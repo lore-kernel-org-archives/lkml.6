@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 399CEC6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 18:33:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9197CC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 18:33:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6F5C20823
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 18:33:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 436BD20823
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 18:33:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="m+tguX0C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6F5C20823
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="S9WJoPU0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 436BD20823
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728334AbeJaD17 (ORCPT
+        id S1728364AbeJaD2C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 23:27:59 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:33712 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727710AbeJaD16 (ORCPT
+        Tue, 30 Oct 2018 23:28:02 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:54721 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727710AbeJaD2A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 23:27:58 -0400
-Received: by mail-it1-f196.google.com with SMTP id p11-v6so3569483itf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 11:33:22 -0700 (PDT)
+        Tue, 30 Oct 2018 23:28:00 -0400
+Received: by mail-it1-f193.google.com with SMTP id d6so9364363itl.4
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 11:33:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=34+ob0sFEhybFDfaezN8qC7dpU4f/CwKNb9IJtk6PWk=;
-        b=m+tguX0CzwX4Zon4ogYPZwXdBp1jkg8v9JkETR+zu+ZkbaPiCd33OpUzP+gwqj8czF
-         8nuECRUlFR8L2K7LECxCJ0K0y+muRwKYMbtiqxPwHsPv8/AHtAuyGgA1erCZGzFXD/Kj
-         ptTujM6AkagSTBisw7YavJjUVALJbJ2k/E5XOxDjyBRRvkHk1r4v4/B8R62oo07tCXOd
-         QBLLSIyTMFu3tlw0OwIrbwpZZxP+if4nTRBry/XRL/H0D56+PM0O8rAGr0azuKbpMkcP
-         eGyPaRSOgqqh0PDV+F+crZ7QhcWxU3MdKLESPC+RMhUFovm38ioUkHyuIGOMEdam9Ji8
-         02AA==
+        bh=Kd+IlX4sZp5qTEQrFdk/0yIj0HwN0pdw7Z4EsC4/s4c=;
+        b=S9WJoPU0wAaHLQB1gm1RUNFoK1C9c8vDolfqI/c7EvBx1N1CyUUsFujZ9RaQuj1zsp
+         0ZixwvsaeB9z1hiVLUqZnwP6CM8KnWoo1UWYvt37foWUIo7upVxRVnNl+gJRXC7q9gi4
+         HKj9h/jfWz/7kvb+hfy+uu2jVL5EL1Mn7tkAlcSWJzJqHhXPH1eSXOexNpWgHV01+Ldm
+         Z4VKcG4VReB+tyuPuUeuz5pvlhbb+Wo+U6Wok1SwGv2a37MHxze67Q83bOI+t2sOCQZq
+         ApECf0Gb7f0K3WJLJfNwT5dCXr6PdXRkySdc/48DeY5DwaeQfQxjp6S0VZHh50sFaF7s
+         hdSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=34+ob0sFEhybFDfaezN8qC7dpU4f/CwKNb9IJtk6PWk=;
-        b=SSbkNZx+xQ2nh85y2fFpaLNnrnA1MxCzCW9CZJ2zQQA/kJpsv7mqHdtQzGrJFqviht
-         wCpFnexhjt2cWG+fKMCmqCj7iFvj1Zau0zrlnnEIX3g/HkzUIl+0PADz6UE/E/uXs6v4
-         RznIkbfBotcJU//T9xCsOQeQlm5xjcJW8l2exG5HJDy9PJ8BdDHSt7ilV8pXlmyJf/LT
-         YlZcIv6uSxoanD/oWMtLCHXAt3vjWc0f05VkzsDVB/RUgGFm5LrCIOGwl9Z1YUuol3j0
-         HDF+fI6pVo95Ou7banBbjPs+4WCyBfDsZ+Fs68l6Z3KTTDojI46wfPWqNveLR8S/+HY6
-         DDuQ==
-X-Gm-Message-State: AGRZ1gLl0KHhDrkokKvJS33dYjCN2jblg3TJTNimswFCH7ilz7R8ra6x
-        ZjY3oPjvdDs8+3Y7pJfbTQJPyw==
-X-Google-Smtp-Source: AJdET5cl3KsNiGzxsR218xiYH+W3ub3FKlYGCLIVFJ98rsqfSb+kHSbG7YZDuzWlBMTS3hqYbe54Cw==
-X-Received: by 2002:a02:e43:: with SMTP id 64-v6mr21185jae.58.1540924402168;
-        Tue, 30 Oct 2018 11:33:22 -0700 (PDT)
+        bh=Kd+IlX4sZp5qTEQrFdk/0yIj0HwN0pdw7Z4EsC4/s4c=;
+        b=cO4MFKR72go7yRJ8gdo1ddYZ2hr9TGHEV6QRKrrKBx85FRudrQbVfWaJxR1gbf7NYq
+         e5qzpARwyjAVfRe1kCN/WBvfo8BazWQ7Q2/ar5L5ezbNr6UvyTNmLME2b5LEuVWglmaM
+         hk0K1/z3JGJMftEkr+qkuD7DV66vty33gnJPnR/Yt0ZyqK034F636z2OVf6viPYhMprS
+         ZcI1OAavBaJgBPgO8Rm9+BSTmz2D2e46csKP0/+pRbIT+d6ehfDNJfn/VO1U0+PHzhNg
+         DylrVNnA4okPu/FWRJx2JroV34OvyBITCGBibvDarPfxhI3sdSedfaEhxv1HN7nLgLxi
+         k7sw==
+X-Gm-Message-State: AGRZ1gLNuKRr7MjZNsgJyqrFuk7/0VHsXqM2eom25VGnlmoQBoS8bltd
+        5E4b/TyKc29AzdN/K7br9EmbVw==
+X-Google-Smtp-Source: AJdET5cUFXwSm/8eLxOG1mBqV1soY1D7+qnaTcwa4rRVDFTomUklW1x0ZlmDrcRdCcrXhGnEd2hIdw==
+X-Received: by 2002:a02:9d79:: with SMTP id m54-v6mr3026jal.5.1540924403832;
+        Tue, 30 Oct 2018 11:33:23 -0700 (PDT)
 Received: from localhost.localdomain ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id o20-v6sm4895739itc.34.2018.10.30.11.33.20
+        by smtp.gmail.com with ESMTPSA id o20-v6sm4895739itc.34.2018.10.30.11.33.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 11:33:20 -0700 (PDT)
+        Tue, 30 Oct 2018 11:33:22 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 13/16] irq: add support for allocating (and affinitizing) sets of IRQs
-Date:   Tue, 30 Oct 2018 12:32:49 -0600
-Message-Id: <20181030183252.17857-14-axboe@kernel.dk>
+Cc:     Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 14/16] nvme: utilize two queue maps, one for reads and one for writes
+Date:   Tue, 30 Oct 2018 12:32:50 -0600
+Message-Id: <20181030183252.17857-15-axboe@kernel.dk>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181030183252.17857-1-axboe@kernel.dk>
 References: <20181030183252.17857-1-axboe@kernel.dk>
@@ -73,140 +73,306 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A driver may have a need to allocate multiple sets of MSI/MSI-X
-interrupts, and have them appropriately affinitized. Add support for
-defining a number of sets in the irq_affinity structure, of varying
-sizes, and get each set affinitized correctly across the machine.
+NVMe does round-robin between queues by default, which means that
+sharing a queue map for both reads and writes can be problematic
+in terms of read servicing. It's much easier to flood the queue
+with writes and reduce the read servicing.
 
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
+Implement two queue maps, one for reads and one for writes. The
+write queue count is configurable through the 'write_queues'
+parameter.
+
+By default, we retain the previous behavior of having a single
+queue set, shared between reads and writes. Setting 'write_queues'
+to a non-zero value will create two queue sets, one for reads and
+one for writes, the latter using the configurable number of
+queues (hardware queue counts permitting).
+
 Reviewed-by: Hannes Reinecke <hare@suse.com>
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Reviewed-by: Keith Busch <keith.busch@intel.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- drivers/pci/msi.c         | 14 ++++++++++++++
- include/linux/interrupt.h |  4 ++++
- kernel/irq/affinity.c     | 40 ++++++++++++++++++++++++++++++---------
- 3 files changed, 49 insertions(+), 9 deletions(-)
+ drivers/nvme/host/pci.c | 174 +++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 162 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
-index af24ed50a245..e6c6e10b9ceb 100644
---- a/drivers/pci/msi.c
-+++ b/drivers/pci/msi.c
-@@ -1036,6 +1036,13 @@ static int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
- 	if (maxvec < minvec)
- 		return -ERANGE;
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index e5d783cb6937..17170686105f 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -74,11 +74,29 @@ static int io_queue_depth = 1024;
+ module_param_cb(io_queue_depth, &io_queue_depth_ops, &io_queue_depth, 0644);
+ MODULE_PARM_DESC(io_queue_depth, "set io queue depth, should >= 2");
  
-+	/*
-+	 * If the caller is passing in sets, we can't support a range of
-+	 * vectors. The caller needs to handle that.
-+	 */
-+	if (affd->nr_sets && minvec != maxvec)
-+		return -EINVAL;
++static int queue_count_set(const char *val, const struct kernel_param *kp);
++static const struct kernel_param_ops queue_count_ops = {
++	.set = queue_count_set,
++	.get = param_get_int,
++};
 +
- 	if (WARN_ON_ONCE(dev->msi_enabled))
- 		return -EINVAL;
- 
-@@ -1087,6 +1094,13 @@ static int __pci_enable_msix_range(struct pci_dev *dev,
- 	if (maxvec < minvec)
- 		return -ERANGE;
- 
-+	/*
-+	 * If the caller is passing in sets, we can't support a range of
-+	 * supported vectors. The caller needs to handle that.
-+	 */
-+	if (affd->nr_sets && minvec != maxvec)
-+		return -EINVAL;
++static int write_queues;
++module_param_cb(write_queues, &queue_count_ops, &write_queues, 0644);
++MODULE_PARM_DESC(write_queues,
++	"Number of queues to use for writes. If not set, reads and writes "
++	"will share a queue set.");
 +
- 	if (WARN_ON_ONCE(dev->msix_enabled))
- 		return -EINVAL;
+ struct nvme_dev;
+ struct nvme_queue;
  
-diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-index 1d6711c28271..ca397ff40836 100644
---- a/include/linux/interrupt.h
-+++ b/include/linux/interrupt.h
-@@ -247,10 +247,14 @@ struct irq_affinity_notify {
-  *			the MSI(-X) vector space
-  * @post_vectors:	Don't apply affinity to @post_vectors at end of
-  *			the MSI(-X) vector space
-+ * @nr_sets:		Length of passed in *sets array
-+ * @sets:		Number of affinitized sets
+ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown);
+ 
++enum {
++	NVMEQ_TYPE_READ,
++	NVMEQ_TYPE_WRITE,
++	NVMEQ_TYPE_NR,
++};
++
+ /*
+  * Represents an NVM Express device.  Each nvme_dev is a PCI function.
   */
- struct irq_affinity {
- 	int	pre_vectors;
- 	int	post_vectors;
-+	int	nr_sets;
-+	int	*sets;
- };
- 
- #if defined(CONFIG_SMP)
-diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
-index f4f29b9d90ee..2046a0f0f0f1 100644
---- a/kernel/irq/affinity.c
-+++ b/kernel/irq/affinity.c
-@@ -180,6 +180,7 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
- 	int curvec, usedvecs;
- 	cpumask_var_t nmsk, npresmsk, *node_to_cpumask;
- 	struct cpumask *masks = NULL;
-+	int i, nr_sets;
- 
- 	/*
- 	 * If there aren't any vectors left after applying the pre/post
-@@ -210,10 +211,23 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
- 	get_online_cpus();
- 	build_node_to_cpumask(node_to_cpumask);
- 
--	/* Spread on present CPUs starting from affd->pre_vectors */
--	usedvecs = irq_build_affinity_masks(affd, curvec, affvecs,
--					    node_to_cpumask, cpu_present_mask,
--					    nmsk, masks);
-+	/*
-+	 * Spread on present CPUs starting from affd->pre_vectors. If we
-+	 * have multiple sets, build each sets affinity mask separately.
-+	 */
-+	nr_sets = affd->nr_sets;
-+	if (!nr_sets)
-+		nr_sets = 1;
-+
-+	for (i = 0, usedvecs = 0; i < nr_sets; i++) {
-+		int this_vecs = affd->sets ? affd->sets[i] : affvecs;
-+		int nr;
-+
-+		nr = irq_build_affinity_masks(affd, curvec, this_vecs,
-+					      node_to_cpumask, cpu_present_mask,
-+					      nmsk, masks + usedvecs);
-+		usedvecs += nr;
-+	}
- 
- 	/*
- 	 * Spread on non present CPUs starting from the next vector to be
-@@ -258,13 +272,21 @@ int irq_calc_affinity_vectors(int minvec, int maxvec, const struct irq_affinity
- {
- 	int resv = affd->pre_vectors + affd->post_vectors;
- 	int vecs = maxvec - resv;
--	int ret;
-+	int set_vecs;
- 
- 	if (resv > minvec)
- 		return 0;
- 
--	get_online_cpus();
--	ret = min_t(int, cpumask_weight(cpu_possible_mask), vecs) + resv;
--	put_online_cpus();
--	return ret;
-+	if (affd->nr_sets) {
-+		int i;
-+
-+		for (i = 0, set_vecs = 0;  i < affd->nr_sets; i++)
-+			set_vecs += affd->sets[i];
-+	} else {
-+		get_online_cpus();
-+		set_vecs = cpumask_weight(cpu_possible_mask);
-+		put_online_cpus();
-+	}
-+
-+	return resv + min(set_vecs, vecs);
+@@ -92,6 +110,7 @@ struct nvme_dev {
+ 	struct dma_pool *prp_small_pool;
+ 	unsigned online_queues;
+ 	unsigned max_qid;
++	unsigned io_queues[NVMEQ_TYPE_NR];
+ 	unsigned int num_vecs;
+ 	int q_depth;
+ 	u32 db_stride;
+@@ -134,6 +153,17 @@ static int io_queue_depth_set(const char *val, const struct kernel_param *kp)
+ 	return param_set_int(val, kp);
  }
+ 
++static int queue_count_set(const char *val, const struct kernel_param *kp)
++{
++	int n = 0, ret;
++
++	ret = kstrtoint(val, 10, &n);
++	if (n > num_possible_cpus())
++		n = num_possible_cpus();
++
++	return param_set_int(val, kp);
++}
++
+ static inline unsigned int sq_idx(unsigned int qid, u32 stride)
+ {
+ 	return qid * 2 * stride;
+@@ -218,9 +248,20 @@ static inline void _nvme_check_size(void)
+ 	BUILD_BUG_ON(sizeof(struct nvme_dbbuf) != 64);
+ }
+ 
++static unsigned int max_io_queues(void)
++{
++	return num_possible_cpus() + write_queues;
++}
++
++static unsigned int max_queue_count(void)
++{
++	/* IO queues + admin queue */
++	return 1 + max_io_queues();
++}
++
+ static inline unsigned int nvme_dbbuf_size(u32 stride)
+ {
+-	return ((num_possible_cpus() + 1) * 8 * stride);
++	return (max_queue_count() * 8 * stride);
+ }
+ 
+ static int nvme_dbbuf_dma_alloc(struct nvme_dev *dev)
+@@ -431,12 +472,41 @@ static int nvme_init_request(struct blk_mq_tag_set *set, struct request *req,
+ 	return 0;
+ }
+ 
++static int queue_irq_offset(struct nvme_dev *dev)
++{
++	/* if we have more than 1 vec, admin queue offsets us 1 */
++	if (dev->num_vecs > 1)
++		return 1;
++
++	return 0;
++}
++
+ static int nvme_pci_map_queues(struct blk_mq_tag_set *set)
+ {
+ 	struct nvme_dev *dev = set->driver_data;
++	int i, qoff, offset;
++
++	offset = queue_irq_offset(dev);
++	for (i = 0, qoff = 0; i < set->nr_maps; i++) {
++		struct blk_mq_queue_map *map = &set->map[i];
+ 
+-	return blk_mq_pci_map_queues(&set->map[0], to_pci_dev(dev->dev),
+-			dev->num_vecs > 1 ? 1 /* admin queue */ : 0);
++		map->nr_queues = dev->io_queues[i];
++		if (!map->nr_queues) {
++			BUG_ON(i == NVMEQ_TYPE_READ);
++
++			/* shared set, resuse read set parameters */
++			map->nr_queues = dev->io_queues[NVMEQ_TYPE_READ];
++			qoff = 0;
++			offset = queue_irq_offset(dev);
++		}
++
++		map->queue_offset = qoff;
++		blk_mq_pci_map_queues(map, to_pci_dev(dev->dev), offset);
++		qoff += map->nr_queues;
++		offset += map->nr_queues;
++	}
++
++	return 0;
+ }
+ 
+ /**
+@@ -849,6 +919,14 @@ static blk_status_t nvme_queue_rq(struct blk_mq_hw_ctx *hctx,
+ 	return ret;
+ }
+ 
++static int nvme_flags_to_type(struct request_queue *q, unsigned int flags)
++{
++	if ((flags & REQ_OP_MASK) == REQ_OP_READ)
++		return NVMEQ_TYPE_READ;
++
++	return NVMEQ_TYPE_WRITE;
++}
++
+ static void nvme_pci_complete_rq(struct request *req)
+ {
+ 	struct nvme_iod *iod = blk_mq_rq_to_pdu(req);
+@@ -1476,6 +1554,7 @@ static const struct blk_mq_ops nvme_mq_admin_ops = {
+ 
+ static const struct blk_mq_ops nvme_mq_ops = {
+ 	.queue_rq	= nvme_queue_rq,
++	.flags_to_type	= nvme_flags_to_type,
+ 	.complete	= nvme_pci_complete_rq,
+ 	.init_hctx	= nvme_init_hctx,
+ 	.init_request	= nvme_init_request,
+@@ -1888,18 +1967,53 @@ static int nvme_setup_host_mem(struct nvme_dev *dev)
+ 	return ret;
+ }
+ 
++static void nvme_calc_io_queues(struct nvme_dev *dev, unsigned int nr_io_queues)
++{
++	unsigned int this_w_queues = write_queues;
++
++	/*
++	 * Setup read/write queue split
++	 */
++	if (nr_io_queues == 1) {
++		dev->io_queues[NVMEQ_TYPE_READ] = 1;
++		dev->io_queues[NVMEQ_TYPE_WRITE] = 0;
++		return;
++	}
++
++	/*
++	 * If 'write_queues' is set, ensure it leaves room for at least
++	 * one read queue
++	 */
++	if (this_w_queues >= nr_io_queues)
++		this_w_queues = nr_io_queues - 1;
++
++	/*
++	 * If 'write_queues' is set to zero, reads and writes will share
++	 * a queue set.
++	 */
++	if (!this_w_queues) {
++		dev->io_queues[NVMEQ_TYPE_WRITE] = 0;
++		dev->io_queues[NVMEQ_TYPE_READ] = nr_io_queues;
++	} else {
++		dev->io_queues[NVMEQ_TYPE_WRITE] = this_w_queues;
++		dev->io_queues[NVMEQ_TYPE_READ] = nr_io_queues - this_w_queues;
++	}
++}
++
+ static int nvme_setup_io_queues(struct nvme_dev *dev)
+ {
+ 	struct nvme_queue *adminq = &dev->queues[0];
+ 	struct pci_dev *pdev = to_pci_dev(dev->dev);
+ 	int result, nr_io_queues;
+ 	unsigned long size;
+-
++	int irq_sets[2];
+ 	struct irq_affinity affd = {
+-		.pre_vectors = 1
++		.pre_vectors = 1,
++		.nr_sets = ARRAY_SIZE(irq_sets),
++		.sets = irq_sets,
+ 	};
+ 
+-	nr_io_queues = num_possible_cpus();
++	nr_io_queues = max_io_queues();
+ 	result = nvme_set_queue_count(&dev->ctrl, &nr_io_queues);
+ 	if (result < 0)
+ 		return result;
+@@ -1934,13 +2048,48 @@ static int nvme_setup_io_queues(struct nvme_dev *dev)
+ 	 * setting up the full range we need.
+ 	 */
+ 	pci_free_irq_vectors(pdev);
+-	result = pci_alloc_irq_vectors_affinity(pdev, 1, nr_io_queues + 1,
+-			PCI_IRQ_ALL_TYPES | PCI_IRQ_AFFINITY, &affd);
+-	if (result <= 0)
+-		return -EIO;
++
++	/*
++	 * For irq sets, we have to ask for minvec == maxvec. This passes
++	 * any reduction back to us, so we can adjust our queue counts and
++	 * IRQ vector needs.
++	 */
++	do {
++		nvme_calc_io_queues(dev, nr_io_queues);
++		irq_sets[0] = dev->io_queues[NVMEQ_TYPE_READ];
++		irq_sets[1] = dev->io_queues[NVMEQ_TYPE_WRITE];
++		if (!irq_sets[1])
++			affd.nr_sets = 1;
++
++		/*
++		 * Need IRQs for read+write queues, and one for the admin queue
++		 */
++		nr_io_queues = irq_sets[0] + irq_sets[1] + 1;
++
++		result = pci_alloc_irq_vectors_affinity(pdev, nr_io_queues,
++				nr_io_queues,
++				PCI_IRQ_ALL_TYPES | PCI_IRQ_AFFINITY, &affd);
++
++		/*
++		 * Need to reduce our vec counts
++		 */
++		if (result == -ENOSPC) {
++			nr_io_queues--;
++			if (!nr_io_queues)
++				return result;
++			continue;
++		} else if (result <= 0)
++			return -EIO;
++		break;
++	} while (1);
++
+ 	dev->num_vecs = result;
+ 	dev->max_qid = max(result - 1, 1);
+ 
++	dev_info(dev->ctrl.device, "%d/%d/%d read/write queues\n",
++					dev->io_queues[NVMEQ_TYPE_READ],
++					dev->io_queues[NVMEQ_TYPE_WRITE]);
++
+ 	/*
+ 	 * Should investigate if there's a performance win from allocating
+ 	 * more queues than interrupt vectors; it might allow the submission
+@@ -2042,6 +2191,7 @@ static int nvme_dev_add(struct nvme_dev *dev)
+ 	if (!dev->ctrl.tagset) {
+ 		dev->tagset.ops = &nvme_mq_ops;
+ 		dev->tagset.nr_hw_queues = dev->online_queues - 1;
++		dev->tagset.nr_maps = NVMEQ_TYPE_NR;
+ 		dev->tagset.timeout = NVME_IO_TIMEOUT;
+ 		dev->tagset.numa_node = dev_to_node(dev->dev);
+ 		dev->tagset.queue_depth =
+@@ -2489,8 +2639,8 @@ static int nvme_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	if (!dev)
+ 		return -ENOMEM;
+ 
+-	dev->queues = kcalloc_node(num_possible_cpus() + 1,
+-			sizeof(struct nvme_queue), GFP_KERNEL, node);
++	dev->queues = kcalloc_node(max_queue_count(), sizeof(struct nvme_queue),
++					GFP_KERNEL, node);
+ 	if (!dev->queues)
+ 		goto free;
+ 
 -- 
 2.17.1
 
