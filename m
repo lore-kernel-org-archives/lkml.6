@@ -2,376 +2,102 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4319C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 03:53:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AEF5C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 04:21:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 525E12082D
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 03:53:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4E8F20823
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 04:21:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="gPFBBAFl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 525E12082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fpond.eu
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="hqzboSOg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4E8F20823
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726613AbeJ3Mou (ORCPT
+        id S1726108AbeJ3NNo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 08:44:50 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.53]:34771 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbeJ3Mou (ORCPT
+        Tue, 30 Oct 2018 09:13:44 -0400
+Received: from conuserg-09.nifty.com ([210.131.2.76]:33569 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725971AbeJ3NNo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 08:44:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1540871582;
-        s=strato-dkim-0002; d=fpond.eu;
-        h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=sq3lbn1m/j7rpbJfrSulgPB1Aj1ql82tOUlwEXDMQX4=;
-        b=gPFBBAFlrHzHxC2CecgJB61jNzT2K8f4/MIedDy/h4uptbQ7OXg5XdPtf68HVloaDQ
-        bBYFGkv1jNPtDXJ1wEsoP+FArpZUae36fZIG5u/vogaTAVfdAiGax48x5bwwJxbDaWbK
-        mBBdmZcJD3geFDOJv3ecxOgco0QbZkxzTlwxRr2UJQYxE/1B6mMRTzJXTozVB14DkFwO
-        qbFJteCwt8lTFY4xQXWl5xMpD/sTYvIRK3DXuTrAOfpwBilhOuMZPvKRUpbMuWs7z0dA
-        W1eZAREyIUc/a1N05SaWVDTS4uG8zF8zA+gW02VsI6vXC0b4EbvWAR2SGsaD6ALwqFc6
-        s0qQ==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzmt2bYDnKIKaws6YXTsc4="
-X-RZG-CLASS-ID: mo00
-Received: from null
-        by smtp-ox.front (RZmta 44.3 AUTH)
-        with ESMTPSA id 20819cu9U3kaxs7
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-        (Client did not present a certificate);
-        Tue, 30 Oct 2018 04:46:36 +0100 (CET)
-Date:   Tue, 30 Oct 2018 04:46:36 +0100 (CET)
-From:   Ulrich Hecht <uli@fpond.eu>
-To:     Jacopo Mondi <jacopo+renesas@jmondi.org>, geert+renesas@glider.be,
-        laurent.pinchart@ideasonboard.com, horms@verge.net.au
-Cc:     linus.walleij@linaro.org, linux-renesas-soc@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <835772700.335137.1540871196272@webmail.strato.com>
-In-Reply-To: <1540836824-4636-3-git-send-email-jacopo+renesas@jmondi.org>
-References: <1540836824-4636-1-git-send-email-jacopo+renesas@jmondi.org>
- <1540836824-4636-3-git-send-email-jacopo+renesas@jmondi.org>
-Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a77965: Add VIN[4|5]
- groups/functions
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev45
-X-Originating-Client: open-xchange-appsuite
+        Tue, 30 Oct 2018 09:13:44 -0400
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id w9U4LgZL000764;
+        Tue, 30 Oct 2018 13:21:43 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com w9U4LgZL000764
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1540873303;
+        bh=vok3clh1+AcMHEIx5gsB0OBiQpXmww8S1/r1ejlge/g=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=hqzboSOgvlGLlHrDxCF879w0FQ1OFDmdzF1JKCpMFslFuQ/dh3uJOmOqiKF+clWun
+         +NRttbUcp1ACWTaJGy82Vv+b39zhxgKi6CSk7dOjEb+RAMQmcu6uAV7X0mq8ksBCS9
+         3sT9s23GKdjfdLfnxorRD/RY4ZyUmw99YFRf8j9rd6Ad46dmpe+gUVd8Ru16LPNB58
+         HTd/zYrRQU/3KK4jF/A6JUTf4+5fjx8MxSqmcTdfPgfTccmut6a61qEnyatZm9UJvO
+         ahvGIM3fAqnZC4Yu8OfYNLomXnBI5fjWul4QiBjHZ8nOyF9mjvYVAqBOl26PkfHWbX
+         g0cw4ITBNK6YA==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] kbuild: remove cc-name variable
+Date:   Tue, 30 Oct 2018 13:21:33 +0900
+Message-Id: <1540873293-29817-2-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1540873293-29817-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1540873293-29817-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thank you for your patch.
+There is one more user of $(cc-name) in the top Makefile. It is supposed
+to detect Clang before invoking Kconfig, so it should still be there
+in the $(shell ...) form. All the other users of $(cc-name) have been
+replaced with $(CONFIG_CC_IS_CLANG). Hence, scripts/Kbuild.include does
+not need to define cc-name any more.
 
-> On October 29, 2018 at 7:13 PM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> 
-> 
-> The VIN4 and VIN5 interfaces supports parallel video input.
-> Add pin, mux and functions definitions for VIN4 and VIN5 for R-Car M3-N.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 254 ++++++++++++++++++++++++++++++++++
->  1 file changed, 254 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-> index dfdd982..1aca4b0 100644
-> --- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-> @@ -3725,6 +3725,216 @@ static const unsigned int usb30_mux[] = {
->  	USB30_PWEN_MARK, USB30_OVC_MARK,
->  };
->  
-> +/* - VIN4 ------------------------------------------------------------------- */
-> +static const unsigned int vin4_data18_a_pins[] = {
-> +	RCAR_GP_PIN(0, 10), RCAR_GP_PIN(0, 11),
-> +	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 13),
-> +	RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 15),
-> +	RCAR_GP_PIN(1, 2),  RCAR_GP_PIN(1, 3),
-> +	RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 5),
-> +	RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 7),
-> +	RCAR_GP_PIN(0, 2),  RCAR_GP_PIN(0, 3),
-> +	RCAR_GP_PIN(0, 4),  RCAR_GP_PIN(0, 5),
-> +	RCAR_GP_PIN(0, 6),  RCAR_GP_PIN(0, 7),
-> +};
-> +
-> +static const unsigned int vin4_data18_a_mux[] = {
-> +	VI4_DATA2_A_MARK, VI4_DATA3_A_MARK,
-> +	VI4_DATA4_A_MARK, VI4_DATA5_A_MARK,
-> +	VI4_DATA6_A_MARK, VI4_DATA7_A_MARK,
-> +	VI4_DATA10_MARK,  VI4_DATA11_MARK,
-> +	VI4_DATA12_MARK,  VI4_DATA13_MARK,
-> +	VI4_DATA14_MARK,  VI4_DATA15_MARK,
-> +	VI4_DATA18_MARK,  VI4_DATA19_MARK,
-> +	VI4_DATA20_MARK,  VI4_DATA21_MARK,
-> +	VI4_DATA22_MARK,  VI4_DATA23_MARK,
-> +};
-> +
-> +static const union vin_data vin4_data_a_pins = {
-> +	.data24 = {
-> +		RCAR_GP_PIN(0, 8),  RCAR_GP_PIN(0, 9),
-> +		RCAR_GP_PIN(0, 10), RCAR_GP_PIN(0, 11),
-> +		RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 13),
-> +		RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 15),
-> +		RCAR_GP_PIN(1, 0),  RCAR_GP_PIN(1, 1),
-> +		RCAR_GP_PIN(1, 2),  RCAR_GP_PIN(1, 3),
-> +		RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 5),
-> +		RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 7),
-> +		RCAR_GP_PIN(0, 0),  RCAR_GP_PIN(0, 1),
-> +		RCAR_GP_PIN(0, 2),  RCAR_GP_PIN(0, 3),
-> +		RCAR_GP_PIN(0, 4),  RCAR_GP_PIN(0, 5),
-> +		RCAR_GP_PIN(0, 6),  RCAR_GP_PIN(0, 7),
-> +	},
-> +};
-> +
-> +static const union vin_data vin4_data_a_mux = {
-> +	.data24 = {
-> +		VI4_DATA0_A_MARK, VI4_DATA1_A_MARK,
-> +		VI4_DATA2_A_MARK, VI4_DATA3_A_MARK,
-> +		VI4_DATA4_A_MARK, VI4_DATA5_A_MARK,
-> +		VI4_DATA6_A_MARK, VI4_DATA7_A_MARK,
-> +		VI4_DATA8_MARK,   VI4_DATA9_MARK,
-> +		VI4_DATA10_MARK,  VI4_DATA11_MARK,
-> +		VI4_DATA12_MARK,  VI4_DATA13_MARK,
-> +		VI4_DATA14_MARK,  VI4_DATA15_MARK,
-> +		VI4_DATA16_MARK,  VI4_DATA17_MARK,
-> +		VI4_DATA18_MARK,  VI4_DATA19_MARK,
-> +		VI4_DATA20_MARK,  VI4_DATA21_MARK,
-> +		VI4_DATA22_MARK,  VI4_DATA23_MARK,
-> +	},
-> +};
-> +
-> +static const unsigned int vin4_data18_b_pins[] = {
-> +	RCAR_GP_PIN(2, 2), RCAR_GP_PIN(2, 3),
-> +	RCAR_GP_PIN(2, 4), RCAR_GP_PIN(2, 5),
-> +	RCAR_GP_PIN(2, 6), RCAR_GP_PIN(2, 7),
-> +	RCAR_GP_PIN(1, 2), RCAR_GP_PIN(1, 3),
-> +	RCAR_GP_PIN(1, 4), RCAR_GP_PIN(1, 5),
-> +	RCAR_GP_PIN(1, 6), RCAR_GP_PIN(1, 7),
-> +	RCAR_GP_PIN(0, 2), RCAR_GP_PIN(0, 3),
-> +	RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 5),
-> +	RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 7),
-> +};
-> +
-> +static const unsigned int vin4_data18_b_mux[] = {
-> +	VI4_DATA2_B_MARK, VI4_DATA3_B_MARK,
-> +	VI4_DATA4_B_MARK, VI4_DATA5_B_MARK,
-> +	VI4_DATA6_B_MARK, VI4_DATA7_B_MARK,
-> +	VI4_DATA10_MARK,  VI4_DATA11_MARK,
-> +	VI4_DATA12_MARK,  VI4_DATA13_MARK,
-> +	VI4_DATA14_MARK,  VI4_DATA15_MARK,
-> +	VI4_DATA18_MARK,  VI4_DATA19_MARK,
-> +	VI4_DATA20_MARK,  VI4_DATA21_MARK,
-> +	VI4_DATA22_MARK,  VI4_DATA23_MARK,
-> +};
-> +
-> +static const union vin_data vin4_data_b_pins = {
-> +	.data24 = {
-> +		RCAR_GP_PIN(2, 0), RCAR_GP_PIN(2, 1),
-> +		RCAR_GP_PIN(2, 2), RCAR_GP_PIN(2, 3),
-> +		RCAR_GP_PIN(2, 4), RCAR_GP_PIN(2, 5),
-> +		RCAR_GP_PIN(2, 6), RCAR_GP_PIN(2, 7),
-> +		RCAR_GP_PIN(1, 0), RCAR_GP_PIN(1, 1),
-> +		RCAR_GP_PIN(1, 2), RCAR_GP_PIN(1, 3),
-> +		RCAR_GP_PIN(1, 4), RCAR_GP_PIN(1, 5),
-> +		RCAR_GP_PIN(1, 6), RCAR_GP_PIN(1, 7),
-> +		RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 1),
-> +		RCAR_GP_PIN(0, 2), RCAR_GP_PIN(0, 3),
-> +		RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 5),
-> +		RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 7),
-> +	},
-> +};
-> +
-> +static const union vin_data vin4_data_b_mux = {
-> +	.data24 = {
-> +		VI4_DATA0_B_MARK, VI4_DATA1_B_MARK,
-> +		VI4_DATA2_B_MARK, VI4_DATA3_B_MARK,
-> +		VI4_DATA4_B_MARK, VI4_DATA5_B_MARK,
-> +		VI4_DATA6_B_MARK, VI4_DATA7_B_MARK,
-> +		VI4_DATA8_MARK,   VI4_DATA9_MARK,
-> +		VI4_DATA10_MARK,  VI4_DATA11_MARK,
-> +		VI4_DATA12_MARK,  VI4_DATA13_MARK,
-> +		VI4_DATA14_MARK,  VI4_DATA15_MARK,
-> +		VI4_DATA16_MARK,  VI4_DATA17_MARK,
-> +		VI4_DATA18_MARK,  VI4_DATA19_MARK,
-> +		VI4_DATA20_MARK,  VI4_DATA21_MARK,
-> +		VI4_DATA22_MARK,  VI4_DATA23_MARK,
-> +	},
-> +};
-> +
-> +static const unsigned int vin4_sync_pins[] = {
-> +	/* VSYNC_N, HSYNC_N */
-> +	RCAR_GP_PIN(1, 17), RCAR_GP_PIN(1, 18),
-> +};
-> +
-> +static const unsigned int vin4_sync_mux[] = {
-> +	VI4_HSYNC_N_MARK, VI4_VSYNC_N_MARK,
-> +};
-> +
-> +static const unsigned int vin4_field_pins[] = {
-> +	RCAR_GP_PIN(1, 16),
-> +};
-> +
-> +static const unsigned int vin4_field_mux[] = {
-> +	VI4_FIELD_MARK,
-> +};
-> +
-> +static const unsigned int vin4_clkenb_pins[] = {
-> +	RCAR_GP_PIN(1, 19),
-> +};
-> +
-> +static const unsigned int vin4_clkenb_mux[] = {
-> +	VI4_CLKENB_MARK,
-> +};
-> +
-> +static const unsigned int vin4_clk_pins[] = {
-> +	RCAR_GP_PIN(1, 27),
-> +};
-> +
-> +static const unsigned int vin4_clk_mux[] = {
-> +	VI4_CLK_MARK,
-> +};
-> +
-> +/* - VIN5 ------------------------------------------------------------------- */
-> +static const union vin_data vin5_data_pins = {
-> +	.data16 = {
-> +		RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 1),
-> +		RCAR_GP_PIN(0, 2), RCAR_GP_PIN(0, 3),
-> +		RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 5),
-> +		RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 7),
-> +		RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 13),
-> +		RCAR_GP_PIN(1, 14), RCAR_GP_PIN(1, 15),
-> +		RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 5),
-> +		RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 7),
-> +	},
-> +};
-> +
-> +static const union vin_data vin5_data_mux = {
-> +	.data16 = {
-> +		VI5_DATA0_MARK, VI5_DATA1_MARK,
-> +		VI5_DATA2_MARK, VI5_DATA3_MARK,
-> +		VI5_DATA4_MARK, VI5_DATA5_MARK,
-> +		VI5_DATA6_MARK, VI5_DATA7_MARK,
-> +		VI5_DATA8_MARK,  VI5_DATA9_MARK,
-> +		VI5_DATA10_MARK, VI5_DATA11_MARK,
-> +		VI5_DATA12_MARK, VI5_DATA13_MARK,
-> +		VI5_DATA14_MARK, VI5_DATA15_MARK,
-> +	},
-> +};
-> +
-> +static const unsigned int vin5_sync_pins[] = {
-> +	/* VSYNC_N, HSYNC_N */
-> +	RCAR_GP_PIN(1, 9), RCAR_GP_PIN(1, 10),
-> +};
-> +
-> +static const unsigned int vin5_sync_mux[] = {
-> +	VI5_HSYNC_N_MARK, VI5_VSYNC_N_MARK,
-> +};
-> +
-> +static const unsigned int vin5_field_pins[] = {
-> +	RCAR_GP_PIN(1, 11),
-> +};
-> +
-> +static const unsigned int vin5_field_mux[] = {
-> +	VI5_FIELD_MARK,
-> +};
-> +
-> +static const unsigned int vin5_clkenb_pins[] = {
-> +	RCAR_GP_PIN(1, 20),
-> +};
-> +
-> +static const unsigned int vin5_clkenb_mux[] = {
-> +	VI5_CLKENB_MARK,
-> +};
-> +
-> +static const unsigned int vin5_clk_pins[] = {
-> +	RCAR_GP_PIN(1, 21),
-> +};
-> +
-> +static const unsigned int vin5_clk_mux[] = {
-> +	VI5_CLK_MARK,
-> +};
-> +
->  static const struct sh_pfc_pin_group pinmux_groups[] = {
->  	SH_PFC_PIN_GROUP(audio_clk_a_a),
->  	SH_PFC_PIN_GROUP(audio_clk_a_b),
-> @@ -4000,6 +4210,24 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
->  	SH_PFC_PIN_GROUP(usb0),
->  	SH_PFC_PIN_GROUP(usb1),
->  	SH_PFC_PIN_GROUP(usb30),
-> +	VIN_DATA_PIN_GROUP_VER(vin4_data, a, 8),
-> +	VIN_DATA_PIN_GROUP_VER(vin4_data, a, 16),
-> +	SH_PFC_PIN_GROUP(vin4_data18_a),
-> +	VIN_DATA_PIN_GROUP_VER(vin4_data, a, 24),
-> +	VIN_DATA_PIN_GROUP_VER(vin4_data, b, 8),
-> +	VIN_DATA_PIN_GROUP_VER(vin4_data, b, 16),
-> +	SH_PFC_PIN_GROUP(vin4_data18_b),
-> +	VIN_DATA_PIN_GROUP_VER(vin4_data, b, 24),
-> +	SH_PFC_PIN_GROUP(vin4_sync),
-> +	SH_PFC_PIN_GROUP(vin4_field),
-> +	SH_PFC_PIN_GROUP(vin4_clkenb),
-> +	SH_PFC_PIN_GROUP(vin4_clk),
-> +	VIN_DATA_PIN_GROUP(vin5_data, 8),
-> +	VIN_DATA_PIN_GROUP(vin5_data, 16),
-> +	SH_PFC_PIN_GROUP(vin5_sync),
-> +	SH_PFC_PIN_GROUP(vin5_field),
-> +	SH_PFC_PIN_GROUP(vin5_clkenb),
-> +	SH_PFC_PIN_GROUP(vin5_clk),
->  };
->  
->  static const char * const audio_clk_groups[] = {
-> @@ -4392,6 +4620,30 @@ static const char * const usb30_groups[] = {
->  	"usb30",
->  };
->  
-> +static const char * const vin4_groups[] = {
-> +	"vin4_data8_a",
-> +	"vin4_data16_a",
-> +	"vin4_data18_a",
-> +	"vin4_data24_a",
-> +	"vin4_data8_b",
-> +	"vin4_data16_b",
-> +	"vin4_data18_b",
-> +	"vin4_data24_b",
-> +	"vin4_sync",
-> +	"vin4_field",
-> +	"vin4_clkenb",
-> +	"vin4_clk",
-> +};
-> +
-> +static const char * const vin5_groups[] = {
-> +	"vin5_data8",
-> +	"vin5_data16",
-> +	"vin5_sync",
-> +	"vin5_field",
-> +	"vin5_clkenb",
-> +	"vin5_clk",
-> +};
-> +
->  static const struct sh_pfc_function pinmux_functions[] = {
->  	SH_PFC_FUNCTION(audio_clk),
->  	SH_PFC_FUNCTION(avb),
-> @@ -4432,6 +4684,8 @@ static const struct sh_pfc_function pinmux_functions[] = {
->  	SH_PFC_FUNCTION(usb0),
->  	SH_PFC_FUNCTION(usb1),
->  	SH_PFC_FUNCTION(usb30),
-> +	SH_PFC_FUNCTION(vin4),
-> +	SH_PFC_FUNCTION(vin5),
->  };
->  
->  static const struct pinmux_cfg_reg pinmux_config_regs[] = {
-> -- 
-> 2.7.4
->
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
+ Makefile               | 2 +-
+ scripts/Kbuild.include | 4 ----
+ 2 files changed, 1 insertion(+), 5 deletions(-)
 
-CU
-Uli
+diff --git a/Makefile b/Makefile
+index bd93bc3..430f7de 100644
+--- a/Makefile
++++ b/Makefile
+@@ -485,7 +485,7 @@ ifneq ($(KBUILD_SRC),)
+ 	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/mkmakefile $(srctree)
+ endif
+ 
+-ifeq ($(cc-name),clang)
++ifneq ($(shell $(CC) --version 2>&1 | head -n 1 | grep clang),)
+ ifneq ($(CROSS_COMPILE),)
+ CLANG_TARGET	:= --target=$(notdir $(CROSS_COMPILE:%-=%))
+ GCC_TOOLCHAIN_DIR := $(dir $(shell which $(LD)))
+diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
+index ca21a35..51703ae 100644
+--- a/scripts/Kbuild.include
++++ b/scripts/Kbuild.include
+@@ -140,10 +140,6 @@ cc-option-yn = $(call try-run,\
+ cc-disable-warning = $(call try-run,\
+ 	$(CC) -Werror $(KBUILD_CPPFLAGS) $(CC_OPTION_CFLAGS) -W$(strip $(1)) -c -x c /dev/null -o "$$TMP",-Wno-$(strip $(1)))
+ 
+-# cc-name
+-# Expands to either gcc or clang
+-cc-name = $(shell $(CC) -v 2>&1 | grep -q "clang version" && echo clang || echo gcc)
+-
+ # cc-version
+ cc-version = $(shell $(CONFIG_SHELL) $(srctree)/scripts/gcc-version.sh $(CC))
+ 
+-- 
+2.7.4
+
