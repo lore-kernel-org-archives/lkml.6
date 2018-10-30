@@ -2,86 +2,78 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 822CAECDE44
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:29:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A6AC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:29:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39E9E20657
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:29:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 365B120657
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:29:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WGdBnrn7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39E9E20657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="d0/wpFci"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 365B120657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbeJaAXJ (ORCPT
+        id S1727673AbeJaAXm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 20:23:09 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43646 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726491AbeJaAXJ (ORCPT
+        Tue, 30 Oct 2018 20:23:42 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53160 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727648AbeJaAXm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 20:23:09 -0400
-Received: by mail-lj1-f194.google.com with SMTP id g26-v6so10506445lja.10
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 08:29:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SZtmXnmJyWcV3ODY01HTI6Wn9QrRQ/iAqsvYQvID67M=;
-        b=WGdBnrn7F16rz92FKgx1F4F3xq2L9ulvrmEfPrKuWXMSJg17Aa63Fxb4Gpe3Qz7ahS
-         SQx/RzzxMUHxL+geYcHIhSUG6fGusw3Q4xKa1lJPbq7lgRXc/NSDMDIEFgl3LPHIqfJ8
-         80TSVyN3Gc0SnuacfrYuhwkcImopJDcH4u/ig=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SZtmXnmJyWcV3ODY01HTI6Wn9QrRQ/iAqsvYQvID67M=;
-        b=R8WWLWQgQSY2zt/n02HNXo4ec6B0lHZN0w5Vj/pH1v5FOFkS98zWTRmr27gjHoxsSC
-         a7nGIFSVYLNE7FOw6rzHCODlIMQtGAPLJ0KRHGw/dD7vaj61hS15bcfFI/dff599ZO0K
-         v+znRGbB+QkEfuP3wEqMReIN4/uvcHoSiPv5nl5B9HtTn5o5vq71S0RB9+QOajv+pUao
-         gMhPQdbEdWbfgIPZbC2ttMYbz+EVLz8hkCZOswezUoKzJivewUl6Lm1oTgwjVtpnuZ7V
-         vf1gLoDLS2aZ07mcFB0Lv40WmqMzk5W7gW0/ycuwxyhhXdrHyupCL53vi29aP2LcsWcd
-         w0sw==
-X-Gm-Message-State: AGRZ1gKWZaStJQJuZ8t8RI9ONstoW+20BkxBfvYsxyNVrMTlUWv1dng6
-        05xSoNctWuqYupYVzFRJAF8jwMWRWdyweA==
-X-Google-Smtp-Source: AJdET5cAtt0cSkLsXb7Z4ca+eTgp31FpiarQD+2CRrWjL7cSl/UPk8SpCHcyVQnPY2DZNrcwdsxFPw==
-X-Received: by 2002:a2e:2909:: with SMTP id u9-v6mr6729839lje.28.1540913351212;
-        Tue, 30 Oct 2018 08:29:11 -0700 (PDT)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
-        by smtp.gmail.com with ESMTPSA id a4-v6sm3735239lfa.91.2018.10.30.08.29.10
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 08:29:10 -0700 (PDT)
-Received: by mail-lf1-f53.google.com with SMTP id p86so6992717lfg.5
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 08:29:10 -0700 (PDT)
-X-Received: by 2002:a19:7019:: with SMTP id h25-v6mr2315708lfc.147.1540913349579;
- Tue, 30 Oct 2018 08:29:09 -0700 (PDT)
+        Tue, 30 Oct 2018 20:23:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=oulFfH9JYVCCDp8mixdnJfogwwFY+N/JvVZ5AUVW1Cs=; b=d0/wpFciFWl09/DEtystyKyfZ
+        Ayf549jf7VMrRZVYfWJx5MBeivHLVTe08BdBuTXu+xE0C4OFakZm3V88PbSGYrOg7orsvl3/YkrLI
+        5RoRKQrbVidA6JSw44P7MRdDzW20hJItCajSNaT+muQxSHrHkQ0Le44cxrP/W6/aaIL4zpOoW1YDu
+        pztgkEZXx5Od8vWVKJbZK1I0ay9kq9u2V9B4yWNVJ1TF0p1LReeg/hVlZOcJ31Cq/jfiUha7tfHsY
+        +Sn+z714xYPPiUvWJ5thKByh0wCUq5nnEp0lMtjqkjhkhJ9WWyvjmgjbk2RuYVDQnr84syN1XJHie
+        0Paq/9f7Q==;
+Received: from [24.132.217.100] (helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gHPTo-0007D0-0a; Tue, 30 Oct 2018 08:35:10 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id B36DC202A40A3; Tue, 30 Oct 2018 09:32:10 +0100 (CET)
+Date:   Tue, 30 Oct 2018 09:32:10 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Cc:     Linux-Kernel <linux-kernel@vger.kernel.org>, mingo@redhat.com,
+        luto@kernel.org, konrad.wilk@oracle.com, dwmw@amazon.co.uk,
+        tglx@linutronix.de, Srinivas REDDY Eeda <srinivas.eeda@oracle.com>,
+        bp@suse.de, daniel@iogearbox.net, yamada.masahiro@socionext.com,
+        michal.lkml@markovi.net, hpa@zytor.com
+Subject: Re: [PATCH 1/3] retpolines: Only enable retpoline when compiler
+ support it
+Message-ID: <20181030083210.GA1459@hirez.programming.kicks-ass.net>
+References: <e63900bc-d7af-4a57-aa96-f6cc84b89e09@default>
 MIME-Version: 1.0
-References: <cover.1540904580.git.dsterba@suse.com>
-In-Reply-To: <cover.1540904580.git.dsterba@suse.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 30 Oct 2018 08:28:53 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgPmELRt00f1tbOoG4kMU6Kn1nvF1AysxXJk2V45WPNJA@mail.gmail.com>
-Message-ID: <CAHk-=wgPmELRt00f1tbOoG4kMU6Kn1nvF1AysxXJk2V45WPNJA@mail.gmail.com>
-Subject: Re: [GIT PULL] Btrfs updates for 4.20, part 2
-To:     dsterba@suse.com
-Cc:     Chris Mason <clm@fb.com>, linux-btrfs@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e63900bc-d7af-4a57-aa96-f6cc84b89e09@default>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 6:24 AM David Sterba <dsterba@suse.com> wrote:
->
-> this part contains a few minor updates and fixes that were under testing
-> or arrived shortly after the merge window freeze, mostly stable material.
+On Mon, Oct 29, 2018 at 11:55:04PM -0700, Zhenzhong Duan wrote:
+> Since retpoline capable compilers are widely available, make
+> CONFIG_RETPOLINE hard depend on it.
+> 
+> Change KBUILD to use CONFIG_RETPOLINE_SUPPORT to avoid conflict with
+> CONFIG_RETPOLINE which is used by kernel.
+> 
+> With all that stuff, the check of RETPOLINE is changed to
+> CONFIG_RETPOLINE.
 
-Pulled,
-
-                 Linus
+So what happens when we select CONFIG_RETPOLINE but do not have
+RETPOLINE_SUPPORT ? From a quick reading we'll silently build a
+!retpoline kernel. I would expect a build failure.
