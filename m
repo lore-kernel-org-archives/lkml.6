@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20A84C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:58:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BCA1C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:58:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D409320827
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:58:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D409320827
+	by mail.kernel.org (Postfix) with ESMTP id 2C5EF20664
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:58:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C5EF20664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728326AbeJaGxp (ORCPT
+        id S1728343AbeJaGxx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 02:53:45 -0400
-Received: from relay.sw.ru ([185.231.240.75]:45994 "EHLO relay.sw.ru"
+        Wed, 31 Oct 2018 02:53:53 -0400
+Received: from relay.sw.ru ([185.231.240.75]:46002 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725743AbeJaGxp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 02:53:45 -0400
+        id S1725743AbeJaGxx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 02:53:53 -0400
 Received: from [172.16.24.21]
         by relay.sw.ru with esmtp (Exim 4.90_1)
         (envelope-from <vvs@virtuozzo.com>)
-        id 1gHc1v-0003h6-Md; Wed, 31 Oct 2018 00:58:31 +0300
+        id 1gHc23-0003hD-HS; Wed, 31 Oct 2018 00:58:39 +0300
 From:   Vasily Averin <vvs@virtuozzo.com>
-Subject: [PATCH v2 08/11] ext4: lost brelse in ext4_orphan_add()
+Subject: [PATCH v2 09/11] ext4: iloc.bh cleanup in add_new_gdb()
 To:     linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>
 Cc:     Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-kernel@vger.kernel.org, Dmitry Monakhov <dmonakhov@gmail.com>
+        linux-kernel@vger.kernel.org
 References: <cover.1540935522.git.vvs@virtuozzo.com>
-Message-ID: <c747413b-f5e1-d3e0-650b-e3749a98d59d@virtuozzo.com>
-Date:   Wed, 31 Oct 2018 00:58:31 +0300
+Message-ID: <eb58c8ca-8456-7b5f-9c12-99f03e3057af@virtuozzo.com>
+Date:   Wed, 31 Oct 2018 00:58:38 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
@@ -46,35 +46,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-iloc.bh os taken in ext4_reserve_inode_write().
-If (dirty == true) it is released in ext4_mark_iloc_dirty(),
-however it is not released in (dirty == false) case.
+iloc.bh was taken in ext4_reserve_inode_write() and released
+in ext4_mark_iloc_dirty(). It should not be released 2nd time
+in rollback after failed ext4_handle_dirty_metadata(gdb_bh)
 
-Fixes d745a8c20c1f ("ext4: reduce contention on s_orphan_lock")
-however iloc.bh count balance was broken earlier by
-Fixes 6e3617e579e0 ("ext4: Handle non empty on-disk orphan link") #2.6.34
+Fixes b40971426a83 ("ext4: add error checking to calls to ...") # 2.6.38
 
-cc: Dmitry Monakhov <dmonakhov@gmail.com>
 Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
 ---
- fs/ext4/namei.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/ext4/resize.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index 67a38532032a..d388cce72db2 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -2811,7 +2811,9 @@ int ext4_orphan_add(handle_t *handle, struct inode *inode)
- 			list_del_init(&EXT4_I(inode)->i_orphan);
- 			mutex_unlock(&sbi->s_orphan_lock);
- 		}
--	}
-+	} else
-+		brelse(iloc.bh);
-+
- 	jbd_debug(4, "superblock will point to %lu\n", inode->i_ino);
- 	jbd_debug(4, "orphan inode %lu will point to %d\n",
- 			inode->i_ino, NEXT_ORPHAN(inode));
+diff --git a/fs/ext4/resize.c b/fs/ext4/resize.c
+index 85158e9de7c2..aedfd6a6fcd1 100644
+--- a/fs/ext4/resize.c
++++ b/fs/ext4/resize.c
+@@ -871,7 +871,7 @@ static int add_new_gdb(handle_t *handle, struct inode *inode,
+ 	err = ext4_handle_dirty_metadata(handle, NULL, gdb_bh);
+ 	if (unlikely(err)) {
+ 		ext4_std_error(sb, err);
+-		goto exit_inode;
++		goto exit_kfree;
+ 	}
+ 	brelse(dind);
+ 
+@@ -891,8 +891,9 @@ static int add_new_gdb(handle_t *handle, struct inode *inode,
+ 	return err;
+ 
+ exit_inode:
+-	kvfree(n_group_desc);
+ 	brelse(iloc.bh);
++exit_kfree:
++	kvfree(n_group_desc);
+ exit_dind:
+ 	brelse(dind);
+ exit_bh:
 -- 
 2.17.1
 
