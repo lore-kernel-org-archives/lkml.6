@@ -2,158 +2,82 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53E57C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 03:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B75CC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 03:15:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2A1620824
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 03:11:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="D1W9Nubz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2A1620824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A51420824
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 03:15:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A51420824
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726522AbeJ3MCm (ORCPT
+        id S1726529AbeJ3MGr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 08:02:42 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:35663 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725988AbeJ3MCm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 08:02:42 -0400
-Received: by mail-ot1-f68.google.com with SMTP id 14so9761800oth.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 20:11:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OOXSHA8/PfVCGuU345coRR2PoLkyRREFhJjY3zVEPp8=;
-        b=D1W9NubzjpWo4uA4CzR0yvTVSwgh9e3L5YfCJ2LWaZ94FLGTpWDMmmyQ+MM1gjtDpi
-         vGFG82oE0vOGif5jycUsC9f4EefjgpMlUZL3Cu2OOdyqzbom/i9uWn3Tm0J8QjUbfRQJ
-         7Xu4BX10C1uJMZ8vzTsaVYN+oT5IPdULdacXCc9T/9TNZwkuTbgq8EvxwLCtOBxXbdzC
-         vQMMQ4xvYC8P0SVxNKhU0WF971JrlA8s/AGTB7827j2hIicPslWNno136uoU6WdW9qbi
-         ThgNrfT3SWSX9JJIVV0iWZoLfW9ubF40NnvPDeq1l/WD4qFKiAbi/w+GUBTNvEF51t70
-         SX7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OOXSHA8/PfVCGuU345coRR2PoLkyRREFhJjY3zVEPp8=;
-        b=syiQBx4HYOXSQ7illHu/PT3thbI83+nTUCkaG07QFMiW1qySmR6BkiDyyfEn/+m/U9
-         xbN5RFdiHSG1epSOb4Usj1kus/vMChfJz/5kkQbx0RJzxsvcrNLonb/9xN9Q3YtuwDoG
-         hrWqxqWbrOko2aYItv5HmwDWBKBNORGeXbTL4JUlb8JBjTkDUudADJCd2uBpN/xeMn0l
-         y/ZAX8Hjue5z8xQA2Yb8ZlGMSvhTULUAN4h26uvxWReqAfeLQJU9WYwTIauiSWMyffXt
-         Kf7Ji3TEsYZH2D05UWL8fRVPbdSwbiNsZEm/sVRjTV5k+AK/8MtvvknC6N+5rcueNYuo
-         USFw==
-X-Gm-Message-State: AGRZ1gJlwknjmIePvFvJtfMe3MJLDYWGa20SZi77oJLSACqzJwH6seTZ
-        cdY4kEuB95/AqW8OYLBY7mjqO8wQf57mDYW7XjMtCg==
-X-Google-Smtp-Source: AJdET5fWpqEPJ4WSXTuWhgvNJypZXibqGvPqR1Y27nH1Al0hJcyiBIG3oOnSCH/OsaS88cEsssqaKilld5HQsqtRjKs=
-X-Received: by 2002:a9d:9c4:: with SMTP id 4mr5093910otz.214.1540869063697;
- Mon, 29 Oct 2018 20:11:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181029210716.212159-1-brho@google.com> <CAPcyv4gJUjuSKwy7i2wuKR=Vz-AkDrxnGya5qkg7XTFxuXbtzw@mail.gmail.com>
- <20181029202854.7c924fd3@gnomeregan.cam.corp.google.com>
-In-Reply-To: <20181029202854.7c924fd3@gnomeregan.cam.corp.google.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 29 Oct 2018 20:10:52 -0700
-Message-ID: <CAPcyv4gQztHrJ3--rhU4ZpaZyyqdqE0=gx50CRArHKiXwfYC+A@mail.gmail.com>
-Subject: Re: [RFC PATCH] kvm: Use huge pages for DAX-backed files
-To:     Barret Rhoden <brho@google.com>
-Cc:     Dave Jiang <dave.jiang@intel.com>, zwisler@kernel.org,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        KVM list <kvm@vger.kernel.org>,
-        "Zhang, Yu C" <yu.c.zhang@intel.com>,
-        "Zhang, Yi Z" <yi.z.zhang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 30 Oct 2018 08:06:47 -0400
+Received: from mout.gmx.net ([212.227.17.20]:58533 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725988AbeJ3MGr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 08:06:47 -0400
+Received: from homer.simpson.net ([188.174.240.89]) by mail.gmx.com (mrgmx101
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0LhSfM-1fmRdp14Vc-00mbld; Tue, 30
+ Oct 2018 04:14:57 +0100
+Received: from homer.simpson.net ([188.174.240.89]) by mail.gmx.com (mrgmx101
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0LhSfM-1fmRdp14Vc-00mbld; Tue, 30
+ Oct 2018 04:14:57 +0100
+Message-ID: <1540869294.4811.3.camel@gmx.de>
+Subject: Re: memcg oops:
+ memcg_kmem_charge_memcg()->try_charge()->page_counter_try_charge()->BOOM
+From:   Mike Galbraith <efault@gmx.de>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+Date:   Tue, 30 Oct 2018 04:14:54 +0100
+In-Reply-To: <20181029214913.GB13325@tower.DHCP.thefacebook.com>
+References: <1540792855.22373.34.camel@gmx.de>
+         <20181029132035.GI32673@dhcp22.suse.cz> <1540830938.10478.4.camel@gmx.de>
+         <20181029185412.GA15760@tower.DHCP.thefacebook.com>
+         <1540846014.4434.10.camel@gmx.de>
+         <20181029214913.GB13325@tower.DHCP.thefacebook.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:o30deUKRYYaM49eWFedlIjFiWSLjWyOIddhHEQ75ns3QKBpYp69
+ UNMuMJI2gYonq9V0aVTlND1nKG3M0pOxgwDQdmlr0sts4iqVrUxeDAc5FJg8HpwP5Z/V4Gj
+ IBCx5VQoLzkBeXHcseq2nNiweIAU6iaVAEl2fkqJg+7lqHI8XXfZqEckAgT0c9tUE/inIAZ
+ PNSZfO6nU5mmy/ayTPfQQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:EIf/4CvtTc8=:g6eCUDLBMosgaPlslkfEPQ
+ 8VhNuRVM3UksAGkpEw44YTDIe0vDLtfgJph+QHlR7OHR+FMNgLFHEd0YwLbm35trb8w5vhNeG
+ Kxnl2qpWkE+KJBJbi5jwh9q6G2sU3IyR0nB1e7CfT0guIOvHmFLzCup8xDDNCH8uv7B2rwiVx
+ jfYb2YegKeexyLy8TydwopFLfXqod5QG6usBGtdTub9O2Xk7twqMcJOa52qtGqbePW+Hpmj4s
+ YVvZdNXyrNByoYCgYooTVvw5FmYxWYfT4t+Cqu1ZzFJhv71SwDGMamn3In5hqzbqNTDQ2jkzE
+ C3pCPT1DmtGSx/WLqI513ySthVtY6icrCkUMJjJOeFyMGsKc8vrPMx6ZdixZqTEozukHvv3J5
+ pztZxeWNFlIVr53bfeRQlolb+EYTDSIZhog27wG0Sw4UKB2iR97J17viMT2/p6RMbKbOn6QHf
+ TxTHF2jVvq6dExf64S/LFu4D+wWVSFMN6vuwVLhmRgvCihqH/6t4JQGrPWJllKtO2G699gfAW
+ 8cuKoKJo+m37GTC4xobQ2qtyiSbYm/WqQZqin4g410iLp6o6HXyIN7RKWTAHvrS8A9Kf9qHPV
+ LpmAC4zrerirzHiffkus82SQ9201hEcDlNyX1ZhdFcgkf6TByxFNjdPfKPsAvUqtlO63ufQG3
+ 2j4DniurotN1KNcQ8a7pLM53oFhjdBGM84TeSkUPfkCoVuR+/8iav0I1fJYaHCGubm8wrq7VD
+ D4BxGQ/6w9LygPsOnQ64GNkepVs/DqBX0QuY6FKCYVjEGvIBn85XJ4CBSoxCmMvmjLsrEydFX
+ KU5PtpT3fp3J9tn2ywt/ZqsMdW9yU6CldXTPX2UV0JyEuNrmYk=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 5:29 PM Barret Rhoden <brho@google.com> wrote:
->
-> On 2018-10-29 at 15:25 Dan Williams <dan.j.williams@intel.com> wrote:
-> > > +       /*
-> > > +        * Our caller grabbed the KVM mmu_lock with a successful
-> > > +        * mmu_notifier_retry, so we're safe to walk the page table.
-> > > +        */
-> > > +       map_sz = pgd_mapping_size(current->mm, hva);
-> > > +       switch (map_sz) {
-> > > +       case PMD_SIZE:
-> > > +               return true;
-> > > +       case P4D_SIZE:
-> > > +       case PUD_SIZE:
-> > > +               printk_once(KERN_INFO "KVM THP promo found a very large page");
-> >
-> > Why not allow PUD_SIZE? The device-dax interface supports PUD mappings.
->
-> The place where I use that helper seemed to care about PMDs (compared
-> to huge pages larger than PUDs), I think due to THP.  Though it also
-> checks "level == PT_PAGE_TABLE_LEVEL", so it's probably a moot point.
->
-> I can change it from pfn_is_pmd_mapped -> pfn_is_huge_mapped and allow
-> any huge mapping that is appropriate: so PUD or PMD for DAX, PMD for
-> non-DAX, IIUC.
+On Mon, 2018-10-29 at 21:49 +0000, Roman Gushchin wrote:
+> On Mon, Oct 29, 2018 at 09:46:54PM +0100, Mike Galbraith wrote:
+> 
+> > Ah, I have cgroup_disable=memory on the command line, which turns out
+> > to be why your box doesn't explode, while mine does.
+> 
+> Yeah, here it is. I'll send the fix in few minutes. Please,
+> test it on your setup. Your tested-by will be appreciated.
 
-Yes, THP stops at PMDs, but DAX and hugetlbfs support PUD level mappings.
-
-> > > +               return false;
-> > > +       }
-> > > +       return false;
-> > > +}
-> >
-> > The above 2 functions are  similar to what we need to do for
-> > determining the blast radius of a memory error, see
-> > dev_pagemap_mapping_shift() and its usage in add_to_kill().
->
-> Great.  I don't know if I have access in the KVM code to the VMA to use
-> those functions directly, but I can extract the guts of
-> dev_pagemap_mapping_shift() or something and put it in mm/util.c.
-
-Sounds good.
-
-> > >  static void transparent_hugepage_adjust(struct kvm_vcpu *vcpu,
-> > >                                         gfn_t *gfnp, kvm_pfn_t *pfnp,
-> > >                                         int *levelp)
-> > > @@ -3168,7 +3237,7 @@ static void transparent_hugepage_adjust(struct kvm_vcpu *vcpu,
-> > >          */
-> > >         if (!is_error_noslot_pfn(pfn) && !kvm_is_reserved_pfn(pfn) &&
-> > >             level == PT_PAGE_TABLE_LEVEL &&
-> > > -           PageTransCompoundMap(pfn_to_page(pfn)) &&
-> > > +           pfn_is_pmd_mapped(vcpu->kvm, gfn, pfn) &&
-> >
-> > I'm wondering if we're adding an explicit is_zone_device_page() check
-> > in this path to determine the page mapping size if that can be a
-> > replacement for the kvm_is_reserved_pfn() check. In other words, the
-> > goal of fixing up PageReserved() was to preclude the need for DAX-page
-> > special casing in KVM, but if we already need add some special casing
-> > for page size determination, might as well bypass the
-> > kvm_is_reserved_pfn() dependency as well.
->
-> kvm_is_reserved_pfn() is used in some other places, like
-> kvm_set_pfn_dirty()and kvm_set_pfn_accessed().  Maybe the way those
-> treat DAX pages matters on a case-by-case basis?
->
-> There are other callers of kvm_is_reserved_pfn() such as
-> kvm_pfn_to_page() and gfn_to_page().  I'm not familiar (yet) with how
-> struct pages and DAX work together, and whether or not the callers of
-> those pfn_to_page() functions have expectations about the 'type' of
-> struct page they get back.
->
-
-The property of DAX pages that requires special coordination is the
-fact that the device hosting the pages can be disabled at will. The
-get_dev_pagemap() api is the interface to pin a device-pfn so that you
-can safely perform a pfn_to_page() operation.
-
-Have the pages that kvm uses in this path already been pinned by vfio?
+Yup, all-better-by:/me
