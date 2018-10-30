@@ -2,61 +2,78 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFDD0ECDE44
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 23:04:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B694ECDE44
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 23:04:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD5BA2081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 23:04:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD5BA2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 229062081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 23:04:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EUWMPM1L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 229062081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728597AbeJaH7w (ORCPT
+        id S1728615AbeJaIAV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 03:59:52 -0400
-Received: from mga09.intel.com ([134.134.136.24]:37157 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727630AbeJaH7w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 03:59:52 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 16:04:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,446,1534834800"; 
-   d="scan'208";a="87651086"
-Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.143]) ([10.7.153.143])
-  by orsmga008.jf.intel.com with ESMTP; 30 Oct 2018 16:04:24 -0700
-Subject: Re: [PATCH i2c-next v9 5/5] i2c: aspeed: Add bus idle waiting logic
- for multi-master use cases
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@01.org, Wolfram Sang <wsa@the-dreams.de>,
-        Brendan Higgins <brendanhiggins@google.com>,
+        Wed, 31 Oct 2018 04:00:21 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35672 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726077AbeJaIAV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 04:00:21 -0400
+Received: by mail-pg1-f196.google.com with SMTP id 32-v6so6406845pgu.2;
+        Tue, 30 Oct 2018 16:04:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=3F8ka36vfkzT2SFr0etVtoE/l9IhHM5F3+ywvyyhTJA=;
+        b=EUWMPM1LhG0oXj7fbYjnFwNt5Cjog2d4mdFWMH6s912ji6XGVEwsjNfVdUmXYJIotf
+         O0U/UPVyM1sBJClBg2B+PtCAQ04p/Ln7s8vQoPZiwwn+7uXMsLyB/ubDQXKSv+WPJChz
+         q3GY4f4/6L1ExKKArk8ieHe3e7Sky2fXYoUNmlv/64ewwvvOiiPtiGHYVChn2emq0K5m
+         H8cpYEjbQ4mqlf3egy3prxh+0OPHx8Xa41rzrmCe8Seu5NvZC1M1J36UktIB2RLBn0Uj
+         6mxpXib8ohOkQ/tzBz7JMNo7MD/AHjWHMOVyT22S7ka0JXz6ORzq2/bJpThU7wq2Ves3
+         m5ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=3F8ka36vfkzT2SFr0etVtoE/l9IhHM5F3+ywvyyhTJA=;
+        b=ZBopc+8UQG+Yix5seiRYfph0JLIBFLE/FitMt8mN5xS11cu4pADDORCmyqTdqyz8MC
+         /vxZH+B/lgfin3CtqQDIkCGtFO2qPGfKyxprqNBQ0poEmJmiat9gERcxmPbkcp6LChfH
+         uBJKdgm3Mz7S1sHvjttqZP2jfiD+noitsjU76Zo0Y4B8JLCnF5nqEEUD49+XNFryFsKr
+         chYi9DPFogvEWhA583gjAHGLECOLJWXOZiSWQKlNzUewQ+nJCg7Qd8Lec2wIOtPaXLGb
+         AXGY+VqDzBh6pP3kjr83fT6VQZ5xNiQyUzzTIfmqR6k+9JHMd3IUd70zhK4mvmkoM2NR
+         AzLA==
+X-Gm-Message-State: AGRZ1gJPn6M2C3QgFpNMw1r3vqLopoakHTF9sDPnXqBAGElZpd/sCABT
+        hVAoqUuC04Sph2nx8jj/d6M=
+X-Google-Smtp-Source: AJdET5cS7JpQmwBP3mU+VqsAA8SWFKOmA5lZk+a+Ja3p7Sb2Edi7iho6l88DQ7jK18teHb2HzF9EAA==
+X-Received: by 2002:a65:62d5:: with SMTP id m21-v6mr644388pgv.243.1540940693777;
+        Tue, 30 Oct 2018 16:04:53 -0700 (PDT)
+Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id s80-v6sm28777795pfa.114.2018.10.30.16.04.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 16:04:53 -0700 (PDT)
+Subject: Re: [PATCH] of/platform: Support dynamic device tree on AMBA bus
+To:     Jaewon Kim <jaewon02.kim@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
-        openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        James Feist <james.feist@linux.intel.com>,
-        Vernon Mauery <vernon.mauery@linux.intel.com>
-References: <20181030210917.32711-6-jae.hyun.yoo@linux.intel.com>
- <201810310601.Odxb7qSY%fengguang.wu@intel.com>
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Message-ID: <f5d3d3a3-daa3-fef7-853a-2b543fce0379@linux.intel.com>
-Date:   Tue, 30 Oct 2018 16:04:24 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Jaewon Kim <jaewon02.kim@samsung.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1540485597-12240-1-git-send-email-jaewon02.kim@samsung.com>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <25f61a9b-af37-18b1-9975-cb4ccbbb3aa7@gmail.com>
+Date:   Tue, 30 Oct 2018 16:04:52 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <201810310601.Odxb7qSY%fengguang.wu@intel.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+In-Reply-To: <1540485597-12240-1-git-send-email-jaewon02.kim@samsung.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,97 +81,165 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/30/2018 3:22 PM, kbuild test robot wrote:
-> Hi Jae,
+Hi Jaewon,
+
+On 10/25/18 9:39 AM, Jaewon Kim wrote:
+> This patch supports dynamic device-tree for AMBA device.
+
+Add AMBA devices and buses to of_platform_notify() so that dynamic device-tree
+will support AMBA.
+
+> The AMBA device must be registered on the AMBA bus, not the platform bus.
 > 
-> Thank you for the patch! Perhaps something to improve:
-> 
-> [auto build test WARNING on wsa/i2c/for-next]
-> [also build test WARNING on v4.19 next-20181030]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Jae-Hyun-Yoo/dt-bindings-i2c-Add-bus-timeout-ms-and-retries-properties-as-common-optional/20181031-051152
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-next
-> config: xtensa-allyesconfig (attached as .config)
-> compiler: xtensa-linux-gcc (GCC) 8.1.0
-> reproduce:
->          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->          chmod +x ~/bin/make.cross
->          # save the attached .config to linux build tree
->          GCC_VERSION=8.1.0 make.cross ARCH=xtensa
-> 
-> Note: it may well be a FALSE warning. FWIW you are at least aware of it now.
-> http://gcc.gnu.org/wiki/Better_Uninitialized_Warnings
-> 
-> All warnings (new ones prefixed by >>):
-> 
->     In file included from include/linux/ktime.h:25,
->                      from include/linux/rcutiny.h:28,
->                      from include/linux/rcupdate.h:209,
->                      from include/linux/srcu.h:33,
->                      from include/linux/notifier.h:16,
->                      from include/linux/clk.h:17,
->                      from drivers/i2c/busses/i2c-aspeed.c:13:
->     drivers/i2c/busses/i2c-aspeed.c: In function 'aspeed_i2c_master_xfer':
->>> include/linux/jiffies.h:108:15: warning: 'timeout' may be used uninitialized in this function [-Wmaybe-uninitialized]
->        ((long)((b) - (a)) < 0))
->                    ^
->     drivers/i2c/busses/i2c-aspeed.c:607:16: note: 'timeout' was declared here
->       unsigned long timeout;
->                     ^~~~~~~
-> --
->     In file included from include/linux/ktime.h:25,
->                      from include/linux/rcutiny.h:28,
->                      from include/linux/rcupdate.h:209,
->                      from include/linux/srcu.h:33,
->                      from include/linux/notifier.h:16,
->                      from include/linux/clk.h:17,
->                      from drivers/i2c//busses/i2c-aspeed.c:13:
->     drivers/i2c//busses/i2c-aspeed.c: In function 'aspeed_i2c_master_xfer':
->>> include/linux/jiffies.h:108:15: warning: 'timeout' may be used uninitialized in this function [-Wmaybe-uninitialized]
->        ((long)((b) - (a)) < 0))
->                    ^
->     drivers/i2c//busses/i2c-aspeed.c:607:16: note: 'timeout' was declared here
->       unsigned long timeout;
->                     ^~~~~~~
-> 
-> vim +/timeout +108 include/linux/jiffies.h
-> 
-> ^1da177e Linus Torvalds   2005-04-16   91
-> ^1da177e Linus Torvalds   2005-04-16   92  /*
-> ^1da177e Linus Torvalds   2005-04-16   93   *	These inlines deal with timer wrapping correctly. You are
-> ^1da177e Linus Torvalds   2005-04-16   94   *	strongly encouraged to use them
-> ^1da177e Linus Torvalds   2005-04-16   95   *	1. Because people otherwise forget
-> ^1da177e Linus Torvalds   2005-04-16   96   *	2. Because if the timer wrap changes in future you won't have to
-> ^1da177e Linus Torvalds   2005-04-16   97   *	   alter your driver code.
-> ^1da177e Linus Torvalds   2005-04-16   98   *
-> ^1da177e Linus Torvalds   2005-04-16   99   * time_after(a,b) returns true if the time a is after time b.
-> ^1da177e Linus Torvalds   2005-04-16  100   *
-> ^1da177e Linus Torvalds   2005-04-16  101   * Do this with "<0" and ">=0" to only test the sign of the result. A
-> ^1da177e Linus Torvalds   2005-04-16  102   * good compiler would generate better code (and a really good compiler
-> ^1da177e Linus Torvalds   2005-04-16  103   * wouldn't care). Gcc is currently neither.
-> ^1da177e Linus Torvalds   2005-04-16  104   */
-> ^1da177e Linus Torvalds   2005-04-16  105  #define time_after(a,b)		\
-> ^1da177e Linus Torvalds   2005-04-16  106  	(typecheck(unsigned long, a) && \
-> ^1da177e Linus Torvalds   2005-04-16  107  	 typecheck(unsigned long, b) && \
-> 5a581b36 Paul E. McKenney 2013-07-27 @108  	 ((long)((b) - (a)) < 0))
-> ^1da177e Linus Torvalds   2005-04-16  109  #define time_before(a,b)	time_after(b,a)
-> ^1da177e Linus Torvalds   2005-04-16  110
-> 
-> :::::: The code at line 108 was first introduced by commit
-> :::::: 5a581b367b5df0531265311fc681c2abd377e5e6 jiffies: Avoid undefined behavior from signed overflow
-> 
-> :::::: TO: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> :::::: CC: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> 
+> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
 > ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+>  drivers/of/platform.c | 93 ++++++++++++++++++++++++++++++++++++++++-----------
+>  1 file changed, 73 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+> index 04ad312..b9ac105 100644
+> --- a/drivers/of/platform.c
+> +++ b/drivers/of/platform.c
+> @@ -286,6 +286,22 @@ static struct amba_device *of_amba_device_create(struct device_node *node,
+>  	of_node_clear_flag(node, OF_POPULATED);
+>  	return NULL;
+>  }
+> +
+> +/**
+> + * of_find_amba_device_by_node - Find the amba_device associated with a node
+> + * @np: Pointer to device tree node
+> + *
+> + * Returns amba_device pointer, or NULL if not found
+> + */
+> +struct amba_device *of_find_amba_device_by_node(struct device_node *np)
+> +{
+> +	struct device *dev;
+> +
+> +	dev = bus_find_device(&amba_bustype, NULL, np, of_dev_node_match);
+> +	return dev ? to_amba_device(dev) : NULL;
+> +}
+> +EXPORT_SYMBOL(of_find_amba_device_by_node);
+> +
+>  #else /* CONFIG_ARM_AMBA */
+>  static struct amba_device *of_amba_device_create(struct device_node *node,
+>  						 const char *bus_id,
+> @@ -294,6 +310,12 @@ static struct amba_device *of_amba_device_create(struct device_node *node,
+>  {
+>  	return NULL;
+>  }
+> +
+> +struct amba_device *of_find_amba_device_by_node(struct device_node *np)
+> +{
+> +	return NULL;
+> +}
+> +EXPORT_SYMBOL(of_find_amba_device_by_node);
+>  #endif /* CONFIG_ARM_AMBA */
+>  
+>  /**
+> @@ -665,6 +687,7 @@ static int of_platform_notify(struct notifier_block *nb,
+>  {
+>  	struct of_reconfig_data *rd = arg;
+>  	struct platform_device *pdev_parent, *pdev;
+> +	struct amba_device *adev_p, *adev;
+>  	bool children_left;
+>  
+>  	switch (of_reconfig_get_state_change(action, rd)) {
+> @@ -677,17 +700,34 @@ static int of_platform_notify(struct notifier_block *nb,
+>  		if (of_node_check_flag(rd->dn, OF_POPULATED))
+>  			return NOTIFY_OK;
+>  
+> -		/* pdev_parent may be NULL when no bus platform device */
+> -		pdev_parent = of_find_device_by_node(rd->dn->parent);
+> -		pdev = of_platform_device_create(rd->dn, NULL,
+> -				pdev_parent ? &pdev_parent->dev : NULL);
+> -		of_dev_put(pdev_parent);
+> -
+> -		if (pdev == NULL) {
+> -			pr_err("%s: failed to create for '%pOF'\n",
+> -					__func__, rd->dn);
+> -			/* of_platform_device_create tosses the error code */
+> -			return notifier_from_errno(-EINVAL);
+> +		if (of_device_is_compatible(rd->dn, "arm,primecell")) {
+> +			/* adev_p may be NULL when no bus amba device */
+> +			adev_p = of_find_amba_device_by_node(rd->dn->parent);
+> +			adev = of_amba_device_create(rd->dn, NULL, NULL,
+> +					adev_p ? &adev_p->dev : NULL);
+> +
+
+> +			if (adev_p)
+> +				put_device(&adev_p->dev);
+
+Please follow the same model as of_dev_put() here, create a new function
+of_amba_dev_put() to implement these two lines.
+
+
+> +
+> +			if (adev == NULL) {
+> +				pr_err("%s: failed to create for '%s'\n",
+> +						__func__, rd->dn->full_name);
+> +				/* of_amba_device_create tosses the error */
+> +				return notifier_from_errno(-EINVAL);
+> +			}
+> +		} else {
+> +			/* pdev_parent may be NULL when no bus platform device*/
+> +			pdev_parent = of_find_device_by_node(rd->dn->parent);
+> +			pdev = of_platform_device_create(rd->dn, NULL,
+> +					pdev_parent ? &pdev_parent->dev : NULL);
+> +			of_dev_put(pdev_parent);
+> +
+> +			if (pdev == NULL) {
+> +				pr_err("%s: failed to create for '%pOF'\n",
+> +						__func__, rd->dn);
+> +				/* of_platform_device_create tosses the error */
+> +				return notifier_from_errno(-EINVAL);
+> +			}
+>  		}
+>  		break;
+>  
+> @@ -698,15 +738,28 @@ static int of_platform_notify(struct notifier_block *nb,
+>  			return NOTIFY_OK;
+>  
+>  		/* find our device by node */
+> -		pdev = of_find_device_by_node(rd->dn);
+> -		if (pdev == NULL)
+> -			return NOTIFY_OK;	/* no? not meant for us */
+> -
+> -		/* unregister takes one ref away */
+> -		of_platform_device_destroy(&pdev->dev, &children_left);
+> -
+> -		/* and put the reference of the find */
+> -		of_dev_put(pdev);
+> +		if (of_device_is_compatible(rd->dn, "arm,primecell")) {
+> +			adev = of_find_amba_device_by_node(rd->dn);
+> +			if (adev == NULL)
+> +				return NOTIFY_OK; /* no? not meant for us */
+> +
+> +			/* unregister takes one ref away */
+> +			of_platform_device_destroy(&adev->dev, &children_left);
+> +
+> +			/* and put the reference of the find */
+
+> +			if (adev)
+> +				put_device(&adev->dev);
+
+of_amba_dev_put() here also
+
+-Frank
+
+
+> +		} else {
+> +			pdev = of_find_device_by_node(rd->dn);
+> +			if (pdev == NULL)
+> +				return NOTIFY_OK; /* no? not meant for us */
+> +
+> +			/* unregister takes one ref away */
+> +			of_platform_device_destroy(&pdev->dev, &children_left);
+> +
+> +			/* and put the reference of the find */
+> +			of_dev_put(pdev);
+> +		}
+>  		break;
+>  	}
+>  
 > 
 
-This is a false warning.
-
-The 'timeout' local variable will be initialized properly if it's gonna
-be used when the multi-master property is set.
-
--Jae
