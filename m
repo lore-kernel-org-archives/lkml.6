@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 073E9ECDE44
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 23:08:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8D47C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 23:08:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF3D320827
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 23:07:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 605D120664
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 23:08:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y5lqsB1L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF3D320827
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b0sSpAaX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 605D120664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728760AbeJaIDZ (ORCPT
+        id S1728773AbeJaID2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 04:03:25 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:45913 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727858AbeJaIDY (ORCPT
+        Wed, 31 Oct 2018 04:03:28 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:35105 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727858AbeJaID1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 04:03:24 -0400
-Received: by mail-pl1-f196.google.com with SMTP id o19-v6so6272095pll.12;
-        Tue, 30 Oct 2018 16:07:56 -0700 (PDT)
+        Wed, 31 Oct 2018 04:03:27 -0400
+Received: by mail-pl1-f195.google.com with SMTP id n4-v6so5716737plp.2;
+        Tue, 30 Oct 2018 16:07:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+6N59L7uziOsAgqyzMTMg5i7pzRvo06QUV0Qk4gJdCk=;
-        b=Y5lqsB1LgOfxx/6499Fqa4AUIsjBk42mCDBfZsLZVekA1MCAdylnlDRhb20aBFoXJu
-         BaQI7HEK48j8zOiBgokkAKxTFfQv3JyG5UyliaFQkG7bCsktN1hzOD6jGKor3cQ5hQR1
-         eES0B3Q7/bHbaxNGh1hagCi56P9Vqclo3mmA+ofJKs7pKbmh10vkQHK71zTFrFJQyu4i
-         AgilZ2T2t0Q8ra7+12DEHpndfFHNipxepyFcf2rc4GUh8sULediv+12EH234rwaX5SYv
-         v09ECYSrYEM7Cgb7yrgp7lHMVcY3018DU1qPiaGpxWcGCkbOLPy7l4vfy+Ey+1briBog
-         6vyw==
+        bh=7vZ19uPI3mKDruwtH4hU5/wYDf7iys0covNZuN4RSWo=;
+        b=b0sSpAaXkV+xyGM/W1Dq7x6l7i0iLY0M7JtiE3/s6y5TUBH+cGaQtDtOf93jahVdTD
+         oHL1TVOyTgX86GsDq8LUIF0rgG32sT1DUbSy9encWrmXzJL67dodIxnKZSuu0NhjzDhv
+         Q4sL/vKzhJ/Hd7Z3YIESj66/39l9rbOXK9dcH1Hl0qpebYme9SM1d+bJGDzh7zQbE1TC
+         uBKgNoEdFV8goBbm0j6gKye5vA/9TfvH6NThX98aaqss9Tv/bHhZCLHcW0n1uXyG0SHx
+         We98aLGRQmim90uKOWeIG2eEFr64WCV+lVFiTE7dms5EPnCe0tZibhjhmXmgQolatwXM
+         tVuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=+6N59L7uziOsAgqyzMTMg5i7pzRvo06QUV0Qk4gJdCk=;
-        b=jwdzI96Jpy3P6PTQEcf1m4EMY46SvvPU6ULyWNi21FGp/uWVNUdHU1ZhhTFVWxOK4a
-         N3wYPk8celPzQUUE6XE+Iou1vY4f3lhRG2dbhzye0a5U54WfIbmJh5WQaETv8lc9r0MA
-         V6zhVSMF/Hx+j6kYDdHqerUxT1sosKEbU8BeSKgnhy1FrWLzN6LU6t2cv9CXq1s6USz6
-         mpgXs0y0fwwQcq6GryEQcotCbcL8GY4DwE0Yhv/x5bzCg6bmWi5tWu/EjZAWP3cKsVa7
-         W8Mk2wD55hW/MYL9QTSZAFj7Cg+0hypsT9VVcrYoSmYn9lXLFGfm7bHQGv9D6C/wMyJn
-         t5/Q==
-X-Gm-Message-State: AGRZ1gLWuSPQSJBIlLqrjjDJdhve1N1o7m+V1+spRRDH+DXt8T37U9Re
-        V/YEGiNi8QeILrBsaf/UnmhJ3u9/
-X-Google-Smtp-Source: AJdET5e6Tm0V1+7ThnrWuHbriYgLtVlcTsTc7PUBcGRqkVYR8PmLtYFIK6zqxKx4hbSb69j3aXQ7CA==
-X-Received: by 2002:a17:902:9a94:: with SMTP id w20-v6mr684585plp.115.1540940875965;
-        Tue, 30 Oct 2018 16:07:55 -0700 (PDT)
+        bh=7vZ19uPI3mKDruwtH4hU5/wYDf7iys0covNZuN4RSWo=;
+        b=IanwQFm8bBu33AB4wJajrBB1uROreqA3iWY7HQjusIKo0bM+tyOteTioM5qpaYZe6G
+         nY/ymUy0fBCceJv9NEckrFF+uFgbuc2xacy0HBgMl4MuZErM6YgOX3x6UqOhxoUbJlwd
+         jbuNRrbMawLohHy//wM23jypaxQsv3po9qyC0x88GRtSInH9pQDv6Mx7tg1Ks/+Y3w6f
+         1Zt/cgKxW119mm56l36GjgvNv+eoNAUGNQwUVqLiEAbARFb/OycxMf4mRHTTu5wa1QMx
+         mAYudPAFOaaXS0ikg5DUx0IuuItSy7qFNdj9z7N6WfZNy0TUVhh4jyreqCE6chcj6c1y
+         8Q+g==
+X-Gm-Message-State: AGRZ1gJKyxsHhfMJ0JVf9d4468qMQIC8JeswoDmHNGxxFcUiXrabNCws
+        Y1oC8aS8frf+MwWX8+0nNNMVm6t/
+X-Google-Smtp-Source: AJdET5eviuElsLX8rPl6Mz0asQbMeCOFXEQ6YBKHFU4VYo0dfi/kdR8jNLu5Vd+mraOxhHnBsbScag==
+X-Received: by 2002:a17:902:4165:: with SMTP id e92-v6mr681021pld.209.1540940878369;
+        Tue, 30 Oct 2018 16:07:58 -0700 (PDT)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id f14-v6sm3431689pgr.87.2018.10.30.16.07.53
+        by smtp.gmail.com with ESMTPSA id f14-v6sm3431689pgr.87.2018.10.30.16.07.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 16:07:54 -0700 (PDT)
+        Tue, 30 Oct 2018 16:07:57 -0700 (PDT)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -85,9 +85,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         green.hu@gmail.com, deanbo422@gmail.com, gxt@pku.edu.cn,
         ard.biesheuvel@linaro.org, linux-snps-arc@lists.infradead.org,
         vgupta@synopsys.com
-Subject: [PATCH v2 5/6] of/fdt: Remove custom __early_init_dt_declare_initrd() implementation
-Date:   Tue, 30 Oct 2018 16:07:20 -0700
-Message-Id: <20181030230721.28429-6-f.fainelli@gmail.com>
+Subject: [PATCH v2 6/6] arch: Move initrd= parsing into do_mounts_initrd.c
+Date:   Tue, 30 Oct 2018 16:07:21 -0700
+Message-Id: <20181030230721.28429-7-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181030230721.28429-1-f.fainelli@gmail.com>
 References: <20181030230721.28429-1-f.fainelli@gmail.com>
@@ -96,66 +96,177 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that ARM64 uses phys_initrd_start/phys_initrd_size, we can get rid
-of its custom __early_init_dt_declare_initrd() which causes a fair
-amount of objects rebuild when changing CONFIG_BLK_DEV_INITRD. In order
-to make sure ARM64 does not produce a BUG() when VM debugging is turned
-on though, we must avoid early calls to __va() which is what
-__early_init_dt_declare_initrd() does and wrap this around to avoid
-running that code on ARM64.
+ARC, ARM, ARM64 and Unicore32 are all capable of parsing the "initrd="
+command line parameter to allow specifying the physical address and size
+of an initrd. Move that parsing into init/do_mounts_initrd.c such that
+we no longer duplicate that logic.
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- arch/arm64/include/asm/memory.h | 8 --------
- drivers/of/fdt.c                | 9 +++++++--
- 2 files changed, 7 insertions(+), 10 deletions(-)
+ arch/arc/mm/init.c       | 25 +++++--------------------
+ arch/arm/mm/init.c       | 17 -----------------
+ arch/arm64/mm/init.c     | 18 ------------------
+ arch/unicore32/mm/init.c | 18 ------------------
+ init/do_mounts_initrd.c  | 17 +++++++++++++++++
+ 5 files changed, 22 insertions(+), 73 deletions(-)
 
-diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
-index b96442960aea..dc3ca21ba240 100644
---- a/arch/arm64/include/asm/memory.h
-+++ b/arch/arm64/include/asm/memory.h
-@@ -168,14 +168,6 @@
- #define IOREMAP_MAX_ORDER	(PMD_SHIFT)
- #endif
- 
--#ifdef CONFIG_BLK_DEV_INITRD
--#define __early_init_dt_declare_initrd(__start, __end)			\
--	do {								\
--		initrd_start = (__start);				\
--		initrd_end = (__end);					\
--	} while (0)
--#endif
--
- #ifndef __ASSEMBLY__
- 
- #include <linux/bitops.h>
-diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
-index e34cb49231b5..f2b5becae96a 100644
---- a/drivers/of/fdt.c
-+++ b/drivers/of/fdt.c
-@@ -892,15 +892,20 @@ const void * __init of_flat_dt_match_machine(const void *default_match,
+diff --git a/arch/arc/mm/init.c b/arch/arc/mm/init.c
+index ba145065c579..369d3d699929 100644
+--- a/arch/arc/mm/init.c
++++ b/arch/arc/mm/init.c
+@@ -79,24 +79,6 @@ void __init early_init_dt_add_memory_arch(u64 base, u64 size)
+ 		base, TO_MB(size), !in_use ? "Not used":"");
  }
  
- #ifdef CONFIG_BLK_DEV_INITRD
--#ifndef __early_init_dt_declare_initrd
- static void __early_init_dt_declare_initrd(unsigned long start,
- 					   unsigned long end)
- {
-+	/* ARM64 would cause a BUG to occur here when CONFIG_DEBUG_VM is
-+	 * enabled since __va() is called too early. ARM64 does make use
-+	 * of phys_initrd_start/phys_initrd_size so we can skip this
-+	 * conversion.
-+	 */
-+#if (!IS_ENABLED(CONFIG_ARM64))
- 	initrd_start = (unsigned long)__va(start);
- 	initrd_end = (unsigned long)__va(end);
- 	initrd_below_start_ok = 1;
+-#ifdef CONFIG_BLK_DEV_INITRD
+-static int __init early_initrd(char *p)
+-{
+-	unsigned long start, size;
+-	char *endp;
+-
+-	start = memparse(p, &endp);
+-	if (*endp == ',') {
+-		size = memparse(endp + 1, NULL);
+-
+-		initrd_start = (unsigned long)__va(start);
+-		initrd_end = (unsigned long)__va(start + size);
+-	}
+-	return 0;
 -}
- #endif
-+}
+-early_param("initrd", early_initrd);
+-#endif
+-
+ /*
+  * First memory setup routine called from setup_arch()
+  * 1. setup swapper's mm @init_mm
+@@ -141,8 +123,11 @@ void __init setup_arch_memory(void)
+ 	memblock_reserve(low_mem_start, __pa(_end) - low_mem_start);
  
- /**
-  * early_init_dt_check_for_initrd - Decode initrd location from flat tree
+ #ifdef CONFIG_BLK_DEV_INITRD
+-	if (initrd_start)
+-		memblock_reserve(__pa(initrd_start), initrd_end - initrd_start);
++	if (phys_initrd_size) {
++		memblock_reserve(phys_initrd_start, phys_initrd_size);
++		initrd_start = __va(phys_initrd_start);
++		initrd_end = initrd_start + phys_initrd_size;
++	}
+ #endif
+ 
+ 	early_init_fdt_reserve_self();
+diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+index 4bfa08e27319..58ec68709606 100644
+--- a/arch/arm/mm/init.c
++++ b/arch/arm/mm/init.c
+@@ -52,23 +52,6 @@ unsigned long __init __clear_cr(unsigned long mask)
+ #endif
+ 
+ #ifdef CONFIG_BLK_DEV_INITRD
+-static int __init early_initrd(char *p)
+-{
+-	phys_addr_t start;
+-	unsigned long size;
+-	char *endp;
+-
+-	start = memparse(p, &endp);
+-	if (*endp == ',') {
+-		size = memparse(endp + 1, NULL);
+-
+-		phys_initrd_start = start;
+-		phys_initrd_size = size;
+-	}
+-	return 0;
+-}
+-early_param("initrd", early_initrd);
+-
+ static int __init parse_tag_initrd(const struct tag *tag)
+ {
+ 	pr_warn("ATAG_INITRD is deprecated; "
+diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+index e95cee656a55..9045afacd10b 100644
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -62,24 +62,6 @@
+ s64 memstart_addr __ro_after_init = -1;
+ phys_addr_t arm64_dma_phys_limit __ro_after_init;
+ 
+-#ifdef CONFIG_BLK_DEV_INITRD
+-static int __init early_initrd(char *p)
+-{
+-	unsigned long start, size;
+-	char *endp;
+-
+-	start = memparse(p, &endp);
+-	if (*endp == ',') {
+-		size = memparse(endp + 1, NULL);
+-
+-		phys_initrd_start = start;
+-		phys_initrd_size = size;
+-	}
+-	return 0;
+-}
+-early_param("initrd", early_initrd);
+-#endif
+-
+ #ifdef CONFIG_KEXEC_CORE
+ /*
+  * reserve_crashkernel() - reserves memory for crash kernel
+diff --git a/arch/unicore32/mm/init.c b/arch/unicore32/mm/init.c
+index f2f815d46846..99acdb829a7e 100644
+--- a/arch/unicore32/mm/init.c
++++ b/arch/unicore32/mm/init.c
+@@ -31,24 +31,6 @@
+ 
+ #include "mm.h"
+ 
+-#ifdef CONFIG_BLK_DEV_INITRD
+-static int __init early_initrd(char *p)
+-{
+-	unsigned long start, size;
+-	char *endp;
+-
+-	start = memparse(p, &endp);
+-	if (*endp == ',') {
+-		size = memparse(endp + 1, NULL);
+-
+-		phys_initrd_start = start;
+-		phys_initrd_size = size;
+-	}
+-	return 0;
+-}
+-early_param("initrd", early_initrd);
+-#endif
+-
+ /*
+  * This keeps memory configuration data used by a couple memory
+  * initialization functions, as well as show_mem() for the skipping
+diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
+index 45865b72f4ea..732d21f4a637 100644
+--- a/init/do_mounts_initrd.c
++++ b/init/do_mounts_initrd.c
+@@ -27,6 +27,23 @@ static int __init no_initrd(char *str)
+ 
+ __setup("noinitrd", no_initrd);
+ 
++static int __init early_initrd(char *p)
++{
++	phys_addr_t start;
++	unsigned long size;
++	char *endp;
++
++	start = memparse(p, &endp);
++	if (*endp == ',') {
++		size = memparse(endp + 1, NULL);
++
++		phys_initrd_start = start;
++		phys_initrd_size = size;
++	}
++	return 0;
++}
++early_param("initrd", early_initrd);
++
+ static int init_linuxrc(struct subprocess_info *info, struct cred *new)
+ {
+ 	ksys_unshare(CLONE_FS | CLONE_FILES);
 -- 
 2.17.1
 
