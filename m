@@ -2,146 +2,103 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B54FCC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:02:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9881AC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:02:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8861520664
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:02:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8861520664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4C24120664
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:02:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="SIxJsSWS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C24120664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727809AbeJaA4G (ORCPT
+        id S1727814AbeJaA4u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 20:56:06 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40081 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726532AbeJaA4G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 20:56:06 -0400
-Received: by mail-wm1-f68.google.com with SMTP id b203-v6so11885891wme.5
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 09:02:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=eUUWXsHyPEdsJNyTQsdt8A4rZRWlaB55E03Ok6c9p0k=;
-        b=jbrKm0aS0nGkLeDEuc4gIX1dAGwG9zGZ8bMMf9oM79ghPi2PTxoQBRVOgwuCXyu1pv
-         46gLI3ux6c+0Cc4RNgxOsGU6n3M8E7ma5qPMZQPZxEPSD2gMSsJYQassc2KDnTW3yILG
-         rxPTuR3awACrqH3ITqXItPRjB3+9vPgjqG+eGTu2msH/0D52eGkLAlZof3oh6u7qO82E
-         j3wL7hdmprzPp4Lo6FGJFpuAIIfr6ntlTisohcB5aAKkt3IDo5quGkwdqgsGpUJDmZ/D
-         fIUdBY+4Ouu614PVfT2AS66kTqLir5m27ECGx3O4H5V1/kuj98Gw3z+37pzDCS1YCJa0
-         oYGA==
-X-Gm-Message-State: AGRZ1gINsoMbY4alcYfKXv4fCWB1erXW4ABdCBGhUB9ysy1C7dnc/iGs
-        Sck5mOiX0vjcBD4aNTcC8ar/iA==
-X-Google-Smtp-Source: AJdET5f/GfnSvgbcPS6Rh/HSmYulm7Z7NjHnQFIugDkx87fB+mCFMsfClMm5xvjWv5t7xEkf0JHvHQ==
-X-Received: by 2002:a1c:e456:: with SMTP id b83-v6mr2230726wmh.143.1540915321602;
-        Tue, 30 Oct 2018 09:02:01 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id i7-v6sm27262444wmd.41.2018.10.30.09.02.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 09:02:00 -0700 (PDT)
-Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Dean Wallace <duffydack73@gmail.com>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Johannes Stezenbach <js@sig21.net>,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mogens Jensen <mogens-jensen@protonmail.com>
-References: <20181025232517.ywnw54qibemosjws@picard>
- <154083512089.98144.9141070901932719147@swboyd.mtv.corp.google.com>
- <CAHp75VfnN5tF1Z9+CDDhKFNG5QfCRcGOZeAkpf-5BfCEx16gvg@mail.gmail.com>
- <CAHp75VctdBE-GM60udJawBCXdmoOqZn4N=kFWz5GLHzjPG2iQQ@mail.gmail.com>
- <20181029190819.2ivlx73n6y6sx4vk@picard>
- <ffc4bcc9-62c3-8940-85d6-d0fd01f3a1b8@linux.intel.com>
- <c8fb730a-c160-41b4-dad0-8ed8594e5687@redhat.com>
- <20181030143836.feo7zcxiestylxoo@picard>
- <2d429c87-24c5-4075-683e-b0d12c3eb1c2@linux.intel.com>
- <d00df762-e4fc-06c5-701e-d5100bfd0e35@redhat.com>
-Message-ID: <783f17c2-ecc6-00fc-5629-02319b965205@redhat.com>
-Date:   Tue, 30 Oct 2018 17:02:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 30 Oct 2018 20:56:50 -0400
+Received: from ozlabs.org ([203.11.71.1]:48453 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725988AbeJaA4u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 20:56:50 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42kx7m6N4cz9s7T;
+        Wed, 31 Oct 2018 03:02:44 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1540915365;
+        bh=TWoEVcN+bVXpXahNgRuq+modmaYlTy2paSx4kl42hPk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=SIxJsSWSNQTqqzTGBuD/fT+jeZgWu/kwR/X6KieZ6HZ9S3k6nTUTmzyXcQP6KIZ+1
+         mcC4DDzFgqYkyK8hhztULtTxg4mYfAKdVDFdUWDiDoO+mVk8MeGVBerqteyxPibBrr
+         ho253QIokbNs/jRVh9eNZqfkrJ0OvR28A5rO+qHLAsYaCmCsPRTUBcmyrJy5hVFW4H
+         VD9xRSm85RfxnBRduixI6OumW4kw9/BLMXKqUiC90aBMXw7gGTr60Yu6qdmuYaRL16
+         bawSec58G1XiuO2gKJqwuUqH8+FaEpvJ4gNf4Lk+MFuTppAfb2J5mkiPTXUi++l7E1
+         qqJudRp2bDjeg==
+Date:   Wed, 31 Oct 2018 03:02:29 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        changbin.du@gmail.com
+Subject: Re: linux-next: manual merge of the compiler-attributes tree with
+ the kbuild tree
+Message-ID: <20181031030229.725abfe2@canb.auug.org.au>
+In-Reply-To: <CANiq72k2w2T0Cy0D--OEmE+sOPkjZtXpukBm+Mz1_xY6MCGg0A@mail.gmail.com>
+References: <20181030104637.382c26d0@canb.auug.org.au>
+        <20181030104941.4fef7dad@canb.auug.org.au>
+        <CANiq72k2w2T0Cy0D--OEmE+sOPkjZtXpukBm+Mz1_xY6MCGg0A@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <d00df762-e4fc-06c5-701e-d5100bfd0e35@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/vIAPEUP4/SKJQ3GhL8KG7X="; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+--Sig_/vIAPEUP4/SKJQ3GhL8KG7X=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 30-10-18 16:46, Hans de Goede wrote:
-> Hi,
-> 
-> On 30-10-18 16:04, Pierre-Louis Bossart wrote:
->>
->> On 10/30/18 9:38 AM, Dean Wallace wrote:
->>> On 30-10-18, Hans de Goede wrote:
->>>> Hi Dean,
->>>>
->>>> Attached are 2 different attempts at fixing this.
->>>>
->>>> When trying these patches do not forget to remove the revert of the
->>>> "Stop-marking-clocks-as-CLK_IS_CRITICAL" commit.
->>>>
->>>> Please first try the 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch
->>>> patch I expect that one to do the trick indicating that the Swanky model
->>>> uses a different pmc clk then which is normally used for the codec clock.
->>>>
->>>> If that patch does not fix things, please give the other patch a try.
->>
->> For Baytrail devices, the audio platform clocks are not managed by the firmware. They are for CHT-based devices - as can be seen by clock resources being described in the DSDT. We used to have a if(baytrail) in the code which was replaced by this CRITICAL label, but the point remains that there is a difference between the two SOC versions.
-> 
-> As I mentioned before the CRITICAL flag was only added a year ago to workaround
-> an issue with on board ethernet needing plt_clk_4 on some laptops, this never
-> had anything to do with sound.
+Hi Miguel,
 
-Ah I see now that you later made some changes based on the patch to fix the ethernet:
+On Tue, 30 Oct 2018 12:21:52 +0100 Miguel Ojeda <miguel.ojeda.sandonis@gmai=
+l.com> wrote:
+>
+> From a quick look, it seems we want:
+>=20
+> #ifndef CONFIG_CC_OPTIMIZE_FOR_DEBUGGING
+> #define __compiletime_warning(message) __attribute__((__warning__(message=
+)))
+> #define __compiletime_error(message) __attribute__((__error__(message)))
+> #endif
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=7735bce05a9c0bb0eb0f08c9002d65843a7c5798
+Thanks, I will use that resolution.
 
-Note though that that does not touch the machine driver which we are discussing
-now and the reporters machine is also BYT based.
+--=20
+Cheers,
+Stephen Rothwell
 
-As explained below (in my original reply) I think it is fine to always
-manage the clk from within the kernel. But if you think this is a bad
-idea, we could re-introduce the is_valleyview() checks in machine
-drivers which are used on CHT devices.
+--Sig_/vIAPEUP4/SKJQ3GhL8KG7X=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
->> In addition I am not aware of any baytrail device using plt_clk_0, so moving a common machine driver such a cht_bsw_max98090_ti to use plt_clk0 only would break other devices (e.g. Rambi/Orco). Asking for both clocks to be on might work though, 
-> 
-> Ok, so we need to have a DMI based quirk for the Swanky and maybe also
-> the clapper to use plt_clk_0 there. Asking for 2 clks if we only need
-> one does not seem like a good plan.
-> 
->> however you still have the problem of trying to manage from the kernel what the firmware already manages.
-> 
-> The firmware only manages it when going to D3 state, with ASoC most of
-> the codecs gets turned off (and we no longer need the clock) but we do
-> not put the device in D3 / execute the _PS3 method. So from a pm pov
-> it is better if we manage the clk ourselves.
-> 
-> Once we do actually put the device in D3 (on suspend) the kernel will have
-> already turned off the clk and the _OFF method of the CLK3 power resource
-> which directly pokes mmio, will just set the enable bit to 0 when it
-> already is 0, so no problem.
+-----BEGIN PGP SIGNATURE-----
 
-Regards,
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvYgJUACgkQAVBC80lX
+0Gx3JAf/eVJt0/EOhXwgRqYifJrD+FC89QhfNKyFYuAqmLBxUk7rHOnybQdOU3qi
+R41el3/EYubyTXzvxNkLQlO91nWE9QgZ42M+DpWsoETl+5fvC9aJdGDTVVHUKMdL
+mo4OPmRUQEwNEHUptzSQIMp4QIvCid7XDrYEFNwi8v6bs9lU31TTWcelZcJm4Slv
+CK+B/tQov9Qz3tfWwl0Evnqnc5uq1sB+IcQOoJj2C6TYzVRh/0LqqjcvOc25TdVJ
+X8KLY6/5rXHA4p2e7o1s+jSmYBI9exFSfRyMYZYsG0dLfKQGeQ8Pn8iuc8j2hFXa
+/YldAe85E09Hs7+s+NTjf1nmOtNEcQ==
+=7XJ2
+-----END PGP SIGNATURE-----
 
-Hans
+--Sig_/vIAPEUP4/SKJQ3GhL8KG7X=--
