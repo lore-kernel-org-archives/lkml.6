@@ -2,106 +2,109 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B91CC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 12:02:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC7FAC6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 12:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E9F020827
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 12:02:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p0mXDtkA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E9F020827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id AAAB520827
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 12:02:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAAB520827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727963AbeJ3UzN (ORCPT
+        id S1727985AbeJ3UzQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 16:55:13 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44793 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727669AbeJ3UzM (ORCPT
+        Tue, 30 Oct 2018 16:55:16 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49603 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727669AbeJ3UzQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 16:55:12 -0400
-Received: by mail-pl1-f194.google.com with SMTP id s5-v6so3797226plq.11
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 05:02:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=/fZwBH2iVawH1pntIF6WCbMKPZ5JViHWRsqv2E4qUT8=;
-        b=p0mXDtkA4SPwdPj+Oz41y47GdUj4XKHYufcQfmOyXtql1nSauDhak+HSXMbvSHlZD6
-         vl/eKEy1/zAZeB/h1olmsfNoh/w48cYs+LElVIVQTLYWpQQdEYwUIz8hC5Dhd4jSwpea
-         VebPz1NeUMXsB+pdM+oZUudwlrsl0zxFTeIUqwyZ6LaaCE8gTwvUuE20wgr6GCxpfqrg
-         TACfI+x+eZobCczPsnidUGks2h4zDVESLaNlkWp/UF0uc5kiH/wYtNUMMKwO5gP6JNNV
-         2l8JvRlIBbRG6aeSSP+3a8/YenCMWk1Bc0qwnCCWxD5Ps64I0nUhG5o1U56xux4Scqgh
-         UeGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=/fZwBH2iVawH1pntIF6WCbMKPZ5JViHWRsqv2E4qUT8=;
-        b=Wyxr6doBE2G67TD2hY0NUkY5QYczutlD1JBW5F4UommCLDZrKuExvqeM4TuzSd7lqu
-         SJPsrTsvFA1O9GFHvvB3K4YFf1VkoJczCoqFQ2Xzvkqh1ogY/AO5KpxEZY3rqOwNe8+E
-         3i6EDJI5g4VjDl+6XJWH/CGdjSxeGw29sbjV7mbDScczkXxvHAcZWaCiVXz0lPWAO7dn
-         GeYxrRMRHdVlr5cP8oOiSyPUR1bmOExXKpZJrl324JbbNLmIeqZeXp0x0cf434QOr94/
-         vY8pfQ9eiTiI3JclTshjK6cpbwoNsKzH0BNF4aUmRKPRo7SekrrZ1Cq2DxT2VSycQ6ma
-         TErA==
-X-Gm-Message-State: AGRZ1gJ+A1BfnVBfcteXYDcWpW9t2VDonNMR6opmRINBFG4rYG8Ls3tK
-        9BqYNOl39JHQStryrijTbnI=
-X-Google-Smtp-Source: AJdET5dEW7QMDhssalpw3d026WIfD8+MQTlfBv0T0fxxrUgM68+Sraa16idCG8CXL5kLKgc/q6PZSw==
-X-Received: by 2002:a17:902:6b04:: with SMTP id o4-v6mr18726759plk.333.1540900921128;
-        Tue, 30 Oct 2018 05:02:01 -0700 (PDT)
-Received: from localhost.localdomain ([191.101.9.198])
-        by smtp.gmail.com with ESMTPSA id s80-v6sm27378369pfa.114.2018.10.30.05.02.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 30 Oct 2018 05:02:00 -0700 (PDT)
-From:   Bo YU <tsu.yubo@gmail.com>
-To:     gregkh@linuxfoundation.org, rafael@kernel.org
-Cc:     linux-kernel@vger.kernel.org, Bo YU <tsu.yubo@gmail.com>
-Subject: [PATCH 2/3] kobject: Fix warnings in lib/kobject_uevent.c
-Date:   Tue, 30 Oct 2018 08:01:15 -0400
-Message-Id: <2783c5cb2226510ba8f7777aaefbd5df9c553bf3.1540886346.git.tsu.yubo@gmail.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <cover.1540886346.git.tsu.yubo@gmail.com>
-References: <cover.1540886346.git.tsu.yubo@gmail.com>
-In-Reply-To: <cover.1540886346.git.tsu.yubo@gmail.com>
-References: <cover.1540886346.git.tsu.yubo@gmail.com>
+        Tue, 30 Oct 2018 16:55:16 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gHSic-0006oX-LV; Tue, 30 Oct 2018 12:01:58 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Harsh Jain <harsh@chelsio.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] crypto: chelsio: clean up various indentation issues
+Date:   Tue, 30 Oct 2018 12:01:58 +0000
+Message-Id: <20181030120158.23323-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a blank after declaration.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Bo YU <tsu.yubo@gmail.com>
+Trivial fix to clean up varous indentation issue
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- lib/kobject_uevent.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/crypto/chelsio/chcr_algo.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
-index 402765c3a9cb..27c6118afd1c 100644
---- a/lib/kobject_uevent.c
-+++ b/lib/kobject_uevent.c
-@@ -240,6 +240,7 @@ static int kobj_usermode_filter(struct kobject *kobj)
- 	ops = kobj_ns_ops(kobj);
- 	if (ops) {
- 		const void *init_ns, *ns;
-+
- 		ns = kobj->ktype->namespace(kobj);
- 		init_ns = ops->initial_ns();
- 		return ns != init_ns;
-@@ -390,6 +391,7 @@ static int kobject_uevent_net_broadcast(struct kobject *kobj,
- 	ops = kobj_ns_ops(kobj);
- 	if (!ops && kobj->kset) {
- 		struct kobject *ksobj = &kobj->kset->kobj;
-+
- 		if (ksobj->parent != NULL)
- 			ops = kobj_ns_ops(ksobj->parent);
+diff --git a/drivers/crypto/chelsio/chcr_algo.c b/drivers/crypto/chelsio/chcr_algo.c
+index db203f8be429..497c57803de7 100644
+--- a/drivers/crypto/chelsio/chcr_algo.c
++++ b/drivers/crypto/chelsio/chcr_algo.c
+@@ -1311,8 +1311,8 @@ static int chcr_aes_decrypt(struct ablkcipher_request *req)
+ 			return -ENOSPC;
  	}
+ 
+-	 err = process_cipher(req, u_ctx->lldi.rxq_ids[c_ctx(tfm)->rx_qidx],
+-			      &skb, CHCR_DECRYPT_OP);
++	err = process_cipher(req, u_ctx->lldi.rxq_ids[c_ctx(tfm)->rx_qidx],
++			     &skb, CHCR_DECRYPT_OP);
+ 	if (err || !skb)
+ 		return err;
+ 	skb->dev = u_ctx->lldi.ports[0];
+@@ -2008,7 +2008,7 @@ static int chcr_ahash_export(struct ahash_request *areq, void *out)
+ 	memcpy(state->partial_hash, req_ctx->partial_hash,
+ 	       CHCR_HASH_MAX_DIGEST_SIZE);
+ 	chcr_init_hctx_per_wr(state);
+-		return 0;
++	return 0;
+ }
+ 
+ static int chcr_ahash_import(struct ahash_request *areq, const void *in)
+@@ -2249,7 +2249,7 @@ static int chcr_aead_fallback(struct aead_request *req, unsigned short op_type)
+ 				  req->base.complete, req->base.data);
+ 	aead_request_set_crypt(subreq, req->src, req->dst, req->cryptlen,
+ 				 req->iv);
+-	 aead_request_set_ad(subreq, req->assoclen);
++	aead_request_set_ad(subreq, req->assoclen);
+ 	return op_type ? crypto_aead_decrypt(subreq) :
+ 		crypto_aead_encrypt(subreq);
+ }
+@@ -3118,12 +3118,12 @@ static int chcr_gcm_setauthsize(struct crypto_aead *tfm, unsigned int authsize)
+ 		aeadctx->mayverify = VERIFY_HW;
+ 		break;
+ 	case ICV_12:
+-		 aeadctx->hmac_ctrl = CHCR_SCMD_HMAC_CTRL_IPSEC_96BIT;
+-		 aeadctx->mayverify = VERIFY_HW;
++		aeadctx->hmac_ctrl = CHCR_SCMD_HMAC_CTRL_IPSEC_96BIT;
++		aeadctx->mayverify = VERIFY_HW;
+ 		break;
+ 	case ICV_14:
+-		 aeadctx->hmac_ctrl = CHCR_SCMD_HMAC_CTRL_PL3;
+-		 aeadctx->mayverify = VERIFY_HW;
++		aeadctx->hmac_ctrl = CHCR_SCMD_HMAC_CTRL_PL3;
++		aeadctx->mayverify = VERIFY_HW;
+ 		break;
+ 	case ICV_16:
+ 		aeadctx->hmac_ctrl = CHCR_SCMD_HMAC_CTRL_NO_TRUNC;
 -- 
-2.11.0
+2.19.1
 
