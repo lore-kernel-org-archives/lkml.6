@@ -2,152 +2,123 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9095C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:51:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03221C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:52:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 930462081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:51:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 989452064C
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:52:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wmbqrhab"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 930462081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="QxXIUqpN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 989452064C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727865AbeJaBpX (ORCPT
+        id S1727883AbeJaBqT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 21:45:23 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:54644 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727484AbeJaBpX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 21:45:23 -0400
-Received: by mail-it1-f195.google.com with SMTP id d6so8962850itl.4;
-        Tue, 30 Oct 2018 09:51:08 -0700 (PDT)
+        Tue, 30 Oct 2018 21:46:19 -0400
+Received: from mail-eopbgr730136.outbound.protection.outlook.com ([40.107.73.136]:13984
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727561AbeJaBqS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 21:46:18 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xbJZ0jBQRAT1UWNJTqYZCeGU/7QDoqBNuoSoR3iB0OQ=;
-        b=WmbqrhabceHBp4QLjP0T6XkAWJ0IZ8la+kDj8ZvX1CCK5oSRlcbYC9pOEQ8xtvd7kE
-         HYtE8WkpfIdQnZOEcBoLXZlWJD/3bQRs4xMyG3dgl+rSaNjYeBQKq9fJVD4bzlOG2nJc
-         68TRxLw2EGPjhzBXl3M0seMzJfaFZz7Nmi3O5AzMoWG7pTM51vPABbQdLIu61DUSRSVV
-         gDGCqUHNWqfC7wtXVLHc3TqEdPkVV19SE+u+Ap3su+Edh4GcYVNQ4Hzwx59HuQ6lx7J+
-         irNlX3lql5vA9gdVeMH4forGbdhHp/ZIS6zH8bKGO5WhEyzHd+SQeACEte9sUaIBwQeK
-         m0Ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xbJZ0jBQRAT1UWNJTqYZCeGU/7QDoqBNuoSoR3iB0OQ=;
-        b=CaTPeOPbmn2/H/znh5MVPEnef4Mge/qnN6tSLnZD5tL8zS80j68KXvaQYlquetg4B4
-         XjB7mSjNBrnmf76XVw7fmEWm4zsLRHBhHPW7AGFaWJNleRLJvBWGYPE0vPaXIklnaKbW
-         GeVrpJHESlS04Ja1h6Il82T65UF+gHQA6Yz+M7QELcatX01crAd+MFGDjpT8z9VibKCI
-         4qZxOP/OZA8ncHPKjHIhZ9YfB8ivMhjU40eqBXHM+BOejZYdeEGgIso48MUKq8fmuvbJ
-         mcc7wxJpAvs+3ENXWJLSJI4fSElHqFYUnK55BUWW75QOFMA2ayxII12UrPLz/OZSR5L4
-         Ez+A==
-X-Gm-Message-State: AGRZ1gJQBgb61Ng9Gjj+QqI6sjf66iDtZKABSnBWcuU6W8YCWx85d0SQ
-        ilQyUE3v+Es9iy2a+zFPNyZm7c4VoIxbvFITKaE=
-X-Google-Smtp-Source: AJdET5dTOI31dORLHX6nLPycN+e6U3P91g9jty0cXL0rT2RHqB5c0fpscozinN6Fb8cISz4raj36vkL99dwtJdbcITk=
-X-Received: by 2002:a24:59c1:: with SMTP id p184-v6mr1986241itb.93.1540918267830;
- Tue, 30 Oct 2018 09:51:07 -0700 (PDT)
+ d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DLYMVodelq1B1QQLdn60/8zhQDxyM9FKxAOqyuaYSHI=;
+ b=QxXIUqpN/6/J9IAo3vi37iY5ZerpXBEuhACLfCtOyHlHrhy3U6Vq937eEwnhV/94pVqanhHCin3gF7CzFLs+Jaighhow482eYM36VEL+tIrATuRGwL1bG1LeQeCjHjyuGLcCGvmGecrYkP63EFx2mIz/ri9fXtIiwHIo/D8+0Ds=
+Received: from CY4PR2201MB1272.namprd22.prod.outlook.com (10.171.216.146) by
+ CY4PR2201MB1240.namprd22.prod.outlook.com (10.171.216.138) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1273.19; Tue, 30 Oct 2018 16:51:58 +0000
+Received: from CY4PR2201MB1272.namprd22.prod.outlook.com
+ ([fe80::ace0:f12e:c2a0:dc23]) by CY4PR2201MB1272.namprd22.prod.outlook.com
+ ([fe80::ace0:f12e:c2a0:dc23%8]) with mapi id 15.20.1273.027; Tue, 30 Oct 2018
+ 16:51:58 +0000
+From:   Paul Burton <paul.burton@mips.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+CC:     "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Paul Mackerras <paulus@samba.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH v2 1/2] kbuild: replace cc-name test with
+ CONFIG_CC_IS_CLANG
+Thread-Topic: [PATCH v2 1/2] kbuild: replace cc-name test with
+ CONFIG_CC_IS_CLANG
+Thread-Index: AQHUcFRQUdRvUBuRmUqUi+ZWeLGgeaU4ARIA
+Date:   Tue, 30 Oct 2018 16:51:58 +0000
+Message-ID: <20181030165156.k6blbpbxh2fmiiay@pburton-laptop>
+References: <1540905994-6073-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1540905994-6073-1-git-send-email-yamada.masahiro@socionext.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR04CA0107.namprd04.prod.outlook.com
+ (2603:10b6:301:3a::48) To CY4PR2201MB1272.namprd22.prod.outlook.com
+ (2603:10b6:910:61::18)
+user-agent: NeoMutt/20180716
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=pburton@wavecomp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [4.16.204.77]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR2201MB1240;6:F4JLfAh/UD/LNIAd4rfY5JLYnnGwCcpEfiZq5TkDdJXZT3Fxg4a67Fu6dmd5SvTwj66HYyq9IluLkW2yQvdtB5A/nt7AFSqyBAGMcdmiwS7E8+TNzyE4rPfjomO27grMG60+s0CgKNmHbwq9+c5BRUAYujjIxmQr5L7BirMEEv+IqmoZeXgzSIzjNw6/ACHMafScID9Yw8fgfUg1ZoPTQN25Hj7jaLC93pYQvjVT9B1GEhpQJVP4xtB5QkZ9OiNaZPxqYaAAR9Opgj6RZthR3pWdMpkSXLkGAc6LjbpZMjeEuD33jgWdg+u5IfhLsCueeq9T46dAPfv6WS8QZtczmYoAjoaFzGXeA/Ab4O+ajP5MVEyo5ZDmBx9Rf4M7m7tIdmM8Zgmksn4WFalHFSTeR2wKyvk9vcpXrihpWGXiqFn8QR8c6rTNMOQwijsIeNQCseej1A+7ahPtD97w7Tyx9g==;5:ckx+K/wgd8rzs3HzdXZXUdL302esZEQ/LQsW8ST4EoElBXh9Xaan+N1Ma5FCyAdTBtEodicxwy5g9gHbCBykwjhEnGQi8zUvC/BR+FJ7RsreRaS5p4WO1a1o9oFMPYL5eujYbXG37w3NVmbsbx7ZdMJA9lrLY5o58CqBuY7IOTw=;7:EKNHjsQ2tDCoGS9w3w+hWtSvPehNm18C5/AVpiPdoXCxQNeTXHSFUErZk9rGsHenoAhXKxFXlqXixrbNM3hzISttIT9xsO8y6fGDR3kn4xYcDbPaY6Jtl88P/Z2aEAywyg6y9wcJJCTOuFqldn6+gw==
+x-ms-office365-filtering-correlation-id: fa5bde02-1166-4956-0ac2-08d63e880185
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:CY4PR2201MB1240;
+x-ms-traffictypediagnostic: CY4PR2201MB1240:
+x-microsoft-antispam-prvs: <CY4PR2201MB1240CE01CFA3381E3A09A603C1CC0@CY4PR2201MB1240.namprd22.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(788757137089);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(3231382)(944501410)(52105095)(148016)(149066)(150057)(6041310)(2016111802025)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(6043046)(201708071742011)(7699051)(76991095);SRVR:CY4PR2201MB1240;BCL:0;PCL:0;RULEID:;SRVR:CY4PR2201MB1240;
+x-forefront-prvs: 08417837C5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(376002)(39840400004)(396003)(366004)(346002)(136003)(199004)(189003)(66066001)(1076002)(5250100002)(6486002)(6436002)(229853002)(6916009)(2906002)(5660300001)(7416002)(3846002)(6116002)(305945005)(7736002)(316002)(8676002)(58126008)(54906003)(81156014)(81166006)(256004)(97736004)(2900100001)(14454004)(68736007)(25786009)(33716001)(71200400001)(71190400001)(6512007)(8936002)(508600001)(44832011)(476003)(486006)(11346002)(186003)(26005)(99286004)(76176011)(102836004)(105586002)(33896004)(386003)(446003)(9686003)(52116002)(6506007)(4326008)(106356001)(6246003)(42882007)(53936002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR2201MB1240;H:CY4PR2201MB1272.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: wavecomp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: MKMc9vEn0n75NPpSLBhshB3W4Q9Dxquj5glw9vSdzn2TtYE/VfvUv3nKi2sKUo5/kqwlx3XhUnFrDRCdrKDPqbTtCDusXeB0M5esVLIt/WePHJRq10cb7zHRcc9XqC6yKEINKPlpbpXK99yUuYFshp9gombpUAYHd+Bnj94+SSzqpHGnNdLv45L+2XHKIbptq24WrR0cyqautJoQBQ+F6hL1CHsaTIFgiXEoaxqFpNoy1hHWJgxd+nr1FDnMWxOiRogCmIWAKsDgRBw/R4ReO7Mr6rkf3iARkwXRResH804jaBdf4WxgLVUox+7GtueuwBNiJEEIJI5z5AyrkgyrTfceV0XALMgdCQlts/s9Fzc=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <256788EA86DFB442B581ECDC903CFAAF@namprd22.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20181026151223.16810-1-ahmedsoliman0x666@gmail.com> <20181029064640.GE128403@gmail.com>
-In-Reply-To: <20181029064640.GE128403@gmail.com>
-From:   Ahmed Soliman <ahmedsoliman0x666@gmail.com>
-Date:   Tue, 30 Oct 2018 18:49:35 +0200
-Message-ID: <CAAGnT3atejrUi6ypZPiDCtMVUP6vx51sKkc2yeQg0SF8-kra8w@mail.gmail.com>
-Subject: Re: [PATCH V5 0/5] KVM: X86: Introducing ROE Protection Kernel Hardening
-To:     mingo@kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        nathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?B?6rmA7J246rK4?= <ovich00@gmail.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        nigel.edwards@hpe.com, Boris Lukashev <blukashev@sempervictus.com>,
-        Hossam Hassan <7ossam9063@gmail.com>,
-        Ahmed Lotfy <A7med.lotfey@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: mips.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fa5bde02-1166-4956-0ac2-08d63e880185
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Oct 2018 16:51:58.6474
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR2201MB1240
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 29 Oct 2018 at 08:46, Ingo Molnar <mingo@kernel.org> wrote:
->
->
-> * Ahmed Abd El Mawgood <ahmedsoliman0x666@gmail.com> wrote:
->
-> > This is the 5th version which is 4th version with minor fixes. ROE is a
-> > hypercall that enables host operating system to restrict guest's access to its
-> > own memory. This will provide a hardening mechanism that can be used to stop
-> > rootkits from manipulating kernel static data structures and code. Once a memory
-> > region is protected the guest kernel can't even request undoing the protection.
-> >
-> > Memory protected by ROE should be non-swapable because even if the ROE protected
-> > page got swapped out, It won't be possible to write anything in its place.
-> >
-> > ROE hypercall should be capable of either protecting a whole memory frame or
-> > parts of it. With these two, it should be possible for guest kernel to protect
-> > its memory and all the page table entries for that memory inside the page table.
-> > I am still not sure whether this should be part of ROE job or the guest's job.
-> >
-> >
-> > The reason why it would be better to implement this from inside kvm: instead of
-> > (host) user space is the need to access SPTEs to modify the permissions, while
-> > mprotect() from user space can work in theory. It will become a big performance
-> > hit to vmexit and switch to user space mode on each fault, on the other hand,
-> > having the permission handled by EPT should make some remarkable performance
-> > gain.
-> >
-> > Our model assumes that an attacker got full root access to a running guest and
-> > his goal is to manipulate kernel code/data (hook syscalls, overwrite IDT ..etc).
-> >
-> > There is future work in progress to also put some sort of protection on the page
-> > table register CR3 and other critical registers that can be intercepted by KVM.
-> > This way it won't be possible for an attacker to manipulate any part of the
-> > guests page table.
->
-> BTW., transparent detection and trapping of attacks would also be nice:
-> if ROE is active and something running on the guest still attempts to
-> change the pagetables, the guest should be frozen and a syslog warning on
-> the hypervisor side should be printed?
+Hi Masahiro,
 
-I was thinking about logging ROE violations to host's kernel logs too
-and I will have it in the next
-version of the patch set, but I am not sure if we should really freeze
-the guest once a violation
-happens, I wanted to completely isolate the mechanism from the policy.
-In the current implementation,
-the policy followed  is left to users pace host process using kvm. It
-will be notified about a Memory IO
-error in the guest, and the guest will be waiting for the host to take
-actions (vmexit). Of course the
-simplest action shall be "do nothing", so the writing operation will
-fail but the guest continues to run, or it
-can freeze the guest, or maybe do something advanced like cloning the
-vm and disconnecting network
-interface from the cloned vm, then enable the write operation and keep
-track of what is going on somehow.
-Because of the many varieties of possible reactions, we decided to
-keep the them out of KVM and just let the
-user space process decide how should the situation be handled.
+On Tue, Oct 30, 2018 at 10:26:33PM +0900, Masahiro Yamada wrote:
+> Evaluating cc-name invokes the compiler every time even when you are
+> not compiling anything, like 'make help'. This is not efficient.
+>=20
+> The compiler type has been already detected in the Kconfig stage.
+> Use CONFIG_CC_IS_CLANG, instead.
+>=20
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
 
-> Also, the feature should probably be 'default y' to help spread it on the
-> distro side. It's opt-in functionality from the guest side anyway, so
-> there's no real cost on the host side other than some minor resident
-> memory.
+Looks good to me:
 
-Noted, I will have it `default y` in the next patches set.
+    Acked-by: Paul Burton <paul.burton@mips.com> (MIPS)
 
 Thanks,
-Ahmed
+    Paul
