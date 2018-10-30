@@ -2,143 +2,71 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B974C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:36:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 759A1C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:36:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BED220848
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:36:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BED220848
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 4632A20823
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:36:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4632A20823
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=monom.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726556AbeJ3R2e (ORCPT
+        id S1726897AbeJ3R26 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 13:28:34 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:53282 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726212AbeJ3R2e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 13:28:34 -0400
-Received: from tmo-115-37.customers.d1-online.com ([80.187.115.37] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gHPVI-0002R0-Q2; Tue, 30 Oct 2018 09:36:01 +0100
-Date:   Tue, 30 Oct 2018 09:35:59 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Michael Kelley <mikelley@microsoft.com>
-cc:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "olaf@aepfle.de" <olaf@aepfle.de>,
-        "apw@canonical.com" <apw@canonical.com>,
-        vkuznets <vkuznets@redhat.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>
-Subject: Re: [PATCH v2 char-misc 1/1] x86/hyperv: Fix PIT shutdown quirk
-In-Reply-To: <1540226025-45092-1-git-send-email-mikelley@microsoft.com>
-Message-ID: <alpine.DEB.2.21.1810300859420.5984@nanos.tec.linutronix.de>
-References: <1540226025-45092-1-git-send-email-mikelley@microsoft.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 30 Oct 2018 13:28:58 -0400
+Received: from mail.monom.org ([188.138.9.77]:54456 "EHLO mail.monom.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726172AbeJ3R26 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 13:28:58 -0400
+Received: from mail.monom.org (localhost [127.0.0.1])
+        by filter.mynetwork.local (Postfix) with ESMTP id 87212500A1F;
+        Tue, 30 Oct 2018 09:36:27 +0100 (CET)
+Received: from [127.0.0.1] (mail.monom.org [188.138.9.77])
+        by mail.monom.org (Postfix) with ESMTPSA id 72CB150051A;
+        Tue, 30 Oct 2018 09:36:24 +0100 (CET)
+Subject: Re: [PATCH RT 1/2] x86/kconfig: Fall back to ticket spinlocks
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Carsten Emde <C.Emde@osadl.org>,
+        John Kacur <jkacur@redhat.com>,
+        Daniel Wagner <daniel.wagner@siemens.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Julia Cartwright <julia@ni.com>,
+        Peter Zijlstra <peterz@infradead.org>
+References: <20181029201617.24733-1-wagi@monom.org>
+ <20181029201617.24733-2-wagi@monom.org>
+ <20181029231244.xfj42ucddp7xnoae@linutronix.de>
+From:   Daniel Wagner <wagi@monom.org>
+Message-ID: <3f4d0e85-c48a-17bf-c180-00ddf5584484@monom.org>
+Date:   Tue, 30 Oct 2018 09:37:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <20181029231244.xfj42ucddp7xnoae@linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michael,
-
-On Mon, 22 Oct 2018, Michael Kelley wrote:
-
-> pit_shutdown() doesn't work on Hyper-V because of a quirk in the
-> PIT emulation. After shutdown the emulated PIT continues to interrupt
-> @18.2 HZ. This problem exists in all versions of Hyper-V and just
-> had not previously been noticed. So replace the normal PIT shutdown
-> function with an alternate version that works on Hyper-V.
+On 30/10/2018 00:12, Sebastian Andrzej Siewior wrote:
+> On 2018-10-29 21:16:16 [+0100], Daniel Wagner wrote:
+>> From: Daniel Wagner <daniel.wagner@siemens.com>
+>>
+>> v4.4.162-rt176-rc1 stable review patch.
+>> If anyone has any objections, please let me know.
 > 
-> The alternate shutdown function could go in the i8253.c module,
-> but it seems better to keep the hack with the Hyper-V code rather
-> than clutter up i8253.c with #ifdef CONFIG_HYPERV.
+> I though that we are going to route this via Greg/stable for v4.4?
 
-You can avoid the ideffery completely. Something like the uncompiled patch
-(lacks comments) below keeps everything in i8253 and should just work.
+ah yes... I should not send out patches after a long day of work...
 
-Thanks,
-
-	tglx
-
-8<-------------------
-
-diff --git a/drivers/clocksource/i8253.c b/drivers/clocksource/i8253.c
-index 9c38895542f4..9b5d2259c2e5 100644
---- a/drivers/clocksource/i8253.c
-+++ b/drivers/clocksource/i8253.c
-@@ -10,6 +10,7 @@
- #include <linux/module.h>
- #include <linux/i8253.h>
- #include <linux/smp.h>
-+#include <linux/hypervisor.h>
- 
- /*
-  * Protects access to I/O ports
-@@ -109,9 +110,10 @@ static int pit_shutdown(struct clock_event_device *evt)
- 	raw_spin_lock(&i8253_lock);
- 
- 	outb_p(0x30, PIT_MODE);
--	outb_p(0, PIT_CH0);
--	outb_p(0, PIT_CH0);
--
-+	if (!hypervisor_is_mshyperv()) {
-+		outb_p(0, PIT_CH0);
-+		outb_p(0, PIT_CH0);
-+	}
- 	raw_spin_unlock(&i8253_lock);
- 	return 0;
- }
-diff --git a/include/linux/hypervisor.h b/include/linux/hypervisor.h
-index fc08b433c856..2ab7303675f3 100644
---- a/include/linux/hypervisor.h
-+++ b/include/linux/hypervisor.h
-@@ -10,6 +10,7 @@
- #ifdef CONFIG_X86
- 
- #include <asm/jailhouse_para.h>
-+#include <asm/hypervisor.h>
- #include <asm/x86_init.h>
- 
- static inline void hypervisor_pin_vcpu(int cpu)
-@@ -17,6 +18,11 @@ static inline void hypervisor_pin_vcpu(int cpu)
- 	x86_platform.hyper.pin_vcpu(cpu);
- }
- 
-+static inline bool hypervisor_is_mshyperv(void)
-+{
-+	return hypervisor_is_type(X86_HYPER_MS_HYPERV);
-+}
-+
- #else /* !CONFIG_X86 */
- 
- #include <linux/of.h>
-@@ -30,6 +36,11 @@ static inline bool jailhouse_paravirt(void)
- 	return of_find_compatible_node(NULL, NULL, "jailhouse,cell");
- }
- 
-+static inline bool hypervisor_is_mshyperv(void)
-+{
-+	return false;
-+}
-+
- #endif /* !CONFIG_X86 */
- 
- #endif /* __LINUX_HYPEVISOR_H */
+next try
