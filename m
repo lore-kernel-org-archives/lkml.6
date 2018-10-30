@@ -2,260 +2,226 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A014EC6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 23:09:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92277C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 23:10:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4801C20664
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 23:09:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4801C20664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 3A31C20664
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 23:10:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HxA8N5Z5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A31C20664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728623AbeJaIEg (ORCPT
+        id S1728647AbeJaIGT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 04:04:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55114 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727430AbeJaIEf (ORCPT
+        Wed, 31 Oct 2018 04:06:19 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:39043 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727430AbeJaIGS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 04:04:35 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6EC0C3A20;
-        Tue, 30 Oct 2018 23:09:06 +0000 (UTC)
-Date:   Tue, 30 Oct 2018 16:09:05 -0700
-From:   akpm@linux-foundation.org
-To:     broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
-        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        mm-commits@vger.kernel.org
-Subject:  mmotm 2018-10-30-16-08 uploaded
-Message-ID: <20181030230905.xHZmM%akpm@linux-foundation.org>
-User-Agent: s-nail v14.9.6
+        Wed, 31 Oct 2018 04:06:18 -0400
+Received: by mail-vs1-f65.google.com with SMTP id h78so7802542vsi.6
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 16:10:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=uyNmxWgVjtCDcTKlEYTWilkBglVV2Ve0yeaY0nXKyx0=;
+        b=HxA8N5Z5b3dxflo9UiRMfqQ7f3t85wA1ta9xqNLLEU+PJrAh/RFqc8Vzx4DLig5fKL
+         Etrxv/z8JASsncWUwrmJUDIg1a8wjZ0z/py8wtqsws4pNr+f2EqccClxb2+d5AG3wiAw
+         0qk4v1Vi4bhgj2UFi8Ir/JTMxgAMjN7RkhUa7S1Iy7PeovVJaqtIerGZp2jB5dG91B5N
+         XizrOUrfaX27gxfjeSuHVGMMNm7utP9YhcJItpezTFwfMoSs0rWdr6Eg4MhSZLdPxZkg
+         T7BD/swMCFb0sy55QEdXgBc6t1wEZbJAlytmuzEKDEKmeNIzr/R50KfSxE6nt3Zu4atZ
+         etZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=uyNmxWgVjtCDcTKlEYTWilkBglVV2Ve0yeaY0nXKyx0=;
+        b=hvGDIkCNJxYUJ0oeJAI/Pqu+i0CikNeXWNpAO7B5fMDIrDE0KFT1zhfBL9F+N+qN2g
+         vojmVYuhjep7zwYu9Ga8Gxfh+iwz7p/Ij5y8HNmtmyAyrGTDE+lQuGh/vjPR1aV7DZXp
+         AlunEQbPRPwPGZTimcv8rdGqsmzNNr/S8zWK3iN9jogrrwhpDr7dc9y4OpaKauOht0L+
+         mDPMqKOfT/JU4Mn08GEk9jCP6iVUv1vtSpj0ruO1Dk4MzGK8LlTRxBDf9pL6Jh7fJTdg
+         mhQoJdxgLYnosuFVanjjGB0bgDIG2q+3IXLIorxoBZ0VZbi2KeiOR1NuS90HA2PlQEgp
+         RhNw==
+X-Gm-Message-State: AGRZ1gIwkEgEpBnVeips3utTppecejKGo/UajFBy8LuWrwGlpNzW9+JX
+        I56/E9c5i2pber8tMmEvGVLnTBX6k1sGMZGwcRLgTQ==
+X-Google-Smtp-Source: AJdET5c/gq3O/Z4W9yonwE50p0RiUoyqtX929aFTVImK5J2FGjTftI0CuqxExKaDAf9KVkPjhDVCMW9TMRQ0eDbWpDQ=
+X-Received: by 2002:a67:6e87:: with SMTP id j129mr313033vsc.171.1540941048268;
+ Tue, 30 Oct 2018 16:10:48 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a67:f48d:0:0:0:0:0 with HTTP; Tue, 30 Oct 2018 16:10:47
+ -0700 (PDT)
+In-Reply-To: <20181030223343.GB105735@joelaf.mtv.corp.google.com>
+References: <20181029221037.87724-1-dancol@google.com> <20181030050012.u43lcvydy6nom3ul@yavin>
+ <CAKOZuesKVic-5epRj8XcFNR_63SgvaPcbjDQuSLxNrEfS=O=Jg@mail.gmail.com>
+ <20181030204501.jnbe7dyqui47hd2x@yavin> <20181030214243.GB32621@google.com>
+ <20181030222339.ud4wfp75tidowuo4@yavin> <20181030223343.GB105735@joelaf.mtv.corp.google.com>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Tue, 30 Oct 2018 23:10:47 +0000
+Message-ID: <CAKOZueuBdY_b=CVk29pzn0NAt9sJtzr6yqx9Y00WCppCm1JFWQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] Implement /proc/pid/kill
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The mm-of-the-moment snapshot 2018-10-30-16-08 has been uploaded to
+On Tue, Oct 30, 2018 at 10:33 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
+> On Wed, Oct 31, 2018 at 09:23:39AM +1100, Aleksa Sarai wrote:
+>> On 2018-10-30, Joel Fernandes <joel@joelfernandes.org> wrote:
+>> > On Wed, Oct 31, 2018 at 07:45:01AM +1100, Aleksa Sarai wrote:
+>> > [...]
+>> > > > > (Unfortunately
+>> > > > > there are lots of things that make it a bit difficult to use /proc/$pid
+>> > > > > exclusively for introspection of a process -- especially in the context
+>> > > > > of containers.)
+>> > > >
+>> > > > Tons of things already break without a working /proc. What do you have in mind?
+>> > >
+>> > > Heh, if only that was the only blocker. :P
+>> > >
+>> > > The basic problem is that currently container runtimes either depend on
+>> > > some non-transient on-disk state (which becomes invalid on machine
+>> > > reboots or dead processes and so on), or on long-running processes that
+>> > > keep file descriptors required for administration of a container alive
+>> > > (think O_PATH to /dev/pts/ptmx to avoid malicious container filesystem
+>> > > attacks). Usually both.
+>> > >
+>> > > What would be really useful would be having some way of "hiding away" a
+>> > > mount namespace (of the pid1 of the container) that has all of the
+>> > > information and bind-mounts-to-file-descriptors that are necessary for
+>> > > administration. If the container's pid1 dies all of the transient state
+>> > > has disappeared automatically -- because the stashed mount namespace has
+>> > > died. In addition, if this was done the way I'm thinking with (and this
+>> > > is the contentious bit) hierarchical mount namespaces you could make it
+>> > > so that the pid1 could not manipulate its current mount namespace to
+>> > > confuse the administrative process. You would also then create an
+>> > > intermediate user namespace to help with several race conditions (that
+>> > > have caused security bugs like CVE-2016-9962) we've seen when joining
+>> > > containers.
+>> > >
+>> > > Unfortunately this all depends on hierarchical mount namespaces (and
+>> > > note that this would just be that NS_GET_PARENT gives you the mount
+>> > > namespace that it was created in -- I'm not suggesting we redesign peers
+>> > > or anything like that). This makes it basically a non-starter.
+>> > >
+>> > > But if, on top of this ground-work, we then referenced containers
+>> > > entirely via an fd to /proc/$pid then you could also avoid PID reuse
+>> > > races (as well as being able to find out implicitly whether a container
+>> > > has died thanks to the error semantics of /proc/$pid). And that's the
+>> > > way I would suggest doing it (if we had these other things in place).
+>> >
+>> > I didn't fully follow exactly what you mean. If you can explain for the
+>> > layman who doesn't know much experience with containers..
+>> >
+>> > Are you saying that keeping open a /proc/$pid directory handle is not
+>> > sufficient to prevent PID reuse while the proc entries under /proc/$pid are
+>> > being looked into? If its not sufficient, then isn't that a bug? If it is
+>> > sufficient, then can we not just keep the handle open while we do whatever we
+>> > want under /proc/$pid ?
+>>
+>> Sorry, I went on a bit of a tangent about various internals of container
+>> runtimes. My main point is that I would love to use /proc/$pid because
+>> it makes reuse handling very trivial and is always correct, but that
+>> there are things which stop us from being able to use it for everything
+>> (which is what my incoherent rambling was on about).
+>
+> Ok thanks. So I am guessing if the following sequence works, then Dan's patch is not
+> needed.
+>
+> 1. open /proc/<pid> directory
+> 2. inspect /proc/<pid> or do whatever with <pid>
+> 3. Issue the kill on <pid>
+> 4. Close the /proc/<pid> directory opened in step 1.
+>
+> So unless I missed something, the above sequence will not cause any PID reuse
+> races.
 
-   http://www.ozlabs.org/~akpm/mmotm/
+Keeping a /proc/$PID directory file descriptor open does not prevent
+$PID being used to name some other process. If it could, you could
+pretty quickly fill a whole system's process table. See the program
+below, which demonstrates the PID collision.
 
-mmotm-readme.txt says
+I think Aleksa's larger point is that it's useful to treat processes
+as other file-descriptor-named, poll-able, wait-able resources.
+Consistency is important. A process is just another system resource,
+and like any other system resource, you should be open to hold a file
+descriptor to it and do things to that process via that file
+descriptor. The precise form of this process-handle FD is up for
+debate. The existing /proc/$PID directory FD is a good candidate for a
+process handle FD, since it does almost all of what's needed. But
+regardless of what form a process handle FD takes, we need it. I don't
+see a case for continuing to treat processes in a non-unixy,
+non-file-descriptor-based manner.
 
-README for mm-of-the-moment:
+#include <fcntl.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
-http://www.ozlabs.org/~akpm/mmotm/
+int
+main()
+{
+    int child_pid = fork();
+    if (child_pid < 0)
+        abort();
 
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
+    char buf[64];
+    int child_procfs_fd;
 
-You will need quilt to apply these patches to the latest Linus release (4.x
-or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-http://ozlabs.org/~akpm/mmotm/series
+    if (child_pid == 0) {
+        for (;;)
+            pause();
+        abort();
+    }
 
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
+    printf("child PID is %d\n", child_pid);
+    sprintf(buf, "/proc/%d", child_pid);
+    child_procfs_fd = open(buf, O_DIRECTORY | O_RDONLY);
+    if (child_procfs_fd < 0)
+        abort();
+    printf("FD# of open /proc/%d is %d\n",
+           child_pid,
+           child_procfs_fd);
+    printf("killing child with SIGKILL\n");
+    kill(child_pid, SIGKILL);
+    if (wait(NULL) != child_pid)
+        abort();
+    printf("child is now dead. PROCFS FD STILL OPEN\n");
+    for (;;) {
+        int new_child_pid = fork();
+        if (new_child_pid < 0)
+            abort();
+        if (new_child_pid == 0)
+            _exit(0);
+        // printf("new child PID: %d\n", new_child_pid);
+        if (wait(NULL) != new_child_pid)
+            abort();
+        if (new_child_pid == child_pid) {
+            printf("FOUND PID COLLISION %d\n", child_pid);
+            printf("old child had pid %d. new, "
+                   "different child has pid %d. "
+                   "procfs directory for old child still open!\n",
+                   child_pid, child_pid);
+            break;
+        }
+    }
 
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
-
-A git tree which contains the memory management portion of this tree is
-maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-by Michal Hocko.  It contains the patches which are between the
-"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
-file, http://www.ozlabs.org/~akpm/mmotm/series.
-
-
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
-
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
-
-To develop on top of mmotm git:
-
-  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-  $ git remote update mmotm
-  $ git checkout -b topic mmotm/master
-  <make changes, commit>
-  $ git send-email mmotm/master.. [...]
-
-To rebase a branch with older patches to a new mmotm release:
-
-  $ git remote update mmotm
-  $ git rebase --onto mmotm/master <topic base> topic
-
-
-
-
-The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is available at
-
-	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
-
-and use of this tree is similar to
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
-
-
-This mmotm tree contains the following patches against 4.19:
-(patches marked "*" will be included in linux-next)
-
-  origin.patch
-* mm-hmm-fix-utf8.patch
-* mm-rmap-map_pte-was-not-handling-private-zone_device-page-properly-v3.patch
-* mm-hmm-fix-race-between-hmm_mirror_unregister-and-mmu_notifier-callback.patch
-* mm-hmm-properly-handle-migration-pmd-v3.patch
-* mm-hmm-use-a-structure-for-update-callback-parameters-v2.patch
-* mm-hmm-invalidate-device-page-table-at-start-of-invalidation.patch
-* mm-gup_benchmark-prevent-integer-overflow-in-ioctl.patch
-* fs-proc-vmcorec-convert-to-use-vmf_error.patch
-* include-linux-compilerh-add-version-detection-to-asm_volatile_goto.patch
-* add-oleksij-rempel-to-mailmap.patch
-* treewide-remove-current_text_addr.patch
-* error-injection-remove-meaningless-null-pointer-check-before-debugfs_remove_recursive.patch
-* lib-bitmapc-remove-wrong-documentation.patch
-* linux-bitmaph-handle-constant-zero-size-bitmaps-correctly.patch
-* linux-bitmaph-remove-redundant-uses-of-small_const_nbits.patch
-* linux-bitmaph-fix-type-of-nbits-in-bitmap_shift_right.patch
-* linux-bitmaph-relax-comment-on-compile-time-constant-nbits.patch
-* lib-bitmapc-fix-remaining-space-computation-in-bitmap_print_to_pagebuf.patch
-* lib-bitmapc-simplify-bitmap_print_to_pagebuf.patch
-* lib-parserc-switch-match_strdup-over-to-use-kmemdup_nul.patch
-* lib-parserc-switch-match_u64int-over-to-use-match_strdup.patch
-* lib-parserc-switch-match_number-over-to-use-match_strdup.patch
-* zlib-remove-fall-through-warnings.patch
-* lib-sg_pool-remove-unnecessary-null-check-when-free-the-object.patch
-* lib-rbtreec-fix-typo-in-comment-of-rb_insert_augmented.patch
-* kstrtox-delete-unnecessary-casts.patch
-* compat-mark-expected-switch-fall-throughs.patch
-* checkpatch-remove-gcc_binary_constant-warning.patch
-* init-do_mountsc-add-root=partlabel=name-support.patch
-* hfsplus-prevent-btree-data-loss-on-root-split.patch
-* hfsplus-fix-bug-on-bnode-parent-update.patch
-* hfs-prevent-btree-data-loss-on-root-split.patch
-* hfs-fix-bug-on-bnode-parent-update.patch
-* hfsplus-prevent-btree-data-loss-on-enospc.patch
-* hfs-prevent-btree-data-loss-on-enospc.patch
-* hfsplus-fix-return-value-of-hfsplus_get_block.patch
-* hfs-fix-return-value-of-hfs_get_block.patch
-* hfsplus-update-timestamps-on-truncate.patch
-* hfs-update-timestamp-on-truncate.patch
-* hfs-fix-array-out-of-bounds-read-of-array-extent.patch
-* reiserfs-propagate-errors-from-fill_with_dentries-properly.patch
-* reiserfs-remove-workaround-code-for-gcc-3x.patch
-* fat-expand-a-slightly-out-of-date-comment.patch
-* fat-create-a-function-to-calculate-the-timezone-offest.patch
-* fat-add-functions-to-update-and-truncate-timestamps-appropriately.patch
-* fat-change-timestamp-updates-to-use-fat_truncate_time.patch
-* fat-truncate-inode-timestamp-updates-in-setattr.patch
-* kernel-fix-a-comment-error.patch
-* signal-mark-expected-switch-fall-throughs.patch
-* kernel-panic-do-not-append-newline-to-the-stack-protector-panic-string.patch
-* kernel-panic-filter-out-a-potential-trailing-newline.patch
-* ipc-ipcmni-limit-check-for-msgmni-and-shmmni.patch
-* ipc-ipcmni-limit-check-for-semmni.patch
-* lib-lz4-update-lz4-decompressor-module.patch
-* kbuild-fix-kernel-boundsc-w=1-warning.patch
-* percpu-cleanup-per_cpu_def_attributes-macro.patch
-* mm-remove-config_no_bootmem.patch
-* mm-remove-config_have_memblock.patch
-* mm-remove-bootmem-allocator-implementation.patch
-* mm-nobootmem-remove-dead-code.patch
-* memblock-rename-memblock_alloc_nid_try_nid-to-memblock_phys_alloc.patch
-* memblock-remove-_virt-from-apis-returning-virtual-address.patch
-* memblock-replace-alloc_bootmem_align-with-memblock_alloc.patch
-* memblock-replace-alloc_bootmem_low-with-memblock_alloc_low.patch
-* memblock-replace-__alloc_bootmem_node_nopanic-with-memblock_alloc_try_nid_nopanic.patch
-* memblock-replace-alloc_bootmem_pages_nopanic-with-memblock_alloc_nopanic.patch
-* memblock-replace-alloc_bootmem_low-with-memblock_alloc_low-2.patch
-* memblock-replace-__alloc_bootmem_nopanic-with-memblock_alloc_from_nopanic.patch
-* memblock-add-align-parameter-to-memblock_alloc_node.patch
-* memblock-replace-alloc_bootmem_pages_node-with-memblock_alloc_node.patch
-* memblock-replace-__alloc_bootmem_node-with-appropriate-memblock_-api.patch
-* memblock-replace-alloc_bootmem_node-with-memblock_alloc_node.patch
-* memblock-replace-alloc_bootmem_low_pages-with-memblock_alloc_low.patch
-* memblock-replace-alloc_bootmem_pages-with-memblock_alloc.patch
-* memblock-replace-__alloc_bootmem-with-memblock_alloc_from.patch
-* memblock-replace-alloc_bootmem-with-memblock_alloc.patch
-* mm-nobootmem-remove-bootmem-allocation-apis.patch
-* memblock-replace-free_bootmem_node-with-memblock_free.patch
-* memblock-replace-free_bootmem_late-with-memblock_free_late.patch
-* memblock-rename-free_all_bootmem-to-memblock_free_all.patch
-* memblock-rename-__free_pages_bootmem-to-memblock_free_pages.patch
-* mm-remove-nobootmem.patch
-* memblock-replace-bootmem_alloc_-with-memblock-variants.patch
-* mm-remove-include-linux-bootmemh.patch
-* docs-boot-time-mm-remove-bootmem-documentation.patch
-* memblock-stop-using-implicit-alignement-to-smp_cache_bytes.patch
-* memblock-warn-if-zero-alignment-was-requested.patch
-* android-binder-replace-vm_insert_page-with-vmf_insert_page.patch
-* mm-memory_hotplug-make-remove_memory-take-the-device_hotplug_lock.patch
-* mm-memory_hotplug-make-add_memory-take-the-device_hotplug_lock.patch
-* mm-memory_hotplug-fix-online-offline_pages-called-wo-mem_hotplug_lock.patch
-* powerpc-powernv-hold-device_hotplug_lock-when-calling-device_online.patch
-* powerpc-powernv-hold-device_hotplug_lock-when-calling-memtrace_offline_pages.patch
-* memory-hotplugtxt-add-some-details-about-locking-internals.patch
-* mm-fix-warning-in-insert_pfn.patch
-* mm-fix-__get_user_pages_fast-comment.patch
-* mm-handle-no-memcg-case-in-memcg_kmem_charge-properly.patch
-* kernel-srcu-fix-ctags.patch
-* mm-dont-reclaim-inodes-with-many-attached-pages.patch
-* mm-thp-always-specify-disabled-vmas-as-nh-in-smaps.patch
-* mm-thp-relax-__gfp_thisnode-for-madv_hugepage-mappings.patch
-* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
-* ocfs2-get-rid-of-ocfs2_is_o2cb_active-function.patch
-* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery.patch
-* ocfs2-dont-use-iocb-when-eiocbqueued-returns.patch
-* ocfs2-fix-a-misuse-a-of-brelse-after-failing-ocfs2_check_dir_entry.patch
-* ocfs2-dont-put-and-assigning-null-to-bh-allocated-outside.patch
-* ocfs2-dlmglue-clean-up-timestamp-handling.patch
-* fix-dead-lock-caused-by-ocfs2_defrag_extent.patch
-* ocfs2-fix-dead-lock-caused-by-ocfs2_defrag_extent.patch
-* fix-clusters-leak-in-ocfs2_defrag_extent.patch
-* fix-clusters-leak-in-ocfs2_defrag_extent-fix.patch
-* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
-* vfs-allow-dedupe-of-user-owned-read-only-files.patch
-* vfs-dedupe-should-return-eperm-if-permission-is-not-granted.patch
-  mm.patch
-* mm-thp-consolidate-thp-gfp-handling-into-alloc_hugepage_direct_gfpmask.patch
-* memory_hotplug-free-pages-as-higher-order.patch
-* memory_hotplug-free-pages-as-higher-order-fix.patch
-* mm-page_alloc-remove-software-prefetching-in-__free_pages_core.patch
-* z3fold-fix-wrong-handling-of-headless-pages.patch
-* mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
-* mm-swap-fix-race-between-swapoff-and-some-swap-operations-v6.patch
-* mm-fix-race-between-swapoff-and-mincore.patch
-* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock.patch
-* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock-fix.patch
-* mm-add-strictlimit-knob-v2.patch
-* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
-* mm-page_owner-align-with-pageblock_nr_pages.patch
-* mm-page_owner-align-with-pageblock_nr-pages.patch
-* info-task-hung-in-generic_file_write_iter.patch
-* kernel-kexec_file-remove-some-duplicated-include-file.patch
-* kernel-sysctlc-remove-duplicated-include.patch
-* bfs-add-sanity-check-at-bfs_fill_super.patch
-* ipc-allow-boot-time-extension-of-ipcmni-from-32k-to-8m.patch
-* ipc-allow-boot-time-extension-of-ipcmni-from-32k-to-8m-checkpatch-fixes.patch
-* ipc-conserve-sequence-numbers-in-extended-ipcmni-mode.patch
-  linux-next.patch
-  linux-next-rejects.patch
-* vfs-replace-current_kernel_time64-with-ktime-equivalent.patch
-* fix-read-buffer-overflow-in-delta-ipc.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  mutex-subsystem-synchro-test-module.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  slab-leaks3-default-y.patch
-  workaround-for-a-pci-restoring-bug.patch
+    return 0;
+}
