@@ -2,158 +2,93 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E233C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:18:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73353C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:18:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27F3F2080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:18:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27F3F2080A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 4430E2082D
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:18:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4430E2082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728301AbeJ3XLq (ORCPT
+        id S1728325AbeJ3XL5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 19:11:46 -0400
-Received: from ozlabs.org ([203.11.71.1]:58699 "EHLO ozlabs.org"
+        Tue, 30 Oct 2018 19:11:57 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:55956 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728033AbeJ3XLq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 19:11:46 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42ktpz4z82z9s8r;
-        Wed, 31 Oct 2018 01:18:03 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc:     Frank Rowand <frowand.list@gmail.com>
-Subject: Re: [PATCH 01/21] of: Add cpu node iterator for_each_of_cpu_node()
-In-Reply-To: <20180905193738.19325-2-robh@kernel.org>
-References: <20180905193738.19325-1-robh@kernel.org> <20180905193738.19325-2-robh@kernel.org>
-Date:   Wed, 31 Oct 2018 01:18:00 +1100
-Message-ID: <874ld3jz6v.fsf@concordia.ellerman.id.au>
+        id S1728177AbeJ3XL5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 19:11:57 -0400
+Received: from wd0370.dip.tu-dresden.de ([141.76.109.114] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.0:ECDHE_RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1gHUqN-0000An-Mt; Tue, 30 Oct 2018 15:18:07 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Vicente Bergas <vicencb@gmail.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/Rockchip SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC support" 
+        <linux-rockchip@lists.infradead.org>
+Subject: Re: [PATCH V2] DT: rockchip: Fix stability issues with the 'performance' governor on rock960
+Date:   Tue, 30 Oct 2018 15:18:06 +0100
+Message-ID: <10930709.0rTHelch2x@phil>
+In-Reply-To: <1539767918-26587-1-git-send-email-daniel.lezcano@linaro.org>
+References: <1539767918-26587-1-git-send-email-daniel.lezcano@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+Am Mittwoch, 17. Oktober 2018, 11:18:30 CET schrieb Daniel Lezcano:
+> When the performance governor is set as default, the rock960 hangs
+> around one minute after booting, whatever the activity is (idle, key
+> pressed, loaded, ...).
+> 
+> Based on the commit log found at https://patchwork.kernel.org/patch/10092377/
+> 
+> "vdd_log has no consumer and therefore will not be set to a specific
+> voltage. Still the PWM output pin gets configured and thence the vdd_log
+> output voltage will changed from it's default. Depending on the idle
+> state of the PWM this will slightly over or undervoltage the logic supply
+> of the RK3399 and cause instability with GbE (undervoltage) and PCIe
+> (overvoltage). Since the default value set by a voltage divider is the
+> correct supply voltage and we don't need to change it during runtime we
+> remove the rail from the devicetree completely so the PWM pin will not
+> be configured."
+> 
+> After removing the vdd-log from the rock960's specific DT, the board
+> does no longer hang and shows a stable behavior.
+> 
+> Apply the same change for the rock960 by removing the vdd-log from the
+> DT.
+> 
+> Fixes: 874846f1fccd ("arm64: dts: rockchip: add 96boards RK3399 Ficus board")
+> Tested-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-Sorry I missed this when you posted it.
+applied as fix for 4.20
+after including a stable-tag (board entered in previous kernel version)
+and modified subject line a bit.
 
-Rob Herring <robh@kernel.org> writes:
-> Iterating thru cpu nodes is a common pattern. Create a common iterator
-> which can find child nodes either by node name or device_type == cpu.
-> Using the former will allow for eventually dropping device_type
-> properties which are deprecated for FDT.
 
-Device trees we see on powerpc generally don't (never?) use "cpu" as the
-node name for CPU nodes. And many of those device trees come from
-firmware, so we can't update them.
+Thanks
+Heiko
 
-So dropping support for device_type is a non-starter from our POV.
 
-cheers
-
-> Cc: Frank Rowand <frowand.list@gmail.com>
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/of/base.c  | 39 +++++++++++++++++++++++++++++++++++++++
->  include/linux/of.h | 11 +++++++++++
->  2 files changed, 50 insertions(+)
->
-> diff --git a/drivers/of/base.c b/drivers/of/base.c
-> index a055cd1ef96d..4807db0a35b3 100644
-> --- a/drivers/of/base.c
-> +++ b/drivers/of/base.c
-> @@ -741,6 +741,45 @@ struct device_node *of_get_next_available_child(const struct device_node *node,
->  }
->  EXPORT_SYMBOL(of_get_next_available_child);
->
-> +/**
-> + *	of_get_next_cpu_node - Iterate on cpu nodes
-> + *	@prev:	previous child of the /cpus node, or NULL to get first
-> + *
-> + *	Returns a cpu node pointer with refcount incremented, use of_node_put()
-> + *	on it when done. Returns NULL when prev is the last child. Decrements
-> + *	the refcount of prev.
-> + */
-> +struct device_node *of_get_next_cpu_node(struct device_node *prev)
-> +{
-> +	struct device_node *next = NULL;
-> +	unsigned long flags;
-> +	struct device_node *node;
-> +
-> +	if (!prev)
-> +		node = of_find_node_by_path("/cpus");
-> +
-> +	raw_spin_lock_irqsave(&devtree_lock, flags);
-> +	if (prev)
-> +		next = prev->sibling;
-> +	else if (node) {
-> +		next = node->child;
-> +		of_node_put(node);
-> +	}
-> +	for (; next; next = next->sibling) {
-> +		if (!(of_node_name_eq(next, "cpu") ||
-> +		      (next->type && !of_node_cmp(next->type, "cpu"))))
-> +			continue;
-> +		if (!__of_device_is_available(next))
-> +			continue;
-> +		if (of_node_get(next))
-> +			break;
-> +	}
-> +	of_node_put(prev);
-> +	raw_spin_unlock_irqrestore(&devtree_lock, flags);
-> +	return next;
-> +}
-> +EXPORT_SYMBOL(of_get_next_cpu_node);
-> +
->  /**
->   * of_get_compatible_child - Find compatible child node
->   * @parent:	parent node
-> diff --git a/include/linux/of.h b/include/linux/of.h
-> index 99b0ebf49632..1aca0dbd35df 100644
-> --- a/include/linux/of.h
-> +++ b/include/linux/of.h
-> @@ -353,6 +353,8 @@ extern const void *of_get_property(const struct device_node *node,
->  				const char *name,
->  				int *lenp);
->  extern struct device_node *of_get_cpu_node(int cpu, unsigned int *thread);
-> +extern struct device_node *of_get_next_cpu_node(struct device_node *prev);
-> +
->  #define for_each_property_of_node(dn, pp) \
->  	for (pp = dn->properties; pp != NULL; pp = pp->next)
->
-> @@ -754,6 +756,11 @@ static inline struct device_node *of_get_cpu_node(int cpu,
->  	return NULL;
->  }
->
-> +static inline struct device_node *of_get_next_cpu_node(struct device_node *prev)
-> +{
-> +	return NULL;
-> +}
-> +
->  static inline int of_n_addr_cells(struct device_node *np)
->  {
->  	return 0;
-> @@ -1217,6 +1224,10 @@ static inline int of_property_read_s32(const struct device_node *np,
->  	for (child = of_get_next_available_child(parent, NULL); child != NULL; \
->  	     child = of_get_next_available_child(parent, child))
->
-> +#define for_each_of_cpu_node(cpu) \
-> +	for (cpu = of_get_next_cpu_node(NULL); cpu != NULL; \
-> +	     cpu = of_get_next_cpu_node(cpu))
-> +
->  #define for_each_node_with_property(dn, prop_name) \
->  	for (dn = of_find_node_with_property(NULL, prop_name); dn; \
->  	     dn = of_find_node_with_property(dn, prop_name))
-> --
-> 2.17.1
