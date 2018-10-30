@@ -2,170 +2,195 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85AF4C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F628C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:12:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41B0420827
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:11:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41B0420827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id BB84E20827
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:12:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aSM87JEo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB84E20827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbeJ3UEV (ORCPT
+        id S1727771AbeJ3UF2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 16:04:21 -0400
-Received: from foss.arm.com ([217.140.101.70]:51744 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727381AbeJ3UEV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 16:04:21 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1ABD8341;
-        Tue, 30 Oct 2018 04:11:19 -0700 (PDT)
-Received: from filthy-habits.cambridge.arm.com (filthy-habits.cambridge.arm.com [10.1.196.62])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5127C3F5D3;
-        Tue, 30 Oct 2018 04:11:18 -0700 (PDT)
-From:   Marc Zyngier <marc.zyngier@arm.com>
-To:     Santosh Shilimkar <ssantosh@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] soc: ti: QMSS: Fix usage of irq_set_affinity_hint
-Date:   Tue, 30 Oct 2018 11:11:03 +0000
-Message-Id: <20181030111103.12110-1-marc.zyngier@arm.com>
-X-Mailer: git-send-email 2.19.1
+        Tue, 30 Oct 2018 16:05:28 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:40089 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727381AbeJ3UF1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 16:05:27 -0400
+Received: by mail-ua1-f66.google.com with SMTP id n7so2133853uao.7
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 04:12:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=L1wMJ/fCyP2TUT8luWKsXO8NQtgXmY5wpEhcZkgnlow=;
+        b=aSM87JEoUbYVST668cQJMPxoFncyZ6U7B19c/JxLC7Tglqq7IoGURw/R0k201vYJ4z
+         /7FY32MI60Kx8mxm/bQbZyiFq/1U57y1ZVJ9j6IcvMemvagxHGgEUita9hik8yIX1h70
+         q7+3AAZez4tXDpZt6yQoUE5xeP/w+2P/B5dm3xXDbQ1wtIaTzOYr0/aEtZbfo0PsoB4m
+         xpkt18AtKfzSFYqjGKSRCWs0Ma4Wr8KEotaUMBAcsRLBIp0anfAORIaN+L/50C2QXD1o
+         s4rf6q5Y9jsyuU2G2yvy2XhdbZXvGgKQ039PpWMuDg365GKrSWE6T1+pIz4iDrfuN+0p
+         fKFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=L1wMJ/fCyP2TUT8luWKsXO8NQtgXmY5wpEhcZkgnlow=;
+        b=JwU2PXOGnDKuP1XNlmtXCKIXRnTp4IeHJJpgEqtE3apR+7deWz7emn8LUZrFk7LzBB
+         W7Qu4Dl6php26rkC828ZxlWhgBAWTx/T1yo81Yl0dQj/5srrbAfmgf4nQ4gk8tmKDysN
+         oEuo+Bly3IBjtAwwxLaQlWP/Bu+BAUGdwJ2ZN86sqZl3tCOjXkaSX5P2syYqOVWt3iZ0
+         VGQxB+zP7ioUz+Jl/N510gnDKms2db6yvMa0KUqGAW5A0aMR3YIJGyrl1iLw2QP56Ns/
+         Ed+s3Tvj77i2WawcE0OnUHNNpTnRkPzRB/DSNFwzB4V8AxBH5tV7UVwpMEQ0HaVGAE2o
+         dpgQ==
+X-Gm-Message-State: AGRZ1gIxEIbJsvnQ9aDD90hSVW5aoHLPvYySTrbr1q9P4u3hZuoPdSWa
+        1J+FiEBzfGtHu+XZ0Nc4SdXvLRvt6dC/IM/2BMWUYs+v/YM=
+X-Google-Smtp-Source: AJdET5fsvSkA7RGCplYknBunJYQfkFz3nObvGytlMJiiw4eZ5ScgoMD7w3dNo1buJ9Svc4nLHYeY26PFIKW6j1wC1UU=
+X-Received: by 2002:ab0:5648:: with SMTP id z8mr7140326uaa.126.1540897941866;
+ Tue, 30 Oct 2018 04:12:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a67:f492:0:0:0:0:0 with HTTP; Tue, 30 Oct 2018 04:12:21
+ -0700 (PDT)
+In-Reply-To: <CAPP7u0VE-4c10A7A+WO+rMFbNF42CROP7+xGttzU_3HWQk883Q@mail.gmail.com>
+References: <20181029221037.87724-1-dancol@google.com> <CAJWu+oquh1RXz+1tD91NzvicYAL3GP0KVi7RLR2cgouSgHXjOw@mail.gmail.com>
+ <CAKOZueub941EHifyf7zEk_yvf=2P+HV-8esE1QPFypRoxtt1qQ@mail.gmail.com>
+ <20181030103910.mnzot3zcoh6j7did@gmail.com> <20181030104037.73t5uz3piywxwmye@gmail.com>
+ <CAKOZuesb4ns1dM7itX9uzvYBGp_aSgQXV1ONuV4eQRq0FiehYQ@mail.gmail.com> <CAPP7u0VE-4c10A7A+WO+rMFbNF42CROP7+xGttzU_3HWQk883Q@mail.gmail.com>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Tue, 30 Oct 2018 11:12:21 +0000
+Message-ID: <CAKOZueswuOTvkOeuipRwg5VCYGvpf=8j1ChJftAk_fJO6xPPtQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] Implement /proc/pid/kill
+To:     Christian Brauner <christian.brauner@canonical.com>
+Cc:     Joel Fernandes <joelaf@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Keystone QMSS driver is pretty damaged, in the sense that it
-does things like this:
+On Tue, Oct 30, 2018 at 11:04 AM, Christian Brauner
+<christian.brauner@canonical.com> wrote:
+> On Tue, Oct 30, 2018 at 11:48 AM Daniel Colascione <dancol@google.com> wrote:
+>>
+>> On Tue, Oct 30, 2018 at 10:40 AM, Christian Brauner
+>> <christian.brauner@canonical.com> wrote:
+>> > On Tue, Oct 30, 2018 at 11:39:11AM +0100, Christian Brauner wrote:
+>> >> On Tue, Oct 30, 2018 at 08:50:22AM +0000, Daniel Colascione wrote:
+>> >> > On Tue, Oct 30, 2018 at 3:21 AM, Joel Fernandes <joelaf@google.com> wrote:
+>> >> > > On Mon, Oct 29, 2018 at 3:11 PM Daniel Colascione <dancol@google.com> wrote:
+>> >> > >>
+>> >> > >> Add a simple proc-based kill interface. To use /proc/pid/kill, just
+>> >> > >> write the signal number in base-10 ASCII to the kill file of the
+>> >> > >> process to be killed: for example, 'echo 9 > /proc/$$/kill'.
+>> >> > >>
+>> >> > >> Semantically, /proc/pid/kill works like kill(2), except that the
+>> >> > >> process ID comes from the proc filesystem context instead of from an
+>> >> > >> explicit system call parameter. This way, it's possible to avoid races
+>> >> > >> between inspecting some aspect of a process and that process's PID
+>> >> > >> being reused for some other process.
+>> >> > >>
+>> >> > >> With /proc/pid/kill, it's possible to write a proper race-free and
+>> >> > >> safe pkill(1). An approximation follows. A real program might use
+>> >> > >> openat(2), having opened a process's /proc/pid directory explicitly,
+>> >> > >> with the directory file descriptor serving as a sort of "process
+>> >> > >> handle".
+>> >> > >
+>> >> > > How long does the 'inspection' procedure take? If its a short
+>> >> > > duration, then is PID reuse really an issue, I mean the PIDs are not
+>> >> > > reused until wrap around and the only reason this can be a problem is
+>> >> > > if you have the wrap around while the 'inspecting some aspect'
+>> >> > > procedure takes really long.
+>> >> >
+>> >> > It's a race. Would you make similar statements about a similar fix for
+>> >> > a race condition involving a mutex and a double-free just because the
+>> >> > race didn't crash most of the time? The issue I'm trying to fix here
+>> >> > is the same problem, one level higher up in the abstraction hierarchy.
+>> >> >
+>> >> > > Also the proc fs is typically not the right place for this. Some
+>> >> > > entries in proc are writeable, but those are for changing values of
+>> >> > > kernel data structures. The title of man proc(5) is "proc - process
+>> >> > > information pseudo-filesystem". So its "information" right?
+>> >> >
+>> >> > Why should userspace care whether a particular operation is "changing
+>> >> > [a] value[] of [a] kernel data structure" or something else? That
+>> >> > something in /proc is a struct field is an implementation detail. It's
+>> >> > the interface semantics that matters, and whether a particular
+>> >> > operation is achieved by changing a struct field or by making a
+>> >> > function call is irrelevant to userspace. Proc is a filesystem about
+>> >> > processes. Why shouldn't you be able to send a signal to a process via
+>> >> > proc? It's an operation involving processes.
+>> >> >
+>> >> > It's already possible to do things *to* processes via proc, e.g.,
+>> >> > adjust OOM killer scores. Proc filesystem file descriptors are
+>> >> > userspace references to kernel-side struct pid instances, and as such,
+>> >> > make good process handles. There are already "verb" files in procfs,
+>> >> > such as /proc/sys/vm/drop_caches and /proc/sysrq-trigger. Why not add
+>> >> > a kill "verb", especially if it closes a race that can't be closed
+>> >> > some other way?
+>> >> >
+>> >> > You could implement this interface as a system call that took a procfs
+>> >> > directory file descriptor, but relative to this proposal, it would be
+>> >> > all downside. Such a thing would act just the same way as
+>> >> > /pric/pid/kill, and wouldn't be usable from the shell or from programs
+>> >> > that didn't want to use syscall(2). (Since glibc isn't adding new
+>> >> > system call wrappers.) AFAIK, the only downside of having a "kill"
+>> >> > file is the need for a string-to-integer conversion, but compared to
+>> >> > process killing, integer parsing is insignificant.
+>> >> >
+>> >> > > IMO without a really good reason for this, it could really be a hard
+>> >> > > sell but the RFC was worth it anyway to discuss it ;-)
+>> >> >
+>> >> > The traditional unix process API is down there at level -10 of Rusty
+>> >> > Russel's old bad API scale: "It's impossible to get right". The races
+>> >> > in the current API are unavoidable. That most programs don't hit these
+>> >> > races most of the time doesn't mean that the race isn't present.
+>> >> >
+>> >> > We've moved to a model where we identify other system resources, like
+>> >> > DRM fences, locks, sockets, and everything else via file descriptors.
+>> >> > This change is a step toward using procfs file descriptors to work
+>> >> > with processes, which makes the system more regular and easier to
+>> >> > reason about. A clean API that's possible to use correctly is a
+>> >> > worthwhile project.
+>> >>
+>> >> So I have been disucssing a new process API With David Howells, Kees
+>> >> Cook and a few others and I am working on an RFC/proposal for this. It
+>> >> is partially inspired by the new mount API. So I would like to block
+>> >> this patch until then. I would like to get this right very much and
+>>
+>> It's good to hear that others are thinking about this problem.
+>>
+>> >> I
+>> >> don't think this is the way to go.
+>
+> Because we want this to be generic and things like getting handles on
+> processes via /proc is just a part of that
 
-	irq_set_affinity_hint(irq, to_cpumask(&cpu_map));
+The word "generic" is like the word "secure": it's hard to tell what
+it means in isolation. :-) Over what domain do we need to be generic?
+Procfs file descriptors already work on processes generally, and they
+allow for race-free access to anything that's reachable via a procfs
+pid directory. In what way would an alternate approach be even more
+generic?
 
-where cpu_map is a local variable. As we leave the function, this
-will point to nowhere-land, and things will end-up badly.
+>> Why not?
+>>
+>> Does your proposed API allow for a race-free pkill, with arbitrary
+>> selection criteria? This capability is a good litmus test for fixing
+>> the long-standing Unix process API issues.
+>
+> You'd have a handle on the process with an fd so yes, it would be.
 
-Instead, let's use a proper cpumask that gets allocated, giving
-the driver a chance to actually work with things like irqbalance
-as well as have a hypothetical 64bit future.
+Thanks. That's good to hear.
 
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
----
-I found this one by inspection after finding a similar bug in an
-unrelated driver. It is only compile-tested. It would probably
-a Cc stable, but that's Santosh's decision.
-
- drivers/soc/ti/knav_qmss.h       |  4 ++--
- drivers/soc/ti/knav_qmss_acc.c   | 10 +++++-----
- drivers/soc/ti/knav_qmss_queue.c | 22 +++++++++++++++-------
- 3 files changed, 22 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/soc/ti/knav_qmss.h b/drivers/soc/ti/knav_qmss.h
-index 3efc47e82973..bd040c29c4bf 100644
---- a/drivers/soc/ti/knav_qmss.h
-+++ b/drivers/soc/ti/knav_qmss.h
-@@ -329,8 +329,8 @@ struct knav_range_ops {
- };
- 
- struct knav_irq_info {
--	int	irq;
--	u32	cpu_map;
-+	int		irq;
-+	struct cpumask	*cpu_mask;
- };
- 
- struct knav_range_info {
-diff --git a/drivers/soc/ti/knav_qmss_acc.c b/drivers/soc/ti/knav_qmss_acc.c
-index 316e82e46f6c..2f7fb2dcc1d6 100644
---- a/drivers/soc/ti/knav_qmss_acc.c
-+++ b/drivers/soc/ti/knav_qmss_acc.c
-@@ -205,18 +205,18 @@ static int knav_range_setup_acc_irq(struct knav_range_info *range,
- {
- 	struct knav_device *kdev = range->kdev;
- 	struct knav_acc_channel *acc;
--	unsigned long cpu_map;
-+	struct cpumask *cpu_mask;
- 	int ret = 0, irq;
- 	u32 old, new;
- 
- 	if (range->flags & RANGE_MULTI_QUEUE) {
- 		acc = range->acc;
- 		irq = range->irqs[0].irq;
--		cpu_map = range->irqs[0].cpu_map;
-+		cpu_mask = range->irqs[0].cpu_mask;
- 	} else {
- 		acc = range->acc + queue;
- 		irq = range->irqs[queue].irq;
--		cpu_map = range->irqs[queue].cpu_map;
-+		cpu_mask = range->irqs[queue].cpu_mask;
- 	}
- 
- 	old = acc->open_mask;
-@@ -239,8 +239,8 @@ static int knav_range_setup_acc_irq(struct knav_range_info *range,
- 			acc->name, acc->name);
- 		ret = request_irq(irq, knav_acc_int_handler, 0, acc->name,
- 				  range);
--		if (!ret && cpu_map) {
--			ret = irq_set_affinity_hint(irq, to_cpumask(&cpu_map));
-+		if (!ret && cpu_mask) {
-+			ret = irq_set_affinity_hint(irq, cpu_mask);
- 			if (ret) {
- 				dev_warn(range->kdev->dev,
- 					 "Failed to set IRQ affinity\n");
-diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
-index b5d5673c255c..8b418379272d 100644
---- a/drivers/soc/ti/knav_qmss_queue.c
-+++ b/drivers/soc/ti/knav_qmss_queue.c
-@@ -118,19 +118,17 @@ static int knav_queue_setup_irq(struct knav_range_info *range,
- 			  struct knav_queue_inst *inst)
- {
- 	unsigned queue = inst->id - range->queue_base;
--	unsigned long cpu_map;
- 	int ret = 0, irq;
- 
- 	if (range->flags & RANGE_HAS_IRQ) {
- 		irq = range->irqs[queue].irq;
--		cpu_map = range->irqs[queue].cpu_map;
- 		ret = request_irq(irq, knav_queue_int_handler, 0,
- 					inst->irq_name, inst);
- 		if (ret)
- 			return ret;
- 		disable_irq(irq);
--		if (cpu_map) {
--			ret = irq_set_affinity_hint(irq, to_cpumask(&cpu_map));
-+		if (range->irqs[queue].cpu_mask) {
-+			ret = irq_set_affinity_hint(irq, range->irqs[queue].cpu_mask);
- 			if (ret) {
- 				dev_warn(range->kdev->dev,
- 					 "Failed to set IRQ affinity\n");
-@@ -1262,9 +1260,19 @@ static int knav_setup_queue_range(struct knav_device *kdev,
- 
- 		range->num_irqs++;
- 
--		if (IS_ENABLED(CONFIG_SMP) && oirq.args_count == 3)
--			range->irqs[i].cpu_map =
--				(oirq.args[2] & 0x0000ff00) >> 8;
-+		if (IS_ENABLED(CONFIG_SMP) && oirq.args_count == 3) {
-+			unsigned long mask;
-+			int bit;
-+
-+			range->irqs[i].cpu_mask = devm_kzalloc(dev,
-+							       cpumask_size(), GFP_KERNEL);
-+			if (!range->irqs[i].cpu_mask)
-+				return -ENOMEM;
-+
-+			mask = (oirq.args[2] & 0x0000ff00) >> 8;
-+			for_each_set_bit(bit, &mask, BITS_PER_LONG)
-+				cpumask_set_cpu(bit, range->irqs[i].cpu_mask);
-+		}
- 	}
- 
- 	range->num_irqs = min(range->num_irqs, range->num_queues);
--- 
-2.19.1
-
+Any idea on the timetable for this proposal? I'm open to lots of
+alternative technical approaches, but I don't want this capability to
+languish for a long time.
