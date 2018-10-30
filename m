@@ -2,192 +2,96 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30F02C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:24:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A33C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:25:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D97832075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:24:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D97832075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 613702075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:25:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 613702075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727503AbeJaASB convert rfc822-to-8bit (ORCPT
+        id S1727558AbeJaAS5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 20:18:01 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:54207 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726218AbeJaASB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 20:18:01 -0400
-Received: from mail-pl1-f200.google.com ([209.85.214.200])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1gHVsC-0003XJ-II
-        for linux-kernel@vger.kernel.org; Tue, 30 Oct 2018 15:24:04 +0000
-Received: by mail-pl1-f200.google.com with SMTP id j1-v6so9527479pll.8
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 08:24:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=7X5OM6eM05JKcwiLbw/BtEAqd6PLa8zPq/ba9q3jBjA=;
-        b=B4IxU9BhKy57rkwMPAMO+aeKBkeSfVvu1izg1VRP12Fd54NqV/bR2hBWcqrwGzfW/m
-         wMqkchITpv2r5qdN96v/3korTYSUmxh+SV+zzjEZZLw74JZH/F2/ARmOfV/XhBMNkKG6
-         DT06FdyLmgO6GFJ9NGgIkYKdba+PbgPe1ax9u84r2IWPo+Gg02KbnoPfi4hMCDQT6OQD
-         q/lE17fyrWtTK+QVOCuHX9Yxilin0dCqjMQbMSB5iqfmmzyy7/vm4SLq8AnR+ga/nqjr
-         0oWezr+QxsOZcaLPApsXtlzoyJXQdwT7ValIiFoUXREiQU768sE0XTD+jx0X5rHaiUCu
-         Uw8w==
-X-Gm-Message-State: AGRZ1gLioeUiXaqhA4ecgApmw4Vw3mijFpjUr4lJJD5JC7XhBiLv6Guk
-        x77FtsQkspdQSkHzJpcorsiJLGBxivgMWGzkZ4P05jp0yjO4cQ8nWdVTzwnzyyHno+Fy0cdx+r+
-        Xh/iKVDZEowrK8UMvfWDZRSEsXCXKHavx9bfQQgqAsA==
-X-Received: by 2002:a63:2c5:: with SMTP id 188mr1355669pgc.400.1540913043179;
-        Tue, 30 Oct 2018 08:24:03 -0700 (PDT)
-X-Google-Smtp-Source: AJdET5dvK2Jxn/UbPbaA70IPYuFIsE6M/uQV2rDEf4An4Te7nlm+RxG8qDW+ez9glR7UGWbJk45VWg==
-X-Received: by 2002:a63:2c5:: with SMTP id 188mr1355651pgc.400.1540913042733;
-        Tue, 30 Oct 2018 08:24:02 -0700 (PDT)
-Received: from 2001-b011-380f-1f39-25e6-f27b-5378-368e.dynamic-ip6.hinet.net (2001-b011-380f-1f39-25e6-f27b-5378-368e.dynamic-ip6.hinet.net. [2001:b011:380f:1f39:25e6:f27b:5378:368e])
-        by smtp.gmail.com with ESMTPSA id r81-v6sm56623112pfa.110.2018.10.30.08.24.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 08:24:01 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
-Subject: Re: [PATCH 2/4 v5] memstick: Prevent memstick host from getting
- runtime suspended during card detection
-From:   Kai Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <CAPDyKFrNBH5jrfF9M_BcTr9JfzAxj0doaQU7V4o5sJRp1=7P4w@mail.gmail.com>
-Date:   Tue, 30 Oct 2018 23:23:59 +0800
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <3881A95A-CDDE-4C69-859F-C1F92F0C5724@canonical.com>
-References: <20181024084958.4627-1-kai.heng.feng@canonical.com>
- <20181024084958.4627-3-kai.heng.feng@canonical.com>
- <CAPDyKFrtQeDUK0Dxu9Z3-eyyMbChHHb2He1AFq2My_7-cTY2FA@mail.gmail.com>
- <E8BC3191-E48C-423C-B704-929F7FAC4930@canonical.com>
- <CAPDyKFrNBH5jrfF9M_BcTr9JfzAxj0doaQU7V4o5sJRp1=7P4w@mail.gmail.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-X-Mailer: Apple Mail (2.3445.100.39)
+        Tue, 30 Oct 2018 20:18:57 -0400
+Received: from mga06.intel.com ([134.134.136.31]:45585 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726218AbeJaAS5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 20:18:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 08:25:02 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,444,1534834800"; 
+   d="scan'208";a="86471608"
+Received: from dbbernha-mobl.amr.corp.intel.com (HELO [10.254.77.95]) ([10.254.77.95])
+  by orsmga008.jf.intel.com with ESMTP; 30 Oct 2018 08:25:01 -0700
+Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>
+Cc:     duffydack73@gmail.com, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Johannes Stezenbach <js@sig21.net>,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        mogens-jensen@protonmail.com
+References: <20181025232517.ywnw54qibemosjws@picard>
+ <154083512089.98144.9141070901932719147@swboyd.mtv.corp.google.com>
+ <CAHp75VfnN5tF1Z9+CDDhKFNG5QfCRcGOZeAkpf-5BfCEx16gvg@mail.gmail.com>
+ <CAHp75VctdBE-GM60udJawBCXdmoOqZn4N=kFWz5GLHzjPG2iQQ@mail.gmail.com>
+ <20181029190819.2ivlx73n6y6sx4vk@picard>
+ <ffc4bcc9-62c3-8940-85d6-d0fd01f3a1b8@linux.intel.com>
+ <c8fb730a-c160-41b4-dad0-8ed8594e5687@redhat.com>
+ <20181030143836.feo7zcxiestylxoo@picard>
+ <d21fe935-5732-7f8c-2c26-3fc3969b4c1c@redhat.com>
+ <CAHp75Ve8FjHLYkq1uXhen40DDj8DJa42vXXs83qDimigcH-=DA@mail.gmail.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <4399344e-712b-c54f-492d-2cbdaad509d6@linux.intel.com>
+Date:   Tue, 30 Oct 2018 10:25:00 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <CAHp75Ve8FjHLYkq1uXhen40DDj8DJa42vXXs83qDimigcH-=DA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-
-> On Oct 30, 2018, at 21:03, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> 
-> On 29 October 2018 at 17:31, Kai Heng Feng <kai.heng.feng@canonical.com> wrote:
->> 
->> 
->>> On Oct 29, 2018, at 20:25, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->>> 
->>> On 24 October 2018 at 10:49, Kai-Heng Feng <kai.heng.feng@canonical.com> wrote:
->>>> We can use MEMSTICK_POWER_{ON,OFF} along with pm_runtime_{get,put}
->>>> helpers to let memstick host support runtime pm.
->>>> 
->>>> There's a small window between memstick_detect_change() and its queued
->>>> work, memstick_check(). In this window the rpm count may go down to zero
->>>> before the memstick host powers on, so the host can be inadvertently
->>>> suspended.
->>>> 
->>>> Increment rpm count before calling memstick_check(), and decrement rpm
->>>> count afterward, as now we are sure the memstick host should be
->>>> suspended or not.
->>>> 
->>>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->>>> ---
->>>> drivers/memstick/core/memstick.c | 4 ++++
->>>> 1 file changed, 4 insertions(+)
->>>> 
->>>> diff --git a/drivers/memstick/core/memstick.c b/drivers/memstick/core/memstick.c
->>>> index 76382c858c35..5f16a8826401 100644
->>>> --- a/drivers/memstick/core/memstick.c
->>>> +++ b/drivers/memstick/core/memstick.c
->>>> @@ -18,6 +18,7 @@
->>>> #include <linux/delay.h>
->>>> #include <linux/slab.h>
->>>> #include <linux/module.h>
->>>> +#include <linux/pm_runtime.h>
->>>> 
->>>> #define DRIVER_NAME "memstick"
->>>> 
->>>> @@ -209,6 +210,7 @@ static int memstick_dummy_check(struct memstick_dev *card)
->>>> */
->>>> void memstick_detect_change(struct memstick_host *host)
->>>> {
->>>> +       pm_runtime_get_noresume(host->dev.parent);
->>>>       queue_work(workqueue, &host->media_checker);
->>>> }
->>>> EXPORT_SYMBOL(memstick_detect_change);
->>>> @@ -479,6 +481,8 @@ static void memstick_check(struct work_struct *work)
->>>>               host->set_param(host, MEMSTICK_POWER, MEMSTICK_POWER_OFF);
->>>> 
->>>>       mutex_unlock(&host->lock);
->>>> +
->>>> +       pm_runtime_put(host->dev.parent);
->>>>       dev_dbg(&host->dev, "memstick_check finished\n");
->>>> }
->>>> 
->>> 
->>> I am not sure this works, sorry.
->>> 
->>> More precisely, I don't think there is a guarantee that the calls to
->>> pm_runtime_get|put*() becomes properly balanced. In principle
->>> memstick_detect_change() could be called, without actually causing a
->>> new work to be scheduled if there is already such a work in the queue
->>> (depends on the workqueue configuration). Isn't it so?
->> 
->> You are right.
->> 
->> We can use test_and_set_bit() or alike to properly balance pm_runtime
->> helpers, but the most straightforward solution in my mind is to merge
->> memstick_detect_change() and memstick_check() as one function.
->> 
->> memstick_detect_change() it’s the only user of memstick_check() anyway.
-> 
-> I suspect memstick_detect_change() is supposed to be called by host
-> drivers, when they receive some kind of notification due to a card
-> being inserted or removed. I guess that happen (at least
-> hypothetically) also from atomic (IRQ) context.
-> 
-> As memstick_check() is doing hole bunch of operations, I am not sure
-> bypassing the work-queue is a good idea, if that is what you are
-> proposing.
-
-Okay, it’s better to keep it that way.
-
-> 
->> 
->> Or is there a better way in your mind?
-> 
-> I don't know.
-> 
-> Well, I am not sure I understand why you need to call
-> pm_runtime_get_noresume() from memstick_detect_change() in the first
-> place. Could you explain that in more detail?
-
-I guess it didn’t explain it well enough in the log, let me add some detail:
-There's a small window between memstick_detect_change() and its queued
-work, memstick_check(). In this window the rpm count may go down to zero
-before the memstick host powers on, where I use
-pm_runtime_get_noresume() to increment the rpm count.
-
-memstick_check() uses some functions in rtsx_usb_ms that have
-pm_runtime_put*() so the rpm count may go down to zero, before the
-memstick host powers on.
-
-Kai-Heng
-
-> 
-> Kind regards
-> Uffe
-
+On 10/30/18 10:03 AM, Andy Shevchenko wrote:
+> On Tue, Oct 30, 2018 at 4:48 PM Hans de Goede <hdegoede@redhat.com> wrote:
+>> On 30-10-18 15:38, Dean Wallace wrote:
+>>> Excellent work Hans.  Compiled 4.19 with
+>>> 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch, sound
+>>> works as before.
+>>>
+>>> for i in /sys/kernel/debug/clk/pmc_plt_clk_?; do echo -n "$i: "; cat $i/clk_flags; echo; done
+>>> /sys/kernel/debug/clk/pmc_plt_clk_0:
+>>> /sys/kernel/debug/clk/pmc_plt_clk_1:
+>>> /sys/kernel/debug/clk/pmc_plt_clk_2:
+>>> /sys/kernel/debug/clk/pmc_plt_clk_3:
+>>> /sys/kernel/debug/clk/pmc_plt_clk_4:
+>>> /sys/kernel/debug/clk/pmc_plt_clk_5:
+>> Ok, so as I expected the Swanky is using pmc_plt_clk_0
+>> as mclk instead of pmc_plt_clk_3. Now the question
+>> becomes is this true for all the designs using the
+>> max98090 codec?
+>> 1) Unconditionally use pmc_plt_clk_0 as mclk (as my test patch does)
+>> in the cht_bsw_max98090_ti.c machine driver
+> I don't know the details, but the main question here indeed do we ever
+> had a working example of that machine with CLK #3 in use?
+yes, Rambi/Orco (Baytrail based).
+>
+> P.S. I would go your first proposal until the opposite will be proved.
+>
