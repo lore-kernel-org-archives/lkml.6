@@ -2,141 +2,119 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D0EC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 07:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC07C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 07:55:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B64F20823
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 07:55:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B64F20823
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=xiaomi.com
+	by mail.kernel.org (Postfix) with ESMTP id 51A1120823
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 07:55:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iAUi4Nz9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51A1120823
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726491AbeJ3QrU (ORCPT
+        id S1726985AbeJ3Qrr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 12:47:20 -0400
-Received: from outboundhk.mxmail.xiaomi.com ([207.226.244.126]:52637 "EHLO
-        outboundhk.mxmail.xiaomi.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726196AbeJ3QrU (ORCPT
+        Tue, 30 Oct 2018 12:47:47 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37213 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726493AbeJ3Qrr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 12:47:20 -0400
-X-AuditID: 0a3808ce-4afff70000012663-85-5bd80ddce9e1
-Received: from xiaomi.com (cnbox2.mioffice.cn [10.237.8.142])
-        by outboundhk.mxmail.xiaomi.com (xiaomi.com) with SMTP id D7.77.09827.CDD08DB5; Tue, 30 Oct 2018 15:53:00 +0800 (HKT)
-Received: from localhost (10.237.91.193) by cnbox2.mioffice.cn (10.237.8.142)
- with Microsoft SMTP Server (TLS) id 15.0.1365.1; Tue, 30 Oct 2018 15:52:59
- +0800
-From:   Peng Wang <wangpeng15@xiaomi.com>
-To:     <keescook@chromium.org>, <anton@enomsg.org>, <ccross@android.com>,
-        <tony.luck@intel.com>, <joel@joelfernandes.org>
-CC:     <linux-kernel@vger.kernel.org>, <vipwangerxiao@gmail.com>,
-        Peng Wang <wangpeng15@xiaomi.com>
-Subject: [PATCH v4] pstore: Avoid duplicate call of persistent_ram_zap()
-Date:   Tue, 30 Oct 2018 15:52:34 +0800
-Message-ID: <20181030075234.21137-1-wangpeng15@xiaomi.com>
-X-Mailer: git-send-email 2.19.1
+        Tue, 30 Oct 2018 12:47:47 -0400
+Received: by mail-wm1-f68.google.com with SMTP id p2-v6so10290986wmc.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 00:55:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=WmyCKMv07XMDvUOnOjyH62nnn/qafLYfJ5ZNEqaVqoQ=;
+        b=iAUi4Nz9S3pjXM6yK8JWzgw5DiUzJ54geSSQZUAw8ms+j1XV5ACSAkPmF/FN9A9T6+
+         oVax5OaUnMWKdKDScx+feR4hBlZZjBVhvjkMazfqNfQnxt+SWgYP898BKEbpDIBzL9UB
+         +OGnD3CDpydmi16kH64GuEQGpWnEumAa6ednw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=WmyCKMv07XMDvUOnOjyH62nnn/qafLYfJ5ZNEqaVqoQ=;
+        b=irncm0kphe+7WmS7wamvAmuUmxalZCq3IIl0dReaV5Sno9rfTErCBj1yzegYLr5dX6
+         2+vxDLgnqQZEQwCcWigMpPZjLw84Q/A74RKdh9VmgHklxxTky1vZAyD1sTJVOz/fOt32
+         lR4ge4idux6WkzsS8h275PXU2I+JlF39URMKvBkTOvNRCNOyqp6FKkDOkeQjO1/OU5aD
+         zp9Vqs318gxlniwwdw1HccvXYhX++VgIf7tktWGCCc137OWW1FZBPfdsjotLCxGS+uv5
+         S84BmK75DO+Sdy3R6Ii4R6UlB/Q49DW+2qcyx83Iz2yteu88u5wHfYUA9Hxb/LjWnoec
+         eJzg==
+X-Gm-Message-State: AGRZ1gJr7ApvNFd/IVYT2ZvXYf20+Bo2euVYgR6wc/K5wVJt6MTfgpS6
+        GULP6d3I+oZR30jYQj8kM+fTjw==
+X-Google-Smtp-Source: AJdET5dpyGMFfRgwb49TDAGbnG1rc8izS6wDnhopduqbWaQtgIx2Q+0ktr8xOdtQTaTLALsfKCu1/g==
+X-Received: by 2002:a1c:870c:: with SMTP id j12-v6mr838368wmd.40.1540886122410;
+        Tue, 30 Oct 2018 00:55:22 -0700 (PDT)
+Received: from [192.168.0.40] (137.55.88.92.rev.sfr.net. [92.88.55.137])
+        by smtp.googlemail.com with ESMTPSA id b5-v6sm2511727wrf.15.2018.10.30.00.55.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 00:55:21 -0700 (PDT)
+Subject: Re: [PATCH 1/4] base/drivers/arch_topology: Remove useless check
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+References: <1540830201-2947-1-git-send-email-daniel.lezcano@linaro.org>
+ <CAOh2x==y+7jEdC-3xpvhr6j+RTtXRwTnBFC2uRVUmuktbCvsKw@mail.gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <d689e382-e4f2-0b03-03a5-2ff4a6bb88bb@linaro.org>
+Date:   Tue, 30 Oct 2018 08:55:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.237.91.193]
-X-ClientProxiedBy: CNCAS1.mioffice.cn (10.237.8.131) To cnbox2.mioffice.cn
- (10.237.8.142)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGLMWRmVeSWpSXmKPExsXC9ZajT/cO741og9uv1C0ObtW02L7xG6vF
-        sgZVizPduRaXd81hs3hz4R6Lxcmfy1kd2D227d7G6jG74SKLx4T+T4weO2fdZfdYvOclk8fC
-        T19ZPT5vkgtgj+KySUnNySxLLdK3S+DK2Ln/N2vBZaGKd3ffMTUwdvF3MXJySAiYSFy4eIm9
-        i5GLQ0hgK6PEh4mbWCCcRYwS805fYQepYhNQl+je3gVmiwhUSFzdf4kNxGYWSJK48ekCmC0s
-        4CGx9NxJVhCbRUBV4sq3v2A2r4CVxL2JL9ggtslLNOzazA4RF5Q4OfMJC8QceYnmrbOZIWwJ
-        iYMvXoDZQgJKEhuutwP1cgD1Kkr8+h8LMSZa4sHvGWwTGAVmIZk0C8mkWUgmLWBkXsUomZGf
-        l54NxMUFibmGermZ+Wlpmcmpesl5mxhBoW/BcW4H44R3qYcYBTgYlXh4G/SuRwuxJpYVV+Ye
-        YpTgYFYS4Q3muhEtxJuSWFmVWpQfX1Sak1p8iFGag0VJnNeg8UC0kEB6YklqdmpqQWoRTJaJ
-        g1OqgdFhTvvWYtG5KWF3nFaUymStUPp2tzI3bfnC0P8Tf1peSpvuZKZz93qwi0/wtGWVb42K
-        zySqh/hGdk9z14pjcr70RfT2VWFjGxbRYo3pS6LkLPzuPHitt4RJ9u42ToOjL7i4T/24MDuv
-        dkN9z6U/MXsX7WC5XD7TzeZd1dUVe5y2fnbZfGnHx2QlluKMREMt5qLiRADSMDL6eQIAAA==
+In-Reply-To: <CAOh2x==y+7jEdC-3xpvhr6j+RTtXRwTnBFC2uRVUmuktbCvsKw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When initialing prz with invalid data in buffer(no PERSISTENT_RAM_SIG),
-function call path is like this:
+On 30/10/2018 06:50, Viresh Kumar wrote:
+> On Mon, Oct 29, 2018 at 9:56 PM Daniel Lezcano
+> <daniel.lezcano@linaro.org> wrote:
+> 
+> Would have been better if I was cc'd on all the patches since I was
+> looking at this
+> stuff actively this week :)
 
-ramoops_init_prz ->
-|
-|-> persistent_ram_new -> persistent_ram_post_init -> persistent_ram_zap
-|
-|-> persistent_ram_zap
+ah, yes. Sorry for that.
 
-As we can see, persistent_ram_zap() is called twice.
-We can avoid this by adding an option to persistent_ram_new(), and
-only call persistent_ram_zap() when it is needed.
 
-Signed-off-by: Peng Wang <wangpeng15@xiaomi.com>
----
- fs/pstore/ram.c            | 4 +---
- fs/pstore/ram_core.c       | 5 +++--
- include/linux/pstore_ram.h | 1 +
- 3 files changed, 5 insertions(+), 5 deletions(-)
+>> The function 'register_cpufreq_notifier' registers the
+>> init_cpu_capacity_notifier() only if raw_capacity is not NULL.
+>>
+>> Hence init_cpu_capacity_notifier() can not be called with raw_capacity
+>> set to NULL, it is pointless to check it.
+> 
+> It isn't entirely pointless though.
+> 
+> It is possible for init_cpu_capacity_notifier() to get called after
+> free_raw_capacity()
+> is called from it as the notifier unregistration happens from a workqueue.
 
-diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-index ffcff6516e89..b51901f97dc2 100644
---- a/fs/pstore/ram.c
-+++ b/fs/pstore/ram.c
-@@ -640,7 +640,7 @@ static int ramoops_init_prz(const char *name,
- 
- 	label = kasprintf(GFP_KERNEL, "ramoops:%s", name);
- 	*prz = persistent_ram_new(*paddr, sz, sig, &cxt->ecc_info,
--				  cxt->memtype, 0, label);
-+				  cxt->memtype, PRZ_FLAG_ZAP_OLD, label);
- 	if (IS_ERR(*prz)) {
- 		int err = PTR_ERR(*prz);
- 
-@@ -649,8 +649,6 @@ static int ramoops_init_prz(const char *name,
- 		return err;
- 	}
- 
--	persistent_ram_zap(*prz);
--
- 	*paddr += sz;
- 
- 	return 0;
-diff --git a/fs/pstore/ram_core.c b/fs/pstore/ram_core.c
-index 12e21f789194..2ededd1ea1c2 100644
---- a/fs/pstore/ram_core.c
-+++ b/fs/pstore/ram_core.c
-@@ -505,15 +505,16 @@ static int persistent_ram_post_init(struct persistent_ram_zone *prz, u32 sig,
- 			pr_debug("found existing buffer, size %zu, start %zu\n",
- 				 buffer_size(prz), buffer_start(prz));
- 			persistent_ram_save_old(prz);
--			return 0;
-+			if (!(prz->flags & PRZ_FLAG_ZAP_OLD))
-+				return 0;
- 		}
- 	} else {
- 		pr_debug("no valid data in buffer (sig = 0x%08x)\n",
- 			 prz->buffer->sig);
-+		prz->buffer->sig = sig;
- 	}
- 
- 	/* Rewind missing or invalid memory area. */
--	prz->buffer->sig = sig;
- 	persistent_ram_zap(prz);
- 
- 	return 0;
-diff --git a/include/linux/pstore_ram.h b/include/linux/pstore_ram.h
-index 602d64725222..6e94980357d2 100644
---- a/include/linux/pstore_ram.h
-+++ b/include/linux/pstore_ram.h
-@@ -30,6 +30,7 @@
-  * PRZ_FLAG_NO_LOCK is used. For all other cases, locking is required.
-  */
- #define PRZ_FLAG_NO_LOCK	BIT(0)
-+#define PRZ_FLAG_ZAP_OLD	BIT(1)
- 
- struct persistent_ram_buffer;
- struct rs_control;
+The workqueue is called from init_cpu_capacity_callback(). This one is
+called in the notifier callback. IOW the notification callback
+unregisters itself. But if it is not registered, it won't unregister,
+hence it won't call the workqueue and init_cpu_capacity_notifier() is
+not called.
+
+
+
 -- 
-2.19.1
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
