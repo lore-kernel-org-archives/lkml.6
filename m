@@ -2,169 +2,162 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B6FECDE44
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 607ABC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:16:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20C732082B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:15:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DB9A2081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:16:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ujaGyG03"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20C732082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="ptYWA1bI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DB9A2081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728431AbeJaHLI (ORCPT
+        id S1728543AbeJaHLZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 03:11:08 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:45278 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726021AbeJaHLH (ORCPT
+        Wed, 31 Oct 2018 03:11:25 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37395 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726227AbeJaHLY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 03:11:07 -0400
-Received: by mail-lf1-f68.google.com with SMTP id c24-v6so10131041lfi.12;
-        Tue, 30 Oct 2018 15:15:49 -0700 (PDT)
+        Wed, 31 Oct 2018 03:11:24 -0400
+Received: by mail-pg1-f195.google.com with SMTP id c10-v6so6353172pgq.4
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 15:16:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=5Ky3uiKRIkgCOv3N0jJvjqQ23cVkr/7JkItMxX78SbQ=;
-        b=ujaGyG03GOtuFjUJZIu2eAQzgm6NK2JTwXOltUPpx6nXKFLGbqGZC5IKtsI3xXeAX2
-         ivRnhJJpJbDHp6yCFpcraDcKyMzwwX2hk6UtkPpTr2jikgp6zO/X26orMQ22dbGlSe5Y
-         c4DQFR6EclBCeM9bxMP2xSetjrt6iC2V9VNxUyjmF6hD4Mmti368oMeQb1aaQ+Xv3oGS
-         L/tFlhHz8qSb/a8tRGtJtI2svKIdbyh9knE4tPQudiGTlGj2mmqOOt0vLzlLz10nBcIR
-         aT0nGswAi7ucysGJIfMri+Fpcso28891sM9EtH8XcP/MPXZ/5uIROZXooaUTFu7Y0nWT
-         pmNg==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Wbi/94E9+yBQLnsGt7GlxRFYHp/cmVPB0k1mrDveYek=;
+        b=ptYWA1bIG8WN/w0H3c01UgIZ9gN613D6IyKnM3t9OPEjc/nsxFIXAtg0d3zQ87IXpL
+         RENV7Xw6YYDBkqlN9ZL21gk1yL2UZ+drdT5bOBGM3NqxcAsCdRxGeUXYOb74C92xYzYa
+         Lu+iNvlQiFsHwtJVpoevznfjmXpgra0Cat3Rc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5Ky3uiKRIkgCOv3N0jJvjqQ23cVkr/7JkItMxX78SbQ=;
-        b=P8YhsGVkrqGlVj+fU6egPMROtb9dhFkqwSC7QsNimuWxVQPkVFk9LD75MZr//92KAO
-         eTFoSxq0lN/1j6YMeycwNSWnNZw/UOCQPuBh8BMIdqyCxLd/dIUXPxPYCHevox/tC1gM
-         aZMnwe7ntrz39UOOJs3gehglNMHtumtNQlrGuHrMRTnIV4/y32fkanBertgp99cFNGOt
-         m0amACjbo/n69PcDl2WVAz/iEnDu55qn8jn+PAF9Qa4DEDk0QZsocHnEClwNdHsuFqCc
-         PRC4SqCbPGJgyV9bEr8BxLiG8E9M+OyAJqWdvHGCpgL5EmLwWlQtiGzhxpAhmXZoqRQR
-         pGpg==
-X-Gm-Message-State: AGRZ1gKl7jaQ+c2CLC5K3U8smWMLw6cnxPiRyvJZppV0aLkIoKlhq1AC
-        dMd9vCvNWnj3oe7wC+FOVgg=
-X-Google-Smtp-Source: AJdET5cLfZ/LiUZETwLRKti0DlIEs5ZZWN7s5o0SKnm9C5hTnMmQ1HWGdfadZaZxwn14awXniefvbQ==
-X-Received: by 2002:a19:5713:: with SMTP id l19mr297890lfb.85.1540937748834;
-        Tue, 30 Oct 2018 15:15:48 -0700 (PDT)
-Received: from [192.168.10.160] (91-159-62-242.elisa-laajakaista.fi. [91.159.62.242])
-        by smtp.gmail.com with ESMTPSA id a8-v6sm3672465ljd.6.2018.10.30.15.15.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 15:15:48 -0700 (PDT)
-Subject: Re: [PATCH 10/17] prmem: documentation
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20181023213504.28905-11-igor.stoppa@huawei.com>
- <20181026092609.GB3159@worktop.c.hoisthospitality.com>
- <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
- <20181028183126.GB744@hirez.programming.kicks-ass.net>
- <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
- <20181030152641.GE8177@hirez.programming.kicks-ass.net>
- <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
- <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
- <20181030175814.GB10491@bombadil.infradead.org> <20181030182841.GE7343@cisco>
- <20181030192021.GC10491@bombadil.infradead.org>
- <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com>
- <BAA65A07-F3AF-4209-9D18-7075CEF11EE8@amacapital.net>
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <2cfb3835-0c18-b3fb-1722-5d693ae0ecd2@gmail.com>
-Date:   Wed, 31 Oct 2018 00:15:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Wbi/94E9+yBQLnsGt7GlxRFYHp/cmVPB0k1mrDveYek=;
+        b=PmNfIQ8pFjz1LltRe5OXCuZb6Ckhgxwi/dZj5oiH3RIjbLm60YBKNEtU5eU9R0vkaw
+         dtik83J4qGZ8jjK2bT96jLDAaU4W6oCC7uqoQ+92JIXrdoBBLJLic954nG4DM3FYhfcC
+         GeQ7nzHbYZUbM3QqTct3UpgZRIWr09Lr2qe4TEsSKYj8/fCorozXzAHxarh49XbdCB0O
+         D05rfh1vNV9wCqJMqOeOK0YaMAMqc+AeLzbZQ/8L0utarcU7ATZO53P6Sx8aD1Q4hZB7
+         M01kLUo6ApyaoPMyQaruxYsU5Mq0TD6gkwjJoMY2OrTCr8xPWINyz7KlB4kbn0BmIlw+
+         spRA==
+X-Gm-Message-State: AGRZ1gIA73dNduImGKqOqOjh/3hv1iKF84av6qkt8v7OLfwyqdJXKyfO
+        Cs+pERHq7bL0YmaTHOODFEYxGg==
+X-Google-Smtp-Source: AJdET5cqOniB/xuasOINm091WZ8cefeKetNPg7qtZlGFWuxKyBcV6Ir6sY4dpsDFYkHY/kT9P3HG2A==
+X-Received: by 2002:a63:2507:: with SMTP id l7mr520354pgl.22.1540937767603;
+        Tue, 30 Oct 2018 15:16:07 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id g123-v6sm54815837pfc.67.2018.10.30.15.16.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 30 Oct 2018 15:16:06 -0700 (PDT)
+Date:   Tue, 30 Oct 2018 15:16:05 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Peng Wang <wangpeng15@xiaomi.com>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, vipwangerxiao@gmail.com
+Subject: Re: [PATCH v4] pstore: Avoid duplicate call of persistent_ram_zap()
+Message-ID: <20181030221605.GA44036@joelaf.mtv.corp.google.com>
+References: <20181030075234.21137-1-wangpeng15@xiaomi.com>
+ <20181030213818.GA32621@google.com>
+ <CAGXu5j+tRWseaecob04U5iXHa-P_z=Hvj3PmhE5YWFUO=LT7Sw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <BAA65A07-F3AF-4209-9D18-7075CEF11EE8@amacapital.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5j+tRWseaecob04U5iXHa-P_z=Hvj3PmhE5YWFUO=LT7Sw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 30/10/2018 23:02, Andy Lutomirski wrote:
+On Tue, Oct 30, 2018 at 02:52:43PM -0700, Kees Cook wrote:
+> On Tue, Oct 30, 2018 at 2:38 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
+> > On Tue, Oct 30, 2018 at 03:52:34PM +0800, Peng Wang wrote:
+> >> When initialing prz with invalid data in buffer(no PERSISTENT_RAM_SIG),
+> >> function call path is like this:
+> >>
+> >> ramoops_init_prz ->
+> >> |
+> >> |-> persistent_ram_new -> persistent_ram_post_init -> persistent_ram_zap
+> >> |
+> >> |-> persistent_ram_zap
+> >>
+> >> As we can see, persistent_ram_zap() is called twice.
+> >> We can avoid this by adding an option to persistent_ram_new(), and
+> >> only call persistent_ram_zap() when it is needed.
+> >>
+> >> Signed-off-by: Peng Wang <wangpeng15@xiaomi.com>
+> >> ---
+> >>  fs/pstore/ram.c            | 4 +---
+> >>  fs/pstore/ram_core.c       | 5 +++--
+> >>  include/linux/pstore_ram.h | 1 +
+> >>  3 files changed, 5 insertions(+), 5 deletions(-)
+> >>
+> >> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+> >> index ffcff6516e89..b51901f97dc2 100644
+> >> --- a/fs/pstore/ram.c
+> >> +++ b/fs/pstore/ram.c
+> >> @@ -640,7 +640,7 @@ static int ramoops_init_prz(const char *name,
+> >>
+> >>       label = kasprintf(GFP_KERNEL, "ramoops:%s", name);
+> >>       *prz = persistent_ram_new(*paddr, sz, sig, &cxt->ecc_info,
+> >> -                               cxt->memtype, 0, label);
+> >> +                               cxt->memtype, PRZ_FLAG_ZAP_OLD, label);
+> >>       if (IS_ERR(*prz)) {
+> >>               int err = PTR_ERR(*prz);
+> >
+> > Looks good to me except the minor comment below:
+> >
+> >>
+> >> @@ -649,8 +649,6 @@ static int ramoops_init_prz(const char *name,
+> >>               return err;
+> >>       }
+> >>
+> >> -     persistent_ram_zap(*prz);
+> >> -
+> >>       *paddr += sz;
+> >>
+> >>       return 0;
+> >> diff --git a/fs/pstore/ram_core.c b/fs/pstore/ram_core.c
+> >> index 12e21f789194..2ededd1ea1c2 100644
+> >> --- a/fs/pstore/ram_core.c
+> >> +++ b/fs/pstore/ram_core.c
+> >> @@ -505,15 +505,16 @@ static int persistent_ram_post_init(struct persistent_ram_zone *prz, u32 sig,
+> >>                       pr_debug("found existing buffer, size %zu, start %zu\n",
+> >>                                buffer_size(prz), buffer_start(prz));
+> >>                       persistent_ram_save_old(prz);
+> >> -                     return 0;
+> >> +                     if (!(prz->flags & PRZ_FLAG_ZAP_OLD))
+> >> +                             return 0;
+> >
+> > This could be written differently.
+> >
+> > We could just do:
+> >
+> > if (prz->flags & PRZ_FLAG_ZAP_OLD)
+> >         persistent_ram_zap(prz);
+> >
+> > And remove the zap from below below.
 > 
+> I actually rearranged things a little to avoid additional round-trips
+> on the mailing list. :)
 > 
->> On Oct 30, 2018, at 1:43 PM, Igor Stoppa <igor.stoppa@gmail.com> wrote:
-
-
->> There is no need to process each of these tens of thousands allocations and initialization as write-rare.
->>
->> Would it be possible to do the same here?
+> > Since Kees already took this patch, I can just patch this in my series if
+> > Kees and you are Ok with this suggestion.
 > 
-> I don’t see why not, although getting the API right will be a tad complicated.
+> I've put it up here:
+> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=pstore/devel&id=ac564e023248e3f4d87917b91d12376ddfca5000
 
-yes, I have some first-hand experience with this :-/
+Cool, it LGTM :)
 
->>
->>>>>
->>>>> To subsequently modify q,
->>>>>
->>>>>     p = rare_modify(q);
->>>>>     q->a = y;
->>>>
->>>> Do you mean
->>>>
->>>>      p->a = y;
->>>>
->>>> here? I assume the intent is that q isn't writable ever, but that's
->>>> the one we have in the structure at rest.
->>> Yes, that was my intent, thanks.
->>> To handle the list case that Igor has pointed out, you might want to
->>> do something like this:
->>>     list_for_each_entry(x, &xs, entry) {
->>>         struct foo *writable = rare_modify(entry);
->>
->> Would this mapping be impossible to spoof by other cores?
->>
-> 
-> Indeed. Only the core with the special mm loaded could see it.
-> 
-> But I dislike allowing regular writes in the protected region. We really only need four write primitives:
-> 
-> 1. Just write one value.  Call at any time (except NMI).
-> 
-> 2. Just copy some bytes. Same as (1) but any number of bytes.
-> 
-> 3,4: Same as 1 and 2 but must be called inside a special rare write region. This is purely an optimization.
+- Joel
 
-Atomic? RCU?
-
-Yes, they are technically just memory writes, but shouldn't the "normal" 
-operation be executed on the writable mapping?
-
-It is possible to sandwich any call between a rare_modify/rare_protect, 
-however isn't that pretty close to having a write-rare version of these 
-plain function.
-
---
-igor
