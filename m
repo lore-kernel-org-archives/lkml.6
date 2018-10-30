@@ -2,92 +2,211 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6374C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 20:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79E8EC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 20:33:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84A5A20664
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 20:32:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C2072082B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 20:33:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="n1SLAl+Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84A5A20664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IdxLzXka"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C2072082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbeJaF06 (ORCPT
+        id S1726799AbeJaF2j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 01:26:58 -0400
-Received: from mail-io1-f54.google.com ([209.85.166.54]:42005 "EHLO
-        mail-io1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726026AbeJaF05 (ORCPT
+        Wed, 31 Oct 2018 01:28:39 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:33609 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725812AbeJaF2j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 01:26:57 -0400
-Received: by mail-io1-f54.google.com with SMTP id n18-v6so8136794ioa.9
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 13:31:58 -0700 (PDT)
+        Wed, 31 Oct 2018 01:28:39 -0400
+Received: by mail-qt1-f194.google.com with SMTP id i15-v6so15222957qtr.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 13:33:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4gqJvoF0dLC0mL7zcZOLz/LLOMGoAQuQbMPMCqTCa40=;
-        b=n1SLAl+QVbywOuUZDSppX12jm2nMbgpjY2f5N+BTNsiHUqYUf5iRgf4TmtQ4326pR+
-         HZLrW1mVsPoRB2JeC3sGGvudisQqIpQCf1/Qykdfqpp2eKvr+sTnop/IF6seZTk05rbj
-         VDXo08XzwGg/PuHjixMffKTDNju+Kh66ouY8pHYqpYK2tY30TobTbVV9j3i4X3ClgzDp
-         1dUZJxPczpiK8a4z6rbTkFmUJvZS8YiPTvqQ2wJ5TFYTlsdU8R405nJHyL38oPJXCOCw
-         2lDnDvElBqI+aY3DJo3EhcwGBhZT97NO7JFNyP6qrsaisrG/Vcaq0ZeAx8rLMCQinBC0
-         Gi/w==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PvVU6/4hfEVaWtqaOqNuHWJ/edwbT7cUJ+lxdx0olMA=;
+        b=IdxLzXkaNfdilLzkRAChtXdvfeD7jrP+/ULzxFCiExZGrFThQMnOIfvDn6+ifHUeSk
+         xItZ5bNNbKVtJikpSF+Bc5IrfozAH1zlAv/hAEmtPx8Ow3ks5C3Xlx59EKPTDxHfJYCn
+         OINv7rsnMQBwkO63TT72n5PuM3b2AdVGvU6CdpHeVQsKvRmxb8RYpJ8QhKqbyGZlb4WO
+         xtpqUaVb9ViOtidlAhidUaOuv1Aj/KXCsK/bTWhLTayAS2eLf+1Sp/iYK0xq1cEeN7iD
+         tQS50UyE3c8WFYFgmJjY9PuY1s1Av1P5swNkKrToOzUUV7zmZH01eyT+1r9NG3EzjCng
+         05pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4gqJvoF0dLC0mL7zcZOLz/LLOMGoAQuQbMPMCqTCa40=;
-        b=ctOTxx/YT35I//sZhqcMGz9aYBZ8UsictLC0IUn1l0nG7ldUrFkGSPjpvciwF/2Ihm
-         3UJgJElfYjf42L3O85SH1qETVNsioW2jGU3toggU1/nfJiltOEO2B+UHNeVQwLri6zeP
-         Yxa/POQ9k8k5VX0FWyPuLYhUPjf/+4HGSNQkmx5PlK67aOl24MJQnvTHwUdymmPL02Lz
-         3ZmwrnJQdFTZAfgU4iBhJJa+dNNHjpGsD2IZilvaU7gVY9HQ1++2iCFHqpc7tEQz8rEg
-         i0Y4EZVmuoujk95/OgDNQkxF8no3rWiowlbQ2umWfuFpU6W/eLFi3u8gEI5IyOGVr1AO
-         d8gw==
-X-Gm-Message-State: AGRZ1gLcF2uzriQ29b6sAtt3valPfD/8mFLHz1mVyPSAfNiERnRSlcok
-        CUO7tBtY8giQnvww2g4zmFEP6v5RsO4=
-X-Google-Smtp-Source: AJdET5cDKQRmv+v9J48JJymmrweEvWCEhpQKr9ptvGgrtaU0T8iwdNB9ROnfwJRK5pnbvoO5Ks7Kag==
-X-Received: by 2002:a6b:bd46:: with SMTP id n67-v6mr160470iof.161.1540931516802;
-        Tue, 30 Oct 2018 13:31:56 -0700 (PDT)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id h24-v6sm8505742iog.80.2018.10.30.13.31.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 13:31:55 -0700 (PDT)
-Subject: Re: [PATCH] mtip32xx: clean an indentation issue, remove extraneous
- tabs
-To:     Colin King <colin.king@canonical.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        linux-block@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181030112942.10186-1-colin.king@canonical.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <cd6119a8-20c8-d67b-b7f9-bb580b006759@kernel.dk>
-Date:   Tue, 30 Oct 2018 14:31:53 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PvVU6/4hfEVaWtqaOqNuHWJ/edwbT7cUJ+lxdx0olMA=;
+        b=n1qw7NojDdqwQge92c+dVQkAWqqCO9sC0tF9W0dM1TGIiX6GDIIClLfDxX9xmlmLO/
+         IZqFg5nn4ddIq3Anw2uK0lLxuPeF9cw9Ut853rwaCjb56btb97iGrI4maQI6ymRWOxh6
+         64wjdwSgsK8ysRgvb5U//y2IbvzZkwEvBAZBUAPHgQjQlHN4082m/edZYOGoqgfe20Mg
+         rmbvnGfFN0SPixh0eKbiI2ImSthnZAv4zMRHR8rfYY5JPl+iQzRGquJb2CCy1AnxR2ZV
+         kwA7Xoesa7lCujTh3w1jCxSxXBJjYm9Ed2EFyH/LsZnN9/QwQBeI3TrACfBZ4RNQ3L0+
+         pvIw==
+X-Gm-Message-State: AGRZ1gINcyvVZk3oh54cHANiGv9kw671plhwJS9JnczT3XjZfdU+RYFX
+        zBZr3WMVfkArHDayznrkBfw=
+X-Google-Smtp-Source: AJdET5fi79O5rW0jNl7sYqvOIGZ0I7w0PX3+PTV7ir2ksOIwhlAccAjCsc1gvAUIsmR+6+uzDPcy8Q==
+X-Received: by 2002:ac8:4419:: with SMTP id j25-v6mr208110qtn.243.1540931618671;
+        Tue, 30 Oct 2018 13:33:38 -0700 (PDT)
+Received: from smtp.gmail.com ([143.107.45.1])
+        by smtp.gmail.com with ESMTPSA id f75sm1788546qkf.96.2018.10.30.13.33.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 30 Oct 2018 13:33:38 -0700 (PDT)
+Date:   Tue, 30 Oct 2018 17:33:33 -0300
+From:   Shayenne Moura <shayenneluzmoura@gmail.com>
+To:     Julia Lawall <julia.lawall@lip6.fr>
+Cc:     Himanshu Jha <himanshujha199640@gmail.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Michael Thayer <michael.thayer@oracle.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        outreachy-kernel@googlegroups.com
+Subject: Re: [Outreachy kernel] [RESEND PATCH 2/2] staging: vboxvideo: Use
+ unsigned int instead bool
+Message-ID: <20181030203333.2eh7hcpcndukjs52@smtp.gmail.com>
+References: <cover.1540580493.git.shayenneluzmoura@gmail.com>
+ <211701e4ae42acd95afb24713314bce5a4c58ecf.1540580493.git.shayenneluzmoura@gmail.com>
+ <20181026204225.GH2015@sasha-vm>
+ <20181028075209.GA1938@himanshu-Vostro-3559>
+ <alpine.DEB.2.21.1810280932030.2450@hadrien>
+ <20181028112011.GA5157@himanshu-Vostro-3559>
+ <alpine.DEB.2.21.1810281243420.2433@hadrien>
+ <20181030201816.joihhwd7htgixo5i@smtp.gmail.com>
+ <alpine.DEB.2.21.1810302122290.2949@hadrien>
 MIME-Version: 1.0
-In-Reply-To: <20181030112942.10186-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1810302122290.2949@hadrien>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/30/18 5:29 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On 10/30, Julia Lawall wrote:
 > 
-> Trivial fix to clean up an indentation issue, remove tabs
+> On Tue, 30 Oct 2018, Shayenne Moura wrote:
+> 
+> > Hi,
+> >
+> > > On Sun, 28 Oct 2018, Himanshu Jha wrote:
+> > >
+> > > > On Sun, Oct 28, 2018 at 09:47:15AM +0100, Julia Lawall wrote:
+> > > > > > The "possible alignement issues" in CHECK report is difficult to figure
+> > > > > > out by just doing a glance analysis. :)
+> > > > > >
+> > > > > > Linus also suggested to use bool as the base type i.e., `bool x:1` but
+> > > > > > again sizeof(_Bool) is implementation defined ranging from 1-4 bytes.
+> > > > >
+> > > > > If bool x:1 has the size of bool, then wouldn't int x:1 have the size of
+> > > > > int?  But my little experiments suggest that the size is the smallest that
+> > > > > fits the requested bits and alignment chosen by the compiler, regardless of
+> > > > > the type.
+> > > >
+> > > > Yes, correct!
+> > > > And we can't use sizeof on bitfields *directly*, nor reference it using a
+> > > > pointer.
+> > > >
+> > > > It can be applied only when these bitfields are wrapped in a structure.
+> > > >
+> > > > Testing:
+> > > >
+> > > > #include <stdio.h>
+> > > > #include <stdbool.h>
+> > > >
+> > > > struct S {
+> > > > bool a:1;
+> > > > bool b:1;
+> > > > bool c:1;
+> > > > bool d:1;
+> > > > };
+> > > >
+> > > > int main(void)
+> > > > {
+> > > >     printf("%zu\n", sizeof(struct S));
+> > > > }
+> > > >
+> > > > Output: 1
+> > > >
+> > > > If I change all bool to unsigned int, output is: *4*.
+> > > >
+> > > > So, conclusion is compiler doesn't squeeze the size less than
+> > > > native size of the datatype i.e., if we changed all members to
+> > > > unsigned int:1,
+> > > > total width = 4 bits
+> > > > padding = 4 bits
+> > > >
+> > > > Therefore, total size should have been = 1 byte!
+> > > > But since sizeof(unsigned int) == 4, it can't be squeezed to
+> > > > less than it.
+> > >
+> > > This conclusion does not seem to be correct, if you try the following
+> > > program.  I get 4 for everything, meaning that the four unsigned int bits
+> > > are getting squeezed into one byte when it is convenient.
+> > >
+> > > #include <stdio.h>
+> > > #include <stdbool.h>
+> > >
+> > > struct S1 {
+> > > bool a:1;
+> > > bool b:1;
+> > > bool c:1;
+> > > bool d:1;
+> > > char a1;
+> > > char a2;
+> > > char a3;
+> > > };
+> > >
+> > > struct S2 {
+> > > unsigned int a:1;
+> > > unsigned int b:1;
+> > > unsigned int c:1;
+> > > unsigned int d:1;
+> > > char a1;
+> > > char a2;
+> > > char a3;
+> > > };
+> > >
+> > > int main(void)
+> > > {
+> > >     printf("%zu\n", sizeof(struct S1));
+> > >     printf("%zu\n", sizeof(struct S2));
+> > >     printf("%zu\n", sizeof(unsigned int));
+> > > }
+> > >
+> > > > Well, int x:1 can either have 0..1 or -1..0 range due implementation
+> > > > defined behavior as I said in the previous reply.
+> > > >
+> > > > If you really want to consider negative values, then make it explicit
+> > > > using `signed int x:1` which make range guaranteed to be -1..0
+> > >
+> > > The code wants booleans, not negative values.
+> > >
+> > > julia
+> >
+> > Thank you all for the discussion!
+> >
+> > However, I think I do not understand the conclusion.
+> >
+> > It means that the best way is to use only boolean instead of use unsigned
+> > int with bitfield? I mean specifically in the case of my patch, where there
+> > are some boolean variables are mixed with other variables types.
+> 
+> To my recollection, your code had a bool with larger types on either side.
+> In that case, I think bool is fine.  The compiler it likely to align those
+> larger typed values such that the field with the bool type will get more
+> than one byte no matter what type you use.  If there are several fields
+> with very small types adjacent, there might be some benefit to thinking
+> about what the type should be.
+> 
+> julia
 
-Applied, thanks.
-
--- 
-Jens Axboe
-
+Got it! Thank you!
