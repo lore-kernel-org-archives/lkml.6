@@ -2,117 +2,157 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C83C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 17:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D13DC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 18:00:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B80D02080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 17:58:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6E862080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 18:00:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LAUn5VAF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B80D02080A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EV6rhLEx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6E862080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728116AbeJaCw7 (ORCPT
+        id S1728096AbeJaCzE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 22:52:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48696 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727771AbeJaCw7 (ORCPT
+        Tue, 30 Oct 2018 22:55:04 -0400
+Received: from mail-qt1-f202.google.com ([209.85.160.202]:54875 "EHLO
+        mail-qt1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728006AbeJaCzE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 22:52:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=hOYWHalG3Y75DkapHEk+KGS33M+jo0PxnQZRMWWEPDw=; b=LAUn5VAFrKdjhcQJb1i0SEG9p
-        cPOEsORxwVWPJv5gMmVTLPOHIsr6cdXMqOGAtudMvPcYlS5R4WMumsACsgk56M9TWUYIlAmtw+X6v
-        JP/D3xGnSmjXGlHRrORSwx0D4zH1EQn2fFj5XYRWj4nNmiPrQ/GTrEAfserDocmzdiZk/lXDWUG9n
-        UdcxqXbixNbKD3cREqhDzoRNDI9wc9lffAPTwS2ufz/+DM28yfxiEGdZQjhT3hryTxkGT2ACvcVCK
-        KkHcVdLTdaCRHOwSuMQQgdchI1SUHFTfAyw261MrKSyiSnVJDPkk/iqFK0oOpqY5L+qR2BPrXqvYa
-        jXgR9dzCA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gHYHO-0001qf-Ff; Tue, 30 Oct 2018 17:58:14 +0000
-Date:   Tue, 30 Oct 2018 10:58:14 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Igor Stoppa <igor.stoppa@gmail.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 10/17] prmem: documentation
-Message-ID: <20181030175814.GB10491@bombadil.infradead.org>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-11-igor.stoppa@huawei.com>
- <20181026092609.GB3159@worktop.c.hoisthospitality.com>
- <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
- <20181028183126.GB744@hirez.programming.kicks-ass.net>
- <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
- <20181030152641.GE8177@hirez.programming.kicks-ass.net>
- <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
- <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Tue, 30 Oct 2018 22:55:04 -0400
+Received: by mail-qt1-f202.google.com with SMTP id 31-v6so14089822qta.21
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 11:00:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=lN9YFitiwSnfZGf0b4XkVoqbBW9W2gqEsy/+ywXQewI=;
+        b=EV6rhLEx9TOLwJ/GdA/TBguZNQCIS6yj7AOf779DcECIDSMGFEvje3l95UR3huy7nQ
+         nr+ItaEYaCs9zPSDZP5EyLUTTtOdXGB06T/nF7Ay6JsD+koDmuzC0EbjvFvgRihJTWbI
+         Xo/0TxOsBFB2P3wVAiZXfEFmb2y+Ns43vH+o0CFbV5GffZ6/bYfmQQHjSK0rky72bQuY
+         S7gpkrQ8WPbh/HGg6TCNRAqL+Lt4rxg72sIBN3ecndAwYNEVKWHQKl8gr7F5puNcvWGu
+         tnKVjtZl/n9D5GatBoX+y/xyQalWtHcLVgBRSvd3CRiSPuHn3cq+zHlGsfXPaRuXky8Q
+         erYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=lN9YFitiwSnfZGf0b4XkVoqbBW9W2gqEsy/+ywXQewI=;
+        b=Yc2BE2wmw5TDLJkcL1DpPPsD3tllSyA3u/EEiR53E6KX5U30PDzzsGqdbQJFn2SRcY
+         LFtOXglWqvIABE8C8KhUs2PzM77B9bM7Ntla7jKx3n7f3YV2yROWH/dkiX5lS+Tdr96D
+         XMnrlt703kmrQRZMwC34TS3FLqzn18ZDwMeQ37vV8pWeFclKazCHmbYD6aO95W9UClGZ
+         1UuRfhcgh2JmcjEwG12YeyVVjEXlLizmO8X63NqVAYNhYbqvijpvEPAuR5wzX+0yznPq
+         4Dpho6f73oyLfC1I24wvUdlwv8vmB8i2cq6/3JAwqsdncEve6VxwAacEoG3wczN9sJEt
+         TUuw==
+X-Gm-Message-State: AGRZ1gLHDbp8CuKrJXeG2KBokUjMXDXuv7Yrxjxhnmwzu1eYPCMw4v1h
+        l8vUEmVQ8Q2DSXfgZVMK90kc6aKW7d43PxphhLlTRpU/dTD7hACSQJrFcCYwSvVfcLTmAJ/F3ns
+        WnEo7C0jEIpgLo2sN6N0cQgCqd/sHGl9/EC1d7Q+9UpQS9XnLvxFUj23WfNsh6F7ndylX0L8vHP
+        4=
+X-Google-Smtp-Source: AJdET5d2q4zXx23nkPKeBmnbUNWufNOzJGke6iwt1kExPjvGOQXoIu5w5l4C3DVil6NObrB2BEiujAJdCTz9og==
+X-Received: by 2002:ae9:f404:: with SMTP id y4mr8770362qkl.27.1540922434837;
+ Tue, 30 Oct 2018 11:00:34 -0700 (PDT)
+Date:   Tue, 30 Oct 2018 12:00:12 -0600
+Message-Id: <20181030180012.232896-1-bmgordon@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
+Subject: [PATCH v2] proc: use ns_capable instead of capable for timerslack_ns
+From:   Benjamin Gordon <bmgordon@google.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Benjamin Gordon <bmgordon@google.com>,
+        John Stultz <john.stultz@linaro.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Oren Laadan <orenl@cellrox.com>,
+        Ruchi Kandoi <kandoiruchi@google.com>,
+        Rom Lemarchand <romlem@android.com>,
+        Todd Kjos <tkjos@google.com>, Colin Cross <ccross@android.com>,
+        Nick Kralevich <nnk@google.com>,
+        Dmitry Shmidt <dimitrysh@google.com>,
+        Elliott Hughes <enh@google.com>,
+        Android Kernel Team <kernel-team@android.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 10:06:51AM -0700, Andy Lutomirski wrote:
-> > On Oct 30, 2018, at 9:37 AM, Kees Cook <keescook@chromium.org> wrote:
-> I support the addition of a rare-write mechanism to the upstream kernel.
-> And I think that there is only one sane way to implement it: using an
-> mm_struct. That mm_struct, just like any sane mm_struct, should only
-> differ from init_mm in that it has extra mappings in the *user* region.
+Access to timerslack_ns is controlled by a process having CAP_SYS_NICE
+in its effective capability set, but the current check looks in the root
+namespace instead of the process' user namespace.  Since a process is
+allowed to do other activities controlled by CAP_SYS_NICE inside a
+namespace, it should also be able to adjust timerslack_ns.
 
-I'd like to understand this approach a little better.  In a syscall path,
-we run with the user task's mm.  What you're proposing is that when we
-want to modify rare data, we switch to rare_mm which contains a
-writable mapping to all the kernel data which is rare-write.
+Signed-off-by: Benjamin Gordon <bmgordon@google.com>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Oren Laadan <orenl@cellrox.com>
+Cc: Ruchi Kandoi <kandoiruchi@google.com>
+Cc: Rom Lemarchand <romlem@android.com>
+Cc: Todd Kjos <tkjos@google.com>
+Cc: Colin Cross <ccross@android.com>
+Cc: Nick Kralevich <nnk@google.com>
+Cc: Dmitry Shmidt <dimitrysh@google.com>
+Cc: Elliott Hughes <enh@google.com>
+Cc: Android Kernel Team <kernel-team@android.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+---
 
-So the API might look something like this:
+Changes from v1:
+  - Use the namespace of the target process instead of the file opener.
+    Didn't carry over John Stultz' Acked-by since the changes aren't
+    cosmetic.
 
-	void *p = rare_alloc(...);	/* writable pointer */
-	p->a = x;
-	q = rare_protect(p);		/* read-only pointer */
+ fs/proc/base.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-To subsequently modify q,
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index c78d8da09b52c..bdc093ba81dd3 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -2385,10 +2385,13 @@ static ssize_t timerslack_ns_write(struct file *file, const char __user *buf,
+ 		return -ESRCH;
+ 
+ 	if (p != current) {
+-		if (!capable(CAP_SYS_NICE)) {
++		rcu_read_lock();
++		if (!ns_capable(__task_cred(p)->user_ns, CAP_SYS_NICE)) {
++			rcu_read_unlock();
+ 			count = -EPERM;
+ 			goto out;
+ 		}
++		rcu_read_unlock();
+ 
+ 		err = security_task_setscheduler(p);
+ 		if (err) {
+@@ -2421,11 +2424,14 @@ static int timerslack_ns_show(struct seq_file *m, void *v)
+ 		return -ESRCH;
+ 
+ 	if (p != current) {
+-
+-		if (!capable(CAP_SYS_NICE)) {
++		rcu_read_lock();
++		if (!ns_capable(__task_cred(p)->user_ns, CAP_SYS_NICE)) {
++			rcu_read_unlock();
+ 			err = -EPERM;
+ 			goto out;
+ 		}
++		rcu_read_unlock();
++
+ 		err = security_task_getscheduler(p);
+ 		if (err)
+ 			goto out;
+-- 
+2.19.1.568.g152ad8e336-goog
 
-	p = rare_modify(q);
-	q->a = y;
-	rare_protect(p);
-
-Under the covers, rare_modify() would switch to the rare_mm and return
-(void *)((unsigned long)q + ARCH_RARE_OFFSET).  All of the rare data
-would then be modifiable, although you don't have any other pointers
-to it.  rare_protect() would switch back to the previous mm and return
-(p - ARCH_RARE_OFFSET).
-
-Does this satisfy Igor's requirements?  We wouldn't be able to
-copy_to/from_user() while rare_mm was active.  I think that's a feature
-though!  It certainly satisfies my interests (kernel code be able to
-mark things as dynamically-allocated-and-read-only-after-initialisation)
