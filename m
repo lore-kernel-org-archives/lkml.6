@@ -2,123 +2,124 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03221C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:52:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 543CEC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:52:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 989452064C
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:52:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1128C2064C
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:52:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="QxXIUqpN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 989452064C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lqpG/Qy0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1128C2064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727883AbeJaBqT (ORCPT
+        id S1727958AbeJaBqa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 21:46:19 -0400
-Received: from mail-eopbgr730136.outbound.protection.outlook.com ([40.107.73.136]:13984
-        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727561AbeJaBqS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 21:46:18 -0400
+        Tue, 30 Oct 2018 21:46:30 -0400
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:33011 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727561AbeJaBq3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 21:46:29 -0400
+Received: by mail-vk1-f195.google.com with SMTP id l186so3186276vke.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 09:52:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DLYMVodelq1B1QQLdn60/8zhQDxyM9FKxAOqyuaYSHI=;
- b=QxXIUqpN/6/J9IAo3vi37iY5ZerpXBEuhACLfCtOyHlHrhy3U6Vq937eEwnhV/94pVqanhHCin3gF7CzFLs+Jaighhow482eYM36VEL+tIrATuRGwL1bG1LeQeCjHjyuGLcCGvmGecrYkP63EFx2mIz/ri9fXtIiwHIo/D8+0Ds=
-Received: from CY4PR2201MB1272.namprd22.prod.outlook.com (10.171.216.146) by
- CY4PR2201MB1240.namprd22.prod.outlook.com (10.171.216.138) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1273.19; Tue, 30 Oct 2018 16:51:58 +0000
-Received: from CY4PR2201MB1272.namprd22.prod.outlook.com
- ([fe80::ace0:f12e:c2a0:dc23]) by CY4PR2201MB1272.namprd22.prod.outlook.com
- ([fe80::ace0:f12e:c2a0:dc23%8]) with mapi id 15.20.1273.027; Tue, 30 Oct 2018
- 16:51:58 +0000
-From:   Paul Burton <paul.burton@mips.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-CC:     "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Paul Mackerras <paulus@samba.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH v2 1/2] kbuild: replace cc-name test with
- CONFIG_CC_IS_CLANG
-Thread-Topic: [PATCH v2 1/2] kbuild: replace cc-name test with
- CONFIG_CC_IS_CLANG
-Thread-Index: AQHUcFRQUdRvUBuRmUqUi+ZWeLGgeaU4ARIA
-Date:   Tue, 30 Oct 2018 16:51:58 +0000
-Message-ID: <20181030165156.k6blbpbxh2fmiiay@pburton-laptop>
-References: <1540905994-6073-1-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1540905994-6073-1-git-send-email-yamada.masahiro@socionext.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR04CA0107.namprd04.prod.outlook.com
- (2603:10b6:301:3a::48) To CY4PR2201MB1272.namprd22.prod.outlook.com
- (2603:10b6:910:61::18)
-user-agent: NeoMutt/20180716
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [4.16.204.77]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR2201MB1240;6:F4JLfAh/UD/LNIAd4rfY5JLYnnGwCcpEfiZq5TkDdJXZT3Fxg4a67Fu6dmd5SvTwj66HYyq9IluLkW2yQvdtB5A/nt7AFSqyBAGMcdmiwS7E8+TNzyE4rPfjomO27grMG60+s0CgKNmHbwq9+c5BRUAYujjIxmQr5L7BirMEEv+IqmoZeXgzSIzjNw6/ACHMafScID9Yw8fgfUg1ZoPTQN25Hj7jaLC93pYQvjVT9B1GEhpQJVP4xtB5QkZ9OiNaZPxqYaAAR9Opgj6RZthR3pWdMpkSXLkGAc6LjbpZMjeEuD33jgWdg+u5IfhLsCueeq9T46dAPfv6WS8QZtczmYoAjoaFzGXeA/Ab4O+ajP5MVEyo5ZDmBx9Rf4M7m7tIdmM8Zgmksn4WFalHFSTeR2wKyvk9vcpXrihpWGXiqFn8QR8c6rTNMOQwijsIeNQCseej1A+7ahPtD97w7Tyx9g==;5:ckx+K/wgd8rzs3HzdXZXUdL302esZEQ/LQsW8ST4EoElBXh9Xaan+N1Ma5FCyAdTBtEodicxwy5g9gHbCBykwjhEnGQi8zUvC/BR+FJ7RsreRaS5p4WO1a1o9oFMPYL5eujYbXG37w3NVmbsbx7ZdMJA9lrLY5o58CqBuY7IOTw=;7:EKNHjsQ2tDCoGS9w3w+hWtSvPehNm18C5/AVpiPdoXCxQNeTXHSFUErZk9rGsHenoAhXKxFXlqXixrbNM3hzISttIT9xsO8y6fGDR3kn4xYcDbPaY6Jtl88P/Z2aEAywyg6y9wcJJCTOuFqldn6+gw==
-x-ms-office365-filtering-correlation-id: fa5bde02-1166-4956-0ac2-08d63e880185
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:CY4PR2201MB1240;
-x-ms-traffictypediagnostic: CY4PR2201MB1240:
-x-microsoft-antispam-prvs: <CY4PR2201MB1240CE01CFA3381E3A09A603C1CC0@CY4PR2201MB1240.namprd22.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(788757137089);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(3231382)(944501410)(52105095)(148016)(149066)(150057)(6041310)(2016111802025)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(6043046)(201708071742011)(7699051)(76991095);SRVR:CY4PR2201MB1240;BCL:0;PCL:0;RULEID:;SRVR:CY4PR2201MB1240;
-x-forefront-prvs: 08417837C5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(376002)(39840400004)(396003)(366004)(346002)(136003)(199004)(189003)(66066001)(1076002)(5250100002)(6486002)(6436002)(229853002)(6916009)(2906002)(5660300001)(7416002)(3846002)(6116002)(305945005)(7736002)(316002)(8676002)(58126008)(54906003)(81156014)(81166006)(256004)(97736004)(2900100001)(14454004)(68736007)(25786009)(33716001)(71200400001)(71190400001)(6512007)(8936002)(508600001)(44832011)(476003)(486006)(11346002)(186003)(26005)(99286004)(76176011)(102836004)(105586002)(33896004)(386003)(446003)(9686003)(52116002)(6506007)(4326008)(106356001)(6246003)(42882007)(53936002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR2201MB1240;H:CY4PR2201MB1272.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: MKMc9vEn0n75NPpSLBhshB3W4Q9Dxquj5glw9vSdzn2TtYE/VfvUv3nKi2sKUo5/kqwlx3XhUnFrDRCdrKDPqbTtCDusXeB0M5esVLIt/WePHJRq10cb7zHRcc9XqC6yKEINKPlpbpXK99yUuYFshp9gombpUAYHd+Bnj94+SSzqpHGnNdLv45L+2XHKIbptq24WrR0cyqautJoQBQ+F6hL1CHsaTIFgiXEoaxqFpNoy1hHWJgxd+nr1FDnMWxOiRogCmIWAKsDgRBw/R4ReO7Mr6rkf3iARkwXRResH804jaBdf4WxgLVUox+7GtueuwBNiJEEIJI5z5AyrkgyrTfceV0XALMgdCQlts/s9Fzc=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <256788EA86DFB442B581ECDC903CFAAF@namprd22.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=q7WyZk2MiYDpQjBokCNGWJhjCkFFLbpltiYvwpeT22o=;
+        b=lqpG/Qy0UGgJecDPwqwuK+39YpDXT/Y9h1Ge2aXbkRirC7oquyVAaR8JDUyaoEi40S
+         M3cpSqN5XwnC+G13yg/R4eu8NU9b43mQdFs74Tp/T7pBt4atRMpplxINJadSGXHkhv20
+         tazARDfFv61sV7szvLWKMxUrYj6izebhkIxcs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=q7WyZk2MiYDpQjBokCNGWJhjCkFFLbpltiYvwpeT22o=;
+        b=LQ14VmE7EB93SzNBJxfO/PAq1X/9A7uT5r2aoMjvjqFxIC9PK3/O6sx5c+zdv/fMVE
+         zlDojzUHfLX4man6oC0CtoTVe0fGn8GviggieYH0qMXLTSaCm9LJdjtbNhxjY8UbKeBs
+         svBJmpwrUUixpPTh5dMwzzhHn7MKQ+JrVMq+BTajnkL3PyybFHaVO2PNU6SoHpceHROO
+         bVCppnQMZmoCAIwx79b6QFBPjXAQSlvtrQ0dy0GPCu5U8wo7g5SQIACy8fSr7GubebBm
+         tSBXswxrM5xmamSNdT7l3EnPOrbP3HoT+iDqFebZOZdwYs0W0Om5fKxQuzknahvuJ9Z4
+         EhTA==
+X-Gm-Message-State: AGRZ1gKgr1WBjVM1XmaRrbzX0tjikGnWNSbf03HukNvq8qCfxM4pk14j
+        U3fD4kPEDFhA942fjaUbpHPncaVcVNo=
+X-Google-Smtp-Source: AJdET5dS6MDnWXydIoIeepG0OBb7ueUdg4AWvA4MoJQKazZwUL0P6lx7I9tBJBViAxye9hlYESnQew==
+X-Received: by 2002:a1f:3103:: with SMTP id x3mr4204327vkx.80.1540918334314;
+        Tue, 30 Oct 2018 09:52:14 -0700 (PDT)
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
+        by smtp.gmail.com with ESMTPSA id e64-v6sm4468445vka.15.2018.10.30.09.52.12
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 09:52:13 -0700 (PDT)
+Received: by mail-vs1-f44.google.com with SMTP id q15so8158937vso.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 09:52:12 -0700 (PDT)
+X-Received: by 2002:a67:6642:: with SMTP id a63mr8241598vsc.42.1540918332122;
+ Tue, 30 Oct 2018 09:52:12 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa5bde02-1166-4956-0ac2-08d63e880185
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Oct 2018 16:51:58.6474
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR2201MB1240
+References: <1539622953-4188-1-git-send-email-rplsssn@codeaurora.org>
+ <CAD=FV=XB9diR_n1TB4+wUjVaRf0VAmCMgkSbtuOSNO5pkrQ8zg@mail.gmail.com> <5b62572d-9f45-c0ee-776e-1486a9d40862@codeaurora.org>
+In-Reply-To: <5b62572d-9f45-c0ee-776e-1486a9d40862@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 30 Oct 2018 09:52:00 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=ViA_0Vpv+oUTHxUFfdoKftMN58wFxcbdYp2mF8SdULew@mail.gmail.com>
+Message-ID: <CAD=FV=ViA_0Vpv+oUTHxUFfdoKftMN58wFxcbdYp2mF8SdULew@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: sdm845: Add PSCI cpuidle low power states
+To:     Raju P L S S S N <rplsssn@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Evan Green <evgreen@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Lina Iyer <ilina@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masahiro,
+Resending since I accidentally clicked back to HTML and lists all bounced.  :(
 
-On Tue, Oct 30, 2018 at 10:26:33PM +0900, Masahiro Yamada wrote:
-> Evaluating cc-name invokes the compiler every time even when you are
-> not compiling anything, like 'make help'. This is not efficient.
->=20
-> The compiler type has been already detected in the Kconfig stage.
-> Use CONFIG_CC_IS_CLANG, instead.
->=20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+On Tue, Oct 30, 2018 at 9:24 AM Raju P L S S S N <rplsssn@codeaurora.org> wrote:
+>
+> On 10/24/2018 12:06 AM, Doug Anderson wrote:
+> > Hi,
+> >
+> > On Mon, Oct 15, 2018 at 10:02 AM Raju P.L.S.S.S.N
+> > <rplsssn@codeaurora.org> wrote:
+> >> +               idle-states {
+> >> +                       entry-method = "psci";
+> >> +
+> >> +                       C0_CPU_SPC: c0_spc {
+> >
+> > nit: all these nodes should have dashes instead of spaces in the node
+> > names (labels can still have spaces).  AKA:
+> >
+> > C0_CPU_SPC: c0-spc {
+>
+> Sure. I will change this. (However, from device tree specification v0.2,
+> I see that Table 2.1 mentions underscore as valid character for node.
+> Please correct me if I'm missing something)
 
-Looks good to me:
+You're right that I don't see it there.  I've always heard that they
+are allowed but discouraged.  One place that mentions this:
 
-    Acked-by: Paul Burton <paul.burton@mips.com> (MIPS)
+https://elinux.org/Device_Tree_Linux
 
-Thanks,
-    Paul
+> Linux conventions
+> * node names
+>   * use dash "-" instead of underscore "_"
+
+That same site points that the majority of people use dashes in node
+names instead of underscores.
+
+-Doug
