@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 673F9C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03982C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:28:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E4782080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:28:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC78C20880
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:28:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vgLnqBfB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E4782080A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yaBdCgkE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC78C20880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728577AbeJ3WVk (ORCPT
+        id S1728591AbeJ3WVl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 18:21:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52556 "EHLO mail.kernel.org"
+        Tue, 30 Oct 2018 18:21:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726925AbeJ3WVj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 18:21:39 -0400
+        id S1726925AbeJ3WVk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 18:21:40 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B9BD020870;
-        Tue, 30 Oct 2018 13:28:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B47D220838;
+        Tue, 30 Oct 2018 13:28:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540906091;
-        bh=6l4kBxfM1QevW2eFNSUJRSzvNlUyfJzzxGEZpdvi7Us=;
+        s=default; t=1540906093;
+        bh=THqIHNOnTh8JTtqg7hU1GIGu15m4ZI+hDzB3FnC9LXQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vgLnqBfBB81Lz2kNEknZRfS5JsTxE92+vNykNQVIYpn6Nogpxja6Syw9JOiSH9ipl
-         QWcAtKldRIXXJO5MqLCh/tGPt21D+CfOtaZjzGGiY36obQX8uEquRGXIr7j00LZGD2
-         Ctnl0pgNSGL+e2Nu6HYyWdr7LlZ4OLa3DkJ6C1mY=
+        b=yaBdCgkEtjdMepvys6a6kF4E/Ux0MXww0rJYVo3NVra+0GIAym0UwcUHsDPfB5o/x
+         jvEcJhs57ORCBRR8NmvfC1uhPptKXhiysiAIlzO40HLfRxko2fM1+iimzAMHmYtAga
+         77oifhYZadCFQJI06CCKMNbYMV18droyYsvMMmmY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
+Cc:     Ake Koomsin <ake@igel.co.jp>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 27/33] r8169: re-enable MSI-X on RTL8168g
-Date:   Tue, 30 Oct 2018 09:26:51 -0400
-Message-Id: <20181030132657.217970-27-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 28/33] virtio_net: avoid using netif_tx_disable() for serializing tx routine
+Date:   Tue, 30 Oct 2018 09:26:52 -0400
+Message-Id: <20181030132657.217970-28-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181030132657.217970-1-sashal@kernel.org>
 References: <20181030132657.217970-1-sashal@kernel.org>
@@ -53,40 +53,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Heiner Kallweit <hkallweit1@gmail.com>
+From: Ake Koomsin <ake@igel.co.jp>
 
-[ Upstream commit 9675931e6b65d160d16bcc9472c1acef15524def ]
+[ Upstream commit 05c998b738fdd3e5d6a257bcacc8f34b6284d795 ]
 
-Similar to d49c88d7677b ("r8169: Enable MSI-X on RTL8106e") after
-e9d0ba506ea8 ("PCI: Reprogram bridge prefetch registers on resume")
-we can safely assume that this also fixes the root cause of
-the issue worked around by 7c53a722459c ("r8169: don't use MSI-X on
-RTL8168g"). So let's revert it.
+Commit 713a98d90c5e ("virtio-net: serialize tx routine during reset")
+introduces netif_tx_disable() after netif_device_detach() in order to
+avoid use-after-free of tx queues. However, there are two issues.
 
-Fixes: 7c53a722459c ("r8169: don't use MSI-X on RTL8168g")
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+1) Its operation is redundant with netif_device_detach() in case the
+   interface is running.
+2) In case of the interface is not running before suspending and
+   resuming, the tx does not get resumed by netif_device_attach().
+   This results in losing network connectivity.
+
+It is better to use netif_tx_lock_bh()/netif_tx_unlock_bh() instead for
+serializing tx routine during reset. This also preserves the symmetry
+of netif_device_detach() and netif_device_attach().
+
+Fixes commit 713a98d90c5e ("virtio-net: serialize tx routine during reset")
+Signed-off-by: Ake Koomsin <ake@igel.co.jp>
+Acked-by: Jason Wang <jasowang@redhat.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/realtek/r8169.c | 5 -----
- 1 file changed, 5 deletions(-)
+ drivers/net/virtio_net.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
-index 36422f783fe7..2eea2b66d970 100644
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -7546,11 +7546,6 @@ static int rtl_alloc_irq(struct rtl8169_private *tp)
- 		RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~MSIEnable);
- 		RTL_W8(tp, Cfg9346, Cfg9346_Lock);
- 		flags = PCI_IRQ_LEGACY;
--	} else if (tp->mac_version == RTL_GIGA_MAC_VER_40) {
--		/* This version was reported to have issues with resume
--		 * from suspend when using MSI-X
--		 */
--		flags = PCI_IRQ_LEGACY | PCI_IRQ_MSI;
- 	} else {
- 		flags = PCI_IRQ_ALL_TYPES;
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index 2b6ec927809e..500e2d8f10bc 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -2162,8 +2162,9 @@ static void virtnet_freeze_down(struct virtio_device *vdev)
+ 	/* Make sure no work handler is accessing the device */
+ 	flush_work(&vi->config_work);
+ 
++	netif_tx_lock_bh(vi->dev);
+ 	netif_device_detach(vi->dev);
+-	netif_tx_disable(vi->dev);
++	netif_tx_unlock_bh(vi->dev);
+ 	cancel_delayed_work_sync(&vi->refill);
+ 
+ 	if (netif_running(vi->dev)) {
+@@ -2199,7 +2200,9 @@ static int virtnet_restore_up(struct virtio_device *vdev)
+ 		}
  	}
+ 
++	netif_tx_lock_bh(vi->dev);
+ 	netif_device_attach(vi->dev);
++	netif_tx_unlock_bh(vi->dev);
+ 	return err;
+ }
+ 
 -- 
 2.17.1
 
