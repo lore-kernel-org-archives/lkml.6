@@ -2,209 +2,156 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9657AC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:04:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E885AC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:04:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4884B20831
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:04:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4884B20831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id AC5F82082D
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:04:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rnec/+NI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC5F82082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727576AbeJ3X6D (ORCPT
+        id S1727664AbeJ3X6H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 19:58:03 -0400
-Received: from mga14.intel.com ([192.55.52.115]:7401 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726135AbeJ3X6C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 19:58:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 08:04:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,444,1534834800"; 
-   d="scan'208";a="92403891"
-Received: from hmoustaf-mobl.amr.corp.intel.com (HELO [10.251.1.216]) ([10.251.1.216])
-  by FMSMGA003.fm.intel.com with ESMTP; 30 Oct 2018 08:04:11 -0700
-Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
-To:     Dean Wallace <duffydack73@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Johannes Stezenbach <js@sig21.net>,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mogens Jensen <mogens-jensen@protonmail.com>
-References: <20181025232517.ywnw54qibemosjws@picard>
- <154083512089.98144.9141070901932719147@swboyd.mtv.corp.google.com>
- <CAHp75VfnN5tF1Z9+CDDhKFNG5QfCRcGOZeAkpf-5BfCEx16gvg@mail.gmail.com>
- <CAHp75VctdBE-GM60udJawBCXdmoOqZn4N=kFWz5GLHzjPG2iQQ@mail.gmail.com>
- <20181029190819.2ivlx73n6y6sx4vk@picard>
- <ffc4bcc9-62c3-8940-85d6-d0fd01f3a1b8@linux.intel.com>
- <c8fb730a-c160-41b4-dad0-8ed8594e5687@redhat.com>
- <20181030143836.feo7zcxiestylxoo@picard>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <2d429c87-24c5-4075-683e-b0d12c3eb1c2@linux.intel.com>
-Date:   Tue, 30 Oct 2018 10:04:11 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 30 Oct 2018 19:58:07 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40783 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726135AbeJ3X6H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 19:58:07 -0400
+Received: by mail-pf1-f193.google.com with SMTP id g21-v6so5978031pfi.7;
+        Tue, 30 Oct 2018 08:04:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=C0ambmftNVJ/c5veL29dtgLhtMxiGX+W3Kd6u+3IiG0=;
+        b=Rnec/+NImldYhVV5Nb7/8EZDXZNpqPIM0/y1BSAtl/qIOwlWZQJYkXTGUqQF/Q8P1V
+         JP6OfEiuoxq2f25M8ixtmkJ/Be513a7JE4MBrGvUWIqtIxx28vhhV9IS5grfl/DUvM+n
+         aARUvMoFTRiNRS5EVod6RK/rKycKwOqHkzz82n4JtQSS0UudcpsKCB2Cle2kJNn2oeQM
+         ab3oI1gLd1uzAUzxWJm4rR8Fkn1oE2BG/bLt+pK2Ht+VktLGLm2jiq9pLunInNEablFG
+         CY5GT9ftJNU5JUK0cAa9kWX3Dn2AsmqjgTQuMKUq1Rg7gEZPNvKBRv4demWAW6lcCz7m
+         1ZOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=C0ambmftNVJ/c5veL29dtgLhtMxiGX+W3Kd6u+3IiG0=;
+        b=T4Ht/osIV0qdeLxzJysGzyiDJGDFbrfmyge+q4swhMQIwntOh52LmO1/T8HiaiivnM
+         bffy7ZlbNFQCC4eLuiuLCKDIulzxAiIthnrMcTs/d2/9spmKraw3foN2qPILuyQZffro
+         bYPhBT5gHUULE+Dceo/qT9d/YvJmxPTmY342GvafEIaUgUwpZJBv9GGLgwVzGUDglpk7
+         2y7e9NAQ6FLoXvvQSBl10Hj/I19+fYy44qYJyKWy5RHnAjqsgp03uV9+CY+K4MIveLD+
+         npzMXUg9phqMPNV3DEQNonVkfm7mSFH15KeBoYYNo6zwOdI1wQvtZSrEiv/U457maEv8
+         C62w==
+X-Gm-Message-State: AGRZ1gJBvXFPRFVKgaxPgYibZTqDhCmfo8lecrXXapIIbC3Tvi4py6Nx
+        N4Xqr3d9KMUUc9iScLzk2v8=
+X-Google-Smtp-Source: AJdET5eTQwJjStCwMLZrvzv8/Z74MLER1ED0vRtHRZldX4ZcpeZNQKnecPzfNRci2zIJS7TsTfUIfA==
+X-Received: by 2002:a62:62c3:: with SMTP id w186-v6mr3338691pfb.5.1540911856337;
+        Tue, 30 Oct 2018 08:04:16 -0700 (PDT)
+Received: from mail.google.com ([2001:19f0:6001:4ff6:5400:1ff:feb7:a195])
+        by smtp.gmail.com with ESMTPSA id u62-v6sm44260327pfu.69.2018.10.30.08.04.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 30 Oct 2018 08:04:15 -0700 (PDT)
+Date:   Tue, 30 Oct 2018 15:04:13 +0000
+From:   Changbin Du <changbin.du@gmail.com>
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        changbin.du@gmail.com
+Subject: Re: linux-next: manual merge of the compiler-attributes tree with
+ the kbuild tree
+Message-ID: <20181030150412.peayixjav2lvbp4s@mail.google.com>
+References: <20181030104637.382c26d0@canb.auug.org.au>
+ <20181030104941.4fef7dad@canb.auug.org.au>
+ <CANiq72k2w2T0Cy0D--OEmE+sOPkjZtXpukBm+Mz1_xY6MCGg0A@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181030143836.feo7zcxiestylxoo@picard>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANiq72k2w2T0Cy0D--OEmE+sOPkjZtXpukBm+Mz1_xY6MCGg0A@mail.gmail.com>
+User-Agent: NeoMutt/20180716-508-7c9a6d
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Oct 30, 2018 at 12:21:52PM +0100, Miguel Ojeda wrote:
+> On Tue, Oct 30, 2018 at 12:49 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Hi all,
+> >
+> > On Tue, 30 Oct 2018 10:46:37 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > >
+> > > Today's linux-next merge of the compiler-attributes tree got a conflict
+> > > in:
+> > >
+> > >   include/linux/compiler-gcc.h
+> > >
+> > > between commit:
+> > >
+> > >   94c7dfd01652 ("kernel hacking: support building kernel with -Og optimization level")
+> > >
+> > > from the kbuild tree and commits:
+> > >
+> > >   5c67a52f3da0 ("Compiler Attributes: always use the extra-underscores syntax")
+> > >   989bd5000f36 ("Compiler Attributes: remove unneeded sparse (__CHECKER__) tests")
+> > >
+> > > from the compiler-attributes tree.
+> > >
+> > > I fixed it up (the latter just removed the __CHECKER__ check, so I did
+> > > that) and can carry the fix as necessary. This is now fixed as far as
+> >
+> > On reflection, that may not have been the correct resolution ...
+> 
+> From a quick look, it seems we want:
+> 
+> #ifndef CONFIG_CC_OPTIMIZE_FOR_DEBUGGING
+> #define __compiletime_warning(message) __attribute__((__warning__(message)))
+> #define __compiletime_error(message) __attribute__((__error__(message)))
+> #endif
+> 
+> i.e. kbuild tree added the CONFIG_CC_OPTIMIZE_FOR_DEBUGGING guard,
+> while the compiler-attributes tree removed the __CHECKER__ one, so we
+> still need the former.
+> 
+> By the way, I think 94c7dfd01652 is wrong: it changes the guard also
+> for __latent_entropy (and it does not change the corresponding comment
+> at "#endif /* __CHECKER__ */").
+> 
+> Also, the commit message does not mention __compiletime_warning --
+> should that one be guarded too by CONFIG_CC_OPTIMIZE_FOR_DEBUGGING?
+> 
+To avoid future possible warning, __compiletime_warning should also be
+guarded. So I did the flow change so __latent_entropy is not affected.
 
-On 10/30/18 9:38 AM, Dean Wallace wrote:
-> On 30-10-18, Hans de Goede wrote:
->> Hi Dean,
->>
->> Attached are 2 different attempts at fixing this.
->>
->> When trying these patches do not forget to remove the revert of the
->> "Stop-marking-clocks-as-CLK_IS_CRITICAL" commit.
->>
->> Please first try the 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch
->> patch I expect that one to do the trick indicating that the Swanky model
->> uses a different pmc clk then which is normally used for the codec clock.
->>
->> If that patch does not fix things, please give the other patch a try.
+--- a/include/linux/compiler-gcc.h
++++ b/include/linux/compiler-gcc.h
+@@ -85,9 +85,11 @@
+ 
+ #define __compiletime_object_size(obj) __builtin_object_size(obj, 0)
+ 
+-#if !defined(__CHECKER__) && !defined(CONFIG_CC_OPTIMIZE_FOR_DEBUGGING)
++#if !defined(__CHECKER__)
++#if !defined(CONFIG_CC_OPTIMIZE_FOR_DEBUGGING)
+ #define __compiletime_warning(message) __attribute__((warning(message)))
+ #define __compiletime_error(message) __attribute__((error(message)))
++#endif
+ 
+ #ifdef LATENT_ENTROPY_PLUGIN
+ #define __latent_entropy __attribute__((latent_entropy))
 
-For Baytrail devices, the audio platform clocks are not managed by the 
-firmware. They are for CHT-based devices - as can be seen by clock 
-resources being described in the DSDT. We used to have a if(baytrail) in 
-the code which was replaced by this CRITICAL label, but the point 
-remains that there is a difference between the two SOC versions.
 
-In addition I am not aware of any baytrail device using plt_clk_0, so 
-moving a common machine driver such a cht_bsw_max98090_ti to use 
-plt_clk0 only would break other devices (e.g. Rambi/Orco). Asking for 
-both clocks to be on might work though, however you still have the 
-problem of trying to manage from the kernel what the firmware already 
-manages.
+> Cheers,
+> Miguel
 
->>
->> Regards,
->>
->> Hans
->>
->>
->>
->> On 29-10-18 23:03, Pierre-Louis Bossart wrote:
->>> On 10/29/18 2:08 PM, Dean Wallace wrote:
->>>> On 29-10-18, Andy Shevchenko wrote:
->>>>> On Mon, Oct 29, 2018 at 7:52 PM Andy Shevchenko
->>>>> <andy.shevchenko@gmail.com> wrote:
->>>>>> Cc: Pierre as well.
->>>>>>
->>>>>> On Mon, Oct 29, 2018 at 7:48 PM Stephen Boyd <sboyd@kernel.org> wrote:
->>>>>>> Quoting Dean Wallace (2018-10-25 16:25:17)
->>>>>>>> I have found a regression in 4.18.15 that means I lose sound on my old
->>>>>>>> Toshiba Chromebook 2 (Swanky).  My system details are:-
->>>>>>>>
->>>>>>>> Toshiba Chromebook (Swanky)
->>>>>>>> MrChromebox UEFI coreboot
->>>>>>>> Arch Linux running latest alsa/pulseaudio
->>>>>>>>
->>>>>>>> Upgraded kernel from 4.18.14 to 4.18.15 and lost all sound output.  By
->>>>>>>> output I mean, the card is still detected, the module loaded, all apps
->>>>>>>> showing sound is being playing, but no actual audible sound comes
->>>>>>>> through.  Upgraded to 4.18.16 same issue.
->>>>>>>>
->>>>>>>> Dug around and found Upstream commit 648e921888ad96ea3dc922739e96716ad3225d7f
->>>>>>>> clk: x86: Stop marking clocks as CLK_IS_CRITICAL
->>>>>>>> "This commit removes the CLK_IS_CRITICAL marking, fixing Cherry Trail
->>>>>>>> devices not being able to reach S0i3 greatly decreasing their battery
->>>>>>>> drain when suspended."
->>>>>>>>
->>>>>>>> I reverted it and compiled 4.18.16 and have sound back again.  Could
->>>>>>>> this be looked into, with possibility of fix.
->>>>>>>>
->>>>>>> Thanks for the bug report. I'm adding some people involved in the commit
->>>>>>> you mention is causing audio regressions. The best plan is to probably
->>>>>>> revert the commit from the 4.18 linux stable tree. Or there may be
->>>>>>> another patch missing that would be useful to make this backported patch
->>>>>>> work. Hopefully Hans or Andy knows.
->>>>>> Hans has been investigating S0ix issues on Baytrail and Cherrytrail machines.
->>>>>> I have a feeling that the problem can be fixed by properly handling
->>>>>> clock in ASoC driver(s). Perhaps Hans and Pierre can figure this out
->>>>>> better than me.
->>>>> Looking to sound/soc/intel/boards/cht_bsw_rt5672.c I see no
->>>>> suspend-resume hooks. Perhaps, adding them like in the commit
->>>>> ac8bd9e13be2 ("r8169: Disable clk during suspend / resume") would
->>>>> help.
->>> I missed this change while i was away. It's indeed the expectation that the audio mclk is handled by the firmware,
->> I believe that the statement "It's indeed the expectation that the
->> audio mclk is handled by the firmware" is not correct for BYT/CHT
->> platforms (and the commit causing the regression only affects BYT/CHT
->> platforms). Various machine drivers under sound/soc/intel/boards have
->> code to deal with the mclk themselves, like this:
->>
->>          drv->mclk = devm_clk_get(&pdev->dev, "pmc_plt_clk_3");
->> ...
->>
->>          if (SND_SOC_DAPM_EVENT_ON(event)) {
->>                  ret = clk_prepare_enable(ctx->mclk);
->> 		...
->>          } else {
->>                  clk_disable_unprepare(ctx->mclk);
->>          }
->>
->> The above code is from sound/soc/intel/boards/cht_bsw_max98090_ti.c
->> which is the machine driver used on the machines for which problems
->> are now being reported.
->>
->> And my commit introducing the problem is in essence a revert of:
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=d31fd43c0f9a41e2678a1e78c0f22f0384c6edd3
->>
->> Which is from 2017-07-14 and the ASoC code for BYT/CHT platforms is
->> much older then that.
->>
->> Also I asked Carlo why he wrote that patch and it was to fix a problem
->> with ethernet on some laptops.
->>
->>> not sure I understand why removing the CLK_IS_CRITICAL was necessary or what it has to do with S0ix.
->> It is necessary, because if it is set the clock never gets disabled and
->> on x86 platforms using suspend2idle we are responsible for *all* the hardware
->> power-management as OS. If we do not disable the clocks then we can only
->> reach S0i1 instead of S0i3 when suspended leading to increased battery
->> drain during suspend.
->>
->> Also note that this patch is only causing problems on CHT + max98090 codec
->> using machines. I've tested it on many other BYT/CHT machines myself and
->> we've not had any other bug reports related to this.
->>
->> So this clearly points to a problem with the clock management in the
->> cht_bsw_max98090_ti.c machine driver.
->>
->> I've some ideas how to fix this and I will prepare some patches to test.
->>
->> Regards,
->>
->> Hans
-> Excellent work Hans.  Compiled 4.19 with
-> 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch, sound
-> works as before.
->
-> for i in /sys/kernel/debug/clk/pmc_plt_clk_?; do echo -n "$i: "; cat $i/clk_flags; echo; done
-> /sys/kernel/debug/clk/pmc_plt_clk_0:
-> /sys/kernel/debug/clk/pmc_plt_clk_1:
-> /sys/kernel/debug/clk/pmc_plt_clk_2:
-> /sys/kernel/debug/clk/pmc_plt_clk_3:
-> /sys/kernel/debug/clk/pmc_plt_clk_4:
-> /sys/kernel/debug/clk/pmc_plt_clk_5:
->
-> Regards
+-- 
+Thanks,
+Changbin Du
