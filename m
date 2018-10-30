@@ -2,107 +2,174 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E72C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 997C6ECDE44
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:59:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E33BD20823
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:58:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62BB12081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:59:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="i2gDO7MX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E33BD20823
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WDaqQ8Ib"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62BB12081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727484AbeJaAwO (ORCPT
+        id S1727638AbeJaAxF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 20:52:14 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:38525 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726364AbeJaAwN (ORCPT
+        Tue, 30 Oct 2018 20:53:05 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39918 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726364AbeJaAxF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 20:52:13 -0400
-Received: by mail-ot1-f65.google.com with SMTP id f24so5840220otl.5
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 08:58:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cBTw3wYT8YeicD7CM/nix+JIKpDpzrZ7yXAwZhKq6HM=;
-        b=i2gDO7MXe467P88dNA9Oku1CAnmWAnZSKDJbbJao7681sN4BC6da6bHML3Dah1y4vD
-         m2UdXqrHBSlITQn4vUCXsqwEy8m+RXJYWmrjMORSeAKp49WGnE4UKMHVfbCqumdYz8v8
-         4JRA51wUGifc6B/hebGp5aFjY5JBYIwBU6S07QYbqi4gY/dL7GY4gDfbTxHFFLbJTKjI
-         iqHffvjUs6t5GZCio3/dvvvWr8LZsH5WuKYjNrOpCW+2RD76hoIH9H4e87hv/TWeWPld
-         zkqqurw2DXEimOnUdlUE+ei9xMMxfg/xB1ms9cU1KwcEFBoj5DMwi9+adzCzZ2UnvGFB
-         8lrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cBTw3wYT8YeicD7CM/nix+JIKpDpzrZ7yXAwZhKq6HM=;
-        b=qGOIf1Rt+vu/eE7h7cPF5NFpfUUUQ2ajiFcgZgmsiOreJOVS8QSq20qLewVx3k9ST4
-         UICvENMR/qJkDh+BTSLWdaO+PZEYD+lxvq60uPcHGegB81wQE3o6NCYq6jIjvFuS5QaA
-         cIdlCbhgj0L2uwnxPI3GQbzI1CDSL2THIFmzjjTtQli/R/wfLGVvrzRYbxzKMRCtGEiq
-         1HijW2rqiFNwIqw8YSLgrdFjqtPQJR3AVQwqk8phyFbeNQ6AT9B47SWeCDm/zrxYapYi
-         eMmHWxSiSy9Vf2yELS3cIatG1ylYs6wCFBo+CkupTkOsvmrxeYFN3aaWEtPtiMg+P0cZ
-         8Q6w==
-X-Gm-Message-State: AGRZ1gLGPi0hyDh2f4pPKehRAF55Iplh/L1j+l6+0qAIZzGtiAVGQNrB
-        kolbDEhPmreuL3Yv+ImvxMgBOOSPkdAQsSCNkD0Z2A==
-X-Google-Smtp-Source: AJdET5eAZT8srNh2COgFLhDueiSN7nQdEWVKgbUgzD+Eaa1ELRPfmasKnI9vq5fugnnWjT3WgP3SuReHK5f82Bsfh3Y=
-X-Received: by 2002:a9d:2ff8:: with SMTP id b53mr6568960otd.229.1540915090793;
- Tue, 30 Oct 2018 08:58:10 -0700 (PDT)
+        Tue, 30 Oct 2018 20:53:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=RFzKLO3kQlJcnRgjOw2V4E4qiSf0NluBsPpJ9q2ybN4=; b=WDaqQ8IbZ7+pbVWSE7/FSxJDS
+        yQlcYp773w/gAuZ0E2/nPCuTmGt3GCfxTPfypnNAZAsB0S9zArrdwNsZlowxYqZi7jZ7zAdNNsKrP
+        diVY7gHHlDOMX6I4cS8E3xdpXDNvmjBE9gHtXYK4yPUx7tcOs+iss7vDBmsB9mvw6ePJiMhIYo2jj
+        9D0pT8t3Bh+cSH0in4oJfyd75A8+C70DGQQ+caSSLKu9wmUuMc3q82S/fBXcw+pwjkeDAus1WhoLz
+        XM15gffa++j07ir+bvoB6F6OcMbQEvS7dfqOFAaGqZgHPuTtIcxwAAwmmrhkRi+A/43QBXCMZItmK
+        6tHA/iSzw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gHWPj-0004WZ-Ci; Tue, 30 Oct 2018 15:58:43 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 8D8042029FA14; Tue, 30 Oct 2018 16:58:41 +0100 (CET)
+Date:   Tue, 30 Oct 2018 16:58:41 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Igor Stoppa <igor.stoppa@gmail.com>
+Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        kernel-hardening@lists.openwall.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, igor.stoppa@huawei.com,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 16/17] prmem: pratomic-long
+Message-ID: <20181030155841.GF8177@hirez.programming.kicks-ass.net>
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-17-igor.stoppa@huawei.com>
+ <20181025001312.GA3159@worktop.c.hoisthospitality.com>
+ <806bfff0-8d62-9918-480d-ec791b93841e@gmail.com>
 MIME-Version: 1.0
-References: <20181029141210.GJ32673@dhcp22.suse.cz> <84f09883c16608ddd2ba88103f43ec6a1c649e97.camel@linux.intel.com>
- <20181029163528.GL32673@dhcp22.suse.cz> <18dfc5a0db11650ff31433311da32c95e19944d9.camel@linux.intel.com>
- <20181029172415.GM32673@dhcp22.suse.cz> <8e7a4311a240b241822945c0bb4095c9ffe5a14d.camel@linux.intel.com>
- <20181029181827.GO32673@dhcp22.suse.cz> <3281f3044fa231bbc1b02d5c5efca3502a0d05a8.camel@linux.intel.com>
- <20181030062915.GT32673@dhcp22.suse.cz> <CAPcyv4itSde5oiW2j5uK8PCqdpXkHKz=kS8NBk2Ge+Ldb=yLUg@mail.gmail.com>
- <20181030081757.GX32673@dhcp22.suse.cz>
-In-Reply-To: <20181030081757.GX32673@dhcp22.suse.cz>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 30 Oct 2018 08:57:58 -0700
-Message-ID: <CAPcyv4jPoNC86wKH7aNiJfy0ZHKDZ6kTjjomeu8uFecuMNpqHA@mail.gmail.com>
-Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
- point where we init pgmap
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     alexander.h.duyck@linux.intel.com, Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Pasha Tatashin <pavel.tatashin@microsoft.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        rppt@linux.vnet.ibm.com, Ingo Molnar <mingo@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Zhang Yi <yi.z.zhang@linux.intel.com>,
-        osalvador@techadventures.net
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <806bfff0-8d62-9918-480d-ec791b93841e@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 1:18 AM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Mon 29-10-18 23:55:12, Dan Williams wrote:
-> > On Mon, Oct 29, 2018 at 11:29 PM Michal Hocko <mhocko@kernel.org> wrote:
-[..]
-> > That testing identified this initialization performance problem and
-> > thankfully got it addressed in time for the current merge window.
->
-> And I still cannot see a word about that in changelogs.
+On Mon, Oct 29, 2018 at 11:17:14PM +0200, Igor Stoppa wrote:
+> 
+> 
+> On 25/10/2018 01:13, Peter Zijlstra wrote:
+> > On Wed, Oct 24, 2018 at 12:35:03AM +0300, Igor Stoppa wrote:
+> > > +static __always_inline
+> > > +bool __pratomic_long_op(bool inc, struct pratomic_long_t *l)
+> > > +{
+> > > +	struct page *page;
+> > > +	uintptr_t base;
+> > > +	uintptr_t offset;
+> > > +	unsigned long flags;
+> > > +	size_t size = sizeof(*l);
+> > > +	bool is_virt = __is_wr_after_init(l, size);
+> > > +
+> > > +	if (WARN(!(is_virt || likely(__is_wr_pool(l, size))),
+> > > +		 WR_ERR_RANGE_MSG))
+> > > +		return false;
+> > > +	local_irq_save(flags);
+> > > +	if (is_virt)
+> > > +		page = virt_to_page(l);
+> > > +	else
+> > > +		vmalloc_to_page(l);
+> > > +	offset = (~PAGE_MASK) & (uintptr_t)l;
+> > > +	base = (uintptr_t)vmap(&page, 1, VM_MAP, PAGE_KERNEL);
+> > > +	if (WARN(!base, WR_ERR_PAGE_MSG)) {
+> > > +		local_irq_restore(flags);
+> > > +		return false;
+> > > +	}
+> > > +	if (inc)
+> > > +		atomic_long_inc((atomic_long_t *)(base + offset));
+> > > +	else
+> > > +		atomic_long_dec((atomic_long_t *)(base + offset));
+> > > +	vunmap((void *)base);
+> > > +	local_irq_restore(flags);
+> > > +	return true;
+> > > +
+> > > +}
+> > 
+> > That's just hideously nasty.. and horribly broken.
+> > 
+> > We're not going to duplicate all these kernel interfaces wrapped in gunk
+> > like that.
+> 
+> one possibility would be to have macros which use typeof() on the parameter
+> being passed, to decide what implementation to use: regular or write-rare
+> 
+> This means that type punning would still be needed, to select the
+> implementation.
+> 
+> Would this be enough? Is there some better way?
 
-True, I would have preferred that commit 966cf44f637e "mm: defer
-ZONE_DEVICE page initialization to the point where we init pgmap"
-include some notes about the scaling advantages afforded by not
-serializing memmap_init_zone() work. I think this information got
-distributed across several patch series because removing the lock was
-not sufficient by itself, Alex went further to also rework the
-physical socket affinity of the nvdimm sub-system's async
-initialization threads.
+Like mentioned elsewhere; if you do write_enable() + write_disable()
+thingies, it all becomes:
 
-As the code gets refactored further it's a chance to add commentary on
-the scaling expectations of the design.
+	write_enable();
+	atomic_foo(&bar);
+	write_disable();
+
+No magic gunk infested duplication at all. Of course, ideally you'd then
+teach objtool about this (or a GCC plugin I suppose) to ensure any
+enable reached a disable.
+
+The alternative is something like:
+
+#define ALLOW_WRITE(stmt) do { write_enable(); do { stmt; } while (0); write_disable(); } while (0)
+
+which then allows you to write:
+
+	ALLOW_WRITE(atomic_foo(&bar));
+
+No duplication.
+
+> > Also, you _cannot_ call vunmap() with IRQs disabled. Clearly
+> > you've never tested this with debug bits enabled.
+> 
+> I thought I had them. And I _did_ have them enabled, at some point.
+> But I must have messed up with the configuration and I failed to notice
+> this.
+> 
+> I can think of a way it might work, albeit it's not going to be very pretty:
+> 
+> * for the vmap(): if I understand correctly, it might sleep while obtaining
+> memory for creating the mapping. This part could be executed before
+> disabling interrupts. The rest of the function, instead, would be executed
+> after interrupts are disabled.
+> 
+> * for vunmap(): after the writing is done, change also the alternate mapping
+> to read only, then enable interrupts and destroy the alternate mapping.
+> Making also the secondary mapping read only makes it equally secure as the
+> primary, which means that it can be visible also with interrupts enabled.
+
+That doesn't work if you wanted to do this write while you already have
+IRQs disabled for example.
+
+
