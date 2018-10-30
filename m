@@ -2,185 +2,119 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF985C0044C
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 01:20:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57FEAC0044C
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 01:29:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 877B32054F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 01:20:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lQXwUdzy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 877B32054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 11C212082D
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 01:29:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11C212082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726170AbeJ3KMP (ORCPT
+        id S1726136AbeJ3KUv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 06:12:15 -0400
-Received: from ozlabs.org ([203.11.71.1]:41475 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725964AbeJ3KMP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 06:12:15 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42kYZD1CLSz9s3l;
-        Tue, 30 Oct 2018 12:20:51 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1540862452;
-        bh=JCkA1Y2ymEQwb091fZfuRDcAAuDYRJAp8dsSCMsFAwk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=lQXwUdzykzTuxW2BqzVRq4YBTEn/sAQkIjURVIDXl18Nq4zlZkGmB/0Gdtl4UHsA5
-         mtwDP7HJpAmHDdyH95yfrYCWvoFL47fRgJvcpFsJGls0hAi2UXwqpwgdpVBP1aJRUs
-         XVfSQ8GWzC7VbW8AaBwj8C9OdAtihDqUMh7d1MHWYSRMKNyjUkquwuNB9ssMjusdHL
-         iz91udxIHdgRxz1exx/QP1oMHWfxQYQIlAIloW48adxmUeN4SPTfJDOpKTAWBMEZL7
-         yUCDuru/+QqMZ2msMJoBJH07/sCpW37n5ZUIUDCmy5EgWIILdGqZxvXYGCflodAapw
-         enY/Me6weBa1w==
-Date:   Tue, 30 Oct 2018 12:20:50 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: manual merge of the vfs tree with Linus' tree
-Message-ID: <20181030122050.1bd82c30@canb.auug.org.au>
+        Tue, 30 Oct 2018 06:20:51 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:35479 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725902AbeJ3KUv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 06:20:51 -0400
+X-UUID: bf4319f52ccb49e6a55b67a58e6a52da-20181030
+X-UUID: bf4319f52ccb49e6a55b67a58e6a52da-20181030
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1095696761; Tue, 30 Oct 2018 09:29:12 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 30 Oct 2018 09:29:10 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 30 Oct 2018 09:29:10 +0800
+Message-ID: <1540862950.12374.40.camel@mtkswgap22>
+Subject: Re: [PATCH v3] mm/page_owner: use kvmalloc instead of kmalloc
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     Michal Hocko <mhocko@kernel.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Joe Perches <joe@perches.com>,
+        Matthew Wilcox <willy@infradead.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>
+Date:   Tue, 30 Oct 2018 09:29:10 +0800
+In-Reply-To: <20181029081706.GC32673@dhcp22.suse.cz>
+References: <1540790176-32339-1-git-send-email-miles.chen@mediatek.com>
+         <20181029080708.GA32673@dhcp22.suse.cz>
+         <20181029081706.GC32673@dhcp22.suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/mwwwIutqEkPptyjt=g5VmnB"; protocol="application/pgp-signature"
+X-TM-SNTS-SMTP: E2CBA49B416C4E3BC132CB3C34AA7BF195474575720F322FAF6EEBF393DA96F42000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/mwwwIutqEkPptyjt=g5VmnB
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2018-10-29 at 09:17 +0100, Michal Hocko wrote:
+> On Mon 29-10-18 09:07:08, Michal Hocko wrote:
+> [...]
+> > Besides that, the following doesn't make much sense to me. It simply
+> > makes no sense to use vmalloc for sub page allocation regardless of
+> > HIGHMEM.
+> 
+> OK, it is still early morning here. Now I get the point of the patch.
+> You just want to (ab)use highmeme for smaller requests. I do not like
+> this, to be honest. It causes an internal fragmentation and more
+> importantly the VMALLOC space on 32b where HIGHMEM is enabled (do we
+> have any 64b with HIGHMEM btw?) is quite small to be wasted like that.
+> 
+thanks for your comment. It looks like that using vmalloc fallback for
+sub page allocation is not good here.
 
-Hi Al,
+Your comment gave another idea:
 
-Today's linux-next merge of the vfs tree got a conflict in:
+1. force kbuf to PAGE_SIZE
+2. allocate a page by alloc_page(GFP_KERNEL | __GFP_HIGHMEM); so we can
+get a highmem page if possible
+3. use kmap/kunmap pair to create mapping for this page. No vmalloc
+space is used.
+4. do not change kvmalloc logic.
 
-  fs/compat_ioctl.c
 
-between commit:
+> In any case such a changes should come with some numbers and as a
+> separate patch for sure.
+> 
+> > > diff --git a/mm/util.c b/mm/util.c
+> > > index 8bf08b5b5760..7b1c59b9bfbf 100644
+> > > --- a/mm/util.c
+> > > +++ b/mm/util.c
+> > > @@ -416,10 +416,10 @@ void *kvmalloc_node(size_t size, gfp_t flags, int node)
+> > >  	ret = kmalloc_node(size, kmalloc_flags, node);
+> > >  
+> > >  	/*
+> > > -	 * It doesn't really make sense to fallback to vmalloc for sub page
+> > > -	 * requests
+> > > +	 * It only makes sense to fallback to vmalloc for sub page
+> > > +	 * requests if we might be able to allocate highmem pages.
+> > >  	 */
+> > > -	if (ret || size <= PAGE_SIZE)
+> > > +	if (ret || (!IS_ENABLED(CONFIG_HIGHMEM) && size <= PAGE_SIZE))
+> > >  		return ret;
+> > >  
+> > >  	return __vmalloc_node_flags_caller(size, node, flags,
+> > > -- 
+> > > 2.18.0
+> > > 
+> > 
+> > -- 
+> > Michal Hocko
+> > SUSE Labs
+> 
 
-  77654350306a ("take compat TIOC[SG]SERIAL treatment into tty_compat_ioctl=
-()")
 
-from Linus' tree and commit:
-
-  69374d063be0 ("compat_ioctl: remove pointless HCI... ioctls")
-
-from the vfs tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc fs/compat_ioctl.c
-index 6e30949d9f77,326ceab5246a..000000000000
---- a/fs/compat_ioctl.c
-+++ b/fs/compat_ioctl.c
-@@@ -429,13 -499,68 +429,6 @@@ static int mt_ioctl_trans(struct file *
- =20
-  #endif /* CONFIG_BLOCK */
- =20
-- /* Bluetooth ioctls */
-- #define HCIUARTSETPROTO		_IOW('U', 200, int)
-- #define HCIUARTGETPROTO		_IOR('U', 201, int)
-- #define HCIUARTGETDEVICE	_IOR('U', 202, int)
-- #define HCIUARTSETFLAGS		_IOW('U', 203, int)
-- #define HCIUARTGETFLAGS		_IOR('U', 204, int)
- -struct serial_struct32 {
- -        compat_int_t    type;
- -        compat_int_t    line;
- -        compat_uint_t   port;
- -        compat_int_t    irq;
- -        compat_int_t    flags;
- -        compat_int_t    xmit_fifo_size;
- -        compat_int_t    custom_divisor;
- -        compat_int_t    baud_base;
- -        unsigned short  close_delay;
- -        char    io_type;
- -        char    reserved_char[1];
- -        compat_int_t    hub6;
- -        unsigned short  closing_wait; /* time to wait before closing */
- -        unsigned short  closing_wait2; /* no longer used... */
- -        compat_uint_t   iomem_base;
- -        unsigned short  iomem_reg_shift;
- -        unsigned int    port_high;
- -     /* compat_ulong_t  iomap_base FIXME */
- -        compat_int_t    reserved[1];
- -};
- -
- -static int serial_struct_ioctl(struct file *file,
- -		unsigned cmd, struct serial_struct32 __user *ss32)
- -{
- -        typedef struct serial_struct32 SS32;
- -        int err;
- -	struct serial_struct __user *ss =3D compat_alloc_user_space(sizeof(*ss));
- -        __u32 udata;
- -	unsigned int base;
- -	unsigned char *iomem_base;
- -
- -	if (ss =3D=3D NULL)
- -		return -EFAULT;
- -        if (cmd =3D=3D TIOCSSERIAL) {
- -		if (copy_in_user(ss, ss32, offsetof(SS32, iomem_base)) ||
- -		    get_user(udata, &ss32->iomem_base))
- -			return -EFAULT;
- -		iomem_base =3D compat_ptr(udata);
- -		if (put_user(iomem_base, &ss->iomem_base) ||
- -		    convert_in_user(&ss32->iomem_reg_shift,
- -		      &ss->iomem_reg_shift) ||
- -		    convert_in_user(&ss32->port_high, &ss->port_high) ||
- -		    put_user(0UL, &ss->iomap_base))
- -			return -EFAULT;
- -        }
- -	err =3D do_ioctl(file, cmd, (unsigned long)ss);
- -        if (cmd =3D=3D TIOCGSERIAL && err >=3D 0) {
- -		if (copy_in_user(ss32, ss, offsetof(SS32, iomem_base)) ||
- -		    get_user(iomem_base, &ss->iomem_base))
- -			return -EFAULT;
- -		base =3D (unsigned long)iomem_base  >> 32 ?
- -			0xffffffff : (unsigned)(unsigned long)iomem_base;
- -		if (put_user(base, &ss32->iomem_base) ||
- -		    convert_in_user(&ss->iomem_reg_shift,
- -		      &ss32->iomem_reg_shift) ||
- -		    convert_in_user(&ss->port_high, &ss32->port_high))
- -			return -EFAULT;
- -        }
- -        return err;
- -}
---
-  #define RTC_IRQP_READ32		_IOR('p', 0x0b, compat_ulong_t)
-  #define RTC_IRQP_SET32		_IOW('p', 0x0c, compat_ulong_t)
-  #define RTC_EPOCH_READ32	_IOR('p', 0x0d, compat_ulong_t)
-
---Sig_/mwwwIutqEkPptyjt=g5VmnB
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvXsfIACgkQAVBC80lX
-0GyWkggAk+mGzr3YiRPXwF7N3+MwbgE4v1IyRXSBCl/CyOfHmPxjHyKZyEsBk+Fl
-cV64iqSJFDLvdanIRyuivDd/AYu/9E1KcUvsmSWogkTE1ut7Sia/2fBi0+w2lbId
-S0YuCUxJDwhMLRd0FR2Sk7C7yNa07EECKsS6qOsgOk7AFJvuF2twPpHnjgDCdc7S
-q/xLfhgYV7J8c1QGsZhUl0tjnMtMk29XUznjcX64nCU+cfYhnei7RR/VtoYsVxbD
-2s0hcZZyflLtK0cjE6r0ceEM/Mej8zwHhxyPgG4CsIU4ZFCxOLE7ST1HQvUeO8bW
-wJG8UdL7jSUwS2XL4vijgcFjOT1ytQ==
-=VfoC
------END PGP SIGNATURE-----
-
---Sig_/mwwwIutqEkPptyjt=g5VmnB--
