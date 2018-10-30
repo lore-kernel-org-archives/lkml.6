@@ -2,100 +2,274 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE4E5C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:26:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62DCEC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:27:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2D6E2081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:26:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 163302081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:27:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RdfaVRLc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2D6E2081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="jbiOZqTH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 163302081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=Dell.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727666AbeJaGVG (ORCPT
+        id S1727709AbeJaGWJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 02:21:06 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:32844 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725743AbeJaGVG (ORCPT
+        Wed, 31 Oct 2018 02:22:09 -0400
+Received: from esa4.dell-outbound.iphmx.com ([68.232.149.214]:15129 "EHLO
+        esa4.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725743AbeJaGWI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 02:21:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Q8w/sHoucG3GmKpRw8+C/5yNw6xEMIv7YocwV/fFoKI=; b=RdfaVRLcsYI1IQiMSBBDcyBiLT
-        7X8Lh03D9wTpHp0iQthLGjZyRF3Mb4TYwIWiWYNpqx06nlaJ9JAEkssaXPRfJ8T3jhJq+DxNutqxP
-        PqtxzMEDPqZxgyfPFe5KgQS8zF7jK/JC6tgz8cKp6b/EsVKE/CuVf5HMZQn5q0IxDW76q2M4qDOPd
-        rFyN7Lxla7U/MdQxv2xSxGsIkVtlKwlR7IZfxbqMMgayaJ8NlqiFL2K8x1B4KeIZ6D3anPUdKTEKG
-        xCZB7Z+/GKe5r2j+pzroo7jZlBNYpojN4z5QL5l9Pr//Q61CDRjiZul61sN6rl2AuwtktwKwbC5N2
-        BK8vQk2g==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gHbWJ-0001ft-En; Tue, 30 Oct 2018 21:25:51 +0000
-Date:   Tue, 30 Oct 2018 14:25:51 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     nadav.amit@gmail.com, Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Igor Stoppa <igor.stoppa@gmail.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 10/17] prmem: documentation
-Message-ID: <20181030212551.GD10491@bombadil.infradead.org>
-References: <20181023213504.28905-11-igor.stoppa@huawei.com>
- <20181026092609.GB3159@worktop.c.hoisthospitality.com>
- <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
- <20181028183126.GB744@hirez.programming.kicks-ass.net>
- <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
- <20181030152641.GE8177@hirez.programming.kicks-ass.net>
- <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
- <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
- <20181030175814.GB10491@bombadil.infradead.org>
- <28C8CD2A-BDC0-49A5-854E-1E18968528B8@amacapital.net>
+        Wed, 31 Oct 2018 02:22:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
+  t=1540934821; x=1572470821;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=00MlkvZgvcXpcnkBOzvgHGLprHdObT8/zYwhl+KmqNc=;
+  b=jbiOZqTHDXYHrilpjvWPvj4tHos3EJ6zMGlO8jF54NQ/CLr7CztzcUz6
+   buhNwwK3Wn+keiEqg0j39e8dQlhACQYWktGykkvhm36FGWvN2xDMU9PK8
+   firHahzvERUI2H1Lo5ozjMONtQ/gWmKs7T6BMBVaRr3fklzQYsgQXzUZn
+   Y=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FNAADvy9hbhyeV50NkHAEBAQQBAQc?=
+ =?us-ascii?q?EAQGBVAQBAQsBgVWCFDKMY6R7gWYLAQGEbAKDJSI3Cg0BAwEBAgEBAgEBAhA?=
+ =?us-ascii?q?BAQEKCwkIKS+CNiKCZAIBAxIVEy0SEAIBCDYQVwIEAQ0NGoJ/ggKdawKBEIl?=
+ =?us-ascii?q?YAQEBgWgziimLZ4IXgRGDEoRnhXICgSoBhzCGC49YVAYBAo0mg1oggXWOVCy?=
+ =?us-ascii?q?WVQIEAgQFAhSBWYF4cIFugU+CJQ4JjhqMEIEfAQE?=
+X-IPAS-Result: =?us-ascii?q?A2FNAADvy9hbhyeV50NkHAEBAQQBAQcEAQGBVAQBAQsBg?=
+ =?us-ascii?q?VWCFDKMY6R7gWYLAQGEbAKDJSI3Cg0BAwEBAgEBAgEBAhABAQEKCwkIKS+CN?=
+ =?us-ascii?q?iKCZAIBAxIVEy0SEAIBCDYQVwIEAQ0NGoJ/ggKdawKBEIlYAQEBgWgziimLZ?=
+ =?us-ascii?q?4IXgRGDEoRnhXICgSoBhzCGC49YVAYBAo0mg1oggXWOVCyWVQIEAgQFAhSBW?=
+ =?us-ascii?q?YF4cIFugU+CJQ4JjhqMEIEfAQE?=
+Received: from mx0a-00154901.pphosted.com ([67.231.149.39])
+  by esa4.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 30 Oct 2018 16:27:00 -0500
+Received: from pps.filterd (m0090351.ppops.net [127.0.0.1])
+        by mx0b-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9ULNU5S106707;
+        Tue, 30 Oct 2018 17:27:00 -0400
+Received: from esa4.dell-outbound2.iphmx.com (esa4.dell-outbound2.iphmx.com [68.232.154.98])
+        by mx0b-00154901.pphosted.com with ESMTP id 2nexh1r7fd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 30 Oct 2018 17:27:00 -0400
+From:   <Justin.Lee1@Dell.com>
+Received: from ausc60pc101.us.dell.com ([143.166.85.206])
+  by esa4.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 31 Oct 2018 03:26:59 +0600
+X-LoopCount0: from 10.166.135.91
+X-IronPort-AV: E=Sophos;i="5.54,446,1534827600"; 
+   d="scan'208";a="1319704866"
+To:     <sam@mendozajonas.com>, <netdev@vger.kernel.org>
+CC:     <davem@davemloft.net>, <linux-kernel@vger.kernel.org>,
+        <openbmc@lists.ozlabs.org>
+Subject: RE: [PATCH net-next 5/6] net/ncsi: Reset channel state in
+ ncsi_start_dev()
+Thread-Topic: [PATCH net-next 5/6] net/ncsi: Reset channel state in
+ ncsi_start_dev()
+Thread-Index: AQHUZpcV/jLZttPJVESchUXzrlpHT6U4CxHw
+Date:   Tue, 30 Oct 2018 21:26:57 +0000
+Message-ID: <96158616f0774e3d9fae0e99bb16e605@AUSX13MPS306.AMER.DELL.COM>
+References: <20181018035917.19413-1-sam@mendozajonas.com>
+ <20181018035917.19413-6-sam@mendozajonas.com>
+In-Reply-To: <20181018035917.19413-6-sam@mendozajonas.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.18.86]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <28C8CD2A-BDC0-49A5-854E-1E18968528B8@amacapital.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-30_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=864 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810300178
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 11:51:17AM -0700, Andy Lutomirski wrote:
-> Finally, one issue: rare_alloc() is going to utterly suck
-> performance-wise due to the global IPI when the region gets zapped out
-> of the direct map or otherwise made RO.  This is the same issue that
-> makes all existing XPO efforts so painful. We need to either optimize
-> the crap out of it somehow or we need to make sure it’s not called
-> except during rare events like device enumeration.
+> +int ncsi_reset_dev(struct ncsi_dev *nd)
+> +{
+> +	struct ncsi_dev_priv *ndp =3D TO_NCSI_DEV_PRIV(nd);
+> +	struct ncsi_channel *nc, *active;
+> +	struct ncsi_package *np;
+> +	unsigned long flags;
+> +	bool enabled;
+> +	int state;
+> +
+> +	active =3D NULL;
+> +	NCSI_FOR_EACH_PACKAGE(ndp, np) {
+> +		NCSI_FOR_EACH_CHANNEL(np, nc) {
+> +			spin_lock_irqsave(&nc->lock, flags);
+> +			enabled =3D nc->monitor.enabled;
+> +			state =3D nc->state;
+> +			spin_unlock_irqrestore(&nc->lock, flags);
+> +
+> +			if (enabled)
+> +				ncsi_stop_channel_monitor(nc);
+> +			if (state =3D=3D NCSI_CHANNEL_ACTIVE) {
+> +				active =3D nc;
+> +				break;
 
-Batching operations is kind of the whole point of the VM ;-)  Either
-this rare memory gets used a lot, in which case we'll want to create slab
-caches for it, make it a MM zone and the whole nine yeards, or it's not
-used very much in which case it doesn't matter that performance sucks.
+Is the original intention to process the channel one by one?
+If it is the case, there are two loops and we might need to use
+"goto found" instead.
 
-For now, I'd suggest allocating 2MB chunks as needed, and having a
-shrinker to hand back any unused pieces.
+> +			}
+> +		}
+> +	}
+> +
+
+found: ?
+
+> +	if (!active) {
+> +		/* Done */
+> +		spin_lock_irqsave(&ndp->lock, flags);
+> +		ndp->flags &=3D ~NCSI_DEV_RESET;
+> +		spin_unlock_irqrestore(&ndp->lock, flags);
+> +		return ncsi_choose_active_channel(ndp);
+> +	}
+> +
+> +	spin_lock_irqsave(&ndp->lock, flags);
+> +	ndp->flags |=3D NCSI_DEV_RESET;
+> +	ndp->active_channel =3D active;
+> +	ndp->active_package =3D active->package;
+> +	spin_unlock_irqrestore(&ndp->lock, flags);
+> +
+> +	nd->state =3D ncsi_dev_state_suspend;
+> +	schedule_work(&ndp->work);
+> +	return 0;
+> +}
+
+
+Also similar issue in ncsi_choose_active_channel() function below.
+
+> @@ -916,32 +1045,49 @@ static int ncsi_choose_active_channel(struct ncsi_=
+dev_priv *ndp)
+> =20
+>  			ncm =3D &nc->modes[NCSI_MODE_LINK];
+>  			if (ncm->data[2] & 0x1) {
+> -				spin_unlock_irqrestore(&nc->lock, flags);
+>  				found =3D nc;
+> -				goto out;
+> +				with_link =3D true;
+>  			}
+> =20
+> -			spin_unlock_irqrestore(&nc->lock, flags);
+> +			/* If multi_channel is enabled configure all valid
+> +			 * channels whether or not they currently have link
+> +			 * so they will have AENs enabled.
+> +			 */
+> +			if (with_link || np->multi_channel) {
+
+I notice that there is a case that we will misconfigure the interface.
+For example below, multi-channel is not enable for package 1.
+But we enable the channel for ncsi2 below (package 1 channel 0) as that int=
+erface is the first
+channel for that package with link.
+
+cat /sys/kernel/debug/ncsi_protocol/ncsi_device_
+IFIDX IFNAME NAME   PID CID RX TX MP MC WP WC PC CS PS LS RU CR NQ HA
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+  2   eth2   ncsi0  000 000 1  1  1  1  1  1  0  2  1  1  1  1  0  1
+  2   eth2   ncsi1  000 001 1  0  1  1  1  1  0  2  1  1  1  1  0  1
+  2   eth2   ncsi2  001 000 1  0  1  0  1  1  0  2  1  1  1  1  0  1
+  2   eth2   ncsi3  001 001 0  0  1  0  1  1  0  1  0  1  1  1  0  1
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+MP: Multi-mode Package     WP: Whitelist Package
+MC: Multi-mode Channel     WC: Whitelist Channel
+PC: Primary Channel        CS: Channel State IA/A/IV 1/2/3
+PS: Poll Status            LS: Link Status
+RU: Running                CR: Carrier OK
+NQ: Queue Stopped          HA: Hardware Arbitration
+
+I temporally change to the following to avoid that.
+			if ((with_link &&
+			     !np->multi_channel &&
+			     list_empty(&ndp->channel_queue)) || np->multi_channel) {
+
+> +				spin_lock_irqsave(&ndp->lock, flags);
+> +				list_add_tail_rcu(&nc->link,
+> +						  &ndp->channel_queue);
+> +				spin_unlock_irqrestore(&ndp->lock, flags);
+> +
+> +				netdev_dbg(ndp->ndev.dev,
+> +					   "NCSI: Channel %u added to queue (link %s)\n",
+> +					   nc->id,
+> +					   ncm->data[2] & 0x1 ? "up" : "down");
+> +			}
+> +
+> +			spin_unlock_irqrestore(&nc->lock, cflags);
+> +
+> +			if (with_link && !np->multi_channel)
+> +				break;
+
+Similar issue here. As we are using break, so each package will configure o=
+ne active TX.
+
+>  		}
+> +		if (with_link && !ndp->multi_package)
+> +			break;
+>  	}
+> =20
+> -	if (!found) {
+> +	if (list_empty(&ndp->channel_queue) && found) {
+> +		netdev_info(ndp->ndev.dev,
+> +			    "NCSI: No channel with link found, configuring channel %u\n",
+> +			    found->id);
+> +		spin_lock_irqsave(&ndp->lock, flags);
+> +		list_add_tail_rcu(&found->link, &ndp->channel_queue);
+> +		spin_unlock_irqrestore(&ndp->lock, flags);
+> +	} else if (!found) {
+>  		netdev_warn(ndp->ndev.dev,
+> -			    "NCSI: No channel found with link\n");
+> +			    "NCSI: No channel found to configure!\n");
+>  		ncsi_report_link(ndp, true);
+>  		return -ENODEV;
+>  	}
+
+
+Also, for deselect package handler function, do we want to set to inactive =
+here?
+If we just change the state, the cached data still keeps the old value. If =
+the new=20
+ncsi_reset_dev() function is handling one by one, can we skip this part?
+
+static int ncsi_rsp_handler_dp(struct ncsi_request *nr)
+{
+	struct ncsi_rsp_pkt *rsp;
+	struct ncsi_dev_priv *ndp =3D nr->ndp;
+	struct ncsi_package *np;
+	struct ncsi_channel *nc;
+	unsigned long flags;
+
+	/* Find the package */
+	rsp =3D (struct ncsi_rsp_pkt *)skb_network_header(nr->rsp);
+	ncsi_find_package_and_channel(ndp, rsp->rsp.common.channel,
+				      &np, NULL);
+	if (!np)
+		return -ENODEV;
+
+	/* Change state of all channels attached to the package */
+	NCSI_FOR_EACH_CHANNEL(np, nc) {
+		spin_lock_irqsave(&nc->lock, flags);
+		nc->state =3D NCSI_CHANNEL_INACTIVE;
+
+		spin_unlock_irqrestore(&nc->lock, flags);
+	}
+
+	return 0;
+}
+
+
