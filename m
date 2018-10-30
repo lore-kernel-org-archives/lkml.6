@@ -2,144 +2,184 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA1CC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 06:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C86DDC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 06:54:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 256F62080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 06:51:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 256F62080A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 957FD20657
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 06:54:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 957FD20657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726551AbeJ3Pnp (ORCPT
+        id S1726683AbeJ3Pq4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 11:43:45 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:53174 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726154AbeJ3Pnp (ORCPT
+        Tue, 30 Oct 2018 11:46:56 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:6652 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726154AbeJ3Pq4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 11:43:45 -0400
-Received: from tmo-115-37.customers.d1-online.com ([80.187.115.37] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gHNs7-0000xx-LM; Tue, 30 Oct 2018 07:51:27 +0100
-Date:   Tue, 30 Oct 2018 07:51:26 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Laurence Oberman <loberman@redhat.com>
-cc:     linux-kernel@vger.kernel.org, rdunlap@infradead.org
-Subject: Re: [PATCH] V6 init/main.c Enable watchdog_thresh control from kernel
- line To: loberman@redhat.com
-In-Reply-To: <1540410119-21120-1-git-send-email-loberman@redhat.com>
-Message-ID: <alpine.DEB.2.21.1810300713320.5984@nanos.tec.linutronix.de>
-References: <1540410119-21120-1-git-send-email-loberman@redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 30 Oct 2018 11:46:56 -0400
+X-UUID: 44b2aa45ef7649f6858083555117557f-20181030
+X-UUID: 44b2aa45ef7649f6858083555117557f-20181030
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 2018501910; Tue, 30 Oct 2018 14:54:33 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 30 Oct 2018 14:54:31 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 30 Oct 2018 14:54:31 +0800
+Message-ID: <1540882471.31817.9.camel@mtksdaap41>
+Subject: Re: [PATCH 3/3] drm/mediatek: Use drm_gem_cma_object instead of
+ mtk_drm_gem_obj
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Daniel Vetter <daniel@ffwll.ch>
+CC:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
+Date:   Tue, 30 Oct 2018 14:54:31 +0800
+In-Reply-To: <20181029091619.GT21967@phenom.ffwll.local>
+References: <1540538523-1973-1-git-send-email-ck.hu@mediatek.com>
+         <1540538523-1973-4-git-send-email-ck.hu@mediatek.com>
+         <20181026102156.GH21967@phenom.ffwll.local>
+         <1540782676.13715.4.camel@mtksdaap41>
+         <20181029091619.GT21967@phenom.ffwll.local>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Laurence,
+Hi, Daniel:
 
-On Wed, 24 Oct 2018, Laurence Oberman wrote:
-
-your subject line reads a bit strange:
-
-Subject: [PATCH] V6 init/main.c Enable watchdog_thresh control from kernel line To: loberman@redhat.com
-
-Aside of that extra 'To:...', please move the V6 inside the square brackets
-together with PATCH so tools can strip off the whole thing.
-
-Also please refrain from using file path as a prefix. It's sufficient to
-use 'init' and please add a colon after the prefix to separate it from the
-short log string. 'kernel line' reads strange, that should be 'kernel
-command line'. 
-
-> Both graphics and serial consoles are exposed to hard lockups
-> when handling a large amount of messaging. The kernel watchdog_thresh
-> parameter up to now has not been available to be set on the kernel line for
-> early boot.
-> This patch allows the setting of watchdog_thresh to be increased
-> when needed to avoid the hard lockups in the console code.
-
-git grep 'This patch' Documentation/process/
-
-> Signed-off-by: Laurence Oberman <loberman@redhat.com>
-> Acked-by: Randy Dunlap <rdunlap@infradead.org>
-> ---
->  Documentation/admin-guide/kernel-parameters.txt |  7 +++++++
->  init/main.c                                     | 11 +++++++++++
->  2 files changed, 18 insertions(+)
+On Mon, 2018-10-29 at 10:16 +0100, Daniel Vetter wrote:
+> On Mon, Oct 29, 2018 at 11:11:16AM +0800, CK Hu wrote:
+> > Hi,Daniel:
+> > 
+> > On Fri, 2018-10-26 at 12:21 +0200, Daniel Vetter wrote:
+> > > On Fri, Oct 26, 2018 at 03:22:03PM +0800, CK Hu wrote:
+> > > > After adding dma_dev in struct drm_device and
+> > > > drm_gem_cma_dumb_create_no_kmap(), drm_gem_cma_object could replace
+> > > > mtk_drm_gem_obj, so use drm_gem_cma_object instead of mtk_drm_gem_obj to
+> > > > reduce redundant code.
+> > > > 
+> > > > Signed-off-by: CK Hu <ck.hu@mediatek.com>
+> > > 
+> > > A few questions/thoughts:
+> > > 
+> > > - Why do you need both drm_device->dev and drm_device->dma_dev? Can't you
+> > >   just register the drm_device with the right struct device?
+> > > 
+> > 
+> > In [1], mmsys is the drm driver and ovl0 and ovl1 is the sub device
+> > which has dma function.
+> > In this drm, there are two crtc and each one is comprised of many
+> > component.
+> > This is an example of mt8173:
+> > 
+> > crtc0: ovl0, color0, aal, od, rdma0, ufoe, dsi0
+> > crtc1: ovl1, color1, gamma, rdma1, dpi0
+> > 
+> > In the device node of ovl0 and ovl1, there is a 'iommus' parameter in
+> > it, so use dma_alloc_xxx() and dma_map_xxx() with that device would get
+> > iova rather than pa. I don't think it's a good idea to register ovl0 or
+> > ovl1 as drm device because each one is just a component in a pipeline.
+> > mmsys controls the clock and routing of multi-media system which include
+> > this drm system, so it's better to register mmsys as drm device. Maybe
+> > we could move 'iommus' parameter from ovl device to mmsys device, so the
+> > dma device changes from ovl device to mmsys device. I'm not sure this
+> > would be a good choice, how do you think?
+> > 
+> > [1]
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/mediatek/mt8173.dtsi?h=v4.19
 > 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 4cdcd1a..102382f 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -4932,6 +4932,13 @@
->  			or other driver-specific files in the
->  			Documentation/watchdog/ directory.
->  
-> +	watchdog_thresh=
-> +			This parameter allows early boot to change the
-> +			value of the watchdog timeout threshold from the default
-> +			of 10 seconds to avoid hard lockups.  Example:
-> +			watchdog_thresh=30
-> +			Default: 10
+> Ah ok. But if you have 2 blocks that make up the overall drm device, why
+> don't you need to switch at runtime between them? I.e. buffer allocated
+> for crtc0 needs to be dma-mapped to crtc0, buffer allocated to crtc1 needs
+> to be dma-mapped on crtc1?
+> 
+> And if they're both the exact same iommu, then imo it would make indeed
+> sense to move the iommu attribute up. Since your current code cant'
+> actually handle truly separate dma-mappings. And neither can your patch
+> series here handled separate iommu for crtc0 and crtc1.
 
-  Describing a parameter with 'This parameter' is pointless. The 'early
-  boot' extra is not really helpful either as the kernel command line
-  parameters are evaluated during early boot.
+Yes, they're the exact same iommu. So I would move iommu attribute up.
 
-  Changing this parameter does not avoid hard lockups, really. It changes
-  the time which has to elapse for a lockup to be detected.
+> 
+> > > - You don't use drm_gem_prime_import_dev, so prime import isn't using the
+> > >   right device either.
+> > 
+> > Yes, you are right. I'm not familiar with whore drm core, so I start to
+> > modify what Mediatek drm use. But this function still works for the drm
+> > device that itself is dma device. If one day there is a drm device which
+> > itself is not a dma device and need this function, send a patch to
+> > modify this function and test it with that drm device. If you want me to
+> > modify all in advance, I'm ok but need others to test it because
+> > Mediatek drm driver does not use them.
+> 
+> I meant to say that mediatek should use drm_gem_prime_import_dev, but
+> currently isn't using that. And your patch series here doesn't fix that
+> either. So there's more bugs left in this area.
 
-  Aside of that it does not only affect the hard lockup detector it also
-  affects the soft lockup detector.
+Great, you find a bug. My test only include export but not import. This
+would take time to generate import-test environment.
 
-  You also fail to mention that setting this to 0 disables both lockup
-  detectors completely. Something like this perhaps:
+> 
+> > > - exynos seems to have the same or at least similar issue, stronger case
+> > >   for your patches if you can solve both.
+> > 
+> > I'm still Mediatek's employee. If I modify other company's driver and it
+> > is not a MUST-BE for Mediatek, Mediatek may think I give contribution to
+> > other company. So I've better not to modify exynos driver.
+> 
+> This isn't how upstream works :-)
 
-	watchdog_thresh=
-			[KNL]
-			Set the hard lockup detector stall duration
-			threshold in seconds. The soft lockup detector
-			threshold is set to twice the value. A value of 0
-			disables both lockup detectors. Default is 10
-			seconds.
+OK, because now I would not modify drm core, I would focus on Mediatek
+drm driver first. If the modification of exynos driver is easy, I could
+try. But if the modification of exynos is huge, I suggest that someone
+who is familiar with exynos driver and have exynos platform to do it.
 
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -1038,6 +1038,17 @@ static int __init set_debug_rodata(char *str)
->  __setup("rodata=", set_debug_rodata);
->  #endif
->  
-> +#ifdef CONFIG_LOCKUP_DETECTOR
-> +extern int watchdog_thresh;
-> +
-> +static int __init watchdog_thresh_setup(char *str)
-> +{
-> +	get_option(&str, &watchdog_thresh);
-> +	return 1;
-> +}
-> +__setup("watchdog_thresh=", watchdog_thresh_setup);
-> +#endif
+Regards,
+CK
+> 
+> > > - I'd start out with using struct drm_gem_cma_object in mtk (similar to
+> > >   what vc4 does), and then reusing as much as possible of the existing
+> > >   helpers. And then looking later on what's still left (like the support
+> > >   for leaving out the virtual mapping).
+> > 
+> > I'm not clear what vc4 does. It looks like that you want me to redefine
+> > mtk_drm_gem_obj based on drm_gem_cma_object. So it would be like
+> > 
+> > struct mtk_drm_gem_obj {
+> > 	struct drm_gem_cma_object base;
+> > 	void *cookie;
+> > 	unsigned long dma_attrs;
+> > };
+> > 
+> > I could try to modify as this and see what have left.
+> 
+> Yup, that's my suggestion. Then we can look at what mtk can use unchanged
+> from the core helpers. And what would need to change and so better
+> evaluate whether it makes sense to do that.
+> 
+> I still think just moving the iommu is probably best.
+> -Daniel
 
-Why are you adding this to init/main.c?
 
-This really belongs into kernel/watchdog.c which also avoids the ifdeffery
-and the ugly extern. Then the subject line becomes something like this:
-
- [PATCH V$N] watchdog/core: Add watchdog_thresh command line parameter
-
-Thanks,
-
-	tglx
