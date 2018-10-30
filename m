@@ -2,109 +2,156 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AAA4C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 06:55:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C05FC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 06:55:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9C762082D
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 06:55:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 619FD20657
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 06:55:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="JFD1xXFB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9C762082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WXAdPrM1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 619FD20657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727340AbeJ3Prj (ORCPT
+        id S1727497AbeJ3Pr4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 11:47:39 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:43079 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726154AbeJ3Prj (ORCPT
+        Tue, 30 Oct 2018 11:47:56 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:39122 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726154AbeJ3Pr4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 11:47:39 -0400
-Received: by mail-ot1-f68.google.com with SMTP id k9so10062468otl.10
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 23:55:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2oEctViFWGv5eMUDxpWzydSoGJaeA2ZN4aB61tX/MeE=;
-        b=JFD1xXFBNKZ6cX0yIR1rE38RC1OfSF80xEszztaMuH0K5TsxAsdg/CnuAiSKwhdrXE
-         QemGK8CIzrR62rXk9yZTPz2O2B618r/9VujQfAwmvCRYaS0MvLwVk2f1AVORD4LrEdgT
-         ubmbjXIBPTymxE1Thw6PpXWKRh0ZXR3Db0HgB/Ws3OohN/88FBqsI0KGIp49QGp+1/Pw
-         ko7ekHYdIPQVOQ1PJ2jvlLdhkNccyw/OROPfA4P9dMtykWhjB5VyMnCFtgj+wQ0hngf5
-         MC67ImwrQBNtS3W9zV2N6m5kSCtkmGpHT9a8lQlI/69ZK8XCfQWR6ECUMKy5WtXQu3Rh
-         0LDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2oEctViFWGv5eMUDxpWzydSoGJaeA2ZN4aB61tX/MeE=;
-        b=TIMOxuAAbFmvLDAKJMbWtF6DB3UzmzGMlYhL/TsCtkxUHlwX5cia6TP1Y2ordQxvtg
-         Y903EDUY1Us9ywEtA5G0sJaP+lhvmQNr2AAlHZomIvcWkFKyjWhOwGyHiE1Pq+O+9q+x
-         lOhiZMRpyjOD06uX+QuwQsrYPewcjWEvZ9yUmCZfcAHpYFrX81qbIfU0S5gXkcLq1Yyq
-         RVYXq/jL2yeKzxT3R8O8SxSZ7K9fYvOvZuyZ1c5lUm1811cdt4YlOxSdrzwZ33R4K7mF
-         6Q6TFSMLSFkI+zXvq6og6z/jDlxdcUut4Jo92DBoQlf9bzJ7cn8oTq3yhcZo2ZBiBm9J
-         PgXQ==
-X-Gm-Message-State: AGRZ1gJQ2mdUoLotoeCb16NT7rvXnIt7AkST0SAfzTiZto5wZPHSaZDv
-        c/u1R/KWhFusDIos2UsnLWeVhi9Gluykm8MQ2gdy9w==
-X-Google-Smtp-Source: AJdET5fmAwhaaAEwjDGPAX8c80uO4K5Ehg60sOXBIIWA/M1/OGmUGA4ZUzbcHplkaDDFlyNfi1PV92LIWJ21dHmSkEo=
-X-Received: by 2002:a9d:9c4:: with SMTP id 4mr5421953otz.214.1540882523764;
- Mon, 29 Oct 2018 23:55:23 -0700 (PDT)
+        Tue, 30 Oct 2018 11:47:56 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9U6rja0064348;
+        Tue, 30 Oct 2018 06:55:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ message-id : date : from : to : cc : subject : content-type :
+ content-transfer-encoding; s=corp-2018-07-02;
+ bh=ZasPdyyfMaoTYYtoXzlqo83MGm65M1bUrdZ9blzatFc=;
+ b=WXAdPrM1pAhiZ75Pktqa646VDuk//nIyrReuwtNQuvJorg647W/H8RgiL0e+eJGvV1ni
+ 8E/L8qtaoPxjYDJ37WSHWJeruSLW7M6egJuAzSdQE7aRKfpkUfBLeh6hZImrYKgajqJJ
+ R5GuPxODb4AHS69NeuEXjE/hShS3oDrosc3tBBqCf96zYEX2qj3/umyccT2f/b7tRJnw
+ TOVBgrmplXqcUgGYPoXjg8l9iwjh9pGhkvjTw5ry3Y5c9XY9dqK1Cz+xoMlFj2YUZTVj
+ VnpjiVNzqfrTHJkIgEfD81EikL/GQNtKgnmK2kDzlF17vM9liliJ7PjcFUM/+6TiobeJ 8g== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2ncgnqsxht-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Oct 2018 06:55:07 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9U6t7A1021281
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Oct 2018 06:55:07 GMT
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9U6t6RZ030589;
+        Tue, 30 Oct 2018 06:55:06 GMT
 MIME-Version: 1.0
-References: <20181017075257.GF18839@dhcp22.suse.cz> <971729e6-bcfe-a386-361b-d662951e69a7@linux.intel.com>
- <20181029141210.GJ32673@dhcp22.suse.cz> <84f09883c16608ddd2ba88103f43ec6a1c649e97.camel@linux.intel.com>
- <20181029163528.GL32673@dhcp22.suse.cz> <18dfc5a0db11650ff31433311da32c95e19944d9.camel@linux.intel.com>
- <20181029172415.GM32673@dhcp22.suse.cz> <8e7a4311a240b241822945c0bb4095c9ffe5a14d.camel@linux.intel.com>
- <20181029181827.GO32673@dhcp22.suse.cz> <3281f3044fa231bbc1b02d5c5efca3502a0d05a8.camel@linux.intel.com>
- <20181030062915.GT32673@dhcp22.suse.cz>
-In-Reply-To: <20181030062915.GT32673@dhcp22.suse.cz>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 29 Oct 2018 23:55:12 -0700
-Message-ID: <CAPcyv4itSde5oiW2j5uK8PCqdpXkHKz=kS8NBk2Ge+Ldb=yLUg@mail.gmail.com>
-Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
- point where we init pgmap
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     alexander.h.duyck@linux.intel.com, Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Pasha Tatashin <pavel.tatashin@microsoft.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        rppt@linux.vnet.ibm.com, Ingo Molnar <mingo@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Zhang Yi <yi.z.zhang@linux.intel.com>,
-        osalvador@techadventures.net
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <dd9fce0a-e7e8-427b-bd11-7ec65ddb2ea7@default>
+Date:   Mon, 29 Oct 2018 23:55:06 -0700 (PDT)
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+To:     Linux-Kernel <linux-kernel@vger.kernel.org>
+Cc:     <mingo@redhat.com>, <konrad.wilk@oracle.com>, <dwmw@amazon.co.uk>,
+        <tglx@linutronix.de>,
+        Srinivas REDDY Eeda <srinivas.eeda@oracle.com>, <bp@suse.de>,
+        <peterz@infradead.org>, <hpa@zytor.com>
+Subject: [PATCH 2/3] retpolines: Remove the minimal stuff of retpoline support
+X-Mailer: Zimbra on Oracle Beehive
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9061 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810300060
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 11:29 PM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Mon 29-10-18 12:59:11, Alexander Duyck wrote:
-> > On Mon, 2018-10-29 at 19:18 +0100, Michal Hocko wrote:
-[..]
-> > The patches Andrew pushed addressed the immediate issue so that now
-> > systems with nvdimm/DAX memory can at least initialize quick enough
-> > that systemd doesn't refuse to mount the root file system due to a
-> > timeout.
->
-> This is about the first time you actually mention that. I have re-read
-> the cover letter and all changelogs of patches in this serious. Unless I
-> have missed something there is nothing about real users hitting issues
-> out there. nvdimm is still considered a toy because there is no real HW
-> users can play with.
+Now that CONFIG_RETPOLINE hard depends on compiler support, there is no
+reason for minimal stuff to still exist.
 
-Yes, you have missed something, because that's incorrect. There's been
-public articles about these parts sampling since May.
+This change is based on suggestion in https://lkml.org/lkml/2018/9/18/1016
 
-    https://www.anandtech.com/show/12828/intel-launches-optane-dimms-up-to-512gb-apache-pass-is-here
+Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+---
+ arch/x86/include/asm/nospec-branch.h |  2 --
+ arch/x86/kernel/cpu/bugs.c           | 13 ++-----------
+ 2 files changed, 2 insertions(+), 13 deletions(-)
 
-That testing identified this initialization performance problem and
-thankfully got it addressed in time for the current merge window.
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/no=
+spec-branch.h
+index 8b09cbb..c202a64 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -221,8 +221,6 @@
+ /* The Spectre V2 mitigation variants */
+ enum spectre_v2_mitigation {
+ =09SPECTRE_V2_NONE,
+-=09SPECTRE_V2_RETPOLINE_MINIMAL,
+-=09SPECTRE_V2_RETPOLINE_MINIMAL_AMD,
+ =09SPECTRE_V2_RETPOLINE_GENERIC,
+ =09SPECTRE_V2_RETPOLINE_AMD,
+ =09SPECTRE_V2_IBRS_ENHANCED,
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index d0108fb..7f6d815 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -135,8 +135,6 @@ enum spectre_v2_mitigation_cmd {
+=20
+ static const char *spectre_v2_strings[] =3D {
+ =09[SPECTRE_V2_NONE]=09=09=09=3D "Vulnerable",
+-=09[SPECTRE_V2_RETPOLINE_MINIMAL]=09=09=3D "Vulnerable: Minimal generic AS=
+M retpoline",
+-=09[SPECTRE_V2_RETPOLINE_MINIMAL_AMD]=09=3D "Vulnerable: Minimal AMD ASM r=
+etpoline",
+ =09[SPECTRE_V2_RETPOLINE_GENERIC]=09=09=3D "Mitigation: Full generic retpo=
+line",
+ =09[SPECTRE_V2_RETPOLINE_AMD]=09=09=3D "Mitigation: Full AMD retpoline",
+ =09[SPECTRE_V2_IBRS_ENHANCED]=09=09=3D "Mitigation: Enhanced IBRS",
+@@ -250,11 +248,6 @@ static void __init spec2_print_if_secure(const char *r=
+eason)
+ =09=09pr_info("%s selected on command line.\n", reason);
+ }
+=20
+-static inline bool retp_compiler(void)
+-{
+-=09return __is_defined(CONFIG_RETPOLINE);
+-}
+-
+ static inline bool match_option(const char *arg, int arglen, const char *o=
+pt)
+ {
+ =09int len =3D strlen(opt);
+@@ -417,14 +410,12 @@ static void __init spectre_v2_select_mitigation(void)
+ =09=09=09pr_err("Spectre mitigation: LFENCE not serializing, switching to =
+generic retpoline\n");
+ =09=09=09goto retpoline_generic;
+ =09=09}
+-=09=09mode =3D retp_compiler() ? SPECTRE_V2_RETPOLINE_AMD :
+-=09=09=09=09=09 SPECTRE_V2_RETPOLINE_MINIMAL_AMD;
++=09=09mode =3D SPECTRE_V2_RETPOLINE_AMD;
+ =09=09setup_force_cpu_cap(X86_FEATURE_RETPOLINE_AMD);
+ =09=09setup_force_cpu_cap(X86_FEATURE_RETPOLINE);
+ =09} else {
+ =09retpoline_generic:
+-=09=09mode =3D retp_compiler() ? SPECTRE_V2_RETPOLINE_GENERIC :
+-=09=09=09=09=09 SPECTRE_V2_RETPOLINE_MINIMAL;
++=09=09mode =3D SPECTRE_V2_RETPOLINE_GENERIC;
+ =09=09setup_force_cpu_cap(X86_FEATURE_RETPOLINE);
+ =09}
+=20
+--=20
+1.8.3.1
