@@ -2,133 +2,129 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 641ADECDE44
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:17:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A13C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:20:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34E3420664
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:17:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34E3420664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
+	by mail.kernel.org (Postfix) with ESMTP id CA5FA2082B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:20:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KRJQaIsC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA5FA2082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726799AbeJaELz (ORCPT
+        id S1727771AbeJaEPM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 00:11:55 -0400
-Received: from fieldses.org ([173.255.197.46]:53490 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726235AbeJaELz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 00:11:55 -0400
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 815F82056; Tue, 30 Oct 2018 15:17:10 -0400 (EDT)
-Date:   Tue, 30 Oct 2018 15:17:10 -0400
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeff Layton <jlayton@redhat.com>
-Subject: [GIT PULL] nfsd changes for 4.20
-Message-ID: <20181030191710.GA23042@fieldses.org>
+        Wed, 31 Oct 2018 00:15:12 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45990 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725743AbeJaEPM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 00:15:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=37nJP9R2qcO8HBp/dMyepi58FVf9IEQD7mWnc5gvOVU=; b=KRJQaIsC774yFQU2a5LgnLkLS
+        SSGXeYxMt6FaQKWmDTNz6ne2oE0AZXsXUx4Q0g+y3nyb1M6pLClzCvMywUxGuJXr/xjqubuyTnZv2
+        Go2w8uj9DvgZcq74mG3w4ej1/TWmISnqEs7SNchJML7UQ4DvCtIsDlh4F7VO5KTqGSoHg3Q08g8sd
+        KaWv/YZMWvFsFR7+vPRVEmamyeE+y4hxCpQRbZGLGVCpwDAB9x2qnfYQXPrh4CjxytK50eeB1JUsY
+        uarR2NbtMIwmc1HWVfWxIRWE3wQWYCUBr65PxjBkuyYVpOxIkKU0kqMWCC6mV6jbf3nx8kik7wyB5
+        4un6CBuYw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gHZYr-0000hc-Sk; Tue, 30 Oct 2018 19:20:21 +0000
+Date:   Tue, 30 Oct 2018 12:20:21 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Igor Stoppa <igor.stoppa@gmail.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 10/17] prmem: documentation
+Message-ID: <20181030192021.GC10491@bombadil.infradead.org>
+References: <20181023213504.28905-11-igor.stoppa@huawei.com>
+ <20181026092609.GB3159@worktop.c.hoisthospitality.com>
+ <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
+ <20181028183126.GB744@hirez.programming.kicks-ass.net>
+ <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
+ <20181030152641.GE8177@hirez.programming.kicks-ass.net>
+ <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
+ <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
+ <20181030175814.GB10491@bombadil.infradead.org>
+ <20181030182841.GE7343@cisco>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
-From:   bfields@fieldses.org (J. Bruce Fields)
+In-Reply-To: <20181030182841.GE7343@cisco>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please pull nfsd changes for 4.20:
+On Tue, Oct 30, 2018 at 12:28:41PM -0600, Tycho Andersen wrote:
+> On Tue, Oct 30, 2018 at 10:58:14AM -0700, Matthew Wilcox wrote:
+> > On Tue, Oct 30, 2018 at 10:06:51AM -0700, Andy Lutomirski wrote:
+> > > > On Oct 30, 2018, at 9:37 AM, Kees Cook <keescook@chromium.org> wrote:
+> > > I support the addition of a rare-write mechanism to the upstream kernel.
+> > > And I think that there is only one sane way to implement it: using an
+> > > mm_struct. That mm_struct, just like any sane mm_struct, should only
+> > > differ from init_mm in that it has extra mappings in the *user* region.
+> > 
+> > I'd like to understand this approach a little better.  In a syscall path,
+> > we run with the user task's mm.  What you're proposing is that when we
+> > want to modify rare data, we switch to rare_mm which contains a
+> > writable mapping to all the kernel data which is rare-write.
+> > 
+> > So the API might look something like this:
+> > 
+> > 	void *p = rare_alloc(...);	/* writable pointer */
+> > 	p->a = x;
+> > 	q = rare_protect(p);		/* read-only pointer */
+> > 
+> > To subsequently modify q,
+> > 
+> > 	p = rare_modify(q);
+> > 	q->a = y;
+> 
+> Do you mean
+> 
+>     p->a = y;
+> 
+> here? I assume the intent is that q isn't writable ever, but that's
+> the one we have in the structure at rest.
 
-  git://linux-nfs.org/~bfields/linux.git tags/nfsd-4.20
+Yes, that was my intent, thanks.
 
-Olga added support for the NFSv4.2 asynchronous copy protocol.  We
-already supported COPY, by copying a limited amount of data and then
-returning a short result, letting the client resend.  The asynchronous
-protocol should offer better performance at the expense of some
-complexity.
+To handle the list case that Igor has pointed out, you might want to
+do something like this:
 
-The other highlight is Trond's work to convert the duplicate reply cache
-to a red-black tree, and to move it and some other server caches to RCU.
-(Previously these have meant taking global spinlocks on every RPC.)
+	list_for_each_entry(x, &xs, entry) {
+		struct foo *writable = rare_modify(entry);
+		kref_get(&writable->ref);
+		rare_protect(writable);
+	}
 
-Otherwise, some RDMA work and miscellaneous bugfixes.
-
---b.
-
-Amir Goldstein (1):
-      lockd: fix access beyond unterminated strings in prints
-
-Andrew Elble (1):
-      nfsd: correctly decrement odstate refcount in error path
-
-Chuck Lever (4):
-      svcrdma: Reduce max_send_sges
-      svcrdma: Remove ->release_rqst call in bc reply handler
-      svcrdma: Remove try_module_get from backchannel
-      svcrdma: Increase the default connection credit limit
-
-Gustavo A. R. Silva (1):
-      nfsd: fix fall-through annotations
-
-Olga Kornievskaia (4):
-      NFSD CB_OFFLOAD xdr
-      NFSD OFFLOAD_STATUS xdr
-      NFSD OFFLOAD_CANCEL xdr
-      NFSD introduce async copy feature
-
-Trond Myklebust (18):
-      SUNRPC: Remove the server 'authtab_lock' and just use RCU
-      SUNRPC: Add lockless lookup of the server's auth domain
-      SUNRPC: Refactor sunrpc_cache_lookup
-      SUNRPC: Allow cache lookups to use RCU protection rather than the r/w spinlock
-      SUNRPC: Make server side AUTH_UNIX use lockless lookups
-      knfsd: Allow lockless lookups of the exports
-      SUNRPC: Lockless server RPCSEC_GSS context lookup
-      knfsd: Lockless lookup of NFSv4 identities.
-      NFS: Lockless DNS lookups
-      NFS: Fix up a typo in nfs_dns_ent_put
-      SUNRPC: Remove non-RCU protected lookup
-      SUNRPC: Replace the cache_detail->hash_lock with a regular spinlock
-      SUNRPC: Simplify TCP receive code
-      knfsd: Remove dead code from nfsd_cache_lookup
-      knfsd: Simplify NFS duplicate replay cache
-      knfsd: Further simplify the cache lookup
-      knfsd: Improve lookup performance in the duplicate reply cache using an rbtree
-      nfsd: Fix an Oops in free_session()
-
-YueHaibing (1):
-      nfsd: remove set but not used variable 'dirp'
-
- Documentation/filesystems/nfs/rpc-cache.txt |   6 +-
- fs/lockd/host.c                             |   2 +-
- fs/nfs/dns_resolve.c                        |  15 +-
- fs/nfsd/cache.h                             |  20 +-
- fs/nfsd/export.c                            |  14 +-
- fs/nfsd/export.h                            |   2 +
- fs/nfsd/netns.h                             |   8 +
- fs/nfsd/nfs4callback.c                      |  98 ++++++++++
- fs/nfsd/nfs4idmap.c                         |  11 +-
- fs/nfsd/nfs4proc.c                          | 289 ++++++++++++++++++++++++++--
- fs/nfsd/nfs4state.c                         |  41 +++-
- fs/nfsd/nfs4xdr.c                           |  50 ++++-
- fs/nfsd/nfscache.c                          | 142 +++++++-------
- fs/nfsd/nfsctl.c                            |   1 +
- fs/nfsd/state.h                             |  10 +
- fs/nfsd/vfs.c                               |   5 +-
- fs/nfsd/xdr4.h                              |  28 +++
- fs/nfsd/xdr4cb.h                            |  10 +
- include/linux/sunrpc/cache.h                |  18 +-
- include/linux/sunrpc/svc_rdma.h             |  13 +-
- include/linux/sunrpc/svcauth.h              |   1 +
- net/sunrpc/auth_gss/svcauth_gss.c           |  41 +++-
- net/sunrpc/cache.c                          | 153 +++++++++------
- net/sunrpc/svc_xprt.c                       |   2 +-
- net/sunrpc/svcauth.c                        |  74 +++++--
- net/sunrpc/svcauth_unix.c                   |  24 ++-
- net/sunrpc/svcsock.c                        |  53 ++---
- net/sunrpc/xprtrdma/svc_rdma_backchannel.c  |  23 +--
- net/sunrpc/xprtrdma/svc_rdma_transport.c    |  10 +-
- 29 files changed, 858 insertions(+), 306 deletions(-)
+but we'd probably wrap it in list_for_each_rare_entry(), just to be nicer.
