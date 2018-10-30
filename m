@@ -2,122 +2,120 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 024FEC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:22:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9B98C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:22:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A952820823
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:22:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H4ybcfV7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A952820823
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 65B2120823
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:22:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65B2120823
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727689AbeJ3UPK (ORCPT
+        id S1727733AbeJ3UPo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 16:15:10 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39906 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726225AbeJ3UPJ (ORCPT
+        Tue, 30 Oct 2018 16:15:44 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:37516 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726225AbeJ3UPn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 16:15:09 -0400
-Received: by mail-lj1-f196.google.com with SMTP id a28-v6so7935405ljd.6;
-        Tue, 30 Oct 2018 04:22:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VX+Bq9XeuwywpXaCbL56kjQLxVXpOVKB1A9wyS/dM1M=;
-        b=H4ybcfV7FFYJ/SkmlyoiJk7mSDLPIfdqdynmTOv2RkPyvo2khHP24Q144t2WA6lVnt
-         7iMqzeb9jLsxuPy4iXPqqCAJ03E/+HLpeUR82Bq/CevOx64OEQPOvoRnDu+vExsa5245
-         i0E823A8v7QEUREeIwHTdXM7kQKIh7rwhkHDaX8DU4KoyMJDkkgAYzcUnndVa8KLG+NU
-         0ffzr7y+cSNO+pqt4NvaHHLlg9A5fi/XGOJq3wWYTzUZbK2Nd8IknMiiglVCZkXtW9/m
-         dmUN928aAw+p7hIR3tefPRTJXI3Zm1DPPbXHaSPQTI5xmdZ2Pfvl3JNOt3un7P0/eOlZ
-         n71w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VX+Bq9XeuwywpXaCbL56kjQLxVXpOVKB1A9wyS/dM1M=;
-        b=s0TD4sAoqZizfZg30ijLkv4mRJsOfkbeuW4meo9MFXnJSPWhC52mm/IPO1vno4OXIM
-         iO3AqAWDgUIUIqr0BM5itnmBj/nx/lc7Gu2rg5SRyrsTrwl8GBAFIcHAWdU810nG5KUM
-         rnOIOeX0FG8WS86sD6HMu2YDTcoN8UT0HEVkk0C0IC491+huEAadJUcZar25bU0//9Vx
-         2BOs9UoLCDTs7n3ElYPMOB+nyRtzVqB2nsO7wo5Jzq37pYMIO9xEeg+6Gqj8hbaz9GcQ
-         ohWxr3PZ82q8mVm+hf8MHMeRYFlIzg4vE6ZwIt2XO686l17qjFkLwgph3NexiYXzm4+z
-         EZrA==
-X-Gm-Message-State: AGRZ1gJ2EYxAt11Kz80zkabFC5TCwXK/+KpoTKY6VH3f5RLMhj4IeHLx
-        Xjpz8n8E4m3ufrLsKpGaKl/VGqOyN7oe2r4pI5E=
-X-Google-Smtp-Source: AJdET5dbv8qdGBF8FhyPE9D3xN+gKa4+AK/TwEY3xsvq7/cWXRBrO6fmii7YkpJZ0B4GrwVdeWnHjzuFH7tFMqFtrxs=
-X-Received: by 2002:a2e:58b:: with SMTP id 133-v6mr8925765ljf.127.1540898523561;
- Tue, 30 Oct 2018 04:22:03 -0700 (PDT)
+        Tue, 30 Oct 2018 16:15:43 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07486;MF=wei.guo.simon@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0TBu-lzu_1540898554;
+Received: from localhost(mailfrom:wei.guo.simon@linux.alibaba.com fp:SMTPD_---0TBu-lzu_1540898554)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 30 Oct 2018 19:22:34 +0800
+Date:   Tue, 30 Oct 2018 19:22:34 +0800
+From:   Simon Guo <wei.guo.simon@linux.alibaba.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     Alex Williamson <alex.williamson@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        qixuan.wu@linux.alibaba.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Subject: Re: Can VFIO pin only a specific region of guest mem when use pass
+ through devices?
+Message-ID: <20181030112234.GA6751@simonLocalRHEL7.x64>
+Reply-To: Simon Guo <wei.guo.simon@linux.alibaba.com>
+References: <20181029024228.GA4279@simonLocalRHEL7.x64>
+ <e4be89df-2bf9-76a2-497f-c6ba3256c95a@redhat.com>
+ <20181029122922.7b2a9b0c@t450s.home>
+ <20181030030051.GA22523@xz-x1>
 MIME-Version: 1.0
-References: <20181030104637.382c26d0@canb.auug.org.au> <20181030104941.4fef7dad@canb.auug.org.au>
-In-Reply-To: <20181030104941.4fef7dad@canb.auug.org.au>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Tue, 30 Oct 2018 12:21:52 +0100
-Message-ID: <CANiq72k2w2T0Cy0D--OEmE+sOPkjZtXpukBm+Mz1_xY6MCGg0A@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the compiler-attributes tree with the
- kbuild tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        changbin.du@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=gb2312
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181030030051.GA22523@xz-x1>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 12:49 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> On Tue, 30 Oct 2018 10:46:37 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Today's linux-next merge of the compiler-attributes tree got a conflict
-> > in:
-> >
-> >   include/linux/compiler-gcc.h
-> >
-> > between commit:
-> >
-> >   94c7dfd01652 ("kernel hacking: support building kernel with -Og optimization level")
-> >
-> > from the kbuild tree and commits:
-> >
-> >   5c67a52f3da0 ("Compiler Attributes: always use the extra-underscores syntax")
-> >   989bd5000f36 ("Compiler Attributes: remove unneeded sparse (__CHECKER__) tests")
-> >
-> > from the compiler-attributes tree.
-> >
-> > I fixed it up (the latter just removed the __CHECKER__ check, so I did
-> > that) and can carry the fix as necessary. This is now fixed as far as
->
-> On reflection, that may not have been the correct resolution ...
+On Tue, Oct 30, 2018 at 11:00:51AM +0800, Peter Xu wrote:
+> On Mon, Oct 29, 2018 at 12:29:22PM -0600, Alex Williamson wrote:
+> > On Mon, 29 Oct 2018 17:14:46 +0800
+> > Jason Wang <jasowang@redhat.com> wrote:
+> > 
+> > > On 2018/10/29 ÉÏÎç10:42, Simon Guo wrote:
+> > > > Hi,
+> > > >
+> > > > I am using network device pass through mode with qemu x86(-device vfio-pci,host=0000:xx:yy.z)
+> > > > and ¡°intel_iommu=on¡± in host kernel command line, and it shows the whole guest memory
+> > > > were pinned(vfio_pin_pages()), viewed by the ¡°top¡± RES memory output. I understand it is due
+> > > > to device can DMA to any guest memory address and it cannot be swapped.
+> > > >
+> > > > However can we just pin a rang of address space allowed by iommu group of that device,
+> > > > instead of pin whole address space? I do notice some code like vtd_host_dma_iommu().
+> > > > Maybe there is already some way to enable that?
+> > > >
+> > > > Sorry if I missed some basics. I googled some but no luck to find the answer yet. Please
+> > > > let me know if any discussion already raised on that.
+> > > >
+> > > > Any other suggestion will also be appreciated. For example, can we modify the guest network
+> > > > card driver to allocate only from a specific memory region(zone), and qemu advises guest
+> > > > kernel to only pin that memory region(zone) accordingly?
+> > > >
+> > > > Thanks,
+> > > > - Simon  
+> > > 
+> > > 
+> > > One possible method is to enable IOMMU of VM.
+> > 
+> > Right, making use of a virtual IOMMU in the VM is really the only way
+> > to bound the DMA to some subset of guest memory, but vIOMMU usage by
+> > the guest is optional on x86 and even if the guest does use it, it might
+> > enable passthrough mode, which puts you back at the problem that all
+> > guest memory is pinned with the additional problem that it might also
+> > be accounted for once per assigned device and may hit locked memory
+> > limits.  Also, the DMA mapping and unmapping path with a vIOMMU is very
+> > slow, so performance of the device in the guest will be abysmal unless
+> > the use case is limited to very static mappings, such as userspace use
+> > within the guest for nested assignment or perhaps DPDK use cases.
+> > 
+> > Modifying the guest to only use a portion of memory for DMA sounds like
+> > a quite intrusive option.  There are certainly IOMMU models where the
+> > IOMMU provides a fixed IOVA range, but creating dynamic mappings within
+> > that range doesn't really solve anything given that it simply returns
+> > us to a vIOMMU with slow mapping.  A window with a fixed identity
+> > mapping used as a DMA zone seems plausible, but again, also pretty
+> > intrusive to the guest, possibly also to the drivers.  Host IOMMU page
+> > faulting can also help the pinned memory footprint, but of course
+> > requires hardware support and lots of new code paths, many of which are
+> > already being discussed for things like Scalable IOV and SVA.  Thanks,
+> 
+> Agree with Jason's and Alex's comments.  One trivial additional: the
+> whole guest RAM will possibly still be pinned for a very short period
+> during guest system boot (e.g., when running guest BIOS) and before
+> the guest kernel enables the vIOMMU for the assigned device since the
+> bootup code like BIOS would still need to be able to access the whole
+> guest memory.
+> 
 
-From a quick look, it seems we want:
+Peter, Alex, Jason,
+Thanks for your nice/detailed explanation. 
 
-#ifndef CONFIG_CC_OPTIMIZE_FOR_DEBUGGING
-#define __compiletime_warning(message) __attribute__((__warning__(message)))
-#define __compiletime_error(message) __attribute__((__error__(message)))
-#endif
-
-i.e. kbuild tree added the CONFIG_CC_OPTIMIZE_FOR_DEBUGGING guard,
-while the compiler-attributes tree removed the __CHECKER__ one, so we
-still need the former.
-
-By the way, I think 94c7dfd01652 is wrong: it changes the guard also
-for __latent_entropy (and it does not change the corresponding comment
-at "#endif /* __CHECKER__ */").
-
-Also, the commit message does not mention __compiletime_warning --
-should that one be guarded too by CONFIG_CC_OPTIMIZE_FOR_DEBUGGING?
-
-Cheers,
-Miguel
+BR,
+- Simon
