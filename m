@@ -2,149 +2,128 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C27BC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:50:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95C6AC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:52:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E5EE20831
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:50:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qmmo0JHa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E5EE20831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 4CFF82080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:52:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CFF82080A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=vivier.eu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726788AbeJ3Rm4 (ORCPT
+        id S1726963AbeJ3Roh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 13:42:56 -0400
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:40382 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726189AbeJ3Rm4 (ORCPT
+        Tue, 30 Oct 2018 13:44:37 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:49769 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726225AbeJ3Roh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 13:42:56 -0400
-Received: by mail-vk1-f196.google.com with SMTP id h20-v6so2784432vke.7
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 01:50:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=oEU/mv+esfKKeHliUNOW6T9zb6Me+WuY+3DiEVFHtfs=;
-        b=qmmo0JHaZ1gM9tAyL1absGBu4ZVWnWusnmoOSO1af3fR3OYg24KxGIiQatWdp/3wih
-         b2wdZI1XE+SGvguiMW+faF3ET9DqTfeaWjIEc1EtT+Xh50RL+/f/e7BntOOVKX7v/9wh
-         7ptTNhQyAHVzm5crR0vUcSTx0vLFf4NxDkNXkltdSSzm/VltWhP9ALW5kG+1owvg6Gog
-         BGUQ13p+AMkApVOjaeB9cYu96aq8wS/s1pwqEtEzcWS85jRMPAQWt7zTuyO1Of5cavyk
-         aiRl5CcitJMGciqdWZ3It6Pro/irE1GdLhuiU1QLo0gOkfBMkPUcM8ycnbIsEvAW/8hs
-         iDcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=oEU/mv+esfKKeHliUNOW6T9zb6Me+WuY+3DiEVFHtfs=;
-        b=kFSNzKRFvo7/Vil9JeYLViqa51Tmf9fhhI72l7R24Oi+8673pLpl+CCoqgTCH6J95x
-         oaD9DHOl88GUQc6H2q677pFpUOIqPcWYIitD92UugAfx1XxqCyDvkucSUw5sBv2YM6oe
-         FqBRNGBL1/BlD4MuHpKFakCa/VmhX8VcmZ/prCGB/qrfM8qRaxZRNz6sagTxgyd/6K5a
-         vCBzVW/ZZlDIMr4ivOSjNm/d/3IOxvR0jRXEck/3pc3NQ7I6O1D5yvXcL9k0WDDY9Sf+
-         d2SYU34Tma0vfv5h61U+rtEBCNO961Rvuhq1OuhXwmCWyJPoS04iR8F3SdpaOpYrsNqL
-         D1vA==
-X-Gm-Message-State: AGRZ1gJaD1SdsiKBCdJ9/G3fs0uvFAuML0ajGio0Z1uP4p2Aq3pmrN0Z
-        FgHvYxbhKnLqKd6L2jov+e+0VdIT3J0T8VbIds6S5mUqTXRnjw==
-X-Google-Smtp-Source: AJdET5ffF60/vZO6gifY+PgKPGsd1uEAUxEd5lJLvLaTot9ac7VvJD4tTMpylL6ATjixbYp8QiJOjctqT+pwt+dPuTE=
-X-Received: by 2002:a1f:984e:: with SMTP id a75mr7884126vke.89.1540889423286;
- Tue, 30 Oct 2018 01:50:23 -0700 (PDT)
+        Tue, 30 Oct 2018 13:44:37 -0400
+Received: from [192.168.100.1] ([78.238.229.36]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MI5YN-1gNl0T3Bjz-00F9I0; Tue, 30 Oct 2018 09:51:34 +0100
+Received: from [192.168.100.1] ([78.238.229.36]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MI5YN-1gNl0T3Bjz-00F9I0; Tue, 30 Oct 2018 09:51:34 +0100
+Subject: Re: [PATCH v6 1/1] ns: add binfmt_misc to the user namespace
+From:   Laurent Vivier <laurent@vivier.eu>
+To:     Eric Biederman <ebiederm@xmission.com>
+Cc:     Andrei Vagin <avagin@gmail.com>, linux-kernel@vger.kernel.org,
+        Jann Horn <jannh@google.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        containers@lists.linux-foundation.org,
+        Dmitry Safonov <dima@arista.com>
+References: <20181010161430.11633-1-laurent@vivier.eu>
+ <20181010161430.11633-2-laurent@vivier.eu> <20181016162245.GA7697@gmail.com>
+ <0fb09ce6-e006-31a2-1f32-f3f6eda44504@vivier.eu>
+Message-ID: <4a1ec0cf-dce7-4193-6946-d46d63398c2d@vivier.eu>
+Date:   Tue, 30 Oct 2018 09:51:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Received: by 2002:a67:f492:0:0:0:0:0 with HTTP; Tue, 30 Oct 2018 01:50:22
- -0700 (PDT)
-In-Reply-To: <CAJWu+oquh1RXz+1tD91NzvicYAL3GP0KVi7RLR2cgouSgHXjOw@mail.gmail.com>
-References: <20181029221037.87724-1-dancol@google.com> <CAJWu+oquh1RXz+1tD91NzvicYAL3GP0KVi7RLR2cgouSgHXjOw@mail.gmail.com>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Tue, 30 Oct 2018 08:50:22 +0000
-Message-ID: <CAKOZueub941EHifyf7zEk_yvf=2P+HV-8esE1QPFypRoxtt1qQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] Implement /proc/pid/kill
-To:     Joel Fernandes <joelaf@google.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <0fb09ce6-e006-31a2-1f32-f3f6eda44504@vivier.eu>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:3gFO3SVwnxgIr3iwSd86bsSaiXl3McEQmHvEzfX8QQXsr6VUzg0
+ FkHA7Nx5zDh6cDONU+IpbbgHaLJms/zb/bNJPrK6cr2voosxmWW7+YrOzio/7oeNn3ZtI2j
+ mU2g3z6rqABthGVue9FmzIb2cjBe+jAYIdQ4S5wX7QNKMZrfoQLMrAnbYR+MgobVEJ1XeMc
+ z34dSAynvhxhOVjbKUP+Q==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:3wNgsPBuC2I=:Ege9K4+ttZK0gTOjYCKFvv
+ x6QiIIAAvqbgIL7aSWrIAi6WFFfuxiwpYnoh4Oyi+k/o0z35GNbBxcp9VUVmmTpQ5aLjfZzsd
+ mTxiM0RJ/y/Vf/JUzw5xZSJsKoT9YxpSNvd0Zkz6JDAzA/8XlR8791To+AKE6VXlMGSkgPp7z
+ F3uvrLM8h8cs4R6RXIvPmcuK5F/eltH+GkGB9MUFVuqih/Q+95bKyzw+tbATHX2voWRCbYNcl
+ BjSwc//yMffSO9EzbDSBwi5w54cuURy1w+wYQ4yr0OTFBmQAzbTNSQ3y8PdGnP592tIYlghFd
+ zZP/d0I0wfWKbfRrPXI4d0iyZoaqhh8I2z+jmaYZM38nKP11VsXzeAG3BNKy6hI3f8syP5tWB
+ vOwNjp9sXoeFIaWEUucPd2VdmmZWj9pojyxpLiXvgmlXCj6FYPHegKcPvmaLoVmDs3EC1ji2N
+ yddjkUjQUrITx2E/0vG1b2eElDZc5WaOR77R3gOA2FGxOK8xq+YwrX/ZtDdvVl3Exrmm9ksoX
+ PXugw8joTAev/0CS673jhOwXsB54cAX8gqBq2EyBhVgQ4XRBU5rSQX6AMd0QJtnwgXW/pOgzh
+ SEWp3OoQEXwdkUhTrsaGfJEuMaAOwmBtGQdKugcOdf10IUGw8BV5+qF4SY65w5m7blCHZCBhJ
+ vgVfixGpwEN7VRBUVZlz+v1KtPS2fm2eRotmRCMP2nkj+h+8Fs4URuPpdE6mQ1Fj+74cYBdaU
+ OdmY0uHi8CfzxRMA
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 3:21 AM, Joel Fernandes <joelaf@google.com> wrote:
-> On Mon, Oct 29, 2018 at 3:11 PM Daniel Colascione <dancol@google.com> wrote:
+Le 24/10/2018 à 19:15, Laurent Vivier a écrit :
+> On 16/10/2018 17:22, Andrei Vagin wrote:
+>> On Wed, Oct 10, 2018 at 06:14:30PM +0200, Laurent Vivier wrote:
+>>> This patch allows to have a different binfmt_misc configuration
+>>> for each new user namespace. By default, the binfmt_misc configuration
+>>> is the one of the previous level, but if the binfmt_misc filesystem is
+>>> mounted in the new namespace a new empty binfmt instance is created and
+>>> used in this namespace.
+>>>
+>>> For instance, using "unshare" we can start a chroot of another
+>>> architecture and configure the binfmt_misc interpreter without being root
+>>> to run the binaries in this chroot.
+>>>
+>>> Signed-off-by: Laurent Vivier <laurent@vivier.eu>
 >>
->> Add a simple proc-based kill interface. To use /proc/pid/kill, just
->> write the signal number in base-10 ASCII to the kill file of the
->> process to be killed: for example, 'echo 9 > /proc/$$/kill'.
+>> Acked-by: Andrei Vagin <avagin@gmail.com>
 >>
->> Semantically, /proc/pid/kill works like kill(2), except that the
->> process ID comes from the proc filesystem context instead of from an
->> explicit system call parameter. This way, it's possible to avoid races
->> between inspecting some aspect of a process and that process's PID
->> being reused for some other process.
+>> Thanks,
+>> Andrei
 >>
->> With /proc/pid/kill, it's possible to write a proper race-free and
->> safe pkill(1). An approximation follows. A real program might use
->> openat(2), having opened a process's /proc/pid directory explicitly,
->> with the directory file descriptor serving as a sort of "process
->> handle".
->
-> How long does the 'inspection' procedure take? If its a short
-> duration, then is PID reuse really an issue, I mean the PIDs are not
-> reused until wrap around and the only reason this can be a problem is
-> if you have the wrap around while the 'inspecting some aspect'
-> procedure takes really long.
+> 
+> I don't konw who is the maintainer for this part, but is there any
+> chance to have this merged in 4.20?
+> 
 
-It's a race. Would you make similar statements about a similar fix for
-a race condition involving a mutex and a double-free just because the
-race didn't crash most of the time? The issue I'm trying to fix here
-is the same problem, one level higher up in the abstraction hierarchy.
+I'd really want to have this merged.
 
-> Also the proc fs is typically not the right place for this. Some
-> entries in proc are writeable, but those are for changing values of
-> kernel data structures. The title of man proc(5) is "proc - process
-> information pseudo-filesystem". So its "information" right?
+I have some real use cases for this:
 
-Why should userspace care whether a particular operation is "changing
-[a] value[] of [a] kernel data structure" or something else? That
-something in /proc is a struct field is an implementation detail. It's
-the interface semantics that matters, and whether a particular
-operation is achieved by changing a struct field or by making a
-function call is irrelevant to userspace. Proc is a filesystem about
-processes. Why shouldn't you be able to send a signal to a process via
-proc? It's an operation involving processes.
+1- to allow a non root user to run a container (with "unshare" for
+instance) with its own binfmt_misc configuration. For instance, like we
+provide a disk image and ask an ordinary user to run it with his
+favorite VM hypervisor, we can provide a tar.gz containing our own
+interpreter and just ask him to unshare+chroot to the exploded file tree,
 
-It's already possible to do things *to* processes via proc, e.g.,
-adjust OOM killer scores. Proc filesystem file descriptors are
-userspace references to kernel-side struct pid instances, and as such,
-make good process handles. There are already "verb" files in procfs,
-such as /proc/sys/vm/drop_caches and /proc/sysrq-trigger. Why not add
-a kill "verb", especially if it closes a race that can't be closed
-some other way?
+2- to allow to run automatic tests of an interpreter on a machine
+without having to change the global configuration of the system. I have
+in mind to add some tests in Avocado to automatically test
+qemu-linux-user in containers, so the interpreter path can depend on the
+build path and possibly run them concurrently,
 
-You could implement this interface as a system call that took a procfs
-directory file descriptor, but relative to this proposal, it would be
-all downside. Such a thing would act just the same way as
-/pric/pid/kill, and wouldn't be usable from the shell or from programs
-that didn't want to use syscall(2). (Since glibc isn't adding new
-system call wrappers.) AFAIK, the only downside of having a "kill"
-file is the need for a string-to-integer conversion, but compared to
-process killing, integer parsing is insignificant.
+3- to select an interpreter by container. For instance, on the
+qemu-devel mailing list, we have a waiting patch to add the bFLT
+interpreter binfmt_misc configuration, but the bFLT doesn't provide the
+CPU type in magic/mask. So it would be interesting to be able to select
+also a bFLT interpreter by container, as we know the CPU architecture we
+have in each chroot/container,
 
-> IMO without a really good reason for this, it could really be a hard
-> sell but the RFC was worth it anyway to discuss it ;-)
+4- another example to select an interpreter by container is qemu-mips
+and qemu-misn32 share the same magic/mask because only the kernel API
+changes, so we can't configure both on the system (but I agree it's a
+QEMU bug: they should be merged and the kernel API be selected at runtime).
 
-The traditional unix process API is down there at level -10 of Rusty
-Russel's old bad API scale: "It's impossible to get right". The races
-in the current API are unavoidable. That most programs don't hit these
-races most of the time doesn't mean that the race isn't present.
-
-We've moved to a model where we identify other system resources, like
-DRM fences, locks, sockets, and everything else via file descriptors.
-This change is a step toward using procfs file descriptors to work
-with processes, which makes the system more regular and easier to
-reason about. A clean API that's possible to use correctly is a
-worthwhile project.
+Thanks,
+Laurent
