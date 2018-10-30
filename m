@@ -2,156 +2,131 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E885AC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:04:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A8BAC6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:05:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC5F82082D
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:04:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B38BB2082D
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:05:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rnec/+NI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC5F82082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DFt8KV8/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B38BB2082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727664AbeJ3X6H (ORCPT
+        id S1727624AbeJ3X7E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 19:58:07 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40783 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726135AbeJ3X6H (ORCPT
+        Tue, 30 Oct 2018 19:59:04 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36531 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726135AbeJ3X7E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 19:58:07 -0400
-Received: by mail-pf1-f193.google.com with SMTP id g21-v6so5978031pfi.7;
-        Tue, 30 Oct 2018 08:04:16 -0700 (PDT)
+        Tue, 30 Oct 2018 19:59:04 -0400
+Received: by mail-wm1-f68.google.com with SMTP id a8-v6so11641568wmf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 08:05:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=C0ambmftNVJ/c5veL29dtgLhtMxiGX+W3Kd6u+3IiG0=;
-        b=Rnec/+NImldYhVV5Nb7/8EZDXZNpqPIM0/y1BSAtl/qIOwlWZQJYkXTGUqQF/Q8P1V
-         JP6OfEiuoxq2f25M8ixtmkJ/Be513a7JE4MBrGvUWIqtIxx28vhhV9IS5grfl/DUvM+n
-         aARUvMoFTRiNRS5EVod6RK/rKycKwOqHkzz82n4JtQSS0UudcpsKCB2Cle2kJNn2oeQM
-         ab3oI1gLd1uzAUzxWJm4rR8Fkn1oE2BG/bLt+pK2Ht+VktLGLm2jiq9pLunInNEablFG
-         CY5GT9ftJNU5JUK0cAa9kWX3Dn2AsmqjgTQuMKUq1Rg7gEZPNvKBRv4demWAW6lcCz7m
-         1ZOg==
+        bh=M8ODo+5nlI/edvBLdzlgQu84w+YBU1p44EcawnET9pk=;
+        b=DFt8KV8/ESNPmbJa9+vvQToHWNT0FzKJUHQGMhiF9UkseKZUnzZsto3XXKO0RsvAcs
+         5Ch0VQjd56r/6zMlKqg0fTCJBXhnoKFVF3VViUJZlLSza4r80aTTVgBhBlwKu+9wJvTD
+         fph0Vae30aLRCbaTKSjWuRJmL2Ii2lHIbRWRs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=C0ambmftNVJ/c5veL29dtgLhtMxiGX+W3Kd6u+3IiG0=;
-        b=T4Ht/osIV0qdeLxzJysGzyiDJGDFbrfmyge+q4swhMQIwntOh52LmO1/T8HiaiivnM
-         bffy7ZlbNFQCC4eLuiuLCKDIulzxAiIthnrMcTs/d2/9spmKraw3foN2qPILuyQZffro
-         bYPhBT5gHUULE+Dceo/qT9d/YvJmxPTmY342GvafEIaUgUwpZJBv9GGLgwVzGUDglpk7
-         2y7e9NAQ6FLoXvvQSBl10Hj/I19+fYy44qYJyKWy5RHnAjqsgp03uV9+CY+K4MIveLD+
-         npzMXUg9phqMPNV3DEQNonVkfm7mSFH15KeBoYYNo6zwOdI1wQvtZSrEiv/U457maEv8
-         C62w==
-X-Gm-Message-State: AGRZ1gJBvXFPRFVKgaxPgYibZTqDhCmfo8lecrXXapIIbC3Tvi4py6Nx
-        N4Xqr3d9KMUUc9iScLzk2v8=
-X-Google-Smtp-Source: AJdET5eTQwJjStCwMLZrvzv8/Z74MLER1ED0vRtHRZldX4ZcpeZNQKnecPzfNRci2zIJS7TsTfUIfA==
-X-Received: by 2002:a62:62c3:: with SMTP id w186-v6mr3338691pfb.5.1540911856337;
-        Tue, 30 Oct 2018 08:04:16 -0700 (PDT)
-Received: from mail.google.com ([2001:19f0:6001:4ff6:5400:1ff:feb7:a195])
-        by smtp.gmail.com with ESMTPSA id u62-v6sm44260327pfu.69.2018.10.30.08.04.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Oct 2018 08:04:15 -0700 (PDT)
-Date:   Tue, 30 Oct 2018 15:04:13 +0000
-From:   Changbin Du <changbin.du@gmail.com>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        changbin.du@gmail.com
-Subject: Re: linux-next: manual merge of the compiler-attributes tree with
- the kbuild tree
-Message-ID: <20181030150412.peayixjav2lvbp4s@mail.google.com>
-References: <20181030104637.382c26d0@canb.auug.org.au>
- <20181030104941.4fef7dad@canb.auug.org.au>
- <CANiq72k2w2T0Cy0D--OEmE+sOPkjZtXpukBm+Mz1_xY6MCGg0A@mail.gmail.com>
+        bh=M8ODo+5nlI/edvBLdzlgQu84w+YBU1p44EcawnET9pk=;
+        b=rXeh7TxMlPrwWP40KWvH3RvOIBGGmLGy0JduFMzNaY+WlEsb3G696pcW6hGsJ0ycPj
+         mB5fdh4UBMesbCdUruoVs2PX46Ekgqg0KogtjG8K/6iXJjX5M1dEqb79+IVyk+Q3qcns
+         AbVZnDMtXiZkLR2wQYUyr6VHu5UhByiJHqCr7XFGsyyx9yd6T85OXtlVCSI1Vl9BO7AB
+         52Q7faZB+NxzTQcASp7aMmNHfFJHp7jqLPjhl9fwbi1mfBoFJNK6J54Bt28EPHI6h7yz
+         dKpVe9lLapAiVK6htLdz9K3XSQmEN6lUBxuUtAHQCqop71AbbEePR8KJ5rL42TkJvRvF
+         tLUA==
+X-Gm-Message-State: AGRZ1gL4OUN7PswSZ0fS32e4jKv4aL4UqooSpAvkxY7wJAAahax3Nnc9
+        7GVBx55kyOY7LxNgl7kD0XFWzg==
+X-Google-Smtp-Source: AJdET5el3LnPtlk+wgEV79lSay2H2tmyOIh5U+5lKKqkDY/av57R78NgBLDtINHfG0CK6CRE8qICtQ==
+X-Received: by 2002:a1c:5a86:: with SMTP id o128-v6mr2035351wmb.138.1540911903380;
+        Tue, 30 Oct 2018 08:05:03 -0700 (PDT)
+Received: from leoy-ThinkPad-X240s ([209.250.228.18])
+        by smtp.gmail.com with ESMTPSA id y16-v6sm23486186wru.18.2018.10.30.08.04.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 08:05:00 -0700 (PDT)
+Date:   Tue, 30 Oct 2018 23:04:49 +0800
+From:   leo.yan@linaro.org
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Coresight ML <coresight@lists.linaro.org>
+Subject: Re: [PATCH] perf cs-etm: Correct CPU mode for samples
+Message-ID: <20181030150449.GB8344@leoy-ThinkPad-X240s>
+References: <1540883908-17018-1-git-send-email-leo.yan@linaro.org>
+ <20181030143226.GA23310@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CANiq72k2w2T0Cy0D--OEmE+sOPkjZtXpukBm+Mz1_xY6MCGg0A@mail.gmail.com>
-User-Agent: NeoMutt/20180716-508-7c9a6d
+In-Reply-To: <20181030143226.GA23310@kernel.org>
+User-Agent: Mutt/1.10+31 (9cdd884) (2018-06-19)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 12:21:52PM +0100, Miguel Ojeda wrote:
-> On Tue, Oct 30, 2018 at 12:49 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Hi all,
-> >
-> > On Tue, 30 Oct 2018 10:46:37 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > >
-> > > Today's linux-next merge of the compiler-attributes tree got a conflict
-> > > in:
-> > >
-> > >   include/linux/compiler-gcc.h
-> > >
-> > > between commit:
-> > >
-> > >   94c7dfd01652 ("kernel hacking: support building kernel with -Og optimization level")
-> > >
-> > > from the kbuild tree and commits:
-> > >
-> > >   5c67a52f3da0 ("Compiler Attributes: always use the extra-underscores syntax")
-> > >   989bd5000f36 ("Compiler Attributes: remove unneeded sparse (__CHECKER__) tests")
-> > >
-> > > from the compiler-attributes tree.
-> > >
-> > > I fixed it up (the latter just removed the __CHECKER__ check, so I did
-> > > that) and can carry the fix as necessary. This is now fixed as far as
-> >
-> > On reflection, that may not have been the correct resolution ...
-> 
-> From a quick look, it seems we want:
-> 
-> #ifndef CONFIG_CC_OPTIMIZE_FOR_DEBUGGING
-> #define __compiletime_warning(message) __attribute__((__warning__(message)))
-> #define __compiletime_error(message) __attribute__((__error__(message)))
-> #endif
-> 
-> i.e. kbuild tree added the CONFIG_CC_OPTIMIZE_FOR_DEBUGGING guard,
-> while the compiler-attributes tree removed the __CHECKER__ one, so we
-> still need the former.
-> 
-> By the way, I think 94c7dfd01652 is wrong: it changes the guard also
-> for __latent_entropy (and it does not change the corresponding comment
-> at "#endif /* __CHECKER__ */").
-> 
-> Also, the commit message does not mention __compiletime_warning --
-> should that one be guarded too by CONFIG_CC_OPTIMIZE_FOR_DEBUGGING?
-> 
-To avoid future possible warning, __compiletime_warning should also be
-guarded. So I did the flow change so __latent_entropy is not affected.
+Hi Arnaldo,
 
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -85,9 +85,11 @@
- 
- #define __compiletime_object_size(obj) __builtin_object_size(obj, 0)
- 
--#if !defined(__CHECKER__) && !defined(CONFIG_CC_OPTIMIZE_FOR_DEBUGGING)
-+#if !defined(__CHECKER__)
-+#if !defined(CONFIG_CC_OPTIMIZE_FOR_DEBUGGING)
- #define __compiletime_warning(message) __attribute__((warning(message)))
- #define __compiletime_error(message) __attribute__((error(message)))
-+#endif
- 
- #ifdef LATENT_ENTROPY_PLUGIN
- #define __latent_entropy __attribute__((latent_entropy))
+On Tue, Oct 30, 2018 at 11:32:26AM -0300, Arnaldo Carvalho de Melo wrote:
+> Em Tue, Oct 30, 2018 at 03:18:28PM +0800, Leo Yan escreveu:
+> > Since commit 9042f5e3539e ("perf tools: Stop fallbacking to kallsyms
+> > for vdso symbols lookup"), the kernel address cannot be properly parsed
+> > to kernel symbol with command 'perf script -k vmlinux'.  The reason is
+> > CoreSight samples is always to set CPU mode as PERF_RECORD_MISC_USER,
+> > thus it fails to find corresponding map/dso in below flows:
+> > 
+> >   process_sample_event()
+> >     `-> machine__resolve()
+> > 	  `-> thread__find_map(thread, sample->cpumode, sample->ip, al);
+> > 
+> > In this flow it needs to pass argument 'sample->cpumode' to tell what's
+> > the CPU mode, before it always passed PERF_RECORD_MISC_USER but without
+> > any failure until the commit 9042f5e3539e ("perf tools: Stop fallbacking
+> > to kallsyms for vdso symbols lookup") has been merged.  The reason is
+> > even with the wrong CPU mode the function thread__find_map() firstly
+> > fails to find map but it will rollback to find kernel map for vdso
+> > symbols lookup.  In the latest code it has removed the fallback code,
+> > thus if CPU mode is PERF_RECORD_MISC_USER then it cannot find map
+> > anymore with kernel address.
+> > 
+> > This patch is to correct samples CPU mode setting, it creates a new
+> > helper function cs_etm__cpu_mode() to tell what's the CPU mode based on
+> > the address with the info from machine structure; this patch has a bit
+> > extension to check not only kernel and user mode, but also check for
+> > host/guest and hypervisor mode.  Finally this patch uses the function
+> > in instruction and branch samples and also apply in cs_etm__mem_access()
+> > for a minor polishing.
+> 
+> Mathieu, can I have your Acked-by, please? Leo, thanks for acting so
+> quickly on this one! 
 
+Thanks for reivewing.  Yeah, let's wait for Mathieu reviewing as well,
+as I know he is travelling so might be delay a bit.
 
-> Cheers,
-> Miguel
+Just remind, we might need the similiar change for util/intel-pt.c and
+util/intel-bts.c when generate samples, otherwise they might have the
+same regression for kernel symbols.  I am not the best person to change
+these two files, but bring up this for attention.
 
--- 
+> Now processing coresight traces should be faster, less lookups :-)
+
+Thanks!
+
+[...]
+
 Thanks,
-Changbin Du
+Leo Yan
