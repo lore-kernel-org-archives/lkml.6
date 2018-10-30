@@ -2,113 +2,94 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB1FC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:16:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10601C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:17:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D5E22080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:16:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D5E22080A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CC12A20831
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:17:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC12A20831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbeJ3RJH (ORCPT
+        id S1726731AbeJ3RKG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 13:09:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35706 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726189AbeJ3RJH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 13:09:07 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 31314AF3F;
-        Tue, 30 Oct 2018 08:16:40 +0000 (UTC)
-Date:   Tue, 30 Oct 2018 09:16:39 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "xishi.qiuxishi@alibaba-inc.com" <xishi.qiuxishi@alibaba-inc.com>,
-        "zy.zhengyi@alibaba-inc.com" <zy.zhengyi@alibaba-inc.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: Re: [PATCH v2 0/2] mm: soft-offline: fix race against page allocation
-Message-ID: <20181030081639.GW32673@dhcp22.suse.cz>
-References: <1531805552-19547-1-git-send-email-n-horiguchi@ah.jp.nec.com>
- <20180815154334.f3eecd1029a153421631413a@linux-foundation.org>
- <20180822013748.GA10343@hori1.linux.bs1.fc.nec.co.jp>
- <20180822080025.GD29735@dhcp22.suse.cz>
- <20181026084636.GY18839@dhcp22.suse.cz>
- <20181030065433.GA1119@hori1.linux.bs1.fc.nec.co.jp>
+        Tue, 30 Oct 2018 13:10:06 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:35434 "EHLO
+        fornost.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726172AbeJ3RKG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 13:10:06 -0400
+Received: from gondolin.me.apana.org.au ([192.168.0.6] helo=gondolin.hengli.com.au)
+        by fornost.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1gHPDQ-0002U4-Qz; Tue, 30 Oct 2018 19:17:32 +1100
+Received: from herbert by gondolin.hengli.com.au with local (Exim 4.80)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1gHPDI-0000kv-Ql; Tue, 30 Oct 2018 19:17:24 +1100
+Date:   Tue, 30 Oct 2018 19:17:24 +1100
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, linux-fscrypt@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Paul Crowley <paulcrowley@google.com>,
+        Greg Kaiser <gkaiser@google.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Samuel Neves <samuel.c.p.neves@gmail.com>,
+        Tomer Ashur <tomer.ashur@esat.kuleuven.be>
+Subject: Re: [RFC PATCH v2 11/12] crypto: adiantum - add Adiantum support
+Message-ID: <20181030081724.GA2730@gondor.apana.org.au>
+References: <20181015175424.97147-1-ebiggers@kernel.org>
+ <20181015175424.97147-12-ebiggers@kernel.org>
+ <CAKv+Gu9wrOOk-LGPYmxgLbv86uXzMeHN6th3mMEDT3Vg893HWw@mail.gmail.com>
+ <20181020071206.GE876@sol.localdomain>
+ <CAKv+Gu9zBKK7ughbBAKkHdfgX2KrBXkF6MhH3xrSdLegrjjYJQ@mail.gmail.com>
+ <20181024220614.GA13497@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181030065433.GA1119@hori1.linux.bs1.fc.nec.co.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181024220614.GA13497@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 30-10-18 06:54:33, Naoya Horiguchi wrote:
-> On Fri, Oct 26, 2018 at 10:46:36AM +0200, Michal Hocko wrote:
-> > On Wed 22-08-18 10:00:25, Michal Hocko wrote:
-> > > On Wed 22-08-18 01:37:48, Naoya Horiguchi wrote:
-> > > > On Wed, Aug 15, 2018 at 03:43:34PM -0700, Andrew Morton wrote:
-> > > > > On Tue, 17 Jul 2018 14:32:30 +0900 Naoya Horiguchi <n-horiguchi@ah.jp.nec.com> wrote:
-> > > > > 
-> > > > > > I've updated the patchset based on feedbacks:
-> > > > > > 
-> > > > > > - updated comments (from Andrew),
-> > > > > > - moved calling set_hwpoison_free_buddy_page() from mm/migrate.c to mm/memory-failure.c,
-> > > > > >   which is necessary to check the return code of set_hwpoison_free_buddy_page(),
-> > > > > > - lkp bot reported a build error when only 1/2 is applied.
-> > > > > > 
-> > > > > >   >    mm/memory-failure.c: In function 'soft_offline_huge_page':
-> > > > > >   > >> mm/memory-failure.c:1610:8: error: implicit declaration of function
-> > > > > >   > 'set_hwpoison_free_buddy_page'; did you mean 'is_free_buddy_page'?
-> > > > > >   > [-Werror=implicit-function-declaration]
-> > > > > >   >        if (set_hwpoison_free_buddy_page(page))
-> > > > > >   >            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > > > >   >            is_free_buddy_page
-> > > > > >   >    cc1: some warnings being treated as errors
-> > > > > > 
-> > > > > >   set_hwpoison_free_buddy_page() is defined in 2/2, so we can't use it
-> > > > > >   in 1/2. Simply doing s/set_hwpoison_free_buddy_page/!TestSetPageHWPoison/
-> > > > > >   will fix this.
-> > > > > > 
-> > > > > > v1: https://lkml.org/lkml/2018/7/12/968
-> > > > > > 
-> > > > > 
-> > > > > Quite a bit of discussion on these two, but no actual acks or
-> > > > > review-by's?
-> > > > 
-> > > > Really sorry for late response.
-> > > > Xishi provided feedback on previous version, but no final ack/reviewed-by.
-> > > > This fix should work on the reported issue, but rewriting soft-offlining
-> > > > without PageHWPoison flag would be the better fix (no actual patch yet.)
-> > > 
-> > > If we can go with the later the I would obviously prefer that. I cannot
-> > > promise to work on the patch though. I can help with reviewing of
-> > > course.
-> > > 
-> > > If this is important enough that people are hitting the issue in normal
-> > > workloads then sure, let's go with the simple fix and continue on top of
-> > > that.
-> > 
-> > Naoya, did you have any chance to look at this or have any plans to look?
-> > I am willing to review and help with the overal design but I cannot
-> > really promise to work on the code.
+On Wed, Oct 24, 2018 at 03:06:17PM -0700, Eric Biggers wrote:
+>
+> The patch I've been using just exposes a file /proc/cryptobench (note: it maybe
+> should be made into a char device instead) to which you can write commands like:
 > 
-> I have a draft version of a patch to isolate a page in buddy-friendly manner
-> without PageHWPoison flag (that was written weeks ago, but I couldn't finish
-> because my other project interrupted me ...).
-> I'll post it after testing, especially confirming that hotplug code properly
-> reset the isolated page.
+> 	algtype=skcipher algname=adiantum(xchacha12,aes) keysize=32 bufsize=4096 niter=1000
+> 
+> Then userspace reads back the result:
+> 
+> 	SUCCESS algname=adiantum(xchacha12,aes) driver_name=adiantum(xchacha12-software,aes-aesni,nhpoly1305-generic) measurement=0x30a5abd5776e0af enc_time=44831104 dec_time=38303077
+> 
+> It's then pretty straightforward to wrap this API in a userspace script that
+> does all the benchmarks you need, and formats the results nicely.
+> 
+> For correctness testing there's also an option 'sgl_fuzz' that randomizes the
+> scatterlist division.
+> 
+> Currently the patch is missing some features such as AEAD support, but at some
+> point I'd like to get it into a state where it can be included upstream.
 
-Thanks a lot Naoya. It is highly appreciated!
+I completely agree that a new interface would be much better for
+tcrypt.
+
+However, we're trying to avoid using /proc for new APIs.  So perhaps
+netlink would be a better choice given the existing configuration and
+stats APIs that already exist for it.
+
+Thanks,
 -- 
-Michal Hocko
-SUSE Labs
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
