@@ -2,310 +2,179 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3EAFC6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:38:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C1CC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:39:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 540C42080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:38:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19CB02080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:39:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="UfXIunvL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 540C42080A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FpwOqZD9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19CB02080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726963AbeJ3Sav (ORCPT
+        id S1726995AbeJ3Sbz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 14:30:51 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:43817 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726247AbeJ3Sav (ORCPT
+        Tue, 30 Oct 2018 14:31:55 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:35854 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726222AbeJ3Sbz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 14:30:51 -0400
-Received: by mail-ed1-f66.google.com with SMTP id y20-v6so9849549eds.10
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 02:38:07 -0700 (PDT)
+        Tue, 30 Oct 2018 14:31:55 -0400
+Received: by mail-qt1-f194.google.com with SMTP id u34-v6so12641083qth.3;
+        Tue, 30 Oct 2018 02:39:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=F2ZjyZFdLkt6fLOqwV+aBE3WtqltslHKYROQQMBKcGg=;
-        b=UfXIunvLisb8pQ260UtUrS5rToiIvdynTFlqmPUxpIdqWfxmNKETS7A9VCFIVd8i/s
-         pU5QYTXAavsKXZIDPLq1fYoM63A3llLUoXPxUsfTQbkC6IotW5y/5mRuyMJ67fjzjXjU
-         WAIPj1DfzqQdx47Oz6mnMrxm+cECxOD1afN8w=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=D7sRCRfkLjX59rxFaCLiPuM4AbNsja0oLNKnwplcX3Y=;
+        b=FpwOqZD9jVZkKySblM8uKwFcgaXzpGxgwj8mFrGLyErZO5VhtkzgxuEzGIiqCsJb92
+         xdpDGvUqVHu9hVtfJLfP2FkedG894BXpqc+eeVXvLyTeFhD7U3xeqDJ/MW04q0lTrPz5
+         g4o4ezMvk00wccC4UyGN45iGtBFDgA1KW0Iicr1ygGpE58fNQklYuJzKK8IIoUlWKgsl
+         z0LAjMDzoYrBNT3txBRAQfGhEHUu16eAylUYkggnH6TIq4dlIRe1BhIdZIiEG9/SzkKh
+         gRwbIcQKRb475sGVNTWoRipZJYjo3oz+CuTX1rAhcq4vXGeDXdjiZittu4bFxaxm2hiR
+         X7fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=F2ZjyZFdLkt6fLOqwV+aBE3WtqltslHKYROQQMBKcGg=;
-        b=raSfZMxlE7IuUYdl20f1L/iGBwEA/AECcK02vV4AwRfpoB+wiOKVkvgayu1Z7ol+eG
-         odUv/Es58wUOupxiKqfGl2FgcLdcgDAv5C2RNjfVnzaRRixQm66mv/h54CehC0+fJLE6
-         e8aCzyMEuWEhPRrajJ0M4KO7hB9pBs7X7XcFC14CSKKYWMdDROo9x+U00ljfoybO1M74
-         I5aA2Fwm5OeABytVRihkMh8m7coEW7M8ffeecvktm9vfzMdNUqlVGiva7Apdlo3F5on7
-         lk4hb3jySqLoL+CJ4vyAob02Kkhd2HAxa9w3Rp4sjUMI3EnO2Hy34a6H7Rlwk9Bh1Glq
-         rOEQ==
-X-Gm-Message-State: AGRZ1gJF9sYE+ppLy6tTsDB6sqZTg5HYqVUdGOddzyKi/qKZOZl48KIn
-        Jfz/Xwjhis6rq9YpFlZnquwr2Q==
-X-Google-Smtp-Source: AJdET5cRmlt4CZoofwMV1jiV8JK6C18dE1vQRYz9LCCdxtOohB5W87+b41zvu1jx5L7dBgtjTDWcqg==
-X-Received: by 2002:a17:906:6c9a:: with SMTP id s26-v6mr4360551ejr.239.1540892287146;
-        Tue, 30 Oct 2018 02:38:07 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id f11-v6sm2698505eds.23.2018.10.30.02.38.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Oct 2018 02:38:06 -0700 (PDT)
-Date:   Tue, 30 Oct 2018 10:38:04 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     virtio-dev@lists.oasis-open.org, dri-devel@lists.freedesktop.org,
-        David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:VIRTIO GPU DRIVER" 
-        <virtualization@lists.linux-foundation.org>
-Subject: Re: [PATCH v4 2/2] drm/virtio: add edid support
-Message-ID: <20181030093804.GQ21967@phenom.ffwll.local>
-Mail-Followup-To: Gerd Hoffmann <kraxel@redhat.com>,
-        virtio-dev@lists.oasis-open.org, dri-devel@lists.freedesktop.org,
-        David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:VIRTIO GPU DRIVER" <virtualization@lists.linux-foundation.org>
-References: <20181030063206.19528-1-kraxel@redhat.com>
- <20181030063206.19528-3-kraxel@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=D7sRCRfkLjX59rxFaCLiPuM4AbNsja0oLNKnwplcX3Y=;
+        b=pPKnCZnA97Q5dXoOkn1gmgygdMqWWNKPGhpzaseQbVT9E19Y/Zkl0q7dQHgsG6Ue4+
+         cJuJJy/IXYVxRf9igB434+jiqZnokbEbkbWJO81uJzFrBzk0xgLZk5MRx8zsbMJkTrOk
+         D4vkK8jjBozhkbeFcm28HOgbM1Kry2YDXzDWRkgi/GMxdZtpyOKZmBXElNzGg/gWmPKl
+         pmO8ljcOW8x47B2RTVY2UkhS0BA34Fkttq61+6n4IaXmMLaHCn2Cq4eP8ewcY6lbgFrK
+         h60w/8JbB6hdsdjBmtqjii+FF/6A3PgXqtWqxhxdG5K5cjPizHz8hQBaUFayewXbCx9g
+         K/cg==
+X-Gm-Message-State: AGRZ1gJDuaUiQx3N0bfF8SPrbGb6HJTnfQ4ITqSPXn9qs+kAbVBd7kWn
+        fek82/Ns4M/GC2J3hLCSelbvjuc3TM1LRiB1lbc=
+X-Google-Smtp-Source: AJdET5fONHZ/A7ez0Zu3dk1CJ9IpCFW7koVQ6ypXQ/jPVVU8qgltvEAF6KRZiKSRJpWC1VUVQWBrJ7PgIB8yuL4UERE=
+X-Received: by 2002:aed:3b4b:: with SMTP id q11-v6mr1496289qte.229.1540892351454;
+ Tue, 30 Oct 2018 02:39:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181030063206.19528-3-kraxel@redhat.com>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181006065113.669-1-rajneesh.bhardwaj@linux.intel.com>
+ <20181006065113.669-3-rajneesh.bhardwaj@linux.intel.com> <CAHp75VcLN6g-6FJsVgxPZRV675N6YQzxsbm19BWgKhpiYfmG3w@mail.gmail.com>
+ <7d7d59a3-241d-9753-24e0-74a8f0fc9df6@linux.intel.com>
+In-Reply-To: <7d7d59a3-241d-9753-24e0-74a8f0fc9df6@linux.intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 30 Oct 2018 11:39:00 +0200
+Message-ID: <CAHp75VdXCXHYGuM8+iT13MdPrndTDoXUF8B_Hyb-uo8RXRHsoQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] platform/x86: intel_pmc_core: Decode Snoop / Non
+ Snoop LTR
+To:     rajneesh.bhardwaj@linux.intel.com
+Cc:     Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 07:32:06AM +0100, Gerd Hoffmann wrote:
-> linux guest driver implementation of the VIRTIO_GPU_F_EDID feature.
-> 
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+On Tue, Oct 30, 2018 at 9:40 AM Bhardwaj, Rajneesh
+<rajneesh.bhardwaj@linux.intel.com> wrote:
 
-Like with bochs, I think drm_do_get_edid() here is overkill and fairly
-pointless.
--Daniel
+> Thanks for your review. My comments below.
+>
+> If you agree then i can quickly send v3 addressing all suggestions so we
+> can make it in time for 4.20 merge window.
 
-> ---
->  drivers/gpu/drm/virtio/virtgpu_drv.h     |  3 ++
->  drivers/gpu/drm/virtio/virtgpu_display.c | 12 ++++++
->  drivers/gpu/drm/virtio/virtgpu_drv.c     |  1 +
->  drivers/gpu/drm/virtio/virtgpu_kms.c     |  8 ++++
->  drivers/gpu/drm/virtio/virtgpu_vq.c      | 67 ++++++++++++++++++++++++++++++++
->  5 files changed, 91 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
-> index d29f0c7c76..852078419d 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_drv.h
-> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
-> @@ -114,6 +114,7 @@ struct virtio_gpu_output {
->  	struct drm_encoder enc;
->  	struct virtio_gpu_display_one info;
->  	struct virtio_gpu_update_cursor cursor;
-> +	struct edid *edid;
->  	int cur_x;
->  	int cur_y;
->  	bool enabled;
-> @@ -204,6 +205,7 @@ struct virtio_gpu_device {
->  	spinlock_t ctx_id_idr_lock;
->  
->  	bool has_virgl_3d;
-> +	bool has_edid;
->  
->  	struct work_struct config_changed_work;
->  
-> @@ -298,6 +300,7 @@ int virtio_gpu_cmd_get_capset_info(struct virtio_gpu_device *vgdev, int idx);
->  int virtio_gpu_cmd_get_capset(struct virtio_gpu_device *vgdev,
->  			      int idx, int version,
->  			      struct virtio_gpu_drv_cap_cache **cache_p);
-> +int virtio_gpu_cmd_get_edids(struct virtio_gpu_device *vgdev);
->  void virtio_gpu_cmd_context_create(struct virtio_gpu_device *vgdev, uint32_t id,
->  				   uint32_t nlen, const char *name);
->  void virtio_gpu_cmd_context_destroy(struct virtio_gpu_device *vgdev,
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_display.c b/drivers/gpu/drm/virtio/virtgpu_display.c
-> index 8f8fed471e..b5580b11a0 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_display.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_display.c
-> @@ -169,6 +169,12 @@ static int virtio_gpu_conn_get_modes(struct drm_connector *connector)
->  	struct drm_display_mode *mode = NULL;
->  	int count, width, height;
->  
-> +	if (output->edid) {
-> +		count = drm_add_edid_modes(connector, output->edid);
-> +		if (count)
-> +			return count;
-> +	}
-> +
->  	width  = le32_to_cpu(output->info.r.width);
->  	height = le32_to_cpu(output->info.r.height);
->  	count = drm_add_modes_noedid(connector, XRES_MAX, YRES_MAX);
-> @@ -287,6 +293,8 @@ static int vgdev_output_init(struct virtio_gpu_device *vgdev, int index)
->  	drm_connector_init(dev, connector, &virtio_gpu_connector_funcs,
->  			   DRM_MODE_CONNECTOR_VIRTUAL);
->  	drm_connector_helper_add(connector, &virtio_gpu_conn_helper_funcs);
-> +	if (vgdev->has_edid)
-> +		drm_connector_attach_edid_property(connector);
->  
->  	drm_encoder_init(dev, encoder, &virtio_gpu_enc_funcs,
->  			 DRM_MODE_ENCODER_VIRTUAL, NULL);
-> @@ -378,6 +386,10 @@ int virtio_gpu_modeset_init(struct virtio_gpu_device *vgdev)
->  
->  void virtio_gpu_modeset_fini(struct virtio_gpu_device *vgdev)
->  {
-> +	int i;
-> +
-> +	for (i = 0 ; i < vgdev->num_scanouts; ++i)
-> +		kfree(vgdev->outputs[i].edid);
->  	virtio_gpu_fbdev_fini(vgdev);
->  	drm_mode_config_cleanup(vgdev->ddev);
->  }
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.c b/drivers/gpu/drm/virtio/virtgpu_drv.c
-> index d9287c144f..f7f32a885a 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_drv.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.c
-> @@ -80,6 +80,7 @@ static unsigned int features[] = {
->  	 */
->  	VIRTIO_GPU_F_VIRGL,
->  #endif
-> +	VIRTIO_GPU_F_EDID,
->  };
->  static struct virtio_driver virtio_gpu_driver = {
->  	.feature_table = features,
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_kms.c b/drivers/gpu/drm/virtio/virtgpu_kms.c
-> index 65060c0852..f6cbbb27e4 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_kms.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_kms.c
-> @@ -44,6 +44,8 @@ static void virtio_gpu_config_changed_work_func(struct work_struct *work)
->  	virtio_cread(vgdev->vdev, struct virtio_gpu_config,
->  		     events_read, &events_read);
->  	if (events_read & VIRTIO_GPU_EVENT_DISPLAY) {
-> +		if (vgdev->has_edid)
-> +			virtio_gpu_cmd_get_edids(vgdev);
->  		virtio_gpu_cmd_get_display_info(vgdev);
->  		drm_helper_hpd_irq_event(vgdev->ddev);
->  		events_clear |= VIRTIO_GPU_EVENT_DISPLAY;
-> @@ -174,6 +176,10 @@ int virtio_gpu_driver_load(struct drm_device *dev, unsigned long flags)
->  #else
->  	DRM_INFO("virgl 3d acceleration not supported by guest\n");
->  #endif
-> +	if (virtio_has_feature(vgdev->vdev, VIRTIO_GPU_F_EDID)) {
-> +		vgdev->has_edid = true;
-> +		DRM_INFO("EDID support available.\n");
-> +	}
->  
->  	ret = virtio_find_vqs(vgdev->vdev, 2, vqs, callbacks, names, NULL);
->  	if (ret) {
-> @@ -219,6 +225,8 @@ int virtio_gpu_driver_load(struct drm_device *dev, unsigned long flags)
->  
->  	if (num_capsets)
->  		virtio_gpu_get_capsets(vgdev, num_capsets);
-> +	if (vgdev->has_edid)
-> +		virtio_gpu_cmd_get_edids(vgdev);
->  	virtio_gpu_cmd_get_display_info(vgdev);
->  	wait_event_timeout(vgdev->resp_wq, !vgdev->display_info_pending,
->  			   5 * HZ);
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
-> index 4e2e037aed..dd149a59c7 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_vq.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-> @@ -604,6 +604,45 @@ static void virtio_gpu_cmd_capset_cb(struct virtio_gpu_device *vgdev,
->  	wake_up(&vgdev->resp_wq);
->  }
->  
-> +static int virtio_get_edid_block(void *data, u8 *buf,
-> +				 unsigned int block, size_t len)
-> +{
-> +	struct virtio_gpu_resp_edid *resp = data;
-> +	size_t start = block * EDID_LENGTH;
-> +
-> +	if (start + len > le32_to_cpu(resp->size))
-> +		return -1;
-> +	memcpy(buf, resp->edid + start, len);
-> +	return 0;
-> +}
-> +
-> +static void virtio_gpu_cmd_get_edid_cb(struct virtio_gpu_device *vgdev,
-> +				       struct virtio_gpu_vbuffer *vbuf)
-> +{
-> +	struct virtio_gpu_cmd_get_edid *cmd =
-> +		(struct virtio_gpu_cmd_get_edid *)vbuf->buf;
-> +	struct virtio_gpu_resp_edid *resp =
-> +		(struct virtio_gpu_resp_edid *)vbuf->resp_buf;
-> +	uint32_t scanout = le32_to_cpu(cmd->scanout);
-> +	struct virtio_gpu_output *output;
-> +	struct edid *new_edid, *old_edid;
-> +
-> +	if (scanout >= vgdev->num_scanouts)
-> +		return;
-> +	output = vgdev->outputs + scanout;
-> +
-> +	new_edid = drm_do_get_edid(&output->conn, virtio_get_edid_block, resp);
-> +
-> +	spin_lock(&vgdev->display_info_lock);
-> +	old_edid = output->edid;
-> +	output->edid = new_edid;
-> +	drm_connector_update_edid_property(&output->conn, output->edid);
-> +	spin_unlock(&vgdev->display_info_lock);
-> +
-> +	kfree(old_edid);
-> +	wake_up(&vgdev->resp_wq);
-> +}
-> +
->  int virtio_gpu_cmd_get_display_info(struct virtio_gpu_device *vgdev)
->  {
->  	struct virtio_gpu_ctrl_hdr *cmd_p;
-> @@ -706,6 +745,34 @@ int virtio_gpu_cmd_get_capset(struct virtio_gpu_device *vgdev,
->  	return 0;
->  }
->  
-> +int virtio_gpu_cmd_get_edids(struct virtio_gpu_device *vgdev)
-> +{
-> +	struct virtio_gpu_cmd_get_edid *cmd_p;
-> +	struct virtio_gpu_vbuffer *vbuf;
-> +	void *resp_buf;
-> +	int scanout;
-> +
-> +	if (WARN_ON(!vgdev->has_edid))
-> +		return -EINVAL;
-> +
-> +	for (scanout = 0; scanout < vgdev->num_scanouts; scanout++) {
-> +		resp_buf = kzalloc(sizeof(struct virtio_gpu_resp_edid),
-> +				   GFP_KERNEL);
-> +		if (!resp_buf)
-> +			return -ENOMEM;
-> +
-> +		cmd_p = virtio_gpu_alloc_cmd_resp
-> +			(vgdev, &virtio_gpu_cmd_get_edid_cb, &vbuf,
-> +			 sizeof(*cmd_p), sizeof(struct virtio_gpu_resp_edid),
-> +			 resp_buf);
-> +		cmd_p->hdr.type = cpu_to_le32(VIRTIO_GPU_CMD_GET_EDID);
-> +		cmd_p->scanout = cpu_to_le32(scanout);
-> +		virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  void virtio_gpu_cmd_context_create(struct virtio_gpu_device *vgdev, uint32_t id,
->  				   uint32_t nlen, const char *name)
->  {
-> -- 
-> 2.9.3
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+I don't like `quickly` part =E2=80=94 usual way to make the last minute mis=
+takes.
+How long does testing take?
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+> On 19-Oct-18 6:04 PM, Andy Shevchenko wrote:
+> > On Sat, Oct 6, 2018 at 9:54 AM Rajneesh Bhardwaj
+> > <rajneesh.bhardwaj@linux.intel.com> wrote:
+> >> The LTR values follow PCIE LTR encoding format and can be decoded as p=
+er
+> >> https://pcisig.com/sites/default/files/specification_documents/ECN_Lat=
+encyTolnReporting_14Aug08.pdf
+> >>
+> >> This adds support to translate the raw LTR values as read from the PMC
+> >> to meaningful values in nanosecond units of time.
+> > While I have pushed this to my review and testing queue, it needs a
+> > bit more work. See my comments below.
+
+> >> +       u32 scale =3D 0;
+> > Redundant, see below.
+
+> >> +       if (val > 5)
+> >> +               pr_warn("Invalid LTR scale factor.\n");
+> > if (...) {
+> >   pr_warn(...); // Btw, Does it recoverable state? What user will get
+> > with returned 0 as a multiplier?
+> >   return 0; // Btw, is 0 fits better than ~0? How hw would behave with
+> > this value?
+> > }
+>
+> We show 0 LTR for invalid scale as PMC output is junk sometimes.
+
+> >> +       else
+> >> +               scale =3D 1U << (5 * (val));
+> >> +
+> >> +       return scale;
+> > return 1U << (5 * val);
+>
+> We intend to return 0 so for invalid LTR scale. This will make retuen
+> non zero and we dont want that.
+
+And my example, if being read carefully, doesn't alter that.
+
+> >> +}
+> >>          for (index =3D 0; map[index].name ; index++) {
+> >> -               seq_printf(s, "IP %-2d :%-32s\tRAW LTR: 0x%x\n", index=
+,
+> >> -                          map[index].name,
+> >> -                          pmc_core_reg_read(pmcdev, map[index].bit_ma=
+sk));
+> > We use 32 characters for the names. Here are two minor issues:
+> > - inconsistency with the rest
+>
+> intentional.
+
+I understand that, but this is not like the rest is printed.
+OK, this is bikeshedding, it's your call, but keep in mind the
+avoidance of ping-pong programming.
+
+> > - ping-pong style of programming (you changed 32 to 24 in the same
+> > series where you introduced 32 in the first place).
+>
+> This is because the formatted output looks better with this width. I
+> used 32 for the earlier patch because its consistent with rest and also
+> does not look bad on screen.
+
+See how it looks like with my proposals below.
+
+> > After you remove the index, it would give you 4 more characters,
+> > though it 4 less than 8 you got from reducing 32 to 24.
+>
+> I plan to keep the index as is. Reason for this is mentioned in previous
+> patch that introduces this index.
+
+No, please don't. We have a numerous userspace tools which are doing
+this pretty well.
+
+> >> --- a/drivers/platform/x86/intel_pmc_core.h
+> >> +++ b/drivers/platform/x86/intel_pmc_core.h
+> >> @@ -177,6 +177,11 @@ enum ppfear_regs {
+> > It might be good idea to include linux/bits.h here.
+>
+> Certainly. Luckily 0day bot didnt complain about randconfigs etc so is
+> it really needed as it will increase size?
+
+You are lucky because of ordering of inclusions. This is fragile.
+Since you are using macros from bits.h better to explicitly show this
+dependency.
+
+--=20
+With Best Regards,
+Andy Shevchenko
