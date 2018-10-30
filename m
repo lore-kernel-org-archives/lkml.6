@@ -2,130 +2,250 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14D72C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B28C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:55:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCB0420664
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:54:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A907E20664
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:55:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="y30ofgft"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCB0420664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="3Ab8kw7x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A907E20664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728102AbeJaGtU (ORCPT
+        id S1728117AbeJaGuO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 02:49:20 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43943 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725743AbeJaGtU (ORCPT
+        Wed, 31 Oct 2018 02:50:14 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:45040 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725743AbeJaGuN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 02:49:20 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n10-v6so6311822pgv.10
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 14:54:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Rew2gv4nVpDtTMnjKCCNmg5kcJfYNGTT9ybPrEx+zJQ=;
-        b=y30ofgftD0wIeQyusVx0RfEuXqttEXrfgimH/kIKElSYpGPd+eTZWstqQPjcWcbEat
-         a6AgsyGckFFVgcaNoneYihXEWf8Uk7c7sCtZAoZdNx4WfhPj+9qbPODLd+n7EdVzLF2C
-         sA+9J/Al0oFrfKkxskDlAqwoQ5PHAzlT87RhRfrZS6KaocRnb4Rd0vEPH70NpNEbAxAn
-         uBG1yVG3Q1Vy29entfqF/rbEJxNI6jhwpACjyr3tA9CRx6vZZTGLWgBCNjfShR1p8ZKu
-         4GjwOTGoumN829cd/+BA8HFLoUGs03eA4FNhCf7G082xHWEXR4zYK4jbzE9qrOhk2Q/h
-         TNTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Rew2gv4nVpDtTMnjKCCNmg5kcJfYNGTT9ybPrEx+zJQ=;
-        b=WaMrjw79gh2BuYEGcpXC49oCYMU6AjxnDMJOYY7nzacRCepMig/uJR9RJiRFxLo1hp
-         sFNwFfv7cMm4mKydJoGzWZ7DQ3+A82E+8xirzEeB47B3fHypkcpZ99sLzrpHlfCU8V3j
-         QmncbzIH9vhbPvuL0f65siUiAon+IfpyGv1QLiKi5ugfSHU9Rbs02ljqH3N6nVm9Uwof
-         SUqmPAt3tPvDYhgqVsfG/8W0sjrYUYz2kbafaM55g/wMCENnQeA5FdFlHKDk2vEZPfiu
-         uwOQwbjbTa8Bp/MmjbHQADfZnv0kDFRk+U92TTAkNaRglvGyE6KGXFr2UzS3OOVeM9lc
-         z6ZQ==
-X-Gm-Message-State: AGRZ1gL+NgePr40+Im4M8511DGgsnBSRq9kYV2lt3ybT0jF8mHoSnTkQ
-        kTnCp+RI2xSovX7yVJ7hkAC0LQ==
-X-Google-Smtp-Source: AJdET5eD4JV8kM0uXTB1HgZyo1g+QYgmjGCh3oJIPxI97sUoNTs284t/4yLY5xZgwqvYBkw8EARUSA==
-X-Received: by 2002:a63:2586:: with SMTP id l128mr475518pgl.104.1540936448037;
-        Tue, 30 Oct 2018 14:54:08 -0700 (PDT)
-Received: from cisco ([128.107.241.161])
-        by smtp.gmail.com with ESMTPSA id d2-v6sm44579313pfj.122.2018.10.30.14.54.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Oct 2018 14:54:07 -0700 (PDT)
-Date:   Tue, 30 Oct 2018 15:54:04 -0600
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian@brauner.io>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Aleksa Sarai <asarai@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH v8 1/2] seccomp: add a return code to trap to userspace
-Message-ID: <20181030215404.GF7343@cisco>
-References: <20181029224031.29809-1-tycho@tycho.ws>
- <20181029224031.29809-2-tycho@tycho.ws>
- <CAGXu5jLjum=TDab67L5XdWKEmzU_5rYeLfGXB1vb2BmfZdPuHQ@mail.gmail.com>
+        Wed, 31 Oct 2018 02:50:13 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9ULshGZ145234;
+        Tue, 30 Oct 2018 21:54:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=DZcq9TRCVc3VuVzPppJiykASgm+lL5238GykhRA1R6A=;
+ b=3Ab8kw7xHkY4aAMF60bOmGud+tIlcWQDWmXOOq2D1QffIZfF+axTR6eXjp2bY8OivlFl
+ oaBV3YETzLcvYszgrcH8k4XGwxqIp/yMP685oUgkjAM1kXjK2fECN408JMWxLoQ/blLs
+ FR4l+8fGCuZwtZ2OpjBTereZ1nkxR40nQwFz0+CVyHXtpohE20HdTEUzAd1K75gr7Lzv
+ ng9O3x2otnAh4KT/mbKYv/YZlXMMBa0Qc6eNkFF9rf+urlNM4bNUJ3Uynip0p1BpC8oD
+ ZLkbjXf4to6SWPRE63eAkWsPzwZ6tf+tIuNOGNCWHN0GLeXBRS+Zc+6MOVPa59Cd1I0/ NQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2nducm3y7r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Oct 2018 21:54:47 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9ULsj7l004328
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Oct 2018 21:54:46 GMT
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9ULshGL028313;
+        Tue, 30 Oct 2018 21:54:43 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 30 Oct 2018 14:54:43 -0700
+Subject: Re: [PATCH RFC v2 1/1] hugetlbfs: use i_mmap_rwsem for pmd sharing
+ and truncate/fault sync
+To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Prakash Sangappa <prakash.sangappa@oracle.com>
+References: <20181024045053.1467-1-mike.kravetz@oracle.com>
+ <20181024045053.1467-2-mike.kravetz@oracle.com>
+ <20181026004220.GA8637@hori1.linux.bs1.fc.nec.co.jp>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <619e9f24-4af1-2083-6219-34a3601b002e@oracle.com>
+Date:   Tue, 30 Oct 2018 14:54:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGXu5jLjum=TDab67L5XdWKEmzU_5rYeLfGXB1vb2BmfZdPuHQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181026004220.GA8637@hori1.linux.bs1.fc.nec.co.jp>
+Content-Type: text/plain; charset=iso-2022-jp
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9062 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810300183
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 02:49:21PM -0700, Kees Cook wrote:
-> On Mon, Oct 29, 2018 at 3:40 PM, Tycho Andersen <tycho@tycho.ws> wrote:
-> >     * switch to a flags based future-proofing mechanism for struct
-> >       seccomp_notif and seccomp_notif_resp, thus avoiding version issues
-> >       with structure length (Kees)
-> [...]
-> >
-> > +struct seccomp_notif {
-> > +       __u64 id;
-> > +       __u32 pid;
-> > +       __u32 flags;
-> > +       struct seccomp_data data;
-> > +};
-> > +
-> > +struct seccomp_notif_resp {
-> > +       __u64 id;
-> > +       __s64 val;
-> > +       __s32 error;
-> > +       __u32 flags;
-> > +};
+On 10/25/18 5:42 PM, Naoya Horiguchi wrote:
+> Hi Mike,
 > 
-> Hrm, so, what's the plan for when struct seccomp_data changes size?
+> On Tue, Oct 23, 2018 at 09:50:53PM -0700, Mike Kravetz wrote:
+>>   Now, anopther task truncates the hugetlbfs file.  As part of truncation,
+>>   it unmaps everyone who has the file mapped.  If a task has a shared pmd
+>>   in this range, huge_pmd_unshhare will be called.  If this is not the last
+> 
+> (sorry, nitpicking ..) a few typos ("anophter" and "unshhare").
 
-I guess my plan was don't ever change the size again, just use flags
-and have extra state available via ioctl().
+Hi Naoya,
 
-> I'm realizing that it might be "too late" for userspace to discover
-> it's running on a newer kernel. i.e. it gets a user notification, and
-> discovers flags it doesn't know how to handle. Do we actually need
-> both flags AND a length? Designing UAPI is frustrating! :)
+Thanks for looking at the patch.  I put this together somewhat quickly before
+traveling and unfortunately made several typos.  Wanted to provide adequate
+documentation to help understand the changes.
 
-:). I don't see this as such a big problem -- in fact it's better than
-the length mode, where you don't know what you don't know, because it
-only copied as much info as you could handle. Older userspace would
-simply not use information it didn't know how to use.
+>>   user sharing the pmd, huge_pmd_unshare will clear pud pointing to the
+>>   pmd.  For the task in the middle of the page fault, the ptep returned by
+>>   huge_pte_alloc points to another task's page table or worse.  This leads
+>>   to bad things such as incorrect page map/reference counts or invalid
+>>   memory references.
+>>
+>> i_mmap_rwsem is currently used for pmd sharing synchronization.  It is also
+>> held during unmap and whenever a call to huge_pmd_unshare is possible.  It
+>> is only acquired in write mode.  Expand and modify the use of i_mmap_rwsem
+>> as follows:
+>> - i_mmap_rwsem is held in write mode for the duration of truncate
+>>   processing.
+>> - i_mmap_rwsem is held in write mode whenever huge_pmd_share is called.
+> 
+> I guess you mean huge_pmd_unshare here, right?
+> 
 
-> Do we need another ioctl to discover the seccomp_data size maybe?
+Correct, i_mmap_rwsem is held in write mode whenever huge_pmd_unshare
+is called.
 
-That could be an option as well, assuming we agree that size would
-work, which I thought we didn't?
+>> - i_mmap_rwsem is held in read mode whenever huge_pmd_share is called.
+>>   Today that is only via huge_pte_alloc.
+>> - i_mmap_rwsem is held in read mode after huge_pte_alloc, until the caller
+>>   is finished with the returned ptep.
+>>
+>> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+[...]
+>> @@ -505,8 +512,8 @@ static int hugetlb_vmtruncate(struct inode *inode, loff_t offset)
+>>  	i_mmap_lock_write(mapping);
+>>  	if (!RB_EMPTY_ROOT(&mapping->i_mmap.rb_root))
+>>  		hugetlb_vmdelete_list(&mapping->i_mmap, pgoff, 0);
+>> -	i_mmap_unlock_write(mapping);
+>>  	remove_inode_hugepages(inode, offset, LLONG_MAX);
+>> +	i_mmap_unlock_write(mapping);
+> 
+> I just have an impression that hugetlbfs_punch_hole() could have the
+> similar race and extending lock range there could be an improvement,
+> although I might miss something as always.
+> 
 
-Tycho
+You are correct.  The hole punch routine (hugetlbfs_punch_hole) should
+continue to hold i_mmap_rwsem in write mode until after calling
+remove_inode_hugepages.
+
+>>  	return 0;
+>>  }
+>>  
+>> @@ -624,7 +631,11 @@ static long hugetlbfs_fallocate(struct file *file, int mode, loff_t offset,
+>>  		/* addr is the offset within the file (zero based) */
+>>  		addr = index * hpage_size;
+>>  
+>> -		/* mutex taken here, fault path and hole punch */
+>> +		/*
+>> +		 * fault mutex taken here, protects against fault path
+>> +		 * and hole punch.  inode_lock previously taken protects
+>> +		 * against truncation.
+>> +		 */
+>>  		hash = hugetlb_fault_mutex_hash(h, mm, &pseudo_vma, mapping,
+>>  						index, addr);
+>>  		mutex_lock(&hugetlb_fault_mutex_table[hash]);
+>> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+>> index 7b5c0ad9a6bd..e9da3eee262f 100644
+>> --- a/mm/hugetlb.c
+>> +++ b/mm/hugetlb.c
+>> @@ -3252,18 +3252,33 @@ int copy_hugetlb_page_range(struct mm_struct *dst, struct mm_struct *src,
+>>  
+>>  	for (addr = vma->vm_start; addr < vma->vm_end; addr += sz) {
+>>  		spinlock_t *src_ptl, *dst_ptl;
+>> +		struct vm_area_struct *dst_vma;
+>> +		struct address_space *mapping;
+>> +
+>>  		src_pte = huge_pte_offset(src, addr, sz);
+>>  		if (!src_pte)
+>>  			continue;
+>> +
+>> +		/*
+>> +		 * i_mmap_rwsem must be held to call huge_pte_alloc.
+>> +		 * Continue to hold until finished with dst_pte, otherwise
+>> +		 * it could go away if part of a shared pmd.
+>> +		 */
+>> +		dst_vma = find_vma(dst, addr);
+>> +		mapping = dst_vma->vm_file->f_mapping;
+> 
+> If vma->vm_file->f_mapping gives the same mapping, you may omit the find_vma()?
+> 
+
+Thanks.  You are correct.  'dst_vma' should be the same as vma as it is
+a copy.  This find is unnecessary.
+
+>> +		i_mmap_lock_read(mapping);
+>>  		dst_pte = huge_pte_alloc(dst, addr, sz);
+>>  		if (!dst_pte) {
+>> +			i_mmap_unlock_read(mapping);
+>>  			ret = -ENOMEM;
+>>  			break;
+>>  		}
+>>  
+>>  		/* If the pagetables are shared don't copy or take references */
+>> -		if (dst_pte == src_pte)
+>> +		if (dst_pte == src_pte) {
+>> +			i_mmap_unlock_read(mapping);
+>>  			continue;
+>> +		}
+>>  
+>>  		dst_ptl = huge_pte_lock(h, dst, dst_pte);
+>>  		src_ptl = huge_pte_lockptr(h, src, src_pte);
+> 
+> [...]
+> 
+>> diff --git a/mm/rmap.c b/mm/rmap.c
+>> index 1e79fac3186b..db49e734dda8 100644
+>> --- a/mm/rmap.c
+>> +++ b/mm/rmap.c
+>> @@ -1347,6 +1347,7 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
+>>  	bool ret = true;
+>>  	unsigned long start = address, end;
+>>  	enum ttu_flags flags = (enum ttu_flags)arg;
+>> +	bool pmd_sharing_possible = false;
+>>  
+>>  	/* munlock has nothing to gain from examining un-locked vmas */
+>>  	if ((flags & TTU_MUNLOCK) && !(vma->vm_flags & VM_LOCKED))
+>> @@ -1376,8 +1377,15 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
+>>  		 * accordingly.
+>>  		 */
+>>  		adjust_range_if_pmd_sharing_possible(vma, &start, &end);
+>> +		if ((end - start) > (PAGE_SIZE << compound_order(page)))
+>> +			pmd_sharing_possible = true;
+> 
+> Maybe the similar check is done in adjust_range_if_pmd_sharing_possible()
+> as the function name claims, so does it make more sense to get this bool
+> value via the return value?
+
+Yes, that makes sense.  This use of adjust_range_if_pmd_sharing_possible
+would be the only place a return value is used.
+
+Thanks for your comments!
+
+I am concerned about the use of any huge pte pointers when the page table
+lock or i_mmap_rwsem is not held.  There may be more instances of this we
+need to protect.  For example, huge_pte_offset at the beginning of
+hugetlb_fault() is still called without any synchronization.  I think we
+may need to acquire i_mmap_rwsem before this call.  I'm trying to think of
+other areas that may be of concern.
+-- 
+Mike Kravetz
