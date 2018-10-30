@@ -2,52 +2,52 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9282AC6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:27:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F34D1C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:27:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6334720827
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:27:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6334720827
+	by mail.kernel.org (Postfix) with ESMTP id C41B520827
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:27:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C41B520827
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727369AbeJ3STp (ORCPT
+        id S1727436AbeJ3ST7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 14:19:45 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49018 "EHLO mx1.redhat.com"
+        Tue, 30 Oct 2018 14:19:59 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50434 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726486AbeJ3STp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 14:19:45 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        id S1726486AbeJ3ST7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 14:19:59 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0D95A307CDDA;
-        Tue, 30 Oct 2018 09:27:06 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id C1009C0495A0;
+        Tue, 30 Oct 2018 09:27:19 +0000 (UTC)
 Received: from krava (unknown [10.43.17.150])
-        by smtp.corp.redhat.com (Postfix) with SMTP id EFBB61000049;
-        Tue, 30 Oct 2018 09:27:04 +0000 (UTC)
-Date:   Tue, 30 Oct 2018 10:27:03 +0100
+        by smtp.corp.redhat.com (Postfix) with SMTP id 88962601A1;
+        Tue, 30 Oct 2018 09:27:18 +0000 (UTC)
+Date:   Tue, 30 Oct 2018 10:27:16 +0100
 From:   Jiri Olsa <jolsa@redhat.com>
 To:     Jiri Olsa <jolsa@kernel.org>
 Cc:     lkml <linux-kernel@vger.kernel.org>,
-        "Signed-off-by : Len Brown" <len.brown@intel.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Markus Mayer <mmayer@broadcom.com>,
         "Herton R. Krzesinski" <herton@redhat.com>
-Subject: Re: [PATCH 05/10] tools power x86_energy_perf_policy: Override
- CFLAGS assignments and add LDFLAGS to build command
-Message-ID: <20181030092703.GB19259@krava>
+Subject: Re: [PATCH 06/10] tools thermal tmon: Override CFLAGS assignments
+Message-ID: <20181030092716.GC19259@krava>
 References: <20181016150614.21260-1-jolsa@kernel.org>
- <20181016150614.21260-6-jolsa@kernel.org>
+ <20181016150614.21260-7-jolsa@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181016150614.21260-6-jolsa@kernel.org>
+In-Reply-To: <20181016150614.21260-7-jolsa@kernel.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Tue, 30 Oct 2018 09:27:06 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 30 Oct 2018 09:27:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -58,35 +58,46 @@ ping
 thanks,
 jirka
 
-On Tue, Oct 16, 2018 at 05:06:10PM +0200, Jiri Olsa wrote:
-> So user could specify outside CFLAGS/LDFLAGS values.
+On Tue, Oct 16, 2018 at 05:06:11PM +0200, Jiri Olsa wrote:
+> So user could specify outside CFLAGS values.
 > 
-> Cc: Signed-off-by: Len Brown <len.brown@intel.com>
+> Cc: Zhang Rui <rui.zhang@intel.com>
+> Cc: Markus Mayer <mmayer@broadcom.com>
 > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 > ---
->  tools/power/x86/x86_energy_perf_policy/Makefile | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  tools/thermal/tmon/Makefile | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> diff --git a/tools/power/x86/x86_energy_perf_policy/Makefile b/tools/power/x86/x86_energy_perf_policy/Makefile
-> index f4534fb8b951..ae7a0e09b722 100644
-> --- a/tools/power/x86/x86_energy_perf_policy/Makefile
-> +++ b/tools/power/x86/x86_energy_perf_policy/Makefile
-> @@ -9,12 +9,12 @@ ifeq ("$(origin O)", "command line")
->  endif
+> diff --git a/tools/thermal/tmon/Makefile b/tools/thermal/tmon/Makefile
+> index 735a510230c3..89a2444c1df2 100644
+> --- a/tools/thermal/tmon/Makefile
+> +++ b/tools/thermal/tmon/Makefile
+> @@ -6,13 +6,13 @@ VERSION = 1.0
 >  
->  x86_energy_perf_policy : x86_energy_perf_policy.c
-> -CFLAGS +=	-Wall
-> -CFLAGS +=	-DMSRHEADER='"../../../../arch/x86/include/asm/msr-index.h"'
-> +override CFLAGS +=	-Wall
-> +override CFLAGS +=	-DMSRHEADER='"../../../../arch/x86/include/asm/msr-index.h"'
+>  BINDIR=usr/bin
+>  WARNFLAGS=-Wall -Wshadow -W -Wformat -Wimplicit-function-declaration -Wimplicit-int
+> -CFLAGS+= -O1 ${WARNFLAGS}
+> +override CFLAGS+= -O1 ${WARNFLAGS}
+>  # Add "-fstack-protector" only if toolchain supports it.
+> -CFLAGS+= $(call cc-option,-fstack-protector)
+> +override CFLAGS+= $(call cc-option,-fstack-protector-strong)
+>  CC?= $(CROSS_COMPILE)gcc
+>  PKG_CONFIG?= pkg-config
 >  
->  %: %.c
->  	@mkdir -p $(BUILD_OUTPUT)
-> -	$(CC) $(CFLAGS) $< -o $(BUILD_OUTPUT)/$@
-> +	$(CC) $(CFLAGS) $< -o $(BUILD_OUTPUT)/$@ $(LDFLAGS)
+> -CFLAGS+=-D VERSION=\"$(VERSION)\"
+> +override CFLAGS+=-D VERSION=\"$(VERSION)\"
+>  LDFLAGS+=
+>  TARGET=tmon
 >  
->  .PHONY : clean
->  clean :
+> @@ -29,7 +29,7 @@ TMON_LIBS += $(shell $(PKG_CONFIG) --libs $(STATIC) panelw ncursesw 2> /dev/null
+>  		     $(PKG_CONFIG) --libs $(STATIC) panel ncurses 2> /dev/null || \
+>  		     echo -lpanel -lncurses)
+>  
+> -CFLAGS    += $(shell $(PKG_CONFIG) --cflags $(STATIC) panelw ncursesw 2> /dev/null || \
+> +override CFLAGS += $(shell $(PKG_CONFIG) --cflags $(STATIC) panelw ncursesw 2> /dev/null || \
+>  		     $(PKG_CONFIG) --cflags $(STATIC) panel ncurses 2> /dev/null)
+>  
+>  OBJS = tmon.o tui.o sysfs.o pid.o
 > -- 
 > 2.17.2
 > 
