@@ -2,116 +2,99 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDCCBC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:43:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 725EEC6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:43:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D4FB20664
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:43:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D4FB20664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
+	by mail.kernel.org (Postfix) with ESMTP id 38ECB20664
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:43:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=konsulko.com header.i=@konsulko.com header.b="oeNIYn5f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38ECB20664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbeJaBh7 (ORCPT
+        id S1727789AbeJaBiK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 21:37:59 -0400
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:41276 "EHLO
-        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727429AbeJaBh6 (ORCPT
+        Tue, 30 Oct 2018 21:38:10 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42391 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727726AbeJaBiK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 21:37:58 -0400
-Received: from [109.168.11.45] (port=36330 helo=[192.168.101.125])
-        by srv-hp10.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1gHX7E-00ASkR-87; Tue, 30 Oct 2018 17:43:40 +0100
-Subject: Re: [PATCH 1/7] dt-bindings: mfd: ds90ux9xx: add description of TI
- DS90Ux9xx ICs
-To:     Vladimir Zapolskiy <vz@mleia.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Marek Vasut <marek.vasut@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sandeep Jain <Sandeep_Jain@mentor.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-References: <20181008211205.2900-1-vz@mleia.com>
- <20181008211205.2900-2-vz@mleia.com>
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Message-ID: <fd0a91c9-6e38-5a18-12e5-955fbf81bfce@lucaceresoli.net>
-Date:   Tue, 30 Oct 2018 17:43:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 30 Oct 2018 21:38:10 -0400
+Received: by mail-pg1-f196.google.com with SMTP id i4-v6so5925068pgq.9
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 09:43:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=konsulko.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3OtMAj1L7mXwhMbSq/VcI6iHOvUL4RLxD22+oCFKUVY=;
+        b=oeNIYn5fzcWxQBawf4khXDdYRMbWr6D415pElcQcwspL33Q09ZXQ4FctwZGZ/KwFsz
+         Pgv08XRv6oU2bfJfdoAYUGT9FDxD4iKFco7XTXotl5U/OPYREBo2KX3brqRQR3ja3o/q
+         +pMSMgKzSvpyValb7o5jXJf2fHJMVO/g6fnFo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3OtMAj1L7mXwhMbSq/VcI6iHOvUL4RLxD22+oCFKUVY=;
+        b=hbZ+Qpe8XjOnb8SDdHA3/2qlLZD8bImLgnzzo0ku0VKmLAGIiuT7r0YLRwfHY2zGjW
+         WIb56+KRqXp2mFSjMu6T1jGnMciOJF2lM/qF8XeaWc/Z/VyBO5nI8+KAob1MeGboyuHH
+         3kSuy6osmiYSjK4o2y6Ze7381MADRt15/lok0LDGZuIW5U/7eY4SHvePj02S+5XBooBg
+         Xmus3TxVCgByO+NJ5oVj3UIzwMwuripX5sx1IVyDn2Cma7bZsgHv8UctbGdf3h+YjcVr
+         v8laJV8bKQ5pPg+qGEFMwNOQqt2QjwN2Y/NE4n5TnKGMJCJJuWNr+jv8KMNcH487xXpG
+         TFhg==
+X-Gm-Message-State: AGRZ1gKesVbG0NDGgY4yjfSLV+abmC/OaH/qSqZMWivt3Z50f/hrnPLH
+        9m1wVm16yKzfzX9/BmvViYzAH2NPOTzfJr11nWKK5A==
+X-Google-Smtp-Source: AJdET5deoaExYnnktCHj5yM9YT4hpmsoY6Ko0RP2xl/R0a2nxq6x8WCot5izY0MYuWyE4Pj2d4ukCYWXOLuqoxAfrZE=
+X-Received: by 2002:a63:480d:: with SMTP id v13-v6mr18691506pga.308.1540917837132;
+ Tue, 30 Oct 2018 09:43:57 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181008211205.2900-2-vz@mleia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca@lucaceresoli.net
-X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+References: <1540913482-22130-1-git-send-email-Julia.Lawall@lip6.fr> <1540913482-22130-3-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1540913482-22130-3-git-send-email-Julia.Lawall@lip6.fr>
+From:   Matt Ranostay <matt.ranostay@konsulko.com>
+Date:   Tue, 30 Oct 2018 09:43:10 -0700
+Message-ID: <CAJCx=gmixee=j_y9v__40x1StZXrtaK0wWrWDibMbYb3HAfnbA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] media: video-i2c: hwmon: constify vb2_ops structure
+To:     Julia.Lawall@lip6.fr
+Cc:     kernel-janitors@vger.kernel.org, mchehab@kernel.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vladimir,
+On Tue, Oct 30, 2018 at 9:06 AM Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+>
+> The vb2_ops structure can be const as it is only stored in the ops
+> field of a vb2_queue structure and this field is const.
+>
+> Done with the help of Coccinelle.
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-On 08/10/18 23:11, Vladimir Zapolskiy wrote:
-> From: Sandeep Jain <Sandeep_Jain@mentor.com>
-> 
-> The change adds device tree binding description of TI DS90Ux9xx
-> series of serializer and deserializer controllers which support video,
-> audio and control data transmission over FPD-III Link connection.
-[...]
-> +Example:
-> +
-> +serializer: serializer@c {
-> +	compatible = "ti,ds90ub927q", "ti,ds90ux9xx";
-> +	reg = <0xc>;
-> +	power-gpios = <&gpio5 12 GPIO_ACTIVE_HIGH>;
-> +	ti,backward-compatible-mode = <0>;
-> +	ti,low-frequency-mode = <0>;
-> +	ti,pixel-clock-edge = <0>;
-> +	...
-> +}
-> +
-> +deserializer: deserializer@3c {
-> +	compatible = "ti,ds90ub940q", "ti,ds90ux9xx";
-> +	reg = <0x3c>;
-> +	power-gpios = <&gpio6 31 GPIO_ACTIVE_HIGH>;
-> +	...
-> +}
+Acked-by: Matt Ranostay <matt.ranostay@konsulko.com>
 
-Interesting patchset, thanks. At the moment I'm working on a driver for
-the TI FPD-III camera serdes chips [0]. At very first sight they have
-many commonalities with the display chipsets [1] you implemented. Did
-you have a look into them? Do you think they could be implemented by the
-same driver?
-
-The camera serdes chips lack some features found on the display chips
-(e.g. audio, white balance). OTOH they have dual or quad input
-deserializers, which adds complexity.
-
-I'm commenting on the details in reply to the following patches
-documenting the DT bindings.
-
-[0] http://www.ti.com/interface/fpd-link-serdes/camera-serdes/overview.html
-[1] http://www.ti.com/interface/fpd-link-serdes/display-serdes/overview.html
-
-Bye,
--- 
-Luca
+>
+> ---
+>  drivers/media/i2c/video-i2c.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/media/i2c/video-i2c.c b/drivers/media/i2c/video-i2c.c
+> index 4d49af86c15e..cb89cda6553d 100644
+> --- a/drivers/media/i2c/video-i2c.c
+> +++ b/drivers/media/i2c/video-i2c.c
+> @@ -336,7 +336,7 @@ static void stop_streaming(struct vb2_queue *vq)
+>         video_i2c_del_list(vq, VB2_BUF_STATE_ERROR);
+>  }
+>
+> -static struct vb2_ops video_i2c_video_qops = {
+> +static const struct vb2_ops video_i2c_video_qops = {
+>         .queue_setup            = queue_setup,
+>         .buf_prepare            = buffer_prepare,
+>         .buf_queue              = buffer_queue,
+>
