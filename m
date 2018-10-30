@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 419B0ECDE44
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:05:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80661C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:05:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A2EF20827
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:05:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A2EF20827
+	by mail.kernel.org (Postfix) with ESMTP id 4DEF020827
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:05:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DEF020827
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbeJ3S6N (ORCPT
+        id S1727420AbeJ3S6e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 14:58:13 -0400
-Received: from lucky1.263xmail.com ([211.157.147.135]:33376 "EHLO
+        Tue, 30 Oct 2018 14:58:34 -0400
+Received: from lucky1.263xmail.com ([211.157.147.130]:45934 "EHLO
         lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726247AbeJ3S6M (ORCPT
+        with ESMTP id S1726792AbeJ3S6e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 14:58:12 -0400
+        Tue, 30 Oct 2018 14:58:34 -0400
 Received: from tony.xie?rock-chips.com (unknown [192.168.167.73])
-        by lucky1.263xmail.com (Postfix) with ESMTP id 1587FA4C;
-        Tue, 30 Oct 2018 18:05:16 +0800 (CST)
+        by lucky1.263xmail.com (Postfix) with ESMTP id ED721380;
+        Tue, 30 Oct 2018 18:05:27 +0800 (CST)
 X-263anti-spam: KSV:0;
 X-MAIL-GRAY: 1
 X-MAIL-DELIVERY: 0
 X-KSVirus-check: 0
 X-ABS-CHECKED: 4
 Received: from localhost.localdomain (localhost [127.0.0.1])
-        by smtp.263.net (Postfix) with ESMTPA id 40562390;
-        Tue, 30 Oct 2018 18:05:11 +0800 (CST)
+        by smtp.263.net (Postfix) with ESMTPA id CD0A3380;
+        Tue, 30 Oct 2018 18:05:23 +0800 (CST)
 X-RL-SENDER: tony.xie@rock-chips.com
 X-FST-TO: heiko@sntech.de
 X-SENDER-IP: 58.22.7.114
 X-LOGIN-NAME: tony.xie@rock-chips.com
-X-UNIQUE-TAG: <522ef8704b132ace1c41bb00a457b503>
+X-UNIQUE-TAG: <8eacf3333ed0056239eae0e09ff5e877>
 X-ATTACHMENT-NUM: 0
 X-SENDER: xxx@rock-chips.com
 X-DNS-TYPE: 0
 Received: from unknown (unknown [58.22.7.114])
-        by smtp.263.net (Postfix) whith SMTP id 11686XWSHB9;
-        Tue, 30 Oct 2018 18:05:15 +0800 (CST)
+        by smtp.263.net (Postfix) whith SMTP id 11686FOIDIY;
+        Tue, 30 Oct 2018 18:05:26 +0800 (CST)
 From:   Tony Xie <tony.xie@rock-chips.com>
 To:     heiko@sntech.de
 Cc:     broonie@kernel.org, lee.jones@linaro.org, robh+dt@kernel.org,
@@ -56,9 +56,9 @@ Cc:     broonie@kernel.org, lee.jones@linaro.org, robh+dt@kernel.org,
         linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
         xsf@rock-chips.com, zhangqing@rock-chips.com,
         huangtao@rock-chips.com, tony.xie@rock-chips.com
-Subject: [PATCH v6 1/6] regmap: add a new macro:REGMAP_IRQ_REG_LINE(_id, _reg_bits)
-Date:   Tue, 30 Oct 2018 18:07:56 +0800
-Message-Id: <1540894081-31270-2-git-send-email-tony.xie@rock-chips.com>
+Subject: [PATCH v6 4/6] dt-bindings: mfd: rk808: Add binding information for RK809 and RK817.
+Date:   Tue, 30 Oct 2018 18:07:59 +0800
+Message-Id: <1540894081-31270-5-git-send-email-tony.xie@rock-chips.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1540894081-31270-1-git-send-email-tony.xie@rock-chips.com>
 References: <1540894081-31270-1-git-send-email-tony.xie@rock-chips.com>
@@ -67,31 +67,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-if there are lots of irqs for a device and the register addresses for these
-irqs is continuous, we can use this macro to initialize regmap_irq value.
+Add device tree bindings documentation for Rockchip's RK809 & RK817 PMIC.
 
 Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 ---
- include/linux/regmap.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+ Documentation/devicetree/bindings/mfd/rk808.txt | 44 +++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-diff --git a/include/linux/regmap.h b/include/linux/regmap.h
-index 4f38068..a468b81 100644
---- a/include/linux/regmap.h
-+++ b/include/linux/regmap.h
-@@ -1047,6 +1047,12 @@ struct regmap_irq {
- #define REGMAP_IRQ_REG(_irq, _off, _mask)		\
- 	[_irq] = { .reg_offset = (_off), .mask = (_mask) }
+diff --git a/Documentation/devicetree/bindings/mfd/rk808.txt b/Documentation/devicetree/bindings/mfd/rk808.txt
+index 91b6522..f306fa0 100644
+--- a/Documentation/devicetree/bindings/mfd/rk808.txt
++++ b/Documentation/devicetree/bindings/mfd/rk808.txt
+@@ -3,11 +3,15 @@ RK8XX Power Management Integrated Circuit
+ The rk8xx family current members:
+ rk805
+ rk808
++rk809
++rk817
+ rk818
  
-+#define REGMAP_IRQ_REG_LINE(_id, _reg_bits) \
-+	[_id] = {				\
-+		.mask = BIT((_id) % (_reg_bits)),	\
-+		.reg_offset = (_id) / (_reg_bits),	\
-+	}
+ Required properties:
+ - compatible: "rockchip,rk805"
+ - compatible: "rockchip,rk808"
++- compatible: "rockchip,rk809"
++- compatible: "rockchip,rk817"
+ - compatible: "rockchip,rk818"
+ - reg: I2C slave address
+ - interrupt-parent: The parent interrupt controller.
+@@ -46,6 +50,23 @@ Optional RK808 properties:
+   the gpio controller. If DVS GPIOs aren't present, voltage changes will happen
+   very quickly with no slow ramp time.
+ 
++Optional shared RK809 and RK817 properties:
++- vcc1-supply:  The input supply for DCDC_REG1
++- vcc2-supply:  The input supply for DCDC_REG2
++- vcc3-supply:  The input supply for DCDC_REG3
++- vcc4-supply:  The input supply for DCDC_REG4
++- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
++- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
++- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
 +
- /**
-  * struct regmap_irq_chip - Description of a generic regmap irq_chip.
-  *
++Optional RK809 properties:
++- vcc8-supply:  The input supply for SWITCH_REG1
++- vcc9-supply:  The input supply for DCDC_REG5, SWITCH_REG2
++
++Optional RK817 properties:
++- vcc8-supply:  The input supply for BOOST
++- vcc9-supply:  The input supply for OTG_SWITCH
++
+ Optional RK818 properties:
+ - vcc1-supply:  The input supply for DCDC_REG1
+ - vcc2-supply:  The input supply for DCDC_REG2
+@@ -87,6 +108,21 @@ number as described in RK808 datasheet.
+ 	- SWITCH_REGn
+ 		- valid values for n are 1 to 2
+ 
++Following regulators of the RK809 and RK817 PMIC blocks are supported. Note that
++the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
++number as described in RK809 and RK817 datasheets.
++
++	- DCDC_REGn
++		- valid values for n are 1 to 5 for RK809.
++		- valid values for n are 1 to 4 for RK817.
++	- LDO_REGn
++		- valid values for n are 1 to 9 for RK809.
++		- valid values for n are 1 to 9 for RK817.
++	- SWITCH_REGn
++		- valid values for n are 1 to 2 for RK809.
++	- BOOST for RK817
++	- OTG_SWITCH for RK817
++
+ Following regulators of the RK818 PMIC block are supported. Note that
+ the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
+ number as described in RK818 datasheet.
+@@ -99,6 +135,14 @@ number as described in RK818 datasheet.
+ 	- HDMI_SWITCH
+ 	- OTG_SWITCH
+ 
++It is necessary to configure three pins for both the RK809 and RK817, the three
++pins are "gpio_ts" "gpio_gt" "gpio_slp".
++	The gpio_gt and gpio_ts pins support the gpio function.
++	The gpio_slp pin is for controlling the pmic states, as below:
++		- reset
++		- power down
++		- sleep
++
+ Standard regulator bindings are used inside regulator subnodes. Check
+   Documentation/devicetree/bindings/regulator/regulator.txt
+ for more details
 -- 
 1.9.1
 
