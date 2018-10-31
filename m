@@ -4,119 +4,100 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D892ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:54:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40A70ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:54:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D79262054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:54:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA26620821
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:54:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="z3KBEurY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D79262054F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="J3ir5gD/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA26620821
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbeKAIyj (ORCPT
+        id S1728048AbeKAIys (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:54:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52790 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:54:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727417AbeKAIGF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:06:05 -0400
+        id S1726532AbeKAIGE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:06:04 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFF3620823;
-        Wed, 31 Oct 2018 23:05:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D64A20866;
+        Wed, 31 Oct 2018 23:05:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027155;
-        bh=oWbdDq+iHpSgGXWpuZGrdKnhqz/tA/mZEIhJ5VoFtog=;
+        s=default; t=1541027153;
+        bh=rNjdU8QKxdta560gh0jiMdLoKJq5s/LlfVnklcD99xk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z3KBEurYHBUbkm3LvPP33z9N0WwsKr0ubfNE8ffYq7vn+y96LhbUzIeUpe4pC+pYX
-         sTfu2B7+W+KdRhclcnCzc8PLf9TqY4jj9vE2Zc1M7bdwEHPPI2MCC8ZfKAYoVqoTiM
-         +gWKUSMeVP8YGjz5X6svQW5h4FAYj+sZJEzqTgqo=
+        b=J3ir5gD/+sbxenb9joOnYlBxpHATNNLBWRlm0Ut1/UF6BZkU6Hn4j5gDBYacODGcp
+         E/jiMT377cmDQ8XbLoxXurbzIgZbEiVf/oyPB+pTKBee6ruteQhwTg+kC7LITvlMyB
+         SjyzqRe0Lpn04lbBY5wKcuhnQ4N7UUnQyWvZ34T4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>,
-        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 014/146] lightnvm: pblk: fix race on sysfs line state
-Date:   Wed, 31 Oct 2018 19:03:29 -0400
-Message-Id: <20181031230541.28822-14-sashal@kernel.org>
+Cc:     Serhey Popovych <serhe.popovych@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 011/146] tun: Consistently configure generic netdev params via rtnetlink
+Date:   Wed, 31 Oct 2018 19:03:26 -0400
+Message-Id: <20181031230541.28822-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Javier González <javier@javigon.com>
+From: Serhey Popovych <serhe.popovych@gmail.com>
 
-[ Upstream commit 44cdbdc657b23f75736eca3e88b781f009104363 ]
+[ Upstream commit df52eab23d703142c766ac00bdb8db19d71238d0 ]
 
-pblk exposes a sysfs interface that represents its internal state. Part
-of this state is the map bitmap for the current open line, which should
-be protected by the line lock to avoid a race when freeing the line
-metadata. Currently, it is not.
+Configuring generic network device parameters on tun will fail in
+presence of IFLA_INFO_KIND attribute in IFLA_LINKINFO nested attribute
+since tun_validate() always return failure.
 
-This patch makes sure that the line state is consistent and NULL
-bitmap pointers are not dereferenced.
+This can be visualized with following ip-link(8) command sequences:
 
-Signed-off-by: Javier González <javier@cnexlabs.com>
-Signed-off-by: Matias Bjørling <mb@lightnvm.io>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+  # ip link set dev tun0 group 100
+  # ip link set dev tun0 group 100 type tun
+  RTNETLINK answers: Invalid argument
+
+with contrast to dummy and veth drivers:
+
+  # ip link set dev dummy0 group 100
+  # ip link set dev dummy0 type dummy
+
+  # ip link set dev veth0 group 100
+  # ip link set dev veth0 group 100 type veth
+
+Fix by returning zero in tun_validate() when @data is NULL that is
+always in case since rtnl_link_ops->maxtype is zero in tun driver.
+
+Fixes: f019a7a594d9 ("tun: Implement ip link del tunXXX")
+Signed-off-by: Serhey Popovych <serhe.popovych@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/lightnvm/pblk-core.c  | 5 +++--
- drivers/lightnvm/pblk-sysfs.c | 8 +++++++-
- 2 files changed, 10 insertions(+), 3 deletions(-)
+ drivers/net/tun.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-index 00984b486fea..2940cdc87af1 100644
---- a/drivers/lightnvm/pblk-core.c
-+++ b/drivers/lightnvm/pblk-core.c
-@@ -1539,13 +1539,14 @@ struct pblk_line *pblk_line_replace_data(struct pblk *pblk)
- 	struct pblk_line *cur, *new = NULL;
- 	unsigned int left_seblks;
- 
--	cur = l_mg->data_line;
- 	new = l_mg->data_next;
- 	if (!new)
- 		goto out;
--	l_mg->data_line = new;
- 
- 	spin_lock(&l_mg->free_lock);
-+	cur = l_mg->data_line;
-+	l_mg->data_line = new;
-+
- 	pblk_line_setup_metadata(new, l_mg, &pblk->lm);
- 	spin_unlock(&l_mg->free_lock);
- 
-diff --git a/drivers/lightnvm/pblk-sysfs.c b/drivers/lightnvm/pblk-sysfs.c
-index 9fc3dfa168b4..8d2ed510c04b 100644
---- a/drivers/lightnvm/pblk-sysfs.c
-+++ b/drivers/lightnvm/pblk-sysfs.c
-@@ -262,8 +262,14 @@ static ssize_t pblk_sysfs_lines(struct pblk *pblk, char *page)
- 		sec_in_line = l_mg->data_line->sec_in_line;
- 		meta_weight = bitmap_weight(&l_mg->meta_bitmap,
- 							PBLK_DATA_LINES);
--		map_weight = bitmap_weight(l_mg->data_line->map_bitmap,
-+
-+		spin_lock(&l_mg->data_line->lock);
-+		if (l_mg->data_line->map_bitmap)
-+			map_weight = bitmap_weight(l_mg->data_line->map_bitmap,
- 							lm->sec_per_line);
-+		else
-+			map_weight = 0;
-+		spin_unlock(&l_mg->data_line->lock);
- 	}
- 	spin_unlock(&l_mg->free_lock);
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index 50e9cc19023a..c52207beef88 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -2264,6 +2264,8 @@ static void tun_setup(struct net_device *dev)
+ static int tun_validate(struct nlattr *tb[], struct nlattr *data[],
+ 			struct netlink_ext_ack *extack)
+ {
++	if (!data)
++		return 0;
+ 	return -EINVAL;
+ }
  
 -- 
 2.17.1
