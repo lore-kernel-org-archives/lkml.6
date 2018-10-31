@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F37EC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA22ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5929520664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8680B20838
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uHg36Pc7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5929520664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SIWF5p3O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8680B20838
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727807AbeKAIGU (ORCPT
+        id S1727978AbeKAIGZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:06:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53124 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:06:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727752AbeKAIGS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:06:18 -0400
+        id S1727784AbeKAIGU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:06:20 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB57420838;
-        Wed, 31 Oct 2018 23:06:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2AB032082E;
+        Wed, 31 Oct 2018 23:06:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027167;
-        bh=E+2WBzhW8gQJGq+HmTovVo4/IW9J3xqDHMZU439p4UE=;
+        s=default; t=1541027170;
+        bh=KPiJvz4He0AwSZ0ySKEL1Gu0R0Z7OVpxUWh1vKcO0so=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uHg36Pc7eAfXqtagiIKB/rGo4uS6yWZbhWlOjrhy1Jl1EoPNCGBFqQWZ1/T0vNtZu
-         0dmKnD1mlssp0OuTr86zf29yQc6r8sTTmn7lvp7qLUmxSnmEgLwwmrKXujeGCi0J65
-         FEa99aIyLAJt0gVoRCZu+JUz79Komj7jJHm3xL8Y=
+        b=SIWF5p3OCYz98e4VS0b9mDyajC2JIWieMcvYiXYbJm/JIYNySOhh5M8fVsyYkrjVV
+         lXEa1u76yP8zLAdjSrB9E43MCz1/gxbaEf80hPZZZ1q8QP/hZc9CFV9S+qwRc4oYIi
+         1ZaEppCbQrhuUVe97trrPbaTCuAEF1lZxS22SvFc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Shaul Triebitz <shaul.triebitz@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 027/146] iwlwifi: pcie: avoid empty free RB queue
-Date:   Wed, 31 Oct 2018 19:03:42 -0400
-Message-Id: <20181031230541.28822-27-sashal@kernel.org>
+Cc:     Lubomir Rintel <lkundrak@v3.sk>, Borislav Petkov <bp@suse.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        x86-ml <x86@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 030/146] x86/olpc: Indicate that legacy PC XO-1 platform should not register RTC
+Date:   Wed, 31 Oct 2018 19:03:45 -0400
+Message-Id: <20181031230541.28822-30-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -53,110 +53,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shaul Triebitz <shaul.triebitz@intel.com>
+From: Lubomir Rintel <lkundrak@v3.sk>
 
-[ Upstream commit 868a1e863f95183f00809363fefba6d4f5bcd116 ]
+[ Upstream commit d92116b800fb79a72ad26121f5011f6aa3ad94c2 ]
 
-If all free RB queues are empty, the driver will never restock the
-free RB queue.  That's because the restocking happens in the Rx flow,
-and if the free queue is empty there will be no Rx.
+On OLPC XO-1, the RTC is discovered via device tree from the arch
+initcall. Don't let the PC platform register another one from its device
+initcall, it's not going to work:
 
-Although there's a background worker (a.k.a. allocator) allocating
-memory for RBs so that the Rx handler can restock them, the worker may
-run only after the free queue has become empty (and then it is too
-late for restocking as explained above).
+  sysfs: cannot create duplicate filename '/devices/platform/rtc_cmos'
+  CPU: 0 PID: 1 Comm: swapper Not tainted 4.19.0-rc6 #12
+  Hardware name: OLPC XO/XO, BIOS OLPC Ver 1.00.01 06/11/2014
+  Call Trace:
+   dump_stack+0x16/0x18
+   sysfs_warn_dup+0x46/0x58
+   sysfs_create_dir_ns+0x76/0x9b
+   kobject_add_internal+0xed/0x209
+   ? __schedule+0x3fa/0x447
+   kobject_add+0x5b/0x66
+   device_add+0x298/0x535
+   ? insert_resource_conflict+0x2a/0x3e
+   platform_device_add+0x14d/0x192
+   ? io_delay_init+0x19/0x19
+   platform_device_register+0x1c/0x1f
+   add_rtc_cmos+0x16/0x31
+   do_one_initcall+0x78/0x14a
+   ? do_early_param+0x75/0x75
+   kernel_init_freeable+0x152/0x1e0
+   ? rest_init+0xa2/0xa2
+   kernel_init+0x8/0xd5
+   ret_from_fork+0x2e/0x38
+  kobject_add_internal failed for rtc_cmos with -EEXIST, don't try to
+    register things with the same name in the same directory.
+  platform rtc_cmos: registered platform RTC device (no PNP device found)
 
-There is a solution for that called 'emergency': If the number of used
-RB's reaches half the amount of all RB's, the Rx handler will not wait
-for the allocator but immediately allocate memory for the used RB's
-and restock the free queue.
-
-But, since the used RB's is per queue, it may happen that the used
-RB's are spread between the queues such that the emergency check will
-fail for each of the queues
-(and still run out of RBs, causing the above symptom).
-
-To fix it, move to emergency mode if the sum of *all* used RBs (for
-all Rx queues) reaches half the amount of all RB's
-
-Signed-off-by: Shaul Triebitz <shaul.triebitz@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+CC: "H. Peter Anvin" <hpa@zytor.com>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: x86-ml <x86@kernel.org>
+Link: http://lkml.kernel.org/r/20181004160808.307738-1-lkundrak@v3.sk
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/pcie/rx.c | 32 +++++++++++++-------
- 1 file changed, 21 insertions(+), 11 deletions(-)
+ arch/x86/platform/olpc/olpc-xo1-rtc.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-index d017aa2a0a8b..d4a31e014c82 100644
---- a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-@@ -1144,6 +1144,14 @@ void iwl_pcie_rx_free(struct iwl_trans *trans)
- 	kfree(trans_pcie->rxq);
+diff --git a/arch/x86/platform/olpc/olpc-xo1-rtc.c b/arch/x86/platform/olpc/olpc-xo1-rtc.c
+index a2b4efddd61a..8e7ddd7e313a 100644
+--- a/arch/x86/platform/olpc/olpc-xo1-rtc.c
++++ b/arch/x86/platform/olpc/olpc-xo1-rtc.c
+@@ -16,6 +16,7 @@
+ 
+ #include <asm/msr.h>
+ #include <asm/olpc.h>
++#include <asm/x86_init.h>
+ 
+ static void rtc_wake_on(struct device *dev)
+ {
+@@ -75,6 +76,8 @@ static int __init xo1_rtc_init(void)
+ 	if (r)
+ 		return r;
+ 
++	x86_platform.legacy.rtc = 0;
++
+ 	device_init_wakeup(&xo1_rtc_device.dev, 1);
+ 	return 0;
  }
- 
-+static void iwl_pcie_rx_move_to_allocator(struct iwl_rxq *rxq,
-+					  struct iwl_rb_allocator *rba)
-+{
-+	spin_lock(&rba->lock);
-+	list_splice_tail_init(&rxq->rx_used, &rba->rbd_empty);
-+	spin_unlock(&rba->lock);
-+}
-+
- /*
-  * iwl_pcie_rx_reuse_rbd - Recycle used RBDs
-  *
-@@ -1175,9 +1183,7 @@ static void iwl_pcie_rx_reuse_rbd(struct iwl_trans *trans,
- 	if ((rxq->used_count % RX_CLAIM_REQ_ALLOC) == RX_POST_REQ_ALLOC) {
- 		/* Move the 2 RBDs to the allocator ownership.
- 		 Allocator has another 6 from pool for the request completion*/
--		spin_lock(&rba->lock);
--		list_splice_tail_init(&rxq->rx_used, &rba->rbd_empty);
--		spin_unlock(&rba->lock);
-+		iwl_pcie_rx_move_to_allocator(rxq, rba);
- 
- 		atomic_inc(&rba->req_pending);
- 		queue_work(rba->alloc_wq, &rba->rx_alloc);
-@@ -1396,10 +1402,18 @@ static void iwl_pcie_rx_handle(struct iwl_trans *trans, int queue)
- 		IWL_DEBUG_RX(trans, "Q %d: HW = SW = %d\n", rxq->id, r);
- 
- 	while (i != r) {
-+		struct iwl_rb_allocator *rba = &trans_pcie->rba;
- 		struct iwl_rx_mem_buffer *rxb;
--
--		if (unlikely(rxq->used_count == rxq->queue_size / 2))
-+		/* number of RBDs still waiting for page allocation */
-+		u32 rb_pending_alloc =
-+			atomic_read(&trans_pcie->rba.req_pending) *
-+			RX_CLAIM_REQ_ALLOC;
-+
-+		if (unlikely(rb_pending_alloc >= rxq->queue_size / 2 &&
-+			     !emergency)) {
-+			iwl_pcie_rx_move_to_allocator(rxq, rba);
- 			emergency = true;
-+		}
- 
- 		rxb = iwl_pcie_get_rxb(trans, rxq, i);
- 		if (!rxb)
-@@ -1421,17 +1435,13 @@ static void iwl_pcie_rx_handle(struct iwl_trans *trans, int queue)
- 			iwl_pcie_rx_allocator_get(trans, rxq);
- 
- 		if (rxq->used_count % RX_CLAIM_REQ_ALLOC == 0 && !emergency) {
--			struct iwl_rb_allocator *rba = &trans_pcie->rba;
--
- 			/* Add the remaining empty RBDs for allocator use */
--			spin_lock(&rba->lock);
--			list_splice_tail_init(&rxq->rx_used, &rba->rbd_empty);
--			spin_unlock(&rba->lock);
-+			iwl_pcie_rx_move_to_allocator(rxq, rba);
- 		} else if (emergency) {
- 			count++;
- 			if (count == 8) {
- 				count = 0;
--				if (rxq->used_count < rxq->queue_size / 3)
-+				if (rb_pending_alloc < rxq->queue_size / 3)
- 					emergency = false;
- 
- 				rxq->read = i;
 -- 
 2.17.1
 
