@@ -7,121 +7,122 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E91C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:23:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF5FAECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:23:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B28A20847
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:23:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5AE62084A
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:23:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qXKtPBbx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B28A20847
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="L7f9vACG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5AE62084A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731525AbeKAIXt (ORCPT
+        id S1731285AbeKAIKv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:23:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33888 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:10:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729311AbeKAIK4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:10:56 -0400
+        id S1731171AbeKAIKt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:10:49 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C74F2081B;
-        Wed, 31 Oct 2018 23:10:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8A582081B;
+        Wed, 31 Oct 2018 23:10:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027444;
-        bh=MO91LDUwEHxDMMsflrGEt8DuMKGiBGxDH/uirpFXOOE=;
+        s=default; t=1541027437;
+        bh=yDKLQAmi375Q/rKRchJEi4pGyhCpYmV4iYrVyJZ5AJY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qXKtPBbx0AuKfHJJK/LMHsJNaw6fXz7M4i2Yn1ehaXj5qvIzJswy4ourtznkrPf1j
-         BWZmwyJa2O0HorD3NR+3ZZoB2rTsjBdOtx0JxTQuIQ+AgkEWK6aPY+4C/W9OgWwvYF
-         yG9own35grHOY20e8YDuAKLYlMxZfCDxyUv8IFaU=
+        b=L7f9vACG1OZEhnxObO0uis0ZIc09c4Byu3xLsBuSDufuuJnh01BkyqCscvkt1oS22
+         x0DtsDneAo0S4AJV/YyD29BgxX6k/EK+VP5poWbRw07Suv/UviLZGH7Qkx0UnFoJo9
+         ggSYrgPvcENJn8a9yxGhPnDA1/2N9tQi49OYKv40=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 62/73] crypto: caam - fix implicit casts in endianness helpers
-Date:   Wed, 31 Oct 2018 19:09:37 -0400
-Message-Id: <20181031230948.29203-62-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 54/73] PCI / ACPI: Enable wake automatically for power managed bridges
+Date:   Wed, 31 Oct 2018 19:09:29 -0400
+Message-Id: <20181031230948.29203-54-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230948.29203-1-sashal@kernel.org>
 References: <20181031230948.29203-1-sashal@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Horia Geantă <horia.geanta@nxp.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-[ Upstream commit aae733a3f46f5ef338fbdde26e14cbb205a23de0 ]
+[ Upstream commit 6299cf9ec3985cac70bede8a855b5087b81a6640 ]
 
-Fix the following sparse endianness warnings:
+We enable power management automatically for bridges where
+pci_bridge_d3_possible() returns true. However, these bridges may have
+ACPI methods such as _DSW that need to be called before D3 entry. For
+example in Lenovo Thinkpad X1 Carbon 6th _DSW method is used to prepare
+D3cold for the PCIe root port hosting Thunderbolt chain. Because wake is
+not enabled _DSW method is never called and the port does not enter
+D3cold properly consuming more power than necessary.
 
-drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __le32unsigned int @@
-drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-drivers/crypto/caam/regs.h:95:1:    got restricted __le32 [usertype] <noident>
-drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __be32unsigned int @@
-drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-drivers/crypto/caam/regs.h:95:1:    got restricted __be32 [usertype] <noident>
+Users can work this around by writing "enabled" to "wakeup" sysfs file
+under the device in question but that is not something an ordinary user
+is expected to do.
 
-drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
-drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
+Since we already automatically enable power management for PCIe ports
+with ->bridge_d3 set extend that to enable wake for them as well,
+assuming the port has any ACPI wakeup related objects implemented in the
+namespace (adev->wakeup.flags.valid is true). This ensures the necessary
+ACPI methods get called at appropriate times and allows the root port in
+Thinkpad X1 Carbon 6th to go into D3cold.
 
-Fixes: 261ea058f016 ("crypto: caam - handle core endianness != caam endianness")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/caam/regs.h | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ drivers/pci/pci-acpi.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/caam/regs.h b/drivers/crypto/caam/regs.h
-index fee363865d88..e5513cc59ec3 100644
---- a/drivers/crypto/caam/regs.h
-+++ b/drivers/crypto/caam/regs.h
-@@ -70,22 +70,22 @@
- extern bool caam_little_end;
- extern bool caam_imx;
+diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
+index 4708eb9df71b..a3cedf8de863 100644
+--- a/drivers/pci/pci-acpi.c
++++ b/drivers/pci/pci-acpi.c
+@@ -738,19 +738,33 @@ static void pci_acpi_setup(struct device *dev)
+ 		return;
  
--#define caam_to_cpu(len)				\
--static inline u##len caam##len ## _to_cpu(u##len val)	\
--{							\
--	if (caam_little_end)				\
--		return le##len ## _to_cpu(val);		\
--	else						\
--		return be##len ## _to_cpu(val);		\
-+#define caam_to_cpu(len)						\
-+static inline u##len caam##len ## _to_cpu(u##len val)			\
-+{									\
-+	if (caam_little_end)						\
-+		return le##len ## _to_cpu((__force __le##len)val);	\
-+	else								\
-+		return be##len ## _to_cpu((__force __be##len)val);	\
+ 	device_set_wakeup_capable(dev, true);
++	/*
++	 * For bridges that can do D3 we enable wake automatically (as
++	 * we do for the power management itself in that case). The
++	 * reason is that the bridge may have additional methods such as
++	 * _DSW that need to be called.
++	 */
++	if (pci_dev->bridge_d3)
++		device_wakeup_enable(dev);
++
+ 	acpi_pci_wakeup(pci_dev, false);
  }
  
--#define cpu_to_caam(len)				\
--static inline u##len cpu_to_caam##len(u##len val)	\
--{							\
--	if (caam_little_end)				\
--		return cpu_to_le##len(val);		\
--	else						\
--		return cpu_to_be##len(val);		\
-+#define cpu_to_caam(len)					\
-+static inline u##len cpu_to_caam##len(u##len val)		\
-+{								\
-+	if (caam_little_end)					\
-+		return (__force u##len)cpu_to_le##len(val);	\
-+	else							\
-+		return (__force u##len)cpu_to_be##len(val);	\
+ static void pci_acpi_cleanup(struct device *dev)
+ {
+ 	struct acpi_device *adev = ACPI_COMPANION(dev);
++	struct pci_dev *pci_dev = to_pci_dev(dev);
+ 
+ 	if (!adev)
+ 		return;
+ 
+ 	pci_acpi_remove_pm_notifier(adev);
+-	if (adev->wakeup.flags.valid)
++	if (adev->wakeup.flags.valid) {
++		if (pci_dev->bridge_d3)
++			device_wakeup_disable(dev);
++
+ 		device_set_wakeup_capable(dev, false);
++	}
  }
  
- caam_to_cpu(16)
+ static bool pci_acpi_bus_match(struct device *dev)
 -- 
 2.17.1
 
