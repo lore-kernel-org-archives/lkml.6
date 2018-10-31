@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36BE3ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:27:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59F8CECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:27:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBC372084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:27:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2072820847
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:27:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z8is8jyg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBC372084A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BZLuCa0K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2072820847
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731242AbeKAI2G (ORCPT
+        id S1731135AbeKAI2G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 1 Nov 2018 04:28:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60814 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:60840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730817AbeKAIKR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:10:17 -0400
+        id S1730940AbeKAIKS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:10:18 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE50420866;
-        Wed, 31 Oct 2018 23:10:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D161A20838;
+        Wed, 31 Oct 2018 23:10:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027405;
-        bh=KPiJvz4He0AwSZ0ySKEL1Gu0R0Z7OVpxUWh1vKcO0so=;
+        s=default; t=1541027406;
+        bh=ubZKX24iCN3x9EGA0j7cvaO4h3JPmWBoEebIFDN8AkU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z8is8jygqfapZHd9MXpTSKtqvwOXqGT8Lp+i4pbquNhpFZ2ojVSXDex4r/sJTqWVK
-         Qa5FukJSw4rqXcHwOq9u7QNxEYvoV4i4EejBwsvPauTNbqZRH3Sb3EXDCF8KFj1jEm
-         2G8HiGRStSJKwZhArcz77Hf5h59tmyM1DOzyYoQ8=
+        b=BZLuCa0K45044qRbEOL1+UYqyUdYnYuDZY3NHxUBrdFLYlRlGYT5F3MyxsLggVDbj
+         3c0+J52WKHUXis8OEutO0+95hiLwk9D1PAtetYM/vbv1njtLr37zZEUS/q+xPa7bwS
+         X2vqZD7hfxyEABYemwANsrqG6er+FujM36oA90H0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Lubomir Rintel <lkundrak@v3.sk>, Borislav Petkov <bp@suse.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        x86-ml <x86@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 18/73] x86/olpc: Indicate that legacy PC XO-1 platform should not register RTC
-Date:   Wed, 31 Oct 2018 19:08:53 -0400
-Message-Id: <20181031230948.29203-18-sashal@kernel.org>
+Cc:     Dou Liyang <douly.fnst@cn.fujitsu.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 19/73] ACPI / processor: Fix the return value of acpi_processor_ids_walk()
+Date:   Wed, 31 Oct 2018 19:08:54 -0400
+Message-Id: <20181031230948.29203-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230948.29203-1-sashal@kernel.org>
 References: <20181031230948.29203-1-sashal@kernel.org>
@@ -53,73 +53,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lubomir Rintel <lkundrak@v3.sk>
+From: Dou Liyang <douly.fnst@cn.fujitsu.com>
 
-[ Upstream commit d92116b800fb79a72ad26121f5011f6aa3ad94c2 ]
+[ Upstream commit d0381bf4f80c571dde1244fe5b85dc35e8b3f546 ]
 
-On OLPC XO-1, the RTC is discovered via device tree from the arch
-initcall. Don't let the PC platform register another one from its device
-initcall, it's not going to work:
+ACPI driver should make sure all the processor IDs in their ACPI Namespace
+are unique. the driver performs a depth-first walk of the namespace tree
+and calls the acpi_processor_ids_walk() to check the duplicate IDs.
 
-  sysfs: cannot create duplicate filename '/devices/platform/rtc_cmos'
-  CPU: 0 PID: 1 Comm: swapper Not tainted 4.19.0-rc6 #12
-  Hardware name: OLPC XO/XO, BIOS OLPC Ver 1.00.01 06/11/2014
-  Call Trace:
-   dump_stack+0x16/0x18
-   sysfs_warn_dup+0x46/0x58
-   sysfs_create_dir_ns+0x76/0x9b
-   kobject_add_internal+0xed/0x209
-   ? __schedule+0x3fa/0x447
-   kobject_add+0x5b/0x66
-   device_add+0x298/0x535
-   ? insert_resource_conflict+0x2a/0x3e
-   platform_device_add+0x14d/0x192
-   ? io_delay_init+0x19/0x19
-   platform_device_register+0x1c/0x1f
-   add_rtc_cmos+0x16/0x31
-   do_one_initcall+0x78/0x14a
-   ? do_early_param+0x75/0x75
-   kernel_init_freeable+0x152/0x1e0
-   ? rest_init+0xa2/0xa2
-   kernel_init+0x8/0xd5
-   ret_from_fork+0x2e/0x38
-  kobject_add_internal failed for rtc_cmos with -EEXIST, don't try to
-    register things with the same name in the same directory.
-  platform rtc_cmos: registered platform RTC device (no PNP device found)
+But, the acpi_processor_ids_walk() mistakes the return value. If a
+processor is checked, it returns true which causes the walk break
+immediately, and other processors will never be checked.
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: x86-ml <x86@kernel.org>
-Link: http://lkml.kernel.org/r/20181004160808.307738-1-lkundrak@v3.sk
+Repace the value with AE_OK which is the standard acpi_status value.
+And don't abort the namespace walk even on error.
+
+Fixes: 8c8cb30f49b8 (acpi/processor: Implement DEVICE operator for processor enumeration)
+Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/platform/olpc/olpc-xo1-rtc.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/acpi/acpi_processor.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/platform/olpc/olpc-xo1-rtc.c b/arch/x86/platform/olpc/olpc-xo1-rtc.c
-index a2b4efddd61a..8e7ddd7e313a 100644
---- a/arch/x86/platform/olpc/olpc-xo1-rtc.c
-+++ b/arch/x86/platform/olpc/olpc-xo1-rtc.c
-@@ -16,6 +16,7 @@
+diff --git a/drivers/acpi/acpi_processor.c b/drivers/acpi/acpi_processor.c
+index 86c10599d9f8..ccf07674a2a0 100644
+--- a/drivers/acpi/acpi_processor.c
++++ b/drivers/acpi/acpi_processor.c
+@@ -642,7 +642,7 @@ static acpi_status __init acpi_processor_ids_walk(acpi_handle handle,
  
- #include <asm/msr.h>
- #include <asm/olpc.h>
-+#include <asm/x86_init.h>
+ 	status = acpi_get_type(handle, &acpi_type);
+ 	if (ACPI_FAILURE(status))
+-		return false;
++		return status;
  
- static void rtc_wake_on(struct device *dev)
- {
-@@ -75,6 +76,8 @@ static int __init xo1_rtc_init(void)
- 	if (r)
- 		return r;
+ 	switch (acpi_type) {
+ 	case ACPI_TYPE_PROCESSOR:
+@@ -662,11 +662,12 @@ static acpi_status __init acpi_processor_ids_walk(acpi_handle handle,
+ 	}
  
-+	x86_platform.legacy.rtc = 0;
-+
- 	device_init_wakeup(&xo1_rtc_device.dev, 1);
- 	return 0;
+ 	processor_validated_ids_update(uid);
+-	return true;
++	return AE_OK;
+ 
+ err:
++	/* Exit on error, but don't abort the namespace walk */
+ 	acpi_handle_info(handle, "Invalid processor object\n");
+-	return false;
++	return AE_OK;
+ 
  }
+ 
 -- 
 2.17.1
 
