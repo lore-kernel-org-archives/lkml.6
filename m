@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 692D5ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CFACECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 247F620664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14AED20664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OYcRAOOf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 247F620664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fwyam7Uj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14AED20664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731418AbeKAILF (ORCPT
+        id S1731444AbeKAILH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:11:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34152 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:11:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731389AbeKAILC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:11:02 -0400
+        id S1731397AbeKAILF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:11:05 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C87E208E3;
-        Wed, 31 Oct 2018 23:10:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05F0D2087A;
+        Wed, 31 Oct 2018 23:10:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027450;
-        bh=mI4rkwRfpdXnDl9oWOd9suwcjunbLincP2B5YfZGY+4=;
+        s=default; t=1541027452;
+        bh=30PZycv/gAPSJ2WEUfirkTvcjgAsvRBH10uhK5lKEIQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OYcRAOOf6w1ABGKc3iNDiS0k839mCAefbh2DxpD2zt05GEHgjU9DSmFmgTxVB+Trk
-         H+tgOBUarpzBRKUhsFuXSQmjhOQivJVsI2Cv9QDvsoURf4XojPgS01OATbcyQb+Zbx
-         MO3oYwXQn/zgBfjF+RnVeLuIEwk+9ysxTLBbrTLQ=
+        b=fwyam7UjGIVGpwEVSoXevMf+6e6E72/dT2PB5FeyztkyybS2gFEg9WDoj5+3V3MFz
+         CjY7DxVqTg3Fo48KrJla3l3fWTzFdzUL2HuqdSfwkLxyZ8ePmjdgaPKQaOblrtT1fA
+         Nl4iIOyELrivCVDG23KzD7OVpv8wOByYZRjlZBJM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Lee Jones <lee.jones@linaro.org>,
+Cc:     Vijay Immanuel <vijayi@attalasystems.com>,
+        Doug Ledford <dledford@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 70/73] mfd: menelaus: Fix possible race condition and leak
-Date:   Wed, 31 Oct 2018 19:09:45 -0400
-Message-Id: <20181031230948.29203-70-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 72/73] IB/rxe: fix for duplicate request processing and ack psns
+Date:   Wed, 31 Oct 2018 19:09:47 -0400
+Message-Id: <20181031230948.29203-72-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230948.29203-1-sashal@kernel.org>
 References: <20181031230948.29203-1-sashal@kernel.org>
@@ -53,64 +53,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Vijay Immanuel <vijayi@attalasystems.com>
 
-[ Upstream commit 9612f8f503804d2fd2f63aa6ba1e58bba4612d96 ]
+[ Upstream commit b97db58557f4aa6d9903f8e1deea6b3d1ed0ba43 ]
 
-The IRQ work is added before the struct rtc is allocated and registered,
-but this struct is used in the IRQ handler. This may lead to a NULL pointer
-dereference.
+Don't reset the resp opcode for a replayed read response.
+The resp opcode could be in the middle of a write or send
+sequence, when the duplicate read request was received.
+An example sequence is as follows:
+- Receive read request for 12KB PSN 20. Transmit read response
+  first, middle and last with PSNs 20,21,22.
+- Receive write first PSN 23.
+  At this point the resp psn is 24 and resp opcode is write first.
+- The sender notices that PSN 20 is dropped and retransmits.
+  Receive read request for 12KB PSN 20. Transmit read response
+  first, middle and last with PSNs 20,21,22. The resp opcode is
+  set to -1, the resp psn remains 24.
+- Receive write first PSN 23. This is processed by duplicate_request().
+  The resp opcode remains -1 and resp psn remains 24.
+- Receive write middle PSN 24. check_op_seq() reports a missing
+  first error since the resp opcode is -1.
 
-Switch to devm_rtc_allocate_device/rtc_register_device to allocate the rtc
-before calling menelaus_add_irq_work.
+When sending an ack for a duplicate send or write request,
+use the psn of the previous ack sent. Do not use the psn
+of a read response for the ack.
+An example sequence is as follows:
+- Receive write PSN 30. Transmit ACK for PSN 30.
+- Receive read request 4KB PSN 31. Transmit read response with
+  PSN 31. The resp psn is now 32.
+- The sender notices that PSN 30 is dropped and retransmits.
+  Receive write PSN 30. duplicate_request() sends an ACK with
+  PSN 31. That is incorrect since PSN 31 was a read request.
 
-Also, this solves a possible leak as the RTC is never released.
-
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Vijay Immanuel <vijayi@attalasystems.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/menelaus.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/infiniband/sw/rxe/rxe_resp.c  | 8 ++++++--
+ drivers/infiniband/sw/rxe/rxe_verbs.h | 2 ++
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mfd/menelaus.c b/drivers/mfd/menelaus.c
-index 29b7164a823b..d28ebe7ecd21 100644
---- a/drivers/mfd/menelaus.c
-+++ b/drivers/mfd/menelaus.c
-@@ -1094,6 +1094,7 @@ static void menelaus_rtc_alarm_work(struct menelaus_chip *m)
- static inline void menelaus_rtc_init(struct menelaus_chip *m)
+diff --git a/drivers/infiniband/sw/rxe/rxe_resp.c b/drivers/infiniband/sw/rxe/rxe_resp.c
+index bd43c1c7a42f..4d84b010b3ee 100644
+--- a/drivers/infiniband/sw/rxe/rxe_resp.c
++++ b/drivers/infiniband/sw/rxe/rxe_resp.c
+@@ -683,6 +683,7 @@ static enum resp_states read_reply(struct rxe_qp *qp,
+ 		rxe_advance_resp_resource(qp);
+ 
+ 		res->type		= RXE_READ_MASK;
++		res->replay		= 0;
+ 
+ 		res->read.va		= qp->resp.va;
+ 		res->read.va_org	= qp->resp.va;
+@@ -753,7 +754,8 @@ static enum resp_states read_reply(struct rxe_qp *qp,
+ 		state = RESPST_DONE;
+ 	} else {
+ 		qp->resp.res = NULL;
+-		qp->resp.opcode = -1;
++		if (!res->replay)
++			qp->resp.opcode = -1;
+ 		if (psn_compare(res->cur_psn, qp->resp.psn) >= 0)
+ 			qp->resp.psn = res->cur_psn;
+ 		state = RESPST_CLEANUP;
+@@ -815,6 +817,7 @@ static enum resp_states execute(struct rxe_qp *qp, struct rxe_pkt_info *pkt)
+ 
+ 	/* next expected psn, read handles this separately */
+ 	qp->resp.psn = (pkt->psn + 1) & BTH_PSN_MASK;
++	qp->resp.ack_psn = qp->resp.psn;
+ 
+ 	qp->resp.opcode = pkt->opcode;
+ 	qp->resp.status = IB_WC_SUCCESS;
+@@ -1071,7 +1074,7 @@ static enum resp_states duplicate_request(struct rxe_qp *qp,
+ 					  struct rxe_pkt_info *pkt)
  {
- 	int	alarm = (m->client->irq > 0);
-+	int	err;
+ 	enum resp_states rc;
+-	u32 prev_psn = (qp->resp.psn - 1) & BTH_PSN_MASK;
++	u32 prev_psn = (qp->resp.ack_psn - 1) & BTH_PSN_MASK;
  
- 	/* assume 32KDETEN pin is pulled high */
- 	if (!(menelaus_read_reg(MENELAUS_OSC_CTRL) & 0x80)) {
-@@ -1101,6 +1102,12 @@ static inline void menelaus_rtc_init(struct menelaus_chip *m)
- 		return;
- 	}
+ 	if (pkt->mask & RXE_SEND_MASK ||
+ 	    pkt->mask & RXE_WRITE_MASK) {
+@@ -1114,6 +1117,7 @@ static enum resp_states duplicate_request(struct rxe_qp *qp,
+ 			res->state = (pkt->psn == res->first_psn) ?
+ 					rdatm_res_state_new :
+ 					rdatm_res_state_replay;
++			res->replay = 1;
  
-+	m->rtc = devm_rtc_allocate_device(&m->client->dev);
-+	if (IS_ERR(m->rtc))
-+		return;
-+
-+	m->rtc->ops = &menelaus_rtc_ops;
-+
- 	/* support RTC alarm; it can issue wakeups */
- 	if (alarm) {
- 		if (menelaus_add_irq_work(MENELAUS_RTCALM_IRQ,
-@@ -1125,10 +1132,8 @@ static inline void menelaus_rtc_init(struct menelaus_chip *m)
- 		menelaus_write_reg(MENELAUS_RTC_CTRL, m->rtc_control);
- 	}
+ 			/* Reset the resource, except length. */
+ 			res->read.va_org = iova;
+diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
+index 1019f5e7dbdd..59f6a24db064 100644
+--- a/drivers/infiniband/sw/rxe/rxe_verbs.h
++++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
+@@ -173,6 +173,7 @@ enum rdatm_res_state {
  
--	m->rtc = rtc_device_register(DRIVER_NAME,
--			&m->client->dev,
--			&menelaus_rtc_ops, THIS_MODULE);
--	if (IS_ERR(m->rtc)) {
-+	err = rtc_register_device(m->rtc);
-+	if (err) {
- 		if (alarm) {
- 			menelaus_remove_irq_work(MENELAUS_RTCALM_IRQ);
- 			device_init_wakeup(&m->client->dev, 0);
+ struct resp_res {
+ 	int			type;
++	int			replay;
+ 	u32			first_psn;
+ 	u32			last_psn;
+ 	u32			cur_psn;
+@@ -197,6 +198,7 @@ struct rxe_resp_info {
+ 	enum rxe_qp_state	state;
+ 	u32			msn;
+ 	u32			psn;
++	u32			ack_psn;
+ 	int			opcode;
+ 	int			drop_msg;
+ 	int			goto_error;
 -- 
 2.17.1
 
