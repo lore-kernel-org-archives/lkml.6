@@ -2,169 +2,83 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB0AFECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:54:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95B9CC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:59:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B92DB20664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:54:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B92DB20664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3442820664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:59:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="b3E1XL+T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3442820664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730700AbeKADyF (ORCPT
+        id S1730711AbeKAD7Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 23:54:05 -0400
-Received: from mga11.intel.com ([192.55.52.93]:61530 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730097AbeKADyF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 23:54:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2018 11:54:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,447,1534834800"; 
-   d="scan'208";a="88491311"
-Received: from chang-linux-2.sc.intel.com ([10.3.52.60])
-  by orsmga008.jf.intel.com with ESMTP; 31 Oct 2018 11:54:46 -0700
-From:   "Chang S. Bae" <chang.seok.bae@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H . Peter Anvin" <hpa@zytor.com>
-Cc:     Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ravi Shankar <ravi.v.shankar@intel.com>,
-        "Chang S . Bae" <chang.seok.bae@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] x86/fsgsbase/64: Fix the base write helper functions
-Date:   Wed, 31 Oct 2018 11:53:51 -0700
-Message-Id: <20181031185351.9736-1-chang.seok.bae@intel.com>
-X-Mailer: git-send-email 2.19.1
+        Wed, 31 Oct 2018 23:59:16 -0400
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:34630 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729639AbeKAD7Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 23:59:16 -0400
+Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 5AC8E10C0964;
+        Wed, 31 Oct 2018 11:59:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1541012397; bh=Fd1cauIXYKYwOMGcXMa821Y/DN04bh89Ljs7jVuJcvw=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=b3E1XL+TWvG16ThEtZBaZWnZpLVWEn+fNFmXPvjqwOfX9EKVFkIpUd0HwWPggO2/N
+         x6gbxejE7yzFBf9NFI7a5uUjgzO2cKvKLz84Ix28nyIBdobTsd48G/S9GdXMcmKRkZ
+         4NHhqmMVHptV1NU0ji7h7g1doY8IVtugHHmvb64rWLSzRa7bqaGw5GvL1E42sg9ES5
+         6BpuNbgrpbmiO+LnVjhxSDleX023H2IeSxGbkJT0X/FP9ia3q+gBGmP3QPi7aGJHxl
+         eGaAw+KMP3+nV2gMsTQqtoPG3qr00P/izJBZwsPoadvY9G2/hO8wiGQyy/DX6LFRwD
+         P6Oh2gM33UFnA==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 4897E326E;
+        Wed, 31 Oct 2018 11:59:57 -0700 (PDT)
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 31 Oct 2018 11:59:57 -0700
+Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
+ by DE02WEHTCB.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Wed,
+ 31 Oct 2018 19:59:54 +0100
+From:   Alexey Brodkin <alexey.brodkin@synopsys.com>
+To:     Vineet Gupta <vineet.gupta1@synopsys.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Eugeniy.Paltsev@synopsys.com" <Eugeniy.Paltsev@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+Subject: Re: [PATCH] ARC: [plat-hsdk] Enable DW APB GPIO support
+Thread-Topic: [PATCH] ARC: [plat-hsdk] Enable DW APB GPIO support
+Thread-Index: AQHUaslFo5wJ/nyDekafXj9rIUlPp6U4BMsAgAGsrQA=
+Date:   Wed, 31 Oct 2018 18:59:53 +0000
+Message-ID: <220be0675d0114028930e6fe122f98cefba130a7.camel@synopsys.com>
+References: <20181023120919.11627-1-Eugeniy.Paltsev@synopsys.com>
+         <0f3fcfcf-6a3d-1277-cee8-91f27f0a3c06@synopsys.com>
+In-Reply-To: <0f3fcfcf-6a3d-1277-cee8-91f27f0a3c06@synopsys.com>
+Accept-Language: en-US, ru-RU
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.225.15.87]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6690D0DAE9EFCE489CA65302EF3AC948@internal.synopsys.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Factor out the code to change index from the relavant helpers. Now,
-the code is located in do_arch_prctl_64().
-
-The helper functions that purport to write the base should just write it
-only. It shouldn't have magic optimizations to change the index.
-
-putreg() in ptrace does not write the current task, but a stopped task.
-
-v2: Fix further on the task write functions. Revert the changes on the
-task read helpers.
-
-Suggested-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
----
- arch/x86/kernel/process_64.c | 48 ++++++++++++++++++++++--------------
- 1 file changed, 30 insertions(+), 18 deletions(-)
-
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index 31b4755369f0..ad849ce9cb73 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -339,19 +339,11 @@ static unsigned long x86_fsgsbase_read_task(struct task_struct *task,
- 
- void x86_fsbase_write_cpu(unsigned long fsbase)
- {
--	/*
--	 * Set the selector to 0 as a notion, that the segment base is
--	 * overwritten, which will be checked for skipping the segment load
--	 * during context switch.
--	 */
--	loadseg(FS, 0);
- 	wrmsrl(MSR_FS_BASE, fsbase);
- }
- 
- void x86_gsbase_write_cpu_inactive(unsigned long gsbase)
- {
--	/* Set the selector to 0 for the same reason as %fs above. */
--	loadseg(GS, 0);
- 	wrmsrl(MSR_KERNEL_GS_BASE, gsbase);
- }
- 
-@@ -392,12 +384,7 @@ int x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase)
- 	if (unlikely(fsbase >= TASK_SIZE_MAX))
- 		return -EPERM;
- 
--	preempt_disable();
- 	task->thread.fsbase = fsbase;
--	if (task == current)
--		x86_fsbase_write_cpu(fsbase);
--	task->thread.fsindex = 0;
--	preempt_enable();
- 
- 	return 0;
- }
-@@ -407,12 +394,7 @@ int x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase)
- 	if (unlikely(gsbase >= TASK_SIZE_MAX))
- 		return -EPERM;
- 
--	preempt_disable();
- 	task->thread.gsbase = gsbase;
--	if (task == current)
--		x86_gsbase_write_cpu_inactive(gsbase);
--	task->thread.gsindex = 0;
--	preempt_enable();
- 
- 	return 0;
- }
-@@ -758,11 +740,41 @@ long do_arch_prctl_64(struct task_struct *task, int option, unsigned long arg2)
- 
- 	switch (option) {
- 	case ARCH_SET_GS: {
-+		preempt_disable();
- 		ret = x86_gsbase_write_task(task, arg2);
-+		if (ret == 0) {
-+			/*
-+			 * ARCH_SET_GS has always overwritten the index
-+			 * and the base. Zero is the most sensible value
-+			 * to put in the index, and is the only value that
-+			 * makes any sense if FSGSBASE is unavailable.
-+			 */
-+			if (task == current) {
-+				loadseg(GS, 0);
-+				x86_gsbase_write_cpu_inactive(arg2);
-+			} else {
-+				task->thread.gsindex = 0;
-+			}
-+		}
-+		preempt_enable();
- 		break;
- 	}
- 	case ARCH_SET_FS: {
-+		preempt_disable();
- 		ret = x86_fsbase_write_task(task, arg2);
-+		if (ret == 0) {
-+			/*
-+			 * Set the selector to 0 for the same reason
-+			 * as %gs above.
-+			 */
-+			if (task == current) {
-+				loadseg(FS, 0);
-+				x86_fsbase_write_cpu(arg2);
-+			} else {
-+				task->thread.fsindex = 0;
-+			}
-+		}
-+		preempt_enable();
- 		break;
- 	}
- 	case ARCH_GET_FS: {
--- 
-2.19.1
-
+SGkgVmluZWV0LA0KDQpPbiBUdWUsIDIwMTgtMTAtMzAgYXQgMTA6MjUgLTA3MDAsIFZpbmVldCBH
+dXB0YSB3cm90ZToNCj4gT24gMTAvMjMvMTggNTowOSBBTSwgRXVnZW5peSBQYWx0c2V2IHdyb3Rl
+Og0KPiA+IEVuYWJsZSBHUElPIHN1cHBvcnQgb24gSFNESy4gSFNESyBTb0MgaW5jbHVkZXMgU3lu
+b3BzeXMNCj4gPiBEZXNpZ25XYXJlIERXX2FwYl9ncGlvIElQIHdpdGggMjQgR1BJT3MgbWFwcGVk
+IG9udG8gcG9ydCBBLg0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IEV1Z2VuaXkgUGFsdHNldiA8
+RXVnZW5peS5QYWx0c2V2QHN5bm9wc3lzLmNvbT4NCj4gDQo+IEBBbGV4ZXksIHUgaGFwcHkgd2l0
+aCB0aGlzID8NCj4gDQo+IC1WaW5lZXQNCg0KQWNrZWQtYnk6IEFsZXhleSBCcm9ka2luIDxhYnJv
+ZGtpbkBzeW5vcHN5cy5jb20+DQo=
