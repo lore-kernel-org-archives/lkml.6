@@ -6,48 +6,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 022DAECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:32:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 095CEC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:32:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EC2D20664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:32:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C288920664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:32:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vHMZdPZG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EC2D20664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qGd8bb9x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C288920664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730507AbeKAIJf (ORCPT
+        id S1730694AbeKAIcj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:09:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59504 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:32:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59584 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730423AbeKAIJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:09:32 -0400
+        id S1730493AbeKAIJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:09:35 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A9342081B;
-        Wed, 31 Oct 2018 23:09:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 20F7320843;
+        Wed, 31 Oct 2018 23:09:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027361;
-        bh=7rU3CT/K4Vz5EVwVCBxraRVK9bYBIoBpjI/z4XCXqQE=;
+        s=default; t=1541027363;
+        bh=/CwvahwV96iKOdOahg9iozHHRKRAOFxZxtm5qC/FAIE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vHMZdPZGXx0ZGQswaukGL/Bt64DiJ3md2Qp5AXn2EVIIOlUYE7fGNX7CUecrcrIqc
-         uBTbkX0y5SrYz1yr2gTh1/pGElor1DeSPTxXNICPQfF9G6weRZmB0h2R3nCOUkGoex
-         2wN5GZnKpJYz6v3nbEyL3gGfT0E5pGuaPRhtaKho=
+        b=qGd8bb9xl8GyHgm+GYwvyVhjA0TY0WIclw/Aue9QMC+Zu+oJy7a5hhsM4ewfXLgVR
+         HUf4e+WhDwQgDfzCOUpN7WBHxe/8bf3mDdd1MtNLc19C5Ov+8j/qnChpp5Ol7swcBg
+         EiNo5oRKJ4rzc1HiiuYsUesM04Yd1a8g6TgB7K4I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dexuan Cui <decui@microsoft.com>,
-        "K . Y . Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Stable@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     Chuck Lever <chuck.lever@oracle.com>, stable@kernel.org,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 095/126] Drivers: hv: kvp: Fix two "this statement may fall through" warnings
-Date:   Wed, 31 Oct 2018 19:07:23 -0400
-Message-Id: <20181031230754.29029-95-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 098/126] xprtrdma: Reset credit grant properly after a disconnect
+Date:   Wed, 31 Oct 2018 19:07:26 -0400
+Message-Id: <20181031230754.29029-98-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -56,67 +52,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dexuan Cui <decui@microsoft.com>
+From: Chuck Lever <chuck.lever@oracle.com>
 
-[ Upstream commit fc62c3b1977d62e6374fd6e28d371bb42dfa5c9d ]
+[ Upstream commit ef739b2175dde9c05594f768cb78149f1ce2ac36 ]
 
-We don't need to call process_ib_ipinfo() if message->kvp_hdr.operation is
-KVP_OP_GET_IP_INFO in kvp_send_key(), because here we just need to pass on
-the op code from the host to the userspace; when the userspace returns
-the info requested by the host, we pass the info on to the host in
-kvp_respond_to_host() -> process_ob_ipinfo(). BTW, the current buggy code
-actually doesn't cause any harm, because only message->kvp_hdr.operation
-is used by the userspace, in the case of KVP_OP_GET_IP_INFO.
+On a fresh connection, an RPC/RDMA client is supposed to send only
+one RPC Call until it gets a credit grant in the first RPC Reply
+from the server [RFC 8166, Section 3.3.3].
 
-The patch also adds a missing "break;" in kvp_send_key(). BTW, the current
-buggy code actually doesn't cause any harm, because in the case of
-KVP_OP_SET, the unexpected fall-through corrupts
-message->body.kvp_set.data.key_size, but that is not really used: see
-the definition of struct hv_kvp_exchg_msg_value.
+There is a bug in the Linux client's credit accounting mechanism
+introduced by commit e7ce710a8802 ("xprtrdma: Avoid deadlock when
+credit window is reset"). On connect, it simply dumps all pending
+RPC Calls onto the new connection.
 
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Servers have been tolerant of this bad behavior. Currently no server
+implementation ever changes its credit grant over reconnects, and
+servers always repost enough Receives before connections are fully
+established.
+
+To correct this issue, ensure that the client resets both the credit
+grant _and_ the congestion window when handling a reconnect.
+
+Fixes: e7ce710a8802 ("xprtrdma: Avoid deadlock when credit ... ")
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Cc: stable@kernel.org
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hv/hv_kvp.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ net/sunrpc/xprtrdma/svc_rdma_backchannel.c | 1 +
+ net/sunrpc/xprtrdma/transport.c            | 6 ++++++
+ 2 files changed, 7 insertions(+)
 
-diff --git a/drivers/hv/hv_kvp.c b/drivers/hv/hv_kvp.c
-index 5eed1e7da15c..57715a0c8120 100644
---- a/drivers/hv/hv_kvp.c
-+++ b/drivers/hv/hv_kvp.c
-@@ -353,7 +353,6 @@ static void process_ib_ipinfo(void *in_msg, void *out_msg, int op)
+diff --git a/net/sunrpc/xprtrdma/svc_rdma_backchannel.c b/net/sunrpc/xprtrdma/svc_rdma_backchannel.c
+index a68180090554..b9827665ff35 100644
+--- a/net/sunrpc/xprtrdma/svc_rdma_backchannel.c
++++ b/net/sunrpc/xprtrdma/svc_rdma_backchannel.c
+@@ -248,6 +248,7 @@ static void
+ xprt_rdma_bc_close(struct rpc_xprt *xprt)
+ {
+ 	dprintk("svcrdma: %s: xprt %p\n", __func__, xprt);
++	xprt->cwnd = RPC_CWNDSHIFT;
+ }
  
- 		out->body.kvp_ip_val.dhcp_enabled = in->kvp_ip_val.dhcp_enabled;
- 
--	default:
- 		utf16s_to_utf8s((wchar_t *)in->kvp_ip_val.adapter_id,
- 				MAX_ADAPTER_ID_SIZE,
- 				UTF16_LITTLE_ENDIAN,
-@@ -406,7 +405,7 @@ kvp_send_key(struct work_struct *dummy)
- 		process_ib_ipinfo(in_msg, message, KVP_OP_SET_IP_INFO);
- 		break;
- 	case KVP_OP_GET_IP_INFO:
--		process_ib_ipinfo(in_msg, message, KVP_OP_GET_IP_INFO);
-+		/* We only need to pass on message->kvp_hdr.operation.  */
- 		break;
- 	case KVP_OP_SET:
- 		switch (in_msg->body.kvp_set.data.value_type) {
-@@ -446,6 +445,9 @@ kvp_send_key(struct work_struct *dummy)
- 			break;
- 
- 		}
+ static void
+diff --git a/net/sunrpc/xprtrdma/transport.c b/net/sunrpc/xprtrdma/transport.c
+index 143ce2579ba9..98cbc7b060ba 100644
+--- a/net/sunrpc/xprtrdma/transport.c
++++ b/net/sunrpc/xprtrdma/transport.c
+@@ -468,6 +468,12 @@ xprt_rdma_close(struct rpc_xprt *xprt)
+ 		xprt->reestablish_timeout = 0;
+ 	xprt_disconnect_done(xprt);
+ 	rpcrdma_ep_disconnect(ep, ia);
 +
-+		break;
-+
- 	case KVP_OP_GET:
- 		message->body.kvp_set.data.key_size =
- 			utf16s_to_utf8s(
++	/* Prepare @xprt for the next connection by reinitializing
++	 * its credit grant to one (see RFC 8166, Section 3.3.3).
++	 */
++	r_xprt->rx_buf.rb_credits = 1;
++	xprt->cwnd = RPC_CWNDSHIFT;
+ }
+ 
+ /**
 -- 
 2.17.1
 
