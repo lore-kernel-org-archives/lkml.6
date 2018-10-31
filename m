@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE2B6ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FAE1C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:31:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95DA120847
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:30:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6673720847
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:31:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hgm0GEip"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95DA120847
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uqC1YmgE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6673720847
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730873AbeKAIbG (ORCPT
+        id S1730624AbeKAIJr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:31:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59976 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:09:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730639AbeKAIJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:09:48 -0400
+        id S1730594AbeKAIJp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:09:45 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 979932081B;
-        Wed, 31 Oct 2018 23:09:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4FD6F2081B;
+        Wed, 31 Oct 2018 23:09:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027377;
-        bh=vDFYdcSD+5oXn5B561i6ag9A7XSVDa14OOAjgL7QHA8=;
+        s=default; t=1541027373;
+        bh=NL8nyC6wXCO8tqqa2gIE4dzzzJFZyYoWqonKEUf+1/M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hgm0GEipsva9c7D3tq95z73N6BBWZLs8Fc791ZkSUyKNxp0ddQOuxc6PnfYCQS5QU
-         2QS3aeUY8IBdrIP2EeAUH30Mb6wUiiGylD+l1f3BbslIq6vO57ovJPekZlWoDF5gTt
-         CQu6ad7XPdW3OcPaB+FDCGCuM/6j8HNiqjZXxKVY=
+        b=uqC1YmgERonj4/+3L9gIeec/Cu7+dPq3hAXFg0URig8fA8JWJtgl005qqcTRGvl1Q
+         V9weeVCB61sTyqA7Y2b2C0xAH1GW23IlMXAk+9IXRqh4NmebcmWR8839PFx0t2475W
+         2WYu8h5pNfUZPYnUcI3qsXzwKaspHUQzIObTPG4M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Waiman Long <longman@redhat.com>, Vinod Koul <vkoul@kernel.org>,
+Cc:     Vignesh R <vigneshr@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 114/126] driver/dma/ioat: Call del_timer_sync() without holding prep_lock
-Date:   Wed, 31 Oct 2018 19:07:42 -0400
-Message-Id: <20181031230754.29029-114-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 110/126] PCI: dwc: pci-dra7xx: Enable errata i870 for both EP and RC mode
+Date:   Wed, 31 Oct 2018 19:07:38 -0400
+Message-Id: <20181031230754.29029-110-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -52,89 +53,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Waiman Long <longman@redhat.com>
+From: Vignesh R <vigneshr@ti.com>
 
-[ Upstream commit cfb03be6c7e8a1591285849c361d67b09f5149f7 ]
+[ Upstream commit 726d75a6d243bf6730da3216f3592503f6f0f588 ]
 
-The following lockdep splat was observed:
+Errata i870 is applicable in both EP and RC mode. Therefore rename
+function dra7xx_pcie_ep_unaligned_memaccess(), that implements errata
+workaround, to dra7xx_pcie_unaligned_memaccess() and call it for both RC
+and EP. Make sure driver probe does not fail in case the workaround is not
+applied for RC mode in order to maintain DT backward compatibility.
 
-[ 1222.241750] ======================================================
-[ 1222.271301] WARNING: possible circular locking dependency detected
-[ 1222.301060] 4.16.0-10.el8+5.x86_64+debug #1 Not tainted
-[ 1222.326659] ------------------------------------------------------
-[ 1222.356565] systemd-shutdow/1 is trying to acquire lock:
-[ 1222.382660]  ((&ioat_chan->timer)){+.-.}, at: [<00000000f71e1a28>] del_timer_sync+0x5/0xf0
-[ 1222.422928]
-[ 1222.422928] but task is already holding lock:
-[ 1222.451743]  (&(&ioat_chan->prep_lock)->rlock){+.-.}, at: [<000000008ea98b12>] ioat_shutdown+0x86/0x100 [ioatdma]
-   :
-[ 1223.524987] Chain exists of:
-[ 1223.524987]   (&ioat_chan->timer) --> &(&ioat_chan->cleanup_lock)->rlock --> &(&ioat_chan->prep_lock)->rlock
-[ 1223.524987]
-[ 1223.594082]  Possible unsafe locking scenario:
-[ 1223.594082]
-[ 1223.622630]        CPU0                    CPU1
-[ 1223.645080]        ----                    ----
-[ 1223.667404]   lock(&(&ioat_chan->prep_lock)->rlock);
-[ 1223.691535]                                lock(&(&ioat_chan->cleanup_lock)->rlock);
-[ 1223.728657]                                lock(&(&ioat_chan->prep_lock)->rlock);
-[ 1223.765122]   lock((&ioat_chan->timer));
-[ 1223.784095]
-[ 1223.784095]  *** DEADLOCK ***
-[ 1223.784095]
-[ 1223.813492] 4 locks held by systemd-shutdow/1:
-[ 1223.834677]  #0:  (reboot_mutex){+.+.}, at: [<0000000056d33456>] SYSC_reboot+0x10f/0x300
-[ 1223.873310]  #1:  (&dev->mutex){....}, at: [<00000000258dfdd7>] device_shutdown+0x1c8/0x660
-[ 1223.913604]  #2:  (&dev->mutex){....}, at: [<0000000068331147>] device_shutdown+0x1d6/0x660
-[ 1223.954000]  #3:  (&(&ioat_chan->prep_lock)->rlock){+.-.}, at: [<000000008ea98b12>] ioat_shutdown+0x86/0x100 [ioatdma]
-
-In the ioat_shutdown() function:
-
-	spin_lock_bh(&ioat_chan->prep_lock);
-	set_bit(IOAT_CHAN_DOWN, &ioat_chan->state);
-	del_timer_sync(&ioat_chan->timer);
-	spin_unlock_bh(&ioat_chan->prep_lock);
-
-According to the synchronization rule for the del_timer_sync() function,
-the caller must not hold locks which would prevent completion of the
-timer's handler.
-
-The timer structure has its own lock that manages its synchronization.
-Setting the IOAT_CHAN_DOWN bit should prevent other CPUs from
-trying to use that device anyway, there is probably no need to call
-del_timer_sync() while holding the prep_lock. So the del_timer_sync()
-call is now moved outside of the prep_lock critical section to prevent
-the circular lock dependency.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Reported-by: Chris Welch <Chris.Welch@viavisolutions.com>
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+[lorenzo.pieralisi@arm.com: reworded the log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/ioat/init.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/pci/controller/dwc/pci-dra7xx.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/dma/ioat/init.c b/drivers/dma/ioat/init.c
-index 4fa4c06c9edb..21a5708985bc 100644
---- a/drivers/dma/ioat/init.c
-+++ b/drivers/dma/ioat/init.c
-@@ -1205,8 +1205,15 @@ static void ioat_shutdown(struct pci_dev *pdev)
+diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
+index 345aab56ce8b..78ed6cc8d521 100644
+--- a/drivers/pci/controller/dwc/pci-dra7xx.c
++++ b/drivers/pci/controller/dwc/pci-dra7xx.c
+@@ -542,7 +542,7 @@ static const struct of_device_id of_dra7xx_pcie_match[] = {
+ };
  
- 		spin_lock_bh(&ioat_chan->prep_lock);
- 		set_bit(IOAT_CHAN_DOWN, &ioat_chan->state);
--		del_timer_sync(&ioat_chan->timer);
- 		spin_unlock_bh(&ioat_chan->prep_lock);
-+		/*
-+		 * Synchronization rule for del_timer_sync():
-+		 *  - The caller must not hold locks which would prevent
-+		 *    completion of the timer's handler.
-+		 * So prep_lock cannot be held before calling it.
-+		 */
-+		del_timer_sync(&ioat_chan->timer);
+ /*
+- * dra7xx_pcie_ep_unaligned_memaccess: workaround for AM572x/AM571x Errata i870
++ * dra7xx_pcie_unaligned_memaccess: workaround for AM572x/AM571x Errata i870
+  * @dra7xx: the dra7xx device where the workaround should be applied
+  *
+  * Access to the PCIe slave port that are not 32-bit aligned will result
+@@ -552,7 +552,7 @@ static const struct of_device_id of_dra7xx_pcie_match[] = {
+  *
+  * To avoid this issue set PCIE_SS1_AXI2OCP_LEGACY_MODE_ENABLE to 1.
+  */
+-static int dra7xx_pcie_ep_unaligned_memaccess(struct device *dev)
++static int dra7xx_pcie_unaligned_memaccess(struct device *dev)
+ {
+ 	int ret;
+ 	struct device_node *np = dev->of_node;
+@@ -704,6 +704,11 @@ static int __init dra7xx_pcie_probe(struct platform_device *pdev)
+ 
+ 		dra7xx_pcie_writel(dra7xx, PCIECTRL_TI_CONF_DEVICE_TYPE,
+ 				   DEVICE_TYPE_RC);
 +
- 		/* this should quiesce then reset */
- 		ioat_reset_hw(ioat_chan);
- 	}
++		ret = dra7xx_pcie_unaligned_memaccess(dev);
++		if (ret)
++			dev_err(dev, "WA for Errata i870 not applied\n");
++
+ 		ret = dra7xx_add_pcie_port(dra7xx, pdev);
+ 		if (ret < 0)
+ 			goto err_gpio;
+@@ -717,7 +722,7 @@ static int __init dra7xx_pcie_probe(struct platform_device *pdev)
+ 		dra7xx_pcie_writel(dra7xx, PCIECTRL_TI_CONF_DEVICE_TYPE,
+ 				   DEVICE_TYPE_EP);
+ 
+-		ret = dra7xx_pcie_ep_unaligned_memaccess(dev);
++		ret = dra7xx_pcie_unaligned_memaccess(dev);
+ 		if (ret)
+ 			goto err_gpio;
+ 
 -- 
 2.17.1
 
