@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C576BECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:58:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD41ECDE47
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:58:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EDE720838
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:58:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9093820657
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:58:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ulga7dAy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EDE720838
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q5Vn6/mJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9093820657
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mailme.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729177AbeJaTzx (ORCPT
+        id S1729115AbeJaTzu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 15:55:53 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:35515 "EHLO
+        Wed, 31 Oct 2018 15:55:50 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:34106 "EHLO
         mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727980AbeJaTzw (ORCPT
+        with ESMTP id S1727980AbeJaTzt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 15:55:52 -0400
-Received: by mail-ed1-f66.google.com with SMTP id d6-v6so5124232edi.2;
-        Wed, 31 Oct 2018 03:58:15 -0700 (PDT)
+        Wed, 31 Oct 2018 15:55:49 -0400
+Received: by mail-ed1-f66.google.com with SMTP id w19-v6so13214807eds.1;
+        Wed, 31 Oct 2018 03:58:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=++UB/yUzA/hcZ0KOxwbRsSFfrZpczcagwpjMv41IvqQ=;
-        b=ulga7dAyn+DGwytYeHgUjjcjPtUEeNkZ4VCytHsNSPLubiYrM7HfeUMabQgms9K6wk
-         7LmMnF9mzXJ0JpSxIipODWpy6myaeG6NCVaT8i0Oxr2K+nvZBni/G8SsVjqELklwWh9O
-         HLjjA4z5/xFHU9de62F8PZQe9WsKwYImlAjbfVG9jJgx0S0Abvb8tBj1TCaP+kFEEldW
-         Ie7P8xoWgYyypu1TZ5PoloRNPz8d9Oa/lTy23GFrWQIRmzRxiJfLbPPQUOF9vGqA/47a
-         VcqM7CzCq9Zdnr2MFPcm1fFu5jTpBUB80lFsu074iv0/kgtEdHJhtTgRk3SMJ0Yblf1f
-         nkZA==
+        bh=t7beONks29Yy+z/C0iTikWiGMQ8xLqtPJiOIUqTiRSA=;
+        b=q5Vn6/mJ3iR/IbTdpcr4TnJjAgHUu9x7XUWoy64UZhLXNkNfFmcksfRl29B5UTL5dr
+         GhXURV+WPFBL95GamF22r2CNoPz0wgnEZUUQn8fcxP/y5IHFwvw+yRlX7QPCUVCc+rpe
+         AOptKQqSTH6I4wVgeP5Gctq6dfAU8q+np+kHbUtmBLpy0LwZDLsnm3FsOzQwO3TDMdDa
+         QDZKpPbuub4xny+KiIaOGosfrnzSKiOC2mvGDA97dozeeOKtfDz0j/IC1LHrY/z25xCd
+         C47UbvWl3ytC5qiWaNLsbGaXxXn0zbuCXAZgZ4meAk2s8s8+1FUU5a2ZlIj0lmB3+aKB
+         OiAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=++UB/yUzA/hcZ0KOxwbRsSFfrZpczcagwpjMv41IvqQ=;
-        b=Fl3rqwHXORNXUMdFI1PG0A14YfSP5erm+WNOvRpWMn10EageAzbgVWqSPDI+PDesTH
-         5gNmlb6PpVQ9xu8u46Zsyvj3ECsiVJfeV0u0qDfdAqlv1tMTtqhEYmYqLcnHLp8HRsal
-         P9Z2m4a9FwixeFkO7M1ZIFdLU5Qoh1Dou5FKuch6emkKGAGz/Ms6npNFwTpVth6zPWuZ
-         NT1hLoLtBUFxyrsy/IQOlDh2bvmVgEQIRnRnTPjGIBRuCqKbn5ndcIn/6fgjiGDvB3zt
-         DVdAOkqJuOWQFbhU+RYBhewX0KIBzlidD2ciCW69wnhbxxHQxHNhjo6NeDwdtS8LBg7k
-         eCFg==
-X-Gm-Message-State: AGRZ1gILcfLWWX8JrzRPlJu4t8z2T4IaKB+7EoXGYs/f2kJ7+JkGEA+t
-        g6Nu7gnKLsSsM2Odli1+qbuIwhKPeos=
-X-Google-Smtp-Source: AJdET5dGUjS+W6tEZnOEWXPIInldSHjteGClsXByMANaXBUe478cvAVGfF7iSi2ch35KNaZ+1TZoaA==
-X-Received: by 2002:a50:a985:: with SMTP id n5-v6mr1692833edc.120.1540983494630;
-        Wed, 31 Oct 2018 03:58:14 -0700 (PDT)
+        bh=t7beONks29Yy+z/C0iTikWiGMQ8xLqtPJiOIUqTiRSA=;
+        b=LJmpwvEwpDjjscTMv7UpoBmyICotCvcYdGBeLHsmc79BdM5brek0+xM4iLn3KcjaAh
+         Ht2RG1loxja8qkvpLvoHe3e9vFgyg+ygWSb/9IudvEargFLgevggGXst9X36cXy09Alg
+         /RP/z1q78X4zTxDDjcqpFKCvyxAeqY2XSpv8NZBbwxd0ArFun6NjBpN2VKoC0Og2hU9C
+         MqqMVjEmr9OZW+TLWwpDlTpL3xfDH3T4k4I6q2Z5iSCRqEKoBinAfBwwZGapXyt2G3dE
+         Bd4up6bQSRVW8pBakKfn1WM86Uy2hO3+Q+wrXO7mhNzYlWqvvJhWt+Jw1VfEOpxSbxf5
+         x7nA==
+X-Gm-Message-State: AGRZ1gL9WJ3R1RVrU/xBrTRkldgM0XUKiSgW/dKK00kfLhx+b9j0EGWr
+        FJu1a5dqxs3YNpUEkGirmjLtxCBIbjo=
+X-Google-Smtp-Source: AJdET5cVUGzTlVbNAyaCA09euIl4fEpIJnyJKHncGX+2NhxQthvUvUBpYKALAeBI5qEY+voWIq+zvQ==
+X-Received: by 2002:a50:f110:: with SMTP id w16-v6mr1681654edl.0.1540983492264;
+        Wed, 31 Oct 2018 03:58:12 -0700 (PDT)
 Received: from localhost.localdomain ([5.57.50.195])
-        by smtp.gmail.com with ESMTPSA id a40-v6sm9041108edd.61.2018.10.31.03.58.13
+        by smtp.gmail.com with ESMTPSA id a40-v6sm9041108edd.61.2018.10.31.03.58.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 03:58:13 -0700 (PDT)
+        Wed, 31 Oct 2018 03:58:11 -0700 (PDT)
 From:   Emil Renner Berthing <esmil@mailme.dk>
 To:     linux-spi@vger.kernel.org
 Cc:     Emil Renner Berthing <kernel@esmil.dk>,
@@ -67,9 +67,9 @@ Cc:     Emil Renner Berthing <kernel@esmil.dk>,
         Heiko Stuebner <heiko@sntech.de>,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 13/14] spi: rockchip: support 4bit words
-Date:   Wed, 31 Oct 2018 11:57:10 +0100
-Message-Id: <20181031105711.19575-14-esmil@mailme.dk>
+Subject: [PATCH v1 11/14] spi: rockchip: precompute rx sample delay
+Date:   Wed, 31 Oct 2018 11:57:08 +0100
+Message-Id: <20181031105711.19575-12-esmil@mailme.dk>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181031105711.19575-1-esmil@mailme.dk>
 References: <20181031105711.19575-1-esmil@mailme.dk>
@@ -82,107 +82,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Emil Renner Berthing <kernel@esmil.dk>
 
-The hardware supports 4, 8 and 16bit spi words,
-so add the missing support for 4bit words.
+Now that we no longer potentially change spi clock
+at runtime we can precompute the rx sample delay
+at probe time rather than for each transfer.
 
 Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
 ---
- drivers/spi/spi-rockchip.c | 41 +++++++++++++++++++++++++++-----------
- 1 file changed, 29 insertions(+), 12 deletions(-)
+ drivers/spi/spi-rockchip.c | 36 ++++++++++++++++++------------------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
 
 diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
-index 1297f081818d..9e47e81553a1 100644
+index d1b3ba2b1532..5fe6099ff366 100644
 --- a/drivers/spi/spi-rockchip.c
 +++ b/drivers/spi/spi-rockchip.c
-@@ -54,6 +54,9 @@
+@@ -94,6 +94,7 @@
+ #define CR0_BHT_8BIT				0x1
  
- /* Bit fields in CTRLR0 */
- #define CR0_DFS_OFFSET				0
-+#define CR0_DFS_4BIT				0x0
-+#define CR0_DFS_8BIT				0x1
-+#define CR0_DFS_16BIT				0x2
+ #define CR0_RSD_OFFSET				14
++#define CR0_RSD_MAX				0x3
  
- #define CR0_CFS_OFFSET				2
+ #define CR0_FRF_OFFSET				16
+ #define CR0_FRF_SPI					0x0
+@@ -179,7 +180,7 @@ struct rockchip_spi {
+ 	u32 freq;
  
-@@ -464,15 +467,14 @@ static void rockchip_spi_config(struct rockchip_spi *rs,
- 		struct spi_device *spi, struct spi_transfer *xfer,
+ 	u8 n_bytes;
+-	u32 rsd_nsecs;
++	u8 rsd;
+ 
+ 	const void *tx;
+ 	const void *tx_end;
+@@ -450,13 +451,13 @@ static void rockchip_spi_config(struct rockchip_spi *rs,
  		bool use_dma)
  {
--	u32 dmacr = 0;
--
+ 	u32 dmacr = 0;
+-	int rsd = 0;
+ 
  	u32 cr0 = CR0_FRF_SPI  << CR0_FRF_OFFSET
  	        | CR0_BHT_8BIT << CR0_BHT_OFFSET
  	        | CR0_SSD_ONE  << CR0_SSD_OFFSET
  	        | CR0_EM_BIG   << CR0_EM_OFFSET;
-+	u32 cr1;
-+	u32 dmacr = 0;
  
- 	cr0 |= rs->rsd << CR0_RSD_OFFSET;
--	cr0 |= (rs->n_bytes << CR0_DFS_OFFSET);
++	cr0 |= rs->rsd << CR0_RSD_OFFSET;
+ 	cr0 |= (rs->n_bytes << CR0_DFS_OFFSET);
  	cr0 |= (spi->mode & 0x3U) << CR0_SCPH_OFFSET;
  
- 	if (xfer->rx_buf && xfer->tx_buf)
-@@ -482,6 +484,27 @@ static void rockchip_spi_config(struct rockchip_spi *rs,
- 	else if (use_dma)
- 		cr0 |= CR0_XFM_TO << CR0_XFM_OFFSET;
- 
-+	switch (xfer->bits_per_word) {
-+	case 4:
-+		cr0 |= CR0_DFS_4BIT << CR0_DFS_OFFSET;
-+		cr1 = xfer->len - 1;
-+		break;
-+	case 8:
-+		cr0 |= CR0_DFS_8BIT << CR0_DFS_OFFSET;
-+		cr1 = xfer->len - 1;
-+		break;
-+	case 16:
-+		cr0 |= CR0_DFS_16BIT << CR0_DFS_OFFSET;
-+		cr1 = xfer->len / 2 - 1;
-+		break;
-+	default:
-+		/* we only whitelist 4, 8 and 16 bit words in
-+		 * master->bits_per_word_mask, so this shouldn't
-+		 * happen
-+		 */
-+		unreachable();
-+	}
-+
- 	if (use_dma) {
- 		if (xfer->tx_buf)
- 			dmacr |= TF_DMA_EN;
-@@ -490,13 +513,7 @@ static void rockchip_spi_config(struct rockchip_spi *rs,
+@@ -474,20 +475,6 @@ static void rockchip_spi_config(struct rockchip_spi *rs,
+ 			dmacr |= RF_DMA_EN;
  	}
  
- 	writel_relaxed(cr0, rs->regs + ROCKCHIP_SPI_CTRLR0);
+-	/* Rx sample delay is expressed in parent clock cycles (max 3) */
+-	rsd = DIV_ROUND_CLOSEST(rs->rsd_nsecs * (rs->freq >> 8),
+-				1000000000 >> 8);
+-	if (!rsd && rs->rsd_nsecs) {
+-		pr_warn_once("rockchip-spi: %u Hz are too slow to express %u ns delay\n",
+-			     rs->freq, rs->rsd_nsecs);
+-	} else if (rsd > 3) {
+-		rsd = 3;
+-		pr_warn_once("rockchip-spi: %u Hz are too fast to express %u ns delay, clamping at %u ns\n",
+-			     rs->freq, rs->rsd_nsecs,
+-			     rsd * 1000000000U / rs->freq);
+-	}
+-	cr0 |= rsd << CR0_RSD_OFFSET;
 -
--	if (rs->n_bytes == 1)
--		writel_relaxed(xfer->len - 1, rs->regs + ROCKCHIP_SPI_CTRLR1);
--	else if (rs->n_bytes == 2)
--		writel_relaxed((xfer->len / 2) - 1, rs->regs + ROCKCHIP_SPI_CTRLR1);
--	else
--		writel_relaxed((xfer->len * 2) - 1, rs->regs + ROCKCHIP_SPI_CTRLR1);
-+	writel_relaxed(cr1, rs->regs + ROCKCHIP_SPI_CTRLR1);
+ 	writel_relaxed(cr0, rs->regs + ROCKCHIP_SPI_CTRLR0);
  
- 	/* unfortunately setting the fifo threshold level to generate an
- 	 * interrupt exactly when the fifo is full doesn't seem to work,
-@@ -545,7 +562,7 @@ static int rockchip_spi_transfer_one(
- 		return -EINVAL;
- 	}
+ 	if (rs->n_bytes == 1)
+@@ -620,8 +607,21 @@ static int rockchip_spi_probe(struct platform_device *pdev)
+ 	rs->freq = clk_get_rate(rs->spiclk);
  
--	rs->n_bytes = xfer->bits_per_word >> 3;
-+	rs->n_bytes = xfer->bits_per_word <= 8 ? 1 : 2;
+ 	if (!of_property_read_u32(pdev->dev.of_node, "rx-sample-delay-ns",
+-				  &rsd_nsecs))
+-		rs->rsd_nsecs = rsd_nsecs;
++				  &rsd_nsecs)) {
++		/* rx sample delay is expressed in parent clock cycles (max 3) */
++		u32 rsd = DIV_ROUND_CLOSEST(rsd_nsecs * (rs->freq >> 8),
++				1000000000 >> 8);
++		if (!rsd) {
++			dev_warn(rs->dev, "%u Hz are too slow to express %u ns delay\n",
++					rs->freq, rsd_nsecs);
++		} else if (rsd > CR0_RSD_MAX) {
++			rsd = CR0_RSD_MAX;
++			dev_warn(rs->dev, "%u Hz are too fast to express %u ns delay, clamping at %u ns\n",
++					rs->freq, rsd_nsecs,
++					CR0_RSD_MAX * 1000000000U / rs->freq);
++		}
++		rs->rsd = rsd;
++	}
  
- 	use_dma = master->can_dma ? master->can_dma(master, spi, xfer) : false;
- 
-@@ -667,7 +684,7 @@ static int rockchip_spi_probe(struct platform_device *pdev)
- 	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_LOOP;
- 	master->num_chipselect = ROCKCHIP_SPI_MAX_CS_NUM;
- 	master->dev.of_node = pdev->dev.of_node;
--	master->bits_per_word_mask = SPI_BPW_MASK(16) | SPI_BPW_MASK(8);
-+	master->bits_per_word_mask = SPI_BPW_MASK(16) | SPI_BPW_MASK(8) | SPI_BPW_MASK(4);
- 	master->min_speed_hz = rs->freq / BAUDR_SCKDV_MAX;
- 	master->max_speed_hz = min(rs->freq / BAUDR_SCKDV_MIN, MAX_SCLK_OUT);
- 
+ 	rs->fifo_len = get_fifo_len(rs);
+ 	if (!rs->fifo_len) {
 -- 
 2.19.1
 
