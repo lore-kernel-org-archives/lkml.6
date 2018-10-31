@@ -4,47 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA292ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:39:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2CD5C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:39:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90BA820664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:39:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA15520664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:39:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lj4gz3Vl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90BA820664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JbofjnNF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA15520664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729901AbeKAIkC (ORCPT
+        id S1729865AbeKAIkR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:40:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57346 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:40:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729597AbeKAII0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:08:26 -0400
+        id S1729624AbeKAIIX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:08:23 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FCA020821;
-        Wed, 31 Oct 2018 23:08:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3E502081B;
+        Wed, 31 Oct 2018 23:08:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027295;
-        bh=rQkjh6Jbx/gYVbPJxx78KPtQMKnAz+tNa+RYimnIHck=;
+        s=default; t=1541027292;
+        bh=/VR6lIXXafUpjR7JKWNbP5Sg9DM1QgMytnddXxMsHMU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lj4gz3VlIl2QzmI14ITvg9gMvmfM5Wj3woEdJlAU3GYrUJlSJa9R4NbMhEvgXJZhA
-         koSfO/+qJvLOLIGq3Ihw3tp6IEHN6ltvaW86BDGzidYHSnEt10bFs/m5efLZcZBTy3
-         SidRK3bpfYtqGK6SEU/nI21FPzdvBoLWGPwAJpqk=
+        b=JbofjnNF3+/h4CobxRQ/ArhTjNwlrF2ULIg68r/aY7DkToO7dPANusojpNKytDd4p
+         wb1Sqo+u+tjXsuAA0pxhYvDqO/vYxgczg1M9tOm1THXSovpKPFTcmSRPsaiU1huyja
+         g5LK0yr6wMpAavvqHQiMemzQy4BOcqAyY1KgOj1o=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Wang Dongsheng <dongsheng.wang@hxt-semitech.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+Cc:     Prarit Bhargava <prarit@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        Stafford Horne <shorne@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 022/126] sdhci: acpi: add free_slot callback
-Date:   Wed, 31 Oct 2018 19:06:10 -0400
-Message-Id: <20181031230754.29029-22-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 019/126] cpupower: Fix coredump on VMWare
+Date:   Wed, 31 Oct 2018 19:06:07 -0400
+Message-Id: <20181031230754.29029-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -53,54 +52,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
+From: Prarit Bhargava <prarit@redhat.com>
 
-[ Upstream commit c7eabbee3de99347105faa7fd925a500ccf43baf ]
+[ Upstream commit f69ffc5d3db8f1f03fd6d1df5930f9a1fbd787b6 ]
 
-The device specific resource can be free in free_slot after
-removing host controller.
+cpupower crashes on VMWare guests.  The guests have the AMD PStateDef MSR
+(0xC0010064 + state number) set to zero.  As a result fid and did are zero
+and the crash occurs because of a divide by zero (cof = fid/did).  This
+can be prevented by checking the enable bit in the PStateDef MSR before
+calculating cof.  By doing this the value of pstate[i] remains zero and
+the value can be tested before displaying the active Pstates.
 
-Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Check the enable bit in the PstateDef register for all supported families
+and only print out enabled Pstates.
+
+Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Stafford Horne <shorne@gmail.com>
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/sdhci-acpi.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ tools/power/cpupower/utils/cpufreq-info.c | 2 ++
+ tools/power/cpupower/utils/helpers/amd.c  | 5 +++++
+ 2 files changed, 7 insertions(+)
 
-diff --git a/drivers/mmc/host/sdhci-acpi.c b/drivers/mmc/host/sdhci-acpi.c
-index 32321bd596d8..c61109f7b793 100644
---- a/drivers/mmc/host/sdhci-acpi.c
-+++ b/drivers/mmc/host/sdhci-acpi.c
-@@ -76,6 +76,7 @@ struct sdhci_acpi_slot {
- 	size_t		priv_size;
- 	int (*probe_slot)(struct platform_device *, const char *, const char *);
- 	int (*remove_slot)(struct platform_device *);
-+	int (*free_slot)(struct platform_device *pdev);
- 	int (*setup_host)(struct platform_device *pdev);
- };
- 
-@@ -756,6 +757,9 @@ static int sdhci_acpi_probe(struct platform_device *pdev)
- err_cleanup:
- 	sdhci_cleanup_host(c->host);
- err_free:
-+	if (c->slot && c->slot->free_slot)
-+		c->slot->free_slot(pdev);
+diff --git a/tools/power/cpupower/utils/cpufreq-info.c b/tools/power/cpupower/utils/cpufreq-info.c
+index df43cd45d810..ccd08dd00996 100644
+--- a/tools/power/cpupower/utils/cpufreq-info.c
++++ b/tools/power/cpupower/utils/cpufreq-info.c
+@@ -200,6 +200,8 @@ static int get_boost_mode(unsigned int cpu)
+ 		printf(_("    Boost States: %d\n"), b_states);
+ 		printf(_("    Total States: %d\n"), pstate_no);
+ 		for (i = 0; i < pstate_no; i++) {
++			if (!pstates[i])
++				continue;
+ 			if (i < b_states)
+ 				printf(_("    Pstate-Pb%d: %luMHz (boost state)"
+ 					 "\n"), i, pstates[i]);
+diff --git a/tools/power/cpupower/utils/helpers/amd.c b/tools/power/cpupower/utils/helpers/amd.c
+index bb41cdd0df6b..58d23997424d 100644
+--- a/tools/power/cpupower/utils/helpers/amd.c
++++ b/tools/power/cpupower/utils/helpers/amd.c
+@@ -119,6 +119,11 @@ int decode_pstates(unsigned int cpu, unsigned int cpu_family,
+ 		}
+ 		if (read_msr(cpu, MSR_AMD_PSTATE + i, &pstate.val))
+ 			return -1;
++		if ((cpu_family == 0x17) && (!pstate.fam17h_bits.en))
++			continue;
++		else if (!pstate.bits.en)
++			continue;
 +
- 	sdhci_free_host(c->host);
- 	return err;
- }
-@@ -777,6 +781,10 @@ static int sdhci_acpi_remove(struct platform_device *pdev)
- 
- 	dead = (sdhci_readl(c->host, SDHCI_INT_STATUS) == ~0);
- 	sdhci_remove_host(c->host, dead);
-+
-+	if (c->slot && c->slot->free_slot)
-+		c->slot->free_slot(pdev);
-+
- 	sdhci_free_host(c->host);
- 
- 	return 0;
+ 		pstates[i] = get_cof(cpu_family, pstate);
+ 	}
+ 	*no = i;
 -- 
 2.17.1
 
