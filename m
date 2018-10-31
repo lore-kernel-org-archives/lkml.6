@@ -2,90 +2,68 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 216CEECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 07:44:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF45FC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 07:45:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5C4F20821
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 07:44:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5C4F20821
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 94F5720821
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 07:45:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zcL9BUv7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94F5720821
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727525AbeJaQlI (ORCPT
+        id S1727532AbeJaQme (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 12:41:08 -0400
-Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:15030 "EHLO
-        alexa-out-blr.qualcomm.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725955AbeJaQlH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 12:41:07 -0400
-X-IronPort-AV: E=Sophos;i="5.54,447,1534789800"; 
-   d="scan'208";a="224103"
-Received: from ironmsg03-blr.qualcomm.com ([10.86.208.132])
-  by alexa-out-blr.qualcomm.com with ESMTP/TLS/AES256-SHA; 31 Oct 2018 13:12:11 +0530
-X-IronPort-AV: E=McAfee;i="5900,7806,9062"; a="1888160"
-Received: from mgottam-linux.qualcomm.com ([10.204.65.20])
-  by ironmsg03-blr.qualcomm.com with ESMTP; 31 Oct 2018 13:12:11 +0530
-Received: by mgottam-linux.qualcomm.com (Postfix, from userid 2305155)
-        id 529433019; Wed, 31 Oct 2018 13:12:10 +0530 (IST)
-From:   Malathi Gottam <mgottam@codeaurora.org>
-To:     stanimir.varbanov@linaro.org, hverkuil@xs4all.nl,
-        mchehab@kernel.org
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, acourbot@chromium.org,
-        vgarodia@codeaurora.org, mgottam@codeaurora.org
-Subject: [PATCH] media: venus: dynamic handling of bitrate
-Date:   Wed, 31 Oct 2018 13:12:08 +0530
-Message-Id: <1540971728-26789-1-git-send-email-mgottam@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Wed, 31 Oct 2018 12:42:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41512 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726380AbeJaQmd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 12:42:33 -0400
+Received: from localhost (unknown [171.61.91.108])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A378B20821;
+        Wed, 31 Oct 2018 07:45:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540971934;
+        bh=ZKfxSBsgfIjSSqXO8YbZkl3uWPGxfOadLFKbAKajKHY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=zcL9BUv7koBFKrq+02rjmWmPPHURoDw7Zvv7wjRLz0c29imiTldNizZmYkovuH8cY
+         B4us3QqNnxatCNNPRfHnteDSc3xAt04R5wHY03JBSUpzUuwOvZQrFYCla2uM8CdA07
+         Uqs9dEaLR/8JBJM1Qk29aeSN+DnUh1VPC4aeAdDQ=
+Date:   Wed, 31 Oct 2018 13:15:24 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        bjorn.andersson@linaro.org, edubezval@gmail.com,
+        andy.gross@linaro.org, Daniel Lezcano <daniel.lezcano@linaro.org>,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-soc@vger.kernel.org
+Subject: Re: [PATCH v1 0/4] thermal: tsens: Add support for QCS404 platform
+Message-ID: <20181031074524.GI12092@vkoul-mobl>
+References: <cover.1539627762.git.amit.kucheria@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1539627762.git.amit.kucheria@linaro.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Any request for a change in bitrate after both planes
-are streamed on is handled by setting the target bitrate
-property to hardware.
+On 16-10-18, 00:10, Amit Kucheria wrote:
+> Add support for the Qualcomm QCS404 platform that contains v1 of the TSENS
+> IP. Introduce a fallback binding to handle "v1" functionality.
 
-Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
----
- drivers/media/platform/qcom/venus/venc_ctrls.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/media/platform/qcom/venus/venc_ctrls.c b/drivers/media/platform/qcom/venus/venc_ctrls.c
-index 45910172..54f310c 100644
---- a/drivers/media/platform/qcom/venus/venc_ctrls.c
-+++ b/drivers/media/platform/qcom/venus/venc_ctrls.c
-@@ -79,7 +79,9 @@ static int venc_op_s_ctrl(struct v4l2_ctrl *ctrl)
- {
- 	struct venus_inst *inst = ctrl_to_inst(ctrl);
- 	struct venc_controls *ctr = &inst->controls.enc;
-+	struct hfi_bitrate brate;
- 	u32 bframes;
-+	u32 ptype;
- 	int ret;
- 
- 	switch (ctrl->id) {
-@@ -88,6 +90,15 @@ static int venc_op_s_ctrl(struct v4l2_ctrl *ctrl)
- 		break;
- 	case V4L2_CID_MPEG_VIDEO_BITRATE:
- 		ctr->bitrate = ctrl->val;
-+		if (inst->streamon_out && inst->streamon_cap) {
-+			ptype = HFI_PROPERTY_CONFIG_VENC_TARGET_BITRATE;
-+			brate.bitrate = ctr->bitrate;
-+			brate.layer_id = 0;
-+
-+			ret = hfi_session_set_property(inst, ptype, &brate);
-+			if (ret)
-+				return ret;
-+		}
- 		break;
- 	case V4L2_CID_MPEG_VIDEO_BITRATE_PEAK:
- 		ctr->bitrate_peak = ctrl->val;
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
+Tested-by: Vinod Koul <vkoul@kernel.org>
+
 -- 
-1.9.1
-
+~Vinod
