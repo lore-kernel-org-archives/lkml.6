@@ -2,122 +2,113 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78607C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 12:46:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5E42C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 12:49:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46E6920664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 12:46:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46E6920664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 78BC820657
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 12:49:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ULf9hPfi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78BC820657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729232AbeJaVoh (ORCPT
+        id S1729103AbeJaVr3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 17:44:37 -0400
-Received: from ozlabs.org ([203.11.71.1]:34311 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728869AbeJaVog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 17:44:36 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42lSl62LKwz9s3l;
-        Wed, 31 Oct 2018 23:46:42 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Christian Zigotzky <chzigotzky@xenosoft.de>
-Subject: NXP P50XX/e5500 secondary CPUs not onlined with current mainline (was [PATCH 20/21] of: use for_each_of_cpu_node iterator)
-In-Reply-To: <20180905193738.19325-21-robh@kernel.org>
-References: <20180905193738.19325-1-robh@kernel.org> <20180905193738.19325-21-robh@kernel.org>
-Date:   Wed, 31 Oct 2018 23:46:39 +1100
-Message-ID: <87r2g6ffm8.fsf@concordia.ellerman.id.au>
+        Wed, 31 Oct 2018 17:47:29 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:38428 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728582AbeJaVr2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 17:47:28 -0400
+Received: by mail-qk1-f196.google.com with SMTP id p3-v6so9378894qkb.5;
+        Wed, 31 Oct 2018 05:49:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=n4SKnKLCIfEwwiiWAv7UkRr8ZbdZ6pbIG/14rX1N1Kc=;
+        b=ULf9hPfiXw4Bp95h/cQpF6RP2YZ+3DQoNkCJOGzNPWB0FIbuXgKxaZO24rhZ1js7m8
+         +m+Bfk0SXBo20aWkMKWQtYCTKd/adpPTEX1V4MDIblTKhlD0RVTzfHNY3c/Pg91w7+s5
+         zgeUpdnyta9fgi/ZsuMDNEKa7mWYPYlVpyR83ULURupWgxFqiXmg41ZnQrMbboZX9fmr
+         Ar0QsfjkJFKwICccE/9qHUu+pboLrGynfCEEIDmUOIyykpB47WWGvKiTyhGc7z+ZS/6D
+         KxBD6/hdnwq45pv/FnlM4nYyVQquOm5envxbfCAcEv5A8IhLXoZO3uTJ7CplHfBYb+FQ
+         ftng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=n4SKnKLCIfEwwiiWAv7UkRr8ZbdZ6pbIG/14rX1N1Kc=;
+        b=B0oWaoD93iG3bCBl9or1MV4nmPErpiDpat0fxVR0xBU3ANj0LnChK/JteDHOXiJ5R0
+         ycOikZkWwNacW0xqIJ0Wyn1HQOKik2mAEDyj/NvKxS1GV9fZwLNDHiHhkRAKxI9ywtDo
+         sBeIC7ws5eKAFNmvF85A7971gRWgdqFTlPKbwT01WDqRmPHmuR8sVznqjYMcKDIceJ0W
+         DulWgXMd0GfGJsqk8y4DgVUQLKJpmbtvoBT0STiPC9EXIU9lUudnW40TZe1w2C0KBWem
+         lWQgM/fzCz8Uvj+pYYoTpp5o8hA867usMahUfg0IYYNYnRtP0cyTwduqyCbdFN+ZqHJo
+         HzPg==
+X-Gm-Message-State: AGRZ1gI9YRteUymU5V31uLPAhhBDb3RdL3TDkD24NqF29Jr+LLnzSb4M
+        yCIIX5zxlEXjPq3k08BBYha+M3BuxxzquObisVM=
+X-Google-Smtp-Source: AJdET5cg5eKjktdwJrG0rm6zMXhnQU8QmrSr9VnCkKJCbc7E2qk6SHs+RDep+g07PffEXAk0KHDVKpap/hCLnPE6ofA=
+X-Received: by 2002:a37:4792:: with SMTP id u140mr2417268qka.301.1540990174675;
+ Wed, 31 Oct 2018 05:49:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <1540993041-25611-1-git-send-email-peng.hao2@zte.com.cn> <1540993041-25611-3-git-send-email-peng.hao2@zte.com.cn>
+In-Reply-To: <1540993041-25611-3-git-send-email-peng.hao2@zte.com.cn>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 31 Oct 2018 14:49:23 +0200
+Message-ID: <CAHp75VewfhyeoAhfFkxjWm+ch_msCeDGqumOEzbawumx7aFjdQ@mail.gmail.com>
+Subject: Re: [PATCH V4 3/5] misc/pvpanic: add MMIO support
+To:     peng.hao2@zte.com.cn
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        hutao@cn.fujitsu.com,
+        Linux Documentation List <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
-
-This change is breaking some powerpc machines, ...
-
-Rob Herring <robh@kernel.org> writes:
-> Use the for_each_of_cpu_node iterator to iterate over cpu nodes. This
-> has the side effect of defaulting to iterating using "cpu" node names in
-> preference to the deprecated (for FDT) device_type == "cpu".
+On Wed, Oct 31, 2018 at 7:27 AM Peng Hao <peng.hao2@zte.com.cn> wrote:
 >
-> Cc: Frank Rowand <frowand.list@gmail.com>
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
-> Please ack and I will take via the DT tree. This is dependent on the
-> first 2 patches.
->
->  drivers/of/base.c    |  2 +-
->  drivers/of/of_numa.c | 15 ++-------------
->  2 files changed, 3 insertions(+), 14 deletions(-)
->
-> diff --git a/drivers/of/base.c b/drivers/of/base.c
-> index 6389aeb2f48c..8285c07cab44 100644
-> --- a/drivers/of/base.c
-> +++ b/drivers/of/base.c
-> @@ -389,7 +389,7 @@ struct device_node *of_get_cpu_node(int cpu, unsigned int *thread)
->  {
->  	struct device_node *cpun;
->
-> -	for_each_node_by_type(cpun, "cpu") {
-> +	for_each_of_cpu_node(cpun) {
->  		if (arch_find_n_match_cpu_physical_id(cpun, cpu, thread))
->  			return cpun;
->  	}
+> On some architectures (e.g. arm64), it's preferable to use MMIO, since
+> this can be used standalone. Add MMIO support to the pvpanic driver.
 
-Previously we just looked for any node with a type of "cpu", but now
-we're using for_each_of_cpu_node(), which does:
+>         case ACPI_RESOURCE_TYPE_IO:
+> -               port =3D res->data.io.minimum;
+> +               if (acpi_dev_resource_io(res, &r))
+> +                       base =3D (void __iomem *) ioport_map(r.start,
+> +                                               r.end - r.start + 1);
+> +               return AE_OK;
+> +
+> +       case ACPI_RESOURCE_TYPE_FIXED_MEMORY32:
+> +               if (acpi_dev_resource_memory(res, &r))
+> +                       base =3D ioremap(r.start, r.end - r.start + 1);
+>                 return AE_OK;
 
-	for (; next; next = next->sibling) {
-		if (!(of_node_name_eq(next, "cpu") ||
-		      (next->type && !of_node_cmp(next->type, "cpu"))))
-			continue;
+You need to split this to two changes. First one converts existing
+code to use acpi_dev_resource_io() and the rest does the rest.
+Moreover, please, read carefully the code of those functions =E2=80=94 hint=
+:
+they check for resource type themselves.
 
-		if (!__of_device_is_available(next))
-			continue;
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> +       if (base)
 
-		if (of_node_get(next))
-			break;
-	}
+Same question. At which conditions the base here can be NULL?
 
+> +               iounmap(base);
 
-ie. the available check is new.
-
-On this machine the 2nd CPU is not marked as available:
-
-  root@p5020ds:/proc/device-tree/cpus/PowerPC,e5500@1# lsprop status 
-  status           "disabled"
-
-This has the effect of preventing the SMP code from finding the 2nd CPU
-in order to bring it up (in smp_85xx_start_cpu()). And so only the boot
-CPU is onlined.
-
-The device tree is built from a dts:
-
-  arch/powerpc/boot/dts/fsl/p5020si-pre.dtsi
-
-But we don't set the status in there, so presumably u-boot is changing
-the status during boot? (not a u-boot expert).
-
-
-We could work around this in the platform code presumably, but I'm
-worried this might break other things as well. You didn't mention the
-addition of the available check in the change log so I wonder if it was
-deliberate or just seemed like a good idea?
-
-cheers
+--=20
+With Best Regards,
+Andy Shevchenko
