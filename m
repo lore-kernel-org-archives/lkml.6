@@ -2,135 +2,122 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C51C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:24:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 187BFECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:24:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27E0D20847
+	by mail.kernel.org (Postfix) with ESMTP id D207D2084A
 	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:24:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uNBzINul"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27E0D20847
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qpUuLyjj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D207D2084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731567AbeKAIYm (ORCPT
+        id S1731612AbeKAIYm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 1 Nov 2018 04:24:42 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33849 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731229AbeKAIKr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+Received: from mail.kernel.org ([198.145.29.99]:33634 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729209AbeKAIKr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 1 Nov 2018 04:10:47 -0400
-Received: by mail-lf1-f67.google.com with SMTP id n26-v6so12960357lfl.1;
-        Wed, 31 Oct 2018 16:10:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=bYvSjIaIsPqm0El1wWSvP8KsufjC/oEwOQPYiVRHspc=;
-        b=uNBzINulDQi6bkHaqZ/jJmLA6O8ppB1Chie3RRl6cDZjNCc2opxtV//u6TJabrAjDO
-         hMUXnrrWSMLAwezRpxNto5dgQstx1KWHCPUtVNt9iTkJqJDi4J+Xe2V5hR89zldgBfhC
-         csJbppMR6ETBaGRns5zLoqy7Hq2FhIrQDT6sdSy2OGwddkCw2Gfh+e/eHSS2Ozco4y01
-         vDEl/ilE6y2oQ63lbzPyrT+C0QbKBYpKt7AMuuWwrvRK9GWa0C7p96zoulDj44RGsXTH
-         wNk3EyYVdR/Gs1DWG9itlgLR9hz7fwphGS8mUL3L1n1gG6eiedDY7WIm9NZ1FN6VTCJR
-         2xlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bYvSjIaIsPqm0El1wWSvP8KsufjC/oEwOQPYiVRHspc=;
-        b=oVyv+/VATxZi2bNr5ODilo2mxw78yaGQMsJlz+dMZ9n9Zm26uMsN+Uc7Uc4ncGc4Yf
-         VVXdI3k9ml9ZUzT9ft2FKvQskcetGB4XijhoK/KY5avNqxGYJv8mfc9mSC4RfX1c8jG5
-         DubcOVzp3bxP+TRCKBxVpeeiCLEe0WOe7ry5kIXia6Lu0qmpyjzkWACt6/DGttcbv+FE
-         L4z496i7f21Ul+BZuvi0Pjo7/R7hBOCIb92AYkkn1sV9n267XOVXiLACL+oWHkZ3eSgG
-         8eu/42frC67bnOdx4jrfBim+T8ZdtYtGMJSBapZESq2k7p1qiR+VpFniQQv83Mi1rlnp
-         XfYw==
-X-Gm-Message-State: AGRZ1gJl3qPs6Iev00KVOxE0mkY8JT6WX2kr+KeCxlQnInniF77t9AC0
-        lkc4bpj3MspqPwd6Dzrf5rE=
-X-Google-Smtp-Source: AJdET5d+pgCrny9FrLo89lL5MKtLMx0Ce00NcYH9Al+J7eP+RGQ/olbAcOfwyGhZPPSRIbX3sLkfJg==
-X-Received: by 2002:a19:200b:: with SMTP id g11mr1281107lfg.58.1541027433478;
-        Wed, 31 Oct 2018 16:10:33 -0700 (PDT)
-Received: from [192.168.10.160] (91-159-62-242.elisa-laajakaista.fi. [91.159.62.242])
-        by smtp.gmail.com with ESMTPSA id e14-v6sm672120ljl.43.2018.10.31.16.10.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 16:10:32 -0700 (PDT)
-Subject: Re: [PATCH 10/17] prmem: documentation
-To:     Andy Lutomirski <luto@amacapital.net>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Kees Cook <keescook@chromium.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
- <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
- <20181030175814.GB10491@bombadil.infradead.org> <20181030182841.GE7343@cisco>
- <20181030192021.GC10491@bombadil.infradead.org>
- <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com>
- <20181030213557.GE10491@bombadil.infradead.org>
- <CALCETrW1FcT88u0QY9k_PMOeZj0G8H6KNb5Bnreo-12NvmmCEQ@mail.gmail.com>
- <20181031100237.GN744@hirez.programming.kicks-ass.net>
- <659CFC78-22BF-492B-B2E4-B8E89AA08446@amacapital.net>
- <20181031210032.GA3159@hirez.programming.kicks-ass.net>
- <2E29C35B-3F98-473D-A874-0D9B9B15B399@amacapital.net>
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <4124995b-4363-9b37-19b1-1879bf04978b@gmail.com>
-Date:   Thu, 1 Nov 2018 01:10:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <2E29C35B-3F98-473D-A874-0D9B9B15B399@amacapital.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB9A520870;
+        Wed, 31 Oct 2018 23:10:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541027435;
+        bh=7rU3CT/K4Vz5EVwVCBxraRVK9bYBIoBpjI/z4XCXqQE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=qpUuLyjjg5ievuLKn+UW4Bwx40kdNrKlo/lYsakb7IAbeyOTTJ0NeNwl3YSY54R16
+         PK8UMRfS/lqG5OHNhBBq/jye4avP1Sbt50ecMkZbHWV7+T5QbBrc7jgMo7tBzdEKql
+         sabuekf0mAm3Xt4PBxR46krf6sGJ2xxTm8TcxBE4=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Dexuan Cui <decui@microsoft.com>,
+        "K . Y . Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Stable@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 52/73] Drivers: hv: kvp: Fix two "this statement may fall through" warnings
+Date:   Wed, 31 Oct 2018 19:09:27 -0400
+Message-Id: <20181031230948.29203-52-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181031230948.29203-1-sashal@kernel.org>
+References: <20181031230948.29203-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Dexuan Cui <decui@microsoft.com>
 
+[ Upstream commit fc62c3b1977d62e6374fd6e28d371bb42dfa5c9d ]
 
-On 01/11/2018 00:57, Andy Lutomirski wrote:
-> 
-> 
->> On Oct 31, 2018, at 2:00 PM, Peter Zijlstra <peterz@infradead.org> wrote:
+We don't need to call process_ib_ipinfo() if message->kvp_hdr.operation is
+KVP_OP_GET_IP_INFO in kvp_send_key(), because here we just need to pass on
+the op code from the host to the userspace; when the userspace returns
+the info requested by the host, we pass the info on to the host in
+kvp_respond_to_host() -> process_ob_ipinfo(). BTW, the current buggy code
+actually doesn't cause any harm, because only message->kvp_hdr.operation
+is used by the userspace, in the case of KVP_OP_GET_IP_INFO.
 
+The patch also adds a missing "break;" in kvp_send_key(). BTW, the current
+buggy code actually doesn't cause any harm, because in the case of
+KVP_OP_SET, the unexpected fall-through corrupts
+message->body.kvp_set.data.key_size, but that is not really used: see
+the definition of struct hv_kvp_exchg_msg_value.
 
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/hv/hv_kvp.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
->> I _think_ the use-case for atomics is updating the reference counts of
->> objects that are in this write-rare domain. But I'm not entirely clear
->> on that myself either. I just really want to avoid duplicating that
->> stuff.
-> 
-> Sounds nuts. Doing a rare-write is many hundreds of cycles at best. Using that for a reference count sounds wacky.
-> 
-> Can we see a *real* use case before we over complicate the API?
-> 
+diff --git a/drivers/hv/hv_kvp.c b/drivers/hv/hv_kvp.c
+index 5eed1e7da15c..57715a0c8120 100644
+--- a/drivers/hv/hv_kvp.c
++++ b/drivers/hv/hv_kvp.c
+@@ -353,7 +353,6 @@ static void process_ib_ipinfo(void *in_msg, void *out_msg, int op)
+ 
+ 		out->body.kvp_ip_val.dhcp_enabled = in->kvp_ip_val.dhcp_enabled;
+ 
+-	default:
+ 		utf16s_to_utf8s((wchar_t *)in->kvp_ip_val.adapter_id,
+ 				MAX_ADAPTER_ID_SIZE,
+ 				UTF16_LITTLE_ENDIAN,
+@@ -406,7 +405,7 @@ kvp_send_key(struct work_struct *dummy)
+ 		process_ib_ipinfo(in_msg, message, KVP_OP_SET_IP_INFO);
+ 		break;
+ 	case KVP_OP_GET_IP_INFO:
+-		process_ib_ipinfo(in_msg, message, KVP_OP_GET_IP_INFO);
++		/* We only need to pass on message->kvp_hdr.operation.  */
+ 		break;
+ 	case KVP_OP_SET:
+ 		switch (in_msg->body.kvp_set.data.value_type) {
+@@ -446,6 +445,9 @@ kvp_send_key(struct work_struct *dummy)
+ 			break;
+ 
+ 		}
++
++		break;
++
+ 	case KVP_OP_GET:
+ 		message->body.kvp_set.data.key_size =
+ 			utf16s_to_utf8s(
+-- 
+2.17.1
 
-
-Does patch #14 of this set not qualify? ima_htable.len ?
-
-https://www.openwall.com/lists/kernel-hardening/2018/10/23/20
-
---
-igor
