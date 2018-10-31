@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC47FC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 480BFECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:16:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B56E620840
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:16:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AB0320664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:16:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cp2te6XV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B56E620840
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uORZRroz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AB0320664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732024AbeKAIMG (ORCPT
+        id S1731994AbeKAIMC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:12:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36580 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:12:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36384 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730936AbeKAIMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:12:05 -0400
+        id S1731959AbeKAIMB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:12:01 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 189F1204FD;
-        Wed, 31 Oct 2018 23:11:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F67C2087A;
+        Wed, 31 Oct 2018 23:11:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027512;
-        bh=YB3AJ2AB9OEX7IEBG1+IDrG1/MRSKTdSkcueFnpKx5Q=;
+        s=default; t=1541027509;
+        bh=89qaYOfoBNwf97uM76x1+acFpmsiFigVD+TWbO2KHU0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cp2te6XVHvFyEUP5xz34KrBkKHyMLmG5InqhkrUFr7UkMxQh74mledkwL8535ztbT
-         iHgYUCksNdRDTxSwL5seI5soReSpglPkxgQB6nOzDGCXN7WHGFlSnKDNeCTEU3iV0B
-         S4+odcv+mlhGJ1ekXU1l/CUyGrjGvYsBISUBn88A=
+        b=uORZRrozeTpVxF4hgSccFkI1RSotZVgplGPkVQleFlDk8BEh+nMUv/MBR5ydV44H/
+         H6LYV8xOwARyVDOKIqQHRU7yfXOH7j8m0BsM57gN46Q0ivCMGHDESDseDod01weUeY
+         ezoNIoR6ahXCezD5gTqHBDFtE+YNoW6B0d58UvMM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Doug Anderson <dianders@chromium.org>,
+Cc:     YueHaibing <yuehaibing@huawei.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 16/32] pinctrl: qcom: spmi-mpp: Fix drive strength setting
-Date:   Wed, 31 Oct 2018 19:11:21 -0400
-Message-Id: <20181031231137.29429-16-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 13/32] pinctrl: qcom: spmi-mpp: Fix err handling of pmic_mpp_set_mux
+Date:   Wed, 31 Oct 2018 19:11:18 -0400
+Message-Id: <20181031231137.29429-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231137.29429-1-sashal@kernel.org>
 References: <20181031231137.29429-1-sashal@kernel.org>
@@ -54,49 +53,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Boyd <swboyd@chromium.org>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 89c68b102f13f123aaef22b292526d6b92501334 ]
+[ Upstream commit 69f8455f6cc78fa6cdf80d0105d7a748106271dc ]
 
-It looks like we parse the drive strength setting here, but never
-actually write it into the hardware to update it. Parse the setting and
-then write it at the end of the pinconf setting function so that it
-actually sticks in the hardware.
+'ret' should be returned while pmic_mpp_write_mode_ctl fails.
 
 Fixes: 0e948042c420 ("pinctrl: qcom: spmi-mpp: Implement support for sink mode")
-Cc: Doug Anderson <dianders@chromium.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-index 0643abfd8a50..8301e600e7a8 100644
+index 9ce0e30e33e8..0643abfd8a50 100644
 --- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
 +++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-@@ -459,7 +459,7 @@ static int pmic_mpp_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 			pad->dtest = arg;
- 			break;
- 		case PIN_CONFIG_DRIVE_STRENGTH:
--			arg = pad->drive_strength;
-+			pad->drive_strength = arg;
- 			break;
- 		case PMIC_MPP_CONF_AMUX_ROUTE:
- 			if (arg >= PMIC_MPP_AMUX_ROUTE_ABUS4)
-@@ -503,6 +503,10 @@ static int pmic_mpp_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 	if (ret < 0)
- 		return ret;
+@@ -321,6 +321,8 @@ static int pmic_mpp_set_mux(struct pinctrl_dev *pctldev, unsigned function,
+ 	pad->function = function;
  
-+	ret = pmic_mpp_write(state, pad, PMIC_MPP_REG_SINK_CTL, pad->drive_strength);
+ 	ret = pmic_mpp_write_mode_ctl(state, pad);
 +	if (ret < 0)
 +		return ret;
-+
+ 
  	val = pad->is_enabled << PMIC_MPP_REG_MASTER_EN_SHIFT;
  
- 	return pmic_mpp_write(state, pad, PMIC_MPP_REG_EN_CTL, val);
 -- 
 2.17.1
 
