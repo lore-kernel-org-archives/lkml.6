@@ -7,49 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 022B2ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FAE1C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC1B620843
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5798D2081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RFjKKrFQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC1B620843
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="d0tAFkpI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5798D2081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730999AbeKAIKY (ORCPT
+        id S1731028AbeKAIK1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:10:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32808 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:10:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730972AbeKAIKW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:10:22 -0400
+        id S1730972AbeKAIKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:10:25 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 128F020854;
-        Wed, 31 Oct 2018 23:10:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3D9D20821;
+        Wed, 31 Oct 2018 23:10:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027410;
-        bh=uWeThC8usxIRMmy2CrAE1eIn4apG7C3ambvWj+eOue4=;
+        s=default; t=1541027413;
+        bh=VK9akVamZ5RhuqjSu2RMnDGjcAYsOTQpeZvE4m9ywtI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RFjKKrFQRCi3LIunce2UzMIR08SOewM6C2UtBLOWi2Dsx07MAqwaGq7fgg5rEsKw+
-         VPB/XSNfV+A0gtaIfJ/6cZM3fyL3NnC5a5zcX4NGn+ApQQjEykDJK3yJ2i05fvmnAI
-         SEATa8SyPi97q6OdwMtbVeCVqhO2+68I2EKVFGLA=
+        b=d0tAFkpIk2+Di0ad/a+tsrBu3ZyF8kOjjSDNBA9tn+Y3+4OqcIQFSfv2H9cPhDu00
+         x8gMZ/u9RGbcM8moR3KR7fOvDvmXe70TeBT7FtRX1o9FQbej/Ihi0t5Td59x+PzQmR
+         y6KTiJETyo3NoS/xtd61iHrP6TnTtXW9fVIk0U2A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+Cc:     Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 23/73] signal: Introduce COMPAT_SIGMINSTKSZ for use in compat_sys_sigaltstack
-Date:   Wed, 31 Oct 2018 19:08:58 -0400
-Message-Id: <20181031230948.29203-23-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 27/73] brcmfmac: fix for proper support of 160MHz bandwidth
+Date:   Wed, 31 Oct 2018 19:09:02 -0400
+Message-Id: <20181031230948.29203-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230948.29203-1-sashal@kernel.org>
 References: <20181031230948.29203-1-sashal@kernel.org>
@@ -58,107 +53,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Will Deacon <will.deacon@arm.com>
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
 
-[ Upstream commit 22839869f21ab3850fbbac9b425ccc4c0023926f ]
+[ Upstream commit 330994e8e8ec5d0b269a5265e6032b37e29aa336 ]
 
-The sigaltstack(2) system call fails with -ENOMEM if the new alternative
-signal stack is found to be smaller than SIGMINSTKSZ. On architectures
-such as arm64, where the native value for SIGMINSTKSZ is larger than
-the compat value, this can result in an unexpected error being reported
-to a compat task. See, for example:
+Decoding of firmware channel information was not complete for 160MHz
+support. This resulted in the following warning:
 
-  https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=904385
+  WARNING: CPU: 2 PID: 2222 at .../broadcom/brcm80211/brcmutil/d11.c:196
+	brcmu_d11ac_decchspec+0x2e/0x100 [brcmutil]
+  Modules linked in: brcmfmac(O) brcmutil(O) sha256_generic cfg80211 ...
+  CPU: 2 PID: 2222 Comm: kworker/2:0 Tainted: G           O
+  4.17.0-wt-testing-x64-00002-gf1bed50 #1
+  Hardware name: Dell Inc. Latitude E6410/07XJP9, BIOS A07 02/15/2011
+  Workqueue: events request_firmware_work_func
+  RIP: 0010:brcmu_d11ac_decchspec+0x2e/0x100 [brcmutil]
+  RSP: 0018:ffffc90000047bd0 EFLAGS: 00010206
+  RAX: 000000000000e832 RBX: ffff8801146fe910 RCX: ffff8801146fd3c0
+  RDX: 0000000000002800 RSI: 0000000000000070 RDI: ffffc90000047c30
+  RBP: ffffc90000047bd0 R08: 0000000000000000 R09: ffffffffa0798c80
+  R10: ffff88012bca55e0 R11: ffff880110a4ea00 R12: ffff8801146f8000
+  R13: ffffc90000047c30 R14: ffff8801146fe930 R15: ffff8801138e02e0
+  FS:  0000000000000000(0000) GS:ffff88012bc80000(0000) knlGS:0000000000000000
+  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: 00007f18ce8b8070 CR3: 000000000200a003 CR4: 00000000000206e0
+  Call Trace:
+   brcmf_setup_wiphybands+0x212/0x780 [brcmfmac]
+   brcmf_cfg80211_attach+0xae2/0x11a0 [brcmfmac]
+   brcmf_attach+0x1fc/0x4b0 [brcmfmac]
+   ? __kmalloc+0x13c/0x1c0
+   brcmf_pcie_setup+0x99b/0xe00 [brcmfmac]
+   brcmf_fw_request_done+0x16a/0x1f0 [brcmfmac]
+   request_firmware_work_func+0x36/0x60
+   process_one_work+0x146/0x350
+   worker_thread+0x4a/0x3b0
+   kthread+0x102/0x140
+   ? process_one_work+0x350/0x350
+   ? kthread_bind+0x20/0x20
+   ret_from_fork+0x35/0x40
+  Code: 66 90 0f b7 07 55 48 89 e5 89 c2 88 47 02 88 47 03 66 81 e2 00 38
+	66 81 fa 00 18 74 6e 66 81 fa 00 20 74 39 66 81 fa 00 10 74 14 <0f>
+	0b 66 25 00 c0 74 20 66 3d 00 c0 75 20 c6 47 04 01 5d c3 66
+  ---[ end trace 550c46682415b26d ]---
+  brcmfmac: brcmf_construct_chaninfo: Ignoring unexpected firmware channel 50
 
-This patch fixes the problem by extending do_sigaltstack to take the
-minimum signal stack size as an additional parameter, allowing the
-native and compat system call entry code to pass in their respective
-values. COMPAT_SIGMINSTKSZ is just defined as SIGMINSTKSZ if it has not
-been defined by the architecture.
+This patch adds the missing stuff to properly handle this.
 
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Reported-by: Steve McIntyre <steve.mcintyre@arm.com>
-Tested-by: Steve McIntyre <93sam@debian.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Reviewed-by: Hante Meuleman <hante.meuleman@broadcom.com>
+Reviewed-by: Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>
+Reviewed-by: Franky Lin <franky.lin@broadcom.com>
+Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/compat.h |  3 +++
- kernel/signal.c        | 14 +++++++++-----
- 2 files changed, 12 insertions(+), 5 deletions(-)
+ .../broadcom/brcm80211/brcmutil/d11.c         | 34 ++++++++++++++++++-
+ .../broadcom/brcm80211/include/brcmu_wifi.h   |  2 ++
+ 2 files changed, 35 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/compat.h b/include/linux/compat.h
-index 3e838a828459..23909d12f729 100644
---- a/include/linux/compat.h
-+++ b/include/linux/compat.h
-@@ -68,6 +68,9 @@ typedef struct compat_sigaltstack {
- 	compat_size_t			ss_size;
- } compat_stack_t;
- #endif
-+#ifndef COMPAT_MINSIGSTKSZ
-+#define COMPAT_MINSIGSTKSZ	MINSIGSTKSZ
-+#endif
- 
- #define compat_jiffies_to_clock_t(x)	\
- 		(((unsigned long)(x) * COMPAT_USER_HZ) / HZ)
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 4439ba9dc5d9..b74acbec9876 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -3215,7 +3215,8 @@ int do_sigaction(int sig, struct k_sigaction *act, struct k_sigaction *oact)
- }
- 
- static int
--do_sigaltstack (const stack_t *ss, stack_t *oss, unsigned long sp)
-+do_sigaltstack (const stack_t *ss, stack_t *oss, unsigned long sp,
-+		size_t min_ss_size)
- {
- 	struct task_struct *t = current;
- 
-@@ -3245,7 +3246,7 @@ do_sigaltstack (const stack_t *ss, stack_t *oss, unsigned long sp)
- 			ss_size = 0;
- 			ss_sp = NULL;
- 		} else {
--			if (unlikely(ss_size < MINSIGSTKSZ))
-+			if (unlikely(ss_size < min_ss_size))
- 				return -ENOMEM;
- 		}
- 
-@@ -3263,7 +3264,8 @@ SYSCALL_DEFINE2(sigaltstack,const stack_t __user *,uss, stack_t __user *,uoss)
- 	if (uss && copy_from_user(&new, uss, sizeof(stack_t)))
- 		return -EFAULT;
- 	err = do_sigaltstack(uss ? &new : NULL, uoss ? &old : NULL,
--			      current_user_stack_pointer());
-+			      current_user_stack_pointer(),
-+			      MINSIGSTKSZ);
- 	if (!err && uoss && copy_to_user(uoss, &old, sizeof(stack_t)))
- 		err = -EFAULT;
- 	return err;
-@@ -3274,7 +3276,8 @@ int restore_altstack(const stack_t __user *uss)
- 	stack_t new;
- 	if (copy_from_user(&new, uss, sizeof(stack_t)))
- 		return -EFAULT;
--	(void)do_sigaltstack(&new, NULL, current_user_stack_pointer());
-+	(void)do_sigaltstack(&new, NULL, current_user_stack_pointer(),
-+			     MINSIGSTKSZ);
- 	/* squash all but EFAULT for now */
- 	return 0;
- }
-@@ -3309,7 +3312,8 @@ COMPAT_SYSCALL_DEFINE2(sigaltstack,
- 		uss.ss_size = uss32.ss_size;
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmutil/d11.c b/drivers/net/wireless/broadcom/brcm80211/brcmutil/d11.c
+index d8b79cb72b58..e7584b842dce 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmutil/d11.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmutil/d11.c
+@@ -77,6 +77,8 @@ static u16 d11ac_bw(enum brcmu_chan_bw bw)
+ 		return BRCMU_CHSPEC_D11AC_BW_40;
+ 	case BRCMU_CHAN_BW_80:
+ 		return BRCMU_CHSPEC_D11AC_BW_80;
++	case BRCMU_CHAN_BW_160:
++		return BRCMU_CHSPEC_D11AC_BW_160;
+ 	default:
+ 		WARN_ON(1);
  	}
- 	ret = do_sigaltstack(uss_ptr ? &uss : NULL, &uoss,
--			     compat_user_stack_pointer());
-+			     compat_user_stack_pointer(),
-+			     COMPAT_MINSIGSTKSZ);
- 	if (ret >= 0 && uoss_ptr)  {
- 		compat_stack_t old;
- 		memset(&old, 0, sizeof(old));
+@@ -190,8 +192,38 @@ static void brcmu_d11ac_decchspec(struct brcmu_chan *ch)
+ 			break;
+ 		}
+ 		break;
+-	case BRCMU_CHSPEC_D11AC_BW_8080:
+ 	case BRCMU_CHSPEC_D11AC_BW_160:
++		switch (ch->sb) {
++		case BRCMU_CHAN_SB_LLL:
++			ch->control_ch_num -= CH_70MHZ_APART;
++			break;
++		case BRCMU_CHAN_SB_LLU:
++			ch->control_ch_num -= CH_50MHZ_APART;
++			break;
++		case BRCMU_CHAN_SB_LUL:
++			ch->control_ch_num -= CH_30MHZ_APART;
++			break;
++		case BRCMU_CHAN_SB_LUU:
++			ch->control_ch_num -= CH_10MHZ_APART;
++			break;
++		case BRCMU_CHAN_SB_ULL:
++			ch->control_ch_num += CH_10MHZ_APART;
++			break;
++		case BRCMU_CHAN_SB_ULU:
++			ch->control_ch_num += CH_30MHZ_APART;
++			break;
++		case BRCMU_CHAN_SB_UUL:
++			ch->control_ch_num += CH_50MHZ_APART;
++			break;
++		case BRCMU_CHAN_SB_UUU:
++			ch->control_ch_num += CH_70MHZ_APART;
++			break;
++		default:
++			WARN_ON_ONCE(1);
++			break;
++		}
++		break;
++	case BRCMU_CHSPEC_D11AC_BW_8080:
+ 	default:
+ 		WARN_ON_ONCE(1);
+ 		break;
+diff --git a/drivers/net/wireless/broadcom/brcm80211/include/brcmu_wifi.h b/drivers/net/wireless/broadcom/brcm80211/include/brcmu_wifi.h
+index 7b9a77981df1..75b2a0438cfa 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/include/brcmu_wifi.h
++++ b/drivers/net/wireless/broadcom/brcm80211/include/brcmu_wifi.h
+@@ -29,6 +29,8 @@
+ #define CH_UPPER_SB			0x01
+ #define CH_LOWER_SB			0x02
+ #define CH_EWA_VALID			0x04
++#define CH_70MHZ_APART			14
++#define CH_50MHZ_APART			10
+ #define CH_30MHZ_APART			6
+ #define CH_20MHZ_APART			4
+ #define CH_10MHZ_APART			2
 -- 
 2.17.1
 
