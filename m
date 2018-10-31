@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F04D5C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5BF9ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B91DF2081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A242720830
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bysH2Gzt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B91DF2081B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WrwpLBP0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A242720830
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729385AbeKAIIB (ORCPT
+        id S1729399AbeKAIIC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:08:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56276 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:08:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729304AbeKAIH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:07:57 -0400
+        id S1729319AbeKAIIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:08:01 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6BF520821;
-        Wed, 31 Oct 2018 23:07:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47B0A20847;
+        Wed, 31 Oct 2018 23:07:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027266;
-        bh=5cwcGzsybiNvs/5TCc1pXlxTIHGp7BYMnmaalh9DHJg=;
+        s=default; t=1541027270;
+        bh=mI4rkwRfpdXnDl9oWOd9suwcjunbLincP2B5YfZGY+4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bysH2GztiEyu6KTo9Hv1tqn7KP6otf1BxFeyJpB636ZMzuU0ONhwxPvzXuSMsJLDc
-         NOm7xCLrI9e+84GMSFgcPh+Afi7wmNmWlvqHMmUQ5FdgcmO85ajiWSGri6cpnlVbsz
-         vkDxcgxMSIQW5j7MZIR5tkBeT0cM8LGtSxAoudWQ=
+        b=WrwpLBP0ineTj6QvkD8Tpy1wxMloANY6IONGEONJp4sBhJ5fXUaGP1IwmNbGr4pKZ
+         7a3Z//s92MtV7QC0AF0x18a88hDnr8Zq1dTR0/pOMklwbRF2RzzcxvBC4Fm8FxIeNT
+         q98PDVIasq7ygS7SqdAu3Rjgi4DrOBVGjvp/FasA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     James Smart <jsmart2021@gmail.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <james.smart@broadcom.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 138/146] scsi: lpfc: Correct race with abort on completion path
-Date:   Wed, 31 Oct 2018 19:05:33 -0400
-Message-Id: <20181031230541.28822-138-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 143/146] mfd: menelaus: Fix possible race condition and leak
+Date:   Wed, 31 Oct 2018 19:05:38 -0400
+Message-Id: <20181031230541.28822-143-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -55,57 +53,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Smart <jsmart2021@gmail.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-[ Upstream commit ca7fb76e091f889cfda1287c07a9358f73832b39 ]
+[ Upstream commit 9612f8f503804d2fd2f63aa6ba1e58bba4612d96 ]
 
-On io completion, the driver is taking an adapter wide lock and nulling the
-scsi command back pointer.  The nulling of the back pointer is to signify the
-io was completed and the scsi_done() routine was called.  However, the routine
-makes no check to see if the abort routine had done the same thing and
-possibly nulled the pointer. Thus it may doubly-complete the io.
+The IRQ work is added before the struct rtc is allocated and registered,
+but this struct is used in the IRQ handler. This may lead to a NULL pointer
+dereference.
 
-Make the following mods:
+Switch to devm_rtc_allocate_device/rtc_register_device to allocate the rtc
+before calling menelaus_add_irq_work.
 
-- Check to make sure forward progress (call scsi_done()) only happens if the
-  command pointer was non-null.
+Also, this solves a possible leak as the RTC is never released.
 
-- As the taking of the lock, which is adapter wide, is very costly on a system
-  under load, null the pointer using an xchg operation rather than under lock.
-
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <james.smart@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/lpfc/lpfc_scsi.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ drivers/mfd/menelaus.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_scsi.c b/drivers/scsi/lpfc/lpfc_scsi.c
-index 5c7858e735c9..200b5bca1f5f 100644
---- a/drivers/scsi/lpfc/lpfc_scsi.c
-+++ b/drivers/scsi/lpfc/lpfc_scsi.c
-@@ -4158,9 +4158,17 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba *phba, struct lpfc_iocbq *pIocbIn,
+diff --git a/drivers/mfd/menelaus.c b/drivers/mfd/menelaus.c
+index 29b7164a823b..d28ebe7ecd21 100644
+--- a/drivers/mfd/menelaus.c
++++ b/drivers/mfd/menelaus.c
+@@ -1094,6 +1094,7 @@ static void menelaus_rtc_alarm_work(struct menelaus_chip *m)
+ static inline void menelaus_rtc_init(struct menelaus_chip *m)
+ {
+ 	int	alarm = (m->client->irq > 0);
++	int	err;
+ 
+ 	/* assume 32KDETEN pin is pulled high */
+ 	if (!(menelaus_read_reg(MENELAUS_OSC_CTRL) & 0x80)) {
+@@ -1101,6 +1102,12 @@ static inline void menelaus_rtc_init(struct menelaus_chip *m)
+ 		return;
  	}
- 	lpfc_scsi_unprep_dma_buf(phba, lpfc_cmd);
  
--	spin_lock_irqsave(&phba->hbalock, flags);
--	lpfc_cmd->pCmd = NULL;
--	spin_unlock_irqrestore(&phba->hbalock, flags);
-+	/* If pCmd was set to NULL from abort path, do not call scsi_done */
-+	if (xchg(&lpfc_cmd->pCmd, NULL) == NULL) {
-+		lpfc_printf_vlog(vport, KERN_INFO, LOG_FCP,
-+				 "0711 FCP cmd already NULL, sid: 0x%06x, "
-+				 "did: 0x%06x, oxid: 0x%04x\n",
-+				 vport->fc_myDID,
-+				 (pnode) ? pnode->nlp_DID : 0,
-+				 phba->sli_rev == LPFC_SLI_REV4 ?
-+				 lpfc_cmd->cur_iocbq.sli4_xritag : 0xffff);
++	m->rtc = devm_rtc_allocate_device(&m->client->dev);
++	if (IS_ERR(m->rtc))
 +		return;
-+	}
++
++	m->rtc->ops = &menelaus_rtc_ops;
++
+ 	/* support RTC alarm; it can issue wakeups */
+ 	if (alarm) {
+ 		if (menelaus_add_irq_work(MENELAUS_RTCALM_IRQ,
+@@ -1125,10 +1132,8 @@ static inline void menelaus_rtc_init(struct menelaus_chip *m)
+ 		menelaus_write_reg(MENELAUS_RTC_CTRL, m->rtc_control);
+ 	}
  
- 	/* The sdev is not guaranteed to be valid post scsi_done upcall. */
- 	cmd->scsi_done(cmd);
+-	m->rtc = rtc_device_register(DRIVER_NAME,
+-			&m->client->dev,
+-			&menelaus_rtc_ops, THIS_MODULE);
+-	if (IS_ERR(m->rtc)) {
++	err = rtc_register_device(m->rtc);
++	if (err) {
+ 		if (alarm) {
+ 			menelaus_remove_irq_work(MENELAUS_RTCALM_IRQ);
+ 			device_init_wakeup(&m->client->dev, 0);
 -- 
 2.17.1
 
