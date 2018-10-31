@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48AFBC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABA95C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:27:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEB6D20847
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:27:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73D3720847
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:27:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SfO4z942"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEB6D20847
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QIB9+rXZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73D3720847
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730987AbeKAIKY (ORCPT
+        id S1731251AbeKAI1j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:10:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32838 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:27:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730973AbeKAIKW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:10:22 -0400
+        id S1729693AbeKAIKX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:10:23 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 648F12084A;
-        Wed, 31 Oct 2018 23:10:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 382922086D;
+        Wed, 31 Oct 2018 23:10:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541027411;
-        bh=EKTsbJkL/oNBw1U+lkaJd7dI9Fy4YpRPZqMbfdAfKvQ=;
+        bh=6EgiTXOrwfLghNJdk5MY3htzX8wi0Djm0JrWUTRY55g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SfO4z942QELp38AgcCNUwU27A2iLf8m/uo7zE4YthWyBI9QDExtNRNebqYbupVKmB
-         ckjSNWfFPpUF2GcAvOhCHjjiVD6m62RftP7h5TRUO898GzJ5V1U6ebUHjO0WFd6ZAW
-         8IK4ZRXutHjomKaBjsKi8LcJlZltS2uYNugD559U=
+        b=QIB9+rXZLC5vX1Ncj935iiVM4+3JjOLepEXYwrvPugqyAmSW7/aFKoqnSW8gkZBqD
+         Hp+jFNznMhfOl4hGkumtcIVFk1j32q08hEUM4J7E+52m9muzXr9l1uBxHQBnr2Ab3E
+         8XyeZouQiGKn7e55BF0p4TDczTBuQI6bEdwo8U/g=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Christian Hewitt <christianshewitt@gmail.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
+Cc:     Ben Hutchings <ben@decadent.org.uk>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 24/73] Bluetooth: btbcm: Add entry for BCM4335C0 UART bluetooth
-Date:   Wed, 31 Oct 2018 19:08:59 -0400
-Message-Id: <20181031230948.29203-24-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 25/73] x86: boot: Fix EFI stub alignment
+Date:   Wed, 31 Oct 2018 19:09:00 -0400
+Message-Id: <20181031230948.29203-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230948.29203-1-sashal@kernel.org>
 References: <20181031230948.29203-1-sashal@kernel.org>
@@ -53,63 +53,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christian Hewitt <christianshewitt@gmail.com>
+From: Ben Hutchings <ben@decadent.org.uk>
 
-[ Upstream commit a357ea098c9605f60d92a66a9073f56ce25726da ]
+[ Upstream commit 9c1442a9d039a1a3302fa93e9a11001c5f23b624 ]
 
-This patch adds the device ID for the AMPAK AP6335 combo module used
-in the 1st generation WeTek Hub Android/LibreELEC HTPC box. The WiFI
-chip identifies itself as BCM4339, while Bluetooth identifies itself
-as BCM4335 (rev C0):
+We currently align the end of the compressed image to a multiple of
+16.  However, the PE-COFF header included in the EFI stub says that
+the file alignment is 32 bytes, and when adding an EFI signature to
+the file it must first be padded to this alignment.
 
-```
-[    4.864248] Bluetooth: hci0: BCM: chip id 86
-[    4.866388] Bluetooth: hci0: BCM: features 0x2f
-[    4.889317] Bluetooth: hci0: BCM4335C0
-[    4.889332] Bluetooth: hci0: BCM4335C0 (003.001.009) build 0000
-[    9.778383] Bluetooth: hci0: BCM4335C0 (003.001.009) build 0268
-```
+sbsigntool commands warn about this:
 
-Output from hciconfig:
+  warning: file-aligned section .text extends beyond end of file
+  warning: checksum areas are greater than image size. Invalid section table?
 
-```
-hci0:	Type: Primary  Bus: UART
-	BD Address: 43:39:00:00:1F:AC  ACL MTU: 1021:8  SCO MTU: 64:1
-	UP RUNNING
-	RX bytes:7567 acl:234 sco:0 events:386 errors:0
-	TX bytes:53844 acl:77 sco:0 commands:304 errors:0
-	Features: 0xbf 0xfe 0xcf 0xfe 0xdb 0xff 0x7b 0x87
-	Packet type: DM1 DM3 DM5 DH1 DH3 DH5 HV1 HV2 HV3
-	Link policy: RSWITCH SNIFF
-	Link mode: SLAVE ACCEPT
-	Name: 'HUB'
-	Class: 0x0c0000
-	Service Classes: Rendering, Capturing
-	Device Class: Miscellaneous,
-	HCI Version: 4.0 (0x6)  Revision: 0x10c
-	LMP Version: 4.0 (0x6)  Subversion: 0x6109
-	Manufacturer: Broadcom Corporation (15)
-```
+Worse, pesign -at least when creating a detached signature- uses the
+hash of the unpadded file, resulting in an invalid signature if
+padding is required.
 
-Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Avoid both these problems by increasing alignment to 32 bytes when
+CONFIG_EFI_STUB is enabled.
+
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/bluetooth/btbcm.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/boot/tools/build.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/bluetooth/btbcm.c b/drivers/bluetooth/btbcm.c
-index cc4bdefa6648..67315cb28826 100644
---- a/drivers/bluetooth/btbcm.c
-+++ b/drivers/bluetooth/btbcm.c
-@@ -325,6 +325,7 @@ static const struct {
- 	{ 0x4103, "BCM4330B1"	},	/* 002.001.003 */
- 	{ 0x410e, "BCM43341B0"	},	/* 002.001.014 */
- 	{ 0x4406, "BCM4324B3"	},	/* 002.004.006 */
-+	{ 0x6109, "BCM4335C0"	},	/* 003.001.009 */
- 	{ 0x610c, "BCM4354"	},	/* 003.001.012 */
- 	{ 0x2209, "BCM43430A1"  },	/* 001.002.009 */
- 	{ }
+diff --git a/arch/x86/boot/tools/build.c b/arch/x86/boot/tools/build.c
+index d4e6cd4577e5..bf0e82400358 100644
+--- a/arch/x86/boot/tools/build.c
++++ b/arch/x86/boot/tools/build.c
+@@ -391,6 +391,13 @@ int main(int argc, char ** argv)
+ 		die("Unable to mmap '%s': %m", argv[2]);
+ 	/* Number of 16-byte paragraphs, including space for a 4-byte CRC */
+ 	sys_size = (sz + 15 + 4) / 16;
++#ifdef CONFIG_EFI_STUB
++	/*
++	 * COFF requires minimum 32-byte alignment of sections, and
++	 * adding a signature is problematic without that alignment.
++	 */
++	sys_size = (sys_size + 1) & ~1;
++#endif
+ 
+ 	/* Patch the setup code with the appropriate size parameters */
+ 	buf[0x1f1] = setup_sectors-1;
 -- 
 2.17.1
 
