@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25069C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:46:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6FBEC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:46:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5A7E20664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:46:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F4C520664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:46:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TDDwOXyQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5A7E20664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="buj2rQch"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F4C520664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728799AbeKAIHU (ORCPT
+        id S1729042AbeKAIq3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:07:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54918 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:46:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728646AbeKAIHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:07:19 -0400
+        id S1728784AbeKAIHU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:07:20 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 11F7220840;
-        Wed, 31 Oct 2018 23:07:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC32D20821;
+        Wed, 31 Oct 2018 23:07:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027228;
-        bh=PxbQiwHKrCR0NH6ar55FXMfvmuTVUkgBgwnl4i46YxA=;
+        s=default; t=1541027229;
+        bh=tEXz/++tMGKHr86NZqpb8GAUuYfZPpJ2ks7AzX/qbNI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TDDwOXyQYXW77lsbjSkwQ51VmSU+HtugDuUvrJlyNfiE9JlFlyoWDUXldK8CgoTBx
-         +K2uGumTpEFBcGpSNA9hzWeFrEH9jusiLLEdVQBOINwHB9XWMTbYUE1Q3D8Jy8uMTn
-         AQXo/z0gj0Bg2J2pc3zcQBWDRVLtYCzybGOdx+wk=
+        b=buj2rQchKu+grc8Tc5RuOMGnKJp1CvlPmsgmSyQ3U6XHOIVH+GpxzlmmC64b5IzRm
+         HtGf9bbL925NdLTBTGzjnlT9+Nr1pBcI1MMspL+SPDOjPCBIFYnFrV1QcwBsM4tqnn
+         O3R+YnCc042BjRq1eEN88RDvGirkWc14bx80C5as=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jim Mattson <jmattson@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
+Cc:     Wenwen Wang <wang6495@umn.edu>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 095/146] KVM: nVMX: Clear reserved bits of #DB exit qualification
-Date:   Wed, 31 Oct 2018 19:04:50 -0400
-Message-Id: <20181031230541.28822-95-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 096/146] scsi: megaraid_sas: fix a missing-check bug
+Date:   Wed, 31 Oct 2018 19:04:51 -0400
+Message-Id: <20181031230541.28822-96-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -53,68 +53,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jim Mattson <jmattson@google.com>
+From: Wenwen Wang <wang6495@umn.edu>
 
-[ Upstream commit cfb634fe3052aefc4e1360fa322018c9a0b49755 ]
+[ Upstream commit 47db7873136a9c57c45390a53b57019cf73c8259 ]
 
-According to volume 3 of the SDM, bits 63:15 and 12:4 of the exit
-qualification field for debug exceptions are reserved (cleared to
-0). However, the SDM is incorrect about bit 16 (corresponding to
-DR6.RTM). This bit should be set if a debug exception (#DB) or a
-breakpoint exception (#BP) occurred inside an RTM region while
-advanced debugging of RTM transactional regions was enabled. Note that
-this is the opposite of DR6.RTM, which "indicates (when clear) that a
-debug exception (#DB) or breakpoint exception (#BP) occurred inside an
-RTM region while advanced debugging of RTM transactional regions was
-enabled."
+In megasas_mgmt_compat_ioctl_fw(), to handle the structure
+compat_megasas_iocpacket 'cioc', a user-space structure megasas_iocpacket
+'ioc' is allocated before megasas_mgmt_ioctl_fw() is invoked to handle
+the packet. Since the two data structures have different fields, the data
+is copied from 'cioc' to 'ioc' field by field. In the copy process,
+'sense_ptr' is prepared if the field 'sense_len' is not null, because it
+will be used in megasas_mgmt_ioctl_fw(). To prepare 'sense_ptr', the
+user-space data 'ioc->sense_off' and 'cioc->sense_off' are copied and
+saved to kernel-space variables 'local_sense_off' and 'user_sense_off'
+respectively. Given that 'ioc->sense_off' is also copied from
+'cioc->sense_off', 'local_sense_off' and 'user_sense_off' should have the
+same value. However, 'cioc' is in the user space and a malicious user can
+race to change the value of 'cioc->sense_off' after it is copied to
+'ioc->sense_off' but before it is copied to 'user_sense_off'. By doing
+so, the attacker can inject different values into 'local_sense_off' and
+'user_sense_off'. This can cause undefined behavior in the following
+execution, because the two variables are supposed to be same.
 
-There is still an issue with stale DR6 bits potentially being
-misreported for the current debug exception.  DR6 should not have been
-modified before vectoring the #DB exception, and the "new DR6 bits"
-should be available somewhere, but it was and they aren't.
+This patch enforces a check on the two kernel variables 'local_sense_off'
+and 'user_sense_off' to make sure they are the same after the copy. In
+case they are not, an error code EINVAL will be returned.
 
-Fixes: b96fb439774e1 ("KVM: nVMX: fixes to nested virt interrupt injection")
-Signed-off-by: Jim Mattson <jmattson@google.com>
-Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/kvm_host.h | 1 +
- arch/x86/kvm/vmx.c              | 7 +++++--
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ drivers/scsi/megaraid/megaraid_sas_base.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 09b2e3e2cf1b..1c09a0d1771f 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -177,6 +177,7 @@ enum {
+diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
+index 9aa9590c5373..f6de7526ded5 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_base.c
++++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+@@ -7523,6 +7523,9 @@ static int megasas_mgmt_compat_ioctl_fw(struct file *file, unsigned long arg)
+ 		get_user(user_sense_off, &cioc->sense_off))
+ 		return -EFAULT;
  
- #define DR6_BD		(1 << 13)
- #define DR6_BS		(1 << 14)
-+#define DR6_BT		(1 << 15)
- #define DR6_RTM		(1 << 16)
- #define DR6_FIXED_1	0xfffe0ff0
- #define DR6_INIT	0xffff0ff0
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index e665aa7167cf..a933ce5ec1ff 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -3294,10 +3294,13 @@ static int nested_vmx_check_exception(struct kvm_vcpu *vcpu, unsigned long *exit
- 		}
- 	} else {
- 		if (vmcs12->exception_bitmap & (1u << nr)) {
--			if (nr == DB_VECTOR)
-+			if (nr == DB_VECTOR) {
- 				*exit_qual = vcpu->arch.dr6;
--			else
-+				*exit_qual &= ~(DR6_FIXED_1 | DR6_BT);
-+				*exit_qual ^= DR6_RTM;
-+			} else {
- 				*exit_qual = 0;
-+			}
- 			return 1;
- 		}
- 	}
++	if (local_sense_off != user_sense_off)
++		return -EINVAL;
++
+ 	if (local_sense_len) {
+ 		void __user **sense_ioc_ptr =
+ 			(void __user **)((u8 *)((unsigned long)&ioc->frame.raw) + local_sense_off);
 -- 
 2.17.1
 
