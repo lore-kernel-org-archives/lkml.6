@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30C63ECDE47
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3894CECDE4A
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:58:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F059C20840
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:58:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0044120685
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:58:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FvYC/+AC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F059C20840
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KpIh9R9P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0044120685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mailme.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728775AbeJaTzj (ORCPT
+        id S1728816AbeJaTzk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 15:55:39 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:45630 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727980AbeJaTzi (ORCPT
+        Wed, 31 Oct 2018 15:55:40 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40311 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728584AbeJaTzk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 15:55:38 -0400
-Received: by mail-ed1-f68.google.com with SMTP id t10-v6so13195006eds.12;
-        Wed, 31 Oct 2018 03:58:01 -0700 (PDT)
+        Wed, 31 Oct 2018 15:55:40 -0400
+Received: by mail-ed1-f67.google.com with SMTP id z12-v6so7433507edp.7;
+        Wed, 31 Oct 2018 03:58:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=WYfde6DTmy6vKGV+9gDH9plmleyfINd+8JWW56qt+kk=;
-        b=FvYC/+AC5eYuBgNb2nlAiPB3vz1mElDsfRt1OAHoYeEvGj/UCl9XZHXo/EUvRErm/b
-         ntWYBBn4EbOK5SaJhCIPFEGPa+sqL4gCpmIITH55qcRNJvTjz6Mhbtyu3vK0Vi4NIwGJ
-         mauAqUiMZ3Y/lASVl15NKh7npR3HPOC4ZnOIELKJwD1C+ICvGHr4gB8Zu4Vou/Ruh6Ft
-         +i3OxcOKSP5H65KXW5hTMADJCZQtfGihNr3+IVpoiKojvXGg5lgjyJnU+giwES3dQ/TC
-         eMdtaeI8GjTgtPYzLOAoM/ZsubZmVYDXj18149os4E9Pe3TeovqFvc3p2kmZ1ubFFdum
-         rt9w==
+        bh=dbib6+Pg43Lu6Hx+gFx5uFOJQsxtYC1x/SdUYr9c7sk=;
+        b=KpIh9R9P5Rhk0lFQ/Zyu/hAbKFoN1QJpGwB+ypPCjbREch5iHc81Y7zIE1oGGGV+a2
+         FqOwLxgqPHzPlM0RCnq8F4mRvHCpDsqiuHNvCQ5bhyCAsv2vczAKl6iHwIUiD3jikMXG
+         NYHaQkL0Vy7cq6EutwE+XjMtyXcO56s9ZcOAVtLRhWaTpucBrg/0Y7PncqBpMG4yeKlG
+         IOcRpr8WwCxYf+UNzkJZ2lO7iH3E9SuLSGiA7xr306A9ZSOWmQmm7Jr9ItPG5aDE0V/p
+         NKp4q3EVBELcTvDstiT85jPJ/ofIEFpXcVbPeYhcBhSPPW1AKkBJY+3uEG+7Ufz/6Yqv
+         j1VQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=WYfde6DTmy6vKGV+9gDH9plmleyfINd+8JWW56qt+kk=;
-        b=Wis3/euJ2BlTFBZfpeHA3CkNvDJzC1ACvMfjdBPFkoHfaoH6s9ewmXcdzLZqV2ijb9
-         Z6BbzhdcMpbFN/8c8I+CB6A6wwICs4yht7eCZNBN/Yh0aLdV1s1kWydOyB/73Ln/F8wx
-         057UlGsa4CqXW3zoq+5xBzUhX+rxSMB7vR+NWvBgReexU/4oFdVtY/mtCoc/dX/2weql
-         OgFon/5DEUpQOptojHScWR9s6rotg5oVoFw6KhHD9hXPtqbABo+VePOd3GAspja1zYu6
-         ZOWR+S9AWiSTarZea6WrKwhp+F8UN3zEP45g1sevI70BILKKzDrTG22W4b47c36PhouR
-         zyAw==
-X-Gm-Message-State: AGRZ1gJYxml9Rs1AKaaJDoHq+WN+6FkDh0hzAPHN05/OS7j3XO+Tb8nn
-        h7iY+ElK2tr//Q0tkOoVrnMfRxf9i+s=
-X-Google-Smtp-Source: AJdET5f9NHRG2n+sUIBfqLTHXySKCvK74rFxnIFr4yjw7JiAPzJfTUx79/DjK7MgXtl34huxli5MzQ==
-X-Received: by 2002:a50:b36e:: with SMTP id r43-v6mr1660672edd.284.1540983480917;
-        Wed, 31 Oct 2018 03:58:00 -0700 (PDT)
+        bh=dbib6+Pg43Lu6Hx+gFx5uFOJQsxtYC1x/SdUYr9c7sk=;
+        b=o0eECnJi2AA+0Mn4v5l6/M5hGfvXeXhwYh8lP7WR97EH+IjezJmMYEgCbtUruwP2rV
+         siTEvPdcKmfEd2qXTUjT/Ocd06YM19DNrGpgh3rVMIs2P3UDEao+/ArxXBgSozPjzkLO
+         VZIS8rqlvmJ2ow8nfP5JV+AH7BqHNQiqGJxGe5JPkWWa05EZCnHtx7vMolBZOS0IgYq/
+         JULPJEp1s7pgDn5RTY9LKe9AU9sblNqRRs2IArrA1zGtR7CQ5fiGuIVS0CgbPti4KjAJ
+         TCF1kgFgNDAxJwIt+2zY1HxwIpaqP6KF22IdWqtt1zihs9tKMW5IJcTWuCVzlX/8JugI
+         i5Qw==
+X-Gm-Message-State: AGRZ1gKQhTw1n/k19/cQ7GH1YkqnmHI1bI4bGvylMPWza94pXKSzpJWB
+        k8YzSgxRLCyKFGAX6uEiehJDtGSmJL0=
+X-Google-Smtp-Source: AJdET5cYec+mxKgDji0431AUeFOOGz3I9Hecae8pfliWAblnj3ztKju9VneIAn0b3zQa+SLBNubAvA==
+X-Received: by 2002:aa7:c6ca:: with SMTP id b10-v6mr1608166eds.249.1540983482517;
+        Wed, 31 Oct 2018 03:58:02 -0700 (PDT)
 Received: from localhost.localdomain ([5.57.50.195])
-        by smtp.gmail.com with ESMTPSA id a40-v6sm9041108edd.61.2018.10.31.03.57.59
+        by smtp.gmail.com with ESMTPSA id a40-v6sm9041108edd.61.2018.10.31.03.58.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 03:57:59 -0700 (PDT)
+        Wed, 31 Oct 2018 03:58:01 -0700 (PDT)
 From:   Emil Renner Berthing <esmil@mailme.dk>
 To:     linux-spi@vger.kernel.org
 Cc:     Emil Renner Berthing <kernel@esmil.dk>,
@@ -67,9 +67,9 @@ Cc:     Emil Renner Berthing <kernel@esmil.dk>,
         Heiko Stuebner <heiko@sntech.de>,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 02/14] spi: rockchip: use designated init for dma config
-Date:   Wed, 31 Oct 2018 11:56:59 +0100
-Message-Id: <20181031105711.19575-3-esmil@mailme.dk>
+Subject: [PATCH v1 03/14] spi: rockchip: always use SPI mode
+Date:   Wed, 31 Oct 2018 11:57:00 +0100
+Message-Id: <20181031105711.19575-4-esmil@mailme.dk>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181031105711.19575-1-esmil@mailme.dk>
 References: <20181031105711.19575-1-esmil@mailme.dk>
@@ -82,68 +82,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Emil Renner Berthing <kernel@esmil.dk>
 
-Use C99 designated initializers for dma slave config
-structures. This also makes sure uninitialized fields
-are zeroed so we don't need an explicit memset.
+The hardware supports 3 different variants of SPI
+and there were some code around it, but nothing
+to actually set it to anything but "Motorola SPI".
+Just drop that code and always use that mode.
 
 Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
 ---
- drivers/spi/spi-rockchip.c | 26 ++++++++++++++------------
- 1 file changed, 14 insertions(+), 12 deletions(-)
+ drivers/spi/spi-rockchip.c | 17 ++++-------------
+ 1 file changed, 4 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
-index 7e54e1a69cc8..87d1b9837d94 100644
+index 87d1b9837d94..7fac4253075e 100644
 --- a/drivers/spi/spi-rockchip.c
 +++ b/drivers/spi/spi-rockchip.c
-@@ -442,12 +442,8 @@ static void rockchip_spi_dma_txcb(void *data)
- static int rockchip_spi_prepare_dma(struct rockchip_spi *rs)
- {
- 	unsigned long flags;
--	struct dma_slave_config rxconf, txconf;
- 	struct dma_async_tx_descriptor *rxdesc, *txdesc;
+@@ -156,12 +156,6 @@
  
--	memset(&rxconf, 0, sizeof(rxconf));
--	memset(&txconf, 0, sizeof(txconf));
+ #define ROCKCHIP_SPI_MAX_CS_NUM			2
+ 
+-enum rockchip_ssi_type {
+-	SSI_MOTO_SPI = 0,
+-	SSI_TI_SSP,
+-	SSI_NS_MICROWIRE,
+-};
 -
- 	spin_lock_irqsave(&rs->lock, flags);
- 	rs->state &= ~RXBUSY;
- 	rs->state &= ~TXBUSY;
-@@ -455,10 +451,13 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs)
+ struct rockchip_spi_dma_data {
+ 	struct dma_chan *ch;
+ 	dma_addr_t addr;
+@@ -179,8 +173,6 @@ struct rockchip_spi {
+ 	u32 fifo_len;
+ 	/* max bus freq supported */
+ 	u32 max_freq;
+-	/* supported slave numbers */
+-	enum rockchip_ssi_type type;
  
- 	rxdesc = NULL;
- 	if (rs->rx) {
--		rxconf.direction = DMA_DEV_TO_MEM;
--		rxconf.src_addr = rs->dma_rx.addr;
--		rxconf.src_addr_width = rs->n_bytes;
--		rxconf.src_maxburst = 1;
-+		struct dma_slave_config rxconf = {
-+			.direction = DMA_DEV_TO_MEM,
-+			.src_addr = rs->dma_rx.addr,
-+			.src_addr_width = rs->n_bytes,
-+			.src_maxburst = 1,
-+		};
-+
- 		dmaengine_slave_config(rs->dma_rx.ch, &rxconf);
+ 	u16 mode;
+ 	u8 tmode;
+@@ -525,14 +517,14 @@ static void rockchip_spi_config(struct rockchip_spi *rs)
+ 	u32 dmacr = 0;
+ 	int rsd = 0;
  
- 		rxdesc = dmaengine_prep_slave_sg(
-@@ -474,10 +473,13 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs)
+-	u32 cr0 = (CR0_BHT_8BIT << CR0_BHT_OFFSET)
+-		| (CR0_SSD_ONE << CR0_SSD_OFFSET)
+-		| (CR0_EM_BIG << CR0_EM_OFFSET);
++	u32 cr0 = CR0_FRF_SPI  << CR0_FRF_OFFSET
++	        | CR0_BHT_8BIT << CR0_BHT_OFFSET
++	        | CR0_SSD_ONE  << CR0_SSD_OFFSET
++	        | CR0_EM_BIG   << CR0_EM_OFFSET;
  
- 	txdesc = NULL;
- 	if (rs->tx) {
--		txconf.direction = DMA_MEM_TO_DEV;
--		txconf.dst_addr = rs->dma_tx.addr;
--		txconf.dst_addr_width = rs->n_bytes;
--		txconf.dst_maxburst = rs->fifo_len / 2;
-+		struct dma_slave_config txconf = {
-+			.direction = DMA_MEM_TO_DEV,
-+			.dst_addr = rs->dma_tx.addr,
-+			.dst_addr_width = rs->n_bytes,
-+			.dst_maxburst = rs->fifo_len / 2,
-+		};
-+
- 		dmaengine_slave_config(rs->dma_tx.ch, &txconf);
+ 	cr0 |= (rs->n_bytes << CR0_DFS_OFFSET);
+ 	cr0 |= ((rs->mode & 0x3) << CR0_SCPH_OFFSET);
+ 	cr0 |= (rs->tmode << CR0_XFM_OFFSET);
+-	cr0 |= (rs->type << CR0_FRF_OFFSET);
  
- 		txdesc = dmaengine_prep_slave_sg(
+ 	if (rs->use_dma) {
+ 		if (rs->tx)
+@@ -709,7 +701,6 @@ static int rockchip_spi_probe(struct platform_device *pdev)
+ 
+ 	spi_enable_chip(rs, false);
+ 
+-	rs->type = SSI_MOTO_SPI;
+ 	rs->master = master;
+ 	rs->dev = &pdev->dev;
+ 	rs->max_freq = clk_get_rate(rs->spiclk);
 -- 
 2.19.1
 
