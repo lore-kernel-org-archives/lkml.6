@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D35ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D21EDC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B73620840
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9294920664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="L/wr1pn8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B73620840
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AB7y1j8G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9294920664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729850AbeKAIIi (ORCPT
+        id S1729889AbeKAIIk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:08:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57720 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:08:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729817AbeKAIIh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:08:37 -0400
+        id S1729851AbeKAIIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:08:39 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3EE22081B;
-        Wed, 31 Oct 2018 23:08:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB28D20830;
+        Wed, 31 Oct 2018 23:08:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027306;
-        bh=xixfP+2xcVyJj/LcGiNejEQLYC1PYTYpBTx80WWdXr0=;
+        s=default; t=1541027308;
+        bh=xZM3vAlTxqGWiO2nZHvsp2dTWMCK15KsAb2COBsSbL8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L/wr1pn8IXMG4sOdCWzquRk5/wWofrB/6Xs9/qw91r2OucV7ML9699/t4zZkLlkty
-         WsUgL7RxIOH02evtuk5zi0wQBtc4nB04MHyFzT4hoD5tRgHS+VB+u3B1EL4vKRz6pz
-         ZSUCJuT9tgBmmr1LZWgE8RMEsOjKDEWTYsBDwDdA=
+        b=AB7y1j8GTUCML5omTMC71qJ6+G6XSh1BvwOc4czqdTA+TcG1by7AbUpTrpNsHwAOk
+         a0u1JwoFKsKm0HXx6nEa2ppYy8esMlG9if0FXYnQ7YV2RFsts1T4ndpZnCjACx4fiL
+         PDx8dx0b+wgtzrAj+DTScWlg3GGqNeMH4T3UNSLE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
+Cc:     Bruce Allan <bruce.w.allan@intel.com>,
+        Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 035/126] regulator: fixed: Default enable high on DT regulators
-Date:   Wed, 31 Oct 2018 19:06:23 -0400
-Message-Id: <20181031230754.29029-35-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 037/126] ice: fix changing of ring descriptor size (ethtool -G)
+Date:   Wed, 31 Oct 2018 19:06:25 -0400
+Message-Id: <20181031230754.29029-37-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -53,65 +54,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Bruce Allan <bruce.w.allan@intel.com>
 
-[ Upstream commit 28be5f15df2ee6882b0a122693159c96a28203c7 ]
+[ Upstream commit f934bb9b8b6136edd261b2dc2c9ad4dbc39ffc66 ]
 
-commit efdfeb079cc3
-("regulator: fixed: Convert to use GPIO descriptor only")
-switched to use gpiod_get() to look up the regulator from the
-gpiolib core whether that is device tree or boardfile.
+rx_mini_pending was set to an incorrect value. This was causing EINVAL to
+always be returned to 'ethtool -G'. The driver does not support mini or
+jumbo rings so the respective settings should be zero.
 
-This meant that we activate the code in
-a603a2b8d86e ("gpio: of: Add special quirk to parse regulator flags")
-which means the descriptors coming from the device tree already
-have the right inversion and open drain semantics set up from
-the gpiolib core.
+Also, change the valid range of the number of descriptors in the rings to
+make the code simpler and easier for users to understand (this removes the
+valid settings of 8 and 16). Add a system log message indicating when the
+number is rounded-up from what the user specifies with the 'ethtool -G'
+command (i.e. when it is not a multiple of 32), and update the log message
+when a user-provided value is out of range to also indicate the stride.
 
-As the fixed regulator was inspected again we got the
-inverted inversion and things broke.
-
-Fix it by ignoring the config in the device tree for now: the
-later patches in the series will push all inversion handling
-over to the gpiolib core and set it up properly in the
-boardfiles for legacy devices, but I did not finish that
-for this kernel cycle.
-
-Fixes: commit efdfeb079cc3 ("regulator: fixed: Convert to use GPIO descriptor only")
-Reported-by: Leonard Crestez <leonard.crestez@nxp.com>
-Reported-by: Fabio Estevam <festevam@gmail.com>
-Reported-by: John Stultz <john.stultz@linaro.org>
-Reported-by: Anders Roxell <anders.roxell@linaro.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Tested-by: John Stultz <john.stultz@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Bruce Allan <bruce.w.allan@intel.com>
+Signed-off-by: Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/regulator/fixed.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/intel/ice/ice.h         |  4 ++--
+ drivers/net/ethernet/intel/ice/ice_ethtool.c | 17 ++++++++++++++---
+ 2 files changed, 16 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
-index 988a7472c2ab..d68ff65a5adc 100644
---- a/drivers/regulator/fixed.c
-+++ b/drivers/regulator/fixed.c
-@@ -84,9 +84,14 @@ of_get_fixed_voltage_config(struct device *dev,
+diff --git a/drivers/net/ethernet/intel/ice/ice.h b/drivers/net/ethernet/intel/ice/ice.h
+index ed071ea75f20..ce12824a8325 100644
+--- a/drivers/net/ethernet/intel/ice/ice.h
++++ b/drivers/net/ethernet/intel/ice/ice.h
+@@ -39,9 +39,9 @@
+ extern const char ice_drv_ver[];
+ #define ICE_BAR0		0
+ #define ICE_DFLT_NUM_DESC	128
+-#define ICE_MIN_NUM_DESC	8
+-#define ICE_MAX_NUM_DESC	8160
+ #define ICE_REQ_DESC_MULTIPLE	32
++#define ICE_MIN_NUM_DESC	ICE_REQ_DESC_MULTIPLE
++#define ICE_MAX_NUM_DESC	8160
+ #define ICE_DFLT_TRAFFIC_CLASS	BIT(0)
+ #define ICE_INT_NAME_STR_LEN	(IFNAMSIZ + 16)
+ #define ICE_ETHTOOL_FWVER_LEN	32
+diff --git a/drivers/net/ethernet/intel/ice/ice_ethtool.c b/drivers/net/ethernet/intel/ice/ice_ethtool.c
+index c71a9b528d6d..9d6754f65a1a 100644
+--- a/drivers/net/ethernet/intel/ice/ice_ethtool.c
++++ b/drivers/net/ethernet/intel/ice/ice_ethtool.c
+@@ -478,9 +478,11 @@ ice_get_ringparam(struct net_device *netdev, struct ethtool_ringparam *ring)
+ 	ring->tx_max_pending = ICE_MAX_NUM_DESC;
+ 	ring->rx_pending = vsi->rx_rings[0]->count;
+ 	ring->tx_pending = vsi->tx_rings[0]->count;
+-	ring->rx_mini_pending = ICE_MIN_NUM_DESC;
++
++	/* Rx mini and jumbo rings are not supported */
+ 	ring->rx_mini_max_pending = 0;
+ 	ring->rx_jumbo_max_pending = 0;
++	ring->rx_mini_pending = 0;
+ 	ring->rx_jumbo_pending = 0;
+ }
  
- 	of_property_read_u32(np, "startup-delay-us", &config->startup_delay);
+@@ -498,14 +500,23 @@ ice_set_ringparam(struct net_device *netdev, struct ethtool_ringparam *ring)
+ 	    ring->tx_pending < ICE_MIN_NUM_DESC ||
+ 	    ring->rx_pending > ICE_MAX_NUM_DESC ||
+ 	    ring->rx_pending < ICE_MIN_NUM_DESC) {
+-		netdev_err(netdev, "Descriptors requested (Tx: %d / Rx: %d) out of range [%d-%d]\n",
++		netdev_err(netdev, "Descriptors requested (Tx: %d / Rx: %d) out of range [%d-%d] (increment %d)\n",
+ 			   ring->tx_pending, ring->rx_pending,
+-			   ICE_MIN_NUM_DESC, ICE_MAX_NUM_DESC);
++			   ICE_MIN_NUM_DESC, ICE_MAX_NUM_DESC,
++			   ICE_REQ_DESC_MULTIPLE);
+ 		return -EINVAL;
+ 	}
  
--	config->enable_high = of_property_read_bool(np, "enable-active-high");
--	config->gpio_is_open_drain = of_property_read_bool(np,
--							   "gpio-open-drain");
-+	/*
-+	 * FIXME: we pulled active low/high and open drain handling into
-+	 * gpiolib so it will be handled there. Delete this in the second
-+	 * step when we also remove the custom inversion handling for all
-+	 * legacy boardfiles.
-+	 */
-+	config->enable_high = 1;
-+	config->gpio_is_open_drain = 0;
+ 	new_tx_cnt = ALIGN(ring->tx_pending, ICE_REQ_DESC_MULTIPLE);
++	if (new_tx_cnt != ring->tx_pending)
++		netdev_info(netdev,
++			    "Requested Tx descriptor count rounded up to %d\n",
++			    new_tx_cnt);
+ 	new_rx_cnt = ALIGN(ring->rx_pending, ICE_REQ_DESC_MULTIPLE);
++	if (new_rx_cnt != ring->rx_pending)
++		netdev_info(netdev,
++			    "Requested Rx descriptor count rounded up to %d\n",
++			    new_rx_cnt);
  
- 	if (of_find_property(np, "vin-supply", NULL))
- 		config->input_supply = "vin";
+ 	/* if nothing to do return success */
+ 	if (new_tx_cnt == vsi->tx_rings[0]->count &&
 -- 
 2.17.1
 
