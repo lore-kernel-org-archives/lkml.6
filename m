@@ -2,267 +2,230 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF608ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:22:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA77ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:22:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8467C205F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:22:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8467C205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 25156205F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:22:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25156205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729558AbeJaXUd (ORCPT
+        id S1729599AbeJaXUq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 19:20:33 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41712 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729411AbeJaXUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 19:20:33 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E917C1596;
-        Wed, 31 Oct 2018 07:22:18 -0700 (PDT)
-Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.144.41])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7CE7F3F71D;
-        Wed, 31 Oct 2018 07:22:18 -0700 (PDT)
-Date:   Wed, 31 Oct 2018 15:22:16 +0100
-From:   Christoffer Dall <christoffer.dall@arm.com>
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, cdall@kernel.org,
-        kvm@vger.kernel.org, marc.zyngier@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, dave.martin@arm.com,
-        pbonzini@redhat.com, kvmarm@lists.cs.columbia.edu
-Subject: Re: [PATCH v6 18/18] kvm: arm64: Allow tuning the physical address
- size for VM
-Message-ID: <20181031142216.GD12057@e113682-lin.lund.arm.com>
-References: <20180926163258.20218-1-suzuki.poulose@arm.com>
- <20180926163258.20218-19-suzuki.poulose@arm.com>
+        Wed, 31 Oct 2018 19:20:46 -0400
+Received: from mga14.intel.com ([192.55.52.115]:45008 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729411AbeJaXUq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 19:20:46 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2018 07:22:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,447,1534834800"; 
+   d="scan'208,223";a="277207785"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.130]) ([10.237.72.130])
+  by fmsmga006.fm.intel.com with ESMTP; 31 Oct 2018 07:22:30 -0700
+Subject: Re: [PATCH 4/5] perf intel-pt: Insert callchain context into
+ synthesized callchains
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
+        linux-kernel@vger.kernel.org, leo.yan@linaro.org,
+        David Miller <davem@davemloft.net>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+References: <20181031091043.23465-1-adrian.hunter@intel.com>
+ <20181031091043.23465-5-adrian.hunter@intel.com>
+ <20181031132803.GG10660@kernel.org>
+ <850eed86-fb8f-e328-316c-378890d4f15f@intel.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <100ea2ec-ed14-b56d-d810-e0a6d2f4b069@intel.com>
+Date:   Wed, 31 Oct 2018 16:20:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180926163258.20218-19-suzuki.poulose@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <850eed86-fb8f-e328-316c-378890d4f15f@intel.com>
+Content-Type: multipart/mixed;
+ boundary="------------39258EA51B193AEA822AE914"
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 05:32:54PM +0100, Suzuki K Poulose wrote:
-> Allow specifying the physical address size limit for a new
-> VM via the kvm_type argument for the KVM_CREATE_VM ioctl. This
-> allows us to finalise the stage2 page table as early as possible
-> and hence perform the right checks on the memory slots
-> without complication. The size is encoded as Log2(PA_Size) in
-> bits[7:0] of the type field. For backward compatibility the
-> value 0 is reserved and implies 40bits. Also, lift the limit
-> of the IPA to host limit and allow lower IPA sizes (e.g, 32).
+This is a multi-part message in MIME format.
+--------------39258EA51B193AEA822AE914
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+
+On 31/10/18 4:15 PM, Adrian Hunter wrote:
+> On 31/10/18 3:28 PM, Arnaldo Carvalho de Melo wrote:
+>> Em Wed, Oct 31, 2018 at 11:10:42AM +0200, Adrian Hunter escreveu:
+>>> In the absence of a fallback, callchains must encode also the callchain
+>>> context. Do that now there is no fallback.
+>>
+>> So, this one is independent of the first 3 patches, right?
 > 
-> The userspace could check the extension KVM_CAP_ARM_VM_IPA_SIZE
-> for the availability of this feature. The cap check returns the
-> maximum limit for the physical address shift supported by the host.
+> Yes.  I was just going to test it separately when I noticed I had
+> screwed up my earlier testing.  When I re-tested I discovered this patch
+> has an off-by-one error:
 > 
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Christoffer Dall <cdall@kernel.org>
-> Cc: Peter Maydell <peter.maydell@linaro.org>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
-> Changes since v5:
->  - Rename the capability to KVM_CAP_ARM_VM_IPA_SIZE
->  - Update Documentation of the API (Peter Maydell)
->  - Fix comment/commit-description as spotted by Eric
-> Changes since v4:
->  - Fold the introduction of the KVM_CAP_ARM_VM_PHYS_SHIFT to this
->    patch to allow detection of the availability of the feature for
->    userspace.
->  - Document the API
->  - Restrict the feature only to arm64.
-> Changes since V3:
->  - Switch to a CAP, that can be checkd via EXTENSIONS on KVM device
->    fd, rather than a dedicated ioctl.
-> ---
->  Documentation/virtual/kvm/api.txt       | 31 +++++++++++++++++++++++++
->  arch/arm64/include/asm/stage2_pgtable.h | 20 ----------------
->  arch/arm64/kvm/reset.c                  | 17 ++++++++++----
->  include/uapi/linux/kvm.h                | 10 ++++++++
->  4 files changed, 54 insertions(+), 24 deletions(-)
+> diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
+> index afdf36852ac8..61a4286a74dc 100644
+> --- a/tools/perf/util/thread-stack.c
+> +++ b/tools/perf/util/thread-stack.c
+> @@ -337,7 +337,7 @@ void thread_stack__sample(struct thread *thread, struct ip_callchain *chain,
+>  
+>  	last_context = context;
+>  
+> -	for (i = 2, j = 0; i < sz && j < thread->ts->cnt; i++, j++) {
+> +	for (i = 2, j = 1; i < sz && j <= thread->ts->cnt; i++, j++) {
+>  		ip = thread->ts->stack[thread->ts->cnt - j].ret_addr;
+>  		context = callchain_context(ip, kernel_start);
+>  		if (context != last_context) {
 > 
-> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
-> index c664064f76fb..54eb7c763c89 100644
-> --- a/Documentation/virtual/kvm/api.txt
-> +++ b/Documentation/virtual/kvm/api.txt
-> @@ -123,6 +123,37 @@ memory layout to fit in user mode), check KVM_CAP_MIPS_VZ and use the
->  flag KVM_VM_MIPS_VZ.
->  
->  
-> +On arm64, the physical address size for a VM (IPA Size limit) is limited
-> +to 40bits by default. The limit can be configured if the host supports the
-> +extension KVM_CAP_ARM_VM_IPA_SIZE. When supported, use
-> +KVM_VM_TYPE_ARM_IPA_SIZE(IPA_Bits) to set the size in the machine type
-> +identifier, where IPA_Bits is the maximum width of any physical
-> +address used by the VM. The IPA_Bits is encoded in bits[7-0] of the
-> +machine type identifier.
-> +
-> +e.g, to configure a guest to use 48bit physical address size :
-> +
-> +    vm_fd = ioctl(dev_fd, KVM_CREATE_VM, KVM_VM_TYPE_ARM_IPA_SIZE(48));
-> +
-> +The requested size (IPA_Bits) must be :
-> +  0 - Implies default size, 40bits (for backward compatibility)
-> +
-> +  or
-> +
-> +  N - Implies N bits, where N is a positive integer such that,
-> +      32 <= N <= Host_IPA_Limit
-> +
-> +Host_IPA_Limit is the maximum possible value for IPA_Bits on the host and
-> +is dependent on the CPU capability and the kernel configuration. The limit can
-> +be retrieved using KVM_CAP_ARM_VM_IPA_SIZE of the KVM_CHECK_EXTENSION
-> +ioctl() at run-time.
-> +
-> +Please note that configuring the IPA size does not affect the capability
-> +exposed by the guest CPUs in ID_AA64MMFR0_EL1[PARange]. It only affects
-> +size of the address translated by the stage2 level (guest physical to
-> +host physical address translations).
-> +
-> +
->  4.3 KVM_GET_MSR_INDEX_LIST, KVM_GET_MSR_FEATURE_INDEX_LIST
->  
->  Capability: basic, KVM_CAP_GET_MSR_FEATURES for KVM_GET_MSR_FEATURE_INDEX_LIST
-> diff --git a/arch/arm64/include/asm/stage2_pgtable.h b/arch/arm64/include/asm/stage2_pgtable.h
-> index 2cce769ba4c6..d352f6df8d2c 100644
-> --- a/arch/arm64/include/asm/stage2_pgtable.h
-> +++ b/arch/arm64/include/asm/stage2_pgtable.h
-> @@ -42,28 +42,8 @@
->   * the range (IPA_SHIFT, IPA_SHIFT - 4).
->   */
->  #define stage2_pgtable_levels(ipa)	ARM64_HW_PGTABLE_LEVELS((ipa) - 4)
-> -#define STAGE2_PGTABLE_LEVELS		stage2_pgtable_levels(KVM_PHYS_SHIFT)
->  #define kvm_stage2_levels(kvm)		VTCR_EL2_LVLS(kvm->arch.vtcr)
->  
-> -/*
-> - * With all the supported VA_BITs and 40bit guest IPA, the following condition
-> - * is always true:
-> - *
-> - *       STAGE2_PGTABLE_LEVELS <= CONFIG_PGTABLE_LEVELS
-> - *
-> - * We base our stage-2 page table walker helpers on this assumption and
-> - * fall back to using the host version of the helper wherever possible.
-> - * i.e, if a particular level is not folded (e.g, PUD) at stage2, we fall back
-> - * to using the host version, since it is guaranteed it is not folded at host.
-> - *
-> - * If the condition breaks in the future, we can rearrange the host level
-> - * definitions and reuse them for stage2. Till then...
-> - */
-> -#if STAGE2_PGTABLE_LEVELS > CONFIG_PGTABLE_LEVELS
-> -#error "Unsupported combination of guest IPA and host VA_BITS."
-> -#endif
-> -
-> -
->  /* stage2_pgdir_shift() is the size mapped by top-level stage2 entry for the VM */
->  #define stage2_pgdir_shift(kvm)		pt_levels_pgdir_shift(kvm_stage2_levels(kvm))
->  #define stage2_pgdir_size(kvm)		(1ULL << stage2_pgdir_shift(kvm))
-> diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
-> index f156e45760bc..95f28d5950e0 100644
-> --- a/arch/arm64/kvm/reset.c
-> +++ b/arch/arm64/kvm/reset.c
-> @@ -89,6 +89,9 @@ int kvm_arch_dev_ioctl_check_extension(struct kvm *kvm, long ext)
->  	case KVM_CAP_VCPU_EVENTS:
->  		r = 1;
->  		break;
-> +	case KVM_CAP_ARM_VM_IPA_SIZE:
-> +		r = kvm_ipa_limit;
-> +		break;
->  	default:
->  		r = 0;
->  	}
-> @@ -192,17 +195,23 @@ int kvm_arm_config_vm(struct kvm *kvm, unsigned long type)
->  	u32 parange, phys_shift;
->  	u8 lvls;
->  
-> -	if (type)
-> +	if (type & ~KVM_VM_TYPE_ARM_IPA_SIZE_MASK)
->  		return -EINVAL;
->  
-> +	phys_shift = KVM_VM_TYPE_ARM_IPA_SIZE(type);
-> +	if (phys_shift) {
-> +		if (phys_shift > kvm_ipa_limit ||
-> +		    phys_shift < 32)
-> +			return -EINVAL;
+> Shall I send V2?
 
-I am concerned here that if we allow the user to set the phys_size to 32
-bits, then we end up with 2 levels of stage2 page tables, which means
-that the size of a stage2 pmd mapping becomes the size of a stage2 pgd
-mapping, yet we can still decide in user_mem_abort() that a stage2 fault
-is backed by PMD size mappings on the host, and attempt a huge mapping
-at stage2, which then becomes a PGD level block map, I think.
+I have attached it
 
-Is this handled somehow?  If so, how?
+--------------39258EA51B193AEA822AE914
+Content-Type: text/x-patch;
+ name="0004-perf-intel-pt-Insert-callchain-context-into-synthesi.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename*0="0004-perf-intel-pt-Insert-callchain-context-into-synthesi.pa";
+ filename*1="tch"
 
-I can't see user_mem_abort() being modified to explicitly handle this
-in your code, but perhaps the stage2_set_pmd_huge() call ends up
-actually mapping at the stage2 pte level, but I can't tell that it does.
-In any case, I think user_mem_abort() should give up on pmd/pud huge
-mappings if the size mapped by the stage2/stage1 pmd/pud levels don't
-line up.  What do you think?
+From 19a9fbdbd3729c7f14c9c1f0ac79c18cce91ff60 Mon Sep 17 00:00:00 2001
+From: Adrian Hunter <adrian.hunter@intel.com>
+Date: Wed, 31 Oct 2018 09:31:25 +0200
+Subject: [PATCH V2 4/5] perf intel-pt: Insert callchain context into
+ synthesized callchains
+
+In the absence of a fallback, callchains must encode also the callchain
+context. Do that now there is no fallback.
+
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: stable@vger.kernel.org # 4.19
+---
 
 
-Thanks,
+Changes in V2:
 
-    Christoffer
+	Fix off-by-one error
 
-> +	} else {
-> +		phys_shift = KVM_PHYS_SHIFT;
-> +	}
-> +
->  	parange = read_sanitised_ftr_reg(SYS_ID_AA64MMFR0_EL1) & 7;
->  	if (parange > ID_AA64MMFR0_PARANGE_MAX)
->  		parange = ID_AA64MMFR0_PARANGE_MAX;
->  	vtcr |= parange << VTCR_EL2_PS_SHIFT;
->  
-> -	phys_shift = id_aa64mmfr0_parange_to_phys_shift(parange);
-> -	if (phys_shift > KVM_PHYS_SHIFT)
-> -		phys_shift = KVM_PHYS_SHIFT;
->  	vtcr |= VTCR_EL2_T0SZ(phys_shift);
->  	/*
->  	 * Use a minimum 2 level page table to prevent splitting
-> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-> index 07548de5c988..9b949efcfd32 100644
-> --- a/include/uapi/linux/kvm.h
-> +++ b/include/uapi/linux/kvm.h
-> @@ -750,6 +750,15 @@ struct kvm_ppc_resize_hpt {
->  
->  #define KVM_S390_SIE_PAGE_OFFSET 1
->  
-> +/*
-> + * On arm64, machine type can be used to request the physical
-> + * address size for the VM. Bits[7-0] are reserved for the guest
-> + * PA size shift (i.e, log2(PA_Size)). For backward compatibility,
-> + * value 0 implies the default IPA size, 40bits.
-> + */
-> +#define KVM_VM_TYPE_ARM_IPA_SIZE_MASK	0xffULL
-> +#define KVM_VM_TYPE_ARM_IPA_SIZE(x)		\
-> +	((x) & KVM_VM_TYPE_ARM_IPA_SIZE_MASK)
->  /*
->   * ioctls for /dev/kvm fds:
->   */
-> @@ -952,6 +961,7 @@ struct kvm_ppc_resize_hpt {
->  #define KVM_CAP_S390_HPAGE_1M 156
->  #define KVM_CAP_NESTED_STATE 157
->  #define KVM_CAP_ARM_INJECT_SERROR_ESR 158
-> +#define KVM_CAP_ARM_VM_IPA_SIZE 159 /* returns maximum IPA bits for a VM */
->  
->  #ifdef KVM_CAP_IRQ_ROUTING
->  
-> -- 
-> 2.19.0
-> 
-> _______________________________________________
-> kvmarm mailing list
-> kvmarm@lists.cs.columbia.edu
-> https://lists.cs.columbia.edu/mailman/listinfo/kvmarm
+
+ tools/perf/util/intel-pt.c     |  6 +++--
+ tools/perf/util/thread-stack.c | 44 +++++++++++++++++++++++++++-------
+ tools/perf/util/thread-stack.h |  2 +-
+ 3 files changed, 40 insertions(+), 12 deletions(-)
+
+diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
+index ffa385a029b3..60732213d16a 100644
+--- a/tools/perf/util/intel-pt.c
++++ b/tools/perf/util/intel-pt.c
+@@ -759,7 +759,8 @@ static struct intel_pt_queue *intel_pt_alloc_queue(struct intel_pt *pt,
+ 	if (pt->synth_opts.callchain) {
+ 		size_t sz = sizeof(struct ip_callchain);
+ 
+-		sz += pt->synth_opts.callchain_sz * sizeof(u64);
++		/* Add 1 to callchain_sz for callchain context */
++		sz += (pt->synth_opts.callchain_sz + 1) * sizeof(u64);
+ 		ptq->chain = zalloc(sz);
+ 		if (!ptq->chain)
+ 			goto out_free;
+@@ -1160,7 +1161,8 @@ static void intel_pt_prep_sample(struct intel_pt *pt,
+ 
+ 	if (pt->synth_opts.callchain) {
+ 		thread_stack__sample(ptq->thread, ptq->chain,
+-				     pt->synth_opts.callchain_sz, sample->ip);
++				     pt->synth_opts.callchain_sz + 1,
++				     sample->ip, pt->kernel_start);
+ 		sample->callchain = ptq->chain;
+ 	}
+ 
+diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
+index c091635bf7dc..61a4286a74dc 100644
+--- a/tools/perf/util/thread-stack.c
++++ b/tools/perf/util/thread-stack.c
+@@ -310,20 +310,46 @@ void thread_stack__free(struct thread *thread)
+ 	}
+ }
+ 
++static inline u64 callchain_context(u64 ip, u64 kernel_start)
++{
++	return ip < kernel_start ? PERF_CONTEXT_USER : PERF_CONTEXT_KERNEL;
++}
++
+ void thread_stack__sample(struct thread *thread, struct ip_callchain *chain,
+-			  size_t sz, u64 ip)
++			  size_t sz, u64 ip, u64 kernel_start)
+ {
+-	size_t i;
++	u64 context = callchain_context(ip, kernel_start);
++	u64 last_context;
++	size_t i, j;
+ 
+-	if (!thread || !thread->ts)
+-		chain->nr = 1;
+-	else
+-		chain->nr = min(sz, thread->ts->cnt + 1);
++	if (sz < 2) {
++		chain->nr = 0;
++		return;
++	}
+ 
+-	chain->ips[0] = ip;
++	chain->ips[0] = context;
++	chain->ips[1] = ip;
++
++	if (!thread || !thread->ts) {
++		chain->nr = 2;
++		return;
++	}
++
++	last_context = context;
++
++	for (i = 2, j = 1; i < sz && j <= thread->ts->cnt; i++, j++) {
++		ip = thread->ts->stack[thread->ts->cnt - j].ret_addr;
++		context = callchain_context(ip, kernel_start);
++		if (context != last_context) {
++			if (i >= sz - 1)
++				break;
++			chain->ips[i++] = context;
++			last_context = context;
++		}
++		chain->ips[i] = ip;
++	}
+ 
+-	for (i = 1; i < chain->nr; i++)
+-		chain->ips[i] = thread->ts->stack[thread->ts->cnt - i].ret_addr;
++	chain->nr = i;
+ }
+ 
+ struct call_return_processor *
+diff --git a/tools/perf/util/thread-stack.h b/tools/perf/util/thread-stack.h
+index b7e41c4ebfdd..f97c00a8c251 100644
+--- a/tools/perf/util/thread-stack.h
++++ b/tools/perf/util/thread-stack.h
+@@ -84,7 +84,7 @@ int thread_stack__event(struct thread *thread, u32 flags, u64 from_ip,
+ 			u64 to_ip, u16 insn_len, u64 trace_nr);
+ void thread_stack__set_trace_nr(struct thread *thread, u64 trace_nr);
+ void thread_stack__sample(struct thread *thread, struct ip_callchain *chain,
+-			  size_t sz, u64 ip);
++			  size_t sz, u64 ip, u64 kernel_start);
+ int thread_stack__flush(struct thread *thread);
+ void thread_stack__free(struct thread *thread);
+ size_t thread_stack__depth(struct thread *thread);
+-- 
+2.17.1
+
+
+--------------39258EA51B193AEA822AE914--
