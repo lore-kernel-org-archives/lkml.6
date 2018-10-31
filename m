@@ -4,44 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03AB0C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:41:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20CA3C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:41:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEC0F20664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:41:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF3BA20664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:41:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yuOratOF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEC0F20664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="v2HvWolh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF3BA20664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729635AbeKAIl4 (ORCPT
+        id S1729372AbeKAIIB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:41:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56512 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:08:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729304AbeKAIIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:08:04 -0400
+        id S1729279AbeKAIH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:07:58 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCA6D20843;
-        Wed, 31 Oct 2018 23:07:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC5FE2084A;
+        Wed, 31 Oct 2018 23:07:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027273;
-        bh=IPq/2lgfLKUrjyz9hFxEXVQvLlf+pd1XazmRXOghw7s=;
+        s=default; t=1541027267;
+        bh=eKk3LOdiVi61SDrRwQoeokGi/E2eiRS6C+6EtuZXkO4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yuOratOFibD6b5sxFBIvWk/avkyR07XYtZ62mK+QQ1DmyyS3uG+Rk9zGwqYRB6XRL
-         eoltwoMTp4mmnBKSoN/7VnqrF2SFjUkXSVDClknbsvlBs4hO6Nuu6u9YYiCH9cq8Lb
-         +9YL4x0v9l0FLF7X35kK7Lg9eBRRYMydIrnTlFyg=
+        b=v2HvWolhnidShDo6ZjSkXeCWpMpAvVfGWCmXvdZd/3KgRENBT5XGAWIqDv5gKqQaC
+         xDHFLaUYw/eOl0pNgmqgScvtw7jd0fv5rpJyIGnepKQZa89EzznigEiLJ5xgF65GHd
+         Ban+QhN9ODYamlW+fN5/uB8pu4mQilk+2VNWq594=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 146/146] ALSA: hda: Check the non-cached stream buffers more explicitly
-Date:   Wed, 31 Oct 2018 19:05:41 -0400
-Message-Id: <20181031230541.28822-146-sashal@kernel.org>
+Cc:     Zhikang Zhang <zhangzhikang1@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 139/146] f2fs: avoid sleeping under spin_lock
+Date:   Wed, 31 Oct 2018 19:05:34 -0400
+Message-Id: <20181031230541.28822-139-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -50,82 +53,249 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Zhikang Zhang <zhangzhikang1@huawei.com>
 
-[ Upstream commit 78c9be61c3a5cd9e2439fd27a5ffad73a81958c7 ]
+[ Upstream commit b430f7263673eab1dc40e662ae3441a9619d16b8 ]
 
-Introduce a new flag, uc_buffer, to indicate that the controller
-requires the non-cached pages for stream buffers, either as a
-chip-specific requirement or specified via snoop=0 option.
-This improves the code-readability.
+In the call trace below, we might sleep in function dput().
 
-Also, this patch fixes the incorrect behavior for C-Media chip where
-the stream buffers were never handled as non-cached due to the check
-of driver_type even if you pass snoop=0 option.
+So in order to avoid sleeping under spin_lock, we remove f2fs_mark_inode_dirty_sync
+from __try_update_largest_extent && __drop_largest_extent.
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+BUG: sleeping function called from invalid context at fs/dcache.c:796
+Call trace:
+	dump_backtrace+0x0/0x3f4
+	show_stack+0x24/0x30
+	dump_stack+0xe0/0x138
+	___might_sleep+0x2a8/0x2c8
+	__might_sleep+0x78/0x10c
+	dput+0x7c/0x750
+	block_dump___mark_inode_dirty+0x120/0x17c
+	__mark_inode_dirty+0x344/0x11f0
+	f2fs_mark_inode_dirty_sync+0x40/0x50
+	__insert_extent_tree+0x2e0/0x2f4
+	f2fs_update_extent_tree_range+0xcf4/0xde8
+	f2fs_update_extent_cache+0x114/0x12c
+	f2fs_update_data_blkaddr+0x40/0x50
+	write_data_page+0x150/0x314
+	do_write_data_page+0x648/0x2318
+	__write_data_page+0xdb4/0x1640
+	f2fs_write_cache_pages+0x768/0xafc
+	__f2fs_write_data_pages+0x590/0x1218
+	f2fs_write_data_pages+0x64/0x74
+	do_writepages+0x74/0xe4
+	__writeback_single_inode+0xdc/0x15f0
+	writeback_sb_inodes+0x574/0xc98
+	__writeback_inodes_wb+0x190/0x204
+	wb_writeback+0x730/0xf14
+	wb_check_old_data_flush+0x1bc/0x1c8
+	wb_workfn+0x554/0xf74
+	process_one_work+0x440/0x118c
+	worker_thread+0xac/0x974
+	kthread+0x1a0/0x1c8
+	ret_from_fork+0x10/0x1c
+
+Signed-off-by: Zhikang Zhang <zhangzhikang1@huawei.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/hda_controller.h |  1 +
- sound/pci/hda/hda_intel.c      | 11 ++++++++---
- 2 files changed, 9 insertions(+), 3 deletions(-)
+ fs/f2fs/extent_cache.c | 51 ++++++++++++++++++++++++++----------------
+ fs/f2fs/f2fs.h         |  7 +++---
+ 2 files changed, 36 insertions(+), 22 deletions(-)
 
-diff --git a/sound/pci/hda/hda_controller.h b/sound/pci/hda/hda_controller.h
-index a68e75b00ea3..53c3cd28bc99 100644
---- a/sound/pci/hda/hda_controller.h
-+++ b/sound/pci/hda/hda_controller.h
-@@ -160,6 +160,7 @@ struct azx {
- 	unsigned int msi:1;
- 	unsigned int probing:1; /* codec probing phase */
- 	unsigned int snoop:1;
-+	unsigned int uc_buffer:1; /* non-cached pages for stream buffers */
- 	unsigned int align_buffer_size:1;
- 	unsigned int region_requested:1;
- 	unsigned int disabled:1; /* disabled by vga_switcheroo */
-diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-index aa4c672dbaf7..e54e8a552111 100644
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -412,7 +412,7 @@ static void __mark_pages_wc(struct azx *chip, struct snd_dma_buffer *dmab, bool
- #ifdef CONFIG_SND_DMA_SGBUF
- 	if (dmab->dev.type == SNDRV_DMA_TYPE_DEV_SG) {
- 		struct snd_sg_buf *sgbuf = dmab->private_data;
--		if (chip->driver_type == AZX_DRIVER_CMEDIA)
-+		if (!chip->uc_buffer)
- 			return; /* deal with only CORB/RIRB buffers */
- 		if (on)
- 			set_pages_array_wc(sgbuf->page_table, sgbuf->pages);
-@@ -1678,6 +1678,7 @@ static void azx_check_snoop_available(struct azx *chip)
- 		dev_info(chip->card->dev, "Force to %s mode by module option\n",
- 			 snoop ? "snoop" : "non-snoop");
- 		chip->snoop = snoop;
-+		chip->uc_buffer = !snoop;
- 		return;
+diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+index 231b77ef5a53..a70cd2580eae 100644
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -308,14 +308,13 @@ static unsigned int __free_extent_tree(struct f2fs_sb_info *sbi,
+ 	return count - atomic_read(&et->node_cnt);
+ }
+ 
+-static void __drop_largest_extent(struct inode *inode,
++static void __drop_largest_extent(struct extent_tree *et,
+ 					pgoff_t fofs, unsigned int len)
+ {
+-	struct extent_info *largest = &F2FS_I(inode)->extent_tree->largest;
+-
+-	if (fofs < largest->fofs + largest->len && fofs + len > largest->fofs) {
+-		largest->len = 0;
+-		f2fs_mark_inode_dirty_sync(inode, true);
++	if (fofs < et->largest.fofs + et->largest.len &&
++			fofs + len > et->largest.fofs) {
++		et->largest.len = 0;
++		et->largest_updated = true;
  	}
+ }
  
-@@ -1698,8 +1699,12 @@ static void azx_check_snoop_available(struct azx *chip)
- 		snoop = false;
+@@ -416,12 +415,11 @@ static bool f2fs_lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
+ 	return ret;
+ }
  
- 	chip->snoop = snoop;
--	if (!snoop)
-+	if (!snoop) {
- 		dev_info(chip->card->dev, "Force to non-snoop mode\n");
-+		/* C-Media requires non-cached pages only for CORB/RIRB */
-+		if (chip->driver_type != AZX_DRIVER_CMEDIA)
-+			chip->uc_buffer = true;
+-static struct extent_node *__try_merge_extent_node(struct inode *inode,
++static struct extent_node *__try_merge_extent_node(struct f2fs_sb_info *sbi,
+ 				struct extent_tree *et, struct extent_info *ei,
+ 				struct extent_node *prev_ex,
+ 				struct extent_node *next_ex)
+ {
+-	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct extent_node *en = NULL;
+ 
+ 	if (prev_ex && __is_back_mergeable(ei, &prev_ex->ei)) {
+@@ -443,7 +441,7 @@ static struct extent_node *__try_merge_extent_node(struct inode *inode,
+ 	if (!en)
+ 		return NULL;
+ 
+-	__try_update_largest_extent(inode, et, en);
++	__try_update_largest_extent(et, en);
+ 
+ 	spin_lock(&sbi->extent_lock);
+ 	if (!list_empty(&en->list)) {
+@@ -454,12 +452,11 @@ static struct extent_node *__try_merge_extent_node(struct inode *inode,
+ 	return en;
+ }
+ 
+-static struct extent_node *__insert_extent_tree(struct inode *inode,
++static struct extent_node *__insert_extent_tree(struct f2fs_sb_info *sbi,
+ 				struct extent_tree *et, struct extent_info *ei,
+ 				struct rb_node **insert_p,
+ 				struct rb_node *insert_parent)
+ {
+-	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct rb_node **p;
+ 	struct rb_node *parent = NULL;
+ 	struct extent_node *en = NULL;
+@@ -476,7 +473,7 @@ static struct extent_node *__insert_extent_tree(struct inode *inode,
+ 	if (!en)
+ 		return NULL;
+ 
+-	__try_update_largest_extent(inode, et, en);
++	__try_update_largest_extent(et, en);
+ 
+ 	/* update in global extent list */
+ 	spin_lock(&sbi->extent_lock);
+@@ -497,6 +494,7 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
+ 	struct rb_node **insert_p = NULL, *insert_parent = NULL;
+ 	unsigned int end = fofs + len;
+ 	unsigned int pos = (unsigned int)fofs;
++	bool updated = false;
+ 
+ 	if (!et)
+ 		return;
+@@ -517,7 +515,7 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
+ 	 * drop largest extent before lookup, in case it's already
+ 	 * been shrunk from extent tree
+ 	 */
+-	__drop_largest_extent(inode, fofs, len);
++	__drop_largest_extent(et, fofs, len);
+ 
+ 	/* 1. lookup first extent node in range [fofs, fofs + len - 1] */
+ 	en = (struct extent_node *)f2fs_lookup_rb_tree_ret(&et->root,
+@@ -550,7 +548,7 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
+ 				set_extent_info(&ei, end,
+ 						end - dei.fofs + dei.blk,
+ 						org_end - end);
+-				en1 = __insert_extent_tree(inode, et, &ei,
++				en1 = __insert_extent_tree(sbi, et, &ei,
+ 							NULL, NULL);
+ 				next_en = en1;
+ 			} else {
+@@ -570,7 +568,7 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
+ 		}
+ 
+ 		if (parts)
+-			__try_update_largest_extent(inode, et, en);
++			__try_update_largest_extent(et, en);
+ 		else
+ 			__release_extent_node(sbi, et, en);
+ 
+@@ -590,15 +588,16 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
+ 	if (blkaddr) {
+ 
+ 		set_extent_info(&ei, fofs, blkaddr, len);
+-		if (!__try_merge_extent_node(inode, et, &ei, prev_en, next_en))
+-			__insert_extent_tree(inode, et, &ei,
++		if (!__try_merge_extent_node(sbi, et, &ei, prev_en, next_en))
++			__insert_extent_tree(sbi, et, &ei,
+ 						insert_p, insert_parent);
+ 
+ 		/* give up extent_cache, if split and small updates happen */
+ 		if (dei.len >= 1 &&
+ 				prev.len < F2FS_MIN_EXTENT_LEN &&
+ 				et->largest.len < F2FS_MIN_EXTENT_LEN) {
+-			__drop_largest_extent(inode, 0, UINT_MAX);
++			et->largest.len = 0;
++			et->largest_updated = true;
+ 			set_inode_flag(inode, FI_NO_EXTENT);
+ 		}
+ 	}
+@@ -606,7 +605,15 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
+ 	if (is_inode_flag_set(inode, FI_NO_EXTENT))
+ 		__free_extent_tree(sbi, et);
+ 
++	if (et->largest_updated) {
++		et->largest_updated = false;
++		updated = true;
 +	}
++
+ 	write_unlock(&et->lock);
++
++	if (updated)
++		f2fs_mark_inode_dirty_sync(inode, true);
  }
  
- static void azx_probe_work(struct work_struct *work)
-@@ -2138,7 +2143,7 @@ static void pcm_mmap_prepare(struct snd_pcm_substream *substream,
- #ifdef CONFIG_X86
- 	struct azx_pcm *apcm = snd_pcm_substream_chip(substream);
- 	struct azx *chip = apcm->chip;
--	if (!azx_snoop(chip) && chip->driver_type != AZX_DRIVER_CMEDIA)
-+	if (chip->uc_buffer)
- 		area->vm_page_prot = pgprot_writecombine(area->vm_page_prot);
- #endif
+ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink)
+@@ -705,6 +712,7 @@ void f2fs_drop_extent_tree(struct inode *inode)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct extent_tree *et = F2FS_I(inode)->extent_tree;
++	bool updated = false;
+ 
+ 	if (!f2fs_may_extent_tree(inode))
+ 		return;
+@@ -713,8 +721,13 @@ void f2fs_drop_extent_tree(struct inode *inode)
+ 
+ 	write_lock(&et->lock);
+ 	__free_extent_tree(sbi, et);
+-	__drop_largest_extent(inode, 0, UINT_MAX);
++	if (et->largest.len) {
++		et->largest.len = 0;
++		updated = true;
++	}
+ 	write_unlock(&et->lock);
++	if (updated)
++		f2fs_mark_inode_dirty_sync(inode, true);
  }
+ 
+ void f2fs_destroy_extent_tree(struct inode *inode)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index abf925664d9c..e146e6c443e8 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -572,6 +572,7 @@ struct extent_tree {
+ 	struct list_head list;		/* to be used by sbi->zombie_list */
+ 	rwlock_t lock;			/* protect extent info rb-tree */
+ 	atomic_t node_cnt;		/* # of extent node in rb-tree*/
++	bool largest_updated;		/* largest extent updated */
+ };
+ 
+ /*
+@@ -754,12 +755,12 @@ static inline bool __is_front_mergeable(struct extent_info *cur,
+ }
+ 
+ extern void f2fs_mark_inode_dirty_sync(struct inode *inode, bool sync);
+-static inline void __try_update_largest_extent(struct inode *inode,
+-			struct extent_tree *et, struct extent_node *en)
++static inline void __try_update_largest_extent(struct extent_tree *et,
++						struct extent_node *en)
+ {
+ 	if (en->ei.len > et->largest.len) {
+ 		et->largest = en->ei;
+-		f2fs_mark_inode_dirty_sync(inode, true);
++		et->largest_updated = true;
+ 	}
+ }
+ 
 -- 
 2.17.1
 
