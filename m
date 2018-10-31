@@ -7,141 +7,83 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B05ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F5AFECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EC8220840
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F12182084A
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nHEt7r4D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EC8220840
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dc02qJ6C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F12182084A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730520AbeKAIJf (ORCPT
+        id S1730534AbeKAIJg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:09:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59492 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:09:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729063AbeKAIJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:09:32 -0400
+        id S1730517AbeKAIJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:09:35 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20CC520664;
-        Wed, 31 Oct 2018 23:09:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0AFE720664;
+        Wed, 31 Oct 2018 23:09:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027360;
-        bh=++X5Yn8sFko6tNfAWfirVz2VbCNRT51+Q+00y68Xhaw=;
+        s=default; t=1541027364;
+        bh=DrvpFuZ8C1WZGOUneKjTLBox+gqu0umAjhbt2Uiu8rA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nHEt7r4DaGUQLdOzVAqK68zU+JUklbt4ioc4elD7Yz4GCG/ukfZOKlHAj1x9rRehM
-         2Yt79JkoY0VYNVtRdl1OauOmneMWphR197sWREzM1kE13zfpF9O6R1LDIIiR3zm3Gx
-         OC1bZfW/04XJ9qH7yy7wiuaufyAxxIH9Jr8HphCI=
+        b=dc02qJ6CkW6cJ5E9ErXttMSv585JiLGc9Bh1hWoowSRcFVrFRbf15rVSNsBZoTrD0
+         0Fzmw4765Q/TIqZJONvTlz8PvhfbRP5Gm4gz36P1I/KQinsHif5vl+kqWfZ2eniVM0
+         reDhJBu3gv+DkXdNz1FpCsyiMPmBnpRpFvIuc1X0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dexuan Cui <decui@microsoft.com>,
-        "K . Y . Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Stable@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     Lina Iyer <ilina@codeaurora.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 094/126] Drivers: hv: vmbus: Use cpumask_var_t for on-stack cpu mask
-Date:   Wed, 31 Oct 2018 19:07:22 -0400
-Message-Id: <20181031230754.29029-94-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 099/126] irqchip/pdc: Setup all edge interrupts as rising edge at GIC
+Date:   Wed, 31 Oct 2018 19:07:27 -0400
+Message-Id: <20181031230754.29029-99-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dexuan Cui <decui@microsoft.com>
+From: Lina Iyer <ilina@codeaurora.org>
 
-[ Upstream commit 25355252607ca288f329ee033f387764883393f6 ]
+[ Upstream commit 7bae48b22c8d38c5cd50f52b6e15d134e2bb3935 ]
 
-A cpumask structure on the stack can cause a warning with
-CONFIG_NR_CPUS=8192 (e.g. Ubuntu 16.04 and 18.04 use this):
+The PDC irqchp can convert a falling edge or level low interrupt to a
+rising edge or level high interrupt at the GIC. We just need to setup
+the GIC correctly. Set up the interrupt type for the IRQ_TYPE_EDGE_BOTH
+as IRQ_TYPE_EDGE_RISING at the GIC.
 
-drivers/hv//channel_mgmt.c: In function ‘init_vp_index’:
-drivers/hv//channel_mgmt.c:702:1: warning: the frame size of 1032 bytes
-  is larger than 1024 bytes [-Wframe-larger-than=]
-
-Nowadays it looks most distros enable CONFIG_CPUMASK_OFFSTACK=y, and
-hence we can work around the warning by using cpumask_var_t.
-
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: f55c73aef890 ("irqchip/pdc: Add PDC interrupt controller for QCOM SoCs")
+Reported-by: Evan Green <evgreen@chromium.org>
+Reviewed-by: Evan Green <evgreen@chromium.org>
+Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hv/channel_mgmt.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ drivers/irqchip/qcom-pdc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/hv/channel_mgmt.c b/drivers/hv/channel_mgmt.c
-index 0f0e091c117c..c4a1ebcfffb6 100644
---- a/drivers/hv/channel_mgmt.c
-+++ b/drivers/hv/channel_mgmt.c
-@@ -606,16 +606,18 @@ static void init_vp_index(struct vmbus_channel *channel, u16 dev_type)
- 	bool perf_chn = vmbus_devs[dev_type].perf_device;
- 	struct vmbus_channel *primary = channel->primary_channel;
- 	int next_node;
--	struct cpumask available_mask;
-+	cpumask_var_t available_mask;
- 	struct cpumask *alloced_mask;
- 
- 	if ((vmbus_proto_version == VERSION_WS2008) ||
--	    (vmbus_proto_version == VERSION_WIN7) || (!perf_chn)) {
-+	    (vmbus_proto_version == VERSION_WIN7) || (!perf_chn) ||
-+	    !alloc_cpumask_var(&available_mask, GFP_KERNEL)) {
- 		/*
- 		 * Prior to win8, all channel interrupts are
- 		 * delivered on cpu 0.
- 		 * Also if the channel is not a performance critical
- 		 * channel, bind it to cpu 0.
-+		 * In case alloc_cpumask_var() fails, bind it to cpu 0.
- 		 */
- 		channel->numa_node = 0;
- 		channel->target_cpu = 0;
-@@ -653,7 +655,7 @@ static void init_vp_index(struct vmbus_channel *channel, u16 dev_type)
- 		cpumask_clear(alloced_mask);
- 	}
- 
--	cpumask_xor(&available_mask, alloced_mask,
-+	cpumask_xor(available_mask, alloced_mask,
- 		    cpumask_of_node(primary->numa_node));
- 
- 	cur_cpu = -1;
-@@ -671,10 +673,10 @@ static void init_vp_index(struct vmbus_channel *channel, u16 dev_type)
- 	}
- 
- 	while (true) {
--		cur_cpu = cpumask_next(cur_cpu, &available_mask);
-+		cur_cpu = cpumask_next(cur_cpu, available_mask);
- 		if (cur_cpu >= nr_cpu_ids) {
- 			cur_cpu = -1;
--			cpumask_copy(&available_mask,
-+			cpumask_copy(available_mask,
- 				     cpumask_of_node(primary->numa_node));
- 			continue;
- 		}
-@@ -704,6 +706,8 @@ static void init_vp_index(struct vmbus_channel *channel, u16 dev_type)
- 
- 	channel->target_cpu = cur_cpu;
- 	channel->target_vp = hv_cpu_number_to_vp_number(cur_cpu);
-+
-+	free_cpumask_var(available_mask);
- }
- 
- static void vmbus_wait_for_unload(void)
+diff --git a/drivers/irqchip/qcom-pdc.c b/drivers/irqchip/qcom-pdc.c
+index b1b47a40a278..faa7d61b9d6c 100644
+--- a/drivers/irqchip/qcom-pdc.c
++++ b/drivers/irqchip/qcom-pdc.c
+@@ -124,6 +124,7 @@ static int qcom_pdc_gic_set_type(struct irq_data *d, unsigned int type)
+ 		break;
+ 	case IRQ_TYPE_EDGE_BOTH:
+ 		pdc_type = PDC_EDGE_DUAL;
++		type = IRQ_TYPE_EDGE_RISING;
+ 		break;
+ 	case IRQ_TYPE_LEVEL_HIGH:
+ 		pdc_type = PDC_LEVEL_HIGH;
 -- 
 2.17.1
 
