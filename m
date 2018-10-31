@@ -2,139 +2,178 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.4 required=3.0 tests=CHARSET_FARAWAY_HEADER,
-	FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D87C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 04:01:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F018FECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 04:03:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2636E20657
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 04:01:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2636E20657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=xiaomi.com
+	by mail.kernel.org (Postfix) with ESMTP id B49E12081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 04:03:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B49E12081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729021AbeJaM4I (ORCPT
+        id S1729039AbeJaM77 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 08:56:08 -0400
-Received: from outboundhk.mxmail.xiaomi.com ([207.226.244.126]:47422 "EHLO
-        outboundhk.mxmail.xiaomi.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728467AbeJaM4I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 08:56:08 -0400
-X-AuditID: 0a3808ce-4c9ff70000012663-7f-5bd928413013
-Received: from xiaomi.com (cnbox9.mioffice.cn [10.237.8.149])
-        by outboundhk.mxmail.xiaomi.com (xiaomi.com) with SMTP id 18.08.09827.14829DB5; Wed, 31 Oct 2018 11:57:53 +0800 (HKT)
-Received: from CNBOX2.mioffice.cn (10.237.8.142) by CNBOX9.mioffice.cn
- (10.237.8.149) with Microsoft SMTP Server (TLS) id 15.0.1365.1; Wed, 31 Oct
- 2018 11:57:52 +0800
-Received: from CNBOX2.mioffice.cn ([fe80::212f:6b18:4f64:d874]) by
- cnbox2.mioffice.cn ([fe80::212f:6b18:4f64:d874%20]) with mapi id
- 15.00.1365.000; Wed, 31 Oct 2018 11:57:52 +0800
-From:   =?gb2312?B?UGVuZzE1IFdhbmcgzfXF9A==?= <wangpeng15@xiaomi.com>
-To:     Joel Fernandes <joel@joelfernandes.org>,
-        Kees Cook <keescook@chromium.org>
-CC:     Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        "Tony Luck" <tony.luck@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "vipwangerxiao@gmail.com" <vipwangerxiao@gmail.com>
-Subject: Re: [PATCH v4] pstore: Avoid duplicate call of persistent_ram_zap()
-Thread-Topic: [PATCH v4] pstore: Avoid duplicate call of persistent_ram_zap()
-Thread-Index: AQHUcCWUM4rhaZU8CEaPf5LcErlgeaU3y1YAgAAEB4CAAAaIgIAA4+op
-Date:   Wed, 31 Oct 2018 03:57:51 +0000
-Message-ID: <1540958265198.28846@xiaomi.com>
-References: <20181030075234.21137-1-wangpeng15@xiaomi.com>
- <20181030213818.GA32621@google.com>
- <CAGXu5j+tRWseaecob04U5iXHa-P_z=Hvj3PmhE5YWFUO=LT7Sw@mail.gmail.com>,<20181030221605.GA44036@joelaf.mtv.corp.google.com>
-In-Reply-To: <20181030221605.GA44036@joelaf.mtv.corp.google.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.237.91.193]
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        Wed, 31 Oct 2018 08:59:59 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45060 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728467AbeJaM76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 08:59:58 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 350EF3DD47;
+        Wed, 31 Oct 2018 04:03:41 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-22.pek2.redhat.com [10.72.8.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7C8921054FD3;
+        Wed, 31 Oct 2018 04:03:35 +0000 (UTC)
+Date:   Wed, 31 Oct 2018 12:03:30 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     syzbot <syzbot+3701447012fe951dabb2@syzkaller.appspotmail.com>
+Cc:     axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: upstream boot error (2)
+Message-ID: <20181031040329.GA23429@ming.t460p>
+References: <000000000000ccd7e80579737060@google.com>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBIsWRmVeSWpSXmKPExsXC9ZZjqq6jxs1og8YV2hYHt2pabN/4jdVi
-        WYOqxZnuXIvLu+awWby5cI/F4uTP5awO7B7bdm9j9ZjdcJHFY0L/J0aPnbPusnss3vOSyWPh
-        p6+sHp83yQWwR3HZpKTmZJalFunbJXBlPLr/ka2gT7Vi2cx3TA2MU1S6GDk5JARMJFZf2sbe
-        xcjFISSwlVHiwNE+FpCEkMAqRolXt2IgEtsZJZYuPM0GkmATcJZY/+Y0I4gtIuAnsaN3MhNI
-        EbPASUaJjXvvsIMkhAV8JPbNh5gkIuArsXZ3N5TtJvHp5hUwm0VAVeL0549gQ3kFdCRe9f9n
-        hdh8m1Fi8qVaEJtTwEHi3v0LTCA2o4CsxNWWbWD1zALiEreezGeCeEFAYsme88wQtqjEy8f/
-        WCFsA4mtS/exQNiKEtOX3Yfq1ZKY1/CbCcJWlJjS/ZAd4gZBiZMzn7BMYBSfhWTFLCQts5C0
-        zELSsoCRZRWjZEZ+Xno2EBcXJOYa6uVm5qelZSan6iXnbWIExa8Fx7kdjBPepR5iFOBgVOLh
-        fZB8I1qINbGsuDL3EKMEB7OSCO/UCqAQb0piZVVqUX58UWlOavEhRmkOFiVxXoPGA9FCAumJ
-        JanZqakFqUUwWSYOTqkGxuP3f9vJ5jNX+G+484qv47xORNDGVJfcqOCcKsWdMnufpu9p/eej
-        dX3yVZeVOVsOtTRX3wkVDrx4szZRfenzV3IiofZhc663nZ0Xpcsi07XR9dWXz9dtU3Qbftev
-        25/wvkgklU3x0Onnhj8DmP9HPz7M/3DNAaOYL8vyTr/b1BH0i6+2z4CzQImlOCPRUIu5qDgR
-        APvh9cfbAgAA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000ccd7e80579737060@google.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 31 Oct 2018 04:03:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cj5Gcm9tOiBKb2VsIEZlcm5hbmRlcyA8am9lbEBqb2VsZmVybmFuZGVzLm9yZz4KPlNlbnQ6IFdl
-ZG5lc2RheSwgT2N0b2JlciAzMSwgMjAxOCA2OjE2Cj5UbzogS2VlcyBDb29rCj5DYzogUGVuZzE1
-IFdhbmcgzfXF9DsgQW50b24gVm9yb250c292OyBDb2xpbiBDcm9zczsgVG9ueSBMdWNrOyBMS01M
-OyB2aXB3YW5nZXJ4aWFvQGdtYWlsLmNvbQo+U3ViamVjdDogUmU6IFtQQVRDSCB2NF0gcHN0b3Jl
-OiBBdm9pZCBkdXBsaWNhdGUgY2FsbCBvZiBwZXJzaXN0ZW50X3JhbV96YXAoKQo+Cj5PbiBUdWUs
-IE9jdCAzMCwgMjAxOCBhdCAwMjo1Mjo0M1BNIC0wNzAwLCBLZWVzIENvb2sgd3JvdGU6Cj4+IE9u
-IFR1ZSwgT2N0IDMwLCAyMDE4IGF0IDI6MzggUE0sIEpvZWwgRmVybmFuZGVzIDxqb2VsQGpvZWxm
-ZXJuYW5kZXMub3JnPiB3cm90ZToKPj4gPiBPbiBUdWUsIE9jdCAzMCwgMjAxOCBhdCAwMzo1Mjoz
-NFBNICswODAwLCBQZW5nIFdhbmcgd3JvdGU6Cj4+ID4+IFdoZW4gaW5pdGlhbGluZyBwcnogd2l0
-aCBpbnZhbGlkIGRhdGEgaW4gYnVmZmVyKG5vIFBFUlNJU1RFTlRfUkFNX1NJRyksCj4+ID4+IGZ1
-bmN0aW9uIGNhbGwgcGF0aCBpcyBsaWtlIHRoaXM6Cj4+ID4+Cj4+ID4+IHJhbW9vcHNfaW5pdF9w
-cnogLT4KPj4gPj4gfAo+PiA+PiB8LT4gcGVyc2lzdGVudF9yYW1fbmV3IC0+IHBlcnNpc3RlbnRf
-cmFtX3Bvc3RfaW5pdCAtPiBwZXJzaXN0ZW50X3JhbV96YXAKPj4gPj4gfAo+PiA+PiB8LT4gcGVy
-c2lzdGVudF9yYW1femFwCj4+ID4+Cj4+ID4+IEFzIHdlIGNhbiBzZWUsIHBlcnNpc3RlbnRfcmFt
-X3phcCgpIGlzIGNhbGxlZCB0d2ljZS4KPj4gPj4gV2UgY2FuIGF2b2lkIHRoaXMgYnkgYWRkaW5n
-IGFuIG9wdGlvbiB0byBwZXJzaXN0ZW50X3JhbV9uZXcoKSwgYW5kCj4+ID4+IG9ubHkgY2FsbCBw
-ZXJzaXN0ZW50X3JhbV96YXAoKSB3aGVuIGl0IGlzIG5lZWRlZC4KPj4gPj4KPj4gPj4gU2lnbmVk
-LW9mZi1ieTogUGVuZyBXYW5nIDx3YW5ncGVuZzE1QHhpYW9taS5jb20+Cj4+ID4+IC0tLQo+PiA+
-PiAgZnMvcHN0b3JlL3JhbS5jICAgICAgICAgICAgfCA0ICstLS0KPj4gPj4gIGZzL3BzdG9yZS9y
-YW1fY29yZS5jICAgICAgIHwgNSArKystLQo+PiA+PiAgaW5jbHVkZS9saW51eC9wc3RvcmVfcmFt
-LmggfCAxICsKPj4gPj4gIDMgZmlsZXMgY2hhbmdlZCwgNSBpbnNlcnRpb25zKCspLCA1IGRlbGV0
-aW9ucygtKQo+PiA+Pgo+PiA+PiBkaWZmIC0tZ2l0IGEvZnMvcHN0b3JlL3JhbS5jIGIvZnMvcHN0
-b3JlL3JhbS5jCj4+ID4+IGluZGV4IGZmY2ZmNjUxNmU4OS4uYjUxOTAxZjk3ZGMyIDEwMDY0NAo+
-PiA+PiAtLS0gYS9mcy9wc3RvcmUvcmFtLmMKPj4gPj4gKysrIGIvZnMvcHN0b3JlL3JhbS5jCj4+
-ID4+IEBAIC02NDAsNyArNjQwLDcgQEAgc3RhdGljIGludCByYW1vb3BzX2luaXRfcHJ6KGNvbnN0
-IGNoYXIgKm5hbWUsCj4+ID4+Cj4+ID4+ICAgICAgIGxhYmVsID0ga2FzcHJpbnRmKEdGUF9LRVJO
-RUwsICJyYW1vb3BzOiVzIiwgbmFtZSk7Cj4+ID4+ICAgICAgICpwcnogPSBwZXJzaXN0ZW50X3Jh
-bV9uZXcoKnBhZGRyLCBzeiwgc2lnLCAmY3h0LT5lY2NfaW5mbywKPj4gPj4gLSAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICBjeHQtPm1lbXR5cGUsIDAsIGxhYmVsKTsKPj4gPj4gKyAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICBjeHQtPm1lbXR5cGUsIFBSWl9GTEFHX1pBUF9PTEQs
-IGxhYmVsKTsKPj4gPj4gICAgICAgaWYgKElTX0VSUigqcHJ6KSkgewo+PiA+PiAgICAgICAgICAg
-ICAgIGludCBlcnIgPSBQVFJfRVJSKCpwcnopOwo+PiA+Cj4+ID4gTG9va3MgZ29vZCB0byBtZSBl
-eGNlcHQgdGhlIG1pbm9yIGNvbW1lbnQgYmVsb3c6Cj4+ID4KPj4gPj4KPj4gPj4gQEAgLTY0OSw4
-ICs2NDksNiBAQCBzdGF0aWMgaW50IHJhbW9vcHNfaW5pdF9wcnooY29uc3QgY2hhciAqbmFtZSwK
-Pj4gPj4gICAgICAgICAgICAgICByZXR1cm4gZXJyOwo+PiA+PiAgICAgICB9Cj4+ID4+Cj4+ID4+
-IC0gICAgIHBlcnNpc3RlbnRfcmFtX3phcCgqcHJ6KTsKPj4gPj4gLQo+PiA+PiAgICAgICAqcGFk
-ZHIgKz0gc3o7Cj4+ID4+Cj4+ID4+ICAgICAgIHJldHVybiAwOwo+PiA+PiBkaWZmIC0tZ2l0IGEv
-ZnMvcHN0b3JlL3JhbV9jb3JlLmMgYi9mcy9wc3RvcmUvcmFtX2NvcmUuYwo+PiA+PiBpbmRleCAx
-MmUyMWY3ODkxOTQuLjJlZGVkZDFlYTFjMiAxMDA2NDQKPj4gPj4gLS0tIGEvZnMvcHN0b3JlL3Jh
-bV9jb3JlLmMKPj4gPj4gKysrIGIvZnMvcHN0b3JlL3JhbV9jb3JlLmMKPj4gPj4gQEAgLTUwNSwx
-NSArNTA1LDE2IEBAIHN0YXRpYyBpbnQgcGVyc2lzdGVudF9yYW1fcG9zdF9pbml0KHN0cnVjdCBw
-ZXJzaXN0ZW50X3JhbV96b25lICpwcnosIHUzMiBzaWcsCj4+ID4+ICAgICAgICAgICAgICAgICAg
-ICAgICBwcl9kZWJ1ZygiZm91bmQgZXhpc3RpbmcgYnVmZmVyLCBzaXplICV6dSwgc3RhcnQgJXp1
-XG4iLAo+PiA+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYnVmZmVyX3NpemUocHJ6
-KSwgYnVmZmVyX3N0YXJ0KHByeikpOwo+PiA+PiAgICAgICAgICAgICAgICAgICAgICAgcGVyc2lz
-dGVudF9yYW1fc2F2ZV9vbGQocHJ6KTsKPj4gPj4gLSAgICAgICAgICAgICAgICAgICAgIHJldHVy
-biAwOwo+PiA+PiArICAgICAgICAgICAgICAgICAgICAgaWYgKCEocHJ6LT5mbGFncyAmIFBSWl9G
-TEFHX1pBUF9PTEQpKQo+PiA+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4g
-MDsKPj4gPgo+PiA+IFRoaXMgY291bGQgYmUgd3JpdHRlbiBkaWZmZXJlbnRseS4KPj4gPgo+PiA+
-IFdlIGNvdWxkIGp1c3QgZG86Cj4+ID4KPj4gPiBpZiAocHJ6LT5mbGFncyAmIFBSWl9GTEFHX1pB
-UF9PTEQpCj4+ID4gICAgICAgICBwZXJzaXN0ZW50X3JhbV96YXAocHJ6KTsKPj4gPgo+PiA+IEFu
-ZCByZW1vdmUgdGhlIHphcCBmcm9tIGJlbG93IGJlbG93Lgo+Pgo+PiBJIGFjdHVhbGx5IHJlYXJy
-YW5nZWQgdGhpbmdzIGEgbGl0dGxlIHRvIGF2b2lkIGFkZGl0aW9uYWwgcm91bmQtdHJpcHMKPj4g
-b24gdGhlIG1haWxpbmcgbGlzdC4gOikKPj4KPj4gPiBTaW5jZSBLZWVzIGFscmVhZHkgdG9vayB0
-aGlzIHBhdGNoLCBJIGNhbiBqdXN0IHBhdGNoIHRoaXMgaW4gbXkgc2VyaWVzIGlmCj4+ID4gS2Vl
-cyBhbmQgeW91IGFyZSBPayB3aXRoIHRoaXMgc3VnZ2VzdGlvbi4KPj4KPj4gSSd2ZSBwdXQgaXQg
-dXAgaGVyZToKPj4gaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9n
-aXQva2Vlcy9saW51eC5naXQvY29tbWl0Lz9oPXBzdG9yZS9kZXZlbCZpZD1hYzU2NGUwMjMyNDhl
-M2Y0ZDg3OTE3YjkxZDEyMzc2ZGRmY2E1MDAwCj4KPkNvb2wsIGl0IExHVE0gOikKPgo+LSBKb2Vs
-Cj4KClRoYW5rIHlvdSBhbGwgZm9yIHRoZXNlIHdhcm0gaGVscC4KClRoaXMgaXMgbXkgZmlyc3Qg
-dGltZSB0byBzdWJtaXQgYSBwYXRjaCB0byBjb21tdW5pdHkuIEZlZWwgZ3JlYXQhCg==
+On Tue, Oct 30, 2018 at 08:00:04AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    11743c56785c Merge tag 'rpmsg-v4.20' of git://github.com/a..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15121199400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=93932074d01b4a5
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3701447012fe951dabb2
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> 
+> Unfortunately, I don't have any reproducer for this crash yet.
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+3701447012fe951dabb2@syzkaller.appspotmail.com
+> 
+> KASAN: use-after-free Read in del_timer_syncNon-volatile memory driver v1.3
+> Linux agpgart interface v0.103
+> [drm] Initialized vgem 1.0.0 20120112 for virtual device on minor 0
+> usbcore: registered new interface driver udl
+> ==================================================================
+> BUG: KASAN: use-after-free in __lock_acquire+0x36d9/0x4c20
+> kernel/locking/lockdep.c:3218
+> Read of size 8 at addr ffff8801d1b6b540 by task swapper/0/1
+> 
+> CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0+ #88
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x244/0x39d lib/dump_stack.c:113
+>  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
+>  kasan_report_error mm/kasan/report.c:354 [inline]
+>  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
+>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+>  __lock_acquire+0x36d9/0x4c20 kernel/locking/lockdep.c:3218
+>  lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
+>  del_timer_sync+0xb7/0x270 kernel/time/timer.c:1283
+>  blk_cleanup_queue+0x413/0x710 block/blk-core.c:809
+>  brd_free+0x5d/0x71 drivers/block/brd.c:422
+>  brd_init+0x2eb/0x393 drivers/block/brd.c:518
+>  do_one_initcall+0x145/0x957 init/main.c:890
+>  do_initcall_level init/main.c:958 [inline]
+>  do_initcalls init/main.c:966 [inline]
+>  do_basic_setup init/main.c:984 [inline]
+>  kernel_init_freeable+0x5c6/0x6b9 init/main.c:1148
+>  kernel_init+0x11/0x1ae init/main.c:1068
+>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:350
+> 
+> Allocated by task 1:
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+>  set_track mm/kasan/kasan.c:460 [inline]
+>  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+>  kmem_cache_alloc_node_trace+0x14c/0x740 mm/slab.c:3663
+>  kmalloc_node include/linux/slab.h:584 [inline]
+>  bdi_alloc_node+0x89/0xe0 mm/backing-dev.c:861
+>  blk_alloc_queue_node+0x2b7/0xe80 block/blk-core.c:1024
+>  blk_alloc_queue+0x1a/0x20 block/blk-core.c:911
+>  brd_alloc+0xb9/0x540 drivers/block/brd.c:378
+>  brd_init+0x11d/0x393 drivers/block/brd.c:498
+>  do_one_initcall+0x145/0x957 init/main.c:890
+>  do_initcall_level init/main.c:958 [inline]
+>  do_initcalls init/main.c:966 [inline]
+>  do_basic_setup init/main.c:984 [inline]
+>  kernel_init_freeable+0x5c6/0x6b9 init/main.c:1148
+>  kernel_init+0x11/0x1ae init/main.c:1068
+>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:350
+> 
+> Freed by task 12:
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+>  set_track mm/kasan/kasan.c:460 [inline]
+>  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+>  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+>  __cache_free mm/slab.c:3498 [inline]
+>  kfree+0xcf/0x230 mm/slab.c:3817
+>  release_bdi mm/backing-dev.c:968 [inline]
+>  kref_put include/linux/kref.h:70 [inline]
+>  bdi_put+0x138/0x180 mm/backing-dev.c:973
+>  blk_exit_queue+0xbf/0xf0 block/blk-core.c:746
+>  __blk_release_queue+0x12f/0x510 block/blk-sysfs.c:841
+>  process_one_work+0xc90/0x1c40 kernel/workqueue.c:2153
+>  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
+>  kthread+0x35a/0x440 kernel/kthread.c:246
+>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:350
+> 
+> The buggy address belongs to the object at ffff8801d1b6ae80
+>  which belongs to the cache kmalloc-2k of size 2048
+> The buggy address is located 1728 bytes inside of
+>  2048-byte region [ffff8801d1b6ae80, ffff8801d1b6b680)
+> The buggy address belongs to the page:
+> page:ffffea000746da80 count:1 mapcount:0 mapping:ffff8801da800c40 index:0x0
+> compound_mapcount: 0
+> flags: 0x2fffc0000010200(slab|head)
+> raw: 02fffc0000010200 ffffea000746da08 ffffea000746dc08 ffff8801da800c40
+> raw: 0000000000000000 ffff8801d1b6a600 0000000100000003 0000000000000000
+> page dumped because: kasan: bad access detected
+> 
+> Memory state around the buggy address:
+>  ffff8801d1b6b400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>  ffff8801d1b6b480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > ffff8801d1b6b500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>                                            ^
+>  ffff8801d1b6b580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>  ffff8801d1b6b600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ==================================================================
+> 
+> 
+
+This issue should have been fixed by the following one-line change:
+
+diff --git a/drivers/block/brd.c b/drivers/block/brd.c
+index df8103dd40ac..a5ecff2071ce 100644
+--- a/drivers/block/brd.c
++++ b/drivers/block/brd.c
+@@ -515,6 +515,8 @@ static int __init brd_init(void)
+ out_free:
+ 	list_for_each_entry_safe(brd, next, &brd_devices, brd_list) {
+ 		list_del(&brd->brd_list);
++		/* don't let put_disk() drop the queue's ref */
++		brd->brd_disk->queue = NULL;
+ 		brd_free(brd);
+ 	}
+ 	unregister_blkdev(RAMDISK_MAJOR, "ramdisk");
+
+-- 
+Ming
