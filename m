@@ -2,48 +2,49 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CF53ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F50C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:21:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34FF020664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:21:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CA8A20843
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:21:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s8ZpDasG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34FF020664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yhbm8TRg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CA8A20843
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731769AbeKAIVT (ORCPT
+        id S1731850AbeKAIVe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:21:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34710 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:21:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731434AbeKAILR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:11:17 -0400
+        id S1731459AbeKAILN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:11:13 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C58320664;
-        Wed, 31 Oct 2018 23:11:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93E9C2064C;
+        Wed, 31 Oct 2018 23:11:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027465;
-        bh=lVy2NQrqWAE30SkM9B7U8nF5bBor/tc9Wfp+h515wow=;
+        s=default; t=1541027461;
+        bh=Kn38Ol2ZRKFn+6ye6JF30u3+0XA8A+ejZ0fCbncPB68=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s8ZpDasGUy6Lg508+2RXivIO9+v7sRpNRYsZZq8gc0a+bSXn0EdDPB5cHrxkreaCP
-         ElMY/nGsVmhe4DOxsG7nDt1emKQDzA+2uyM9vw0c6PpMXGZHB3akoz4lfpkoq7v6M4
-         vOf7q4zMmPXWeDpFifdbgxnfjW/Ud8CtpU3ajLmw=
+        b=Yhbm8TRgbY19gUpRJ7uoW9bo+NTLFSyyVZxP09o5CQUdciuLq6p+QSDWuq3kPDap4
+         IeClYqHUPSg3J1oq7zORp3dw22Ah9HuLSI+CDUz507BrqHWuc3E8Rwf8I4xigbQQG7
+         tdEqoBM9xAJ8mBh5+wTksjbUMaPhJ4fXMrWZ9GUg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Yu Zhao <yuzhao@google.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+Cc:     Thierry Reding <treding@nvidia.com>,
+        Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 12/48] mmc: sdhci-pci-o2micro: Add quirk for O2 Micro dev 0x8620 rev 0x01
-Date:   Wed, 31 Oct 2018 19:10:18 -0400
-Message-Id: <20181031231054.29333-12-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 07/48] hwmon: (pwm-fan) Set fan speed to 0 on suspend
+Date:   Wed, 31 Oct 2018 19:10:13 -0400
+Message-Id: <20181031231054.29333-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231054.29333-1-sashal@kernel.org>
 References: <20181031231054.29333-1-sashal@kernel.org>
@@ -52,59 +53,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yu Zhao <yuzhao@google.com>
+From: Thierry Reding <treding@nvidia.com>
 
-[ Upstream commit 5169894982bb67486d93cc1e10151712bb86bcb6 ]
+[ Upstream commit 95dcd64bc5a27080beaa344edfe5bdcca3d2e7dc ]
 
-This device reports SDHCI_CLOCK_INT_STABLE even though it's not
-ready to take SDHCI_CLOCK_CARD_EN. The symptom is that reading
-SDHCI_CLOCK_CONTROL after enabling the clock shows absence of the
-bit from the register (e.g. expecting 0x0000fa07 = 0x0000fa03 |
-SDHCI_CLOCK_CARD_EN but only observed the first operand).
+Technically this is not required because disabling the PWM should be
+enough. However, when support for atomic operations was implemented in
+the PWM subsystem, only actual changes to the PWM channel are applied
+during pwm_config(), which means that during after resume from suspend
+the old settings won't be applied.
 
-mmc1: Timeout waiting for hardware cmd interrupt.
-mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
-mmc1: sdhci: Sys addr:  0x00000000 | Version:  0x00000603
-mmc1: sdhci: Blk size:  0x00000000 | Blk cnt:  0x00000000
-mmc1: sdhci: Argument:  0x00000000 | Trn mode: 0x00000000
-mmc1: sdhci: Present:   0x01ff0001 | Host ctl: 0x00000001
-mmc1: sdhci: Power:     0x0000000f | Blk gap:  0x00000000
-mmc1: sdhci: Wake-up:   0x00000000 | Clock:    0x0000fa03
-mmc1: sdhci: Timeout:   0x00000000 | Int stat: 0x00000000
-mmc1: sdhci: Int enab:  0x00ff0083 | Sig enab: 0x00ff0083
-mmc1: sdhci: AC12 err:  0x00000000 | Slot int: 0x00000000
-mmc1: sdhci: Caps:      0x25fcc8bf | Caps_1:   0x00002077
-mmc1: sdhci: Cmd:       0x00000000 | Max curr: 0x005800c8
-mmc1: sdhci: Resp[0]:   0x00000000 | Resp[1]:  0x00000000
-mmc1: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
-mmc1: sdhci: Host ctl2: 0x00000008
-mmc1: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x00000000
-mmc1: sdhci: ============================================
+One possible solution is for the PWM driver to implement its own PM
+operations such that settings from before suspend get applied on resume.
+This has the disadvantage of completely ignoring any particular ordering
+requirements that PWM user drivers might have, so it is best to leave it
+up to the user drivers to apply the settings that they want at the
+appropriate time.
 
-The problem happens during wakeup from S3. Adding a delay quirk
-after power up reliably fixes the problem.
+Another way to solve this would be to read back the current state of the
+PWM at the time of resume. That way, in case the configuration was lost
+during suspend, applying the old settings in PWM user drivers would
+actually get them applied because they differ from the current settings.
+However, not all PWM drivers support reading the hardware state, and not
+all hardware may support it.
 
-Signed-off-by: Yu Zhao <yuzhao@google.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+The best workaround at this point seems to be to let PWM user drivers
+tell the PWM subsystem that the PWM is turned off by, in addition to
+disabling it, also setting the duty cycle to 0. This causes the resume
+operation to apply a configuration that is different from the current
+configuration, resulting in the proper state from before suspend getting
+restored.
+
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/sdhci-pci-o2micro.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/hwmon/pwm-fan.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
-index d48f03104b5b..e417e4274d66 100644
---- a/drivers/mmc/host/sdhci-pci-o2micro.c
-+++ b/drivers/mmc/host/sdhci-pci-o2micro.c
-@@ -334,6 +334,9 @@ int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
- 		pci_write_config_byte(chip->pdev, O2_SD_LOCK_WP, scratch);
- 		break;
- 	case PCI_DEVICE_ID_O2_SEABIRD0:
-+		if (chip->pdev->revision == 0x01)
-+			chip->quirks |= SDHCI_QUIRK_DELAY_AFTER_POWER;
-+		/* fall through */
- 	case PCI_DEVICE_ID_O2_SEABIRD1:
- 		/* UnLock WP */
- 		ret = pci_read_config_byte(chip->pdev,
+diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
+index f9af3935b427..fb03449de2e0 100644
+--- a/drivers/hwmon/pwm-fan.c
++++ b/drivers/hwmon/pwm-fan.c
+@@ -306,9 +306,19 @@ static int pwm_fan_remove(struct platform_device *pdev)
+ static int pwm_fan_suspend(struct device *dev)
+ {
+ 	struct pwm_fan_ctx *ctx = dev_get_drvdata(dev);
++	struct pwm_args args;
++	int ret;
++
++	pwm_get_args(ctx->pwm, &args);
++
++	if (ctx->pwm_value) {
++		ret = pwm_config(ctx->pwm, 0, args.period);
++		if (ret < 0)
++			return ret;
+ 
+-	if (ctx->pwm_value)
+ 		pwm_disable(ctx->pwm);
++	}
++
+ 	return 0;
+ }
+ 
 -- 
 2.17.1
 
