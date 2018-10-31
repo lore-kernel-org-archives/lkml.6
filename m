@@ -3,49 +3,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DE09C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:59:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C06F0C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 22:00:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD5C82080A
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:59:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD5C82080A
+	by mail.kernel.org (Postfix) with ESMTP id 7B3632080A
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 22:00:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B3632080A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbeKAG7w (ORCPT
+        id S1726728AbeKAHAZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 02:59:52 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41435 "EHLO
+        Thu, 1 Nov 2018 03:00:25 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41525 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725921AbeKAG7v (ORCPT
+        with ESMTP id S1725901AbeKAHAZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 02:59:51 -0400
+        Thu, 1 Nov 2018 03:00:25 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9VLxheu2558034
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9VM0Iss2558335
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 31 Oct 2018 14:59:43 -0700
+        Wed, 31 Oct 2018 15:00:18 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9VLxgBB2558030;
-        Wed, 31 Oct 2018 14:59:42 -0700
-Date:   Wed, 31 Oct 2018 14:59:42 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9VM0I3r2558332;
+        Wed, 31 Oct 2018 15:00:18 -0700
+Date:   Wed, 31 Oct 2018 15:00:18 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-o3ymi3104m8moaz9865g09w9@git.kernel.org>
-Cc:     benjamin@python.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        jolsa@kernel.org, dsahern@gmail.com, mingo@kernel.org,
-        wangnan0@huawei.com, tglx@linutronix.de, acme@redhat.com,
-        adrian.hunter@intel.com, namhyung@kernel.org
-Reply-To: acme@redhat.com, tglx@linutronix.de, adrian.hunter@intel.com,
-          namhyung@kernel.org, wangnan0@huawei.com, dsahern@gmail.com,
-          linux-kernel@vger.kernel.org, jolsa@kernel.org, mingo@kernel.org,
-          benjamin@python.org, hpa@zytor.com
+Message-ID: <tip-btue14k5jemayuykfrwsnh85@git.kernel.org>
+Cc:     jolsa@kernel.org, dsahern@gmail.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, namhyung@kernel.org,
+        wangnan0@huawei.com, acme@redhat.com, adrian.hunter@intel.com,
+        tglx@linutronix.de, hpa@zytor.com, benjamin@python.org
+Reply-To: namhyung@kernel.org, acme@redhat.com, tglx@linutronix.de,
+          adrian.hunter@intel.com, benjamin@python.org, hpa@zytor.com,
+          wangnan0@huawei.com, mingo@kernel.org, dsahern@gmail.com,
+          jolsa@kernel.org, linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf beauty: Introduce
- strarray__scnprintf_flags()
-Git-Commit-ID: 579e5ff629b17744f62473f314768de8b6f1e66c
+Subject: [tip:perf/urgent] perf trace beauty: Allow syscalls to mask an
+ argument before considering it
+Git-Commit-ID: 496fd346b71ffa0ff35623e9ec79df0bad47bd66
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,17 +59,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  579e5ff629b17744f62473f314768de8b6f1e66c
-Gitweb:     https://git.kernel.org/tip/579e5ff629b17744f62473f314768de8b6f1e66c
+Commit-ID:  496fd346b71ffa0ff35623e9ec79df0bad47bd66
+Gitweb:     https://git.kernel.org/tip/496fd346b71ffa0ff35623e9ec79df0bad47bd66
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 25 Oct 2018 14:21:31 -0300
+AuthorDate: Thu, 25 Oct 2018 16:09:47 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 30 Oct 2018 11:46:23 -0300
 
-perf beauty: Introduce strarray__scnprintf_flags()
+perf trace beauty: Allow syscalls to mask an argument before considering it
 
-Generalizing pkey_alloc__scnprintf_access_rights(), so that we can use
-it with other flags-like arguments, such as mount's mountflags argument.
+Take mount's 'flags' arg, to cope with this semantic, as defined in do_mount in fs/namespace.c:
+
+  /*
+   * Pre-0.97 versions of mount() didn't have a flags word.  When the
+   * flags word was introduced its top half was required to have the
+   * magic value 0xC0ED, and this remained so until 2.4.0-test9.
+   * Therefore, if this magic number is present, it carries no
+   * information and must be discarded.
+   */
+
+We need to mask this arg, and then see if it is zero, when we simply
+don't print the arg name and value.
+
+The next patch will use this for mount's 'flag' arg.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Benjamin Peterson <benjamin@python.org>
@@ -77,81 +89,53 @@ Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-o3ymi3104m8moaz9865g09w9@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-btue14k5jemayuykfrwsnh85@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/trace/beauty/beauty.h     |  1 +
- tools/perf/trace/beauty/pkey_alloc.c | 27 ++++++++++++++++-----------
- 2 files changed, 17 insertions(+), 11 deletions(-)
+ tools/perf/builtin-trace.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/tools/perf/trace/beauty/beauty.h b/tools/perf/trace/beauty/beauty.h
-index 2570152d3909..a1806c4f3ccd 100644
---- a/tools/perf/trace/beauty/beauty.h
-+++ b/tools/perf/trace/beauty/beauty.h
-@@ -24,6 +24,7 @@ struct strarray {
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 7081d7ea12e5..14fb63e17de5 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -614,6 +614,7 @@ static size_t syscall_arg__scnprintf_getrandom_flags(char *bf, size_t size,
+ 
+ struct syscall_arg_fmt {
+ 	size_t	   (*scnprintf)(char *bf, size_t size, struct syscall_arg *arg);
++	unsigned long (*mask_val)(struct syscall_arg *arg, unsigned long val);
+ 	void	   *parm;
+ 	const char *name;
+ 	bool	   show_zero;
+@@ -1487,6 +1488,19 @@ static size_t syscall__scnprintf_name(struct syscall *sc, char *bf, size_t size,
+ 	return scnprintf(bf, size, "arg%d: ", arg->idx);
  }
  
- size_t strarray__scnprintf(struct strarray *sa, char *bf, size_t size, const char *intfmt, int val);
-+size_t strarray__scnprintf_flags(struct strarray *sa, char *bf, size_t size, unsigned long flags);
- 
- struct trace;
- struct thread;
-diff --git a/tools/perf/trace/beauty/pkey_alloc.c b/tools/perf/trace/beauty/pkey_alloc.c
-index d3e5188a9bef..1b8ed4cac815 100644
---- a/tools/perf/trace/beauty/pkey_alloc.c
-+++ b/tools/perf/trace/beauty/pkey_alloc.c
-@@ -9,31 +9,28 @@
- #include <linux/kernel.h>
- #include <linux/log2.h>
- 
--static size_t pkey_alloc__scnprintf_access_rights(int access_rights, char *bf, size_t size)
-+size_t strarray__scnprintf_flags(struct strarray *sa, char *bf, size_t size, unsigned long flags)
- {
- 	int i, printed = 0;
- 
--#include "trace/beauty/generated/pkey_alloc_access_rights_array.c"
--	static DEFINE_STRARRAY(pkey_alloc_access_rights);
--
--	if (access_rights == 0) {
--		const char *s = strarray__pkey_alloc_access_rights.entries[0];
-+	if (flags == 0) {
-+		const char *s = sa->entries[0];
- 		if (s)
- 			return scnprintf(bf, size, "%s", s);
- 		return scnprintf(bf, size, "%d", 0);
- 	}
- 
--	for (i = 1; i < strarray__pkey_alloc_access_rights.nr_entries; ++i) {
--		int bit = 1 << (i - 1);
-+	for (i = 1; i < sa->nr_entries; ++i) {
-+		unsigned long bit = 1UL << (i - 1);
- 
--		if (!(access_rights & bit))
-+		if (!(flags & bit))
- 			continue;
- 
- 		if (printed != 0)
- 			printed += scnprintf(bf + printed, size - printed, "|");
- 
--		if (strarray__pkey_alloc_access_rights.entries[i] != NULL)
--			printed += scnprintf(bf + printed, size - printed, "%s", strarray__pkey_alloc_access_rights.entries[i]);
-+		if (sa->entries[i] != NULL)
-+			printed += scnprintf(bf + printed, size - printed, "%s", sa->entries[i]);
- 		else
- 			printed += scnprintf(bf + printed, size - printed, "0x%#", bit);
- 	}
-@@ -41,6 +38,14 @@ static size_t pkey_alloc__scnprintf_access_rights(int access_rights, char *bf, s
- 	return printed;
- }
- 
-+static size_t pkey_alloc__scnprintf_access_rights(int access_rights, char *bf, size_t size)
++/*
++ * Check if the value is in fact zero, i.e. mask whatever needs masking, such
++ * as mount 'flags' argument that needs ignoring some magic flag, see comment
++ * in tools/perf/trace/beauty/mount_flags.c
++ */
++static unsigned long syscall__mask_val(struct syscall *sc, struct syscall_arg *arg, unsigned long val)
 +{
-+#include "trace/beauty/generated/pkey_alloc_access_rights_array.c"
-+	static DEFINE_STRARRAY(pkey_alloc_access_rights);
++	if (sc->arg_fmt && sc->arg_fmt[arg->idx].mask_val)
++		return sc->arg_fmt[arg->idx].mask_val(arg, val);
 +
-+	return strarray__scnprintf_flags(&strarray__pkey_alloc_access_rights, bf, size, access_rights);
++	return val;
 +}
 +
- size_t syscall_arg__scnprintf_pkey_alloc_access_rights(char *bf, size_t size, struct syscall_arg *arg)
+ static size_t syscall__scnprintf_val(struct syscall *sc, char *bf, size_t size,
+ 				     struct syscall_arg *arg, unsigned long val)
  {
- 	unsigned long cmd = arg->val;
+@@ -1535,6 +1549,11 @@ static size_t syscall__scnprintf_args(struct syscall *sc, char *bf, size_t size,
+ 				continue;
+ 
+ 			val = syscall_arg__val(&arg, arg.idx);
++			/*
++			 * Some syscall args need some mask, most don't and
++			 * return val untouched.
++			 */
++			val = syscall__mask_val(sc, &arg, val);
+ 
+ 			/*
+  			 * Suppress this argument if its value is zero and
