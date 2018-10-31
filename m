@@ -6,149 +6,101 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B45C6786F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 02:34:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63551ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 02:34:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 197A82082B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 02:34:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 197A82082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 206B72082B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 02:34:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 206B72082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728729AbeJaLaQ (ORCPT
+        id S1728926AbeJaLaW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 07:30:16 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:41041 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726984AbeJaLaQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 07:30:16 -0400
-Received: by mail-ed1-f68.google.com with SMTP id x31-v6so12306535edd.8;
-        Tue, 30 Oct 2018 19:34:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6xev504+9+t26CT3h73rk74WjG5WJeIvT+HvtmntYd8=;
-        b=Z/lL9RjQMOD7RU6AeZzPmZtJMJu/2gncI/tqfD8fE0pVcObWnwM9KbI93vP5r748Cu
-         XDUKRewL/PenuFxme/73Cww84DIysFwAwlY8oGbOVHCpz5WKCE/mYGsrAfQY3iOyIUvr
-         mo5AKHtBtCEUtLLVcDU6S/sEkKk5lCKkyfTFxdp0DUw3gSMYZlsuy7Jz5Cev8HdKlbYC
-         cMSY4jo1GXFjDKkwMWNwBK1eYd1dQoJE7Q65GEYu6jqHkWrgTHKVY/2ibj8JKNrAnoet
-         8CKXwMBMohj+j/62c8a8joA0TYSWqBYzzI1J2c6r+2ezNfe6pwvpd4n3ttbHw9nMTnjT
-         dQOA==
-X-Gm-Message-State: AGRZ1gIjPXN/SWAunDIWKFcFm2WGwtZIqJAaLwrZwkYq598x/Yyv+Ckb
-        jmUDvbHm6qW/hx1g6Gp3uea6M40p2kw=
-X-Google-Smtp-Source: AJdET5cwnA9z4MA9CMWU+DtTFqotMPGJIffVH4NEN0Z8aglbRh67vZAiSy/Jlf+GLulmjQ3LNnnFcw==
-X-Received: by 2002:a50:aa98:: with SMTP id q24-v6mr581493edc.93.1540953253696;
-        Tue, 30 Oct 2018 19:34:13 -0700 (PDT)
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com. [209.85.221.44])
-        by smtp.gmail.com with ESMTPSA id w31-v6sm8409458edb.8.2018.10.30.19.34.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 19:34:12 -0700 (PDT)
-Received: by mail-wr1-f44.google.com with SMTP id r10-v6so14753286wrv.6;
-        Tue, 30 Oct 2018 19:34:12 -0700 (PDT)
-X-Received: by 2002:a5d:4844:: with SMTP id n4-v6mr1030928wrs.28.1540953252313;
- Tue, 30 Oct 2018 19:34:12 -0700 (PDT)
+        Wed, 31 Oct 2018 07:30:22 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:6469 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726984AbeJaLaV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 07:30:21 -0400
+Received: from DGGEMM402-HUB.china.huawei.com (unknown [172.30.72.53])
+        by Forcepoint Email with ESMTP id 4D1354A6965AB;
+        Wed, 31 Oct 2018 10:34:17 +0800 (CST)
+Received: from DGGEMM424-HUB.china.huawei.com (10.1.198.41) by
+ DGGEMM402-HUB.china.huawei.com (10.3.20.210) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 31 Oct 2018 10:34:18 +0800
+Received: from DGGEMM526-MBX.china.huawei.com ([169.254.8.186]) by
+ dggemm424-hub.china.huawei.com ([10.1.198.41]) with mapi id 14.03.0415.000;
+ Wed, 31 Oct 2018 10:34:15 +0800
+From:   "Zengtao (B)" <prime.zeng@hisilicon.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+CC:     "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "usb-storage@lists.one-eyed-alien.net" 
+        <usb-storage@lists.one-eyed-alien.net>
+Subject: RE: scsi_set_medium_removal timeout issue 
+Thread-Topic: scsi_set_medium_removal timeout issue 
+Thread-Index: AQHUcFn+y+cITluAQnWJAza/Xxh90aU4oaOg
+Date:   Wed, 31 Oct 2018 02:34:15 +0000
+Message-ID: <678F3D1BB717D949B966B68EAEB446ED1F19F98A@dggemm526-mbx.china.huawei.com>
+References: <678F3D1BB717D949B966B68EAEB446ED1F19F1CF@dggemm526-mbx.china.huawei.com>
+ <Pine.LNX.4.44L0.1810301005200.1515-100000@iolanthe.rowland.org>
+In-Reply-To: <Pine.LNX.4.44L0.1810301005200.1515-100000@iolanthe.rowland.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.67.222.15]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20181023185330.10472-1-oskari@lemmela.net> <20181025133017.2rdnbgmvdlx67kcz@earth.universe>
-In-Reply-To: <20181025133017.2rdnbgmvdlx67kcz@earth.universe>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Wed, 31 Oct 2018 10:33:58 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64oGFyUenJ9-054RCXoG0Z+z5ziiTiL95Ga-5yy3xFyxw@mail.gmail.com>
-Message-ID: <CAGb2v64oGFyUenJ9-054RCXoG0Z+z5ziiTiL95Ga-5yy3xFyxw@mail.gmail.com>
-Subject: Re: [PATCH v5 00/11] AXP8x3 AC and battery power supply support
-To:     sebastian.reichel@collabora.com, oskari@lemmela.net
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Quentin Schulz <quentin.schulz@free-electrons.com>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 3:08 AM Sebastian Reichel
-<sebastian.reichel@collabora.com> wrote:
->
-> Hi,
->
-> Patches 1, 2 & 9 look good to me and do not seem to have any
-> dependencies. I plan to merge them after the merge window
-> for 4.20 closes.
-
-Patches 2, 3 & 4 aren't needed. They aren't in the correct format
-for model-specific + fallback compatibles either.
-
-ChenYu
-
->
-> -- Sebastian
->
-> On Tue, Oct 23, 2018 at 09:53:19PM +0300, Oskari Lemmela wrote:
-> > AXP813 AC power supply support with input current and
-> > voltage limiting support.
-> >
-> > AXP803 AC and battery power supply support.
-> >
-> > Changes in v5:
-> > * Return correct input current limit for values 0x6 and 0x7
-> > * Add specific compatibles for AXP803
-> > * Change commit messages
-> > * Add Vasily Khoruzhick Pinebook DTS patch
-> >
-> > Changes in v4:
-> > * Change order of axp20x-gpio in axp20x.c
-> > * Fix indentation and spaces to tabs in axp20x.c
-> >
-> > Changes in v3:
-> > * Reorder ac_power_supply DT node
-> > * Rename axp20x_ac_power_set_property function
-> > * Split mfd commit
-> >
-> > Changes in v2:
-> > * Reuse axp813 compatibles for axp803
-> > * Refactor axp20x_ac_power.c
-> >
-> > Oskari Lemmela (10):
-> >   dt-bindings: power: supply: axp20x: add AXP813 AC power DT binding
-> >   dt-bindings: power: supply: axp20x: add AXP803 power bindings
-> >   dt-bindings: gpio: gpio-axp209: add AXP803 GPIO bindings
-> >   dt-bindings: iio: adc: add AXP803 ADC bindings
-> >   ARM: dts: axp81x: add AC power supply subnode
-> >   arm64: dts: allwinner: axp803: add AC and battery power supplies
-> >   arm64: dts: allwinner: a64: sopine-baseboard: enable power supplies
-> >   power: supply: add AC power supply driver for AXP813
-> >   mfd: axp20x: Add AC power supply cell for AXP813
-> >   mfd: axp20x: Add supported cells for AXP803
-> >
-> > Vasily Khoruzhick (1):
-> >   arm64: dts: allwinner: a64: pinebook: enable power supplies
-> >
-> >  .../devicetree/bindings/gpio/gpio-axp209.txt  |  2 +
-> >  .../bindings/iio/adc/axp20x_adc.txt           |  2 +
-> >  .../bindings/power/supply/axp20x_ac_power.txt |  4 +
-> >  .../bindings/power/supply/axp20x_battery.txt  |  1 +
-> >  arch/arm/boot/dts/axp81x.dtsi                 |  5 +
-> >  arch/arm64/boot/dts/allwinner/axp803.dtsi     | 33 +++++++
-> >  .../dts/allwinner/sun50i-a64-pinebook.dts     |  8 ++
-> >  .../allwinner/sun50i-a64-sopine-baseboard.dts |  8 ++
-> >  drivers/mfd/axp20x.c                          | 20 ++++
-> >  drivers/power/supply/axp20x_ac_power.c        | 94 +++++++++++++++++++
-> >  include/linux/mfd/axp20x.h                    |  1 +
-> >  11 files changed, 178 insertions(+)
-> >
-> > --
-> > 2.17.1
-> >
+SGk6DQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPkZyb206IEFsYW4gU3Rlcm4gW21h
+aWx0bzpzdGVybkByb3dsYW5kLmhhcnZhcmQuZWR1XQ0KPlNlbnQ6IFR1ZXNkYXksIE9jdG9iZXIg
+MzAsIDIwMTggMTA6MDggUE0NCj5UbzogWmVuZ3RhbyAoQikgPHByaW1lLnplbmdAaGlzaWxpY29u
+LmNvbT4NCj5DYzogamVqYkBsaW51eC52bmV0LmlibS5jb207IG1hcnRpbi5wZXRlcnNlbkBvcmFj
+bGUuY29tOw0KPmdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnOyBsaW51eC1zY3NpQHZnZXIua2Vy
+bmVsLm9yZzsNCj5saW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC11c2JAdmdlci5r
+ZXJuZWwub3JnOw0KPnVzYi1zdG9yYWdlQGxpc3RzLm9uZS1leWVkLWFsaWVuLm5ldA0KPlN1Ympl
+Y3Q6IFJlOiBzY3NpX3NldF9tZWRpdW1fcmVtb3ZhbCB0aW1lb3V0IGlzc3VlDQo+DQo+T24gVHVl
+LCAzMCBPY3QgMjAxOCwgWmVuZ3RhbyAoQikgd3JvdGU6DQo+DQo+PiBIaQ0KPj4NCj4+IEkgaGF2
+ZSByZWNlbnRseSBtZXQgYSBzY3NpX3NldF9tZWRpdW1fcmVtb3ZhbCB0aW1lb3V0IGlzc3VlLCBh
+bmQgaXQncw0KPj4gcmVsYXRlZCAgdG8gYm90aCBTQ1NJIGFuZCBVU0IgTUFTUyBzdG9yYWdlLg0K
+Pj4gU2luY2UgaSBhbSBub3QgYW4gZXhwZXJ0IGluIGVpdGhlciBzY3NpIG9yIHVzYiBtYXNzIHN0
+b3JhZ2UsIGkgYW0NCj4+IHdyaXRpbmcgdG8gcmVwb3J0IHRoZSBpc3N1ZSBhbmQgYXNrIGZvciBh
+IHNvbHV0aW9uIGZyb20geW91IGd1eXMuDQo+Pg0KPj4gTXkgdGVzdCBzY2VuYXJpbyBpcyBhcyBm
+b2xsb3c6DQo+PiAxLkxpbnV4IEhPU1QtLS0tLUxpbnV4IG1hc3Mgc3RvcmFnZSBnYWRnZXQodGhl
+IGJhY2sgc3RvcmUgaXMgYSBmbGFzaA0KPnBhcnRpdGlvbikuDQo+PiAyLkhvc3QgbW91bnQgdGhl
+IGRldmljZS4NCj4+IDMuSG9zdCB3cml0ZXMgc29tZSBkYXRhIHRvIHRoZSBNYXNzIHN0b3JhZ2Ug
+ZGV2aWNlLg0KPj4gNC5Ib3N0IFVubW91bnQgdGhlIGRldmljZS4NCj4+IEJvdGggTGludXgga2Vy
+bmVscyhIb3N0IGFuZCBEZXZpY2UpIGFyZSBMaW51eCA0LjkuDQo+PiBTb21lIGhhcyByZXBvcnRl
+ZCB0aGUgc2FtZSBpc3N1ZSBhIGxvbmcgdGltZSBhZ28sIGJ1dCBpdCByZW1haW5zIHRoZXJlLg0K
+Pj4gaHR0cHM6Ly93d3cuc3Bpbmljcy5uZXQvbGlzdHMvbGludXgtdXNiL21zZzUzNzM5Lmh0bWwN
+Cj4+DQo+PiBGb3IgdGhlIGlzc3VlIGl0c2VsZiwgdGhlcmUgaXMgbXkgb2JzZXJ2YXRpb246DQo+
+PiBJbiB0aGUgc3RlcCA0LCB0aGUgSG9zdCB3aWxsIGlzc3VlIGFuDQo+UFJFVkVOVF9BTExPV19N
+RURJVU1fUkVNT1ZBTCBzY3NpIGNvbW1hbmQuDQo+PiBhbmQgYW5kIHRpbWVvdXQgaGFwcGVucyBk
+dWUgdG8gdGhlIGRldmljZSAncyB2ZXJ5IHNsb3cNCj5mc2dfbHVuX2ZzeW5jX3N1Yi4NCj4NCj5T
+b21ldGhpbmcgaXMgd3JvbmcgaGVyZS4gIEJlZm9yZSBzZW5kaW5nIFBSRVZFTlQtQUxMT1cgTUVE
+SVVNDQo+UkVNT1ZBTCwgdGhlIGhvc3Qgc2hvdWxkIGlzc3VlIFNZTkNIUk9OSVpFIENBQ0hFLiAg
+VGhpcyB3aWxsIGZvcmNlDQo+ZnNnX2x1bl9mc3luY19zdWIgdG8gcnVuLCBhbmQgdGhlIGhvc3Qg
+c2hvdWxkIGFsbG93IGEgbG9uZyB0aW1lb3V0IGZvcg0KPnRoaXMgY29tbWFuZC4gIFRoZW4gd2hl
+biBQUkVWRU5ULUFMTE9XIE1FRElVTSBSRU1PVkFMIGlzIHNlbnQsDQo+bm90aGluZyB3aWxsIG5l
+ZWQgdG8gYmUgZmx1c2hlZC4NCj4NCg0KRGVmaW5pdGVseSwgSSBoYXZlbid0IHNlZW4gdGhlIFNZ
+TkNIUk9OSVpFIENBQ0hFIGZyb20gdGhlIGhvc3QsIGl0IGRpcmVjdGx5DQppc3N1ZWQgdGhlIFBS
+RVZFTlQtQUxMT1cgTUVESVVNIFJFTU9WQUwsIHNvIG1heWJlIHNvbWV0aGluZyB3cm9uZw0Kd2l0
+aCB0aGUgc2NzaSBsYXllciBvciBzb21ldGhpbmcgd3Jvbmcgd2l0aCB0aGUgbWFzcyBzdG9yYWdl
+IGNsYXNzIGRyaXZlcj8NCg0KWmVuZ3RhbyANCg0KPkFsYW4gU3Rlcm4NCj4NCj4+IEkgZm91bmQg
+dGhlcmUgYXJlIHR3byBtZXRob2RzIHRvIHdvcmthcm91bmQgdGhlIGlzc3VlOg0KPj4gMS4gQ2hh
+bmdlIHRoZSB0aW1lb3V0IHZhbHVlIG9mIGhvc3Qgc2NzaSBjb21tYW5kDQo+PiBQUkVWRU5UX0FM
+TE9XX01FRElVTV9SRU1PVkFMIHRvIHRvIGFib3V0IDYwIHNlY29uZHMgZnJvbSAxMA0KPnNlY29u
+ZHMuDQo+PiAyLiBSZW1vdmUgdGhlIGZzZ19sdW5fZnN5bmNfc3ViIGluIHRoZSBkZXZpY2UncyBN
+YXNzIHN0b3JhZ2UgZ2FkZ2V0DQo+ZHJpdmVyLg0KPj4NCj4+IFRoYW5rcw0KPj4NCj4+IFJlZ2Fy
+ZHMNCj4+IHplbnRhbw0KDQo=
