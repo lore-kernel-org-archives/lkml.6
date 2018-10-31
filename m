@@ -2,235 +2,128 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93DF4C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 17:44:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1751BECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 17:44:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D1B220657
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 17:44:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D1B220657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C3E1B20657
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 17:44:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eMNUZEE6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3E1B20657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729964AbeKACnC (ORCPT
+        id S1729990AbeKACn3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 22:43:02 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44562 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729315AbeKACnC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 22:43:02 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4579980D;
-        Wed, 31 Oct 2018 10:44:02 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1580E3F6A8;
-        Wed, 31 Oct 2018 10:44:02 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id E86641AE0CFD; Wed, 31 Oct 2018 17:44:08 +0000 (GMT)
-Date:   Wed, 31 Oct 2018 17:44:08 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: arm64 tools build failure wrt smp_load_{acquire,release}
- expansion on gcc version 5.4.0 20160609 (Ubuntu/Linaro
- 5.4.0-6ubuntu1~16.04.9)
-Message-ID: <20181031174408.GA27871@arm.com>
-References: <20181031154550.GA28340@kernel.org>
+        Wed, 31 Oct 2018 22:43:29 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:35475 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729315AbeKACn2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 22:43:28 -0400
+Received: by mail-ua1-f68.google.com with SMTP id d8so5245890ual.2
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 10:44:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=4vcOD6E25VumNhaqeNzWwPkzPZMJ/b+SNHRZfcLSucc=;
+        b=eMNUZEE6SapBZfp2ttNijdIrk7ZDP0eekCrv00i6SpEDZ+kQlTv78eOMLL0DNs0nl4
+         BOjqwz6JTy2AABOVXFXMDEOvz1OkJjHmhZopMP67TIpx2vNhGy0k/aotuaHAiNjolaTu
+         0aklovUNOk2mmAzIoxQAx2wNan7EA0XVBDwJcHR0GSB3+uHjTERKUyzgYZy7tOv1JlU5
+         zApt+g7DPB/l6EnRcLfN8yr/PdmLBg6Jzr82XigOiPzLu8cOBHmZdzr+MIATtRM5b9qh
+         0xKTif2osoLIwnaMV8/Cr+BAJ9ytMcPDcZj23U39NT+AhGxA49UJtlBqoqqsEgJYVW2x
+         4d+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=4vcOD6E25VumNhaqeNzWwPkzPZMJ/b+SNHRZfcLSucc=;
+        b=SupTLcxnBKml0+G/5OMUjqiB9zBBMgeEEZm9Y3s6txi7lqCxSiPSJoVYl7LjJOCMIH
+         0YobtrCWPgganNoPgmbY/R43H9lFsW9x9rBbek4JANer6hOvIIQHLpJxjUjgCl2wEtRk
+         jw9gGf4KNDslOODjTCMi/Jn6m04wRSChl2I76gQCHX1ARFjPWg23B47+bW2yxQQMi5bq
+         mT6DV6IhpPpnLS52afJKz7By34SGDbRuZu+HEPOgywWAiviYr53+BCXnFgCwkipoR5Tv
+         WDKt5HwHFU6+xmH1RecYZKFFKTduwFUUowLPDR06YRZD0TBS5syKo8PR3bhNL2tV0fJR
+         QR2Q==
+X-Gm-Message-State: AGRZ1gL50qS6jbs9VpQgEEPgTd0CwtOaCcr5pqSyfWOoYFvKARM0d4rf
+        hTAWfJVJi8aJ0CEzwtG8onqQiEizBVmCXUZ+WLYIjA==
+X-Google-Smtp-Source: AJdET5eAx8TA0ypoL3INz/fcwVZi9WE87p5oP6iUr2i9RckyVsRzNBWquG+n/qLmZeX48/qknP3eQT8zA12Mm4d7rR4=
+X-Received: by 2002:ab0:15a1:: with SMTP id i30mr1889024uae.11.1541007867134;
+ Wed, 31 Oct 2018 10:44:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181031154550.GA28340@kernel.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Received: by 2002:a67:f48d:0:0:0:0:0 with HTTP; Wed, 31 Oct 2018 10:44:24
+ -0700 (PDT)
+In-Reply-To: <175DDE5D-E738-4C35-B664-6AD8B9CF446D@amacapital.net>
+References: <20181029175322.189042-1-dancol@google.com> <CAKOZueuX6GL+rXZbtd_X2RaxF1MdNiEnHFbTRE2X8bsY9bOzuA@mail.gmail.com>
+ <175DDE5D-E738-4C35-B664-6AD8B9CF446D@amacapital.net>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Wed, 31 Oct 2018 17:44:24 +0000
+Message-ID: <CAKOZuevXXqwJepmLNUtrU=f8jtdgdKAzUAnAA2+KVcWoMxMyFg@mail.gmail.com>
+Subject: Re: [RFC PATCH] Minimal non-child process exit notification support
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api@vger.kernel.org, Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joelaf@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnaldo,
+On Wed, Oct 31, 2018 at 5:25 PM, Andy Lutomirski <luto@amacapital.net> wrot=
+e:
+> I had an old patch to do much the same thing:
 
-On Wed, Oct 31, 2018 at 12:45:50PM -0300, Arnaldo Carvalho de Melo wrote:
-> So I noticed the following build failure thare point to:
-> 
-> commit 09d62154f61316f7e97eae3f31ef8770c7e4b386
-> Author: Daniel Borkmann <daniel@iogearbox.net>
-> Date:   Fri Oct 19 15:51:02 2018 +0200
-> 
->     tools, perf: add and use optimized ring_buffer_{read_head, write_tail} helpers
-> 
-> -------------------------
-> 
->   50 ubuntu:16.04-x-arm64          : FAIL aarch64-linux-gnu-gcc (Ubuntu/Linaro 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
->   
-> Works well with:
-> 
->   59 ubuntu:18.04-x-arm64          : Ok   aarch64-linux-gnu-gcc (Ubuntu/Linaro 7.3.0-27ubuntu1~18.04) 7.3.0
-> 
-> And all the other environments I test build :-)
+It's a perennial idea. :-)
 
-Cheers for reporting this. I managed to reproduce the build failure with
-gcc version 6.3.0 20170516 (Debian 6.3.0-18+deb9u1).
+> https://lore.kernel.org/patchwork/patch/345098/
+>
+> Can you comment as to how your API compares to my old patch?
 
-The code in question is the arm64 versions of smp_load_acquire() and
-smp_store_release(). Unlike other architectures, these are not built
-around READ_ONCE() and WRITE_ONCE() since we have instructions we can
-use instead of fences. Bringing our macros up-to-date with those (i.e.
-tweaking the union initialisation and using the special "uXX_alias_t"
-types) appears to fix the issue for me.
+Sure. Basically, my approach is sort-of eventfd-esque, whereas your
+approach involves adding a very unusual operation (poll support) to a
+type of file (a directory) that normally doesn't support it. My
+approach feels a bit more "conventional" than poll on a dfd.
+Additionally, my approach is usable from the shell. In your model,
+poll(2) returning *is* the notification, whereas in my approach, the
+canonical notification is read() yielding EOF, with poll(2) acting
+like a wakeup hint, just like for eventfd. (You can set O_NONBLOCK on
+the exithand FD just like you would any other FD.)
 
-Diff below...
+The use of read() for notification of exit also allows for a simple
+extension in which we return a siginfo_t with exit information to the
+waiter, without changing the API model. My initial patch doesn't
+include this feature because I wanted to keep the initial version as
+simple as possible.
 
-Will
+> You=E2=80=99re using
+> some fairly gnarly global synchronization
 
---->8
+The global synchronization only kicks for a particular process exit if
+somebody has used an exithand FD to wait on that process. (Or more
+precisely, that process's struct signal.) Since most process exits
+don't require global synchronization, I don't think the global
+waitqueue for exithand is a big problem, but if it is, there are
+options for fixing it.
 
-diff --git a/tools/arch/arm64/include/asm/barrier.h b/tools/arch/arm64/include/asm/barrier.h
-index 12835ea0e417..378c051fa177 100644
---- a/tools/arch/arm64/include/asm/barrier.h
-+++ b/tools/arch/arm64/include/asm/barrier.h
-@@ -14,74 +14,75 @@
- #define wmb()		asm volatile("dmb ishst" ::: "memory")
- #define rmb()		asm volatile("dmb ishld" ::: "memory")
- 
--#define smp_store_release(p, v)					\
--do {								\
--	union { typeof(*p) __val; char __c[1]; } __u =		\
--		{ .__val = (__force typeof(*p)) (v) }; 		\
--								\
--	switch (sizeof(*p)) {					\
--	case 1:							\
--		asm volatile ("stlrb %w1, %0"			\
--				: "=Q" (*p)			\
--				: "r" (*(__u8 *)__u.__c)	\
--				: "memory");			\
--		break;						\
--	case 2:							\
--		asm volatile ("stlrh %w1, %0"			\
--				: "=Q" (*p)			\
--				: "r" (*(__u16 *)__u.__c)	\
--				: "memory");			\
--		break;						\
--	case 4:							\
--		asm volatile ("stlr %w1, %0"			\
--				: "=Q" (*p)			\
--				: "r" (*(__u32 *)__u.__c)	\
--				: "memory");			\
--		break;						\
--	case 8:							\
--		asm volatile ("stlr %1, %0"			\
--				: "=Q" (*p)			\
--				: "r" (*(__u64 *)__u.__c)	\
--				: "memory");			\
--		break;						\
--	default:						\
--		/* Only to shut up gcc ... */			\
--		mb();						\
--		break;						\
--	}							\
-+#define smp_store_release(p, v)						\
-+do {									\
-+	union { typeof(*p) __val; char __c[1]; } __u =			\
-+		{ .__val = (v) }; 					\
-+									\
-+	switch (sizeof(*p)) {						\
-+	case 1:								\
-+		asm volatile ("stlrb %w1, %0"				\
-+				: "=Q" (*p)				\
-+				: "r" (*(__u8_alias_t *)__u.__c)	\
-+				: "memory");				\
-+		break;							\
-+	case 2:								\
-+		asm volatile ("stlrh %w1, %0"				\
-+				: "=Q" (*p)				\
-+				: "r" (*(__u16_alias_t *)__u.__c)	\
-+				: "memory");				\
-+		break;							\
-+	case 4:								\
-+		asm volatile ("stlr %w1, %0"				\
-+				: "=Q" (*p)				\
-+				: "r" (*(__u32_alias_t *)__u.__c)	\
-+				: "memory");				\
-+		break;							\
-+	case 8:								\
-+		asm volatile ("stlr %1, %0"				\
-+				: "=Q" (*p)				\
-+				: "r" (*(__u64_alias_t *)__u.__c)	\
-+				: "memory");				\
-+		break;							\
-+	default:							\
-+		/* Only to shut up gcc ... */				\
-+		mb();							\
-+		break;							\
-+	}								\
- } while (0)
- 
--#define smp_load_acquire(p)					\
--({								\
--	union { typeof(*p) __val; char __c[1]; } __u;		\
--								\
--	switch (sizeof(*p)) {					\
--	case 1:							\
--		asm volatile ("ldarb %w0, %1"			\
--			: "=r" (*(__u8 *)__u.__c)		\
--			: "Q" (*p) : "memory");			\
--		break;						\
--	case 2:							\
--		asm volatile ("ldarh %w0, %1"			\
--			: "=r" (*(__u16 *)__u.__c)		\
--			: "Q" (*p) : "memory");			\
--		break;						\
--	case 4:							\
--		asm volatile ("ldar %w0, %1"			\
--			: "=r" (*(__u32 *)__u.__c)		\
--			: "Q" (*p) : "memory");			\
--		break;						\
--	case 8:							\
--		asm volatile ("ldar %0, %1"			\
--			: "=r" (*(__u64 *)__u.__c)		\
--			: "Q" (*p) : "memory");			\
--		break;						\
--	default:						\
--		/* Only to shut up gcc ... */			\
--		mb();						\
--		break;						\
--	}							\
--	__u.__val;						\
-+#define smp_load_acquire(p)						\
-+({									\
-+	union { typeof(*p) __val; char __c[1]; } __u =			\
-+		{ .__c = { 0 } };					\
-+									\
-+	switch (sizeof(*p)) {						\
-+	case 1:								\
-+		asm volatile ("ldarb %w0, %1"				\
-+			: "=r" (*(__u8_alias_t *)__u.__c)		\
-+			: "Q" (*p) : "memory");				\
-+		break;							\
-+	case 2:								\
-+		asm volatile ("ldarh %w0, %1"				\
-+			: "=r" (*(__u16_alias_t *)__u.__c)		\
-+			: "Q" (*p) : "memory");				\
-+		break;							\
-+	case 4:								\
-+		asm volatile ("ldar %w0, %1"				\
-+			: "=r" (*(__u32_alias_t *)__u.__c)		\
-+			: "Q" (*p) : "memory");				\
-+		break;							\
-+	case 8:								\
-+		asm volatile ("ldar %0, %1"				\
-+			: "=r" (*(__u64_alias_t *)__u.__c)		\
-+			: "Q" (*p) : "memory");				\
-+		break;							\
-+	default:							\
-+		/* Only to shut up gcc ... */				\
-+		mb();							\
-+		break;							\
-+	}								\
-+	__u.__val;							\
- })
- 
- #endif /* _TOOLS_LINUX_ASM_AARCH64_BARRIER_H */
+> , and that seems unnecessary
+
+It is necessary, and I don't see how your patch is correct. In your
+proc_task_base_poll, you call poll_wait() with &task->detach_wqh. What
+prevents that waitqueue disappearing (and the poll table waitqueue
+pointer dangling) immediately after proc_task_base_poll returns? The
+proc_inode maintains a reference to a struct pid, not a task_struct,
+but your waitqueue lives in task_struct.
+
+The waitqueue living in task_struct is also wrong in the case that a
+multithreaded program execs from a non-main thread; in this case (if
+I'm reading the code in exec.c right) we destroy the old main thread
+task_struct and have the caller-of-exec's task_struct adopt the old
+main thread's struct pid. That is, identity-continuity of struct task
+is not the same as identity-continuity of the logical thread group.
