@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22537ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2736C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D42B62081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EA9720664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pj0vioSv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D42B62081B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1+pUqLc7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EA9720664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728510AbeKAIHA (ORCPT
+        id S1728564AbeKAIHD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:07:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54358 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:07:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728478AbeKAIG7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:06:59 -0400
+        id S1728512AbeKAIHB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:07:01 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6516820830;
-        Wed, 31 Oct 2018 23:06:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E071520821;
+        Wed, 31 Oct 2018 23:06:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027209;
-        bh=pn1eozHMEtFk1PH+V8gCs57KdFntLUYYwiaU5ci4Hqw=;
+        s=default; t=1541027211;
+        bh=Iq7wlvSUDkCpAU+LDyoCb3Q+Bwtn72s/fPFvJCGEZNg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pj0vioSvhU3tVIDVzWCE5JcMjBjpKs1oBt5zHx4DegD7bql5Ho81Kfx8AFzLNbFye
-         JZx6dKZuBUXDJzfachipHegnqV+ZLiOAWO+7nW16yFQ8AuuhHydFF6k0mJaEUIOFCk
-         /Yase+WE9H8g4ykuqZeuwsZ1pHyFNDZVumMa6zHk=
+        b=1+pUqLc7rWURkCaNQhGsb6IXnimqWjCfWcIbGNB25ohSTZhCZd06JccAmE5/FI2Ky
+         VrgheAM5yAadYafYu3LXmb3a2mP0sYntS5fPuGp+C7ZjenkdLslGU7/fpXr+KvwA83
+         d3SUPL7+Lezd357Nz4oPK5b1fjNAjhxH4V3f0h1E=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 072/146] net: dsa: mv88e6xxx: Fix writing to a PHY page.
-Date:   Wed, 31 Oct 2018 19:04:27 -0400
-Message-Id: <20181031230541.28822-72-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 075/146] libertas_tf: prevent underflow in process_cmdrequest()
+Date:   Wed, 31 Oct 2018 19:04:30 -0400
+Message-Id: <20181031230541.28822-75-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -53,35 +53,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrew Lunn <andrew@lunn.ch>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit c309b158090d788e96ee597444965cb79b040484 ]
+[ Upstream commit 3348ef6a6a126706d6a73ed40c18d8033df72783 ]
 
-After changing to the needed page, actually write the value to the
-register!
+If recvlength is less than MESSAGE_HEADER_LEN (4) we would end up
+corrupting memory.
 
-Fixes: 09cb7dfd3f14 ("net: dsa: mv88e6xxx: describe PHY page and SerDes")
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: c305a19a0d0a ("libertas_tf: usb specific functions")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/dsa/mv88e6xxx/phy.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/wireless/marvell/libertas_tf/if_usb.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/dsa/mv88e6xxx/phy.c b/drivers/net/dsa/mv88e6xxx/phy.c
-index 46af8052e535..152a65d46e0b 100644
---- a/drivers/net/dsa/mv88e6xxx/phy.c
-+++ b/drivers/net/dsa/mv88e6xxx/phy.c
-@@ -110,6 +110,9 @@ int mv88e6xxx_phy_page_write(struct mv88e6xxx_chip *chip, int phy,
- 	err = mv88e6xxx_phy_page_get(chip, phy, page);
- 	if (!err) {
- 		err = mv88e6xxx_phy_write(chip, phy, MV88E6XXX_PHY_PAGE, page);
-+		if (!err)
-+			err = mv88e6xxx_phy_write(chip, phy, reg, val);
-+
- 		mv88e6xxx_phy_page_put(chip, phy);
- 	}
+diff --git a/drivers/net/wireless/marvell/libertas_tf/if_usb.c b/drivers/net/wireless/marvell/libertas_tf/if_usb.c
+index e92fc5001171..789337ea676a 100644
+--- a/drivers/net/wireless/marvell/libertas_tf/if_usb.c
++++ b/drivers/net/wireless/marvell/libertas_tf/if_usb.c
+@@ -605,9 +605,10 @@ static inline void process_cmdrequest(int recvlength, uint8_t *recvbuff,
+ {
+ 	unsigned long flags;
  
+-	if (recvlength > LBS_CMD_BUFFER_SIZE) {
++	if (recvlength < MESSAGE_HEADER_LEN ||
++	    recvlength > LBS_CMD_BUFFER_SIZE) {
+ 		lbtf_deb_usbd(&cardp->udev->dev,
+-			     "The receive buffer is too large\n");
++			     "The receive buffer is invalid: %d\n", recvlength);
+ 		kfree_skb(skb);
+ 		return;
+ 	}
 -- 
 2.17.1
 
