@@ -2,201 +2,104 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF766ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 17:33:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D836DECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 17:34:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8ECB2081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 17:33:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8ECB2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id AB3312081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 17:34:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB3312081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729919AbeKACcy (ORCPT
+        id S1729938AbeKACdE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 22:32:54 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51642 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729896AbeKACcy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 22:32:54 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9VHTJw6118927
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 13:33:55 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nfec100dk-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 13:33:55 -0400
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 31 Oct 2018 17:33:54 -0000
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 31 Oct 2018 17:33:50 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9VHXnIF33095830
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 31 Oct 2018 17:33:49 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 558FAB2066;
-        Wed, 31 Oct 2018 17:33:49 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 239AAB206E;
-        Wed, 31 Oct 2018 17:33:49 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.141])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 31 Oct 2018 17:33:49 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id CFDB116C0BB2; Wed, 31 Oct 2018 10:33:49 -0700 (PDT)
-Date:   Wed, 31 Oct 2018 10:33:49 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
-        josh@joshtriplett.org, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com
-Subject: Re: [PATCH RFC kenrel/rcu] Eliminate BUG_ON() for sync.c
-Reply-To: paulmck@linux.ibm.com
-References: <20181022145241.GA7488@linux.ibm.com>
- <20181022152406.GA7257@redhat.com>
- <20181022155644.GG4170@linux.ibm.com>
- <20181022161439.GA8640@redhat.com>
- <20181030175539.GL4170@linux.ibm.com>
- <20181031172604.GC21207@redhat.com>
+        Wed, 31 Oct 2018 22:33:04 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:10648 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729737AbeKACdE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 22:33:04 -0400
+Received: from smtp2.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:2:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id C3397A110B;
+        Wed, 31 Oct 2018 18:34:04 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter04.heinlein-hosting.de (spamfilter04.heinlein-hosting.de [80.241.56.122]) (amavisd-new, port 10030)
+        with ESMTP id xgZy_zwhPyhD; Wed, 31 Oct 2018 18:34:03 +0100 (CET)
+Date:   Thu, 1 Nov 2018 04:33:53 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Daniel Colascione <dancol@google.com>,
+        linux-kernel@vger.kernel.org, timmurray@google.com,
+        joelaf@google.com, surenb@google.com,
+        christian.brauner@canonical.com, ebiederm@xmission.com,
+        keescook@chromium.org, oleg@redhat.com
+Subject: Re: [PATCH v2] Implement /proc/pid/kill
+Message-ID: <20181031173353.uob5qikkhsb5digy@yavin>
+References: <20181029221037.87724-1-dancol@google.com>
+ <20181031143744.77677-1-dancol@google.com>
+ <20181031150548.GA103404@joelaf.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="urpvdo46d6qtxa4g"
 Content-Disposition: inline
-In-Reply-To: <20181031172604.GC21207@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18103117-0068-0000-0000-00000357301F
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009960; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01110710; UDB=6.00575542; IPR=6.00890802;
- MB=3.00023981; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-31 17:33:52
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18103117-0069-0000-0000-00004644AA0B
-Message-Id: <20181031173349.GF4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-31_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810310146
+In-Reply-To: <20181031150548.GA103404@joelaf.mtv.corp.google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 06:26:05PM +0100, Oleg Nesterov wrote:
-> On 10/30, Paul E. McKenney wrote:
-> >
-> > On Mon, Oct 22, 2018 at 06:14:40PM +0200, Oleg Nesterov wrote:
-> > > > > ----------------------------------------------------------------------------
-> > > > > Damn.
-> > > > >
-> > > > > This suddenly reminds me that I rewrote this code completely, and you even
-> > > > > reviewed the new implementation and (iirc) acked it!
-> > > > >
-> > > > > However, I failed to force myself to rewrite the comments, and that is why
-> > > > > I didn't send the "official" patch :/
-> > > > >
-> > > > > May be some time...
-> > > >
-> > > > Could you please point me at the last email thread?  Yes, I should be
-> > > > able to find it, but I would probably get the wrong one.  :-/
-> > >
-> > > probably this one,
-> > >
-> > > 	[PATCH] rcu_sync: simplify the state machine, introduce __rcu_sync_enter()
-> > > 	https://lkml.org/lkml/2016/7/16/150
-> > >
-> > > but I am not sure, will recheck tomorrow.
-> >
-> > Just following up...  Here is what I currently have.
-> 
-> Hmm. Are you sure you replied to the correct message? ;)
-> 
-> the patch below looks absolutely unrelated...
 
-Oy...  Right message, wrong commit.
+--urpvdo46d6qtxa4g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Does the one below look somewhat more relevant?  ;-)
+On 2018-10-31, Joel Fernandes <joel@joelfernandes.org> wrote:
+> I suggest to maintainers we take this in as an intermediate solution
+> since we don't have anything close to it and this is a real issue, and
+> the fix proposed is simple.
 
-							Thanx, Paul
+I would suggest we wait until after LPC to see what Christian's design
+is (given that, from what I've heard, it will help us solve more
+problems than just the kill(2) issue).
 
-------------------------------------------------------------------------
+I am very skeptical of adding new procfs files as an "intermediate
+solution" (procfs is the most obvious example of an interface which is
+effectively written in stone). Especially if this would conflict with
+the idea Christian will propose -- as he said, there were proposals to
+do this in the past and they didn't get anywhere because of lack of
+discussion and brainstorming before posting patches.
 
-commit 10314fde6fcdbaaf7c21b539dd2db5933344344f
-Author: Paul E. McKenney <paulmck@linux.ibm.com>
-Date:   Mon Oct 22 07:43:22 2018 -0700
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
-    rcu: Eliminate BUG_ON() for sync.c
-    
-    The sync.c file has a number of calls to BUG_ON(), which panics the
-    kernel, which is not a good strategy for devices (like embedded) that
-    don't have a way to capture console output.  This commit therefore
-    changes these BUG_ON() calls to WARN_ON_ONCE(), but does so quite naively.
-    
-    Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-    Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-    Cc: Oleg Nesterov <oleg@redhat.com>
-    Cc: Peter Zijlstra <peterz@infradead.org>
+--urpvdo46d6qtxa4g
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/kernel/rcu/sync.c b/kernel/rcu/sync.c
-index 3f943efcf61c..a6ba446a9693 100644
---- a/kernel/rcu/sync.c
-+++ b/kernel/rcu/sync.c
-@@ -125,8 +125,7 @@ void rcu_sync_enter(struct rcu_sync *rsp)
- 		rsp->gp_state = GP_PENDING;
- 	spin_unlock_irq(&rsp->rss_lock);
- 
--	BUG_ON(need_wait && need_sync);
--
-+	WARN_ON_ONCE(need_wait && need_sync);
- 	if (need_sync) {
- 		gp_ops[rsp->gp_type].sync();
- 		rsp->gp_state = GP_PASSED;
-@@ -139,7 +138,7 @@ void rcu_sync_enter(struct rcu_sync *rsp)
- 		 * Nobody has yet been allowed the 'fast' path and thus we can
- 		 * avoid doing any sync(). The callback will get 'dropped'.
- 		 */
--		BUG_ON(rsp->gp_state != GP_PASSED);
-+		WARN_ON_ONCE(rsp->gp_state != GP_PASSED);
- 	}
- }
- 
-@@ -166,8 +165,8 @@ static void rcu_sync_func(struct rcu_head *rhp)
- 	struct rcu_sync *rsp = container_of(rhp, struct rcu_sync, cb_head);
- 	unsigned long flags;
- 
--	BUG_ON(rsp->gp_state != GP_PASSED);
--	BUG_ON(rsp->cb_state == CB_IDLE);
-+	WARN_ON_ONCE(rsp->gp_state != GP_PASSED);
-+	WARN_ON_ONCE(rsp->cb_state == CB_IDLE);
- 
- 	spin_lock_irqsave(&rsp->rss_lock, flags);
- 	if (rsp->gp_count) {
-@@ -225,7 +224,7 @@ void rcu_sync_dtor(struct rcu_sync *rsp)
- {
- 	int cb_state;
- 
--	BUG_ON(rsp->gp_count);
-+	WARN_ON_ONCE(rsp->gp_count);
- 
- 	spin_lock_irq(&rsp->rss_lock);
- 	if (rsp->cb_state == CB_REPLAY)
-@@ -235,6 +234,6 @@ void rcu_sync_dtor(struct rcu_sync *rsp)
- 
- 	if (cb_state != CB_IDLE) {
- 		gp_ops[rsp->gp_type].wait();
--		BUG_ON(rsp->cb_state != CB_IDLE);
-+		WARN_ON_ONCE(rsp->cb_state != CB_IDLE);
- 	}
- }
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCAAdFiEEb6Gz4/mhjNy+aiz1Snvnv3Dem58FAlvZ54AACgkQSnvnv3De
+m5+fahAA0B0b0bhD/KuB/xokVIjR7z2eesm4mTyHpVWpP2gXKWi1xe3/7rgulUM1
+vUKAGDnDbwW9ysxFv2E5c8UnI4vwn9lV0COYCq82Di+4xZ2nbvpK6VBNC8AsdhTL
+Cu3QDHrumfwMSxK5wb2Wyq/pa2pe2DyKokZZC7bgr5rBjIiSpcYjCyywg8rgtYTe
+0rkLlC7S8UPD0B+LI3e5NDwz8ksWdmlRldKgO514WI8rEMs6E1c6/REN9q35b5K9
+c7XGyDYNy/+719hc2K1LxC0yrJZ3KnmaLtWN7o+PWYV93XxNjZHxrRAWh9jpoYAK
+vo6q6AHOJAXP3z66qR2pbh7rPrrnoEneOfwTkSJILrFWecpgIlkd2Ov2g+/y1Oi9
+zFEmaBi7bx9dbjdEnuExmcPBvnKrl7ddtnSyGutE4s+fHnXl+Vz+HQ4ohWb9qpcD
+VBIqHNTgdhx/SE0edMOrE/yBx+5nppl2TT69UtziBRY4mVlRGwum9EGWQrHb318R
+cu4Sls15kTeqaqbSOglyYC84bKrOqfHz3MBNG/PgcJ2rNNN4OBizlHz/UYf9yBx3
+YdJgPLSSDxVtVdE3F4z5bnLHq/z+KNhaMHWmz3SYMHJBsy6gBhr0sYkfo0se4VLh
+8WpOAfRIGwi0UQDDd2XmZ2MTOvJ0CJC3sBTtLa83VVLYwtBmggw=
+=TCYp
+-----END PGP SIGNATURE-----
+
+--urpvdo46d6qtxa4g--
