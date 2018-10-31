@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF960ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:14:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6969BC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:14:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DE2120664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:14:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 312E22085A
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:14:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UdTtEFPZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DE2120664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LC6PbFN7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 312E22085A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732247AbeKAIMZ (ORCPT
+        id S1732220AbeKAIMY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:12:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37222 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:12:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731111AbeKAIMW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:12:22 -0400
+        id S1731038AbeKAIMX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:12:23 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BD0720866;
-        Wed, 31 Oct 2018 23:12:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0132920843;
+        Wed, 31 Oct 2018 23:12:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027529;
-        bh=6aA6Ch5b2Lonu9ONXKOeqNMoUj6GvuhzTiYEe5fOBTE=;
+        s=default; t=1541027531;
+        bh=xx0jE5Zm6B3+nvjtOfyvXln0fo96kZA1qqYqqcsOAls=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UdTtEFPZRII3RSAnLNgUZmkkxHlz3uOX5BE2STcP6u3u7zJFBewb9s4JIvTlSFJEk
-         H3jHyauEDTD2p3nHq5evPQh8ryT5z4I76O6vJMkWgLPq/48UTYvdhp6Zjjz7txfEfH
-         pFYKpTdGBQgUw8ybKmni3HKOUC2aPxmPVhLPMb38=
+        b=LC6PbFN7Qswv9KWwc2nHhMSo4sRAYRfg1gm3j+SCdPaZ5qYkzZ7gP6Edd1HU2S2me
+         pAHnuLPYf3Ek0P4CXXmS1/QhAZlv7QAu8fPNiS2FdIFKCT+tExzCIcU8ZUQyj+lSsN
+         yN7ruhOLN9EZYbDYc0mO5dG3uCthf0lge9x6Vsks=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Omar Sandoval <osandov@fb.com>, Jens Axboe <axboe@kernel.dk>,
+Cc:     Serhey Popovych <serhe.popovych@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 02/22] ataflop: fix error handling during setup
-Date:   Wed, 31 Oct 2018 19:11:46 -0400
-Message-Id: <20181031231206.29509-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 04/22] tun: Consistently configure generic netdev params via rtnetlink
+Date:   Wed, 31 Oct 2018 19:11:48 -0400
+Message-Id: <20181031231206.29509-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231206.29509-1-sashal@kernel.org>
 References: <20181031231206.29509-1-sashal@kernel.org>
@@ -52,75 +53,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Omar Sandoval <osandov@fb.com>
+From: Serhey Popovych <serhe.popovych@gmail.com>
 
-[ Upstream commit 71327f547ee3a46ec5c39fdbbd268401b2578d0e ]
+[ Upstream commit df52eab23d703142c766ac00bdb8db19d71238d0 ]
 
-Move queue allocation next to disk allocation to fix a couple of issues:
+Configuring generic network device parameters on tun will fail in
+presence of IFLA_INFO_KIND attribute in IFLA_LINKINFO nested attribute
+since tun_validate() always return failure.
 
-- If add_disk() hasn't been called, we should clear disk->queue before
-  calling put_disk().
-- If we fail to allocate a request queue, we still need to put all of
-  the disks, not just the ones that we allocated queues for.
+This can be visualized with following ip-link(8) command sequences:
 
-Signed-off-by: Omar Sandoval <osandov@fb.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+  # ip link set dev tun0 group 100
+  # ip link set dev tun0 group 100 type tun
+  RTNETLINK answers: Invalid argument
+
+with contrast to dummy and veth drivers:
+
+  # ip link set dev dummy0 group 100
+  # ip link set dev dummy0 type dummy
+
+  # ip link set dev veth0 group 100
+  # ip link set dev veth0 group 100 type veth
+
+Fix by returning zero in tun_validate() when @data is NULL that is
+always in case since rtnl_link_ops->maxtype is zero in tun driver.
+
+Fixes: f019a7a594d9 ("tun: Implement ip link del tunXXX")
+Signed-off-by: Serhey Popovych <serhe.popovych@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/ataflop.c | 25 +++++++++++++++----------
- 1 file changed, 15 insertions(+), 10 deletions(-)
+ drivers/net/tun.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/block/ataflop.c b/drivers/block/ataflop.c
-index 2104b1b4ccda..9ab759bcebd5 100644
---- a/drivers/block/ataflop.c
-+++ b/drivers/block/ataflop.c
-@@ -1933,6 +1933,11 @@ static int __init atari_floppy_init (void)
- 		unit[i].disk = alloc_disk(1);
- 		if (!unit[i].disk)
- 			goto Enomem;
-+
-+		unit[i].disk->queue = blk_init_queue(do_fd_request,
-+						     &ataflop_lock);
-+		if (!unit[i].disk->queue)
-+			goto Enomem;
- 	}
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index 3067f840210e..7448ebe2c383 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -1423,6 +1423,8 @@ static void tun_setup(struct net_device *dev)
+  */
+ static int tun_validate(struct nlattr *tb[], struct nlattr *data[])
+ {
++	if (!data)
++		return 0;
+ 	return -EINVAL;
+ }
  
- 	if (UseTrackbuffer < 0)
-@@ -1964,10 +1969,6 @@ static int __init atari_floppy_init (void)
- 		sprintf(unit[i].disk->disk_name, "fd%d", i);
- 		unit[i].disk->fops = &floppy_fops;
- 		unit[i].disk->private_data = &unit[i];
--		unit[i].disk->queue = blk_init_queue(do_fd_request,
--					&ataflop_lock);
--		if (!unit[i].disk->queue)
--			goto Enomem;
- 		set_capacity(unit[i].disk, MAX_DISK_SIZE * 2);
- 		add_disk(unit[i].disk);
- 	}
-@@ -1982,13 +1983,17 @@ static int __init atari_floppy_init (void)
- 
- 	return 0;
- Enomem:
--	while (i--) {
--		struct request_queue *q = unit[i].disk->queue;
-+	do {
-+		struct gendisk *disk = unit[i].disk;
- 
--		put_disk(unit[i].disk);
--		if (q)
--			blk_cleanup_queue(q);
--	}
-+		if (disk) {
-+			if (disk->queue) {
-+				blk_cleanup_queue(disk->queue);
-+				disk->queue = NULL;
-+			}
-+			put_disk(unit[i].disk);
-+		}
-+	} while (i--);
- 
- 	unregister_blkdev(FLOPPY_MAJOR, "fd");
- 	return -ENOMEM;
 -- 
 2.17.1
 
