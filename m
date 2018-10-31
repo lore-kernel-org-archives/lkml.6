@@ -2,158 +2,227 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A3F7C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:42:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D08CC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:45:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 156E92054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:42:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="LTWVg3J7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 156E92054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	by mail.kernel.org (Postfix) with ESMTP id D208D2054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:45:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D208D2054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=emutex.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730075AbeKAFmV (ORCPT
+        id S1730047AbeKAFpO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 01:42:21 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39414 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729821AbeKAFmV (ORCPT
+        Thu, 1 Nov 2018 01:45:14 -0400
+Received: from mr30.theemaillaundry.net ([78.46.72.43]:45956 "EHLO
+        mr30.theemaillaundry.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726318AbeKAFpO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 01:42:21 -0400
-Received: by mail-pf1-f195.google.com with SMTP id c25-v6so8181324pfe.6
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 13:42:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tNw4+GQDoI+QM0z6JRCy7TPp3efbz9Gf3KD2w8i/67w=;
-        b=LTWVg3J7Zj0OilUrMPMl/KAotZUGSib/8cbljjkSKDAymWi2vXIrIY3uuKdOeQX8bA
-         io1GuRvN+zmQJxDfrXgdcg4i6Clr7OU5LT6BIX5piwd6Uu7sJddot82KRAwFYzczjuJ/
-         PGOWBVMX4NaXc9qbaZCB0RLQ35YYs3XRQDZrPZyEjcwblSJoYQQ98zGfzpwvzrSKIpCh
-         O/6yLTgNBKo+uItqyNDOn0KT+IMLWr7P83P8t4B2BOQNxinTexZj2ddqsyZWiAD6cZDZ
-         ODqN6TdK3ru6mVRrjF2ShOks+810hWr1UHZVxXZ9uK1GUrDwT+47uiAp+JIzDfpW90RI
-         e21g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=tNw4+GQDoI+QM0z6JRCy7TPp3efbz9Gf3KD2w8i/67w=;
-        b=km9zv11qgMaHFYqMhcAiGM1pcgpEDGF7wiyXmq25TMr1+sEpxbRhuHPLvLKDm4jndp
-         erEm/HfCVZjiGXioH+9pZXsxHKgLG3zCCavA245lxEqfbPlFs9RhJ5qFCRplzfdREC3D
-         VEVhB0NwzXzgBLOki18V/aX/IvGwqbL2vy1r7BsMnp4FyabH8wjVOTwZeZbOcTNCpJSC
-         xRRC44p0oLmjbGXCXjcHOadyqly0F9/t1uIToNAVYXqXjlK1r/zvNENBAMhBTPkOQxwb
-         yUSCdx2dLpF3C3W3jm3frE8CEqVs7IvjJoz3KmghOlNlTUy+50ebdViu/ugFmIlnO8qH
-         4FeQ==
-X-Gm-Message-State: AGRZ1gIIXWwrOV+TA74C5JQqBxAlkTB7R6fra7InsG7m6oVwtL5ysQwF
-        I1VuojCgDcn7sjMX2Cqcn236iA==
-X-Google-Smtp-Source: AJdET5dEk5vIhWJb+nT1PKgOqAKSCzVQCgcC7HazjWXIZzmxVPxF3qQNEJpQUGDsbZIEIAQshAOm3Q==
-X-Received: by 2002:a63:1013:: with SMTP id f19-v6mr4620144pgl.38.1541018560320;
-        Wed, 31 Oct 2018 13:42:40 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id s8-v6sm1699840pgi.44.2018.10.31.13.42.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 13:42:39 -0700 (PDT)
-Date:   Wed, 31 Oct 2018 13:42:39 -0700 (PDT)
-X-Google-Original-Date: Wed, 31 Oct 2018 13:42:26 PDT (-0700)
-Subject:     Re: [PATCH] RISC-V: defconfig: Enable printk timestamps
-In-Reply-To: <CAOesGMjXZNURZ4SdKjssYCcFv3=4MYLBpBpzvvb1rNM-fo=QHQ@mail.gmail.com>
-CC:     anup@brainfault.org, aou@eecs.berkeley.edu, atish.patra@wdc.com,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     Olof Johansson <olof@lixom.net>, davem@sunset.davemloft.net
-Message-ID: <mhng-111820e6-59c0-479a-a10f-f3729007ba70@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Thu, 1 Nov 2018 01:45:14 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mr30.theemaillaundry.net (Postfix) with ESMTP id 705FC2409F3;
+        Wed, 31 Oct 2018 20:45:30 +0000 (GMT)
+X-Amavis-Modified: Mail body modified (using disclaimer) -
+        mr30.theemaillaundry.net
+X-Virus-Scanned: amavisd-new at theemaillaundry.net
+Received: from mr30.theemaillaundry.net ([127.0.0.1])
+        by localhost (mr30.theemaillaundry.net [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id N-bLtXl6gjVJ; Wed, 31 Oct 2018 20:45:28 +0000 (GMT)
+Received: from statler.emutex.com (unknown [92.51.199.138])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mr30.theemaillaundry.net (Postfix) with ESMTPS id 8D910240F13;
+        Wed, 31 Oct 2018 20:45:28 +0000 (GMT)
+Received: from [10.10.68.81] (helo=dan-Latitude-E5450.emutex.com)
+        by statler.emutex.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_CBC_SHA256:128)
+        (Exim 4.84)
+        (envelope-from <dan@emutex.com>)
+        id 1gHxMl-0007KU-Ic; Wed, 31 Oct 2018 20:45:27 +0000
+From:   Dan O'Donovan <dan@emutex.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org,
+        linux-leds@vger.kernel.org,
+        Carlos Iglesias <carlos.iglesias@emutex.com>,
+        Dan O'Donovan <dan@emutex.com>
+Subject: [PATCH v3 2/3] leds: upboard: Add LED support
+Date:   Wed, 31 Oct 2018 20:44:48 +0000
+Message-Id: <1541018689-20625-3-git-send-email-dan@emutex.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1541018689-20625-1-git-send-email-dan@emutex.com>
+References: <1539969334-24577-1-git-send-email-dan@emutex.com>
+ <1541018689-20625-1-git-send-email-dan@emutex.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 31 Oct 2018 12:20:40 PDT (-0700), Olof Johansson wrote:
-> On Tue, Oct 30, 2018 at 5:37 AM Anup Patel <anup@brainfault.org> wrote:
->>
->> The printk timestamps are very useful information to visually see
->> where kernel is spending time during boot. It also helps us see
->> the timing of hotplug events at runtime.
->>
->> This patch enables printk timestamps in RISC-V defconfig so that
->> we have it enabled by default (similar to other architectures
->> such as x86_64, arm64, etc).
->>
->> Signed-off-by: Anup Patel <anup@brainfault.org>
->
-> Acked-by: Olof Johansson <olof@lixom.net>
->
-> For next time: doing a re-format of the defconfig (to shuffle config
-> order), plus changes in the same patch, tends to be a bit fragile. For
-> cases like these, I'd recommend hand-pruning to just flip the one
-> option if needed, and then have Palmer or Andrew refresh the defconfig
-> during a merge window if needed (usually quite rare).
+Allow userspace to use the on-board LEDs as "upboard:<color>:".
 
-I poked around and it looks like most architectures have this enabled for at 
-least one defconfig, with the big architectures having it enabled for all of 
-them.
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Dan O'Donovan <dan@emutex.com>
+---
+ drivers/leds/Kconfig        |  10 +++++
+ drivers/leds/Makefile       |   1 +
+ drivers/leds/leds-upboard.c | 103 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 114 insertions(+)
+ create mode 100644 drivers/leds/leds-upboard.c
 
-I decided to do a bit of a case study here to try and figure out why some 
-architectures have this enabled for some defconfigs but not for others, and as 
-far as I can tell it's just an oversight.  Specifically, looking at sparc32 (# 
-CONFIG_PRINTK_TIME is not set) vs sparc64 (CONFIG_PRINTK_TIME=y) I can't find 
-any reason for the difference.  sparc32's setting can be traced back to
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index a72f97f..4ae1ec3 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -766,6 +766,16 @@ config LEDS_NIC78BX
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called leds-nic78bx.
+ 
++config LEDS_UPBOARD
++	tristate "LED support for the UP Squared"
++	depends on LEDS_CLASS
++	depends on MFD_UPBOARD
++	help
++	  This option enables support for the LEDs on the UP Squared board.
++
++	  This driver can also be built as a module. If so, the module
++	  will be called leds-upboard.
++
+ comment "LED Triggers"
+ source "drivers/leds/trigger/Kconfig"
+ 
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index 4c1b005..a35629d 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -79,6 +79,7 @@ obj-$(CONFIG_LEDS_MT6323)		+= leds-mt6323.o
+ obj-$(CONFIG_LEDS_LM3692X)		+= leds-lm3692x.o
+ obj-$(CONFIG_LEDS_SC27XX_BLTC)		+= leds-sc27xx-bltc.o
+ obj-$(CONFIG_LEDS_LM3601X)		+= leds-lm3601x.o
++obj-$(CONFIG_LEDS_UPBOARD)		+= leds-upboard.o
+ 
+ # LED SPI Drivers
+ obj-$(CONFIG_LEDS_CR0014114)		+= leds-cr0014114.o
+diff --git a/drivers/leds/leds-upboard.c b/drivers/leds/leds-upboard.c
+new file mode 100644
+index 0000000..90ebd9b
+--- /dev/null
++++ b/drivers/leds/leds-upboard.c
+@@ -0,0 +1,103 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// UP Board LED driver
++//
++// Copyright (c) 2018, Emutex Ltd.
++//
++// Author: Javier Arteaga <javier@emutex.com>
++//
++
++#include <linux/kernel.h>
++#include <linux/leds.h>
++#include <linux/mfd/upboard.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++#define to_upboard_led(cdev) container_of(cdev, struct upboard_led, cdev)
++
++static const char * const upboard_led_names[] = {
++	"upboard:blue:",
++	"upboard:yellow:",
++	"upboard:green:",
++	"upboard:red:",
++};
++
++struct upboard_led {
++	struct regmap_field *field;
++	struct led_classdev cdev;
++};
++
++static enum led_brightness upboard_led_brightness_get(struct led_classdev *cdev)
++{
++	struct upboard_led *led = to_upboard_led(cdev);
++	int ret, brightness = 0;
++
++	ret = regmap_field_read(led->field, &brightness);
++	if (ret < 0)
++		dev_err(cdev->dev, "Failed to get led brightness, %d", ret);
++
++	return brightness;
++}
++
++static void upboard_led_brightness_set(struct led_classdev *cdev,
++				       enum led_brightness brightness)
++{
++	struct upboard_led *led = to_upboard_led(cdev);
++	int ret;
++
++	ret = regmap_field_write(led->field, brightness);
++	if (ret < 0)
++		dev_err(cdev->dev, "Failed to set led brightness, %d", ret);
++}
++
++static int upboard_led_probe(struct platform_device *pdev)
++{
++	unsigned int led_index = pdev->id;
++	struct device *dev = &pdev->dev;
++	struct upboard_led *led;
++	struct regmap *regmap;
++	struct reg_field conf = {
++		.reg = UPBOARD_REG_FUNC_EN0,
++		.lsb = led_index,
++		.msb = led_index,
++	};
++
++	if (led_index >= ARRAY_SIZE(upboard_led_names))
++		return -EINVAL;
++
++	if (!dev->parent)
++		return -EINVAL;
++
++	regmap = dev_get_regmap(dev->parent, NULL);
++	if (!regmap)
++		return -EINVAL;
++
++	led = devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
++	if (!led)
++		return -ENOMEM;
++
++	led->field = devm_regmap_field_alloc(dev, regmap, conf);
++	if (IS_ERR(led->field))
++		return PTR_ERR(led->field);
++
++	led->cdev.max_brightness = 1;
++	led->cdev.brightness_get = upboard_led_brightness_get;
++	led->cdev.brightness_set = upboard_led_brightness_set;
++	led->cdev.name = upboard_led_names[led_index];
++
++	return devm_led_classdev_register(dev, &led->cdev);
++}
++
++static struct platform_driver upboard_led_driver = {
++	.driver = {
++		.name = "upboard-led",
++	},
++};
++
++module_platform_driver_probe(upboard_led_driver, upboard_led_probe);
++
++MODULE_ALIAS("platform:upboard-led");
++MODULE_AUTHOR("Javier Arteaga <javier@emutex.com>");
++MODULE_DESCRIPTION("UP Board LED driver");
++MODULE_LICENSE("GPL v2");
+-- 
+2.7.4
 
-    commit 216da721b881838d639a3987bf8a825e6b4aacdd
-    Author: David S. Miller <davem@sunset.davemloft.net>
-    Date:   Sun Dec 17 14:21:34 2006 -0800
-    
-        [SPARC]: Update defconfig.
-    
-        Signed-off-by: David S. Miller <davem@davemloft.net>
 
-which changes everything in the defconfig, while the sparc64 version dates back to
+------
+This email has been scanned for spam and malware by The Email Laundry.
 
-    commit 3ebc284d52757cf39788731f8fddd70a89f7fc23
-    Author: David S. Miller <davem@sunset.davemloft.net>
-    Date:   Mon Jan 9 14:36:49 2006 -0800
-    
-        [SPARC64]: Update defconfig.
-    
-        Signed-off-by: David S. Miller <davem@davemloft.net>
-
-When we first submitted out port upstream we had an empty defconfig, with the 
-theory being that we should just pick whatever the default in Kconfig is for 
-everything.  That's obviously the wrong thing to do because most of those 
-options are bogus.  At the time I didn't care enough to look because I just 
-wanted something to work, but now I find myself asking the question "what goes 
-in a defconfig?"  Is it:
-
-* What I, as the maintainer of arch/riscv, want?  That's essentially what it is 
-  now, as we have things like "CONFIG_R8169=y" in there because I happened to 
-  have one sitting around when we needed to plug in an Ethernet card to test 
-  out PCIe.
-* What distributions expect?  There's a major element of this in there right 
-  now, as half this stuff was just selected because the Debian and Fedora guys 
-  suggested we do so because adding things to the RISC-V defconfig made it 
-  easier to put together their build scripts.  For example, we ended up with 
-  "CONFIG_EXPERT=y" because some setting necessary for the distros was hidden 
-  behind it -- that seems like an odd default.
-* What users expect?  I'm not even sure who users are in this case, as from my 
-  understating most people use distro kernels and don't twiddle Kconfig 
-  options.
-* What is necessary to work on RISC-V hardware?  This seems like the most 
-  reasonable use for an arch-specific defconfig, and subsumes things like 
-  "CONFIG_SIFIVE_PLIC=y" because without the PLIC driver nothing will work (but 
-  the PLIC driver shouldn't be enabled by default for all architectures, as 
-  it's useless everywhere else).
-
-Maybe I've opened up a big can of worms here...  It just seems silly to have 
-most of our current defconfig be RISC-V specific.
-
-Anyway, I'm happy with the change because it meets my "what I want" criteria 
-:).  I'll split it into two parts, though, as that way when someone else has to 
-go to some archaeology on our port they'll be less likely to get lost.
