@@ -2,109 +2,146 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D322ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:48:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E62AC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:51:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3341220685
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:48:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF71B20685
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:51:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="Z+M5lKim"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3341220685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="e1XXRFP3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF71B20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728151AbeJaSqM (ORCPT
+        id S1727980AbeJaSse (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 14:46:12 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:43045 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727637AbeJaSqL (ORCPT
+        Wed, 31 Oct 2018 14:48:34 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:42749 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727527AbeJaSsd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 14:46:11 -0400
-Received: by mail-pl1-f194.google.com with SMTP id g59-v6so3010918plb.10
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 02:48:48 -0700 (PDT)
+        Wed, 31 Oct 2018 14:48:33 -0400
+Received: by mail-ed1-f68.google.com with SMTP id b7-v6so13035353edd.9
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 02:51:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=eMcfQj3xu7SzJYqwIC9m31n4fvakOQVoNjyilo/BVOA=;
-        b=Z+M5lKimifsG8dwdL75BqL5h8XZYG/OF6C7XeE9wJAKrDJmY+ZEkzWeCCARIGqTo86
-         nqvNhWQpk2fb5g1XIPtQb9MAMleb5geXr6etQEM01SKAak8GcyIFV1ODBXEZlCEVHECm
-         EBdvva3AYDi+xDMVyvN7fTwNHOCkysFnAw8CB/oyTzzoSLKzITcYT6nbToeLF9yhkfov
-         KD6urpUSklwXCXqOwozSxybTCpKSQHtyDNr5bAKLarfribXndq9zdWtrtLrQ4GgsuC9f
-         gg3qjZc32iHxuiFphIFHpgOXqwcuH3Em2yu7DgMNcOdwREC6XTGc/YsVhUKH9R+9n4+m
-         nfqw==
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pWBPAPUCerHExLmV17rkZPmN4Migybs7RpwxuO6c4v4=;
+        b=e1XXRFP3Ei7qH3iHkdkpFiyVGFQEJ/Dh6mHBI995tTcAivc1C4W5mbe1i/PYX+GiLe
+         vAQRwe6g53alz1AfPQndohp0Juxa8NSvSFMtf+xnacoaWXZc/NkWTL1n4FwyIXFFSAvt
+         SAPlaKWgoeaY72coZZF8bXHu2xZSdevpxztDI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eMcfQj3xu7SzJYqwIC9m31n4fvakOQVoNjyilo/BVOA=;
-        b=WQi1pIAJ3MBaGiS85GHk0IIpglzshhYXUinuEFDRWwRTzBzc/K4C0TvWk7Hs1tDAX+
-         tRB+wlSfYbumE6jP295kHiXjVBTX9YYN465ON2sJl6t6FbIAIKgjUeRXCktjKVuxJvwj
-         enm6azUSxJTidtIS0L4zI5POlw/SMtNYiK5Jj6EuqKlvg0ozMk9qK4Go2Qe3kxJA0oBx
-         EnDDyr+yNq8c8RnTO+3jL+UqqH19VqHDclK+nw+dteBLgAHrvj/icmHg+V/MNVplJHnP
-         3xBLMT0NJUGosR63+SA1y7aaLYmMc8EdMErTx9I9BYjKmfxV25D+RupFnUErTk+JlVhP
-         VJYw==
-X-Gm-Message-State: AGRZ1gJvwnCw6KnaIYmia/gd+LiNeu4DqOSmEquu4zLUyMb9/BSVLSqN
-        uXt6sovcIRVm+89EWSssyj8W2A==
-X-Google-Smtp-Source: AJdET5fn97qu6A8xO3jdaVfXnblLQNF/EUFd/ynj5bCOJts02NkQgS/0uy0cRQCWC4I435c22g35Dg==
-X-Received: by 2002:a17:902:7786:: with SMTP id o6-v6mr2561607pll.95.1540979327437;
-        Wed, 31 Oct 2018 02:48:47 -0700 (PDT)
-Received: from kshutemo-mobl1.localdomain ([192.55.54.45])
-        by smtp.gmail.com with ESMTPSA id k132-v6sm34882783pga.28.2018.10.31.02.48.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 02:48:46 -0700 (PDT)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id E836F301604; Wed, 31 Oct 2018 12:48:41 +0300 (+03)
-Date:   Wed, 31 Oct 2018 12:48:41 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc:     Li Wang <liwang@redhat.com>, Guenter Roeck <linux@roeck-us.net>,
-        Janosch Frank <frankja@linux.vnet.ibm.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
-Subject: Re: [PATCH 1/3] mm: introduce mm_[p4d|pud|pmd]_folded
-Message-ID: <20181031094841.cawzzoddkemmufwl@kshutemo-mobl1>
-References: <1539621759-5967-1-git-send-email-schwidefsky@de.ibm.com>
- <1539621759-5967-2-git-send-email-schwidefsky@de.ibm.com>
- <20181031090255.bvmp3jnsdaunhzn7@kshutemo-mobl1>
- <20181031103536.0cab673d@mschwideX1>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=pWBPAPUCerHExLmV17rkZPmN4Migybs7RpwxuO6c4v4=;
+        b=Zwx7KfeYIEgjK8ZXvN0vgrWM3Y2ATEXmHHHUndE5RWV6FkBpDD+LqR6OROWx3mJPGo
+         pz8b01DSgmOx/kYTO3GG6Rgsx22m10Mui2G1nO3B8yGHqPR6xxuFqxw+F62q4wueVMus
+         f9vH3XFPZRnnyWALRmDt6v2a0XhVp5nqewLs06lGQ1XHfZN2jpP+RjihmoXB/TBJG+7d
+         o47ySq8Oa3PZF6lvy/FbEGcqOmVoJD7CSOfKvXiPdIpoapBbKW9hV2NTtxuMiC59OXpR
+         tetl4PCkqKdPYO5Fg7lAZYQPJFnBDJ5SyPzs7SedusXamduPlTNLo+wbjkten2SylBV/
+         qohw==
+X-Gm-Message-State: AGRZ1gLqHIIZTg4B/zPok/ObSldkdKmGbbZJ0QlamMBZXpPyoKlYHBlt
+        Y5vCX08y2Ij7VIiz4mRzHKYhvA==
+X-Google-Smtp-Source: AJdET5dKVsRGSQE/cTm81+HnZOH8RrCMJ5K6KoY4tfC9ixFy8M1KkbdNQT+5dQOERAgEwDmjmWbP4Q==
+X-Received: by 2002:a50:9a81:: with SMTP id p1-v6mr1484541edb.112.1540979467767;
+        Wed, 31 Oct 2018 02:51:07 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id t19-v6sm8327039edd.68.2018.10.31.02.51.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 31 Oct 2018 02:51:05 -0700 (PDT)
+Date:   Wed, 31 Oct 2018 10:51:03 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Haneen Mohammed <hamohammed.sa@gmail.com>
+Cc:     Sean Paul <sean@poorly.run>,
+        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] MAINTAINERS: Add entry for VKMS
+Message-ID: <20181031095103.GU21967@phenom.ffwll.local>
+Mail-Followup-To: Haneen Mohammed <hamohammed.sa@gmail.com>,
+        Sean Paul <sean@poorly.run>,
+        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+References: <20181022012701.7a2rkmot2bj37xfb@smtp.gmail.com>
+ <20181022123142.GE154175@art_vandelay>
+ <20181030231227.GA10773@haneenDRM>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181031103536.0cab673d@mschwideX1>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20181030231227.GA10773@haneenDRM>
+X-Operating-System: Linux phenom 4.18.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 10:35:36AM +0100, Martin Schwidefsky wrote:
-> > Maybe
-> > 	return __is_defined(__PAGETABLE_P4D_FOLDED);
+On Wed, Oct 31, 2018 at 02:12:27AM +0300, Haneen Mohammed wrote:
+> On Mon, Oct 22, 2018 at 08:31:42AM -0400, Sean Paul wrote:
+> > On Sun, Oct 21, 2018 at 10:27:01PM -0300, Rodrigo Siqueira wrote:
+> > > Add maintainers and reviewers for VKMS driver
+> > > 
+> > > Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
 > > 
-> > ?
->  
-> I have tried that, doesn't work. The reason is that the
-> __PAGETABLE_xxx_FOLDED defines to not have a value.
+> > Acked-by: Sean Paul <sean@poorly.run>
+> > 
 > 
-> #define __PAGETABLE_P4D_FOLDED
-> #define __PAGETABLE_PMD_FOLDED
-> #define __PAGETABLE_PUD_FOLDED
-> 
-> While the definition of CONFIG_xxx symbols looks like this
-> 
-> #define CONFIG_xxx 1
-> 
-> The __is_defined needs the value for the __take_second_arg trick.
+> Reviewed-by: Haneen Mohammed <hamohammed.sa@gmail.com>
 
-I guess this is easily fixable :)
+Rodrigo, are you all set up with commit rights for drm-misc now?
+-Daniel
+
+> 
+> > > ---
+> > > Changes in v2:
+> > >   - Insert the section in alphabetical order
+> > > 
+> > >  MAINTAINERS | 10 ++++++++++
+> > >  1 file changed, 10 insertions(+)
+> > > 
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index 39c3f6682ace..56572f0968ce 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -4733,6 +4733,16 @@ S:	Odd Fixes
+> > >  F:	drivers/gpu/drm/udl/
+> > >  T:	git git://anongit.freedesktop.org/drm/drm-misc
+> > >  
+> > > +DRM DRIVER FOR VIRTUAL KERNEL MODESETTING (VKMS)
+> > > +M:	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+> > > +R:	Haneen Mohammed <hamohammed.sa@gmail.com>
+> > > +R:	Daniel Vetter <daniel@ffwll.ch>
+> > > +T:	git git://anongit.freedesktop.org/drm/drm-misc
+> > > +S:	Maintained
+> > > +L:	dri-devel@lists.freedesktop.org
+> > > +F:	drivers/gpu/drm/vkms/
+> > > +F:	Documentation/gpu/vkms.rst
+> > > +
+> > >  DRM DRIVER FOR VMWARE VIRTUAL GPU
+> > >  M:	"VMware Graphics" <linux-graphics-maintainer@vmware.com>
+> > >  M:	Sinclair Yeh <syeh@vmware.com>
+> > > -- 
+> > > 2.19.1
+> > > 
+> > 
+> > -- 
+> > Sean Paul, Software Engineer, Google / Chromium OS
 
 -- 
- Kirill A. Shutemov
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
