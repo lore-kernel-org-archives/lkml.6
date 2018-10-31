@@ -6,44 +6,46 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48295C0044C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F50DECDE46
 	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:12:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AE2B204FD
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:12:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49F9920866
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:12:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2FtU52WM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AE2B204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BT+THpJx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49F9920866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732376AbeKAIMi (ORCPT
+        id S1732422AbeKAIM5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:12:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37826 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:12:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732318AbeKAIMh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:12:37 -0400
+        id S1732373AbeKAIMi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:12:38 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2AA920989;
-        Wed, 31 Oct 2018 23:12:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8819E20866;
+        Wed, 31 Oct 2018 23:12:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027545;
-        bh=NAnkQ42HELZeI+8/Dx6+xOe4BfsNMc7ODzmkuJvyV4s=;
+        s=default; t=1541027546;
+        bh=OiOY1w8FlPG7S0RyhAlrAwzjDCi6i2Cm+o3e9g8jJNs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2FtU52WMka5i1QJDJKMxCz1oc5Olw3WSDCnpnLkWBRYmrtW2Sa/t45e0d5Rbo+Nwa
-         +Ng15RCcvqWk5P3AfEHzxm5FKUnXPqBgYunOjt9nTB0hMIXz/s9Ca87yWv/toP+7pM
-         LU/pQED/H8LFokzetqnJBBWY7+0/QY9jVER9XACM=
+        b=BT+THpJxRyFuwkpYTIvIJ1g3fIe+qBXg134PJYe4sDwAyxJXcykNLeXmztwIcuvVQ
+         zfsXeCB60sfU3k70wIpWVdD5PvwqA1UHIGD8AaCvAlo6z7i5mNeCEdDzILnzboN082
+         5XCAMSZu5cAJA6RBf2SFObNQ7kyXATgMyZenc44A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     James Smart <jsmart2021@gmail.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <james.smart@broadcom.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 19/22] uio: ensure class is registered before devices
-Date:   Wed, 31 Oct 2018 19:12:03 -0400
-Message-Id: <20181031231206.29509-19-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 20/22] scsi: lpfc: Correct soft lockup when running mds diagnostics
+Date:   Wed, 31 Oct 2018 19:12:04 -0400
+Message-Id: <20181031231206.29509-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231206.29509-1-sashal@kernel.org>
 References: <20181031231206.29509-1-sashal@kernel.org>
@@ -52,86 +54,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: James Smart <jsmart2021@gmail.com>
 
-[ Upstream commit ae61cf5b9913027c6953a79ed3894da4f47061bd ]
+[ Upstream commit 0ef01a2d95fd62bb4f536e7ce4d5e8e74b97a244 ]
 
-When both uio and the uio drivers are built in the kernel, it is possible
-for a driver to register devices before the uio class is registered.
+When running an mds diagnostic that passes frames with the switch, soft
+lockups are detected. The driver is in a CQE processing loop and has
+sufficient amount of traffic that it never exits the ring processing routine,
+thus the "lockup".
 
-This may result in a NULL pointer dereference later on in
-get_device_parent() when accessing the class glue_dirs spinlock.
+Cap the number of elements in the work processing routine to 64 elements. This
+ensures that the cpu will be given up and the handler reschedule to process
+additional items.
 
-The trace looks like that:
-
-Unable to handle kernel NULL pointer dereference at virtual address 00000140
-[...]
-[<ffff0000089cc234>] _raw_spin_lock+0x14/0x48
-[<ffff0000084f56bc>] device_add+0x154/0x6a0
-[<ffff0000084f5e48>] device_create_groups_vargs+0x120/0x128
-[<ffff0000084f5edc>] device_create+0x54/0x60
-[<ffff0000086e72c0>] __uio_register_device+0x120/0x4a8
-[<ffff000008528b7c>] jaguar2_pci_probe+0x2d4/0x558
-[<ffff0000083fc18c>] local_pci_probe+0x3c/0xb8
-[<ffff0000083fd81c>] pci_device_probe+0x11c/0x180
-[<ffff0000084f88bc>] driver_probe_device+0x22c/0x2d8
-[<ffff0000084f8a24>] __driver_attach+0xbc/0xc0
-[<ffff0000084f69fc>] bus_for_each_dev+0x4c/0x98
-[<ffff0000084f81b8>] driver_attach+0x20/0x28
-[<ffff0000084f7d08>] bus_add_driver+0x1b8/0x228
-[<ffff0000084f93c0>] driver_register+0x60/0xf8
-[<ffff0000083fb918>] __pci_register_driver+0x40/0x48
-
-Return EPROBE_DEFER in that case so the driver can register the device
-later.
-
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <james.smart@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/uio/uio.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/scsi/lpfc/lpfc_sli.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-index 86055f663a01..db292c085399 100644
---- a/drivers/uio/uio.c
-+++ b/drivers/uio/uio.c
-@@ -249,6 +249,8 @@ static struct class uio_class = {
- 	.dev_groups = uio_groups,
- };
+diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
+index cdade5828a5d..fcae6f66a5a6 100644
+--- a/drivers/scsi/lpfc/lpfc_sli.c
++++ b/drivers/scsi/lpfc/lpfc_sli.c
+@@ -3441,6 +3441,7 @@ lpfc_sli_handle_slow_ring_event_s4(struct lpfc_hba *phba,
+ 	struct hbq_dmabuf *dmabuf;
+ 	struct lpfc_cq_event *cq_event;
+ 	unsigned long iflag;
++	int count = 0;
  
-+bool uio_class_registered;
+ 	spin_lock_irqsave(&phba->hbalock, iflag);
+ 	phba->hba_flag &= ~HBA_SP_QUEUE_EVT;
+@@ -3462,16 +3463,22 @@ lpfc_sli_handle_slow_ring_event_s4(struct lpfc_hba *phba,
+ 			if (irspiocbq)
+ 				lpfc_sli_sp_handle_rspiocb(phba, pring,
+ 							   irspiocbq);
++			count++;
+ 			break;
+ 		case CQE_CODE_RECEIVE:
+ 		case CQE_CODE_RECEIVE_V1:
+ 			dmabuf = container_of(cq_event, struct hbq_dmabuf,
+ 					      cq_event);
+ 			lpfc_sli4_handle_received_buffer(phba, dmabuf);
++			count++;
+ 			break;
+ 		default:
+ 			break;
+ 		}
 +
- /*
-  * device functions
-  */
-@@ -771,6 +773,9 @@ static int init_uio_class(void)
- 		printk(KERN_ERR "class_register failed for uio\n");
- 		goto err_class_register;
++		/* Limit the number of events to 64 to avoid soft lockups */
++		if (count == 64)
++			break;
  	}
-+
-+	uio_class_registered = true;
-+
- 	return 0;
- 
- err_class_register:
-@@ -781,6 +786,7 @@ static int init_uio_class(void)
- 
- static void release_uio_class(void)
- {
-+	uio_class_registered = false;
- 	class_unregister(&uio_class);
- 	uio_major_cleanup();
  }
-@@ -800,6 +806,9 @@ int __uio_register_device(struct module *owner,
- 	struct uio_device *idev;
- 	int ret = 0;
- 
-+	if (!uio_class_registered)
-+		return -EPROBE_DEFER;
-+
- 	if (!parent || !info || !info->name || !info->version)
- 		return -EINVAL;
  
 -- 
 2.17.1
