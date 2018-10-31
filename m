@@ -7,84 +7,131 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C6EC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:29:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D38BEECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:29:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B834B2084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:29:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B9E520847
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:29:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ye8tSP30"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B834B2084A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s7A1oTNK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B9E520847
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730798AbeKAIKD (ORCPT
+        id S1731081AbeKAI3j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:10:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60386 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:29:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729461AbeKAIKB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:10:01 -0400
+        id S1730786AbeKAIKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:10:03 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB4C42064C;
-        Wed, 31 Oct 2018 23:09:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8210720838;
+        Wed, 31 Oct 2018 23:09:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027390;
-        bh=bgLFnVB2vrMrKLehnfRKtP/GL3PqH1sWLoYTCb5LlWQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Ye8tSP3071VPMkdipjKqiiddVvo150HItgihC57nxT7WVzKw7ofAprHewMV7VzLp2
-         5AX4GBOjs3RY3ZgnvnMjyU2hMmTes4SrcvJt52rm9p2p/jThvCed/tLIjIk1/4+HcQ
-         Wk7GhWMtWa7t8ULDB+zPukhj1VN81hXz0TiirS+8=
+        s=default; t=1541027391;
+        bh=WAOGDwq9FbH1UBKlF/K62xSe/RQ7ouiGA6KIh4RrwlM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=s7A1oTNK4W8K8TA4fJjw3Rk9QH27nWj5gUIPqHHA+daPbCv9Pg4ShPvjTAViDaXAE
+         4ETJtIcr+iC+3s055nU7MVwIbwS2BghC5iKakHW9Ss1uGr2qpYSN10wyVIm1cHOYjb
+         i9kM2FcK+iYxsVeGED+eeS1j2hLxsKaFPJ6v7rRc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 01/73] net: ethernet: ti: cpsw: unsync mcast entries while switch promisc mode
-Date:   Wed, 31 Oct 2018 19:08:36 -0400
-Message-Id: <20181031230948.29203-1-sashal@kernel.org>
+Cc:     Waiman Long <longman@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 02/73] locking/lockdep: Fix debug_locks off performance problem
+Date:   Wed, 31 Oct 2018 19:08:37 -0400
+Message-Id: <20181031230948.29203-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181031230948.29203-1-sashal@kernel.org>
+References: <20181031230948.29203-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+From: Waiman Long <longman@redhat.com>
 
-[ Upstream commit 9737cc99dd14b5b8b9d267618a6061feade8ea68 ]
+[ Upstream commit 9506a7425b094d2f1d9c877ed5a78f416669269b ]
 
-After flushing all mcast entries from the table, the ones contained in
-mc list of ndev are not restored when promisc mode is toggled off,
-because they are considered as synched with ALE, thus, in order to
-restore them after promisc mode - reset syncing info. This fix
-touches only switch mode devices, including single port boards
-like Beagle Bone.
+It was found that when debug_locks was turned off because of a problem
+found by the lockdep code, the system performance could drop quite
+significantly when the lock_stat code was also configured into the
+kernel. For instance, parallel kernel build time on a 4-socket x86-64
+server nearly doubled.
 
-Fixes: commit 5da1948969bc
-("net: ethernet: ti: cpsw: fix lost of mcast packets while rx_mode update")
+Further analysis into the cause of the slowdown traced back to the
+frequent call to debug_locks_off() from the __lock_acquired() function
+probably due to some inconsistent lockdep states with debug_locks
+off. The debug_locks_off() function did an unconditional atomic xchg
+to write a 0 value into debug_locks which had already been set to 0.
+This led to severe cacheline contention in the cacheline that held
+debug_locks.  As debug_locks is being referenced in quite a few different
+places in the kernel, this greatly slow down the system performance.
 
-Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+To prevent that trashing of debug_locks cacheline, lock_acquired()
+and lock_contended() now checks the state of debug_locks before
+proceeding. The debug_locks_off() function is also modified to check
+debug_locks before calling __debug_locks_off().
+
+Signed-off-by: Waiman Long <longman@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Link: http://lkml.kernel.org/r/1539913518-15598-1-git-send-email-longman@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/ti/cpsw.c | 1 +
- 1 file changed, 1 insertion(+)
+ kernel/locking/lockdep.c | 4 ++--
+ lib/debug_locks.c        | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-index 8cb44eabc283..a44838aac97d 100644
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -601,6 +601,7 @@ static void cpsw_set_promiscious(struct net_device *ndev, bool enable)
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index d7c155048ea9..bf694c709b96 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -4215,7 +4215,7 @@ void lock_contended(struct lockdep_map *lock, unsigned long ip)
+ {
+ 	unsigned long flags;
  
- 			/* Clear all mcast from ALE */
- 			cpsw_ale_flush_multicast(ale, ALE_ALL_PORTS, -1);
-+			__dev_mc_unsync(ndev, NULL);
+-	if (unlikely(!lock_stat))
++	if (unlikely(!lock_stat || !debug_locks))
+ 		return;
  
- 			/* Flood All Unicast Packets to Host port */
- 			cpsw_ale_control_set(ale, 0, ALE_P0_UNI_FLOOD, 1);
+ 	if (unlikely(current->lockdep_recursion))
+@@ -4235,7 +4235,7 @@ void lock_acquired(struct lockdep_map *lock, unsigned long ip)
+ {
+ 	unsigned long flags;
+ 
+-	if (unlikely(!lock_stat))
++	if (unlikely(!lock_stat || !debug_locks))
+ 		return;
+ 
+ 	if (unlikely(current->lockdep_recursion))
+diff --git a/lib/debug_locks.c b/lib/debug_locks.c
+index 96c4c633d95e..124fdf238b3d 100644
+--- a/lib/debug_locks.c
++++ b/lib/debug_locks.c
+@@ -37,7 +37,7 @@ EXPORT_SYMBOL_GPL(debug_locks_silent);
+  */
+ int debug_locks_off(void)
+ {
+-	if (__debug_locks_off()) {
++	if (debug_locks && __debug_locks_off()) {
+ 		if (!debug_locks_silent) {
+ 			console_verbose();
+ 			return 1;
 -- 
 2.17.1
 
