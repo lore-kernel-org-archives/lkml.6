@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8292EC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:46:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30B46ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:46:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A9B520847
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:46:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC0CC20840
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:46:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/EJ7PIO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A9B520847
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oWMJqQiN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC0CC20840
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730250AbeKABpb (ORCPT
+        id S1730264AbeKABpe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 21:45:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60290 "EHLO mail.kernel.org"
+        Wed, 31 Oct 2018 21:45:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729775AbeKABpa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 21:45:30 -0400
+        id S1729775AbeKABpd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 21:45:33 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5A0C2081B;
-        Wed, 31 Oct 2018 16:46:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6552D20838;
+        Wed, 31 Oct 2018 16:46:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541004402;
-        bh=jbNLX2xwG09t2YFvgRlBT6MPj05MytAg38EqWTAlehA=;
+        s=default; t=1541004405;
+        bh=NUwrR1SQYkEJAgVALLZulR7YWms9poZe3tFu1wgZ/pQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F/EJ7PIOVA8Rd7suBrJGDpuGb6wzWbwT6Jgb1m0kfDmQDed93EeF4n3KMkWp/iwki
-         UXlDxEd/cfePM+i7C21KKgC2vNhbvzwjFADpSvyN+nog9rRBk5nGpTkKrBZezgKBRJ
-         ECIQ3L25gpkJvoCGfdVBtzXZ+R43zkoYXFW/mrkg=
+        b=oWMJqQiNtnaVngeR/DKdYW5Gc296bi1TfPkeH/RJ+YF9vai66piRoDjyHb8xMofi0
+         FQ2zG1na3L6DzqWYQXbQLcLLwnqcBqtI2G7bO7Vry7PrcwR5Te7zEwhzEOJP5EaRAN
+         sfD6pRFar9Vgwkd2GKsC7DW0ZuRkoMRHikxg9yy8=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Leblond <eric@regit.org>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Subject: [PATCH 24/28] tools headers uapi: Update linux/if_link.h header copy
-Date:   Wed, 31 Oct 2018 13:45:04 -0300
-Message-Id: <20181031164508.4784-25-acme@kernel.org>
+        David Miller <davem@davemloft.net>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 25/28] perf top: Start display thread earlier
+Date:   Wed, 31 Oct 2018 13:45:05 -0300
+Message-Id: <20181031164508.4784-26-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181031164508.4784-1-acme@kernel.org>
 References: <20181031164508.4784-1-acme@kernel.org>
@@ -57,37 +57,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: David Miller <davem@davemloft.net>
 
-To pick the changes from:
+If events are coming in at a rate such that the event processing thread
+can barely keep up, our initial run of the event ring will almost never
+terminate and this delays the starting of the display thread.
 
-  9163a0fc1f0c ("net: bridge: add support for per-port vlan stats")
+The screen basically stays black until the event thread can get out of
+it's endless loop.
 
-And silence this build warning:
+Therefore, start the display thread before we start processing the ring
+buffer.
 
-  Warning: Kernel ABI header at 'tools/include/uapi/linux/if_link.h' differs from latest version at 'include/uapi/linux/if_link.h'
+This also make sure that we always have the user requested real time
+setting engaged when processing the ring.
 
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Eric Leblond <eric@regit.org>
-Cc: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Link: https://lkml.kernel.org/n/tip-7p53ghippywz7fqkwo3nkzet@git.kernel.org
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: http://lkml.kernel.org/r/20181030.223003.2242527041807905962.davem@davemloft.net
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/include/uapi/linux/if_link.h | 1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/builtin-top.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/tools/include/uapi/linux/if_link.h b/tools/include/uapi/linux/if_link.h
-index 58faab897201..1debfa42cba1 100644
---- a/tools/include/uapi/linux/if_link.h
-+++ b/tools/include/uapi/linux/if_link.h
-@@ -287,6 +287,7 @@ enum {
- 	IFLA_BR_MCAST_STATS_ENABLED,
- 	IFLA_BR_MCAST_IGMP_VERSION,
- 	IFLA_BR_MCAST_MLD_VERSION,
-+	IFLA_BR_VLAN_STATS_PER_PORT,
- 	__IFLA_BR_MAX,
- };
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index 8e29e0cc8626..b2838de13de0 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -1134,11 +1134,6 @@ static int __cmd_top(struct perf_top *top)
+         if (!target__none(&opts->target))
+                 perf_evlist__enable(top->evlist);
+ 
+-	/* Wait for a minimal set of events before starting the snapshot */
+-	perf_evlist__poll(top->evlist, 100);
+-
+-	perf_top__mmap_read(top);
+-
+ 	ret = -1;
+ 	if (pthread_create(&thread, NULL, (use_browser > 0 ? display_thread_tui :
+ 							    display_thread), top)) {
+@@ -1156,6 +1151,11 @@ static int __cmd_top(struct perf_top *top)
+ 		}
+ 	}
+ 
++	/* Wait for a minimal set of events before starting the snapshot */
++	perf_evlist__poll(top->evlist, 100);
++
++	perf_top__mmap_read(top);
++
+ 	while (!done) {
+ 		u64 hits = top->samples;
  
 -- 
 2.14.4
