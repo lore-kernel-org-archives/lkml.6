@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F981C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 389C7ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DD3B2064C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00BCA2081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LuZvJkAm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DD3B2064C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NjVySNdq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00BCA2081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731143AbeKAIKg (ORCPT
+        id S1731168AbeKAIKi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:10:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33268 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:10:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731110AbeKAIKf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:10:35 -0400
+        id S1729645AbeKAIKh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:10:37 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 632B220843;
-        Wed, 31 Oct 2018 23:10:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0DA2120838;
+        Wed, 31 Oct 2018 23:10:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027424;
-        bh=FYBFqrhVinhdRvVhAnfmN693wT2oKuIZIHlbaLGu2qE=;
+        s=default; t=1541027425;
+        bh=34y4eytW8REGCP0YpMIKjpVLx2aLXV0OepI83a3odA8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LuZvJkAmfX83+WBPd7kyniT0G9cCRYJueYUAxZPFQwI3LQ6ui5842jxWyQBWs1FNn
-         6UAMRYNTKZUD+tpnena6fx0LDkRUarUdh541r0tmWmdXjGQ1LWTlPLbtJ1m9KmZrJk
-         BZA9/0FhzNoDPved9eQduN2+fHMGvkv+plpYLojI=
+        b=NjVySNdq3TdtoHmYbJaYygBNd2qbXafb+quJzPx6HkrEJE+B9eTAUQZZZ+obV9n96
+         rC+aurCE+W29ZCtqtv5TamaEPAmeGK21XR3979afl8hzmyoihfwki6jtnG8lPnfffX
+         IUJm1aaCipnozUJgxgT2nvTIGpa4kXlBMzdnmJIY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Eduardo Valentin <edubezval@gmail.com>,
+Cc:     Finn Thain <fthain@telegraphics.com.au>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 39/73] thermal: da9062/61: Prevent hardware access during system suspend
-Date:   Wed, 31 Oct 2018 19:09:14 -0400
-Message-Id: <20181031230948.29203-39-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 41/73] scsi: esp_scsi: Track residual for PIO transfers
+Date:   Wed, 31 Oct 2018 19:09:16 -0400
+Message-Id: <20181031230948.29203-41-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230948.29203-1-sashal@kernel.org>
 References: <20181031230948.29203-1-sashal@kernel.org>
@@ -53,46 +53,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Finn Thain <fthain@telegraphics.com.au>
 
-[ Upstream commit 760eea43f8c6d48684f1f34b8a02fddc1456e849 ]
+[ Upstream commit fd47d919d0c336e7c22862b51ee94927ffea227a ]
 
-The workqueue used for monitoring the hardware may run while the device
-is already suspended.  Fix this by using the freezable system workqueue
-instead, cfr. commit 51e20d0e3a60cf46 ("thermal: Prevent polling from
-happening during system suspend").
+If a target disconnects during a PIO data transfer the command may fail
+when the target reconnects:
 
-Fixes: 608567aac3206ae8 ("thermal: da9062/61: Thermal junction temperature monitoring driver")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+scsi host1: DMA length is zero!
+scsi host1: cur adr[04380000] len[00000000]
+
+The scsi bus is then reset. This happens because the residual reached
+zero before the transfer was completed.
+
+The usual residual calculation relies on the Transfer Count registers.
+That works for DMA transfers but not for PIO transfers. Fix the problem
+by storing the PIO transfer residual and using that to correctly
+calculate bytes_sent.
+
+Fixes: 6fe07aaffbf0 ("[SCSI] m68k: new mac_esp scsi driver")
+Tested-by: Stan Johnson <userm57@yahoo.com>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Tested-by: Michael Schmitz <schmitzmic@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thermal/da9062-thermal.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/esp_scsi.c | 1 +
+ drivers/scsi/esp_scsi.h | 2 ++
+ drivers/scsi/mac_esp.c  | 2 ++
+ 3 files changed, 5 insertions(+)
 
-diff --git a/drivers/thermal/da9062-thermal.c b/drivers/thermal/da9062-thermal.c
-index dd8dd947b7f0..01b0cb994457 100644
---- a/drivers/thermal/da9062-thermal.c
-+++ b/drivers/thermal/da9062-thermal.c
-@@ -106,7 +106,7 @@ static void da9062_thermal_poll_on(struct work_struct *work)
- 					   THERMAL_EVENT_UNSPECIFIED);
+diff --git a/drivers/scsi/esp_scsi.c b/drivers/scsi/esp_scsi.c
+index c3fc34b9964d..9e5d3f7d29ae 100644
+--- a/drivers/scsi/esp_scsi.c
++++ b/drivers/scsi/esp_scsi.c
+@@ -1338,6 +1338,7 @@ static int esp_data_bytes_sent(struct esp *esp, struct esp_cmd_entry *ent,
  
- 		delay = msecs_to_jiffies(thermal->zone->passive_delay);
--		schedule_delayed_work(&thermal->work, delay);
-+		queue_delayed_work(system_freezable_wq, &thermal->work, delay);
- 		return;
+ 	bytes_sent = esp->data_dma_len;
+ 	bytes_sent -= ecount;
++	bytes_sent -= esp->send_cmd_residual;
+ 
+ 	/*
+ 	 * The am53c974 has a DMA 'pecularity'. The doc states:
+diff --git a/drivers/scsi/esp_scsi.h b/drivers/scsi/esp_scsi.h
+index 8163dca2071b..a77772777a30 100644
+--- a/drivers/scsi/esp_scsi.h
++++ b/drivers/scsi/esp_scsi.h
+@@ -540,6 +540,8 @@ struct esp {
+ 
+ 	void			*dma;
+ 	int			dmarev;
++
++	u32			send_cmd_residual;
+ };
+ 
+ /* A front-end driver for the ESP chip should do the following in
+diff --git a/drivers/scsi/mac_esp.c b/drivers/scsi/mac_esp.c
+index eb551f3cc471..71879f2207e0 100644
+--- a/drivers/scsi/mac_esp.c
++++ b/drivers/scsi/mac_esp.c
+@@ -427,6 +427,8 @@ static void mac_esp_send_pio_cmd(struct esp *esp, u32 addr, u32 esp_count,
+ 			scsi_esp_cmd(esp, ESP_CMD_TI);
+ 		}
  	}
- 
-@@ -125,7 +125,7 @@ static irqreturn_t da9062_thermal_irq_handler(int irq, void *data)
- 	struct da9062_thermal *thermal = data;
- 
- 	disable_irq_nosync(thermal->irq);
--	schedule_delayed_work(&thermal->work, 0);
-+	queue_delayed_work(system_freezable_wq, &thermal->work, 0);
- 
- 	return IRQ_HANDLED;
++
++	esp->send_cmd_residual = esp_count;
  }
+ 
+ static int mac_esp_irq_pending(struct esp *esp)
 -- 
 2.17.1
 
