@@ -2,189 +2,109 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B27C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83368C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:40:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5993420664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:37:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EX7JY+uG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5993420664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 3916F20854
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:40:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3916F20854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729603AbeJaXgG (ORCPT
+        id S1729614AbeJaXie (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 19:36:06 -0400
-Received: from mail-io1-f74.google.com ([209.85.166.74]:50220 "EHLO
-        mail-io1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729494AbeJaXgF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 19:36:05 -0400
-Received: by mail-io1-f74.google.com with SMTP id q127-v6so14017377iod.17
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 07:37:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=G9OgXTXqXs4aSm+7e0Qm/JO4NDS7yJ9L9QyroRhIkTo=;
-        b=EX7JY+uG6qkg7EN6TA+fNRWQVHpdYkYe30JNw5v1QGDARFMjLoIUgG+w+vRn3020i9
-         UwjCYyH/JoNsDUggGTu/re8Dpd5idipIvTC/Qr8DUrf4kDeHe0WlmGD6OgepwA+EvROC
-         FCtHJfBEWYjBlS5GPMDNaVARjtLEQW3QARpKWO5dqAjsKmqJ1qUiln6xnQmPxpditsd9
-         Qf+57SQ8112ZKHdGZjoz/VE6fd8v6oxmjHP8MN6GvOBjn+5uAr94o+3ZOIrwMCWeoeyL
-         83dOTGG/OC3HfSatWgqf2FOedKZCiJi1X/bSbGwpgymS3Kq3g44yHa4W4U4Fi6DKW49y
-         yqbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=G9OgXTXqXs4aSm+7e0Qm/JO4NDS7yJ9L9QyroRhIkTo=;
-        b=TLxQFc+M2DXjIhmjgFenVnOkoBUfgToG9RD+GNQFS4UurYcetBqLzrGDQ19q1bKLgf
-         eQMXHFVWi7sMlreMaiKOzLb4x6TOOTNwNRt0CwGm+W6XI/v/seCJ8X56xSveh6ZlvMLv
-         N0kSImK6ad/N6S3lnb+DMSgeiP6dml1LOKpGNM6h1wbyx+UniOqK7W94JA6Jzx/SJvfL
-         EGtDI72kCCXNIgwkpgEi6f60NyGlZgyvzyNHBDUx8u2JW2decYUw87LuwMEMJknp8dbK
-         l4Rg2ZpNSvH1nYVAW1YdHOW+PzBmb98Ycj/UIpQ/qLr7obdZg0RtY/ekuF49eSRkbVjB
-         EdIA==
-X-Gm-Message-State: AGRZ1gL1szi2iIUM6CBhbVGJfWlHj7XQMlwFz7obfL6v60gtguy7qlmI
-        SIha0XCfnFQHlT+ZX9hAkTTBEwoXQTwZLWPi7gMBTBIw+pM7dFpHRtEmO2EDYlviZoQGJ4KY09H
-        HORj+UXjRVaE1PEacI+VoPX2peHFbsv4apON/Lu3aWUeWAVfotEPCJL2KuDW+njFfvXX8Jw==
-X-Google-Smtp-Source: AJdET5c8aKk0i383R7w8JR/guH9Yu78G3apupxNfxlHTUyaGgK2R954ZtnVbXZca90O5Xparvwgzh7pSTqU=
-X-Received: by 2002:a24:6794:: with SMTP id u142-v6mr2044403itc.9.1540996667413;
- Wed, 31 Oct 2018 07:37:47 -0700 (PDT)
-Date:   Wed, 31 Oct 2018 14:37:44 +0000
-In-Reply-To: <20181029221037.87724-1-dancol@google.com>
-Message-Id: <20181031143744.77677-1-dancol@google.com>
-Mime-Version: 1.0
-References: <20181029221037.87724-1-dancol@google.com>
-X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
-Subject: [PATCH v2] Implement /proc/pid/kill
-From:   Daniel Colascione <dancol@google.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     timmurray@google.com, joelaf@google.com, surenb@google.com,
-        cyphar@cyphar.com, christian.brauner@canonical.com,
-        ebiederm@xmission.com, keescook@chromium.org, oleg@redhat.com,
-        Daniel Colascione <dancol@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 31 Oct 2018 19:38:34 -0400
+Received: from mga14.intel.com ([192.55.52.115]:46260 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729492AbeJaXie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 19:38:34 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2018 07:40:15 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,447,1534834800"; 
+   d="scan'208";a="270313306"
+Received: from htphan-mobl4.amr.corp.intel.com (HELO [10.251.5.56]) ([10.251.5.56])
+  by orsmga005.jf.intel.com with ESMTP; 31 Oct 2018 07:40:15 -0700
+Subject: Re: [PATCH v3] mm, drm/i915: mark pinned shmemfs pages as unevictable
+To:     Michal Hocko <mhocko@kernel.org>,
+        Kuo-Hsin Yang <vovoy@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mm@kvack.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20181031081945.207709-1-vovoy@chromium.org>
+ <20181031142458.GP32673@dhcp22.suse.cz>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <cc44aa53-8705-02ea-6c59-f311427d93af@intel.com>
+Date:   Wed, 31 Oct 2018 07:40:14 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181031142458.GP32673@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a simple proc-based kill interface. To use /proc/pid/kill, just
-write the signal number in base-10 ASCII to the kill file of the
-process to be killed: for example, 'echo 9 > /proc/$$/kill'.
+On 10/31/18 7:24 AM, Michal Hocko wrote:
+> I am also wondering whether unevictable pages culling can be
+> really visible when we do the anon LRU reclaim because the swap path is
+> quite expensinve on its own.
 
-Semantically, /proc/pid/kill works like kill(2), except that the
-process ID comes from the proc filesystem context instead of from an
-explicit system call parameter. This way, it's possible to avoid races
-between inspecting some aspect of a process and that process's PID
-being reused for some other process.
+Didn't we create the unevictable lists in the first place because
+scanning alone was observed to be so expensive in some scenarios?
 
-Note that only the real user ID that opened a /proc/pid/kill file can
-write to it; other users get EPERM.  This check prevents confused
-deputy attacks via, e.g., standard output of setuid programs.
-
-With /proc/pid/kill, it's possible to write a proper race-free and
-safe pkill(1). An approximation follows. A real program might use
-openat(2), having opened a process's /proc/pid directory explicitly,
-with the directory file descriptor serving as a sort of "process
-handle".
-
-    #!/bin/bash
-    set -euo pipefail
-    pat=$1
-    for proc_status in /proc/*/status; do (
-        cd $(dirname $proc_status)
-        readarray proc_argv -d'' < cmdline
-        if ((${#proc_argv[@]} > 0)) &&
-               [[ ${proc_argv[0]} = *$pat* ]];
-        then
-            echo 15 > kill
-        fi
-    ) || true; done
-
-Signed-off-by: Daniel Colascione <dancol@google.com>
----
-
-Added a real-user-ID check to prevent confused deputy attacks.
-
- fs/proc/base.c | 51 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
-
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 7e9f07bf260d..74e494f24b28 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -205,6 +205,56 @@ static int proc_root_link(struct dentry *dentry, struct path *path)
- 	return result;
- }
- 
-+static ssize_t proc_pid_kill_write(struct file *file,
-+				   const char __user *buf,
-+				   size_t count, loff_t *ppos)
-+{
-+	ssize_t res;
-+	int sig;
-+	char buffer[4];
-+
-+	/* This check prevents a confused deputy attack in which an
-+	 * unprivileged process opens /proc/victim/kill and convinces
-+	 * a privileged process to write to that kill FD, effectively
-+	 * performing a kill with the privileges of the unwitting
-+	 * privileged process.  Here, we just fail the kill operation
-+	 * if someone calls write(2) with a real user ID that differs
-+	 * from the one used to open the kill FD.
-+	 */
-+	res = -EPERM;
-+	if (file->f_cred->user != current_user())
-+		goto out;
-+
-+	res = -EINVAL;
-+	if (*ppos != 0)
-+		goto out;
-+
-+	res = -EINVAL;
-+	if (count > sizeof(buffer) - 1)
-+		goto out;
-+
-+	res = -EFAULT;
-+	if (copy_from_user(buffer, buf, count))
-+		goto out;
-+
-+	buffer[count] = '\0';
-+	res = kstrtoint(strstrip(buffer), 10, &sig);
-+	if (res)
-+		goto out;
-+
-+	res = kill_pid(proc_pid(file_inode(file)), sig, 0);
-+	if (res)
-+		goto out;
-+	res = count;
-+out:
-+	return res;
-+
-+}
-+
-+static const struct file_operations proc_pid_kill_ops = {
-+	.write	= proc_pid_kill_write,
-+};
-+
- static ssize_t get_mm_cmdline(struct mm_struct *mm, char __user *buf,
- 			      size_t count, loff_t *ppos)
- {
-@@ -2935,6 +2985,7 @@ static const struct pid_entry tgid_base_stuff[] = {
- #ifdef CONFIG_HAVE_ARCH_TRACEHOOK
- 	ONE("syscall",    S_IRUSR, proc_pid_syscall),
- #endif
-+	REG("kill",       S_IRUGO | S_IWUGO, proc_pid_kill_ops),
- 	REG("cmdline",    S_IRUGO, proc_pid_cmdline_ops),
- 	ONE("stat",       S_IRUGO, proc_tgid_stat),
- 	ONE("statm",      S_IRUGO, proc_pid_statm),
--- 
-2.19.1.568.g152ad8e336-goog
-
+Or am I misunderstanding your question.
