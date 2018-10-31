@@ -7,43 +7,49 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA48ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C28BC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:49:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EE352064C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:49:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30A852064C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:49:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q6YlqDsV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EE352064C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VWW+Li1E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30A852064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728571AbeKAItn (ORCPT
+        id S1728363AbeKAIGt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:49:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54074 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:06:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728362AbeKAIGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:06:51 -0400
+        id S1728333AbeKAIGr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:06:47 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 137262082E;
-        Wed, 31 Oct 2018 23:06:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F382120838;
+        Wed, 31 Oct 2018 23:06:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027200;
-        bh=ZKqUWnddh566WruoM5HzD3dxfNovhBVLi2kbvr2yZgw=;
+        s=default; t=1541027197;
+        bh=5EqJv7ncqkFpEAiGQyfgKvF+NY2jtRsfMi5tulWvSic=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q6YlqDsVYueAK9F6i7H0RWdIfBvXmfxsuGBMDfLpOhvu4X597gzbPwvyAkFL1pDLO
-         gvZko2N011lfp/Sj/sRTMvHeU78bBhUskHDVoRtlOfoPtMNybZNjowzGBujNCzg4Ws
-         D6vbdbQ6RhRXlqUifmqHcFRxZb9OzByhgFXlOUrs=
+        b=VWW+Li1E5rJZY84PtZvjVQsd1J2iLV/syt4WSuoT9887/s0NfnBcCGO16Oke8qSBE
+         oqAkQxoMqOgVJ7PPy6zdoZogkIZz5UP2t0URAqV056pxjS8oWeddiTL+EqRnalBqka
+         XEbLgQw8qIlI/MDfFPEMtqFRRXr8q4J1VUGZG7ko=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 064/146] bpf/verifier: fix verifier instability
-Date:   Wed, 31 Oct 2018 19:04:19 -0400
-Message-Id: <20181031230541.28822-64-sashal@kernel.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 060/146] kprobes: Return error if we fail to reuse kprobe instead of BUG_ON()
+Date:   Wed, 31 Oct 2018 19:04:15 -0400
+Message-Id: <20181031230541.28822-60-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -52,87 +58,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexei Starovoitov <ast@kernel.org>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit a9c676bc8fc58d00eea9836fb14ee43c0346416a ]
+[ Upstream commit 819319fc93461c07b9cdb3064f154bd8cfd48172 ]
 
-Edward Cree says:
-In check_mem_access(), for the PTR_TO_CTX case, after check_ctx_access()
-has supplied a reg_type, the other members of the register state are set
-appropriately.  Previously reg.range was set to 0, but as it is in a
-union with reg.map_ptr, which is larger, upper bytes of the latter were
-left in place.  This then caused the memcmp() in regsafe() to fail,
-preventing some branches from being pruned (and occasionally causing the
-same program to take a varying number of processed insns on repeated
-verifier runs).
+Make reuse_unused_kprobe() to return error code if
+it fails to reuse unused kprobe for optprobe instead
+of calling BUG_ON().
 
-Fix the instability by clearing bpf_reg_state in __mark_reg_[un]known()
-
-Fixes: f1174f77b50c ("bpf/verifier: rework value tracking")
-Debugged-by: Edward Cree <ecree@solarflare.com>
-Acked-by: Edward Cree <ecree@solarflare.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+Cc: David S . Miller <davem@davemloft.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Naveen N . Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/153666124040.21306.14150398706331307654.stgit@devbox
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/verifier.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ kernel/kprobes.c | 27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 465952a8e465..f0a2f49ff194 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -553,7 +553,9 @@ static void __mark_reg_not_init(struct bpf_reg_state *reg);
-  */
- static void __mark_reg_known(struct bpf_reg_state *reg, u64 imm)
- {
--	reg->id = 0;
-+	/* Clear id, off, and union(map_ptr, range) */
-+	memset(((u8 *)reg) + sizeof(reg->type), 0,
-+	       offsetof(struct bpf_reg_state, var_off) - sizeof(reg->type));
- 	reg->var_off = tnum_const(imm);
- 	reg->smin_value = (s64)imm;
- 	reg->smax_value = (s64)imm;
-@@ -572,7 +574,6 @@ static void __mark_reg_known_zero(struct bpf_reg_state *reg)
- static void __mark_reg_const_zero(struct bpf_reg_state *reg)
- {
- 	__mark_reg_known(reg, 0);
--	reg->off = 0;
- 	reg->type = SCALAR_VALUE;
+diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+index ab257be4d924..4344381664cc 100644
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -700,9 +700,10 @@ static void unoptimize_kprobe(struct kprobe *p, bool force)
  }
  
-@@ -683,9 +684,12 @@ static void __mark_reg_unbounded(struct bpf_reg_state *reg)
- /* Mark a register as having a completely unknown (scalar) value. */
- static void __mark_reg_unknown(struct bpf_reg_state *reg)
+ /* Cancel unoptimizing for reusing */
+-static void reuse_unused_kprobe(struct kprobe *ap)
++static int reuse_unused_kprobe(struct kprobe *ap)
+ {
+ 	struct optimized_kprobe *op;
++	int ret;
+ 
+ 	BUG_ON(!kprobe_unused(ap));
+ 	/*
+@@ -714,8 +715,12 @@ static void reuse_unused_kprobe(struct kprobe *ap)
+ 	/* Enable the probe again */
+ 	ap->flags &= ~KPROBE_FLAG_DISABLED;
+ 	/* Optimize it again (remove from op->list) */
+-	BUG_ON(!kprobe_optready(ap));
++	ret = kprobe_optready(ap);
++	if (ret)
++		return ret;
++
+ 	optimize_kprobe(ap);
++	return 0;
+ }
+ 
+ /* Remove optimized instructions */
+@@ -940,11 +945,16 @@ static void __disarm_kprobe(struct kprobe *p, bool reopt)
+ #define kprobe_disarmed(p)			kprobe_disabled(p)
+ #define wait_for_kprobe_optimizer()		do {} while (0)
+ 
+-/* There should be no unused kprobes can be reused without optimization */
+-static void reuse_unused_kprobe(struct kprobe *ap)
++static int reuse_unused_kprobe(struct kprobe *ap)
  {
 +	/*
-+	 * Clear type, id, off, and union(map_ptr, range) and
-+	 * padding between 'type' and union
++	 * If the optimized kprobe is NOT supported, the aggr kprobe is
++	 * released at the same time that the last aggregated kprobe is
++	 * unregistered.
++	 * Thus there should be no chance to reuse unused kprobe.
 +	 */
-+	memset(reg, 0, offsetof(struct bpf_reg_state, var_off));
- 	reg->type = SCALAR_VALUE;
--	reg->id = 0;
--	reg->off = 0;
- 	reg->var_off = tnum_unknown;
- 	reg->frameno = 0;
- 	__mark_reg_unbounded(reg);
-@@ -1727,9 +1731,6 @@ static int check_mem_access(struct bpf_verifier_env *env, int insn_idx, u32 regn
- 			else
- 				mark_reg_known_zero(env, regs,
- 						    value_regno);
--			regs[value_regno].id = 0;
--			regs[value_regno].off = 0;
--			regs[value_regno].range = 0;
- 			regs[value_regno].type = reg_type;
- 		}
+ 	printk(KERN_ERR "Error: There should be no unused kprobe here.\n");
+-	BUG_ON(kprobe_unused(ap));
++	return -EINVAL;
+ }
  
-@@ -2580,7 +2581,6 @@ static int check_helper_call(struct bpf_verifier_env *env, int func_id, int insn
- 			regs[BPF_REG_0].type = PTR_TO_MAP_VALUE_OR_NULL;
- 		/* There is no offset yet applied, variable or fixed */
- 		mark_reg_known_zero(env, regs, BPF_REG_0);
--		regs[BPF_REG_0].off = 0;
- 		/* remember map_ptr, so that check_map_access()
- 		 * can check 'value_size' boundary of memory access
- 		 * to map element returned from bpf_map_lookup_elem()
+ static void free_aggr_kprobe(struct kprobe *p)
+@@ -1318,9 +1328,12 @@ static int register_aggr_kprobe(struct kprobe *orig_p, struct kprobe *p)
+ 			goto out;
+ 		}
+ 		init_aggr_kprobe(ap, orig_p);
+-	} else if (kprobe_unused(ap))
++	} else if (kprobe_unused(ap)) {
+ 		/* This probe is going to die. Rescue it */
+-		reuse_unused_kprobe(ap);
++		ret = reuse_unused_kprobe(ap);
++		if (ret)
++			goto out;
++	}
+ 
+ 	if (kprobe_gone(ap)) {
+ 		/*
 -- 
 2.17.1
 
