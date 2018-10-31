@@ -7,43 +7,46 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE825ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:37:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB461C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:37:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75CF920664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:37:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B42CA20664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:37:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="X4iIILmf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75CF920664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dq1z9QQ5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B42CA20664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730053AbeKAIIw (ORCPT
+        id S1730014AbeKAIIu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:08:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58216 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:08:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729855AbeKAIIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:08:51 -0400
+        id S1729995AbeKAIIs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:08:48 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A734120847;
-        Wed, 31 Oct 2018 23:08:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D11C620821;
+        Wed, 31 Oct 2018 23:08:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027320;
-        bh=J1w7CfViljGDO58gsaMyV0aNsx6x8XOC1S+PPnA+Mv0=;
+        s=default; t=1541027317;
+        bh=6VQHARJjCbGbCwGJ182QyQzz46ecWe+REzMowYa1mkk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X4iIILmfF1/1qrjMIIbiMQfbWuoxM2Pk/rRwAnYVNkr9mZLlu1V1qii6ZuJFAQRMl
-         TnoDuSoKKrWmx26RZxxEVX6VX3EoMupyh81FMoEaqxnNNdkP9Iu4rm8HiHE4nzNSws
-         MjnHSAQAYspfG8D0JnN8W1GjXmNaJ+DGvJahfAnc=
+        b=dq1z9QQ5vT6naKP/SUf+NbrQo76+Mj03dIk2NY622cYfftVw3HNAMlFq1/2RqpGc7
+         6wHK1FnN1FLwaW3JhcWySctyXMHHBYVXjJD4lT7Jc6tLN79Z/GXVZA8/TIGhEVW81Y
+         SppCzVF1wrftII4027dDiA7QzHb2ZPa6Sh5q/s2c=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 050/126] block, bfq: correctly charge and reset entity service in all cases
-Date:   Wed, 31 Oct 2018 19:06:38 -0400
-Message-Id: <20181031230754.29029-50-sashal@kernel.org>
+Cc:     Peng Li <lipeng321@huawei.com>,
+        Fuyun Liang <liangfuyun1@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 047/126] net: hns3: Check hdev state when getting link status
+Date:   Wed, 31 Oct 2018 19:06:35 -0400
+Message-Id: <20181031230754.29029-47-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -52,73 +55,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paolo Valente <paolo.valente@linaro.org>
+From: Peng Li <lipeng321@huawei.com>
 
-[ Upstream commit cbeb869a3d1110450186b738199963c5e68c2a71 ]
+[ Upstream commit 582d37bbb613b8ad86bf82845d3a74a02a5a0fa1 ]
 
-BFQ schedules entities (which represent either per-process queues or
-groups of queues) as a function of their timestamps. In particular, as
-a function of their (virtual) finish times. The finish time of an
-entity is computed as a function of the budget assigned to the entity,
-assuming, tentatively, that the entity, once in service, will receive
-an amount of service equal to its budget. Then, when the entity is
-expired because it finishes to be served, this finish time is updated
-as a function of the actual service received by the entity. This
-allows the entity to be correctly charged with only the service
-received, and then to be correctly re-scheduled.
+By default, HW link status is up. If hclge_update_link_status is called
+before net up, driver will print "link up". It is not suitable. hdev
+state check is needed when getting link status.
 
-Yet an entity may receive service also while not being the entity in
-service (in the scheduling environment of its parent entity), for
-several reasons. If the entity remains with no backlog while receiving
-this 'unofficial' service, then it is expired. Also on such an
-expiration, the finish time of the entity should be updated to account
-for only the service actually received by the entity. Unfortunately,
-such an update is not performed for an entity expiring without being
-the entity in service.
-
-In a similar vein, the service counter of the entity in service is
-reset when the entity is expired, to be ready to be used for next
-service cycle. This reset too should be performed also in case an
-entity is expired because it remains empty after receiving service
-while not being the entity in service. But in this case the reset is
-not performed.
-
-This commit performs the above update of the finish time and reset of
-the service received, also for an entity expiring while not being the
-entity in service.
-
-Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 46a3df9f9718 ("net: hns3: Add HNS3 Acceleration Engine & Compatibility Layer Support")
+Fixes: e2cb1dec9779 ("net: hns3: Add HNS3 VF HCL(Hardware Compatibility Layer) Support")
+Signed-off-by: Fuyun Liang <liangfuyun1@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/bfq-wf2q.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c   | 3 +++
+ drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c | 3 +++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/block/bfq-wf2q.c b/block/bfq-wf2q.c
-index 4498c43245e2..681498e5d40a 100644
---- a/block/bfq-wf2q.c
-+++ b/block/bfq-wf2q.c
-@@ -1178,10 +1178,17 @@ bool __bfq_deactivate_entity(struct bfq_entity *entity, bool ins_into_idle_tree)
- 	st = bfq_entity_service_tree(entity);
- 	is_in_service = entity == sd->in_service_entity;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index 8179ecb089b7..15f2dd4824f4 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -2398,6 +2398,9 @@ static int hclge_get_mac_phy_link(struct hclge_dev *hdev)
+ 	int mac_state;
+ 	int link_stat;
  
--	if (is_in_service) {
--		bfq_calc_finish(entity, entity->service);
-+	bfq_calc_finish(entity, entity->service);
++	if (test_bit(HCLGE_STATE_DOWN, &hdev->state))
++		return 0;
 +
-+	if (is_in_service)
- 		sd->in_service_entity = NULL;
--	}
-+	else
-+		/*
-+		 * Non in-service entity: nobody will take care of
-+		 * resetting its service counter on expiration. Do it
-+		 * now.
-+		 */
-+		entity->service = 0;
+ 	mac_state = hclge_get_mac_link_status(hdev);
  
- 	if (entity->tree == &st->active)
- 		bfq_active_extract(st, entity);
+ 	if (hdev->hw.mac.phydev) {
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+index 12aa1f1b99ef..212c7bf5ea4a 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+@@ -299,6 +299,9 @@ void hclgevf_update_link_status(struct hclgevf_dev *hdev, int link_state)
+ 
+ 	client = handle->client;
+ 
++	link_state =
++		test_bit(HCLGEVF_STATE_DOWN, &hdev->state) ? 0 : link_state;
++
+ 	if (link_state != hdev->hw.mac.link) {
+ 		client->ops->link_status_change(handle, !!link_state);
+ 		hdev->hw.mac.link = link_state;
 -- 
 2.17.1
 
