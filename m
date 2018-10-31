@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78CD6C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:45:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B808DECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:45:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EAC62082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:45:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 787F420821
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:45:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pzA+BNRR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EAC62082E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="t2TU9y6x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 787F420821
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729958AbeKABoZ (ORCPT
+        id S1729972AbeKABo2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 21:44:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58876 "EHLO mail.kernel.org"
+        Wed, 31 Oct 2018 21:44:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729341AbeKABoY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 21:44:24 -0400
+        id S1729341AbeKABo2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 21:44:28 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4312D20821;
-        Wed, 31 Oct 2018 16:45:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A08B920840;
+        Wed, 31 Oct 2018 16:45:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541004337;
-        bh=pHhyCxnvPJkUb5M0fPjxuXqu+lVahX4RXNSvAui8AOA=;
+        s=default; t=1541004340;
+        bh=0I6sutqWFP5reAAk7u81DZPf/7CcaCSn0rS2DrXpYkA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pzA+BNRRv0mdRDpD5BRPymKwfaShQysXitdTvyjcfmvWaomxTNCvTo/WLfNbltaet
-         LrxWVwcyQyhrpVR0Okj4hvksnJjm9niixKTTSxbslPHPvDUAuIKyKarfiTvlLjLbz5
-         pzDV0SOWL4NlU6mZ4X4a24No/4CqrDP2PsbBMjGY=
+        b=t2TU9y6xhEc0L5smYz9uBaLCpiZE7s2Vd++AJ5ob5aJ1iGieTsG/gNLC6+tHylBEt
+         q8Q3Ke2yQxUZKDIEAPhm1Ad0gxIY5qAg2g5LWtSEnupo2RfeeElzPw/CFUyObseGha
+         iTZH40p/rXpU4ONwmwgP+6GnHmW/fYOFEwEvextc=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -47,9 +47,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 04/28] perf beauty: Introduce strarray__scnprintf_flags()
-Date:   Wed, 31 Oct 2018 13:44:44 -0300
-Message-Id: <20181031164508.4784-5-acme@kernel.org>
+Subject: [PATCH 05/28] perf trace beauty: Allow syscalls to mask an argument before considering it
+Date:   Wed, 31 Oct 2018 13:44:45 -0300
+Message-Id: <20181031164508.4784-6-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181031164508.4784-1-acme@kernel.org>
 References: <20181031164508.4784-1-acme@kernel.org>
@@ -60,8 +60,20 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Generalizing pkey_alloc__scnprintf_access_rights(), so that we can use
-it with other flags-like arguments, such as mount's mountflags argument.
+Take mount's 'flags' arg, to cope with this semantic, as defined in do_mount in fs/namespace.c:
+
+  /*
+   * Pre-0.97 versions of mount() didn't have a flags word.  When the
+   * flags word was introduced its top half was required to have the
+   * magic value 0xC0ED, and this remained so until 2.4.0-test9.
+   * Therefore, if this magic number is present, it carries no
+   * information and must be discarded.
+   */
+
+We need to mask this arg, and then see if it is zero, when we simply
+don't print the arg name and value.
+
+The next patch will use this for mount's 'flag' arg.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Benjamin Peterson <benjamin@python.org>
@@ -69,84 +81,56 @@ Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-o3ymi3104m8moaz9865g09w9@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-btue14k5jemayuykfrwsnh85@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/trace/beauty/beauty.h     |  1 +
- tools/perf/trace/beauty/pkey_alloc.c | 27 ++++++++++++++++-----------
- 2 files changed, 17 insertions(+), 11 deletions(-)
+ tools/perf/builtin-trace.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/tools/perf/trace/beauty/beauty.h b/tools/perf/trace/beauty/beauty.h
-index 2570152d3909..a1806c4f3ccd 100644
---- a/tools/perf/trace/beauty/beauty.h
-+++ b/tools/perf/trace/beauty/beauty.h
-@@ -24,6 +24,7 @@ struct strarray {
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 7081d7ea12e5..14fb63e17de5 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -614,6 +614,7 @@ static size_t syscall_arg__scnprintf_getrandom_flags(char *bf, size_t size,
+ 
+ struct syscall_arg_fmt {
+ 	size_t	   (*scnprintf)(char *bf, size_t size, struct syscall_arg *arg);
++	unsigned long (*mask_val)(struct syscall_arg *arg, unsigned long val);
+ 	void	   *parm;
+ 	const char *name;
+ 	bool	   show_zero;
+@@ -1487,6 +1488,19 @@ static size_t syscall__scnprintf_name(struct syscall *sc, char *bf, size_t size,
+ 	return scnprintf(bf, size, "arg%d: ", arg->idx);
  }
  
- size_t strarray__scnprintf(struct strarray *sa, char *bf, size_t size, const char *intfmt, int val);
-+size_t strarray__scnprintf_flags(struct strarray *sa, char *bf, size_t size, unsigned long flags);
- 
- struct trace;
- struct thread;
-diff --git a/tools/perf/trace/beauty/pkey_alloc.c b/tools/perf/trace/beauty/pkey_alloc.c
-index d3e5188a9bef..1b8ed4cac815 100644
---- a/tools/perf/trace/beauty/pkey_alloc.c
-+++ b/tools/perf/trace/beauty/pkey_alloc.c
-@@ -9,31 +9,28 @@
- #include <linux/kernel.h>
- #include <linux/log2.h>
- 
--static size_t pkey_alloc__scnprintf_access_rights(int access_rights, char *bf, size_t size)
-+size_t strarray__scnprintf_flags(struct strarray *sa, char *bf, size_t size, unsigned long flags)
- {
- 	int i, printed = 0;
- 
--#include "trace/beauty/generated/pkey_alloc_access_rights_array.c"
--	static DEFINE_STRARRAY(pkey_alloc_access_rights);
--
--	if (access_rights == 0) {
--		const char *s = strarray__pkey_alloc_access_rights.entries[0];
-+	if (flags == 0) {
-+		const char *s = sa->entries[0];
- 		if (s)
- 			return scnprintf(bf, size, "%s", s);
- 		return scnprintf(bf, size, "%d", 0);
- 	}
- 
--	for (i = 1; i < strarray__pkey_alloc_access_rights.nr_entries; ++i) {
--		int bit = 1 << (i - 1);
-+	for (i = 1; i < sa->nr_entries; ++i) {
-+		unsigned long bit = 1UL << (i - 1);
- 
--		if (!(access_rights & bit))
-+		if (!(flags & bit))
- 			continue;
- 
- 		if (printed != 0)
- 			printed += scnprintf(bf + printed, size - printed, "|");
- 
--		if (strarray__pkey_alloc_access_rights.entries[i] != NULL)
--			printed += scnprintf(bf + printed, size - printed, "%s", strarray__pkey_alloc_access_rights.entries[i]);
-+		if (sa->entries[i] != NULL)
-+			printed += scnprintf(bf + printed, size - printed, "%s", sa->entries[i]);
- 		else
- 			printed += scnprintf(bf + printed, size - printed, "0x%#", bit);
- 	}
-@@ -41,6 +38,14 @@ static size_t pkey_alloc__scnprintf_access_rights(int access_rights, char *bf, s
- 	return printed;
- }
- 
-+static size_t pkey_alloc__scnprintf_access_rights(int access_rights, char *bf, size_t size)
++/*
++ * Check if the value is in fact zero, i.e. mask whatever needs masking, such
++ * as mount 'flags' argument that needs ignoring some magic flag, see comment
++ * in tools/perf/trace/beauty/mount_flags.c
++ */
++static unsigned long syscall__mask_val(struct syscall *sc, struct syscall_arg *arg, unsigned long val)
 +{
-+#include "trace/beauty/generated/pkey_alloc_access_rights_array.c"
-+	static DEFINE_STRARRAY(pkey_alloc_access_rights);
++	if (sc->arg_fmt && sc->arg_fmt[arg->idx].mask_val)
++		return sc->arg_fmt[arg->idx].mask_val(arg, val);
 +
-+	return strarray__scnprintf_flags(&strarray__pkey_alloc_access_rights, bf, size, access_rights);
++	return val;
 +}
 +
- size_t syscall_arg__scnprintf_pkey_alloc_access_rights(char *bf, size_t size, struct syscall_arg *arg)
+ static size_t syscall__scnprintf_val(struct syscall *sc, char *bf, size_t size,
+ 				     struct syscall_arg *arg, unsigned long val)
  {
- 	unsigned long cmd = arg->val;
+@@ -1535,6 +1549,11 @@ static size_t syscall__scnprintf_args(struct syscall *sc, char *bf, size_t size,
+ 				continue;
+ 
+ 			val = syscall_arg__val(&arg, arg.idx);
++			/*
++			 * Some syscall args need some mask, most don't and
++			 * return val untouched.
++			 */
++			val = syscall__mask_val(sc, &arg, val);
+ 
+ 			/*
+  			 * Suppress this argument if its value is zero and
 -- 
 2.14.4
 
