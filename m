@@ -3,36 +3,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB14BECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 08:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F191C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 08:52:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89BC22081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 08:50:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89BC22081B
+	by mail.kernel.org (Postfix) with ESMTP id 02E4B20840
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 08:52:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02E4B20840
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727661AbeJaRrL (ORCPT
+        id S1727646AbeJaRtZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 13:47:11 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59692 "EHLO mx1.redhat.com"
+        Wed, 31 Oct 2018 13:49:25 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:32982 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726054AbeJaRrL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 13:47:11 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S1725955AbeJaRtY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 13:49:24 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 907CC4E915;
-        Wed, 31 Oct 2018 08:49:59 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0D04730821F4;
+        Wed, 31 Oct 2018 08:52:13 +0000 (UTC)
 Received: from [10.36.112.62] (ovpn-112-62.ams2.redhat.com [10.36.112.62])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 779541974C;
-        Wed, 31 Oct 2018 08:49:54 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2C2421001914;
+        Wed, 31 Oct 2018 08:52:06 +0000 (UTC)
 Subject: Re: [RFC PATCH] kvm: Use huge pages for DAX-backed files
-To:     Barret Rhoden <brho@google.com>,
-        Dan Williams <dan.j.williams@intel.com>
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Barret Rhoden <brho@google.com>
 Cc:     Dave Jiang <dave.jiang@intel.com>, zwisler@kernel.org,
         Vishal L Verma <vishal.l.verma@intel.com>,
         rkrcmar@redhat.com, Thomas Gleixner <tglx@linutronix.de>,
@@ -45,9 +44,6 @@ Cc:     Dave Jiang <dave.jiang@intel.com>, zwisler@kernel.org,
         "Zhang, Yi Z" <yi.z.zhang@intel.com>
 References: <20181029210716.212159-1-brho@google.com>
  <CAPcyv4gJUjuSKwy7i2wuKR=Vz-AkDrxnGya5qkg7XTFxuXbtzw@mail.gmail.com>
- <20181029202854.7c924fd3@gnomeregan.cam.corp.google.com>
- <CAPcyv4gQztHrJ3--rhU4ZpaZyyqdqE0=gx50CRArHKiXwfYC+A@mail.gmail.com>
- <20181030154524.181b8236@gnomeregan.cam.corp.google.com>
 From:   Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -85,65 +81,33 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <71d52e0f-ec40-d423-4dd4-e3aeb3730166@redhat.com>
-Date:   Wed, 31 Oct 2018 09:49:52 +0100
+Message-ID: <e00c5f69-f4d7-859c-cbde-0392b0a5195c@redhat.com>
+Date:   Wed, 31 Oct 2018 09:52:04 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20181030154524.181b8236@gnomeregan.cam.corp.google.com>
+In-Reply-To: <CAPcyv4gJUjuSKwy7i2wuKR=Vz-AkDrxnGya5qkg7XTFxuXbtzw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 31 Oct 2018 08:49:59 +0000 (UTC)
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Wed, 31 Oct 2018 08:52:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/10/2018 20:45, Barret Rhoden wrote:
-> On 2018-10-29 at 20:10 Dan Williams <dan.j.williams@intel.com> wrote:
->> The property of DAX pages that requires special coordination is the
->> fact that the device hosting the pages can be disabled at will. The
->> get_dev_pagemap() api is the interface to pin a device-pfn so that you
->> can safely perform a pfn_to_page() operation.
->>
->> Have the pages that kvm uses in this path already been pinned by vfio?
+On 29/10/2018 23:25, Dan Williams wrote:
+> I'm wondering if we're adding an explicit is_zone_device_page() check
+> in this path to determine the page mapping size if that can be a
+> replacement for the kvm_is_reserved_pfn() check. In other words, the
+> goal of fixing up PageReserved() was to preclude the need for DAX-page
+> special casing in KVM, but if we already need add some special casing
+> for page size determination, might as well bypass the
+> kvm_is_reserved_pfn() dependency as well.
 
-No, VFIO is not involved here.
-
-The pages that KVM uses are never pinned.  Soon after we grab them and
-we build KVM's page table, we do put_page in mmu_set_spte (via
-kvm_release_pfn_clean).  From that point on the MMU notifier will take
-care of invalidating SPT before the page disappears from the mm's page
-table.
-
-> One usage of kvm_is_reserved_pfn() in KVM code is like this:
-> 
-> static struct page *kvm_pfn_to_page(kvm_pfn_t pfn)
-> {  
->         if (is_error_noslot_pfn(pfn))
->                 return KVM_ERR_PTR_BAD_PAGE; 
->     
->         if (kvm_is_reserved_pfn(pfn)) {                      
->                 WARN_ON(1);
->                 return KVM_ERR_PTR_BAD_PAGE;                         
->         }
-> 
->         return pfn_to_page(pfn);                                                  
-> }
-> 
-> I think there's no guarantee the kvm->mmu_lock is held in the generic
-> case.
-
-Indeed, it's not.
-
-> There are probably other rules related to gfn_to_page that keep the
-> page alive, maybe just during interrupt/vmexit context?  Whatever keeps
-> those pages alive for normal memory might grab that devmap reference
-> under the hood for DAX mappings.
-
-Nothing keeps the page alive except for the MMU notifier (which of
-course cannot run in atomic context, since its callers take the mmap_sem).
+No, please don't.  The kvm_is_reserved_pfn() check is for correctness,
+the page-size check is for optimization.  In theory you could have a
+ZONE_DEVICE area that is smaller than 2MB and thus does not use huge pages.
 
 Paolo
