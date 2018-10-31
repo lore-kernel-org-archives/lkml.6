@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EBB1ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:16:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2E0DC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:16:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2020720664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:16:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A2192064C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:16:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qegaXVJj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2020720664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rzuK++Tl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A2192064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732188AbeKAIQp (ORCPT
+        id S1732164AbeKAIRE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:16:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36284 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:17:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730815AbeKAIL7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:11:59 -0400
+        id S1731916AbeKAILz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:11:55 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A63E420866;
-        Wed, 31 Oct 2018 23:11:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED87120854;
+        Wed, 31 Oct 2018 23:11:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027507;
-        bh=Cju/D3RxbTH6ZqqwWGQO2KVmVRK5Bbg6zlXLa/iyMQU=;
+        s=default; t=1541027503;
+        bh=2di+Gc2jR0LIpOCoSUvtY+8S6BiAAfuFAQ272b7u8G8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qegaXVJjoUx/Hih1eaKWMq4HmxOHc6wZ0fnXktxnOcGvqQQOLVmbJjB46KhB3j9zt
-         /arFLTESH4ePWD91IRzhFNXf++AK5bs38kEDTUjEtKORoE+y4IeDyG7qRkDd71ejBW
-         w/Um/9CzTkHSDFLakYdo9Yd+yHvXudD9ZDsh91/8=
+        b=rzuK++Tl/E8kKiitMoFtu/QkmbbrH4AKCY7E/fLv1tug7Qf9DB3oeGwnPSwehQg4z
+         eagdMieroEQ7Ba0V+P0I+5koWwmjtMbEtgQut8AmgOF8p622Qjg3huhxRBquWzCnC7
+         BXLrqBqDuM2pA1AgwCq0CMdakLJg+LjhkU6YtfbQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
+Cc:     Sanskriti Sharma <sansharm@redhat.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 10/32] regulator: fixed: Default enable high on DT regulators
-Date:   Wed, 31 Oct 2018 19:11:15 -0400
-Message-Id: <20181031231137.29429-10-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 06/32] perf tools: Cleanup trace-event-info 'tdata' leak
+Date:   Wed, 31 Oct 2018 19:11:11 -0400
+Message-Id: <20181031231137.29429-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231137.29429-1-sashal@kernel.org>
 References: <20181031231137.29429-1-sashal@kernel.org>
@@ -53,65 +53,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Sanskriti Sharma <sansharm@redhat.com>
 
-[ Upstream commit 28be5f15df2ee6882b0a122693159c96a28203c7 ]
+[ Upstream commit faedbf3fd19f2511a39397f76359e4cc6ee93072 ]
 
-commit efdfeb079cc3
-("regulator: fixed: Convert to use GPIO descriptor only")
-switched to use gpiod_get() to look up the regulator from the
-gpiolib core whether that is device tree or boardfile.
+Free tracing_data structure in tracing_data_get() error paths.
 
-This meant that we activate the code in
-a603a2b8d86e ("gpio: of: Add special quirk to parse regulator flags")
-which means the descriptors coming from the device tree already
-have the right inversion and open drain semantics set up from
-the gpiolib core.
+Fixes the following coverity complaint:
 
-As the fixed regulator was inspected again we got the
-inverted inversion and things broke.
+  Error: RESOURCE_LEAK (CWE-772):
+  leaked_storage: Variable "tdata" going out of scope leaks the storage
 
-Fix it by ignoring the config in the device tree for now: the
-later patches in the series will push all inversion handling
-over to the gpiolib core and set it up properly in the
-boardfiles for legacy devices, but I did not finish that
-for this kernel cycle.
-
-Fixes: commit efdfeb079cc3 ("regulator: fixed: Convert to use GPIO descriptor only")
-Reported-by: Leonard Crestez <leonard.crestez@nxp.com>
-Reported-by: Fabio Estevam <festevam@gmail.com>
-Reported-by: John Stultz <john.stultz@linaro.org>
-Reported-by: Anders Roxell <anders.roxell@linaro.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Tested-by: John Stultz <john.stultz@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sanskriti Sharma <sansharm@redhat.com>
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Joe Lawrence <joe.lawrence@redhat.com>
+Link: http://lkml.kernel.org/r/1538490554-8161-3-git-send-email-sansharm@redhat.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/regulator/fixed.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ tools/perf/util/trace-event-info.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
-index ff62d69ba0be..24ad5e6832df 100644
---- a/drivers/regulator/fixed.c
-+++ b/drivers/regulator/fixed.c
-@@ -94,9 +94,14 @@ of_get_fixed_voltage_config(struct device *dev,
+diff --git a/tools/perf/util/trace-event-info.c b/tools/perf/util/trace-event-info.c
+index d995743cb673..58ce62088a39 100644
+--- a/tools/perf/util/trace-event-info.c
++++ b/tools/perf/util/trace-event-info.c
+@@ -507,12 +507,14 @@ struct tracing_data *tracing_data_get(struct list_head *pattrs,
+ 			 "/tmp/perf-XXXXXX");
+ 		if (!mkstemp(tdata->temp_file)) {
+ 			pr_debug("Can't make temp file");
++			free(tdata);
+ 			return NULL;
+ 		}
  
- 	of_property_read_u32(np, "startup-delay-us", &config->startup_delay);
+ 		temp_fd = open(tdata->temp_file, O_RDWR);
+ 		if (temp_fd < 0) {
+ 			pr_debug("Can't read '%s'", tdata->temp_file);
++			free(tdata);
+ 			return NULL;
+ 		}
  
--	config->enable_high = of_property_read_bool(np, "enable-active-high");
--	config->gpio_is_open_drain = of_property_read_bool(np,
--							   "gpio-open-drain");
-+	/*
-+	 * FIXME: we pulled active low/high and open drain handling into
-+	 * gpiolib so it will be handled there. Delete this in the second
-+	 * step when we also remove the custom inversion handling for all
-+	 * legacy boardfiles.
-+	 */
-+	config->enable_high = 1;
-+	config->gpio_is_open_drain = 0;
- 
- 	if (of_find_property(np, "vin-supply", NULL))
- 		config->input_supply = "vin";
 -- 
 2.17.1
 
