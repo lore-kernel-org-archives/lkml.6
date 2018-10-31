@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA4B7ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91D37C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B28AC2081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B5892081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bdlcTNgG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B28AC2081B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rOBhmiyy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B5892081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729697AbeKAII0 (ORCPT
+        id S1729716AbeKAII2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:08:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57280 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:08:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57366 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728334AbeKAIIZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:08:25 -0400
+        id S1728334AbeKAII1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:08:27 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB1D120664;
-        Wed, 31 Oct 2018 23:08:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72C13208E3;
+        Wed, 31 Oct 2018 23:08:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027294;
-        bh=lf4tvG9aqCQyojjAUSfl5A0vOH/1k+Hi4jj6+OvvbNg=;
+        s=default; t=1541027296;
+        bh=/+PQqP9t4ZV5lAlBalgxA4SPTsElbHnLnIeYlm3kqNE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bdlcTNgGe//4FYefJ9tNlwi2nJKTpAvQjRy8R/AS5An5wYF56xYEVtf/dzENrvU9M
-         JWiYgb3pZDKD739y4gaFKjXqfcoJk9W0MNo/wVcQrjIx3YWl9RmNmngBvN1zQcTPo5
-         zQylCll3TXerZaG2Qk3Ip4c/97ey12li6u4op35s=
+        b=rOBhmiyyDfZvlIsTRfFmL1zc7uTCcR1vnYMfepZ49SdaHYWYWov64KHx/RW+4QKP8
+         CsF5J+rkUD2W3acjrC4sR/T5ypFb8l3XLyj3e0f02S+1HLkGHxU07H+MIg1jay8iGS
+         gisu3r3Auf8yvw8EsRJf5fFGEKHz1HQw3INyDHUc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Yu Zhao <yuzhao@google.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 021/126] mmc: sdhci-pci-o2micro: Add quirk for O2 Micro dev 0x8620 rev 0x01
-Date:   Wed, 31 Oct 2018 19:06:09 -0400
-Message-Id: <20181031230754.29029-21-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 023/126] mtd: rawnand: denali: set SPARE_AREA_SKIP_BYTES register to 8 if unset
+Date:   Wed, 31 Oct 2018 19:06:11 -0400
+Message-Id: <20181031230754.29029-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -52,59 +53,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yu Zhao <yuzhao@google.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-[ Upstream commit 5169894982bb67486d93cc1e10151712bb86bcb6 ]
+[ Upstream commit 0d55c668b218a1db68b5044bce4de74e1bd0f0c8 ]
 
-This device reports SDHCI_CLOCK_INT_STABLE even though it's not
-ready to take SDHCI_CLOCK_CARD_EN. The symptom is that reading
-SDHCI_CLOCK_CONTROL after enabling the clock shows absence of the
-bit from the register (e.g. expecting 0x0000fa07 = 0x0000fa03 |
-SDHCI_CLOCK_CARD_EN but only observed the first operand).
+NAND devices need additional data area (OOB) for error correction,
+but it is also used for Bad Block Marker (BBM).  In many cases, the
+first byte in OOB is used for BBM, but the location actually depends
+on chip vendors.  The NAND controller should preserve the precious
+BBM to keep track of bad blocks.
 
-mmc1: Timeout waiting for hardware cmd interrupt.
-mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
-mmc1: sdhci: Sys addr:  0x00000000 | Version:  0x00000603
-mmc1: sdhci: Blk size:  0x00000000 | Blk cnt:  0x00000000
-mmc1: sdhci: Argument:  0x00000000 | Trn mode: 0x00000000
-mmc1: sdhci: Present:   0x01ff0001 | Host ctl: 0x00000001
-mmc1: sdhci: Power:     0x0000000f | Blk gap:  0x00000000
-mmc1: sdhci: Wake-up:   0x00000000 | Clock:    0x0000fa03
-mmc1: sdhci: Timeout:   0x00000000 | Int stat: 0x00000000
-mmc1: sdhci: Int enab:  0x00ff0083 | Sig enab: 0x00ff0083
-mmc1: sdhci: AC12 err:  0x00000000 | Slot int: 0x00000000
-mmc1: sdhci: Caps:      0x25fcc8bf | Caps_1:   0x00002077
-mmc1: sdhci: Cmd:       0x00000000 | Max curr: 0x005800c8
-mmc1: sdhci: Resp[0]:   0x00000000 | Resp[1]:  0x00000000
-mmc1: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
-mmc1: sdhci: Host ctl2: 0x00000008
-mmc1: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x00000000
-mmc1: sdhci: ============================================
+In Denali IP, the SPARE_AREA_SKIP_BYTES register is used to specify
+the number of bytes to skip from the start of OOB.  The ECC engine
+will automatically skip the specified number of bytes when it gets
+access to OOB area.
 
-The problem happens during wakeup from S3. Adding a delay quirk
-after power up reliably fixes the problem.
+The same value for SPARE_AREA_SKIP_BYTES should be used between
+firmware and the operating system if you intend to use the NAND
+device across the control hand-off.
 
-Signed-off-by: Yu Zhao <yuzhao@google.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+In fact, the current denali.c code expects firmware to have already
+set the SPARE_AREA_SKIP_BYTES register, then reads the value out.
+
+If no firmware (or bootloader) has initialized the controller, the
+register value is zero, which is the default after power-on-reset.
+In other words, the Linux driver cannot initialize the controller
+by itself.
+
+Some possible solutions are:
+
+ [1] Add a DT property to specify the skipped bytes in OOB
+ [2] Associate the preferred value with compatible
+ [3] Hard-code the default value in the driver
+
+My first attempt was [1], but in the review process, [3] was suggested
+as a counter-implementation.
+(https://lore.kernel.org/patchwork/patch/983055/)
+
+The default value 8 was chosen to match to the boot ROM of the UniPhier
+platform.  The preferred value may vary by platform.  If so, please
+trade up to a different solution.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/sdhci-pci-o2micro.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/mtd/nand/raw/denali.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
-index 555970a29c94..34326d95d254 100644
---- a/drivers/mmc/host/sdhci-pci-o2micro.c
-+++ b/drivers/mmc/host/sdhci-pci-o2micro.c
-@@ -367,6 +367,9 @@ int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
- 		pci_write_config_byte(chip->pdev, O2_SD_LOCK_WP, scratch);
- 		break;
- 	case PCI_DEVICE_ID_O2_SEABIRD0:
-+		if (chip->pdev->revision == 0x01)
-+			chip->quirks |= SDHCI_QUIRK_DELAY_AFTER_POWER;
-+		/* fall through */
- 	case PCI_DEVICE_ID_O2_SEABIRD1:
- 		/* UnLock WP */
- 		ret = pci_read_config_byte(chip->pdev,
+diff --git a/drivers/mtd/nand/raw/denali.c b/drivers/mtd/nand/raw/denali.c
+index c502075e5721..ff955f085351 100644
+--- a/drivers/mtd/nand/raw/denali.c
++++ b/drivers/mtd/nand/raw/denali.c
+@@ -28,6 +28,7 @@
+ MODULE_LICENSE("GPL");
+ 
+ #define DENALI_NAND_NAME    "denali-nand"
++#define DENALI_DEFAULT_OOB_SKIP_BYTES	8
+ 
+ /* for Indexed Addressing */
+ #define DENALI_INDEXED_CTRL	0x00
+@@ -1106,12 +1107,17 @@ static void denali_hw_init(struct denali_nand_info *denali)
+ 		denali->revision = swab16(ioread32(denali->reg + REVISION));
+ 
+ 	/*
+-	 * tell driver how many bit controller will skip before
+-	 * writing ECC code in OOB, this register may be already
+-	 * set by firmware. So we read this value out.
+-	 * if this value is 0, just let it be.
++	 * Set how many bytes should be skipped before writing data in OOB.
++	 * If a non-zero value has already been set (by firmware or something),
++	 * just use it.  Otherwise, set the driver default.
+ 	 */
+ 	denali->oob_skip_bytes = ioread32(denali->reg + SPARE_AREA_SKIP_BYTES);
++	if (!denali->oob_skip_bytes) {
++		denali->oob_skip_bytes = DENALI_DEFAULT_OOB_SKIP_BYTES;
++		iowrite32(denali->oob_skip_bytes,
++			  denali->reg + SPARE_AREA_SKIP_BYTES);
++	}
++
+ 	denali_detect_max_banks(denali);
+ 	iowrite32(0x0F, denali->reg + RB_PIN_ENABLED);
+ 	iowrite32(CHIP_EN_DONT_CARE__FLAG, denali->reg + CHIP_ENABLE_DONT_CARE);
 -- 
 2.17.1
 
