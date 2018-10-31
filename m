@@ -2,82 +2,215 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 325D9C6786F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 01:24:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66EDDC6786F
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 01:29:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF0B02081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 01:24:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF0B02081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 04D222081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 01:29:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OMZwzAeI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04D222081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729030AbeJaKUg (ORCPT
+        id S1728768AbeJaKY7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 06:20:36 -0400
-Received: from mga14.intel.com ([192.55.52.115]:54379 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728084AbeJaKUf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 06:20:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 18:24:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,446,1534834800"; 
-   d="scan'208";a="82852405"
-Received: from lifengji-mobl.ccr.corp.intel.com ([10.255.29.174])
-  by fmsmga008.fm.intel.com with ESMTP; 30 Oct 2018 18:24:44 -0700
-Message-ID: <1540949083.2254.62.camel@intel.com>
-Subject: [GIT PULL] Thermal management updates for v4.20-rc1
-From:   Zhang Rui <rui.zhang@intel.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux PM list <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Date:   Wed, 31 Oct 2018 09:24:43 +0800
+        Wed, 31 Oct 2018 06:24:59 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:37531 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728084AbeJaKY6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 06:24:58 -0400
+Received: by mail-yw1-f67.google.com with SMTP id v77-v6so5786059ywc.4
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 18:29:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=yfNH3smvnGeaCWiEjLKEWsfKNH5zNG8MFAyCKAmV0IU=;
+        b=OMZwzAeIfiVHWazf4cHKdRNQ6NTvwyREtZVDjF/LJHlH9/5wlil5Rt63DK0nyeVToo
+         TRqt64JJSGg7bNlvVRnSxeJMrYOrgjGSmS4fDjz1ZFh8QN1iD4xrMm5iCz+13o4fMB84
+         LFGPLlp2tTD/WSSRdpJARUilXiV91lgr/lwjk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=yfNH3smvnGeaCWiEjLKEWsfKNH5zNG8MFAyCKAmV0IU=;
+        b=byhfhj/WHgAlrdjf9H/5sFTcR0tsQLtz0IP0FmKsYtj0yYEDy7cR3FQ0UfsswPenZ4
+         pEcp5+IIbYP/PH3QTNbQ4M2wGEydBYOnxQ4VXpJqnZWT9TX2WAquV6SmY9vH9FuQh2nw
+         68+8ptIMY3Esn/97rKdHcN+EbKNH6cg1uLfqPIEU0dsCGbg7VQ8s0IqAaJ5TEzu0VoKY
+         shuEgNlB4Yv+nN2SORO2DClcVUTtmrFTCRBDA5eUFL6T8eOGe29DBdiBOPiZ7cV35KXK
+         /cvVDZK1kAiFuY9qapoWhqnlIOWzVlgYhAh61il0M1REgYRT1cDH3t9CpBflBG5Y5fkn
+         zuwA==
+X-Gm-Message-State: AGRZ1gIXJFDocpkoO9WEx5OwjHa1XinSTh2DteMi9WPTkc1XqmrV30oh
+        07j1wx6shoK/F26yjYJTNPk+ehW03e4=
+X-Google-Smtp-Source: AJdET5fPIzNS6nrhvox52D9BcUbtwGcrZfh2zeu+CXvcstFg+XiVb43OVKgfPQmQCLku/cNyjSUmaw==
+X-Received: by 2002:a0d:d514:: with SMTP id x20-v6mr1143849ywd.130.1540949345838;
+        Tue, 30 Oct 2018 18:29:05 -0700 (PDT)
+Received: from mail-yw1-f44.google.com (mail-yw1-f44.google.com. [209.85.161.44])
+        by smtp.gmail.com with ESMTPSA id n128-v6sm6048921ywc.71.2018.10.30.18.29.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 18:29:03 -0700 (PDT)
+Received: by mail-yw1-f44.google.com with SMTP id c126-v6so5780440ywd.8
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 18:29:03 -0700 (PDT)
+X-Received: by 2002:a81:98cf:: with SMTP id p198-v6mr149819ywg.353.1540949342712;
+ Tue, 30 Oct 2018 18:29:02 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Tue, 30 Oct 2018 18:29:01
+ -0700 (PDT)
+In-Reply-To: <20181031002917.GA2180@cisco>
+References: <20181029224031.29809-1-tycho@tycho.ws> <20181029224031.29809-2-tycho@tycho.ws>
+ <CAGXu5jLjum=TDab67L5XdWKEmzU_5rYeLfGXB1vb2BmfZdPuHQ@mail.gmail.com>
+ <20181030215404.GF7343@cisco> <CAGXu5j+ZPxu6egE1fEr+N9+zLx3N+SJ_vbS_zzj9_hrdWrrrWQ@mail.gmail.com>
+ <20181030223228.GG7343@cisco> <CAGXu5j+XEYqVye7yZaYF1_-xpCQt7pA=YgsTpQJnYupE5MSa4Q@mail.gmail.com>
+ <20181031002917.GA2180@cisco>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 30 Oct 2018 18:29:01 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jJubF30FsPVJeEZ18XKN-6BJMEbgF6+8_Bs6MT1fOyv8Q@mail.gmail.com>
+Message-ID: <CAGXu5jJubF30FsPVJeEZ18XKN-6BJMEbgF6+8_Bs6MT1fOyv8Q@mail.gmail.com>
+Subject: Re: [PATCH v8 1/2] seccomp: add a return code to trap to userspace
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian@brauner.io>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Aleksa Sarai <asarai@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Linus,
+On Tue, Oct 30, 2018 at 5:29 PM, Tycho Andersen <tycho@tycho.ws> wrote:
+> On Tue, Oct 30, 2018 at 03:34:54PM -0700, Kees Cook wrote:
+>> On Tue, Oct 30, 2018 at 3:32 PM, Tycho Andersen <tycho@tycho.ws> wrote:
+>> > On Tue, Oct 30, 2018 at 03:00:17PM -0700, Kees Cook wrote:
+>> >> On Tue, Oct 30, 2018 at 2:54 PM, Tycho Andersen <tycho@tycho.ws> wrot=
+e:
+>> >> > On Tue, Oct 30, 2018 at 02:49:21PM -0700, Kees Cook wrote:
+>> >> >> On Mon, Oct 29, 2018 at 3:40 PM, Tycho Andersen <tycho@tycho.ws> w=
+rote:
+>> >> >> >     * switch to a flags based future-proofing mechanism for stru=
+ct
+>> >> >> >       seccomp_notif and seccomp_notif_resp, thus avoiding versio=
+n issues
+>> >> >> >       with structure length (Kees)
+>> >> >> [...]
+>> >> >> >
+>> >> >> > +struct seccomp_notif {
+>> >> >> > +       __u64 id;
+>> >> >> > +       __u32 pid;
+>> >> >> > +       __u32 flags;
+>> >> >> > +       struct seccomp_data data;
+>> >> >> > +};
+>> >> >> > +
+>> >> >> > +struct seccomp_notif_resp {
+>> >> >> > +       __u64 id;
+>> >> >> > +       __s64 val;
+>> >> >> > +       __s32 error;
+>> >> >> > +       __u32 flags;
+>> >> >> > +};
+>> >> >>
+>> >> >> Hrm, so, what's the plan for when struct seccomp_data changes size=
+?
+>> >> >
+>> >> > I guess my plan was don't ever change the size again, just use flag=
+s
+>> >> > and have extra state available via ioctl().
+>> >> >
+>> >> >> I'm realizing that it might be "too late" for userspace to discove=
+r
+>> >> >> it's running on a newer kernel. i.e. it gets a user notification, =
+and
+>> >> >> discovers flags it doesn't know how to handle. Do we actually need
+>> >> >> both flags AND a length? Designing UAPI is frustrating! :)
+>> >> >
+>> >> > :). I don't see this as such a big problem -- in fact it's better t=
+han
+>> >> > the length mode, where you don't know what you don't know, because =
+it
+>> >> > only copied as much info as you could handle. Older userspace would
+>> >> > simply not use information it didn't know how to use.
+>> >> >
+>> >> >> Do we need another ioctl to discover the seccomp_data size maybe?
+>> >> >
+>> >> > That could be an option as well, assuming we agree that size would
+>> >> > work, which I thought we didn't?
+>> >>
+>> >> Size alone wasn't able to determine the layout of the seccomp_notif
+>> >> structure since it had holes (in the prior version). seccomp_data
+>> >> doesn't have holes and is likely to change in size (see the recent
+>> >> thread on adding the MPK register to it...)
+>> >
+>> > Oh, sorry, I misread this as seccomp_notif, not seccomp_data.
+>> >
+>> >> I'm trying to imagine the right API for this. A portable user of
+>> >> seccomp_notif expects the id/pid/flags/data to always be in the same
+>> >> place, but it's the size of seccomp_data that may change. So it wants
+>> >> to allocate space for seccomp_notif header and "everything else", of
+>> >> which is may only understand the start of seccomp_data (and ignore an=
+y
+>> >> new trailing fields).
+>> >>
+>> >> So... perhaps the "how big are things?" ioctl would report the header
+>> >> size and the seccomp_data size. Then both are flexible. And flags
+>> >> would be left as a way to "version" the header?
+>> >>
+>> >> Any Linux API list members want to chime in here?
+>> >
+>> > So:
+>> >
+>> > struct seccomp_notify_sizes {
+>> >     u16 seccomp_notify;
+>> >     u16 seccomp_data;
+>> > };
+>> >
+>> > ioctl(fd, SECCOMP_IOCTL_GET_SIZE, &sizes);
+>> >
+>> > This would be only one extra syscall over the lifetime of the listener
+>> > process, which doesn't seem too bad. One thing that's slightly
+>> > annoying is that you can't do it until you actually get an event, so
+>> > maybe it could be a command on the seccomp syscall instead:
+>> >
+>> > seccomp(SECCOMP_GET_NOTIF_SIZES, 0, &sizes);
+>>
+>> Yeah, top-level makes more sense. u16 seems fine too.
+>
+> So one problem is this is that the third argument of the seccomp
+> syscall is declared as const char, so I get:
+>
+> kernel/seccomp.c: In function =E2=80=98seccomp_get_notif_sizes=E2=80=99:
+> kernel/seccomp.c:1401:19: warning: passing argument 1 of =E2=80=98copy_to=
+_user=E2=80=99 discards =E2=80=98const=E2=80=99 qualifier from pointer targ=
+et type [-Wdiscarded-qualifiers]
+>   if (copy_to_user(usizes, &sizes, sizeof(sizes)))
+>                    ^~~~~~
+> In file included from ./include/linux/compat.h:19:0,
+>                  from kernel/seccomp.c:19:
+> ./include/linux/uaccess.h:152:1: note: expected =E2=80=98void *=E2=80=99 =
+but argument is of type =E2=80=98const char *=E2=80=99
+>  copy_to_user(void __user *to, const void *from, unsigned long n)
+>  ^~~~~~~~~~~~
+>
+> If I drop the const it doesn't complain, but I'm not sure what the protoc=
+ol is
+> for changing the types of syscall declarations. In principle it doesn't r=
+eally
+> mean anything, but...
 
-Please pull from
-  git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git next
+I think this should be fine. It's documented as "void *"...
 
-to receive the latest Thermal management updates for v4.20-rc1 with
-top-most commit c2b59d279dbbac750958f6a1bc4841e431d934e3:
-
-  thermal: core: using power_efficient_wq for thermal worker (2018-10-
-10 21:48:50 +0800)
-
-on top of commit 0238df646e6224016a45505d2c111a24669ebe21:
-
-  Linux 4.19-rc7 (2018-10-07 17:26:02 +0200)
-
-Specifics:
-- Fix a use-after-free issue when unregistering a thermal cooling
-device.(Dmitry Osipenko)
-
-- use power_efficient_wq for thermal worker to save more power. (Jeson
-Gao)
-
-thanks,
-rui
-
-----------------------------------------------------------------
-Dmitry Osipenko (1):
-      thermal: core: Fix use-after-free in
-thermal_cooling_device_destroy_sysfs
-
-Jeson Gao (1):
-      thermal: core: using power_efficient_wq for thermal worker
-
- drivers/thermal/thermal_core.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+--=20
+Kees Cook
