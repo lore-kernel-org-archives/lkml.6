@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2606C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38D22C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:45:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 579B220664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:45:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F250320664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:45:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xF4e9xls"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 579B220664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DGs9QE0D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F250320664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728877AbeKAIHZ (ORCPT
+        id S1728860AbeKAIHY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:07:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55082 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:07:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728817AbeKAIHX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728646AbeKAIHX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 1 Nov 2018 04:07:23 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 750CB20838;
-        Wed, 31 Oct 2018 23:07:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F2B42081B;
+        Wed, 31 Oct 2018 23:07:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027232;
-        bh=iSPwOEr0187w+abwVVJbJt5U2yfpTxn5/QbqAQCzqpM=;
+        s=default; t=1541027233;
+        bh=2h5AOeZchGzgjP0uM8Do63qTlbDMuIEEewO/zMK3tEM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xF4e9xlseyR34dQhgiwnj3aOBebYmMKeiv85T/w/oMqRpxkZKhWextAxkdu9yj8Si
-         0tyMr/Z7LzIG+KlwUvDyLmMHZrpXu1764mSZju0qxuBjPov5lErg2mnTFkXteh4ajp
-         4aAq1Y7uF2TOESzySdz9VY0DkCqq20Bdun2LeoCE=
+        b=DGs9QE0DZXhldeLx01+HsA0A+ewDbPBfsh4EmqME+WaZlBG3mQd+/dDsqb0G5Crhx
+         3IL4I2ORN14PJoIJ4Gx0POxbAC//77i9B5VYntMnw+n36w6QEsD5dHSJ2YKkmVVTCK
+         vRUQJUt8cA+xEvIYEpcHfZw5xLbWSDo9oSxAXgJI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Denis Drozdov <denisd@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
+Cc:     Selvin Xavier <selvin.xavier@broadcom.com>,
         Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 099/146] IB/ipoib: Clear IPCB before icmp_send
-Date:   Wed, 31 Oct 2018 19:04:54 -0400
-Message-Id: <20181031230541.28822-99-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 100/146] RDMA/bnxt_re: Avoid accessing nq->bar_reg_iomem in failure case
+Date:   Wed, 31 Oct 2018 19:04:55 -0400
+Message-Id: <20181031230541.28822-100-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -54,105 +53,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denis Drozdov <denisd@mellanox.com>
+From: Selvin Xavier <selvin.xavier@broadcom.com>
 
-[ Upstream commit 4d6e4d12da2c308f8f976d3955c45ee62539ac98 ]
+[ Upstream commit ed51efd2ce44091a858ad829f666727e7c95695e ]
 
-IPCB should be cleared before icmp_send, since it may contain data from
-previous layers and the data could be misinterpreted as ip header options,
-which later caused the ihl to be set to an invalid value and resulted in
-the following stack corruption:
+In the failure path, nq->bar_reg_iomem gets accessed without
+initializing. Avoid this by calling the bnxt_qplib_nq_stop_irq only if the
+initialization is complete.
 
-[ 1083.031512] ib0: packet len 57824 (> 2048) too long to send, dropping
-[ 1083.031843] ib0: packet len 37904 (> 2048) too long to send, dropping
-[ 1083.032004] ib0: packet len 4040 (> 2048) too long to send, dropping
-[ 1083.032253] ib0: packet len 63800 (> 2048) too long to send, dropping
-[ 1083.032481] ib0: packet len 23960 (> 2048) too long to send, dropping
-[ 1083.033149] ib0: packet len 63800 (> 2048) too long to send, dropping
-[ 1083.033439] ib0: packet len 63800 (> 2048) too long to send, dropping
-[ 1083.033700] ib0: packet len 63800 (> 2048) too long to send, dropping
-[ 1083.034124] ib0: packet len 63800 (> 2048) too long to send, dropping
-[ 1083.034387] ==================================================================
-[ 1083.034602] BUG: KASAN: stack-out-of-bounds in __ip_options_echo+0xf08/0x1310
-[ 1083.034798] Write of size 4 at addr ffff880353457c5f by task kworker/u16:0/7
-[ 1083.034990]
-[ 1083.035104] CPU: 7 PID: 7 Comm: kworker/u16:0 Tainted: G           O      4.19.0-rc5+ #1
-[ 1083.035316] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu2 04/01/2014
-[ 1083.035573] Workqueue: ipoib_wq ipoib_cm_skb_reap [ib_ipoib]
-[ 1083.035750] Call Trace:
-[ 1083.035888]  dump_stack+0x9a/0xeb
-[ 1083.036031]  print_address_description+0xe3/0x2e0
-[ 1083.036213]  kasan_report+0x18a/0x2e0
-[ 1083.036356]  ? __ip_options_echo+0xf08/0x1310
-[ 1083.036522]  __ip_options_echo+0xf08/0x1310
-[ 1083.036688]  icmp_send+0x7b9/0x1cd0
-[ 1083.036843]  ? icmp_route_lookup.constprop.9+0x1070/0x1070
-[ 1083.037018]  ? netif_schedule_queue+0x5/0x200
-[ 1083.037180]  ? debug_show_all_locks+0x310/0x310
-[ 1083.037341]  ? rcu_dynticks_curr_cpu_in_eqs+0x85/0x120
-[ 1083.037519]  ? debug_locks_off+0x11/0x80
-[ 1083.037673]  ? debug_check_no_obj_freed+0x207/0x4c6
-[ 1083.037841]  ? check_flags.part.27+0x450/0x450
-[ 1083.037995]  ? debug_check_no_obj_freed+0xc3/0x4c6
-[ 1083.038169]  ? debug_locks_off+0x11/0x80
-[ 1083.038318]  ? skb_dequeue+0x10e/0x1a0
-[ 1083.038476]  ? ipoib_cm_skb_reap+0x2b5/0x650 [ib_ipoib]
-[ 1083.038642]  ? netif_schedule_queue+0xa8/0x200
-[ 1083.038820]  ? ipoib_cm_skb_reap+0x544/0x650 [ib_ipoib]
-[ 1083.038996]  ipoib_cm_skb_reap+0x544/0x650 [ib_ipoib]
-[ 1083.039174]  process_one_work+0x912/0x1830
-[ 1083.039336]  ? wq_pool_ids_show+0x310/0x310
-[ 1083.039491]  ? lock_acquire+0x145/0x3a0
-[ 1083.042312]  worker_thread+0x87/0xbb0
-[ 1083.045099]  ? process_one_work+0x1830/0x1830
-[ 1083.047865]  kthread+0x322/0x3e0
-[ 1083.050624]  ? kthread_create_worker_on_cpu+0xc0/0xc0
-[ 1083.053354]  ret_from_fork+0x3a/0x50
-
-For instance __ip_options_echo is failing to proceed with invalid srr and
-optlen passed from another layer via IPCB
-
-[  762.139568] IPv4: __ip_options_echo rr=0 ts=0 srr=43 cipso=0
-[  762.139720] IPv4: ip_options_build: IPCB 00000000f3cd969e opt 000000002ccb3533
-[  762.139838] IPv4: __ip_options_echo in srr: optlen 197 soffset 84
-[  762.139852] IPv4: ip_options_build srr=0 is_frag=0 rr_needaddr=0 ts_needaddr=0 ts_needtime=0 rr=0 ts=0
-[  762.140269] ==================================================================
-[  762.140713] IPv4: __ip_options_echo rr=0 ts=0 srr=0 cipso=0
-[  762.141078] BUG: KASAN: stack-out-of-bounds in __ip_options_echo+0x12ec/0x1680
-[  762.141087] Write of size 4 at addr ffff880353457c7f by task kworker/u16:0/7
-
-Signed-off-by: Denis Drozdov <denisd@mellanox.com>
-Reviewed-by: Erez Shitrit <erezsh@mellanox.com>
-Reviewed-by: Feras Daoud <ferasda@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 1ac5a4047975 ("RDMA/bnxt_re: Add bnxt_re RoCE driver")
+Fixes: 6e04b1035689 ("RDMA/bnxt_re: Fix broken RoCE driver due to recent L2 driver changes")
+Signed-off-by: Selvin Xavier <selvin.xavier@broadcom.com>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/ulp/ipoib/ipoib_cm.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/bnxt_re/qplib_fp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/ulp/ipoib/ipoib_cm.c b/drivers/infiniband/ulp/ipoib/ipoib_cm.c
-index 3d5424f335cb..0428e01e8f69 100644
---- a/drivers/infiniband/ulp/ipoib/ipoib_cm.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_cm.c
-@@ -1438,11 +1438,15 @@ static void ipoib_cm_skb_reap(struct work_struct *work)
- 		spin_unlock_irqrestore(&priv->lock, flags);
- 		netif_tx_unlock_bh(dev);
+diff --git a/drivers/infiniband/hw/bnxt_re/qplib_fp.c b/drivers/infiniband/hw/bnxt_re/qplib_fp.c
+index 6ad0d46ab879..249efa0a6aba 100644
+--- a/drivers/infiniband/hw/bnxt_re/qplib_fp.c
++++ b/drivers/infiniband/hw/bnxt_re/qplib_fp.c
+@@ -360,7 +360,8 @@ void bnxt_qplib_disable_nq(struct bnxt_qplib_nq *nq)
+ 	}
  
--		if (skb->protocol == htons(ETH_P_IP))
-+		if (skb->protocol == htons(ETH_P_IP)) {
-+			memset(IPCB(skb), 0, sizeof(*IPCB(skb)));
- 			icmp_send(skb, ICMP_DEST_UNREACH, ICMP_FRAG_NEEDED, htonl(mtu));
-+		}
- #if IS_ENABLED(CONFIG_IPV6)
--		else if (skb->protocol == htons(ETH_P_IPV6))
-+		else if (skb->protocol == htons(ETH_P_IPV6)) {
-+			memset(IP6CB(skb), 0, sizeof(*IP6CB(skb)));
- 			icmpv6_send(skb, ICMPV6_PKT_TOOBIG, 0, mtu);
-+		}
- #endif
- 		dev_kfree_skb_any(skb);
+ 	/* Make sure the HW is stopped! */
+-	bnxt_qplib_nq_stop_irq(nq, true);
++	if (nq->requested)
++		bnxt_qplib_nq_stop_irq(nq, true);
  
+ 	if (nq->bar_reg_iomem)
+ 		iounmap(nq->bar_reg_iomem);
 -- 
 2.17.1
 
