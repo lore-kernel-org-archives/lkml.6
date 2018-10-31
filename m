@@ -2,247 +2,80 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D29C6786F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 00:52:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85768C6786F
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 00:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2124B20664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 00:52:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="oD4k6M2v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2124B20664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 53D9520664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 00:53:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53D9520664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728829AbeJaJsi (ORCPT
+        id S1728847AbeJaJtc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 05:48:38 -0400
-Received: from ozlabs.org ([203.11.71.1]:42257 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728591AbeJaJsh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 05:48:37 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42l8vN4CBsz9s8r;
-        Wed, 31 Oct 2018 11:52:48 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1540947168;
-        bh=IMwiu+idg7TasJa6CzmDE9DmZc0FOX5CQE2xIXHChRQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=oD4k6M2v6qymNkwV+8X9CjUMOIAngCvpT+CQaUe551uyjabwTZ3Md2mxqnxj6NfiE
-         7kKmmfDRf4eJnMWz6XlBb58Yoo+yH25So1hD3BxgPHgqEH3p61RlH/UovXLAJy2y+5
-         0XqQruPemukOJAJksKuP+czP1qsaYYdYn9u6CALo1GRws2Zv3LLZ12bozjbklBm8rf
-         McyDHbV3DMLvIR25x7SJs5rJWLytja10en2mVWgEazT4OBwBYbawGOCUikXHWbgBZs
-         e3WqTtOTjAqznjZqCChwGU+AlB5fIubb9LewGzVXjP//Jl80jtP201g6dZH4rCg94n
-         Oc6sJJUSCp4ow==
-Date:   Wed, 31 Oct 2018 11:52:47 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Al Viro <viro@ZenIV.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Fasheh <mfasheh@suse.de>
-Subject: linux-next: manual merge of the vfs tree with the xfs tree
-Message-ID: <20181031115247.6adcb659@canb.auug.org.au>
+        Wed, 31 Oct 2018 05:49:32 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37109 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728591AbeJaJtb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 05:49:31 -0400
+Received: by mail-pg1-f193.google.com with SMTP id c10-v6so6510190pgq.4;
+        Tue, 30 Oct 2018 17:53:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=khWo0nrLtR0gpz6qZiFVs3uMUmNdBFNMYf2YM6o6TGQ=;
+        b=ZQOSVZCNa6Mkhba6vaAWNLuZM0hs4gW69BwS2d9qbJUbSEZ8ulAJU80Txf9tfj8/gk
+         7qxibsWSl/PZzSV0pUnkotVjp8hMjMXs9/yL/eWMm/2h+f3YA2hMj+KiK8Pzzab64sQJ
+         zoE0R4JIxQ29NWzEm2iKyj68AZw1KOadINLvF46IALlFXLX7xMLFPwcy8BOne4TVXxAK
+         nyBL46pC3Ihn6e/jBcameKXwyb94+gA23xDzT51ODk/Rs4ng4gSJ9p3pxiXk47rTZaG3
+         mJFsZkE6+U/2UQ5UX8L156bYEEroK+Urj7idoG3N7NrTIAVR/bxJO4b4J2obAV2xtYhQ
+         u9YA==
+X-Gm-Message-State: AGRZ1gKgyiXNHgXkZUfhXqaT+7co4+yeLK7U7afqjjgyk6aygLxXyxnK
+        8mEncDZpis9PqtkJhLqPeRIFI8kC
+X-Google-Smtp-Source: AJdET5fBcy3hJbACTsPhoC8xXge8hW59/2+AHQnHGStlqqVBkBcjz5ud6H2LF3bZicdjbTmtD2I6rw==
+X-Received: by 2002:a62:4e01:: with SMTP id c1-v6mr996465pfb.141.1540947225329;
+        Tue, 30 Oct 2018 17:53:45 -0700 (PDT)
+Received: from ?IPv6:2601:647:4800:973f:e9fd:d0f6:3e3:43a5? ([2601:647:4800:973f:e9fd:d0f6:3e3:43a5])
+        by smtp.gmail.com with ESMTPSA id x189-v6sm20604509pfb.162.2018.10.30.17.53.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 17:53:44 -0700 (PDT)
+Subject: Re: [PATCH 06/16] blk-mq: add 'type' attribute to the sysfs hctx
+ directory
+To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20181030183252.17857-1-axboe@kernel.dk>
+ <20181030183252.17857-7-axboe@kernel.dk>
+From:   Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <2d858eb1-56d6-5c3e-7c7e-9e36b1ad04fc@grimberg.me>
+Date:   Tue, 30 Oct 2018 17:53:43 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/wf7V+EiKui3bl=g5qIjdOB="; protocol="application/pgp-signature"
+In-Reply-To: <20181030183252.17857-7-axboe@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/wf7V+EiKui3bl=g5qIjdOB=
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+> It can be useful for a user to verify what type a given hardware
+> queue is, expose this information in sysfs.
 
-[I don't understand why all this new work turned up in the xfs tree
-during the merge window ...]
+I assume the user is expected to understand the meaning of the
+enumeration it sees in accessing this field correct?
 
-Today's linux-next merge of the vfs tree got a conflict in:
+Would be nice to output some meaningful string but I'm not
+yet sure how to do that, but would be nice...
 
-  fs/read_write.c
-
-between commits:
-
-  42ec3d4c0218 ("vfs: make remap_file_range functions take and return bytes=
- completed")
-  eca3654e3cc7 ("vfs: enable remap callers that can handle short operations=
-")
-
-from the xfs tree and commit:
-
-  5de4480ae7f8 ("vfs: allow dedupe of user owned read-only files")
-
-from the vfs tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc fs/read_write.c
-index 50680b900b52,10f9bed985f4..000000000000
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@@ -2014,14 -1880,120 +2013,28 @@@ loff_t vfs_clone_file_range(struct fil
-  }
-  EXPORT_SYMBOL(vfs_clone_file_range);
- =20
- -/*
- - * Read a page's worth of file data into the page cache.  Return the page
- - * locked.
- - */
- -static struct page *vfs_dedupe_get_page(struct inode *inode, loff_t offse=
-t)
- -{
- -	struct address_space *mapping;
- -	struct page *page;
- -	pgoff_t n;
- -
- -	n =3D offset >> PAGE_SHIFT;
- -	mapping =3D inode->i_mapping;
- -	page =3D read_mapping_page(mapping, n, NULL);
- -	if (IS_ERR(page))
- -		return page;
- -	if (!PageUptodate(page)) {
- -		put_page(page);
- -		return ERR_PTR(-EIO);
- -	}
- -	lock_page(page);
- -	return page;
- -}
- -
- -/*
- - * Compare extents of two files to see if they are the same.
- - * Caller must have locked both inodes to prevent write races.
- - */
- -int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
- -				  struct inode *dest, loff_t destoff,
- -				  loff_t len, bool *is_same)
- -{
- -	loff_t src_poff;
- -	loff_t dest_poff;
- -	void *src_addr;
- -	void *dest_addr;
- -	struct page *src_page;
- -	struct page *dest_page;
- -	loff_t cmp_len;
- -	bool same;
- -	int error;
- -
- -	error =3D -EINVAL;
- -	same =3D true;
- -	while (len) {
- -		src_poff =3D srcoff & (PAGE_SIZE - 1);
- -		dest_poff =3D destoff & (PAGE_SIZE - 1);
- -		cmp_len =3D min(PAGE_SIZE - src_poff,
- -			      PAGE_SIZE - dest_poff);
- -		cmp_len =3D min(cmp_len, len);
- -		if (cmp_len <=3D 0)
- -			goto out_error;
- -
- -		src_page =3D vfs_dedupe_get_page(src, srcoff);
- -		if (IS_ERR(src_page)) {
- -			error =3D PTR_ERR(src_page);
- -			goto out_error;
- -		}
- -		dest_page =3D vfs_dedupe_get_page(dest, destoff);
- -		if (IS_ERR(dest_page)) {
- -			error =3D PTR_ERR(dest_page);
- -			unlock_page(src_page);
- -			put_page(src_page);
- -			goto out_error;
- -		}
- -		src_addr =3D kmap_atomic(src_page);
- -		dest_addr =3D kmap_atomic(dest_page);
- -
- -		flush_dcache_page(src_page);
- -		flush_dcache_page(dest_page);
- -
- -		if (memcmp(src_addr + src_poff, dest_addr + dest_poff, cmp_len))
- -			same =3D false;
- -
- -		kunmap_atomic(dest_addr);
- -		kunmap_atomic(src_addr);
- -		unlock_page(dest_page);
- -		unlock_page(src_page);
- -		put_page(dest_page);
- -		put_page(src_page);
- -
- -		if (!same)
- -			break;
- -
- -		srcoff +=3D cmp_len;
- -		destoff +=3D cmp_len;
- -		len -=3D cmp_len;
- -	}
- -
- -	*is_same =3D same;
- -	return 0;
- -
- -out_error:
- -	return error;
- -}
- -EXPORT_SYMBOL(vfs_dedupe_file_range_compare);
- -
-+ /* Check whether we are allowed to dedupe the destination file */
-+ static bool allow_file_dedupe(struct file *file)
-+ {
-+ 	if (capable(CAP_SYS_ADMIN))
-+ 		return true;
-+ 	if (file->f_mode & FMODE_WRITE)
-+ 		return true;
-+ 	if (uid_eq(current_fsuid(), file_inode(file)->i_uid))
-+ 		return true;
-+ 	if (!inode_permission(file_inode(file), MAY_WRITE))
-+ 		return true;
-+ 	return false;
-+ }
-+=20
- -int vfs_dedupe_file_range_one(struct file *src_file, loff_t src_pos,
- -			      struct file *dst_file, loff_t dst_pos, u64 len)
- +loff_t vfs_dedupe_file_range_one(struct file *src_file, loff_t src_pos,
- +				 struct file *dst_file, loff_t dst_pos,
- +				 loff_t len, unsigned int remap_flags)
-  {
- -	s64 ret;
- +	loff_t ret;
- +
- +	WARN_ON_ONCE(remap_flags & ~(REMAP_FILE_DEDUP |
- +				     REMAP_FILE_CAN_SHORTEN));
- =20
-  	ret =3D mnt_want_write_file(dst_file);
-  	if (ret)
-
---Sig_/wf7V+EiKui3bl=g5qIjdOB=
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvY/N8ACgkQAVBC80lX
-0GyWYwf7BsacbozPlupcw6q8zL6YxFTxk4fzb/GgimWS3Zq2b359YZGLjA5LvGef
-iH67sHFyO1th6ZSL3BLeu/41i3OFRSAYrY+7SQKNDu8NPMEKBaV8mmXsWTLbI8l5
-0OSpT/IbAs2+AqTiiVzb2IheqHdl6NpUqvaSS8nBQFjFf9feIJTXVHqQh4NpueMR
-pCyyHEbuwTi4PQ6PyRx7G9JCzin6nswYhvVcDmaXiDKVtSuDWoPbneuWMX5EUax7
-xAVQF6I/gJkhDOE8r5unfFwKjN+90E0Iqm40vZ/tKIvm6d3oxoVoMwsVqYiayNvv
-u21e5dEm1rbGX32rrp3evbFmRdR/tA==
-=9Zcp
------END PGP SIGNATURE-----
-
---Sig_/wf7V+EiKui3bl=g5qIjdOB=--
+Other than that,
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
