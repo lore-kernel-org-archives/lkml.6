@@ -2,54 +2,76 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A668C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:17:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ABEDC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:17:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD3C52081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:17:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD3C52081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2E0B42054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:17:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="lba8EueQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E0B42054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729492AbeJaXPZ (ORCPT
+        id S1729513AbeJaXQA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 19:15:25 -0400
-Received: from mga09.intel.com ([134.134.136.24]:38183 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729385AbeJaXPZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 19:15:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2018 07:17:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,447,1534834800"; 
-   d="scan'208";a="277206257"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.130]) ([10.237.72.130])
-  by fmsmga006.fm.intel.com with ESMTP; 31 Oct 2018 07:17:10 -0700
-Subject: Re: [PATCH 4/5] perf intel-pt: Insert callchain context into
- synthesized callchains
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        linux-kernel@vger.kernel.org, leo.yan@linaro.org,
-        David Miller <davem@davemloft.net>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-References: <20181031091043.23465-1-adrian.hunter@intel.com>
- <20181031091043.23465-5-adrian.hunter@intel.com>
- <20181031132803.GG10660@kernel.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <850eed86-fb8f-e328-316c-378890d4f15f@intel.com>
-Date:   Wed, 31 Oct 2018 16:15:26 +0200
+        Wed, 31 Oct 2018 19:16:00 -0400
+Received: from mail-io1-f50.google.com ([209.85.166.50]:36345 "EHLO
+        mail-io1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729463AbeJaXP7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 19:15:59 -0400
+Received: by mail-io1-f50.google.com with SMTP id o19-v6so9779666iod.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 07:17:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=5UpullBLVcT/e6vPfRg78NsTkfPPe4/w8oFXT4PilmA=;
+        b=lba8EueQnK78efeF9qGMYV5J0rVPNt9iIROLA3aUpB3IUhSvB2xP484EJ2C7DcmFvi
+         JUCfZFf2eSvDA3vmOac0O0RqL90JKbfH1spJmJw2CptZ44bb6BFL4EA6445gGiBz0vy7
+         0lPOOTjq7LaqGCIgiywH8E3xIDdQrTnA4qxPUHxo9yefL1kdISSWeEOh/GVmnUQUaaOf
+         r8gTQXoshJTRJl9TnykIsFpYzM13Mil81zgutsGIWn8eMyY/bQc6J+ETzVw/Wr4/7aA3
+         SVFEFwPriKRSQ4PNiMKj2yHrYdFFRsG001kxc81wR5zA49mdfqn1TC3gT3s666KR/p92
+         BdZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5UpullBLVcT/e6vPfRg78NsTkfPPe4/w8oFXT4PilmA=;
+        b=KI2fM2QMguclzF+ZabkkmAyAHtoDgXlDRfpDI8PV0eQ1PsrIvYL4iJmW21I+KyIEjE
+         nRRVSc4UxPEDCWGMhq67fdeJ859FNPLWVe60g9aPjnLwpl3z/Ed/BbLpiyohKmgZ03Hc
+         6YBWyHuCh/OQdtCTNXI8LqC6Luri8OdabSDm2eQ/oHr5MZ0p0U1x6P6J5QwWINpEtDAS
+         H6UcwEMAy+NFQ60RHITQGZ7QCPLQRnawj4GHc/PatiBUFm6M7A9ovM2bFSEM6QupsZA6
+         STA561cIsRSyusBkjIu+l4A/l8J39CaGIvKzr6R9wgh7zlQhmgnJFa2bkQgBkrijYMhS
+         Iz/A==
+X-Gm-Message-State: AGRZ1gJ6pNRCNnqTqmh23toqBDjvUEYfeETwFK3Xmkmm8d1u7HbrQt9t
+        LLy/QO7ec5MP14Rc3671uCZOcA7xwtk=
+X-Google-Smtp-Source: AJdET5d+CRyioTZxlx2kgUQJNk6GyA5VkuXq+sOQqohkIUDLrnX+87oXx6XKsjtxGiX0q+YOwUITcA==
+X-Received: by 2002:a6b:590d:: with SMTP id n13-v6mr2248148iob.176.1540995465911;
+        Wed, 31 Oct 2018 07:17:45 -0700 (PDT)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id k133-v6sm9955191itb.16.2018.10.31.07.17.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Oct 2018 07:17:44 -0700 (PDT)
+Subject: Re: [PATCH 02/16] blk-mq: abstract out queue map
+To:     Sagi Grimberg <sagi@grimberg.me>, linux-block@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20181030183252.17857-1-axboe@kernel.dk>
+ <20181030183252.17857-3-axboe@kernel.dk>
+ <725b4d35-2390-58d9-4041-0bac6de6cd77@grimberg.me>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <cc5771b1-5ca9-8463-f575-9f5f9cad4fe3@kernel.dk>
+Date:   Wed, 31 Oct 2018 08:17:43 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181031132803.GG10660@kernel.org>
+In-Reply-To: <725b4d35-2390-58d9-4041-0bac6de6cd77@grimberg.me>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -58,144 +80,20 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/10/18 3:28 PM, Arnaldo Carvalho de Melo wrote:
-> Em Wed, Oct 31, 2018 at 11:10:42AM +0200, Adrian Hunter escreveu:
->> In the absence of a fallback, callchains must encode also the callchain
->> context. Do that now there is no fallback.
+On 10/30/18 6:31 PM, Sagi Grimberg wrote:
 > 
-> So, this one is independent of the first 3 patches, right?
-
-Yes.  I was just going to test it separately when I noticed I had
-screwed up my earlier testing.  When I re-tested I discovered this patch
-has an off-by-one error:
-
-diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
-index afdf36852ac8..61a4286a74dc 100644
---- a/tools/perf/util/thread-stack.c
-+++ b/tools/perf/util/thread-stack.c
-@@ -337,7 +337,7 @@ void thread_stack__sample(struct thread *thread, struct ip_callchain *chain,
- 
- 	last_context = context;
- 
--	for (i = 2, j = 0; i < sz && j < thread->ts->cnt; i++, j++) {
-+	for (i = 2, j = 1; i < sz && j <= thread->ts->cnt; i++, j++) {
- 		ip = thread->ts->stack[thread->ts->cnt - j].ret_addr;
- 		context = callchain_context(ip, kernel_start);
- 		if (context != last_context) {
-
-Shall I send V2?
-
-> So, this one is independent of the first 3 patches, right? Ok, applying
-> it first, I'll relook the first ones next.
+>> @@ -41,12 +41,12 @@ int blk_mq_rdma_map_queues(struct blk_mq_tag_set *set,
+>>   			goto fallback;
+>>   
+>>   		for_each_cpu(cpu, mask)
+>> -			set->mq_map[cpu] = queue;
+>> +			set->map[0].mq_map[cpu] = queue;
 > 
-> - Arnaldo
->  
->> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
->> Cc: stable@vger.kernel.org # 4.19
->> ---
->>  tools/perf/util/intel-pt.c     |  6 +++--
->>  tools/perf/util/thread-stack.c | 44 +++++++++++++++++++++++++++-------
->>  tools/perf/util/thread-stack.h |  2 +-
->>  3 files changed, 40 insertions(+), 12 deletions(-)
->>
->> diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
->> index ffa385a029b3..60732213d16a 100644
->> --- a/tools/perf/util/intel-pt.c
->> +++ b/tools/perf/util/intel-pt.c
->> @@ -759,7 +759,8 @@ static struct intel_pt_queue *intel_pt_alloc_queue(struct intel_pt *pt,
->>  	if (pt->synth_opts.callchain) {
->>  		size_t sz = sizeof(struct ip_callchain);
->>  
->> -		sz += pt->synth_opts.callchain_sz * sizeof(u64);
->> +		/* Add 1 to callchain_sz for callchain context */
->> +		sz += (pt->synth_opts.callchain_sz + 1) * sizeof(u64);
->>  		ptq->chain = zalloc(sz);
->>  		if (!ptq->chain)
->>  			goto out_free;
->> @@ -1160,7 +1161,8 @@ static void intel_pt_prep_sample(struct intel_pt *pt,
->>  
->>  	if (pt->synth_opts.callchain) {
->>  		thread_stack__sample(ptq->thread, ptq->chain,
->> -				     pt->synth_opts.callchain_sz, sample->ip);
->> +				     pt->synth_opts.callchain_sz + 1,
->> +				     sample->ip, pt->kernel_start);
->>  		sample->callchain = ptq->chain;
->>  	}
->>  
->> diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
->> index c091635bf7dc..afdf36852ac8 100644
->> --- a/tools/perf/util/thread-stack.c
->> +++ b/tools/perf/util/thread-stack.c
->> @@ -310,20 +310,46 @@ void thread_stack__free(struct thread *thread)
->>  	}
->>  }
->>  
->> +static inline u64 callchain_context(u64 ip, u64 kernel_start)
->> +{
->> +	return ip < kernel_start ? PERF_CONTEXT_USER : PERF_CONTEXT_KERNEL;
->> +}
->> +
->>  void thread_stack__sample(struct thread *thread, struct ip_callchain *chain,
->> -			  size_t sz, u64 ip)
->> +			  size_t sz, u64 ip, u64 kernel_start)
->>  {
->> -	size_t i;
->> +	u64 context = callchain_context(ip, kernel_start);
->> +	u64 last_context;
->> +	size_t i, j;
->>  
->> -	if (!thread || !thread->ts)
->> -		chain->nr = 1;
->> -	else
->> -		chain->nr = min(sz, thread->ts->cnt + 1);
->> +	if (sz < 2) {
->> +		chain->nr = 0;
->> +		return;
->> +	}
->>  
->> -	chain->ips[0] = ip;
->> +	chain->ips[0] = context;
->> +	chain->ips[1] = ip;
->> +
->> +	if (!thread || !thread->ts) {
->> +		chain->nr = 2;
->> +		return;
->> +	}
->> +
->> +	last_context = context;
->> +
->> +	for (i = 2, j = 0; i < sz && j < thread->ts->cnt; i++, j++) {
->> +		ip = thread->ts->stack[thread->ts->cnt - j].ret_addr;
->> +		context = callchain_context(ip, kernel_start);
->> +		if (context != last_context) {
->> +			if (i >= sz - 1)
->> +				break;
->> +			chain->ips[i++] = context;
->> +			last_context = context;
->> +		}
->> +		chain->ips[i] = ip;
->> +	}
->>  
->> -	for (i = 1; i < chain->nr; i++)
->> -		chain->ips[i] = thread->ts->stack[thread->ts->cnt - i].ret_addr;
->> +	chain->nr = i;
->>  }
->>  
->>  struct call_return_processor *
->> diff --git a/tools/perf/util/thread-stack.h b/tools/perf/util/thread-stack.h
->> index b7e41c4ebfdd..f97c00a8c251 100644
->> --- a/tools/perf/util/thread-stack.h
->> +++ b/tools/perf/util/thread-stack.h
->> @@ -84,7 +84,7 @@ int thread_stack__event(struct thread *thread, u32 flags, u64 from_ip,
->>  			u64 to_ip, u16 insn_len, u64 trace_nr);
->>  void thread_stack__set_trace_nr(struct thread *thread, u64 trace_nr);
->>  void thread_stack__sample(struct thread *thread, struct ip_callchain *chain,
->> -			  size_t sz, u64 ip);
->> +			  size_t sz, u64 ip, u64 kernel_start);
->>  int thread_stack__flush(struct thread *thread);
->>  void thread_stack__free(struct thread *thread);
->>  size_t thread_stack__depth(struct thread *thread);
->> -- 
->> 2.17.1
-> 
+> Any reason not to change the signature like the other mappers?
+
+No particular reason, outside of not wanting to touch more than
+I had to.
+
+-- 
+Jens Axboe
 
