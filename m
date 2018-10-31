@@ -2,75 +2,155 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C605C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:08:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD73FC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:11:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 702CB2054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:08:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7773120821
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:11:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="e28+tlqf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 702CB2054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=protonmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wC4hxliy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7773120821
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729497AbeJaXGT (ORCPT
+        id S1729493AbeJaXJK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 19:06:19 -0400
-Received: from mail-40130.protonmail.ch ([185.70.40.130]:57179 "EHLO
-        mail-40130.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729289AbeJaXGT (ORCPT
+        Wed, 31 Oct 2018 19:09:10 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38206 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729411AbeJaXJJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 19:06:19 -0400
-Date:   Wed, 31 Oct 2018 14:07:58 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=default; t=1540994886;
-        bh=Q6HkqJOc8aTDap/HzLD9lIYOslUH7oVP4NQTVxXTYjk=;
-        h=Date:To:From:Reply-To:Subject:Feedback-ID:From;
-        b=e28+tlqfinQPLLb29LIXkqSGvnVYP+IJY2lC5+PZF6ggHmC6ufT83dVEO7jMr8iUM
-         RaMCosoUSuQPpdel/o6H2ncgX6BeAK3wBncX/k8qkAALSsK8sXG1yq4LTP5HY3J4UX
-         831NNkkxP4ZCd+PVxrdv0Z2HnArqlecYtFT9ds2I=
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Reply-To: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Subject: Re: GNU Kind Communication Guidelines / New Code Of Conduct = Insufficient Pseudoreligion
-Message-ID: <xgGm2oaUFgkSeMSvDgaNnO9eTJ_XahhOh2qhJLWAE2IDUrC40hWr3ckrfZ0iovepLuRLf-XkJ2gskgWwxjHkklDhu2acBPm2irG4BT8kiy4=@protonmail.com>
-Feedback-ID: jE8CP55NmWCGfbi9g5qzrOGkxuwuSXpchSI6fmYzjd5UEveHXeJrmiWc0_sgJdqIHM8YAKf9EEyPwffaRmhZ0A==:Ext:ProtonMail
+        Wed, 31 Oct 2018 19:09:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=+1gaQhkWsZvYGq8K6A73FwqGpSZvRTDUrGRM7O1511o=; b=wC4hxliyPQgRZWc5kJhXJGtY6
+        Kr41xPKVk+s9uym78W0aKoPxVkgNMWG6fkt4GF4j3Md+vY7bKMy+tPFjF04MfKAvH4iE/PPN0bE7c
+        OvmuZxwsAfV8xFznXBTy8kKsiF/caSvux7fUyXOYS8Yqr/zrSZRKs5Mzw2XjLhKFND9eew2UBbTa+
+        hP2A8lJ9XxBWBCECgsX+coO83dSU0/W4s+1hb0+XYananBSJCsQc6T6lnfqqtlHac8TDSNsknyEUx
+        /ONAN1clkI7J4FNkWEoAyepnrLkjoaRCHiQrR6zE05eKAXtxXo5fA4ACFTcrMj5eN35vsOtlrve/+
+        9LNN9xU9w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gHrCa-0003r4-VF; Wed, 31 Oct 2018 14:10:37 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id F1B812029F87F; Wed, 31 Oct 2018 15:10:30 +0100 (CET)
+Date:   Wed, 31 Oct 2018 15:10:30 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Yi Sun <yi.y.sun@linux.intel.com>
+Cc:     Waiman Long <longman@redhat.com>, Juergen Gross <jgross@suse.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
+        chao.p.peng@intel.com, chao.gao@intel.com,
+        isaku.yamahata@intel.com, michael.h.kelley@microsoft.com,
+        tianyu.lan@microsoft.com, "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v1 2/2] x86/hyperv: make HvNotifyLongSpinWait hypercall
+Message-ID: <20181031141030.GB13219@hirez.programming.kicks-ass.net>
+References: <1539954835-34035-3-git-send-email-yi.y.sun@linux.intel.com>
+ <bab010e9-a122-95f1-d8cc-790e56c72716@suse.com>
+ <20181022015342.GK11769@yi.y.sun>
+ <2e0d62cb-b706-a5b4-65f7-982a913fb32b@suse.com>
+ <ba75b994-c1a6-6e91-6499-b9af90636fcf@redhat.com>
+ <20181022171516.GH3117@worktop.programming.kicks-ass.net>
+ <20181023025740.GL11769@yi.y.sun>
+ <20181023085127.GG3109@worktop.c.hoisthospitality.com>
+ <20181023093328.GA15378@yi.y.sun>
+ <20181031015417.GC15378@yi.y.sun>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181031015417.GC15378@yi.y.sun>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The real philosophical background of operating systems is actually this:
+On Wed, Oct 31, 2018 at 09:54:17AM +0800, Yi Sun wrote:
+> On 18-10-23 17:33:28, Yi Sun wrote:
+> > On 18-10-23 10:51:27, Peter Zijlstra wrote:
 
-I/O, first operatingsystems like layer, available source, has Biblical back=
-ground.
-Unix, a whole operating system, available source, builds on first biblical =
-background.
-Irix, a first multimedia OS, not available source, builds on the earlier.
-GNU Is Not Unix, builds on the earlier, but in hippie times, is also associ=
-ated with LSD.
-Amiga 500, an Irix for the home computer, not available source, builds on e=
-arlier, and probably LSD aswell.
-Microsoft Windows, not available source, builds on earlier aswell, LSD and =
-many regressions aswell, with task priorities still not working after 20 ye=
-ars.
+> > > Can you try and explain why vcpu_is_preempted() doesn't work for you?
+> > 
+> > I thought HvSpinWaitInfo is used to notify hypervisor the spin number
+> > which is different with vcpu_is_preempted. So I did not consider
+> > vcpu_is_preempted.
+> > 
+> > But HvSpinWaitInfo is a quite simple function and could be combined
+> > with vcpu_is_preempted together. So I think it is OK to use
+> > vcpu_is_preempted to make codes clean. I will have a try.
+> 
+> After checking codes, there is one issue to call vcpu_is_preempted.
+> There are two spin loops in qspinlock_paravirt.h. One loop in
+> 'pv_wait_node' calls vcpu_is_preempted. But another loop in
+> 'pv_wait_head_or_lock' does not call vcpu_is_preempted. It also does
+> not call any other ops of 'pv_lock_ops' in the loop. So I am afraid
+> we have to add one more ops in 'pv_lock_ops' to do this.
 
-Uqquh Is Not A Triune O-S, fixes all this, makes available source focus aga=
-in, and upgrades the biblical philosophy with a Quran, and a correct latini=
-zation of ALLAH, Uqquh. Being a global "fair pay" OS, and the only OS neede=
-d, with Fpy Licence and Delyar as the online currency.
+Why? Would not something like the below cure that? Waiman, can you have
+a look at this; I always forget how that paravirt crud works.
 
-The Next Thing, in Computing, respecting Labour Party politics, and work un=
-ion efforts.
+---
+ kernel/locking/qspinlock.c          | 5 +++--
+ kernel/locking/qspinlock_paravirt.h | 5 +++--
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
-Peace!
-Ywe C=C3=A6rlyn
-WIP - https://www.youtube.com/channel/UCR3gmLVjHS5A702wo4bol_Q
+diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
+index 8a8c3c208c5e..a4ab80f95176 100644
+--- a/kernel/locking/qspinlock.c
++++ b/kernel/locking/qspinlock.c
+@@ -286,7 +286,8 @@ static __always_inline void __pv_wait_node(struct mcs_spinlock *node,
+ static __always_inline void __pv_kick_node(struct qspinlock *lock,
+ 					   struct mcs_spinlock *node) { }
+ static __always_inline u32  __pv_wait_head_or_lock(struct qspinlock *lock,
+-						   struct mcs_spinlock *node)
++						   struct mcs_spinlock *node,
++						   struct mcs_spinlock *prev)
+ 						   { return 0; }
+ 
+ #define pv_enabled()		false
+@@ -500,7 +501,7 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
+ 	 * If PV isn't active, 0 will be returned instead.
+ 	 *
+ 	 */
+-	if ((val = pv_wait_head_or_lock(lock, node)))
++	if ((val = pv_wait_head_or_lock(lock, node, prev)))
+ 		goto locked;
+ 
+ 	val = atomic_cond_read_acquire(&lock->val, !(VAL & _Q_LOCKED_PENDING_MASK));
+diff --git a/kernel/locking/qspinlock_paravirt.h b/kernel/locking/qspinlock_paravirt.h
+index 0130e488ebfe..531dadc955fb 100644
+--- a/kernel/locking/qspinlock_paravirt.h
++++ b/kernel/locking/qspinlock_paravirt.h
+@@ -399,9 +399,10 @@ static void pv_kick_node(struct qspinlock *lock, struct mcs_spinlock *node)
+  * The current value of the lock will be returned for additional processing.
+  */
+ static u32
+-pv_wait_head_or_lock(struct qspinlock *lock, struct mcs_spinlock *node)
++pv_wait_head_or_lock(struct qspinlock *lock, struct mcs_spinlock *node, struct mcs_spinlock *prev)
+ {
+ 	struct pv_node *pn = (struct pv_node *)node;
++	struct pv_node *pp = (struct pv_node *)prev;
+ 	struct qspinlock **lp = NULL;
+ 	int waitcnt = 0;
+ 	int loop;
+@@ -430,7 +431,7 @@ pv_wait_head_or_lock(struct qspinlock *lock, struct mcs_spinlock *node)
+ 		 * disable lock stealing before attempting to acquire the lock.
+ 		 */
+ 		set_pending(lock);
+-		for (loop = SPIN_THRESHOLD; loop; loop--) {
++		for (loop = SPIN_THRESHOLD; loop && !vcpu_is_preempted(prev->cpu); loop--) {
+ 			if (trylock_clear_pending(lock))
+ 				goto gotlock;
+ 			cpu_relax();
+
