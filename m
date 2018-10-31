@@ -2,127 +2,116 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8968FECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:44:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB291C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:44:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2952420664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:44:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46C2220664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:44:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hNbX+Xlc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2952420664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="U3xdc9tR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46C2220664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729181AbeKAIoz (ORCPT
+        id S1729266AbeKAIo6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:44:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55434 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728964AbeKAIHd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:07:33 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39ABD20821;
-        Wed, 31 Oct 2018 23:07:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027242;
-        bh=I1EECB/32Iele6bm12Ctioj1LBfdEmVN16THtKuighY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hNbX+Xlcc7QxUTBoxAfLhTII0H30rz/+HeDN0E35Nk4w728UToLDp/dLzQ6Hord6E
-         YFKTnozQYlVIXMolXeul67DjfD7SOnkrX3b46E0Z5HqPTcLnnWbaOKbBh+Og5TUZ9A
-         TTsfN0i9pBMWXOpdgbkgIFQAqH7TM7xAOTvoCHUo=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 111/146] PCI / ACPI: Enable wake automatically for power managed bridges
-Date:   Wed, 31 Oct 2018 19:05:06 -0400
-Message-Id: <20181031230541.28822-111-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
-References: <20181031230541.28822-1-sashal@kernel.org>
+        Thu, 1 Nov 2018 04:44:58 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:7174 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728964AbeKAIo5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:44:57 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bda3e530000>; Wed, 31 Oct 2018 16:44:19 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 31 Oct 2018 16:44:34 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 31 Oct 2018 16:44:34 -0700
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 31 Oct
+ 2018 23:44:34 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Wed, 31 Oct 2018 23:44:34 +0000
+Received: from vdumpa-ubuntu.nvidia.com (Not Verified[172.17.173.140]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5bda3e570004>; Wed, 31 Oct 2018 16:44:34 -0700
+From:   Krishna Reddy <vdumpa@nvidia.com>
+To:     <will.deacon@arm.com>, <robin.murphy@arm.com>, <joro@8bytes.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <treding@nvidia.com>,
+        <yhsu@nvidia.com>, <snikam@nvidia.com>, <praithatha@nvidia.com>,
+        <talho@nvidia.com>, <avanbrunt@nvidia.com>, <nicolinc@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>
+Subject: [PATCH v2 0/5] Add Tegra194 Dual ARM SMMU driver
+Date:   Wed, 31 Oct 2018 16:43:45 -0700
+Message-ID: <1541029430-14150-1-git-send-email-vdumpa@nvidia.com>
+X-Mailer: git-send-email 2.1.4
+X-NVConfidentiality: public
+MIME-Version: 1.0
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1541029459; bh=ZaaMTIa6v2NWOtPxYwF2QbPw3hjJCTiME0tR4tMuFP0=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=U3xdc9tRgj7PM1LnKznuSg4tX2J/Xo8JbOM6klmipGMVwc0VnVG+xxPfQuaSHvp/W
+         wkoES9bPoBA0VkEBXAoRL/KbeD7P56G97h2+Ynbyb9xa0/QCVgQa0ZbyXaezgjohB3
+         86NvufF6OnyfMfMSAnCFUxEW1dRDSaU/7X1R7PYB82jpcXOH4S28xnw8fWL+Yha/rs
+         C3Thm3y3CImZdjB8X6rg/y2WABSUUdGYuwZzTd+7IplEPX9qCxARcH4cPqiVj3v1JM
+         5lBCliNZrLM/uW+w9VaeYtLHDuh+vd0HbvR2j7Wm9gogtvmA9+haLHURHdf08s2rbh
+         jvFSHhQxVJE3w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+NVIDIA's Xavier (Tegra194) SOC has three ARM SMMU(MMU-500) instances.
+Two of the SMMU instances are used to interleave IOVA accesses across them.
+The IOVA accesses from HW devices are interleaved across these two SMMU instances
+and they need to be programmed identical.
 
-[ Upstream commit 6299cf9ec3985cac70bede8a855b5087b81a6640 ]
+The existing ARM SMMU driver can't be used in its current form for programming the
+two SMMU instances identically. But, most of the code can be shared between ARM SMMU
+driver and Tegra194 SMMU driver.
+Page fault handling and TLB sync operations need to know about specific instance
+of SMMU for correct fault handling and optimal TLB sync wait. Rest of the code doesn't
+need to know about number of SMMU instances. Based on this fact, The patch series here
+rearranges the arm-smmu.c code to allow sharing most of the ARM SMMU programming/iommu_ops
+code between ARM SMMU driver and Tegra194 SMMU driver and transparently
+handles programming of two SMMU instances.
 
-We enable power management automatically for bridges where
-pci_bridge_d3_possible() returns true. However, these bridges may have
-ACPI methods such as _DSW that need to be called before D3 entry. For
-example in Lenovo Thinkpad X1 Carbon 6th _DSW method is used to prepare
-D3cold for the PCIe root port hosting Thunderbolt chain. Because wake is
-not enabled _DSW method is never called and the port does not enter
-D3cold properly consuming more power than necessary.
+The third SMMU instance would use the existing ARM SMMU driver.
 
-Users can work this around by writing "enabled" to "wakeup" sysfs file
-under the device in question but that is not something an ordinary user
-is expected to do.
+Changes in v2:
+* Added CONFIG_ARM_SMMU_TEGRA to protect Tegra194 SMMU driver compilation
+* Enabled CONFIG_ARM_SMMU_TEGRA in defconfig
+* Added SMMU nodes in Tegra194 device tree
 
-Since we already automatically enable power management for PCIe ports
-with ->bridge_d3 set extend that to enable wake for them as well,
-assuming the port has any ACPI wakeup related objects implemented in the
-namespace (adev->wakeup.flags.valid is true). This ensures the necessary
-ACPI methods get called at appropriate times and allows the root port in
-Thinkpad X1 Carbon 6th to go into D3cold.
+Krishna Reddy (5):
+  iommu/arm-smmu: rearrange arm-smmu.c code
+  iommu/arm-smmu: Prepare fault, probe, sync functions for sharing code
+  iommu/tegra194_smmu: Add Tegra194 SMMU driver
+  arm64: defconfig: Enable ARM_SMMU_TEGRA
+  arm64: tegra: Add SMMU nodes to Tegra194 device tree
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/pci/pci-acpi.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi |  148 ++
+ arch/arm64/configs/defconfig             |    1 +
+ drivers/iommu/Kconfig                    |   10 +
+ drivers/iommu/Makefile                   |    1 +
+ drivers/iommu/arm-smmu-common.c          | 1971 +++++++++++++++++++++++++++
+ drivers/iommu/arm-smmu-common.h          |  256 ++++
+ drivers/iommu/arm-smmu.c                 | 2167 +-----------------------------
+ drivers/iommu/tegra194-smmu.c            |  201 +++
+ 8 files changed, 2595 insertions(+), 2160 deletions(-)
+ create mode 100644 drivers/iommu/arm-smmu-common.c
+ create mode 100644 drivers/iommu/arm-smmu-common.h
+ create mode 100644 drivers/iommu/tegra194-smmu.c
 
-diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
-index c2ab57705043..f8436d1c4d45 100644
---- a/drivers/pci/pci-acpi.c
-+++ b/drivers/pci/pci-acpi.c
-@@ -762,19 +762,33 @@ static void pci_acpi_setup(struct device *dev)
- 		return;
- 
- 	device_set_wakeup_capable(dev, true);
-+	/*
-+	 * For bridges that can do D3 we enable wake automatically (as
-+	 * we do for the power management itself in that case). The
-+	 * reason is that the bridge may have additional methods such as
-+	 * _DSW that need to be called.
-+	 */
-+	if (pci_dev->bridge_d3)
-+		device_wakeup_enable(dev);
-+
- 	acpi_pci_wakeup(pci_dev, false);
- }
- 
- static void pci_acpi_cleanup(struct device *dev)
- {
- 	struct acpi_device *adev = ACPI_COMPANION(dev);
-+	struct pci_dev *pci_dev = to_pci_dev(dev);
- 
- 	if (!adev)
- 		return;
- 
- 	pci_acpi_remove_pm_notifier(adev);
--	if (adev->wakeup.flags.valid)
-+	if (adev->wakeup.flags.valid) {
-+		if (pci_dev->bridge_d3)
-+			device_wakeup_disable(dev);
-+
- 		device_set_wakeup_capable(dev, false);
-+	}
- }
- 
- static bool pci_acpi_bus_match(struct device *dev)
 -- 
-2.17.1
+2.1.4
 
