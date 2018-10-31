@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82FD8ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 787C8ECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4ABE220664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4111420664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0Xzrdbxj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4ABE220664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="huMKa5Da"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4111420664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729240AbeKAIHv (ORCPT
+        id S1729261AbeKAIHx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:07:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56036 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:07:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729216AbeKAIHv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729150AbeKAIHv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 1 Nov 2018 04:07:51 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69B5520838;
-        Wed, 31 Oct 2018 23:07:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4290220847;
+        Wed, 31 Oct 2018 23:07:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541027260;
-        bh=vDFYdcSD+5oXn5B561i6ag9A7XSVDa14OOAjgL7QHA8=;
+        bh=tcoRiYmjAZfeRl0GAiTVtRoXj59w79nkV7wvusDboCI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0Xzrdbxj2ReYvI2EMFTbLGNvHH1yze79EJ0VH3WIc4li8jYpG0h5vCQUw1dSeEU4J
-         5vibiYGX4XIAzjRbGyjhwzeTSZ+laXrOB+b4haikMiCfbJGW4Lb/v2ELVFTHk4+xvM
-         KFFnd5iIxtkNyPrF9Vuy5xeI5sIo308vwYhyclSs=
+        b=huMKa5Da0rzk/j5vFAR8/7t5IepF94SQ6WBZxgyyHIKBKS57a8RwSNILZEqJKIPJz
+         m0CKGRlKSijZ6RlyUm/c1JkrozrpcFtM23AIyFqNykN5tJl4LlVcyhpHO8zqS0RM3N
+         Gs9h2kpJPZsMbSkYOhNyyt1faIhtOFSkwCu8vmgg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Waiman Long <longman@redhat.com>, Vinod Koul <vkoul@kernel.org>,
+Cc:     Akshu Agrawal <akshu.agrawal@amd.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 131/146] driver/dma/ioat: Call del_timer_sync() without holding prep_lock
-Date:   Wed, 31 Oct 2018 19:05:26 -0400
-Message-Id: <20181031230541.28822-131-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 132/146] ASoC: AMD: Fix capture unstable in beginning for some runs
+Date:   Wed, 31 Oct 2018 19:05:27 -0400
+Message-Id: <20181031230541.28822-132-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -52,89 +53,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Waiman Long <longman@redhat.com>
+From: Akshu Agrawal <akshu.agrawal@amd.com>
 
-[ Upstream commit cfb03be6c7e8a1591285849c361d67b09f5149f7 ]
+[ Upstream commit c50535ed6a10fcae1b64ae83c0f6b1eeb5535afc ]
 
-The following lockdep splat was observed:
+alsa_conformance_test -C hw:0,4 -p 1024 --debug
+would sometime show:
+TIME_DIFF(s)    HW_LEVEL       READ              RATE
+0.000095970         1024       1024    10670001.041992
+0.042609555         1024       2048       24032.168372
+0.021330364         1024       3072       48006.681930
+0.021339559         1024       4096       47985.996337
+The issue is that in dma pointer function we can have stale value
+of the register for current descriptor of channel.
+The register retains the number of the last descriptor that
+was transferred.
 
-[ 1222.241750] ======================================================
-[ 1222.271301] WARNING: possible circular locking dependency detected
-[ 1222.301060] 4.16.0-10.el8+5.x86_64+debug #1 Not tainted
-[ 1222.326659] ------------------------------------------------------
-[ 1222.356565] systemd-shutdow/1 is trying to acquire lock:
-[ 1222.382660]  ((&ioat_chan->timer)){+.-.}, at: [<00000000f71e1a28>] del_timer_sync+0x5/0xf0
-[ 1222.422928]
-[ 1222.422928] but task is already holding lock:
-[ 1222.451743]  (&(&ioat_chan->prep_lock)->rlock){+.-.}, at: [<000000008ea98b12>] ioat_shutdown+0x86/0x100 [ioatdma]
-   :
-[ 1223.524987] Chain exists of:
-[ 1223.524987]   (&ioat_chan->timer) --> &(&ioat_chan->cleanup_lock)->rlock --> &(&ioat_chan->prep_lock)->rlock
-[ 1223.524987]
-[ 1223.594082]  Possible unsafe locking scenario:
-[ 1223.594082]
-[ 1223.622630]        CPU0                    CPU1
-[ 1223.645080]        ----                    ----
-[ 1223.667404]   lock(&(&ioat_chan->prep_lock)->rlock);
-[ 1223.691535]                                lock(&(&ioat_chan->cleanup_lock)->rlock);
-[ 1223.728657]                                lock(&(&ioat_chan->prep_lock)->rlock);
-[ 1223.765122]   lock((&ioat_chan->timer));
-[ 1223.784095]
-[ 1223.784095]  *** DEADLOCK ***
-[ 1223.784095]
-[ 1223.813492] 4 locks held by systemd-shutdow/1:
-[ 1223.834677]  #0:  (reboot_mutex){+.+.}, at: [<0000000056d33456>] SYSC_reboot+0x10f/0x300
-[ 1223.873310]  #1:  (&dev->mutex){....}, at: [<00000000258dfdd7>] device_shutdown+0x1c8/0x660
-[ 1223.913604]  #2:  (&dev->mutex){....}, at: [<0000000068331147>] device_shutdown+0x1d6/0x660
-[ 1223.954000]  #3:  (&(&ioat_chan->prep_lock)->rlock){+.-.}, at: [<000000008ea98b12>] ioat_shutdown+0x86/0x100 [ioatdma]
+Fix ensures that we report position, 0, till the one period worth of
+data is transferred.  After one period of data, in handler of period
+completion interrupt we update the config and correct value of descriptor
+starts reflecting.
 
-In the ioat_shutdown() function:
-
-	spin_lock_bh(&ioat_chan->prep_lock);
-	set_bit(IOAT_CHAN_DOWN, &ioat_chan->state);
-	del_timer_sync(&ioat_chan->timer);
-	spin_unlock_bh(&ioat_chan->prep_lock);
-
-According to the synchronization rule for the del_timer_sync() function,
-the caller must not hold locks which would prevent completion of the
-timer's handler.
-
-The timer structure has its own lock that manages its synchronization.
-Setting the IOAT_CHAN_DOWN bit should prevent other CPUs from
-trying to use that device anyway, there is probably no need to call
-del_timer_sync() while holding the prep_lock. So the del_timer_sync()
-call is now moved outside of the prep_lock critical section to prevent
-the circular lock dependency.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/ioat/init.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ sound/soc/amd/acp-pcm-dma.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/dma/ioat/init.c b/drivers/dma/ioat/init.c
-index 4fa4c06c9edb..21a5708985bc 100644
---- a/drivers/dma/ioat/init.c
-+++ b/drivers/dma/ioat/init.c
-@@ -1205,8 +1205,15 @@ static void ioat_shutdown(struct pci_dev *pdev)
+diff --git a/sound/soc/amd/acp-pcm-dma.c b/sound/soc/amd/acp-pcm-dma.c
+index 77b265bd0505..3135e9eafd18 100644
+--- a/sound/soc/amd/acp-pcm-dma.c
++++ b/sound/soc/amd/acp-pcm-dma.c
+@@ -1036,16 +1036,22 @@ static snd_pcm_uframes_t acp_dma_pointer(struct snd_pcm_substream *substream)
  
- 		spin_lock_bh(&ioat_chan->prep_lock);
- 		set_bit(IOAT_CHAN_DOWN, &ioat_chan->state);
--		del_timer_sync(&ioat_chan->timer);
- 		spin_unlock_bh(&ioat_chan->prep_lock);
-+		/*
-+		 * Synchronization rule for del_timer_sync():
-+		 *  - The caller must not hold locks which would prevent
-+		 *    completion of the timer's handler.
-+		 * So prep_lock cannot be held before calling it.
-+		 */
-+		del_timer_sync(&ioat_chan->timer);
-+
- 		/* this should quiesce then reset */
- 		ioat_reset_hw(ioat_chan);
- 	}
+ 	if (substream->stream == SNDRV_PCM_STREAM_CAPTURE) {
+ 		period_bytes = frames_to_bytes(runtime, runtime->period_size);
+-		dscr = acp_reg_read(rtd->acp_mmio, rtd->dma_curr_dscr);
+-		if (dscr == rtd->dma_dscr_idx_1)
+-			pos = period_bytes;
+-		else
+-			pos = 0;
+ 		bytescount = acp_get_byte_count(rtd);
+-		if (bytescount > rtd->bytescount)
++		if (bytescount >= rtd->bytescount)
+ 			bytescount -= rtd->bytescount;
+-		delay = do_div(bytescount, period_bytes);
+-		runtime->delay = bytes_to_frames(runtime, delay);
++		if (bytescount < period_bytes) {
++			pos = 0;
++		} else {
++			dscr = acp_reg_read(rtd->acp_mmio, rtd->dma_curr_dscr);
++			if (dscr == rtd->dma_dscr_idx_1)
++				pos = period_bytes;
++			else
++				pos = 0;
++		}
++		if (bytescount > 0) {
++			delay = do_div(bytescount, period_bytes);
++			runtime->delay = bytes_to_frames(runtime, delay);
++		}
+ 	} else {
+ 		buffersize = frames_to_bytes(runtime, runtime->buffer_size);
+ 		bytescount = acp_get_byte_count(rtd);
 -- 
 2.17.1
 
