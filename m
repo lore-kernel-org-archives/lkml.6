@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16077ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 22:06:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F8DC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 22:06:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA47820821
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 22:06:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA47820821
+	by mail.kernel.org (Postfix) with ESMTP id A0B852080A
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 22:06:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0B852080A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727281AbeKAHGR (ORCPT
+        id S1727338AbeKAHGt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 03:06:17 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:54101 "EHLO
+        Thu, 1 Nov 2018 03:06:49 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:48623 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726646AbeKAHGR (ORCPT
+        with ESMTP id S1726314AbeKAHGs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 03:06:17 -0400
+        Thu, 1 Nov 2018 03:06:48 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9VM60cF2560587
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9VM6YdN2560823
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 31 Oct 2018 15:06:00 -0700
+        Wed, 31 Oct 2018 15:06:34 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9VM5xxH2560584;
-        Wed, 31 Oct 2018 15:05:59 -0700
-Date:   Wed, 31 Oct 2018 15:05:59 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9VM6YXV2560820;
+        Wed, 31 Oct 2018 15:06:34 -0700
+Date:   Wed, 31 Oct 2018 15:06:34 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-c00bqzclscgah26z2g5zxm73@git.kernel.org>
-Cc:     adrian.hunter@intel.com, namhyung@kernel.org, wangnan0@huawei.com,
-        Jason@zx2c4.com, hpa@zytor.com, herbert@gondor.apana.org.au,
-        acme@redhat.com, linux-kernel@vger.kernel.org, jolsa@kernel.org,
-        mingo@kernel.org, tglx@linutronix.de, dsahern@gmail.com
-Reply-To: jolsa@kernel.org, mingo@kernel.org, tglx@linutronix.de,
-          dsahern@gmail.com, adrian.hunter@intel.com, namhyung@kernel.org,
-          wangnan0@huawei.com, Jason@zx2c4.com, hpa@zytor.com,
-          herbert@gondor.apana.org.au, acme@redhat.com,
-          linux-kernel@vger.kernel.org
+Message-ID: <tip-3euy7c4yy5mvnp5bm16t9vqg@git.kernel.org>
+Cc:     kim.phillips@arm.com, hpa@zytor.com, mingo@kernel.org,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        jolsa@kernel.org, arnd@arndb.de, acme@redhat.com,
+        geert@linux-m68k.org, tglx@linutronix.de
+Reply-To: linux-kernel@vger.kernel.org, arnd@arndb.de, jolsa@kernel.org,
+          acme@redhat.com, geert@linux-m68k.org, tglx@linutronix.de,
+          kim.phillips@arm.com, mingo@kernel.org, hpa@zytor.com,
+          namhyung@kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] tools include uapi: Update linux/fs.h copy
-Git-Commit-ID: 733ac4f9935c4b257aff2ec476e6c20665daf6c2
+Subject: [tip:perf/urgent] tools arch uapi: Update asm-generic/unistd.h and
+ arm64 unistd.h copies
+Git-Commit-ID: 8dd4c0f68c0db4c0f01af60a99a7ed34fd3dee2b
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,69 +59,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  733ac4f9935c4b257aff2ec476e6c20665daf6c2
-Gitweb:     https://git.kernel.org/tip/733ac4f9935c4b257aff2ec476e6c20665daf6c2
+Commit-ID:  8dd4c0f68c0db4c0f01af60a99a7ed34fd3dee2b
+Gitweb:     https://git.kernel.org/tip/8dd4c0f68c0db4c0f01af60a99a7ed34fd3dee2b
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 30 Oct 2018 12:27:37 -0300
+AuthorDate: Tue, 30 Oct 2018 13:10:50 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Wed, 31 Oct 2018 09:57:51 -0300
 
-tools include uapi: Update linux/fs.h copy
+tools arch uapi: Update asm-generic/unistd.h and arm64 unistd.h copies
 
-To silence this perf build warning:
+To get the changes in:
 
-  Warning: Kernel ABI header at 'tools/include/uapi/linux/fs.h' differs from latest version at 'include/uapi/linux/fs.h'
-  diff -u tools/include/uapi/linux/fs.h include/uapi/linux/fs.h
+  82b355d161c9 ("y2038: Remove newstat family from default syscall set")
 
-Due to just two comments added by:
+Which will make the syscall table used by 'perf trace' for arm64 to be
+updated from the changes in that patch.
 
-  Fixes: 578bdaabd015 ("crypto: speck - remove Speck")
+This silences these perf build warnings:
 
-So nothing that entails changes in tools/, that so far uses fs.h to
-generate the mount and umount syscalls 'flags' argument integer->string
-tables with:
+  Warning: Kernel ABI header at 'tools/arch/arm64/include/uapi/asm/unistd.h' differs from latest version at 'arch/arm64/include/uapi/asm/unistd.h'
+  diff -u tools/arch/arm64/include/uapi/asm/unistd.h arch/arm64/include/uapi/asm/unistd.h
+  Warning: Kernel ABI header at 'tools/include/uapi/asm-generic/unistd.h' differs from latest version at 'include/uapi/asm-generic/unistd.h'
+  diff -u tools/include/uapi/asm-generic/unistd.h include/uapi/asm-generic/unistd.h
 
-  $ tools/perf/trace/beauty/mount_flags.sh
-  static const char *mount_flags[] = {
-	[4096 ? (ilog2(4096) + 1) : 0] = "BIND",
-<SNIP>
-	[30 + 1] = "ACTIVE",
-	[31 + 1] = "NOUSER",
-  };
-  $
-  # trace -e mount,umount mount --bind /proc /mnt
-     1.228 ( 2.581 ms): mount/1068 mount(dev_name: /mnt, dir_name: 0x55f011c354a0, type: 0x55f011c38170, flags: BIND) = 0
-  # trace -e mount,umount umount /proc /mnt
-  umount: /proc: target is busy.
-     1.587 ( 0.010 ms): umount/1070 umount2(name: /proc) = -1 EBUSY Device or resource busy
-     1.799 (12.660 ms): umount/1070 umount2(name: /mnt) = 0
-  #
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
+Cc: Kim Phillips <kim.phillips@arm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Cc: Jason A. Donenfeld <Jason@zx2c4.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Link: https://lkml.kernel.org/n/tip-c00bqzclscgah26z2g5zxm73@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-3euy7c4yy5mvnp5bm16t9vqg@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/include/uapi/linux/fs.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/arch/arm64/include/uapi/asm/unistd.h | 1 +
+ tools/include/uapi/asm-generic/unistd.h    | 2 ++
+ 2 files changed, 3 insertions(+)
 
-diff --git a/tools/include/uapi/linux/fs.h b/tools/include/uapi/linux/fs.h
-index 73e01918f996..a441ea1bfe6d 100644
---- a/tools/include/uapi/linux/fs.h
-+++ b/tools/include/uapi/linux/fs.h
-@@ -279,8 +279,8 @@ struct fsxattr {
- #define FS_ENCRYPTION_MODE_AES_256_CTS		4
- #define FS_ENCRYPTION_MODE_AES_128_CBC		5
- #define FS_ENCRYPTION_MODE_AES_128_CTS		6
--#define FS_ENCRYPTION_MODE_SPECK128_256_XTS	7
--#define FS_ENCRYPTION_MODE_SPECK128_256_CTS	8
-+#define FS_ENCRYPTION_MODE_SPECK128_256_XTS	7 /* Removed, do not use. */
-+#define FS_ENCRYPTION_MODE_SPECK128_256_CTS	8 /* Removed, do not use. */
+diff --git a/tools/arch/arm64/include/uapi/asm/unistd.h b/tools/arch/arm64/include/uapi/asm/unistd.h
+index 5072cbd15c82..dae1584cf017 100644
+--- a/tools/arch/arm64/include/uapi/asm/unistd.h
++++ b/tools/arch/arm64/include/uapi/asm/unistd.h
+@@ -16,5 +16,6 @@
+  */
  
- struct fscrypt_policy {
- 	__u8 version;
+ #define __ARCH_WANT_RENAMEAT
++#define __ARCH_WANT_NEW_STAT
+ 
+ #include <asm-generic/unistd.h>
+diff --git a/tools/include/uapi/asm-generic/unistd.h b/tools/include/uapi/asm-generic/unistd.h
+index df4bedb9b01c..538546edbfbd 100644
+--- a/tools/include/uapi/asm-generic/unistd.h
++++ b/tools/include/uapi/asm-generic/unistd.h
+@@ -242,10 +242,12 @@ __SYSCALL(__NR_tee, sys_tee)
+ /* fs/stat.c */
+ #define __NR_readlinkat 78
+ __SYSCALL(__NR_readlinkat, sys_readlinkat)
++#if defined(__ARCH_WANT_NEW_STAT) || defined(__ARCH_WANT_STAT64)
+ #define __NR3264_fstatat 79
+ __SC_3264(__NR3264_fstatat, sys_fstatat64, sys_newfstatat)
+ #define __NR3264_fstat 80
+ __SC_3264(__NR3264_fstat, sys_fstat64, sys_newfstat)
++#endif
+ 
+ /* fs/sync.c */
+ #define __NR_sync 81
