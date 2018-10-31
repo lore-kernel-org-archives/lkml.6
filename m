@@ -7,43 +7,46 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DED0ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A4DEC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:55:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1402B20821
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:54:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 419D62054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:55:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EVK0ymRM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1402B20821
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tq1+rO5o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 419D62054F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728014AbeKAIzS (ORCPT
+        id S1726380AbeKAIF4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:55:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52610 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:05:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52536 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726549AbeKAIF6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:05:58 -0400
+        id S1726202AbeKAIFz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:05:55 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 08C3520821;
-        Wed, 31 Oct 2018 23:05:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D425020823;
+        Wed, 31 Oct 2018 23:05:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027148;
-        bh=mlnNognbhobDyzNnJrdaa+++B29jwSgnl0YcoSO2r6k=;
+        s=default; t=1541027145;
+        bh=nPzAxlsCI9yFomFr6wYxP465lWD3iXRwQOLKzvJV+iY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EVK0ymRMinQJ0sDm8iQoSGLh8bBlfLTaQzpcbMMio4aRJffU+LKBovVel0qFQRm0p
-         F8of6/4iTdcTak7MIJ7ohL5ZVvew2ZfGarFeDxzcgCKL1nrHdZHYSYjHudWT4PWuGD
-         Cw0hwtm0/sa18J9cDC2DTZyZq9/sxmyW5U70KC0M=
+        b=tq1+rO5otNiz2m15K+jJ5a1JHo1ZWG6YR6w8Q1VXGLyvfzzwRZli0SdO5nlTHOnNc
+         LjaCbTcb4GgU6393SljIWjY91jIqIeJ2WQQH4/StYai7vpQ7C498g19KENJd4fuLHz
+         MAZnVY7rJDSyDw2dfL7m4cKqeiyJsDJfinN3noag=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Omar Sandoval <osandov@fb.com>, Jens Axboe <axboe@kernel.dk>,
+Cc:     Eric Dumazet <edumazet@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 006/146] ataflop: fix error handling during setup
-Date:   Wed, 31 Oct 2018 19:03:21 -0400
-Message-Id: <20181031230541.28822-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 003/146] net: loopback: clear skb->tstamp before netif_rx()
+Date:   Wed, 31 Oct 2018 19:03:18 -0400
+Message-Id: <20181031230541.28822-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -52,75 +55,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Omar Sandoval <osandov@fb.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 71327f547ee3a46ec5c39fdbbd268401b2578d0e ]
+[ Upstream commit 4c16128b6271e70c8743178e90cccee147858503 ]
 
-Move queue allocation next to disk allocation to fix a couple of issues:
+At least UDP / TCP stacks can now cook skbs with a tstamp using
+MONOTONIC base (or arbitrary values with SCM_TXTIME)
 
-- If add_disk() hasn't been called, we should clear disk->queue before
-  calling put_disk().
-- If we fail to allocate a request queue, we still need to put all of
-  the disks, not just the ones that we allocated queues for.
+Since loopback driver does not call (directly or indirectly)
+skb_scrub_packet(), we need to clear skb->tstamp so that
+net_timestamp_check() can eventually resample the time,
+using ktime_get_real().
 
-Signed-off-by: Omar Sandoval <osandov@fb.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 80b14dee2bea ("net: Add a new socket option for a future transmit time.")
+Fixes: fb420d5d91c1 ("tcp/fq: move back to CLOCK_MONOTONIC")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Willem de Bruijn <willemb@google.com>
+Cc: Soheil Hassas Yeganeh <soheil@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/ataflop.c | 25 +++++++++++++++----------
- 1 file changed, 15 insertions(+), 10 deletions(-)
+ drivers/net/loopback.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/block/ataflop.c b/drivers/block/ataflop.c
-index dfb2c2622e5a..822e3060d834 100644
---- a/drivers/block/ataflop.c
-+++ b/drivers/block/ataflop.c
-@@ -1935,6 +1935,11 @@ static int __init atari_floppy_init (void)
- 		unit[i].disk = alloc_disk(1);
- 		if (!unit[i].disk)
- 			goto Enomem;
+diff --git a/drivers/net/loopback.c b/drivers/net/loopback.c
+index 30612497643c..d192936b76cf 100644
+--- a/drivers/net/loopback.c
++++ b/drivers/net/loopback.c
+@@ -75,6 +75,10 @@ static netdev_tx_t loopback_xmit(struct sk_buff *skb,
+ 	int len;
+ 
+ 	skb_tx_timestamp(skb);
 +
-+		unit[i].disk->queue = blk_init_queue(do_fd_request,
-+						     &ataflop_lock);
-+		if (!unit[i].disk->queue)
-+			goto Enomem;
- 	}
++	/* do not fool net_timestamp_check() with various clock bases */
++	skb->tstamp = 0;
++
+ 	skb_orphan(skb);
  
- 	if (UseTrackbuffer < 0)
-@@ -1966,10 +1971,6 @@ static int __init atari_floppy_init (void)
- 		sprintf(unit[i].disk->disk_name, "fd%d", i);
- 		unit[i].disk->fops = &floppy_fops;
- 		unit[i].disk->private_data = &unit[i];
--		unit[i].disk->queue = blk_init_queue(do_fd_request,
--					&ataflop_lock);
--		if (!unit[i].disk->queue)
--			goto Enomem;
- 		set_capacity(unit[i].disk, MAX_DISK_SIZE * 2);
- 		add_disk(unit[i].disk);
- 	}
-@@ -1984,13 +1985,17 @@ static int __init atari_floppy_init (void)
- 
- 	return 0;
- Enomem:
--	while (i--) {
--		struct request_queue *q = unit[i].disk->queue;
-+	do {
-+		struct gendisk *disk = unit[i].disk;
- 
--		put_disk(unit[i].disk);
--		if (q)
--			blk_cleanup_queue(q);
--	}
-+		if (disk) {
-+			if (disk->queue) {
-+				blk_cleanup_queue(disk->queue);
-+				disk->queue = NULL;
-+			}
-+			put_disk(unit[i].disk);
-+		}
-+	} while (i--);
- 
- 	unregister_blkdev(FLOPPY_MAJOR, "fd");
- 	return -ENOMEM;
+ 	/* Before queueing this packet to netif_rx(),
 -- 
 2.17.1
 
