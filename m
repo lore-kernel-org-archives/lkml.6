@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95B44C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A713ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CE1E20866
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F5A820854
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u+lcNMFs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CE1E20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bUB2MdMg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F5A820854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731955AbeKAIL6 (ORCPT
+        id S1731968AbeKAIMA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:11:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36204 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:12:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731914AbeKAIL5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:11:57 -0400
+        id S1730796AbeKAIL6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:11:58 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF16B2087A;
-        Wed, 31 Oct 2018 23:11:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9420B20840;
+        Wed, 31 Oct 2018 23:11:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027505;
-        bh=lVy2NQrqWAE30SkM9B7U8nF5bBor/tc9Wfp+h515wow=;
+        s=default; t=1541027506;
+        bh=KPiJvz4He0AwSZ0ySKEL1Gu0R0Z7OVpxUWh1vKcO0so=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u+lcNMFsCqRXl+VQVTg1eLXNLDV/6r85xxM7+u6NnoYFzIQJXsRNz1G1HaQF2BddL
-         scjjYU34laC2OS7xxLwJcyEF+Lfi5DoXcYxUXeFP45fjeuJnQJy4GwphAPMitOK9kM
-         ios8sGD/ecWXgJRoyERhBxiz92bH6LjPDw/9tOKA=
+        b=bUB2MdMgwBQ2vuXtfa6H50FE1F6pEFs38/mT44sCrZEqWGuupmuWokzEU7rOlMtqU
+         bJ1qEcPLAv7eNgRpOWKpaEJMK96WWereaGwEbikgeN29lC6TLLgeSRCCIo2JzUA8gz
+         OKViWWAO1ZRt655ZZf3cSrnM5KhB6MHeI90qb4t4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Yu Zhao <yuzhao@google.com>, Ulf Hansson <ulf.hansson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 08/32] mmc: sdhci-pci-o2micro: Add quirk for O2 Micro dev 0x8620 rev 0x01
-Date:   Wed, 31 Oct 2018 19:11:13 -0400
-Message-Id: <20181031231137.29429-8-sashal@kernel.org>
+Cc:     Lubomir Rintel <lkundrak@v3.sk>, Borislav Petkov <bp@suse.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        x86-ml <x86@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 09/32] x86/olpc: Indicate that legacy PC XO-1 platform should not register RTC
+Date:   Wed, 31 Oct 2018 19:11:14 -0400
+Message-Id: <20181031231137.29429-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231137.29429-1-sashal@kernel.org>
 References: <20181031231137.29429-1-sashal@kernel.org>
@@ -52,59 +53,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yu Zhao <yuzhao@google.com>
+From: Lubomir Rintel <lkundrak@v3.sk>
 
-[ Upstream commit 5169894982bb67486d93cc1e10151712bb86bcb6 ]
+[ Upstream commit d92116b800fb79a72ad26121f5011f6aa3ad94c2 ]
 
-This device reports SDHCI_CLOCK_INT_STABLE even though it's not
-ready to take SDHCI_CLOCK_CARD_EN. The symptom is that reading
-SDHCI_CLOCK_CONTROL after enabling the clock shows absence of the
-bit from the register (e.g. expecting 0x0000fa07 = 0x0000fa03 |
-SDHCI_CLOCK_CARD_EN but only observed the first operand).
+On OLPC XO-1, the RTC is discovered via device tree from the arch
+initcall. Don't let the PC platform register another one from its device
+initcall, it's not going to work:
 
-mmc1: Timeout waiting for hardware cmd interrupt.
-mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
-mmc1: sdhci: Sys addr:  0x00000000 | Version:  0x00000603
-mmc1: sdhci: Blk size:  0x00000000 | Blk cnt:  0x00000000
-mmc1: sdhci: Argument:  0x00000000 | Trn mode: 0x00000000
-mmc1: sdhci: Present:   0x01ff0001 | Host ctl: 0x00000001
-mmc1: sdhci: Power:     0x0000000f | Blk gap:  0x00000000
-mmc1: sdhci: Wake-up:   0x00000000 | Clock:    0x0000fa03
-mmc1: sdhci: Timeout:   0x00000000 | Int stat: 0x00000000
-mmc1: sdhci: Int enab:  0x00ff0083 | Sig enab: 0x00ff0083
-mmc1: sdhci: AC12 err:  0x00000000 | Slot int: 0x00000000
-mmc1: sdhci: Caps:      0x25fcc8bf | Caps_1:   0x00002077
-mmc1: sdhci: Cmd:       0x00000000 | Max curr: 0x005800c8
-mmc1: sdhci: Resp[0]:   0x00000000 | Resp[1]:  0x00000000
-mmc1: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
-mmc1: sdhci: Host ctl2: 0x00000008
-mmc1: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x00000000
-mmc1: sdhci: ============================================
+  sysfs: cannot create duplicate filename '/devices/platform/rtc_cmos'
+  CPU: 0 PID: 1 Comm: swapper Not tainted 4.19.0-rc6 #12
+  Hardware name: OLPC XO/XO, BIOS OLPC Ver 1.00.01 06/11/2014
+  Call Trace:
+   dump_stack+0x16/0x18
+   sysfs_warn_dup+0x46/0x58
+   sysfs_create_dir_ns+0x76/0x9b
+   kobject_add_internal+0xed/0x209
+   ? __schedule+0x3fa/0x447
+   kobject_add+0x5b/0x66
+   device_add+0x298/0x535
+   ? insert_resource_conflict+0x2a/0x3e
+   platform_device_add+0x14d/0x192
+   ? io_delay_init+0x19/0x19
+   platform_device_register+0x1c/0x1f
+   add_rtc_cmos+0x16/0x31
+   do_one_initcall+0x78/0x14a
+   ? do_early_param+0x75/0x75
+   kernel_init_freeable+0x152/0x1e0
+   ? rest_init+0xa2/0xa2
+   kernel_init+0x8/0xd5
+   ret_from_fork+0x2e/0x38
+  kobject_add_internal failed for rtc_cmos with -EEXIST, don't try to
+    register things with the same name in the same directory.
+  platform rtc_cmos: registered platform RTC device (no PNP device found)
 
-The problem happens during wakeup from S3. Adding a delay quirk
-after power up reliably fixes the problem.
-
-Signed-off-by: Yu Zhao <yuzhao@google.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+CC: "H. Peter Anvin" <hpa@zytor.com>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: x86-ml <x86@kernel.org>
+Link: http://lkml.kernel.org/r/20181004160808.307738-1-lkundrak@v3.sk
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/sdhci-pci-o2micro.c | 3 +++
+ arch/x86/platform/olpc/olpc-xo1-rtc.c | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
-index d48f03104b5b..e417e4274d66 100644
---- a/drivers/mmc/host/sdhci-pci-o2micro.c
-+++ b/drivers/mmc/host/sdhci-pci-o2micro.c
-@@ -334,6 +334,9 @@ int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
- 		pci_write_config_byte(chip->pdev, O2_SD_LOCK_WP, scratch);
- 		break;
- 	case PCI_DEVICE_ID_O2_SEABIRD0:
-+		if (chip->pdev->revision == 0x01)
-+			chip->quirks |= SDHCI_QUIRK_DELAY_AFTER_POWER;
-+		/* fall through */
- 	case PCI_DEVICE_ID_O2_SEABIRD1:
- 		/* UnLock WP */
- 		ret = pci_read_config_byte(chip->pdev,
+diff --git a/arch/x86/platform/olpc/olpc-xo1-rtc.c b/arch/x86/platform/olpc/olpc-xo1-rtc.c
+index a2b4efddd61a..8e7ddd7e313a 100644
+--- a/arch/x86/platform/olpc/olpc-xo1-rtc.c
++++ b/arch/x86/platform/olpc/olpc-xo1-rtc.c
+@@ -16,6 +16,7 @@
+ 
+ #include <asm/msr.h>
+ #include <asm/olpc.h>
++#include <asm/x86_init.h>
+ 
+ static void rtc_wake_on(struct device *dev)
+ {
+@@ -75,6 +76,8 @@ static int __init xo1_rtc_init(void)
+ 	if (r)
+ 		return r;
+ 
++	x86_platform.legacy.rtc = 0;
++
+ 	device_init_wakeup(&xo1_rtc_device.dev, 1);
+ 	return 0;
+ }
 -- 
 2.17.1
 
