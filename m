@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 865BEECDE44
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D84A4C0044C
 	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45E7720838
+	by mail.kernel.org (Postfix) with ESMTP id 95D2520664
 	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dpi9i6aS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45E7720838
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zIUMMidF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95D2520664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727629AbeKAIGK (ORCPT
+        id S1727677AbeKAIGM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:06:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52872 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:06:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727552AbeKAIGJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:06:09 -0400
+        id S1727597AbeKAIGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:06:10 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF7ED2082E;
-        Wed, 31 Oct 2018 23:05:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B808320843;
+        Wed, 31 Oct 2018 23:05:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027158;
-        bh=ihRQ5pWOUmmIUafbkcx6ywXZszPGOt24xKycGkcmC0c=;
+        s=default; t=1541027159;
+        bh=mS6VLy0+jU+Quwb3mDE6MzpA3VojBvi04BvSm6eZ4KA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dpi9i6aSoGqMvRb5cAmEeMkf8Zw7ekNqOda9cVgAHQ42/EVF8tEqPvy7tOqx3WgUx
-         tzbf4EE+4Mp51Dq3WVTItr9QDfVjwyytpzbwVoiWANZpuX7s4oBIaITSk1UBJQVFqy
-         bdNSCz5iJPVPUylfzUFRMlz4BZ+d5ZF9UB9MuDpw=
+        b=zIUMMidF3MSn6n2AjVJevLHDjUlpobbuhRvgziwc3w4PdzKyb7RBQXRI7QVKln3yk
+         MxqNX5ukld1f/bb46pwAL0Zu0UHCaT49JmZzYLhD5YzNQgnHp9BtU4p2TKZ6ZA0kR3
+         +k+ToRwSBfQatcGGLz7k4mW7e34NYXmiPvVfDpCY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
+Cc:     Sanskriti Sharma <sansharm@redhat.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 017/146] spi: spi-ep93xx: Use dma_data_direction for ep93xx_spi_dma_{finish,prepare}
-Date:   Wed, 31 Oct 2018 19:03:32 -0400
-Message-Id: <20181031230541.28822-17-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 018/146] perf tools: Free temporary 'sys' string in read_event_files()
+Date:   Wed, 31 Oct 2018 19:03:33 -0400
+Message-Id: <20181031230541.28822-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -53,162 +53,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Sanskriti Sharma <sansharm@redhat.com>
 
-[ Upstream commit a1108c7b2efb892350ba6a0e932dfd45622f4e2b ]
+[ Upstream commit 1e44224fb0528b4c0cc176bde2bb31e9127eb14b ]
 
-Clang warns when one enumerated type is implicitly converted to another.
+For each system in a given pevent, read_event_files() reads in a
+temporary 'sys' string.  Be sure to free this string before moving onto
+to the next system and/or leaving read_event_files().
 
-drivers/spi/spi-ep93xx.c:342:62: warning: implicit conversion from
-enumeration type 'enum dma_transfer_direction' to different enumeration
-type 'enum dma_data_direction' [-Wenum-conversion]
-        nents = dma_map_sg(chan->device->dev, sgt->sgl, sgt->nents, dir);
-                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
-./include/linux/dma-mapping.h:428:58: note: expanded from macro
-'dma_map_sg'
-#define dma_map_sg(d, s, n, r) dma_map_sg_attrs(d, s, n, r, 0)
-                               ~~~~~~~~~~~~~~~~          ^
-drivers/spi/spi-ep93xx.c:348:57: warning: implicit conversion from
-enumeration type 'enum dma_transfer_direction' to different enumeration
-type 'enum dma_data_direction' [-Wenum-conversion]
-                dma_unmap_sg(chan->device->dev, sgt->sgl, sgt->nents, dir);
-                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
-./include/linux/dma-mapping.h:429:62: note: expanded from macro
-'dma_unmap_sg'
-#define dma_unmap_sg(d, s, n, r) dma_unmap_sg_attrs(d, s, n, r, 0)
-                                 ~~~~~~~~~~~~~~~~~~          ^
-drivers/spi/spi-ep93xx.c:377:56: warning: implicit conversion from
-enumeration type 'enum dma_transfer_direction' to different enumeration
-type 'enum dma_data_direction' [-Wenum-conversion]
-        dma_unmap_sg(chan->device->dev, sgt->sgl, sgt->nents, dir);
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
-./include/linux/dma-mapping.h:429:62: note: expanded from macro
-'dma_unmap_sg'
-#define dma_unmap_sg(d, s, n, r) dma_unmap_sg_attrs(d, s, n, r, 0)
-                                 ~~~~~~~~~~~~~~~~~~          ^
-3 warnings generated.
+Fixes the following coverity complaints:
 
-dma_{,un}map_sg expect an enum of type dma_data_direction but this
-driver uses dma_transfer_direction for everything. Convert the driver to
-use dma_data_direction for these two functions.
+  Error: RESOURCE_LEAK (CWE-772):
 
-There are two places that strictly require an enum of type
-dma_transfer_direction: the direction member in struct dma_slave_config
-and the direction parameter in dmaengine_prep_slave_sg. To avoid using
-an explicit cast, add a simple function, ep93xx_dma_data_to_trans_dir,
-to safely map between the two types because they are not 1 to 1 in
-meaning.
+  tools/perf/util/trace-event-read.c:343: overwrite_var: Overwriting
+  "sys" in "sys = read_string()" leaks the storage that "sys" points to.
 
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+  tools/perf/util/trace-event-read.c:353: leaked_storage: Variable "sys"
+  going out of scope leaks the storage it points to.
+
+Signed-off-by: Sanskriti Sharma <sansharm@redhat.com>
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Joe Lawrence <joe.lawrence@redhat.com>
+Link: http://lkml.kernel.org/r/1538490554-8161-6-git-send-email-sansharm@redhat.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-ep93xx.c | 36 +++++++++++++++++++++++++-----------
- 1 file changed, 25 insertions(+), 11 deletions(-)
+ tools/perf/util/trace-event-read.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-ep93xx.c b/drivers/spi/spi-ep93xx.c
-index f1526757aaf6..79fc3940245a 100644
---- a/drivers/spi/spi-ep93xx.c
-+++ b/drivers/spi/spi-ep93xx.c
-@@ -246,6 +246,19 @@ static int ep93xx_spi_read_write(struct spi_master *master)
- 	return -EINPROGRESS;
- }
- 
-+static enum dma_transfer_direction
-+ep93xx_dma_data_to_trans_dir(enum dma_data_direction dir)
-+{
-+	switch (dir) {
-+	case DMA_TO_DEVICE:
-+		return DMA_MEM_TO_DEV;
-+	case DMA_FROM_DEVICE:
-+		return DMA_DEV_TO_MEM;
-+	default:
-+		return DMA_TRANS_NONE;
-+	}
-+}
-+
- /**
-  * ep93xx_spi_dma_prepare() - prepares a DMA transfer
-  * @master: SPI master
-@@ -257,7 +270,7 @@ static int ep93xx_spi_read_write(struct spi_master *master)
-  */
- static struct dma_async_tx_descriptor *
- ep93xx_spi_dma_prepare(struct spi_master *master,
--		       enum dma_transfer_direction dir)
-+		       enum dma_data_direction dir)
- {
- 	struct ep93xx_spi *espi = spi_master_get_devdata(master);
- 	struct spi_transfer *xfer = master->cur_msg->state;
-@@ -277,9 +290,9 @@ ep93xx_spi_dma_prepare(struct spi_master *master,
- 		buswidth = DMA_SLAVE_BUSWIDTH_1_BYTE;
- 
- 	memset(&conf, 0, sizeof(conf));
--	conf.direction = dir;
-+	conf.direction = ep93xx_dma_data_to_trans_dir(dir);
- 
--	if (dir == DMA_DEV_TO_MEM) {
-+	if (dir == DMA_FROM_DEVICE) {
- 		chan = espi->dma_rx;
- 		buf = xfer->rx_buf;
- 		sgt = &espi->rx_sgt;
-@@ -343,7 +356,8 @@ ep93xx_spi_dma_prepare(struct spi_master *master,
- 	if (!nents)
- 		return ERR_PTR(-ENOMEM);
- 
--	txd = dmaengine_prep_slave_sg(chan, sgt->sgl, nents, dir, DMA_CTRL_ACK);
-+	txd = dmaengine_prep_slave_sg(chan, sgt->sgl, nents, conf.direction,
-+				      DMA_CTRL_ACK);
- 	if (!txd) {
- 		dma_unmap_sg(chan->device->dev, sgt->sgl, sgt->nents, dir);
- 		return ERR_PTR(-ENOMEM);
-@@ -360,13 +374,13 @@ ep93xx_spi_dma_prepare(struct spi_master *master,
-  * unmapped.
-  */
- static void ep93xx_spi_dma_finish(struct spi_master *master,
--				  enum dma_transfer_direction dir)
-+				  enum dma_data_direction dir)
- {
- 	struct ep93xx_spi *espi = spi_master_get_devdata(master);
- 	struct dma_chan *chan;
- 	struct sg_table *sgt;
- 
--	if (dir == DMA_DEV_TO_MEM) {
-+	if (dir == DMA_FROM_DEVICE) {
- 		chan = espi->dma_rx;
- 		sgt = &espi->rx_sgt;
- 	} else {
-@@ -381,8 +395,8 @@ static void ep93xx_spi_dma_callback(void *callback_param)
- {
- 	struct spi_master *master = callback_param;
- 
--	ep93xx_spi_dma_finish(master, DMA_MEM_TO_DEV);
--	ep93xx_spi_dma_finish(master, DMA_DEV_TO_MEM);
-+	ep93xx_spi_dma_finish(master, DMA_TO_DEVICE);
-+	ep93xx_spi_dma_finish(master, DMA_FROM_DEVICE);
- 
- 	spi_finalize_current_transfer(master);
- }
-@@ -392,15 +406,15 @@ static int ep93xx_spi_dma_transfer(struct spi_master *master)
- 	struct ep93xx_spi *espi = spi_master_get_devdata(master);
- 	struct dma_async_tx_descriptor *rxd, *txd;
- 
--	rxd = ep93xx_spi_dma_prepare(master, DMA_DEV_TO_MEM);
-+	rxd = ep93xx_spi_dma_prepare(master, DMA_FROM_DEVICE);
- 	if (IS_ERR(rxd)) {
- 		dev_err(&master->dev, "DMA RX failed: %ld\n", PTR_ERR(rxd));
- 		return PTR_ERR(rxd);
+diff --git a/tools/perf/util/trace-event-read.c b/tools/perf/util/trace-event-read.c
+index 3dfc1db6b25b..5eb1b2469bba 100644
+--- a/tools/perf/util/trace-event-read.c
++++ b/tools/perf/util/trace-event-read.c
+@@ -349,9 +349,12 @@ static int read_event_files(struct tep_handle *pevent)
+ 		for (x=0; x < count; x++) {
+ 			size = read8(pevent);
+ 			ret = read_event_file(pevent, sys, size);
+-			if (ret)
++			if (ret) {
++				free(sys);
+ 				return ret;
++			}
+ 		}
++		free(sys);
  	}
- 
--	txd = ep93xx_spi_dma_prepare(master, DMA_MEM_TO_DEV);
-+	txd = ep93xx_spi_dma_prepare(master, DMA_TO_DEVICE);
- 	if (IS_ERR(txd)) {
--		ep93xx_spi_dma_finish(master, DMA_DEV_TO_MEM);
-+		ep93xx_spi_dma_finish(master, DMA_FROM_DEVICE);
- 		dev_err(&master->dev, "DMA TX failed: %ld\n", PTR_ERR(txd));
- 		return PTR_ERR(txd);
- 	}
+ 	return 0;
+ }
 -- 
 2.17.1
 
