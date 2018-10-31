@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40919ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D14CC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:44:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08ACB2082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:44:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 062B820664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:44:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="axcijbLw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08ACB2082E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gkkUymW0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 062B820664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728995AbeKAIHg (ORCPT
+        id S1729251AbeKAIok (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:07:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55490 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:44:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728910AbeKAIHf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:07:35 -0400
+        id S1728978AbeKAIHg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:07:36 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0A9C2064C;
-        Wed, 31 Oct 2018 23:07:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C755C20838;
+        Wed, 31 Oct 2018 23:07:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027244;
-        bh=DrvpFuZ8C1WZGOUneKjTLBox+gqu0umAjhbt2Uiu8rA=;
+        s=default; t=1541027245;
+        bh=cS9lFM0fSU86x0TjFVKRQWCLSp5vPysdcFuiAfI6+24=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=axcijbLwRTMK82T4gkPzywm1Vm1gkcSCWKNLk8pQ4MaGtwHypPqAsSFGzNH1pedv8
-         DdTPfUYI9ucu5sFzf2taJ4CpTJlh6t2+C4G9uGvlXiqcNY9pClXxkVpPJrpxXKCQjc
-         0t1ErGqUEVJX9F8V0ugvZTi40hj/tcRxJNoI48rE=
+        b=gkkUymW0tMWCO+1IJbyrqAyDTD8to64V8/yyYuyT1d6FEUXQ/IMtlV7fzc1fqghh8
+         Bz4Dq0hzR34E98oaZIFmyqLBMGqR/r80KZHbzM7Y05iklnpZIjP+3OKLnjW3LDK5gY
+         sKiopGDyYFTcpuMkNG/RbrCZlbmobJ5V41K6H3Jo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Lina Iyer <ilina@codeaurora.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
+Cc:     Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Amelie Delaunay <amelie.delaunay@st.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 113/146] irqchip/pdc: Setup all edge interrupts as rising edge at GIC
-Date:   Wed, 31 Oct 2018 19:05:08 -0400
-Message-Id: <20181031230541.28822-113-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 114/146] usb: dwc2: fix call to vbus supply exit routine, call it unlocked
+Date:   Wed, 31 Oct 2018 19:05:09 -0400
+Message-Id: <20181031230541.28822-114-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -53,37 +54,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lina Iyer <ilina@codeaurora.org>
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
 
-[ Upstream commit 7bae48b22c8d38c5cd50f52b6e15d134e2bb3935 ]
+[ Upstream commit 5aa678c7fd5371769efde30763fb43a43a118cd0 ]
 
-The PDC irqchp can convert a falling edge or level low interrupt to a
-rising edge or level high interrupt at the GIC. We just need to setup
-the GIC correctly. Set up the interrupt type for the IRQ_TYPE_EDGE_BOTH
-as IRQ_TYPE_EDGE_RISING at the GIC.
+dwc2_vbus_supply_exit() may call regulator_disable(). It shouldn't be
+called with interrupts disabled as it might sleep.
+This is seen with DEBUG_ATOMIC_SLEEP=y.
 
-Fixes: f55c73aef890 ("irqchip/pdc: Add PDC interrupt controller for QCOM SoCs")
-Reported-by: Evan Green <evgreen@chromium.org>
-Reviewed-by: Evan Green <evgreen@chromium.org>
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Fixes: 531ef5ebea96 ("usb: dwc2: add support for host mode external
+vbus supply")
+
+Tested-by: Artur Petrosyan <arturp@synopsys.com>
+Acked-by: Minas Harutyunyan <hminas@synopsys.com>
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/irqchip/qcom-pdc.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/dwc2/hcd.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/irqchip/qcom-pdc.c b/drivers/irqchip/qcom-pdc.c
-index b1b47a40a278..faa7d61b9d6c 100644
---- a/drivers/irqchip/qcom-pdc.c
-+++ b/drivers/irqchip/qcom-pdc.c
-@@ -124,6 +124,7 @@ static int qcom_pdc_gic_set_type(struct irq_data *d, unsigned int type)
- 		break;
- 	case IRQ_TYPE_EDGE_BOTH:
- 		pdc_type = PDC_EDGE_DUAL;
-+		type = IRQ_TYPE_EDGE_RISING;
- 		break;
- 	case IRQ_TYPE_LEVEL_HIGH:
- 		pdc_type = PDC_LEVEL_HIGH;
+diff --git a/drivers/usb/dwc2/hcd.c b/drivers/usb/dwc2/hcd.c
+index 2bd6e6bfc241..befaf1e9d98a 100644
+--- a/drivers/usb/dwc2/hcd.c
++++ b/drivers/usb/dwc2/hcd.c
+@@ -4482,7 +4482,9 @@ static int _dwc2_hcd_suspend(struct usb_hcd *hcd)
+ 		hprt0 |= HPRT0_SUSP;
+ 		hprt0 &= ~HPRT0_PWR;
+ 		dwc2_writel(hsotg, hprt0, HPRT0);
++		spin_unlock_irqrestore(&hsotg->lock, flags);
+ 		dwc2_vbus_supply_exit(hsotg);
++		spin_lock_irqsave(&hsotg->lock, flags);
+ 	}
+ 
+ 	/* Enter partial_power_down */
 -- 
 2.17.1
 
