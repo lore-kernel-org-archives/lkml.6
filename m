@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F3CECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF5A2C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33BA620840
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77C6F2064C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AkiPTh6C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33BA620840
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GLblx2qn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77C6F2064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729756AbeKAIIa (ORCPT
+        id S1729772AbeKAIIb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:08:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57458 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:08:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729698AbeKAII3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:08:29 -0400
+        id S1729736AbeKAIIa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:08:30 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E68E020838;
-        Wed, 31 Oct 2018 23:08:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A527120821;
+        Wed, 31 Oct 2018 23:08:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027298;
-        bh=GGGEfhsOsU3Hk4LjJnuxZidhrcXZqqGEWz8tXk3Z4YM=;
+        s=default; t=1541027299;
+        bh=KPiJvz4He0AwSZ0ySKEL1Gu0R0Z7OVpxUWh1vKcO0so=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AkiPTh6CowQKQTOkWasysNGW71PvMRNzUNYkNfnfTtHzpwYDBjh28NP3SwO3VBJpR
-         E5UhOu4MgDOpgxj4XRNaYkAWd55Yv4J3YtvE5FtvDShu+wutdAxC0gWBZdz3xpueSB
-         ETtLM0Ju6K5g1yyifSgkyTiEBqFgwkKZVwn3QbLs=
+        b=GLblx2qnkcP3E2hz/x67svkc7hknNM/FaLOw06Iv3GDaqhsl2I98FlHb4XVf23E6L
+         9KQQgS7oatpgbJW10KKMvB/ZSuj8AKwZ+Ln9FvcKIx94SZcFE6UZrOrn1UIGfWor9a
+         BNG6ZTFiXY1P3NITVUOwVBa29zYNXwwXIyhcflN8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Luca Coelho <luciano.coelho@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 026/126] iwlwifi: mvm: check for n_profiles validity in EWRD ACPI
-Date:   Wed, 31 Oct 2018 19:06:14 -0400
-Message-Id: <20181031230754.29029-26-sashal@kernel.org>
+Cc:     Lubomir Rintel <lkundrak@v3.sk>, Borislav Petkov <bp@suse.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        x86-ml <x86@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 027/126] x86/olpc: Indicate that legacy PC XO-1 platform should not register RTC
+Date:   Wed, 31 Oct 2018 19:06:15 -0400
+Message-Id: <20181031230754.29029-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -52,45 +53,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luca Coelho <luciano.coelho@intel.com>
+From: Lubomir Rintel <lkundrak@v3.sk>
 
-[ Upstream commit 2e1976bb75263fbad918e82184b16a23bd721546 ]
+[ Upstream commit d92116b800fb79a72ad26121f5011f6aa3ad94c2 ]
 
-When reading the profiles from the EWRD table in ACPI, we loop over
-the data and set it into our internal table.  We use the number of
-profiles specified in ACPI without checking its validity, so if the
-ACPI table is corrupted and the number is larger than our array size,
-we will try to make an out-of-bounds access.
+On OLPC XO-1, the RTC is discovered via device tree from the arch
+initcall. Don't let the PC platform register another one from its device
+initcall, it's not going to work:
 
-Fix this by making sure the value specified in the ACPI table is
-valid.
+  sysfs: cannot create duplicate filename '/devices/platform/rtc_cmos'
+  CPU: 0 PID: 1 Comm: swapper Not tainted 4.19.0-rc6 #12
+  Hardware name: OLPC XO/XO, BIOS OLPC Ver 1.00.01 06/11/2014
+  Call Trace:
+   dump_stack+0x16/0x18
+   sysfs_warn_dup+0x46/0x58
+   sysfs_create_dir_ns+0x76/0x9b
+   kobject_add_internal+0xed/0x209
+   ? __schedule+0x3fa/0x447
+   kobject_add+0x5b/0x66
+   device_add+0x298/0x535
+   ? insert_resource_conflict+0x2a/0x3e
+   platform_device_add+0x14d/0x192
+   ? io_delay_init+0x19/0x19
+   platform_device_register+0x1c/0x1f
+   add_rtc_cmos+0x16/0x31
+   do_one_initcall+0x78/0x14a
+   ? do_early_param+0x75/0x75
+   kernel_init_freeable+0x152/0x1e0
+   ? rest_init+0xa2/0xa2
+   kernel_init+0x8/0xd5
+   ret_from_fork+0x2e/0x38
+  kobject_add_internal failed for rtc_cmos with -EEXIST, don't try to
+    register things with the same name in the same directory.
+  platform rtc_cmos: registered platform RTC device (no PNP device found)
 
-Fixes: 6996490501ed ("iwlwifi: mvm: add support for EWRD (Dynamic SAR) ACPI table")
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+CC: "H. Peter Anvin" <hpa@zytor.com>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: x86-ml <x86@kernel.org>
+Link: http://lkml.kernel.org/r/20181004160808.307738-1-lkundrak@v3.sk
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/fw.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/x86/platform/olpc/olpc-xo1-rtc.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-index 866c91c923be..dd674dcf1a0a 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-@@ -669,8 +669,12 @@ static int iwl_mvm_sar_get_ewrd_table(struct iwl_mvm *mvm)
- 	enabled = !!(wifi_pkg->package.elements[1].integer.value);
- 	n_profiles = wifi_pkg->package.elements[2].integer.value;
+diff --git a/arch/x86/platform/olpc/olpc-xo1-rtc.c b/arch/x86/platform/olpc/olpc-xo1-rtc.c
+index a2b4efddd61a..8e7ddd7e313a 100644
+--- a/arch/x86/platform/olpc/olpc-xo1-rtc.c
++++ b/arch/x86/platform/olpc/olpc-xo1-rtc.c
+@@ -16,6 +16,7 @@
  
--	/* in case of BIOS bug */
--	if (n_profiles <= 0) {
-+	/*
-+	 * Check the validity of n_profiles.  The EWRD profiles start
-+	 * from index 1, so the maximum value allowed here is
-+	 * ACPI_SAR_PROFILES_NUM - 1.
-+	 */
-+	if (n_profiles <= 0 || n_profiles >= ACPI_SAR_PROFILE_NUM) {
- 		ret = -EINVAL;
- 		goto out_free;
- 	}
+ #include <asm/msr.h>
+ #include <asm/olpc.h>
++#include <asm/x86_init.h>
+ 
+ static void rtc_wake_on(struct device *dev)
+ {
+@@ -75,6 +76,8 @@ static int __init xo1_rtc_init(void)
+ 	if (r)
+ 		return r;
+ 
++	x86_platform.legacy.rtc = 0;
++
+ 	device_init_wakeup(&xo1_rtc_device.dev, 1);
+ 	return 0;
+ }
 -- 
 2.17.1
 
