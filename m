@@ -2,103 +2,135 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB85BECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C51C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:24:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F9822084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:24:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27E0D20847
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:24:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ae2nWRaW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F9822084A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uNBzINul"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27E0D20847
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731594AbeKAIY2 (ORCPT
+        id S1731567AbeKAIYm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:24:28 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:42080 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729429AbeKAIY1 (ORCPT
+        Thu, 1 Nov 2018 04:24:42 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33849 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731229AbeKAIKr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:24:27 -0400
-Received: by mail-qt1-f193.google.com with SMTP id z20-v6so19177919qti.9;
-        Wed, 31 Oct 2018 16:24:11 -0700 (PDT)
+        Thu, 1 Nov 2018 04:10:47 -0400
+Received: by mail-lf1-f67.google.com with SMTP id n26-v6so12960357lfl.1;
+        Wed, 31 Oct 2018 16:10:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=jstt/NuaoXs95PZH7TPaxy0ZuXgof9oFVKJ51mpMNC4=;
-        b=Ae2nWRaWGWjD2RV3tBi6ThvDV+dSFtjEN9plfOVZjQy7c3RHO63QRaVvUQbbn9QhEa
-         OlK+CmXYg/lC+Sp7XTuuUEO0iz8/Z+kLCEh/wsNTtWkB51xqoQtSOH/zZ+LfBpXL+BP4
-         Sttkc6d88AFZv8Pv79lWYWEJq0tuJOih8o8BLLNWry/Bcx8AYqmjZMY3G5LoIVAAflod
-         DS0awKMhTNxpk7QiFVAa73XVv9KtxXt+juj9Nvhact7VzOOhsnqDhO4DZ++XXt5gyMlp
-         +XYjGLwK6P0CBObdzugnSFhqJU//D0qXxv8BnZn7Jzyco6WrONWLVht/VZuqz36fEi27
-         76xQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=bYvSjIaIsPqm0El1wWSvP8KsufjC/oEwOQPYiVRHspc=;
+        b=uNBzINulDQi6bkHaqZ/jJmLA6O8ppB1Chie3RRl6cDZjNCc2opxtV//u6TJabrAjDO
+         hMUXnrrWSMLAwezRpxNto5dgQstx1KWHCPUtVNt9iTkJqJDi4J+Xe2V5hR89zldgBfhC
+         csJbppMR6ETBaGRns5zLoqy7Hq2FhIrQDT6sdSy2OGwddkCw2Gfh+e/eHSS2Ozco4y01
+         vDEl/ilE6y2oQ63lbzPyrT+C0QbKBYpKt7AMuuWwrvRK9GWa0C7p96zoulDj44RGsXTH
+         wNk3EyYVdR/Gs1DWG9itlgLR9hz7fwphGS8mUL3L1n1gG6eiedDY7WIm9NZ1FN6VTCJR
+         2xlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=jstt/NuaoXs95PZH7TPaxy0ZuXgof9oFVKJ51mpMNC4=;
-        b=RzwH9SdIZniN0EDIi08fcSKXuRGab1sx88sXEsY4hobz4yZxWa0C2vYUHl763nbWi4
-         P5QjLvk/Q5gnc9jfb+ptLRo3NX3Sl7RppHTPiDBTaO5Ep1/cCkSxJuGAnr2fZ6Vyr6gt
-         s+QV1cMIEqPREbfyi8Oo9lg3yWMmJJC4CUKJY6L6bBlx7cizH3nSsSCg7GrYczvN2Fkw
-         5Y2nClX+7OvahOkTk/PG9TvyfX6LHX7mLqXTUh53tcWOO3w6jtqZKvzAoHUrMA0pB2cv
-         uHrs+cU88T35Cbll73LCM9Vhk61QwHnFsIrWRtiETa2r/eamv+iida5UktOvgvKohanV
-         VENg==
-X-Gm-Message-State: AGRZ1gK13IrP6tkkAEx2tQDkU9D6gHCNGLNtuj0pZerVlDXfcbmOuWei
-        WCaVJzc5trwHs9Samitcvhc=
-X-Google-Smtp-Source: AJdET5cKDIoDb+38c26rewjmEMqRN+Uig6yIvHBLYNvWHyGigez01SMP1I3htKy4yZ/vLa/rgTHe7Q==
-X-Received: by 2002:ac8:50b:: with SMTP id u11-v6mr4628570qtg.366.1541028251002;
-        Wed, 31 Oct 2018 16:24:11 -0700 (PDT)
-Received: from WindFlash ([179.159.21.48])
-        by smtp.gmail.com with ESMTPSA id 88-v6sm2972381qte.6.2018.10.31.16.24.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 31 Oct 2018 16:24:06 -0700 (PDT)
-Message-ID: <16b6518d7b36787e1813d62336b661bf603d54b2.camel@gmail.com>
-Subject: Re: [PATCH v3 4/5] modpost: Changes parameter name to avoid
- shadowing.
-From:   Leonardo Bras <leobras.c@gmail.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     lkcamp@lists.libreplanetbr.org, Borislav Petkov <bp@alien8.de>,
-        David.Laight@aculab.com, Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, helen@koikeco.de,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Wed, 31 Oct 2018 20:24:01 -0300
-In-Reply-To: <CAK7LNAQzgdFPpwHEtfDazLd2jAhNy8=f_4mvOQMWfOWCb07E1Q@mail.gmail.com>
-References: <20181024040354.24879-1-leobras.c@gmail.com>
-         <20181024040354.24879-5-leobras.c@gmail.com>
-         <CAK7LNAQzgdFPpwHEtfDazLd2jAhNy8=f_4mvOQMWfOWCb07E1Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bYvSjIaIsPqm0El1wWSvP8KsufjC/oEwOQPYiVRHspc=;
+        b=oVyv+/VATxZi2bNr5ODilo2mxw78yaGQMsJlz+dMZ9n9Zm26uMsN+Uc7Uc4ncGc4Yf
+         VVXdI3k9ml9ZUzT9ft2FKvQskcetGB4XijhoK/KY5avNqxGYJv8mfc9mSC4RfX1c8jG5
+         DubcOVzp3bxP+TRCKBxVpeeiCLEe0WOe7ry5kIXia6Lu0qmpyjzkWACt6/DGttcbv+FE
+         L4z496i7f21Ul+BZuvi0Pjo7/R7hBOCIb92AYkkn1sV9n267XOVXiLACL+oWHkZ3eSgG
+         8eu/42frC67bnOdx4jrfBim+T8ZdtYtGMJSBapZESq2k7p1qiR+VpFniQQv83Mi1rlnp
+         XfYw==
+X-Gm-Message-State: AGRZ1gJl3qPs6Iev00KVOxE0mkY8JT6WX2kr+KeCxlQnInniF77t9AC0
+        lkc4bpj3MspqPwd6Dzrf5rE=
+X-Google-Smtp-Source: AJdET5d+pgCrny9FrLo89lL5MKtLMx0Ce00NcYH9Al+J7eP+RGQ/olbAcOfwyGhZPPSRIbX3sLkfJg==
+X-Received: by 2002:a19:200b:: with SMTP id g11mr1281107lfg.58.1541027433478;
+        Wed, 31 Oct 2018 16:10:33 -0700 (PDT)
+Received: from [192.168.10.160] (91-159-62-242.elisa-laajakaista.fi. [91.159.62.242])
+        by smtp.gmail.com with ESMTPSA id e14-v6sm672120ljl.43.2018.10.31.16.10.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Oct 2018 16:10:32 -0700 (PDT)
+Subject: Re: [PATCH 10/17] prmem: documentation
+To:     Andy Lutomirski <luto@amacapital.net>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Kees Cook <keescook@chromium.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
+ <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
+ <20181030175814.GB10491@bombadil.infradead.org> <20181030182841.GE7343@cisco>
+ <20181030192021.GC10491@bombadil.infradead.org>
+ <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com>
+ <20181030213557.GE10491@bombadil.infradead.org>
+ <CALCETrW1FcT88u0QY9k_PMOeZj0G8H6KNb5Bnreo-12NvmmCEQ@mail.gmail.com>
+ <20181031100237.GN744@hirez.programming.kicks-ass.net>
+ <659CFC78-22BF-492B-B2E4-B8E89AA08446@amacapital.net>
+ <20181031210032.GA3159@hirez.programming.kicks-ass.net>
+ <2E29C35B-3F98-473D-A874-0D9B9B15B399@amacapital.net>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <4124995b-4363-9b37-19b1-1879bf04978b@gmail.com>
+Date:   Thu, 1 Nov 2018 01:10:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <2E29C35B-3F98-473D-A874-0D9B9B15B399@amacapital.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em seg, 2018-10-29 às 01:42 +0900, Masahiro Yamada escreveu:
-> On Wed, Oct 24, 2018 at 1:05 PM Leonardo Bras <leobras.c@gmail.com>
-> wrote:
-> > Changes the parameter name to avoid shadowing a variable.
-> > 
-> > Signed-off-by: Leonardo Bras <leobras.c@gmail.com>
+
+
+On 01/11/2018 00:57, Andy Lutomirski wrote:
 > 
-> For this one, I'd rather like to see code refactoring
-> than renaming the variable.
 > 
-> I will take a closer look.
+>> On Oct 31, 2018, at 2:00 PM, Peter Zijlstra <peterz@infradead.org> wrote:
 
 
-What do you suggest to refactor?
-I volunteer for this work.
 
-Leonardo Bras
+>> I _think_ the use-case for atomics is updating the reference counts of
+>> objects that are in this write-rare domain. But I'm not entirely clear
+>> on that myself either. I just really want to avoid duplicating that
+>> stuff.
+> 
+> Sounds nuts. Doing a rare-write is many hundreds of cycles at best. Using that for a reference count sounds wacky.
+> 
+> Can we see a *real* use case before we over complicate the API?
+> 
 
+
+Does patch #14 of this set not qualify? ima_htable.len ?
+
+https://www.openwall.com/lists/kernel-hardening/2018/10/23/20
+
+--
+igor
