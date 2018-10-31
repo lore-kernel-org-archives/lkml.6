@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 380E1C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E18BDC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F370F20821
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A882C2082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HGRO94Vb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F370F20821
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mttwqAwh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A882C2082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728129AbeKAIGf (ORCPT
+        id S1728148AbeKAIGh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:06:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53560 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:06:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727984AbeKAIGe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:06:34 -0400
+        id S1727984AbeKAIGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:06:36 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B465B20843;
-        Wed, 31 Oct 2018 23:06:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E25D20847;
+        Wed, 31 Oct 2018 23:06:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027183;
-        bh=SYlUz+5LaDSURpKfbJR8lBKb/o70zFxoVbwW6Og2P3A=;
+        s=default; t=1541027185;
+        bh=Mw8EC2MR8S4zEcuXVC4fE3B8YWowHW/bBhF21Mgs6hY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HGRO94VblgUIcJ/pdX03BRpFN4bNzj/P7YztXBPVEVnY1MA61leRr5v1Y8E74au2w
-         gU4rlj6Q0ObhEih0vh3hTn9Veu7p+pE7dBvzIOXDahkxKUCIAH/hbyoy8/kv/Zu8RX
-         fHuq/mYmtziRw+WGT/R6iHquQlOHlX89RGXDIbUg=
+        b=mttwqAwhG+dN/SDaNOcPpwNafoP34sz/LTge02XevpWaqxuES1nzKQ4AdWCNcRwkv
+         dm83Yr01gzwAud3aGxZmyMrBwB64o9JhXeLCuiSB4mF7Zr1afYOwpFJAt+ZBOh7LR8
+         S5mMktFo4Oe9wZPsKWjNBAkUVzPOSlzOiRD02RgE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Yunsheng Lin <linyunsheng@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 045/146] net: hns3: Fix for packet buffer setting bug
-Date:   Wed, 31 Oct 2018 19:04:00 -0400
-Message-Id: <20181031230541.28822-45-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 048/146] efi/x86: Call efi_parse_options() from efi_main()
+Date:   Wed, 31 Oct 2018 19:04:03 -0400
+Message-Id: <20181031230541.28822-48-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -55,78 +53,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit 996ff91840eb6f288826e472685abde78bac20ea ]
+[ Upstream commit c33ce984435bb6142792802d75513a71e55d1969 ]
 
-The hardware expects a unit of 128 bytes when setting
-packet buffer. When calculating the packet buffer size,
-hclge_rx_buffer_calc does not round up the size as a unit
-of 128 byte, which may casue packet lost problem when stress
-testing.
+Before this commit we were only calling efi_parse_options() from
+make_boot_params(), but make_boot_params() only gets called if the
+kernel gets booted directly as an EFI executable. So when booted through
+e.g. grub we ended up not parsing the commandline in the boot code.
 
-This patch fixes it by rounding up packet size when calculating.
+This makes the drivers/firmware/efi/libstub code ignore the "quiet"
+commandline argument resulting in the following message being printed:
+"EFI stub: UEFI Secure Boot is enabled."
 
-Fixes: 46a3df9f9718 ("net: hns3: Add HNS3 Acceleration Engine & Compatibility Layer Support")
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Despite the quiet request. This commits adds an extra call to
+efi_parse_options() to efi_main() to make sure that the options are
+always processed. This fixes quiet not working.
+
+This also fixes the libstub code ignoring nokaslr and efi=nochunk.
+
+Reported-by: Peter Robinson <pbrobinson@redhat.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ arch/x86/boot/compressed/eboot.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 8577dfc799ad..023910abc831 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -1657,11 +1657,13 @@ static int hclge_tx_buffer_calc(struct hclge_dev *hdev,
- static int hclge_rx_buffer_calc(struct hclge_dev *hdev,
- 				struct hclge_pkt_buf_alloc *buf_alloc)
- {
--	u32 rx_all = hdev->pkt_buf_size;
-+#define HCLGE_BUF_SIZE_UNIT	128
-+	u32 rx_all = hdev->pkt_buf_size, aligned_mps;
- 	int no_pfc_priv_num, pfc_priv_num;
- 	struct hclge_priv_buf *priv;
- 	int i;
+diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
+index 1458b1700fc7..8b4c5e001157 100644
+--- a/arch/x86/boot/compressed/eboot.c
++++ b/arch/x86/boot/compressed/eboot.c
+@@ -738,6 +738,7 @@ efi_main(struct efi_config *c, struct boot_params *boot_params)
+ 	struct desc_struct *desc;
+ 	void *handle;
+ 	efi_system_table_t *_table;
++	unsigned long cmdline_paddr;
  
-+	aligned_mps = round_up(hdev->mps, HCLGE_BUF_SIZE_UNIT);
- 	rx_all -= hclge_get_tx_buff_alloced(buf_alloc);
+ 	efi_early = c;
  
- 	/* When DCB is not supported, rx private
-@@ -1680,13 +1682,13 @@ static int hclge_rx_buffer_calc(struct hclge_dev *hdev,
- 		if (hdev->hw_tc_map & BIT(i)) {
- 			priv->enable = 1;
- 			if (hdev->tm_info.hw_pfc_map & BIT(i)) {
--				priv->wl.low = hdev->mps;
--				priv->wl.high = priv->wl.low + hdev->mps;
-+				priv->wl.low = aligned_mps;
-+				priv->wl.high = priv->wl.low + aligned_mps;
- 				priv->buf_size = priv->wl.high +
- 						HCLGE_DEFAULT_DV;
- 			} else {
- 				priv->wl.low = 0;
--				priv->wl.high = 2 * hdev->mps;
-+				priv->wl.high = 2 * aligned_mps;
- 				priv->buf_size = priv->wl.high;
- 			}
- 		} else {
-@@ -1718,11 +1720,11 @@ static int hclge_rx_buffer_calc(struct hclge_dev *hdev,
+@@ -755,6 +756,15 @@ efi_main(struct efi_config *c, struct boot_params *boot_params)
+ 	else
+ 		setup_boot_services32(efi_early);
  
- 		if (hdev->tm_info.hw_pfc_map & BIT(i)) {
- 			priv->wl.low = 128;
--			priv->wl.high = priv->wl.low + hdev->mps;
-+			priv->wl.high = priv->wl.low + aligned_mps;
- 			priv->buf_size = priv->wl.high + HCLGE_DEFAULT_DV;
- 		} else {
- 			priv->wl.low = 0;
--			priv->wl.high = hdev->mps;
-+			priv->wl.high = aligned_mps;
- 			priv->buf_size = priv->wl.high;
- 		}
- 	}
++	/*
++	 * make_boot_params() may have been called before efi_main(), in which
++	 * case this is the second time we parse the cmdline. This is ok,
++	 * parsing the cmdline multiple times does not have side-effects.
++	 */
++	cmdline_paddr = ((u64)hdr->cmd_line_ptr |
++			 ((u64)boot_params->ext_cmd_line_ptr << 32));
++	efi_parse_options((char *)cmdline_paddr);
++
+ 	/*
+ 	 * If the boot loader gave us a value for secure_boot then we use that,
+ 	 * otherwise we ask the BIOS.
 -- 
 2.17.1
 
