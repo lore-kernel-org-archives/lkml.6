@@ -2,87 +2,107 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E89F6C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:45:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C691C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:46:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A475220685
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:45:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 039B320685
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:46:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cwnBwpEy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A475220685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dz6C5jQG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 039B320685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728136AbeJaSnU (ORCPT
+        id S1728229AbeJaSnr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 14:43:20 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:41849 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727966AbeJaSnU (ORCPT
+        Wed, 31 Oct 2018 14:43:47 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:46472 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727950AbeJaSnr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 14:43:20 -0400
-Received: by mail-lj1-f195.google.com with SMTP id z80-v6so8131883ljb.8
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 02:45:56 -0700 (PDT)
+        Wed, 31 Oct 2018 14:43:47 -0400
+Received: by mail-ua1-f68.google.com with SMTP id z8so5641146uap.13
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 02:46:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Yh+xcyDuNaQcm5dvReosPndqR3uzujxkGzE/xt6GmTo=;
-        b=cwnBwpEyR8enSkYsnDkn5PtKd9TFvUFKXT5EncA/iX/XpT/nSfbsnbgIOjWWhQ7MR8
-         ypZ7o1eiBzSxAo9gG8VMHLjE36hx7La9knp0T/SvaGkCW7jZgJyeyhsqdiRnK1vskiFb
-         iwHUrnfRen462UpxwhDKZclQdxVP/9IZJNl0Y=
+        bh=1FSkhAaaRYQ810JuigKdPIuYFjFvfKU35f3b681oNGE=;
+        b=Dz6C5jQGdkscY2t9rjjvBqtZt5azT0AQ332qFsrw2ScnkKsiUNPBtVWo6FSEmAb1nl
+         3KEUcKsj4oZVi4GvHz3sCSJjvqeqCkF1u0g/33qYk5UjWbc82pzXju/8TldE2AWoPptO
+         wU5GNKoV6myqpPypTzTdSFnylAZkrd13wB4wYFkp1+JS1/3b9uPtPGjChyRAt9IfYmiz
+         5CeHygDtkNtOhh0ddy/EFVVMIKHmiAx1UNpJIuGfBDbsFLVEfCGUpW+BJJkwxnbuyaPt
+         HMeYWOg12vJGqIQBHeROncJ0Kbket+gG0FL5tCq/q5qfGyhbK2mkPQGAK8o14KKPRGod
+         L/Tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Yh+xcyDuNaQcm5dvReosPndqR3uzujxkGzE/xt6GmTo=;
-        b=Oc6HU6l4FxN20WVVOm3nGiQhJXgE5vdZ1wyD2Q96+4L9u1TnbVB0A0yIRJ9PdDM1WE
-         m6ImfEDAWybCTDvsJTjxwYgZP7Pb8H/D0q1RMjCDlp76dbcBNG/XB7hD5HX4ELdQbdwZ
-         DPAc3vJKrBINEorHipm0qNqQ9/nLt7luE9UHXzxIrLhhRCiVhZSVpzOO4b4C9unbmrwx
-         0AXqQOOBNiSzFcTWmJIP72t3XDdai4TcYvG5OXGRazsfUul4xQmhMRsQZHSRt57a0o1h
-         5puDSXOCzMhDvWXltsS2ROK6wg4hD7Al+oedRMU0SL/a5j/f/wGdmic6yeIzpm2NDyq9
-         bNMg==
-X-Gm-Message-State: AGRZ1gJFLvkOz3+w1Wa67RubBonub6GNjK2A3SwEcG2n8h7R3RFkR8Mz
-        JSamzVWWz3ARjH6mVeiCCTTDzfiSSc0MdDGqiNr6fQ==
-X-Google-Smtp-Source: AJdET5cwslk2PyxnSQ0X1nDX6Ia/1G70GN0FXouJAJO+7xk5wIEH8MP6XWWY2X3gmryrbH9MwhrFgjKTvmlP0Q38W0Y=
-X-Received: by 2002:a2e:9849:: with SMTP id e9-v6mr1539108ljj.9.1540979155807;
- Wed, 31 Oct 2018 02:45:55 -0700 (PDT)
+        bh=1FSkhAaaRYQ810JuigKdPIuYFjFvfKU35f3b681oNGE=;
+        b=bvP7+k1KgH/BCUZAkXsCdo+iBg9F39m8qRF0o1fEaL75h3Fq4DoKshNYnY3o291pog
+         zxErOnkA1TLzd4dLKf39Wthsb2IyQqHNbzC+xQT0k169T0QET66gMxCW1oB+toCu+Y8X
+         Zf0DGVAi0KzQdnvqTO8hs/pmqGsTosZO8Bu2xXKBnmuEKdcyMualOiOv0A+h5JYzY2Ch
+         /NvzSAoSW2ttQZYx1CKi5CETpW9Wz3gnh3PXC/o4Ti/rtZ1aCb1AF1VD2pNmwbtLBczL
+         fApfVSnV7ewZIfnGbKec+GzmownYRtmHIE1735Tydq7jMfGG+mKmYZJKpLepSXqkCHqr
+         iYPg==
+X-Gm-Message-State: AGRZ1gKMWCGpNBoHWBlkBinHU+MW86gnjxxnbE5MGue5MapknthSTuHq
+        Za3ItidyAZHUHNh9Po9Zlg4gpHXUv49mOwZRbFA=
+X-Google-Smtp-Source: AJdET5eIsNKNOsErzbX7xRwhYdVIZ3ALB8y5qrnGt9Aw4CqoDIvSD4gOGE8dxkku4ZdkDuaJkB2F9yaGKJ+deMQCqeY=
+X-Received: by 2002:ab0:7055:: with SMTP id v21mr980814ual.1.1540979183303;
+ Wed, 31 Oct 2018 02:46:23 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181023160319.27003-1-jbrunet@baylibre.com>
-In-Reply-To: <20181023160319.27003-1-jbrunet@baylibre.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 31 Oct 2018 10:45:44 +0100
-Message-ID: <CACRpkdbXP2s7gEUUaJ8cUgS1V_8SejWUVTkjPdZDZ7W9Vw7tqQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: meson: fix pinconf bias disable
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20181025183739.9375-1-robert.foss@collabora.com>
+In-Reply-To: <20181025183739.9375-1-robert.foss@collabora.com>
+From:   Emil Velikov <emil.l.velikov@gmail.com>
+Date:   Wed, 31 Oct 2018 09:45:05 +0000
+Message-ID: <CACvgo50dph07XsrbeNJ_WcL0cTuiPG-viX9oczaVbsP9wKb9xw@mail.gmail.com>
+Subject: Re: [PATCH 0/5] virgl: fence fd support
+To:     Robert Foss <robert.foss@collabora.com>
+Cc:     David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
+        ML dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:VIRTIO GPU DRIVER" 
+        <virtualization@lists.linux-foundation.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Emil Velikov <emil.velikov@collabora.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 6:03 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+Hi Rob,
 
-> If a bias is enabled on a pin of an Amlogic SoC, calling .pin_config_set()
-> with PIN_CONFIG_BIAS_DISABLE will not disable the bias. Instead it will
-> force a pull-down bias on the pin.
+On Thu, 25 Oct 2018 at 19:37, Robert Foss <robert.foss@collabora.com> wrote:
 >
-> Instead of the pull type register bank, the driver should access the pull
-> enable register bank.
+> This series implements fence support for drm/virtio and
+> has been tested using qemu, kmscube and the below branches.
 >
-> Fixes: 6ac730951104 ("pinctrl: add driver for Amlogic Meson SoCs")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> Rob Herring solved a reference counting issue and
+> suggested a context check for the execbuf ioctl, his
+> changes have been included in the below commits to
+> keep the tree working at all commits.
+>
+I've put forward some mostly minor suggestions.
+The patches look pretty good but there's one piece missing:
 
-Patch applied for fixes with Neil's ACK.
+>
+> The linux series can be found here:
+> https://gitlab.collabora.com/robertfoss/linux/commits/virtio_fences_v3
+>
+> As for mesa, the branch can be found here:
+> https://gitlab.collabora.com/robertfoss/mesa/commits/virtio_fences_v3
+>
+Namely: This should be out for review. The kernel and userspace side
+of IOCTLs should happen roughly at the same time.
+Otherwise, there's a huge chance of merging one side of the component,
+while the other needs architectural changes.
 
-Yours,
-Linus Walleij
+HTH
+Emil
