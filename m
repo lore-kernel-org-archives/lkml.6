@@ -2,103 +2,110 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9708C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:07:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0201BC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:08:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98EEB205F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:07:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98EEB205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B627920821
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:08:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gg/Hcy5+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B627920821
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729506AbeKAAFs convert rfc822-to-8bit (ORCPT
+        id S1729570AbeKAAHJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 20:05:48 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38114 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729445AbeKAAFs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 20:05:48 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 63FD181DFE;
-        Wed, 31 Oct 2018 15:07:24 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8B66F6107F;
-        Wed, 31 Oct 2018 15:07:22 +0000 (UTC)
-Subject: Re: [PATCH v1 2/2] x86/hyperv: make HvNotifyLongSpinWait hypercall
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Yi Sun <yi.y.sun@linux.intel.com>
-Cc:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, tglx@linutronix.de, chao.p.peng@intel.com,
-        chao.gao@intel.com, isaku.yamahata@intel.com,
-        michael.h.kelley@microsoft.com, tianyu.lan@microsoft.com,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>
-References: <1539954835-34035-3-git-send-email-yi.y.sun@linux.intel.com>
- <bab010e9-a122-95f1-d8cc-790e56c72716@suse.com>
- <20181022015342.GK11769@yi.y.sun>
- <2e0d62cb-b706-a5b4-65f7-982a913fb32b@suse.com>
- <ba75b994-c1a6-6e91-6499-b9af90636fcf@redhat.com>
- <20181022171516.GH3117@worktop.programming.kicks-ass.net>
- <20181023025740.GL11769@yi.y.sun>
- <20181023085127.GG3109@worktop.c.hoisthospitality.com>
- <20181023093328.GA15378@yi.y.sun> <20181031015417.GC15378@yi.y.sun>
- <20181031141030.GB13219@hirez.programming.kicks-ass.net>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <fc0bf563-b1ae-4d4b-1341-11c44b759b8a@redhat.com>
-Date:   Wed, 31 Oct 2018 11:07:22 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <20181031141030.GB13219@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 31 Oct 2018 15:07:24 +0000 (UTC)
+        Wed, 31 Oct 2018 20:07:09 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:39505 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728857AbeKAAHJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 20:07:09 -0400
+Received: by mail-lf1-f68.google.com with SMTP id n18so3575606lfh.6
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 08:08:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=e5frE0WJ4d8tX8keWMYH6dLS7V4PumD0YzkgOc87U20=;
+        b=Gg/Hcy5+noTBg1aPXPBql0TGm7aVmka1GfD/Vo1kGojY3HYsyfUiMfv+eIu9vjJktQ
+         Ir2zVFwFOpaV0lnm5scoV1NYnHpmMZRJxL2HyHxYIN8tDXxS/R3YDz0HRijxZfNMyeto
+         fEb7F4H9J3SApKheQiC1irCxjobJGVbzQ8E9I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=e5frE0WJ4d8tX8keWMYH6dLS7V4PumD0YzkgOc87U20=;
+        b=bW5cnA8U5bL6u/qw5CZFqZ8AmY9NjpUwDBT1HRb1qp+3RKJD3X500smSYBbZMJmdNM
+         iWjK2H64r1jj4YjsBikiLcybhyb3c3ybykVVJk3+L+bkIBXJ5LVxARXQc2IMdw0ly5fD
+         fzpM8EJjU2/+cEUppGeBa020JjovMJ928rrxkIWnzNxgauzw9rbg3nHXlYonDhwzI0OV
+         d8g4iT4hhz/NtjEghL10XGi4n0lZ8GlZOI9hCVwJ68+jIFJdldiXaSJCovp5tEjbdt0K
+         0grTqcS76ypR5XcrE+qxoO/zdy6sJ7Q8dTJGTDOgE7igx9dKgeern8wC3Czgxz+gnUtK
+         /m/A==
+X-Gm-Message-State: AGRZ1gJAK6IB6FnTGav1rDGnJb/1hmIEJB3V7Qb+XPFsfUk9mTAvVNCd
+        RYr55StLTHlkSAWgZ4KTPUKv/w==
+X-Google-Smtp-Source: AJdET5e2aEfuu9h9V0EqP2gHQwPP1MHSXWGVK52IntXUL/smNjv821MneACQUglaQOKsX9n/RypJCg==
+X-Received: by 2002:a19:d145:: with SMTP id i66mr2158515lfg.97.1540998515293;
+        Wed, 31 Oct 2018 08:08:35 -0700 (PDT)
+Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
+        by smtp.gmail.com with ESMTPSA id o72sm4281690lfg.33.2018.10.31.08.08.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 31 Oct 2018 08:08:34 -0700 (PDT)
+From:   Niklas Cassel <niklas.cassel@linaro.org>
+To:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc:     vkoul@kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
+        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] net: stmmac: Fix stmmac_mdio_reset() when building stmmac as modules
+Date:   Wed, 31 Oct 2018 16:08:10 +0100
+Message-Id: <20181031150810.16665-1-niklas.cassel@linaro.org>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/31/2018 10:10 AM, Peter Zijlstra wrote:
-> On Wed, Oct 31, 2018 at 09:54:17AM +0800, Yi Sun wrote:
->> On 18-10-23 17:33:28, Yi Sun wrote:
->>> On 18-10-23 10:51:27, Peter Zijlstra wrote:
->>>> Can you try and explain why vcpu_is_preempted() doesn't work for you?
->>> I thought HvSpinWaitInfo is used to notify hypervisor the spin number
->>> which is different with vcpu_is_preempted. So I did not consider
->>> vcpu_is_preempted.
->>>
->>> But HvSpinWaitInfo is a quite simple function and could be combined
->>> with vcpu_is_preempted together. So I think it is OK to use
->>> vcpu_is_preempted to make codes clean. I will have a try.
->> After checking codes, there is one issue to call vcpu_is_preempted.
->> There are two spin loops in qspinlock_paravirt.h. One loop in
->> 'pv_wait_node' calls vcpu_is_preempted. But another loop in
->> 'pv_wait_head_or_lock' does not call vcpu_is_preempted. It also does
->> not call any other ops of 'pv_lock_ops' in the loop. So I am afraid
->> we have to add one more ops in 'pv_lock_ops' to do this.
-> Why? Would not something like the below cure that? Waiman, can you have
-> a look at this; I always forget how that paravirt crud works.
+When building stmmac, it is only possible to select CONFIG_DWMAC_GENERIC,
+or any of the glue drivers, when CONFIG_STMMAC_PLATFORM is set.
+The only exception is CONFIG_STMMAC_PCI.
 
-There are two major reasons why the vcpu_is_preempt() test isn't done at
-pv_wait_head_or_lock(). First of all, we may not have a valid prev
-pointer after all if it is the first one to enter the queue while the
-lock is busy. Secondly, because of lock stealing, the cpu number pointed
-by a valid prev pointer may not be the actual cpu that is currently
-holding the lock. Another minor reason is that we want to minimize the
-lock transfer latency and so don't want to sleep too early while waiting
-at the queue head.
+When calling of_mdiobus_register(), it will call our ->reset()
+callback, which is set to stmmac_mdio_reset().
 
-Cheers,
-Longman
+Most of the code in stmmac_mdio_reset() is protected by a
+"#if defined(CONFIG_STMMAC_PLATFORM)", which will evaluate
+to false when CONFIG_STMMAC_PLATFORM=m.
+
+Because of this, the phy reset gpio will only be pulled when
+stmmac is built as built-in, but not when built as modules.
+
+Fix this by using "#if IS_ENABLED()" instead of "#if defined()".
+
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+index b72ef171477e..bdd351597b55 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+@@ -243,7 +243,7 @@ static int stmmac_mdio_write(struct mii_bus *bus, int phyaddr, int phyreg,
+  */
+ int stmmac_mdio_reset(struct mii_bus *bus)
+ {
+-#if defined(CONFIG_STMMAC_PLATFORM)
++#if IS_ENABLED(CONFIG_STMMAC_PLATFORM)
+ 	struct net_device *ndev = bus->priv;
+ 	struct stmmac_priv *priv = netdev_priv(ndev);
+ 	unsigned int mii_address = priv->hw->mii.addr;
+-- 
+2.17.2
 
