@@ -2,656 +2,129 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31386C6786F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 03:25:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A219FC6786F
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 03:28:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB76920821
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 03:25:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB76920821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 030CD20821
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 03:28:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ukcOrHEV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 030CD20821
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jms.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729173AbeJaMVc (ORCPT
+        id S1729064AbeJaMYv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 08:21:32 -0400
-Received: from mga06.intel.com ([134.134.136.31]:31214 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728773AbeJaMVb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 08:21:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 20:25:19 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,447,1534834800"; 
-   d="scan'208";a="82878196"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by fmsmga008.fm.intel.com with ESMTP; 30 Oct 2018 20:25:19 -0700
-Subject: [PATCH 8/8] device-dax: Add /sys/class/dax backwards compatibility
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     linux-nvdimm@lists.01.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        dave.hansen@linux.intel.com
-Date:   Tue, 30 Oct 2018 20:13:31 -0700
-Message-ID: <154095561122.3271337.123035797363130070.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <154095556915.3271337.12581429676272726902.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <154095556915.3271337.12581429676272726902.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        Wed, 31 Oct 2018 08:24:51 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:35012 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725942AbeJaMYv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 08:24:51 -0400
+Received: by mail-pl1-f196.google.com with SMTP id n4-v6so5989466plp.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 20:28:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hkiQMuZb68Bws7nm5qJb3wroH0iBRmJTrQHyerd/nO4=;
+        b=ukcOrHEVCv2LEMCZE//ejDKs7a5piuP2u4nyoWJQcmu/xXveMEECC3WuhN8BSs1TYc
+         0dXKTKHhpRZ/c7YD13HmHtFbxebdOXABl5qWgPt5k3WIu3PrmEReQ0i7YIFU2a8HDHK8
+         HPhVzrFWmKSAyDoaxX9+1aAmIMcQFIC+rJ7niHGoQo+9HxuR7NpdiKfJE6JfcAAsbzYD
+         0dks3Pv6QSOVRrNGqo/BasXMTCDyOLWk9AzIYDGdP8Bt7YVqKwwVXCCJ7Q49QIgDQ9dx
+         FCzimZViXPmStK/FVmxOGfChOF1coZ12IwaIi+wmWaQDUBHiekPieDv0Ho9sTyYpULwb
+         1OTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=hkiQMuZb68Bws7nm5qJb3wroH0iBRmJTrQHyerd/nO4=;
+        b=tQeTV6etf4dneC/oBUv/aMwtAX5GnJcdr7x7bgH8LLLaYm6DfimJzTIZqRA0IvyVSD
+         mE1w1X9FfmWCPvhghyRe1NL9UbmhKa0VvtpqnJ/DnhthI2RvffEcJv5S4nXjct+nBQz2
+         T1M6LdM7HfF+IO4eYxyZmV8oW5awghT3M80rCHR7KmJzS0Zh3TBJSfaTNhWU/KHFxVe2
+         XETs++19Alp9r0Hu7niC8De/OGkUSBrl6b1lmdQORqfxf9FSeSMRtDnTyHKWqi9kekv8
+         jf31lAkZtkTPo6bdw92kz1sGYnOVsg1wNFxLREfjZ9lMGfzYfeY6x0yjJgxhIwQTr6Il
+         +qWg==
+X-Gm-Message-State: AGRZ1gJlXLa4X9i73wJnzF0VORxC4A7UElxJaL8DpcnsC8oaxlcrE2Go
+        X02fyPEs9jQ3GAlwHdjsCPI=
+X-Google-Smtp-Source: AJdET5ekT1N4gQefzp/9Q2i4Yh1OE/2oSEa0bXUqfygddbX/1/Tx44yxD2f4cIDbdA4tf1f2mRSWLQ==
+X-Received: by 2002:a17:902:6909:: with SMTP id j9-v6mr1439240plk.221.1540956520142;
+        Tue, 30 Oct 2018 20:28:40 -0700 (PDT)
+Received: from aurora.jms.id.au ([45.124.203.15])
+        by smtp.gmail.com with ESMTPSA id b62-v6sm27195786pfa.159.2018.10.30.20.28.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 30 Oct 2018 20:28:38 -0700 (PDT)
+Received: by aurora.jms.id.au (sSMTP sendmail emulation); Wed, 31 Oct 2018 13:58:31 +1030
+From:   Joel Stanley <joel@jms.id.au>
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc:     Arnd Bergmann <arnd@arndb.de>, Kees Cook <keescook@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jinsong Ji <jji@us.ibm.com>
+Subject: [PATCH] raid6/ppc: Fix build for clang
+Date:   Wed, 31 Oct 2018 13:58:29 +1030
+Message-Id: <20181031032829.18131-1-joel@jms.id.au>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On the expectation that some environments may not upgrade libdaxctl
-(userspace component that depends on the /sys/class/dax hierarchy),
-provide a default / legacy dax_pmem_compat driver. The dax_pmem_compat
-driver implements the original /sys/class/dax sysfs layout rather than
-/sys/bus/dax. When userspace is upgraded it can blacklist this module
-and switch to the dax_pmem driver going forward.
+We cannot build these files with clang as it does not allow altivec
+instructions in assembly when -msoft-float is passed.
 
-CONFIG_DEV_DAX_PMEM_COMPAT and supporting code will be deleted according
-to the dax_pmem entry in Documentation/ABI/obsolete/.
+Jinsong Ji <jji@us.ibm.com> wrote:
+> We currently disable Altivec/VSX support when enabling soft-float.  So
+> any usage of vector builtins will break.
+>
+> Enable Altivec/VSX with soft-float may need quite some clean up work, so
+> I guess this is currently a limitation.
+>
+> Removing -msoft-float will make it work (and we are lucky that no
+> floating point instructions will be generated as well).
 
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+This is a workaround until the issue is resolved in clang.
+
+Link: https://bugs.llvm.org/show_bug.cgi?id=31177
+Link: https://github.com/ClangBuiltLinux/linux/issues/239
+Signed-off-by: Joel Stanley <joel@jms.id.au>
 ---
- Documentation/ABI/obsolete/sysfs-class-dax |   22 +++++++
- drivers/dax/Kconfig                        |   12 +++-
- drivers/dax/Makefile                       |    4 +
- drivers/dax/bus.c                          |   29 +++++++--
- drivers/dax/bus.h                          |   26 +++++++-
- drivers/dax/device.c                       |    9 ++-
- drivers/dax/pmem.c                         |   90 ----------------------------
- drivers/dax/pmem/Makefile                  |    7 ++
- drivers/dax/pmem/compat.c                  |   73 +++++++++++++++++++++++
- drivers/dax/pmem/core.c                    |   69 +++++++++++++++++++++
- drivers/dax/pmem/pmem.c                    |   40 ++++++++++++
- tools/testing/nvdimm/Kbuild                |    6 ++
- 12 files changed, 283 insertions(+), 104 deletions(-)
- create mode 100644 Documentation/ABI/obsolete/sysfs-class-dax
- delete mode 100644 drivers/dax/pmem.c
- create mode 100644 drivers/dax/pmem/Makefile
- create mode 100644 drivers/dax/pmem/compat.c
- create mode 100644 drivers/dax/pmem/core.c
- create mode 100644 drivers/dax/pmem/pmem.c
+ lib/raid6/Makefile | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/Documentation/ABI/obsolete/sysfs-class-dax b/Documentation/ABI/obsolete/sysfs-class-dax
-new file mode 100644
-index 000000000000..2cb9fc5e8bd1
---- /dev/null
-+++ b/Documentation/ABI/obsolete/sysfs-class-dax
-@@ -0,0 +1,22 @@
-+What:           /sys/class/dax/
-+Date:           May, 2016
-+KernelVersion:  v4.7
-+Contact:        linux-nvdimm@lists.01.org
-+Description:	Device DAX is the device-centric analogue of Filesystem
-+		DAX (CONFIG_FS_DAX).  It allows memory ranges to be
-+		allocated and mapped without need of an intervening file
-+		system.  Device DAX is strict, precise and predictable.
-+		Specifically this interface:
-+
-+		1/ Guarantees fault granularity with respect to a given
-+		page size (pte, pmd, or pud) set at configuration time.
-+
-+		2/ Enforces deterministic behavior by being strict about
-+		what fault scenarios are supported.
-+
-+		The /sys/class/dax/ interface enumerates all the
-+		device-dax instances in the system. The ABI is
-+		deprecated and will be removed after 2020. It is
-+		replaced with the DAX bus interface /sys/bus/dax/ where
-+		device-dax instances can be found under
-+		/sys/bus/dax/devices/
-diff --git a/drivers/dax/Kconfig b/drivers/dax/Kconfig
-index e0700bf4893a..6fc96f03920e 100644
---- a/drivers/dax/Kconfig
-+++ b/drivers/dax/Kconfig
-@@ -23,12 +23,22 @@ config DEV_DAX
- config DEV_DAX_PMEM
- 	tristate "PMEM DAX: direct access to persistent memory"
- 	depends on LIBNVDIMM && NVDIMM_DAX && DEV_DAX
-+	depends on m # until we can kill DEV_DAX_PMEM_COMPAT
- 	default DEV_DAX
- 	help
- 	  Support raw access to persistent memory.  Note that this
- 	  driver consumes memory ranges allocated and exported by the
- 	  libnvdimm sub-system.
+diff --git a/lib/raid6/Makefile b/lib/raid6/Makefile
+index 2f8b61dfd9b0..3a844e6fd01c 100644
+--- a/lib/raid6/Makefile
++++ b/lib/raid6/Makefile
+@@ -18,6 +18,21 @@ quiet_cmd_unroll = UNROLL  $@
  
--	  Say Y if unsure
-+	  Say M if unsure
+ ifeq ($(CONFIG_ALTIVEC),y)
+ altivec_flags := -maltivec $(call cc-option,-mabi=altivec)
 +
-+config DEV_DAX_PMEM_COMPAT
-+	tristate "PMEM DAX: support the deprecated /sys/class/dax interface"
-+	depends on DEV_DAX_PMEM
-+	default DEV_DAX_PMEM
-+	help
-+	  Older versions of the libdaxctl library expect to find all
-+	  device-dax instances under /sys/class/dax. If libdaxctl in
-+	  your distribution is older than v58 say M, otherwise say N.
- 
++ifdef CONFIG_CC_IS_CLANG
++# clang ppc port does not yet support -maltifec when -msoft-float is
++# enabled. A future release of clang will resolve this
++# https://bugs.llvm.org/show_bug.cgi?id=31177
++CFLAGS_REMOVE_altivec1.o  += -msoft-float
++CFLAGS_REMOVE_altivec2.o  += -msoft-float
++CFLAGS_REMOVE_altivec4.o  += -msoft-float
++CFLAGS_REMOVE_altivec8.o  += -msoft-float
++CFLAGS_REMOVE_altivec8.o  += -msoft-float
++CFLAGS_REMOVE_vpermxor1.o += -msoft-float
++CFLAGS_REMOVE_vpermxor2.o += -msoft-float
++CFLAGS_REMOVE_vpermxor4.o += -msoft-float
++CFLAGS_REMOVE_vpermxor8.o += -msoft-float
++endif
  endif
-diff --git a/drivers/dax/Makefile b/drivers/dax/Makefile
-index 658e6b9b1d74..233bbffccbe6 100644
---- a/drivers/dax/Makefile
-+++ b/drivers/dax/Makefile
-@@ -1,9 +1,9 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_DAX) += dax.o
- obj-$(CONFIG_DEV_DAX) += device_dax.o
--obj-$(CONFIG_DEV_DAX_PMEM) += dax_pmem.o
  
- dax-y := super.o
- dax-y += bus.o
--dax_pmem-y := pmem.o
- device_dax-y := device.o
-+
-+obj-y += pmem/
-diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
-index 178d76504f79..ebf9a4726f6c 100644
---- a/drivers/dax/bus.c
-+++ b/drivers/dax/bus.c
-@@ -9,6 +9,8 @@
- #include "dax-private.h"
- #include "bus.h"
- 
-+static struct class *dax_class;
-+
- static DEFINE_MUTEX(dax_bus_lock);
- 
- #define DAX_NAME_LEN 30
-@@ -310,8 +312,8 @@ static void unregister_dev_dax(void *dev)
- 	put_device(dev);
- }
- 
--struct dev_dax *devm_create_dev_dax(struct dax_region *dax_region, int id,
--		struct dev_pagemap *pgmap)
-+struct dev_dax *__devm_create_dev_dax(struct dax_region *dax_region, int id,
-+		struct dev_pagemap *pgmap, enum dev_dax_subsys subsys)
- {
- 	struct device *parent = dax_region->dev;
- 	struct dax_device *dax_dev;
-@@ -350,7 +352,10 @@ struct dev_dax *devm_create_dev_dax(struct dax_region *dax_region, int id,
- 
- 	inode = dax_inode(dax_dev);
- 	dev->devt = inode->i_rdev;
--	dev->bus = &dax_bus_type;
-+	if (subsys == DEV_DAX_BUS)
-+		dev->bus = &dax_bus_type;
-+	else
-+		dev->class = dax_class;
- 	dev->parent = parent;
- 	dev->groups = dax_attribute_groups;
- 	dev->release = dev_dax_release;
-@@ -374,7 +379,7 @@ struct dev_dax *devm_create_dev_dax(struct dax_region *dax_region, int id,
- 
- 	return ERR_PTR(rc);
- }
--EXPORT_SYMBOL_GPL(devm_create_dev_dax);
-+EXPORT_SYMBOL_GPL(__devm_create_dev_dax);
- 
- static int match_always_count;
- 
-@@ -407,6 +412,7 @@ EXPORT_SYMBOL_GPL(__dax_driver_register);
- 
- void dax_driver_unregister(struct dax_device_driver *dax_drv)
- {
-+	struct device_driver *drv = &dax_drv->drv;
- 	struct dax_id *dax_id, *_id;
- 
- 	mutex_lock(&dax_bus_lock);
-@@ -416,15 +422,28 @@ void dax_driver_unregister(struct dax_device_driver *dax_drv)
- 		kfree(dax_id);
- 	}
- 	mutex_unlock(&dax_bus_lock);
-+	driver_unregister(drv);
- }
- EXPORT_SYMBOL_GPL(dax_driver_unregister);
- 
- int __init dax_bus_init(void)
- {
--	return bus_register(&dax_bus_type);
-+	int rc;
-+
-+	if (IS_ENABLED(CONFIG_DEV_DAX_PMEM_COMPAT)) {
-+		dax_class = class_create(THIS_MODULE, "dax");
-+		if (IS_ERR(dax_class))
-+			return PTR_ERR(dax_class);
-+	}
-+
-+	rc = bus_register(&dax_bus_type);
-+	if (rc)
-+		class_destroy(dax_class);
-+	return rc;
- }
- 
- void __exit dax_bus_exit(void)
- {
- 	bus_unregister(&dax_bus_type);
-+	class_destroy(dax_class);
- }
-diff --git a/drivers/dax/bus.h b/drivers/dax/bus.h
-index 395ab812367c..ce977552ffb5 100644
---- a/drivers/dax/bus.h
-+++ b/drivers/dax/bus.h
-@@ -2,7 +2,8 @@
- /* Copyright(c) 2016 - 2018 Intel Corporation. All rights reserved. */
- #ifndef __DAX_BUS_H__
- #define __DAX_BUS_H__
--struct device;
-+#include <linux/device.h>
-+
- struct dev_dax;
- struct resource;
- struct dax_device;
-@@ -10,8 +11,23 @@ struct dax_region;
- void dax_region_put(struct dax_region *dax_region);
- struct dax_region *alloc_dax_region(struct device *parent, int region_id,
- 		struct resource *res, unsigned int align, unsigned long flags);
--struct dev_dax *devm_create_dev_dax(struct dax_region *dax_region, int id,
--		struct dev_pagemap *pgmap);
-+
-+enum dev_dax_subsys {
-+	DEV_DAX_BUS,
-+	DEV_DAX_CLASS,
-+};
-+
-+struct dev_dax *__devm_create_dev_dax(struct dax_region *dax_region, int id,
-+		struct dev_pagemap *pgmap, enum dev_dax_subsys subsys);
-+
-+static inline struct dev_dax *devm_create_dev_dax(struct dax_region *dax_region,
-+		int id, struct dev_pagemap *pgmap)
-+{
-+	return __devm_create_dev_dax(dax_region, id, pgmap, DEV_DAX_BUS);
-+}
-+
-+/* to be deleted when DEV_DAX_CLASS is removed */
-+struct dev_dax *__dax_pmem_probe(struct device *dev, enum dev_dax_subsys subsys);
- 
- struct dax_device_driver {
- 	struct device_driver drv;
-@@ -26,6 +42,10 @@ int __dax_driver_register(struct dax_device_driver *dax_drv,
- void dax_driver_unregister(struct dax_device_driver *dax_drv);
- void kill_dev_dax(struct dev_dax *dev_dax);
- 
-+#if IS_ENABLED(CONFIG_DEV_DAX_PMEM_COMPAT)
-+int dev_dax_probe(struct device *dev);
-+#endif
-+
- /*
-  * While run_dax() is potentially a generic operation that could be
-  * defined in include/linux/dax.h we don't want to grow any users
-diff --git a/drivers/dax/device.c b/drivers/dax/device.c
-index 052aed3ab600..71694cd984a3 100644
---- a/drivers/dax/device.c
-+++ b/drivers/dax/device.c
-@@ -445,7 +445,7 @@ static void dev_dax_kill(void *dev_dax)
- 	kill_dev_dax(dev_dax);
- }
- 
--static int dev_dax_probe(struct device *dev)
-+int dev_dax_probe(struct device *dev)
- {
- 	struct dev_dax *dev_dax = to_dev_dax(dev);
- 	struct dax_device *dax_dev = dev_dax->dax_dev;
-@@ -488,7 +488,11 @@ static int dev_dax_probe(struct device *dev)
- 	inode = dax_inode(dax_dev);
- 	cdev = inode->i_cdev;
- 	cdev_init(cdev, &dax_fops);
--	cdev->owner = dev->driver->owner;
-+	if (dev->class) {
-+		/* for the CONFIG_DEV_DAX_PMEM_COMPAT case */
-+		cdev->owner = dev->parent->driver->owner;
-+	} else
-+		cdev->owner = dev->driver->owner;
- 	cdev_set_parent(cdev, &dev->kobj);
- 	rc = cdev_add(cdev, dev->devt, 1);
- 	if (rc)
-@@ -501,6 +505,7 @@ static int dev_dax_probe(struct device *dev)
- 	run_dax(dax_dev);
- 	return devm_add_action_or_reset(dev, dev_dax_kill, dev_dax);
- }
-+EXPORT_SYMBOL_GPL(dev_dax_probe);
- 
- static int dev_dax_remove(struct device *dev)
- {
-diff --git a/drivers/dax/pmem.c b/drivers/dax/pmem.c
-deleted file mode 100644
-index d3cefa7868ac..000000000000
---- a/drivers/dax/pmem.c
-+++ /dev/null
-@@ -1,90 +0,0 @@
--/*
-- * Copyright(c) 2016 Intel Corporation. All rights reserved.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of version 2 of the GNU General Public License as
-- * published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but
-- * WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-- * General Public License for more details.
-- */
--#include <linux/percpu-refcount.h>
--#include <linux/memremap.h>
--#include <linux/module.h>
--#include <linux/pfn_t.h>
--#include "../nvdimm/pfn.h"
--#include "../nvdimm/nd.h"
--#include "bus.h"
--
--static int dax_pmem_probe(struct device *dev)
--{
--	struct resource res;
--	int rc, id, region_id;
--	resource_size_t offset;
--	struct nd_pfn_sb *pfn_sb;
--	struct dev_dax *dev_dax;
--	struct nd_namespace_io *nsio;
--	struct dax_region *dax_region;
--	struct dev_pagemap pgmap = { 0 };
--	struct nd_namespace_common *ndns;
--	struct nd_dax *nd_dax = to_nd_dax(dev);
--	struct nd_pfn *nd_pfn = &nd_dax->nd_pfn;
--
--	ndns = nvdimm_namespace_common_probe(dev);
--	if (IS_ERR(ndns))
--		return PTR_ERR(ndns);
--	nsio = to_nd_namespace_io(&ndns->dev);
--
--	/* parse the 'pfn' info block via ->rw_bytes */
--	rc = devm_nsio_enable(dev, nsio);
--	if (rc)
--		return rc;
--	rc = nvdimm_setup_pfn(nd_pfn, &pgmap);
--	if (rc)
--		return rc;
--	devm_nsio_disable(dev, nsio);
--
--	/* reserve the metadata area, device-dax will reserve the data */
--        pfn_sb = nd_pfn->pfn_sb;
--	offset = le64_to_cpu(pfn_sb->dataoff);
--	if (!devm_request_mem_region(dev, nsio->res.start, offset,
--				dev_name(&ndns->dev))) {
--                dev_warn(dev, "could not reserve metadata\n");
--                return -EBUSY;
--        }
--
--	rc = sscanf(dev_name(&ndns->dev), "namespace%d.%d", &region_id, &id);
--	if (rc != 2)
--		return -EINVAL;
--
--	/* adjust the dax_region resource to the start of data */
--	memcpy(&res, &pgmap.res, sizeof(res));
--	res.start += offset;
--	dax_region = alloc_dax_region(dev, region_id, &res,
--			le32_to_cpu(pfn_sb->align), PFN_DEV|PFN_MAP);
--	if (!dax_region)
--		return -ENOMEM;
--
--	dev_dax = devm_create_dev_dax(dax_region, id, &pgmap);
--
--	/* child dev_dax instances now own the lifetime of the dax_region */
--	dax_region_put(dax_region);
--
--	return PTR_ERR_OR_ZERO(dev_dax);
--}
--
--static struct nd_device_driver dax_pmem_driver = {
--	.probe = dax_pmem_probe,
--	.drv = {
--		.name = "dax_pmem",
--	},
--	.type = ND_DRIVER_DAX_PMEM,
--};
--
--module_nd_driver(dax_pmem_driver);
--
--MODULE_LICENSE("GPL v2");
--MODULE_AUTHOR("Intel Corporation");
--MODULE_ALIAS_ND_DEVICE(ND_DEVICE_DAX_PMEM);
-diff --git a/drivers/dax/pmem/Makefile b/drivers/dax/pmem/Makefile
-new file mode 100644
-index 000000000000..e2e79bd3fdcf
---- /dev/null
-+++ b/drivers/dax/pmem/Makefile
-@@ -0,0 +1,7 @@
-+obj-$(CONFIG_DEV_DAX_PMEM) += dax_pmem.o
-+obj-$(CONFIG_DEV_DAX_PMEM) += dax_pmem_core.o
-+obj-$(CONFIG_DEV_DAX_PMEM_COMPAT) += dax_pmem_compat.o
-+
-+dax_pmem-y := pmem.o
-+dax_pmem_core-y := core.o
-+dax_pmem_compat-y := compat.o
-diff --git a/drivers/dax/pmem/compat.c b/drivers/dax/pmem/compat.c
-new file mode 100644
-index 000000000000..d7b15e6f30c5
---- /dev/null
-+++ b/drivers/dax/pmem/compat.c
-@@ -0,0 +1,73 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright(c) 2016 - 2018 Intel Corporation. All rights reserved. */
-+#include <linux/percpu-refcount.h>
-+#include <linux/memremap.h>
-+#include <linux/module.h>
-+#include <linux/pfn_t.h>
-+#include <linux/nd.h>
-+#include "../bus.h"
-+
-+/* we need the private definitions to implement compat suport */
-+#include "../dax-private.h"
-+
-+static int dax_pmem_compat_probe(struct device *dev)
-+{
-+	struct dev_dax *dev_dax = __dax_pmem_probe(dev, DEV_DAX_CLASS);
-+	int rc;
-+
-+	if (IS_ERR(dev_dax))
-+		return PTR_ERR(dev_dax);
-+
-+        if (!devres_open_group(&dev_dax->dev, dev_dax, GFP_KERNEL))
-+		return -ENOMEM;
-+
-+	device_lock(&dev_dax->dev);
-+	rc = dev_dax_probe(&dev_dax->dev);
-+	device_unlock(&dev_dax->dev);
-+
-+	devres_close_group(&dev_dax->dev, dev_dax);
-+	if (rc)
-+		devres_release_group(&dev_dax->dev, dev_dax);
-+
-+	return rc;
-+}
-+
-+static int dax_pmem_compat_release(struct device *dev, void *data)
-+{
-+	device_lock(dev);
-+	devres_release_group(dev, to_dev_dax(dev));
-+	device_unlock(dev);
-+
-+	return 0;
-+}
-+
-+static int dax_pmem_compat_remove(struct device *dev)
-+{
-+	device_for_each_child(dev, NULL, dax_pmem_compat_release);
-+	return 0;
-+}
-+
-+static struct nd_device_driver dax_pmem_compat_driver = {
-+	.probe = dax_pmem_compat_probe,
-+	.remove = dax_pmem_compat_remove,
-+	.drv = {
-+		.name = "dax_pmem_compat",
-+	},
-+	.type = ND_DRIVER_DAX_PMEM,
-+};
-+
-+static int __init dax_pmem_compat_init(void)
-+{
-+	return nd_driver_register(&dax_pmem_compat_driver);
-+}
-+module_init(dax_pmem_compat_init);
-+
-+static void __exit dax_pmem_compat_exit(void)
-+{
-+	driver_unregister(&dax_pmem_compat_driver.drv);
-+}
-+module_exit(dax_pmem_compat_exit);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_AUTHOR("Intel Corporation");
-+MODULE_ALIAS_ND_DEVICE(ND_DEVICE_DAX_PMEM);
-diff --git a/drivers/dax/pmem/core.c b/drivers/dax/pmem/core.c
-new file mode 100644
-index 000000000000..bdcff1b14e95
---- /dev/null
-+++ b/drivers/dax/pmem/core.c
-@@ -0,0 +1,69 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright(c) 2016 - 2018 Intel Corporation. All rights reserved. */
-+#include <linux/memremap.h>
-+#include <linux/module.h>
-+#include <linux/pfn_t.h>
-+#include "../../nvdimm/pfn.h"
-+#include "../../nvdimm/nd.h"
-+#include "../bus.h"
-+
-+struct dev_dax *__dax_pmem_probe(struct device *dev, enum dev_dax_subsys subsys)
-+{
-+	struct resource res;
-+	int rc, id, region_id;
-+	resource_size_t offset;
-+	struct nd_pfn_sb *pfn_sb;
-+	struct dev_dax *dev_dax;
-+	struct nd_namespace_io *nsio;
-+	struct dax_region *dax_region;
-+	struct dev_pagemap pgmap = { 0 };
-+	struct nd_namespace_common *ndns;
-+	struct nd_dax *nd_dax = to_nd_dax(dev);
-+	struct nd_pfn *nd_pfn = &nd_dax->nd_pfn;
-+
-+	ndns = nvdimm_namespace_common_probe(dev);
-+	if (IS_ERR(ndns))
-+		return ERR_CAST(ndns);
-+	nsio = to_nd_namespace_io(&ndns->dev);
-+
-+	/* parse the 'pfn' info block via ->rw_bytes */
-+	rc = devm_nsio_enable(dev, nsio);
-+	if (rc)
-+		return ERR_PTR(rc);
-+	rc = nvdimm_setup_pfn(nd_pfn, &pgmap);
-+	if (rc)
-+		return ERR_PTR(rc);
-+	devm_nsio_disable(dev, nsio);
-+
-+	/* reserve the metadata area, device-dax will reserve the data */
-+        pfn_sb = nd_pfn->pfn_sb;
-+	offset = le64_to_cpu(pfn_sb->dataoff);
-+	if (!devm_request_mem_region(dev, nsio->res.start, offset,
-+				dev_name(&ndns->dev))) {
-+                dev_warn(dev, "could not reserve metadata\n");
-+		return ERR_PTR(-EBUSY);
-+        }
-+
-+	rc = sscanf(dev_name(&ndns->dev), "namespace%d.%d", &region_id, &id);
-+	if (rc != 2)
-+		return ERR_PTR(-EINVAL);
-+
-+	/* adjust the dax_region resource to the start of data */
-+	memcpy(&res, &pgmap.res, sizeof(res));
-+	res.start += offset;
-+	dax_region = alloc_dax_region(dev, region_id, &res,
-+			le32_to_cpu(pfn_sb->align), PFN_DEV|PFN_MAP);
-+	if (!dax_region)
-+		return ERR_PTR(-ENOMEM);
-+
-+	dev_dax = __devm_create_dev_dax(dax_region, id, &pgmap, subsys);
-+
-+	/* child dev_dax instances now own the lifetime of the dax_region */
-+	dax_region_put(dax_region);
-+
-+	return dev_dax;
-+}
-+EXPORT_SYMBOL_GPL(__dax_pmem_probe);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_AUTHOR("Intel Corporation");
-diff --git a/drivers/dax/pmem/pmem.c b/drivers/dax/pmem/pmem.c
-new file mode 100644
-index 000000000000..0ae4238a0ef8
---- /dev/null
-+++ b/drivers/dax/pmem/pmem.c
-@@ -0,0 +1,40 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright(c) 2016 - 2018 Intel Corporation. All rights reserved. */
-+#include <linux/percpu-refcount.h>
-+#include <linux/memremap.h>
-+#include <linux/module.h>
-+#include <linux/pfn_t.h>
-+#include <linux/nd.h>
-+#include "../bus.h"
-+
-+static int dax_pmem_probe(struct device *dev)
-+{
-+	return PTR_ERR_OR_ZERO(__dax_pmem_probe(dev, DEV_DAX_BUS));
-+}
-+
-+static struct nd_device_driver dax_pmem_driver = {
-+	.probe = dax_pmem_probe,
-+	.drv = {
-+		.name = "dax_pmem",
-+	},
-+	.type = ND_DRIVER_DAX_PMEM,
-+};
-+
-+static int __init dax_pmem_init(void)
-+{
-+	return nd_driver_register(&dax_pmem_driver);
-+}
-+module_init(dax_pmem_init);
-+
-+static void __exit dax_pmem_exit(void)
-+{
-+	driver_unregister(&dax_pmem_driver.drv);
-+}
-+module_exit(dax_pmem_exit);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_AUTHOR("Intel Corporation");
-+#if !IS_ENABLED(CONFIG_DEV_DAX_PMEM_COMPAT)
-+/* For compat builds, don't load this module by default */
-+MODULE_ALIAS_ND_DEVICE(ND_DEVICE_DAX_PMEM);
-+#endif
-diff --git a/tools/testing/nvdimm/Kbuild b/tools/testing/nvdimm/Kbuild
-index bfc4d8e98452..1e37719bc37e 100644
---- a/tools/testing/nvdimm/Kbuild
-+++ b/tools/testing/nvdimm/Kbuild
-@@ -34,6 +34,8 @@ obj-$(CONFIG_DAX) += dax.o
- endif
- obj-$(CONFIG_DEV_DAX) += device_dax.o
- obj-$(CONFIG_DEV_DAX_PMEM) += dax_pmem.o
-+obj-$(CONFIG_DEV_DAX_PMEM) += dax_pmem_core.o
-+obj-$(CONFIG_DEV_DAX_PMEM_COMPAT) += dax_pmem_compat.o
- 
- nfit-y := $(ACPI_SRC)/core.o
- nfit-$(CONFIG_X86_MCE) += $(ACPI_SRC)/mce.o
-@@ -63,7 +65,9 @@ device_dax-y += dax-dev.o
- device_dax-y += device_dax_test.o
- device_dax-y += config_check.o
- 
--dax_pmem-y := $(DAX_SRC)/pmem.o
-+dax_pmem-y := $(DAX_SRC)/pmem/pmem.o
-+dax_pmem_core-y := $(DAX_SRC)/pmem/core.o
-+dax_pmem_compat-y := $(DAX_SRC)/pmem/compat.o
- dax_pmem-y += config_check.o
- 
- libnvdimm-y := $(NVDIMM_SRC)/core.o
+ # The GCC option -ffreestanding is required in order to compile code containing
+-- 
+2.19.1
 
