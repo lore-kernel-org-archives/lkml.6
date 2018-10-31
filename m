@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E18BDC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16445ECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A882C2082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C58B720823
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mttwqAwh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A882C2082E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pBTlPY4x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C58B720823
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728148AbeKAIGh (ORCPT
+        id S1728169AbeKAIGh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 1 Nov 2018 04:06:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53626 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:53638 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727984AbeKAIGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:06:36 -0400
+        id S1728133AbeKAIGh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:06:37 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E25D20847;
-        Wed, 31 Oct 2018 23:06:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33FE720848;
+        Wed, 31 Oct 2018 23:06:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027185;
-        bh=Mw8EC2MR8S4zEcuXVC4fE3B8YWowHW/bBhF21Mgs6hY=;
+        s=default; t=1541027186;
+        bh=6EgiTXOrwfLghNJdk5MY3htzX8wi0Djm0JrWUTRY55g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mttwqAwhG+dN/SDaNOcPpwNafoP34sz/LTge02XevpWaqxuES1nzKQ4AdWCNcRwkv
-         dm83Yr01gzwAud3aGxZmyMrBwB64o9JhXeLCuiSB4mF7Zr1afYOwpFJAt+ZBOh7LR8
-         S5mMktFo4Oe9wZPsKWjNBAkUVzPOSlzOiRD02RgE=
+        b=pBTlPY4xX0IbPoW+vjwHXwOgA1mCfuN+mc2Exl2bIc6klgNGqAufz2WC9VJL0/fpD
+         egwgN5RLbjMtFS8m3b+MOKE7ds/THMk2ss8jluVjUifPVCveZNjvVcKM2nr2IgtlLX
+         lo0B8zzsOvvlFiQN5925h9LvXms1Es71lmPa+p00=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Hans de Goede <hdegoede@redhat.com>,
+Cc:     Ben Hutchings <ben@decadent.org.uk>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 048/146] efi/x86: Call efi_parse_options() from efi_main()
-Date:   Wed, 31 Oct 2018 19:04:03 -0400
-Message-Id: <20181031230541.28822-48-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 049/146] x86: boot: Fix EFI stub alignment
+Date:   Wed, 31 Oct 2018 19:04:04 -0400
+Message-Id: <20181031230541.28822-49-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -53,61 +53,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Ben Hutchings <ben@decadent.org.uk>
 
-[ Upstream commit c33ce984435bb6142792802d75513a71e55d1969 ]
+[ Upstream commit 9c1442a9d039a1a3302fa93e9a11001c5f23b624 ]
 
-Before this commit we were only calling efi_parse_options() from
-make_boot_params(), but make_boot_params() only gets called if the
-kernel gets booted directly as an EFI executable. So when booted through
-e.g. grub we ended up not parsing the commandline in the boot code.
+We currently align the end of the compressed image to a multiple of
+16.  However, the PE-COFF header included in the EFI stub says that
+the file alignment is 32 bytes, and when adding an EFI signature to
+the file it must first be padded to this alignment.
 
-This makes the drivers/firmware/efi/libstub code ignore the "quiet"
-commandline argument resulting in the following message being printed:
-"EFI stub: UEFI Secure Boot is enabled."
+sbsigntool commands warn about this:
 
-Despite the quiet request. This commits adds an extra call to
-efi_parse_options() to efi_main() to make sure that the options are
-always processed. This fixes quiet not working.
+  warning: file-aligned section .text extends beyond end of file
+  warning: checksum areas are greater than image size. Invalid section table?
 
-This also fixes the libstub code ignoring nokaslr and efi=nochunk.
+Worse, pesign -at least when creating a detached signature- uses the
+hash of the unpadded file, resulting in an invalid signature if
+padding is required.
 
-Reported-by: Peter Robinson <pbrobinson@redhat.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Avoid both these problems by increasing alignment to 32 bytes when
+CONFIG_EFI_STUB is enabled.
+
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/boot/compressed/eboot.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/x86/boot/tools/build.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
-index 1458b1700fc7..8b4c5e001157 100644
---- a/arch/x86/boot/compressed/eboot.c
-+++ b/arch/x86/boot/compressed/eboot.c
-@@ -738,6 +738,7 @@ efi_main(struct efi_config *c, struct boot_params *boot_params)
- 	struct desc_struct *desc;
- 	void *handle;
- 	efi_system_table_t *_table;
-+	unsigned long cmdline_paddr;
- 
- 	efi_early = c;
- 
-@@ -755,6 +756,15 @@ efi_main(struct efi_config *c, struct boot_params *boot_params)
- 	else
- 		setup_boot_services32(efi_early);
- 
+diff --git a/arch/x86/boot/tools/build.c b/arch/x86/boot/tools/build.c
+index d4e6cd4577e5..bf0e82400358 100644
+--- a/arch/x86/boot/tools/build.c
++++ b/arch/x86/boot/tools/build.c
+@@ -391,6 +391,13 @@ int main(int argc, char ** argv)
+ 		die("Unable to mmap '%s': %m", argv[2]);
+ 	/* Number of 16-byte paragraphs, including space for a 4-byte CRC */
+ 	sys_size = (sz + 15 + 4) / 16;
++#ifdef CONFIG_EFI_STUB
 +	/*
-+	 * make_boot_params() may have been called before efi_main(), in which
-+	 * case this is the second time we parse the cmdline. This is ok,
-+	 * parsing the cmdline multiple times does not have side-effects.
++	 * COFF requires minimum 32-byte alignment of sections, and
++	 * adding a signature is problematic without that alignment.
 +	 */
-+	cmdline_paddr = ((u64)hdr->cmd_line_ptr |
-+			 ((u64)boot_params->ext_cmd_line_ptr << 32));
-+	efi_parse_options((char *)cmdline_paddr);
-+
- 	/*
- 	 * If the boot loader gave us a value for secure_boot then we use that,
- 	 * otherwise we ask the BIOS.
++	sys_size = (sys_size + 1) & ~1;
++#endif
+ 
+ 	/* Patch the setup code with the appropriate size parameters */
+ 	buf[0x1f1] = setup_sectors-1;
 -- 
 2.17.1
 
