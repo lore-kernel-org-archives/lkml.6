@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D2CECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25069C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:46:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D8F320664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:45:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5A7E20664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:46:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SG9h+E7T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D8F320664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TDDwOXyQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5A7E20664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728990AbeKAIqP (ORCPT
+        id S1728799AbeKAIHU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:46:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55074 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:07:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728813AbeKAIHV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:07:21 -0400
+        id S1728646AbeKAIHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:07:19 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A48720830;
-        Wed, 31 Oct 2018 23:07:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11F7220840;
+        Wed, 31 Oct 2018 23:07:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027231;
-        bh=7ndQ0liK/ZwWE3jGzI/qgSNUSapHwibkmlzajcTlSTs=;
+        s=default; t=1541027228;
+        bh=PxbQiwHKrCR0NH6ar55FXMfvmuTVUkgBgwnl4i46YxA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SG9h+E7TT2LPTwKj0CTjb0jLnT5OrMYo2SX1q9ZhPwyKGSN5UmPkqQ56QbmSOllwD
-         d530VX1nHIgxYjKg3cBRSlkF6SH7OIZ1Ht6YqJXSQXeVKhsmeiuO2KouN0y204gOEf
-         lHOEpq4+ks8IsVKTBoHM4mm5Cp4qSZITMcpNSuig=
+        b=TDDwOXyQYXW77lsbjSkwQ51VmSU+HtugDuUvrJlyNfiE9JlFlyoWDUXldK8CgoTBx
+         +K2uGumTpEFBcGpSNA9hzWeFrEH9jusiLLEdVQBOINwHB9XWMTbYUE1Q3D8Jy8uMTn
+         AQXo/z0gj0Bg2J2pc3zcQBWDRVLtYCzybGOdx+wk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+Cc:     Jim Mattson <jmattson@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 098/146] RDMA/cm: Respect returned status of cm_init_av_by_path
-Date:   Wed, 31 Oct 2018 19:04:53 -0400
-Message-Id: <20181031230541.28822-98-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 095/146] KVM: nVMX: Clear reserved bits of #DB exit qualification
+Date:   Wed, 31 Oct 2018 19:04:50 -0400
+Message-Id: <20181031230541.28822-95-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -53,40 +53,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: Jim Mattson <jmattson@google.com>
 
-[ Upstream commit e54b6a3bcd1ec972b25a164bdf495d9e7120b107 ]
+[ Upstream commit cfb634fe3052aefc4e1360fa322018c9a0b49755 ]
 
-Add missing check for failure of cm_init_av_by_path
+According to volume 3 of the SDM, bits 63:15 and 12:4 of the exit
+qualification field for debug exceptions are reserved (cleared to
+0). However, the SDM is incorrect about bit 16 (corresponding to
+DR6.RTM). This bit should be set if a debug exception (#DB) or a
+breakpoint exception (#BP) occurred inside an RTM region while
+advanced debugging of RTM transactional regions was enabled. Note that
+this is the opposite of DR6.RTM, which "indicates (when clear) that a
+debug exception (#DB) or breakpoint exception (#BP) occurred inside an
+RTM region while advanced debugging of RTM transactional regions was
+enabled."
 
-Fixes: e1444b5a163e ("IB/cm: Fix automatic path migration support")
-Reported-by: Slava Shwartsman <slavash@mellanox.com>
-Reviewed-by: Parav Pandit <parav@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+There is still an issue with stale DR6 bits potentially being
+misreported for the current debug exception.  DR6 should not have been
+modified before vectoring the #DB exception, and the "new DR6 bits"
+should be available somewhere, but it was and they aren't.
+
+Fixes: b96fb439774e1 ("KVM: nVMX: fixes to nested virt interrupt injection")
+Signed-off-by: Jim Mattson <jmattson@google.com>
+Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/core/cm.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/kvm_host.h | 1 +
+ arch/x86/kvm/vmx.c              | 7 +++++--
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/infiniband/core/cm.c b/drivers/infiniband/core/cm.c
-index 6e39c27dca8e..4c533275d1f2 100644
---- a/drivers/infiniband/core/cm.c
-+++ b/drivers/infiniband/core/cm.c
-@@ -3292,8 +3292,11 @@ static int cm_lap_handler(struct cm_work *work)
- 	if (ret)
- 		goto unlock;
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 09b2e3e2cf1b..1c09a0d1771f 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -177,6 +177,7 @@ enum {
  
--	cm_init_av_by_path(param->alternate_path, NULL, &cm_id_priv->alt_av,
--			   cm_id_priv);
-+	ret = cm_init_av_by_path(param->alternate_path, NULL,
-+				 &cm_id_priv->alt_av, cm_id_priv);
-+	if (ret)
-+		goto unlock;
-+
- 	cm_id_priv->id.lap_state = IB_CM_LAP_RCVD;
- 	cm_id_priv->tid = lap_msg->hdr.tid;
- 	ret = atomic_inc_and_test(&cm_id_priv->work_count);
+ #define DR6_BD		(1 << 13)
+ #define DR6_BS		(1 << 14)
++#define DR6_BT		(1 << 15)
+ #define DR6_RTM		(1 << 16)
+ #define DR6_FIXED_1	0xfffe0ff0
+ #define DR6_INIT	0xffff0ff0
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index e665aa7167cf..a933ce5ec1ff 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -3294,10 +3294,13 @@ static int nested_vmx_check_exception(struct kvm_vcpu *vcpu, unsigned long *exit
+ 		}
+ 	} else {
+ 		if (vmcs12->exception_bitmap & (1u << nr)) {
+-			if (nr == DB_VECTOR)
++			if (nr == DB_VECTOR) {
+ 				*exit_qual = vcpu->arch.dr6;
+-			else
++				*exit_qual &= ~(DR6_FIXED_1 | DR6_BT);
++				*exit_qual ^= DR6_RTM;
++			} else {
+ 				*exit_qual = 0;
++			}
+ 			return 1;
+ 		}
+ 	}
 -- 
 2.17.1
 
