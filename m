@@ -2,268 +2,215 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C36ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:48:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26632ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:49:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD14E2084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:48:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2F8C2064C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:49:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oPb3s05g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD14E2084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hRfi3Kd5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2F8C2064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726292AbeKAGss (ORCPT
+        id S1726350AbeKAGt3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 02:48:48 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53320 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725919AbeKAGss (ORCPT
+        Thu, 1 Nov 2018 02:49:29 -0400
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:43407 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725919AbeKAGt3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 02:48:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:References:Cc:To:From:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jEZ4011gEjjejkKlRWqI/t7Fk42ifynuY5ymrHwkiOs=; b=oPb3s05gPMGkNx2RTmpLSyQgv
-        KW7HKnzoPO5CZeQ9qAIUNx+ulV4IWyFnT4BUKQTl8kM52FGYTKd3ewKp4L16MAHKp4pXgXv8C1VOs
-        iXA9u3h63CkkEqSaL5lUifnjgbPKhbX05bnwF5LdVK495M1RJWWnT1hoHga9AkERSVqRLoWeyLYrf
-        S06y6uUYGZPBN+nzIu6zQ0qmeXUhh0KAbz9qWx6BnJ7q8LZFGZdRA9VdO9qLN/BoiltxuF4Ku+Rfz
-        tpRhLZHM7dNpenfwnua39WbEvJ0LjR0feV3sgxZv4MlhaCBd+ukUpVOO1ytNbztGv4VahEEkrbOkW
-        Pwi1gLioQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gHyM9-0000um-4v; Wed, 31 Oct 2018 21:48:53 +0000
-Subject: Re: 4.18: early boot crash in thermal_cooling_device_destroy_sysfs
-From:   Randy Dunlap <rdunlap@infradead.org>
-To:     Zhang Rui <rui.zhang@intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     ACPI Devel Mailing List <linux-acpi@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <c1e0c7c7-2ed9-39fd-b3e0-aebf4d5839a3@infradead.org>
- <4a200a32-7d7f-1248-2ecd-74600083b1c1@infradead.org>
- <3743579.MQBqPkux9Q@aspire.rjw.lan>
- <6eaa3393-f7aa-8f1a-a5c4-72aaafa2d1f9@infradead.org>
- <1540948029.2254.57.camel@intel.com>
- <89eac8ad-ec37-7573-e385-0e1d46364691@infradead.org>
-Message-ID: <f3bdedc2-6b6d-9842-3331-cee34eeebb06@infradead.org>
-Date:   Wed, 31 Oct 2018 14:48:52 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 1 Nov 2018 02:49:29 -0400
+Received: by mail-vk1-f193.google.com with SMTP id g144so2847918vke.10
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 14:49:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9OZBU7xBbZRq91LmWRsKb1e+HamrGUSqJjfkZGsW5iY=;
+        b=hRfi3Kd5G9/BLYolaPFaixRBSy8QElOUfTm0fyNwi5G2el/3A087MYoMPAXTtCvmr6
+         aqtzB3yUpqwbaMtfyXn9KPe/xCBryhqzS5lXRDQiilI7KlDKS9tpNMeE3EhIpseZtToC
+         y5ZSqIZ1fBG/MJmna3J4vq+E8lJ01mfbgfTEg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9OZBU7xBbZRq91LmWRsKb1e+HamrGUSqJjfkZGsW5iY=;
+        b=T2Lys1QeezHoBxc4f0qTBGM1w7UHv6W+Nzm/FaRe8uceg5VSIbLw7orWI7CwZN+Lcl
+         NbwfUfnELos0jxNv5n3h8C3Nz+DcfBVfz6vDMh+te2Z2dt92nCgHHOiZVOPakQZzDnAn
+         Lvsu5/JNOIYvkpKzaGduBOdEHfJLPI/eReGyMv00OYkCDmz9/eIDNmwytLD7KUIm59TJ
+         daDKIZRarXW1YJswe7ugzCbNjS/Gip4dXNUN9DyBI+58BuKUr4D/xx66qavhRZIyKYRF
+         YnhNkRfboKClR/IOXeQ0EbZh5bBkFnpH63wd1bY1NLfue28zyGmTu8uuW82K+KnMClcC
+         ozsA==
+X-Gm-Message-State: AGRZ1gJ1kIrPUacasSbcm1fs7IzhZOlEqgaNlwUTL5zdjXY7yaOqW/20
+        zzNfWDlyPAaZC3rs+8DGkbcBKs+cwbI=
+X-Google-Smtp-Source: AJdET5cbfl7krHbj6TmN7ii8tKw2VB0+EuM1DalTvvTuMwHxgBqIkhcRcMgD3lmoaS5tuY7SE/7cpA==
+X-Received: by 2002:a1f:1d4b:: with SMTP id d72-v6mr2130600vkd.34.1541022573666;
+        Wed, 31 Oct 2018 14:49:33 -0700 (PDT)
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
+        by smtp.gmail.com with ESMTPSA id p191-v6sm4337622vkd.23.2018.10.31.14.49.33
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Oct 2018 14:49:33 -0700 (PDT)
+Received: by mail-vs1-f47.google.com with SMTP id q15so11063341vso.1
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 14:49:33 -0700 (PDT)
+X-Received: by 2002:a67:6642:: with SMTP id a63mr2174631vsc.42.1541022087194;
+ Wed, 31 Oct 2018 14:41:27 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <89eac8ad-ec37-7573-e385-0e1d46364691@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20181030221843.121254-1-dianders@chromium.org>
+ <20181030221843.121254-3-dianders@chromium.org> <20181031184050.sd5opni3mznaapkv@holly.lan>
+In-Reply-To: <20181031184050.sd5opni3mznaapkv@holly.lan>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 31 Oct 2018 14:41:14 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=V1eHo7Wz31DTMMNi394qwEaESTxJCYVE60Q7hpDEqRmQ@mail.gmail.com>
+Message-ID: <CAD=FV=V1eHo7Wz31DTMMNi394qwEaESTxJCYVE60Q7hpDEqRmQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] kgdb: Fix kgdb_roundup_cpus() for arches who used smp_call_function()
+To:     Daniel Thompson <daniel.thompson@linaro.org>
+Cc:     Jason Wessel <jason.wessel@windriver.com>,
+        kgdb-bugreport@lists.sourceforge.net,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-mips@linux-mips.org, linux-sh@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>, jhogan@kernel.org,
+        linux-hexagon@vger.kernel.org, Vineet Gupta <vgupta@synopsys.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>, dalias@libc.org,
+        Ralf Baechle <ralf@linux-mips.org>,
+        linux-snps-arc@lists.infradead.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Will Deacon <will.deacon@arm.com>, paulus@samba.org,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        christophe.leroy@c-s.fr, mpe@ellerman.id.au, paul.burton@mips.com,
+        LKML <linux-kernel@vger.kernel.org>, rkuo@codeaurora.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/30/18 10:47 PM, Randy Dunlap wrote:
-> On 10/30/18 6:07 PM, Zhang Rui wrote:
->> Hi, Randy,
->>
->> On 五, 2018-10-26 at 20:35 -0700, Randy Dunlap wrote:
->>> On 10/26/18 2:14 AM, Rafael J. Wysocki wrote:
->>>>
->>>> On Monday, October 22, 2018 8:37:25 PM CEST Randy Dunlap wrote:
->>>>>
->>>>>
->>>>> On 8/16/18 2:33 PM, Randy Dunlap wrote:
->>>>>>
->>>>>> Hi,
->>>>>>
->>>>>> Sorry for the photo.  That's all I have available so far.
->>>>>>
->>>>>> https://www.infradead.org/~rdunlap/doc/IMG_20180816_133254743_H
->>>>>> DR.jpg
->>>>>>
->>>>>>
->>>>>> Does anyone recognize this?
->>>>>>
->>>>>> This is an (older) Toshiba laptop.  The kernel .config is
->>>>>> mostly an
->>>>>> allmodconfig with some DEBUG options disabled and other options
->>>>>> enabled
->>>>>> so that it can boot without using an initramfs.  (and with
->>>>>> COMPILE_TEST
->>>>>> disabled :)
->>>>>>
->>>>>>
->>>>>> The full kernel .config file is attached.
->>>>>>
->>>>>> Thanks,
->>>>>>
->>>>> This is a result of CONFIG_DEBUG_TEST_DRIVER_REMOVE=y.
->>>>> [switch from 64-bit to 32-bit machine]
->>>>>
->>>>>
->>>>> When using CONFIG_DEBUG_VM=y, it BUGs at:
->>>>> [    5.553603] ------------[ cut here ]------------
->>>>> [    5.553733] kernel BUG at arch/x86/mm/physaddr.c:75!
->>>>> [    5.557788] invalid opcode: 0000 [#1] PREEMPT SMP
->>>>> DEBUG_PAGEALLOC
->>>>> [    5.558738] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.19.0-
->>>>> rc7 #4
->>>>> [    5.558738] Hardware name: Dell Inc. Inspiron
->>>>> 1318                   /0C236D, BIOS A04 01/15/2009
->>>>> [    5.558738] EIP: __phys_addr+0x40/0x90
->>>>> [    5.558738] Code: 00 40 75 2e 8b 15 00 57 23 d5 85 d2 74 12 89
->>>>> d9 c1 e9 0c 39 ca 72 5b e8 2e ca ff ff 39 d8 75 4a 89 d8 5b 5d c3
->>>>> 8d 74 26 00 90 <0f> 0b 8d b6 00 00 00 00 8b 0d 80 56 23 d5 8d 91
->>>>> 00 00 80 00 39 d0
->>>>> [    5.558738] EAX: 6b6b6b6b EBX: 6b6b6b6b ECX: 00140011 EDX:
->>>>> 00000000
->>>>> [    5.558738] ESI: f4890000 EDI: d4a58d60 EBP: f40c1e0c ESP:
->>>>> f40c1e08
->>>>> [    5.558738] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068
->>>>> EFLAGS: 00210a97
->>>>> [    5.558738] CR0: 80050033 CR2: 00000000 CR3: 14cad000 CR4:
->>>>> 000406d0
->>>>> [    5.558738] Call Trace:
->>>>> [    5.558738]  kfree+0x1f/0x160
->>>>> [    5.558738]  thermal_cooling_device_destroy_sysfs+0x11/0x20
->>>>> [    5.558738]  thermal_cooling_device_unregister+0x168/0x180
->>>>> [    5.558738]  acpi_pss_perf_exit.isra.4+0x32/0x50
->>>>> [    5.558738]  acpi_processor_stop+0x4d/0x60
->>>>> [    5.558738]  really_probe+0xa3/0x3e0
->>>>> [    5.558738]  driver_probe_device+0x5b/0x120
->>>>> [    5.558738]  __driver_attach+0xd9/0x100
->>>>> [    5.558738]  ? driver_probe_device+0x120/0x120
->>>>> [    5.558738]  bus_for_each_dev+0x56/0x90
->>>>> [    5.558738]  driver_attach+0x14/0x20
->>>>> [    5.558738]  ? driver_probe_device+0x120/0x120
->>>>> [    5.558738]  bus_add_driver+0x117/0x210
->>>>> [    5.558738]  driver_register+0x61/0xb0
->>>>> [    5.558738]  acpi_processor_driver_init+0x19/0x88
->>>>> [    5.558738]  ? acpi_pci_slot_init+0xf/0xf
->>>>> [    5.558738]  do_one_initcall+0x3e/0x15a
->>>>> [    5.558738]  ? do_early_param+0x75/0x75
->>>>> [    5.558738]  kernel_init_freeable+0x170/0x1f3
->>>>> [    5.558738]  ? rest_init+0xcd/0xcd
->>>>> [    5.558738]  kernel_init+0x8/0xdb
->>>>> [    5.558738]  ret_from_fork+0x2e/0x38
->>>>> [    5.558738] Modules linked in:
->>>>> [    5.625269] _warn_unseeded_randomness: 1 callbacks suppressed
->>>>> [    5.625272] random: get_random_bytes called from
->>>>> init_oops_id+0x3a/0x40 with crng_init=0
->>>>> [    5.629758] ---[ end trace 65b17bf4d18e7692 ]---
->>>>> [    5.631573] EIP: __phys_addr+0x40/0x90
->>>>> [    5.633242] Code: 00 40 75 2e 8b 15 00 57 23 d5 85 d2 74 12 89
->>>>> d9 c1 e9 0c 39 ca 72 5b e8 2e ca ff ff 39 d8 75 4a 89 d8 5b 5d c3
->>>>> 8d 74 26 00 90 <0f> 0b 8d b6 00 00 00 00 8b 0d 80 56 23 d5 8d 91
->>>>> 00 00 80 00 39 d0
->>>>> [    5.638618] EAX: 6b6b6b6b EBX: 6b6b6b6b ECX: 00140011 EDX:
->>>>> 00000000
->>>>> [    5.640703] ESI: f4890000 EDI: d4a58d60 EBP: f40c1e0c ESP:
->>>>> d4cb13dc
->>>>> [    5.642801] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068
->>>>> EFLAGS: 00210a97
->>>>> [    5.645053] CR0: 80050033 CR2: 00000000 CR3: 14cad000 CR4:
->>>>> 000406d0
->>>>> [    5.647179] Kernel panic - not syncing: Fatal exception
->>>>> [    5.648172] Kernel Offset: 0x13000000 from 0xc1000000
->>>>> (relocation range: 0xc0000000-0xf77fdfff)
->>>>> [    5.648172] ---[ end Kernel panic - not syncing: Fatal
->>>>> exception ]---
->>>>>
->>>>>
->>>>> When not using CONFIG_DEBUG_VM, it BUGs in kfree:
->>>>> [    5.497864] ------------[ cut here ]------------
->>>>> [    5.498215] kernel BUG at mm/slub.c:3901!
->>>>> [    5.501739] invalid opcode: 0000 [#1] PREEMPT SMP
->>>>> [    5.502720] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-
->>>>> rc7 #3
->>>>> [    5.502720] Hardware name: Dell Inc. Inspiron
->>>>> 1318                   /0C236D, BIOS A04 01/15/2009
->>>>> [    5.502720] EIP: kfree+0x117/0x150
->>>>> [    5.502720] Code: 74 21 8b 06 31 d2 f6 c4 80 74 04 0f b6 56 31
->>>>> 89 f0 e8 7d e0 fa ff e9 7b ff ff ff 8d b4 26 00 00 00 00 90 8b 46
->>>>> 04 a8 01 75 d8 <0f> 0b 8d b4 26 00 00 00 00 8b 75 f0 ff 75 ec 89
->>>>> d9 89 f8 6a 01 53
->>>>> [    5.502720] EAX: 00000100 EBX: 6b6b6b6b ECX: 00140011 EDX:
->>>>> 00000000
->>>>> [    5.502720] ESI: f67dac70 EDI: ccc4aca0 EBP: f4083e28 ESP:
->>>>> f4083e10
->>>>> [    5.502720] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068
->>>>> EFLAGS: 00210246
->>>>> [    5.502720] CR0: 80050033 CR2: ffd14000 CR3: 0ce94000 CR4:
->>>>> 000406d0
->>>>> [    5.502720] Call Trace:
->>>>> [    5.502720]  thermal_cooling_device_destroy_sysfs+0x11/0x20
->>>>> [    5.502720]  thermal_cooling_device_unregister+0x168/0x180
->>>>> [    5.502720]  acpi_pss_perf_exit.isra.4+0x32/0x50
->>>>> [    5.502720]  acpi_processor_stop+0x4d/0x60
->>>>> [    5.502720]  really_probe+0xa3/0x3e0
->>>>> [    5.502720]  driver_probe_device+0x5b/0x120
->>>>> [    5.502720]  __driver_attach+0xd9/0x100
->>>>> [    5.502720]  ? driver_probe_device+0x120/0x120
->>>>> [    5.502720]  bus_for_each_dev+0x56/0x90
->>>>> [    5.502720]  driver_attach+0x14/0x20
->>>>> [    5.502720]  ? driver_probe_device+0x120/0x120
->>>>> [    5.502720]  bus_add_driver+0x117/0x210
->>>>> [    5.502720]  driver_register+0x61/0xb0
->>>>> [    5.502720]  acpi_processor_driver_init+0x19/0x88
->>>>> [    5.502720]  ? acpi_pci_slot_init+0xf/0xf
->>>>> [    5.502720]  do_one_initcall+0x3e/0x15a
->>>>> [    5.502720]  ? do_early_param+0x75/0x75
->>>>> [    5.502720]  kernel_init_freeable+0x170/0x1f3
->>>>> [    5.502720]  ? rest_init+0xcd/0xcd
->>>>> [    5.502720]  kernel_init+0x8/0xdb
->>>>> [    5.502720]  ret_from_fork+0x2e/0x38
->>>>> [    5.502720] Modules linked in:
->>>>> [    5.567678] _warn_unseeded_randomness: 1 callbacks suppressed
->>>>> [    5.567682] random: get_random_bytes called from
->>>>> init_oops_id+0x3a/0x40 with crng_init=0
->>>>> [    5.572237] ---[ end trace 1b6e88c03e412db2 ]---
->>>>> [    5.574099] EIP: kfree+0x117/0x150
->>>>> [    5.575673] Code: 74 21 8b 06 31 d2 f6 c4 80 74 04 0f b6 56 31
->>>>> 89 f0 e8 7d e0 fa ff e9 7b ff ff ff 8d b4 26 00 00 00 00 90 8b 46
->>>>> 04 a8 01 75 d8 <0f> 0b 8d b4 26 00 00 00 00 8b 75 f0 ff 75 ec 89
->>>>> d9 89 f8 6a 01 53
->>>>> [    5.581124] EAX: 00000100 EBX: 6b6b6b6b ECX: 00140011 EDX:
->>>>> 00000000
->>>>> [    5.583243] ESI: f67dac70 EDI: ccc4aca0 EBP: f4083e28 ESP:
->>>>> cce983dc
->>>>> [    5.585347] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068
->>>>> EFLAGS: 00210246
->>>>> [    5.587600] CR0: 80050033 CR2: ffd14000 CR3: 0ce94000 CR4:
->>>>> 000406d0
->>>>> [    5.589747] Kernel panic - not syncing: Fatal exception
->>>>> [    5.590740] Kernel Offset: 0xb200000 from 0xc1000000
->>>>> (relocation range: 0xc0000000-0xf77fdfff)
->>>>> [    5.590740] ---[ end Kernel panic - not syncing: Fatal
->>>>> exception ]---
->>>>>
->>>>>
->>>>>
->>>>>
->>>> This admittedly is a long shot, but does the appended patch help?
->>> Thanks for the patch, but:
->>> Nope, same crash.
->>>
->>
->> thanks for the report, please confirm if the following patch fixes the
->> problem or not
->> https://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git/commit
->> /?h=next&id=3c587768271e9c20276522025729e4ebca51583b
-> 
-> Hi,
-> 
-> I believe this patch does fix the problem.
-> I'll hook up a serial cable tomorrow to confirm/verify this.
+Hi,
 
-That fix is tested & confirmed.
+On Wed, Oct 31, 2018 at 11:40 AM Daniel Thompson
+<daniel.thompson@linaro.org> wrote:
+>
+> On Tue, Oct 30, 2018 at 03:18:43PM -0700, Douglas Anderson wrote:
+> > diff --git a/kernel/debug/debug_core.c b/kernel/debug/debug_core.c
+> > index f3cadda45f07..9a3f952de6ed 100644
+> > --- a/kernel/debug/debug_core.c
+> > +++ b/kernel/debug/debug_core.c
+> > @@ -55,6 +55,7 @@
+> >  #include <linux/mm.h>
+> >  #include <linux/vmacache.h>
+> >  #include <linux/rcupdate.h>
+> > +#include <linux/irq.h>
+> >
+> >  #include <asm/cacheflush.h>
+> >  #include <asm/byteorder.h>
+> > @@ -220,6 +221,39 @@ int __weak kgdb_skipexception(int exception, struct pt_regs *regs)
+> >       return 0;
+> >  }
+> >
+> > +/*
+> > + * Default (weak) implementation for kgdb_roundup_cpus
+> > + */
+> > +
+> > +static DEFINE_PER_CPU(call_single_data_t, kgdb_roundup_csd);
+> > +
+> > +void __weak kgdb_call_nmi_hook(void *ignored)
+> > +{
+> > +     kgdb_nmicallback(raw_smp_processor_id(), get_irq_regs());
+> > +}
+> > +
+> > +void __weak kgdb_roundup_cpus(void)
+> > +{
+> > +     call_single_data_t *csd;
+> > +     int cpu;
+> > +
+> > +     for_each_cpu(cpu, cpu_online_mask) {
+> > +             csd = &per_cpu(kgdb_roundup_csd, cpu);
+> > +             smp_call_function_single_async(cpu, csd);
+> > +     }
+>
+> smp_call_function() automatically skips the calling CPU but this code does
+> not. It isn't a hard bug since kgdb_nmicallback() does a re-entrancy
+> check but I'd still prefer to skip the calling CPU.
 
-> thanks,
+I'll incorporate this into the next version.
 
--- 
-~Randy
+
+> As mentioned in another part of the thread we can also add robustness
+> by skipping a cpu where csd->flags != 0 (and adding an appropriately
+> large comment regarding why). Doing the check directly is abusing
+> internal knowledge that smp.c normally keeps to itself so an accessor
+> of some kind would be needed.
+
+Sure.  I could add smp_async_func_finished() that just looked like:
+
+int smp_async_func_finished(call_single_data_t *csd)
+{
+  return !(csd->flags & CSD_FLAG_LOCK);
+}
+
+My understanding of all the mutual exclusion / memory barrier concepts
+employed by smp.c is pretty weak, though.  I'm hoping that it's safe
+to just access the structure and check the bit directly.
+
+...but do you think adding a generic accessor like this is better than
+just keeping track of this in kgdb directly?  I could avoid the
+accessor by adding a "rounding_up" member to "struct
+debuggerinfo_struct" and doing something like this in roundup:
+
+  /* If it didn't round up last time, don't try again */
+  if (kgdb_info[cpu].rounding_up)
+    continue
+
+  kgdb_info[cpu].rounding_up = true
+  smp_call_function_single_async(cpu, csd);
+
+...and then in kgdb_nmicallback() I could just add:
+
+  kgdb_info[cpu].rounding_up = false
+
+In that case we're not adding a generic accessor to smp.c that most
+people should never use.
+
+
+I'll wait to hear back from you if you think the accessor is OK.  It
+seems like it might be nice not to have to add something to smp.c just
+for this one use case.
+
+
+> > +}
+> > +
+> > +static void kgdb_generic_roundup_init(void)
+> > +{
+> > +     call_single_data_t *csd;
+> > +     int cpu;
+> > +
+> > +     for_each_possible_cpu(cpu) {
+> > +             csd = &per_cpu(kgdb_roundup_csd, cpu);
+> > +             csd->func = kgdb_call_nmi_hook;
+> > +     }
+> > +}
+>
+> I can't help noticing this code is very similar to kgdb_roundup_cpus. Do
+> we really gain much from ahead-of-time initializing csd->func?
+
+Oh!  Right...  At first I thought about just trying to put the "csd"
+on the stack in kgdb_roundup_cpus() but then I realized that it needed
+to persist past the end of kgdb_roundup_cpus().  ...and once I gave up
+on the idea of putting it on the stack I decided I needed the init.
+
+...but you're right that I don't really.  The only thing I'm initting
+is the function pointer and it totally wouldn't hurt to just init that
+over and over again every time kgdb_roundup_cpus() is called.
+
+-Doug
