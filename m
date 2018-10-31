@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B56ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21AA4C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADA6220840
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D47A22064C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2s7VfRE5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADA6220840
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ql2xjsmf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D47A22064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730705AbeKAIJx (ORCPT
+        id S1730721AbeKAIJy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:09:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60082 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:09:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730658AbeKAIJw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:09:52 -0400
+        id S1730659AbeKAIJx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:09:53 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57FB820840;
-        Wed, 31 Oct 2018 23:09:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 58BE920664;
+        Wed, 31 Oct 2018 23:09:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027381;
-        bh=4RCA2D2uN8ZtSaIP50+ZVFbk1X7Sxat4GkW6bGVDwA4=;
+        s=default; t=1541027382;
+        bh=T8OeCwzhTo+0rk4FgpOODPVJ89RJlS63o8OhJiFlr4Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2s7VfRE5RpUmKvWZ7goJbLZ5zmm37SWLRwl7k4RaBmj0so6maJEF7xC0WuO9I1YN2
-         6E/1sseYPukJ8WfWCWYvtr6e6L3/Ib5lSPwiZwGsU2TKFX7UO1tBsgF8lTRb46mEi9
-         njugr7VGiVL/Wb3/3/+RXul8AdB5/bkh6YQVhUbE=
+        b=Ql2xjsmfeJjC6GYzAQLPVumrrDyZtp8UC1DU5GAe1P2P1Iv/HarHw6cRuqiRVbyW5
+         ZnbI62L5qPy7gvDbV5X0AIe9MTDLKGmwE1QbTqmGGaetANbZUTbI4mRJZorSPI9cxA
+         THxe5XVG7AyD3Z8m6b69iBYTC4/QhLAnsub8sZj0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     James Smart <jsmart2021@gmail.com>,
@@ -44,9 +44,9 @@ Cc:     James Smart <jsmart2021@gmail.com>,
         James Smart <james.smart@broadcom.com>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 118/126] scsi: lpfc: Correct soft lockup when running mds diagnostics
-Date:   Wed, 31 Oct 2018 19:07:46 -0400
-Message-Id: <20181031230754.29029-118-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 119/126] scsi: lpfc: Correct race with abort on completion path
+Date:   Wed, 31 Oct 2018 19:07:47 -0400
+Message-Id: <20181031230754.29029-119-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -57,60 +57,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: James Smart <jsmart2021@gmail.com>
 
-[ Upstream commit 0ef01a2d95fd62bb4f536e7ce4d5e8e74b97a244 ]
+[ Upstream commit ca7fb76e091f889cfda1287c07a9358f73832b39 ]
 
-When running an mds diagnostic that passes frames with the switch, soft
-lockups are detected. The driver is in a CQE processing loop and has
-sufficient amount of traffic that it never exits the ring processing routine,
-thus the "lockup".
+On io completion, the driver is taking an adapter wide lock and nulling the
+scsi command back pointer.  The nulling of the back pointer is to signify the
+io was completed and the scsi_done() routine was called.  However, the routine
+makes no check to see if the abort routine had done the same thing and
+possibly nulled the pointer. Thus it may doubly-complete the io.
 
-Cap the number of elements in the work processing routine to 64 elements. This
-ensures that the cpu will be given up and the handler reschedule to process
-additional items.
+Make the following mods:
+
+- Check to make sure forward progress (call scsi_done()) only happens if the
+  command pointer was non-null.
+
+- As the taking of the lock, which is adapter wide, is very costly on a system
+  under load, null the pointer using an xchg operation rather than under lock.
 
 Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
 Signed-off-by: James Smart <james.smart@broadcom.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/lpfc/lpfc_sli.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/scsi/lpfc/lpfc_scsi.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
-index 6f3c00a233ec..4f8d459d2378 100644
---- a/drivers/scsi/lpfc/lpfc_sli.c
-+++ b/drivers/scsi/lpfc/lpfc_sli.c
-@@ -3790,6 +3790,7 @@ lpfc_sli_handle_slow_ring_event_s4(struct lpfc_hba *phba,
- 	struct hbq_dmabuf *dmabuf;
- 	struct lpfc_cq_event *cq_event;
- 	unsigned long iflag;
-+	int count = 0;
- 
- 	spin_lock_irqsave(&phba->hbalock, iflag);
- 	phba->hba_flag &= ~HBA_SP_QUEUE_EVT;
-@@ -3811,16 +3812,22 @@ lpfc_sli_handle_slow_ring_event_s4(struct lpfc_hba *phba,
- 			if (irspiocbq)
- 				lpfc_sli_sp_handle_rspiocb(phba, pring,
- 							   irspiocbq);
-+			count++;
- 			break;
- 		case CQE_CODE_RECEIVE:
- 		case CQE_CODE_RECEIVE_V1:
- 			dmabuf = container_of(cq_event, struct hbq_dmabuf,
- 					      cq_event);
- 			lpfc_sli4_handle_received_buffer(phba, dmabuf);
-+			count++;
- 			break;
- 		default:
- 			break;
- 		}
-+
-+		/* Limit the number of events to 64 to avoid soft lockups */
-+		if (count == 64)
-+			break;
+diff --git a/drivers/scsi/lpfc/lpfc_scsi.c b/drivers/scsi/lpfc/lpfc_scsi.c
+index a94fb9f8bb44..3b3af1459008 100644
+--- a/drivers/scsi/lpfc/lpfc_scsi.c
++++ b/drivers/scsi/lpfc/lpfc_scsi.c
+@@ -4140,9 +4140,17 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba *phba, struct lpfc_iocbq *pIocbIn,
  	}
- }
+ 	lpfc_scsi_unprep_dma_buf(phba, lpfc_cmd);
  
+-	spin_lock_irqsave(&phba->hbalock, flags);
+-	lpfc_cmd->pCmd = NULL;
+-	spin_unlock_irqrestore(&phba->hbalock, flags);
++	/* If pCmd was set to NULL from abort path, do not call scsi_done */
++	if (xchg(&lpfc_cmd->pCmd, NULL) == NULL) {
++		lpfc_printf_vlog(vport, KERN_INFO, LOG_FCP,
++				 "0711 FCP cmd already NULL, sid: 0x%06x, "
++				 "did: 0x%06x, oxid: 0x%04x\n",
++				 vport->fc_myDID,
++				 (pnode) ? pnode->nlp_DID : 0,
++				 phba->sli_rev == LPFC_SLI_REV4 ?
++				 lpfc_cmd->cur_iocbq.sli4_xritag : 0xffff);
++		return;
++	}
+ 
+ 	/* The sdev is not guaranteed to be valid post scsi_done upcall. */
+ 	cmd->scsi_done(cmd);
 -- 
 2.17.1
 
