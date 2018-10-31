@@ -7,43 +7,46 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE01ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:14:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43D09ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:14:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 903FE20664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:14:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C06520664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:14:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hKiDrFVg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 903FE20664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mrD6Cgmc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C06520664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732380AbeKAIOm (ORCPT
+        id S1732382AbeKAIO4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:14:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37038 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:14:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36972 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732094AbeKAIMR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:12:17 -0400
+        id S1732145AbeKAIMQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:12:16 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBD1D20866;
-        Wed, 31 Oct 2018 23:12:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 382122085A;
+        Wed, 31 Oct 2018 23:12:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027525;
-        bh=cN3XPElDjkDk11CkaRIXctT918DU+eCbo6XCsr9+Er4=;
+        s=default; t=1541027524;
+        bh=mQWBrbECmt88BAcFgaRmNgkRGbFf3kGREed1DtNlbXo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hKiDrFVgLZQunevhgP2L1qR+RHVytsMqI/MXPyEk7Hqq9juD9oGuvlM0CsgH+IGWH
-         KOK4p+Rt6fiRwv2gZ6+u39MiWYFUyJTUtJP+pnGB9EWJZ/ZVNS5B2YOlCsTIessvZ1
-         +o5UdMaB54eS48hAxjFvjQfOHV1hgAHwss16VmtM=
+        b=mrD6CgmcUs7OIXcb33IXB8mK8VMgWEi2xCiUsvtbQRmTISJ0XFL6ch1Vq1gtzLrkV
+         d9jyVZwABv2ZiigkA7l4d+h/8Qw19PkLi1V3W+E8j133LpeHMNrPF143rpt5jiSpkA
+         ueLldSnlRBJAhLUs/XAhk9+yHPTzVwQzMahEZEA4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Paul Cercueil <paul@crapouillou.net>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 31/32] dmaengine: dma-jz4780: Return error if not probed from DT
-Date:   Wed, 31 Oct 2018 19:11:36 -0400
-Message-Id: <20181031231137.29429-31-sashal@kernel.org>
+Cc:     James Smart <jsmart2021@gmail.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <james.smart@broadcom.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 29/32] scsi: lpfc: Correct soft lockup when running mds diagnostics
+Date:   Wed, 31 Oct 2018 19:11:34 -0400
+Message-Id: <20181031231137.29429-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231137.29429-1-sashal@kernel.org>
 References: <20181031231137.29429-1-sashal@kernel.org>
@@ -52,38 +55,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Cercueil <paul@crapouillou.net>
+From: James Smart <jsmart2021@gmail.com>
 
-[ Upstream commit 54f919a04cf221bc1601d1193682d4379dacacbd ]
+[ Upstream commit 0ef01a2d95fd62bb4f536e7ce4d5e8e74b97a244 ]
 
-The driver calls clk_get() with the clock name set to NULL, which means
-that the driver could only work when probed from devicetree. From now
-on, we explicitly require the driver to be probed from devicetree.
+When running an mds diagnostic that passes frames with the switch, soft
+lockups are detected. The driver is in a CQE processing loop and has
+sufficient amount of traffic that it never exits the ring processing routine,
+thus the "lockup".
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Tested-by: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Cap the number of elements in the work processing routine to 64 elements. This
+ensures that the cpu will be given up and the handler reschedule to process
+additional items.
+
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <james.smart@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/dma-jz4780.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/scsi/lpfc/lpfc_sli.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
-index dade7c47ff18..8344b7c91fe3 100644
---- a/drivers/dma/dma-jz4780.c
-+++ b/drivers/dma/dma-jz4780.c
-@@ -750,6 +750,11 @@ static int jz4780_dma_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	int i, ret;
+diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
+index 3406586b9201..ad4f16ab7f7a 100644
+--- a/drivers/scsi/lpfc/lpfc_sli.c
++++ b/drivers/scsi/lpfc/lpfc_sli.c
+@@ -3485,6 +3485,7 @@ lpfc_sli_handle_slow_ring_event_s4(struct lpfc_hba *phba,
+ 	struct hbq_dmabuf *dmabuf;
+ 	struct lpfc_cq_event *cq_event;
+ 	unsigned long iflag;
++	int count = 0;
  
-+	if (!dev->of_node) {
-+		dev_err(dev, "This driver must be probed from devicetree\n");
-+		return -EINVAL;
-+	}
+ 	spin_lock_irqsave(&phba->hbalock, iflag);
+ 	phba->hba_flag &= ~HBA_SP_QUEUE_EVT;
+@@ -3506,16 +3507,22 @@ lpfc_sli_handle_slow_ring_event_s4(struct lpfc_hba *phba,
+ 			if (irspiocbq)
+ 				lpfc_sli_sp_handle_rspiocb(phba, pring,
+ 							   irspiocbq);
++			count++;
+ 			break;
+ 		case CQE_CODE_RECEIVE:
+ 		case CQE_CODE_RECEIVE_V1:
+ 			dmabuf = container_of(cq_event, struct hbq_dmabuf,
+ 					      cq_event);
+ 			lpfc_sli4_handle_received_buffer(phba, dmabuf);
++			count++;
+ 			break;
+ 		default:
+ 			break;
+ 		}
 +
- 	jzdma = devm_kzalloc(dev, sizeof(*jzdma), GFP_KERNEL);
- 	if (!jzdma)
- 		return -ENOMEM;
++		/* Limit the number of events to 64 to avoid soft lockups */
++		if (count == 64)
++			break;
+ 	}
+ }
+ 
 -- 
 2.17.1
 
