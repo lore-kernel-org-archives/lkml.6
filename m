@@ -6,75 +6,68 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF38AC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 11:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C512C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 11:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E65B20685
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 11:19:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E65B20685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6019320685
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 11:20:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6019320685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728504AbeJaURJ convert rfc822-to-8bit (ORCPT
+        id S1728656AbeJaUSA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 16:17:09 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37550 "EHLO mx1.redhat.com"
+        Wed, 31 Oct 2018 16:18:00 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:60836 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725831AbeJaURJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 16:17:09 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A02743082AF3;
-        Wed, 31 Oct 2018 11:19:30 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-113.rdu2.redhat.com [10.10.120.113])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1CF7A5D6A6;
-        Wed, 31 Oct 2018 11:19:28 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20181031104912.s3tqjl3u43ou3kwo@gofer.mess.org>
-References: <20181031104912.s3tqjl3u43ou3kwo@gofer.mess.org> <20181030223249.dhwhxdjipzmjxzsy@gofer.mess.org> <153778383104.14867.1567557014782141706.stgit@warthog.procyon.org.uk> <20181030110319.764f33f0@coco.lan> <8474.1540982182@warthog.procyon.org.uk>
-To:     Sean Young <sean@mess.org>
-Cc:     dhowells@redhat.com,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Michael Krufky <mkrufky@linuxtv.org>,
-        Brad Love <brad@nextdimension.cc>, mchehab@kernel.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dvb: Allow MAC addresses to be mapped to stable device names with udev
+        id S1725831AbeJaUSA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 16:18:00 -0400
+Received: from ip5f5a8d7b.dynamic.kabel-deutschland.de ([95.90.141.123] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1gHoXa-0004ZI-Rm; Wed, 31 Oct 2018 12:20:02 +0100
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     Emil Renner Berthing <esmil@mailme.dk>
+Cc:     linux-spi@vger.kernel.org, Emil Renner Berthing <kernel@esmil.dk>,
+        Addy Ke <addy.ke@rock-chips.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 00/14] Rockchip SPI cleanup and use interrupts
+Date:   Wed, 31 Oct 2018 12:20:00 +0100
+Message-ID: <4443653.p1DpZLIVTj@diego>
+In-Reply-To: <20181031105711.19575-1-esmil@mailme.dk>
+References: <20181031105711.19575-1-esmil@mailme.dk>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <12107.1540984768.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Wed, 31 Oct 2018 11:19:28 +0000
-Message-ID: <12108.1540984768@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 31 Oct 2018 11:19:30 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean Young <sean@mess.org> wrote:
+Am Mittwoch, 31. Oktober 2018, 11:56:57 CET schrieb Emil Renner Berthing:
+> Emil Renner Berthing (14):
+>   spi: rockchip: make spi_enable_chip take bool
+>   spi: rockchip: use designated init for dma config
+>   spi: rockchip: always use SPI mode
+>   spi: rockchip: use atomic_t state
+>   spi: rockchip: disable spi on error
+>   spi: rockchip: read transfer info directly
+>   spi: rockchip: don't store dma channels twice
+>   spi: rockchip: remove master pointer from dev data
+>   spi: rockchip: simplify use_dma logic
+>   spi: rockchip: set min/max speed
+>   spi: rockchip: precompute rx sample delay
+>   spi: rockchip: use irq rather than polling
+>   spi: rockchip: support 4bit words
+>   spi: rockchip: support lsb-first mode
 
-> > > Devices without a mac address shouldn't have a mac_dvb sysfs attribute,
-> > > I think.
-> > 
-> > I'm not sure that's possible within the core infrastructure.  It's a class
-> > attribute set when the class is created; I'm not sure it can be overridden on
-> > a per-device basis.
-> > 
-> > Possibly the file could return "" or "none" in this case?
-> 
-> That's very ugly. Have a look at, for example, rc-core wakeup filters:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/media/rc/rc-main.c#n1844
+The series, on rk3288 with cros-ec and spi-flash, rk3328 with a spi-flash, 
+rk3399 with cros-ec and spi-flash:
 
-By analogy, then, I think the thing to do is to put something like struct
-rc_dev::sysfs_groups[] into struct dvb_device (or maybe struct dvb_adapter)
-and then the dvb_mac attribute in there during dvb_register_device() based on
-whether or not the MAC address is not all zeros at that point.
+Tested-by: Heiko Stuebner <heiko@sntech.de>
 
-David
+
+
