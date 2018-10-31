@@ -2,102 +2,98 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD22DECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:30:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD531C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:31:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66C4D2054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:30:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66C4D2054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8196E2054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:31:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8196E2054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726237AbeKAGa2 (ORCPT
+        id S1726290AbeKAGaw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 02:30:28 -0400
-Received: from mga04.intel.com ([192.55.52.120]:41562 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725901AbeKAGa1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 02:30:27 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2018 14:30:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,449,1534834800"; 
-   d="scan'208";a="277316362"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.193])
-  by fmsmga006.fm.intel.com with ESMTP; 31 Oct 2018 14:30:36 -0700
-Date:   Wed, 31 Oct 2018 14:30:36 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Andrew Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs
- w/ PF_SGX
-Message-ID: <20181031213036.GA23089@linux.intel.com>
-References: <20180926173516.GA10920@linux.intel.com>
- <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
- <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
- <20180926204400.GA11446@linux.intel.com>
- <b7e14c6e-fc05-93fa-eef9-5e3f06ab4729@intel.com>
- <CALCETrXByb2UVuZ6AXUeOd8y90NAikbZuvdN3wf_TjHZ+CxNhA@mail.gmail.com>
- <992b1d6d-cc0f-776f-d938-2a1f7cad52c8@intel.com>
- <20180927135603.GF8242@linux.intel.com>
- <ae76dfe7-3587-0d21-37b7-535279edc235@fortanix.com>
- <2e7b81e1-818f-7d76-e2b4-793d9ec5d5a6@intel.com>
+        Thu, 1 Nov 2018 02:30:52 -0400
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:24828
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725848AbeKAGaw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 02:30:52 -0400
+X-IronPort-AV: E=Sophos;i="5.54,449,1534802400"; 
+   d="scan'208";a="283990917"
+Received: from 89-157-201-244.rev.numericable.fr (HELO hadrien) ([89.157.201.244])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2018 22:30:59 +0100
+Date:   Wed, 31 Oct 2018 22:30:58 +0100 (CET)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To:     Shayenne Moura <shayenneluzmoura@gmail.com>
+cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        outreachy-kernel@googlegroups.com
+Subject: Re: [Outreachy kernel] [PATCH] drm: Rename crtc_idr as object_idr
+ to KMS cleanups
+In-Reply-To: <20181031211935.p2pxr7fh26m5dc7v@smtp.gmail.com>
+Message-ID: <alpine.DEB.2.21.1810312229530.5416@hadrien>
+References: <20181031205737.cingeaqget7hkbs6@smtp.gmail.com> <alpine.DEB.2.21.1810312200520.2391@hadrien> <20181031211935.p2pxr7fh26m5dc7v@smtp.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2e7b81e1-818f-7d76-e2b4-793d9ec5d5a6@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 01, 2018 at 03:03:30PM -0700, Dave Hansen wrote:
-> On 10/01/2018 02:42 PM, Jethro Beekman wrote:
-> > 
-> > 1) Even though the vDSO function exists, userspace may still call 
-> > `ENCLU[EENTER]` manually, so the fault handling as described in the 
-> > current patch should also be maintained.
-> 
-> Why?
 
-Circling back to this question, what if we take the easy way out and
-simply signal SIGSEGV without an SGX-specific code?  I.e. treat #PF
-with X86_PF_SGX as an access error, no more no less.  That should be
-sufficient for userspace to function, albeit with a little more effort,
-but presumably no more than would be needed to run on SGX1 hardware.
 
-AFAIK there isn't a way to prevent userspace from manually invoking
-EENTER, short of doing some really nasty text poking or PTE swizzling.
-We could declare using EENTER as unsupported, but that seems like
-cutting off the nose to spite the face.  Supporting userspace EENTER
-in a limited capacity would allow people to do whatever crazy tricks
-they're wont to do without having to deal with absurd requests for
-the vDSO interface.
+On Wed, 31 Oct 2018, Shayenne Moura wrote:
 
-If we go this route we could also add the vDSO stuff after basic SGX
-support is in mainline, obviously with approval from the powers that
-be.
+> On 10/31, Julia Lawall wrote:
+> >
+> >
+> > On Wed, 31 Oct 2018, Shayenne da Luz Moura wrote:
+> >
+> > > Rename 'drm_mode_config.crtc_idr' as 'drm_mode_config.object_idr',
+> > > as proposed in the task description in TODO list for KMS cleanups.
+> >
+> > Is object_idr a field that already exists?  If so, "Rename" is not the
+> > best choice of words.  It should be something like "use the object_idr
+> > field instead of the crtc_idr field" and then explain why.  "task
+> > description in TODO list for KMS cleanups" isn't very helpful to
+> > understand why the change should be made.
+> >
+> > julia
+>
+> Hi Julia,
+>
+> Thank you for your review!
+>
+> This patch is to solve this TODO task:
+>  drm_mode_config.crtc_idr is misnamed, since it contains all KMS object.
+>  Should be renamed to drm_mode_config.object_idr.
+>
+> Do you think I need to use this description in my commit message?
+
+That seems more helpful.
+
+But it seems that the name should actually be changed.  Which means that
+the structure definition should be changed too.  Was that done?
+
+julia
+
+>
+> Best,
+> Shayenne
+>
+> --
+> You received this message because you are subscribed to the Google Groups "outreachy-kernel" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to outreachy-kernel+unsubscribe@googlegroups.com.
+> To post to this group, send email to outreachy-kernel@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/outreachy-kernel/20181031211935.p2pxr7fh26m5dc7v%40smtp.gmail.com.
+> For more options, visit https://groups.google.com/d/optout.
+>
