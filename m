@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF1A9ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:36:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68645ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:36:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D23020664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:36:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D9AE20664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:36:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VZI5gydn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D23020664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nXcpWqKd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D9AE20664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730193AbeKAIJD (ORCPT
+        id S1730374AbeKAIgk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:09:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58538 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:36:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728825AbeKAIJB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:09:01 -0400
+        id S1730161AbeKAIJC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:09:02 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05BB42085A;
-        Wed, 31 Oct 2018 23:08:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2B7920847;
+        Wed, 31 Oct 2018 23:08:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027329;
-        bh=VX2FgP8zSlWA7Xz503DcJIJbzzrre9LO4e0nlr132H8=;
+        s=default; t=1541027331;
+        bh=vZk7KSjMKrQtZFfkIHicRVmHpbanh9tx/85Kk4XUEkE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VZI5gydna4VKGewKykRQMv6PBZNlM8qNXTU/T1kQK41Ym3Cyg9QK6u/R018WWClqz
-         AgQ41npimIa/rcDSAX+9fwcet3zCA5vEofEFh+AdC0HK9rMDQtjJBDkApv/NZTOUCf
-         GQ17d2bo5JXeQ8UtDzYbYlg4nVjYJxyOTfWVqmWw=
+        b=nXcpWqKdqfdZP3V9qbgqfvG7j9Ygknrz0jzlAfRZfHmqW14bu52K34+90iffm0l21
+         YqDtYPMEEfkvqJ3w9PKtUIQjc6PV3GWCubttZvx1z8bM8N1eMXF8TC654CYOWDU71d
+         QOnm2vwZIcnsSwaTfnuU/ecBQLf8pVx7CjwchmIQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Douglas Anderson <dianders@chromium.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+Cc:     Yunsheng Lin <linyunsheng@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 059/126] pinctrl: spmi-mpp: Fix pmic_mpp_config_get() to be compliant
-Date:   Wed, 31 Oct 2018 19:06:47 -0400
-Message-Id: <20181031230754.29029-59-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 061/126] net: hns3: Preserve vlan 0 in hardware table
+Date:   Wed, 31 Oct 2018 19:06:49 -0400
+Message-Id: <20181031230754.29029-61-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -53,93 +55,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
+From: Yunsheng Lin <linyunsheng@huawei.com>
 
-[ Upstream commit 0d5b476f8f57fcb06c45fe27681ac47254f63fd2 ]
+[ Upstream commit daaa8521760ee4d4e65f309c4c37b3a1e58c9d4e ]
 
-If you look at "pinconf-groups" in debugfs for ssbi-mpp you'll notice
-it looks like nonsense.
+When netdev is down, the stack will delete the vlan from
+hardware including vlan0, which will cause problem when
+doing loopback selftest when netdev is down.
 
-The problem is fairly well described in commit 1cf86bc21257 ("pinctrl:
-qcom: spmi-gpio: Fix pmic_gpio_config_get() to be compliant") and
-commit 05e0c828955c ("pinctrl: msm: Fix msm_config_group_get() to be
-compliant"), but it was pointed out that ssbi-mpp has the same
-problem.  Let's fix it there too.
+This patch fixes it by always preserving vlan 0 in hardware,
+because vlan 0 is defalut vlan, which should always be in
+hardware.
 
-NOTE: in case it's helpful to someone reading this, the way to tell
-whether to do the -EINVAL or not is to look at the PCONFDUMP for a
-given attribute.  If the last element (has_arg) is false then you need
-to do the -EINVAL trick.
-
-ALSO NOTE: it seems unlikely that the values returned when we try to
-get PIN_CONFIG_BIAS_PULL_UP will actually be printed since "has_arg"
-is false for that one, but I guess it's still fine to return different
-values so I kept doing that.  It seems like another driver (ssbi-gpio)
-uses a custom attribute (PM8XXX_QCOM_PULL_UP_STRENGTH) for something
-similar so maybe a future change should do that here too.
-
-Fixes: cfb24f6ebd38 ("pinctrl: Qualcomm SPMI PMIC MPP pin controller driver")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: c39c4d98dc65 ("net: hns3: Add mac loopback selftest support in hns3 driver")
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-index 7577f133d326..ac251c62bc66 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-@@ -345,13 +345,12 @@ static int pmic_mpp_config_get(struct pinctrl_dev *pctldev,
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index 73b04e11ec0b..867f27106a02 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -4732,6 +4732,9 @@ static int hclge_set_vlan_filter_hw(struct hclge_dev *hdev, __be16 proto,
+ 	u16 vport_idx, vport_num = 0;
+ 	int ret;
  
- 	switch (param) {
- 	case PIN_CONFIG_BIAS_DISABLE:
--		arg = pad->pullup == PMIC_MPP_PULL_UP_OPEN;
-+		if (pad->pullup != PMIC_MPP_PULL_UP_OPEN)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_BIAS_PULL_UP:
- 		switch (pad->pullup) {
--		case PMIC_MPP_PULL_UP_OPEN:
--			arg = 0;
--			break;
- 		case PMIC_MPP_PULL_UP_0P6KOHM:
- 			arg = 600;
- 			break;
-@@ -366,13 +365,17 @@ static int pmic_mpp_config_get(struct pinctrl_dev *pctldev,
- 		}
- 		break;
- 	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
--		arg = !pad->is_enabled;
-+		if (pad->is_enabled)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_POWER_SOURCE:
- 		arg = pad->power_source;
- 		break;
- 	case PIN_CONFIG_INPUT_ENABLE:
--		arg = pad->input_enabled;
-+		if (!pad->input_enabled)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_OUTPUT:
- 		arg = pad->out_value;
-@@ -384,7 +387,9 @@ static int pmic_mpp_config_get(struct pinctrl_dev *pctldev,
- 		arg = pad->amux_input;
- 		break;
- 	case PMIC_MPP_CONF_PAIRED:
--		arg = pad->paired;
-+		if (!pad->paired)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_DRIVE_STRENGTH:
- 		arg = pad->drive_strength;
++	if (is_kill && !vlan_id)
++		return 0;
++
+ 	ret = hclge_set_vf_vlan_common(hdev, vport_id, is_kill, vlan_id,
+ 				       0, proto);
+ 	if (ret) {
 -- 
 2.17.1
 
