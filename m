@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7501FECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:12:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5347CC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:12:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22A7220840
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:12:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A95D20664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:12:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cGliCDoA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22A7220840
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1icCSVp9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A95D20664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732143AbeKAIMN (ORCPT
+        id S1732160AbeKAIMQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:12:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36796 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:12:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732094AbeKAIMM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:12:12 -0400
+        id S1732144AbeKAIMP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:12:15 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 237A12085A;
-        Wed, 31 Oct 2018 23:11:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 610BC2087A;
+        Wed, 31 Oct 2018 23:12:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027519;
-        bh=tHrttO4wnHzs3MgD5CI088CEOQIQdsSASAp6WRXK1dc=;
+        s=default; t=1541027523;
+        bh=DPFJjGhqh2pb6qKsuEsQ1anPInA3+GRznd2dljeTLik=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cGliCDoA8cRgpUzFU96AOCTawE0LH3fh2YxTzPwxg1JORXxLYf8QUP9bzkYYdq8ig
-         DeHrIbJPVHhhzoKNrIYrw8LpJc5zVEam2obeA0emDnpL0Ut9PFeQTtdoNQKTl5KLwH
-         OJ9wQCWCaK4ZYbWrblEgLme/D82xVVPiCj/R1HOs=
+        b=1icCSVp96JXnx5snCzwUiXlQJ8QjQsMBWxa4Pjqy6RAggoGPjgQkPo1MYe5g/+qHF
+         V+XUzBOK5+/y7NSAWVI7Jo+Z+vUMdn8Ytq2CbDuMNwVid2JjeBrvm2E/jdyrGo+avg
+         aFFXfux8+WbdLb4cuXtWc8gwgxhxhSwCfX1QAU2I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Theodore Ts'o <tytso@mit.edu>, stable@kernel.org,
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 24/32] ext4: fix argument checking in EXT4_IOC_MOVE_EXT
-Date:   Wed, 31 Oct 2018 19:11:29 -0400
-Message-Id: <20181031231137.29429-24-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 28/32] uio: ensure class is registered before devices
+Date:   Wed, 31 Oct 2018 19:11:33 -0400
+Message-Id: <20181031231137.29429-28-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231137.29429-1-sashal@kernel.org>
 References: <20181031231137.29429-1-sashal@kernel.org>
@@ -52,48 +53,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-[ Upstream commit f18b2b83a727a3db208308057d2c7945f368e625 ]
+[ Upstream commit ae61cf5b9913027c6953a79ed3894da4f47061bd ]
 
-If the starting block number of either the source or destination file
-exceeds the EOF, EXT4_IOC_MOVE_EXT should return EINVAL.
+When both uio and the uio drivers are built in the kernel, it is possible
+for a driver to register devices before the uio class is registered.
 
-Also fixed the helper function mext_check_coverage() so that if the
-logical block is beyond EOF, make it return immediately, instead of
-looping until the block number wraps all the away around.  This takes
-long enough that if there are multiple threads trying to do pound on
-an the same inode doing non-sensical things, it can end up triggering
-the kernel's soft lockup detector.
+This may result in a NULL pointer dereference later on in
+get_device_parent() when accessing the class glue_dirs spinlock.
 
-Reported-by: syzbot+c61979f6f2cba5cb3c06@syzkaller.appspotmail.com
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+The trace looks like that:
+
+Unable to handle kernel NULL pointer dereference at virtual address 00000140
+[...]
+[<ffff0000089cc234>] _raw_spin_lock+0x14/0x48
+[<ffff0000084f56bc>] device_add+0x154/0x6a0
+[<ffff0000084f5e48>] device_create_groups_vargs+0x120/0x128
+[<ffff0000084f5edc>] device_create+0x54/0x60
+[<ffff0000086e72c0>] __uio_register_device+0x120/0x4a8
+[<ffff000008528b7c>] jaguar2_pci_probe+0x2d4/0x558
+[<ffff0000083fc18c>] local_pci_probe+0x3c/0xb8
+[<ffff0000083fd81c>] pci_device_probe+0x11c/0x180
+[<ffff0000084f88bc>] driver_probe_device+0x22c/0x2d8
+[<ffff0000084f8a24>] __driver_attach+0xbc/0xc0
+[<ffff0000084f69fc>] bus_for_each_dev+0x4c/0x98
+[<ffff0000084f81b8>] driver_attach+0x20/0x28
+[<ffff0000084f7d08>] bus_add_driver+0x1b8/0x228
+[<ffff0000084f93c0>] driver_register+0x60/0xf8
+[<ffff0000083fb918>] __pci_register_driver+0x40/0x48
+
+Return EPROBE_DEFER in that case so the driver can register the device
+later.
+
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ext4/move_extent.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/uio/uio.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
-index 05048fcfd602..6b5e2eddd8d7 100644
---- a/fs/ext4/move_extent.c
-+++ b/fs/ext4/move_extent.c
-@@ -526,9 +526,13 @@ mext_check_arguments(struct inode *orig_inode,
- 			orig_inode->i_ino, donor_inode->i_ino);
- 		return -EINVAL;
+diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
+index b9823eb9c195..0ab15d833d1b 100644
+--- a/drivers/uio/uio.c
++++ b/drivers/uio/uio.c
+@@ -249,6 +249,8 @@ static struct class uio_class = {
+ 	.dev_groups = uio_groups,
+ };
+ 
++bool uio_class_registered;
++
+ /*
+  * device functions
+  */
+@@ -772,6 +774,9 @@ static int init_uio_class(void)
+ 		printk(KERN_ERR "class_register failed for uio\n");
+ 		goto err_class_register;
  	}
--	if (orig_eof < orig_start + *len - 1)
-+	if (orig_eof <= orig_start)
-+		*len = 0;
-+	else if (orig_eof < orig_start + *len - 1)
- 		*len = orig_eof - orig_start;
--	if (donor_eof < donor_start + *len - 1)
-+	if (donor_eof <= donor_start)
-+		*len = 0;
-+	else if (donor_eof < donor_start + *len - 1)
- 		*len = donor_eof - donor_start;
- 	if (!*len) {
- 		ext4_debug("ext4 move extent: len should not be 0 "
++
++	uio_class_registered = true;
++
+ 	return 0;
+ 
+ err_class_register:
+@@ -782,6 +787,7 @@ static int init_uio_class(void)
+ 
+ static void release_uio_class(void)
+ {
++	uio_class_registered = false;
+ 	class_unregister(&uio_class);
+ 	uio_major_cleanup();
+ }
+@@ -801,6 +807,9 @@ int __uio_register_device(struct module *owner,
+ 	struct uio_device *idev;
+ 	int ret = 0;
+ 
++	if (!uio_class_registered)
++		return -EPROBE_DEFER;
++
+ 	if (!parent || !info || !info->name || !info->version)
+ 		return -EINVAL;
+ 
 -- 
 2.17.1
 
