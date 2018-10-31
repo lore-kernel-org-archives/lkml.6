@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6222BECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DFE1ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F10B2064C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C16920838
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="z58U96XS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F10B2064C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pZMT9iXP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C16920838
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728615AbeKAIHG (ORCPT
+        id S1728629AbeKAIHI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:07:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54512 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:07:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728533AbeKAIHE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:07:04 -0400
+        id S1728581AbeKAIHH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:07:07 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DBE220840;
-        Wed, 31 Oct 2018 23:06:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5FE02081B;
+        Wed, 31 Oct 2018 23:06:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027214;
-        bh=CcRV/kLR6yrTXK2LsYZVJ1fn+J7L4h2aDCegqemHkzY=;
+        s=default; t=1541027216;
+        bh=dHa8dKHtFKD4XKyCrU57+s+F/IVP4Rs0gC/qpgUY+ao=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z58U96XSi4wdcC9tcoo5DFROhn/Fp7dN/2HSvFJ+ZwFsE5DxcrGUyfUZJLQiWjAdh
-         WbcModF76o6HBR/xSSzyf66jtqCNtg328y6LiDPn223AbYO8SGfIXP38ZdVYuAUgLp
-         b6onOL3x1/cwprvFbS4j8owlKViWkKK+i4a1O/pM=
+        b=pZMT9iXPt1hXPeWMLy4Pgcm6g98/IjRsg9eldfwjUaJ/VSCVi+ZQhdNjrgs/v1gvN
+         zwKicHSYqv4zU3OQgv3Lu1TvoFSlspe/4SiZtaeQ+2QXSbiPyDNLAgQiY0EXAJXuMH
+         Utctq2DnzDwPckpMUKqxu5l/6pztPVCHevmM2WRI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Shannon Nelson <shannon.nelson@oracle.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+Cc:     Martin Willi <martin@strongswan.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 078/146] ixgbe: disallow IPsec Tx offload when in SR-IOV mode
-Date:   Wed, 31 Oct 2018 19:04:33 -0400
-Message-Id: <20181031230541.28822-78-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 081/146] ath10k: schedule hardware restart if WMI command times out
+Date:   Wed, 31 Oct 2018 19:04:36 -0400
+Message-Id: <20181031230541.28822-81-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -53,45 +53,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shannon Nelson <shannon.nelson@oracle.com>
+From: Martin Willi <martin@strongswan.org>
 
-[ Upstream commit 47b6f50077e68bcd544f657526dad4bfdce7e87d ]
+[ Upstream commit a9911937e7d332761e8c4fcbc7ba0426bdc3956f ]
 
-There seems to be a problem in the x540's internal switch wherein if SR-IOV
-mode is enabled and an offloaded IPsec packet is sent to a local VF,
-the packet is silently dropped.  This might never be a problem as it is
-somewhat a corner case, but if someone happens to be using IPsec offload
-from the PF to a VF that just happens to get migrated to the local box,
-communication will mysteriously fail.
+When running in AP mode, ath10k sometimes suffers from TX credit
+starvation. The issue is hard to reproduce and shows up once in a
+few days, but has been repeatedly seen with QCA9882 and a large
+range of firmwares, including 10.2.4.70.67.
 
-Not good.
+Once the module is in this state, TX credits are never replenished,
+which results in "SWBA overrun" errors, as no beacons can be sent.
+Even worse, WMI commands run in a timeout while holding the conf
+mutex for three seconds each, making any further operations slow
+and the whole system unresponsive.
 
-A simple way to protect from this is to simply not allow any IPsec offloads
-for outgoing packets when num_vfs != 0.  This doesn't help any offloads that
-were created before SR-IOV was enabled, but we'll get to that later.
+The firmware/driver never recovers from that state automatically,
+and triggering TX flush or warm restarts won't work over WMI. So
+issue a hardware restart if a WMI command times out due to missing
+TX credits. This implies a connectivity outage of about 1.4s in AP
+mode, but brings back the interface and the whole system to a usable
+state. WMI command timeouts have not been seen in absent of this
+specific issue, so taking such drastic actions seems legitimate.
 
-Signed-off-by: Shannon Nelson <shannon.nelson@oracle.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Martin Willi <martin@strongswan.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/wireless/ath/ath10k/wmi.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
-index da4322e4daed..add124e0381d 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
-@@ -676,6 +676,9 @@ static int ixgbe_ipsec_add_sa(struct xfrm_state *xs)
- 	} else {
- 		struct tx_sa tsa;
+diff --git a/drivers/net/wireless/ath/ath10k/wmi.c b/drivers/net/wireless/ath/ath10k/wmi.c
+index 1dced0dae9cd..9f31b9a10850 100644
+--- a/drivers/net/wireless/ath/ath10k/wmi.c
++++ b/drivers/net/wireless/ath/ath10k/wmi.c
+@@ -1869,6 +1869,12 @@ int ath10k_wmi_cmd_send(struct ath10k *ar, struct sk_buff *skb, u32 cmd_id)
+ 	if (ret)
+ 		dev_kfree_skb_any(skb);
  
-+		if (adapter->num_vfs)
-+			return -EOPNOTSUPP;
++	if (ret == -EAGAIN) {
++		ath10k_warn(ar, "wmi command %d timeout, restarting hardware\n",
++			    cmd_id);
++		queue_work(ar->workqueue, &ar->restart_work);
++	}
 +
- 		/* find the first unused index */
- 		ret = ixgbe_ipsec_find_empty_idx(ipsec, false);
- 		if (ret < 0) {
+ 	return ret;
+ }
+ 
 -- 
 2.17.1
 
