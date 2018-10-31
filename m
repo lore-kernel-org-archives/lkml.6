@@ -2,147 +2,244 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A742FC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:08:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BF84C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:12:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B5352081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:08:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U050z7kz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B5352081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1B8872080A
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:12:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B8872080A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729907AbeKAFHz (ORCPT
+        id S1729872AbeKAFMa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 01:07:55 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:36960 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725898AbeKAFHz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 01:07:55 -0400
-Received: by mail-yb1-f194.google.com with SMTP id d18-v6so7192032yba.4
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 13:08:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:date:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=mXNW9Z9pdNKylpCYEsjGBtFwSbBTAGrJoPaCRvqHuFM=;
-        b=U050z7kz05sjSInfJ7XskyK5mO6beh8HmvrtlaeEFt1URGVgMnx9DeeNg8fNifLwcW
-         0kWVk52JFRbuf6WWQteTRmnpG7mjHOQPsmYmNm7z/EpntfEdYTwMG7c5RFD+sPGh1VGV
-         KnidEXGhtejxZeR/9doS33G/yxFD8/d2tWdviq9VlKL38hpGr9E2LFtZxOR0svsDEvpQ
-         lz3XJfLy20zRyHkQdQ38PR2mY4ejGK5kg4bEnHNFh/r7mwcXPpN96Scy5GMvyj+CRfKb
-         8qwPYfozOoUJ8NIMCqWEQBBEDSAM5PJjH51qJUMkdEpVuouVKmvb0BSAzFc4p9juL523
-         5oLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=mXNW9Z9pdNKylpCYEsjGBtFwSbBTAGrJoPaCRvqHuFM=;
-        b=islkG1Hg1U3bXB4MF4YABEzqQmyhubqiEN0+XYfFsofSpysBoBwVOGDD3HiSnqASOl
-         A5F4GBiXWqmiSg2zoW9EnqS5Fjq2iSJVVIIOtzT+HHn6Wf5Lij2kLF/4w08HC41BaCae
-         7V7i7aVkGSfmmMPx+QV9JDT47twcnkJ8T7KYw5Vmu0ZeIlfd7KnEGj8MvrfVxC2GxRot
-         TMe2AW6g3EfDEQAh2mstwjvvMZ+W0qyG8YJagsD7QHOjTVp2UZeuZxk3FMij5ZeRz689
-         K5c8RZvUgJcB8HPFshw5swh6OL8mV6pTXDWhWHb78tfwsdkwjcVj6yQ4uyuG9DkfAwy5
-         MpjQ==
-X-Gm-Message-State: AGRZ1gIVoDd5xHLNzByxixJkYncAjnTNPiGNx03mixLMSf3RtfEQ8P4Q
-        rIPd8sC6TmzNkLHn8U3WXw==
-X-Google-Smtp-Source: AJdET5fH1egl9EFDccHNi3I3Mia/P/+mj5/Jvp52amLHx+y7XXnlCsuBhrkMtdRSTfpgcW3vKYuYJA==
-X-Received: by 2002:a25:2d60:: with SMTP id s32-v6mr4799142ybe.471.1541016499993;
-        Wed, 31 Oct 2018 13:08:19 -0700 (PDT)
-Received: from 960 ([130.254.104.55])
-        by smtp.gmail.com with ESMTPSA id q2-v6sm9721689ywa.24.2018.10.31.13.08.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 31 Oct 2018 13:08:19 -0700 (PDT)
-Message-ID: <60bede7d2cc0a0c06575da2bcbf06367f15bf4ca.camel@gmail.com>
-Subject: Re: [PATCH 2/3] ALSA:hda: fix front speakers on Huawei MBXP.
-From:   ayman.bagabas@gmail.com
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Kailang Yang <kailang@realtek.com>,
-        Hui Wang <hui.wang@canonical.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 31 Oct 2018 16:08:18 -0400
-In-Reply-To: <20181031192013.7701-1-ayman.bagabas@gmail.com>
-References: <20181031192013.7701-1-ayman.bagabas@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
+        Thu, 1 Nov 2018 01:12:30 -0400
+Received: from mleia.com ([178.79.152.223]:48272 "EHLO mail.mleia.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726294AbeKAFMa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 01:12:30 -0400
+Received: from mail.mleia.com (localhost [127.0.0.1])
+        by mail.mleia.com (Postfix) with ESMTP id 8B05F424849;
+        Wed, 31 Oct 2018 20:12:52 +0000 (GMT)
+Subject: Re: [PATCH 2/7] dt-bindings: mfd: ds90ux9xx: add description of TI
+ DS90Ux9xx I2C bridge
+To:     Luca Ceresoli <luca@lucaceresoli.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+References: <20181008211205.2900-1-vz@mleia.com>
+ <20181008211205.2900-3-vz@mleia.com>
+ <b9a617da-1712-2d28-d25c-e3c413a4e9f0@lucaceresoli.net>
+From:   Vladimir Zapolskiy <vz@mleia.com>
+Message-ID: <2c90affe-0972-751d-8312-3d15d130c3fb@mleia.com>
+Date:   Wed, 31 Oct 2018 22:12:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <b9a617da-1712-2d28-d25c-e3c413a4e9f0@lucaceresoli.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
+X-CRM114-CacheID: sfid-20181031_201252_601344_C8207D12 
+X-CRM114-Status: GOOD (  40.95  )
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch solves bug 200501 'Only 2 of 4 speakers playing sound.' 
-https://bugzilla.kernel.org/show_bug.cgi?id=200501
+Hi Luca,
 
-On Wed, 2018-10-31 at 15:20 -0400, Ayman Bagabas wrote:
-> This patch enables the front speakers on Huawei Matebook X Pro
-> laptops.
-> These laptops come with Dolby Atmos sound system and these pins
-> configuration enables the front speakers.
-> 
-> Signed-off-by: Ayman Bagabas <ayman.bagabas@gmail.com>
-> ---
->  sound/pci/hda/patch_realtek.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/sound/pci/hda/patch_realtek.c
-> b/sound/pci/hda/patch_realtek.c
-> index 3ac7ba9b342d..4f7a39c7883c 100644
-> --- a/sound/pci/hda/patch_realtek.c
-> +++ b/sound/pci/hda/patch_realtek.c
-> @@ -5493,6 +5493,7 @@ enum {
->  	ALC298_FIXUP_TPT470_DOCK,
->  	ALC255_FIXUP_DUMMY_LINEOUT_VERB,
->  	ALC255_FIXUP_DELL_HEADSET_MIC,
-> +	ALC256_FIXUP_HUAWEI_MBXP_PINS,
->  	ALC295_FIXUP_HP_X360,
->  	ALC221_FIXUP_HP_HEADSET_MIC,
->  };
-> @@ -6347,6 +6348,22 @@ static const struct hda_fixup alc269_fixups[]
-> = {
->  		.chained = true,
->  		.chain_id = ALC269_FIXUP_HEADSET_MIC
->  	},
-> +	[ALC256_FIXUP_HUAWEI_MBXP_PINS] = {
-> +		.type = HDA_FIXUP_PINS,
-> +		.v.pins = (const struct hda_pintbl[]) {
-> +			{0x12, 0x90a60130},
-> +			{0x13, 0x40000000},
-> +			{0x14, 0x90170110},
-> +			{0x18, 0x411111f0},
-> +			{0x19, 0x04a11040},
-> +			{0x1a, 0x411111f0},
-> +			{0x1b, 0x90170112},
-> +			{0x1d, 0x40759a05},
-> +			{0x1e, 0x411111f0},
-> +			{0x21, 0x04211020},
-> +			{ },
-> +		},
-> +	},
->  	[ALC295_FIXUP_HP_X360] = {
->  		.type = HDA_FIXUP_FUNC,
->  		.v.func = alc295_fixup_hp_top_speakers,
-> @@ -6592,6 +6609,7 @@ static const struct snd_pci_quirk
-> alc269_fixup_tbl[] = {
->  	SND_PCI_QUIRK(0x17aa, 0x5109, "Thinkpad",
-> ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
->  	SND_PCI_QUIRK(0x17aa, 0x511e, "Thinkpad",
-> ALC298_FIXUP_TPT470_DOCK),
->  	SND_PCI_QUIRK(0x17aa, 0x511f, "Thinkpad",
-> ALC298_FIXUP_TPT470_DOCK),
-> +	SND_PCI_QUIRK(0x19e5, 0x3204, "Huawei MBXP",
-> ALC256_FIXUP_HUAWEI_MBXP_PINS),
->  	SND_PCI_QUIRK(0x17aa, 0x3bf8, "Quanta FL1",
-> ALC269_FIXUP_PCM_44K),
->  	SND_PCI_QUIRK(0x17aa, 0x9e54, "LENOVO NB",
-> ALC269_FIXUP_LENOVO_EAPD),
->  	SND_PCI_QUIRK(0x1b7d, 0xa831, "Ordissimo EVE2 ",
-> ALC269VB_FIXUP_ORDISSIMO_EVE2), /* Also known as Malata PC-B1303 */
+thank you for review.
 
+On 10/30/2018 06:43 PM, Luca Ceresoli wrote:
+> Hi Vladimir,
+> 
+> On 08/10/18 23:12, Vladimir Zapolskiy wrote:
+>> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+>>
+>> TI DS90Ux9xx de-/serializers are capable to route I2C messages to
+>> I2C slave devices connected to a remote de-/serializer in a pair,
+>> the change adds description of device tree bindings of the subcontroller
+>> to configure and enable this functionality.
+>>
+>> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+>> ---
+>>  .../bindings/mfd/ti,ds90ux9xx-i2c-bridge.txt  | 61 +++++++++++++++++++
+>>  1 file changed, 61 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/mfd/ti,ds90ux9xx-i2c-bridge.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx-i2c-bridge.txt b/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx-i2c-bridge.txt
+>> new file mode 100644
+>> index 000000000000..4169e382073a
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx-i2c-bridge.txt
+>> @@ -0,0 +1,61 @@
+>> +TI DS90Ux9xx de-/serializer I2C bridge subcontroller
+>> +
+>> +Required properties:
+>> +- compatible: Must contain a generic "ti,ds90ux9xx-i2c-bridge" value and
+>> +	may contain one more specific value from the list:
+>> +	"ti,ds90ux925-i2c-bridge",
+>> +	"ti,ds90ux926-i2c-bridge",
+>> +	"ti,ds90ux927-i2c-bridge",
+>> +	"ti,ds90ux928-i2c-bridge",
+>> +	"ti,ds90ux940-i2c-bridge".
+>> +
+>> +Required properties of a de-/serializer device connected to a local I2C bus:
+>> +- ti,i2c-bridges: List of phandles to remote de-/serializer devices with
+>> +	two arguments: id of a local de-/serializer FPD link and an assigned
+>> +	I2C address of a remote de-/serializer to be accessed on a local
+>> +	I2C bus.
+>> +
+>> +Optional properties of a de-/serializer device connected to a local I2C bus:
+>> +- ti,i2c-bridge-maps: List of 3-cell values:
+>> +	- the first argument is id of a local de-/serializer FPD link,
+>> +	- the second argument is an I2C address of a device connected to
+>> +	  a remote de-/serializer IC,
+>> +	- the third argument is an I2C address of the remote I2C device
+>> +	  for access on a local I2C bus.
+> 
+> BTW I usually use names "remove slave" address and "alias" for bullets 2
+> and 3. These are the names from the datasheets, and are clearer IMO.
+> 
+
+Definitely you are correct, I find that verbose descriptions might be
+more appropriate and self-explanatory for anyone, who is not closely familiar
+with the IC series. I'll consider to add the names from the datasheets
+as well.
+
+> Now to the big stuff.
+> 
+> I find a static map in the "local" chip DT node is a limit. You might
+> have to support multiple models of remote device, where you'll know the
+> model only when after it gets connected. Think Beaglebone capes, but
+> over FPD-Link 3. This scenario opens several issues, but specifically
+> for I2C address mapping I addressed it by adding in the "local" chip's
+> DT node a pool of I2C aliases it can use. The DT author is responsible
+> to pick addresses that are not used on the same I2C bus, which cannot be
+> done at runtime reliably.
+
+Here I see several important topics raised.
+
+1) A static map in the "local" chip DT node is not a limit in sense that
+   it is optional, so it would be a working model just to omit the property,
+   however it may (or may not) require another handlers to bridge remote
+   I2C devices, for instance 'ti,i2c-bridge-pass-all' property, or new
+   UAPI.
+
+2) About supporting multiple models of remote PCBs in the same dts file,
+   it might be an excessive complication to predict a proper description
+   of an unknown in advance complex device, so, a better solution should
+   be to apply DT overlays in runtime, but at any time the hardware
+   description and the mapping shall be precisely defined.
+
+3) About a pool of vacant I2C addresses, I dislike the idea that there
+   will be no definite or constant I2C address in runtime for a particular
+   remote slave device. As I've mentioned above, it would be better to
+   utilize DT overlays to handle "multiple models of remote device"
+   dynamically in runtime, adding this feature could be done on top of
+   the shown code.
+
+> Here's my current draft on a dual/quad port deserializer:
+> 
+> &i2c0 {
+>     serializer@3d {
+>         reg = <0x3d>;
+>         ...
+> 
+>         /* Guaranteed not physically present on i2c0 */
+>         i2c-alias-pool = /bits/ 8 <0x20 0x21 0x22 0x23 0x24 0x25>;
+> 
+>         rxports {
+>             #address-cells = <1>;
+>             #size-cells = <0>;
+> 
+>             rxport@0 {
+>                 reg = <0>;
+>                 remote-i2c-bus { /* The proxied I2C bus on rxport 0 */
+>                     #address-cells = <1>;
+>                     #size-cells = <0>;
+> 
+>                     eeprom@51 {
+>                         reg = <0x51>;
+>                         compatible = "at,24c02";
+>                     };
+>                 };
+> 
+>             rxport@1 {
+>                 reg = <1>;
+>                 remote-i2c-bus { /* The proxied I2C bus on rxport 1 */
+>                     #address-cells = <1>;
+>                     #size-cells = <0>;
+> 
+>                     eeprom@51 {
+>                         reg = <0x51>;
+>                         compatible = "at,24c02";
+>                     };
+>                 };
+>             };
+>         };
+>     };
+> };
+> 
+> At probe time the serializer driver instantiates one new i2c_adapter for
+> each rxport. Any remote device is added (removed) to that adapter, then
+> the driver finds an available alias and maps (unmaps) it. The
+
+I avoid using i2c_adapter object, because then you get a confusing access
+to right the same device on two logical I2C buses. This is not the way
+how I2C muxes operate or are expected to operate, commonly I2C muxes contain
+a protocol to access muxed devices, which are "invisible" on a host bus,
+and here a local IC behaves like an I2C device with multiple addresses.
+
+Note, that following an advice from Wolfram I'm going to send the i2c-bridge
+cell driver into inclusion under drivers/i2c/muxes/ , even if the device
+driver does not register a mux.
+
+> transactions are handled in a way similar to i2c-mux, i.e. the ds90*
+> i2c_adapter has a master_xfer callback that changes the remote slave
+> address to the corresponding alias, then calls parent->algo->master_xfer().
+> 
+> Note how both eeproms in the example have the same physical address.
+> They will be given two different aliases.
+
+The question is how to determine which runtime assigned address represents
+which eeprom of two. The remote/alias scheme I propose makes it transparent.
+
+>> +- ti,i2c-bridge-auto-ack: Enables AUTO ACK mode.
+> 
+> It this useful other than for debugging? And, as Laurent noted, this
+> should not be in DT: it doesn't describe the hardware.
+> 
+
+I'll drop it, I've just checked that it is unused in any of production dts
+files, which are accessible to me.
+
+By "hardware description" I generally mean a hardware specific handle.
+If IC supports a meaningful, one time programmable non-standard 1-bit field
+configuration, then using a bool property in DT sounds reasonable to me.
+
+>> +- ti,i2c-bridge-pass-all: Enables PASS ALL mode, remote I2C slave devices
+>> +	are accessible on a local (host) I2C bus without I2C address
+>> +	remappings.
+> 
+> It should be clear from the DT docs that either ti,i2c-bridge-pass-all
+> is enabled or the alias map/pool is used, but not both.
+> 
+
+Sure, I'll add this information, thank you for pointing it out.
+
+--
+Best wishes,
+Vladimir
