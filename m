@@ -2,258 +2,279 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC724C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:21:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F46C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:23:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8575020664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:21:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8575020664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2E1D22081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:23:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E1D22081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730134AbeKADUo (ORCPT
+        id S1730160AbeKADWR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 23:20:44 -0400
-Received: from foss.arm.com ([217.140.101.70]:45570 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730000AbeKADUo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 23:20:44 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D453B80D;
-        Wed, 31 Oct 2018 11:21:34 -0700 (PDT)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BBD2C3F6A8;
-        Wed, 31 Oct 2018 11:21:32 -0700 (PDT)
-Subject: Re: [PATCH v2 09/10] irqchip: ti-sci-inta: Add support for Interrupt
- Aggregator driver
-To:     Grygorii Strashko <grygorii.strashko@ti.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>
-Cc:     Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, tglx@linutronix.de,
-        jason@lakedaemon.net,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel@vger.kernel.org, Tero Kristo <t-kristo@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Device Tree Mailing List <devicetree@vger.kernel.org>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>
-References: <20181018154017.7112-1-lokeshvutla@ti.com>
- <20181018154017.7112-10-lokeshvutla@ti.com>
- <b20127dc-be43-3b00-9960-663738df0069@arm.com>
- <9969f24c-cdb0-1f5c-d0f4-b1c1f587325c@ti.com>
- <86va5ssrfm.wl-marc.zyngier@arm.com>
- <2369ea50-55db-c97b-5b43-99d572c97dc9@ti.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- xsFNBE6Jf0UBEADLCxpix34Ch3kQKA9SNlVQroj9aHAEzzl0+V8jrvT9a9GkK+FjBOIQz4KE
- g+3p+lqgJH4NfwPm9H5I5e3wa+Scz9wAqWLTT772Rqb6hf6kx0kKd0P2jGv79qXSmwru28vJ
- t9NNsmIhEYwS5eTfCbsZZDCnR31J6qxozsDHpCGLHlYym/VbC199Uq/pN5gH+5JHZyhyZiNW
- ozUCjMqC4eNW42nYVKZQfbj/k4W9xFfudFaFEhAf/Vb1r6F05eBP1uopuzNkAN7vqS8XcgQH
- qXI357YC4ToCbmqLue4HK9+2mtf7MTdHZYGZ939OfTlOGuxFW+bhtPQzsHiW7eNe0ew0+LaL
- 3wdNzT5abPBscqXWVGsZWCAzBmrZato+Pd2bSCDPLInZV0j+rjt7MWiSxEAEowue3IcZA++7
- ifTDIscQdpeKT8hcL+9eHLgoSDH62SlubO/y8bB1hV8JjLW/jQpLnae0oz25h39ij4ijcp8N
- t5slf5DNRi1NLz5+iaaLg4gaM3ywVK2VEKdBTg+JTg3dfrb3DH7ctTQquyKun9IVY8AsxMc6
- lxl4HxrpLX7HgF10685GG5fFla7R1RUnW5svgQhz6YVU33yJjk5lIIrrxKI/wLlhn066mtu1
- DoD9TEAjwOmpa6ofV6rHeBPehUwMZEsLqlKfLsl0PpsJwov8TQARAQABzSNNYXJjIFp5bmdp
- ZXIgPG1hcmMuenluZ2llckBhcm0uY29tPsLBewQTAQIAJQIbAwYLCQgHAwIGFQgCCQoLBBYC
- AwECHgECF4AFAk6NvYYCGQEACgkQI9DQutE9ekObww/+NcUATWXOcnoPflpYG43GZ0XjQLng
- LQFjBZL+CJV5+1XMDfz4ATH37cR+8gMO1UwmWPv5tOMKLHhw6uLxGG4upPAm0qxjRA/SE3LC
- 22kBjWiSMrkQgv5FDcwdhAcj8A+gKgcXBeyXsGBXLjo5UQOGvPTQXcqNXB9A3ZZN9vS6QUYN
- TXFjnUnzCJd+PVI/4jORz9EUVw1q/+kZgmA8/GhfPH3xNetTGLyJCJcQ86acom2liLZZX4+1
- 6Hda2x3hxpoQo7pTu+XA2YC4XyUstNDYIsE4F4NVHGi88a3N8yWE+Z7cBI2HjGvpfNxZnmKX
- 6bws6RQ4LHDPhy0yzWFowJXGTqM/e79c1UeqOVxKGFF3VhJJu1nMlh+5hnW4glXOoy/WmDEM
- UMbl9KbJUfo+GgIQGMp8mwgW0vK4HrSmevlDeMcrLdfbbFbcZLNeFFBn6KqxFZaTd+LpylIH
- bOPN6fy1Dxf7UZscogYw5Pt0JscgpciuO3DAZo3eXz6ffj2NrWchnbj+SpPBiH4srfFmHY+Y
- LBemIIOmSqIsjoSRjNEZeEObkshDVG5NncJzbAQY+V3Q3yo9og/8ZiaulVWDbcpKyUpzt7pv
- cdnY3baDE8ate/cymFP5jGJK++QCeA6u6JzBp7HnKbngqWa6g8qDSjPXBPCLmmRWbc5j0lvA
- 6ilrF8nOwU0ETol/RQEQAM/2pdLYCWmf3rtIiP8Wj5NwyjSL6/UrChXtoX9wlY8a4h3EX6E3
- 64snIJVMLbyr4bwdmPKULlny7T/R8dx/mCOWu/DztrVNQiXWOTKJnd/2iQblBT+W5W8ep/nS
- w3qUIckKwKdplQtzSKeE+PJ+GMS+DoNDDkcrVjUnsoCEr0aK3cO6g5hLGu8IBbC1CJYSpple
- VVb/sADnWF3SfUvJ/l4K8Uk4B4+X90KpA7U9MhvDTCy5mJGaTsFqDLpnqp/yqaT2P7kyMG2E
- w+eqtVIqwwweZA0S+tuqput5xdNAcsj2PugVx9tlw/LJo39nh8NrMxAhv5aQ+JJ2I8UTiHLX
- QvoC0Yc/jZX/JRB5r4x4IhK34Mv5TiH/gFfZbwxd287Y1jOaD9lhnke1SX5MXF7eCT3cgyB+
- hgSu42w+2xYl3+rzIhQqxXhaP232t/b3ilJO00ZZ19d4KICGcakeiL6ZBtD8TrtkRiewI3v0
- o8rUBWtjcDRgg3tWx/PcJvZnw1twbmRdaNvsvnlapD2Y9Js3woRLIjSAGOijwzFXSJyC2HU1
- AAuR9uo4/QkeIrQVHIxP7TJZdJ9sGEWdeGPzzPlKLHwIX2HzfbdtPejPSXm5LJ026qdtJHgz
- BAb3NygZG6BH6EC1NPDQ6O53EXorXS1tsSAgp5ZDSFEBklpRVT3E0NrDABEBAAHCwV8EGAEC
- AAkFAk6Jf0UCGwwACgkQI9DQutE9ekMLBQ//U+Mt9DtFpzMCIHFPE9nNlsCm75j22lNiw6mX
- mx3cUA3pl+uRGQr/zQC5inQNtjFUmwGkHqrAw+SmG5gsgnM4pSdYvraWaCWOZCQCx1lpaCOl
- MotrNcwMJTJLQGc4BjJyOeSH59HQDitKfKMu/yjRhzT8CXhys6R0kYMrEN0tbe1cFOJkxSbV
- 0GgRTDF4PKyLT+RncoKxQe8lGxuk5614aRpBQa0LPafkirwqkUtxsPnarkPUEfkBlnIhAR8L
- kmneYLu0AvbWjfJCUH7qfpyS/FRrQCoBq9QIEcf2v1f0AIpA27f9KCEv5MZSHXGCdNcbjKw1
- 39YxYZhmXaHFKDSZIC29YhQJeXWlfDEDq6nIhvurZy3mSh2OMQgaIoFexPCsBBOclH8QUtMk
- a3jW/qYyrV+qUq9Wf3SKPrXf7B3xB332jFCETbyZQXqmowV+2b3rJFRWn5hK5B+xwvuxKyGq
- qDOGjof2dKl2zBIxbFgOclV7wqCVkhxSJi/QaOj2zBqSNPXga5DWtX3ekRnJLa1+ijXxmdjz
- hApihi08gwvP5G9fNGKQyRETePEtEAWt0b7dOqMzYBYGRVr7uS4uT6WP7fzOwAJC4lU7ZYWZ
- yVshCa0IvTtp1085RtT3qhh9mobkcZ+7cQOY+Tx2RGXS9WeOh2jZjdoWUv6CevXNQyOUXMM=
-Organization: ARM Ltd
-Message-ID: <da27ecc5-db32-cf3a-c194-962c44bc782f@arm.com>
-Date:   Wed, 31 Oct 2018 18:21:31 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 31 Oct 2018 23:22:17 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52886 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730069AbeKADWR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 23:22:17 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9VIFIkD045677
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 14:23:06 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nffcde1ur-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 14:23:06 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 31 Oct 2018 18:23:04 -0000
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 31 Oct 2018 18:22:59 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9VIMw6e27984126
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 31 Oct 2018 18:22:58 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B8659B2068;
+        Wed, 31 Oct 2018 18:22:58 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8511BB2065;
+        Wed, 31 Oct 2018 18:22:58 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.141])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 31 Oct 2018 18:22:58 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 4611B16C06E6; Wed, 31 Oct 2018 11:22:59 -0700 (PDT)
+Date:   Wed, 31 Oct 2018 11:22:59 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Ran Rozenstein <ranro@mellanox.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
+        "dipankar@in.ibm.com" <dipankar@in.ibm.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+        "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "fweisbec@gmail.com" <fweisbec@gmail.com>,
+        "oleg@redhat.com" <oleg@redhat.com>,
+        Maor Gottlieb <maorg@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Eran Ben Elisha <eranbe@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>
+Subject: Re: [PATCH tip/core/rcu 02/19] rcu: Defer reporting RCU-preempt
+ quiescent states when disabled
+Reply-To: paulmck@linux.ibm.com
+References: <20180829222021.GA29944@linux.vnet.ibm.com>
+ <20180829222047.319-2-paulmck@linux.vnet.ibm.com>
+ <AM4PR0501MB27691ECD1B0ECB0531B16F20C5F30@AM4PR0501MB2769.eurprd05.prod.outlook.com>
+ <20181029142735.GZ4170@linux.ibm.com>
+ <20181030034452.GA224709@google.com>
+ <20181030125800.GE4170@linux.ibm.com>
+ <20181030222123.GB44036@joelaf.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <2369ea50-55db-c97b-5b43-99d572c97dc9@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181030222123.GB44036@joelaf.mtv.corp.google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18103118-0060-0000-0000-000002CAA32F
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009961; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01110726; UDB=6.00575551; IPR=6.00890818;
+ MB=3.00023982; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-31 18:23:04
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18103118-0061-0000-0000-0000470AC438
+Message-Id: <20181031182259.GH4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-31_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810310151
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Grygorii,
-
-On 31/10/18 16:39, Grygorii Strashko wrote:
-
-[...]
-
-> I'd try to provide some additional information here.
-> (Sry, I'll still use term "events")
+On Tue, Oct 30, 2018 at 03:21:23PM -0700, Joel Fernandes wrote:
+> On Tue, Oct 30, 2018 at 05:58:00AM -0700, Paul E. McKenney wrote:
+> > On Mon, Oct 29, 2018 at 08:44:52PM -0700, Joel Fernandes wrote:
+> > > On Mon, Oct 29, 2018 at 07:27:35AM -0700, Paul E. McKenney wrote:
+> > > > On Mon, Oct 29, 2018 at 11:24:42AM +0000, Ran Rozenstein wrote:
+> > > > > Hi Paul and all,
+> > > > > 
+> > > > > > -----Original Message-----
+> > > > > > From: linux-kernel-owner@vger.kernel.org [mailto:linux-kernel-
+> > > > > > owner@vger.kernel.org] On Behalf Of Paul E. McKenney
+> > > > > > Sent: Thursday, August 30, 2018 01:21
+> > > > > > To: linux-kernel@vger.kernel.org
+> > > > > > Cc: mingo@kernel.org; jiangshanlai@gmail.com; dipankar@in.ibm.com;
+> > > > > > akpm@linux-foundation.org; mathieu.desnoyers@efficios.com;
+> > > > > > josh@joshtriplett.org; tglx@linutronix.de; peterz@infradead.org;
+> > > > > > rostedt@goodmis.org; dhowells@redhat.com; edumazet@google.com;
+> > > > > > fweisbec@gmail.com; oleg@redhat.com; joel@joelfernandes.org; Paul E.
+> > > > > > McKenney <paulmck@linux.vnet.ibm.com>
+> > > > > > Subject: [PATCH tip/core/rcu 02/19] rcu: Defer reporting RCU-preempt
+> > > > > > quiescent states when disabled
+> > > > > > 
+> > > > > > This commit defers reporting of RCU-preempt quiescent states at
+> > > > > > rcu_read_unlock_special() time when any of interrupts, softirq, or
+> > > > > > preemption are disabled.  These deferred quiescent states are reported at a
+> > > > > > later RCU_SOFTIRQ, context switch, idle entry, or CPU-hotplug offline
+> > > > > > operation.  Of course, if another RCU read-side critical section has started in
+> > > > > > the meantime, the reporting of the quiescent state will be further deferred.
+> > > > > > 
+> > > > > > This also means that disabling preemption, interrupts, and/or softirqs will act
+> > > > > > as an RCU-preempt read-side critical section.
+> > > > > > This is enforced by checking preempt_count() as needed.
+> > > > > > 
+> > > > > > Some special cases must be handled on an ad-hoc basis, for example,
+> > > > > > context switch is a quiescent state even though both the scheduler and
+> > > > > > do_exit() disable preemption.  In these cases, additional calls to
+> > > > > > rcu_preempt_deferred_qs() override the preemption disabling.  Similar logic
+> > > > > > overrides disabled interrupts in rcu_preempt_check_callbacks() because in
+> > > > > > this case the quiescent state happened just before the corresponding
+> > > > > > scheduling-clock interrupt.
+> > > > > > 
+> > > > > > In theory, this change lifts a long-standing restriction that required that if
+> > > > > > interrupts were disabled across a call to rcu_read_unlock() that the matching
+> > > > > > rcu_read_lock() also be contained within that interrupts-disabled region of
+> > > > > > code.  Because the reporting of the corresponding RCU-preempt quiescent
+> > > > > > state is now deferred until after interrupts have been enabled, it is no longer
+> > > > > > possible for this situation to result in deadlocks involving the scheduler's
+> > > > > > runqueue and priority-inheritance locks.  This may allow some code
+> > > > > > simplification that might reduce interrupt latency a bit.  Unfortunately, in
+> > > > > > practice this would also defer deboosting a low-priority task that had been
+> > > > > > subjected to RCU priority boosting, so real-time-response considerations
+> > > > > > might well force this restriction to remain in place.
+> > > > > > 
+> > > > > > Because RCU-preempt grace periods are now blocked not only by RCU read-
+> > > > > > side critical sections, but also by disabling of interrupts, preemption, and
+> > > > > > softirqs, it will be possible to eliminate RCU-bh and RCU-sched in favor of
+> > > > > > RCU-preempt in CONFIG_PREEMPT=y kernels.  This may require some
+> > > > > > additional plumbing to provide the network denial-of-service guarantees
+> > > > > > that have been traditionally provided by RCU-bh.  Once these are in place,
+> > > > > > CONFIG_PREEMPT=n kernels will be able to fold RCU-bh into RCU-sched.
+> > > > > > This would mean that all kernels would have but one flavor of RCU, which
+> > > > > > would open the door to significant code cleanup.
+> > > > > > 
+> > > > > > Moving to a single flavor of RCU would also have the beneficial effect of
+> > > > > > reducing the NOCB kthreads by at least a factor of two.
+> > > > > > 
+> > > > > > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com> [ paulmck:
+> > > > > > Apply rcu_read_unlock_special() preempt_count() feedback
+> > > > > >   from Joel Fernandes. ]
+> > > > > > [ paulmck: Adjust rcu_eqs_enter() call to rcu_preempt_deferred_qs() in
+> > > > > >   response to bug reports from kbuild test robot. ] [ paulmck: Fix bug located
+> > > > > > by kbuild test robot involving recursion
+> > > > > >   via rcu_preempt_deferred_qs(). ]
+> > > > > > ---
+> > > > > >  .../RCU/Design/Requirements/Requirements.html |  50 +++---
+> > > > > >  include/linux/rcutiny.h                       |   5 +
+> > > > > >  kernel/rcu/tree.c                             |   9 ++
+> > > > > >  kernel/rcu/tree.h                             |   3 +
+> > > > > >  kernel/rcu/tree_exp.h                         |  71 +++++++--
+> > > > > >  kernel/rcu/tree_plugin.h                      | 144 +++++++++++++-----
+> > > > > >  6 files changed, 205 insertions(+), 77 deletions(-)
+> > > > > > 
+> > > > > 
+> > > > > We started seeing the trace below in our regression system, after I bisected I found this is the offending commit.
+> > > > > This appears immediately on boot. 
+> > > > > Please let me know if you need any additional details.
+> > > > 
+> > > > Interesting.  Here is the offending function:
+> > > > 
+> > > > 	static void rcu_preempt_deferred_qs(struct task_struct *t)
+> > > > 	{
+> > > > 		unsigned long flags;
+> > > > 		bool couldrecurse = t->rcu_read_lock_nesting >= 0;
+> > > > 
+> > > > 		if (!rcu_preempt_need_deferred_qs(t))
+> > > > 			return;
+> > > > 		if (couldrecurse)
+> > > > 			t->rcu_read_lock_nesting -= INT_MIN;
+> > > > 		local_irq_save(flags);
+> > > > 		rcu_preempt_deferred_qs_irqrestore(t, flags);
+> > > > 		if (couldrecurse)
+> > > > 			t->rcu_read_lock_nesting += INT_MIN;
+> > > > 	}
+> > > > 
+> > > > Using twos-complement arithmetic (which the kernel build gcc arguments
+> > > > enforce, last I checked) this does work.  But as UBSAN says, subtracting
+> > > > INT_MIN is unconditionally undefined behavior according to the C standard.
+> > > > 
+> > > > Good catch!!!
+> > > > 
+> > > > So how do I make the above code not simply function, but rather meet
+> > > > the C standard?
+> > > > 
+> > > > One approach to add INT_MIN going in, then add INT_MAX and then add 1
+> > > > coming out.
+> > > > 
+> > > > Another approach is to sacrifice the INT_MAX value (should be plenty
+> > > > safe), thus subtract INT_MAX going in and add INT_MAX coming out.
+> > > > For consistency, I suppose that I should change the INT_MIN in
+> > > > __rcu_read_unlock() to -INT_MAX.
+> > > > 
+> > > > I could also leave __rcu_read_unlock() alone and XOR the top
+> > > > bit of t->rcu_read_lock_nesting on entry and exit to/from
+> > > > rcu_preempt_deferred_qs().
+> > > > 
+> > > > Sacrificing the INT_MIN value seems most maintainable, as in the following
+> > > > patch.  Thoughts?
+> > > 
+> > > The INT_MAX naming could be very confusing for nesting levels, could we not
+> > > instead just define something like:
+> > > #define RCU_NESTING_MIN (INT_MIN - 1)
+> > > #define RCU_NESTING_MAX (INT_MAX)
+> > > 
+> > > and just use that? also one more comment below:
+> > 
+> > Hmmm...  There is currently no use for RCU_NESTING_MAX, but if the check
+> > at the end of __rcu_read_unlock() were to be extended to check for
+> > too-deep positive nesting, it would need to check for something like
+> > INT_MAX/2.  You could of course argue that the current check against
+> > INT_MIN/2 should instead be against -INT_MAX/2, but there really isn't
+> > much difference between the two.
+> > 
+> > Another approach would be to convert to unsigned in order to avoid the
+> > overflow problem completely.
+> > 
+> > For the moment, anyway, I am inclined to leave it as is.
 > 
-> As Lokesh explained in other mail on K3 SoC everything is generic and most
-> of resources allocated dynamicaly:
-> - generic DMA channels
-> - generic HW rings (used by DMA channel)
-> - generic events (assigned to the rings) and muxed to different cores/hosts
-> 
-> So, when some driver would like to perform DMA transaction It's
-> required to build (configure) DMA channel by allocating different type of
-> resources and link them together to get finally working Data Movement path
-> (situation complicated by ti-sci firmware which policies resources between cores/hosts):
-> - get UDMA channel from available range
-> - get HW rings and attach them to the UDMA channel
-> - get event, assign it to the ring and mux it to the core/host through IA->IR-> chain
->    (and this step is done by ti_sci_inta_register_event() - no DT as everything is dynamic).
-> 
-> Next, how this is working now - ti_sci_inta_register_event():
-> - first call does similar things as regular DT irq mapping (end up calling irq_create_fwspec_mapping()
->    and builds IRQ chain as below:
->    linux_virq = ti_sci_inta_register_event(dev, <ringacc tisci_dev_id>,
-> 				<ringacc id>, 0, IRQF_TRIGGER_HIGH, false);
-> 
->               +---------------------+
->               |         IA          |
-> +--------+   |            +------+ |        +--------+         +------+
-> | ring 1 +----->evtA+----->VintX +---------->   IR   +--------->  GIC +-->
-> +--------+   |            +------+ |        +--------+         +------+  Linux IRQ Y
->     evtA      |                     |
->               |                     |
->               +---------------------+
-> 
-> - second call updates only IA input part while keeping other parts of IRQ chain the same
->    if valid <linux_virq> passed as input parameter:
->    linux_virq = ti_sci_inta_register_event(dev, <ringacc tisci_dev_id>,
-> 				<ringacc id>, linux_virq, IRQF_TRIGGER_HIGH, false);
->               +---------------------+
->               |         IA          |
-> +--------+   |            +------+ |        +--------+         +------+
-> | ring 1 +----->evtA+--^-->VintX +---------->   IR   +--------->  GIC +-->
-> +--------+   |         |  +------+ |        +--------+         +------+  Linux IRQ Y
->               |         |           |
-> +--------+   |         |           |
-> | ring 2 +----->evtB+--+           |
-> +--------+   |                     |
->               +---------------------+
+> Both the unsigned and INT_MIN/2 options sound good to me, but if you want
+> leave it as is, that would be fine as well. thanks,
 
-This is basically equivalent requesting a bunch of MSIs for a single
-device, and obtaining a set of corresponding interrupts. The fact that
-you end-up muxing them in the IA block is an implementation detail.
+One approach would be something like this:
 
-> 
->    As per above, irq-ti-sci-inta and tisci fw creates shared IRQ on HW layer by attaching
->    events to already established IA->IR->GIC IRQ chain. Any Rings events will trigger
->    Linux IRQ Y line and keep it active until Rings are not empty.
-> 
-> Now why this was done this way?
-> Note. I'm not saying this is right, but it is the way we've done it as of now. And I hope MSI
-> will help to move forward, but I'm not very familiar with it.
-> 
-> The consumer of this approach is K3 Networking driver, first of all, and
-> this approach allows to eliminate runtime overhead in Networking hot path and
-> provides possibility to implement driver's specific queues/rings handling policies
-> - like round-robin vs priority.
-> 
-> CPSW networking driver doesn't need to know exact ring generated IRQ - it
+#define RCU_READ_LOCK_BIAS (INT_MAX)
+#define RCU_READ_LOCK_NMAX (-INT_MAX)
+#define RCU_READ_LOCK_PMAX INT_MAX
 
-Well, to fit the Linux model, you'll have to know. Events needs to be
-signalled as individual IRQs.
+Then _rcu_read_unlock() would set ->rcu_read_lock_nesting to
+-RCU_READ_LOCK_BIAS, and compare against RCU_READ_LOCK_NMAX.
+The comparison against RCU_READ_LOCK_PMAX would preferably take
+place just after the increment in __rcu_read_lock(), again only under
+CONFIG_PROVE_RCU.
 
-> need to know if there is packet for processing, so current IRQ handling sequence we have (simplified):
-> - any ring evt -> IA -> IR -> GIC -> Linux IRQ Y
->    handle_fasteoi_irq() -> cpsw_irq_handler -> disable_irq() -> napi_schedule()
+rcu_preempt_deferred_qs() would then subtract then add RCU_READ_LOCK_BIAS.
 
-Here, disable_irq() will only affect a single "event".
+Thoughts?
 
->    ...
->    soft_irq() -> cpsw_poll():
-> 	- [1] for each ring from Hi prio to Low prio
-> 	      [2] get packet
-> 	      [3] if (packet) process packet & goto [2]
-> 	          else goto [1]
-> 	       if (no more packets) goto [4]
-> 	  [4] enable_irq()
-> 
-> As can be seen there is no intermediate IRQ dispatchers on IA/IR levels and no IRQs-per-rings,
-> and NAPI poll cycle allows to implement driver's specific rings handling policy.
-> 
-> Next: depending on the use case following optimizations are possible:
-> 1) throughput: split all TX (or RX) rings on X groups, where X = num_cpus
-> and allocate assign IRQ to each group for Networking XPS/RPS/RSS.
-> For example, CPSW2G has 8 TX channels and so 8 completion rings, 4 CPUs:
->   rings[0,1] -(IA/IR) - Linux IRQ 1
->   rings[2,3] -(IA/IR) - Linux IRQ 2
->   rings[4,5] -(IA/IR) - Linux IRQ 3
->   rings[6,7] -(IA/IR) - Linux IRQ 4
-> each Linux IRQ assigned to separate CPU.
+							Thanx, Paul
 
-What you call "Linux IRQ" is what ends up being generated at the GIC
-level, and isn't the interrupt the driver will get. It will get an
-interrupt number which represent a single event. We absolutely need to
-maintain this 1:1 mapping between event and driver-visible interrupts.
-Whatever happens between the scenes is none of the driver problem.
-
-In your "one interrupt, multiple events" paradigm, the whole IA thing
-would be conceptually part of your networking IP. I don't believe this
-is the case, and trawling the documentation seems to confirm this view.
-
-> 2) min latency:
->   Ring X is used by RT application for TX/RX some traffic (using AF_XDP sockets for example)
->   Ring X can be assigned with separate IRQ while other rings still grouped to
->   produce 1 IRQ
->   rings[0,6] - (IA/IR) - Linux IRQ 1
->   rings[7] - (IA/IR) - Linux IRQ 2
->   Linux IRQ 2 assigned to separate CPU where RT application is running.
-> 
-> Hope above will help to clarify some K3 AM6 IRQ generation questions and
-> find the way to move forward.
-
-Well, I'm convinced that we do not want a networking driver to be tied
-to an interrupt architecture, and that the two should be completely
-independent. But that's my own opinion. I can only see two solutions
-moving forward:
-
-1) You make the IA a real interrupt controller that exposes real
-interrupts (one per event), and write your networking driver
-independently of the underlying interrupt architecture.
-
-2) you make the IA an integral part of your network driver, not exposing
-anything outside of it, and limiting the interactions with the IR
-*through the standard IRQ API*. You duplicate this knowledge throughout
-the other client drivers.
-
-I believe that (2) would be a massive design mistake as it locks the
-driver to a single of the HW (and potentially a single revision of the
-firmware) while (1) gives you the required level of flexibility by
-hiding the whole event "concept" at a single location.
-
-Yes, (1) makes you rewrite your existing, out of tree drivers. Oh well...
-
-Thanks,
-	
-	M.
--- 
-Jazz is not dead. It just smells funny...
