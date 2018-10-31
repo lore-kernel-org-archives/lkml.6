@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA80ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:27:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48AFBC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:27:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4019E20847
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:27:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEB6D20847
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:27:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tn27mf0E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4019E20847
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SfO4z942"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEB6D20847
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731229AbeKAI1Q (ORCPT
+        id S1730987AbeKAIKY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:27:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32894 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730974AbeKAIKY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 1 Nov 2018 04:10:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32838 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730973AbeKAIKW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:10:22 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D24D2064C;
-        Wed, 31 Oct 2018 23:10:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 648F12084A;
+        Wed, 31 Oct 2018 23:10:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027412;
-        bh=6j4QWqlfuxcnan2613gO4k8zZZO6NT3Wz+utt/o07LM=;
+        s=default; t=1541027411;
+        bh=EKTsbJkL/oNBw1U+lkaJd7dI9Fy4YpRPZqMbfdAfKvQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Tn27mf0ESUdxeB+EkXOLSOlLzJJThY2HoR2PQ+XmMQZVad+RyUrKxneNqqckHcEWV
-         pnKQNG/MI6Vt6IE4Dc9hzJ1H2G6MikKDI/BTOMczH2soRiHegooKeddn82iIgbEyI7
-         z6pV1wTd9JN23rO7Cm5LzwL3Q3xcecl/8zAf7LAI=
+        b=SfO4z942QELp38AgcCNUwU27A2iLf8m/uo7zE4YthWyBI9QDExtNRNebqYbupVKmB
+         ckjSNWfFPpUF2GcAvOhCHjjiVD6m62RftP7h5TRUO898GzJ5V1U6ebUHjO0WFd6ZAW
+         8IK4ZRXutHjomKaBjsKi8LcJlZltS2uYNugD559U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     YueHaibing <yuehaibing@huawei.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+Cc:     Christian Hewitt <christianshewitt@gmail.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 26/73] pinctrl: qcom: spmi-mpp: Fix err handling of pmic_mpp_set_mux
-Date:   Wed, 31 Oct 2018 19:09:01 -0400
-Message-Id: <20181031230948.29203-26-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 24/73] Bluetooth: btbcm: Add entry for BCM4335C0 UART bluetooth
+Date:   Wed, 31 Oct 2018 19:08:59 -0400
+Message-Id: <20181031230948.29203-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230948.29203-1-sashal@kernel.org>
 References: <20181031230948.29203-1-sashal@kernel.org>
@@ -53,33 +53,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Christian Hewitt <christianshewitt@gmail.com>
 
-[ Upstream commit 69f8455f6cc78fa6cdf80d0105d7a748106271dc ]
+[ Upstream commit a357ea098c9605f60d92a66a9073f56ce25726da ]
 
-'ret' should be returned while pmic_mpp_write_mode_ctl fails.
+This patch adds the device ID for the AMPAK AP6335 combo module used
+in the 1st generation WeTek Hub Android/LibreELEC HTPC box. The WiFI
+chip identifies itself as BCM4339, while Bluetooth identifies itself
+as BCM4335 (rev C0):
 
-Fixes: 0e948042c420 ("pinctrl: qcom: spmi-mpp: Implement support for sink mode")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+```
+[    4.864248] Bluetooth: hci0: BCM: chip id 86
+[    4.866388] Bluetooth: hci0: BCM: features 0x2f
+[    4.889317] Bluetooth: hci0: BCM4335C0
+[    4.889332] Bluetooth: hci0: BCM4335C0 (003.001.009) build 0000
+[    9.778383] Bluetooth: hci0: BCM4335C0 (003.001.009) build 0268
+```
+
+Output from hciconfig:
+
+```
+hci0:	Type: Primary  Bus: UART
+	BD Address: 43:39:00:00:1F:AC  ACL MTU: 1021:8  SCO MTU: 64:1
+	UP RUNNING
+	RX bytes:7567 acl:234 sco:0 events:386 errors:0
+	TX bytes:53844 acl:77 sco:0 commands:304 errors:0
+	Features: 0xbf 0xfe 0xcf 0xfe 0xdb 0xff 0x7b 0x87
+	Packet type: DM1 DM3 DM5 DH1 DH3 DH5 HV1 HV2 HV3
+	Link policy: RSWITCH SNIFF
+	Link mode: SLAVE ACCEPT
+	Name: 'HUB'
+	Class: 0x0c0000
+	Service Classes: Rendering, Capturing
+	Device Class: Miscellaneous,
+	HCI Version: 4.0 (0x6)  Revision: 0x10c
+	LMP Version: 4.0 (0x6)  Subversion: 0x6109
+	Manufacturer: Broadcom Corporation (15)
+```
+
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/bluetooth/btbcm.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-index 6556dbeae65e..418bc40df7ca 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-@@ -319,6 +319,8 @@ static int pmic_mpp_set_mux(struct pinctrl_dev *pctldev, unsigned function,
- 	pad->function = function;
- 
- 	ret = pmic_mpp_write_mode_ctl(state, pad);
-+	if (ret < 0)
-+		return ret;
- 
- 	val = pad->is_enabled << PMIC_MPP_REG_MASTER_EN_SHIFT;
- 
+diff --git a/drivers/bluetooth/btbcm.c b/drivers/bluetooth/btbcm.c
+index cc4bdefa6648..67315cb28826 100644
+--- a/drivers/bluetooth/btbcm.c
++++ b/drivers/bluetooth/btbcm.c
+@@ -325,6 +325,7 @@ static const struct {
+ 	{ 0x4103, "BCM4330B1"	},	/* 002.001.003 */
+ 	{ 0x410e, "BCM43341B0"	},	/* 002.001.014 */
+ 	{ 0x4406, "BCM4324B3"	},	/* 002.004.006 */
++	{ 0x6109, "BCM4335C0"	},	/* 003.001.009 */
+ 	{ 0x610c, "BCM4354"	},	/* 003.001.012 */
+ 	{ 0x2209, "BCM43430A1"  },	/* 001.002.009 */
+ 	{ }
 -- 
 2.17.1
 
