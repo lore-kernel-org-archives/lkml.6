@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E56CC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:52:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B5E4ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:52:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE14D2054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:52:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1481A2080A
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:52:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u+C9r/No"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE14D2054F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MMIAMbpp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1481A2080A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728260AbeKAIwj (ORCPT
+        id S1727883AbeKAIGY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:52:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53310 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727838AbeKAIGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 1 Nov 2018 04:06:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53246 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727752AbeKAIGW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:06:22 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0DCE20830;
-        Wed, 31 Oct 2018 23:06:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2972B2081B;
+        Wed, 31 Oct 2018 23:06:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027174;
-        bh=oyGb2u5HLv10meYeOi6geGjQjtinMeZQNFbByG/F+5I=;
+        s=default; t=1541027171;
+        bh=XEf0RlrhqaRxAJNBmKEdpP8scWQk9smH2GgejxoPUmM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u+C9r/NovMolLCkr3py2sf/e9qNJXnGbJuHUOpWKbXR0PbtYHz2VxH60hYzBBbqqL
-         X1a2Y+Aw6PVTQKBjR6U0/pghS4ulRhU/FJA+9kXN/HGz1X0KDmV61aWPpZzdS5H9EU
-         DE/v/REp/gzGppfDgn/sVMxusRdh0sFFRNITbJiw=
+        b=MMIAMbppf9cLNnuS+AymeW34mgFWGN8JOwRSJb6z40ajcCGG9PsPyBhfu4hNZlBCL
+         il+F5tehXk6sw+HhEMX858hPEjq8kc88fmf+dhtnyUXBshVPij0+a0D7tZPVeheYqn
+         65fUAaQ3EsM3x2INXz/yjQsGpau/sJDRkF/VsOSA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dou Liyang <douly.fnst@cn.fujitsu.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+Cc:     Sagi Grimberg <sagi@grimberg.me>, Christoph Hellwig <hch@lst.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 035/146] ACPI / processor: Fix the return value of acpi_processor_ids_walk()
-Date:   Wed, 31 Oct 2018 19:03:50 -0400
-Message-Id: <20181031230541.28822-35-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 032/146] nvmet-rdma: use a private workqueue for delete
+Date:   Wed, 31 Oct 2018 19:03:47 -0400
+Message-Id: <20181031230541.28822-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -53,57 +52,160 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
+From: Sagi Grimberg <sagi@grimberg.me>
 
-[ Upstream commit d0381bf4f80c571dde1244fe5b85dc35e8b3f546 ]
+[ Upstream commit 2acf70ade79d26b97611a8df52eb22aa33814cd4 ]
 
-ACPI driver should make sure all the processor IDs in their ACPI Namespace
-are unique. the driver performs a depth-first walk of the namespace tree
-and calls the acpi_processor_ids_walk() to check the duplicate IDs.
+Queue deletion is done asynchronous when the last reference on the queue
+is dropped.  Thus, in order to make sure we don't over allocate under a
+connect/disconnect storm, we let queue deletion complete before making
+forward progress.
 
-But, the acpi_processor_ids_walk() mistakes the return value. If a
-processor is checked, it returns true which causes the walk break
-immediately, and other processors will never be checked.
+However, given that we flush the system_wq from rdma_cm context which
+runs from a workqueue context, we can have a circular locking complaint
+[1]. Fix that by using a private workqueue for queue deletion.
 
-Repace the value with AE_OK which is the standard acpi_status value.
-And don't abort the namespace walk even on error.
+[1]:
+======================================================
+WARNING: possible circular locking dependency detected
+4.19.0-rc4-dbg+ #3 Not tainted
+------------------------------------------------------
+kworker/5:0/39 is trying to acquire lock:
+00000000a10b6db9 (&id_priv->handler_mutex){+.+.}, at: rdma_destroy_id+0x6f/0x440 [rdma_cm]
 
-Fixes: 8c8cb30f49b8 (acpi/processor: Implement DEVICE operator for processor enumeration)
-Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+but task is already holding lock:
+00000000331b4e2c ((work_completion)(&queue->release_work)){+.+.}, at: process_one_work+0x3ed/0xa20
+
+which lock already depends on the new lock.
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 ((work_completion)(&queue->release_work)){+.+.}:
+       process_one_work+0x474/0xa20
+       worker_thread+0x63/0x5a0
+       kthread+0x1cf/0x1f0
+       ret_from_fork+0x24/0x30
+
+-> #2 ((wq_completion)"events"){+.+.}:
+       flush_workqueue+0xf3/0x970
+       nvmet_rdma_cm_handler+0x133d/0x1734 [nvmet_rdma]
+       cma_ib_req_handler+0x72f/0xf90 [rdma_cm]
+       cm_process_work+0x2e/0x110 [ib_cm]
+       cm_req_handler+0x135b/0x1c30 [ib_cm]
+       cm_work_handler+0x2b7/0x38cd [ib_cm]
+       process_one_work+0x4ae/0xa20
+nvmet_rdma:nvmet_rdma_cm_handler: nvmet_rdma: disconnected (10): status 0 id 0000000040357082
+       worker_thread+0x63/0x5a0
+       kthread+0x1cf/0x1f0
+       ret_from_fork+0x24/0x30
+nvme nvme0: Reconnecting in 10 seconds...
+
+-> #1 (&id_priv->handler_mutex/1){+.+.}:
+       __mutex_lock+0xfe/0xbe0
+       mutex_lock_nested+0x1b/0x20
+       cma_ib_req_handler+0x6aa/0xf90 [rdma_cm]
+       cm_process_work+0x2e/0x110 [ib_cm]
+       cm_req_handler+0x135b/0x1c30 [ib_cm]
+       cm_work_handler+0x2b7/0x38cd [ib_cm]
+       process_one_work+0x4ae/0xa20
+       worker_thread+0x63/0x5a0
+       kthread+0x1cf/0x1f0
+       ret_from_fork+0x24/0x30
+
+-> #0 (&id_priv->handler_mutex){+.+.}:
+       lock_acquire+0xc5/0x200
+       __mutex_lock+0xfe/0xbe0
+       mutex_lock_nested+0x1b/0x20
+       rdma_destroy_id+0x6f/0x440 [rdma_cm]
+       nvmet_rdma_release_queue_work+0x8e/0x1b0 [nvmet_rdma]
+       process_one_work+0x4ae/0xa20
+       worker_thread+0x63/0x5a0
+       kthread+0x1cf/0x1f0
+       ret_from_fork+0x24/0x30
+
+Fixes: 777dc82395de ("nvmet-rdma: occasionally flush ongoing controller teardown")
+Reported-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
+Tested-by: Bart Van Assche <bvanassche@acm.org>
+
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/acpi_processor.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/nvme/target/rdma.c | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/acpi/acpi_processor.c b/drivers/acpi/acpi_processor.c
-index 449d86d39965..fc447410ae4d 100644
---- a/drivers/acpi/acpi_processor.c
-+++ b/drivers/acpi/acpi_processor.c
-@@ -643,7 +643,7 @@ static acpi_status __init acpi_processor_ids_walk(acpi_handle handle,
+diff --git a/drivers/nvme/target/rdma.c b/drivers/nvme/target/rdma.c
+index bfc4da660bb4..5becca88ccbe 100644
+--- a/drivers/nvme/target/rdma.c
++++ b/drivers/nvme/target/rdma.c
+@@ -122,6 +122,7 @@ struct nvmet_rdma_device {
+ 	int			inline_page_count;
+ };
  
- 	status = acpi_get_type(handle, &acpi_type);
- 	if (ACPI_FAILURE(status))
--		return false;
-+		return status;
++struct workqueue_struct *nvmet_rdma_delete_wq;
+ static bool nvmet_rdma_use_srq;
+ module_param_named(use_srq, nvmet_rdma_use_srq, bool, 0444);
+ MODULE_PARM_DESC(use_srq, "Use shared receive queue.");
+@@ -1267,12 +1268,12 @@ static int nvmet_rdma_queue_connect(struct rdma_cm_id *cm_id,
  
- 	switch (acpi_type) {
- 	case ACPI_TYPE_PROCESSOR:
-@@ -663,11 +663,12 @@ static acpi_status __init acpi_processor_ids_walk(acpi_handle handle,
+ 	if (queue->host_qid == 0) {
+ 		/* Let inflight controller teardown complete */
+-		flush_scheduled_work();
++		flush_workqueue(nvmet_rdma_delete_wq);
  	}
  
- 	processor_validated_ids_update(uid);
--	return true;
-+	return AE_OK;
+ 	ret = nvmet_rdma_cm_accept(cm_id, queue, &event->param.conn);
+ 	if (ret) {
+-		schedule_work(&queue->release_work);
++		queue_work(nvmet_rdma_delete_wq, &queue->release_work);
+ 		/* Destroying rdma_cm id is not needed here */
+ 		return 0;
+ 	}
+@@ -1337,7 +1338,7 @@ static void __nvmet_rdma_queue_disconnect(struct nvmet_rdma_queue *queue)
  
- err:
-+	/* Exit on error, but don't abort the namespace walk */
- 	acpi_handle_info(handle, "Invalid processor object\n");
--	return false;
-+	return AE_OK;
- 
+ 	if (disconnect) {
+ 		rdma_disconnect(queue->cm_id);
+-		schedule_work(&queue->release_work);
++		queue_work(nvmet_rdma_delete_wq, &queue->release_work);
+ 	}
  }
  
+@@ -1367,7 +1368,7 @@ static void nvmet_rdma_queue_connect_fail(struct rdma_cm_id *cm_id,
+ 	mutex_unlock(&nvmet_rdma_queue_mutex);
+ 
+ 	pr_err("failed to connect queue %d\n", queue->idx);
+-	schedule_work(&queue->release_work);
++	queue_work(nvmet_rdma_delete_wq, &queue->release_work);
+ }
+ 
+ /**
+@@ -1649,8 +1650,17 @@ static int __init nvmet_rdma_init(void)
+ 	if (ret)
+ 		goto err_ib_client;
+ 
++	nvmet_rdma_delete_wq = alloc_workqueue("nvmet-rdma-delete-wq",
++			WQ_UNBOUND | WQ_MEM_RECLAIM | WQ_SYSFS, 0);
++	if (!nvmet_rdma_delete_wq) {
++		ret = -ENOMEM;
++		goto err_unreg_transport;
++	}
++
+ 	return 0;
+ 
++err_unreg_transport:
++	nvmet_unregister_transport(&nvmet_rdma_ops);
+ err_ib_client:
+ 	ib_unregister_client(&nvmet_rdma_ib_client);
+ 	return ret;
+@@ -1658,6 +1668,7 @@ static int __init nvmet_rdma_init(void)
+ 
+ static void __exit nvmet_rdma_exit(void)
+ {
++	destroy_workqueue(nvmet_rdma_delete_wq);
+ 	nvmet_unregister_transport(&nvmet_rdma_ops);
+ 	ib_unregister_client(&nvmet_rdma_ib_client);
+ 	WARN_ON_ONCE(!list_empty(&nvmet_rdma_queue_list));
 -- 
 2.17.1
 
