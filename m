@@ -2,92 +2,75 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEBC0C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D6FFECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:13:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CE3E2064C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:12:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QxzLB34T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CE3E2064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CA3DA20657
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:13:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA3DA20657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mess.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729433AbeKABLO (ORCPT
+        id S1729682AbeKABLm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 21:11:14 -0400
-Received: from casper.infradead.org ([85.118.1.10]:59966 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727207AbeKABLO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 21:11:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=l9dsZ7YjPZgnv8Upl6majTM+PA8YpYYu0yaUpQUPKGA=; b=QxzLB34TR0senKALbv7nDf50ys
-        9xFP7f53HMBlwVh9uHXJWglAgue9VDo6q9lgDxTYtKdbpoV6dEMSrWcvwpq2hMiOWRrMF15q6Wv3K
-        cf8EtkvEBEeaK8cvbR7KpVVhXSWK0eJ2xewb9n3nZnFn1xrlwDtNrIYO2w9gHzdvqcb/h72MGtPcG
-        8YMcge0kRtP8HkSO+6dJZs6yZRh9Ixt+3VvhEbSWElAUFIEgkQ7Bv9cqDC68JjbOI12Gxsize2mrG
-        ocRgLgXs2wC3k73JZjTIyLcKB6gy28s06NJru7oOydLpGh87VIZ54WMc5nF4XIlF+JbWVAOWkA7e/
-        3zKnYLNQ==;
-Received: from 177.206.134.103.dynamic.adsl.gvt.net.br ([177.206.134.103] helo=coco.lan)
-        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gHt6V-0007mg-HB; Wed, 31 Oct 2018 16:12:24 +0000
-Date:   Wed, 31 Oct 2018 13:12:18 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+        Wed, 31 Oct 2018 21:11:42 -0400
+Received: from gofer.mess.org ([88.97.38.141]:57397 "EHLO gofer.mess.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729382AbeKABLm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 21:11:42 -0400
+Received: by gofer.mess.org (Postfix, from userid 1000)
+        id 8E604601B6; Wed, 31 Oct 2018 16:13:00 +0000 (GMT)
+Date:   Wed, 31 Oct 2018 16:13:00 +0000
+From:   Sean Young <sean@mess.org>
 To:     David Howells <dhowells@redhat.com>
-Cc:     Sean Young <sean@mess.org>, Michael Krufky <mkrufky@linuxtv.org>,
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Michael Krufky <mkrufky@linuxtv.org>,
         Brad Love <brad@nextdimension.cc>, mchehab@kernel.org,
         linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] dvb: Allow MAC addresses to be mapped to stable device
  names with udev
-Message-ID: <20181031131218.6cd8ce0c@coco.lan>
-In-Reply-To: <13768.1541001100@warthog.procyon.org.uk>
+Message-ID: <20181031161300.vzk6nsyyyvjukqxz@gofer.mess.org>
 References: <12108.1540984768@warthog.procyon.org.uk>
-        <20181031104912.s3tqjl3u43ou3kwo@gofer.mess.org>
-        <20181030223249.dhwhxdjipzmjxzsy@gofer.mess.org>
-        <153778383104.14867.1567557014782141706.stgit@warthog.procyon.org.uk>
-        <20181030110319.764f33f0@coco.lan>
-        <8474.1540982182@warthog.procyon.org.uk>
-        <13768.1541001100@warthog.procyon.org.uk>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+ <20181031104912.s3tqjl3u43ou3kwo@gofer.mess.org>
+ <20181030223249.dhwhxdjipzmjxzsy@gofer.mess.org>
+ <153778383104.14867.1567557014782141706.stgit@warthog.procyon.org.uk>
+ <20181030110319.764f33f0@coco.lan>
+ <8474.1540982182@warthog.procyon.org.uk>
+ <13768.1541001100@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <13768.1541001100@warthog.procyon.org.uk>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, 31 Oct 2018 15:51:40 +0000
-David Howells <dhowells@redhat.com> escreveu:
-
+On Wed, Oct 31, 2018 at 03:51:40PM +0000, David Howells wrote:
 > David Howells <dhowells@redhat.com> wrote:
 > 
 > > > > > Devices without a mac address shouldn't have a mac_dvb sysfs attribute,
-> > > > > I think.  
+> > > > > I think.
 > > > > 
 > > > > I'm not sure that's possible within the core infrastructure.  It's a
 > > > > class attribute set when the class is created; I'm not sure it can be
 > > > > overridden on a per-device basis.
 > > > > 
-> > > > Possibly the file could return "" or "none" in this case?  
+> > > > Possibly the file could return "" or "none" in this case?
 > > > 
 > > > That's very ugly. Have a look at, for example, rc-core wakeup filters:
 > > > 
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/media/rc/rc-main.c#n1844  
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/media/rc/rc-main.c#n1844
 > > 
 > > By analogy, then, I think the thing to do is to put something like struct
 > > rc_dev::sysfs_groups[] into struct dvb_device (or maybe struct dvb_adapter)
 > > and then the dvb_mac attribute in there during dvb_register_device() based on
-> > whether or not the MAC address is not all zeros at that point.  
+> > whether or not the MAC address is not all zeros at that point.
 > 
 > Hmmm...  This is trickier than it seems.  At the point the device struct is
 > registered, the MAC address hasn't yet been read:
@@ -120,16 +103,19 @@ David Howells <dhowells@redhat.com> escreveu:
 > set right after lines 15.124665 and 15.255996.  Interestingly, a third of a
 > second elapses between the device registration and the MAC being printed for
 > each adapter.
+
+device_create() will register the device in sysfs and send uevent. So, your
+original udev rule/code will not work, since it always would read
+a mac address of 0, as proposed_mac is not populated when the device is
+announced. That is, unless udev is scheduled after the mac is read.
+
+I think the device_add/device_create() which triggers the uevent should be
+delayed until everything is available.
+
+Sean
+
 > 
 > Any suggestions?
-
-Yeah, I was afraid about that. At V4L2 core, what we do is that we first
-do everything, including firmware load, and only after having everything
-setup, we register the char device.
-
-I suspect it should be possible to do that too at dvb-usb and dvb-usb-v2,
-but some work would be needed.
-
 > 
 > David
 > ---
@@ -168,6 +154,9 @@ but some work would be needed.
 > +	if (adap->proposed_mac[0] || adap->proposed_mac[1] ||
 > +	    adap->proposed_mac[2] || adap->proposed_mac[3] ||
 > +	    adap->proposed_mac[4] || adap->proposed_mac[5]) {
+
+is_zero_ether_addr()
+
 > +		dvbdev->sysfs_groups[0] = &dvb_device_attr_grp;
 > +		dvbdev->sysfs_groups[1] = NULL;
 > +		adap->device->groups = dvbdev->sysfs_groups;
@@ -236,8 +225,3 @@ but some work would be needed.
 >  	struct dvb_adapter *adapter;
 >  	enum dvb_device_type type;
 >  	int minor;
-
-
-
-Thanks,
-Mauro
