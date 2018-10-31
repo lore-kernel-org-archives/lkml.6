@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB3B5ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF5EECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:27:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9946B2081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:26:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F092205F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:27:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="K8sNBDDN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9946B2081B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="q7TV3Umd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F092205F4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729592AbeJaXZH (ORCPT
+        id S1729630AbeJaXZW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 19:25:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37594 "EHLO mail.kernel.org"
+        Wed, 31 Oct 2018 19:25:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729492AbeJaXZH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 19:25:07 -0400
+        id S1729492AbeJaXZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 19:25:22 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ABD65205F4;
-        Wed, 31 Oct 2018 14:26:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 157C8205F4;
+        Wed, 31 Oct 2018 14:27:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540996011;
-        bh=gw3ZirH2yqWe1D4DVkpS89FpSzHE3hHI/FgKQB6HRag=;
+        s=default; t=1540996026;
+        bh=CkcjRLWopQsQK8H8nxZ1RoYZaRBOgCIG1S4nT2bEqUU=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=K8sNBDDN50y3tm4Gb52q48pczGg28BSz3LACZ6WL1cmlgEYmSjJKypyeM0BikarUm
-         MUpVHkJwv/yX6n4XTFm35Zki3Q4DLUDyDu8f56QGk9+ImsyxzXXLLP0ZF3G+RsFuWe
-         FdjwD94yV4OOtuw8i5pIBVygisJ90ZfBElurugZg=
+        b=q7TV3UmdsdFeDvCZmrwTcoplqaciPg3O1NgLrlhUGfseExBQDVXmx0IDvxVw22VX+
+         C6TNpweL6TUGPkPXMMisWsbU4GLC1GqB2Diovj2T2Ecz9Q+6fr4/tNTzMGGV6iwXss
+         D0zNb+iyArNv7GngY5WsV0pi3jMynfC9+k8SyxRs=
 Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 6C7C0142D18; Wed, 31 Oct 2018 11:26:47 -0300 (-03)
-Date:   Wed, 31 Oct 2018 11:26:47 -0300
+        id 7FAFE142D18; Wed, 31 Oct 2018 11:27:03 -0300 (-03)
+Date:   Wed, 31 Oct 2018 11:27:03 -0300
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Adrian Hunter <adrian.hunter@intel.com>
 Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
@@ -48,15 +48,16 @@ Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>
 Subject: Re: [PATCH 4/5] perf intel-pt: Insert callchain context into
  synthesized callchains
-Message-ID: <20181031142647.GJ10660@kernel.org>
+Message-ID: <20181031142703.GK10660@kernel.org>
 References: <20181031091043.23465-1-adrian.hunter@intel.com>
  <20181031091043.23465-5-adrian.hunter@intel.com>
  <20181031132803.GG10660@kernel.org>
  <850eed86-fb8f-e328-316c-378890d4f15f@intel.com>
+ <100ea2ec-ed14-b56d-d810-e0a6d2f4b069@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <850eed86-fb8f-e328-316c-378890d4f15f@intel.com>
+In-Reply-To: <100ea2ec-ed14-b56d-d810-e0a6d2f4b069@intel.com>
 X-Url:  http://acmel.wordpress.com
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,146 +65,161 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Oct 31, 2018 at 04:15:26PM +0200, Adrian Hunter escreveu:
-> On 31/10/18 3:28 PM, Arnaldo Carvalho de Melo wrote:
-> > Em Wed, Oct 31, 2018 at 11:10:42AM +0200, Adrian Hunter escreveu:
-> >> In the absence of a fallback, callchains must encode also the callchain
-> >> context. Do that now there is no fallback.
+Em Wed, Oct 31, 2018 at 04:20:45PM +0200, Adrian Hunter escreveu:
+> On 31/10/18 4:15 PM, Adrian Hunter wrote:
+> > On 31/10/18 3:28 PM, Arnaldo Carvalho de Melo wrote:
+> >> Em Wed, Oct 31, 2018 at 11:10:42AM +0200, Adrian Hunter escreveu:
+> >>> In the absence of a fallback, callchains must encode also the callchain
+> >>> context. Do that now there is no fallback.
+> >>
+> >> So, this one is independent of the first 3 patches, right?
 > > 
-> > So, this one is independent of the first 3 patches, right?
+> > Yes.  I was just going to test it separately when I noticed I had
+> > screwed up my earlier testing.  When I re-tested I discovered this patch
+> > has an off-by-one error:
+> > 
+> > diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
+> > index afdf36852ac8..61a4286a74dc 100644
+> > --- a/tools/perf/util/thread-stack.c
+> > +++ b/tools/perf/util/thread-stack.c
+> > @@ -337,7 +337,7 @@ void thread_stack__sample(struct thread *thread, struct ip_callchain *chain,
+> >  
+> >  	last_context = context;
+> >  
+> > -	for (i = 2, j = 0; i < sz && j < thread->ts->cnt; i++, j++) {
+> > +	for (i = 2, j = 1; i < sz && j <= thread->ts->cnt; i++, j++) {
+> >  		ip = thread->ts->stack[thread->ts->cnt - j].ret_addr;
+> >  		context = callchain_context(ip, kernel_start);
+> >  		if (context != last_context) {
+> > 
+> > Shall I send V2?
 > 
-> Yes.  I was just going to test it separately when I noticed I had
-> screwed up my earlier testing.  When I re-tested I discovered this patch
-> has an off-by-one error:
+> I have attached it
+
+Thanks!
+
+> >From 19a9fbdbd3729c7f14c9c1f0ac79c18cce91ff60 Mon Sep 17 00:00:00 2001
+> From: Adrian Hunter <adrian.hunter@intel.com>
+> Date: Wed, 31 Oct 2018 09:31:25 +0200
+> Subject: [PATCH V2 4/5] perf intel-pt: Insert callchain context into
+>  synthesized callchains
 > 
+> In the absence of a fallback, callchains must encode also the callchain
+> context. Do that now there is no fallback.
+> 
+> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: stable@vger.kernel.org # 4.19
+> ---
+> 
+> 
+> Changes in V2:
+> 
+> 	Fix off-by-one error
+> 
+> 
+>  tools/perf/util/intel-pt.c     |  6 +++--
+>  tools/perf/util/thread-stack.c | 44 +++++++++++++++++++++++++++-------
+>  tools/perf/util/thread-stack.h |  2 +-
+>  3 files changed, 40 insertions(+), 12 deletions(-)
+> 
+> diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
+> index ffa385a029b3..60732213d16a 100644
+> --- a/tools/perf/util/intel-pt.c
+> +++ b/tools/perf/util/intel-pt.c
+> @@ -759,7 +759,8 @@ static struct intel_pt_queue *intel_pt_alloc_queue(struct intel_pt *pt,
+>  	if (pt->synth_opts.callchain) {
+>  		size_t sz = sizeof(struct ip_callchain);
+>  
+> -		sz += pt->synth_opts.callchain_sz * sizeof(u64);
+> +		/* Add 1 to callchain_sz for callchain context */
+> +		sz += (pt->synth_opts.callchain_sz + 1) * sizeof(u64);
+>  		ptq->chain = zalloc(sz);
+>  		if (!ptq->chain)
+>  			goto out_free;
+> @@ -1160,7 +1161,8 @@ static void intel_pt_prep_sample(struct intel_pt *pt,
+>  
+>  	if (pt->synth_opts.callchain) {
+>  		thread_stack__sample(ptq->thread, ptq->chain,
+> -				     pt->synth_opts.callchain_sz, sample->ip);
+> +				     pt->synth_opts.callchain_sz + 1,
+> +				     sample->ip, pt->kernel_start);
+>  		sample->callchain = ptq->chain;
+>  	}
+>  
 > diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
-> index afdf36852ac8..61a4286a74dc 100644
+> index c091635bf7dc..61a4286a74dc 100644
 > --- a/tools/perf/util/thread-stack.c
 > +++ b/tools/perf/util/thread-stack.c
-> @@ -337,7 +337,7 @@ void thread_stack__sample(struct thread *thread, struct ip_callchain *chain,
+> @@ -310,20 +310,46 @@ void thread_stack__free(struct thread *thread)
+>  	}
+>  }
 >  
->  	last_context = context;
+> +static inline u64 callchain_context(u64 ip, u64 kernel_start)
+> +{
+> +	return ip < kernel_start ? PERF_CONTEXT_USER : PERF_CONTEXT_KERNEL;
+> +}
+> +
+>  void thread_stack__sample(struct thread *thread, struct ip_callchain *chain,
+> -			  size_t sz, u64 ip)
+> +			  size_t sz, u64 ip, u64 kernel_start)
+>  {
+> -	size_t i;
+> +	u64 context = callchain_context(ip, kernel_start);
+> +	u64 last_context;
+> +	size_t i, j;
 >  
-> -	for (i = 2, j = 0; i < sz && j < thread->ts->cnt; i++, j++) {
+> -	if (!thread || !thread->ts)
+> -		chain->nr = 1;
+> -	else
+> -		chain->nr = min(sz, thread->ts->cnt + 1);
+> +	if (sz < 2) {
+> +		chain->nr = 0;
+> +		return;
+> +	}
+>  
+> -	chain->ips[0] = ip;
+> +	chain->ips[0] = context;
+> +	chain->ips[1] = ip;
+> +
+> +	if (!thread || !thread->ts) {
+> +		chain->nr = 2;
+> +		return;
+> +	}
+> +
+> +	last_context = context;
+> +
 > +	for (i = 2, j = 1; i < sz && j <= thread->ts->cnt; i++, j++) {
->  		ip = thread->ts->stack[thread->ts->cnt - j].ret_addr;
->  		context = callchain_context(ip, kernel_start);
->  		if (context != last_context) {
+> +		ip = thread->ts->stack[thread->ts->cnt - j].ret_addr;
+> +		context = callchain_context(ip, kernel_start);
+> +		if (context != last_context) {
+> +			if (i >= sz - 1)
+> +				break;
+> +			chain->ips[i++] = context;
+> +			last_context = context;
+> +		}
+> +		chain->ips[i] = ip;
+> +	}
+>  
+> -	for (i = 1; i < chain->nr; i++)
+> -		chain->ips[i] = thread->ts->stack[thread->ts->cnt - i].ret_addr;
+> +	chain->nr = i;
+>  }
+>  
+>  struct call_return_processor *
+> diff --git a/tools/perf/util/thread-stack.h b/tools/perf/util/thread-stack.h
+> index b7e41c4ebfdd..f97c00a8c251 100644
+> --- a/tools/perf/util/thread-stack.h
+> +++ b/tools/perf/util/thread-stack.h
+> @@ -84,7 +84,7 @@ int thread_stack__event(struct thread *thread, u32 flags, u64 from_ip,
+>  			u64 to_ip, u16 insn_len, u64 trace_nr);
+>  void thread_stack__set_trace_nr(struct thread *thread, u64 trace_nr);
+>  void thread_stack__sample(struct thread *thread, struct ip_callchain *chain,
+> -			  size_t sz, u64 ip);
+> +			  size_t sz, u64 ip, u64 kernel_start);
+>  int thread_stack__flush(struct thread *thread);
+>  void thread_stack__free(struct thread *thread);
+>  size_t thread_stack__depth(struct thread *thread);
+> -- 
+> 2.17.1
 > 
-> Shall I send V2?
 
-No need, I can fix this here
- 
-> > So, this one is independent of the first 3 patches, right? Ok, applying
-> > it first, I'll relook the first ones next.
-> > 
-> > - Arnaldo
-> >  
-> >> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> >> Cc: stable@vger.kernel.org # 4.19
-> >> ---
-> >>  tools/perf/util/intel-pt.c     |  6 +++--
-> >>  tools/perf/util/thread-stack.c | 44 +++++++++++++++++++++++++++-------
-> >>  tools/perf/util/thread-stack.h |  2 +-
-> >>  3 files changed, 40 insertions(+), 12 deletions(-)
-> >>
-> >> diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-> >> index ffa385a029b3..60732213d16a 100644
-> >> --- a/tools/perf/util/intel-pt.c
-> >> +++ b/tools/perf/util/intel-pt.c
-> >> @@ -759,7 +759,8 @@ static struct intel_pt_queue *intel_pt_alloc_queue(struct intel_pt *pt,
-> >>  	if (pt->synth_opts.callchain) {
-> >>  		size_t sz = sizeof(struct ip_callchain);
-> >>  
-> >> -		sz += pt->synth_opts.callchain_sz * sizeof(u64);
-> >> +		/* Add 1 to callchain_sz for callchain context */
-> >> +		sz += (pt->synth_opts.callchain_sz + 1) * sizeof(u64);
-> >>  		ptq->chain = zalloc(sz);
-> >>  		if (!ptq->chain)
-> >>  			goto out_free;
-> >> @@ -1160,7 +1161,8 @@ static void intel_pt_prep_sample(struct intel_pt *pt,
-> >>  
-> >>  	if (pt->synth_opts.callchain) {
-> >>  		thread_stack__sample(ptq->thread, ptq->chain,
-> >> -				     pt->synth_opts.callchain_sz, sample->ip);
-> >> +				     pt->synth_opts.callchain_sz + 1,
-> >> +				     sample->ip, pt->kernel_start);
-> >>  		sample->callchain = ptq->chain;
-> >>  	}
-> >>  
-> >> diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
-> >> index c091635bf7dc..afdf36852ac8 100644
-> >> --- a/tools/perf/util/thread-stack.c
-> >> +++ b/tools/perf/util/thread-stack.c
-> >> @@ -310,20 +310,46 @@ void thread_stack__free(struct thread *thread)
-> >>  	}
-> >>  }
-> >>  
-> >> +static inline u64 callchain_context(u64 ip, u64 kernel_start)
-> >> +{
-> >> +	return ip < kernel_start ? PERF_CONTEXT_USER : PERF_CONTEXT_KERNEL;
-> >> +}
-> >> +
-> >>  void thread_stack__sample(struct thread *thread, struct ip_callchain *chain,
-> >> -			  size_t sz, u64 ip)
-> >> +			  size_t sz, u64 ip, u64 kernel_start)
-> >>  {
-> >> -	size_t i;
-> >> +	u64 context = callchain_context(ip, kernel_start);
-> >> +	u64 last_context;
-> >> +	size_t i, j;
-> >>  
-> >> -	if (!thread || !thread->ts)
-> >> -		chain->nr = 1;
-> >> -	else
-> >> -		chain->nr = min(sz, thread->ts->cnt + 1);
-> >> +	if (sz < 2) {
-> >> +		chain->nr = 0;
-> >> +		return;
-> >> +	}
-> >>  
-> >> -	chain->ips[0] = ip;
-> >> +	chain->ips[0] = context;
-> >> +	chain->ips[1] = ip;
-> >> +
-> >> +	if (!thread || !thread->ts) {
-> >> +		chain->nr = 2;
-> >> +		return;
-> >> +	}
-> >> +
-> >> +	last_context = context;
-> >> +
-> >> +	for (i = 2, j = 0; i < sz && j < thread->ts->cnt; i++, j++) {
-> >> +		ip = thread->ts->stack[thread->ts->cnt - j].ret_addr;
-> >> +		context = callchain_context(ip, kernel_start);
-> >> +		if (context != last_context) {
-> >> +			if (i >= sz - 1)
-> >> +				break;
-> >> +			chain->ips[i++] = context;
-> >> +			last_context = context;
-> >> +		}
-> >> +		chain->ips[i] = ip;
-> >> +	}
-> >>  
-> >> -	for (i = 1; i < chain->nr; i++)
-> >> -		chain->ips[i] = thread->ts->stack[thread->ts->cnt - i].ret_addr;
-> >> +	chain->nr = i;
-> >>  }
-> >>  
-> >>  struct call_return_processor *
-> >> diff --git a/tools/perf/util/thread-stack.h b/tools/perf/util/thread-stack.h
-> >> index b7e41c4ebfdd..f97c00a8c251 100644
-> >> --- a/tools/perf/util/thread-stack.h
-> >> +++ b/tools/perf/util/thread-stack.h
-> >> @@ -84,7 +84,7 @@ int thread_stack__event(struct thread *thread, u32 flags, u64 from_ip,
-> >>  			u64 to_ip, u16 insn_len, u64 trace_nr);
-> >>  void thread_stack__set_trace_nr(struct thread *thread, u64 trace_nr);
-> >>  void thread_stack__sample(struct thread *thread, struct ip_callchain *chain,
-> >> -			  size_t sz, u64 ip);
-> >> +			  size_t sz, u64 ip, u64 kernel_start);
-> >>  int thread_stack__flush(struct thread *thread);
-> >>  void thread_stack__free(struct thread *thread);
-> >>  size_t thread_stack__depth(struct thread *thread);
-> >> -- 
-> >> 2.17.1
-> > 
