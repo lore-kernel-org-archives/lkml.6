@@ -2,133 +2,196 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF28EC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:17:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3839AC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:17:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 802AF20664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:17:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="xgijD/OV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 802AF20664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	by mail.kernel.org (Postfix) with ESMTP id EDE2820664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:17:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDE2820664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730085AbeKADQb (ORCPT
+        id S1730109AbeKADRB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 23:16:31 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:43226 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729206AbeKADQb (ORCPT
+        Wed, 31 Oct 2018 23:17:01 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50248 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729206AbeKADRB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 23:16:31 -0400
-Received: by mail-qt1-f195.google.com with SMTP id q41-v6so18187283qtq.10
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 11:17:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=sVaziTIpyUOUhUsbSepg0EQX77ZWmo8ScVcNxR9osZ0=;
-        b=xgijD/OVOgAc0SQX/5mYIq06iHb6LjH6PBZ6R82PCvcdT59FUdhYGYeDjUOFS+aQ1f
-         4mCH8fRJ1OfFQm+0rswolmbp/Fx+59FafilfqEmmZEA8Xmx4301ko1ym5md1QVVaJR8z
-         2I+9XakAe7EIP9kwqh6ekRsKUFta9tmeyQq/9/BQMY6VerRnArbyEAx3KjMlW5Qf/uGV
-         AXNvYqV2B4soSquR23dSapdS86ObzIWz1O87OoODPbBnq5CEAGh8f2t8aZbRDHEPejRp
-         +Sfi3uibi9SuZJAIaaWRPaA8z+seY3ej/aWIEwZQ7t0N5M6Rx3a3yp0uPIKutHbSbDqN
-         O5uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sVaziTIpyUOUhUsbSepg0EQX77ZWmo8ScVcNxR9osZ0=;
-        b=Z0LBMqDIHFH7eJG61TSXbYfDLOlpszBGVoRFyfs+qdON90BI052xHWyoBYE29HLyH2
-         QcwsOjRez8lfLz+5r0RGWyjFhG1AKCWI8xDVRwifVUuXcAYzJv17nt6pOcNkzBJGPmVN
-         5Rz934Yhf1zGVg2GHxUUKm3AC+k/n+FWdJMlH7M15wjmibJDO277sJcR2xCgtd27y01G
-         kMojxcDmiqdbk9MmQFpvAYyEoa0C/JcSgk841ldBItaALFyXOpMy3SENLqVjkZePhQwQ
-         QpZXyP+gGZsKiBQwwy8zMHw4fDFx1UMyrwS1UCpy7MVbY01hAkz8/hTf0dAtEenWgBCO
-         Ly9w==
-X-Gm-Message-State: AGRZ1gKIQvK+nC6E2nJ7/N53EW8kjHSFcqzBchbufiG9FKdPuP24maVs
-        +I3XdadoCEDmoqdrWi57Ngp53EnuU5UTVw==
-X-Google-Smtp-Source: AJdET5f+nMO29x2hDNE6UtERRyrLn6uYHkzjK8aFp2MoWg0/8af/z18mG3W+eW/umE8W8xfo7Qrytw==
-X-Received: by 2002:ac8:2381:: with SMTP id q1-v6mr3811219qtq.322.1541009841894;
-        Wed, 31 Oct 2018 11:17:21 -0700 (PDT)
-Received: from cisco ([173.38.117.87])
-        by smtp.gmail.com with ESMTPSA id o49sm6702779qtf.60.2018.10.31.11.17.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 31 Oct 2018 11:17:20 -0700 (PDT)
-Date:   Wed, 31 Oct 2018 12:17:17 -0600
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Daniel Colascione <dancol@google.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH v3] Implement /proc/pid/kill
-Message-ID: <20181031181717.GD2180@cisco>
-References: <20181029221037.87724-1-dancol@google.com>
- <20181031155912.45088-1-dancol@google.com>
- <20181031175448.GC2180@cisco>
- <CAKOZuevrFxWLY1J1DVPNGaEy8UbkD1r_M9T9FQTOtSrqp-G0qw@mail.gmail.com>
+        Wed, 31 Oct 2018 23:17:01 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9VIFIpx124879
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 14:17:51 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2nffw0vrqp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 14:17:51 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 31 Oct 2018 18:17:51 -0000
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 31 Oct 2018 18:17:48 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9VIHlFU43188356
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 31 Oct 2018 18:17:47 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A2A46B2073;
+        Wed, 31 Oct 2018 18:17:47 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7B2C5B2067;
+        Wed, 31 Oct 2018 18:17:47 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.141])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 31 Oct 2018 18:17:47 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 39BBA16C06E6; Wed, 31 Oct 2018 11:17:48 -0700 (PDT)
+Date:   Wed, 31 Oct 2018 11:17:48 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [RFC] doc: rcu: remove note on smp_mb during synchronize_rcu
+Reply-To: paulmck@linux.ibm.com
+References: <20181028043046.198403-1-joel@joelfernandes.org>
+ <20181030222649.GA105735@joelaf.mtv.corp.google.com>
+ <20181030234336.GW4170@linux.ibm.com>
+ <20181031011119.GF224709@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKOZuevrFxWLY1J1DVPNGaEy8UbkD1r_M9T9FQTOtSrqp-G0qw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181031011119.GF224709@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18103118-0060-0000-0000-000002CAA289
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009961; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01110724; UDB=6.00575550; IPR=6.00890816;
+ MB=3.00023982; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-31 18:17:49
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18103118-0061-0000-0000-0000470AC112
+Message-Id: <20181031181748.GG4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-31_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810310151
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 06:00:49PM +0000, Daniel Colascione wrote:
-> On Wed, Oct 31, 2018 at 5:54 PM, Tycho Andersen <tycho@tycho.ws> wrote:
-> > Why not just use an ioctl() like Jann suggested instead of this big
-> > security check? Then we avoid the whole setuid writer thing entirely,
+On Tue, Oct 30, 2018 at 06:11:19PM -0700, Joel Fernandes wrote:
+> Hi Paul,
 > 
-> Don't you think a system call would be better than a new ioctl?
-
-We already have a kill() system call :)
-
-> With either an ioctl or a new system call, though, the shell would
-> need a helper program to use the facility, whereas with the existing
-> approach, the shell can use the new facility without any additional
-> binaries.
-
-...and a binary to use it!
-
-The nice thing about an ioctl is that it avoids this class of attacks
-entirely.
-
-> > and we can pass the fd around if we want to.
+> On Tue, Oct 30, 2018 at 04:43:36PM -0700, Paul E. McKenney wrote:
+> > On Tue, Oct 30, 2018 at 03:26:49PM -0700, Joel Fernandes wrote:
+> > > Hi Paul,
+> > > 
+> > > On Sat, Oct 27, 2018 at 09:30:46PM -0700, Joel Fernandes (Google) wrote:
+> > > > As per this thread [1], it seems this smp_mb isn't needed anymore:
+> > > > "So the smp_mb() that I was trying to add doesn't need to be there."
+> > > > 
+> > > > So let us remove this part from the memory ordering documentation.
+> > > > 
+> > > > [1] https://lkml.org/lkml/2017/10/6/707
+> > > > 
+> > > > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> > > 
+> > > I was just checking about this patch. Do you feel it is correct to remove
+> > > this part from the docs? Are you satisified that a barrier isn't needed there
+> > > now? Or did I miss something?
+> > 
+> > Apologies, it got lost in the shuffle.  I have now applied it with a
+> > bit of rework to the commit log, thank you!
 > 
-> You can pass the FD around today --- specifically, you just pass the
-> /proc/pid directory FD, not the /proc/pid/kill FD. The /proc/pid
-> directory FD acts as a process handle. (It's literally a reference to
-> a struct pid.) Anyone who receives one of these process handle FDs and
-> who wants to use the corresponding kill file can open the kill fd with
-> openat(2). What you can't do is pass the /proc/pid/kill FD to another
-> security context and use it, but when would you ever want to do that?
+> No worries, thanks for taking it!
+> 
+> Just wanted to update you on my progress reading/correcting the docs. The
+> 'Memory Ordering' is taking a bit of time so I paused that and I'm focusing
+> on finishing all the other low hanging fruit. This activity is mostly during
+> night hours after the baby is asleep but some times I also manage to sneak it
+> into the day job ;-)
 
-Perhaps I don't have a good imagination, because it's not clear to me
-when I'd ever use this from a shell instead of the kill binary,
-either. Using this from the shell is still racy, because if I do
-something like:
+If there is anything I can do to make this a more sustainable task for
+you, please do not keep it a secret!!!
 
-echo 9 > /proc/$pid/kill
+> BTW I do want to discuss about this smp_mb patch above with you at LPC if you
+> had time, even though we are removing it from the documentation. I thought
+> about it a few times, and I was not able to fully appreciate the need for the
+> barrier (that is even assuming that complete() etc did not do the right
+> thing).  Specifically I was wondering same thing Peter said in the above
+> thread I think that - if that rcu_read_unlock() triggered all the spin
+> locking up the tree of nodes, then why is that locking not sufficient to
+> prevent reads from the read-side section from bleeding out? That would
+> prevent the reader that just unlocked from seeing anything that happens
+> _after_ the synchronize_rcu.
 
-There's exactly the same race that there is with kill, that $pid might
-be something else. Of course I could do some magic with bind mounts or
-my pwd or something to keep it alive, but I can already do that today
-with kill.
+Actually, I recall an smp_mb() being added, but am not seeing it anywhere
+relevant to wait_for_completion().  So I might need to add the smp_mb()
+to synchronize_rcu() and remove the patch (retaining the typo fix).  :-/
 
-I can understand the desire to have a race free way to do this, but
-"it must use write(2)" seems a little unnecessary, given that the
-shell use case isn't particularly convincing to me.
+The short form answer is that anything before a grace period on any CPU
+must be seen by any CPU as being before anything on any CPU after that
+same grace period.  This guarantee requires a rather big hammer.
 
-Tycho
+But yes, let's talk at LPC!
+
+> Also about GP memory ordering and RCU-tree-locking, I think you mentioned to
+> me that the RCU reader-sections are virtually extended both forward and
+> backward and whereever it ends, those paths do heavy-weight synchronization
+> that should be sufficient to prevent memory ordering issues (such as those
+> you mentioned in the Requierments document). That is exactly why we don't
+> need explicit barriers during rcu_read_unlock. If I recall I asked you why
+> those are not needed. So that answer made sense, but then now on going
+> through the 'Memory Ordering' document, I see that you mentioned there is
+> reliance on the locking. Is that reliance on locking necessary to maintain
+> ordering then?
+
+There is a "network" of locking augmented by smp_mb__after_unlock_lock()
+that implements the all-to-all memory ordering mentioned above.  But it
+also needs to handle all the possible complete()/wait_for_completion()
+races, even those assisted by hypervisor vCPU preemption.
+
+> Or did I miss the points completely? :(
+
+A question for the ages for both of us!  ;-)
+
+> ----------------------
+> TODO list of the index file marking which ones I have finished perusing:
+> 
+> arrayRCU.txt			DONE
+> checklist.txt			DONE
+> listRCU.txt			DONE
+> lockdep.txt			DONE
+> lockdep-splat.txt		DONE
+> NMI-RCU.txt
+> rcu_dereference.txt
+> rcubarrier.txt
+> rculist_nulls.txt
+> rcuref.txt
+> rcu.txt
+> RTFP.txt			DONE
+> stallwarn.txt			DONE
+> torture.txt
+> UP.txt
+> whatisRCU.txt			DONE
+> 
+> Design
+>  - Data-Structures		DONE
+>  - Requirements			DONE
+>  - Expedited-Grace-Periods
+>  - Memory Ordering		next
+
+Great progress, and again, thank you!!!
+
+							Thanx, Paul
+
