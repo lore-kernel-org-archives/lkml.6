@@ -2,159 +2,122 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45E66C6786F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 02:09:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E520DECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 02:24:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8ECA2081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 02:09:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8ECA2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B47982082B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 02:24:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B47982082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728765AbeJaLE4 (ORCPT
+        id S1728826AbeJaLUr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 07:04:56 -0400
-Received: from mga17.intel.com ([192.55.52.151]:42689 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728665AbeJaLE4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 07:04:56 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 19:08:59 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,446,1534834800"; 
-   d="scan'208";a="82861110"
-Received: from yisun1-ubuntu.bj.intel.com (HELO localhost) ([10.238.156.104])
-  by fmsmga008.fm.intel.com with ESMTP; 30 Oct 2018 19:08:57 -0700
-Date:   Wed, 31 Oct 2018 10:06:10 +0800
-From:   Yi Sun <yi.y.sun@linux.intel.com>
-To:     Michael Kelley <mikelley@microsoft.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "jgross@suse.com" <jgross@suse.com>,
-        "chao.p.peng@intel.com" <chao.p.peng@intel.com>,
-        "chao.gao@intel.com" <chao.gao@intel.com>,
-        "isaku.yamahata@intel.com" <isaku.yamahata@intel.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>
-Subject: Re: [PATCH v1 2/2] x86/hyperv: make HvNotifyLongSpinWait hypercall
-Message-ID: <20181031020610.GD15378@yi.y.sun>
-References: <1539954835-34035-1-git-send-email-yi.y.sun@linux.intel.com>
- <1539954835-34035-3-git-send-email-yi.y.sun@linux.intel.com>
- <CY4PR21MB07737AA8E3F7E7353D42F5C8D7F60@CY4PR21MB0773.namprd21.prod.outlook.com>
+        Wed, 31 Oct 2018 07:20:47 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:38651 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728671AbeJaLUq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 07:20:46 -0400
+Received: by mail-ed1-f67.google.com with SMTP id c1-v6so12300108ede.5;
+        Tue, 30 Oct 2018 19:24:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qisjhRzqYftCgGXLPIeSirkSfWPEJ3OepZwWig78/Bc=;
+        b=jQUFmmT5FOJLhz/aD1EJCJ6Oxp2NZc/2VPLsYha8qeQtft2y9QsXUQnnR7F+NiLWBG
+         ZbcQ8gElhR2stgmsCKCUdwRRICzpowpWh1vi2DQkRC4jXqWVcrsrW1eSk+teIPz3dhzt
+         zbBNdcCquaVe41b/+VGDh5tSYwQPOsCChs/IUWB5cM7JMm0xMT4WwJ2yCUyNAzhGs2Wa
+         BlH84FVzWQTFStjaM9wjnWG22v8UYIA5YijUKLrAZ9kU5/WDNOxNUBZS7pLv96MVi93e
+         sk2PMUfJndNTGB2IFnViaL7byg3CbHrt8njsbmIfKMMI/xTW1aKR6B2I5LqEsL5VT+25
+         24bw==
+X-Gm-Message-State: AGRZ1gLYm4MU0KP2PzSxNtegRkbCap0vF2OofRW3YJQDs0707rj4piTn
+        na8/aSnC1dcdB6gYKSt2YUIM43QvTfU=
+X-Google-Smtp-Source: AJdET5csxfhohntJ1U/4DiuCQ/zKp+l662vuSsLvSZrQwQQvV2WoszXOiuZRsiiIDQAWN33B8dyjMA==
+X-Received: by 2002:a50:a8a2:: with SMTP id k31-v6mr606871edc.192.1540952686432;
+        Tue, 30 Oct 2018 19:24:46 -0700 (PDT)
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com. [209.85.221.47])
+        by smtp.gmail.com with ESMTPSA id b2-v6sm6464656edy.52.2018.10.30.19.24.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 19:24:46 -0700 (PDT)
+Received: by mail-wr1-f47.google.com with SMTP id w5-v6so14746491wrt.2;
+        Tue, 30 Oct 2018 19:24:45 -0700 (PDT)
+X-Received: by 2002:adf:e307:: with SMTP id b7-v6mr988673wrj.91.1540952685177;
+ Tue, 30 Oct 2018 19:24:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CY4PR21MB07737AA8E3F7E7353D42F5C8D7F60@CY4PR21MB0773.namprd21.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20181026144344.27778-1-jagan@amarulasolutions.com> <20181026144344.27778-23-jagan@amarulasolutions.com>
+In-Reply-To: <20181026144344.27778-23-jagan@amarulasolutions.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Wed, 31 Oct 2018 10:24:32 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65a-+-U74QWBvHLJ9e+_dWY3Cy+h9CfAFHqmFnB0GmcBw@mail.gmail.com>
+Message-ID: <CAGb2v65a-+-U74QWBvHLJ9e+_dWY3Cy+h9CfAFHqmFnB0GmcBw@mail.gmail.com>
+Subject: Re: [PATCH v3 22/25] dt-bindings: sun6i-dsi: Add compatible for A64 DPHY
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After syncing with Hyper-V team, we have got answers as below.
+On Fri, Oct 26, 2018 at 10:46 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+>
+> The MIPI DSI PHY HDMI controller on Allwinner A64 is similar
+> on the one on A31.
+>
+> Add A64 compatible and append A31 compatible as fallback.
+>
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+> Changes for v3:
+> - none
+> Changes for v2:
+> - new patch
+>
+>  Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+> index 9fa6e7a758ad..704fb31962f2 100644
+> --- a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+> +++ b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+> @@ -36,7 +36,7 @@ D-PHY
+>
+>  Required properties:
+>    - compatible: value must be one of:
+> -    * allwinner,sun6i-a31-mipi-dphy
+> +    * "allwinner,sun50i-a64-mipi-dphy", "allwinner,sun6i-a31-mipi-dphy"
 
-On 18-10-24 16:53:00, Michael Kelley wrote:
-> From: Yi Sun <yi.y.sun@linux.intel.com>  Sent: Friday, October 19, 2018 6:14 AM
-> > 
-> > The HvNotifyLongSpinWait hypercall (HVCALL_NOTIFY_LONG_SPIN_WAIT)
-> > is used by a guest OS to notify the hypervisor that the calling
-> > virtual processor is attempting to acquire a resource that is
-> > potentially held by another virtual processor within the same
-> > Virtual Machine. This scheduling hint improves the scalability of
-> > VMs with more than one virtual processor on Hyper-V.
-> > 
-> > Per MSFT TLFS, the retry number (SpinWaitInfo) is sent to hypervisor
-> > only when the retry number exceeds the recommended number. If
-> > recommended number is 0xFFFFFFFF, never retry.
-> 
-> The HvNotifyLongSpinWait hypercall should be understood to be
-> advisory only.  As you noted, it is a scheduling hint to the
-> hypervisor that some virtual CPU in the VM holds a spin lock.  Even
-> though Linux knows which vCPU holds the spin lock, the hypercall
-> does not provide a way to give that information to Hyper-V.  The
-> hypercall always returns immediately.
-> 
-> The "retry number" is a bit mis-named in the Hyper-V Top Level
-> Functional Spec (TLFS).  It is essentially a threshold value.  Hyper-V is
-> saying "don't bother to advise me about the spin lock until you have
-> done a certain number of spins."  This threshold prevents
-> over-notifying Hyper-V such that the notification becomes somewhat
-> meaningless.   It's not immediately clear to me why the hypercall passes
-> that value as an input, but maybe it lets the Hyper-V scheduler prioritize
-> among vCPUs based on how many times they have spun for a lock.  I
-> think we were told that current Hyper-V implementations ignore this
-> input value anyway.
-> 
-> I believe the description of the sentinel value 0xFFFFFFFF in the
-> Hyper-V TLFS is incorrect.  Because it is the max possible threshold
-> value, that value in the EBX register just means to not ever bother to
-> notify.   The description should be "0xFFFFFFFF indicates never to notify."
-> The value does *not* indicate anything about retrying to obtain the
-> spin lock.
-> 
-You are right. 0xFFFFFFFF only indicates never to notify. We should not
-break the spin loop.
+The format for this is one "combination" per line. You need to keep the
+original "allwinner,sun6i-a31-mipi-dphy".
 
-> >  static bool __initdata hv_pvspin = true;
-> > 
-> > +bool hv_notify_long_spin_wait(int retry_num)
-> 
-> retry_num should probably be declared as unsigned int.  You
-> don't want it to be treated as a negative number if the high
-> order bit is set.
-> 
-Yes, thanks!
+ChenYu
 
-> > +{
-> > +	/*
-> > +	 * Per MSFT TLFS, the SpinWaitInfo is sent to hypervisor only when
-> > +	 * the retry number exceeds the recommended number.
-> > +	 *
-> > +	 * If recommended number is 0xFFFFFFFF, never retry.
-> > +	 */
-> > +	if (ms_hyperv.num_spin_retry == HYPERV_SPINLOCK_RETRY_NEVER)
-> > +		return false;
-> > +
-> > +	if ((0 == retry_num % ms_hyperv.num_spin_retry) && retry_num)
-> 
-> I don't know if the "%" function is right here.  Your implementation will
-> notify Hyper-V on every multiple of num_spin_retry.   The alternative is to
-> notify once when the threshold is exceeded, and never again for this
-> particular attempt to obtain a spin lock.  We should check with the Hyper-V
-> team for which approach they expect to be used.
-> 
-We should send the notification on every multiple of the recommended
-number.
-
-> > +		hv_do_fast_hypercall8(HVCALL_NOTIFY_LONG_SPIN_WAIT,
-> > +				      retry_num);
-> 
-> The Hyper-V TLFS seems to be inconsistent on whether the input parameter
-> is 32-bits or 64-bits.   In one place it is typed as UINT64, but in another place
-> it is shown as only 4 bytes.  Need to clear this up with the Hyper-V team as
-> well.
-> 
-It is 32-bits.
-
-> > +
-> > +	return true;
-> 
-> I don't see a need for this function to return true vs. false.  Any calling code
-> should not change its behavior based on num_spin_retry.   This function will
-> either notify Hyper-V or not notify Hyper-V, depending on whether the number
-> of attempts to obtain the spinlock meets the threshold.  But calling code will
-> do the same thing regardless of whether such a notification is made. 
-> 
-You are right. I will change it to 'void'.
-
-> Michael
+>    - reg: base address and size of memory-mapped region
+>    - clocks: phandles to the clocks feeding the DSI encoder
+>      * bus: the DSI interface clock
+> --
+> 2.18.0.321.gffc6fa0e3
+>
