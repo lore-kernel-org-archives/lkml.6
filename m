@@ -2,190 +2,137 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC7BFC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:58:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28AD3C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:58:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 853B920685
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:58:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D64A920685
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:58:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZKRc9Y8v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 853B920685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mailme.dk
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="d0c9joiE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D64A920685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729118AbeJaT4X (ORCPT
+        id S1729243AbeJaT4b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 15:56:23 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:42484 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728924AbeJaTzp (ORCPT
+        Wed, 31 Oct 2018 15:56:31 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:38338 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728918AbeJaTzo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 15:55:45 -0400
-Received: by mail-ed1-f67.google.com with SMTP id b7-v6so13199999edd.9;
-        Wed, 31 Oct 2018 03:58:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Mc8cm3LzERwLnKMSOFVucQyf/Yt+O2Cfgw2FqcjLLao=;
-        b=ZKRc9Y8vWvVPRx8PjqEQGspQ/xb0BQV9xxmeTZ1Ez7pY9y1CbZmo4HGk1DUsKFctEm
-         NC8uuvTMA2J0T3MIzfQ1QkPukYzZW0C37YlChlEL3xQiWGmtqAlrrDb/cjlXN3U3gMpj
-         uUHs6ZTR00J7Xm5BUEtJyZp7lMJuHpOuf+WCpX9F4hsbDHymbHSM9A5fE7odLvvYNWtG
-         yNdJuC1a3bA+pmFuwkyDO6TFuDj0c7QQJ/nKEWOMDzMpfUXOq2FWss3TttEXUJNAzunU
-         vFn5852YhdDPq/fGL1gb9k3luBwxDNaEOXoTTteEZYqzyBwxx1SdWVT1p07iQyYizTvo
-         AGvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=Mc8cm3LzERwLnKMSOFVucQyf/Yt+O2Cfgw2FqcjLLao=;
-        b=NJx07aXvV5OqUqu5uN9hPCNaWEJCCeQl0tsRZNR9MODIB0T6B1+VlKzmcfQ+Sfyeff
-         /okORG6eQxnjy4ioy0polONb+LPHm6U8Uyc1htqgSPilk9MsgMBB4/E5aeSoF8cioMs0
-         NBw31MXlYcl/iKYlSPyzzK8GU7n+Q8Z+xeu9gAM/MeZKtiN3QrPFM1ItzZ542aHvxRpD
-         a02rHwwycA9+pWW9vf10wz6LE0l51QjZ9e8iWdb0hsImnNj6l6qKsUnpe7H21dUQCqLI
-         yahrBcMMAz66Qo+tpw5t5sScrO1c2KTqZ15e2+fCB9pUUWF5JW0AvQCN0edPUUMVOi1p
-         tgWg==
-X-Gm-Message-State: AGRZ1gIMH8+c/Bp0qnayeudQ7+crArrVv5AY9RnNgj4LNlgg/cVreXMx
-        NvkWDtDlJ8xZTc9tPyCAHqJrdc8UzIM=
-X-Google-Smtp-Source: AJdET5eEOZaRlLh0oURXycFkTESkH3KQgBOenj0dhs/NKvSojVhcJQf+KbOh4fThPXNgI7UlD1uJ2Q==
-X-Received: by 2002:a50:ec9a:: with SMTP id e26-v6mr1665211edr.134.1540983488621;
-        Wed, 31 Oct 2018 03:58:08 -0700 (PDT)
-Received: from localhost.localdomain ([5.57.50.195])
-        by smtp.gmail.com with ESMTPSA id a40-v6sm9041108edd.61.2018.10.31.03.58.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 03:58:07 -0700 (PDT)
-From:   Emil Renner Berthing <esmil@mailme.dk>
-To:     linux-spi@vger.kernel.org
-Cc:     Emil Renner Berthing <kernel@esmil.dk>,
-        Addy Ke <addy.ke@rock-chips.com>,
-        Mark Brown <broonie@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 08/14] spi: rockchip: remove master pointer from dev data
-Date:   Wed, 31 Oct 2018 11:57:05 +0100
-Message-Id: <20181031105711.19575-9-esmil@mailme.dk>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181031105711.19575-1-esmil@mailme.dk>
-References: <20181031105711.19575-1-esmil@mailme.dk>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 31 Oct 2018 15:55:44 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9VAnn9r133983;
+        Wed, 31 Oct 2018 10:58:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=V4/gdpncSNEQ4mZl16I2UnE30UBx6m4HftDP1gv2Atw=;
+ b=d0c9joiE/zKrhnyCi1N6JtSUqChZZ6zYUIHOriAMbo/3lc/o3U33e61oSVtm0zKXGA6I
+ gGYBmMol36B1+LD9JbIZMCjTW/URtdZm++rcJjecv4KdMVe14RfVJt9yT6w0QiLnWBJh
+ +uGVa0oGoM6JOnMUap4jMJWicINX7LmawY/f7oZI+IY6f3XyVuI6b+dCpOuBQ/9+CeMG
+ IXmhnmG/tSdKYhPz0MGpmkU7Zo+G3NiqAuqYm5CiiWqzR18tdg7052ppgbS09tUPxkub
+ 9uXIIlQHc9FmyCGu4jFFrxdqVJcmvjNPvPodyg9hi7+QSkpIFA2bd/BHaEhJo3B+h7Pm Mw== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2120.oracle.com with ESMTP id 2ncfyq235b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 31 Oct 2018 10:58:02 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9VAw1EY018986
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 31 Oct 2018 10:58:01 GMT
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9VAvxlB029153;
+        Wed, 31 Oct 2018 10:58:00 GMT
+Received: from manish-VirtualBox.in.oracle.com (/10.191.249.11)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 31 Oct 2018 03:57:59 -0700
+From:   mk.singh@oracle.com
+To:     netdev@vger.kernel.org
+Cc:     eric.dumazet@gmail.com, mkubecek@suse.cz,
+        Manish Kumar Singh <mk.singh@oracle.com>,
+        Jay Vosburgh <j.vosburgh@gmail.com>,
+        Veaceslav Falico <vfalico@gmail.com>,
+        Andy Gospodarek <andy@greyhouse.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] bonding:avoid repeated display of same link status change
+Date:   Wed, 31 Oct 2018 16:27:28 +0530
+Message-Id: <20181031105729.7442-1-mk.singh@oracle.com>
+X-Mailer: git-send-email 2.14.1
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9062 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810310090
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Emil Renner Berthing <kernel@esmil.dk>
+From: Manish Kumar Singh <mk.singh@oracle.com>
 
-In almost all cases we already have a pointer to the
-spi master structure where we have the driver data.
+When link status change needs to be committed and rtnl lock couldn't be
+taken, avoid redisplay of same link status change message.
 
-The only exceptions are the dma callbacks which are
-easily fixed by passing them the master and using
-spi_master_get_devdata to retrieve the driver data.
-
-Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+Signed-off-by: Manish Kumar Singh <mk.singh@oracle.com>
 ---
- drivers/spi/spi-rockchip.c | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+ drivers/net/bonding/bond_main.c | 8 ++++++--
+ include/net/bonding.h           | 1 +
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
-index f3fe6d4cf6f6..45a1479c1a29 100644
---- a/drivers/spi/spi-rockchip.c
-+++ b/drivers/spi/spi-rockchip.c
-@@ -159,7 +159,6 @@
+diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+index 2b01180be834..b3d95c7040ac 100644
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -2096,7 +2096,8 @@ static int bond_miimon_inspect(struct bonding *bond)
+ 			bond_propose_link_state(slave, BOND_LINK_FAIL);
+ 			commit++;
+ 			slave->delay = bond->params.downdelay;
+-			if (slave->delay) {
++			if (slave->delay &&
++			    !atomic64_read(&bond->rtnl_needed)) {
+ 				netdev_info(bond->dev, "link status down for %sinterface %s, disabling it in %d ms\n",
+ 					    (BOND_MODE(bond) ==
+ 					     BOND_MODE_ACTIVEBACKUP) ?
+@@ -2136,7 +2137,8 @@ static int bond_miimon_inspect(struct bonding *bond)
+ 			commit++;
+ 			slave->delay = bond->params.updelay;
  
- struct rockchip_spi {
- 	struct device *dev;
--	struct spi_master *master;
- 
- 	struct clk *spiclk;
- 	struct clk *apb_pclk;
-@@ -350,19 +349,21 @@ static int rockchip_spi_pio_transfer(struct rockchip_spi *rs)
- 
- static void rockchip_spi_dma_rxcb(void *data)
- {
--	struct rockchip_spi *rs = data;
-+	struct spi_master *master = data;
-+	struct rockchip_spi *rs = spi_master_get_devdata(master);
- 	int state = atomic_fetch_andnot(RXDMA, &rs->state);
- 
- 	if (state & TXDMA)
- 		return;
- 
- 	spi_enable_chip(rs, false);
--	spi_finalize_current_transfer(rs->master);
-+	spi_finalize_current_transfer(master);
- }
- 
- static void rockchip_spi_dma_txcb(void *data)
- {
--	struct rockchip_spi *rs = data;
-+	struct spi_master *master = data;
-+	struct rockchip_spi *rs = spi_master_get_devdata(master);
- 	int state = atomic_fetch_andnot(TXDMA, &rs->state);
- 
- 	if (state & RXDMA)
-@@ -372,7 +373,7 @@ static void rockchip_spi_dma_txcb(void *data)
- 	wait_for_idle(rs);
- 
- 	spi_enable_chip(rs, false);
--	spi_finalize_current_transfer(rs->master);
-+	spi_finalize_current_transfer(master);
- }
- 
- static int rockchip_spi_prepare_dma(struct rockchip_spi *rs,
-@@ -401,7 +402,7 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs,
- 			return -EINVAL;
- 
- 		rxdesc->callback = rockchip_spi_dma_rxcb;
--		rxdesc->callback_param = rs;
-+		rxdesc->callback_param = master;
- 	}
- 
- 	txdesc = NULL;
-@@ -426,7 +427,7 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs,
+-			if (slave->delay) {
++			if (slave->delay &&
++			    !atomic64_read(&bond->rtnl_needed)) {
+ 				netdev_info(bond->dev, "link status up for interface %s, enabling it in %d ms\n",
+ 					    slave->dev->name,
+ 					    ignore_updelay ? 0 :
+@@ -2310,9 +2312,11 @@ static void bond_mii_monitor(struct work_struct *work)
+ 		if (!rtnl_trylock()) {
+ 			delay = 1;
+ 			should_notify_peers = false;
++			atomic64_set(&bond->rtnl_needed, 1);
+ 			goto re_arm;
  		}
  
- 		txdesc->callback = rockchip_spi_dma_txcb;
--		txdesc->callback_param = rs;
-+		txdesc->callback_param = master;
- 	}
++		atomic64_set(&bond->rtnl_needed, 0);
+ 		bond_for_each_slave(bond, slave, iter) {
+ 			bond_commit_link_state(slave, BOND_SLAVE_NOTIFY_LATER);
+ 		}
+diff --git a/include/net/bonding.h b/include/net/bonding.h
+index a4f116f06c50..20c3c875266f 100644
+--- a/include/net/bonding.h
++++ b/include/net/bonding.h
+@@ -229,6 +229,7 @@ struct bonding {
+ 	struct	 dentry *debug_dir;
+ #endif /* CONFIG_DEBUG_FS */
+ 	struct rtnl_link_stats64 bond_stats;
++	atomic64_t rtnl_needed;
+ };
  
- 	/* rx must be started before tx due to spi instinct */
-@@ -633,7 +634,6 @@ static int rockchip_spi_probe(struct platform_device *pdev)
- 
- 	spi_enable_chip(rs, false);
- 
--	rs->master = master;
- 	rs->dev = &pdev->dev;
- 	rs->max_freq = clk_get_rate(rs->spiclk);
- 
-@@ -746,9 +746,8 @@ static int rockchip_spi_suspend(struct device *dev)
- {
- 	int ret;
- 	struct spi_master *master = dev_get_drvdata(dev);
--	struct rockchip_spi *rs = spi_master_get_devdata(master);
- 
--	ret = spi_master_suspend(rs->master);
-+	ret = spi_master_suspend(master);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -773,7 +772,7 @@ static int rockchip_spi_resume(struct device *dev)
- 	if (ret < 0)
- 		return ret;
- 
--	ret = spi_master_resume(rs->master);
-+	ret = spi_master_resume(master);
- 	if (ret < 0) {
- 		clk_disable_unprepare(rs->spiclk);
- 		clk_disable_unprepare(rs->apb_pclk);
+ #define bond_slave_get_rcu(dev) \
 -- 
-2.19.1
+2.14.1
 
