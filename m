@@ -7,351 +7,123 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E50EBC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 19:19:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65F7FC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 19:20:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88E4A20657
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 19:19:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 258FF2081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 19:20:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lr5Nrd1/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88E4A20657
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t168Unfc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 258FF2081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729438AbeKAETP (ORCPT
+        id S1727970AbeKAETw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 00:19:15 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:37127 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725731AbeKAETP (ORCPT
+        Thu, 1 Nov 2018 00:19:52 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:35326 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725731AbeKAETv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 00:19:15 -0400
-Received: by mail-yb1-f195.google.com with SMTP id d18-v6so7128537yba.4;
-        Wed, 31 Oct 2018 12:19:51 -0700 (PDT)
+        Thu, 1 Nov 2018 00:19:51 -0400
+Received: by mail-yw1-f65.google.com with SMTP id w135-v6so4730867ywd.2
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 12:20:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=oJL+nZGd+8R4XbIWudoP5RNYuAFFYCo/H7cjVUhG9i0=;
-        b=lr5Nrd1/u4MnPkIZl8JLtrNNBiMkHEMTgitwR/tB58SbRtgX49RAqvfoyuGoN7nz77
-         JLvX0GKcTpnX3jCI+OejwS6TgyZgOeee5qc7iQnKDVEuvbeeTjAdyY3ZTZFwCRheruVD
-         o74SzSUp3Rx7/T9LsM+3wAZhcRgUeNOzi0qkM7KsezhuUOHhsrPSTCqTOTL5aRZsly4Z
-         dUvosA90AwPIuMDmzXOu4g9BkwVoOoZAf8yVwzuCQ700QoGrcpDKcuIRnpGmyjfcC1UQ
-         ckpFtBiREa3S5PmJ53poxj2/BZ2eMZyioDw0Xr/8No0ANL/O9tSjy2ThVddlqXK8PDag
-         /DmQ==
+        bh=OEigaJ1V34vm8vKs8+NtLV2yPLQb0ZC9a/U8CiPe97M=;
+        b=t168UnfcL9KgAjXhQQh90eKjjHCt8CnDVhgrDPP9phsolBAnHoCyz8iDOzloitAx5P
+         epM13ov7i0EMmbCCBtemdwtd25tSDK6irMZetrrvan6aJAteN0lE00UENu5DeoTEeBxn
+         Fj1prcTKoYCEI3qNKsKZT5y5YRxcnVB6haSO6eStkut4i2mRzhIVdstWfKflISlLR2+S
+         gEuMGXyz9bAeQh8nKwR1Iquo+WHo9+J8v3RMgA70UWV//IiG8yimUeT7WL6CsJAyteFG
+         665weGjtOJuxopm4AuNuIxftu2yhijg7Q+DLf6H70jmPNnc73KwRmKvHK84q41iv3ZMB
+         JUGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=oJL+nZGd+8R4XbIWudoP5RNYuAFFYCo/H7cjVUhG9i0=;
-        b=Qpdx5zGlbV+xFD9luzEC1SUKXw17Pn8PyNAb/R1w0R8w066ZIjRjYJKXtUI71wfsS0
-         u1oJSwctVzzcpw/apWdufhqhR7eK8WFHvNRQ65O9AzVHLGbNzsSWwIGJcegv8BGSJsiH
-         l8Od0UYTmfeVieooj52j0brMkYT3ADeMRku7fV+vAvQ3TSUaXeKWuvpvm0JyoqcY7nyc
-         fL/TIGP2m7Kx4kI8iqLw6Xo1lPLOBbm3lmVgw7Ma7o/WaByo9JiCJPjOL9PKPY5C6P5j
-         chy6kLwPDNx05l7MTNI+qsoH+EL9+U/wn9ZYpW1erRi5qYoQBtz1EqwLdhEJMyltuUWz
-         bqyg==
-X-Gm-Message-State: AGRZ1gIU0rPu3QY9cF7MRZjLEvwM1bYctAWOdKM3cfWKY18u9vZBa4lO
-        61m2FvhCFHUfBpEeBJi3iA==
-X-Google-Smtp-Source: AJdET5dOjxSkKBK+zr/V05EPtAJhyg4+KQEgJ5nzrCv28Zg84wDJ/ebEvikGH9eDwn4RlftSyUkWHg==
-X-Received: by 2002:a25:a422:: with SMTP id f31-v6mr4557738ybi.10.1541013590222;
-        Wed, 31 Oct 2018 12:19:50 -0700 (PDT)
+        bh=OEigaJ1V34vm8vKs8+NtLV2yPLQb0ZC9a/U8CiPe97M=;
+        b=kBny0Wh4ueAL8RQB4fXFMySSUvj8Ae+fZHCzWZwQf1bln7bfLam8Zj+vw2aUzCW3w5
+         Ji4XSosFbCqVYqUw/+kdLoXKPZ9PukO3eRT4LEpY7dTvv0aPFFrPL6djwKWVd3KKYQC4
+         WlteBzBgjVEl5uv2T8icG83U7ozHbHAPwJcVpLJGeoGmuFPB764lkaYhwxb0/gbeo7ys
+         rVjScfxml3R424PD0Mzk9P3ra9ELST1IeEi+4WutABM+CtaXxWF0RRlCbF/GMw1LIv1g
+         umzzOEMyy3Ik/4NQ9h5WSsrTiiTAm4rDGWyw/Yhhj5/TG5hgCs7d10Q3g230vhVBTWQ5
+         Y3JQ==
+X-Gm-Message-State: AGRZ1gKgI0Jd+orvzPTdzJ1qgO+n3I/f3t3+5DoZSdJxaC/cBHD2MWMV
+        ajKxcy57pYzc1cB3GSOr/Q==
+X-Google-Smtp-Source: AJdET5dOeu7yuc284Wk4I+NPodyVktLnLBkp0VfXPnXwm7uv+PaNAR/FYIWlwB9q7j+1vSx9ITYdvA==
+X-Received: by 2002:a0d:f585:: with SMTP id e127-v6mr4398869ywf.170.1541013626837;
+        Wed, 31 Oct 2018 12:20:26 -0700 (PDT)
 Received: from 960.armstrong.edu ([130.254.104.55])
-        by smtp.gmail.com with ESMTPSA id w6-v6sm9031775ywl.30.2018.10.31.12.19.49
+        by smtp.gmail.com with ESMTPSA id x10-v6sm7705640ywi.70.2018.10.31.12.20.26
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 31 Oct 2018 12:19:49 -0700 (PDT)
+        Wed, 31 Oct 2018 12:20:26 -0700 (PDT)
 From:   Ayman Bagabas <ayman.bagabas@gmail.com>
-To:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Kailang Yang <kailang@realtek.com>,
+        Hui Wang <hui.wang@canonical.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
 Cc:     ayman.bagabas@gmail.com
-Subject: [PATCH 1/3] x86: add support for Huawei WMI hotkeys.
-Date:   Wed, 31 Oct 2018 15:19:36 -0400
-Message-Id: <20181031191938.7513-1-ayman.bagabas@gmail.com>
+Subject: [PATCH 2/3] ALSA:hda: fix front speakers on Huawei MBXP.
+Date:   Wed, 31 Oct 2018 15:20:12 -0400
+Message-Id: <20181031192013.7701-1-ayman.bagabas@gmail.com>
 X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver adds support for missing hotkeys on some Huawei laptops.
-Currently, only Huawei Matebook X Pro is supported. The driver
-recognizes the following keys: brightness keys, micmute, wlan, and
-Huawei special key. The brightness keys are ignored since they work out
-of the box.
+This patch enables the front speakers on Huawei Matebook X Pro laptops.
+These laptops come with Dolby Atmos sound system and these pins
+configuration enables the front speakers.
 
 Signed-off-by: Ayman Bagabas <ayman.bagabas@gmail.com>
 ---
- drivers/platform/x86/Kconfig      |  13 ++
- drivers/platform/x86/Makefile     |   1 +
- drivers/platform/x86/huawei_wmi.c | 225 ++++++++++++++++++++++++++++++
- 3 files changed, 239 insertions(+)
- create mode 100644 drivers/platform/x86/huawei_wmi.c
+ sound/pci/hda/patch_realtek.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 0c1aa6c314f5..c6813981e45c 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -1229,6 +1229,19 @@ config I2C_MULTI_INSTANTIATE
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called i2c-multi-instantiate.
- 
-+config HUAWEI_LAPTOP
-+	tristate "Huawei WMI hotkeys driver"
-+	depends on ACPI
-+	depends on ACPI_WMI
-+	depends on INPUT
-+	select INPUT_SPARSEKMAP
-+	help
-+	  This driver provides support for Huawei WMI hotkeys.
-+	  It enables the missing keys and adds support to micmute
-+	  led found on these laptops.q
-+	  Supported devices are:
-+	  - Matebook X Pro
-+
- endif # X86_PLATFORM_DEVICES
- 
- config PMC_ATOM
-diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-index e6d1becf81ce..5984354e18ff 100644
---- a/drivers/platform/x86/Makefile
-+++ b/drivers/platform/x86/Makefile
-@@ -29,6 +29,7 @@ obj-$(CONFIG_ACERHDF)		+= acerhdf.o
- obj-$(CONFIG_HP_ACCEL)		+= hp_accel.o
- obj-$(CONFIG_HP_WIRELESS)	+= hp-wireless.o
- obj-$(CONFIG_HP_WMI)		+= hp-wmi.o
-+obj-$(CONFIG_HUAWEI_LAPTOP)		+= huawei_wmi.o
- obj-$(CONFIG_AMILO_RFKILL)	+= amilo-rfkill.o
- obj-$(CONFIG_GPD_POCKET_FAN)	+= gpd-pocket-fan.o
- obj-$(CONFIG_TC1100_WMI)	+= tc1100-wmi.o
-diff --git a/drivers/platform/x86/huawei_wmi.c b/drivers/platform/x86/huawei_wmi.c
-new file mode 100644
-index 000000000000..a430ff860929
---- /dev/null
-+++ b/drivers/platform/x86/huawei_wmi.c
-@@ -0,0 +1,225 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ *  Huawei WMI Hotkeys Driver
-+ *
-+ *  Copyright (C) 2018		  Ayman Bagabas <ayman.bagabas@gmail.com>
-+ *
-+ *  This program is free software: you can redistribute it and/or modify
-+ *  it under the terms of the GNU General Public License as published by
-+ *  the Free Software Foundation, either version 2 of the License, or
-+ *  (at your option) any later version.
-+ *
-+ *  This program is distributed in the hope that it will be useful,
-+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *  GNU General Public License for more details.
-+ *
-+ *  You should have received a copy of the GNU General Public License
-+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-+ *
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/input.h>
-+#include <linux/input/sparse-keymap.h>
-+#include <linux/acpi.h>
-+#include <linux/wmi.h>
-+#include <linux/huawei_wmi.h>
-+
-+MODULE_AUTHOR("Ayman Bagabas <ayman.bagabas@gmail.com>");
-+MODULE_DESCRIPTION("Huawei WMI hotkeys");
-+MODULE_LICENSE("GPL");
-+
-+#define DEVICE_NAME "huawei"
-+#define MODULE_NAME DEVICE_NAME"_wmi"
-+
-+/*
-+ * Huawei WMI Devices GUIDs
-+ */
-+#define AMW0_GUID "ABBC0F5B-8EA1-11D1-A000-C90629100000" // \_SB.AMW0
-+
-+/*
-+ * Huawei WMI Events GUIDs
-+ */
-+#define EVENT_GUID "ABBC0F5C-8EA1-11D1-A000-C90629100000"
-+
-+MODULE_ALIAS("wmi:"AMW0_GUID);
-+MODULE_ALIAS("wmi:"EVENT_GUID);
-+
-+enum {
-+	MICMUTE_LED_ON = 0x00010B04,
-+	MICMUTE_LED_OFF = 0x00000B04,
-+};
-+
-+static const struct key_entry huawei_wmi_keymap[] __initconst = {
-+		{ KE_IGNORE, 0x281, { KEY_BRIGHTNESSDOWN } },
-+		{ KE_IGNORE, 0x282, { KEY_BRIGHTNESSUP } },
-+		{ KE_IGNORE, 0x283, { KEY_KBDILLUMTOGGLE } },
-+		{ KE_KEY,	0x287, { KEY_MICMUTE } },
-+		{ KE_KEY,	0x289, { KEY_WLAN } },
-+		// Huawei |M| button
-+		{ KE_KEY,	0x28a, { KEY_PROG1 } },
-+		{ KE_END,	0 }
-+};
-+
-+struct huawei_wmi_device {
-+	struct input_dev *inputdev;
-+};
-+static struct huawei_wmi_device *wmi_device;
-+
-+int huawei_wmi_micmute_led_set(bool on)
-+{
-+	u32 args = (on) ? MICMUTE_LED_ON : MICMUTE_LED_OFF;
-+	struct acpi_buffer input = { (acpi_size)sizeof(args), &args };
-+	acpi_status status;
-+
-+	status = wmi_evaluate_method(AMW0_GUID, 0, 1, &input, NULL);
-+	if (ACPI_FAILURE(status))
-+		return status;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(huawei_wmi_micmute_led_set);
-+
-+static void huawei_wmi_process_key(struct input_dev *input_dev, int code)
-+{
-+	const struct key_entry *key;
-+
-+	key = sparse_keymap_entry_from_scancode(input_dev, code);
-+
-+	if (!key) {
-+		pr_info("%s: Unknown key pressed, code: 0x%04x\n",
-+					MODULE_NAME, code);
-+		return;
-+	}
-+
-+	sparse_keymap_report_entry(input_dev, key, 1, true);
-+}
-+
-+static void huawei_wmi_notify(u32 value, void *context)
-+{
-+	struct acpi_buffer response = { ACPI_ALLOCATE_BUFFER, NULL };
-+	union acpi_object *obj;
-+	acpi_status status;
-+
-+	status = wmi_get_event_data(value, &response);
-+	if (ACPI_FAILURE(status)) {
-+		pr_err("%s: Bad event status 0x%x\n",
-+					MODULE_NAME, status);
-+		return;
-+	}
-+
-+	obj = (union acpi_object *)response.pointer;
-+
-+	if (!obj)
-+		return;
-+
-+	if (obj->type == ACPI_TYPE_INTEGER)
-+		huawei_wmi_process_key(wmi_device->inputdev,
-+							obj->integer.value);
-+	else
-+		pr_info("%s: Unknown response received %d\n",
-+					MODULE_NAME, obj->type);
-+
-+	kfree(response.pointer);
-+}
-+
-+static int huawei_input_init(void)
-+{
-+	acpi_status status;
-+	int err;
-+
-+	wmi_device->inputdev = input_allocate_device();
-+	if (!wmi_device->inputdev)
-+		return -ENOMEM;
-+
-+	wmi_device->inputdev->name = "Huawei WMI hotkeys";
-+	wmi_device->inputdev->phys = "wmi/input0";
-+	wmi_device->inputdev->id.bustype = BUS_HOST;
-+
-+	err = sparse_keymap_setup(wmi_device->inputdev,
-+			huawei_wmi_keymap, NULL);
-+	if (err)
-+		goto err_free_dev;
-+
-+	status = wmi_install_notify_handler(EVENT_GUID,
-+			huawei_wmi_notify,
-+			NULL);
-+
-+	if (ACPI_FAILURE(status)) {
-+		err = -EIO;
-+		goto err_free_dev;
-+	}
-+
-+	err = input_register_device(wmi_device->inputdev);
-+	if (err)
-+		goto err_remove_notifier;
-+
-+	return 0;
-+
-+
-+err_remove_notifier:
-+	wmi_remove_notify_handler(EVENT_GUID);
-+err_free_dev:
-+	input_free_device(wmi_device->inputdev);
-+	return err;
-+}
-+
-+static void huawei_input_exit(void)
-+{
-+	wmi_remove_notify_handler(EVENT_GUID);
-+	input_unregister_device(wmi_device->inputdev);
-+}
-+
-+static int __init huawei_wmi_setup(void)
-+{
-+	int err;
-+
-+	wmi_device = kmalloc(sizeof(struct huawei_wmi_device), GFP_KERNEL);
-+	if (!wmi_device)
-+		return -ENOMEM;
-+
-+	err = huawei_input_init();
-+	if (err)
-+		goto err_input;
-+
-+	return 0;
-+
-+err_input:
-+	return err;
-+}
-+
-+static void huawei_wmi_destroy(void)
-+{
-+	huawei_input_exit();
-+	kfree(wmi_device);
-+}
-+
-+static int __init huawei_wmi_init(void)
-+{
-+	int err;
-+
-+	if (!wmi_has_guid(EVENT_GUID)) {
-+		pr_warn("%s: No known WMI GUID found\n", MODULE_NAME);
-+		return -ENODEV;
-+	}
-+
-+	err = huawei_wmi_setup();
-+	if (err) {
-+		pr_err("%s: Failed to setup device\n", MODULE_NAME);
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+
-+static void __exit huawei_wmi_exit(void)
-+{
-+	huawei_wmi_destroy();
-+	pr_debug("%s: Driver unloaded successfully\n", MODULE_NAME);
-+}
-+
-+module_init(huawei_wmi_init);
-+module_exit(huawei_wmi_exit);
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 3ac7ba9b342d..4f7a39c7883c 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -5493,6 +5493,7 @@ enum {
+ 	ALC298_FIXUP_TPT470_DOCK,
+ 	ALC255_FIXUP_DUMMY_LINEOUT_VERB,
+ 	ALC255_FIXUP_DELL_HEADSET_MIC,
++	ALC256_FIXUP_HUAWEI_MBXP_PINS,
+ 	ALC295_FIXUP_HP_X360,
+ 	ALC221_FIXUP_HP_HEADSET_MIC,
+ };
+@@ -6347,6 +6348,22 @@ static const struct hda_fixup alc269_fixups[] = {
+ 		.chained = true,
+ 		.chain_id = ALC269_FIXUP_HEADSET_MIC
+ 	},
++	[ALC256_FIXUP_HUAWEI_MBXP_PINS] = {
++		.type = HDA_FIXUP_PINS,
++		.v.pins = (const struct hda_pintbl[]) {
++			{0x12, 0x90a60130},
++			{0x13, 0x40000000},
++			{0x14, 0x90170110},
++			{0x18, 0x411111f0},
++			{0x19, 0x04a11040},
++			{0x1a, 0x411111f0},
++			{0x1b, 0x90170112},
++			{0x1d, 0x40759a05},
++			{0x1e, 0x411111f0},
++			{0x21, 0x04211020},
++			{ },
++		},
++	},
+ 	[ALC295_FIXUP_HP_X360] = {
+ 		.type = HDA_FIXUP_FUNC,
+ 		.v.func = alc295_fixup_hp_top_speakers,
+@@ -6592,6 +6609,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x17aa, 0x5109, "Thinkpad", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
+ 	SND_PCI_QUIRK(0x17aa, 0x511e, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
+ 	SND_PCI_QUIRK(0x17aa, 0x511f, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
++	SND_PCI_QUIRK(0x19e5, 0x3204, "Huawei MBXP", ALC256_FIXUP_HUAWEI_MBXP_PINS),
+ 	SND_PCI_QUIRK(0x17aa, 0x3bf8, "Quanta FL1", ALC269_FIXUP_PCM_44K),
+ 	SND_PCI_QUIRK(0x17aa, 0x9e54, "LENOVO NB", ALC269_FIXUP_LENOVO_EAPD),
+ 	SND_PCI_QUIRK(0x1b7d, 0xa831, "Ordissimo EVE2 ", ALC269VB_FIXUP_ORDISSIMO_EVE2), /* Also known as Malata PC-B1303 */
 -- 
 2.17.2
 
