@@ -2,163 +2,142 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BF84ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:48:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55BCCC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:48:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A78620821
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:48:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A78620821
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1733F20821
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:48:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="vzlkoZ2t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1733F20821
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730689AbeKADrl (ORCPT
+        id S1730704AbeKADr7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 23:47:41 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46092 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730675AbeKADrk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 23:47:40 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F4C880D;
-        Wed, 31 Oct 2018 11:48:24 -0700 (PDT)
-Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AEF163F6A8;
-        Wed, 31 Oct 2018 11:48:21 -0700 (PDT)
-Subject: Re: [PATCH 07/10] sched/fair: Provide can_migrate_task_llc
-To:     Steven Sistare <steven.sistare@oracle.com>, mingo@redhat.com,
-        peterz@infradead.org
-Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
-        rohit.k.jain@oracle.com, daniel.m.jordan@oracle.com,
-        pavel.tatashin@microsoft.com, matt@codeblueprint.co.uk,
-        umgwanakikbuti@gmail.com, riel@redhat.com, jbacik@fb.com,
-        juri.lelli@redhat.com, linux-kernel@vger.kernel.org,
-        Quentin Perret <quentin.perret@arm.com>
-References: <1540220381-424433-1-git-send-email-steven.sistare@oracle.com>
- <1540220381-424433-8-git-send-email-steven.sistare@oracle.com>
- <f75ddcd5-f9a0-30c5-94e4-c4077e17ffb0@arm.com>
- <b9915490-661b-0d0e-ae60-d5803357e1ec@oracle.com>
- <b7d91b1d-5da1-5d70-f266-93b108379b64@arm.com>
- <7c503b58-6370-df65-51c3-2591bb1cf621@oracle.com>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <d018a2d4-815a-9731-63e4-ba61c8259435@arm.com>
-Date:   Wed, 31 Oct 2018 18:48:20 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 31 Oct 2018 23:47:59 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:33614 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730176AbeKADr6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 23:47:58 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9VIiHtj134037;
+        Wed, 31 Oct 2018 18:48:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=thdYZ+IWw+c5cWRgqS1fTV7cfSUMA2Me6ZPD3o/lOLk=;
+ b=vzlkoZ2tNwUtNNNpmlEdxISkq+53Qffr/Anl0mI9/H2H+VNJV20PavFlJo9TUb2roOlp
+ KHwuW0xqUBhUB4GBDevtucN/fnchhGDwStXMM/UimxIPnEN3l5uC7ncfnmMxKZpzCECV
+ Hv7pbVQIe43XbVmyPuP25Gq6ACLegIv/tUox2gQIE9wqbaM18VHex4NYc7bPGv0/9Ch5
+ gdWamr/4YTlE1YRwGnAaK87qNdqjsPnf3HvJO0Fomhp5p3w/CA6XGrJk789Mj9+accHg
+ O+7DnvKGPQ40Jx5lXGrRMJD1k6WxWPFishTfkF8dGVavsCRF0MgIOG7R+2YqKlAXf0SG Jw== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2ncgnr4ypp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 31 Oct 2018 18:48:11 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9VIm6Lo016658
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 31 Oct 2018 18:48:06 GMT
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9VIm5s5027929;
+        Wed, 31 Oct 2018 18:48:05 GMT
+Received: from [10.209.243.127] (/10.209.243.127)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 31 Oct 2018 11:48:04 -0700
+Subject: Re: [PATCH v2 09/10] irqchip: ti-sci-inta: Add support for Interrupt
+ Aggregator driver
+To:     Marc Zyngier <marc.zyngier@arm.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Lokesh Vutla <lokeshvutla@ti.com>
+Cc:     Nishanth Menon <nm@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, tglx@linutronix.de,
+        jason@lakedaemon.net,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org, Tero Kristo <t-kristo@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Device Tree Mailing List <devicetree@vger.kernel.org>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>
+References: <20181018154017.7112-1-lokeshvutla@ti.com>
+ <20181018154017.7112-10-lokeshvutla@ti.com>
+ <b20127dc-be43-3b00-9960-663738df0069@arm.com>
+ <9969f24c-cdb0-1f5c-d0f4-b1c1f587325c@ti.com>
+ <86va5ssrfm.wl-marc.zyngier@arm.com>
+ <2369ea50-55db-c97b-5b43-99d572c97dc9@ti.com>
+ <da27ecc5-db32-cf3a-c194-962c44bc782f@arm.com>
+ <18df8960-9165-ba50-2c25-9f00d32198e8@oracle.com>
+ <e799646e-1fff-f96b-38e8-3d46b0160867@arm.com>
+From:   Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <2207fc72-22a6-b216-7b98-7c8c7768f002@oracle.com>
+Date:   Wed, 31 Oct 2018 11:48:00 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <7c503b58-6370-df65-51c3-2591bb1cf621@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <e799646e-1fff-f96b-38e8-3d46b0160867@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9063 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810310154
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 31/10/2018 15:43, Steven Sistare wrote:
-> On 10/29/2018 3:34 PM, Valentin Schneider wrote:
-[...]
->> Suppose you have 2 rq's sharing a workload of 3 tasks. You get one rq with
->> nr_running == 1 (r_1) and one rq with nr_running == 2 (r_2).
+On 10/31/2018 11:42 AM, Marc Zyngier wrote:
+> On 31/10/18 18:38, Santosh Shilimkar wrote:
+>> On 10/31/2018 11:21 AM, Marc Zyngier wrote:
+>>> Hi Grygorii,
+>>>
 >>
->> As soon as the task on r_1 ends/blocks, we'll go through idle balancing and
->> can potentially steal the non-running task from r_2. Sometime later the task
->> that was running on r_1 wakes up, and we end up with r_1->nr_running == 2
->> and r_2->nr_running == 1.
+>> [...]
 >>
->> IOW we've swapped their role in that example, and the whole thing can
->> repeat.
+>>>
+>>> Well, I'm convinced that we do not want a networking driver to be tied
+>>> to an interrupt architecture, and that the two should be completely
+>>> independent. But that's my own opinion. I can only see two solutions
+>>> moving forward:
+>>>
+>>> 1) You make the IA a real interrupt controller that exposes real
+>>> interrupts (one per event), and write your networking driver
+>>> independently of the underlying interrupt architecture.
+>>>
+>>> 2) you make the IA an integral part of your network driver, not exposing
+>>> anything outside of it, and limiting the interactions with the IR
+>>> *through the standard IRQ API*. You duplicate this knowledge throughout
+>>> the other client drivers.
+>>>
+>>> I believe that (2) would be a massive design mistake as it locks the
+>>> driver to a single of the HW (and potentially a single revision of the
+>>> firmware) while (1) gives you the required level of flexibility by
+>>> hiding the whole event "concept" at a single location.
+>>>
+>>> Yes, (1) makes you rewrite your existing, out of tree drivers. Oh well...
+>>>
+>> My preference is also not tie the network driver with IA. BTW, this is
+>> very standard functionality with other network drivers too. And this
+>> is handled using MSI-X.
 >>
->> The shorter the period of those tasks, the more we'll migrate them
->> between rq's, hence why I wonder if we shouldn't have some sort of
->> throttling.
+>> So strong NO for 1) from me as well.
 > 
-> Stealing is still the right move in this scenario.  Idle cycles become useful
-> cycles.  The only cost is the CPU time to dequeue from a remote rq and
-> enqueue on the local rq.  Earlier we discussed skipping try_steal() if avg_idle
-> is very small, on the order of 10 usec.  I think that type of throttling would 
-> cover your scenario.  I will add it in my next version.
+> Err. Are you opposing to (1) or (2)? From the above, I cannot really
+> tell... ;-)
 > 
+I mixed it up, sorry. I meant NO for (2), i.e No for making IA part of
+the network driver.
 
-Sounds good to me. Out of curiosity, how did you establish this 10 µsec
-threshold? I guess we just want something very tiny but still big enough
-to broadly cover try_steal() worst case exec times.
+Regards,
+Santosh
 
-[...]
->> Mmm so task_hot() mainly implements two mechanisms - the CACHE_HOT_BUDDY
->> sched feature and the exec_start threshold.
->>
->> The first one should be sidestepped in the stealing case since we won't
->> pass (if env->dst_rq->nr_running), that leaves us with the threshold.
->>
->> We might want to sidestep it when we are doing balancing within an LLC
->> domain (env->sd->flags & SD_SHARE_PKG_RESOURCES) - or use a lower threshold
->> in such cases.
->>
->> In any case, I think it would make sense to add some LLC conditions to
->> task_hot() so that
->> - regular load_balance() can also benefit from them
-> 
-> This is probably a good idea (lower threshold for task_hot within LLC).
-> I would rather see it done as a separate patch, with a separate performance
-> evaluation, as it will affect all workloads, even those that do not steal.
 
-Agreed.
-
-> A load balancing migration when !task_hot() may be performed even when
-> the dst CPU already has a task to run, so the migration may or may not
-> improve utilization.  By contrast, a newly idle CPU that does not find
-> work goes idle and definitely wastes cycles.  Note how
-> migrate_degrades_locality() chooses migration regardless of preferred node
-> when the dst is idle:
-> 
->         /* Leaving a core idle is often worse than degrading locality. */
->         if (env->idle != CPU_NOT_IDLE)
->                 return -1;
-> 
-> I apply the same principle in can_migrate_task_llc().
-> 
-[...]
->> Right, so my line of thinking was that by not doing a load_balance() and
->> taking a shortcut (stealing a task), we may end up just postponing a
->> load_balance() to after we've stolen a task. I guess in those cases
->> there's no magic trick to be found and we just have to deal with it.
-> 
-> In the current code I call idle_balance/load_balance first and then try_steal.
-> If idle_balance fails because of cost, then it has effectively postponed itself,
-> independently of stealing.  The next successful call to load_balance will
-> correct any imbalance caused by stealing.
-> 
->> And then there's some of the logic like we have in update_sd_pick_busiest()
->> where we e.g. try to prevent misfit tasks from running on LITTLEs, but
->> then if such tasks are waiting to be run and a LITTLE frees itself up,
->> I *think* it's okay to steal it.
-> 
-> Should be OK to steal.  If a BIG subsequently goes idle, load_balance will move
-> the task to the BIG, or the BIG may steal it when we support misfit stealing.
-> 
-> Questions for you, Valentin:
-> 
->   - Should misfit stealing be a separate patch, after my series?  I prefer that,
->     so we get stealing in peoples hands as soon as possible.  I think separating 
->     it is OK because stealing should not cause any regression for misfits, as 
->     my code still calls idle_balance/load_balance, which handles misfits.
-> 
-
-I don't have any objections, Quentin (added on cc) might want to disable
-stealing when !overutilized for Energy Aware Scheduling, but then that
-also depends on what gets in first :)
-
->   - Who should implement misfit stealing -- you, me, someone else?  I have no 
->     preference.
-
-It would make more sense if I did that, as it's easy for me to test it -
-unless you're really curious about Arm stuff and want to have some fun :)
-
-> 
-> - Steve
-> 
