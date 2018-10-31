@@ -2,159 +2,269 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 621D9ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47DE8C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:15:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2895220821
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:11:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2895220821
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=interlog.com
+	by mail.kernel.org (Postfix) with ESMTP id E4E8C2081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:15:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ufHi3E7L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4E8C2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730191AbeKAGKv (ORCPT
+        id S1728547AbeKAGOs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 02:10:51 -0400
-Received: from smtp.infotech.no ([82.134.31.41]:60656 "EHLO smtp.infotech.no"
+        Thu, 1 Nov 2018 02:14:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726023AbeKAGKv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 02:10:51 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp.infotech.no (Postfix) with ESMTP id 2B2E720423B;
-        Wed, 31 Oct 2018 22:11:02 +0100 (CET)
-X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
-Received: from smtp.infotech.no ([127.0.0.1])
-        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 1qhqtI81rRl6; Wed, 31 Oct 2018 22:10:55 +0100 (CET)
-Received: from [10.200.30.107] (unknown [213.52.86.138])
-        by smtp.infotech.no (Postfix) with ESMTPA id 05B9F20417A;
-        Wed, 31 Oct 2018 22:10:54 +0100 (CET)
-Reply-To: dgilbert@interlog.com
-Subject: Re: remove exofs and the T10 OSD code V2
-To:     Boaz Harrosh <ooo@electrozaur.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, martin.petersen@oracle.com,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        osd-dev@open-osd.org, linux-scsi@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181027082019.20838-1-hch@lst.de>
- <f9423180-e0fc-efba-e759-dfa4725953ad@kernel.dk>
- <20181030074542.GB24697@lst.de>
- <ea317f79-37bb-1149-fc43-fb07f46c15e9@electrozaur.com>
-From:   Douglas Gilbert <dgilbert@interlog.com>
-Message-ID: <57a73f2b-29be-6301-2f4b-df582b7d23ff@interlog.com>
-Date:   Wed, 31 Oct 2018 22:10:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1726023AbeKAGOs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 02:14:48 -0400
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1DA1D2080A;
+        Wed, 31 Oct 2018 21:15:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541020500;
+        bh=2CsSE2wOvMJY16T9Ez5ZhPq5v9OmyFK3QTFr2DTIeb8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ufHi3E7LQU5UwdbLyu+TMPnYNDNs4DhV982yjqwxH8WYy6SL4VBU6xAVBqdRC5hV6
+         UoS7mrWTRTgNxzzaDCyBeaCpnvyPFATyffrlWa+EXGECQ5W0Za6en5qNbvPV63sYSO
+         23p7Fz5FrOn4U8EinMrjQyn9IKWOvNhzK63upBcw=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id B1D4A142D18; Wed, 31 Oct 2018 18:14:56 -0300 (-03)
+Date:   Wed, 31 Oct 2018 18:14:56 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Daniel Borkmann <daniel@iogearbox.net>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: arm64 tools build failure wrt smp_load_{acquire,release}
+ expansion on gcc version 5.4.0 20160609 (Ubuntu/Linaro
+ 5.4.0-6ubuntu1~16.04.9)
+Message-ID: <20181031211456.GE28340@kernel.org>
+References: <20181031154550.GA28340@kernel.org>
+ <20181031174408.GA27871@arm.com>
+ <50dc7bfe-47de-6837-30e0-4d31dabacd31@iogearbox.net>
 MIME-Version: 1.0
-In-Reply-To: <ea317f79-37bb-1149-fc43-fb07f46c15e9@electrozaur.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <50dc7bfe-47de-6837-30e0-4d31dabacd31@iogearbox.net>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-31 4:57 p.m., Boaz Harrosh wrote:
-> On 30/10/18 09:45, Christoph Hellwig wrote:
->> On Mon, Oct 29, 2018 at 02:42:12PM -0600, Jens Axboe wrote:
->>> LGTM, for both:
->>
->> I also have this one on top as requested by Martin.  The core block
->> bidi support is unfortunately also used by bsg-lib, although it is
->> not anywhere near as invasive.  But that is another argument for
->> looking into moving bsg-lib away from using block queues..
->>
-> 
-> BUT this patch is very very wrong.
-> 
-> Totally apart from T10-OSD and its use in the field. Support for scsi BIDI
-> commands is not exclusive to T10-OSD at all. Even the simple scsi-array
-> command-set has BIDI operations defined. for example the write-return-xor
-> and so on.
-> 
-> Also some private administrative CDBs of some vendor devices uses SCSI-BIDI.
-> So this patch just broke some drivers. (User-mode apps use bsg pass through)
-> 
-> Also you might (try hard and) remove all usage of scsi-bidi as an initiator
-> from the Linux Kernel. But what about target mode. As a target we have supported
-> on the wire bidi protocols like write-return-xor and others for a long time.
-> Are you willing to silently break all these setups in the field on the next update?
-> Are you so sure these are never used?
-> 
-> PLEASE, I beg of you guys. Do not remove SCSI-BIDI. It is a cry of generations.
-> 
-> And I think by the rules of Linus, as far as target mode. You are not allowed
-> to break users in this way.
+Em Wed, Oct 31, 2018 at 07:08:29PM +0100, Daniel Borkmann escreveu:
+> On 10/31/2018 06:44 PM, Will Deacon wrote:
+> > Diff below...
+ 
+> I just gave this a spin on 16.04 and it resolves the build issue, thanks
+> for the quick fix, Will!
+ 
+> Tested-by: Daniel Borkmann <daniel@iogearbox.net>
 
-Hi,
-I'm in the process of rebuilding the sg driver with the following goals:
+It buildz, ship it:
 
-   - undo 20 years of road wear, some of which is caused by literally
-     hundreds of "laparoscopic" patches that gradually ruin a driver,
-     at least from the maintainer's viewpoint. Comments that once made
-     sense become cryptic or just nonsense; naming schemes that
-     obliterate variable names to the extent that a random name
-     generator would be easier to follow; and just plain broken code.
-     For example, why sort out the existing locking at a particular
-     level when you can add a new lock in a completely non-orthogonal
-     way? [Yes, I looking at you, google.] Anyway, my first cut at this
-     is out there (on the linux-scsi list, see: "[PATCH v3 0/8] sg:
-     major cleanup, remove max_queue limit"). Not much new there,
-     unless you look very closely
+# time dm android-ndk:r12b-arm \
+	  android-ndk:r15c-arm \
+	  debian:experimental-x-arm64 \
+	  ubuntu:14.04.4-x-linaro-arm64 \
+	  ubuntu:16.04-x-arm \
+	  ubuntu:16.04-x-arm64 \
+	  ubuntu:18.04-x-arm \
+	  ubuntu:18.04-x-arm64
+   1 android-ndk:r12b-arm          : Ok   arm-linux-androideabi-gcc (GCC) 4.9.x 20150123 (prerelease)
+   2 android-ndk:r15c-arm          : Ok   arm-linux-androideabi-gcc (GCC) 4.9.x 20150123 (prerelease)
+   3 debian:experimental-x-arm64   : Ok   aarch64-linux-gnu-gcc (Debian 8.2.0-7) 8.2.0
+   4 ubuntu:14.04.4-x-linaro-arm64 : Ok   aarch64-linux-gnu-gcc (Linaro GCC 5.5-2017.10) 5.5.0
+   5 ubuntu:16.04-x-arm            : Ok   arm-linux-gnueabihf-gcc (Ubuntu/Linaro 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+   6 ubuntu:16.04-x-arm64          : Ok   aarch64-linux-gnu-gcc (Ubuntu/Linaro 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+   7 ubuntu:18.04-x-arm            : Ok   arm-linux-gnueabihf-gcc (Ubuntu/Linaro 7.3.0-27ubuntu1~18.04) 7.3.0
+   8 ubuntu:18.04-x-arm64          : Ok   aarch64-linux-gnu-gcc (Ubuntu/Linaro 7.3.0-27ubuntu1~18.04) 7.3.0
+#
 
-   - the next step is to add to the sg driver async SCSI command
-     capability based on the sg_io_v4 structure previously only used
-     by the bsg driver and now removed from bsg. The main advantage
-     of the sg_io_v4 structure over previous pass-through interface
-     attempts is the support of SCSI bidi commands
+So I've added it to my tree as below, can I keep it like that?
 
-   - as part of this effort introduce two new ioctls: SG_IOSUBMIT and
-     SG_IORECEIVE to replace the write()/read() technique currently
-     in use (since Linux 1.0 in 1992). The write()/read() technique
-     seems to be responsible for various security folks losing clumps
-     of their hair. One advantage of ioctls, as Alan Cox pointed out,
-     is the ability to write to and read back from the kernel in a way
-     that is naturally synchronized. [Actually, those security folks
-     shouldn't look too closely at sg_read() in that respect.]
+Thanks,
 
-In discussions with several folks who are on the T10 committee, I
-wondered why there was no READ GATHERED command (there has been a
-WRITE SCATTERED for 2 years). The answer was lack of interest ***,
-plus the difficultly of implementation. You see, READ GATHERED needs
-to send a scatter gather list to the device and get the corresponding
-data back (as a linear array). And that requires either:
-   a) bidi commands (scatter gather list in the data-out, corresponding
-      "read" data in the data-in), or
-   b) loooong SCSI commands, up to around 256 bytes long in which the
-      sgat list is the latter part of that command
+- Arnaldo
 
-And the T10 folks say neither of those options is well supported or
-is expensive. I'm guessing they are referring to Linux and Windows.
-I haven't argued much beyond that point, but it looks like a bit of
-a chicken and egg situation.
+commit 86b21876a75c912917ade1e2b3831501eb2e9e45
+Author: Will Deacon <will.deacon@arm.com>
+Date:   Wed Oct 31 17:44:08 2018 +0000
 
+    tools headers barrier: Fix arm64 tools build failure wrt smp_load_{acquire,release}
+    
+    Cheers for reporting this. I managed to reproduce the build failure with
+    gcc version 6.3.0 20170516 (Debian 6.3.0-18+deb9u1).
+    
+    The code in question is the arm64 versions of smp_load_acquire() and
+    smp_store_release(). Unlike other architectures, these are not built
+    around READ_ONCE() and WRITE_ONCE() since we have instructions we can
+    use instead of fences. Bringing our macros up-to-date with those (i.e.
+    tweaking the union initialisation and using the special "uXX_alias_t"
+    types) appears to fix the issue for me.
+    
+    Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+    Signed-off-by: Will Deacon <will.deacon@arm.com>
+    Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+    Tested-by: Daniel Borkmann <daniel@iogearbox.net>
+    Cc: Peter Zijlstra <peterz@infradead.org>
+    Link: http://lkml.kernel.org/r/20181031174408.GA27871@arm.com
+    Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Don't know too much about the T10 OSD stuff. But I can see that it
-uses both long SCSI commands and a lot of bidi. IMO it seems to be
-10 or 20 years before its time. Maybe ibm/redhat need to
-(re-)discover it for it to catch on.
-
-
-Plus there are proprietary SCSI bidi commands out there. People contact
-me and ask me how to issue them with sg3_utils package. Easy, I tell them,
-just use sg_raw with a bsg device. Typically, in my experience, "no news
-is good news" after suggestions like that. When I give bad advice, I
-usually hear back relatively quickly. Anyone who wants SCSI bidi _async_
-support is currently out of luck.
-
-Enough already
-Doug Gilbert
-
-
-*** example: loading all or most kernel modules in a few READ SCATTERED
-     commands might speed up boot time ...
+diff --git a/tools/arch/arm64/include/asm/barrier.h b/tools/arch/arm64/include/asm/barrier.h
+index 12835ea0e417..378c051fa177 100644
+--- a/tools/arch/arm64/include/asm/barrier.h
++++ b/tools/arch/arm64/include/asm/barrier.h
+@@ -14,74 +14,75 @@
+ #define wmb()		asm volatile("dmb ishst" ::: "memory")
+ #define rmb()		asm volatile("dmb ishld" ::: "memory")
+ 
+-#define smp_store_release(p, v)					\
+-do {								\
+-	union { typeof(*p) __val; char __c[1]; } __u =		\
+-		{ .__val = (__force typeof(*p)) (v) }; 		\
+-								\
+-	switch (sizeof(*p)) {					\
+-	case 1:							\
+-		asm volatile ("stlrb %w1, %0"			\
+-				: "=Q" (*p)			\
+-				: "r" (*(__u8 *)__u.__c)	\
+-				: "memory");			\
+-		break;						\
+-	case 2:							\
+-		asm volatile ("stlrh %w1, %0"			\
+-				: "=Q" (*p)			\
+-				: "r" (*(__u16 *)__u.__c)	\
+-				: "memory");			\
+-		break;						\
+-	case 4:							\
+-		asm volatile ("stlr %w1, %0"			\
+-				: "=Q" (*p)			\
+-				: "r" (*(__u32 *)__u.__c)	\
+-				: "memory");			\
+-		break;						\
+-	case 8:							\
+-		asm volatile ("stlr %1, %0"			\
+-				: "=Q" (*p)			\
+-				: "r" (*(__u64 *)__u.__c)	\
+-				: "memory");			\
+-		break;						\
+-	default:						\
+-		/* Only to shut up gcc ... */			\
+-		mb();						\
+-		break;						\
+-	}							\
++#define smp_store_release(p, v)						\
++do {									\
++	union { typeof(*p) __val; char __c[1]; } __u =			\
++		{ .__val = (v) }; 					\
++									\
++	switch (sizeof(*p)) {						\
++	case 1:								\
++		asm volatile ("stlrb %w1, %0"				\
++				: "=Q" (*p)				\
++				: "r" (*(__u8_alias_t *)__u.__c)	\
++				: "memory");				\
++		break;							\
++	case 2:								\
++		asm volatile ("stlrh %w1, %0"				\
++				: "=Q" (*p)				\
++				: "r" (*(__u16_alias_t *)__u.__c)	\
++				: "memory");				\
++		break;							\
++	case 4:								\
++		asm volatile ("stlr %w1, %0"				\
++				: "=Q" (*p)				\
++				: "r" (*(__u32_alias_t *)__u.__c)	\
++				: "memory");				\
++		break;							\
++	case 8:								\
++		asm volatile ("stlr %1, %0"				\
++				: "=Q" (*p)				\
++				: "r" (*(__u64_alias_t *)__u.__c)	\
++				: "memory");				\
++		break;							\
++	default:							\
++		/* Only to shut up gcc ... */				\
++		mb();							\
++		break;							\
++	}								\
+ } while (0)
+ 
+-#define smp_load_acquire(p)					\
+-({								\
+-	union { typeof(*p) __val; char __c[1]; } __u;		\
+-								\
+-	switch (sizeof(*p)) {					\
+-	case 1:							\
+-		asm volatile ("ldarb %w0, %1"			\
+-			: "=r" (*(__u8 *)__u.__c)		\
+-			: "Q" (*p) : "memory");			\
+-		break;						\
+-	case 2:							\
+-		asm volatile ("ldarh %w0, %1"			\
+-			: "=r" (*(__u16 *)__u.__c)		\
+-			: "Q" (*p) : "memory");			\
+-		break;						\
+-	case 4:							\
+-		asm volatile ("ldar %w0, %1"			\
+-			: "=r" (*(__u32 *)__u.__c)		\
+-			: "Q" (*p) : "memory");			\
+-		break;						\
+-	case 8:							\
+-		asm volatile ("ldar %0, %1"			\
+-			: "=r" (*(__u64 *)__u.__c)		\
+-			: "Q" (*p) : "memory");			\
+-		break;						\
+-	default:						\
+-		/* Only to shut up gcc ... */			\
+-		mb();						\
+-		break;						\
+-	}							\
+-	__u.__val;						\
++#define smp_load_acquire(p)						\
++({									\
++	union { typeof(*p) __val; char __c[1]; } __u =			\
++		{ .__c = { 0 } };					\
++									\
++	switch (sizeof(*p)) {						\
++	case 1:								\
++		asm volatile ("ldarb %w0, %1"				\
++			: "=r" (*(__u8_alias_t *)__u.__c)		\
++			: "Q" (*p) : "memory");				\
++		break;							\
++	case 2:								\
++		asm volatile ("ldarh %w0, %1"				\
++			: "=r" (*(__u16_alias_t *)__u.__c)		\
++			: "Q" (*p) : "memory");				\
++		break;							\
++	case 4:								\
++		asm volatile ("ldar %w0, %1"				\
++			: "=r" (*(__u32_alias_t *)__u.__c)		\
++			: "Q" (*p) : "memory");				\
++		break;							\
++	case 8:								\
++		asm volatile ("ldar %0, %1"				\
++			: "=r" (*(__u64_alias_t *)__u.__c)		\
++			: "Q" (*p) : "memory");				\
++		break;							\
++	default:							\
++		/* Only to shut up gcc ... */				\
++		mb();							\
++		break;							\
++	}								\
++	__u.__val;							\
+ })
+ 
+ #endif /* _TOOLS_LINUX_ASM_AARCH64_BARRIER_H */
