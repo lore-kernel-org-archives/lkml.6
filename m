@@ -2,215 +2,138 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5802CC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49780ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:46:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1624A20821
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:46:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08143205F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:46:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KSSY5qjB";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ba4KirKF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1624A20821
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Op7j43lB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08143205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728660AbeJaToG (ORCPT
+        id S1728702AbeJaTob (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 15:44:06 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41476 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727980AbeJaToF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 15:44:05 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 70BE560767; Wed, 31 Oct 2018 10:46:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540982790;
-        bh=n7Llx1zi8E9y/9e20tlBulty7KXqgzlZgHwyCqC19as=;
-        h=From:To:Cc:Subject:Date:From;
-        b=KSSY5qjBv8RFwa5UjMC64+SwVwWtO3k3IZRl7jtPtFiAHkebq+NTH6SzBtL2ae0iD
-         1lK1FWo5YU6ky5HP1xhgHoEu4bXYykS+IFqQrrsVLC0ulo+yo4vR//VWXv1EUbiCks
-         ydeZkfOL7jSdUk91ztNT6RBxsACl5T2T0J9UgBlE=
-Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6FAD4601D4;
-        Wed, 31 Oct 2018 10:46:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540982789;
-        bh=n7Llx1zi8E9y/9e20tlBulty7KXqgzlZgHwyCqC19as=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ba4KirKFbaOkh2ogcOxkXiBFURQZqTrUN7WepnuBa20pTixVRJFruEsKJfELe7BMb
-         b20490TjEm/ZcjDss5PUB3KmtMayerZH+iUgTUSS7+gPNRTi0oQOAHGBNnWGPEybHR
-         WxWSMCr0PCGu33x5Lp4M2E1JDDER5He0lDBHVCGs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6FAD4601D4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     bjorn.andersson@linaro.org, briannorris@chromium.org,
-        mark.rutland@arm.com, andy.gross@linaro.org
-Cc:     akdwived@codeaurora.org, clew@codeaurora.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org,
-        Sibi Sankar <sibis@codeaurora.org>
-Subject: [RFC PATCH v3] remoteproc: qcom: q6v5-mss: Sync MSS with RMTFS QMI service
-Date:   Wed, 31 Oct 2018 16:16:14 +0530
-Message-Id: <20181031104614.10412-1-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.19.1
+        Wed, 31 Oct 2018 15:44:31 -0400
+Received: from mail-eopbgr70049.outbound.protection.outlook.com ([40.107.7.49]:53248
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727980AbeJaToa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 15:44:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HQnRHBOMmKChGV++xKHokvPvBVQMI4ZJnkAyEUzA5/8=;
+ b=Op7j43lBPabe6+UwNREMWCRKtj4cf/tp8RxdSPuV9echpsAQWw+EmRRZPqyBOoeJlKyFBhDhFfPTShOxgcbBGMfOOt0PhTNstqQqITufUQ6bsIWzZbGUgvY9r8ZEdfioWSxvS3J4lXkVPsagFUecUupyNecf3C/gxODf/n5XJVI=
+Received: from AM0PR04MB4290.eurprd04.prod.outlook.com (52.134.126.145) by
+ AM0PR04MB4241.eurprd04.prod.outlook.com (52.134.126.27) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1273.24; Wed, 31 Oct 2018 10:46:52 +0000
+Received: from AM0PR04MB4290.eurprd04.prod.outlook.com
+ ([fe80::989c:6296:ecdc:89ff]) by AM0PR04MB4290.eurprd04.prod.outlook.com
+ ([fe80::989c:6296:ecdc:89ff%2]) with mapi id 15.20.1273.027; Wed, 31 Oct 2018
+ 10:46:52 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Fabio Estevam <festevam@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+CC:     dl-linux-imx <linux-imx@nxp.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Franck Lenormand <franck.lenormand@nxp.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>
+Subject: Re: [PATCH v4 2/4] crypto: mxs-dcp - Add support for dcp clk
+Thread-Topic: [PATCH v4 2/4] crypto: mxs-dcp - Add support for dcp clk
+Thread-Index: AQHUZhY4HefM3c9m50qn78KSFJ8+NA==
+Date:   Wed, 31 Oct 2018 10:46:52 +0000
+Message-ID: <AM0PR04MB4290A361A92B782DC5A9F8BDEECD0@AM0PR04MB4290.eurprd04.prod.outlook.com>
+References: <cover.1539779579.git.leonard.crestez@nxp.com>
+ <95dce7010676581691b1ac9906e9298470e0aa1a.1539779579.git.leonard.crestez@nxp.com>
+ <CAOMZO5BMeHjsyZWhUb5RmEBRCYViUN-Vx8KyLBWtDJGKBHHpCg@mail.gmail.com>
+ <a97517bf72f649915bccf555ab7d3c8c4551298d.camel@nxp.com>
+ <CAOMZO5DCzM_NnqD4tHTAn4pAaUdQGo38Ami1h3pu9SzgyQ7GnQ@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [192.88.166.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB4241;6:luT7ro8bLtr7MXY1Ro1RKs2wQa2H7DljrrtfCJL1Bdv8gcNiMU/kqch3+RcSPvpSc6SiPT5Y0CBaoefR/OV5s9lcp53Tp+vigiDAYzbAij9+Dt+AqowAjfbhPeBp8+1FlElpJvZOQ8Xu80UaLdTI8vEXaYnXSSTMfMzPtyeqBAZQuOTp/ZmZuofoLYQz8If5I1t+uTNEcdOqS9LGfMqqHVdl58iBnDp3qgjhveNnceFfzhiWY9D1B91YYxm1eQ5mUHBXdH5y0MqPSavGB6SX62czxYK6U+lsR+2AeiXdBf8g+FFKmRlVYVnT4yNKs5ckcqxOCEo147b9Fp0oNHOivDS3EwCB02OH+ZpE+/AYNgk9/avlpU72ARfz5sBZCm7TcTtfZsxxm8wiGgR0LFwc4sziwW2xXU7OH6pPsof7Bbjpc/nPdbrq09sfOwWKerWpNc2kM+nEv54KRMcIr5p/7A==;5:IDarvoy5jqrcDNRZpZkULGSczBoBc6zZSowP+fZD/XavkhoKH4JfBnU8xMX/a8ulf1BDEjwIe5K8TBRQNBw4rvYIacu2sd75X6Z7evcmqwaW68E7AExOFNBgY+BeuSL1QDOPRdKNnz1tNFMu8F4R0k5RuwlluMWRBs4xeNc6v3M=;7:NELqfxX3gkvQklZZPG7X1GeRPrgxCqUzk44fyj0zU2usNlgXmo+NRSvy3RoN56hFx5fUh51BaOZA8fu6S2eCi4SqFiSUVcu11NSoj8HEgqNl6uxGUs6Le9vA03W2NqVfDfx59iU3+ygYPAPI2LyuCw==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 1555476a-4b3d-45ba-0bc2-08d63f1e2b2e
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4241;
+x-ms-traffictypediagnostic: AM0PR04MB4241:
+x-microsoft-antispam-prvs: <AM0PR04MB4241D0FE1B310780856D95D9EECD0@AM0PR04MB4241.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(185117386973197)(85827821059158);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231382)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB4241;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4241;
+x-forefront-prvs: 084285FC5C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(136003)(346002)(396003)(366004)(39860400002)(54534003)(189003)(199004)(102836004)(2906002)(446003)(7696005)(476003)(74316002)(6116002)(486006)(53546011)(81166006)(14454004)(8676002)(81156014)(76176011)(68736007)(6436002)(6506007)(186003)(55016002)(99286004)(26005)(6246003)(229853002)(7416002)(3846002)(6306002)(305945005)(44832011)(53936002)(86362001)(5660300001)(9686003)(7736002)(4326008)(66066001)(71190400001)(93886005)(316002)(54906003)(110136005)(33656002)(25786009)(39060400002)(71200400001)(2900100001)(256004)(14444005)(8936002)(106356001)(105586002)(966005)(478600001)(97736004)(5250100002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4241;H:AM0PR04MB4290.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: yJIHXqWFqmko3sXmW8lW124soh2wl78hFzjwRVhkeKuiRNJXYy0uMnDCQI0PTH/pYMVSn57F1f6wtXZYS2fOTpvitV7hM3HW/6CZAN7Ml7MU3OaQhG9TBtihWMa5vsvqH0S3yYdPzMZeGnwdGXY0qany+hW5f0psU38y45j8QxZy7Cx1Zi2anUrq64izwLFqUi45Eorhv6bapG9GuVj6VBEsvNO1tifB6XwqhO66Kxcq2LMi9Jypghni8wrm56qwIewTm64AR/ExkKseqEXj9FT5nYr12lS+cA3vyEp+oSFmNdWFh9tki7yAlinj2umHq8TjDPfTnJczE12wwieaOXONdOI8uud0pJJ82VOyP8A=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1555476a-4b3d-45ba-0bc2-08d63f1e2b2e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Oct 2018 10:46:52.4573
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4241
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce RMTFS qmi lookup client to synchronize bring up/down modem
-with the REMOTE FS QMI service.
-
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
-The currently implemented workaround in the Linaro QCOMLT releases is to
-blacklist the qcom_q6v5_pil kernel module and load this explicitly after rmtfs
-has been started.
-
-With this patch the modem module can be loaded automatically by the
-platform_bus and will only be booted as the rmtfs becomes available. Performing
-actions such as upgrading (and restarting) the rmtfs service will cause the
-modem to automatically restart and hence continue to function after the
-upgrade.
-
-v3:
-  Move rmtfs lookup client to the q6v5_mss driver
-  [Suggested-by: Bjorn Andersson <bjorn.andersson@linaro.org>]
-  [Suggested-by: Brian Norris <briannorris@chromium.org>]
-  Add deny_sysfs_ops flag to prevent updation of state/firmware
-  [Suggested-by: Bjorn Andersson <bjorn.andersson@linaro.org>]
-
-v2:
-  Remove rproc_boot/shutdown from rmtfs_mem open/release and add
-  qmi lookup for Remote file system service to address Brian's
-  race concerns.
-
-Depends on: https://patchwork.kernel.org/patch/10601325/
-
- drivers/remoteproc/Kconfig         |  1 +
- drivers/remoteproc/qcom_q6v5_mss.c | 41 ++++++++++++++++++++++++++++++
- 2 files changed, 42 insertions(+)
-
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index 8894935583e2..5919098697ec 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -100,6 +100,7 @@ config QCOM_Q6V5_MSS
- 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
- 	depends on QCOM_SYSMON || QCOM_SYSMON=n
- 	select MFD_SYSCON
-+	select QCOM_QMI_HELPERS
- 	select QCOM_Q6V5_COMMON
- 	select QCOM_RPROC_COMMON
- 	select QCOM_SCM
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index da4e496816aa..436a7fec84e9 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -30,6 +30,7 @@
- #include <linux/remoteproc.h>
- #include <linux/reset.h>
- #include <linux/soc/qcom/mdt_loader.h>
-+#include <linux/soc/qcom/qmi.h>
- #include <linux/iopoll.h>
- 
- #include "remoteproc_internal.h"
-@@ -39,6 +40,7 @@
- #include <linux/qcom_scm.h>
- 
- #define MPSS_CRASH_REASON_SMEM		421
-+#define REMOTEFS_QMI_SVC_ID		0xE
- 
- /* RMB Status Register Values */
- #define RMB_PBL_SUCCESS			0x1
-@@ -180,6 +182,7 @@ struct q6v5 {
- 	void *mpss_region;
- 	size_t mpss_size;
- 
-+	struct qmi_handle lookup_client;
- 	struct qcom_rproc_glink glink_subdev;
- 	struct qcom_rproc_subdev smd_subdev;
- 	struct qcom_rproc_ssr ssr_subdev;
-@@ -991,6 +994,25 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
- 	}
- }
- 
-+static int rmtfs_new_server(struct qmi_handle *qmi, struct qmi_service *serv)
-+{
-+	struct q6v5 *qproc = container_of(qmi, struct q6v5, lookup_client);
-+
-+	return rproc_boot(qproc->rproc);
-+};
-+
-+static void rmtfs_del_server(struct qmi_handle *qmi, struct qmi_service *serv)
-+{
-+	struct q6v5 *qproc = container_of(qmi, struct q6v5, lookup_client);
-+
-+	rproc_shutdown(qproc->rproc);
-+};
-+
-+static struct qmi_ops lookup_ops = {
-+	.new_server = rmtfs_new_server,
-+	.del_server = rmtfs_del_server,
-+};
-+
- static int q6v5_start(struct rproc *rproc)
- {
- 	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
-@@ -1269,6 +1291,9 @@ static int q6v5_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 
-+	rproc->auto_boot = false;
-+	rproc->deny_sysfs_ops = true;
-+
- 	qproc = (struct q6v5 *)rproc->priv;
- 	qproc->dev = &pdev->dev;
- 	qproc->rproc = rproc;
-@@ -1346,8 +1371,23 @@ static int q6v5_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto free_rproc;
- 
-+	/* The modem polls for REMOTE FS QMI service for a fixed period, post
-+	 * which it issues a fatal error. The RMTFS lookup client handles this
-+	 * dependency by ensuring that the modem is brought up/down in sync with
-+	 * the REMOTE FS QMI SERVICE.
-+	 */
-+	ret = qmi_handle_init(&qproc->lookup_client, 0, &lookup_ops, NULL);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to initialize qmi handle.\n");
-+		goto delete_rproc;
-+	}
-+
-+	qmi_add_lookup(&qproc->lookup_client, REMOTEFS_QMI_SVC_ID, 0, 0);
-+
- 	return 0;
- 
-+delete_rproc:
-+	rproc_del(rproc);
- free_rproc:
- 	rproc_free(rproc);
- 
-@@ -1358,6 +1398,7 @@ static int q6v5_remove(struct platform_device *pdev)
- {
- 	struct q6v5 *qproc = platform_get_drvdata(pdev);
- 
-+	qmi_handle_release(&qproc->lookup_client);
- 	rproc_del(qproc->rproc);
- 
- 	qcom_remove_sysmon_subdev(qproc->sysmon);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+On 10/17/2018 4:02 PM, Fabio Estevam wrote:=0A=
+> On Wed, Oct 17, 2018 at 9:59 AM Leonard Crestez <leonard.crestez@nxp.com>=
+ wrote:=0A=
+> =0A=
+>> There is a changelog in the cover letter.=0A=
+> =0A=
+> It did not show up:=0A=
+> https://lkml.org/lkml/2018/10/17/673=0A=
+=0A=
+Sorry, I forgot to copy the changelog for v4. The only change is the one =
+=0A=
+we discussed earlier in this thread.=0A=
+=0A=
+>> This only looks slightly odd in git diff but it's not unrelated.=0A=
+>>=0A=
+>> I placed clk get/prepare/enable just before stmp_reset_block and made=0A=
+>> stmp_reset_block print a message and goto err_disable_unprepare_clk on=
+=0A=
+>> failure instead of just "if (ret) return ret;"=0A=
+> =0A=
+> Got it! Then it looks fine, thanks:=0A=
+> =0A=
+> Reviewed-by: Fabio Estevam <festevam@gmail.com>=0A=
+=0A=
+Thanks for looking at this series.=0A=
+=0A=
+Shawn already applied patches 3/4, I guess parts 1/2 should go through =0A=
+the crypto tree? I don't know how crypto treats patches in the merge =0A=
+window, I can resend with all the ack/review tags after rc1 is out.=0A=
