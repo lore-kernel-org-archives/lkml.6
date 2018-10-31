@@ -2,107 +2,296 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA989ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 04:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5696EECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 04:16:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 847EE2081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 04:04:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 847EE2081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 21AC320821
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 04:16:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21AC320821
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729066AbeJaNBB (ORCPT
+        id S1728992AbeJaNNC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 09:01:01 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:14163 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728467AbeJaNBB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 09:01:01 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 1EB989C66F38F;
-        Wed, 31 Oct 2018 12:04:37 +0800 (CST)
-Received: from localhost (10.177.23.164) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.408.0; Wed, 31 Oct 2018
- 12:04:31 +0800
-From:   Zhen Lei <thunder.leizhen@huawei.com>
-To:     John Garry <john.garry@huawei.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-CC:     Zhen Lei <thunder.leizhen@huawei.com>,
-        LinuxArm <linuxarm@huawei.com>
-Subject: [PATCH v3 1/1] iommu/arm-smmu-v3: eliminate a potential memory corruption on hi1620 and earlier
-Date:   Wed, 31 Oct 2018 12:02:07 +0800
-Message-ID: <1540958527-15408-1-git-send-email-thunder.leizhen@huawei.com>
-X-Mailer: git-send-email 1.9.5.msysgit.0
+        Wed, 31 Oct 2018 09:13:02 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:46524 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728467AbeJaNNB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 09:13:01 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9V4Fp8f099877;
+        Tue, 30 Oct 2018 23:15:51 -0500
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id w9V4FpTH013463
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 30 Oct 2018 23:15:51 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 30
+ Oct 2018 23:15:51 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 30 Oct 2018 23:15:51 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9V4Fjtr001295;
+        Tue, 30 Oct 2018 23:15:45 -0500
+Subject: Re: [PATCH 5/6] pci: layerscape: Add the EP mode support.
+To:     Xiaowei Bao <xiaowei.bao@nxp.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "cyrille.pitchen@free-electrons.com" 
+        <cyrille.pitchen@free-electrons.com>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>,
+        "niklas.cassel@axis.com" <niklas.cassel@axis.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+CC:     Jiafei Pan <jiafei.pan@nxp.com>
+References: <20181025110901.5680-1-xiaowei.bao@nxp.com>
+ <20181025110901.5680-5-xiaowei.bao@nxp.com>
+ <d9d07e05-556b-a56d-bb7f-eaec9fb739b8@ti.com>
+ <HE1PR04MB1497DF7D9428A5C791CB6A03F5F00@HE1PR04MB1497.eurprd04.prod.outlook.com>
+ <HE1PR04MB14979058170FA16A7465FF9EF5CD0@HE1PR04MB1497.eurprd04.prod.outlook.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <a85a6900-2478-0750-6f33-2e787cf80d1d@ti.com>
+Date:   Wed, 31 Oct 2018 09:45:21 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.23.164]
-X-CFilter-Loop: Reflected
+In-Reply-To: <HE1PR04MB14979058170FA16A7465FF9EF5CD0@HE1PR04MB1497.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The standard GITS_TRANSLATER register in ITS is only 4 bytes, but
-Hisilicon expands the next 4 bytes to carry some IMPDEF information. That
-means, total 8 bytes data will be written to MSIAddress each time.
+Hi,
 
-MSIAddr: |----4bytes----|----4bytes----|
-	 |    MSIData   |    IMPDEF    |
+On 31/10/18 8:03 AM, Xiaowei Bao wrote:
+> 
+> 
+> -----Original Message-----
+> From: Xiaowei Bao 
+> Sent: 2018年10月26日 17:19
+> To: 'Kishon Vijay Abraham I' <kishon@ti.com>; bhelgaas@google.com; robh+dt@kernel.org; mark.rutland@arm.com; shawnguo@kernel.org; Leo Li <leoyang.li@nxp.com>; lorenzo.pieralisi@arm.com; arnd@arndb.de; gregkh@linuxfoundation.org; M.h. Lian <minghuan.lian@nxp.com>; Mingkai Hu <mingkai.hu@nxp.com>; Roy Zang <roy.zang@nxp.com>; kstewart@linuxfoundation.org; cyrille.pitchen@free-electrons.com; pombredanne@nexb.com; shawn.lin@rock-chips.com; niklas.cassel@axis.com; linux-pci@vger.kernel.org; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linuxppc-dev@lists.ozlabs.org
+> Cc: Jiafei Pan <jiafei.pan@nxp.com>
+> Subject: RE: [PATCH 5/6] pci: layerscape: Add the EP mode support.
+> 
+> 
+> 
+> -----Original Message-----
+> From: Kishon Vijay Abraham I <kishon@ti.com>
+> Sent: 2018年10月26日 13:29
+> To: Xiaowei Bao <xiaowei.bao@nxp.com>; bhelgaas@google.com; robh+dt@kernel.org; mark.rutland@arm.com; shawnguo@kernel.org; Leo Li <leoyang.li@nxp.com>; lorenzo.pieralisi@arm.com; arnd@arndb.de; gregkh@linuxfoundation.org; M.h. Lian <minghuan.lian@nxp.com>; Mingkai Hu <mingkai.hu@nxp.com>; Roy Zang <roy.zang@nxp.com>; kstewart@linuxfoundation.org; cyrille.pitchen@free-electrons.com; pombredanne@nexb.com; shawn.lin@rock-chips.com; niklas.cassel@axis.com; linux-pci@vger.kernel.org; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linuxppc-dev@lists.ozlabs.org
+> Subject: Re: [PATCH 5/6] pci: layerscape: Add the EP mode support.
+> 
+> Hi,
+> 
+> On Thursday 25 October 2018 04:39 PM, Xiaowei Bao wrote:
+>> Add the PCIe EP mode support for layerscape platform.
+>>
+>> Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
+>> ---
+>>  drivers/pci/controller/dwc/Makefile            |    2 +-
+>>  drivers/pci/controller/dwc/pci-layerscape-ep.c |  161
+>> ++++++++++++++++++++++++
+>>  2 files changed, 162 insertions(+), 1 deletions(-)  create mode
+>> 100644 drivers/pci/controller/dwc/pci-layerscape-ep.c
+>>
+>> diff --git a/drivers/pci/controller/dwc/Makefile
+>> b/drivers/pci/controller/dwc/Makefile
+>> index 5d2ce72..b26d617 100644
+>> --- a/drivers/pci/controller/dwc/Makefile
+>> +++ b/drivers/pci/controller/dwc/Makefile
+>> @@ -8,7 +8,7 @@ obj-$(CONFIG_PCI_EXYNOS) += pci-exynos.o
+>>  obj-$(CONFIG_PCI_IMX6) += pci-imx6.o
+>>  obj-$(CONFIG_PCIE_SPEAR13XX) += pcie-spear13xx.o
+>>  obj-$(CONFIG_PCI_KEYSTONE) += pci-keystone-dw.o pci-keystone.o
+>> -obj-$(CONFIG_PCI_LAYERSCAPE) += pci-layerscape.o
+>> +obj-$(CONFIG_PCI_LAYERSCAPE) += pci-layerscape.o pci-layerscape-ep.o
+>>  obj-$(CONFIG_PCIE_QCOM) += pcie-qcom.o
+>>  obj-$(CONFIG_PCIE_ARMADA_8K) += pcie-armada8k.o
+>>  obj-$(CONFIG_PCIE_ARTPEC6) += pcie-artpec6.o diff --git 
+>> a/drivers/pci/controller/dwc/pci-layerscape-ep.c
+>> b/drivers/pci/controller/dwc/pci-layerscape-ep.c
+>> new file mode 100644
+>> index 0000000..3b33bbc
+>> --- /dev/null
+>> +++ b/drivers/pci/controller/dwc/pci-layerscape-ep.c
+>> @@ -0,0 +1,161 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * PCIe controller EP driver for Freescale Layerscape SoCs
+>> + *
+>> + * Copyright (C) 2018 NXP Semiconductor.
+>> + *
+>> + * Author: Xiaowei Bao <xiaowei.bao@nxp.com>  */
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/init.h>
+>> +#include <linux/of_pci.h>
+>> +#include <linux/of_platform.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/pci.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/resource.h>
+>> +
+>> +#include "pcie-designware.h"
+>> +
+>> +#define PCIE_DBI2_OFFSET		0x1000	/* DBI2 base address*/
+> 
+> The base address should come from dt.
+>> +
+>> +struct ls_pcie_ep {
+>> +	struct dw_pcie		*pci;
+>> +};
+>> +
+>> +#define to_ls_pcie_ep(x)	dev_get_drvdata((x)->dev)
+>> +
+>> +static bool ls_pcie_is_bridge(struct ls_pcie_ep *pcie) {
+>> +	struct dw_pcie *pci = pcie->pci;
+>> +	u32 header_type;
+>> +
+>> +	header_type = ioread8(pci->dbi_base + PCI_HEADER_TYPE);
+>> +	header_type &= 0x7f;
+>> +
+>> +	return header_type == PCI_HEADER_TYPE_BRIDGE; }
+>> +
+>> +static int ls_pcie_establish_link(struct dw_pcie *pci) {
+>> +	return 0;
+>> +}
+> 
+> There should be some way by which EP should tell RC that it is not configured yet. Are there no bits to control LTSSM state initialization or Configuration retry status enabling?
+> [Xiaowei Bao] There have not bits to control LTSSM state to tell the RC it is configured. The start link is auto completed.
+> [Xiaowei Bao] Hi Kishon, is there any advice?
 
-There is no problem for ITS, because the next 4 bytes space is reserved
-in ITS. But it will overwrite the 4 bytes memory following "sync_count".
-It's very fortunately that the previous and the next neighbour of the
-"sync_count" are both aligned by 8 bytes, so no problem is met now.
+If there is no HW support, I don't think anything could be done here. This
+could result in RC reading configuration space even before EP is fully initialized.
+>> +
+>> +static const struct dw_pcie_ops ls_pcie_ep_ops = {
+>> +	.start_link = ls_pcie_establish_link, };
+>> +
+>> +static const struct of_device_id ls_pcie_ep_of_match[] = {
+>> +	{ .compatible = "fsl,ls-pcie-ep",},
+>> +	{ },
+>> +};
+>> +
+>> +static void ls_pcie_ep_init(struct dw_pcie_ep *ep) {
+>> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>> +	struct pci_epc *epc = ep->epc;
+>> +	enum pci_barno bar;
+>> +
+>> +	for (bar = BAR_0; bar <= BAR_5; bar++)
+>> +		dw_pcie_ep_reset_bar(pci, bar);
+>> +
+>> +	epc->features |= EPC_FEATURE_NO_LINKUP_NOTIFIER; }
+>> +
+>> +static int ls_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+>> +				  enum pci_epc_irq_type type, u16 interrupt_num) {
+>> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>> +
+>> +	switch (type) {
+>> +	case PCI_EPC_IRQ_LEGACY:
+>> +		return dw_pcie_ep_raise_legacy_irq(ep, func_no);
+>> +	case PCI_EPC_IRQ_MSI:
+>> +		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
+>> +	case PCI_EPC_IRQ_MSIX:
+>> +		return dw_pcie_ep_raise_msix_irq(ep, func_no, interrupt_num);
+>> +	default:
+>> +		dev_err(pci->dev, "UNKNOWN IRQ type\n");
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static struct dw_pcie_ep_ops pcie_ep_ops = {
+>> +	.ep_init = ls_pcie_ep_init,
+>> +	.raise_irq = ls_pcie_ep_raise_irq,
+>> +};
+>> +
+>> +static int __init ls_add_pcie_ep(struct ls_pcie_ep *pcie,
+>> +					struct platform_device *pdev)
+>> +{
+>> +	struct dw_pcie *pci = pcie->pci;
+>> +	struct device *dev = pci->dev;
+>> +	struct dw_pcie_ep *ep;
+>> +	struct resource *res;
+>> +	int ret;
+>> +
+>> +	ep = &pci->ep;
+>> +	ep->ops = &pcie_ep_ops;
+>> +
+>> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "addr_space");
+>> +	if (!res)
+>> +		return -EINVAL;
+>> +
+>> +	ep->phys_base = res->start;
+>> +	ep->addr_size = resource_size(res);
+>> +
+>> +	ret = dw_pcie_ep_init(ep);
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to initialize endpoint\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int __init ls_pcie_ep_probe(struct platform_device *pdev) {
+>> +	struct device *dev = &pdev->dev;
+>> +	struct dw_pcie *pci;
+>> +	struct ls_pcie_ep *pcie;
+>> +	struct resource *dbi_base;
+>> +	int ret;
+>> +
+>> +	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
+>> +	if (!pcie)
+>> +		return -ENOMEM;
+>> +
+>> +	pci = devm_kzalloc(dev, sizeof(*pci), GFP_KERNEL);
+>> +	if (!pci)
+>> +		return -ENOMEM;
+>> +
+>> +	dbi_base = platform_get_resource_byname(pdev, IORESOURCE_MEM, "regs");
+>> +	pci->dbi_base = devm_pci_remap_cfg_resource(dev, dbi_base);
+>> +	if (IS_ERR(pci->dbi_base))
+>> +		return PTR_ERR(pci->dbi_base);
+>> +
+>> +	pci->dbi_base2 = pci->dbi_base + PCIE_DBI2_OFFSET;
+>> +	pci->dev = dev;
+>> +	pci->ops = &ls_pcie_ep_ops;
+>> +	pcie->pci = pci;
+>> +
+>> +	if (ls_pcie_is_bridge(pcie))
+>> +		return -ENODEV;
+> 
+> For an endpoint this condition should never occur. This should only mean, a wrong compatible has been used in dt.
+> [Xiaowei Bao] This function is a way that can check the PCI controller whether work in EP mode, I think it is more safer. Of course, it can be removed.
+> [Xiaowei Bao] Hi Kishon, is there any advice?
 
-It's good to explicitly add a workaround. Let's enclose the "sync_count"
-into a union and companion with a new member "padding" of type u64.
+IMHO this check is not required.
 
-There is no functional change.
-
-Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
----
- drivers/iommu/arm-smmu-v3.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index 6947ccf..4e94730 100644
---- a/drivers/iommu/arm-smmu-v3.c
-+++ b/drivers/iommu/arm-smmu-v3.c
-@@ -576,7 +576,23 @@ struct arm_smmu_device {
-
- 	struct arm_smmu_strtab_cfg	strtab_cfg;
-
--	u32				sync_count;
-+	/*
-+	 * The member "padding" is used to make sure the member "sync_count" to
-+	 * be aligned at 8 bytes boundary, and 4 bytes padding memory followed.
-+	 *
-+	 * These are required by hi1620 and earlier of Hisilicon. Because the
-+	 * ITS hardware on hi1620 and earlier will truncate the MSIAddress(Here
-+	 * it's the address of "sync_count") to 8 bytes boundary first, then
-+	 * write 32 bits MSIdata at offset 0, and 32 bits IMPDEF data at offset
-+	 * 4. Without this workaround, the adjacent member maybe overwritten.
-+	 *
-+	 *                    |---4bytes---|---4bytes---|
-+	 * MSIAddress & (~0x7):   MSIdata  | IMPDEF data|
-+	 */
-+	union {
-+		u32			sync_count;
-+		u64			padding;
-+	};
-
- 	/* IOMMU core code handle */
- 	struct iommu_device		iommu;
---
-1.8.3
-
-
+Thanks
+Kishon
