@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90C01ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:58:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95DECC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:58:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40CC420685
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:58:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AB5720657
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:58:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fUaxh1C8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40CC420685
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j9cRjOr2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AB5720657
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mailme.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729144AbeJaTzw (ORCPT
+        id S1729197AbeJaTz5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 15:55:52 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:34109 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728584AbeJaTzw (ORCPT
+        Wed, 31 Oct 2018 15:55:57 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:40328 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729118AbeJaTzx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 15:55:52 -0400
-Received: by mail-ed1-f67.google.com with SMTP id w19-v6so13214868eds.1;
-        Wed, 31 Oct 2018 03:58:14 -0700 (PDT)
+        Wed, 31 Oct 2018 15:55:53 -0400
+Received: by mail-ed1-f66.google.com with SMTP id z12-v6so7434082edp.7;
+        Wed, 31 Oct 2018 03:58:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=EkIAGQDkxm5dcGwdRwXh5MtSCXZ1eknDDdN0tLGmIqc=;
-        b=fUaxh1C8XF6/bxM3AI/ZUB5bsyo4yT8Rx2g4Rn/IDVbREe1uVaUslJ/3WhGjuBPUfC
-         EK3EOGqxJHLgTvQEEHP7TswnyK/PPMHDvvojdoWUUWIPafRS81wt72fXIePUoKjxny4g
-         Nmiet7iUNIIALHEkByI1GRrqfuA+tm4cph7IsXJkBGQXYChacWyg2IUWwUXjrflb7SvJ
-         iNH35eXVT4m92XPH9/ZiT1GyvVCT+MN9w9HkOsjVYd4NjthVeBvdxEH7fxVksQRPX4jC
-         L5SHEyG8JxaKXqevnDF8gWyaZj68xt8olPZEZK/uNwKrGNp9kGXvkuGwrOc7jGyWDXMd
-         WVjA==
+        bh=vFXrdaCnfUcL3JBvZ1D2OFb6nZYiYl1mIe6eBbWMqL8=;
+        b=j9cRjOr2Qk6WhMktPZIsjKN9DmT2bAFv2j71YifXQZfLlv6jMXJXphuMSIdq5tz09z
+         XnyFE5yxy7icgbkKV3TqtlXk5tzvAjDxiUdvQfK3ULNCfSRYSQTjKtN913oPWw7G9Weg
+         mlIBmsUB3UAjfYHcnNMQYz6ZidHqY3i3j43OKrmTQvH3lEDj/CsGUrmoSfeBbhs4chnt
+         3eP1y9JQUdoSqg5ez+8vobGWTLn8Su1bma2Bk4KHzZh5RQck8amjTVL3pmzRS2Lbb06m
+         gn0wiodTVrlCSUseWHdGN1ILiwLVSEnHF2w73DWDzfW9DLsv+hyfpHNAjvTIwwwki01w
+         3uIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=EkIAGQDkxm5dcGwdRwXh5MtSCXZ1eknDDdN0tLGmIqc=;
-        b=i8b1vSfsHb7AIpHsZaNIsXb7+8JZVF8Na6ecVd+L/4wIqhCZqmlvyAxP9pX9wuMr8w
-         PY40QoWxgjjte35w9HgXrbkOcq15+a5iK7/ZOMxtGiQ9kCtlK0IPq9Pzs/Wn0p67okRt
-         Y6TAa6/IcFYUtBsj7uU6LPO1sJJZ+HeYgpSke1aaKlfeACluHh9J2Z1Pn2m4cC84fwSw
-         grA0pXWGbJ3nvfxtaPhWuDVZ7WG+ix0OMfJpu5fR3I5VWLN/0dtDKRPFYgQ8jpvxVlXv
-         2PMZ1mBB0c4zhOY5ISoJH2wLoOcCTz388W9OpaPTpXU3flKJedeTjdlC/YLSS/l2OQvu
-         huLg==
-X-Gm-Message-State: AGRZ1gL9GnjMAr+yVdzFhrxfS8cufAnf7j5m2Vw6Ikg38eVvHdWDXipq
-        9vLJccDdFBQhq+WJBHilM9ad+1i6ero=
-X-Google-Smtp-Source: AJdET5e2JsuJdnRgI43Tl7VmUk85AkVAL96UxTdmp4eWdkP0Avou7v3Q8qfcoef3zDqaLJS9y0XAUA==
-X-Received: by 2002:a50:cd4b:: with SMTP id d11-v6mr1705378edj.60.1540983493418;
-        Wed, 31 Oct 2018 03:58:13 -0700 (PDT)
+        bh=vFXrdaCnfUcL3JBvZ1D2OFb6nZYiYl1mIe6eBbWMqL8=;
+        b=X3kr2pNUi2elMfxteRp7oPH/HMMxXxAe6iDtc0IEVcejAESb1kKk6xVkcjquEOXE8Y
+         qEYXT4n/2o9t0TTbOinaZWCfRLnpS5gvBIfgvfoe3dM7HqDyGWW4Gxi1Hg1TrWoC/Nv0
+         ZeA35c0el2iPKkn9R30E9aHqndud73SguvYvR3ECeYMmbB3B1CHZ+/tqrUldyQzSYG9T
+         zHp9ZJrK4RMlpt9wjpYtT8L1w7lFrp5iMpMF6Ue6wliD5sGN/WGHyRnULfgAjunj+HVC
+         lu6od2dIpWELmlUIy2CmJG1Y+2hIr961GQAQ/Fq9mWP/wE1MLTG+9TUzMGqPQKRrLMqT
+         gmCA==
+X-Gm-Message-State: AGRZ1gIAef3QEz2AFrFtLq/e5YE6jXuhNrKNP04m0r1w+nMLoexeyGAe
+        oCRDiMT2EwaLIKb/NFAAJtS2AsD/6WQ=
+X-Google-Smtp-Source: AJdET5c/3MYjg/ih6xMnCyOBAPScWHmrMxpeAuKd8a6RB2ZJ/zGqslC4pAvABXSSVUiuBJjhl5r/Kw==
+X-Received: by 2002:a17:906:c3c6:: with SMTP id cj6-v6mr171501ejb.178.1540983495888;
+        Wed, 31 Oct 2018 03:58:15 -0700 (PDT)
 Received: from localhost.localdomain ([5.57.50.195])
-        by smtp.gmail.com with ESMTPSA id a40-v6sm9041108edd.61.2018.10.31.03.58.12
+        by smtp.gmail.com with ESMTPSA id a40-v6sm9041108edd.61.2018.10.31.03.58.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 03:58:12 -0700 (PDT)
+        Wed, 31 Oct 2018 03:58:15 -0700 (PDT)
 From:   Emil Renner Berthing <esmil@mailme.dk>
 To:     linux-spi@vger.kernel.org
 Cc:     Emil Renner Berthing <kernel@esmil.dk>,
@@ -67,9 +67,9 @@ Cc:     Emil Renner Berthing <kernel@esmil.dk>,
         Heiko Stuebner <heiko@sntech.de>,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 12/14] spi: rockchip: use irq rather than polling
-Date:   Wed, 31 Oct 2018 11:57:09 +0100
-Message-Id: <20181031105711.19575-13-esmil@mailme.dk>
+Subject: [PATCH v1 14/14] spi: rockchip: support lsb-first mode
+Date:   Wed, 31 Oct 2018 11:57:11 +0100
+Message-Id: <20181031105711.19575-15-esmil@mailme.dk>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181031105711.19575-1-esmil@mailme.dk>
 References: <20181031105711.19575-1-esmil@mailme.dk>
@@ -82,276 +82,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Emil Renner Berthing <kernel@esmil.dk>
 
-Register an interrupt handler to fill/empty the
-tx and rx fifos rather than busy-looping.
+Add missing support for lsb-first mode.
 
 Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
 ---
- drivers/spi/spi-rockchip.c | 155 ++++++++++++++++++++++---------------
- 1 file changed, 92 insertions(+), 63 deletions(-)
+ drivers/spi/spi-rockchip.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
-index 5fe6099ff366..1297f081818d 100644
+index 9e47e81553a1..3912526ead66 100644
 --- a/drivers/spi/spi-rockchip.c
 +++ b/drivers/spi/spi-rockchip.c
-@@ -172,6 +172,11 @@ struct rockchip_spi {
- 	dma_addr_t dma_addr_rx;
- 	dma_addr_t dma_addr_tx;
+@@ -476,6 +476,8 @@ static void rockchip_spi_config(struct rockchip_spi *rs,
  
-+	const void *tx;
-+	void *rx;
-+	unsigned int tx_left;
-+	unsigned int rx_left;
-+
- 	atomic_t state;
+ 	cr0 |= rs->rsd << CR0_RSD_OFFSET;
+ 	cr0 |= (spi->mode & 0x3U) << CR0_SCPH_OFFSET;
++	if (spi->mode & SPI_LSB_FIRST)
++		cr0 |= CR0_FBM_LSB << CR0_FBM_OFFSET;
  
- 	/*depth of the FIFO buffer */
-@@ -182,11 +187,6 @@ struct rockchip_spi {
- 	u8 n_bytes;
- 	u8 rsd;
- 
--	const void *tx;
--	const void *tx_end;
--	void *rx;
--	void *rx_end;
--
- 	bool cs_asserted[ROCKCHIP_SPI_MAX_CS_NUM];
- };
- 
-@@ -222,24 +222,6 @@ static u32 get_fifo_len(struct rockchip_spi *rs)
- 	return (fifo == 31) ? 0 : fifo;
- }
- 
--static inline u32 tx_max(struct rockchip_spi *rs)
--{
--	u32 tx_left, tx_room;
--
--	tx_left = (rs->tx_end - rs->tx) / rs->n_bytes;
--	tx_room = rs->fifo_len - readl_relaxed(rs->regs + ROCKCHIP_SPI_TXFLR);
--
--	return min(tx_left, tx_room);
--}
--
--static inline u32 rx_max(struct rockchip_spi *rs)
--{
--	u32 rx_left = (rs->rx_end - rs->rx) / rs->n_bytes;
--	u32 rx_room = (u32)readl_relaxed(rs->regs + ROCKCHIP_SPI_RXFLR);
--
--	return min(rx_left, rx_room);
--}
--
- static void rockchip_spi_set_cs(struct spi_device *spi, bool enable)
- {
- 	struct spi_master *master = spi->master;
-@@ -277,6 +259,9 @@ static void rockchip_spi_handle_err(struct spi_master *master,
- 	 */
- 	spi_enable_chip(rs, false);
- 
-+	/* make sure all interrupts are masked */
-+	writel_relaxed(0, rs->regs + ROCKCHIP_SPI_IMR);
-+
- 	if (atomic_read(&rs->state) & TXDMA)
- 		dmaengine_terminate_async(master->dma_tx);
- 
-@@ -286,14 +271,17 @@ static void rockchip_spi_handle_err(struct spi_master *master,
- 
- static void rockchip_spi_pio_writer(struct rockchip_spi *rs)
- {
--	u32 max = tx_max(rs);
--	u32 txw = 0;
-+	u32 tx_free = rs->fifo_len - readl_relaxed(rs->regs + ROCKCHIP_SPI_TXFLR);
-+	u32 words = min(rs->tx_left, tx_free);
-+
-+	rs->tx_left -= words;
-+	for (; words; words--) {
-+		u32 txw;
- 
--	while (max--) {
- 		if (rs->n_bytes == 1)
--			txw = *(u8 *)(rs->tx);
-+			txw = *(u8 *)rs->tx;
- 		else
--			txw = *(u16 *)(rs->tx);
-+			txw = *(u16 *)rs->tx;
- 
- 		writel_relaxed(txw, rs->regs + ROCKCHIP_SPI_TXDR);
- 		rs->tx += rs->n_bytes;
-@@ -302,46 +290,72 @@ static void rockchip_spi_pio_writer(struct rockchip_spi *rs)
- 
- static void rockchip_spi_pio_reader(struct rockchip_spi *rs)
- {
--	u32 max = rx_max(rs);
--	u32 rxw;
-+	u32 words = readl_relaxed(rs->regs + ROCKCHIP_SPI_RXFLR);
-+	u32 rx_left = rs->rx_left - words;
-+
-+	/* the hardware doesn't allow us to change fifo threshold
-+	 * level while spi is enabled, so instead make sure to leave
-+	 * enough words in the rx fifo to get the last interrupt
-+	 * exactly when all words have been received
-+	 */
-+	if (rx_left) {
-+		u32 ftl = readl_relaxed(rs->regs + ROCKCHIP_SPI_RXFTLR) + 1;
-+
-+		if (rx_left < ftl) {
-+			rx_left = ftl;
-+			words = rs->rx_left - rx_left;
-+		}
-+	}
-+
-+	rs->rx_left = rx_left;
-+	for (; words; words--) {
-+		u32 rxw = readl_relaxed(rs->regs + ROCKCHIP_SPI_RXDR);
-+
-+		if (!rs->rx)
-+			continue;
- 
--	while (max--) {
--		rxw = readl_relaxed(rs->regs + ROCKCHIP_SPI_RXDR);
- 		if (rs->n_bytes == 1)
--			*(u8 *)(rs->rx) = (u8)rxw;
-+			*(u8 *)rs->rx = (u8)rxw;
- 		else
--			*(u16 *)(rs->rx) = (u16)rxw;
-+			*(u16 *)rs->rx = (u16)rxw;
- 		rs->rx += rs->n_bytes;
- 	}
- }
- 
--static int rockchip_spi_pio_transfer(struct rockchip_spi *rs)
-+static irqreturn_t rockchip_spi_isr(int irq, void *dev_id)
- {
--	int remain = 0;
-+	struct spi_master *master = dev_id;
-+	struct rockchip_spi *rs = spi_master_get_devdata(master);
- 
--	spi_enable_chip(rs, true);
-+	if (rs->tx_left)
-+		rockchip_spi_pio_writer(rs);
- 
--	do {
--		if (rs->tx) {
--			remain = rs->tx_end - rs->tx;
--			rockchip_spi_pio_writer(rs);
--		}
-+	rockchip_spi_pio_reader(rs);
-+	if (!rs->rx_left) {
-+		spi_enable_chip(rs, false);
-+		writel_relaxed(0, rs->regs + ROCKCHIP_SPI_IMR);
-+		spi_finalize_current_transfer(master);
-+	}
- 
--		if (rs->rx) {
--			remain = rs->rx_end - rs->rx;
--			rockchip_spi_pio_reader(rs);
--		}
-+	return IRQ_HANDLED;
-+}
- 
--		cpu_relax();
--	} while (remain);
-+static int rockchip_spi_prepare_irq(struct rockchip_spi *rs,
-+		struct spi_transfer *xfer)
-+{
-+	rs->tx = xfer->tx_buf;
-+	rs->rx = xfer->rx_buf;
-+	rs->tx_left = rs->tx ? xfer->len / rs->n_bytes : 0;
-+	rs->rx_left = xfer->len / rs->n_bytes;
- 
--	/* If tx, wait until the FIFO data completely. */
--	if (rs->tx)
--		wait_for_idle(rs);
-+	writel_relaxed(INT_RF_FULL, rs->regs + ROCKCHIP_SPI_IMR);
-+	spi_enable_chip(rs, true);
- 
--	spi_enable_chip(rs, false);
-+	if (rs->tx_left)
-+		rockchip_spi_pio_writer(rs);
- 
--	return 0;
-+	/* 1 means the transfer is in progress */
-+	return 1;
- }
- 
- static void rockchip_spi_dma_rxcb(void *data)
-@@ -465,7 +479,7 @@ static void rockchip_spi_config(struct rockchip_spi *rs,
+ 	if (xfer->rx_buf && xfer->tx_buf)
  		cr0 |= CR0_XFM_TR << CR0_XFM_OFFSET;
- 	else if (xfer->rx_buf)
- 		cr0 |= CR0_XFM_RO << CR0_XFM_OFFSET;
--	else
-+	else if (use_dma)
- 		cr0 |= CR0_XFM_TO << CR0_XFM_OFFSET;
+@@ -681,7 +683,7 @@ static int rockchip_spi_probe(struct platform_device *pdev)
  
- 	if (use_dma) {
-@@ -484,8 +498,14 @@ static void rockchip_spi_config(struct rockchip_spi *rs,
- 	else
- 		writel_relaxed((xfer->len * 2) - 1, rs->regs + ROCKCHIP_SPI_CTRLR1);
- 
--	writel_relaxed(rs->fifo_len / 2 - 1, rs->regs + ROCKCHIP_SPI_TXFTLR);
--	writel_relaxed(rs->fifo_len / 2 - 1, rs->regs + ROCKCHIP_SPI_RXFTLR);
-+	/* unfortunately setting the fifo threshold level to generate an
-+	 * interrupt exactly when the fifo is full doesn't seem to work,
-+	 * so we need the strict inequality here
-+	 */
-+	if (xfer->len < rs->fifo_len)
-+		writel_relaxed(xfer->len - 1, rs->regs + ROCKCHIP_SPI_RXFTLR);
-+	else
-+		writel_relaxed(rs->fifo_len / 2 - 1, rs->regs + ROCKCHIP_SPI_RXFTLR);
- 
- 	writel_relaxed(rs->fifo_len / 2 - 1, rs->regs + ROCKCHIP_SPI_DMATDLR);
- 	writel_relaxed(0, rs->regs + ROCKCHIP_SPI_DMARDLR);
-@@ -527,11 +547,6 @@ static int rockchip_spi_transfer_one(
- 
- 	rs->n_bytes = xfer->bits_per_word >> 3;
- 
--	rs->tx = xfer->tx_buf;
--	rs->tx_end = rs->tx + xfer->len;
--	rs->rx = xfer->rx_buf;
--	rs->rx_end = rs->rx + xfer->len;
--
- 	use_dma = master->can_dma ? master->can_dma(master, spi, xfer) : false;
- 
- 	rockchip_spi_config(rs, spi, xfer, use_dma);
-@@ -539,7 +554,7 @@ static int rockchip_spi_transfer_one(
- 	if (use_dma)
- 		return rockchip_spi_prepare_dma(rs, master, xfer);
- 
--	return rockchip_spi_pio_transfer(rs);
-+	return rockchip_spi_prepare_irq(rs, xfer);
- }
- 
- static bool rockchip_spi_can_dma(struct spi_master *master,
-@@ -547,8 +562,13 @@ static bool rockchip_spi_can_dma(struct spi_master *master,
- 				 struct spi_transfer *xfer)
- {
- 	struct rockchip_spi *rs = spi_master_get_devdata(master);
-+	unsigned int bytes_per_word = xfer->bits_per_word <= 8 ? 1 : 2;
- 
--	return (xfer->len > rs->fifo_len);
-+	/* if the numbor of spi words to transfer is less than the fifo
-+	 * length we can just fill the fifo and wait for a single irq,
-+	 * so don't bother setting up dma
-+	 */
-+	return xfer->len / bytes_per_word >= rs->fifo_len;
- }
- 
- static int rockchip_spi_probe(struct platform_device *pdev)
-@@ -603,6 +623,15 @@ static int rockchip_spi_probe(struct platform_device *pdev)
- 
- 	spi_enable_chip(rs, false);
- 
-+	ret = platform_get_irq(pdev, 0);
-+	if (ret < 0)
-+		goto err_disable_spiclk;
-+
-+	ret = devm_request_threaded_irq(&pdev->dev, ret, rockchip_spi_isr, NULL,
-+			IRQF_ONESHOT, dev_name(&pdev->dev), master);
-+	if (ret)
-+		goto err_disable_spiclk;
-+
- 	rs->dev = &pdev->dev;
- 	rs->freq = clk_get_rate(rs->spiclk);
- 
+ 	master->auto_runtime_pm = true;
+ 	master->bus_num = pdev->id;
+-	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_LOOP;
++	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_LOOP | SPI_LSB_FIRST;
+ 	master->num_chipselect = ROCKCHIP_SPI_MAX_CS_NUM;
+ 	master->dev.of_node = pdev->dev.of_node;
+ 	master->bits_per_word_mask = SPI_BPW_MASK(16) | SPI_BPW_MASK(8) | SPI_BPW_MASK(4);
 -- 
 2.19.1
 
