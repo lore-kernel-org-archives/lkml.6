@@ -4,46 +4,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 332D0ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29977C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA5B12064C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC1E92064C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sFjIsQdE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA5B12064C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gPWhmBcU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC1E92064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728702AbeKAIHO (ORCPT
+        id S1728779AbeKAIHS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:07:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54732 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:07:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728581AbeKAIHL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:07:11 -0400
+        id S1728703AbeKAIHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:07:16 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16F092081B;
-        Wed, 31 Oct 2018 23:07:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC56C2064C;
+        Wed, 31 Oct 2018 23:07:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027220;
-        bh=v5JwRh15q1fAOl0WuDZ1q8ubyHl4ldwk4yi9VO2bUeU=;
+        s=default; t=1541027225;
+        bh=3JtbUwR8XOp8MBQdW7nl0+6wkKqNfq9/3CsuUtWuzvA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sFjIsQdEZ6TmadWZta64uoIhdxxbyKikP7RtJxpE7hKwchZqL3X5hQSiN7oRuGgIx
-         hSZq2H9EXZLSQH7T7LYNSMtyxPdqQR7R0FOhtOHFA9slCU0RaMRqiWghYhkEdYkL7S
-         S1m2nMTQEm7yYx7ylp2sBVjXlft6cmIw/bZNCJ9k=
+        b=gPWhmBcUNGM3x6wIbj6ChPPvs+kVnYKTfp7VkOjxYINN1sFWFRi6ZfC3a67DuMPKT
+         THcqYTnxuSVncO45rgGa2gnoADTYPh1X4Yy8Ioms58rEnKVv9MUnBFyEhpasabIv/W
+         5Q5EkD9mgY6w2tttTPxZaTU2J8lR0kChJmRgAyyY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Michal Hocko <mhocko@suse.com>, Tejun Heo <tj@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 086/146] cgroup, netclassid: add a preemption point to write_classid
-Date:   Wed, 31 Oct 2018 19:04:41 -0400
-Message-Id: <20181031230541.28822-86-sashal@kernel.org>
+Cc:     Rob Herring <robh@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 091/146] of: Add missing exports of node name compare functions
+Date:   Wed, 31 Oct 2018 19:04:46 -0400
+Message-Id: <20181031230541.28822-91-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -52,67 +50,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+From: Rob Herring <robh@kernel.org>
 
-[ Upstream commit a90e90b7d55e789c71d85b946ffb5c1ab2f137ca ]
+[ Upstream commit 173ee3962959a1985a109f81539a403b5cd07ae7 ]
 
-We have seen a customer complaining about soft lockups on !PREEMPT
-kernel config with 4.4 based kernel
+Commit f42b0e18f2e5 ("of: add node name compare helper functions")
+failed to add the module exports to of_node_name_eq() and
+of_node_name_prefix(). Add them now.
 
-[1072141.435366] NMI watchdog: BUG: soft lockup - CPU#21 stuck for 22s! [systemd:1]
-[1072141.444090] Modules linked in: mpt3sas raid_class binfmt_misc af_packet 8021q garp mrp stp llc xfs libcrc32c bonding iscsi_ibft iscsi_boot_sysfs msr ext4 crc16 jbd2 mbcache cdc_ether usbnet mii joydev hid_generic usbhid intel_rapl x86_pkg_temp_thermal intel_powerclamp coretemp crct10dif_pclmul crc32_pclmul ghash_clmulni_intel ipmi_ssif mgag200 i2c_algo_bit ttm ipmi_devintf drbg ixgbe drm_kms_helper vxlan ansi_cprng ip6_udp_tunnel drm aesni_intel udp_tunnel aes_x86_64 iTCO_wdt syscopyarea ptp xhci_pci lrw iTCO_vendor_support pps_core gf128mul ehci_pci glue_helper sysfillrect mdio pcspkr sb_edac ablk_helper cryptd ehci_hcd sysimgblt xhci_hcd fb_sys_fops edac_core mei_me lpc_ich ses usbcore enclosure dca mfd_core ipmi_si mei i2c_i801 scsi_transport_sas usb_common ipmi_msghandler shpchp fjes wmi processor button acpi_pad btrfs xor raid6_pq sd_mod crc32c_intel megaraid_sas sg dm_multipath dm_mod scsi_dh_rdac scsi_dh_emc scsi_dh_alua scsi_mod md_mod autofs4
-[1072141.444146] Supported: Yes
-[1072141.444149] CPU: 21 PID: 1 Comm: systemd Not tainted 4.4.121-92.80-default #1
-[1072141.444150] Hardware name: LENOVO Lenovo System x3650 M5 -[5462P4U]- -[5462P4U]-/01GR451, BIOS -[TCE136H-2.70]- 06/13/2018
-[1072141.444151] task: ffff880191bd0040 ti: ffff880191bd4000 task.ti: ffff880191bd4000
-[1072141.444153] RIP: 0010:[<ffffffff815229f9>]  [<ffffffff815229f9>] update_classid_sock+0x29/0x40
-[1072141.444157] RSP: 0018:ffff880191bd7d58  EFLAGS: 00000286
-[1072141.444158] RAX: ffff883b177cb7c0 RBX: 0000000000000000 RCX: 0000000000000000
-[1072141.444159] RDX: 00000000000009c7 RSI: ffff880191bd7d5c RDI: ffff8822e29bb200
-[1072141.444160] RBP: ffff883a72230980 R08: 0000000000000101 R09: 0000000000000000
-[1072141.444161] R10: 0000000000000008 R11: f000000000000000 R12: ffffffff815229d0
-[1072141.444162] R13: 0000000000000000 R14: ffff881fd0a47ac0 R15: ffff880191bd7f28
-[1072141.444163] FS:  00007f3e2f1eb8c0(0000) GS:ffff882000340000(0000) knlGS:0000000000000000
-[1072141.444164] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[1072141.444165] CR2: 00007f3e2f200000 CR3: 0000001ffea4e000 CR4: 00000000001606f0
-[1072141.444166] Stack:
-[1072141.444166]  ffffffa800000246 00000000000009c7 ffffffff8121d583 ffff8818312a05c0
-[1072141.444168]  ffff8818312a1100 ffff880197c3b280 ffff881861422858 ffffffffffffffea
-[1072141.444170]  ffffffff81522b1c ffffffff81d0ca20 ffff8817fa17b950 ffff883fdd8121e0
-[1072141.444171] Call Trace:
-[1072141.444179]  [<ffffffff8121d583>] iterate_fd+0x53/0x80
-[1072141.444182]  [<ffffffff81522b1c>] write_classid+0x4c/0x80
-[1072141.444187]  [<ffffffff8111328b>] cgroup_file_write+0x9b/0x100
-[1072141.444193]  [<ffffffff81278bcb>] kernfs_fop_write+0x11b/0x150
-[1072141.444198]  [<ffffffff81201566>] __vfs_write+0x26/0x100
-[1072141.444201]  [<ffffffff81201bed>] vfs_write+0x9d/0x190
-[1072141.444203]  [<ffffffff812028c2>] SyS_write+0x42/0xa0
-[1072141.444207]  [<ffffffff815f58c3>] entry_SYSCALL_64_fastpath+0x1e/0xca
-[1072141.445490] DWARF2 unwinder stuck at entry_SYSCALL_64_fastpath+0x1e/0xca
-
-If a cgroup has many tasks with many open file descriptors then we would
-end up in a large loop without any rescheduling point throught the
-operation. Add cond_resched once per task.
-
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+Fixes: f42b0e18f2e5 ("of: add node name compare helper functions")
+Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/netclassid_cgroup.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/of/base.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/net/core/netclassid_cgroup.c b/net/core/netclassid_cgroup.c
-index 5e4f04004a49..7bf833598615 100644
---- a/net/core/netclassid_cgroup.c
-+++ b/net/core/netclassid_cgroup.c
-@@ -106,6 +106,7 @@ static int write_classid(struct cgroup_subsys_state *css, struct cftype *cft,
- 		iterate_fd(p->files, 0, update_classid_sock,
- 			   (void *)(unsigned long)cs->classid);
- 		task_unlock(p);
-+		cond_resched();
- 	}
- 	css_task_iter_end(&it);
+diff --git a/drivers/of/base.c b/drivers/of/base.c
+index 74eaedd5b860..70f5fd08891b 100644
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -67,6 +67,7 @@ bool of_node_name_eq(const struct device_node *np, const char *name)
  
+ 	return (strlen(name) == len) && (strncmp(node_name, name, len) == 0);
+ }
++EXPORT_SYMBOL(of_node_name_eq);
+ 
+ bool of_node_name_prefix(const struct device_node *np, const char *prefix)
+ {
+@@ -75,6 +76,7 @@ bool of_node_name_prefix(const struct device_node *np, const char *prefix)
+ 
+ 	return strncmp(kbasename(np->full_name), prefix, strlen(prefix)) == 0;
+ }
++EXPORT_SYMBOL(of_node_name_prefix);
+ 
+ int of_n_addr_cells(struct device_node *np)
+ {
 -- 
 2.17.1
 
