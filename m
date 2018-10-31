@@ -7,45 +7,43 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE24C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:36:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE825ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:37:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4E3E20664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:36:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75CF920664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:37:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ITfSvsQe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4E3E20664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="X4iIILmf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75CF920664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730291AbeKAIhF (ORCPT
+        id S1730053AbeKAIIw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:37:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58382 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:08:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730102AbeKAII4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:08:56 -0400
+        id S1729855AbeKAIIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:08:51 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D9FE20843;
-        Wed, 31 Oct 2018 23:08:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A734120847;
+        Wed, 31 Oct 2018 23:08:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027325;
-        bh=iX8kmCH5qygupNzuPtqfHHUmFgw35uPXn0A23dRrCVU=;
+        s=default; t=1541027320;
+        bh=J1w7CfViljGDO58gsaMyV0aNsx6x8XOC1S+PPnA+Mv0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ITfSvsQeNCvn0UZnr+cZgsQEHHGTKqAGQ8ZkRjmuPxQVcjt8fO4dHTwwi5qje58md
-         +yMGZoX0iHLvrM7WuFF0ag24HLxX9d9cUJ5RfpEhXXKeGnREeKMEisAidHrliJJdB+
-         jfUoXcSFM3VTnnobFyt68YHsNBFZh4NWAn+RvAPo=
+        b=X4iIILmfF1/1qrjMIIbiMQfbWuoxM2Pk/rRwAnYVNkr9mZLlu1V1qii6ZuJFAQRMl
+         TnoDuSoKKrWmx26RZxxEVX6VX3EoMupyh81FMoEaqxnNNdkP9Iu4rm8HiHE4nzNSws
+         MjnHSAQAYspfG8D0JnN8W1GjXmNaJ+DGvJahfAnc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 055/126] pinctrl: qcom: spmi-mpp: Fix drive strength setting
-Date:   Wed, 31 Oct 2018 19:06:43 -0400
-Message-Id: <20181031230754.29029-55-sashal@kernel.org>
+Cc:     Paolo Valente <paolo.valente@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 050/126] block, bfq: correctly charge and reset entity service in all cases
+Date:   Wed, 31 Oct 2018 19:06:38 -0400
+Message-Id: <20181031230754.29029-50-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -54,49 +52,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Boyd <swboyd@chromium.org>
+From: Paolo Valente <paolo.valente@linaro.org>
 
-[ Upstream commit 89c68b102f13f123aaef22b292526d6b92501334 ]
+[ Upstream commit cbeb869a3d1110450186b738199963c5e68c2a71 ]
 
-It looks like we parse the drive strength setting here, but never
-actually write it into the hardware to update it. Parse the setting and
-then write it at the end of the pinconf setting function so that it
-actually sticks in the hardware.
+BFQ schedules entities (which represent either per-process queues or
+groups of queues) as a function of their timestamps. In particular, as
+a function of their (virtual) finish times. The finish time of an
+entity is computed as a function of the budget assigned to the entity,
+assuming, tentatively, that the entity, once in service, will receive
+an amount of service equal to its budget. Then, when the entity is
+expired because it finishes to be served, this finish time is updated
+as a function of the actual service received by the entity. This
+allows the entity to be correctly charged with only the service
+received, and then to be correctly re-scheduled.
 
-Fixes: 0e948042c420 ("pinctrl: qcom: spmi-mpp: Implement support for sink mode")
-Cc: Doug Anderson <dianders@chromium.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Yet an entity may receive service also while not being the entity in
+service (in the scheduling environment of its parent entity), for
+several reasons. If the entity remains with no backlog while receiving
+this 'unofficial' service, then it is expired. Also on such an
+expiration, the finish time of the entity should be updated to account
+for only the service actually received by the entity. Unfortunately,
+such an update is not performed for an entity expiring without being
+the entity in service.
+
+In a similar vein, the service counter of the entity in service is
+reset when the entity is expired, to be ready to be used for next
+service cycle. This reset too should be performed also in case an
+entity is expired because it remains empty after receiving service
+while not being the entity in service. But in this case the reset is
+not performed.
+
+This commit performs the above update of the finish time and reset of
+the service received, also for an entity expiring while not being the
+entity in service.
+
+Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ block/bfq-wf2q.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-index 418bc40df7ca..7577f133d326 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-@@ -457,7 +457,7 @@ static int pmic_mpp_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 			pad->dtest = arg;
- 			break;
- 		case PIN_CONFIG_DRIVE_STRENGTH:
--			arg = pad->drive_strength;
-+			pad->drive_strength = arg;
- 			break;
- 		case PMIC_MPP_CONF_AMUX_ROUTE:
- 			if (arg >= PMIC_MPP_AMUX_ROUTE_ABUS4)
-@@ -504,6 +504,10 @@ static int pmic_mpp_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 	if (ret < 0)
- 		return ret;
+diff --git a/block/bfq-wf2q.c b/block/bfq-wf2q.c
+index 4498c43245e2..681498e5d40a 100644
+--- a/block/bfq-wf2q.c
++++ b/block/bfq-wf2q.c
+@@ -1178,10 +1178,17 @@ bool __bfq_deactivate_entity(struct bfq_entity *entity, bool ins_into_idle_tree)
+ 	st = bfq_entity_service_tree(entity);
+ 	is_in_service = entity == sd->in_service_entity;
  
-+	ret = pmic_mpp_write(state, pad, PMIC_MPP_REG_SINK_CTL, pad->drive_strength);
-+	if (ret < 0)
-+		return ret;
+-	if (is_in_service) {
+-		bfq_calc_finish(entity, entity->service);
++	bfq_calc_finish(entity, entity->service);
 +
- 	val = pad->is_enabled << PMIC_MPP_REG_MASTER_EN_SHIFT;
++	if (is_in_service)
+ 		sd->in_service_entity = NULL;
+-	}
++	else
++		/*
++		 * Non in-service entity: nobody will take care of
++		 * resetting its service counter on expiration. Do it
++		 * now.
++		 */
++		entity->service = 0;
  
- 	return pmic_mpp_write(state, pad, PMIC_MPP_REG_EN_CTL, val);
+ 	if (entity->tree == &st->active)
+ 		bfq_active_extract(st, entity);
 -- 
 2.17.1
 
