@@ -2,93 +2,113 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D5DEC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 11:41:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E13BC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 11:43:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E74552081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 11:41:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E74552081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id BBE4120685
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 11:43:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBE4120685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728754AbeJaUiv (ORCPT
+        id S1728660AbeJaUli (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 16:38:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35064 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726025AbeJaUiv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 16:38:51 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DF316B080;
-        Wed, 31 Oct 2018 11:41:08 +0000 (UTC)
-Date:   Wed, 31 Oct 2018 12:41:07 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Miles Chen <miles.chen@mediatek.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Joe Perches <joe@perches.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, wsd_upstream@mediatek.com
-Subject: Re: [PATCH v3] mm/page_owner: use kvmalloc instead of kmalloc
-Message-ID: <20181031114107.GM32673@dhcp22.suse.cz>
-References: <1540790176-32339-1-git-send-email-miles.chen@mediatek.com>
- <20181029080708.GA32673@dhcp22.suse.cz>
- <20181029081706.GC32673@dhcp22.suse.cz>
- <1540862950.12374.40.camel@mtkswgap22>
- <20181030060601.GR32673@dhcp22.suse.cz>
- <1540882551.23278.12.camel@mtkswgap22>
- <20181030081537.GV32673@dhcp22.suse.cz>
- <1540975637.10275.10.camel@mtkswgap22>
- <20181031101501.GL32673@dhcp22.suse.cz>
- <1540981182.16084.1.camel@mtkswgap22>
+        Wed, 31 Oct 2018 16:41:38 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39814 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725897AbeJaUli (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 16:41:38 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 22C2280D;
+        Wed, 31 Oct 2018 04:43:56 -0700 (PDT)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C08423F71D;
+        Wed, 31 Oct 2018 04:43:54 -0700 (PDT)
+Subject: Re: [PATCH v3 1/1] iommu/arm-smmu-v3: eliminate a potential memory
+ corruption on hi1620 and earlier
+To:     Zhen Lei <thunder.leizhen@huawei.com>,
+        John Garry <john.garry@huawei.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Cc:     LinuxArm <linuxarm@huawei.com>
+References: <1540958527-15408-1-git-send-email-thunder.leizhen@huawei.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <ba9a0f3b-d150-c066-91a4-9ed9a380670b@arm.com>
+Date:   Wed, 31 Oct 2018 11:43:50 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1540981182.16084.1.camel@mtkswgap22>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1540958527-15408-1-git-send-email-thunder.leizhen@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 31-10-18 18:19:42, Miles Chen wrote:
-> On Wed, 2018-10-31 at 11:15 +0100, Michal Hocko wrote:
-> > On Wed 31-10-18 16:47:17, Miles Chen wrote:
-> > > On Tue, 2018-10-30 at 09:15 +0100, Michal Hocko wrote:
-> > > > On Tue 30-10-18 14:55:51, Miles Chen wrote:
-> > > > [...]
-> > > > > It's a real problem when using page_owner.
-> > > > > I found this issue recently: I'm not able to read page_owner information
-> > > > > during a overnight test. (error: read failed: Out of memory). I replace
-> > > > > kmalloc() with vmalloc() and it worked well.
-> > > > 
-> > > > Is this with trimming the allocation to a single page and doing shorter
-> > > > than requested reads?
-> > > 
-> > > 
-> > > I printed out the allocate count on my device the request count is <=
-> > > 4096. So I tested this scenario by trimming the count to from 4096 to
-> > > 1024 bytes and it works fine. 
-> > > 
-> > > count = count > 1024? 1024: count;
-> > > 
-> > > It tested it on both 32bit and 64bit kernel.
-> > 
-> > Are you saying that you see OOMs for 4k size?
-> > 
-> yes, because kmalloc only use normal memor, not highmem + normal memory
-> I think that's why vmalloc() works.
+On 31/10/2018 04:02, Zhen Lei wrote:
+> The standard GITS_TRANSLATER register in ITS is only 4 bytes, but
+> Hisilicon expands the next 4 bytes to carry some IMPDEF information. That
+> means, total 8 bytes data will be written to MSIAddress each time.
+> 
+> MSIAddr: |----4bytes----|----4bytes----|
+> 	 |    MSIData   |    IMPDEF    |
+> 
+> There is no problem for ITS, because the next 4 bytes space is reserved
+> in ITS. But it will overwrite the 4 bytes memory following "sync_count".
+> It's very fortunately that the previous and the next neighbour of the
+> "sync_count" are both aligned by 8 bytes, so no problem is met now.
+> 
+> It's good to explicitly add a workaround. Let's enclose the "sync_count"
+> into a union and companion with a new member "padding" of type u64.
+> 
+> There is no functional change.
 
-Can I see an OOM report please? I am especially interested that 1k
-doesn't cause the problem because there shouldn't be that much of a
-difference between the two. Larger allocations could be a result of
-memory fragmentation but 1k vs. 4k to make a difference really seems
-unexpected.
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 
--- 
-Michal Hocko
-SUSE Labs
+> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+> ---
+>   drivers/iommu/arm-smmu-v3.c | 18 +++++++++++++++++-
+>   1 file changed, 17 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+> index 6947ccf..4e94730 100644
+> --- a/drivers/iommu/arm-smmu-v3.c
+> +++ b/drivers/iommu/arm-smmu-v3.c
+> @@ -576,7 +576,23 @@ struct arm_smmu_device {
+> 
+>   	struct arm_smmu_strtab_cfg	strtab_cfg;
+> 
+> -	u32				sync_count;
+> +	/*
+> +	 * The member "padding" is used to make sure the member "sync_count" to
+> +	 * be aligned at 8 bytes boundary, and 4 bytes padding memory followed.
+> +	 *
+> +	 * These are required by hi1620 and earlier of Hisilicon. Because the
+> +	 * ITS hardware on hi1620 and earlier will truncate the MSIAddress(Here
+> +	 * it's the address of "sync_count") to 8 bytes boundary first, then
+> +	 * write 32 bits MSIdata at offset 0, and 32 bits IMPDEF data at offset
+> +	 * 4. Without this workaround, the adjacent member maybe overwritten.
+> +	 *
+> +	 *                    |---4bytes---|---4bytes---|
+> +	 * MSIAddress & (~0x7):   MSIdata  | IMPDEF data|
+> +	 */
+> +	union {
+> +		u32			sync_count;
+> +		u64			padding;
+> +	};
+> 
+>   	/* IOMMU core code handle */
+>   	struct iommu_device		iommu;
+> --
+> 1.8.3
+> 
+> 
