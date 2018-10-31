@@ -7,120 +7,127 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 389C7ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9565AECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00BCA2081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B63C2081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NjVySNdq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00BCA2081B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yTi2YTYc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B63C2081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731168AbeKAIKi (ORCPT
+        id S1731210AbeKAIKm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:10:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33300 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:10:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729645AbeKAIKh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:10:37 -0400
+        id S1731171AbeKAIKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:10:41 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0DA2120838;
-        Wed, 31 Oct 2018 23:10:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 57F702085A;
+        Wed, 31 Oct 2018 23:10:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027425;
-        bh=34y4eytW8REGCP0YpMIKjpVLx2aLXV0OepI83a3odA8=;
+        s=default; t=1541027429;
+        bh=q1KxqZO594NkudKQe+XFXYCmBHicgcDJ0jR19ahPKSM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NjVySNdq3TdtoHmYbJaYygBNd2qbXafb+quJzPx6HkrEJE+B9eTAUQZZZ+obV9n96
-         rC+aurCE+W29ZCtqtv5TamaEPAmeGK21XR3979afl8hzmyoihfwki6jtnG8lPnfffX
-         IUJm1aaCipnozUJgxgT2nvTIGpa4kXlBMzdnmJIY=
+        b=yTi2YTYcyJR+HuWGx3pPqSaS4pIN31IbKG51bzSx6FjG+9MuiG1dgXpqpC1idOCbB
+         MeS7XshZhM7T5xk8vDBTtAUpL5gJ2DIEVBfhDJhNwh3BiIERtq3jRNaW/IIbt2piGM
+         KGAzMm/96+8MXQFJmvfKu0mDt/jAS4eFeZGkS9uw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Finn Thain <fthain@telegraphics.com.au>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
+Cc:     Parav Pandit <parav@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 41/73] scsi: esp_scsi: Track residual for PIO transfers
-Date:   Wed, 31 Oct 2018 19:09:16 -0400
-Message-Id: <20181031230948.29203-41-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 45/73] RDMA/core: Do not expose unsupported counters
+Date:   Wed, 31 Oct 2018 19:09:20 -0400
+Message-Id: <20181031230948.29203-45-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230948.29203-1-sashal@kernel.org>
 References: <20181031230948.29203-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Finn Thain <fthain@telegraphics.com.au>
+From: Parav Pandit <parav@mellanox.com>
 
-[ Upstream commit fd47d919d0c336e7c22862b51ee94927ffea227a ]
+[ Upstream commit 0f6ef65d1c6ec8deb5d0f11f86631ec4cfe8f22e ]
 
-If a target disconnects during a PIO data transfer the command may fail
-when the target reconnects:
+If the provider driver (such as rdma_rxe) doesn't support pma counters,
+avoid exposing its directory similar to optional hw_counters directory.
+If core fails to read the PMA counter, return an error so that user can
+retry later if needed.
 
-scsi host1: DMA length is zero!
-scsi host1: cur adr[04380000] len[00000000]
-
-The scsi bus is then reset. This happens because the residual reached
-zero before the transfer was completed.
-
-The usual residual calculation relies on the Transfer Count registers.
-That works for DMA transfers but not for PIO transfers. Fix the problem
-by storing the PIO transfer residual and using that to correctly
-calculate bytes_sent.
-
-Fixes: 6fe07aaffbf0 ("[SCSI] m68k: new mac_esp scsi driver")
-Tested-by: Stan Johnson <userm57@yahoo.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Tested-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 35c4cbb17811 ("IB/core: Create get_perf_mad function in sysfs.c")
+Reported-by: Holger Hoffstätte <holger@applied-asynchrony.com>
+Tested-by: Holger Hoffstätte <holger@applied-asynchrony.com>
+Signed-off-by: Parav Pandit <parav@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/esp_scsi.c | 1 +
- drivers/scsi/esp_scsi.h | 2 ++
- drivers/scsi/mac_esp.c  | 2 ++
- 3 files changed, 5 insertions(+)
+ drivers/infiniband/core/sysfs.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/scsi/esp_scsi.c b/drivers/scsi/esp_scsi.c
-index c3fc34b9964d..9e5d3f7d29ae 100644
---- a/drivers/scsi/esp_scsi.c
-+++ b/drivers/scsi/esp_scsi.c
-@@ -1338,6 +1338,7 @@ static int esp_data_bytes_sent(struct esp *esp, struct esp_cmd_entry *ent,
+diff --git a/drivers/infiniband/core/sysfs.c b/drivers/infiniband/core/sysfs.c
+index 0a1e96c25ca3..f75f99476ad0 100644
+--- a/drivers/infiniband/core/sysfs.c
++++ b/drivers/infiniband/core/sysfs.c
+@@ -489,7 +489,7 @@ static ssize_t show_pma_counter(struct ib_port *p, struct port_attribute *attr,
+ 	ret = get_perf_mad(p->ibdev, p->port_num, tab_attr->attr_id, &data,
+ 			40 + offset / 8, sizeof(data));
+ 	if (ret < 0)
+-		return sprintf(buf, "N/A (no PMA)\n");
++		return ret;
  
- 	bytes_sent = esp->data_dma_len;
- 	bytes_sent -= ecount;
-+	bytes_sent -= esp->send_cmd_residual;
- 
- 	/*
- 	 * The am53c974 has a DMA 'pecularity'. The doc states:
-diff --git a/drivers/scsi/esp_scsi.h b/drivers/scsi/esp_scsi.h
-index 8163dca2071b..a77772777a30 100644
---- a/drivers/scsi/esp_scsi.h
-+++ b/drivers/scsi/esp_scsi.h
-@@ -540,6 +540,8 @@ struct esp {
- 
- 	void			*dma;
- 	int			dmarev;
-+
-+	u32			send_cmd_residual;
- };
- 
- /* A front-end driver for the ESP chip should do the following in
-diff --git a/drivers/scsi/mac_esp.c b/drivers/scsi/mac_esp.c
-index eb551f3cc471..71879f2207e0 100644
---- a/drivers/scsi/mac_esp.c
-+++ b/drivers/scsi/mac_esp.c
-@@ -427,6 +427,8 @@ static void mac_esp_send_pio_cmd(struct esp *esp, u32 addr, u32 esp_count,
- 			scsi_esp_cmd(esp, ESP_CMD_TI);
- 		}
+ 	switch (width) {
+ 	case 4:
+@@ -1012,10 +1012,12 @@ static int add_port(struct ib_device *device, int port_num,
+ 		goto err_put;
  	}
-+
-+	esp->send_cmd_residual = esp_count;
- }
  
- static int mac_esp_irq_pending(struct esp *esp)
+-	p->pma_table = get_counter_table(device, port_num);
+-	ret = sysfs_create_group(&p->kobj, p->pma_table);
+-	if (ret)
+-		goto err_put_gid_attrs;
++	if (device->process_mad) {
++		p->pma_table = get_counter_table(device, port_num);
++		ret = sysfs_create_group(&p->kobj, p->pma_table);
++		if (ret)
++			goto err_put_gid_attrs;
++	}
+ 
+ 	p->gid_group.name  = "gids";
+ 	p->gid_group.attrs = alloc_group_attrs(show_port_gid, attr.gid_tbl_len);
+@@ -1128,7 +1130,8 @@ static int add_port(struct ib_device *device, int port_num,
+ 	p->gid_group.attrs = NULL;
+ 
+ err_remove_pma:
+-	sysfs_remove_group(&p->kobj, p->pma_table);
++	if (p->pma_table)
++		sysfs_remove_group(&p->kobj, p->pma_table);
+ 
+ err_put_gid_attrs:
+ 	kobject_put(&p->gid_attr_group->kobj);
+@@ -1240,7 +1243,9 @@ static void free_port_list_attributes(struct ib_device *device)
+ 			kfree(port->hw_stats);
+ 			free_hsag(&port->kobj, port->hw_stats_ag);
+ 		}
+-		sysfs_remove_group(p, port->pma_table);
++
++		if (port->pma_table)
++			sysfs_remove_group(p, port->pma_table);
+ 		sysfs_remove_group(p, &port->pkey_group);
+ 		sysfs_remove_group(p, &port->gid_group);
+ 		sysfs_remove_group(&port->gid_attr_group->kobj,
 -- 
 2.17.1
 
