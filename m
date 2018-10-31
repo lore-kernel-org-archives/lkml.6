@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5BF9ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DCDAECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A242720830
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0BC92081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WrwpLBP0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A242720830
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HahWUUId"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0BC92081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729399AbeKAIIC (ORCPT
+        id S1729415AbeKAIID (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:08:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56438 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:08:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729319AbeKAIIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:08:01 -0400
+        id S1729304AbeKAIIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:08:02 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47B0A20847;
-        Wed, 31 Oct 2018 23:07:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F50420821;
+        Wed, 31 Oct 2018 23:07:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027270;
-        bh=mI4rkwRfpdXnDl9oWOd9suwcjunbLincP2B5YfZGY+4=;
+        s=default; t=1541027271;
+        bh=ZzJU/mOIbCwL51xMpX6SClB1NK63OmoOYUoKxGiLkPM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WrwpLBP0ineTj6QvkD8Tpy1wxMloANY6IONGEONJp4sBhJ5fXUaGP1IwmNbGr4pKZ
-         7a3Z//s92MtV7QC0AF0x18a88hDnr8Zq1dTR0/pOMklwbRF2RzzcxvBC4Fm8FxIeNT
-         q98PDVIasq7ygS7SqdAu3Rjgi4DrOBVGjvp/FasA=
+        b=HahWUUIdrKt/khsAw8Z28o6ysIgPY8NPq5f54c4wsX415oG3grMGImM7STEP6AXcM
+         KT26vNi6ZwrMmuSzcglfcuiwByoI0bUa4y7XecA/og2BBOGLeXPzd6U6/Oph9nEK52
+         rsFqTiUK9yXzMW7HGcLNyM85VIhwKt7B0kperzSQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 143/146] mfd: menelaus: Fix possible race condition and leak
-Date:   Wed, 31 Oct 2018 19:05:38 -0400
-Message-Id: <20181031230541.28822-143-sashal@kernel.org>
+Cc:     Paul Cercueil <paul@crapouillou.net>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 144/146] dmaengine: dma-jz4780: Return error if not probed from DT
+Date:   Wed, 31 Oct 2018 19:05:39 -0400
+Message-Id: <20181031230541.28822-144-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -53,64 +52,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Paul Cercueil <paul@crapouillou.net>
 
-[ Upstream commit 9612f8f503804d2fd2f63aa6ba1e58bba4612d96 ]
+[ Upstream commit 54f919a04cf221bc1601d1193682d4379dacacbd ]
 
-The IRQ work is added before the struct rtc is allocated and registered,
-but this struct is used in the IRQ handler. This may lead to a NULL pointer
-dereference.
+The driver calls clk_get() with the clock name set to NULL, which means
+that the driver could only work when probed from devicetree. From now
+on, we explicitly require the driver to be probed from devicetree.
 
-Switch to devm_rtc_allocate_device/rtc_register_device to allocate the rtc
-before calling menelaus_add_irq_work.
-
-Also, this solves a possible leak as the RTC is never released.
-
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Tested-by: Mathieu Malaterre <malat@debian.org>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/menelaus.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/dma/dma-jz4780.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/mfd/menelaus.c b/drivers/mfd/menelaus.c
-index 29b7164a823b..d28ebe7ecd21 100644
---- a/drivers/mfd/menelaus.c
-+++ b/drivers/mfd/menelaus.c
-@@ -1094,6 +1094,7 @@ static void menelaus_rtc_alarm_work(struct menelaus_chip *m)
- static inline void menelaus_rtc_init(struct menelaus_chip *m)
- {
- 	int	alarm = (m->client->irq > 0);
-+	int	err;
+diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
+index 85820a2d69d4..987899610b46 100644
+--- a/drivers/dma/dma-jz4780.c
++++ b/drivers/dma/dma-jz4780.c
+@@ -761,6 +761,11 @@ static int jz4780_dma_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 	int i, ret;
  
- 	/* assume 32KDETEN pin is pulled high */
- 	if (!(menelaus_read_reg(MENELAUS_OSC_CTRL) & 0x80)) {
-@@ -1101,6 +1102,12 @@ static inline void menelaus_rtc_init(struct menelaus_chip *m)
- 		return;
- 	}
- 
-+	m->rtc = devm_rtc_allocate_device(&m->client->dev);
-+	if (IS_ERR(m->rtc))
-+		return;
++	if (!dev->of_node) {
++		dev_err(dev, "This driver must be probed from devicetree\n");
++		return -EINVAL;
++	}
 +
-+	m->rtc->ops = &menelaus_rtc_ops;
-+
- 	/* support RTC alarm; it can issue wakeups */
- 	if (alarm) {
- 		if (menelaus_add_irq_work(MENELAUS_RTCALM_IRQ,
-@@ -1125,10 +1132,8 @@ static inline void menelaus_rtc_init(struct menelaus_chip *m)
- 		menelaus_write_reg(MENELAUS_RTC_CTRL, m->rtc_control);
- 	}
- 
--	m->rtc = rtc_device_register(DRIVER_NAME,
--			&m->client->dev,
--			&menelaus_rtc_ops, THIS_MODULE);
--	if (IS_ERR(m->rtc)) {
-+	err = rtc_register_device(m->rtc);
-+	if (err) {
- 		if (alarm) {
- 			menelaus_remove_irq_work(MENELAUS_RTCALM_IRQ);
- 			device_init_wakeup(&m->client->dev, 0);
+ 	jzdma = devm_kzalloc(dev, sizeof(*jzdma), GFP_KERNEL);
+ 	if (!jzdma)
+ 		return -ENOMEM;
 -- 
 2.17.1
 
