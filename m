@@ -2,93 +2,124 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 114A5ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:43:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A6FEECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:45:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAD7720685
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:43:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F315520685
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:45:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bJiUxUMd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAD7720685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HA1WlLxi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F315520685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727966AbeJaSkg (ORCPT
+        id S1727956AbeJaSmm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 14:40:36 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:38534 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727436AbeJaSkf (ORCPT
+        Wed, 31 Oct 2018 14:42:42 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43866 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727519AbeJaSmm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 14:40:35 -0400
-Received: by mail-lf1-f67.google.com with SMTP id p86so8909351lfg.5
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 02:43:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=p78zBwnYL4GrL60VvL2qsENAKsSSxnMcMy+xEmvl7yo=;
-        b=bJiUxUMdmUYs7MSjhTtxiAvQhazuHAnBCr0UJwXKausWKWOb9si4U+CR8km0EEjyyT
-         jCTkiA4CIXdFmSx3hDzSIEACp2ilVEwOhlOZiv9THT8xB8DS/2+iUwV7YHSxr/wlqK5q
-         x41Gw85GzEE7038xQYUyrpVq4CgBinMPtK+VU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=p78zBwnYL4GrL60VvL2qsENAKsSSxnMcMy+xEmvl7yo=;
-        b=csn3LxcNbq0eyYssHq6lyM2WTrUQeEThCQ4blYszK9hJT/aJ15KYAGL9Z3kR8St9op
-         zikjPOacx4MZF8hOGBkBd2DFji1Fqt2/wGvg+JkR05zjoQYPpByoeW1otDRf5erZ8T6s
-         FrS1cNMMe337V1u0M/n9V/9ZFJjbl6lEaMC7GJ8Gao26rJsWim6fteMY17DZrqauL/ud
-         cpDOSLLH2Qt2JuXJHF8bAi3+lMRQAi/3sLV8Oc+xJeEUIaKZatRzqHuOU1Du4aBqJ6Rt
-         63ivMMnsvCWGpGO1uc84vO8yFL7aYis+Mw7ESMmmKLJTrjT7u+Tuj5d5I3R0XHBeca3k
-         FKvg==
-X-Gm-Message-State: AGRZ1gJPRXKoyuAyEJ/yIjHCpuN7b+9BmZaSu6WTc35QTGvnAZaYriv8
-        uoWVLg0Uc0Fy3AD0ZKGtU0wuj8Asf7q8kqArGs6ryQ==
-X-Google-Smtp-Source: AJdET5crKjdh83yMt1h3yZZpT90dqqdQPChLimg9VtELppF2gijyNMd1ltjzCrSBpErxX2MIefFascDH+K8fnKiEvWw=
-X-Received: by 2002:a19:8d01:: with SMTP id p1mr1285546lfd.149.1540978991144;
- Wed, 31 Oct 2018 02:43:11 -0700 (PDT)
+        Wed, 31 Oct 2018 14:42:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=5duRF5Ve0wJcAnT0Nx+ccoQUyWmGXvrB97qVmZnpHNQ=; b=HA1WlLxiJQhwR98VcoVIEWsUTd
+        G9aW8fe9+smp2ldyfb4DGTjYtjxKvVtcCafBMsG3R0hx3Wp4tZTzf/GznxbP/NftKQs4bTqhsV64S
+        8FPhoT/LUpOCxZFLg+KzJG6GJpZVWb16efuo9KPb2iU6kCqj2WYSeP5PHNzM6vs9/6gRiIb2X5WZS
+        SQVQ9yKiPvOf8mnycWNn+v8wkg4+bMLyOa3LXatp/KOAsWXrhLsKhp54Ui4OpJY50lyPfdr7ogFN9
+        LDW/27qcUabj6v4H+K4LqALcOFU+/mVwVYlUcbCltJ3qhjy1ay+KAHTPCSRCf3QIrDJgXUFyxfcQw
+        QxAvu8wQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gHn3k-0000rL-F1; Wed, 31 Oct 2018 09:45:08 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A8B492029FA14; Wed, 31 Oct 2018 10:45:06 +0100 (CET)
+Date:   Wed, 31 Oct 2018 10:45:06 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Igor Stoppa <igor.stoppa@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Kees Cook <keescook@chromium.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 10/17] prmem: documentation
+Message-ID: <20181031094506.GM744@hirez.programming.kicks-ass.net>
+References: <20181028183126.GB744@hirez.programming.kicks-ass.net>
+ <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
+ <20181030152641.GE8177@hirez.programming.kicks-ass.net>
+ <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
+ <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
+ <20181030175814.GB10491@bombadil.infradead.org>
+ <20181030182841.GE7343@cisco>
+ <20181030192021.GC10491@bombadil.infradead.org>
+ <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com>
+ <BAA65A07-F3AF-4209-9D18-7075CEF11EE8@amacapital.net>
 MIME-Version: 1.0
-References: <20181023190655.12004-1-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20181023190655.12004-1-manivannan.sadhasivam@linaro.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 31 Oct 2018 10:43:00 +0100
-Message-ID: <CACRpkdbMSYt5aH9fwRijtO=VG1nLAnfxTsfxGza+_Z2iGj2+-A@mail.gmail.com>
-Subject: Re: [PATCH 0/5] Add Pinctrl and GPIO support for HI3670 SoC
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     Xu Wei <xuwei5@hisilicon.com>, Rob Herring <robh+dt@kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <BAA65A07-F3AF-4209-9D18-7075CEF11EE8@amacapital.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 9:07 PM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
+On Tue, Oct 30, 2018 at 02:02:12PM -0700, Andy Lutomirski wrote:
+> But I dislike allowing regular writes in the protected region. We
+> really only need four write primitives:
+> 
+> 1. Just write one value.  Call at any time (except NMI).
+> 
+> 2. Just copy some bytes. Same as (1) but any number of bytes.
 
-> This patchset adds Pinctrl and GPIO support for HI3670 SoC from HiSilicon
-> found in the HiKey970 developement board. Also, the remaining UARTs are
-> enabled and GPIO line names are added based on the Schematics and the
-> 96Boards Consumer Edition spec.
->
-> Note: These patches are based on the below common clk patches pushed
-> earlier:
->
-> arm64: dts: hisilicon: Add clock nodes for Hi3670 SoC
-> arm64: dts: hisilicon: Source SoC clock for UART6
+Given the !preempt/!IRQ contraints I'd certainly put an upper limit on
+the number of bytes there.
 
-All looks good to me.
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-for the series.
+> 3,4: Same as 1 and 2 but must be called inside a special rare write
+> region. This is purely an optimization.
+> 
+> Actually getting a modifiable pointer should be disallowed for two
+> reasons:
+> 
+> 1. Some architectures may want to use a special
+> write-different-address-space operation.
 
-Yours,
-Linus Walleij
+You're thinking of s390 ? :-)
+
+> Heck, x86 could, too: make
+> the actual offset be a secret and shove the offset into FSBASE or
+> similar. Then %fs-prefixed writes would do the rare writes.
+
+> 2. Alternatively, x86 could set the U bit. Then the actual writes
+> would use the uaccess helpers, giving extra protection via SMAP.
+
+Cute, and yes, something like that would be nice.
+
+> We don’t really want a situation where an unchecked pointer in the
+> rare write region completely defeats the mechanism.
+
+Agreed.
