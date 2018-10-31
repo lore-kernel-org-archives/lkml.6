@@ -2,539 +2,495 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1AA5ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:45:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3494AC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:45:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 263EF2082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:45:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D01972082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:45:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QnRPHjjb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 263EF2082E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GzLygdVh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D01972082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729900AbeKABoN (ORCPT
+        id S1729915AbeKABoQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 21:44:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58614 "EHLO mail.kernel.org"
+        Wed, 31 Oct 2018 21:44:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729341AbeKABoM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 21:44:12 -0400
+        id S1729341AbeKABoP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 21:44:15 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF14520664;
-        Wed, 31 Oct 2018 16:45:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1948E2081B;
+        Wed, 31 Oct 2018 16:45:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541004323;
-        bh=f4qdZYpip6Ye2zzxa4fFSrWYi32+Va2NUhxqiS2nnug=;
-        h=From:To:Cc:Subject:Date:From;
-        b=QnRPHjjbvFj1Uvl+Wv0LFkLFvD9f+MZByt8qqHMd6GTT3o5JyqZ1xP0udELOl2dZ/
-         rAt8QPb4Mvw+7k+IgXPP9WMz4E2CKnURXInHygrteItoez0xSG+Bk5L7ivoHAgqJy1
-         CR/FRMigyxSpEZapGmqIznNRNuv6kKYwDxHjkurE=
+        s=default; t=1541004327;
+        bh=mo+UuIiUpC2sOXYGFzbe1K/IDheJNM/Tj5DIppWVGNQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GzLygdVhxqIFbkSwzafhcjgdPbS44EoZhG/WFB55+bnfB5dodJ41CkhMrgR1423C6
+         VWs5/O8KLXg5mZ9tl1ng3DM2BDGlv/UNunF0ybyqXky0D+tn+V4f8EfhPmpzfQYbQD
+         cy5BJu/RsWsezfGqw9Fys60ae0cZXZp6thuLEe4k=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
         Benjamin Peterson <benjamin@python.org>,
-        coresight@lists.linaro.org, David Ahern <dsahern@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Don Zickus <dzickus@redhat.com>, Eric Leblond <eric@regit.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Joe Mario <jmario@redhat.com>,
-        Kan Liang <kan.liang@intel.com>,
-        Kim Phillips <kim.phillips@arm.com>,
-        Leo Yan <leo.yan@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Milian Wolff <milian.wolff@kdab.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Souvik Banerjee <souvik1997@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>,
-        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Wang Nan <wangnan0@huawei.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [GIT PULL 00/24] perf/urgent improvements and fixes
-Date:   Wed, 31 Oct 2018 13:44:40 -0300
-Message-Id: <20181031164508.4784-1-acme@kernel.org>
+        Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 01/28] tools include uapi: Grab a copy of linux/fs.h
+Date:   Wed, 31 Oct 2018 13:44:41 -0300
+Message-Id: <20181031164508.4784-2-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20181031164508.4784-1-acme@kernel.org>
+References: <20181031164508.4784-1-acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ingo,
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-	Please consider pulling, next ones should be concentrating just
-on bug fixes, been busy with some, so some were left in the queue,
-flushing them now.
+We'll use it to create tables for the 'flags' argument to the 'mount'
+and 'umount' syscalls.
 
-- Arnaldo
+Add it to check_headers.sh so that when a new protocol gets added we get
+a notification during the build process.
 
-Test results at the end of this message, as usual.
-
-The following changes since commit 28fa741c27e6d57f6bf594ba3c444ce79e671e09:
-
-  perf/core: Clean up inconsisent indentation (2018-10-30 09:51:58 +0100)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-urgent-for-mingo-4.20-20181031
-
-for you to fetch changes up to 5d4f0edaa3ac4f1844ed7c64cd2bae6f1912bac5:
-
-  perf intel-pt/bts: Calculate cpumode for synthesized samples (2018-10-31 12:56:26 -0300)
-
-----------------------------------------------------------------
-perf/urgent improvements and fixes:
-
-- Fixes dealing with the removal of the fallback to looking up samples
-  marked as userspace in the kernel maps, done recently:
-
-  - For intel-pt, that was setting the synthesized header misc field
-    as PERF_RECORD_MISC_USER, depending thus on the fallback to take
-    place, now it sets as USER or KERNEL according to x86 specific
-    knowledge. Also now it inserts the PERF_CONTEXT_{USER,KERNEL} into
-    the PERF_SAMPLE_CALLCHAINs it synthesizes from hw traces (Adrian Hunter)
-
-  - Similar fixes for the cs-etm ARM HW trace code, that used the Intel PT
-    model as a starting point (Leo Yan)
-
-  - For the "caller" callchain order, where the callchain returned by the
-    kernel was simply reversed without taking into account the
-    PERF_CONTEXT_{USER,KERNEL,etc} markers from where to define if an entry
-    was for kernel or userspace, working just because the map lookup fallback
-    was in place (David S. Miller)
-
-- Allow for selecting if 'overwrite' mode should be used in 'perf top' and
-  make the default for it not to be used. This is due to problems with the
-  current implementation where the pausing used ends up making 'perf top'
-  miss PERF_RECORD_{MMAP,FORK,EXEC,etc} events, which with short lifetime
-  threads workloads leads quickly to many "unknown" maps (and thus symbols)
-  to appear in the UI. Workloads with long thread lifetimes and with few
-  metadata events can still use --overwrite to take advantage of the
-  overwrite mode (Arnaldo Carvalho de Melo)
-
-- Start 'perf top''s display thread earlier, so that the screen doesn't
-  remain blank for too long at tool start (David S. Miller)
-
-- Don't clone maps from parent when synthesizing forks, to avoid the inevitable
-  flurry of overlapping maps as we process the synthesized MMAP2 events that get
-  delivered shortly thereafter. (David S. Miller)
-
-- Take pgoff into account when reporting elf to libdwfl, now the unwinding
-  results are the same with elfutils's libdwfl and libunwind (Milian Wolff)
-
-- Update lotsa kernel ABI headers (Arnaldo Carvalho de Melo)
-
-- 'perf trace' syscall arg beautification improvements to allow for
-  handling args such as mount's 'flags', where maks have to be ignored
-  before considering what is left, that, if only zeroes, is suppressed
-  like other args without such masks (Arnaldo Carvalho de Melo)
-
-- Beautify mount's 'source' and 'flags' args (Arnaldo Carvalho de Melo)
-
-- Generate mmap's flags bit constants from linux/mman.h and all the
-  arch specific mman.h files, so that no changes in the main 'perf trace'
-  source files is required when new flags get added (Arnaldo Carvalho de Melo)
-
-- Consider syscall aliases, so that 'perf trace -e umount' works and we don't
-  have to use 'umount2' (that works as well, just not required) (Arnaldo Carvalho de Melo)
-
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Benjamin Peterson <benjamin@python.org>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-yacf9jvkwfwg2g95r2us3xb3@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-----------------------------------------------------------------
-Adrian Hunter (2):
-      perf intel-pt: Insert callchain context into synthesized callchains
-      perf intel-pt/bts: Calculate cpumode for synthesized samples
-
-Arnaldo Carvalho de Melo (21):
-      tools include uapi: Grab a copy of linux/fs.h
-      perf beauty: Add a generator for MS_ mount/umount's flag constants
-      perf beauty: Switch from GPL v2.0 to LGPL v2.1
-      perf beauty: Introduce strarray__scnprintf_flags()
-      perf trace beauty: Allow syscalls to mask an argument before considering it
-      perf trace beauty: Beautify mount/umount's 'flags' argument
-      perf trace: Consider syscall aliases too
-      perf trace: Beautify the umount's 'name' argument
-      perf trace: Beautify mount's first pathname arg
-      perf top: Allow disabling the overwrite mode
-      perf top: Do not use overwrite mode by default
-      tools include uapi: Update linux/fs.h copy
-      tools arch uapi: Update asm-generic/unistd.h and arm64 unistd.h copies
-      tools include uapi: Update asound.h copy
-      perf beauty: Add a generator for MAP_ mmap's flag constants
-      perf beauty: Wire up the mmap flags table generator to the Makefile
-      perf trace beauty: Use the mmap flags table generated from headers
-      tools include uapi: Update linux/mmap.h copy
-      tools headers: Sync the various kvm.h header copies
-      tools headers uapi: Update linux/netlink.h header copy
-      tools headers uapi: Update linux/if_link.h header copy
-
-David Miller (2):
-      perf top: Start display thread earlier
-      perf tools: Don't clone maps from parent when synthesizing forks
-
-David S. Miller (1):
-      perf callchain: Honour the ordering of PERF_CONTEXT_{USER,KERNEL,etc}
-
-Leo Yan (1):
-      perf cs-etm: Correct CPU mode for samples
-
-Milian Wolff (1):
-      perf unwind: Take pgoff into account when reporting elf to libdwfl
-
- include/uapi/linux/perf_event.h                    |   2 +
- tools/arch/arm64/include/uapi/asm/unistd.h         |   1 +
- tools/arch/powerpc/include/uapi/asm/kvm.h          |   1 +
- tools/arch/s390/include/uapi/asm/kvm.h             |   2 +
- tools/arch/x86/include/uapi/asm/kvm.h              |   6 +-
- tools/include/uapi/asm-generic/unistd.h            |   2 +
- tools/include/uapi/linux/fs.h                      | 393 +++++++++++++++++++++
- tools/include/uapi/linux/if_link.h                 |   1 +
- tools/include/uapi/linux/kvm.h                     |  21 +-
- tools/include/uapi/linux/mman.h                    |   2 +
- tools/include/uapi/linux/netlink.h                 |   1 +
- tools/include/uapi/linux/perf_event.h              |   2 +
- tools/include/uapi/sound/asound.h                  |   2 +-
- tools/perf/Documentation/perf-top.txt              |  10 +
- tools/perf/Makefile.perf                           |  19 +
- tools/perf/builtin-top.c                           |  21 +-
- tools/perf/builtin-trace.c                         |  48 ++-
- tools/perf/check-headers.sh                        |   1 +
- tools/perf/trace/beauty/Build                      |   1 +
- tools/perf/trace/beauty/beauty.h                   |   7 +
- tools/perf/trace/beauty/clone.c                    |   3 +-
- tools/perf/trace/beauty/drm_ioctl.sh               |   1 +
- tools/perf/trace/beauty/eventfd.c                  |   2 +-
- tools/perf/trace/beauty/fcntl.c                    |   3 +-
- tools/perf/trace/beauty/flock.c                    |   2 +-
- tools/perf/trace/beauty/futex_op.c                 |   2 +-
- tools/perf/trace/beauty/futex_val3.c               |   2 +-
- tools/perf/trace/beauty/ioctl.c                    |   3 +-
- tools/perf/trace/beauty/kcmp.c                     |   3 +-
- tools/perf/trace/beauty/kcmp_type.sh               |   1 +
- tools/perf/trace/beauty/kvm_ioctl.sh               |   1 +
- tools/perf/trace/beauty/madvise_behavior.sh        |   1 +
- tools/perf/trace/beauty/mmap.c                     |  50 +--
- tools/perf/trace/beauty/mmap_flags.sh              |  32 ++
- tools/perf/trace/beauty/mode_t.c                   |   2 +-
- tools/perf/trace/beauty/mount_flags.c              |  43 +++
- tools/perf/trace/beauty/mount_flags.sh             |  15 +
- tools/perf/trace/beauty/msg_flags.c                |   2 +-
- tools/perf/trace/beauty/open_flags.c               |   2 +-
- tools/perf/trace/beauty/perf_event_open.c          |   2 +-
- tools/perf/trace/beauty/perf_ioctl.sh              |   1 +
- tools/perf/trace/beauty/pid.c                      |   3 +-
- tools/perf/trace/beauty/pkey_alloc.c               |  30 +-
- .../perf/trace/beauty/pkey_alloc_access_rights.sh  |   1 +
- tools/perf/trace/beauty/prctl.c                    |   3 +-
- tools/perf/trace/beauty/prctl_option.sh            |   1 +
- tools/perf/trace/beauty/sched_policy.c             |   2 +-
- tools/perf/trace/beauty/seccomp.c                  |   2 +-
- tools/perf/trace/beauty/signum.c                   |   2 +-
- tools/perf/trace/beauty/sndrv_ctl_ioctl.sh         |   1 +
- tools/perf/trace/beauty/sndrv_pcm_ioctl.sh         |   1 +
- tools/perf/trace/beauty/sockaddr.c                 |   2 +-
- tools/perf/trace/beauty/socket.c                   |   2 +-
- tools/perf/trace/beauty/socket_ipproto.sh          |   1 +
- tools/perf/trace/beauty/socket_type.c              |   2 +-
- tools/perf/trace/beauty/statx.c                    |   3 +-
- tools/perf/trace/beauty/vhost_virtio_ioctl.sh      |   1 +
- tools/perf/trace/beauty/waitid_options.c           |   2 +-
- tools/perf/util/cs-etm.c                           |  39 +-
- tools/perf/util/event.c                            |   1 +
- tools/perf/util/intel-bts.c                        |  17 +-
- tools/perf/util/intel-pt.c                         |  28 +-
- tools/perf/util/machine.c                          |  54 ++-
- tools/perf/util/thread-stack.c                     |  44 ++-
- tools/perf/util/thread-stack.h                     |   2 +-
- tools/perf/util/thread.c                           |  13 +-
- tools/perf/util/thread.h                           |   2 +-
- tools/perf/util/unwind-libdw.c                     |   4 +-
- 68 files changed, 837 insertions(+), 142 deletions(-)
+---
+ tools/include/uapi/linux/fs.h | 393 ++++++++++++++++++++++++++++++++++++++++++
+ tools/perf/check-headers.sh   |   1 +
+ 2 files changed, 394 insertions(+)
  create mode 100644 tools/include/uapi/linux/fs.h
- create mode 100755 tools/perf/trace/beauty/mmap_flags.sh
- create mode 100644 tools/perf/trace/beauty/mount_flags.c
- create mode 100755 tools/perf/trace/beauty/mount_flags.sh
 
-Test results:
+diff --git a/tools/include/uapi/linux/fs.h b/tools/include/uapi/linux/fs.h
+new file mode 100644
+index 000000000000..73e01918f996
+--- /dev/null
++++ b/tools/include/uapi/linux/fs.h
+@@ -0,0 +1,393 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++#ifndef _UAPI_LINUX_FS_H
++#define _UAPI_LINUX_FS_H
++
++/*
++ * This file has definitions for some important file table structures
++ * and constants and structures used by various generic file system
++ * ioctl's.  Please do not make any changes in this file before
++ * sending patches for review to linux-fsdevel@vger.kernel.org and
++ * linux-api@vger.kernel.org.
++ */
++
++#include <linux/limits.h>
++#include <linux/ioctl.h>
++#include <linux/types.h>
++
++/*
++ * It's silly to have NR_OPEN bigger than NR_FILE, but you can change
++ * the file limit at runtime and only root can increase the per-process
++ * nr_file rlimit, so it's safe to set up a ridiculously high absolute
++ * upper limit on files-per-process.
++ *
++ * Some programs (notably those using select()) may have to be 
++ * recompiled to take full advantage of the new limits..  
++ */
++
++/* Fixed constants first: */
++#undef NR_OPEN
++#define INR_OPEN_CUR 1024	/* Initial setting for nfile rlimits */
++#define INR_OPEN_MAX 4096	/* Hard limit for nfile rlimits */
++
++#define BLOCK_SIZE_BITS 10
++#define BLOCK_SIZE (1<<BLOCK_SIZE_BITS)
++
++#define SEEK_SET	0	/* seek relative to beginning of file */
++#define SEEK_CUR	1	/* seek relative to current file position */
++#define SEEK_END	2	/* seek relative to end of file */
++#define SEEK_DATA	3	/* seek to the next data */
++#define SEEK_HOLE	4	/* seek to the next hole */
++#define SEEK_MAX	SEEK_HOLE
++
++#define RENAME_NOREPLACE	(1 << 0)	/* Don't overwrite target */
++#define RENAME_EXCHANGE		(1 << 1)	/* Exchange source and dest */
++#define RENAME_WHITEOUT		(1 << 2)	/* Whiteout source */
++
++struct file_clone_range {
++	__s64 src_fd;
++	__u64 src_offset;
++	__u64 src_length;
++	__u64 dest_offset;
++};
++
++struct fstrim_range {
++	__u64 start;
++	__u64 len;
++	__u64 minlen;
++};
++
++/* extent-same (dedupe) ioctls; these MUST match the btrfs ioctl definitions */
++#define FILE_DEDUPE_RANGE_SAME		0
++#define FILE_DEDUPE_RANGE_DIFFERS	1
++
++/* from struct btrfs_ioctl_file_extent_same_info */
++struct file_dedupe_range_info {
++	__s64 dest_fd;		/* in - destination file */
++	__u64 dest_offset;	/* in - start of extent in destination */
++	__u64 bytes_deduped;	/* out - total # of bytes we were able
++				 * to dedupe from this file. */
++	/* status of this dedupe operation:
++	 * < 0 for error
++	 * == FILE_DEDUPE_RANGE_SAME if dedupe succeeds
++	 * == FILE_DEDUPE_RANGE_DIFFERS if data differs
++	 */
++	__s32 status;		/* out - see above description */
++	__u32 reserved;		/* must be zero */
++};
++
++/* from struct btrfs_ioctl_file_extent_same_args */
++struct file_dedupe_range {
++	__u64 src_offset;	/* in - start of extent in source */
++	__u64 src_length;	/* in - length of extent */
++	__u16 dest_count;	/* in - total elements in info array */
++	__u16 reserved1;	/* must be zero */
++	__u32 reserved2;	/* must be zero */
++	struct file_dedupe_range_info info[0];
++};
++
++/* And dynamically-tunable limits and defaults: */
++struct files_stat_struct {
++	unsigned long nr_files;		/* read only */
++	unsigned long nr_free_files;	/* read only */
++	unsigned long max_files;		/* tunable */
++};
++
++struct inodes_stat_t {
++	long nr_inodes;
++	long nr_unused;
++	long dummy[5];		/* padding for sysctl ABI compatibility */
++};
++
++
++#define NR_FILE  8192	/* this can well be larger on a larger system */
++
++
++/*
++ * These are the fs-independent mount-flags: up to 32 flags are supported
++ */
++#define MS_RDONLY	 1	/* Mount read-only */
++#define MS_NOSUID	 2	/* Ignore suid and sgid bits */
++#define MS_NODEV	 4	/* Disallow access to device special files */
++#define MS_NOEXEC	 8	/* Disallow program execution */
++#define MS_SYNCHRONOUS	16	/* Writes are synced at once */
++#define MS_REMOUNT	32	/* Alter flags of a mounted FS */
++#define MS_MANDLOCK	64	/* Allow mandatory locks on an FS */
++#define MS_DIRSYNC	128	/* Directory modifications are synchronous */
++#define MS_NOATIME	1024	/* Do not update access times. */
++#define MS_NODIRATIME	2048	/* Do not update directory access times */
++#define MS_BIND		4096
++#define MS_MOVE		8192
++#define MS_REC		16384
++#define MS_VERBOSE	32768	/* War is peace. Verbosity is silence.
++				   MS_VERBOSE is deprecated. */
++#define MS_SILENT	32768
++#define MS_POSIXACL	(1<<16)	/* VFS does not apply the umask */
++#define MS_UNBINDABLE	(1<<17)	/* change to unbindable */
++#define MS_PRIVATE	(1<<18)	/* change to private */
++#define MS_SLAVE	(1<<19)	/* change to slave */
++#define MS_SHARED	(1<<20)	/* change to shared */
++#define MS_RELATIME	(1<<21)	/* Update atime relative to mtime/ctime. */
++#define MS_KERNMOUNT	(1<<22) /* this is a kern_mount call */
++#define MS_I_VERSION	(1<<23) /* Update inode I_version field */
++#define MS_STRICTATIME	(1<<24) /* Always perform atime updates */
++#define MS_LAZYTIME	(1<<25) /* Update the on-disk [acm]times lazily */
++
++/* These sb flags are internal to the kernel */
++#define MS_SUBMOUNT     (1<<26)
++#define MS_NOREMOTELOCK	(1<<27)
++#define MS_NOSEC	(1<<28)
++#define MS_BORN		(1<<29)
++#define MS_ACTIVE	(1<<30)
++#define MS_NOUSER	(1<<31)
++
++/*
++ * Superblock flags that can be altered by MS_REMOUNT
++ */
++#define MS_RMT_MASK	(MS_RDONLY|MS_SYNCHRONOUS|MS_MANDLOCK|MS_I_VERSION|\
++			 MS_LAZYTIME)
++
++/*
++ * Old magic mount flag and mask
++ */
++#define MS_MGC_VAL 0xC0ED0000
++#define MS_MGC_MSK 0xffff0000
++
++/*
++ * Structure for FS_IOC_FSGETXATTR[A] and FS_IOC_FSSETXATTR.
++ */
++struct fsxattr {
++	__u32		fsx_xflags;	/* xflags field value (get/set) */
++	__u32		fsx_extsize;	/* extsize field value (get/set)*/
++	__u32		fsx_nextents;	/* nextents field value (get)	*/
++	__u32		fsx_projid;	/* project identifier (get/set) */
++	__u32		fsx_cowextsize;	/* CoW extsize field value (get/set)*/
++	unsigned char	fsx_pad[8];
++};
++
++/*
++ * Flags for the fsx_xflags field
++ */
++#define FS_XFLAG_REALTIME	0x00000001	/* data in realtime volume */
++#define FS_XFLAG_PREALLOC	0x00000002	/* preallocated file extents */
++#define FS_XFLAG_IMMUTABLE	0x00000008	/* file cannot be modified */
++#define FS_XFLAG_APPEND		0x00000010	/* all writes append */
++#define FS_XFLAG_SYNC		0x00000020	/* all writes synchronous */
++#define FS_XFLAG_NOATIME	0x00000040	/* do not update access time */
++#define FS_XFLAG_NODUMP		0x00000080	/* do not include in backups */
++#define FS_XFLAG_RTINHERIT	0x00000100	/* create with rt bit set */
++#define FS_XFLAG_PROJINHERIT	0x00000200	/* create with parents projid */
++#define FS_XFLAG_NOSYMLINKS	0x00000400	/* disallow symlink creation */
++#define FS_XFLAG_EXTSIZE	0x00000800	/* extent size allocator hint */
++#define FS_XFLAG_EXTSZINHERIT	0x00001000	/* inherit inode extent size */
++#define FS_XFLAG_NODEFRAG	0x00002000	/* do not defragment */
++#define FS_XFLAG_FILESTREAM	0x00004000	/* use filestream allocator */
++#define FS_XFLAG_DAX		0x00008000	/* use DAX for IO */
++#define FS_XFLAG_COWEXTSIZE	0x00010000	/* CoW extent size allocator hint */
++#define FS_XFLAG_HASATTR	0x80000000	/* no DIFLAG for this	*/
++
++/* the read-only stuff doesn't really belong here, but any other place is
++   probably as bad and I don't want to create yet another include file. */
++
++#define BLKROSET   _IO(0x12,93)	/* set device read-only (0 = read-write) */
++#define BLKROGET   _IO(0x12,94)	/* get read-only status (0 = read_write) */
++#define BLKRRPART  _IO(0x12,95)	/* re-read partition table */
++#define BLKGETSIZE _IO(0x12,96)	/* return device size /512 (long *arg) */
++#define BLKFLSBUF  _IO(0x12,97)	/* flush buffer cache */
++#define BLKRASET   _IO(0x12,98)	/* set read ahead for block device */
++#define BLKRAGET   _IO(0x12,99)	/* get current read ahead setting */
++#define BLKFRASET  _IO(0x12,100)/* set filesystem (mm/filemap.c) read-ahead */
++#define BLKFRAGET  _IO(0x12,101)/* get filesystem (mm/filemap.c) read-ahead */
++#define BLKSECTSET _IO(0x12,102)/* set max sectors per request (ll_rw_blk.c) */
++#define BLKSECTGET _IO(0x12,103)/* get max sectors per request (ll_rw_blk.c) */
++#define BLKSSZGET  _IO(0x12,104)/* get block device sector size */
++#if 0
++#define BLKPG      _IO(0x12,105)/* See blkpg.h */
++
++/* Some people are morons.  Do not use sizeof! */
++
++#define BLKELVGET  _IOR(0x12,106,size_t)/* elevator get */
++#define BLKELVSET  _IOW(0x12,107,size_t)/* elevator set */
++/* This was here just to show that the number is taken -
++   probably all these _IO(0x12,*) ioctls should be moved to blkpg.h. */
++#endif
++/* A jump here: 108-111 have been used for various private purposes. */
++#define BLKBSZGET  _IOR(0x12,112,size_t)
++#define BLKBSZSET  _IOW(0x12,113,size_t)
++#define BLKGETSIZE64 _IOR(0x12,114,size_t)	/* return device size in bytes (u64 *arg) */
++#define BLKTRACESETUP _IOWR(0x12,115,struct blk_user_trace_setup)
++#define BLKTRACESTART _IO(0x12,116)
++#define BLKTRACESTOP _IO(0x12,117)
++#define BLKTRACETEARDOWN _IO(0x12,118)
++#define BLKDISCARD _IO(0x12,119)
++#define BLKIOMIN _IO(0x12,120)
++#define BLKIOOPT _IO(0x12,121)
++#define BLKALIGNOFF _IO(0x12,122)
++#define BLKPBSZGET _IO(0x12,123)
++#define BLKDISCARDZEROES _IO(0x12,124)
++#define BLKSECDISCARD _IO(0x12,125)
++#define BLKROTATIONAL _IO(0x12,126)
++#define BLKZEROOUT _IO(0x12,127)
++/*
++ * A jump here: 130-131 are reserved for zoned block devices
++ * (see uapi/linux/blkzoned.h)
++ */
++
++#define BMAP_IOCTL 1		/* obsolete - kept for compatibility */
++#define FIBMAP	   _IO(0x00,1)	/* bmap access */
++#define FIGETBSZ   _IO(0x00,2)	/* get the block size used for bmap */
++#define FIFREEZE	_IOWR('X', 119, int)	/* Freeze */
++#define FITHAW		_IOWR('X', 120, int)	/* Thaw */
++#define FITRIM		_IOWR('X', 121, struct fstrim_range)	/* Trim */
++#define FICLONE		_IOW(0x94, 9, int)
++#define FICLONERANGE	_IOW(0x94, 13, struct file_clone_range)
++#define FIDEDUPERANGE	_IOWR(0x94, 54, struct file_dedupe_range)
++
++#define FSLABEL_MAX 256	/* Max chars for the interface; each fs may differ */
++
++#define	FS_IOC_GETFLAGS			_IOR('f', 1, long)
++#define	FS_IOC_SETFLAGS			_IOW('f', 2, long)
++#define	FS_IOC_GETVERSION		_IOR('v', 1, long)
++#define	FS_IOC_SETVERSION		_IOW('v', 2, long)
++#define FS_IOC_FIEMAP			_IOWR('f', 11, struct fiemap)
++#define FS_IOC32_GETFLAGS		_IOR('f', 1, int)
++#define FS_IOC32_SETFLAGS		_IOW('f', 2, int)
++#define FS_IOC32_GETVERSION		_IOR('v', 1, int)
++#define FS_IOC32_SETVERSION		_IOW('v', 2, int)
++#define FS_IOC_FSGETXATTR		_IOR('X', 31, struct fsxattr)
++#define FS_IOC_FSSETXATTR		_IOW('X', 32, struct fsxattr)
++#define FS_IOC_GETFSLABEL		_IOR(0x94, 49, char[FSLABEL_MAX])
++#define FS_IOC_SETFSLABEL		_IOW(0x94, 50, char[FSLABEL_MAX])
++
++/*
++ * File system encryption support
++ */
++/* Policy provided via an ioctl on the topmost directory */
++#define FS_KEY_DESCRIPTOR_SIZE	8
++
++#define FS_POLICY_FLAGS_PAD_4		0x00
++#define FS_POLICY_FLAGS_PAD_8		0x01
++#define FS_POLICY_FLAGS_PAD_16		0x02
++#define FS_POLICY_FLAGS_PAD_32		0x03
++#define FS_POLICY_FLAGS_PAD_MASK	0x03
++#define FS_POLICY_FLAGS_VALID		0x03
++
++/* Encryption algorithms */
++#define FS_ENCRYPTION_MODE_INVALID		0
++#define FS_ENCRYPTION_MODE_AES_256_XTS		1
++#define FS_ENCRYPTION_MODE_AES_256_GCM		2
++#define FS_ENCRYPTION_MODE_AES_256_CBC		3
++#define FS_ENCRYPTION_MODE_AES_256_CTS		4
++#define FS_ENCRYPTION_MODE_AES_128_CBC		5
++#define FS_ENCRYPTION_MODE_AES_128_CTS		6
++#define FS_ENCRYPTION_MODE_SPECK128_256_XTS	7
++#define FS_ENCRYPTION_MODE_SPECK128_256_CTS	8
++
++struct fscrypt_policy {
++	__u8 version;
++	__u8 contents_encryption_mode;
++	__u8 filenames_encryption_mode;
++	__u8 flags;
++	__u8 master_key_descriptor[FS_KEY_DESCRIPTOR_SIZE];
++};
++
++#define FS_IOC_SET_ENCRYPTION_POLICY	_IOR('f', 19, struct fscrypt_policy)
++#define FS_IOC_GET_ENCRYPTION_PWSALT	_IOW('f', 20, __u8[16])
++#define FS_IOC_GET_ENCRYPTION_POLICY	_IOW('f', 21, struct fscrypt_policy)
++
++/* Parameters for passing an encryption key into the kernel keyring */
++#define FS_KEY_DESC_PREFIX		"fscrypt:"
++#define FS_KEY_DESC_PREFIX_SIZE		8
++
++/* Structure that userspace passes to the kernel keyring */
++#define FS_MAX_KEY_SIZE			64
++
++struct fscrypt_key {
++	__u32 mode;
++	__u8 raw[FS_MAX_KEY_SIZE];
++	__u32 size;
++};
++
++/*
++ * Inode flags (FS_IOC_GETFLAGS / FS_IOC_SETFLAGS)
++ *
++ * Note: for historical reasons, these flags were originally used and
++ * defined for use by ext2/ext3, and then other file systems started
++ * using these flags so they wouldn't need to write their own version
++ * of chattr/lsattr (which was shipped as part of e2fsprogs).  You
++ * should think twice before trying to use these flags in new
++ * contexts, or trying to assign these flags, since they are used both
++ * as the UAPI and the on-disk encoding for ext2/3/4.  Also, we are
++ * almost out of 32-bit flags.  :-)
++ *
++ * We have recently hoisted FS_IOC_FSGETXATTR / FS_IOC_FSSETXATTR from
++ * XFS to the generic FS level interface.  This uses a structure that
++ * has padding and hence has more room to grow, so it may be more
++ * appropriate for many new use cases.
++ *
++ * Please do not change these flags or interfaces before checking with
++ * linux-fsdevel@vger.kernel.org and linux-api@vger.kernel.org.
++ */
++#define	FS_SECRM_FL			0x00000001 /* Secure deletion */
++#define	FS_UNRM_FL			0x00000002 /* Undelete */
++#define	FS_COMPR_FL			0x00000004 /* Compress file */
++#define FS_SYNC_FL			0x00000008 /* Synchronous updates */
++#define FS_IMMUTABLE_FL			0x00000010 /* Immutable file */
++#define FS_APPEND_FL			0x00000020 /* writes to file may only append */
++#define FS_NODUMP_FL			0x00000040 /* do not dump file */
++#define FS_NOATIME_FL			0x00000080 /* do not update atime */
++/* Reserved for compression usage... */
++#define FS_DIRTY_FL			0x00000100
++#define FS_COMPRBLK_FL			0x00000200 /* One or more compressed clusters */
++#define FS_NOCOMP_FL			0x00000400 /* Don't compress */
++/* End compression flags --- maybe not all used */
++#define FS_ENCRYPT_FL			0x00000800 /* Encrypted file */
++#define FS_BTREE_FL			0x00001000 /* btree format dir */
++#define FS_INDEX_FL			0x00001000 /* hash-indexed directory */
++#define FS_IMAGIC_FL			0x00002000 /* AFS directory */
++#define FS_JOURNAL_DATA_FL		0x00004000 /* Reserved for ext3 */
++#define FS_NOTAIL_FL			0x00008000 /* file tail should not be merged */
++#define FS_DIRSYNC_FL			0x00010000 /* dirsync behaviour (directories only) */
++#define FS_TOPDIR_FL			0x00020000 /* Top of directory hierarchies*/
++#define FS_HUGE_FILE_FL			0x00040000 /* Reserved for ext4 */
++#define FS_EXTENT_FL			0x00080000 /* Extents */
++#define FS_EA_INODE_FL			0x00200000 /* Inode used for large EA */
++#define FS_EOFBLOCKS_FL			0x00400000 /* Reserved for ext4 */
++#define FS_NOCOW_FL			0x00800000 /* Do not cow file */
++#define FS_INLINE_DATA_FL		0x10000000 /* Reserved for ext4 */
++#define FS_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
++#define FS_RESERVED_FL			0x80000000 /* reserved for ext2 lib */
++
++#define FS_FL_USER_VISIBLE		0x0003DFFF /* User visible flags */
++#define FS_FL_USER_MODIFIABLE		0x000380FF /* User modifiable flags */
++
++
++#define SYNC_FILE_RANGE_WAIT_BEFORE	1
++#define SYNC_FILE_RANGE_WRITE		2
++#define SYNC_FILE_RANGE_WAIT_AFTER	4
++
++/*
++ * Flags for preadv2/pwritev2:
++ */
++
++typedef int __bitwise __kernel_rwf_t;
++
++/* high priority request, poll if possible */
++#define RWF_HIPRI	((__force __kernel_rwf_t)0x00000001)
++
++/* per-IO O_DSYNC */
++#define RWF_DSYNC	((__force __kernel_rwf_t)0x00000002)
++
++/* per-IO O_SYNC */
++#define RWF_SYNC	((__force __kernel_rwf_t)0x00000004)
++
++/* per-IO, return -EAGAIN if operation would block */
++#define RWF_NOWAIT	((__force __kernel_rwf_t)0x00000008)
++
++/* per-IO O_APPEND */
++#define RWF_APPEND	((__force __kernel_rwf_t)0x00000010)
++
++/* mask of flags supported by the kernel */
++#define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
++			 RWF_APPEND)
++
++#endif /* _UAPI_LINUX_FS_H */
+diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
+index c72cc73a6b09..9531f7bd7d9b 100755
+--- a/tools/perf/check-headers.sh
++++ b/tools/perf/check-headers.sh
+@@ -5,6 +5,7 @@ HEADERS='
+ include/uapi/drm/drm.h
+ include/uapi/drm/i915_drm.h
+ include/uapi/linux/fcntl.h
++include/uapi/linux/fs.h
+ include/uapi/linux/kcmp.h
+ include/uapi/linux/kvm.h
+ include/uapi/linux/in.h
+-- 
+2.14.4
 
-The first ones are container (docker) based builds of tools/perf with
-and without libelf support.  Where clang is available, it is also used
-to build perf with/without libelf, and building with LIBCLANGLLVM=1
-(built-in clang) with gcc and clang when clang and its devel libraries
-are installed.
-
-The objtool and samples/bpf/ builds are disabled now that I'm switching from
-using the sources in a local volume to fetching them from a http server to
-build it inside the container, to make it easier to build in a container cluster.
-Those will come back later.
-
-Several are cross builds, the ones with -x-ARCH and the android one, and those
-may not have all the features built, due to lack of multi-arch devel packages,
-available and being used so far on just a few, like
-debian:experimental-x-{arm64,mipsel}.
-
-The 'perf test' one will perform a variety of tests exercising
-tools/perf/util/, tools/lib/{bpf,traceevent,etc}, as well as run perf commands
-with a variety of command line event specifications to then intercept the
-sys_perf_event syscall to check that the perf_event_attr fields are set up as
-expected, among a variety of other unit tests.
-
-Then there is the 'make -C tools/perf build-test' ones, that build tools/perf/
-with a variety of feature sets, exercising the build with an incomplete set of
-features as well as with a complete one. It is planned to have it run on each
-of the containers mentioned above, using some container orchestration
-infrastructure. Get in contact if interested in helping having this in place.
-
-The failures are minor and will be fixed soon.
-
-  50     6.21 ubuntu:16.04-x-arm64          : FAIL aarch64-linux-gnu-gcc (Ubuntu/Linaro 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
-
-This one is related to smp_load_{acquire,release} expansions in this specific
-gcc version, reported to Daniel Borkmann
-
-  60     3.70 ubuntu:18.04-x-m68k           : FAIL m68k-linux-gnu-gcc (Ubuntu 7.3.0-27ubuntu1~18.04) 7.3.0
-  64     3.48 ubuntu:18.04-x-riscv64        : FAIL riscv64-linux-gnu-gcc (Ubuntu 7.3.0-27ubuntu1~18.04) 7.3.0
-
-These two need mman.h files added to its directories in tools/arch/, will fix later.
-
-  66     3.84 ubuntu:18.04-x-sh4            : FAIL sh4-linux-gnu-gcc (Ubuntu 7.3.0-27ubuntu1~18.04) 7.3.0
-
-Needs to normalize sh4 -> sh so that it finds
-tools/arch/sh/include/uapi/asm/mman.h.
-
-  # dm
-   1 alpine:3.4                    : Ok   gcc (Alpine 5.3.0) 5.3.0
-   2 alpine:3.5                    : Ok   gcc (Alpine 6.2.1) 6.2.1 20160822
-   3 alpine:3.6                    : Ok   gcc (Alpine 6.3.0) 6.3.0
-   4 alpine:3.7                    : Ok   gcc (Alpine 6.4.0) 6.4.0
-   5 alpine:3.8                    : Ok   gcc (Alpine 6.4.0) 6.4.0
-   6 alpine:edge                   : Ok   gcc (Alpine 6.4.0) 6.4.0
-   7 amazonlinux:1                 : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-28)
-   8 amazonlinux:2                 : Ok   gcc (GCC) 7.3.1 20180303 (Red Hat 7.3.1-5)
-   9 android-ndk:r12b-arm          : Ok   arm-linux-androideabi-gcc (GCC) 4.9.x 20150123 (prerelease)
-  10 android-ndk:r15c-arm          : Ok   arm-linux-androideabi-gcc (GCC) 4.9.x 20150123 (prerelease)
-  11 centos:5                      : Ok   gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-55)
-  12 centos:6                      : Ok   gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-23)
-  13 centos:7                      : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-28)
-  14 clearlinux:latest             : Ok   gcc (Clear Linux OS for Intel Architecture) 8.2.1 20180502
-  15 debian:7                      : Ok   gcc (Debian 4.7.2-5) 4.7.2
-  16 debian:8                      : Ok   gcc (Debian 4.9.2-10+deb8u1) 4.9.2
-  17 debian:9                      : Ok   gcc (Debian 6.3.0-18+deb9u1) 6.3.0 20170516
-  18 debian:experimental           : Ok   gcc (Debian 8.2.0-8) 8.2.0
-  19 debian:experimental-x-arm64   : Ok   aarch64-linux-gnu-gcc (Debian 8.2.0-7) 8.2.0
-  20 debian:experimental-x-mips    : Ok   mips-linux-gnu-gcc (Debian 8.2.0-7) 8.2.0
-  21 debian:experimental-x-mips64  : Ok   mips64-linux-gnuabi64-gcc (Debian 8.1.0-12) 8.1.0
-  22 debian:experimental-x-mipsel  : Ok   mipsel-linux-gnu-gcc (Debian 8.2.0-7) 8.2.0
-  23 fedora:20                     : Ok   gcc (GCC) 4.8.3 20140911 (Red Hat 4.8.3-7)
-  24 fedora:21                     : Ok   gcc (GCC) 4.9.2 20150212 (Red Hat 4.9.2-6)
-  25 fedora:22                     : Ok   gcc (GCC) 5.3.1 20160406 (Red Hat 5.3.1-6)
-  26 fedora:23                     : Ok   gcc (GCC) 5.3.1 20160406 (Red Hat 5.3.1-6)
-  27 fedora:24                     : Ok   gcc (GCC) 6.3.1 20161221 (Red Hat 6.3.1-1)
-  28 fedora:24-x-ARC-uClibc        : Ok   arc-linux-gcc (ARCompact ISA Linux uClibc toolchain 2017.09-rc2) 7.1.1 20170710
-  29 fedora:25                     : Ok   gcc (GCC) 6.4.1 20170727 (Red Hat 6.4.1-1)
-  30 fedora:26                     : Ok   gcc (GCC) 7.3.1 20180130 (Red Hat 7.3.1-2)
-  31 fedora:27                     : Ok   gcc (GCC) 7.3.1 20180712 (Red Hat 7.3.1-6)
-  32 fedora:28                     : Ok   gcc (GCC) 8.1.1 20180712 (Red Hat 8.1.1-5)
-  33 fedora:29                     : Ok   gcc (GCC) 8.2.1 20181011 (Red Hat 8.2.1-4)
-  34 fedora:rawhide                : Ok   gcc (GCC) 8.2.1 20180905 (Red Hat 8.2.1-3)
-  35 gentoo-stage3-amd64:latest    : Ok   gcc (Gentoo 7.3.0-r3 p1.4) 7.3.0
-  36 mageia:5                      : Ok   gcc (GCC) 4.9.2
-  37 mageia:6                      : Ok   gcc (Mageia 5.5.0-1.mga6) 5.5.0
-  38 opensuse:13.2                 : Ok   gcc (SUSE Linux) 4.8.3 20140627 [gcc-4_8-branch revision 212064]
-  39 opensuse:42.1                 : Ok   gcc (SUSE Linux) 4.8.5
-  40 opensuse:42.2                 : Ok   gcc (SUSE Linux) 4.8.5
-  41 opensuse:42.3                 : Ok   gcc (SUSE Linux) 4.8.5
-  42 opensuse:tumbleweed           : Ok   gcc (SUSE Linux) 7.3.1 20180323 [gcc-7-branch revision 258812]
-  43 oraclelinux:6                 : Ok   gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-23.0.1)
-  44 oraclelinux:7                 : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-28.0.1)
-  45 ubuntu:12.04.5                : Ok   gcc (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3
-  46 ubuntu:14.04.4                : Ok   gcc (Ubuntu 4.8.4-2ubuntu1~14.04.3) 4.8.4
-  47 ubuntu:14.04.4-x-linaro-arm64 : Ok   aarch64-linux-gnu-gcc (Linaro GCC 5.5-2017.10) 5.5.0
-  48 ubuntu:16.04                  : Ok   gcc (Ubuntu 5.4.0-6ubuntu1~16.04.10) 5.4.0 20160609
-  49 ubuntu:16.04-x-arm            : Ok   arm-linux-gnueabihf-gcc (Ubuntu/Linaro 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
-  50 ubuntu:16.04-x-arm64          : FAIL aarch64-linux-gnu-gcc (Ubuntu/Linaro 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
-  51 ubuntu:16.04-x-powerpc        : Ok   powerpc-linux-gnu-gcc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
-  52 ubuntu:16.04-x-powerpc64      : Ok   powerpc64-linux-gnu-gcc (Ubuntu/IBM 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
-  53 ubuntu:16.04-x-powerpc64el    : Ok   powerpc64le-linux-gnu-gcc (Ubuntu/IBM 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
-  54 ubuntu:16.04-x-s390           : Ok   s390x-linux-gnu-gcc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
-  55 ubuntu:16.10                  : Ok   gcc (Ubuntu 6.2.0-5ubuntu12) 6.2.0 20161005
-  56 ubuntu:17.10                  : Ok   gcc (Ubuntu 7.2.0-8ubuntu3.2) 7.2.0
-  57 ubuntu:18.04                  : Ok   gcc (Ubuntu 7.3.0-27ubuntu1~18.04) 7.3.0
-  58 ubuntu:18.04-x-arm            : Ok   arm-linux-gnueabihf-gcc (Ubuntu/Linaro 7.3.0-27ubuntu1~18.04) 7.3.0
-  59 ubuntu:18.04-x-arm64          : Ok   aarch64-linux-gnu-gcc (Ubuntu/Linaro 7.3.0-27ubuntu1~18.04) 7.3.0
-  60 ubuntu:18.04-x-m68k           : FAIL m68k-linux-gnu-gcc (Ubuntu 7.3.0-27ubuntu1~18.04) 7.3.0
-  61 ubuntu:17.04-x-powerpc        : Ok   powerpc-linux-gnu-gcc (Ubuntu 7.3.0-27ubuntu1~18.04) 7.3.0
-  62 ubuntu:18.04-x-powerpc64      : Ok   powerpc64-linux-gnu-gcc (Ubuntu 7.3.0-27ubuntu1~18.04) 7.3.0
-  63 ubuntu:18.04-x-powerpc64el    : Ok   powerpc64le-linux-gnu-gcc (Ubuntu 7.3.0-27ubuntu1~18.04) 7.3.0
-  64 ubuntu:18.04-x-riscv64        : FAIL riscv64-linux-gnu-gcc (Ubuntu 7.3.0-27ubuntu1~18.04) 7.3.0
-  65 ubuntu:18.04-x-s390           : Ok   s390x-linux-gnu-gcc (Ubuntu 7.3.0-27ubuntu1~18.04) 7.3.0
-  66 ubuntu:18.04-x-sh4            : FAIL sh4-linux-gnu-gcc (Ubuntu 7.3.0-27ubuntu1~18.04) 7.3.0
-  67 ubuntu:18.04-x-sparc64        : Ok   sparc64-linux-gnu-gcc (Ubuntu 7.3.0-27ubuntu1~18.04) 7.3.0
-  68 ubuntu:18.10                  : Ok   gcc (Ubuntu 8.2.0-7ubuntu1) 8.2.0
-
-  # uname -a
-  Linux seventh 4.19.0-rc8-00014-gc0cff31be705 #1 SMP Wed Oct 17 09:00:22 -03 2018 x86_64 x86_64 x86_64 GNU/Linux
-  # git log --oneline -1
-  5d4f0edaa3ac perf intel-pt/bts: Calculate cpumode for synthesized samples
-  # perf version --build-options
-  perf version 4.19.g5d4f0e
-                   dwarf: [ on  ]  # HAVE_DWARF_SUPPORT
-      dwarf_getlocations: [ on  ]  # HAVE_DWARF_GETLOCATIONS_SUPPORT
-                   glibc: [ on  ]  # HAVE_GLIBC_SUPPORT
-                    gtk2: [ on  ]  # HAVE_GTK2_SUPPORT
-           syscall_table: [ on  ]  # HAVE_SYSCALL_TABLE_SUPPORT
-                  libbfd: [ on  ]  # HAVE_LIBBFD_SUPPORT
-                  libelf: [ on  ]  # HAVE_LIBELF_SUPPORT
-                 libnuma: [ on  ]  # HAVE_LIBNUMA_SUPPORT
-  numa_num_possible_cpus: [ on  ]  # HAVE_LIBNUMA_SUPPORT
-                 libperl: [ on  ]  # HAVE_LIBPERL_SUPPORT
-               libpython: [ on  ]  # HAVE_LIBPYTHON_SUPPORT
-                libslang: [ on  ]  # HAVE_SLANG_SUPPORT
-               libcrypto: [ on  ]  # HAVE_LIBCRYPTO_SUPPORT
-               libunwind: [ on  ]  # HAVE_LIBUNWIND_SUPPORT
-      libdw-dwarf-unwind: [ on  ]  # HAVE_DWARF_SUPPORT
-                    zlib: [ on  ]  # HAVE_ZLIB_SUPPORT
-                    lzma: [ on  ]  # HAVE_LZMA_SUPPORT
-               get_cpuid: [ on  ]  # HAVE_AUXTRACE_SUPPORT
-                     bpf: [ on  ]  # HAVE_LIBBPF_SUPPORT
-  # perf test
-   1: vmlinux symtab matches kallsyms                       : Ok
-   2: Detect openat syscall event                           : Ok
-   3: Detect openat syscall event on all cpus               : Ok
-   4: Read samples using the mmap interface                 : Ok
-   5: Test data source output                               : Ok
-   6: Parse event definition strings                        : Ok
-   7: Simple expression parser                              : Ok
-   8: PERF_RECORD_* events & perf_sample fields             : Ok
-   9: Parse perf pmu format                                 : Ok
-  10: DSO data read                                         : Ok
-  11: DSO data cache                                        : Ok
-  12: DSO data reopen                                       : Ok
-  13: Roundtrip evsel->name                                 : Ok
-  14: Parse sched tracepoints fields                        : Ok
-  15: syscalls:sys_enter_openat event fields                : Ok
-  16: Setup struct perf_event_attr                          : Ok
-  17: Match and link multiple hists                         : Ok
-  18: 'import perf' in python                               : Ok
-  19: Breakpoint overflow signal handler                    : Ok
-  20: Breakpoint overflow sampling                          : Ok
-  21: Breakpoint accounting                                 : Ok
-  22: Watchpoint                                            :
-  22.1: Read Only Watchpoint                                : Skip
-  22.2: Write Only Watchpoint                               : Ok
-  22.3: Read / Write Watchpoint                             : Ok
-  22.4: Modify Watchpoint                                   : Ok
-  23: Number of exit events of a simple workload            : Ok
-  24: Software clock events period values                   : Ok
-  25: Object code reading                                   : Ok
-  26: Sample parsing                                        : Ok
-  27: Use a dummy software event to keep tracking           : Ok
-  28: Parse with no sample_id_all bit set                   : Ok
-  29: Filter hist entries                                   : Ok
-  30: Lookup mmap thread                                    : Ok
-  31: Share thread mg                                       : Ok
-  32: Sort output of hist entries                           : Ok
-  33: Cumulate child hist entries                           : Ok
-  34: Track with sched_switch                               : Ok
-  35: Filter fds with revents mask in a fdarray             : Ok
-  36: Add fd to a fdarray, making it autogrow               : Ok
-  37: kmod_path__parse                                      : Ok
-  38: Thread map                                            : Ok
-  39: LLVM search and compile                               :
-  39.1: Basic BPF llvm compile                              : Ok
-  39.2: kbuild searching                                    : Ok
-  39.3: Compile source for BPF prologue generation          : Ok
-  39.4: Compile source for BPF relocation                   : Ok
-  40: Session topology                                      : Ok
-  41: BPF filter                                            :
-  41.1: Basic BPF filtering                                 : Ok
-  41.2: BPF pinning                                         : Ok
-  41.3: BPF prologue generation                             : Ok
-  41.4: BPF relocation checker                              : Ok
-  42: Synthesize thread map                                 : Ok
-  43: Remove thread map                                     : Ok
-  44: Synthesize cpu map                                    : Ok
-  45: Synthesize stat config                                : Ok
-  46: Synthesize stat                                       : Ok
-  47: Synthesize stat round                                 : Ok
-  48: Synthesize attr update                                : Ok
-  49: Event times                                           : Ok
-  50: Read backward ring buffer                             : Ok
-  51: Print cpu map                                         : Ok
-  52: Probe SDT events                                      : Ok
-  53: is_printable_array                                    : Ok
-  54: Print bitmap                                          : Ok
-  55: perf hooks                                            : Ok
-  56: builtin clang support                                 : Skip (not compiled in)
-  57: unit_number__scnprintf                                : Ok
-  58: mem2node                                              : Ok
-  59: x86 rdpmc                                             : Ok
-  60: Convert perf time to TSC                              : Ok
-  61: DWARF unwind                                          : Ok
-  62: x86 instruction decoder - new instructions            : Ok
-  63: x86 bp modify                                         : Ok
-  64: probe libc's inet_pton & backtrace it with ping       : Ok
-  65: Check open filename arg using perf trace + vfs_getname: Ok
-  66: Use vfs_getname probe to get syscall args filenames   : Ok
-  67: Add vfs_getname probe to get syscall args filenames   : Ok
-
-  $ make -C tools/perf build-test
-  make: Entering directory '/home/acme/git/perf/tools/perf'
-  - tarpkg: ./tests/perf-targz-src-pkg .
-         make_with_clangllvm_O: make LIBCLANGLLVM=1
-             make_no_libperl_O: make NO_LIBPERL=1
-         make_install_prefix_O: make install prefix=/tmp/krava
-   make_install_prefix_slash_O: make install prefix=/tmp/krava/
-           make_no_libpython_O: make NO_LIBPYTHON=1
-                 make_perf_o_O: make perf.o
-                 make_static_O: make LDFLAGS=-static
-                make_no_newt_O: make NO_NEWT=1
-            make_no_auxtrace_O: make NO_AUXTRACE=1
-       make_util_pmu_bison_o_O: make util/pmu-bison.o
-             make_util_map_o_O: make util/map.o
-                make_minimal_O: make NO_LIBPERL=1 NO_LIBPYTHON=1 NO_NEWT=1 NO_GTK2=1 NO_DEMANGLE=1 NO_LIBELF=1 NO_LIBUNWIND=1 NO_BACKTRACE=1 NO_LIBNUMA=1 NO_LIBAUDIT=1 NO_LIBBIONIC=1 NO_LIBDW_DWARF_UNWIND=1 NO_AUXTRACE=1 NO_LIBBPF=1 NO_LIBCRYPTO=1 NO_SDT=1 NO_JVMTI=1
-              make_no_libelf_O: make NO_LIBELF=1
-           make_no_backtrace_O: make NO_BACKTRACE=1
-              make_no_libbpf_O: make NO_LIBBPF=1
-           make_no_libunwind_O: make NO_LIBUNWIND=1
-                make_no_gtk2_O: make NO_GTK2=1
-            make_install_bin_O: make install-bin
-            make_no_demangle_O: make NO_DEMANGLE=1
-           make_no_libbionic_O: make NO_LIBBIONIC=1
-             make_no_libnuma_O: make NO_LIBNUMA=1
-        make_with_babeltrace_O: make LIBBABELTRACE=1
-                   make_pure_O: make
-                   make_tags_O: make tags
-  make_no_libdw_dwarf_unwind_O: make NO_LIBDW_DWARF_UNWIND=1
-                make_install_O: make install
-              make_clean_all_O: make clean all
-               make_no_slang_O: make NO_SLANG=1
-                    make_doc_O: make doc
-                  make_debug_O: make DEBUG=1
-            make_no_libaudit_O: make NO_LIBAUDIT=1
-                   make_help_O: make help
-                  make_no_ui_O: make NO_NEWT=1 NO_SLANG=1 NO_GTK2=1
-             make_no_scripts_O: make NO_LIBPYTHON=1 NO_LIBPERL=1
-  OK
-  make: Leaving directory '/home/acme/git/perf/tools/perf'
-  $
