@@ -2,129 +2,125 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAB9CC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 05:58:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE9C4C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 06:01:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A09A20838
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 05:58:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5360120838
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 06:01:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nfwEarNh";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Qh+YyDNu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A09A20838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="wTLD8ys8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5360120838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729061AbeJaOzM (ORCPT
+        id S1728347AbeJaO5p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 10:55:12 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:40342 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725989AbeJaOzL (ORCPT
+        Wed, 31 Oct 2018 10:57:45 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:43368 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbeJaO5p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 10:55:11 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9DB42605A2; Wed, 31 Oct 2018 05:58:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540965512;
-        bh=9MnElDSYSY0yEQgIH0BvYY30V27yJAHOHsBiRLpqttU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=nfwEarNhZ4h6hU37/FLAVpKOZzgq130G+0GlzqXBDjE4yqr42+vDojKJHxnfIXbJY
-         Ti0hw6niv4MrPpxrmMZPTf5uvODnHiM+uuAP6kIKBB1pRufjrtTiRFj7sshG5v+PtJ
-         28nKr/LmSPFDeMT4V6jpheJUY7rgjd1kiSagYPQM=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id D4E9D60112;
-        Wed, 31 Oct 2018 05:58:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540965511;
-        bh=9MnElDSYSY0yEQgIH0BvYY30V27yJAHOHsBiRLpqttU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Qh+YyDNuDi5W3vh9xava3TOhGhRWtLNmzURA6SlBSD0wjY6B5Le+JZd+6HA5mx1qO
-         6K9l0G7mj0c+uLvqYyXZyblTeUkp20zCwPIlsoIIa+wTHcmmkFZo4T3gE7Me8eZAG1
-         Z09QkYxh42xehg3/annFYU59igDEZ+0o2Ma0Fl3E=
+        Wed, 31 Oct 2018 10:57:45 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9V5xOsP080705;
+        Wed, 31 Oct 2018 06:00:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=reply-to : subject :
+ to : cc : references : from : message-id : date : mime-version :
+ in-reply-to : content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=gns1bkZk+ljdH1f9lOhhVAH9LtH2qjy8RxTDVDfewqQ=;
+ b=wTLD8ys8H3edK4ygnGZINepq2cnwhESZ+wrDsuT+Uo4cguo9iKXybQy3RgZGcXvU296S
+ spwrfb5qBwFKN1SqfAE0UjFYQw3WEx1wXjLEa6yY8udX3TQq4LJfUCR4Twd0jj2ODQGQ
+ kdhZYSevqytX+uiOpYcBiAy45Tj4CBULAYRQn26E3aPm/ampVZDsI46vaiIYAJZDeIDp
+ 3YzKEzlhHalF23PvnkIp0BbCH7VZf31lzY++wxvjVM1RQ6qq5AsuEAsrKDe25rLVv1vG
+ bpnebpuU2zY31NMWjr9vsMoCwRX7leQMOChHlSB4lqjolVqtfGnefiB/KHBXRZ0F37H6 iQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2nducm5717-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 31 Oct 2018 06:00:37 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9V60aUI015223
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 31 Oct 2018 06:00:36 GMT
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9V60aPD019657;
+        Wed, 31 Oct 2018 06:00:36 GMT
+Received: from [10.191.22.95] (/10.191.22.95)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 30 Oct 2018 23:00:35 -0700
+Reply-To: zhenzhong.duan@oracle.com
+Subject: Re: [PATCH 3/3] kprobes/x86: Simplify indirect-jump check in
+ retpoline
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Linux-Kernel <linux-kernel@vger.kernel.org>, mingo@redhat.com,
+        konrad.wilk@oracle.com, dwmw@amazon.co.uk, tglx@linutronix.de,
+        Srinivas REDDY Eeda <srinivas.eeda@oracle.com>, bp@suse.de,
+        hpa@zytor.com
+References: <cc8f9981-f327-4238-8378-262579584db4@default>
+ <20181030083650.GB1459@hirez.programming.kicks-ass.net>
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Organization: Oracle
+Message-ID: <849ae148-85cd-5f46-d98b-b827cc9c605c@oracle.com>
+Date:   Wed, 31 Oct 2018 14:01:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <20181030083650.GB1459@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Wed, 31 Oct 2018 11:28:31 +0530
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Evan Green <evgreen@chromium.org>, benchan@chromium.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        tsoni@codeaurora.org
-Subject: Re: [PATCH] arm64: dts: qcom: sdm845: Add reserve-memory nodes
-In-Reply-To: <CAD=FV=Xf7NXTV_OtBePn9QUQbzdkMxdYg-yRua_6SbV-av3P+g@mail.gmail.com>
-References: <20181026122745.5094-1-sibis@codeaurora.org>
- <CAD=FV=Xf7NXTV_OtBePn9QUQbzdkMxdYg-yRua_6SbV-av3P+g@mail.gmail.com>
-Message-ID: <d2648e22591576fd01b311feca99112f@codeaurora.org>
-X-Sender: sibis@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9062 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810310051
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Doug,
-Thanks for the review!
+On 2018/10/30 16:36, Peter Zijlstra wrote:
+> On Mon, Oct 29, 2018 at 11:55:06PM -0700, Zhenzhong Duan wrote:
+>> Since CONFIG_RETPOLINE hard depends on compiler support now, so
+>> replacing indirect-jump check with the range check is safe in that case.
+> 
+> Can we put kprobes on module init text before we run alternatives on it?
 
-I noticed both the quirks just after sending it out :(, will fix them.
+Forgive me I doesn't understand your question. Do you mean this patch 
+impact kprobes on module init text?
 
+> 
+>> @@ -240,20 +242,16 @@ static int insn_jump_into_range(struct insn *insn, unsigned long start, int len)
+>>   
+>>   static int insn_is_indirect_jump(struct insn *insn)
+>>   {
+>> -	int ret = __insn_is_indirect_jump(insn);
+>> +	int ret;
+>>   
+>>   #ifdef CONFIG_RETPOLINE
+>> -	/*
+>> -	 * Jump to x86_indirect_thunk_* is treated as an indirect jump.
+>> -	 * Note that even with CONFIG_RETPOLINE=y, the kernel compiled with
+>> -	 * older gcc may use indirect jump. So we add this check instead of
+>> -	 * replace indirect-jump check.
+>> -	 */
+>> -	if (!ret)
+>> +	/* Jump to x86_indirect_thunk_* is treated as an indirect jump. */
+>>   		ret = insn_jump_into_range(insn,
+>>   				(unsigned long)__indirect_thunk_start,
+>>   				(unsigned long)__indirect_thunk_end -
+>>   				(unsigned long)__indirect_thunk_start);
+>> +#else
+>> +		ret = __insn_is_indirect_jump(insn);
+>>   #endif
+>>   	return ret;
+>>   }
+> 
+> The resulting code is indented wrong.
+> 
 
-On 2018-10-30 00:07, Doug Anderson wrote:
-> Hi,
-> 
-> On Fri, Oct 26, 2018 at 5:28 AM Sibi Sankar <sibis@codeaurora.org> 
-> wrote:
->> 
->> Add reserve-memory nodes for mpss and mba required for
->> remoteproc mss pil.
->> 
->> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
->> ---
->>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 10 ++++++++++
->>  1 file changed, 10 insertions(+)
->> 
->> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi 
->> b/arch/arm64/boot/dts/qcom/sdm845.dtsi
->> index d3fe012ad84e..f74892e447f9 100644
->> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
->> @@ -88,6 +88,16 @@
->>                         reg = <0 0x86200000 0 0x2d00000>;
->>                         no-map;
->>                 };
->> +
->> +               mpss_region: reserved-memory@8e000000 {
->> +                       no-map;
->> +                       reg = <0 0x8e000000 0 0x7800000>;
->> +               };
->> +
->> +               mba_region: reserved-memory@96500000 {
-> 
-> nit: All of the other reserved memory in this same section just has
-> the node name "memory".  Can you please follow suit?  Also above.
-> This is the kind of thing that Rob H. usually cares about doing right.
-> 
->> +                       no-map;
->> +                       reg = <0 0x96500000 0 0x200000>;
-> 
-> nit: All of the other reserved memory in this same section has "reg"
-> above "no-map".  It doesn't matter a whole lot, but why not make it
-> match everyone else?  Also above.
-> 
-> 
-> -Doug
+Oh, yes. Thanks for point out.
 
--- 
--- Sibi Sankar --
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+Zhenzhong
