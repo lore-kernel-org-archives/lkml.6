@@ -7,44 +7,42 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF5FAECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9012DECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:23:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5AE62084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:23:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BCCB20847
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:23:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="L7f9vACG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5AE62084A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bX+h/brI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BCCB20847
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731285AbeKAIKv (ORCPT
+        id S1731504AbeKAIYD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:10:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33708 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:24:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731171AbeKAIKt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:10:49 -0400
+        id S1731273AbeKAIKv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:10:51 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8A582081B;
-        Wed, 31 Oct 2018 23:10:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3EF432085A;
+        Wed, 31 Oct 2018 23:10:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027437;
-        bh=yDKLQAmi375Q/rKRchJEi4pGyhCpYmV4iYrVyJZ5AJY=;
+        s=default; t=1541027439;
+        bh=WOVdlvI1JvA7EmpZrvzZCkoMwjwnNILBmMBYiH0By7I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L7f9vACG1OZEhnxObO0uis0ZIc09c4Byu3xLsBuSDufuuJnh01BkyqCscvkt1oS22
-         x0DtsDneAo0S4AJV/YyD29BgxX6k/EK+VP5poWbRw07Suv/UviLZGH7Qkx0UnFoJo9
-         ggSYrgPvcENJn8a9yxGhPnDA1/2N9tQi49OYKv40=
+        b=bX+h/brIYjcu8UwvKWzDFgwZBTUrWGCib89ad7QZrqqdsJ97KTkKr+qQuhZticPKt
+         CVtnCfGw9XKJwLaV5RGEekaRK0wHJyfA+ZFNGFn6KaVZrnoqrWOaTvLoyeuwirGK81
+         3CHp3moyY2Aqs7SZsEJW38uugI+EjtTFjIEIiwwM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 54/73] PCI / ACPI: Enable wake automatically for power managed bridges
-Date:   Wed, 31 Oct 2018 19:09:29 -0400
-Message-Id: <20181031230948.29203-54-sashal@kernel.org>
+Cc:     Shaohua Li <shli@fb.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 57/73] MD: fix invalid stored role for a disk
+Date:   Wed, 31 Oct 2018 19:09:32 -0400
+Message-Id: <20181031230948.29203-57-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230948.29203-1-sashal@kernel.org>
 References: <20181031230948.29203-1-sashal@kernel.org>
@@ -53,76 +51,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Shaohua Li <shli@fb.com>
 
-[ Upstream commit 6299cf9ec3985cac70bede8a855b5087b81a6640 ]
+[ Upstream commit d595567dc4f0c1d90685ec1e2e296e2cad2643ac ]
 
-We enable power management automatically for bridges where
-pci_bridge_d3_possible() returns true. However, these bridges may have
-ACPI methods such as _DSW that need to be called before D3 entry. For
-example in Lenovo Thinkpad X1 Carbon 6th _DSW method is used to prepare
-D3cold for the PCIe root port hosting Thunderbolt chain. Because wake is
-not enabled _DSW method is never called and the port does not enter
-D3cold properly consuming more power than necessary.
+If we change the number of array's device after device is removed from array,
+then add the device back to array, we can see that device is added as active
+role instead of spare which we expected.
 
-Users can work this around by writing "enabled" to "wakeup" sysfs file
-under the device in question but that is not something an ordinary user
-is expected to do.
+Please see the below link for details:
+https://marc.info/?l=linux-raid&m=153736982015076&w=2
 
-Since we already automatically enable power management for PCIe ports
-with ->bridge_d3 set extend that to enable wake for them as well,
-assuming the port has any ACPI wakeup related objects implemented in the
-namespace (adev->wakeup.flags.valid is true). This ensures the necessary
-ACPI methods get called at appropriate times and allows the root port in
-Thinkpad X1 Carbon 6th to go into D3cold.
+This is caused by that we prefer to use device's previous role which is
+recorded by saved_raid_disk, but we should respect the new number of
+conf->raid_disks since it could be changed after device is removed.
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reported-by: Gioh Kim <gi-oh.kim@profitbricks.com>
+Tested-by: Gioh Kim <gi-oh.kim@profitbricks.com>
+Acked-by: Guoqing Jiang <gqjiang@suse.com>
+Signed-off-by: Shaohua Li <shli@fb.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/pci-acpi.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ drivers/md/md.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
-index 4708eb9df71b..a3cedf8de863 100644
---- a/drivers/pci/pci-acpi.c
-+++ b/drivers/pci/pci-acpi.c
-@@ -738,19 +738,33 @@ static void pci_acpi_setup(struct device *dev)
- 		return;
- 
- 	device_set_wakeup_capable(dev, true);
-+	/*
-+	 * For bridges that can do D3 we enable wake automatically (as
-+	 * we do for the power management itself in that case). The
-+	 * reason is that the bridge may have additional methods such as
-+	 * _DSW that need to be called.
-+	 */
-+	if (pci_dev->bridge_d3)
-+		device_wakeup_enable(dev);
-+
- 	acpi_pci_wakeup(pci_dev, false);
- }
- 
- static void pci_acpi_cleanup(struct device *dev)
- {
- 	struct acpi_device *adev = ACPI_COMPANION(dev);
-+	struct pci_dev *pci_dev = to_pci_dev(dev);
- 
- 	if (!adev)
- 		return;
- 
- 	pci_acpi_remove_pm_notifier(adev);
--	if (adev->wakeup.flags.valid)
-+	if (adev->wakeup.flags.valid) {
-+		if (pci_dev->bridge_d3)
-+			device_wakeup_disable(dev);
-+
- 		device_set_wakeup_capable(dev, false);
-+	}
- }
- 
- static bool pci_acpi_bus_match(struct device *dev)
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index 5599712d478e..4c1a6abed606 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -1766,6 +1766,10 @@ static int super_1_validate(struct mddev *mddev, struct md_rdev *rdev)
+ 			} else
+ 				set_bit(In_sync, &rdev->flags);
+ 			rdev->raid_disk = role;
++			if (role >= mddev->raid_disks) {
++				rdev->saved_raid_disk = -1;
++				rdev->raid_disk = -1;
++			}
+ 			break;
+ 		}
+ 		if (sb->devflags & WriteMostly1)
 -- 
 2.17.1
 
