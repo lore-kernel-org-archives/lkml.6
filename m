@@ -2,108 +2,104 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F52C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 17:47:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 987B1ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 17:53:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0154220657
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 17:47:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0154220657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=electrozaur.com
+	by mail.kernel.org (Postfix) with ESMTP id 5CFDD2081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 17:53:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="ilDIcmkR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CFDD2081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729949AbeKACq4 (ORCPT
+        id S1729944AbeKACwI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 22:46:56 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53132 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729745AbeKACq4 (ORCPT
+        Wed, 31 Oct 2018 22:52:08 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:36930 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729437AbeKACwI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 22:46:56 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 189-v6so16010479wmw.2;
-        Wed, 31 Oct 2018 10:47:54 -0700 (PDT)
+        Wed, 31 Oct 2018 22:52:08 -0400
+Received: by mail-lf1-f67.google.com with SMTP id p17so5876152lfh.4
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 10:53:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=g0IrHxduBcZHFMvoPRPZebBFVY7/ASRAbySjIVIKC2A=;
+        b=ilDIcmkRI2jh7+drVrTBaREQk0chT/L0w5Awlan9QPVa6R4kZ3VMdvreLxSlSunKFW
+         +SpiU13ANsBHAnrr0yN/KPuhG8XkndbEFP2YAr6qLTXtn7enXHf+yBNhTRvTHzXEPYo4
+         aAXzPYdzFunV3Eo2sMUtdfokA8umAPrgXRsg3NOHNHVBNn/CSPAZ+WxZPYygfa2E5w4s
+         1XaRHm1pZ75wpNv77eU7lj9YfpQJIaFcqnwypL6QSI3y13rGPMYytJ6MKJ6SYwFtd/YE
+         ohU2EM2hNXFzbEncHId0XSdFfznF1D3lN67VZ/fKQZIvfFr0L/niQZRUi2FlL/WLeNoN
+         0wmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=BhDGAK0BcgCBiOTQRWaZcJpY9AuY8QHgMr5CyJ+vI50=;
-        b=Xd4gK1Z4/+QcXmEZ7s1w6pGQEJ0mtj4392a3Cxt/KAfjteC6ynp+PgK780EvtBBFWH
-         WgeI8tSixoohNN6u4ilERnrbqx1/wvZwbYPkwDi16va5BRYdOxt+eAhL+2R/LsQr4syD
-         r1O1/r53LHm6gtPoX8MSrO6Homg0ErmrB3JZ61vPx54Woias4JJffoHz9lFwSC+EP1QD
-         LkoT6I1KEmDg9W5DXZiHXLyBXEM8p5WFKZKMOet+NqyTDvQ5iHBayoH5wulrGMjRnzCi
-         EUKAEIVSPqZKpeCAFSq30aSZxSKxX836Nv3bwsT1hrHiaidUa9XJFu0hWlLDeyNYp4sZ
-         vleg==
-X-Gm-Message-State: AGRZ1gIyodRGSnV1q0FbOts51GoKxKeyyN19yWoaHW7LMs/jnNrBpC16
-        f+pp0AR9GRBOYtZvadesLy0usuJb
-X-Google-Smtp-Source: AJdET5dFkdn7IWo/RD/Cey+7bFcjpmCsK0UKPUsk/pI9cGXwoIep3FEUYvEp/sOtJ9e0d1Wb5RWnQw==
-X-Received: by 2002:a1c:e714:: with SMTP id e20-v6mr3004960wmh.83.1541008072985;
-        Wed, 31 Oct 2018 10:47:52 -0700 (PDT)
-Received: from [10.0.0.5] ([207.232.55.62])
-        by smtp.gmail.com with ESMTPSA id t82-v6sm20041893wme.30.2018.10.31.10.47.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 10:47:52 -0700 (PDT)
-Subject: Re: remove exofs and the T10 OSD code V2
-To:     Bart Van Assche <bvanassche@acm.org>,
-        Christoph Hellwig <hch@lst.de>, martin.petersen@oracle.com
-References: <20181027082019.20838-1-hch@lst.de>
- <c9740eeb-6b96-35b6-a436-7537669da1a9@electrozaur.com>
- <1541006979.196084.138.camel@acm.org>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        osd-dev@open-osd.org, linux-scsi@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Boaz Harrosh <ooo@electrozaur.com>
-Message-ID: <6794b3a0-fe57-cd8b-3ad3-3a590121b12a@electrozaur.com>
-Date:   Wed, 31 Oct 2018 19:47:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=g0IrHxduBcZHFMvoPRPZebBFVY7/ASRAbySjIVIKC2A=;
+        b=LOWeJkmTMe/AoEDdOY2q+7+2EyxuBEXcNHZQpNatVmNkZPsajIYknDCIUbvGoRu2hu
+         V41wx1s5+3f7bLBU+pakM/U9X8fu5+EtP3R9n9DINYTG4x2GoDfLLm9FijT6ocM6OE/U
+         VH+Ub6cWIUWxIEFECPNvs12uGvuRdi/7Zi4BhWA8nqLZfzb9e8NvTprb+Yz2lwQLblY7
+         VZYrmEGYkgpAkvn3DZKniDAmh5mu5knT15ZbmL9ZHYKjEz+rY0h3sykVl6HWlWQ7uUN8
+         aNKfvDPNH2DiwOP6Ng2+2z1j0tcc43aE73WEUDjXG5HgyATYiN8Q3z/bmVisk1+Eluvv
+         RSTw==
+X-Gm-Message-State: AGRZ1gIxedp0FzvsPK3cIY766eEuj2RgQtEqxLeM6Zyca1sL7bIJaBhJ
+        +GKdNbcaze07Eky257UEJUffGnF11QNSj25FsS89YA==
+X-Google-Smtp-Source: AJdET5eO6mD6lP2Itc47/yOLIyL8e6knEwHpm5DofhD+vkwPtPQfUJZvJ3gC1WgdsL86wKOnxbnMw4EH/qZiGNCbs1A=
+X-Received: by 2002:a19:df41:: with SMTP id q1mr2582969lfj.25.1541008384704;
+ Wed, 31 Oct 2018 10:53:04 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1541006979.196084.138.camel@acm.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+References: <20181031064709.30981-1-olof@lixom.net> <mhng-74b51433-1762-4741-935d-56ca1b3548a0@palmer-si-x1c4>
+In-Reply-To: <mhng-74b51433-1762-4741-935d-56ca1b3548a0@palmer-si-x1c4>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Wed, 31 Oct 2018 10:52:51 -0700
+Message-ID: <CAOesGMgWDM+Etng3bNU-Yem6+WRJEu+TfddzKoN-htno1Az3=w@mail.gmail.com>
+Subject: Re: [PATCH 0/3] RISC-V: A few build/warning fixes and cleanup
+To:     Palmer Dabbelt <palmer@sifive.com>
+Cc:     Albert Ou <aou@eecs.berkeley.edu>, Zong Li <zongbox@gmail.com>,
+        linux-riscv@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/10/18 19:29, Bart Van Assche wrote:
-> On Wed, 2018-10-31 at 18:34 +0200, Boaz Harrosh wrote:
->> On 27/10/18 11:20, Christoph Hellwig wrote:
->>> The only real user of the T10 OSD protocol, the pNFS object layout
->>> driver never went to the point of having shipping products, and we
->>> removed it 1.5 years ago.  Exofs is just a simple example without
->>> real life users.
->>>
->>> The code has been mostly unmaintained for years and is getting in the
->>> way of block / SCSI changes, so I think it's finally time to drop it.
->>>
->>> Quote from Boaz:
->>>
->>> "As I said then. It is used in Universities for studies and experiments.
->>> Every once in a while. I get an email with questions and reports.
->>>
->>> But yes feel free to remove the all thing!!
->>
->> I think I'm changing my mind about this.
->> [ ... ]
-> 
-> The osd driver was accepted in the upstream kernel in 2009. I have checked all
-> commits in Linus' tree for the osd driver that went in since 2009. All changes
-> made by other kernel developers than you are the result of tree-wide refactoring,
-> compiler warning fixes, fixes for issues detected by static source code
-> analyzers or spelling fixes. Hence my question: how big is the user base of the
-> exofs and osd kernel drivers? 
-> 
+Hi,
 
-Not big at all. And none of them production setups. As I said mainly used
-by academia.
+On Wed, Oct 31, 2018 at 10:09 AM Palmer Dabbelt <palmer@sifive.com> wrote:
+>
+> On Tue, 30 Oct 2018 23:47:06 PDT (-0700), Olof Johansson wrote:
+> > A couple of fixes for build breakage or warnings, and a small whitespace/asm
+> > cleanup. The non-cleanups would be good to see in 4.20 to keep builds green.
+>
+> I'm happy to just keep them all together, since the cleanups are non-functional
+> changes.  Patch 1/3 appears to have disappeared from my inbox and I can't get
+> to the infradead archives, do you mind re-sending it?
 
-Thanks
-Boaz
+Sure, check inbox in a few minutes.
 
-> Thanks,
-> Bart.
+> This also brings up a bigger issue: I need to stop breaking the build,
+> particularly as we now support a bunch of configurations.  Is your CI stuff
+> still running?  It'd be great to have it run against some of our integration
+> branches so I can catch these before they make it upstream.  I haven't been
+> getting any emails.
 
+I've migrated machines to a new system and that CI is up and running.
+Right now the emails don't go anywhere but me, but let me know where
+you want them sent and I'll be happy to do so (probably not
+linux-riscv due to volume/noise). They're also uploaded to
+http://arm-soc.lixom.net/buildlogs/riscv/.
+
+Since you keep single-patch branches in your tree, and I compile
+everything for every branch, I've restricted what branches I poll and
+build. Right now it's "for*" and "riscv*".
+
+
+-Olof
