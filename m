@@ -2,116 +2,122 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB291C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BD02C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:44:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46C2220664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:44:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 441C720664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:44:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="U3xdc9tR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46C2220664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fd7K3c0p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 441C720664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729266AbeKAIo6 (ORCPT
+        id S1729308AbeKAIpM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:44:58 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:7174 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728964AbeKAIo5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:44:57 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bda3e530000>; Wed, 31 Oct 2018 16:44:19 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 31 Oct 2018 16:44:34 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 31 Oct 2018 16:44:34 -0700
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 31 Oct
- 2018 23:44:34 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Wed, 31 Oct 2018 23:44:34 +0000
-Received: from vdumpa-ubuntu.nvidia.com (Not Verified[172.17.173.140]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5bda3e570004>; Wed, 31 Oct 2018 16:44:34 -0700
-From:   Krishna Reddy <vdumpa@nvidia.com>
-To:     <will.deacon@arm.com>, <robin.murphy@arm.com>, <joro@8bytes.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <treding@nvidia.com>,
-        <yhsu@nvidia.com>, <snikam@nvidia.com>, <praithatha@nvidia.com>,
-        <talho@nvidia.com>, <avanbrunt@nvidia.com>, <nicolinc@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>
-Subject: [PATCH v2 0/5] Add Tegra194 Dual ARM SMMU driver
-Date:   Wed, 31 Oct 2018 16:43:45 -0700
-Message-ID: <1541029430-14150-1-git-send-email-vdumpa@nvidia.com>
-X-Mailer: git-send-email 2.1.4
-X-NVConfidentiality: public
-MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1541029459; bh=ZaaMTIa6v2NWOtPxYwF2QbPw3hjJCTiME0tR4tMuFP0=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=U3xdc9tRgj7PM1LnKznuSg4tX2J/Xo8JbOM6klmipGMVwc0VnVG+xxPfQuaSHvp/W
-         wkoES9bPoBA0VkEBXAoRL/KbeD7P56G97h2+Ynbyb9xa0/QCVgQa0ZbyXaezgjohB3
-         86NvufF6OnyfMfMSAnCFUxEW1dRDSaU/7X1R7PYB82jpcXOH4S28xnw8fWL+Yha/rs
-         C3Thm3y3CImZdjB8X6rg/y2WABSUUdGYuwZzTd+7IplEPX9qCxARcH4cPqiVj3v1JM
-         5lBCliNZrLM/uW+w9VaeYtLHDuh+vd0HbvR2j7Wm9gogtvmA9+haLHURHdf08s2rbh
-         jvFSHhQxVJE3w==
+        Thu, 1 Nov 2018 04:45:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55386 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728948AbeKAIHb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:07:31 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 323A220664;
+        Wed, 31 Oct 2018 23:07:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541027241;
+        bh=7rU3CT/K4Vz5EVwVCBxraRVK9bYBIoBpjI/z4XCXqQE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=fd7K3c0pzgleFwS3lBLQC6IWnc4Opw/Q2rwZny3pk6MCn6Dd2VxbLl6fleclEwild
+         BziADdntqwlJCXIcVgilGLXowS/Yk0YSN6x37T0QTxs69hqWL1RsWBHPpiq7t4Rjig
+         TaFSv0ZudEGi1JKakEZ6wptXdw+h/pNN+PgVzkXM=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Dexuan Cui <decui@microsoft.com>,
+        "K . Y . Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Stable@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 109/146] Drivers: hv: kvp: Fix two "this statement may fall through" warnings
+Date:   Wed, 31 Oct 2018 19:05:04 -0400
+Message-Id: <20181031230541.28822-109-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
+References: <20181031230541.28822-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-NVIDIA's Xavier (Tegra194) SOC has three ARM SMMU(MMU-500) instances.
-Two of the SMMU instances are used to interleave IOVA accesses across them.
-The IOVA accesses from HW devices are interleaved across these two SMMU instances
-and they need to be programmed identical.
+From: Dexuan Cui <decui@microsoft.com>
 
-The existing ARM SMMU driver can't be used in its current form for programming the
-two SMMU instances identically. But, most of the code can be shared between ARM SMMU
-driver and Tegra194 SMMU driver.
-Page fault handling and TLB sync operations need to know about specific instance
-of SMMU for correct fault handling and optimal TLB sync wait. Rest of the code doesn't
-need to know about number of SMMU instances. Based on this fact, The patch series here
-rearranges the arm-smmu.c code to allow sharing most of the ARM SMMU programming/iommu_ops
-code between ARM SMMU driver and Tegra194 SMMU driver and transparently
-handles programming of two SMMU instances.
+[ Upstream commit fc62c3b1977d62e6374fd6e28d371bb42dfa5c9d ]
 
-The third SMMU instance would use the existing ARM SMMU driver.
+We don't need to call process_ib_ipinfo() if message->kvp_hdr.operation is
+KVP_OP_GET_IP_INFO in kvp_send_key(), because here we just need to pass on
+the op code from the host to the userspace; when the userspace returns
+the info requested by the host, we pass the info on to the host in
+kvp_respond_to_host() -> process_ob_ipinfo(). BTW, the current buggy code
+actually doesn't cause any harm, because only message->kvp_hdr.operation
+is used by the userspace, in the case of KVP_OP_GET_IP_INFO.
 
-Changes in v2:
-* Added CONFIG_ARM_SMMU_TEGRA to protect Tegra194 SMMU driver compilation
-* Enabled CONFIG_ARM_SMMU_TEGRA in defconfig
-* Added SMMU nodes in Tegra194 device tree
+The patch also adds a missing "break;" in kvp_send_key(). BTW, the current
+buggy code actually doesn't cause any harm, because in the case of
+KVP_OP_SET, the unexpected fall-through corrupts
+message->body.kvp_set.data.key_size, but that is not really used: see
+the definition of struct hv_kvp_exchg_msg_value.
 
-Krishna Reddy (5):
-  iommu/arm-smmu: rearrange arm-smmu.c code
-  iommu/arm-smmu: Prepare fault, probe, sync functions for sharing code
-  iommu/tegra194_smmu: Add Tegra194 SMMU driver
-  arm64: defconfig: Enable ARM_SMMU_TEGRA
-  arm64: tegra: Add SMMU nodes to Tegra194 device tree
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/hv/hv_kvp.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
- arch/arm64/boot/dts/nvidia/tegra194.dtsi |  148 ++
- arch/arm64/configs/defconfig             |    1 +
- drivers/iommu/Kconfig                    |   10 +
- drivers/iommu/Makefile                   |    1 +
- drivers/iommu/arm-smmu-common.c          | 1971 +++++++++++++++++++++++++++
- drivers/iommu/arm-smmu-common.h          |  256 ++++
- drivers/iommu/arm-smmu.c                 | 2167 +-----------------------------
- drivers/iommu/tegra194-smmu.c            |  201 +++
- 8 files changed, 2595 insertions(+), 2160 deletions(-)
- create mode 100644 drivers/iommu/arm-smmu-common.c
- create mode 100644 drivers/iommu/arm-smmu-common.h
- create mode 100644 drivers/iommu/tegra194-smmu.c
-
+diff --git a/drivers/hv/hv_kvp.c b/drivers/hv/hv_kvp.c
+index 5eed1e7da15c..57715a0c8120 100644
+--- a/drivers/hv/hv_kvp.c
++++ b/drivers/hv/hv_kvp.c
+@@ -353,7 +353,6 @@ static void process_ib_ipinfo(void *in_msg, void *out_msg, int op)
+ 
+ 		out->body.kvp_ip_val.dhcp_enabled = in->kvp_ip_val.dhcp_enabled;
+ 
+-	default:
+ 		utf16s_to_utf8s((wchar_t *)in->kvp_ip_val.adapter_id,
+ 				MAX_ADAPTER_ID_SIZE,
+ 				UTF16_LITTLE_ENDIAN,
+@@ -406,7 +405,7 @@ kvp_send_key(struct work_struct *dummy)
+ 		process_ib_ipinfo(in_msg, message, KVP_OP_SET_IP_INFO);
+ 		break;
+ 	case KVP_OP_GET_IP_INFO:
+-		process_ib_ipinfo(in_msg, message, KVP_OP_GET_IP_INFO);
++		/* We only need to pass on message->kvp_hdr.operation.  */
+ 		break;
+ 	case KVP_OP_SET:
+ 		switch (in_msg->body.kvp_set.data.value_type) {
+@@ -446,6 +445,9 @@ kvp_send_key(struct work_struct *dummy)
+ 			break;
+ 
+ 		}
++
++		break;
++
+ 	case KVP_OP_GET:
+ 		message->body.kvp_set.data.key_size =
+ 			utf16s_to_utf8s(
 -- 
-2.1.4
+2.17.1
 
