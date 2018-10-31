@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9306BC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA80ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:27:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5838920847
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:26:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4019E20847
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:27:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SCurcFgB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5838920847
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tn27mf0E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4019E20847
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731015AbeKAIK0 (ORCPT
+        id S1731229AbeKAI1Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:10:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32926 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:27:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731000AbeKAIK0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:10:26 -0400
+        id S1730974AbeKAIKY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:10:24 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A85E420838;
-        Wed, 31 Oct 2018 23:10:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D24D2064C;
+        Wed, 31 Oct 2018 23:10:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027414;
-        bh=FjF0sxzkT6nEUZLq6yowJ/HrHE4IiKXSwG4ehYfem20=;
+        s=default; t=1541027412;
+        bh=6j4QWqlfuxcnan2613gO4k8zZZO6NT3Wz+utt/o07LM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SCurcFgBr0JrmAKBu2jXoDvp/bgQYiZd45/43KB8qZnYfeepb2O/1ai83HwMAq54m
-         M1bV44EM4UzKIuqN1dDckUiL2wIst0jCB8CAi+7H7pPFobx06AhMHIk2UXPRetXl2l
-         r861lXJzmZugFv/9a0IPBCPS4NTKnvPKUl/eOCH0=
+        b=Tn27mf0ESUdxeB+EkXOLSOlLzJJThY2HoR2PQ+XmMQZVad+RyUrKxneNqqckHcEWV
+         pnKQNG/MI6Vt6IE4Dc9hzJ1H2G6MikKDI/BTOMczH2soRiHegooKeddn82iIgbEyI7
+         z6pV1wTd9JN23rO7Cm5LzwL3Q3xcecl/8zAf7LAI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     YueHaibing <yuehaibing@huawei.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 28/73] net: phy: phylink: ensure the carrier is off when starting phylink
-Date:   Wed, 31 Oct 2018 19:09:03 -0400
-Message-Id: <20181031230948.29203-28-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 26/73] pinctrl: qcom: spmi-mpp: Fix err handling of pmic_mpp_set_mux
+Date:   Wed, 31 Oct 2018 19:09:01 -0400
+Message-Id: <20181031230948.29203-26-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230948.29203-1-sashal@kernel.org>
 References: <20181031230948.29203-1-sashal@kernel.org>
@@ -53,40 +53,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Antoine Tenart <antoine.tenart@bootlin.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit aeeb2e8fdefdd5d257a1446351c70cb3df540199 ]
+[ Upstream commit 69f8455f6cc78fa6cdf80d0105d7a748106271dc ]
 
-Phylink made an assumption about the carrier state being down when
-calling phylink_start(). If this assumption isn't satisfied, the
-internal phylink state could misbehave and a net device could end up not
-being functional.
+'ret' should be returned while pmic_mpp_write_mode_ctl fails.
 
-This patch fixes this by explicitly calling netif_carrier_off() in
-phylink_start().
-
-Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
-Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 0e948042c420 ("pinctrl: qcom: spmi-mpp: Implement support for sink mode")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/phy/phylink.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
-index e4a6ed88b9cf..9b8b9242fb61 100644
---- a/drivers/net/phy/phylink.c
-+++ b/drivers/net/phy/phylink.c
-@@ -747,6 +747,9 @@ void phylink_start(struct phylink *pl)
- 		    phylink_an_mode_str(pl->link_an_mode),
- 		    phy_modes(pl->link_config.interface));
+diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
+index 6556dbeae65e..418bc40df7ca 100644
+--- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
++++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
+@@ -319,6 +319,8 @@ static int pmic_mpp_set_mux(struct pinctrl_dev *pctldev, unsigned function,
+ 	pad->function = function;
  
-+	/* Always set the carrier off */
-+	netif_carrier_off(pl->netdev);
-+
- 	/* Apply the link configuration to the MAC when starting. This allows
- 	 * a fixed-link to start with the correct parameters, and also
- 	 * ensures that we set the appropriate advertisment for Serdes links.
+ 	ret = pmic_mpp_write_mode_ctl(state, pad);
++	if (ret < 0)
++		return ret;
+ 
+ 	val = pad->is_enabled << PMIC_MPP_REG_MASTER_EN_SHIFT;
+ 
 -- 
 2.17.1
 
