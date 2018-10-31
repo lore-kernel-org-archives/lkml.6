@@ -2,117 +2,111 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C94ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B2D9C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:36:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39F5B20657
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:35:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E893020657
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:36:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="HX1HCtfC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39F5B20657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QTwGdeXh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E893020657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730343AbeKADeU (ORCPT
+        id S1730381AbeKADfg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 23:34:20 -0400
-Received: from mail-lj1-f175.google.com ([209.85.208.175]:40381 "EHLO
-        mail-lj1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730000AbeKADeT (ORCPT
+        Wed, 31 Oct 2018 23:35:36 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:37444 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730366AbeKADfg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 23:34:19 -0400
-Received: by mail-lj1-f175.google.com with SMTP id t22-v6so15772825lji.7
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 11:35:06 -0700 (PDT)
+        Wed, 31 Oct 2018 23:35:36 -0400
+Received: by mail-yw1-f65.google.com with SMTP id v77-v6so6886541ywc.4
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 11:36:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=FQUsOhAwBp6jUI+p9eH6uJvgprhroMji27yeTbkEtYw=;
-        b=HX1HCtfCWHRHiOj2HkHJDfDrTd4kEr78eixfg0e6rWvwpA7/uGXm9eodLrEPPSmkLR
-         T6eFpq3xr9sSb0Gt5gR4U076chSuyETG6i/zwGInoKxBWXkx73wAjixl+dShcfe0Gytx
-         cBBXuLj4YLiD9mMIgY99h0mtoDjMO3oLW63pM=
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=gpsKMomm+GrwtRyJAOCXyuHRERr88MbuDosKAbF5u+Q=;
+        b=QTwGdeXh+dkfNtq+grhyiYFNttpNehW40M6FOwgG3o6+i4JlA4Hc3STgvdklW18bYj
+         R0OIx7fHJlWrdetcQ05N/zEvmnrpXKwDhaIqUYMM+Z41xH65zinBMFBfi+9j7l2eKBeb
+         xicsDFETy+9dpgloJgAzKvzot3xOt/376LG2Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=FQUsOhAwBp6jUI+p9eH6uJvgprhroMji27yeTbkEtYw=;
-        b=QTiFnJT0jNjnWnFe/+GnXySHpUhnebBw4j5Oyu9Zh1qJ8NOu6hwcvd2x9iTvlGTmfg
-         sTbPrhKJmdHPsLJDje47a0qIrKtPD2WxPfW/T8cwAGK/kfbcQdwBMWGiC+vT+MZYLoaT
-         uFn6GaVlo4JbcsGIjFOZxPm/3mKaCw6gNSK2uGWP2OYKL7YdX1oyfAG/4v8uHb2cWf8B
-         oSVA/XgWYDXYxKTe6v6zafUWu14J8IXGQaSH4jokPQ+2PwaGk4YWa5JEIuuOXmM0tJdI
-         guhcqvIjWrC3nQOHUMLfmpTI2+PUs6GWxp5Y8BkWmJOTHRMCoPHlTVl5iNdgwVJlR1KZ
-         iQag==
-X-Gm-Message-State: AGRZ1gIaKyljyQAu4EJDHk1oMM4jNfSjXfPr4ODe2BIR8YHN7ziIqzY/
-        U9Q92gPfZfd9scL98NbRaIxRzhE042AZ/A==
-X-Google-Smtp-Source: AJdET5dIDaXP1/3LkVjiO3w1fDAWajhEr/8Rpdy2JUoeHu87lufSO08TtY8dJljWVFRDKeY3/yqfiA==
-X-Received: by 2002:a2e:2909:: with SMTP id u9-v6mr2822451lje.28.1541010905107;
-        Wed, 31 Oct 2018 11:35:05 -0700 (PDT)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id p13-v6sm3315477ljh.31.2018.10.31.11.35.01
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=gpsKMomm+GrwtRyJAOCXyuHRERr88MbuDosKAbF5u+Q=;
+        b=JgNLGoqDBooIRjkG4AVj0p+5ir6UvktmvkvmKzCOfMBZh78tz9F1eYqpTPkCenbha3
+         aA/H7ioveMrlv6ABNR0ebycGfaT8xhrTUwv4ut947vVldevi1QpBKLOy7VmnOWTgJ5sV
+         tF9Kd9ErJ7ZlQGUcfKflzSYnttSk6KytzUPdZBY3I0AjM1rsK6HpBdHSNwpWK8YHc1uY
+         Otci2Xo9QIJoh7Hh/TABrPH06ObpvHj/2duRQHU9P8x641GA2GZ5ztoywhAZ41LuMJmj
+         VJZ52DIP74337jX77PTjOeiYdmjw8wBhVwKrnyk8UQZmClweAPrMYkY2SISYJrzN7CFT
+         vD4g==
+X-Gm-Message-State: AGRZ1gKufkRVtEx4E6x0ioPEkZabIDl3lo8U0JaOiNgDxPZXIQDZnVFK
+        YYJ0pmEJ2+aOU/xq0Mc8GWbeofpaaKU=
+X-Google-Smtp-Source: AJdET5dPLo1Bqr6yFbh/HwDGBTlP1bvBaqfFOw/KtSB1TuxNQGJfdGUnPYN956rjLimPrA7qmBIxbw==
+X-Received: by 2002:a81:1701:: with SMTP id 1-v6mr4349825ywx.120.1541010982637;
+        Wed, 31 Oct 2018 11:36:22 -0700 (PDT)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
+        by smtp.gmail.com with ESMTPSA id k85-v6sm6900617ywa.76.2018.10.31.11.36.19
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 11:35:02 -0700 (PDT)
-Received: by mail-lj1-f179.google.com with SMTP id z80-v6so9723837ljb.8
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 11:35:01 -0700 (PDT)
-X-Received: by 2002:a2e:874e:: with SMTP id q14-v6mr755549ljj.120.1541010900998;
- Wed, 31 Oct 2018 11:35:00 -0700 (PDT)
+        Wed, 31 Oct 2018 11:36:20 -0700 (PDT)
+Received: by mail-yb1-f177.google.com with SMTP id t13-v6so928993ybb.8
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 11:36:19 -0700 (PDT)
+X-Received: by 2002:a25:3588:: with SMTP id c130-v6mr4393880yba.410.1541010978747;
+ Wed, 31 Oct 2018 11:36:18 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAHk-=wjS6cjjP+fkZWzzrdZ_fZ1F=PrAGcBc57vKCpNyoD73Vw@mail.gmail.com>
- <CACRpkdbi2gqqc271eMgHjD68bqf2mzw8zw+iAhYv2LFajfo-eQ@mail.gmail.com>
- <CAHk-=wiiC65aZFrDp69vdcSALLDZNPkTL1diadxNL54tBPeAzQ@mail.gmail.com>
- <20181023093521.dm3l5oen2j7etsot@kshutemo-mobl1> <CAHk-=wh6i5t5jYHrC-ZCdj8qoZWP3BptV87U=G9G4UyunzPf7Q@mail.gmail.com>
- <20181023200408.GA13179@chatter.qube.local> <CAHk-=wjVJ1w=MYXhu42+1rPybtztz+7q=KWo53nQmasR7R4SNA@mail.gmail.com>
- <20181031142756.GA5679@pure.paranoia.local>
-In-Reply-To: <20181031142756.GA5679@pure.paranoia.local>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 31 Oct 2018 11:34:44 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wht_ohu8T1yA_cB1VG2=V25X0_2FEbBdq=PsFd50g9pRg@mail.gmail.com>
-Message-ID: <CAHk-=wht_ohu8T1yA_cB1VG2=V25X0_2FEbBdq=PsFd50g9pRg@mail.gmail.com>
-Subject: Re: Git pull ack emails..
-To:     kirill@shutemov.name, Linus Walleij <linus.walleij@linaro.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Mark Brown <broonie@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Wed, 31 Oct 2018 11:36:17
+ -0700 (PDT)
+In-Reply-To: <20181031182107.726051323@linutronix.de>
+References: <20181031182107.726051323@linutronix.de>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 31 Oct 2018 11:36:17 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jK7gjBGe8MWmmoG+wkdfc_wKL5u7ce6Kfbd7+cyBeaUSA@mail.gmail.com>
+Message-ID: <CAGXu5jK7gjBGe8MWmmoG+wkdfc_wKL5u7ce6Kfbd7+cyBeaUSA@mail.gmail.com>
+Subject: Re: [patch 0/9] time: Add SPDX identifiers and cleanup boilerplates
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Peter Anvin <hpa@zytor.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Corey Minyard <cminyard@mvista.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        David Riley <davidriley@chromium.org>,
+        Colin Cross <ccross@android.com>,
+        Mark Brown <broonie@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 7:28 AM Konstantin Ryabitsev
-<konstantin@linuxfoundation.org> wrote:
+On Wed, Oct 31, 2018 at 11:21 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+> Add SPDX identifiers to all files in kernel/time and remove the license
+> boiler plates.
 >
-> Regarding your case specifically, what's a good cutoff period for
-> treating a pull request as effectively ignored/abandoned (i.e. no
-> matching commit-id ever found in the repo). I'm guessing about a month,
-> or do you want to go longer, in case something shifts to the following
-> merge window?
+> Aside of that use the chance to get rid of (stale) file references and tidy
+> up the top of file comments as they are touched anyway by this work.
+>
+> This work is based on a script and data from Philippe Ombredanne, Kate
+> Stewart and myself. The data has been created with two independent license
+> scanners and manual inspection.
 
-Oh, I'd definitely not go longer - if anything, I think it could be shorter.
+Looks good! I need to do this for some of my trees too... too much
+boilerplate in the tree! :)
 
-My *normal* reaction time is on the order of days. But yes, every
-merge window there are a couple of pulls that I end up delaying to the
-end of the merge window when I'm supposed to have more time to really
-review them. Right now I have three such pull requests pending, for
-example (and had planned to look at them today, but then new "normal"
-pull requests happened, so I still haven't gotten around to them).
+Acked-by: Kees Cook <keescook@chromium.org>
 
-But even when those things get put in my queue, the queue shouldn't be
-longer than the 2-week merge window, and if it is, I end up responding
-separately (ie writing people "ok, I'm still mulling this over, but
-it's not making rc1").
-
-So I think a one-month queue is more than sufficient, and if there are
-reasons to time things out earlier, a two-week one would be perfectly
-fine too.
-
-                  Linus
+-- 
+Kees Cook
