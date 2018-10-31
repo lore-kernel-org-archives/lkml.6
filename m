@@ -7,121 +7,83 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC60DECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28322ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74D3820821
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9D4D20664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vWZ+bJi8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74D3820821
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yqGot5v2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9D4D20664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729202AbeKAIHs (ORCPT
+        id S1729222AbeKAIHu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:07:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55964 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:07:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729065AbeKAIHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729150AbeKAIHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 1 Nov 2018 04:07:48 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E634E2081B;
-        Wed, 31 Oct 2018 23:07:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC8D520830;
+        Wed, 31 Oct 2018 23:07:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027257;
-        bh=pC3wMmp2/pTskeHuGJa/bBSw0Liu/94Ewotp1gtTZIQ=;
+        s=default; t=1541027258;
+        bh=8YA0vWFhpY+Sn68jT8xm6ghQKKZys++ILysgTsBS9rE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vWZ+bJi8Q4fdCLqE9ZO58H+vDR4nI/Rwvb81IEER/8E6b96SvtDb/5zMI+vUG6bOI
-         QLhpf76sM4BiBuxy97tOJFS8T23BhZkHc4BKgCk5v9TQxsZdpWBOeICXCqShyVDkVH
-         zL5nixp6V27AalfFMjTzm4lPlZIQcNkk6DQCMGgE=
+        b=yqGot5v2fHi4nTUaHEyg1SHYxD91jCt8nrTNewbBmZhmC0sTnjl7Whg/clZg7Hw3V
+         19chwncKgQOi6j0Hmqry3YdTZ1NZsgRLlW/zKU3z2zEQx7wAQmUXCg1QpP+VEopeFT
+         Bp+t6VkMrmZYi/95Go8KYp6OfV8u4ymIbWLWYWtw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+Cc:     Loic Poulain <loic.poulain@linaro.org>,
+        Peter Chen <peter.chen@nxp.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 128/146] crypto: caam - fix implicit casts in endianness helpers
-Date:   Wed, 31 Oct 2018 19:05:23 -0400
-Message-Id: <20181031230541.28822-128-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 129/146] usb: chipidea: Prevent unbalanced IRQ disable
+Date:   Wed, 31 Oct 2018 19:05:24 -0400
+Message-Id: <20181031230541.28822-129-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Horia Geantă <horia.geanta@nxp.com>
+From: Loic Poulain <loic.poulain@linaro.org>
 
-[ Upstream commit aae733a3f46f5ef338fbdde26e14cbb205a23de0 ]
+[ Upstream commit 8b97d73c4d72a2abf58f8e49062a7ee1e5f1334e ]
 
-Fix the following sparse endianness warnings:
+The ChipIdea IRQ is disabled before scheduling the otg work and
+re-enabled on otg work completion. However if the job is already
+scheduled we have to undo the effect of disable_irq int order to
+balance the IRQ disable-depth value.
 
-drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __le32unsigned int @@
-drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-drivers/crypto/caam/regs.h:95:1:    got restricted __le32 [usertype] <noident>
-drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __be32unsigned int @@
-drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-drivers/crypto/caam/regs.h:95:1:    got restricted __be32 [usertype] <noident>
-
-drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
-drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
-
-Fixes: 261ea058f016 ("crypto: caam - handle core endianness != caam endianness")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: be6b0c1bd0be ("usb: chipidea: using one inline function to cover queue work operations")
+Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
+Signed-off-by: Peter Chen <peter.chen@nxp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/caam/regs.h | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ drivers/usb/chipidea/otg.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/caam/regs.h b/drivers/crypto/caam/regs.h
-index 4fb91ba39c36..ce3f9ad7120f 100644
---- a/drivers/crypto/caam/regs.h
-+++ b/drivers/crypto/caam/regs.h
-@@ -70,22 +70,22 @@
- extern bool caam_little_end;
- extern bool caam_imx;
- 
--#define caam_to_cpu(len)				\
--static inline u##len caam##len ## _to_cpu(u##len val)	\
--{							\
--	if (caam_little_end)				\
--		return le##len ## _to_cpu(val);		\
--	else						\
--		return be##len ## _to_cpu(val);		\
-+#define caam_to_cpu(len)						\
-+static inline u##len caam##len ## _to_cpu(u##len val)			\
-+{									\
-+	if (caam_little_end)						\
-+		return le##len ## _to_cpu((__force __le##len)val);	\
-+	else								\
-+		return be##len ## _to_cpu((__force __be##len)val);	\
+diff --git a/drivers/usb/chipidea/otg.h b/drivers/usb/chipidea/otg.h
+index 7e7428e48bfa..4f8b8179ec96 100644
+--- a/drivers/usb/chipidea/otg.h
++++ b/drivers/usb/chipidea/otg.h
+@@ -17,7 +17,8 @@ void ci_handle_vbus_change(struct ci_hdrc *ci);
+ static inline void ci_otg_queue_work(struct ci_hdrc *ci)
+ {
+ 	disable_irq_nosync(ci->irq);
+-	queue_work(ci->wq, &ci->work);
++	if (queue_work(ci->wq, &ci->work) == false)
++		enable_irq(ci->irq);
  }
  
--#define cpu_to_caam(len)				\
--static inline u##len cpu_to_caam##len(u##len val)	\
--{							\
--	if (caam_little_end)				\
--		return cpu_to_le##len(val);		\
--	else						\
--		return cpu_to_be##len(val);		\
-+#define cpu_to_caam(len)					\
-+static inline u##len cpu_to_caam##len(u##len val)		\
-+{								\
-+	if (caam_little_end)					\
-+		return (__force u##len)cpu_to_le##len(val);	\
-+	else							\
-+		return (__force u##len)cpu_to_be##len(val);	\
- }
- 
- caam_to_cpu(16)
+ #endif /* __DRIVERS_USB_CHIPIDEA_OTG_H */
 -- 
 2.17.1
 
