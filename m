@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16445ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C139FC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C58B720823
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D88420821
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pBTlPY4x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C58B720823
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PeYZesws"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D88420821
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728169AbeKAIGh (ORCPT
+        id S1728253AbeKAIGl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:06:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53638 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:06:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53766 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728133AbeKAIGh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:06:37 -0400
+        id S1728185AbeKAIGk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:06:40 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33FE720848;
-        Wed, 31 Oct 2018 23:06:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C78232082E;
+        Wed, 31 Oct 2018 23:06:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027186;
-        bh=6EgiTXOrwfLghNJdk5MY3htzX8wi0Djm0JrWUTRY55g=;
+        s=default; t=1541027190;
+        bh=6j4QWqlfuxcnan2613gO4k8zZZO6NT3Wz+utt/o07LM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pBTlPY4xX0IbPoW+vjwHXwOgA1mCfuN+mc2Exl2bIc6klgNGqAufz2WC9VJL0/fpD
-         egwgN5RLbjMtFS8m3b+MOKE7ds/THMk2ss8jluVjUifPVCveZNjvVcKM2nr2IgtlLX
-         lo0B8zzsOvvlFiQN5925h9LvXms1Es71lmPa+p00=
+        b=PeYZeswsVTLoBR2KL3JY5tpwmCIpiMEHWmyL/e0d2eoOpQoh+S9PJiWYzu7pG4exj
+         6GJMP75dt5NfIW+3V3TAcWqKwmja6iwUMOrJgyHcNe9Q3z/qdvOiKD2NhPJJd9j6kP
+         z3Cxa3cTwLUbMVntJvcGBJ5vlRoQO7IqLIKOrz3M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Ben Hutchings <ben@decadent.org.uk>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+Cc:     YueHaibing <yuehaibing@huawei.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 049/146] x86: boot: Fix EFI stub alignment
-Date:   Wed, 31 Oct 2018 19:04:04 -0400
-Message-Id: <20181031230541.28822-49-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 053/146] pinctrl: qcom: spmi-mpp: Fix err handling of pmic_mpp_set_mux
+Date:   Wed, 31 Oct 2018 19:04:08 -0400
+Message-Id: <20181031230541.28822-53-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -53,52 +53,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Hutchings <ben@decadent.org.uk>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 9c1442a9d039a1a3302fa93e9a11001c5f23b624 ]
+[ Upstream commit 69f8455f6cc78fa6cdf80d0105d7a748106271dc ]
 
-We currently align the end of the compressed image to a multiple of
-16.  However, the PE-COFF header included in the EFI stub says that
-the file alignment is 32 bytes, and when adding an EFI signature to
-the file it must first be padded to this alignment.
+'ret' should be returned while pmic_mpp_write_mode_ctl fails.
 
-sbsigntool commands warn about this:
-
-  warning: file-aligned section .text extends beyond end of file
-  warning: checksum areas are greater than image size. Invalid section table?
-
-Worse, pesign -at least when creating a detached signature- uses the
-hash of the unpadded file, resulting in an invalid signature if
-padding is required.
-
-Avoid both these problems by increasing alignment to 32 bytes when
-CONFIG_EFI_STUB is enabled.
-
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Fixes: 0e948042c420 ("pinctrl: qcom: spmi-mpp: Implement support for sink mode")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/boot/tools/build.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/boot/tools/build.c b/arch/x86/boot/tools/build.c
-index d4e6cd4577e5..bf0e82400358 100644
---- a/arch/x86/boot/tools/build.c
-+++ b/arch/x86/boot/tools/build.c
-@@ -391,6 +391,13 @@ int main(int argc, char ** argv)
- 		die("Unable to mmap '%s': %m", argv[2]);
- 	/* Number of 16-byte paragraphs, including space for a 4-byte CRC */
- 	sys_size = (sz + 15 + 4) / 16;
-+#ifdef CONFIG_EFI_STUB
-+	/*
-+	 * COFF requires minimum 32-byte alignment of sections, and
-+	 * adding a signature is problematic without that alignment.
-+	 */
-+	sys_size = (sys_size + 1) & ~1;
-+#endif
+diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
+index 6556dbeae65e..418bc40df7ca 100644
+--- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
++++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
+@@ -319,6 +319,8 @@ static int pmic_mpp_set_mux(struct pinctrl_dev *pctldev, unsigned function,
+ 	pad->function = function;
  
- 	/* Patch the setup code with the appropriate size parameters */
- 	buf[0x1f1] = setup_sectors-1;
+ 	ret = pmic_mpp_write_mode_ctl(state, pad);
++	if (ret < 0)
++		return ret;
+ 
+ 	val = pad->is_enabled << PMIC_MPP_REG_MASTER_EN_SHIFT;
+ 
 -- 
 2.17.1
 
