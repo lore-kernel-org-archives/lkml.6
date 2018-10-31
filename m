@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D1DECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B56ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DB932081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADA6220840
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="r/3ZkM0Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DB932081B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2s7VfRE5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADA6220840
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730688AbeKAIJv (ORCPT
+        id S1730705AbeKAIJx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:09:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60002 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:09:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730658AbeKAIJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:09:50 -0400
+        id S1730658AbeKAIJw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:09:52 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6CB8A20838;
-        Wed, 31 Oct 2018 23:09:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 57FB820840;
+        Wed, 31 Oct 2018 23:09:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027378;
-        bh=uj7pqy00sEesVJHROTkKHccFKi6NjlaVwUz+BnUtPmY=;
+        s=default; t=1541027381;
+        bh=4RCA2D2uN8ZtSaIP50+ZVFbk1X7Sxat4GkW6bGVDwA4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r/3ZkM0Z5J4h0b3hl3kCi3dSFoB6oCNIN1EljK9ZC8YdPKa7sxayWRq72ilCoSSWG
-         073gN5VX2xxePMqOZRRUSDTZK7I1qOuDXfOak1wqbBTEhoYCrOojHkmL+tjnRJlrOw
-         blhOtDhAGp2wqHLAua48UeohLrBpm+0bcqNghEO8=
+        b=2s7VfRE5RpUmKvWZ7goJbLZ5zmm37SWLRwl7k4RaBmj0so6maJEF7xC0WuO9I1YN2
+         6E/1sseYPukJ8WfWCWYvtr6e6L3/Ib5lSPwiZwGsU2TKFX7UO1tBsgF8lTRb46mEi9
+         njugr7VGiVL/Wb3/3/+RXul8AdB5/bkh6YQVhUbE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Wei-Ning Huang <wnhuang@chromium.org>,
-        Julius Werner <jwerner@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     James Smart <jsmart2021@gmail.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <james.smart@broadcom.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 115/126] firmware: coreboot: Unmap ioregion after device population
-Date:   Wed, 31 Oct 2018 19:07:43 -0400
-Message-Id: <20181031230754.29029-115-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 118/126] scsi: lpfc: Correct soft lockup when running mds diagnostics
+Date:   Wed, 31 Oct 2018 19:07:46 -0400
+Message-Id: <20181031230754.29029-118-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -57,61 +55,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Boyd <swboyd@chromium.org>
+From: James Smart <jsmart2021@gmail.com>
 
-[ Upstream commit 20edec388277b62ddfddb8b2b376a937a2cd6d1b ]
+[ Upstream commit 0ef01a2d95fd62bb4f536e7ce4d5e8e74b97a244 ]
 
-Both callers of coreboot_table_init() ioremap the pointer that comes in
-but they don't unmap the memory on failure. Both of them also fail probe
-immediately with the return value of coreboot_table_init(), leaking a
-mapping when it fails. The mapping isn't necessary at all after devices
-are populated either, so we can just drop the mapping here when we exit
-the function. Let's do that to simplify the code a bit and plug the leak.
+When running an mds diagnostic that passes frames with the switch, soft
+lockups are detected. The driver is in a CQE processing loop and has
+sufficient amount of traffic that it never exits the ring processing routine,
+thus the "lockup".
 
-Cc: Wei-Ning Huang <wnhuang@chromium.org>
-Cc: Julius Werner <jwerner@chromium.org>
-Cc: Brian Norris <briannorris@chromium.org>
-Cc: Samuel Holland <samuel@sholland.org>
-Fixes: 570d30c2823f ("firmware: coreboot: Expose the coreboot table as a bus")
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-Reviewed-by: Julius Werner <jwerner@chromium.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cap the number of elements in the work processing routine to 64 elements. This
+ensures that the cpu will be given up and the handler reschedule to process
+additional items.
+
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <james.smart@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/firmware/google/coreboot_table.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/scsi/lpfc/lpfc_sli.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/firmware/google/coreboot_table.c b/drivers/firmware/google/coreboot_table.c
-index 19db5709ae28..898bb9abc41f 100644
---- a/drivers/firmware/google/coreboot_table.c
-+++ b/drivers/firmware/google/coreboot_table.c
-@@ -110,7 +110,8 @@ int coreboot_table_init(struct device *dev, void __iomem *ptr)
+diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
+index 6f3c00a233ec..4f8d459d2378 100644
+--- a/drivers/scsi/lpfc/lpfc_sli.c
++++ b/drivers/scsi/lpfc/lpfc_sli.c
+@@ -3790,6 +3790,7 @@ lpfc_sli_handle_slow_ring_event_s4(struct lpfc_hba *phba,
+ 	struct hbq_dmabuf *dmabuf;
+ 	struct lpfc_cq_event *cq_event;
+ 	unsigned long iflag;
++	int count = 0;
  
- 	if (strncmp(header.signature, "LBIO", sizeof(header.signature))) {
- 		pr_warn("coreboot_table: coreboot table missing or corrupt!\n");
--		return -ENODEV;
-+		ret = -ENODEV;
-+		goto out;
+ 	spin_lock_irqsave(&phba->hbalock, iflag);
+ 	phba->hba_flag &= ~HBA_SP_QUEUE_EVT;
+@@ -3811,16 +3812,22 @@ lpfc_sli_handle_slow_ring_event_s4(struct lpfc_hba *phba,
+ 			if (irspiocbq)
+ 				lpfc_sli_sp_handle_rspiocb(phba, pring,
+ 							   irspiocbq);
++			count++;
+ 			break;
+ 		case CQE_CODE_RECEIVE:
+ 		case CQE_CODE_RECEIVE_V1:
+ 			dmabuf = container_of(cq_event, struct hbq_dmabuf,
+ 					      cq_event);
+ 			lpfc_sli4_handle_received_buffer(phba, dmabuf);
++			count++;
+ 			break;
+ 		default:
+ 			break;
+ 		}
++
++		/* Limit the number of events to 64 to avoid soft lockups */
++		if (count == 64)
++			break;
  	}
- 
- 	ptr_entry = (void *)ptr_header + header.header_bytes;
-@@ -137,7 +138,8 @@ int coreboot_table_init(struct device *dev, void __iomem *ptr)
- 
- 		ptr_entry += entry.size;
- 	}
--
-+out:
-+	iounmap(ptr);
- 	return ret;
  }
- EXPORT_SYMBOL(coreboot_table_init);
-@@ -146,7 +148,6 @@ int coreboot_table_exit(void)
- {
- 	if (ptr_header) {
- 		bus_unregister(&coreboot_bus_type);
--		iounmap(ptr_header);
- 		ptr_header = NULL;
- 	}
  
 -- 
 2.17.1
