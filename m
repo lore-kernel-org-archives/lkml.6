@@ -4,46 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C092DC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:53:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 531BFECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:53:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85F8F2054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:53:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CE2B2054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:53:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="f7kFzAZT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85F8F2054F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="X4qYsPHh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CE2B2054F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727732AbeKAIGP (ORCPT
+        id S1728033AbeKAIxo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:06:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53056 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:53:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727597AbeKAIGP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:06:15 -0400
+        id S1727679AbeKAIGN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:06:13 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3BCDF20843;
-        Wed, 31 Oct 2018 23:06:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64E2720823;
+        Wed, 31 Oct 2018 23:06:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027164;
-        bh=Klm8WRRhOZ6oLg8g9G5uscjrkCKtQOIuCOic5+Hy/gY=;
+        s=default; t=1541027163;
+        bh=/VR6lIXXafUpjR7JKWNbP5Sg9DM1QgMytnddXxMsHMU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f7kFzAZTsvMoVNZKuJWkjxDdWzrVQBlwmxShXkvKcW+5oaQnphnh6rjvg6GAjMY58
-         OfxSUpZTkw90T8UU+SZRgOmEK63Q7T7I+UyUmWsozUTaXAf5ytOA01m5fKN/3jkwp2
-         8zzsGfJmmEHVhzJdw3dbkCDFaHHC8/1VIxq6qh3g=
+        b=X4qYsPHhPeAsvNtakMEgpvjgnh86yxb1fAs+WjkqALUtuPtnQVGFqz+aMb6fA4Eiy
+         TkReq18VtpTksSoPCfUv3t0yDLf46uWa+BRhDYEyT/67aVgLTStK1TBikENNLIqQOJ
+         2gsvpNpNBD+LGk4YV99XVQGWnUroKLPboPhEjZ4k=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Yu Zhao <yuzhao@google.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+Cc:     Prarit Bhargava <prarit@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        Stafford Horne <shorne@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 024/146] mmc: sdhci-pci-o2micro: Add quirk for O2 Micro dev 0x8620 rev 0x01
-Date:   Wed, 31 Oct 2018 19:03:39 -0400
-Message-Id: <20181031230541.28822-24-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 022/146] cpupower: Fix coredump on VMWare
+Date:   Wed, 31 Oct 2018 19:03:37 -0400
+Message-Id: <20181031230541.28822-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -52,59 +52,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yu Zhao <yuzhao@google.com>
+From: Prarit Bhargava <prarit@redhat.com>
 
-[ Upstream commit 5169894982bb67486d93cc1e10151712bb86bcb6 ]
+[ Upstream commit f69ffc5d3db8f1f03fd6d1df5930f9a1fbd787b6 ]
 
-This device reports SDHCI_CLOCK_INT_STABLE even though it's not
-ready to take SDHCI_CLOCK_CARD_EN. The symptom is that reading
-SDHCI_CLOCK_CONTROL after enabling the clock shows absence of the
-bit from the register (e.g. expecting 0x0000fa07 = 0x0000fa03 |
-SDHCI_CLOCK_CARD_EN but only observed the first operand).
+cpupower crashes on VMWare guests.  The guests have the AMD PStateDef MSR
+(0xC0010064 + state number) set to zero.  As a result fid and did are zero
+and the crash occurs because of a divide by zero (cof = fid/did).  This
+can be prevented by checking the enable bit in the PStateDef MSR before
+calculating cof.  By doing this the value of pstate[i] remains zero and
+the value can be tested before displaying the active Pstates.
 
-mmc1: Timeout waiting for hardware cmd interrupt.
-mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
-mmc1: sdhci: Sys addr:  0x00000000 | Version:  0x00000603
-mmc1: sdhci: Blk size:  0x00000000 | Blk cnt:  0x00000000
-mmc1: sdhci: Argument:  0x00000000 | Trn mode: 0x00000000
-mmc1: sdhci: Present:   0x01ff0001 | Host ctl: 0x00000001
-mmc1: sdhci: Power:     0x0000000f | Blk gap:  0x00000000
-mmc1: sdhci: Wake-up:   0x00000000 | Clock:    0x0000fa03
-mmc1: sdhci: Timeout:   0x00000000 | Int stat: 0x00000000
-mmc1: sdhci: Int enab:  0x00ff0083 | Sig enab: 0x00ff0083
-mmc1: sdhci: AC12 err:  0x00000000 | Slot int: 0x00000000
-mmc1: sdhci: Caps:      0x25fcc8bf | Caps_1:   0x00002077
-mmc1: sdhci: Cmd:       0x00000000 | Max curr: 0x005800c8
-mmc1: sdhci: Resp[0]:   0x00000000 | Resp[1]:  0x00000000
-mmc1: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
-mmc1: sdhci: Host ctl2: 0x00000008
-mmc1: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x00000000
-mmc1: sdhci: ============================================
+Check the enable bit in the PstateDef register for all supported families
+and only print out enabled Pstates.
 
-The problem happens during wakeup from S3. Adding a delay quirk
-after power up reliably fixes the problem.
-
-Signed-off-by: Yu Zhao <yuzhao@google.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Stafford Horne <shorne@gmail.com>
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/sdhci-pci-o2micro.c | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/power/cpupower/utils/cpufreq-info.c | 2 ++
+ tools/power/cpupower/utils/helpers/amd.c  | 5 +++++
+ 2 files changed, 7 insertions(+)
 
-diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
-index 77e9bc4aaee9..cc3ffeffd7a2 100644
---- a/drivers/mmc/host/sdhci-pci-o2micro.c
-+++ b/drivers/mmc/host/sdhci-pci-o2micro.c
-@@ -490,6 +490,9 @@ int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
- 		pci_write_config_byte(chip->pdev, O2_SD_LOCK_WP, scratch);
- 		break;
- 	case PCI_DEVICE_ID_O2_SEABIRD0:
-+		if (chip->pdev->revision == 0x01)
-+			chip->quirks |= SDHCI_QUIRK_DELAY_AFTER_POWER;
-+		/* fall through */
- 	case PCI_DEVICE_ID_O2_SEABIRD1:
- 		/* UnLock WP */
- 		ret = pci_read_config_byte(chip->pdev,
+diff --git a/tools/power/cpupower/utils/cpufreq-info.c b/tools/power/cpupower/utils/cpufreq-info.c
+index df43cd45d810..ccd08dd00996 100644
+--- a/tools/power/cpupower/utils/cpufreq-info.c
++++ b/tools/power/cpupower/utils/cpufreq-info.c
+@@ -200,6 +200,8 @@ static int get_boost_mode(unsigned int cpu)
+ 		printf(_("    Boost States: %d\n"), b_states);
+ 		printf(_("    Total States: %d\n"), pstate_no);
+ 		for (i = 0; i < pstate_no; i++) {
++			if (!pstates[i])
++				continue;
+ 			if (i < b_states)
+ 				printf(_("    Pstate-Pb%d: %luMHz (boost state)"
+ 					 "\n"), i, pstates[i]);
+diff --git a/tools/power/cpupower/utils/helpers/amd.c b/tools/power/cpupower/utils/helpers/amd.c
+index bb41cdd0df6b..58d23997424d 100644
+--- a/tools/power/cpupower/utils/helpers/amd.c
++++ b/tools/power/cpupower/utils/helpers/amd.c
+@@ -119,6 +119,11 @@ int decode_pstates(unsigned int cpu, unsigned int cpu_family,
+ 		}
+ 		if (read_msr(cpu, MSR_AMD_PSTATE + i, &pstate.val))
+ 			return -1;
++		if ((cpu_family == 0x17) && (!pstate.fam17h_bits.en))
++			continue;
++		else if (!pstate.bits.en)
++			continue;
++
+ 		pstates[i] = get_cof(cpu_family, pstate);
+ 	}
+ 	*no = i;
 -- 
 2.17.1
 
