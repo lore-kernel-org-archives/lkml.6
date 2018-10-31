@@ -2,149 +2,91 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79440C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:46:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72DB1C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:50:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E7692054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:46:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A0342081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:50:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OChd+WuJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E7692054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="W7xb3Kmz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A0342081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730185AbeKAFqU (ORCPT
+        id S1730099AbeKAFtn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 01:46:20 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:43982 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726167AbeKAFqU (ORCPT
+        Thu, 1 Nov 2018 01:49:43 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:36047 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729837AbeKAFtm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 01:46:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=HbVU1qMU7jfmDpq0n7mc+ceizetKVVY3CRZVQnKAMWg=; b=OChd+WuJTSOH4zP9dn2m+uphH
-        g25GYGfSXwdrsuBxVNrtbZT3xI/j/xt0pGsQyGxiRgmHJmlT7jrGTsR+nPCifInPgESxIuAIuzW3x
-        AXSSk5btwcQlicygX+VemPDUWWHtBAdTy9a2H20sPkUkYz9lNpMJsVlSk7qY7K2QXcpHPUfGG7Xna
-        vkk0B7sd5xka+UcxQzRSdvRAa+DcoqIFdALLIXakXLt3Tuv9B7vB3IuavwW0sYmjqhWjUi55b57r0
-        Kk80z8q6LBHEv1OaGW3oni8GniaVbUx5XbHx73WSnSwIP51tRUqn+tTcWWQmlchGUWTGYr8nGsaH3
-        UK0E207Mw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gHxNi-0006xQ-6V; Wed, 31 Oct 2018 20:46:26 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id ED21B20296F15; Wed, 31 Oct 2018 21:46:22 +0100 (CET)
-Date:   Wed, 31 Oct 2018 21:46:22 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     John Garry <john.garry@huawei.com>
-Cc:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, Linuxarm <linuxarm@huawei.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: Crash report: Broken NUMA distance map causes crash on arm64
- system
-Message-ID: <20181031204622.GB3141@hirez.programming.kicks-ass.net>
-References: <b89bf686-05bd-a3de-e7ef-4ab9ab7bdb6c@huawei.com>
- <20181030092640.GE1459@hirez.programming.kicks-ass.net>
- <d126099d-2698-8e3a-06ca-f229e57c3052@huawei.com>
- <ae352fe1-3c59-dcde-fd00-2c03b4491dc6@huawei.com>
+        Thu, 1 Nov 2018 01:49:42 -0400
+Received: by mail-io1-f65.google.com with SMTP id o19-v6so10735818iod.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 13:50:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=gdqkYyQspsp1WFaLbhTlBRvMbAA1AboKVVjEVgVlLig=;
+        b=W7xb3KmzQ3Cjid5eWduqpmNvkFD/f006k3FWCcEcbCTyNCIIizFJfGNe9BdXw+BuDM
+         jMErr804r5QuM3PK2+iHwrmDMNQD/LylWrqaPQ/1WQKr4X+QRdSDmXMrI0D3tgHjiVQ/
+         Jegd9rk50dOzmpcEtZE3WmNLFjYLwNtiDlMas=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=gdqkYyQspsp1WFaLbhTlBRvMbAA1AboKVVjEVgVlLig=;
+        b=WqSQIJKPWXMEr0wbd7Wu/LevktW7CgohTmnjRJXfoBtFfLqAggFdiw31cItn4sFNg9
+         gJN+nnCOJ3cL1KxLeYdcX5LedItgfGdTET9EeWYs2zZYZDqEmRm2AJdbG8wqSlCvMEeu
+         bgXxuG2iPXVfChTH6V7x1gv05W02JKA72wNSb4090nGxVzyCQ7uy7JWqyfYiMHlMd9ke
+         FbNX+rOrU3qh45jU9Ozmgen3wJu3mvXsRdmVIeu0qqvdZG7CpCinymri8XV7vuZJRHVg
+         Ve1KLHmVmSHB2i1LpNvp3D2oiTiGfumyCS3O/XiHqmy4lwR2BbuBTfxppW6yn1Dgau9j
+         kNyA==
+X-Gm-Message-State: AGRZ1gIU/b0h0s9qkxauodHplbYifNkwEP+fHCGLOKBnJhRAIAQBjvQI
+        4DPWQ9Ddroj8V6Uru5S8UKxY+rsg1Ey7kxCD8gV9/g==
+X-Google-Smtp-Source: AJdET5fBetzoYDrLt3lBbcnEMbv987eCuUGi4Ro/GTezCwbUJ0XuM1D4fX2qOxCGldtqCKHDiPFtDj8rLp2zVbNGqSk=
+X-Received: by 2002:a5e:8b42:: with SMTP id z2-v6mr2711054iom.144.1541019000450;
+ Wed, 31 Oct 2018 13:50:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ae352fe1-3c59-dcde-fd00-2c03b4491dc6@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a6b:ac42:0:0:0:0:0 with HTTP; Wed, 31 Oct 2018 13:49:59
+ -0700 (PDT)
+X-Originating-IP: [212.96.48.140]
+In-Reply-To: <7505.1541011140@warthog.procyon.org.uk>
+References: <20181031053355.GQ32577@ZenIV.linux.org.uk> <87a7mut9cm.fsf@xmission.com>
+ <7505.1541011140@warthog.procyon.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 31 Oct 2018 21:49:59 +0100
+Message-ID: <CAJfpegtJwkrFECtLBzm8WrYhhDjbQSAuB4ZsoDzbKh6T7UZJUA@mail.gmail.com>
+Subject: Re: [git pull] mount API series
+To:     David Howells <dhowells@redhat.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 03:35:35PM +0000, John Garry wrote:
-> [    7.154740] ERROR: Node-distance not symmetric
-> [    7.154740]
-> [    7.160724]   10 15 20 25
-> [    7.163456]   15 10 25 30
-> [    7.166190]   20 25 10 15
-> [    7.168921]   10 10 15 10
-> [    7.171655]
+On Wed, Oct 31, 2018 at 7:39 PM, David Howells <dhowells@redhat.com> wrote:
+>> My objections fundamentally is that I can find real problems when I look
+>> at the code.
 
-But I'm not getting the rest of those errors with my 'reproducer':
+I think the big risk with such a change is not that there are bugs,
+but that we get the API wrong, and have to keep supporting a broken
+API forever.
 
-  kvm -smp 4 -m 4G -display none -monitor null -serial stdio -kernel defconfig-build/arch/x86/boot/bzImage -append "sched_debug debug ignore_loglevel earlyprintk=serial,ttyS0,115200,keep numa=fake=4:10,15,20,25,15,10,25,30,20,25,10,15,10,10,15,10,0"
+Were any of your objections of that type?
 
-[    0.828331] ERROR: Node-distance not symmetric
-[    0.828331] 
-[    0.829081]   10 15 20 25 
-[    0.830079]   15 10 25 30 
-[    0.831079]   20 25 10 15 
-[    0.832079]   10 10 15 10 
-[    0.833079] 
-[    0.834373] CPU0 attaching sched-domain(s):
-[    0.835082]  domain-0: span=0-3 level=DIE
-[    0.836079]   groups: 0:{ span=0 }, 1:{ span=1 }, 2:{ span=2 }, 3:{ span=3 }
-[    0.837082] CPU1 attaching sched-domain(s):
-[    0.838081]  domain-0: span=0-3 level=DIE
-[    0.839079]   groups: 1:{ span=1 }, 2:{ span=2 }, 3:{ span=3 }, 0:{ span=0 }
-[    0.840082] CPU2 attaching sched-domain(s):
-[    0.841080]  domain-0: span=0-3 level=DIE
-[    0.842079]   groups: 2:{ span=2 }, 3:{ span=3 }, 0:{ span=0 }, 1:{ span=1 }
-[    0.843094] ------------[ cut here ]------------
-[    0.844076] kernel BUG at ../mm/slub.c:3901!
-[    0.844083] invalid opcode: 0000 [#1] SMP PTI
-[    0.845076] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc8+ #305
-[    0.845076] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-[    0.845076] RIP: 0010:kfree+0x113/0x160
-[    0.845076] Code: 18 48 89 da 4c 89 e6 e8 db 01 c5 00 48 8b 45 00 48 85 c0 75 e4 e9 0e ff ff ff 49 8b 02 f6 c4 80 75 0a 49 8b 42 08 a8 01 75 02 <0f> 0b 49 8b 02 31 f6 f6 c4 80 74 05 41 0f b6 72 51 5b 5d 41 5c 4c
-[    0.845076] RSP: 0000:ffffabc080633dc8 EFLAGS: 00010246
-[    0.845076] RAX: ffff9f973fff8da0 RBX: ffff9f970000001e RCX: 00000000000000f9
-[    0.845076] RDX: 0000000000000000 RSI: ffff9f963ea23c80 RDI: 0000606980000000
-[    0.845076] RBP: 0000000000020ac0 R08: 0000000000023c80 R09: ffffffff9f8a10db
-[    0.845076] R10: fffff17204000000 R11: 0000000000000001 R12: ffffffff9f8a113d
-[    0.845076] R13: 0000000000000003 R14: ffffffffa0ab4820 R15: ffff9f973e5bde00
-[    0.845076] FS:  0000000000000000(0000) GS:ffff9f963ea00000(0000) knlGS:0000000000000000
-[    0.845076] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    0.845076] CR2: 00000000ffffffff CR3: 000000008ea0a000 CR4: 00000000000006f0
-[    0.845076] Call Trace:
-[    0.845076]  destroy_sched_domain+0x3d/0x50
-[    0.845076]  cpu_attach_domain+0x378/0x680
-[    0.845076]  ? update_group_capacity+0x20/0x2c0
-[    0.845076]  build_sched_domains+0xde9/0xed0
-[    0.845076]  ? set_debug_rodata+0xc/0xc
-[    0.845076]  sched_init_domains+0x80/0x90
-[    0.845076]  sched_init_smp+0x1d/0x63
-[    0.845076]  kernel_init_freeable+0x101/0x23f
-[    0.845076]  ? rest_init+0xb0/0xb0
-[    0.845076]  kernel_init+0x5/0x100
-[    0.845076]  ret_from_fork+0x35/0x40
+There's the argument about sharing of super blocks doing weird things,
+but we can't get rid of that one due to having to support the old
+mount(2) API forever anyway.  That's not a new burden, and the new API
+allows fixing this incrementally by adding better models later.
 
-I'll work on that crash though..
-
-> I also note that if I apply the patch, below, to reject the invalid NUMA
-> distance, we're still getting a warning/error:
-> 
-> [    7.144407] CPU: All CPU(s) started at EL2
-> [    7.148678] alternatives: patching kernel code
-> [    7.153557] ERROR: Node-0 not representative
-> [    7.153557]
-> [    7.159365]   10 15 20 25
-> [    7.162097]   15 10 25 30
-> [    7.164832]   20 25 10 15
-> [    7.167562]   25 30 15 10
-
-Yeah, that's an 'obviously' broken topology too.
-
-Clearly you're far more creative than the ACPI BIOS people have been so
-far.
+Thanks,
+Miklos
