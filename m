@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B082CC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 17:17:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54109C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 17:24:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 521A72081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 17:17:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA70020664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 17:24:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ngcRJtrb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 521A72081B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rPC+n3IH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA70020664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729769AbeKACP4 (ORCPT
+        id S1729575AbeKACXe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 22:15:56 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43508 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728128AbeKACPz (ORCPT
+        Wed, 31 Oct 2018 22:23:34 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:46903 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727991AbeKACXd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 22:15:55 -0400
-Received: by mail-pf1-f194.google.com with SMTP id h4-v6so7913552pfi.10
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 10:17:00 -0700 (PDT)
+        Wed, 31 Oct 2018 22:23:33 -0400
+Received: by mail-pl1-f193.google.com with SMTP id bb7-v6so7588244plb.13
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 10:24:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :user-agent;
         bh=zc1khfAyWUBOdyCwV25jhN5KvcyQAnzVbTRxc9EZz0w=;
-        b=ngcRJtrbPPju3/owhv5DE1bhMXH+J7tl5kR9fODo+O7gQbmnMlNFbDLAPO7jOMC3cG
-         d2SWbPCp5cbiMEbA+UM3MaVmqgW9mg8GZUkxUVjGBo7uHIQgT0z9t8qjyG9b+/jXap52
-         zPKMxFwbF4rV100XWb3czvsxi3QbHP+jZs280WPAG3DnmLdQoZU1x3tYDUB78L20D3/R
-         eowrQwcwXPZy79YL3oUQBQdhZ9BkYMLfbSBPyx1Z0bXcrlAhTsanloI4qHCghbI8q9m2
-         SQ/Pwuk93jWtTohqEJlCBIQrA8kXwEwF3Bgd0veipfWFrxJUjpr8dJqD212CdXBSudmv
-         JQOw==
+        b=rPC+n3IHCMMRhUcnhOTT7DevtOrX3hWaqewazVl4WQr8hp+MXVBmMLxFPDlq1F6fYK
+         aqRztMxlxclrje3ybZk3a45JKzG28p1jFfNXUapM2yIJr4+rb4G6EB6xzSpFyDQCegO5
+         /fda/CDTJi3s43lq9/cvw6Rtwp1U3KHKH+tMhQ7OYaQnQz1rqaAxB5xIL49Xxz9Mn9ep
+         YQlBM9wiZkamdfBM8CWIgJV+vN9bAHD4wzkhKjKkdifeRSXuPTkD+9M5mvtXHLUg295I
+         MDGP+Y3yLq7HDzgFlqNBJHtXq69JaAr+1x9msqO3BCwveQ99sCltK9SRCWfUNq8I4h78
+         EPSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:user-agent;
         bh=zc1khfAyWUBOdyCwV25jhN5KvcyQAnzVbTRxc9EZz0w=;
-        b=Q+SULxX1PD683wzvUYEOtyybjb7H/JaQzX6G1lCsTKqrULjr7yqo1m3zIELpH3e088
-         ZcV8JsNZkM9pijOKcQ4VdFxwMKAXyMnaYpmtusEpOk5G3yckBpVQL8GIzfE6Mn9pXrR8
-         Q0QQiAE8ro8aPxVBnV9bNqLCOP5k8WZ/sZdp1tE600JWra2V5hTma9CvmM1ACr4QBd/q
-         9Q6/qAJ9uQRdbK6B3a8S3ZIelvToh6phxFe5CseHohNy+ohppSDrgVVIIZ2TegJoH4vj
-         8nC7itf/FRlvOIvuYG6FOYDT2Nj8/TfPC5BETz3wHRldMrAQvyu+swmRI/0R2OzU25I6
-         +uhQ==
-X-Gm-Message-State: AGRZ1gJj5mUGPaq6Z1rDJTTehQ3SaqDARRsiXzXLsxx1uVQJwxpwnVb1
-        bkVp4BwGN/kVHEwjiyZBxVk=
-X-Google-Smtp-Source: AJdET5cyM914XxLo8m4lE4G+GTqNDanNpD/cwRPHhzTt0GlV+wMytVuoofaOnm8q4f6jSSc6Eulzmg==
-X-Received: by 2002:a63:6c4a:: with SMTP id h71-v6mr3990075pgc.326.1541006220352;
-        Wed, 31 Oct 2018 10:17:00 -0700 (PDT)
+        b=rawF/hSgTMWNLvezL4SMzDOItIzgDPYGswbFAX/2aiQyRVzhAQ+rv7T7QdUbFwGOPB
+         eRoFIvNbfXcCLkGSAb+9orIJfaz6loG3d8DETIqwhziP9UqiBJos0ZF5mBo0WvwN6oVo
+         4KgT/x8x6RqhFp+sZsS0tOt9yyFdsAyNNaInNI0jqcY4TQ/V0DooXlHCKUM31yC55dX4
+         eDopyf3rIAy6gMWN+70Z4bQrn4E9yhBE6s6jpAQdJb0GMTfwS9fwrDLN6ZGCmbUjcZFC
+         HKK7tXLf6MqLZIVRJzECiZV3rPK8T9i/tcM6/KkPoxgskSZUFa3KOA9tc73SBRQCW0Xb
+         NcrA==
+X-Gm-Message-State: AGRZ1gJ495sq34nuPojnYhK0PKPQPwV6692wSCyxTm/B9eDk/yyxpVdF
+        fdgZbm7LKNZJpL88zper2Nw=
+X-Google-Smtp-Source: AJdET5flpitmvzko3Zdl2HzsL1C8l53LskzglsuyXBlp2IzeGYV2wL7jsq6kgOZlx05I0K44yYNQ0A==
+X-Received: by 2002:a17:902:28a2:: with SMTP id f31-v6mr4339787plb.312.1541006677375;
+        Wed, 31 Oct 2018 10:24:37 -0700 (PDT)
 Received: from nishad ([106.51.27.228])
-        by smtp.gmail.com with ESMTPSA id h2-v6sm5879263pfc.6.2018.10.31.10.16.57
+        by smtp.gmail.com with ESMTPSA id h25-v6sm28310165pgv.27.2018.10.31.10.24.34
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 31 Oct 2018 10:16:59 -0700 (PDT)
-Date:   Wed, 31 Oct 2018 22:46:54 +0530
+        Wed, 31 Oct 2018 10:24:36 -0700 (PDT)
+Date:   Wed, 31 Oct 2018 22:54:31 +0530
 From:   Nishad Kamdar <nishadkamdar@gmail.com>
 To:     Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Rui Miguel Silva <rmfrfs@gmail.com>, greybus-dev@lists.linaro.org,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 Subject: [PATCH] greybus: gpio: switch GPIO portions to use GPIOLIB_IRQCHIP
-Message-ID: <20181031171649.GA16800@nishad>
+Message-ID: <20181031172426.GA16897@nishad>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
