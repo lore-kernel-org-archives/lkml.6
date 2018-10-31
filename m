@@ -2,226 +2,860 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MIME_BASE64_TEXT,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4446DC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:56:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B4AFC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:58:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D019720821
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:56:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PfBfb5+e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D019720821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C74B920821
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:58:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C74B920821
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=electrozaur.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729698AbeKAAzZ (ORCPT
+        id S1729730AbeKAA4i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 20:55:25 -0400
-Received: from mail-yb1-f171.google.com ([209.85.219.171]:44504 "EHLO
-        mail-yb1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729613AbeKAAzZ (ORCPT
+        Wed, 31 Oct 2018 20:56:38 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42705 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729613AbeKAA4i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 20:55:25 -0400
-Received: by mail-yb1-f171.google.com with SMTP id p144-v6so6819067yba.11;
-        Wed, 31 Oct 2018 08:56:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:mime-version;
-        bh=kUCbMxRNWBQJbpbUv5Cs/R+fOEF1Qg7PTWELdcgvsoM=;
-        b=PfBfb5+eA0j3l5Jy0o5cr/Jej1H0ovD1kKif/FKl6OG7MCBE+zXC2s8wQvO+LVvHoz
-         gnVywfnzRwk+5pCHVYzPkhmoF+4KnK32mZzMR1zfnRAqhpiI7xBBwC3WAruMOlkVDI35
-         zt3L4ztdH/oT7vzKERj+FQ6ASOgdk9hfbjRoVTDeybqx2bRwV6V6Hs5rCAhi4jR39rRQ
-         90iWRypuSw7P2btQxGlDNnzkuTy6uUk6xcGUiIJ3koLnXPahIsA46KVCidU7qn1YA8NY
-         5K+leds47akVVLLrcDPKL/3q79Bu+bsgwzJUBH27dO7+AaCMpba3qkUs9xp2e6QKgq/H
-         QYlQ==
+        Wed, 31 Oct 2018 20:56:38 -0400
+Received: by mail-wr1-f65.google.com with SMTP id y15-v6so17071575wru.9;
+        Wed, 31 Oct 2018 08:58:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:mime-version;
-        bh=kUCbMxRNWBQJbpbUv5Cs/R+fOEF1Qg7PTWELdcgvsoM=;
-        b=q7VmkL3+i/q7zbWJzqLJAlwjdqBJFXFu+5n2afQN2MwzN1rUgNq5ccDs4xJZsB1XBE
-         UlHKbi2RpXo2vt2bKF+YgmgiU0qjymRffDiY4jbqNz8BQstKTv6cgsI2Iz8xnjozDhMb
-         u/TtR5lTUCFhawkVhNi0AN2fWdIyBahjf5pVBMSqldS8R05t5vq8WhAZncpPHE5pxHjh
-         dpjRVyDS1GNEq6HXGbD8BKt2sJY6YKiWNBQhssSW5MfkuhGmiW/2C5p4UHbEURyiJUjE
-         U+pyY3iRB+eLOQRXRvkRD9oNn4QX6Eb/XkGF1oM6JBSpu6qD4KqyXJ6ouIzat+Y/sBiC
-         d5ZA==
-X-Gm-Message-State: AGRZ1gLA2oM8sR9ndI2LGSQgAKovzAMcfAE26jYoycpIf4uTk5nLpdXU
-        gt27ujJ8nyBvTZpJbBknIg==
-X-Google-Smtp-Source: AJdET5eIa3/EpZLG33UsABfNGr9IomGa74QmTWCwQoDCDmGwUTeMmo0B3saxGCqotOFnDPDcG1x5vQ==
-X-Received: by 2002:a25:bb4a:: with SMTP id b10-v6mr3727002ybk.396.1541001407682;
-        Wed, 31 Oct 2018 08:56:47 -0700 (PDT)
-Received: from 960 ([130.254.104.55])
-        by smtp.gmail.com with ESMTPSA id r5-v6sm10861941ywr.80.2018.10.31.08.56.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 31 Oct 2018 08:56:46 -0700 (PDT)
-Message-ID: <e2da896b99bd0c0ba39f214ee7fb2231994554df.camel@gmail.com>
-Subject: [PATCH] x86: add support for Huawei WMI hotkeys.
-From:   ayman.bagabas@gmail.com
-To:     dvhart@infradead.org, andy@infradead.org,
-        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Cc:     Ayman Bagabas <ayman.bagabas@gmail.com>
-Date:   Wed, 31 Oct 2018 11:56:46 -0400
-Content-Type: multipart/mixed; boundary="=-3tr7Bf8thnGDWw7mpUQA"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
+        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=abeFlVPsLWLyOOv3//h3j1XH5hFTflJkCVN6Ie4NXkI=;
+        b=iECNr2zDhCLLBCL0TFPtFRue2KngZqKjn2czgRUE4PGDyc1r5aky/NHFx6Hzhc4soD
+         SSsx2fmLGOJov/2jmBLhieyBEAHF2fb2hrKXhG7g5qRCLLYZIKCQTh3X05gWc4CLR6Z6
+         5g2oYCbhVLNZ0nPfRXBaMfv4Fg02dtBSZ9OjmkaL0yDxA6Ls09Cmrf7xe/psXpkhDLr5
+         WT4ltTmon8saIG1dwp8JUAFMVWPSo8oWX3UnDCDzvj0An4JJ25HSABtWrLSt5C2JKlbU
+         otrG2F66xnCfKAXlfp0i+XYiV2T0EeAEc2Q0yY/DU122sd4C76+lTat6EMinuyDVWGA9
+         4RXA==
+X-Gm-Message-State: AGRZ1gK3gkvOvueeUrVva9uup9sebS+OkXbOc83uHNoYk+DNBevkOGjD
+        2hHx0ANw7z18whkPuAEBF6fwTE7v
+X-Google-Smtp-Source: AJdET5dQPEbEjRDuGpYA9LnRQSIwg9MZjTBIB7Yu3tGX9t/6UzrL2TL2brGreJh9Lee6A3Poq6nBqQ==
+X-Received: by 2002:a5d:6a4d:: with SMTP id t13-v6mr1100734wrw.257.1541001478709;
+        Wed, 31 Oct 2018 08:57:58 -0700 (PDT)
+Received: from [10.0.0.5] ([207.232.55.62])
+        by smtp.gmail.com with ESMTPSA id y141-v6sm28913451wme.10.2018.10.31.08.57.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Oct 2018 08:57:56 -0700 (PDT)
+Subject: Re: remove exofs and the T10 OSD code V2
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        martin.petersen@oracle.com,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20181027082019.20838-1-hch@lst.de>
+ <f9423180-e0fc-efba-e759-dfa4725953ad@kernel.dk>
+ <20181030074542.GB24697@lst.de>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        osd-dev@open-osd.org, linux-scsi@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Boaz Harrosh <ooo@electrozaur.com>
+Message-ID: <ea317f79-37bb-1149-fc43-fb07f46c15e9@electrozaur.com>
+Date:   Wed, 31 Oct 2018 17:57:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
+MIME-Version: 1.0
+In-Reply-To: <20181030074542.GB24697@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 30/10/18 09:45, Christoph Hellwig wrote:
+> On Mon, Oct 29, 2018 at 02:42:12PM -0600, Jens Axboe wrote:
+>> LGTM, for both:
+> 
+> I also have this one on top as requested by Martin.  The core block
+> bidi support is unfortunately also used by bsg-lib, although it is
+> not anywhere near as invasive.  But that is another argument for
+> looking into moving bsg-lib away from using block queues..
+> 
 
---=-3tr7Bf8thnGDWw7mpUQA
-Content-Type: text/plain
-Content-Transfer-Encoding: base64
+BUT this patch is very very wrong.
 
-Cg0K
+Totally apart from T10-OSD and its use in the field. Support for scsi BIDI
+commands is not exclusive to T10-OSD at all. Even the simple scsi-array
+command-set has BIDI operations defined. for example the write-return-xor
+and so on.
 
+Also some private administrative CDBs of some vendor devices uses SCSI-BIDI.
+So this patch just broke some drivers. (User-mode apps use bsg pass through)
 
---=-3tr7Bf8thnGDWw7mpUQA
-Content-Disposition: attachment; filename="0001-x86-add-support-for-Huawei-WMI-hotkeys.patch"
-Content-Type: text/x-patch; name="0001-x86-add-support-for-Huawei-WMI-hotkeys.patch";
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
+Also you might (try hard and) remove all usage of scsi-bidi as an initiator
+from the Linux Kernel. But what about target mode. As a target we have supported
+on the wire bidi protocols like write-return-xor and others for a long time.
+Are you willing to silently break all these setups in the field on the next update?
+Are you so sure these are never used?
 
-RnJvbSBiYzA2OTc2MmU3ZTg2ZGQzYWIzOWU1NWQ3YjE0NWRlYjg1ODg0ZGVjIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBBeW1hbiBCYWdhYmFzIDxheW1hbi5iYWdhYmFzQGdtYWlsLmNv
-bT4KRGF0ZTogV2VkLCAzMSBPY3QgMjAxOCAxMToyNDo0MyAtMDQwMApTdWJqZWN0OiBbUEFUQ0gg
-MS8zXSB4ODY6IGFkZCBzdXBwb3J0IGZvciBIdWF3ZWkgV01JIGhvdGtleXMuCgpUaGlzIGRyaXZl
-ciBhZGRzIHN1cHBvcnQgZm9yIG1pc3NpbmcgaG90a2V5cyBvbiBzb21lIEh1YXdlaSBsYXB0b3Bz
-LgpDdXJyZW50bHksIG9ubHkgSHVhd2VpIE1hdGVib29rIFggUHJvIGlzIHN1cHBvcnRlZC4gVGhl
-IGRyaXZlcgpyZWNvZ25pemVzIHRoZSBmb2xsb3dpbmcga2V5czogYnJpZ2h0bmVzcyBrZXlzLCBt
-aWNtdXRlLCB3bGFuLCBhbmQKSHVhd2VpIHNwZWNpYWwga2V5LiBUaGUgYnJpZ2h0bmVzcyBrZXlz
-IGFyZSBpZ25vcmVkIHNpbmNlIHRoZXkgd29yayBvdXQKb2YgdGhlIGJveC4KClNpZ25lZC1vZmYt
-Ynk6IEF5bWFuIEJhZ2FiYXMgPGF5bWFuLmJhZ2FiYXNAZ21haWwuY29tPgotLS0KIGRyaXZlcnMv
-cGxhdGZvcm0veDg2L0tjb25maWcgICAgICB8ICAxMyArKwogZHJpdmVycy9wbGF0Zm9ybS94ODYv
-TWFrZWZpbGUgICAgIHwgICAxICsKIGRyaXZlcnMvcGxhdGZvcm0veDg2L2h1YXdlaV93bWkuYyB8
-IDIyNSArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKIDMgZmlsZXMgY2hhbmdlZCwgMjM5
-IGluc2VydGlvbnMoKykKIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL3BsYXRmb3JtL3g4Ni9o
-dWF3ZWlfd21pLmMKCmRpZmYgLS1naXQgYS9kcml2ZXJzL3BsYXRmb3JtL3g4Ni9LY29uZmlnIGIv
-ZHJpdmVycy9wbGF0Zm9ybS94ODYvS2NvbmZpZwppbmRleCAwYzFhYTZjMzE0ZjUuLmM2ODEzOTgx
-ZTQ1YyAxMDA2NDQKLS0tIGEvZHJpdmVycy9wbGF0Zm9ybS94ODYvS2NvbmZpZworKysgYi9kcml2
-ZXJzL3BsYXRmb3JtL3g4Ni9LY29uZmlnCkBAIC0xMjI5LDYgKzEyMjksMTkgQEAgY29uZmlnIEky
-Q19NVUxUSV9JTlNUQU5USUFURQogCSAgVG8gY29tcGlsZSB0aGlzIGRyaXZlciBhcyBhIG1vZHVs
-ZSwgY2hvb3NlIE0gaGVyZTogdGhlIG1vZHVsZQogCSAgd2lsbCBiZSBjYWxsZWQgaTJjLW11bHRp
-LWluc3RhbnRpYXRlLgogCitjb25maWcgSFVBV0VJX0xBUFRPUAorCXRyaXN0YXRlICJIdWF3ZWkg
-V01JIGhvdGtleXMgZHJpdmVyIgorCWRlcGVuZHMgb24gQUNQSQorCWRlcGVuZHMgb24gQUNQSV9X
-TUkKKwlkZXBlbmRzIG9uIElOUFVUCisJc2VsZWN0IElOUFVUX1NQQVJTRUtNQVAKKwloZWxwCisJ
-ICBUaGlzIGRyaXZlciBwcm92aWRlcyBzdXBwb3J0IGZvciBIdWF3ZWkgV01JIGhvdGtleXMuCisJ
-ICBJdCBlbmFibGVzIHRoZSBtaXNzaW5nIGtleXMgYW5kIGFkZHMgc3VwcG9ydCB0byBtaWNtdXRl
-CisJICBsZWQgZm91bmQgb24gdGhlc2UgbGFwdG9wcy5xCisJICBTdXBwb3J0ZWQgZGV2aWNlcyBh
-cmU6CisJICAtIE1hdGVib29rIFggUHJvCisKIGVuZGlmICMgWDg2X1BMQVRGT1JNX0RFVklDRVMK
-IAogY29uZmlnIFBNQ19BVE9NCmRpZmYgLS1naXQgYS9kcml2ZXJzL3BsYXRmb3JtL3g4Ni9NYWtl
-ZmlsZSBiL2RyaXZlcnMvcGxhdGZvcm0veDg2L01ha2VmaWxlCmluZGV4IGU2ZDFiZWNmODFjZS4u
-NTk4NDM1NGUxOGZmIDEwMDY0NAotLS0gYS9kcml2ZXJzL3BsYXRmb3JtL3g4Ni9NYWtlZmlsZQor
-KysgYi9kcml2ZXJzL3BsYXRmb3JtL3g4Ni9NYWtlZmlsZQpAQCAtMjksNiArMjksNyBAQCBvYmot
-JChDT05GSUdfQUNFUkhERikJCSs9IGFjZXJoZGYubwogb2JqLSQoQ09ORklHX0hQX0FDQ0VMKQkJ
-Kz0gaHBfYWNjZWwubwogb2JqLSQoQ09ORklHX0hQX1dJUkVMRVNTKQkrPSBocC13aXJlbGVzcy5v
-CiBvYmotJChDT05GSUdfSFBfV01JKQkJKz0gaHAtd21pLm8KK29iai0kKENPTkZJR19IVUFXRUlf
-TEFQVE9QKQkJKz0gaHVhd2VpX3dtaS5vCiBvYmotJChDT05GSUdfQU1JTE9fUkZLSUxMKQkrPSBh
-bWlsby1yZmtpbGwubwogb2JqLSQoQ09ORklHX0dQRF9QT0NLRVRfRkFOKQkrPSBncGQtcG9ja2V0
-LWZhbi5vCiBvYmotJChDT05GSUdfVEMxMTAwX1dNSSkJKz0gdGMxMTAwLXdtaS5vCmRpZmYgLS1n
-aXQgYS9kcml2ZXJzL3BsYXRmb3JtL3g4Ni9odWF3ZWlfd21pLmMgYi9kcml2ZXJzL3BsYXRmb3Jt
-L3g4Ni9odWF3ZWlfd21pLmMKbmV3IGZpbGUgbW9kZSAxMDA2NDQKaW5kZXggMDAwMDAwMDAwMDAw
-Li5hNDMwZmY4NjA5MjkKLS0tIC9kZXYvbnVsbAorKysgYi9kcml2ZXJzL3BsYXRmb3JtL3g4Ni9o
-dWF3ZWlfd21pLmMKQEAgLTAsMCArMSwyMjUgQEAKKy8vIFNQRFgtTGljZW5zZS1JZGVudGlmaWVy
-OiBHUEwtMi4wCisvKgorICogIEh1YXdlaSBXTUkgSG90a2V5cyBEcml2ZXIKKyAqCisgKiAgQ29w
-eXJpZ2h0IChDKSAyMDE4CQkgIEF5bWFuIEJhZ2FiYXMgPGF5bWFuLmJhZ2FiYXNAZ21haWwuY29t
-PgorICoKKyAqICBUaGlzIHByb2dyYW0gaXMgZnJlZSBzb2Z0d2FyZTogeW91IGNhbiByZWRpc3Ry
-aWJ1dGUgaXQgYW5kL29yIG1vZGlmeQorICogIGl0IHVuZGVyIHRoZSB0ZXJtcyBvZiB0aGUgR05V
-IEdlbmVyYWwgUHVibGljIExpY2Vuc2UgYXMgcHVibGlzaGVkIGJ5CisgKiAgdGhlIEZyZWUgU29m
-dHdhcmUgRm91bmRhdGlvbiwgZWl0aGVyIHZlcnNpb24gMiBvZiB0aGUgTGljZW5zZSwgb3IKKyAq
-ICAoYXQgeW91ciBvcHRpb24pIGFueSBsYXRlciB2ZXJzaW9uLgorICoKKyAqICBUaGlzIHByb2dy
-YW0gaXMgZGlzdHJpYnV0ZWQgaW4gdGhlIGhvcGUgdGhhdCBpdCB3aWxsIGJlIHVzZWZ1bCwKKyAq
-ICBidXQgV0lUSE9VVCBBTlkgV0FSUkFOVFk7IHdpdGhvdXQgZXZlbiB0aGUgaW1wbGllZCB3YXJy
-YW50eSBvZgorICogIE1FUkNIQU5UQUJJTElUWSBvciBGSVRORVNTIEZPUiBBIFBBUlRJQ1VMQVIg
-UFVSUE9TRS4gIFNlZSB0aGUKKyAqICBHTlUgR2VuZXJhbCBQdWJsaWMgTGljZW5zZSBmb3IgbW9y
-ZSBkZXRhaWxzLgorICoKKyAqICBZb3Ugc2hvdWxkIGhhdmUgcmVjZWl2ZWQgYSBjb3B5IG9mIHRo
-ZSBHTlUgR2VuZXJhbCBQdWJsaWMgTGljZW5zZQorICogIGFsb25nIHdpdGggdGhpcyBwcm9ncmFt
-LiAgSWYgbm90LCBzZWUgPGh0dHBzOi8vd3d3LmdudS5vcmcvbGljZW5zZXMvPi4KKyAqCisgKi8K
-KworI2luY2x1ZGUgPGxpbnV4L2tlcm5lbC5oPgorI2luY2x1ZGUgPGxpbnV4L21vZHVsZS5oPgor
-I2luY2x1ZGUgPGxpbnV4L2luaXQuaD4KKyNpbmNsdWRlIDxsaW51eC9pbnB1dC5oPgorI2luY2x1
-ZGUgPGxpbnV4L2lucHV0L3NwYXJzZS1rZXltYXAuaD4KKyNpbmNsdWRlIDxsaW51eC9hY3BpLmg+
-CisjaW5jbHVkZSA8bGludXgvd21pLmg+CisjaW5jbHVkZSA8bGludXgvaHVhd2VpX3dtaS5oPgor
-CitNT0RVTEVfQVVUSE9SKCJBeW1hbiBCYWdhYmFzIDxheW1hbi5iYWdhYmFzQGdtYWlsLmNvbT4i
-KTsKK01PRFVMRV9ERVNDUklQVElPTigiSHVhd2VpIFdNSSBob3RrZXlzIik7CitNT0RVTEVfTElD
-RU5TRSgiR1BMIik7CisKKyNkZWZpbmUgREVWSUNFX05BTUUgImh1YXdlaSIKKyNkZWZpbmUgTU9E
-VUxFX05BTUUgREVWSUNFX05BTUUiX3dtaSIKKworLyoKKyAqIEh1YXdlaSBXTUkgRGV2aWNlcyBH
-VUlEcworICovCisjZGVmaW5lIEFNVzBfR1VJRCAiQUJCQzBGNUItOEVBMS0xMUQxLUEwMDAtQzkw
-NjI5MTAwMDAwIiAvLyBcX1NCLkFNVzAKKworLyoKKyAqIEh1YXdlaSBXTUkgRXZlbnRzIEdVSURz
-CisgKi8KKyNkZWZpbmUgRVZFTlRfR1VJRCAiQUJCQzBGNUMtOEVBMS0xMUQxLUEwMDAtQzkwNjI5
-MTAwMDAwIgorCitNT0RVTEVfQUxJQVMoIndtaToiQU1XMF9HVUlEKTsKK01PRFVMRV9BTElBUygi
-d21pOiJFVkVOVF9HVUlEKTsKKworZW51bSB7CisJTUlDTVVURV9MRURfT04gPSAweDAwMDEwQjA0
-LAorCU1JQ01VVEVfTEVEX09GRiA9IDB4MDAwMDBCMDQsCit9OworCitzdGF0aWMgY29uc3Qgc3Ry
-dWN0IGtleV9lbnRyeSBodWF3ZWlfd21pX2tleW1hcFtdIF9faW5pdGNvbnN0ID0geworCQl7IEtF
-X0lHTk9SRSwgMHgyODEsIHsgS0VZX0JSSUdIVE5FU1NET1dOIH0gfSwKKwkJeyBLRV9JR05PUkUs
-IDB4MjgyLCB7IEtFWV9CUklHSFRORVNTVVAgfSB9LAorCQl7IEtFX0lHTk9SRSwgMHgyODMsIHsg
-S0VZX0tCRElMTFVNVE9HR0xFIH0gfSwKKwkJeyBLRV9LRVksCTB4Mjg3LCB7IEtFWV9NSUNNVVRF
-IH0gfSwKKwkJeyBLRV9LRVksCTB4Mjg5LCB7IEtFWV9XTEFOIH0gfSwKKwkJLy8gSHVhd2VpIHxN
-fCBidXR0b24KKwkJeyBLRV9LRVksCTB4MjhhLCB7IEtFWV9QUk9HMSB9IH0sCisJCXsgS0VfRU5E
-LAkwIH0KK307CisKK3N0cnVjdCBodWF3ZWlfd21pX2RldmljZSB7CisJc3RydWN0IGlucHV0X2Rl
-diAqaW5wdXRkZXY7Cit9Oworc3RhdGljIHN0cnVjdCBodWF3ZWlfd21pX2RldmljZSAqd21pX2Rl
-dmljZTsKKworaW50IGh1YXdlaV93bWlfbWljbXV0ZV9sZWRfc2V0KGJvb2wgb24pCit7CisJdTMy
-IGFyZ3MgPSAob24pID8gTUlDTVVURV9MRURfT04gOiBNSUNNVVRFX0xFRF9PRkY7CisJc3RydWN0
-IGFjcGlfYnVmZmVyIGlucHV0ID0geyAoYWNwaV9zaXplKXNpemVvZihhcmdzKSwgJmFyZ3MgfTsK
-KwlhY3BpX3N0YXR1cyBzdGF0dXM7CisKKwlzdGF0dXMgPSB3bWlfZXZhbHVhdGVfbWV0aG9kKEFN
-VzBfR1VJRCwgMCwgMSwgJmlucHV0LCBOVUxMKTsKKwlpZiAoQUNQSV9GQUlMVVJFKHN0YXR1cykp
-CisJCXJldHVybiBzdGF0dXM7CisKKwlyZXR1cm4gMDsKK30KK0VYUE9SVF9TWU1CT0xfR1BMKGh1
-YXdlaV93bWlfbWljbXV0ZV9sZWRfc2V0KTsKKworc3RhdGljIHZvaWQgaHVhd2VpX3dtaV9wcm9j
-ZXNzX2tleShzdHJ1Y3QgaW5wdXRfZGV2ICppbnB1dF9kZXYsIGludCBjb2RlKQoreworCWNvbnN0
-IHN0cnVjdCBrZXlfZW50cnkgKmtleTsKKworCWtleSA9IHNwYXJzZV9rZXltYXBfZW50cnlfZnJv
-bV9zY2FuY29kZShpbnB1dF9kZXYsIGNvZGUpOworCisJaWYgKCFrZXkpIHsKKwkJcHJfaW5mbygi
-JXM6IFVua25vd24ga2V5IHByZXNzZWQsIGNvZGU6IDB4JTA0eFxuIiwKKwkJCQkJTU9EVUxFX05B
-TUUsIGNvZGUpOworCQlyZXR1cm47CisJfQorCisJc3BhcnNlX2tleW1hcF9yZXBvcnRfZW50cnko
-aW5wdXRfZGV2LCBrZXksIDEsIHRydWUpOworfQorCitzdGF0aWMgdm9pZCBodWF3ZWlfd21pX25v
-dGlmeSh1MzIgdmFsdWUsIHZvaWQgKmNvbnRleHQpCit7CisJc3RydWN0IGFjcGlfYnVmZmVyIHJl
-c3BvbnNlID0geyBBQ1BJX0FMTE9DQVRFX0JVRkZFUiwgTlVMTCB9OworCXVuaW9uIGFjcGlfb2Jq
-ZWN0ICpvYmo7CisJYWNwaV9zdGF0dXMgc3RhdHVzOworCisJc3RhdHVzID0gd21pX2dldF9ldmVu
-dF9kYXRhKHZhbHVlLCAmcmVzcG9uc2UpOworCWlmIChBQ1BJX0ZBSUxVUkUoc3RhdHVzKSkgewor
-CQlwcl9lcnIoIiVzOiBCYWQgZXZlbnQgc3RhdHVzIDB4JXhcbiIsCisJCQkJCU1PRFVMRV9OQU1F
-LCBzdGF0dXMpOworCQlyZXR1cm47CisJfQorCisJb2JqID0gKHVuaW9uIGFjcGlfb2JqZWN0ICop
-cmVzcG9uc2UucG9pbnRlcjsKKworCWlmICghb2JqKQorCQlyZXR1cm47CisKKwlpZiAob2JqLT50
-eXBlID09IEFDUElfVFlQRV9JTlRFR0VSKQorCQlodWF3ZWlfd21pX3Byb2Nlc3Nfa2V5KHdtaV9k
-ZXZpY2UtPmlucHV0ZGV2LAorCQkJCQkJCW9iai0+aW50ZWdlci52YWx1ZSk7CisJZWxzZQorCQlw
-cl9pbmZvKCIlczogVW5rbm93biByZXNwb25zZSByZWNlaXZlZCAlZFxuIiwKKwkJCQkJTU9EVUxF
-X05BTUUsIG9iai0+dHlwZSk7CisKKwlrZnJlZShyZXNwb25zZS5wb2ludGVyKTsKK30KKworc3Rh
-dGljIGludCBodWF3ZWlfaW5wdXRfaW5pdCh2b2lkKQoreworCWFjcGlfc3RhdHVzIHN0YXR1czsK
-KwlpbnQgZXJyOworCisJd21pX2RldmljZS0+aW5wdXRkZXYgPSBpbnB1dF9hbGxvY2F0ZV9kZXZp
-Y2UoKTsKKwlpZiAoIXdtaV9kZXZpY2UtPmlucHV0ZGV2KQorCQlyZXR1cm4gLUVOT01FTTsKKwor
-CXdtaV9kZXZpY2UtPmlucHV0ZGV2LT5uYW1lID0gIkh1YXdlaSBXTUkgaG90a2V5cyI7CisJd21p
-X2RldmljZS0+aW5wdXRkZXYtPnBoeXMgPSAid21pL2lucHV0MCI7CisJd21pX2RldmljZS0+aW5w
-dXRkZXYtPmlkLmJ1c3R5cGUgPSBCVVNfSE9TVDsKKworCWVyciA9IHNwYXJzZV9rZXltYXBfc2V0
-dXAod21pX2RldmljZS0+aW5wdXRkZXYsCisJCQlodWF3ZWlfd21pX2tleW1hcCwgTlVMTCk7CisJ
-aWYgKGVycikKKwkJZ290byBlcnJfZnJlZV9kZXY7CisKKwlzdGF0dXMgPSB3bWlfaW5zdGFsbF9u
-b3RpZnlfaGFuZGxlcihFVkVOVF9HVUlELAorCQkJaHVhd2VpX3dtaV9ub3RpZnksCisJCQlOVUxM
-KTsKKworCWlmIChBQ1BJX0ZBSUxVUkUoc3RhdHVzKSkgeworCQllcnIgPSAtRUlPOworCQlnb3Rv
-IGVycl9mcmVlX2RldjsKKwl9CisKKwllcnIgPSBpbnB1dF9yZWdpc3Rlcl9kZXZpY2Uod21pX2Rl
-dmljZS0+aW5wdXRkZXYpOworCWlmIChlcnIpCisJCWdvdG8gZXJyX3JlbW92ZV9ub3RpZmllcjsK
-KworCXJldHVybiAwOworCisKK2Vycl9yZW1vdmVfbm90aWZpZXI6CisJd21pX3JlbW92ZV9ub3Rp
-ZnlfaGFuZGxlcihFVkVOVF9HVUlEKTsKK2Vycl9mcmVlX2RldjoKKwlpbnB1dF9mcmVlX2Rldmlj
-ZSh3bWlfZGV2aWNlLT5pbnB1dGRldik7CisJcmV0dXJuIGVycjsKK30KKworc3RhdGljIHZvaWQg
-aHVhd2VpX2lucHV0X2V4aXQodm9pZCkKK3sKKwl3bWlfcmVtb3ZlX25vdGlmeV9oYW5kbGVyKEVW
-RU5UX0dVSUQpOworCWlucHV0X3VucmVnaXN0ZXJfZGV2aWNlKHdtaV9kZXZpY2UtPmlucHV0ZGV2
-KTsKK30KKworc3RhdGljIGludCBfX2luaXQgaHVhd2VpX3dtaV9zZXR1cCh2b2lkKQoreworCWlu
-dCBlcnI7CisKKwl3bWlfZGV2aWNlID0ga21hbGxvYyhzaXplb2Yoc3RydWN0IGh1YXdlaV93bWlf
-ZGV2aWNlKSwgR0ZQX0tFUk5FTCk7CisJaWYgKCF3bWlfZGV2aWNlKQorCQlyZXR1cm4gLUVOT01F
-TTsKKworCWVyciA9IGh1YXdlaV9pbnB1dF9pbml0KCk7CisJaWYgKGVycikKKwkJZ290byBlcnJf
-aW5wdXQ7CisKKwlyZXR1cm4gMDsKKworZXJyX2lucHV0OgorCXJldHVybiBlcnI7Cit9CisKK3N0
-YXRpYyB2b2lkIGh1YXdlaV93bWlfZGVzdHJveSh2b2lkKQoreworCWh1YXdlaV9pbnB1dF9leGl0
-KCk7CisJa2ZyZWUod21pX2RldmljZSk7Cit9CisKK3N0YXRpYyBpbnQgX19pbml0IGh1YXdlaV93
-bWlfaW5pdCh2b2lkKQoreworCWludCBlcnI7CisKKwlpZiAoIXdtaV9oYXNfZ3VpZChFVkVOVF9H
-VUlEKSkgeworCQlwcl93YXJuKCIlczogTm8ga25vd24gV01JIEdVSUQgZm91bmRcbiIsIE1PRFVM
-RV9OQU1FKTsKKwkJcmV0dXJuIC1FTk9ERVY7CisJfQorCisJZXJyID0gaHVhd2VpX3dtaV9zZXR1
-cCgpOworCWlmIChlcnIpIHsKKwkJcHJfZXJyKCIlczogRmFpbGVkIHRvIHNldHVwIGRldmljZVxu
-IiwgTU9EVUxFX05BTUUpOworCQlyZXR1cm4gZXJyOworCX0KKworCXJldHVybiAwOworfQorCitz
-dGF0aWMgdm9pZCBfX2V4aXQgaHVhd2VpX3dtaV9leGl0KHZvaWQpCit7CisJaHVhd2VpX3dtaV9k
-ZXN0cm95KCk7CisJcHJfZGVidWcoIiVzOiBEcml2ZXIgdW5sb2FkZWQgc3VjY2Vzc2Z1bGx5XG4i
-LCBNT0RVTEVfTkFNRSk7Cit9CisKK21vZHVsZV9pbml0KGh1YXdlaV93bWlfaW5pdCk7Cittb2R1
-bGVfZXhpdChodWF3ZWlfd21pX2V4aXQpOwotLSAKMi4xNy4yCgo=
+PLEASE, I beg of you guys. Do not remove SCSI-BIDI. It is a cry of generations.
 
+And I think by the rules of Linus, as far as target mode. You are not allowed
+to break users in this way.
 
---=-3tr7Bf8thnGDWw7mpUQA--
+Thanks
+Boaz
+
+> ---
+>>From d6dd4f32798edd425a4df72f6125dba03e19d8c7 Mon Sep 17 00:00:00 2001
+> From: Christoph Hellwig <hch@lst.de>
+> Date: Sat, 27 Oct 2018 15:49:13 +0200
+> Subject: scsi: remove bidirectional command support
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  drivers/scsi/cxgbi/libcxgbi.c      | 13 ++---
+>  drivers/scsi/iscsi_tcp.c           |  9 +---
+>  drivers/scsi/libiscsi.c            | 64 +++---------------------
+>  drivers/scsi/libiscsi_tcp.c        |  8 +--
+>  drivers/scsi/scsi_debug.c          | 51 ++++---------------
+>  drivers/scsi/scsi_error.c          |  3 --
+>  drivers/scsi/scsi_lib.c            | 80 ++----------------------------
+>  drivers/scsi/virtio_scsi.c         | 14 ++----
+>  drivers/target/loopback/tcm_loop.c | 15 ------
+>  drivers/usb/storage/uas.c          | 11 +---
+>  include/scsi/scsi_cmnd.h           | 19 +------
+>  include/scsi/scsi_eh.h             |  1 -
+>  12 files changed, 35 insertions(+), 253 deletions(-)
+> 
+> diff --git a/drivers/scsi/cxgbi/libcxgbi.c b/drivers/scsi/cxgbi/libcxgbi.c
+> index 75f876409fb9..4466ae5c9a74 100644
+> --- a/drivers/scsi/cxgbi/libcxgbi.c
+> +++ b/drivers/scsi/cxgbi/libcxgbi.c
+> @@ -1211,7 +1211,7 @@ scmd_get_params(struct scsi_cmnd *sc, struct scatterlist **sgl,
+>  		unsigned int *sgcnt, unsigned int *dlen,
+>  		unsigned int prot)
+>  {
+> -	struct scsi_data_buffer *sdb = prot ? scsi_prot(sc) : scsi_out(sc);
+> +	struct scsi_data_buffer *sdb = prot ? scsi_prot(sc) : &sc->sdb;
+>  
+>  	*sgl = sdb->table.sgl;
+>  	*sgcnt = sdb->table.nents;
+> @@ -1427,8 +1427,7 @@ static void task_release_itt(struct iscsi_task *task, itt_t hdr_itt)
+>  	log_debug(1 << CXGBI_DBG_DDP,
+>  		  "cdev 0x%p, task 0x%p, release tag 0x%x.\n",
+>  		  cdev, task, tag);
+> -	if (sc &&
+> -	    (scsi_bidi_cmnd(sc) || sc->sc_data_direction == DMA_FROM_DEVICE) &&
+> +	if (sc && sc->sc_data_direction == DMA_FROM_DEVICE &&
+>  	    cxgbi_ppm_is_ddp_tag(ppm, tag)) {
+>  		struct cxgbi_task_data *tdata = iscsi_task_cxgbi_data(task);
+>  		struct cxgbi_task_tag_info *ttinfo = &tdata->ttinfo;
+> @@ -1460,9 +1459,7 @@ static int task_reserve_itt(struct iscsi_task *task, itt_t *hdr_itt)
+>  	u32 tag = 0;
+>  	int err = -EINVAL;
+>  
+> -	if (sc &&
+> -	    (scsi_bidi_cmnd(sc) || sc->sc_data_direction == DMA_FROM_DEVICE)
+> -	) {
+> +	if (sc && sc->sc_data_direction == DMA_FROM_DEVICE) {
+>  		struct cxgbi_task_data *tdata = iscsi_task_cxgbi_data(task);
+>  		struct cxgbi_task_tag_info *ttinfo = &tdata->ttinfo;
+>  
+> @@ -1896,7 +1893,7 @@ int cxgbi_conn_alloc_pdu(struct iscsi_task *task, u8 opcode)
+>  	if (SKB_MAX_HEAD(cdev->skb_tx_rsvd) > (512 * MAX_SKB_FRAGS) &&
+>  	    (opcode == ISCSI_OP_SCSI_DATA_OUT ||
+>  	     (opcode == ISCSI_OP_SCSI_CMD &&
+> -	      (scsi_bidi_cmnd(sc) || sc->sc_data_direction == DMA_TO_DEVICE))))
+> +	      sc->sc_data_direction == DMA_TO_DEVICE)))
+>  		/* data could goes into skb head */
+>  		headroom += min_t(unsigned int,
+>  				SKB_MAX_HEAD(cdev->skb_tx_rsvd),
+> @@ -1971,7 +1968,7 @@ int cxgbi_conn_init_pdu(struct iscsi_task *task, unsigned int offset,
+>  		return 0;
+>  
+>  	if (task->sc) {
+> -		struct scsi_data_buffer *sdb = scsi_out(task->sc);
+> +		struct scsi_data_buffer *sdb = &task->sc->sdb;
+>  		struct scatterlist *sg = NULL;
+>  		int err;
+>  
+> diff --git a/drivers/scsi/iscsi_tcp.c b/drivers/scsi/iscsi_tcp.c
+> index 23354f206533..a78b46bb2b71 100644
+> --- a/drivers/scsi/iscsi_tcp.c
+> +++ b/drivers/scsi/iscsi_tcp.c
+> @@ -514,7 +514,7 @@ static int iscsi_sw_tcp_pdu_init(struct iscsi_task *task,
+>  	if (!task->sc)
+>  		iscsi_sw_tcp_send_linear_data_prep(conn, task->data, count);
+>  	else {
+> -		struct scsi_data_buffer *sdb = scsi_out(task->sc);
+> +		struct scsi_data_buffer *sdb = &task->sc->sdb;
+>  
+>  		err = iscsi_sw_tcp_send_data_prep(conn, sdb->table.sgl,
+>  						  sdb->table.nents, offset,
+> @@ -948,12 +948,6 @@ static umode_t iscsi_sw_tcp_attr_is_visible(int param_type, int param)
+>  	return 0;
+>  }
+>  
+> -static int iscsi_sw_tcp_slave_alloc(struct scsi_device *sdev)
+> -{
+> -	blk_queue_flag_set(QUEUE_FLAG_BIDI, sdev->request_queue);
+> -	return 0;
+> -}
+> -
+>  static int iscsi_sw_tcp_slave_configure(struct scsi_device *sdev)
+>  {
+>  	struct iscsi_sw_tcp_host *tcp_sw_host = iscsi_host_priv(sdev->host);
+> @@ -981,7 +975,6 @@ static struct scsi_host_template iscsi_sw_tcp_sht = {
+>  	.eh_device_reset_handler= iscsi_eh_device_reset,
+>  	.eh_target_reset_handler = iscsi_eh_recover_target,
+>  	.use_clustering         = DISABLE_CLUSTERING,
+> -	.slave_alloc            = iscsi_sw_tcp_slave_alloc,
+>  	.slave_configure        = iscsi_sw_tcp_slave_configure,
+>  	.target_alloc		= iscsi_target_alloc,
+>  	.proc_name		= "iscsi_tcp",
+> diff --git a/drivers/scsi/libiscsi.c b/drivers/scsi/libiscsi.c
+> index 93c66ebad907..a6dec983c30e 100644
+> --- a/drivers/scsi/libiscsi.c
+> +++ b/drivers/scsi/libiscsi.c
+> @@ -218,32 +218,6 @@ static int iscsi_prep_ecdb_ahs(struct iscsi_task *task)
+>  	return 0;
+>  }
+>  
+> -static int iscsi_prep_bidi_ahs(struct iscsi_task *task)
+> -{
+> -	struct scsi_cmnd *sc = task->sc;
+> -	struct iscsi_rlength_ahdr *rlen_ahdr;
+> -	int rc;
+> -
+> -	rlen_ahdr = iscsi_next_hdr(task);
+> -	rc = iscsi_add_hdr(task, sizeof(*rlen_ahdr));
+> -	if (rc)
+> -		return rc;
+> -
+> -	rlen_ahdr->ahslength =
+> -		cpu_to_be16(sizeof(rlen_ahdr->read_length) +
+> -						  sizeof(rlen_ahdr->reserved));
+> -	rlen_ahdr->ahstype = ISCSI_AHSTYPE_RLENGTH;
+> -	rlen_ahdr->reserved = 0;
+> -	rlen_ahdr->read_length = cpu_to_be32(scsi_in(sc)->length);
+> -
+> -	ISCSI_DBG_SESSION(task->conn->session,
+> -			  "bidi-in rlen_ahdr->read_length(%d) "
+> -		          "rlen_ahdr->ahslength(%d)\n",
+> -		          be32_to_cpu(rlen_ahdr->read_length),
+> -		          be16_to_cpu(rlen_ahdr->ahslength));
+> -	return 0;
+> -}
+> -
+>  /**
+>   * iscsi_check_tmf_restrictions - check if a task is affected by TMF
+>   * @task: iscsi task
+> @@ -382,13 +356,6 @@ static int iscsi_prep_scsi_cmd_pdu(struct iscsi_task *task)
+>  	memcpy(hdr->cdb, sc->cmnd, cmd_len);
+>  
+>  	task->imm_count = 0;
+> -	if (scsi_bidi_cmnd(sc)) {
+> -		hdr->flags |= ISCSI_FLAG_CMD_READ;
+> -		rc = iscsi_prep_bidi_ahs(task);
+> -		if (rc)
+> -			return rc;
+> -	}
+> -
+>  	if (scsi_get_prot_op(sc) != SCSI_PROT_NORMAL)
+>  		task->protected = true;
+>  
+> @@ -463,12 +430,10 @@ static int iscsi_prep_scsi_cmd_pdu(struct iscsi_task *task)
+>  
+>  	conn->scsicmd_pdus_cnt++;
+>  	ISCSI_DBG_SESSION(session, "iscsi prep [%s cid %d sc %p cdb 0x%x "
+> -			  "itt 0x%x len %d bidi_len %d cmdsn %d win %d]\n",
+> -			  scsi_bidi_cmnd(sc) ? "bidirectional" :
+> +			  "itt 0x%x len %d cmdsn %d win %d]\n",
+>  			  sc->sc_data_direction == DMA_TO_DEVICE ?
+>  			  "write" : "read", conn->id, sc, sc->cmnd[0],
+>  			  task->itt, transfer_length,
+> -			  scsi_bidi_cmnd(sc) ? scsi_in(sc)->length : 0,
+>  			  session->cmdsn,
+>  			  session->max_cmdsn - session->exp_cmdsn + 1);
+>  	return 0;
+> @@ -637,12 +602,7 @@ static void fail_scsi_task(struct iscsi_task *task, int err)
+>  		state = ISCSI_TASK_ABRT_TMF;
+>  
+>  	sc->result = err << 16;
+> -	if (!scsi_bidi_cmnd(sc))
+> -		scsi_set_resid(sc, scsi_bufflen(sc));
+> -	else {
+> -		scsi_out(sc)->resid = scsi_out(sc)->length;
+> -		scsi_in(sc)->resid = scsi_in(sc)->length;
+> -	}
+> +	scsi_set_resid(sc, scsi_bufflen(sc));
+>  
+>  	/* regular RX path uses back_lock */
+>  	spin_lock_bh(&conn->session->back_lock);
+> @@ -897,14 +857,7 @@ static void iscsi_scsi_cmd_rsp(struct iscsi_conn *conn, struct iscsi_hdr *hdr,
+>  
+>  	if (rhdr->flags & (ISCSI_FLAG_CMD_BIDI_UNDERFLOW |
+>  			   ISCSI_FLAG_CMD_BIDI_OVERFLOW)) {
+> -		int res_count = be32_to_cpu(rhdr->bi_residual_count);
+> -
+> -		if (scsi_bidi_cmnd(sc) && res_count > 0 &&
+> -				(rhdr->flags & ISCSI_FLAG_CMD_BIDI_OVERFLOW ||
+> -				 res_count <= scsi_in(sc)->length))
+> -			scsi_in(sc)->resid = res_count;
+> -		else
+> -			sc->result = (DID_BAD_TARGET << 16) | rhdr->cmd_status;
+> +		sc->result = (DID_BAD_TARGET << 16) | rhdr->cmd_status;
+>  	}
+>  
+>  	if (rhdr->flags & (ISCSI_FLAG_CMD_UNDERFLOW |
+> @@ -951,8 +904,8 @@ iscsi_data_in_rsp(struct iscsi_conn *conn, struct iscsi_hdr *hdr,
+>  
+>  		if (res_count > 0 &&
+>  		    (rhdr->flags & ISCSI_FLAG_CMD_OVERFLOW ||
+> -		     res_count <= scsi_in(sc)->length))
+> -			scsi_in(sc)->resid = res_count;
+> +		     res_count <= sc->sdb.length))
+> +			sc->sdb.resid = res_count;
+>  		else
+>  			sc->result = (DID_BAD_TARGET << 16) | rhdr->cmd_status;
+>  	}
+> @@ -1794,12 +1747,7 @@ int iscsi_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *sc)
+>  	spin_unlock_bh(&session->frwd_lock);
+>  	ISCSI_DBG_SESSION(session, "iscsi: cmd 0x%x is not queued (%d)\n",
+>  			  sc->cmnd[0], reason);
+> -	if (!scsi_bidi_cmnd(sc))
+> -		scsi_set_resid(sc, scsi_bufflen(sc));
+> -	else {
+> -		scsi_out(sc)->resid = scsi_out(sc)->length;
+> -		scsi_in(sc)->resid = scsi_in(sc)->length;
+> -	}
+> +	scsi_set_resid(sc, scsi_bufflen(sc));
+>  	sc->scsi_done(sc);
+>  	return 0;
+>  }
+> diff --git a/drivers/scsi/libiscsi_tcp.c b/drivers/scsi/libiscsi_tcp.c
+> index 4fcb9e65be57..1ec8332df515 100644
+> --- a/drivers/scsi/libiscsi_tcp.c
+> +++ b/drivers/scsi/libiscsi_tcp.c
+> @@ -491,7 +491,7 @@ static int iscsi_tcp_data_in(struct iscsi_conn *conn, struct iscsi_task *task)
+>  	struct iscsi_tcp_task *tcp_task = task->dd_data;
+>  	struct iscsi_data_rsp *rhdr = (struct iscsi_data_rsp *)tcp_conn->in.hdr;
+>  	int datasn = be32_to_cpu(rhdr->datasn);
+> -	unsigned total_in_length = scsi_in(task->sc)->length;
+> +	unsigned total_in_length = task->sc->sdb.length;
+>  
+>  	/*
+>  	 * lib iscsi will update this in the completion handling if there
+> @@ -576,11 +576,11 @@ static int iscsi_tcp_r2t_rsp(struct iscsi_conn *conn, struct iscsi_task *task)
+>  			      data_length, session->max_burst);
+>  
+>  	data_offset = be32_to_cpu(rhdr->data_offset);
+> -	if (data_offset + data_length > scsi_out(task->sc)->length) {
+> +	if (data_offset + data_length > task->sc->sdb.length) {
+>  		iscsi_conn_printk(KERN_ERR, conn,
+>  				  "invalid R2T with data len %u at offset %u "
+>  				  "and total length %d\n", data_length,
+> -				  data_offset, scsi_out(task->sc)->length);
+> +				  data_offset, task->sc->sdb.length);
+>  		return ISCSI_ERR_DATALEN;
+>  	}
+>  
+> @@ -692,7 +692,7 @@ iscsi_tcp_hdr_dissect(struct iscsi_conn *conn, struct iscsi_hdr *hdr)
+>  		if (tcp_conn->in.datalen) {
+>  			struct iscsi_tcp_task *tcp_task = task->dd_data;
+>  			struct ahash_request *rx_hash = NULL;
+> -			struct scsi_data_buffer *sdb = scsi_in(task->sc);
+> +			struct scsi_data_buffer *sdb = &task->sc->sdb;
+>  
+>  			/*
+>  			 * Setup copy of Data-In into the struct scsi_cmnd
+> diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
+> index 60bcc6df97a9..98b212ec6240 100644
+> --- a/drivers/scsi/scsi_debug.c
+> +++ b/drivers/scsi/scsi_debug.c
+> @@ -430,7 +430,6 @@ static int resp_rsup_opcodes(struct scsi_cmnd *, struct sdebug_dev_info *);
+>  static int resp_rsup_tmfs(struct scsi_cmnd *, struct sdebug_dev_info *);
+>  static int resp_write_same_10(struct scsi_cmnd *, struct sdebug_dev_info *);
+>  static int resp_write_same_16(struct scsi_cmnd *, struct sdebug_dev_info *);
+> -static int resp_xdwriteread_10(struct scsi_cmnd *, struct sdebug_dev_info *);
+>  static int resp_comp_write(struct scsi_cmnd *, struct sdebug_dev_info *);
+>  static int resp_write_buffer(struct scsi_cmnd *, struct sdebug_dev_info *);
+>  static int resp_sync_cache(struct scsi_cmnd *, struct sdebug_dev_info *);
+> @@ -600,9 +599,6 @@ static const struct opcode_info_t opcode_info_arr[SDEB_I_LAST_ELEMENT + 1] = {
+>  	{0, 0x42, 0, F_D_OUT | FF_MEDIA_IO, resp_unmap, NULL, /* UNMAP */
+>  	    {10,  0x1, 0, 0, 0, 0, 0x3f, 0xff, 0xff, 0xc7, 0, 0, 0, 0, 0, 0} },
+>  /* 25 */
+> -	{0, 0x53, 0, F_D_IN | F_D_OUT | FF_MEDIA_IO, resp_xdwriteread_10,
+> -	    NULL, {10,  0xff, 0xff, 0xff, 0xff, 0xff, 0x3f, 0xff, 0xff, 0xc7,
+> -		   0, 0, 0, 0, 0, 0} },		/* XDWRITEREAD(10) */
+>  	{0, 0x3b, 0, F_D_OUT_MAYBE, resp_write_buffer, NULL,
+>  	    {10,  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xc7, 0, 0,
+>  	     0, 0, 0, 0} },			/* WRITE_BUFFER */
+> @@ -1010,11 +1006,11 @@ static int fill_from_dev_buffer(struct scsi_cmnd *scp, unsigned char *arr,
+>  				int arr_len)
+>  {
+>  	int act_len;
+> -	struct scsi_data_buffer *sdb = scsi_in(scp);
+> +	struct scsi_data_buffer *sdb = &scp->sdb;
+>  
+>  	if (!sdb->length)
+>  		return 0;
+> -	if (!(scsi_bidi_cmnd(scp) || scp->sc_data_direction == DMA_FROM_DEVICE))
+> +	if (scp->sc_data_direction != DMA_FROM_DEVICE)
+>  		return DID_ERROR << 16;
+>  
+>  	act_len = sg_copy_from_buffer(sdb->table.sgl, sdb->table.nents,
+> @@ -1033,12 +1029,12 @@ static int p_fill_from_dev_buffer(struct scsi_cmnd *scp, const void *arr,
+>  				  int arr_len, unsigned int off_dst)
+>  {
+>  	int act_len, n;
+> -	struct scsi_data_buffer *sdb = scsi_in(scp);
+> +	struct scsi_data_buffer *sdb = &scp->sdb;
+>  	off_t skip = off_dst;
+>  
+>  	if (sdb->length <= off_dst)
+>  		return 0;
+> -	if (!(scsi_bidi_cmnd(scp) || scp->sc_data_direction == DMA_FROM_DEVICE))
+> +	if (scp->sc_data_direction != DMA_FROM_DEVICE)
+>  		return DID_ERROR << 16;
+>  
+>  	act_len = sg_pcopy_from_buffer(sdb->table.sgl, sdb->table.nents,
+> @@ -1058,7 +1054,7 @@ static int fetch_to_dev_buffer(struct scsi_cmnd *scp, unsigned char *arr,
+>  {
+>  	if (!scsi_bufflen(scp))
+>  		return 0;
+> -	if (!(scsi_bidi_cmnd(scp) || scp->sc_data_direction == DMA_TO_DEVICE))
+> +	if (scp->sc_data_direction != DMA_TO_DEVICE)
+>  		return -1;
+>  
+>  	return scsi_sg_copy_to_buffer(scp, arr, arr_len);
+> @@ -2477,21 +2473,19 @@ static int do_device_access(struct scsi_cmnd *scmd, u32 sg_skip, u64 lba,
+>  {
+>  	int ret;
+>  	u64 block, rest = 0;
+> -	struct scsi_data_buffer *sdb;
+> +	struct scsi_data_buffer *sdb = &scmd->sdb;
+>  	enum dma_data_direction dir;
+>  
+>  	if (do_write) {
+> -		sdb = scsi_out(scmd);
+>  		dir = DMA_TO_DEVICE;
+>  		write_since_sync = true;
+>  	} else {
+> -		sdb = scsi_in(scmd);
+>  		dir = DMA_FROM_DEVICE;
+>  	}
+>  
+>  	if (!sdb->length)
+>  		return 0;
+> -	if (!(scsi_bidi_cmnd(scmd) || scmd->sc_data_direction == dir))
+> +	if (scmd->sc_data_direction != dir)
+>  		return -1;
+>  
+>  	block = do_div(lba, sdebug_store_sectors);
+> @@ -2774,7 +2768,7 @@ static int resp_read_dt0(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
+>  	if (unlikely(ret == -1))
+>  		return DID_ERROR << 16;
+>  
+> -	scsi_in(scp)->resid = scsi_bufflen(scp) - ret;
+> +	scp->sdb.resid = scsi_bufflen(scp) - ret;
+>  
+>  	if (unlikely(sqcp)) {
+>  		if (sqcp->inj_recovered) {
+> @@ -3724,7 +3718,7 @@ static int resp_xdwriteread(struct scsi_cmnd *scp, unsigned long long lba,
+>  	int j;
+>  	unsigned char *kaddr, *buf;
+>  	unsigned int offset;
+> -	struct scsi_data_buffer *sdb = scsi_in(scp);
+> +	struct scsi_data_buffer *sdb = &scp->sdb;
+>  	struct sg_mapping_iter miter;
+>  
+>  	/* better not to use temporary buffer. */
+> @@ -3754,32 +3748,6 @@ static int resp_xdwriteread(struct scsi_cmnd *scp, unsigned long long lba,
+>  	return 0;
+>  }
+>  
+> -static int resp_xdwriteread_10(struct scsi_cmnd *scp,
+> -			       struct sdebug_dev_info *devip)
+> -{
+> -	u8 *cmd = scp->cmnd;
+> -	u64 lba;
+> -	u32 num;
+> -	int errsts;
+> -
+> -	if (!scsi_bidi_cmnd(scp)) {
+> -		mk_sense_buffer(scp, ILLEGAL_REQUEST, INSUFF_RES_ASC,
+> -				INSUFF_RES_ASCQ);
+> -		return check_condition_result;
+> -	}
+> -	errsts = resp_read_dt0(scp, devip);
+> -	if (errsts)
+> -		return errsts;
+> -	if (!(cmd[1] & 0x4)) {		/* DISABLE_WRITE is not set */
+> -		errsts = resp_write_dt0(scp, devip);
+> -		if (errsts)
+> -			return errsts;
+> -	}
+> -	lba = get_unaligned_be32(cmd + 2);
+> -	num = get_unaligned_be16(cmd + 7);
+> -	return resp_xdwriteread(scp, lba, num, devip);
+> -}
+> -
+>  static struct sdebug_queue *get_queue(struct scsi_cmnd *cmnd)
+>  {
+>  	u32 tag = blk_mq_unique_tag(cmnd->request);
+> @@ -3953,7 +3921,6 @@ static int scsi_debug_slave_alloc(struct scsi_device *sdp)
+>  	if (sdebug_verbose)
+>  		pr_info("slave_alloc <%u %u %u %llu>\n",
+>  		       sdp->host->host_no, sdp->channel, sdp->id, sdp->lun);
+> -	blk_queue_flag_set(QUEUE_FLAG_BIDI, sdp->request_queue);
+>  	return 0;
+>  }
+>  
+> diff --git a/drivers/scsi/scsi_error.c b/drivers/scsi/scsi_error.c
+> index c736d61b1648..42dd49961ca5 100644
+> --- a/drivers/scsi/scsi_error.c
+> +++ b/drivers/scsi/scsi_error.c
+> @@ -965,7 +965,6 @@ void scsi_eh_prep_cmnd(struct scsi_cmnd *scmd, struct scsi_eh_save *ses,
+>  	ses->cmnd = scmd->cmnd;
+>  	ses->data_direction = scmd->sc_data_direction;
+>  	ses->sdb = scmd->sdb;
+> -	ses->next_rq = scmd->request->next_rq;
+>  	ses->result = scmd->result;
+>  	ses->underflow = scmd->underflow;
+>  	ses->prot_op = scmd->prot_op;
+> @@ -976,7 +975,6 @@ void scsi_eh_prep_cmnd(struct scsi_cmnd *scmd, struct scsi_eh_save *ses,
+>  	scmd->cmnd = ses->eh_cmnd;
+>  	memset(scmd->cmnd, 0, BLK_MAX_CDB);
+>  	memset(&scmd->sdb, 0, sizeof(scmd->sdb));
+> -	scmd->request->next_rq = NULL;
+>  	scmd->result = 0;
+>  
+>  	if (sense_bytes) {
+> @@ -1029,7 +1027,6 @@ void scsi_eh_restore_cmnd(struct scsi_cmnd* scmd, struct scsi_eh_save *ses)
+>  	scmd->cmnd = ses->cmnd;
+>  	scmd->sc_data_direction = ses->data_direction;
+>  	scmd->sdb = ses->sdb;
+> -	scmd->request->next_rq = ses->next_rq;
+>  	scmd->result = ses->result;
+>  	scmd->underflow = ses->underflow;
+>  	scmd->prot_op = ses->prot_op;
+> diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+> index c7fccbb8f554..cae0a5f7539d 100644
+> --- a/drivers/scsi/scsi_lib.c
+> +++ b/drivers/scsi/scsi_lib.c
+> @@ -610,11 +610,6 @@ static void scsi_mq_free_sgtables(struct scsi_cmnd *cmd)
+>  
+>  	if (cmd->sdb.table.nents)
+>  		sg_free_table_chained(&cmd->sdb.table, true);
+> -	if (cmd->request->next_rq) {
+> -		sdb = cmd->request->next_rq->special;
+> -		if (sdb)
+> -			sg_free_table_chained(&sdb->table, true);
+> -	}
+>  	if (scsi_prot_sg_count(cmd))
+>  		sg_free_table_chained(&cmd->prot_sdb->table, true);
+>  }
+> @@ -653,18 +648,9 @@ static void scsi_release_buffers(struct scsi_cmnd *cmd)
+>  		sg_free_table_chained(&cmd->prot_sdb->table, false);
+>  }
+>  
+> -static void scsi_release_bidi_buffers(struct scsi_cmnd *cmd)
+> -{
+> -	struct scsi_data_buffer *bidi_sdb = cmd->request->next_rq->special;
+> -
+> -	sg_free_table_chained(&bidi_sdb->table, false);
+> -	kmem_cache_free(scsi_sdb_cache, bidi_sdb);
+> -	cmd->request->next_rq->special = NULL;
+> -}
+> -
+>  /* Returns false when no more bytes to process, true if there are more */
+>  static bool scsi_end_request(struct request *req, blk_status_t error,
+> -		unsigned int bytes, unsigned int bidi_bytes)
+> +		unsigned int bytes)
+>  {
+>  	struct scsi_cmnd *cmd = blk_mq_rq_to_pdu(req);
+>  	struct scsi_device *sdev = cmd->device;
+> @@ -673,11 +659,6 @@ static bool scsi_end_request(struct request *req, blk_status_t error,
+>  	if (blk_update_request(req, error, bytes))
+>  		return true;
+>  
+> -	/* Bidi request must be completed as a whole */
+> -	if (unlikely(bidi_bytes) &&
+> -	    blk_update_request(req->next_rq, error, bidi_bytes))
+> -		return true;
+> -
+>  	if (blk_queue_add_random(q))
+>  		add_disk_randomness(req->rq_disk);
+>  
+> @@ -707,8 +688,6 @@ static bool scsi_end_request(struct request *req, blk_status_t error,
+>  	} else {
+>  		unsigned long flags;
+>  
+> -		if (bidi_bytes)
+> -			scsi_release_bidi_buffers(cmd);
+>  		scsi_release_buffers(cmd);
+>  		scsi_put_command(cmd);
+>  
+> @@ -916,7 +895,7 @@ static void scsi_io_completion_action(struct scsi_cmnd *cmd, int result)
+>  				scsi_print_command(cmd);
+>  			}
+>  		}
+> -		if (!scsi_end_request(req, blk_stat, blk_rq_err_bytes(req), 0))
+> +		if (!scsi_end_request(req, blk_stat, blk_rq_err_bytes(req)))
+>  			return;
+>  		/*FALLTHRU*/
+>  	case ACTION_REPREP:
+> @@ -1051,29 +1030,6 @@ void scsi_io_completion(struct scsi_cmnd *cmd, unsigned int good_bytes)
+>  		 */
+>  		scsi_req(req)->result = cmd->result;
+>  		scsi_req(req)->resid_len = scsi_get_resid(cmd);
+> -
+> -		if (unlikely(scsi_bidi_cmnd(cmd))) {
+> -			/*
+> -			 * Bidi commands Must be complete as a whole,
+> -			 * both sides at once.
+> -			 */
+> -			scsi_req(req->next_rq)->resid_len = scsi_in(cmd)->resid;
+> -			if (scsi_end_request(req, BLK_STS_OK, blk_rq_bytes(req),
+> -					blk_rq_bytes(req->next_rq)))
+> -				WARN_ONCE(true,
+> -					  "Bidi command with remaining bytes");
+> -			return;
+> -		}
+> -	}
+> -
+> -	/* no bidi support yet, other than in pass-through */
+> -	if (unlikely(blk_bidi_rq(req))) {
+> -		WARN_ONCE(true, "Only support bidi command in passthrough");
+> -		scmd_printk(KERN_ERR, cmd, "Killing bidi command\n");
+> -		if (scsi_end_request(req, BLK_STS_IOERR, blk_rq_bytes(req),
+> -				     blk_rq_bytes(req->next_rq)))
+> -			WARN_ONCE(true, "Bidi command with remaining bytes");
+> -		return;
+>  	}
+>  
+>  	/*
+> @@ -1090,13 +1046,13 @@ void scsi_io_completion(struct scsi_cmnd *cmd, unsigned int good_bytes)
+>  	 * to retry code. Fast path should return in this block.
+>  	 */
+>  	if (likely(blk_rq_bytes(req) > 0 || blk_stat == BLK_STS_OK)) {
+> -		if (likely(!scsi_end_request(req, blk_stat, good_bytes, 0)))
+> +		if (likely(!scsi_end_request(req, blk_stat, good_bytes)))
+>  			return; /* no bytes remaining */
+>  	}
+>  
+>  	/* Kill remainder if no retries. */
+>  	if (unlikely(blk_stat && scsi_noretry_cmd(cmd))) {
+> -		if (scsi_end_request(req, blk_stat, blk_rq_bytes(req), 0))
+> +		if (scsi_end_request(req, blk_stat, blk_rq_bytes(req)))
+>  			WARN_ONCE(true,
+>  			    "Bytes remaining after failed, no-retry command");
+>  		return;
+> @@ -1159,23 +1115,6 @@ int scsi_init_io(struct scsi_cmnd *cmd)
+>  	if (error)
+>  		goto err_exit;
+>  
+> -	if (blk_bidi_rq(rq)) {
+> -		if (!rq->q->mq_ops) {
+> -			struct scsi_data_buffer *bidi_sdb =
+> -				kmem_cache_zalloc(scsi_sdb_cache, GFP_ATOMIC);
+> -			if (!bidi_sdb) {
+> -				error = BLKPREP_DEFER;
+> -				goto err_exit;
+> -			}
+> -
+> -			rq->next_rq->special = bidi_sdb;
+> -		}
+> -
+> -		error = scsi_init_sgtable(rq->next_rq, rq->next_rq->special);
+> -		if (error)
+> -			goto err_exit;
+> -	}
+> -
+>  	if (blk_integrity_rq(rq)) {
+>  		struct scsi_data_buffer *prot_sdb = cmd->prot_sdb;
+>  		int ivecs, count;
+> @@ -2026,17 +1965,6 @@ static int scsi_mq_prep_fn(struct request *req)
+>  			(struct scatterlist *)(cmd->prot_sdb + 1);
+>  	}
+>  
+> -	if (blk_bidi_rq(req)) {
+> -		struct request *next_rq = req->next_rq;
+> -		struct scsi_data_buffer *bidi_sdb = blk_mq_rq_to_pdu(next_rq);
+> -
+> -		memset(bidi_sdb, 0, sizeof(struct scsi_data_buffer));
+> -		bidi_sdb->table.sgl =
+> -			(struct scatterlist *)(bidi_sdb + 1);
+> -
+> -		next_rq->special = bidi_sdb;
+> -	}
+> -
+>  	blk_mq_start_request(req);
+>  
+>  	return scsi_setup_cmnd(sdev, req);
+> diff --git a/drivers/scsi/virtio_scsi.c b/drivers/scsi/virtio_scsi.c
+> index 1c72db94270e..fd54c12a5ed3 100644
+> --- a/drivers/scsi/virtio_scsi.c
+> +++ b/drivers/scsi/virtio_scsi.c
+> @@ -127,16 +127,8 @@ static inline struct Scsi_Host *virtio_scsi_host(struct virtio_device *vdev)
+>  
+>  static void virtscsi_compute_resid(struct scsi_cmnd *sc, u32 resid)
+>  {
+> -	if (!resid)
+> -		return;
+> -
+> -	if (!scsi_bidi_cmnd(sc)) {
+> +	if (resid)
+>  		scsi_set_resid(sc, resid);
+> -		return;
+> -	}
+> -
+> -	scsi_in(sc)->resid = min(resid, scsi_in(sc)->length);
+> -	scsi_out(sc)->resid = resid - scsi_in(sc)->resid;
+>  }
+>  
+>  /**
+> @@ -430,9 +422,9 @@ static int virtscsi_add_cmd(struct virtqueue *vq,
+>  
+>  	if (sc && sc->sc_data_direction != DMA_NONE) {
+>  		if (sc->sc_data_direction != DMA_FROM_DEVICE)
+> -			out = &scsi_out(sc)->table;
+> +			out = &sc->sdb.table;
+>  		if (sc->sc_data_direction != DMA_TO_DEVICE)
+> -			in = &scsi_in(sc)->table;
+> +			in = &sc->sdb.table;
+>  	}
+>  
+>  	/* Request header.  */
+> diff --git a/drivers/target/loopback/tcm_loop.c b/drivers/target/loopback/tcm_loop.c
+> index bc8918f382e4..a43bb76cccf6 100644
+> --- a/drivers/target/loopback/tcm_loop.c
+> +++ b/drivers/target/loopback/tcm_loop.c
+> @@ -128,14 +128,6 @@ static void tcm_loop_submission_work(struct work_struct *work)
+>  		set_host_byte(sc, DID_ERROR);
+>  		goto out_done;
+>  	}
+> -	if (scsi_bidi_cmnd(sc)) {
+> -		struct scsi_data_buffer *sdb = scsi_in(sc);
+> -
+> -		sgl_bidi = sdb->table.sgl;
+> -		sgl_bidi_count = sdb->table.nents;
+> -		se_cmd->se_cmd_flags |= SCF_BIDI;
+> -
+> -	}
+>  
+>  	transfer_length = scsi_transfer_length(sc);
+>  	if (!scsi_prot_sg_count(sc) &&
+> @@ -304,12 +296,6 @@ static int tcm_loop_target_reset(struct scsi_cmnd *sc)
+>  	return FAILED;
+>  }
+>  
+> -static int tcm_loop_slave_alloc(struct scsi_device *sd)
+> -{
+> -	blk_queue_flag_set(QUEUE_FLAG_BIDI, sd->request_queue);
+> -	return 0;
+> -}
+> -
+>  static struct scsi_host_template tcm_loop_driver_template = {
+>  	.show_info		= tcm_loop_show_info,
+>  	.proc_name		= "tcm_loopback",
+> @@ -325,7 +311,6 @@ static struct scsi_host_template tcm_loop_driver_template = {
+>  	.cmd_per_lun		= 1024,
+>  	.max_sectors		= 0xFFFF,
+>  	.use_clustering		= DISABLE_CLUSTERING,
+> -	.slave_alloc		= tcm_loop_slave_alloc,
+>  	.module			= THIS_MODULE,
+>  	.track_queue_depth	= 1,
+>  };
+> diff --git a/drivers/usb/storage/uas.c b/drivers/usb/storage/uas.c
+> index 1f7b401c4d04..1c3bff3d57b0 100644
+> --- a/drivers/usb/storage/uas.c
+> +++ b/drivers/usb/storage/uas.c
+> @@ -368,25 +368,19 @@ static void uas_data_cmplt(struct urb *urb)
+>  	struct scsi_cmnd *cmnd = urb->context;
+>  	struct uas_cmd_info *cmdinfo = (void *)&cmnd->SCp;
+>  	struct uas_dev_info *devinfo = (void *)cmnd->device->hostdata;
+> -	struct scsi_data_buffer *sdb = NULL;
+> +	struct scsi_data_buffer *sdb = &cmnd->sdb;
+>  	unsigned long flags;
+>  	int status = urb->status;
+>  
+>  	spin_lock_irqsave(&devinfo->lock, flags);
+>  
+>  	if (cmdinfo->data_in_urb == urb) {
+> -		sdb = scsi_in(cmnd);
+>  		cmdinfo->state &= ~DATA_IN_URB_INFLIGHT;
+>  		cmdinfo->data_in_urb = NULL;
+>  	} else if (cmdinfo->data_out_urb == urb) {
+> -		sdb = scsi_out(cmnd);
+>  		cmdinfo->state &= ~DATA_OUT_URB_INFLIGHT;
+>  		cmdinfo->data_out_urb = NULL;
+>  	}
+> -	if (sdb == NULL) {
+> -		WARN_ON_ONCE(1);
+> -		goto out;
+> -	}
+>  
+>  	if (devinfo->resetting)
+>  		goto out;
+> @@ -426,8 +420,7 @@ static struct urb *uas_alloc_data_urb(struct uas_dev_info *devinfo, gfp_t gfp,
+>  	struct usb_device *udev = devinfo->udev;
+>  	struct uas_cmd_info *cmdinfo = (void *)&cmnd->SCp;
+>  	struct urb *urb = usb_alloc_urb(0, gfp);
+> -	struct scsi_data_buffer *sdb = (dir == DMA_FROM_DEVICE)
+> -		? scsi_in(cmnd) : scsi_out(cmnd);
+> +	struct scsi_data_buffer *sdb = &cmnd->sdb;
+>  	unsigned int pipe = (dir == DMA_FROM_DEVICE)
+>  		? devinfo->data_in_pipe : devinfo->data_out_pipe;
+>  
+> diff --git a/include/scsi/scsi_cmnd.h b/include/scsi/scsi_cmnd.h
+> index c891ada3c5c2..681f0ca808d7 100644
+> --- a/include/scsi/scsi_cmnd.h
+> +++ b/include/scsi/scsi_cmnd.h
+> @@ -209,23 +209,6 @@ static inline int scsi_get_resid(struct scsi_cmnd *cmd)
+>  #define scsi_for_each_sg(cmd, sg, nseg, __i)			\
+>  	for_each_sg(scsi_sglist(cmd), sg, nseg, __i)
+>  
+> -static inline int scsi_bidi_cmnd(struct scsi_cmnd *cmd)
+> -{
+> -	return blk_bidi_rq(cmd->request) &&
+> -		(cmd->request->next_rq->special != NULL);
+> -}
+> -
+> -static inline struct scsi_data_buffer *scsi_in(struct scsi_cmnd *cmd)
+> -{
+> -	return scsi_bidi_cmnd(cmd) ?
+> -		cmd->request->next_rq->special : &cmd->sdb;
+> -}
+> -
+> -static inline struct scsi_data_buffer *scsi_out(struct scsi_cmnd *cmd)
+> -{
+> -	return &cmd->sdb;
+> -}
+> -
+>  static inline int scsi_sg_copy_from_buffer(struct scsi_cmnd *cmd,
+>  					   void *buf, int buflen)
+>  {
+> @@ -347,7 +330,7 @@ static inline void set_driver_byte(struct scsi_cmnd *cmd, char status)
+>  
+>  static inline unsigned scsi_transfer_length(struct scsi_cmnd *scmd)
+>  {
+> -	unsigned int xfer_len = scsi_out(scmd)->length;
+> +	unsigned int xfer_len = scmd->sdb.length;
+>  	unsigned int prot_interval = scsi_prot_interval(scmd);
+>  
+>  	if (scmd->prot_flags & SCSI_PROT_TRANSFER_PI)
+> diff --git a/include/scsi/scsi_eh.h b/include/scsi/scsi_eh.h
+> index 2b7e227960e1..3810b340551c 100644
+> --- a/include/scsi/scsi_eh.h
+> +++ b/include/scsi/scsi_eh.h
+> @@ -39,7 +39,6 @@ struct scsi_eh_save {
+>  	unsigned char prot_op;
+>  	unsigned char *cmnd;
+>  	struct scsi_data_buffer sdb;
+> -	struct request *next_rq;
+>  	/* new command support */
+>  	unsigned char eh_cmnd[BLK_MAX_CDB];
+>  	struct scatterlist sense_sgl;
+> 
 
