@@ -2,85 +2,119 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F9DEC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:23:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A07C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:23:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 238F32084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:23:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 768AC20847
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:23:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="P/tBeEbv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 238F32084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NAA1cTRQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 768AC20847
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731598AbeKAIXf (ORCPT
+        id S1731325AbeKAIK4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:23:35 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:40002 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728548AbeKAIXe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:23:34 -0400
-Received: by mail-lf1-f67.google.com with SMTP id n3-v6so12950495lfe.7
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 16:23:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fpZdpokKvQSVfTqMIaCufFICb5MDl6qqXhiKEYYMWuY=;
-        b=P/tBeEbvhGu0l4waNQPHovipcFXGFY+kLh2+4HNONcRjajDsJAuA35GEw4jCfS/XUm
-         I4lieDosGjPBJUC9Ya+dfyPOe232EEBu6KOxd+tk79zTDRkNMU5Xl8i5PMhJGWf8T8l3
-         SqzooMkan8ToIoayRLiveS6VLLG+ia2ncEzeU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fpZdpokKvQSVfTqMIaCufFICb5MDl6qqXhiKEYYMWuY=;
-        b=K0o2ND+sC+BS3Qz9+MrPSyjlXTKTEjWKCXsgByo3ZhL4/V1gUlcE+tYhvSK2SlLds7
-         tE3TRxanD1VQAEmj2GXS92aJ0E0Mb06B2TArdud2iirLifxC/KjWlGhV+S5bkR+tMrym
-         09ftIfWfeXN2vwCjpz6JpgRYIhAT9OZb+yxJMatyHP4SnjUZdfDAsGBXp/9b0fUq09ey
-         aR4c5V8hIr9Ygw+RqzVb+GpWn653Emc8RH44vkowF6WGiVjCxpfsVMXJFR4svUzN1LHe
-         TNWZYgZKEkATsDqcr47tJd/y3NJAlstWYOmTSa9E6YzdcpmhAyOC4m8yX4g34N1YEpla
-         0sqg==
-X-Gm-Message-State: AGRZ1gLon+4Ld2rFBapdCo49Ktg39HxWrKOwWxZ47k4+GHeZ81mThKj4
-        WXUCbyWK5A5qSih/zSgMwiiRzkUR50mtBw==
-X-Google-Smtp-Source: AJdET5dzlxCnFOOqAZD18G2vMrDX9qsqT+4HC18ZQnVEmfPDo/VoD69BnmhzS4vVYI4VZ7Nu2xHAWw==
-X-Received: by 2002:a19:cd8e:: with SMTP id d136mr3215330lfg.3.1541028196775;
-        Wed, 31 Oct 2018 16:23:16 -0700 (PDT)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
-        by smtp.gmail.com with ESMTPSA id e73-v6sm4357183lji.55.2018.10.31.16.23.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 16:23:16 -0700 (PDT)
-Received: by mail-lf1-f45.google.com with SMTP id n3-v6so12950463lfe.7
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 16:23:15 -0700 (PDT)
-X-Received: by 2002:a19:7019:: with SMTP id h25-v6mr3193250lfc.147.1541028195354;
- Wed, 31 Oct 2018 16:23:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <mhng-ddfcf75a-ffa5-43b1-a785-23da232023ad@palmer-si-x1c4>
-In-Reply-To: <mhng-ddfcf75a-ffa5-43b1-a785-23da232023ad@palmer-si-x1c4>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 31 Oct 2018 16:22:59 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj2DtKSLDUCAzOpUsxuuSjzVyi3XyhJ1KqH9bX1_rLsoQ@mail.gmail.com>
-Message-ID: <CAHk-=wj2DtKSLDUCAzOpUsxuuSjzVyi3XyhJ1KqH9bX1_rLsoQ@mail.gmail.com>
-Subject: Re: [GIT PULL] RISC-V Patches for the 4.20 Merge Window, Part 2 v2
-To:     palmer@sifive.com
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 1 Nov 2018 04:10:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33866 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730062AbeKAIKz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:10:55 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 974A72086D;
+        Wed, 31 Oct 2018 23:10:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541027443;
+        bh=oZeYX92I7AXIpJ1c1lS9Rn60WFW14xA0HyXjgLJbNCo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=NAA1cTRQMBqN0hUYZaABExIgYQ8ZK//83T+kvYiw1tj4sBaCW3T8zsK0uD4LyG1Uu
+         RFYaUgGJOScBZlFp72xbjXXY9UIzRG77WbNOEesashT6ccpKq6DreSnfk01djqps8V
+         53QzXKKhbnjAfykhXNczEYs1CU2WHllLhZIj77fs=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Vignesh R <vigneshr@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 61/73] PCI: dwc: pci-dra7xx: Enable errata i870 for both EP and RC mode
+Date:   Wed, 31 Oct 2018 19:09:36 -0400
+Message-Id: <20181031230948.29203-61-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181031230948.29203-1-sashal@kernel.org>
+References: <20181031230948.29203-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 4:07 PM Palmer Dabbelt <palmer@sifive.com> wrote:
->
-> RISC-V Patches for the 4.20 Merge Window, Part 2 v2
+From: Vignesh R <vigneshr@ti.com>
 
-Pulled.
+[ Upstream commit 726d75a6d243bf6730da3216f3592503f6f0f588 ]
 
-                Linus
+Errata i870 is applicable in both EP and RC mode. Therefore rename
+function dra7xx_pcie_ep_unaligned_memaccess(), that implements errata
+workaround, to dra7xx_pcie_unaligned_memaccess() and call it for both RC
+and EP. Make sure driver probe does not fail in case the workaround is not
+applied for RC mode in order to maintain DT backward compatibility.
+
+Reported-by: Chris Welch <Chris.Welch@viavisolutions.com>
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+[lorenzo.pieralisi@arm.com: reworded the log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/pci/dwc/pci-dra7xx.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/pci/dwc/pci-dra7xx.c b/drivers/pci/dwc/pci-dra7xx.c
+index 362607f727ee..06eae132aff7 100644
+--- a/drivers/pci/dwc/pci-dra7xx.c
++++ b/drivers/pci/dwc/pci-dra7xx.c
+@@ -546,7 +546,7 @@ static const struct of_device_id of_dra7xx_pcie_match[] = {
+ };
+ 
+ /*
+- * dra7xx_pcie_ep_unaligned_memaccess: workaround for AM572x/AM571x Errata i870
++ * dra7xx_pcie_unaligned_memaccess: workaround for AM572x/AM571x Errata i870
+  * @dra7xx: the dra7xx device where the workaround should be applied
+  *
+  * Access to the PCIe slave port that are not 32-bit aligned will result
+@@ -556,7 +556,7 @@ static const struct of_device_id of_dra7xx_pcie_match[] = {
+  *
+  * To avoid this issue set PCIE_SS1_AXI2OCP_LEGACY_MODE_ENABLE to 1.
+  */
+-static int dra7xx_pcie_ep_unaligned_memaccess(struct device *dev)
++static int dra7xx_pcie_unaligned_memaccess(struct device *dev)
+ {
+ 	int ret;
+ 	struct device_node *np = dev->of_node;
+@@ -707,6 +707,11 @@ static int __init dra7xx_pcie_probe(struct platform_device *pdev)
+ 	case DW_PCIE_RC_TYPE:
+ 		dra7xx_pcie_writel(dra7xx, PCIECTRL_TI_CONF_DEVICE_TYPE,
+ 				   DEVICE_TYPE_RC);
++
++		ret = dra7xx_pcie_unaligned_memaccess(dev);
++		if (ret)
++			dev_err(dev, "WA for Errata i870 not applied\n");
++
+ 		ret = dra7xx_add_pcie_port(dra7xx, pdev);
+ 		if (ret < 0)
+ 			goto err_gpio;
+@@ -715,7 +720,7 @@ static int __init dra7xx_pcie_probe(struct platform_device *pdev)
+ 		dra7xx_pcie_writel(dra7xx, PCIECTRL_TI_CONF_DEVICE_TYPE,
+ 				   DEVICE_TYPE_EP);
+ 
+-		ret = dra7xx_pcie_ep_unaligned_memaccess(dev);
++		ret = dra7xx_pcie_unaligned_memaccess(dev);
+ 		if (ret)
+ 			goto err_gpio;
+ 
+-- 
+2.17.1
+
