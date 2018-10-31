@@ -2,178 +2,338 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 442CBC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 19:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5642EC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 19:58:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E43EA20657
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 19:55:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=emutex.onmicrosoft.com header.i=@emutex.onmicrosoft.com header.b="V9hc0PAw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E43EA20657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=emutex.com
+	by mail.kernel.org (Postfix) with ESMTP id 0B1F02081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 19:58:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B1F02081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729675AbeKAEzQ (ORCPT
+        id S1729722AbeKAE5d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 00:55:16 -0400
-Received: from mail-ve1eur01on0109.outbound.protection.outlook.com ([104.47.1.109]:57546
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726175AbeKAEzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 00:55:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=emutex.onmicrosoft.com; s=selector1-emutex-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=k5xdGvBJnyRzO+nJeEPONkJpboWYNKOJa0QD6yuLkMQ=;
- b=V9hc0PAwyUTpRP+UL2oLwohjT4PBUAvvhVfNCRalxRsF4TORq2mS+rpZIy1/JPbAeXz3wTkwIpGWyiXBNIRzE59sRwVc2caNf9sg1Aa7g0/PQK72woWOnWdC9NGyW1zSS7tB/Zsvp87QACY1XZJwqq0EKbG6wk33DZ/nNXQEELs=
-Received: from VI1P190MB0013.EURP190.PROD.OUTLOOK.COM (10.172.14.137) by
- VI1P190MB0447.EURP190.PROD.OUTLOOK.COM (10.165.198.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1273.25; Wed, 31 Oct 2018 19:55:39 +0000
-Received: from VI1P190MB0013.EURP190.PROD.OUTLOOK.COM
- ([fe80::71b0:31d3:faf9:3584]) by VI1P190MB0013.EURP190.PROD.OUTLOOK.COM
- ([fe80::71b0:31d3:faf9:3584%6]) with mapi id 15.20.1294.021; Wed, 31 Oct 2018
- 19:55:39 +0000
-From:   Dan O'Donovan <dan.odonovan@emutex.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Dan O'Donovan <dan.odonovan@emutex.com>
-CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        Carlos Iglesias <carlos.iglesias@emutex.com>,
-        Javier Arteaga <javier@emutex.com>
-Subject: Re: [PATCH v2 3/3] pinctrl: upboard: Add UP2 pinctrl and gpio driver
-Thread-Topic: [PATCH v2 3/3] pinctrl: upboard: Add UP2 pinctrl and gpio driver
-Thread-Index: AQHUatOnpHqRH1KyNEOtKkYLNHmfuqU50bkA
-Date:   Wed, 31 Oct 2018 19:55:39 +0000
-Message-ID: <4ba11985-c71e-e526-8478-8bfe0e208429@emutex.com>
-References: <20180421085009.28773-1-javier@emutex.com>
- <1539969334-24577-1-git-send-email-dan@emutex.com>
- <1539969334-24577-4-git-send-email-dan@emutex.com>
- <CAHp75Vc8jxK6mcjOxmuOD0CTqYvfSSL=HMPpRVtOyCb6LxVB2w@mail.gmail.com>
-In-Reply-To: <CAHp75Vc8jxK6mcjOxmuOD0CTqYvfSSL=HMPpRVtOyCb6LxVB2w@mail.gmail.com>
-Accept-Language: en-IE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: LO2P265CA0276.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a1::24) To VI1P190MB0013.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:800:a0::9)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=dan.odonovan@emutex.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [92.51.199.138]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1P190MB0447;6:y15n2tWOQKoSl4QK98G1qRgRcBVZpAq6n+L+L9gAjchS9xhNnHw2OX93FrPiZhVR2o44sZXG0XiZHDQyyl68vcxOkn4BBVBiso1nwjoMnVXkB34Tjl686uD0SP2iLXgHREhBw1OC7gHF2LcF9GV08WX4X13UdrAihTv8/reUIjDofn59j090GMpsrezo3xinAKLkYQveVSgjUxl9or2SV96cxNrrPtE+YpyVxw/YCKS/c/Xy59BrS/kTYBipBz/5yD2Nmtzxbfo9djttB+dWf980CVaJLgvq0ad+d6YnTqBHNwaIERtRzuvBoGcSVLlmWqf6HSrYao4Lg4oGTLXkHnPykorQMORMfAzsKnFV3XcOmHWvcFTyVgbXis36RXE2ZjVDmcDdheesvTlHA27Yr0OSoJ7QsCPFUp2S0bDHd1iQY+kSSHHKHBNDnGZhx1C5pW33n7nLgqYfr6csLFTumA==;5:Sc4puWszEwJixwvBhT5Y2UP0YUQlm8O0JbezIeillLEMfuOVxYD/aimTzZEQrdrYrqNG3pmxvxBi96ookMYT8veUbCbWWujjLCnviZDgQaGjySJ+VhndnHn97A5/36/E3459c+SVZg+KdX0lZOen9Qg8iR9iibHSBUPfcvrQNSU=;7:N60TiZIxzKF2zSHJj0f7SQPH+1kujdEm27WAuvyfJJDEjbi5fbQbo2XRhD6FJfRMqFy/6Qd4k3WYg9uZ1bFgKzmYnnZf4bA7XgAGVRy6KZz0VKOGKQ/nDZRRhDKaRgzeqz6MskQb6y9GjTzvqB+wvw==
-x-ms-office365-filtering-correlation-id: fe49eef4-39b3-442d-de22-08d63f6ad4b9
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:VI1P190MB0447;
-x-ms-traffictypediagnostic: VI1P190MB0447:
-x-microsoft-antispam-prvs: <VI1P190MB0447FE883681C5DAFA1851D3F8CD0@VI1P190MB0447.EURP190.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231382)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(148016)(149066)(150057)(6041310)(6059035)(201703131423095)(20161123555045)(201703061421075)(201703061452153)(201703151056150)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:VI1P190MB0447;BCL:0;PCL:0;RULEID:;SRVR:VI1P190MB0447;
-x-forefront-prvs: 084285FC5C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(39830400003)(366004)(136003)(396003)(189003)(199004)(386003)(3846002)(6512007)(31696002)(102836004)(486006)(6486002)(36756003)(55236004)(38480400004)(53546011)(575784001)(86362001)(6506007)(6116002)(93886005)(26005)(446003)(38500400001)(229853002)(586005)(38610400001)(38600400001)(99286004)(11346002)(76176011)(476003)(6436002)(52116002)(2616005)(53936002)(107886003)(6246003)(186003)(54906003)(110136005)(256004)(14444005)(97736004)(498600001)(2900100001)(106356001)(14454004)(305945005)(71190400001)(71200400001)(7416002)(5660300001)(81156014)(8676002)(81166006)(5250100002)(39060400002)(8936002)(25786009)(4326008)(31686004)(68736007)(66066001)(2906002)(7736002)(105586002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1P190MB0447;H:VI1P190MB0013.EURP190.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: emutex.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: jb6a6y1kvGB2ZsEobFcupLPgGtXsubCrkTiBCEvOioYJ/ne9Po/9ft8vA0Kg6XipgPeOGsojlii1TrgwighciWuxnkK/tzdTR9rbV06iMmS8DIcTfB5X0vIZNc1MUIbIdUsa+lJ7ewK7Wq3LcyNYGWI7jUd+7FNOwC7Mi7i+TcSQU3mfJ2BGvPp4f+rf7VotsDL7tqpVM8Si4BM9xnAN1XXkTq7Kq/N76gcmoiP0vZlhLKtFn3Q++4X9MAsx8KBtSdzSciSj+NhYKF0lEYcqWdFKBHkUEOQSXnZwIZ0Drta4zcpvCliespVixKiJ2dItHJEQ+E0dSuOR8F9EAaMw7cNU6u4qUjYKfWGXm5QE0Fs=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <87C31841509831468D8F76348AFB44BF@EURP190.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+        Thu, 1 Nov 2018 00:57:33 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48658 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727537AbeKAE5d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 00:57:33 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5A2E0307EA82;
+        Wed, 31 Oct 2018 19:58:00 +0000 (UTC)
+Received: from redhat.com (dhcp-17-208.bos.redhat.com [10.18.17.208])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id DDC495D9D6;
+        Wed, 31 Oct 2018 19:57:55 +0000 (UTC)
+Date:   Wed, 31 Oct 2018 15:57:54 -0400
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+To:     Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc:     Li Wang <liwang@redhat.com>, Guenter Roeck <linux@roeck-us.net>,
+        Janosch Frank <frankja@linux.vnet.ibm.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+Subject: Re: s390: runtime warning about pgtables_bytes
+Message-ID: <20181031195754.ypyhlvfab2ddx6sa@redhat.com>
+References: <CAEemH2eExK_jwOPZDFBZkwABucpZqh+=s+qpN-tFfMzxwo7cZA@mail.gmail.com>
+ <20181011150211.7d8c07ac@mschwideX1>
+ <20181012170833.2a05f308@mschwideX1>
 MIME-Version: 1.0
-X-OriginatorOrg: emutex.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fe49eef4-39b3-442d-de22-08d63f6ad4b9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Oct 2018 19:55:39.1060
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84cc844b-5c53-4da1-99da-34ef4089ea8e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1P190MB0447
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181012170833.2a05f308@mschwideX1>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 31 Oct 2018 19:58:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VGhhbmtzIGZvciB5b3VyIHJldmlldyBmZWVkYmFjaywgQW5keSHCoCBJJ2xsIHNlbmQgYSB2MyBz
-aG9ydGx5IHdpdGggdGhvc2UgY2hhbmdlcyB5b3Ugc3VnZ2VzdGVkLsKgIEkndmUgYWRkZWQgc29t
-ZSBjb21tZW50cyBpbmxpbmUgYmVsb3cuDQoNCk9uIDEwLzIwLzIwMTggMTI6NDAgUE0sIEFuZHkg
-U2hldmNoZW5rbyB3cm90ZToNCj4gT24gRnJpLCBPY3QgMTksIDIwMTggYXQgODoyNCBQTSBEYW4g
-TydEb25vdmFuIDxkYW5AZW11dGV4LmNvbT4gd3JvdGU6DQo+DQo+PiArc3RhdGljIGludCB1cGJv
-YXJkX2dldF9mdW5jdGlvbnNfY291bnQoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2KQ0KPj4g
-K3sNCj4+ICsgICAgICAgcmV0dXJuIDA7DQo+PiArfQ0KPj4gKw0KPj4gK3N0YXRpYyBpbnQgdXBi
-b2FyZF9nZXRfZnVuY3Rpb25fZ3JvdXBzKHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldiwNCj4+
-ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGludCBzZWxl
-Y3RvciwNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNvbnN0IGNo
-YXIgKiBjb25zdCAqKmdyb3VwcywNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIHVuc2lnbmVkIGludCAqbnVtX2dyb3VwcykNCj4+ICt7DQo+PiArICAgICAgICpncm91
-cHMgPSBOVUxMOw0KPj4gKyAgICAgICAqbnVtX2dyb3VwcyA9IDA7DQo+PiArICAgICAgIHJldHVy
-biAwOw0KPj4gK30NCj4+ICsNCj4+ICtzdGF0aWMgY29uc3QgY2hhciAqdXBib2FyZF9nZXRfZnVu
-Y3Rpb25fbmFtZShzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsDQo+PiArICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBpbnQgc2VsZWN0b3IpDQo+
-PiArew0KPj4gKyAgICAgICByZXR1cm4gTlVMTDsNCj4+ICt9DQo+PiArDQo+PiArc3RhdGljIGlu
-dCB1cGJvYXJkX3NldF9tdXgoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LCB1bnNpZ25lZCBp
-bnQgZnVuY3Rpb24sDQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBpbnQg
-Z3JvdXApDQo+PiArew0KPj4gKyAgICAgICByZXR1cm4gMDsNCj4+ICt9DQo+IEhtbS4uLiBEbyB5
-b3UgbmVlZCB0aG9zZSBzdHVicz8gU2FtZSBRIGZvciBvdGhlciBzdHVicyBpbiB0aGUgZmlsZS4N
-Ckl0IGxvb2tzIGxpa2UgdGhleSdyZSByZXF1aXJlZCBieSBwaW5jdHJsIGNvcmUsIHdoaWNoIHJl
-dHVybnMgYW4gZXJyb3IgaWYgdGhleSdyZSBub3QgcHJvdmlkZWQuDQoNCj4+ICtzdGF0aWMgaW50
-IHVwYm9hcmRfZ3Bpb19yZXF1ZXN0X2VuYWJsZShzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYs
-DQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgcGluY3Ry
-bF9ncGlvX3JhbmdlICpyYW5nZSwNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIHVuc2lnbmVkIGludCBwaW4pDQo+PiArew0KPj4gKyAgICAgICBjb25zdCBzdHJ1Y3Qg
-cGluX2Rlc2MgKiBjb25zdCBwZCA9IHBpbl9kZXNjX2dldChwY3RsZGV2LCBwaW4pOw0KPj4gKyAg
-ICAgICBjb25zdCBzdHJ1Y3QgdXBib2FyZF9waW4gKnA7DQo+PiArICAgICAgIGludCByZXQ7DQo+
-PiArDQo+PiArICAgICAgIGlmICghcGQpDQo+PiArICAgICAgICAgICAgICAgcmV0dXJuIC1FSU5W
-QUw7DQo+IFdoZW4gaXQgcG9zc2libGUgdG8gaGFwcGVuPw0KPiBTYW1lIFEgZm9yIHRoZSByZXN0
-IHNhbWUgZXhjZXJwdHMuDQpBZ3JlZWQsIGl0IHNob3VsZG4ndCBiZSBwb3NzaWJsZS7CoCBJIHdp
-bGwgcmVtb3ZlIHRoZXNlIGNoZWNrcy4NCg0KPj4gKw0KPj4gKyAgICAgICBpZiAob2Zmc2V0ICsg
-MSA+IHBjdHJsLT5uc29jX2dwaW9zIHx8ICFwY3RybC0+c29jX2dwaW9zW29mZnNldF0pDQo+PiAr
-ICAgICAgICAgICAgICAgcmV0dXJuIEVSUl9QVFIoLUVOT0RFVik7DQo+IG9mZnNldCA+PSA/DQo+
-IElzIGl0IGV2ZW4gcG9zc2libGU/DQpBZ3JlZWQsIGl0IHNob3VsZG4ndCBiZSBwb3NzaWJsZS7C
-oCBJIHdpbGwgcmVtb3ZlIHRoZXNlIGNoZWNrcy4NCg0KPj4gK3N0YXRpYyBpbnQgdXBib2FyZF9w
-aW5jdHJsX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+PiArew0KPj4gKyAg
-ICAgICBzdHJ1Y3QgZGV2aWNlICpkZXYgPSAmcGRldi0+ZGV2Ow0KPj4gKyAgICAgICBzdHJ1Y3Qg
-cGluY3RybF9kZXNjICpwY3RsZGVzYzsNCj4+ICsgICAgICAgc3RydWN0IHVwYm9hcmRfcGluY3Ry
-bCAqcGN0cmw7DQo+PiArICAgICAgIHN0cnVjdCB1cGJvYXJkX3BpbiAqcGluczsNCj4+ICsgICAg
-ICAgc3RydWN0IGFjcGlfZGV2aWNlICphZGV2Ow0KPj4gKyAgICAgICBzdHJ1Y3QgcmVnbWFwICpy
-ZWdtYXA7DQo+PiArICAgICAgIHVuc2lnbmVkIGludCBpOw0KPj4gKyAgICAgICBpbnQgcmV0Ow0K
-Pj4gKyAgICAgICBhZGV2ID0gQUNQSV9DT01QQU5JT04oZGV2KTsNCj4+ICsgICAgICAgaWYgKCFh
-ZGV2IHx8IHN0cmNtcChhY3BpX2RldmljZV9oaWQoYWRldiksICJBQU5UMEYwMSIpKQ0KPj4gKyAg
-ICAgICAgICAgICAgIHJldHVybiAtRU5PREVWOw0KPiBTYW1lIFEgYXMgcGVyIExFRCBkcml2ZXIu
-DQpJIGFncmVlLsKgIEkgd2lsbCByZW1vdmUgdGhpcyBjaGVjaywgYm90aCBoZXJlIGFuZCBpbiB0
-aGUgTEVEIGRyaXZlci4NCg0KPj4gKyAgICAgICAgICAgICAgIGlmIChwZC0+ZHJ2X2RhdGEpIHsN
-Cj4+ICsgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCByZWdfZmllbGQgKmZpZWxkID0gcGQt
-PmRydl9kYXRhOw0KPj4gKw0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgcGluLT5mdW5jX2Vu
-ID0gZGV2bV9yZWdtYXBfZmllbGRfYWxsb2MoZGV2LCByZWdtYXAsDQo+PiArICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAqZmllbGQp
-Ow0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgaWYgKElTX0VSUihwaW4tPmZ1bmNfZW4pKQ0K
-Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gUFRSX0VSUihwaW4tPmZ1
-bmNfZW4pOw0KPj4gKyAgICAgICAgICAgICAgIH0NCj4+ICsNCj4+ICsgICAgICAgICAgICAgICBw
-aW4tPmdwaW9fZW4gPSB1cGJvYXJkX2ZpZWxkX2FsbG9jKGRldiwgcmVnbWFwLA0KPj4gKyAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgVVBCT0FSRF9SRUdf
-R1BJT19FTjAsIGkpOw0KPj4gKyAgICAgICAgICAgICAgIGlmIChJU19FUlIocGluLT5ncGlvX2Vu
-KSkNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiBQVFJfRVJSKHBpbi0+Z3Bpb19l
-bik7DQo+PiArDQo+PiArICAgICAgICAgICAgICAgcGluLT5ncGlvX2RpciA9IHVwYm9hcmRfZmll
-bGRfYWxsb2MoZGV2LCByZWdtYXAsDQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgVVBCT0FSRF9SRUdfR1BJT19ESVIwLCBpKTsNCj4+ICsgICAg
-ICAgICAgICAgICBpZiAoSVNfRVJSKHBpbi0+Z3Bpb19kaXIpKQ0KPj4gKyAgICAgICAgICAgICAg
-ICAgICAgICAgcmV0dXJuIFBUUl9FUlIocGluLT5ncGlvX2Rpcik7DQo+PiArDQo+PiArICAgICAg
-ICAgICAgICAgKChzdHJ1Y3QgcGluY3RybF9waW5fZGVzYyAqKXBkKS0+ZHJ2X2RhdGEgPSBwaW47
-DQo+IEknbSBub3Qgc3VyZSBJIHVuZGVyc3RhbmQgdGhlIHB1cnBvc2Ugb2YgdGhpcyBjYXN0aW5n
-Lg0KV2hlbiB0aGUgcGQgcG9pbnRlciBpcyByZXRyaWV2ZWQgZnJvbSBzdHJ1Y3QgcGluY3RybF9k
-ZXNjLCBpdCBoYXMgYSBjb25zdCBjb25zdHJhaW50LsKgIFRoZSBwdXJwb3NlIG9mIHRoZSBjYXN0
-IGlzIHRvIGJ5cGFzcyB0aGF0IGNvbnN0cmFpbnQgZm9yIHRoaXMgdXNlIGNhc2UsIGJlY2F1c2Ug
-dGhpcyBjb2RlIGlzIGFsbG9jYXRpbmcgYW5kIHNldHRpbmcgZHJ2X2RhdGEgZHluYW1pY2FsbHkg
-aGVyZSBhdCBydW4tdGltZSByYXRoZXIgdGhhbiBhdCBjb21waWxlLXRpbWUuDQo=
+On Fri, Oct 12, 2018 at 05:08:33PM +0200, Martin Schwidefsky wrote:
+> On Thu, 11 Oct 2018 15:02:11 +0200
+> Martin Schwidefsky <schwidefsky@de.ibm.com> wrote:
+> 
+> > On Thu, 11 Oct 2018 18:04:12 +0800
+> > Li Wang <liwang@redhat.com> wrote:
+> > 
+> > > When running s390 system with LTP/cve-2017-17052.c[1], the following BUG is
+> > > came out repeatedly.
+> > > I remember this warning start from kernel-4.16.0 and now it still exist in
+> > > kernel-4.19-rc7.
+> > > Can anyone take a look?
+> > > 
+> > > [ 2678.991496] BUG: non-zero pgtables_bytes on freeing mm: 16384
+> > > [ 2679.001543] BUG: non-zero pgtables_bytes on freeing mm: 16384
+> > > [ 2679.002453] BUG: non-zero pgtables_bytes on freeing mm: 16384
+> > > [ 2679.003256] BUG: non-zero pgtables_bytes on freeing mm: 16384
+> > > [ 2679.013689] BUG: non-zero pgtables_bytes on freeing mm: 16384
+> > > [ 2679.024647] BUG: non-zero pgtables_bytes on freeing mm: 16384
+> > > [ 2679.064408] BUG: non-zero pgtables_bytes on freeing mm: 16384
+> > > [ 2679.133963] BUG: non-zero pgtables_bytes on freeing mm: 16384
+> > > 
+> > > [1]:
+> > > https://github.com/linux-test-project/ltp/blob/master/testcases/cve/cve-2017-17052.c  
+> >  
+> > Confirmed, I see this bug with cvs-2017-17052 on my LPAR as well.
+> > I'll look into it.
+>  
+> Ok, I think I understand the problem now. This is the patch I am testing
+> right now. It seems to fix the issue, but I had to change common mm
+> code for it.
+> --
+> >From 9e3bc2e96930206ef1ece377e45224c51aca1799 Mon Sep 17 00:00:00 2001
+> From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+> Date: Fri, 12 Oct 2018 16:32:29 +0200
+> Subject: [RFC][PATCH] s390/mm: fix mis-accounting of pgtable_bytes
+> 
+> In case a fork or a clone system fails in copy_process and the error
+> handling does the mmput() at the bad_fork_cleanup_mm label, the following
+> warning messages will appear on the console:
+> 
+> BUG: non-zero pgtables_bytes on freeing mm: 16384
+> 
+> The reason for that is the tricks we play with mm_inc_nr_puds() and
+> mm_inc_nr_pmds() in init_new_context().
+> 
+> A normal 64-bit process has 3 levels of page table, the p4d level and
+> the pud level are folded. On process termination the free_pud_range()
+> function in mm/memory.c will subtract 16KB from pgtable_bytes with a
+> mm_dec_nr_puds() call, but there actually is not really a pud table.
+> The s390 version of pud_free_tlb() recognized this an does nothing,
+> the region-3 table will be freed with the pgd_free() call later on.
+> But the mm_dec_nr_puds() is done unconditionally, to counter act this
+> the init_new_context() function has an extra mm_inc_nr_puds() call.
+> 
+> Now with a failed fork or clone the free_pgtables() function is not
+> called, there is no mm_dec_nr_puds() but the mm_inc_nr_puds() has
+> been done which leads to the incorrect pgtable_bytes of 16384.
+> Nothing is broken by this, but the warning is annoying.
+> 
+> To get rid of the warning drop the mm_inc_nr_pmds() & mm_inc_nr_puds()
+> calls from init_new_context(), introduce the mm_pmd_folded(),
+> pmd_pud_folded() and pmd_p4d_folded() helper, and add if-statements
+> to the functions mm_[inc|dec]_nr_[pmds|puds].
+> 
+> Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+> ---
+>  arch/s390/include/asm/mmu_context.h |  5 -----
+>  arch/s390/include/asm/pgalloc.h     |  6 ++---
+>  arch/s390/include/asm/pgtable.h     | 18 +++++++++++++++
+>  arch/s390/include/asm/tlb.h         |  6 ++---
+>  include/linux/mm.h                  | 44 ++++++++++++++++++++++++++++++++-----
+>  5 files changed, 62 insertions(+), 17 deletions(-)
+> 
+> diff --git a/arch/s390/include/asm/mmu_context.h b/arch/s390/include/asm/mmu_context.h
+> index dbd689d556ce..ccbb53e22024 100644
+> --- a/arch/s390/include/asm/mmu_context.h
+> +++ b/arch/s390/include/asm/mmu_context.h
+> @@ -46,8 +46,6 @@ static inline int init_new_context(struct task_struct *tsk,
+>  		mm->context.asce_limit = STACK_TOP_MAX;
+>  		mm->context.asce = __pa(mm->pgd) | _ASCE_TABLE_LENGTH |
+>  				   _ASCE_USER_BITS | _ASCE_TYPE_REGION3;
+> -		/* pgd_alloc() did not account this pud */
+> -		mm_inc_nr_puds(mm);
+>  		break;
+>  	case -PAGE_SIZE:
+>  		/* forked 5-level task, set new asce with new_mm->pgd */
+> @@ -63,9 +61,6 @@ static inline int init_new_context(struct task_struct *tsk,
+>  		/* forked 2-level compat task, set new asce with new mm->pgd */
+>  		mm->context.asce = __pa(mm->pgd) | _ASCE_TABLE_LENGTH |
+>  				   _ASCE_USER_BITS | _ASCE_TYPE_SEGMENT;
+> -		/* pgd_alloc() did not account this pmd */
+> -		mm_inc_nr_pmds(mm);
+> -		mm_inc_nr_puds(mm);
+>  	}
+>  	crst_table_init((unsigned long *) mm->pgd, pgd_entry_type(mm));
+>  	return 0;
+> diff --git a/arch/s390/include/asm/pgalloc.h b/arch/s390/include/asm/pgalloc.h
+> index f0f9bcf94c03..5ee733720a57 100644
+> --- a/arch/s390/include/asm/pgalloc.h
+> +++ b/arch/s390/include/asm/pgalloc.h
+> @@ -36,11 +36,11 @@ static inline void crst_table_init(unsigned long *crst, unsigned long entry)
+>  
+>  static inline unsigned long pgd_entry_type(struct mm_struct *mm)
+>  {
+> -	if (mm->context.asce_limit <= _REGION3_SIZE)
+> +	if (mm_pmd_folded(mm))
+>  		return _SEGMENT_ENTRY_EMPTY;
+> -	if (mm->context.asce_limit <= _REGION2_SIZE)
+> +	if (mm_pud_folded(mm))
+>  		return _REGION3_ENTRY_EMPTY;
+> -	if (mm->context.asce_limit <= _REGION1_SIZE)
+> +	if (mm_p4d_folded(mm))
+>  		return _REGION2_ENTRY_EMPTY;
+>  	return _REGION1_ENTRY_EMPTY;
+>  }
+> diff --git a/arch/s390/include/asm/pgtable.h b/arch/s390/include/asm/pgtable.h
+> index 411d435e7a7d..063732414dfb 100644
+> --- a/arch/s390/include/asm/pgtable.h
+> +++ b/arch/s390/include/asm/pgtable.h
+> @@ -493,6 +493,24 @@ static inline int is_module_addr(void *addr)
+>  				   _REGION_ENTRY_PROTECT | \
+>  				   _REGION_ENTRY_NOEXEC)
+>  
+> +static inline bool mm_p4d_folded(struct mm_struct *mm)
+> +{
+> +	return mm->context.asce_limit <= _REGION1_SIZE;
+> +}
+> +#define mm_p4d_folded(mm) mm_p4d_folded(mm)
+> +
+> +static inline bool mm_pud_folded(struct mm_struct *mm)
+> +{
+> +	return mm->context.asce_limit <= _REGION2_SIZE;
+> +}
+> +#define mm_pud_folded(mm) mm_pud_folded(mm)
+> +
+> +static inline bool mm_pmd_folded(struct mm_struct *mm)
+> +{
+> +	return mm->context.asce_limit <= _REGION3_SIZE;
+> +}
+> +#define mm_pmd_folded(mm) mm_pmd_folded(mm)
+> +
+>  static inline int mm_has_pgste(struct mm_struct *mm)
+>  {
+>  #ifdef CONFIG_PGSTE
+> diff --git a/arch/s390/include/asm/tlb.h b/arch/s390/include/asm/tlb.h
+> index 457b7ba0fbb6..b31c779cf581 100644
+> --- a/arch/s390/include/asm/tlb.h
+> +++ b/arch/s390/include/asm/tlb.h
+> @@ -136,7 +136,7 @@ static inline void pte_free_tlb(struct mmu_gather *tlb, pgtable_t pte,
+>  static inline void pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmd,
+>  				unsigned long address)
+>  {
+> -	if (tlb->mm->context.asce_limit <= _REGION3_SIZE)
+> +	if (mm_pmd_folded(tlb->mm))
+>  		return;
+>  	pgtable_pmd_page_dtor(virt_to_page(pmd));
+>  	tlb_remove_table(tlb, pmd);
+> @@ -152,7 +152,7 @@ static inline void pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmd,
+>  static inline void p4d_free_tlb(struct mmu_gather *tlb, p4d_t *p4d,
+>  				unsigned long address)
+>  {
+> -	if (tlb->mm->context.asce_limit <= _REGION1_SIZE)
+> +	if (mm_p4d_folded(tlb->mm))
+>  		return;
+>  	tlb_remove_table(tlb, p4d);
+>  }
+> @@ -167,7 +167,7 @@ static inline void p4d_free_tlb(struct mmu_gather *tlb, p4d_t *p4d,
+>  static inline void pud_free_tlb(struct mmu_gather *tlb, pud_t *pud,
+>  				unsigned long address)
+>  {
+> -	if (tlb->mm->context.asce_limit <= _REGION2_SIZE)
+> +	if (mm_pud_folded(tlb->mm))
+>  		return;
+>  	tlb_remove_table(tlb, pud);
+>  }
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 0416a7204be3..1e4a045f19ec 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -105,6 +105,34 @@ extern int mmap_rnd_compat_bits __read_mostly;
+>  #define mm_zero_struct_page(pp)  ((void)memset((pp), 0, sizeof(struct page)))
+>  #endif
+>  
+> +/*
+> + * On some architectures it depends on the mm if the p4d/pud or pmd
+> + * layer of the page table hierarchy is folded or not.
+> + */
+> +#ifndef mm_p4d_folded
+> +#define mm_p4d_folded(mm) mm_p4d_folded(mm)
+> +static inline bool mm_p4d_folded(struct mm_struct *mm)
+> +{
+> +	return __is_defined(__PAGETABLE_P4D_FOLDED);
+> +}
+> +#endif
+> +
+> +#ifndef mm_pud_folded
+> +#define mm_pud_folded(mm) mm_pud_folded(mm)
+> +static inline bool mm_pud_folded(struct mm_struct *mm)
+> +{
+> +	return __is_defined(__PAGETABLE_PUD_FOLDED);
+> +}
+> +#endif
+> +
+> +#ifndef mm_pmd_folded
+> +#define mm_pmd_folded(mm) mm_pmd_folded(mm)
+> +static inline bool mm_pmd_folded(struct mm_struct *mm)
+> +{
+> +	return __is_defined(__PAGETABLE_PMD_FOLDED);
+> +}
+> +#endif
+> +
+>  /*
+>   * Default maximum number of active map areas, this limits the number of vmas
+>   * per mm struct. Users can overwrite this number by sysctl but there is a
+> @@ -1710,7 +1738,7 @@ static inline int __p4d_alloc(struct mm_struct *mm, pgd_t *pgd,
+>  int __p4d_alloc(struct mm_struct *mm, pgd_t *pgd, unsigned long address);
+>  #endif
+>  
+> -#if defined(__PAGETABLE_PUD_FOLDED) || !defined(CONFIG_MMU)
+> +#if !defined(CONFIG_MMU)
+>  static inline int __pud_alloc(struct mm_struct *mm, p4d_t *p4d,
+>  						unsigned long address)
+>  {
+> @@ -1724,16 +1752,18 @@ int __pud_alloc(struct mm_struct *mm, p4d_t *p4d, unsigned long address);
+>  
+>  static inline void mm_inc_nr_puds(struct mm_struct *mm)
+>  {
+> -	atomic_long_add(PTRS_PER_PUD * sizeof(pud_t), &mm->pgtables_bytes);
+> +	if (!mm_pud_folded(mm))
+> +		atomic_long_add(PTRS_PER_PUD * sizeof(pud_t), &mm->pgtables_bytes);
+>  }
+>  
+>  static inline void mm_dec_nr_puds(struct mm_struct *mm)
+>  {
+> -	atomic_long_sub(PTRS_PER_PUD * sizeof(pud_t), &mm->pgtables_bytes);
+> +	if (!mm_pud_folded(mm))
+> +		atomic_long_sub(PTRS_PER_PUD * sizeof(pud_t), &mm->pgtables_bytes);
+>  }
+>  #endif
+>  
+> -#if defined(__PAGETABLE_PMD_FOLDED) || !defined(CONFIG_MMU)
+> +#if !defined(CONFIG_MMU)
+>  static inline int __pmd_alloc(struct mm_struct *mm, pud_t *pud,
+>  						unsigned long address)
+>  {
+> @@ -1748,12 +1778,14 @@ int __pmd_alloc(struct mm_struct *mm, pud_t *pud, unsigned long address);
+>  
+>  static inline void mm_inc_nr_pmds(struct mm_struct *mm)
+>  {
+> -	atomic_long_add(PTRS_PER_PMD * sizeof(pmd_t), &mm->pgtables_bytes);
+> +	if (!mm_pmd_folded(mm))
+> +		atomic_long_add(PTRS_PER_PMD * sizeof(pmd_t), &mm->pgtables_bytes);
+>  }
+>  
+>  static inline void mm_dec_nr_pmds(struct mm_struct *mm)
+>  {
+> -	atomic_long_sub(PTRS_PER_PMD * sizeof(pmd_t), &mm->pgtables_bytes);
+> +	if (!mm_pmd_folded(mm))
+> +		atomic_long_sub(PTRS_PER_PMD * sizeof(pmd_t), &mm->pgtables_bytes);
+>  }
+>  #endif
+>  
+> -- 
+> 2.16.4
+> 
+> 
+> -- 
+
+Hi Martin,
+
+We've seen these "non-zero pgtable byte" complaints as well and I found
+this thread + test patch.  Looks good after applying and running the LTP
+cve-2017-17052 test over here.
+
+Did this need further testing and/or review?  I didn't see it in the
+kernel/git/s390/linux.git tree so I thought I would ask.
+
+Thanks,
+
+-- Joe
