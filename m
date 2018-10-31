@@ -4,45 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A2E6ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:12:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73679C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:13:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEBEA20664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:12:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 395E720664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:13:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pQQxk7tN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEBEA20664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pq8NP6ru"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 395E720664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732432AbeKAINJ (ORCPT
+        id S1732348AbeKAIMf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:13:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37792 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:12:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37732 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732341AbeKAIMg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:12:36 -0400
+        id S1732263AbeKAIMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:12:34 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27DD920866;
-        Wed, 31 Oct 2018 23:12:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25F9220989;
+        Wed, 31 Oct 2018 23:12:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027543;
-        bh=z5TJusn5GxV84G0ICqjwHg2zcgcelLNvLOOMQLmNAcE=;
+        s=default; t=1541027542;
+        bh=HHisLMqV6cqVgc3yjqt1XgP9owQFledv9egZym3s7XA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pQQxk7tNdj18c9VkH1ITh2hTQ6j2FPPCBP/nw/a+SVXhIxhFf66r2nhn19mHlp/3o
-         GmtLe7+levw1m8pRXqJ2MNLJZhLVSpw+mDbQ//y8j4pk0QZl/oL9Mh82/15Fp3Bcjo
-         XIDtiL19ZYw7UuQeRxbUtoakLDprECwezspQaWPw=
+        b=pq8NP6ruxFRFfrIaPot1ivIHbVNf46WSFKR4TdErZtoDSo+NjB2wQmLICjOlaLYyy
+         GnkImziAg+JG8F0K4tvflIRQjTTnnZrbFWaGf2G/B8El+zLQ0uMmm6MMUVJZ2EEp1t
+         S1VW9d1I8bmwcwyQrq2ECr5TU0MnfsDxhfr31mdQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Shaohua Li <shli@fb.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 17/22] MD: fix invalid stored role for a disk
-Date:   Wed, 31 Oct 2018 19:12:01 -0400
-Message-Id: <20181031231206.29509-17-sashal@kernel.org>
+Cc:     Dexuan Cui <decui@microsoft.com>,
+        "K . Y . Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Stable@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 15/22] Drivers: hv: kvp: Fix two "this statement may fall through" warnings
+Date:   Wed, 31 Oct 2018 19:11:59 -0400
+Message-Id: <20181031231206.29509-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231206.29509-1-sashal@kernel.org>
 References: <20181031231206.29509-1-sashal@kernel.org>
@@ -51,45 +56,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shaohua Li <shli@fb.com>
+From: Dexuan Cui <decui@microsoft.com>
 
-[ Upstream commit d595567dc4f0c1d90685ec1e2e296e2cad2643ac ]
+[ Upstream commit fc62c3b1977d62e6374fd6e28d371bb42dfa5c9d ]
 
-If we change the number of array's device after device is removed from array,
-then add the device back to array, we can see that device is added as active
-role instead of spare which we expected.
+We don't need to call process_ib_ipinfo() if message->kvp_hdr.operation is
+KVP_OP_GET_IP_INFO in kvp_send_key(), because here we just need to pass on
+the op code from the host to the userspace; when the userspace returns
+the info requested by the host, we pass the info on to the host in
+kvp_respond_to_host() -> process_ob_ipinfo(). BTW, the current buggy code
+actually doesn't cause any harm, because only message->kvp_hdr.operation
+is used by the userspace, in the case of KVP_OP_GET_IP_INFO.
 
-Please see the below link for details:
-https://marc.info/?l=linux-raid&m=153736982015076&w=2
+The patch also adds a missing "break;" in kvp_send_key(). BTW, the current
+buggy code actually doesn't cause any harm, because in the case of
+KVP_OP_SET, the unexpected fall-through corrupts
+message->body.kvp_set.data.key_size, but that is not really used: see
+the definition of struct hv_kvp_exchg_msg_value.
 
-This is caused by that we prefer to use device's previous role which is
-recorded by saved_raid_disk, but we should respect the new number of
-conf->raid_disks since it could be changed after device is removed.
-
-Reported-by: Gioh Kim <gi-oh.kim@profitbricks.com>
-Tested-by: Gioh Kim <gi-oh.kim@profitbricks.com>
-Acked-by: Guoqing Jiang <gqjiang@suse.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/md.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/hv/hv_kvp.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index ba201db6afce..31eb08e2f4f8 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -1646,6 +1646,10 @@ static int super_1_validate(struct mddev *mddev, struct md_rdev *rdev)
- 			} else
- 				set_bit(In_sync, &rdev->flags);
- 			rdev->raid_disk = role;
-+			if (role >= mddev->raid_disks) {
-+				rdev->saved_raid_disk = -1;
-+				rdev->raid_disk = -1;
-+			}
+diff --git a/drivers/hv/hv_kvp.c b/drivers/hv/hv_kvp.c
+index 521c14625b3a..c1e4483ca0ae 100644
+--- a/drivers/hv/hv_kvp.c
++++ b/drivers/hv/hv_kvp.c
+@@ -326,7 +326,6 @@ static void process_ib_ipinfo(void *in_msg, void *out_msg, int op)
+ 
+ 		out->body.kvp_ip_val.dhcp_enabled = in->kvp_ip_val.dhcp_enabled;
+ 
+-	default:
+ 		utf16s_to_utf8s((wchar_t *)in->kvp_ip_val.adapter_id,
+ 				MAX_ADAPTER_ID_SIZE,
+ 				UTF16_LITTLE_ENDIAN,
+@@ -379,7 +378,7 @@ kvp_send_key(struct work_struct *dummy)
+ 		process_ib_ipinfo(in_msg, message, KVP_OP_SET_IP_INFO);
+ 		break;
+ 	case KVP_OP_GET_IP_INFO:
+-		process_ib_ipinfo(in_msg, message, KVP_OP_GET_IP_INFO);
++		/* We only need to pass on message->kvp_hdr.operation.  */
+ 		break;
+ 	case KVP_OP_SET:
+ 		switch (in_msg->body.kvp_set.data.value_type) {
+@@ -419,6 +418,9 @@ kvp_send_key(struct work_struct *dummy)
  			break;
+ 
  		}
- 		if (sb->devflags & WriteMostly1)
++
++		break;
++
+ 	case KVP_OP_GET:
+ 		message->body.kvp_set.data.key_size =
+ 			utf16s_to_utf8s(
 -- 
 2.17.1
 
