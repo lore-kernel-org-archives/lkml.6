@@ -2,163 +2,110 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AED8EC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 13:06:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4386C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 13:07:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6345F20657
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 13:06:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ISr4/4Rs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6345F20657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7D12020657
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 13:07:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D12020657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729315AbeJaWEp (ORCPT
+        id S1729339AbeJaWFB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 18:04:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40700 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729226AbeJaWEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 18:04:45 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 676B220664;
-        Wed, 31 Oct 2018 13:06:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540991207;
-        bh=Etcnqm7DrNid7Ztcb+eMJy70+SY2qAjIgqSun3iiP0w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ISr4/4RsyrfEgG2lFRqKPIxf2HjTG6zKf8wU+Nkq44M3alk037hu8LQBpNJR3T+FW
-         jGfUpKy9yS+G7WYjdEcSrGLeLJatKgSeDmWiHu0E7NOXVtn/Cju916vHnwVUn1ouhd
-         mWBajuFCewRXPWVQVXfaDMS/kwSekLQvs/DN0+PI=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 25EBA142C5F; Wed, 31 Oct 2018 10:06:45 -0300 (-03)
-Date:   Wed, 31 Oct 2018 10:06:45 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     David Miller <davem@davemloft.net>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf: Don't clone maps from parent when synthesizing
- forks
-Message-ID: <20181031130645.GE10660@kernel.org>
-References: <20181030.222404.2085088822877051075.davem@davemloft.net>
- <20181031130138.GA13216@krava>
+        Wed, 31 Oct 2018 18:05:01 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:55561 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729226AbeJaWFB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 18:05:01 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.80)
+        (envelope-from <kurt.kanzenbach@linutronix.de>)
+        id 1gHqCx-0000m5-L7; Wed, 31 Oct 2018 14:06:51 +0100
+Date:   Wed, 31 Oct 2018 14:06:51 +0100
+From:   Kurt Kanzenbach <kurt.kanzenbach@linutronix.de>
+To:     David Miller <davem@davemloft.net>
+Cc:     anirudh@xilinx.com, John.Linn@xilinx.com, michal.simek@xilinx.com,
+        radhey.shyam.pandey@xilinx.com, andrew@lunn.ch,
+        yuehaibing@huawei.com, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] net: axienet: recheck condition after timeout in
+ mdio_wait()
+Message-ID: <20181031130651.l4toezvyg4etevnh@linutronix.de>
+References: <20181030093139.10226-1-kurt@linutronix.de>
+ <20181030093139.10226-2-kurt@linutronix.de>
+ <20181030.112511.957438343014682098.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181031130138.GA13216@krava>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20181030.112511.957438343014682098.davem@davemloft.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Oct 31, 2018 at 02:01:38PM +0100, Jiri Olsa escreveu:
-> On Tue, Oct 30, 2018 at 10:24:04PM -0700, David Miller wrote:
-> 
-> SNIP
-> 
-> > diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> > index 111ae858cbcb..214b7979c4e7 100644
-> > --- a/tools/perf/util/machine.c
-> > +++ b/tools/perf/util/machine.c
-> > @@ -1708,6 +1708,7 @@ int machine__process_fork_event(struct machine *machine, union perf_event *event
-> >  	struct thread *parent = machine__findnew_thread(machine,
-> >  							event->fork.ppid,
-> >  							event->fork.ptid);
-> > +	bool do_maps_clone = true;
-> >  	int err = 0;
-> >  
-> >  	if (dump_trace)
-> > @@ -1737,8 +1738,11 @@ int machine__process_fork_event(struct machine *machine, union perf_event *event
-> >  	thread = machine__findnew_thread(machine, event->fork.pid,
-> >  					 event->fork.tid);
-> >  
-> > +	if (event->fork.header.misc & PERF_RECORD_MISC_FORK_EXEC)
-> > +		do_maps_clone = false;
-> 
-> could you please put some comment in here shortly
-> explaining the reason behind this flag
-
-I'll get that comment from the commit log message
- 
+On Tue, Oct 30, 2018 at 11:25:11AM -0700, David Miller wrote:
+> From: Kurt Kanzenbach <kurt@linutronix.de>
+> Date: Tue, 30 Oct 2018 10:31:38 +0100
+>
+> > The function could report a false positive if it gets preempted between reading
+> > the XAE_MDIO_MCR_OFFSET register and checking for the timeout.  In such a case,
+> > the condition has to be rechecked to avoid false positives.
+> >
+> > Therefore, check for expected condition even after the timeout occurred.
+> >
+> > Signed-off-by: Kurt Kanzenbach <kurt@linutronix.de>
+>  ...
+> >  		if (time_before_eq(end, jiffies)) {
+> > -			WARN_ON(1);
+> > -			return -ETIMEDOUT;
+> > +			val = axienet_ior(lp, XAE_MDIO_MCR_OFFSET);
+> > +			break;
+> >  		}
 > > +
-> >  	if (thread == NULL || parent == NULL ||
-> > -	    thread__fork(thread, parent, sample->time) < 0) {
-> > +	    thread__fork(thread, parent, sample->time, do_maps_clone) < 0) {
-> >  		dump_printf("problem processing PERF_RECORD_FORK, skipping event.\n");
-> >  		err = -1;
+> >  		udelay(1);
 > >  	}
-> > diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
-> > index 2048d393ece6..54b2c9ceba9f 100644
-> > --- a/tools/perf/util/thread.c
-> > +++ b/tools/perf/util/thread.c
-> > @@ -330,7 +330,8 @@ static int thread__prepare_access(struct thread *thread)
-> >  }
-> >  
-> >  static int thread__clone_map_groups(struct thread *thread,
-> > -				    struct thread *parent)
-> > +				    struct thread *parent,
-> > +				    bool do_maps_clone)
-> >  {
-> >  	/* This is new thread, we share map groups for process. */
-> >  	if (thread->pid_ == parent->pid_)
-> > @@ -341,15 +342,14 @@ static int thread__clone_map_groups(struct thread *thread,
-> >  			 thread->pid_, thread->tid, parent->pid_, parent->tid);
-> >  		return 0;
-> >  	}
-> > -
-> >  	/* But this one is new process, copy maps. */
-> > -	if (map_groups__clone(thread, parent->mg) < 0)
-> > +	if (do_maps_clone &&
-> > +	    map_groups__clone(thread, parent->mg) < 0)
-> >  		return -ENOMEM;
-> > -
-> >  	return 0;
-> 
-> we could move all this into one line:
-> 
-> 	return do_maps_clone ? map_groups__clone(thread, parent->mg) : 0;
+> > -	return 0;
+> > +	if (val & XAE_MDIO_MCR_READY_MASK)
+> > +		return 0;
+> > +
+> > +	WARN_ON(1);
+> > +	return -ETIMEDOUT;
+>
+> You are not fundamentally changing the situation at all.
+>
+> The condtion could change right after your last read of
+> XAR_MDIO_MCR_OFFSET, which is the same thing that happens before your
+> modifications to this code.
 
-Yeah, I can do that as well, after looking at what map_groups__clone()
-returns, which can go into the unwind backends.
+That's true. The problem is different: If the current task gets
+preempted by a higher priority task between checking the condition and
+the timeout code, then a timeout might be falsely detected. Consider the
+following events:
 
-- Arnaldo
- 
-> thanks,
-> jirka
-> 
-> >  }
-> >  
-> > -int thread__fork(struct thread *thread, struct thread *parent, u64 timestamp)
-> > +int thread__fork(struct thread *thread, struct thread *parent, u64 timestamp, bool do_maps_clone)
-> >  {
-> >  	if (parent->comm_set) {
-> >  		const char *comm = thread__comm_str(parent);
-> > @@ -362,7 +362,7 @@ int thread__fork(struct thread *thread, struct thread *parent, u64 timestamp)
-> >  	}
-> >  
-> >  	thread->ppid = parent->tid;
-> > -	return thread__clone_map_groups(thread, parent);
-> > +	return thread__clone_map_groups(thread, parent, do_maps_clone);
-> >  }
-> >  
-> >  void thread__find_cpumode_addr_location(struct thread *thread, u64 addr,
-> > diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
-> > index 07606aa6998d..7e30fe99b74b 100644
-> > --- a/tools/perf/util/thread.h
-> > +++ b/tools/perf/util/thread.h
-> > @@ -87,7 +87,7 @@ struct comm *thread__comm(const struct thread *thread);
-> >  struct comm *thread__exec_comm(const struct thread *thread);
-> >  const char *thread__comm_str(const struct thread *thread);
-> >  int thread__insert_map(struct thread *thread, struct map *map);
-> > -int thread__fork(struct thread *thread, struct thread *parent, u64 timestamp);
-> > +int thread__fork(struct thread *thread, struct thread *parent, u64 timestamp, bool do_maps_clone);
-> >  size_t thread__fprintf(struct thread *thread, FILE *fp);
-> >  
-> >  struct thread *thread__main_thread(struct machine *machine, struct thread *thread);
+loop:
+ check mdio condition
+ ------------------------
+ task with real time priority may run for a long time
+ ------------------------
+ check for timeout
+ wait
+
+That's why I've added the recheck of the condition in the timeout case.
+
+>
+> It sounds more like the timeout is slightly too short, and that's the
+> real problem that causes whatever behavior you think you are fixing
+> here.
+
+The timeout value is not the problem here.
+
+Thanks,
+Kurt
