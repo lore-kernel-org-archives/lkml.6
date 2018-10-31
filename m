@@ -2,109 +2,80 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E9EECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:11:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F79EC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:15:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74DF720685
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:11:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XE6cCwPx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74DF720685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 2F48120685
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:15:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F48120685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728346AbeJaTJ0 (ORCPT
+        id S1728568AbeJaTMd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 15:09:26 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:35630 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727692AbeJaTJ0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 15:09:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=gq+In4AB5xCINJI4HV1K716XlMaT2LdiwoPTCQL+wv4=; b=XE6cCwPxeHBHyBSmrkkSTtRE4
-        fFj0439HWdMorMVwv7jsOrdkAXPvSjMnG/TENzReeveGoTBa+dxhZ76iqkmyThYV/MB1dmgIPVqQD
-        MSKW5vE1nLpkVp6eBNJowgXIICZK7MbBSZUKahue+7DkfjGMRbFJvFyPf99SqB95s3MrWytVaO4jf
-        51lu/xx4Qn4ZxcZbAUCoYETUTMyP21EfRyu9SmJn9YN/f42JOr7Bk1P1enkB2Pkn/e4MoXiAxENhO
-        G87ck59YrOaR4fQ2/VojZzeVciQeAaKM9RVVxbQqXVNCiE30fW+THRoTmxgxZNEZ2lKjn3j4mg7Cj
-        Eoe6im17Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gHnTD-0002jN-Qt; Wed, 31 Oct 2018 10:11:28 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 34E802029FA14; Wed, 31 Oct 2018 11:11:24 +0100 (CET)
-Date:   Wed, 31 Oct 2018 11:11:24 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Igor Stoppa <igor.stoppa@gmail.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Kees Cook <keescook@chromium.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 10/17] prmem: documentation
-Message-ID: <20181031101124.GO744@hirez.programming.kicks-ass.net>
-References: <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
- <20181030152641.GE8177@hirez.programming.kicks-ass.net>
- <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
- <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
- <20181030175814.GB10491@bombadil.infradead.org>
- <20181030182841.GE7343@cisco>
- <20181030192021.GC10491@bombadil.infradead.org>
- <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com>
- <BAA65A07-F3AF-4209-9D18-7075CEF11EE8@amacapital.net>
- <2cfb3835-0c18-b3fb-1722-5d693ae0ecd2@gmail.com>
+        Wed, 31 Oct 2018 15:12:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50700 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727865AbeJaTMd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 15:12:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5F308AE3E;
+        Wed, 31 Oct 2018 10:15:03 +0000 (UTC)
+Date:   Wed, 31 Oct 2018 11:15:01 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Miles Chen <miles.chen@mediatek.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Joe Perches <joe@perches.com>,
+        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, wsd_upstream@mediatek.com
+Subject: Re: [PATCH v3] mm/page_owner: use kvmalloc instead of kmalloc
+Message-ID: <20181031101501.GL32673@dhcp22.suse.cz>
+References: <1540790176-32339-1-git-send-email-miles.chen@mediatek.com>
+ <20181029080708.GA32673@dhcp22.suse.cz>
+ <20181029081706.GC32673@dhcp22.suse.cz>
+ <1540862950.12374.40.camel@mtkswgap22>
+ <20181030060601.GR32673@dhcp22.suse.cz>
+ <1540882551.23278.12.camel@mtkswgap22>
+ <20181030081537.GV32673@dhcp22.suse.cz>
+ <1540975637.10275.10.camel@mtkswgap22>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2cfb3835-0c18-b3fb-1722-5d693ae0ecd2@gmail.com>
+In-Reply-To: <1540975637.10275.10.camel@mtkswgap22>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 12:15:46AM +0200, Igor Stoppa wrote:
-> On 30/10/2018 23:02, Andy Lutomirski wrote:
-
-> > But I dislike allowing regular writes in the protected region. We
-> > really only need four write primitives:
+On Wed 31-10-18 16:47:17, Miles Chen wrote:
+> On Tue, 2018-10-30 at 09:15 +0100, Michal Hocko wrote:
+> > On Tue 30-10-18 14:55:51, Miles Chen wrote:
+> > [...]
+> > > It's a real problem when using page_owner.
+> > > I found this issue recently: I'm not able to read page_owner information
+> > > during a overnight test. (error: read failed: Out of memory). I replace
+> > > kmalloc() with vmalloc() and it worked well.
 > > 
-> > 1. Just write one value.  Call at any time (except NMI).
-> > 
-> > 2. Just copy some bytes. Same as (1) but any number of bytes.
-> > 
-> > 3,4: Same as 1 and 2 but must be called inside a special rare write
-> > region. This is purely an optimization.
+> > Is this with trimming the allocation to a single page and doing shorter
+> > than requested reads?
 > 
-> Atomic? RCU?
+> 
+> I printed out the allocate count on my device the request count is <=
+> 4096. So I tested this scenario by trimming the count to from 4096 to
+> 1024 bytes and it works fine. 
+> 
+> count = count > 1024? 1024: count;
+> 
+> It tested it on both 32bit and 64bit kernel.
 
-RCU can be done, that's not really a problem. Atomics otoh are a
-problem. Having pointers makes them just work.
+Are you saying that you see OOMs for 4k size?
 
-Andy; I understand your reason for not wanting them, but I really don't
-want to duplicate everything. Is there something we can do with static
-analysis to make you more comfortable with the pointer thing?
+-- 
+Michal Hocko
+SUSE Labs
