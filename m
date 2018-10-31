@@ -7,49 +7,45 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8BD7C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:46:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFBFFC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:47:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A049420838
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:46:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6385D20823
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:47:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dNZWzDi6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A049420838
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IpoU4cQo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6385D20823
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730322AbeKABpp (ORCPT
+        id S1730067AbeKABox (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 21:45:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60714 "EHLO mail.kernel.org"
+        Wed, 31 Oct 2018 21:44:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730279AbeKABpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 21:45:44 -0400
+        id S1729827AbeKABow (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 21:44:52 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C0C9620823;
-        Wed, 31 Oct 2018 16:46:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F8432081B;
+        Wed, 31 Oct 2018 16:46:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541004415;
-        bh=v2gopqJvSpeoQjoROiIOvbARup1WOXFwDkEfic/U50E=;
+        s=default; t=1541004364;
+        bh=mlAhG+PCHbU3dJWNvtBN4zTRDgJUDwGrLJTuM+xTYus=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dNZWzDi6kXEdj5vySVvGUAS7aUFZal0aW/rmOIVX2r+ZgeGEjObj5Be1TAVRzqplw
-         IpEK+tNAFoyV6GJienI8bOJ8Y3CmhSl8KYh1aGxUbKQmyCzEmk6Vy32lv9zJwLyJKC
-         D0y+C0uWVJ5T8eGlt2VinwRw+f/rQ5TIeMUQMTPM=
+        b=IpoU4cQoAAUVb8lxmFfwBqZ3vO9c7yfiupsYNKO3muvUbTNIPvKzJ212Wf8jcz/+W
+         jzhl7YgMQHg2P4SC+1FsuaDBs1u6sjcN8WKYynCN+5v2reQBnfMKj4ld2b5AYeOkTF
+         62ZcOmaWnmayj5t74pdZKdz1UNyOoVG0wL2QRGCU=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Leo Yan <leo.yan@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        stable@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 28/28] perf intel-pt/bts: Calculate cpumode for synthesized samples
-Date:   Wed, 31 Oct 2018 13:45:08 -0300
-Message-Id: <20181031164508.4784-29-acme@kernel.org>
+        Milian Wolff <milian.wolff@kdab.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 12/28] perf unwind: Take pgoff into account when reporting elf to libdwfl
+Date:   Wed, 31 Oct 2018 13:44:52 -0300
+Message-Id: <20181031164508.4784-13-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181031164508.4784-1-acme@kernel.org>
 References: <20181031164508.4784-1-acme@kernel.org>
@@ -58,126 +54,194 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Milian Wolff <milian.wolff@kdab.com>
 
-In the absence of a fallback, samples must provide a correct cpumode for
-the 'ip'. Do that now there is no fallback.
+libdwfl parses an ELF file itself and creates mappings for the
+individual sections. perf on the other hand sees raw mmap events which
+represent individual sections. When we encounter an address pointing
+into a mapping with pgoff != 0, we must take that into account and
+report the file at the non-offset base address.
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Leo Yan <leo.yan@linaro.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: stable@vger.kernel.org # 4.19
-Link: http://lkml.kernel.org/r/20181031091043.23465-6-adrian.hunter@intel.com
+This fixes unwinding with libdwfl in some cases. E.g. for a file like:
+
+```
+
+using namespace std;
+
+mutex g_mutex;
+
+double worker()
+{
+    lock_guard<mutex> guard(g_mutex);
+    uniform_real_distribution<double> uniform(-1E5, 1E5);
+    default_random_engine engine;
+    double s = 0;
+    for (int i = 0; i < 1000; ++i) {
+        s += norm(complex<double>(uniform(engine), uniform(engine)));
+    }
+    cout << s << endl;
+    return s;
+}
+
+int main()
+{
+    vector<std::future<double>> results;
+    for (int i = 0; i < 10000; ++i) {
+        results.push_back(async(launch::async, worker));
+    }
+    return 0;
+}
+```
+
+Compile it with `g++ -g -O2 -lpthread cpp-locking.cpp  -o cpp-locking`,
+then record it with `perf record --call-graph dwarf -e
+sched:sched_switch`.
+
+When you analyze it with `perf script` and libunwind, you should see:
+
+```
+cpp-locking 20038 [005] 54830.236589: sched:sched_switch: prev_comm=cpp-locking prev_pid=20038 prev_prio=120 prev_state=T ==> next_comm=swapper/5 next_pid=0 next_prio=120
+        ffffffffb166fec5 __sched_text_start+0x545 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb166fec5 __sched_text_start+0x545 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb1670208 schedule+0x28 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb16737cc rwsem_down_read_failed+0xec (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb1665e04 call_rwsem_down_read_failed+0x14 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb1672a03 down_read+0x13 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb106bd85 __do_page_fault+0x445 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb18015f5 page_fault+0x45 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+            7f38e4252591 new_heap+0x101 (/usr/lib/libc-2.28.so)
+            7f38e4252d0b arena_get2.part.4+0x2fb (/usr/lib/libc-2.28.so)
+            7f38e4255b1c tcache_init.part.6+0xec (/usr/lib/libc-2.28.so)
+            7f38e42569e5 __GI___libc_malloc+0x115 (inlined)
+            7f38e4241790 __GI__IO_file_doallocate+0x90 (inlined)
+            7f38e424fbbf __GI__IO_doallocbuf+0x4f (inlined)
+            7f38e424ee47 __GI__IO_file_overflow+0x197 (inlined)
+            7f38e424df36 _IO_new_file_xsputn+0x116 (inlined)
+            7f38e4242bfb __GI__IO_fwrite+0xdb (inlined)
+            7f38e463fa6d std::basic_streambuf<char, std::char_traits<char> >::sputn(char const*, long)+0x1cd (inlined)
+            7f38e463fa6d std::ostreambuf_iterator<char, std::char_traits<char> >::_M_put(char const*, long)+0x1cd (inlined)
+            7f38e463fa6d std::ostreambuf_iterator<char, std::char_traits<char> > std::__write<char>(std::ostreambuf_iterator<char, std::char_traits<char> >, char const*, int)+0x1cd (inlined)
+            7f38e463fa6d std::ostreambuf_iterator<char, std::char_traits<char> > std::num_put<char, std::ostreambuf_iterator<char, std::char_traits<char> > >::_M_insert_float<double>(std::ostreambuf_iterator<c>
+            7f38e464bd70 std::num_put<char, std::ostreambuf_iterator<char, std::char_traits<char> > >::put(std::ostreambuf_iterator<char, std::char_traits<char> >, std::ios_base&, char, double) const+0x90 (inl>
+            7f38e464bd70 std::ostream& std::ostream::_M_insert<double>(double)+0x90 (/usr/lib/libstdc++.so.6.0.25)
+            563b9cb502f7 std::ostream::operator<<(double)+0xb7 (inlined)
+            563b9cb502f7 worker()+0xb7 (/ssd/milian/projects/kdab/rnd/hotspot/build/tests/test-clients/cpp-locking/cpp-locking)
+            563b9cb506fb double std::__invoke_impl<double, double (*)()>(std::__invoke_other, double (*&&)())+0x2b (inlined)
+            563b9cb506fb std::__invoke_result<double (*)()>::type std::__invoke<double (*)()>(double (*&&)())+0x2b (inlined)
+            563b9cb506fb decltype (__invoke((_S_declval<0ul>)())) std::thread::_Invoker<std::tuple<double (*)()> >::_M_invoke<0ul>(std::_Index_tuple<0ul>)+0x2b (inlined)
+            563b9cb506fb std::thread::_Invoker<std::tuple<double (*)()> >::operator()()+0x2b (inlined)
+            563b9cb506fb std::__future_base::_Task_setter<std::unique_ptr<std::__future_base::_Result<double>, std::__future_base::_Result_base::_Deleter>, std::thread::_Invoker<std::tuple<double (*)()> >, dou>
+            563b9cb506fb std::_Function_handler<std::unique_ptr<std::__future_base::_Result_base, std::__future_base::_Result_base::_Deleter> (), std::__future_base::_Task_setter<std::unique_ptr<std::__future_>
+            563b9cb507e8 std::function<std::unique_ptr<std::__future_base::_Result_base, std::__future_base::_Result_base::_Deleter> ()>::operator()() const+0x28 (inlined)
+            563b9cb507e8 std::__future_base::_State_baseV2::_M_do_set(std::function<std::unique_ptr<std::__future_base::_Result_base, std::__future_base::_Result_base::_Deleter> ()>*, bool*)+0x28 (/ssd/milian/>
+            7f38e46d24fe __pthread_once_slow+0xbe (/usr/lib/libpthread-2.28.so)
+            563b9cb51149 __gthread_once+0xe9 (inlined)
+            563b9cb51149 void std::call_once<void (std::__future_base::_State_baseV2::*)(std::function<std::unique_ptr<std::__future_base::_Result_base, std::__future_base::_Result_base::_Deleter> ()>*, bool*)>
+            563b9cb51149 std::__future_base::_State_baseV2::_M_set_result(std::function<std::unique_ptr<std::__future_base::_Result_base, std::__future_base::_Result_base::_Deleter> ()>, bool)+0xe9 (inlined)
+            563b9cb51149 std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<double (*)()> >, double>::_Async_state_impl(std::thread::_Invoker<std::tuple<double (*)()> >&&)::{lambda()#1}::op>
+            563b9cb51149 void std::__invoke_impl<void, std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<double (*)()> >, double>::_Async_state_impl(std::thread::_Invoker<std::tuple<double>
+            563b9cb51149 std::__invoke_result<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<double (*)()> >, double>::_Async_state_impl(std::thread::_Invoker<std::tuple<double (*)()> >>
+            563b9cb51149 decltype (__invoke((_S_declval<0ul>)())) std::thread::_Invoker<std::tuple<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<double (*)()> >, double>::_Async_state_>
+            563b9cb51149 std::thread::_Invoker<std::tuple<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<double (*)()> >, double>::_Async_state_impl(std::thread::_Invoker<std::tuple<dou>
+            563b9cb51149 std::thread::_State_impl<std::thread::_Invoker<std::tuple<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<double (*)()> >, double>::_Async_state_impl(std::thread>
+            7f38e45f0062 execute_native_thread_routine+0x12 (/usr/lib/libstdc++.so.6.0.25)
+            7f38e46caa9c start_thread+0xfc (/usr/lib/libpthread-2.28.so)
+            7f38e42ccb22 __GI___clone+0x42 (inlined)
+```
+
+Before this patch, using libdwfl, you would see:
+
+```
+cpp-locking 20038 [005] 54830.236589: sched:sched_switch: prev_comm=cpp-locking prev_pid=20038 prev_prio=120 prev_state=T ==> next_comm=swapper/5 next_pid=0 next_prio=120
+        ffffffffb166fec5 __sched_text_start+0x545 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb166fec5 __sched_text_start+0x545 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb1670208 schedule+0x28 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb16737cc rwsem_down_read_failed+0xec (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb1665e04 call_rwsem_down_read_failed+0x14 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb1672a03 down_read+0x13 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb106bd85 __do_page_fault+0x445 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb18015f5 page_fault+0x45 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+            7f38e4252591 new_heap+0x101 (/usr/lib/libc-2.28.so)
+        a041161e77950c5c [unknown] ([unknown])
+```
+
+With this patch applied, we get a bit further in unwinding:
+
+```
+cpp-locking 20038 [005] 54830.236589: sched:sched_switch: prev_comm=cpp-locking prev_pid=20038 prev_prio=120 prev_state=T ==> next_comm=swapper/5 next_pid=0 next_prio=120
+        ffffffffb166fec5 __sched_text_start+0x545 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb166fec5 __sched_text_start+0x545 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb1670208 schedule+0x28 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb16737cc rwsem_down_read_failed+0xec (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb1665e04 call_rwsem_down_read_failed+0x14 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb1672a03 down_read+0x13 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb106bd85 __do_page_fault+0x445 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb18015f5 page_fault+0x45 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+            7f38e4252591 new_heap+0x101 (/usr/lib/libc-2.28.so)
+            7f38e4252d0b arena_get2.part.4+0x2fb (/usr/lib/libc-2.28.so)
+            7f38e4255b1c tcache_init.part.6+0xec (/usr/lib/libc-2.28.so)
+            7f38e42569e5 __GI___libc_malloc+0x115 (inlined)
+            7f38e4241790 __GI__IO_file_doallocate+0x90 (inlined)
+            7f38e424fbbf __GI__IO_doallocbuf+0x4f (inlined)
+            7f38e424ee47 __GI__IO_file_overflow+0x197 (inlined)
+            7f38e424df36 _IO_new_file_xsputn+0x116 (inlined)
+            7f38e4242bfb __GI__IO_fwrite+0xdb (inlined)
+            7f38e463fa6d std::basic_streambuf<char, std::char_traits<char> >::sputn(char const*, long)+0x1cd (inlined)
+            7f38e463fa6d std::ostreambuf_iterator<char, std::char_traits<char> >::_M_put(char const*, long)+0x1cd (inlined)
+            7f38e463fa6d std::ostreambuf_iterator<char, std::char_traits<char> > std::__write<char>(std::ostreambuf_iterator<char, std::char_traits<char> >, char const*, int)+0x1cd (inlined)
+            7f38e463fa6d std::ostreambuf_iterator<char, std::char_traits<char> > std::num_put<char, std::ostreambuf_iterator<char, std::char_traits<char> > >::_M_insert_float<double>(std::ostreambuf_iterator<c>
+            7f38e464bd70 std::num_put<char, std::ostreambuf_iterator<char, std::char_traits<char> > >::put(std::ostreambuf_iterator<char, std::char_traits<char> >, std::ios_base&, char, double) const+0x90 (inl>
+            7f38e464bd70 std::ostream& std::ostream::_M_insert<double>(double)+0x90 (/usr/lib/libstdc++.so.6.0.25)
+            563b9cb502f7 std::ostream::operator<<(double)+0xb7 (inlined)
+            563b9cb502f7 worker()+0xb7 (/ssd/milian/projects/kdab/rnd/hotspot/build/tests/test-clients/cpp-locking/cpp-locking)
+        6eab825c1ee3e4ff [unknown] ([unknown])
+```
+
+Note that the backtrace is still stopping too early, when compared to
+the nice results obtained via libunwind. It's unclear so far what the
+reason for that is.
+
+Committer note:
+
+Further comment by Milian on the thread started on the Link: tag below:
+
+ ---
+The remaining issue is due to a bug in elfutils:
+
+https://sourceware.org/ml/elfutils-devel/2018-q4/msg00089.html
+
+With both patches applied, libunwind and elfutils produce the same output for
+the above scenario.
+ ---
+
+Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Link: http://lkml.kernel.org/r/20181029141644.3907-1-milian.wolff@kdab.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/intel-bts.c | 17 ++++++++++++-----
- tools/perf/util/intel-pt.c  | 22 +++++++++++++---------
- 2 files changed, 25 insertions(+), 14 deletions(-)
+ tools/perf/util/unwind-libdw.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/intel-bts.c b/tools/perf/util/intel-bts.c
-index 3b3a3d55dca1..7b27d77306c2 100644
---- a/tools/perf/util/intel-bts.c
-+++ b/tools/perf/util/intel-bts.c
-@@ -269,6 +269,13 @@ static int intel_bts_do_fix_overlap(struct auxtrace_queue *queue,
- 	return 0;
- }
+diff --git a/tools/perf/util/unwind-libdw.c b/tools/perf/util/unwind-libdw.c
+index 6f318b15950e..5eff9bfc5758 100644
+--- a/tools/perf/util/unwind-libdw.c
++++ b/tools/perf/util/unwind-libdw.c
+@@ -45,13 +45,13 @@ static int __report_module(struct addr_location *al, u64 ip,
+ 		Dwarf_Addr s;
  
-+static inline u8 intel_bts_cpumode(struct intel_bts *bts, uint64_t ip)
-+{
-+	return machine__kernel_ip(bts->machine, ip) ?
-+	       PERF_RECORD_MISC_KERNEL :
-+	       PERF_RECORD_MISC_USER;
-+}
-+
- static int intel_bts_synth_branch_sample(struct intel_bts_queue *btsq,
- 					 struct branch *branch)
- {
-@@ -281,12 +288,8 @@ static int intel_bts_synth_branch_sample(struct intel_bts_queue *btsq,
- 	    bts->num_events++ <= bts->synth_opts.initial_skip)
- 		return 0;
+ 		dwfl_module_info(mod, NULL, &s, NULL, NULL, NULL, NULL, NULL);
+-		if (s != al->map->start)
++		if (s != al->map->start - al->map->pgoff)
+ 			mod = 0;
+ 	}
  
--	event.sample.header.type = PERF_RECORD_SAMPLE;
--	event.sample.header.misc = PERF_RECORD_MISC_USER;
--	event.sample.header.size = sizeof(struct perf_event_header);
--
--	sample.cpumode = PERF_RECORD_MISC_USER;
- 	sample.ip = le64_to_cpu(branch->from);
-+	sample.cpumode = intel_bts_cpumode(bts, sample.ip);
- 	sample.pid = btsq->pid;
- 	sample.tid = btsq->tid;
- 	sample.addr = le64_to_cpu(branch->to);
-@@ -298,6 +301,10 @@ static int intel_bts_synth_branch_sample(struct intel_bts_queue *btsq,
- 	sample.insn_len = btsq->intel_pt_insn.length;
- 	memcpy(sample.insn, btsq->intel_pt_insn.buf, INTEL_PT_INSN_BUF_SZ);
+ 	if (!mod)
+ 		mod = dwfl_report_elf(ui->dwfl, dso->short_name,
+-				      (dso->symsrc_filename ? dso->symsrc_filename : dso->long_name), -1, al->map->start,
++				      (dso->symsrc_filename ? dso->symsrc_filename : dso->long_name), -1, al->map->start - al->map->pgoff,
+ 				      false);
  
-+	event.sample.header.type = PERF_RECORD_SAMPLE;
-+	event.sample.header.misc = sample.cpumode;
-+	event.sample.header.size = sizeof(struct perf_event_header);
-+
- 	if (bts->synth_opts.inject) {
- 		event.sample.header.size = bts->branches_event_size;
- 		ret = perf_event__synthesize_sample(&event,
-diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-index 60732213d16a..86cc9a64e982 100644
---- a/tools/perf/util/intel-pt.c
-+++ b/tools/perf/util/intel-pt.c
-@@ -407,6 +407,13 @@ intel_pt_cache_lookup(struct dso *dso, struct machine *machine, u64 offset)
- 	return auxtrace_cache__lookup(dso->auxtrace_cache, offset);
- }
- 
-+static inline u8 intel_pt_cpumode(struct intel_pt *pt, uint64_t ip)
-+{
-+	return ip >= pt->kernel_start ?
-+	       PERF_RECORD_MISC_KERNEL :
-+	       PERF_RECORD_MISC_USER;
-+}
-+
- static int intel_pt_walk_next_insn(struct intel_pt_insn *intel_pt_insn,
- 				   uint64_t *insn_cnt_ptr, uint64_t *ip,
- 				   uint64_t to_ip, uint64_t max_insn_cnt,
-@@ -429,10 +436,7 @@ static int intel_pt_walk_next_insn(struct intel_pt_insn *intel_pt_insn,
- 	if (to_ip && *ip == to_ip)
- 		goto out_no_cache;
- 
--	if (*ip >= ptq->pt->kernel_start)
--		cpumode = PERF_RECORD_MISC_KERNEL;
--	else
--		cpumode = PERF_RECORD_MISC_USER;
-+	cpumode = intel_pt_cpumode(ptq->pt, *ip);
- 
- 	thread = ptq->thread;
- 	if (!thread) {
-@@ -1059,15 +1063,11 @@ static void intel_pt_prep_b_sample(struct intel_pt *pt,
- 				   union perf_event *event,
- 				   struct perf_sample *sample)
- {
--	event->sample.header.type = PERF_RECORD_SAMPLE;
--	event->sample.header.misc = PERF_RECORD_MISC_USER;
--	event->sample.header.size = sizeof(struct perf_event_header);
--
- 	if (!pt->timeless_decoding)
- 		sample->time = tsc_to_perf_time(ptq->timestamp, &pt->tc);
- 
--	sample->cpumode = PERF_RECORD_MISC_USER;
- 	sample->ip = ptq->state->from_ip;
-+	sample->cpumode = intel_pt_cpumode(pt, sample->ip);
- 	sample->pid = ptq->pid;
- 	sample->tid = ptq->tid;
- 	sample->addr = ptq->state->to_ip;
-@@ -1076,6 +1076,10 @@ static void intel_pt_prep_b_sample(struct intel_pt *pt,
- 	sample->flags = ptq->flags;
- 	sample->insn_len = ptq->insn_len;
- 	memcpy(sample->insn, ptq->insn, INTEL_PT_INSN_BUF_SZ);
-+
-+	event->sample.header.type = PERF_RECORD_SAMPLE;
-+	event->sample.header.misc = sample->cpumode;
-+	event->sample.header.size = sizeof(struct perf_event_header);
- }
- 
- static int intel_pt_inject_event(union perf_event *event,
+ 	return mod && dwfl_addrmodule(ui->dwfl, ip) == mod ? 0 : -1;
 -- 
 2.14.4
 
