@@ -2,132 +2,127 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFEE9C6786F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 00:22:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94839C6786F
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 00:25:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5299A2064C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 00:22:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3ECDB2082B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 00:25:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="eMIA/z8P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5299A2064C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="h/olmIEz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ECDB2082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728621AbeJaJSc (ORCPT
+        id S1728658AbeJaJVe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 05:18:32 -0400
-Received: from ozlabs.org ([203.11.71.1]:36097 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727739AbeJaJSc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 05:18:32 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42l8Dj6ng1z9sC2;
-        Wed, 31 Oct 2018 11:22:45 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1540945367;
-        bh=e0InvdKKGhuGEFqJNAMxflnM25cirEpI7kcZVLXekg0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=eMIA/z8PnL6zoI5dzUKlCdoDZNmArPx2j0jR3BMQaVaLyR4DTjdxtJtOKT3FDBr7U
-         3hqOpdOUnhrJsNC75KLmYlekd/GQq8Y2fOLrbjt7OuzccnS2RCiPqq04nhyiNc8Y4b
-         6jJvdUrWOaGI979A+xB8bQcSEb2IRH1ADdtz8cqkW69fMHk6DPpmyWaProh37Bw/dW
-         zij9Bpb9hVPrjOVfco/G1KqTUOfPo9TxFcl7eqCGEndtFSTSmKFEiSgTAJn3mHWMMn
-         iyqQ2ooZNnT6ooyAA5zLgp7ov3bAELeyAIeJylWvpKfV7MEKHgZljrrILLNWU/8C98
-         x4Q7sYK7qcrKA==
-Date:   Wed, 31 Oct 2018 11:22:44 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: linux-next: manual merge of the xfs tree with Linus' tree
-Message-ID: <20181031112244.71b62e67@canb.auug.org.au>
+        Wed, 31 Oct 2018 05:21:34 -0400
+Received: from alln-iport-3.cisco.com ([173.37.142.90]:8750 "EHLO
+        alln-iport-3.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727954AbeJaJVe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 05:21:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=691; q=dns/txt; s=iport;
+  t=1540945551; x=1542155151;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=LZUqOI0aqGVTCiLV36okuf1IPwe9QJF4KI0GQ/AS4mM=;
+  b=h/olmIEzGkfkmxD38VfNE7irRTI1Nwk+Mu34RHOhVMBnAceBpvluLO11
+   eIDO2Y0ourlcvdI0sEBm9Radrvb/20yz7MYZlJoXL7RHNCWcnzrt+nk/Q
+   8Ztay8dC/96boR+lVHVcqKuFGJbxH75GpB2oZdIGuR47LjQgCORz5AX6o
+   U=;
+X-IronPort-AV: E=Sophos;i="5.54,446,1534809600"; 
+   d="scan'208";a="194350737"
+Received: from rcdn-core-7.cisco.com ([173.37.93.143])
+  by alln-iport-3.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2018 00:25:50 +0000
+Received: from [10.154.208.183] ([10.154.208.183])
+        by rcdn-core-7.cisco.com (8.15.2/8.15.2) with ESMTP id w9V0PmLW027665;
+        Wed, 31 Oct 2018 00:25:48 GMT
+Subject: Re: [PATCH v5] kernel/signal: Signal-based pre-coredump notification
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Helge Deller <deller@gmx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <christian@brauner.io>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
+        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>,
+        Enke Chen <enkechen@cisco.com>
+References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
+ <458c04d8-d189-4a26-729a-bb1d1d751534@cisco.com>
+ <7741efa7-a3f8-62a1-ba52-613883164643@cisco.com>
+ <84460a77-a111-404e-4bad-88104a6e246e@cisco.com>
+ <20181026082812.GA10581@redhat.com>
+ <21f678a8-4001-df36-c26e-e96cf203b1b1@cisco.com>
+ <20181029111804.GA24820@redhat.com>
+ <0c197608-3b7e-ffd1-8943-801a60beb917@cisco.com>
+ <20181030164628.GD7643@redhat.com>
+From:   Enke Chen <enkechen@cisco.com>
+Message-ID: <b50b14cd-e1a9-ff7d-12e0-c3613e125be9@cisco.com>
+Date:   Tue, 30 Oct 2018 17:25:51 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/UUSPbcXU+t.755lGC47ucM="; protocol="application/pgp-signature"
+In-Reply-To: <20181030164628.GD7643@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Auto-Response-Suppress: DR, OOF, AutoReply
+X-Outbound-SMTP-Client: 10.154.208.183, [10.154.208.183]
+X-Outbound-Node: rcdn-core-7.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/UUSPbcXU+t.755lGC47ucM=
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi, Oleg:
 
-Hi all,
+On 10/30/18 9:46 AM, Oleg Nesterov wrote:
+> On 10/29, Enke Chen wrote:
+>>
+>> Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+> 
+> Hmm. I didn't say this ;)
+> 
+> But OK, feel free to keep this tag.
 
-Today's linux-next merge of the xfs tree got a conflict in:
+Thanks.
 
-  Documentation/filesystems/porting
+> 
+> I do not like this feauture. But I see no technical problems in this version
+> and I never pretented I understand the user-space needs, so I won't argue.
 
-between commit:
+As I explained earlier, the primary application is in the area of network
+high-availability / non-stop-forwarding where early fault notification and
+early action can help maintain BFD sessions and thus avoid unnecessary
+disruption to forwarding while the control-plane is recovering.
 
-  1a16dbaf798c ("Document d_splice_alias() calling conventions for ->lookup=
-() users.")
+-- Enke
 
-from Linus' tree and commit:
-
-  2e5dfc99f2e6 ("vfs: combine the clone and dedupe into a single remap_file=
-_range")
-
-from the xfs tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc Documentation/filesystems/porting
-index 321d74b73937,e6d4466268dd..000000000000
---- a/Documentation/filesystems/porting
-+++ b/Documentation/filesystems/porting
-@@@ -623,13 -623,7 +623,18 @@@ in your dentry operations instead
-  	On success you get a new struct file sharing the mount/dentry with the
-  	original, on failure - ERR_PTR().
-  --
- +[recommended]
- +	->lookup() instances doing an equivalent of
- +		if (IS_ERR(inode))
- +			return ERR_CAST(inode);
- +		return d_splice_alias(inode, dentry);
- +	don't need to bother with the check - d_splice_alias() will do the
- +	right thing when given ERR_PTR(...) as inode.  Moreover, passing NULL
- +	inode to d_splice_alias() will also do the right thing (equivalent of
- +	d_add(dentry, NULL); return NULL;), so that kind of special cases
- +	also doesn't need a separate treatment.
-++--
-+ [mandatory]
-+ 	->clone_file_range() and ->dedupe_file_range have been replaced with
-+ 	->remap_file_range().  See Documentation/filesystems/vfs.txt for more
-+ 	information.
-
---Sig_/UUSPbcXU+t.755lGC47ucM=
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvY9dQACgkQAVBC80lX
-0GwAnAf/W1trKamURUrsaeJdnjHRf6Ln93h+z9RzjBgCx7tIRK+HvGVwQuUVgsjK
-WUtZasJffW18z0jS1673oCBvKe5hhZ3AZIhuyA++m0FXfPAKYnQaCC/eJzO4yE4y
-6Pp9Pheu98Z+FP8sSSLMNGo0US1cGAIX2JRLBA1gthfZtn5a6d81iNtTjd+div0H
-cfF2iodUtSeE9B2blhAYeNjR9rPnSJ08L7QdB5D33nG2k78WSdnD7P+CCkE5dyV3
-oPqorp0aA+7Y2gJ/b8FC1QQdJNFo+udolKFpyVOvtZE4vAgOz4kOuPT8rjhYQFet
-pObV1nOay8DCtw77yWzD8OsNDg0pFQ==
-=MLav
------END PGP SIGNATURE-----
-
---Sig_/UUSPbcXU+t.755lGC47ucM=--
