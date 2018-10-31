@@ -2,150 +2,208 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7435DECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:26:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB3B5ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:26:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AE5A2081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:26:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9946B2081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:26:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WZaagSOn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AE5A2081B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="K8sNBDDN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9946B2081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729622AbeJaXYZ (ORCPT
+        id S1729592AbeJaXZH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 19:24:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37452 "EHLO mail.kernel.org"
+        Wed, 31 Oct 2018 19:25:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729492AbeJaXYZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 19:24:25 -0400
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1729492AbeJaXZH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 19:25:07 -0400
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67D68205F4;
-        Wed, 31 Oct 2018 14:26:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ABD65205F4;
+        Wed, 31 Oct 2018 14:26:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540995969;
-        bh=iTdI3PcKb3WYFvgfSFAAbWJqUh/yxX97Wq6VNE4qmA0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=WZaagSOn9GAiiBvCkhwwdHNVpV1vEF+iDKSIqgY1GESWZZczTczhZuif9+Zvlqna3
-         gKsKPNuZnKxpAMjYOdI1+3vo2H+j0OMyFWkpD/Vy4hUAohdyNwITHdf84VmgWrWEnc
-         kzqsCfO3BgNTquFTSt3IQRIXGj+M0etOsZGkymnc=
-Received: by mail-qk1-f180.google.com with SMTP id e4so9711910qkh.6;
-        Wed, 31 Oct 2018 07:26:09 -0700 (PDT)
-X-Gm-Message-State: AGRZ1gLxKF/Q/li6DLnGrdkQZNgYN4Ac0WaeQVlAy6pKns83HPhY7bd2
-        uMXckH6RmBqm1iUzoW2vC1GFBDzlNqvCc/Gdaw==
-X-Google-Smtp-Source: AJdET5ePSkkt7QiSi/rcCV2eqINF3tYgpihZZyt6dVv7VLo1RlHO8oS4LxbaAotSNWJ+uTGShfTLzPc0TUwvmrEKeAk=
-X-Received: by 2002:a0c:8c8a:: with SMTP id p10mr2888818qvb.218.1540995968603;
- Wed, 31 Oct 2018 07:26:08 -0700 (PDT)
+        s=default; t=1540996011;
+        bh=gw3ZirH2yqWe1D4DVkpS89FpSzHE3hHI/FgKQB6HRag=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=K8sNBDDN50y3tm4Gb52q48pczGg28BSz3LACZ6WL1cmlgEYmSjJKypyeM0BikarUm
+         MUpVHkJwv/yX6n4XTFm35Zki3Q4DLUDyDu8f56QGk9+ImsyxzXXLLP0ZF3G+RsFuWe
+         FdjwD94yV4OOtuw8i5pIBVygisJ90ZfBElurugZg=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 6C7C0142D18; Wed, 31 Oct 2018 11:26:47 -0300 (-03)
+Date:   Wed, 31 Oct 2018 11:26:47 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
+        linux-kernel@vger.kernel.org, leo.yan@linaro.org,
+        David Miller <davem@davemloft.net>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH 4/5] perf intel-pt: Insert callchain context into
+ synthesized callchains
+Message-ID: <20181031142647.GJ10660@kernel.org>
+References: <20181031091043.23465-1-adrian.hunter@intel.com>
+ <20181031091043.23465-5-adrian.hunter@intel.com>
+ <20181031132803.GG10660@kernel.org>
+ <850eed86-fb8f-e328-316c-378890d4f15f@intel.com>
 MIME-Version: 1.0
-References: <20180905193738.19325-1-robh@kernel.org> <20180905193738.19325-21-robh@kernel.org>
- <87r2g6ffm8.fsf@concordia.ellerman.id.au>
-In-Reply-To: <87r2g6ffm8.fsf@concordia.ellerman.id.au>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 31 Oct 2018 09:25:56 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+mZD5cgzOQoC0bd-Bi-1i=eK=Xa3hLNtZ2phR8=5dN5A@mail.gmail.com>
-Message-ID: <CAL_Jsq+mZD5cgzOQoC0bd-Bi-1i=eK=Xa3hLNtZ2phR8=5dN5A@mail.gmail.com>
-Subject: Re: NXP P50XX/e5500 secondary CPUs not onlined with current mainline
- (was [PATCH 20/21] of: use for_each_of_cpu_node iterator)
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>, chzigotzky@xenosoft.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <850eed86-fb8f-e328-316c-378890d4f15f@intel.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 7:46 AM Michael Ellerman <mpe@ellerman.id.au> wrote:
->
-> Hi Rob,
->
-> This change is breaking some powerpc machines, ...
->
-> Rob Herring <robh@kernel.org> writes:
-> > Use the for_each_of_cpu_node iterator to iterate over cpu nodes. This
-> > has the side effect of defaulting to iterating using "cpu" node names in
-> > preference to the deprecated (for FDT) device_type == "cpu".
-> >
-> > Cc: Frank Rowand <frowand.list@gmail.com>
-> > Cc: devicetree@vger.kernel.org
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> > ---
-> > Please ack and I will take via the DT tree. This is dependent on the
-> > first 2 patches.
-> >
-> >  drivers/of/base.c    |  2 +-
-> >  drivers/of/of_numa.c | 15 ++-------------
-> >  2 files changed, 3 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/drivers/of/base.c b/drivers/of/base.c
-> > index 6389aeb2f48c..8285c07cab44 100644
-> > --- a/drivers/of/base.c
-> > +++ b/drivers/of/base.c
-> > @@ -389,7 +389,7 @@ struct device_node *of_get_cpu_node(int cpu, unsigned int *thread)
-> >  {
-> >       struct device_node *cpun;
-> >
-> > -     for_each_node_by_type(cpun, "cpu") {
-> > +     for_each_of_cpu_node(cpun) {
-> >               if (arch_find_n_match_cpu_physical_id(cpun, cpu, thread))
-> >                       return cpun;
-> >       }
->
-> Previously we just looked for any node with a type of "cpu", but now
-> we're using for_each_of_cpu_node(), which does:
->
->         for (; next; next = next->sibling) {
->                 if (!(of_node_name_eq(next, "cpu") ||
->                       (next->type && !of_node_cmp(next->type, "cpu"))))
->                         continue;
->
->                 if (!__of_device_is_available(next))
->                         continue;
->                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->
->                 if (of_node_get(next))
->                         break;
->         }
->
->
-> ie. the available check is new.
->
-> On this machine the 2nd CPU is not marked as available:
->
->   root@p5020ds:/proc/device-tree/cpus/PowerPC,e5500@1# lsprop status
->   status           "disabled"
->
-> This has the effect of preventing the SMP code from finding the 2nd CPU
-> in order to bring it up (in smp_85xx_start_cpu()). And so only the boot
-> CPU is onlined.
->
-> The device tree is built from a dts:
->
->   arch/powerpc/boot/dts/fsl/p5020si-pre.dtsi
->
-> But we don't set the status in there, so presumably u-boot is changing
-> the status during boot? (not a u-boot expert).
+Em Wed, Oct 31, 2018 at 04:15:26PM +0200, Adrian Hunter escreveu:
+> On 31/10/18 3:28 PM, Arnaldo Carvalho de Melo wrote:
+> > Em Wed, Oct 31, 2018 at 11:10:42AM +0200, Adrian Hunter escreveu:
+> >> In the absence of a fallback, callchains must encode also the callchain
+> >> context. Do that now there is no fallback.
+> > 
+> > So, this one is independent of the first 3 patches, right?
+> 
+> Yes.  I was just going to test it separately when I noticed I had
+> screwed up my earlier testing.  When I re-tested I discovered this patch
+> has an off-by-one error:
+> 
+> diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
+> index afdf36852ac8..61a4286a74dc 100644
+> --- a/tools/perf/util/thread-stack.c
+> +++ b/tools/perf/util/thread-stack.c
+> @@ -337,7 +337,7 @@ void thread_stack__sample(struct thread *thread, struct ip_callchain *chain,
+>  
+>  	last_context = context;
+>  
+> -	for (i = 2, j = 0; i < sz && j < thread->ts->cnt; i++, j++) {
+> +	for (i = 2, j = 1; i < sz && j <= thread->ts->cnt; i++, j++) {
+>  		ip = thread->ts->stack[thread->ts->cnt - j].ret_addr;
+>  		context = callchain_context(ip, kernel_start);
+>  		if (context != last_context) {
+> 
+> Shall I send V2?
 
-Ah, status for cpus is a bit different. For most nodes, it should be
-equivalent to the node not being present, but for cpus it means
-offline if disabled. Though ARM platforms have never used it in that
-way.
-
-> We could work around this in the platform code presumably, but I'm
-> worried this might break other things as well. You didn't mention the
-> addition of the available check in the change log so I wonder if it was
-> deliberate or just seemed like a good idea?
-
-Just seemed like a good idea...
-
-I'll send a patch now dropping those 2 lines.
-
-Rob
+No need, I can fix this here
+ 
+> > So, this one is independent of the first 3 patches, right? Ok, applying
+> > it first, I'll relook the first ones next.
+> > 
+> > - Arnaldo
+> >  
+> >> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+> >> Cc: stable@vger.kernel.org # 4.19
+> >> ---
+> >>  tools/perf/util/intel-pt.c     |  6 +++--
+> >>  tools/perf/util/thread-stack.c | 44 +++++++++++++++++++++++++++-------
+> >>  tools/perf/util/thread-stack.h |  2 +-
+> >>  3 files changed, 40 insertions(+), 12 deletions(-)
+> >>
+> >> diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
+> >> index ffa385a029b3..60732213d16a 100644
+> >> --- a/tools/perf/util/intel-pt.c
+> >> +++ b/tools/perf/util/intel-pt.c
+> >> @@ -759,7 +759,8 @@ static struct intel_pt_queue *intel_pt_alloc_queue(struct intel_pt *pt,
+> >>  	if (pt->synth_opts.callchain) {
+> >>  		size_t sz = sizeof(struct ip_callchain);
+> >>  
+> >> -		sz += pt->synth_opts.callchain_sz * sizeof(u64);
+> >> +		/* Add 1 to callchain_sz for callchain context */
+> >> +		sz += (pt->synth_opts.callchain_sz + 1) * sizeof(u64);
+> >>  		ptq->chain = zalloc(sz);
+> >>  		if (!ptq->chain)
+> >>  			goto out_free;
+> >> @@ -1160,7 +1161,8 @@ static void intel_pt_prep_sample(struct intel_pt *pt,
+> >>  
+> >>  	if (pt->synth_opts.callchain) {
+> >>  		thread_stack__sample(ptq->thread, ptq->chain,
+> >> -				     pt->synth_opts.callchain_sz, sample->ip);
+> >> +				     pt->synth_opts.callchain_sz + 1,
+> >> +				     sample->ip, pt->kernel_start);
+> >>  		sample->callchain = ptq->chain;
+> >>  	}
+> >>  
+> >> diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
+> >> index c091635bf7dc..afdf36852ac8 100644
+> >> --- a/tools/perf/util/thread-stack.c
+> >> +++ b/tools/perf/util/thread-stack.c
+> >> @@ -310,20 +310,46 @@ void thread_stack__free(struct thread *thread)
+> >>  	}
+> >>  }
+> >>  
+> >> +static inline u64 callchain_context(u64 ip, u64 kernel_start)
+> >> +{
+> >> +	return ip < kernel_start ? PERF_CONTEXT_USER : PERF_CONTEXT_KERNEL;
+> >> +}
+> >> +
+> >>  void thread_stack__sample(struct thread *thread, struct ip_callchain *chain,
+> >> -			  size_t sz, u64 ip)
+> >> +			  size_t sz, u64 ip, u64 kernel_start)
+> >>  {
+> >> -	size_t i;
+> >> +	u64 context = callchain_context(ip, kernel_start);
+> >> +	u64 last_context;
+> >> +	size_t i, j;
+> >>  
+> >> -	if (!thread || !thread->ts)
+> >> -		chain->nr = 1;
+> >> -	else
+> >> -		chain->nr = min(sz, thread->ts->cnt + 1);
+> >> +	if (sz < 2) {
+> >> +		chain->nr = 0;
+> >> +		return;
+> >> +	}
+> >>  
+> >> -	chain->ips[0] = ip;
+> >> +	chain->ips[0] = context;
+> >> +	chain->ips[1] = ip;
+> >> +
+> >> +	if (!thread || !thread->ts) {
+> >> +		chain->nr = 2;
+> >> +		return;
+> >> +	}
+> >> +
+> >> +	last_context = context;
+> >> +
+> >> +	for (i = 2, j = 0; i < sz && j < thread->ts->cnt; i++, j++) {
+> >> +		ip = thread->ts->stack[thread->ts->cnt - j].ret_addr;
+> >> +		context = callchain_context(ip, kernel_start);
+> >> +		if (context != last_context) {
+> >> +			if (i >= sz - 1)
+> >> +				break;
+> >> +			chain->ips[i++] = context;
+> >> +			last_context = context;
+> >> +		}
+> >> +		chain->ips[i] = ip;
+> >> +	}
+> >>  
+> >> -	for (i = 1; i < chain->nr; i++)
+> >> -		chain->ips[i] = thread->ts->stack[thread->ts->cnt - i].ret_addr;
+> >> +	chain->nr = i;
+> >>  }
+> >>  
+> >>  struct call_return_processor *
+> >> diff --git a/tools/perf/util/thread-stack.h b/tools/perf/util/thread-stack.h
+> >> index b7e41c4ebfdd..f97c00a8c251 100644
+> >> --- a/tools/perf/util/thread-stack.h
+> >> +++ b/tools/perf/util/thread-stack.h
+> >> @@ -84,7 +84,7 @@ int thread_stack__event(struct thread *thread, u32 flags, u64 from_ip,
+> >>  			u64 to_ip, u16 insn_len, u64 trace_nr);
+> >>  void thread_stack__set_trace_nr(struct thread *thread, u64 trace_nr);
+> >>  void thread_stack__sample(struct thread *thread, struct ip_callchain *chain,
+> >> -			  size_t sz, u64 ip);
+> >> +			  size_t sz, u64 ip, u64 kernel_start);
+> >>  int thread_stack__flush(struct thread *thread);
+> >>  void thread_stack__free(struct thread *thread);
+> >>  size_t thread_stack__depth(struct thread *thread);
+> >> -- 
+> >> 2.17.1
+> > 
