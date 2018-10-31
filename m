@@ -7,126 +7,90 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5C58C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08354ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D1C42064C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B783620843
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="huZJQFN8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D1C42064C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="H23r6jaA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B783620843
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730811AbeKAIKE (ORCPT
+        id S1730825AbeKAIKF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:10:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60326 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:10:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730658AbeKAIJ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:09:59 -0400
+        id S1730658AbeKAIKE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:10:04 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C76420840;
-        Wed, 31 Oct 2018 23:09:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9F532081B;
+        Wed, 31 Oct 2018 23:09:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027387;
-        bh=vbfyaG5sIRkHLCqeTuHcLDedAovPhOhKlikF+WE2Kh8=;
+        s=default; t=1541027393;
+        bh=pIfjnnxC+iR3ByAMU9YVN+Tv1tHCZP7Mj76BjV5yBL8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=huZJQFN8Qju863bdlKVtwFc2WJOxTgpvpDyGVx0AB6cImJH8OObAPHDgbRhqpbryp
-         UggCn8FwRo1mU2aNZYTPxKW9W8XbH7CcrOB9BTTcpLOu9wyy+2btJ2bdISSxqaciAm
-         6u6RMeYlMwr4m99PDpG9kA2g1jJtkNu9Y/cOwL2c=
+        b=H23r6jaA8Y0zq5PZlx4LR4AUlQNtyE7xUBgUUZr9sNt6hWJ77ubXcujc5GJdeF3i2
+         PZpwdOvKuBSyBizH2/OFUUvfsgXwLYSh2ikT9429gBmoySNBbEL8uXcLEDaH/bL5v6
+         PfPrq8Jqkdo1WW/FbjT442yvnR2DjaYnKF6mqrEI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 126/126] ALSA: hda: Check the non-cached stream buffers more explicitly
-Date:   Wed, 31 Oct 2018 19:07:54 -0400
-Message-Id: <20181031230754.29029-126-sashal@kernel.org>
+Cc:     Omar Sandoval <osandov@fb.com>, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 04/73] swim: fix cleanup on setup error
+Date:   Wed, 31 Oct 2018 19:08:39 -0400
+Message-Id: <20181031230948.29203-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
-References: <20181031230754.29029-1-sashal@kernel.org>
+In-Reply-To: <20181031230948.29203-1-sashal@kernel.org>
+References: <20181031230948.29203-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Omar Sandoval <osandov@fb.com>
 
-[ Upstream commit 78c9be61c3a5cd9e2439fd27a5ffad73a81958c7 ]
+[ Upstream commit 1448a2a5360ae06f25e2edc61ae070dff5c0beb4 ]
 
-Introduce a new flag, uc_buffer, to indicate that the controller
-requires the non-cached pages for stream buffers, either as a
-chip-specific requirement or specified via snoop=0 option.
-This improves the code-readability.
+If we fail to allocate the request queue for a disk, we still need to
+free that disk, not just the previous ones. Additionally, we need to
+cleanup the previous request queues.
 
-Also, this patch fixes the incorrect behavior for C-Media chip where
-the stream buffers were never handled as non-cached due to the check
-of driver_type even if you pass snoop=0 option.
-
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Omar Sandoval <osandov@fb.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/hda_controller.h |  1 +
- sound/pci/hda/hda_intel.c      | 11 ++++++++---
- 2 files changed, 9 insertions(+), 3 deletions(-)
+ drivers/block/swim.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/sound/pci/hda/hda_controller.h b/sound/pci/hda/hda_controller.h
-index a68e75b00ea3..53c3cd28bc99 100644
---- a/sound/pci/hda/hda_controller.h
-+++ b/sound/pci/hda/hda_controller.h
-@@ -160,6 +160,7 @@ struct azx {
- 	unsigned int msi:1;
- 	unsigned int probing:1; /* codec probing phase */
- 	unsigned int snoop:1;
-+	unsigned int uc_buffer:1; /* non-cached pages for stream buffers */
- 	unsigned int align_buffer_size:1;
- 	unsigned int region_requested:1;
- 	unsigned int disabled:1; /* disabled by vga_switcheroo */
-diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-index 28dc5e124995..a862c26ef211 100644
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -410,7 +410,7 @@ static void __mark_pages_wc(struct azx *chip, struct snd_dma_buffer *dmab, bool
- #ifdef CONFIG_SND_DMA_SGBUF
- 	if (dmab->dev.type == SNDRV_DMA_TYPE_DEV_SG) {
- 		struct snd_sg_buf *sgbuf = dmab->private_data;
--		if (chip->driver_type == AZX_DRIVER_CMEDIA)
-+		if (!chip->uc_buffer)
- 			return; /* deal with only CORB/RIRB buffers */
- 		if (on)
- 			set_pages_array_wc(sgbuf->page_table, sgbuf->pages);
-@@ -1636,6 +1636,7 @@ static void azx_check_snoop_available(struct azx *chip)
- 		dev_info(chip->card->dev, "Force to %s mode by module option\n",
- 			 snoop ? "snoop" : "non-snoop");
- 		chip->snoop = snoop;
-+		chip->uc_buffer = !snoop;
- 		return;
- 	}
+diff --git a/drivers/block/swim.c b/drivers/block/swim.c
+index e88d50f75a4a..58e308145e95 100644
+--- a/drivers/block/swim.c
++++ b/drivers/block/swim.c
+@@ -887,8 +887,17 @@ static int swim_floppy_init(struct swim_priv *swd)
  
-@@ -1656,8 +1657,12 @@ static void azx_check_snoop_available(struct azx *chip)
- 		snoop = false;
- 
- 	chip->snoop = snoop;
--	if (!snoop)
-+	if (!snoop) {
- 		dev_info(chip->card->dev, "Force to non-snoop mode\n");
-+		/* C-Media requires non-cached pages only for CORB/RIRB */
-+		if (chip->driver_type != AZX_DRIVER_CMEDIA)
-+			chip->uc_buffer = true;
-+	}
+ exit_put_disks:
+ 	unregister_blkdev(FLOPPY_MAJOR, "fd");
+-	while (drive--)
+-		put_disk(swd->unit[drive].disk);
++	do {
++		struct gendisk *disk = swd->unit[drive].disk;
++
++		if (disk) {
++			if (disk->queue) {
++				blk_cleanup_queue(disk->queue);
++				disk->queue = NULL;
++			}
++			put_disk(disk);
++		}
++	} while (drive--);
+ 	return err;
  }
  
- static void azx_probe_work(struct work_struct *work)
-@@ -2096,7 +2101,7 @@ static void pcm_mmap_prepare(struct snd_pcm_substream *substream,
- #ifdef CONFIG_X86
- 	struct azx_pcm *apcm = snd_pcm_substream_chip(substream);
- 	struct azx *chip = apcm->chip;
--	if (!azx_snoop(chip) && chip->driver_type != AZX_DRIVER_CMEDIA)
-+	if (chip->uc_buffer)
- 		area->vm_page_prot = pgprot_writecombine(area->vm_page_prot);
- #endif
- }
 -- 
 2.17.1
 
