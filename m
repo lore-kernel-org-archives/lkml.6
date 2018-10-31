@@ -7,46 +7,42 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43D09ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:14:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D19ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:14:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C06520664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:14:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDFF120664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:14:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mrD6Cgmc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C06520664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PkYiW/up"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDFF120664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732382AbeKAIO4 (ORCPT
+        id S1732130AbeKAIMN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:14:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36972 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:12:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732145AbeKAIMQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:12:16 -0400
+        id S1732087AbeKAIMM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:12:12 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 382122085A;
-        Wed, 31 Oct 2018 23:12:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F29BA20866;
+        Wed, 31 Oct 2018 23:11:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027524;
-        bh=mQWBrbECmt88BAcFgaRmNgkRGbFf3kGREed1DtNlbXo=;
+        s=default; t=1541027520;
+        bh=3xpQZJCx40UoNE4KL5N+S3vXKm2D2UT1sWsJ54KK2ps=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mrD6CgmcUs7OIXcb33IXB8mK8VMgWEi2xCiUsvtbQRmTISJ0XFL6ch1Vq1gtzLrkV
-         d9jyVZwABv2ZiigkA7l4d+h/8Qw19PkLi1V3W+E8j133LpeHMNrPF143rpt5jiSpkA
-         ueLldSnlRBJAhLUs/XAhk9+yHPTzVwQzMahEZEA4=
+        b=PkYiW/upYIXLJGYFX7vSi8i5Nbln9jzfOnm/CDG47lYX1gq5zvkVKO04rI2ObfBI7
+         JiAAyKuHX/La5YJJBAszp7K4Gz5UUHuphWYdDOPXXzR7QxezK44jU5h53/i0OhAm3y
+         Urk7zD4qmPGio41Zov2Nzl9HoQfPqxUDV/K0dgwc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     James Smart <jsmart2021@gmail.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <james.smart@broadcom.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 29/32] scsi: lpfc: Correct soft lockup when running mds diagnostics
-Date:   Wed, 31 Oct 2018 19:11:34 -0400
-Message-Id: <20181031231137.29429-29-sashal@kernel.org>
+Cc:     Shaohua Li <shli@fb.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 25/32] MD: fix invalid stored role for a disk
+Date:   Wed, 31 Oct 2018 19:11:30 -0400
+Message-Id: <20181031231137.29429-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231137.29429-1-sashal@kernel.org>
 References: <20181031231137.29429-1-sashal@kernel.org>
@@ -55,62 +51,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Smart <jsmart2021@gmail.com>
+From: Shaohua Li <shli@fb.com>
 
-[ Upstream commit 0ef01a2d95fd62bb4f536e7ce4d5e8e74b97a244 ]
+[ Upstream commit d595567dc4f0c1d90685ec1e2e296e2cad2643ac ]
 
-When running an mds diagnostic that passes frames with the switch, soft
-lockups are detected. The driver is in a CQE processing loop and has
-sufficient amount of traffic that it never exits the ring processing routine,
-thus the "lockup".
+If we change the number of array's device after device is removed from array,
+then add the device back to array, we can see that device is added as active
+role instead of spare which we expected.
 
-Cap the number of elements in the work processing routine to 64 elements. This
-ensures that the cpu will be given up and the handler reschedule to process
-additional items.
+Please see the below link for details:
+https://marc.info/?l=linux-raid&m=153736982015076&w=2
 
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <james.smart@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+This is caused by that we prefer to use device's previous role which is
+recorded by saved_raid_disk, but we should respect the new number of
+conf->raid_disks since it could be changed after device is removed.
+
+Reported-by: Gioh Kim <gi-oh.kim@profitbricks.com>
+Tested-by: Gioh Kim <gi-oh.kim@profitbricks.com>
+Acked-by: Guoqing Jiang <gqjiang@suse.com>
+Signed-off-by: Shaohua Li <shli@fb.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/lpfc/lpfc_sli.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/md/md.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
-index 3406586b9201..ad4f16ab7f7a 100644
---- a/drivers/scsi/lpfc/lpfc_sli.c
-+++ b/drivers/scsi/lpfc/lpfc_sli.c
-@@ -3485,6 +3485,7 @@ lpfc_sli_handle_slow_ring_event_s4(struct lpfc_hba *phba,
- 	struct hbq_dmabuf *dmabuf;
- 	struct lpfc_cq_event *cq_event;
- 	unsigned long iflag;
-+	int count = 0;
- 
- 	spin_lock_irqsave(&phba->hbalock, iflag);
- 	phba->hba_flag &= ~HBA_SP_QUEUE_EVT;
-@@ -3506,16 +3507,22 @@ lpfc_sli_handle_slow_ring_event_s4(struct lpfc_hba *phba,
- 			if (irspiocbq)
- 				lpfc_sli_sp_handle_rspiocb(phba, pring,
- 							   irspiocbq);
-+			count++;
- 			break;
- 		case CQE_CODE_RECEIVE:
- 		case CQE_CODE_RECEIVE_V1:
- 			dmabuf = container_of(cq_event, struct hbq_dmabuf,
- 					      cq_event);
- 			lpfc_sli4_handle_received_buffer(phba, dmabuf);
-+			count++;
- 			break;
- 		default:
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index 07f307402351..4caf240693cd 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -1670,6 +1670,10 @@ static int super_1_validate(struct mddev *mddev, struct md_rdev *rdev)
+ 			} else
+ 				set_bit(In_sync, &rdev->flags);
+ 			rdev->raid_disk = role;
++			if (role >= mddev->raid_disks) {
++				rdev->saved_raid_disk = -1;
++				rdev->raid_disk = -1;
++			}
  			break;
  		}
-+
-+		/* Limit the number of events to 64 to avoid soft lockups */
-+		if (count == 64)
-+			break;
- 	}
- }
- 
+ 		if (sb->devflags & WriteMostly1)
 -- 
 2.17.1
 
