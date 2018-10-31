@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B32B1ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:46:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 209D5C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:46:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77DF020664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:46:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB37A20664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:46:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oS8ufkyr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77DF020664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="032+qSpr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB37A20664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728761AbeKAIHS (ORCPT
+        id S1728745AbeKAIHS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 1 Nov 2018 04:07:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54822 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:54860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728646AbeKAIHO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:07:14 -0400
+        id S1728695AbeKAIHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:07:15 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 149D320840;
+        by mail.kernel.org (Postfix) with ESMTPSA id 009A920823;
         Wed, 31 Oct 2018 23:07:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027223;
-        bh=T1KXXEbo/2TZKhA3E8FGyXxqa5b5MRrLIA+lKK6BBxo=;
+        s=default; t=1541027224;
+        bh=LOdhwDStj3ZM725HkUVFKVnrUaHDHdQjfHe9FlR0ubw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oS8ufkyrU9jQ96v0oVaabJDkLc09zEG2Shpq30t7QRiomMkpgtGV8qnB2F2PdN9+Q
-         jA4ytDnXe9EnX9G5Puw1LAGNGqb8Fo0M1Z55SLxTw0As4Ks4xulj+XbOXpq3pjPf+Q
-         /vdKtSV+gSZdHjzeBOpJ302Et3OOZpE7EfoC2mHQ=
+        b=032+qSprq3aBYu3HuQLq7Su08hdE4yGhqEAylJTDJFqGf+TOCdNgW808GGPSc4rnH
+         72iq6VtQnJgYmjK30Ha6Dv4of1Td4/zaXj/nS7xFBUrS/51iIYjF5WNr7NHR2+MVtK
+         bBoWbmJDEaW2JlJGxks6n69QDftHt6N0v1tAfY0A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Xiao Ni <xni@redhat.com>, David Jeffery <djeffery@redhat.com>,
-        Shaohua Li <shli@fb.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 089/146] MD: Memory leak when flush bio size is zero
-Date:   Wed, 31 Oct 2018 19:04:44 -0400
-Message-Id: <20181031230541.28822-89-sashal@kernel.org>
+Cc:     Jack Wang <jinpu.wang@profitbricks.com>, Shaohua Li <shli@fb.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 090/146] md: fix memleak for mempool
+Date:   Wed, 31 Oct 2018 19:04:45 -0400
+Message-Id: <20181031230541.28822-90-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -52,53 +52,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiao Ni <xni@redhat.com>
+From: Jack Wang <jinpu.wang@profitbricks.com>
 
-[ Upstream commit af9b926de9c5986ab009e64917de87c9758bab10 ]
+[ Upstream commit 6aaa58c994277647f8b05ffef3b9b225a2d08f36 ]
 
-flush_pool is leaked when flush bio size is zero
+I noticed kmemleak report memory leak when run create/stop
+md in a loop, backtrace:
+[<000000001ca975e7>] mempool_create_node+0x86/0xd0
+[<0000000095576bcd>] md_run+0x1057/0x1410 [md_mod]
+[<000000007b45c5fc>] do_md_run+0x15/0x130 [md_mod]
+[<000000001ede9ec0>] md_ioctl+0x1f49/0x25d0 [md_mod]
+[<000000004142cacf>] blkdev_ioctl+0x680/0xd00
+
+The root cause is we alloc mddev->flush_pool and
+mddev->flush_bio_pool in md_run, but from do_md_stop
+will not call into md_stop but __md_stop, move the
+mempool_destroy to __md_stop fixes the problem for me.
+
+The bug was introduced in 5a409b4f56d5, the fixes should go to
+4.18+
 
 Fixes: 5a409b4f56d5 ("MD: fix lock contention for flush bios")
-Signed-off-by: David Jeffery <djeffery@redhat.com>
-Signed-off-by: Xiao Ni <xni@redhat.com>
+Signed-off-by: Jack Wang <jinpu.wang@profitbricks.com>
+Reviewed-by: Xiao Ni <xni@redhat.com>
 Signed-off-by: Shaohua Li <shli@fb.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/md.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/md/md.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/md/md.c b/drivers/md/md.c
-index 63ceabb4e020..06f68f19b5f3 100644
+index 06f68f19b5f3..8668793262d0 100644
 --- a/drivers/md/md.c
 +++ b/drivers/md/md.c
-@@ -452,10 +452,11 @@ static void md_end_flush(struct bio *fbio)
- 	rdev_dec_pending(rdev, mddev);
- 
- 	if (atomic_dec_and_test(&fi->flush_pending)) {
--		if (bio->bi_iter.bi_size == 0)
-+		if (bio->bi_iter.bi_size == 0) {
- 			/* an empty barrier - all done */
- 			bio_endio(bio);
--		else {
-+			mempool_free(fi, mddev->flush_pool);
-+		} else {
- 			INIT_WORK(&fi->flush_work, submit_flushes);
- 			queue_work(md_wq, &fi->flush_work);
- 		}
-@@ -509,10 +510,11 @@ void md_flush_request(struct mddev *mddev, struct bio *bio)
- 	rcu_read_unlock();
- 
- 	if (atomic_dec_and_test(&fi->flush_pending)) {
--		if (bio->bi_iter.bi_size == 0)
-+		if (bio->bi_iter.bi_size == 0) {
- 			/* an empty barrier - all done */
- 			bio_endio(bio);
--		else {
-+			mempool_free(fi, mddev->flush_pool);
-+		} else {
- 			INIT_WORK(&fi->flush_work, submit_flushes);
- 			queue_work(md_wq, &fi->flush_work);
- 		}
+@@ -5906,14 +5906,6 @@ static void __md_stop(struct mddev *mddev)
+ 		mddev->to_remove = &md_redundancy_group;
+ 	module_put(pers->owner);
+ 	clear_bit(MD_RECOVERY_FROZEN, &mddev->recovery);
+-}
+-
+-void md_stop(struct mddev *mddev)
+-{
+-	/* stop the array and free an attached data structures.
+-	 * This is called from dm-raid
+-	 */
+-	__md_stop(mddev);
+ 	if (mddev->flush_bio_pool) {
+ 		mempool_destroy(mddev->flush_bio_pool);
+ 		mddev->flush_bio_pool = NULL;
+@@ -5922,6 +5914,14 @@ void md_stop(struct mddev *mddev)
+ 		mempool_destroy(mddev->flush_pool);
+ 		mddev->flush_pool = NULL;
+ 	}
++}
++
++void md_stop(struct mddev *mddev)
++{
++	/* stop the array and free an attached data structures.
++	 * This is called from dm-raid
++	 */
++	__md_stop(mddev);
+ 	bioset_exit(&mddev->bio_set);
+ 	bioset_exit(&mddev->sync_set);
+ }
 -- 
 2.17.1
 
