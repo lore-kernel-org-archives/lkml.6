@@ -2,123 +2,120 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 645A1ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:53:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD7B7C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:54:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2533920821
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:53:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E25020821
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:54:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1fDyhSjn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2533920821
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0Tpe26hv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E25020821
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727869AbeKAIyU (ORCPT
+        id S1727518AbeKAIGG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:54:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52860 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:06:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52782 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727312AbeKAIGH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:06:07 -0400
+        id S1727231AbeKAIGF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:06:05 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E34372085A;
-        Wed, 31 Oct 2018 23:05:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 283502081B;
+        Wed, 31 Oct 2018 23:05:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027157;
-        bh=aPI56e/X7Fen3qsq7FQyLmzMg0HBIEjJB7cM+v0IHpk=;
+        s=default; t=1541027154;
+        bh=ixUZkOVKcxgbGYsuykHXlGnNiMl6OJKGDCgw9JPoNjE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1fDyhSjnT+afS4T+tRBORMkcuFGQcXEilwFgPMdsjEZPabMrCZYUbzGQ/k3YJvsfn
-         ICifSVnfh+S1IUhmAmP7RcmPN8DGmuILdUrNYIYjye+4LMnowrjLsh+YJDTxmVmshy
-         mryZHga6pqq/jh2uQ05QV0AiTM+bD9BkQjjBdufY=
+        b=0Tpe26hvuOmIiJZ2JnUKFBNohqafOIj/neAjBgMfVnz8/7uemFKBwd63tXweQIg/g
+         17r8SJ/8EdLLCRQ0euLRsEb2rA7fctBPPJiWHWIR+47NjtDr9IStShwmogBZC/UL03
+         62DElRsy8nmSuwk8tIF1BMvN4vJpDqfP2RNvJYxI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>,
-        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 016/146] lightnvm: pblk: fix race condition on metadata I/O
-Date:   Wed, 31 Oct 2018 19:03:31 -0400
-Message-Id: <20181031230541.28822-16-sashal@kernel.org>
+Cc:     Thierry Reding <treding@nvidia.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 013/146] hwmon: (pwm-fan) Set fan speed to 0 on suspend
+Date:   Wed, 31 Oct 2018 19:03:28 -0400
+Message-Id: <20181031230541.28822-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Javier González <javier@javigon.com>
+From: Thierry Reding <treding@nvidia.com>
 
-[ Upstream commit d8adaa3b86324c6186d0adf74bc256bdacfffdb6 ]
+[ Upstream commit 95dcd64bc5a27080beaa344edfe5bdcca3d2e7dc ]
 
-In pblk, when a new line is allocated, metadata for the previously
-written line is scheduled. This is done through a fixed memory region
-that is shared through time and contexts across different lines and
-therefore protected by a lock. Unfortunately, this lock is not properly
-covering all the metadata used for sharing this memory regions,
-resulting in a race condition.
+Technically this is not required because disabling the PWM should be
+enough. However, when support for atomic operations was implemented in
+the PWM subsystem, only actual changes to the PWM channel are applied
+during pwm_config(), which means that during after resume from suspend
+the old settings won't be applied.
 
-This patch fixes this race condition by protecting this metadata
-properly.
+One possible solution is for the PWM driver to implement its own PM
+operations such that settings from before suspend get applied on resume.
+This has the disadvantage of completely ignoring any particular ordering
+requirements that PWM user drivers might have, so it is best to leave it
+up to the user drivers to apply the settings that they want at the
+appropriate time.
 
-Fixes: dd2a43437337 ("lightnvm: pblk: sched. metadata on write thread")
-Signed-off-by: Javier González <javier@cnexlabs.com>
-Signed-off-by: Matias Bjørling <mb@lightnvm.io>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Another way to solve this would be to read back the current state of the
+PWM at the time of resume. That way, in case the configuration was lost
+during suspend, applying the old settings in PWM user drivers would
+actually get them applied because they differ from the current settings.
+However, not all PWM drivers support reading the hardware state, and not
+all hardware may support it.
+
+The best workaround at this point seems to be to let PWM user drivers
+tell the PWM subsystem that the PWM is turned off by, in addition to
+disabling it, also setting the duty cycle to 0. This causes the resume
+operation to apply a configuration that is different from the current
+configuration, resulting in the proper state from before suspend getting
+restored.
+
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/lightnvm/pblk-write.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/hwmon/pwm-fan.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
-index ee774a86cf1e..879227d584e7 100644
---- a/drivers/lightnvm/pblk-write.c
-+++ b/drivers/lightnvm/pblk-write.c
-@@ -417,12 +417,11 @@ int pblk_submit_meta_io(struct pblk *pblk, struct pblk_line *meta_line)
- 			rqd->ppa_list[i] = addr_to_gen_ppa(pblk, paddr, id);
- 	}
+diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
+index 7838af58f92d..9d611dd268e1 100644
+--- a/drivers/hwmon/pwm-fan.c
++++ b/drivers/hwmon/pwm-fan.c
+@@ -290,9 +290,19 @@ static int pwm_fan_remove(struct platform_device *pdev)
+ static int pwm_fan_suspend(struct device *dev)
+ {
+ 	struct pwm_fan_ctx *ctx = dev_get_drvdata(dev);
++	struct pwm_args args;
++	int ret;
++
++	pwm_get_args(ctx->pwm, &args);
++
++	if (ctx->pwm_value) {
++		ret = pwm_config(ctx->pwm, 0, args.period);
++		if (ret < 0)
++			return ret;
  
-+	spin_lock(&l_mg->close_lock);
- 	emeta->mem += rq_len;
--	if (emeta->mem >= lm->emeta_len[0]) {
--		spin_lock(&l_mg->close_lock);
-+	if (emeta->mem >= lm->emeta_len[0])
- 		list_del(&meta_line->list);
--		spin_unlock(&l_mg->close_lock);
--	}
-+	spin_unlock(&l_mg->close_lock);
- 
- 	pblk_down_page(pblk, rqd->ppa_list, rqd->nr_ppas);
- 
-@@ -491,14 +490,15 @@ static struct pblk_line *pblk_should_submit_meta_io(struct pblk *pblk,
- 	struct pblk_line *meta_line;
- 
- 	spin_lock(&l_mg->close_lock);
--retry:
- 	if (list_empty(&l_mg->emeta_list)) {
- 		spin_unlock(&l_mg->close_lock);
- 		return NULL;
- 	}
- 	meta_line = list_first_entry(&l_mg->emeta_list, struct pblk_line, list);
--	if (meta_line->emeta->mem >= lm->emeta_len[0])
--		goto retry;
-+	if (meta_line->emeta->mem >= lm->emeta_len[0]) {
-+		spin_unlock(&l_mg->close_lock);
-+		return NULL;
+-	if (ctx->pwm_value)
+ 		pwm_disable(ctx->pwm);
 +	}
- 	spin_unlock(&l_mg->close_lock);
++
+ 	return 0;
+ }
  
- 	if (!pblk_valid_meta_ppa(pblk, meta_line, data_rqd))
 -- 
 2.17.1
 
