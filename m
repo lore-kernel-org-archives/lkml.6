@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F916ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:35:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73DB8C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:36:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3760E20664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:35:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A7F720664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:36:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G+t3yU2O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3760E20664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fHHJ3HNt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A7F720664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730458AbeKAIgM (ORCPT
+        id S1730416AbeKAIg0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:36:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58720 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:36:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58558 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730129AbeKAIJH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:09:07 -0400
+        id S1730179AbeKAIJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:09:03 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42BB020847;
-        Wed, 31 Oct 2018 23:08:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F6DB20843;
+        Wed, 31 Oct 2018 23:08:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027335;
-        bh=PDjINacEU4tSOsCAzbtoGLoQJRD2SNX0ZZ2K7PFHhFs=;
+        s=default; t=1541027332;
+        bh=oB//ipImLu9PLmunzaEw5CQHt+47aWeop3ncAXJEuEw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G+t3yU2OkmxS7OO6TwJ9N/mjVACeECObUpU4+Dto5NUHSb5//zLa5Z3FzAaxaB0yE
-         fMkzRhriOmF7dY/suRx5KLQQKF7ylGF2M1JHW55dxOU0oUb3AxhM22xs8pOonLkqfH
-         JgL6NRsXB1K6BxyaoHFkr/Ahfypw+Kj/FotmECMU=
+        b=fHHJ3HNtnc6+3L4QaHEHyuNwdDdtaJrI4JmBPDtGLbYaeABmlB/q3PxILA0ZMfl1d
+         NbUiHUM6fvTRcHxsF0rWjs5Woz7hm6ouc0F+uRK0glkGhnSHZstgpwb0lzqB6gmI7v
+         7virbviFPzMg16RiX7ZsvmPaVjg0CpfDbR1zaTxg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sara Sharon <sara.sharon@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+Cc:     Yunsheng Lin <linyunsheng@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 066/126] iwlwifi: mvm: fix BAR seq ctrl reporting
-Date:   Wed, 31 Oct 2018 19:06:54 -0400
-Message-Id: <20181031230754.29029-66-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 062/126] net: hns3: Fix ping exited problem when doing lp selftest
+Date:   Wed, 31 Oct 2018 19:06:50 -0400
+Message-Id: <20181031230754.29029-62-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -53,55 +55,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sara Sharon <sara.sharon@intel.com>
+From: Yunsheng Lin <linyunsheng@huawei.com>
 
-[ Upstream commit 941ab4eb66c10bc5c7234e83a7a858b2806ed151 ]
+[ Upstream commit 3f8601f0f5716c4e63a9f215bbc581df42859d61 ]
 
-There is a bug in FW where the sequence control may be
-incorrect, and the driver overrides it with the value
-of the ieee80211 header.
+When ping is runnig and user executes the loopback selftest, the
+ping cmd will stop and exit.
 
-However, in BAR there is no sequence control in the header,
-which result with arbitrary sequence.
+This patch fixes it by using the hns3_nic_net_open/stop to offline
+the netdev when doing loopback selftest.
 
-This access to an unknown location is bad and it makes the
-logs very confusing - so fix it.
-
-Signed-off-by: Sara Sharon <sara.sharon@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Fixes: c39c4d98dc65 ("net: hns3: Add mac loopback selftest support in hns3 driver")
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/tx.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tx.c b/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
-index cf2591f2ac23..2d35b70de2ab 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
-@@ -1385,6 +1385,7 @@ static void iwl_mvm_rx_tx_cmd_single(struct iwl_mvm *mvm,
- 	while (!skb_queue_empty(&skbs)) {
- 		struct sk_buff *skb = __skb_dequeue(&skbs);
- 		struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
-+		struct ieee80211_hdr *hdr = (void *)skb->data;
- 		bool flushed = false;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
+index 11620e003a8e..967a625c040d 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
+@@ -310,7 +310,7 @@ static void hns3_self_test(struct net_device *ndev,
+ 			h->flags & HNAE3_SUPPORT_MAC_LOOPBACK;
  
- 		skb_freed++;
-@@ -1429,11 +1430,11 @@ static void iwl_mvm_rx_tx_cmd_single(struct iwl_mvm *mvm,
- 			info->flags |= IEEE80211_TX_STAT_AMPDU_NO_BACK;
- 		info->flags &= ~IEEE80211_TX_CTL_AMPDU;
+ 	if (if_running)
+-		dev_close(ndev);
++		ndev->netdev_ops->ndo_stop(ndev);
  
--		/* W/A FW bug: seq_ctl is wrong when the status isn't success */
--		if (status != TX_STATUS_SUCCESS) {
--			struct ieee80211_hdr *hdr = (void *)skb->data;
-+		/* W/A FW bug: seq_ctl is wrong upon failure / BAR frame */
-+		if (ieee80211_is_back_req(hdr->frame_control))
-+			seq_ctl = 0;
-+		else if (status != TX_STATUS_SUCCESS)
- 			seq_ctl = le16_to_cpu(hdr->seq_ctrl);
--		}
+ #if IS_ENABLED(CONFIG_VLAN_8021Q)
+ 	/* Disable the vlan filter for selftest does not support it */
+@@ -348,7 +348,7 @@ static void hns3_self_test(struct net_device *ndev,
+ #endif
  
- 		if (unlikely(!seq_ctl)) {
- 			struct ieee80211_hdr *hdr = (void *)skb->data;
+ 	if (if_running)
+-		dev_open(ndev);
++		ndev->netdev_ops->ndo_open(ndev);
+ }
+ 
+ static int hns3_get_sset_count(struct net_device *netdev, int stringset)
 -- 
 2.17.1
 
