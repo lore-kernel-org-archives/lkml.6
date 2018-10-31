@@ -4,46 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10F92ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E77C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD23D2064C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BA772081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="q7xVJtnd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD23D2064C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pDHnLg4x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BA772081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730638AbeKAIJr (ORCPT
+        id S1730657AbeKAIJt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:09:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59838 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:09:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730586AbeKAIJo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:09:44 -0400
+        id S1730626AbeKAIJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:09:47 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9537920843;
-        Wed, 31 Oct 2018 23:09:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C491F20664;
+        Wed, 31 Oct 2018 23:09:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027372;
-        bh=K0MRiKlQ6hGIqPMZqLHfPV4ZjtQmFKZgeAwzinrVFYM=;
+        s=default; t=1541027376;
+        bh=Q8PWVI/Q6kVjAGlTRqiIvGRgFQZpEYIyE//7dRYMANI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q7xVJtndLEvPHbywwPsz67RXrH7dK4eLTAl4FVYwFxwlfkPAjv8dMnU5J8KrlKjIj
-         cKg0+C3KR8NEIvtkUYZNKA/UxvK5WfVCrAzLZGmgdK5ECWVbjTlgPL6YR1DQ18tSw9
-         KYYiI8mcU1384IPnuRTN9iCAnbdgQsVbGf/fj65o=
+        b=pDHnLg4xtPfaJBgqwfTZfvaXyJEwhgu6N0Yu+xLZHVWSf1LZvsH0WDnsz4O8pkYIP
+         7Tublf9b+DUwM4Ys36+RSfsN4esp6EK/kCKaBbcwuTojOSOAQpyr2hR3kF2N1u98Ks
+         xqcT+3DzUIm1D9vVcQWG/QlcJ/NijprFy5VQazaA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Tonghao Zhang <xiangxia.m.yue@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+Cc:     Casey Schaufler <casey.schaufler@intel.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 108/126] PCI/MSI: Warn and return error if driver enables MSI/MSI-X twice
-Date:   Wed, 31 Oct 2018 19:07:36 -0400
-Message-Id: <20181031230754.29029-108-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 113/126] Smack: ptrace capability use fixes
+Date:   Wed, 31 Oct 2018 19:07:41 -0400
+Message-Id: <20181031230754.29029-113-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -52,97 +53,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tonghao Zhang <xiangxia.m.yue@gmail.com>
+From: Casey Schaufler <casey.schaufler@intel.com>
 
-[ Upstream commit 4c1ef72e9b71a19fb405ebfcd37c0a5e16fa44ca ]
+[ Upstream commit dcb569cf6ac99ca899b8109c128b6ae52477a015 ]
 
-It is a serious driver defect to enable MSI or MSI-X more than once.  Doing
-so may panic the kernel as in the stack trace below:
+This fixes a pair of problems in the Smack ptrace checks
+related to checking capabilities. In both cases, as reported
+by Lukasz Pawelczyk, the raw capability calls are used rather
+than the Smack wrapper that check addition restrictions.
+In one case, as reported by Jann Horn, the wrong task is being
+checked for capabilities.
 
-  Call Trace:
-    sysfs_add_one+0xa5/0xd0
-    create_dir+0x7c/0xe0
-    sysfs_create_subdir+0x1c/0x20
-    internal_create_group+0x6d/0x290
-    sysfs_create_groups+0x4a/0xa0
-    populate_msi_sysfs+0x1cd/0x210
-    pci_enable_msix+0x31c/0x3e0
-    igbuio_pci_open+0x72/0x300 [igb_uio]
-    uio_open+0xcc/0x120 [uio]
-    chrdev_open+0xa1/0x1e0
-    [...]
-    do_sys_open+0xf3/0x1f0
-    SyS_open+0x1e/0x20
-    system_call_fastpath+0x16/0x1b
-    ---[ end trace 11042e2848880209 ]---
-    Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: ffffffffa056b4fa
-
-We want to keep the WARN_ON() and stack trace so the driver can be fixed,
-but we can avoid the kernel panic by returning an error.  We may still get
-warnings like this:
-
-  Call Trace:
-    pci_enable_msix+0x3c9/0x3e0
-    igbuio_pci_open+0x72/0x300 [igb_uio]
-    uio_open+0xcc/0x120 [uio]
-    chrdev_open+0xa1/0x1e0
-    [...]
-    do_sys_open+0xf3/0x1f0
-    SyS_open+0x1e/0x20
-    system_call_fastpath+0x16/0x1b
-    ------------[ cut here ]------------
-    WARNING: at fs/sysfs/dir.c:526 sysfs_add_one+0xa5/0xd0()
-    sysfs: cannot create duplicate filename '/devices/pci0000:00/0000:00:03.0/0000:01:00.1/msi_irqs'
-
-Signed-off-by: Tonghao Zhang <xiangxia.m.yue@gmail.com>
-[bhelgaas: changelog, fix patch whitespace, remove !!]
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/msi.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ security/smack/smack_lsm.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
-index 4d88afdfc843..f7b7cb7189eb 100644
---- a/drivers/pci/msi.c
-+++ b/drivers/pci/msi.c
-@@ -958,7 +958,6 @@ static int __pci_enable_msix(struct pci_dev *dev, struct msix_entry *entries,
- 			}
- 		}
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 8b6cd5a79bfa..a81d815c81f3 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -420,6 +420,7 @@ static int smk_ptrace_rule_check(struct task_struct *tracer,
+ 	struct smk_audit_info ad, *saip = NULL;
+ 	struct task_smack *tsp;
+ 	struct smack_known *tracer_known;
++	const struct cred *tracercred;
+ 
+ 	if ((mode & PTRACE_MODE_NOAUDIT) == 0) {
+ 		smk_ad_init(&ad, func, LSM_AUDIT_DATA_TASK);
+@@ -428,7 +429,8 @@ static int smk_ptrace_rule_check(struct task_struct *tracer,
  	}
--	WARN_ON(!!dev->msix_enabled);
  
- 	/* Check whether driver already requested for MSI irq */
- 	if (dev->msi_enabled) {
-@@ -1028,8 +1027,6 @@ static int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
- 	if (!pci_msi_supported(dev, minvec))
- 		return -EINVAL;
+ 	rcu_read_lock();
+-	tsp = __task_cred(tracer)->security;
++	tracercred = __task_cred(tracer);
++	tsp = tracercred->security;
+ 	tracer_known = smk_of_task(tsp);
  
--	WARN_ON(!!dev->msi_enabled);
--
- 	/* Check whether driver already requested MSI-X irqs */
- 	if (dev->msix_enabled) {
- 		pci_info(dev, "can't enable MSI (MSI-X already enabled)\n");
-@@ -1039,6 +1036,9 @@ static int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
- 	if (maxvec < minvec)
- 		return -ERANGE;
- 
-+	if (WARN_ON_ONCE(dev->msi_enabled))
-+		return -EINVAL;
+ 	if ((mode & PTRACE_MODE_ATTACH) &&
+@@ -438,7 +440,7 @@ static int smk_ptrace_rule_check(struct task_struct *tracer,
+ 			rc = 0;
+ 		else if (smack_ptrace_rule == SMACK_PTRACE_DRACONIAN)
+ 			rc = -EACCES;
+-		else if (capable(CAP_SYS_PTRACE))
++		else if (smack_privileged_cred(CAP_SYS_PTRACE, tracercred))
+ 			rc = 0;
+ 		else
+ 			rc = -EACCES;
+@@ -1840,6 +1842,7 @@ static int smack_file_send_sigiotask(struct task_struct *tsk,
+ {
+ 	struct smack_known *skp;
+ 	struct smack_known *tkp = smk_of_task(tsk->cred->security);
++	const struct cred *tcred;
+ 	struct file *file;
+ 	int rc;
+ 	struct smk_audit_info ad;
+@@ -1853,8 +1856,12 @@ static int smack_file_send_sigiotask(struct task_struct *tsk,
+ 	skp = file->f_security;
+ 	rc = smk_access(skp, tkp, MAY_DELIVER, NULL);
+ 	rc = smk_bu_note("sigiotask", skp, tkp, MAY_DELIVER, rc);
+-	if (rc != 0 && has_capability(tsk, CAP_MAC_OVERRIDE))
 +
- 	nvec = pci_msi_vec_count(dev);
- 	if (nvec < 0)
- 		return nvec;
-@@ -1087,6 +1087,9 @@ static int __pci_enable_msix_range(struct pci_dev *dev,
- 	if (maxvec < minvec)
- 		return -ERANGE;
++	rcu_read_lock();
++	tcred = __task_cred(tsk);
++	if (rc != 0 && smack_privileged_cred(CAP_MAC_OVERRIDE, tcred))
+ 		rc = 0;
++	rcu_read_unlock();
  
-+	if (WARN_ON_ONCE(dev->msix_enabled))
-+		return -EINVAL;
-+
- 	for (;;) {
- 		if (affd) {
- 			nvec = irq_calc_affinity_vectors(minvec, nvec, affd);
+ 	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_TASK);
+ 	smk_ad_setfield_u_tsk(&ad, tsk);
 -- 
 2.17.1
 
