@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 803C1ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:45:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98561C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:45:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2991F2054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:45:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2991F2054F
+	by mail.kernel.org (Postfix) with ESMTP id 425B82054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:45:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 425B82054F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=emutex.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730151AbeKAFpV (ORCPT
+        id S1730169AbeKAFp1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 01:45:21 -0400
-Received: from mr35.theemaillaundry.net ([109.169.43.43]:38022 "EHLO
+        Thu, 1 Nov 2018 01:45:27 -0400
+Received: from mr35.theemaillaundry.net ([109.169.43.43]:38008 "EHLO
         mr35.theemaillaundry.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730060AbeKAFpU (ORCPT
+        with ESMTP id S1730055AbeKAFpV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 01:45:20 -0400
+        Thu, 1 Nov 2018 01:45:21 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mr35.theemaillaundry.net (Postfix) with ESMTP id ECE6B9FF0A;
+        by mr35.theemaillaundry.net (Postfix) with ESMTP id 439D5A10C0;
         Wed, 31 Oct 2018 20:45:35 +0000 (GMT)
 X-Amavis-Modified: Mail body modified (using disclaimer) -
         mr35.theemaillaundry.net
 X-Virus-Scanned: amavisd-new at theemaillaundry.net
 Received: from mr35.theemaillaundry.net ([127.0.0.1])
         by localhost (mr35.theemaillaundry.net [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 6n7b97yKDGAo; Wed, 31 Oct 2018 20:45:29 +0000 (GMT)
+        with ESMTP id amE82gqRV-Dw; Wed, 31 Oct 2018 20:45:28 +0000 (GMT)
 Received: from statler.emutex.com (unknown [92.51.199.138])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mr35.theemaillaundry.net (Postfix) with ESMTPS id CA058A029A;
-        Wed, 31 Oct 2018 20:45:28 +0000 (GMT)
+        by mr35.theemaillaundry.net (Postfix) with ESMTPS id EBEB19FF0A;
+        Wed, 31 Oct 2018 20:45:27 +0000 (GMT)
 Received: from [10.10.68.81] (helo=dan-Latitude-E5450.emutex.com)
         by statler.emutex.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_CBC_SHA256:128)
         (Exim 4.84)
         (envelope-from <dan@emutex.com>)
-        id 1gHxMm-0007KU-0e; Wed, 31 Oct 2018 20:45:28 +0000
+        id 1gHxMk-0007KU-5V; Wed, 31 Oct 2018 20:45:27 +0000
 From:   Dan O'Donovan <dan@emutex.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -54,9 +54,9 @@ Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         linux-leds@vger.kernel.org,
         Carlos Iglesias <carlos.iglesias@emutex.com>,
         Dan O'Donovan <dan@emutex.com>
-Subject: [PATCH v3 3/3] pinctrl: upboard: Add UP2 pinctrl and gpio driver
-Date:   Wed, 31 Oct 2018 20:44:49 +0000
-Message-Id: <1541018689-20625-4-git-send-email-dan@emutex.com>
+Subject: [PATCH v3 1/3] mfd: upboard: Add UP2 platform controller driver
+Date:   Wed, 31 Oct 2018 20:44:47 +0000
+Message-Id: <1541018689-20625-2-git-send-email-dan@emutex.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1541018689-20625-1-git-send-email-dan@emutex.com>
 References: <1539969334-24577-1-git-send-email-dan@emutex.com>
@@ -66,573 +66,479 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The UP2 board features a Raspberry Pi compatible pin header (HAT) and a
-board-specific expansion connector (EXHAT). Both expose assorted
-functions from either the SoC (such as GPIO, I2C, SPI, UART...) or other
-on-board devices (ADC, FPGA IP blocks...).
+UP Squared (UP2) is a x86 SBC from AAEON based on Intel Apollo Lake. It
+features a MAX 10 FPGA that routes lines from both SoC and on-board
+devices to two I/O headers:
 
-These lines are routed through an on-board FPGA. The platform controller
-in its stock firmware provides register fields to change:
+                                +------------------------+
+                                | 40-pin RPi-like header |
+                         +------|         (HAT)          |
+                         |      +------------------------+
+    +-------+    +--------+
+    |       |    |        |     +------------------------+
+    |  SoC  |----|  FPGA  |-----|  Custom UP2 pin header |
+    |       |    |        |     |        (EXHAT)         |
+    +-------+    +--------+     +------------------------+
+                         |
+                         +------* On-board devices: LED, VLS...
 
-- Line enable (FPGA pins enabled / high impedance)
-- Line direction (SoC driven / FPGA driven)
+This is intended to enable vendor-specific applications to customize I/O
+header pinout, as well as include low-latency functionality. It also
+performs voltage level translation between the SoC (1.8V) and HAT header
+(3.3V).
 
-To enable using SoC GPIOs on the pin header, this arrangement requires
-both configuring the platform controller, and updating the SoC pad
-registers in sync.
+Out of the box, this block implements a platform controller with a
+GPIO-bitbanged control interface. It's enumerated by ACPI and provides
+registers to control:
 
-Add a frontend pinctrl/GPIO driver that registers a new set of GPIO
-lines for the header pins. When these are requested, the driver
-propagates this request to the backend SoC pinctrl/GPIO driver by
-grabbing a GPIO descriptor for the matching SoC GPIO line. The needed
-mapping for this is retrieved via ACPI properties.
+- Configuration of all FPGA-routed header lines. These can be driven
+  SoC-to-header, header-to-SoC or set in high impedance.
 
+- On-board LEDs and enable lines for other platform devices.
+
+Add core support for this platform controller as a MFD device, exposing
+these registers as a regmap.
+
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Dan O'Donovan <dan@emutex.com>
 ---
- drivers/pinctrl/Kconfig           |  13 +
- drivers/pinctrl/Makefile          |   1 +
- drivers/pinctrl/pinctrl-upboard.c | 496 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 510 insertions(+)
- create mode 100644 drivers/pinctrl/pinctrl-upboard.c
+ drivers/mfd/Kconfig         |  17 +++
+ drivers/mfd/Makefile        |   1 +
+ drivers/mfd/upboard.c       | 336 ++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/mfd/upboard.h |  44 ++++++
+ 4 files changed, 398 insertions(+)
+ create mode 100644 drivers/mfd/upboard.c
+ create mode 100644 include/linux/mfd/upboard.h
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index 4d8c00e..56c1345 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -350,6 +350,19 @@ config PINCTRL_OCELOT
- 	select GENERIC_PINMUX_FUNCTIONS
- 	select REGMAP_MMIO
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 8c5dfdc..cccb901 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -1871,6 +1871,23 @@ config MFD_STM32_TIMERS
+ 	  for PWM and IIO Timer. This driver allow to share the
+ 	  registers between the others drivers.
  
-+config PINCTRL_UPBOARD
-+	tristate "UP Squared pinctrl and GPIO driver"
++config MFD_UPBOARD
++	tristate "UP Squared"
 +	depends on ACPI
-+	depends on MFD_UPBOARD
-+	select PINMUX
++	depends on GPIOLIB
++	select MFD_CORE
++	select REGMAP
 +	help
-+	  Pinctrl driver for the pin headers on the UP Squared board. It
-+	  handles pin control for lines routed through the on-board FPGA and
-+	  propagates changes to the SoC pinctrl to keep them in sync.
++	  If you say yes here you get support for the platform controller
++	  of the UP Squared single-board computer.
 +
-+	  This driver can also be built as a module. If so, the module will be
-+	  called pinctrl-upboard.
++	  This driver provides common support for accessing the device,
++	  additional drivers must be enabled in order to use the
++	  functionality of the device.
 +
- source "drivers/pinctrl/actions/Kconfig"
- source "drivers/pinctrl/aspeed/Kconfig"
- source "drivers/pinctrl/bcm/Kconfig"
-diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
-index 18a13c1..23cd292 100644
---- a/drivers/pinctrl/Makefile
-+++ b/drivers/pinctrl/Makefile
-@@ -43,6 +43,7 @@ obj-$(CONFIG_PINCTRL_ZYNQ)	+= pinctrl-zynq.o
- obj-$(CONFIG_PINCTRL_INGENIC)	+= pinctrl-ingenic.o
- obj-$(CONFIG_PINCTRL_RK805)	+= pinctrl-rk805.o
- obj-$(CONFIG_PINCTRL_OCELOT)	+= pinctrl-ocelot.o
-+obj-$(CONFIG_PINCTRL_UPBOARD)	+= pinctrl-upboard.o
++	  This driver can also be built as a module. If so, the module
++	  will be called "upboard".
++
+ menu "Multimedia Capabilities Port drivers"
+ 	depends on ARCH_SA1100
  
- obj-y				+= actions/
- obj-$(CONFIG_ARCH_ASPEED)	+= aspeed/
-diff --git a/drivers/pinctrl/pinctrl-upboard.c b/drivers/pinctrl/pinctrl-upboard.c
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index 12980a4..593b86f 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -242,3 +242,4 @@ obj-$(CONFIG_MFD_SC27XX_PMIC)	+= sprd-sc27xx-spi.o
+ obj-$(CONFIG_RAVE_SP_CORE)	+= rave-sp.o
+ obj-$(CONFIG_MFD_ROHM_BD718XX)	+= rohm-bd718x7.o
+ 
++obj-$(CONFIG_MFD_UPBOARD)  += upboard.o
+diff --git a/drivers/mfd/upboard.c b/drivers/mfd/upboard.c
 new file mode 100644
-index 0000000..2695863
+index 0000000..8b88731
 --- /dev/null
-+++ b/drivers/pinctrl/pinctrl-upboard.c
-@@ -0,0 +1,496 @@
++++ b/drivers/mfd/upboard.c
+@@ -0,0 +1,336 @@
 +// SPDX-License-Identifier: GPL-2.0
 +//
-+// UP Board pin controller driver
++// UP Board platform controller driver
 +//
 +// Copyright (c) 2018, Emutex Ltd.
 +//
-+// Authors: Javier Arteaga <javier@emutex.com>
-+//          Dan O'Donovan <dan@emutex.com>
++// Author: Javier Arteaga <javier@emutex.com>
 +//
 +
++#include <linux/acpi.h>
 +#include <linux/gpio/consumer.h>
-+#include <linux/gpio/driver.h>
 +#include <linux/kernel.h>
++#include <linux/mfd/core.h>
 +#include <linux/mfd/upboard.h>
 +#include <linux/module.h>
-+#include <linux/pinctrl/consumer.h>
-+#include <linux/pinctrl/pinctrl.h>
-+#include <linux/pinctrl/pinmux.h>
 +#include <linux/platform_device.h>
 +#include <linux/regmap.h>
-+#include <linux/string.h>
 +
-+#include "core.h"
++#define UPBOARD_FW_BUILD_SHIFT 12
++#define UPBOARD_FW_MAJOR_SHIFT 8
++#define UPBOARD_FW_MINOR_SHIFT 4
++#define UPBOARD_FW_PATCH_SHIFT 0
 +
-+#define to_upboard_pinctrl(gc) container_of(gc, struct upboard_pinctrl, chip)
++#define UPBOARD_FW_BUILD(id) (((id) >> UPBOARD_FW_BUILD_SHIFT) & 0x0f)
++#define UPBOARD_FW_MAJOR(id) (((id) >> UPBOARD_FW_MAJOR_SHIFT) & 0x0f)
++#define UPBOARD_FW_MINOR(id) (((id) >> UPBOARD_FW_MINOR_SHIFT) & 0x0f)
++#define UPBOARD_FW_PATCH(id) (((id) >> UPBOARD_FW_PATCH_SHIFT) & 0x0f)
 +
-+struct upboard_pin {
-+	struct regmap_field *func_en;
-+	struct regmap_field *gpio_en;
-+	struct regmap_field *gpio_dir;
++#define AAEON_MANUFACTURER_ID 0x01
++#define SUPPORTED_FW_MAJOR 0x0
++
++/* MSb of 8-bit address is an R/W flag */
++#define UPBOARD_ADDRESS_SIZE  8
++#define UPBOARD_READ_FLAG     BIT(7)
++
++enum upboard_id {
++	UPBOARD_ID_UP2 = 1,
 +};
 +
-+struct upboard_pinctrl {
-+	struct pinctrl_dev *pctldev;
-+	struct gpio_chip chip;
-+	unsigned int nsoc_gpios;
-+	struct gpio_desc **soc_gpios;
++struct upboard_ddata {
++	struct gpio_desc *clear_gpio;
++	struct gpio_desc *strobe_gpio;
++	struct gpio_desc *datain_gpio;
++	struct gpio_desc *dataout_gpio;
++	const struct regmap_config *regmapconf;
++	const struct mfd_cell *cells;
++	size_t ncells;
 +};
-+
-+enum upboard_func0_enables {
-+	UPBOARD_I2C0_EN = 8,
-+	UPBOARD_I2C1_EN = 9,
-+};
-+
-+static const struct reg_field upboard_i2c0_reg =
-+	REG_FIELD(UPBOARD_REG_FUNC_EN0, UPBOARD_I2C0_EN, UPBOARD_I2C0_EN);
-+
-+static const struct reg_field upboard_i2c1_reg =
-+	REG_FIELD(UPBOARD_REG_FUNC_EN0, UPBOARD_I2C1_EN, UPBOARD_I2C1_EN);
-+
-+#define UPBOARD_BIT_TO_PIN(r, bit) ((r) * UPBOARD_REGISTER_SIZE + (bit))
 +
 +/*
-+ * UP Squared data
++ * UP boards include a platform controller with a proprietary GPIO-bitbanged
++ * control interface to access its configuration registers.
++ *
++ * The following macros and functions implement the read/write handlers for
++ * that interface, to provide a regmap-based abstraction for the controller.
 + */
 +
-+#define UPBOARD_UP2_BIT_TO_PIN(r, id) (UPBOARD_BIT_TO_PIN(r, UPBOARD_UP2_##id))
++#define set_clear(u, x) gpiod_set_value((u)->clear_gpio, (x))
++#define set_strobe(u, x) gpiod_set_value((u)->strobe_gpio, (x))
++#define set_datain(u, x) gpiod_set_value((u)->datain_gpio, (x))
++#define get_dataout(u) gpiod_get_value((u)->dataout_gpio)
 +
-+#define UPBOARD_UP2_PIN_ANON(r, bit)					\
-+	{								\
-+		.number = UPBOARD_BIT_TO_PIN(r, bit),			\
-+	}
-+
-+#define UPBOARD_UP2_PIN_NAME(r, id)					\
-+	{								\
-+		.number = UPBOARD_UP2_BIT_TO_PIN(r, id),		\
-+		.name = #id,						\
-+	}
-+
-+#define UPBOARD_UP2_PIN_FUNC(r, id, data)				\
-+	{								\
-+		.number = UPBOARD_UP2_BIT_TO_PIN(r, id),		\
-+		.name = #id,						\
-+		.drv_data = (void *)(data),				\
-+	}
-+
-+enum upboard_up2_reg0_bit {
-+	UPBOARD_UP2_UART1_TXD,
-+	UPBOARD_UP2_UART1_RXD,
-+	UPBOARD_UP2_UART1_RTS,
-+	UPBOARD_UP2_UART1_CTS,
-+	UPBOARD_UP2_GPIO3,
-+	UPBOARD_UP2_GPIO5,
-+	UPBOARD_UP2_GPIO6,
-+	UPBOARD_UP2_GPIO11,
-+	UPBOARD_UP2_EXHAT_LVDS1n,
-+	UPBOARD_UP2_EXHAT_LVDS1p,
-+	UPBOARD_UP2_SPI2_TXD,
-+	UPBOARD_UP2_SPI2_RXD,
-+	UPBOARD_UP2_SPI2_FS1,
-+	UPBOARD_UP2_SPI2_FS0,
-+	UPBOARD_UP2_SPI2_CLK,
-+	UPBOARD_UP2_SPI1_TXD,
-+};
-+
-+enum upboard_up2_reg1_bit {
-+	UPBOARD_UP2_SPI1_RXD,
-+	UPBOARD_UP2_SPI1_FS1,
-+	UPBOARD_UP2_SPI1_FS0,
-+	UPBOARD_UP2_SPI1_CLK,
-+	UPBOARD_UP2_BIT20,
-+	UPBOARD_UP2_BIT21,
-+	UPBOARD_UP2_BIT22,
-+	UPBOARD_UP2_BIT23,
-+	UPBOARD_UP2_PWM1,
-+	UPBOARD_UP2_PWM0,
-+	UPBOARD_UP2_EXHAT_LVDS0n,
-+	UPBOARD_UP2_EXHAT_LVDS0p,
-+	UPBOARD_UP2_I2C0_SCL,
-+	UPBOARD_UP2_I2C0_SDA,
-+	UPBOARD_UP2_I2C1_SCL,
-+	UPBOARD_UP2_I2C1_SDA,
-+};
-+
-+enum upboard_up2_reg2_bit {
-+	UPBOARD_UP2_EXHAT_LVDS3n,
-+	UPBOARD_UP2_EXHAT_LVDS3p,
-+	UPBOARD_UP2_EXHAT_LVDS4n,
-+	UPBOARD_UP2_EXHAT_LVDS4p,
-+	UPBOARD_UP2_EXHAT_LVDS5n,
-+	UPBOARD_UP2_EXHAT_LVDS5p,
-+	UPBOARD_UP2_I2S_SDO,
-+	UPBOARD_UP2_I2S_SDI,
-+	UPBOARD_UP2_I2S_WS_SYNC,
-+	UPBOARD_UP2_I2S_BCLK,
-+	UPBOARD_UP2_EXHAT_LVDS6n,
-+	UPBOARD_UP2_EXHAT_LVDS6p,
-+	UPBOARD_UP2_EXHAT_LVDS7n,
-+	UPBOARD_UP2_EXHAT_LVDS7p,
-+	UPBOARD_UP2_EXHAT_LVDS2n,
-+	UPBOARD_UP2_EXHAT_LVDS2p,
-+};
-+
-+static struct pinctrl_pin_desc upboard_up2_pins[] = {
-+	UPBOARD_UP2_PIN_NAME(0, UART1_TXD),
-+	UPBOARD_UP2_PIN_NAME(0, UART1_RXD),
-+	UPBOARD_UP2_PIN_NAME(0, UART1_RTS),
-+	UPBOARD_UP2_PIN_NAME(0, UART1_CTS),
-+	UPBOARD_UP2_PIN_NAME(0, GPIO3),
-+	UPBOARD_UP2_PIN_NAME(0, GPIO5),
-+	UPBOARD_UP2_PIN_NAME(0, GPIO6),
-+	UPBOARD_UP2_PIN_NAME(0, GPIO11),
-+	UPBOARD_UP2_PIN_NAME(0, EXHAT_LVDS1n),
-+	UPBOARD_UP2_PIN_NAME(0, EXHAT_LVDS1p),
-+	UPBOARD_UP2_PIN_NAME(0, SPI2_TXD),
-+	UPBOARD_UP2_PIN_NAME(0, SPI2_RXD),
-+	UPBOARD_UP2_PIN_NAME(0, SPI2_FS1),
-+	UPBOARD_UP2_PIN_NAME(0, SPI2_FS0),
-+	UPBOARD_UP2_PIN_NAME(0, SPI2_CLK),
-+	UPBOARD_UP2_PIN_NAME(0, SPI1_TXD),
-+	UPBOARD_UP2_PIN_NAME(1, SPI1_RXD),
-+	UPBOARD_UP2_PIN_NAME(1, SPI1_FS1),
-+	UPBOARD_UP2_PIN_NAME(1, SPI1_FS0),
-+	UPBOARD_UP2_PIN_NAME(1, SPI1_CLK),
-+	UPBOARD_UP2_PIN_ANON(1, 4),
-+	UPBOARD_UP2_PIN_ANON(1, 5),
-+	UPBOARD_UP2_PIN_ANON(1, 6),
-+	UPBOARD_UP2_PIN_ANON(1, 7),
-+	UPBOARD_UP2_PIN_NAME(1, PWM1),
-+	UPBOARD_UP2_PIN_NAME(1, PWM0),
-+	UPBOARD_UP2_PIN_NAME(1, EXHAT_LVDS0n),
-+	UPBOARD_UP2_PIN_NAME(1, EXHAT_LVDS0p),
-+	UPBOARD_UP2_PIN_FUNC(1, I2C0_SCL, &upboard_i2c0_reg),
-+	UPBOARD_UP2_PIN_FUNC(1, I2C0_SDA, &upboard_i2c0_reg),
-+	UPBOARD_UP2_PIN_FUNC(1, I2C1_SCL, &upboard_i2c1_reg),
-+	UPBOARD_UP2_PIN_FUNC(1, I2C1_SDA, &upboard_i2c1_reg),
-+	UPBOARD_UP2_PIN_NAME(2, EXHAT_LVDS3n),
-+	UPBOARD_UP2_PIN_NAME(2, EXHAT_LVDS3p),
-+	UPBOARD_UP2_PIN_NAME(2, EXHAT_LVDS4n),
-+	UPBOARD_UP2_PIN_NAME(2, EXHAT_LVDS4p),
-+	UPBOARD_UP2_PIN_NAME(2, EXHAT_LVDS5n),
-+	UPBOARD_UP2_PIN_NAME(2, EXHAT_LVDS5p),
-+	UPBOARD_UP2_PIN_NAME(2, I2S_SDO),
-+	UPBOARD_UP2_PIN_NAME(2, I2S_SDI),
-+	UPBOARD_UP2_PIN_NAME(2, I2S_WS_SYNC),
-+	UPBOARD_UP2_PIN_NAME(2, I2S_BCLK),
-+	UPBOARD_UP2_PIN_NAME(2, EXHAT_LVDS6n),
-+	UPBOARD_UP2_PIN_NAME(2, EXHAT_LVDS6p),
-+	UPBOARD_UP2_PIN_NAME(2, EXHAT_LVDS7n),
-+	UPBOARD_UP2_PIN_NAME(2, EXHAT_LVDS7p),
-+	UPBOARD_UP2_PIN_NAME(2, EXHAT_LVDS2n),
-+	UPBOARD_UP2_PIN_NAME(2, EXHAT_LVDS2p),
-+};
-+
-+static int upboard_get_functions_count(struct pinctrl_dev *pctldev)
++static void __reg_io_start(const struct upboard_ddata * const ddata)
 +{
-+	return 0;
++	/*
++	 * CLEAR signal must be pulsed low before any register access.
++	 * This resets internal counters in the controller and marks
++	 * the start of a new register access.
++	 */
++	set_clear(ddata, 0);
++	set_clear(ddata, 1);
 +}
 +
-+static int upboard_get_function_groups(struct pinctrl_dev *pctldev,
-+				       unsigned int selector,
-+				       const char * const **groups,
-+				       unsigned int *num_groups)
++static void __reg_io_end(const struct upboard_ddata * const ddata)
 +{
-+	*groups = NULL;
-+	*num_groups = 0;
-+	return 0;
++	/*
++	 * STROBE signal must be cycled again to mark the end of a register
++	 * access.  Partial register accesses are discarded harmlessly
++	 * by the controller if this final strobe cycle is not sent
++	 */
++	set_strobe(ddata, 0);
++	set_strobe(ddata, 1);
 +}
 +
-+static const char *upboard_get_function_name(struct pinctrl_dev *pctldev,
-+					     unsigned int selector)
++static void __reg_io_write(const struct upboard_ddata * const ddata,
++			   unsigned int size, unsigned int val)
 +{
-+	return NULL;
-+}
-+
-+static int upboard_set_mux(struct pinctrl_dev *pctldev, unsigned int function,
-+			   unsigned int group)
-+{
-+	return 0;
-+}
-+
-+static int upboard_gpio_request_enable(struct pinctrl_dev *pctldev,
-+				       struct pinctrl_gpio_range *range,
-+				       unsigned int pin)
-+{
-+	const struct pin_desc * const pd = pin_desc_get(pctldev, pin);
-+	const struct upboard_pin *p = pd->drv_data;
-+	int ret;
-+
-+	/* if this pin has an associated function bit, disable it first */
-+	if (p->func_en) {
-+		ret = regmap_field_write(p->func_en, 0);
-+		if (ret)
-+			return ret;
++	/*
++	 * DATAIN is latched on each rising edge of the STROBE signal.
++	 * Data (register address or value) is sent MSb first.
++	 */
++	while (size--) {
++		set_strobe(ddata, 0);
++		set_datain(ddata, (val >> size) & 0x1);
++		set_strobe(ddata, 1);
 +	}
++}
 +
-+	if (p->gpio_en) {
-+		ret = regmap_field_write(p->gpio_en, 1);
-+		if (ret)
-+			return ret;
++static void __reg_io_read(const struct upboard_ddata * const ddata,
++			  unsigned int size, unsigned int *val)
++{
++	/*
++	 * DATAOUT is latched on on each rising edge of the STROBE signal.
++	 * Data (register value) is received MSb first.
++	 */
++	*val = 0;
++	while (size--) {
++		set_strobe(ddata, 0);
++		set_strobe(ddata, 1);
++		*val |= get_dataout(ddata) << size;
 +	}
++}
++
++static int upboard_reg_read(void *context, unsigned int reg, unsigned int *val)
++{
++	const struct upboard_ddata * const ddata = context;
++
++	__reg_io_start(ddata);
++	__reg_io_write(ddata, UPBOARD_ADDRESS_SIZE, reg | UPBOARD_READ_FLAG);
++	__reg_io_read(ddata, UPBOARD_REGISTER_SIZE, val);
++	__reg_io_end(ddata);
 +
 +	return 0;
 +}
 +
-+static int upboard_gpio_set_direction(struct pinctrl_dev *pctldev,
-+				      struct pinctrl_gpio_range *range,
-+				      unsigned int pin, bool input)
++static int upboard_reg_write(void *context, unsigned int reg, unsigned int val)
 +{
-+	const struct pin_desc * const pd = pin_desc_get(pctldev, pin);
-+	const struct upboard_pin *p = pd->drv_data;
++	const struct upboard_ddata * const ddata = context;
 +
-+	return regmap_field_write(p->gpio_dir, input);
-+}
++	__reg_io_start(ddata);
++	__reg_io_write(ddata, UPBOARD_ADDRESS_SIZE, reg);
++	__reg_io_write(ddata, UPBOARD_REGISTER_SIZE, val);
++	__reg_io_end(ddata);
 +
-+static const struct pinmux_ops upboard_pinmux_ops = {
-+	.get_functions_count = upboard_get_functions_count,
-+	.get_function_groups = upboard_get_function_groups,
-+	.get_function_name = upboard_get_function_name,
-+	.set_mux = upboard_set_mux,
-+	.gpio_request_enable = upboard_gpio_request_enable,
-+	.gpio_set_direction = upboard_gpio_set_direction,
-+};
-+
-+static int upboard_get_groups_count(struct pinctrl_dev *pctldev)
-+{
 +	return 0;
 +}
 +
-+static const char *upboard_get_group_name(struct pinctrl_dev *pctldev,
-+					  unsigned int selector)
-+{
-+	return NULL;
-+}
++/* UP Squared */
 +
-+static const struct pinctrl_ops upboard_pinctrl_ops = {
-+	.get_groups_count = upboard_get_groups_count,
-+	.get_group_name = upboard_get_group_name,
++static const struct regmap_range upboard_up2_readable_ranges[] = {
++	regmap_reg_range(UPBOARD_REG_PLATFORM_ID, UPBOARD_REG_FIRMWARE_ID),
++	regmap_reg_range(UPBOARD_REG_FUNC_EN0, UPBOARD_REG_FUNC_EN1),
++	regmap_reg_range(UPBOARD_REG_GPIO_EN0, UPBOARD_REG_GPIO_EN2),
++	regmap_reg_range(UPBOARD_REG_GPIO_DIR0, UPBOARD_REG_GPIO_DIR2),
 +};
 +
-+static struct pinctrl_desc upboard_up2_pinctrl_desc = {
-+	.pins = upboard_up2_pins,
-+	.npins = ARRAY_SIZE(upboard_up2_pins),
-+	.pctlops = &upboard_pinctrl_ops,
-+	.pmxops = &upboard_pinmux_ops,
-+	.owner = THIS_MODULE,
++static const struct regmap_range upboard_up2_writable_ranges[] = {
++	regmap_reg_range(UPBOARD_REG_FUNC_EN0, UPBOARD_REG_FUNC_EN1),
++	regmap_reg_range(UPBOARD_REG_GPIO_EN0, UPBOARD_REG_GPIO_EN2),
++	regmap_reg_range(UPBOARD_REG_GPIO_DIR0, UPBOARD_REG_GPIO_DIR2),
 +};
 +
-+static int upboard_gpio_request(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct upboard_pinctrl *pctrl = to_upboard_pinctrl(gc);
-+	struct gpio_desc *desc;
-+	int ret;
-+
-+	ret = pinctrl_gpio_request(gc->base + offset);
-+	if (ret)
-+		return ret;
-+
-+	desc = devm_gpiod_get_index(gc->parent, "external", offset, GPIOD_ASIS);
-+	if (IS_ERR(desc))
-+		return PTR_ERR(desc);
-+
-+	pctrl->soc_gpios[offset] = desc;
-+	return 0;
-+}
-+
-+static void upboard_gpio_free(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct upboard_pinctrl *pctrl = to_upboard_pinctrl(gc);
-+
-+	if (!pctrl->soc_gpios[offset])
-+		return;
-+
-+	devm_gpiod_put(gc->parent, pctrl->soc_gpios[offset]);
-+	pctrl->soc_gpios[offset] = NULL;
-+
-+	pinctrl_gpio_free(gc->base + offset);
-+}
-+
-+static int upboard_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct upboard_pinctrl *pctrl = to_upboard_pinctrl(gc);
-+	struct gpio_desc *desc = pctrl->soc_gpios[offset];
-+
-+	if (!desc)
-+		return -ENODEV;
-+
-+	return gpiod_get_direction(desc);
-+}
-+
-+static int upboard_gpio_direction_input(struct gpio_chip *gc,
-+					unsigned int offset)
-+{
-+	struct upboard_pinctrl *pctrl = to_upboard_pinctrl(gc);
-+	struct gpio_desc *desc = pctrl->soc_gpios[offset];
-+	int ret;
-+
-+	if (!desc)
-+		return -ENODEV;
-+
-+	ret = gpiod_direction_input(desc);
-+	if (ret)
-+		return ret;
-+
-+	return pinctrl_gpio_direction_input(gc->base + offset);
-+}
-+
-+static int upboard_gpio_direction_output(struct gpio_chip *gc,
-+					 unsigned int offset, int value)
-+{
-+	struct upboard_pinctrl *pctrl = to_upboard_pinctrl(gc);
-+	struct gpio_desc *desc = pctrl->soc_gpios[offset];
-+	int ret;
-+
-+	if (!desc)
-+		return -ENODEV;
-+
-+	ret = pinctrl_gpio_direction_output(gc->base + offset);
-+	if (ret)
-+		return ret;
-+
-+	return gpiod_direction_output(desc, value);
-+}
-+
-+static int upboard_gpio_get_value(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct upboard_pinctrl *pctrl = to_upboard_pinctrl(gc);
-+	struct gpio_desc *desc = pctrl->soc_gpios[offset];
-+
-+	if (!desc)
-+		return -ENODEV;
-+
-+	return gpiod_get_value(desc);
-+}
-+
-+static void upboard_gpio_set_value(struct gpio_chip *gc, unsigned int offset,
-+				   int value)
-+{
-+	struct upboard_pinctrl *pctrl = to_upboard_pinctrl(gc);
-+	struct gpio_desc *desc = pctrl->soc_gpios[offset];
-+
-+	if (!desc)
-+		return;
-+
-+	gpiod_set_value(desc, value);
-+}
-+
-+static struct gpio_chip upboard_gpio_chip = {
-+	.label = "UP pin controller",
-+	.owner = THIS_MODULE,
-+	.request = upboard_gpio_request,
-+	.free = upboard_gpio_free,
-+	.get_direction = upboard_gpio_get_direction,
-+	.direction_input = upboard_gpio_direction_input,
-+	.direction_output = upboard_gpio_direction_output,
-+	.get = upboard_gpio_get_value,
-+	.set = upboard_gpio_set_value,
-+	.base = -1,
++static const struct regmap_access_table upboard_up2_readable_table = {
++	.yes_ranges = upboard_up2_readable_ranges,
++	.n_yes_ranges = ARRAY_SIZE(upboard_up2_readable_ranges),
 +};
 +
-+static struct regmap_field *upboard_field_alloc(struct device *dev,
-+						struct regmap *regmap,
-+						unsigned int base,
-+						unsigned int number)
-+{
-+	const unsigned int reg = number / UPBOARD_REGISTER_SIZE;
-+	const unsigned int bit = number % UPBOARD_REGISTER_SIZE;
-+	const struct reg_field field = {
-+		.reg = base + reg,
-+		.msb = bit,
-+		.lsb = bit,
-+	};
++static const struct regmap_access_table upboard_up2_writable_table = {
++	.yes_ranges = upboard_up2_writable_ranges,
++	.n_yes_ranges = ARRAY_SIZE(upboard_up2_writable_ranges),
++};
 +
-+	return devm_regmap_field_alloc(dev, regmap, field);
-+}
++static const struct regmap_config upboard_up2_regmap_config = {
++	.reg_bits = UPBOARD_ADDRESS_SIZE,
++	.val_bits = UPBOARD_REGISTER_SIZE,
++	.max_register = UPBOARD_REG_MAX,
++	.reg_read = upboard_reg_read,
++	.reg_write = upboard_reg_write,
++	.fast_io = false,
++	.cache_type = REGCACHE_RBTREE,
++	.rd_table = &upboard_up2_readable_table,
++	.wr_table = &upboard_up2_writable_table,
++};
 +
-+static int upboard_pinctrl_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct pinctrl_desc *pctldesc;
-+	struct upboard_pinctrl *pctrl;
-+	struct upboard_pin *pins;
-+	struct regmap *regmap;
-+	unsigned int i;
-+	int ret;
-+
-+	if (!dev->parent)
-+		return -EINVAL;
-+
-+	regmap = dev_get_regmap(dev->parent, NULL);
-+	if (!regmap)
-+		return -EINVAL;
-+
-+	pctldesc = &upboard_up2_pinctrl_desc;
-+	pctldesc->name = dev_name(dev);
-+
-+	pins = devm_kcalloc(dev, pctldesc->npins, sizeof(*pins), GFP_KERNEL);
-+	if (!pins)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < pctldesc->npins; i++) {
-+		struct upboard_pin *pin = &pins[i];
-+		struct pinctrl_pin_desc *pd;
-+
-+		pd = (struct pinctrl_pin_desc *)&pctldesc->pins[i];
-+		if (pd->drv_data) {
-+			struct reg_field *field = pd->drv_data;
-+
-+			pin->func_en = devm_regmap_field_alloc(dev, regmap,
-+							       *field);
-+			if (IS_ERR(pin->func_en))
-+				return PTR_ERR(pin->func_en);
-+		}
-+
-+		pin->gpio_en = upboard_field_alloc(dev, regmap,
-+						   UPBOARD_REG_GPIO_EN0, i);
-+		if (IS_ERR(pin->gpio_en))
-+			return PTR_ERR(pin->gpio_en);
-+
-+		pin->gpio_dir = upboard_field_alloc(dev, regmap,
-+						    UPBOARD_REG_GPIO_DIR0, i);
-+		if (IS_ERR(pin->gpio_dir))
-+			return PTR_ERR(pin->gpio_dir);
-+
-+		pd->drv_data = pin;
-+	}
-+
-+	pctrl = devm_kzalloc(dev, sizeof(*pctrl), GFP_KERNEL);
-+	if (!pctrl)
-+		return -ENOMEM;
-+
-+	pctrl->chip = upboard_gpio_chip;
-+	pctrl->chip.parent = dev;
-+	pctrl->chip.ngpio = pctldesc->npins;
-+
-+	pctrl->nsoc_gpios = gpiod_count(dev, "external");
-+	pctrl->soc_gpios = devm_kcalloc(dev, pctrl->nsoc_gpios,
-+					sizeof(*pctrl->soc_gpios), GFP_KERNEL);
-+	if (!pctrl->soc_gpios)
-+		return -ENOMEM;
-+
-+	pctrl->pctldev = devm_pinctrl_register(dev, pctldesc, pctrl);
-+	if (IS_ERR(pctrl->pctldev))
-+		return PTR_ERR(pctrl->pctldev);
-+
-+	ret = devm_gpiochip_add_data(dev, &pctrl->chip, &pctrl->chip);
-+	if (ret)
-+		return ret;
-+
-+	return gpiochip_add_pin_range(&pctrl->chip, pctldesc->name, 0, 0,
-+				      pctldesc->npins);
-+}
-+
-+static struct platform_driver upboard_pinctrl_driver = {
-+	.driver = {
-+		.name = "upboard-pinctrl",
++static const struct mfd_cell upboard_up2_mfd_cells[] = {
++	{
++		.name = "upboard-led",
++		.id = 0,
++	},
++	{
++		.name = "upboard-led",
++		.id = 1,
++	},
++	{
++		.name = "upboard-led",
++		.id = 2,
++	},
++	{
++		.name = "upboard-led",
++		.id = 3,
++	},
++	{
++		.name = "upboard-pinctrl"
 +	},
 +};
 +
-+module_platform_driver_probe(upboard_pinctrl_driver, upboard_pinctrl_probe);
++static int upboard_init_gpio(struct device *dev)
++{
++	struct upboard_ddata *ddata = dev_get_drvdata(dev);
++	struct gpio_desc *enable_gpio;
 +
-+MODULE_ALIAS("platform:upboard-pinctrl");
++	ddata->clear_gpio = devm_gpiod_get(dev, "clear", GPIOD_OUT_LOW);
++	if (IS_ERR(ddata->clear_gpio))
++		return PTR_ERR(ddata->clear_gpio);
++
++	ddata->strobe_gpio = devm_gpiod_get(dev, "strobe", GPIOD_OUT_LOW);
++	if (IS_ERR(ddata->strobe_gpio))
++		return PTR_ERR(ddata->strobe_gpio);
++
++	ddata->datain_gpio = devm_gpiod_get(dev, "datain", GPIOD_OUT_LOW);
++	if (IS_ERR(ddata->datain_gpio))
++		return PTR_ERR(ddata->datain_gpio);
++
++	ddata->dataout_gpio = devm_gpiod_get(dev, "dataout", GPIOD_IN);
++	if (IS_ERR(ddata->dataout_gpio))
++		return PTR_ERR(ddata->dataout_gpio);
++
++	/* External I/O signals are gated by ENABLE - ensure this is high */
++	enable_gpio = devm_gpiod_get(dev, "enable", GPIOD_OUT_HIGH);
++	if (IS_ERR(enable_gpio))
++		return PTR_ERR(enable_gpio);
++
++	return 0;
++}
++
++static int upboard_check_supported(struct device *dev, struct regmap *regmap)
++{
++	uint8_t manufacturer_id, build, major, minor, patch;
++	unsigned int platform_id, firmware_id;
++	int ret;
++
++	ret = regmap_read(regmap, UPBOARD_REG_PLATFORM_ID, &platform_id);
++	if (ret)
++		return ret;
++
++	manufacturer_id = platform_id;
++	if (manufacturer_id != AAEON_MANUFACTURER_ID) {
++		dev_err(dev,
++			"unsupported FPGA firmware from manufacturer 0x%02x",
++			manufacturer_id);
++		return -ENODEV;
++	}
++
++	ret = regmap_read(regmap, UPBOARD_REG_FIRMWARE_ID, &firmware_id);
++	if (ret)
++		return ret;
++
++	build = UPBOARD_FW_BUILD(firmware_id);
++	major = UPBOARD_FW_MAJOR(firmware_id);
++	minor = UPBOARD_FW_MINOR(firmware_id);
++	patch = UPBOARD_FW_PATCH(firmware_id);
++	if (major != SUPPORTED_FW_MAJOR) {
++		dev_err(dev, "unsupported FPGA firmware v%u.%u.%u.%u",
++			 major, minor, patch, build);
++		return -ENODEV;
++	}
++
++	dev_dbg(dev, "supported FPGA firmware v%u.%u.%u.%u",
++		major, minor, patch, build);
++	return 0;
++}
++
++static const struct acpi_device_id upboard_acpi_match[] = {
++	{ "AANT0F01", (kernel_ulong_t)UPBOARD_ID_UP2 },
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, upboard_acpi_match);
++
++static int upboard_match_device(struct device *dev)
++{
++	struct upboard_ddata *ddata = dev_get_drvdata(dev);
++	enum upboard_id id = (kernel_ulong_t)device_get_match_data(dev);
++
++	switch (id) {
++	case UPBOARD_ID_UP2:
++		ddata->regmapconf = &upboard_up2_regmap_config;
++		ddata->cells = upboard_up2_mfd_cells;
++		ddata->ncells = ARRAY_SIZE(upboard_up2_mfd_cells);
++		break;
++	default:
++		dev_err(dev, "unsupported ID %u\n", id);
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static int upboard_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct upboard_ddata *ddata;
++	struct regmap *regmap;
++	int ret;
++
++	ddata = devm_kzalloc(dev, sizeof(*ddata), GFP_KERNEL);
++	if (!ddata)
++		return -ENOMEM;
++
++	dev_set_drvdata(dev, ddata);
++
++	ret = upboard_match_device(dev);
++	if (ret)
++		return ret;
++
++	regmap = devm_regmap_init(dev, NULL, ddata, ddata->regmapconf);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
++	ret = upboard_init_gpio(dev);
++	if (ret) {
++		if (ret != -EPROBE_DEFER)
++			dev_err(dev, "failed to init GPIOs: %d", ret);
++		return ret;
++	}
++
++	ret = upboard_check_supported(dev, regmap);
++	if (ret)
++		return ret;
++
++	return devm_mfd_add_devices(dev, 0, ddata->cells, ddata->ncells,
++				    NULL, 0, NULL);
++}
++
++static struct platform_driver upboard_driver = {
++	.probe = upboard_probe,
++	.driver = {
++		.name = "upboard",
++		.acpi_match_table = upboard_acpi_match,
++	},
++};
++
++module_platform_driver(upboard_driver);
++
 +MODULE_AUTHOR("Javier Arteaga <javier@emutex.com>");
-+MODULE_AUTHOR("Dan O'Donovan <dan@emutex.com>");
-+MODULE_DESCRIPTION("UP Board pin control and GPIO driver");
++MODULE_DESCRIPTION("UP Board platform controller driver");
 +MODULE_LICENSE("GPL v2");
+diff --git a/include/linux/mfd/upboard.h b/include/linux/mfd/upboard.h
+new file mode 100644
+index 0000000..63e677f
+--- /dev/null
++++ b/include/linux/mfd/upboard.h
+@@ -0,0 +1,44 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// UP Board MFD driver interface
++//
++// Copyright (c) 2018, Emutex Ltd.
++//
++// Author: Javier Arteaga <javier@emutex.com>
++//
++
++#ifndef __LINUX_MFD_UPBOARD_H
++#define __LINUX_MFD_UPBOARD_H
++
++#define UPBOARD_REGISTER_SIZE 16
++
++/**
++ * enum upboard_reg - addresses for 16-bit controller registers
++ *
++ * @UPBOARD_REG_PLATFORM_ID:    [RO] BOARD_ID | MANUFACTURER_ID
++ * @UPBOARD_REG_FIRMWARE_ID:    [RO] BUILD | MAJOR | MINOR | PATCH
++ * @UPBOARD_REG_FUNC_EN0:       [RW] Toggles for board functions (bank 0)
++ * @UPBOARD_REG_FUNC_EN1:       [RW] Toggles for board functions (bank 1)
++ * @UPBOARD_REG_GPIO_EN0:       [RW] Hi-Z (0) / enabled (1) GPIO (bank 0)
++ * @UPBOARD_REG_GPIO_EN1:       [RW] Hi-Z (0) / enabled (1) GPIO (bank 1)
++ * @UPBOARD_REG_GPIO_EN2:       [RW] Hi-Z (0) / enabled (1) GPIO (bank 2)
++ * @UPBOARD_REG_GPIO_DIR0:      [RW] SoC- (0) / FPGA- (1) driven GPIO (bank 0)
++ * @UPBOARD_REG_GPIO_DIR1:      [RW] SoC- (0) / FPGA- (1) driven GPIO (bank 1)
++ * @UPBOARD_REG_GPIO_DIR2:      [RW] SoC- (0) / FPGA- (1) driven GPIO (bank 2)
++ * @UPBOARD_REG_MAX: one past the last valid address
++ */
++enum upboard_reg {
++	UPBOARD_REG_PLATFORM_ID   = 0x10,
++	UPBOARD_REG_FIRMWARE_ID   = 0x11,
++	UPBOARD_REG_FUNC_EN0      = 0x20,
++	UPBOARD_REG_FUNC_EN1      = 0x21,
++	UPBOARD_REG_GPIO_EN0      = 0x30,
++	UPBOARD_REG_GPIO_EN1      = 0x31,
++	UPBOARD_REG_GPIO_EN2      = 0x32,
++	UPBOARD_REG_GPIO_DIR0     = 0x40,
++	UPBOARD_REG_GPIO_DIR1     = 0x41,
++	UPBOARD_REG_GPIO_DIR2     = 0x42,
++	UPBOARD_REG_MAX,
++};
++
++#endif /*  __LINUX_MFD_UPBOARD_H */
 -- 
 2.7.4
 
