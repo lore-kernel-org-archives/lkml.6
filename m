@@ -2,121 +2,174 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA524C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 08:34:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E20B2C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 08:41:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8D8220685
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 08:34:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8D8220685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id 9DB562080A
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 08:41:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DB562080A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727775AbeJaRb5 (ORCPT
+        id S1727573AbeJaRiw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 13:31:57 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:45787 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbeJaRb5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 13:31:57 -0400
-Received: by mail-lf1-f66.google.com with SMTP id b20so659131lfa.12;
-        Wed, 31 Oct 2018 01:34:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UWFrztTGBGBvTlJ4yv0DEf/05EQvWoHnl+hl24Atexs=;
-        b=AQ2MBNjtUK7fKfRSNTsky68QVxLVWwBZS26gYAc9VHHU2j/yFO59a8QZy5prGPWYwI
-         i8o2mW78syqGBc6Csif09NvVpdBUwLyDS0+vxld+lk/r/GUlZZGsujKT2r4VOrFxOYXk
-         EB6nSYydLnDoqCFI125DGLVhtRtJI4TlnwGZd4NWDvvviP1MkPl4MZSvxeHM22krQV01
-         X7cnFB/uPHKiq9tys8W66qRVmGKZUmszSqiW6inHNROy6P4Gc6fcpS9CRg70Jyly58jX
-         pWPOxxR+eNBzozlT3q2eGd0kkLV0AMzdhE4BlcWP8e3iBz35l/2VctFsUxjnAtJVJABj
-         /LeQ==
-X-Gm-Message-State: AGRZ1gKzXPhq5ZtXbhFZBAeGSopFX5PABheFR3HRNqADz5F9u213N4BP
-        on1E0jHXfBr4uMLLq1M1xEY=
-X-Google-Smtp-Source: AJdET5ecHIjPyVjF1HMdEiS5Gtf76m4/ewMhfAoITPfJhfIAU8wIAlHcuEVc6E7fJAq4CmUdKsF69g==
-X-Received: by 2002:a19:d212:: with SMTP id j18-v6mr1193355lfg.44.1540974886563;
-        Wed, 31 Oct 2018 01:34:46 -0700 (PDT)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id r22-v6sm2780095ljh.77.2018.10.31.01.34.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 31 Oct 2018 01:34:46 -0700 (PDT)
-Date:   Wed, 31 Oct 2018 10:34:32 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh@kernel.org>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Huang Shijie <sjhuang@iluvatar.ai>,
-        Akshu Agrawal <Akshu.Agrawal@amd.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Daniel Kurtz <djkurtz@chromium.org>, mazziesaccount@gmail.com
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        matti.vaittinen@fi.rohmeurope.com
-Subject: [PATCH 8/8] clk: apcs-msm8916: simplify probe cleanup by using devm
-Message-ID: <0495e02e0a7e7afe5b16e606fd83ad928a3eed4d.1540970653.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1540970653.git.matti.vaittinen@fi.rohmeurope.com>
+        Wed, 31 Oct 2018 13:38:52 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37258 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726054AbeJaRiw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 13:38:52 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A0DE341;
+        Wed, 31 Oct 2018 01:41:43 -0700 (PDT)
+Received: from filthy-habits.cambridge.arm.com (filthy-habits.cambridge.arm.com [10.1.196.62])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6DA8B3F557;
+        Wed, 31 Oct 2018 01:41:42 -0700 (PDT)
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Santosh Shilimkar <ssantosh@kernel.org>, arm@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2] soc: ti: QMSS: Fix usage of irq_set_affinity_hint
+Date:   Wed, 31 Oct 2018 08:41:34 +0000
+Message-Id: <20181031084134.96289-1-marc.zyngier@arm.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1540970653.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-use devm variant for of_provider registration.
+The Keystone QMSS driver is pretty damaged, in the sense that it
+does things like this:
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+	irq_set_affinity_hint(irq, to_cpumask(&cpu_map));
+
+where cpu_map is a local variable. As we leave the function, this
+will point to nowhere-land, and things will end-up badly.
+
+Instead, let's use a proper cpumask that gets allocated, giving
+the driver a chance to actually work with things like irqbalance
+as well as have a hypothetical 64bit future.
+
+Cc: stable@vger.kernel.org
+Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 ---
- drivers/clk/qcom/apcs-msm8916.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+* From v1:
+  - Added Santosh's Ack
+  - Cc stable
+  - Directly sent to arm-soc for immediate pick-up
+    (https://lore.kernel.org/lkml/0a20aaf3-65ce-a7ae-8a0e-877313483969@oracle.com/)
 
-diff --git a/drivers/clk/qcom/apcs-msm8916.c b/drivers/clk/qcom/apcs-msm8916.c
-index b1cc8dbcd327..f4e0c136ab1a 100644
---- a/drivers/clk/qcom/apcs-msm8916.c
-+++ b/drivers/clk/qcom/apcs-msm8916.c
-@@ -96,8 +96,8 @@ static int qcom_apcs_msm8916_clk_probe(struct platform_device *pdev)
- 		goto err;
+ drivers/soc/ti/knav_qmss.h       |  4 ++--
+ drivers/soc/ti/knav_qmss_acc.c   | 10 +++++-----
+ drivers/soc/ti/knav_qmss_queue.c | 22 +++++++++++++++-------
+ 3 files changed, 22 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/soc/ti/knav_qmss.h b/drivers/soc/ti/knav_qmss.h
+index 3efc47e82973..bd040c29c4bf 100644
+--- a/drivers/soc/ti/knav_qmss.h
++++ b/drivers/soc/ti/knav_qmss.h
+@@ -329,8 +329,8 @@ struct knav_range_ops {
+ };
+ 
+ struct knav_irq_info {
+-	int	irq;
+-	u32	cpu_map;
++	int		irq;
++	struct cpumask	*cpu_mask;
+ };
+ 
+ struct knav_range_info {
+diff --git a/drivers/soc/ti/knav_qmss_acc.c b/drivers/soc/ti/knav_qmss_acc.c
+index 316e82e46f6c..2f7fb2dcc1d6 100644
+--- a/drivers/soc/ti/knav_qmss_acc.c
++++ b/drivers/soc/ti/knav_qmss_acc.c
+@@ -205,18 +205,18 @@ static int knav_range_setup_acc_irq(struct knav_range_info *range,
+ {
+ 	struct knav_device *kdev = range->kdev;
+ 	struct knav_acc_channel *acc;
+-	unsigned long cpu_map;
++	struct cpumask *cpu_mask;
+ 	int ret = 0, irq;
+ 	u32 old, new;
+ 
+ 	if (range->flags & RANGE_MULTI_QUEUE) {
+ 		acc = range->acc;
+ 		irq = range->irqs[0].irq;
+-		cpu_map = range->irqs[0].cpu_map;
++		cpu_mask = range->irqs[0].cpu_mask;
+ 	} else {
+ 		acc = range->acc + queue;
+ 		irq = range->irqs[queue].irq;
+-		cpu_map = range->irqs[queue].cpu_map;
++		cpu_mask = range->irqs[queue].cpu_mask;
  	}
  
--	ret = of_clk_add_hw_provider(parent->of_node, of_clk_hw_simple_get,
--				     &a53cc->clkr.hw);
-+	ret = devm_of_clk_add_parent_hw_provider(dev, of_clk_hw_simple_get,
-+						 &a53cc->clkr.hw);
- 	if (ret) {
- 		dev_err(dev, "failed to add clock provider: %d\n", ret);
- 		goto err;
-@@ -118,7 +118,6 @@ static int qcom_apcs_msm8916_clk_remove(struct platform_device *pdev)
- 	struct device *parent = pdev->dev.parent;
+ 	old = acc->open_mask;
+@@ -239,8 +239,8 @@ static int knav_range_setup_acc_irq(struct knav_range_info *range,
+ 			acc->name, acc->name);
+ 		ret = request_irq(irq, knav_acc_int_handler, 0, acc->name,
+ 				  range);
+-		if (!ret && cpu_map) {
+-			ret = irq_set_affinity_hint(irq, to_cpumask(&cpu_map));
++		if (!ret && cpu_mask) {
++			ret = irq_set_affinity_hint(irq, cpu_mask);
+ 			if (ret) {
+ 				dev_warn(range->kdev->dev,
+ 					 "Failed to set IRQ affinity\n");
+diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
+index b5d5673c255c..8b418379272d 100644
+--- a/drivers/soc/ti/knav_qmss_queue.c
++++ b/drivers/soc/ti/knav_qmss_queue.c
+@@ -118,19 +118,17 @@ static int knav_queue_setup_irq(struct knav_range_info *range,
+ 			  struct knav_queue_inst *inst)
+ {
+ 	unsigned queue = inst->id - range->queue_base;
+-	unsigned long cpu_map;
+ 	int ret = 0, irq;
  
- 	clk_notifier_unregister(a53cc->pclk, &a53cc->clk_nb);
--	of_clk_del_provider(parent->of_node);
+ 	if (range->flags & RANGE_HAS_IRQ) {
+ 		irq = range->irqs[queue].irq;
+-		cpu_map = range->irqs[queue].cpu_map;
+ 		ret = request_irq(irq, knav_queue_int_handler, 0,
+ 					inst->irq_name, inst);
+ 		if (ret)
+ 			return ret;
+ 		disable_irq(irq);
+-		if (cpu_map) {
+-			ret = irq_set_affinity_hint(irq, to_cpumask(&cpu_map));
++		if (range->irqs[queue].cpu_mask) {
++			ret = irq_set_affinity_hint(irq, range->irqs[queue].cpu_mask);
+ 			if (ret) {
+ 				dev_warn(range->kdev->dev,
+ 					 "Failed to set IRQ affinity\n");
+@@ -1262,9 +1260,19 @@ static int knav_setup_queue_range(struct knav_device *kdev,
  
- 	return 0;
- }
+ 		range->num_irqs++;
+ 
+-		if (IS_ENABLED(CONFIG_SMP) && oirq.args_count == 3)
+-			range->irqs[i].cpu_map =
+-				(oirq.args[2] & 0x0000ff00) >> 8;
++		if (IS_ENABLED(CONFIG_SMP) && oirq.args_count == 3) {
++			unsigned long mask;
++			int bit;
++
++			range->irqs[i].cpu_mask = devm_kzalloc(dev,
++							       cpumask_size(), GFP_KERNEL);
++			if (!range->irqs[i].cpu_mask)
++				return -ENOMEM;
++
++			mask = (oirq.args[2] & 0x0000ff00) >> 8;
++			for_each_set_bit(bit, &mask, BITS_PER_LONG)
++				cpumask_set_cpu(bit, range->irqs[i].cpu_mask);
++		}
+ 	}
+ 
+ 	range->num_irqs = min(range->num_irqs, range->num_queues);
 -- 
-2.14.3
-
+2.19.1
 
