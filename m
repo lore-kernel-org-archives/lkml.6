@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96EDBC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:37:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB855ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:37:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 565092080A
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:37:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B10B22080A
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:37:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="FBH3nMdq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 565092080A
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="b/O3jfQm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B10B22080A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730436AbeKADgR (ORCPT
+        id S1730451AbeKADgZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 23:36:17 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44181 "EHLO
+        Wed, 31 Oct 2018 23:36:25 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44191 "EHLO
         mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730422AbeKADgQ (ORCPT
+        with ESMTP id S1730309AbeKADgW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 23:36:16 -0400
-Received: by mail-pf1-f195.google.com with SMTP id j13-v6so4528161pff.11
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 11:37:03 -0700 (PDT)
+        Wed, 31 Oct 2018 23:36:22 -0400
+Received: by mail-pf1-f195.google.com with SMTP id j13-v6so4528306pff.11
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 11:37:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=2+xatb7GAYf1iPx9vohAUt8Lkjw2k2aXyj3u/SwygA8=;
-        b=FBH3nMdqmuhgmU1teKrPqo+RPZdy7woz3XpS+xDhLiYfZqFsZpnN3Ko/FlUgfN6uRy
-         mFjjj0xfiAvlITH8y/kWVADzGMIA0pevfjLh6ZPHlG+VD0dUwPnmYV31qC5biuJGNDem
-         87h02ur1s2ENI+feTXe5we7NkQ8QYxvoqC2CE=
+        bh=VtDP696hbO19uToYRi7oM6dHh9NSDT61nMATPXIXC/I=;
+        b=b/O3jfQmePj1DX/wEvh1E1sHCiG32OHdJYfc5fz9LSkWXnNMwf09WHXyR0jQkUfy9K
+         O9kqLyiY0Hz0Q3uIszZdCCTygWpegMfg5pcGGAf3o7Ja/AMAT9ZP8UZq/sBnDBFXTiJg
+         ctjfIaeCukgbr1uI+C981hVVq7CdrsxUdLqVc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=2+xatb7GAYf1iPx9vohAUt8Lkjw2k2aXyj3u/SwygA8=;
-        b=TKi/jOUhOLlAIrgrJWApHBV75Bac8raD/Z7aex3uXKPpY6wRcPtcMAEVJtObOZvYMm
-         2bNh9z+oOqgc0GPGzIaw9YkoAJ98xy+Y5+fSwzDVDR5jRIYgoQ/uKgTax0wwHDGAb255
-         mgFiIfnBDMLicbR92moi1hDfOIk+9qMBvYcJf/8cg05QM/X4mIGBZs4yWHVnbHqC4DYh
-         GzACK5UUWf4E3VL+ghrHJcIuHaSTATFiX3KD+v66ISpWPhoZ/UQ7RVyuAtToeo8mEdQJ
-         s8LEp0sfBGGdN+k2OQHYv9Doa91b7pQYkYT4mGRQuW7JQDiT5yrLXwkI/AKgAzJAA5Lj
-         4a7A==
-X-Gm-Message-State: AGRZ1gIJXFML6vd0mCic7Q7HNaoNTQ0ZEdlvWUUPYBBzMvMnEvaAnyrJ
-        kZg2G5Xb4yexDaRz7XpFm+aqUw==
-X-Google-Smtp-Source: AJdET5efM5Q9/RJtG3RBShKS55fQY3ny3lPoH5UqMxqt7cpndnVTUIFA3saEXkkcCrEQooxFGqLicg==
-X-Received: by 2002:a62:1803:: with SMTP id 3-v6mr4538052pfy.21.1541011022962;
-        Wed, 31 Oct 2018 11:37:02 -0700 (PDT)
+        bh=VtDP696hbO19uToYRi7oM6dHh9NSDT61nMATPXIXC/I=;
+        b=hJXc58z++y24eLVbtaKb1y8XF9dM6m19TZMMB3qiUK7Tp8kIV1gYDFAGQtEIRI8L+e
+         TKuorUxAuzGkEq4mGA6Aqff2vKKfd6NLdlZNlZh58lAOQkPIGhmgpkZm87clkvHmkFsy
+         HmmHZmYU1pdKjLHtxAYXdegOCeRuSidWrEN1f0dRtmxXvF0WpBXglZuk8tJsQ81N7l2G
+         mUeP+s1vNMjfIt+BjCudcooxnLsS/pNeaR5j0qiMIylhCub1gyduux3aNWm4VavJFjHK
+         Fp7QEQcvWJaMA6Yz43Yb3rw57vXql+P+OMLY9liO87eprWi74kpe3v77d/bY5jfYqto8
+         GavA==
+X-Gm-Message-State: AGRZ1gLO4wUVsq9E1q4Hcef1daN4u/cebvn3c3pG7ceEWWQEPWpGHUCW
+        fEELlLfE1+ygBnYDeX+mQk0C1A==
+X-Google-Smtp-Source: AJdET5cMSIuSoFjnbVwXw2d+D/0rORXJnxBTh1/oH9UGMwTm03/QvOSMluE4MeLZ0SEkToopfzZN+Q==
+X-Received: by 2002:a63:27c1:: with SMTP id n184-v6mr4209217pgn.334.1541011029505;
+        Wed, 31 Oct 2018 11:37:09 -0700 (PDT)
 Received: from localhost.localdomain ([2409:4070:221e:94ae:dc27:379e:a542:5441])
-        by smtp.gmail.com with ESMTPSA id 72-v6sm37165627pfl.126.2018.10.31.11.36.57
+        by smtp.gmail.com with ESMTPSA id 72-v6sm37165627pfl.126.2018.10.31.11.37.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 11:37:02 -0700 (PDT)
+        Wed, 31 Oct 2018 11:37:09 -0700 (PDT)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Cc:     Jagan Teki <jagan@openedev.com>
-Subject: [PATCH 3/7] arm64: allwinner: h6: Add OrangePi Lite2 initial support
-Date:   Thu,  1 Nov 2018 00:06:30 +0530
-Message-Id: <20181031183634.29640-3-jagan@amarulasolutions.com>
+Cc:     Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH 4/7] arm64: allwinner: h6: Add MMC1 pinmux
+Date:   Thu,  1 Nov 2018 00:06:31 +0530
+Message-Id: <20181031183634.29640-4-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20181031183634.29640-1-jagan@amarulasolutions.com>
 References: <20181031183634.29640-1-jagan@amarulasolutions.com>
@@ -75,54 +75,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jagan Teki <jagan@openedev.com>
+MMC1 controlled is already added, but mmc1 pinmux would
+need to function SDIO.
 
-OrangePi Lite2 is Allwinner H6 based open-source SBC,
-which support:
-- Allwinner H6 Quad-core 64-bit ARM Cortex-A53
-- GPU Mali-T720
-- 1GB LPDDR3 RAM
-- AXP805 PMIC
-- AP6356S Wifi/BT
-- USB 2.0, USB 3.0 Host, OTG
-- HDMI port
-- 5V/2A DC power supply
+So, add support for it.
 
-Signed-off-by: Jagan Teki <jagan@openedev.com>
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- arch/arm64/boot/dts/allwinner/Makefile                |  1 +
- .../boot/dts/allwinner/sun50i-h6-orangepi-lite2.dts   | 11 +++++++++++
- 2 files changed, 12 insertions(+)
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-lite2.dts
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
-index 8d4f97f279e0..38f4a015637c 100644
---- a/arch/arm64/boot/dts/allwinner/Makefile
-+++ b/arch/arm64/boot/dts/allwinner/Makefile
-@@ -18,5 +18,6 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-pc2.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-prime.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-zero-plus.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-zero-plus2.dtb
-+dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-orangepi-lite2.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-orangepi-one-plus.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-pine-h64.dtb
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-lite2.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-lite2.dts
-new file mode 100644
-index 000000000000..e098a2475f2d
---- /dev/null
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-lite2.dts
-@@ -0,0 +1,11 @@
-+// SPDX-License-Identifier: (GPL-2.0+ or MIT)
-+/*
-+ * Copyright (C) 2018 Jagan Teki <jagan@openedev.com>
-+ */
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+index 040828d2e2c0..3b9da12e65db 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+@@ -157,6 +157,14 @@
+ 				bias-pull-up;
+ 			};
+ 
++			mmc1_pins: mmc1-pins {
++				pins = "PG0", "PG1", "PG2", "PG3",
++				       "PG4", "PG5";
++				function = "mmc1";
++				drive-strength = <30>;
++				bias-pull-up;
++			};
 +
-+#include "sun50i-h6-orangepi.dtsi"
-+
-+/ {
-+	model = "OrangePi Lite2";
-+	compatible = "xunlong,orangepi-lite2", "allwinner,sun50i-h6";
-+};
+ 			mmc2_pins: mmc2-pins {
+ 				pins = "PC1", "PC4", "PC5", "PC6",
+ 				       "PC7", "PC8", "PC9", "PC10",
 -- 
 2.18.0.321.gffc6fa0e3
 
