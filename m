@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1367C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 116EAECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:45:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69C2D20843
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:45:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9ED920821
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:45:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OzpeXSsX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69C2D20843
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RM9Srx3W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9ED920821
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730000AbeKABof (ORCPT
+        id S1730012AbeKABoj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 21:44:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59120 "EHLO mail.kernel.org"
+        Wed, 31 Oct 2018 21:44:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729987AbeKABof (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 21:44:35 -0400
+        id S1729775AbeKABoi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 21:44:38 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC8EA20840;
-        Wed, 31 Oct 2018 16:45:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D37220821;
+        Wed, 31 Oct 2018 16:45:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541004347;
-        bh=sJ8eW/YfPFf+tRJhJcbvlj2PqdJaSjJOqNzp6ifNEoU=;
+        s=default; t=1541004351;
+        bh=C5Fzpk7sXL7rI5BSL2o/L/3D6Y4dANUTiSj8JHb+kiQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OzpeXSsXLgAIlxW4hUo+843biGyYRCaaIAG8gLWAWwEpOuocekdMr8WzJBNJF/76b
-         Fn+gbJQ48jqliMOKynQuhMAC5XPJWsCICeIuAyWaQpXqEndz6h8f7Fn1cF297E6SF1
-         iXW7HpPN3eyu1iK7s2UE2zebLslqU1HEJ9BtadCo=
+        b=RM9Srx3WmDMLOmFRPnlLy9brIKKvhl9jRPRpO6q7fq9AUnIBRpKzfMcZm9CeNKUnB
+         yjfsgpo1YI2/6ysf6nyNmNGXC8SRHE5yDt2wmdoZrq19txJgetz21A+s3A+svBDGG1
+         6PbH9Aj/CJA/RhthzPDoBclcDYYBsS4DF39H9wt8=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -47,9 +47,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 07/28] perf trace: Consider syscall aliases too
-Date:   Wed, 31 Oct 2018 13:44:47 -0300
-Message-Id: <20181031164508.4784-8-acme@kernel.org>
+Subject: [PATCH 08/28] perf trace: Beautify the umount's 'name' argument
+Date:   Wed, 31 Oct 2018 13:44:48 -0300
+Message-Id: <20181031164508.4784-9-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181031164508.4784-1-acme@kernel.org>
 References: <20181031164508.4784-1-acme@kernel.org>
@@ -60,37 +60,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-When trying to trace the 'umount' syscall on x86_64 I noticed that it
-was failing:
+By using the SCA_FILENAME beautifier, that works when either the
+probe:vfs_getname probe is in place or with the eBPF program
+tools/perf/examples/bpf/augmented_syscalls.c:
 
-  # trace -e umount umount /mnt
-  event syntax error: 'umount'
-                       \___ parser error
-  Run 'perf list' for a list of valid events
-
-   Usage: perf trace [<options>] [<command>]
-      or: perf trace [<options>] -- <command> [<options>]
-      or: perf trace record [<options>] [<command>]
-      or: perf trace record [<options>] -- <command> [<options>]
-
-      -e, --event <event>   event/syscall selector. use 'perf list' to list available events
+  # perf probe -l
+  probe:vfs_getname (on getname_flags:73@acme/git/linux/fs/namei.c with pathname)
+  # perf trace -e umount
+  9630.332 ( 9.521 ms): umount/8082 umount2(name: /mnt) = 0
   #
 
-This is because in the x86-64 we have it just as 'umount2':
-
-  $ grep umount arch/x86/entry/syscalls/syscall_64.tbl
-  166	common	umount2			__x64_sys_umount
-  $
-
-So if the syscall name fails, try fallbacking to looking at the aliases
-we have in the syscall_fmts table to then re-lookup, now:
-
-  # trace -e umount umount -f /mnt
-  umount: /mnt: not mounted.
-     1.759 ( 0.004 ms): umount/18365 umount2(name: 0x55fbfcbc4480, flags: 1) = -1 EINVAL Invalid argument
-  #
-
-Time to beautify the flags arg :-)
+The augmented syscalls one will be done in the next patch.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Benjamin Peterson <benjamin@python.org>
@@ -98,64 +78,26 @@ Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-ukweodgzbmjd25lfkgryeft1@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-hegbzlpd2nrn584l5jxn7sy2@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+ tools/perf/builtin-trace.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 76c14c0129fc..db8711061ca3 100644
+index db8711061ca3..d286f73ef2e5 100644
 --- a/tools/perf/builtin-trace.c
 +++ b/tools/perf/builtin-trace.c
-@@ -862,6 +862,18 @@ static struct syscall_fmt *syscall_fmt__find(const char *name)
- 	return bsearch(name, syscall_fmts, nmemb, sizeof(struct syscall_fmt), syscall_fmt__cmp);
- }
- 
-+static struct syscall_fmt *syscall_fmt__find_by_alias(const char *alias)
-+{
-+	int i, nmemb = ARRAY_SIZE(syscall_fmts);
-+
-+	for (i = 0; i < nmemb; ++i) {
-+		if (syscall_fmts[i].alias && strcmp(syscall_fmts[i].alias, alias) == 0)
-+			return &syscall_fmts[i];
-+	}
-+
-+	return NULL;
-+}
-+
- /*
-  * is_exit: is this "exit" or "exit_group"?
-  * is_open: is this "open" or "openat"? To associate the fd returned in sys_exit with the pathname in sys_enter.
-@@ -3195,6 +3207,7 @@ static int trace__parse_events_option(const struct option *opt, const char *str,
- 	int len = strlen(str) + 1, err = -1, list, idx;
- 	char *strace_groups_dir = system_path(STRACE_GROUPS_DIR);
- 	char group_name[PATH_MAX];
-+	struct syscall_fmt *fmt;
- 
- 	if (strace_groups_dir == NULL)
- 		return -1;
-@@ -3212,12 +3225,19 @@ static int trace__parse_events_option(const struct option *opt, const char *str,
- 		if (syscalltbl__id(trace->sctbl, s) >= 0 ||
- 		    syscalltbl__strglobmatch_first(trace->sctbl, s, &idx) >= 0) {
- 			list = 1;
-+			goto do_concat;
-+		}
-+
-+		fmt = syscall_fmt__find_by_alias(s);
-+		if (fmt != NULL) {
-+			list = 1;
-+			s = fmt->name;
- 		} else {
- 			path__join(group_name, sizeof(group_name), strace_groups_dir, s);
- 			if (access(group_name, R_OK) == 0)
- 				list = 1;
- 		}
--
-+do_concat:
- 		if (lists[list]) {
- 			sprintf(lists[list] + strlen(lists[list]), ",%s", s);
- 		} else {
+@@ -838,7 +838,8 @@ static struct syscall_fmt {
+ 	  .arg = { [2] = { .scnprintf = SCA_SIGNUM, /* sig */ }, }, },
+ 	{ .name	    = "tkill",
+ 	  .arg = { [1] = { .scnprintf = SCA_SIGNUM, /* sig */ }, }, },
+-	{ .name     = "umount2", .alias = "umount", },
++	{ .name     = "umount2", .alias = "umount",
++	  .arg = { [0] = { .scnprintf = SCA_FILENAME, /* name */ }, }, },
+ 	{ .name	    = "uname", .alias = "newuname", },
+ 	{ .name	    = "unlinkat",
+ 	  .arg = { [0] = { .scnprintf = SCA_FDAT, /* dfd */ }, }, },
 -- 
 2.14.4
 
