@@ -2,187 +2,211 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69715C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 17:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D06BFC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 17:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AC642080A
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 17:54:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="FeUzRy1r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AC642080A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	by mail.kernel.org (Postfix) with ESMTP id 8973B2081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 17:55:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8973B2081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729952AbeKACxz (ORCPT
+        id S1729988AbeKACyU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 22:53:55 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:45244 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729437AbeKACxz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 22:53:55 -0400
-Received: by mail-qt1-f196.google.com with SMTP id l9-v6so18090754qtj.12
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 10:54:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KU7NTQjjJ2BEHJJ1W7BtEhUyIBSVtGvlz07nH730Syw=;
-        b=FeUzRy1rIDoaPIgNBVvo/O8O9Nu7ajTn1Q6VVQeK2UGHo9Ppu5n06DOUeW3J2D0oNH
-         AIXaSY6WaHSCFH/W7NMQeBNvWo0HfB+2X8B+UWVCFgdQVJv5Fq2ufogwgwzwgZumV9U+
-         fGPqHYKmCdNp6H5aYmuz3XqeZBfwZhvlQ/b1fZjmTfMslWa9OL7kK7EWSiEPwINDs0H4
-         wcuVmz54OmA0wQVir9TgRkgYnzQk/0AmyVH9Bu5zcnD3f5J5Hfy5P/UZ4LiM7tcggW7n
-         IPQ3LxAiiLF1gI+fuXl6ITwTjKdoWFz2rTWHd81ZPTnaMtd5OgObRxqC245lmOul+Lgd
-         aoIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KU7NTQjjJ2BEHJJ1W7BtEhUyIBSVtGvlz07nH730Syw=;
-        b=OKv6hEozgfnw6+bokK0qL2iKcSFA9LiKDSNAYsbXok83CH7SHmYPQUxo96vuThXfF2
-         rb74119rWEz+HsRJaw2jbue1HNprt9+orbgP3AVO6x9AsDNDOsLxa01I3XIG7ZVNo2GU
-         5Q4MZ59QtKX9OXdKjnYJcimqg0Xht+bRUmeZ0XkbcSFBOpLDaPOQfwa82+b+YnylHtyV
-         I3mahN1LRX/EcoWp4Flt9NsEXuiwwcMXtx3w0Y+HqAwdULDYbkUyVY2Xwrf2D/VTWFzY
-         l0hnt4bAQRxccSe3d5KF5iF0osfkjH1ABQci8w+ZWf3Hu2bQ87+IIaxA9YGoQUNUksB8
-         n8Hg==
-X-Gm-Message-State: AGRZ1gJtf9DlOie/EXLhbvgJdKS19p0PUmM3GLfNtZrmTV0PtCGZDj7g
-        r8uRViDCO1+XPVpURAYPv7Qlgg==
-X-Google-Smtp-Source: AJdET5e3RcWV2BMTEtFm1DdEERjmhu3XiZI8JH04bxfD8YOSu8liQHC2Smj84MBpQLKjZIbxgbVHgQ==
-X-Received: by 2002:aed:2a0b:: with SMTP id c11-v6mr3604978qtd.147.1541008491703;
-        Wed, 31 Oct 2018 10:54:51 -0700 (PDT)
-Received: from cisco ([173.38.117.87])
-        by smtp.gmail.com with ESMTPSA id o68-v6sm19015355qkl.65.2018.10.31.10.54.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 31 Oct 2018 10:54:50 -0700 (PDT)
-Date:   Wed, 31 Oct 2018 11:54:48 -0600
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Daniel Colascione <dancol@google.com>
-Cc:     linux-kernel@vger.kernel.org, timmurray@google.com,
-        joelaf@google.com, surenb@google.com, cyphar@cyphar.com,
-        christian.brauner@canonical.com, ebiederm@xmission.com,
-        keescook@chromium.org, oleg@redhat.com
-Subject: Re: [PATCH v3] Implement /proc/pid/kill
-Message-ID: <20181031175448.GC2180@cisco>
-References: <20181029221037.87724-1-dancol@google.com>
- <20181031155912.45088-1-dancol@google.com>
+        Wed, 31 Oct 2018 22:54:20 -0400
+Received: from foss.arm.com ([217.140.101.70]:44704 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729745AbeKACyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 22:54:20 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5B15080D;
+        Wed, 31 Oct 2018 10:55:17 -0700 (PDT)
+Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CCDC63F6A8;
+        Wed, 31 Oct 2018 10:55:14 -0700 (PDT)
+Subject: Re: [PATCH v6 18/18] kvm: arm64: Allow tuning the physical address
+ size for VM
+To:     Christoffer Dall <christoffer.dall@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, cdall@kernel.org,
+        kvm@vger.kernel.org, marc.zyngier@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, dave.martin@arm.com,
+        pbonzini@redhat.com, kvmarm@lists.cs.columbia.edu,
+        Punit Agrawal <punit.agrawal@arm.com>
+References: <20180926163258.20218-1-suzuki.poulose@arm.com>
+ <20180926163258.20218-19-suzuki.poulose@arm.com>
+ <20181031142216.GD12057@e113682-lin.lund.arm.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <ebfbc17a-5954-7a67-0ae4-b911ba5f8b9e@arm.com>
+Date:   Wed, 31 Oct 2018 17:55:13 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181031155912.45088-1-dancol@google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181031142216.GD12057@e113682-lin.lund.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 03:59:12PM +0000, Daniel Colascione wrote:
-> Add a simple proc-based kill interface. To use /proc/pid/kill, just
-> write the signal number in base-10 ASCII to the kill file of the
-> process to be killed: for example, 'echo 9 > /proc/$$/kill'.
-> 
-> Semantically, /proc/pid/kill works like kill(2), except that the
-> process ID comes from the proc filesystem context instead of from an
-> explicit system call parameter. This way, it's possible to avoid races
-> between inspecting some aspect of a process and that process's PID
-> being reused for some other process.
-> 
-> Note that the write(2) to the kill file descriptor works only if it
-> happens in the security context as the call to open(2), where
-> "security context" is defined as the set of all ambient user IDs
-> (effective uid, fs uid, real uid, and saved uid) as well as the
-> presence of the CAP_KILL capability.  This check prevents confused
-> deputy attacks via, e.g., supplying a /proc/$(pidof httpd)/kill file
-> descriptor as the standard output of setuid program and convincing
-> that program to write a "9".
-> 
-> With /proc/pid/kill, it's possible to write a proper race-free and
-> safe pkill(1). An approximation follows. A real program might use
-> openat(2), having opened a process's /proc/pid directory explicitly,
-> with the directory file descriptor serving as a sort of "process
-> handle".
-> 
->     #!/bin/bash
->     set -euo pipefail
->     pat=$1
->     for proc_status in /proc/*/status; do (
->         cd $(dirname $proc_status)
->         readarray proc_argv -d'' < cmdline
->         if ((${#proc_argv[@]} > 0)) &&
->                [[ ${proc_argv[0]} = *$pat* ]];
->         then
->             echo 15 > kill
->         fi
->     ) || true; done
-> 
-> Signed-off-by: Daniel Colascione <dancol@google.com>
-> ---
-> 
-> Turns out that checking struct user isn't sufficient, since signal.c's
-> permissions check also cares about effective UIDs. Let's be
-> extra-paranoid and bail if _anything_ relevant in struct cred
-> has changed.
-> 
-> Also, as Joel suggested, switch from goto-return to direct return.
-> 
->  fs/proc/base.c | 67 ++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 67 insertions(+)
-> 
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index 7e9f07bf260d..b0e7ded96af9 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -205,6 +205,72 @@ static int proc_root_link(struct dentry *dentry, struct path *path)
->  	return result;
->  }
->  
-> +static ssize_t proc_pid_kill_write(struct file *file,
-> +				   const char __user *buf,
-> +				   size_t count, loff_t *ppos)
-> +{
-> +	ssize_t res;
-> +	int sig;
-> +	char buffer[4];
-> +	const struct cred *cur_cred;
-> +	const struct cred *open_cred;
-> +	bool security_changed;
-> +
-> +	/* This check prevents a confused deputy attack in which an
-> +	 * unprivileged process opens /proc/victim/kill and convinces
-> +	 * a privileged process to write to that kill FD, effectively
-> +	 * performing a kill with the privileges of the unwitting
-> +	 * privileged process.  Here, we just fail the kill operation
-> +	 * if someone calls write(2) with a real user ID that differs
-> +	 * from the one used to open the kill FD.
-> +	 */
-> +	cur_cred = current_cred();
-> +	open_cred = file->f_cred;
-> +	security_changed =
-> +		cur_cred->user_ns != open_cred->user_ns ||
-> +		!uid_eq(cur_cred->euid, open_cred->euid) ||
-> +		!uid_eq(cur_cred->fsuid, open_cred->fsuid) ||
-> +		!uid_eq(cur_cred->suid, open_cred->suid) ||
-> +		!uid_eq(cur_cred->uid, open_cred->uid) ||
-> +		/* No audit: if we actually use the capability, we'll
-> +		 * audit during the actual kill. Here, we're just
-> +		 * checking whether our kill-FD has escaped its
-> +		 * original security context and bailing if it has.
-> +		 */
-> +		(security_capable_noaudit(cur_cred,
-> +					  cur_cred->user_ns,
-> +					  CAP_KILL)
-> +		 != security_capable_noaudit(open_cred,
-> +					     open_cred->user_ns,
-> +					     CAP_KILL));
-> +	if (security_changed)
-> +		return -EPERM;
+Hi Christoffer,
 
-Why not just use an ioctl() like Jann suggested instead of this big
-security check? Then we avoid the whole setuid writer thing entirely,
-and we can pass the fd around if we want to.
+On 31/10/18 14:22, Christoffer Dall wrote:
+> On Wed, Sep 26, 2018 at 05:32:54PM +0100, Suzuki K Poulose wrote:
+>> Allow specifying the physical address size limit for a new
+>> VM via the kvm_type argument for the KVM_CREATE_VM ioctl. This
+>> allows us to finalise the stage2 page table as early as possible
+>> and hence perform the right checks on the memory slots
+>> without complication. The size is encoded as Log2(PA_Size) in
+>> bits[7:0] of the type field. For backward compatibility the
+>> value 0 is reserved and implies 40bits. Also, lift the limit
+>> of the IPA to host limit and allow lower IPA sizes (e.g, 32).
+>>
+>> The userspace could check the extension KVM_CAP_ARM_VM_IPA_SIZE
+>> for the availability of this feature. The cap check returns the
+>> maximum limit for the physical address shift supported by the host.
+>>
+>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>> Cc: Christoffer Dall <cdall@kernel.org>
+>> Cc: Peter Maydell <peter.maydell@linaro.org>
+>> Cc: Paolo Bonzini <pbonzini@redhat.com>
+>> Cc: Radim Krčmář <rkrcmar@redhat.com>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> ---
 
-Tycho
+>> @@ -192,17 +195,23 @@ int kvm_arm_config_vm(struct kvm *kvm, unsigned long type)
+>>   	u32 parange, phys_shift;
+>>   	u8 lvls;
+>>   
+>> -	if (type)
+>> +	if (type & ~KVM_VM_TYPE_ARM_IPA_SIZE_MASK)
+>>   		return -EINVAL;
+>>   
+>> +	phys_shift = KVM_VM_TYPE_ARM_IPA_SIZE(type);
+>> +	if (phys_shift) {
+>> +		if (phys_shift > kvm_ipa_limit ||
+>> +		    phys_shift < 32)
+>> +			return -EINVAL;
+> 
+> I am concerned here that if we allow the user to set the phys_size to 32
+> bits, then we end up with 2 levels of stage2 page tables, which means
+> that the size of a stage2 pmd mapping becomes the size of a stage2 pgd
+> mapping, yet we can still decide in user_mem_abort() that a stage2 fault
+> is backed by PMD size mappings on the host, and attempt a huge mapping
+> at stage2, which then becomes a PGD level block map, I think.
+
+Yes, you're right. We will have a pgd-level block map in that case.
+This should work transparently as PMD at stage2 is folded into PGD and
+we endup marking the PGD entry as huge and the stage2 accessors deal
+with it appropriately. This is similar to having a PMD huge page with
+64K + 42bit VA (2 level page table) on stage1.
+
+> 
+> Is this handled somehow?  If so, how?
+
+We don't prevent this. We have a guaranteed minimum number of levels
+at 2, which implies you can map a stage1 PMD huge page at stage2.
+I acknowledge that the Linux naming convention does cause some confusion
+for a "level" at stage1 and stage2 levels. But if you think of it
+from the hardware level (and like the ARM ARM defines it , Level 0-3),
+it is much simpler. i.e, you can map a huge page at level N in stage1
+into stage2 if you have that level N. It doesn't matter if stage2 has
+more or less number of levels than stage1, as long as stage2 table can
+deal with it.
+
+> 
+> I can't see user_mem_abort() being modified to explicitly handle this
+> in your code, but perhaps the stage2_set_pmd_huge() call ends up
+> actually mapping at the stage2 pte level, but I can't tell that it does.
+
+The stage2_set_pmd_huge() installs it at the PGD (level 2, which would
+have been PMD if we had levels > 2) slot.
+
+pmd = stage2_get_pmd(addr)
+        \-> pud = stage2_get_pud(addr)
+              \-> pgd = kvm->arch.pgd + stage2_pgd_index(addr);
+              \-> (we have stage2_pgd_none(x) = 0 and
+              \-> stage2_pud_offset(pgd, addr) = pgd
+              \->returns (kvm->arch.pgd + stage2_pgd_index(addr);
+        \->  stage_pud_none(x) = 0 & stage2_pmd_offset(pud, addr) = pud
+        \->  returns pud (kvm->arch.pgd + stage2_pgd_index(addr))
+
+and we install the PMD huge mapping at the location.
+
+> In any case, I think user_mem_abort() should give up on pmd/pud huge
+> mappings if the size mapped by the stage2/stage1 pmd/pud levels don't
+> line up.  What do you think?
+
+Does it matter ? Personally I don't think it matters much as long as we
+are able to map the "huge" page at stage1 in the stage2 as huge, even if
+the stage2 has lesser levels and manage it well. Given that PMD huge
+pages are quite common, it would be good to exploit it when we can.
+
+On the other hand, for stage2 PUD we are checking if the stage2 has a
+PUD level (kvm_has_stage2_pud()). May be we should relax it just like
+we do for PMD to check (kvm_stage2_levels > 2).
+
+
+Thanks
+Suzuki
+
+> 
+> Thanks,
+> 
+>      Christoffer
+> 
+>> +	} else {
+>> +		phys_shift = KVM_PHYS_SHIFT;
+>> +	}
+>> +
+>>   	parange = read_sanitised_ftr_reg(SYS_ID_AA64MMFR0_EL1) & 7;
+>>   	if (parange > ID_AA64MMFR0_PARANGE_MAX)
+>>   		parange = ID_AA64MMFR0_PARANGE_MAX;
+>>   	vtcr |= parange << VTCR_EL2_PS_SHIFT;
+>>   
+>> -	phys_shift = id_aa64mmfr0_parange_to_phys_shift(parange);
+>> -	if (phys_shift > KVM_PHYS_SHIFT)
+>> -		phys_shift = KVM_PHYS_SHIFT;
+>>   	vtcr |= VTCR_EL2_T0SZ(phys_shift);
+>>   	/*
+>>   	 * Use a minimum 2 level page table to prevent splitting
+>> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+>> index 07548de5c988..9b949efcfd32 100644
+>> --- a/include/uapi/linux/kvm.h
+>> +++ b/include/uapi/linux/kvm.h
+>> @@ -750,6 +750,15 @@ struct kvm_ppc_resize_hpt {
+>>   
+>>   #define KVM_S390_SIE_PAGE_OFFSET 1
+>>   
+>> +/*
+>> + * On arm64, machine type can be used to request the physical
+>> + * address size for the VM. Bits[7-0] are reserved for the guest
+>> + * PA size shift (i.e, log2(PA_Size)). For backward compatibility,
+>> + * value 0 implies the default IPA size, 40bits.
+>> + */
+>> +#define KVM_VM_TYPE_ARM_IPA_SIZE_MASK	0xffULL
+>> +#define KVM_VM_TYPE_ARM_IPA_SIZE(x)		\
+>> +	((x) & KVM_VM_TYPE_ARM_IPA_SIZE_MASK)
+>>   /*
+>>    * ioctls for /dev/kvm fds:
+>>    */
+>> @@ -952,6 +961,7 @@ struct kvm_ppc_resize_hpt {
+>>   #define KVM_CAP_S390_HPAGE_1M 156
+>>   #define KVM_CAP_NESTED_STATE 157
+>>   #define KVM_CAP_ARM_INJECT_SERROR_ESR 158
+>> +#define KVM_CAP_ARM_VM_IPA_SIZE 159 /* returns maximum IPA bits for a VM */
+>>   
+>>   #ifdef KVM_CAP_IRQ_ROUTING
+>>   
+>> -- 
+>> 2.19.0
+>>
+>> _______________________________________________
+>> kvmarm mailing list
+>> kvmarm@lists.cs.columbia.edu
+>> https://lists.cs.columbia.edu/mailman/listinfo/kvmarm
