@@ -2,172 +2,102 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A5FECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:26:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7189C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:29:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1572B20823
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:26:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1572B20823
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 7761D20657
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:29:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oxQjDJhu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7761D20657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730350AbeKAD0H (ORCPT
+        id S1730120AbeKAD2o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 23:26:07 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:56210 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729964AbeKADZW (ORCPT
+        Wed, 31 Oct 2018 23:28:44 -0400
+Received: from mail-qk1-f201.google.com ([209.85.222.201]:41292 "EHLO
+        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729964AbeKAD2o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 23:25:22 -0400
-Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gHvBy-0005cj-FN; Wed, 31 Oct 2018 19:26:10 +0100
-Message-Id: <20181031182252.963632760@linutronix.de>
-User-Agent: quilt/0.65
-Date:   Wed, 31 Oct 2018 19:21:10 +0100
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Peter Anvin <hpa@zytor.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Corey Minyard <cminyard@mvista.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        David Riley <davidriley@chromium.org>,
-        Colin Cross <ccross@android.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [patch 3/9] hrtimers/tick/clockevents: Remove sloppy license
- references
-References: <20181031182107.726051323@linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline;
- filename=hrtimers--Remove-sloppy-license-references.patch
+        Wed, 31 Oct 2018 23:28:44 -0400
+Received: by mail-qk1-f201.google.com with SMTP id n68so8812236qkn.8
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 11:29:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=i9QXbiyYnA/VgYjBPDYvW4PFISbSCy6/dfYVSObFaYc=;
+        b=oxQjDJhuaUEwT9qm2JRaDw7lEonR+UTqS3l9CkEniZatBCWkWSEnxlBkwSTKm66t8x
+         HDRgEbVZEJoDG3ls9CDw8cfGxIQ6KkujMJzML3JjEhSCjIdPyBLtBpha7apvnlt1zGvR
+         aQw2cG9o533bAeF9ME8tFXu5QRRspnWjcZ51OPdIOg4XFUf7Z1NwzSj4V3/MVqym7kYR
+         Bhdr2ATSOXh4DBBbfn2vJnxC0A4c9aK00sSS9bLvn+OLN9K5GbChTM5/TGhU3DtPEECJ
+         L9xIjz7fTQYTCn41ZAlGFQac3RJC4+hAV6y/JoyVTs/AwiYEOhMivzNAbhnLo3TuBrl7
+         tELw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=i9QXbiyYnA/VgYjBPDYvW4PFISbSCy6/dfYVSObFaYc=;
+        b=Poy+3NwWHBHr7XSfQmplkIoPCrcQxjoFmdZCpfNcFTU8amtLa11cu+2nduNxMFnkBw
+         RynfVvHBJWc02uUSN1scz+30kjSPKjo3B0vaqRU4TGj4CpahFbKaWR6y9LnKH3OysKIZ
+         Qjhok4Lai/V2xF/nki+jbuJCB3pa+SzgmRjyGigZ8QZsQfMzjAPn/gECVC0/F4DBZPxx
+         Hblb4fuIxe+e0UkwnfHDJW3Bo5NNgiAqvyfftDL9TwZ6EB3KZPP08TpBxPAse70jlE+W
+         XvhAXG6VjdZTeGoZGDUBnuIEjlcMcPF6FQT2B3IRYt2KAUvVxy/teVL8WHt22g3Ah/5w
+         gC5Q==
+X-Gm-Message-State: AGRZ1gJvQY/qtX2M19+Sagr+QZbTXEphEw/1udhHvo+vE2MtxfXn4tva
+        RoblVnKxyoW0kE8G5rwnjj/TPkOUypfQSssb24Q=
+X-Google-Smtp-Source: AJdET5eRcaP61zN2pBbh1szgtwZHOx9bMl+cnH+PSwlQQiWDOGM8C4mACqMUkFB9adOZ7LDUO7D7a0TjwEPep0EF91o=
+X-Received: by 2002:a0c:e702:: with SMTP id d2mr3032930qvn.34.1541010572185;
+ Wed, 31 Oct 2018 11:29:32 -0700 (PDT)
+Date:   Wed, 31 Oct 2018 11:29:07 -0700
+Message-Id: <20181031182909.169342-1-ndesaulniers@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
+Subject: [PATCH v2] include/linux/compiler*.h: add version detection to asm_volatile_goto
+From:   ndesaulniers@google.com
+To:     torvalds@linux-foundation.org
+Cc:     akpm@linux-foundation.org, miguel.ojeda.sandonis@gmail.com,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"For licencing details see kernel-base/COPYING" and similar license
-references have no value over the SPDX identifier. Remove them.
+asm_volatile_goto should also be defined for other compilers that support
+asm goto.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 ---
- include/linux/hrtimer.h      |    2 --
- kernel/time/clockevents.c    |    3 ---
- kernel/time/hrtimer.c        |    2 --
- kernel/time/tick-broadcast.c |    3 ---
- kernel/time/tick-common.c    |    3 ---
- kernel/time/tick-oneshot.c   |    3 ---
- kernel/time/tick-sched.c     |    2 --
- kernel/time/timer_list.c     |    4 ----
- 8 files changed, 22 deletions(-)
+V1 -> V2: drop changes to include/linux/compiler-gcc.h.
 
---- a/include/linux/hrtimer.h
-+++ b/include/linux/hrtimer.h
-@@ -8,8 +8,6 @@
-  *  data type definitions, declarations, prototypes
-  *
-  *  Started by: Thomas Gleixner and Ingo Molnar
-- *
-- *  For licencing details see kernel-base/COPYING
-  */
- #ifndef _LINUX_HRTIMER_H
- #define _LINUX_HRTIMER_H
---- a/kernel/time/clockevents.c
-+++ b/kernel/time/clockevents.c
-@@ -5,9 +5,6 @@
-  * Copyright(C) 2005-2006, Thomas Gleixner <tglx@linutronix.de>
-  * Copyright(C) 2005-2007, Red Hat, Inc., Ingo Molnar
-  * Copyright(C) 2006-2007, Timesys Corp., Thomas Gleixner
-- *
-- * This code is licenced under the GPL version 2. For details see
-- * kernel-base/COPYING.
-  */
- 
- #include <linux/clockchips.h>
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -20,8 +20,6 @@
-  *
-  *	George Anzinger, Andrew Morton, Steven Rostedt, Roman Zippel
-  *	et. al.
-- *
-- *  For licencing details see kernel-base/COPYING
-  */
- 
- #include <linux/cpu.h>
---- a/kernel/time/tick-broadcast.c
-+++ b/kernel/time/tick-broadcast.c
-@@ -6,9 +6,6 @@
-  * Copyright(C) 2005-2006, Thomas Gleixner <tglx@linutronix.de>
-  * Copyright(C) 2005-2007, Red Hat, Inc., Ingo Molnar
-  * Copyright(C) 2006-2007, Timesys Corp., Thomas Gleixner
-- *
-- * This code is licenced under the GPL version 2. For details see
-- * kernel-base/COPYING.
-  */
- #include <linux/cpu.h>
- #include <linux/err.h>
---- a/kernel/time/tick-common.c
-+++ b/kernel/time/tick-common.c
-@@ -6,9 +6,6 @@
-  * Copyright(C) 2005-2006, Thomas Gleixner <tglx@linutronix.de>
-  * Copyright(C) 2005-2007, Red Hat, Inc., Ingo Molnar
-  * Copyright(C) 2006-2007, Timesys Corp., Thomas Gleixner
-- *
-- * This code is licenced under the GPL version 2. For details see
-- * kernel-base/COPYING.
-  */
- #include <linux/cpu.h>
- #include <linux/err.h>
---- a/kernel/time/tick-oneshot.c
-+++ b/kernel/time/tick-oneshot.c
-@@ -6,9 +6,6 @@
-  * Copyright(C) 2005-2006, Thomas Gleixner <tglx@linutronix.de>
-  * Copyright(C) 2005-2007, Red Hat, Inc., Ingo Molnar
-  * Copyright(C) 2006-2007, Timesys Corp., Thomas Gleixner
-- *
-- * This code is licenced under the GPL version 2. For details see
-- * kernel-base/COPYING.
-  */
- #include <linux/cpu.h>
- #include <linux/err.h>
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -7,8 +7,6 @@
-  *  No idle tick implementation for low and high resolution timers
-  *
-  *  Started by: Thomas Gleixner and Ingo Molnar
-- *
-- *  Distribute under GPLv2.
-  */
- #include <linux/cpu.h>
- #include <linux/err.h>
---- a/kernel/time/timer_list.c
-+++ b/kernel/time/timer_list.c
-@@ -3,10 +3,6 @@
-  * List pending timers
-  *
-  * Copyright(C) 2006, Red Hat, Inc., Ingo Molnar
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- 
- #include <linux/proc_fs.h>
+ include/linux/compiler_types.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
+diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+index 97cfe29b3f0a..6f1cb84a687b 100644
+--- a/include/linux/compiler_types.h
++++ b/include/linux/compiler_types.h
+@@ -151,6 +151,10 @@ struct ftrace_likely_data {
+ #define __assume_aligned(a, ...)
+ #endif
+ 
++#ifndef asm_volatile_goto
++#define asm_volatile_goto(x...) asm goto(x)
++#endif
++
+ /* Are two types/vars the same type (ignoring qualifiers)? */
+ #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
+ 
+-- 
+2.19.1.568.g152ad8e336-goog
 
