@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F5AFECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F58ECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F12182084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 172CF20843
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dc02qJ6C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F12182084A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1j6cIYfC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 172CF20843
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730534AbeKAIJg (ORCPT
+        id S1730548AbeKAIJh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:09:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59604 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:09:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730517AbeKAIJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:09:35 -0400
+        id S1730517AbeKAIJg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:09:36 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0AFE720664;
-        Wed, 31 Oct 2018 23:09:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D12C920838;
+        Wed, 31 Oct 2018 23:09:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027364;
-        bh=DrvpFuZ8C1WZGOUneKjTLBox+gqu0umAjhbt2Uiu8rA=;
+        s=default; t=1541027365;
+        bh=8DchUv9ENxnBwR0PR30WtrWFlWPcq596TZfuyVlu/Gk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dc02qJ6CkW6cJ5E9ErXttMSv585JiLGc9Bh1hWoowSRcFVrFRbf15rVSNsBZoTrD0
-         0Fzmw4765Q/TIqZJONvTlz8PvhfbRP5Gm4gz36P1I/KQinsHif5vl+kqWfZ2eniVM0
-         reDhJBu3gv+DkXdNz1FpCsyiMPmBnpRpFvIuc1X0=
+        b=1j6cIYfCtwww/M4ykXk4EpdO9HciYLiIMAXNh2sd7knM30a/xMeYRBa2nUkVdhkPE
+         +imfksEI5EwIoDUlSF92wO7x3o1ds0sC3xzyTJsPmJXXgMvATFI8s3Pv01hcwmpFkc
+         Dtu8tSQs8aWZHrliBcL+CmOp7JGT3/9rKGZQXvbg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Lina Iyer <ilina@codeaurora.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
+Cc:     Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Amelie Delaunay <amelie.delaunay@st.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 099/126] irqchip/pdc: Setup all edge interrupts as rising edge at GIC
-Date:   Wed, 31 Oct 2018 19:07:27 -0400
-Message-Id: <20181031230754.29029-99-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 100/126] usb: dwc2: fix a race with external vbus supply
+Date:   Wed, 31 Oct 2018 19:07:28 -0400
+Message-Id: <20181031230754.29029-100-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -53,37 +54,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lina Iyer <ilina@codeaurora.org>
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
 
-[ Upstream commit 7bae48b22c8d38c5cd50f52b6e15d134e2bb3935 ]
+[ Upstream commit 41ee1ea21052583eaf5487dfa0d0c907c9667548 ]
 
-The PDC irqchp can convert a falling edge or level low interrupt to a
-rising edge or level high interrupt at the GIC. We just need to setup
-the GIC correctly. Set up the interrupt type for the IRQ_TYPE_EDGE_BOTH
-as IRQ_TYPE_EDGE_RISING at the GIC.
+There's a race with root hub resume, when using external vbus supply.
+Root hub gets resumed, but runtime pm autosuspend runs as external vbus
+supply isn't enabled. So, host never exit from power down properly.
+Initialize vbus external supply before, rater that after hub resume.
 
-Fixes: f55c73aef890 ("irqchip/pdc: Add PDC interrupt controller for QCOM SoCs")
-Reported-by: Evan Green <evgreen@chromium.org>
-Reviewed-by: Evan Green <evgreen@chromium.org>
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Fixes: 531ef5ebea96 ("usb: dwc2: add support for host mode external
+vbus supply")
+
+Tested-by: Artur Petrosyan <arturp@synopsys.com>
+Acked-by: Minas Harutyunyan <hminas@synopsys.com>
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/irqchip/qcom-pdc.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/dwc2/hcd.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/qcom-pdc.c b/drivers/irqchip/qcom-pdc.c
-index b1b47a40a278..faa7d61b9d6c 100644
---- a/drivers/irqchip/qcom-pdc.c
-+++ b/drivers/irqchip/qcom-pdc.c
-@@ -124,6 +124,7 @@ static int qcom_pdc_gic_set_type(struct irq_data *d, unsigned int type)
- 		break;
- 	case IRQ_TYPE_EDGE_BOTH:
- 		pdc_type = PDC_EDGE_DUAL;
-+		type = IRQ_TYPE_EDGE_RISING;
- 		break;
- 	case IRQ_TYPE_LEVEL_HIGH:
- 		pdc_type = PDC_LEVEL_HIGH;
+diff --git a/drivers/usb/dwc2/hcd.c b/drivers/usb/dwc2/hcd.c
+index 6e2cdd7b93d4..05a68f035d19 100644
+--- a/drivers/usb/dwc2/hcd.c
++++ b/drivers/usb/dwc2/hcd.c
+@@ -4394,6 +4394,7 @@ static int _dwc2_hcd_start(struct usb_hcd *hcd)
+ 	struct dwc2_hsotg *hsotg = dwc2_hcd_to_hsotg(hcd);
+ 	struct usb_bus *bus = hcd_to_bus(hcd);
+ 	unsigned long flags;
++	int ret;
+ 
+ 	dev_dbg(hsotg->dev, "DWC OTG HCD START\n");
+ 
+@@ -4409,6 +4410,13 @@ static int _dwc2_hcd_start(struct usb_hcd *hcd)
+ 
+ 	dwc2_hcd_reinit(hsotg);
+ 
++	/* enable external vbus supply before resuming root hub */
++	spin_unlock_irqrestore(&hsotg->lock, flags);
++	ret = dwc2_vbus_supply_init(hsotg);
++	if (ret)
++		return ret;
++	spin_lock_irqsave(&hsotg->lock, flags);
++
+ 	/* Initialize and connect root hub if one is not already attached */
+ 	if (bus->root_hub) {
+ 		dev_dbg(hsotg->dev, "DWC OTG HCD Has Root Hub\n");
+@@ -4418,7 +4426,7 @@ static int _dwc2_hcd_start(struct usb_hcd *hcd)
+ 
+ 	spin_unlock_irqrestore(&hsotg->lock, flags);
+ 
+-	return dwc2_vbus_supply_init(hsotg);
++	return 0;
+ }
+ 
+ /*
 -- 
 2.17.1
 
