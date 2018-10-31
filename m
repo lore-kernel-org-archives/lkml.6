@@ -2,111 +2,129 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDAC4ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:19:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07346C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:24:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B195E205F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:19:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE4C820821
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:24:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kzi+2D/u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B195E205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="mbdZPZwA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE4C820821
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728019AbeJaSQv (ORCPT
+        id S1728025AbeJaSWH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 14:16:51 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:34784 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726054AbeJaSQv (ORCPT
+        Wed, 31 Oct 2018 14:22:07 -0400
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:19083 "EHLO
+        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726075AbeJaSWH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 14:16:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=fVhXZWXj81sT/c2mZE0H4mJ1k8z+LPDjNU9EBM9zVvU=; b=kzi+2D/uyQhcVvTbEufaP92gn
-        nyDe5p2eDCiO4FJ1nv9mXiBFr4+Vhifg605AxkPfkblc1H1mSQoK8vMeruUP3pWZLoFjCdV2D5r3C
-        6Z/4WYmD74tckX8XvozBI0epdKJ27Tg1xvCKwI4iEE61plq+4eJf27iO8jL13jAt9IEPEw1ZxbBpo
-        KtPV3DmNlIHr8ZzdiYrXjL1GwYHfUUalZEV2bpe/59qZx/IV4gr6XuvQyTWvWRB6eyZVIYjolcQwq
-        33QzbBQh58hAxV5a/L2T8iLrfKE31Vqabllhz9w0kI8SVNmuNLKamKfs21WjbcyJP7y7dYRyApjHi
-        jVfTTfo/Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gHmeS-0002R2-PK; Wed, 31 Oct 2018 09:19:01 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 4A63A2029FA14; Wed, 31 Oct 2018 10:18:59 +0100 (CET)
-Date:   Wed, 31 Oct 2018 10:18:59 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Kees Cook <keescook@chromium.org>,
-        Igor Stoppa <igor.stoppa@gmail.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 10/17] prmem: documentation
-Message-ID: <20181031091859.GI744@hirez.programming.kicks-ass.net>
-References: <20181023213504.28905-11-igor.stoppa@huawei.com>
- <20181026092609.GB3159@worktop.c.hoisthospitality.com>
- <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
- <20181028183126.GB744@hirez.programming.kicks-ass.net>
- <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
- <20181030152641.GE8177@hirez.programming.kicks-ass.net>
- <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
- <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
- <20181030175814.GB10491@bombadil.infradead.org>
- <d5b57049-419b-3bbb-dc8d-97e4024965df@intel.com>
+        Wed, 31 Oct 2018 14:22:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1540977887; x=1572513887;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:mime-version:
+   content-transfer-encoding;
+  bh=h2XUroPz2iYXI0zbI6L7gAOuXJw15Vr57FoAADpHtkc=;
+  b=mbdZPZwAX32QGK6KXrA2P8nSqTQqd8dd1EYWO/JRkbyIUgCyJv2IWUzD
+   lod4vIhngRLP/SFo5klhZekHivZcrbhJE/TisivmQUGy+M5x6QeCyLWYf
+   B2W73fwXyfAT9TedU3RfSQeASrxK78tqxyOUHL4dKUnGJRgcGzf9eyoOh
+   g=;
+X-IronPort-AV: E=Sophos;i="5.54,447,1534809600"; 
+   d="scan'208";a="365938197"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2a-c5104f52.us-west-2.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 31 Oct 2018 09:24:45 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan2.pdx.amazon.com [10.236.137.194])
+        by email-inbound-relay-2a-c5104f52.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w9V9OeU6052104
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Wed, 31 Oct 2018 09:24:44 GMT
+Received: from EX13D08EUC004.ant.amazon.com (10.43.164.176) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Wed, 31 Oct 2018 09:24:44 +0000
+Received: from EX13D18EUC002.ant.amazon.com (10.43.164.50) by
+ EX13D08EUC004.ant.amazon.com (10.43.164.176) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Wed, 31 Oct 2018 09:24:43 +0000
+Received: from EX13D18EUC002.ant.amazon.com ([10.43.164.50]) by
+ EX13D18EUC002.ant.amazon.com ([10.43.164.50]) with mapi id 15.00.1367.000;
+ Wed, 31 Oct 2018 09:24:43 +0000
+From:   "Shah, Amit" <aams@amazon.de>
+To:     "Heyne, Maximilian" <mheyne@amazon.de>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>, "hch@lst.de" <hch@lst.de>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Dannowski, Uwe" <uwed@amazon.de>,
+        "Mehlan, Torsten" <tomeh@amazon.de>
+Subject: Re: [PATCH] fs: fix lost error code in dio_complete
+Thread-Topic: [PATCH] fs: fix lost error code in dio_complete
+Thread-Index: AQHUcJu/T1oGSJ7npE6IhxEAy6raE6U5FeWA
+Date:   Wed, 31 Oct 2018 09:24:43 +0000
+Message-ID: <1540977883.6429.74.camel@amazon.com>
+References: <20181030215739.4557-1-mheyne@amazon.de>
+In-Reply-To: <20181030215739.4557-1-mheyne@amazon.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.43.166.231]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <349323C0013D7842B5B361F149F7BD06@amazon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d5b57049-419b-3bbb-dc8d-97e4024965df@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 11:03:51AM -0700, Dave Hansen wrote:
-> On 10/30/18 10:58 AM, Matthew Wilcox wrote:
-> > Does this satisfy Igor's requirements?  We wouldn't be able to
-> > copy_to/from_user() while rare_mm was active.  I think that's a feature
-> > though!  It certainly satisfies my interests (kernel code be able to
-> > mark things as dynamically-allocated-and-read-only-after-initialisation)
-> 
-> It has to be more than copy_to/from_user(), though, I think.
-> 
-> rare_modify(q) either has to preempt_disable(), or we need to teach the
-> context-switching code when and how to switch in/out of the rare_mm.
-> preempt_disable() would also keep us from sleeping.
+T24gRGksIDIwMTgtMTAtMzAgYXQgMjE6NTcgKzAwMDAsIE1heGltaWxpYW4gSGV5bmUgd3JvdGU6
+DQo+IGNvbW1pdCBlMjU5MjIxNzYzYTQwNDAzZDViYjIzMjIwOTk5OGU4YzQ1ODA0YWI4ICgiZnM6
+IHNpbXBsaWZ5IHRoZQ0KPiBnZW5lcmljX3dyaXRlX3N5bmMgcHJvdG90eXBlIikgcmV3b3JrZWQg
+Y2FsbGVycyBvZiBnZW5lcmljX3dyaXRlX3N5bmMoKSwNCj4gYW5kIGVuZGVkIHVwIGRyb3BwaW5n
+IHRoZSBlcnJvciByZXR1cm4gZm9yIHRoZSBkaXJlY3RpbyBwYXRoLiBQcmlvciB0bw0KPiB0aGF0
+IGNvbW1pdCwgaW4gZGlvX2NvbXBsZXRlKCksIGFuIGVycm9yIHdvdWxkIGJlIGJ1YmJsZWQgdXAg
+dGhlIHN0YWNrLA0KPiBidXQgYWZ0ZXIgdGhhdCBjb21taXQsIGVycm9ycyBwYXNzZWQgb24gdG8g
+ZGlvX2NvbXBsZXRlIHdlcmUgZWF0ZW4gdXAuDQo+IA0KPiBUaGlzIHdhcyByZXBvcnRlZCBvbiB0
+aGUgbGlzdCBlYXJsaWVyLCBhbmQgYSBmaXggd2FzIHByb3Bvc2VkIGluDQo+IGh0dHBzOi8vbG9y
+ZS5rZXJuZWwub3JnL2xrbWwvMjAxNjA5MjExNDE1MzkuR0ExNzg5OEBpbmZyYWRlYWQub3JnLywg
+YnV0DQo+IG5ldmVyIGZvbGxvd2VkIHVwIHdpdGguwqDCoFdlIHJlY2VudGx5IGhpdCB0aGlzIGJ1
+ZyBpbiBvdXIgdGVzdGluZyB3aGVyZQ0KPiBmZW5jaW5nIGlvIGVycm9ycywgd2hpY2ggd2VyZSBw
+cmV2aW91c2x5IGVycm9yaW5nIG91dCB3aXRoIEVJTywgd2VyZQ0KPiBiZWluZyByZXR1cm5lZCBh
+cyBzdWNjZXNzIG9wZXJhdGlvbnMgYWZ0ZXIgdGhpcyBjb21taXQuDQo+IA0KPiBUaGUgZml4IHBy
+b3Bvc2VkIG9uIHRoZSBsaXN0IGVhcmxpZXIgd2FzIGEgbGl0dGxlIHNob3J0IC0tIGl0IHdvdWxk
+IGhhdmUNCj4gc3RpbGwgY2FsbGVkIGdlbmVyaWNfd3JpdGVfc3luYygpIGluIGNhc2UgYHJldGAg
+YWxyZWFkeSBjb250YWluZWQgYW4NCj4gZXJyb3IuwqDCoFRoaXMgZml4IGVuc3VyZXMgZ2VuZXJp
+Y193cml0ZV9zeW5jKCkgaXMgb25seSBjYWxsZWQgd2hlbg0KPiB0aGVyZSdzIG5vIHBlbmRpbmcg
+ZXJyb3IgaW4gdGhlIHdyaXRlLg0KPiANCj4gQ0M6IHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmcNCj4g
+UmVwb3J0ZWQtYnk6IFJhdmkgTmFua2FuaSA8cm5hbmthbmlAYW1hem9uLmNvbT4NCj4gU2lnbmVk
+LW9mZi1ieTogTWF4aW1pbGlhbiBIZXluZSA8bWhleW5lQGFtYXpvbi5kZT4NCj4gU2lnbmVkLW9m
+Zi1ieTogVG9yc3RlbiBNZWhsYW4gPHRvbWVoQGFtYXpvbi5kZT4NCj4gU2lnbmVkLW9mZi1ieTog
+VXdlIERhbm5vd3NraSA8dXdlZEBhbWF6b24uZGU+DQo+IFNpZ25lZC1vZmYtYnk6IEFtaXQgU2hh
+aCA8YWFtc0BhbWF6b24uZGU+DQo+IFNpZ25lZC1vZmYtYnk6IERhdmlkIFdvb2Rob3VzZSA8ZHdt
+d0BhbWF6b24uY28udWs+DQo+IC0tLQ0KPiDCoGZzL2RpcmVjdC1pby5jIHwgNCArKy0tDQo+IMKg
+MSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gDQo+IGRp
+ZmYgLS1naXQgYS9mcy9kaXJlY3QtaW8uYyBiL2ZzL2RpcmVjdC1pby5jDQo+IGluZGV4IDA5M2Zi
+NTRjZDMxNi4uMTk5MTQ2MDM2MDkzIDEwMDY0NA0KPiAtLS0gYS9mcy9kaXJlY3QtaW8uYw0KPiAr
+KysgYi9mcy9kaXJlY3QtaW8uYw0KPiBAQCAtMzI1LDggKzMyNSw4IEBAIHN0YXRpYyBzc2l6ZV90
+IGRpb19jb21wbGV0ZShzdHJ1Y3QgZGlvICpkaW8sIHNzaXplX3QgcmV0LCB1bnNpZ25lZCBpbnQg
+ZmxhZ3MpDQo+IMKgCQnCoCovDQo+IMKgCQlkaW8tPmlvY2ItPmtpX3BvcyArPSB0cmFuc2ZlcnJl
+ZDsNCj4gwqANCj4gLQkJaWYgKGRpby0+b3AgPT0gUkVRX09QX1dSSVRFKQ0KPiAtCQkJcmV0ID0g
+Z2VuZXJpY193cml0ZV9zeW5jKGRpby0+aW9jYizCoMKgdHJhbnNmZXJyZWQpOw0KPiArCQlpZiAo
+cmV0ID4gMCAmJiBkaW8tPm9wID09IFJFUV9PUF9XUklURSkNCj4gKwkJCXJldCA9IGdlbmVyaWNf
+d3JpdGVfc3luYyhkaW8tPmlvY2IsIHJldCk7DQoNCklzIHRoZSBzL3RyYW5zZmVycmVkL3JldC8g
+Y2hhbmdlIG5lY2Vzc2FyeT8gwqBOZWVkcyBleHBsYWluaW5nLCBhdCBsZWFzdC4NCg0KPiDCoAkJ
+ZGlvLT5pb2NiLT5raV9jb21wbGV0ZShkaW8tPmlvY2IsIHJldCwgMCk7DQo+IMKgCX0NCj4gwqAN
+Cg0KVGhhbmtzLA0KDQoNCg0KCQkJCUFtaXQKQW1hem9uIERldmVsb3BtZW50IENlbnRlciBHZXJt
+YW55IEdtYkgKQmVybGluIC0gRHJlc2RlbiAtIEFhY2hlbgptYWluIG9mZmljZTogS3JhdXNlbnN0
+ci4gMzgsIDEwMTE3IEJlcmxpbgpHZXNjaGFlZnRzZnVlaHJlcjogRHIuIFJhbGYgSGVyYnJpY2gs
+IENocmlzdGlhbiBTY2hsYWVnZXIKVXN0LUlEOiBERTI4OTIzNzg3OQpFaW5nZXRyYWdlbiBhbSBB
+bXRzZ2VyaWNodCBDaGFybG90dGVuYnVyZyBIUkIgMTQ5MTczIEIK
 
-Yes, I think we want to have preempt disable at the very least. We could
-indeed make the context switch code smart and teach is about this state,
-but I think allowing preemption in such section is a bad idea. We want
-to keep these sections short and simple (and bounded), such that they
-can be analyzed for correctness.
-
-Once you allow preemption, things tend to grow large and complex.
-
-Ideally we'd even disabled interrupts over this, to further limit what
-code runs in the rare_mm context. NMIs need special care anyway.
