@@ -7,44 +7,49 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66A35ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7933DECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:38:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E06420664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:38:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F24D20664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:38:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="viPNayYM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E06420664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dJqM4Gyt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F24D20664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730134AbeKAIia (ORCPT
+        id S1729870AbeKAIIk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:38:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57888 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:08:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729890AbeKAIIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:08:42 -0400
+        id S1729817AbeKAIIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:08:39 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEBDE20830;
-        Wed, 31 Oct 2018 23:08:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A6D120838;
+        Wed, 31 Oct 2018 23:08:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027311;
-        bh=rG4g6nUsKCq0+j9skxf6lMLY2Qbnu4BHw8qfLExOQ7g=;
+        s=default; t=1541027307;
+        bh=qcZd9mhbefSqqMRUbMGlzWVapCHlNIAfDOfkgEKwcw0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=viPNayYMKgQOfNF6n8YBry6tsNMMgodgpv5Kk4jePE9bWg9aP/0O9uxFtVLkOxIZO
-         WG3NZvwum0N3tXRnAII+HROCngg2RRTG7o+gVyuP0tgtPKP/AsBDeDIDM30oX1Zz2v
-         TiDcicW1bYb88Wa3tMMPouH+vNBBXH9xc2+AxIYk=
+        b=dJqM4GytIZPcGq442o648pOdJav33zHKxQrUg3Xf/1IA96V2elUr2gJE13aAiC6cd
+         bW4czLhkVWMX/7ihOF3vi5KN7NjLd6QgHxNSBELlb2eVgoerZUNpXpzlRYUY4yK/ya
+         CY8F6esO6mvPqimlFbT9bt/QC17qHjviN+eSVocM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Christian Hewitt <christianshewitt@gmail.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
+Cc:     Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 040/126] Bluetooth: btbcm: Add entry for BCM4335C0 UART bluetooth
-Date:   Wed, 31 Oct 2018 19:06:28 -0400
-Message-Id: <20181031230754.29029-40-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 036/126] signal: Introduce COMPAT_SIGMINSTKSZ for use in compat_sys_sigaltstack
+Date:   Wed, 31 Oct 2018 19:06:24 -0400
+Message-Id: <20181031230754.29029-36-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -53,63 +58,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christian Hewitt <christianshewitt@gmail.com>
+From: Will Deacon <will.deacon@arm.com>
 
-[ Upstream commit a357ea098c9605f60d92a66a9073f56ce25726da ]
+[ Upstream commit 22839869f21ab3850fbbac9b425ccc4c0023926f ]
 
-This patch adds the device ID for the AMPAK AP6335 combo module used
-in the 1st generation WeTek Hub Android/LibreELEC HTPC box. The WiFI
-chip identifies itself as BCM4339, while Bluetooth identifies itself
-as BCM4335 (rev C0):
+The sigaltstack(2) system call fails with -ENOMEM if the new alternative
+signal stack is found to be smaller than SIGMINSTKSZ. On architectures
+such as arm64, where the native value for SIGMINSTKSZ is larger than
+the compat value, this can result in an unexpected error being reported
+to a compat task. See, for example:
 
-```
-[    4.864248] Bluetooth: hci0: BCM: chip id 86
-[    4.866388] Bluetooth: hci0: BCM: features 0x2f
-[    4.889317] Bluetooth: hci0: BCM4335C0
-[    4.889332] Bluetooth: hci0: BCM4335C0 (003.001.009) build 0000
-[    9.778383] Bluetooth: hci0: BCM4335C0 (003.001.009) build 0268
-```
+  https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=904385
 
-Output from hciconfig:
+This patch fixes the problem by extending do_sigaltstack to take the
+minimum signal stack size as an additional parameter, allowing the
+native and compat system call entry code to pass in their respective
+values. COMPAT_SIGMINSTKSZ is just defined as SIGMINSTKSZ if it has not
+been defined by the architecture.
 
-```
-hci0:	Type: Primary  Bus: UART
-	BD Address: 43:39:00:00:1F:AC  ACL MTU: 1021:8  SCO MTU: 64:1
-	UP RUNNING
-	RX bytes:7567 acl:234 sco:0 events:386 errors:0
-	TX bytes:53844 acl:77 sco:0 commands:304 errors:0
-	Features: 0xbf 0xfe 0xcf 0xfe 0xdb 0xff 0x7b 0x87
-	Packet type: DM1 DM3 DM5 DH1 DH3 DH5 HV1 HV2 HV3
-	Link policy: RSWITCH SNIFF
-	Link mode: SLAVE ACCEPT
-	Name: 'HUB'
-	Class: 0x0c0000
-	Service Classes: Rendering, Capturing
-	Device Class: Miscellaneous,
-	HCI Version: 4.0 (0x6)  Revision: 0x10c
-	LMP Version: 4.0 (0x6)  Subversion: 0x6109
-	Manufacturer: Broadcom Corporation (15)
-```
-
-Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Reported-by: Steve McIntyre <steve.mcintyre@arm.com>
+Tested-by: Steve McIntyre <93sam@debian.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/bluetooth/btbcm.c | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/compat.h |  3 +++
+ kernel/signal.c        | 14 +++++++++-----
+ 2 files changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/bluetooth/btbcm.c b/drivers/bluetooth/btbcm.c
-index 99cde1f9467d..e3e4d929e74f 100644
---- a/drivers/bluetooth/btbcm.c
-+++ b/drivers/bluetooth/btbcm.c
-@@ -324,6 +324,7 @@ static const struct bcm_subver_table bcm_uart_subver_table[] = {
- 	{ 0x4103, "BCM4330B1"	},	/* 002.001.003 */
- 	{ 0x410e, "BCM43341B0"	},	/* 002.001.014 */
- 	{ 0x4406, "BCM4324B3"	},	/* 002.004.006 */
-+	{ 0x6109, "BCM4335C0"	},	/* 003.001.009 */
- 	{ 0x610c, "BCM4354"	},	/* 003.001.012 */
- 	{ 0x2122, "BCM4343A0"	},	/* 001.001.034 */
- 	{ 0x2209, "BCM43430A1"  },	/* 001.002.009 */
+diff --git a/include/linux/compat.h b/include/linux/compat.h
+index c68acc47da57..47041c7fed28 100644
+--- a/include/linux/compat.h
++++ b/include/linux/compat.h
+@@ -103,6 +103,9 @@ typedef struct compat_sigaltstack {
+ 	compat_size_t			ss_size;
+ } compat_stack_t;
+ #endif
++#ifndef COMPAT_MINSIGSTKSZ
++#define COMPAT_MINSIGSTKSZ	MINSIGSTKSZ
++#endif
+ 
+ #define compat_jiffies_to_clock_t(x)	\
+ 		(((unsigned long)(x) * COMPAT_USER_HZ) / HZ)
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 8d8a940422a8..41a5dd2df27d 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -3417,7 +3417,8 @@ int do_sigaction(int sig, struct k_sigaction *act, struct k_sigaction *oact)
+ }
+ 
+ static int
+-do_sigaltstack (const stack_t *ss, stack_t *oss, unsigned long sp)
++do_sigaltstack (const stack_t *ss, stack_t *oss, unsigned long sp,
++		size_t min_ss_size)
+ {
+ 	struct task_struct *t = current;
+ 
+@@ -3447,7 +3448,7 @@ do_sigaltstack (const stack_t *ss, stack_t *oss, unsigned long sp)
+ 			ss_size = 0;
+ 			ss_sp = NULL;
+ 		} else {
+-			if (unlikely(ss_size < MINSIGSTKSZ))
++			if (unlikely(ss_size < min_ss_size))
+ 				return -ENOMEM;
+ 		}
+ 
+@@ -3465,7 +3466,8 @@ SYSCALL_DEFINE2(sigaltstack,const stack_t __user *,uss, stack_t __user *,uoss)
+ 	if (uss && copy_from_user(&new, uss, sizeof(stack_t)))
+ 		return -EFAULT;
+ 	err = do_sigaltstack(uss ? &new : NULL, uoss ? &old : NULL,
+-			      current_user_stack_pointer());
++			      current_user_stack_pointer(),
++			      MINSIGSTKSZ);
+ 	if (!err && uoss && copy_to_user(uoss, &old, sizeof(stack_t)))
+ 		err = -EFAULT;
+ 	return err;
+@@ -3476,7 +3478,8 @@ int restore_altstack(const stack_t __user *uss)
+ 	stack_t new;
+ 	if (copy_from_user(&new, uss, sizeof(stack_t)))
+ 		return -EFAULT;
+-	(void)do_sigaltstack(&new, NULL, current_user_stack_pointer());
++	(void)do_sigaltstack(&new, NULL, current_user_stack_pointer(),
++			     MINSIGSTKSZ);
+ 	/* squash all but EFAULT for now */
+ 	return 0;
+ }
+@@ -3510,7 +3513,8 @@ static int do_compat_sigaltstack(const compat_stack_t __user *uss_ptr,
+ 		uss.ss_size = uss32.ss_size;
+ 	}
+ 	ret = do_sigaltstack(uss_ptr ? &uss : NULL, &uoss,
+-			     compat_user_stack_pointer());
++			     compat_user_stack_pointer(),
++			     COMPAT_MINSIGSTKSZ);
+ 	if (ret >= 0 && uoss_ptr)  {
+ 		compat_stack_t old;
+ 		memset(&old, 0, sizeof(old));
 -- 
 2.17.1
 
