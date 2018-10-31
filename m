@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08354ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C535C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B783620843
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 550EB2081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="H23r6jaA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B783620843
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yhj5ckpf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 550EB2081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730825AbeKAIKF (ORCPT
+        id S1730840AbeKAIKH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:10:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60478 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:10:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730658AbeKAIKE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:10:04 -0400
+        id S1730817AbeKAIKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:10:05 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9F532081B;
-        Wed, 31 Oct 2018 23:09:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7FD7620821;
+        Wed, 31 Oct 2018 23:09:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027393;
-        bh=pIfjnnxC+iR3ByAMU9YVN+Tv1tHCZP7Mj76BjV5yBL8=;
+        s=default; t=1541027394;
+        bh=uM0kR4w+ZCco6GT3Hu5u94ZHnxpAuJ/AHa3vnguWCDc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H23r6jaA8Y0zq5PZlx4LR4AUlQNtyE7xUBgUUZr9sNt6hWJ77ubXcujc5GJdeF3i2
-         PZpwdOvKuBSyBizH2/OFUUvfsgXwLYSh2ikT9429gBmoySNBbEL8uXcLEDaH/bL5v6
-         PfPrq8Jqkdo1WW/FbjT442yvnR2DjaYnKF6mqrEI=
+        b=Yhj5ckpfxXAPjMzXmhbSQJ8HQIf0+fKrQCZlkujL0GojNV8LFtyHeurIRw64tIKBp
+         0IweHVgYdX2SWJg1s0n6xKee0mUIr4Ksgw2Ts3iCKWk/l+BAMzPR15K9rbg4g54dlc
+         fyq9bN8IO5hWvPbpNxYNIbMADk1YAxBXoLvDXhZU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Omar Sandoval <osandov@fb.com>, Jens Axboe <axboe@kernel.dk>,
+Cc:     Ryan C Goodfellow <rgoodfel@isi.edu>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 04/73] swim: fix cleanup on setup error
-Date:   Wed, 31 Oct 2018 19:08:39 -0400
-Message-Id: <20181031230948.29203-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 05/73] nfp: devlink port split support for 1x100G CXP NIC
+Date:   Wed, 31 Oct 2018 19:08:40 -0400
+Message-Id: <20181031230948.29203-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230948.29203-1-sashal@kernel.org>
 References: <20181031230948.29203-1-sashal@kernel.org>
@@ -52,44 +53,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Omar Sandoval <osandov@fb.com>
+From: Ryan C Goodfellow <rgoodfel@isi.edu>
 
-[ Upstream commit 1448a2a5360ae06f25e2edc61ae070dff5c0beb4 ]
+[ Upstream commit 5948185b97fa1f83d7855e638a72982a1073ebf5 ]
 
-If we fail to allocate the request queue for a disk, we still need to
-free that disk, not just the previous ones. Additionally, we need to
-cleanup the previous request queues.
+This commit makes it possible to use devlink to split the 100G CXP
+Netronome into two 40G interfaces. Currently when you ask for 2
+interfaces, the math in src/nfp_devlink.c:nfp_devlink_port_split
+calculates that you want 5 lanes per port because for some reason
+eth_port.port_lanes=10 (shouldn't this be 12 for CXP?). What we really
+want when asking for 2 breakout interfaces is 4 lanes per port. This
+commit makes that happen by calculating based on 8 lanes if 10 are
+present.
 
-Signed-off-by: Omar Sandoval <osandov@fb.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Ryan C Goodfellow <rgoodfel@isi.edu>
+Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Reviewed-by: Greg Weeks <greg.weeks@netronome.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/swim.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ .../net/ethernet/netronome/nfp/nfp_devlink.c    | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/block/swim.c b/drivers/block/swim.c
-index e88d50f75a4a..58e308145e95 100644
---- a/drivers/block/swim.c
-+++ b/drivers/block/swim.c
-@@ -887,8 +887,17 @@ static int swim_floppy_init(struct swim_priv *swd)
+diff --git a/drivers/net/ethernet/netronome/nfp/nfp_devlink.c b/drivers/net/ethernet/netronome/nfp/nfp_devlink.c
+index 6c9f29c2e975..90a6c4fbc113 100644
+--- a/drivers/net/ethernet/netronome/nfp/nfp_devlink.c
++++ b/drivers/net/ethernet/netronome/nfp/nfp_devlink.c
+@@ -96,6 +96,7 @@ nfp_devlink_port_split(struct devlink *devlink, unsigned int port_index,
+ {
+ 	struct nfp_pf *pf = devlink_priv(devlink);
+ 	struct nfp_eth_table_port eth_port;
++	unsigned int lanes;
+ 	int ret;
  
- exit_put_disks:
- 	unregister_blkdev(FLOPPY_MAJOR, "fd");
--	while (drive--)
--		put_disk(swd->unit[drive].disk);
-+	do {
-+		struct gendisk *disk = swd->unit[drive].disk;
+ 	if (count < 2)
+@@ -114,8 +115,12 @@ nfp_devlink_port_split(struct devlink *devlink, unsigned int port_index,
+ 		goto out;
+ 	}
+ 
+-	ret = nfp_devlink_set_lanes(pf, eth_port.index,
+-				    eth_port.port_lanes / count);
++	/* Special case the 100G CXP -> 2x40G split */
++	lanes = eth_port.port_lanes / count;
++	if (eth_port.lanes == 10 && count == 2)
++		lanes = 8 / count;
 +
-+		if (disk) {
-+			if (disk->queue) {
-+				blk_cleanup_queue(disk->queue);
-+				disk->queue = NULL;
-+			}
-+			put_disk(disk);
-+		}
-+	} while (drive--);
- 	return err;
- }
++	ret = nfp_devlink_set_lanes(pf, eth_port.index, lanes);
+ out:
+ 	mutex_unlock(&pf->lock);
+ 
+@@ -127,6 +132,7 @@ nfp_devlink_port_unsplit(struct devlink *devlink, unsigned int port_index)
+ {
+ 	struct nfp_pf *pf = devlink_priv(devlink);
+ 	struct nfp_eth_table_port eth_port;
++	unsigned int lanes;
+ 	int ret;
+ 
+ 	mutex_lock(&pf->lock);
+@@ -142,7 +148,12 @@ nfp_devlink_port_unsplit(struct devlink *devlink, unsigned int port_index)
+ 		goto out;
+ 	}
+ 
+-	ret = nfp_devlink_set_lanes(pf, eth_port.index, eth_port.port_lanes);
++	/* Special case the 100G CXP -> 2x40G unsplit */
++	lanes = eth_port.port_lanes;
++	if (eth_port.port_lanes == 8)
++		lanes = 10;
++
++	ret = nfp_devlink_set_lanes(pf, eth_port.index, lanes);
+ out:
+ 	mutex_unlock(&pf->lock);
  
 -- 
 2.17.1
