@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A497ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:12:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D3EFECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:12:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D45E520843
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:12:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F231220866
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:12:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RD5aOGc2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D45E520843
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nEoHFldt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F231220866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732302AbeKAIM3 (ORCPT
+        id S1732316AbeKAIMa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:12:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37468 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:12:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732282AbeKAIM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:12:28 -0400
+        id S1732263AbeKAIM3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:12:29 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 637DF20840;
-        Wed, 31 Oct 2018 23:12:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7969B2087A;
+        Wed, 31 Oct 2018 23:12:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027536;
-        bh=KPiJvz4He0AwSZ0ySKEL1Gu0R0Z7OVpxUWh1vKcO0so=;
+        s=default; t=1541027537;
+        bh=FEJ2OydZmOc8wVg1Xw19njW5epGCQDn+vAxsl019hRI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RD5aOGc2aNnoF2lRR6AdnYRmHadKtL8xWXrYj01yWPOzcaD9Ie/XyQAEHMqAi505g
-         CnKpep//wFqMhZ/IZ9K5N5SCz6CM/1VesSJgaz3xsTpELPEj7UgRVqREcALbKkDv5Q
-         z6iTKfrPQtvBzEKm3d97byuiTAwvorYFGbPqeOjg=
+        b=nEoHFldtMz3GoH8SwaasPHQce1swXzMep9EyxHZQq8xjCN1IQhV+UZakScPtMPz8B
+         5OILPDDhjrHvPuUf8AT0107wbt1FQkQDHTpxxd8AyXA8qnAyOEOGFPXQk5JmgLTBll
+         FWZvuJrZxEsF7O0t3y2klCGRwaqNdtfmnL6UsUGM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Lubomir Rintel <lkundrak@v3.sk>, Borislav Petkov <bp@suse.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        x86-ml <x86@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 09/22] x86/olpc: Indicate that legacy PC XO-1 platform should not register RTC
-Date:   Wed, 31 Oct 2018 19:11:53 -0400
-Message-Id: <20181031231206.29509-9-sashal@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 10/22] regulator: fixed: Default enable high on DT regulators
+Date:   Wed, 31 Oct 2018 19:11:54 -0400
+Message-Id: <20181031231206.29509-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231206.29509-1-sashal@kernel.org>
 References: <20181031231206.29509-1-sashal@kernel.org>
@@ -52,73 +52,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lubomir Rintel <lkundrak@v3.sk>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-[ Upstream commit d92116b800fb79a72ad26121f5011f6aa3ad94c2 ]
+[ Upstream commit 28be5f15df2ee6882b0a122693159c96a28203c7 ]
 
-On OLPC XO-1, the RTC is discovered via device tree from the arch
-initcall. Don't let the PC platform register another one from its device
-initcall, it's not going to work:
+commit efdfeb079cc3
+("regulator: fixed: Convert to use GPIO descriptor only")
+switched to use gpiod_get() to look up the regulator from the
+gpiolib core whether that is device tree or boardfile.
 
-  sysfs: cannot create duplicate filename '/devices/platform/rtc_cmos'
-  CPU: 0 PID: 1 Comm: swapper Not tainted 4.19.0-rc6 #12
-  Hardware name: OLPC XO/XO, BIOS OLPC Ver 1.00.01 06/11/2014
-  Call Trace:
-   dump_stack+0x16/0x18
-   sysfs_warn_dup+0x46/0x58
-   sysfs_create_dir_ns+0x76/0x9b
-   kobject_add_internal+0xed/0x209
-   ? __schedule+0x3fa/0x447
-   kobject_add+0x5b/0x66
-   device_add+0x298/0x535
-   ? insert_resource_conflict+0x2a/0x3e
-   platform_device_add+0x14d/0x192
-   ? io_delay_init+0x19/0x19
-   platform_device_register+0x1c/0x1f
-   add_rtc_cmos+0x16/0x31
-   do_one_initcall+0x78/0x14a
-   ? do_early_param+0x75/0x75
-   kernel_init_freeable+0x152/0x1e0
-   ? rest_init+0xa2/0xa2
-   kernel_init+0x8/0xd5
-   ret_from_fork+0x2e/0x38
-  kobject_add_internal failed for rtc_cmos with -EEXIST, don't try to
-    register things with the same name in the same directory.
-  platform rtc_cmos: registered platform RTC device (no PNP device found)
+This meant that we activate the code in
+a603a2b8d86e ("gpio: of: Add special quirk to parse regulator flags")
+which means the descriptors coming from the device tree already
+have the right inversion and open drain semantics set up from
+the gpiolib core.
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: x86-ml <x86@kernel.org>
-Link: http://lkml.kernel.org/r/20181004160808.307738-1-lkundrak@v3.sk
+As the fixed regulator was inspected again we got the
+inverted inversion and things broke.
+
+Fix it by ignoring the config in the device tree for now: the
+later patches in the series will push all inversion handling
+over to the gpiolib core and set it up properly in the
+boardfiles for legacy devices, but I did not finish that
+for this kernel cycle.
+
+Fixes: commit efdfeb079cc3 ("regulator: fixed: Convert to use GPIO descriptor only")
+Reported-by: Leonard Crestez <leonard.crestez@nxp.com>
+Reported-by: Fabio Estevam <festevam@gmail.com>
+Reported-by: John Stultz <john.stultz@linaro.org>
+Reported-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Tested-by: John Stultz <john.stultz@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/platform/olpc/olpc-xo1-rtc.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/regulator/fixed.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/platform/olpc/olpc-xo1-rtc.c b/arch/x86/platform/olpc/olpc-xo1-rtc.c
-index a2b4efddd61a..8e7ddd7e313a 100644
---- a/arch/x86/platform/olpc/olpc-xo1-rtc.c
-+++ b/arch/x86/platform/olpc/olpc-xo1-rtc.c
-@@ -16,6 +16,7 @@
+diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
+index 354105eff1f8..dfe2e91436e5 100644
+--- a/drivers/regulator/fixed.c
++++ b/drivers/regulator/fixed.c
+@@ -92,9 +92,14 @@ of_get_fixed_voltage_config(struct device *dev)
  
- #include <asm/msr.h>
- #include <asm/olpc.h>
-+#include <asm/x86_init.h>
+ 	of_property_read_u32(np, "startup-delay-us", &config->startup_delay);
  
- static void rtc_wake_on(struct device *dev)
- {
-@@ -75,6 +76,8 @@ static int __init xo1_rtc_init(void)
- 	if (r)
- 		return r;
+-	config->enable_high = of_property_read_bool(np, "enable-active-high");
+-	config->gpio_is_open_drain = of_property_read_bool(np,
+-							   "gpio-open-drain");
++	/*
++	 * FIXME: we pulled active low/high and open drain handling into
++	 * gpiolib so it will be handled there. Delete this in the second
++	 * step when we also remove the custom inversion handling for all
++	 * legacy boardfiles.
++	 */
++	config->enable_high = 1;
++	config->gpio_is_open_drain = 0;
  
-+	x86_platform.legacy.rtc = 0;
-+
- 	device_init_wakeup(&xo1_rtc_device.dev, 1);
- 	return 0;
- }
+ 	if (of_find_property(np, "vin-supply", NULL))
+ 		config->input_supply = "vin";
 -- 
 2.17.1
 
