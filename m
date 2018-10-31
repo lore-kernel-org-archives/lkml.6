@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF4D9C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D35ECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E32020840
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B73620840
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vtbHd/1w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E32020840
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="L/wr1pn8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B73620840
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729831AbeKAIIh (ORCPT
+        id S1729850AbeKAIIi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:08:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57674 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:08:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729794AbeKAIIg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:08:36 -0400
+        id S1729817AbeKAIIh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:08:37 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6E512064C;
-        Wed, 31 Oct 2018 23:08:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3EE22081B;
+        Wed, 31 Oct 2018 23:08:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027304;
-        bh=MZuVpyKfXFgjtZWyaBctliGI5hmqqoQD0X1l/h/OtOw=;
+        s=default; t=1541027306;
+        bh=xixfP+2xcVyJj/LcGiNejEQLYC1PYTYpBTx80WWdXr0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vtbHd/1wqKxAiqNy2VMGBtKOribwxdQpZsyJji0scjWsKOGlf1bBEkBOIc37fCypi
-         Mb/2+0TP7/8AdN6J2Fk++ar8CO4yfQdmgoj60ckfkQhsBP+aaC0eT1mzjhs5bzG5j3
-         JhTZhJdzu94AroJWn6YFrkDy00o9I1NEwlIcjE8I=
+        b=L/wr1pn8IXMG4sOdCWzquRk5/wWofrB/6Xs9/qw91r2OucV7ML9699/t4zZkLlkty
+         WsUgL7RxIOH02evtuk5zi0wQBtc4nB04MHyFzT4hoD5tRgHS+VB+u3B1EL4vKRz6pz
+         ZSUCJuT9tgBmmr1LZWgE8RMEsOjKDEWTYsBDwDdA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Xiaochen Shen <xiaochen.shen@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H Peter Anvin" <hpa@zytor.com>, "Tony Luck" <tony.luck@intel.com>,
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 033/126] x86/intel_rdt: Show missing resctrl mount options
-Date:   Wed, 31 Oct 2018 19:06:21 -0400
-Message-Id: <20181031230754.29029-33-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 035/126] regulator: fixed: Default enable high on DT regulators
+Date:   Wed, 31 Oct 2018 19:06:23 -0400
+Message-Id: <20181031230754.29029-35-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -55,57 +53,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiaochen Shen <xiaochen.shen@intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-[ Upstream commit 2cc81c6992248ea37d0241bc325977bab310bc3b ]
+[ Upstream commit 28be5f15df2ee6882b0a122693159c96a28203c7 ]
 
-In resctrl filesystem, mount options exist to enable L3/L2 CDP and MBA
-Software Controller features if the platform supports them:
+commit efdfeb079cc3
+("regulator: fixed: Convert to use GPIO descriptor only")
+switched to use gpiod_get() to look up the regulator from the
+gpiolib core whether that is device tree or boardfile.
 
- mount -t resctrl resctrl [-o cdp[,cdpl2][,mba_MBps]] /sys/fs/resctrl
+This meant that we activate the code in
+a603a2b8d86e ("gpio: of: Add special quirk to parse regulator flags")
+which means the descriptors coming from the device tree already
+have the right inversion and open drain semantics set up from
+the gpiolib core.
 
-But currently only "cdp" option is displayed in /proc/mounts. "cdpl2" and
-"mba_MBps" options are not shown even when they are active.
+As the fixed regulator was inspected again we got the
+inverted inversion and things broke.
 
-Before:
- # mount -t resctrl resctrl -o cdp,mba_MBps /sys/fs/resctrl
- # grep resctrl /proc/mounts
- /sys/fs/resctrl /sys/fs/resctrl resctrl rw,relatime,cdp 0 0
+Fix it by ignoring the config in the device tree for now: the
+later patches in the series will push all inversion handling
+over to the gpiolib core and set it up properly in the
+boardfiles for legacy devices, but I did not finish that
+for this kernel cycle.
 
-After:
- # mount -t resctrl resctrl -o cdp,mba_MBps /sys/fs/resctrl
- # grep resctrl /proc/mounts
- /sys/fs/resctrl /sys/fs/resctrl resctrl rw,relatime,cdp,mba_MBps 0 0
-
-Signed-off-by: Xiaochen Shen <xiaochen.shen@intel.com>
-Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "H Peter Anvin" <hpa@zytor.com>
-Cc: "Tony Luck" <tony.luck@intel.com>
-Link: https://lkml.kernel.org/r/1536796118-60135-1-git-send-email-fenghua.yu@intel.com
+Fixes: commit efdfeb079cc3 ("regulator: fixed: Convert to use GPIO descriptor only")
+Reported-by: Leonard Crestez <leonard.crestez@nxp.com>
+Reported-by: Fabio Estevam <festevam@gmail.com>
+Reported-by: John Stultz <john.stultz@linaro.org>
+Reported-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Tested-by: John Stultz <john.stultz@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/regulator/fixed.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 749856a2e736..bc3801985d73 100644
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -2032,6 +2032,13 @@ static int rdtgroup_show_options(struct seq_file *seq, struct kernfs_root *kf)
- {
- 	if (rdt_resources_all[RDT_RESOURCE_L3DATA].alloc_enabled)
- 		seq_puts(seq, ",cdp");
-+
-+	if (rdt_resources_all[RDT_RESOURCE_L2DATA].alloc_enabled)
-+		seq_puts(seq, ",cdpl2");
-+
-+	if (is_mba_sc(&rdt_resources_all[RDT_RESOURCE_MBA]))
-+		seq_puts(seq, ",mba_MBps");
-+
- 	return 0;
- }
+diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
+index 988a7472c2ab..d68ff65a5adc 100644
+--- a/drivers/regulator/fixed.c
++++ b/drivers/regulator/fixed.c
+@@ -84,9 +84,14 @@ of_get_fixed_voltage_config(struct device *dev,
  
+ 	of_property_read_u32(np, "startup-delay-us", &config->startup_delay);
+ 
+-	config->enable_high = of_property_read_bool(np, "enable-active-high");
+-	config->gpio_is_open_drain = of_property_read_bool(np,
+-							   "gpio-open-drain");
++	/*
++	 * FIXME: we pulled active low/high and open drain handling into
++	 * gpiolib so it will be handled there. Delete this in the second
++	 * step when we also remove the custom inversion handling for all
++	 * legacy boardfiles.
++	 */
++	config->enable_high = 1;
++	config->gpio_is_open_drain = 0;
+ 
+ 	if (of_find_property(np, "vin-supply", NULL))
+ 		config->input_supply = "vin";
 -- 
 2.17.1
 
