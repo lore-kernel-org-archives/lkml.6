@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A52A3ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:26:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A549ECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:26:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6859C20657
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:26:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6859C20657
+	by mail.kernel.org (Postfix) with ESMTP id 4D9CB20657
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:26:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D9CB20657
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730287AbeKADZ1 (ORCPT
+        id S1730299AbeKADZ2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 23:25:27 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:56232 "EHLO
+        Wed, 31 Oct 2018 23:25:28 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:56255 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729986AbeKADZ0 (ORCPT
+        with ESMTP id S1730262AbeKADZ1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 23:25:26 -0400
+        Wed, 31 Oct 2018 23:25:27 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1gHvC1-0005dE-LL; Wed, 31 Oct 2018 19:26:13 +0100
-Message-Id: <20181031182253.300140921@linutronix.de>
+        id 1gHvC3-0005de-Q2; Wed, 31 Oct 2018 19:26:15 +0100
+Message-Id: <20181031182253.479792883@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Wed, 31 Oct 2018 19:21:14 +0100
+Date:   Wed, 31 Oct 2018 19:21:16 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Ingo Molnar <mingo@kernel.org>,
@@ -46,14 +46,13 @@ Cc:     Ingo Molnar <mingo@kernel.org>,
         Nicolas Pitre <nicolas.pitre@linaro.org>,
         David Riley <davidriley@chromium.org>,
         Colin Cross <ccross@android.com>,
-        Mark Brown <broonie@kernel.org>,
-        Russell King <rmk+kernel@arm.linux.org.uk>
-Subject: [patch 7/9] sched/clock: Remove license boilerplate
+        Mark Brown <broonie@kernel.org>
+Subject: [patch 9/9] posix-timers: Remove license boilerplate
 References: <20181031182107.726051323@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline;
- filename=sched-clock--Remove-license-boilerplate.patch
+ filename=posix-timers--Remove-license-boilerplate.patch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -62,25 +61,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 The SPDX identifier defines the license of the file already. No need for
 the boilerplate.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: John Stultz <john.stultz@linaro.org>
----
- kernel/time/sched_clock.c |    4 ----
- 1 file changed, 4 deletions(-)
+Remove also the completely outdated Montavista snail mail address.
 
---- a/kernel/time/sched_clock.c
-+++ b/kernel/time/sched_clock.c
-@@ -2,10 +2,6 @@
- /*
-  * Generic sched_clock() support, to extend low level hardware time
-  * counters to full 64-bit ns values.
-- *
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Corey Minyard <cminyard@mvista.com>
+---
+ kernel/time/posix-timers.c |   20 +-------------------
+ 1 file changed, 1 insertion(+), 19 deletions(-)
+
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -7,25 +7,7 @@
+  * 2004-06-01  Fix CLOCK_REALTIME clock/timer TIMER_ABSTIME bug.
+  *			     Copyright (C) 2004 Boris Hu
+  *
 - * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or (at
+- * your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful, but
+- * WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+- * General Public License for more details.
+-
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+- *
+- * MontaVista Software | 1237 East Arques Avenue | Sunnyvale | CA 94085 | USA
+- */
+-
+-/* These are all the functions necessary to implement
+- * POSIX clocks & timers
++ * These are all the functions necessary to implement POSIX clocks & timers
   */
- #include <linux/clocksource.h>
- #include <linux/init.h>
+ #include <linux/mm.h>
+ #include <linux/interrupt.h>
 
 
