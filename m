@@ -6,97 +6,113 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB63CC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C94ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:35:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58B3F20657
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:35:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39F5B20657
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:35:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bLkNBCDR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58B3F20657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="HX1HCtfC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39F5B20657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730323AbeKADeR (ORCPT
+        id S1730343AbeKADeU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 23:34:17 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37325 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730000AbeKADeR (ORCPT
+        Wed, 31 Oct 2018 23:34:20 -0400
+Received: from mail-lj1-f175.google.com ([209.85.208.175]:40381 "EHLO
+        mail-lj1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730000AbeKADeT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 23:34:17 -0400
-Received: by mail-wr1-f67.google.com with SMTP id g9-v6so17603265wrq.4
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 11:35:04 -0700 (PDT)
+        Wed, 31 Oct 2018 23:34:19 -0400
+Received: by mail-lj1-f175.google.com with SMTP id t22-v6so15772825lji.7
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 11:35:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=/R2L5HQBXDw0/Xg4fnjvJK8AaWmqirCcYNNkoKNJKAg=;
-        b=bLkNBCDRaKK4gdmyHB2oyDMSFmccY9LiIIyiXs/KFFz8qWYYWwN75L7DgnuvxEKoxH
-         gONKR6T2lgmiciAVvMwO6bv7BIHWaM5TH+xQvV1cKiIhfRgzXlmOvKFlfjveJbcsrMXB
-         eHFUW+jOvpOENRc7QlCIqKTRtRCF7FNMcBjFs=
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=FQUsOhAwBp6jUI+p9eH6uJvgprhroMji27yeTbkEtYw=;
+        b=HX1HCtfCWHRHiOj2HkHJDfDrTd4kEr78eixfg0e6rWvwpA7/uGXm9eodLrEPPSmkLR
+         T6eFpq3xr9sSb0Gt5gR4U076chSuyETG6i/zwGInoKxBWXkx73wAjixl+dShcfe0Gytx
+         cBBXuLj4YLiD9mMIgY99h0mtoDjMO3oLW63pM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=/R2L5HQBXDw0/Xg4fnjvJK8AaWmqirCcYNNkoKNJKAg=;
-        b=Okt4ezvnYNZmj3L7CScJAh+hlrrYLLS74XKIKe8U85KIZ8zj/ENwfvZ/eegOGr2zX2
-         MtBxmcvpiPTtdw1CyBAcR7mfe9yL0OZ6LUNlyaItsEUd/i/SqYzEvN6Xd7VqPu4PcCkd
-         aQj1d6IKeU7f6UW+P88tAhFjn5Xq+s5eGqtmV63754tplm2JEfBs5bAomKGZpBphP7Wa
-         5ytNBUkWNobJFtglrjGVhMP6yfPll/yAzXgfES7wVbN+wCE0i9oxS6S3kG7lGK8eUQTO
-         aJIKBRjvFp6fV4hNXNzbbKOZdm/ktCjUS/T6nxqNeRGZ2TOW082ItEVUyjWsSLbgLphx
-         +pmw==
-X-Gm-Message-State: AGRZ1gLgEAcHF6LKc5VXWZRdbEci6LvDipTG0M0wq7IrKeqcvtAtr0J2
-        It5xD7vZNL68Y+spVn10dRTsmCXGFPYwl0zVTsiOrw==
-X-Google-Smtp-Source: AJdET5dDOqCIsaUtnWCguW515rIR3eIV96QWY0/f13u9vgvPOeQbM3SamH2gm0rOMvasjx9OcehUY8yjk8LJQA6TEww=
-X-Received: by 2002:adf:e28d:: with SMTP id v13-v6mr3704207wri.139.1541010903226;
- Wed, 31 Oct 2018 11:35:03 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=FQUsOhAwBp6jUI+p9eH6uJvgprhroMji27yeTbkEtYw=;
+        b=QTiFnJT0jNjnWnFe/+GnXySHpUhnebBw4j5Oyu9Zh1qJ8NOu6hwcvd2x9iTvlGTmfg
+         sTbPrhKJmdHPsLJDje47a0qIrKtPD2WxPfW/T8cwAGK/kfbcQdwBMWGiC+vT+MZYLoaT
+         uFn6GaVlo4JbcsGIjFOZxPm/3mKaCw6gNSK2uGWP2OYKL7YdX1oyfAG/4v8uHb2cWf8B
+         oSVA/XgWYDXYxKTe6v6zafUWu14J8IXGQaSH4jokPQ+2PwaGk4YWa5JEIuuOXmM0tJdI
+         guhcqvIjWrC3nQOHUMLfmpTI2+PUs6GWxp5Y8BkWmJOTHRMCoPHlTVl5iNdgwVJlR1KZ
+         iQag==
+X-Gm-Message-State: AGRZ1gIaKyljyQAu4EJDHk1oMM4jNfSjXfPr4ODe2BIR8YHN7ziIqzY/
+        U9Q92gPfZfd9scL98NbRaIxRzhE042AZ/A==
+X-Google-Smtp-Source: AJdET5dIDaXP1/3LkVjiO3w1fDAWajhEr/8Rpdy2JUoeHu87lufSO08TtY8dJljWVFRDKeY3/yqfiA==
+X-Received: by 2002:a2e:2909:: with SMTP id u9-v6mr2822451lje.28.1541010905107;
+        Wed, 31 Oct 2018 11:35:05 -0700 (PDT)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id p13-v6sm3315477ljh.31.2018.10.31.11.35.01
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Oct 2018 11:35:02 -0700 (PDT)
+Received: by mail-lj1-f179.google.com with SMTP id z80-v6so9723837ljb.8
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 11:35:01 -0700 (PDT)
+X-Received: by 2002:a2e:874e:: with SMTP id q14-v6mr755549ljj.120.1541010900998;
+ Wed, 31 Oct 2018 11:35:00 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a1c:4054:0:0:0:0:0 with HTTP; Wed, 31 Oct 2018 11:35:01
- -0700 (PDT)
-In-Reply-To: <20181031182107.726051323@linutronix.de>
-References: <20181031182107.726051323@linutronix.de>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Wed, 31 Oct 2018 11:35:01 -0700
-Message-ID: <CALAqxLVXZEFHmNBrDC+csQYwft4zHA=kB8oXfA66m-p3kKUf6Q@mail.gmail.com>
-Subject: Re: [patch 0/9] time: Add SPDX identifiers and cleanup boilerplates
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Peter Anvin <hpa@zytor.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Corey Minyard <cminyard@mvista.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        David Riley <davidriley@chromium.org>,
-        Colin Cross <ccross@android.com>,
-        Mark Brown <broonie@kernel.org>
+References: <CAHk-=wjS6cjjP+fkZWzzrdZ_fZ1F=PrAGcBc57vKCpNyoD73Vw@mail.gmail.com>
+ <CACRpkdbi2gqqc271eMgHjD68bqf2mzw8zw+iAhYv2LFajfo-eQ@mail.gmail.com>
+ <CAHk-=wiiC65aZFrDp69vdcSALLDZNPkTL1diadxNL54tBPeAzQ@mail.gmail.com>
+ <20181023093521.dm3l5oen2j7etsot@kshutemo-mobl1> <CAHk-=wh6i5t5jYHrC-ZCdj8qoZWP3BptV87U=G9G4UyunzPf7Q@mail.gmail.com>
+ <20181023200408.GA13179@chatter.qube.local> <CAHk-=wjVJ1w=MYXhu42+1rPybtztz+7q=KWo53nQmasR7R4SNA@mail.gmail.com>
+ <20181031142756.GA5679@pure.paranoia.local>
+In-Reply-To: <20181031142756.GA5679@pure.paranoia.local>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 31 Oct 2018 11:34:44 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wht_ohu8T1yA_cB1VG2=V25X0_2FEbBdq=PsFd50g9pRg@mail.gmail.com>
+Message-ID: <CAHk-=wht_ohu8T1yA_cB1VG2=V25X0_2FEbBdq=PsFd50g9pRg@mail.gmail.com>
+Subject: Re: Git pull ack emails..
+To:     kirill@shutemov.name, Linus Walleij <linus.walleij@linaro.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Mark Brown <broonie@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 11:21 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> Add SPDX identifiers to all files in kernel/time and remove the license
-> boiler plates.
+On Wed, Oct 31, 2018 at 7:28 AM Konstantin Ryabitsev
+<konstantin@linuxfoundation.org> wrote:
 >
-> Aside of that use the chance to get rid of (stale) file references and tidy
-> up the top of file comments as they are touched anyway by this work.
->
-> This work is based on a script and data from Philippe Ombredanne, Kate
-> Stewart and myself. The data has been created with two independent license
-> scanners and manual inspection.
+> Regarding your case specifically, what's a good cutoff period for
+> treating a pull request as effectively ignored/abandoned (i.e. no
+> matching commit-id ever found in the repo). I'm guessing about a month,
+> or do you want to go longer, in case something shifts to the following
+> merge window?
 
+Oh, I'd definitely not go longer - if anything, I think it could be shorter.
 
-Looks ok by me.
+My *normal* reaction time is on the order of days. But yes, every
+merge window there are a couple of pulls that I end up delaying to the
+end of the merge window when I'm supposed to have more time to really
+review them. Right now I have three such pull requests pending, for
+example (and had planned to look at them today, but then new "normal"
+pull requests happened, so I still haven't gotten around to them).
 
-Acked-by: John Stultz <john.stultz@linaro.org>
+But even when those things get put in my queue, the queue shouldn't be
+longer than the 2-week merge window, and if it is, I end up responding
+separately (ie writing people "ok, I'm still mulling this over, but
+it's not making rc1").
 
-thanks
--john
+So I think a one-month queue is more than sufficient, and if there are
+reasons to time things out earlier, a two-week one would be perfectly
+fine too.
+
+                  Linus
