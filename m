@@ -2,119 +2,142 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F11AFECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:25:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D47F2ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:25:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B538B205F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:25:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B538B205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id 97548205F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:25:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VxOBmg1r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97548205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729613AbeJaXXh (ORCPT
+        id S1729606AbeJaXYL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 19:23:37 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:22583 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729494AbeJaXXh (ORCPT
+        Wed, 31 Oct 2018 19:24:11 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:40942 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729492AbeJaXYL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 19:23:37 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by dkim.mimecast.com with ESMTP id
- uk-mta-169-yJgCRg4gN6OzIim__iclww-1; Wed, 31 Oct 2018 14:25:18 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Wed, 31 Oct 2018 14:25:23 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 31 Oct 2018 14:25:23 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Daniel Colascione' <dancol@google.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "timmurray@google.com" <timmurray@google.com>,
-        "joelaf@google.com" <joelaf@google.com>
-Subject: RE: [RFC PATCH] Minimal non-child process exit notification support
-Thread-Topic: [RFC PATCH] Minimal non-child process exit notification support
-Thread-Index: AQHUb7BQVhTcKn4SykenXuciwsVIoKU5SOFwgAAJ8QCAABLgAA==
-Date:   Wed, 31 Oct 2018 14:25:22 +0000
-Message-ID: <4ed9af67cf4a46708905d3f392344bcb@AcuMS.aculab.com>
-References: <20181029175322.189042-1-dancol@google.com>
- <4beaaae77bea4cc5b4cc15504331c9a9@AcuMS.aculab.com>
- <CAKOZuetR6_ztfJOe4TMVCX2J5sfuP8XBtG66hmsDkx-KH=CpJw@mail.gmail.com>
-In-Reply-To: <CAKOZuetR6_ztfJOe4TMVCX2J5sfuP8XBtG66hmsDkx-KH=CpJw@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Wed, 31 Oct 2018 19:24:11 -0400
+Received: by mail-qk1-f196.google.com with SMTP id f18-v6so9712247qkm.7;
+        Wed, 31 Oct 2018 07:25:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=nP7Djv6v9shpmQaYTxM+upkt37Jfp8TUxQtY6zVOVog=;
+        b=VxOBmg1rqWXqKEBbu21qj/VubWUGGzSuSwgtCxnVnUA64xGtjGrqOmUmpfbLcwbaLI
+         NrDB7LQLzXt4xsoq4Swf8XJBWRLkyNNKAX0xnk6xNrxaT+s19DNSnMVbDwNZni/T/d3C
+         0FbY7Up8QKrs2qvYdum1L9/TwZhIyAH1DTjzNndGj2QfCB8BbUh3fvPQ1Uy4VvodFZQr
+         Gv5Sl1C9VB34iMcvQXFHJt/92A6HK46DlaQCZD9t+hhrrKFr7JpJ4LhBBiXvRmEhdlNH
+         VqtA+SYgcFUWNKVBVMRLrEjQF1OFDSW6mcDG75QOqPsJT8aeV79wJE4I7PxIbdTHzaL8
+         Tt4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=nP7Djv6v9shpmQaYTxM+upkt37Jfp8TUxQtY6zVOVog=;
+        b=MJD14WUb2Y2lh9ECuLYAc2+MEd7fCnlg98/QvFLZ7DRQfHgwvvjvW6+5Vxn/GyrSEo
+         Nuk8TxtfdNzWWpEneGAj6//v0Hx2jPDCeAi5xTmEUEuUakwtm1lAwOu4/dw/X2ud/vc5
+         LtAr/X/0hYJDDj7ISignMWVw+Hxak2A7MCn9BWwJtaiP9m+/oTeNns2R6ljFQ8hrsTbD
+         GVuP2DHW7F05CdLIGaG6d+8KmGGSeSywXc2ffC8cUkT/Zu5RN7Ilu1PFG9+LwhRjMJli
+         AtrrqigNI7yPVoVXaL4ZhIvDA785NNOfE1Ovu55Red+HP+BlS94prZ1rgAlKP1eyGf7d
+         0kRQ==
+X-Gm-Message-State: AGRZ1gJVrkq2DFmgBDTNDIzh2ohpSW0i4D2gQzdQb84jPXMIwvZEfbCQ
+        OpsUp1s5adcecWGB+4zJgOwDhImxSWzuz4Dy6o0=
+X-Google-Smtp-Source: AJdET5fV0+HVwkP/qUQRmBR4ru+ARC/XQ0wFKMwQRwY3gWysR87Uw7zKnTxPP/Je6IBwf8HNHGo2t+R1OdBoNQwNdS8=
+X-Received: by 2002:ac8:2c49:: with SMTP id e9-v6mr2879568qta.17.1540995955282;
+ Wed, 31 Oct 2018 07:25:55 -0700 (PDT)
 MIME-Version: 1.0
-X-MC-Unique: yJgCRg4gN6OzIim__iclww-1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+References: <20181024134040.115413-1-smuchun@gmail.com> <CACRpkdbht0wn=Vy4-M-sgEbsiY-S8u3eP0s_DM+j+6vWvZG5cQ@mail.gmail.com>
+In-Reply-To: <CACRpkdbht0wn=Vy4-M-sgEbsiY-S8u3eP0s_DM+j+6vWvZG5cQ@mail.gmail.com>
+From:   Muchun Song <smuchun@gmail.com>
+Date:   Wed, 31 Oct 2018 22:25:46 +0800
+Message-ID: <CAPSr9jEW_+9BSFRLbqMVO=m4+AMih4cHm_AS241TjfvGcMFKAA@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: fix possible use after free on label
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogRGFuaWVsIENvbGFzY2lvbmUNCj4gU2VudDogMzEgT2N0b2JlciAyMDE4IDEyOjU2DQo+
-IE9uIFdlZCwgT2N0IDMxLCAyMDE4IGF0IDEyOjI3IFBNLCBEYXZpZCBMYWlnaHQgPERhdmlkLkxh
-aWdodEBhY3VsYWIuY29tPiB3cm90ZToNCj4gPiBGcm9tOiBEYW5pZWwgQ29sYXNjaW9uZQ0KPiA+
-PiBTZW50OiAyOSBPY3RvYmVyIDIwMTggMTc6NTMNCj4gPj4NCj4gPj4gVGhpcyBwYXRjaCBhZGRz
-IGEgbmV3IGZpbGUgdW5kZXIgL3Byb2MvcGlkLCAvcHJvYy9waWQvZXhpdGhhbmQuDQo+ID4+IEF0
-dGVtcHRpbmcgdG8gcmVhZCBmcm9tIGFuIGV4aXRoYW5kIGZpbGUgd2lsbCBibG9jayB1bnRpbCB0
-aGUNCj4gPj4gY29ycmVzcG9uZGluZyBwcm9jZXNzIGV4aXRzLCBhdCB3aGljaCBwb2ludCB0aGUg
-cmVhZCB3aWxsIHN1Y2Nlc3NmdWxseQ0KPiA+PiBjb21wbGV0ZSB3aXRoIEVPRi4gIFRoZSBmaWxl
-IGRlc2NyaXB0b3Igc3VwcG9ydHMgYm90aCBibG9ja2luZw0KPiA+PiBvcGVyYXRpb25zIGFuZCBw
-b2xsKDIpLiBJdCdzIGludGVuZGVkIHRvIGJlIGEgbWluaW1hbCBpbnRlcmZhY2UgZm9yDQo+ID4+
-IGFsbG93aW5nIGEgcHJvZ3JhbSB0byB3YWl0IGZvciB0aGUgZXhpdCBvZiBhIHByb2Nlc3MgdGhh
-dCBpcyBub3Qgb25lDQo+ID4+IG9mIGl0cyBjaGlsZHJlbi4NCj4gPg0KPiA+IFdoeSBkbyB5b3Ug
-bmVlZCBhbiBleHRyYSBmaWxlPw0KPiANCj4gQmVjYXVzZSBubyBjdXJyZW50IGZpbGUgc3VmZmlj
-ZXMuDQoNClRoYXQgZG9lc24ndCBzdG9wIHlvdSBtYWtpbmcgc29tZXRoaW5nIHdvcmsgb24gYW55
-L2FsbCBvZiB0aGUgZXhpc3RpbmcgZmlsZXMuDQoNCj4gPiBJdCBvdWdodCB0byBiZSBwb3NzaWJs
-ZSB0byB1c2UgcG9sbCgpIHRvIHdhaXQgZm9yIFBPTExFUlIgaGF2aW5nIHNldA0KPiA+ICdldmVu
-dHMnIHRvIHplcm8gb24gYW55IG9mIHRoZSBub2RlcyBpbiAvcHJvYy9waWQgLSBvciBldmVuIG9u
-DQo+ID4gdGhlIGRpcmVjdG9yeSBpdHNlbGYuDQo+IA0KPiBUaGF0IGRvZXNuJ3QgYWN0dWFsbHkg
-d29yayB0b2RheS4gQW5kIHdhaXRpbmcgb24gYSBkaXJlY3Rvcnkgd2l0aA0KPiBQT0xMRVJSIHdv
-dWxkIGJlIHZlcnkgd2VpcmQsIHNpbmNlIGRpcmVjdG9yaWVzIGluIGdlbmVyYWwgZG9uJ3QgZG8N
-Cj4gdGhpbmdzIGxpa2UgYmxvY2tpbmcgcmVhZHMgb3IgcG9sbCBzdXBwb3J0LiBBIHNlcGFyYXRl
-IGZpbGUgd2l0aA0KPiBzZWxmLWNvbnRhaW5lZCwgd2VsbC1kZWZpbmVkIHNlbWFudGljcyBpcyBj
-bGVhbmVyLg0KDQpEZXZpY2UgZHJpdmVycyB3aWxsICh3ZWxsIG91Z2h0IHRvKSByZXR1cm4gUE9M
-TEVSUiB3aGVuIGEgZGV2aWNlDQppcyByZW1vdmVkLg0KTWFraW5nIHByb2NmcyBiZWhhdmUgdGhl
-IHNhbWUgd2F5IHdvdWxkbid0IGJlIHRvbyBzdHVwaWQuDQoNCj4gPiBJbmRlZWQsIHRvIGF2b2lk
-IGtpbGxpbmcgdGhlIHdyb25nIHByb2Nlc3MgeW91IG5lZWQgdG8gaGF2ZSBvcGVuZWQNCj4gPiBz
-b21lIG5vZGUgb2YgL3Byb2MvcGlkLyogKG1heWJlIGNtZGxpbmUpIGJlZm9yZSBzZW5kaW5nIHRo
-ZSBraWxsDQo+ID4gc2lnbmFsLg0KPiANCj4gVGhlIGtlcm5lbCByZWFsbHkgbmVlZHMgYmV0dGVy
-IGRvY3VtZW50YXRpb24gb2YgdGhlIHNlbWFudGljcyBvZg0KPiBwcm9jZnMgZmlsZSBkZXNjcmlw
-dG9ycy4gWW91J3JlIG5vdCB0aGUgb25seSBwZXJzb24gdG8gdGhpbmssDQo+IG1pc3Rha2VubHks
-IHRoYXQga2VlcGluZyBhIHJlZmVyZW5jZSB0byBhIC9wcm9jLyRQSUQvc29tZXRoaW5nIEZEDQo+
-IHJlc2VydmVzICRQSUQgYW5kIHByZXZlbnRzIGl0IGJlaW5nIHVzZWQgZm9yIGFub3RoZXIgcHJv
-Y2Vzcy4gUHJvY2ZzDQo+IEZEcyBkbyBubyBzdWNoIHRoaW5nLiBraWxsKDIpIGlzIHVuc2FmZSB3
-aGV0aGVyIG9yIG5vdA0KPiAvcHJvYy9waWQvY21kbGluZSBvciBhbnkgb3RoZXIgL3Byb2MgZmls
-ZSBpcyBvcGVuLg0KDQpJbnRlcmVzdGluZy4NCkxpbnV4ICdmaXhlZCcgdGhlIHByb2JsZW0gb2Yg
-cGlkIHJldXNlIGluIHRoZSBrZXJuZWwgYnkgYWRkaW5nIChJSVJDKQ0KJ3N0cnVjdCBwaWQnIHRo
-YXQgcmVmZXJlbmNlIGNvdW50cyB0aGUgcGlkIHN0b3BwaW5nIHJldXNlLg0KQnV0IHNpbmNlIHRo
-ZSBwaWRzIGFyZSBzdGlsbCBhbGxvY2F0ZWQgc2VxdWVudGlhbGx5IHVzZXJzcGFjZSBjYW4NCnN0
-aWxsIHJlZmVyZW5jZSBhIHBpZCB0aGF0IGlzIGZyZWVkIGFuZCBpbW1lZGlhdGVseSByZXVzZWQu
-DQpJJ2QgaGF2ZSB0aG91Z2h0IHRoYXQgcHJvY2ZzIG5vZGVzIGhlbGQgYSByZWZlcmVuY2UgY291
-bnQgb24gdGhlICdzdHJ1Y3QgcGlkJy4NClRoZXJlJ3MgcHJvYmFibHkgbm8gcmVhc29uIHdoeSBp
-dCBzaG91bGRuJ3QuDQoNCkFubm95aW5nbHkgbm9uLUdQTCBkcml2ZXJzIGNhbid0IHJlbGVhc2Ug
-cmVmZXJlbmNlcyB0byAnc3RydWN0IHBpZCcgc28NCmFyZSB2ZXJ5IGNvbnN0cmFpbmVkIGFib3V0
-IHdoaWNoIHByb2Nlc3NlcyB0aGV5IGNhbiBzaWduYWwuDQpJIGFsc28gbWFuYWdlZCB0byB1c2Ug
-YSBzdGFsZSAnc3RydWN0IHBpZCcgYW5kIGtpbGwgdGhlIHdyb25nIHByb2Nlc3MNCi0gbXVjaCBt
-b3JlIGxpa2VseSB0aGF0IHRoZSBwaWQgbnVtYmVyIGJlaW5nIHJldXNlZC4NCg0KSWYgeW91IGxv
-b2sgYXQgdGhlIE5ldEJTRCBwaWQgYWxsb2NhdG9yIHlvdSdsbCBzZWUgdGhhdCBpdCB1c2VzIHRo
-ZQ0KbG93IHBpZCBiaXRzIHRvIGluZGV4IGFuIGFycmF5IGFuZCB0aGUgaGlnaCBiaXRzIGFzIGEg
-c2VxdWVuY2UgbnVtYmVyLg0KVGhlIGFycmF5IHNsb3RzIGFyZSBhbHNvIHJldXNlZCBMSUZPLCBz
-byB5b3UgYWx3YXlzIG5lZWQgYSBzaWduaWZpY2FudA0KbnVtYmVyIG9mIHBpZCBhbGxvY2F0ZS9m
-cmVlIGJlZm9yZSBhIG51bWJlciBpcyByZXVzZWQuDQpUaGUgbm9uLXNlcXVlbnRpYWwgYWxsb2Nh
-dGlvbiBhbHNvIG1ha2VzIGl0IHNpZ25pZmljYW50bHkgbW9yZSBkaWZmaWN1bHQNCnRvIHByZWRp
-Y3Qgd2hlbiBhIHBpZCB3aWxsIGJlIHJldXNlZC4NClRoZSB0YWJsZSBzaXplIGlzIGRvdWJsZWQg
-d2hlbiBpdCBnZXRzIG5lYXJseSBmdWxsLg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRy
-ZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1L
-MSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
+Hi Linus,
 
+Thanks for your review.
+
+Linus Walleij <linus.walleij@linaro.org> =E4=BA=8E2018=E5=B9=B410=E6=9C=883=
+1=E6=97=A5=E5=91=A8=E4=B8=89 =E4=B8=8B=E5=8D=886:32=E5=86=99=E9=81=93=EF=BC=
+=9A
+>
+> Hi Muchun,
+>
+> thanks for your patch!
+>
+> On Wed, Oct 24, 2018 at 3:41 PM Muchun Song <smuchun@gmail.com> wrote:
+>
+> > gpiod_request_commit() copies the pointer to the label
+> > passed as an argument only to be used later. But there's a
+> > chance the caller could immediately free the passed string
+> > (e.g., local variable). This could trigger a use after free
+> > when we use gpio label(e.g., gpiochip_unlock_as_irq(),
+> > gpiochip_is_requested()).
+> >
+> > To be on the safe side: duplicate the string with
+> > kstrdup_const() so that if an unaware user passes an address
+> > to a stack-allocated buffer, we won't get the arbitrary label.
+> >
+> > Signed-off-by: Muchun Song <smuchun@gmail.com>
+>
+> I am a bit worried about the memory consumption for this,
+> but I guess typically this should not be much.
+
+Yeah, I think so. In most cases, we pass the label, which is
+in .rodata section.
+
+>
+> I am a little bit lost in const-correctness here, and I do
+> understand that the label could point to something allocated on
+> the stack, but it seems like an awkward way of shooting
+> oneself in the foot really. Allocate something and then
+> pass it as a const char *? That is something we could pretty
+> much detect with a cocinelle script I think?
+
+Some user may have more than one gpio to request
+and may program the following code to request one gpio=EF=BC=9A
+
+int gpio_request_one(int gpio)
+{
+        char name[8];
+
+        snprintf(name, sizeof(name), "GPIO_%d", gpio);
+
+        return gpio_request(gpio, name);
+}
+
+In this case, it could trigger a use after free when we use gpio label.
+But the user may not realize it. With this patch applied, we can get
+the right label.
+
+>
+> Anyways: if you want to proceed with this approach, also
+> make sure to fix gpiod_set_consumer_name() to free previous
+> label and make a new strdup when called.
+>
+> Yours,
+> Linus Walleij
+
+Sorry, I forgot to fix gpiod_set_consumer_name().
+I will send you a patch of v2 later. Thanks.
+
+Yours,
+Muchun Song
