@@ -2,91 +2,109 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B4FFC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:11:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E9EECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:11:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2074C20838
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:11:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2074C20838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 74DF720685
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:11:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XE6cCwPx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74DF720685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728258AbeJaTI1 (ORCPT
+        id S1728346AbeJaTJ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 15:08:27 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:59570 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727692AbeJaTI0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 15:08:26 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 1kq5Fyvu_-DI; Wed, 31 Oct 2018 11:10:57 +0100 (CET)
-Received: from zn.tnic (p200300EC2BCE6000329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bce:6000:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 68A061EC00EB;
-        Wed, 31 Oct 2018 11:10:57 +0100 (CET)
-Date:   Wed, 31 Oct 2018 11:10:54 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Dave Young <dyoung@redhat.com>
-Cc:     lijiang <lijiang@redhat.com>, Baoquan He <bhe@redhat.com>,
-        Petr Tesarik <ptesarik@suse.cz>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, kexec@lists.infradead.org, mingo@redhat.com,
-        tglx@linutronix.de, Kazuhito Hagio <khagio@redhat.com>
-Subject: Re: [PATCH] kdump, vmcoreinfo: Export sme_me_mask value to vmcoreinfo
-Message-ID: <20181031101054.GB15955@zn.tnic>
-References: <15897206-c1a6-ced6-3a1b-f71da8fc9c83@redhat.com>
- <20181029114414.GA11408@MiWiFi-R3L-srv>
- <90385882-7fd1-a674-ec5a-19bd42471a5e@redhat.com>
- <20181029134918.GB32150@zn.tnic>
- <699ab34e-1373-582d-4e58-e76bd57ec34f@redhat.com>
- <20181030050900.GA25987@dhcp-128-65.nay.redhat.com>
- <20181030091542.GD32102@zn.tnic>
- <20181030092314.GC14493@MiWiFi-R3L-srv>
- <dcbc925f-6935-6a34-fde1-7aa1ea378891@redhat.com>
- <20181031024748.GA2058@dhcp-128-65.nay.redhat.com>
+        Wed, 31 Oct 2018 15:09:26 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:35630 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727692AbeJaTJ0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 15:09:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gq+In4AB5xCINJI4HV1K716XlMaT2LdiwoPTCQL+wv4=; b=XE6cCwPxeHBHyBSmrkkSTtRE4
+        fFj0439HWdMorMVwv7jsOrdkAXPvSjMnG/TENzReeveGoTBa+dxhZ76iqkmyThYV/MB1dmgIPVqQD
+        MSKW5vE1nLpkVp6eBNJowgXIICZK7MbBSZUKahue+7DkfjGMRbFJvFyPf99SqB95s3MrWytVaO4jf
+        51lu/xx4Qn4ZxcZbAUCoYETUTMyP21EfRyu9SmJn9YN/f42JOr7Bk1P1enkB2Pkn/e4MoXiAxENhO
+        G87ck59YrOaR4fQ2/VojZzeVciQeAaKM9RVVxbQqXVNCiE30fW+THRoTmxgxZNEZ2lKjn3j4mg7Cj
+        Eoe6im17Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gHnTD-0002jN-Qt; Wed, 31 Oct 2018 10:11:28 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 34E802029FA14; Wed, 31 Oct 2018 11:11:24 +0100 (CET)
+Date:   Wed, 31 Oct 2018 11:11:24 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Igor Stoppa <igor.stoppa@gmail.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Kees Cook <keescook@chromium.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 10/17] prmem: documentation
+Message-ID: <20181031101124.GO744@hirez.programming.kicks-ass.net>
+References: <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
+ <20181030152641.GE8177@hirez.programming.kicks-ass.net>
+ <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
+ <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
+ <20181030175814.GB10491@bombadil.infradead.org>
+ <20181030182841.GE7343@cisco>
+ <20181030192021.GC10491@bombadil.infradead.org>
+ <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com>
+ <BAA65A07-F3AF-4209-9D18-7075CEF11EE8@amacapital.net>
+ <2cfb3835-0c18-b3fb-1722-5d693ae0ecd2@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181031024748.GA2058@dhcp-128-65.nay.redhat.com>
+In-Reply-To: <2cfb3835-0c18-b3fb-1722-5d693ae0ecd2@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 10:47:48AM +0800, Dave Young wrote:
-> It is a mist only a few kdump people know them, documenting them will help
-> people to understand and review. It will also be clearer instead of
-> digging into code?
+On Wed, Oct 31, 2018 at 12:15:46AM +0200, Igor Stoppa wrote:
+> On 30/10/2018 23:02, Andy Lutomirski wrote:
 
-Wholeheartedly agreed. Especially if people start using vmcoreinfo for
-other stuff, like live debugging:
+> > But I dislike allowing regular writes in the protected region. We
+> > really only need four write primitives:
+> > 
+> > 1. Just write one value.  Call at any time (except NMI).
+> > 
+> > 2. Just copy some bytes. Same as (1) but any number of bytes.
+> > 
+> > 3,4: Same as 1 and 2 but must be called inside a special rare write
+> > region. This is purely an optimization.
+> 
+> Atomic? RCU?
 
-https://lkml.kernel.org/r/1540593788-28181-1-git-send-email-bhsharma@redhat.com
+RCU can be done, that's not really a problem. Atomics otoh are a
+problem. Having pointers makes them just work.
 
-> The document can briefly explain what is vmcoreinfo, why we need it, and
-> some background info.  Then list the exported values with some
-> classifying by core kernel, arch related,  string or number etc.  For
-> most of them like Baoquan said no need more explanation, but add
-> explanations for something if needed like this sme mask.
-
-And add explanations for *all* of them!
-
-If this becomes an API, then it better be documented.
-
-> But I think this can be done separately instead of blocking this patch.
-
-We have three months to the next merge window - I'm sure you guys can do
-both. :-)
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Andy; I understand your reason for not wanting them, but I really don't
+want to duplicate everything. Is there something we can do with static
+analysis to make you more comfortable with the pointer thing?
