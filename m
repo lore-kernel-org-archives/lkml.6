@@ -2,167 +2,158 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 277DFECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:40:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A3F7C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:42:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83A242081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:40:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 156E92054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:42:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=emutex.onmicrosoft.com header.i=@emutex.onmicrosoft.com header.b="afMdq/t1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83A242081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=emutex.com
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="LTWVg3J7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 156E92054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730074AbeKAFkc (ORCPT
+        id S1730075AbeKAFmV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 01:40:32 -0400
-Received: from mail-eopbgr80114.outbound.protection.outlook.com ([40.107.8.114]:59176
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729837AbeKAFkb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 01:40:31 -0400
+        Thu, 1 Nov 2018 01:42:21 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:39414 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729821AbeKAFmV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 01:42:21 -0400
+Received: by mail-pf1-f195.google.com with SMTP id c25-v6so8181324pfe.6
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 13:42:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=emutex.onmicrosoft.com; s=selector1-emutex-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wJazY2ZgMOJI+PZZ231yzDTkt9hMx7GVzNkylPrfrrY=;
- b=afMdq/t1RmhcOjcDwdhZNwvx4FLEIlbzT+UtWxroHkB91CfvKhIp7GOee0Jo7ojB7AIJmVds1/H9avIugS2ANLTJ1uXSe8XVylsQzlj8Z/tz0yvVEurPkTB1VqYhlg9WOFav7AEAHbZSsANOON+N8CbLRgoMu5Rf4sMX6iuqhe8=
-Received: from VI1P190MB0013.EURP190.PROD.OUTLOOK.COM (10.172.14.137) by
- VI1P190MB0494.EURP190.PROD.OUTLOOK.COM (10.165.198.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.21; Wed, 31 Oct 2018 20:40:45 +0000
-Received: from VI1P190MB0013.EURP190.PROD.OUTLOOK.COM
- ([fe80::71b0:31d3:faf9:3584]) by VI1P190MB0013.EURP190.PROD.OUTLOOK.COM
- ([fe80::71b0:31d3:faf9:3584%6]) with mapi id 15.20.1294.021; Wed, 31 Oct 2018
- 20:40:45 +0000
-From:   Dan O'Donovan <dan.odonovan@emutex.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Dan O'Donovan <dan.odonovan@emutex.com>
-CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        Carlos Iglesias <carlos.iglesias@emutex.com>
-Subject: Re: [PATCH v2 1/3] mfd: upboard: Add UP2 platform controller driver
-Thread-Topic: [PATCH v2 1/3] mfd: upboard: Add UP2 platform controller driver
-Thread-Index: AQHUatOn/ozPfCtK6E+jLanRdnZEdKU53lSA
-Date:   Wed, 31 Oct 2018 20:40:45 +0000
-Message-ID: <cdf91d51-dfb5-b2dc-99af-60954cf32255@emutex.com>
-References: <20180421085009.28773-1-javier@emutex.com>
- <1539969334-24577-1-git-send-email-dan@emutex.com>
- <1539969334-24577-2-git-send-email-dan@emutex.com>
- <CAHp75VdkwfcPdSmB0dYBF_xwwXMqkrLOa1tL0xkOJ4DVcx8h8g@mail.gmail.com>
-In-Reply-To: <CAHp75VdkwfcPdSmB0dYBF_xwwXMqkrLOa1tL0xkOJ4DVcx8h8g@mail.gmail.com>
-Accept-Language: en-IE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: CWLP265CA0005.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:401:10::17) To VI1P190MB0013.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:800:a0::9)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=dan.odonovan@emutex.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [92.51.199.138]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1P190MB0494;6:xMoAofV1YkfYhPBJSohFTjdEjCgY86/wH4xg8gcAtuEsI6iKRnSHsAp0uGWMnBOu11CNSookMDUAvZpzJlDhniUJ8+ujFvNS4PRgZze5ulGKlJZV5TmZccmZQ0YD8j1idnErg9BT8Rn2Zw2HwCZoAbwtsLjccLaeUNF7LuTC44ZHcVT8GPUNCDRBbXWJ4VydFc6RaHQRBvjZPceUCGp+c0Ef9o8wj0KLSLds7MHwi5j01rhwYUXTDuFsGf56rEV2DeU6aYTM22MhemG/mAGF84m97HzEb4jlGqkuBi45ssmynY3edZEybeL/7y4n9QMvOuWv4UToaTj+rHjHvgtHo4uIH0sev+/qOcZJtXYaM2VrUQ+7IRl/BGSumjOjk3ldRl3YyOC/OLMyt/dzdeEPIqxHXYiIdJvBr5ypvZRDCGy7L4Njoum+164+Ma8dJPsNOD4DvPyNbaCO5APV4eitUQ==;5:g7sFVQtBdEz731BgAmVFcIv1wTYsgGBm6sjXWyJq3XnL8E+CD57F8OMorrwpWjg5tSDsk8dlFxyuXPq3MtDOhzZFAuF4bNGzlau5eU2NsNrbU9zQHfYPhIOeglOAR6vlOIfAmUykYjDrRUplOCw3w1S4IXuC41gq1mQN0V4raos=;7:TF8wJxFqkXCbje+hCm/jNRhGv0qpa10gDDf8JO0KxvTWKC6oC6Ctmktn9VsVJInFoDeNgRcSxL1TPtRAiQ75WIYc4TH8j83Cga/4hvGuoJJgCK1avU8QhZqc2bchM8y9CWCurr7wwvHD7EH+9W5CtQ==
-x-ms-office365-filtering-correlation-id: 71a4ca6e-246a-41c9-e0b9-08d63f7121eb
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:VI1P190MB0494;
-x-ms-traffictypediagnostic: VI1P190MB0494:
-x-microsoft-antispam-prvs: <VI1P190MB04944EA34FB2A5522E9ECA81F8CD0@VI1P190MB0494.EURP190.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:(278428928389397)(192278398808882)(166708455590820);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231382)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(148016)(149066)(150057)(6041310)(6059035)(201703131423095)(20161123555045)(201703061421075)(201703151056150)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:VI1P190MB0494;BCL:0;PCL:0;RULEID:;SRVR:VI1P190MB0494;
-x-forefront-prvs: 084285FC5C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39830400003)(376002)(136003)(396003)(366004)(199004)(189003)(31696002)(6506007)(498600001)(68736007)(446003)(55236004)(66066001)(2900100001)(5660300001)(186003)(486006)(86362001)(38480400004)(7416002)(26005)(97736004)(386003)(81156014)(53546011)(8676002)(81166006)(7736002)(8936002)(6116002)(53936002)(3846002)(305945005)(52116002)(6486002)(105586002)(6246003)(99286004)(2906002)(6512007)(106356001)(38600400001)(110136005)(256004)(39060400002)(107886003)(38500400001)(5250100002)(14454004)(4326008)(2616005)(71200400001)(71190400001)(586005)(31686004)(36756003)(6306002)(93886005)(11346002)(229853002)(476003)(38610400001)(25786009)(102836004)(966005)(76176011)(6436002)(54906003);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1P190MB0494;H:VI1P190MB0013.EURP190.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: emutex.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 8uJeP26J2xc77tO2Vu/8l3fyfJ5NItVHqHs6P2Ei7Iad4U4OXUU91xI0qtPdPOAAADTpm9DFQOtU2uBISMFOtVeiEvFsNW06gIUo77emYH/SnWBFJ5VESthay0TeTY9TCLnLOHNMB04Gsem6x2z81a8ZmzXn6HUthd/0TCqooJWqY2klkdmVCfIMIhRNCZguI8LsKLPBfIkhTME6jeLXt0CKo9tuGg8BRAxY85muS9m283nCNwzx7086B1eTL1yH84jHkixCzl6kVkhzXdwzsirvTAtEyNkLkBmQMzstmYCRStN31TgW4A/5jxe/PHU3TOemvW0gtW5M1mHF8fwOlSrqnA5tta2XSVpSW1VGYGs=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <FA21931C4422744687ECC1B11E2A1830@EURP190.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: emutex.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71a4ca6e-246a-41c9-e0b9-08d63f7121eb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Oct 2018 20:40:45.8109
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84cc844b-5c53-4da1-99da-34ef4089ea8e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1P190MB0494
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tNw4+GQDoI+QM0z6JRCy7TPp3efbz9Gf3KD2w8i/67w=;
+        b=LTWVg3J7Zj0OilUrMPMl/KAotZUGSib/8cbljjkSKDAymWi2vXIrIY3uuKdOeQX8bA
+         io1GuRvN+zmQJxDfrXgdcg4i6Clr7OU5LT6BIX5piwd6Uu7sJddot82KRAwFYzczjuJ/
+         PGOWBVMX4NaXc9qbaZCB0RLQ35YYs3XRQDZrPZyEjcwblSJoYQQ98zGfzpwvzrSKIpCh
+         O/6yLTgNBKo+uItqyNDOn0KT+IMLWr7P83P8t4B2BOQNxinTexZj2ddqsyZWiAD6cZDZ
+         ODqN6TdK3ru6mVRrjF2ShOks+810hWr1UHZVxXZ9uK1GUrDwT+47uiAp+JIzDfpW90RI
+         e21g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=tNw4+GQDoI+QM0z6JRCy7TPp3efbz9Gf3KD2w8i/67w=;
+        b=km9zv11qgMaHFYqMhcAiGM1pcgpEDGF7wiyXmq25TMr1+sEpxbRhuHPLvLKDm4jndp
+         erEm/HfCVZjiGXioH+9pZXsxHKgLG3zCCavA245lxEqfbPlFs9RhJ5qFCRplzfdREC3D
+         VEVhB0NwzXzgBLOki18V/aX/IvGwqbL2vy1r7BsMnp4FyabH8wjVOTwZeZbOcTNCpJSC
+         xRRC44p0oLmjbGXCXjcHOadyqly0F9/t1uIToNAVYXqXjlK1r/zvNENBAMhBTPkOQxwb
+         yUSCdx2dLpF3C3W3jm3frE8CEqVs7IvjJoz3KmghOlNlTUy+50ebdViu/ugFmIlnO8qH
+         4FeQ==
+X-Gm-Message-State: AGRZ1gIIXWwrOV+TA74C5JQqBxAlkTB7R6fra7InsG7m6oVwtL5ysQwF
+        I1VuojCgDcn7sjMX2Cqcn236iA==
+X-Google-Smtp-Source: AJdET5dEk5vIhWJb+nT1PKgOqAKSCzVQCgcC7HazjWXIZzmxVPxF3qQNEJpQUGDsbZIEIAQshAOm3Q==
+X-Received: by 2002:a63:1013:: with SMTP id f19-v6mr4620144pgl.38.1541018560320;
+        Wed, 31 Oct 2018 13:42:40 -0700 (PDT)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id s8-v6sm1699840pgi.44.2018.10.31.13.42.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Oct 2018 13:42:39 -0700 (PDT)
+Date:   Wed, 31 Oct 2018 13:42:39 -0700 (PDT)
+X-Google-Original-Date: Wed, 31 Oct 2018 13:42:26 PDT (-0700)
+Subject:     Re: [PATCH] RISC-V: defconfig: Enable printk timestamps
+In-Reply-To: <CAOesGMjXZNURZ4SdKjssYCcFv3=4MYLBpBpzvvb1rNM-fo=QHQ@mail.gmail.com>
+CC:     anup@brainfault.org, aou@eecs.berkeley.edu, atish.patra@wdc.com,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     Olof Johansson <olof@lixom.net>, davem@sunset.davemloft.net
+Message-ID: <mhng-111820e6-59c0-479a-a10f-f3729007ba70@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQpPbiAxMC8yMC8yMDE4IDEyOjQ5IFBNLCBBbmR5IFNoZXZjaGVua28gd3JvdGU6DQo+IE9uIEZy
-aSwgT2N0IDE5LCAyMDE4IGF0IDg6MjYgUE0gRGFuIE8nRG9ub3ZhbiA8ZGFuQGVtdXRleC5jb20+
-IHdyb3RlOg0KPj4gRnJvbTogSmF2aWVyIEFydGVhZ2EgPGphdmllckBlbXV0ZXguY29tPg0KPj4N
-Cj4+IFVQIFNxdWFyZWQgKFVQMikgaXMgYSB4ODYgU0JDIGZyb20gQUFFT04gYmFzZWQgb24gSW50
-ZWwgQXBvbGxvIExha2UuIEl0DQo+PiBmZWF0dXJlcyBhIE1BWCAxMCBGUEdBIHRoYXQgcm91dGVz
-IGxpbmVzIGZyb20gYm90aCBTb0MgYW5kIG9uLWJvYXJkDQo+PiBkZXZpY2VzIHRvIHR3byBJL08g
-aGVhZGVyczoNCj4+DQo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICstLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0rDQo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwg
-NDAtcGluIFJQaS1saWtlIGhlYWRlciB8DQo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgKy0t
-LS0tLXwgICAgICAgICAoSEFUKSAgICAgICAgICB8DQo+PiAgICAgICAgICAgICAgICAgICAgICAg
-ICAgfCAgICAgICstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0rDQo+PiAgICAgKy0tLS0tLS0rICAg
-ICstLS0tLS0tLSsNCj4+ICAgICB8ICAgICAgIHwgICAgfCAgICAgICAgfCAgICAgKy0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLSsNCj4+ICAgICB8ICBTb0MgIHwtLS0tfCAgRlBHQSAgfC0tLS0tfCAg
-Q3VzdG9tIFVQMiBwaW4gaGVhZGVyIHwNCj4+ICAgICB8ICAgICAgIHwgICAgfCAgICAgICAgfCAg
-ICAgfCAgICAgICAgKEVYSEFUKSAgICAgICAgIHwNCj4+ICAgICArLS0tLS0tLSsgICAgKy0tLS0t
-LS0tKyAgICAgKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSsNCj4+ICAgICAgICAgICAgICAgICAg
-ICAgICAgICB8DQo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgKy0tLS0tLSogT24tYm9hcmQg
-ZGV2aWNlczogTEVELCBWTFMuLi4NCj4+DQo+PiBUaGlzIGlzIGludGVuZGVkIHRvIGVuYWJsZSB2
-ZW5kb3Itc3BlY2lmaWMgYXBwbGljYXRpb25zIHRvIGN1c3RvbWl6ZSBJL08NCj4+IGhlYWRlciBw
-aW5vdXQsIGFzIHdlbGwgYXMgaW5jbHVkZSBsb3ctbGF0ZW5jeSBmdW5jdGlvbmFsaXR5LiBJdCBh
-bHNvDQo+PiBwZXJmb3JtcyB2b2x0YWdlIGxldmVsIHRyYW5zbGF0aW9uIGJldHdlZW4gdGhlIFNv
-QyAoMS44VikgYW5kIEhBVCBoZWFkZXINCj4+ICgzLjNWKS4NCj4+DQo+PiBPdXQgb2YgdGhlIGJv
-eCwgdGhpcyBibG9jayBpbXBsZW1lbnRzIGEgcGxhdGZvcm0gY29udHJvbGxlciB3aXRoIGENCj4+
-IEdQSU8tYml0YmFuZ2VkIGNvbnRyb2wgaW50ZXJmYWNlLiBJdCdzIGVudW1lcmF0ZWQgYnkgQUNQ
-SSBhbmQgcHJvdmlkZXMNCj4+IHJlZ2lzdGVycyB0byBjb250cm9sOg0KPj4NCj4+IC0gQ29uZmln
-dXJhdGlvbiBvZiBhbGwgRlBHQS1yb3V0ZWQgaGVhZGVyIGxpbmVzLiBUaGVzZSBjYW4gYmUgZHJp
-dmVuDQo+PiAgIFNvQy10by1oZWFkZXIsIGhlYWRlci10by1Tb0Mgb3Igc2V0IGluIGhpZ2ggaW1w
-ZWRhbmNlLg0KPj4NCj4+IC0gT24tYm9hcmQgTEVEcyBhbmQgZW5hYmxlIGxpbmVzIGZvciBvdGhl
-ciBwbGF0Zm9ybSBkZXZpY2VzLg0KPj4NCj4+IEFkZCBjb3JlIHN1cHBvcnQgZm9yIHRoaXMgcGxh
-dGZvcm0gY29udHJvbGxlciBhcyBhIE1GRCBkZXZpY2UsIGV4cG9zaW5nDQo+PiB0aGVzZSByZWdp
-c3RlcnMgYXMgYSByZWdtYXAuDQo+IENhbiB3ZSBzZWUgYSBsaW5rIHRvIG9yIGFuIGV4Y2VycHQg
-b2YgQUNQSSB0YWJsZSBmb3IgdGhpcyBkZXZpY2U/DQpTdXJlOiBodHRwczovL2dpc3QuZ2l0aHVi
-LmNvbS9EYW4tRW11dGV4LzYzODJjMjVmNGI4YjhjZGQ4MGU2MDU2ODg5Y2RmNDhiDQpJJ2xsIGFk
-ZCB0aGlzIHRvIHRoZSBjb3ZlciBsZXR0ZXIgZm9yIHYzIGFzIHdlbGwuDQoNCj4NCj4+ICsjZGVm
-aW5lIHNldF9jbGVhcih1LCB4KSBncGlvZF9zZXRfdmFsdWUoKHUpLT5jbGVhcl9ncGlvLCAoeCkp
-DQo+PiArI2RlZmluZSBzZXRfc3Ryb2JlKHUsIHgpIGdwaW9kX3NldF92YWx1ZSgodSktPnN0cm9i
-ZV9ncGlvLCAoeCkpDQo+PiArI2RlZmluZSBzZXRfZGF0YWluKHUsIHgpIGdwaW9kX3NldF92YWx1
-ZSgodSktPmRhdGFpbl9ncGlvLCAoeCkpDQo+PiArI2RlZmluZSBnZXRfZGF0YW91dCh1KSBncGlv
-ZF9nZXRfdmFsdWUoKHUpLT5kYXRhb3V0X2dwaW8pDQo+IEkgdGhpbmsgdGhlc2UgbWFjcm9zIGRv
-bid0IGJyaW5nIG11Y2ggdmFsdWUuIChVcCB0byB5b3UgYW5kIExlZSB0byBkZWNpZGUpDQpUaGVz
-ZSB3ZXJlIGFkZGVkIGluIHJlc3BvbnNlIHRvIG9uZSBvZiB5b3VyIHJldmlldyBjb21tZW50cyBv
-biB0aGUgb3JpZ2luYWwgcGF0Y2gtc2V0IDspDQpJIHRoaW5rIHRoZXkgZG8gc2xpZ2h0bHkgaW1w
-cm92ZSB0aGUgY29kZSByZWFkYWJpbGl0eSBzbyBJJ2xsIGxlYXZlIHRoZW0gdGhlcmUgaWYgdGhl
-cmUgYXJlIG5vIG9iamVjdGlvbnMuDQoNCj4NCj4NCj4+ICtzdGF0aWMgdm9pZCBfX3JlZ19pb193
-cml0ZShjb25zdCBzdHJ1Y3QgdXBib2FyZF9kZGF0YSAqIGNvbnN0IGRkYXRhLA0KPj4gKyAgICAg
-ICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgaW50IHNpemUsIHVuc2lnbmVkIGludCB2YWwp
-DQo+PiArew0KPj4gKyAgICAgICBpbnQgaTsNCj4+ICsNCj4+ICsgICAgICAgLyoNCj4+ICsgICAg
-ICAgICogREFUQUlOIGlzIGxhdGNoZWQgb24gZWFjaCByaXNpbmcgZWRnZSBvZiB0aGUgU1RST0JF
-IHNpZ25hbC4NCj4+ICsgICAgICAgICogRGF0YSAocmVnaXN0ZXIgYWRkcmVzcyBvciB2YWx1ZSkg
-aXMgc2VudCBNU2IgZmlyc3QuDQo+PiArICAgICAgICAqLw0KPj4gKyAgICAgICBmb3IgKGkgPSBz
-aXplIC0gMTsgaSA+PSAwOyBpLS0pIHsNCj4gd2hpbGUgKHNpemUtLSkNClllcCwgbXVjaCBuZWF0
-ZXIuwqAgSSdsbCBjaGFuZ2UgdGhhdCwgdGhhbmtzIcKgIERpdHRvIGZvciB0aGUgb3RoZXIgY29t
-bWVudHMgb24gdGhpcyBmaWxlLisgcmV0ID0gdXBib2FyZF9pbml0X2dwaW8oZGV2KTsNCg0KPj4g
-KyAgICAgICBpZiAocmV0KSB7DQo+PiArICAgICAgICAgICAgICAgaWYgKHJldCAhPSAtRVBST0JF
-X0RFRkVSKQ0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgZGV2X2VycihkZXYsICJmYWlsZWQg
-dG8gaW5pdCBHUElPczogJWQiLCByZXQpOw0KPj4gKyAgICAgICAgICAgICAgIHJldHVybiByZXQ7
-DQo+PiArICAgICAgIH0NCj4gSSBkb24ndCBrbm93IGlmIHByb2JlX2VycigpIGhlbHBlciBpcyBn
-b2luZyB0byBiZSBhIHBhcnQgb2YgdjQuMjENCj4gKHdoaWNoIHRoaXMgc2VyaWVzIHRhcmdldHMp
-LCBpdCB3b3VsZCBiZSBnb29kIHRvIHVzZSBpdC4NCkkgbGVmdCB0aGlzIG91dCBmb3Igbm93IGlu
-IGNhc2UgaXQgY2F1c2VzIGFueSBhd2t3YXJkbmVzcyB3aXRoIG1lcmdpbmcuwqAgSG9wZSB0aGF0
-J3Mgb2suDQoNCg==
+On Wed, 31 Oct 2018 12:20:40 PDT (-0700), Olof Johansson wrote:
+> On Tue, Oct 30, 2018 at 5:37 AM Anup Patel <anup@brainfault.org> wrote:
+>>
+>> The printk timestamps are very useful information to visually see
+>> where kernel is spending time during boot. It also helps us see
+>> the timing of hotplug events at runtime.
+>>
+>> This patch enables printk timestamps in RISC-V defconfig so that
+>> we have it enabled by default (similar to other architectures
+>> such as x86_64, arm64, etc).
+>>
+>> Signed-off-by: Anup Patel <anup@brainfault.org>
+>
+> Acked-by: Olof Johansson <olof@lixom.net>
+>
+> For next time: doing a re-format of the defconfig (to shuffle config
+> order), plus changes in the same patch, tends to be a bit fragile. For
+> cases like these, I'd recommend hand-pruning to just flip the one
+> option if needed, and then have Palmer or Andrew refresh the defconfig
+> during a merge window if needed (usually quite rare).
+
+I poked around and it looks like most architectures have this enabled for at 
+least one defconfig, with the big architectures having it enabled for all of 
+them.
+
+I decided to do a bit of a case study here to try and figure out why some 
+architectures have this enabled for some defconfigs but not for others, and as 
+far as I can tell it's just an oversight.  Specifically, looking at sparc32 (# 
+CONFIG_PRINTK_TIME is not set) vs sparc64 (CONFIG_PRINTK_TIME=y) I can't find 
+any reason for the difference.  sparc32's setting can be traced back to
+
+    commit 216da721b881838d639a3987bf8a825e6b4aacdd
+    Author: David S. Miller <davem@sunset.davemloft.net>
+    Date:   Sun Dec 17 14:21:34 2006 -0800
+    
+        [SPARC]: Update defconfig.
+    
+        Signed-off-by: David S. Miller <davem@davemloft.net>
+
+which changes everything in the defconfig, while the sparc64 version dates back to
+
+    commit 3ebc284d52757cf39788731f8fddd70a89f7fc23
+    Author: David S. Miller <davem@sunset.davemloft.net>
+    Date:   Mon Jan 9 14:36:49 2006 -0800
+    
+        [SPARC64]: Update defconfig.
+    
+        Signed-off-by: David S. Miller <davem@davemloft.net>
+
+When we first submitted out port upstream we had an empty defconfig, with the 
+theory being that we should just pick whatever the default in Kconfig is for 
+everything.  That's obviously the wrong thing to do because most of those 
+options are bogus.  At the time I didn't care enough to look because I just 
+wanted something to work, but now I find myself asking the question "what goes 
+in a defconfig?"  Is it:
+
+* What I, as the maintainer of arch/riscv, want?  That's essentially what it is 
+  now, as we have things like "CONFIG_R8169=y" in there because I happened to 
+  have one sitting around when we needed to plug in an Ethernet card to test 
+  out PCIe.
+* What distributions expect?  There's a major element of this in there right 
+  now, as half this stuff was just selected because the Debian and Fedora guys 
+  suggested we do so because adding things to the RISC-V defconfig made it 
+  easier to put together their build scripts.  For example, we ended up with 
+  "CONFIG_EXPERT=y" because some setting necessary for the distros was hidden 
+  behind it -- that seems like an odd default.
+* What users expect?  I'm not even sure who users are in this case, as from my 
+  understating most people use distro kernels and don't twiddle Kconfig 
+  options.
+* What is necessary to work on RISC-V hardware?  This seems like the most 
+  reasonable use for an arch-specific defconfig, and subsumes things like 
+  "CONFIG_SIFIVE_PLIC=y" because without the PLIC driver nothing will work (but 
+  the PLIC driver shouldn't be enabled by default for all architectures, as 
+  it's useless everywhere else).
+
+Maybe I've opened up a big can of worms here...  It just seems silly to have 
+most of our current defconfig be RISC-V specific.
+
+Anyway, I'm happy with the change because it meets my "what I want" criteria 
+:).  I'll split it into two parts, though, as that way when someone else has to 
+go to some archaeology on our port they'll be less likely to get lost.
