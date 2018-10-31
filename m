@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD292ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:43:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B629AECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:43:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 945C62082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:43:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B9192082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:43:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FtjE2zOG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 945C62082E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C5HZppsi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B9192082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729400AbeKAInx (ORCPT
+        id S1729478AbeKAIoP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:43:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55764 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:44:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729095AbeKAIHn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:07:43 -0400
+        id S1729048AbeKAIHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:07:40 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A141920830;
-        Wed, 31 Oct 2018 23:07:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 085CA2081B;
+        Wed, 31 Oct 2018 23:07:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027253;
-        bh=YpaCoHUzS4yD05OD76ZuEj0PQXUzKZ8odnoZIlH25no=;
+        s=default; t=1541027249;
+        bh=BUO7P0P+xdR7VJn0JH/KCflHbLnrDHUs2MdKga7UoHw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FtjE2zOGvSc7VKuweAR6UNRbDllnDj6uOeWVoNo+LGqJuTaCtVI2gw8uaryOCB3B6
-         9VQlLbZMbxO75XJj0MgIAK6YxNFy7bt+q6Uvg9H5spA+1Fk1Vqz3VlVKuFXgQo9Od+
-         A5Xh4vSW0zihQ++dC95aKSZMR4QHab6fdBF/LY7U=
+        b=C5HZppsiScH+DqDRUyiHlGG5COnCXe/pncEQq38zJHyrjikELHbxw9AHunTxKBt+Y
+         1EbuVhwqYfzfQiLmpHbwhPvMEmwHcevZJNrypGyg7mNrv48/tsEcC3grnlrJmuZJWI
+         jZNjAGa5+LFHO92ong8x2xSWpq+I6h6S92ZrzKuQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+Cc:     Alan Douglas <adouglas@cadence.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 123/146] f2fs: fix to recover inode's crtime during POR
-Date:   Wed, 31 Oct 2018 19:05:18 -0400
-Message-Id: <20181031230541.28822-123-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 119/146] PCI: cadence: Correct probe behaviour when failing to get PHY
+Date:   Wed, 31 Oct 2018 19:05:14 -0400
+Message-Id: <20181031230541.28822-119-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -52,51 +53,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Alan Douglas <adouglas@cadence.com>
 
-[ Upstream commit 5cd1f387a13b5188b4edb4c834310302a85a6ea2 ]
+[ Upstream commit aa77e55d48124d0d78456eabf872fffb5decdbe1 ]
 
-Testcase to reproduce this bug:
-1. mkfs.f2fs -O extra_attr -O inode_crtime /dev/sdd
-2. mount -t f2fs /dev/sdd /mnt/f2fs
-3. touch /mnt/f2fs/file
-4. xfs_io -f /mnt/f2fs/file -c "fsync"
-5. godown /mnt/f2fs
-6. umount /mnt/f2fs
-7. mount -t f2fs /dev/sdd /mnt/f2fs
-8. xfs_io -f /mnt/f2fs/file -c "statx -r"
+Test the correct value to see whether the PHY get failed.
 
-stat.btime.tv_sec = 0
-stat.btime.tv_nsec = 0
+Use devm_phy_get() instead of devm_phy_optional_get(), since it is
+only called if phy name is given in devicetree and so should exist.
+If failure when getting or linking PHY, put any PHYs which were
+already got and unlink them.
 
-This patch fixes to recover inode creation time fields during
-mount.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Fixes: dfb80534692ddc5b ("PCI: cadence: Add generic PHY support to host and EP drivers")
+Reported-by: Colin King <colin.king@canonical.com>
+Signed-off-by: Alan Douglas <adouglas@cadence.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/node.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/pci/controller/pcie-cadence.c | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index dd2e45a661aa..fe5c9ff92772 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -2560,6 +2560,13 @@ int f2fs_recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
- 			F2FS_FITS_IN_INODE(src, le16_to_cpu(src->i_extra_isize),
- 								i_projid))
- 			dst->i_projid = src->i_projid;
-+
-+		if (f2fs_sb_has_inode_crtime(sbi->sb) &&
-+			F2FS_FITS_IN_INODE(src, le16_to_cpu(src->i_extra_isize),
-+							i_crtime_nsec)) {
-+			dst->i_crtime = src->i_crtime;
-+			dst->i_crtime_nsec = src->i_crtime_nsec;
+diff --git a/drivers/pci/controller/pcie-cadence.c b/drivers/pci/controller/pcie-cadence.c
+index 975bcdd6b5c0..cd795f6fc1e2 100644
+--- a/drivers/pci/controller/pcie-cadence.c
++++ b/drivers/pci/controller/pcie-cadence.c
+@@ -190,14 +190,16 @@ int cdns_pcie_init_phy(struct device *dev, struct cdns_pcie *pcie)
+ 
+ 	for (i = 0; i < phy_count; i++) {
+ 		of_property_read_string_index(np, "phy-names", i, &name);
+-		phy[i] = devm_phy_optional_get(dev, name);
+-		if (IS_ERR(phy))
+-			return PTR_ERR(phy);
+-
++		phy[i] = devm_phy_get(dev, name);
++		if (IS_ERR(phy[i])) {
++			ret = PTR_ERR(phy[i]);
++			goto err_phy;
 +		}
+ 		link[i] = device_link_add(dev, &phy[i]->dev, DL_FLAG_STATELESS);
+ 		if (!link[i]) {
++			devm_phy_put(dev, phy[i]);
+ 			ret = -EINVAL;
+-			goto err_link;
++			goto err_phy;
+ 		}
  	}
  
- 	new_ni = old_ni;
+@@ -207,13 +209,15 @@ int cdns_pcie_init_phy(struct device *dev, struct cdns_pcie *pcie)
+ 
+ 	ret =  cdns_pcie_enable_phy(pcie);
+ 	if (ret)
+-		goto err_link;
++		goto err_phy;
+ 
+ 	return 0;
+ 
+-err_link:
+-	while (--i >= 0)
++err_phy:
++	while (--i >= 0) {
+ 		device_link_del(link[i]);
++		devm_phy_put(dev, phy[i]);
++	}
+ 
+ 	return ret;
+ }
 -- 
 2.17.1
 
