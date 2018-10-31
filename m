@@ -2,126 +2,159 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CC01C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:08:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 621D9ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:11:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA9562081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:08:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA9562081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2895220821
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:11:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2895220821
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=interlog.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730712AbeKAGHo (ORCPT
+        id S1730191AbeKAGKv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 02:07:44 -0400
-Received: from mga11.intel.com ([192.55.52.93]:6767 "EHLO mga11.intel.com"
+        Thu, 1 Nov 2018 02:10:51 -0400
+Received: from smtp.infotech.no ([82.134.31.41]:60656 "EHLO smtp.infotech.no"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728942AbeKAGHC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 02:07:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2018 14:07:17 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,449,1534834800"; 
-   d="scan'208";a="102369365"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by fmsmga004.fm.intel.com with ESMTP; 31 Oct 2018 14:07:17 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@redhat.com>, "H Peter Anvin" <hpa@zytor.com>,
-        "Tony Luck" <tony.luck@intel.com>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Reinette Chatre" <reinette.chatre@intel.com>,
-        "Babu Moger" <babu.moger@amd.com>,
-        "James Morse" <james.morse@arm.com>,
-        "Ravi V Shankar" <ravi.v.shankar@intel.com>,
-        "Sai Praneeth Prakhya" <sai.praneeth.prakhya@intel.com>,
-        "Arshiya Hayatkhan Pathan" <arshiya.hayatkhan.pathan@intel.com>
-Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
-        Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH v3 1/8] selftests/resctrl: Add README for resctrl tests
-Date:   Wed, 31 Oct 2018 14:02:27 -0700
-Message-Id: <1541019754-192204-2-git-send-email-fenghua.yu@intel.com>
-X-Mailer: git-send-email 2.5.0
-In-Reply-To: <1541019754-192204-1-git-send-email-fenghua.yu@intel.com>
-References: <1541019754-192204-1-git-send-email-fenghua.yu@intel.com>
+        id S1726023AbeKAGKv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 02:10:51 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp.infotech.no (Postfix) with ESMTP id 2B2E720423B;
+        Wed, 31 Oct 2018 22:11:02 +0100 (CET)
+X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
+Received: from smtp.infotech.no ([127.0.0.1])
+        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 1qhqtI81rRl6; Wed, 31 Oct 2018 22:10:55 +0100 (CET)
+Received: from [10.200.30.107] (unknown [213.52.86.138])
+        by smtp.infotech.no (Postfix) with ESMTPA id 05B9F20417A;
+        Wed, 31 Oct 2018 22:10:54 +0100 (CET)
+Reply-To: dgilbert@interlog.com
+Subject: Re: remove exofs and the T10 OSD code V2
+To:     Boaz Harrosh <ooo@electrozaur.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, martin.petersen@oracle.com,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        osd-dev@open-osd.org, linux-scsi@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181027082019.20838-1-hch@lst.de>
+ <f9423180-e0fc-efba-e759-dfa4725953ad@kernel.dk>
+ <20181030074542.GB24697@lst.de>
+ <ea317f79-37bb-1149-fc43-fb07f46c15e9@electrozaur.com>
+From:   Douglas Gilbert <dgilbert@interlog.com>
+Message-ID: <57a73f2b-29be-6301-2f4b-df582b7d23ff@interlog.com>
+Date:   Wed, 31 Oct 2018 22:10:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <ea317f79-37bb-1149-fc43-fb07f46c15e9@electrozaur.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-resctrl tests will be implemented. README is added for the tool first.
+On 2018-10-31 4:57 p.m., Boaz Harrosh wrote:
+> On 30/10/18 09:45, Christoph Hellwig wrote:
+>> On Mon, Oct 29, 2018 at 02:42:12PM -0600, Jens Axboe wrote:
+>>> LGTM, for both:
+>>
+>> I also have this one on top as requested by Martin.  The core block
+>> bidi support is unfortunately also used by bsg-lib, although it is
+>> not anywhere near as invasive.  But that is another argument for
+>> looking into moving bsg-lib away from using block queues..
+>>
+> 
+> BUT this patch is very very wrong.
+> 
+> Totally apart from T10-OSD and its use in the field. Support for scsi BIDI
+> commands is not exclusive to T10-OSD at all. Even the simple scsi-array
+> command-set has BIDI operations defined. for example the write-return-xor
+> and so on.
+> 
+> Also some private administrative CDBs of some vendor devices uses SCSI-BIDI.
+> So this patch just broke some drivers. (User-mode apps use bsg pass through)
+> 
+> Also you might (try hard and) remove all usage of scsi-bidi as an initiator
+> from the Linux Kernel. But what about target mode. As a target we have supported
+> on the wire bidi protocols like write-return-xor and others for a long time.
+> Are you willing to silently break all these setups in the field on the next update?
+> Are you so sure these are never used?
+> 
+> PLEASE, I beg of you guys. Do not remove SCSI-BIDI. It is a cry of generations.
+> 
+> And I think by the rules of Linus, as far as target mode. You are not allowed
+> to break users in this way.
 
-Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
----
- tools/testing/selftests/resctrl/README | 53 ++++++++++++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
- create mode 100644 tools/testing/selftests/resctrl/README
+Hi,
+I'm in the process of rebuilding the sg driver with the following goals:
 
-diff --git a/tools/testing/selftests/resctrl/README b/tools/testing/selftests/resctrl/README
-new file mode 100644
-index 000000000000..09851a619547
---- /dev/null
-+++ b/tools/testing/selftests/resctrl/README
-@@ -0,0 +1,53 @@
-+resctrl_tests - resctrl file system test suit
-+
-+Authors:
-+	Fenghua Yu <fenghua.yu@intel.com>
-+	Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-+	Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>
-+
-+resctrl_tests tests various resctrl functionalities and interfaces including
-+both software and hardware.
-+
-+Currently it supports Memory Bandwidth Monitoring test and Memory Bandwidth
-+Allocation test on Intel RDT hardware. More tests will be added in the future.
-+And the test suit can be extended to cover AMD QoS and ARM MPAM hardware
-+as well.
-+
-+BUILD
-+-----
-+
-+Run "make" to build executable file "resctrl_tests".
-+
-+RUN
-+---
-+
-+To use resctrl_tests, root or sudoer privileges are required. This is because
-+the test needs to mount resctrl file system and change contents in the file
-+system.
-+
-+Executing the test without any parameter will run all supported tests:
-+
-+	sudo ./resctrl_tests
-+
-+OVERVIEW OF EXECUTION
-+---------------------
-+
-+A test case has four stages:
-+
-+  - setup: mount resctrl file system, create group, setup schemata, move test
-+    process pids to tasks, start benchmark.
-+  - execute: let benchmark run
-+  - verify: get resctrl data and verify the data with another source, e.g.
-+    perf event.
-+  - teardown: umount resctrl and clear temporary files.
-+
-+ARGUMENTS
-+---------
-+
-+Parameter '-h' shows usage information.
-+
-+usage: resctrl_tests [-h] [-b benchmark_cmd [options]] [-t test list]
-+        -b benchmark_cmd [options]: run specified benchmark
-+         default benchmark is builtin fill_buf
-+        -t test list: run tests specified in the test list, e.g. -t mbm,mba
-+        -h: help
--- 
-2.5.0
+   - undo 20 years of road wear, some of which is caused by literally
+     hundreds of "laparoscopic" patches that gradually ruin a driver,
+     at least from the maintainer's viewpoint. Comments that once made
+     sense become cryptic or just nonsense; naming schemes that
+     obliterate variable names to the extent that a random name
+     generator would be easier to follow; and just plain broken code.
+     For example, why sort out the existing locking at a particular
+     level when you can add a new lock in a completely non-orthogonal
+     way? [Yes, I looking at you, google.] Anyway, my first cut at this
+     is out there (on the linux-scsi list, see: "[PATCH v3 0/8] sg:
+     major cleanup, remove max_queue limit"). Not much new there,
+     unless you look very closely
 
+   - the next step is to add to the sg driver async SCSI command
+     capability based on the sg_io_v4 structure previously only used
+     by the bsg driver and now removed from bsg. The main advantage
+     of the sg_io_v4 structure over previous pass-through interface
+     attempts is the support of SCSI bidi commands
+
+   - as part of this effort introduce two new ioctls: SG_IOSUBMIT and
+     SG_IORECEIVE to replace the write()/read() technique currently
+     in use (since Linux 1.0 in 1992). The write()/read() technique
+     seems to be responsible for various security folks losing clumps
+     of their hair. One advantage of ioctls, as Alan Cox pointed out,
+     is the ability to write to and read back from the kernel in a way
+     that is naturally synchronized. [Actually, those security folks
+     shouldn't look too closely at sg_read() in that respect.]
+
+In discussions with several folks who are on the T10 committee, I
+wondered why there was no READ GATHERED command (there has been a
+WRITE SCATTERED for 2 years). The answer was lack of interest ***,
+plus the difficultly of implementation. You see, READ GATHERED needs
+to send a scatter gather list to the device and get the corresponding
+data back (as a linear array). And that requires either:
+   a) bidi commands (scatter gather list in the data-out, corresponding
+      "read" data in the data-in), or
+   b) loooong SCSI commands, up to around 256 bytes long in which the
+      sgat list is the latter part of that command
+
+And the T10 folks say neither of those options is well supported or
+is expensive. I'm guessing they are referring to Linux and Windows.
+I haven't argued much beyond that point, but it looks like a bit of
+a chicken and egg situation.
+
+
+Don't know too much about the T10 OSD stuff. But I can see that it
+uses both long SCSI commands and a lot of bidi. IMO it seems to be
+10 or 20 years before its time. Maybe ibm/redhat need to
+(re-)discover it for it to catch on.
+
+
+Plus there are proprietary SCSI bidi commands out there. People contact
+me and ask me how to issue them with sg3_utils package. Easy, I tell them,
+just use sg_raw with a bsg device. Typically, in my experience, "no news
+is good news" after suggestions like that. When I give bad advice, I
+usually hear back relatively quickly. Anyone who wants SCSI bidi _async_
+support is currently out of luck.
+
+Enough already
+Doug Gilbert
+
+
+*** example: loading all or most kernel modules in a few READ SCATTERED
+     commands might speed up boot time ...
