@@ -2,105 +2,92 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30935ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:10:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7867C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:13:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E58242081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:10:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E58242081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	by mail.kernel.org (Postfix) with ESMTP id 5BB1A2064C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:13:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BB1A2064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729633AbeKAAJB (ORCPT
+        id S1728048AbeKAAMC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 20:09:01 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:36454 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728649AbeKAAJB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 20:09:01 -0400
-Received: by mail-oi1-f196.google.com with SMTP id r127-v6so12159306oie.3;
-        Wed, 31 Oct 2018 08:10:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+y7oVs92NHV9Bxku2kYiguSBO3ZrYPcqTR8aIVbst+8=;
-        b=uEiBN8hChEGpnlXQ7OPrjOyVCIMa4jb5dieIv4tBnIrDviGURO27BlsOECarWOVfwW
-         8Kn2IPoFG1j0quCaTvBGmGRBWx0+ZrX3gNGLgKR7R0MmtKH+Qel+6Ss8FMq89VvGWZ1/
-         pDs65RpiOXgx+gxpooc0rZiqUTKBYYQD9VaSkP51ytfi3aGEPknlwxsu4YshCz7jLciK
-         RQlCQqHZxlFqjakTYrImug/xS5GOJRLafHMNx/6hhWvcPHvoBGGXE8JxnQ/MGp9sogvQ
-         +z+55yfMFo0U5pRa4JVDM1ar6u7ct3xGnp17uh6IgbUTeIwTy/4kDLypwuO6tte8deoo
-         N5mA==
-X-Gm-Message-State: AGRZ1gLHhCPW3HnZgNDUdhmwyqso0iput+cZ6o/fjCYyJyRYlhj2+wBS
-        hB6QYJIX8gUT7xK4LUF+VLqO2bYKhFE82pmNUS0=
-X-Google-Smtp-Source: AJdET5duqyYYZ23S5ycJZS6H+QOzSUuyZ/mGRbBcXv4SbsxO1cFdXZryu5Gapq9m+TDnQElpayO/Flqp2tuwKKHvUGc=
-X-Received: by 2002:aca:6854:: with SMTP id d81-v6mr2069710oic.18.1540998636150;
- Wed, 31 Oct 2018 08:10:36 -0700 (PDT)
+        Wed, 31 Oct 2018 20:12:02 -0400
+Received: from mga06.intel.com ([134.134.136.31]:20118 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726686AbeKAAMC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 20:12:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2018 08:13:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,447,1534834800"; 
+   d="scan'208";a="104142627"
+Received: from ksmole-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.40.70])
+  by fmsmga001.fm.intel.com with ESMTP; 31 Oct 2018 08:13:33 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Shayenne da Luz Moura <shayenneluzmoura@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>
+Cc:     outreachy-kernel@googlegroups.com, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] drm: Remove 80-column line in drm_mode_object.c
+In-Reply-To: <20181031144445.vrdngzj3jclforta@smtp.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20181031144445.vrdngzj3jclforta@smtp.gmail.com>
+Date:   Wed, 31 Oct 2018 17:13:38 +0200
+Message-ID: <87a7mudu8t.fsf@intel.com>
 MIME-Version: 1.0
-References: <1540957223-30984-1-git-send-email-harini.katakam@xilinx.com>
- <1540957223-30984-4-git-send-email-harini.katakam@xilinx.com> <20181031145400.GH20889@lunn.ch>
-In-Reply-To: <20181031145400.GH20889@lunn.ch>
-From:   Harini Katakam <harinik@xilinx.com>
-Date:   Wed, 31 Oct 2018 20:40:25 +0530
-Message-ID: <CAFcVECKg4u5t9=TOJ1omVJ=8ves_yvzcDZZA_-bE4OAv96cymg@mail.gmail.com>
-Subject: Re: [PATCH 3/4] net: macb: Add pm runtime support
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Harini Katakam <harini.katakam@xilinx.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        David Miller <davem@davemloft.net>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Michal Simek <michal.simek@xilinx.com>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
-On Wed, Oct 31, 2018 at 8:24 PM Andrew Lunn <andrew@lunn.ch> wrote:
+On Wed, 31 Oct 2018, Shayenne da Luz Moura <shayenneluzmoura@gmail.com> wrote:
+> Add a new variable to make the drm_mode_object comparison before
+> idr_alloc and decrease line size.
 >
-> On Wed, Oct 31, 2018 at 09:10:22AM +0530, Harini Katakam wrote:
-> > From: Harini Katakam <harinik@xilinx.com>
-> >
-> > Add runtime pm functions and move clock handling there.
-> > If device is suspended and not a wake device, then return from
-> > mdio read/write functions without performing any action because
-> > the clocks are not active.
-> >
-> > Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> > Signed-off-by: Harini Katakam <harinik@xilinx.com>
-> > ---
-> > Changes from RFC:
-> > Updated pm get sync/put sync calls.
-> > Removed unecessary clk up in mdio helpers.
+> Signed-off-by: Shayenne da Luz Moura <shayenneluzmoura@gmail.com>
+> ---
+>  drivers/gpu/drm/drm_mode_object.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 >
-> This last bit has me worried.
->
-> The MDIO bus is a shared bus with a life of its own.  You can have
-> multiple PHYs and switches on it. The PHYs can for a different
-> Ethernet MAC. Switch drivers will expect to be able to address the
-> switch when the interface is down.
->
-> The FEC driver did something similar for a while. I had to make MDIO
-> read/write runtime PM aware, otherwise i could not access the Ethernet
-> switch hanging of its MDIO bus.
+> diff --git a/drivers/gpu/drm/drm_mode_object.c b/drivers/gpu/drm/drm_mode_object.c
+> index be8b754eaf60..4b9eafddb409 100644
+> --- a/drivers/gpu/drm/drm_mode_object.c
+> +++ b/drivers/gpu/drm/drm_mode_object.c
+> @@ -36,9 +36,10 @@ int __drm_mode_object_add(struct drm_device *dev, struct drm_mode_object *obj,
+>  			  void (*obj_free_cb)(struct kref *kref))
+>  {
+>  	int ret;
+> +	struct drm_mode_object *obj_tmp = register_obj ? obj : NULL;
+>  
+>  	mutex_lock(&dev->mode_config.idr_mutex);
+> -	ret = idr_alloc(&dev->mode_config.crtc_idr, register_obj ? obj : NULL, 1, 0, GFP_KERNEL);
+> +	ret = idr_alloc(&dev->mode_config.crtc_idr, obj_tmp, 1, 0, GFP_KERNEL);
 
-Yes, I understand. But I thought I'd handle it when we have a separate
-MDIO bus driver. As of now, with macb, I do not see a way, for ex.,
-for MAC1 to access MDIO0 when MAC0 is suspended.
-However, I will work a bit more on this solution.
+Please don't send checkpatch "fixes" to adhere to the 80-column rule. Or
+at least use --max-line-length=100 or something to look for worse
+offenders than this.
 
-With the clk up, I've noticed that there is atleast one PHY status poll
-that ends up bringing the clock up after the MAC has been suspended.
-Of course phy is supended immediately after that but it just delays
-this full power down process.
+And if you insist, please just add a newline and proper indentation
+after "NULL," instead of adding a temporary variable.
 
-Regards,
-Harini
+
+BR,
+Jani.
+
+>  	if (ret >= 0) {
+>  		/*
+>  		 * Set up the object linking under the protection of the idr
+
+-- 
+Jani Nikula, Intel Open Source Graphics Center
