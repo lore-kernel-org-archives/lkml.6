@@ -2,119 +2,121 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B712BC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82765C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:19:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BBA42054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:19:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="BWmJmWQo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BBA42054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 405A42054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:19:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 405A42054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729563AbeJaXR1 (ORCPT
+        id S1729579AbeJaXRg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 19:17:27 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:34654 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729435AbeJaXR1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 19:17:27 -0400
-Received: by mail-io1-f66.google.com with SMTP id d80-v6so9783008iof.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 07:19:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=IlzRQXbAV1LXlsHt9Ex8s6CKDGNyrq+9u53dKATLAyw=;
-        b=BWmJmWQof9e0QpnRPkWeO1GfBA5TijTXWmOknsK4BaUjIbyvBQX1UD7bbTWdI0mLyK
-         p6+ERICySQKBkEo3oLAxaQXmyfHwRN8kJBjN3nDPWTN8WL0CW8aDbpTpf+bjTS3KqOcN
-         PM+gj4ouDouHPFjfZ3c41a7j56tPaOe5J+Ll94u/G2NtmVxYlU3fPMIs+c7D4vbv5VhU
-         MWct8LM3WEhCCRSXGkGD7cNPMUuGzXE1fVgzWkFspkqGaP3SD7K7gew86mWKauaDoT8/
-         d5wVLhKP0RGALRQaKj5q0ZxcpRt4qNtLcPLFKWmUEzEk8ten29j0u0OP9X0ivS+oJXYE
-         k56Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IlzRQXbAV1LXlsHt9Ex8s6CKDGNyrq+9u53dKATLAyw=;
-        b=qWC0kGnDU2jnJWryHRO/MQM8fuSGDi3jj2bYietrmT01rRWp2CGyMlk0gIV/K0SLQB
-         pkafBF0zXCwDrT61N2TpnWgbOMyv3j11T9yIFSQ6TvbqQfqg62zUk9zo1lK65gGNWnrY
-         Sr+ktHYMrneYZhhcwFvOb4iMzbAs7/kW1L6UjOOLAJ3XyrIZ54SrPMXy8l80cnHc1rM0
-         6tKZyblUGBRfkgJq78kJsyWXcZ+Ks+k/5/fD5K2Ap5PuosZTdFcc0QYZDE2zDtJHgc6d
-         8BJT341PfvrE74wqdfpwT8KutrE0pSpbMUYicfQsOMoxWFfQEnMoMwo+mRVaIHiMvEbt
-         AzJQ==
-X-Gm-Message-State: AGRZ1gLZ0qX2bYMVjgxCzZAfoE5c8J2QgfgTelXZ/inExKoFAPAylphk
-        pDSFu1uGTinAVhGd5YvqA508HGtqmJk=
-X-Google-Smtp-Source: AJdET5e/EtH61gVC/MlGIzj2I1F6nFbgDINzhkHkxCpojNU29UyGVKJP3f7nkrCG/OpcSCApic64ag==
-X-Received: by 2002:a6b:bd45:: with SMTP id n66-v6mr2159406iof.25.1540995552802;
-        Wed, 31 Oct 2018 07:19:12 -0700 (PDT)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id 22-v6sm12398779ioc.22.2018.10.31.07.19.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 07:19:11 -0700 (PDT)
-Subject: Re: [PATCH 05/16] blk-mq: allow software queue to map to multiple
- hardware queues
-To:     Sagi Grimberg <sagi@grimberg.me>, linux-block@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20181030183252.17857-1-axboe@kernel.dk>
- <20181030183252.17857-6-axboe@kernel.dk>
- <f5bff9c7-2c94-8988-cf76-318fa0808cf0@grimberg.me>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <95e50d97-7cb3-7632-6e3f-b75ce32153ff@kernel.dk>
-Date:   Wed, 31 Oct 2018 08:19:10 -0600
+        Wed, 31 Oct 2018 19:17:36 -0400
+Received: from mga06.intel.com ([134.134.136.31]:16217 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729435AbeJaXRg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 19:17:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2018 07:19:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,447,1534834800"; 
+   d="scan'208";a="270308144"
+Received: from htphan-mobl4.amr.corp.intel.com (HELO [10.251.5.56]) ([10.251.5.56])
+  by orsmga005.jf.intel.com with ESMTP; 31 Oct 2018 07:19:22 -0700
+Subject: Re: [PATCH v3] mm, drm/i915: mark pinned shmemfs pages as unevictable
+To:     owner-linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-mm@kvack.org
+Cc:     Kuo-Hsin Yang <vovoy@chromium.org>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Michal Hocko <mhocko@suse.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20181031081945.207709-1-vovoy@chromium.org>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <039b2768-39ff-6196-9615-1f0302ee3e0e@intel.com>
+Date:   Wed, 31 Oct 2018 07:19:21 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <f5bff9c7-2c94-8988-cf76-318fa0808cf0@grimberg.me>
+In-Reply-To: <20181031081945.207709-1-vovoy@chromium.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/30/18 6:49 PM, Sagi Grimberg wrote:
-> 
-> 
->> @@ -2342,10 +2346,16 @@ static void blk_mq_map_swqueue(struct request_queue *q)
->>   
->>   		ctx = per_cpu_ptr(q->queue_ctx, i);
->>   		hctx = blk_mq_map_queue_type(q, 0, i);
->> -
->> +		hctx->type = 0;
->>   		cpumask_set_cpu(i, hctx->cpumask);
->> -		ctx->index_hw = hctx->nr_ctx;
->> +		ctx->index_hw[hctx->type] = hctx->nr_ctx;
->>   		hctx->ctxs[hctx->nr_ctx++] = ctx;
->> +
->> +		/*
->> +		 * If the nr_ctx type overflows, we have exceeded the
->> +		 * amount of sw queues we can support.
->> +		 */
->> +		BUG_ON(!hctx->nr_ctx);
-> 
-> Was this added because nr_ctx became short? What was the motivation
-> for that? save space? structure alignment?
+On 10/31/18 1:19 AM, owner-linux-mm@kvack.org wrote:
+> -These are currently used in two places in the kernel:
+> +These are currently used in three places in the kernel:
+>  
+>   (1) By ramfs to mark the address spaces of its inodes when they are created,
+>       and this mark remains for the life of the inode.
+> @@ -154,6 +154,8 @@ These are currently used in two places in the kernel:
+>       swapped out; the application must touch the pages manually if it wants to
+>       ensure they're in memory.
+>  
+> + (3) By the i915 driver to mark pinned address space until it's unpinned.
 
-Right, I made it smaller to not take up more space after this change.
-And since it is now smaller, adding a check for wrap seemed like
-a good idea.
+mlock() and ramfs usage are pretty easy to track down.  /proc/$pid/smaps
+or /proc/meminfo can show us mlock() and good ol' 'df' and friends can
+show us ramfs the extent of pinned memory.
 
-> Perhaps this should be mentioned in the change log (as it contradicts
-> that no functional changes exist in this patch). Or, if this can happen
-> even when 32bit nr_ctx, it should be a separate small patch?
+With these, if we see "Unevictable" in meminfo bump up, we at least have
+a starting point to find the cause.
 
-Could happen for any type, but more likely now of course. I'll
-mention this in the changelog.
-
--- 
-Jens Axboe
-
+Do we have an equivalent for i915?
