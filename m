@@ -2,172 +2,118 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECEA6ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:48:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC8CC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:52:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F57A2081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:48:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O/LOoT7b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F57A2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 364702054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:52:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 364702054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729634AbeJaXq4 (ORCPT
+        id S1729363AbeJaXun (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 19:46:56 -0400
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:38591 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729411AbeJaXq4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 19:46:56 -0400
-Received: by mail-vk1-f194.google.com with SMTP id j20so3967524vke.5
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 07:48:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=VXHMFRoEjcbyqAsTw0a9V7FO4ZhzNuA0KlmatjR5ocM=;
-        b=O/LOoT7biqzr8xHAs6liAaCXA8WmGtkS6cRzQ723AbcmpH+/QF2Uei/mxqf2L1wnnq
-         WM+9k9qqt/H+8xx1S6vxrbJdrBU04Lu6NqfGcQySpewS7AMScGVs1F+ZjC7OG0hoqu5s
-         Jj/mU232Y1dRpxlCwMgDFNO4pXrbfyX1TGpagE5BXRf+HYReaMLAZw/gaamhkpNninGi
-         LFh5m7/STop97N5tDdZcyjfp8kYz8onzBOMWoz/HjZE6DWL7QBz4lkIy2Lmf4EQyPGpa
-         Uf4Lh0iG5ABWFIYks1CtOMAGY0PLseVjlIEfREsvqeKM+c23yk09yycP1IUSwAb8pTwU
-         +iwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=VXHMFRoEjcbyqAsTw0a9V7FO4ZhzNuA0KlmatjR5ocM=;
-        b=BdJztitvWdE26/i38Ro9j7VCUNPVBe8O4d1qxAiO/Ffp5MBGMOp3aMOCfdvAAubjro
-         EEo6hKC6mU+6P/akRII11VhMOrKKt7NCDa2VggMs9xRzUNHy6Kzd8qQ/PpF40d8ePohj
-         D+FnNEwZ3x4e0YpB0TSCear+eLdB9uG8lY5UzB7ShpJ/xokrdn+baj1YhMbUBOsBm45T
-         zd3Q+lyNweziK3r4dzzDWDEjw8lEZKxbnK1RzU3NowXuqd2UG4fWrB/s8tSQABXoIoVo
-         6JG3+uREGaPjRwQXtwrKvOGaIPYZPCRGfn9hMVe+QFfIua2+aixtesKdgdam9tSIiOng
-         Utwg==
-X-Gm-Message-State: AGRZ1gLv1lA1gBkCO7gZ3qTY0T9eRcbbUvLbk62hSLHrKeYO6BUOyiNU
-        Tsd8UljeEga+slNauUIC9r+xK3i9I8Nq7vnvHOf+Ovp4a+g=
-X-Google-Smtp-Source: AJdET5eWpsxOaleU9PuJHu2rWj+WMnZDBu1sxiChYQTT9uIaX2lvDZmln5Jn1Tn5HFxTdEWeuXbd/SMQtjRQlAtrRv4=
-X-Received: by 2002:a1f:1144:: with SMTP id 65mr1406211vkr.54.1540997314794;
- Wed, 31 Oct 2018 07:48:34 -0700 (PDT)
+        Wed, 31 Oct 2018 19:50:43 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42274 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729170AbeJaXun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 19:50:43 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 102B4341;
+        Wed, 31 Oct 2018 07:52:22 -0700 (PDT)
+Received: from localhost (e105922-lin.cambridge.arm.com [10.1.197.25])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 834003F71D;
+        Wed, 31 Oct 2018 07:52:21 -0700 (PDT)
+From:   Punit Agrawal <punit.agrawal@arm.com>
+To:     Christoffer Dall <christoffer.dall@arm.com>
+Cc:     <kvmarm@lists.cs.columbia.edu>, <marc.zyngier@arm.com>,
+        <will.deacon@arm.com>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <suzuki.poulose@arm.com>,
+        <stable@vger.kernel.org>
+Subject: Re: [PATCH v8 1/9] KVM: arm/arm64: Ensure only THP is candidate for adjustment
+References: <20181001155443.23032-1-punit.agrawal@arm.com>
+        <20181001155443.23032-2-punit.agrawal@arm.com>
+        <20181031143646.GE12057@e113682-lin.lund.arm.com>
+Date:   Wed, 31 Oct 2018 14:52:20 +0000
+In-Reply-To: <20181031143646.GE12057@e113682-lin.lund.arm.com> (Christoffer
+        Dall's message of "Wed, 31 Oct 2018 15:36:46 +0100")
+Message-ID: <87h8h2rwwr.fsf@e105922-lin.cambridge.arm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-Received: by 2002:a67:f48d:0:0:0:0:0 with HTTP; Wed, 31 Oct 2018 07:48:34
- -0700 (PDT)
-In-Reply-To: <4ed9af67cf4a46708905d3f392344bcb@AcuMS.aculab.com>
-References: <20181029175322.189042-1-dancol@google.com> <4beaaae77bea4cc5b4cc15504331c9a9@AcuMS.aculab.com>
- <CAKOZuetR6_ztfJOe4TMVCX2J5sfuP8XBtG66hmsDkx-KH=CpJw@mail.gmail.com> <4ed9af67cf4a46708905d3f392344bcb@AcuMS.aculab.com>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Wed, 31 Oct 2018 14:48:34 +0000
-Message-ID: <CAKOZueuuAGSDwXc2jdZM_=EJdsG0HeGZFLaFWDFNHLLKXJpwbg@mail.gmail.com>
-Subject: Re: [RFC PATCH] Minimal non-child process exit notification support
-To:     David Laight <David.Laight@aculab.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "timmurray@google.com" <timmurray@google.com>,
-        "joelaf@google.com" <joelaf@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 2:25 PM, David Laight <David.Laight@aculab.com> wrote:
-> From: Daniel Colascione
->> Sent: 31 October 2018 12:56
->> On Wed, Oct 31, 2018 at 12:27 PM, David Laight <David.Laight@aculab.com> wrote:
->> > From: Daniel Colascione
->> >> Sent: 29 October 2018 17:53
->> >>
->> >> This patch adds a new file under /proc/pid, /proc/pid/exithand.
->> >> Attempting to read from an exithand file will block until the
->> >> corresponding process exits, at which point the read will successfully
->> >> complete with EOF.  The file descriptor supports both blocking
->> >> operations and poll(2). It's intended to be a minimal interface for
->> >> allowing a program to wait for the exit of a process that is not one
->> >> of its children.
->> >
->> > Why do you need an extra file?
->>
->> Because no current file suffices.
+Christoffer Dall <christoffer.dall@arm.com> writes:
+
+> On Mon, Oct 01, 2018 at 04:54:35PM +0100, Punit Agrawal wrote:
+>> PageTransCompoundMap() returns true for hugetlbfs and THP
+>> hugepages. This behaviour incorrectly leads to stage 2 faults for
+>> unsupported hugepage sizes (e.g., 64K hugepage with 4K pages) to be
+>> treated as THP faults.
+>> 
+>> Tighten the check to filter out hugetlbfs pages. This also leads to
+>> consistently mapping all unsupported hugepage sizes as PTE level
+>> entries at stage 2.
+>> 
+>> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+>> Reviewed-by: Suzuki Poulose <suzuki.poulose@arm.com>
+>> Cc: Christoffer Dall <christoffer.dall@arm.com>
+>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>> Cc: stable@vger.kernel.org # v4.13+
 >
-> That doesn't stop you making something work on any/all of the existing files.
-
-Why overload?
-
->> > It ought to be possible to use poll() to wait for POLLERR having set
->> > 'events' to zero on any of the nodes in /proc/pid - or even on
->> > the directory itself.
->>
->> That doesn't actually work today. And waiting on a directory with
->> POLLERR would be very weird, since directories in general don't do
->> things like blocking reads or poll support. A separate file with
->> self-contained, well-defined semantics is cleaner.
 >
-> Device drivers will (well ought to) return POLLERR when a device
-> is removed.
-> Making procfs behave the same way wouldn't be too stupid.
-
-That's overkill. You'd need to add poll support to files throughout
-/proc/pid, and I don't think doing so would add any new capabilities
-over keeping the changes localized to one new place.
-
->> > Indeed, to avoid killing the wrong process you need to have opened
->> > some node of /proc/pid/* (maybe cmdline) before sending the kill
->> > signal.
->>
->> The kernel really needs better documentation of the semantics of
->> procfs file descriptors. You're not the only person to think,
->> mistakenly, that keeping a reference to a /proc/$PID/something FD
->> reserves $PID and prevents it being used for another process. Procfs
->> FDs do no such thing. kill(2) is unsafe whether or not
->> /proc/pid/cmdline or any other /proc file is open.
+> Hmm, this function is only actually called from user_mem_abort() if we
+> have (!hugetlb), so I'm not sure the cc stable here was actually
+> warranted, nor that this patch is strictly necessary.
 >
-> Interesting.
-> Linux 'fixed' the problem of pid reuse in the kernel by adding (IIRC)
-> 'struct pid' that reference counts the pid stopping reuse.
-
-Struct pid doesn't stop PID reuse. It just allows the kernel to
-distinguish between a stale and current reference to a given PID. In a
-sense, the "struct pid*" is the "real" name of a process and the
-numeric PID is just a convenient way to find a struct pid.
-
-> But since the pids are still allocated sequentially userspace can
-> still reference a pid that is freed and immediately reused.
-> I'd have thought that procfs nodes held a reference count on the 'struct pid'.
-> There's probably no reason why it shouldn't.
+> It doesn't hurt, and makes the code potentially more robust for the
+> future though.
 >
-> Annoyingly non-GPL drivers can't release references to 'struct pid' so
-> are very constrained about which processes they can signal.
+> Am I missing something?
 
-If I had my way, I'd s/EXPORT_SYMBOL_GPL/EXPORT_SYMBOL/ in pid.c.
-These routines seem generally useful. As an alternative, I suppose
-drivers could just use the new /proc/pid/kill interface, with
-sufficient contortions, just as userspace can.
+!hugetlb is only true for hugepage sizes supported at stage 2. The
+function also got called for unsupported hugepage size at stage 2, e.g.,
+64k hugepage with 4k page size, which then ended up doing the wrong
+thing.
 
-> I also managed to use a stale 'struct pid' and kill the wrong process
-> - much more likely that the pid number being reused.
+Hope that adds some context. I should've added this to the commit log.
 
-That shouldn't be possible, unless by "stale 'struct pid'" you mean a
-struct pid* referring to a struct pid that's been released and reused
-for some other object (possibly a different struct pid instances), and
-that's UB.
-
-> If you look at the NetBSD pid allocator you'll see that it uses the
-> low pid bits to index an array and the high bits as a sequence number.
-> The array slots are also reused LIFO, so you always need a significant
-> number of pid allocate/free before a number is reused.
-> The non-sequential allocation also makes it significantly more difficult
-> to predict when a pid will be reused.
-> The table size is doubled when it gets nearly full.
-
-NetBSD is still just papering over the problem. The real issue is that
-the whole PID-based process API model is unsafe, and a clever PID
-allocator doesn't address the fundamental race condition. As long as
-PID reuse is possible at all, there's a potential race condition, and
-correctness depends on hope. The only way you could address the PID
-race problem while not changing the Unix process API is by making
-pid_t ridiculously wide so that it never wraps around.
+>
+> Thanks,
+>
+>     Christoffer
+>
+>> ---
+>>  virt/kvm/arm/mmu.c | 8 +++++++-
+>>  1 file changed, 7 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+>> index 7e477b3cae5b..c23a1b323aad 100644
+>> --- a/virt/kvm/arm/mmu.c
+>> +++ b/virt/kvm/arm/mmu.c
+>> @@ -1231,8 +1231,14 @@ static bool transparent_hugepage_adjust(kvm_pfn_t *pfnp, phys_addr_t *ipap)
+>>  {
+>>  	kvm_pfn_t pfn = *pfnp;
+>>  	gfn_t gfn = *ipap >> PAGE_SHIFT;
+>> +	struct page *page = pfn_to_page(pfn);
+>>  
+>> -	if (PageTransCompoundMap(pfn_to_page(pfn))) {
+>> +	/*
+>> +	 * PageTransCompoungMap() returns true for THP and
+>> +	 * hugetlbfs. Make sure the adjustment is done only for THP
+>> +	 * pages.
+>> +	 */
+>> +	if (!PageHuge(page) && PageTransCompoundMap(page)) {
+>>  		unsigned long mask;
+>>  		/*
+>>  		 * The address we faulted on is backed by a transparent huge
+>> -- 
+>> 2.18.0
+>> 
