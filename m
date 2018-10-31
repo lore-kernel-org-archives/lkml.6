@@ -2,115 +2,110 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C8ECC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 13:39:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C95E1ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 13:39:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D05002082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 13:39:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="J5wwlS5s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D05002082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 942D92081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 13:39:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 942D92081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729313AbeJaWhO (ORCPT
+        id S1729333AbeJaWhc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 18:37:14 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46087 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729220AbeJaWhO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 18:37:14 -0400
-Received: by mail-lj1-f196.google.com with SMTP id x3-v6so14838517lji.13
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 06:39:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Qyvys34vf1qIimjNCAwNOfxOhRg3WtfSWWYeB3pwWRg=;
-        b=J5wwlS5sUPZceaxMdPGfKZpP9yF8JALB2L4QRk/8da3c++1H/xjn9nQxUtp89y+uBY
-         6fN/87PhLPgWlOtfScBM6FgPr3jnIQI7LZxNV1tAC3Wg410d/yIo/oTP6hrGlt56yAUZ
-         mFLTixgb3OAi3Bbg5mYcxMMKzrmA58WmQEpIA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Qyvys34vf1qIimjNCAwNOfxOhRg3WtfSWWYeB3pwWRg=;
-        b=ZSCCwKM2ExK3un4vFIxaIOCj812/G9W9kV7ozfIvrXgMhkJFk5dCiO2WZ7mF3707Uz
-         aOACTLwNX9ifcDceCVytlYesL0Vq31spzLHpFUnKWdgJ9QPJ7hvBSK2iP4IM7Bi3FKWF
-         bUsIrVLOZPTUINfbdC0oN1hPCxysRHq97VPLXIczRsg3/STjNIlW6mu/c3t0+1wnNkUL
-         +BUpv3NBRlZ4EzosdD4ockFfW9iMchHk81ETcPCq2PBj5tGl79w0llAmmBgcn2S4oddz
-         bbwwTcI5xA8yWxrzu+bfQ+sLZVIjsd1anNzvferoS6aaAo4/X5LY8qhDgM5/G7JoQvBE
-         ukBQ==
-X-Gm-Message-State: AGRZ1gLW3kAd68e2mtQrDpeedddCy/kWK4zXHKl2vVKqDFYQNE+qRd8h
-        khLAw95D2r8GSshJfkLm3o0bzqWA/gwR9r7FrD6qGQ==
-X-Google-Smtp-Source: AJdET5d3q3yT6ZDIWLDmTLyE/TXWdCkXqOKgZqQkJ0uP9bZFmz5fken0DUvm8/prmLVby/fWwuYyOGeM8D+VCjUtapo=
-X-Received: by 2002:a2e:1510:: with SMTP id s16-v6mr2064317ljd.4.1540993148258;
- Wed, 31 Oct 2018 06:39:08 -0700 (PDT)
+        Wed, 31 Oct 2018 18:37:32 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:59502 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729139AbeJaWhc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 18:37:32 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id CEB95A1047;
+        Wed, 31 Oct 2018 14:39:25 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
+        with ESMTP id 2PmreqW_Gst6; Wed, 31 Oct 2018 14:39:24 +0100 (CET)
+Date:   Thu, 1 Nov 2018 00:39:12 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Christian Brauner <christian@brauner.io>,
+        Aleksa Sarai <asarai@suse.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kretprobe: produce sane stack traces
+Message-ID: <20181031133912.3j5tryq2vyhkdn4d@yavin>
+References: <20181026132210.12569-1-cyphar@cyphar.com>
+ <20181030101206.2e5998ca3c75496c91ba5b09@kernel.org>
+ <20181031090317.4e211fdd@vmware.local.home>
 MIME-Version: 1.0
-References: <20181029094245.7886-1-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20181029094245.7886-1-manivannan.sadhasivam@linaro.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 31 Oct 2018 14:38:56 +0100
-Message-ID: <CACRpkdYThcGjdV9Ezs4qMr8K6_jH40SDUgt0Tps8d+_4sSESyg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/7] Standardize onboard LED support for 96Boards
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     Rob Herring <robh@kernel.org>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        ezequiel@collabora.com, Xu Wei <xuwei5@hisilicon.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Andy Gross <andy.gross@linaro.org>, linux-leds@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        linux-arm-msm@vger.kernel.org,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Koen Kooi <koen.kooi@linaro.org>,
-        Nicolas Dechesne <nicolas.dechesne@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="si2rvs2mjjmh3fgx"
+Content-Disposition: inline
+In-Reply-To: <20181031090317.4e211fdd@vmware.local.home>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 10:43 AM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
 
-> This patchset standardizes the onboard LEDs on 96Boards by maintaining
-> common labels and triggers as below:
->
-> green:user1  default-trigger: heartbeat
-> green:user2  default-trigger: mmc0/disk-activity (onboard-storage)
-> green:user3  default-trigger: mmc1 (SD card)
-> green:user4  default-trigger: none, panic-indicator
-> yellow:wlan  default-trigger: phy0tx
-> blue:bt      default-trigger: hci0-power
->
-> This standardization is required to provide a common behaviour of LEDs
-> across all mainline supported 96Boards and also making it easier to
-> control it using an userspace library like MRAA.
->
-> For Rock960 and Ficus boards, the LED support is added in this patchset.
-> Rest of the boards are converted to adopt the standard.
->
-> Note: Since there is no UFS trigger available for now, user2 LED trigger
-> is set to none on HiKey960.
+--si2rvs2mjjmh3fgx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This series:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+On 2018-10-31, Steven Rostedt <rostedt@goodmis.org> wrote:
+> > Anyway, until that merge happens, this patch looks good to avoid
+> > this issue for generic solution (e.g. for the arch which doesn't
+> > supports retstack).
+>=20
+> I think its time to come up with an algorithm that makes function graph
+> work with multiple users, and have kretprobes be able to hook into it
+> just like kprobes hooks into function tracer.
+>=20
+> I have some ideas on how to get this done, and will try to have an RFC
+> patch set ready by plumbers.
 
-It makes a lot of sense to try to unify the userspace ABI so we get
-some kind of order here instead of trying to counteract it with
-per-device kludges in userspace. It definately makes things better!
+Should I continue working on this patchset?
 
-Yours,
-Linus Walleij
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--si2rvs2mjjmh3fgx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEb6Gz4/mhjNy+aiz1Snvnv3Dem58FAlvZsIAACgkQSnvnv3De
+m599Ew//WQYMTifoaqa/qaOqV6wu3+yszJP6u1jF05x99Q8k8qjmV7I89BzVQeef
+vwJNOXo8u4PliULh+E3oKW+vSeuWKWBa21SS+K0/w6x4Xcr/VuNoj5aQh3m245+8
+VylMwqgAkEuNQAv1SVOaNcKZ0BUd3cKlFAJ13WYdxj5vPckG/ZNExsMDuLF8aeTD
+iMDO4j/n6DmyIg2MUJuKqd476WfluuRkm8H/52y+pvevkcqN7oIturhsx3GUay75
+eaRK5TNcfouo/IJj5h9DlakK24qu6uk3IKaRpomeklKEmJEzNrsYlt4K2VlQy+1a
+lbxHHDvp7Q6o21pzCX1qwUucmwEKL9PesoWLlb+140zuVkDCBhmo8ZMCOAHaU1ss
+HQVqIms6MglVdzBCRwVA6hPvA2P+A+ohRv90g+EaGJaSOAcI1/xDndD2Yi61ZvO1
+TObh2ZCOMEpaiuPayyCm1SbwDkNGjJuWo34JXfY4paLBRamL49FpF4rZZHoFLQ/m
+o6W71UcuBlsF5vh1zqLWu5LtRIf5C6gsCGPgIG8QSgy9kAQWIPyBzmvFuwV/hM8K
+z5UMif93u+jz8MpPhCZGIwMu/r035NceduSY4pwGwc+j916iOGaQnYKgWlz3TSG9
+vJlZWYfyfv8PcSKJUKwOMCIBfWn2ljZJKMxGXLaxTyxUZKZ2M4o=
+=SZlv
+-----END PGP SIGNATURE-----
+
+--si2rvs2mjjmh3fgx--
