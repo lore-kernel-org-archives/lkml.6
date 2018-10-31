@@ -7,43 +7,42 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C8ACC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5C58C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B17C22081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D1C42064C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PP33/+RO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B17C22081B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="huZJQFN8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D1C42064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730783AbeKAIJ7 (ORCPT
+        id S1730811AbeKAIKE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:09:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60196 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:10:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60326 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730726AbeKAIJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:09:57 -0400
+        id S1730658AbeKAIJ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:09:59 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1FBA2081B;
-        Wed, 31 Oct 2018 23:09:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C76420840;
+        Wed, 31 Oct 2018 23:09:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027386;
-        bh=ZzJU/mOIbCwL51xMpX6SClB1NK63OmoOYUoKxGiLkPM=;
+        s=default; t=1541027387;
+        bh=vbfyaG5sIRkHLCqeTuHcLDedAovPhOhKlikF+WE2Kh8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PP33/+RO+eJ8WI2UQ6GeWaYluL1bJQCIi0i3P8as0OpJvxT36j96inF1A9VWPfyHy
-         UkD5EqK9ZBcKjVfgObf+gUR3icJiJVHcC7XK0TVmxDfslaahaO03pbHcEjrcF1OfUm
-         y28Pstm6DkOGJJOsj6Q3+f1O/0pXAmI7fgrYUQGU=
+        b=huZJQFN8Qju863bdlKVtwFc2WJOxTgpvpDyGVx0AB6cImJH8OObAPHDgbRhqpbryp
+         UggCn8FwRo1mU2aNZYTPxKW9W8XbH7CcrOB9BTTcpLOu9wyy+2btJ2bdISSxqaciAm
+         6u6RMeYlMwr4m99PDpG9kA2g1jJtkNu9Y/cOwL2c=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Paul Cercueil <paul@crapouillou.net>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 124/126] dmaengine: dma-jz4780: Return error if not probed from DT
-Date:   Wed, 31 Oct 2018 19:07:52 -0400
-Message-Id: <20181031230754.29029-124-sashal@kernel.org>
+Cc:     Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 126/126] ALSA: hda: Check the non-cached stream buffers more explicitly
+Date:   Wed, 31 Oct 2018 19:07:54 -0400
+Message-Id: <20181031230754.29029-126-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -52,38 +51,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Cercueil <paul@crapouillou.net>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 54f919a04cf221bc1601d1193682d4379dacacbd ]
+[ Upstream commit 78c9be61c3a5cd9e2439fd27a5ffad73a81958c7 ]
 
-The driver calls clk_get() with the clock name set to NULL, which means
-that the driver could only work when probed from devicetree. From now
-on, we explicitly require the driver to be probed from devicetree.
+Introduce a new flag, uc_buffer, to indicate that the controller
+requires the non-cached pages for stream buffers, either as a
+chip-specific requirement or specified via snoop=0 option.
+This improves the code-readability.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Tested-by: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Also, this patch fixes the incorrect behavior for C-Media chip where
+the stream buffers were never handled as non-cached due to the check
+of driver_type even if you pass snoop=0 option.
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/dma-jz4780.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ sound/pci/hda/hda_controller.h |  1 +
+ sound/pci/hda/hda_intel.c      | 11 ++++++++---
+ 2 files changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
-index 85820a2d69d4..987899610b46 100644
---- a/drivers/dma/dma-jz4780.c
-+++ b/drivers/dma/dma-jz4780.c
-@@ -761,6 +761,11 @@ static int jz4780_dma_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	int i, ret;
+diff --git a/sound/pci/hda/hda_controller.h b/sound/pci/hda/hda_controller.h
+index a68e75b00ea3..53c3cd28bc99 100644
+--- a/sound/pci/hda/hda_controller.h
++++ b/sound/pci/hda/hda_controller.h
+@@ -160,6 +160,7 @@ struct azx {
+ 	unsigned int msi:1;
+ 	unsigned int probing:1; /* codec probing phase */
+ 	unsigned int snoop:1;
++	unsigned int uc_buffer:1; /* non-cached pages for stream buffers */
+ 	unsigned int align_buffer_size:1;
+ 	unsigned int region_requested:1;
+ 	unsigned int disabled:1; /* disabled by vga_switcheroo */
+diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
+index 28dc5e124995..a862c26ef211 100644
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -410,7 +410,7 @@ static void __mark_pages_wc(struct azx *chip, struct snd_dma_buffer *dmab, bool
+ #ifdef CONFIG_SND_DMA_SGBUF
+ 	if (dmab->dev.type == SNDRV_DMA_TYPE_DEV_SG) {
+ 		struct snd_sg_buf *sgbuf = dmab->private_data;
+-		if (chip->driver_type == AZX_DRIVER_CMEDIA)
++		if (!chip->uc_buffer)
+ 			return; /* deal with only CORB/RIRB buffers */
+ 		if (on)
+ 			set_pages_array_wc(sgbuf->page_table, sgbuf->pages);
+@@ -1636,6 +1636,7 @@ static void azx_check_snoop_available(struct azx *chip)
+ 		dev_info(chip->card->dev, "Force to %s mode by module option\n",
+ 			 snoop ? "snoop" : "non-snoop");
+ 		chip->snoop = snoop;
++		chip->uc_buffer = !snoop;
+ 		return;
+ 	}
  
-+	if (!dev->of_node) {
-+		dev_err(dev, "This driver must be probed from devicetree\n");
-+		return -EINVAL;
+@@ -1656,8 +1657,12 @@ static void azx_check_snoop_available(struct azx *chip)
+ 		snoop = false;
+ 
+ 	chip->snoop = snoop;
+-	if (!snoop)
++	if (!snoop) {
+ 		dev_info(chip->card->dev, "Force to non-snoop mode\n");
++		/* C-Media requires non-cached pages only for CORB/RIRB */
++		if (chip->driver_type != AZX_DRIVER_CMEDIA)
++			chip->uc_buffer = true;
 +	}
-+
- 	jzdma = devm_kzalloc(dev, sizeof(*jzdma), GFP_KERNEL);
- 	if (!jzdma)
- 		return -ENOMEM;
+ }
+ 
+ static void azx_probe_work(struct work_struct *work)
+@@ -2096,7 +2101,7 @@ static void pcm_mmap_prepare(struct snd_pcm_substream *substream,
+ #ifdef CONFIG_X86
+ 	struct azx_pcm *apcm = snd_pcm_substream_chip(substream);
+ 	struct azx *chip = apcm->chip;
+-	if (!azx_snoop(chip) && chip->driver_type != AZX_DRIVER_CMEDIA)
++	if (chip->uc_buffer)
+ 		area->vm_page_prot = pgprot_writecombine(area->vm_page_prot);
+ #endif
+ }
 -- 
 2.17.1
 
