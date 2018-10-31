@@ -7,133 +7,121 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE7A6ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:17:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE0FEC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:18:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85A8F20843
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:17:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B76E620664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:18:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HFlzTkiU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85A8F20843
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GDqStQ5u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B76E620664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732140AbeKAISE (ORCPT
+        id S1732065AbeKAISR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:18:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35762 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:18:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35678 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731844AbeKAILp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:11:45 -0400
+        id S1731688AbeKAILm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:11:42 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0C592085A;
-        Wed, 31 Oct 2018 23:11:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B15B20843;
+        Wed, 31 Oct 2018 23:11:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027493;
-        bh=ViuhCkOJBh6eqnMLZodmjEoHunriaYOiXNszhOVtsW0=;
+        s=default; t=1541027490;
+        bh=0GMEpojMixSZjOExndEgcC2dtVASMNurB3qD8TA9XcU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HFlzTkiUCOp7S5AXt+lqOhTAFtwHeMwRuPso1hxph6u2iwhlUAgOWxtzZUj2B8KOq
-         GvSYSKKtjxbUXtaxaTtvzsLKnTpYL3LbVgzYTJRDdpmA8c9PQ+2zmNaQ9Fcln83qnw
-         PoB85OeJgQLhDx4+NoDw2+dyZTvHtyVAVwoWUtjE=
+        b=GDqStQ5uWgUS4z6+G/K6MrxKYAGuyjAgdXsbx6BvVgCNtfwfk/bwjnfgGPxWPCwzp
+         SmQfzZJJbx9M3fnUuD2sQYHZmmRxfpX4di5djOPwm771yonH/2drPZ+G477s6HcEjJ
+         dHGD8j0yUu84u29iuEDGjhZ2cBp6p6gMPEpIyGg0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 44/48] uio: ensure class is registered before devices
-Date:   Wed, 31 Oct 2018 19:10:50 -0400
-Message-Id: <20181031231054.29333-44-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 41/48] crypto: caam - fix implicit casts in endianness helpers
+Date:   Wed, 31 Oct 2018 19:10:47 -0400
+Message-Id: <20181031231054.29333-41-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231054.29333-1-sashal@kernel.org>
 References: <20181031231054.29333-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Horia Geantă <horia.geanta@nxp.com>
 
-[ Upstream commit ae61cf5b9913027c6953a79ed3894da4f47061bd ]
+[ Upstream commit aae733a3f46f5ef338fbdde26e14cbb205a23de0 ]
 
-When both uio and the uio drivers are built in the kernel, it is possible
-for a driver to register devices before the uio class is registered.
+Fix the following sparse endianness warnings:
 
-This may result in a NULL pointer dereference later on in
-get_device_parent() when accessing the class glue_dirs spinlock.
+drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __le32unsigned int @@
+drivers/crypto/caam/regs.h:95:1:    expected unsigned int
+drivers/crypto/caam/regs.h:95:1:    got restricted __le32 [usertype] <noident>
+drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __be32unsigned int @@
+drivers/crypto/caam/regs.h:95:1:    expected unsigned int
+drivers/crypto/caam/regs.h:95:1:    got restricted __be32 [usertype] <noident>
 
-The trace looks like that:
+drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
+drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
 
-Unable to handle kernel NULL pointer dereference at virtual address 00000140
-[...]
-[<ffff0000089cc234>] _raw_spin_lock+0x14/0x48
-[<ffff0000084f56bc>] device_add+0x154/0x6a0
-[<ffff0000084f5e48>] device_create_groups_vargs+0x120/0x128
-[<ffff0000084f5edc>] device_create+0x54/0x60
-[<ffff0000086e72c0>] __uio_register_device+0x120/0x4a8
-[<ffff000008528b7c>] jaguar2_pci_probe+0x2d4/0x558
-[<ffff0000083fc18c>] local_pci_probe+0x3c/0xb8
-[<ffff0000083fd81c>] pci_device_probe+0x11c/0x180
-[<ffff0000084f88bc>] driver_probe_device+0x22c/0x2d8
-[<ffff0000084f8a24>] __driver_attach+0xbc/0xc0
-[<ffff0000084f69fc>] bus_for_each_dev+0x4c/0x98
-[<ffff0000084f81b8>] driver_attach+0x20/0x28
-[<ffff0000084f7d08>] bus_add_driver+0x1b8/0x228
-[<ffff0000084f93c0>] driver_register+0x60/0xf8
-[<ffff0000083fb918>] __pci_register_driver+0x40/0x48
-
-Return EPROBE_DEFER in that case so the driver can register the device
-later.
-
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 261ea058f016 ("crypto: caam - handle core endianness != caam endianness")
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/uio/uio.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/crypto/caam/regs.h | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-index f0a9ea2740df..cfbfef08c94a 100644
---- a/drivers/uio/uio.c
-+++ b/drivers/uio/uio.c
-@@ -249,6 +249,8 @@ static struct class uio_class = {
- 	.dev_groups = uio_groups,
- };
+diff --git a/drivers/crypto/caam/regs.h b/drivers/crypto/caam/regs.h
+index 84d2f838a063..b03e6f54ec14 100644
+--- a/drivers/crypto/caam/regs.h
++++ b/drivers/crypto/caam/regs.h
+@@ -68,22 +68,22 @@
  
-+bool uio_class_registered;
-+
- /*
-  * device functions
-  */
-@@ -780,6 +782,9 @@ static int init_uio_class(void)
- 		printk(KERN_ERR "class_register failed for uio\n");
- 		goto err_class_register;
- 	}
-+
-+	uio_class_registered = true;
-+
- 	return 0;
+ extern bool caam_little_end;
  
- err_class_register:
-@@ -790,6 +795,7 @@ static int init_uio_class(void)
- 
- static void release_uio_class(void)
- {
-+	uio_class_registered = false;
- 	class_unregister(&uio_class);
- 	uio_major_cleanup();
+-#define caam_to_cpu(len)				\
+-static inline u##len caam##len ## _to_cpu(u##len val)	\
+-{							\
+-	if (caam_little_end)				\
+-		return le##len ## _to_cpu(val);		\
+-	else						\
+-		return be##len ## _to_cpu(val);		\
++#define caam_to_cpu(len)						\
++static inline u##len caam##len ## _to_cpu(u##len val)			\
++{									\
++	if (caam_little_end)						\
++		return le##len ## _to_cpu((__force __le##len)val);	\
++	else								\
++		return be##len ## _to_cpu((__force __be##len)val);	\
  }
-@@ -809,6 +815,9 @@ int __uio_register_device(struct module *owner,
- 	struct uio_device *idev;
- 	int ret = 0;
  
-+	if (!uio_class_registered)
-+		return -EPROBE_DEFER;
-+
- 	if (!parent || !info || !info->name || !info->version)
- 		return -EINVAL;
+-#define cpu_to_caam(len)				\
+-static inline u##len cpu_to_caam##len(u##len val)	\
+-{							\
+-	if (caam_little_end)				\
+-		return cpu_to_le##len(val);		\
+-	else						\
+-		return cpu_to_be##len(val);		\
++#define cpu_to_caam(len)					\
++static inline u##len cpu_to_caam##len(u##len val)		\
++{								\
++	if (caam_little_end)					\
++		return (__force u##len)cpu_to_le##len(val);	\
++	else							\
++		return (__force u##len)cpu_to_be##len(val);	\
+ }
  
+ caam_to_cpu(16)
 -- 
 2.17.1
 
