@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 568E0ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F3CECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E1A420664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33BA620840
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kus0uzB3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E1A420664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AkiPTh6C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33BA620840
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729735AbeKAII3 (ORCPT
+        id S1729756AbeKAIIa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:08:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57410 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:08:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729698AbeKAII2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:08:28 -0400
+        id S1729698AbeKAII3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:08:29 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4968D20840;
-        Wed, 31 Oct 2018 23:08:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E68E020838;
+        Wed, 31 Oct 2018 23:08:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027296;
-        bh=r1nlQK8m6dK/LLyLy1iNcLvkvmY12R+p98OuRmcBb1I=;
+        s=default; t=1541027298;
+        bh=GGGEfhsOsU3Hk4LjJnuxZidhrcXZqqGEWz8tXk3Z4YM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kus0uzB3cSBTMVH8Y18H5PJHpY/Pt2uAdM4rCG46vjRB8NjwYPeJ3ThUDkE59k4Pt
-         mEiOZChOovSEjGGtSvIOWGDRa+E/lXS9tURrfp8Y5IXD46gIGHuyfyd/bAnGRVODA1
-         LACSU2+I+GEbk9zllPQmaoSla0sBw/DhRaHnDzgQ=
+        b=AkiPTh6CowQKQTOkWasysNGW71PvMRNzUNYkNfnfTtHzpwYDBjh28NP3SwO3VBJpR
+         E5UhOu4MgDOpgxj4XRNaYkAWd55Yv4J3YtvE5FtvDShu+wutdAxC0gWBZdz3xpueSB
+         ETtLM0Ju6K5g1yyifSgkyTiEBqFgwkKZVwn3QbLs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Shaul Triebitz <shaul.triebitz@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+Cc:     Luca Coelho <luciano.coelho@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 024/126] iwlwifi: pcie: avoid empty free RB queue
-Date:   Wed, 31 Oct 2018 19:06:12 -0400
-Message-Id: <20181031230754.29029-24-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 026/126] iwlwifi: mvm: check for n_profiles validity in EWRD ACPI
+Date:   Wed, 31 Oct 2018 19:06:14 -0400
+Message-Id: <20181031230754.29029-26-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -53,110 +52,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shaul Triebitz <shaul.triebitz@intel.com>
+From: Luca Coelho <luciano.coelho@intel.com>
 
-[ Upstream commit 868a1e863f95183f00809363fefba6d4f5bcd116 ]
+[ Upstream commit 2e1976bb75263fbad918e82184b16a23bd721546 ]
 
-If all free RB queues are empty, the driver will never restock the
-free RB queue.  That's because the restocking happens in the Rx flow,
-and if the free queue is empty there will be no Rx.
+When reading the profiles from the EWRD table in ACPI, we loop over
+the data and set it into our internal table.  We use the number of
+profiles specified in ACPI without checking its validity, so if the
+ACPI table is corrupted and the number is larger than our array size,
+we will try to make an out-of-bounds access.
 
-Although there's a background worker (a.k.a. allocator) allocating
-memory for RBs so that the Rx handler can restock them, the worker may
-run only after the free queue has become empty (and then it is too
-late for restocking as explained above).
+Fix this by making sure the value specified in the ACPI table is
+valid.
 
-There is a solution for that called 'emergency': If the number of used
-RB's reaches half the amount of all RB's, the Rx handler will not wait
-for the allocator but immediately allocate memory for the used RB's
-and restock the free queue.
-
-But, since the used RB's is per queue, it may happen that the used
-RB's are spread between the queues such that the emergency check will
-fail for each of the queues
-(and still run out of RBs, causing the above symptom).
-
-To fix it, move to emergency mode if the sum of *all* used RBs (for
-all Rx queues) reaches half the amount of all RB's
-
-Signed-off-by: Shaul Triebitz <shaul.triebitz@intel.com>
+Fixes: 6996490501ed ("iwlwifi: mvm: add support for EWRD (Dynamic SAR) ACPI table")
 Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/pcie/rx.c | 32 +++++++++++++-------
- 1 file changed, 21 insertions(+), 11 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/fw.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-index d15f5ba2dc77..cb5631c85d16 100644
---- a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-@@ -1050,6 +1050,14 @@ void iwl_pcie_rx_free(struct iwl_trans *trans)
- 	kfree(trans_pcie->rxq);
- }
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
+index 866c91c923be..dd674dcf1a0a 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
+@@ -669,8 +669,12 @@ static int iwl_mvm_sar_get_ewrd_table(struct iwl_mvm *mvm)
+ 	enabled = !!(wifi_pkg->package.elements[1].integer.value);
+ 	n_profiles = wifi_pkg->package.elements[2].integer.value;
  
-+static void iwl_pcie_rx_move_to_allocator(struct iwl_rxq *rxq,
-+					  struct iwl_rb_allocator *rba)
-+{
-+	spin_lock(&rba->lock);
-+	list_splice_tail_init(&rxq->rx_used, &rba->rbd_empty);
-+	spin_unlock(&rba->lock);
-+}
-+
- /*
-  * iwl_pcie_rx_reuse_rbd - Recycle used RBDs
-  *
-@@ -1081,9 +1089,7 @@ static void iwl_pcie_rx_reuse_rbd(struct iwl_trans *trans,
- 	if ((rxq->used_count % RX_CLAIM_REQ_ALLOC) == RX_POST_REQ_ALLOC) {
- 		/* Move the 2 RBDs to the allocator ownership.
- 		 Allocator has another 6 from pool for the request completion*/
--		spin_lock(&rba->lock);
--		list_splice_tail_init(&rxq->rx_used, &rba->rbd_empty);
--		spin_unlock(&rba->lock);
-+		iwl_pcie_rx_move_to_allocator(rxq, rba);
- 
- 		atomic_inc(&rba->req_pending);
- 		queue_work(rba->alloc_wq, &rba->rx_alloc);
-@@ -1261,10 +1267,18 @@ static void iwl_pcie_rx_handle(struct iwl_trans *trans, int queue)
- 		IWL_DEBUG_RX(trans, "Q %d: HW = SW = %d\n", rxq->id, r);
- 
- 	while (i != r) {
-+		struct iwl_rb_allocator *rba = &trans_pcie->rba;
- 		struct iwl_rx_mem_buffer *rxb;
--
--		if (unlikely(rxq->used_count == rxq->queue_size / 2))
-+		/* number of RBDs still waiting for page allocation */
-+		u32 rb_pending_alloc =
-+			atomic_read(&trans_pcie->rba.req_pending) *
-+			RX_CLAIM_REQ_ALLOC;
-+
-+		if (unlikely(rb_pending_alloc >= rxq->queue_size / 2 &&
-+			     !emergency)) {
-+			iwl_pcie_rx_move_to_allocator(rxq, rba);
- 			emergency = true;
-+		}
- 
- 		if (trans->cfg->mq_rx_supported) {
- 			/*
-@@ -1307,17 +1321,13 @@ static void iwl_pcie_rx_handle(struct iwl_trans *trans, int queue)
- 			iwl_pcie_rx_allocator_get(trans, rxq);
- 
- 		if (rxq->used_count % RX_CLAIM_REQ_ALLOC == 0 && !emergency) {
--			struct iwl_rb_allocator *rba = &trans_pcie->rba;
--
- 			/* Add the remaining empty RBDs for allocator use */
--			spin_lock(&rba->lock);
--			list_splice_tail_init(&rxq->rx_used, &rba->rbd_empty);
--			spin_unlock(&rba->lock);
-+			iwl_pcie_rx_move_to_allocator(rxq, rba);
- 		} else if (emergency) {
- 			count++;
- 			if (count == 8) {
- 				count = 0;
--				if (rxq->used_count < rxq->queue_size / 3)
-+				if (rb_pending_alloc < rxq->queue_size / 3)
- 					emergency = false;
- 
- 				rxq->read = i;
+-	/* in case of BIOS bug */
+-	if (n_profiles <= 0) {
++	/*
++	 * Check the validity of n_profiles.  The EWRD profiles start
++	 * from index 1, so the maximum value allowed here is
++	 * ACPI_SAR_PROFILES_NUM - 1.
++	 */
++	if (n_profiles <= 0 || n_profiles >= ACPI_SAR_PROFILE_NUM) {
+ 		ret = -EINVAL;
+ 		goto out_free;
+ 	}
 -- 
 2.17.1
 
