@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C31AEECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:26:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC4AC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:26:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8834F20847
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:26:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36DF020847
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:26:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="faCSA+8e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8834F20847
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xwSztLaY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36DF020847
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731091AbeKAIKe (ORCPT
+        id S1731277AbeKAI03 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:10:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33168 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:26:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33116 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731072AbeKAIKd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:10:33 -0400
+        id S1731045AbeKAIKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:10:31 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E243C20838;
-        Wed, 31 Oct 2018 23:10:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6EAB020838;
+        Wed, 31 Oct 2018 23:10:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027421;
-        bh=Qy4VKV5WideHusplge3nKbXSwgXp597H/IP1bkNUcd4=;
+        s=default; t=1541027419;
+        bh=VX2FgP8zSlWA7Xz503DcJIJbzzrre9LO4e0nlr132H8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=faCSA+8eJP00gmKm05a9q2kM773MkrS4q/sfyiI+Gr2oo4UVcksg8pdlY+aCsimVs
-         ukZSTedwFoBmoMOhYBoWiYoa64Li4yncPqiUpreny3G6SIIJJUtfUyB/1P2D7Cb9mI
-         X1wiJHtKC8tJOTC7cRFjC+14XsfyIp181h+AtGwc=
+        b=xwSztLaY3q/DbRSYg6q+FnhUW41PPDOeekWeiqktlSbRaO3d0BFmQanmpgrfs67o6
+         9qn4kmrwn5iVj+JJEUpAHNJA87QAx74/m0MWZjybS+0T1+bBtNiYkOiFG4RXrvnVOF
+         1/ccbtej55qP9y1fPXvu+47jGBJ/vBL+iwb79rNU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sara Sharon <sara.sharon@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+Cc:     Douglas Anderson <dianders@chromium.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 36/73] iwlwifi: mvm: fix BAR seq ctrl reporting
-Date:   Wed, 31 Oct 2018 19:09:11 -0400
-Message-Id: <20181031230948.29203-36-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 33/73] pinctrl: spmi-mpp: Fix pmic_mpp_config_get() to be compliant
+Date:   Wed, 31 Oct 2018 19:09:08 -0400
+Message-Id: <20181031230948.29203-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230948.29203-1-sashal@kernel.org>
 References: <20181031230948.29203-1-sashal@kernel.org>
@@ -53,55 +53,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sara Sharon <sara.sharon@intel.com>
+From: Douglas Anderson <dianders@chromium.org>
 
-[ Upstream commit 941ab4eb66c10bc5c7234e83a7a858b2806ed151 ]
+[ Upstream commit 0d5b476f8f57fcb06c45fe27681ac47254f63fd2 ]
 
-There is a bug in FW where the sequence control may be
-incorrect, and the driver overrides it with the value
-of the ieee80211 header.
+If you look at "pinconf-groups" in debugfs for ssbi-mpp you'll notice
+it looks like nonsense.
 
-However, in BAR there is no sequence control in the header,
-which result with arbitrary sequence.
+The problem is fairly well described in commit 1cf86bc21257 ("pinctrl:
+qcom: spmi-gpio: Fix pmic_gpio_config_get() to be compliant") and
+commit 05e0c828955c ("pinctrl: msm: Fix msm_config_group_get() to be
+compliant"), but it was pointed out that ssbi-mpp has the same
+problem.  Let's fix it there too.
 
-This access to an unknown location is bad and it makes the
-logs very confusing - so fix it.
+NOTE: in case it's helpful to someone reading this, the way to tell
+whether to do the -EINVAL or not is to look at the PCONFDUMP for a
+given attribute.  If the last element (has_arg) is false then you need
+to do the -EINVAL trick.
 
-Signed-off-by: Sara Sharon <sara.sharon@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+ALSO NOTE: it seems unlikely that the values returned when we try to
+get PIN_CONFIG_BIAS_PULL_UP will actually be printed since "has_arg"
+is false for that one, but I guess it's still fine to return different
+values so I kept doing that.  It seems like another driver (ssbi-gpio)
+uses a custom attribute (PM8XXX_QCOM_PULL_UP_STRENGTH) for something
+similar so maybe a future change should do that here too.
+
+Fixes: cfb24f6ebd38 ("pinctrl: Qualcomm SPMI PMIC MPP pin controller driver")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/tx.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tx.c b/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
-index 6c014c273922..62a6e293cf12 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
-@@ -1345,6 +1345,7 @@ static void iwl_mvm_rx_tx_cmd_single(struct iwl_mvm *mvm,
- 	while (!skb_queue_empty(&skbs)) {
- 		struct sk_buff *skb = __skb_dequeue(&skbs);
- 		struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
-+		struct ieee80211_hdr *hdr = (void *)skb->data;
- 		bool flushed = false;
+diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
+index 7577f133d326..ac251c62bc66 100644
+--- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
++++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
+@@ -345,13 +345,12 @@ static int pmic_mpp_config_get(struct pinctrl_dev *pctldev,
  
- 		skb_freed++;
-@@ -1389,11 +1390,11 @@ static void iwl_mvm_rx_tx_cmd_single(struct iwl_mvm *mvm,
- 			info->flags |= IEEE80211_TX_STAT_AMPDU_NO_BACK;
- 		info->flags &= ~IEEE80211_TX_CTL_AMPDU;
- 
--		/* W/A FW bug: seq_ctl is wrong when the status isn't success */
--		if (status != TX_STATUS_SUCCESS) {
--			struct ieee80211_hdr *hdr = (void *)skb->data;
-+		/* W/A FW bug: seq_ctl is wrong upon failure / BAR frame */
-+		if (ieee80211_is_back_req(hdr->frame_control))
-+			seq_ctl = 0;
-+		else if (status != TX_STATUS_SUCCESS)
- 			seq_ctl = le16_to_cpu(hdr->seq_ctrl);
--		}
- 
- 		if (unlikely(!seq_ctl)) {
- 			struct ieee80211_hdr *hdr = (void *)skb->data;
+ 	switch (param) {
+ 	case PIN_CONFIG_BIAS_DISABLE:
+-		arg = pad->pullup == PMIC_MPP_PULL_UP_OPEN;
++		if (pad->pullup != PMIC_MPP_PULL_UP_OPEN)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_BIAS_PULL_UP:
+ 		switch (pad->pullup) {
+-		case PMIC_MPP_PULL_UP_OPEN:
+-			arg = 0;
+-			break;
+ 		case PMIC_MPP_PULL_UP_0P6KOHM:
+ 			arg = 600;
+ 			break;
+@@ -366,13 +365,17 @@ static int pmic_mpp_config_get(struct pinctrl_dev *pctldev,
+ 		}
+ 		break;
+ 	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
+-		arg = !pad->is_enabled;
++		if (pad->is_enabled)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_POWER_SOURCE:
+ 		arg = pad->power_source;
+ 		break;
+ 	case PIN_CONFIG_INPUT_ENABLE:
+-		arg = pad->input_enabled;
++		if (!pad->input_enabled)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_OUTPUT:
+ 		arg = pad->out_value;
+@@ -384,7 +387,9 @@ static int pmic_mpp_config_get(struct pinctrl_dev *pctldev,
+ 		arg = pad->amux_input;
+ 		break;
+ 	case PMIC_MPP_CONF_PAIRED:
+-		arg = pad->paired;
++		if (!pad->paired)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_DRIVE_STRENGTH:
+ 		arg = pad->drive_strength;
 -- 
 2.17.1
 
