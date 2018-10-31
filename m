@@ -7,45 +7,43 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4902ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:43:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD292ECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:43:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D87520664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:43:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 945C62082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:43:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W/sDDSiI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D87520664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FtjE2zOG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 945C62082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729116AbeKAIHn (ORCPT
+        id S1729400AbeKAInx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:07:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55696 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:43:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727308AbeKAIHm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:07:42 -0400
+        id S1729095AbeKAIHn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:07:43 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B73832064C;
-        Wed, 31 Oct 2018 23:07:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A141920830;
+        Wed, 31 Oct 2018 23:07:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027251;
-        bh=L2Otf0USOLk05QKnSlvJM8QHbwdM1pnJno8WqednS+c=;
+        s=default; t=1541027253;
+        bh=YpaCoHUzS4yD05OD76ZuEj0PQXUzKZ8odnoZIlH25no=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W/sDDSiIulYOxxDAMEic/KiJthT1vsiCeNfDJIpRY7kX6VG0gDxfViucr40S90btI
-         ZbSKbxpbK4mwvq/cJlozt7Fd7PyVFXxhB7ceiqG+jp993nVf8Z05Yb9+id5WAlKiZX
-         HZyXkg7+iz2gzsKYkcCtc30nQ7hp9Qt/tSLdQSVI=
+        b=FtjE2zOGvSc7VKuweAR6UNRbDllnDj6uOeWVoNo+LGqJuTaCtVI2gw8uaryOCB3B6
+         9VQlLbZMbxO75XJj0MgIAK6YxNFy7bt+q6Uvg9H5spA+1Fk1Vqz3VlVKuFXgQo9Od+
+         A5Xh4vSW0zihQ++dC95aKSZMR4QHab6fdBF/LY7U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Anshuman Gupta <anshuman.gupta@intel.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 121/146] xhci: Avoid USB autosuspend when resuming USB2 ports.
-Date:   Wed, 31 Oct 2018 19:05:16 -0400
-Message-Id: <20181031230541.28822-121-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 123/146] f2fs: fix to recover inode's crtime during POR
+Date:   Wed, 31 Oct 2018 19:05:18 -0400
+Message-Id: <20181031230541.28822-123-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -54,88 +52,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anshuman Gupta <anshuman.gupta@intel.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 330e2d61cdd58363eb5e66b2e72f76fe3c5492e0 ]
+[ Upstream commit 5cd1f387a13b5188b4edb4c834310302a85a6ea2 ]
 
-When USB bus host controller root hub resumes from autosuspend,
-it immediately tries to enter auto-suspend, but there can be a
-scenario when root hub is resuming its usb2 ports, in that particular
-case USB host controller auto suspend fails since it is busy
-to resuming its usb2 ports.
+Testcase to reproduce this bug:
+1. mkfs.f2fs -O extra_attr -O inode_crtime /dev/sdd
+2. mount -t f2fs /dev/sdd /mnt/f2fs
+3. touch /mnt/f2fs/file
+4. xfs_io -f /mnt/f2fs/file -c "fsync"
+5. godown /mnt/f2fs
+6. umount /mnt/f2fs
+7. mount -t f2fs /dev/sdd /mnt/f2fs
+8. xfs_io -f /mnt/f2fs/file -c "statx -r"
 
-This makes multiple failed cycles of auto-suspend until all usb2
-ports of host controller root hub do not resume.
+stat.btime.tv_sec = 0
+stat.btime.tv_nsec = 0
 
-This patch uses USB core framework usb_hcd_start_port_resume,
-usb_hcd_end_port_resume API's in order to  autoresume/autosuspend
-root hub properly.
+This patch fixes to recover inode creation time fields during
+mount.
 
-Signed-off-by: Anshuman Gupta <anshuman.gupta@intel.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/host/xhci-hub.c  | 5 +++++
- drivers/usb/host/xhci-ring.c | 1 +
- 2 files changed, 6 insertions(+)
+ fs/f2fs/node.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
-index 7e2a531ba321..12eea73d9f20 100644
---- a/drivers/usb/host/xhci-hub.c
-+++ b/drivers/usb/host/xhci-hub.c
-@@ -900,6 +900,7 @@ static u32 xhci_get_port_status(struct usb_hcd *hcd,
- 				set_bit(wIndex, &bus_state->resuming_ports);
- 				bus_state->resume_done[wIndex] = timeout;
- 				mod_timer(&hcd->rh_timer, timeout);
-+				usb_hcd_start_port_resume(&hcd->self, wIndex);
- 			}
- 		/* Has resume been signalled for USB_RESUME_TIME yet? */
- 		} else if (time_after_eq(jiffies,
-@@ -940,6 +941,7 @@ static u32 xhci_get_port_status(struct usb_hcd *hcd,
- 				clear_bit(wIndex, &bus_state->rexit_ports);
- 			}
- 
-+			usb_hcd_end_port_resume(&hcd->self, wIndex);
- 			bus_state->port_c_suspend |= 1 << wIndex;
- 			bus_state->suspended_ports &= ~(1 << wIndex);
- 		} else {
-@@ -962,6 +964,7 @@ static u32 xhci_get_port_status(struct usb_hcd *hcd,
- 	    (raw_port_status & PORT_PLS_MASK) != XDEV_RESUME) {
- 		bus_state->resume_done[wIndex] = 0;
- 		clear_bit(wIndex, &bus_state->resuming_ports);
-+		usb_hcd_end_port_resume(&hcd->self, wIndex);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index dd2e45a661aa..fe5c9ff92772 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -2560,6 +2560,13 @@ int f2fs_recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
+ 			F2FS_FITS_IN_INODE(src, le16_to_cpu(src->i_extra_isize),
+ 								i_projid))
+ 			dst->i_projid = src->i_projid;
++
++		if (f2fs_sb_has_inode_crtime(sbi->sb) &&
++			F2FS_FITS_IN_INODE(src, le16_to_cpu(src->i_extra_isize),
++							i_crtime_nsec)) {
++			dst->i_crtime = src->i_crtime;
++			dst->i_crtime_nsec = src->i_crtime_nsec;
++		}
  	}
  
- 
-@@ -1337,6 +1340,7 @@ int xhci_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue,
- 					goto error;
- 
- 				set_bit(wIndex, &bus_state->resuming_ports);
-+				usb_hcd_start_port_resume(&hcd->self, wIndex);
- 				xhci_set_link_state(xhci, ports[wIndex],
- 						    XDEV_RESUME);
- 				spin_unlock_irqrestore(&xhci->lock, flags);
-@@ -1345,6 +1349,7 @@ int xhci_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue,
- 				xhci_set_link_state(xhci, ports[wIndex],
- 							XDEV_U0);
- 				clear_bit(wIndex, &bus_state->resuming_ports);
-+				usb_hcd_end_port_resume(&hcd->self, wIndex);
- 			}
- 			bus_state->port_c_suspend |= 1 << wIndex;
- 
-diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index f0a99aa0ac58..cd4659703647 100644
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -1602,6 +1602,7 @@ static void handle_port_status(struct xhci_hcd *xhci,
- 			set_bit(HCD_FLAG_POLL_RH, &hcd->flags);
- 			mod_timer(&hcd->rh_timer,
- 				  bus_state->resume_done[hcd_portnum]);
-+			usb_hcd_start_port_resume(&hcd->self, hcd_portnum);
- 			bogus_port_status = true;
- 		}
- 	}
+ 	new_ni = old_ni;
 -- 
 2.17.1
 
