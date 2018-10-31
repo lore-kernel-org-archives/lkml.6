@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3464C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8776AECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AB2A2081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45B5720840
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hVoIrdc0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AB2A2081B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XzyNPafi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45B5720840
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731685AbeKAILa (ORCPT
+        id S1731700AbeKAILb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:11:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35166 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:11:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731646AbeKAIL3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:11:29 -0400
+        id S1731646AbeKAILa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:11:30 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7AA492086D;
-        Wed, 31 Oct 2018 23:11:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2452C20854;
+        Wed, 31 Oct 2018 23:11:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027477;
-        bh=57+oAAjx8pW0PNCOblriMv6TdCrizMWo8yRbrAaWuTk=;
+        s=default; t=1541027478;
+        bh=w4QNDj7ONOqNOont17ZxjzGNxabby9nJJc9OvqoIVJc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hVoIrdc0spCFs1RgX00OSM34ZXBorhAfwfnEj5dynCG5n+Pma3lGd+oMZ5LYxTeEo
-         22YRWM4Lvs1eGE0ol3av6bmZC6pzj4Kn5eJA4fkuAtc6G/sKEzYV0t9kTigmjuo7F+
-         SghM6574ZCSvBrgJmcaI6+8OD1fX/7zTDAqJaruU=
+        b=XzyNPafiw69sOuuLbAL8mSeK9C9NGCCgbLFx41uEgdWP/dxm7eZgTkVWL1Y7rBY74
+         rVfS2rjUt+ZN92k04S7CzMRT/AGFl1Qq8rxQrM478EIJdoMR98sWdpF5+Yk8onQb7P
+         aJLWUzyuU6OcGc4iC3jRU7p98FzOYbG3cyNsO2lo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Douglas Anderson <dianders@chromium.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+Cc:     Martin Willi <martin@strongswan.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 25/48] pinctrl: ssbi-gpio: Fix pm8xxx_pin_config_get() to be compliant
-Date:   Wed, 31 Oct 2018 19:10:31 -0400
-Message-Id: <20181031231054.29333-25-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 27/48] ath10k: schedule hardware restart if WMI command times out
+Date:   Wed, 31 Oct 2018 19:10:33 -0400
+Message-Id: <20181031231054.29333-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231054.29333-1-sashal@kernel.org>
 References: <20181031231054.29333-1-sashal@kernel.org>
@@ -53,88 +53,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
+From: Martin Willi <martin@strongswan.org>
 
-[ Upstream commit b432414b996d32a1bd9afe2bd595bd5729c1477f ]
+[ Upstream commit a9911937e7d332761e8c4fcbc7ba0426bdc3956f ]
 
-If you look at "pinconf-groups" in debugfs for ssbi-gpio you'll notice
-it looks like nonsense.
+When running in AP mode, ath10k sometimes suffers from TX credit
+starvation. The issue is hard to reproduce and shows up once in a
+few days, but has been repeatedly seen with QCA9882 and a large
+range of firmwares, including 10.2.4.70.67.
 
-The problem is fairly well described in commit 1cf86bc21257 ("pinctrl:
-qcom: spmi-gpio: Fix pmic_gpio_config_get() to be compliant") and
-commit 05e0c828955c ("pinctrl: msm: Fix msm_config_group_get() to be
-compliant"), but it was pointed out that ssbi-gpio has the same
-problem.  Let's fix it there too.
+Once the module is in this state, TX credits are never replenished,
+which results in "SWBA overrun" errors, as no beacons can be sent.
+Even worse, WMI commands run in a timeout while holding the conf
+mutex for three seconds each, making any further operations slow
+and the whole system unresponsive.
 
-Fixes: b4c45fe974bc ("pinctrl: qcom: ssbi: Family A gpio & mpp drivers")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+The firmware/driver never recovers from that state automatically,
+and triggering TX flush or warm restarts won't work over WMI. So
+issue a hardware restart if a WMI command times out due to missing
+TX credits. This implies a connectivity outage of about 1.4s in AP
+mode, but brings back the interface and the whole system to a usable
+state. WMI command timeouts have not been seen in absent of this
+specific issue, so taking such drastic actions seems legitimate.
+
+Signed-off-by: Martin Willi <martin@strongswan.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c | 28 ++++++++++++++++++------
- 1 file changed, 21 insertions(+), 7 deletions(-)
+ drivers/net/wireless/ath/ath10k/wmi.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-index d3f5501d17ee..e86c4de2f6db 100644
---- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-@@ -260,22 +260,32 @@ static int pm8xxx_pin_config_get(struct pinctrl_dev *pctldev,
+diff --git a/drivers/net/wireless/ath/ath10k/wmi.c b/drivers/net/wireless/ath/ath10k/wmi.c
+index 75f7a7b549df..21aec5c252ee 100644
+--- a/drivers/net/wireless/ath/ath10k/wmi.c
++++ b/drivers/net/wireless/ath/ath10k/wmi.c
+@@ -1822,6 +1822,12 @@ int ath10k_wmi_cmd_send(struct ath10k *ar, struct sk_buff *skb, u32 cmd_id)
+ 	if (ret)
+ 		dev_kfree_skb_any(skb);
  
- 	switch (param) {
- 	case PIN_CONFIG_BIAS_DISABLE:
--		arg = pin->bias == PM8XXX_GPIO_BIAS_NP;
-+		if (pin->bias != PM8XXX_GPIO_BIAS_NP)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_BIAS_PULL_DOWN:
--		arg = pin->bias == PM8XXX_GPIO_BIAS_PD;
-+		if (pin->bias != PM8XXX_GPIO_BIAS_PD)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_BIAS_PULL_UP:
--		arg = pin->bias <= PM8XXX_GPIO_BIAS_PU_1P5_30;
-+		if (pin->bias > PM8XXX_GPIO_BIAS_PU_1P5_30)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PM8XXX_QCOM_PULL_UP_STRENGTH:
- 		arg = pin->pull_up_strength;
- 		break;
- 	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
--		arg = pin->disable;
-+		if (!pin->disable)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_INPUT_ENABLE:
--		arg = pin->mode == PM8XXX_GPIO_MODE_INPUT;
-+		if (pin->mode != PM8XXX_GPIO_MODE_INPUT)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_OUTPUT:
- 		if (pin->mode & PM8XXX_GPIO_MODE_OUTPUT)
-@@ -290,10 +300,14 @@ static int pm8xxx_pin_config_get(struct pinctrl_dev *pctldev,
- 		arg = pin->output_strength;
- 		break;
- 	case PIN_CONFIG_DRIVE_PUSH_PULL:
--		arg = !pin->open_drain;
-+		if (pin->open_drain)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
--		arg = pin->open_drain;
-+		if (!pin->open_drain)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	default:
- 		return -EINVAL;
++	if (ret == -EAGAIN) {
++		ath10k_warn(ar, "wmi command %d timeout, restarting hardware\n",
++			    cmd_id);
++		queue_work(ar->workqueue, &ar->restart_work);
++	}
++
+ 	return ret;
+ }
+ 
 -- 
 2.17.1
 
