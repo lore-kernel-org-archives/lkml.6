@@ -2,104 +2,156 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2072BECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:59:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DE09C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:59:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8C762080A
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:59:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bKrZL2ds"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8C762080A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id DD5C82080A
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:59:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD5C82080A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbeKAG7g (ORCPT
+        id S1726701AbeKAG7w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 02:59:36 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:36179 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726129AbeKAG7g (ORCPT
+        Thu, 1 Nov 2018 02:59:52 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41435 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725921AbeKAG7v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 02:59:36 -0400
-Received: by mail-vs1-f68.google.com with SMTP id v205so8429658vsc.3
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 14:59:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RKWy2oBfvjiLz2Ry6EiaPy1ELeaxR+H0LicNIMjDW/A=;
-        b=bKrZL2ds7f9gAMc3RN4yVmwet2VdDpJk8hQk/WMzz0Zoe7/40RUMngaLdO/xvbGK1V
-         SECnsTG+N811DcdNqLejMgS9ICPYUa6t5A6XPOJg0/9kkk2s2OFNyuPRRam3wSCrnS83
-         e1EFOPhArHI+7LL43atVQ/Qpvi6tNG1bRkjcs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RKWy2oBfvjiLz2Ry6EiaPy1ELeaxR+H0LicNIMjDW/A=;
-        b=Ii4i1d3/V6AjvgzZ6zd2zjLlTw7gViyoQ0zqUvafukrpRW8uGee+5MGTr0vingmLfQ
-         kyKBmOtS6r758HNmnXStAdFJ5m6cExhg2Pg2hXtVZWmzRbqvBHekXjL21doLRIztSERi
-         e3rsKPswud1MvZe3rvVx2ecMoMllyrrrBUizUYaMn4qskvWw9g+oiutw9+EqQCfDd+ed
-         xFjyBn5BUSZxgTJnsQ2EQvtJs4jo6ACkGWGnI0nLDxBtzR9E8sAd/AlshFyLKEXc72yP
-         KHSDOeixUFxI+a4E7cOBDRTzTnyMoyuvRxKx9ZQjP+hrT9861Gcq3l/pZDPEDmAbz7sY
-         tfmQ==
-X-Gm-Message-State: AGRZ1gISzvwk8YfvRph46p7QvlKzpMhcYkEecE1pRqSqp15lReQ5varn
-        C5yM06TknMzbIf5NNQZcpW/eGA5E4sY=
-X-Google-Smtp-Source: AJdET5dNp5y1oL4WcbsyGrIozcDXb4lVX0Q86v0yuSbLSD5bfiguT+nP+GpS7DCEXVBmlUfVA40cxA==
-X-Received: by 2002:a67:2a41:: with SMTP id q62mr2153465vsq.230.1541023178634;
-        Wed, 31 Oct 2018 14:59:38 -0700 (PDT)
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com. [209.85.221.177])
-        by smtp.gmail.com with ESMTPSA id j71-v6sm7537763vkj.38.2018.10.31.14.59.37
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 14:59:37 -0700 (PDT)
-Received: by mail-vk1-f177.google.com with SMTP id g144so2853417vke.10
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 14:59:37 -0700 (PDT)
-X-Received: by 2002:a1f:1053:: with SMTP id g80mr2172535vki.90.1541023176851;
- Wed, 31 Oct 2018 14:59:36 -0700 (PDT)
+        Thu, 1 Nov 2018 02:59:51 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9VLxheu2558034
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 31 Oct 2018 14:59:43 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9VLxgBB2558030;
+        Wed, 31 Oct 2018 14:59:42 -0700
+Date:   Wed, 31 Oct 2018 14:59:42 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-o3ymi3104m8moaz9865g09w9@git.kernel.org>
+Cc:     benjamin@python.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        jolsa@kernel.org, dsahern@gmail.com, mingo@kernel.org,
+        wangnan0@huawei.com, tglx@linutronix.de, acme@redhat.com,
+        adrian.hunter@intel.com, namhyung@kernel.org
+Reply-To: acme@redhat.com, tglx@linutronix.de, adrian.hunter@intel.com,
+          namhyung@kernel.org, wangnan0@huawei.com, dsahern@gmail.com,
+          linux-kernel@vger.kernel.org, jolsa@kernel.org, mingo@kernel.org,
+          benjamin@python.org, hpa@zytor.com
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf beauty: Introduce
+ strarray__scnprintf_flags()
+Git-Commit-ID: 579e5ff629b17744f62473f314768de8b6f1e66c
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <20181031060921.5890-1-sibis@codeaurora.org>
-In-Reply-To: <20181031060921.5890-1-sibis@codeaurora.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 31 Oct 2018 14:59:25 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XpFrt2htDfbkhFQMh7szTcUm4CYqNHsVomOEK6XArC_w@mail.gmail.com>
-Message-ID: <CAD=FV=XpFrt2htDfbkhFQMh7szTcUm4CYqNHsVomOEK6XArC_w@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: dts: qcom: sdm845: Add reserve-memory nodes
-To:     sibis@codeaurora.org
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Evan Green <evgreen@chromium.org>, benchan@chromium.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        tsoni@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Commit-ID:  579e5ff629b17744f62473f314768de8b6f1e66c
+Gitweb:     https://git.kernel.org/tip/579e5ff629b17744f62473f314768de8b6f1e66c
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Thu, 25 Oct 2018 14:21:31 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 30 Oct 2018 11:46:23 -0300
 
-On Tue, Oct 30, 2018 at 11:09 PM Sibi Sankar <sibis@codeaurora.org> wrote:
->
-> Add reserve-memory nodes for mpss and mba required for
-> remoteproc mss pil.
->
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+perf beauty: Introduce strarray__scnprintf_flags()
 
-I'm not an expert on the assignment of these ranges, but my nits have
-been addressed and it seems like it matches what we're doing in this
-section.
+Generalizing pkey_alloc__scnprintf_access_rights(), so that we can use
+it with other flags-like arguments, such as mount's mountflags argument.
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Benjamin Peterson <benjamin@python.org>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-o3ymi3104m8moaz9865g09w9@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/trace/beauty/beauty.h     |  1 +
+ tools/perf/trace/beauty/pkey_alloc.c | 27 ++++++++++++++++-----------
+ 2 files changed, 17 insertions(+), 11 deletions(-)
+
+diff --git a/tools/perf/trace/beauty/beauty.h b/tools/perf/trace/beauty/beauty.h
+index 2570152d3909..a1806c4f3ccd 100644
+--- a/tools/perf/trace/beauty/beauty.h
++++ b/tools/perf/trace/beauty/beauty.h
+@@ -24,6 +24,7 @@ struct strarray {
+ }
+ 
+ size_t strarray__scnprintf(struct strarray *sa, char *bf, size_t size, const char *intfmt, int val);
++size_t strarray__scnprintf_flags(struct strarray *sa, char *bf, size_t size, unsigned long flags);
+ 
+ struct trace;
+ struct thread;
+diff --git a/tools/perf/trace/beauty/pkey_alloc.c b/tools/perf/trace/beauty/pkey_alloc.c
+index d3e5188a9bef..1b8ed4cac815 100644
+--- a/tools/perf/trace/beauty/pkey_alloc.c
++++ b/tools/perf/trace/beauty/pkey_alloc.c
+@@ -9,31 +9,28 @@
+ #include <linux/kernel.h>
+ #include <linux/log2.h>
+ 
+-static size_t pkey_alloc__scnprintf_access_rights(int access_rights, char *bf, size_t size)
++size_t strarray__scnprintf_flags(struct strarray *sa, char *bf, size_t size, unsigned long flags)
+ {
+ 	int i, printed = 0;
+ 
+-#include "trace/beauty/generated/pkey_alloc_access_rights_array.c"
+-	static DEFINE_STRARRAY(pkey_alloc_access_rights);
+-
+-	if (access_rights == 0) {
+-		const char *s = strarray__pkey_alloc_access_rights.entries[0];
++	if (flags == 0) {
++		const char *s = sa->entries[0];
+ 		if (s)
+ 			return scnprintf(bf, size, "%s", s);
+ 		return scnprintf(bf, size, "%d", 0);
+ 	}
+ 
+-	for (i = 1; i < strarray__pkey_alloc_access_rights.nr_entries; ++i) {
+-		int bit = 1 << (i - 1);
++	for (i = 1; i < sa->nr_entries; ++i) {
++		unsigned long bit = 1UL << (i - 1);
+ 
+-		if (!(access_rights & bit))
++		if (!(flags & bit))
+ 			continue;
+ 
+ 		if (printed != 0)
+ 			printed += scnprintf(bf + printed, size - printed, "|");
+ 
+-		if (strarray__pkey_alloc_access_rights.entries[i] != NULL)
+-			printed += scnprintf(bf + printed, size - printed, "%s", strarray__pkey_alloc_access_rights.entries[i]);
++		if (sa->entries[i] != NULL)
++			printed += scnprintf(bf + printed, size - printed, "%s", sa->entries[i]);
+ 		else
+ 			printed += scnprintf(bf + printed, size - printed, "0x%#", bit);
+ 	}
+@@ -41,6 +38,14 @@ static size_t pkey_alloc__scnprintf_access_rights(int access_rights, char *bf, s
+ 	return printed;
+ }
+ 
++static size_t pkey_alloc__scnprintf_access_rights(int access_rights, char *bf, size_t size)
++{
++#include "trace/beauty/generated/pkey_alloc_access_rights_array.c"
++	static DEFINE_STRARRAY(pkey_alloc_access_rights);
++
++	return strarray__scnprintf_flags(&strarray__pkey_alloc_access_rights, bf, size, access_rights);
++}
++
+ size_t syscall_arg__scnprintf_pkey_alloc_access_rights(char *bf, size_t size, struct syscall_arg *arg)
+ {
+ 	unsigned long cmd = arg->val;
