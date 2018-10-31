@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E95BC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:26:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A4D5ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:26:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3EAC20657
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:26:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3EAC20657
+	by mail.kernel.org (Postfix) with ESMTP id 289B52081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:26:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 289B52081B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730313AbeKADZe (ORCPT
+        id S1730206AbeKADZZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 23:25:34 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:56246 "EHLO
+        Wed, 31 Oct 2018 23:25:25 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:56213 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729950AbeKADZ1 (ORCPT
+        with ESMTP id S1729986AbeKADZX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 23:25:27 -0400
+        Wed, 31 Oct 2018 23:25:23 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1gHvC2-0005dR-Oo; Wed, 31 Oct 2018 19:26:15 +0100
-Message-Id: <20181031182253.385909804@linutronix.de>
+        id 1gHvBz-0005cu-9S; Wed, 31 Oct 2018 19:26:11 +0100
+Message-Id: <20181031182253.047449481@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Wed, 31 Oct 2018 19:21:15 +0100
+Date:   Wed, 31 Oct 2018 19:21:11 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Ingo Molnar <mingo@kernel.org>,
@@ -47,56 +47,64 @@ Cc:     Ingo Molnar <mingo@kernel.org>,
         David Riley <davidriley@chromium.org>,
         Colin Cross <ccross@android.com>,
         Mark Brown <broonie@kernel.org>
-Subject: [patch 8/9] posix-clocks: Remove license boiler plate
+Subject: [patch 4/9] time/debug: Remove license boilerplate
 References: <20181031182107.726051323@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline;
- filename=posix-clocks--Remove-license-boiler-plate.patch
+ filename=time-debug--Remove-license-boilerplate.patch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SPDX identifier defines the license of the file already. No need for
-the boilerplate.
+The SPDX identifier is enough. Remove the license boilerplate.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Richard Cochran <richardcochran@gmail.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: David Riley <davidriley@chromium.org>
+Cc: Colin Cross <ccross@android.com>
 ---
+ kernel/time/test_udelay.c       |    9 ---------
+ kernel/time/timekeeping_debug.c |   10 ----------
+ 2 files changed, 19 deletions(-)
 
-@Richard: This file is (C) OMICRON, but I don't have a contact
-anymore. That Cochran dude is not longer working there :)
-
-Do you have a contact? If so, can you please reply to this mail and Cc
-him/her.
-
----
- kernel/time/posix-clock.c |   14 --------------
- 1 file changed, 14 deletions(-)
-
---- a/kernel/time/posix-clock.c
-+++ b/kernel/time/posix-clock.c
-@@ -3,20 +3,6 @@
-  * Support for dynamic clock devices
+--- a/kernel/time/test_udelay.c
++++ b/kernel/time/test_udelay.c
+@@ -8,15 +8,6 @@
+  * Specifying usecs of 0 or negative values will run multiples tests.
   *
-  * Copyright (C) 2010 OMICRON electronics GmbH
+  * Copyright (C) 2014 Google, Inc.
 - *
-- *  This program is free software; you can redistribute it and/or modify
-- *  it under the terms of the GNU General Public License as published by
-- *  the Free Software Foundation; either version 2 of the License, or
-- *  (at your option) any later version.
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
 - *
-- *  This program is distributed in the hope that it will be useful,
-- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *  GNU General Public License for more details.
-- *
-- *  You should have received a copy of the GNU General Public License
-- *  along with this program; if not, write to the Free Software
-- *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
   */
- #include <linux/device.h>
- #include <linux/export.h>
+ 
+ #include <linux/debugfs.h>
+--- a/kernel/time/timekeeping_debug.c
++++ b/kernel/time/timekeeping_debug.c
+@@ -3,16 +3,6 @@
+  * debugfs file to track time spent in suspend
+  *
+  * Copyright (c) 2011, Google, Inc.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+- * more details.
+  */
+ 
+ #include <linux/debugfs.h>
 
 
