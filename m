@@ -7,44 +7,48 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDFA3ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95EB8C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:12:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CEF5204FD
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E4D9208E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:12:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="axuQZaLg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CEF5204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZwBxH6qA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E4D9208E3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732091AbeKAIMK (ORCPT
+        id S1732103AbeKAIML (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:12:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36636 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:12:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36768 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732006AbeKAIMH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:12:07 -0400
+        id S1730312AbeKAIML (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:12:11 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A074920866;
-        Wed, 31 Oct 2018 23:11:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED7F520989;
+        Wed, 31 Oct 2018 23:11:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027515;
-        bh=U2b9FP75za6tzP3O9lXlsZ1LxB3AwXLB4xKrYLoi70U=;
+        s=default; t=1541027518;
+        bh=345dE4yakgIXUDtObUSVfu218Nz+Df25oW6qn9P/YzY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=axuQZaLgcDs9TVjW7E/UOO/EtCwhFacHAWK8xgXIpPzQwXWVYJT2SKJ5Dl7CRYedF
-         vJ9co9JnzlhAejjnWawIj0xtlXBULf+rCa15xHB0RIseiXjpkpqMsygWeKYvkiLMMe
-         p4a+AcmgT3dHxO54NB9KqcH0cZirkxBqG8UVjwvo=
+        b=ZwBxH6qAqudL5XvVVJ3TEjoYtY85D2EJcy9fHGafRc7H/Wf4qGadxOHvn9eMN4H10
+         EWrl8uRP8GDZUWPMNL4mfW14AUrPIZjSvmpPh5CedtUF0L7jGU1yTTIe4SsSN/qtPc
+         yRs8UGEsFvJC9OFSNEL51WYRJKcepSn4S+xHbPUY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Martin Willi <martin@strongswan.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
+Cc:     Dexuan Cui <decui@microsoft.com>,
+        "K . Y . Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Stable@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 19/32] ath10k: schedule hardware restart if WMI command times out
-Date:   Wed, 31 Oct 2018 19:11:24 -0400
-Message-Id: <20181031231137.29429-19-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 23/32] Drivers: hv: kvp: Fix two "this statement may fall through" warnings
+Date:   Wed, 31 Oct 2018 19:11:28 -0400
+Message-Id: <20181031231137.29429-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231137.29429-1-sashal@kernel.org>
 References: <20181031231137.29429-1-sashal@kernel.org>
@@ -53,53 +57,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Willi <martin@strongswan.org>
+From: Dexuan Cui <decui@microsoft.com>
 
-[ Upstream commit a9911937e7d332761e8c4fcbc7ba0426bdc3956f ]
+[ Upstream commit fc62c3b1977d62e6374fd6e28d371bb42dfa5c9d ]
 
-When running in AP mode, ath10k sometimes suffers from TX credit
-starvation. The issue is hard to reproduce and shows up once in a
-few days, but has been repeatedly seen with QCA9882 and a large
-range of firmwares, including 10.2.4.70.67.
+We don't need to call process_ib_ipinfo() if message->kvp_hdr.operation is
+KVP_OP_GET_IP_INFO in kvp_send_key(), because here we just need to pass on
+the op code from the host to the userspace; when the userspace returns
+the info requested by the host, we pass the info on to the host in
+kvp_respond_to_host() -> process_ob_ipinfo(). BTW, the current buggy code
+actually doesn't cause any harm, because only message->kvp_hdr.operation
+is used by the userspace, in the case of KVP_OP_GET_IP_INFO.
 
-Once the module is in this state, TX credits are never replenished,
-which results in "SWBA overrun" errors, as no beacons can be sent.
-Even worse, WMI commands run in a timeout while holding the conf
-mutex for three seconds each, making any further operations slow
-and the whole system unresponsive.
+The patch also adds a missing "break;" in kvp_send_key(). BTW, the current
+buggy code actually doesn't cause any harm, because in the case of
+KVP_OP_SET, the unexpected fall-through corrupts
+message->body.kvp_set.data.key_size, but that is not really used: see
+the definition of struct hv_kvp_exchg_msg_value.
 
-The firmware/driver never recovers from that state automatically,
-and triggering TX flush or warm restarts won't work over WMI. So
-issue a hardware restart if a WMI command times out due to missing
-TX credits. This implies a connectivity outage of about 1.4s in AP
-mode, but brings back the interface and the whole system to a usable
-state. WMI command timeouts have not been seen in absent of this
-specific issue, so taking such drastic actions seems legitimate.
-
-Signed-off-by: Martin Willi <martin@strongswan.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath10k/wmi.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/hv/hv_kvp.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath10k/wmi.c b/drivers/net/wireless/ath/ath10k/wmi.c
-index 5bb1be478954..f201e50447d8 100644
---- a/drivers/net/wireless/ath/ath10k/wmi.c
-+++ b/drivers/net/wireless/ath/ath10k/wmi.c
-@@ -1749,6 +1749,12 @@ int ath10k_wmi_cmd_send(struct ath10k *ar, struct sk_buff *skb, u32 cmd_id)
- 	if (ret)
- 		dev_kfree_skb_any(skb);
+diff --git a/drivers/hv/hv_kvp.c b/drivers/hv/hv_kvp.c
+index 1771a968c3f2..7f54e5beb718 100644
+--- a/drivers/hv/hv_kvp.c
++++ b/drivers/hv/hv_kvp.c
+@@ -336,7 +336,6 @@ static void process_ib_ipinfo(void *in_msg, void *out_msg, int op)
  
-+	if (ret == -EAGAIN) {
-+		ath10k_warn(ar, "wmi command %d timeout, restarting hardware\n",
-+			    cmd_id);
-+		queue_work(ar->workqueue, &ar->restart_work);
-+	}
+ 		out->body.kvp_ip_val.dhcp_enabled = in->kvp_ip_val.dhcp_enabled;
+ 
+-	default:
+ 		utf16s_to_utf8s((wchar_t *)in->kvp_ip_val.adapter_id,
+ 				MAX_ADAPTER_ID_SIZE,
+ 				UTF16_LITTLE_ENDIAN,
+@@ -389,7 +388,7 @@ kvp_send_key(struct work_struct *dummy)
+ 		process_ib_ipinfo(in_msg, message, KVP_OP_SET_IP_INFO);
+ 		break;
+ 	case KVP_OP_GET_IP_INFO:
+-		process_ib_ipinfo(in_msg, message, KVP_OP_GET_IP_INFO);
++		/* We only need to pass on message->kvp_hdr.operation.  */
+ 		break;
+ 	case KVP_OP_SET:
+ 		switch (in_msg->body.kvp_set.data.value_type) {
+@@ -429,6 +428,9 @@ kvp_send_key(struct work_struct *dummy)
+ 			break;
+ 
+ 		}
 +
- 	return ret;
- }
- 
++		break;
++
+ 	case KVP_OP_GET:
+ 		message->body.kvp_set.data.key_size =
+ 			utf16s_to_utf8s(
 -- 
 2.17.1
 
