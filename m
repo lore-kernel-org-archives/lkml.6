@@ -4,47 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A473C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:33:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 716C0C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:33:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53D4F2080A
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:33:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03C5C20664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:33:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="N0FpA0xE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53D4F2080A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="STwUlD4s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03C5C20664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730755AbeKAIdc (ORCPT
+        id S1730441AbeKAIJ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:33:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59452 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728959AbeKAIJ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 1 Nov 2018 04:09:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59366 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728959AbeKAIJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:09:26 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C4432064C;
-        Wed, 31 Oct 2018 23:09:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0985F2081B;
+        Wed, 31 Oct 2018 23:09:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027358;
-        bh=QltuBSFq8q9zmoyot0OxAFhBLiX7iXNUEQ6kxrpb3iE=;
+        s=default; t=1541027355;
+        bh=GZvI6+ZUhrjC2GF5Z5vETFphxwnIvDDokVS7VhFE/Jo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N0FpA0xEcG5h0D1LJyWx/kDR+Sk2HvFzHiyKgeNGnjZeL7E4qHf9cIZbxws60eAwc
-         +i5p36DkT2F4tAT3nEh26XpWrlU4FaOyCl0GcWHzc/HVZ03sXMS95u/SkzTJ2Yuj/Q
-         rIAhIMUo9pEaZ+NSzEnpG7bfJ+jNMIrjqfjSM5io=
+        b=STwUlD4s1CI6JCqtXUFQzUkj6uFIGXtlG0qZ5UWNtZ7U/M8PkzHQHz1/wHt00cZon
+         cuDyHNQ0QgwKo1Iun9WP3WqyRxfiBsjBoswVArwfBGKKz8AsJuuxIe6Kj913f6QZyy
+         kOCZyadCCsmnpvpurN3J2Sc4CLSrjup4/z47uUDg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Javier Martinez Canillas <javierm@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+Cc:     Honghui Zhang <honghui.zhang@mediatek.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 092/126] tpm: suppress transmit cmd error logs when TPM 1.2 is disabled/deactivated
-Date:   Wed, 31 Oct 2018 19:07:20 -0400
-Message-Id: <20181031230754.29029-92-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 089/126] PCI: mediatek: Fix mtk_pcie_find_port() endpoint/port matching logic
+Date:   Wed, 31 Oct 2018 19:07:17 -0400
+Message-Id: <20181031230754.29029-89-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -53,68 +52,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Javier Martinez Canillas <javierm@redhat.com>
+From: Honghui Zhang <honghui.zhang@mediatek.com>
 
-[ Upstream commit 0d6d0d62d9505a9816716aa484ebd0b04c795063 ]
+[ Upstream commit 074d6f32689ce05a084b6fa3db38445745bf11cc ]
 
-For TPM 1.2 chips the system setup utility allows to set the TPM device in
-one of the following states:
+The Mediatek's host controller has two slots, each with its own control
+registers. The host driver needs to identify what slot is connected to
+what port in order to access the device's configuration space.
 
-  * Active: Security chip is functional
-  * Inactive: Security chip is visible, but is not functional
-  * Disabled: Security chip is hidden and is not functional
+Current code retrieving slot connected to a given endpoint device.
 
-When choosing the "Inactive" state, the TPM 1.2 device is enumerated and
-registered, but sending TPM commands fail with either TPM_DEACTIVATED or
-TPM_DISABLED depending if the firmware deactivated or disabled the TPM.
+Assuming each slot is connected to one endpoint device as below:
 
-Since these TPM 1.2 error codes don't have special treatment, inactivating
-the TPM leads to a very noisy kernel log buffer that shows messages like
-the following:
+                host bridge
+  bus 0 --> __________|_______
+           |                  |
+           |                  |
+         slot 0             slot 1
+  bus 1 -->|        bus 2 --> |
+           |                  |
+         EP 0               EP 1
 
-  tpm_tis 00:05: 1.2 TPM (device-id 0x0, rev-id 78)
-  tpm tpm0: A TPM error (6) occurred attempting to read a pcr value
-  tpm tpm0: TPM is disabled/deactivated (0x6)
-  tpm tpm0: A TPM error (6) occurred attempting get random
-  tpm tpm0: A TPM error (6) occurred attempting to read a pcr value
-  ima: No TPM chip found, activating TPM-bypass! (rc=6)
-  tpm tpm0: A TPM error (6) occurred attempting get random
-  tpm tpm0: A TPM error (6) occurred attempting get random
-  tpm tpm0: A TPM error (6) occurred attempting get random
-  tpm tpm0: A TPM error (6) occurred attempting get random
+During PCI enumeration, system software will scan all the PCI devices on
+every bus starting from devfn 0. Using PCI_SLOT(devfn) for matching an
+endpoint to its slot is erroneous in that the devfn does not contain the
+hierarchical bus numbering in it. In order to match an endpoint with its
+slot (and related port), the PCI tree must be walked up to the root bus
+(where the root ports are situated) and then the PCI_SLOT(devfn)
+matching logic can be correctly applied for matching.
 
-Let's just suppress error log messages for the TPM_{DEACTIVATED,DISABLED}
-return codes, since this is expected when the TPM 1.2 is set to Inactive.
+This patch fixes the mtk_pcie_find_port() slot matching logic by adding
+appropriate PCI tree walking code to retrieve the slot/port a given
+endpoint is connected to.
 
-In that case the kernel log is cleaner and less confusing for users, i.e:
-
-  tpm_tis 00:05: 1.2 TPM (device-id 0x0, rev-id 78)
-  tpm tpm0: TPM is disabled/deactivated (0x6)
-  ima: No TPM chip found, activating TPM-bypass! (rc=6)
-
-Reported-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+[lorenzo.pieralisi@arm.com: rewrote the commit log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Acked-by: Ryder Lee <ryder.lee@mediatek.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/char/tpm/tpm-interface.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pci/controller/pcie-mediatek.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 3a3a7a548a85..e8822b3d10e1 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -664,7 +664,8 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
- 		return len;
+diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+index 861dda69f366..c5ff6ca65eab 100644
+--- a/drivers/pci/controller/pcie-mediatek.c
++++ b/drivers/pci/controller/pcie-mediatek.c
+@@ -337,6 +337,17 @@ static struct mtk_pcie_port *mtk_pcie_find_port(struct pci_bus *bus,
+ {
+ 	struct mtk_pcie *pcie = bus->sysdata;
+ 	struct mtk_pcie_port *port;
++	struct pci_dev *dev = NULL;
++
++	/*
++	 * Walk the bus hierarchy to get the devfn value
++	 * of the port in the root bus.
++	 */
++	while (bus && bus->number) {
++		dev = bus->self;
++		bus = dev->bus;
++		devfn = dev->devfn;
++	}
  
- 	err = be32_to_cpu(header->return_code);
--	if (err != 0 && desc)
-+	if (err != 0 && err != TPM_ERR_DISABLED && err != TPM_ERR_DEACTIVATED
-+	    && desc)
- 		dev_err(&chip->dev, "A TPM error (%d) occurred %s\n", err,
- 			desc);
- 	if (err)
+ 	list_for_each_entry(port, &pcie->ports, list)
+ 		if (port->slot == PCI_SLOT(devfn))
 -- 
 2.17.1
 
