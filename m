@@ -2,49 +2,49 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5DB2C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C365C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BD5920843
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCB112064C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bcRmswe+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BD5920843
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SLVH1dcV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCB112064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730857AbeKAIKK (ORCPT
+        id S1730896AbeKAIKM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:10:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60558 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:10:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730817AbeKAIKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:10:08 -0400
+        id S1730817AbeKAIKL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:10:11 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F315820821;
-        Wed, 31 Oct 2018 23:09:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 908D820840;
+        Wed, 31 Oct 2018 23:09:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027396;
-        bh=Ek8ZcXmOeFRly4xCk/hYdw4mqFzzObDcqmPQn7sBX+Q=;
+        s=default; t=1541027399;
+        bh=TwzLdQVjgS0dhqvID0oBUWtXn4PVXK5Vc47NLDyAO9Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bcRmswe+Spq8I3sorfk53n0FBc/1JrfVbZnFDPHM4zthDsSwkkI0jIlSe71QNuvep
-         G92ED/JrspVuyD8JlIoeOp/KrgyEyV/XKycJhc5rh7r22Z9EtwFb9GsDnXtTJr/DE9
-         tYNlU74ESNj4Ntz6D0wiED6W9gZuAzJwhidAbaRs=
+        b=SLVH1dcV/ZWoF54xjG9fYGV8Pefroe3Pph3gbgJE3CO5V7Qr1gUbx6wP7sDhANDJK
+         mR4UgL8r3LrD7urpcIIy3sVqASrrtMgwx1n2Py25wXqN5WgeCmUO5vc2OdNj3oJwE0
+         F4hSeJE3+4iAi/pN0entEfy4oqSwGBobsdCwBNXA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Thierry Reding <treding@nvidia.com>,
-        Guenter Roeck <linux@roeck-us.net>,
+Cc:     Sanskriti Sharma <sansharm@redhat.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 08/73] hwmon: (pwm-fan) Set fan speed to 0 on suspend
-Date:   Wed, 31 Oct 2018 19:08:43 -0400
-Message-Id: <20181031230948.29203-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 11/73] perf tools: Free temporary 'sys' string in read_event_files()
+Date:   Wed, 31 Oct 2018 19:08:46 -0400
+Message-Id: <20181031230948.29203-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230948.29203-1-sashal@kernel.org>
 References: <20181031230948.29203-1-sashal@kernel.org>
@@ -53,69 +53,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Sanskriti Sharma <sansharm@redhat.com>
 
-[ Upstream commit 95dcd64bc5a27080beaa344edfe5bdcca3d2e7dc ]
+[ Upstream commit 1e44224fb0528b4c0cc176bde2bb31e9127eb14b ]
 
-Technically this is not required because disabling the PWM should be
-enough. However, when support for atomic operations was implemented in
-the PWM subsystem, only actual changes to the PWM channel are applied
-during pwm_config(), which means that during after resume from suspend
-the old settings won't be applied.
+For each system in a given pevent, read_event_files() reads in a
+temporary 'sys' string.  Be sure to free this string before moving onto
+to the next system and/or leaving read_event_files().
 
-One possible solution is for the PWM driver to implement its own PM
-operations such that settings from before suspend get applied on resume.
-This has the disadvantage of completely ignoring any particular ordering
-requirements that PWM user drivers might have, so it is best to leave it
-up to the user drivers to apply the settings that they want at the
-appropriate time.
+Fixes the following coverity complaints:
 
-Another way to solve this would be to read back the current state of the
-PWM at the time of resume. That way, in case the configuration was lost
-during suspend, applying the old settings in PWM user drivers would
-actually get them applied because they differ from the current settings.
-However, not all PWM drivers support reading the hardware state, and not
-all hardware may support it.
+  Error: RESOURCE_LEAK (CWE-772):
 
-The best workaround at this point seems to be to let PWM user drivers
-tell the PWM subsystem that the PWM is turned off by, in addition to
-disabling it, also setting the duty cycle to 0. This causes the resume
-operation to apply a configuration that is different from the current
-configuration, resulting in the proper state from before suspend getting
-restored.
+  tools/perf/util/trace-event-read.c:343: overwrite_var: Overwriting
+  "sys" in "sys = read_string()" leaks the storage that "sys" points to.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+  tools/perf/util/trace-event-read.c:353: leaked_storage: Variable "sys"
+  going out of scope leaks the storage it points to.
+
+Signed-off-by: Sanskriti Sharma <sansharm@redhat.com>
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Joe Lawrence <joe.lawrence@redhat.com>
+Link: http://lkml.kernel.org/r/1538490554-8161-6-git-send-email-sansharm@redhat.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/pwm-fan.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ tools/perf/util/trace-event-read.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
-index 70cc0d134f3c..ca250e7ac511 100644
---- a/drivers/hwmon/pwm-fan.c
-+++ b/drivers/hwmon/pwm-fan.c
-@@ -290,9 +290,19 @@ static int pwm_fan_remove(struct platform_device *pdev)
- static int pwm_fan_suspend(struct device *dev)
- {
- 	struct pwm_fan_ctx *ctx = dev_get_drvdata(dev);
-+	struct pwm_args args;
-+	int ret;
-+
-+	pwm_get_args(ctx->pwm, &args);
-+
-+	if (ctx->pwm_value) {
-+		ret = pwm_config(ctx->pwm, 0, args.period);
-+		if (ret < 0)
-+			return ret;
- 
--	if (ctx->pwm_value)
- 		pwm_disable(ctx->pwm);
-+	}
-+
+diff --git a/tools/perf/util/trace-event-read.c b/tools/perf/util/trace-event-read.c
+index 8a9a677f7576..6bfd690d63d9 100644
+--- a/tools/perf/util/trace-event-read.c
++++ b/tools/perf/util/trace-event-read.c
+@@ -350,9 +350,12 @@ static int read_event_files(struct pevent *pevent)
+ 		for (x=0; x < count; x++) {
+ 			size = read8(pevent);
+ 			ret = read_event_file(pevent, sys, size);
+-			if (ret)
++			if (ret) {
++				free(sys);
+ 				return ret;
++			}
+ 		}
++		free(sys);
+ 	}
  	return 0;
  }
- 
 -- 
 2.17.1
 
