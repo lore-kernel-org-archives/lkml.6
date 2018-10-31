@@ -6,170 +6,187 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E20B2C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 08:41:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F07D4C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 08:43:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DB562080A
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 08:41:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DB562080A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B0DF02081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 08:43:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0DF02081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axis.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727573AbeJaRiw (ORCPT
+        id S1727624AbeJaRkV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 13:38:52 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37258 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726054AbeJaRiw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 13:38:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A0DE341;
-        Wed, 31 Oct 2018 01:41:43 -0700 (PDT)
-Received: from filthy-habits.cambridge.arm.com (filthy-habits.cambridge.arm.com [10.1.196.62])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6DA8B3F557;
-        Wed, 31 Oct 2018 01:41:42 -0700 (PDT)
-From:   Marc Zyngier <marc.zyngier@arm.com>
-To:     Santosh Shilimkar <ssantosh@kernel.org>, arm@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2] soc: ti: QMSS: Fix usage of irq_set_affinity_hint
-Date:   Wed, 31 Oct 2018 08:41:34 +0000
-Message-Id: <20181031084134.96289-1-marc.zyngier@arm.com>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 31 Oct 2018 13:40:21 -0400
+Received: from bastet.se.axis.com ([195.60.68.11]:47707 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726054AbeJaRkV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 13:40:21 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bastet.se.axis.com (Postfix) with ESMTP id 0688A18477;
+        Wed, 31 Oct 2018 09:43:09 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
+Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
+        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id yRc14r5GZQ2w; Wed, 31 Oct 2018 09:43:08 +0100 (CET)
+Received: from boulder03.se.axis.com (boulder03.se.axis.com [10.0.8.17])
+        by bastet.se.axis.com (Postfix) with ESMTPS id 0F6AE18393;
+        Wed, 31 Oct 2018 09:43:07 +0100 (CET)
+Received: from boulder03.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D3E5C1E08D;
+        Wed, 31 Oct 2018 09:43:07 +0100 (CET)
+Received: from boulder03.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C87101E081;
+        Wed, 31 Oct 2018 09:43:07 +0100 (CET)
+Received: from seth.se.axis.com (unknown [10.0.2.172])
+        by boulder03.se.axis.com (Postfix) with ESMTP;
+        Wed, 31 Oct 2018 09:43:07 +0100 (CET)
+Received: from lnxartpec.se.axis.com (lnxartpec.se.axis.com [10.88.4.9])
+        by seth.se.axis.com (Postfix) with ESMTP id BC5002355;
+        Wed, 31 Oct 2018 09:43:07 +0100 (CET)
+Received: by lnxartpec.se.axis.com (Postfix, from userid 10564)
+        id B845780AD5; Wed, 31 Oct 2018 09:43:07 +0100 (CET)
+From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
+To:     linux@armlinux.org.uk, jeyu@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Vincent Whitchurch <rabinv@axis.com>
+Subject: [PATCH v2] ARM: module: Fix function kallsyms on Thumb-2
+Date:   Wed, 31 Oct 2018 09:42:53 +0100
+Message-Id: <20181031084253.9650-1-vincent.whitchurch@axis.com>
+X-Mailer: git-send-email 2.11.0
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Keystone QMSS driver is pretty damaged, in the sense that it
-does things like this:
+Thumb-2 functions have the lowest bit set in the symbol value in the
+symtab.  When kallsyms are generated for the vmlinux, the kallsyms are
+generated from the output of nm, and nm clears the lowest bit.
 
-	irq_set_affinity_hint(irq, to_cpumask(&cpu_map));
+ $ arm-linux-gnueabihf-readelf -a vmlinux | grep show_interrupts
+  95947: 8015dc89   686 FUNC    GLOBAL DEFAULT    2 show_interrupts
+ $ arm-linux-gnueabihf-nm vmlinux | grep show_interrupts
+ 8015dc88 T show_interrupts
+ $ cat /proc/kallsyms | grep show_interrupts
+ 8015dc88 T show_interrupts
 
-where cpu_map is a local variable. As we leave the function, this
-will point to nowhere-land, and things will end-up badly.
+However, for modules, the kallsyms uses the values in the symbol table
+without modification, so for functions in modules, the lowest bit is set
+in kallsyms.
 
-Instead, let's use a proper cpumask that gets allocated, giving
-the driver a chance to actually work with things like irqbalance
-as well as have a hypothetical 64bit future.
+ $ arm-linux-gnueabihf-readelf -a drivers/net/tun.ko | grep tun_get_socket
+    268: 000000e1    44 FUNC    GLOBAL DEFAULT    2 tun_get_socket
+ $ arm-linux-gnueabihf-nm drivers/net/tun.ko | grep tun_get_socket
+ 000000e0 T tun_get_socket
+ $ cat /proc/kallsyms | grep tun_get_socket
+ 7fcd30e1 t tun_get_socket  [tun]
 
-Cc: stable@vger.kernel.org
-Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Because of this, the offset of the crashing instruction shown in oopses
+is incorrect when the crash is in a module.  For example, given a
+tun_get_socket which starts like this,
+
+ 000000e0 <tun_get_socket>:
+       e0:       b500            push    {lr}
+       e2:       f7ff fffe       bl      0 <__gnu_mcount_nc>
+       e6:       4b08            ldr     r3, [pc, #32]
+       e8:       6942            ldr     r2, [r0, #20]
+       ea:       429a            cmp     r2, r3
+       ec:       d002            beq.n   f4 <tun_get_socket+0x14>
+
+a crash when tun_get_socket is called with NULL results in:
+
+ PC is at tun_get_socket+0x7/0x2c [tun]
+ pc : [<7fcdb0e8>]
+
+which can result in the incorrect line being reported by gdb if this
+symbol+offset is used there.  If the crash is on the first instruction
+of a function, the "PC is at" line would also report the symbol name of
+the preceding function.
+
+To solve this, fix up these symbols like nm does.  For this, we need a
+new hook in the generic module loading code, before the symbols' st_info
+is overwritten by add_kallsyms().  After the fix:
+
+ $ cat /proc/kallsyms | grep tun_get_socket
+ 7fcd30e0 t tun_get_socket  [tun]
+
+ PC is at tun_get_socket+0x8/0x2c [tun]
+ pc : [<7fcdb0e8>]
+
+Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
 ---
-* From v1:
-  - Added Santosh's Ack
-  - Cc stable
-  - Directly sent to arm-soc for immediate pick-up
-    (https://lore.kernel.org/lkml/0a20aaf3-65ce-a7ae-8a0e-877313483969@oracle.com/)
+v2: Fix build warning with !MODULES
 
- drivers/soc/ti/knav_qmss.h       |  4 ++--
- drivers/soc/ti/knav_qmss_acc.c   | 10 +++++-----
- drivers/soc/ti/knav_qmss_queue.c | 22 +++++++++++++++-------
- 3 files changed, 22 insertions(+), 14 deletions(-)
+ arch/arm/kernel/module.c     | 14 ++++++++++++++
+ include/linux/moduleloader.h |  3 +++
+ kernel/module.c              |  6 ++++++
+ 3 files changed, 23 insertions(+)
 
-diff --git a/drivers/soc/ti/knav_qmss.h b/drivers/soc/ti/knav_qmss.h
-index 3efc47e82973..bd040c29c4bf 100644
---- a/drivers/soc/ti/knav_qmss.h
-+++ b/drivers/soc/ti/knav_qmss.h
-@@ -329,8 +329,8 @@ struct knav_range_ops {
- };
+diff --git a/arch/arm/kernel/module.c b/arch/arm/kernel/module.c
+index 3ff571c2c71c..771f86318d84 100644
+--- a/arch/arm/kernel/module.c
++++ b/arch/arm/kernel/module.c
+@@ -399,6 +399,20 @@ int module_finalize(const Elf32_Ehdr *hdr, const Elf_Shdr *sechdrs,
+ 	return 0;
+ }
  
- struct knav_irq_info {
--	int	irq;
--	u32	cpu_map;
-+	int		irq;
-+	struct cpumask	*cpu_mask;
- };
- 
- struct knav_range_info {
-diff --git a/drivers/soc/ti/knav_qmss_acc.c b/drivers/soc/ti/knav_qmss_acc.c
-index 316e82e46f6c..2f7fb2dcc1d6 100644
---- a/drivers/soc/ti/knav_qmss_acc.c
-+++ b/drivers/soc/ti/knav_qmss_acc.c
-@@ -205,18 +205,18 @@ static int knav_range_setup_acc_irq(struct knav_range_info *range,
- {
- 	struct knav_device *kdev = range->kdev;
- 	struct knav_acc_channel *acc;
--	unsigned long cpu_map;
-+	struct cpumask *cpu_mask;
- 	int ret = 0, irq;
- 	u32 old, new;
- 
- 	if (range->flags & RANGE_MULTI_QUEUE) {
- 		acc = range->acc;
- 		irq = range->irqs[0].irq;
--		cpu_map = range->irqs[0].cpu_map;
-+		cpu_mask = range->irqs[0].cpu_mask;
- 	} else {
- 		acc = range->acc + queue;
- 		irq = range->irqs[queue].irq;
--		cpu_map = range->irqs[queue].cpu_map;
-+		cpu_mask = range->irqs[queue].cpu_mask;
- 	}
- 
- 	old = acc->open_mask;
-@@ -239,8 +239,8 @@ static int knav_range_setup_acc_irq(struct knav_range_info *range,
- 			acc->name, acc->name);
- 		ret = request_irq(irq, knav_acc_int_handler, 0, acc->name,
- 				  range);
--		if (!ret && cpu_map) {
--			ret = irq_set_affinity_hint(irq, to_cpumask(&cpu_map));
-+		if (!ret && cpu_mask) {
-+			ret = irq_set_affinity_hint(irq, cpu_mask);
- 			if (ret) {
- 				dev_warn(range->kdev->dev,
- 					 "Failed to set IRQ affinity\n");
-diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
-index b5d5673c255c..8b418379272d 100644
---- a/drivers/soc/ti/knav_qmss_queue.c
-+++ b/drivers/soc/ti/knav_qmss_queue.c
-@@ -118,19 +118,17 @@ static int knav_queue_setup_irq(struct knav_range_info *range,
- 			  struct knav_queue_inst *inst)
- {
- 	unsigned queue = inst->id - range->queue_base;
--	unsigned long cpu_map;
- 	int ret = 0, irq;
- 
- 	if (range->flags & RANGE_HAS_IRQ) {
- 		irq = range->irqs[queue].irq;
--		cpu_map = range->irqs[queue].cpu_map;
- 		ret = request_irq(irq, knav_queue_int_handler, 0,
- 					inst->irq_name, inst);
- 		if (ret)
- 			return ret;
- 		disable_irq(irq);
--		if (cpu_map) {
--			ret = irq_set_affinity_hint(irq, to_cpumask(&cpu_map));
-+		if (range->irqs[queue].cpu_mask) {
-+			ret = irq_set_affinity_hint(irq, range->irqs[queue].cpu_mask);
- 			if (ret) {
- 				dev_warn(range->kdev->dev,
- 					 "Failed to set IRQ affinity\n");
-@@ -1262,9 +1260,19 @@ static int knav_setup_queue_range(struct knav_device *kdev,
- 
- 		range->num_irqs++;
- 
--		if (IS_ENABLED(CONFIG_SMP) && oirq.args_count == 3)
--			range->irqs[i].cpu_map =
--				(oirq.args[2] & 0x0000ff00) >> 8;
-+		if (IS_ENABLED(CONFIG_SMP) && oirq.args_count == 3) {
-+			unsigned long mask;
-+			int bit;
++#if defined(CONFIG_THUMB2_KERNEL) && defined(CONFIG_KALLSYMS)
++void module_fixup_kallsyms(struct mod_kallsyms *kallsyms)
++{
++	int i;
 +
-+			range->irqs[i].cpu_mask = devm_kzalloc(dev,
-+							       cpumask_size(), GFP_KERNEL);
-+			if (!range->irqs[i].cpu_mask)
-+				return -ENOMEM;
++	for (i = 0; i < kallsyms->num_symtab; i++) {
++		Elf_Sym *sym = &kallsyms->symtab[i];
 +
-+			mask = (oirq.args[2] & 0x0000ff00) >> 8;
-+			for_each_set_bit(bit, &mask, BITS_PER_LONG)
-+				cpumask_set_cpu(bit, range->irqs[i].cpu_mask);
-+		}
- 	}
++		if (ELF_ST_TYPE(sym->st_info) == STT_FUNC)
++			sym->st_value &= ~1;
++	}
++}
++#endif
++
+ void
+ module_arch_cleanup(struct module *mod)
+ {
+diff --git a/include/linux/moduleloader.h b/include/linux/moduleloader.h
+index 31013c2effd3..b1ac5584eaa5 100644
+--- a/include/linux/moduleloader.h
++++ b/include/linux/moduleloader.h
+@@ -86,6 +86,9 @@ void module_arch_cleanup(struct module *mod);
+ /* Any cleanup before freeing mod->module_init */
+ void module_arch_freeing_init(struct module *mod);
  
- 	range->num_irqs = min(range->num_irqs, range->num_queues);
++struct mod_kallsyms;
++void module_fixup_kallsyms(struct mod_kallsyms *kallsyms);
++
+ #ifdef CONFIG_KASAN
+ #include <linux/kasan.h>
+ #define MODULE_ALIGN (PAGE_SIZE << KASAN_SHADOW_SCALE_SHIFT)
+diff --git a/kernel/module.c b/kernel/module.c
+index 49a405891587..ded4f4b49824 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -2659,6 +2659,10 @@ static void layout_symtab(struct module *mod, struct load_info *info)
+ 	mod->init_layout.size = debug_align(mod->init_layout.size);
+ }
+ 
++void __weak module_fixup_kallsyms(struct mod_kallsyms *kallsyms)
++{
++}
++
+ /*
+  * We use the full symtab and strtab which layout_symtab arranged to
+  * be appended to the init section.  Later we switch to the cut-down
+@@ -2680,6 +2684,8 @@ static void add_kallsyms(struct module *mod, const struct load_info *info)
+ 	/* Make sure we get permanent strtab: don't use info->strtab. */
+ 	mod->kallsyms->strtab = (void *)info->sechdrs[info->index.str].sh_addr;
+ 
++	module_fixup_kallsyms(mod->kallsyms);
++
+ 	/* Set types up while we still have access to sections. */
+ 	for (i = 0; i < mod->kallsyms->num_symtab; i++)
+ 		mod->kallsyms->symtab[i].st_info
 -- 
-2.19.1
+2.11.0
 
