@@ -2,113 +2,89 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF5F6C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:30:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3824ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:30:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86F052084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:30:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64C6D20847
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:30:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qrEsewnY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86F052084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="x1zz37fF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64C6D20847
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730905AbeKAIai (ORCPT
+        id S1730675AbeKAIJv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:30:38 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:45837 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728810AbeKAIah (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:30:37 -0400
-Received: by mail-vs1-f65.google.com with SMTP id 124so11153716vsp.12
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 16:30:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OtQH7+VlIPJvqHuErN8wezZ8VBDVAx5jnhNjxzFm3kA=;
-        b=qrEsewnY+t4jX4U05jF/Kx4jTbnEe38Z2ihgWj77fURbXyk+e6LLFsBpcmavx68skf
-         OGEIwQLKR8iD+WyW42XZS6MSkDMbegQfik2GGRHVB2zZdVgqFGHtGwB/IxhntvBd1+5J
-         32Rcg/KK9mza3H29w7X9kF7TeC8g9YlTFbDhatsHePgsrKyMFAQ+j/9OL4R4RUK0OyX8
-         uiCxGBZi9m+e5qji+4C/Oq/vmKDvWPE6mm4Fqh37UYrWug3gBHtDIJ8yED2ztWJYWKtp
-         aZ4fANm03MGwOp3rTS3cF6sn5WRJe98blNqhSMmq1XK683b08rkaHVTIMQONuL8SByVv
-         JVTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OtQH7+VlIPJvqHuErN8wezZ8VBDVAx5jnhNjxzFm3kA=;
-        b=XugomNbJJt9gFUYwvYJZfkIB1e5T23gn0Na/vYGskPWyGlRkOwub/2U+wOxmbUqsGj
-         H6h8NZVxYeqS3M1s1sLeTRg2HoqwkW3VNF8KDSHuOu5CsjSm0aZU1ecTw8IiW61KXc3i
-         ckgQi0Ikc0CFbhl7UrhUprp6YfVqETgXt0Y9I7AXiPMJFLeEGZwuwKvHVX2JSFPioKzu
-         eW3nc+fHGq05UL17hECD+Z3MQ63gqsci37TtzquOkvOejrnNs2amL7hFJyrR9/bn7ESQ
-         +Cn+d1mHx51h6jX8W5CqWJdDZBiXDq+0F64PqPF6xAxPfXgfeQB6DHXZ0DEz4OP0PORF
-         MWgw==
-X-Gm-Message-State: AGRZ1gKZxtkp2jGzK6ZZAmbevf49PKUi8WtTC4bXXDKaMaAqI5qTgleB
-        nZmdXZqa9KBq8NbF32QncqN4Cz9woMrvVOFdN/eKH3ms
-X-Google-Smtp-Source: AJdET5d7eHSXGLwz0mA9PDQdk2J9BEbcRlyXX9akuB/uAcP8p8gDt9gBvVaeOaMyOP6cihRfHb8HRNNFCLFRVWB6nTU=
-X-Received: by 2002:a67:60c7:: with SMTP id u190mr2253775vsb.85.1541028619223;
- Wed, 31 Oct 2018 16:30:19 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181031205737.cingeaqget7hkbs6@smtp.gmail.com>
-In-Reply-To: <20181031205737.cingeaqget7hkbs6@smtp.gmail.com>
-From:   Emil Velikov <emil.l.velikov@gmail.com>
-Date:   Wed, 31 Oct 2018 23:28:59 +0000
-Message-ID: <CACvgo535WoPfiaHzwd=UW11iKid7a2VPg+fYX1_VTLjO-WRzMg@mail.gmail.com>
-Subject: Re: [PATCH] drm: Rename crtc_idr as object_idr to KMS cleanups
-To:     shayenneluzmoura@gmail.com
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        outreachy-kernel@googlegroups.com,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        ML dri-devel <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 1 Nov 2018 04:09:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60044 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730626AbeKAIJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:09:50 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98C0020664;
+        Wed, 31 Oct 2018 23:09:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541027379;
+        bh=X6D8vaT3ay7sZOblU3lLC0B1EcIlf4i1ApAQwr5H4Xw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=x1zz37fFEjX1b6WOpvQvSkXMyJwsEEXyfSunB5hrT6S61Wekdk+88x6ZNw7+vOgaf
+         Q+we0qtuMJ32ihOTF0elOtqLotUYYK5sDMJcnmiyGtqS2xdB8wnt/p7VtHzLh0WKnl
+         nD3vQSTaJ3+dkwQuJqchBy4wxwuDUibn/MGaem6Q=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Moni Shoua <monis@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 116/126] IB/mlx5: Allow transition of DCI QP to reset
+Date:   Wed, 31 Oct 2018 19:07:44 -0400
+Message-Id: <20181031230754.29029-116-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
+References: <20181031230754.29029-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shayenne,
+From: Moni Shoua <monis@mellanox.com>
 
-Welcome to DRM.
+[ Upstream commit 99ed748e878a99c6c7b87bbec063eefd9e47cb42 ]
 
-As far as I can see you're a newcomer to kernel development, so I'd
-recommend watch a recent talk from Marc [1]
-He provides a very good introduction, both for newbies and for people
-willing the know the deeper reasons behind.
+The transition is allowed from any state and the atrribute mask must be
+IB_QP_STATE.
 
-That said, here's some suggestions:
+Fixes: c32a4f296e1d ("IB/mlx5: Add support for DC Initiator QP")
+Signed-off-by: Moni Shoua <monis@mellanox.com>
+Reviewed-by: Artemy Kovalyov <artemyko@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/infiniband/hw/mlx5/qp.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-On Wed, 31 Oct 2018 at 20:58, Shayenne da Luz Moura
-<shayenneluzmoura@gmail.com> wrote:
->
-I'd rename the title to "drm: rename drm_mode_config::crtc_idr to object_idr"
-The "... as ... to KMS cleanups" translation is very strange in
-English. It confused me and I've read the TODO over a dozen times ;-)
+diff --git a/drivers/infiniband/hw/mlx5/qp.c b/drivers/infiniband/hw/mlx5/qp.c
+index 01eae67d5a6e..e260f6a156ed 100644
+--- a/drivers/infiniband/hw/mlx5/qp.c
++++ b/drivers/infiniband/hw/mlx5/qp.c
+@@ -3264,7 +3264,9 @@ static bool modify_dci_qp_is_ok(enum ib_qp_state cur_state, enum ib_qp_state new
+ 	int req = IB_QP_STATE;
+ 	int opt = 0;
+ 
+-	if (cur_state == IB_QPS_RESET && new_state == IB_QPS_INIT) {
++	if (new_state == IB_QPS_RESET) {
++		return is_valid_mask(attr_mask, req, opt);
++	} else if (cur_state == IB_QPS_RESET && new_state == IB_QPS_INIT) {
+ 		req |= IB_QP_PKEY_INDEX | IB_QP_PORT;
+ 		return is_valid_mask(attr_mask, req, opt);
+ 	} else if (cur_state == IB_QPS_INIT && new_state == IB_QPS_INIT) {
+-- 
+2.17.1
 
-> Rename 'drm_mode_config.crtc_idr' as 'drm_mode_config.object_idr',
-> as proposed in the task description in TODO list for KMS cleanups.
->
-Similarly here.
-
-> Signed-off-by: Shayenne da Luz Moura <shayenneluzmoura@gmail.com>
-> ---
->  drivers/gpu/drm/drm_lease.c       | 6 +++---
->  drivers/gpu/drm/drm_mode_config.c | 4 ++--
->  drivers/gpu/drm/drm_mode_object.c | 8 ++++----
->  3 files changed, 9 insertions(+), 9 deletions(-)
->
-As pointed out in the talk - always self review and ensure patches
-don't break things.
-Here, DRM doesn't build which is obviously not correct and breaks things.
-
-HTH
-Emil
-[1] https://www.youtube.com/watch?v=LIdznotOxvg
