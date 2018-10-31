@@ -2,127 +2,166 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F341FC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:40:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D04AFECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:40:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A49FC2080A
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:40:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96F292080A
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:40:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ff569I06"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A49FC2080A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hdQ/nyXb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96F292080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730414AbeKADju (ORCPT
+        id S1730360AbeKADkL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 23:39:50 -0400
-Received: from casper.infradead.org ([85.118.1.10]:46454 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730360AbeKADju (ORCPT
+        Wed, 31 Oct 2018 23:40:11 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36898 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729785AbeKADkL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 23:39:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=JN6gLWfE8PoDiVm5A/aVBebgG4pjGaMk/vS9QABSoFA=; b=Ff569I06bKgaaYyYa97TtLiv3P
-        Zo1SzSZWMxWfWZmL88YoIvMVqA/liQ2zGb6bz+uCxELignejAlEa2ukm1nZCVLu7N2IYrBXQMnpAQ
-        wNxucrmfB0aIXEvZaYTCV1/1DqEOsLNotGkOSJynftRs/GBKXwIVY82r4+PMlwQk9QtRpM5Or6qs9
-        A7zFwN4K/TCsAE3z+yJRWgR7kDFND5+IzHNrht+0bJP0SocKFxmEU7HRHxWghNXCVqq7+abNKpI2D
-        D5Fb7XHZRN0mXiqlYa9OGaoyRTjTmQoc2IwoxQf+6vCDmIjGmaAwaG+GWhtGB4p/i27pAO3/Lpbnv
-        LkAaytQQ==;
-Received: from 177.206.134.103.dynamic.adsl.gvt.net.br ([177.206.134.103] helo=coco.lan)
-        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gHvPu-0006Js-I0; Wed, 31 Oct 2018 18:40:34 +0000
-Date:   Wed, 31 Oct 2018 15:40:30 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-media@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL for v4.20-rc1] new experimental media request API
-Message-ID: <20181031154030.3fab5a00@coco.lan>
-In-Reply-To: <CAHk-=whQKCA18MEi7FT=10c0HVa=kxSyYBJeAQH-C2mA5gBhbg@mail.gmail.com>
-References: <20181030105328.0667ec68@coco.lan>
-        <CAHk-=whQKCA18MEi7FT=10c0HVa=kxSyYBJeAQH-C2mA5gBhbg@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Wed, 31 Oct 2018 23:40:11 -0400
+Received: by mail-wr1-f68.google.com with SMTP id g9-v6so17620406wrq.4
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 11:40:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WtYS++Eq2aKwebxiYSlbkwQV34nMjfy4iBCJpS0awSw=;
+        b=hdQ/nyXbfRzLkuTjrCs+yt4AzN38RVEgQhSi/O8VUC5RcMchuISzBsyZJL1VYH2Frd
+         EEOj3uIby+3hOsmcYzl+uFlpUahxCiq5zKOrtPNCdr3QyOddDFKIJ4zqQT+lvmodn2nu
+         ORdFQfg5/C1Cx0QHT5BZWjF6cV+MJh4h6LW6U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WtYS++Eq2aKwebxiYSlbkwQV34nMjfy4iBCJpS0awSw=;
+        b=K+4ajdq0gcy61XVxS2BGa/gcHmL3EVI3PqNjq3UFIG+Qcunjc+1bNadXHS9jbuE+T4
+         Wvzet6a/gXvY5YdcqsJ7D2JTGFiOJLTdd0XcD0A4nLznckLx8F6iraxtyAkadTLtD7c/
+         gMKFaYnjiZkfcklaBEjfKFMvilzq7SPbPCEuzrxplgIX1IoIwKr2/kvA8LlLLv0otDku
+         aYidA+/uupTum48vlseskMuTs2ybheomy07nVg1xD+m0NZY9wAtJKbJhqiyGbPgwWIA5
+         fBhfH20g1wAauQBwGI/YGXADTGIZsmciIN64mfkECWSk8O4Wv1m3sKnzYnMcEtM0mFUc
+         NY9A==
+X-Gm-Message-State: AGRZ1gLcvrBr41HCG4sKeVYSjou5iZb/5qSiNeFxM6OeJncFGJgwvR1B
+        WxC/fnF9aIGPqlA4YgjazvoTlQ==
+X-Google-Smtp-Source: AJdET5cW1DPUxxa9WGN3IWebi0IepbzWy8AHnIeVuGeUiXFAb/j4Sh57UviFzEx5cdIbZsHCTGri7g==
+X-Received: by 2002:adf:8909:: with SMTP id s9-v6mr3821947wrs.309.1541011254757;
+        Wed, 31 Oct 2018 11:40:54 -0700 (PDT)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id 191-v6sm18863435wmk.30.2018.10.31.11.40.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 31 Oct 2018 11:40:53 -0700 (PDT)
+Date:   Wed, 31 Oct 2018 18:40:50 +0000
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Jason Wessel <jason.wessel@windriver.com>,
+        kgdb-bugreport@lists.sourceforge.net,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-mips@linux-mips.org, linux-sh@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Hogan <jhogan@kernel.org>, linux-hexagon@vger.kernel.org,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Rich Felker <dalias@libc.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        linux-snps-arc@lists.infradead.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Burton <paul.burton@mips.com>,
+        linux-kernel@vger.kernel.org, Richard Kuo <rkuo@codeaurora.org>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v2 2/2] kgdb: Fix kgdb_roundup_cpus() for arches who used
+ smp_call_function()
+Message-ID: <20181031184050.sd5opni3mznaapkv@holly.lan>
+References: <20181030221843.121254-1-dianders@chromium.org>
+ <20181030221843.121254-3-dianders@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181030221843.121254-3-dianders@chromium.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Tue, Oct 30, 2018 at 03:18:43PM -0700, Douglas Anderson wrote:
+> diff --git a/kernel/debug/debug_core.c b/kernel/debug/debug_core.c
+> index f3cadda45f07..9a3f952de6ed 100644
+> --- a/kernel/debug/debug_core.c
+> +++ b/kernel/debug/debug_core.c
+> @@ -55,6 +55,7 @@
+>  #include <linux/mm.h>
+>  #include <linux/vmacache.h>
+>  #include <linux/rcupdate.h>
+> +#include <linux/irq.h>
+>  
+>  #include <asm/cacheflush.h>
+>  #include <asm/byteorder.h>
+> @@ -220,6 +221,39 @@ int __weak kgdb_skipexception(int exception, struct pt_regs *regs)
+>  	return 0;
+>  }
+>  
+> +/*
+> + * Default (weak) implementation for kgdb_roundup_cpus
+> + */
+> +
+> +static DEFINE_PER_CPU(call_single_data_t, kgdb_roundup_csd);
+> +
+> +void __weak kgdb_call_nmi_hook(void *ignored)
+> +{
+> +	kgdb_nmicallback(raw_smp_processor_id(), get_irq_regs());
+> +}
+> +
+> +void __weak kgdb_roundup_cpus(void)
+> +{
+> +	call_single_data_t *csd;
+> +	int cpu;
+> +
+> +	for_each_cpu(cpu, cpu_online_mask) {
+> +		csd = &per_cpu(kgdb_roundup_csd, cpu);
+> +		smp_call_function_single_async(cpu, csd);
+> +	}
 
-Em Wed, 31 Oct 2018 11:05:09 -0700
-Linus Torvalds <torvalds@linux-foundation.org> escreveu:
+smp_call_function() automatically skips the calling CPU but this code does
+not. It isn't a hard bug since kgdb_nmicallback() does a re-entrancy
+check but I'd still prefer to skip the calling CPU.
 
-> On Tue, Oct 30, 2018 at 6:53 AM Mauro Carvalho Chehab
-> <mchehab+samsung@kernel.org> wrote:
-> >
-> > For a new media API: the request API  
-> 
-> Ugh. I don't know how much being in staging matters - if people start
-> using it, they start using it.
-> 
-> "Staging" does not mean "regressions don't matter".
+As mentioned in another part of the thread we can also add robustness
+by skipping a cpu where csd->flags != 0 (and adding an appropriately
+large comment regarding why). Doing the check directly is abusing
+internal knowledge that smp.c normally keeps to itself so an accessor
+of some kind would be needed.
 
-Yes, I know.
 
-This shouldn't affect normal cameras and generic V4L2 apps, as this
-is for very advanced use cases. So, we hope that people won't start
-using it for a while. 
+> +}
+> +
+> +static void kgdb_generic_roundup_init(void)
+> +{
+> +	call_single_data_t *csd;
+> +	int cpu;
+> +
+> +	for_each_possible_cpu(cpu) {
+> +		csd = &per_cpu(kgdb_roundup_csd, cpu);
+> +		csd->func = kgdb_call_nmi_hook;
+> +	}
+> +}
 
-The main interested party on this is Google CromeOS. We're working 
-together with them in order to do upstream first. They are well aware
-that the API may change. So, I don't expect any complaints from their
-side if the API would require further changes.
+I can't help noticing this code is very similar to kgdb_roundup_cpus. Do
+we really gain much from ahead-of-time initializing csd->func?
 
-The point is that this API is complex and ensuring that it will
-work properly is not easy. We've been thinking about a solution for
-the Camera HAL 2 for a long time (I guess the first discussions were
-done back in 2008).
 
-The big problem is that V4L2 API was designed to work with a stream,
-while Google HAL API expects to have control for each individual
-frame.
-
-The Google API allows, for example that, inside a stream, the
-first frame would have a VGA resolution, the next one a 4K resolution
-(for example, when the user clicks on a camera button) and then returning
-back to VGA (it actually allows full control for every single frame). 
-
-This is something that it is not possible to do with the "standard" 
-V4L2 API without stopping and restarting a stream (with increases
-a lot the latency).
-
-Solving it is so complex that we decided to start with a completely
-new type of Linux media drivers (stateless decoders). In long term, 
-the same API should be used by not only by decoders, but also for 
-encoders and complex cameras (those with an image signal processor 
-inside a SoC chipset).
-
-In order to be sure that it is possible to implement the way we did,
-We need to be able to add it to the Kernel somehow and to have
-enough drivers that will let us test all possible scenarios.
-
-That will allow to adapt a version of the camera HAL for testing
-and see if it behaves as expected.
-
-> But pulled,
-
-Thanks! Anyway, we'll try to rush the tests for this API in order to
-try sending any fixes that might be disruptive before the final
-release.
-
-Regards,
-Mauro
+Daniel.
