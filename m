@@ -4,50 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73679C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:13:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16CBFECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:13:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 395E720664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:13:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C947D20664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:13:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pq8NP6ru"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 395E720664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IBpQesh4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C947D20664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732348AbeKAIMf (ORCPT
+        id S1732442AbeKAINU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:12:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37732 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:13:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732263AbeKAIMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:12:34 -0400
+        id S1731215AbeKAIMf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:12:35 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25F9220989;
-        Wed, 31 Oct 2018 23:12:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5039F21019;
+        Wed, 31 Oct 2018 23:12:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541027542;
-        bh=HHisLMqV6cqVgc3yjqt1XgP9owQFledv9egZym3s7XA=;
+        bh=tiuaiob8ayIWktC1g3BJ/eOx6E806rt+854w9nHPKEk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pq8NP6ruxFRFfrIaPot1ivIHbVNf46WSFKR4TdErZtoDSo+NjB2wQmLICjOlaLYyy
-         GnkImziAg+JG8F0K4tvflIRQjTTnnZrbFWaGf2G/B8El+zLQ0uMmm6MMUVJZ2EEp1t
-         S1VW9d1I8bmwcwyQrq2ECr5TU0MnfsDxhfr31mdQ=
+        b=IBpQesh4WjM1SusVLrJfjRyStcDmJReQr0HG4acA04AqAhskSP0+mVdf+yQa7e4Wp
+         AMyJ3c1bQ9HJ4MLphn0bILjnAZQjrN2HYdh/upZeTEUbUm1GqpV5O7JvDp2gQQAKE9
+         7e3K5vPeUsh0vXHlo93O52oxob4/VmbwN3aT8i94=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dexuan Cui <decui@microsoft.com>,
-        "K . Y . Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Stable@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     Theodore Ts'o <tytso@mit.edu>, stable@kernel.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 15/22] Drivers: hv: kvp: Fix two "this statement may fall through" warnings
-Date:   Wed, 31 Oct 2018 19:11:59 -0400
-Message-Id: <20181031231206.29509-15-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 16/22] ext4: fix argument checking in EXT4_IOC_MOVE_EXT
+Date:   Wed, 31 Oct 2018 19:12:00 -0400
+Message-Id: <20181031231206.29509-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231206.29509-1-sashal@kernel.org>
 References: <20181031231206.29509-1-sashal@kernel.org>
@@ -56,67 +52,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dexuan Cui <decui@microsoft.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-[ Upstream commit fc62c3b1977d62e6374fd6e28d371bb42dfa5c9d ]
+[ Upstream commit f18b2b83a727a3db208308057d2c7945f368e625 ]
 
-We don't need to call process_ib_ipinfo() if message->kvp_hdr.operation is
-KVP_OP_GET_IP_INFO in kvp_send_key(), because here we just need to pass on
-the op code from the host to the userspace; when the userspace returns
-the info requested by the host, we pass the info on to the host in
-kvp_respond_to_host() -> process_ob_ipinfo(). BTW, the current buggy code
-actually doesn't cause any harm, because only message->kvp_hdr.operation
-is used by the userspace, in the case of KVP_OP_GET_IP_INFO.
+If the starting block number of either the source or destination file
+exceeds the EOF, EXT4_IOC_MOVE_EXT should return EINVAL.
 
-The patch also adds a missing "break;" in kvp_send_key(). BTW, the current
-buggy code actually doesn't cause any harm, because in the case of
-KVP_OP_SET, the unexpected fall-through corrupts
-message->body.kvp_set.data.key_size, but that is not really used: see
-the definition of struct hv_kvp_exchg_msg_value.
+Also fixed the helper function mext_check_coverage() so that if the
+logical block is beyond EOF, make it return immediately, instead of
+looping until the block number wraps all the away around.  This takes
+long enough that if there are multiple threads trying to do pound on
+an the same inode doing non-sensical things, it can end up triggering
+the kernel's soft lockup detector.
 
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported-by: syzbot+c61979f6f2cba5cb3c06@syzkaller.appspotmail.com
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hv/hv_kvp.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ fs/ext4/move_extent.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hv/hv_kvp.c b/drivers/hv/hv_kvp.c
-index 521c14625b3a..c1e4483ca0ae 100644
---- a/drivers/hv/hv_kvp.c
-+++ b/drivers/hv/hv_kvp.c
-@@ -326,7 +326,6 @@ static void process_ib_ipinfo(void *in_msg, void *out_msg, int op)
- 
- 		out->body.kvp_ip_val.dhcp_enabled = in->kvp_ip_val.dhcp_enabled;
- 
--	default:
- 		utf16s_to_utf8s((wchar_t *)in->kvp_ip_val.adapter_id,
- 				MAX_ADAPTER_ID_SIZE,
- 				UTF16_LITTLE_ENDIAN,
-@@ -379,7 +378,7 @@ kvp_send_key(struct work_struct *dummy)
- 		process_ib_ipinfo(in_msg, message, KVP_OP_SET_IP_INFO);
- 		break;
- 	case KVP_OP_GET_IP_INFO:
--		process_ib_ipinfo(in_msg, message, KVP_OP_GET_IP_INFO);
-+		/* We only need to pass on message->kvp_hdr.operation.  */
- 		break;
- 	case KVP_OP_SET:
- 		switch (in_msg->body.kvp_set.data.value_type) {
-@@ -419,6 +418,9 @@ kvp_send_key(struct work_struct *dummy)
- 			break;
- 
- 		}
-+
-+		break;
-+
- 	case KVP_OP_GET:
- 		message->body.kvp_set.data.key_size =
- 			utf16s_to_utf8s(
+diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
+index 4d1049517e4a..ebe809bac808 100644
+--- a/fs/ext4/move_extent.c
++++ b/fs/ext4/move_extent.c
+@@ -533,9 +533,13 @@ mext_check_arguments(struct inode *orig_inode,
+ 			orig_inode->i_ino, donor_inode->i_ino);
+ 		return -EINVAL;
+ 	}
+-	if (orig_eof < orig_start + *len - 1)
++	if (orig_eof <= orig_start)
++		*len = 0;
++	else if (orig_eof < orig_start + *len - 1)
+ 		*len = orig_eof - orig_start;
+-	if (donor_eof < donor_start + *len - 1)
++	if (donor_eof <= donor_start)
++		*len = 0;
++	else if (donor_eof < donor_start + *len - 1)
+ 		*len = donor_eof - donor_start;
+ 	if (!*len) {
+ 		ext4_debug("ext4 move extent: len should not be 0 "
 -- 
 2.17.1
 
