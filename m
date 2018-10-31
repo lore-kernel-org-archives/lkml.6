@@ -2,118 +2,90 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 462A9C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 07:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90609ECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 07:50:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E137420840
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 07:47:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hWUlYmPn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E137420840
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 57D3920840
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 07:50:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57D3920840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727498AbeJaQot (ORCPT
+        id S1727507AbeJaQrZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 12:44:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41732 "EHLO mail.kernel.org"
+        Wed, 31 Oct 2018 12:47:25 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:54108 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726493AbeJaQos (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 12:44:48 -0400
-Received: from localhost (unknown [171.61.91.108])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05EB820821;
-        Wed, 31 Oct 2018 07:47:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540972068;
-        bh=6Ej4xdjoDNmZTOMaRUKbn6lRwhxVTLMFpxddv5eZXe8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hWUlYmPn7XGj3cPgL8n6Q6P6fc1kaJro+8wYVjJWpEJqdUMvkadfTjb+ipjnd8zQ9
-         FfkRlAYDr2sJRpzKF+4k7YUAYQD2OZ0NHDlfTWNDJ6krORh+O6Arq2XAe80c+Sbbye
-         PTLfoMOCeud7H+wO5EhTQBrvd0s3FrDTOaDMDIkA=
-Date:   Wed, 31 Oct 2018 13:17:40 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     andy.gross@linaro.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        bjorn.andersson@linaro.org, edubezval@gmail.com,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v1 3/4] arm64: dts: qcom: qcs404: Add tsens controller
-Message-ID: <20181031074740.GJ12092@vkoul-mobl>
-References: <cover.1539627762.git.amit.kucheria@linaro.org>
- <f1dccd5d6fa08572237ccb3716f2f0ddab54ba40.1539627762.git.amit.kucheria@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f1dccd5d6fa08572237ccb3716f2f0ddab54ba40.1539627762.git.amit.kucheria@linaro.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1726336AbeJaQrZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 12:47:25 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 362862000AB;
+        Wed, 31 Oct 2018 08:50:23 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 790822000A8;
+        Wed, 31 Oct 2018 08:50:20 +0100 (CET)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id BF7B2402C8;
+        Wed, 31 Oct 2018 15:50:16 +0800 (SGT)
+From:   Yuantian Tang <andy.tang@nxp.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yuantian Tang <andy.tang@nxp.com>
+Subject: [PATCH v3] clk: qoriq: add more chips support
+Date:   Wed, 31 Oct 2018 15:46:16 +0800
+Message-Id: <20181031074616.24412-1-andy.tang@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16-10-18, 00:10, Amit Kucheria wrote:
-> qcs404 has a single TSENS IP block with 10 sensors. The calibration data
-> is stored in an eeprom (qfprom) that is accessed through the nvmem
-> framework. We add the qfprom node to allow the tsens sensors to be
-> calibrated correctly.
+Add more chip-specific compatible strings to support more Socs.
 
-Andy,
+Signed-off-by: Yuantian Tang <andy.tang@nxp.com>
+---
+v3:
+  - undo deleting old bindings
+  - split dts and driver code to different patchset
+v2:
+  - remove all legacy code
 
-These have dependency on the patch series adding The DT file I sent
-yesterday[1]. Please apply these on top of that series
+ drivers/clk/clk-qoriq.c |   11 +++++++++++
+ 1 files changed, 11 insertions(+), 0 deletions(-)
 
-[1]: https://patchwork.kernel.org/project/linux-arm-msm/list/?series=36319
-
-Thanks
-
-> 
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/qcs404.dtsi | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> index e1e2ba9cbfcd..dfd65c53cf5f 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> @@ -273,6 +273,26 @@
->  			status = "okay";
->  		};
->  
-> +		qfprom: qfprom@a4000 {
-> +			compatible = "qcom,qfprom";
-> +			reg = <0xa4000 0x1000>;
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			tsens_caldata: caldata@d0 {
-> +				reg = <0x1f8 0x14>;
-> +			};
-> +		};
-> +
-> +		tsens: thermal-sensor@4a9000 {
-> +			compatible = "qcom,qcs404-tsens", "qcom,tsens-v1";
-> +			reg = <0x4a9000 0x1000>, /* TM */
-> +			      <0x4a8000 0x1000>; /* SROT */
-> +			nvmem-cells = <&tsens_caldata>;
-> +			nvmem-cell-names = "calib";
-> +			#qcom,sensors = <10>;
-> +			#thermal-sensor-cells = <1>;
-> +		};
-> +
->  		apcs_glb: mailbox@b011000 {
->  			compatible = "qcom,qcs404-apcs-apps-global", "syscon";
->  			reg = <0xb011000 0x1000>;
-> -- 
-> 2.17.1
-
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 4c30b6e..5baa9e0 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -1418,12 +1418,23 @@ static void __init clockgen_init(struct device_node *np)
+ 
+ CLK_OF_DECLARE(qoriq_clockgen_1, "fsl,qoriq-clockgen-1.0", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_2, "fsl,qoriq-clockgen-2.0", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_b4420, "fsl,b4420-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_b4860, "fsl,b4860-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1012a, "fsl,ls1012a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1021a, "fsl,ls1021a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1046a, "fsl,ls1046a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1088a, "fsl,ls1088a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_p2041, "fsl,p2041-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_p3041, "fsl,p3041-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_p4080, "fsl,p4080-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_p5020, "fsl,p5020-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_p5040, "fsl,p5040-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_t1023, "fsl,t1023-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_t1040, "fsl,t1040-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_t2080, "fsl,t2080-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_t4240, "fsl,t4240-clockgen", clockgen_init);
+ 
+ /* Legacy nodes */
+ CLK_OF_DECLARE(qoriq_sysclk_1, "fsl,qoriq-sysclk-1.0", sysclk_init);
 -- 
-~Vinod
+1.7.1
+
