@@ -7,100 +7,127 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1D83C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C334AC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A29520664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8ACFD20840
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vKDFaOmB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A29520664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qGVLno3h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ACFD20840
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731773AbeKAILh (ORCPT
+        id S1731785AbeKAILi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:11:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35312 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:11:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731702AbeKAILd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:11:33 -0400
+        id S1731688AbeKAILe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:11:34 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 941ED20854;
-        Wed, 31 Oct 2018 23:11:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 691752081B;
+        Wed, 31 Oct 2018 23:11:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027481;
-        bh=b1KXZhS9fKMgqU5LYH/sDnEQPpIHyskRvrEj/EhizC8=;
+        s=default; t=1541027482;
+        bh=jnHWnBRsFdtChXJGWCcZ6Kgw2uy8icB27pwNJvxJpXc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vKDFaOmBihyxm9i+eSLq7wb+M8EJwiv0hTy40XbEafrTSbIxXSs/YXkTJwyIZB/r0
-         heBWqIF4koK3O7SHaPzKex3oZKBGJmR2flNhQEp3iz1sJy6VzbL0h2FRxkh8zHClMm
-         fYLdTJG8WJYMu+mbYOytjMGdFLuhQYZe6AGi13Po=
+        b=qGVLno3hAjm1C0agZ5gBjQo73D72CgJgbgxTfGxAs+Jwx+bmnHcjW8HZ3LK8bywF0
+         I5aJqYXwnapazBigSRAGQ4i163G30WkwuYrWLYLgKIE4mBVa/WF8w503ljfHNde/+y
+         Ziz6DvUJxMGzesE4xSc+SES1wMUWsnHuBUS6L/hU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Wenwen Wang <wang6495@umn.edu>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
+Cc:     Parav Pandit <parav@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 30/48] scsi: megaraid_sas: fix a missing-check bug
-Date:   Wed, 31 Oct 2018 19:10:36 -0400
-Message-Id: <20181031231054.29333-30-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 31/48] RDMA/core: Do not expose unsupported counters
+Date:   Wed, 31 Oct 2018 19:10:37 -0400
+Message-Id: <20181031231054.29333-31-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231054.29333-1-sashal@kernel.org>
 References: <20181031231054.29333-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wenwen Wang <wang6495@umn.edu>
+From: Parav Pandit <parav@mellanox.com>
 
-[ Upstream commit 47db7873136a9c57c45390a53b57019cf73c8259 ]
+[ Upstream commit 0f6ef65d1c6ec8deb5d0f11f86631ec4cfe8f22e ]
 
-In megasas_mgmt_compat_ioctl_fw(), to handle the structure
-compat_megasas_iocpacket 'cioc', a user-space structure megasas_iocpacket
-'ioc' is allocated before megasas_mgmt_ioctl_fw() is invoked to handle
-the packet. Since the two data structures have different fields, the data
-is copied from 'cioc' to 'ioc' field by field. In the copy process,
-'sense_ptr' is prepared if the field 'sense_len' is not null, because it
-will be used in megasas_mgmt_ioctl_fw(). To prepare 'sense_ptr', the
-user-space data 'ioc->sense_off' and 'cioc->sense_off' are copied and
-saved to kernel-space variables 'local_sense_off' and 'user_sense_off'
-respectively. Given that 'ioc->sense_off' is also copied from
-'cioc->sense_off', 'local_sense_off' and 'user_sense_off' should have the
-same value. However, 'cioc' is in the user space and a malicious user can
-race to change the value of 'cioc->sense_off' after it is copied to
-'ioc->sense_off' but before it is copied to 'user_sense_off'. By doing
-so, the attacker can inject different values into 'local_sense_off' and
-'user_sense_off'. This can cause undefined behavior in the following
-execution, because the two variables are supposed to be same.
+If the provider driver (such as rdma_rxe) doesn't support pma counters,
+avoid exposing its directory similar to optional hw_counters directory.
+If core fails to read the PMA counter, return an error so that user can
+retry later if needed.
 
-This patch enforces a check on the two kernel variables 'local_sense_off'
-and 'user_sense_off' to make sure they are the same after the copy. In
-case they are not, an error code EINVAL will be returned.
-
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 35c4cbb17811 ("IB/core: Create get_perf_mad function in sysfs.c")
+Reported-by: Holger Hoffstätte <holger@applied-asynchrony.com>
+Tested-by: Holger Hoffstätte <holger@applied-asynchrony.com>
+Signed-off-by: Parav Pandit <parav@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/megaraid/megaraid_sas_base.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/infiniband/core/sysfs.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
-index 090fdcdd15c9..5de024a50e15 100644
---- a/drivers/scsi/megaraid/megaraid_sas_base.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_base.c
-@@ -6901,6 +6901,9 @@ static int megasas_mgmt_compat_ioctl_fw(struct file *file, unsigned long arg)
- 		get_user(user_sense_off, &cioc->sense_off))
- 		return -EFAULT;
+diff --git a/drivers/infiniband/core/sysfs.c b/drivers/infiniband/core/sysfs.c
+index 42de5f22da93..a1240ddca026 100644
+--- a/drivers/infiniband/core/sysfs.c
++++ b/drivers/infiniband/core/sysfs.c
+@@ -485,7 +485,7 @@ static ssize_t show_pma_counter(struct ib_port *p, struct port_attribute *attr,
+ 	ret = get_perf_mad(p->ibdev, p->port_num, tab_attr->attr_id, &data,
+ 			40 + offset / 8, sizeof(data));
+ 	if (ret < 0)
+-		return sprintf(buf, "N/A (no PMA)\n");
++		return ret;
  
-+	if (local_sense_off != user_sense_off)
-+		return -EINVAL;
+ 	switch (width) {
+ 	case 4:
+@@ -1008,10 +1008,12 @@ static int add_port(struct ib_device *device, int port_num,
+ 		goto err_put;
+ 	}
+ 
+-	p->pma_table = get_counter_table(device, port_num);
+-	ret = sysfs_create_group(&p->kobj, p->pma_table);
+-	if (ret)
+-		goto err_put_gid_attrs;
++	if (device->process_mad) {
++		p->pma_table = get_counter_table(device, port_num);
++		ret = sysfs_create_group(&p->kobj, p->pma_table);
++		if (ret)
++			goto err_put_gid_attrs;
++	}
+ 
+ 	p->gid_group.name  = "gids";
+ 	p->gid_group.attrs = alloc_group_attrs(show_port_gid, attr.gid_tbl_len);
+@@ -1124,7 +1126,8 @@ static int add_port(struct ib_device *device, int port_num,
+ 	p->gid_group.attrs = NULL;
+ 
+ err_remove_pma:
+-	sysfs_remove_group(&p->kobj, p->pma_table);
++	if (p->pma_table)
++		sysfs_remove_group(&p->kobj, p->pma_table);
+ 
+ err_put_gid_attrs:
+ 	kobject_put(&p->gid_attr_group->kobj);
+@@ -1236,7 +1239,9 @@ static void free_port_list_attributes(struct ib_device *device)
+ 			kfree(port->hw_stats);
+ 			free_hsag(&port->kobj, port->hw_stats_ag);
+ 		}
+-		sysfs_remove_group(p, port->pma_table);
 +
- 	if (local_sense_len) {
- 		void __user **sense_ioc_ptr =
- 			(void __user **)((u8 *)((unsigned long)&ioc->frame.raw) + local_sense_off);
++		if (port->pma_table)
++			sysfs_remove_group(p, port->pma_table);
+ 		sysfs_remove_group(p, &port->pkey_group);
+ 		sysfs_remove_group(p, &port->gid_group);
+ 		sysfs_remove_group(&port->gid_attr_group->kobj,
 -- 
 2.17.1
 
