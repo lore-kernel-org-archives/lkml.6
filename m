@@ -2,163 +2,91 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F26DECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:26:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9306BC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:26:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 378C420847
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:26:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5838920847
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:26:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="XKi3AvcF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 378C420847
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SCurcFgB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5838920847
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731364AbeKAI0s (ORCPT
+        id S1731015AbeKAIK0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:26:48 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:34726 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727546AbeKAI0r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:26:47 -0400
-Received: from emerald.amanokami.net (unknown [96.44.9.81])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0AAE811F2;
-        Thu,  1 Nov 2018 00:26:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1541028388;
-        bh=EZGOw/j7tr+oKO3jtwt4JL3i+Fs1aU4VF5qrCN8OpPU=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=XKi3AvcFYXle9xrJtQ8ynOLS7JbKvTzhrxHsFw4DeajesOU8FGHiFnva4x9Cv1ZoS
-         CTG7rSxd0V8Mijiaxm4AY8LwC7gmNDaiC7kwEKOGaU/Yh/8lUvIz3PHx07gqMk6VrI
-         ReYrFsRdAuI1xuz7pQLIS5C+2Zh4wrwf2y4zSu5o=
-Date:   Wed, 31 Oct 2018 19:26:20 -0400
-From:   Paul Elder <paul.elder@ideasonboard.com>
-To:     Bin Liu <b-liu@ti.com>, laurent.pinchart@ideasonboard.com,
-        kieran.bingham@ideasonboard.com, gregkh@linuxfoundation.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        balbi@kernel.org, stern@rowland.harvard.edu, rogerq@ti.com
-Subject: Re: [PATCH 5/6] usb: musb: gadget: implement send_response
-Message-ID: <20181031232620.GA13896@emerald.amanokami.net>
-References: <20181010024903.1633-1-paul.elder@ideasonboard.com>
- <20181010024903.1633-6-paul.elder@ideasonboard.com>
- <20181011160746.GA8763@uda0271908>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181011160746.GA8763@uda0271908>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Thu, 1 Nov 2018 04:10:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32926 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731000AbeKAIK0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:10:26 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A85E420838;
+        Wed, 31 Oct 2018 23:10:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541027414;
+        bh=FjF0sxzkT6nEUZLq6yowJ/HrHE4IiKXSwG4ehYfem20=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=SCurcFgBr0JrmAKBu2jXoDvp/bgQYiZd45/43KB8qZnYfeepb2O/1ai83HwMAq54m
+         M1bV44EM4UzKIuqN1dDckUiL2wIst0jCB8CAi+7H7pPFobx06AhMHIk2UXPRetXl2l
+         r861lXJzmZugFv/9a0IPBCPS4NTKnvPKUl/eOCH0=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 28/73] net: phy: phylink: ensure the carrier is off when starting phylink
+Date:   Wed, 31 Oct 2018 19:09:03 -0400
+Message-Id: <20181031230948.29203-28-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181031230948.29203-1-sashal@kernel.org>
+References: <20181031230948.29203-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bin,
+From: Antoine Tenart <antoine.tenart@bootlin.com>
 
-On Thu, Oct 11, 2018 at 11:07:46AM -0500, Bin Liu wrote:
-> Hi,
-> 
-> On Tue, Oct 09, 2018 at 10:49:02PM -0400, Paul Elder wrote:
-> > This patch implements a mechanism to signal the MUSB driver to reply to
-> > a control OUT request with STALL or ACK.
-> > 
-> > Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> 
-> The patch looks good to me, here is my Acked-by:
-> 
-> Acked-by: Bin Liu <b-liu@ti.com>
-> 
-> but I am unable to test this patch set - the current Greg's usb-next
-> tree gives deadlock error between composite_disconnect() and
-> usb_function_deactivate() when loading g_webcam.ko on BeagleboneBlack.
-> The error happens before applying this patch set.
+[ Upstream commit aeeb2e8fdefdd5d257a1446351c70cb3df540199 ]
 
-We don't use g_webcam anymore, because it doesn't offer the flexibility
-that configfs does (for example, only one function can be configured with
-g_webcam). There are no features that g_webcam offers that configfs doesn't.
+Phylink made an assumption about the carrier state being down when
+calling phylink_start(). If this assumption isn't satisfied, the
+internal phylink state could misbehave and a net device could end up not
+being functional.
 
-I was unable to reproduce the deadlock that you mention on Greg's
-usb-next tree. Which commit were you on?
-I did, however, get the deadlock that you mention upon *killing* the
-userspace application providing the stream, not when loading g_webcam.ko.
+This patch fixes this by explicitly calling netif_carrier_off() in
+phylink_start().
 
-Here is a sample script for setting up a UVC gadget through configfs
-(I haven't tested this exact script; I extracted the functional
-components):
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/phy/phylink.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-CONFIGFS="/sys/kernel/config"
-GADGET="$CONFIGFS/usb_gadget"
-VID="0x0525"
-PID="0xa4a2"
-SERIAL="0123456789"
-MANUF=$(hostname)
-PRODUCT="UVC Gadget"
-UDC=`ls /sys/class/udc`
+diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
+index e4a6ed88b9cf..9b8b9242fb61 100644
+--- a/drivers/net/phy/phylink.c
++++ b/drivers/net/phy/phylink.c
+@@ -747,6 +747,9 @@ void phylink_start(struct phylink *pl)
+ 		    phylink_an_mode_str(pl->link_an_mode),
+ 		    phy_modes(pl->link_config.interface));
+ 
++	/* Always set the carrier off */
++	netif_carrier_off(pl->netdev);
++
+ 	/* Apply the link configuration to the MAC when starting. This allows
+ 	 * a fixed-link to start with the correct parameters, and also
+ 	 * ensures that we set the appropriate advertisment for Serdes links.
+-- 
+2.17.1
 
-cd $GADGET/g1
-echo $VID > idVendor
-echo $PID > idProduct
-
-mkdir -p strings/0x409
-echo $SERIAL > strings/0x409/serialnumber
-echo $MANUF > strings/0x409/manufacturer
-echo $PRODUCT > strings/0x409/product
-
-mkdir configs/c.1
-mkdir configs/c.1/strings/0x409
-
-# create uvc
-CONFIG="configs/c.1"
-FUNCTION="uvc.0"
-
-mkdir functions/$FUNCTION
-
-# create frame 640x360 uncompressed
-WIDTH=640
-HEIGHT=360
-
-wdir=functions/$FUNCTION/streaming/uncompressed/u/${HEIGHT}p
-
-mkdir $wdir
-echo $WIDTH > $wdir/wWidth
-echo $HEIGHT > $wdir/wHeight
-echo $(( $WIDTH * $HEIGHT * 2 )) > $wdir/dwMaxVideoFrameBufferSize
-cat <<EOF > $wdir/dwFrameInterval
-666666
-100000
-5000000
-EOF
-# end create frame
-
-mkdir functions/$FUNCTION/streaming/header/h
-cd functions/$FUNCTION/streaming/header/h
-ln -s ../../uncompressed/u
-cd ../../class/fs
-ln -s ../../header/h
-cd ../../class/hs
-ln -s ../../header/h
-cd ../../../control
-mkdir header/h
-ln -s header/h class/fs
-ln -s header/h class/ss
-cd ../../../
-
-# Set the packet size: uvc gadget max size is 3k...
-echo 3072 > functions/$FUNCTION/streaming_maxpacket
-echo 2048 > functions/$FUNCTION/streaming_maxpacket
-echo 1024 > functions/$FUNCTION/streaming_maxpacket
-
-ln -s functions/$FUNCTION configs/c.1
-# end create uvc
-
-echo $UDC > UDC
-
-
-Thanks,
-
-Paul
