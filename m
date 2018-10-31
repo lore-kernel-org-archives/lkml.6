@@ -4,46 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 880B1ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE40ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F4DD20840
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48A402087A
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TKlAUYFc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F4DD20840
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MCVj/Lv9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48A402087A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731348AbeKAIK5 (ORCPT
+        id S1731374AbeKAILA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:10:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33800 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:11:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731301AbeKAIKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:10:53 -0400
+        id S1731339AbeKAIK6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:10:58 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4FF120843;
-        Wed, 31 Oct 2018 23:10:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 17FCD20843;
+        Wed, 31 Oct 2018 23:10:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027441;
-        bh=ddu7Z03LKHLtVbLFxw5b4i5Qq2VsgFqUK6UMeXG7UcA=;
+        s=default; t=1541027445;
+        bh=JYXSSV9/GfYls42Rl+PpHO1cKU6gbz6oIfEN1BLuNhw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TKlAUYFcDo4c/0LAFv9MIAogJaGVyktI1l84aWoyLURU289tzgyY1/ISUmwXY/q5z
-         UQFihUTKvC9Z3xd/Z2obbGsaee1+JzGBk9e7X1yrAEBYMqk3fXxNz/H7CKKbdE0ZID
-         jxS1J1izQTk84XWwmWV/5Z4g/tBLPiz0+VfId8Mo=
+        b=MCVj/Lv9Hnf+sP1vONta/YMdoiaA4E0reYKMolUjVSyqu34xcR+RQ2JPHwIoCZ4gS
+         userGzVNcbwtM2CMPU3TxgjZHvUPWmewUcMUtDV6p5N3L8QkanjJrv8nJSdPEhVpg4
+         1GLj8LRwu2/3KudeCtK/y/Iy8R71/R+0Vux5u0rA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Tonghao Zhang <xiangxia.m.yue@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+Cc:     Waiman Long <longman@redhat.com>, Vinod Koul <vkoul@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 59/73] PCI/MSI: Warn and return error if driver enables MSI/MSI-X twice
-Date:   Wed, 31 Oct 2018 19:09:34 -0400
-Message-Id: <20181031230948.29203-59-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 64/73] driver/dma/ioat: Call del_timer_sync() without holding prep_lock
+Date:   Wed, 31 Oct 2018 19:09:39 -0400
+Message-Id: <20181031230948.29203-64-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230948.29203-1-sashal@kernel.org>
 References: <20181031230948.29203-1-sashal@kernel.org>
@@ -52,97 +52,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tonghao Zhang <xiangxia.m.yue@gmail.com>
+From: Waiman Long <longman@redhat.com>
 
-[ Upstream commit 4c1ef72e9b71a19fb405ebfcd37c0a5e16fa44ca ]
+[ Upstream commit cfb03be6c7e8a1591285849c361d67b09f5149f7 ]
 
-It is a serious driver defect to enable MSI or MSI-X more than once.  Doing
-so may panic the kernel as in the stack trace below:
+The following lockdep splat was observed:
 
-  Call Trace:
-    sysfs_add_one+0xa5/0xd0
-    create_dir+0x7c/0xe0
-    sysfs_create_subdir+0x1c/0x20
-    internal_create_group+0x6d/0x290
-    sysfs_create_groups+0x4a/0xa0
-    populate_msi_sysfs+0x1cd/0x210
-    pci_enable_msix+0x31c/0x3e0
-    igbuio_pci_open+0x72/0x300 [igb_uio]
-    uio_open+0xcc/0x120 [uio]
-    chrdev_open+0xa1/0x1e0
-    [...]
-    do_sys_open+0xf3/0x1f0
-    SyS_open+0x1e/0x20
-    system_call_fastpath+0x16/0x1b
-    ---[ end trace 11042e2848880209 ]---
-    Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: ffffffffa056b4fa
+[ 1222.241750] ======================================================
+[ 1222.271301] WARNING: possible circular locking dependency detected
+[ 1222.301060] 4.16.0-10.el8+5.x86_64+debug #1 Not tainted
+[ 1222.326659] ------------------------------------------------------
+[ 1222.356565] systemd-shutdow/1 is trying to acquire lock:
+[ 1222.382660]  ((&ioat_chan->timer)){+.-.}, at: [<00000000f71e1a28>] del_timer_sync+0x5/0xf0
+[ 1222.422928]
+[ 1222.422928] but task is already holding lock:
+[ 1222.451743]  (&(&ioat_chan->prep_lock)->rlock){+.-.}, at: [<000000008ea98b12>] ioat_shutdown+0x86/0x100 [ioatdma]
+   :
+[ 1223.524987] Chain exists of:
+[ 1223.524987]   (&ioat_chan->timer) --> &(&ioat_chan->cleanup_lock)->rlock --> &(&ioat_chan->prep_lock)->rlock
+[ 1223.524987]
+[ 1223.594082]  Possible unsafe locking scenario:
+[ 1223.594082]
+[ 1223.622630]        CPU0                    CPU1
+[ 1223.645080]        ----                    ----
+[ 1223.667404]   lock(&(&ioat_chan->prep_lock)->rlock);
+[ 1223.691535]                                lock(&(&ioat_chan->cleanup_lock)->rlock);
+[ 1223.728657]                                lock(&(&ioat_chan->prep_lock)->rlock);
+[ 1223.765122]   lock((&ioat_chan->timer));
+[ 1223.784095]
+[ 1223.784095]  *** DEADLOCK ***
+[ 1223.784095]
+[ 1223.813492] 4 locks held by systemd-shutdow/1:
+[ 1223.834677]  #0:  (reboot_mutex){+.+.}, at: [<0000000056d33456>] SYSC_reboot+0x10f/0x300
+[ 1223.873310]  #1:  (&dev->mutex){....}, at: [<00000000258dfdd7>] device_shutdown+0x1c8/0x660
+[ 1223.913604]  #2:  (&dev->mutex){....}, at: [<0000000068331147>] device_shutdown+0x1d6/0x660
+[ 1223.954000]  #3:  (&(&ioat_chan->prep_lock)->rlock){+.-.}, at: [<000000008ea98b12>] ioat_shutdown+0x86/0x100 [ioatdma]
 
-We want to keep the WARN_ON() and stack trace so the driver can be fixed,
-but we can avoid the kernel panic by returning an error.  We may still get
-warnings like this:
+In the ioat_shutdown() function:
 
-  Call Trace:
-    pci_enable_msix+0x3c9/0x3e0
-    igbuio_pci_open+0x72/0x300 [igb_uio]
-    uio_open+0xcc/0x120 [uio]
-    chrdev_open+0xa1/0x1e0
-    [...]
-    do_sys_open+0xf3/0x1f0
-    SyS_open+0x1e/0x20
-    system_call_fastpath+0x16/0x1b
-    ------------[ cut here ]------------
-    WARNING: at fs/sysfs/dir.c:526 sysfs_add_one+0xa5/0xd0()
-    sysfs: cannot create duplicate filename '/devices/pci0000:00/0000:00:03.0/0000:01:00.1/msi_irqs'
+	spin_lock_bh(&ioat_chan->prep_lock);
+	set_bit(IOAT_CHAN_DOWN, &ioat_chan->state);
+	del_timer_sync(&ioat_chan->timer);
+	spin_unlock_bh(&ioat_chan->prep_lock);
 
-Signed-off-by: Tonghao Zhang <xiangxia.m.yue@gmail.com>
-[bhelgaas: changelog, fix patch whitespace, remove !!]
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+According to the synchronization rule for the del_timer_sync() function,
+the caller must not hold locks which would prevent completion of the
+timer's handler.
+
+The timer structure has its own lock that manages its synchronization.
+Setting the IOAT_CHAN_DOWN bit should prevent other CPUs from
+trying to use that device anyway, there is probably no need to call
+del_timer_sync() while holding the prep_lock. So the del_timer_sync()
+call is now moved outside of the prep_lock critical section to prevent
+the circular lock dependency.
+
+Signed-off-by: Waiman Long <longman@redhat.com>
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/msi.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/dma/ioat/init.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
-index 496ed9130600..536e9a5cd2b1 100644
---- a/drivers/pci/msi.c
-+++ b/drivers/pci/msi.c
-@@ -958,7 +958,6 @@ static int __pci_enable_msix(struct pci_dev *dev, struct msix_entry *entries,
- 			}
- 		}
+diff --git a/drivers/dma/ioat/init.c b/drivers/dma/ioat/init.c
+index 854deb0da07c..68680e4151ea 100644
+--- a/drivers/dma/ioat/init.c
++++ b/drivers/dma/ioat/init.c
+@@ -1205,8 +1205,15 @@ static void ioat_shutdown(struct pci_dev *pdev)
+ 
+ 		spin_lock_bh(&ioat_chan->prep_lock);
+ 		set_bit(IOAT_CHAN_DOWN, &ioat_chan->state);
+-		del_timer_sync(&ioat_chan->timer);
+ 		spin_unlock_bh(&ioat_chan->prep_lock);
++		/*
++		 * Synchronization rule for del_timer_sync():
++		 *  - The caller must not hold locks which would prevent
++		 *    completion of the timer's handler.
++		 * So prep_lock cannot be held before calling it.
++		 */
++		del_timer_sync(&ioat_chan->timer);
++
+ 		/* this should quiesce then reset */
+ 		ioat_reset_hw(ioat_chan);
  	}
--	WARN_ON(!!dev->msix_enabled);
- 
- 	/* Check whether driver already requested for MSI irq */
- 	if (dev->msi_enabled) {
-@@ -1028,8 +1027,6 @@ static int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
- 	if (!pci_msi_supported(dev, minvec))
- 		return -EINVAL;
- 
--	WARN_ON(!!dev->msi_enabled);
--
- 	/* Check whether driver already requested MSI-X irqs */
- 	if (dev->msix_enabled) {
- 		dev_info(&dev->dev,
-@@ -1040,6 +1037,9 @@ static int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
- 	if (maxvec < minvec)
- 		return -ERANGE;
- 
-+	if (WARN_ON_ONCE(dev->msi_enabled))
-+		return -EINVAL;
-+
- 	nvec = pci_msi_vec_count(dev);
- 	if (nvec < 0)
- 		return nvec;
-@@ -1088,6 +1088,9 @@ static int __pci_enable_msix_range(struct pci_dev *dev,
- 	if (maxvec < minvec)
- 		return -ERANGE;
- 
-+	if (WARN_ON_ONCE(dev->msix_enabled))
-+		return -EINVAL;
-+
- 	for (;;) {
- 		if (affd) {
- 			nvec = irq_calc_affinity_vectors(minvec, nvec, affd);
 -- 
 2.17.1
 
