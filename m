@@ -4,46 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FCE5ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:18:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 413B9C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:18:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1674720664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:18:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF46B20664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:18:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="h7yLNZMW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1674720664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qPXKIjW+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF46B20664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731996AbeKAISm (ORCPT
+        id S1732006AbeKAIS7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:18:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35592 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:18:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731801AbeKAILl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:11:41 -0400
+        id S1731756AbeKAILh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:11:37 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7028A2081B;
-        Wed, 31 Oct 2018 23:11:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B3E420840;
+        Wed, 31 Oct 2018 23:11:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027489;
-        bh=aTUpDGa/pUkkqbgzQRRdUvjAQP5tBV/ne0HVUPoccGU=;
+        s=default; t=1541027485;
+        bh=SqACrfgs/d9XmZW6O+9DDLSbq6aVAwoKyYNB3IL8bgg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h7yLNZMWbquxS4MjF0WbIqKf5pzrqJoQY9Yk+ZqICODlnHcghFNvRQhCRjriFiDTo
-         RwOD0xcvLC/AypBSdfIGPkDQXE16GqrFHXKIW0FiOOGpYwXvhpgG4zSWghdH3SIQjb
-         zxEDjjH28w9AsWcxeoyCC04M/ILty/x2PJvNmkEo=
+        b=qPXKIjW+IIlXiq5qRTmfA3AfMUmdn5ldmq6Qrk53aAdi9j7Ra6iDEP965IuO4oavZ
+         tq6ze9CcKcviQo5ohJOyy3Pe6zvUH/JTjnhNJz0Lpb7FPavAGrNngcd1yS+wPcbaQ8
+         5MGGQwgDVkkO6m1mYa5OfD+nKb2u91FRzb/BUTXo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Tonghao Zhang <xiangxia.m.yue@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+Cc:     Jorgen Hansen <jhansen@vmware.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 39/48] PCI/MSI: Warn and return error if driver enables MSI/MSI-X twice
-Date:   Wed, 31 Oct 2018 19:10:45 -0400
-Message-Id: <20181031231054.29333-39-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 35/48] VMCI: Resource wildcard match fixed
+Date:   Wed, 31 Oct 2018 19:10:41 -0400
+Message-Id: <20181031231054.29333-35-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231054.29333-1-sashal@kernel.org>
 References: <20181031231054.29333-1-sashal@kernel.org>
@@ -52,97 +53,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tonghao Zhang <xiangxia.m.yue@gmail.com>
+From: Jorgen Hansen <jhansen@vmware.com>
 
-[ Upstream commit 4c1ef72e9b71a19fb405ebfcd37c0a5e16fa44ca ]
+[ Upstream commit 11924ba5e671d6caef1516923e2bd8c72929a3fe ]
 
-It is a serious driver defect to enable MSI or MSI-X more than once.  Doing
-so may panic the kernel as in the stack trace below:
+When adding a VMCI resource, the check for an existing entry
+would ignore that the new entry could be a wildcard. This could
+result in multiple resource entries that would match a given
+handle. One disastrous outcome of this is that the
+refcounting used to ensure that delayed callbacks for VMCI
+datagrams have run before the datagram is destroyed can be
+wrong, since the refcount could be increased on the duplicate
+entry. This in turn leads to a use after free bug. This issue
+was discovered by Hangbin Liu using KASAN and syzkaller.
 
-  Call Trace:
-    sysfs_add_one+0xa5/0xd0
-    create_dir+0x7c/0xe0
-    sysfs_create_subdir+0x1c/0x20
-    internal_create_group+0x6d/0x290
-    sysfs_create_groups+0x4a/0xa0
-    populate_msi_sysfs+0x1cd/0x210
-    pci_enable_msix+0x31c/0x3e0
-    igbuio_pci_open+0x72/0x300 [igb_uio]
-    uio_open+0xcc/0x120 [uio]
-    chrdev_open+0xa1/0x1e0
-    [...]
-    do_sys_open+0xf3/0x1f0
-    SyS_open+0x1e/0x20
-    system_call_fastpath+0x16/0x1b
-    ---[ end trace 11042e2848880209 ]---
-    Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: ffffffffa056b4fa
-
-We want to keep the WARN_ON() and stack trace so the driver can be fixed,
-but we can avoid the kernel panic by returning an error.  We may still get
-warnings like this:
-
-  Call Trace:
-    pci_enable_msix+0x3c9/0x3e0
-    igbuio_pci_open+0x72/0x300 [igb_uio]
-    uio_open+0xcc/0x120 [uio]
-    chrdev_open+0xa1/0x1e0
-    [...]
-    do_sys_open+0xf3/0x1f0
-    SyS_open+0x1e/0x20
-    system_call_fastpath+0x16/0x1b
-    ------------[ cut here ]------------
-    WARNING: at fs/sysfs/dir.c:526 sysfs_add_one+0xa5/0xd0()
-    sysfs: cannot create duplicate filename '/devices/pci0000:00/0000:00:03.0/0000:01:00.1/msi_irqs'
-
-Signed-off-by: Tonghao Zhang <xiangxia.m.yue@gmail.com>
-[bhelgaas: changelog, fix patch whitespace, remove !!]
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Fixes: bc63dedb7d46 ("VMCI: resource object implementation")
+Reported-by: Hangbin Liu <liuhangbin@gmail.com>
+Reviewed-by: Adit Ranadive <aditr@vmware.com>
+Reviewed-by: Vishnu Dasa <vdasa@vmware.com>
+Signed-off-by: Jorgen Hansen <jhansen@vmware.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/msi.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/misc/vmw_vmci/vmci_driver.c   | 2 +-
+ drivers/misc/vmw_vmci/vmci_resource.c | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
-index 0e9a9dbeb184..37f393f27efc 100644
---- a/drivers/pci/msi.c
-+++ b/drivers/pci/msi.c
-@@ -981,7 +981,6 @@ static int __pci_enable_msix(struct pci_dev *dev, struct msix_entry *entries,
- 			}
+diff --git a/drivers/misc/vmw_vmci/vmci_driver.c b/drivers/misc/vmw_vmci/vmci_driver.c
+index d7eaf1eb11e7..003bfba40758 100644
+--- a/drivers/misc/vmw_vmci/vmci_driver.c
++++ b/drivers/misc/vmw_vmci/vmci_driver.c
+@@ -113,5 +113,5 @@ module_exit(vmci_drv_exit);
+ 
+ MODULE_AUTHOR("VMware, Inc.");
+ MODULE_DESCRIPTION("VMware Virtual Machine Communication Interface.");
+-MODULE_VERSION("1.1.5.0-k");
++MODULE_VERSION("1.1.6.0-k");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/misc/vmw_vmci/vmci_resource.c b/drivers/misc/vmw_vmci/vmci_resource.c
+index 9a53a30de445..f1164602cec1 100644
+--- a/drivers/misc/vmw_vmci/vmci_resource.c
++++ b/drivers/misc/vmw_vmci/vmci_resource.c
+@@ -56,7 +56,8 @@ static struct vmci_resource *vmci_resource_lookup(struct vmci_handle handle,
+ 
+ 		if (r->type == type &&
+ 		    rid == handle.resource &&
+-		    (cid == handle.context || cid == VMCI_INVALID_ID)) {
++		    (cid == handle.context || cid == VMCI_INVALID_ID ||
++		     handle.context == VMCI_INVALID_ID)) {
+ 			resource = r;
+ 			break;
  		}
- 	}
--	WARN_ON(!!dev->msix_enabled);
- 
- 	/* Check whether driver already requested for MSI irq */
- 	if (dev->msi_enabled) {
-@@ -1068,8 +1067,6 @@ static int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
- 	if (!pci_msi_supported(dev, minvec))
- 		return -EINVAL;
- 
--	WARN_ON(!!dev->msi_enabled);
--
- 	/* Check whether driver already requested MSI-X irqs */
- 	if (dev->msix_enabled) {
- 		dev_info(&dev->dev,
-@@ -1080,6 +1077,9 @@ static int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
- 	if (maxvec < minvec)
- 		return -ERANGE;
- 
-+	if (WARN_ON_ONCE(dev->msi_enabled))
-+		return -EINVAL;
-+
- 	nvec = pci_msi_vec_count(dev);
- 	if (nvec < 0)
- 		return nvec;
-@@ -1138,6 +1138,9 @@ static int __pci_enable_msix_range(struct pci_dev *dev,
- 	if (maxvec < minvec)
- 		return -ERANGE;
- 
-+	if (WARN_ON_ONCE(dev->msix_enabled))
-+		return -EINVAL;
-+
- 	for (;;) {
- 		if (affinity) {
- 			nvec = irq_calc_affinity_vectors(dev->irq_affinity,
 -- 
 2.17.1
 
