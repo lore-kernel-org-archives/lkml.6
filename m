@@ -5,66 +5,79 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16571C6786F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 01:18:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 325D9C6786F
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 01:24:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF9362082B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 01:18:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF9362082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+	by mail.kernel.org (Postfix) with ESMTP id DF0B02081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 01:24:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF0B02081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729023AbeJaKNu (ORCPT
+        id S1729030AbeJaKUg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 06:13:50 -0400
-Received: from mail-pg1-f170.google.com ([209.85.215.170]:44710 "EHLO
-        mail-pg1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728591AbeJaKNt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 06:13:49 -0400
-Received: by mail-pg1-f170.google.com with SMTP id w3-v6so6518353pgs.11;
-        Tue, 30 Oct 2018 18:18:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
-        b=kf1tQkHjOQj6grhbaPi1B5JhjlG9EPb+r4dhd4jKSyKg8FOKk3yCnQ7AvQ0l2O8Vbd
-         KVE6u6VtYxmJcNJ/W5Lv2VOFi7vT4LbH2jdL7rxTCwijhCiR8DFPtQNvE3hiP5JF+D3+
-         fzKFubW3Ms+SI4exIR8bRMfMRk64UtAm/Rjm7Z0aGSUmwP98uuLcsTI39ukxSRm9Y9/r
-         EPJPiMCJJiQQ2GDLtVds/yYeGWSvbPC08CJSPO1/EHZ0fIFPoQ5xFcy2BVrDQaIl2Fus
-         aJXv8pgLuCAY41ZsMrLtKPx0lVet/9k4g1WDnPytFNF6S0IaZ6A/xaTid9W6OHMyMKRz
-         IDvw==
-X-Gm-Message-State: AGRZ1gIqj2kH/HGoBGa83O+LGrJ8OR6BoeScPgzOqWPQ9QKS5KEo71nV
-        ic3nlCACu1AhigiJtS9vktM=
-X-Google-Smtp-Source: AJdET5f+ByJoqb45xa0zwzqKJh0h8PhEyFpl4Q1x8g/YB8N51CtqpOLwfJ+teBXKoMR+mweip6fO+w==
-X-Received: by 2002:a62:8288:: with SMTP id w130-v6mr1121795pfd.68.1540948680297;
-        Tue, 30 Oct 2018 18:18:00 -0700 (PDT)
-Received: from ?IPv6:2601:647:4800:973f:e9fd:d0f6:3e3:43a5? ([2601:647:4800:973f:e9fd:d0f6:3e3:43a5])
-        by smtp.gmail.com with ESMTPSA id d197-v6sm42339813pga.1.2018.10.30.18.17.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 18:17:59 -0700 (PDT)
-Subject: Re: [PATCH 13/16] irq: add support for allocating (and affinitizing)
- sets of IRQs
-To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>
-References: <20181030183252.17857-1-axboe@kernel.dk>
- <20181030183252.17857-14-axboe@kernel.dk>
-From:   Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <6e401081-afe6-aa09-2dea-c0c9c1bc294d@grimberg.me>
-Date:   Tue, 30 Oct 2018 18:17:57 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181030183252.17857-14-axboe@kernel.dk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 31 Oct 2018 06:20:36 -0400
+Received: from mga14.intel.com ([192.55.52.115]:54379 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728084AbeJaKUf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 06:20:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 18:24:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,446,1534834800"; 
+   d="scan'208";a="82852405"
+Received: from lifengji-mobl.ccr.corp.intel.com ([10.255.29.174])
+  by fmsmga008.fm.intel.com with ESMTP; 30 Oct 2018 18:24:44 -0700
+Message-ID: <1540949083.2254.62.camel@intel.com>
+Subject: [GIT PULL] Thermal management updates for v4.20-rc1
+From:   Zhang Rui <rui.zhang@intel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux PM list <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Wed, 31 Oct 2018 09:24:43 +0800
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Hi, Linus,
+
+Please pull from
+  git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git next
+
+to receive the latest Thermal management updates for v4.20-rc1 with
+top-most commit c2b59d279dbbac750958f6a1bc4841e431d934e3:
+
+  thermal: core: using power_efficient_wq for thermal worker (2018-10-
+10 21:48:50 +0800)
+
+on top of commit 0238df646e6224016a45505d2c111a24669ebe21:
+
+  Linux 4.19-rc7 (2018-10-07 17:26:02 +0200)
+
+Specifics:
+- Fix a use-after-free issue when unregistering a thermal cooling
+device.(Dmitry Osipenko)
+
+- use power_efficient_wq for thermal worker to save more power. (Jeson
+Gao)
+
+thanks,
+rui
+
+----------------------------------------------------------------
+Dmitry Osipenko (1):
+      thermal: core: Fix use-after-free in
+thermal_cooling_device_destroy_sysfs
+
+Jeson Gao (1):
+      thermal: core: using power_efficient_wq for thermal worker
+
+ drivers/thermal/thermal_core.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
