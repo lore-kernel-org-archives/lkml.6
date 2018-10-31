@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C8E4C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1645ECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 412622064C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9D7A2081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DM3McP2n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 412622064C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="miqS8k2n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9D7A2081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728893AbeKAIH0 (ORCPT
+        id S1728907AbeKAIH0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 1 Nov 2018 04:07:26 -0400
 Received: from mail.kernel.org ([198.145.29.99]:55074 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728840AbeKAIHY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:07:24 -0400
+        id S1726795AbeKAIH0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:07:26 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 411CC2064C;
-        Wed, 31 Oct 2018 23:07:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0205620830;
+        Wed, 31 Oct 2018 23:07:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027233;
-        bh=PwOWO/HO6CdLbUGyUS1z5sBSXeT97GHfaG0HdQyfkic=;
+        s=default; t=1541027235;
+        bh=GZvI6+ZUhrjC2GF5Z5vETFphxwnIvDDokVS7VhFE/Jo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DM3McP2nG5MHw4iutga+shBE3HILagBkpDbRc9TkUDcotshieksuwEVtDGKHAclNA
-         6/cXQVLFjimwulYagmThA1N5JkW87xK5uLwQn4cWTd5VASI2H6QN1pau4hVMmErqvI
-         O1QOvh6BUFKEUDPpYn0aOtf+INQ7Kd1r/5OCGfS4=
+        b=miqS8k2nXFR4hkH3KOAphzR+Vsb4vGnHvuNiBp+rZfu8/pzzkNDTRrg+wlsd0ZO04
+         Lp2av6/3Lr7WPd63QJJdFqDRvsrik1/vZXzYxX+rJnfJJK9kXVdc0hY2x9HpxXsrUQ
+         NhzpiLWyWzS5SpFQvipEehqJ5FD5cr1m6mjYtMBM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Selvin Xavier <selvin.xavier@broadcom.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+Cc:     Honghui Zhang <honghui.zhang@mediatek.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 101/146] RDMA/bnxt_re: Fix recursive lock warning in debug kernel
-Date:   Wed, 31 Oct 2018 19:04:56 -0400
-Message-Id: <20181031230541.28822-101-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 103/146] PCI: mediatek: Fix mtk_pcie_find_port() endpoint/port matching logic
+Date:   Wed, 31 Oct 2018 19:04:58 -0400
+Message-Id: <20181031230541.28822-103-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -53,92 +53,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Selvin Xavier <selvin.xavier@broadcom.com>
+From: Honghui Zhang <honghui.zhang@mediatek.com>
 
-[ Upstream commit d455f29f6d76a5f94881ca1289aaa1e90617ff5d ]
+[ Upstream commit 074d6f32689ce05a084b6fa3db38445745bf11cc ]
 
-Fix possible recursive lock warning. Its a false warning as the locks are
-part of two differnt HW Queue data structure - cmdq and creq. Debug kernel
-is throwing the following warning and stack trace.
+The Mediatek's host controller has two slots, each with its own control
+registers. The host driver needs to identify what slot is connected to
+what port in order to access the device's configuration space.
 
-[  783.914967] ============================================
-[  783.914970] WARNING: possible recursive locking detected
-[  783.914973] 4.19.0-rc2+ #33 Not tainted
-[  783.914976] --------------------------------------------
-[  783.914979] swapper/2/0 is trying to acquire lock:
-[  783.914982] 000000002aa3949d (&(&hwq->lock)->rlock){..-.}, at: bnxt_qplib_service_creq+0x232/0x350 [bnxt_re]
-[  783.914999]
-but task is already holding lock:
-[  783.915002] 00000000be73920d (&(&hwq->lock)->rlock){..-.}, at: bnxt_qplib_service_creq+0x2a/0x350 [bnxt_re]
-[  783.915013]
-other info that might help us debug this:
-[  783.915016]  Possible unsafe locking scenario:
+Current code retrieving slot connected to a given endpoint device.
 
-[  783.915019]        CPU0
-[  783.915021]        ----
-[  783.915034]   lock(&(&hwq->lock)->rlock);
-[  783.915035]   lock(&(&hwq->lock)->rlock);
-[  783.915037]
- *** DEADLOCK ***
+Assuming each slot is connected to one endpoint device as below:
 
-[  783.915038]  May be due to missing lock nesting notation
+                host bridge
+  bus 0 --> __________|_______
+           |                  |
+           |                  |
+         slot 0             slot 1
+  bus 1 -->|        bus 2 --> |
+           |                  |
+         EP 0               EP 1
 
-[  783.915039] 1 lock held by swapper/2/0:
-[  783.915040]  #0: 00000000be73920d (&(&hwq->lock)->rlock){..-.}, at: bnxt_qplib_service_creq+0x2a/0x350 [bnxt_re]
-[  783.915044]
-stack backtrace:
-[  783.915046] CPU: 2 PID: 0 Comm: swapper/2 Not tainted 4.19.0-rc2+ #33
-[  783.915047] Hardware name: Dell Inc. PowerEdge R730/0599V5, BIOS 1.0.4 08/28/2014
-[  783.915048] Call Trace:
-[  783.915049]  <IRQ>
-[  783.915054]  dump_stack+0x90/0xe3
-[  783.915058]  __lock_acquire+0x106c/0x1080
-[  783.915061]  ? sched_clock+0x5/0x10
-[  783.915063]  lock_acquire+0xbd/0x1a0
-[  783.915065]  ? bnxt_qplib_service_creq+0x232/0x350 [bnxt_re]
-[  783.915069]  _raw_spin_lock_irqsave+0x4a/0x90
-[  783.915071]  ? bnxt_qplib_service_creq+0x232/0x350 [bnxt_re]
-[  783.915073]  bnxt_qplib_service_creq+0x232/0x350 [bnxt_re]
-[  783.915078]  tasklet_action_common.isra.17+0x197/0x1b0
-[  783.915081]  __do_softirq+0xcb/0x3a6
-[  783.915084]  irq_exit+0xe9/0x100
-[  783.915085]  do_IRQ+0x6a/0x120
-[  783.915087]  common_interrupt+0xf/0xf
-[  783.915088]  </IRQ>
+During PCI enumeration, system software will scan all the PCI devices on
+every bus starting from devfn 0. Using PCI_SLOT(devfn) for matching an
+endpoint to its slot is erroneous in that the devfn does not contain the
+hierarchical bus numbering in it. In order to match an endpoint with its
+slot (and related port), the PCI tree must be walked up to the root bus
+(where the root ports are situated) and then the PCI_SLOT(devfn)
+matching logic can be correctly applied for matching.
 
-Use nested notation for the spin_lock to avoid this warning.
+This patch fixes the mtk_pcie_find_port() slot matching logic by adding
+appropriate PCI tree walking code to retrieve the slot/port a given
+endpoint is connected to.
 
-Signed-off-by: Selvin Xavier <selvin.xavier@broadcom.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+[lorenzo.pieralisi@arm.com: rewrote the commit log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Acked-by: Ryder Lee <ryder.lee@mediatek.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/bnxt_re/qplib_rcfw.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/pci/controller/pcie-mediatek.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
-index 2852d350ada1..6637df77d236 100644
---- a/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
-+++ b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
-@@ -309,8 +309,17 @@ static int bnxt_qplib_process_qp_event(struct bnxt_qplib_rcfw *rcfw,
- 		rcfw->aeq_handler(rcfw, qp_event, qp);
- 		break;
- 	default:
--		/* Command Response */
--		spin_lock_irqsave(&cmdq->lock, flags);
-+		/*
-+		 * Command Response
-+		 * cmdq->lock needs to be acquired to synchronie
-+		 * the command send and completion reaping. This function
-+		 * is always called with creq->lock held. Using
-+		 * the nested variant of spin_lock.
-+		 *
-+		 */
+diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+index 861dda69f366..c5ff6ca65eab 100644
+--- a/drivers/pci/controller/pcie-mediatek.c
++++ b/drivers/pci/controller/pcie-mediatek.c
+@@ -337,6 +337,17 @@ static struct mtk_pcie_port *mtk_pcie_find_port(struct pci_bus *bus,
+ {
+ 	struct mtk_pcie *pcie = bus->sysdata;
+ 	struct mtk_pcie_port *port;
++	struct pci_dev *dev = NULL;
 +
-+		spin_lock_irqsave_nested(&cmdq->lock, flags,
-+					 SINGLE_DEPTH_NESTING);
- 		cookie = le16_to_cpu(qp_event->cookie);
- 		mcookie = qp_event->cookie;
- 		blocked = cookie & RCFW_CMD_IS_BLOCKING;
++	/*
++	 * Walk the bus hierarchy to get the devfn value
++	 * of the port in the root bus.
++	 */
++	while (bus && bus->number) {
++		dev = bus->self;
++		bus = dev->bus;
++		devfn = dev->devfn;
++	}
+ 
+ 	list_for_each_entry(port, &pcie->ports, list)
+ 		if (port->slot == PCI_SLOT(devfn))
 -- 
 2.17.1
 
