@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C25ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:15:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C748C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:15:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADBF720840
+	by mail.kernel.org (Postfix) with ESMTP id E6FA02145D
 	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:15:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s6KydPqm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADBF720840
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uBLbzova"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6FA02145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732037AbeKAIMG (ORCPT
+        id S1732329AbeKAIQG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:12:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36500 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:16:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730796AbeKAIME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:12:04 -0400
+        id S1732009AbeKAIMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:12:06 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 447C9208E3;
-        Wed, 31 Oct 2018 23:11:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03E0520854;
+        Wed, 31 Oct 2018 23:11:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027511;
-        bh=dAwof9cyXIrpuw+HAV95P5iD4dDzbkMmvbitq3Oe25k=;
+        s=default; t=1541027513;
+        bh=cfYlc4bYnnCncqlJhXd8YMlRUJJ/2wpPo+5FnuGXmj0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s6KydPqmH0P0g/dPEZ3+OQSq7U/FULdPcRG9seuw2MI+kMcXXoxapkfoAcDpEFv5l
-         jP6rAFRp3SwP9+HtcCMjdwQOHsUL4WpkFH1IdTJ5AIXqrNxYmjBNXvzJKNCwEm3Q7I
-         /2u3PaImmitiPq5Rqmo7RTCGVZh5izL32CeNPOGM=
+        b=uBLbzova4EKfsyX0jNvA5qsmE6qXVk4WFdqFNrLbj2NfF34GmmyPBhpisWHVkYU/u
+         z1RpIPPaA+0lEtx4QECfmUbfxhP3RYIBuFaG3HabYiZBSHZU9zVxC3eJbb4zaorUqV
+         KLkEO+ddpRzqZ3Zx00KNlrNhTkegxUDSgbg88Mbk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+Cc:     Douglas Anderson <dianders@chromium.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 15/32] ACPI / LPSS: Add alternative ACPI HIDs for Cherry Trail DMA controllers
-Date:   Wed, 31 Oct 2018 19:11:20 -0400
-Message-Id: <20181031231137.29429-15-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 17/32] pinctrl: spmi-mpp: Fix pmic_mpp_config_get() to be compliant
+Date:   Wed, 31 Oct 2018 19:11:22 -0400
+Message-Id: <20181031231137.29429-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231137.29429-1-sashal@kernel.org>
 References: <20181031231137.29429-1-sashal@kernel.org>
@@ -53,49 +53,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Douglas Anderson <dianders@chromium.org>
 
-[ Upstream commit 240714061c58e6b1abfb3322398a7634151c06cb ]
+[ Upstream commit 0d5b476f8f57fcb06c45fe27681ac47254f63fd2 ]
 
-Bay and Cherry Trail DSTDs represent a different set of devices depending
-on which OS the device think it is booting. One set of decices for Windows
-and another set of devices for Android which targets the Android-x86 Linux
-kernel fork (which e.g. used to have its own display driver instead of
-using the i915 driver).
+If you look at "pinconf-groups" in debugfs for ssbi-mpp you'll notice
+it looks like nonsense.
 
-Which set of devices we are actually going to get is out of our control,
-this is controlled by the ACPI OSID variable, which gets either set through
-an EFI setup option, or sometimes is autodetected. So we need to support
-both.
+The problem is fairly well described in commit 1cf86bc21257 ("pinctrl:
+qcom: spmi-gpio: Fix pmic_gpio_config_get() to be compliant") and
+commit 05e0c828955c ("pinctrl: msm: Fix msm_config_group_get() to be
+compliant"), but it was pointed out that ssbi-mpp has the same
+problem.  Let's fix it there too.
 
-This commit adds support for the 80862286 and 808622C0 ACPI HIDs which we
-get for the first resp. second DMA controller on Cherry Trail devices when
-OSID is set to Android.
+NOTE: in case it's helpful to someone reading this, the way to tell
+whether to do the -EINVAL or not is to look at the PCONFDUMP for a
+given attribute.  If the last element (has_arg) is false then you need
+to do the -EINVAL trick.
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+ALSO NOTE: it seems unlikely that the values returned when we try to
+get PIN_CONFIG_BIAS_PULL_UP will actually be printed since "has_arg"
+is false for that one, but I guess it's still fine to return different
+values so I kept doing that.  It seems like another driver (ssbi-gpio)
+uses a custom attribute (PM8XXX_QCOM_PULL_UP_STRENGTH) for something
+similar so maybe a future change should do that here too.
+
+Fixes: cfb24f6ebd38 ("pinctrl: Qualcomm SPMI PMIC MPP pin controller driver")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/acpi_lpss.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/acpi/acpi_lpss.c b/drivers/acpi/acpi_lpss.c
-index 8a0f77fb5181..572755e557d6 100644
---- a/drivers/acpi/acpi_lpss.c
-+++ b/drivers/acpi/acpi_lpss.c
-@@ -235,9 +235,11 @@ static const struct acpi_device_id acpi_lpss_device_ids[] = {
- 	{ "INT33FC", },
+diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
+index 8301e600e7a8..5cd9a81a6060 100644
+--- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
++++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
+@@ -347,13 +347,12 @@ static int pmic_mpp_config_get(struct pinctrl_dev *pctldev,
  
- 	/* Braswell LPSS devices */
-+	{ "80862286", LPSS_ADDR(lpss_dma_desc) },
- 	{ "80862288", LPSS_ADDR(bsw_pwm_dev_desc) },
- 	{ "8086228A", LPSS_ADDR(bsw_uart_dev_desc) },
- 	{ "8086228E", LPSS_ADDR(bsw_spi_dev_desc) },
-+	{ "808622C0", LPSS_ADDR(lpss_dma_desc) },
- 	{ "808622C1", LPSS_ADDR(bsw_i2c_dev_desc) },
- 
- 	/* Broadwell LPSS devices */
+ 	switch (param) {
+ 	case PIN_CONFIG_BIAS_DISABLE:
+-		arg = pad->pullup == PMIC_MPP_PULL_UP_OPEN;
++		if (pad->pullup != PMIC_MPP_PULL_UP_OPEN)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_BIAS_PULL_UP:
+ 		switch (pad->pullup) {
+-		case PMIC_MPP_PULL_UP_OPEN:
+-			arg = 0;
+-			break;
+ 		case PMIC_MPP_PULL_UP_0P6KOHM:
+ 			arg = 600;
+ 			break;
+@@ -368,13 +367,17 @@ static int pmic_mpp_config_get(struct pinctrl_dev *pctldev,
+ 		}
+ 		break;
+ 	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
+-		arg = !pad->is_enabled;
++		if (pad->is_enabled)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_POWER_SOURCE:
+ 		arg = pad->power_source;
+ 		break;
+ 	case PIN_CONFIG_INPUT_ENABLE:
+-		arg = pad->input_enabled;
++		if (!pad->input_enabled)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_OUTPUT:
+ 		arg = pad->out_value;
+@@ -386,7 +389,9 @@ static int pmic_mpp_config_get(struct pinctrl_dev *pctldev,
+ 		arg = pad->amux_input;
+ 		break;
+ 	case PMIC_MPP_CONF_PAIRED:
+-		arg = pad->paired;
++		if (!pad->paired)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_DRIVE_STRENGTH:
+ 		arg = pad->drive_strength;
 -- 
 2.17.1
 
