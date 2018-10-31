@@ -7,114 +7,141 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73C5EECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A91FBC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B8912081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FDD020843
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hNiqBoib"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B8912081B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zpNfyTSq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FDD020843
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731241AbeKAIKq (ORCPT
+        id S1731255AbeKAIKs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:10:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33564 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:10:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33586 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731171AbeKAIKp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:10:45 -0400
+        id S1731171AbeKAIKq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:10:46 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C189920821;
-        Wed, 31 Oct 2018 23:10:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 94E6420840;
+        Wed, 31 Oct 2018 23:10:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027433;
-        bh=8dv3Hdjei0656NckEwAO4k16k+6ruRluLfQCRv0wXbE=;
+        s=default; t=1541027434;
+        bh=k5/nf9i2uDVUV7/0ayW+Onyytx8aIvcPUYDRWeJH6+4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hNiqBoibhJTT0SqJ7BlkROWlqMrPnlgC4XTgdFUhT/LSpyPYWOdaliXSYWP+O3BVX
-         FMQpfqODS5sVQVv9LdnHQTrpOxSX8ekRVaZejXq1MFuYLTQnw0W4f40hwhzR9EOgkf
-         pNNvmR5m5ME5z6bSxYlLVD8CGx8Hs5f9DPNswEhA=
+        b=zpNfyTSqc0QahiRDlvGeDQfbDWkRfZsdNeXD9iEcG6aRThJllYBlF+oh/+/nPR9CT
+         revHyga3hCVDjYgV5lO2g6Q7s4nIFOpBAwkgR5c8ruzPFuKHiv/Y1lEBuvSZiVaEUM
+         lUP8zAD7cRxnO6nK7ozmmcIWAoK8YLHHLQxI7B1M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Javier Martinez Canillas <javierm@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+Cc:     Dexuan Cui <decui@microsoft.com>,
+        "K . Y . Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Stable@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 50/73] tpm: suppress transmit cmd error logs when TPM 1.2 is disabled/deactivated
-Date:   Wed, 31 Oct 2018 19:09:25 -0400
-Message-Id: <20181031230948.29203-50-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 51/73] Drivers: hv: vmbus: Use cpumask_var_t for on-stack cpu mask
+Date:   Wed, 31 Oct 2018 19:09:26 -0400
+Message-Id: <20181031230948.29203-51-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230948.29203-1-sashal@kernel.org>
 References: <20181031230948.29203-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Javier Martinez Canillas <javierm@redhat.com>
+From: Dexuan Cui <decui@microsoft.com>
 
-[ Upstream commit 0d6d0d62d9505a9816716aa484ebd0b04c795063 ]
+[ Upstream commit 25355252607ca288f329ee033f387764883393f6 ]
 
-For TPM 1.2 chips the system setup utility allows to set the TPM device in
-one of the following states:
+A cpumask structure on the stack can cause a warning with
+CONFIG_NR_CPUS=8192 (e.g. Ubuntu 16.04 and 18.04 use this):
 
-  * Active: Security chip is functional
-  * Inactive: Security chip is visible, but is not functional
-  * Disabled: Security chip is hidden and is not functional
+drivers/hv//channel_mgmt.c: In function ‘init_vp_index’:
+drivers/hv//channel_mgmt.c:702:1: warning: the frame size of 1032 bytes
+  is larger than 1024 bytes [-Wframe-larger-than=]
 
-When choosing the "Inactive" state, the TPM 1.2 device is enumerated and
-registered, but sending TPM commands fail with either TPM_DEACTIVATED or
-TPM_DISABLED depending if the firmware deactivated or disabled the TPM.
+Nowadays it looks most distros enable CONFIG_CPUMASK_OFFSTACK=y, and
+hence we can work around the warning by using cpumask_var_t.
 
-Since these TPM 1.2 error codes don't have special treatment, inactivating
-the TPM leads to a very noisy kernel log buffer that shows messages like
-the following:
-
-  tpm_tis 00:05: 1.2 TPM (device-id 0x0, rev-id 78)
-  tpm tpm0: A TPM error (6) occurred attempting to read a pcr value
-  tpm tpm0: TPM is disabled/deactivated (0x6)
-  tpm tpm0: A TPM error (6) occurred attempting get random
-  tpm tpm0: A TPM error (6) occurred attempting to read a pcr value
-  ima: No TPM chip found, activating TPM-bypass! (rc=6)
-  tpm tpm0: A TPM error (6) occurred attempting get random
-  tpm tpm0: A TPM error (6) occurred attempting get random
-  tpm tpm0: A TPM error (6) occurred attempting get random
-  tpm tpm0: A TPM error (6) occurred attempting get random
-
-Let's just suppress error log messages for the TPM_{DEACTIVATED,DISABLED}
-return codes, since this is expected when the TPM 1.2 is set to Inactive.
-
-In that case the kernel log is cleaner and less confusing for users, i.e:
-
-  tpm_tis 00:05: 1.2 TPM (device-id 0x0, rev-id 78)
-  tpm tpm0: TPM is disabled/deactivated (0x6)
-  ima: No TPM chip found, activating TPM-bypass! (rc=6)
-
-Reported-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/char/tpm/tpm-interface.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/hv/channel_mgmt.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index a2070ab86c82..4f6505c5e631 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -652,7 +652,8 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
- 		return len;
+diff --git a/drivers/hv/channel_mgmt.c b/drivers/hv/channel_mgmt.c
+index 1700b4e7758d..752c52f7353d 100644
+--- a/drivers/hv/channel_mgmt.c
++++ b/drivers/hv/channel_mgmt.c
+@@ -599,16 +599,18 @@ static void init_vp_index(struct vmbus_channel *channel, u16 dev_type)
+ 	bool perf_chn = vmbus_devs[dev_type].perf_device;
+ 	struct vmbus_channel *primary = channel->primary_channel;
+ 	int next_node;
+-	struct cpumask available_mask;
++	cpumask_var_t available_mask;
+ 	struct cpumask *alloced_mask;
  
- 	err = be32_to_cpu(header->return_code);
--	if (err != 0 && desc)
-+	if (err != 0 && err != TPM_ERR_DISABLED && err != TPM_ERR_DEACTIVATED
-+	    && desc)
- 		dev_err(&chip->dev, "A TPM error (%d) occurred %s\n", err,
- 			desc);
- 	if (err)
+ 	if ((vmbus_proto_version == VERSION_WS2008) ||
+-	    (vmbus_proto_version == VERSION_WIN7) || (!perf_chn)) {
++	    (vmbus_proto_version == VERSION_WIN7) || (!perf_chn) ||
++	    !alloc_cpumask_var(&available_mask, GFP_KERNEL)) {
+ 		/*
+ 		 * Prior to win8, all channel interrupts are
+ 		 * delivered on cpu 0.
+ 		 * Also if the channel is not a performance critical
+ 		 * channel, bind it to cpu 0.
++		 * In case alloc_cpumask_var() fails, bind it to cpu 0.
+ 		 */
+ 		channel->numa_node = 0;
+ 		channel->target_cpu = 0;
+@@ -646,7 +648,7 @@ static void init_vp_index(struct vmbus_channel *channel, u16 dev_type)
+ 		cpumask_clear(alloced_mask);
+ 	}
+ 
+-	cpumask_xor(&available_mask, alloced_mask,
++	cpumask_xor(available_mask, alloced_mask,
+ 		    cpumask_of_node(primary->numa_node));
+ 
+ 	cur_cpu = -1;
+@@ -664,10 +666,10 @@ static void init_vp_index(struct vmbus_channel *channel, u16 dev_type)
+ 	}
+ 
+ 	while (true) {
+-		cur_cpu = cpumask_next(cur_cpu, &available_mask);
++		cur_cpu = cpumask_next(cur_cpu, available_mask);
+ 		if (cur_cpu >= nr_cpu_ids) {
+ 			cur_cpu = -1;
+-			cpumask_copy(&available_mask,
++			cpumask_copy(available_mask,
+ 				     cpumask_of_node(primary->numa_node));
+ 			continue;
+ 		}
+@@ -697,6 +699,8 @@ static void init_vp_index(struct vmbus_channel *channel, u16 dev_type)
+ 
+ 	channel->target_cpu = cur_cpu;
+ 	channel->target_vp = hv_cpu_number_to_vp_number(cur_cpu);
++
++	free_cpumask_var(available_mask);
+ }
+ 
+ static void vmbus_wait_for_unload(void)
 -- 
 2.17.1
 
