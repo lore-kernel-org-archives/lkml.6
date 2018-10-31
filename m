@@ -7,43 +7,46 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE40ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A51BC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48A402087A
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B653C2086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MCVj/Lv9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48A402087A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l2VujBAI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B653C2086D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731374AbeKAILA (ORCPT
+        id S1731388AbeKAILC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:11:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33942 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:11:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731339AbeKAIK6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:10:58 -0400
+        id S1727752AbeKAILA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:11:00 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 17FCD20843;
-        Wed, 31 Oct 2018 23:10:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B063920664;
+        Wed, 31 Oct 2018 23:10:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027445;
-        bh=JYXSSV9/GfYls42Rl+PpHO1cKU6gbz6oIfEN1BLuNhw=;
+        s=default; t=1541027448;
+        bh=zkLsD4TIocvvaqXZmzy2LbRycv5Xnkvwdbtobsly5S0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MCVj/Lv9Hnf+sP1vONta/YMdoiaA4E0reYKMolUjVSyqu34xcR+RQ2JPHwIoCZ4gS
-         userGzVNcbwtM2CMPU3TxgjZHvUPWmewUcMUtDV6p5N3L8QkanjJrv8nJSdPEhVpg4
-         1GLj8LRwu2/3KudeCtK/y/Iy8R71/R+0Vux5u0rA=
+        b=l2VujBAICdNn4HL6PgtDj1IgIy4RoyZOiJPTKOQsJ8+0J7eD6xsQLHf2zsRoKAQoV
+         1N7cn0woY9/LmhCx16sJWxr0n25TnRBPHv9PEqPp2eSlD1ncsUTsm4qSfoUnwXfp/O
+         ysIFRbkQF3ZPPGSVyZp8RG1rijxzXtPHHtWU3gzg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Waiman Long <longman@redhat.com>, Vinod Koul <vkoul@kernel.org>,
+Cc:     James Smart <jsmart2021@gmail.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <james.smart@broadcom.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 64/73] driver/dma/ioat: Call del_timer_sync() without holding prep_lock
-Date:   Wed, 31 Oct 2018 19:09:39 -0400
-Message-Id: <20181031230948.29203-64-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 67/73] scsi: lpfc: Correct race with abort on completion path
+Date:   Wed, 31 Oct 2018 19:09:42 -0400
+Message-Id: <20181031230948.29203-67-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230948.29203-1-sashal@kernel.org>
 References: <20181031230948.29203-1-sashal@kernel.org>
@@ -52,89 +55,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Waiman Long <longman@redhat.com>
+From: James Smart <jsmart2021@gmail.com>
 
-[ Upstream commit cfb03be6c7e8a1591285849c361d67b09f5149f7 ]
+[ Upstream commit ca7fb76e091f889cfda1287c07a9358f73832b39 ]
 
-The following lockdep splat was observed:
+On io completion, the driver is taking an adapter wide lock and nulling the
+scsi command back pointer.  The nulling of the back pointer is to signify the
+io was completed and the scsi_done() routine was called.  However, the routine
+makes no check to see if the abort routine had done the same thing and
+possibly nulled the pointer. Thus it may doubly-complete the io.
 
-[ 1222.241750] ======================================================
-[ 1222.271301] WARNING: possible circular locking dependency detected
-[ 1222.301060] 4.16.0-10.el8+5.x86_64+debug #1 Not tainted
-[ 1222.326659] ------------------------------------------------------
-[ 1222.356565] systemd-shutdow/1 is trying to acquire lock:
-[ 1222.382660]  ((&ioat_chan->timer)){+.-.}, at: [<00000000f71e1a28>] del_timer_sync+0x5/0xf0
-[ 1222.422928]
-[ 1222.422928] but task is already holding lock:
-[ 1222.451743]  (&(&ioat_chan->prep_lock)->rlock){+.-.}, at: [<000000008ea98b12>] ioat_shutdown+0x86/0x100 [ioatdma]
-   :
-[ 1223.524987] Chain exists of:
-[ 1223.524987]   (&ioat_chan->timer) --> &(&ioat_chan->cleanup_lock)->rlock --> &(&ioat_chan->prep_lock)->rlock
-[ 1223.524987]
-[ 1223.594082]  Possible unsafe locking scenario:
-[ 1223.594082]
-[ 1223.622630]        CPU0                    CPU1
-[ 1223.645080]        ----                    ----
-[ 1223.667404]   lock(&(&ioat_chan->prep_lock)->rlock);
-[ 1223.691535]                                lock(&(&ioat_chan->cleanup_lock)->rlock);
-[ 1223.728657]                                lock(&(&ioat_chan->prep_lock)->rlock);
-[ 1223.765122]   lock((&ioat_chan->timer));
-[ 1223.784095]
-[ 1223.784095]  *** DEADLOCK ***
-[ 1223.784095]
-[ 1223.813492] 4 locks held by systemd-shutdow/1:
-[ 1223.834677]  #0:  (reboot_mutex){+.+.}, at: [<0000000056d33456>] SYSC_reboot+0x10f/0x300
-[ 1223.873310]  #1:  (&dev->mutex){....}, at: [<00000000258dfdd7>] device_shutdown+0x1c8/0x660
-[ 1223.913604]  #2:  (&dev->mutex){....}, at: [<0000000068331147>] device_shutdown+0x1d6/0x660
-[ 1223.954000]  #3:  (&(&ioat_chan->prep_lock)->rlock){+.-.}, at: [<000000008ea98b12>] ioat_shutdown+0x86/0x100 [ioatdma]
+Make the following mods:
 
-In the ioat_shutdown() function:
+- Check to make sure forward progress (call scsi_done()) only happens if the
+  command pointer was non-null.
 
-	spin_lock_bh(&ioat_chan->prep_lock);
-	set_bit(IOAT_CHAN_DOWN, &ioat_chan->state);
-	del_timer_sync(&ioat_chan->timer);
-	spin_unlock_bh(&ioat_chan->prep_lock);
+- As the taking of the lock, which is adapter wide, is very costly on a system
+  under load, null the pointer using an xchg operation rather than under lock.
 
-According to the synchronization rule for the del_timer_sync() function,
-the caller must not hold locks which would prevent completion of the
-timer's handler.
-
-The timer structure has its own lock that manages its synchronization.
-Setting the IOAT_CHAN_DOWN bit should prevent other CPUs from
-trying to use that device anyway, there is probably no need to call
-del_timer_sync() while holding the prep_lock. So the del_timer_sync()
-call is now moved outside of the prep_lock critical section to prevent
-the circular lock dependency.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <james.smart@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/ioat/init.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/scsi/lpfc/lpfc_scsi.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/dma/ioat/init.c b/drivers/dma/ioat/init.c
-index 854deb0da07c..68680e4151ea 100644
---- a/drivers/dma/ioat/init.c
-+++ b/drivers/dma/ioat/init.c
-@@ -1205,8 +1205,15 @@ static void ioat_shutdown(struct pci_dev *pdev)
+diff --git a/drivers/scsi/lpfc/lpfc_scsi.c b/drivers/scsi/lpfc/lpfc_scsi.c
+index 1a6f122bb25d..4ade13d72deb 100644
+--- a/drivers/scsi/lpfc/lpfc_scsi.c
++++ b/drivers/scsi/lpfc/lpfc_scsi.c
+@@ -4149,9 +4149,17 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba *phba, struct lpfc_iocbq *pIocbIn,
  
- 		spin_lock_bh(&ioat_chan->prep_lock);
- 		set_bit(IOAT_CHAN_DOWN, &ioat_chan->state);
--		del_timer_sync(&ioat_chan->timer);
- 		spin_unlock_bh(&ioat_chan->prep_lock);
-+		/*
-+		 * Synchronization rule for del_timer_sync():
-+		 *  - The caller must not hold locks which would prevent
-+		 *    completion of the timer's handler.
-+		 * So prep_lock cannot be held before calling it.
-+		 */
-+		del_timer_sync(&ioat_chan->timer);
-+
- 		/* this should quiesce then reset */
- 		ioat_reset_hw(ioat_chan);
- 	}
+ 	lpfc_scsi_unprep_dma_buf(phba, lpfc_cmd);
+ 
+-	spin_lock_irqsave(&phba->hbalock, flags);
+-	lpfc_cmd->pCmd = NULL;
+-	spin_unlock_irqrestore(&phba->hbalock, flags);
++	/* If pCmd was set to NULL from abort path, do not call scsi_done */
++	if (xchg(&lpfc_cmd->pCmd, NULL) == NULL) {
++		lpfc_printf_vlog(vport, KERN_INFO, LOG_FCP,
++				 "0711 FCP cmd already NULL, sid: 0x%06x, "
++				 "did: 0x%06x, oxid: 0x%04x\n",
++				 vport->fc_myDID,
++				 (pnode) ? pnode->nlp_DID : 0,
++				 phba->sli_rev == LPFC_SLI_REV4 ?
++				 lpfc_cmd->cur_iocbq.sli4_xritag : 0xffff);
++		return;
++	}
+ 
+ 	/* The sdev is not guaranteed to be valid post scsi_done upcall. */
+ 	cmd->scsi_done(cmd);
 -- 
 2.17.1
 
