@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD2EC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B54C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33E1A2085A
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 010632081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="E/AE02BW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33E1A2085A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TmWqME5P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 010632081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731800AbeKAILj (ORCPT
+        id S1731829AbeKAILm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:11:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35498 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:11:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731688AbeKAILi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:11:38 -0400
+        id S1731786AbeKAILj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:11:39 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F5EE2081B;
-        Wed, 31 Oct 2018 23:11:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D7A4220843;
+        Wed, 31 Oct 2018 23:11:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027486;
-        bh=UiGlEgDuxWA4/ILQtxLczqeq2DHQrCMzl4ID4YQ1N64=;
+        s=default; t=1541027487;
+        bh=PHfb73WrxO3DBiZmu9LXfvQYF4mL+BGJUeMXIu9DpVU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E/AE02BWnl1C2tS7jzrZvV3EB5x/8JDO3ih8FoE2ky3wtNWifppaYOp9VlYnpfG94
-         aQlYZHilOJmARRDVfZlKcogkFQDLlwcIRVqQytWThVLUoAuGoY6Aw0ALX7mTNkc09O
-         H8YC3hIDIsNJ6ctIcOckmDIx7t3MsJLjVK6Zpbhc=
+        b=TmWqME5PQyYDlX6X07bqMXMnPWAS0Zs1hl896Yl6LeHYh3pnX56R8awOKfZi27eWY
+         ArTiChTwMOKdt/K92/Jq9pkhECO2MEG9Gv8DX5gRzqPG0FK3E9jcuCkFfpP0JOD+/A
+         CzoN+1RejO5Sv7YdXib+y8IAzvi1QCXVgkxfXLd8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+Cc:     Theodore Ts'o <tytso@mit.edu>, stable@kernel.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 36/48] usb: gadget: udc: atmel: handle at91sam9rl PMC
-Date:   Wed, 31 Oct 2018 19:10:42 -0400
-Message-Id: <20181031231054.29333-36-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 37/48] ext4: fix argument checking in EXT4_IOC_MOVE_EXT
+Date:   Wed, 31 Oct 2018 19:10:43 -0400
+Message-Id: <20181031231054.29333-37-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231054.29333-1-sashal@kernel.org>
 References: <20181031231054.29333-1-sashal@kernel.org>
@@ -53,35 +52,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-[ Upstream commit bb80e4fa57eb75ebd64ae9be4155da6d12c1a997 ]
+[ Upstream commit f18b2b83a727a3db208308057d2c7945f368e625 ]
 
-The at91sam9rl PMC is not quite the same as the at91sam9g45 one and now has
-its own compatible string. Add support for that.
+If the starting block number of either the source or destination file
+exceeds the EOF, EXT4_IOC_MOVE_EXT should return EINVAL.
 
-Fixes: 217bace8e548 ("ARM: dts: fix PMC compatible")
-Acked-by: Cristian Birsan <cristian.birsan@microchip.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Also fixed the helper function mext_check_coverage() so that if the
+logical block is beyond EOF, make it return immediately, instead of
+looping until the block number wraps all the away around.  This takes
+long enough that if there are multiple threads trying to do pound on
+an the same inode doing non-sensical things, it can end up triggering
+the kernel's soft lockup detector.
+
+Reported-by: syzbot+c61979f6f2cba5cb3c06@syzkaller.appspotmail.com
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/udc/atmel_usba_udc.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/ext4/move_extent.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/gadget/udc/atmel_usba_udc.c b/drivers/usb/gadget/udc/atmel_usba_udc.c
-index ad8402906f77..9705bcdbc577 100644
---- a/drivers/usb/gadget/udc/atmel_usba_udc.c
-+++ b/drivers/usb/gadget/udc/atmel_usba_udc.c
-@@ -1922,6 +1922,8 @@ static struct usba_ep * atmel_udc_of_init(struct platform_device *pdev,
- 
- 	udc->errata = match->data;
- 	udc->pmc = syscon_regmap_lookup_by_compatible("atmel,at91sam9g45-pmc");
-+	if (IS_ERR(udc->pmc))
-+		udc->pmc = syscon_regmap_lookup_by_compatible("atmel,at91sam9rl-pmc");
- 	if (IS_ERR(udc->pmc))
- 		udc->pmc = syscon_regmap_lookup_by_compatible("atmel,at91sam9x5-pmc");
- 	if (udc->errata && IS_ERR(udc->pmc))
+diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
+index 578f8c33fb44..c4434bdeeea7 100644
+--- a/fs/ext4/move_extent.c
++++ b/fs/ext4/move_extent.c
+@@ -526,9 +526,13 @@ mext_check_arguments(struct inode *orig_inode,
+ 			orig_inode->i_ino, donor_inode->i_ino);
+ 		return -EINVAL;
+ 	}
+-	if (orig_eof < orig_start + *len - 1)
++	if (orig_eof <= orig_start)
++		*len = 0;
++	else if (orig_eof < orig_start + *len - 1)
+ 		*len = orig_eof - orig_start;
+-	if (donor_eof < donor_start + *len - 1)
++	if (donor_eof <= donor_start)
++		*len = 0;
++	else if (donor_eof < donor_start + *len - 1)
+ 		*len = donor_eof - donor_start;
+ 	if (!*len) {
+ 		ext4_debug("ext4 move extent: len should not be 0 "
 -- 
 2.17.1
 
