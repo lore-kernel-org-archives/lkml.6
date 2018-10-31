@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4050C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CE8CC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:25:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CCC120847
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:24:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C63DB2084A
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:25:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rqe3Iw6M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CCC120847
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KbqcBQ14"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C63DB2084A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731522AbeKAIZI (ORCPT
+        id S1731198AbeKAIKl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:25:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33498 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:10:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731211AbeKAIKn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:10:43 -0400
+        id S1729645AbeKAIKj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:10:39 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0925320843;
-        Wed, 31 Oct 2018 23:10:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81D672086D;
+        Wed, 31 Oct 2018 23:10:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027431;
-        bh=hjtitxuHFdQ4mCwb/6gIBNSF3PgxF2vXuq51eLogKiw=;
+        s=default; t=1541027428;
+        bh=efA70owHkUDd81hWMrVCRqXYZ8/qrjd+SMdWG8kX2SE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rqe3Iw6M2qpzkM+WBP6+yFobRzKSdafWhpdiy6Gydec/I0tVqmzm3iJljWImLGGlS
-         LOId4ZTnWDLxWjAWWt+VtEEp25gCW3muNJHXFpL5PEZTby0G0DNGLm/O1KTx1Kn266
-         iLsUo2u/KLbjy+8VO9vjCkFiYCnp7Gtgbl4dbtXY=
+        b=KbqcBQ14EFs1XtTge0a5kNMDXds1HS6z9/xOHre4+ryZx4Nj58d87/tRsh969B0tH
+         dE+BHyCPDRRX0titeeUAspWV23tSvIsvFlEOYN5/kCwUp/WmJFwhnZDfYjd6Hw/8Vo
+         rTUMZQY0k/A7orr0ULP5q693Sr/zSuaNfPuJx14I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "Tudor.Ambarus@microchip.com" <Tudor.Ambarus@microchip.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     Wenwen Wang <wang6495@umn.edu>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 48/73] usb: host: ohci-at91: fix request of irq for optional gpio
-Date:   Wed, 31 Oct 2018 19:09:23 -0400
-Message-Id: <20181031230948.29203-48-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 44/73] scsi: megaraid_sas: fix a missing-check bug
+Date:   Wed, 31 Oct 2018 19:09:19 -0400
+Message-Id: <20181031230948.29203-44-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230948.29203-1-sashal@kernel.org>
 References: <20181031230948.29203-1-sashal@kernel.org>
@@ -54,44 +53,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Tudor.Ambarus@microchip.com" <Tudor.Ambarus@microchip.com>
+From: Wenwen Wang <wang6495@umn.edu>
 
-[ Upstream commit 325b9313ec3be56c8e2fe03f977fee19cec75820 ]
+[ Upstream commit 47db7873136a9c57c45390a53b57019cf73c8259 ]
 
-atmel,oc-gpio is optional. Request its irq only when atmel,oc is set
-in device tree.
+In megasas_mgmt_compat_ioctl_fw(), to handle the structure
+compat_megasas_iocpacket 'cioc', a user-space structure megasas_iocpacket
+'ioc' is allocated before megasas_mgmt_ioctl_fw() is invoked to handle
+the packet. Since the two data structures have different fields, the data
+is copied from 'cioc' to 'ioc' field by field. In the copy process,
+'sense_ptr' is prepared if the field 'sense_len' is not null, because it
+will be used in megasas_mgmt_ioctl_fw(). To prepare 'sense_ptr', the
+user-space data 'ioc->sense_off' and 'cioc->sense_off' are copied and
+saved to kernel-space variables 'local_sense_off' and 'user_sense_off'
+respectively. Given that 'ioc->sense_off' is also copied from
+'cioc->sense_off', 'local_sense_off' and 'user_sense_off' should have the
+same value. However, 'cioc' is in the user space and a malicious user can
+race to change the value of 'cioc->sense_off' after it is copied to
+'ioc->sense_off' but before it is copied to 'user_sense_off'. By doing
+so, the attacker can inject different values into 'local_sense_off' and
+'user_sense_off'. This can cause undefined behavior in the following
+execution, because the two variables are supposed to be same.
 
-devm_gpiod_get_index_optional returns NULL if -ENOENT. Check its
-return value for NULL before error, because it is more probable that
-atmel,oc is not set.
+This patch enforces a check on the two kernel variables 'local_sense_off'
+and 'user_sense_off' to make sure they are the same after the copy. In
+case they are not, an error code EINVAL will be returned.
 
-This fixes the following errors on boards where atmel,oc is not set in
-device tree:
-[    0.960000] at91_ohci 500000.ohci: failed to request gpio "overcurrent" IRQ
-[    0.960000] at91_ohci 500000.ohci: failed to request gpio "overcurrent" IRQ
-[    0.970000] at91_ohci 500000.ohci: failed to request gpio "overcurrent" IRQ
-
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/host/ohci-at91.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/scsi/megaraid/megaraid_sas_base.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/usb/host/ohci-at91.c b/drivers/usb/host/ohci-at91.c
-index 5302f988e7e6..e0ebd3d513c6 100644
---- a/drivers/usb/host/ohci-at91.c
-+++ b/drivers/usb/host/ohci-at91.c
-@@ -550,6 +550,8 @@ static int ohci_hcd_at91_drv_probe(struct platform_device *pdev)
- 		pdata->overcurrent_pin[i] =
- 			devm_gpiod_get_index_optional(&pdev->dev, "atmel,oc",
- 						      i, GPIOD_IN);
-+		if (!pdata->overcurrent_pin[i])
-+			continue;
- 		if (IS_ERR(pdata->overcurrent_pin[i])) {
- 			err = PTR_ERR(pdata->overcurrent_pin[i]);
- 			dev_err(&pdev->dev, "unable to claim gpio \"overcurrent\": %d\n", err);
+diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
+index d55c365be238..d0abee3e6ed9 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_base.c
++++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+@@ -7361,6 +7361,9 @@ static int megasas_mgmt_compat_ioctl_fw(struct file *file, unsigned long arg)
+ 		get_user(user_sense_off, &cioc->sense_off))
+ 		return -EFAULT;
+ 
++	if (local_sense_off != user_sense_off)
++		return -EINVAL;
++
+ 	if (local_sense_len) {
+ 		void __user **sense_ioc_ptr =
+ 			(void __user **)((u8 *)((unsigned long)&ioc->frame.raw) + local_sense_off);
 -- 
 2.17.1
 
