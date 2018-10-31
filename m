@@ -2,150 +2,108 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DB22ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:32:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69890C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:36:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43615205F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:32:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="CzXn8ZsH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43615205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 219AE205F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:36:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 219AE205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729620AbeJaXa5 (ORCPT
+        id S1729575AbeJaXfG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 19:30:57 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:54423 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729546AbeJaXa4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 19:30:56 -0400
-Received: by mail-it1-f193.google.com with SMTP id d6so12944216itl.4
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 07:32:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=eOltqg78k7DjZQG0RK8FjS0R0LQrp6f51NkSHHkm9mE=;
-        b=CzXn8ZsH8ZOuK5MljgKSkTZd+FAvXtwxxGJN+AP1enBqt9Zm3mjwpaffukG6FTgp8A
-         Mp1GXRVqTv5SyAlCJ9JDuWYXUZqd39OKrZMlSIBFotUG7FJdMtpo/MmSNZTMiYI40PQv
-         MPVF8KTBslEZMG4Ft0zcdiZ4UT0S4zr9xODUtvee7yjfqLXou/NwGlWCVQ67gdrYeiln
-         i33214By5CPCimu4c2RZHhIvA5TrIZZ2/xnjA0l0Phnp86S+BxeBqqbNa2Bi6jY0c4mP
-         iR0iuduzkpspmKdpjX8yPYMTNGFWd8VG2MPS8Urc3WG/yedVgBr8qu94dXAeJVpf5Fnu
-         GQdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=eOltqg78k7DjZQG0RK8FjS0R0LQrp6f51NkSHHkm9mE=;
-        b=UtYbkweylCHQfSTDCDN+GG/Y/bYoYIIcTGb1HEIkPZ9Tx4Iy0A4qJVE2UlZBYM2rRS
-         zyF+Rk7yNFjIPBe7GvclVFU4cS3QftknvK8A0rku6qjtdffbUBToqYR+tH0CvLZO1npP
-         KPc6Wu323V171EgcauS2kE4OCuaa1f5dQU27uAJonANFYfRSSzTYthRz60Q4lc05b3Qx
-         zRkPD7FTAJw0BkcguUUW89Qt9Pt5vA+4/jmuiUrIadrT/rC3cqXJJ/fcQFkVlVuX/sGT
-         oWMfnrqv+Kvksjju5k4zcGOnrPBhCLIv0nNssmrW9t8zecgLg84ApQLWuXmzIBwh3Wg5
-         Xr2w==
-X-Gm-Message-State: AGRZ1gKHUzV/E3HEjLt8x/UbKVIpEQo7Q8Nj6sC2J7OznQKsEiDeR6la
-        gLw8qMydv+xoh4wcaRr2kYzb0n04dg0=
-X-Google-Smtp-Source: AJdET5escoz50anhB2FI9qOy8fgkrAU7PLjkdDmG7dO3+/fi24YkHedtm494BiXgXhrOZHMOn6DocQ==
-X-Received: by 2002:a24:32c5:: with SMTP id j188-v6mr2524697ita.134.1540996358853;
-        Wed, 31 Oct 2018 07:32:38 -0700 (PDT)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id w132-v6sm3524728ita.34.2018.10.31.07.32.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 07:32:37 -0700 (PDT)
-Subject: Re: [PATCH 14/16] nvme: utilize two queue maps, one for reads and one
- for writes
-To:     Sagi Grimberg <sagi@grimberg.me>, linux-block@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20181030183252.17857-1-axboe@kernel.dk>
- <20181030183252.17857-15-axboe@kernel.dk>
- <193a50fe-0c02-9f01-f110-5cfa1cec9283@grimberg.me>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <29cd36b5-623a-1143-3aee-a81265ec70eb@kernel.dk>
-Date:   Wed, 31 Oct 2018 08:32:36 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 31 Oct 2018 19:35:06 -0400
+Received: from foss.arm.com ([217.140.101.70]:41982 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729494AbeJaXfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 19:35:06 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E67AB341;
+        Wed, 31 Oct 2018 07:36:48 -0700 (PDT)
+Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.144.41])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4DB4F3F71D;
+        Wed, 31 Oct 2018 07:36:48 -0700 (PDT)
+Date:   Wed, 31 Oct 2018 15:36:46 +0100
+From:   Christoffer Dall <christoffer.dall@arm.com>
+To:     Punit Agrawal <punit.agrawal@arm.com>
+Cc:     kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, suzuki.poulose@arm.com,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v8 1/9] KVM: arm/arm64: Ensure only THP is candidate for
+ adjustment
+Message-ID: <20181031143646.GE12057@e113682-lin.lund.arm.com>
+References: <20181001155443.23032-1-punit.agrawal@arm.com>
+ <20181001155443.23032-2-punit.agrawal@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <193a50fe-0c02-9f01-f110-5cfa1cec9283@grimberg.me>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181001155443.23032-2-punit.agrawal@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/30/18 7:57 PM, Sagi Grimberg wrote:
+On Mon, Oct 01, 2018 at 04:54:35PM +0100, Punit Agrawal wrote:
+> PageTransCompoundMap() returns true for hugetlbfs and THP
+> hugepages. This behaviour incorrectly leads to stage 2 faults for
+> unsupported hugepage sizes (e.g., 64K hugepage with 4K pages) to be
+> treated as THP faults.
 > 
->> +static int queue_irq_offset(struct nvme_dev *dev)
->> +{
->> +	/* if we have more than 1 vec, admin queue offsets us 1 */
+> Tighten the check to filter out hugetlbfs pages. This also leads to
+> consistently mapping all unsupported hugepage sizes as PTE level
+> entries at stage 2.
 > 
-> offsets us by 1?
+> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+> Reviewed-by: Suzuki Poulose <suzuki.poulose@arm.com>
+> Cc: Christoffer Dall <christoffer.dall@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: stable@vger.kernel.org # v4.13+
 
-Fixed
 
->> @@ -1934,13 +2048,48 @@ static int nvme_setup_io_queues(struct nvme_dev *dev)
->>   	 * setting up the full range we need.
->>   	 */
->>   	pci_free_irq_vectors(pdev);
->> -	result = pci_alloc_irq_vectors_affinity(pdev, 1, nr_io_queues + 1,
->> -			PCI_IRQ_ALL_TYPES | PCI_IRQ_AFFINITY, &affd);
->> -	if (result <= 0)
->> -		return -EIO;
->> +
->> +	/*
->> +	 * For irq sets, we have to ask for minvec == maxvec. This passes
->> +	 * any reduction back to us, so we can adjust our queue counts and
->> +	 * IRQ vector needs.
->> +	 */
->> +	do {
->> +		nvme_calc_io_queues(dev, nr_io_queues);
->> +		irq_sets[0] = dev->io_queues[NVMEQ_TYPE_READ];
->> +		irq_sets[1] = dev->io_queues[NVMEQ_TYPE_WRITE];
->> +		if (!irq_sets[1])
->> +			affd.nr_sets = 1;
->> +
->> +		/*
->> +		 * Need IRQs for read+write queues, and one for the admin queue
->> +		 */
->> +		nr_io_queues = irq_sets[0] + irq_sets[1] + 1;
->> +
->> +		result = pci_alloc_irq_vectors_affinity(pdev, nr_io_queues,
->> +				nr_io_queues,
->> +				PCI_IRQ_ALL_TYPES | PCI_IRQ_AFFINITY, &affd);
->> +
->> +		/*
->> +		 * Need to reduce our vec counts
->> +		 */
->> +		if (result == -ENOSPC) {
->> +			nr_io_queues--;
->> +			if (!nr_io_queues)
->> +				return result;
->> +			continue;
->> +		} else if (result <= 0)
->> +			return -EIO;
->> +		break;
->> +	} while (1);
->> +
->>   	dev->num_vecs = result;
->>   	dev->max_qid = max(result - 1, 1);
->>   
->> +	dev_info(dev->ctrl.device, "%d/%d/%d read/write queues\n",
->> +					dev->io_queues[NVMEQ_TYPE_READ],
->> +					dev->io_queues[NVMEQ_TYPE_WRITE]);
->> +
+Hmm, this function is only actually called from user_mem_abort() if we
+have (!hugetlb), so I'm not sure the cc stable here was actually
+warranted, nor that this patch is strictly necessary.
+
+It doesn't hurt, and makes the code potentially more robust for the
+future though.
+
+Am I missing something?
+
+Thanks,
+
+    Christoffer
+
+> ---
+>  virt/kvm/arm/mmu.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 > 
-> Perhaps it would be better if we move this code into a function.
-
-Agree, I've done that now.
-
--- 
-Jens Axboe
-
+> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+> index 7e477b3cae5b..c23a1b323aad 100644
+> --- a/virt/kvm/arm/mmu.c
+> +++ b/virt/kvm/arm/mmu.c
+> @@ -1231,8 +1231,14 @@ static bool transparent_hugepage_adjust(kvm_pfn_t *pfnp, phys_addr_t *ipap)
+>  {
+>  	kvm_pfn_t pfn = *pfnp;
+>  	gfn_t gfn = *ipap >> PAGE_SHIFT;
+> +	struct page *page = pfn_to_page(pfn);
+>  
+> -	if (PageTransCompoundMap(pfn_to_page(pfn))) {
+> +	/*
+> +	 * PageTransCompoungMap() returns true for THP and
+> +	 * hugetlbfs. Make sure the adjustment is done only for THP
+> +	 * pages.
+> +	 */
+> +	if (!PageHuge(page) && PageTransCompoundMap(page)) {
+>  		unsigned long mask;
+>  		/*
+>  		 * The address we faulted on is backed by a transparent huge
+> -- 
+> 2.18.0
+> 
