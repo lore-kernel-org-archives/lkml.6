@@ -4,51 +4,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BD02C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:44:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85D79ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:45:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 441C720664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:44:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C8CA2082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:45:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fd7K3c0p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 441C720664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="I3ICEI/2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C8CA2082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729308AbeKAIpM (ORCPT
+        id S1729329AbeKAIpW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:45:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55386 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:45:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728948AbeKAIHb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:07:31 -0400
+        id S1728918AbeKAIH3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:07:29 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 323A220664;
-        Wed, 31 Oct 2018 23:07:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BE9620821;
+        Wed, 31 Oct 2018 23:07:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027241;
-        bh=7rU3CT/K4Vz5EVwVCBxraRVK9bYBIoBpjI/z4XCXqQE=;
+        s=default; t=1541027238;
+        bh=b9LSd88zp3hEsCbEGEp8oGHOania1pQhi8BKl6FPxSs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fd7K3c0pzgleFwS3lBLQC6IWnc4Opw/Q2rwZny3pk6MCn6Dd2VxbLl6fleclEwild
-         BziADdntqwlJCXIcVgilGLXowS/Yk0YSN6x37T0QTxs69hqWL1RsWBHPpiq7t4Rjig
-         TaFSv0ZudEGi1JKakEZ6wptXdw+h/pNN+PgVzkXM=
+        b=I3ICEI/2XEo6Oy6WhMEJebyOKfZpgbhHT9lvQNc9vw6e+k0Sge9TAmZC3Qr25STpG
+         PmzxlL4Z2f9eOJryTDvmFDBMLcjdAIWGCVEZTNpJIk7QKkBjTnVA/zEKC+zxDHyNVq
+         EqxaslVZ1+ubV+zQlJ8w1QIxVQWyMnFf+3BnjbRo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dexuan Cui <decui@microsoft.com>,
-        "K . Y . Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Stable@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 109/146] Drivers: hv: kvp: Fix two "this statement may fall through" warnings
-Date:   Wed, 31 Oct 2018 19:05:04 -0400
-Message-Id: <20181031230541.28822-109-sashal@kernel.org>
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 107/146] f2fs: clear PageError on the read path
+Date:   Wed, 31 Oct 2018 19:05:02 -0400
+Message-Id: <20181031230541.28822-107-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -57,67 +50,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dexuan Cui <decui@microsoft.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-[ Upstream commit fc62c3b1977d62e6374fd6e28d371bb42dfa5c9d ]
+[ Upstream commit fb7d70db305a1446864227abf711b756568f8242 ]
 
-We don't need to call process_ib_ipinfo() if message->kvp_hdr.operation is
-KVP_OP_GET_IP_INFO in kvp_send_key(), because here we just need to pass on
-the op code from the host to the userspace; when the userspace returns
-the info requested by the host, we pass the info on to the host in
-kvp_respond_to_host() -> process_ob_ipinfo(). BTW, the current buggy code
-actually doesn't cause any harm, because only message->kvp_hdr.operation
-is used by the userspace, in the case of KVP_OP_GET_IP_INFO.
+When running fault injection test, I hit somewhat wrong behavior in f2fs_gc ->
+gc_data_segment():
 
-The patch also adds a missing "break;" in kvp_send_key(). BTW, the current
-buggy code actually doesn't cause any harm, because in the case of
-KVP_OP_SET, the unexpected fall-through corrupts
-message->body.kvp_set.data.key_size, but that is not really used: see
-the definition of struct hv_kvp_exchg_msg_value.
+0. fault injection generated some PageError'ed pages
 
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+1. gc_data_segment
+ -> f2fs_get_read_data_page(REQ_RAHEAD)
+
+2. move_data_page
+ -> f2fs_get_lock_data_page()
+  -> f2f_get_read_data_page()
+   -> f2fs_submit_page_read()
+    -> submit_bio(READ)
+  -> return EIO due to PageError
+  -> fail to move data
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hv/hv_kvp.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ fs/f2fs/data.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hv/hv_kvp.c b/drivers/hv/hv_kvp.c
-index 5eed1e7da15c..57715a0c8120 100644
---- a/drivers/hv/hv_kvp.c
-+++ b/drivers/hv/hv_kvp.c
-@@ -353,7 +353,6 @@ static void process_ib_ipinfo(void *in_msg, void *out_msg, int op)
- 
- 		out->body.kvp_ip_val.dhcp_enabled = in->kvp_ip_val.dhcp_enabled;
- 
--	default:
- 		utf16s_to_utf8s((wchar_t *)in->kvp_ip_val.adapter_id,
- 				MAX_ADAPTER_ID_SIZE,
- 				UTF16_LITTLE_ENDIAN,
-@@ -406,7 +405,7 @@ kvp_send_key(struct work_struct *dummy)
- 		process_ib_ipinfo(in_msg, message, KVP_OP_SET_IP_INFO);
- 		break;
- 	case KVP_OP_GET_IP_INFO:
--		process_ib_ipinfo(in_msg, message, KVP_OP_GET_IP_INFO);
-+		/* We only need to pass on message->kvp_hdr.operation.  */
- 		break;
- 	case KVP_OP_SET:
- 		switch (in_msg->body.kvp_set.data.value_type) {
-@@ -446,6 +445,9 @@ kvp_send_key(struct work_struct *dummy)
- 			break;
- 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index cd5d53353a61..f79fb3aa5ae3 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -80,7 +80,8 @@ static void __read_end_io(struct bio *bio)
+ 		/* PG_error was set if any post_read step failed */
+ 		if (bio->bi_status || PageError(page)) {
+ 			ClearPageUptodate(page);
+-			SetPageError(page);
++			/* will re-read again later */
++			ClearPageError(page);
+ 		} else {
+ 			SetPageUptodate(page);
  		}
-+
-+		break;
-+
- 	case KVP_OP_GET:
- 		message->body.kvp_set.data.key_size =
- 			utf16s_to_utf8s(
+@@ -590,6 +591,7 @@ static int f2fs_submit_page_read(struct inode *inode, struct page *page,
+ 		bio_put(bio);
+ 		return -EFAULT;
+ 	}
++	ClearPageError(page);
+ 	__submit_bio(F2FS_I_SB(inode), bio, DATA);
+ 	return 0;
+ }
+@@ -1565,6 +1567,7 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
+ 		if (bio_add_page(bio, page, blocksize, 0) < blocksize)
+ 			goto submit_and_realloc;
+ 
++		ClearPageError(page);
+ 		last_block_in_bio = block_nr;
+ 		goto next_page;
+ set_error_page:
 -- 
 2.17.1
 
