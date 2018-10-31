@@ -2,155 +2,200 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD73FC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:11:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A668C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:17:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7773120821
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:11:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wC4hxliy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7773120821
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id CD3C52081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:17:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD3C52081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729493AbeJaXJK (ORCPT
+        id S1729492AbeJaXPZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 19:09:10 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:38206 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729411AbeJaXJJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 19:09:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=+1gaQhkWsZvYGq8K6A73FwqGpSZvRTDUrGRM7O1511o=; b=wC4hxliyPQgRZWc5kJhXJGtY6
-        Kr41xPKVk+s9uym78W0aKoPxVkgNMWG6fkt4GF4j3Md+vY7bKMy+tPFjF04MfKAvH4iE/PPN0bE7c
-        OvmuZxwsAfV8xFznXBTy8kKsiF/caSvux7fUyXOYS8Yqr/zrSZRKs5Mzw2XjLhKFND9eew2UBbTa+
-        hP2A8lJ9XxBWBCECgsX+coO83dSU0/W4s+1hb0+XYananBSJCsQc6T6lnfqqtlHac8TDSNsknyEUx
-        /ONAN1clkI7J4FNkWEoAyepnrLkjoaRCHiQrR6zE05eKAXtxXo5fA4ACFTcrMj5eN35vsOtlrve/+
-        9LNN9xU9w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gHrCa-0003r4-VF; Wed, 31 Oct 2018 14:10:37 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id F1B812029F87F; Wed, 31 Oct 2018 15:10:30 +0100 (CET)
-Date:   Wed, 31 Oct 2018 15:10:30 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Yi Sun <yi.y.sun@linux.intel.com>
-Cc:     Waiman Long <longman@redhat.com>, Juergen Gross <jgross@suse.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
-        chao.p.peng@intel.com, chao.gao@intel.com,
-        isaku.yamahata@intel.com, michael.h.kelley@microsoft.com,
-        tianyu.lan@microsoft.com, "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v1 2/2] x86/hyperv: make HvNotifyLongSpinWait hypercall
-Message-ID: <20181031141030.GB13219@hirez.programming.kicks-ass.net>
-References: <1539954835-34035-3-git-send-email-yi.y.sun@linux.intel.com>
- <bab010e9-a122-95f1-d8cc-790e56c72716@suse.com>
- <20181022015342.GK11769@yi.y.sun>
- <2e0d62cb-b706-a5b4-65f7-982a913fb32b@suse.com>
- <ba75b994-c1a6-6e91-6499-b9af90636fcf@redhat.com>
- <20181022171516.GH3117@worktop.programming.kicks-ass.net>
- <20181023025740.GL11769@yi.y.sun>
- <20181023085127.GG3109@worktop.c.hoisthospitality.com>
- <20181023093328.GA15378@yi.y.sun>
- <20181031015417.GC15378@yi.y.sun>
+        Wed, 31 Oct 2018 19:15:25 -0400
+Received: from mga09.intel.com ([134.134.136.24]:38183 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729385AbeJaXPZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 19:15:25 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2018 07:17:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,447,1534834800"; 
+   d="scan'208";a="277206257"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.130]) ([10.237.72.130])
+  by fmsmga006.fm.intel.com with ESMTP; 31 Oct 2018 07:17:10 -0700
+Subject: Re: [PATCH 4/5] perf intel-pt: Insert callchain context into
+ synthesized callchains
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
+        linux-kernel@vger.kernel.org, leo.yan@linaro.org,
+        David Miller <davem@davemloft.net>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+References: <20181031091043.23465-1-adrian.hunter@intel.com>
+ <20181031091043.23465-5-adrian.hunter@intel.com>
+ <20181031132803.GG10660@kernel.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <850eed86-fb8f-e328-316c-378890d4f15f@intel.com>
+Date:   Wed, 31 Oct 2018 16:15:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181031015417.GC15378@yi.y.sun>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181031132803.GG10660@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 09:54:17AM +0800, Yi Sun wrote:
-> On 18-10-23 17:33:28, Yi Sun wrote:
-> > On 18-10-23 10:51:27, Peter Zijlstra wrote:
-
-> > > Can you try and explain why vcpu_is_preempted() doesn't work for you?
-> > 
-> > I thought HvSpinWaitInfo is used to notify hypervisor the spin number
-> > which is different with vcpu_is_preempted. So I did not consider
-> > vcpu_is_preempted.
-> > 
-> > But HvSpinWaitInfo is a quite simple function and could be combined
-> > with vcpu_is_preempted together. So I think it is OK to use
-> > vcpu_is_preempted to make codes clean. I will have a try.
+On 31/10/18 3:28 PM, Arnaldo Carvalho de Melo wrote:
+> Em Wed, Oct 31, 2018 at 11:10:42AM +0200, Adrian Hunter escreveu:
+>> In the absence of a fallback, callchains must encode also the callchain
+>> context. Do that now there is no fallback.
 > 
-> After checking codes, there is one issue to call vcpu_is_preempted.
-> There are two spin loops in qspinlock_paravirt.h. One loop in
-> 'pv_wait_node' calls vcpu_is_preempted. But another loop in
-> 'pv_wait_head_or_lock' does not call vcpu_is_preempted. It also does
-> not call any other ops of 'pv_lock_ops' in the loop. So I am afraid
-> we have to add one more ops in 'pv_lock_ops' to do this.
+> So, this one is independent of the first 3 patches, right?
 
-Why? Would not something like the below cure that? Waiman, can you have
-a look at this; I always forget how that paravirt crud works.
+Yes.  I was just going to test it separately when I noticed I had
+screwed up my earlier testing.  When I re-tested I discovered this patch
+has an off-by-one error:
 
----
- kernel/locking/qspinlock.c          | 5 +++--
- kernel/locking/qspinlock_paravirt.h | 5 +++--
- 2 files changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
-index 8a8c3c208c5e..a4ab80f95176 100644
---- a/kernel/locking/qspinlock.c
-+++ b/kernel/locking/qspinlock.c
-@@ -286,7 +286,8 @@ static __always_inline void __pv_wait_node(struct mcs_spinlock *node,
- static __always_inline void __pv_kick_node(struct qspinlock *lock,
- 					   struct mcs_spinlock *node) { }
- static __always_inline u32  __pv_wait_head_or_lock(struct qspinlock *lock,
--						   struct mcs_spinlock *node)
-+						   struct mcs_spinlock *node,
-+						   struct mcs_spinlock *prev)
- 						   { return 0; }
+diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
+index afdf36852ac8..61a4286a74dc 100644
+--- a/tools/perf/util/thread-stack.c
++++ b/tools/perf/util/thread-stack.c
+@@ -337,7 +337,7 @@ void thread_stack__sample(struct thread *thread, struct ip_callchain *chain,
  
- #define pv_enabled()		false
-@@ -500,7 +501,7 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
- 	 * If PV isn't active, 0 will be returned instead.
- 	 *
- 	 */
--	if ((val = pv_wait_head_or_lock(lock, node)))
-+	if ((val = pv_wait_head_or_lock(lock, node, prev)))
- 		goto locked;
+ 	last_context = context;
  
- 	val = atomic_cond_read_acquire(&lock->val, !(VAL & _Q_LOCKED_PENDING_MASK));
-diff --git a/kernel/locking/qspinlock_paravirt.h b/kernel/locking/qspinlock_paravirt.h
-index 0130e488ebfe..531dadc955fb 100644
---- a/kernel/locking/qspinlock_paravirt.h
-+++ b/kernel/locking/qspinlock_paravirt.h
-@@ -399,9 +399,10 @@ static void pv_kick_node(struct qspinlock *lock, struct mcs_spinlock *node)
-  * The current value of the lock will be returned for additional processing.
-  */
- static u32
--pv_wait_head_or_lock(struct qspinlock *lock, struct mcs_spinlock *node)
-+pv_wait_head_or_lock(struct qspinlock *lock, struct mcs_spinlock *node, struct mcs_spinlock *prev)
- {
- 	struct pv_node *pn = (struct pv_node *)node;
-+	struct pv_node *pp = (struct pv_node *)prev;
- 	struct qspinlock **lp = NULL;
- 	int waitcnt = 0;
- 	int loop;
-@@ -430,7 +431,7 @@ pv_wait_head_or_lock(struct qspinlock *lock, struct mcs_spinlock *node)
- 		 * disable lock stealing before attempting to acquire the lock.
- 		 */
- 		set_pending(lock);
--		for (loop = SPIN_THRESHOLD; loop; loop--) {
-+		for (loop = SPIN_THRESHOLD; loop && !vcpu_is_preempted(prev->cpu); loop--) {
- 			if (trylock_clear_pending(lock))
- 				goto gotlock;
- 			cpu_relax();
+-	for (i = 2, j = 0; i < sz && j < thread->ts->cnt; i++, j++) {
++	for (i = 2, j = 1; i < sz && j <= thread->ts->cnt; i++, j++) {
+ 		ip = thread->ts->stack[thread->ts->cnt - j].ret_addr;
+ 		context = callchain_context(ip, kernel_start);
+ 		if (context != last_context) {
+
+Shall I send V2?
+
+> So, this one is independent of the first 3 patches, right? Ok, applying
+> it first, I'll relook the first ones next.
+> 
+> - Arnaldo
+>  
+>> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+>> Cc: stable@vger.kernel.org # 4.19
+>> ---
+>>  tools/perf/util/intel-pt.c     |  6 +++--
+>>  tools/perf/util/thread-stack.c | 44 +++++++++++++++++++++++++++-------
+>>  tools/perf/util/thread-stack.h |  2 +-
+>>  3 files changed, 40 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
+>> index ffa385a029b3..60732213d16a 100644
+>> --- a/tools/perf/util/intel-pt.c
+>> +++ b/tools/perf/util/intel-pt.c
+>> @@ -759,7 +759,8 @@ static struct intel_pt_queue *intel_pt_alloc_queue(struct intel_pt *pt,
+>>  	if (pt->synth_opts.callchain) {
+>>  		size_t sz = sizeof(struct ip_callchain);
+>>  
+>> -		sz += pt->synth_opts.callchain_sz * sizeof(u64);
+>> +		/* Add 1 to callchain_sz for callchain context */
+>> +		sz += (pt->synth_opts.callchain_sz + 1) * sizeof(u64);
+>>  		ptq->chain = zalloc(sz);
+>>  		if (!ptq->chain)
+>>  			goto out_free;
+>> @@ -1160,7 +1161,8 @@ static void intel_pt_prep_sample(struct intel_pt *pt,
+>>  
+>>  	if (pt->synth_opts.callchain) {
+>>  		thread_stack__sample(ptq->thread, ptq->chain,
+>> -				     pt->synth_opts.callchain_sz, sample->ip);
+>> +				     pt->synth_opts.callchain_sz + 1,
+>> +				     sample->ip, pt->kernel_start);
+>>  		sample->callchain = ptq->chain;
+>>  	}
+>>  
+>> diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
+>> index c091635bf7dc..afdf36852ac8 100644
+>> --- a/tools/perf/util/thread-stack.c
+>> +++ b/tools/perf/util/thread-stack.c
+>> @@ -310,20 +310,46 @@ void thread_stack__free(struct thread *thread)
+>>  	}
+>>  }
+>>  
+>> +static inline u64 callchain_context(u64 ip, u64 kernel_start)
+>> +{
+>> +	return ip < kernel_start ? PERF_CONTEXT_USER : PERF_CONTEXT_KERNEL;
+>> +}
+>> +
+>>  void thread_stack__sample(struct thread *thread, struct ip_callchain *chain,
+>> -			  size_t sz, u64 ip)
+>> +			  size_t sz, u64 ip, u64 kernel_start)
+>>  {
+>> -	size_t i;
+>> +	u64 context = callchain_context(ip, kernel_start);
+>> +	u64 last_context;
+>> +	size_t i, j;
+>>  
+>> -	if (!thread || !thread->ts)
+>> -		chain->nr = 1;
+>> -	else
+>> -		chain->nr = min(sz, thread->ts->cnt + 1);
+>> +	if (sz < 2) {
+>> +		chain->nr = 0;
+>> +		return;
+>> +	}
+>>  
+>> -	chain->ips[0] = ip;
+>> +	chain->ips[0] = context;
+>> +	chain->ips[1] = ip;
+>> +
+>> +	if (!thread || !thread->ts) {
+>> +		chain->nr = 2;
+>> +		return;
+>> +	}
+>> +
+>> +	last_context = context;
+>> +
+>> +	for (i = 2, j = 0; i < sz && j < thread->ts->cnt; i++, j++) {
+>> +		ip = thread->ts->stack[thread->ts->cnt - j].ret_addr;
+>> +		context = callchain_context(ip, kernel_start);
+>> +		if (context != last_context) {
+>> +			if (i >= sz - 1)
+>> +				break;
+>> +			chain->ips[i++] = context;
+>> +			last_context = context;
+>> +		}
+>> +		chain->ips[i] = ip;
+>> +	}
+>>  
+>> -	for (i = 1; i < chain->nr; i++)
+>> -		chain->ips[i] = thread->ts->stack[thread->ts->cnt - i].ret_addr;
+>> +	chain->nr = i;
+>>  }
+>>  
+>>  struct call_return_processor *
+>> diff --git a/tools/perf/util/thread-stack.h b/tools/perf/util/thread-stack.h
+>> index b7e41c4ebfdd..f97c00a8c251 100644
+>> --- a/tools/perf/util/thread-stack.h
+>> +++ b/tools/perf/util/thread-stack.h
+>> @@ -84,7 +84,7 @@ int thread_stack__event(struct thread *thread, u32 flags, u64 from_ip,
+>>  			u64 to_ip, u16 insn_len, u64 trace_nr);
+>>  void thread_stack__set_trace_nr(struct thread *thread, u64 trace_nr);
+>>  void thread_stack__sample(struct thread *thread, struct ip_callchain *chain,
+>> -			  size_t sz, u64 ip);
+>> +			  size_t sz, u64 ip, u64 kernel_start);
+>>  int thread_stack__flush(struct thread *thread);
+>>  void thread_stack__free(struct thread *thread);
+>>  size_t thread_stack__depth(struct thread *thread);
+>> -- 
+>> 2.17.1
+> 
 
