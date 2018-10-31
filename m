@@ -2,196 +2,161 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 262A5C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 07:04:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA228C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 07:05:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9EE920821
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 07:04:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9EE920821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 69A0220821
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 07:05:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69A0220821
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726665AbeJaQA7 (ORCPT
+        id S1726830AbeJaQCS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 12:00:59 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38514 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726097AbeJaQA6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 12:00:58 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9V6we1a059088
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 03:04:07 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nf3ykquax-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 03:04:06 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Wed, 31 Oct 2018 07:04:03 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 31 Oct 2018 07:03:56 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9V73tt457540644
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 31 Oct 2018 07:03:55 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0993E4C052;
-        Wed, 31 Oct 2018 07:03:55 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9A4DA4C058;
-        Wed, 31 Oct 2018 07:03:52 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.68])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 31 Oct 2018 07:03:52 +0000 (GMT)
-Date:   Wed, 31 Oct 2018 09:03:50 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Greg Hackmann <ghackmann@android.com>,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        CHANDAN VN <chandan.vn@samsung.com>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE" 
-        <devicetree@vger.kernel.org>, linux@armlinux.org.uk,
-        green.hu@gmail.com, deanbo422@gmail.com, gxt@pku.edu.cn,
-        ard.biesheuvel@linaro.org, linux-snps-arc@lists.infradead.org,
-        vgupta@synopsys.com
-Subject: Re: [PATCH v2 4/6] arm64: Utilize phys_initrd_start/phys_initrd_size
-References: <20181030230721.28429-1-f.fainelli@gmail.com>
- <20181030230721.28429-5-f.fainelli@gmail.com>
+        Wed, 31 Oct 2018 12:02:18 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36482 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725961AbeJaQCS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 12:02:18 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC39180D;
+        Wed, 31 Oct 2018 00:05:25 -0700 (PDT)
+Received: from salmiak (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 851733F71D;
+        Wed, 31 Oct 2018 00:05:23 -0700 (PDT)
+Date:   Wed, 31 Oct 2018 07:05:17 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Peng Hao <peng.hao2@zte.com.cn>
+Cc:     robh+dt@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
+        andy@infradead.org, dvhart@infradead.org,
+        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        hutao@cn.fujitsu.com, linux-doc@vger.kernel.org
+Subject: Re: [PATCH V4 1/5]  pvpanic: move pvpanic to misc as common driver
+Message-ID: <20181031070517.ijplknobd6en4h5g@salmiak>
+References: <1540993041-25611-1-git-send-email-peng.hao2@zte.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181030230721.28429-5-f.fainelli@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18103107-0020-0000-0000-000002DD59D3
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18103107-0021-0000-0000-0000212CAC67
-Message-Id: <20181031070350.GA12503@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-31_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810310059
+In-Reply-To: <1540993041-25611-1-git-send-email-peng.hao2@zte.com.cn>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 04:07:19PM -0700, Florian Fainelli wrote:
-> ARM64 is the only architecture that re-defines
-> __early_init_dt_declare_initrd() in order for that function to populate
-> initrd_start/initrd_end with physical addresses instead of virtual
-> addresses. Instead of having an override we can leverage
-> drivers/of/fdt.c populating phys_initrd_start/phys_initrd_size to
-> populate those variables for us.
+On Wed, Oct 31, 2018 at 09:37:17PM +0800, Peng Hao wrote:
+> move pvpanic.c from drivers/platform/x86 to drivers/misc.
+> following patches will use pvpanic device in arm64.
+
+FWIW, the series as a whole looks fine to me, so for all patches:
+
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+
+Thanks,
+Mark.
+
 > 
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
 > ---
->  arch/arm64/mm/init.c | 21 +++++++++------------
->  1 file changed, 9 insertions(+), 12 deletions(-)
+>  drivers/misc/Kconfig                     | 7 +++++++
+>  drivers/misc/Makefile                    | 1 +
+>  drivers/{platform/x86 => misc}/pvpanic.c | 0
+>  drivers/platform/Kconfig                 | 3 +++
+>  drivers/platform/Makefile                | 1 +
+>  drivers/platform/x86/Kconfig             | 8 --------
+>  drivers/platform/x86/Makefile            | 1 -
+>  7 files changed, 12 insertions(+), 9 deletions(-)
+>  rename drivers/{platform/x86 => misc}/pvpanic.c (100%)
 > 
-> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-> index 3cf87341859f..e95cee656a55 100644
-> --- a/arch/arm64/mm/init.c
-> +++ b/arch/arm64/mm/init.c
-> @@ -72,8 +72,8 @@ static int __init early_initrd(char *p)
->  	if (*endp == ',') {
->  		size = memparse(endp + 1, NULL);
+> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+> index 5d71300..ca55c94 100644
+> --- a/drivers/misc/Kconfig
+> +++ b/drivers/misc/Kconfig
+> @@ -499,6 +499,13 @@ config MISC_RTSX
+>  	tristate
+>  	default MISC_RTSX_PCI || MISC_RTSX_USB
 >  
-> -		initrd_start = start;
-> -		initrd_end = start + size;
-> +		phys_initrd_start = start;
-> +		phys_initrd_size = size;
->  	}
->  	return 0;
->  }
-> @@ -408,14 +408,14 @@ void __init arm64_memblock_init(void)
->  		memblock_add(__pa_symbol(_text), (u64)(_end - _text));
->  	}
+> +config PVPANIC
+> +	tristate "pvpanic device support"
+> +	help
+> +          This driver provides support for the pvpanic device.  pvpanic is
+> +          a paravirtualized device provided by QEMU; it lets a virtual machine
+> +          (guest) communicate panic events to the host.
+> +
+>  source "drivers/misc/c2port/Kconfig"
+>  source "drivers/misc/eeprom/Kconfig"
+>  source "drivers/misc/cb710/Kconfig"
+> diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+> index 20be70c..39dc005 100644
+> --- a/drivers/misc/Makefile
+> +++ b/drivers/misc/Makefile
+> @@ -57,3 +57,4 @@ obj-$(CONFIG_ASPEED_LPC_SNOOP)	+= aspeed-lpc-snoop.o
+>  obj-$(CONFIG_PCI_ENDPOINT_TEST)	+= pci_endpoint_test.o
+>  obj-$(CONFIG_OCXL)		+= ocxl/
+>  obj-$(CONFIG_MISC_RTSX)		+= cardreader/
+> +obj-$(CONFIG_PVPANIC)  		+= pvpanic.o
+> diff --git a/drivers/platform/x86/pvpanic.c b/drivers/misc/pvpanic.c
+> similarity index 100%
+> rename from drivers/platform/x86/pvpanic.c
+> rename to drivers/misc/pvpanic.c
+> diff --git a/drivers/platform/Kconfig b/drivers/platform/Kconfig
+> index d4c2e42..8b64b78 100644
+> --- a/drivers/platform/Kconfig
+> +++ b/drivers/platform/Kconfig
+> @@ -1,3 +1,6 @@
+> +if ARM64
+> +source "drivers/platform/arm/Kconfig"
+> +endif
+>  if X86
+>  source "drivers/platform/x86/Kconfig"
+>  endif
+> diff --git a/drivers/platform/Makefile b/drivers/platform/Makefile
+> index 4b2ce58..232231c 100644
+> --- a/drivers/platform/Makefile
+> +++ b/drivers/platform/Makefile
+> @@ -3,6 +3,7 @@
+>  # Makefile for linux/drivers/platform
+>  #
 >  
-> -	if (IS_ENABLED(CONFIG_BLK_DEV_INITRD) && initrd_start) {
-> +	if (IS_ENABLED(CONFIG_BLK_DEV_INITRD) && phys_initrd_size) {
->  		/*
->  		 * Add back the memory we just removed if it results in the
->  		 * initrd to become inaccessible via the linear mapping.
->  		 * Otherwise, this is a no-op
->  		 */
-> -		u64 base = initrd_start & PAGE_MASK;
-> -		u64 size = PAGE_ALIGN(initrd_end) - base;
-> +		u64 base = phys_initrd_start & PAGE_MASK;
-> +		u64 size = PAGE_ALIGN(phys_initrd_size);
+> +obj-$(CONFIG_ARM64)               += arm/
+>  obj-$(CONFIG_X86)		+= x86/
+>  obj-$(CONFIG_MELLANOX_PLATFORM)	+= mellanox/
+>  obj-$(CONFIG_MIPS)		+= mips/
+> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+> index ef016e4..a6b412e 100644
+> --- a/drivers/platform/x86/Kconfig
+> +++ b/drivers/platform/x86/Kconfig
+> @@ -1119,14 +1119,6 @@ config INTEL_SMARTCONNECT
+>  	  This driver checks to determine whether the device has Intel Smart
+>  	  Connect enabled, and if so disables it.
 >  
->  		/*
->  		 * We can only add back the initrd memory if we don't end up
-> @@ -460,13 +460,10 @@ void __init arm64_memblock_init(void)
->  	 */
->  	memblock_reserve(__pa_symbol(_text), _end - _text);
->  #ifdef CONFIG_BLK_DEV_INITRD
-> -	if (initrd_start) {
-
-There may be no initrd at all, so the condition here would rather become
-
-	if (phys_initrd_start)
-
-> -		memblock_reserve(initrd_start, initrd_end - initrd_start);
+> -config PVPANIC
+> -	tristate "pvpanic device support"
+> -	depends on ACPI
+> -	---help---
+> -	  This driver provides support for the pvpanic device.  pvpanic is
+> -	  a paravirtualized device provided by QEMU; it lets a virtual machine
+> -	  (guest) communicate panic events to the host.
 > -
-> -		/* the generic initrd code expects virtual addresses */
-> -		initrd_start = __phys_to_virt(initrd_start);
-> -		initrd_end = __phys_to_virt(initrd_end);
-> -	}
-> +	/* the generic initrd code expects virtual addresses */
-> +	initrd_start = __phys_to_virt(phys_initrd_start);
-> +	initrd_end = initrd_start + phys_initrd_size;
-> +	initrd_below_start_ok = 0;
->  #endif
-
-I also wonder what is the reason to keep memstart_addr randomization and
-initrd setup interleaved?
-
-What we have now is roughly:
-
-1) set memstart_addr
-2) enforce memory_limit
-3) reserve initrd
-4) randomize memstart_addr
-5) reserve text + data
-6) reserve initrd again and set virtual addresses of initrd_{start,end}
-
-Maybe it's possible to merge (3) into (6) ?
-
->  	early_init_fdt_scan_reserved_mem();
+>  config INTEL_PMC_IPC
+>  	tristate "Intel PMC IPC Driver"
+>  	depends on ACPI
+> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
+> index 2ba6cb7..a4ec299 100644
+> --- a/drivers/platform/x86/Makefile
+> +++ b/drivers/platform/x86/Makefile
+> @@ -75,7 +75,6 @@ obj-$(CONFIG_APPLE_GMUX)	+= apple-gmux.o
+>  obj-$(CONFIG_INTEL_RST)		+= intel-rst.o
+>  obj-$(CONFIG_INTEL_SMARTCONNECT)	+= intel-smartconnect.o
+>  
+> -obj-$(CONFIG_PVPANIC)           += pvpanic.o
+>  obj-$(CONFIG_ALIENWARE_WMI)	+= alienware-wmi.o
+>  obj-$(CONFIG_INTEL_PMC_IPC)	+= intel_pmc_ipc.o
+>  obj-$(CONFIG_SILEAD_DMI)	+= silead_dmi.o
 > -- 
-> 2.17.1
+> 1.8.3.1
 > 
-
--- 
-Sincerely yours,
-Mike.
-
