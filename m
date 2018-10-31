@@ -2,547 +2,149 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98561C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:45:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79440C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:46:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 425B82054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:45:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 425B82054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=emutex.com
+	by mail.kernel.org (Postfix) with ESMTP id 1E7692054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:46:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OChd+WuJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E7692054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730169AbeKAFp1 (ORCPT
+        id S1730185AbeKAFqU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 01:45:27 -0400
-Received: from mr35.theemaillaundry.net ([109.169.43.43]:38008 "EHLO
-        mr35.theemaillaundry.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730055AbeKAFpV (ORCPT
+        Thu, 1 Nov 2018 01:46:20 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:43982 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726167AbeKAFqU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 01:45:21 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mr35.theemaillaundry.net (Postfix) with ESMTP id 439D5A10C0;
-        Wed, 31 Oct 2018 20:45:35 +0000 (GMT)
-X-Amavis-Modified: Mail body modified (using disclaimer) -
-        mr35.theemaillaundry.net
-X-Virus-Scanned: amavisd-new at theemaillaundry.net
-Received: from mr35.theemaillaundry.net ([127.0.0.1])
-        by localhost (mr35.theemaillaundry.net [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id amE82gqRV-Dw; Wed, 31 Oct 2018 20:45:28 +0000 (GMT)
-Received: from statler.emutex.com (unknown [92.51.199.138])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mr35.theemaillaundry.net (Postfix) with ESMTPS id EBEB19FF0A;
-        Wed, 31 Oct 2018 20:45:27 +0000 (GMT)
-Received: from [10.10.68.81] (helo=dan-Latitude-E5450.emutex.com)
-        by statler.emutex.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_CBC_SHA256:128)
-        (Exim 4.84)
-        (envelope-from <dan@emutex.com>)
-        id 1gHxMk-0007KU-5V; Wed, 31 Oct 2018 20:45:27 +0000
-From:   Dan O'Donovan <dan@emutex.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org,
-        linux-leds@vger.kernel.org,
-        Carlos Iglesias <carlos.iglesias@emutex.com>,
-        Dan O'Donovan <dan@emutex.com>
-Subject: [PATCH v3 1/3] mfd: upboard: Add UP2 platform controller driver
-Date:   Wed, 31 Oct 2018 20:44:47 +0000
-Message-Id: <1541018689-20625-2-git-send-email-dan@emutex.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1541018689-20625-1-git-send-email-dan@emutex.com>
-References: <1539969334-24577-1-git-send-email-dan@emutex.com>
- <1541018689-20625-1-git-send-email-dan@emutex.com>
+        Thu, 1 Nov 2018 01:46:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=HbVU1qMU7jfmDpq0n7mc+ceizetKVVY3CRZVQnKAMWg=; b=OChd+WuJTSOH4zP9dn2m+uphH
+        g25GYGfSXwdrsuBxVNrtbZT3xI/j/xt0pGsQyGxiRgmHJmlT7jrGTsR+nPCifInPgESxIuAIuzW3x
+        AXSSk5btwcQlicygX+VemPDUWWHtBAdTy9a2H20sPkUkYz9lNpMJsVlSk7qY7K2QXcpHPUfGG7Xna
+        vkk0B7sd5xka+UcxQzRSdvRAa+DcoqIFdALLIXakXLt3Tuv9B7vB3IuavwW0sYmjqhWjUi55b57r0
+        Kk80z8q6LBHEv1OaGW3oni8GniaVbUx5XbHx73WSnSwIP51tRUqn+tTcWWQmlchGUWTGYr8nGsaH3
+        UK0E207Mw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gHxNi-0006xQ-6V; Wed, 31 Oct 2018 20:46:26 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id ED21B20296F15; Wed, 31 Oct 2018 21:46:22 +0100 (CET)
+Date:   Wed, 31 Oct 2018 21:46:22 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     John Garry <john.garry@huawei.com>
+Cc:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, Linuxarm <linuxarm@huawei.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: Crash report: Broken NUMA distance map causes crash on arm64
+ system
+Message-ID: <20181031204622.GB3141@hirez.programming.kicks-ass.net>
+References: <b89bf686-05bd-a3de-e7ef-4ab9ab7bdb6c@huawei.com>
+ <20181030092640.GE1459@hirez.programming.kicks-ass.net>
+ <d126099d-2698-8e3a-06ca-f229e57c3052@huawei.com>
+ <ae352fe1-3c59-dcde-fd00-2c03b4491dc6@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ae352fe1-3c59-dcde-fd00-2c03b4491dc6@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-UP Squared (UP2) is a x86 SBC from AAEON based on Intel Apollo Lake. It
-features a MAX 10 FPGA that routes lines from both SoC and on-board
-devices to two I/O headers:
+On Tue, Oct 30, 2018 at 03:35:35PM +0000, John Garry wrote:
+> [    7.154740] ERROR: Node-distance not symmetric
+> [    7.154740]
+> [    7.160724]   10 15 20 25
+> [    7.163456]   15 10 25 30
+> [    7.166190]   20 25 10 15
+> [    7.168921]   10 10 15 10
+> [    7.171655]
 
-                                +------------------------+
-                                | 40-pin RPi-like header |
-                         +------|         (HAT)          |
-                         |      +------------------------+
-    +-------+    +--------+
-    |       |    |        |     +------------------------+
-    |  SoC  |----|  FPGA  |-----|  Custom UP2 pin header |
-    |       |    |        |     |        (EXHAT)         |
-    +-------+    +--------+     +------------------------+
-                         |
-                         +------* On-board devices: LED, VLS...
+But I'm not getting the rest of those errors with my 'reproducer':
 
-This is intended to enable vendor-specific applications to customize I/O
-header pinout, as well as include low-latency functionality. It also
-performs voltage level translation between the SoC (1.8V) and HAT header
-(3.3V).
+  kvm -smp 4 -m 4G -display none -monitor null -serial stdio -kernel defconfig-build/arch/x86/boot/bzImage -append "sched_debug debug ignore_loglevel earlyprintk=serial,ttyS0,115200,keep numa=fake=4:10,15,20,25,15,10,25,30,20,25,10,15,10,10,15,10,0"
 
-Out of the box, this block implements a platform controller with a
-GPIO-bitbanged control interface. It's enumerated by ACPI and provides
-registers to control:
+[    0.828331] ERROR: Node-distance not symmetric
+[    0.828331] 
+[    0.829081]   10 15 20 25 
+[    0.830079]   15 10 25 30 
+[    0.831079]   20 25 10 15 
+[    0.832079]   10 10 15 10 
+[    0.833079] 
+[    0.834373] CPU0 attaching sched-domain(s):
+[    0.835082]  domain-0: span=0-3 level=DIE
+[    0.836079]   groups: 0:{ span=0 }, 1:{ span=1 }, 2:{ span=2 }, 3:{ span=3 }
+[    0.837082] CPU1 attaching sched-domain(s):
+[    0.838081]  domain-0: span=0-3 level=DIE
+[    0.839079]   groups: 1:{ span=1 }, 2:{ span=2 }, 3:{ span=3 }, 0:{ span=0 }
+[    0.840082] CPU2 attaching sched-domain(s):
+[    0.841080]  domain-0: span=0-3 level=DIE
+[    0.842079]   groups: 2:{ span=2 }, 3:{ span=3 }, 0:{ span=0 }, 1:{ span=1 }
+[    0.843094] ------------[ cut here ]------------
+[    0.844076] kernel BUG at ../mm/slub.c:3901!
+[    0.844083] invalid opcode: 0000 [#1] SMP PTI
+[    0.845076] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc8+ #305
+[    0.845076] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+[    0.845076] RIP: 0010:kfree+0x113/0x160
+[    0.845076] Code: 18 48 89 da 4c 89 e6 e8 db 01 c5 00 48 8b 45 00 48 85 c0 75 e4 e9 0e ff ff ff 49 8b 02 f6 c4 80 75 0a 49 8b 42 08 a8 01 75 02 <0f> 0b 49 8b 02 31 f6 f6 c4 80 74 05 41 0f b6 72 51 5b 5d 41 5c 4c
+[    0.845076] RSP: 0000:ffffabc080633dc8 EFLAGS: 00010246
+[    0.845076] RAX: ffff9f973fff8da0 RBX: ffff9f970000001e RCX: 00000000000000f9
+[    0.845076] RDX: 0000000000000000 RSI: ffff9f963ea23c80 RDI: 0000606980000000
+[    0.845076] RBP: 0000000000020ac0 R08: 0000000000023c80 R09: ffffffff9f8a10db
+[    0.845076] R10: fffff17204000000 R11: 0000000000000001 R12: ffffffff9f8a113d
+[    0.845076] R13: 0000000000000003 R14: ffffffffa0ab4820 R15: ffff9f973e5bde00
+[    0.845076] FS:  0000000000000000(0000) GS:ffff9f963ea00000(0000) knlGS:0000000000000000
+[    0.845076] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    0.845076] CR2: 00000000ffffffff CR3: 000000008ea0a000 CR4: 00000000000006f0
+[    0.845076] Call Trace:
+[    0.845076]  destroy_sched_domain+0x3d/0x50
+[    0.845076]  cpu_attach_domain+0x378/0x680
+[    0.845076]  ? update_group_capacity+0x20/0x2c0
+[    0.845076]  build_sched_domains+0xde9/0xed0
+[    0.845076]  ? set_debug_rodata+0xc/0xc
+[    0.845076]  sched_init_domains+0x80/0x90
+[    0.845076]  sched_init_smp+0x1d/0x63
+[    0.845076]  kernel_init_freeable+0x101/0x23f
+[    0.845076]  ? rest_init+0xb0/0xb0
+[    0.845076]  kernel_init+0x5/0x100
+[    0.845076]  ret_from_fork+0x35/0x40
 
-- Configuration of all FPGA-routed header lines. These can be driven
-  SoC-to-header, header-to-SoC or set in high impedance.
+I'll work on that crash though..
 
-- On-board LEDs and enable lines for other platform devices.
+> I also note that if I apply the patch, below, to reject the invalid NUMA
+> distance, we're still getting a warning/error:
+> 
+> [    7.144407] CPU: All CPU(s) started at EL2
+> [    7.148678] alternatives: patching kernel code
+> [    7.153557] ERROR: Node-0 not representative
+> [    7.153557]
+> [    7.159365]   10 15 20 25
+> [    7.162097]   15 10 25 30
+> [    7.164832]   20 25 10 15
+> [    7.167562]   25 30 15 10
 
-Add core support for this platform controller as a MFD device, exposing
-these registers as a regmap.
+Yeah, that's an 'obviously' broken topology too.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Dan O'Donovan <dan@emutex.com>
----
- drivers/mfd/Kconfig         |  17 +++
- drivers/mfd/Makefile        |   1 +
- drivers/mfd/upboard.c       | 336 ++++++++++++++++++++++++++++++++++++++++++++
- include/linux/mfd/upboard.h |  44 ++++++
- 4 files changed, 398 insertions(+)
- create mode 100644 drivers/mfd/upboard.c
- create mode 100644 include/linux/mfd/upboard.h
-
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index 8c5dfdc..cccb901 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -1871,6 +1871,23 @@ config MFD_STM32_TIMERS
- 	  for PWM and IIO Timer. This driver allow to share the
- 	  registers between the others drivers.
- 
-+config MFD_UPBOARD
-+	tristate "UP Squared"
-+	depends on ACPI
-+	depends on GPIOLIB
-+	select MFD_CORE
-+	select REGMAP
-+	help
-+	  If you say yes here you get support for the platform controller
-+	  of the UP Squared single-board computer.
-+
-+	  This driver provides common support for accessing the device,
-+	  additional drivers must be enabled in order to use the
-+	  functionality of the device.
-+
-+	  This driver can also be built as a module. If so, the module
-+	  will be called "upboard".
-+
- menu "Multimedia Capabilities Port drivers"
- 	depends on ARCH_SA1100
- 
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index 12980a4..593b86f 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -242,3 +242,4 @@ obj-$(CONFIG_MFD_SC27XX_PMIC)	+= sprd-sc27xx-spi.o
- obj-$(CONFIG_RAVE_SP_CORE)	+= rave-sp.o
- obj-$(CONFIG_MFD_ROHM_BD718XX)	+= rohm-bd718x7.o
- 
-+obj-$(CONFIG_MFD_UPBOARD)  += upboard.o
-diff --git a/drivers/mfd/upboard.c b/drivers/mfd/upboard.c
-new file mode 100644
-index 0000000..8b88731
---- /dev/null
-+++ b/drivers/mfd/upboard.c
-@@ -0,0 +1,336 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// UP Board platform controller driver
-+//
-+// Copyright (c) 2018, Emutex Ltd.
-+//
-+// Author: Javier Arteaga <javier@emutex.com>
-+//
-+
-+#include <linux/acpi.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/kernel.h>
-+#include <linux/mfd/core.h>
-+#include <linux/mfd/upboard.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#define UPBOARD_FW_BUILD_SHIFT 12
-+#define UPBOARD_FW_MAJOR_SHIFT 8
-+#define UPBOARD_FW_MINOR_SHIFT 4
-+#define UPBOARD_FW_PATCH_SHIFT 0
-+
-+#define UPBOARD_FW_BUILD(id) (((id) >> UPBOARD_FW_BUILD_SHIFT) & 0x0f)
-+#define UPBOARD_FW_MAJOR(id) (((id) >> UPBOARD_FW_MAJOR_SHIFT) & 0x0f)
-+#define UPBOARD_FW_MINOR(id) (((id) >> UPBOARD_FW_MINOR_SHIFT) & 0x0f)
-+#define UPBOARD_FW_PATCH(id) (((id) >> UPBOARD_FW_PATCH_SHIFT) & 0x0f)
-+
-+#define AAEON_MANUFACTURER_ID 0x01
-+#define SUPPORTED_FW_MAJOR 0x0
-+
-+/* MSb of 8-bit address is an R/W flag */
-+#define UPBOARD_ADDRESS_SIZE  8
-+#define UPBOARD_READ_FLAG     BIT(7)
-+
-+enum upboard_id {
-+	UPBOARD_ID_UP2 = 1,
-+};
-+
-+struct upboard_ddata {
-+	struct gpio_desc *clear_gpio;
-+	struct gpio_desc *strobe_gpio;
-+	struct gpio_desc *datain_gpio;
-+	struct gpio_desc *dataout_gpio;
-+	const struct regmap_config *regmapconf;
-+	const struct mfd_cell *cells;
-+	size_t ncells;
-+};
-+
-+/*
-+ * UP boards include a platform controller with a proprietary GPIO-bitbanged
-+ * control interface to access its configuration registers.
-+ *
-+ * The following macros and functions implement the read/write handlers for
-+ * that interface, to provide a regmap-based abstraction for the controller.
-+ */
-+
-+#define set_clear(u, x) gpiod_set_value((u)->clear_gpio, (x))
-+#define set_strobe(u, x) gpiod_set_value((u)->strobe_gpio, (x))
-+#define set_datain(u, x) gpiod_set_value((u)->datain_gpio, (x))
-+#define get_dataout(u) gpiod_get_value((u)->dataout_gpio)
-+
-+static void __reg_io_start(const struct upboard_ddata * const ddata)
-+{
-+	/*
-+	 * CLEAR signal must be pulsed low before any register access.
-+	 * This resets internal counters in the controller and marks
-+	 * the start of a new register access.
-+	 */
-+	set_clear(ddata, 0);
-+	set_clear(ddata, 1);
-+}
-+
-+static void __reg_io_end(const struct upboard_ddata * const ddata)
-+{
-+	/*
-+	 * STROBE signal must be cycled again to mark the end of a register
-+	 * access.  Partial register accesses are discarded harmlessly
-+	 * by the controller if this final strobe cycle is not sent
-+	 */
-+	set_strobe(ddata, 0);
-+	set_strobe(ddata, 1);
-+}
-+
-+static void __reg_io_write(const struct upboard_ddata * const ddata,
-+			   unsigned int size, unsigned int val)
-+{
-+	/*
-+	 * DATAIN is latched on each rising edge of the STROBE signal.
-+	 * Data (register address or value) is sent MSb first.
-+	 */
-+	while (size--) {
-+		set_strobe(ddata, 0);
-+		set_datain(ddata, (val >> size) & 0x1);
-+		set_strobe(ddata, 1);
-+	}
-+}
-+
-+static void __reg_io_read(const struct upboard_ddata * const ddata,
-+			  unsigned int size, unsigned int *val)
-+{
-+	/*
-+	 * DATAOUT is latched on on each rising edge of the STROBE signal.
-+	 * Data (register value) is received MSb first.
-+	 */
-+	*val = 0;
-+	while (size--) {
-+		set_strobe(ddata, 0);
-+		set_strobe(ddata, 1);
-+		*val |= get_dataout(ddata) << size;
-+	}
-+}
-+
-+static int upboard_reg_read(void *context, unsigned int reg, unsigned int *val)
-+{
-+	const struct upboard_ddata * const ddata = context;
-+
-+	__reg_io_start(ddata);
-+	__reg_io_write(ddata, UPBOARD_ADDRESS_SIZE, reg | UPBOARD_READ_FLAG);
-+	__reg_io_read(ddata, UPBOARD_REGISTER_SIZE, val);
-+	__reg_io_end(ddata);
-+
-+	return 0;
-+}
-+
-+static int upboard_reg_write(void *context, unsigned int reg, unsigned int val)
-+{
-+	const struct upboard_ddata * const ddata = context;
-+
-+	__reg_io_start(ddata);
-+	__reg_io_write(ddata, UPBOARD_ADDRESS_SIZE, reg);
-+	__reg_io_write(ddata, UPBOARD_REGISTER_SIZE, val);
-+	__reg_io_end(ddata);
-+
-+	return 0;
-+}
-+
-+/* UP Squared */
-+
-+static const struct regmap_range upboard_up2_readable_ranges[] = {
-+	regmap_reg_range(UPBOARD_REG_PLATFORM_ID, UPBOARD_REG_FIRMWARE_ID),
-+	regmap_reg_range(UPBOARD_REG_FUNC_EN0, UPBOARD_REG_FUNC_EN1),
-+	regmap_reg_range(UPBOARD_REG_GPIO_EN0, UPBOARD_REG_GPIO_EN2),
-+	regmap_reg_range(UPBOARD_REG_GPIO_DIR0, UPBOARD_REG_GPIO_DIR2),
-+};
-+
-+static const struct regmap_range upboard_up2_writable_ranges[] = {
-+	regmap_reg_range(UPBOARD_REG_FUNC_EN0, UPBOARD_REG_FUNC_EN1),
-+	regmap_reg_range(UPBOARD_REG_GPIO_EN0, UPBOARD_REG_GPIO_EN2),
-+	regmap_reg_range(UPBOARD_REG_GPIO_DIR0, UPBOARD_REG_GPIO_DIR2),
-+};
-+
-+static const struct regmap_access_table upboard_up2_readable_table = {
-+	.yes_ranges = upboard_up2_readable_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(upboard_up2_readable_ranges),
-+};
-+
-+static const struct regmap_access_table upboard_up2_writable_table = {
-+	.yes_ranges = upboard_up2_writable_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(upboard_up2_writable_ranges),
-+};
-+
-+static const struct regmap_config upboard_up2_regmap_config = {
-+	.reg_bits = UPBOARD_ADDRESS_SIZE,
-+	.val_bits = UPBOARD_REGISTER_SIZE,
-+	.max_register = UPBOARD_REG_MAX,
-+	.reg_read = upboard_reg_read,
-+	.reg_write = upboard_reg_write,
-+	.fast_io = false,
-+	.cache_type = REGCACHE_RBTREE,
-+	.rd_table = &upboard_up2_readable_table,
-+	.wr_table = &upboard_up2_writable_table,
-+};
-+
-+static const struct mfd_cell upboard_up2_mfd_cells[] = {
-+	{
-+		.name = "upboard-led",
-+		.id = 0,
-+	},
-+	{
-+		.name = "upboard-led",
-+		.id = 1,
-+	},
-+	{
-+		.name = "upboard-led",
-+		.id = 2,
-+	},
-+	{
-+		.name = "upboard-led",
-+		.id = 3,
-+	},
-+	{
-+		.name = "upboard-pinctrl"
-+	},
-+};
-+
-+static int upboard_init_gpio(struct device *dev)
-+{
-+	struct upboard_ddata *ddata = dev_get_drvdata(dev);
-+	struct gpio_desc *enable_gpio;
-+
-+	ddata->clear_gpio = devm_gpiod_get(dev, "clear", GPIOD_OUT_LOW);
-+	if (IS_ERR(ddata->clear_gpio))
-+		return PTR_ERR(ddata->clear_gpio);
-+
-+	ddata->strobe_gpio = devm_gpiod_get(dev, "strobe", GPIOD_OUT_LOW);
-+	if (IS_ERR(ddata->strobe_gpio))
-+		return PTR_ERR(ddata->strobe_gpio);
-+
-+	ddata->datain_gpio = devm_gpiod_get(dev, "datain", GPIOD_OUT_LOW);
-+	if (IS_ERR(ddata->datain_gpio))
-+		return PTR_ERR(ddata->datain_gpio);
-+
-+	ddata->dataout_gpio = devm_gpiod_get(dev, "dataout", GPIOD_IN);
-+	if (IS_ERR(ddata->dataout_gpio))
-+		return PTR_ERR(ddata->dataout_gpio);
-+
-+	/* External I/O signals are gated by ENABLE - ensure this is high */
-+	enable_gpio = devm_gpiod_get(dev, "enable", GPIOD_OUT_HIGH);
-+	if (IS_ERR(enable_gpio))
-+		return PTR_ERR(enable_gpio);
-+
-+	return 0;
-+}
-+
-+static int upboard_check_supported(struct device *dev, struct regmap *regmap)
-+{
-+	uint8_t manufacturer_id, build, major, minor, patch;
-+	unsigned int platform_id, firmware_id;
-+	int ret;
-+
-+	ret = regmap_read(regmap, UPBOARD_REG_PLATFORM_ID, &platform_id);
-+	if (ret)
-+		return ret;
-+
-+	manufacturer_id = platform_id;
-+	if (manufacturer_id != AAEON_MANUFACTURER_ID) {
-+		dev_err(dev,
-+			"unsupported FPGA firmware from manufacturer 0x%02x",
-+			manufacturer_id);
-+		return -ENODEV;
-+	}
-+
-+	ret = regmap_read(regmap, UPBOARD_REG_FIRMWARE_ID, &firmware_id);
-+	if (ret)
-+		return ret;
-+
-+	build = UPBOARD_FW_BUILD(firmware_id);
-+	major = UPBOARD_FW_MAJOR(firmware_id);
-+	minor = UPBOARD_FW_MINOR(firmware_id);
-+	patch = UPBOARD_FW_PATCH(firmware_id);
-+	if (major != SUPPORTED_FW_MAJOR) {
-+		dev_err(dev, "unsupported FPGA firmware v%u.%u.%u.%u",
-+			 major, minor, patch, build);
-+		return -ENODEV;
-+	}
-+
-+	dev_dbg(dev, "supported FPGA firmware v%u.%u.%u.%u",
-+		major, minor, patch, build);
-+	return 0;
-+}
-+
-+static const struct acpi_device_id upboard_acpi_match[] = {
-+	{ "AANT0F01", (kernel_ulong_t)UPBOARD_ID_UP2 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(acpi, upboard_acpi_match);
-+
-+static int upboard_match_device(struct device *dev)
-+{
-+	struct upboard_ddata *ddata = dev_get_drvdata(dev);
-+	enum upboard_id id = (kernel_ulong_t)device_get_match_data(dev);
-+
-+	switch (id) {
-+	case UPBOARD_ID_UP2:
-+		ddata->regmapconf = &upboard_up2_regmap_config;
-+		ddata->cells = upboard_up2_mfd_cells;
-+		ddata->ncells = ARRAY_SIZE(upboard_up2_mfd_cells);
-+		break;
-+	default:
-+		dev_err(dev, "unsupported ID %u\n", id);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int upboard_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct upboard_ddata *ddata;
-+	struct regmap *regmap;
-+	int ret;
-+
-+	ddata = devm_kzalloc(dev, sizeof(*ddata), GFP_KERNEL);
-+	if (!ddata)
-+		return -ENOMEM;
-+
-+	dev_set_drvdata(dev, ddata);
-+
-+	ret = upboard_match_device(dev);
-+	if (ret)
-+		return ret;
-+
-+	regmap = devm_regmap_init(dev, NULL, ddata, ddata->regmapconf);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	ret = upboard_init_gpio(dev);
-+	if (ret) {
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(dev, "failed to init GPIOs: %d", ret);
-+		return ret;
-+	}
-+
-+	ret = upboard_check_supported(dev, regmap);
-+	if (ret)
-+		return ret;
-+
-+	return devm_mfd_add_devices(dev, 0, ddata->cells, ddata->ncells,
-+				    NULL, 0, NULL);
-+}
-+
-+static struct platform_driver upboard_driver = {
-+	.probe = upboard_probe,
-+	.driver = {
-+		.name = "upboard",
-+		.acpi_match_table = upboard_acpi_match,
-+	},
-+};
-+
-+module_platform_driver(upboard_driver);
-+
-+MODULE_AUTHOR("Javier Arteaga <javier@emutex.com>");
-+MODULE_DESCRIPTION("UP Board platform controller driver");
-+MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/mfd/upboard.h b/include/linux/mfd/upboard.h
-new file mode 100644
-index 0000000..63e677f
---- /dev/null
-+++ b/include/linux/mfd/upboard.h
-@@ -0,0 +1,44 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// UP Board MFD driver interface
-+//
-+// Copyright (c) 2018, Emutex Ltd.
-+//
-+// Author: Javier Arteaga <javier@emutex.com>
-+//
-+
-+#ifndef __LINUX_MFD_UPBOARD_H
-+#define __LINUX_MFD_UPBOARD_H
-+
-+#define UPBOARD_REGISTER_SIZE 16
-+
-+/**
-+ * enum upboard_reg - addresses for 16-bit controller registers
-+ *
-+ * @UPBOARD_REG_PLATFORM_ID:    [RO] BOARD_ID | MANUFACTURER_ID
-+ * @UPBOARD_REG_FIRMWARE_ID:    [RO] BUILD | MAJOR | MINOR | PATCH
-+ * @UPBOARD_REG_FUNC_EN0:       [RW] Toggles for board functions (bank 0)
-+ * @UPBOARD_REG_FUNC_EN1:       [RW] Toggles for board functions (bank 1)
-+ * @UPBOARD_REG_GPIO_EN0:       [RW] Hi-Z (0) / enabled (1) GPIO (bank 0)
-+ * @UPBOARD_REG_GPIO_EN1:       [RW] Hi-Z (0) / enabled (1) GPIO (bank 1)
-+ * @UPBOARD_REG_GPIO_EN2:       [RW] Hi-Z (0) / enabled (1) GPIO (bank 2)
-+ * @UPBOARD_REG_GPIO_DIR0:      [RW] SoC- (0) / FPGA- (1) driven GPIO (bank 0)
-+ * @UPBOARD_REG_GPIO_DIR1:      [RW] SoC- (0) / FPGA- (1) driven GPIO (bank 1)
-+ * @UPBOARD_REG_GPIO_DIR2:      [RW] SoC- (0) / FPGA- (1) driven GPIO (bank 2)
-+ * @UPBOARD_REG_MAX: one past the last valid address
-+ */
-+enum upboard_reg {
-+	UPBOARD_REG_PLATFORM_ID   = 0x10,
-+	UPBOARD_REG_FIRMWARE_ID   = 0x11,
-+	UPBOARD_REG_FUNC_EN0      = 0x20,
-+	UPBOARD_REG_FUNC_EN1      = 0x21,
-+	UPBOARD_REG_GPIO_EN0      = 0x30,
-+	UPBOARD_REG_GPIO_EN1      = 0x31,
-+	UPBOARD_REG_GPIO_EN2      = 0x32,
-+	UPBOARD_REG_GPIO_DIR0     = 0x40,
-+	UPBOARD_REG_GPIO_DIR1     = 0x41,
-+	UPBOARD_REG_GPIO_DIR2     = 0x42,
-+	UPBOARD_REG_MAX,
-+};
-+
-+#endif /*  __LINUX_MFD_UPBOARD_H */
--- 
-2.7.4
-
-
-------
-This email has been scanned for spam and malware by The Email Laundry.
-
+Clearly you're far more creative than the ACPI BIOS people have been so
+far.
