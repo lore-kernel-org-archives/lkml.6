@@ -7,127 +7,152 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8D15C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D30DECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8269520664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23A042064C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="M6FtwuRk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8269520664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="H/Muk3qT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23A042064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730405AbeKAIJY (ORCPT
+        id S1730420AbeKAIJZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:09:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59216 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:09:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730380AbeKAIJW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:09:22 -0400
+        id S1730392AbeKAIJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:09:24 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA3B420838;
-        Wed, 31 Oct 2018 23:09:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90DA12081B;
+        Wed, 31 Oct 2018 23:09:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027351;
-        bh=355Ul7dAqP4hsRsREpqRPcIieIvL0WH8GzzBqcJ2i1I=;
+        s=default; t=1541027352;
+        bh=CgBCerYBhTOMp8Gevxx0IVA2AtJrxlOMJJc0tJjc9/E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M6FtwuRkh3AL+dZZRkZDKKcFBzrIb0mZtY4Lu8n8yAidX/6e2H5X8HCpY30xpiZE8
-         rN7GZg8fgtJKHukW4lrPQE6/c1jrz2gim4LMasHuCqP4arkwEBJv6/8tMZm1Pbi9Ow
-         OwYc6oHuV1oAzUE4j+lHXX6y16Je804s9YGu32VE=
+        b=H/Muk3qTySKeQykczDLkds8sSeh0lxT5EkqDDZWu/mCOMuqwcY4+moLPej+9kbinB
+         eA+LEqo2abUGmhxzO5Ca5ZAg9dPSdiUf4vyhKD9dHl/TLyFEql57HC0ea1bvz1HjMC
+         XjOrv02Ti3Sc0mGmC1dlRrm4x6y7OOW6LjWT0D/A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Parav Pandit <parav@mellanox.com>,
+Cc:     Denis Drozdov <denisd@mellanox.com>,
         Leon Romanovsky <leonro@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 084/126] RDMA/core: Do not expose unsupported counters
-Date:   Wed, 31 Oct 2018 19:07:12 -0400
-Message-Id: <20181031230754.29029-84-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 085/126] IB/ipoib: Clear IPCB before icmp_send
+Date:   Wed, 31 Oct 2018 19:07:13 -0400
+Message-Id: <20181031230754.29029-85-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Parav Pandit <parav@mellanox.com>
+From: Denis Drozdov <denisd@mellanox.com>
 
-[ Upstream commit 0f6ef65d1c6ec8deb5d0f11f86631ec4cfe8f22e ]
+[ Upstream commit 4d6e4d12da2c308f8f976d3955c45ee62539ac98 ]
 
-If the provider driver (such as rdma_rxe) doesn't support pma counters,
-avoid exposing its directory similar to optional hw_counters directory.
-If core fails to read the PMA counter, return an error so that user can
-retry later if needed.
+IPCB should be cleared before icmp_send, since it may contain data from
+previous layers and the data could be misinterpreted as ip header options,
+which later caused the ihl to be set to an invalid value and resulted in
+the following stack corruption:
 
-Fixes: 35c4cbb17811 ("IB/core: Create get_perf_mad function in sysfs.c")
-Reported-by: Holger Hoffstätte <holger@applied-asynchrony.com>
-Tested-by: Holger Hoffstätte <holger@applied-asynchrony.com>
-Signed-off-by: Parav Pandit <parav@mellanox.com>
+[ 1083.031512] ib0: packet len 57824 (> 2048) too long to send, dropping
+[ 1083.031843] ib0: packet len 37904 (> 2048) too long to send, dropping
+[ 1083.032004] ib0: packet len 4040 (> 2048) too long to send, dropping
+[ 1083.032253] ib0: packet len 63800 (> 2048) too long to send, dropping
+[ 1083.032481] ib0: packet len 23960 (> 2048) too long to send, dropping
+[ 1083.033149] ib0: packet len 63800 (> 2048) too long to send, dropping
+[ 1083.033439] ib0: packet len 63800 (> 2048) too long to send, dropping
+[ 1083.033700] ib0: packet len 63800 (> 2048) too long to send, dropping
+[ 1083.034124] ib0: packet len 63800 (> 2048) too long to send, dropping
+[ 1083.034387] ==================================================================
+[ 1083.034602] BUG: KASAN: stack-out-of-bounds in __ip_options_echo+0xf08/0x1310
+[ 1083.034798] Write of size 4 at addr ffff880353457c5f by task kworker/u16:0/7
+[ 1083.034990]
+[ 1083.035104] CPU: 7 PID: 7 Comm: kworker/u16:0 Tainted: G           O      4.19.0-rc5+ #1
+[ 1083.035316] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu2 04/01/2014
+[ 1083.035573] Workqueue: ipoib_wq ipoib_cm_skb_reap [ib_ipoib]
+[ 1083.035750] Call Trace:
+[ 1083.035888]  dump_stack+0x9a/0xeb
+[ 1083.036031]  print_address_description+0xe3/0x2e0
+[ 1083.036213]  kasan_report+0x18a/0x2e0
+[ 1083.036356]  ? __ip_options_echo+0xf08/0x1310
+[ 1083.036522]  __ip_options_echo+0xf08/0x1310
+[ 1083.036688]  icmp_send+0x7b9/0x1cd0
+[ 1083.036843]  ? icmp_route_lookup.constprop.9+0x1070/0x1070
+[ 1083.037018]  ? netif_schedule_queue+0x5/0x200
+[ 1083.037180]  ? debug_show_all_locks+0x310/0x310
+[ 1083.037341]  ? rcu_dynticks_curr_cpu_in_eqs+0x85/0x120
+[ 1083.037519]  ? debug_locks_off+0x11/0x80
+[ 1083.037673]  ? debug_check_no_obj_freed+0x207/0x4c6
+[ 1083.037841]  ? check_flags.part.27+0x450/0x450
+[ 1083.037995]  ? debug_check_no_obj_freed+0xc3/0x4c6
+[ 1083.038169]  ? debug_locks_off+0x11/0x80
+[ 1083.038318]  ? skb_dequeue+0x10e/0x1a0
+[ 1083.038476]  ? ipoib_cm_skb_reap+0x2b5/0x650 [ib_ipoib]
+[ 1083.038642]  ? netif_schedule_queue+0xa8/0x200
+[ 1083.038820]  ? ipoib_cm_skb_reap+0x544/0x650 [ib_ipoib]
+[ 1083.038996]  ipoib_cm_skb_reap+0x544/0x650 [ib_ipoib]
+[ 1083.039174]  process_one_work+0x912/0x1830
+[ 1083.039336]  ? wq_pool_ids_show+0x310/0x310
+[ 1083.039491]  ? lock_acquire+0x145/0x3a0
+[ 1083.042312]  worker_thread+0x87/0xbb0
+[ 1083.045099]  ? process_one_work+0x1830/0x1830
+[ 1083.047865]  kthread+0x322/0x3e0
+[ 1083.050624]  ? kthread_create_worker_on_cpu+0xc0/0xc0
+[ 1083.053354]  ret_from_fork+0x3a/0x50
+
+For instance __ip_options_echo is failing to proceed with invalid srr and
+optlen passed from another layer via IPCB
+
+[  762.139568] IPv4: __ip_options_echo rr=0 ts=0 srr=43 cipso=0
+[  762.139720] IPv4: ip_options_build: IPCB 00000000f3cd969e opt 000000002ccb3533
+[  762.139838] IPv4: __ip_options_echo in srr: optlen 197 soffset 84
+[  762.139852] IPv4: ip_options_build srr=0 is_frag=0 rr_needaddr=0 ts_needaddr=0 ts_needtime=0 rr=0 ts=0
+[  762.140269] ==================================================================
+[  762.140713] IPv4: __ip_options_echo rr=0 ts=0 srr=0 cipso=0
+[  762.141078] BUG: KASAN: stack-out-of-bounds in __ip_options_echo+0x12ec/0x1680
+[  762.141087] Write of size 4 at addr ffff880353457c7f by task kworker/u16:0/7
+
+Signed-off-by: Denis Drozdov <denisd@mellanox.com>
+Reviewed-by: Erez Shitrit <erezsh@mellanox.com>
+Reviewed-by: Feras Daoud <ferasda@mellanox.com>
 Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/core/sysfs.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+ drivers/infiniband/ulp/ipoib/ipoib_cm.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/infiniband/core/sysfs.c b/drivers/infiniband/core/sysfs.c
-index 31c7efaf8e7a..63406cd212a7 100644
---- a/drivers/infiniband/core/sysfs.c
-+++ b/drivers/infiniband/core/sysfs.c
-@@ -516,7 +516,7 @@ static ssize_t show_pma_counter(struct ib_port *p, struct port_attribute *attr,
- 	ret = get_perf_mad(p->ibdev, p->port_num, tab_attr->attr_id, &data,
- 			40 + offset / 8, sizeof(data));
- 	if (ret < 0)
--		return sprintf(buf, "N/A (no PMA)\n");
-+		return ret;
+diff --git a/drivers/infiniband/ulp/ipoib/ipoib_cm.c b/drivers/infiniband/ulp/ipoib/ipoib_cm.c
+index a620701f9d41..1ac2bbc84671 100644
+--- a/drivers/infiniband/ulp/ipoib/ipoib_cm.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_cm.c
+@@ -1439,11 +1439,15 @@ static void ipoib_cm_skb_reap(struct work_struct *work)
+ 		spin_unlock_irqrestore(&priv->lock, flags);
+ 		netif_tx_unlock_bh(dev);
  
- 	switch (width) {
- 	case 4:
-@@ -1061,10 +1061,12 @@ static int add_port(struct ib_device *device, int port_num,
- 		goto err_put;
- 	}
+-		if (skb->protocol == htons(ETH_P_IP))
++		if (skb->protocol == htons(ETH_P_IP)) {
++			memset(IPCB(skb), 0, sizeof(*IPCB(skb)));
+ 			icmp_send(skb, ICMP_DEST_UNREACH, ICMP_FRAG_NEEDED, htonl(mtu));
++		}
+ #if IS_ENABLED(CONFIG_IPV6)
+-		else if (skb->protocol == htons(ETH_P_IPV6))
++		else if (skb->protocol == htons(ETH_P_IPV6)) {
++			memset(IP6CB(skb), 0, sizeof(*IP6CB(skb)));
+ 			icmpv6_send(skb, ICMPV6_PKT_TOOBIG, 0, mtu);
++		}
+ #endif
+ 		dev_kfree_skb_any(skb);
  
--	p->pma_table = get_counter_table(device, port_num);
--	ret = sysfs_create_group(&p->kobj, p->pma_table);
--	if (ret)
--		goto err_put_gid_attrs;
-+	if (device->process_mad) {
-+		p->pma_table = get_counter_table(device, port_num);
-+		ret = sysfs_create_group(&p->kobj, p->pma_table);
-+		if (ret)
-+			goto err_put_gid_attrs;
-+	}
- 
- 	p->gid_group.name  = "gids";
- 	p->gid_group.attrs = alloc_group_attrs(show_port_gid, attr.gid_tbl_len);
-@@ -1177,7 +1179,8 @@ static int add_port(struct ib_device *device, int port_num,
- 	p->gid_group.attrs = NULL;
- 
- err_remove_pma:
--	sysfs_remove_group(&p->kobj, p->pma_table);
-+	if (p->pma_table)
-+		sysfs_remove_group(&p->kobj, p->pma_table);
- 
- err_put_gid_attrs:
- 	kobject_put(&p->gid_attr_group->kobj);
-@@ -1289,7 +1292,9 @@ static void free_port_list_attributes(struct ib_device *device)
- 			kfree(port->hw_stats);
- 			free_hsag(&port->kobj, port->hw_stats_ag);
- 		}
--		sysfs_remove_group(p, port->pma_table);
-+
-+		if (port->pma_table)
-+			sysfs_remove_group(p, port->pma_table);
- 		sysfs_remove_group(p, &port->pkey_group);
- 		sysfs_remove_group(p, &port->gid_group);
- 		sysfs_remove_group(&port->gid_attr_group->kobj,
 -- 
 2.17.1
 
