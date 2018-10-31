@@ -2,180 +2,125 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B3CAC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:26:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81269C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:27:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C40162054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:26:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C40162054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 449AD2081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:27:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kudzu-us.20150623.gappssmtp.com header.i=@kudzu-us.20150623.gappssmtp.com header.b="c3AdRRpe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 449AD2081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kudzu.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725963AbeKAG0X (ORCPT
+        id S1726030AbeKAG1P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 02:26:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44320 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725736AbeKAG0X (ORCPT
+        Thu, 1 Nov 2018 02:27:15 -0400
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:45156 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725736AbeKAG1P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 02:26:23 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 398D4B09;
-        Wed, 31 Oct 2018 21:26:33 +0000 (UTC)
-Date:   Wed, 31 Oct 2018 14:26:32 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Larry Chen <lchen@suse.com>
-Cc:     mark@fasheh.com, jlbec@evilplan.org, linux-kernel@vger.kernel.org,
-        ocfs2-devel@oss.oracle.com, Joseph Qi <jiangqi903@gmail.com>,
-        Changwei Ge <gechangwei@live.cn>
-Subject: Re: [PATCH V2] ocfs2: fix dead lock caused by ocfs2_defrag_extent
-Message-Id: <20181031142632.c523108bc137caa8cb1c6282@linux-foundation.org>
-In-Reply-To: <20180902091455.23862-1-lchen@suse.com>
-References: <20180902091455.23862-1-lchen@suse.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 1 Nov 2018 02:27:15 -0400
+Received: by mail-yb1-f193.google.com with SMTP id 131-v6so7271844ybe.12
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 14:27:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kudzu-us.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=0G85Kx39zGxZ8q3L47ldXCNqZ5BBMx7UP+SlzKDVKpQ=;
+        b=c3AdRRpeyp8+YJN6JpQrI71DHsfwkrXm1/NMqs+5a0mp5Jadcy3o91bY6NrvNZiFev
+         8H0A6QyBnDRkDEiRsk6I24CKPHhsn1JMPgCXLZ/QleMXlS+NIDYHF58VcJ+7fzInSHtL
+         f4sgRyoPMF/NypZeYO1vY8oRu8/VCtERzTzwlQo2MHSr+p3TekVCQrcwBESmQqYn9it4
+         ZMXZPWQqosgsv8ALfb9h1XJG4MW/R6o6awjKR9gOxIQ5b7I5OQ8NnkSSEF24V3XKPB+3
+         VtzHKHmR+crwgKkuMlgvgUAoZTgzPmEZ2S36rjkOjdApRum+ZdxMEfjnFKrIX7usIMVf
+         FIjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0G85Kx39zGxZ8q3L47ldXCNqZ5BBMx7UP+SlzKDVKpQ=;
+        b=p/SzP9hxGQcH1rBVS5VUp0U2vRNRql91a3NZX/vSbbo1Tzj4mRu3+1nrTZItvYTxN2
+         OHNZVw6HmweZ+hOsNdWk5mqr1udwdRUwKDqD76g+AK9pRrPMoQOz8cGp1LaSdvRygz4Q
+         TaHRI8Yo1Guwi6g8ji9j6v4THvZqCABg+613C15SWHvQjxWIzMIZ8WR/HUjkNWYd54n4
+         1fs0tc9U1KgTUf4d9NXnFAQ75CMlghD+Jz7ZzOPkKG0pbnJIkxeN4dh4IvBA3EthOF9b
+         /KfSwxcVXhCCnQczmhSvwO8kvvvN28shNX/+OWMmnRQGA9c/UAwU2hUMs9b3CgDo2qny
+         8CCg==
+X-Gm-Message-State: AGRZ1gKTKbvHEFvYMUdV+n95PajkBMe1TRhPVhz6ka8044HoiNc+QrWa
+        +9+qIjYsnzBMWvzEjYnkyrEHTQ==
+X-Google-Smtp-Source: AJdET5d8Tw99h0QcD8Xuse2qTw59Eh4HE74yp9sfGzesiO0My/VvlD4Kh8konllMUapl4cOpFet28w==
+X-Received: by 2002:a25:2c93:: with SMTP id s141-v6mr4831307ybs.193.1541021244888;
+        Wed, 31 Oct 2018 14:27:24 -0700 (PDT)
+Received: from kudzu.us (76-230-155-4.lightspeed.rlghnc.sbcglobal.net. [76.230.155.4])
+        by smtp.gmail.com with ESMTPSA id d63-v6sm5694499ywf.100.2018.10.31.14.27.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 31 Oct 2018 14:27:24 -0700 (PDT)
+Date:   Wed, 31 Oct 2018 17:27:22 -0400
+From:   Jon Mason <jdmason@kudzu.us>
+To:     Serge Semin <fancer.lancer@gmail.com>
+Cc:     dave.jiang@intel.com, allenbh@gmail.com,
+        Sergey.Semin@t-platforms.ru, linux-ntb@googlegroups.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] ntb: idt: Add hwmon temperature sensor interface
+Message-ID: <20181031212721.GA2565@kudzu.us>
+References: <20180714115834.3350-1-fancer.lancer@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180714115834.3350-1-fancer.lancer@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Jul 14, 2018 at 02:58:30PM +0300, Serge Semin wrote:
+> IDT PCIe-switches are equipped with an embedded temperature sensor. It
+> works within the range [0; 127.5]C with a resolution of 0.5C. It can
+> be used to monitor the chip core temperature so to have prevent it from
+> possible overheating. It might be very topical for the chip, since it
+> gets heated like in hell especially if ASPM isn't enabled.
+> 
+> Other than the current sampled temperatur, the sensor interface exposes
+> history registors with lowest and highest measured temperature, thresholds
+> and alarm IRQs enabled/disable bits, ADC/filter settings. The device manual
+> states that the switch is able to generate a msi interrupt on PCIe upstreams
+> if the temperature crosses one of three configurable thresholds. But in
+> practice we discovered that the enable/disable threshold IRQs bits interface
+> is very broken (see the third patch commit message), so it can't be used
+> to create the hwmon alarm interface. As the result we had to remove the
+> already available temperature sensor IRQ handler and disable the corresponding
+> interrupt.
+> 
+> Current version of the driver provides following standard hwmon sysfs
+> files: temperature input, lowest and highest measured temperature
+> with possibility to reset the history, temperature offset. The rest of the
+> nodes can't be safely implemented for the chip due to the described issues.
+> 
+> Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
 
-Folks, could we please review this patch for upstream inclusion?
+FYI, I'm waiting on you to correct the kbuild issues.  I have been
+assuming you knew this, but given the lack of follow-up patches I am
+beginning to this you might believe I'm ignoring them.  I'm not :)
 
-Thanks.
+Thanks,
+Jon
 
-
-From: Larry Chen <lchen@suse.com>
-Subject: ocfs2: fix deadlock caused by ocfs2_defrag_extent
-
-ocfs2_defrag_extent may fall into deadlock.
-
-ocfs2_ioctl_move_extents
-  ocfs2_ioctl_move_extents
-    ocfs2_move_extents
-      ocfs2_defrag_extent
-        ocfs2_lock_allocators_move_extents
-
-          ocfs2_reserve_clusters
-            inode_lock GLOBAL_BITMAP_SYSTEM_INODE
-
-	  __ocfs2_flush_truncate_log
-            inode_lock GLOBAL_BITMAP_SYSTEM_INODE
-
-As backtrace shows above, ocfs2_reserve_clusters() will call inode_lock
-against the global bitmap if local allocator has not sufficient cluters. 
-Once global bitmap could meet the demand, ocfs2_reserve_cluster will
-return success with global bitmap locked.
-
-After ocfs2_reserve_cluster(), if truncate log is full,
-__ocfs2_flush_truncate_log() will definitely fall into deadlock because it
-needs to inode_lock global bitmap, which has already been locked.
-
-To fix this bug, we could remove from ocfs2_lock_allocators_move_extents()
-the code which intends to lock global allocator, and put the removed code
-after __ocfs2_flush_truncate_log().
-
-ocfs2_lock_allocators_move_extents() is refered by 2 places, one is here,
-the other does not need the data allocator context, which means this patch
-does not affect the caller so far.
-
-[lchen@suse.com: rename ocfs2_lock_allocators_move_extents() to ocfs2_lock_meta_allocator_move_extents(), add some comments]
-  Link: http://lkml.kernel.org/r/20180902091455.23862-1-lchen@suse.com
-Link: http://lkml.kernel.org/r/20180827080121.31145-1-lchen@suse.com
-Signed-off-by: Larry Chen <lchen@suse.com>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Joseph Qi <jiangqi903@gmail.com>
-Cc: Changwei Ge <ge.changwei@h3c.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- fs/ocfs2/move_extents.c |   40 +++++++++++++++++++++++---------------
- 1 file changed, 25 insertions(+), 15 deletions(-)
-
---- a/fs/ocfs2/move_extents.c~fix-dead-lock-caused-by-ocfs2_defrag_extent
-+++ a/fs/ocfs2/move_extents.c
-@@ -162,7 +162,7 @@ out:
-  * in some cases, we don't need to reserve clusters, just let data_ac
-  * be NULL.
-  */
--static int ocfs2_lock_allocators_move_extents(struct inode *inode,
-+static int ocfs2_lock_meta_allocator_move_extents(struct inode *inode,
- 					struct ocfs2_extent_tree *et,
- 					u32 clusters_to_move,
- 					u32 extents_to_split,
-@@ -192,13 +192,6 @@ static int ocfs2_lock_allocators_move_ex
- 		goto out;
- 	}
- 
--	if (data_ac) {
--		ret = ocfs2_reserve_clusters(osb, clusters_to_move, data_ac);
--		if (ret) {
--			mlog_errno(ret);
--			goto out;
--		}
--	}
- 
- 	*credits += ocfs2_calc_extend_credits(osb->sb, et->et_root_el);
- 
-@@ -257,10 +250,11 @@ static int ocfs2_defrag_extent(struct oc
- 		}
- 	}
- 
--	ret = ocfs2_lock_allocators_move_extents(inode, &context->et, *len, 1,
--						 &context->meta_ac,
--						 &context->data_ac,
--						 extra_blocks, &credits);
-+	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
-+						*len, 1,
-+						&context->meta_ac,
-+						&context->data_ac,
-+						extra_blocks, &credits);
- 	if (ret) {
- 		mlog_errno(ret);
- 		goto out;
-@@ -283,6 +277,21 @@ static int ocfs2_defrag_extent(struct oc
- 		}
- 	}
- 
-+	/*
-+	 * Make sure ocfs2_reserve_cluster is called after
-+	 * __ocfs2_flush_truncate_log, otherwise, dead lock may happen.
-+	 *
-+	 * If ocfs2_reserve_cluster is called
-+	 * before __ocfs2_flush_truncate_log, dead lock on global bitmap
-+	 * may happen.
-+	 *
-+	 */
-+	ret = ocfs2_reserve_clusters(osb, *len, &context->data_ac);
-+	if (ret) {
-+		mlog_errno(ret);
-+		goto out_unlock_mutex;
-+	}
-+
- 	handle = ocfs2_start_trans(osb, credits);
- 	if (IS_ERR(handle)) {
- 		ret = PTR_ERR(handle);
-@@ -600,9 +609,10 @@ static int ocfs2_move_extent(struct ocfs
- 		}
- 	}
- 
--	ret = ocfs2_lock_allocators_move_extents(inode, &context->et, len, 1,
--						 &context->meta_ac,
--						 NULL, extra_blocks, &credits);
-+	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
-+						len, 1,
-+						&context->meta_ac,
-+						NULL, extra_blocks, &credits);
- 	if (ret) {
- 		mlog_errno(ret);
- 		goto out;
-_
-
+> 
+> Serge Semin (4):
+>   ntb: idt: Alter temperature read method
+>   ntb: idt: Add basic hwmon sysfs interface
+>   ntb: idt: Discard temperature sensor IRQ handler
+>   ntb: idt: Alter the driver info comments
+> 
+>  drivers/ntb/hw/idt/Kconfig      |   4 +-
+>  drivers/ntb/hw/idt/ntb_hw_idt.c | 317 ++++++++++++++++++++++++++++++++++------
+>  drivers/ntb/hw/idt/ntb_hw_idt.h |  87 ++++++++++-
+>  3 files changed, 353 insertions(+), 55 deletions(-)
+> 
+> -- 
+> 2.12.0
+> 
