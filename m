@@ -7,43 +7,45 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EFD4ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC7B5C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C3A020843
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B66820821
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uGsH/GZZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C3A020843
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YWige8wr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B66820821
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729078AbeKAIHk (ORCPT
+        id S1729093AbeKAIHm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:07:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55598 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:07:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727308AbeKAIHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:07:39 -0400
+        id S1729065AbeKAIHl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:07:41 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7349220830;
-        Wed, 31 Oct 2018 23:07:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE03120821;
+        Wed, 31 Oct 2018 23:07:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027248;
-        bh=PWEEDArc6o/tcTam/X7oKdXsVa4AEnWWR4Z7ICtEGnw=;
+        s=default; t=1541027250;
+        bh=2u9N2z5t4ZTRPc/Yr1WHTsSxUZCkNrie02SwsGBTvBw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uGsH/GZZd+q1hN08yIrGLjF/KCT9kJBkJyYei+BB2tXn5KHxwLl+AaHmFFk2ciuZH
-         +5ccIIm6EYYGHVNDSXaEZ4Yjyw+ZrpX4Vh6szXKne67f4qOvz/eWlS24h1/IvX/I3i
-         2B9pKXuYs44J5EIBOAfMXTJ+rxivm6cgGrZR6Pco=
+        b=YWige8wrrsnJ49o6/fYDBYpraPNOOelnlyFQ9ftfrNCbuh7IepF0fMCaMOQTx7Lw9
+         bvDX7suSvbfuFPRPkQemxLnMz4RBfpI9IJrMK2SejN+UsXHZ4cNz/bzxmAb6UmN8rj
+         Ahi0gAh0WeECE6bGLK5Rb3xpjcyI/GvNyEkNbygI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Theodore Ts'o <tytso@mit.edu>, stable@kernel.org,
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 117/146] ext4: fix argument checking in EXT4_IOC_MOVE_EXT
-Date:   Wed, 31 Oct 2018 19:05:12 -0400
-Message-Id: <20181031230541.28822-117-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 120/146] nvmem: check the return value of nvmem_add_cells()
+Date:   Wed, 31 Oct 2018 19:05:15 -0400
+Message-Id: <20181031230541.28822-120-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -52,48 +54,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-[ Upstream commit f18b2b83a727a3db208308057d2c7945f368e625 ]
+[ Upstream commit fa72d847d68d7833b77a4bef944cf2c5baf56f49 ]
 
-If the starting block number of either the source or destination file
-exceeds the EOF, EXT4_IOC_MOVE_EXT should return EINVAL.
+This function can fail so check its return value in nvmem_register()
+and act accordingly.
 
-Also fixed the helper function mext_check_coverage() so that if the
-logical block is beyond EOF, make it return immediately, instead of
-looping until the block number wraps all the away around.  This takes
-long enough that if there are multiple threads trying to do pound on
-an the same inode doing non-sensical things, it can end up triggering
-the kernel's soft lockup detector.
-
-Reported-by: syzbot+c61979f6f2cba5cb3c06@syzkaller.appspotmail.com
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ext4/move_extent.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/nvmem/core.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
-index a409ff70d67b..2f5be02fc6f6 100644
---- a/fs/ext4/move_extent.c
-+++ b/fs/ext4/move_extent.c
-@@ -516,9 +516,13 @@ mext_check_arguments(struct inode *orig_inode,
- 			orig_inode->i_ino, donor_inode->i_ino);
- 		return -EINVAL;
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index aa1657831b70..7c530c88b3fb 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -516,11 +516,17 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
+ 			goto err_device_del;
  	}
--	if (orig_eof < orig_start + *len - 1)
-+	if (orig_eof <= orig_start)
-+		*len = 0;
-+	else if (orig_eof < orig_start + *len - 1)
- 		*len = orig_eof - orig_start;
--	if (donor_eof < donor_start + *len - 1)
-+	if (donor_eof <= donor_start)
-+		*len = 0;
-+	else if (donor_eof < donor_start + *len - 1)
- 		*len = donor_eof - donor_start;
- 	if (!*len) {
- 		ext4_debug("ext4 move extent: len should not be 0 "
+ 
+-	if (config->cells)
+-		nvmem_add_cells(nvmem, config->cells, config->ncells);
++	if (config->cells) {
++		rval = nvmem_add_cells(nvmem, config->cells, config->ncells);
++		if (rval)
++			goto err_teardown_compat;
++	}
+ 
+ 	return nvmem;
+ 
++err_teardown_compat:
++	if (config->compat)
++		device_remove_bin_file(nvmem->base_dev, &nvmem->eeprom);
+ err_device_del:
+ 	device_del(&nvmem->dev);
+ err_put_device:
 -- 
 2.17.1
 
