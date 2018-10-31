@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09FEBC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:37:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5180DC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:37:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C634320664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:37:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BC9F20664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:37:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EPu4OIZT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C634320664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lfFmzCGf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BC9F20664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730265AbeKAIhu (ORCPT
+        id S1730267AbeKAIiD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:37:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58156 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:38:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729996AbeKAIIt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:08:49 -0400
+        id S1727339AbeKAIIq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:08:46 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D40AE20840;
-        Wed, 31 Oct 2018 23:08:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5805120843;
+        Wed, 31 Oct 2018 23:08:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027318;
-        bh=wQCunkimjRfJsWlVZJElw7eDKwQ5/GHTnupsgtHqQNg=;
+        s=default; t=1541027314;
+        bh=3jNxAO5z5jxM6hlgB0cbf7krl/KNnNIplASNPyPZSAw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EPu4OIZTV87ybKWi9qj70J09IPHVCYq01KFW8K/PknJfBbjmgZdxmqFg42p2HUGcR
-         J5SzXahG+kn8GiShCRE1hwhW7dBv8Hc4M5K7NPQe3WH4/ANck13aaNQn1TvwuDY6LU
-         8KkACdwyOpAEOIkFPL1MmPAqDVBxWB4GD89rZYGY=
+        b=lfFmzCGfxJss9e8bRuxwwYaKTZdTNYpY8WKiBblbdzwx//9S2GImXBIdr7KN1juRx
+         T/TXdy+/3F1iZ7NVCthrxxFUPt76/WQH40VhOX9wknKbVMfPxYjIjfqfSGjrJTcgo+
+         qseIL5yEovtONPOIKaUjve1COGeLlh+BGmG/caHs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Fuyun Liang <liangfuyun1@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     YueHaibing <yuehaibing@huawei.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 048/126] net: hns3: Set STATE_DOWN bit of hdev state when stopping net
-Date:   Wed, 31 Oct 2018 19:06:36 -0400
-Message-Id: <20181031230754.29029-48-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 044/126] pinctrl: sunxi: fix 'pctrl->functions' allocation in sunxi_pinctrl_build_state
+Date:   Wed, 31 Oct 2018 19:06:32 -0400
+Message-Id: <20181031230754.29029-44-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -55,52 +53,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fuyun Liang <liangfuyun1@huawei.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 2f7e489611bc685b8e00aba436032a8aac6cac57 ]
+[ Upstream commit a4925311a5443126ecc90671a1604ea7b0f5b32e ]
 
-We clear STATE_DOWN bit of hdev state when starting net, but do not set
-it again when stopping net. It causes that the net is down, but hdev state
-is still up. STATE_DOWN bit of hdev state should be set when stopping net.
+fixes following Smatch static check warning:
 
-Fixes: 46a3df9f9718 ("net: hns3: Add HNS3 Acceleration Engine & Compatibility Layer Support")
-Fixes: e2cb1dec9779 ("net: hns3: Add HNS3 VF HCL(Hardware Compatibility Layer) Support")
-Signed-off-by: Fuyun Liang <liangfuyun1@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+ ./drivers/pinctrl/sunxi/pinctrl-sunxi.c:1112 sunxi_pinctrl_build_state()
+ warn: passing devm_ allocated variable to kfree. 'pctrl->functions'
+
+As we will be calling krealloc() on pointer 'pctrl->functions', which means
+kfree() will be called in there, devm_kzalloc() shouldn't be used with
+the allocation in the first place.  Fix the warning by calling kcalloc()
+and managing the free procedure in error path on our own.
+
+Fixes: 0e37f88d9ad8 ("ARM: sunxi: Add pinctrl driver for Allwinner SoCs")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c   | 2 ++
- drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c | 2 ++
- 2 files changed, 4 insertions(+)
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 15f2dd4824f4..73b04e11ec0b 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -3794,6 +3794,8 @@ static void hclge_ae_stop(struct hnae3_handle *handle)
- 	struct hclge_dev *hdev = vport->back;
- 	int i;
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+index 4d9bf9b3e9f3..26ebedc1f6d3 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+@@ -1079,10 +1079,9 @@ static int sunxi_pinctrl_build_state(struct platform_device *pdev)
+ 	 * We suppose that we won't have any more functions than pins,
+ 	 * we'll reallocate that later anyway
+ 	 */
+-	pctl->functions = devm_kcalloc(&pdev->dev,
+-				       pctl->ngroups,
+-				       sizeof(*pctl->functions),
+-				       GFP_KERNEL);
++	pctl->functions = kcalloc(pctl->ngroups,
++				  sizeof(*pctl->functions),
++				  GFP_KERNEL);
+ 	if (!pctl->functions)
+ 		return -ENOMEM;
  
-+	set_bit(HCLGE_STATE_DOWN, &hdev->state);
-+
- 	del_timer_sync(&hdev->service_timer);
- 	cancel_work_sync(&hdev->service_task);
- 	clear_bit(HCLGE_STATE_SERVICE_SCHED, &hdev->state);
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-index 212c7bf5ea4a..6090a7cd83e1 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-@@ -1442,6 +1442,8 @@ static void hclgevf_ae_stop(struct hnae3_handle *handle)
- 	struct hclgevf_dev *hdev = hclgevf_ae_get_hdev(handle);
- 	int i, queue_id;
+@@ -1133,8 +1132,10 @@ static int sunxi_pinctrl_build_state(struct platform_device *pdev)
  
-+	set_bit(HCLGEVF_STATE_DOWN, &hdev->state);
-+
- 	for (i = 0; i < hdev->num_tqps; i++) {
- 		/* Ring disable */
- 		queue_id = hclgevf_get_queue_id(handle->kinfo.tqp[i]);
+ 			func_item = sunxi_pinctrl_find_function_by_name(pctl,
+ 									func->name);
+-			if (!func_item)
++			if (!func_item) {
++				kfree(pctl->functions);
+ 				return -EINVAL;
++			}
+ 
+ 			if (!func_item->groups) {
+ 				func_item->groups =
+@@ -1142,8 +1143,10 @@ static int sunxi_pinctrl_build_state(struct platform_device *pdev)
+ 						     func_item->ngroups,
+ 						     sizeof(*func_item->groups),
+ 						     GFP_KERNEL);
+-				if (!func_item->groups)
++				if (!func_item->groups) {
++					kfree(pctl->functions);
+ 					return -ENOMEM;
++				}
+ 			}
+ 
+ 			func_grp = func_item->groups;
 -- 
 2.17.1
 
