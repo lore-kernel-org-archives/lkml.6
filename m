@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C748C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:15:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC47FC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:16:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6FA02145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:15:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B56E620840
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:16:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uBLbzova"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6FA02145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cp2te6XV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B56E620840
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732329AbeKAIQG (ORCPT
+        id S1732024AbeKAIMG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:16:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36596 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732009AbeKAIMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 1 Nov 2018 04:12:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36580 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730936AbeKAIMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:12:05 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03E0520854;
+        by mail.kernel.org (Postfix) with ESMTPSA id 189F1204FD;
         Wed, 31 Oct 2018 23:11:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027513;
-        bh=cfYlc4bYnnCncqlJhXd8YMlRUJJ/2wpPo+5FnuGXmj0=;
+        s=default; t=1541027512;
+        bh=YB3AJ2AB9OEX7IEBG1+IDrG1/MRSKTdSkcueFnpKx5Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uBLbzova4EKfsyX0jNvA5qsmE6qXVk4WFdqFNrLbj2NfF34GmmyPBhpisWHVkYU/u
-         z1RpIPPaA+0lEtx4QECfmUbfxhP3RYIBuFaG3HabYiZBSHZU9zVxC3eJbb4zaorUqV
-         KLkEO+ddpRzqZ3Zx00KNlrNhTkegxUDSgbg88Mbk=
+        b=cp2te6XVHvFyEUP5xz34KrBkKHyMLmG5InqhkrUFr7UkMxQh74mledkwL8535ztbT
+         iHgYUCksNdRDTxSwL5seI5soReSpglPkxgQB6nOzDGCXN7WHGFlSnKDNeCTEU3iV0B
+         S4+odcv+mlhGJ1ekXU1l/CUyGrjGvYsBISUBn88A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Douglas Anderson <dianders@chromium.org>,
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Doug Anderson <dianders@chromium.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 17/32] pinctrl: spmi-mpp: Fix pmic_mpp_config_get() to be compliant
-Date:   Wed, 31 Oct 2018 19:11:22 -0400
-Message-Id: <20181031231137.29429-17-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 16/32] pinctrl: qcom: spmi-mpp: Fix drive strength setting
+Date:   Wed, 31 Oct 2018 19:11:21 -0400
+Message-Id: <20181031231137.29429-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231137.29429-1-sashal@kernel.org>
 References: <20181031231137.29429-1-sashal@kernel.org>
@@ -53,93 +54,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
+From: Stephen Boyd <swboyd@chromium.org>
 
-[ Upstream commit 0d5b476f8f57fcb06c45fe27681ac47254f63fd2 ]
+[ Upstream commit 89c68b102f13f123aaef22b292526d6b92501334 ]
 
-If you look at "pinconf-groups" in debugfs for ssbi-mpp you'll notice
-it looks like nonsense.
+It looks like we parse the drive strength setting here, but never
+actually write it into the hardware to update it. Parse the setting and
+then write it at the end of the pinconf setting function so that it
+actually sticks in the hardware.
 
-The problem is fairly well described in commit 1cf86bc21257 ("pinctrl:
-qcom: spmi-gpio: Fix pmic_gpio_config_get() to be compliant") and
-commit 05e0c828955c ("pinctrl: msm: Fix msm_config_group_get() to be
-compliant"), but it was pointed out that ssbi-mpp has the same
-problem.  Let's fix it there too.
-
-NOTE: in case it's helpful to someone reading this, the way to tell
-whether to do the -EINVAL or not is to look at the PCONFDUMP for a
-given attribute.  If the last element (has_arg) is false then you need
-to do the -EINVAL trick.
-
-ALSO NOTE: it seems unlikely that the values returned when we try to
-get PIN_CONFIG_BIAS_PULL_UP will actually be printed since "has_arg"
-is false for that one, but I guess it's still fine to return different
-values so I kept doing that.  It seems like another driver (ssbi-gpio)
-uses a custom attribute (PM8XXX_QCOM_PULL_UP_STRENGTH) for something
-similar so maybe a future change should do that here too.
-
-Fixes: cfb24f6ebd38 ("pinctrl: Qualcomm SPMI PMIC MPP pin controller driver")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Fixes: 0e948042c420 ("pinctrl: qcom: spmi-mpp: Implement support for sink mode")
+Cc: Doug Anderson <dianders@chromium.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+ drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-index 8301e600e7a8..5cd9a81a6060 100644
+index 0643abfd8a50..8301e600e7a8 100644
 --- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
 +++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-@@ -347,13 +347,12 @@ static int pmic_mpp_config_get(struct pinctrl_dev *pctldev,
- 
- 	switch (param) {
- 	case PIN_CONFIG_BIAS_DISABLE:
--		arg = pad->pullup == PMIC_MPP_PULL_UP_OPEN;
-+		if (pad->pullup != PMIC_MPP_PULL_UP_OPEN)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_BIAS_PULL_UP:
- 		switch (pad->pullup) {
--		case PMIC_MPP_PULL_UP_OPEN:
--			arg = 0;
--			break;
- 		case PMIC_MPP_PULL_UP_0P6KOHM:
- 			arg = 600;
+@@ -459,7 +459,7 @@ static int pmic_mpp_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 			pad->dtest = arg;
  			break;
-@@ -368,13 +367,17 @@ static int pmic_mpp_config_get(struct pinctrl_dev *pctldev,
- 		}
- 		break;
- 	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
--		arg = !pad->is_enabled;
-+		if (pad->is_enabled)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_POWER_SOURCE:
- 		arg = pad->power_source;
- 		break;
- 	case PIN_CONFIG_INPUT_ENABLE:
--		arg = pad->input_enabled;
-+		if (!pad->input_enabled)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_OUTPUT:
- 		arg = pad->out_value;
-@@ -386,7 +389,9 @@ static int pmic_mpp_config_get(struct pinctrl_dev *pctldev,
- 		arg = pad->amux_input;
- 		break;
- 	case PMIC_MPP_CONF_PAIRED:
--		arg = pad->paired;
-+		if (!pad->paired)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_DRIVE_STRENGTH:
- 		arg = pad->drive_strength;
+ 		case PIN_CONFIG_DRIVE_STRENGTH:
+-			arg = pad->drive_strength;
++			pad->drive_strength = arg;
+ 			break;
+ 		case PMIC_MPP_CONF_AMUX_ROUTE:
+ 			if (arg >= PMIC_MPP_AMUX_ROUTE_ABUS4)
+@@ -503,6 +503,10 @@ static int pmic_mpp_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 	if (ret < 0)
+ 		return ret;
+ 
++	ret = pmic_mpp_write(state, pad, PMIC_MPP_REG_SINK_CTL, pad->drive_strength);
++	if (ret < 0)
++		return ret;
++
+ 	val = pad->is_enabled << PMIC_MPP_REG_MASTER_EN_SHIFT;
+ 
+ 	return pmic_mpp_write(state, pad, PMIC_MPP_REG_EN_CTL, val);
 -- 
 2.17.1
 
