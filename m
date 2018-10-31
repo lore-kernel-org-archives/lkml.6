@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2736C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C982C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EA9720664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFD7D20823
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1+pUqLc7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EA9720664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oSEOKkUK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFD7D20823
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728564AbeKAIHD (ORCPT
+        id S1728580AbeKAIHD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 1 Nov 2018 04:07:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54430 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:54462 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728512AbeKAIHB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:07:01 -0400
+        id S1728533AbeKAIHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:07:03 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E071520821;
-        Wed, 31 Oct 2018 23:06:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B618920823;
+        Wed, 31 Oct 2018 23:06:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027211;
-        bh=Iq7wlvSUDkCpAU+LDyoCb3Q+Bwtn72s/fPFvJCGEZNg=;
+        s=default; t=1541027212;
+        bh=+n7ZDG8QYndBhDshQ1CluhLqFF07Cj9TFZz/kJW3NOI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1+pUqLc7rWURkCaNQhGsb6IXnimqWjCfWcIbGNB25ohSTZhCZd06JccAmE5/FI2Ky
-         VrgheAM5yAadYafYu3LXmb3a2mP0sYntS5fPuGp+C7ZjenkdLslGU7/fpXr+KvwA83
-         d3SUPL7+Lezd357Nz4oPK5b1fjNAjhxH4V3f0h1E=
+        b=oSEOKkUKRsUGH0LMN7pzRJLoCYj3v80cw5hKwSruFY1dMpffFIKTlt0SMcGqyqXVP
+         jdTsFlJqf8MTXTLTfJc/WFfykeIcPoZdQ89GVO85lCxiz+ecOXY7OrJGs7tCN190LT
+         j8q7mVCTBLY7IvFvhaVKE8BhSLaDJtKMPOlJN4f4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+Cc:     Sara Sharon <sara.sharon@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 075/146] libertas_tf: prevent underflow in process_cmdrequest()
-Date:   Wed, 31 Oct 2018 19:04:30 -0400
-Message-Id: <20181031230541.28822-75-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 076/146] iwlwifi: mvm: fix BAR seq ctrl reporting
+Date:   Wed, 31 Oct 2018 19:04:31 -0400
+Message-Id: <20181031230541.28822-76-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -53,38 +53,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Sara Sharon <sara.sharon@intel.com>
 
-[ Upstream commit 3348ef6a6a126706d6a73ed40c18d8033df72783 ]
+[ Upstream commit 941ab4eb66c10bc5c7234e83a7a858b2806ed151 ]
 
-If recvlength is less than MESSAGE_HEADER_LEN (4) we would end up
-corrupting memory.
+There is a bug in FW where the sequence control may be
+incorrect, and the driver overrides it with the value
+of the ieee80211 header.
 
-Fixes: c305a19a0d0a ("libertas_tf: usb specific functions")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+However, in BAR there is no sequence control in the header,
+which result with arbitrary sequence.
+
+This access to an unknown location is bad and it makes the
+logs very confusing - so fix it.
+
+Signed-off-by: Sara Sharon <sara.sharon@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/marvell/libertas_tf/if_usb.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/tx.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/wireless/marvell/libertas_tf/if_usb.c b/drivers/net/wireless/marvell/libertas_tf/if_usb.c
-index e92fc5001171..789337ea676a 100644
---- a/drivers/net/wireless/marvell/libertas_tf/if_usb.c
-+++ b/drivers/net/wireless/marvell/libertas_tf/if_usb.c
-@@ -605,9 +605,10 @@ static inline void process_cmdrequest(int recvlength, uint8_t *recvbuff,
- {
- 	unsigned long flags;
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tx.c b/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
+index ff193dca2020..2d21f0a1fa00 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
+@@ -1405,6 +1405,7 @@ static void iwl_mvm_rx_tx_cmd_single(struct iwl_mvm *mvm,
+ 	while (!skb_queue_empty(&skbs)) {
+ 		struct sk_buff *skb = __skb_dequeue(&skbs);
+ 		struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
++		struct ieee80211_hdr *hdr = (void *)skb->data;
+ 		bool flushed = false;
  
--	if (recvlength > LBS_CMD_BUFFER_SIZE) {
-+	if (recvlength < MESSAGE_HEADER_LEN ||
-+	    recvlength > LBS_CMD_BUFFER_SIZE) {
- 		lbtf_deb_usbd(&cardp->udev->dev,
--			     "The receive buffer is too large\n");
-+			     "The receive buffer is invalid: %d\n", recvlength);
- 		kfree_skb(skb);
- 		return;
- 	}
+ 		skb_freed++;
+@@ -1449,11 +1450,11 @@ static void iwl_mvm_rx_tx_cmd_single(struct iwl_mvm *mvm,
+ 			info->flags |= IEEE80211_TX_STAT_AMPDU_NO_BACK;
+ 		info->flags &= ~IEEE80211_TX_CTL_AMPDU;
+ 
+-		/* W/A FW bug: seq_ctl is wrong when the status isn't success */
+-		if (status != TX_STATUS_SUCCESS) {
+-			struct ieee80211_hdr *hdr = (void *)skb->data;
++		/* W/A FW bug: seq_ctl is wrong upon failure / BAR frame */
++		if (ieee80211_is_back_req(hdr->frame_control))
++			seq_ctl = 0;
++		else if (status != TX_STATUS_SUCCESS)
+ 			seq_ctl = le16_to_cpu(hdr->seq_ctrl);
+-		}
+ 
+ 		if (unlikely(!seq_ctl)) {
+ 			struct ieee80211_hdr *hdr = (void *)skb->data;
 -- 
 2.17.1
 
