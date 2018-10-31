@@ -2,211 +2,131 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D06BFC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 17:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB42C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 17:58:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8973B2081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 17:55:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8973B2081B
+	by mail.kernel.org (Postfix) with ESMTP id 504CF2080A
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 17:58:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 504CF2080A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729988AbeKACyU (ORCPT
+        id S1729995AbeKAC5F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 22:54:20 -0400
-Received: from foss.arm.com ([217.140.101.70]:44704 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729745AbeKACyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 22:54:20 -0400
+        Wed, 31 Oct 2018 22:57:05 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44740 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729737AbeKAC5E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 22:57:04 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5B15080D;
-        Wed, 31 Oct 2018 10:55:17 -0700 (PDT)
-Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CCDC63F6A8;
-        Wed, 31 Oct 2018 10:55:14 -0700 (PDT)
-Subject: Re: [PATCH v6 18/18] kvm: arm64: Allow tuning the physical address
- size for VM
-To:     Christoffer Dall <christoffer.dall@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, cdall@kernel.org,
-        kvm@vger.kernel.org, marc.zyngier@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, dave.martin@arm.com,
-        pbonzini@redhat.com, kvmarm@lists.cs.columbia.edu,
-        Punit Agrawal <punit.agrawal@arm.com>
-References: <20180926163258.20218-1-suzuki.poulose@arm.com>
- <20180926163258.20218-19-suzuki.poulose@arm.com>
- <20181031142216.GD12057@e113682-lin.lund.arm.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <ebfbc17a-5954-7a67-0ae4-b911ba5f8b9e@arm.com>
-Date:   Wed, 31 Oct 2018 17:55:13 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 22E3280D;
+        Wed, 31 Oct 2018 10:58:01 -0700 (PDT)
+Received: from localhost (e105922-lin.cambridge.arm.com [10.1.197.25])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 93ABB3F6A8;
+        Wed, 31 Oct 2018 10:58:00 -0700 (PDT)
+From:   Punit Agrawal <punit.agrawal@arm.com>
+To:     kvmarm@lists.cs.columbia.edu
+Cc:     Punit Agrawal <punit.agrawal@arm.com>, marc.zyngier@arm.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, suzuki.poulose@arm.com,
+        punitagrawal@gmail.com
+Subject: [PATCH v9 0/8] KVM: Support PUD hugepage at stage 2
+Date:   Wed, 31 Oct 2018 17:57:37 +0000
+Message-Id: <20181031175745.18650-1-punit.agrawal@arm.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <20181031142216.GD12057@e113682-lin.lund.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+X-ARM-No-Footer: FoSSMail
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoffer,
+This series is an update to the PUD hugepage support previously posted
+at [0]. This patchset adds support for PUD hugepages at stage 2 a
+feature that is useful on cores that have support for large sized TLB
+mappings (e.g., 1GB for 4K granule).
 
-On 31/10/18 14:22, Christoffer Dall wrote:
-> On Wed, Sep 26, 2018 at 05:32:54PM +0100, Suzuki K Poulose wrote:
->> Allow specifying the physical address size limit for a new
->> VM via the kvm_type argument for the KVM_CREATE_VM ioctl. This
->> allows us to finalise the stage2 page table as early as possible
->> and hence perform the right checks on the memory slots
->> without complication. The size is encoded as Log2(PA_Size) in
->> bits[7:0] of the type field. For backward compatibility the
->> value 0 is reserved and implies 40bits. Also, lift the limit
->> of the IPA to host limit and allow lower IPA sizes (e.g, 32).
->>
->> The userspace could check the extension KVM_CAP_ARM_VM_IPA_SIZE
->> for the availability of this feature. The cap check returns the
->> maximum limit for the physical address shift supported by the host.
->>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> Cc: Christoffer Dall <cdall@kernel.org>
->> Cc: Peter Maydell <peter.maydell@linaro.org>
->> Cc: Paolo Bonzini <pbonzini@redhat.com>
->> Cc: Radim Krčmář <rkrcmar@redhat.com>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
+The patches are based on the latest upstream kernel.
 
->> @@ -192,17 +195,23 @@ int kvm_arm_config_vm(struct kvm *kvm, unsigned long type)
->>   	u32 parange, phys_shift;
->>   	u8 lvls;
->>   
->> -	if (type)
->> +	if (type & ~KVM_VM_TYPE_ARM_IPA_SIZE_MASK)
->>   		return -EINVAL;
->>   
->> +	phys_shift = KVM_VM_TYPE_ARM_IPA_SIZE(type);
->> +	if (phys_shift) {
->> +		if (phys_shift > kvm_ipa_limit ||
->> +		    phys_shift < 32)
->> +			return -EINVAL;
-> 
-> I am concerned here that if we allow the user to set the phys_size to 32
-> bits, then we end up with 2 levels of stage2 page tables, which means
-> that the size of a stage2 pmd mapping becomes the size of a stage2 pgd
-> mapping, yet we can still decide in user_mem_abort() that a stage2 fault
-> is backed by PMD size mappings on the host, and attempt a huge mapping
-> at stage2, which then becomes a PGD level block map, I think.
+The patches have been tested on AMD Seattle system with the following
+hugepage sizes - 2M and 1G.
 
-Yes, you're right. We will have a pgd-level block map in that case.
-This should work transparently as PMD at stage2 is folded into PGD and
-we endup marking the PGD entry as huge and the stage2 accessors deal
-with it appropriately. This is similar to having a PMD huge page with
-64K + 42bit VA (2 level page table) on stage1.
+Thanks,
+Punit
 
-> 
-> Is this handled somehow?  If so, how?
+[0] https://patchwork.kernel.org/cover/10622379/
 
-We don't prevent this. We have a guaranteed minimum number of levels
-at 2, which implies you can map a stage1 PMD huge page at stage2.
-I acknowledge that the Linux naming convention does cause some confusion
-for a "level" at stage1 and stage2 levels. But if you think of it
-from the hardware level (and like the ARM ARM defines it , Level 0-3),
-it is much simpler. i.e, you can map a huge page at level N in stage1
-into stage2 if you have that level N. It doesn't matter if stage2 has
-more or less number of levels than stage1, as long as stage2 table can
-deal with it.
+v8 -> v9
 
-> 
-> I can't see user_mem_abort() being modified to explicitly handle this
-> in your code, but perhaps the stage2_set_pmd_huge() call ends up
-> actually mapping at the stage2 pte level, but I can't tell that it does.
+* Dropped bugfix patch 1 which has been merged
 
-The stage2_set_pmd_huge() installs it at the PGD (level 2, which would
-have been PMD if we had levels > 2) slot.
+v7 -> v8
 
-pmd = stage2_get_pmd(addr)
-        \-> pud = stage2_get_pud(addr)
-              \-> pgd = kvm->arch.pgd + stage2_pgd_index(addr);
-              \-> (we have stage2_pgd_none(x) = 0 and
-              \-> stage2_pud_offset(pgd, addr) = pgd
-              \->returns (kvm->arch.pgd + stage2_pgd_index(addr);
-        \->  stage_pud_none(x) = 0 & stage2_pmd_offset(pud, addr) = pud
-        \->  returns pud (kvm->arch.pgd + stage2_pgd_index(addr))
+* Add kvm_stage2_has_pud() helper on arm32
+* Rebased to v6 of 52bit dynamic IPA support
 
-and we install the PMD huge mapping at the location.
+v6 -> v7
 
-> In any case, I think user_mem_abort() should give up on pmd/pud huge
-> mappings if the size mapped by the stage2/stage1 pmd/pud levels don't
-> line up.  What do you think?
+* Restrict thp check to exclude hugetlbfs pages - Patch 1
+* Don't update PUD entry if there's no change - Patch 9
+* Add check for PUD level in stage 2 - Patch 9
 
-Does it matter ? Personally I don't think it matters much as long as we
-are able to map the "huge" page at stage1 in the stage2 as huge, even if
-the stage2 has lesser levels and manage it well. Given that PMD huge
-pages are quite common, it would be good to exploit it when we can.
+v5 -> v6
 
-On the other hand, for stage2 PUD we are checking if the stage2 has a
-PUD level (kvm_has_stage2_pud()). May be we should relax it just like
-we do for PMD to check (kvm_stage2_levels > 2).
+* Split Patch 1 to move out the refactoring of exec permissions on
+  page table entries.
+* Patch 4 - Initialise p*dpp pointers in stage2_get_leaf_entry()
+* Patch 5 - Trigger a BUG() in kvm_pud_pfn() on arm
 
+v4 -> v5:
+* Patch 1 - Drop helper stage2_should_exec() and refactor the
+  condition to decide if a page table entry should be marked
+  executable
+* Patch 4-6 - Introduce stage2_get_leaf_entry() and use it in this and
+  latter patches
+* Patch 7 - Use stage 2 accessors instead of using the page table
+  helpers directly
+* Patch 7 - Add a note to update the PUD hugepage support when number
+  of levels of stage 2 tables differs from stage 1
 
-Thanks
-Suzuki
+v3 -> v4:
+* Patch 1 and 7 - Don't put down hugepages pte if logging is enabled
+* Patch 4-5 - Add PUD hugepage support for exec and access faults
+* Patch 6 - PUD hugepage support for aging page table entries
 
-> 
-> Thanks,
-> 
->      Christoffer
-> 
->> +	} else {
->> +		phys_shift = KVM_PHYS_SHIFT;
->> +	}
->> +
->>   	parange = read_sanitised_ftr_reg(SYS_ID_AA64MMFR0_EL1) & 7;
->>   	if (parange > ID_AA64MMFR0_PARANGE_MAX)
->>   		parange = ID_AA64MMFR0_PARANGE_MAX;
->>   	vtcr |= parange << VTCR_EL2_PS_SHIFT;
->>   
->> -	phys_shift = id_aa64mmfr0_parange_to_phys_shift(parange);
->> -	if (phys_shift > KVM_PHYS_SHIFT)
->> -		phys_shift = KVM_PHYS_SHIFT;
->>   	vtcr |= VTCR_EL2_T0SZ(phys_shift);
->>   	/*
->>   	 * Use a minimum 2 level page table to prevent splitting
->> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
->> index 07548de5c988..9b949efcfd32 100644
->> --- a/include/uapi/linux/kvm.h
->> +++ b/include/uapi/linux/kvm.h
->> @@ -750,6 +750,15 @@ struct kvm_ppc_resize_hpt {
->>   
->>   #define KVM_S390_SIE_PAGE_OFFSET 1
->>   
->> +/*
->> + * On arm64, machine type can be used to request the physical
->> + * address size for the VM. Bits[7-0] are reserved for the guest
->> + * PA size shift (i.e, log2(PA_Size)). For backward compatibility,
->> + * value 0 implies the default IPA size, 40bits.
->> + */
->> +#define KVM_VM_TYPE_ARM_IPA_SIZE_MASK	0xffULL
->> +#define KVM_VM_TYPE_ARM_IPA_SIZE(x)		\
->> +	((x) & KVM_VM_TYPE_ARM_IPA_SIZE_MASK)
->>   /*
->>    * ioctls for /dev/kvm fds:
->>    */
->> @@ -952,6 +961,7 @@ struct kvm_ppc_resize_hpt {
->>   #define KVM_CAP_S390_HPAGE_1M 156
->>   #define KVM_CAP_NESTED_STATE 157
->>   #define KVM_CAP_ARM_INJECT_SERROR_ESR 158
->> +#define KVM_CAP_ARM_VM_IPA_SIZE 159 /* returns maximum IPA bits for a VM */
->>   
->>   #ifdef KVM_CAP_IRQ_ROUTING
->>   
->> -- 
->> 2.19.0
->>
->> _______________________________________________
->> kvmarm mailing list
->> kvmarm@lists.cs.columbia.edu
->> https://lists.cs.columbia.edu/mailman/listinfo/kvmarm
+v2 -> v3:
+* Update vma_pagesize directly if THP [1/4]. Previsouly this was done
+  indirectly via hugetlb
+* Added review tag [4/4]
+
+v1 -> v2:
+* Create helper to check if the page should have exec permission [1/4]
+* Fix broken condition to detect THP hugepage [1/4]
+* Fix in-correct hunk resulting from a rebase [4/4]
+
+Punit Agrawal (8):
+  KVM: arm/arm64: Share common code in user_mem_abort()
+  KVM: arm/arm64: Re-factor setting the Stage 2 entry to exec on fault
+  KVM: arm/arm64: Introduce helpers to manipulate page table entries
+  KVM: arm64: Support dirty page tracking for PUD hugepages
+  KVM: arm64: Support PUD hugepage in stage2_is_exec()
+  KVM: arm64: Support handling access faults for PUD hugepages
+  KVM: arm64: Update age handlers to support PUD hugepages
+  KVM: arm64: Add support for creating PUD hugepages at stage 2
+
+ arch/arm/include/asm/kvm_mmu.h         |  61 +++++
+ arch/arm/include/asm/stage2_pgtable.h  |   5 +
+ arch/arm64/include/asm/kvm_mmu.h       |  48 ++++
+ arch/arm64/include/asm/pgtable-hwdef.h |   4 +
+ arch/arm64/include/asm/pgtable.h       |   9 +
+ virt/kvm/arm/mmu.c                     | 312 ++++++++++++++++++-------
+ 6 files changed, 360 insertions(+), 79 deletions(-)
+
+-- 
+2.19.1
+
