@@ -2,129 +2,107 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E81EECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:33:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E500ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:38:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D955B20664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:33:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B3B92054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:38:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="kaeQUieA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D955B20664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/nECttj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B3B92054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729639AbeKAAcQ (ORCPT
+        id S1729370AbeKAAg6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 20:32:16 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:39122 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726476AbeKAAcQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 20:32:16 -0400
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id w9VFXfph032013;
-        Thu, 1 Nov 2018 00:33:41 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w9VFXfph032013
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1541000022;
-        bh=7MVqzDRPdYZDW53V3e7ri//BecS61EPHkL2jRn69Nm0=;
+        Wed, 31 Oct 2018 20:36:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56276 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728848AbeKAAg6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 20:36:58 -0400
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B307E2054F;
+        Wed, 31 Oct 2018 15:38:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541000306;
+        bh=SrHiqprI2Igm7mZX0Lj3vPpqA6DpW9/dFrupZWZ5joY=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=kaeQUieAyfeKSQI4FWreOZvw1ljjQJ+ilSlGiDjO3btxpg0dnHi4sU6ZB09rd2Hwe
-         8DxqhQZhh5KI7vyvt8T/t6cxulnjzCj+eJaRpjN+xyuHGPeU4IqO4kj36aiDJ81eIf
-         fhZmuWFRYAFESA69yz7jFeBnu1bG5Jqf8QDV+p6WnfI3Hvok7f47Xb61j84KDwvdlG
-         lWve812/SfzKpkAwVQCMVhyiq6OxOHbNeurgFFLXz2+fD1UUIRpKE+oNDN7E6PnFc7
-         XFIrzjhFJ7KsZ0OGs3Zo55AI39wAy5y6K6jBqbOd3maoj9n7v4IyaP2dlSY3yD8PHo
-         5rhs/PDS/1/eg==
-X-Nifty-SrcIP: [209.85.221.169]
-Received: by mail-vk1-f169.google.com with SMTP id j20so4009715vke.5;
-        Wed, 31 Oct 2018 08:33:41 -0700 (PDT)
-X-Gm-Message-State: AGRZ1gJqZ+KGtWx5ojmS5ny5K0r48M4ScM9pZNEsRXhVqtd5H3lOcsXP
-        sdNk2JdAHob6p9QeSUKXJlVthxVO5EtmFIOgzA8=
-X-Google-Smtp-Source: AJdET5cSKM07kpQyZQ73G/EvgXpVGTYb+L6+vGDKhCWRoPmOB0xQTbJTKCGHcBBdV8iKhtsZJhGWT++V5NCTdRKbt4o=
-X-Received: by 2002:a1f:1d4b:: with SMTP id d72-v6mr1474118vkd.34.1541000020309;
- Wed, 31 Oct 2018 08:33:40 -0700 (PDT)
+        b=V/nECttjGJVXPeoQDl2D3ydV/pQY3WuzUX4odigd44F3QCHQ1TuffgBCdm84kl53D
+         GetHQqcEIIclpwrwqdkDMlM6vCLNk/2vrbzku8Nag/8DvxU/ORbQxAeoBhxF6u0pC6
+         4NnAVKTpFjplAha5vmmWntuP3n9PjeAXxV3kUTBo=
+Received: by mail-qk1-f172.google.com with SMTP id o125so6938046qkf.3;
+        Wed, 31 Oct 2018 08:38:26 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gJzhECBuAwYBiF6z1lej5CHYnEG7ZftHine5f8YcQi57yt3litD
+        3RgJhdNM1rWxz5c9wpSr5jh26ISPmUSG9cz5VQ==
+X-Google-Smtp-Source: AJdET5dpkLPA/853rQ+bTlNW1Qq7Llf6js2SQlVWqMJjuATT/WnZMYpf83CMTA/1m3YfXlZN0t/zpJlBsx90Ay0pjD0=
+X-Received: by 2002:ac8:173d:: with SMTP id w58mr3096992qtj.76.1541000305921;
+ Wed, 31 Oct 2018 08:38:25 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181019120952.32763-1-hch@lst.de> <20181019120952.32763-6-hch@lst.de>
- <20181019151019.GA5618@localhost>
-In-Reply-To: <20181019151019.GA5618@localhost>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 1 Nov 2018 00:33:04 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARa7xqG1iyQb9PE271L8QTC7nsaVXSAofm0hzku8T5Xvg@mail.gmail.com>
-Message-ID: <CAK7LNARa7xqG1iyQb9PE271L8QTC7nsaVXSAofm0hzku8T5Xvg@mail.gmail.com>
-Subject: Re: [PATCH 5/9] powerpc: PCI_MSI needs PCI
-To:     Josh Triplett <josh@joshtriplett.org>
-Cc:     Christoph Hellwig <hch@lst.de>, mporter@kernel.crashing.org,
-        Alex Bounine <alex.bou9@gmail.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-pci@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+References: <20180917153322.29206-1-ckeepax@opensource.cirrus.com>
+ <20180926223944.GA30051@bogus> <20180928054646.GK8485@dell>
+ <CAL_JsqLD=qzXiAptsR4X16_tYwSocFhrLJ=yh6caw1ke8YdESQ@mail.gmail.com> <20181009065522.GD32033@dell>
+In-Reply-To: <20181009065522.GD32033@dell>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 31 Oct 2018 10:38:14 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLCCMg1GeCU0_2-EvGS2FaRq4j1tFqEMswv5QBZ_jr9ZQ@mail.gmail.com>
+Message-ID: <CAL_JsqLCCMg1GeCU0_2-EvGS2FaRq4j1tFqEMswv5QBZ_jr9ZQ@mail.gmail.com>
+Subject: Re: [PATCH] mfd: arizona: Correct link for sound binding document
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        patches@opensource.cirrus.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 20, 2018 at 12:10 AM Josh Triplett <josh@joshtriplett.org> wrote:
+On Tue, Oct 9, 2018 at 1:55 AM Lee Jones <lee.jones@linaro.org> wrote:
 >
-> On Fri, Oct 19, 2018 at 02:09:48PM +0200, Christoph Hellwig wrote:
-> > Various powerpc boards select the PCI_MSI config option without selecting
-> > PCI, resulting in potentially not compilable configurations if the by
-> > default enabled PCI option is disabled.  Explicitly select PCI to ensure
-> > we always have valid configs.
-> [...]
-> > --- a/arch/powerpc/platforms/44x/Kconfig
-> > +++ b/arch/powerpc/platforms/44x/Kconfig
-> > @@ -24,6 +24,7 @@ config BLUESTONE
-> >       default n
-> >       select PPC44x_SIMPLE
-> >       select APM821xx
-> > +     select PCI
-> >       select PCI_MSI
-> >       select PPC4xx_MSI
-> >       select PPC4xx_PCI_EXPRESS
-> > @@ -78,6 +79,7 @@ config KATMAI
-> >       select 440SPe
-> >       select PCI
-> >       select PPC4xx_PCI_EXPRESS
-> > +     select PCI
-> >       select PCI_MSI
+> On Fri, 28 Sep 2018, Rob Herring wrote:
 >
-> This case already had PCI selected a couple of lines above.
-
-
-Good catch!
-
-I dropped this hunk,
-and applied to linux-kbuild.
-
-
-
-
-
-> >       select PPC4xx_MSI
-> >       help
-> > @@ -219,6 +221,7 @@ config AKEBONO
-> >       select SWIOTLB
-> >       select 476FPE
-> >       select PPC4xx_PCI_EXPRESS
-> > +     select PCI
-> >       select PCI_MSI
-> >       select PPC4xx_HSTA_MSI
-> >       select I2C
-> > --
-> > 2.19.1
+> > On Fri, Sep 28, 2018 at 12:46 AM Lee Jones <lee.jones@linaro.org> wrote:
+> > >
+> > > On Wed, 26 Sep 2018, Rob Herring wrote:
+> > >
+> > > > On Mon, Sep 17, 2018 at 04:33:22PM +0100, Charles Keepax wrote:
+> > > > > Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> > > > > ---
+> > > > >  Documentation/devicetree/bindings/mfd/arizona.txt | 2 +-
+> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > >
+> > > > Applied.
+> > >
+> > > Probably won't do any harm in this instance, but it's usually better
+> > > for MFD binding changes to go through the MFD tree to avoid
+> > > merge-conflicts.
 > >
+> > It had been sitting there for a while, so I picked it up. Plus if we
+>
+> A little over a week is not 'a while'. :)
 
+You're right. Probably should have waited 2 weeks. Developers
+shouldn't have to wait longer than that for a response (according to
+the chief penguin).
 
+> > have conflicts within a binding (other than tree wide clean ups I do),
+> > that's not a good sign that the binding is changing.
+>
+> Not sure I understand this.
 
--- 
-Best Regards
-Masahiro Yamada
+If there are multiple sets of changes to a single binding within 1
+release cycle (more than 1 really IMO), then that is a problem in and
+of itself. We may want drivers enhanced feature by feature, but I
+don't want bindings to. Bindings shouldn't be evolving. Maybe
+sometimes different people add different things, but then they need to
+work out the dependencies and conflicts, not you or me.
+
+Rob
