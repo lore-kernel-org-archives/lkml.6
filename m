@@ -7,44 +7,48 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E77C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D1DECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BA772081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DB932081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pDHnLg4x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BA772081B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="r/3ZkM0Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DB932081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730657AbeKAIJt (ORCPT
+        id S1730688AbeKAIJv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:09:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59960 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:09:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730626AbeKAIJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:09:47 -0400
+        id S1730658AbeKAIJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:09:50 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C491F20664;
-        Wed, 31 Oct 2018 23:09:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CB8A20838;
+        Wed, 31 Oct 2018 23:09:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027376;
-        bh=Q8PWVI/Q6kVjAGlTRqiIvGRgFQZpEYIyE//7dRYMANI=;
+        s=default; t=1541027378;
+        bh=uj7pqy00sEesVJHROTkKHccFKi6NjlaVwUz+BnUtPmY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pDHnLg4xtPfaJBgqwfTZfvaXyJEwhgu6N0Yu+xLZHVWSf1LZvsH0WDnsz4O8pkYIP
-         7Tublf9b+DUwM4Ys36+RSfsN4esp6EK/kCKaBbcwuTojOSOAQpyr2hR3kF2N1u98Ks
-         xqcT+3DzUIm1D9vVcQWG/QlcJ/NijprFy5VQazaA=
+        b=r/3ZkM0Z5J4h0b3hl3kCi3dSFoB6oCNIN1EljK9ZC8YdPKa7sxayWRq72ilCoSSWG
+         073gN5VX2xxePMqOZRRUSDTZK7I1qOuDXfOak1wqbBTEhoYCrOojHkmL+tjnRJlrOw
+         blhOtDhAGp2wqHLAua48UeohLrBpm+0bcqNghEO8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Casey Schaufler <casey.schaufler@intel.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Wei-Ning Huang <wnhuang@chromium.org>,
+        Julius Werner <jwerner@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 113/126] Smack: ptrace capability use fixes
-Date:   Wed, 31 Oct 2018 19:07:41 -0400
-Message-Id: <20181031230754.29029-113-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 115/126] firmware: coreboot: Unmap ioregion after device population
+Date:   Wed, 31 Oct 2018 19:07:43 -0400
+Message-Id: <20181031230754.29029-115-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -53,76 +57,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Casey Schaufler <casey.schaufler@intel.com>
+From: Stephen Boyd <swboyd@chromium.org>
 
-[ Upstream commit dcb569cf6ac99ca899b8109c128b6ae52477a015 ]
+[ Upstream commit 20edec388277b62ddfddb8b2b376a937a2cd6d1b ]
 
-This fixes a pair of problems in the Smack ptrace checks
-related to checking capabilities. In both cases, as reported
-by Lukasz Pawelczyk, the raw capability calls are used rather
-than the Smack wrapper that check addition restrictions.
-In one case, as reported by Jann Horn, the wrong task is being
-checked for capabilities.
+Both callers of coreboot_table_init() ioremap the pointer that comes in
+but they don't unmap the memory on failure. Both of them also fail probe
+immediately with the return value of coreboot_table_init(), leaking a
+mapping when it fails. The mapping isn't necessary at all after devices
+are populated either, so we can just drop the mapping here when we exit
+the function. Let's do that to simplify the code a bit and plug the leak.
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Wei-Ning Huang <wnhuang@chromium.org>
+Cc: Julius Werner <jwerner@chromium.org>
+Cc: Brian Norris <briannorris@chromium.org>
+Cc: Samuel Holland <samuel@sholland.org>
+Fixes: 570d30c2823f ("firmware: coreboot: Expose the coreboot table as a bus")
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Reviewed-by: Julius Werner <jwerner@chromium.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/smack/smack_lsm.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/firmware/google/coreboot_table.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 8b6cd5a79bfa..a81d815c81f3 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -420,6 +420,7 @@ static int smk_ptrace_rule_check(struct task_struct *tracer,
- 	struct smk_audit_info ad, *saip = NULL;
- 	struct task_smack *tsp;
- 	struct smack_known *tracer_known;
-+	const struct cred *tracercred;
+diff --git a/drivers/firmware/google/coreboot_table.c b/drivers/firmware/google/coreboot_table.c
+index 19db5709ae28..898bb9abc41f 100644
+--- a/drivers/firmware/google/coreboot_table.c
++++ b/drivers/firmware/google/coreboot_table.c
+@@ -110,7 +110,8 @@ int coreboot_table_init(struct device *dev, void __iomem *ptr)
  
- 	if ((mode & PTRACE_MODE_NOAUDIT) == 0) {
- 		smk_ad_init(&ad, func, LSM_AUDIT_DATA_TASK);
-@@ -428,7 +429,8 @@ static int smk_ptrace_rule_check(struct task_struct *tracer,
+ 	if (strncmp(header.signature, "LBIO", sizeof(header.signature))) {
+ 		pr_warn("coreboot_table: coreboot table missing or corrupt!\n");
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto out;
  	}
  
- 	rcu_read_lock();
--	tsp = __task_cred(tracer)->security;
-+	tracercred = __task_cred(tracer);
-+	tsp = tracercred->security;
- 	tracer_known = smk_of_task(tsp);
+ 	ptr_entry = (void *)ptr_header + header.header_bytes;
+@@ -137,7 +138,8 @@ int coreboot_table_init(struct device *dev, void __iomem *ptr)
  
- 	if ((mode & PTRACE_MODE_ATTACH) &&
-@@ -438,7 +440,7 @@ static int smk_ptrace_rule_check(struct task_struct *tracer,
- 			rc = 0;
- 		else if (smack_ptrace_rule == SMACK_PTRACE_DRACONIAN)
- 			rc = -EACCES;
--		else if (capable(CAP_SYS_PTRACE))
-+		else if (smack_privileged_cred(CAP_SYS_PTRACE, tracercred))
- 			rc = 0;
- 		else
- 			rc = -EACCES;
-@@ -1840,6 +1842,7 @@ static int smack_file_send_sigiotask(struct task_struct *tsk,
+ 		ptr_entry += entry.size;
+ 	}
+-
++out:
++	iounmap(ptr);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(coreboot_table_init);
+@@ -146,7 +148,6 @@ int coreboot_table_exit(void)
  {
- 	struct smack_known *skp;
- 	struct smack_known *tkp = smk_of_task(tsk->cred->security);
-+	const struct cred *tcred;
- 	struct file *file;
- 	int rc;
- 	struct smk_audit_info ad;
-@@ -1853,8 +1856,12 @@ static int smack_file_send_sigiotask(struct task_struct *tsk,
- 	skp = file->f_security;
- 	rc = smk_access(skp, tkp, MAY_DELIVER, NULL);
- 	rc = smk_bu_note("sigiotask", skp, tkp, MAY_DELIVER, rc);
--	if (rc != 0 && has_capability(tsk, CAP_MAC_OVERRIDE))
-+
-+	rcu_read_lock();
-+	tcred = __task_cred(tsk);
-+	if (rc != 0 && smack_privileged_cred(CAP_MAC_OVERRIDE, tcred))
- 		rc = 0;
-+	rcu_read_unlock();
+ 	if (ptr_header) {
+ 		bus_unregister(&coreboot_bus_type);
+-		iounmap(ptr_header);
+ 		ptr_header = NULL;
+ 	}
  
- 	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_TASK);
- 	smk_ad_setfield_u_tsk(&ad, tsk);
 -- 
 2.17.1
 
