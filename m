@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA2AC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:17:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE7A6ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:17:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A980520664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:17:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85A8F20843
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:17:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZcuuczP5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A980520664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HFlzTkiU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85A8F20843
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732088AbeKAIRw (ORCPT
+        id S1732140AbeKAISE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:17:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35878 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:18:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731859AbeKAILr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:11:47 -0400
+        id S1731844AbeKAILp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:11:45 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 37CBA20843;
-        Wed, 31 Oct 2018 23:11:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A0C592085A;
+        Wed, 31 Oct 2018 23:11:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027495;
-        bh=KmVA3M7AfROOayfWEfMOjCPI45kljvTrt428hy2xJG8=;
+        s=default; t=1541027493;
+        bh=ViuhCkOJBh6eqnMLZodmjEoHunriaYOiXNszhOVtsW0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZcuuczP5OcdZV+5tfxf0aNB4mi13BBfExo7DI+KVIoETJjFz0sDNv1GTWPRRzqOMu
-         9H1ImtZQ4V1Fao/iUlQ6CHkuPhWno5O541xqZX5LCESLbvtopqtx1Om4322pMhB5nF
-         6DKiepvNepj5lDHtGv1DZJe527DM1nY+jt6vjLXk=
+        b=HFlzTkiUCOp7S5AXt+lqOhTAFtwHeMwRuPso1hxph6u2iwhlUAgOWxtzZUj2B8KOq
+         GvSYSKKtjxbUXtaxaTtvzsLKnTpYL3LbVgzYTJRDdpmA8c9PQ+2zmNaQ9Fcln83qnw
+         PoB85OeJgQLhDx4+NoDw2+dyZTvHtyVAVwoWUtjE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Paul Cercueil <paul@crapouillou.net>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 47/48] dmaengine: dma-jz4780: Return error if not probed from DT
-Date:   Wed, 31 Oct 2018 19:10:53 -0400
-Message-Id: <20181031231054.29333-47-sashal@kernel.org>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 44/48] uio: ensure class is registered before devices
+Date:   Wed, 31 Oct 2018 19:10:50 -0400
+Message-Id: <20181031231054.29333-44-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231054.29333-1-sashal@kernel.org>
 References: <20181031231054.29333-1-sashal@kernel.org>
@@ -52,38 +53,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Cercueil <paul@crapouillou.net>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-[ Upstream commit 54f919a04cf221bc1601d1193682d4379dacacbd ]
+[ Upstream commit ae61cf5b9913027c6953a79ed3894da4f47061bd ]
 
-The driver calls clk_get() with the clock name set to NULL, which means
-that the driver could only work when probed from devicetree. From now
-on, we explicitly require the driver to be probed from devicetree.
+When both uio and the uio drivers are built in the kernel, it is possible
+for a driver to register devices before the uio class is registered.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Tested-by: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+This may result in a NULL pointer dereference later on in
+get_device_parent() when accessing the class glue_dirs spinlock.
+
+The trace looks like that:
+
+Unable to handle kernel NULL pointer dereference at virtual address 00000140
+[...]
+[<ffff0000089cc234>] _raw_spin_lock+0x14/0x48
+[<ffff0000084f56bc>] device_add+0x154/0x6a0
+[<ffff0000084f5e48>] device_create_groups_vargs+0x120/0x128
+[<ffff0000084f5edc>] device_create+0x54/0x60
+[<ffff0000086e72c0>] __uio_register_device+0x120/0x4a8
+[<ffff000008528b7c>] jaguar2_pci_probe+0x2d4/0x558
+[<ffff0000083fc18c>] local_pci_probe+0x3c/0xb8
+[<ffff0000083fd81c>] pci_device_probe+0x11c/0x180
+[<ffff0000084f88bc>] driver_probe_device+0x22c/0x2d8
+[<ffff0000084f8a24>] __driver_attach+0xbc/0xc0
+[<ffff0000084f69fc>] bus_for_each_dev+0x4c/0x98
+[<ffff0000084f81b8>] driver_attach+0x20/0x28
+[<ffff0000084f7d08>] bus_add_driver+0x1b8/0x228
+[<ffff0000084f93c0>] driver_register+0x60/0xf8
+[<ffff0000083fb918>] __pci_register_driver+0x40/0x48
+
+Return EPROBE_DEFER in that case so the driver can register the device
+later.
+
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/dma-jz4780.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/uio/uio.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
-index 7373b7a555ec..803cfb4523b0 100644
---- a/drivers/dma/dma-jz4780.c
-+++ b/drivers/dma/dma-jz4780.c
-@@ -754,6 +754,11 @@ static int jz4780_dma_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	int i, ret;
+diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
+index f0a9ea2740df..cfbfef08c94a 100644
+--- a/drivers/uio/uio.c
++++ b/drivers/uio/uio.c
+@@ -249,6 +249,8 @@ static struct class uio_class = {
+ 	.dev_groups = uio_groups,
+ };
  
-+	if (!dev->of_node) {
-+		dev_err(dev, "This driver must be probed from devicetree\n");
-+		return -EINVAL;
-+	}
++bool uio_class_registered;
 +
- 	jzdma = devm_kzalloc(dev, sizeof(*jzdma), GFP_KERNEL);
- 	if (!jzdma)
- 		return -ENOMEM;
+ /*
+  * device functions
+  */
+@@ -780,6 +782,9 @@ static int init_uio_class(void)
+ 		printk(KERN_ERR "class_register failed for uio\n");
+ 		goto err_class_register;
+ 	}
++
++	uio_class_registered = true;
++
+ 	return 0;
+ 
+ err_class_register:
+@@ -790,6 +795,7 @@ static int init_uio_class(void)
+ 
+ static void release_uio_class(void)
+ {
++	uio_class_registered = false;
+ 	class_unregister(&uio_class);
+ 	uio_major_cleanup();
+ }
+@@ -809,6 +815,9 @@ int __uio_register_device(struct module *owner,
+ 	struct uio_device *idev;
+ 	int ret = 0;
+ 
++	if (!uio_class_registered)
++		return -EPROBE_DEFER;
++
+ 	if (!parent || !info || !info->name || !info->version)
+ 		return -EINVAL;
+ 
 -- 
 2.17.1
 
