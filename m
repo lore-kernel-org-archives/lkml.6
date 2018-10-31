@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B33E6ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C8C6ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BF3020664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B25482082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tn3EukAH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BF3020664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xpJh+ehO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B25482082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727703AbeKAIGO (ORCPT
+        id S1727751AbeKAIGQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:06:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52974 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:06:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727597AbeKAIGM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:06:12 -0400
+        id S1727683AbeKAIGO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:06:14 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76E2520830;
-        Wed, 31 Oct 2018 23:06:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5043E20840;
+        Wed, 31 Oct 2018 23:06:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027162;
-        bh=FkjLfiO/5jDWGMgIVUu4SwbNGXQ/kS/nJCgbZurLHBE=;
+        s=default; t=1541027164;
+        bh=BEDCdPOFxAxzV5SglPa0Qo72PbSZrndlj5VsDH8eNHA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Tn3EukAHhDa7Sj0NjxkGn32pp2Oe8UeCXO7mugugZoC2QhyUAHoIug4kJf0Czy9Hf
-         J+WMBhhrCVafCozRU+hxGFgRBJvNRilHCKrbRBUV085FxnIZW9t15uvFr40mTHnhSC
-         4DVMzWCtSm4Tp0sekjxV0dHRTlwfHlzkOwqh9dS0=
+        b=xpJh+ehOBcYYu7NQMjmOCXm0dBjln5d+fsSSRPWfumEK8wpMDdKwgdHufUivu6JwQ
+         dwSbtHg86ctGSusMpr/GKKC0EcpUJwkpnUSzfMg1faKyvytyF94Jqw+U9epVI7T+GL
+         A18JTZKphOc7ClklOmftzvsW+6RzazmCKl27UWwM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sanskriti Sharma <sansharm@redhat.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+Cc:     Ben Peddell <klightspeed@killerwolves.net>,
+        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 021/146] perf strbuf: Match va_{add,copy} with va_end
-Date:   Wed, 31 Oct 2018 19:03:36 -0400
-Message-Id: <20181031230541.28822-21-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 023/146] bcache: Populate writeback_rate_minimum attribute
+Date:   Wed, 31 Oct 2018 19:03:38 -0400
+Message-Id: <20181031230541.28822-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -53,61 +53,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sanskriti Sharma <sansharm@redhat.com>
+From: Ben Peddell <klightspeed@killerwolves.net>
 
-[ Upstream commit ce49d8436cffa9b7a6a5f110879d53e89dbc6746 ]
+[ Upstream commit 7567c2a2ad9e80a2ce977eef535e64b61899633e ]
 
-Ensure that all code paths in strbuf_addv() call va_end() on the
-ap_saved copy that was made.
+Forgot to include the maintainers with my first email.
 
-Fixes the following coverity complaint:
+Somewhere between Michael Lyle's original
+"bcache: PI controller for writeback rate V2" patch dated 07 Sep 2017
+and 1d316e6 bcache: implement PI controller for writeback rate,
+the mapping of the writeback_rate_minimum attribute was dropped.
 
-  Error: VARARGS (CWE-237): [#def683]
-  tools/perf/util/strbuf.c:106: missing_va_end: va_end was not called
-  for "ap_saved".
+Re-add the missing sysfs writeback_rate_minimum attribute mapping to
+"allow the user to specify a minimum rate at which dirty blocks are
+retired."
 
-Signed-off-by: Sanskriti Sharma <sansharm@redhat.com>
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Joe Lawrence <joe.lawrence@redhat.com>
-Link: http://lkml.kernel.org/r/1538490554-8161-2-git-send-email-sansharm@redhat.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 1d316e6 ("bcache: implement PI controller for writeback rate")
+Signed-off-by: Ben Peddell <klightspeed@killerwolves.net>
+Signed-off-by: Coly Li <colyli@suse.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/strbuf.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/md/bcache/sysfs.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/perf/util/strbuf.c b/tools/perf/util/strbuf.c
-index 3d1cf5bf7f18..9005fbe0780e 100644
---- a/tools/perf/util/strbuf.c
-+++ b/tools/perf/util/strbuf.c
-@@ -98,19 +98,25 @@ static int strbuf_addv(struct strbuf *sb, const char *fmt, va_list ap)
+diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+index 150cf4f4cf74..26f035a0c5b9 100644
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -285,6 +285,7 @@ STORE(__cached_dev)
+ 			    1, WRITEBACK_RATE_UPDATE_SECS_MAX);
+ 	d_strtoul(writeback_rate_i_term_inverse);
+ 	d_strtoul_nonzero(writeback_rate_p_term_inverse);
++	d_strtoul_nonzero(writeback_rate_minimum);
  
- 	va_copy(ap_saved, ap);
- 	len = vsnprintf(sb->buf + sb->len, sb->alloc - sb->len, fmt, ap);
--	if (len < 0)
-+	if (len < 0) {
-+		va_end(ap_saved);
- 		return len;
-+	}
- 	if (len > strbuf_avail(sb)) {
- 		ret = strbuf_grow(sb, len);
--		if (ret)
-+		if (ret) {
-+			va_end(ap_saved);
- 			return ret;
-+		}
- 		len = vsnprintf(sb->buf + sb->len, sb->alloc - sb->len, fmt, ap_saved);
- 		va_end(ap_saved);
- 		if (len > strbuf_avail(sb)) {
- 			pr_debug("this should not happen, your vsnprintf is broken");
-+			va_end(ap_saved);
- 			return -EINVAL;
- 		}
- 	}
-+	va_end(ap_saved);
- 	return strbuf_setlen(sb, sb->len + len);
- }
+ 	sysfs_strtoul_clamp(io_error_limit, dc->error_limit, 0, INT_MAX);
  
+@@ -412,6 +413,7 @@ static struct attribute *bch_cached_dev_files[] = {
+ 	&sysfs_writeback_rate_update_seconds,
+ 	&sysfs_writeback_rate_i_term_inverse,
+ 	&sysfs_writeback_rate_p_term_inverse,
++	&sysfs_writeback_rate_minimum,
+ 	&sysfs_writeback_rate_debug,
+ 	&sysfs_errors,
+ 	&sysfs_io_error_limit,
 -- 
 2.17.1
 
