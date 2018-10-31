@@ -2,88 +2,93 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11BC1C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 114A5ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:43:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C129520685
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:42:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C129520685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=chris-wilson.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id CAD7720685
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:43:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bJiUxUMd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAD7720685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbeJaSkE convert rfc822-to-8bit (ORCPT
+        id S1727966AbeJaSkg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 14:40:04 -0400
-Received: from mail.fireflyinternet.com ([109.228.58.192]:63556 "EHLO
-        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727436AbeJaSkD (ORCPT
+        Wed, 31 Oct 2018 14:40:36 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:38534 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727436AbeJaSkf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 14:40:03 -0400
-X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
-Received: from localhost (unverified [78.156.65.138]) 
-        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 14296867-1500050 
-        for multiple; Wed, 31 Oct 2018 09:41:55 +0000
-Content-Type: text/plain; charset="utf-8"
+        Wed, 31 Oct 2018 14:40:35 -0400
+Received: by mail-lf1-f67.google.com with SMTP id p86so8909351lfg.5
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 02:43:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=p78zBwnYL4GrL60VvL2qsENAKsSSxnMcMy+xEmvl7yo=;
+        b=bJiUxUMdmUYs7MSjhTtxiAvQhazuHAnBCr0UJwXKausWKWOb9si4U+CR8km0EEjyyT
+         jCTkiA4CIXdFmSx3hDzSIEACp2ilVEwOhlOZiv9THT8xB8DS/2+iUwV7YHSxr/wlqK5q
+         x41Gw85GzEE7038xQYUyrpVq4CgBinMPtK+VU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=p78zBwnYL4GrL60VvL2qsENAKsSSxnMcMy+xEmvl7yo=;
+        b=csn3LxcNbq0eyYssHq6lyM2WTrUQeEThCQ4blYszK9hJT/aJ15KYAGL9Z3kR8St9op
+         zikjPOacx4MZF8hOGBkBd2DFji1Fqt2/wGvg+JkR05zjoQYPpByoeW1otDRf5erZ8T6s
+         FrS1cNMMe337V1u0M/n9V/9ZFJjbl6lEaMC7GJ8Gao26rJsWim6fteMY17DZrqauL/ud
+         cpDOSLLH2Qt2JuXJHF8bAi3+lMRQAi/3sLV8Oc+xJeEUIaKZatRzqHuOU1Du4aBqJ6Rt
+         63ivMMnsvCWGpGO1uc84vO8yFL7aYis+Mw7ESMmmKLJTrjT7u+Tuj5d5I3R0XHBeca3k
+         FKvg==
+X-Gm-Message-State: AGRZ1gJPRXKoyuAyEJ/yIjHCpuN7b+9BmZaSu6WTc35QTGvnAZaYriv8
+        uoWVLg0Uc0Fy3AD0ZKGtU0wuj8Asf7q8kqArGs6ryQ==
+X-Google-Smtp-Source: AJdET5crKjdh83yMt1h3yZZpT90dqqdQPChLimg9VtELppF2gijyNMd1ltjzCrSBpErxX2MIefFascDH+K8fnKiEvWw=
+X-Received: by 2002:a19:8d01:: with SMTP id p1mr1285546lfd.149.1540978991144;
+ Wed, 31 Oct 2018 02:43:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To:     Kuo-Hsin Yang <vovoy@chromium.org>,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-From:   Chris Wilson <chris@chris-wilson.co.uk>
-In-Reply-To: <20181031081945.207709-1-vovoy@chromium.org>
-Cc:     Kuo-Hsin Yang <vovoy@chromium.org>, Michal Hocko <mhocko@suse.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>
-References: <20181031081945.207709-1-vovoy@chromium.org>
-Message-ID: <154097891543.4007.9898414288875202246@skylake-alporthouse-com>
-User-Agent: alot/0.6
-Subject: Re: [PATCH v3] mm, drm/i915: mark pinned shmemfs pages as unevictable
-Date:   Wed, 31 Oct 2018 09:41:55 +0000
+References: <20181023190655.12004-1-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20181023190655.12004-1-manivannan.sadhasivam@linaro.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 31 Oct 2018 10:43:00 +0100
+Message-ID: <CACRpkdbMSYt5aH9fwRijtO=VG1nLAnfxTsfxGza+_Z2iGj2+-A@mail.gmail.com>
+Subject: Re: [PATCH 0/5] Add Pinctrl and GPIO support for HI3670 SoC
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     Xu Wei <xuwei5@hisilicon.com>, Rob Herring <robh+dt@kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Kuo-Hsin Yang (2018-10-31 08:19:45)
-> The i915 driver uses shmemfs to allocate backing storage for gem
-> objects. These shmemfs pages can be pinned (increased ref count) by
-> shmem_read_mapping_page_gfp(). When a lot of pages are pinned, vmscan
-> wastes a lot of time scanning these pinned pages. In some extreme case,
-> all pages in the inactive anon lru are pinned, and only the inactive
-> anon lru is scanned due to inactive_ratio, the system cannot swap and
-> invokes the oom-killer. Mark these pinned pages as unevictable to speed
-> up vmscan.
-> 
-> Add check_move_lru_page() to move page to appropriate lru list.
-> 
-> This patch was inspired by Chris Wilson's change [1].
-> 
-> [1]: https://patchwork.kernel.org/patch/9768741/
-> 
-> Cc: Chris Wilson <chris@chris-wilson.co.uk>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Signed-off-by: Kuo-Hsin Yang <vovoy@chromium.org>
-> ---
-> The previous mapping_set_unevictable patch is worse on gem_syslatency
-> because it defers to vmscan to move these pages to the unevictable list
-> and the test measures latency to allocate 2MiB pages. This performance
-> impact can be solved by explicit moving pages to the unevictable list in
-> the i915 function.
-> 
-> Chris, can you help to run the "igt/benchmarks/gem_syslatency -t 120 -b -m"
-> test with this patch on your testing machine? I tried to run the test on
-> a Celeron N4000, 4GB Ram machine. The mean value with this patch is
-> similar to that with the mlock patch.
+On Tue, Oct 23, 2018 at 9:07 PM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
 
-Will do. As you are confident, I'll try a few different machines. :)
--Chris
+> This patchset adds Pinctrl and GPIO support for HI3670 SoC from HiSilicon
+> found in the HiKey970 developement board. Also, the remaining UARTs are
+> enabled and GPIO line names are added based on the Schematics and the
+> 96Boards Consumer Edition spec.
+>
+> Note: These patches are based on the below common clk patches pushed
+> earlier:
+>
+> arm64: dts: hisilicon: Add clock nodes for Hi3670 SoC
+> arm64: dts: hisilicon: Source SoC clock for UART6
+
+All looks good to me.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+for the series.
+
+Yours,
+Linus Walleij
