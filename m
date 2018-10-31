@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA954C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB1EECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB5142084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEF0820838
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zwO7hdP/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB5142084A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="may7O7MG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEF0820838
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729007AbeKAIHg (ORCPT
+        id S1729024AbeKAIHh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:07:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55456 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:07:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727308AbeKAIHe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:07:34 -0400
+        id S1727308AbeKAIHh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:07:37 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1164B20664;
-        Wed, 31 Oct 2018 23:07:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AECCE20821;
+        Wed, 31 Oct 2018 23:07:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027243;
-        bh=/CwvahwV96iKOdOahg9iozHHRKRAOFxZxtm5qC/FAIE=;
+        s=default; t=1541027246;
+        bh=XVtZjroNJog4pqqkdzhBADTcruVXl7CTn5CWVT6ZmvQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zwO7hdP/QT/4LJ/90MKZqlvULQPGrvgk9VASCpHbZea2DRshv6cuWItMxRxs0mCWZ
-         vqocKzFKJkah0DahARfc4ojboG+e+6fU4AJc9ikPmCI7gFCQw6P7K74JRVBHsjlkiE
-         sBL94v5VGnWUoXIhjhygcGAs2/1TqM2mbhVCfml8=
+        b=may7O7MGAaIZHYV2YlynbA7pjbfCV3eDEIOf8CzUfJmcqwIwDe0S7+vyCNLb8UG+D
+         ziS1RN1eZXgKEDe6hxhauU6z+UdZJtrB06zm+uDjhQVMsuwvGHAI0G54ndKBoW42gS
+         nY+IQcF7L4DBvnd3BYLnXwshOwqBMOnMJl3hmOVQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Chuck Lever <chuck.lever@oracle.com>, stable@kernel.org,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+Cc:     Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Amelie Delaunay <amelie.delaunay@st.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 112/146] xprtrdma: Reset credit grant properly after a disconnect
-Date:   Wed, 31 Oct 2018 19:05:07 -0400
-Message-Id: <20181031230541.28822-112-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 115/146] usb: dwc2: fix a race with external vbus supply
+Date:   Wed, 31 Oct 2018 19:05:10 -0400
+Message-Id: <20181031230541.28822-115-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -53,66 +54,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuck Lever <chuck.lever@oracle.com>
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
 
-[ Upstream commit ef739b2175dde9c05594f768cb78149f1ce2ac36 ]
+[ Upstream commit 41ee1ea21052583eaf5487dfa0d0c907c9667548 ]
 
-On a fresh connection, an RPC/RDMA client is supposed to send only
-one RPC Call until it gets a credit grant in the first RPC Reply
-from the server [RFC 8166, Section 3.3.3].
+There's a race with root hub resume, when using external vbus supply.
+Root hub gets resumed, but runtime pm autosuspend runs as external vbus
+supply isn't enabled. So, host never exit from power down properly.
+Initialize vbus external supply before, rater that after hub resume.
 
-There is a bug in the Linux client's credit accounting mechanism
-introduced by commit e7ce710a8802 ("xprtrdma: Avoid deadlock when
-credit window is reset"). On connect, it simply dumps all pending
-RPC Calls onto the new connection.
+Fixes: 531ef5ebea96 ("usb: dwc2: add support for host mode external
+vbus supply")
 
-Servers have been tolerant of this bad behavior. Currently no server
-implementation ever changes its credit grant over reconnects, and
-servers always repost enough Receives before connections are fully
-established.
-
-To correct this issue, ensure that the client resets both the credit
-grant _and_ the congestion window when handling a reconnect.
-
-Fixes: e7ce710a8802 ("xprtrdma: Avoid deadlock when credit ... ")
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-Cc: stable@kernel.org
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Tested-by: Artur Petrosyan <arturp@synopsys.com>
+Acked-by: Minas Harutyunyan <hminas@synopsys.com>
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sunrpc/xprtrdma/svc_rdma_backchannel.c | 1 +
- net/sunrpc/xprtrdma/transport.c            | 6 ++++++
- 2 files changed, 7 insertions(+)
+ drivers/usb/dwc2/hcd.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/net/sunrpc/xprtrdma/svc_rdma_backchannel.c b/net/sunrpc/xprtrdma/svc_rdma_backchannel.c
-index a68180090554..b9827665ff35 100644
---- a/net/sunrpc/xprtrdma/svc_rdma_backchannel.c
-+++ b/net/sunrpc/xprtrdma/svc_rdma_backchannel.c
-@@ -248,6 +248,7 @@ static void
- xprt_rdma_bc_close(struct rpc_xprt *xprt)
- {
- 	dprintk("svcrdma: %s: xprt %p\n", __func__, xprt);
-+	xprt->cwnd = RPC_CWNDSHIFT;
- }
+diff --git a/drivers/usb/dwc2/hcd.c b/drivers/usb/dwc2/hcd.c
+index befaf1e9d98a..260010abf9d8 100644
+--- a/drivers/usb/dwc2/hcd.c
++++ b/drivers/usb/dwc2/hcd.c
+@@ -4393,6 +4393,7 @@ static int _dwc2_hcd_start(struct usb_hcd *hcd)
+ 	struct dwc2_hsotg *hsotg = dwc2_hcd_to_hsotg(hcd);
+ 	struct usb_bus *bus = hcd_to_bus(hcd);
+ 	unsigned long flags;
++	int ret;
  
- static void
-diff --git a/net/sunrpc/xprtrdma/transport.c b/net/sunrpc/xprtrdma/transport.c
-index 143ce2579ba9..98cbc7b060ba 100644
---- a/net/sunrpc/xprtrdma/transport.c
-+++ b/net/sunrpc/xprtrdma/transport.c
-@@ -468,6 +468,12 @@ xprt_rdma_close(struct rpc_xprt *xprt)
- 		xprt->reestablish_timeout = 0;
- 	xprt_disconnect_done(xprt);
- 	rpcrdma_ep_disconnect(ep, ia);
+ 	dev_dbg(hsotg->dev, "DWC OTG HCD START\n");
+ 
+@@ -4408,6 +4409,13 @@ static int _dwc2_hcd_start(struct usb_hcd *hcd)
+ 
+ 	dwc2_hcd_reinit(hsotg);
+ 
++	/* enable external vbus supply before resuming root hub */
++	spin_unlock_irqrestore(&hsotg->lock, flags);
++	ret = dwc2_vbus_supply_init(hsotg);
++	if (ret)
++		return ret;
++	spin_lock_irqsave(&hsotg->lock, flags);
 +
-+	/* Prepare @xprt for the next connection by reinitializing
-+	 * its credit grant to one (see RFC 8166, Section 3.3.3).
-+	 */
-+	r_xprt->rx_buf.rb_credits = 1;
-+	xprt->cwnd = RPC_CWNDSHIFT;
+ 	/* Initialize and connect root hub if one is not already attached */
+ 	if (bus->root_hub) {
+ 		dev_dbg(hsotg->dev, "DWC OTG HCD Has Root Hub\n");
+@@ -4417,7 +4425,7 @@ static int _dwc2_hcd_start(struct usb_hcd *hcd)
+ 
+ 	spin_unlock_irqrestore(&hsotg->lock, flags);
+ 
+-	return dwc2_vbus_supply_init(hsotg);
++	return 0;
  }
  
- /**
+ /*
 -- 
 2.17.1
 
