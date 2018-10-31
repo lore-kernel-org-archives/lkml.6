@@ -2,194 +2,85 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDA99C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 08:43:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0264EC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 08:47:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BB8020847
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 08:43:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BB8020847
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mess.org
+	by mail.kernel.org (Postfix) with ESMTP id A9CC020838
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 08:47:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9CC020838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727683AbeJaRkj (ORCPT
+        id S1727533AbeJaRoh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 13:40:39 -0400
-Received: from gofer.mess.org ([88.97.38.141]:46395 "EHLO gofer.mess.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726054AbeJaRkj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 13:40:39 -0400
-Received: by gofer.mess.org (Postfix, from userid 1000)
-        id 67D00601E4; Wed, 31 Oct 2018 08:43:27 +0000 (GMT)
-Date:   Wed, 31 Oct 2018 08:43:27 +0000
-From:   Sean Young <sean@mess.org>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Michael Krufky <mkrufky@linuxtv.org>,
-        Brad Love <brad@nextdimension.cc>, mchehab@kernel.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dvb: Allow MAC addresses to be mapped to stable device
- names with udev
-Message-ID: <20181031084327.25bd5654ij37o3b5@gofer.mess.org>
-References: <153778383104.14867.1567557014782141706.stgit@warthog.procyon.org.uk>
- <20181030110319.764f33f0@coco.lan>
- <20181030223249.dhwhxdjipzmjxzsy@gofer.mess.org>
- <20181030213513.51922545@coco.lan>
+        Wed, 31 Oct 2018 13:44:37 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:54748 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726054AbeJaRoh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 13:44:37 -0400
+X-UUID: 30688663cbf244a8bc91cf557fcfafd8-20181031
+X-UUID: 30688663cbf244a8bc91cf557fcfafd8-20181031
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 423088792; Wed, 31 Oct 2018 16:47:19 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 31 Oct 2018 16:47:17 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 31 Oct 2018 16:47:17 +0800
+Message-ID: <1540975637.10275.10.camel@mtkswgap22>
+Subject: Re: [PATCH v3] mm/page_owner: use kvmalloc instead of kmalloc
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     Michal Hocko <mhocko@kernel.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Joe Perches <joe@perches.com>,
+        Matthew Wilcox <willy@infradead.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>
+Date:   Wed, 31 Oct 2018 16:47:17 +0800
+In-Reply-To: <20181030081537.GV32673@dhcp22.suse.cz>
+References: <1540790176-32339-1-git-send-email-miles.chen@mediatek.com>
+         <20181029080708.GA32673@dhcp22.suse.cz>
+         <20181029081706.GC32673@dhcp22.suse.cz>
+         <1540862950.12374.40.camel@mtkswgap22>
+         <20181030060601.GR32673@dhcp22.suse.cz>
+         <1540882551.23278.12.camel@mtkswgap22>
+         <20181030081537.GV32673@dhcp22.suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181030213513.51922545@coco.lan>
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 09:35:31PM -0300, Mauro Carvalho Chehab wrote:
-> Em Tue, 30 Oct 2018 22:32:50 +0000
-> Sean Young <sean@mess.org> escreveu:
+On Tue, 2018-10-30 at 09:15 +0100, Michal Hocko wrote:
+> On Tue 30-10-18 14:55:51, Miles Chen wrote:
+> [...]
+> > It's a real problem when using page_owner.
+> > I found this issue recently: I'm not able to read page_owner information
+> > during a overnight test. (error: read failed: Out of memory). I replace
+> > kmalloc() with vmalloc() and it worked well.
 > 
-> Thanks for reviewing it!
-> 
-> > On Tue, Oct 30, 2018 at 11:03:19AM -0300, Mauro Carvalho Chehab wrote:
-> > > Em Mon, 24 Sep 2018 11:10:31 +0100
-> > > David Howells <dhowells@redhat.com> escreveu:
-> > >   
-> > > > Some devices, such as the DVBSky S952 and T982 cards, are dual port cards
-> > > > that provide two cx23885 devices on the same PCI device, which means the
-> > > > attributes available for writing udev rules are exactly the same, apart
-> > > > from the adapter number.  Unfortunately, the adapter numbers are dependent
-> > > > on the order in which things are initialised, so this can change over
-> > > > different releases of the kernel.
-> > > > 
-> > > > Devices have a MAC address available, which is printed during boot:  
-> > 
-> > Not all dvb devices have a mac address.
-> 
-> True. Usually, devices without eeprom don't have, specially the too old ones.
-> 
-> On others, the MAC address only appear after the firmware is loaded.
-> 
-> > > > 
-> > > > 	[   10.951517] DVBSky T982 port 1 MAC address: 00:11:22:33:44:55
-> > > > 	...
-> > > > 	[   10.984875] DVBSky T982 port 2 MAC address: 00:11:22:33:44:56
-> > > > 
-> > > > To make it possible to distinguish these in udev, provide sysfs attributes
-> > > > to make the MAC address, adapter number and type available.  There are
-> > > > other fields that could perhaps be exported also.  In particular, it would
-> > > > be nice to provide the port number, but somehow that doesn't manage to
-> > > > propagate through the labyrinthine initialisation process.
-> > > > 
-> > > > The new sysfs attributes can be seen from userspace as:
-> > > > 
-> > > > 	[root@deneb ~]# ls /sys/class/dvb/dvb0.frontend0/
-> > > > 	dev  device  dvb_adapter  dvb_mac  dvb_type
-> > > > 	power  subsystem  uevent
-> > > > 	[root@deneb ~]# cat /sys/class/dvb/dvb0.frontend0/dvb_*
-> > > > 	0
-> > > > 	00:11:22:33:44:55
-> > > > 	frontend
-> > > > 
-> > > > They can be used in udev rules:
-> > > > 
-> > > > 	SUBSYSTEM=="dvb", ATTRS{vendor}=="0x14f1", ATTRS{device}=="0x8852", ATTRS{subsystem_device}=="0x0982", ATTR{dvb_mac}=="00:11:22:33:44:55", PROGRAM="/bin/sh -c 'K=%k; K=$${K#dvb}; printf dvb/adapter9820/%%s $${K#*.}'", SYMLINK+="%c"
-> > > > 	SUBSYSTEM=="dvb", ATTRS{vendor}=="0x14f1", ATTRS{device}=="0x8852", ATTRS{subsystem_device}=="0x0982", ATTR{dvb_mac}=="00:11.22.33.44.56", PROGRAM="/bin/sh -c 'K=%k; K=$${K#dvb}; printf dvb/adapter9821/%%s $${K#*.}'", SYMLINK+="%c"
-> > > > 
-> > > > where the match is made with ATTR{dvb_mac} or similar.  The rules above
-> > > > make symlinks from /dev/dvb/adapter982/* to /dev/dvb/adapterXX/*.
-> > > > 
-> > > > Note that binding the dvb-net device to a network interface and changing it
-> > > > there does not reflect back into the the dvb_adapter struct and doesn't
-> > > > change the MAC address here.  This means that a system with two identical
-> > > > cards in it may need to distinguish them by some other means than MAC
-> > > > address.
-> > > > 
-> > > > Signed-off-by: David Howells <dhowells@redhat.com>  
-> > > 
-> > > Looks OK to me.
-> > > 
-> > > Michael/Sean/Brad,
-> > > 
-> > > Any comments? If not, I'll probably submit it this week upstream.  
-> > 
-> > With this patch, with a usb Hauppauge Nova-T Stick I get:
-> 
-> Weird. Normally, Hauppauge devices have MAC address, as they all have
-> eeproms. On several models, the MAC is even printed at the label on
-> its back.
-> 
-> Perhaps the logic didn't wait for the firmware to load?
-
-This is an ancient dib0700 device; the firmware did load but there is no
-mac.
-
-> > $ tail /sys/class/dvb/*/dvb_*
-> > ==> /sys/class/dvb/dvb0.demux0/dvb_adapter <==  
-> > 0
-> > 
-> > ==> /sys/class/dvb/dvb0.demux0/dvb_mac <==  
-> > 00:00:00:00:00:00
-> > 
-> > ==> /sys/class/dvb/dvb0.demux0/dvb_type <==  
-> > demux
-> > 
-> > ==> /sys/class/dvb/dvb0.dvr0/dvb_adapter <==  
-> > 0
-> > 
-> > ==> /sys/class/dvb/dvb0.dvr0/dvb_mac <==  
-> > 00:00:00:00:00:00
-> > 
-> > ==> /sys/class/dvb/dvb0.dvr0/dvb_type <==  
-> > dvr
-> > 
-> > ==> /sys/class/dvb/dvb0.frontend0/dvb_adapter <==  
-> > 0
-> > 
-> > ==> /sys/class/dvb/dvb0.frontend0/dvb_mac <==  
-> > 00:00:00:00:00:00
-> > 
-> > ==> /sys/class/dvb/dvb0.frontend0/dvb_type <==  
-> > frontend
-> > 
-> > ==> /sys/class/dvb/dvb0.net0/dvb_adapter <==  
-> > 0
-> > 
-> > ==> /sys/class/dvb/dvb0.net0/dvb_mac <==  
-> > 00:00:00:00:00:00
-> > 
-> > ==> /sys/class/dvb/dvb0.net0/dvb_type <==  
-> > net
-> > 
-> > 
-> > This would mean a stable name is based on a mac of 0, and there are many
-> > more devices don't have a mac so they would all match this stable name.
-> 
-> It can only provide information when the device has it. 
-> 
-> > Devices without a mac address shouldn't have a mac_dvb sysfs attribute,
-> > I think.
-> 
-> Hmm... do you mean that, if the mac is reported as 00:00:00:00:00,
-> then the sysfs node should not be exposed? Makes sense.
-
-Yes, I do.
-
-> > The dvb type and dvb adapter no is already present in the device name,
-> > I'm not sure why this needs duplicating.
-> 
-> IMO, it helps to write udev rules if those information are exposed.
-
-That is true. There is support for regexs in udev, e.g.:
-
-	KERNEL=="dvd[0-9]*.demux.[0-9]*"
-
-Having said that dvb_type does look a little nicer:
-
-	ATTR{dvb_type}=="demux"
+> Is this with trimming the allocation to a single page and doing shorter
+> than requested reads?
 
 
-Sean
+I printed out the allocate count on my device the request count is <=
+4096. So I tested this scenario by trimming the count to from 4096 to
+1024 bytes and it works fine. 
+
+count = count > 1024? 1024: count;
+
+It tested it on both 32bit and 64bit kernel.
+
