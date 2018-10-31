@@ -2,134 +2,90 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6ED8C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 06:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F12BC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 06:43:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 809BA20657
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 06:42:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FC5D20657
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 06:43:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WoOL7Cd7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 809BA20657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="P1xeNk4V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FC5D20657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729087AbeJaPjN (ORCPT
+        id S1729213AbeJaPkN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 11:39:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46620 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725955AbeJaPjN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 11:39:13 -0400
-Received: from localhost (unknown [77.138.135.184])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE32220657;
-        Wed, 31 Oct 2018 06:42:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540968145;
-        bh=LlWID5Wm73ps0md5xNoZwfQ/Za+BiDmDice34qf0IP0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WoOL7Cd7/hnj6CLip7ZOjgaK1J+hoKu9+QcrNiQVDS5i3vCzZ9bhSk8VM1sqg6jXD
-         xpzBNUfLEXDx+J+RlKHVTRDHuw89pAcVbpRWv3OT0hwN0J9mF3IDrdyG3R+P8gKceJ
-         6W+dyQp8b4iCQ1RogkzT2WqKXX5yB0RMu/zfGzSs=
-Date:   Wed, 31 Oct 2018 08:42:20 +0200
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Cc:     syzbot <syzbot+26de17458aeda9d305d8@syzkaller.appspotmail.com>,
-        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
-        rds-devel@oss.oracle.com, syzkaller-bugs@googlegroups.com,
-        davem@davemloft.net, linux-kernel@vger.kernel.org
-Subject: Re: WARNING in rds_message_alloc_sgs
-Message-ID: <20181031064220.GN3974@mtr-leonro.mtl.com>
-References: <0000000000003c6b7b0579772ff3@google.com>
- <a7a834e0-c300-b5b9-67b5-78fa3eba8ebb@oracle.com>
+        Wed, 31 Oct 2018 11:40:13 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:47090 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728562AbeJaPkN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 11:40:13 -0400
+Received: by mail-lj1-f195.google.com with SMTP id x3-v6so13758114lji.13
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 23:43:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1fwqQ9aRSAqM7zyF84//NoXF0ruX4u0DGZ2rO3Fr/rk=;
+        b=P1xeNk4VZ2KONvH+f9hoBPd4w8hoFJ3ho6asLuiQfPz/1gOlM8GOb1HWvnv3IyuaUs
+         xdUD9dZ25ywaOUI/2UIaUzneVDFG4XV5kmYwoN1ZNelQHirZR5q0A+W9ENPnDLg6Sukg
+         ZSsfWmZg33D/dG2pFOa3aliC1wnw6buoIfVHeEuJz5tqU6PR2beagVWL781dCc0y31yo
+         j7ORoWIoprQ27QSj586FlINuTbQZM4aNYXbqEbG8y5CDmazazSe0r3GcqYCrwQMPAvj+
+         dDT42wKrLWzFoqbzUFbgJRvdCuma8lXmxmlV0AAF0ey4L5J9Kgk3hPvxANsyUIU6LNcK
+         SYBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1fwqQ9aRSAqM7zyF84//NoXF0ruX4u0DGZ2rO3Fr/rk=;
+        b=BkQbXh7JdjTmDvcb/knwcDloBjCi0pi6w71Di2fyy8kNU0zzlm3MhhL9SyEecG1pzc
+         sX1w7lgiEwzQ2Sj3vkdaUNPaTvwHhMKbmxJciE+iTUtGh50Xy9wBEnbpTzBpHuTh2gz/
+         KQYp9YWuo4gLTSVID+ioGcVezwDiEJVlTNx0f0ckBqu11WLB9tgWWf7jSPHsNge/UzJE
+         XYO4B8uuWx1mm6RevU8S7TAIaO5t4fv4Fnqr2zbMD0b33Y/dU+vOOkn7UzFROUjdfaRL
+         ciENra0inhJwhmU03kcdwPanYiEBvWiwtEPmV85oMZLC1TlHur68hSlwOAOgQV6mx8cW
+         4NMA==
+X-Gm-Message-State: AGRZ1gLJEY3NJGfUEUbjMknVNsmKV33uOG9vmlxd1mLdOx140CAKNiBA
+        /8kpHZf6AjR+sGC3TcTWqaQbP4mF7deFbdsvrZot8w==
+X-Google-Smtp-Source: AJdET5cTRyqdz43/LBrXLek8MAxzVpnXYE/Q19xoaIaH3hii/9lInHPt858A3Q61EhZe4cY6iPxDJeeFdQKZo3y2NqA=
+X-Received: by 2002:a2e:b1d2:: with SMTP id e18-v6mr1113525lja.34.1540968204058;
+ Tue, 30 Oct 2018 23:43:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="Q8BnQc91gJZX4vDc"
-Content-Disposition: inline
-In-Reply-To: <a7a834e0-c300-b5b9-67b5-78fa3eba8ebb@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181031000413.30123-1-olof@lixom.net> <CAOesGMg6L8+=ZFbH_ThUG3VrePrbBY0Bg5HWi+AiaEbNSOn_qA@mail.gmail.com>
+In-Reply-To: <CAOesGMg6L8+=ZFbH_ThUG3VrePrbBY0Bg5HWi+AiaEbNSOn_qA@mail.gmail.com>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Tue, 30 Oct 2018 23:43:12 -0700
+Message-ID: <CAOesGMh8zq=vK0ARqK-1S4MYn7kg541u+dziKqnGuswrCi=n1A@mail.gmail.com>
+Subject: Re: [PATCH] RISC-V: lib: Fix build error for 64-bit
+To:     Palmer Dabbelt <palmer@sifive.com>
+Cc:     Albert Ou <aou@eecs.berkeley.edu>, Zong Li <zongbox@gmail.com>,
+        linux-riscv@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---Q8BnQc91gJZX4vDc
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Oct 30, 2018 at 12:38:02PM -0700, Santosh Shilimkar wrote:
-> On 10/30/2018 12:28 PM, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following crash on:
-> >
-> > HEAD commit:=A0=A0=A0 6201f31a39f8 Add linux-next specific files for 20=
-181030
-> > git tree:=A0=A0=A0=A0=A0=A0 linux-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D1397d06d400=
-000
-> > kernel config:=A0 https://syzkaller.appspot.com/x/.config?x=3D2a22859d8=
-70756c1
-> > dashboard link:
-> > https://syzkaller.appspot.com/bug?extid=3D26de17458aeda9d305d8
-> > compiler:=A0=A0=A0=A0=A0=A0 gcc (GCC) 8.0.1 20180413 (experimental)
-> > syz repro:=A0=A0=A0=A0=A0 https://syzkaller.appspot.com/x/repro.syz?x=
-=3D10bb52eb400000
-> > C reproducer:=A0=A0 https://syzkaller.appspot.com/x/repro.c?x=3D118bdfc=
-5400000
-> >
-> > IMPORTANT: if you fix the bug, please add the following tag to the comm=
-it:
-> > Reported-by: syzbot+26de17458aeda9d305d8@syzkaller.appspotmail.com
-> >
-> > WARNING: CPU: 0 PID: 19789 at net/rds/message.c:316
-> > rds_message_alloc_sgs+0x10c/0x160 net/rds/message.c:316
-> > Kernel panic - not syncing: panic_on_warn set ...
-> Looks like this kernel build has panic on warn enabled which
-> triggers panic for " WARN_ON(!nr_pages)" case. Will look into
-> it. Thanks !!
-
-Please don't forget to remove user triggered WARN_ON.
-https://lwn.net/Articles/769365/
-"Greg Kroah-Hartman raised the problem of core kernel API code that will
-use WARN_ON_ONCE() to complain about bad usage; that will not generate
-the desired result if WARN_ON_ONCE() is configured to crash the machine.
-He was told that the code should just call pr_warn() instead, and that
-the called function should return an error in such situations. It was
-generally agreed that any WARN_ON() or WARN_ON_ONCE() calls that can be
-triggered from user space need to be fixed."
-
-Thanks
-
+On Tue, Oct 30, 2018 at 5:05 PM Olof Johansson <olof@lixom.net> wrote:
 >
-> Regards,
-> Santosh
+> On Tue, Oct 30, 2018 at 5:04 PM Olof Johansson <olof@lixom.net> wrote:
+> >
+> > Fixes the following build error from tinyconfig:
+> >
+> > riscv64-unknown-linux-gnu-ld: kernel/sched/fair.o: in function `.L8':
+> > fair.c:(.text+0x70): undefined reference to `__lshrti3'
+> > riscv64-unknown-linux-gnu-ld: kernel/time/clocksource.o: in function `.L0 ':
+> > clocksource.c:(.text+0x334): undefined reference to `__lshrti3'
+>
+> Err, fixed the whitespace in tishift.S while I was at it. Undo if you want.
 
---Q8BnQc91gJZX4vDc
-Content-Type: application/pgp-signature; name="signature.asc"
+Ended up with a few more fixes, so I split this in two and will repost
+as a series. Apologies for the noise.
 
------BEGIN PGP SIGNATURE-----
 
-iQIcBAEBAgAGBQJb2U7MAAoJEORje4g2clinySoP/1M2x8wQN60bkPszYgFYoOqD
-rouJticqrcknoxCPIzwHEMtzdEMvEnEKD5980BIHank13TJ3MIb9NIhDGZ3N9lVY
-Is5x9YJRsKLouY68Ui7VDNsJ0DPYO5ylfvyyp7eSUyf0hGbRZ3axqeoLQFCo2S6e
-4VOYlYJlLJ+tEueEyEY/gnD6yaVlYfXijDIZzd/olDxDIx6eGfPg2kscNqDD/M6Z
-Js4scqLtMGqsjYn+yR50e8TFVKssLdSDhY7ADl0DDzPiZZHpqRVHRwrGu9XO3O8e
-XUNCGBlzqA0O+ltbvgLRIBlQ1fIrBOo0q/qAvp8dPQs/k+VnQe6AzHlLGMaE9DuL
-qlS536JxC3f/WsOc+sk7e/zMphiH44crLzZ6LI56PVdCKANdAAN47lOr/HroOh5v
-PFEuFUALrOSo4Yl6Xsoc/6L+qdVZDB4JtbrDUvuzmAkTz0cQKSrWH3JN+IYQErzZ
-LUHk3Pf1/r81/DxkirokTfHpUSKiruDvaAFs3Q925xxNGUjU5axj8X10c7sQNchD
-lkRhT3TIa5KCtOK4m7fW53j24WUe6NtBbym0/bhoC0fX4gekF5bp3AqY0I7WF+w6
-gDd/etlAfYlK4yTQbVKWbHTKEmMxBsEFDUJSvsn9HrgeWEZdbfVOV6CfPj0qz5nu
-EeprTD0XCeG4M0bWxkNU
-=uvwi
------END PGP SIGNATURE-----
-
---Q8BnQc91gJZX4vDc--
+-Olof
