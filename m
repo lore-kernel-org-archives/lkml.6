@@ -7,49 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95FA5C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29979C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BC0120854
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5A3B208E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MzrrLBXX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BC0120854
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pzB3Rits"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5A3B208E3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732050AbeKAIMG (ORCPT
+        id S1732064AbeKAIMH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:12:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36448 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:12:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732006AbeKAIMD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:12:03 -0400
+        id S1730796AbeKAIMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:12:06 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E989E20880;
-        Wed, 31 Oct 2018 23:11:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC5EF204FD;
+        Wed, 31 Oct 2018 23:11:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027511;
-        bh=os7x5a9Bu6mVXq4vgThaHRhMwRnSLcxVdhwe6Lu7oJ8=;
+        s=default; t=1541027514;
+        bh=m4BGfWAE4ELVR2m+wMqwnCU1g3CRG48NoYaSxA+VoDU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MzrrLBXXL5om4zJqqixbHxGcKJnx1lTPrJJJs7C+CI+BnbmfFgomalWJX/Qsx+FyC
-         Lsmv0R3y88LExX3DI5vZbG3++4CncS26w1S39h3cSEZbdI40hRmcCdZ4NhC41xRUre
-         ht7GPvCxbtuQIuuvuVGkJajShkqlYEOVmVt7tSS0=
+        b=pzB3Rits+eFpFqmOLl0hvTRwfCRynk+LyU10JFFRylrVCsPOwGtH1SWBUZUW9RQIY
+         VW6zH5WrTZzW6ogynHnQgvcavciWprd3Qmr3WcNrfd4lgiFrM+2s9ONGy0gWomkABz
+         3Ot0jhiDdHoJylAAVEFwGq40aZJzNey8pMa6Zr3A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 14/32] kprobes: Return error if we fail to reuse kprobe instead of BUG_ON()
-Date:   Wed, 31 Oct 2018 19:11:19 -0400
-Message-Id: <20181031231137.29429-14-sashal@kernel.org>
+Cc:     Douglas Anderson <dianders@chromium.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 18/32] pinctrl: ssbi-gpio: Fix pm8xxx_pin_config_get() to be compliant
+Date:   Wed, 31 Oct 2018 19:11:23 -0400
+Message-Id: <20181031231137.29429-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231137.29429-1-sashal@kernel.org>
 References: <20181031231137.29429-1-sashal@kernel.org>
@@ -58,93 +53,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Douglas Anderson <dianders@chromium.org>
 
-[ Upstream commit 819319fc93461c07b9cdb3064f154bd8cfd48172 ]
+[ Upstream commit b432414b996d32a1bd9afe2bd595bd5729c1477f ]
 
-Make reuse_unused_kprobe() to return error code if
-it fails to reuse unused kprobe for optprobe instead
-of calling BUG_ON().
+If you look at "pinconf-groups" in debugfs for ssbi-gpio you'll notice
+it looks like nonsense.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-Cc: David S . Miller <davem@davemloft.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Naveen N . Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/153666124040.21306.14150398706331307654.stgit@devbox
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+The problem is fairly well described in commit 1cf86bc21257 ("pinctrl:
+qcom: spmi-gpio: Fix pmic_gpio_config_get() to be compliant") and
+commit 05e0c828955c ("pinctrl: msm: Fix msm_config_group_get() to be
+compliant"), but it was pointed out that ssbi-gpio has the same
+problem.  Let's fix it there too.
+
+Fixes: b4c45fe974bc ("pinctrl: qcom: ssbi: Family A gpio & mpp drivers")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/kprobes.c | 27 ++++++++++++++++++++-------
- 1 file changed, 20 insertions(+), 7 deletions(-)
+ drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c | 28 ++++++++++++++++++------
+ 1 file changed, 21 insertions(+), 7 deletions(-)
 
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index 388bcace62f8..d8daf6c55d2b 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -665,9 +665,10 @@ static void unoptimize_kprobe(struct kprobe *p, bool force)
- }
+diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+index 19a3c3bc2f1f..b1e8a2d905ff 100644
+--- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+@@ -259,22 +259,32 @@ static int pm8xxx_pin_config_get(struct pinctrl_dev *pctldev,
  
- /* Cancel unoptimizing for reusing */
--static void reuse_unused_kprobe(struct kprobe *ap)
-+static int reuse_unused_kprobe(struct kprobe *ap)
- {
- 	struct optimized_kprobe *op;
-+	int ret;
- 
- 	BUG_ON(!kprobe_unused(ap));
- 	/*
-@@ -681,8 +682,12 @@ static void reuse_unused_kprobe(struct kprobe *ap)
- 	/* Enable the probe again */
- 	ap->flags &= ~KPROBE_FLAG_DISABLED;
- 	/* Optimize it again (remove from op->list) */
--	BUG_ON(!kprobe_optready(ap));
-+	ret = kprobe_optready(ap);
-+	if (ret)
-+		return ret;
-+
- 	optimize_kprobe(ap);
-+	return 0;
- }
- 
- /* Remove optimized instructions */
-@@ -894,11 +899,16 @@ static void __disarm_kprobe(struct kprobe *p, bool reopt)
- #define kprobe_disarmed(p)			kprobe_disabled(p)
- #define wait_for_kprobe_optimizer()		do {} while (0)
- 
--/* There should be no unused kprobes can be reused without optimization */
--static void reuse_unused_kprobe(struct kprobe *ap)
-+static int reuse_unused_kprobe(struct kprobe *ap)
- {
-+	/*
-+	 * If the optimized kprobe is NOT supported, the aggr kprobe is
-+	 * released at the same time that the last aggregated kprobe is
-+	 * unregistered.
-+	 * Thus there should be no chance to reuse unused kprobe.
-+	 */
- 	printk(KERN_ERR "Error: There should be no unused kprobe here.\n");
--	BUG_ON(kprobe_unused(ap));
-+	return -EINVAL;
- }
- 
- static void free_aggr_kprobe(struct kprobe *p)
-@@ -1276,9 +1286,12 @@ static int register_aggr_kprobe(struct kprobe *orig_p, struct kprobe *p)
- 			goto out;
- 		}
- 		init_aggr_kprobe(ap, orig_p);
--	} else if (kprobe_unused(ap))
-+	} else if (kprobe_unused(ap)) {
- 		/* This probe is going to die. Rescue it */
--		reuse_unused_kprobe(ap);
-+		ret = reuse_unused_kprobe(ap);
-+		if (ret)
-+			goto out;
-+	}
- 
- 	if (kprobe_gone(ap)) {
- 		/*
+ 	switch (param) {
+ 	case PIN_CONFIG_BIAS_DISABLE:
+-		arg = pin->bias == PM8XXX_GPIO_BIAS_NP;
++		if (pin->bias != PM8XXX_GPIO_BIAS_NP)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_BIAS_PULL_DOWN:
+-		arg = pin->bias == PM8XXX_GPIO_BIAS_PD;
++		if (pin->bias != PM8XXX_GPIO_BIAS_PD)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_BIAS_PULL_UP:
+-		arg = pin->bias <= PM8XXX_GPIO_BIAS_PU_1P5_30;
++		if (pin->bias > PM8XXX_GPIO_BIAS_PU_1P5_30)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PM8XXX_QCOM_PULL_UP_STRENGTH:
+ 		arg = pin->pull_up_strength;
+ 		break;
+ 	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
+-		arg = pin->disable;
++		if (!pin->disable)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_INPUT_ENABLE:
+-		arg = pin->mode == PM8XXX_GPIO_MODE_INPUT;
++		if (pin->mode != PM8XXX_GPIO_MODE_INPUT)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_OUTPUT:
+ 		if (pin->mode & PM8XXX_GPIO_MODE_OUTPUT)
+@@ -289,10 +299,14 @@ static int pm8xxx_pin_config_get(struct pinctrl_dev *pctldev,
+ 		arg = pin->output_strength;
+ 		break;
+ 	case PIN_CONFIG_DRIVE_PUSH_PULL:
+-		arg = !pin->open_drain;
++		if (pin->open_drain)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
+-		arg = pin->open_drain;
++		if (!pin->open_drain)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	default:
+ 		return -EINVAL;
 -- 
 2.17.1
 
