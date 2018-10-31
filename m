@@ -4,101 +4,134 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 922B3ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61C33C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:40:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54B1F20664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:40:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C29C20664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:40:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ogTYXr7S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54B1F20664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rzfHSl1t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C29C20664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729873AbeKAIka (ORCPT
+        id S1729884AbeKAIkt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:40:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57130 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:40:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727802AbeKAIIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:08:21 -0400
+        id S1728094AbeKAIIS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:08:18 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 427732081B;
-        Wed, 31 Oct 2018 23:08:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F47320821;
+        Wed, 31 Oct 2018 23:08:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027289;
-        bh=iIs37oMI0J+wd0O3eAfzOumMgM63rXt1f9fEPWOkA4A=;
+        s=default; t=1541027287;
+        bh=I9mmCSxQK3HiHkChjF353pIwUH3sr3IYdDQnPZ4mui4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ogTYXr7SSgtkviFk6t5HiMzn8PIfYgDUr1XhBZKgIl8mNjPKkd+urcgcoSV3nubME
-         hf6JJZcqWwh3eLPRifAjCwjJWQZGaZu+BapTtslrkENcb+Xoyhz6Qf3xpU1VQLuWqK
-         0MGmlwp3kJvPXziaQgCW2yjJRIqUZMwDxByNS1II=
+        b=rzfHSl1tWbBh9AaTvY3EZMOZVGtCzXrapzsqO1wRn3u00YLk3i6yfUD3LHcMjmbnO
+         lP0b0fMUOPG/+1GD+KULsVJRGSh2Q2dQa5SnCnLtRxNuRYZDBxgHTN1sSmVLHKOL0n
+         vLJidIijmewcV5J8Pb5EAlRAiJ+Dt7wxK/r592wo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sanskriti Sharma <sansharm@redhat.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 016/126] perf tools: Free temporary 'sys' string in read_event_files()
-Date:   Wed, 31 Oct 2018 19:06:04 -0400
-Message-Id: <20181031230754.29029-16-sashal@kernel.org>
+Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 013/126] lightnvm: pblk: fix two sleep-in-atomic-context bugs
+Date:   Wed, 31 Oct 2018 19:06:01 -0400
+Message-Id: <20181031230754.29029-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sanskriti Sharma <sansharm@redhat.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit 1e44224fb0528b4c0cc176bde2bb31e9127eb14b ]
+[ Upstream commit 7325b4bbe5952e3e939f15de812f2ee0c0d33ca9 ]
 
-For each system in a given pevent, read_event_files() reads in a
-temporary 'sys' string.  Be sure to free this string before moving onto
-to the next system and/or leaving read_event_files().
+The driver may sleep with holding a spinlock.
 
-Fixes the following coverity complaints:
+The function call paths (from bottom to top) in Linux-4.16 are:
 
-  Error: RESOURCE_LEAK (CWE-772):
+[FUNC] nvm_dev_dma_alloc(GFP_KERNEL)
+drivers/lightnvm/pblk-core.c, 754:
+	nvm_dev_dma_alloc in pblk_line_submit_smeta_io
+drivers/lightnvm/pblk-core.c, 1048:
+	pblk_line_submit_smeta_io in pblk_line_init_bb
+drivers/lightnvm/pblk-core.c, 1434:
+	pblk_line_init_bb in pblk_line_replace_data
+drivers/lightnvm/pblk-recovery.c, 980:
+	pblk_line_replace_data in pblk_recov_l2p
+drivers/lightnvm/pblk-recovery.c, 976:
+	spin_lock in pblk_recov_l2p
 
-  tools/perf/util/trace-event-read.c:343: overwrite_var: Overwriting
-  "sys" in "sys = read_string()" leaks the storage that "sys" points to.
+[FUNC] bio_map_kern(GFP_KERNEL)
+drivers/lightnvm/pblk-core.c, 762:
+	bio_map_kern in pblk_line_submit_smeta_io
+drivers/lightnvm/pblk-core.c, 1048:
+	pblk_line_submit_smeta_io in pblk_line_init_bb
+drivers/lightnvm/pblk-core.c, 1434:
+	pblk_line_init_bb in pblk_line_replace_data
+drivers/lightnvm/pblk-recovery.c, 980:
+	pblk_line_replace_data in pblk_recov_l2p
+drivers/lightnvm/pblk-recovery.c, 976:
+	spin_lock in pblk_recov_l2p
 
-  tools/perf/util/trace-event-read.c:353: leaked_storage: Variable "sys"
-  going out of scope leaks the storage it points to.
+To fix these bugs, the call to pblk_line_replace_data()
+is moved out of the spinlock protection.
 
-Signed-off-by: Sanskriti Sharma <sansharm@redhat.com>
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Joe Lawrence <joe.lawrence@redhat.com>
-Link: http://lkml.kernel.org/r/1538490554-8161-6-git-send-email-sansharm@redhat.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+These bugs are found by my static analysis tool DSAC.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Reviewed-by: Javier González <javier@cnexlabs.com>
+Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/trace-event-read.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/lightnvm/pblk-recovery.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/trace-event-read.c b/tools/perf/util/trace-event-read.c
-index 40b425949aa3..2d50e4384c72 100644
---- a/tools/perf/util/trace-event-read.c
-+++ b/tools/perf/util/trace-event-read.c
-@@ -349,9 +349,12 @@ static int read_event_files(struct pevent *pevent)
- 		for (x=0; x < count; x++) {
- 			size = read8(pevent);
- 			ret = read_event_file(pevent, sys, size);
--			if (ret)
-+			if (ret) {
-+				free(sys);
- 				return ret;
-+			}
+diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
+index d83466b3821b..958bda8a69b7 100644
+--- a/drivers/lightnvm/pblk-recovery.c
++++ b/drivers/lightnvm/pblk-recovery.c
+@@ -956,12 +956,14 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
  		}
-+		free(sys);
  	}
- 	return 0;
- }
+ 
+-	spin_lock(&l_mg->free_lock);
+ 	if (!open_lines) {
++		spin_lock(&l_mg->free_lock);
+ 		WARN_ON_ONCE(!test_and_clear_bit(meta_line,
+ 							&l_mg->meta_bitmap));
++		spin_unlock(&l_mg->free_lock);
+ 		pblk_line_replace_data(pblk);
+ 	} else {
++		spin_lock(&l_mg->free_lock);
+ 		/* Allocate next line for preparation */
+ 		l_mg->data_next = pblk_line_get(pblk);
+ 		if (l_mg->data_next) {
+@@ -969,8 +971,8 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
+ 			l_mg->data_next->type = PBLK_LINETYPE_DATA;
+ 			is_next = 1;
+ 		}
++		spin_unlock(&l_mg->free_lock);
+ 	}
+-	spin_unlock(&l_mg->free_lock);
+ 
+ 	if (is_next)
+ 		pblk_line_erase(pblk, l_mg->data_next);
 -- 
 2.17.1
 
