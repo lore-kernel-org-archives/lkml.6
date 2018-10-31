@@ -2,178 +2,107 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F018FECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 04:03:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA989ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 04:04:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B49E12081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 04:03:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B49E12081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 847EE2081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 04:04:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 847EE2081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729039AbeJaM77 (ORCPT
+        id S1729066AbeJaNBB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 08:59:59 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45060 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728467AbeJaM76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 08:59:58 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 350EF3DD47;
-        Wed, 31 Oct 2018 04:03:41 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-22.pek2.redhat.com [10.72.8.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7C8921054FD3;
-        Wed, 31 Oct 2018 04:03:35 +0000 (UTC)
-Date:   Wed, 31 Oct 2018 12:03:30 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     syzbot <syzbot+3701447012fe951dabb2@syzkaller.appspotmail.com>
-Cc:     axboe@kernel.dk, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: upstream boot error (2)
-Message-ID: <20181031040329.GA23429@ming.t460p>
-References: <000000000000ccd7e80579737060@google.com>
+        Wed, 31 Oct 2018 09:01:01 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:14163 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728467AbeJaNBB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 09:01:01 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 1EB989C66F38F;
+        Wed, 31 Oct 2018 12:04:37 +0800 (CST)
+Received: from localhost (10.177.23.164) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.408.0; Wed, 31 Oct 2018
+ 12:04:31 +0800
+From:   Zhen Lei <thunder.leizhen@huawei.com>
+To:     John Garry <john.garry@huawei.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+CC:     Zhen Lei <thunder.leizhen@huawei.com>,
+        LinuxArm <linuxarm@huawei.com>
+Subject: [PATCH v3 1/1] iommu/arm-smmu-v3: eliminate a potential memory corruption on hi1620 and earlier
+Date:   Wed, 31 Oct 2018 12:02:07 +0800
+Message-ID: <1540958527-15408-1-git-send-email-thunder.leizhen@huawei.com>
+X-Mailer: git-send-email 1.9.5.msysgit.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000ccd7e80579737060@google.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 31 Oct 2018 04:03:41 +0000 (UTC)
+Content-Type: text/plain
+X-Originating-IP: [10.177.23.164]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 08:00:04AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    11743c56785c Merge tag 'rpmsg-v4.20' of git://github.com/a..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=15121199400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=93932074d01b4a5
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3701447012fe951dabb2
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> 
-> Unfortunately, I don't have any reproducer for this crash yet.
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+3701447012fe951dabb2@syzkaller.appspotmail.com
-> 
-> KASAN: use-after-free Read in del_timer_syncNon-volatile memory driver v1.3
-> Linux agpgart interface v0.103
-> [drm] Initialized vgem 1.0.0 20120112 for virtual device on minor 0
-> usbcore: registered new interface driver udl
-> ==================================================================
-> BUG: KASAN: use-after-free in __lock_acquire+0x36d9/0x4c20
-> kernel/locking/lockdep.c:3218
-> Read of size 8 at addr ffff8801d1b6b540 by task swapper/0/1
-> 
-> CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0+ #88
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x244/0x39d lib/dump_stack.c:113
->  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
->  kasan_report_error mm/kasan/report.c:354 [inline]
->  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
->  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
->  __lock_acquire+0x36d9/0x4c20 kernel/locking/lockdep.c:3218
->  lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
->  del_timer_sync+0xb7/0x270 kernel/time/timer.c:1283
->  blk_cleanup_queue+0x413/0x710 block/blk-core.c:809
->  brd_free+0x5d/0x71 drivers/block/brd.c:422
->  brd_init+0x2eb/0x393 drivers/block/brd.c:518
->  do_one_initcall+0x145/0x957 init/main.c:890
->  do_initcall_level init/main.c:958 [inline]
->  do_initcalls init/main.c:966 [inline]
->  do_basic_setup init/main.c:984 [inline]
->  kernel_init_freeable+0x5c6/0x6b9 init/main.c:1148
->  kernel_init+0x11/0x1ae init/main.c:1068
->  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:350
-> 
-> Allocated by task 1:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->  set_track mm/kasan/kasan.c:460 [inline]
->  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
->  kmem_cache_alloc_node_trace+0x14c/0x740 mm/slab.c:3663
->  kmalloc_node include/linux/slab.h:584 [inline]
->  bdi_alloc_node+0x89/0xe0 mm/backing-dev.c:861
->  blk_alloc_queue_node+0x2b7/0xe80 block/blk-core.c:1024
->  blk_alloc_queue+0x1a/0x20 block/blk-core.c:911
->  brd_alloc+0xb9/0x540 drivers/block/brd.c:378
->  brd_init+0x11d/0x393 drivers/block/brd.c:498
->  do_one_initcall+0x145/0x957 init/main.c:890
->  do_initcall_level init/main.c:958 [inline]
->  do_initcalls init/main.c:966 [inline]
->  do_basic_setup init/main.c:984 [inline]
->  kernel_init_freeable+0x5c6/0x6b9 init/main.c:1148
->  kernel_init+0x11/0x1ae init/main.c:1068
->  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:350
-> 
-> Freed by task 12:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->  set_track mm/kasan/kasan.c:460 [inline]
->  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
->  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
->  __cache_free mm/slab.c:3498 [inline]
->  kfree+0xcf/0x230 mm/slab.c:3817
->  release_bdi mm/backing-dev.c:968 [inline]
->  kref_put include/linux/kref.h:70 [inline]
->  bdi_put+0x138/0x180 mm/backing-dev.c:973
->  blk_exit_queue+0xbf/0xf0 block/blk-core.c:746
->  __blk_release_queue+0x12f/0x510 block/blk-sysfs.c:841
->  process_one_work+0xc90/0x1c40 kernel/workqueue.c:2153
->  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
->  kthread+0x35a/0x440 kernel/kthread.c:246
->  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:350
-> 
-> The buggy address belongs to the object at ffff8801d1b6ae80
->  which belongs to the cache kmalloc-2k of size 2048
-> The buggy address is located 1728 bytes inside of
->  2048-byte region [ffff8801d1b6ae80, ffff8801d1b6b680)
-> The buggy address belongs to the page:
-> page:ffffea000746da80 count:1 mapcount:0 mapping:ffff8801da800c40 index:0x0
-> compound_mapcount: 0
-> flags: 0x2fffc0000010200(slab|head)
-> raw: 02fffc0000010200 ffffea000746da08 ffffea000746dc08 ffff8801da800c40
-> raw: 0000000000000000 ffff8801d1b6a600 0000000100000003 0000000000000000
-> page dumped because: kasan: bad access detected
-> 
-> Memory state around the buggy address:
->  ffff8801d1b6b400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->  ffff8801d1b6b480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> > ffff8801d1b6b500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->                                            ^
->  ffff8801d1b6b580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->  ffff8801d1b6b600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ==================================================================
-> 
-> 
+The standard GITS_TRANSLATER register in ITS is only 4 bytes, but
+Hisilicon expands the next 4 bytes to carry some IMPDEF information. That
+means, total 8 bytes data will be written to MSIAddress each time.
 
-This issue should have been fixed by the following one-line change:
+MSIAddr: |----4bytes----|----4bytes----|
+	 |    MSIData   |    IMPDEF    |
 
-diff --git a/drivers/block/brd.c b/drivers/block/brd.c
-index df8103dd40ac..a5ecff2071ce 100644
---- a/drivers/block/brd.c
-+++ b/drivers/block/brd.c
-@@ -515,6 +515,8 @@ static int __init brd_init(void)
- out_free:
- 	list_for_each_entry_safe(brd, next, &brd_devices, brd_list) {
- 		list_del(&brd->brd_list);
-+		/* don't let put_disk() drop the queue's ref */
-+		brd->brd_disk->queue = NULL;
- 		brd_free(brd);
- 	}
- 	unregister_blkdev(RAMDISK_MAJOR, "ramdisk");
+There is no problem for ITS, because the next 4 bytes space is reserved
+in ITS. But it will overwrite the 4 bytes memory following "sync_count".
+It's very fortunately that the previous and the next neighbour of the
+"sync_count" are both aligned by 8 bytes, so no problem is met now.
 
--- 
-Ming
+It's good to explicitly add a workaround. Let's enclose the "sync_count"
+into a union and companion with a new member "padding" of type u64.
+
+There is no functional change.
+
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+---
+ drivers/iommu/arm-smmu-v3.c | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+index 6947ccf..4e94730 100644
+--- a/drivers/iommu/arm-smmu-v3.c
++++ b/drivers/iommu/arm-smmu-v3.c
+@@ -576,7 +576,23 @@ struct arm_smmu_device {
+
+ 	struct arm_smmu_strtab_cfg	strtab_cfg;
+
+-	u32				sync_count;
++	/*
++	 * The member "padding" is used to make sure the member "sync_count" to
++	 * be aligned at 8 bytes boundary, and 4 bytes padding memory followed.
++	 *
++	 * These are required by hi1620 and earlier of Hisilicon. Because the
++	 * ITS hardware on hi1620 and earlier will truncate the MSIAddress(Here
++	 * it's the address of "sync_count") to 8 bytes boundary first, then
++	 * write 32 bits MSIdata at offset 0, and 32 bits IMPDEF data at offset
++	 * 4. Without this workaround, the adjacent member maybe overwritten.
++	 *
++	 *                    |---4bytes---|---4bytes---|
++	 * MSIAddress & (~0x7):   MSIdata  | IMPDEF data|
++	 */
++	union {
++		u32			sync_count;
++		u64			padding;
++	};
+
+ 	/* IOMMU core code handle */
+ 	struct iommu_device		iommu;
+--
+1.8.3
+
+
