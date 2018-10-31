@@ -2,189 +2,437 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFD61C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 22:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA2FC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 22:14:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BBC320664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 22:13:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BBC320664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 8522220664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 22:14:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8522220664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxonhyperv.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726580AbeKAHN2 (ORCPT
+        id S1726672AbeKAHOR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 03:13:28 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:45895 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725755AbeKAHN2 (ORCPT
+        Thu, 1 Nov 2018 03:14:17 -0400
+Received: from a2nlsmtp01-03.prod.iad2.secureserver.net ([198.71.225.37]:42514
+        "EHLO a2nlsmtp01-03.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725755AbeKAHOR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 03:13:28 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9VMDLd52561835
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 31 Oct 2018 15:13:21 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9VMDLdc2561832;
-        Wed, 31 Oct 2018 15:13:21 -0700
-Date:   Wed, 31 Oct 2018 15:13:21 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-5d4f0edaa3ac4f1844ed7c64cd2bae6f1912bac5@git.kernel.org>
-Cc:     leo.yan@linaro.org, tglx@linutronix.de, adrian.hunter@intel.com,
-        davem@davemloft.net, linux-kernel@vger.kernel.org,
-        jolsa@kernel.org, acme@redhat.com, hpa@zytor.com, mingo@kernel.org,
-        ak@linux.intel.com, mathieu.poirier@linaro.org
-Reply-To: mathieu.poirier@linaro.org, acme@redhat.com, mingo@kernel.org,
-          hpa@zytor.com, jolsa@kernel.org, ak@linux.intel.com,
-          adrian.hunter@intel.com, linux-kernel@vger.kernel.org,
-          davem@davemloft.net, tglx@linutronix.de, leo.yan@linaro.org
-In-Reply-To: <20181031091043.23465-6-adrian.hunter@intel.com>
-References: <20181031091043.23465-6-adrian.hunter@intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf intel-pt/bts: Calculate cpumode for
- synthesized samples
-Git-Commit-ID: 5d4f0edaa3ac4f1844ed7c64cd2bae6f1912bac5
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Thu, 1 Nov 2018 03:14:17 -0400
+Received: from linuxonhyperv2.linuxonhyperv.com ([107.180.71.197])
+        by : HOSTING RELAY : with ESMTP
+        id HyjkgVEW1Wzu3HyjkgRF8R; Wed, 31 Oct 2018 15:13:16 -0700
+x-originating-ip: 107.180.71.197
+Received: from longli by linuxonhyperv2.linuxonhyperv.com with local (Exim 4.91)
+        (envelope-from <longli@linuxonhyperv2.linuxonhyperv.com>)
+        id 1gHyjk-0000gY-4B; Wed, 31 Oct 2018 15:13:16 -0700
+From:   Long Li <longli@linuxonhyperv.com>
+To:     Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
+Cc:     Long Li <longli@microsoft.com>
+Subject: [Patch v4 1/3] CIFS: Add support for direct I/O read
+Date:   Wed, 31 Oct 2018 22:13:09 +0000
+Message-Id: <20181031221311.2596-1-longli@linuxonhyperv.com>
+X-Mailer: git-send-email 2.18.0
+Reply-To: longli@microsoft.com
+X-CMAE-Envelope: MS4wfDU3diU7whGWatn5LsZ3I4dWVsqR2P23Wz3bSGWz0cVGgTggzm6VM+9qqJBuFy3KqLITh4Bd6UGTmXHWZLhVxOWlrWll7tuwST8eHaj3E05CFLnCez1i
+ blM0r3L8X/rNzD0s65Yo0pQ/sGxAjhcmIcdE+B04NhwRswvUzc6q4HHJemnNk6kUeP4lg0araJm6bqpkK+LrHvJaYamHze7PcV8DVX1TTlfHVG59FM9SbeOt
+ fPeceDrNW9uJqHfEIUnF7Ir04zdQ1M/Wwhpb0o+w+iIj+H4je+5986bqEYCv5TWU2Rh/IXD+PLVlSpVXYkafhYmsdVvIVfmbbWJG6x5qxxfVm8qJazl6kYyA
+ JXiBKBbH+R6wgN+YCpCxZfQ9XV1YRw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5d4f0edaa3ac4f1844ed7c64cd2bae6f1912bac5
-Gitweb:     https://git.kernel.org/tip/5d4f0edaa3ac4f1844ed7c64cd2bae6f1912bac5
-Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Wed, 31 Oct 2018 11:10:43 +0200
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 31 Oct 2018 12:56:26 -0300
+From: Long Li <longli@microsoft.com>
 
-perf intel-pt/bts: Calculate cpumode for synthesized samples
+With direct I/O read, we transfer the data directly from transport layer to
+the user data buffer.
 
-In the absence of a fallback, samples must provide a correct cpumode for
-the 'ip'. Do that now there is no fallback.
+Change in v3: add support for kernel AIO
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Leo Yan <leo.yan@linaro.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: stable@vger.kernel.org # 4.19
-Link: http://lkml.kernel.org/r/20181031091043.23465-6-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Change in v4:
+Refactor common read code to __cifs_readv for direct and non-direct I/O.
+Retry on direct I/O failure.
+
+Signed-off-by: Long Li <longli@microsoft.com>
 ---
- tools/perf/util/intel-bts.c | 17 ++++++++++++-----
- tools/perf/util/intel-pt.c  | 22 +++++++++++++---------
- 2 files changed, 25 insertions(+), 14 deletions(-)
+ fs/cifs/cifsfs.h   |   1 +
+ fs/cifs/cifsglob.h |   5 ++
+ fs/cifs/file.c     | 219 +++++++++++++++++++++++++++++++++++++++++++----------
+ 3 files changed, 186 insertions(+), 39 deletions(-)
 
-diff --git a/tools/perf/util/intel-bts.c b/tools/perf/util/intel-bts.c
-index 3b3a3d55dca1..7b27d77306c2 100644
---- a/tools/perf/util/intel-bts.c
-+++ b/tools/perf/util/intel-bts.c
-@@ -269,6 +269,13 @@ static int intel_bts_do_fix_overlap(struct auxtrace_queue *queue,
- 	return 0;
+diff --git a/fs/cifs/cifsfs.h b/fs/cifs/cifsfs.h
+index 5f02318..7fba9aa 100644
+--- a/fs/cifs/cifsfs.h
++++ b/fs/cifs/cifsfs.h
+@@ -102,6 +102,7 @@ extern int cifs_open(struct inode *inode, struct file *file);
+ extern int cifs_close(struct inode *inode, struct file *file);
+ extern int cifs_closedir(struct inode *inode, struct file *file);
+ extern ssize_t cifs_user_readv(struct kiocb *iocb, struct iov_iter *to);
++extern ssize_t cifs_direct_readv(struct kiocb *iocb, struct iov_iter *to);
+ extern ssize_t cifs_strict_readv(struct kiocb *iocb, struct iov_iter *to);
+ extern ssize_t cifs_user_writev(struct kiocb *iocb, struct iov_iter *from);
+ extern ssize_t cifs_strict_writev(struct kiocb *iocb, struct iov_iter *from);
+diff --git a/fs/cifs/cifsglob.h b/fs/cifs/cifsglob.h
+index 7f62c98..52248dd 100644
+--- a/fs/cifs/cifsglob.h
++++ b/fs/cifs/cifsglob.h
+@@ -1146,6 +1146,11 @@ struct cifs_aio_ctx {
+ 	unsigned int		len;
+ 	unsigned int		total_len;
+ 	bool			should_dirty;
++	/*
++	 * Indicates if this aio_ctx is for direct_io,
++	 * If yes, iter is a copy of the user passed iov_iter
++	 */
++	bool			direct_io;
+ };
+ 
+ struct cifs_readdata;
+diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+index 87eece6..daab878 100644
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -2965,7 +2965,6 @@ cifs_uncached_readdata_release(struct kref *refcount)
+ 	kref_put(&rdata->ctx->refcount, cifs_aio_ctx_release);
+ 	for (i = 0; i < rdata->nr_pages; i++) {
+ 		put_page(rdata->pages[i]);
+-		rdata->pages[i] = NULL;
+ 	}
+ 	cifs_readdata_release(refcount);
+ }
+@@ -3092,6 +3091,63 @@ cifs_uncached_copy_into_pages(struct TCP_Server_Info *server,
+ 	return uncached_fill_pages(server, rdata, iter, iter->count);
  }
  
-+static inline u8 intel_bts_cpumode(struct intel_bts *bts, uint64_t ip)
++static int cifs_resend_rdata(struct cifs_readdata *rdata,
++                     struct list_head *rdata_list,
++                     struct cifs_aio_ctx *ctx)
 +{
-+	return machine__kernel_ip(bts->machine, ip) ?
-+	       PERF_RECORD_MISC_KERNEL :
-+	       PERF_RECORD_MISC_USER;
++	int wait_retry = 0;
++	unsigned int rsize, credits;
++	int rc;
++	struct TCP_Server_Info *server = tlink_tcon(rdata->cfile->tlink)->ses->server;
++
++	/*
++	 * Try to resend this rdata, waiting for credits up to 3 seconds.
++	 * Note: we are attempting to resend the whole rdata not in segments
++	 */
++	do {
++		rc = server->ops->wait_mtu_credits(server, rdata->bytes,
++						&rsize, &credits);
++
++		if (rc)
++			break;
++
++		if (rsize < rdata->bytes) {
++			add_credits_and_wake_if(server, credits, 0);
++			msleep(1000);
++			wait_retry++;
++		}
++	} while (rsize < rdata->bytes && wait_retry < 3);
++
++	/*
++	 * If we can't find enough credits to send this rdata
++	 * release the rdata and return failure, this will pass
++	 * whatever I/O amount we have finished to VFS.
++	 */
++	if (rsize < rdata->bytes) {
++		rc = -EBUSY;
++		goto out;
++	}
++
++	rc = -EAGAIN;
++	while (rc == -EAGAIN)
++		if (!rdata->cfile->invalidHandle ||
++		    !(rc = cifs_reopen_file(rdata->cfile, true)))
++			rc = server->ops->async_readv(rdata);
++
++	if (!rc) {
++		/* Add to aio pending list */
++		list_add_tail(&rdata->list, rdata_list);
++		return 0;
++	}
++
++	add_credits_and_wake_if(server, rdata->credits, 0);
++out:
++	kref_put(&rdata->refcount,
++		cifs_uncached_readdata_release);
++
++	return rc;
 +}
 +
- static int intel_bts_synth_branch_sample(struct intel_bts_queue *btsq,
- 					 struct branch *branch)
+ static int
+ cifs_send_async_read(loff_t offset, size_t len, struct cifsFileInfo *open_file,
+ 		     struct cifs_sb_info *cifs_sb, struct list_head *rdata_list,
+@@ -3103,6 +3159,9 @@ cifs_send_async_read(loff_t offset, size_t len, struct cifsFileInfo *open_file,
+ 	int rc;
+ 	pid_t pid;
+ 	struct TCP_Server_Info *server;
++	struct page **pagevec;
++	size_t start;
++	struct iov_iter direct_iov = ctx->iter;
+ 
+ 	server = tlink_tcon(open_file->tlink)->ses->server;
+ 
+@@ -3111,6 +3170,9 @@ cifs_send_async_read(loff_t offset, size_t len, struct cifsFileInfo *open_file,
+ 	else
+ 		pid = current->tgid;
+ 
++	if (ctx->direct_io)
++		iov_iter_advance(&direct_iov, offset - ctx->pos);
++
+ 	do {
+ 		rc = server->ops->wait_mtu_credits(server, cifs_sb->rsize,
+ 						   &rsize, &credits);
+@@ -3118,20 +3180,56 @@ cifs_send_async_read(loff_t offset, size_t len, struct cifsFileInfo *open_file,
+ 			break;
+ 
+ 		cur_len = min_t(const size_t, len, rsize);
+-		npages = DIV_ROUND_UP(cur_len, PAGE_SIZE);
+ 
+-		/* allocate a readdata struct */
+-		rdata = cifs_readdata_alloc(npages,
++		if (ctx->direct_io) {
++
++			cur_len = iov_iter_get_pages_alloc(
++					&direct_iov, &pagevec,
++					cur_len, &start);
++			if (cur_len < 0) {
++				cifs_dbg(VFS,
++					"couldn't get user pages (cur_len=%zd)"
++					" iter type %d"
++					" iov_offset %zd count %zd\n",
++					cur_len, direct_iov.type, direct_iov.iov_offset,
++					direct_iov.count);
++				dump_stack();
++				break;
++			}
++			iov_iter_advance(&direct_iov, cur_len);
++
++			rdata = cifs_readdata_direct_alloc(
++					pagevec, cifs_uncached_readv_complete);
++			if (!rdata) {
++				add_credits_and_wake_if(server, credits, 0);
++				rc = -ENOMEM;
++				break;
++			}
++
++			npages = (cur_len + start + PAGE_SIZE-1) / PAGE_SIZE;
++			rdata->page_offset = start;
++			rdata->tailsz = npages > 1 ?
++				cur_len-(PAGE_SIZE-start)-(npages-2)*PAGE_SIZE :
++				cur_len;
++
++		} else {
++
++			npages = DIV_ROUND_UP(cur_len, PAGE_SIZE);
++			/* allocate a readdata struct */
++			rdata = cifs_readdata_alloc(npages,
+ 					    cifs_uncached_readv_complete);
+-		if (!rdata) {
+-			add_credits_and_wake_if(server, credits, 0);
+-			rc = -ENOMEM;
+-			break;
+-		}
++			if (!rdata) {
++				add_credits_and_wake_if(server, credits, 0);
++				rc = -ENOMEM;
++				break;
++			}
+ 
+-		rc = cifs_read_allocate_pages(rdata, npages);
+-		if (rc)
+-			goto error;
++			rc = cifs_read_allocate_pages(rdata, npages);
++			if (rc)
++				goto error;
++
++			rdata->tailsz = PAGE_SIZE;
++		}
+ 
+ 		rdata->cfile = cifsFileInfo_get(open_file);
+ 		rdata->nr_pages = npages;
+@@ -3139,7 +3237,6 @@ cifs_send_async_read(loff_t offset, size_t len, struct cifsFileInfo *open_file,
+ 		rdata->bytes = cur_len;
+ 		rdata->pid = pid;
+ 		rdata->pagesz = PAGE_SIZE;
+-		rdata->tailsz = PAGE_SIZE;
+ 		rdata->read_into_pages = cifs_uncached_read_into_pages;
+ 		rdata->copy_into_pages = cifs_uncached_copy_into_pages;
+ 		rdata->credits = credits;
+@@ -3153,9 +3250,11 @@ cifs_send_async_read(loff_t offset, size_t len, struct cifsFileInfo *open_file,
+ 		if (rc) {
+ 			add_credits_and_wake_if(server, rdata->credits, 0);
+ 			kref_put(&rdata->refcount,
+-				 cifs_uncached_readdata_release);
+-			if (rc == -EAGAIN)
++				cifs_uncached_readdata_release);
++			if (rc == -EAGAIN) {
++				iov_iter_revert(&direct_iov, cur_len);
+ 				continue;
++			}
+ 			break;
+ 		}
+ 
+@@ -3211,45 +3310,62 @@ collect_uncached_read_data(struct cifs_aio_ctx *ctx)
+ 				 * reading.
+ 				 */
+ 				if (got_bytes && got_bytes < rdata->bytes) {
+-					rc = cifs_readdata_to_iov(rdata, to);
++					rc = 0;
++					if (!ctx->direct_io)
++						rc = cifs_readdata_to_iov(rdata, to);
+ 					if (rc) {
+ 						kref_put(&rdata->refcount,
+-						cifs_uncached_readdata_release);
++							cifs_uncached_readdata_release);
+ 						continue;
+ 					}
+ 				}
+ 
+-				rc = cifs_send_async_read(
++				if (ctx->direct_io) {
++					/*
++					 * Re-use rdata as this is a
++					 * direct I/O
++					 */
++					rc = cifs_resend_rdata(
++						rdata,
++						&tmp_list, ctx);
++				} else {
++					rc = cifs_send_async_read(
+ 						rdata->offset + got_bytes,
+ 						rdata->bytes - got_bytes,
+ 						rdata->cfile, cifs_sb,
+ 						&tmp_list, ctx);
+ 
++					kref_put(&rdata->refcount,
++						cifs_uncached_readdata_release);
++				}
++
+ 				list_splice(&tmp_list, &ctx->list);
+ 
+-				kref_put(&rdata->refcount,
+-					 cifs_uncached_readdata_release);
+ 				goto again;
+ 			} else if (rdata->result)
+ 				rc = rdata->result;
+-			else
++			else if (!ctx->direct_io)
+ 				rc = cifs_readdata_to_iov(rdata, to);
+ 
+ 			/* if there was a short read -- discard anything left */
+ 			if (rdata->got_bytes && rdata->got_bytes < rdata->bytes)
+ 				rc = -ENODATA;
++
++			ctx->total_len += rdata->got_bytes;
+ 		}
+ 		list_del_init(&rdata->list);
+ 		kref_put(&rdata->refcount, cifs_uncached_readdata_release);
+ 	}
+ 
+-	for (i = 0; i < ctx->npages; i++) {
+-		if (ctx->should_dirty)
+-			set_page_dirty(ctx->bv[i].bv_page);
+-		put_page(ctx->bv[i].bv_page);
+-	}
++	if (!ctx->direct_io) {
++		for (i = 0; i < ctx->npages; i++) {
++			if (ctx->should_dirty)
++				set_page_dirty(ctx->bv[i].bv_page);
++			put_page(ctx->bv[i].bv_page);
++		}
+ 
+-	ctx->total_len = ctx->len - iov_iter_count(to);
++		ctx->total_len = ctx->len - iov_iter_count(to);
++	}
+ 
+ 	cifs_stats_bytes_read(tcon, ctx->total_len);
+ 
+@@ -3267,18 +3383,27 @@ collect_uncached_read_data(struct cifs_aio_ctx *ctx)
+ 		complete(&ctx->done);
+ }
+ 
+-ssize_t cifs_user_readv(struct kiocb *iocb, struct iov_iter *to)
++ssize_t __cifs_readv(struct kiocb *iocb, struct iov_iter *to, bool direct)
  {
-@@ -281,12 +288,8 @@ static int intel_bts_synth_branch_sample(struct intel_bts_queue *btsq,
- 	    bts->num_events++ <= bts->synth_opts.initial_skip)
+-	struct file *file = iocb->ki_filp;
+-	ssize_t rc;
+ 	size_t len;
+-	ssize_t total_read = 0;
+-	loff_t offset = iocb->ki_pos;
++	struct file *file = iocb->ki_filp;
+ 	struct cifs_sb_info *cifs_sb;
+-	struct cifs_tcon *tcon;
+ 	struct cifsFileInfo *cfile;
++	struct cifs_tcon *tcon;
++	ssize_t rc, total_read = 0;
++	loff_t offset = iocb->ki_pos;
+ 	struct cifs_aio_ctx *ctx;
+ 
++	/*
++	 * iov_iter_get_pages_alloc() doesn't work with ITER_KVEC,
++	 * fall back to data copy read path
++	 * this could be improved by getting pages directly in ITER_KVEC
++	 */
++	if (direct && to->type & ITER_KVEC) {
++		cifs_dbg(FYI, "use non-direct cifs_user_readv for kvec I/O\n");
++		direct = false;
++	}
++
+ 	len = iov_iter_count(to);
+ 	if (!len)
  		return 0;
+@@ -3305,14 +3430,20 @@ ssize_t cifs_user_readv(struct kiocb *iocb, struct iov_iter *to)
+ 	if (to->type == ITER_IOVEC)
+ 		ctx->should_dirty = true;
  
--	event.sample.header.type = PERF_RECORD_SAMPLE;
--	event.sample.header.misc = PERF_RECORD_MISC_USER;
--	event.sample.header.size = sizeof(struct perf_event_header);
+-	rc = setup_aio_ctx_iter(ctx, to, READ);
+-	if (rc) {
+-		kref_put(&ctx->refcount, cifs_aio_ctx_release);
+-		return rc;
++	if (direct) {
++		ctx->pos = offset;
++		ctx->direct_io = true;
++		ctx->iter = *to;
++		ctx->len = len;
++	} else {
++		rc = setup_aio_ctx_iter(ctx, to, READ);
++		if (rc) {
++			kref_put(&ctx->refcount, cifs_aio_ctx_release);
++			return rc;
++		}
++		len = ctx->len;
+ 	}
+ 
+-	len = ctx->len;
 -
--	sample.cpumode = PERF_RECORD_MISC_USER;
- 	sample.ip = le64_to_cpu(branch->from);
-+	sample.cpumode = intel_bts_cpumode(bts, sample.ip);
- 	sample.pid = btsq->pid;
- 	sample.tid = btsq->tid;
- 	sample.addr = le64_to_cpu(branch->to);
-@@ -298,6 +301,10 @@ static int intel_bts_synth_branch_sample(struct intel_bts_queue *btsq,
- 	sample.insn_len = btsq->intel_pt_insn.length;
- 	memcpy(sample.insn, btsq->intel_pt_insn.buf, INTEL_PT_INSN_BUF_SZ);
+ 	/* grab a lock here due to read response handlers can access ctx */
+ 	mutex_lock(&ctx->aio_mutex);
  
-+	event.sample.header.type = PERF_RECORD_SAMPLE;
-+	event.sample.header.misc = sample.cpumode;
-+	event.sample.header.size = sizeof(struct perf_event_header);
-+
- 	if (bts->synth_opts.inject) {
- 		event.sample.header.size = bts->branches_event_size;
- 		ret = perf_event__synthesize_sample(&event,
-diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-index 60732213d16a..86cc9a64e982 100644
---- a/tools/perf/util/intel-pt.c
-+++ b/tools/perf/util/intel-pt.c
-@@ -407,6 +407,13 @@ intel_pt_cache_lookup(struct dso *dso, struct machine *machine, u64 offset)
- 	return auxtrace_cache__lookup(dso->auxtrace_cache, offset);
+@@ -3354,6 +3485,16 @@ ssize_t cifs_user_readv(struct kiocb *iocb, struct iov_iter *to)
+ 	return rc;
  }
  
-+static inline u8 intel_pt_cpumode(struct intel_pt *pt, uint64_t ip)
++ssize_t cifs_direct_readv(struct kiocb *iocb, struct iov_iter *to)
 +{
-+	return ip >= pt->kernel_start ?
-+	       PERF_RECORD_MISC_KERNEL :
-+	       PERF_RECORD_MISC_USER;
++	return __cifs_readv(iocb, to, true);
 +}
 +
- static int intel_pt_walk_next_insn(struct intel_pt_insn *intel_pt_insn,
- 				   uint64_t *insn_cnt_ptr, uint64_t *ip,
- 				   uint64_t to_ip, uint64_t max_insn_cnt,
-@@ -429,10 +436,7 @@ static int intel_pt_walk_next_insn(struct intel_pt_insn *intel_pt_insn,
- 	if (to_ip && *ip == to_ip)
- 		goto out_no_cache;
- 
--	if (*ip >= ptq->pt->kernel_start)
--		cpumode = PERF_RECORD_MISC_KERNEL;
--	else
--		cpumode = PERF_RECORD_MISC_USER;
-+	cpumode = intel_pt_cpumode(ptq->pt, *ip);
- 
- 	thread = ptq->thread;
- 	if (!thread) {
-@@ -1059,15 +1063,11 @@ static void intel_pt_prep_b_sample(struct intel_pt *pt,
- 				   union perf_event *event,
- 				   struct perf_sample *sample)
- {
--	event->sample.header.type = PERF_RECORD_SAMPLE;
--	event->sample.header.misc = PERF_RECORD_MISC_USER;
--	event->sample.header.size = sizeof(struct perf_event_header);
--
- 	if (!pt->timeless_decoding)
- 		sample->time = tsc_to_perf_time(ptq->timestamp, &pt->tc);
- 
--	sample->cpumode = PERF_RECORD_MISC_USER;
- 	sample->ip = ptq->state->from_ip;
-+	sample->cpumode = intel_pt_cpumode(pt, sample->ip);
- 	sample->pid = ptq->pid;
- 	sample->tid = ptq->tid;
- 	sample->addr = ptq->state->to_ip;
-@@ -1076,6 +1076,10 @@ static void intel_pt_prep_b_sample(struct intel_pt *pt,
- 	sample->flags = ptq->flags;
- 	sample->insn_len = ptq->insn_len;
- 	memcpy(sample->insn, ptq->insn, INTEL_PT_INSN_BUF_SZ);
++ssize_t cifs_user_readv(struct kiocb *iocb, struct iov_iter *to)
++{
++	return __cifs_readv(iocb, to, false);
++}
 +
-+	event->sample.header.type = PERF_RECORD_SAMPLE;
-+	event->sample.header.misc = sample->cpumode;
-+	event->sample.header.size = sizeof(struct perf_event_header);
- }
- 
- static int intel_pt_inject_event(union perf_event *event,
+ ssize_t
+ cifs_strict_readv(struct kiocb *iocb, struct iov_iter *to)
+ {
+-- 
+2.7.4
+
