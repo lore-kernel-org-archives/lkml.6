@@ -2,112 +2,110 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 304BAC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 12:53:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F27F2C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 12:56:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5E4120664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 12:53:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93A7A20685
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 12:56:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s3FUmOli"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5E4120664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZcZjX9Mq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93A7A20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729165AbeJaVvo (ORCPT
+        id S1729220AbeJaVyJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 17:51:44 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:46008 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728930AbeJaVvo (ORCPT
+        Wed, 31 Oct 2018 17:54:09 -0400
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:44859 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728930AbeJaVyJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 17:51:44 -0400
-Received: by mail-qk1-f196.google.com with SMTP id d135so8337318qkc.12;
-        Wed, 31 Oct 2018 05:53:49 -0700 (PDT)
+        Wed, 31 Oct 2018 17:54:09 -0400
+Received: by mail-vk1-f195.google.com with SMTP id h128so2390293vkg.11
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 05:56:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=lEWLbS0T/h/I3R4Mu9GptRpVDLfdRFtQIrzSW3pSAZg=;
-        b=s3FUmOli4jKnoKYjYLEun/RLT/Pq85smhehxaoGwsiSgz9cTrfZEeB1FYzQw+prLEB
-         ZaeBv3bQ1kBeCbDKEwTS1A5za5+9k91GAJUSp5I4W3hcj/rhCBcyNO+2+Etxonw7Y5TS
-         ZA5pO9lvUXNOZp3+rT7dxoi3H06bni0v3MFaAYg9YH66fkdnqvgMnajHgFITXWJM8yu+
-         EoA8HEwwYgIbBUJLZM2azn7D+vu0YpoWf1Wf2SGiyhNCeV7PoQz8rF7vIs7bg0EjfS7H
-         Bal7WWHMRHhXliVejuUD369QR6g3hT20CWH2Qmw3Vrllw0xe1JYF9eKBxpmdzBxp4v2C
-         MPxw==
+        bh=2748mQjQZ5HZ8OHwmIKNL4oZpWL6si+Toa6T7ktkpG8=;
+        b=ZcZjX9MqSMkHPNQEGkf/1r4cQ0yR4GD1WnR6odKOLR7Sezbz4u89T2YlojZmG6dU+4
+         XjxyOh5ZFv/Jc0BKLfPuCPfRy9AoTdDscd1k7zhqKDEFYx0nkt6yYwymjdpTTN9pRMsd
+         w7fbJGUaHBBEwjbNfYWleIe/rSb0a/6kcORrrGVAeamcZXXLtf2y5xqlp4vcN4hVmUA/
+         OkcNUmo9iqHplwv+XkzriX3CMPp5doRDqjxZDDc53UF9PRU6Hsy1S1Gn0n0iw6xccF+8
+         Tpq0betEVhLaWbJ+BFFPIaQ8iQ8t4OM/BsPPqbLwq5xt0vFLuda0NVvHYl57MwnJFKM0
+         D86w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=lEWLbS0T/h/I3R4Mu9GptRpVDLfdRFtQIrzSW3pSAZg=;
-        b=ajvJ1MKE8DNrr9VFi5QPHHeMR5WdWWiPQrbCIhFB+iCp1cG/POerZCUEH5mgjO11G5
-         kDtz2xp8mSWKlQ+yzN/FvAyu/uDumEbRDVuMopEgvTDOD6jRKQ0VF0fcUQMDPsXeCizu
-         YJPUQRuR2qkMiH3VvUkPAC0MgDGcYMr7ycs4ZSEKSAO3k3n6T/j9MgA8nTy9nvRzefVu
-         vQE7wYWVlQWUKsEkquDUG4k9bkJB8E0iCHXRDeNk0vG+o82kzOBxaZSK3GsmZlwGrkSW
-         iDMggrYiCXvXSOm2p9uVrFckj/U6HHiZeUufVX7AtqKFUDmAmXF9akidKhcoPrdC0Tdp
-         zjfw==
-X-Gm-Message-State: AGRZ1gJ1U1Bv26z6SXmUmh37Zjq5bmBVsA4oAsngMMHVuKjqyEtgLXDx
-        xKwC2MKDC8mbB3fmojocdSh3w13B3wM5J4aG648ugIYHwhY=
-X-Google-Smtp-Source: AJdET5fsJJ1T+qs5i/yQzx6XQZaYMyiuSXuNgd5aV/DvxDlJr7RTq2tAEQ8c/5i4tKRpbmnGSclV0M4d1NYZw/yOlrY=
-X-Received: by 2002:a37:1f44:: with SMTP id f65mr2278089qkf.33.1540990429546;
- Wed, 31 Oct 2018 05:53:49 -0700 (PDT)
+        bh=2748mQjQZ5HZ8OHwmIKNL4oZpWL6si+Toa6T7ktkpG8=;
+        b=Tdtzp1Xguat1dKqMTA4c5i2DzzPNhKkRIkLENs5eYzytw96fi6dtmxWS/DJuoIS1x+
+         PyVVBJwVOfZINhOMq5zm4LSvPrLqdzMyHXAt3VlI9hi146o8cSlYE8RNNt5djUe2ArPR
+         C1OZywLjEZRUSyb3mOsQ5XLM3yHoG49sfvRcoYlQcro3cdi8ZQuAlCIi182/hwsBfTzT
+         zSxsF23MswCdlXDFSSpTzMrXWO5kjfTN4nHVGu9EzW7uIqLPZRZV1YwylE2+KLdyMOMI
+         YifFj/sTP6vG7McjkOTEo75jV2FnDt71hhitoDj45U+8IkqL9t6L5jHE9rmJd57z4ykQ
+         l/wA==
+X-Gm-Message-State: AGRZ1gIGWWDnCXqLzDhCP4jyLHqvWBNc0zdtf6++tUNm//Lko/t5Qyrc
+        PkqKf0K/5x1Up+TsOt0DBBVpDiJHWnkaT8zXaJLG1w==
+X-Google-Smtp-Source: AJdET5ecbg32zGJNiSUzy6+vCP4WFL2bnv9DiNUqQNjavEWOPYZNJDpKE3XU+N87mg44uRQGvBs8Gl05Aqyn2HwN61s=
+X-Received: by 2002:a1f:984e:: with SMTP id a75mr1230107vke.89.1540990573640;
+ Wed, 31 Oct 2018 05:56:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <1540993041-25611-1-git-send-email-peng.hao2@zte.com.cn> <1540993041-25611-4-git-send-email-peng.hao2@zte.com.cn>
-In-Reply-To: <1540993041-25611-4-git-send-email-peng.hao2@zte.com.cn>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 31 Oct 2018 14:53:38 +0200
-Message-ID: <CAHp75VeQD7xEUyR=Vwk78R3Ld2OfBzL=mkKQF9YLO0nKJyJ6zA@mail.gmail.com>
-Subject: Re: [PATCH V4 4/5] misc/pvpanic: add support to get pvpanic device
- info by FDT
-To:     peng.hao2@zte.com.cn
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        hutao@cn.fujitsu.com,
-        Linux Documentation List <linux-doc@vger.kernel.org>
+Received: by 2002:a67:f48d:0:0:0:0:0 with HTTP; Wed, 31 Oct 2018 05:56:12
+ -0700 (PDT)
+In-Reply-To: <4beaaae77bea4cc5b4cc15504331c9a9@AcuMS.aculab.com>
+References: <20181029175322.189042-1-dancol@google.com> <4beaaae77bea4cc5b4cc15504331c9a9@AcuMS.aculab.com>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Wed, 31 Oct 2018 12:56:12 +0000
+Message-ID: <CAKOZuetR6_ztfJOe4TMVCX2J5sfuP8XBtG66hmsDkx-KH=CpJw@mail.gmail.com>
+Subject: Re: [RFC PATCH] Minimal non-child process exit notification support
+To:     David Laight <David.Laight@aculab.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "timmurray@google.com" <timmurray@google.com>,
+        "joelaf@google.com" <joelaf@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 7:27 AM Peng Hao <peng.hao2@zte.com.cn> wrote:
+On Wed, Oct 31, 2018 at 12:27 PM, David Laight <David.Laight@aculab.com> wrote:
+> From: Daniel Colascione
+>> Sent: 29 October 2018 17:53
+>>
+>> This patch adds a new file under /proc/pid, /proc/pid/exithand.
+>> Attempting to read from an exithand file will block until the
+>> corresponding process exits, at which point the read will successfully
+>> complete with EOF.  The file descriptor supports both blocking
+>> operations and poll(2). It's intended to be a minimal interface for
+>> allowing a program to wait for the exit of a process that is not one
+>> of its children.
 >
-> By default, when ACPI tables and FDT coexist for ARM64,
-> current kernel takes precedence over FDT to get device information.
-> Virt machine in qemu provides both FDT and ACPI table. This patch
-> increases the way to get information through FDT.
+> Why do you need an extra file?
 
-> @@ -3,15 +3,18 @@
+Because no current file suffices.
 
->   *  Copyright (C) 2013 Fujitsu.
-> + *  Copyright (C) 2018 ZTE.
+> It ought to be possible to use poll() to wait for POLLERR having set
+> 'events' to zero on any of the nodes in /proc/pid - or even on
+> the directory itself.
 
-> +#include <linux/acpi.h>
-...
-> -#include <linux/acpi.h>
+That doesn't actually work today. And waiting on a directory with
+POLLERR would be very weird, since directories in general don't do
+things like blocking reads or poll support. A separate file with
+self-contained, well-defined semantics is cleaner.
 
-> -       { "", 0 },
-> +       { "", 0 }
+> Indeed, to avoid killing the wrong process you need to have opened
+> some node of /proc/pid/* (maybe cmdline) before sending the kill
+> signal.
 
-These changes regarding to style should go in a separate patch.
-
->  #include <linux/module.h>
-> -#include <linux/init.h>
-
-This one also in a separate patch.
-
-So, the one should be split to three AFAICS.
-
--- 
-With Best Regards,
-Andy Shevchenko
+The kernel really needs better documentation of the semantics of
+procfs file descriptors. You're not the only person to think,
+mistakenly, that keeping a reference to a /proc/$PID/something FD
+reserves $PID and prevents it being used for another process. Procfs
+FDs do no such thing. kill(2) is unsafe whether or not
+/proc/pid/cmdline or any other /proc file is open.
