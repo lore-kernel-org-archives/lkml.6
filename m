@@ -2,300 +2,149 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B7ADECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:29:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0854EC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:30:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E5FB20847
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:29:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rsCu4/Lu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E5FB20847
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B739620847
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:30:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B739620847
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730770AbeKAIJ6 (ORCPT
+        id S1731035AbeKAIaQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:09:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60162 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730658AbeKAIJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:09:55 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59A822064C;
-        Wed, 31 Oct 2018 23:09:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027382;
-        bh=Mtn7w78F6xV0roP+CPpIdUE5kLBYOR+DrRY2PL5A4ds=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rsCu4/Lu2FGz4+srZ5j4PvwVgWHQA48uIvcYSepBJj2Q2ymYQ2hNad/eH6p+FXEtQ
-         Q90CBz/Qjt/FsSwfbC4QFl7RS4LTal65uDZtI3M9m2e/Ja0VPsA147mP3r7oNC4HxB
-         kj71INgep3gyOWG+J5TvXodwAuy6kOzkD820Vd4o=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Zhikang Zhang <zhangzhikang1@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 120/126] f2fs: avoid sleeping under spin_lock
-Date:   Wed, 31 Oct 2018 19:07:48 -0400
-Message-Id: <20181031230754.29029-120-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
-References: <20181031230754.29029-1-sashal@kernel.org>
+        Thu, 1 Nov 2018 04:30:16 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51366 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727627AbeKAIaP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:30:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 70E6AAE26;
+        Wed, 31 Oct 2018 23:29:55 +0000 (UTC)
+Subject: Re: [PATCH anybus v2 2/5] dt-bindings: anybus-bridge: document
+ devicetree binding.
+To:     thesven73@gmail.com, svendev@arcx.com
+Cc:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        treding@nvidia.com, david@lechnology.com, noralf@tronnes.org,
+        johan@kernel.org, monstr@monstr.eu, michal.vokac@ysoft.com,
+        arnd@arndb.de, gregkh@linuxfoundation.org, john.garry@huawei.com,
+        geert+renesas@glider.be, robin.murphy@arm.com,
+        paul.gortmaker@windriver.com,
+        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
+        stuyoder@gmail.com, linus.walleij@linaro.org,
+        maxime.ripard@bootlin.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20181031194425.32132-1-TheSven73@googlemail.com>
+ <20181031194425.32132-3-TheSven73@googlemail.com>
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Organization: SUSE Linux GmbH
+Message-ID: <999e50d3-924d-b960-ffb2-b1ee04c08d09@suse.de>
+Date:   Thu, 1 Nov 2018 00:29:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181031194425.32132-3-TheSven73@googlemail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhikang Zhang <zhangzhikang1@huawei.com>
+Hi Sven,
 
-[ Upstream commit b430f7263673eab1dc40e662ae3441a9619d16b8 ]
+Am 31.10.18 um 20:44 schrieb thesven73@gmail.com:
+> From: Sven Van Asbroeck <svendev@arcx.com>
+> 
+> This patch adds devicetree binding documentation for the
+> Arcx anybus bridge.
+> 
+> Signed-off-by: Sven Van Asbroeck <svendev@arcx.com>
+> ---
+>  .../bindings/misc/arcx,anybus-bridge.txt      | 34 +++++++++++++++++++
+>  .../devicetree/bindings/vendor-prefixes.txt   |  1 +
+>  2 files changed, 35 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/misc/arcx,anybus-bridge.txt
+[...]
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> index 2c3fc512e746..1bf07b20a8af 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> @@ -35,6 +35,7 @@ aptina	Aptina Imaging
+>  arasan	Arasan Chip Systems
+>  archermind ArcherMind Technology (Nanjing) Co., Ltd.
+>  arctic	Arctic Sand
+> +arcx	Arcx/Archronix Inc.
+>  aries	Aries Embedded GmbH
+>  arm	ARM Ltd.
+>  armadeus	ARMadeus Systems SARL
 
-In the call trace below, we might sleep in function dput().
+Please move this to a separate patch, titled "dt-bindings: Add vendor
+prefix for Arcx", with the commit message describing what the company does.
+Also note that subject lines usually do not end with a full stop,
+similar to book titles or news headlines.
+And it is usually preferable to have such a long list of people in CC
+rather than in To, to make it clear whom you expect to handle it and to
+facilitate replies going to you without hand-editing every other To.
 
-So in order to avoid sleeping under spin_lock, we remove f2fs_mark_inode_dirty_sync
-from __try_update_largest_extent && __drop_largest_extent.
+I notice that arcx.com spells it ARCX Inc., in upper-case without any
+mention of Archronix in the name. So if that's a previous name you may
+want to write it as "ARCX Inc. (formerly Archronix Inc.)"? Look for
+other examples in that file.
 
-BUG: sleeping function called from invalid context at fs/dcache.c:796
-Call trace:
-	dump_backtrace+0x0/0x3f4
-	show_stack+0x24/0x30
-	dump_stack+0xe0/0x138
-	___might_sleep+0x2a8/0x2c8
-	__might_sleep+0x78/0x10c
-	dput+0x7c/0x750
-	block_dump___mark_inode_dirty+0x120/0x17c
-	__mark_inode_dirty+0x344/0x11f0
-	f2fs_mark_inode_dirty_sync+0x40/0x50
-	__insert_extent_tree+0x2e0/0x2f4
-	f2fs_update_extent_tree_range+0xcf4/0xde8
-	f2fs_update_extent_cache+0x114/0x12c
-	f2fs_update_data_blkaddr+0x40/0x50
-	write_data_page+0x150/0x314
-	do_write_data_page+0x648/0x2318
-	__write_data_page+0xdb4/0x1640
-	f2fs_write_cache_pages+0x768/0xafc
-	__f2fs_write_data_pages+0x590/0x1218
-	f2fs_write_data_pages+0x64/0x74
-	do_writepages+0x74/0xe4
-	__writeback_single_inode+0xdc/0x15f0
-	writeback_sb_inodes+0x574/0xc98
-	__writeback_inodes_wb+0x190/0x204
-	wb_writeback+0x730/0xf14
-	wb_check_old_data_flush+0x1bc/0x1c8
-	wb_workfn+0x554/0xf74
-	process_one_work+0x440/0x118c
-	worker_thread+0xac/0x974
-	kthread+0x1a0/0x1c8
-	ret_from_fork+0x10/0x1c
+Regards,
+Andreas
 
-Signed-off-by: Zhikang Zhang <zhangzhikang1@huawei.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/f2fs/extent_cache.c | 51 ++++++++++++++++++++++++++----------------
- fs/f2fs/f2fs.h         |  7 +++---
- 2 files changed, 36 insertions(+), 22 deletions(-)
-
-diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index 231b77ef5a53..a70cd2580eae 100644
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -308,14 +308,13 @@ static unsigned int __free_extent_tree(struct f2fs_sb_info *sbi,
- 	return count - atomic_read(&et->node_cnt);
- }
- 
--static void __drop_largest_extent(struct inode *inode,
-+static void __drop_largest_extent(struct extent_tree *et,
- 					pgoff_t fofs, unsigned int len)
- {
--	struct extent_info *largest = &F2FS_I(inode)->extent_tree->largest;
--
--	if (fofs < largest->fofs + largest->len && fofs + len > largest->fofs) {
--		largest->len = 0;
--		f2fs_mark_inode_dirty_sync(inode, true);
-+	if (fofs < et->largest.fofs + et->largest.len &&
-+			fofs + len > et->largest.fofs) {
-+		et->largest.len = 0;
-+		et->largest_updated = true;
- 	}
- }
- 
-@@ -416,12 +415,11 @@ static bool f2fs_lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
- 	return ret;
- }
- 
--static struct extent_node *__try_merge_extent_node(struct inode *inode,
-+static struct extent_node *__try_merge_extent_node(struct f2fs_sb_info *sbi,
- 				struct extent_tree *et, struct extent_info *ei,
- 				struct extent_node *prev_ex,
- 				struct extent_node *next_ex)
- {
--	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct extent_node *en = NULL;
- 
- 	if (prev_ex && __is_back_mergeable(ei, &prev_ex->ei)) {
-@@ -443,7 +441,7 @@ static struct extent_node *__try_merge_extent_node(struct inode *inode,
- 	if (!en)
- 		return NULL;
- 
--	__try_update_largest_extent(inode, et, en);
-+	__try_update_largest_extent(et, en);
- 
- 	spin_lock(&sbi->extent_lock);
- 	if (!list_empty(&en->list)) {
-@@ -454,12 +452,11 @@ static struct extent_node *__try_merge_extent_node(struct inode *inode,
- 	return en;
- }
- 
--static struct extent_node *__insert_extent_tree(struct inode *inode,
-+static struct extent_node *__insert_extent_tree(struct f2fs_sb_info *sbi,
- 				struct extent_tree *et, struct extent_info *ei,
- 				struct rb_node **insert_p,
- 				struct rb_node *insert_parent)
- {
--	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct rb_node **p;
- 	struct rb_node *parent = NULL;
- 	struct extent_node *en = NULL;
-@@ -476,7 +473,7 @@ static struct extent_node *__insert_extent_tree(struct inode *inode,
- 	if (!en)
- 		return NULL;
- 
--	__try_update_largest_extent(inode, et, en);
-+	__try_update_largest_extent(et, en);
- 
- 	/* update in global extent list */
- 	spin_lock(&sbi->extent_lock);
-@@ -497,6 +494,7 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
- 	struct rb_node **insert_p = NULL, *insert_parent = NULL;
- 	unsigned int end = fofs + len;
- 	unsigned int pos = (unsigned int)fofs;
-+	bool updated = false;
- 
- 	if (!et)
- 		return;
-@@ -517,7 +515,7 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
- 	 * drop largest extent before lookup, in case it's already
- 	 * been shrunk from extent tree
- 	 */
--	__drop_largest_extent(inode, fofs, len);
-+	__drop_largest_extent(et, fofs, len);
- 
- 	/* 1. lookup first extent node in range [fofs, fofs + len - 1] */
- 	en = (struct extent_node *)f2fs_lookup_rb_tree_ret(&et->root,
-@@ -550,7 +548,7 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
- 				set_extent_info(&ei, end,
- 						end - dei.fofs + dei.blk,
- 						org_end - end);
--				en1 = __insert_extent_tree(inode, et, &ei,
-+				en1 = __insert_extent_tree(sbi, et, &ei,
- 							NULL, NULL);
- 				next_en = en1;
- 			} else {
-@@ -570,7 +568,7 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
- 		}
- 
- 		if (parts)
--			__try_update_largest_extent(inode, et, en);
-+			__try_update_largest_extent(et, en);
- 		else
- 			__release_extent_node(sbi, et, en);
- 
-@@ -590,15 +588,16 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
- 	if (blkaddr) {
- 
- 		set_extent_info(&ei, fofs, blkaddr, len);
--		if (!__try_merge_extent_node(inode, et, &ei, prev_en, next_en))
--			__insert_extent_tree(inode, et, &ei,
-+		if (!__try_merge_extent_node(sbi, et, &ei, prev_en, next_en))
-+			__insert_extent_tree(sbi, et, &ei,
- 						insert_p, insert_parent);
- 
- 		/* give up extent_cache, if split and small updates happen */
- 		if (dei.len >= 1 &&
- 				prev.len < F2FS_MIN_EXTENT_LEN &&
- 				et->largest.len < F2FS_MIN_EXTENT_LEN) {
--			__drop_largest_extent(inode, 0, UINT_MAX);
-+			et->largest.len = 0;
-+			et->largest_updated = true;
- 			set_inode_flag(inode, FI_NO_EXTENT);
- 		}
- 	}
-@@ -606,7 +605,15 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
- 	if (is_inode_flag_set(inode, FI_NO_EXTENT))
- 		__free_extent_tree(sbi, et);
- 
-+	if (et->largest_updated) {
-+		et->largest_updated = false;
-+		updated = true;
-+	}
-+
- 	write_unlock(&et->lock);
-+
-+	if (updated)
-+		f2fs_mark_inode_dirty_sync(inode, true);
- }
- 
- unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink)
-@@ -705,6 +712,7 @@ void f2fs_drop_extent_tree(struct inode *inode)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct extent_tree *et = F2FS_I(inode)->extent_tree;
-+	bool updated = false;
- 
- 	if (!f2fs_may_extent_tree(inode))
- 		return;
-@@ -713,8 +721,13 @@ void f2fs_drop_extent_tree(struct inode *inode)
- 
- 	write_lock(&et->lock);
- 	__free_extent_tree(sbi, et);
--	__drop_largest_extent(inode, 0, UINT_MAX);
-+	if (et->largest.len) {
-+		et->largest.len = 0;
-+		updated = true;
-+	}
- 	write_unlock(&et->lock);
-+	if (updated)
-+		f2fs_mark_inode_dirty_sync(inode, true);
- }
- 
- void f2fs_destroy_extent_tree(struct inode *inode)
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index b6f2dc8163e1..181aade161e8 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -556,6 +556,7 @@ struct extent_tree {
- 	struct list_head list;		/* to be used by sbi->zombie_list */
- 	rwlock_t lock;			/* protect extent info rb-tree */
- 	atomic_t node_cnt;		/* # of extent node in rb-tree*/
-+	bool largest_updated;		/* largest extent updated */
- };
- 
- /*
-@@ -736,12 +737,12 @@ static inline bool __is_front_mergeable(struct extent_info *cur,
- }
- 
- extern void f2fs_mark_inode_dirty_sync(struct inode *inode, bool sync);
--static inline void __try_update_largest_extent(struct inode *inode,
--			struct extent_tree *et, struct extent_node *en)
-+static inline void __try_update_largest_extent(struct extent_tree *et,
-+						struct extent_node *en)
- {
- 	if (en->ei.len > et->largest.len) {
- 		et->largest = en->ei;
--		f2fs_mark_inode_dirty_sync(inode, true);
-+		et->largest_updated = true;
- 	}
- }
- 
 -- 
-2.17.1
-
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
