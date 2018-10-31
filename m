@@ -4,46 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F02C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AFAAC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1623620664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6206120664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="x6djUV58"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1623620664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NdnxMzqf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6206120664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729156AbeKAIHp (ORCPT
+        id S1729186AbeKAIHs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:07:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55804 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:07:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55832 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729065AbeKAIHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:07:44 -0400
+        id S1729150AbeKAIHq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:07:46 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7700220854;
-        Wed, 31 Oct 2018 23:07:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5976320843;
+        Wed, 31 Oct 2018 23:07:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541027254;
-        bh=WEppRg14yI03jxShUlyc81xYYi3YbLXktbPkIeibCNo=;
+        bh=HzSE0Lu1QeuI6M4yrX3S9kW18enyNOcN4OQqac9Fw64=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x6djUV58x5GAVtNubmCcQrwv7gbqlGooIaIo4ThZ6uHQEUYjLOFo0U1pUm9MwVBJ8
-         gJxQ51XCt8XS13fvhoct3BTN1b9hEzGltBibgIgJc61jVhYGlFNcyvO6Sp7lePZqw6
-         JmNyQ1hAhQIeX1akizKn9lxNTvlNpjRXtqCnyOac=
+        b=NdnxMzqfON8+KcVdjcUF486lCjvdPglOCbQLa94xP4f2sgi+c72+nSHco2d3erGiS
+         NkOdc2qZMEchTMXKPAQzPDQb3HdCh0McYAXZZ9u9Ock7adg8GAuepGqjitWQbB397a
+         TWX0OBTprE8u1GE/PrsSCj1wBDnuY7CNytQ3/udM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+Cc:     Tonghao Zhang <xiangxia.m.yue@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 124/146] f2fs: fix to recover inode's i_flags during POR
-Date:   Wed, 31 Oct 2018 19:05:19 -0400
-Message-Id: <20181031230541.28822-124-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 125/146] PCI/MSI: Warn and return error if driver enables MSI/MSI-X twice
+Date:   Wed, 31 Oct 2018 19:05:20 -0400
+Message-Id: <20181031230541.28822-125-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -52,51 +52,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Tonghao Zhang <xiangxia.m.yue@gmail.com>
 
-[ Upstream commit 19c73a691ccf6fb2f12d4e9cf9830023966cec88 ]
+[ Upstream commit 4c1ef72e9b71a19fb405ebfcd37c0a5e16fa44ca ]
 
-Testcase to reproduce this bug:
-1. mkfs.f2fs /dev/sdd
-2. mount -t f2fs /dev/sdd /mnt/f2fs
-3. touch /mnt/f2fs/file
-4. sync
-5. chattr +A /mnt/f2fs/file
-6. xfs_io -f /mnt/f2fs/file -c "fsync"
-7. godown /mnt/f2fs
-8. umount /mnt/f2fs
-9. mount -t f2fs /dev/sdd /mnt/f2fs
-10. lsattr /mnt/f2fs/file
+It is a serious driver defect to enable MSI or MSI-X more than once.  Doing
+so may panic the kernel as in the stack trace below:
 
------------------N- /mnt/f2fs/file
+  Call Trace:
+    sysfs_add_one+0xa5/0xd0
+    create_dir+0x7c/0xe0
+    sysfs_create_subdir+0x1c/0x20
+    internal_create_group+0x6d/0x290
+    sysfs_create_groups+0x4a/0xa0
+    populate_msi_sysfs+0x1cd/0x210
+    pci_enable_msix+0x31c/0x3e0
+    igbuio_pci_open+0x72/0x300 [igb_uio]
+    uio_open+0xcc/0x120 [uio]
+    chrdev_open+0xa1/0x1e0
+    [...]
+    do_sys_open+0xf3/0x1f0
+    SyS_open+0x1e/0x20
+    system_call_fastpath+0x16/0x1b
+    ---[ end trace 11042e2848880209 ]---
+    Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: ffffffffa056b4fa
 
-But actually, we expect the corrct result is:
+We want to keep the WARN_ON() and stack trace so the driver can be fixed,
+but we can avoid the kernel panic by returning an error.  We may still get
+warnings like this:
 
--------A---------N- /mnt/f2fs/file
+  Call Trace:
+    pci_enable_msix+0x3c9/0x3e0
+    igbuio_pci_open+0x72/0x300 [igb_uio]
+    uio_open+0xcc/0x120 [uio]
+    chrdev_open+0xa1/0x1e0
+    [...]
+    do_sys_open+0xf3/0x1f0
+    SyS_open+0x1e/0x20
+    system_call_fastpath+0x16/0x1b
+    ------------[ cut here ]------------
+    WARNING: at fs/sysfs/dir.c:526 sysfs_add_one+0xa5/0xd0()
+    sysfs: cannot create duplicate filename '/devices/pci0000:00/0000:00:03.0/0000:01:00.1/msi_irqs'
 
-The reason is we didn't recover inode.i_flags field during mount,
-fix it.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-
+Signed-off-by: Tonghao Zhang <xiangxia.m.yue@gmail.com>
+[bhelgaas: changelog, fix patch whitespace, remove !!]
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/recovery.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pci/msi.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 95511ed11a22..12a3293bcbc9 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -221,6 +221,7 @@ static void recover_inode(struct inode *inode, struct page *page)
- 	inode->i_mtime.tv_nsec = le32_to_cpu(raw->i_mtime_nsec);
+diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
+index f2ef896464b3..af24ed50a245 100644
+--- a/drivers/pci/msi.c
++++ b/drivers/pci/msi.c
+@@ -958,7 +958,6 @@ static int __pci_enable_msix(struct pci_dev *dev, struct msix_entry *entries,
+ 			}
+ 		}
+ 	}
+-	WARN_ON(!!dev->msix_enabled);
  
- 	F2FS_I(inode)->i_advise = raw->i_advise;
-+	F2FS_I(inode)->i_flags = le32_to_cpu(raw->i_flags);
+ 	/* Check whether driver already requested for MSI irq */
+ 	if (dev->msi_enabled) {
+@@ -1028,8 +1027,6 @@ static int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
+ 	if (!pci_msi_supported(dev, minvec))
+ 		return -EINVAL;
  
- 	recover_inline_flags(inode, raw);
+-	WARN_ON(!!dev->msi_enabled);
+-
+ 	/* Check whether driver already requested MSI-X irqs */
+ 	if (dev->msix_enabled) {
+ 		pci_info(dev, "can't enable MSI (MSI-X already enabled)\n");
+@@ -1039,6 +1036,9 @@ static int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
+ 	if (maxvec < minvec)
+ 		return -ERANGE;
  
++	if (WARN_ON_ONCE(dev->msi_enabled))
++		return -EINVAL;
++
+ 	nvec = pci_msi_vec_count(dev);
+ 	if (nvec < 0)
+ 		return nvec;
+@@ -1087,6 +1087,9 @@ static int __pci_enable_msix_range(struct pci_dev *dev,
+ 	if (maxvec < minvec)
+ 		return -ERANGE;
+ 
++	if (WARN_ON_ONCE(dev->msix_enabled))
++		return -EINVAL;
++
+ 	for (;;) {
+ 		if (affd) {
+ 			nvec = irq_calc_affinity_vectors(minvec, nvec, affd);
 -- 
 2.17.1
 
