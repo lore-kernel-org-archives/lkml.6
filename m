@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3DE4C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:30:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E11AECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:30:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DCC52084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:30:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDC6520847
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:30:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AUKZkRet"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DCC52084A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vCGH/810"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDC6520847
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730743AbeKAIJ6 (ORCPT
+        id S1730932AbeKAIa1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:09:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60196 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:30:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60256 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730659AbeKAIJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:09:55 -0400
+        id S1730723AbeKAIJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:09:57 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EB6A2084A;
-        Wed, 31 Oct 2018 23:09:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDDE520843;
+        Wed, 31 Oct 2018 23:09:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027383;
-        bh=/HuDTDEc3gcaDaKMXd7gMKlIbW/K1yYOSuDjjy4HTN8=;
+        s=default; t=1541027385;
+        bh=mI4rkwRfpdXnDl9oWOd9suwcjunbLincP2B5YfZGY+4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AUKZkRet5c3yl0NJqmTkX5w4gynzP3Hu9DiMNP9E4W4eO+ZSMbQFvL167uhydMKYI
-         4zb0EY2tnJIq0tkP5tCqD6OeV802IOKnaGR/kYA/hFjgvbhBbp3TmAIeo0k+5eBBdq
-         KqOLRSneDi/OSSKu2bvj2ogtA/bOSKY6akS+k+Yo=
+        b=vCGH/8105j9OiOgLH5E2h1T2keLwx6U0YlBvexug3fKSKdES81nDhmGEbUbtC6DKl
+         hGqGcZJzccCx7QJlZrnd6R+qDps+YyLtjf0QDmd1r6k3yDGXjqIevNKhXdvmky0ri8
+         n5Q4bcZ0zOxzhTPHvmMM1/1R/CZ7Gu/LrM+ZZy5Q=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Yunlei He <heyunlei@huawei.com>, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 121/126] f2fs: report error if quota off error during umount
-Date:   Wed, 31 Oct 2018 19:07:49 -0400
-Message-Id: <20181031230754.29029-121-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 123/126] mfd: menelaus: Fix possible race condition and leak
+Date:   Wed, 31 Oct 2018 19:07:51 -0400
+Message-Id: <20181031230754.29029-123-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -53,85 +53,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunlei He <heyunlei@huawei.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-[ Upstream commit cda9cc595f0bb6ffa51a4efc4b6533dfa4039b4c ]
+[ Upstream commit 9612f8f503804d2fd2f63aa6ba1e58bba4612d96 ]
 
-Now, we depend on fsck to ensure quota file data is ok,
-so we scan whole partition if checkpoint without umount
-flag. It's same for quota off error case, which may make
-quota file data inconsistent.
+The IRQ work is added before the struct rtc is allocated and registered,
+but this struct is used in the IRQ handler. This may lead to a NULL pointer
+dereference.
 
-generic/019 reports below error:
+Switch to devm_rtc_allocate_device/rtc_register_device to allocate the rtc
+before calling menelaus_add_irq_work.
 
- __quota_error: 1160 callbacks suppressed
- Quota error (device zram1): write_blk: dquota write failed
- Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
- Quota error (device zram1): write_blk: dquota write failed
- Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
- Quota error (device zram1): write_blk: dquota write failed
- Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
- Quota error (device zram1): write_blk: dquota write failed
- Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
- Quota error (device zram1): write_blk: dquota write failed
- Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
- VFS: Busy inodes after unmount of zram1. Self-destruct in 5 seconds.  Have a nice day...
+Also, this solves a possible leak as the RTC is never released.
 
-If we failed in below path due to fail to write dquot block, we will miss
-to release quota inode, fix it.
-
-- f2fs_put_super
- - f2fs_quota_off_umount
-  - f2fs_quota_off
-   - f2fs_quota_sync   <-- failed
-   - dquot_quota_off   <-- missed to call
-
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/super.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
+ drivers/mfd/menelaus.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 742147cbe759..a3e90e6f72a8 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1820,7 +1820,9 @@ static int f2fs_quota_off(struct super_block *sb, int type)
- 	if (!inode || !igrab(inode))
- 		return dquot_quota_off(sb, type);
- 
--	f2fs_quota_sync(sb, type);
-+	err = f2fs_quota_sync(sb, type);
-+	if (err)
-+		goto out_put;
- 
- 	err = dquot_quota_off(sb, type);
- 	if (err || f2fs_sb_has_quota_ino(sb))
-@@ -1839,9 +1841,20 @@ static int f2fs_quota_off(struct super_block *sb, int type)
- void f2fs_quota_off_umount(struct super_block *sb)
+diff --git a/drivers/mfd/menelaus.c b/drivers/mfd/menelaus.c
+index 29b7164a823b..d28ebe7ecd21 100644
+--- a/drivers/mfd/menelaus.c
++++ b/drivers/mfd/menelaus.c
+@@ -1094,6 +1094,7 @@ static void menelaus_rtc_alarm_work(struct menelaus_chip *m)
+ static inline void menelaus_rtc_init(struct menelaus_chip *m)
  {
- 	int type;
-+	int err;
+ 	int	alarm = (m->client->irq > 0);
++	int	err;
+ 
+ 	/* assume 32KDETEN pin is pulled high */
+ 	if (!(menelaus_read_reg(MENELAUS_OSC_CTRL) & 0x80)) {
+@@ -1101,6 +1102,12 @@ static inline void menelaus_rtc_init(struct menelaus_chip *m)
+ 		return;
+ 	}
+ 
++	m->rtc = devm_rtc_allocate_device(&m->client->dev);
++	if (IS_ERR(m->rtc))
++		return;
 +
-+	for (type = 0; type < MAXQUOTAS; type++) {
-+		err = f2fs_quota_off(sb, type);
-+		if (err) {
-+			int ret = dquot_quota_off(sb, type);
++	m->rtc->ops = &menelaus_rtc_ops;
++
+ 	/* support RTC alarm; it can issue wakeups */
+ 	if (alarm) {
+ 		if (menelaus_add_irq_work(MENELAUS_RTCALM_IRQ,
+@@ -1125,10 +1132,8 @@ static inline void menelaus_rtc_init(struct menelaus_chip *m)
+ 		menelaus_write_reg(MENELAUS_RTC_CTRL, m->rtc_control);
+ 	}
  
--	for (type = 0; type < MAXQUOTAS; type++)
--		f2fs_quota_off(sb, type);
-+			f2fs_msg(sb, KERN_ERR,
-+				"Fail to turn off disk quota "
-+				"(type: %d, err: %d, ret:%d), Please "
-+				"run fsck to fix it.", type, err, ret);
-+			set_sbi_flag(F2FS_SB(sb), SBI_NEED_FSCK);
-+		}
-+	}
- }
- 
- static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
+-	m->rtc = rtc_device_register(DRIVER_NAME,
+-			&m->client->dev,
+-			&menelaus_rtc_ops, THIS_MODULE);
+-	if (IS_ERR(m->rtc)) {
++	err = rtc_register_device(m->rtc);
++	if (err) {
+ 		if (alarm) {
+ 			menelaus_remove_irq_work(MENELAUS_RTCALM_IRQ);
+ 			device_init_wakeup(&m->client->dev, 0);
 -- 
 2.17.1
 
