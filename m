@@ -7,161 +7,127 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C259ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8D15C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 129C620838
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8269520664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cp1p3yCy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 129C620838
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="M6FtwuRk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8269520664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730390AbeKAIJW (ORCPT
+        id S1730405AbeKAIJY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:09:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59144 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:09:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730346AbeKAIJU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:09:20 -0400
+        id S1730380AbeKAIJW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:09:22 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 352042081B;
-        Wed, 31 Oct 2018 23:09:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA3B420838;
+        Wed, 31 Oct 2018 23:09:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027348;
-        bh=qwSFJRY47yl1qLewAyDGsq9x1+ZS6GZjbC+D5Cfxh1g=;
+        s=default; t=1541027351;
+        bh=355Ul7dAqP4hsRsREpqRPcIieIvL0WH8GzzBqcJ2i1I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cp1p3yCynGwBL75SwWr+hUfHKBD7lZuFBe2DV7egkInfTZ9O65Et0FCKhT7SgVugx
-         M+o4qaYgqkCLqKKvf8Onx2hPHVys6eLr0SpqQehtAt7edTz9BVsDLiMgMkDs0HCwoM
-         VQxSIfQunrVN8iUrsuENyV6EL2F3fYxU9BRcCLh0=
+        b=M6FtwuRkh3AL+dZZRkZDKKcFBzrIb0mZtY4Lu8n8yAidX/6e2H5X8HCpY30xpiZE8
+         rN7GZg8fgtJKHukW4lrPQE6/c1jrz2gim4LMasHuCqP4arkwEBJv6/8tMZm1Pbi9Ow
+         OwYc6oHuV1oAzUE4j+lHXX6y16Je804s9YGu32VE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     David Howells <dhowells@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
+Cc:     Parav Pandit <parav@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 081/126] UAPI: ndctl: Fix g++-unsupported initialisation in headers
-Date:   Wed, 31 Oct 2018 19:07:09 -0400
-Message-Id: <20181031230754.29029-81-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 084/126] RDMA/core: Do not expose unsupported counters
+Date:   Wed, 31 Oct 2018 19:07:12 -0400
+Message-Id: <20181031230754.29029-84-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+From: Parav Pandit <parav@mellanox.com>
 
-[ Upstream commit 9607871f37dc3e717639694b8d0dc738f2a68efc ]
+[ Upstream commit 0f6ef65d1c6ec8deb5d0f11f86631ec4cfe8f22e ]
 
-The following code in the linux/ndctl header file:
+If the provider driver (such as rdma_rxe) doesn't support pma counters,
+avoid exposing its directory similar to optional hw_counters directory.
+If core fails to read the PMA counter, return an error so that user can
+retry later if needed.
 
-	static inline const char *nvdimm_bus_cmd_name(unsigned cmd)
-	{
-		static const char * const names[] = {
-			[ND_CMD_ARS_CAP] = "ars_cap",
-			[ND_CMD_ARS_START] = "ars_start",
-			[ND_CMD_ARS_STATUS] = "ars_status",
-			[ND_CMD_CLEAR_ERROR] = "clear_error",
-			[ND_CMD_CALL] = "cmd_call",
-		};
-
-		if (cmd < ARRAY_SIZE(names) && names[cmd])
-			return names[cmd];
-		return "unknown";
-	}
-
-is broken in a number of ways:
-
- (1) ARRAY_SIZE() is not generally defined.
-
- (2) g++ does not support "non-trivial" array initialisers fully yet.
-
- (3) Every file that calls this function will acquire a copy of names[].
-
-The same goes for nvdimm_cmd_name().
-
-Fix all three by converting to a switch statement where each case returns a
-string.  That way if cmd is a constant, the compiler can trivially reduce it
-and, if not, the compiler can use a shared lookup table if it thinks that is
-more efficient.
-
-A better way would be to remove these functions and their arrays from the
-header entirely.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Fixes: 35c4cbb17811 ("IB/core: Create get_perf_mad function in sysfs.c")
+Reported-by: Holger Hoffstätte <holger@applied-asynchrony.com>
+Tested-by: Holger Hoffstätte <holger@applied-asynchrony.com>
+Signed-off-by: Parav Pandit <parav@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/uapi/linux/ndctl.h | 48 +++++++++++++++++---------------------
- 1 file changed, 21 insertions(+), 27 deletions(-)
+ drivers/infiniband/core/sysfs.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/include/uapi/linux/ndctl.h b/include/uapi/linux/ndctl.h
-index 7e27070b9440..2f2c43d633c5 100644
---- a/include/uapi/linux/ndctl.h
-+++ b/include/uapi/linux/ndctl.h
-@@ -128,37 +128,31 @@ enum {
+diff --git a/drivers/infiniband/core/sysfs.c b/drivers/infiniband/core/sysfs.c
+index 31c7efaf8e7a..63406cd212a7 100644
+--- a/drivers/infiniband/core/sysfs.c
++++ b/drivers/infiniband/core/sysfs.c
+@@ -516,7 +516,7 @@ static ssize_t show_pma_counter(struct ib_port *p, struct port_attribute *attr,
+ 	ret = get_perf_mad(p->ibdev, p->port_num, tab_attr->attr_id, &data,
+ 			40 + offset / 8, sizeof(data));
+ 	if (ret < 0)
+-		return sprintf(buf, "N/A (no PMA)\n");
++		return ret;
  
- static inline const char *nvdimm_bus_cmd_name(unsigned cmd)
- {
--	static const char * const names[] = {
--		[ND_CMD_ARS_CAP] = "ars_cap",
--		[ND_CMD_ARS_START] = "ars_start",
--		[ND_CMD_ARS_STATUS] = "ars_status",
--		[ND_CMD_CLEAR_ERROR] = "clear_error",
--		[ND_CMD_CALL] = "cmd_call",
--	};
--
--	if (cmd < ARRAY_SIZE(names) && names[cmd])
--		return names[cmd];
--	return "unknown";
-+	switch (cmd) {
-+	case ND_CMD_ARS_CAP:		return "ars_cap";
-+	case ND_CMD_ARS_START:		return "ars_start";
-+	case ND_CMD_ARS_STATUS:		return "ars_status";
-+	case ND_CMD_CLEAR_ERROR:	return "clear_error";
-+	case ND_CMD_CALL:		return "cmd_call";
-+	default:			return "unknown";
+ 	switch (width) {
+ 	case 4:
+@@ -1061,10 +1061,12 @@ static int add_port(struct ib_device *device, int port_num,
+ 		goto err_put;
+ 	}
+ 
+-	p->pma_table = get_counter_table(device, port_num);
+-	ret = sysfs_create_group(&p->kobj, p->pma_table);
+-	if (ret)
+-		goto err_put_gid_attrs;
++	if (device->process_mad) {
++		p->pma_table = get_counter_table(device, port_num);
++		ret = sysfs_create_group(&p->kobj, p->pma_table);
++		if (ret)
++			goto err_put_gid_attrs;
 +	}
- }
  
- static inline const char *nvdimm_cmd_name(unsigned cmd)
- {
--	static const char * const names[] = {
--		[ND_CMD_SMART] = "smart",
--		[ND_CMD_SMART_THRESHOLD] = "smart_thresh",
--		[ND_CMD_DIMM_FLAGS] = "flags",
--		[ND_CMD_GET_CONFIG_SIZE] = "get_size",
--		[ND_CMD_GET_CONFIG_DATA] = "get_data",
--		[ND_CMD_SET_CONFIG_DATA] = "set_data",
--		[ND_CMD_VENDOR_EFFECT_LOG_SIZE] = "effect_size",
--		[ND_CMD_VENDOR_EFFECT_LOG] = "effect_log",
--		[ND_CMD_VENDOR] = "vendor",
--		[ND_CMD_CALL] = "cmd_call",
--	};
--
--	if (cmd < ARRAY_SIZE(names) && names[cmd])
--		return names[cmd];
--	return "unknown";
-+	switch (cmd) {
-+	case ND_CMD_SMART:			return "smart";
-+	case ND_CMD_SMART_THRESHOLD:		return "smart_thresh";
-+	case ND_CMD_DIMM_FLAGS:			return "flags";
-+	case ND_CMD_GET_CONFIG_SIZE:		return "get_size";
-+	case ND_CMD_GET_CONFIG_DATA:		return "get_data";
-+	case ND_CMD_SET_CONFIG_DATA:		return "set_data";
-+	case ND_CMD_VENDOR_EFFECT_LOG_SIZE:	return "effect_size";
-+	case ND_CMD_VENDOR_EFFECT_LOG:		return "effect_log";
-+	case ND_CMD_VENDOR:			return "vendor";
-+	case ND_CMD_CALL:			return "cmd_call";
-+	default:				return "unknown";
-+	}
- }
+ 	p->gid_group.name  = "gids";
+ 	p->gid_group.attrs = alloc_group_attrs(show_port_gid, attr.gid_tbl_len);
+@@ -1177,7 +1179,8 @@ static int add_port(struct ib_device *device, int port_num,
+ 	p->gid_group.attrs = NULL;
  
- #define ND_IOCTL 'N'
+ err_remove_pma:
+-	sysfs_remove_group(&p->kobj, p->pma_table);
++	if (p->pma_table)
++		sysfs_remove_group(&p->kobj, p->pma_table);
+ 
+ err_put_gid_attrs:
+ 	kobject_put(&p->gid_attr_group->kobj);
+@@ -1289,7 +1292,9 @@ static void free_port_list_attributes(struct ib_device *device)
+ 			kfree(port->hw_stats);
+ 			free_hsag(&port->kobj, port->hw_stats_ag);
+ 		}
+-		sysfs_remove_group(p, port->pma_table);
++
++		if (port->pma_table)
++			sysfs_remove_group(p, port->pma_table);
+ 		sysfs_remove_group(p, &port->pkey_group);
+ 		sysfs_remove_group(p, &port->gid_group);
+ 		sysfs_remove_group(&port->gid_attr_group->kobj,
 -- 
 2.17.1
 
