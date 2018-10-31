@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 352A6C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA954C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF80F2081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB5142084A
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bzbiKVrL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF80F2081B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zwO7hdP/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB5142084A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728977AbeKAIHe (ORCPT
+        id S1729007AbeKAIHg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:07:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55398 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:07:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728910AbeKAIHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:07:32 -0400
+        id S1727308AbeKAIHe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:07:34 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FBF32081B;
-        Wed, 31 Oct 2018 23:07:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1164B20664;
+        Wed, 31 Oct 2018 23:07:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027242;
-        bh=TcLOVOdKOaH99qbyMhI0msVsik6TBT9a+p7G2sAB1LI=;
+        s=default; t=1541027243;
+        bh=/CwvahwV96iKOdOahg9iozHHRKRAOFxZxtm5qC/FAIE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bzbiKVrLEZGxmxcySvxAOVEOvLWWqBdwl0Fhzk2gEATUusCDdhvo+Pq0Y7WvykmD6
-         n0+KYWnEBZAwyJYglhmazae3oyLK+dppNNadq9wfzd28rPeIXuuKR1QJxy5gBxWXln
-         4YdqqE274+DAxg7bBUhUx3IbYcdmp7oZ8isjKjYY=
+        b=zwO7hdP/QT/4LJ/90MKZqlvULQPGrvgk9VASCpHbZea2DRshv6cuWItMxRxs0mCWZ
+         vqocKzFKJkah0DahARfc4ojboG+e+6fU4AJc9ikPmCI7gFCQw6P7K74JRVBHsjlkiE
+         sBL94v5VGnWUoXIhjhygcGAs2/1TqM2mbhVCfml8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jorgen Hansen <jhansen@vmware.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     Chuck Lever <chuck.lever@oracle.com>, stable@kernel.org,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 110/146] VMCI: Resource wildcard match fixed
-Date:   Wed, 31 Oct 2018 19:05:05 -0400
-Message-Id: <20181031230541.28822-110-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 112/146] xprtrdma: Reset credit grant properly after a disconnect
+Date:   Wed, 31 Oct 2018 19:05:07 -0400
+Message-Id: <20181031230541.28822-112-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -53,57 +53,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jorgen Hansen <jhansen@vmware.com>
+From: Chuck Lever <chuck.lever@oracle.com>
 
-[ Upstream commit 11924ba5e671d6caef1516923e2bd8c72929a3fe ]
+[ Upstream commit ef739b2175dde9c05594f768cb78149f1ce2ac36 ]
 
-When adding a VMCI resource, the check for an existing entry
-would ignore that the new entry could be a wildcard. This could
-result in multiple resource entries that would match a given
-handle. One disastrous outcome of this is that the
-refcounting used to ensure that delayed callbacks for VMCI
-datagrams have run before the datagram is destroyed can be
-wrong, since the refcount could be increased on the duplicate
-entry. This in turn leads to a use after free bug. This issue
-was discovered by Hangbin Liu using KASAN and syzkaller.
+On a fresh connection, an RPC/RDMA client is supposed to send only
+one RPC Call until it gets a credit grant in the first RPC Reply
+from the server [RFC 8166, Section 3.3.3].
 
-Fixes: bc63dedb7d46 ("VMCI: resource object implementation")
-Reported-by: Hangbin Liu <liuhangbin@gmail.com>
-Reviewed-by: Adit Ranadive <aditr@vmware.com>
-Reviewed-by: Vishnu Dasa <vdasa@vmware.com>
-Signed-off-by: Jorgen Hansen <jhansen@vmware.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+There is a bug in the Linux client's credit accounting mechanism
+introduced by commit e7ce710a8802 ("xprtrdma: Avoid deadlock when
+credit window is reset"). On connect, it simply dumps all pending
+RPC Calls onto the new connection.
+
+Servers have been tolerant of this bad behavior. Currently no server
+implementation ever changes its credit grant over reconnects, and
+servers always repost enough Receives before connections are fully
+established.
+
+To correct this issue, ensure that the client resets both the credit
+grant _and_ the congestion window when handling a reconnect.
+
+Fixes: e7ce710a8802 ("xprtrdma: Avoid deadlock when credit ... ")
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Cc: stable@kernel.org
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/misc/vmw_vmci/vmci_driver.c   | 2 +-
- drivers/misc/vmw_vmci/vmci_resource.c | 3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ net/sunrpc/xprtrdma/svc_rdma_backchannel.c | 1 +
+ net/sunrpc/xprtrdma/transport.c            | 6 ++++++
+ 2 files changed, 7 insertions(+)
 
-diff --git a/drivers/misc/vmw_vmci/vmci_driver.c b/drivers/misc/vmw_vmci/vmci_driver.c
-index d7eaf1eb11e7..003bfba40758 100644
---- a/drivers/misc/vmw_vmci/vmci_driver.c
-+++ b/drivers/misc/vmw_vmci/vmci_driver.c
-@@ -113,5 +113,5 @@ module_exit(vmci_drv_exit);
+diff --git a/net/sunrpc/xprtrdma/svc_rdma_backchannel.c b/net/sunrpc/xprtrdma/svc_rdma_backchannel.c
+index a68180090554..b9827665ff35 100644
+--- a/net/sunrpc/xprtrdma/svc_rdma_backchannel.c
++++ b/net/sunrpc/xprtrdma/svc_rdma_backchannel.c
+@@ -248,6 +248,7 @@ static void
+ xprt_rdma_bc_close(struct rpc_xprt *xprt)
+ {
+ 	dprintk("svcrdma: %s: xprt %p\n", __func__, xprt);
++	xprt->cwnd = RPC_CWNDSHIFT;
+ }
  
- MODULE_AUTHOR("VMware, Inc.");
- MODULE_DESCRIPTION("VMware Virtual Machine Communication Interface.");
--MODULE_VERSION("1.1.5.0-k");
-+MODULE_VERSION("1.1.6.0-k");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/misc/vmw_vmci/vmci_resource.c b/drivers/misc/vmw_vmci/vmci_resource.c
-index 1ab6e8737a5f..da1ee2e1ba99 100644
---- a/drivers/misc/vmw_vmci/vmci_resource.c
-+++ b/drivers/misc/vmw_vmci/vmci_resource.c
-@@ -57,7 +57,8 @@ static struct vmci_resource *vmci_resource_lookup(struct vmci_handle handle,
+ static void
+diff --git a/net/sunrpc/xprtrdma/transport.c b/net/sunrpc/xprtrdma/transport.c
+index 143ce2579ba9..98cbc7b060ba 100644
+--- a/net/sunrpc/xprtrdma/transport.c
++++ b/net/sunrpc/xprtrdma/transport.c
+@@ -468,6 +468,12 @@ xprt_rdma_close(struct rpc_xprt *xprt)
+ 		xprt->reestablish_timeout = 0;
+ 	xprt_disconnect_done(xprt);
+ 	rpcrdma_ep_disconnect(ep, ia);
++
++	/* Prepare @xprt for the next connection by reinitializing
++	 * its credit grant to one (see RFC 8166, Section 3.3.3).
++	 */
++	r_xprt->rx_buf.rb_credits = 1;
++	xprt->cwnd = RPC_CWNDSHIFT;
+ }
  
- 		if (r->type == type &&
- 		    rid == handle.resource &&
--		    (cid == handle.context || cid == VMCI_INVALID_ID)) {
-+		    (cid == handle.context || cid == VMCI_INVALID_ID ||
-+		     handle.context == VMCI_INVALID_ID)) {
- 			resource = r;
- 			break;
- 		}
+ /**
 -- 
 2.17.1
 
