@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5180DC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:37:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C3C3ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:38:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BC9F20664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:37:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECE8B2082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:38:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lfFmzCGf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BC9F20664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gnLSABuR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECE8B2082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730267AbeKAIiD (ORCPT
+        id S1729908AbeKAIIm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:38:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58008 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:08:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727339AbeKAIIq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:08:46 -0400
+        id S1729855AbeKAIIl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:08:41 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5805120843;
-        Wed, 31 Oct 2018 23:08:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3F382084A;
+        Wed, 31 Oct 2018 23:08:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027314;
-        bh=3jNxAO5z5jxM6hlgB0cbf7krl/KNnNIplASNPyPZSAw=;
+        s=default; t=1541027309;
+        bh=+5X7dIC/QbjYxm/+gKy32O98nmODIuISS/rcNXrJd8c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lfFmzCGfxJss9e8bRuxwwYaKTZdTNYpY8WKiBblbdzwx//9S2GImXBIdr7KN1juRx
-         T/TXdy+/3F1iZ7NVCthrxxFUPt76/WQH40VhOX9wknKbVMfPxYjIjfqfSGjrJTcgo+
-         qseIL5yEovtONPOIKaUjve1COGeLlh+BGmG/caHs=
+        b=gnLSABuRA+FqNGGOJ0IY6/U6WCagdBQq0diaSnuYGef73o7a41nWL7gKguIk/ZWCZ
+         ikeASjvEtZN5z4zUymlPkZJwgUH0YFrHrDAchWo6XIvGRT4n0wkTZvdnUtFEIaJSMV
+         b+hXJeJNt0g7a5u4kHwd8COKZyKIiqy7dB+LqLog=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     YueHaibing <yuehaibing@huawei.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+Cc:     Jacob Keller <jacob.e.keller@intel.com>,
+        Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 044/126] pinctrl: sunxi: fix 'pctrl->functions' allocation in sunxi_pinctrl_build_state
-Date:   Wed, 31 Oct 2018 19:06:32 -0400
-Message-Id: <20181031230754.29029-44-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 038/126] ice: update fw version check logic
+Date:   Wed, 31 Oct 2018 19:06:26 -0400
+Message-Id: <20181031230754.29029-38-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -53,71 +54,117 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Jacob Keller <jacob.e.keller@intel.com>
 
-[ Upstream commit a4925311a5443126ecc90671a1604ea7b0f5b32e ]
+[ Upstream commit 396fbf9cab5dc07f8f87773062a8d35f54b40a05 ]
 
-fixes following Smatch static check warning:
+We have MAX_FW_API_VER_BRANCH, MAX_FW_API_VER_MAJOR, and
+MAX_FW_API_VER_MINOR that we use in ice_controlq.h to test when a
+firmware version is newer than expected. This is currently tested by
+comparing each field separately. Thus, we compare the branch field
+against the MAX_FW_API_VER_BRANCH, and so forth.
 
- ./drivers/pinctrl/sunxi/pinctrl-sunxi.c:1112 sunxi_pinctrl_build_state()
- warn: passing devm_ allocated variable to kfree. 'pctrl->functions'
+This means that currently, if we suppose that the max firmware version
+is defined as 0.2.1, i.e.
 
-As we will be calling krealloc() on pointer 'pctrl->functions', which means
-kfree() will be called in there, devm_kzalloc() shouldn't be used with
-the allocation in the first place.  Fix the warning by calling kcalloc()
-and managing the free procedure in error path on our own.
+Then firmware 0.1.3 will fail to load. This is because the minor version
+3 is greater than the max minor version 1.
 
-Fixes: 0e37f88d9ad8 ("ARM: sunxi: Add pinctrl driver for Allwinner SoCs")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+This is not intuitive, because of the notion that increasing the major
+firmware version to 2 should mean any firmware version with a major
+version is less than 2 should be considered older than 2...
+
+In order to allow both 0.2.1 and 0.1.3 to load, you would have to define
+the "max" firmware version as 0.2.3.. It is possible that such
+a firmware version doesn't even exist yet!
+
+Fix this by replacing the current logic with an updated check that
+behaves as follows:
+
+First, we check the major version. If it is greater than the expected
+version, then we prevent driver load. Additionally, a warning message is
+logged to indicate to the system administrator that they need to update
+their driver. This is now the only case where the driver will refuse to
+load.
+
+Second, if the major version is less than the expected version, we log
+an information message indicating the NVM should be updated.
+
+Third, if the major version is exact, we'll then check the minor
+version. If the minor version is more than two versions less than
+expected, we log an information message indicating the NVM should be
+updated. If it is more than two versions greater than the expected
+version, we log an information message that the driver should be
+updated.
+
+To support this, the ice_aq_ver_check function needs its signature
+updated to pass the HW structure. Since we now pass this structure,
+there is no need to pass the firmware API versions separately.
+
+Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+Signed-off-by: Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/intel/ice/ice_controlq.c | 30 ++++++++++++-------
+ 1 file changed, 19 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index 4d9bf9b3e9f3..26ebedc1f6d3 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -1079,10 +1079,9 @@ static int sunxi_pinctrl_build_state(struct platform_device *pdev)
- 	 * We suppose that we won't have any more functions than pins,
- 	 * we'll reallocate that later anyway
- 	 */
--	pctl->functions = devm_kcalloc(&pdev->dev,
--				       pctl->ngroups,
--				       sizeof(*pctl->functions),
--				       GFP_KERNEL);
-+	pctl->functions = kcalloc(pctl->ngroups,
-+				  sizeof(*pctl->functions),
-+				  GFP_KERNEL);
- 	if (!pctl->functions)
- 		return -ENOMEM;
+diff --git a/drivers/net/ethernet/intel/ice/ice_controlq.c b/drivers/net/ethernet/intel/ice/ice_controlq.c
+index 62be72fdc8f3..e783976c401d 100644
+--- a/drivers/net/ethernet/intel/ice/ice_controlq.c
++++ b/drivers/net/ethernet/intel/ice/ice_controlq.c
+@@ -518,22 +518,31 @@ ice_shutdown_sq(struct ice_hw *hw, struct ice_ctl_q_info *cq)
  
-@@ -1133,8 +1132,10 @@ static int sunxi_pinctrl_build_state(struct platform_device *pdev)
+ /**
+  * ice_aq_ver_check - Check the reported AQ API version.
+- * @fw_branch: The "branch" of FW, typically describes the device type
+- * @fw_major: The major version of the FW API
+- * @fw_minor: The minor version increment of the FW API
++ * @hw: pointer to the hardware structure
+  *
+  * Checks if the driver should load on a given AQ API version.
+  *
+  * Return: 'true' iff the driver should attempt to load. 'false' otherwise.
+  */
+-static bool ice_aq_ver_check(u8 fw_branch, u8 fw_major, u8 fw_minor)
++static bool ice_aq_ver_check(struct ice_hw *hw)
+ {
+-	if (fw_branch != EXP_FW_API_VER_BRANCH)
+-		return false;
+-	if (fw_major != EXP_FW_API_VER_MAJOR)
+-		return false;
+-	if (fw_minor != EXP_FW_API_VER_MINOR)
++	if (hw->api_maj_ver > EXP_FW_API_VER_MAJOR) {
++		/* Major API version is newer than expected, don't load */
++		dev_warn(ice_hw_to_dev(hw),
++			 "The driver for the device stopped because the NVM image is newer than expected. You must install the most recent version of the network driver.\n");
+ 		return false;
++	} else if (hw->api_maj_ver == EXP_FW_API_VER_MAJOR) {
++		if (hw->api_min_ver > (EXP_FW_API_VER_MINOR + 2))
++			dev_info(ice_hw_to_dev(hw),
++				 "The driver for the device detected a newer version of the NVM image than expected. Please install the most recent version of the network driver.\n");
++		else if ((hw->api_min_ver + 2) < EXP_FW_API_VER_MINOR)
++			dev_info(ice_hw_to_dev(hw),
++				 "The driver for the device detected an older version of the NVM image than expected. Please update the NVM image.\n");
++	} else {
++		/* Major API version is older than expected, log a warning */
++		dev_info(ice_hw_to_dev(hw),
++			 "The driver for the device detected an older version of the NVM image than expected. Please update the NVM image.\n");
++	}
+ 	return true;
+ }
  
- 			func_item = sunxi_pinctrl_find_function_by_name(pctl,
- 									func->name);
--			if (!func_item)
-+			if (!func_item) {
-+				kfree(pctl->functions);
- 				return -EINVAL;
-+			}
+@@ -588,8 +597,7 @@ static enum ice_status ice_init_check_adminq(struct ice_hw *hw)
+ 	if (status)
+ 		goto init_ctrlq_free_rq;
  
- 			if (!func_item->groups) {
- 				func_item->groups =
-@@ -1142,8 +1143,10 @@ static int sunxi_pinctrl_build_state(struct platform_device *pdev)
- 						     func_item->ngroups,
- 						     sizeof(*func_item->groups),
- 						     GFP_KERNEL);
--				if (!func_item->groups)
-+				if (!func_item->groups) {
-+					kfree(pctl->functions);
- 					return -ENOMEM;
-+				}
- 			}
- 
- 			func_grp = func_item->groups;
+-	if (!ice_aq_ver_check(hw->api_branch, hw->api_maj_ver,
+-			      hw->api_min_ver)) {
++	if (!ice_aq_ver_check(hw)) {
+ 		status = ICE_ERR_FW_API_VER;
+ 		goto init_ctrlq_free_rq;
+ 	}
 -- 
 2.17.1
 
