@@ -2,87 +2,108 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EC8FC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:29:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82048C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:30:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE8012054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:29:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE8012054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de
+	by mail.kernel.org (Postfix) with ESMTP id 477592054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:30:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XQVwDx48"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 477592054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726123AbeKAG3Z (ORCPT
+        id S1726187AbeKAGaY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 02:29:25 -0400
-Received: from mo4-p05-ob.smtp.rzone.de ([85.215.255.135]:29927 "EHLO
-        mo4-p05-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725736AbeKAG3Y (ORCPT
+        Thu, 1 Nov 2018 02:30:24 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:36754 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725999AbeKAGaY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 02:29:24 -0400
-X-RZG-AUTH: ":LX8JdEmkW/4tAFwMkcNJIloh1hrA5u3owhPk7bdT5Fx22AatU+eLaHfutoZdl+X9BETxn4/4+IVqx+QKE8uPUyz7H84id4F0yi4r+BiOwjaTFJDezg=="
-X-RZG-CLASS-ID: mo05
-Received: from fs-work.fritz.box
-        by smtp.strato.de (RZmta 44.3 AUTH)
-        with ESMTPSA id j097e4u9VLTT3ZI
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Wed, 31 Oct 2018 22:29:29 +0100 (CET)
-From:   Frieder Schrempf <frieder.schrempf@kontron.de>
-To:     steve.glendinning@shawell.net, UNGLinuxDriver@microchip.com
-Cc:     davem@davemloft.net, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        stable@vger.kernel.org
-Subject: [PATCH] usbnet: smsc95xx: disable carrier check while suspending
-Date:   Wed, 31 Oct 2018 22:27:01 +0100
-Message-Id: <1541021221-337-1-git-send-email-frieder.schrempf@kontron.de>
-X-Mailer: git-send-email 2.7.4
+        Thu, 1 Nov 2018 02:30:24 -0400
+Received: by mail-lj1-f196.google.com with SMTP id s15-v6so16244294lji.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 14:30:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1zVxuEYHA0OjT0GBGxNcDM0Kyu3TPQo/tjna7UCNe4A=;
+        b=XQVwDx48gboYDBcFkyNV+veyMdOGbUZG4bJnNRRWpoVJQn/ZjL9j3i6FUI4PNRMX5t
+         //UixLDMte0FI0E++uHHqQK5A+A7I8JOo5BizaXWUjvCJI21tejWBsqMZIS64Ac3BcZC
+         8B8icMjkqBAYC6h1HZ4h/0OYNHiwL8i8jZXTw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1zVxuEYHA0OjT0GBGxNcDM0Kyu3TPQo/tjna7UCNe4A=;
+        b=bVbwPxlA2++xhXlrAo6w9A8txky/hGfEyuQkSM2RbAvFM9amceZtHMkMNwpjfLgkcI
+         eCLWtiU9n/2HGtqd4GndmBerS2LKImnqm8USkV4EKZ/FbzIY4jmYmHKTsPq1CiqVaFn7
+         2/7HV7x/4KlQWo5q8KfwQFgFX6p4411UfcQa2lSYOcQNx+G7Hb11SWkuA12n17jUF2KM
+         5lbEuLr/Zj2nsymDiMoMasDLa8Xiq57Qv2zqI8GpdJMThftDVo/eBcP8ZPBJSFatBzGZ
+         Y7Q7HU2zizzQ26wLQbgnr2AtnHEVW77cg3fBIfNlut3wHhwCFvqn9xWbkZfp+xbt73MH
+         wHxQ==
+X-Gm-Message-State: AGRZ1gKaKJ4f8up+nqS/PLOMsbVzoK8wTpjzS//QRLlKLdFV8CaZIbf7
+        FItVxmCWy9nAl2HdsqTuqK8tZIrALnquXwW6Mwep3g==
+X-Google-Smtp-Source: AJdET5d4YzYiAQSo9tOiK+kEWJYxEgb2DdR5sAIIKChwhlTwt110MViPIGts/7KhMvU9ZXGv6wU4P7J8ncVbp0QdLC4=
+X-Received: by 2002:a2e:9107:: with SMTP id m7-v6mr3184566ljg.23.1541021432468;
+ Wed, 31 Oct 2018 14:30:32 -0700 (PDT)
+MIME-Version: 1.0
+References: <1539969334-24577-1-git-send-email-dan@emutex.com>
+ <1541018689-20625-1-git-send-email-dan@emutex.com> <1541018689-20625-4-git-send-email-dan@emutex.com>
+In-Reply-To: <1541018689-20625-4-git-send-email-dan@emutex.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 31 Oct 2018 22:30:20 +0100
+Message-ID: <CACRpkdajUt7Brrf9jCOhEvrzvx24A8tp1NpGKuDPi_0uh5++eg@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] pinctrl: upboard: Add UP2 pinctrl and gpio driver
+To:     "Dan O'Donovan" <dan@emutex.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-leds@vger.kernel.org, carlos.iglesias@emutex.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We need to make sure, that the carrier check polling is disabled
-while suspending. Otherwise we can end up with usbnet_read_cmd()
-being issued when only usbnet_read_cmd_nopm() is allowed. If this
-happens, read operations lock up.
+Hi Dan,
 
-Fixes: d69d169493 ("usbnet: smsc95xx: fix link detection for disabled autonegotiation")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
----
- drivers/net/usb/smsc95xx.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+On Wed, Oct 31, 2018 at 9:45 PM Dan O'Donovan <dan@emutex.com> wrote:
 
-diff --git a/drivers/net/usb/smsc95xx.c b/drivers/net/usb/smsc95xx.c
-index 262e7a3..3bc9633 100644
---- a/drivers/net/usb/smsc95xx.c
-+++ b/drivers/net/usb/smsc95xx.c
-@@ -1592,6 +1592,8 @@ static int smsc95xx_suspend(struct usb_interface *intf, pm_message_t message)
- 	u32 val, link_up;
- 	int ret;
- 
-+	cancel_delayed_work_sync(&pdata->carrier_check);
-+
- 	ret = usbnet_suspend(intf, message);
- 	if (ret < 0) {
- 		netdev_warn(dev->net, "usbnet_suspend error\n");
-@@ -1840,6 +1842,11 @@ static int smsc95xx_suspend(struct usb_interface *intf, pm_message_t message)
- 	 */
- 	if (ret && PMSG_IS_AUTO(message))
- 		usbnet_resume(intf);
-+
-+	if (ret)
-+		schedule_delayed_work(&pdata->carrier_check,
-+				      CARRIER_CHECK_DELAY);
-+
- 	return ret;
- }
- 
--- 
-2.7.4
+> The UP2 board features a Raspberry Pi compatible pin header (HAT) and a
+> board-specific expansion connector (EXHAT). Both expose assorted
+> functions from either the SoC (such as GPIO, I2C, SPI, UART...) or other
+> on-board devices (ADC, FPGA IP blocks...).
+>
+> These lines are routed through an on-board FPGA. The platform controller
+> in its stock firmware provides register fields to change:
+>
+> - Line enable (FPGA pins enabled / high impedance)
+> - Line direction (SoC driven / FPGA driven)
+>
+> To enable using SoC GPIOs on the pin header, this arrangement requires
+> both configuring the platform controller, and updating the SoC pad
+> registers in sync.
+>
+> Add a frontend pinctrl/GPIO driver that registers a new set of GPIO
+> lines for the header pins. When these are requested, the driver
+> propagates this request to the backend SoC pinctrl/GPIO driver by
+> grabbing a GPIO descriptor for the matching SoC GPIO line. The needed
+> mapping for this is retrieved via ACPI properties.
+>
+> Signed-off-by: Dan O'Donovan <dan@emutex.com>
 
+It appears you missed my review comments so please read them
+and reply or respin the patch accordingly.
+
+Yours,
+Linus Walleij
