@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1645ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5172C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9D7A2081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADE3F2064C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="miqS8k2n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9D7A2081B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fleE6GDj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADE3F2064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728907AbeKAIH0 (ORCPT
+        id S1728927AbeKAIH3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:07:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55074 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:07:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726795AbeKAIH0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:07:26 -0400
+        id S1726795AbeKAIH1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:07:27 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0205620830;
-        Wed, 31 Oct 2018 23:07:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB95920838;
+        Wed, 31 Oct 2018 23:07:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027235;
-        bh=GZvI6+ZUhrjC2GF5Z5vETFphxwnIvDDokVS7VhFE/Jo=;
+        s=default; t=1541027236;
+        bh=qfDBSN5mygco8LttDLboGl6OPr7seNGmrRBXBNsvZ3E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=miqS8k2nXFR4hkH3KOAphzR+Vsb4vGnHvuNiBp+rZfu8/pzzkNDTRrg+wlsd0ZO04
-         Lp2av6/3Lr7WPd63QJJdFqDRvsrik1/vZXzYxX+rJnfJJK9kXVdc0hY2x9HpxXsrUQ
-         NhzpiLWyWzS5SpFQvipEehqJ5FD5cr1m6mjYtMBM=
+        b=fleE6GDjmmMiS6SPe8qsmhed0gCYh/Vj0Eu72wt3PK4N91NqGDX5AWS+eISKWSCTc
+         IO4mxbc4Y7K25BwjzRqYcoakOURgBMBf6rGe1umZ8WUvS0OeI8gloMGRo3rW4FK9po
+         MB87Ym2qlsm1bBBY8Sf1+ykAEeiMIWVTYwn2UIJc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Honghui Zhang <honghui.zhang@mediatek.com>,
+Cc:     Alan Douglas <adouglas@cadence.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 103/146] PCI: mediatek: Fix mtk_pcie_find_port() endpoint/port matching logic
-Date:   Wed, 31 Oct 2018 19:04:58 -0400
-Message-Id: <20181031230541.28822-103-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 104/146] PCI: cadence: Use AXI region 0 to signal interrupts from EP
+Date:   Wed, 31 Oct 2018 19:04:59 -0400
+Message-Id: <20181031230541.28822-104-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -53,70 +53,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Honghui Zhang <honghui.zhang@mediatek.com>
+From: Alan Douglas <adouglas@cadence.com>
 
-[ Upstream commit 074d6f32689ce05a084b6fa3db38445745bf11cc ]
+[ Upstream commit 0652d4b6b56f73c81abbdbc7e26f772cb2dfe370 ]
 
-The Mediatek's host controller has two slots, each with its own control
-registers. The host driver needs to identify what slot is connected to
-what port in order to access the device's configuration space.
+The IRQ physical address is allocated from region 0, rather than
+the highest region. Update the driver to reserve this region in
+the bitmap and to use region 0 for all types of interrupt.
 
-Current code retrieving slot connected to a given endpoint device.
+This corrects a problem which prevents the interrupt being
+signalled correctly if using the first address in the AXI region,
+since an offset of zero will always be mapped to region 0.
 
-Assuming each slot is connected to one endpoint device as below:
-
-                host bridge
-  bus 0 --> __________|_______
-           |                  |
-           |                  |
-         slot 0             slot 1
-  bus 1 -->|        bus 2 --> |
-           |                  |
-         EP 0               EP 1
-
-During PCI enumeration, system software will scan all the PCI devices on
-every bus starting from devfn 0. Using PCI_SLOT(devfn) for matching an
-endpoint to its slot is erroneous in that the devfn does not contain the
-hierarchical bus numbering in it. In order to match an endpoint with its
-slot (and related port), the PCI tree must be walked up to the root bus
-(where the root ports are situated) and then the PCI_SLOT(devfn)
-matching logic can be correctly applied for matching.
-
-This patch fixes the mtk_pcie_find_port() slot matching logic by adding
-appropriate PCI tree walking code to retrieve the slot/port a given
-endpoint is connected to.
-
-Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
-[lorenzo.pieralisi@arm.com: rewrote the commit log]
+Fixes: 37dddf14f1ae ("PCI: cadence: Add EndPoint Controller driver for Cadence PCIe controller")
+Signed-off-by: Alan Douglas <adouglas@cadence.com>
 Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Acked-by: Ryder Lee <ryder.lee@mediatek.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/controller/pcie-mediatek.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/pci/controller/pcie-cadence-ep.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-index 861dda69f366..c5ff6ca65eab 100644
---- a/drivers/pci/controller/pcie-mediatek.c
-+++ b/drivers/pci/controller/pcie-mediatek.c
-@@ -337,6 +337,17 @@ static struct mtk_pcie_port *mtk_pcie_find_port(struct pci_bus *bus,
+diff --git a/drivers/pci/controller/pcie-cadence-ep.c b/drivers/pci/controller/pcie-cadence-ep.c
+index 9e87dd7f9ac3..6692654798d4 100644
+--- a/drivers/pci/controller/pcie-cadence-ep.c
++++ b/drivers/pci/controller/pcie-cadence-ep.c
+@@ -258,7 +258,6 @@ static void cdns_pcie_ep_assert_intx(struct cdns_pcie_ep *ep, u8 fn,
+ 				     u8 intx, bool is_asserted)
  {
- 	struct mtk_pcie *pcie = bus->sysdata;
- 	struct mtk_pcie_port *port;
-+	struct pci_dev *dev = NULL;
-+
-+	/*
-+	 * Walk the bus hierarchy to get the devfn value
-+	 * of the port in the root bus.
-+	 */
-+	while (bus && bus->number) {
-+		dev = bus->self;
-+		bus = dev->bus;
-+		devfn = dev->devfn;
-+	}
+ 	struct cdns_pcie *pcie = &ep->pcie;
+-	u32 r = ep->max_regions - 1;
+ 	u32 offset;
+ 	u16 status;
+ 	u8 msg_code;
+@@ -268,8 +267,8 @@ static void cdns_pcie_ep_assert_intx(struct cdns_pcie_ep *ep, u8 fn,
+ 	/* Set the outbound region if needed. */
+ 	if (unlikely(ep->irq_pci_addr != CDNS_PCIE_EP_IRQ_PCI_ADDR_LEGACY ||
+ 		     ep->irq_pci_fn != fn)) {
+-		/* Last region was reserved for IRQ writes. */
+-		cdns_pcie_set_outbound_region_for_normal_msg(pcie, fn, r,
++		/* First region was reserved for IRQ writes. */
++		cdns_pcie_set_outbound_region_for_normal_msg(pcie, fn, 0,
+ 							     ep->irq_phys_addr);
+ 		ep->irq_pci_addr = CDNS_PCIE_EP_IRQ_PCI_ADDR_LEGACY;
+ 		ep->irq_pci_fn = fn;
+@@ -347,8 +346,8 @@ static int cdns_pcie_ep_send_msi_irq(struct cdns_pcie_ep *ep, u8 fn,
+ 	/* Set the outbound region if needed. */
+ 	if (unlikely(ep->irq_pci_addr != (pci_addr & ~pci_addr_mask) ||
+ 		     ep->irq_pci_fn != fn)) {
+-		/* Last region was reserved for IRQ writes. */
+-		cdns_pcie_set_outbound_region(pcie, fn, ep->max_regions - 1,
++		/* First region was reserved for IRQ writes. */
++		cdns_pcie_set_outbound_region(pcie, fn, 0,
+ 					      false,
+ 					      ep->irq_phys_addr,
+ 					      pci_addr & ~pci_addr_mask,
+@@ -517,6 +516,8 @@ static int cdns_pcie_ep_probe(struct platform_device *pdev)
+ 		goto free_epc_mem;
+ 	}
+ 	ep->irq_pci_addr = CDNS_PCIE_EP_IRQ_PCI_ADDR_NONE;
++	/* Reserve region 0 for IRQs */
++	set_bit(0, &ep->ob_region_map);
  
- 	list_for_each_entry(port, &pcie->ports, list)
- 		if (port->slot == PCI_SLOT(devfn))
+ 	return 0;
+ 
 -- 
 2.17.1
 
