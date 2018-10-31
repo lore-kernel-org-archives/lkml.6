@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9087DC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0766ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:34:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58C2220664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:34:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6AE42081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:34:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zNUplruM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58C2220664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cx8grZ1h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6AE42081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730603AbeKAIe4 (ORCPT
+        id S1730460AbeKAIfH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:34:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59044 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:35:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728870AbeKAIJQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730301AbeKAIJQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 1 Nov 2018 04:09:16 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C5AEC20840;
-        Wed, 31 Oct 2018 23:09:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EDFC32064C;
+        Wed, 31 Oct 2018 23:09:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027345;
-        bh=rXvm4yLOg3hKafGlOFCpoqvD/2Y3lDZLtfXB6kDzcIA=;
+        s=default; t=1541027344;
+        bh=yVjPZIbPakPdFKOeRxM4CmMydYyzIlJKgYJZVqUk0GM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zNUplruM+nWzPlWxUMF4PZMhpzm1gOUtA35+UXDTEsjp0QNTRtTnnN6dI/VvVuXTT
-         oCD9Sf1OlAkruTOIrbGCxKlxp7hKwjilpQsUMVT8uk6Yt7DixmLhKwc9zLmX18N68H
-         zBXPb25YxdVfT7f4Y4pYMLTcxT1kIIGy8aFtLuzs=
+        b=Cx8grZ1hm6F/L1j2+i/h/4ax9wnJhPxqJhrxghkSoR02JNRhgroZbS/sWCAG0Cw5p
+         uPcU1N+VdW+t3KYJi7DnfzQteO6LNBNFOioXvYBALsoYU+1Z+Gnm9YtsDt6BFhKdQ1
+         F+aGaYh0YdQdqfxkpZ7vAnSOLNB194RwvKZr9stk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Xiao Ni <xni@redhat.com>, David Jeffery <djeffery@redhat.com>,
-        Shaohua Li <shli@fb.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 077/126] MD: Memory leak when flush bio size is zero
-Date:   Wed, 31 Oct 2018 19:07:05 -0400
-Message-Id: <20181031230754.29029-77-sashal@kernel.org>
+Cc:     Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 076/126] f2fs: fix to account IO correctly for cgroup writeback
+Date:   Wed, 31 Oct 2018 19:07:04 -0400
+Message-Id: <20181031230754.29029-76-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -52,53 +52,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiao Ni <xni@redhat.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit af9b926de9c5986ab009e64917de87c9758bab10 ]
+[ Upstream commit 78efac537de33faab9a4302cc05a70bb4a8b3b63 ]
 
-flush_pool is leaked when flush bio size is zero
+Now, we have supported cgroup writeback, it depends on correctly IO
+account of specified filesystem.
 
-Fixes: 5a409b4f56d5 ("MD: fix lock contention for flush bios")
-Signed-off-by: David Jeffery <djeffery@redhat.com>
-Signed-off-by: Xiao Ni <xni@redhat.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
+But in commit d1b3e72d5490 ("f2fs: submit bio of in-place-update pages"),
+we split write paths from f2fs_submit_page_mbio() to two:
+- f2fs_submit_page_bio() for IPU path
+- f2fs_submit_page_bio() for OPU path
+
+But still we account write IO only in f2fs_submit_page_mbio(), result in
+incorrect IO account, fix it by adding missing IO account in IPU path.
+
+Fixes: d1b3e72d5490 ("f2fs: submit bio of in-place-update pages")
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/md.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ fs/f2fs/data.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index 994aed2f9dff..e9be5cd9bb96 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -455,10 +455,11 @@ static void md_end_flush(struct bio *fbio)
- 	rdev_dec_pending(rdev, mddev);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index b61954d40c25..fa439f5c4d88 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -453,6 +453,10 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+ 		bio_put(bio);
+ 		return -EFAULT;
+ 	}
++
++	if (fio->io_wbc && !is_read_io(fio->op))
++		wbc_account_io(fio->io_wbc, page, PAGE_SIZE);
++
+ 	bio_set_op_attrs(bio, fio->op, fio->op_flags);
  
- 	if (atomic_dec_and_test(&fi->flush_pending)) {
--		if (bio->bi_iter.bi_size == 0)
-+		if (bio->bi_iter.bi_size == 0) {
- 			/* an empty barrier - all done */
- 			bio_endio(bio);
--		else {
-+			mempool_free(fi, mddev->flush_pool);
-+		} else {
- 			INIT_WORK(&fi->flush_work, submit_flushes);
- 			queue_work(md_wq, &fi->flush_work);
- 		}
-@@ -512,10 +513,11 @@ void md_flush_request(struct mddev *mddev, struct bio *bio)
- 	rcu_read_unlock();
- 
- 	if (atomic_dec_and_test(&fi->flush_pending)) {
--		if (bio->bi_iter.bi_size == 0)
-+		if (bio->bi_iter.bi_size == 0) {
- 			/* an empty barrier - all done */
- 			bio_endio(bio);
--		else {
-+			mempool_free(fi, mddev->flush_pool);
-+		} else {
- 			INIT_WORK(&fi->flush_work, submit_flushes);
- 			queue_work(md_wq, &fi->flush_work);
- 		}
+ 	__submit_bio(fio->sbi, bio, fio->type);
 -- 
 2.17.1
 
