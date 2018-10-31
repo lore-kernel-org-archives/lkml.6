@@ -2,360 +2,307 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4445C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 19:36:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 143D5ECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 19:38:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 606802081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 19:36:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4EA520664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 19:38:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nFE1eq/U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 606802081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FeZth37E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4EA520664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729408AbeKAEfg (ORCPT
+        id S1729686AbeKAEh7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 00:35:36 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:50622 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725731AbeKAEfg (ORCPT
+        Thu, 1 Nov 2018 00:37:59 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36218 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725731AbeKAEh6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 00:35:36 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9VJXSOF175786;
-        Wed, 31 Oct 2018 19:35:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=skl+ARsO6AsyEUwwcGRZOddsiW1suPxMivtItEc78rA=;
- b=nFE1eq/UQ9BDtHgx9VEtCZoP+VPwiz6vlPUxV0SE1VyEt6TVgEZmr6NpSQOcWI/DkdVT
- qwXGJPE5wmN/FkG0NsnosuQqYjx48c/W5LBLzQK/QClcKGFS9FL0Fe2HeyqFidceS8og
- YAfZj9v4e9qsUtX+NqA407AQAEUgBlhMymX5jgL4U6CxBdr9yAppQ82tUsRRvNcF3J4c
- syJ7aL4F6VeKwnTCPtwnFcZMGHa/m0XZPjPMh2YW/AO95n26YR4qkANbprf4g9FVoTXG
- o8StCgxuDaJMe1BPeEEX6ZEJYNYnztS6eC3vL8G3oQeNV9YPpiZDGtGIWXsaVNZpv+bq /A== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2ncgnr57dw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 31 Oct 2018 19:35:28 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9VJZQIP015765
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 31 Oct 2018 19:35:26 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9VJZOvW026591;
-        Wed, 31 Oct 2018 19:35:24 GMT
-Received: from [10.152.35.100] (/10.152.35.100)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 31 Oct 2018 12:35:24 -0700
-Subject: Re: [PATCH 00/10] steal tasks to improve CPU utilization
-To:     mingo@redhat.com, peterz@infradead.org
-Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
-        daniel.m.jordan@oracle.com, pavel.tatashin@microsoft.com,
-        matt@codeblueprint.co.uk, umgwanakikbuti@gmail.com,
-        riel@redhat.com, jbacik@fb.com, juri.lelli@redhat.com,
-        linux-kernel@vger.kernel.org, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, quentin.perret@arm.com
-References: <1540220381-424433-1-git-send-email-steven.sistare@oracle.com>
-From:   Steven Sistare <steven.sistare@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <d2f86a75-408f-1284-6906-4e5f186bde79@oracle.com>
-Date:   Wed, 31 Oct 2018 15:35:01 -0400
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 1 Nov 2018 00:37:58 -0400
+Received: by mail-lj1-f195.google.com with SMTP id s15-v6so15965623lji.3;
+        Wed, 31 Oct 2018 12:38:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=W8ulcxHo3chmo/prFXCr2FufRlaSLPsimF46Q/a+fh8=;
+        b=FeZth37Euj/gDYy5BK2s0iKjOjFIpfbKrd4pHfv/5hQoU4CkU8CC48ZaQRYXRS9Ac1
+         TmW+U8TdNRd1G9QuD+NdUQtb+Op3AzJBT8L9SBmylBQ4SvTHiHCAYGPw3zFI4xsAfPId
+         p+07IAilO6PLJfobO77jwAbn7u4z5LSvdCxrnkaWME5hB5Gs9sp1Ag9n2ipXuiLc61FL
+         Qk9AcEhG2KC76GpWlGx5vlrmare35v1N+gLLgPAPqz+NOqHWBseHgeLCRd7MkiLU/Doi
+         zV/iMQfo3hc76YSKYw25GOqPNi3q/TjQyXsD8ptAEmYxL8K8w2pIp3vPdlBk4K5FdWeV
+         B9Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=W8ulcxHo3chmo/prFXCr2FufRlaSLPsimF46Q/a+fh8=;
+        b=AcOj7OdKqtEidGAZtjsQIX5hjDYLEn5dx9vcpRvgfOY/XYxz6svMcEgnCYIC+VNsJb
+         X56YDSa59qVA7W+HT1wOlKygquRAZz6Akw4wiL9fd3rhE9eb8T/PaEHB2WUx3yTR0Eg1
+         F2h42eElmqGFwfvBYNUCsaYeaVfbKl8xEo/nvsuMTE+7R3MJwU0rlHGd/7mBDT2Hor5/
+         L5L/uKBnnVaiQ19hn8KM9nw3hwNYWMOu5n+unUuJFP4HHJGL+vq4Gx2+VyWSrRuGLV+1
+         OJdHfBUOeDcIMcemTru1PulfCkePcM2sAdda/a+zDxoEnTknRci/klJ1pio8koPoUWdi
+         Is7w==
+X-Gm-Message-State: AGRZ1gKrmMJhE0LHGBhMkwP4JmMRvyI5ONgu8euMK5jtoFtBE5BcwStp
+        T9+gCRh0cG8FaZpDFgOtdw1g4O1ERMQ=
+X-Google-Smtp-Source: AJdET5cT1VF6Pd6Gyro2VM7rtWyZV55i7ejdpc2Ptj1u3YRW7JiLu4Mny9mtNzir7rihPbG5+6hX6g==
+X-Received: by 2002:a2e:449c:: with SMTP id b28-v6mr2847487ljf.47.1541014705870;
+        Wed, 31 Oct 2018 12:38:25 -0700 (PDT)
+Received: from ?IPv6:2001:14bb:52:7be:f0bf:dd2d:f008:5213? (dmkd798g-7z2-yccwcp-4.rev.dnainternet.fi. [2001:14bb:52:7be:f0bf:dd2d:f008:5213])
+        by smtp.gmail.com with ESMTPSA id g2-v6sm1674927ljg.9.2018.10.31.12.38.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Oct 2018 12:38:25 -0700 (PDT)
+Subject: Re: [PATCH 10/17] prmem: documentation
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+To:     Andy Lutomirski <luto@amacapital.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Tycho Andersen <tycho@tycho.ws>, Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, selinux@vger.kernel.org
+References: <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
+ <20181028183126.GB744@hirez.programming.kicks-ass.net>
+ <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
+ <20181030152641.GE8177@hirez.programming.kicks-ass.net>
+ <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
+ <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
+ <20181030175814.GB10491@bombadil.infradead.org> <20181030182841.GE7343@cisco>
+ <20181030192021.GC10491@bombadil.infradead.org>
+ <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com>
+ <20181030213557.GE10491@bombadil.infradead.org>
+ <CALCETrW1FcT88u0QY9k_PMOeZj0G8H6KNb5Bnreo-12NvmmCEQ@mail.gmail.com>
+ <1d8e2d20-ba18-763e-03ff-d061e98d86ff@gmail.com>
+Message-ID: <9f91adeb-0517-3955-6602-49bf6a892593@gmail.com>
+Date:   Wed, 31 Oct 2018 21:38:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <1540220381-424433-1-git-send-email-steven.sistare@oracle.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1d8e2d20-ba18-763e-03ff-d061e98d86ff@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9063 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810310162
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks very much to everyone who has commented on my patch series.
-Here are the issues to be addressed in V2 of the series, and the person
-that suggested it, or raised the issue that led to it.
 
-Changes for V2:
-  * Remove stray patch 10 hunk from patch 5 (Valentin)
-  * Fix "warning: label out defined but not used" for !CONFIG_SCHED_SMT
-    (Valentin)
-  * Set SCHED_STEAL_NODE_LIMIT_DEFAULT to 2 (Steve)
-  * Call try_steal iff avg_idle exceeds some small threshold (Steve, Valentin)
 
-Possible future work:
-  * Use sparsemask and stealing for RT (Steve, Peter)
-  * Remove the core and socket levels from idle_balance() and let stealing
-    handle those levels (Steve, Peter)
-  * Delete idle_balance() and use stealing exclusively for handling new idle
-    (Steve, Peter)
-  * Test specjbb multi-warehouse on 8-node systems when stealing for
-    large NUMA systems is revisited (Peter)
-  * Enhance stealing to handle misfits (Valentin)
-  * Lower time threshold for task_hot within LLC (Valentin)
+On 31/10/2018 11:08, Igor Stoppa wrote:
+> Adding SELinux folks and the SELinux ml
+> 
+> I think it's better if they participate in this discussion.
+> 
+> On 31/10/2018 06:41, Andy Lutomirski wrote:
+>> On Tue, Oct 30, 2018 at 2:36 PM Matthew Wilcox <willy@infradead.org> 
+>> wrote:
+>>>
+>>> On Tue, Oct 30, 2018 at 10:43:14PM +0200, Igor Stoppa wrote:
+>>>> On 30/10/2018 21:20, Matthew Wilcox wrote:
+>>>>>>> So the API might look something like this:
+>>>>>>>
+>>>>>>>          void *p = rare_alloc(...);      /* writable pointer */
+>>>>>>>          p->a = x;
+>>>>>>>          q = rare_protect(p);            /* read-only pointer */
+>>>>
+>>>> With pools and memory allocated from vmap_areas, I was able to say
+>>>>
+>>>> protect(pool)
+>>>>
+>>>> and that would do a swipe on all the pages currently in use.
+>>>> In the SELinux policyDB, for example, one doesn't really want to
+>>>> individually protect each allocation.
+>>>>
+>>>> The loading phase happens usually at boot, when the system can be 
+>>>> assumed to
+>>>> be sane (one might even preload a bare-bone set of rules from 
+>>>> initramfs and
+>>>> then replace it later on, with the full blown set).
+>>>>
+>>>> There is no need to process each of these tens of thousands 
+>>>> allocations and
+>>>> initialization as write-rare.
+>>>>
+>>>> Would it be possible to do the same here?
+>>>
+>>> What Andy is proposing effectively puts all rare allocations into
+>>> one pool.  Although I suppose it could be generalised to multiple pools
+>>> ... one mm_struct per pool.  Andy, what do you think to doing that?
+>>
+>> Hmm.  Let's see.
+>>
+>> To clarify some of this thread, I think that the fact that rare_write
+>> uses an mm_struct and alias mappings under the hood should be
+>> completely invisible to users of the API. 
+> 
+> I agree.
+> 
+>> No one should ever be
+>> handed a writable pointer to rare_write memory (except perhaps during
+>> bootup or when initializing a large complex data structure that will
+>> be rare_write but isn't yet, e.g. the policy db).
+> 
+> The policy db doesn't need to be write rare.
+> Actually, it really shouldn't be write rare.
+> 
+> Maybe it's just a matter of wording, but effectively the policyDB can be 
+> trated with this sequence:
+> 
+> 1) allocate various data structures in writable form
+> 
+> 2) initialize them
+> 
+> 3) go back to 1 as needed
+> 
+> 4) lock down everything that has been allocated, as Read-Only
+> The reason why I stress ReadOnly is that differentiating what is really 
+> ReadOnly from what is WriteRare provides an extra edge against attacks, 
+> because attempts to alter ReadOnly data through a WriteRare API could be 
+> detected
+> 
+> 5) read any part of the policyDB during regular operations
+> 
+> 6) in case of update, create a temporary new version, using steps 1..3
+> 
+> 7) if update successful, use the new one and destroy the old one
+> 
+> 8) if the update failed, destroy the new one
+> 
+> The destruction at points 7 and 8 is not so much a write operation, as 
+> it is a release of the memory.
+> 
+> So, we might have a bit different interpretation of what write-rare 
+> means wrt destroying the memory and its content.
+> 
+> To clarify: I've been using write-rare to indicate primarily small 
+> operations that one would otherwise achieve with "=", memcpy or memset 
+> or more complex variants, like atomic ops, rcu pointer assignment, etc.
+> 
+> Tearing down an entire set of allocations like the policyDB doesn't fit 
+> very well with that model.
+> 
+> The only part which _needs_ to be write rare, in the policyDB, is the 
+> set of pointers which are used to access all the dynamically allocated 
+> data set.
+> 
+> These pointers must be updated when a new policyDB is allocated.
+> 
+>> For example, there could easily be architectures where having a
+>> writable alias is problematic.  On such architectures, an entirely
+>> different mechanism might work better.  And, if a tool like KNOX ever
+>> becomes a *part* of the Linux kernel (hint hint!)
+> 
+> Something related, albeit not identical is going on here [1]
+> Eventually, it could be expanded to deal also with write rare.
+> 
+>> If you have multiple pools and one mm_struct per pool, you'll need a
+>> way to find the mm_struct from a given allocation. 
+> 
+> Indeed. In my patchset, based on vmas, I do the following:
+> * a private field from the page struct points to the vma using that page
+> * inside the vma there is alist_head used only during deletion
+>    - one pointer is used to chain vmas fro mthe same pool
+>    - one pointer points to the pool struct
+> * the pool struct has the property to use for all the associated 
+> allocations: is it write-rare, read-only, does it auto protect, etc.
+> 
+>> Regardless of how
+>> the mm_structs are set up, changing rare_write memory to normal memory
+>> or vice versa will require a global TLB flush (all ASIDs and global
+>> pages) on all CPUs, so having extra mm_structs doesn't seem to buy
+>> much.
+> 
+> 1) it supports differnt levels of protection:
+>    temporarily unprotected vs read-only vs write-rare
+> 
+> 2) the change of write permission should be possible only toward more 
+> restrictive rules (writable -> write-rare -> read-only) and only to the 
+> point that was specified while creating the pool, to avoid DOS attacks, 
+> where a write-rare is flipped into read-only and further updates fail
+> (ex: prevent IMA from registering modifications to a file, by not 
+> letting it store new information - I'm not 100% sure this would work, 
+> but it gives the idea, I think)
+> 
+> 3) being able to track all the allocations related to a pool would allow 
+> to perform mass operations, like reducing the writabilty or destroying 
+> all the allocations.
+> 
+>> (It's just possible that changing rare_write back to normal might be
+>> able to avoid the flush if the spurious faults can be handled
+>> reliably.)
+> 
+> I do not see the need for such a case of degrading the write permissions 
+> of an allocation, unless it refers to the release of a pool of 
+> allocations (see updating the SELinux policy DB)
 
-Dropped:
-  * Skip try_steal() if we bail out of idle_balance() because !this_rq->rd->overload 
-    (Valentin)
-    I tried it and saw no difference.  Dropped for simplicity.
+A few more thoughts about pools. Not sure if they are all correct.
+Note: I stick to "pool", instead of mm_struct, because what I'll say is 
+mostly independent from the implementation.
 
-Does anyone else plan to review the code?  Please tell me now, even if your
-review will be delayed.  If yes, I will wait for all comments before producing
-V2.  The code changes so far are small.
+- As Peter Zijlstra wrote earlier, protecting a target moves the focus 
+of the attack to something else. In this case, probably, the "something 
+else" would be the metadata of the pool(s).
 
-- Steve
+- The amount of pools needed should be known at compilation time, so the 
+metadata used for pools could be statically allocated and any change to 
+it could be treated as write-rare.
 
-On 10/22/2018 10:59 AM, Steve Sistare wrote:
-> When a CPU has no more CFS tasks to run, and idle_balance() fails to
-> find a task, then attempt to steal a task from an overloaded CPU in the
-> same LLC. Maintain and use a bitmap of overloaded CPUs to efficiently
-> identify candidates.  To minimize search time, steal the first migratable
-> task that is found when the bitmap is traversed.  For fairness, search
-> for migratable tasks on an overloaded CPU in order of next to run.
-> 
-> This simple stealing yields a higher CPU utilization than idle_balance()
-> alone, because the search is cheap, so it may be called every time the CPU
-> is about to go idle.  idle_balance() does more work because it searches
-> widely for the busiest queue, so to limit its CPU consumption, it declines
-> to search if the system is too busy.  Simple stealing does not offload the
-> globally busiest queue, but it is much better than running nothing at all.
-> 
-> The bitmap of overloaded CPUs is a new type of sparse bitmap, designed to
-> reduce cache contention vs the usual bitmap when many threads concurrently
-> set, clear, and visit elements.
-> 
-> Patch 1 defines the sparsemask type and its operations.
-> 
-> Patches 2, 3, and 4 implement the bitmap of overloaded CPUs.
-> 
-> Patches 5 and 6 refactor existing code for a cleaner merge of later
->   patches.
-> 
-> Patches 7 and 8 implement task stealing using the overloaded CPUs bitmap.
-> 
-> Patch 9 disables stealing on systems with more than 2 NUMA nodes for the
-> time being because of performance regressions that are not due to stealing
-> per-se.  See the patch description for details.
-> 
-> Patch 10 adds schedstats for comparing the new behavior to the old, and
->   provided as a convenience for developers only, not for integration.
-> 
-> The patch series is based on kernel 4.19.0-rc7.  It compiles, boots, and
-> runs with/without each of CONFIG_SCHED_SMT, CONFIG_SMP, CONFIG_SCHED_DEBUG,
-> and CONFIG_PREEMPT.  It runs without error with CONFIG_DEBUG_PREEMPT +
-> CONFIG_SLUB_DEBUG + CONFIG_DEBUG_PAGEALLOC + CONFIG_DEBUG_MUTEXES +
-> CONFIG_DEBUG_SPINLOCK + CONFIG_DEBUG_ATOMIC_SLEEP.  CPU hot plug and CPU
-> bandwidth control were tested.
-> 
-> Stealing imprroves utilization with only a modest CPU overhead in scheduler
-> code.  In the following experiment, hackbench is run with varying numbers
-> of groups (40 tasks per group), and the delta in /proc/schedstat is shown
-> for each run, averaged per CPU, augmented with these non-standard stats:
-> 
->   %find - percent of time spent in old and new functions that search for
->     idle CPUs and tasks to steal and set the overloaded CPUs bitmap.
-> 
->   steal - number of times a task is stolen from another CPU.
-> 
-> X6-2: 1 socket * 10 cores * 2 hyperthreads = 20 CPUs
-> Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
-> hackbench <grps> process 100000
-> sched_wakeup_granularity_ns=15000000
-> 
->   baseline
->   grps  time  %busy  slice   sched   idle     wake %find  steal
->   1    8.084  75.02   0.10  105476  46291    59183  0.31      0
->   2   13.892  85.33   0.10  190225  70958   119264  0.45      0
->   3   19.668  89.04   0.10  263896  87047   176850  0.49      0
->   4   25.279  91.28   0.10  322171  94691   227474  0.51      0
->   8   47.832  94.86   0.09  630636 144141   486322  0.56      0
-> 
->   new
->   grps  time  %busy  slice   sched   idle     wake %find  steal  %speedup
->   1    5.938  96.80   0.24   31255   7190    24061  0.63   7433  36.1
->   2   11.491  99.23   0.16   74097   4578    69512  0.84  19463  20.9
->   3   16.987  99.66   0.15  115824   1985   113826  0.77  24707  15.8
->   4   22.504  99.80   0.14  167188   2385   164786  0.75  29353  12.3
->   8   44.441  99.86   0.11  389153   1616   387401  0.67  38190   7.6
-> 
-> Elapsed time improves by 8 to 36%, and CPU busy utilization is up
-> by 5 to 22% hitting 99% for 2 or more groups (80 or more tasks).
-> The cost is at most 0.4% more find time.
-> 
-> Additional performance results follow.  A negative "speedup" is a
-> regression.  Note: for all hackbench runs, sched_wakeup_granularity_ns
-> is set to 15 msec.  Otherwise, preemptions increase at higher loads and
-> distort the comparison between baseline and new.
-> 
-> ------------------ 1 Socket Results ------------------
-> 
-> X6-2: 1 socket * 10 cores * 2 hyperthreads = 20 CPUs
-> Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
-> Average of 10 runs of: hackbench <groups> process 100000
-> 
->             --- base --    --- new ---
->   groups    time %stdev    time %stdev  %speedup
->        1   8.008    0.1   5.905    0.2      35.6
->        2  13.814    0.2  11.438    0.1      20.7
->        3  19.488    0.2  16.919    0.1      15.1
->        4  25.059    0.1  22.409    0.1      11.8
->        8  47.478    0.1  44.221    0.1       7.3
-> 
-> X6-2: 1 socket * 22 cores * 2 hyperthreads = 44 CPUs
-> Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
-> Average of 10 runs of: hackbench <groups> process 100000
-> 
->             --- base --    --- new ---
->   groups    time %stdev    time %stdev  %speedup
->        1   4.586    0.8   4.596    0.6      -0.3
->        2   7.693    0.2   5.775    1.3      33.2
->        3  10.442    0.3   8.288    0.3      25.9
->        4  13.087    0.2  11.057    0.1      18.3
->        8  24.145    0.2  22.076    0.3       9.3
->       16  43.779    0.1  41.741    0.2       4.8
-> 
-> KVM 4-cpu
-> Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz
-> tbench, average of 11 runs.
-> 
->   clients    %speedup
->         1        16.2
->         2        11.7
->         4         9.9
->         8        12.8
->        16        13.7
-> 
-> KVM 2-cpu
-> Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz
-> 
->   Benchmark                     %speedup
->   specjbb2015_critical_jops          5.7
->   mysql_sysb1.0.14_mutex_2          40.6
->   mysql_sysb1.0.14_oltp_2            3.9
-> 
-> ------------------ 2 Socket Results ------------------
-> 
-> X6-2: 2 sockets * 10 cores * 2 hyperthreads = 40 CPUs
-> Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
-> Average of 10 runs of: hackbench <groups> process 100000
-> 
->             --- base --    --- new ---
->   groups    time %stdev    time %stdev  %speedup
->        1   7.945    0.2   7.219    8.7      10.0
->        2   8.444    0.4   6.689    1.5      26.2
->        3  12.100    1.1   9.962    2.0      21.4
->        4  15.001    0.4  13.109    1.1      14.4
->        8  27.960    0.2  26.127    0.3       7.0
-> 
-> X6-2: 2 sockets * 22 cores * 2 hyperthreads = 88 CPUs
-> Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
-> Average of 10 runs of: hackbench <groups> process 100000
-> 
->             --- base --    --- new ---
->   groups    time %stdev    time %stdev  %speedup
->        1   5.826    5.4   5.840    5.0      -0.3
->        2   5.041    5.3   6.171   23.4     -18.4
->        3   6.839    2.1   6.324    3.8       8.1
->        4   8.177    0.6   7.318    3.6      11.7
->        8  14.429    0.7  13.966    1.3       3.3
->       16  26.401    0.3  25.149    1.5       4.9
-> 
-> 
-> X6-2: 2 sockets * 22 cores * 2 hyperthreads = 88 CPUs
-> Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
-> Oracle database OLTP, logging disabled, NVRAM storage
-> 
->   Customers   Users   %speedup
->     1200000      40       -1.2
->     2400000      80        2.7
->     3600000     120        8.9
->     4800000     160        4.4
->     6000000     200        3.0
-> 
-> X6-2: 2 sockets * 14 cores * 2 hyperthreads = 56 CPUs
-> Intel(R) Xeon(R) CPU E5-2690 v4 @ 2.60GHz
-> Results from the Oracle "Performance PIT".
-> 
->   Benchmark                                           %speedup
-> 
->   mysql_sysb1.0.14_fileio_56_rndrd                        19.6
->   mysql_sysb1.0.14_fileio_56_seqrd                        12.1
->   mysql_sysb1.0.14_fileio_56_rndwr                         0.4
->   mysql_sysb1.0.14_fileio_56_seqrewr                      -0.3
-> 
->   pgsql_sysb1.0.14_fileio_56_rndrd                        19.5
->   pgsql_sysb1.0.14_fileio_56_seqrd                         8.6
->   pgsql_sysb1.0.14_fileio_56_rndwr                         1.0
->   pgsql_sysb1.0.14_fileio_56_seqrewr                       0.5
-> 
->   opatch_time_ASM_12.2.0.1.0_HP2M                          7.5
->   select-1_users-warm_asmm_ASM_12.2.0.1.0_HP2M             5.1
->   select-1_users_asmm_ASM_12.2.0.1.0_HP2M                  4.4
->   swingbenchv3_asmm_soebench_ASM_12.2.0.1.0_HP2M           5.8
-> 
->   lm3_memlat_L2                                            4.8
->   lm3_memlat_L1                                            0.0
-> 
->   ub_gcc_56CPUs-56copies_Pipe-based_Context_Switching     60.1
->   ub_gcc_56CPUs-56copies_Shell_Scripts_1_concurrent        5.2
->   ub_gcc_56CPUs-56copies_Shell_Scripts_8_concurrent       -3.0
->   ub_gcc_56CPUs-56copies_File_Copy_1024_bufsize_2000_maxblocks 2.4
-> 
-> X5-2: 2 sockets * 18 cores * 2 hyperthreads = 72 CPUs
-> Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz
-> 
->   NAS_OMP
->   bench class   ncpu    %improved(Mops)
->   dc    B       72      1.3
->   is    C       72      0.9
->   is    D       72      0.7
-> 
->   sysbench mysql, average of 24 runs
->           --- base ---     --- new ---
->   nthr   events  %stdev   events  %stdev %speedup
->      1    331.0    0.25    331.0    0.24     -0.1
->      2    661.3    0.22    661.8    0.22      0.0
->      4   1297.0    0.88   1300.5    0.82      0.2
->      8   2420.8    0.04   2420.5    0.04     -0.1
->     16   4826.3    0.07   4825.4    0.05     -0.1
->     32   8815.3    0.27   8830.2    0.18      0.1
->     64  12823.0    0.24  12823.6    0.26      0.0
-> 
-> --------------------------------------------------------------
-> 
-> Steve Sistare (10):
->   sched: Provide sparsemask, a reduced contention bitmap
->   sched/topology: Provide hooks to allocate data shared per LLC
->   sched/topology: Provide cfs_overload_cpus bitmap
->   sched/fair: Dynamically update cfs_overload_cpus
->   sched/fair: Hoist idle_stamp up from idle_balance
->   sched/fair: Generalize the detach_task interface
->   sched/fair: Provide can_migrate_task_llc
->   sched/fair: Steal work from an overloaded CPU when CPU goes idle
->   sched/fair: disable stealing if too many NUMA nodes
->   sched/fair: Provide idle search schedstats
-> 
->  include/linux/sched/topology.h |   1 +
->  include/linux/sparsemask.h     | 260 +++++++++++++++++++++++++++++++
->  kernel/sched/core.c            |  30 +++-
->  kernel/sched/fair.c            | 338 +++++++++++++++++++++++++++++++++++++----
->  kernel/sched/features.h        |   6 +
->  kernel/sched/sched.h           |  13 +-
->  kernel/sched/stats.c           |  11 +-
->  kernel/sched/stats.h           |  13 ++
->  kernel/sched/topology.c        | 117 +++++++++++++-
->  lib/Makefile                   |   2 +-
->  lib/sparsemask.c               | 142 +++++++++++++++++
->  11 files changed, 898 insertions(+), 35 deletions(-)
->  create mode 100644 include/linux/sparsemask.h
->  create mode 100644 lib/sparsemask.c
-> 
+- only certain fields of a pool structure would be writable, even as 
+write-rare, after the pool is initialized.
+In case the pool is a mm_struct or a superset (containing also 
+additional properties, like the type of writability: RO or WR), the field
+
+struct vm_area_struct *mmap;
+
+is an example of what could be protected. It should be alterable only 
+when creating/destroying the pool and making the first initialization.
+
+- to speed up and also improve the validation of the target of a 
+write-rare operation, it would be really desirable if the target had 
+some intrinsic property which clearly differentiates it from 
+non-write-rare memory. Its address, for example. The amount of write 
+rare data needed by a full kernel should not exceed a few tens of 
+megabytes. On a 64 bit system it shouldn't be so bad to reserve an 
+address range maybe one order of magnitude lager than that.
+It could even become a parameter for the creation of a pool.
+SELinux, for example, should fit within 10-20MB. Or it could be a 
+command line parameter.
+
+- even if an hypervisor was present, it would be preferable to use it 
+exclusively as extra protection, which triggers an exception only when 
+something abnormal happens. The hypervisor should not become aware of 
+the actual meaning of kernel (meta)data. Ideally, it would be mostly 
+used for trapping unexpected writes to pages which are not supposed to 
+be modified.
+
+- one more reason for using pools is that, if each pool was also acting 
+as memory cache for its users, attacks relying on use-after-free would 
+not have access to possible vulnerability, because the memory and 
+addresses associated with a pool would stay with it.
+
+--
+igor
