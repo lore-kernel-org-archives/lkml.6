@@ -7,48 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95EB8C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8817C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:12:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E4D9208E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:12:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80A792085A
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:12:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZwBxH6qA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E4D9208E3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YkA1OhdV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80A792085A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732103AbeKAIML (ORCPT
+        id S1732115AbeKAIMM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:12:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36768 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:12:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730312AbeKAIML (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:12:11 -0400
+        id S1732087AbeKAIMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:12:09 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED7F520989;
+        by mail.kernel.org (Postfix) with ESMTPSA id 22A4920866;
         Wed, 31 Oct 2018 23:11:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027518;
-        bh=345dE4yakgIXUDtObUSVfu218Nz+Df25oW6qn9P/YzY=;
+        s=default; t=1541027517;
+        bh=8tfeCUo6J4gfewvj6FnyhOfx108s4Kk673DhdMLYLs8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZwBxH6qAqudL5XvVVJ3TEjoYtY85D2EJcy9fHGafRc7H/Wf4qGadxOHvn9eMN4H10
-         EWrl8uRP8GDZUWPMNL4mfW14AUrPIZjSvmpPh5CedtUF0L7jGU1yTTIe4SsSN/qtPc
-         yRs8UGEsFvJC9OFSNEL51WYRJKcepSn4S+xHbPUY=
+        b=YkA1OhdVqnTobWdNU9Oc6fXE0Fa9ughjfseGy1JcbvbMvTYa78L2IEP9IWumSKdrb
+         6Ta3Y9psIOAuiiC6aQEwKNNM4A3xy6uMO0D4ijnWBATUhE/jHVb2+Bx1kP2q5w0y77
+         MHEiySICJ0gretFSHEQBETNW/P+UFug35e+Qb9JQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dexuan Cui <decui@microsoft.com>,
-        "K . Y . Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Stable@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     Javier Martinez Canillas <javierm@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 23/32] Drivers: hv: kvp: Fix two "this statement may fall through" warnings
-Date:   Wed, 31 Oct 2018 19:11:28 -0400
-Message-Id: <20181031231137.29429-23-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 22/32] tpm: suppress transmit cmd error logs when TPM 1.2 is disabled/deactivated
+Date:   Wed, 31 Oct 2018 19:11:27 -0400
+Message-Id: <20181031231137.29429-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231137.29429-1-sashal@kernel.org>
 References: <20181031231137.29429-1-sashal@kernel.org>
@@ -57,67 +53,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dexuan Cui <decui@microsoft.com>
+From: Javier Martinez Canillas <javierm@redhat.com>
 
-[ Upstream commit fc62c3b1977d62e6374fd6e28d371bb42dfa5c9d ]
+[ Upstream commit 0d6d0d62d9505a9816716aa484ebd0b04c795063 ]
 
-We don't need to call process_ib_ipinfo() if message->kvp_hdr.operation is
-KVP_OP_GET_IP_INFO in kvp_send_key(), because here we just need to pass on
-the op code from the host to the userspace; when the userspace returns
-the info requested by the host, we pass the info on to the host in
-kvp_respond_to_host() -> process_ob_ipinfo(). BTW, the current buggy code
-actually doesn't cause any harm, because only message->kvp_hdr.operation
-is used by the userspace, in the case of KVP_OP_GET_IP_INFO.
+For TPM 1.2 chips the system setup utility allows to set the TPM device in
+one of the following states:
 
-The patch also adds a missing "break;" in kvp_send_key(). BTW, the current
-buggy code actually doesn't cause any harm, because in the case of
-KVP_OP_SET, the unexpected fall-through corrupts
-message->body.kvp_set.data.key_size, but that is not really used: see
-the definition of struct hv_kvp_exchg_msg_value.
+  * Active: Security chip is functional
+  * Inactive: Security chip is visible, but is not functional
+  * Disabled: Security chip is hidden and is not functional
 
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+When choosing the "Inactive" state, the TPM 1.2 device is enumerated and
+registered, but sending TPM commands fail with either TPM_DEACTIVATED or
+TPM_DISABLED depending if the firmware deactivated or disabled the TPM.
+
+Since these TPM 1.2 error codes don't have special treatment, inactivating
+the TPM leads to a very noisy kernel log buffer that shows messages like
+the following:
+
+  tpm_tis 00:05: 1.2 TPM (device-id 0x0, rev-id 78)
+  tpm tpm0: A TPM error (6) occurred attempting to read a pcr value
+  tpm tpm0: TPM is disabled/deactivated (0x6)
+  tpm tpm0: A TPM error (6) occurred attempting get random
+  tpm tpm0: A TPM error (6) occurred attempting to read a pcr value
+  ima: No TPM chip found, activating TPM-bypass! (rc=6)
+  tpm tpm0: A TPM error (6) occurred attempting get random
+  tpm tpm0: A TPM error (6) occurred attempting get random
+  tpm tpm0: A TPM error (6) occurred attempting get random
+  tpm tpm0: A TPM error (6) occurred attempting get random
+
+Let's just suppress error log messages for the TPM_{DEACTIVATED,DISABLED}
+return codes, since this is expected when the TPM 1.2 is set to Inactive.
+
+In that case the kernel log is cleaner and less confusing for users, i.e:
+
+  tpm_tis 00:05: 1.2 TPM (device-id 0x0, rev-id 78)
+  tpm tpm0: TPM is disabled/deactivated (0x6)
+  ima: No TPM chip found, activating TPM-bypass! (rc=6)
+
+Reported-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hv/hv_kvp.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/char/tpm/tpm-interface.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hv/hv_kvp.c b/drivers/hv/hv_kvp.c
-index 1771a968c3f2..7f54e5beb718 100644
---- a/drivers/hv/hv_kvp.c
-+++ b/drivers/hv/hv_kvp.c
-@@ -336,7 +336,6 @@ static void process_ib_ipinfo(void *in_msg, void *out_msg, int op)
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 95a40ec854ad..e3f2915ca4be 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -415,7 +415,8 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, const void *cmd,
+ 	header = cmd;
  
- 		out->body.kvp_ip_val.dhcp_enabled = in->kvp_ip_val.dhcp_enabled;
+ 	err = be32_to_cpu(header->return_code);
+-	if (err != 0 && desc)
++	if (err != 0 && err != TPM_ERR_DISABLED && err != TPM_ERR_DEACTIVATED
++	    && desc)
+ 		dev_err(&chip->dev, "A TPM error (%d) occurred %s\n", err,
+ 			desc);
  
--	default:
- 		utf16s_to_utf8s((wchar_t *)in->kvp_ip_val.adapter_id,
- 				MAX_ADAPTER_ID_SIZE,
- 				UTF16_LITTLE_ENDIAN,
-@@ -389,7 +388,7 @@ kvp_send_key(struct work_struct *dummy)
- 		process_ib_ipinfo(in_msg, message, KVP_OP_SET_IP_INFO);
- 		break;
- 	case KVP_OP_GET_IP_INFO:
--		process_ib_ipinfo(in_msg, message, KVP_OP_GET_IP_INFO);
-+		/* We only need to pass on message->kvp_hdr.operation.  */
- 		break;
- 	case KVP_OP_SET:
- 		switch (in_msg->body.kvp_set.data.value_type) {
-@@ -429,6 +428,9 @@ kvp_send_key(struct work_struct *dummy)
- 			break;
- 
- 		}
-+
-+		break;
-+
- 	case KVP_OP_GET:
- 		message->body.kvp_set.data.key_size =
- 			utf16s_to_utf8s(
 -- 
 2.17.1
 
