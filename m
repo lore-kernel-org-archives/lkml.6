@@ -2,1807 +2,401 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FECCC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:39:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B483ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:40:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B80412081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:39:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B80412081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BF1C82081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:40:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="nS5aodqq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF1C82081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729630AbeKAAhm (ORCPT
+        id S1729678AbeKAAip (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 20:37:42 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55886 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727623AbeKAAhl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 20:37:41 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B79C088308;
-        Wed, 31 Oct 2018 15:39:09 +0000 (UTC)
-Received: from krava (unknown [10.43.17.150])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 09DF660851;
-        Wed, 31 Oct 2018 15:39:07 +0000 (UTC)
-Date:   Wed, 31 Oct 2018 16:39:07 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        David Miller <davem@davemloft.net>
-Cc:     linux-kernel@vger.kernel.org, Namhyung Kim <namhyung@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>
-Subject: Re: [PATCH RFC] hist lookups
-Message-ID: <20181031153907.GA29893@krava>
-References: <20181030.220328.833911429549884471.davem@davemloft.net>
- <20181031124306.GA10660@kernel.org>
+        Wed, 31 Oct 2018 20:38:45 -0400
+Received: from mail-eopbgr680103.outbound.protection.outlook.com ([40.107.68.103]:56982
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727623AbeKAAio (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 20:38:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=W4f8LA4wki1cA3TplMuvoqgYusGfV7uKgfa+qzf8/f4=;
+ b=nS5aodqqFlTHxjri0CFN7NsRGPryTlLAVz39o2TZ1E2JjjSXlzT/kPSi97yjJcYmtALtQKqNfX5CGtKxVrzYEwebs8IxSD3czWpL1BtJCX9j4VfOLbm1EmYpKBdN/LEluashMJacHWMOL7pG8mWidEBDVmoZmmHY1ha8ZToSKyw=
+Received: from DM5PR21MB0508.namprd21.prod.outlook.com (10.172.91.142) by
+ DM5PR21MB0859.namprd21.prod.outlook.com (10.173.172.145) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.4; Wed, 31 Oct 2018 15:40:02 +0000
+Received: from DM5PR21MB0508.namprd21.prod.outlook.com
+ ([fe80::909e:78d3:5637:c4fe]) by DM5PR21MB0508.namprd21.prod.outlook.com
+ ([fe80::909e:78d3:5637:c4fe%6]) with mapi id 15.20.1294.014; Wed, 31 Oct 2018
+ 15:40:02 +0000
+From:   Pasha Tatashin <Pavel.Tatashin@microsoft.com>
+To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+CC:     Pasha Tatashin <Pavel.Tatashin@microsoft.com>,
+        "mhocko@suse.com" <mhocko@suse.com>,
+        "dave.jiang@intel.com" <dave.jiang@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "yi.z.zhang@linux.intel.com" <yi.z.zhang@linux.intel.com>,
+        "khalid.aziz@oracle.com" <khalid.aziz@oracle.com>,
+        "rppt@linux.vnet.ibm.com" <rppt@linux.vnet.ibm.com>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "ldufour@linux.vnet.ibm.com" <ldufour@linux.vnet.ibm.com>,
+        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>
+Subject: Re: [mm PATCH v4 3/6] mm: Use memblock/zone specific iterator for
+ handling deferred page init
+Thread-Topic: [mm PATCH v4 3/6] mm: Use memblock/zone specific iterator for
+ handling deferred page init
+Thread-Index: AQHUZnS64EfZUXoWUkmxUsXxcYCLGqU5kw0A
+Date:   Wed, 31 Oct 2018 15:40:02 +0000
+Message-ID: <5b937f29-a6e1-6622-b035-246229021d3e@microsoft.com>
+References: <20181017235043.17213.92459.stgit@localhost.localdomain>
+ <20181017235419.17213.68425.stgit@localhost.localdomain>
+In-Reply-To: <20181017235419.17213.68425.stgit@localhost.localdomain>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [73.69.118.222]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR21MB0859;6:T627lwbCfCDAi0gczBlgaA0HDJ1AU37Rc9OmIs9R66qk0zoRdptZFUHgVtpoG5qe8Xe3/nUKoVHYHDkNeiS1vwMjFi8FE9VkK/zHU0kAT2EeJ6HMUyt5n05Xr7knuT7gwLT9FmwAIq7cWpWaXGW9+fS4raQsG59QlDwrvbl/0KrPBCAb6oTogPgtFuYIhrMrEUF/E5WAOw5Kypncnc2pCp6WLB62GuLKvxeKn3j9STZ0VjDpkoX171WwSTf9cgjDRIw5LMMFY1yahzgtGncNb8t92kPmmCY1h/XhDnX/ErVYEiTTB0pre6LcjbPfN6gyH5TeRCQsaojQV09Qawt4jgPKmFmU1Od1thGP/zzsPzPbGhQaWIIadGZKlKVFqiUbydHtnCfctk54+YJvFyOe0gizhq5DGxIusiuAAjGny2PQqR/x7tb2W43JmNp1whHBkNAGsF82rLLAM3Oh5uALPw==;5:ixrJfhEwwS5e/bjXhfVayslpBM7Oy8lgxK+gNqyyCuuB//Knk7SdNjrOJOVzw0sdzW7tLfQpFnMKRq2/2zipsTODpq2xVy+HmYAJvtxJpZ6kdGVc63TowOma7BYcI0x9YHJk3uPiRxPSojK5+C3cBGWeCyrqQDky3bay28qnRp0=;7:IeyQbdYvh1Ya0u7Gtc+iHbPK74ABTGfHZI4IP+o9mKC9imMmpXnOWP2bndcNfIZtL/UU+gghGl3LlqDo2xvSks0WF1E6C5Wodmrax46DVKCIJEO8dblwsaibrBjOhfnZXrHCjnlagoTZcu18Y7al/A==
+x-ms-office365-filtering-correlation-id: 390a914d-35b4-420d-6e4e-08d63f471f7d
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:DM5PR21MB0859;
+x-ms-traffictypediagnostic: DM5PR21MB0859:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Pavel.Tatashin@microsoft.com; 
+x-microsoft-antispam-prvs: <DM5PR21MB0859F33CD87F5D0E5628145E9DCD0@DM5PR21MB0859.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(228905959029699);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(8220035)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231382)(944501410)(52105095)(2018427008)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:DM5PR21MB0859;BCL:0;PCL:0;RULEID:;SRVR:DM5PR21MB0859;
+x-forefront-prvs: 084285FC5C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(376002)(346002)(396003)(136003)(43544003)(199004)(189003)(2906002)(229853002)(2501003)(5250100002)(6246003)(446003)(2900100001)(4744004)(6436002)(71200400001)(6512007)(7736002)(71190400001)(53946003)(11346002)(476003)(14454004)(31696002)(68736007)(478600001)(72206003)(86362001)(53936002)(86612001)(186003)(2201001)(305945005)(486006)(2616005)(10290500003)(6116002)(26005)(106356001)(105586002)(22452003)(66066001)(6506007)(316002)(8936002)(54906003)(110136005)(8676002)(10090500001)(4326008)(81166006)(81156014)(25786009)(31686004)(7416002)(99286004)(256004)(14444005)(97736004)(6486002)(5660300001)(76176011)(102836004)(36756003)(53546011)(3846002);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR21MB0859;H:DM5PR21MB0508.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: MmIxIq40jJz/PX86040Fkho+K1olYEjyBL0pT0RGSFJW12rZOiDwtsATH+1AbcSgCZ/geK/UG9txqtfRapCAGnxVBaIlZbFLaNoLxIpPam1sx1rdINjYfMLtXCrXFTygAHNivcywy+Vs88UViYox7IgPBfvaebkGF3fbqOKGali+EAPQn4ryPMh2SZorjAeyFCQlD9KivdKCZTUNbYth8A1dczcnK0W0lKNz3FSB+8Zt95+sgAkfSXOJ8LbJ9yN4+DU6djcP4YTu+rNf0G71al7E9v3IwvM7fvAIQLOH2d/LRUdKJkZivBiqY9zRHPUJViw/ujQMZ4Ri4xOGvPC30miH39qs+e8CDfZHHk29ASg=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0CBB0709521B0046948BA091DCB31062@namprd21.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181031124306.GA10660@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 31 Oct 2018 15:39:09 +0000 (UTC)
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 390a914d-35b4-420d-6e4e-08d63f471f7d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Oct 2018 15:40:02.1354
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR21MB0859
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 09:43:06AM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Tue, Oct 30, 2018 at 10:03:28PM -0700, David Miller escreveu:
-> > 
-> > So when a cpu is overpowered processing samples, most of the time is
-> > spent in the histogram code.
-
-it'd be great to make hist processing faster, but is your main target here
-to get the load out of the reader thread, so we dont lose events during the
-hist processing?
-
-we could queue events directly from reader thread into another thread and
-keep it (the reader thread) free of processing, focusing only on event
-reading/passing 
-
-jirka
-
-> > 
-> > It seems we initialize a ~262 byte structure on the stack to do every
-> > histogram entry lookup.
-> > 
-> > This is a side effect of how the sorting code is shared with the code
-> > that does lookups and insertions into the histogram tree(s).
-> > 
-> > I tried to change this so that lookups use a smaller key, but it gets
-> > ugly real fast.
-> > 
-> > I don't know when I'd be able to work more on this so I'm posting this
-> > hoping maybe someone else can move it forward, or maybe even find a
-> > better way to do this.
-> 
-> Added Namhyung to the CC list, that is in vacations right now but said
-> he would look into the issues recently raised when he gets back.
-> 
-> Thanks a lot for all the work you did in this sprint, really
-> appreciated, I'm processing the fixes for the fallback to kallsyms and
-> the other patch you submitted, will do tests and push to Ingo and
-> revisit this after I get ready for Vancouver ;-)
-> 
-> - Arnaldo
->  
-> > The histogram code is really the limiting factor in how well perf can
-> > handle high sample rates.
-> > 
-> > diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
-> > index f96c005..f0265e4 100644
-> > --- a/tools/perf/util/sort.c
-> > +++ b/tools/perf/util/sort.c
-> > @@ -81,6 +81,12 @@ sort__thread_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  	return right->thread->tid - left->thread->tid;
-> >  }
-> >  
-> > +static int64_t
-> > +sort__thread_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	return key->al->thread->tid - entry->thread->tid;
-> > +}
-> > +
-> >  static int hist_entry__thread_snprintf(struct hist_entry *he, char *bf,
-> >  				       size_t size, unsigned int width)
-> >  {
-> > @@ -104,6 +110,7 @@ static int hist_entry__thread_filter(struct hist_entry *he, int type, const void
-> >  struct sort_entry sort_thread = {
-> >  	.se_header	= "    Pid:Command",
-> >  	.se_cmp		= sort__thread_cmp,
-> > +	.se_cmp_key	= sort__thread_cmp_key,
-> >  	.se_snprintf	= hist_entry__thread_snprintf,
-> >  	.se_filter	= hist_entry__thread_filter,
-> >  	.se_width_idx	= HISTC_THREAD,
-> > @@ -123,6 +130,13 @@ sort__comm_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  }
-> >  
-> >  static int64_t
-> > +sort__comm_cmp_key(struct hist_entry *entry,
-> > +	       struct hist_entry_cmp_key *key)
-> > +{
-> > +	return strcmp(comm__str(key->comm), comm__str(entry->comm));
-> > +}
-> > +
-> > +static int64_t
-> >  sort__comm_collapse(struct hist_entry *left, struct hist_entry *right)
-> >  {
-> >  	return strcmp(comm__str(right->comm), comm__str(left->comm));
-> > @@ -143,6 +157,7 @@ static int hist_entry__comm_snprintf(struct hist_entry *he, char *bf,
-> >  struct sort_entry sort_comm = {
-> >  	.se_header	= "Command",
-> >  	.se_cmp		= sort__comm_cmp,
-> > +	.se_cmp_key	= sort__comm_cmp_key,
-> >  	.se_collapse	= sort__comm_collapse,
-> >  	.se_sort	= sort__comm_sort,
-> >  	.se_snprintf	= hist_entry__comm_snprintf,
-> > @@ -178,6 +193,12 @@ sort__dso_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  	return _sort__dso_cmp(right->ms.map, left->ms.map);
-> >  }
-> >  
-> > +static int64_t
-> > +sort__dso_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	return _sort__dso_cmp(key->al->map, entry->ms.map);
-> > +}
-> > +
-> >  static int _hist_entry__dso_snprintf(struct map *map, char *bf,
-> >  				     size_t size, unsigned int width)
-> >  {
-> > @@ -209,6 +230,7 @@ static int hist_entry__dso_filter(struct hist_entry *he, int type, const void *a
-> >  struct sort_entry sort_dso = {
-> >  	.se_header	= "Shared Object",
-> >  	.se_cmp		= sort__dso_cmp,
-> > +	.se_cmp_key	= sort__dso_cmp_key,
-> >  	.se_snprintf	= hist_entry__dso_snprintf,
-> >  	.se_filter	= hist_entry__dso_filter,
-> >  	.se_width_idx	= HISTC_DSO,
-> > @@ -260,6 +282,25 @@ sort__sym_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  }
-> >  
-> >  static int64_t
-> > +sort__sym_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	int64_t ret;
-> > +
-> > +	if (!entry->ms.sym && !key->al->sym)
-> > +		return _sort__addr_cmp(entry->ip, key->al->addr);
-> > +
-> > +	/*
-> > +	 * comparing symbol address alone is not enough since it's a
-> > +	 * relative address within a dso.
-> > +	 */
-> > +	ret = sort__dso_cmp_key(entry, key);
-> > +	if (ret != 0)
-> > +		return ret;
-> > +
-> > +	return _sort__sym_cmp(entry->ms.sym, key->al->sym);
-> > +}
-> > +
-> > +static int64_t
-> >  sort__sym_sort(struct hist_entry *left, struct hist_entry *right)
-> >  {
-> >  	if (!left->ms.sym || !right->ms.sym)
-> > @@ -323,6 +364,7 @@ static int hist_entry__sym_filter(struct hist_entry *he, int type, const void *a
-> >  struct sort_entry sort_sym = {
-> >  	.se_header	= "Symbol",
-> >  	.se_cmp		= sort__sym_cmp,
-> > +	.se_cmp_key	= sort__sym_cmp_key,
-> >  	.se_sort	= sort__sym_sort,
-> >  	.se_snprintf	= hist_entry__sym_snprintf,
-> >  	.se_filter	= hist_entry__sym_filter,
-> > @@ -347,6 +389,18 @@ sort__srcline_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  	return strcmp(right->srcline, left->srcline);
-> >  }
-> >  
-> > +static int64_t
-> > +sort__srcline_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	if (!entry->srcline)
-> > +		entry->srcline = hist_entry__srcline(entry);
-> > +	if (!key->al->srcline)
-> > +		key->al->srcline =
-> > +			map__srcline(key->al->map, key->al->addr, key->al->sym);
-> > +
-> > +	return strcmp(key->al->srcline, entry->srcline);
-> > +}
-> > +
-> >  static int hist_entry__srcline_snprintf(struct hist_entry *he, char *bf,
-> >  					size_t size, unsigned int width)
-> >  {
-> > @@ -359,6 +413,7 @@ static int hist_entry__srcline_snprintf(struct hist_entry *he, char *bf,
-> >  struct sort_entry sort_srcline = {
-> >  	.se_header	= "Source:Line",
-> >  	.se_cmp		= sort__srcline_cmp,
-> > +	.se_cmp_key	= sort__srcline_cmp_key,
-> >  	.se_snprintf	= hist_entry__srcline_snprintf,
-> >  	.se_width_idx	= HISTC_SRCLINE,
-> >  };
-> > @@ -382,6 +437,18 @@ sort__srcline_from_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  	return strcmp(right->branch_info->srcline_from, left->branch_info->srcline_from);
-> >  }
-> >  
-> > +static int64_t
-> > +sort__srcline_from_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	if (!entry->branch_info->srcline_from)
-> > +		entry->branch_info->srcline_from = addr_map_symbol__srcline(&entry->branch_info->from);
-> > +
-> > +	if (!key->bi->srcline_from)
-> > +		key->bi->srcline_from = addr_map_symbol__srcline(&key->bi->from);
-> > +
-> > +	return strcmp(key->bi->srcline_from, entry->branch_info->srcline_from);
-> > +}
-> > +
-> >  static int hist_entry__srcline_from_snprintf(struct hist_entry *he, char *bf,
-> >  					size_t size, unsigned int width)
-> >  {
-> > @@ -391,6 +458,7 @@ static int hist_entry__srcline_from_snprintf(struct hist_entry *he, char *bf,
-> >  struct sort_entry sort_srcline_from = {
-> >  	.se_header	= "From Source:Line",
-> >  	.se_cmp		= sort__srcline_from_cmp,
-> > +	.se_cmp_key	= sort__srcline_from_cmp_key,
-> >  	.se_snprintf	= hist_entry__srcline_from_snprintf,
-> >  	.se_width_idx	= HISTC_SRCLINE_FROM,
-> >  };
-> > @@ -409,6 +477,18 @@ sort__srcline_to_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  	return strcmp(right->branch_info->srcline_to, left->branch_info->srcline_to);
-> >  }
-> >  
-> > +static int64_t
-> > +sort__srcline_to_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	if (!entry->branch_info->srcline_to)
-> > +		entry->branch_info->srcline_to = addr_map_symbol__srcline(&entry->branch_info->to);
-> > +
-> > +	if (!key->bi->srcline_to)
-> > +		key->bi->srcline_to = addr_map_symbol__srcline(&key->bi->to);
-> > +
-> > +	return strcmp(key->bi->srcline_to, entry->branch_info->srcline_to);
-> > +}
-> > +
-> >  static int hist_entry__srcline_to_snprintf(struct hist_entry *he, char *bf,
-> >  					size_t size, unsigned int width)
-> >  {
-> > @@ -418,6 +498,7 @@ static int hist_entry__srcline_to_snprintf(struct hist_entry *he, char *bf,
-> >  struct sort_entry sort_srcline_to = {
-> >  	.se_header	= "To Source:Line",
-> >  	.se_cmp		= sort__srcline_to_cmp,
-> > +	.se_cmp_key	= sort__srcline_to_cmp_key,
-> >  	.se_snprintf	= hist_entry__srcline_to_snprintf,
-> >  	.se_width_idx	= HISTC_SRCLINE_TO,
-> >  };
-> > @@ -426,16 +507,16 @@ struct sort_entry sort_srcline_to = {
-> >  
-> >  static char no_srcfile[1];
-> >  
-> > -static char *hist_entry__get_srcfile(struct hist_entry *e)
-> > +static char *__hist_entry__get_srcfile(struct map *map, struct symbol *sym,
-> > +				       u64 ip)
-> >  {
-> >  	char *sf, *p;
-> > -	struct map *map = e->ms.map;
-> >  
-> >  	if (!map)
-> >  		return no_srcfile;
-> >  
-> > -	sf = __get_srcline(map->dso, map__rip_2objdump(map, e->ip),
-> > -			 e->ms.sym, false, true, true, e->ip);
-> > +	sf = __get_srcline(map->dso, map__rip_2objdump(map, ip),
-> > +			 sym, false, true, true, ip);
-> >  	if (!strcmp(sf, SRCLINE_UNKNOWN))
-> >  		return no_srcfile;
-> >  	p = strchr(sf, ':');
-> > @@ -447,6 +528,15 @@ static char *hist_entry__get_srcfile(struct hist_entry *e)
-> >  	return no_srcfile;
-> >  }
-> >  
-> > +static char *hist_entry__get_srcfile(struct hist_entry *e)
-> > +{
-> > +	return __hist_entry__get_srcfile(e->ms.map, e->ms.sym, e->ip);
-> > +}
-> > +
-> > +static char *hist_entry_key__get_srcfile(struct hist_entry_cmp_key *key)
-> > +{
-> > +	return __hist_entry__get_srcfile(key->al->map, key->al->sym, key->al->addr);
-> > +}
-> >  static int64_t
-> >  sort__srcfile_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  {
-> > @@ -458,6 +548,17 @@ sort__srcfile_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  	return strcmp(right->srcfile, left->srcfile);
-> >  }
-> >  
-> > +static int64_t
-> > +sort__srcfile_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	if (!entry->srcfile)
-> > +		entry->srcfile = hist_entry__get_srcfile(entry);
-> > +	if (!key->srcfile)
-> > +		key->srcfile = hist_entry_key__get_srcfile(key);
-> > +
-> > +	return strcmp(key->srcfile, entry->srcfile);
-> > +}
-> > +
-> >  static int hist_entry__srcfile_snprintf(struct hist_entry *he, char *bf,
-> >  					size_t size, unsigned int width)
-> >  {
-> > @@ -470,6 +571,7 @@ static int hist_entry__srcfile_snprintf(struct hist_entry *he, char *bf,
-> >  struct sort_entry sort_srcfile = {
-> >  	.se_header	= "Source File",
-> >  	.se_cmp		= sort__srcfile_cmp,
-> > +	.se_cmp_key	= sort__srcfile_cmp_key,
-> >  	.se_snprintf	= hist_entry__srcfile_snprintf,
-> >  	.se_width_idx	= HISTC_SRCFILE,
-> >  };
-> > @@ -488,6 +590,18 @@ sort__parent_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  	return strcmp(sym_r->name, sym_l->name);
-> >  }
-> >  
-> > +static int64_t
-> > +sort__parent_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	struct symbol *sym_l = entry->parent;
-> > +	struct symbol *sym_r = key->sym_parent;
-> > +
-> > +	if (!sym_l || !sym_r)
-> > +		return cmp_null(sym_l, sym_r);
-> > +
-> > +	return strcmp(sym_r->name, sym_l->name);
-> > +}
-> > +
-> >  static int hist_entry__parent_snprintf(struct hist_entry *he, char *bf,
-> >  				       size_t size, unsigned int width)
-> >  {
-> > @@ -498,6 +612,7 @@ static int hist_entry__parent_snprintf(struct hist_entry *he, char *bf,
-> >  struct sort_entry sort_parent = {
-> >  	.se_header	= "Parent symbol",
-> >  	.se_cmp		= sort__parent_cmp,
-> > +	.se_cmp_key	= sort__parent_cmp_key,
-> >  	.se_snprintf	= hist_entry__parent_snprintf,
-> >  	.se_width_idx	= HISTC_PARENT,
-> >  };
-> > @@ -510,6 +625,12 @@ sort__cpu_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  	return right->cpu - left->cpu;
-> >  }
-> >  
-> > +static int64_t
-> > +sort__cpu_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	return key->al->cpu - entry->cpu;
-> > +}
-> > +
-> >  static int hist_entry__cpu_snprintf(struct hist_entry *he, char *bf,
-> >  				    size_t size, unsigned int width)
-> >  {
-> > @@ -519,6 +640,7 @@ static int hist_entry__cpu_snprintf(struct hist_entry *he, char *bf,
-> >  struct sort_entry sort_cpu = {
-> >  	.se_header      = "CPU",
-> >  	.se_cmp	        = sort__cpu_cmp,
-> > +	.se_cmp_key     = sort__cpu_cmp_key,
-> >  	.se_snprintf    = hist_entry__cpu_snprintf,
-> >  	.se_width_idx	= HISTC_CPU,
-> >  };
-> > @@ -548,6 +670,22 @@ sort__cgroup_id_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  				       left->cgroup_id.ino);
-> >  }
-> >  
-> > +static int64_t
-> > +sort__cgroup_id_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	struct namespaces *ns = thread__namespaces(key->al->thread);
-> > +	int64_t ret;
-> > +	u64 val;
-> > +
-> > +	val = ns ? ns->link_info[CGROUP_NS_INDEX].dev : 0;
-> > +	ret = _sort__cgroup_dev_cmp(val, entry->cgroup_id.dev);
-> > +	if (ret != 0)
-> > +		return ret;
-> > +
-> > +	val = ns ? ns->link_info[CGROUP_NS_INDEX].ino : 0;
-> > +	return _sort__cgroup_inode_cmp(val, entry->cgroup_id.ino);
-> > +}
-> > +
-> >  static int hist_entry__cgroup_id_snprintf(struct hist_entry *he,
-> >  					  char *bf, size_t size,
-> >  					  unsigned int width __maybe_unused)
-> > @@ -559,6 +697,7 @@ static int hist_entry__cgroup_id_snprintf(struct hist_entry *he,
-> >  struct sort_entry sort_cgroup_id = {
-> >  	.se_header      = "cgroup id (dev/inode)",
-> >  	.se_cmp	        = sort__cgroup_id_cmp,
-> > +	.se_cmp_key     = sort__cgroup_id_cmp_key,
-> >  	.se_snprintf    = hist_entry__cgroup_id_snprintf,
-> >  	.se_width_idx	= HISTC_CGROUP_ID,
-> >  };
-> > @@ -571,6 +710,12 @@ sort__socket_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  	return right->socket - left->socket;
-> >  }
-> >  
-> > +static int64_t
-> > +sort__socket_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	return key->al->socket - entry->socket;
-> > +}
-> > +
-> >  static int hist_entry__socket_snprintf(struct hist_entry *he, char *bf,
-> >  				    size_t size, unsigned int width)
-> >  {
-> > @@ -590,6 +735,7 @@ static int hist_entry__socket_filter(struct hist_entry *he, int type, const void
-> >  struct sort_entry sort_socket = {
-> >  	.se_header      = "Socket",
-> >  	.se_cmp	        = sort__socket_cmp,
-> > +	.se_cmp_key     = sort__socket_cmp_key,
-> >  	.se_snprintf    = hist_entry__socket_snprintf,
-> >  	.se_filter      = hist_entry__socket_filter,
-> >  	.se_width_idx	= HISTC_SOCKET,
-> > @@ -597,20 +743,21 @@ struct sort_entry sort_socket = {
-> >  
-> >  /* --sort trace */
-> >  
-> > -static char *get_trace_output(struct hist_entry *he)
-> > +static char *__get_trace_output(struct hists *hists, void *raw_data,
-> > +				u32 raw_size)
-> >  {
-> >  	struct trace_seq seq;
-> >  	struct perf_evsel *evsel;
-> >  	struct tep_record rec = {
-> > -		.data = he->raw_data,
-> > -		.size = he->raw_size,
-> > +		.data = raw_data,
-> > +		.size = raw_size,
-> >  	};
-> >  
-> > -	evsel = hists_to_evsel(he->hists);
-> > +	evsel = hists_to_evsel(hists);
-> >  
-> >  	trace_seq_init(&seq);
-> >  	if (symbol_conf.raw_trace) {
-> > -		tep_print_fields(&seq, he->raw_data, he->raw_size,
-> > +		tep_print_fields(&seq, raw_data, raw_size,
-> >  				 evsel->tp_format);
-> >  	} else {
-> >  		tep_event_info(&seq, evsel->tp_format, &rec);
-> > @@ -622,6 +769,16 @@ static char *get_trace_output(struct hist_entry *he)
-> >  	return realloc(seq.buffer, seq.len + 1);
-> >  }
-> >  
-> > +static char *get_trace_output(struct hist_entry *he)
-> > +{
-> > +	return __get_trace_output(he->hists, he->raw_data, he->raw_size);
-> > +}
-> > +
-> > +static char *get_trace_output_key(struct hists *hists, struct hist_entry_cmp_key *key)
-> > +{
-> > +	return __get_trace_output(hists, key->sample->raw_data, key->sample->raw_size);
-> > +}
-> > +
-> >  static int64_t
-> >  sort__trace_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  {
-> > @@ -639,6 +796,23 @@ sort__trace_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  	return strcmp(right->trace_output, left->trace_output);
-> >  }
-> >  
-> > +static int64_t
-> > +sort__trace_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	struct perf_evsel *evsel;
-> > +
-> > +	evsel = hists_to_evsel(entry->hists);
-> > +	if (evsel->attr.type != PERF_TYPE_TRACEPOINT)
-> > +		return 0;
-> > +
-> > +	if (entry->trace_output == NULL)
-> > +		entry->trace_output = get_trace_output(entry);
-> > +	if (key->trace_output == NULL)
-> > +		key->trace_output = get_trace_output_key(entry->hists, key);
-> > +
-> > +	return strcmp(key->trace_output, entry->trace_output);
-> > +}
-> > +
-> >  static int hist_entry__trace_snprintf(struct hist_entry *he, char *bf,
-> >  				    size_t size, unsigned int width)
-> >  {
-> > @@ -656,6 +830,7 @@ static int hist_entry__trace_snprintf(struct hist_entry *he, char *bf,
-> >  struct sort_entry sort_trace = {
-> >  	.se_header      = "Trace output",
-> >  	.se_cmp	        = sort__trace_cmp,
-> > +	.se_cmp_key     = sort__trace_cmp_key,
-> >  	.se_snprintf    = hist_entry__trace_snprintf,
-> >  	.se_width_idx	= HISTC_TRACE,
-> >  };
-> > @@ -672,6 +847,16 @@ sort__dso_from_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  			      right->branch_info->from.map);
-> >  }
-> >  
-> > +static int64_t
-> > +sort__dso_from_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	if (!entry->branch_info || !key->bi)
-> > +		return cmp_null(entry->branch_info, key->bi);
-> > +
-> > +	return _sort__dso_cmp(entry->branch_info->from.map,
-> > +			      key->bi->from.map);
-> > +}
-> > +
-> >  static int hist_entry__dso_from_snprintf(struct hist_entry *he, char *bf,
-> >  				    size_t size, unsigned int width)
-> >  {
-> > @@ -704,6 +889,16 @@ sort__dso_to_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  			      right->branch_info->to.map);
-> >  }
-> >  
-> > +static int64_t
-> > +sort__dso_to_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	if (!entry->branch_info || !key->bi)
-> > +		return cmp_null(entry->branch_info, key->bi);
-> > +
-> > +	return _sort__dso_cmp(entry->branch_info->to.map,
-> > +			      key->bi->to.map);
-> > +}
-> > +
-> >  static int hist_entry__dso_to_snprintf(struct hist_entry *he, char *bf,
-> >  				       size_t size, unsigned int width)
-> >  {
-> > @@ -745,6 +940,24 @@ sort__sym_from_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  }
-> >  
-> >  static int64_t
-> > +sort__sym_from_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	struct addr_map_symbol *from_l = &entry->branch_info->from;
-> > +	struct addr_map_symbol *from_r = &key->bi->from;
-> > +
-> > +	if (!entry->branch_info || !key->bi)
-> > +		return cmp_null(entry->branch_info, key->bi);
-> > +
-> > +	from_l = &entry->branch_info->from;
-> > +	from_r = &key->bi->from;
-> > +
-> > +	if (!from_l->sym && !from_r->sym)
-> > +		return _sort__addr_cmp(from_l->addr, from_r->addr);
-> > +
-> > +	return _sort__sym_cmp(from_l->sym, from_r->sym);
-> > +}
-> > +
-> > +static int64_t
-> >  sort__sym_to_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  {
-> >  	struct addr_map_symbol *to_l, *to_r;
-> > @@ -761,6 +974,23 @@ sort__sym_to_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  	return _sort__sym_cmp(to_l->sym, to_r->sym);
-> >  }
-> >  
-> > +static int64_t
-> > +sort__sym_to_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	struct addr_map_symbol *to_l, *to_r;
-> > +
-> > +	if (!entry->branch_info || !key->bi)
-> > +		return cmp_null(entry->branch_info, key->bi);
-> > +
-> > +	to_l = &entry->branch_info->to;
-> > +	to_r = &key->bi->to;
-> > +
-> > +	if (!to_l->sym && !to_r->sym)
-> > +		return _sort__addr_cmp(to_l->addr, to_r->addr);
-> > +
-> > +	return _sort__sym_cmp(to_l->sym, to_r->sym);
-> > +}
-> > +
-> >  static int hist_entry__sym_from_snprintf(struct hist_entry *he, char *bf,
-> >  					 size_t size, unsigned int width)
-> >  {
-> > @@ -814,6 +1044,7 @@ static int hist_entry__sym_to_filter(struct hist_entry *he, int type,
-> >  struct sort_entry sort_dso_from = {
-> >  	.se_header	= "Source Shared Object",
-> >  	.se_cmp		= sort__dso_from_cmp,
-> > +	.se_cmp_key	= sort__dso_from_cmp_key,
-> >  	.se_snprintf	= hist_entry__dso_from_snprintf,
-> >  	.se_filter	= hist_entry__dso_from_filter,
-> >  	.se_width_idx	= HISTC_DSO_FROM,
-> > @@ -822,6 +1053,7 @@ struct sort_entry sort_dso_from = {
-> >  struct sort_entry sort_dso_to = {
-> >  	.se_header	= "Target Shared Object",
-> >  	.se_cmp		= sort__dso_to_cmp,
-> > +	.se_cmp_key	= sort__dso_to_cmp_key,
-> >  	.se_snprintf	= hist_entry__dso_to_snprintf,
-> >  	.se_filter	= hist_entry__dso_to_filter,
-> >  	.se_width_idx	= HISTC_DSO_TO,
-> > @@ -830,6 +1062,7 @@ struct sort_entry sort_dso_to = {
-> >  struct sort_entry sort_sym_from = {
-> >  	.se_header	= "Source Symbol",
-> >  	.se_cmp		= sort__sym_from_cmp,
-> > +	.se_cmp_key	= sort__sym_from_cmp_key,
-> >  	.se_snprintf	= hist_entry__sym_from_snprintf,
-> >  	.se_filter	= hist_entry__sym_from_filter,
-> >  	.se_width_idx	= HISTC_SYMBOL_FROM,
-> > @@ -838,6 +1071,7 @@ struct sort_entry sort_sym_from = {
-> >  struct sort_entry sort_sym_to = {
-> >  	.se_header	= "Target Symbol",
-> >  	.se_cmp		= sort__sym_to_cmp,
-> > +	.se_cmp_key	= sort__sym_to_cmp_key,
-> >  	.se_snprintf	= hist_entry__sym_to_snprintf,
-> >  	.se_filter	= hist_entry__sym_to_filter,
-> >  	.se_width_idx	= HISTC_SYMBOL_TO,
-> > @@ -856,6 +1090,19 @@ sort__mispredict_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  	return mp || p;
-> >  }
-> >  
-> > +static int64_t
-> > +sort__mispredict_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	unsigned char mp, p;
-> > +
-> > +	if (!entry->branch_info || !key->bi)
-> > +		return cmp_null(entry->branch_info, key->bi);
-> > +
-> > +	mp = entry->branch_info->flags.mispred != key->bi->flags.mispred;
-> > +	p  = entry->branch_info->flags.predicted != key->bi->flags.predicted;
-> > +	return mp || p;
-> > +}
-> > +
-> >  static int hist_entry__mispredict_snprintf(struct hist_entry *he, char *bf,
-> >  				    size_t size, unsigned int width){
-> >  	static const char *out = "N/A";
-> > @@ -880,6 +1127,16 @@ sort__cycles_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  		right->branch_info->flags.cycles;
-> >  }
-> >  
-> > +static int64_t
-> > +sort__cycles_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	if (!entry->branch_info || !key->bi)
-> > +		return cmp_null(entry->branch_info, key->bi);
-> > +
-> > +	return entry->branch_info->flags.cycles -
-> > +		key->bi->flags.cycles;
-> > +}
-> > +
-> >  static int hist_entry__cycles_snprintf(struct hist_entry *he, char *bf,
-> >  				    size_t size, unsigned int width)
-> >  {
-> > @@ -894,6 +1151,7 @@ static int hist_entry__cycles_snprintf(struct hist_entry *he, char *bf,
-> >  struct sort_entry sort_cycles = {
-> >  	.se_header	= "Basic Block Cycles",
-> >  	.se_cmp		= sort__cycles_cmp,
-> > +	.se_cmp_key	= sort__cycles_cmp_key,
-> >  	.se_snprintf	= hist_entry__cycles_snprintf,
-> >  	.se_width_idx	= HISTC_CYCLES,
-> >  };
-> > @@ -912,6 +1170,19 @@ sort__daddr_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  	return (int64_t)(r - l);
-> >  }
-> >  
-> > +static int64_t
-> > +sort__daddr_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	uint64_t l = 0, r = 0;
-> > +
-> > +	if (entry->mem_info)
-> > +		l = entry->mem_info->daddr.addr;
-> > +	if (key->mem_info)
-> > +		r = key->mem_info->daddr.addr;
-> > +
-> > +	return (int64_t)(r - l);
-> > +}
-> > +
-> >  static int hist_entry__daddr_snprintf(struct hist_entry *he, char *bf,
-> >  				    size_t size, unsigned int width)
-> >  {
-> > @@ -941,6 +1212,19 @@ sort__iaddr_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  	return (int64_t)(r - l);
-> >  }
-> >  
-> > +static int64_t
-> > +sort__iaddr_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	uint64_t l = 0, r = 0;
-> > +
-> > +	if (entry->mem_info)
-> > +		l = entry->mem_info->iaddr.addr;
-> > +	if (key->mem_info)
-> > +		r = key->mem_info->iaddr.addr;
-> > +
-> > +	return (int64_t)(r - l);
-> > +}
-> > +
-> >  static int hist_entry__iaddr_snprintf(struct hist_entry *he, char *bf,
-> >  				    size_t size, unsigned int width)
-> >  {
-> > @@ -971,6 +1255,20 @@ sort__dso_daddr_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  	return _sort__dso_cmp(map_l, map_r);
-> >  }
-> >  
-> > +static int64_t
-> > +sort__dso_daddr_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	struct map *map_l = NULL;
-> > +	struct map *map_r = NULL;
-> > +
-> > +	if (entry->mem_info)
-> > +		map_l = entry->mem_info->daddr.map;
-> > +	if (key->mem_info)
-> > +		map_r = key->mem_info->daddr.map;
-> > +
-> > +	return _sort__dso_cmp(map_l, map_r);
-> > +}
-> > +
-> >  static int hist_entry__dso_daddr_snprintf(struct hist_entry *he, char *bf,
-> >  				    size_t size, unsigned int width)
-> >  {
-> > @@ -1001,6 +1299,25 @@ sort__locked_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  	return (int64_t)(data_src_r.mem_lock - data_src_l.mem_lock);
-> >  }
-> >  
-> > +static int64_t
-> > +sort__locked_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	union perf_mem_data_src data_src_l;
-> > +	union perf_mem_data_src data_src_r;
-> > +
-> > +	if (entry->mem_info)
-> > +		data_src_l = entry->mem_info->data_src;
-> > +	else
-> > +		data_src_l.mem_lock = PERF_MEM_LOCK_NA;
-> > +
-> > +	if (key->mem_info)
-> > +		data_src_r = key->mem_info->data_src;
-> > +	else
-> > +		data_src_r.mem_lock = PERF_MEM_LOCK_NA;
-> > +
-> > +	return (int64_t)(data_src_r.mem_lock - data_src_l.mem_lock);
-> > +}
-> > +
-> >  static int hist_entry__locked_snprintf(struct hist_entry *he, char *bf,
-> >  				    size_t size, unsigned int width)
-> >  {
-> > @@ -1029,6 +1346,25 @@ sort__tlb_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  	return (int64_t)(data_src_r.mem_dtlb - data_src_l.mem_dtlb);
-> >  }
-> >  
-> > +static int64_t
-> > +sort__tlb_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	union perf_mem_data_src data_src_l;
-> > +	union perf_mem_data_src data_src_r;
-> > +
-> > +	if (entry->mem_info)
-> > +		data_src_l = entry->mem_info->data_src;
-> > +	else
-> > +		data_src_l.mem_dtlb = PERF_MEM_TLB_NA;
-> > +
-> > +	if (key->mem_info)
-> > +		data_src_r = key->mem_info->data_src;
-> > +	else
-> > +		data_src_r.mem_dtlb = PERF_MEM_TLB_NA;
-> > +
-> > +	return (int64_t)(data_src_r.mem_dtlb - data_src_l.mem_dtlb);
-> > +}
-> > +
-> >  static int hist_entry__tlb_snprintf(struct hist_entry *he, char *bf,
-> >  				    size_t size, unsigned int width)
-> >  {
-> > @@ -1057,6 +1393,25 @@ sort__lvl_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  	return (int64_t)(data_src_r.mem_lvl - data_src_l.mem_lvl);
-> >  }
-> >  
-> > +static int64_t
-> > +sort__lvl_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	union perf_mem_data_src data_src_l;
-> > +	union perf_mem_data_src data_src_r;
-> > +
-> > +	if (entry->mem_info)
-> > +		data_src_l = entry->mem_info->data_src;
-> > +	else
-> > +		data_src_l.mem_lvl = PERF_MEM_LVL_NA;
-> > +
-> > +	if (key->mem_info)
-> > +		data_src_r = key->mem_info->data_src;
-> > +	else
-> > +		data_src_r.mem_lvl = PERF_MEM_LVL_NA;
-> > +
-> > +	return (int64_t)(data_src_r.mem_lvl - data_src_l.mem_lvl);
-> > +}
-> > +
-> >  static int hist_entry__lvl_snprintf(struct hist_entry *he, char *bf,
-> >  				    size_t size, unsigned int width)
-> >  {
-> > @@ -1085,6 +1440,25 @@ sort__snoop_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  	return (int64_t)(data_src_r.mem_snoop - data_src_l.mem_snoop);
-> >  }
-> >  
-> > +static int64_t
-> > +sort__snoop_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	union perf_mem_data_src data_src_l;
-> > +	union perf_mem_data_src data_src_r;
-> > +
-> > +	if (entry->mem_info)
-> > +		data_src_l = entry->mem_info->data_src;
-> > +	else
-> > +		data_src_l.mem_snoop = PERF_MEM_SNOOP_NA;
-> > +
-> > +	if (key->mem_info)
-> > +		data_src_r = key->mem_info->data_src;
-> > +	else
-> > +		data_src_r.mem_snoop = PERF_MEM_SNOOP_NA;
-> > +
-> > +	return (int64_t)(data_src_r.mem_snoop - data_src_l.mem_snoop);
-> > +}
-> > +
-> >  static int hist_entry__snoop_snprintf(struct hist_entry *he, char *bf,
-> >  				    size_t size, unsigned int width)
-> >  {
-> > @@ -1158,6 +1532,70 @@ sort__dcacheline_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  	return 0;
-> >  }
-> >  
-> > +static int64_t
-> > +sort__dcacheline_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	u64 l, r;
-> > +	struct map *l_map, *r_map;
-> > +
-> > +	if (!entry->mem_info)  return -1;
-> > +	if (!key->mem_info) return 1;
-> > +
-> > +	/* group event types together */
-> > +	if (entry->cpumode > key->al->cpumode) return -1;
-> > +	if (entry->cpumode < key->al->cpumode) return 1;
-> > +
-> > +	l_map = entry->mem_info->daddr.map;
-> > +	r_map = key->mem_info->daddr.map;
-> > +
-> > +	/* if both are NULL, jump to sort on al_addr instead */
-> > +	if (!l_map && !r_map)
-> > +		goto addr;
-> > +
-> > +	if (!l_map) return -1;
-> > +	if (!r_map) return 1;
-> > +
-> > +	if (l_map->maj > r_map->maj) return -1;
-> > +	if (l_map->maj < r_map->maj) return 1;
-> > +
-> > +	if (l_map->min > r_map->min) return -1;
-> > +	if (l_map->min < r_map->min) return 1;
-> > +
-> > +	if (l_map->ino > r_map->ino) return -1;
-> > +	if (l_map->ino < r_map->ino) return 1;
-> > +
-> > +	if (l_map->ino_generation > r_map->ino_generation) return -1;
-> > +	if (l_map->ino_generation < r_map->ino_generation) return 1;
-> > +
-> > +	/*
-> > +	 * Addresses with no major/minor numbers are assumed to be
-> > +	 * anonymous in userspace.  Sort those on pid then address.
-> > +	 *
-> > +	 * The kernel and non-zero major/minor mapped areas are
-> > +	 * assumed to be unity mapped.  Sort those on address.
-> > +	 */
-> > +
-> > +	if ((entry->cpumode != PERF_RECORD_MISC_KERNEL) &&
-> > +	    (!(l_map->flags & MAP_SHARED)) &&
-> > +	    !l_map->maj && !l_map->min && !l_map->ino &&
-> > +	    !l_map->ino_generation) {
-> > +		/* userspace anonymous */
-> > +
-> > +		if (entry->thread->pid_ > key->al->thread->pid_) return -1;
-> > +		if (entry->thread->pid_ < key->al->thread->pid_) return 1;
-> > +	}
-> > +
-> > +addr:
-> > +	/* al_addr does all the right addr - start + offset calculations */
-> > +	l = cl_address(entry->mem_info->daddr.al_addr);
-> > +	r = cl_address(key->mem_info->daddr.al_addr);
-> > +
-> > +	if (l > r) return -1;
-> > +	if (l < r) return 1;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static int hist_entry__dcacheline_snprintf(struct hist_entry *he, char *bf,
-> >  					  size_t size, unsigned int width)
-> >  {
-> > @@ -1189,6 +1627,7 @@ static int hist_entry__dcacheline_snprintf(struct hist_entry *he, char *bf,
-> >  struct sort_entry sort_mispredict = {
-> >  	.se_header	= "Branch Mispredicted",
-> >  	.se_cmp		= sort__mispredict_cmp,
-> > +	.se_cmp_key	= sort__mispredict_cmp_key,
-> >  	.se_snprintf	= hist_entry__mispredict_snprintf,
-> >  	.se_width_idx	= HISTC_MISPREDICT,
-> >  };
-> > @@ -1198,12 +1637,24 @@ static u64 he_weight(struct hist_entry *he)
-> >  	return he->stat.nr_events ? he->stat.weight / he->stat.nr_events : 0;
-> >  }
-> >  
-> > +static u64 key_weight(struct hist_entry_cmp_key *key)
-> > +{
-> > +	return key->sample->weight;
-> > +}
-> > +
-> >  static int64_t
-> >  sort__local_weight_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  {
-> >  	return he_weight(left) - he_weight(right);
-> >  }
-> >  
-> > +static int64_t
-> > +sort__local_weight_cmp_key(struct hist_entry *entry,
-> > +			   struct hist_entry_cmp_key *key)
-> > +{
-> > +	return he_weight(entry) - key_weight(key);
-> > +}
-> > +
-> >  static int hist_entry__local_weight_snprintf(struct hist_entry *he, char *bf,
-> >  				    size_t size, unsigned int width)
-> >  {
-> > @@ -1213,6 +1664,7 @@ static int hist_entry__local_weight_snprintf(struct hist_entry *he, char *bf,
-> >  struct sort_entry sort_local_weight = {
-> >  	.se_header	= "Local Weight",
-> >  	.se_cmp		= sort__local_weight_cmp,
-> > +	.se_cmp_key	= sort__local_weight_cmp_key,
-> >  	.se_snprintf	= hist_entry__local_weight_snprintf,
-> >  	.se_width_idx	= HISTC_LOCAL_WEIGHT,
-> >  };
-> > @@ -1223,6 +1675,13 @@ sort__global_weight_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  	return left->stat.weight - right->stat.weight;
-> >  }
-> >  
-> > +static int64_t
-> > +sort__global_weight_cmp_key(struct hist_entry *entry,
-> > +			    struct hist_entry_cmp_key *key __maybe_unused)
-> > +{
-> > +	return entry->stat.weight - key->sample->weight;
-> > +}
-> > +
-> >  static int hist_entry__global_weight_snprintf(struct hist_entry *he, char *bf,
-> >  					      size_t size, unsigned int width)
-> >  {
-> > @@ -1232,6 +1691,7 @@ static int hist_entry__global_weight_snprintf(struct hist_entry *he, char *bf,
-> >  struct sort_entry sort_global_weight = {
-> >  	.se_header	= "Weight",
-> >  	.se_cmp		= sort__global_weight_cmp,
-> > +	.se_cmp_key	= sort__global_weight_cmp_key,
-> >  	.se_snprintf	= hist_entry__global_weight_snprintf,
-> >  	.se_width_idx	= HISTC_GLOBAL_WEIGHT,
-> >  };
-> > @@ -1239,6 +1699,7 @@ struct sort_entry sort_global_weight = {
-> >  struct sort_entry sort_mem_daddr_sym = {
-> >  	.se_header	= "Data Symbol",
-> >  	.se_cmp		= sort__daddr_cmp,
-> > +	.se_cmp_key	= sort__daddr_cmp_key,
-> >  	.se_snprintf	= hist_entry__daddr_snprintf,
-> >  	.se_width_idx	= HISTC_MEM_DADDR_SYMBOL,
-> >  };
-> > @@ -1246,6 +1707,7 @@ struct sort_entry sort_mem_daddr_sym = {
-> >  struct sort_entry sort_mem_iaddr_sym = {
-> >  	.se_header	= "Code Symbol",
-> >  	.se_cmp		= sort__iaddr_cmp,
-> > +	.se_cmp_key	= sort__iaddr_cmp_key,
-> >  	.se_snprintf	= hist_entry__iaddr_snprintf,
-> >  	.se_width_idx	= HISTC_MEM_IADDR_SYMBOL,
-> >  };
-> > @@ -1253,6 +1715,7 @@ struct sort_entry sort_mem_iaddr_sym = {
-> >  struct sort_entry sort_mem_daddr_dso = {
-> >  	.se_header	= "Data Object",
-> >  	.se_cmp		= sort__dso_daddr_cmp,
-> > +	.se_cmp_key	= sort__dso_daddr_cmp_key,
-> >  	.se_snprintf	= hist_entry__dso_daddr_snprintf,
-> >  	.se_width_idx	= HISTC_MEM_DADDR_DSO,
-> >  };
-> > @@ -1260,6 +1723,7 @@ struct sort_entry sort_mem_daddr_dso = {
-> >  struct sort_entry sort_mem_locked = {
-> >  	.se_header	= "Locked",
-> >  	.se_cmp		= sort__locked_cmp,
-> > +	.se_cmp_key	= sort__locked_cmp_key,
-> >  	.se_snprintf	= hist_entry__locked_snprintf,
-> >  	.se_width_idx	= HISTC_MEM_LOCKED,
-> >  };
-> > @@ -1267,6 +1731,7 @@ struct sort_entry sort_mem_locked = {
-> >  struct sort_entry sort_mem_tlb = {
-> >  	.se_header	= "TLB access",
-> >  	.se_cmp		= sort__tlb_cmp,
-> > +	.se_cmp_key	= sort__tlb_cmp_key,
-> >  	.se_snprintf	= hist_entry__tlb_snprintf,
-> >  	.se_width_idx	= HISTC_MEM_TLB,
-> >  };
-> > @@ -1274,6 +1739,7 @@ struct sort_entry sort_mem_tlb = {
-> >  struct sort_entry sort_mem_lvl = {
-> >  	.se_header	= "Memory access",
-> >  	.se_cmp		= sort__lvl_cmp,
-> > +	.se_cmp_key	= sort__lvl_cmp_key,
-> >  	.se_snprintf	= hist_entry__lvl_snprintf,
-> >  	.se_width_idx	= HISTC_MEM_LVL,
-> >  };
-> > @@ -1281,6 +1747,7 @@ struct sort_entry sort_mem_lvl = {
-> >  struct sort_entry sort_mem_snoop = {
-> >  	.se_header	= "Snoop",
-> >  	.se_cmp		= sort__snoop_cmp,
-> > +	.se_cmp_key	= sort__snoop_cmp_key,
-> >  	.se_snprintf	= hist_entry__snoop_snprintf,
-> >  	.se_width_idx	= HISTC_MEM_SNOOP,
-> >  };
-> > @@ -1288,6 +1755,7 @@ struct sort_entry sort_mem_snoop = {
-> >  struct sort_entry sort_mem_dcacheline = {
-> >  	.se_header	= "Data Cacheline",
-> >  	.se_cmp		= sort__dcacheline_cmp,
-> > +	.se_cmp_key	= sort__dcacheline_cmp_key,
-> >  	.se_snprintf	= hist_entry__dcacheline_snprintf,
-> >  	.se_width_idx	= HISTC_MEM_DCACHELINE,
-> >  };
-> > @@ -1305,6 +1773,19 @@ sort__phys_daddr_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  	return (int64_t)(r - l);
-> >  }
-> >  
-> > +static int64_t
-> > +sort__phys_daddr_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	uint64_t l = 0, r = 0;
-> > +
-> > +	if (entry->mem_info)
-> > +		l = entry->mem_info->daddr.phys_addr;
-> > +	if (key->mem_info)
-> > +		r = key->mem_info->daddr.phys_addr;
-> > +
-> > +	return (int64_t)(r - l);
-> > +}
-> > +
-> >  static int hist_entry__phys_daddr_snprintf(struct hist_entry *he, char *bf,
-> >  					   size_t size, unsigned int width)
-> >  {
-> > @@ -1329,6 +1810,7 @@ static int hist_entry__phys_daddr_snprintf(struct hist_entry *he, char *bf,
-> >  struct sort_entry sort_mem_phys_daddr = {
-> >  	.se_header	= "Data Physical Address",
-> >  	.se_cmp		= sort__phys_daddr_cmp,
-> > +	.se_cmp_key	= sort__phys_daddr_cmp_key,
-> >  	.se_snprintf	= hist_entry__phys_daddr_snprintf,
-> >  	.se_width_idx	= HISTC_MEM_PHYS_DADDR,
-> >  };
-> > @@ -1343,6 +1825,16 @@ sort__abort_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  		right->branch_info->flags.abort;
-> >  }
-> >  
-> > +static int64_t
-> > +sort__abort_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	if (!entry->branch_info || !key->bi)
-> > +		return cmp_null(entry->branch_info, key->bi);
-> > +
-> > +	return entry->branch_info->flags.abort !=
-> > +		key->bi->flags.abort;
-> > +}
-> > +
-> >  static int hist_entry__abort_snprintf(struct hist_entry *he, char *bf,
-> >  				    size_t size, unsigned int width)
-> >  {
-> > @@ -1361,6 +1853,7 @@ static int hist_entry__abort_snprintf(struct hist_entry *he, char *bf,
-> >  struct sort_entry sort_abort = {
-> >  	.se_header	= "Transaction abort",
-> >  	.se_cmp		= sort__abort_cmp,
-> > +	.se_cmp_key	= sort__abort_cmp_key,
-> >  	.se_snprintf	= hist_entry__abort_snprintf,
-> >  	.se_width_idx	= HISTC_ABORT,
-> >  };
-> > @@ -1375,6 +1868,16 @@ sort__in_tx_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  		right->branch_info->flags.in_tx;
-> >  }
-> >  
-> > +static int64_t
-> > +sort__in_tx_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	if (!entry->branch_info || !key->bi)
-> > +		return cmp_null(entry->branch_info, key->bi);
-> > +
-> > +	return entry->branch_info->flags.in_tx !=
-> > +		key->bi->flags.in_tx;
-> > +}
-> > +
-> >  static int hist_entry__in_tx_snprintf(struct hist_entry *he, char *bf,
-> >  				    size_t size, unsigned int width)
-> >  {
-> > @@ -1393,6 +1896,7 @@ static int hist_entry__in_tx_snprintf(struct hist_entry *he, char *bf,
-> >  struct sort_entry sort_in_tx = {
-> >  	.se_header	= "Branch in transaction",
-> >  	.se_cmp		= sort__in_tx_cmp,
-> > +	.se_cmp_key	= sort__in_tx_cmp_key,
-> >  	.se_snprintf	= hist_entry__in_tx_snprintf,
-> >  	.se_width_idx	= HISTC_IN_TX,
-> >  };
-> > @@ -1403,6 +1907,12 @@ sort__transaction_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  	return left->transaction - right->transaction;
-> >  }
-> >  
-> > +static int64_t
-> > +sort__transaction_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	return entry->transaction - key->sample->transaction;
-> > +}
-> > +
-> >  static inline char *add_str(char *p, const char *str)
-> >  {
-> >  	strcpy(p, str);
-> > @@ -1465,6 +1975,7 @@ static int hist_entry__transaction_snprintf(struct hist_entry *he, char *bf,
-> >  struct sort_entry sort_transaction = {
-> >  	.se_header	= "Transaction                ",
-> >  	.se_cmp		= sort__transaction_cmp,
-> > +	.se_cmp_key	= sort__transaction_cmp_key,
-> >  	.se_snprintf	= hist_entry__transaction_snprintf,
-> >  	.se_width_idx	= HISTC_TRANSACTION,
-> >  };
-> > @@ -1486,6 +1997,12 @@ sort__sym_size_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  	return _sort__sym_size_cmp(right->ms.sym, left->ms.sym);
-> >  }
-> >  
-> > +static int64_t
-> > +sort__sym_size_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	return _sort__sym_size_cmp(key->al->sym, entry->ms.sym);
-> > +}
-> > +
-> >  static int _hist_entry__sym_size_snprintf(struct symbol *sym, char *bf,
-> >  					  size_t bf_size, unsigned int width)
-> >  {
-> > @@ -1504,6 +2021,7 @@ static int hist_entry__sym_size_snprintf(struct hist_entry *he, char *bf,
-> >  struct sort_entry sort_sym_size = {
-> >  	.se_header	= "Symbol size",
-> >  	.se_cmp		= sort__sym_size_cmp,
-> > +	.se_cmp_key	= sort__sym_size_cmp_key,
-> >  	.se_snprintf	= hist_entry__sym_size_snprintf,
-> >  	.se_width_idx	= HISTC_SYM_SIZE,
-> >  };
-> > @@ -1525,6 +2043,12 @@ sort__dso_size_cmp(struct hist_entry *left, struct hist_entry *right)
-> >  	return _sort__dso_size_cmp(right->ms.map, left->ms.map);
-> >  }
-> >  
-> > +static int64_t
-> > +sort__dso_size_cmp_key(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	return _sort__dso_size_cmp(key->al->map, entry->ms.map);
-> > +}
-> > +
-> >  static int _hist_entry__dso_size_snprintf(struct map *map, char *bf,
-> >  					  size_t bf_size, unsigned int width)
-> >  {
-> > @@ -1544,6 +2068,7 @@ static int hist_entry__dso_size_snprintf(struct hist_entry *he, char *bf,
-> >  struct sort_entry sort_dso_size = {
-> >  	.se_header	= "DSO size",
-> >  	.se_cmp		= sort__dso_size_cmp,
-> > +	.se_cmp_key	= sort__dso_size_cmp_key,
-> >  	.se_snprintf	= hist_entry__dso_size_snprintf,
-> >  	.se_width_idx	= HISTC_DSO_SIZE,
-> >  };
-> > @@ -1693,12 +2218,13 @@ static int __sort__hpp_entry(struct perf_hpp_fmt *fmt, struct perf_hpp *hpp,
-> >  }
-> >  
-> >  static int64_t __sort__hpp_cmp(struct perf_hpp_fmt *fmt,
-> > -			       struct hist_entry *a, struct hist_entry *b)
-> > +			       struct hist_entry *entry,
-> > +			       struct hist_entry_cmp_key *key)
-> >  {
-> >  	struct hpp_sort_entry *hse;
-> >  
-> >  	hse = container_of(fmt, struct hpp_sort_entry, hpp);
-> > -	return hse->se->se_cmp(a, b);
-> > +	return hse->se->se_cmp_key(entry, key);
-> >  }
-> >  
-> >  static int64_t __sort__hpp_collapse(struct perf_hpp_fmt *fmt,
-> > @@ -2089,9 +2615,37 @@ static int64_t __sort__hde_cmp(struct perf_hpp_fmt *fmt,
-> >  	return memcmp(a->raw_data + offset, b->raw_data + offset, size);
-> >  }
-> >  
-> > +static int64_t __sort__hde_cmp_key(struct perf_hpp_fmt *fmt,
-> > +				   struct hist_entry *a,
-> > +				   struct hist_entry_cmp_key *key)
-> > +{
-> > +	struct hpp_dynamic_entry *hde;
-> > +	struct tep_format_field *field;
-> > +	unsigned offset, size;
-> > +
-> > +	hde = container_of(fmt, struct hpp_dynamic_entry, hpp);
-> > +	field = hde->field;
-> > +	if (field->flags & TEP_FIELD_IS_DYNAMIC) {
-> > +		unsigned long long dyn;
-> > +
-> > +		tep_read_number_field(field, a->raw_data, &dyn);
-> > +		offset = dyn & 0xffff;
-> > +		size = (dyn >> 16) & 0xffff;
-> > +
-> > +		/* record max width for output */
-> > +		if (size > hde->dynamic_len)
-> > +			hde->dynamic_len = size;
-> > +	} else {
-> > +		offset = field->offset;
-> > +		size = field->size;
-> > +	}
-> > +
-> > +	return memcmp(a->raw_data + offset, key->sample->raw_data + offset, size);
-> > +}
-> > +
-> >  bool perf_hpp__is_dynamic_entry(struct perf_hpp_fmt *fmt)
-> >  {
-> > -	return fmt->cmp == __sort__hde_cmp;
-> > +	return fmt->cmp == __sort__hde_cmp_key;
-> >  }
-> >  
-> >  static bool __sort__hde_equal(struct perf_hpp_fmt *a, struct perf_hpp_fmt *b)
-> > @@ -2138,7 +2692,7 @@ __alloc_dynamic_entry(struct perf_evsel *evsel, struct tep_format_field *field,
-> >  	hde->hpp.entry  = __sort__hde_entry;
-> >  	hde->hpp.color  = NULL;
-> >  
-> > -	hde->hpp.cmp = __sort__hde_cmp;
-> > +	hde->hpp.cmp = __sort__hde_cmp_key;
-> >  	hde->hpp.collapse = __sort__hde_cmp;
-> >  	hde->hpp.sort = __sort__hde_cmp;
-> >  	hde->hpp.equal = __sort__hde_equal;
-> > diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
-> > index a97cf8e..da85224 100644
-> > --- a/tools/perf/util/sort.h
-> > +++ b/tools/perf/util/sort.h
-> > @@ -264,6 +264,7 @@ struct sort_entry {
-> >  	const char *se_header;
-> >  
-> >  	int64_t (*se_cmp)(struct hist_entry *, struct hist_entry *);
-> > +	int64_t (*se_cmp_key)(struct hist_entry *, struct hist_entry_cmp_key *);
-> >  	int64_t (*se_collapse)(struct hist_entry *, struct hist_entry *);
-> >  	int64_t	(*se_sort)(struct hist_entry *, struct hist_entry *);
-> >  	int	(*se_snprintf)(struct hist_entry *he, char *bf, size_t size,
-> > diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
-> > index 3badd7f..78df16b 100644
-> > --- a/tools/perf/util/hist.h
-> > +++ b/tools/perf/util/hist.h
-> > @@ -150,7 +150,6 @@ int hist_entry_iter__add(struct hist_entry_iter *iter, struct addr_location *al,
-> >  struct perf_hpp;
-> >  struct perf_hpp_fmt;
-> >  
-> > -int64_t hist_entry__cmp(struct hist_entry *left, struct hist_entry *right);
-> >  int64_t hist_entry__collapse(struct hist_entry *left, struct hist_entry *right);
-> >  int hist_entry__transaction_len(void);
-> >  int hist_entry__sort_snprintf(struct hist_entry *he, char *bf, size_t size,
-> > @@ -238,6 +237,18 @@ struct perf_hpp {
-> >  	void *ptr;
-> >  };
-> >  
-> > +struct hist_entry_cmp_key {
-> > +	struct addr_location *al;
-> > +	struct comm *comm;
-> > +	struct branch_info *bi;
-> > +	struct symbol *sym_parent;
-> > +	struct perf_sample *sample;
-> > +	struct mem_info *mem_info;
-> > +	char *srcfile;
-> > +	char *trace_output;
-> > +};
-> > +
-> > +struct comm;
-> >  struct perf_hpp_fmt {
-> >  	const char *name;
-> >  	int (*header)(struct perf_hpp_fmt *fmt, struct perf_hpp *hpp,
-> > @@ -249,7 +260,8 @@ struct perf_hpp_fmt {
-> >  	int (*entry)(struct perf_hpp_fmt *fmt, struct perf_hpp *hpp,
-> >  		     struct hist_entry *he);
-> >  	int64_t (*cmp)(struct perf_hpp_fmt *fmt,
-> > -		       struct hist_entry *a, struct hist_entry *b);
-> > +		       struct hist_entry *entry,
-> > +		       struct hist_entry_cmp_key *key);
-> >  	int64_t (*collapse)(struct perf_hpp_fmt *fmt,
-> >  			    struct hist_entry *a, struct hist_entry *b);
-> >  	int64_t (*sort)(struct perf_hpp_fmt *fmt,
-> > @@ -525,4 +537,8 @@ static inline int hists__scnprintf_title(struct hists *hists, char *bf, size_t s
-> >  	return __hists__scnprintf_title(hists, bf, size, true);
-> >  }
-> >  
-> > +extern unsigned long hist_lookups;
-> > +extern unsigned long hist_hits;
-> > +extern unsigned long hist_misses;
-> > +
-> >  #endif	/* __PERF_HIST_H */
-> > diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
-> > index 828cb97..a4deb5d 100644
-> > --- a/tools/perf/util/hist.c
-> > +++ b/tools/perf/util/hist.c
-> > @@ -364,16 +364,49 @@ void hists__delete_entries(struct hists *hists)
-> >  	}
-> >  }
-> >  
-> > +static u8 symbol__parent_filter(const struct symbol *parent)
-> > +{
-> > +	if (symbol_conf.exclude_other && parent == NULL)
-> > +		return 1 << HIST_FILTER__PARENT;
-> > +	return 0;
-> > +}
-> > +
-> >  /*
-> >   * histogram, sorted on item, collects periods
-> >   */
-> >  
-> >  static int hist_entry__init(struct hist_entry *he,
-> > -			    struct hist_entry *template,
-> > +			    struct hist_entry_cmp_key *key,
-> > +			    struct hists *hists,
-> >  			    bool sample_self,
-> >  			    size_t callchain_size)
-> >  {
-> > -	*he = *template;
-> > +	struct namespaces *ns = thread__namespaces(key->al->thread);
-> > +
-> > +	he->thread = key->al->thread;
-> > +	he->comm = thread__comm(he->thread);
-> > +	he->cgroup_id.dev = ns ? ns->link_info[CGROUP_NS_INDEX].dev : 0;
-> > +	he->cgroup_id.ino = ns ? ns->link_info[CGROUP_NS_INDEX].ino : 0;
-> > +	he->ms.map = key->al->map;
-> > +	he->ms.sym = key->al->sym;
-> > +	he->srcline = key->al->srcline ? strdup(key->al->srcline) : NULL;
-> > +	he->socket	 = key->al->socket;
-> > +	he->cpu	 = key->al->cpu;
-> > +	he->cpumode = key->al->cpumode;
-> > +	he->ip	 = key->al->addr;
-> > +	he->level	 = key->al->level;
-> > +	he->stat.nr_events = 1;
-> > +	he->stat.period = key->sample->period;
-> > +	he->stat.weight = key->sample->weight;
-> > +	he->parent = key->sym_parent;
-> > +	he->filtered = symbol__parent_filter(key->sym_parent) | key->al->filtered;
-> > +	he->hists = hists;
-> > +	he->branch_info = key->bi;
-> > +	he->mem_info = key->mem_info;
-> > +	he->transaction = key->sample->transaction;
-> > +	he->raw_data = key->sample->raw_data;
-> > +	he->raw_size = key->sample->raw_size;
-> > +
-> >  	he->callchain_size = callchain_size;
-> >  
-> >  	if (symbol_conf.cumulate_callchain) {
-> > @@ -400,7 +433,7 @@ static int hist_entry__init(struct hist_entry *he,
-> >  			return -ENOMEM;
-> >  		}
-> >  
-> > -		memcpy(he->branch_info, template->branch_info,
-> > +		memcpy(he->branch_info, key->bi,
-> >  		       sizeof(*he->branch_info));
-> >  
-> >  		map__get(he->branch_info->from.map);
-> > @@ -459,23 +492,25 @@ static struct hist_entry_ops default_ops = {
-> >  	.free	= hist_entry__free,
-> >  };
-> >  
-> > -static struct hist_entry *hist_entry__new(struct hist_entry *template,
-> > +static struct hist_entry *hist_entry__new(struct hist_entry_cmp_key *key,
-> > +					  struct hists *hists,
-> > +					  struct hist_entry_ops *ops,
-> >  					  bool sample_self)
-> >  {
-> > -	struct hist_entry_ops *ops = template->ops;
-> >  	size_t callchain_size = 0;
-> >  	struct hist_entry *he;
-> >  	int err = 0;
-> >  
-> >  	if (!ops)
-> > -		ops = template->ops = &default_ops;
-> > +		ops = &default_ops;
-> >  
-> >  	if (symbol_conf.use_callchain)
-> >  		callchain_size = sizeof(struct callchain_root);
-> >  
-> >  	he = ops->new(callchain_size);
-> >  	if (he) {
-> > -		err = hist_entry__init(he, template, sample_self, callchain_size);
-> > +		he->ops = ops;
-> > +		err = hist_entry__init(he, key, hists, sample_self, callchain_size);
-> >  		if (err) {
-> >  			ops->free(he);
-> >  			he = NULL;
-> > @@ -485,13 +520,6 @@ static struct hist_entry *hist_entry__new(struct hist_entry *template,
-> >  	return he;
-> >  }
-> >  
-> > -static u8 symbol__parent_filter(const struct symbol *parent)
-> > -{
-> > -	if (symbol_conf.exclude_other && parent == NULL)
-> > -		return 1 << HIST_FILTER__PARENT;
-> > -	return 0;
-> > -}
-> > -
-> >  static void hist_entry__add_callchain_period(struct hist_entry *he, u64 period)
-> >  {
-> >  	if (!hist_entry__has_callchains(he) || !symbol_conf.use_callchain)
-> > @@ -502,17 +530,43 @@ static void hist_entry__add_callchain_period(struct hist_entry *he, u64 period)
-> >  		he->hists->callchain_non_filtered_period += period;
-> >  }
-> >  
-> > +static int64_t
-> > +hist_entry__cmp(struct hist_entry *entry, struct hist_entry_cmp_key *key)
-> > +{
-> > +	struct hists *hists = entry->hists;
-> > +	struct perf_hpp_fmt *fmt;
-> > +	int64_t cmp = 0;
-> > +
-> > +	hists__for_each_sort_list(hists, fmt) {
-> > +		if (perf_hpp__is_dynamic_entry(fmt) &&
-> > +		    !perf_hpp__defined_dynamic_entry(fmt, hists))
-> > +			continue;
-> > +
-> > +		cmp = fmt->cmp(fmt, entry, key);
-> > +		if (cmp)
-> > +			break;
-> > +	}
-> > +
-> > +	return cmp;
-> > +}
-> > +
-> > +unsigned long hist_lookups;
-> > +unsigned long hist_hits;
-> > +unsigned long hist_misses;
-> > +
-> >  static struct hist_entry *hists__findnew_entry(struct hists *hists,
-> > -					       struct hist_entry *entry,
-> > -					       struct addr_location *al,
-> > +					       struct hist_entry_cmp_key *key,
-> > +					       struct hist_entry_ops *ops,
-> >  					       bool sample_self)
-> >  {
-> >  	struct rb_node **p;
-> >  	struct rb_node *parent = NULL;
-> >  	struct hist_entry *he;
-> >  	int64_t cmp;
-> > -	u64 period = entry->stat.period;
-> > -	u64 weight = entry->stat.weight;
-> > +	u64 period = key->sample->period;
-> > +	u64 weight = key->sample->weight;
-> > +
-> > +	hist_lookups++;
-> >  
-> >  	p = &hists->entries_in->rb_node;
-> >  
-> > @@ -526,7 +580,7 @@ static struct hist_entry *hists__findnew_entry(struct hists *hists,
-> >  		 * function when searching an entry regardless which sort
-> >  		 * keys were used.
-> >  		 */
-> > -		cmp = hist_entry__cmp(he, entry);
-> > +		cmp = hist_entry__cmp(he, key);
-> >  
-> >  		if (!cmp) {
-> >  			if (sample_self) {
-> > @@ -540,7 +594,7 @@ static struct hist_entry *hists__findnew_entry(struct hists *hists,
-> >  			 * This mem info was allocated from sample__resolve_mem
-> >  			 * and will not be used anymore.
-> >  			 */
-> > -			mem_info__zput(entry->mem_info);
-> > +			mem_info__zput(key->mem_info);
-> >  
-> >  			/* If the map of an existing hist_entry has
-> >  			 * become out-of-date due to an exec() or
-> > @@ -548,10 +602,11 @@ static struct hist_entry *hists__findnew_entry(struct hists *hists,
-> >  			 * mis-adjust symbol addresses when computing
-> >  			 * the history counter to increment.
-> >  			 */
-> > -			if (he->ms.map != entry->ms.map) {
-> > +			if (he->ms.map != key->al->map) {
-> >  				map__put(he->ms.map);
-> > -				he->ms.map = map__get(entry->ms.map);
-> > +				he->ms.map = map__get(key->al->map);
-> >  			}
-> > +			hist_hits++;
-> >  			goto out;
-> >  		}
-> >  
-> > @@ -561,7 +616,8 @@ static struct hist_entry *hists__findnew_entry(struct hists *hists,
-> >  			p = &(*p)->rb_right;
-> >  	}
-> >  
-> > -	he = hist_entry__new(entry, sample_self);
-> > +	hist_misses++;
-> > +	he = hist_entry__new(key, hists, ops, sample_self);
-> >  	if (!he)
-> >  		return NULL;
-> >  
-> > @@ -573,9 +629,9 @@ static struct hist_entry *hists__findnew_entry(struct hists *hists,
-> >  	rb_insert_color(&he->rb_node_in, hists->entries_in);
-> >  out:
-> >  	if (sample_self)
-> > -		he_stat__add_cpumode_period(&he->stat, al->cpumode, period);
-> > +		he_stat__add_cpumode_period(&he->stat, key->al->cpumode, period);
-> >  	if (symbol_conf.cumulate_callchain)
-> > -		he_stat__add_cpumode_period(he->stat_acc, al->cpumode, period);
-> > +		he_stat__add_cpumode_period(he->stat_acc, key->al->cpumode, period);
-> >  	return he;
-> >  }
-> >  
-> > @@ -589,39 +645,19 @@ __hists__add_entry(struct hists *hists,
-> >  		   bool sample_self,
-> >  		   struct hist_entry_ops *ops)
-> >  {
-> > -	struct namespaces *ns = thread__namespaces(al->thread);
-> > -	struct hist_entry entry = {
-> > -		.thread	= al->thread,
-> > -		.comm = thread__comm(al->thread),
-> > -		.cgroup_id = {
-> > -			.dev = ns ? ns->link_info[CGROUP_NS_INDEX].dev : 0,
-> > -			.ino = ns ? ns->link_info[CGROUP_NS_INDEX].ino : 0,
-> > -		},
-> > -		.ms = {
-> > -			.map	= al->map,
-> > -			.sym	= al->sym,
-> > -		},
-> > -		.srcline = al->srcline ? strdup(al->srcline) : NULL,
-> > -		.socket	 = al->socket,
-> > -		.cpu	 = al->cpu,
-> > -		.cpumode = al->cpumode,
-> > -		.ip	 = al->addr,
-> > -		.level	 = al->level,
-> > -		.stat = {
-> > -			.nr_events = 1,
-> > -			.period	= sample->period,
-> > -			.weight = sample->weight,
-> > -		},
-> > -		.parent = sym_parent,
-> > -		.filtered = symbol__parent_filter(sym_parent) | al->filtered,
-> > -		.hists	= hists,
-> > -		.branch_info = bi,
-> > -		.mem_info = mi,
-> > -		.transaction = sample->transaction,
-> > -		.raw_data = sample->raw_data,
-> > -		.raw_size = sample->raw_size,
-> > -		.ops = ops,
-> > -	}, *he = hists__findnew_entry(hists, &entry, al, sample_self);
-> > +	struct hist_entry_cmp_key key;
-> > +	struct hist_entry *he;
-> > +
-> > +	key.al = al;
-> > +	key.comm = thread__comm(al->thread);
-> > +	key.bi = bi;
-> > +	key.sym_parent = sym_parent;
-> > +	key.sample = sample;
-> > +	key.mem_info = mi;
-> > +	key.srcfile = NULL;
-> > +	key.trace_output = NULL;
-> > +
-> > +	he = hists__findnew_entry(hists, &key, ops, sample_self);
-> >  
-> >  	if (!hists->has_callchains && he && he->callchain_size != 0)
-> >  		hists->has_callchains = true;
-> > @@ -947,7 +983,9 @@ iter_add_next_cumulative_entry(struct hist_entry_iter *iter,
-> >  	struct perf_evsel *evsel = iter->evsel;
-> >  	struct perf_sample *sample = iter->sample;
-> >  	struct hist_entry **he_cache = iter->priv;
-> > +	struct hist_entry_cmp_key key;
-> >  	struct hist_entry *he;
-> > +#if 0
-> >  	struct hist_entry he_tmp = {
-> >  		.hists = evsel__hists(evsel),
-> >  		.cpu = al->cpu,
-> > @@ -963,6 +1001,7 @@ iter_add_next_cumulative_entry(struct hist_entry_iter *iter,
-> >  		.raw_data = sample->raw_data,
-> >  		.raw_size = sample->raw_size,
-> >  	};
-> > +#endif
-> >  	int i;
-> >  	struct callchain_cursor cursor;
-> >  
-> > @@ -974,8 +1013,16 @@ iter_add_next_cumulative_entry(struct hist_entry_iter *iter,
-> >  	 * Check if there's duplicate entries in the callchain.
-> >  	 * It's possible that it has cycles or recursive calls.
-> >  	 */
-> > +	key.al = al;
-> > +	key.comm = thread__comm(al->thread);
-> > +	key.bi = NULL;
-> > +	key.sym_parent = iter->parent;
-> > +	key.sample = sample;
-> > +	key.mem_info = NULL;
-> > +	key.srcfile = NULL;
-> > +	key.trace_output = NULL;
-> >  	for (i = 0; i < iter->curr; i++) {
-> > -		if (hist_entry__cmp(he_cache[i], &he_tmp) == 0) {
-> > +		if (hist_entry__cmp(he_cache[i], &key) == 0) {
-> >  			/* to avoid calling callback function */
-> >  			iter->he = NULL;
-> >  			return 0;
-> > @@ -1088,26 +1135,6 @@ int hist_entry_iter__add(struct hist_entry_iter *iter, struct addr_location *al,
-> >  }
-> >  
-> >  int64_t
-> > -hist_entry__cmp(struct hist_entry *left, struct hist_entry *right)
-> > -{
-> > -	struct hists *hists = left->hists;
-> > -	struct perf_hpp_fmt *fmt;
-> > -	int64_t cmp = 0;
-> > -
-> > -	hists__for_each_sort_list(hists, fmt) {
-> > -		if (perf_hpp__is_dynamic_entry(fmt) &&
-> > -		    !perf_hpp__defined_dynamic_entry(fmt, hists))
-> > -			continue;
-> > -
-> > -		cmp = fmt->cmp(fmt, left, right);
-> > -		if (cmp)
-> > -			break;
-> > -	}
-> > -
-> > -	return cmp;
-> > -}
-> > -
-> > -int64_t
-> >  hist_entry__collapse(struct hist_entry *left, struct hist_entry *right)
-> >  {
-> >  	struct hists *hists = left->hists;
-> > @@ -1312,7 +1339,11 @@ static struct hist_entry *hierarchy_insert_entry(struct hists *hists,
-> >  			p = &parent->rb_right;
-> >  	}
-> >  
-> > -	new = hist_entry__new(he, true);
-> > +#if 1
-> > +	new = NULL;
-> > +#else
-> > +	new = hist_entry__new(he, true); /* XXX fix XXX */
-> > +#endif
-> >  	if (new == NULL)
-> >  		return NULL;
-> >  
-> > @@ -2168,7 +2199,11 @@ static struct hist_entry *hists__add_dummy_entry(struct hists *hists,
-> >  			p = &(*p)->rb_right;
-> >  	}
-> >  
-> > -	he = hist_entry__new(pair, true);
-> > +#if 1
-> > +	he = NULL;
-> > +#else
-> > +	he = hist_entry__new(pair, true); /* XXX fix XXX */
-> > +#endif
-> >  	if (he) {
-> >  		memset(&he->stat, 0, sizeof(he->stat));
-> >  		he->hists = hists;
-> > @@ -2213,7 +2248,11 @@ static struct hist_entry *add_dummy_hierarchy_entry(struct hists *hists,
-> >  			p = &parent->rb_right;
-> >  	}
-> >  
-> > -	he = hist_entry__new(pair, true);
-> > +#if 1
-> > +	he = NULL;
-> > +#else
-> > +	he = hist_entry__new(pair, true); /* XXX fix XXX */
-> > +#endif
-> >  	if (he) {
-> >  		rb_link_node(&he->rb_node_in, parent, p);
-> >  		rb_insert_color(&he->rb_node_in, root);
-> > diff --git a/tools/perf/ui/hist.c b/tools/perf/ui/hist.c
-> > index fe3dfaa..a3d66e1 100644
-> > --- a/tools/perf/ui/hist.c
-> > +++ b/tools/perf/ui/hist.c
-> > @@ -372,8 +372,15 @@ HPP_RAW_FNS(samples, nr_events)
-> >  HPP_RAW_FNS(period, period)
-> >  
-> >  static int64_t hpp__nop_cmp(struct perf_hpp_fmt *fmt __maybe_unused,
-> > -			    struct hist_entry *a __maybe_unused,
-> > -			    struct hist_entry *b __maybe_unused)
-> > +			    struct hist_entry *entry __maybe_unused,
-> > +			    struct hist_entry_cmp_key *key __maybe_unused)
-> > +{
-> > +	return 0;
-> > +}
-> > +
-> > +static int64_t hpp__nop_collapse(struct perf_hpp_fmt *fmt __maybe_unused,
-> > +				 struct hist_entry *a __maybe_unused,
-> > +				 struct hist_entry *b __maybe_unused)
-> >  {
-> >  	return 0;
-> >  }
-> > @@ -399,7 +406,7 @@ static bool hpp__equal(struct perf_hpp_fmt *a, struct perf_hpp_fmt *b)
-> >  		.color	= hpp__color_ ## _fn,		\
-> >  		.entry	= hpp__entry_ ## _fn,		\
-> >  		.cmp	= hpp__nop_cmp,			\
-> > -		.collapse = hpp__nop_cmp,		\
-> > +		.collapse = hpp__nop_collapse,		\
-> >  		.sort	= hpp__sort_ ## _fn,		\
-> >  		.idx	= PERF_HPP__ ## _idx,		\
-> >  		.equal	= hpp__equal,			\
-> > @@ -413,7 +420,7 @@ static bool hpp__equal(struct perf_hpp_fmt *a, struct perf_hpp_fmt *b)
-> >  		.color	= hpp__color_ ## _fn,		\
-> >  		.entry	= hpp__entry_ ## _fn,		\
-> >  		.cmp	= hpp__nop_cmp,			\
-> > -		.collapse = hpp__nop_cmp,		\
-> > +		.collapse = hpp__nop_collapse,		\
-> >  		.sort	= hpp__sort_ ## _fn,		\
-> >  		.idx	= PERF_HPP__ ## _idx,		\
-> >  		.equal	= hpp__equal,			\
-> > @@ -426,7 +433,7 @@ static bool hpp__equal(struct perf_hpp_fmt *a, struct perf_hpp_fmt *b)
-> >  		.width	= hpp__width_fn,		\
-> >  		.entry	= hpp__entry_ ## _fn,		\
-> >  		.cmp	= hpp__nop_cmp,			\
-> > -		.collapse = hpp__nop_cmp,		\
-> > +		.collapse = hpp__nop_collapse,		\
-> >  		.sort	= hpp__sort_ ## _fn,		\
-> >  		.idx	= PERF_HPP__ ## _idx,		\
-> >  		.equal	= hpp__equal,			\
-> > diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-> > index f3aa9d0..190f5eb 100644
-> > --- a/tools/perf/builtin-c2c.c
-> > +++ b/tools/perf/builtin-c2c.c
-> > @@ -1717,12 +1717,13 @@ static int c2c_se_entry(struct perf_hpp_fmt *fmt, struct perf_hpp *hpp,
-> >  }
-> >  
-> >  static int64_t c2c_se_cmp(struct perf_hpp_fmt *fmt,
-> > -			  struct hist_entry *a, struct hist_entry *b)
-> > +			  struct hist_entry *entry,
-> > +			  struct hist_entry_cmp_key *key)
-> >  {
-> >  	struct c2c_fmt *c2c_fmt = container_of(fmt, struct c2c_fmt, fmt);
-> >  	struct c2c_dimension *dim = c2c_fmt->dim;
-> >  
-> > -	return dim->se->se_cmp(a, b);
-> > +	return dim->se->se_cmp_key(entry, key);
-> >  }
-> >  
-> >  static int64_t c2c_se_collapse(struct perf_hpp_fmt *fmt,
-> > @@ -1755,8 +1756,13 @@ static struct c2c_fmt *get_format(const char *name)
-> >  	INIT_LIST_HEAD(&fmt->list);
-> >  	INIT_LIST_HEAD(&fmt->sort_list);
-> >  
-> > +#if 1
-> > +	fmt->cmp	= c2c_se_cmp;
-> > +	fmt->sort	= dim->cmp;
-> > +#else
-> >  	fmt->cmp	= dim->se ? c2c_se_cmp   : dim->cmp;
-> >  	fmt->sort	= dim->se ? c2c_se_cmp   : dim->cmp;
-> > +#endif
-> >  	fmt->color	= dim->se ? NULL	 : dim->color;
-> >  	fmt->entry	= dim->se ? c2c_se_entry : dim->entry;
-> >  	fmt->header	= c2c_header;
-> > diff --git a/tools/perf/builtin-diff.c b/tools/perf/builtin-diff.c
-> > index 39db2ee..2684efa 100644
-> > --- a/tools/perf/builtin-diff.c
-> > +++ b/tools/perf/builtin-diff.c
-> > @@ -604,8 +604,16 @@ hist_entry__cmp_compute_idx(struct hist_entry *left, struct hist_entry *right,
-> >  
-> >  static int64_t
-> >  hist_entry__cmp_nop(struct perf_hpp_fmt *fmt __maybe_unused,
-> > -		    struct hist_entry *left __maybe_unused,
-> > -		    struct hist_entry *right __maybe_unused)
-> > +		    struct hist_entry *entry __maybe_unused,
-> > +		    struct hist_entry_cmp_key *key __maybe_unused)
-> > +{
-> > +	return 0;
-> > +}
-> > +
-> > +static int64_t
-> > +hist_entry__collapse_nop(struct perf_hpp_fmt *fmt __maybe_unused,
-> > +			 struct hist_entry *a __maybe_unused,
-> > +			 struct hist_entry *b __maybe_unused)
-> >  {
-> >  	return 0;
-> >  }
-> > @@ -1141,7 +1149,7 @@ static void data__hpp_register(struct data__file *d, int idx)
-> >  	fmt->width  = hpp__width;
-> >  	fmt->entry  = hpp__entry_global;
-> >  	fmt->cmp    = hist_entry__cmp_nop;
-> > -	fmt->collapse = hist_entry__cmp_nop;
-> > +	fmt->collapse = hist_entry__collapse_nop;
-> >  
-> >  	/* TODO more colors */
-> >  	switch (idx) {
-> > @@ -1166,7 +1174,7 @@ static void data__hpp_register(struct data__file *d, int idx)
-> >  		fmt->sort  = hist_entry__cmp_delta_abs;
-> >  		break;
-> >  	default:
-> > -		fmt->sort  = hist_entry__cmp_nop;
-> > +		fmt->sort  = hist_entry__collapse_nop;
-> >  		break;
-> >  	}
-> >  
-> > @@ -1230,7 +1238,7 @@ static int ui_init(void)
-> >  	}
-> >  
-> >  	fmt->cmp      = hist_entry__cmp_nop;
-> > -	fmt->collapse = hist_entry__cmp_nop;
-> > +	fmt->collapse = hist_entry__collapse_nop;
-> >  
-> >  	switch (compute) {
-> >  	case COMPUTE_DELTA:
+DQoNCk9uIDEwLzE3LzE4IDc6NTQgUE0sIEFsZXhhbmRlciBEdXljayB3cm90ZToNCj4gVGhpcyBw
+YXRjaCBpbnRyb2R1Y2VzIGEgbmV3IGl0ZXJhdG9yIGZvcl9lYWNoX2ZyZWVfbWVtX3Bmbl9yYW5n
+ZV9pbl96b25lLg0KPiANCj4gVGhpcyBpdGVyYXRvciB3aWxsIHRha2UgY2FyZSBvZiBtYWtpbmcg
+c3VyZSBhIGdpdmVuIG1lbW9yeSByYW5nZSBwcm92aWRlZA0KPiBpcyBpbiBmYWN0IGNvbnRhaW5l
+ZCB3aXRoaW4gYSB6b25lLiBJdCB0YWtlcyBhcmUgb2YgYWxsIHRoZSBib3VuZHMgY2hlY2tpbmcN
+Cj4gd2Ugd2VyZSBkb2luZyBpbiBkZWZlcnJlZF9ncm93X3pvbmUsIGFuZCBkZWZlcnJlZF9pbml0
+X21lbW1hcC4gSW4gYWRkaXRpb24NCj4gaXQgc2hvdWxkIGhlbHAgdG8gc3BlZWQgdXAgdGhlIHNl
+YXJjaCBhIGJpdCBieSBpdGVyYXRpbmcgdW50aWwgdGhlIGVuZCBvZiBhDQo+IHJhbmdlIGlzIGdy
+ZWF0ZXIgdGhhbiB0aGUgc3RhcnQgb2YgdGhlIHpvbmUgcGZuIHJhbmdlLCBhbmQgd2lsbCBleGl0
+DQo+IGNvbXBsZXRlbHkgaWYgdGhlIHN0YXJ0IGlzIGJleW9uZCB0aGUgZW5kIG9mIHRoZSB6b25l
+Lg0KPiANCj4gVGhpcyBwYXRjaCBhZGRzIHlldCBhbm90aGVyIGl0ZXJhdG9yIGNhbGxlZA0KPiBm
+b3JfZWFjaF9mcmVlX21lbV9yYW5nZV9pbl96b25lX2Zyb20gYW5kIHRoZW4gdXNlcyBpdCB0byBz
+dXBwb3J0DQo+IGluaXRpYWxpemluZyBhbmQgZnJlZWluZyBwYWdlcyBpbiBncm91cHMgbm8gbGFy
+Z2VyIHRoYW4gTUFYX09SREVSX05SX1BBR0VTLg0KPiBCeSBkb2luZyB0aGlzIHdlIGNhbiBncmVh
+dGx5IGltcHJvdmUgdGhlIGNhY2hlIGxvY2FsaXR5IG9mIHRoZSBwYWdlcyB3aGlsZQ0KPiB3ZSBk
+byBzZXZlcmFsIGxvb3BzIG92ZXIgdGhlbSBpbiB0aGUgaW5pdCBhbmQgZnJlZWluZyBwcm9jZXNz
+Lg0KPiANCj4gV2UgYXJlIGFibGUgdG8gdGlnaHRlbiB0aGUgbG9vcHMgYXMgYSByZXN1bHQgc2lu
+Y2Ugd2Ugb25seSByZWFsbHkgbmVlZCB0aGUNCj4gY2hlY2tzIGZvciBmaXJzdF9pbml0X3BmbiBp
+biBvdXIgZmlyc3QgaXRlcmF0aW9uIGFuZCBhZnRlciB0aGF0IHdlIGNhbg0KPiBhc3N1bWUgdGhh
+dCBhbGwgZnV0dXJlIHZhbHVlcyB3aWxsIGJlIGdyZWF0ZXIgdGhhbiB0aGlzLiBTbyBJIGhhdmUg
+YWRkZWQgYQ0KPiBmdW5jdGlvbiBjYWxsZWQgZGVmZXJyZWRfaW5pdF9tZW1fcGZuX3JhbmdlX2lu
+X3pvbmUgdGhhdCBwcmltZXMgdGhlDQo+IGl0ZXJhdG9ycyBhbmQgaWYgaXQgZmFpbHMgd2UgY2Fu
+IGp1c3QgZXhpdC4NCj4gDQo+IE9uIG15IHg4Nl82NCB0ZXN0IHN5c3RlbSB3aXRoIDM4NEdCIG9m
+IG1lbW9yeSBwZXIgbm9kZSBJIHNhdyBhIHJlZHVjdGlvbiBpbg0KPiBpbml0aWFsaXphdGlvbiB0
+aW1lIGZyb20gMS44NXMgdG8gMS4zOHMgYXMgYSByZXN1bHQgb2YgdGhpcyBwYXRjaC4NCj4gDQo+
+IFNpZ25lZC1vZmYtYnk6IEFsZXhhbmRlciBEdXljayA8YWxleGFuZGVyLmguZHV5Y2tAbGludXgu
+aW50ZWwuY29tPg0KDQpIaSBBbGV4LA0KDQpDb3VsZCB5b3UgcGxlYXNlIHNwbGl0IHRoaXMgcGF0
+Y2ggaW50byB0d28gcGFydHM6DQoNCjEuIEFkZCBkZWZlcnJlZF9pbml0X21heG9yZGVyKCkNCjIu
+IEFkZCBtZW1ibG9jayBpdGVyYXRvcj8NCg0KVGhpcyB3b3VsZCBhbGxvdyBhIGJldHRlciBiaXNl
+Y3RpbmcgaW4gY2FzZSBvZiBwcm9ibGVtcy4gQ2hhbmluZyB0d28NCmxvb3BzIGludG8gZGVmZXJy
+ZWRfaW5pdF9tYXhvcmRlcigpIHdoaWxlIGEgZ29vZCBpZGVhLCBpcyBzdGlsbA0Kbm9uLXRyaXZp
+YWwgYW5kIG1pZ2h0IGxlYWQgdG8gYnVncy4NCg0KVGhhbmsgeW91LA0KUGF2ZWwNCg0KPiAtLS0N
+Cj4gIGluY2x1ZGUvbGludXgvbWVtYmxvY2suaCB8ICAgNTggKysrKysrKysrKysrKysrDQo+ICBt
+bS9tZW1ibG9jay5jICAgICAgICAgICAgfCAgIDYzICsrKysrKysrKysrKysrKysNCj4gIG1tL3Bh
+Z2VfYWxsb2MuYyAgICAgICAgICB8ICAxNzYgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KystLS0tLS0tLS0tLS0tLQ0KPiAgMyBmaWxlcyBjaGFuZ2VkLCAyNDIgaW5zZXJ0aW9ucygrKSwg
+NTUgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9tZW1ibG9j
+ay5oIGIvaW5jbHVkZS9saW51eC9tZW1ibG9jay5oDQo+IGluZGV4IGFlZTI5OWE2YWE3Ni4uMmRk
+ZDFiYWZkZDAzIDEwMDY0NA0KPiAtLS0gYS9pbmNsdWRlL2xpbnV4L21lbWJsb2NrLmgNCj4gKysr
+IGIvaW5jbHVkZS9saW51eC9tZW1ibG9jay5oDQo+IEBAIC0xNzgsNiArMTc4LDI1IEBAIHZvaWQg
+X19uZXh0X3Jlc2VydmVkX21lbV9yZWdpb24odTY0ICppZHgsIHBoeXNfYWRkcl90ICpvdXRfc3Rh
+cnQsDQo+ICAJCQkgICAgICBwX3N0YXJ0LCBwX2VuZCwgcF9uaWQpKQ0KPiAgDQo+ICAvKioNCj4g
+KyAqIGZvcl9lYWNoX21lbV9yYW5nZV9mcm9tIC0gaXRlcmF0ZSB0aHJvdWdoIG1lbWJsb2NrIGFy
+ZWFzIGZyb20gdHlwZV9hIGFuZCBub3QNCj4gKyAqIGluY2x1ZGVkIGluIHR5cGVfYi4gT3IganVz
+dCB0eXBlX2EgaWYgdHlwZV9iIGlzIE5VTEwuDQo+ICsgKiBAaTogdTY0IHVzZWQgYXMgbG9vcCB2
+YXJpYWJsZQ0KPiArICogQHR5cGVfYTogcHRyIHRvIG1lbWJsb2NrX3R5cGUgdG8gaXRlcmF0ZQ0K
+PiArICogQHR5cGVfYjogcHRyIHRvIG1lbWJsb2NrX3R5cGUgd2hpY2ggZXhjbHVkZXMgZnJvbSB0
+aGUgaXRlcmF0aW9uDQo+ICsgKiBAbmlkOiBub2RlIHNlbGVjdG9yLCAlTlVNQV9OT19OT0RFIGZv
+ciBhbGwgbm9kZXMNCj4gKyAqIEBmbGFnczogcGljayBmcm9tIGJsb2NrcyBiYXNlZCBvbiBtZW1v
+cnkgYXR0cmlidXRlcw0KPiArICogQHBfc3RhcnQ6IHB0ciB0byBwaHlzX2FkZHJfdCBmb3Igc3Rh
+cnQgYWRkcmVzcyBvZiB0aGUgcmFuZ2UsIGNhbiBiZSAlTlVMTA0KPiArICogQHBfZW5kOiBwdHIg
+dG8gcGh5c19hZGRyX3QgZm9yIGVuZCBhZGRyZXNzIG9mIHRoZSByYW5nZSwgY2FuIGJlICVOVUxM
+DQo+ICsgKiBAcF9uaWQ6IHB0ciB0byBpbnQgZm9yIG5pZCBvZiB0aGUgcmFuZ2UsIGNhbiBiZSAl
+TlVMTA0KPiArICovDQo+ICsjZGVmaW5lIGZvcl9lYWNoX21lbV9yYW5nZV9mcm9tKGksIHR5cGVf
+YSwgdHlwZV9iLCBuaWQsIGZsYWdzLAkJXA0KPiArCQkJICAgcF9zdGFydCwgcF9lbmQsIHBfbmlk
+KQkJCVwNCj4gKwlmb3IgKGkgPSAwLCBfX25leHRfbWVtX3JhbmdlKCZpLCBuaWQsIGZsYWdzLCB0
+eXBlX2EsIHR5cGVfYiwJXA0KPiArCQkJCSAgICAgcF9zdGFydCwgcF9lbmQsIHBfbmlkKTsJCVwN
+Cj4gKwkgICAgIGkgIT0gKHU2NClVTExPTkdfTUFYOwkJCQkJXA0KPiArCSAgICAgX19uZXh0X21l
+bV9yYW5nZSgmaSwgbmlkLCBmbGFncywgdHlwZV9hLCB0eXBlX2IsCQlcDQo+ICsJCQkgICAgICBw
+X3N0YXJ0LCBwX2VuZCwgcF9uaWQpKQ0KPiArLyoqDQo+ICAgKiBmb3JfZWFjaF9tZW1fcmFuZ2Vf
+cmV2IC0gcmV2ZXJzZSBpdGVyYXRlIHRocm91Z2ggbWVtYmxvY2sgYXJlYXMgZnJvbQ0KPiAgICog
+dHlwZV9hIGFuZCBub3QgaW5jbHVkZWQgaW4gdHlwZV9iLiBPciBqdXN0IHR5cGVfYSBpZiB0eXBl
+X2IgaXMgTlVMTC4NCj4gICAqIEBpOiB1NjQgdXNlZCBhcyBsb29wIHZhcmlhYmxlDQo+IEBAIC0y
+NDgsNiArMjY3LDQ1IEBAIHZvaWQgX19uZXh0X21lbV9wZm5fcmFuZ2UoaW50ICppZHgsIGludCBu
+aWQsIHVuc2lnbmVkIGxvbmcgKm91dF9zdGFydF9wZm4sDQo+ICAJICAgICBpID49IDA7IF9fbmV4
+dF9tZW1fcGZuX3JhbmdlKCZpLCBuaWQsIHBfc3RhcnQsIHBfZW5kLCBwX25pZCkpDQo+ICAjZW5k
+aWYgLyogQ09ORklHX0hBVkVfTUVNQkxPQ0tfTk9ERV9NQVAgKi8NCj4gIA0KPiArI2lmZGVmIENP
+TkZJR19ERUZFUlJFRF9TVFJVQ1RfUEFHRV9JTklUDQo+ICt2b2lkIF9fbmV4dF9tZW1fcGZuX3Jh
+bmdlX2luX3pvbmUodTY0ICppZHgsIHN0cnVjdCB6b25lICp6b25lLA0KPiArCQkJCSAgdW5zaWdu
+ZWQgbG9uZyAqb3V0X3NwZm4sDQo+ICsJCQkJICB1bnNpZ25lZCBsb25nICpvdXRfZXBmbik7DQo+
+ICsvKioNCj4gKyAqIGZvcl9lYWNoX2ZyZWVfbWVtX3JhbmdlX2luX3pvbmUgLSBpdGVyYXRlIHRo
+cm91Z2ggem9uZSBzcGVjaWZpYyBmcmVlDQo+ICsgKiBtZW1ibG9jayBhcmVhcw0KPiArICogQGk6
+IHU2NCB1c2VkIGFzIGxvb3AgdmFyaWFibGUNCj4gKyAqIEB6b25lOiB6b25lIGluIHdoaWNoIGFs
+bCBvZiB0aGUgbWVtb3J5IGJsb2NrcyByZXNpZGUNCj4gKyAqIEBwX3N0YXJ0OiBwdHIgdG8gcGh5
+c19hZGRyX3QgZm9yIHN0YXJ0IGFkZHJlc3Mgb2YgdGhlIHJhbmdlLCBjYW4gYmUgJU5VTEwNCj4g
+KyAqIEBwX2VuZDogcHRyIHRvIHBoeXNfYWRkcl90IGZvciBlbmQgYWRkcmVzcyBvZiB0aGUgcmFu
+Z2UsIGNhbiBiZSAlTlVMTA0KPiArICoNCj4gKyAqIFdhbGtzIG92ZXIgZnJlZSAobWVtb3J5ICYm
+ICFyZXNlcnZlZCkgYXJlYXMgb2YgbWVtYmxvY2sgaW4gYSBzcGVjaWZpYw0KPiArICogem9uZS4g
+QXZhaWxhYmxlIGFzIHNvb24gYXMgbWVtYmxvY2sgaXMgaW5pdGlhbGl6ZWQuDQo+ICsgKi8NCj4g
+KyNkZWZpbmUgZm9yX2VhY2hfZnJlZV9tZW1fcGZuX3JhbmdlX2luX3pvbmUoaSwgem9uZSwgcF9z
+dGFydCwgcF9lbmQpCVwNCj4gKwlmb3IgKGkgPSAwLAkJCQkJCQlcDQo+ICsJICAgICBfX25leHRf
+bWVtX3Bmbl9yYW5nZV9pbl96b25lKCZpLCB6b25lLCBwX3N0YXJ0LCBwX2VuZCk7CVwNCj4gKwkg
+ICAgIGkgIT0gKHU2NClVTExPTkdfTUFYOwkJCQkJXA0KPiArCSAgICAgX19uZXh0X21lbV9wZm5f
+cmFuZ2VfaW5fem9uZSgmaSwgem9uZSwgcF9zdGFydCwgcF9lbmQpKQ0KPiArDQo+ICsvKioNCj4g
+KyAqIGZvcl9lYWNoX2ZyZWVfbWVtX3JhbmdlX2luX3pvbmVfZnJvbSAtIGl0ZXJhdGUgdGhyb3Vn
+aCB6b25lIHNwZWNpZmljDQo+ICsgKiBmcmVlIG1lbWJsb2NrIGFyZWFzIGZyb20gYSBnaXZlbiBw
+b2ludA0KPiArICogQGk6IHU2NCB1c2VkIGFzIGxvb3AgdmFyaWFibGUNCj4gKyAqIEB6b25lOiB6
+b25lIGluIHdoaWNoIGFsbCBvZiB0aGUgbWVtb3J5IGJsb2NrcyByZXNpZGUNCj4gKyAqIEBwX3N0
+YXJ0OiBwdHIgdG8gcGh5c19hZGRyX3QgZm9yIHN0YXJ0IGFkZHJlc3Mgb2YgdGhlIHJhbmdlLCBj
+YW4gYmUgJU5VTEwNCj4gKyAqIEBwX2VuZDogcHRyIHRvIHBoeXNfYWRkcl90IGZvciBlbmQgYWRk
+cmVzcyBvZiB0aGUgcmFuZ2UsIGNhbiBiZSAlTlVMTA0KPiArICoNCj4gKyAqIFdhbGtzIG92ZXIg
+ZnJlZSAobWVtb3J5ICYmICFyZXNlcnZlZCkgYXJlYXMgb2YgbWVtYmxvY2sgaW4gYSBzcGVjaWZp
+Yw0KPiArICogem9uZSwgY29udGludWluZyBmcm9tIGN1cnJlbnQgcG9zaXRpb24uIEF2YWlsYWJs
+ZSBhcyBzb29uIGFzIG1lbWJsb2NrIGlzDQo+ICsgKiBpbml0aWFsaXplZC4NCj4gKyAqLw0KPiAr
+I2RlZmluZSBmb3JfZWFjaF9mcmVlX21lbV9wZm5fcmFuZ2VfaW5fem9uZV9mcm9tKGksIHpvbmUs
+IHBfc3RhcnQsIHBfZW5kKSBcDQo+ICsJZm9yICg7IGkgIT0gKHU2NClVTExPTkdfTUFYOwkJCQkJ
+ICBcDQo+ICsJICAgICBfX25leHRfbWVtX3Bmbl9yYW5nZV9pbl96b25lKCZpLCB6b25lLCBwX3N0
+YXJ0LCBwX2VuZCkpDQo+ICsNCj4gKyNlbmRpZiAvKiBDT05GSUdfREVGRVJSRURfU1RSVUNUX1BB
+R0VfSU5JVCAqLw0KPiArDQo+ICAvKioNCj4gICAqIGZvcl9lYWNoX2ZyZWVfbWVtX3JhbmdlIC0g
+aXRlcmF0ZSB0aHJvdWdoIGZyZWUgbWVtYmxvY2sgYXJlYXMNCj4gICAqIEBpOiB1NjQgdXNlZCBh
+cyBsb29wIHZhcmlhYmxlDQo+IGRpZmYgLS1naXQgYS9tbS9tZW1ibG9jay5jIGIvbW0vbWVtYmxv
+Y2suYw0KPiBpbmRleCBmMmVmMzkxNWEzNTYuLmFiMzU0NWUzNTZiNyAxMDA2NDQNCj4gLS0tIGEv
+bW0vbWVtYmxvY2suYw0KPiArKysgYi9tbS9tZW1ibG9jay5jDQo+IEBAIC0xMjM5LDYgKzEyMzks
+NjkgQEAgaW50IF9faW5pdF9tZW1ibG9jayBtZW1ibG9ja19zZXRfbm9kZShwaHlzX2FkZHJfdCBi
+YXNlLCBwaHlzX2FkZHJfdCBzaXplLA0KPiAgCXJldHVybiAwOw0KPiAgfQ0KPiAgI2VuZGlmIC8q
+IENPTkZJR19IQVZFX01FTUJMT0NLX05PREVfTUFQICovDQo+ICsjaWZkZWYgQ09ORklHX0RFRkVS
+UkVEX1NUUlVDVF9QQUdFX0lOSVQNCj4gKy8qKg0KPiArICogX19uZXh0X21lbV9wZm5fcmFuZ2Vf
+aW5fem9uZSAtIGl0ZXJhdG9yIGZvciBmb3JfZWFjaF8qX3JhbmdlX2luX3pvbmUoKQ0KPiArICoN
+Cj4gKyAqIEBpZHg6IHBvaW50ZXIgdG8gdTY0IGxvb3AgdmFyaWFibGUNCj4gKyAqIEB6b25lOiB6
+b25lIGluIHdoaWNoIGFsbCBvZiB0aGUgbWVtb3J5IGJsb2NrcyByZXNpZGUNCj4gKyAqIEBvdXRf
+c3RhcnQ6IHB0ciB0byB1bG9uZyBmb3Igc3RhcnQgcGZuIG9mIHRoZSByYW5nZSwgY2FuIGJlICVO
+VUxMDQo+ICsgKiBAb3V0X2VuZDogcHRyIHRvIHVsb25nIGZvciBlbmQgcGZuIG9mIHRoZSByYW5n
+ZSwgY2FuIGJlICVOVUxMDQo+ICsgKg0KPiArICogVGhpcyBmdW5jdGlvbiBpcyBtZWFudCB0byBi
+ZSBhIHpvbmUvcGZuIHNwZWNpZmljIHdyYXBwZXIgZm9yIHRoZQ0KPiArICogZm9yX2VhY2hfbWVt
+X3JhbmdlIHR5cGUgaXRlcmF0b3JzLiBTcGVjaWZpY2FsbHkgdGhleSBhcmUgdXNlZCBpbiB0aGUN
+Cj4gKyAqIGRlZmVycmVkIG1lbW9yeSBpbml0IHJvdXRpbmVzIGFuZCBhcyBzdWNoIHdlIHdlcmUg
+ZHVwbGljYXRpbmcgbXVjaCBvZg0KPiArICogdGhpcyBsb2dpYyB0aHJvdWdob3V0IHRoZSBjb2Rl
+LiBTbyBpbnN0ZWFkIG9mIGhhdmluZyBpdCBpbiBtdWx0aXBsZQ0KPiArICogbG9jYXRpb25zIGl0
+IHNlZW1lZCBsaWtlIGl0IHdvdWxkIG1ha2UgbW9yZSBzZW5zZSB0byBjZW50cmFsaXplIHRoaXMg
+dG8NCj4gKyAqIG9uZSBuZXcgaXRlcmF0b3IgdGhhdCBkb2VzIGV2ZXJ5dGhpbmcgdGhleSBuZWVk
+Lg0KPiArICovDQo+ICt2b2lkIF9faW5pdF9tZW1ibG9jaw0KPiArX19uZXh0X21lbV9wZm5fcmFu
+Z2VfaW5fem9uZSh1NjQgKmlkeCwgc3RydWN0IHpvbmUgKnpvbmUsDQo+ICsJCQkgICAgIHVuc2ln
+bmVkIGxvbmcgKm91dF9zcGZuLCB1bnNpZ25lZCBsb25nICpvdXRfZXBmbikNCj4gK3sNCj4gKwlp
+bnQgem9uZV9uaWQgPSB6b25lX3RvX25pZCh6b25lKTsNCj4gKwlwaHlzX2FkZHJfdCBzcGEsIGVw
+YTsNCj4gKwlpbnQgbmlkOw0KPiArDQo+ICsJX19uZXh0X21lbV9yYW5nZShpZHgsIHpvbmVfbmlk
+LCBNRU1CTE9DS19OT05FLA0KPiArCQkJICZtZW1ibG9jay5tZW1vcnksICZtZW1ibG9jay5yZXNl
+cnZlZCwNCj4gKwkJCSAmc3BhLCAmZXBhLCAmbmlkKTsNCj4gKw0KPiArCXdoaWxlICgqaWR4ICE9
+IFVMTE9OR19NQVgpIHsNCj4gKwkJdW5zaWduZWQgbG9uZyBlcGZuID0gUEZOX0RPV04oZXBhKTsN
+Cj4gKwkJdW5zaWduZWQgbG9uZyBzcGZuID0gUEZOX1VQKHNwYSk7DQo+ICsNCj4gKwkJLyoNCj4g
+KwkJICogVmVyaWZ5IHRoZSBlbmQgaXMgYXQgbGVhc3QgcGFzdCB0aGUgc3RhcnQgb2YgdGhlIHpv
+bmUgYW5kDQo+ICsJCSAqIHRoYXQgd2UgaGF2ZSBhdCBsZWFzdCBvbmUgUEZOIHRvIGluaXRpYWxp
+emUuDQo+ICsJCSAqLw0KPiArCQlpZiAoem9uZS0+em9uZV9zdGFydF9wZm4gPCBlcGZuICYmIHNw
+Zm4gPCBlcGZuKSB7DQo+ICsJCQkvKiBpZiB3ZSB3ZW50IHRvbyBmYXIganVzdCBzdG9wIHNlYXJj
+aGluZyAqLw0KPiArCQkJaWYgKHpvbmVfZW5kX3Bmbih6b25lKSA8PSBzcGZuKQ0KPiArCQkJCWJy
+ZWFrOw0KPiArDQo+ICsJCQlpZiAob3V0X3NwZm4pDQo+ICsJCQkJKm91dF9zcGZuID0gbWF4KHpv
+bmUtPnpvbmVfc3RhcnRfcGZuLCBzcGZuKTsNCj4gKwkJCWlmIChvdXRfZXBmbikNCj4gKwkJCQkq
+b3V0X2VwZm4gPSBtaW4oem9uZV9lbmRfcGZuKHpvbmUpLCBlcGZuKTsNCj4gKw0KPiArCQkJcmV0
+dXJuOw0KPiArCQl9DQo+ICsNCj4gKwkJX19uZXh0X21lbV9yYW5nZShpZHgsIHpvbmVfbmlkLCBN
+RU1CTE9DS19OT05FLA0KPiArCQkJCSAmbWVtYmxvY2subWVtb3J5LCAmbWVtYmxvY2sucmVzZXJ2
+ZWQsDQo+ICsJCQkJICZzcGEsICZlcGEsICZuaWQpOw0KPiArCX0NCj4gKw0KPiArCS8qIHNpZ25h
+bCBlbmQgb2YgaXRlcmF0aW9uICovDQo+ICsJKmlkeCA9IFVMTE9OR19NQVg7DQo+ICsJaWYgKG91
+dF9zcGZuKQ0KPiArCQkqb3V0X3NwZm4gPSBVTE9OR19NQVg7DQo+ICsJaWYgKG91dF9lcGZuKQ0K
+PiArCQkqb3V0X2VwZm4gPSAwOw0KPiArfQ0KPiArDQo+ICsjZW5kaWYgLyogQ09ORklHX0RFRkVS
+UkVEX1NUUlVDVF9QQUdFX0lOSVQgKi8NCj4gIA0KPiAgI2lmZGVmIENPTkZJR19IQVZFX01FTUJM
+T0NLX1BGTl9WQUxJRA0KPiAgdW5zaWduZWQgbG9uZyBfX2luaXRfbWVtYmxvY2sgbWVtYmxvY2tf
+bmV4dF92YWxpZF9wZm4odW5zaWduZWQgbG9uZyBwZm4pDQo+IGRpZmYgLS1naXQgYS9tbS9wYWdl
+X2FsbG9jLmMgYi9tbS9wYWdlX2FsbG9jLmMNCj4gaW5kZXggYTc2NmExNWZhZDgxLi4yMGU5ZWIz
+NWQ3NWQgMTAwNjQ0DQo+IC0tLSBhL21tL3BhZ2VfYWxsb2MuYw0KPiArKysgYi9tbS9wYWdlX2Fs
+bG9jLmMNCj4gQEAgLTE1MTIsMTkgKzE1MTIsMTAzIEBAIHN0YXRpYyB1bnNpZ25lZCBsb25nICBf
+X2luaXQgZGVmZXJyZWRfaW5pdF9wYWdlcyhzdHJ1Y3Qgem9uZSAqem9uZSwNCj4gIAlyZXR1cm4g
+KG5yX3BhZ2VzKTsNCj4gIH0NCj4gIA0KPiArLyoNCj4gKyAqIFRoaXMgZnVuY3Rpb24gaXMgbWVh
+bnQgdG8gcHJlLWxvYWQgdGhlIGl0ZXJhdG9yIGZvciB0aGUgem9uZSBpbml0Lg0KPiArICogU3Bl
+Y2lmaWNhbGx5IGl0IHdhbGtzIHRocm91Z2ggdGhlIHJhbmdlcyB1bnRpbCB3ZSBhcmUgY2F1Z2h0
+IHVwIHRvIHRoZQ0KPiArICogZmlyc3RfaW5pdF9wZm4gdmFsdWUgYW5kIGV4aXRzIHRoZXJlLiBJ
+ZiB3ZSBuZXZlciBlbmNvdW50ZXIgdGhlIHZhbHVlIHdlDQo+ICsgKiByZXR1cm4gZmFsc2UgaW5k
+aWNhdGluZyB0aGVyZSBhcmUgbm8gdmFsaWQgcmFuZ2VzIGxlZnQuDQo+ICsgKi8NCj4gK3N0YXRp
+YyBib29sIF9faW5pdA0KPiArZGVmZXJyZWRfaW5pdF9tZW1fcGZuX3JhbmdlX2luX3pvbmUodTY0
+ICppLCBzdHJ1Y3Qgem9uZSAqem9uZSwNCj4gKwkJCQkgICAgdW5zaWduZWQgbG9uZyAqc3Bmbiwg
+dW5zaWduZWQgbG9uZyAqZXBmbiwNCj4gKwkJCQkgICAgdW5zaWduZWQgbG9uZyBmaXJzdF9pbml0
+X3BmbikNCj4gK3sNCj4gKwl1NjQgajsNCj4gKw0KPiArCS8qDQo+ICsJICogU3RhcnQgb3V0IGJ5
+IHdhbGtpbmcgdGhyb3VnaCB0aGUgcmFuZ2VzIGluIHRoaXMgem9uZSB0aGF0IGhhdmUNCj4gKwkg
+KiBhbHJlYWR5IGJlZW4gaW5pdGlhbGl6ZWQuIFdlIGRvbid0IG5lZWQgdG8gZG8gYW55dGhpbmcg
+d2l0aCB0aGVtDQo+ICsJICogc28gd2UganVzdCBuZWVkIHRvIGZsdXNoIHRoZW0gb3V0IG9mIHRo
+ZSBzeXN0ZW0uDQo+ICsJICovDQo+ICsJZm9yX2VhY2hfZnJlZV9tZW1fcGZuX3JhbmdlX2luX3pv
+bmUoaiwgem9uZSwgc3BmbiwgZXBmbikgew0KPiArCQlpZiAoKmVwZm4gPD0gZmlyc3RfaW5pdF9w
+Zm4pDQo+ICsJCQljb250aW51ZTsNCj4gKwkJaWYgKCpzcGZuIDwgZmlyc3RfaW5pdF9wZm4pDQo+
+ICsJCQkqc3BmbiA9IGZpcnN0X2luaXRfcGZuOw0KPiArCQkqaSA9IGo7DQo+ICsJCXJldHVybiB0
+cnVlOw0KPiArCX0NCj4gKw0KPiArCXJldHVybiBmYWxzZTsNCj4gK30NCj4gKw0KPiArLyoNCj4g
+KyAqIEluaXRpYWxpemUgYW5kIGZyZWUgcGFnZXMuIFdlIGRvIGl0IGluIHR3byBsb29wczogZmly
+c3Qgd2UgaW5pdGlhbGl6ZQ0KPiArICogc3RydWN0IHBhZ2UsIHRoYW4gZnJlZSB0byBidWRkeSBh
+bGxvY2F0b3IsIGJlY2F1c2Ugd2hpbGUgd2UgYXJlDQo+ICsgKiBmcmVlaW5nIHBhZ2VzIHdlIGNh
+biBhY2Nlc3MgcGFnZXMgdGhhdCBhcmUgYWhlYWQgKGNvbXB1dGluZyBidWRkeQ0KPiArICogcGFn
+ZSBpbiBfX2ZyZWVfb25lX3BhZ2UoKSkuDQo+ICsgKg0KPiArICogSW4gb3JkZXIgdG8gdHJ5IGFu
+ZCBrZWVwIHNvbWUgbWVtb3J5IGluIHRoZSBjYWNoZSB3ZSBoYXZlIHRoZSBsb29wDQo+ICsgKiBi
+cm9rZW4gYWxvbmcgbWF4IHBhZ2Ugb3JkZXIgYm91bmRhcmllcy4gVGhpcyB3YXkgd2Ugd2lsbCBu
+b3QgY2F1c2UNCj4gKyAqIGFueSBpc3N1ZXMgd2l0aCB0aGUgYnVkZHkgcGFnZSBjb21wdXRhdGlv
+bi4NCj4gKyAqLw0KPiArc3RhdGljIHVuc2lnbmVkIGxvbmcgX19pbml0DQo+ICtkZWZlcnJlZF9p
+bml0X21heG9yZGVyKHU2NCAqaSwgc3RydWN0IHpvbmUgKnpvbmUsIHVuc2lnbmVkIGxvbmcgKnN0
+YXJ0X3BmbiwNCj4gKwkJICAgICAgIHVuc2lnbmVkIGxvbmcgKmVuZF9wZm4pDQo+ICt7DQo+ICsJ
+dW5zaWduZWQgbG9uZyBtb19wZm4gPSBBTElHTigqc3RhcnRfcGZuICsgMSwgTUFYX09SREVSX05S
+X1BBR0VTKTsNCj4gKwl1bnNpZ25lZCBsb25nIHNwZm4gPSAqc3RhcnRfcGZuLCBlcGZuID0gKmVu
+ZF9wZm47DQo+ICsJdW5zaWduZWQgbG9uZyBucl9wYWdlcyA9IDA7DQo+ICsJdTY0IGogPSAqaTsN
+Cj4gKw0KPiArCS8qIEZpcnN0IHdlIGxvb3AgdGhyb3VnaCBhbmQgaW5pdGlhbGl6ZSB0aGUgcGFn
+ZSB2YWx1ZXMgKi8NCj4gKwlmb3JfZWFjaF9mcmVlX21lbV9wZm5fcmFuZ2VfaW5fem9uZV9mcm9t
+KGosIHpvbmUsICZzcGZuLCAmZXBmbikgew0KPiArCQl1bnNpZ25lZCBsb25nIHQ7DQo+ICsNCj4g
+KwkJaWYgKG1vX3BmbiA8PSBzcGZuKQ0KPiArCQkJYnJlYWs7DQo+ICsNCj4gKwkJdCA9IG1pbiht
+b19wZm4sIGVwZm4pOw0KPiArCQlucl9wYWdlcyArPSBkZWZlcnJlZF9pbml0X3BhZ2VzKHpvbmUs
+IHNwZm4sIHQpOw0KPiArDQo+ICsJCWlmIChtb19wZm4gPD0gZXBmbikNCj4gKwkJCWJyZWFrOw0K
+PiArCX0NCj4gKw0KPiArCS8qIFJlc2V0IHZhbHVlcyBhbmQgbm93IGxvb3AgdGhyb3VnaCBmcmVl
+aW5nIHBhZ2VzIGFzIG5lZWRlZCAqLw0KPiArCWogPSAqaTsNCj4gKw0KPiArCWZvcl9lYWNoX2Zy
+ZWVfbWVtX3Bmbl9yYW5nZV9pbl96b25lX2Zyb20oaiwgem9uZSwgc3RhcnRfcGZuLCBlbmRfcGZu
+KSB7DQo+ICsJCXVuc2lnbmVkIGxvbmcgdDsNCj4gKw0KPiArCQlpZiAobW9fcGZuIDw9ICpzdGFy
+dF9wZm4pDQo+ICsJCQlicmVhazsNCj4gKw0KPiArCQl0ID0gbWluKG1vX3BmbiwgKmVuZF9wZm4p
+Ow0KPiArCQlkZWZlcnJlZF9mcmVlX3BhZ2VzKCpzdGFydF9wZm4sIHQpOw0KPiArCQkqc3RhcnRf
+cGZuID0gdDsNCj4gKw0KPiArCQlpZiAobW9fcGZuIDwgKmVuZF9wZm4pDQo+ICsJCQlicmVhazsN
+Cj4gKwl9DQo+ICsNCj4gKwkvKiBTdG9yZSBvdXIgY3VycmVudCB2YWx1ZXMgdG8gYmUgcmV1c2Vk
+IG9uIHRoZSBuZXh0IGl0ZXJhdGlvbiAqLw0KPiArCSppID0gajsNCj4gKw0KPiArCXJldHVybiBu
+cl9wYWdlczsNCj4gK30NCj4gKw0KPiAgLyogSW5pdGlhbGlzZSByZW1haW5pbmcgbWVtb3J5IG9u
+IGEgbm9kZSAqLw0KPiAgc3RhdGljIGludCBfX2luaXQgZGVmZXJyZWRfaW5pdF9tZW1tYXAodm9p
+ZCAqZGF0YSkNCj4gIHsNCj4gIAlwZ19kYXRhX3QgKnBnZGF0ID0gZGF0YTsNCj4gLQlpbnQgbmlk
+ID0gcGdkYXQtPm5vZGVfaWQ7DQo+ICsJY29uc3Qgc3RydWN0IGNwdW1hc2sgKmNwdW1hc2sgPSBj
+cHVtYXNrX29mX25vZGUocGdkYXQtPm5vZGVfaWQpOw0KPiArCXVuc2lnbmVkIGxvbmcgc3BmbiA9
+IDAsIGVwZm4gPSAwLCBucl9wYWdlcyA9IDA7DQo+ICsJdW5zaWduZWQgbG9uZyBmaXJzdF9pbml0
+X3BmbiwgZmxhZ3M7DQo+ICAJdW5zaWduZWQgbG9uZyBzdGFydCA9IGppZmZpZXM7DQo+IC0JdW5z
+aWduZWQgbG9uZyBucl9wYWdlcyA9IDA7DQo+IC0JdW5zaWduZWQgbG9uZyBzcGZuLCBlcGZuLCBm
+aXJzdF9pbml0X3BmbiwgZmxhZ3M7DQo+IC0JcGh5c19hZGRyX3Qgc3BhLCBlcGE7DQo+IC0JaW50
+IHppZDsNCj4gIAlzdHJ1Y3Qgem9uZSAqem9uZTsNCj4gLQljb25zdCBzdHJ1Y3QgY3B1bWFzayAq
+Y3B1bWFzayA9IGNwdW1hc2tfb2Zfbm9kZShwZ2RhdC0+bm9kZV9pZCk7DQo+ICAJdTY0IGk7DQo+
+ICsJaW50IHppZDsNCj4gIA0KPiAgCS8qIEJpbmQgbWVtb3J5IGluaXRpYWxpc2F0aW9uIHRocmVh
+ZCB0byBhIGxvY2FsIG5vZGUgaWYgcG9zc2libGUgKi8NCj4gIAlpZiAoIWNwdW1hc2tfZW1wdHko
+Y3B1bWFzaykpDQo+IEBAIC0xNTQ5LDMxICsxNjMzLDMwIEBAIHN0YXRpYyBpbnQgX19pbml0IGRl
+ZmVycmVkX2luaXRfbWVtbWFwKHZvaWQgKmRhdGEpDQo+ICAJCWlmIChmaXJzdF9pbml0X3BmbiA8
+IHpvbmVfZW5kX3Bmbih6b25lKSkNCj4gIAkJCWJyZWFrOw0KPiAgCX0NCj4gLQlmaXJzdF9pbml0
+X3BmbiA9IG1heCh6b25lLT56b25lX3N0YXJ0X3BmbiwgZmlyc3RfaW5pdF9wZm4pOw0KPiArDQo+
+ICsJLyogSWYgdGhlIHpvbmUgaXMgZW1wdHkgc29tZWJvZHkgZWxzZSBtYXkgaGF2ZSBjbGVhcmVk
+IG91dCB0aGUgem9uZSAqLw0KPiArCWlmICghZGVmZXJyZWRfaW5pdF9tZW1fcGZuX3JhbmdlX2lu
+X3pvbmUoJmksIHpvbmUsICZzcGZuLCAmZXBmbiwNCj4gKwkJCQkJCSBmaXJzdF9pbml0X3Bmbikp
+IHsNCj4gKwkJcGdkYXRfcmVzaXplX3VubG9jayhwZ2RhdCwgJmZsYWdzKTsNCj4gKwkJcGdkYXRf
+aW5pdF9yZXBvcnRfb25lX2RvbmUoKTsNCj4gKwkJcmV0dXJuIDA7DQo+ICsJfQ0KPiAgDQo+ICAJ
+LyoNCj4gLQkgKiBJbml0aWFsaXplIGFuZCBmcmVlIHBhZ2VzLiBXZSBkbyBpdCBpbiB0d28gbG9v
+cHM6IGZpcnN0IHdlIGluaXRpYWxpemUNCj4gLQkgKiBzdHJ1Y3QgcGFnZSwgdGhhbiBmcmVlIHRv
+IGJ1ZGR5IGFsbG9jYXRvciwgYmVjYXVzZSB3aGlsZSB3ZSBhcmUNCj4gLQkgKiBmcmVlaW5nIHBh
+Z2VzIHdlIGNhbiBhY2Nlc3MgcGFnZXMgdGhhdCBhcmUgYWhlYWQgKGNvbXB1dGluZyBidWRkeQ0K
+PiAtCSAqIHBhZ2UgaW4gX19mcmVlX29uZV9wYWdlKCkpLg0KPiArCSAqIEluaXRpYWxpemUgYW5k
+IGZyZWUgcGFnZXMgaW4gTUFYX09SREVSIHNpemVkIGluY3JlbWVudHMgc28NCj4gKwkgKiB0aGF0
+IHdlIGNhbiBhdm9pZCBpbnRyb2R1Y2luZyBhbnkgaXNzdWVzIHdpdGggdGhlIGJ1ZGR5DQo+ICsJ
+ICogYWxsb2NhdG9yLg0KPiAgCSAqLw0KPiAtCWZvcl9lYWNoX2ZyZWVfbWVtX3JhbmdlKGksIG5p
+ZCwgTUVNQkxPQ0tfTk9ORSwgJnNwYSwgJmVwYSwgTlVMTCkgew0KPiAtCQlzcGZuID0gbWF4X3Qo
+dW5zaWduZWQgbG9uZywgZmlyc3RfaW5pdF9wZm4sIFBGTl9VUChzcGEpKTsNCj4gLQkJZXBmbiA9
+IG1pbl90KHVuc2lnbmVkIGxvbmcsIHpvbmVfZW5kX3Bmbih6b25lKSwgUEZOX0RPV04oZXBhKSk7
+DQo+IC0JCW5yX3BhZ2VzICs9IGRlZmVycmVkX2luaXRfcGFnZXMoem9uZSwgc3BmbiwgZXBmbik7
+DQo+IC0JfQ0KPiAtCWZvcl9lYWNoX2ZyZWVfbWVtX3JhbmdlKGksIG5pZCwgTUVNQkxPQ0tfTk9O
+RSwgJnNwYSwgJmVwYSwgTlVMTCkgew0KPiAtCQlzcGZuID0gbWF4X3QodW5zaWduZWQgbG9uZywg
+Zmlyc3RfaW5pdF9wZm4sIFBGTl9VUChzcGEpKTsNCj4gLQkJZXBmbiA9IG1pbl90KHVuc2lnbmVk
+IGxvbmcsIHpvbmVfZW5kX3Bmbih6b25lKSwgUEZOX0RPV04oZXBhKSk7DQo+IC0JCWRlZmVycmVk
+X2ZyZWVfcGFnZXMoc3BmbiwgZXBmbik7DQo+IC0JfQ0KPiArCXdoaWxlIChzcGZuIDwgZXBmbikN
+Cj4gKwkJbnJfcGFnZXMgKz0gZGVmZXJyZWRfaW5pdF9tYXhvcmRlcigmaSwgem9uZSwgJnNwZm4s
+ICZlcGZuKTsNCj4gKw0KPiAgCXBnZGF0X3Jlc2l6ZV91bmxvY2socGdkYXQsICZmbGFncyk7DQo+
+ICANCj4gIAkvKiBTYW5pdHkgY2hlY2sgdGhhdCB0aGUgbmV4dCB6b25lIHJlYWxseSBpcyB1bnBv
+cHVsYXRlZCAqLw0KPiAgCVdBUk5fT04oKyt6aWQgPCBNQVhfTlJfWk9ORVMgJiYgcG9wdWxhdGVk
+X3pvbmUoKyt6b25lKSk7DQo+ICANCj4gLQlwcl9pbmZvKCJub2RlICVkIGluaXRpYWxpc2VkLCAl
+bHUgcGFnZXMgaW4gJXVtc1xuIiwgbmlkLCBucl9wYWdlcywNCj4gLQkJCQkJamlmZmllc190b19t
+c2VjcyhqaWZmaWVzIC0gc3RhcnQpKTsNCj4gKwlwcl9pbmZvKCJub2RlICVkIGluaXRpYWxpc2Vk
+LCAlbHUgcGFnZXMgaW4gJXVtc1xuIiwNCj4gKwkJcGdkYXQtPm5vZGVfaWQsCW5yX3BhZ2VzLCBq
+aWZmaWVzX3RvX21zZWNzKGppZmZpZXMgLSBzdGFydCkpOw0KPiAgDQo+ICAJcGdkYXRfaW5pdF9y
+ZXBvcnRfb25lX2RvbmUoKTsNCj4gIAlyZXR1cm4gMDsNCj4gQEAgLTE2MDQsMTQgKzE2ODcsMTEg
+QEAgc3RhdGljIGludCBfX2luaXQgZGVmZXJyZWRfaW5pdF9tZW1tYXAodm9pZCAqZGF0YSkNCj4g
+IHN0YXRpYyBub2lubGluZSBib29sIF9faW5pdA0KPiAgZGVmZXJyZWRfZ3Jvd196b25lKHN0cnVj
+dCB6b25lICp6b25lLCB1bnNpZ25lZCBpbnQgb3JkZXIpDQo+ICB7DQo+IC0JaW50IHppZCA9IHpv
+bmVfaWR4KHpvbmUpOw0KPiAtCWludCBuaWQgPSB6b25lX3RvX25pZCh6b25lKTsNCj4gLQlwZ19k
+YXRhX3QgKnBnZGF0ID0gTk9ERV9EQVRBKG5pZCk7DQo+ICAJdW5zaWduZWQgbG9uZyBucl9wYWdl
+c19uZWVkZWQgPSBBTElHTigxIDw8IG9yZGVyLCBQQUdFU19QRVJfU0VDVElPTik7DQo+IC0JdW5z
+aWduZWQgbG9uZyBucl9wYWdlcyA9IDA7DQo+IC0JdW5zaWduZWQgbG9uZyBmaXJzdF9pbml0X3Bm
+biwgc3BmbiwgZXBmbiwgdCwgZmxhZ3M7DQo+ICsJcGdfZGF0YV90ICpwZ2RhdCA9IHpvbmUtPnpv
+bmVfcGdkYXQ7DQo+ICAJdW5zaWduZWQgbG9uZyBmaXJzdF9kZWZlcnJlZF9wZm4gPSBwZ2RhdC0+
+Zmlyc3RfZGVmZXJyZWRfcGZuOw0KPiAtCXBoeXNfYWRkcl90IHNwYSwgZXBhOw0KPiArCXVuc2ln
+bmVkIGxvbmcgc3BmbiwgZXBmbiwgZmxhZ3M7DQo+ICsJdW5zaWduZWQgbG9uZyBucl9wYWdlcyA9
+IDA7DQo+ICAJdTY0IGk7DQo+ICANCj4gIAkvKiBPbmx5IHRoZSBsYXN0IHpvbmUgbWF5IGhhdmUg
+ZGVmZXJyZWQgcGFnZXMgKi8NCj4gQEAgLTE2NDAsMzcgKzE3MjAsMjMgQEAgc3RhdGljIGludCBf
+X2luaXQgZGVmZXJyZWRfaW5pdF9tZW1tYXAodm9pZCAqZGF0YSkNCj4gIAkJcmV0dXJuIHRydWU7
+DQo+ICAJfQ0KPiAgDQo+IC0JZmlyc3RfaW5pdF9wZm4gPSBtYXgoem9uZS0+em9uZV9zdGFydF9w
+Zm4sIGZpcnN0X2RlZmVycmVkX3Bmbik7DQo+IC0NCj4gLQlpZiAoZmlyc3RfaW5pdF9wZm4gPj0g
+cGdkYXRfZW5kX3BmbihwZ2RhdCkpIHsNCj4gKwkvKiBJZiB0aGUgem9uZSBpcyBlbXB0eSBzb21l
+Ym9keSBlbHNlIG1heSBoYXZlIGNsZWFyZWQgb3V0IHRoZSB6b25lICovDQo+ICsJaWYgKCFkZWZl
+cnJlZF9pbml0X21lbV9wZm5fcmFuZ2VfaW5fem9uZSgmaSwgem9uZSwgJnNwZm4sICZlcGZuLA0K
+PiArCQkJCQkJIGZpcnN0X2RlZmVycmVkX3BmbikpIHsNCj4gIAkJcGdkYXRfcmVzaXplX3VubG9j
+ayhwZ2RhdCwgJmZsYWdzKTsNCj4gLQkJcmV0dXJuIGZhbHNlOw0KPiArCQlyZXR1cm4gdHJ1ZTsN
+Cj4gIAl9DQo+ICANCj4gLQlmb3JfZWFjaF9mcmVlX21lbV9yYW5nZShpLCBuaWQsIE1FTUJMT0NL
+X05PTkUsICZzcGEsICZlcGEsIE5VTEwpIHsNCj4gLQkJc3BmbiA9IG1heF90KHVuc2lnbmVkIGxv
+bmcsIGZpcnN0X2luaXRfcGZuLCBQRk5fVVAoc3BhKSk7DQo+IC0JCWVwZm4gPSBtaW5fdCh1bnNp
+Z25lZCBsb25nLCB6b25lX2VuZF9wZm4oem9uZSksIFBGTl9ET1dOKGVwYSkpOw0KPiAtDQo+IC0J
+CXdoaWxlIChzcGZuIDwgZXBmbiAmJiBucl9wYWdlcyA8IG5yX3BhZ2VzX25lZWRlZCkgew0KPiAt
+CQkJdCA9IEFMSUdOKHNwZm4gKyBQQUdFU19QRVJfU0VDVElPTiwgUEFHRVNfUEVSX1NFQ1RJT04p
+Ow0KPiAtCQkJZmlyc3RfZGVmZXJyZWRfcGZuID0gbWluKHQsIGVwZm4pOw0KPiAtCQkJbnJfcGFn
+ZXMgKz0gZGVmZXJyZWRfaW5pdF9wYWdlcyh6b25lLCBzcGZuLA0KPiAtCQkJCQkJCWZpcnN0X2Rl
+ZmVycmVkX3Bmbik7DQo+IC0JCQlzcGZuID0gZmlyc3RfZGVmZXJyZWRfcGZuOw0KPiAtCQl9DQo+
+IC0NCj4gLQkJaWYgKG5yX3BhZ2VzID49IG5yX3BhZ2VzX25lZWRlZCkNCj4gLQkJCWJyZWFrOw0K
+PiArCS8qDQo+ICsJICogSW5pdGlhbGl6ZSBhbmQgZnJlZSBwYWdlcyBpbiBNQVhfT1JERVIgc2l6
+ZWQgaW5jcmVtZW50cyBzbw0KPiArCSAqIHRoYXQgd2UgY2FuIGF2b2lkIGludHJvZHVjaW5nIGFu
+eSBpc3N1ZXMgd2l0aCB0aGUgYnVkZHkNCj4gKwkgKiBhbGxvY2F0b3IuDQo+ICsJICovDQo+ICsJ
+d2hpbGUgKHNwZm4gPCBlcGZuICYmIG5yX3BhZ2VzIDwgbnJfcGFnZXNfbmVlZGVkKSB7DQo+ICsJ
+CW5yX3BhZ2VzICs9IGRlZmVycmVkX2luaXRfbWF4b3JkZXIoJmksIHpvbmUsICZzcGZuLCAmZXBm
+bik7DQo+ICsJCWZpcnN0X2RlZmVycmVkX3BmbiA9IHNwZm47DQo+ICAJfQ0KPiAgDQo+IC0JZm9y
+X2VhY2hfZnJlZV9tZW1fcmFuZ2UoaSwgbmlkLCBNRU1CTE9DS19OT05FLCAmc3BhLCAmZXBhLCBO
+VUxMKSB7DQo+IC0JCXNwZm4gPSBtYXhfdCh1bnNpZ25lZCBsb25nLCBmaXJzdF9pbml0X3Bmbiwg
+UEZOX1VQKHNwYSkpOw0KPiAtCQllcGZuID0gbWluX3QodW5zaWduZWQgbG9uZywgZmlyc3RfZGVm
+ZXJyZWRfcGZuLCBQRk5fRE9XTihlcGEpKTsNCj4gLQkJZGVmZXJyZWRfZnJlZV9wYWdlcyhzcGZu
+LCBlcGZuKTsNCj4gLQ0KPiAtCQlpZiAoZmlyc3RfZGVmZXJyZWRfcGZuID09IGVwZm4pDQo+IC0J
+CQlicmVhazsNCj4gLQl9DQo+ICAJcGdkYXQtPmZpcnN0X2RlZmVycmVkX3BmbiA9IGZpcnN0X2Rl
+ZmVycmVkX3BmbjsNCj4gIAlwZ2RhdF9yZXNpemVfdW5sb2NrKHBnZGF0LCAmZmxhZ3MpOw0KPiAg
+DQo+IA==
