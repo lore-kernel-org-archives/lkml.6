@@ -2,207 +2,144 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,UPPERCASE_75_100 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BF95C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:50:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31577C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:53:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43F852054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:50:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43F852054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-mips.org
+	by mail.kernel.org (Postfix) with ESMTP id BE9892064C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 20:53:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="Z5StMnW+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE9892064C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730154AbeKAFuj (ORCPT
+        id S1730159AbeKAFw5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 01:50:39 -0400
-Received: from eddie.linux-mips.org ([148.251.95.138]:42562 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729361AbeKAFuj (ORCPT
+        Thu, 1 Nov 2018 01:52:57 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36499 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729921AbeKAFw5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 01:50:39 -0400
-Received: (from localhost user: 'macro', uid#1010) by eddie.linux-mips.org
-        with ESMTP id S23991065AbeJaUuxgY2vV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 21:50:53 +0100
-Date:   Wed, 31 Oct 2018 20:50:53 +0000 (GMT)
-From:   "Maciej W. Rozycki" <macro@linux-mips.org>
-To:     Christoph Hellwig <hch@lst.de>
-cc:     iommu@lists.linux-foundation.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/6] dma-mapping: merge direct and noncoherent ops
-In-Reply-To: <20181031203206.GA28337@lst.de>
-Message-ID: <alpine.LFD.2.21.1810312043250.20378@eddie.linux-mips.org>
-References: <20180914095808.22202-1-hch@lst.de> <20180914095808.22202-5-hch@lst.de> <alpine.LFD.2.21.1810311414200.20378@eddie.linux-mips.org> <alpine.LFD.2.21.1810311559590.20378@eddie.linux-mips.org> <20181031203206.GA28337@lst.de>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="-74151329-1430260507-1541019053=:20378"
+        Thu, 1 Nov 2018 01:52:57 -0400
+Received: by mail-pg1-f195.google.com with SMTP id z17-v6so7948587pgv.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 13:53:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=T43vL0uiUWLMgJnYgtALRl2GDqUTpSZ128iFcN3LwTs=;
+        b=Z5StMnW+uJcea8edu3fwrTJ39z9eAu2Wk0XnPj3naZRd/dpQStWTMG2aH3xR2E977+
+         g3jPQNe8t15BIwnEk6zsenrJAHJ5fVfvGcP8bbAFG26PkqrtMCXeU8mkxNuXopND8mGm
+         nraD9oeGDKCfAk55EeFAyt1Yv2LFza0K+u9C6T70GCYTmEbtHK3Xtxp8VYAlFirFewOF
+         Oaz2TNIuw2vm2KyHQgEliv+Py8fS7jRDvYapkil5b6XOIHBGu+jJx0IAjE9DSiUbYcIh
+         f7OtNQoy+r2G1i3i1cmSBnLvEDSiSdRf0dDLy2+zjSfLGHjSVWRvdF4Py7YEcYLU3sdd
+         UyhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=T43vL0uiUWLMgJnYgtALRl2GDqUTpSZ128iFcN3LwTs=;
+        b=eA7rIuHgGMpvEzlFKqfakMQq3AyN/sofeI5x7/Ggor4Brf6n4DzuTOgreInp0CKFyR
+         Z67i+w6vJXodNG1FDLqzFM4mXjqljY29a3nYIlYC7Z7Z4cGC715Rp+ObIiJVoMg76lHL
+         SVywPdHNa7ayacsriSEjhAZaMJDZ7JgmD+Sa5i1VK/mnyZJtXY8URRJABGlQXyeL7GYV
+         jIP80HhUNkSUtdvRyTjqjXYQlYQG8joM+1LVjSmDLdID19fkeFZ5Wq7rupgADzy7IITX
+         ZGIcsLw3Qc22jUZOAENN2ZNT+UAKVXMqH5WgIRgxk60B+nzQmkDpcCC2RgusBBSISaWQ
+         Jtnw==
+X-Gm-Message-State: AGRZ1gKwEQTb3YLQs42DkL8sv989j1DQytFPDUljjJcewjzhxRXR2LU5
+        WAmrSC4W3wjqyd7uT+GmMANhug==
+X-Google-Smtp-Source: AJdET5chQ7Cp9Q+mzYtWkZ5r8Db3lPrfyTqiRzxCHmrtmu2KH6bMrEOo4RqqGRkjBz1wz8+iKI4riQ==
+X-Received: by 2002:a63:5664:: with SMTP id g36mr4522707pgm.313.1541019194338;
+        Wed, 31 Oct 2018 13:53:14 -0700 (PDT)
+Received: from ?IPv6:2600:1010:b021:f9e6:a9a5:9545:35ee:19c8? ([2600:1010:b021:f9e6:a9a5:9545:35ee:19c8])
+        by smtp.gmail.com with ESMTPSA id t26-v6sm37407658pfa.158.2018.10.31.13.53.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Oct 2018 13:53:13 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH 10/17] prmem: documentation
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16A404)
+In-Reply-To: <34204E6C-53C2-427D-A3B2-3D2E091D3E4B@amacapital.net>
+Date:   Wed, 31 Oct 2018 13:53:11 -0700
+Cc:     Igor Stoppa <igor.stoppa@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Kees Cook <keescook@chromium.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <83ED6142-A370-42FD-BBA4-95E5C3F998B3@amacapital.net>
+References: <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com> <20181030152641.GE8177@hirez.programming.kicks-ass.net> <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com> <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net> <20181030175814.GB10491@bombadil.infradead.org> <20181030182841.GE7343@cisco> <20181030192021.GC10491@bombadil.infradead.org> <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com> <BAA65A07-F3AF-4209-9D18-7075CEF11EE8@amacapital.net> <2cfb3835-0c18-b3fb-1722-5d693ae0ecd2@gmail.com> <20181031101124.GO744@hirez.programming.kicks-ass.net> <34204E6C-53C2-427D-A3B2-3D2E091D3E4B@amacapital.net>
+To:     Peter Zijlstra <peterz@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
 
----74151329-1430260507-1541019053=:20378
-Content-Type: text/plain; charset=US-ASCII
 
-On Wed, 31 Oct 2018, Christoph Hellwig wrote:
+> On Oct 31, 2018, at 1:38 PM, Andy Lutomirski <luto@amacapital.net> wrote:
+>=20
+>=20
+>=20
+>>> On Oct 31, 2018, at 3:11 AM, Peter Zijlstra <peterz@infradead.org> wrote=
+:
+>>>=20
+>>> On Wed, Oct 31, 2018 at 12:15:46AM +0200, Igor Stoppa wrote:
+>>> On 30/10/2018 23:02, Andy Lutomirski wrote:
+>>=20
+>>>> But I dislike allowing regular writes in the protected region. We
+>>>> really only need four write primitives:
+>>>>=20
+>>>> 1. Just write one value.  Call at any time (except NMI).
+>>>>=20
+>>>> 2. Just copy some bytes. Same as (1) but any number of bytes.
+>>>>=20
+>>>> 3,4: Same as 1 and 2 but must be called inside a special rare write
+>>>> region. This is purely an optimization.
+>>>=20
+>>> Atomic? RCU?
+>>=20
+>> RCU can be done, that's not really a problem. Atomics otoh are a
+>> problem. Having pointers makes them just work.
+>>=20
+>> Andy; I understand your reason for not wanting them, but I really don't
+>> want to duplicate everything. Is there something we can do with static
+>> analysis to make you more comfortable with the pointer thing?
+>=20
+> I=E2=80=99m sure we could do something with static analysis, but I think s=
+eeing a real use case where all this fanciness makes sense would be good.
+>=20
+> And I don=E2=80=99t know if s390 *can* have an efficient implementation th=
+at uses pointers. OTOH they have all kinds of magic stuff, so who knows?
 
-> Can you send me your .config?
+Also, if we=E2=80=99re using a hypervisor, then there are a couple ways it c=
+ould be done:
 
- Sure, attached.
+1. VMFUNC.  Pointers work fine.  This is stronger than any amount of CR3 tri=
+ckery because it can=E2=80=99t be defeated by page table attacks.
 
- This is an updated 4.19 defconfig I was going to submit as I tripped over 
-this problem, so just rename it to .config and use `make olddefconfig' to 
-regenerate a full version.
+2. A hypercall to do the write. No pointers.
 
- Thanks,
-
-  Maciej
----74151329-1430260507-1541019053=:20378
-Content-Type: text/plain; charset=US-ASCII; name=decstation_defconfig
-Content-Transfer-Encoding: BASE64
-Content-ID: <alpine.LFD.2.21.1810312050530.20378@eddie.linux-mips.org>
-Content-Description: 
-Content-Disposition: attachment; filename=decstation_defconfig
-
-Q09ORklHX1NZU1ZJUEM9eQ0KQ09ORklHX1BPU0lYX01RVUVVRT15DQpDT05G
-SUdfSElHSF9SRVNfVElNRVJTPXkNCkNPTkZJR19CU0RfUFJPQ0VTU19BQ0NU
-PXkNCkNPTkZJR19CU0RfUFJPQ0VTU19BQ0NUX1YzPXkNCkNPTkZJR19MT0df
-QlVGX1NISUZUPTE1DQpDT05GSUdfRVhQRVJUPXkNCiMgQ09ORklHX1NHRVRN
-QVNLX1NZU0NBTEwgaXMgbm90IHNldA0KIyBDT05GSUdfU1lTRlNfU1lTQ0FM
-TCBpcyBub3Qgc2V0DQpDT05GSUdfQlBGX1NZU0NBTEw9eQ0KIyBDT05GSUdf
-Q09NUEFUX0JSSyBpcyBub3Qgc2V0DQpDT05GSUdfU0xBQj15DQpDT05GSUdf
-TUFDSF9ERUNTVEFUSU9OPXkNCkNPTkZJR19DUFVfUjMwMDA9eQ0KQ09ORklH
-X1RDPXkNCiMgQ09ORklHX1NVU1BFTkQgaXMgbm90IHNldA0KQ09ORklHX01P
-RFVMRVM9eQ0KQ09ORklHX01PRFVMRV9VTkxPQUQ9eQ0KQ09ORklHX01PRFVM
-RV9TUkNWRVJTSU9OX0FMTD15DQojIENPTkZJR19MQkRBRiBpcyBub3Qgc2V0
-DQpDT05GSUdfUEFSVElUSU9OX0FEVkFOQ0VEPXkNCkNPTkZJR19PU0ZfUEFS
-VElUSU9OPXkNCiMgQ09ORklHX0VGSV9QQVJUSVRJT04gaXMgbm90IHNldA0K
-Q09ORklHX05FVD15DQpDT05GSUdfUEFDS0VUPXkNCkNPTkZJR19VTklYPXkN
-CkNPTkZJR19ORVRfS0VZPW0NCkNPTkZJR19ORVRfS0VZX01JR1JBVEU9eQ0K
-Q09ORklHX0lORVQ9eQ0KQ09ORklHX0lQX01VTFRJQ0FTVD15DQpDT05GSUdf
-SVBfUE5QPXkNCkNPTkZJR19JUF9QTlBfQk9PVFA9eQ0KQ09ORklHX1NZTl9D
-T09LSUVTPXkNCkNPTkZJR19JTkVUX0FIPW0NCkNPTkZJR19JTkVUX0VTUD1t
-DQpDT05GSUdfSU5FVF9JUENPTVA9bQ0KQ09ORklHX0lORVRfWEZSTV9NT0RF
-X1RSQU5TUE9SVD1tDQpDT05GSUdfSU5FVF9YRlJNX01PREVfVFVOTkVMPW0N
-CkNPTkZJR19JTkVUX1hGUk1fTU9ERV9CRUVUPW0NCkNPTkZJR19UQ1BfTUQ1
-U0lHPXkNCkNPTkZJR19JUFY2X1JPVVRFUl9QUkVGPXkNCkNPTkZJR19JUFY2
-X1JPVVRFX0lORk89eQ0KQ09ORklHX0lORVQ2X0FIPW0NCkNPTkZJR19JTkVU
-Nl9FU1A9bQ0KQ09ORklHX0lORVQ2X0lQQ09NUD1tDQpDT05GSUdfSVBWNl9N
-SVA2PW0NCkNPTkZJR19JTkVUNl9YRlJNX01PREVfUk9VVEVPUFRJTUlaQVRJ
-T049bQ0KQ09ORklHX0lQVjZfTVVMVElQTEVfVEFCTEVTPXkNCkNPTkZJR19J
-UFY2X1NVQlRSRUVTPXkNCkNPTkZJR19ORVRXT1JLX1NFQ01BUks9eQ0KQ09O
-RklHX0lQX1NDVFA9bQ0KQ09ORklHX1ZMQU5fODAyMVE9bQ0KQ09ORklHX0RF
-Q05FVD1tDQpDT05GSUdfREVDTkVUX1JPVVRFUj15DQojIENPTkZJR19XSVJF
-TEVTUyBpcyBub3Qgc2V0DQojIENPTkZJR19VRVZFTlRfSEVMUEVSIGlzIG5v
-dCBzZXQNCiMgQ09ORklHX0ZXX0xPQURFUiBpcyBub3Qgc2V0DQojIENPTkZJ
-R19BTExPV19ERVZfQ09SRURVTVAgaXMgbm90IHNldA0KQ09ORklHX01URD1t
-DQpDT05GSUdfTVREX0JMT0NLPW0NCkNPTkZJR19NVERfQkxPQ0tfUk89bQ0K
-Q09ORklHX01URF9NUzAyTlY9bQ0KQ09ORklHX0JMS19ERVZfTE9PUD1tDQpD
-T05GSUdfQkxLX0RFVl9SQU09bQ0KQ09ORklHX1NDU0k9eQ0KQ09ORklHX0JM
-S19ERVZfU0Q9eQ0KQ09ORklHX0NIUl9ERVZfU1Q9bQ0KQ09ORklHX0JMS19E
-RVZfU1I9bQ0KQ09ORklHX0NIUl9ERVZfU0c9bQ0KQ09ORklHX1NDU0lfQ09O
-U1RBTlRTPXkNCkNPTkZJR19TQ1NJX1NQSV9BVFRSUz1tDQpDT05GSUdfSVND
-U0lfVENQPW0NCkNPTkZJR19ORVRERVZJQ0VTPXkNCiMgQ09ORklHX05FVF9W
-RU5ET1JfQUxBQ1JJVEVDSCBpcyBub3Qgc2V0DQojIENPTkZJR19ORVRfVkVO
-RE9SX0FNQVpPTiBpcyBub3Qgc2V0DQpDT05GSUdfREVDTEFOQ0U9eQ0KIyBD
-T05GSUdfTkVUX1ZFTkRPUl9BUVVBTlRJQSBpcyBub3Qgc2V0DQojIENPTkZJ
-R19ORVRfVkVORE9SX0FSQyBpcyBub3Qgc2V0DQojIENPTkZJR19ORVRfVkVO
-RE9SX0FVUk9SQSBpcyBub3Qgc2V0DQojIENPTkZJR19ORVRfVkVORE9SX0JS
-T0FEQ09NIGlzIG5vdCBzZXQNCiMgQ09ORklHX05FVF9WRU5ET1JfQ0FERU5D
-RSBpcyBub3Qgc2V0DQojIENPTkZJR19ORVRfVkVORE9SX0NBVklVTSBpcyBu
-b3Qgc2V0DQojIENPTkZJR19ORVRfVkVORE9SX0NPUlRJTkEgaXMgbm90IHNl
-dA0KIyBDT05GSUdfTkVUX1ZFTkRPUl9FWkNISVAgaXMgbm90IHNldA0KIyBD
-T05GSUdfTkVUX1ZFTkRPUl9IVUFXRUkgaXMgbm90IHNldA0KIyBDT05GSUdf
-TkVUX1ZFTkRPUl9JTlRFTCBpcyBub3Qgc2V0DQojIENPTkZJR19ORVRfVkVO
-RE9SX01BUlZFTEwgaXMgbm90IHNldA0KIyBDT05GSUdfTkVUX1ZFTkRPUl9N
-SUNSRUwgaXMgbm90IHNldA0KIyBDT05GSUdfTkVUX1ZFTkRPUl9NSUNST1NF
-TUkgaXMgbm90IHNldA0KIyBDT05GSUdfTkVUX1ZFTkRPUl9OQVRTRU1JIGlz
-IG5vdCBzZXQNCiMgQ09ORklHX05FVF9WRU5ET1JfTkVUUk9OT01FIGlzIG5v
-dCBzZXQNCiMgQ09ORklHX05FVF9WRU5ET1JfTkkgaXMgbm90IHNldA0KIyBD
-T05GSUdfTkVUX1ZFTkRPUl9RVUFMQ09NTSBpcyBub3Qgc2V0DQojIENPTkZJ
-R19ORVRfVkVORE9SX1JFTkVTQVMgaXMgbm90IHNldA0KIyBDT05GSUdfTkVU
-X1ZFTkRPUl9ST0NLRVIgaXMgbm90IHNldA0KIyBDT05GSUdfTkVUX1ZFTkRP
-Ul9TQU1TVU5HIGlzIG5vdCBzZXQNCiMgQ09ORklHX05FVF9WRU5ET1JfU0VF
-USBpcyBub3Qgc2V0DQojIENPTkZJR19ORVRfVkVORE9SX1NPTEFSRkxBUkUg
-aXMgbm90IHNldA0KIyBDT05GSUdfTkVUX1ZFTkRPUl9TTVNDIGlzIG5vdCBz
-ZXQNCiMgQ09ORklHX05FVF9WRU5ET1JfU09DSU9ORVhUIGlzIG5vdCBzZXQN
-CiMgQ09ORklHX05FVF9WRU5ET1JfU1RNSUNSTyBpcyBub3Qgc2V0DQojIENP
-TkZJR19ORVRfVkVORE9SX1NZTk9QU1lTIGlzIG5vdCBzZXQNCiMgQ09ORklH
-X05FVF9WRU5ET1JfVklBIGlzIG5vdCBzZXQNCiMgQ09ORklHX05FVF9WRU5E
-T1JfV0laTkVUIGlzIG5vdCBzZXQNCiMgQ09ORklHX05FVF9WRU5ET1JfWElM
-SU5YIGlzIG5vdCBzZXQNCkNPTkZJR19GRERJPXkNCkNPTkZJR19ERUZaQT15
-DQpDT05GSUdfREVGWFg9eQ0KIyBDT05GSUdfV0xBTiBpcyBub3Qgc2V0DQoj
-IENPTkZJR19LRVlCT0FSRF9BVEtCRCBpcyBub3Qgc2V0DQpDT05GSUdfS0VZ
-Qk9BUkRfTEtLQkQ9eQ0KIyBDT05GSUdfTU9VU0VfUFMyIGlzIG5vdCBzZXQN
-CkNPTkZJR19NT1VTRV9WU1hYWEFBPXkNCiMgQ09ORklHX0hXX1JBTkRPTSBp
-cyBub3Qgc2V0DQojIENPTkZJR19IV01PTiBpcyBub3Qgc2V0DQpDT05GSUdf
-RkI9eQ0KQ09ORklHX0ZCX1RHQT15DQpDT05GSUdfRkJfUE1BR19BQT15DQpD
-T05GSUdfRkJfUE1BR19CQT15DQpDT05GSUdfRkJfUE1BR0JfQj15DQojIENP
-TkZJR19WR0FfQ09OU09MRSBpcyBub3Qgc2V0DQpDT05GSUdfRFVNTVlfQ09O
-U09MRV9DT0xVTU5TPTE2MA0KQ09ORklHX0RVTU1ZX0NPTlNPTEVfUk9XUz02
-NA0KQ09ORklHX0ZSQU1FQlVGRkVSX0NPTlNPTEU9eQ0KQ09ORklHX0ZSQU1F
-QlVGRkVSX0NPTlNPTEVfREVURUNUX1BSSU1BUlk9eQ0KQ09ORklHX0xPR089
-eQ0KIyBDT05GSUdfTE9HT19MSU5VWF9WR0ExNiBpcyBub3Qgc2V0DQojIENP
-TkZJR19MT0dPX0xJTlVYX0NMVVQyMjQgaXMgbm90IHNldA0KIyBDT05GSUdf
-SElEIGlzIG5vdCBzZXQNCiMgQ09ORklHX1VTQl9TVVBQT1JUIGlzIG5vdCBz
-ZXQNCkNPTkZJR19SVENfQ0xBU1M9eQ0KQ09ORklHX1JUQ19JTlRGX0RFVl9V
-SUVfRU1VTD15DQpDT05GSUdfUlRDX0RSVl9DTU9TPXkNCiMgQ09ORklHX01J
-UFNfUExBVEZPUk1fREVWSUNFUyBpcyBub3Qgc2V0DQojIENPTkZJR19JT01N
-VV9TVVBQT1JUIGlzIG5vdCBzZXQNCkNPTkZJR19FWFQyX0ZTPXkNCkNPTkZJ
-R19FWFQyX0ZTX1hBVFRSPXkNCkNPTkZJR19FWFQyX0ZTX1BPU0lYX0FDTD15
-DQpDT05GSUdfRVhUMl9GU19TRUNVUklUWT15DQpDT05GSUdfRVhUM19GUz15
-DQpDT05GSUdfRVhUM19GU19QT1NJWF9BQ0w9eQ0KQ09ORklHX0VYVDNfRlNf
-U0VDVVJJVFk9eQ0KIyBDT05GSUdfTUFOREFUT1JZX0ZJTEVfTE9DS0lORyBp
-cyBub3Qgc2V0DQpDT05GSUdfSVNPOTY2MF9GUz15DQpDT05GSUdfSk9MSUVU
-PXkNCkNPTkZJR19QUk9DX0tDT1JFPXkNCkNPTkZJR19QUk9DX0NISUxEUkVO
-PXkNCkNPTkZJR19UTVBGUz15DQpDT05GSUdfVE1QRlNfUE9TSVhfQUNMPXkN
-CkNPTkZJR19DT05GSUdGU19GUz15DQpDT05GSUdfVUZTX0ZTPXkNCkNPTkZJ
-R19VRlNfRlNfV1JJVEU9eQ0KQ09ORklHX05GU19GUz15DQpDT05GSUdfTkZT
-X1YzX0FDTD15DQpDT05GSUdfTkZTX1NXQVA9eQ0KQ09ORklHX1JPT1RfTkZT
-PXkNCkNPTkZJR19ORlNEPW0NCkNPTkZJR19ORlNEX1YzPXkNCkNPTkZJR19O
-RlNEX1YzX0FDTD15DQojIENPTkZJR19SUENTRUNfR1NTX0tSQjUgaXMgbm90
-IHNldA0KQ09ORklHX05MU19JU084ODU5Xzg9bQ0KQ09ORklHX05MU19BU0NJ
-ST1tDQpDT05GSUdfTkxTX0lTTzg4NTlfMT1tDQpDT05GSUdfTkxTX0lTTzg4
-NTlfMj1tDQpDT05GSUdfTkxTX0lTTzg4NTlfMz1tDQpDT05GSUdfTkxTX0lT
-Tzg4NTlfND1tDQpDT05GSUdfTkxTX0lTTzg4NTlfNT1tDQpDT05GSUdfTkxT
-X0lTTzg4NTlfNj1tDQpDT05GSUdfTkxTX0lTTzg4NTlfNz1tDQpDT05GSUdf
-TkxTX0lTTzg4NTlfOT1tDQpDT05GSUdfTkxTX0lTTzg4NTlfMTM9bQ0KQ09O
-RklHX05MU19JU084ODU5XzE0PW0NCkNPTkZJR19OTFNfSVNPODg1OV8xNT1t
-DQpDT05GSUdfTkxTX1VURjg9bQ0KQ09ORklHX0NSWVBUT19SU0E9bQ0KQ09O
-RklHX0NSWVBUT19NQU5BR0VSPXkNCkNPTkZJR19DUllQVE9fQ0NNPW0NCkNP
-TkZJR19DUllQVE9fR0NNPW0NCkNPTkZJR19DUllQVE9fQ0hBQ0hBMjBQT0xZ
-MTMwNT1tDQpDT05GSUdfQ1JZUFRPX0NUUz1tDQpDT05GSUdfQ1JZUFRPX0xS
-Vz1tDQpDT05GSUdfQ1JZUFRPX1BDQkM9bQ0KQ09ORklHX0NSWVBUT19YVFM9
-bQ0KQ09ORklHX0NSWVBUT19LRVlXUkFQPW0NCkNPTkZJR19DUllQVE9fQ01B
-Qz1tDQpDT05GSUdfQ1JZUFRPX1hDQkM9bQ0KQ09ORklHX0NSWVBUT19WTUFD
-PW0NCkNPTkZJR19DUllQVE9fQ1JDMzI9bQ0KQ09ORklHX0NSWVBUT19DUkNU
-MTBESUY9bQ0KQ09ORklHX0NSWVBUT19NRDQ9bQ0KQ09ORklHX0NSWVBUT19N
-SUNIQUVMX01JQz1tDQpDT05GSUdfQ1JZUFRPX1JNRDEyOD1tDQpDT05GSUdf
-Q1JZUFRPX1JNRDE2MD1tDQpDT05GSUdfQ1JZUFRPX1JNRDI1Nj1tDQpDT05G
-SUdfQ1JZUFRPX1JNRDMyMD1tDQpDT05GSUdfQ1JZUFRPX1NIQTUxMj1tDQpD
-T05GSUdfQ1JZUFRPX1RHUjE5Mj1tDQpDT05GSUdfQ1JZUFRPX1dQNTEyPW0N
-CkNPTkZJR19DUllQVE9fQU5VQklTPW0NCkNPTkZJR19DUllQVE9fQVJDND1t
-DQpDT05GSUdfQ1JZUFRPX0JMT1dGSVNIPW0NCkNPTkZJR19DUllQVE9fQ0FN
-RUxMSUE9bQ0KQ09ORklHX0NSWVBUT19DQVNUNT1tDQpDT05GSUdfQ1JZUFRP
-X0NBU1Q2PW0NCkNPTkZJR19DUllQVE9fRkNSWVBUPW0NCkNPTkZJR19DUllQ
-VE9fS0hBWkFEPW0NCkNPTkZJR19DUllQVE9fU0FMU0EyMD1tDQpDT05GSUdf
-Q1JZUFRPX1NFRUQ9bQ0KQ09ORklHX0NSWVBUT19TRVJQRU5UPW0NCkNPTkZJ
-R19DUllQVE9fVEVBPW0NCkNPTkZJR19DUllQVE9fVFdPRklTSD1tDQpDT05G
-SUdfQ1JZUFRPX0xaTz1tDQpDT05GSUdfQ1JZUFRPXzg0Mj1tDQpDT05GSUdf
-Q1JZUFRPX0xaND1tDQpDT05GSUdfQ1JZUFRPX0xaNEhDPW0NCkNPTkZJR19D
-UllQVE9fQU5TSV9DUFJORz1tDQpDT05GSUdfQ1JZUFRPX0RSQkdfSEFTSD15
-DQpDT05GSUdfQ1JZUFRPX0RSQkdfQ1RSPXkNCiMgQ09ORklHX0NSWVBUT19I
-VyBpcyBub3Qgc2V0DQpDT05GSUdfRlJBTUVfV0FSTj0yMDQ4DQpDT05GSUdf
-TUFHSUNfU1lTUlE9eQ0KIyBDT05GSUdfRlRSQUNFIGlzIG5vdCBzZXQNCg==
-
----74151329-1430260507-1541019053=:20378--
+Basically, I think that if we can get away without writable pointers, we get=
+ more flexibility and less need for fancy static analysis. If we do need poi=
+nters, then so be it.=
