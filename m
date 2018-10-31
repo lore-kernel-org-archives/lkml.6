@@ -2,61 +2,62 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F56C6786F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 03:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E93CC6786F
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 03:04:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20F5B20831
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 03:01:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20F5B20831
+	by mail.kernel.org (Postfix) with ESMTP id 322C420664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 03:04:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 322C420664
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728474AbeJaL5N (ORCPT
+        id S1728840AbeJaMBC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 07:57:13 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:34872 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726200AbeJaL5N (ORCPT
+        Wed, 31 Oct 2018 08:01:02 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:44031 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728157AbeJaMBB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 07:57:13 -0400
-Received: by mail-ed1-f66.google.com with SMTP id d6-v6so4260134edi.2;
-        Tue, 30 Oct 2018 20:01:07 -0700 (PDT)
+        Wed, 31 Oct 2018 08:01:01 -0400
+Received: by mail-ed1-f65.google.com with SMTP id y20-v6so12342982eds.10;
+        Tue, 30 Oct 2018 20:04:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=7xP8pxYWP6iRFybnCXDTz5/BYiWNIe9KaxPtSx1Ncz8=;
-        b=XLs6HEXV85Kd6xGquivdBQc6RntoLkAZuGLKQJbduFVzwLR9ynPfegieyI2IU6VwKl
-         dGhTHoEhbBwMgQa++Zflre1ozXO3kGAXvksHhAd6cw492WTwLVif8WyY0UGnqiNvUTmm
-         crG2dXs6K/aqMmRjw+7S+rKa2tBPgc5b+5d/3DxW6gdZ+Xkr7H5iUO2I9yrbb15/AiS0
-         O4InKUwIBqGjUQ71f205X+NIKHY5tEikzTTqJ9TajFOrTbUMG6gHHTFof34jFQ1fEGG8
-         6mPOZW8zr79103rj/ABu7Kg/DJN2CgW+kDt/xDDGuEYHbcPZfzbPfrWM14zacwstxlvw
-         RmRw==
-X-Gm-Message-State: AGRZ1gJYcGQpIOsW3LgxP7j4i5Rhq6fYITeNzkevWuCLRyqGOSX8UjXf
-        qmR0UR3u9bgTAwjn5wKb3axVRqmKGY8=
-X-Google-Smtp-Source: AJdET5ejc3KX6x8Ucb5y4f6x7rRxGTMui64LvND5KBcE0F6iRLJWJAkpHHMHKs4yAGfB1gi2ZKMp0w==
-X-Received: by 2002:a17:906:a35a:: with SMTP id bz26-v6mr454120ejb.98.1540954866238;
-        Tue, 30 Oct 2018 20:01:06 -0700 (PDT)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com. [209.85.128.44])
-        by smtp.gmail.com with ESMTPSA id x21-v6sm7589806eds.30.2018.10.30.20.01.04
+        bh=3kinJVyv/a2nqy6YbZQfjLuU2cHZLi482BYxu0jIYVQ=;
+        b=YObiSpJM2O9stl6PTj7V+z6KHpjETLpexjm8NwLgPrvgGjrb175VtUGXr09y3KFgLh
+         iEXUdkNApvEFSn9GcfTuhRHcG4clhJ3hcBs3NzcNc/22AaqBzqEFuwvq7GcKxiCBaTFd
+         qPdDrc83xO4pIGUuPnZYEkd5/NyMP4ukBtf3C9kwB7vFmYSqLHFodKfYZrBkwqCTowhA
+         UUILH3yqLqndfoA6jZvMPF7O9a/qJ6JLjdWL4QFc5KXdFLywabM1nQiVd7t5FM2kN3ov
+         qEH4VHUNFXTHw81ohclzDZm/V6fP6MOxtNdaoMJ+0BIBI2ufX1TqtV1G80lGd9m2yiwQ
+         madA==
+X-Gm-Message-State: AGRZ1gJOjwY2J7MWISbwNkLOnaEQ1AWkwminbhtthhyM6mIPN6ikta7t
+        qgFNsildhOFo1WflnGo6LF6RCZwhDr0=
+X-Google-Smtp-Source: AJdET5esK+WCgPZ9LalN07I3Pszyh6AvsOv9XIavu5NBO9T6xB3RcwyJP8FOBvVN/AzlJppM2UBO8g==
+X-Received: by 2002:a17:906:958c:: with SMTP id r12-v6mr471059ejx.125.1540955093877;
+        Tue, 30 Oct 2018 20:04:53 -0700 (PDT)
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com. [209.85.128.47])
+        by smtp.gmail.com with ESMTPSA id x15-v6sm8111131edm.26.2018.10.30.20.04.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 20:01:05 -0700 (PDT)
-Received: by mail-wm1-f44.google.com with SMTP id l2-v6so7647923wmh.3;
-        Tue, 30 Oct 2018 20:01:04 -0700 (PDT)
-X-Received: by 2002:a1c:1752:: with SMTP id 79-v6mr831954wmx.145.1540954864372;
- Tue, 30 Oct 2018 20:01:04 -0700 (PDT)
+        Tue, 30 Oct 2018 20:04:52 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id v24-v6so3831649wmh.3;
+        Tue, 30 Oct 2018 20:04:51 -0700 (PDT)
+X-Received: by 2002:a1c:9f01:: with SMTP id i1-v6mr841736wme.8.1540955091416;
+ Tue, 30 Oct 2018 20:04:51 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181023185330.10472-1-oskari@lemmela.net> <20181023185330.10472-4-oskari@lemmela.net>
-In-Reply-To: <20181023185330.10472-4-oskari@lemmela.net>
+References: <20181023185330.10472-1-oskari@lemmela.net> <20181023185330.10472-7-oskari@lemmela.net>
+In-Reply-To: <20181023185330.10472-7-oskari@lemmela.net>
 From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Wed, 31 Oct 2018 11:00:51 +0800
-X-Gmail-Original-Message-ID: <CAGb2v666Vn_GdFwT4MXfbD7Gb1UC+gwGdVhquKH09Ld_Q3QmtA@mail.gmail.com>
-Message-ID: <CAGb2v666Vn_GdFwT4MXfbD7Gb1UC+gwGdVhquKH09Ld_Q3QmtA@mail.gmail.com>
-Subject: Re: [PATCH v5 03/11] dt-bindings: gpio: gpio-axp209: add AXP803 GPIO bindings
+Date:   Wed, 31 Oct 2018 11:04:38 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64ZPHVcruMVhuo_SiFe-z0QsS-w7AT+_0zco7K36zp-8w@mail.gmail.com>
+Message-ID: <CAGb2v64ZPHVcruMVhuo_SiFe-z0QsS-w7AT+_0zco7K36zp-8w@mail.gmail.com>
+Subject: Re: [PATCH v5 06/11] arm64: dts: allwinner: axp803: add AC and
+ battery power supplies
 To:     oskari@lemmela.net
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Sebastian Reichel <sre@kernel.org>,
@@ -82,48 +83,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Wed, Oct 24, 2018 at 2:54 AM Oskari Lemmela <oskari@lemmela.net> wrote:
 >
-> The AXP803 GPIO is compatible with AXP813 GPIO, but add
-> specific compatible for it.
+> Parts of the AXP803 are compatible with their counterparts on the AXP813.
+> Add DT nodes ADC, GPIO, AC and battery power supplies.
 >
 > Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
-> ---
->  Documentation/devicetree/bindings/gpio/gpio-axp209.txt | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-axp209.txt b/Documentation/devicetree/bindings/gpio/gpio-axp209.txt
-> index fc42b2caa06d..5337a21d7bcf 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio-axp209.txt
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-axp209.txt
-> @@ -11,6 +11,7 @@ This driver employs the per-pin muxing pattern.
->  Required properties:
->  - compatible: Should be one of:
->         - "x-powers,axp209-gpio"
-> +       - "x-powers,axp803-gpio"
->         - "x-powers,axp813-gpio"
->  - #gpio-cells: Should be two. The first cell is the pin number and the
->    second is the GPIO flags.
-> @@ -67,6 +68,7 @@ GPIO0 |       gpio_in, gpio_out, ldo, adc
->  GPIO1  |       gpio_in, gpio_out, ldo, adc
->  GPIO2  |       gpio_in, gpio_out
->
-> +axp803
->  axp813
->  ------
->  GPIO   |       Functions
-> --
+> Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
+> Tested-by: Vasily Khoruzhick <anarsoul@gmail.com>
 
-As mentioned in my reply to the cover letter, this patch isn't needed.
-
-We ask people to add model-specific compatibles in the device tree
-in case the hardware turns out not to be so compatible with the old
-hardware we thought it was compatible with. With the model-specific
-compatible in place, we have a way out. Without it, we'd have to ask
-everyone to update their device trees, which annoys some people who'd
-like to have some sort of backward compatibility.
-
-If the model-specific + fallback compatibles combination was to be
-listed, the line would include both compatibles. But we're not doing
-that for Allwinner stuff. As mentioned it is there just in case. The
-best outcome is we don't care and don't need to use them.
-
-ChenYu
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
