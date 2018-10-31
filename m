@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11CF2ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 13:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E896ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 13:24:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C727D2054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 13:24:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F6922054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 13:24:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Kf8+c6Q1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C727D2054F
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ePaZ39gZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F6922054F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729435AbeJaWWv (ORCPT
+        id S1729449AbeJaWW4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 18:22:51 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40025 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729271AbeJaWWv (ORCPT
+        Wed, 31 Oct 2018 18:22:56 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33896 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729271AbeJaWWz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 18:22:51 -0400
-Received: by mail-wm1-f65.google.com with SMTP id b203-v6so14557973wme.5
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 06:24:49 -0700 (PDT)
+        Wed, 31 Oct 2018 18:22:55 -0400
+Received: by mail-wr1-f65.google.com with SMTP id j26-v6so2306011wre.1
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 06:24:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=broadcom.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ejdq2iAILhXuBUzBm5b1+5FdxwkTFXYLi2UC8hcWNRQ=;
-        b=Kf8+c6Q102OvZvnTwjj50CdT9IfffMtzPGIY+oCBNs2T1u3rtVgD4lq0peAaDuCQpH
-         P+Mvx8ob870aZX2EJaWLvFjmB9mKWCVRPnd28fVb1yDXiS+Uc/PP1WSKsxIGhotmrn/e
-         d6kwOY6WBHxlc02dhOSMPvZtEFUNOZBSLyadk=
+        bh=Qx5wcL5y6HZkLAvJCMEMw3jq+pGbXjabHVOJwCwdMfo=;
+        b=ePaZ39gZEziy4naiU5F8I3+fFZtN9OgqfIQ6hZOhMg2XxyIbwSqdMGheKPUU8QWyH8
+         Xmn1OhqI5yfPKoH8ExpTIF+MDilcTDPli00FUCX+FrgMmkwBShqGwysHarBFFpEJrMsw
+         T4y0DMuF0GMo3qn61KCDE0dS7++ISjmqGmHjg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ejdq2iAILhXuBUzBm5b1+5FdxwkTFXYLi2UC8hcWNRQ=;
-        b=MuEjFp3ddV5F07IAuqPj+fG4TpLCNSRHoxkZVBSk9Kck36J5NLw4wuwSOtb2HxHkkG
-         7L31EYhJAUHmatAOYz5Y15T/DdzXLjNBbppOqKd1in4h5fRC0bKuVKxEoH+t3A9yl/BY
-         UpP42Wn/aVI5/XbSNQ01xKLzs24uIwmQwpyFjNjD99E9agDitz3OEmGPhBqWhsUlEcGc
-         aYumpFIPT6wJjEYOvl8QezZgSvSJ0xDKjF60Jzm+KASwbtO6TYDHzGhwLDhTPr/LECbb
-         DDhsrNscxp8ut4r3RpVo5zbMyTap2f47C2F+cYueXHhjO3GCn7Hv121cAmZpFwAhvto4
-         4DBw==
-X-Gm-Message-State: AGRZ1gIpSSLHdh4YZjolstpatp+ow9BktYsLBDrhGTlZYT1h53AHPhDX
-        Gg2Ti92i8hqFNWNro92/WTT+UQ==
-X-Google-Smtp-Source: AJdET5cgS67HPw9NbceOniS8Yv9iCAHa90PIgYODhS8OKx+Wh7VgKCGjle4Bg3NnCTTQnsXfOlr4RQ==
-X-Received: by 2002:a1c:4601:: with SMTP id t1-v6mr2336964wma.102.1540992288664;
-        Wed, 31 Oct 2018 06:24:48 -0700 (PDT)
+        bh=Qx5wcL5y6HZkLAvJCMEMw3jq+pGbXjabHVOJwCwdMfo=;
+        b=bwsrEf6smvxf3L/EfUJf1EAx8Yu3VbtTb06VowsAIucjFvDXO/OAwYikuGDHcWhcgn
+         DZs6UYhK7+bPjp0s5NNVaB/htsiqZHY++rE3SKAwubIf8P+9oiWtzvPU+Hin3Oxww8PO
+         8PtnhmYp4DaeIMyyl1/XESkit468a6Zi44Sj/OyZ8wRebSMprrcK3v+LDWzJas+ZJElf
+         JAC5A/la5cL9/nGLQf0KJ3CNxPQncUoDiyaSiCSNHjw65idcbx+QvGfjEiqjoMM7ALn7
+         J8I3t3H1YFRn8rIOXwg7gk8rOwDNqSRHWKfl6BcqyZsc5PgeEoz2/fRjxJTtWT6n6HgV
+         t1Fg==
+X-Gm-Message-State: AGRZ1gL58N8g/S7uq2hlh+gG3aa/HK9FdClhDGLpddzH/i/hKo3Yt6rA
+        QdS3h6RIb7vFQCuETMmjLA84tg==
+X-Google-Smtp-Source: AJdET5fkcBk69DafsE8iWeJhF7PKWDGuVmKzQ+gM9OmwaoWJMB0QpMXnEo+0qv5ugnN1wppEM7tHKg==
+X-Received: by 2002:adf:fc8b:: with SMTP id g11-v6mr2738878wrr.78.1540992292440;
+        Wed, 31 Oct 2018 06:24:52 -0700 (PDT)
 Received: from dhcp-10-123-74-106.dhcp.broadcom.net ([192.19.234.250])
-        by smtp.gmail.com with ESMTPSA id r16-v6sm25202614wrv.21.2018.10.31.06.24.45
+        by smtp.gmail.com with ESMTPSA id r16-v6sm25202614wrv.21.2018.10.31.06.24.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 06:24:48 -0700 (PDT)
+        Wed, 31 Oct 2018 06:24:51 -0700 (PDT)
 From:   Suganath Prabu <suganath-prabu.subramani@broadcom.com>
 To:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Sathya.Prakash@broadcom.com, sreekanth.reddy@broadcom.com,
         Suganath Prabu <suganath-prabu.subramani@broadcom.com>
-Subject: [PATCH v7 7/8] mpt3sas: Fix driver modifying persistent data in Manufacturing page11
-Date:   Wed, 31 Oct 2018 18:53:38 +0530
-Message-Id: <1540992219-20291-8-git-send-email-suganath-prabu.subramani@broadcom.com>
+Subject: [PATCH v7 8/8] mpt3sas: Bump driver version to 27.100.00.00.
+Date:   Wed, 31 Oct 2018 18:53:39 +0530
+Message-Id: <1540992219-20291-9-git-send-email-suganath-prabu.subramani@broadcom.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1540992219-20291-1-git-send-email-suganath-prabu.subramani@broadcom.com>
 References: <1540992219-20291-1-git-send-email-suganath-prabu.subramani@broadcom.com>
@@ -70,33 +70,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently driver is modifying both current & NVRAM/persistent data
-in Manufacturing page11. Driver should change only current copy of
-Manufacturing page11. It should not modify the persistent data.
-
-So removed the section of code where driver is modifying
-the persistent data of Manufacturing page11.
+Modify driver version to 27.100.00.00
+(which is equivalent to PH8 OOB driver)
 
 Signed-off-by: Suganath Prabu <suganath-prabu.subramani@broadcom.com>
 ---
- drivers/scsi/mpt3sas/mpt3sas_config.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/scsi/mpt3sas/mpt3sas_base.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_config.c b/drivers/scsi/mpt3sas/mpt3sas_config.c
-index 257b66f..8516713 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_config.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_config.c
-@@ -658,10 +658,6 @@ mpt3sas_config_set_manufacturing_pg11(struct MPT3SAS_ADAPTER *ioc,
- 	r = _config_request(ioc, &mpi_request, mpi_reply,
- 	    MPT3_CONFIG_PAGE_DEFAULT_TIMEOUT, config_page,
- 	    sizeof(*config_page));
--	mpi_request.Action = MPI2_CONFIG_ACTION_PAGE_WRITE_NVRAM;
--	r = _config_request(ioc, &mpi_request, mpi_reply,
--	    MPT3_CONFIG_PAGE_DEFAULT_TIMEOUT, config_page,
--	    sizeof(*config_page));
-  out:
- 	return r;
- }
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.h b/drivers/scsi/mpt3sas/mpt3sas_base.h
+index 4e532b0..6922c3b 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.h
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.h
+@@ -74,8 +74,8 @@
+ #define MPT3SAS_DRIVER_NAME		"mpt3sas"
+ #define MPT3SAS_AUTHOR "Avago Technologies <MPT-FusionLinux.pdl@avagotech.com>"
+ #define MPT3SAS_DESCRIPTION	"LSI MPT Fusion SAS 3.0 Device Driver"
+-#define MPT3SAS_DRIVER_VERSION		"26.100.00.00"
+-#define MPT3SAS_MAJOR_VERSION		26
++#define MPT3SAS_DRIVER_VERSION		"27.100.00.00"
++#define MPT3SAS_MAJOR_VERSION		27
+ #define MPT3SAS_MINOR_VERSION		100
+ #define MPT3SAS_BUILD_VERSION		0
+ #define MPT3SAS_RELEASE_VERSION	00
 -- 
 1.8.3.1
 
