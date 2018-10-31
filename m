@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A549ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:26:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E95BC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:26:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D9CB20657
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:26:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D9CB20657
+	by mail.kernel.org (Postfix) with ESMTP id E3EAC20657
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:26:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3EAC20657
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730299AbeKADZ2 (ORCPT
+        id S1730313AbeKADZe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 23:25:28 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:56255 "EHLO
+        Wed, 31 Oct 2018 23:25:34 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:56246 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730262AbeKADZ1 (ORCPT
+        with ESMTP id S1729950AbeKADZ1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 31 Oct 2018 23:25:27 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1gHvC3-0005de-Q2; Wed, 31 Oct 2018 19:26:15 +0100
-Message-Id: <20181031182253.479792883@linutronix.de>
+        id 1gHvC2-0005dR-Oo; Wed, 31 Oct 2018 19:26:15 +0100
+Message-Id: <20181031182253.385909804@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Wed, 31 Oct 2018 19:21:16 +0100
+Date:   Wed, 31 Oct 2018 19:21:15 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Ingo Molnar <mingo@kernel.org>,
@@ -47,12 +47,12 @@ Cc:     Ingo Molnar <mingo@kernel.org>,
         David Riley <davidriley@chromium.org>,
         Colin Cross <ccross@android.com>,
         Mark Brown <broonie@kernel.org>
-Subject: [patch 9/9] posix-timers: Remove license boilerplate
+Subject: [patch 8/9] posix-clocks: Remove license boiler plate
 References: <20181031182107.726051323@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline;
- filename=posix-timers--Remove-license-boilerplate.patch
+ filename=posix-clocks--Remove-license-boiler-plate.patch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,42 +61,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 The SPDX identifier defines the license of the file already. No need for
 the boilerplate.
 
-Remove also the completely outdated Montavista snail mail address.
-
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Corey Minyard <cminyard@mvista.com>
+Cc: Richard Cochran <richardcochran@gmail.com>
 ---
- kernel/time/posix-timers.c |   20 +-------------------
- 1 file changed, 1 insertion(+), 19 deletions(-)
 
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -7,25 +7,7 @@
-  * 2004-06-01  Fix CLOCK_REALTIME clock/timer TIMER_ABSTIME bug.
-  *			     Copyright (C) 2004 Boris Hu
+@Richard: This file is (C) OMICRON, but I don't have a contact
+anymore. That Cochran dude is not longer working there :)
+
+Do you have a contact? If so, can you please reply to this mail and Cc
+him/her.
+
+---
+ kernel/time/posix-clock.c |   14 --------------
+ 1 file changed, 14 deletions(-)
+
+--- a/kernel/time/posix-clock.c
++++ b/kernel/time/posix-clock.c
+@@ -3,20 +3,6 @@
+  * Support for dynamic clock devices
   *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or (at
-- * your option) any later version.
+  * Copyright (C) 2010 OMICRON electronics GmbH
 - *
-- * This program is distributed in the hope that it will be useful, but
-- * WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-- * General Public License for more details.
--
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+- *  This program is free software; you can redistribute it and/or modify
+- *  it under the terms of the GNU General Public License as published by
+- *  the Free Software Foundation; either version 2 of the License, or
+- *  (at your option) any later version.
 - *
-- * MontaVista Software | 1237 East Arques Avenue | Sunnyvale | CA 94085 | USA
-- */
--
--/* These are all the functions necessary to implement
-- * POSIX clocks & timers
-+ * These are all the functions necessary to implement POSIX clocks & timers
+- *  This program is distributed in the hope that it will be useful,
+- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *  GNU General Public License for more details.
+- *
+- *  You should have received a copy of the GNU General Public License
+- *  along with this program; if not, write to the Free Software
+- *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
   */
- #include <linux/mm.h>
- #include <linux/interrupt.h>
+ #include <linux/device.h>
+ #include <linux/export.h>
 
 
