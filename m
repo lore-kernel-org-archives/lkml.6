@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DCDAECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84BCCC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0BC92081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C61A20830
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HahWUUId"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0BC92081B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tqk/HhFp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C61A20830
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729415AbeKAIID (ORCPT
+        id S1729431AbeKAIIF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:08:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56450 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:08:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729304AbeKAIIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:08:02 -0400
+        id S1729404AbeKAIID (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:08:03 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F50420821;
+        by mail.kernel.org (Postfix) with ESMTPSA id F0C6A20838;
         Wed, 31 Oct 2018 23:07:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027271;
-        bh=ZzJU/mOIbCwL51xMpX6SClB1NK63OmoOYUoKxGiLkPM=;
+        s=default; t=1541027272;
+        bh=LAYdO3kh8klMG9LaXI/ebBUW6eKVOAdcbRmWIL43C1c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HahWUUIdrKt/khsAw8Z28o6ysIgPY8NPq5f54c4wsX415oG3grMGImM7STEP6AXcM
-         KT26vNi6ZwrMmuSzcglfcuiwByoI0bUa4y7XecA/og2BBOGLeXPzd6U6/Oph9nEK52
-         rsFqTiUK9yXzMW7HGcLNyM85VIhwKt7B0kperzSQ=
+        b=tqk/HhFpXb7hswsKeZsFzJQEA+GxkqC2N5AEsdN1p974bP1fZPAsvom1n/Cx52WUR
+         B/T63cXtuD8TtcteBn74lZ++RRmmJHI258teYgsLGlupQB2YawCGqnuTVFds+CSvcr
+         WkvHaEHNGBfS5wEndK1V2jwX57M5XW1odXgqSua0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Paul Cercueil <paul@crapouillou.net>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 144/146] dmaengine: dma-jz4780: Return error if not probed from DT
-Date:   Wed, 31 Oct 2018 19:05:39 -0400
-Message-Id: <20181031230541.28822-144-sashal@kernel.org>
+Cc:     Vijay Immanuel <vijayi@attalasystems.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 145/146] IB/rxe: fix for duplicate request processing and ack psns
+Date:   Wed, 31 Oct 2018 19:05:40 -0400
+Message-Id: <20181031230541.28822-145-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -52,38 +53,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Cercueil <paul@crapouillou.net>
+From: Vijay Immanuel <vijayi@attalasystems.com>
 
-[ Upstream commit 54f919a04cf221bc1601d1193682d4379dacacbd ]
+[ Upstream commit b97db58557f4aa6d9903f8e1deea6b3d1ed0ba43 ]
 
-The driver calls clk_get() with the clock name set to NULL, which means
-that the driver could only work when probed from devicetree. From now
-on, we explicitly require the driver to be probed from devicetree.
+Don't reset the resp opcode for a replayed read response.
+The resp opcode could be in the middle of a write or send
+sequence, when the duplicate read request was received.
+An example sequence is as follows:
+- Receive read request for 12KB PSN 20. Transmit read response
+  first, middle and last with PSNs 20,21,22.
+- Receive write first PSN 23.
+  At this point the resp psn is 24 and resp opcode is write first.
+- The sender notices that PSN 20 is dropped and retransmits.
+  Receive read request for 12KB PSN 20. Transmit read response
+  first, middle and last with PSNs 20,21,22. The resp opcode is
+  set to -1, the resp psn remains 24.
+- Receive write first PSN 23. This is processed by duplicate_request().
+  The resp opcode remains -1 and resp psn remains 24.
+- Receive write middle PSN 24. check_op_seq() reports a missing
+  first error since the resp opcode is -1.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Tested-by: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+When sending an ack for a duplicate send or write request,
+use the psn of the previous ack sent. Do not use the psn
+of a read response for the ack.
+An example sequence is as follows:
+- Receive write PSN 30. Transmit ACK for PSN 30.
+- Receive read request 4KB PSN 31. Transmit read response with
+  PSN 31. The resp psn is now 32.
+- The sender notices that PSN 30 is dropped and retransmits.
+  Receive write PSN 30. duplicate_request() sends an ACK with
+  PSN 31. That is incorrect since PSN 31 was a read request.
+
+Signed-off-by: Vijay Immanuel <vijayi@attalasystems.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/dma-jz4780.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/infiniband/sw/rxe/rxe_resp.c  | 8 ++++++--
+ drivers/infiniband/sw/rxe/rxe_verbs.h | 2 ++
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
-index 85820a2d69d4..987899610b46 100644
---- a/drivers/dma/dma-jz4780.c
-+++ b/drivers/dma/dma-jz4780.c
-@@ -761,6 +761,11 @@ static int jz4780_dma_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	int i, ret;
+diff --git a/drivers/infiniband/sw/rxe/rxe_resp.c b/drivers/infiniband/sw/rxe/rxe_resp.c
+index aa5833318372..fc6c880756da 100644
+--- a/drivers/infiniband/sw/rxe/rxe_resp.c
++++ b/drivers/infiniband/sw/rxe/rxe_resp.c
+@@ -682,6 +682,7 @@ static enum resp_states read_reply(struct rxe_qp *qp,
+ 		rxe_advance_resp_resource(qp);
  
-+	if (!dev->of_node) {
-+		dev_err(dev, "This driver must be probed from devicetree\n");
-+		return -EINVAL;
-+	}
-+
- 	jzdma = devm_kzalloc(dev, sizeof(*jzdma), GFP_KERNEL);
- 	if (!jzdma)
- 		return -ENOMEM;
+ 		res->type		= RXE_READ_MASK;
++		res->replay		= 0;
+ 
+ 		res->read.va		= qp->resp.va;
+ 		res->read.va_org	= qp->resp.va;
+@@ -752,7 +753,8 @@ static enum resp_states read_reply(struct rxe_qp *qp,
+ 		state = RESPST_DONE;
+ 	} else {
+ 		qp->resp.res = NULL;
+-		qp->resp.opcode = -1;
++		if (!res->replay)
++			qp->resp.opcode = -1;
+ 		if (psn_compare(res->cur_psn, qp->resp.psn) >= 0)
+ 			qp->resp.psn = res->cur_psn;
+ 		state = RESPST_CLEANUP;
+@@ -814,6 +816,7 @@ static enum resp_states execute(struct rxe_qp *qp, struct rxe_pkt_info *pkt)
+ 
+ 	/* next expected psn, read handles this separately */
+ 	qp->resp.psn = (pkt->psn + 1) & BTH_PSN_MASK;
++	qp->resp.ack_psn = qp->resp.psn;
+ 
+ 	qp->resp.opcode = pkt->opcode;
+ 	qp->resp.status = IB_WC_SUCCESS;
+@@ -1065,7 +1068,7 @@ static enum resp_states duplicate_request(struct rxe_qp *qp,
+ 					  struct rxe_pkt_info *pkt)
+ {
+ 	enum resp_states rc;
+-	u32 prev_psn = (qp->resp.psn - 1) & BTH_PSN_MASK;
++	u32 prev_psn = (qp->resp.ack_psn - 1) & BTH_PSN_MASK;
+ 
+ 	if (pkt->mask & RXE_SEND_MASK ||
+ 	    pkt->mask & RXE_WRITE_MASK) {
+@@ -1108,6 +1111,7 @@ static enum resp_states duplicate_request(struct rxe_qp *qp,
+ 			res->state = (pkt->psn == res->first_psn) ?
+ 					rdatm_res_state_new :
+ 					rdatm_res_state_replay;
++			res->replay = 1;
+ 
+ 			/* Reset the resource, except length. */
+ 			res->read.va_org = iova;
+diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
+index af1470d29391..332a16dad2a7 100644
+--- a/drivers/infiniband/sw/rxe/rxe_verbs.h
++++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
+@@ -171,6 +171,7 @@ enum rdatm_res_state {
+ 
+ struct resp_res {
+ 	int			type;
++	int			replay;
+ 	u32			first_psn;
+ 	u32			last_psn;
+ 	u32			cur_psn;
+@@ -195,6 +196,7 @@ struct rxe_resp_info {
+ 	enum rxe_qp_state	state;
+ 	u32			msn;
+ 	u32			psn;
++	u32			ack_psn;
+ 	int			opcode;
+ 	int			drop_msg;
+ 	int			goto_error;
 -- 
 2.17.1
 
