@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F28CAC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:19:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63397ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:19:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA5B32084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:19:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2836B20664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:19:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BhYBCmWf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA5B32084A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OhllJkL8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2836B20664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731732AbeKAILg (ORCPT
+        id S1731908AbeKAITs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:11:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35382 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:19:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731716AbeKAILf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:11:35 -0400
+        id S1731663AbeKAILa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:11:30 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52A882087A;
-        Wed, 31 Oct 2018 23:11:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 50C1620840;
+        Wed, 31 Oct 2018 23:11:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027483;
-        bh=CZP4OmvN5df11I9aNKAwyJLyGrpJ5GjLWyHhsTKsAMU=;
+        s=default; t=1541027477;
+        bh=AUUzt/ZKy5DqjcQpN3iBfNQ38c6hD5Hb52gfrC9tHRQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BhYBCmWfVsROteF1Hm7sKyYvBuHBKO72e1X6YYmU00Ka5ipA4JHr22xqdTocuJXkh
-         m++zdmxe4ZJVnuCSDAsc6dtdJDMGYKISvULFR7KsntADvtgvIUyD7s4hIz++IYKJK9
-         jUwx6JQ4W1X5c5fduCXu7V/aP1ezBm630IWbKhRY=
+        b=OhllJkL81g5FOcaMzjvcnzXCihtyntg+jOQ3CPL/sNUaeyV4OT909aDhk3DukrSRZ
+         s1m7thg+mQHY+MY/goYS/OwTuOEPlyjI2Nr2bJJ+YW4p6F4wcTRdFnmasnUVH8MJxy
+         xpEZGRtuZFKG/dMNWn6b5zL7XeufOkK3bhHpyoek=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Denis Drozdov <denisd@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+Cc:     Sebastian Basierski <sebastianx.basierski@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 32/48] IB/ipoib: Clear IPCB before icmp_send
-Date:   Wed, 31 Oct 2018 19:10:38 -0400
-Message-Id: <20181031231054.29333-32-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 26/48] ixgbevf: VF2VF TCP RSS
+Date:   Wed, 31 Oct 2018 19:10:32 -0400
+Message-Id: <20181031231054.29333-26-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231054.29333-1-sashal@kernel.org>
 References: <20181031231054.29333-1-sashal@kernel.org>
@@ -54,105 +53,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denis Drozdov <denisd@mellanox.com>
+From: Sebastian Basierski <sebastianx.basierski@intel.com>
 
-[ Upstream commit 4d6e4d12da2c308f8f976d3955c45ee62539ac98 ]
+[ Upstream commit 7fb94bd58dd6650a0158e68d414e185077d8b57a ]
 
-IPCB should be cleared before icmp_send, since it may contain data from
-previous layers and the data could be misinterpreted as ip header options,
-which later caused the ihl to be set to an invalid value and resulted in
-the following stack corruption:
+While VF2VF with RSS communication, RSS Type were wrongly recognized
+and RSS hash was not calculated as it should be. Packets was
+distributed on various queues by accident.
+This commit fixes that behaviour and causes proper RSS Type recognition.
 
-[ 1083.031512] ib0: packet len 57824 (> 2048) too long to send, dropping
-[ 1083.031843] ib0: packet len 37904 (> 2048) too long to send, dropping
-[ 1083.032004] ib0: packet len 4040 (> 2048) too long to send, dropping
-[ 1083.032253] ib0: packet len 63800 (> 2048) too long to send, dropping
-[ 1083.032481] ib0: packet len 23960 (> 2048) too long to send, dropping
-[ 1083.033149] ib0: packet len 63800 (> 2048) too long to send, dropping
-[ 1083.033439] ib0: packet len 63800 (> 2048) too long to send, dropping
-[ 1083.033700] ib0: packet len 63800 (> 2048) too long to send, dropping
-[ 1083.034124] ib0: packet len 63800 (> 2048) too long to send, dropping
-[ 1083.034387] ==================================================================
-[ 1083.034602] BUG: KASAN: stack-out-of-bounds in __ip_options_echo+0xf08/0x1310
-[ 1083.034798] Write of size 4 at addr ffff880353457c5f by task kworker/u16:0/7
-[ 1083.034990]
-[ 1083.035104] CPU: 7 PID: 7 Comm: kworker/u16:0 Tainted: G           O      4.19.0-rc5+ #1
-[ 1083.035316] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu2 04/01/2014
-[ 1083.035573] Workqueue: ipoib_wq ipoib_cm_skb_reap [ib_ipoib]
-[ 1083.035750] Call Trace:
-[ 1083.035888]  dump_stack+0x9a/0xeb
-[ 1083.036031]  print_address_description+0xe3/0x2e0
-[ 1083.036213]  kasan_report+0x18a/0x2e0
-[ 1083.036356]  ? __ip_options_echo+0xf08/0x1310
-[ 1083.036522]  __ip_options_echo+0xf08/0x1310
-[ 1083.036688]  icmp_send+0x7b9/0x1cd0
-[ 1083.036843]  ? icmp_route_lookup.constprop.9+0x1070/0x1070
-[ 1083.037018]  ? netif_schedule_queue+0x5/0x200
-[ 1083.037180]  ? debug_show_all_locks+0x310/0x310
-[ 1083.037341]  ? rcu_dynticks_curr_cpu_in_eqs+0x85/0x120
-[ 1083.037519]  ? debug_locks_off+0x11/0x80
-[ 1083.037673]  ? debug_check_no_obj_freed+0x207/0x4c6
-[ 1083.037841]  ? check_flags.part.27+0x450/0x450
-[ 1083.037995]  ? debug_check_no_obj_freed+0xc3/0x4c6
-[ 1083.038169]  ? debug_locks_off+0x11/0x80
-[ 1083.038318]  ? skb_dequeue+0x10e/0x1a0
-[ 1083.038476]  ? ipoib_cm_skb_reap+0x2b5/0x650 [ib_ipoib]
-[ 1083.038642]  ? netif_schedule_queue+0xa8/0x200
-[ 1083.038820]  ? ipoib_cm_skb_reap+0x544/0x650 [ib_ipoib]
-[ 1083.038996]  ipoib_cm_skb_reap+0x544/0x650 [ib_ipoib]
-[ 1083.039174]  process_one_work+0x912/0x1830
-[ 1083.039336]  ? wq_pool_ids_show+0x310/0x310
-[ 1083.039491]  ? lock_acquire+0x145/0x3a0
-[ 1083.042312]  worker_thread+0x87/0xbb0
-[ 1083.045099]  ? process_one_work+0x1830/0x1830
-[ 1083.047865]  kthread+0x322/0x3e0
-[ 1083.050624]  ? kthread_create_worker_on_cpu+0xc0/0xc0
-[ 1083.053354]  ret_from_fork+0x3a/0x50
-
-For instance __ip_options_echo is failing to proceed with invalid srr and
-optlen passed from another layer via IPCB
-
-[  762.139568] IPv4: __ip_options_echo rr=0 ts=0 srr=43 cipso=0
-[  762.139720] IPv4: ip_options_build: IPCB 00000000f3cd969e opt 000000002ccb3533
-[  762.139838] IPv4: __ip_options_echo in srr: optlen 197 soffset 84
-[  762.139852] IPv4: ip_options_build srr=0 is_frag=0 rr_needaddr=0 ts_needaddr=0 ts_needtime=0 rr=0 ts=0
-[  762.140269] ==================================================================
-[  762.140713] IPv4: __ip_options_echo rr=0 ts=0 srr=0 cipso=0
-[  762.141078] BUG: KASAN: stack-out-of-bounds in __ip_options_echo+0x12ec/0x1680
-[  762.141087] Write of size 4 at addr ffff880353457c7f by task kworker/u16:0/7
-
-Signed-off-by: Denis Drozdov <denisd@mellanox.com>
-Reviewed-by: Erez Shitrit <erezsh@mellanox.com>
-Reviewed-by: Feras Daoud <ferasda@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Sebastian Basierski <sebastianx.basierski@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/ulp/ipoib/ipoib_cm.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/infiniband/ulp/ipoib/ipoib_cm.c b/drivers/infiniband/ulp/ipoib/ipoib_cm.c
-index ad9b486ca7ea..95a3e0abd2a4 100644
---- a/drivers/infiniband/ulp/ipoib/ipoib_cm.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_cm.c
-@@ -1422,11 +1422,15 @@ static void ipoib_cm_skb_reap(struct work_struct *work)
- 		spin_unlock_irqrestore(&priv->lock, flags);
- 		netif_tx_unlock_bh(dev);
- 
--		if (skb->protocol == htons(ETH_P_IP))
-+		if (skb->protocol == htons(ETH_P_IP)) {
-+			memset(IPCB(skb), 0, sizeof(*IPCB(skb)));
- 			icmp_send(skb, ICMP_DEST_UNREACH, ICMP_FRAG_NEEDED, htonl(mtu));
-+		}
- #if IS_ENABLED(CONFIG_IPV6)
--		else if (skb->protocol == htons(ETH_P_IPV6))
-+		else if (skb->protocol == htons(ETH_P_IPV6)) {
-+			memset(IP6CB(skb), 0, sizeof(*IP6CB(skb)));
- 			icmpv6_send(skb, ICMPV6_PKT_TOOBIG, 0, mtu);
-+		}
- #endif
- 		dev_kfree_skb_any(skb);
- 
+diff --git a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
+index 029513294984..75607267e656 100644
+--- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
++++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
+@@ -3419,6 +3419,10 @@ static void ixgbevf_tx_csum(struct ixgbevf_ring *tx_ring,
+ 		skb_checksum_help(skb);
+ 		goto no_csum;
+ 	}
++
++	if (first->protocol == htons(ETH_P_IP))
++		type_tucmd |= IXGBE_ADVTXD_TUCMD_IPV4;
++
+ 	/* update TX checksum flag */
+ 	first->tx_flags |= IXGBE_TX_FLAGS_CSUM;
+ 	vlan_macip_lens = skb_checksum_start_offset(skb) -
 -- 
 2.17.1
 
