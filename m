@@ -2,215 +2,130 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7D45ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:53:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A2FFECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:54:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D2F520821
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:53:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3557D20821
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:54:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rrtixMdE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D2F520821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ftbf+bg3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3557D20821
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729718AbeKAAwW (ORCPT
+        id S1729726AbeKAAxA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 20:52:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59422 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729440AbeKAAwW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 20:52:22 -0400
-Received: from linux-8ccs (charybdis-ext.suse.de [195.135.221.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 512702064C;
-        Wed, 31 Oct 2018 15:53:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541001226;
-        bh=dRdFGEhaTC/i/0Mfp6jlLXibTVabH05dQnp8Z/R0eIs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rrtixMdE78fQY58kUQUnkJJ5J/3eVrp+Zspc/j4mHWLRogl7UVVAkyQUyNp14P4EX
-         K37nPHDtunUQEiNXbndGkyodqSASrbNw8EF0ER3PAYJRV5ybL5G+gYKZsOVv9jIVeL
-         aLVpaQTk5+Z5IAuNkAHpbq7GOVZkGM0NDBsd+TUI=
-Date:   Wed, 31 Oct 2018 16:53:41 +0100
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Vincent Whitchurch <vincent.whitchurch@axis.com>
-Cc:     linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Vincent Whitchurch <rabinv@axis.com>,
-        live-patching@vger.kernel.org
-Subject: Re: [PATCH v2] ARM: module: Fix function kallsyms on Thumb-2
-Message-ID: <20181031155341.GA27878@linux-8ccs>
-References: <20181031084253.9650-1-vincent.whitchurch@axis.com>
+        Wed, 31 Oct 2018 20:53:00 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:38263 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729613AbeKAAw7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 20:52:59 -0400
+Received: by mail-pf1-f196.google.com with SMTP id b11-v6so7823060pfi.5;
+        Wed, 31 Oct 2018 08:54:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=0m2bCnfc3Hx5A6TqlQQS1VxnmjoIkF3lh6xONpj9bBQ=;
+        b=Ftbf+bg3mwRiI1kj4AxGqj+qZAkQPs+BoZCymhHCGCftNySf6/KXY6yZRaAv5rqJEC
+         N/1EY3AO7kTmcTAu/vd6l/2M8xmnMzVm1wbYAHITCUjKXdXtSRc2KNva5VfTA1umIF+R
+         puGbaH7ekb+9GWerwn3W5/ZUbE/syLcqYbi3s9skwYvYHNx59WcDlgMSKUt7NoBU+yh1
+         5NLn2HFuYPTiHlz+ba2G17/55qVxcyh8CU83p0ipIHNFuBHx+nnBSTNV+8lRiQjck6F1
+         iNOyHbRyupUe/8OB0YRX6dowumCBcjRBKTNA8y7OjIh6ZUISryXZ7RGyC4MgSTQ+PsK3
+         Xakg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=0m2bCnfc3Hx5A6TqlQQS1VxnmjoIkF3lh6xONpj9bBQ=;
+        b=hRgaGVNZBQuzeKY/1ZRRZa6kjEg0mSOClJ7bUGkzNFr2SgW+LGlFNGT8Jy8cb8tDmU
+         bRFSuP9Lj+VsV/cI354n+c3EEzF4YMXnZEiz7UazDG+uwr05GPK8M9iCLQvTQIniZZTT
+         2GfyB9hhI9EtiqMq0Pu0mpuzimk/jjwCgOWs2p5s9q7Md+r7MTdNRo+OqGcTII10eFhF
+         KwxfJGH9J3bEOQys8V3hCH+FzRMKYbyXZNsbF+Z16CUcbjvqopVMm1/MTD6k6OvjB72E
+         84Z0b6CDasDn4/EjamxO7JNGFIIx6VZaODVWikUYgyUhfdQr2Ki8Fb6Ld892ht+b0lsI
+         9ThQ==
+X-Gm-Message-State: AGRZ1gJCVF2lI+1alD5amJdXtIrBoFwOW1B2M/f+OWS/7rF1d340TkK0
+        C3au51scGKhkBdmmyqSGGlM=
+X-Google-Smtp-Source: AJdET5cu6DPduIdOyhlvZMNclFP2FjaHvXAfB8cCmqVc4mk5G6oxhk2rer/nzirjn/DtPyzrRUzxGw==
+X-Received: by 2002:a62:6c49:: with SMTP id h70-v6mr4138647pfc.134.1541001264589;
+        Wed, 31 Oct 2018 08:54:24 -0700 (PDT)
+Received: from nishad ([106.51.27.228])
+        by smtp.gmail.com with ESMTPSA id w2-v6sm25930929pfw.26.2018.10.31.08.54.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 31 Oct 2018 08:54:24 -0700 (PDT)
+Date:   Wed, 31 Oct 2018 21:24:16 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Slawomir Stepien <sst@poczta.fm>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v7 0/3] staging: iio: ad2s1210: Switch to the gpio descriptor
+ interface.
+Message-ID: <cover.1541000375.git.nishadkamdar@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181031084253.9650-1-vincent.whitchurch@axis.com>
-X-OS:   Linux linux-8ccs 4.12.14-lp150.12.16-default x86_64
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+++ Vincent Whitchurch [31/10/18 09:42 +0100]:
->Thumb-2 functions have the lowest bit set in the symbol value in the
->symtab.  When kallsyms are generated for the vmlinux, the kallsyms are
->generated from the output of nm, and nm clears the lowest bit.
->
-> $ arm-linux-gnueabihf-readelf -a vmlinux | grep show_interrupts
->  95947: 8015dc89   686 FUNC    GLOBAL DEFAULT    2 show_interrupts
-> $ arm-linux-gnueabihf-nm vmlinux | grep show_interrupts
-> 8015dc88 T show_interrupts
-> $ cat /proc/kallsyms | grep show_interrupts
-> 8015dc88 T show_interrupts
->
->However, for modules, the kallsyms uses the values in the symbol table
->without modification, so for functions in modules, the lowest bit is set
->in kallsyms.
->
-> $ arm-linux-gnueabihf-readelf -a drivers/net/tun.ko | grep tun_get_socket
->    268: 000000e1    44 FUNC    GLOBAL DEFAULT    2 tun_get_socket
-> $ arm-linux-gnueabihf-nm drivers/net/tun.ko | grep tun_get_socket
-> 000000e0 T tun_get_socket
-> $ cat /proc/kallsyms | grep tun_get_socket
-> 7fcd30e1 t tun_get_socket  [tun]
->
->Because of this, the offset of the crashing instruction shown in oopses
->is incorrect when the crash is in a module.  For example, given a
->tun_get_socket which starts like this,
->
-> 000000e0 <tun_get_socket>:
->       e0:       b500            push    {lr}
->       e2:       f7ff fffe       bl      0 <__gnu_mcount_nc>
->       e6:       4b08            ldr     r3, [pc, #32]
->       e8:       6942            ldr     r2, [r0, #20]
->       ea:       429a            cmp     r2, r3
->       ec:       d002            beq.n   f4 <tun_get_socket+0x14>
->
->a crash when tun_get_socket is called with NULL results in:
->
-> PC is at tun_get_socket+0x7/0x2c [tun]
-> pc : [<7fcdb0e8>]
->
->which can result in the incorrect line being reported by gdb if this
->symbol+offset is used there.  If the crash is on the first instruction
->of a function, the "PC is at" line would also report the symbol name of
->the preceding function.
->
->To solve this, fix up these symbols like nm does.  For this, we need a
->new hook in the generic module loading code, before the symbols' st_info
->is overwritten by add_kallsyms().  After the fix:
->
-> $ cat /proc/kallsyms | grep tun_get_socket
-> 7fcd30e0 t tun_get_socket  [tun]
->
-> PC is at tun_get_socket+0x8/0x2c [tun]
-> pc : [<7fcdb0e8>]
->
->Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
->---
->v2: Fix build warning with !MODULES
+Use the gpiod interface instead of the deprecated old non-descriptor
 
+Changes in v7:
+ - Adds a level of indirection to read and write
+   the gpio_desc to make the code simpler.
+ - Drop gpioin flag which decides how the GPIOs
+   are controlled as the GPIOs must be outputs
+   for the host as per the datasheet.
+Changes in v6:
+ - Split device tree table addition and device tree support 
+   addition in two patches.
+ - Replace platform data with device tree support.
+ - Rename boolean property.
+Changes in v5:
+ - Add device tree support.
+ - Add device tree table for matching vendor ID.
+ - Add Support for retrieving platform data from device tree.
+Changes in v4:
+ - Add spaces after { and before } in gpios[]
+   initialization.
+ - Check the correct pointer for error.
+ - Align the dev_err msg to existing format in the code.
+Changes in v3:
+ - Use a pointer to pointer for gpio_desc in
+   struct ad2s1210_gpio as it will be used to
+   modify a pointer.
+ - Use dot notation to initialize the structure.
+ - Use a pointer variable to avoid writing gpios[i].
+Changes in v2:
+ - Use the spi_device struct embedded in st instead
+   of passing it as an argument to ad2s1210_setup_gpios().
+ - Use an array of structs to reduce redundant code in
+   in ad2s1210_setup_gpios().
+ - Remove ad2s1210_free_gpios() as devm API is being used.
 
-Hi Vincent,
+Nishad Kamdar (3):
+  staging: iio: ad2s1210: Switch to the gpio descriptor interface
+  staging: iio: ad2s1210: Drop the gpioin flag.
+  staging: iio: ad2s1210: Add device tree table.
 
-Just a few questions -
+ drivers/staging/iio/resolver/ad2s1210.c | 132 +++++++++++-------------
+ drivers/staging/iio/resolver/ad2s1210.h |  20 ----
+ 2 files changed, 62 insertions(+), 90 deletions(-)
 
-Could this be done in modpost? I'm guessing the answer is no as some
-relocations may rely on that bit being set in st_value, right?
-Therefore we can only clear the bit _after_ relocations to the module
-are applied at runtime, correct?
+-- 
+2.17.1
 
-I'm not against having an arch-specific kallsyms fixup function, my
-only concern would be if this would interfere with the delayed
-relocations livepatching does, if there are plans in the future to
-have livepatching on arm (IIRC there was an attempt at a port in
-2016). If there exists some Thumb-2 relocation types that rely on that
-lowest bit in st_value being set in order to be applied, and we clear
-it permanently from the symtab, then livepatching wouldn't be able to
-apply those types of relocations anymore. If this is a legitimate
-concern, then perhaps an alternative solution would be to have an
-arch-specific kallsyms symbol-value-fixup function for accesses to
-sym.st_value, without modifying the module symtab.
-
-
-Thanks,
-
-Jessica
-
-> arch/arm/kernel/module.c     | 14 ++++++++++++++
-> include/linux/moduleloader.h |  3 +++
-> kernel/module.c              |  6 ++++++
-> 3 files changed, 23 insertions(+)
->
->diff --git a/arch/arm/kernel/module.c b/arch/arm/kernel/module.c
->index 3ff571c2c71c..771f86318d84 100644
->--- a/arch/arm/kernel/module.c
->+++ b/arch/arm/kernel/module.c
->@@ -399,6 +399,20 @@ int module_finalize(const Elf32_Ehdr *hdr, const Elf_Shdr *sechdrs,
-> 	return 0;
-> }
->
->+#if defined(CONFIG_THUMB2_KERNEL) && defined(CONFIG_KALLSYMS)
->+void module_fixup_kallsyms(struct mod_kallsyms *kallsyms)
->+{
->+	int i;
->+
->+	for (i = 0; i < kallsyms->num_symtab; i++) {
->+		Elf_Sym *sym = &kallsyms->symtab[i];
->+
->+		if (ELF_ST_TYPE(sym->st_info) == STT_FUNC)
->+			sym->st_value &= ~1;
->+	}
->+}
->+#endif
->+
-> void
-> module_arch_cleanup(struct module *mod)
-> {
->diff --git a/include/linux/moduleloader.h b/include/linux/moduleloader.h
->index 31013c2effd3..b1ac5584eaa5 100644
->--- a/include/linux/moduleloader.h
->+++ b/include/linux/moduleloader.h
->@@ -86,6 +86,9 @@ void module_arch_cleanup(struct module *mod);
-> /* Any cleanup before freeing mod->module_init */
-> void module_arch_freeing_init(struct module *mod);
->
->+struct mod_kallsyms;
->+void module_fixup_kallsyms(struct mod_kallsyms *kallsyms);
->+
-> #ifdef CONFIG_KASAN
-> #include <linux/kasan.h>
-> #define MODULE_ALIGN (PAGE_SIZE << KASAN_SHADOW_SCALE_SHIFT)
->diff --git a/kernel/module.c b/kernel/module.c
->index 49a405891587..ded4f4b49824 100644
->--- a/kernel/module.c
->+++ b/kernel/module.c
->@@ -2659,6 +2659,10 @@ static void layout_symtab(struct module *mod, struct load_info *info)
-> 	mod->init_layout.size = debug_align(mod->init_layout.size);
-> }
->
->+void __weak module_fixup_kallsyms(struct mod_kallsyms *kallsyms)
->+{
->+}
->+
-> /*
->  * We use the full symtab and strtab which layout_symtab arranged to
->  * be appended to the init section.  Later we switch to the cut-down
->@@ -2680,6 +2684,8 @@ static void add_kallsyms(struct module *mod, const struct load_info *info)
-> 	/* Make sure we get permanent strtab: don't use info->strtab. */
-> 	mod->kallsyms->strtab = (void *)info->sechdrs[info->index.str].sh_addr;
->
->+	module_fixup_kallsyms(mod->kallsyms);
->+
-> 	/* Set types up while we still have access to sections. */
-> 	for (i = 0; i < mod->kallsyms->num_symtab; i++)
-> 		mod->kallsyms->symtab[i].st_info
->-- 
->2.11.0
->
