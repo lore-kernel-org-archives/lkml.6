@@ -4,46 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E6C8C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:31:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 022DAECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:32:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6604F20664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:31:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EC2D20664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:32:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="exGiET9Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6604F20664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vHMZdPZG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EC2D20664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730754AbeKAIcP (ORCPT
+        id S1730507AbeKAIJf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:32:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59676 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:09:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730517AbeKAIJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:09:38 -0400
+        id S1730423AbeKAIJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:09:32 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D68520843;
-        Wed, 31 Oct 2018 23:09:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A9342081B;
+        Wed, 31 Oct 2018 23:09:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027367;
-        bh=7kQwfHWFpW++ufUn9OODYr5Q0xVcCfG5bD/uhl+ef/k=;
+        s=default; t=1541027361;
+        bh=7rU3CT/K4Vz5EVwVCBxraRVK9bYBIoBpjI/z4XCXqQE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=exGiET9YsDOpbTcszSGh9ZBabBsKzS3fFpGxyB7tsCsrvC+57XWgMRP+6hb/DW8Il
-         eLL2fPnS/J0kdM0wxo5qk/4fM1opg8StpPcMrI55uLG3s0u6hDSZA0rn3lUJ+hUfOC
-         ez13ggGXXKStvELhEJ2pRVtcqRRFETWcrikjw0v8=
+        b=vHMZdPZGXx0ZGQswaukGL/Bt64DiJ3md2Qp5AXn2EVIIOlUYE7fGNX7CUecrcrIqc
+         uBTbkX0y5SrYz1yr2gTh1/pGElor1DeSPTxXNICPQfF9G6weRZmB0h2R3nCOUkGoex
+         2wN5GZnKpJYz6v3nbEyL3gGfT0E5pGuaPRhtaKho=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Theodore Ts'o <tytso@mit.edu>, stable@kernel.org,
+Cc:     Dexuan Cui <decui@microsoft.com>,
+        "K . Y . Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Stable@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 102/126] ext4: fix argument checking in EXT4_IOC_MOVE_EXT
-Date:   Wed, 31 Oct 2018 19:07:30 -0400
-Message-Id: <20181031230754.29029-102-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 095/126] Drivers: hv: kvp: Fix two "this statement may fall through" warnings
+Date:   Wed, 31 Oct 2018 19:07:23 -0400
+Message-Id: <20181031230754.29029-95-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -52,48 +56,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Dexuan Cui <decui@microsoft.com>
 
-[ Upstream commit f18b2b83a727a3db208308057d2c7945f368e625 ]
+[ Upstream commit fc62c3b1977d62e6374fd6e28d371bb42dfa5c9d ]
 
-If the starting block number of either the source or destination file
-exceeds the EOF, EXT4_IOC_MOVE_EXT should return EINVAL.
+We don't need to call process_ib_ipinfo() if message->kvp_hdr.operation is
+KVP_OP_GET_IP_INFO in kvp_send_key(), because here we just need to pass on
+the op code from the host to the userspace; when the userspace returns
+the info requested by the host, we pass the info on to the host in
+kvp_respond_to_host() -> process_ob_ipinfo(). BTW, the current buggy code
+actually doesn't cause any harm, because only message->kvp_hdr.operation
+is used by the userspace, in the case of KVP_OP_GET_IP_INFO.
 
-Also fixed the helper function mext_check_coverage() so that if the
-logical block is beyond EOF, make it return immediately, instead of
-looping until the block number wraps all the away around.  This takes
-long enough that if there are multiple threads trying to do pound on
-an the same inode doing non-sensical things, it can end up triggering
-the kernel's soft lockup detector.
+The patch also adds a missing "break;" in kvp_send_key(). BTW, the current
+buggy code actually doesn't cause any harm, because in the case of
+KVP_OP_SET, the unexpected fall-through corrupts
+message->body.kvp_set.data.key_size, but that is not really used: see
+the definition of struct hv_kvp_exchg_msg_value.
 
-Reported-by: syzbot+c61979f6f2cba5cb3c06@syzkaller.appspotmail.com
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ext4/move_extent.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/hv/hv_kvp.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
-index 8e17efdcbf11..887353875060 100644
---- a/fs/ext4/move_extent.c
-+++ b/fs/ext4/move_extent.c
-@@ -518,9 +518,13 @@ mext_check_arguments(struct inode *orig_inode,
- 			orig_inode->i_ino, donor_inode->i_ino);
- 		return -EINVAL;
- 	}
--	if (orig_eof < orig_start + *len - 1)
-+	if (orig_eof <= orig_start)
-+		*len = 0;
-+	else if (orig_eof < orig_start + *len - 1)
- 		*len = orig_eof - orig_start;
--	if (donor_eof < donor_start + *len - 1)
-+	if (donor_eof <= donor_start)
-+		*len = 0;
-+	else if (donor_eof < donor_start + *len - 1)
- 		*len = donor_eof - donor_start;
- 	if (!*len) {
- 		ext4_debug("ext4 move extent: len should not be 0 "
+diff --git a/drivers/hv/hv_kvp.c b/drivers/hv/hv_kvp.c
+index 5eed1e7da15c..57715a0c8120 100644
+--- a/drivers/hv/hv_kvp.c
++++ b/drivers/hv/hv_kvp.c
+@@ -353,7 +353,6 @@ static void process_ib_ipinfo(void *in_msg, void *out_msg, int op)
+ 
+ 		out->body.kvp_ip_val.dhcp_enabled = in->kvp_ip_val.dhcp_enabled;
+ 
+-	default:
+ 		utf16s_to_utf8s((wchar_t *)in->kvp_ip_val.adapter_id,
+ 				MAX_ADAPTER_ID_SIZE,
+ 				UTF16_LITTLE_ENDIAN,
+@@ -406,7 +405,7 @@ kvp_send_key(struct work_struct *dummy)
+ 		process_ib_ipinfo(in_msg, message, KVP_OP_SET_IP_INFO);
+ 		break;
+ 	case KVP_OP_GET_IP_INFO:
+-		process_ib_ipinfo(in_msg, message, KVP_OP_GET_IP_INFO);
++		/* We only need to pass on message->kvp_hdr.operation.  */
+ 		break;
+ 	case KVP_OP_SET:
+ 		switch (in_msg->body.kvp_set.data.value_type) {
+@@ -446,6 +445,9 @@ kvp_send_key(struct work_struct *dummy)
+ 			break;
+ 
+ 		}
++
++		break;
++
+ 	case KVP_OP_GET:
+ 		message->body.kvp_set.data.key_size =
+ 			utf16s_to_utf8s(
 -- 
 2.17.1
 
