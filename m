@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB31BECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 380E1C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7368420821
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F370F20821
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCp2qZ+/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7368420821
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HGRO94Vb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F370F20821
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728097AbeKAIGd (ORCPT
+        id S1728129AbeKAIGf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:06:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53388 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:06:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727984AbeKAIGa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:06:30 -0400
+        id S1727984AbeKAIGe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:06:34 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB3AD20843;
-        Wed, 31 Oct 2018 23:06:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B465B20843;
+        Wed, 31 Oct 2018 23:06:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027179;
-        bh=VJIveXiCnAmoabm4oI36g6Ps2qFbn500SMnUQfuGQ00=;
+        s=default; t=1541027183;
+        bh=SYlUz+5LaDSURpKfbJR8lBKb/o70zFxoVbwW6Og2P3A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aCp2qZ+/GTQYS1ibw7zQBbXTD+iD3AvJ7vEGqisfHE6SAPjEIlcF3diERchqMrbE0
-         zs6PDqmUFzZNZPMd9Utx2NBdebUhT46JRABeDyOAvpJsr5STkPsZPy6MMz8YWd83r6
-         VsLXBf1v9gemtYi9bBr4NzGHxn1fQqkLIXhbaljA=
+        b=HGRO94VblgUIcJ/pdX03BRpFN4bNzj/P7YztXBPVEVnY1MA61leRr5v1Y8E74au2w
+         gU4rlj6Q0ObhEih0vh3hTn9Veu7p+pE7dBvzIOXDahkxKUCIAH/hbyoy8/kv/Zu8RX
+         fHuq/mYmtziRw+WGT/R6iHquQlOHlX89RGXDIbUg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Rakesh Pillai <pillair@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
+Cc:     Yunsheng Lin <linyunsheng@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 041/146] ath10k: fix tx status flag setting for management frames
-Date:   Wed, 31 Oct 2018 19:03:56 -0400
-Message-Id: <20181031230541.28822-41-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 045/146] net: hns3: Fix for packet buffer setting bug
+Date:   Wed, 31 Oct 2018 19:04:00 -0400
+Message-Id: <20181031230541.28822-45-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -53,49 +55,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rakesh Pillai <pillair@codeaurora.org>
+From: Yunsheng Lin <linyunsheng@huawei.com>
 
-[ Upstream commit 058a7eab9d9ee12f57282eb0b606668dada70d7a ]
+[ Upstream commit 996ff91840eb6f288826e472685abde78bac20ea ]
 
-The tx_status for management frames is being filled
-incorrectly in the flags of skb_cb. This incorrect
-flag setting causes the upper layers to consider that
-the particular frame was not transmitted properly,
-leading to improper behavior.
+The hardware expects a unit of 128 bytes when setting
+packet buffer. When calculating the packet buffer size,
+hclge_rx_buffer_calc does not round up the size as a unit
+of 128 byte, which may casue packet lost problem when stress
+testing.
 
-Set the IEEE80211_TX_STAT_ACK flag in the info flags
-of skb_cb, to indicate the successful transmission of
-the management frame.
+This patch fixes it by rounding up packet size when calculating.
 
-Tested HW: WCN3990
-Tested FW: WLAN.HL.2.0-01188-QCAHLSWMTPLZ-1
-
-Fixes: dc405152bb64d4ae01c9ac669de25b2d1fb6fc2d
-Signed-off-by: Rakesh Pillai <pillair@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes: 46a3df9f9718 ("net: hns3: Add HNS3 Acceleration Engine & Compatibility Layer Support")
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath10k/wmi.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath10k/wmi.c b/drivers/net/wireless/ath/ath10k/wmi.c
-index fd612d2905b0..1dced0dae9cd 100644
---- a/drivers/net/wireless/ath/ath10k/wmi.c
-+++ b/drivers/net/wireless/ath/ath10k/wmi.c
-@@ -2336,7 +2336,12 @@ static int wmi_process_mgmt_tx_comp(struct ath10k *ar, u32 desc_id,
- 	dma_unmap_single(ar->dev, pkt_addr->paddr,
- 			 msdu->len, DMA_FROM_DEVICE);
- 	info = IEEE80211_SKB_CB(msdu);
--	info->flags |= status;
-+
-+	if (status)
-+		info->flags &= ~IEEE80211_TX_STAT_ACK;
-+	else
-+		info->flags |= IEEE80211_TX_STAT_ACK;
-+
- 	ieee80211_tx_status_irqsafe(ar->hw, msdu);
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index 8577dfc799ad..023910abc831 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -1657,11 +1657,13 @@ static int hclge_tx_buffer_calc(struct hclge_dev *hdev,
+ static int hclge_rx_buffer_calc(struct hclge_dev *hdev,
+ 				struct hclge_pkt_buf_alloc *buf_alloc)
+ {
+-	u32 rx_all = hdev->pkt_buf_size;
++#define HCLGE_BUF_SIZE_UNIT	128
++	u32 rx_all = hdev->pkt_buf_size, aligned_mps;
+ 	int no_pfc_priv_num, pfc_priv_num;
+ 	struct hclge_priv_buf *priv;
+ 	int i;
  
- 	ret = 0;
++	aligned_mps = round_up(hdev->mps, HCLGE_BUF_SIZE_UNIT);
+ 	rx_all -= hclge_get_tx_buff_alloced(buf_alloc);
+ 
+ 	/* When DCB is not supported, rx private
+@@ -1680,13 +1682,13 @@ static int hclge_rx_buffer_calc(struct hclge_dev *hdev,
+ 		if (hdev->hw_tc_map & BIT(i)) {
+ 			priv->enable = 1;
+ 			if (hdev->tm_info.hw_pfc_map & BIT(i)) {
+-				priv->wl.low = hdev->mps;
+-				priv->wl.high = priv->wl.low + hdev->mps;
++				priv->wl.low = aligned_mps;
++				priv->wl.high = priv->wl.low + aligned_mps;
+ 				priv->buf_size = priv->wl.high +
+ 						HCLGE_DEFAULT_DV;
+ 			} else {
+ 				priv->wl.low = 0;
+-				priv->wl.high = 2 * hdev->mps;
++				priv->wl.high = 2 * aligned_mps;
+ 				priv->buf_size = priv->wl.high;
+ 			}
+ 		} else {
+@@ -1718,11 +1720,11 @@ static int hclge_rx_buffer_calc(struct hclge_dev *hdev,
+ 
+ 		if (hdev->tm_info.hw_pfc_map & BIT(i)) {
+ 			priv->wl.low = 128;
+-			priv->wl.high = priv->wl.low + hdev->mps;
++			priv->wl.high = priv->wl.low + aligned_mps;
+ 			priv->buf_size = priv->wl.high + HCLGE_DEFAULT_DV;
+ 		} else {
+ 			priv->wl.low = 0;
+-			priv->wl.high = hdev->mps;
++			priv->wl.high = aligned_mps;
+ 			priv->buf_size = priv->wl.high;
+ 		}
+ 	}
 -- 
 2.17.1
 
