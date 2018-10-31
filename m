@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27DD8C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:43:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED9AC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:43:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC1E620664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:43:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3604F2082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:43:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="g4CNcrft"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC1E620664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oXyhkr/8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3604F2082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729175AbeKAIHr (ORCPT
+        id S1729389AbeKAIni (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:07:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55880 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:43:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729065AbeKAIHq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:07:46 -0400
+        id S1729136AbeKAIHr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:07:47 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31337208A3;
-        Wed, 31 Oct 2018 23:07:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BAAE20838;
+        Wed, 31 Oct 2018 23:07:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027255;
-        bh=TZh0kuaNJUgcZ4KfLemz3qOvrVg8+bivLoE6Cm/itNI=;
+        s=default; t=1541027256;
+        bh=K7IYI+mpkpBCEcQCflg6P1fsO1ftivwpeyDleZrqv5o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g4CNcrftIJyTYJc926JsNKniyW4AMXoygheCQf2wqjPRIbBzfckTpD0A9yWz/lEtm
-         gFIJP8DRWUTJJZl+8QpWi/LPFHDige/YIQbfAF1h8Re/76pAtdNg+MBHLKLS1r01A3
-         RxXhCaktVZWrjg4LfMzicLwI1WStIIOBcNbp/WII=
+        b=oXyhkr/8YBSqyakkBG65Ny3tKRXi24UWSo6ptIQh8tkkNRCiCZeTTO1pevBuSUyHm
+         9u68cg2caVd0RaLOFpKX4G9fc5/aJ7tizY2Fz7YIN6mvE6uVQJjNc9BMbqh9Kz+0yY
+         D/DcfPqbEIwGlItBNPae40oN9p+ajwbqJhW+NzSA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     Vignesh R <vigneshr@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 126/146] coresight: etb10: Fix handling of perf mode
-Date:   Wed, 31 Oct 2018 19:05:21 -0400
-Message-Id: <20181031230541.28822-126-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 127/146] PCI: dwc: pci-dra7xx: Enable errata i870 for both EP and RC mode
+Date:   Wed, 31 Oct 2018 19:05:22 -0400
+Message-Id: <20181031230541.28822-127-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -54,38 +53,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
+From: Vignesh R <vigneshr@ti.com>
 
-[ Upstream commit 987d1e8dcd370d96029a3d76a0031b043c4a69ae ]
+[ Upstream commit 726d75a6d243bf6730da3216f3592503f6f0f588 ]
 
-If the ETB is already enabled in sysfs mode, the ETB reports
-success even if a perf mode is requested. Fix this by checking
-the requested mode.
+Errata i870 is applicable in both EP and RC mode. Therefore rename
+function dra7xx_pcie_ep_unaligned_memaccess(), that implements errata
+workaround, to dra7xx_pcie_unaligned_memaccess() and call it for both RC
+and EP. Make sure driver probe does not fail in case the workaround is not
+applied for RC mode in order to maintain DT backward compatibility.
 
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported-by: Chris Welch <Chris.Welch@viavisolutions.com>
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+[lorenzo.pieralisi@arm.com: reworded the log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwtracing/coresight/coresight-etb10.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/pci/controller/dwc/pci-dra7xx.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
-index 306119eaf16a..0dad8626bcfb 100644
---- a/drivers/hwtracing/coresight/coresight-etb10.c
-+++ b/drivers/hwtracing/coresight/coresight-etb10.c
-@@ -147,6 +147,10 @@ static int etb_enable(struct coresight_device *csdev, u32 mode)
- 	if (val == CS_MODE_PERF)
- 		return -EBUSY;
+diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
+index ce9224a36f62..a32d6dde7a57 100644
+--- a/drivers/pci/controller/dwc/pci-dra7xx.c
++++ b/drivers/pci/controller/dwc/pci-dra7xx.c
+@@ -542,7 +542,7 @@ static const struct of_device_id of_dra7xx_pcie_match[] = {
+ };
  
-+	/* Don't let perf disturb sysFS sessions */
-+	if (val == CS_MODE_SYSFS && mode == CS_MODE_PERF)
-+		return -EBUSY;
+ /*
+- * dra7xx_pcie_ep_unaligned_memaccess: workaround for AM572x/AM571x Errata i870
++ * dra7xx_pcie_unaligned_memaccess: workaround for AM572x/AM571x Errata i870
+  * @dra7xx: the dra7xx device where the workaround should be applied
+  *
+  * Access to the PCIe slave port that are not 32-bit aligned will result
+@@ -552,7 +552,7 @@ static const struct of_device_id of_dra7xx_pcie_match[] = {
+  *
+  * To avoid this issue set PCIE_SS1_AXI2OCP_LEGACY_MODE_ENABLE to 1.
+  */
+-static int dra7xx_pcie_ep_unaligned_memaccess(struct device *dev)
++static int dra7xx_pcie_unaligned_memaccess(struct device *dev)
+ {
+ 	int ret;
+ 	struct device_node *np = dev->of_node;
+@@ -704,6 +704,11 @@ static int __init dra7xx_pcie_probe(struct platform_device *pdev)
+ 
+ 		dra7xx_pcie_writel(dra7xx, PCIECTRL_TI_CONF_DEVICE_TYPE,
+ 				   DEVICE_TYPE_RC);
 +
- 	/* Nothing to do, the tracer is already enabled. */
- 	if (val == CS_MODE_SYSFS)
- 		goto out;
++		ret = dra7xx_pcie_unaligned_memaccess(dev);
++		if (ret)
++			dev_err(dev, "WA for Errata i870 not applied\n");
++
+ 		ret = dra7xx_add_pcie_port(dra7xx, pdev);
+ 		if (ret < 0)
+ 			goto err_gpio;
+@@ -717,7 +722,7 @@ static int __init dra7xx_pcie_probe(struct platform_device *pdev)
+ 		dra7xx_pcie_writel(dra7xx, PCIECTRL_TI_CONF_DEVICE_TYPE,
+ 				   DEVICE_TYPE_EP);
+ 
+-		ret = dra7xx_pcie_ep_unaligned_memaccess(dev);
++		ret = dra7xx_pcie_unaligned_memaccess(dev);
+ 		if (ret)
+ 			goto err_gpio;
+ 
 -- 
 2.17.1
 
