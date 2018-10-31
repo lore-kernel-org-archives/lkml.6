@@ -2,64 +2,63 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B801ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:58:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A612ECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8A6220821
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:58:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3019E20840
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 10:58:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rIlkk46m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8A6220821
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OC54jJBi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3019E20840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mailme.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728858AbeJaTzl (ORCPT
+        id S1728915AbeJaTzn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 15:55:41 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45633 "EHLO
+        Wed, 31 Oct 2018 15:55:43 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:38434 "EHLO
         mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727980AbeJaTzl (ORCPT
+        with ESMTP id S1728584AbeJaTzm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 15:55:41 -0400
-Received: by mail-ed1-f66.google.com with SMTP id t10-v6so13195134eds.12;
-        Wed, 31 Oct 2018 03:58:04 -0700 (PDT)
+        Wed, 31 Oct 2018 15:55:42 -0400
+Received: by mail-ed1-f66.google.com with SMTP id c1-v6so13212946ede.5;
+        Wed, 31 Oct 2018 03:58:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=kkKJd0JSuBqvelUuvT0eKbShB/FPMqJYghXkfCJEjr4=;
-        b=rIlkk46mZZYHMXqa5JyiQSYmoyAwd+TSvUC1GqWgLTgGkOrh0PI/gPxwE/3Wu0SlMB
-         eXevNM6DfKWiWNtgTEzABoQLfe+A6eB+HrTK9w5ouB29engMP7sno7LG3BHMJ6odbA9p
-         RbCJ83IJCQehbhM0oYbL1LmU5O5syZm++0AQDucbZp8TAsgico40Y2coR8hG5W9621eb
-         BdKd69N4YPNtJHxJ5bmGP2z0R3/kzgm3t/GUcbxaueLg8hOcmmv4X2QNquXcMG7Fer4b
-         M27INnaYc2cbnH7LoDbn55dNv9jrQ/fmQ1jQ7w367Vs6E+NI2c86ujYBiH/SVO5QBX0c
-         no4Q==
+        bh=Rs2LcgmQGCncpft7MaTg8PjtcQwZ1HH5YMHMu/sFwOI=;
+        b=OC54jJBilbUazi6Ne0xC+3kdPSx8z01hM6b7sKqZ5gl+Nfm0ZNuANEiX57ZDEZTC0l
+         l1jVwyjvYP4gKr+jVLLvmevoWGMd4HiO/ZbmUiaNyFlghSetXK/bDzyPL6NI5gRfyoC1
+         /4Ny5DGAkAdzc5sBSaxv0XdRJkT1PL6zWwURTMMDLCzlIFogMZJGvIMpaqXcRXvVetL1
+         NT6rBNk4jjXW5rFPQMTR7gc9MkOnP0PTNsMvs9a4/lrFcmyiHruDVlbb8opLC6q6jEih
+         2QyfUq5sNJP6kRuSnH1oF8+szvkKABtbtC3ut7c5hcTUzUk2P7r3vbQxAW7RC5tguqGz
+         x62Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=kkKJd0JSuBqvelUuvT0eKbShB/FPMqJYghXkfCJEjr4=;
-        b=lCmnOLUcNfmM4b1dMTky1pmQ8UbmuGOAQsk6CWdwQlXpAXtFPu9ygz2Xfk7hlbwMTI
-         cFIIkh6lfngDENvtIMCsBorJLMJfPGWKJtl6N3KZRNjpwmdCXQPdwZaiRQ6LV6D+NDIl
-         YfloLbr+EmCHKsL9XTgPUjzlOwTotgR8ZL30iQGoql5Aw5uoD6/vQi1PzREXAG9jzNQW
-         ZSzKnU2h8iwn/mRdVfYovUiOpSdQaerlGiepnhXz9jQzRcnTwgD/wIsgiAY3O2EdPqiR
-         P7XdmokrEsexHXGlEoF2hXj8SCCNFARi/IXCspZPktotfH0tu7Sgw38j+/tkZ/Gw4twe
-         QQ2Q==
-X-Gm-Message-State: AGRZ1gJRXWwnioSk+M3L/B0LPiejvlSqd0OOCyB0grAXl9pApSgQmF3n
-        FF+DdeZ7JqIcqdk/6/9Lz8CEAzevrtk=
-X-Google-Smtp-Source: AJdET5fCYK/Y6ZbFSkJavviOB11WusoCHlzwimmTYstEu+zsletzjKarN8lAR2HOXJT0o6mmQwYNAA==
-X-Received: by 2002:a50:b5a6:: with SMTP id a35-v6mr1632145ede.279.1540983483641;
-        Wed, 31 Oct 2018 03:58:03 -0700 (PDT)
+        bh=Rs2LcgmQGCncpft7MaTg8PjtcQwZ1HH5YMHMu/sFwOI=;
+        b=X2IVA0vf23TeW4RYMPllsa0U+lpILUC1FvjkQTh+nfncRcponKez5G34f244yWeLwK
+         iV1IxvOUBlo6rh+wva77Cjf1TcmfY4lF4FDJbGbwiiX43PvQqa9rUXjS/hRlj2Y6Fk04
+         dnj5ZkfrHkZyQHkEubnYzO6C5kzZYiZhEIDhaPfUizDfGE9DjuetamXKoHSA9nio/d3u
+         lWtHdOw5GQFlt3kbTsnANhxDvn0jXNJccBGhDE+d1WtfY2yxzGtpqsdBL0ThCDpc1rG1
+         4/KGs8oHbKS6ODSTNDa4cVRcB2S/HlIaUS+8uplluvEUlFv4rnShvkG4NFbgubMbhcdD
+         7/tQ==
+X-Gm-Message-State: AGRZ1gIQv9PbfclOpbe2nkkxPUY5W5v2/BPfLtRXLPlodIOtpW8Z9gwt
+        z64goCGh8VaHCPHKfxL+ZNx15ve/QmI=
+X-Google-Smtp-Source: AJdET5ea8afZYWNBE9XM+iEa43V8OIl92bvPXVKcuAC9RFGrN7cfMzRRNtvEySZqyFF9ck5/dHsrXA==
+X-Received: by 2002:a50:be4c:: with SMTP id b12-v6mr1639738edi.46.1540983484774;
+        Wed, 31 Oct 2018 03:58:04 -0700 (PDT)
 Received: from localhost.localdomain ([5.57.50.195])
-        by smtp.gmail.com with ESMTPSA id a40-v6sm9041108edd.61.2018.10.31.03.58.02
+        by smtp.gmail.com with ESMTPSA id a40-v6sm9041108edd.61.2018.10.31.03.58.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 03:58:02 -0700 (PDT)
+        Wed, 31 Oct 2018 03:58:04 -0700 (PDT)
 From:   Emil Renner Berthing <esmil@mailme.dk>
 To:     linux-spi@vger.kernel.org
 Cc:     Emil Renner Berthing <kernel@esmil.dk>,
@@ -68,9 +67,9 @@ Cc:     Emil Renner Berthing <kernel@esmil.dk>,
         Heiko Stuebner <heiko@sntech.de>,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 04/14] spi: rockchip: use atomic_t state
-Date:   Wed, 31 Oct 2018 11:57:01 +0100
-Message-Id: <20181031105711.19575-5-esmil@mailme.dk>
+Subject: [PATCH v1 05/14] spi: rockchip: disable spi on error
+Date:   Wed, 31 Oct 2018 11:57:02 +0100
+Message-Id: <20181031105711.19575-6-esmil@mailme.dk>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181031105711.19575-1-esmil@mailme.dk>
 References: <20181031105711.19575-1-esmil@mailme.dk>
@@ -83,180 +82,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Emil Renner Berthing <kernel@esmil.dk>
 
-The state field is currently only used to make sure
-only the last of the tx and rx dma callbacks issue
-an spi_finalize_current_transfer.
-Rather than using a spinlock we can get away
-with just turning the state field into an atomic_t.
+Successful transfers leave the spi disabled, so if
+we just make sure to disable the spi on error
+there should be no need to disable the spi from
+master->unprepare_message.
+
+This also flushes the tx and rx fifos,
+so no need to do that manually.
 
 Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
 ---
- drivers/spi/spi-rockchip.c | 75 +++++++++++++-------------------------
- 1 file changed, 25 insertions(+), 50 deletions(-)
+ drivers/spi/spi-rockchip.c | 30 +++++-------------------------
+ 1 file changed, 5 insertions(+), 25 deletions(-)
 
 diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
-index 7fac4253075e..1c813797f963 100644
+index 1c813797f963..5729e6071729 100644
 --- a/drivers/spi/spi-rockchip.c
 +++ b/drivers/spi/spi-rockchip.c
-@@ -142,8 +142,9 @@
- #define RF_DMA_EN					(1 << 0)
- #define TF_DMA_EN					(1 << 1)
+@@ -210,12 +210,6 @@ static inline void spi_set_clk(struct rockchip_spi *rs, u16 div)
+ 	writel_relaxed(div, rs->regs + ROCKCHIP_SPI_BAUDR);
+ }
  
--#define RXBUSY						(1 << 0)
--#define TXBUSY						(1 << 1)
-+/* Driver state flags */
-+#define RXDMA					(1 << 0)
-+#define TXDMA					(1 << 1)
- 
- /* sclk_out: spi master internal logic in rk3x can support 50Mhz */
- #define MAX_SCLK_OUT		50000000
-@@ -169,6 +170,9 @@ struct rockchip_spi {
- 	struct clk *apb_pclk;
- 
- 	void __iomem *regs;
-+
-+	atomic_t state;
-+
- 	/*depth of the FIFO buffer */
- 	u32 fifo_len;
- 	/* max bus freq supported */
-@@ -187,10 +191,6 @@ struct rockchip_spi {
- 	void *rx;
- 	void *rx_end;
- 
--	u32 state;
--	/* protect state */
--	spinlock_t lock;
+-static inline void flush_fifo(struct rockchip_spi *rs)
+-{
+-	while (readl_relaxed(rs->regs + ROCKCHIP_SPI_RXFLR))
+-		readl_relaxed(rs->regs + ROCKCHIP_SPI_RXDR);
+-}
 -
- 	bool cs_asserted[ROCKCHIP_SPI_MAX_CS_NUM];
- 
- 	bool use_dma;
-@@ -302,28 +302,21 @@ static int rockchip_spi_prepare_message(struct spi_master *master,
- static void rockchip_spi_handle_err(struct spi_master *master,
- 				    struct spi_message *msg)
+ static inline void wait_for_idle(struct rockchip_spi *rs)
  {
--	unsigned long flags;
+ 	unsigned long timeout = jiffies + msecs_to_jiffies(5);
+@@ -304,29 +298,16 @@ static void rockchip_spi_handle_err(struct spi_master *master,
+ {
  	struct rockchip_spi *rs = spi_master_get_devdata(master);
  
--	spin_lock_irqsave(&rs->lock, flags);
--
- 	/*
- 	 * For DMA mode, we need terminate DMA channel and flush
- 	 * fifo for the next transfer if DMA thansfer timeout.
- 	 * handle_err() was called by core if transfer failed.
- 	 * Maybe it is reasonable for error handling here.
+-	/*
+-	 * For DMA mode, we need terminate DMA channel and flush
+-	 * fifo for the next transfer if DMA thansfer timeout.
+-	 * handle_err() was called by core if transfer failed.
+-	 * Maybe it is reasonable for error handling here.
++	/* stop running spi transfer
++	 * this also flushes both rx and tx fifos
  	 */
--	if (rs->use_dma) {
--		if (rs->state & RXBUSY) {
--			dmaengine_terminate_async(rs->dma_rx.ch);
--			flush_fifo(rs);
--		}
-+	if (atomic_read(&rs->state) & TXDMA)
-+		dmaengine_terminate_async(rs->dma_tx.ch);
- 
--		if (rs->state & TXBUSY)
--			dmaengine_terminate_async(rs->dma_tx.ch);
-+	if (atomic_read(&rs->state) & RXDMA) {
-+		dmaengine_terminate_async(rs->dma_rx.ch);
-+		flush_fifo(rs);
- 	}
--
--	spin_unlock_irqrestore(&rs->lock, flags);
- }
- 
- static int rockchip_spi_unprepare_message(struct spi_master *master,
-@@ -398,48 +391,36 @@ static int rockchip_spi_pio_transfer(struct rockchip_spi *rs)
- 
- static void rockchip_spi_dma_rxcb(void *data)
- {
--	unsigned long flags;
- 	struct rockchip_spi *rs = data;
-+	int state = atomic_fetch_andnot(RXDMA, &rs->state);
- 
--	spin_lock_irqsave(&rs->lock, flags);
--
--	rs->state &= ~RXBUSY;
--	if (!(rs->state & TXBUSY)) {
--		spi_enable_chip(rs, false);
--		spi_finalize_current_transfer(rs->master);
--	}
-+	if (state & TXDMA)
-+		return;
- 
--	spin_unlock_irqrestore(&rs->lock, flags);
 +	spi_enable_chip(rs, false);
-+	spi_finalize_current_transfer(rs->master);
- }
- 
- static void rockchip_spi_dma_txcb(void *data)
- {
--	unsigned long flags;
- 	struct rockchip_spi *rs = data;
-+	int state = atomic_fetch_andnot(TXDMA, &rs->state);
 +
-+	if (state & RXDMA)
-+		return;
+ 	if (atomic_read(&rs->state) & TXDMA)
+ 		dmaengine_terminate_async(rs->dma_tx.ch);
  
- 	/* Wait until the FIFO data completely. */
- 	wait_for_idle(rs);
- 
--	spin_lock_irqsave(&rs->lock, flags);
--
--	rs->state &= ~TXBUSY;
--	if (!(rs->state & RXBUSY)) {
--		spi_enable_chip(rs, false);
--		spi_finalize_current_transfer(rs->master);
+-	if (atomic_read(&rs->state) & RXDMA) {
++	if (atomic_read(&rs->state) & RXDMA)
+ 		dmaengine_terminate_async(rs->dma_rx.ch);
+-		flush_fifo(rs);
 -	}
+-}
 -
--	spin_unlock_irqrestore(&rs->lock, flags);
-+	spi_enable_chip(rs, false);
-+	spi_finalize_current_transfer(rs->master);
+-static int rockchip_spi_unprepare_message(struct spi_master *master,
+-					  struct spi_message *msg)
+-{
+-	struct rockchip_spi *rs = spi_master_get_devdata(master);
+-
+-	spi_enable_chip(rs, false);
+-
+-	return 0;
  }
  
- static int rockchip_spi_prepare_dma(struct rockchip_spi *rs)
- {
--	unsigned long flags;
- 	struct dma_async_tx_descriptor *rxdesc, *txdesc;
+ static void rockchip_spi_pio_writer(struct rockchip_spi *rs)
+@@ -705,7 +686,6 @@ static int rockchip_spi_probe(struct platform_device *pdev)
  
--	spin_lock_irqsave(&rs->lock, flags);
--	rs->state &= ~RXBUSY;
--	rs->state &= ~TXBUSY;
--	spin_unlock_irqrestore(&rs->lock, flags);
-+	atomic_set(&rs->state, 0);
- 
- 	rxdesc = NULL;
- 	if (rs->rx) {
-@@ -490,9 +471,7 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs)
- 
- 	/* rx must be started before tx due to spi instinct */
- 	if (rxdesc) {
--		spin_lock_irqsave(&rs->lock, flags);
--		rs->state |= RXBUSY;
--		spin_unlock_irqrestore(&rs->lock, flags);
-+		atomic_or(RXDMA, &rs->state);
- 		dmaengine_submit(rxdesc);
- 		dma_async_issue_pending(rs->dma_rx.ch);
- 	}
-@@ -500,9 +479,7 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs)
- 	spi_enable_chip(rs, true);
- 
- 	if (txdesc) {
--		spin_lock_irqsave(&rs->lock, flags);
--		rs->state |= TXBUSY;
--		spin_unlock_irqrestore(&rs->lock, flags);
-+		atomic_or(TXDMA, &rs->state);
- 		dmaengine_submit(txdesc);
- 		dma_async_issue_pending(rs->dma_tx.ch);
- 	}
-@@ -716,8 +693,6 @@ static int rockchip_spi_probe(struct platform_device *pdev)
- 		goto err_disable_spiclk;
- 	}
- 
--	spin_lock_init(&rs->lock);
--
- 	pm_runtime_set_active(&pdev->dev);
- 	pm_runtime_enable(&pdev->dev);
- 
+ 	master->set_cs = rockchip_spi_set_cs;
+ 	master->prepare_message = rockchip_spi_prepare_message;
+-	master->unprepare_message = rockchip_spi_unprepare_message;
+ 	master->transfer_one = rockchip_spi_transfer_one;
+ 	master->max_transfer_size = rockchip_spi_max_transfer_size;
+ 	master->handle_err = rockchip_spi_handle_err;
 -- 
 2.19.1
 
