@@ -2,133 +2,130 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D537ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:37:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE3FC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:38:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D10C62080A
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:37:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4A0120821
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:38:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="EMrQreV6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D10C62080A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NC2b1aoQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4A0120821
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730496AbeKADgj (ORCPT
+        id S1730432AbeKADhz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 23:36:39 -0400
-Received: from mail-pg1-f175.google.com ([209.85.215.175]:35259 "EHLO
-        mail-pg1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730141AbeKADgj (ORCPT
+        Wed, 31 Oct 2018 23:37:55 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:50220 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730334AbeKADhz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 23:36:39 -0400
-Received: by mail-pg1-f175.google.com with SMTP id 32-v6so7793847pgu.2
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 11:37:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=wHPgnCxqq5e0L9jJ6bVuEGeSV4D7Kq7aHeh6/Y3ccbE=;
-        b=EMrQreV6Yi1OdKVIn3mcavYfygx+uGfowj7ltEWaFFo/xLaQJwyrIxoH2cJz8YmfWt
-         E12j4obY1c8NgMf2Snm2qrW0onUE3yiHPDjjUzkWuRaAi0r5jhxG7uIpR70XzIdmZSLe
-         NQcs4ugCwBWxdEX1XFairG+vNsiA+cahpX9Mw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=wHPgnCxqq5e0L9jJ6bVuEGeSV4D7Kq7aHeh6/Y3ccbE=;
-        b=kxSR2aOJp3mCvhsc8sgaU4zL6Ua8z6fBrG4wVmYry+6rSI+D7iq8ULf5yJKoK07Nj+
-         tZC4W9Q48ztaF+phvxGqk0K9eSEII/P8L9j9S6XgFWdIXl+YvxlrqkZufrD0jEdyku8s
-         GdIbz5jhkEZCXZtJ0iVUcuwYOWE+sjPUR5wrziDO6in0x1poAg/g9BjnxenAH9ySvDg6
-         VqV4j2HwDurq1ka5SeEEUJkZ+6MHXehEYncaabfFuSC46PyQRSt3MRLsxzsF5wFW+F1M
-         bxOIMwE7UVRfh4QmZch6jlryN10e1d0UE1XmdEcPq22vOSI3aMlYtYwGJDgb0ndFSbYq
-         l+iA==
-X-Gm-Message-State: AGRZ1gJtpe0uvuhTG8ZuJg8wHKM2tjRgPsOT5sJypFuHgU7A9UJOPFDa
-        Qtfpq1arGL7OtBCgTyoi/zk4TA==
-X-Google-Smtp-Source: AJdET5dIKqaeL7zBZUtwMgEeuzpgCaemCrL4QomOCbt2bDBlLxFL6ksUdMv3tbqYH4SljTb2D3VWAw==
-X-Received: by 2002:a62:8145:: with SMTP id t66-v6mr4533951pfd.246.1541011045621;
-        Wed, 31 Oct 2018 11:37:25 -0700 (PDT)
-Received: from localhost.localdomain ([2409:4070:221e:94ae:dc27:379e:a542:5441])
-        by smtp.gmail.com with ESMTPSA id 72-v6sm37165627pfl.126.2018.10.31.11.37.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 11:37:25 -0700 (PDT)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Cc:     Jagan Teki <jagan@openedev.com>
-Subject: [RFC PATCH 7/7] arm64: allwinner: h6: orangepi-liet2: Enable AP6356S WiFi support
-Date:   Thu,  1 Nov 2018 00:06:34 +0530
-Message-Id: <20181031183634.29640-7-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
-In-Reply-To: <20181031183634.29640-1-jagan@amarulasolutions.com>
-References: <20181031183634.29640-1-jagan@amarulasolutions.com>
+        Wed, 31 Oct 2018 23:37:55 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9VIYWtf173658;
+        Wed, 31 Oct 2018 18:38:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=W3t2f2bAdmcADwFbXMNRdktXIiBY2gNdqS+7vxDZuSQ=;
+ b=NC2b1aoQMHRIkQIRqr81MQedctFvMWuxs5KDBqryglFuTmYfa4BhSN/ubSxRalirD6y8
+ 68XPu4J3L7mDka3snGD6+tJtZao3++7s9n2QdHdlHfDlXggiEl9b9LxoHSgSRKIm3joV
+ P5km5AJ+arexpFLk5NWnWX+d2SMMxYeNoeAXhfrQwoR9kJyEy/JjXN2aonaWBWZtikxi
+ GGUf9WsSwn3XjwzsQIKVUBOq3716nYNU/LiOJWiJz6gRHzflWTFzCiNgMM27BKA9wTRp
+ qcduCiPQsp5w1AzXireXmM3bs7YEDcD0xK1iQgz0eF8Gz2jmsD13LPolzoZbowklb+Nt 6w== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2120.oracle.com with ESMTP id 2ncfyq4xh7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 31 Oct 2018 18:38:05 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9VIc4cO008204
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 31 Oct 2018 18:38:04 GMT
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9VIc3Ia019232;
+        Wed, 31 Oct 2018 18:38:03 GMT
+Received: from [10.209.243.127] (/10.209.243.127)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 31 Oct 2018 11:38:03 -0700
+Subject: Re: [PATCH v2 09/10] irqchip: ti-sci-inta: Add support for Interrupt
+ Aggregator driver
+To:     Marc Zyngier <marc.zyngier@arm.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Lokesh Vutla <lokeshvutla@ti.com>
+Cc:     Nishanth Menon <nm@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, tglx@linutronix.de,
+        jason@lakedaemon.net,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org, Tero Kristo <t-kristo@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Device Tree Mailing List <devicetree@vger.kernel.org>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>
+References: <20181018154017.7112-1-lokeshvutla@ti.com>
+ <20181018154017.7112-10-lokeshvutla@ti.com>
+ <b20127dc-be43-3b00-9960-663738df0069@arm.com>
+ <9969f24c-cdb0-1f5c-d0f4-b1c1f587325c@ti.com>
+ <86va5ssrfm.wl-marc.zyngier@arm.com>
+ <2369ea50-55db-c97b-5b43-99d572c97dc9@ti.com>
+ <da27ecc5-db32-cf3a-c194-962c44bc782f@arm.com>
+From:   Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <18df8960-9165-ba50-2c25-9f00d32198e8@oracle.com>
+Date:   Wed, 31 Oct 2018 11:38:00 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <da27ecc5-db32-cf3a-c194-962c44bc782f@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9063 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810310152
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jagan Teki <jagan@openedev.com>
+On 10/31/2018 11:21 AM, Marc Zyngier wrote:
+> Hi Grygorii,
+> 
 
-Enable AP6356S WiFi/BT combo chip on Orangepi Lite2 board:
-- WiFi SDIO interface is connected to MMC1
-- WiFi WL-PMU-EN pin connected to gpio PM3: attach to mmc-pwrseq
-- WiFi WL-WAKE-AP pin connected to gpio PM0
-- 32kHz external oscillator gate clock from RTC
+[...]
 
-Signed-off-by: Jagan Teki <jagan@openedev.com>
----
-Note:
-- chip detected, but failed to connect
-[  129.084504] brcmfmac: brcmf_sdio_hostmail: mailbox indicates firmware halted
-[  135.906409] brcmfmac: brcmf_sdio_bus_rxctl: resumed on timeout 
+> 
+> Well, I'm convinced that we do not want a networking driver to be tied
+> to an interrupt architecture, and that the two should be completely
+> independent. But that's my own opinion. I can only see two solutions
+> moving forward:
+> 
+> 1) You make the IA a real interrupt controller that exposes real
+> interrupts (one per event), and write your networking driver
+> independently of the underlying interrupt architecture.
+> 
+> 2) you make the IA an integral part of your network driver, not exposing
+> anything outside of it, and limiting the interactions with the IR
+> *through the standard IRQ API*. You duplicate this knowledge throughout
+> the other client drivers.
+> 
+> I believe that (2) would be a massive design mistake as it locks the
+> driver to a single of the HW (and potentially a single revision of the
+> firmware) while (1) gives you the required level of flexibility by
+> hiding the whole event "concept" at a single location.
+> 
+> Yes, (1) makes you rewrite your existing, out of tree drivers. Oh well...
+> 
+My preference is also not tie the network driver with IA. BTW, this is
+very standard functionality with other network drivers too. And this
+is handled using MSI-X.
 
- .../allwinner/sun50i-h6-orangepi-lite2.dts    | 27 +++++++++++++++++++
- 1 file changed, 27 insertions(+)
+So strong NO for 1) from me as well.
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-lite2.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-lite2.dts
-index e098a2475f2d..b8012208c185 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-lite2.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-lite2.dts
-@@ -8,4 +8,31 @@
- / {
- 	model = "OrangePi Lite2";
- 	compatible = "xunlong,orangepi-lite2", "allwinner,sun50i-h6";
-+
-+	wifi_pwrseq: wifi-pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		clocks = <&rtc 1>;
-+		clock-names = "ext_clock";
-+		reset-gpios = <&r_pio 1 3 GPIO_ACTIVE_LOW>; /* WL-REG-ON: PM3 */
-+		post-power-on-delay-ms = <200>;
-+	};
-+};
-+
-+&mmc1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc1_pins>;
-+	vmmc-supply = <&reg_cldo2>;
-+	vqmmc-supply = <&reg_bldo3>;
-+	mmc-pwrseq = <&wifi_pwrseq>;
-+	bus-width = <4>;
-+	non-removable;
-+	status = "okay";
-+
-+	brcmf: wifi@1 {
-+		reg = <1>;
-+		compatible = "brcm,bcm4329-fmac";
-+		interrupt-parent = <&r_pio>;
-+		interrupts = <1 0 IRQ_TYPE_LEVEL_LOW>;	/* WL-WAKE-AP: PM0 */
-+		interrupt-names = "host-wake";
-+	};
- };
--- 
-2.18.0.321.gffc6fa0e3
-
+regards,
+Santosh
