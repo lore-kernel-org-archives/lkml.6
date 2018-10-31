@@ -2,359 +2,163 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18DC8C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 08:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A34C1ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 08:31:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C799120685
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 08:30:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C799120685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id 6A42E20685
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 08:31:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A42E20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727655AbeJaR1z (ORCPT
+        id S1727694AbeJaR2K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 13:27:55 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:41195 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727602AbeJaR1y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 13:27:54 -0400
-Received: by mail-lj1-f195.google.com with SMTP id z80-v6so7941139ljb.8;
-        Wed, 31 Oct 2018 01:30:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AUG5Mi3TO2RgHGsx54uAhXA+Wk0PFlYpwXr8Pb2siIs=;
-        b=Ceqjvc38StWo+uV0fgKsb7VlbJUO8H+U4akkSkaBS/LHRKet/ouGhU7DIfgRBTtwfi
-         J+sBQFKdCirg5uEwCQJpAFDTauFvd1ALBZR7AM5pNaLE6yEYT6j6Bcst4oQZD2Ay4dBc
-         Ekmcvrzl+tULRUfz3A4P3du0345vfdfZ0+XK2M1OVbrVr7BDceSoT9ovVZ/GbCU87c7s
-         CMmKMPx9Q8aKT5t/vt1vVmJVcyMpfkfXun9Hch2nPpCDqJfatEfripIF0Vi1QFK1aKdG
-         bucY6LA60DGeAEfGJClSMyTIwrsAFLgXCLDO/4heqbaeeiphRMdDu0ZZXEPtmAVnwBou
-         AonQ==
-X-Gm-Message-State: AGRZ1gLheUgn5VI/dtKOKR57nYOqLS/vlxLS4HbSzZUnW2/NVYTfgBkJ
-        HviHBwljp1l2Tpd9i3StA7Q=
-X-Google-Smtp-Source: AJdET5dTyajRbjrL/bIHFv6pYPz0S5pgk0WEz6dS/bT8vGdldTihgcLK3hyEPA6ma5HhmP3mIaSvbQ==
-X-Received: by 2002:a2e:7011:: with SMTP id l17-v6mr1463746ljc.147.1540974644407;
-        Wed, 31 Oct 2018 01:30:44 -0700 (PDT)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id t15-v6sm3924793lji.75.2018.10.31.01.30.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 31 Oct 2018 01:30:43 -0700 (PDT)
-Date:   Wed, 31 Oct 2018 10:30:34 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh@kernel.org>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Huang Shijie <sjhuang@iluvatar.ai>,
-        Akshu Agrawal <Akshu.Agrawal@amd.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Daniel Kurtz <djkurtz@chromium.org>, mazziesaccount@gmail.com
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        matti.vaittinen@fi.rohmeurope.com
-Subject: [PATCH 1/8] clk: clkdev/of_clk - add managed lookup and provider
- registrations
-Message-ID: <b3954431df109827c71d25d390adf22f6991a6df.1540970653.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1540970653.git.matti.vaittinen@fi.rohmeurope.com>
+        Wed, 31 Oct 2018 13:28:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47774 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727514AbeJaR2K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 13:28:10 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5BCF753EDF;
+        Wed, 31 Oct 2018 08:31:01 +0000 (UTC)
+Subject: Re: [PATCH] mm: hide incomplete nr_indirectly_reclaimable in
+ /proc/zoneinfo
+To:     Roman Gushchin <guro@fb.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Cc:     Yongqin Liu <yongqin.liu@linaro.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20181030174649.16778-1-guro@fb.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <8596268b-7bd1-16c4-ad06-31c3114528bb@suse.cz>
+Date:   Wed, 31 Oct 2018 09:12:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1540970653.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20181030174649.16778-1-guro@fb.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With MFD devices the clk properties may be contained in MFD (parent) DT
-node. Current devm_of_clk_add_hw_provider assumes the clk is bound to MFD
-subdevice not to MFD device (parent). Add
-devm_of_clk_add_hw_provider_parent to tackle this issue.
+On 10/30/18 6:48 PM, Roman Gushchin wrote:
+> Yongqin reported that /proc/zoneinfo format is broken in 4.14
+> due to commit 7aaf77272358 ("mm: don't show nr_indirectly_reclaimable
+> in /proc/vmstat")
+> 
+> Node 0, zone      DMA
+>   per-node stats
+>       nr_inactive_anon 403
+>       nr_active_anon 89123
+>       nr_inactive_file 128887
+>       nr_active_file 47377
+>       nr_unevictable 2053
+>       nr_slab_reclaimable 7510
+>       nr_slab_unreclaimable 10775
+>       nr_isolated_anon 0
+>       nr_isolated_file 0
+>       <...>
+>       nr_vmscan_write 0
+>       nr_vmscan_immediate_reclaim 0
+>       nr_dirtied   6022
+>       nr_written   5985
+>                    74240
+>       ^^^^^^^^^^
+>   pages free     131656
+> 
+> The problem is caused by the nr_indirectly_reclaimable counter,
+> which is hidden from the /proc/vmstat, but not from the
+> /proc/zoneinfo. Let's fix this inconsistency and hide the
+> counter from /proc/zoneinfo exactly as from /proc/vmstat.
 
-Also clkdev registration lacks of managed registration functions and it
-seems few drivers do not drop clkdev lookups at exit. Add
-devm_clk_hw_register_clkdev and devm_clk_release_clkdev to ease lookup
-releasing at exit.
+Ooops, good catch.
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- Documentation/driver-model/devres.txt |   3 +
- drivers/clk/clk.c                     |  28 ++++++--
- drivers/clk/clkdev.c                  | 122 ++++++++++++++++++++++++++--------
- include/linux/clk-provider.h          |   4 ++
- include/linux/clkdev.h                |   4 ++
- 5 files changed, 129 insertions(+), 32 deletions(-)
+> BTW, in 4.19+ the counter has been renamed and exported by
+> the commit b29940c1abd7 ("mm: rename and change semantics of
+> nr_indirectly_reclaimable_bytes"), so there is no such a problem
+> anymore.
 
-diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver-model/devres.txt
-index 43681ca0837f..fac63760b01c 100644
---- a/Documentation/driver-model/devres.txt
-+++ b/Documentation/driver-model/devres.txt
-@@ -238,6 +238,9 @@ CLOCK
-   devm_clk_put()
-   devm_clk_hw_register()
-   devm_of_clk_add_hw_provider()
-+  devm_of_clk_add_parent_hw_provider()
-+  devm_clk_hw_register_clkdev()
-+  devm_clk_release_clkdev()
- 
- DMA
-   dmaenginem_async_device_register()
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index af011974d4ec..9bb921eb90f6 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3893,12 +3893,12 @@ static void devm_of_clk_release_provider(struct device *dev, void *res)
- 	of_clk_del_provider(*(struct device_node **)res);
- }
- 
--int devm_of_clk_add_hw_provider(struct device *dev,
-+static int __devm_of_clk_add_hw_provider(struct device *dev,
- 			struct clk_hw *(*get)(struct of_phandle_args *clkspec,
- 					      void *data),
--			void *data)
-+			struct device_node *of_node, void *data)
- {
--	struct device_node **ptr, *np;
-+	struct device_node **ptr;
- 	int ret;
- 
- 	ptr = devres_alloc(devm_of_clk_release_provider, sizeof(*ptr),
-@@ -3906,10 +3906,9 @@ int devm_of_clk_add_hw_provider(struct device *dev,
- 	if (!ptr)
- 		return -ENOMEM;
- 
--	np = dev->of_node;
--	ret = of_clk_add_hw_provider(np, get, data);
-+	*ptr = of_node;
-+	ret = of_clk_add_hw_provider(of_node, get, data);
- 	if (!ret) {
--		*ptr = np;
- 		devres_add(dev, ptr);
- 	} else {
- 		devres_free(ptr);
-@@ -3917,8 +3916,25 @@ int devm_of_clk_add_hw_provider(struct device *dev,
- 
- 	return ret;
- }
-+int devm_of_clk_add_hw_provider(struct device *dev,
-+			struct clk_hw *(*get)(struct of_phandle_args *clkspec,
-+					      void *data),
-+			void *data)
-+{
-+	return __devm_of_clk_add_hw_provider(dev, get, dev->of_node, data);
-+}
- EXPORT_SYMBOL_GPL(devm_of_clk_add_hw_provider);
- 
-+int devm_of_clk_add_parent_hw_provider(struct device *dev,
-+			struct clk_hw *(*get)(struct of_phandle_args *clkspec,
-+					      void *data),
-+			void *data)
-+{
-+	return __devm_of_clk_add_hw_provider(dev, get, dev->parent->of_node,
-+					     data);
-+}
-+EXPORT_SYMBOL_GPL(devm_of_clk_add_parent_hw_provider);
-+
- /**
-  * of_clk_del_provider() - Remove a previously registered clock provider
-  * @np: Device node pointer associated with clock provider
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index 9ab3db8b3988..f6100b6e06fd 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -401,6 +401,25 @@ static struct clk_lookup *__clk_register_clkdev(struct clk_hw *hw,
- 	return cl;
- }
- 
-+static int do_clk_register_clkdev(struct clk_hw *hw,
-+	struct clk_lookup **cl, const char *con_id, const char *dev_id)
-+{
-+
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	/*
-+	 * Since dev_id can be NULL, and NULL is handled specially, we must
-+	 * pass it as either a NULL format string, or with "%s".
-+	 */
-+	if (dev_id)
-+		*cl = __clk_register_clkdev(hw, con_id, "%s",
-+					   dev_id);
-+	else
-+		*cl = __clk_register_clkdev(hw, con_id, NULL);
-+
-+	return *cl ? 0 : -ENOMEM;
-+}
-+
- /**
-  * clk_register_clkdev - register one clock lookup for a struct clk
-  * @clk: struct clk to associate with all clk_lookups
-@@ -420,20 +439,10 @@ int clk_register_clkdev(struct clk *clk, const char *con_id,
- {
- 	struct clk_lookup *cl;
- 
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
--
--	/*
--	 * Since dev_id can be NULL, and NULL is handled specially, we must
--	 * pass it as either a NULL format string, or with "%s".
--	 */
--	if (dev_id)
--		cl = __clk_register_clkdev(__clk_get_hw(clk), con_id, "%s",
--					   dev_id);
--	else
--		cl = __clk_register_clkdev(__clk_get_hw(clk), con_id, NULL);
--
--	return cl ? 0 : -ENOMEM;
-+	if (!IS_ERR(clk))
-+		return do_clk_register_clkdev(__clk_get_hw(clk), &cl, con_id,
-+					      dev_id);
-+	return PTR_ERR(clk);
- }
- EXPORT_SYMBOL(clk_register_clkdev);
- 
-@@ -456,18 +465,79 @@ int clk_hw_register_clkdev(struct clk_hw *hw, const char *con_id,
- {
- 	struct clk_lookup *cl;
- 
--	if (IS_ERR(hw))
--		return PTR_ERR(hw);
-+	return do_clk_register_clkdev(hw, &cl, con_id, dev_id);
-+}
-+EXPORT_SYMBOL(clk_hw_register_clkdev);
- 
--	/*
--	 * Since dev_id can be NULL, and NULL is handled specially, we must
--	 * pass it as either a NULL format string, or with "%s".
--	 */
--	if (dev_id)
--		cl = __clk_register_clkdev(hw, con_id, "%s", dev_id);
--	else
--		cl = __clk_register_clkdev(hw, con_id, NULL);
-+static void devm_clkdev_release(struct device *dev, void *res)
-+{
-+	clkdev_drop(*(struct clk_lookup **)res);
-+}
- 
--	return cl ? 0 : -ENOMEM;
-+static int devm_clk_match_clkdev(struct device *dev, void *res, void *data)
-+{
-+	struct clk_lookup **l = res;
-+
-+	if (!l || !*l) {
-+		WARN_ON(!l || !*l);
-+		return 0;
-+	}
-+	return *l == data;
- }
--EXPORT_SYMBOL(clk_hw_register_clkdev);
-+
-+/**
-+ * devm_clk_release_clkdev - Resource managed clkdev lookup release
-+ * @dev: device this lookup is bound
-+ * @con_id: connection ID string on device
-+ * @dev_id: format string describing device name
-+ *
-+ * Drop the clkdev lookup created with devm_clk_hw_register_clkdev.
-+ * Normally this function will not need to be called and the resource
-+ * management code will ensure that the resource is freed.
-+ */
-+void devm_clk_release_clkdev(struct device *dev, const char *con_id,
-+			     const char *dev_id)
-+{
-+	struct clk_lookup *cl;
-+	int rval;
-+
-+	cl = clk_find(dev_id, con_id);
-+	WARN_ON(!cl);
-+	rval = devres_release(dev, devm_clkdev_release,
-+			      &devm_clk_match_clkdev, cl);
-+	WARN_ON(rval);
-+}
-+EXPORT_SYMBOL(devm_clk_release_clkdev);
-+
-+/**
-+ * devm_clk_hw_register_clkdev - managed clk lookup registration for clk_hw
-+ * @dev: device this lookup is bound
-+ * @hw: struct clk_hw to associate with all clk_lookups
-+ * @con_id: connection ID string on device
-+ * @dev_id: format string describing device name
-+ *
-+ * con_id or dev_id may be NULL as a wildcard, just as in the rest of
-+ * clkdev.
-+ *
-+ * To make things easier for mass registration, we detect error clk_hws
-+ * from a previous clk_hw_register_*() call, and return the error code for
-+ * those.  This is to permit this function to be called immediately
-+ * after clk_hw_register_*().
-+ */
-+int devm_clk_hw_register_clkdev(struct device *dev, struct clk_hw *hw,
-+				const char *con_id, const char *dev_id)
-+{
-+	int rval = -ENOMEM;
-+	struct clk_lookup **cl;
-+
-+	cl = devres_alloc(devm_clkdev_release, sizeof(*cl), GFP_KERNEL);
-+	if (cl) {
-+		rval = do_clk_register_clkdev(hw, cl, con_id, dev_id);
-+		if (!rval)
-+			devres_add(dev, cl);
-+		else
-+			devres_free(cl);
-+	}
-+	return rval;
-+}
-+EXPORT_SYMBOL(devm_clk_hw_register_clkdev);
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 60c51871b04b..94c7bf471c31 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -916,6 +916,10 @@ int devm_of_clk_add_hw_provider(struct device *dev,
- 			   struct clk_hw *(*get)(struct of_phandle_args *clkspec,
- 						 void *data),
- 			   void *data);
-+int devm_of_clk_add_parent_hw_provider(struct device *dev,
-+			   struct clk_hw *(*get)(struct of_phandle_args *clkspec,
-+						 void *data),
-+			   void *data);
- void of_clk_del_provider(struct device_node *np);
- void devm_of_clk_del_provider(struct device *dev);
- struct clk *of_clk_src_simple_get(struct of_phandle_args *clkspec,
-diff --git a/include/linux/clkdev.h b/include/linux/clkdev.h
-index 4890ff033220..ccb32af5848b 100644
---- a/include/linux/clkdev.h
-+++ b/include/linux/clkdev.h
-@@ -52,4 +52,8 @@ int clk_add_alias(const char *, const char *, const char *, struct device *);
- int clk_register_clkdev(struct clk *, const char *, const char *);
- int clk_hw_register_clkdev(struct clk_hw *, const char *, const char *);
- 
-+int devm_clk_hw_register_clkdev(struct device *dev, struct clk_hw *hw,
-+				const char *con_id, const char *dev_id);
-+void devm_clk_release_clkdev(struct device *dev, const char *con_id,
-+			     const char *dev_id);
- #endif
--- 
-2.14.3
+Yeah and that commit depends on introducing a new set kmalloc
+reclaimable caches, which is definitely not a stable material, so a
+stable-only patch seems to be the only option.
 
+> Cc: <stable@vger.kernel.org> # 4.14.x-4.18.x
+> Fixes: 7aaf77272358 ("mm: don't show nr_indirectly_reclaimable in /proc/vmstat")
+> Reported-by: Yongqin Liu <yongqin.liu@linaro.org>
+> Signed-off-by: Roman Gushchin <guro@fb.com>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+
+> ---
+>  mm/vmstat.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/mm/vmstat.c b/mm/vmstat.c
+> index 527ae727d547..6389e876c7a7 100644
+> --- a/mm/vmstat.c
+> +++ b/mm/vmstat.c
+> @@ -1500,6 +1500,10 @@ static void zoneinfo_show_print(struct seq_file *m, pg_data_t *pgdat,
+>  	if (is_zone_first_populated(pgdat, zone)) {
+>  		seq_printf(m, "\n  per-node stats");
+>  		for (i = 0; i < NR_VM_NODE_STAT_ITEMS; i++) {
+> +			/* Skip hidden vmstat items. */
+> +			if (*vmstat_text[i + NR_VM_ZONE_STAT_ITEMS +
+> +					 NR_VM_NUMA_STAT_ITEMS] == '\0')
+> +				continue;
+>  			seq_printf(m, "\n      %-12s %lu",
+>  				vmstat_text[i + NR_VM_ZONE_STAT_ITEMS +
+>  				NR_VM_NUMA_STAT_ITEMS],
+> 
 
