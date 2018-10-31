@@ -2,85 +2,235 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7537C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:29:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98C6BC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:32:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A1CF20657
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:29:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 441202064C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 18:32:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="K8pqyiQ3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A1CF20657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ENR5bcVz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 441202064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730228AbeKAD2t (ORCPT
+        id S1730241AbeKADbR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 23:28:49 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41881 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729964AbeKAD2t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 23:28:49 -0400
-Received: by mail-lj1-f193.google.com with SMTP id z80-v6so9708519ljb.8
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 11:29:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fkeO5T89B0RMpAd4GhViYYvlwIvUzTPNTQcqM2cLw5A=;
-        b=K8pqyiQ3GUQ/uY7qEHE2hQhzLx/LzytawBr6naQGvzA39Yhzpi4nf6WFmbwxl9sInR
-         3tvnK9sYP/oGOv6FVcZRyP5hWvnTQLQQwsOoBMfylU/70UKMQIxA1uu0d8hvxejK29zn
-         XQ+jMjGemGd95T03rpQABL5ONspY7nrPg1v6A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fkeO5T89B0RMpAd4GhViYYvlwIvUzTPNTQcqM2cLw5A=;
-        b=KwpSWoRx2AThZcYLjejoXPxPeznjZYb19RacSc3GzRCSxKxVz7RG5yZv/8SLvVB0N/
-         7STerwoHk9UuTl5HhixCXexoEUw2Wx0Iw9f2VQVTapZ8+l8ySNNwjktuIMgWgpBWKtsJ
-         5LVw6N+e3jyDB6BpfllXNr5uAd3c3e9f73OxqVkIabRMe6EbyMu5+h+kRgyW0H7e1KRO
-         Vrj7fx93W1flxNCw04nq2s0NEiILHqAwMz7hHJ1exECN8dTg6vhwgCV5Wa3k9GP/Z3M6
-         k7StlZdbGKAbWKzjTtgqbMtpOEZJ2bceIbAI/KGWQL8k84OrDaBcudeMy04dwG0+WKsU
-         gkow==
-X-Gm-Message-State: AGRZ1gJntIlOIsj3l46jNky+boQYkb6JHGANm5ABS/P+qKeidRYXMRDY
-        4zIOOC9w27uw4U+2vjRc9Nf26xmF6fBK/g==
-X-Google-Smtp-Source: AJdET5fmje6MsUeHB/s0Oq8tezAsZ9qiJUgCfw6WtuYRn5lWGBgCTqeQjUGXU7KxtJhvqUleLDMHuQ==
-X-Received: by 2002:a2e:5c86:: with SMTP id q128-v6mr2963209ljb.119.1541010575789;
-        Wed, 31 Oct 2018 11:29:35 -0700 (PDT)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
-        by smtp.gmail.com with ESMTPSA id l67-v6sm4571985lfg.45.2018.10.31.11.29.34
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 11:29:35 -0700 (PDT)
-Received: by mail-lj1-f182.google.com with SMTP id s15-v6so15776686lji.3
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 11:29:34 -0700 (PDT)
-X-Received: by 2002:a2e:9f42:: with SMTP id v2-v6mr2988003ljk.80.1541010574267;
- Wed, 31 Oct 2018 11:29:34 -0700 (PDT)
+        Wed, 31 Oct 2018 23:31:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54420 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730010AbeKADbQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 23:31:16 -0400
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E4572081B;
+        Wed, 31 Oct 2018 18:32:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541010724;
+        bh=hIvIjY70T8umZjsOxm4Ahn8MHAuiHxvdEs2DozcLNgE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ENR5bcVzspmY7ekgiATAlZ1vZc743SI9BShX5q9lrGmdO1+P7vXgr3FrxfOvfgWCr
+         uGBtoVIqwXluNi7AnyEFttUPO5uw2Sm38dURuSkRi/8UzxCu9GBj3hWQJgan5reJ/7
+         lHIo9FGzfpnAd5XsoeaELAu4pxbCnVrawGsuckw4=
+Received: by mail-qk1-f174.google.com with SMTP id u68so6775873qkg.9;
+        Wed, 31 Oct 2018 11:32:04 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gJzwcSG1u7oqlD15vZmyrYh4koNWAZQmsR3qdh3xf0FANbmW0JQ
+        a8Q7xHP9cdm63UHGZt47uZsth4UU+BjWfNTU9w==
+X-Google-Smtp-Source: AJdET5eWT6ewjEQTBQ1UTZ8Q1i5lkuDr5R848APi3393/fKZP3G9AY9IOXJK46227xHTAZpM9ZNScOqYo09ijD7rpgs=
+X-Received: by 2002:a37:9201:: with SMTP id u1-v6mr3416965qkd.29.1541010723283;
+ Wed, 31 Oct 2018 11:32:03 -0700 (PDT)
 MIME-Version: 1.0
-References: <1540949083.2254.62.camel@intel.com>
-In-Reply-To: <1540949083.2254.62.camel@intel.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 31 Oct 2018 11:29:18 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjKa=WKrA_MCO1=6ccKZ+1tvauXJAesPbrOu17KgzNMvg@mail.gmail.com>
-Message-ID: <CAHk-=wjKa=WKrA_MCO1=6ccKZ+1tvauXJAesPbrOu17KgzNMvg@mail.gmail.com>
-Subject: Re: [GIT PULL] Thermal management updates for v4.20-rc1
-To:     rui.zhang@intel.com
-Cc:     linux-pm@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1540485597-12240-1-git-send-email-jaewon02.kim@samsung.com>
+In-Reply-To: <1540485597-12240-1-git-send-email-jaewon02.kim@samsung.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 31 Oct 2018 13:31:50 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+V8HmmHV98Wsq-Kec2NXgY4ih+KKEVd-1nZbCoLUPe7Q@mail.gmail.com>
+Message-ID: <CAL_Jsq+V8HmmHV98Wsq-Kec2NXgY4ih+KKEVd-1nZbCoLUPe7Q@mail.gmail.com>
+Subject: Re: [PATCH] of/platform: Support dynamic device tree on AMBA bus
+To:     jaewon02.kim@gmail.com
+Cc:     Frank Rowand <frowand.list@gmail.com>, jaewon02.kim@samsung.com,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 6:24 PM Zhang Rui <rui.zhang@intel.com> wrote:
+On Thu, Oct 25, 2018 at 11:40 AM Jaewon Kim <jaewon02.kim@gmail.com> wrote:
 >
-> Thermal management updates for v4.20-rc1 [..]
+> This patch supports dynamic device-tree for AMBA device.
+> The AMBA device must be registered on the AMBA bus, not the platform bus.
 
-Pulled,
+I'm not convinced we should even support this. There's a limited
+number of AMBA devices. They would almost certainly be on-chip and
+static. I suppose in theory you could have them in an FPGA, but
+generally the FPGA vendors have their own IP blocks and don't use ARM
+Primecell IP. So what is the usecase?
 
-                        Linus
+>
+> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+
+Your author and S-o-b emails should match.
+
+> ---
+>  drivers/of/platform.c | 93 ++++++++++++++++++++++++++++++++++++++++-----------
+>  1 file changed, 73 insertions(+), 20 deletions(-)
+>
+> diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+> index 04ad312..b9ac105 100644
+> --- a/drivers/of/platform.c
+> +++ b/drivers/of/platform.c
+> @@ -286,6 +286,22 @@ static struct amba_device *of_amba_device_create(struct device_node *node,
+>         of_node_clear_flag(node, OF_POPULATED);
+>         return NULL;
+>  }
+> +
+> +/**
+> + * of_find_amba_device_by_node - Find the amba_device associated with a node
+> + * @np: Pointer to device tree node
+> + *
+> + * Returns amba_device pointer, or NULL if not found
+> + */
+> +struct amba_device *of_find_amba_device_by_node(struct device_node *np)
+> +{
+> +       struct device *dev;
+> +
+> +       dev = bus_find_device(&amba_bustype, NULL, np, of_dev_node_match);
+> +       return dev ? to_amba_device(dev) : NULL;
+> +}
+> +EXPORT_SYMBOL(of_find_amba_device_by_node);
+
+I would prefer we add (or change the platform device version) an
+of_find_device_by_node which can be extended to different bus types.
+
+> +
+>  #else /* CONFIG_ARM_AMBA */
+>  static struct amba_device *of_amba_device_create(struct device_node *node,
+>                                                  const char *bus_id,
+> @@ -294,6 +310,12 @@ static struct amba_device *of_amba_device_create(struct device_node *node,
+>  {
+>         return NULL;
+>  }
+> +
+> +struct amba_device *of_find_amba_device_by_node(struct device_node *np)
+> +{
+> +       return NULL;
+> +}
+> +EXPORT_SYMBOL(of_find_amba_device_by_node);
+>  #endif /* CONFIG_ARM_AMBA */
+>
+>  /**
+> @@ -665,6 +687,7 @@ static int of_platform_notify(struct notifier_block *nb,
+>  {
+>         struct of_reconfig_data *rd = arg;
+>         struct platform_device *pdev_parent, *pdev;
+> +       struct amba_device *adev_p, *adev;
+>         bool children_left;
+>
+>         switch (of_reconfig_get_state_change(action, rd)) {
+> @@ -677,17 +700,34 @@ static int of_platform_notify(struct notifier_block *nb,
+>                 if (of_node_check_flag(rd->dn, OF_POPULATED))
+>                         return NOTIFY_OK;
+>
+> -               /* pdev_parent may be NULL when no bus platform device */
+> -               pdev_parent = of_find_device_by_node(rd->dn->parent);
+> -               pdev = of_platform_device_create(rd->dn, NULL,
+> -                               pdev_parent ? &pdev_parent->dev : NULL);
+> -               of_dev_put(pdev_parent);
+> -
+> -               if (pdev == NULL) {
+> -                       pr_err("%s: failed to create for '%pOF'\n",
+> -                                       __func__, rd->dn);
+> -                       /* of_platform_device_create tosses the error code */
+> -                       return notifier_from_errno(-EINVAL);
+> +               if (of_device_is_compatible(rd->dn, "arm,primecell")) {
+> +                       /* adev_p may be NULL when no bus amba device */
+> +                       adev_p = of_find_amba_device_by_node(rd->dn->parent);
+
+An amba_device can't ever have a parent that's an amba_device. The
+parent of an amba_device is typically a platform_device for a
+'simple-bus'.
+
+> +                       adev = of_amba_device_create(rd->dn, NULL, NULL,
+> +                                       adev_p ? &adev_p->dev : NULL);
+> +
+> +                       if (adev_p)
+> +                               put_device(&adev_p->dev);
+> +
+> +                       if (adev == NULL) {
+> +                               pr_err("%s: failed to create for '%s'\n",
+> +                                               __func__, rd->dn->full_name);
+> +                               /* of_amba_device_create tosses the error */
+> +                               return notifier_from_errno(-EINVAL);
+> +                       }
+> +               } else {
+> +                       /* pdev_parent may be NULL when no bus platform device*/
+> +                       pdev_parent = of_find_device_by_node(rd->dn->parent);
+> +                       pdev = of_platform_device_create(rd->dn, NULL,
+> +                                       pdev_parent ? &pdev_parent->dev : NULL);
+> +                       of_dev_put(pdev_parent);
+> +
+> +                       if (pdev == NULL) {
+> +                               pr_err("%s: failed to create for '%pOF'\n",
+> +                                               __func__, rd->dn);
+> +                               /* of_platform_device_create tosses the error */
+> +                               return notifier_from_errno(-EINVAL);
+> +                       }
+
+This all pretty much duplicates what of_platform_bus_create() does and
+we should use it here rather than have another copy. Plus what about
+handling of any child devices (in the platform device case).
+
+>                 }
+>                 break;
+>
+> @@ -698,15 +738,28 @@ static int of_platform_notify(struct notifier_block *nb,
+>                         return NOTIFY_OK;
+>
+>                 /* find our device by node */
+> -               pdev = of_find_device_by_node(rd->dn);
+> -               if (pdev == NULL)
+> -                       return NOTIFY_OK;       /* no? not meant for us */
+> -
+> -               /* unregister takes one ref away */
+> -               of_platform_device_destroy(&pdev->dev, &children_left);
+> -
+> -               /* and put the reference of the find */
+> -               of_dev_put(pdev);
+> +               if (of_device_is_compatible(rd->dn, "arm,primecell")) {
+> +                       adev = of_find_amba_device_by_node(rd->dn);
+
+With the above suggested function returning a struct device for the
+node, you can get rid of the if {} else {}.
+
+> +                       if (adev == NULL)
+> +                               return NOTIFY_OK; /* no? not meant for us */
+> +
+> +                       /* unregister takes one ref away */
+> +                       of_platform_device_destroy(&adev->dev, &children_left);
+> +
+> +                       /* and put the reference of the find */
+> +                       if (adev)
+> +                               put_device(&adev->dev);
+> +               } else {
+> +                       pdev = of_find_device_by_node(rd->dn);
+> +                       if (pdev == NULL)
+> +                               return NOTIFY_OK; /* no? not meant for us */
+> +
+> +                       /* unregister takes one ref away */
+> +                       of_platform_device_destroy(&pdev->dev, &children_left);
+> +
+> +                       /* and put the reference of the find */
+> +                       of_dev_put(pdev);
+> +               }
+>                 break;
+>         }
+>
+> --
+> 2.7.4
+>
