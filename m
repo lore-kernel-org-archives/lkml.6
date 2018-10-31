@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB9D8C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF4D9C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7C3020830
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E32020840
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q/H8RN2/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7C3020830
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vtbHd/1w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E32020840
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729806AbeKAIIf (ORCPT
+        id S1729831AbeKAIIh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:08:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57604 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:08:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729698AbeKAIId (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:08:33 -0400
+        id S1729794AbeKAIIg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:08:36 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3950F20843;
-        Wed, 31 Oct 2018 23:08:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6E512064C;
+        Wed, 31 Oct 2018 23:08:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027302;
-        bh=oyGb2u5HLv10meYeOi6geGjQjtinMeZQNFbByG/F+5I=;
+        s=default; t=1541027304;
+        bh=MZuVpyKfXFgjtZWyaBctliGI5hmqqoQD0X1l/h/OtOw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q/H8RN2/dX2CoU+SffjyPEM8SMmlqCdzQjup/tVohAtXnAM8TYtUj0+vd9ZzAcONp
-         BSWUpPa3iJFC+fgEktOdjiEd2gUGuI8x4X1uih7Ar/YCVKeGxt9KCNFZZl21mjE/Ur
-         PShz7vvKWckf3kONVSiRRxbqv9v/5DioSVLSizlg=
+        b=vtbHd/1wqKxAiqNy2VMGBtKOribwxdQpZsyJji0scjWsKOGlf1bBEkBOIc37fCypi
+         Mb/2+0TP7/8AdN6J2Fk++ar8CO4yfQdmgoj60ckfkQhsBP+aaC0eT1mzjhs5bzG5j3
+         JhTZhJdzu94AroJWn6YFrkDy00o9I1NEwlIcjE8I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dou Liyang <douly.fnst@cn.fujitsu.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+Cc:     Xiaochen Shen <xiaochen.shen@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H Peter Anvin" <hpa@zytor.com>, "Tony Luck" <tony.luck@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 031/126] ACPI / processor: Fix the return value of acpi_processor_ids_walk()
-Date:   Wed, 31 Oct 2018 19:06:19 -0400
-Message-Id: <20181031230754.29029-31-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 033/126] x86/intel_rdt: Show missing resctrl mount options
+Date:   Wed, 31 Oct 2018 19:06:21 -0400
+Message-Id: <20181031230754.29029-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -53,55 +55,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
+From: Xiaochen Shen <xiaochen.shen@intel.com>
 
-[ Upstream commit d0381bf4f80c571dde1244fe5b85dc35e8b3f546 ]
+[ Upstream commit 2cc81c6992248ea37d0241bc325977bab310bc3b ]
 
-ACPI driver should make sure all the processor IDs in their ACPI Namespace
-are unique. the driver performs a depth-first walk of the namespace tree
-and calls the acpi_processor_ids_walk() to check the duplicate IDs.
+In resctrl filesystem, mount options exist to enable L3/L2 CDP and MBA
+Software Controller features if the platform supports them:
 
-But, the acpi_processor_ids_walk() mistakes the return value. If a
-processor is checked, it returns true which causes the walk break
-immediately, and other processors will never be checked.
+ mount -t resctrl resctrl [-o cdp[,cdpl2][,mba_MBps]] /sys/fs/resctrl
 
-Repace the value with AE_OK which is the standard acpi_status value.
-And don't abort the namespace walk even on error.
+But currently only "cdp" option is displayed in /proc/mounts. "cdpl2" and
+"mba_MBps" options are not shown even when they are active.
 
-Fixes: 8c8cb30f49b8 (acpi/processor: Implement DEVICE operator for processor enumeration)
-Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Before:
+ # mount -t resctrl resctrl -o cdp,mba_MBps /sys/fs/resctrl
+ # grep resctrl /proc/mounts
+ /sys/fs/resctrl /sys/fs/resctrl resctrl rw,relatime,cdp 0 0
+
+After:
+ # mount -t resctrl resctrl -o cdp,mba_MBps /sys/fs/resctrl
+ # grep resctrl /proc/mounts
+ /sys/fs/resctrl /sys/fs/resctrl resctrl rw,relatime,cdp,mba_MBps 0 0
+
+Signed-off-by: Xiaochen Shen <xiaochen.shen@intel.com>
+Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: "H Peter Anvin" <hpa@zytor.com>
+Cc: "Tony Luck" <tony.luck@intel.com>
+Link: https://lkml.kernel.org/r/1536796118-60135-1-git-send-email-fenghua.yu@intel.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/acpi_processor.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/acpi/acpi_processor.c b/drivers/acpi/acpi_processor.c
-index 449d86d39965..fc447410ae4d 100644
---- a/drivers/acpi/acpi_processor.c
-+++ b/drivers/acpi/acpi_processor.c
-@@ -643,7 +643,7 @@ static acpi_status __init acpi_processor_ids_walk(acpi_handle handle,
- 
- 	status = acpi_get_type(handle, &acpi_type);
- 	if (ACPI_FAILURE(status))
--		return false;
-+		return status;
- 
- 	switch (acpi_type) {
- 	case ACPI_TYPE_PROCESSOR:
-@@ -663,11 +663,12 @@ static acpi_status __init acpi_processor_ids_walk(acpi_handle handle,
- 	}
- 
- 	processor_validated_ids_update(uid);
--	return true;
-+	return AE_OK;
- 
- err:
-+	/* Exit on error, but don't abort the namespace walk */
- 	acpi_handle_info(handle, "Invalid processor object\n");
--	return false;
-+	return AE_OK;
- 
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index 749856a2e736..bc3801985d73 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -2032,6 +2032,13 @@ static int rdtgroup_show_options(struct seq_file *seq, struct kernfs_root *kf)
+ {
+ 	if (rdt_resources_all[RDT_RESOURCE_L3DATA].alloc_enabled)
+ 		seq_puts(seq, ",cdp");
++
++	if (rdt_resources_all[RDT_RESOURCE_L2DATA].alloc_enabled)
++		seq_puts(seq, ",cdpl2");
++
++	if (is_mba_sc(&rdt_resources_all[RDT_RESOURCE_MBA]))
++		seq_puts(seq, ",mba_MBps");
++
+ 	return 0;
  }
  
 -- 
