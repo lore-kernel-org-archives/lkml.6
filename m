@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14141ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:51:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A635C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:51:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD5692064C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:51:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F6F72064C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:51:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DbUVqITB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD5692064C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cxnr7m/U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F6F72064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728366AbeKAIvd (ORCPT
+        id S1728113AbeKAIGf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:51:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53560 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728098AbeKAIGf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 1 Nov 2018 04:06:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53504 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728040AbeKAIGe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:06:34 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8946D20854;
-        Wed, 31 Oct 2018 23:06:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B278020838;
+        Wed, 31 Oct 2018 23:06:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027185;
-        bh=iRbJlu+RCqB5NUUnNMVzp6yjzxF0vNrx9OAwzStowp8=;
+        s=default; t=1541027184;
+        bh=rG4g6nUsKCq0+j9skxf6lMLY2Qbnu4BHw8qfLExOQ7g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DbUVqITBODFPY6uJHmbVTbfUlucuDkmy3c4jWikfQRSRobBq59OXC/p9iwz4bE8FJ
-         sOk9dxhFaCMvXVb6Il4WtT+4uZ/0Rs8cZ4d2JBImLu0+foP8KZ2coE46ZrPi+YUbD0
-         Aob4rjje2+6zRxaPLh9o+HrQm8UDJ751XPWy2otM=
+        b=cxnr7m/UOrru5T7f4CHhmPBnvYibSMWvXdhM02IXZV8vsVcg9rn+dzDTCUjnWQPl+
+         wc7ly96/DaoN3wWcnMFTm0GBIkpWUeIgAvSsa6+NaGigIqjUZbBLhIhtgCTlSE/2wo
+         2Vt+xTD5a9n9u/KUb0Nig3b8dpm2Fb2aKmpVt2sw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Balakrishna Godavarthi <bgodavar@codeaurora.org>,
+Cc:     Christian Hewitt <christianshewitt@gmail.com>,
         Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 047/146] Bluetooth: hci_qca: Remove hdev dereference in qca_close().
-Date:   Wed, 31 Oct 2018 19:04:02 -0400
-Message-Id: <20181031230541.28822-47-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 046/146] Bluetooth: btbcm: Add entry for BCM4335C0 UART bluetooth
+Date:   Wed, 31 Oct 2018 19:04:01 -0400
+Message-Id: <20181031230541.28822-46-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -53,101 +53,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+From: Christian Hewitt <christianshewitt@gmail.com>
 
-[ Upstream commit c2d7827338618a9e73a3f892ca63d9082bb7a94d ]
+[ Upstream commit a357ea098c9605f60d92a66a9073f56ce25726da ]
 
-When flag KASAN is set, we are seeing an following crash while removing
-hci_uart module.
+This patch adds the device ID for the AMPAK AP6335 combo module used
+in the 1st generation WeTek Hub Android/LibreELEC HTPC box. The WiFI
+chip identifies itself as BCM4339, while Bluetooth identifies itself
+as BCM4335 (rev C0):
 
-[   50.589909] Unable to handle kernel paging request at virtual address 6b6b6b6b6b6b73
-[   50.597902] Mem abort info:
-[   50.600846]   Exception class = DABT (current EL), IL = 32 bits
-[   50.606959]   SET = 0, FnV = 0
-[   50.610142]   EA = 0, S1PTW = 0
-[   50.613396] Data abort info:
-[   50.616401]   ISV = 0, ISS = 0x00000004
-[   50.620373]   CM = 0, WnR = 0
-[   50.623466] [006b6b6b6b6b6b73] address between user and kernel address ranges
-[   50.630818] Internal error: Oops: 96000004 [#1] PREEMPT SMP
+```
+[    4.864248] Bluetooth: hci0: BCM: chip id 86
+[    4.866388] Bluetooth: hci0: BCM: features 0x2f
+[    4.889317] Bluetooth: hci0: BCM4335C0
+[    4.889332] Bluetooth: hci0: BCM4335C0 (003.001.009) build 0000
+[    9.778383] Bluetooth: hci0: BCM4335C0 (003.001.009) build 0268
+```
 
-[   50.671670] PC is at qca_power_shutdown+0x28/0x100 [hci_uart]
-[   50.677593] LR is at qca_close+0x74/0xb0 [hci_uart]
-[   50.775689] Process rmmod (pid: 2144, stack limit = 0xffffff801ba90000)
-[   50.782493] Call trace:
+Output from hciconfig:
 
-[   50.872150] [<ffffff8000c3c81c>] qca_power_shutdown+0x28/0x100 [hci_uart]
-[   50.879138] [<ffffff8000c3c968>] qca_close+0x74/0xb0 [hci_uart]
-[   50.885238] [<ffffff8000c3a71c>] hci_uart_unregister_device+0x44/0x50 [hci_uart]
-[   50.892846] [<ffffff8000c3c9f4>] qca_serdev_remove+0x50/0x5c [hci_uart]
-[   50.899654] [<ffffff800844f630>] serdev_drv_remove+0x28/0x38
-[   50.905489] [<ffffff800850fc44>] device_release_driver_internal+0x140/0x1e4
-[   50.912653] [<ffffff800850fd94>] driver_detach+0x78/0x84
-[   50.918121] [<ffffff800850edac>] bus_remove_driver+0x80/0xa8
-[   50.923942] [<ffffff80085107dc>] driver_unregister+0x4c/0x58
-[   50.929768] [<ffffff8000c3ca8c>] qca_deinit+0x24/0x598 [hci_uart]
-[   50.936045] [<ffffff8000c3ca10>] hci_uart_exit+0x10/0x48 [hci_uart]
-[   50.942495] [<ffffff8008136630>] SyS_delete_module+0x17c/0x224
+```
+hci0:	Type: Primary  Bus: UART
+	BD Address: 43:39:00:00:1F:AC  ACL MTU: 1021:8  SCO MTU: 64:1
+	UP RUNNING
+	RX bytes:7567 acl:234 sco:0 events:386 errors:0
+	TX bytes:53844 acl:77 sco:0 commands:304 errors:0
+	Features: 0xbf 0xfe 0xcf 0xfe 0xdb 0xff 0x7b 0x87
+	Packet type: DM1 DM3 DM5 DH1 DH3 DH5 HV1 HV2 HV3
+	Link policy: RSWITCH SNIFF
+	Link mode: SLAVE ACCEPT
+	Name: 'HUB'
+	Class: 0x0c0000
+	Service Classes: Rendering, Capturing
+	Device Class: Miscellaneous,
+	HCI Version: 4.0 (0x6)  Revision: 0x10c
+	LMP Version: 4.0 (0x6)  Subversion: 0x6109
+	Manufacturer: Broadcom Corporation (15)
+```
 
-This crash is due to dereference of hdev, after freeing it.
-
-Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
 Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/bluetooth/hci_qca.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/bluetooth/btbcm.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index 2fee65886d50..f0d593c3fa72 100644
---- a/drivers/bluetooth/hci_qca.c
-+++ b/drivers/bluetooth/hci_qca.c
-@@ -167,7 +167,7 @@ struct qca_serdev {
- };
- 
- static int qca_power_setup(struct hci_uart *hu, bool on);
--static void qca_power_shutdown(struct hci_dev *hdev);
-+static void qca_power_shutdown(struct hci_uart *hu);
- 
- static void __serial_clock_on(struct tty_struct *tty)
- {
-@@ -609,7 +609,7 @@ static int qca_close(struct hci_uart *hu)
- 	if (hu->serdev) {
- 		qcadev = serdev_device_get_drvdata(hu->serdev);
- 		if (qcadev->btsoc_type == QCA_WCN3990)
--			qca_power_shutdown(hu->hdev);
-+			qca_power_shutdown(hu);
- 		else
- 			gpiod_set_value_cansleep(qcadev->bt_en, 0);
- 
-@@ -1232,12 +1232,15 @@ static const struct qca_vreg_data qca_soc_data = {
- 	.num_vregs = 4,
- };
- 
--static void qca_power_shutdown(struct hci_dev *hdev)
-+static void qca_power_shutdown(struct hci_uart *hu)
- {
--	struct hci_uart *hu = hci_get_drvdata(hdev);
-+	struct serdev_device *serdev = hu->serdev;
-+	unsigned char cmd = QCA_WCN3990_POWEROFF_PULSE;
- 
- 	host_set_baudrate(hu, 2400);
--	qca_send_power_pulse(hdev, QCA_WCN3990_POWEROFF_PULSE);
-+	hci_uart_set_flow_control(hu, true);
-+	serdev_device_write_buf(serdev, &cmd, sizeof(cmd));
-+	hci_uart_set_flow_control(hu, false);
- 	qca_power_setup(hu, false);
- }
- 
-@@ -1413,7 +1416,7 @@ static void qca_serdev_remove(struct serdev_device *serdev)
- 	struct qca_serdev *qcadev = serdev_device_get_drvdata(serdev);
- 
- 	if (qcadev->btsoc_type == QCA_WCN3990)
--		qca_power_shutdown(qcadev->serdev_hu.hdev);
-+		qca_power_shutdown(&qcadev->serdev_hu);
- 	else
- 		clk_disable_unprepare(qcadev->susclk);
- 
+diff --git a/drivers/bluetooth/btbcm.c b/drivers/bluetooth/btbcm.c
+index 99cde1f9467d..e3e4d929e74f 100644
+--- a/drivers/bluetooth/btbcm.c
++++ b/drivers/bluetooth/btbcm.c
+@@ -324,6 +324,7 @@ static const struct bcm_subver_table bcm_uart_subver_table[] = {
+ 	{ 0x4103, "BCM4330B1"	},	/* 002.001.003 */
+ 	{ 0x410e, "BCM43341B0"	},	/* 002.001.014 */
+ 	{ 0x4406, "BCM4324B3"	},	/* 002.004.006 */
++	{ 0x6109, "BCM4335C0"	},	/* 003.001.009 */
+ 	{ 0x610c, "BCM4354"	},	/* 003.001.012 */
+ 	{ 0x2122, "BCM4343A0"	},	/* 001.001.034 */
+ 	{ 0x2209, "BCM43430A1"  },	/* 001.002.009 */
 -- 
 2.17.1
 
