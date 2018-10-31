@@ -7,45 +7,49 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28417C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:51:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EF86ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:51:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D91512064C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:51:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57E262064C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:51:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dvU3kP/r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D91512064C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xek6CXhM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57E262064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728386AbeKAIvr (ORCPT
+        id S1728083AbeKAIGc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:51:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53388 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728063AbeKAIGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 1 Nov 2018 04:06:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53400 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728043AbeKAIGa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:06:30 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C97F720821;
-        Wed, 31 Oct 2018 23:06:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E7D820830;
+        Wed, 31 Oct 2018 23:06:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027182;
-        bh=+5X7dIC/QbjYxm/+gKy32O98nmODIuISS/rcNXrJd8c=;
+        s=default; t=1541027180;
+        bh=d3jqBbn/9Poqv+I1jgwvudd2LkeSuMY+WqtBmXR3PZo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dvU3kP/rLD49wprEnj4Qi0a387IyrHht6WubvF5tv0+Tprd28zadryTsPMZbc9Pb6
-         aVJsxlFhKJ11uJPryqo+D8aVs0ZhVd1b5craweR9rIL9TEekpxcEytMa+tcp7f4xpC
-         BI66pbb4v176lgRq7votaOuhhu8x8aj1dk+l7jSU=
+        b=Xek6CXhMUK8Oq2vs+bkrspkfKWceaDsE818ldUN7IAo8RB20nmODw6ivbJQPDgjfz
+         24vT0XjMjYwlAtDoJ4nmzB/UD6E5RFCy0q5V59U20stQ36B9ifQF7rHfEEj948OQb4
+         3WZCHRscBCOK0F4TIECMd6/MMhN8GmjiYD/sLQVE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jacob Keller <jacob.e.keller@intel.com>,
-        Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+Cc:     Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 044/146] ice: update fw version check logic
-Date:   Wed, 31 Oct 2018 19:03:59 -0400
-Message-Id: <20181031230541.28822-44-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 042/146] signal: Introduce COMPAT_SIGMINSTKSZ for use in compat_sys_sigaltstack
+Date:   Wed, 31 Oct 2018 19:03:57 -0400
+Message-Id: <20181031230541.28822-42-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -54,117 +58,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jacob Keller <jacob.e.keller@intel.com>
+From: Will Deacon <will.deacon@arm.com>
 
-[ Upstream commit 396fbf9cab5dc07f8f87773062a8d35f54b40a05 ]
+[ Upstream commit 22839869f21ab3850fbbac9b425ccc4c0023926f ]
 
-We have MAX_FW_API_VER_BRANCH, MAX_FW_API_VER_MAJOR, and
-MAX_FW_API_VER_MINOR that we use in ice_controlq.h to test when a
-firmware version is newer than expected. This is currently tested by
-comparing each field separately. Thus, we compare the branch field
-against the MAX_FW_API_VER_BRANCH, and so forth.
+The sigaltstack(2) system call fails with -ENOMEM if the new alternative
+signal stack is found to be smaller than SIGMINSTKSZ. On architectures
+such as arm64, where the native value for SIGMINSTKSZ is larger than
+the compat value, this can result in an unexpected error being reported
+to a compat task. See, for example:
 
-This means that currently, if we suppose that the max firmware version
-is defined as 0.2.1, i.e.
+  https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=904385
 
-Then firmware 0.1.3 will fail to load. This is because the minor version
-3 is greater than the max minor version 1.
+This patch fixes the problem by extending do_sigaltstack to take the
+minimum signal stack size as an additional parameter, allowing the
+native and compat system call entry code to pass in their respective
+values. COMPAT_SIGMINSTKSZ is just defined as SIGMINSTKSZ if it has not
+been defined by the architecture.
 
-This is not intuitive, because of the notion that increasing the major
-firmware version to 2 should mean any firmware version with a major
-version is less than 2 should be considered older than 2...
-
-In order to allow both 0.2.1 and 0.1.3 to load, you would have to define
-the "max" firmware version as 0.2.3.. It is possible that such
-a firmware version doesn't even exist yet!
-
-Fix this by replacing the current logic with an updated check that
-behaves as follows:
-
-First, we check the major version. If it is greater than the expected
-version, then we prevent driver load. Additionally, a warning message is
-logged to indicate to the system administrator that they need to update
-their driver. This is now the only case where the driver will refuse to
-load.
-
-Second, if the major version is less than the expected version, we log
-an information message indicating the NVM should be updated.
-
-Third, if the major version is exact, we'll then check the minor
-version. If the minor version is more than two versions less than
-expected, we log an information message indicating the NVM should be
-updated. If it is more than two versions greater than the expected
-version, we log an information message that the driver should be
-updated.
-
-To support this, the ice_aq_ver_check function needs its signature
-updated to pass the HW structure. Since we now pass this structure,
-there is no need to pass the firmware API versions separately.
-
-Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
-Signed-off-by: Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Reported-by: Steve McIntyre <steve.mcintyre@arm.com>
+Tested-by: Steve McIntyre <93sam@debian.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/ice/ice_controlq.c | 30 ++++++++++++-------
- 1 file changed, 19 insertions(+), 11 deletions(-)
+ include/linux/compat.h |  3 +++
+ kernel/signal.c        | 14 +++++++++-----
+ 2 files changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_controlq.c b/drivers/net/ethernet/intel/ice/ice_controlq.c
-index 62be72fdc8f3..e783976c401d 100644
---- a/drivers/net/ethernet/intel/ice/ice_controlq.c
-+++ b/drivers/net/ethernet/intel/ice/ice_controlq.c
-@@ -518,22 +518,31 @@ ice_shutdown_sq(struct ice_hw *hw, struct ice_ctl_q_info *cq)
+diff --git a/include/linux/compat.h b/include/linux/compat.h
+index 1a3c4f37e908..de0c13bdcd2c 100644
+--- a/include/linux/compat.h
++++ b/include/linux/compat.h
+@@ -103,6 +103,9 @@ typedef struct compat_sigaltstack {
+ 	compat_size_t			ss_size;
+ } compat_stack_t;
+ #endif
++#ifndef COMPAT_MINSIGSTKSZ
++#define COMPAT_MINSIGSTKSZ	MINSIGSTKSZ
++#endif
  
- /**
-  * ice_aq_ver_check - Check the reported AQ API version.
-- * @fw_branch: The "branch" of FW, typically describes the device type
-- * @fw_major: The major version of the FW API
-- * @fw_minor: The minor version increment of the FW API
-+ * @hw: pointer to the hardware structure
-  *
-  * Checks if the driver should load on a given AQ API version.
-  *
-  * Return: 'true' iff the driver should attempt to load. 'false' otherwise.
-  */
--static bool ice_aq_ver_check(u8 fw_branch, u8 fw_major, u8 fw_minor)
-+static bool ice_aq_ver_check(struct ice_hw *hw)
- {
--	if (fw_branch != EXP_FW_API_VER_BRANCH)
--		return false;
--	if (fw_major != EXP_FW_API_VER_MAJOR)
--		return false;
--	if (fw_minor != EXP_FW_API_VER_MINOR)
-+	if (hw->api_maj_ver > EXP_FW_API_VER_MAJOR) {
-+		/* Major API version is newer than expected, don't load */
-+		dev_warn(ice_hw_to_dev(hw),
-+			 "The driver for the device stopped because the NVM image is newer than expected. You must install the most recent version of the network driver.\n");
- 		return false;
-+	} else if (hw->api_maj_ver == EXP_FW_API_VER_MAJOR) {
-+		if (hw->api_min_ver > (EXP_FW_API_VER_MINOR + 2))
-+			dev_info(ice_hw_to_dev(hw),
-+				 "The driver for the device detected a newer version of the NVM image than expected. Please install the most recent version of the network driver.\n");
-+		else if ((hw->api_min_ver + 2) < EXP_FW_API_VER_MINOR)
-+			dev_info(ice_hw_to_dev(hw),
-+				 "The driver for the device detected an older version of the NVM image than expected. Please update the NVM image.\n");
-+	} else {
-+		/* Major API version is older than expected, log a warning */
-+		dev_info(ice_hw_to_dev(hw),
-+			 "The driver for the device detected an older version of the NVM image than expected. Please update the NVM image.\n");
-+	}
- 	return true;
+ #define compat_jiffies_to_clock_t(x)	\
+ 		(((unsigned long)(x) * COMPAT_USER_HZ) / HZ)
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 5843c541fda9..e4aad0e90882 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -3460,7 +3460,8 @@ int do_sigaction(int sig, struct k_sigaction *act, struct k_sigaction *oact)
  }
  
-@@ -588,8 +597,7 @@ static enum ice_status ice_init_check_adminq(struct ice_hw *hw)
- 	if (status)
- 		goto init_ctrlq_free_rq;
+ static int
+-do_sigaltstack (const stack_t *ss, stack_t *oss, unsigned long sp)
++do_sigaltstack (const stack_t *ss, stack_t *oss, unsigned long sp,
++		size_t min_ss_size)
+ {
+ 	struct task_struct *t = current;
  
--	if (!ice_aq_ver_check(hw->api_branch, hw->api_maj_ver,
--			      hw->api_min_ver)) {
-+	if (!ice_aq_ver_check(hw)) {
- 		status = ICE_ERR_FW_API_VER;
- 		goto init_ctrlq_free_rq;
+@@ -3490,7 +3491,7 @@ do_sigaltstack (const stack_t *ss, stack_t *oss, unsigned long sp)
+ 			ss_size = 0;
+ 			ss_sp = NULL;
+ 		} else {
+-			if (unlikely(ss_size < MINSIGSTKSZ))
++			if (unlikely(ss_size < min_ss_size))
+ 				return -ENOMEM;
+ 		}
+ 
+@@ -3508,7 +3509,8 @@ SYSCALL_DEFINE2(sigaltstack,const stack_t __user *,uss, stack_t __user *,uoss)
+ 	if (uss && copy_from_user(&new, uss, sizeof(stack_t)))
+ 		return -EFAULT;
+ 	err = do_sigaltstack(uss ? &new : NULL, uoss ? &old : NULL,
+-			      current_user_stack_pointer());
++			      current_user_stack_pointer(),
++			      MINSIGSTKSZ);
+ 	if (!err && uoss && copy_to_user(uoss, &old, sizeof(stack_t)))
+ 		err = -EFAULT;
+ 	return err;
+@@ -3519,7 +3521,8 @@ int restore_altstack(const stack_t __user *uss)
+ 	stack_t new;
+ 	if (copy_from_user(&new, uss, sizeof(stack_t)))
+ 		return -EFAULT;
+-	(void)do_sigaltstack(&new, NULL, current_user_stack_pointer());
++	(void)do_sigaltstack(&new, NULL, current_user_stack_pointer(),
++			     MINSIGSTKSZ);
+ 	/* squash all but EFAULT for now */
+ 	return 0;
+ }
+@@ -3553,7 +3556,8 @@ static int do_compat_sigaltstack(const compat_stack_t __user *uss_ptr,
+ 		uss.ss_size = uss32.ss_size;
  	}
+ 	ret = do_sigaltstack(uss_ptr ? &uss : NULL, &uoss,
+-			     compat_user_stack_pointer());
++			     compat_user_stack_pointer(),
++			     COMPAT_MINSIGSTKSZ);
+ 	if (ret >= 0 && uoss_ptr)  {
+ 		compat_stack_t old;
+ 		memset(&old, 0, sizeof(old));
 -- 
 2.17.1
 
