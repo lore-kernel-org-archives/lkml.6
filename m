@@ -4,101 +4,86 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71564ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:14:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE01ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:14:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3758D20664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:14:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 903FE20664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:14:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XglduaLa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3758D20664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hKiDrFVg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 903FE20664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732406AbeKAIOX (ORCPT
+        id S1732380AbeKAIOm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:14:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37308 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:14:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732144AbeKAIMY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:12:24 -0400
+        id S1732094AbeKAIMR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:12:17 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CBA882085A;
-        Wed, 31 Oct 2018 23:12:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBD1D20866;
+        Wed, 31 Oct 2018 23:12:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027532;
-        bh=jQEj0xITjl2/8oQr+GS5F2gU+sMwhVezrWOn0OWbebY=;
+        s=default; t=1541027525;
+        bh=cN3XPElDjkDk11CkaRIXctT918DU+eCbo6XCsr9+Er4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XglduaLa3bSjXmzGpzSQKGNBdX70MDE5I7n7D3755+nT5wD/r7zubFU/lu/9tr5Zy
-         vLQHCCuynbBwm5SuCHFI/UkJeQsFf6/FgEoTISA5Qkp3W9DLXAwskRSzqavvhqnPC+
-         H8XsKo/pUnj+fR+s9RziCUwFDbuSmVFr4WPAlEYM=
+        b=hKiDrFVgLZQunevhgP2L1qR+RHVytsMqI/MXPyEk7Hqq9juD9oGuvlM0CsgH+IGWH
+         KOK4p+Rt6fiRwv2gZ6+u39MiWYFUyJTUtJP+pnGB9EWJZ/ZVNS5B2YOlCsTIessvZ1
+         +o5UdMaB54eS48hAxjFvjQfOHV1hgAHwss16VmtM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sanskriti Sharma <sansharm@redhat.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 05/22] perf tools: Free temporary 'sys' string in read_event_files()
-Date:   Wed, 31 Oct 2018 19:11:49 -0400
-Message-Id: <20181031231206.29509-5-sashal@kernel.org>
+Cc:     Paul Cercueil <paul@crapouillou.net>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 31/32] dmaengine: dma-jz4780: Return error if not probed from DT
+Date:   Wed, 31 Oct 2018 19:11:36 -0400
+Message-Id: <20181031231137.29429-31-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181031231206.29509-1-sashal@kernel.org>
-References: <20181031231206.29509-1-sashal@kernel.org>
+In-Reply-To: <20181031231137.29429-1-sashal@kernel.org>
+References: <20181031231137.29429-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sanskriti Sharma <sansharm@redhat.com>
+From: Paul Cercueil <paul@crapouillou.net>
 
-[ Upstream commit 1e44224fb0528b4c0cc176bde2bb31e9127eb14b ]
+[ Upstream commit 54f919a04cf221bc1601d1193682d4379dacacbd ]
 
-For each system in a given pevent, read_event_files() reads in a
-temporary 'sys' string.  Be sure to free this string before moving onto
-to the next system and/or leaving read_event_files().
+The driver calls clk_get() with the clock name set to NULL, which means
+that the driver could only work when probed from devicetree. From now
+on, we explicitly require the driver to be probed from devicetree.
 
-Fixes the following coverity complaints:
-
-  Error: RESOURCE_LEAK (CWE-772):
-
-  tools/perf/util/trace-event-read.c:343: overwrite_var: Overwriting
-  "sys" in "sys = read_string()" leaks the storage that "sys" points to.
-
-  tools/perf/util/trace-event-read.c:353: leaked_storage: Variable "sys"
-  going out of scope leaks the storage it points to.
-
-Signed-off-by: Sanskriti Sharma <sansharm@redhat.com>
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Joe Lawrence <joe.lawrence@redhat.com>
-Link: http://lkml.kernel.org/r/1538490554-8161-6-git-send-email-sansharm@redhat.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Tested-by: Mathieu Malaterre <malat@debian.org>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/trace-event-read.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/dma/dma-jz4780.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/tools/perf/util/trace-event-read.c b/tools/perf/util/trace-event-read.c
-index 54d9e9b548a8..495e014df4fe 100644
---- a/tools/perf/util/trace-event-read.c
-+++ b/tools/perf/util/trace-event-read.c
-@@ -336,9 +336,12 @@ static int read_event_files(struct pevent *pevent)
- 		for (x=0; x < count; x++) {
- 			size = read8(pevent);
- 			ret = read_event_file(pevent, sys, size);
--			if (ret)
-+			if (ret) {
-+				free(sys);
- 				return ret;
-+			}
- 		}
-+		free(sys);
- 	}
- 	return 0;
- }
+diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
+index dade7c47ff18..8344b7c91fe3 100644
+--- a/drivers/dma/dma-jz4780.c
++++ b/drivers/dma/dma-jz4780.c
+@@ -750,6 +750,11 @@ static int jz4780_dma_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 	int i, ret;
+ 
++	if (!dev->of_node) {
++		dev_err(dev, "This driver must be probed from devicetree\n");
++		return -EINVAL;
++	}
++
+ 	jzdma = devm_kzalloc(dev, sizeof(*jzdma), GFP_KERNEL);
+ 	if (!jzdma)
+ 		return -ENOMEM;
 -- 
 2.17.1
 
