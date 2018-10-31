@@ -2,113 +2,101 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C42C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 13:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C27C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 13:55:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFE5A20685
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 13:53:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QmkNvIiG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFE5A20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 5327920847
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 13:55:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5327920847
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729407AbeJaWvf (ORCPT
+        id S1729410AbeJaWx0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 18:51:35 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58384 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729321AbeJaWve (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 18:51:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jK2vllVynI4Vdu1UBSTv+648erhxJoPT7Y1W6GANjes=; b=QmkNvIiGMq7fJl6vwbxs0bn14
-        iDxLcWu2QCKCYqZOSjtY64MStFiXrqoSXFEp5b6tG001eoQEZswHsEIwOvGDWkvKIhpkUf+LxDXnx
-        aHCJo/SJWpmiWEbFv0OSEYg8iuu79AVBcd0RQwYp4cQaM/dyCGt57QDLWju8+q9BmmzGZF49RtBk8
-        kIl1d/pYzwNywlQpNjKM9FdxhC41PsLX1wt7S/YKE88Gvz3Z36c2XoELzzM3DpRqRlhUUxKCecd73
-        wS5j0A7nIVbWu7Aa8A4nRiSBB/OqQ3eeeuxvEP+vPpFc4TxByY6SFD2XfAwOvkhK0LAMuab08kv5B
-        KT3GzDDUA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gHqvy-0002lP-NP; Wed, 31 Oct 2018 13:53:22 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id DDE442029F885; Wed, 31 Oct 2018 14:53:20 +0100 (CET)
-Date:   Wed, 31 Oct 2018 14:53:20 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Cc:     Linux-Kernel <linux-kernel@vger.kernel.org>, mingo@redhat.com,
-        konrad.wilk@oracle.com, dwmw@amazon.co.uk, tglx@linutronix.de,
-        Srinivas REDDY Eeda <srinivas.eeda@oracle.com>, bp@suse.de,
-        hpa@zytor.com
-Subject: Re: [PATCH 3/3] kprobes/x86: Simplify indirect-jump check in
- retpoline
-Message-ID: <20181031135320.GC13237@hirez.programming.kicks-ass.net>
-References: <cc8f9981-f327-4238-8378-262579584db4@default>
- <20181030083650.GB1459@hirez.programming.kicks-ass.net>
- <849ae148-85cd-5f46-d98b-b827cc9c605c@oracle.com>
+        Wed, 31 Oct 2018 18:53:26 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:33953 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729271AbeJaWx0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 18:53:26 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id D0ACD20884; Wed, 31 Oct 2018 14:55:15 +0100 (CET)
+Received: from bbrezillon (aaubervilliers-681-1-12-210.w90-88.abo.wanadoo.fr [90.88.133.210])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 990B1207F4;
+        Wed, 31 Oct 2018 14:55:05 +0100 (CET)
+Date:   Wed, 31 Oct 2018 14:55:05 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Huijin Park <huijin.park@samsung.com>
+Cc:     Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org,
+        bbanghj.park@gmail.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: cast to u64 to avoid unexpected error
+Message-ID: <20181031145505.6b034b84@bbrezillon>
+In-Reply-To: <1535009282-1480-1-git-send-email-huijin.park@samsung.com>
+References: <CGME20180823072813eucas1p2a534b4be94a3a2bc3480adcefca2ca22@eucas1p2.samsung.com>
+        <1535009282-1480-1-git-send-email-huijin.park@samsung.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <849ae148-85cd-5f46-d98b-b827cc9c605c@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 02:01:20PM +0800, Zhenzhong Duan wrote:
-> On 2018/10/30 16:36, Peter Zijlstra wrote:
-> > On Mon, Oct 29, 2018 at 11:55:06PM -0700, Zhenzhong Duan wrote:
-> > > Since CONFIG_RETPOLINE hard depends on compiler support now, so
-> > > replacing indirect-jump check with the range check is safe in that case.
-> > 
-> > Can we put kprobes on module init text before we run alternatives on it?
-> 
-> Forgive me I doesn't understand your question. Do you mean this patch impact
-> kprobes on module init text?
+Hi Huijin,
 
-In that case we would still see the indirect paravirt calls for example,
-and we'd still need that cascade you took out.
+Subject prefix should be "mtd: spi-nor: ...", and please replace
+"unexpected error" by "unsigned int overflows".
 
-Now, I'm not at all sure we're able to use kprobes at those times, so it
-might be a non-issue.
+On Thu, 23 Aug 2018 03:28:02 -0400
+Huijin Park <huijin.park@samsung.com> wrote:
 
-> > > @@ -240,20 +242,16 @@ static int insn_jump_into_range(struct insn *insn, unsigned long start, int len)
-> > >   static int insn_is_indirect_jump(struct insn *insn)
-> > >   {
-> > > -	int ret = __insn_is_indirect_jump(insn);
-> > > +	int ret;
-> > >   #ifdef CONFIG_RETPOLINE
-> > > -	/*
-> > > -	 * Jump to x86_indirect_thunk_* is treated as an indirect jump.
-> > > -	 * Note that even with CONFIG_RETPOLINE=y, the kernel compiled with
-> > > -	 * older gcc may use indirect jump. So we add this check instead of
-> > > -	 * replace indirect-jump check.
-> > > -	 */
-> > > -	if (!ret)
-> > > +	/* Jump to x86_indirect_thunk_* is treated as an indirect jump. */
-> > >   		ret = insn_jump_into_range(insn,
-> > >   				(unsigned long)__indirect_thunk_start,
-> > >   				(unsigned long)__indirect_thunk_end -
-> > >   				(unsigned long)__indirect_thunk_start);
-> > > +#else
-> > > +		ret = __insn_is_indirect_jump(insn);
-> > >   #endif
-> > >   	return ret;
-> > >   }
-> > 
-> > The resulting code is indented wrong.
-> > 
+> From: "huijin.park" <huijin.park@samsung.com>
 > 
-> Oh, yes. Thanks for point out.
+> the params->size is defined as "u64"
+> and, "info->sector_size" and "info->n_sectors" is defined as unsgined and u16
+
+						 ^ are		^ unsigned
+
+> thus, u64 data might have strange data(loss data) if data is overflow.
+
+						    ^ if the result
+overflows an unsigned int.
+
+> this patch cast it to u64.
+
+	     ^casts info->sector_size to an u64.
+
 > 
-> Zhenzhong
+> Signed-off-by: huijin.park <huijin.park@samsung.com>
+> ---
+>  drivers/mtd/spi-nor/spi-nor.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+> index d9c368c..527f281 100644
+> --- a/drivers/mtd/spi-nor/spi-nor.c
+> +++ b/drivers/mtd/spi-nor/spi-nor.c
+> @@ -2459,7 +2459,7 @@ static int spi_nor_init_params(struct spi_nor *nor,
+>  	memset(params, 0, sizeof(*params));
+>  
+>  	/* Set SPI NOR sizes. */
+> -	params->size = info->sector_size * info->n_sectors;
+> +	params->size = (u64)info->sector_size * (u64)info->n_sectors;
+
+						^ this cast is not needed.
+
+BTW, I doubt we'll ever have to deal with NORs that are more than 4GB,
+but making static code analysis tools happy and enforcing code
+correctness is important too.
+
+>  	params->page_size = info->page_size;
+>  
+>  	/* (Fast) Read settings. */
+
+Regards,
+
+Boris
