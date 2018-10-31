@@ -2,119 +2,176 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D95CBECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:00:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF545C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:00:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8ED3820821
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:00:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ab7w+9WH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ED3820821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B064D20823
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:00:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B064D20823
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729803AbeKAA7V (ORCPT
+        id S1729813AbeKAA73 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 20:59:21 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45715 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728848AbeKAA7V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 20:59:21 -0400
-Received: by mail-pf1-f195.google.com with SMTP id v5-v6so2920107pfm.12;
-        Wed, 31 Oct 2018 09:00:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=CVl1ESSj4idIa/gbF1NQ+Xy9kDUcvqho4q0SllzV20U=;
-        b=Ab7w+9WHaj5ieIEXc158y+Grk9mmLMeZzCEaKMNf3P+OgbEG6E/I+ylQtqV3KkiR4F
-         LMVBR0NClQsxCO5IqnxHa2RVuNJ61lkzZY799rk5fMtBrxh7506rfBxlSiloqHe9DP5W
-         lAJPE6LTPxxtiO6agbJOdfJPz8IL7CokheIABeXkrhjoX5rvjzPr68uRTLFuZ91+iFbL
-         bObi2iBzhIYk78LI4hUjJm+8hrhxYmTQYxjNoF9DnyV7flx5RzxEnYi17ySD6k8E4+Bs
-         7QlyYFAcXr9c6HrWAU4pTvQNJFOP1Q6XOfPpGNk8efGduK9M2dzECOjWYuiKgRdOCmte
-         Xn7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CVl1ESSj4idIa/gbF1NQ+Xy9kDUcvqho4q0SllzV20U=;
-        b=mkr/G0fqn/mVrlDgmwIks8K8WuqDsqkgix2ea41xrOdCrbXrIgQLrfwdIV1Z+RJW3W
-         nHoubTnHRM41KL83Rg8AEu4DCdctlHh3Nhto335ldk6Kc6j5xkk2pk+oirv+us5LmH9O
-         asSCqoKE5ggRnvPaQcXIBrMkQQQ/o33pYv8mVHcDyrlTP3f+aM5RCGgLSJ21ecKxKgw7
-         ISOo+F2LKqWmM9iRd68JXz/WmEojUgEAFhLVnj+m+Uqp1Ajij2xj+o0gy6RnupQaiBwV
-         1xR5qGJ4CgMxW+PBZOg7BenLvf5Mpxd5kwUlyhZnrvMR4Pz/LqsTr6voZPq0jMFCTYjn
-         2CzQ==
-X-Gm-Message-State: AGRZ1gLE4jmGLqi3QV9Veny30aK++qinuYHczQbv5J5Ko3N3Khh2zCCO
-        S/EjIF5dUTiSnZJX57C1blg=
-X-Google-Smtp-Source: AJdET5fdFZ9qbWSa8LWQg0zUojvdgpJgZyJu998JYFlMuPqP1J+WY+5ytIf36Ed+Ej3rHTUzVXTMDA==
-X-Received: by 2002:a62:7086:: with SMTP id l128-v6mr4118503pfc.181.1541001644140;
-        Wed, 31 Oct 2018 09:00:44 -0700 (PDT)
-Received: from nishad ([106.51.27.228])
-        by smtp.gmail.com with ESMTPSA id u19-v6sm30759983pfj.115.2018.10.31.09.00.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 31 Oct 2018 09:00:43 -0700 (PDT)
-Date:   Wed, 31 Oct 2018 21:30:36 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Slawomir Stepien <sst@poczta.fm>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v7 3/3] staging: iio: ad2s1210: Add device tree table.
-Message-ID: <ee142522b129dd6fd8d71b5567d9c6711e89efbe.1541000375.git.nishadkamdar@gmail.com>
-References: <cover.1541000375.git.nishadkamdar@gmail.com>
+        Wed, 31 Oct 2018 20:59:29 -0400
+Received: from foss.arm.com ([217.140.101.70]:43210 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728848AbeKAA72 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 20:59:28 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD5EE341;
+        Wed, 31 Oct 2018 09:00:51 -0700 (PDT)
+Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.144.41])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3FBF03F71D;
+        Wed, 31 Oct 2018 09:00:51 -0700 (PDT)
+Date:   Wed, 31 Oct 2018 17:00:49 +0100
+From:   Christoffer Dall <christoffer.dall@arm.com>
+To:     Lukas Braun <koomi@moshbit.net>
+Cc:     Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org, Ralph Palutke <ralph.palutke@fau.de>
+Subject: Re: [PATCH v2] KVM: arm/arm64: Check memslot bounds before mapping
+ hugepages
+Message-ID: <20181031160049.GF12057@e113682-lin.lund.arm.com>
+References: <20180926151135.16083-1-koomi@moshbit.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1541000375.git.nishadkamdar@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180926151135.16083-1-koomi@moshbit.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add device tree table for matching vendor ID.
+On Wed, Sep 26, 2018 at 05:11:35PM +0200, Lukas Braun wrote:
+> Userspace can create a memslot with memory backed by (transparent)
+> hugepages, but with bounds that do not align with hugepages.
+> In that case, we cannot map the entire region in the guest as hugepages
+> without exposing additional host memory to the guest and potentially
+> interfering with other memslots.
+> Consequently, this patch adds a bounds check when populating guest page
+> tables and forces the creation of regular PTEs if mapping an entire
+> hugepage would violate the memslots bounds.
+> 
+> Signed-off-by: Lukas Braun <koomi@moshbit.net>
 
-Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
----
- drivers/staging/iio/resolver/ad2s1210.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+It took me fairly long to understand why we didn't catch that when we
+introduced the 'offset check', which indicates that this function is
+just getting too long to read.
 
-diff --git a/drivers/staging/iio/resolver/ad2s1210.c b/drivers/staging/iio/resolver/ad2s1210.c
-index d3e7d5aad2c8..7c50def91a2b 100644
---- a/drivers/staging/iio/resolver/ad2s1210.c
-+++ b/drivers/staging/iio/resolver/ad2s1210.c
-@@ -701,6 +701,12 @@ static int ad2s1210_remove(struct spi_device *spi)
- 	return 0;
+I don't absolutely mind the fix below, but it does pile on to the
+complexity.
+
+Here's an alternative approach (untested, of course), but it slightly
+limits the functionality we have today, in favor of simplicitly.  (Also
+not sure if it's too large for cc'ing stable).
+
+
+Thanks,
+
+    Christoffer
+
+
+diff --git a/arch/arm64/include/asm/stage2_pgtable.h b/arch/arm64/include/asm/stage2_pgtable.h
+index 8b68099348e5..ccb003dfdb97 100644
+--- a/arch/arm64/include/asm/stage2_pgtable.h
++++ b/arch/arm64/include/asm/stage2_pgtable.h
+@@ -119,6 +119,11 @@ static inline phys_addr_t stage2_pmd_addr_end(phys_addr_t addr, phys_addr_t end)
+ 	return (boundary - 1 < end - 1) ? boundary : end;
  }
  
-+static const struct of_device_id ad2s1210_of_match[] = {
-+	{ .compatible = "adi,ad2s1210", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, ad2s1210_of_match);
++static inline bool stage2_pmd_aligned(phys_addr_t addr)
++{
++	return !!(addr & ~S2_PMD_MASK);
++}
 +
- static const struct spi_device_id ad2s1210_id[] = {
- 	{ "ad2s1210" },
- 	{}
-@@ -710,6 +716,7 @@ MODULE_DEVICE_TABLE(spi, ad2s1210_id);
- static struct spi_driver ad2s1210_driver = {
- 	.driver = {
- 		.name = DRV_NAME,
-+		.of_match_table = of_match_ptr(ad2s1210_of_match),
- 	},
- 	.probe = ad2s1210_probe,
- 	.remove = ad2s1210_remove,
--- 
-2.17.1
-
+ #endif		/* STAGE2_PGTABLE_LEVELS > 2 */
+ 
+ #define stage2_pte_table_empty(ptep)			kvm_page_empty(ptep)
+diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+index ed162a6c57c5..e5709ccee224 100644
+--- a/virt/kvm/arm/mmu.c
++++ b/virt/kvm/arm/mmu.c
+@@ -1466,6 +1466,22 @@ static void kvm_send_hwpoison_signal(unsigned long address,
+ 	send_sig_info(SIGBUS, &info, current);
+ }
+ 
++static bool memslot_supports_pmd_mappings(struct kvm_memory_slot *memslot)
++{
++	gpa_t gpa_start, gpa_end;
++	hva_t hva_start, hva_end;
++	size_t size;
++
++	size = memslot->npages * PAGE_SIZE;
++	gpa_start = memslot->base_gfn << PAGE_SHIFT;
++	gpa_end = gpa_start + size;
++	hva_start = memslot->userspace_addr;
++	hva_end = hva_start + size;
++
++	return stage2_pmd_aligned(gpa_start) && stage2_pmd_aligned(gpa_end) &&
++	       stage2_pmd_aligned(hva_start) && stage2_pmd_aligned(hva_end);
++}
++
+ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 			  struct kvm_memory_slot *memslot, unsigned long hva,
+ 			  unsigned long fault_status)
+@@ -1491,6 +1507,22 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 		return -EFAULT;
+ 	}
+ 
++	/*
++	 * We limit PMD-size mappings to situations where both the userspace
++	 * region and GPA region is aligned to the stage2 pmd size and is a
++	 * multiple of the stage2 pmd size in total size.  This ensures
++	 * that we won't map unintended host memory and that we'll map the
++	 * intended user pages (not skewed by mismatching PMD offsets).
++	 *
++	 * We miss out on the opportunity to map non-edge PMD regions in
++	 * unaligned memslots.  Oh well...
++	 */
++	if (!memslot_supports_pmd_mappings(memslot))
++		force_pte = true;
++
++	if (logging_active)
++		force_pte = true;
++
+ 	/* Let's check if we will get back a huge page backed by hugetlbfs */
+ 	down_read(&current->mm->mmap_sem);
+ 	vma = find_vma_intersection(current->mm, hva, hva + 1);
+@@ -1500,22 +1532,9 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 		return -EFAULT;
+ 	}
+ 
+-	if (vma_kernel_pagesize(vma) == PMD_SIZE && !logging_active) {
++	if (vma_kernel_pagesize(vma) == PMD_SIZE && !force_pte) {
+ 		hugetlb = true;
+ 		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
+-	} else {
+-		/*
+-		 * Pages belonging to memslots that don't have the same
+-		 * alignment for userspace and IPA cannot be mapped using
+-		 * block descriptors even if the pages belong to a THP for
+-		 * the process, because the stage-2 block descriptor will
+-		 * cover more than a single THP and we loose atomicity for
+-		 * unmapping, updates, and splits of the THP or other pages
+-		 * in the stage-2 block range.
+-		 */
+-		if ((memslot->userspace_addr & ~PMD_MASK) !=
+-		    ((memslot->base_gfn << PAGE_SHIFT) & ~PMD_MASK))
+-			force_pte = true;
+ 	}
+ 	up_read(&current->mm->mmap_sem);
+ 
+@@ -1554,7 +1573,6 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 		 * should not be mapped with huge pages (it introduces churn
+ 		 * and performance degradation), so force a pte mapping.
+ 		 */
+-		force_pte = true;
+ 		flags |= KVM_S2_FLAG_LOGGING_ACTIVE;
+ 
+ 		/*
