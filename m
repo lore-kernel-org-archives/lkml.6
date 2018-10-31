@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CF88ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F981C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EB8B20843
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DD3B2064C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:10:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YdfBqdNd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EB8B20843
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LuZvJkAm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DD3B2064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731129AbeKAIKf (ORCPT
+        id S1731143AbeKAIKg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:10:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33128 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:10:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731060AbeKAIKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:10:31 -0400
+        id S1731110AbeKAIKf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:10:35 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 444CD2085A;
-        Wed, 31 Oct 2018 23:10:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 632B220843;
+        Wed, 31 Oct 2018 23:10:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027419;
-        bh=bpwEIpuDJAR+VO4q+16AnizZZU0OE1U7XBaW6GcsE0k=;
+        s=default; t=1541027424;
+        bh=FYBFqrhVinhdRvVhAnfmN693wT2oKuIZIHlbaLGu2qE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YdfBqdNdI0813LIzuH3xOdTM4hfxbzDyUTbCeF9NlzBW2Pze24X8UjrxFJLf8k6sF
-         hB074qq1OINqWTs9isVXhhpPw0qQOZMHPpPKCAT6FaA1UtmElBFgbZfobbgN78dODA
-         ACnmyk5nD6plOqwiausg2W48ULj8S4zfqkaVQDgY=
+        b=LuZvJkAmfX83+WBPd7kyniT0G9cCRYJueYUAxZPFQwI3LQ6ui5842jxWyQBWs1FNn
+         6UAMRYNTKZUD+tpnena6fx0LDkRUarUdh541r0tmWmdXjGQ1LWTlPLbtJ1m9KmZrJk
+         BZA9/0FhzNoDPved9eQduN2+fHMGvkv+plpYLojI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Douglas Anderson <dianders@chromium.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Eduardo Valentin <edubezval@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 34/73] pinctrl: ssbi-gpio: Fix pm8xxx_pin_config_get() to be compliant
-Date:   Wed, 31 Oct 2018 19:09:09 -0400
-Message-Id: <20181031230948.29203-34-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 39/73] thermal: da9062/61: Prevent hardware access during system suspend
+Date:   Wed, 31 Oct 2018 19:09:14 -0400
+Message-Id: <20181031230948.29203-39-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230948.29203-1-sashal@kernel.org>
 References: <20181031230948.29203-1-sashal@kernel.org>
@@ -53,88 +53,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit b432414b996d32a1bd9afe2bd595bd5729c1477f ]
+[ Upstream commit 760eea43f8c6d48684f1f34b8a02fddc1456e849 ]
 
-If you look at "pinconf-groups" in debugfs for ssbi-gpio you'll notice
-it looks like nonsense.
+The workqueue used for monitoring the hardware may run while the device
+is already suspended.  Fix this by using the freezable system workqueue
+instead, cfr. commit 51e20d0e3a60cf46 ("thermal: Prevent polling from
+happening during system suspend").
 
-The problem is fairly well described in commit 1cf86bc21257 ("pinctrl:
-qcom: spmi-gpio: Fix pmic_gpio_config_get() to be compliant") and
-commit 05e0c828955c ("pinctrl: msm: Fix msm_config_group_get() to be
-compliant"), but it was pointed out that ssbi-gpio has the same
-problem.  Let's fix it there too.
-
-Fixes: b4c45fe974bc ("pinctrl: qcom: ssbi: Family A gpio & mpp drivers")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: 608567aac3206ae8 ("thermal: da9062/61: Thermal junction temperature monitoring driver")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c | 28 ++++++++++++++++++------
- 1 file changed, 21 insertions(+), 7 deletions(-)
+ drivers/thermal/da9062-thermal.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-index f53e32a9d8fc..0e153bae322e 100644
---- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-@@ -260,22 +260,32 @@ static int pm8xxx_pin_config_get(struct pinctrl_dev *pctldev,
+diff --git a/drivers/thermal/da9062-thermal.c b/drivers/thermal/da9062-thermal.c
+index dd8dd947b7f0..01b0cb994457 100644
+--- a/drivers/thermal/da9062-thermal.c
++++ b/drivers/thermal/da9062-thermal.c
+@@ -106,7 +106,7 @@ static void da9062_thermal_poll_on(struct work_struct *work)
+ 					   THERMAL_EVENT_UNSPECIFIED);
  
- 	switch (param) {
- 	case PIN_CONFIG_BIAS_DISABLE:
--		arg = pin->bias == PM8XXX_GPIO_BIAS_NP;
-+		if (pin->bias != PM8XXX_GPIO_BIAS_NP)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_BIAS_PULL_DOWN:
--		arg = pin->bias == PM8XXX_GPIO_BIAS_PD;
-+		if (pin->bias != PM8XXX_GPIO_BIAS_PD)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_BIAS_PULL_UP:
--		arg = pin->bias <= PM8XXX_GPIO_BIAS_PU_1P5_30;
-+		if (pin->bias > PM8XXX_GPIO_BIAS_PU_1P5_30)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PM8XXX_QCOM_PULL_UP_STRENGTH:
- 		arg = pin->pull_up_strength;
- 		break;
- 	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
--		arg = pin->disable;
-+		if (!pin->disable)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_INPUT_ENABLE:
--		arg = pin->mode == PM8XXX_GPIO_MODE_INPUT;
-+		if (pin->mode != PM8XXX_GPIO_MODE_INPUT)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_OUTPUT:
- 		if (pin->mode & PM8XXX_GPIO_MODE_OUTPUT)
-@@ -290,10 +300,14 @@ static int pm8xxx_pin_config_get(struct pinctrl_dev *pctldev,
- 		arg = pin->output_strength;
- 		break;
- 	case PIN_CONFIG_DRIVE_PUSH_PULL:
--		arg = !pin->open_drain;
-+		if (pin->open_drain)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
--		arg = pin->open_drain;
-+		if (!pin->open_drain)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	default:
- 		return -EINVAL;
+ 		delay = msecs_to_jiffies(thermal->zone->passive_delay);
+-		schedule_delayed_work(&thermal->work, delay);
++		queue_delayed_work(system_freezable_wq, &thermal->work, delay);
+ 		return;
+ 	}
+ 
+@@ -125,7 +125,7 @@ static irqreturn_t da9062_thermal_irq_handler(int irq, void *data)
+ 	struct da9062_thermal *thermal = data;
+ 
+ 	disable_irq_nosync(thermal->irq);
+-	schedule_delayed_work(&thermal->work, 0);
++	queue_delayed_work(system_freezable_wq, &thermal->work, 0);
+ 
+ 	return IRQ_HANDLED;
+ }
 -- 
 2.17.1
 
