@@ -2,96 +2,97 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 790C7C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A5D3ECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:53:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35BFF2054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:53:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 325982054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:53:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qnMWHs01"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35BFF2054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="g/Bm0ShD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 325982054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727995AbeKAIyB (ORCPT
+        id S1728140AbeKAIyB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 1 Nov 2018 04:54:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52956 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727552AbeKAIGL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:36059 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727598AbeKAIGL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 1 Nov 2018 04:06:11 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D1E72082E;
-        Wed, 31 Oct 2018 23:06:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027161;
-        bh=gyYrjgLiCJXkKVjzf2Xc6952N5UhCjlaU81NE6QViJ0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qnMWHs0149XaQID+j+JWZpjqWYyY+JJohOfru9v4gGOrEc08OgOLAjRoc5MuEzAuZ
-         DoLvMPK23A6UhXBx7ZIO2k5vhI4/N+jXLr3+zJR4HY+1ECyRbaWl6UDepaXM5pjiNb
-         UoID4BpDPbT0d6W5BvVPpNKLTsxVNI9uUg1Nw/cg=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sanskriti Sharma <sansharm@redhat.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 020/146] perf tools: Free 'printk' string in parse_ftrace_printk()
-Date:   Wed, 31 Oct 2018 19:03:35 -0400
-Message-Id: <20181031230541.28822-20-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
-References: <20181031230541.28822-1-sashal@kernel.org>
+Received: by mail-lf1-f66.google.com with SMTP id h192so12938729lfg.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 16:06:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hP7wrws3x6nOWlRynuTNVKdhCa+sxm2uuw7fee0CuW8=;
+        b=g/Bm0ShDn+frRwfs+wEjLtz6nJNfavBjt/tQfuct98MSL+43kt23u6pP61O9TDbRxp
+         RNni4z8RY1hmrDoLeemSVqxv8kFt7BqN9U7mlEd0ZYJwt636SbK1AXYTI7MbroxziPdV
+         2I7ZnR95CGn+6R3ir0TXC3TWMJjINty+pVcLs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hP7wrws3x6nOWlRynuTNVKdhCa+sxm2uuw7fee0CuW8=;
+        b=EorpvybhRdD3GVPulbwsLSMZk6cZOKfNMWR7Dv03KFV/+SzXrtK9m0ip1qqO0kl0ia
+         D2837u8PFWMtgEqX4q8xhye44YxHL0PsM/WhyLorx0FvuYcDxZ2eKezPFSA8YoTWlm9g
+         geootCZVYaU8XL+PUCHOQLedeKq++UuK9l2mnEK+1544t+W5k4QiEV0CrrB730PQQfGI
+         qUPrtUAi9ChVeC27c48DewHNfxShO3gso+tm9yE4vLvterqQGinI2fBk9fXI7fHOd6Lm
+         mUHhrrRG87MAB5+QJLoOTlXvMbe9Kz3szNyUDABo7078j86ibYJg1raeM+5QDjZxlh86
+         /gnQ==
+X-Gm-Message-State: AGRZ1gKetUauU7z2Ph88pFZ0JI5QTYw8QehBNYONfUfX52P4/+YItM4e
+        d+zWgvfudVMv7S1xtBTkY1f9j23t9dlpWw==
+X-Google-Smtp-Source: AJdET5chQ7+gIqYl+n5v3LBHC8dHaLils12yL2ZnF9cF67BhX3rJ7I197axapKwEu+IZHj/Hw/Lugw==
+X-Received: by 2002:a19:288c:: with SMTP id o134-v6mr3218923lfo.124.1541027158757;
+        Wed, 31 Oct 2018 16:05:58 -0700 (PDT)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id n16-v6sm4293406lji.28.2018.10.31.16.05.57
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Oct 2018 16:05:58 -0700 (PDT)
+Received: by mail-lj1-f181.google.com with SMTP id f3-v6so16401964ljk.9
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 16:05:57 -0700 (PDT)
+X-Received: by 2002:a2e:9819:: with SMTP id a25-v6mr3591023ljj.6.1541027157277;
+ Wed, 31 Oct 2018 16:05:57 -0700 (PDT)
+MIME-Version: 1.0
+References: <1829585.6m1bt7BjAO@blindfold> <CAHk-=wjw8qra+SYDDjvSnZ=APsn9aFG9WiJGSLD94A0Q_+BZWg@mail.gmail.com>
+ <4324649.OiLOZ4spUA@blindfold>
+In-Reply-To: <4324649.OiLOZ4spUA@blindfold>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 31 Oct 2018 16:05:41 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgWy-GwTMQLE1t__fA6Lse8V0J5h4Pkd6mHY7DnZYqFWQ@mail.gmail.com>
+Message-ID: <CAHk-=wgWy-GwTMQLE1t__fA6Lse8V0J5h4Pkd6mHY7DnZYqFWQ@mail.gmail.com>
+Subject: Re: [GIT PULL] UML changes for 4.20-rc1
+To:     richard@nod.at
+Cc:     linux-um@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sanskriti Sharma <sansharm@redhat.com>
+On Wed, Oct 31, 2018 at 4:01 PM Richard Weinberger <richard@nod.at> wrote:
+>
+> Okay, so my rebase was in vain, I thought you don't like pull requests
+> with such an old base.
 
-[ Upstream commit 9c8a182e5a73e01afd11742a2ab887bf338fdafd ]
+Some *really* old bases can cause problems, but generally that's if
+it's more than a year old (or if there's been some major upheaval that
+happens to particularly strike your particular code).
 
-parse_ftrace_printk() tokenizes and parses a line, calling strdup() each
-iteration.  Add code to free this temporary format string duplicate.
+Honestly, I don't think I can recall any actual "that is based on
+something so old that it actually gets problematic" case ever having
+happened.  But I could imagine it.
 
-Fixes the following coverity complaints:
+So if it's "a release or two", it's not worth rebasing for. Not unless
+there is some other pressing reason (ie some screw-up that requires a
+rebase).
 
-  Error: RESOURCE_LEAK (CWE-772):
-  tools/perf/util/trace-event-parse.c:158: overwrite_var: Overwriting
-  "printk" in "printk = strdup(fmt + 1)" leaks the storage that "printk"
-  points to.
-
-  tools/perf/util/trace-event-parse.c:162: leaked_storage: Variable
-  "printk" going out of scope leaks the storage it points to.
-
-Signed-off-by: Sanskriti Sharma <sansharm@redhat.com>
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Joe Lawrence <joe.lawrence@redhat.com>
-Link: http://lkml.kernel.org/r/1538490554-8161-4-git-send-email-sansharm@redhat.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- tools/perf/util/trace-event-parse.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/perf/util/trace-event-parse.c b/tools/perf/util/trace-event-parse.c
-index e76214f8d596..b15a9bf1837b 100644
---- a/tools/perf/util/trace-event-parse.c
-+++ b/tools/perf/util/trace-event-parse.c
-@@ -158,6 +158,7 @@ void parse_ftrace_printk(struct tep_handle *pevent,
- 		printk = strdup(fmt+1);
- 		line = strtok_r(NULL, "\n", &next);
- 		tep_register_print_string(pevent, printk, addr);
-+		free(printk);
- 	}
- }
- 
--- 
-2.17.1
-
+                   Linus
