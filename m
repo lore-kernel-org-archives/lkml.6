@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EE28ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 22:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFD61C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 22:13:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19BB120664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 22:12:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19BB120664
+	by mail.kernel.org (Postfix) with ESMTP id 8BBC320664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 22:13:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BBC320664
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726220AbeKAHMy (ORCPT
+        id S1726580AbeKAHN2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 03:12:54 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:52289 "EHLO
+        Thu, 1 Nov 2018 03:13:28 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:45895 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725755AbeKAHMy (ORCPT
+        with ESMTP id S1725755AbeKAHN2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 03:12:54 -0400
+        Thu, 1 Nov 2018 03:13:28 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9VMClPk2561782
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9VMDLd52561835
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 31 Oct 2018 15:12:47 -0700
+        Wed, 31 Oct 2018 15:13:21 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9VMCluk2561779;
-        Wed, 31 Oct 2018 15:12:47 -0700
-Date:   Wed, 31 Oct 2018 15:12:47 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9VMDLdc2561832;
+        Wed, 31 Oct 2018 15:13:21 -0700
+Date:   Wed, 31 Oct 2018 15:13:21 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-242483068b4b9ad02f1653819b6e683577681e0e@git.kernel.org>
-Cc:     acme@redhat.com, tglx@linutronix.de, jolsa@kernel.org,
-        adrian.hunter@intel.com, mingo@kernel.org, leo.yan@linaro.org,
-        ak@linux.intel.com, hpa@zytor.com, davem@davemloft.net,
-        linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org
-Reply-To: hpa@zytor.com, leo.yan@linaro.org, ak@linux.intel.com,
-          linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
-          davem@davemloft.net, tglx@linutronix.de, acme@redhat.com,
-          adrian.hunter@intel.com, jolsa@kernel.org, mingo@kernel.org
-In-Reply-To: <100ea2ec-ed14-b56d-d810-e0a6d2f4b069@intel.com>
-References: <100ea2ec-ed14-b56d-d810-e0a6d2f4b069@intel.com>
+Message-ID: <tip-5d4f0edaa3ac4f1844ed7c64cd2bae6f1912bac5@git.kernel.org>
+Cc:     leo.yan@linaro.org, tglx@linutronix.de, adrian.hunter@intel.com,
+        davem@davemloft.net, linux-kernel@vger.kernel.org,
+        jolsa@kernel.org, acme@redhat.com, hpa@zytor.com, mingo@kernel.org,
+        ak@linux.intel.com, mathieu.poirier@linaro.org
+Reply-To: mathieu.poirier@linaro.org, acme@redhat.com, mingo@kernel.org,
+          hpa@zytor.com, jolsa@kernel.org, ak@linux.intel.com,
+          adrian.hunter@intel.com, linux-kernel@vger.kernel.org,
+          davem@davemloft.net, tglx@linutronix.de, leo.yan@linaro.org
+In-Reply-To: <20181031091043.23465-6-adrian.hunter@intel.com>
+References: <20181031091043.23465-6-adrian.hunter@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf intel-pt: Insert callchain context into
- synthesized callchains
-Git-Commit-ID: 242483068b4b9ad02f1653819b6e683577681e0e
+Subject: [tip:perf/urgent] perf intel-pt/bts: Calculate cpumode for
+ synthesized samples
+Git-Commit-ID: 5d4f0edaa3ac4f1844ed7c64cd2bae6f1912bac5
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -61,17 +61,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  242483068b4b9ad02f1653819b6e683577681e0e
-Gitweb:     https://git.kernel.org/tip/242483068b4b9ad02f1653819b6e683577681e0e
+Commit-ID:  5d4f0edaa3ac4f1844ed7c64cd2bae6f1912bac5
+Gitweb:     https://git.kernel.org/tip/5d4f0edaa3ac4f1844ed7c64cd2bae6f1912bac5
 Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Wed, 31 Oct 2018 11:10:42 +0200
+AuthorDate: Wed, 31 Oct 2018 11:10:43 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 31 Oct 2018 12:54:27 -0300
+CommitDate: Wed, 31 Oct 2018 12:56:26 -0300
 
-perf intel-pt: Insert callchain context into synthesized callchains
+perf intel-pt/bts: Calculate cpumode for synthesized samples
 
-In the absence of a fallback, callchains must encode also the callchain
-context. Do that now there is no fallback.
+In the absence of a fallback, samples must provide a correct cpumode for
+the 'ip'. Do that now there is no fallback.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Reviewed-by: Jiri Olsa <jolsa@kernel.org>
@@ -80,108 +80,111 @@ Cc: David S. Miller <davem@davemloft.net>
 Cc: Leo Yan <leo.yan@linaro.org>
 Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: stable@vger.kernel.org # 4.19
-Link: http://lkml.kernel.org/r/100ea2ec-ed14-b56d-d810-e0a6d2f4b069@intel.com
+Link: http://lkml.kernel.org/r/20181031091043.23465-6-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/intel-pt.c     |  6 ++++--
- tools/perf/util/thread-stack.c | 44 +++++++++++++++++++++++++++++++++---------
- tools/perf/util/thread-stack.h |  2 +-
- 3 files changed, 40 insertions(+), 12 deletions(-)
+ tools/perf/util/intel-bts.c | 17 ++++++++++++-----
+ tools/perf/util/intel-pt.c  | 22 +++++++++++++---------
+ 2 files changed, 25 insertions(+), 14 deletions(-)
 
-diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-index ffa385a029b3..60732213d16a 100644
---- a/tools/perf/util/intel-pt.c
-+++ b/tools/perf/util/intel-pt.c
-@@ -759,7 +759,8 @@ static struct intel_pt_queue *intel_pt_alloc_queue(struct intel_pt *pt,
- 	if (pt->synth_opts.callchain) {
- 		size_t sz = sizeof(struct ip_callchain);
- 
--		sz += pt->synth_opts.callchain_sz * sizeof(u64);
-+		/* Add 1 to callchain_sz for callchain context */
-+		sz += (pt->synth_opts.callchain_sz + 1) * sizeof(u64);
- 		ptq->chain = zalloc(sz);
- 		if (!ptq->chain)
- 			goto out_free;
-@@ -1160,7 +1161,8 @@ static void intel_pt_prep_sample(struct intel_pt *pt,
- 
- 	if (pt->synth_opts.callchain) {
- 		thread_stack__sample(ptq->thread, ptq->chain,
--				     pt->synth_opts.callchain_sz, sample->ip);
-+				     pt->synth_opts.callchain_sz + 1,
-+				     sample->ip, pt->kernel_start);
- 		sample->callchain = ptq->chain;
- 	}
- 
-diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
-index c091635bf7dc..61a4286a74dc 100644
---- a/tools/perf/util/thread-stack.c
-+++ b/tools/perf/util/thread-stack.c
-@@ -310,20 +310,46 @@ void thread_stack__free(struct thread *thread)
- 	}
+diff --git a/tools/perf/util/intel-bts.c b/tools/perf/util/intel-bts.c
+index 3b3a3d55dca1..7b27d77306c2 100644
+--- a/tools/perf/util/intel-bts.c
++++ b/tools/perf/util/intel-bts.c
+@@ -269,6 +269,13 @@ static int intel_bts_do_fix_overlap(struct auxtrace_queue *queue,
+ 	return 0;
  }
  
-+static inline u64 callchain_context(u64 ip, u64 kernel_start)
++static inline u8 intel_bts_cpumode(struct intel_bts *bts, uint64_t ip)
 +{
-+	return ip < kernel_start ? PERF_CONTEXT_USER : PERF_CONTEXT_KERNEL;
++	return machine__kernel_ip(bts->machine, ip) ?
++	       PERF_RECORD_MISC_KERNEL :
++	       PERF_RECORD_MISC_USER;
 +}
 +
- void thread_stack__sample(struct thread *thread, struct ip_callchain *chain,
--			  size_t sz, u64 ip)
-+			  size_t sz, u64 ip, u64 kernel_start)
+ static int intel_bts_synth_branch_sample(struct intel_bts_queue *btsq,
+ 					 struct branch *branch)
  {
--	size_t i;
-+	u64 context = callchain_context(ip, kernel_start);
-+	u64 last_context;
-+	size_t i, j;
+@@ -281,12 +288,8 @@ static int intel_bts_synth_branch_sample(struct intel_bts_queue *btsq,
+ 	    bts->num_events++ <= bts->synth_opts.initial_skip)
+ 		return 0;
  
--	if (!thread || !thread->ts)
--		chain->nr = 1;
--	else
--		chain->nr = min(sz, thread->ts->cnt + 1);
-+	if (sz < 2) {
-+		chain->nr = 0;
-+		return;
-+	}
+-	event.sample.header.type = PERF_RECORD_SAMPLE;
+-	event.sample.header.misc = PERF_RECORD_MISC_USER;
+-	event.sample.header.size = sizeof(struct perf_event_header);
+-
+-	sample.cpumode = PERF_RECORD_MISC_USER;
+ 	sample.ip = le64_to_cpu(branch->from);
++	sample.cpumode = intel_bts_cpumode(bts, sample.ip);
+ 	sample.pid = btsq->pid;
+ 	sample.tid = btsq->tid;
+ 	sample.addr = le64_to_cpu(branch->to);
+@@ -298,6 +301,10 @@ static int intel_bts_synth_branch_sample(struct intel_bts_queue *btsq,
+ 	sample.insn_len = btsq->intel_pt_insn.length;
+ 	memcpy(sample.insn, btsq->intel_pt_insn.buf, INTEL_PT_INSN_BUF_SZ);
  
--	chain->ips[0] = ip;
-+	chain->ips[0] = context;
-+	chain->ips[1] = ip;
++	event.sample.header.type = PERF_RECORD_SAMPLE;
++	event.sample.header.misc = sample.cpumode;
++	event.sample.header.size = sizeof(struct perf_event_header);
 +
-+	if (!thread || !thread->ts) {
-+		chain->nr = 2;
-+		return;
-+	}
-+
-+	last_context = context;
-+
-+	for (i = 2, j = 1; i < sz && j <= thread->ts->cnt; i++, j++) {
-+		ip = thread->ts->stack[thread->ts->cnt - j].ret_addr;
-+		context = callchain_context(ip, kernel_start);
-+		if (context != last_context) {
-+			if (i >= sz - 1)
-+				break;
-+			chain->ips[i++] = context;
-+			last_context = context;
-+		}
-+		chain->ips[i] = ip;
-+	}
- 
--	for (i = 1; i < chain->nr; i++)
--		chain->ips[i] = thread->ts->stack[thread->ts->cnt - i].ret_addr;
-+	chain->nr = i;
+ 	if (bts->synth_opts.inject) {
+ 		event.sample.header.size = bts->branches_event_size;
+ 		ret = perf_event__synthesize_sample(&event,
+diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
+index 60732213d16a..86cc9a64e982 100644
+--- a/tools/perf/util/intel-pt.c
++++ b/tools/perf/util/intel-pt.c
+@@ -407,6 +407,13 @@ intel_pt_cache_lookup(struct dso *dso, struct machine *machine, u64 offset)
+ 	return auxtrace_cache__lookup(dso->auxtrace_cache, offset);
  }
  
- struct call_return_processor *
-diff --git a/tools/perf/util/thread-stack.h b/tools/perf/util/thread-stack.h
-index b7e41c4ebfdd..f97c00a8c251 100644
---- a/tools/perf/util/thread-stack.h
-+++ b/tools/perf/util/thread-stack.h
-@@ -84,7 +84,7 @@ int thread_stack__event(struct thread *thread, u32 flags, u64 from_ip,
- 			u64 to_ip, u16 insn_len, u64 trace_nr);
- void thread_stack__set_trace_nr(struct thread *thread, u64 trace_nr);
- void thread_stack__sample(struct thread *thread, struct ip_callchain *chain,
--			  size_t sz, u64 ip);
-+			  size_t sz, u64 ip, u64 kernel_start);
- int thread_stack__flush(struct thread *thread);
- void thread_stack__free(struct thread *thread);
- size_t thread_stack__depth(struct thread *thread);
++static inline u8 intel_pt_cpumode(struct intel_pt *pt, uint64_t ip)
++{
++	return ip >= pt->kernel_start ?
++	       PERF_RECORD_MISC_KERNEL :
++	       PERF_RECORD_MISC_USER;
++}
++
+ static int intel_pt_walk_next_insn(struct intel_pt_insn *intel_pt_insn,
+ 				   uint64_t *insn_cnt_ptr, uint64_t *ip,
+ 				   uint64_t to_ip, uint64_t max_insn_cnt,
+@@ -429,10 +436,7 @@ static int intel_pt_walk_next_insn(struct intel_pt_insn *intel_pt_insn,
+ 	if (to_ip && *ip == to_ip)
+ 		goto out_no_cache;
+ 
+-	if (*ip >= ptq->pt->kernel_start)
+-		cpumode = PERF_RECORD_MISC_KERNEL;
+-	else
+-		cpumode = PERF_RECORD_MISC_USER;
++	cpumode = intel_pt_cpumode(ptq->pt, *ip);
+ 
+ 	thread = ptq->thread;
+ 	if (!thread) {
+@@ -1059,15 +1063,11 @@ static void intel_pt_prep_b_sample(struct intel_pt *pt,
+ 				   union perf_event *event,
+ 				   struct perf_sample *sample)
+ {
+-	event->sample.header.type = PERF_RECORD_SAMPLE;
+-	event->sample.header.misc = PERF_RECORD_MISC_USER;
+-	event->sample.header.size = sizeof(struct perf_event_header);
+-
+ 	if (!pt->timeless_decoding)
+ 		sample->time = tsc_to_perf_time(ptq->timestamp, &pt->tc);
+ 
+-	sample->cpumode = PERF_RECORD_MISC_USER;
+ 	sample->ip = ptq->state->from_ip;
++	sample->cpumode = intel_pt_cpumode(pt, sample->ip);
+ 	sample->pid = ptq->pid;
+ 	sample->tid = ptq->tid;
+ 	sample->addr = ptq->state->to_ip;
+@@ -1076,6 +1076,10 @@ static void intel_pt_prep_b_sample(struct intel_pt *pt,
+ 	sample->flags = ptq->flags;
+ 	sample->insn_len = ptq->insn_len;
+ 	memcpy(sample->insn, ptq->insn, INTEL_PT_INSN_BUF_SZ);
++
++	event->sample.header.type = PERF_RECORD_SAMPLE;
++	event->sample.header.misc = sample->cpumode;
++	event->sample.header.size = sizeof(struct perf_event_header);
+ }
+ 
+ static int intel_pt_inject_event(union perf_event *event,
