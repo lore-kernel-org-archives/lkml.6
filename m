@@ -4,47 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9710C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61353ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99AD320854
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29DCA2085A
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dlvwLWqn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99AD320854
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6rdy06K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29DCA2085A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731927AbeKAILz (ORCPT
+        id S1731941AbeKAIL5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:11:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36098 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:11:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731914AbeKAILy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:11:54 -0400
+        id S1730796AbeKAIL4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:11:56 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3BBEE2085A;
-        Wed, 31 Oct 2018 23:11:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D500E2085A;
+        Wed, 31 Oct 2018 23:11:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027501;
-        bh=99Z7K6V9r/lqQdDNNUnID3KXQk/LtcBOx3W6tyKubCg=;
+        s=default; t=1541027504;
+        bh=bvo1h2bwlubHylv+fqebyw7NNfghczvN9UDyOz4MngQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dlvwLWqnXxbKjHZiRatqP7su2AUe6lsOqkXimGMCR14t/frNQnVoXIAzYvfm3YgJS
-         iRUXQ77m5nc/67EfvqMC8ssaFf63irdvZjILo98TdykZkJ9TJMQiqjk0aI/79Gc/Mp
-         YRohw1RqY3KGH4G0Zv/3zbtpOOHwZHw/K+0lQ0K0=
+        b=R6rdy06KPXknETDTDnPTCfgNa2P1v/9uJckAtRdeL+jR3WMlnDoCOtWtbP+4SFqPd
+         cRH4Bc+gfpF56oQqaverFTLa7RjnTdzqb9/4/83ZAvdXt7C3Tk+g0VAGggbydZoqT/
+         5t/bQpbTREeJIl8JmfVd0bFI+BaUcxZdk+Y3GH0M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Serhey Popovych <serhe.popovych@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     Prarit Bhargava <prarit@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        Stafford Horne <shorne@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 04/32] tun: Consistently configure generic netdev params via rtnetlink
-Date:   Wed, 31 Oct 2018 19:11:09 -0400
-Message-Id: <20181031231137.29429-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 07/32] cpupower: Fix coredump on VMWare
+Date:   Wed, 31 Oct 2018 19:11:12 -0400
+Message-Id: <20181031231137.29429-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231137.29429-1-sashal@kernel.org>
 References: <20181031231137.29429-1-sashal@kernel.org>
@@ -53,52 +52,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Serhey Popovych <serhe.popovych@gmail.com>
+From: Prarit Bhargava <prarit@redhat.com>
 
-[ Upstream commit df52eab23d703142c766ac00bdb8db19d71238d0 ]
+[ Upstream commit f69ffc5d3db8f1f03fd6d1df5930f9a1fbd787b6 ]
 
-Configuring generic network device parameters on tun will fail in
-presence of IFLA_INFO_KIND attribute in IFLA_LINKINFO nested attribute
-since tun_validate() always return failure.
+cpupower crashes on VMWare guests.  The guests have the AMD PStateDef MSR
+(0xC0010064 + state number) set to zero.  As a result fid and did are zero
+and the crash occurs because of a divide by zero (cof = fid/did).  This
+can be prevented by checking the enable bit in the PStateDef MSR before
+calculating cof.  By doing this the value of pstate[i] remains zero and
+the value can be tested before displaying the active Pstates.
 
-This can be visualized with following ip-link(8) command sequences:
+Check the enable bit in the PstateDef register for all supported families
+and only print out enabled Pstates.
 
-  # ip link set dev tun0 group 100
-  # ip link set dev tun0 group 100 type tun
-  RTNETLINK answers: Invalid argument
-
-with contrast to dummy and veth drivers:
-
-  # ip link set dev dummy0 group 100
-  # ip link set dev dummy0 type dummy
-
-  # ip link set dev veth0 group 100
-  # ip link set dev veth0 group 100 type veth
-
-Fix by returning zero in tun_validate() when @data is NULL that is
-always in case since rtnl_link_ops->maxtype is zero in tun driver.
-
-Fixes: f019a7a594d9 ("tun: Implement ip link del tunXXX")
-Signed-off-by: Serhey Popovych <serhe.popovych@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Stafford Horne <shorne@gmail.com>
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/tun.c | 2 ++
- 1 file changed, 2 insertions(+)
+ tools/power/cpupower/utils/cpufreq-info.c | 2 ++
+ tools/power/cpupower/utils/helpers/amd.c  | 5 +++++
+ 2 files changed, 7 insertions(+)
 
-diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-index 50bfded6d7ef..5ac0b850d6b1 100644
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -1475,6 +1475,8 @@ static void tun_setup(struct net_device *dev)
-  */
- static int tun_validate(struct nlattr *tb[], struct nlattr *data[])
- {
-+	if (!data)
-+		return 0;
- 	return -EINVAL;
- }
- 
+diff --git a/tools/power/cpupower/utils/cpufreq-info.c b/tools/power/cpupower/utils/cpufreq-info.c
+index 0e6764330241..f9b064ac8d94 100644
+--- a/tools/power/cpupower/utils/cpufreq-info.c
++++ b/tools/power/cpupower/utils/cpufreq-info.c
+@@ -200,6 +200,8 @@ static int get_boost_mode(unsigned int cpu)
+ 		printf(_("    Boost States: %d\n"), b_states);
+ 		printf(_("    Total States: %d\n"), pstate_no);
+ 		for (i = 0; i < pstate_no; i++) {
++			if (!pstates[i])
++				continue;
+ 			if (i < b_states)
+ 				printf(_("    Pstate-Pb%d: %luMHz (boost state)"
+ 					 "\n"), i, pstates[i]);
+diff --git a/tools/power/cpupower/utils/helpers/amd.c b/tools/power/cpupower/utils/helpers/amd.c
+index 6437ef39aeea..82adfb33d7a5 100644
+--- a/tools/power/cpupower/utils/helpers/amd.c
++++ b/tools/power/cpupower/utils/helpers/amd.c
+@@ -103,6 +103,11 @@ int decode_pstates(unsigned int cpu, unsigned int cpu_family,
+ 		}
+ 		if (read_msr(cpu, MSR_AMD_PSTATE + i, &pstate.val))
+ 			return -1;
++		if ((cpu_family == 0x17) && (!pstate.fam17h_bits.en))
++			continue;
++		else if (!pstate.bits.en)
++			continue;
++
+ 		pstates[i] = get_cof(cpu_family, pstate);
+ 	}
+ 	*no = i;
 -- 
 2.17.1
 
