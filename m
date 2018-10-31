@@ -7,48 +7,45 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E07A8C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 428AEECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A923220664
+	by mail.kernel.org (Postfix) with ESMTP id 00C7920989
 	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:07:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JfXLj+Yd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A923220664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hlRkDzV+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00C7920989
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729283AbeKAIHy (ORCPT
+        id S1729301AbeKAIHz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:07:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56098 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:07:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729243AbeKAIHx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:07:53 -0400
+        id S1729279AbeKAIHy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:07:54 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1DDE620821;
-        Wed, 31 Oct 2018 23:07:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2029520840;
+        Wed, 31 Oct 2018 23:07:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027262;
-        bh=uj7pqy00sEesVJHROTkKHccFKi6NjlaVwUz+BnUtPmY=;
+        s=default; t=1541027263;
+        bh=+HO/lVP/Q5O6sXq47kLAeDC4vHbyvLENQeQRCAFGzyc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JfXLj+Yd3G1KBAuK+jNBPusBs2sXaVCgmHMEbZ8wQIbKi+50YU2zbpZppYq/782HI
-         /HqFxOAFEG8+F6zeqIuo+7QzJA9mcNlnHGb/4DKAh4grwIdHGMzUZ/3z8Rzt3Etqr1
-         42T4u6f+sZ8kUfXP4WNkm+SRfzDlJ/tx3n46eXjY=
+        b=hlRkDzV+3VqseZUh8djxSDXnESp5yXm6/gd7rexLhKArunz5hCcorhOKWI1Iktqcd
+         sEuc0yNjj0/VkxS8cQMNCJ+Xq/oKQJmpOb9EX2Jk8CXrbGbeXHy4AK7tgzr6hJXUWQ
+         xKjhVU1KJ7BAqp3dXaUtv8NJU5qJO2j8jYqEC2yM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Wei-Ning Huang <wnhuang@chromium.org>,
-        Julius Werner <jwerner@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     Moni Shoua <monis@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 133/146] firmware: coreboot: Unmap ioregion after device population
-Date:   Wed, 31 Oct 2018 19:05:28 -0400
-Message-Id: <20181031230541.28822-133-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 135/146] IB/mlx5: Allow transition of DCI QP to reset
+Date:   Wed, 31 Oct 2018 19:05:30 -0400
+Message-Id: <20181031230541.28822-135-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -57,62 +54,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Boyd <swboyd@chromium.org>
+From: Moni Shoua <monis@mellanox.com>
 
-[ Upstream commit 20edec388277b62ddfddb8b2b376a937a2cd6d1b ]
+[ Upstream commit 99ed748e878a99c6c7b87bbec063eefd9e47cb42 ]
 
-Both callers of coreboot_table_init() ioremap the pointer that comes in
-but they don't unmap the memory on failure. Both of them also fail probe
-immediately with the return value of coreboot_table_init(), leaking a
-mapping when it fails. The mapping isn't necessary at all after devices
-are populated either, so we can just drop the mapping here when we exit
-the function. Let's do that to simplify the code a bit and plug the leak.
+The transition is allowed from any state and the atrribute mask must be
+IB_QP_STATE.
 
-Cc: Wei-Ning Huang <wnhuang@chromium.org>
-Cc: Julius Werner <jwerner@chromium.org>
-Cc: Brian Norris <briannorris@chromium.org>
-Cc: Samuel Holland <samuel@sholland.org>
-Fixes: 570d30c2823f ("firmware: coreboot: Expose the coreboot table as a bus")
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-Reviewed-by: Julius Werner <jwerner@chromium.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: c32a4f296e1d ("IB/mlx5: Add support for DC Initiator QP")
+Signed-off-by: Moni Shoua <monis@mellanox.com>
+Reviewed-by: Artemy Kovalyov <artemyko@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/firmware/google/coreboot_table.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/infiniband/hw/mlx5/qp.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/firmware/google/coreboot_table.c b/drivers/firmware/google/coreboot_table.c
-index 19db5709ae28..898bb9abc41f 100644
---- a/drivers/firmware/google/coreboot_table.c
-+++ b/drivers/firmware/google/coreboot_table.c
-@@ -110,7 +110,8 @@ int coreboot_table_init(struct device *dev, void __iomem *ptr)
+diff --git a/drivers/infiniband/hw/mlx5/qp.c b/drivers/infiniband/hw/mlx5/qp.c
+index 6cba2a02d11b..d53d954ac8af 100644
+--- a/drivers/infiniband/hw/mlx5/qp.c
++++ b/drivers/infiniband/hw/mlx5/qp.c
+@@ -3243,7 +3243,9 @@ static bool modify_dci_qp_is_ok(enum ib_qp_state cur_state, enum ib_qp_state new
+ 	int req = IB_QP_STATE;
+ 	int opt = 0;
  
- 	if (strncmp(header.signature, "LBIO", sizeof(header.signature))) {
- 		pr_warn("coreboot_table: coreboot table missing or corrupt!\n");
--		return -ENODEV;
-+		ret = -ENODEV;
-+		goto out;
- 	}
- 
- 	ptr_entry = (void *)ptr_header + header.header_bytes;
-@@ -137,7 +138,8 @@ int coreboot_table_init(struct device *dev, void __iomem *ptr)
- 
- 		ptr_entry += entry.size;
- 	}
--
-+out:
-+	iounmap(ptr);
- 	return ret;
- }
- EXPORT_SYMBOL(coreboot_table_init);
-@@ -146,7 +148,6 @@ int coreboot_table_exit(void)
- {
- 	if (ptr_header) {
- 		bus_unregister(&coreboot_bus_type);
--		iounmap(ptr_header);
- 		ptr_header = NULL;
- 	}
- 
+-	if (cur_state == IB_QPS_RESET && new_state == IB_QPS_INIT) {
++	if (new_state == IB_QPS_RESET) {
++		return is_valid_mask(attr_mask, req, opt);
++	} else if (cur_state == IB_QPS_RESET && new_state == IB_QPS_INIT) {
+ 		req |= IB_QP_PKEY_INDEX | IB_QP_PORT;
+ 		return is_valid_mask(attr_mask, req, opt);
+ 	} else if (cur_state == IB_QPS_INIT && new_state == IB_QPS_INIT) {
 -- 
 2.17.1
 
