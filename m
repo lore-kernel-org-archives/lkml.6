@@ -2,151 +2,114 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A74EECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:29:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 631D8ECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:30:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41B9D20838
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:29:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41B9D20838
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 24D0E20840
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:30:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jY8arnAl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24D0E20840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728095AbeJaS0z (ORCPT
+        id S1727950AbeJaS1b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 14:26:55 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:43800 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727757AbeJaS0z (ORCPT
+        Wed, 31 Oct 2018 14:27:31 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:34858 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727597AbeJaS1b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 14:26:55 -0400
-Received: by mail-ed1-f67.google.com with SMTP id y20-v6so12985781eds.10
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 02:29:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LSDLSqkZwnwfLo7WPhPqkqH6UiOLAwoxdtNxltf3vrc=;
-        b=XUWqE6QbyBExFV0K7ReVGkZ/xZ9Wx+rxyX/zUS53tFXOiLUnNH6dB0GV/uKzCTE66I
-         08qJUAAsOAO7m1WAnW6vb3QervWC+8vYjlXm6cKW76ULJcK61GLCGRzuD9yiPZhuAh4D
-         mC9Y9UCpPP+ygAxA4N0mJdthf7ubpZfB9/4VVNGst7sq8qrwWxuEr0GPYUDPqYk6BO6P
-         z3i0MQOxkLLA4wqfYqy0l4mPgOj7aaCgrM/VWt4DZf3JKEBDo0SndtrVG5Ik0JKx5CiZ
-         ZQZhd7lG5GduBzz7krvS85IxZ2kFZpaEZQ3Rs2qsZnfOc5izZWBWZx/amLkcwCBBeDWG
-         Uklg==
-X-Gm-Message-State: AGRZ1gKw1QG0TUGIBnFrAN22mTkUHyIH7EAWlVRG+wMqgeGdYTZZxhTs
-        IEv9c7/lt224Xx21RAgFnGLuhdVhS6M=
-X-Google-Smtp-Source: AJdET5fxkXE8MHnPLcPJW5FdL0IUVXE7BWhqakbEhNbU1gxjbClwSfflY30juRy/b57IxPob9RXXpg==
-X-Received: by 2002:a17:906:f285:: with SMTP id gu5-v6mr1023889ejb.64.1540978173735;
-        Wed, 31 Oct 2018 02:29:33 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id d23-v6sm50968ejk.21.2018.10.31.02.29.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 02:29:33 -0700 (PDT)
-Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
-To:     Mogens Jensen <mogens-jensen@protonmail.com>
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Dean Wallace <duffydack73@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Johannes Stezenbach <js@sig21.net>,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181025232517.ywnw54qibemosjws@picard>
- <ffc4bcc9-62c3-8940-85d6-d0fd01f3a1b8@linux.intel.com>
- <c8fb730a-c160-41b4-dad0-8ed8594e5687@redhat.com>
- <20181030143836.feo7zcxiestylxoo@picard>
- <2d429c87-24c5-4075-683e-b0d12c3eb1c2@linux.intel.com>
- <d00df762-e4fc-06c5-701e-d5100bfd0e35@redhat.com>
- <e48696f0-aa3e-e20e-d038-9d8dda9cbfce@redhat.com>
- <BaxBOBmUCld7THAnRIDXUpKq8uQ2oJ49EaNlq0mZ11gFjA5JjhbfhVouLZGc1q74PrQC6uGfddKklIP059D_DtQwBqK-sn9rd4xEPhW9E6s=@protonmail.com>
- <d53738e1-4ba5-640e-7ef7-1705ab205061@redhat.com>
- <kAuINEBUUnlS5_uJafGtvryMEJVkDO4pb_yLfClwMcTS1h3sB1gYPcXBvg9X3RINfp5Uch7kLXuhTRX_JtouTYxoS6xNr77_b46e-mugl3k=@protonmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <b8849ae1-5a38-e7a1-da14-dc7f9d164825@redhat.com>
-Date:   Wed, 31 Oct 2018 10:29:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 31 Oct 2018 14:27:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=3jes58u1jTxmuOF8FMhmEDRdUkFP9Qkm++im5XLV5ys=; b=jY8arnAl+D3zGHGTnlVl9fRINf
+        0r1qffbbaW9tzevjDNcuLMs29ffRTn85xFLvU6m15urgYyQQF0NVmBRd3mTeQps+9jOn+LQZSz8th
+        pQ9qe85dgObjx+EzzI2vfdYSD4xlHYw4nsgyLEdfqO8stcKrJUL/ywEI4ZfdOiTHcKplk8Vp5BIU2
+        QjfTR3C+gjZk9IIk9Eh6V4M6qbLokd0V/dY7XwKEAHL3FQ5aeP/yhFMUXBygnusbhuAi5bbiuSR/2
+        DbOWIzFiRCvk8ikqZF78waI5gkJiEkOGKvl9bBUSKIF1eelCR0wpbSTvdVNEVdmNoCQAp0cABhfhW
+        /9+Xy3Ag==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gHmoq-0002Sf-7w; Wed, 31 Oct 2018 09:29:44 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 36EB42029FA14; Wed, 31 Oct 2018 10:29:42 +0100 (CET)
+Date:   Wed, 31 Oct 2018 10:29:42 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>, nadav.amit@gmail.com,
+        Kees Cook <keescook@chromium.org>,
+        Igor Stoppa <igor.stoppa@gmail.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 10/17] prmem: documentation
+Message-ID: <20181031092942.GJ744@hirez.programming.kicks-ass.net>
+References: <20181026092609.GB3159@worktop.c.hoisthospitality.com>
+ <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
+ <20181028183126.GB744@hirez.programming.kicks-ass.net>
+ <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
+ <20181030152641.GE8177@hirez.programming.kicks-ass.net>
+ <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
+ <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
+ <20181030175814.GB10491@bombadil.infradead.org>
+ <28C8CD2A-BDC0-49A5-854E-1E18968528B8@amacapital.net>
+ <20181030212551.GD10491@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <kAuINEBUUnlS5_uJafGtvryMEJVkDO4pb_yLfClwMcTS1h3sB1gYPcXBvg9X3RINfp5Uch7kLXuhTRX_JtouTYxoS6xNr77_b46e-mugl3k=@protonmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181030212551.GD10491@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 31-10-18 07:02, Mogens Jensen wrote:
-> ‐‐‐‐‐‐‐ Original Message ‐‐‐‐‐‐‐
-> On Tuesday, October 30, 2018 7:10 PM, Hans de Goede <hdegoede@redhat.com> wrote:
+On Tue, Oct 30, 2018 at 02:25:51PM -0700, Matthew Wilcox wrote:
+> On Tue, Oct 30, 2018 at 11:51:17AM -0700, Andy Lutomirski wrote:
+> > Finally, one issue: rare_alloc() is going to utterly suck
+> > performance-wise due to the global IPI when the region gets zapped out
+> > of the direct map or otherwise made RO.  This is the same issue that
+> > makes all existing XPO efforts so painful. We need to either optimize
+> > the crap out of it somehow or we need to make sure it’s not called
+> > except during rare events like device enumeration.
 > 
->> Hi,
->>
->> On 30-10-18 19:56, Mogens Jensen wrote:
->>
->>> ‐‐‐‐‐‐‐ Original Message ‐‐‐‐‐‐‐
->>> On Tuesday, October 30, 2018 4:04 PM, Hans de Goede hdegoede@redhat.com wrote:
->>>
->>>> Hi,
->>>> On 30-10-18 16:46, Hans de Goede wrote:
->>>>
->>>>> Hi,
->>>>> On 30-10-18 16:04, Pierre-Louis Bossart wrote:
->>>>>
->>>>>> In addition I am not aware of any baytrail device using plt_clk_0, so moving a common machine driver such a cht_bsw_max98090_ti to use plt_clk0 only would break other devices (e.g. Rambi/Orco). Asking for both clocks to be on might work though,
->>>>>
->>>>> Ok, so we need to have a DMI based quirk for the Swanky and maybe also
->>>>> the clapper to use plt_clk_0 there. Asking for 2 clks if we only need
->>>>> one does not seem like a good plan.
->>>>
->>>> Dean, Mogens,
->>>> To write a proper patch for this I'm going to need DMI strings
->>>> from your devices.
->>>> Can you please run (as normal user):
->>>> grep . /sys/class/dmi/id/* 2> /dev/null
->>>> And reply with the output of this command?
->>>> I have attached the output from a coreboot seabios based clapper.
->>
->> Thank you.
->>
->>> Should I still test 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch with SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH and asoundrc from Dean? There seems to have been some development in the case since that request was made.
->>
->> Yes please test that, I expect that to also fix things for the
->> Clapper, but I need to have that confirmed before submitting a
->> patch upstream adding a quirk for the Clapper to use pmc_plt_clk_0
->> instead of pmc_plt_clk_3.
->>
->> Regards,
->>
->> Hans
->>
-> Unfortunately I only have access to longterm kernel 4.14 for building/running on this system, and 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch does not patch against 4.14.78. Can a test patch for 4.14 be created?
+> Batching operations is kind of the whole point of the VM ;-)  Either
+> this rare memory gets used a lot, in which case we'll want to create slab
+> caches for it, make it a MM zone and the whole nine yeards, or it's not
+> used very much in which case it doesn't matter that performance sucks.
 
-Can you run (as root):
+Yes, for the dynamic case something along those lines would be needed.
+If we have a single rare zone, we could even have __GFP_RARE or whatever
+that manages this.
 
-for i in /sys/kernel/debug/clk/pmc_plt_clk_?; do echo -n "$i: "; cat $i/clk_flags; echo; done
+The page allocator would have to grow a rare memblock type, and every
+rare alloc would allocate from a rare memblock, when none is available,
+creation of a rare block would set up the mappings etc..
 
-When running a kernel with working audio?
+> For now, I'd suggest allocating 2MB chunks as needed, and having a
+> shrinker to hand back any unused pieces.
 
-Then I can confirm that the Clapper is also using pmc_plt_clk_0, so that I can
-fix this for the clapper for 4.18+
-
-I've just checked the 4.14 sources and in 4.14 the SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH
-driver does not support mclk control yet, so for the 4.14 kernel the only way to
-fix this is to revert the 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
-commit.
-
-Regards,
-
-Hans
-
+Something like the percpu allocator?
