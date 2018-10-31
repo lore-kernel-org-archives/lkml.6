@@ -2,109 +2,156 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83368C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:40:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B75C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:41:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3916F20854
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:40:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3916F20854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9AD9720664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 14:41:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="rvy1gCGl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AD9720664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729614AbeJaXie (ORCPT
+        id S1729625AbeJaXkI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 19:38:34 -0400
-Received: from mga14.intel.com ([192.55.52.115]:46260 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729492AbeJaXie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 19:38:34 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2018 07:40:15 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,447,1534834800"; 
-   d="scan'208";a="270313306"
-Received: from htphan-mobl4.amr.corp.intel.com (HELO [10.251.5.56]) ([10.251.5.56])
-  by orsmga005.jf.intel.com with ESMTP; 31 Oct 2018 07:40:15 -0700
-Subject: Re: [PATCH v3] mm, drm/i915: mark pinned shmemfs pages as unevictable
-To:     Michal Hocko <mhocko@kernel.org>,
-        Kuo-Hsin Yang <vovoy@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mm@kvack.org, Chris Wilson <chris@chris-wilson.co.uk>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20181031081945.207709-1-vovoy@chromium.org>
- <20181031142458.GP32673@dhcp22.suse.cz>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <cc44aa53-8705-02ea-6c59-f311427d93af@intel.com>
-Date:   Wed, 31 Oct 2018 07:40:14 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 31 Oct 2018 19:40:08 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:40476 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729492AbeJaXkH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 19:40:07 -0400
+Received: by mail-lf1-f66.google.com with SMTP id n3-v6so11837177lfe.7
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 07:41:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=lhDbs1vluhJmhUAN/WwPRrQW3gOtpvuTdFHdux8en98=;
+        b=rvy1gCGlpw9z+7ETxB8VdpBgn0tvkkmIEUnh+XZuwZepP3NWHW3OVs+qc/cV4+0L4x
+         1vPA8pWgBaI3pWBxBVsjznNdWGBoajOH/pgDqcnfAiHjZFpqGMXxwCoSZfDRvzo05xdb
+         wr8hRQPUH9SmpYOjeYT9rNXe6e250QpM3Ymic=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=lhDbs1vluhJmhUAN/WwPRrQW3gOtpvuTdFHdux8en98=;
+        b=KO54id2xGj8zURC5wiVPQ7S1ppw4EpdXFk55nbGpqJ3Kx/G1fhPIG30MYbOzfiQKni
+         GjgqdmXpGITM0u7xowIqmT0Nv4+Duc4CPgIe4c8pxaFfEWQ/BaHNhaa8XlYZrN07yRPi
+         4ymqLZ/PhicopmP/AZWE3FfuKh4l7PDSUIBGqV5ER6fucSo+8+fQu4tpbPtj86UMvJyo
+         oIiqZ1Fk3lL2Va7RsYEGNLLklZWFv7Ylr6B2qKRBMk+0U/88xL7nvux8yn7AsIyvAIzt
+         g570LG3J9qrLmJRyXsjTneXcvKfHoD4Nmfx2jFGyHTNwpnshkZ+DNhCyEbRs1cAtJaT5
+         aUsw==
+X-Gm-Message-State: AGRZ1gJBWSexlYMNyZgDGTeUPQhf2EkynsOcyPT65TPH3zvj1bMdsJL0
+        m3obTb6VrKHLtJ23OO3dZL+GaqYBZQDfxqQlmCTbEQ==
+X-Google-Smtp-Source: AJdET5d+OrYKkkucYkzHeAAFD5Z+p8kYKHzWtW/l088cxY9A3OMDbw28C+VaaeDPsYcfpj0c6q8lq/PV8RWeFmGPzJc=
+X-Received: by 2002:a19:1365:: with SMTP id j98mr1980820lfi.55.1540996905486;
+ Wed, 31 Oct 2018 07:41:45 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181031142458.GP32673@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a2e:650a:0:0:0:0:0 with HTTP; Wed, 31 Oct 2018 07:41:44
+ -0700 (PDT)
+In-Reply-To: <4ed9af67cf4a46708905d3f392344bcb@AcuMS.aculab.com>
+References: <20181029175322.189042-1-dancol@google.com> <4beaaae77bea4cc5b4cc15504331c9a9@AcuMS.aculab.com>
+ <CAKOZuetR6_ztfJOe4TMVCX2J5sfuP8XBtG66hmsDkx-KH=CpJw@mail.gmail.com> <4ed9af67cf4a46708905d3f392344bcb@AcuMS.aculab.com>
+From:   Joel Fernandes <joel@joelfernandes.org>
+Date:   Wed, 31 Oct 2018 07:41:44 -0700
+Message-ID: <CAEXW_YS-nTccFtuE9DMkFYA7wXAfeRHt7v4KSZcXMWVYKm+Uyg@mail.gmail.com>
+Subject: Re: [RFC PATCH] Minimal non-child process exit notification support
+To:     David Laight <David.Laight@aculab.com>
+Cc:     Daniel Colascione <dancol@google.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "timmurray@google.com" <timmurray@google.com>,
+        "joelaf@google.com" <joelaf@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/31/18 7:24 AM, Michal Hocko wrote:
-> I am also wondering whether unevictable pages culling can be
-> really visible when we do the anon LRU reclaim because the swap path is
-> quite expensinve on its own.
+On Wed, Oct 31, 2018 at 7:25 AM, David Laight <David.Laight@aculab.com> wrote:
+> From: Daniel Colascione
+>> Sent: 31 October 2018 12:56
+>> On Wed, Oct 31, 2018 at 12:27 PM, David Laight <David.Laight@aculab.com> wrote:
+>> > From: Daniel Colascione
+>> >> Sent: 29 October 2018 17:53
+>> >>
+>> >> This patch adds a new file under /proc/pid, /proc/pid/exithand.
+>> >> Attempting to read from an exithand file will block until the
+>> >> corresponding process exits, at which point the read will successfully
+>> >> complete with EOF.  The file descriptor supports both blocking
+>> >> operations and poll(2). It's intended to be a minimal interface for
+>> >> allowing a program to wait for the exit of a process that is not one
+>> >> of its children.
+>> >
+>> > Why do you need an extra file?
+>>
+>> Because no current file suffices.
+>
+> That doesn't stop you making something work on any/all of the existing files.
+>
+>> > It ought to be possible to use poll() to wait for POLLERR having set
+>> > 'events' to zero on any of the nodes in /proc/pid - or even on
+>> > the directory itself.
+>>
+>> That doesn't actually work today. And waiting on a directory with
+>> POLLERR would be very weird, since directories in general don't do
+>> things like blocking reads or poll support. A separate file with
+>> self-contained, well-defined semantics is cleaner.
+>
+> Device drivers will (well ought to) return POLLERR when a device
+> is removed.
+> Making procfs behave the same way wouldn't be too stupid.
+>
+>> > Indeed, to avoid killing the wrong process you need to have opened
+>> > some node of /proc/pid/* (maybe cmdline) before sending the kill
+>> > signal.
+>>
+>> The kernel really needs better documentation of the semantics of
+>> procfs file descriptors. You're not the only person to think,
+>> mistakenly, that keeping a reference to a /proc/$PID/something FD
+>> reserves $PID and prevents it being used for another process. Procfs
+>> FDs do no such thing. kill(2) is unsafe whether or not
+>> /proc/pid/cmdline or any other /proc file is open.
+>
+> Interesting.
+> Linux 'fixed' the problem of pid reuse in the kernel by adding (IIRC)
+> 'struct pid' that reference counts the pid stopping reuse.
 
-Didn't we create the unevictable lists in the first place because
-scanning alone was observed to be so expensive in some scenarios?
+This is incorrect if you mean numeric pids. See the end of these
+comments in include/linux/pid.h . A pid value can be reused, it just
+works Ok because it causes a new struct pid allocation. That doesn't
+mean there isn't a numeric reuse. There's also no where in pid_alloc()
+where we prevent the numeric reuse AFAICT.
 
-Or am I misunderstanding your question.
+/*
+ * What is struct pid?
+ *
+ * A struct pid is the kernel's internal notion of a process identifier.
+ * It refers to individual tasks, process groups, and sessions.  While
+ * there are processes attached to it the struct pid lives in a hash
+ * table, so it and then the processes that it refers to can be found
+ * quickly from the numeric pid value.  The attached processes may be
+ * quickly accessed by following pointers from struct pid.
+ *
+ * Storing pid_t values in the kernel and referring to them later has a
+ * problem.  The process originally with that pid may have exited and the
+ * pid allocator wrapped, and another process could have come along
+ * and been assigned that pid.
+ *
+ * Referring to user space processes by holding a reference to struct
+ * task_struct has a problem.  When the user space process exits
+ * the now useless task_struct is still kept.  A task_struct plus a
+ * stack consumes around 10K of low kernel memory.  More precisely
+ * this is THREAD_SIZE + sizeof(struct task_struct).  By comparison
+ * a struct pid is about 64 bytes.
+ *
+ * Holding a reference to struct pid solves both of these problems.
+ * It is small so holding a reference does not consume a lot of
+ * resources, and since a new struct pid is allocated when the numeric pid
+ * value is reused (when pids wrap around) we don't mistakenly refer to new
+ * processes.
+ */
