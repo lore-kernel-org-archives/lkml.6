@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F96C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D243C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 440BB20664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D03B620664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vpgsf4iG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 440BB20664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VWsdqXsA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D03B620664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730329AbeKAIJQ (ORCPT
+        id S1730345AbeKAIJS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:09:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58924 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:09:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730289AbeKAIJO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:09:14 -0400
+        id S1730289AbeKAIJR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:09:17 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D61AC20880;
-        Wed, 31 Oct 2018 23:09:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B27412081B;
+        Wed, 31 Oct 2018 23:09:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027342;
-        bh=v5JwRh15q1fAOl0WuDZ1q8ubyHl4ldwk4yi9VO2bUeU=;
+        s=default; t=1541027346;
+        bh=yXBEDLXz5W+koJfcdY9F5kiUrEfoE5WNwRnSDFUQkoI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vpgsf4iGCDhkHO0mc5WfWoBMDGapvrc2tnbANHbiAcDTI0IWn0dqyDKXMMb8Au2tW
-         Q8beCwpUJ9f8CxTkGjSbZEmhLBmlwTl//s7Wb7wNEhi3G267BFUjt7Ab0laFwxUPRP
-         BIk2e/5NfAsvrxZtDo7s2iuwDBqMpNxsj+t5nXT0=
+        b=VWsdqXsA/iWEBkTWqXYIEuEXgZNXJNmJQbBA54wqqWjm7nk9PPaRdU0FSwZu3JtYk
+         VSX6GG6SnHB5wuwlcO9n3RqLMVhV08jAj01F5woQ7j/w9lmnIqfC9m0s8zKTfEmlWO
+         NH2fwgEUjiglQxbN1VmeOdXvAxW2hFW3OjWUAiFA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Michal Hocko <mhocko@suse.com>, Tejun Heo <tj@kernel.org>,
+Cc:     Jack Wang <jinpu.wang@profitbricks.com>, Shaohua Li <shli@fb.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 074/126] cgroup, netclassid: add a preemption point to write_classid
-Date:   Wed, 31 Oct 2018 19:07:02 -0400
-Message-Id: <20181031230754.29029-74-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 078/126] md: fix memleak for mempool
+Date:   Wed, 31 Oct 2018 19:07:06 -0400
+Message-Id: <20181031230754.29029-78-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -52,67 +52,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+From: Jack Wang <jinpu.wang@profitbricks.com>
 
-[ Upstream commit a90e90b7d55e789c71d85b946ffb5c1ab2f137ca ]
+[ Upstream commit 6aaa58c994277647f8b05ffef3b9b225a2d08f36 ]
 
-We have seen a customer complaining about soft lockups on !PREEMPT
-kernel config with 4.4 based kernel
+I noticed kmemleak report memory leak when run create/stop
+md in a loop, backtrace:
+[<000000001ca975e7>] mempool_create_node+0x86/0xd0
+[<0000000095576bcd>] md_run+0x1057/0x1410 [md_mod]
+[<000000007b45c5fc>] do_md_run+0x15/0x130 [md_mod]
+[<000000001ede9ec0>] md_ioctl+0x1f49/0x25d0 [md_mod]
+[<000000004142cacf>] blkdev_ioctl+0x680/0xd00
 
-[1072141.435366] NMI watchdog: BUG: soft lockup - CPU#21 stuck for 22s! [systemd:1]
-[1072141.444090] Modules linked in: mpt3sas raid_class binfmt_misc af_packet 8021q garp mrp stp llc xfs libcrc32c bonding iscsi_ibft iscsi_boot_sysfs msr ext4 crc16 jbd2 mbcache cdc_ether usbnet mii joydev hid_generic usbhid intel_rapl x86_pkg_temp_thermal intel_powerclamp coretemp crct10dif_pclmul crc32_pclmul ghash_clmulni_intel ipmi_ssif mgag200 i2c_algo_bit ttm ipmi_devintf drbg ixgbe drm_kms_helper vxlan ansi_cprng ip6_udp_tunnel drm aesni_intel udp_tunnel aes_x86_64 iTCO_wdt syscopyarea ptp xhci_pci lrw iTCO_vendor_support pps_core gf128mul ehci_pci glue_helper sysfillrect mdio pcspkr sb_edac ablk_helper cryptd ehci_hcd sysimgblt xhci_hcd fb_sys_fops edac_core mei_me lpc_ich ses usbcore enclosure dca mfd_core ipmi_si mei i2c_i801 scsi_transport_sas usb_common ipmi_msghandler shpchp fjes wmi processor button acpi_pad btrfs xor raid6_pq sd_mod crc32c_intel megaraid_sas sg dm_multipath dm_mod scsi_dh_rdac scsi_dh_emc scsi_dh_alua scsi_mod md_mod autofs4
-[1072141.444146] Supported: Yes
-[1072141.444149] CPU: 21 PID: 1 Comm: systemd Not tainted 4.4.121-92.80-default #1
-[1072141.444150] Hardware name: LENOVO Lenovo System x3650 M5 -[5462P4U]- -[5462P4U]-/01GR451, BIOS -[TCE136H-2.70]- 06/13/2018
-[1072141.444151] task: ffff880191bd0040 ti: ffff880191bd4000 task.ti: ffff880191bd4000
-[1072141.444153] RIP: 0010:[<ffffffff815229f9>]  [<ffffffff815229f9>] update_classid_sock+0x29/0x40
-[1072141.444157] RSP: 0018:ffff880191bd7d58  EFLAGS: 00000286
-[1072141.444158] RAX: ffff883b177cb7c0 RBX: 0000000000000000 RCX: 0000000000000000
-[1072141.444159] RDX: 00000000000009c7 RSI: ffff880191bd7d5c RDI: ffff8822e29bb200
-[1072141.444160] RBP: ffff883a72230980 R08: 0000000000000101 R09: 0000000000000000
-[1072141.444161] R10: 0000000000000008 R11: f000000000000000 R12: ffffffff815229d0
-[1072141.444162] R13: 0000000000000000 R14: ffff881fd0a47ac0 R15: ffff880191bd7f28
-[1072141.444163] FS:  00007f3e2f1eb8c0(0000) GS:ffff882000340000(0000) knlGS:0000000000000000
-[1072141.444164] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[1072141.444165] CR2: 00007f3e2f200000 CR3: 0000001ffea4e000 CR4: 00000000001606f0
-[1072141.444166] Stack:
-[1072141.444166]  ffffffa800000246 00000000000009c7 ffffffff8121d583 ffff8818312a05c0
-[1072141.444168]  ffff8818312a1100 ffff880197c3b280 ffff881861422858 ffffffffffffffea
-[1072141.444170]  ffffffff81522b1c ffffffff81d0ca20 ffff8817fa17b950 ffff883fdd8121e0
-[1072141.444171] Call Trace:
-[1072141.444179]  [<ffffffff8121d583>] iterate_fd+0x53/0x80
-[1072141.444182]  [<ffffffff81522b1c>] write_classid+0x4c/0x80
-[1072141.444187]  [<ffffffff8111328b>] cgroup_file_write+0x9b/0x100
-[1072141.444193]  [<ffffffff81278bcb>] kernfs_fop_write+0x11b/0x150
-[1072141.444198]  [<ffffffff81201566>] __vfs_write+0x26/0x100
-[1072141.444201]  [<ffffffff81201bed>] vfs_write+0x9d/0x190
-[1072141.444203]  [<ffffffff812028c2>] SyS_write+0x42/0xa0
-[1072141.444207]  [<ffffffff815f58c3>] entry_SYSCALL_64_fastpath+0x1e/0xca
-[1072141.445490] DWARF2 unwinder stuck at entry_SYSCALL_64_fastpath+0x1e/0xca
+The root cause is we alloc mddev->flush_pool and
+mddev->flush_bio_pool in md_run, but from do_md_stop
+will not call into md_stop but __md_stop, move the
+mempool_destroy to __md_stop fixes the problem for me.
 
-If a cgroup has many tasks with many open file descriptors then we would
-end up in a large loop without any rescheduling point throught the
-operation. Add cond_resched once per task.
+The bug was introduced in 5a409b4f56d5, the fixes should go to
+4.18+
 
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+Fixes: 5a409b4f56d5 ("MD: fix lock contention for flush bios")
+Signed-off-by: Jack Wang <jinpu.wang@profitbricks.com>
+Reviewed-by: Xiao Ni <xni@redhat.com>
+Signed-off-by: Shaohua Li <shli@fb.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/netclassid_cgroup.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/md/md.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/net/core/netclassid_cgroup.c b/net/core/netclassid_cgroup.c
-index 5e4f04004a49..7bf833598615 100644
---- a/net/core/netclassid_cgroup.c
-+++ b/net/core/netclassid_cgroup.c
-@@ -106,6 +106,7 @@ static int write_classid(struct cgroup_subsys_state *css, struct cftype *cft,
- 		iterate_fd(p->files, 0, update_classid_sock,
- 			   (void *)(unsigned long)cs->classid);
- 		task_unlock(p);
-+		cond_resched();
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index e9be5cd9bb96..71665e2c30eb 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -5909,14 +5909,6 @@ static void __md_stop(struct mddev *mddev)
+ 		mddev->to_remove = &md_redundancy_group;
+ 	module_put(pers->owner);
+ 	clear_bit(MD_RECOVERY_FROZEN, &mddev->recovery);
+-}
+-
+-void md_stop(struct mddev *mddev)
+-{
+-	/* stop the array and free an attached data structures.
+-	 * This is called from dm-raid
+-	 */
+-	__md_stop(mddev);
+ 	if (mddev->flush_bio_pool) {
+ 		mempool_destroy(mddev->flush_bio_pool);
+ 		mddev->flush_bio_pool = NULL;
+@@ -5925,6 +5917,14 @@ void md_stop(struct mddev *mddev)
+ 		mempool_destroy(mddev->flush_pool);
+ 		mddev->flush_pool = NULL;
  	}
- 	css_task_iter_end(&it);
- 
++}
++
++void md_stop(struct mddev *mddev)
++{
++	/* stop the array and free an attached data structures.
++	 * This is called from dm-raid
++	 */
++	__md_stop(mddev);
+ 	bioset_exit(&mddev->bio_set);
+ 	bioset_exit(&mddev->sync_set);
+ }
 -- 
 2.17.1
 
