@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D14CC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:44:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8968FECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:44:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 062B820664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:44:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2952420664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:44:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gkkUymW0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 062B820664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hNbX+Xlc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2952420664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729251AbeKAIok (ORCPT
+        id S1729181AbeKAIoz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:44:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55500 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:44:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728978AbeKAIHg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:07:36 -0400
+        id S1728964AbeKAIHd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:07:33 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C755C20838;
-        Wed, 31 Oct 2018 23:07:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39ABD20821;
+        Wed, 31 Oct 2018 23:07:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027245;
-        bh=cS9lFM0fSU86x0TjFVKRQWCLSp5vPysdcFuiAfI6+24=;
+        s=default; t=1541027242;
+        bh=I1EECB/32Iele6bm12Ctioj1LBfdEmVN16THtKuighY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gkkUymW0tMWCO+1IJbyrqAyDTD8to64V8/yyYuyT1d6FEUXQ/IMtlV7fzc1fqghh8
-         Bz4Dq0hzR34E98oaZIFmyqLBMGqR/r80KZHbzM7Y05iklnpZIjP+3OKLnjW3LDK5gY
-         sKiopGDyYFTcpuMkNG/RbrCZlbmobJ5V41K6H3Jo=
+        b=hNbX+Xlcc7QxUTBoxAfLhTII0H30rz/+HeDN0E35Nk4w728UToLDp/dLzQ6Hord6E
+         YFKTnozQYlVIXMolXeul67DjfD7SOnkrX3b46E0Z5HqPTcLnnWbaOKbBh+Og5TUZ9A
+         TTsfN0i9pBMWXOpdgbkgIFQAqH7TM7xAOTvoCHUo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Amelie Delaunay <amelie.delaunay@st.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 114/146] usb: dwc2: fix call to vbus supply exit routine, call it unlocked
-Date:   Wed, 31 Oct 2018 19:05:09 -0400
-Message-Id: <20181031230541.28822-114-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 111/146] PCI / ACPI: Enable wake automatically for power managed bridges
+Date:   Wed, 31 Oct 2018 19:05:06 -0400
+Message-Id: <20181031230541.28822-111-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -54,41 +53,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-[ Upstream commit 5aa678c7fd5371769efde30763fb43a43a118cd0 ]
+[ Upstream commit 6299cf9ec3985cac70bede8a855b5087b81a6640 ]
 
-dwc2_vbus_supply_exit() may call regulator_disable(). It shouldn't be
-called with interrupts disabled as it might sleep.
-This is seen with DEBUG_ATOMIC_SLEEP=y.
+We enable power management automatically for bridges where
+pci_bridge_d3_possible() returns true. However, these bridges may have
+ACPI methods such as _DSW that need to be called before D3 entry. For
+example in Lenovo Thinkpad X1 Carbon 6th _DSW method is used to prepare
+D3cold for the PCIe root port hosting Thunderbolt chain. Because wake is
+not enabled _DSW method is never called and the port does not enter
+D3cold properly consuming more power than necessary.
 
-Fixes: 531ef5ebea96 ("usb: dwc2: add support for host mode external
-vbus supply")
+Users can work this around by writing "enabled" to "wakeup" sysfs file
+under the device in question but that is not something an ordinary user
+is expected to do.
 
-Tested-by: Artur Petrosyan <arturp@synopsys.com>
-Acked-by: Minas Harutyunyan <hminas@synopsys.com>
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Since we already automatically enable power management for PCIe ports
+with ->bridge_d3 set extend that to enable wake for them as well,
+assuming the port has any ACPI wakeup related objects implemented in the
+namespace (adev->wakeup.flags.valid is true). This ensures the necessary
+ACPI methods get called at appropriate times and allows the root port in
+Thinkpad X1 Carbon 6th to go into D3cold.
+
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/dwc2/hcd.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/pci/pci-acpi.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/dwc2/hcd.c b/drivers/usb/dwc2/hcd.c
-index 2bd6e6bfc241..befaf1e9d98a 100644
---- a/drivers/usb/dwc2/hcd.c
-+++ b/drivers/usb/dwc2/hcd.c
-@@ -4482,7 +4482,9 @@ static int _dwc2_hcd_suspend(struct usb_hcd *hcd)
- 		hprt0 |= HPRT0_SUSP;
- 		hprt0 &= ~HPRT0_PWR;
- 		dwc2_writel(hsotg, hprt0, HPRT0);
-+		spin_unlock_irqrestore(&hsotg->lock, flags);
- 		dwc2_vbus_supply_exit(hsotg);
-+		spin_lock_irqsave(&hsotg->lock, flags);
- 	}
+diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
+index c2ab57705043..f8436d1c4d45 100644
+--- a/drivers/pci/pci-acpi.c
++++ b/drivers/pci/pci-acpi.c
+@@ -762,19 +762,33 @@ static void pci_acpi_setup(struct device *dev)
+ 		return;
  
- 	/* Enter partial_power_down */
+ 	device_set_wakeup_capable(dev, true);
++	/*
++	 * For bridges that can do D3 we enable wake automatically (as
++	 * we do for the power management itself in that case). The
++	 * reason is that the bridge may have additional methods such as
++	 * _DSW that need to be called.
++	 */
++	if (pci_dev->bridge_d3)
++		device_wakeup_enable(dev);
++
+ 	acpi_pci_wakeup(pci_dev, false);
+ }
+ 
+ static void pci_acpi_cleanup(struct device *dev)
+ {
+ 	struct acpi_device *adev = ACPI_COMPANION(dev);
++	struct pci_dev *pci_dev = to_pci_dev(dev);
+ 
+ 	if (!adev)
+ 		return;
+ 
+ 	pci_acpi_remove_pm_notifier(adev);
+-	if (adev->wakeup.flags.valid)
++	if (adev->wakeup.flags.valid) {
++		if (pci_dev->bridge_d3)
++			device_wakeup_disable(dev);
++
+ 		device_set_wakeup_capable(dev, false);
++	}
+ }
+ 
+ static bool pci_acpi_bus_match(struct device *dev)
 -- 
 2.17.1
 
