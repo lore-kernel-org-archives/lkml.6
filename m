@@ -7,44 +7,49 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADBDAC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95FA5C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62A0720854
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BC0120854
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:11:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0bcTXDFS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62A0720854
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MzrrLBXX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BC0120854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732008AbeKAIMC (ORCPT
+        id S1732050AbeKAIMG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:12:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36368 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:12:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730796AbeKAIMB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:12:01 -0400
+        id S1732006AbeKAIMD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:12:03 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4CE5C2085A;
-        Wed, 31 Oct 2018 23:11:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E989E20880;
+        Wed, 31 Oct 2018 23:11:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027508;
-        bh=2QpXOtDKFvZhfQjDO6qRveeN4eSMpRyEhqVdqhSOxh4=;
+        s=default; t=1541027511;
+        bh=os7x5a9Bu6mVXq4vgThaHRhMwRnSLcxVdhwe6Lu7oJ8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0bcTXDFSDkmu6k5gkz12kfIdl7hhadfJI3k3jThFb8mjsJDbuWAU9ImgmJofbrmA5
-         Moax9pjTlFlbaf3QtSdGK6LJ2nO61ycK1sqs6dNcj+WkBQ8ZWZz5LpvRTzENxUmtaM
-         6tStKtM/uBu1EBVPDp6G6YoVm8xyehXTKaGVGVN0=
+        b=MzrrLBXXL5om4zJqqixbHxGcKJnx1lTPrJJJs7C+CI+BnbmfFgomalWJX/Qsx+FyC
+         Lsmv0R3y88LExX3DI5vZbG3++4CncS26w1S39h3cSEZbdI40hRmcCdZ4NhC41xRUre
+         ht7GPvCxbtuQIuuvuVGkJajShkqlYEOVmVt7tSS0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Ben Hutchings <ben@decadent.org.uk>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 12/32] x86: boot: Fix EFI stub alignment
-Date:   Wed, 31 Oct 2018 19:11:17 -0400
-Message-Id: <20181031231137.29429-12-sashal@kernel.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 14/32] kprobes: Return error if we fail to reuse kprobe instead of BUG_ON()
+Date:   Wed, 31 Oct 2018 19:11:19 -0400
+Message-Id: <20181031231137.29429-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231137.29429-1-sashal@kernel.org>
 References: <20181031231137.29429-1-sashal@kernel.org>
@@ -53,52 +58,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Hutchings <ben@decadent.org.uk>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit 9c1442a9d039a1a3302fa93e9a11001c5f23b624 ]
+[ Upstream commit 819319fc93461c07b9cdb3064f154bd8cfd48172 ]
 
-We currently align the end of the compressed image to a multiple of
-16.  However, the PE-COFF header included in the EFI stub says that
-the file alignment is 32 bytes, and when adding an EFI signature to
-the file it must first be padded to this alignment.
+Make reuse_unused_kprobe() to return error code if
+it fails to reuse unused kprobe for optprobe instead
+of calling BUG_ON().
 
-sbsigntool commands warn about this:
-
-  warning: file-aligned section .text extends beyond end of file
-  warning: checksum areas are greater than image size. Invalid section table?
-
-Worse, pesign -at least when creating a detached signature- uses the
-hash of the unpadded file, resulting in an invalid signature if
-padding is required.
-
-Avoid both these problems by increasing alignment to 32 bytes when
-CONFIG_EFI_STUB is enabled.
-
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+Cc: David S . Miller <davem@davemloft.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Naveen N . Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/153666124040.21306.14150398706331307654.stgit@devbox
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/boot/tools/build.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ kernel/kprobes.c | 27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/boot/tools/build.c b/arch/x86/boot/tools/build.c
-index a7661c430cd9..523db6ce88dd 100644
---- a/arch/x86/boot/tools/build.c
-+++ b/arch/x86/boot/tools/build.c
-@@ -391,6 +391,13 @@ int main(int argc, char ** argv)
- 		die("Unable to mmap '%s': %m", argv[2]);
- 	/* Number of 16-byte paragraphs, including space for a 4-byte CRC */
- 	sys_size = (sz + 15 + 4) / 16;
-+#ifdef CONFIG_EFI_STUB
-+	/*
-+	 * COFF requires minimum 32-byte alignment of sections, and
-+	 * adding a signature is problematic without that alignment.
-+	 */
-+	sys_size = (sys_size + 1) & ~1;
-+#endif
+diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+index 388bcace62f8..d8daf6c55d2b 100644
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -665,9 +665,10 @@ static void unoptimize_kprobe(struct kprobe *p, bool force)
+ }
  
- 	/* Patch the setup code with the appropriate size parameters */
- 	buf[0x1f1] = setup_sectors-1;
+ /* Cancel unoptimizing for reusing */
+-static void reuse_unused_kprobe(struct kprobe *ap)
++static int reuse_unused_kprobe(struct kprobe *ap)
+ {
+ 	struct optimized_kprobe *op;
++	int ret;
+ 
+ 	BUG_ON(!kprobe_unused(ap));
+ 	/*
+@@ -681,8 +682,12 @@ static void reuse_unused_kprobe(struct kprobe *ap)
+ 	/* Enable the probe again */
+ 	ap->flags &= ~KPROBE_FLAG_DISABLED;
+ 	/* Optimize it again (remove from op->list) */
+-	BUG_ON(!kprobe_optready(ap));
++	ret = kprobe_optready(ap);
++	if (ret)
++		return ret;
++
+ 	optimize_kprobe(ap);
++	return 0;
+ }
+ 
+ /* Remove optimized instructions */
+@@ -894,11 +899,16 @@ static void __disarm_kprobe(struct kprobe *p, bool reopt)
+ #define kprobe_disarmed(p)			kprobe_disabled(p)
+ #define wait_for_kprobe_optimizer()		do {} while (0)
+ 
+-/* There should be no unused kprobes can be reused without optimization */
+-static void reuse_unused_kprobe(struct kprobe *ap)
++static int reuse_unused_kprobe(struct kprobe *ap)
+ {
++	/*
++	 * If the optimized kprobe is NOT supported, the aggr kprobe is
++	 * released at the same time that the last aggregated kprobe is
++	 * unregistered.
++	 * Thus there should be no chance to reuse unused kprobe.
++	 */
+ 	printk(KERN_ERR "Error: There should be no unused kprobe here.\n");
+-	BUG_ON(kprobe_unused(ap));
++	return -EINVAL;
+ }
+ 
+ static void free_aggr_kprobe(struct kprobe *p)
+@@ -1276,9 +1286,12 @@ static int register_aggr_kprobe(struct kprobe *orig_p, struct kprobe *p)
+ 			goto out;
+ 		}
+ 		init_aggr_kprobe(ap, orig_p);
+-	} else if (kprobe_unused(ap))
++	} else if (kprobe_unused(ap)) {
+ 		/* This probe is going to die. Rescue it */
+-		reuse_unused_kprobe(ap);
++		ret = reuse_unused_kprobe(ap);
++		if (ret)
++			goto out;
++	}
+ 
+ 	if (kprobe_gone(ap)) {
+ 		/*
 -- 
 2.17.1
 
