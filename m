@@ -2,105 +2,75 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1DDDECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 06:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2065AC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 06:09:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7201120880
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 06:09:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D085F20838
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 06:09:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hvJlC36f";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hXmKWuPA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7201120880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yea8tfg8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D085F20838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729148AbeJaPGT (ORCPT
+        id S1729183AbeJaPG0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 11:06:19 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48376 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726754AbeJaPGT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 11:06:19 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 40BDE6072E; Wed, 31 Oct 2018 06:09:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540966178;
-        bh=ax5CFkg0q2RWn69xmo0SojWiYSUi5r57YeY8Z2UJgrs=;
-        h=From:To:Cc:Subject:Date:From;
-        b=hvJlC36fNcgO8JhiMFfZD4sEZ3xEZeFOSKAGGE8wHATlpmnR9gji3Th9qppO67zmi
-         7V4CNwbgqoGffcxEE95bHbMCxJVbKS/FiLoJnDNNqRjwMko6mOYUXL1I5l/WFqr8zn
-         Qx5s2tMpx8uA/+FkuLmulfj3LDfSYRTKeapmD1j4=
-Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        Wed, 31 Oct 2018 11:06:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60438 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726754AbeJaPGZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 11:06:25 -0400
+Received: from tiger (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        (Authenticated sender: sibis@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 40334601B4;
-        Wed, 31 Oct 2018 06:09:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540966177;
-        bh=ax5CFkg0q2RWn69xmo0SojWiYSUi5r57YeY8Z2UJgrs=;
-        h=From:To:Cc:Subject:Date:From;
-        b=hXmKWuPAKbFt/5gszv4is1ySZ2S2D6YbD9SmaYIl2gB7hhgALG4M1u9v1KnQBeSjX
-         6OYkZOEjDYN1rpmNMA5LBTb7kPFjyMvymEZZwGL20tQSfoaDSrMkpGLlp7H/pyrpxl
-         I6hpqNBFnqDMf/0g59ZUVMFhNsby6IcFi3tC5t7k=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 40334601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org
-Cc:     bjorn.andersson@linaro.org, dianders@chromium.org,
-        evgreen@chromium.org, benchan@chromium.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tsoni@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2] arm64: dts: qcom: sdm845: Add reserve-memory nodes
-Date:   Wed, 31 Oct 2018 11:39:21 +0530
-Message-Id: <20181031060921.5890-1-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.19.1
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D1F520821;
+        Wed, 31 Oct 2018 06:09:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540966184;
+        bh=jtf9nTI6FcpZ7DsK1y9SCkoJ/MxMyltxTcn/jLPKSdE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=yea8tfg8WYY2s96/2bMyxkEgpc4ARLxG+Gf4fNpE0+ZAkZFN7xUsbL8Qe4D35829/
+         wIGvByWefGTvYo2org9p8NkWUV6faZCQLkA274tpV7c9bCsTXLbx9aJOx/jeHReLfD
+         qVKiNlKslsyf3T4DEjvNMu//Rxq7My1ztIqJvcvg=
+Date:   Wed, 31 Oct 2018 14:09:18 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Lucas Stach <l.stach@pengutronix.de>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Stefan Agner <stefan@agner.ch>, Marek Vasut <marex@denx.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/4] soc: imx: gpc: Increase GPC_CLK_MAX to 7
+Message-ID: <20181031060916.GA10386@tiger>
+References: <cover.1539020938.git.leonard.crestez@nxp.com>
+ <be94b872b63e6e0ac6f65ea41a69322d958f4a93.1539020938.git.leonard.crestez@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <be94b872b63e6e0ac6f65ea41a69322d958f4a93.1539020938.git.leonard.crestez@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add reserve-memory nodes for mpss and mba required for
-remoteproc mss pil.
+On Mon, Oct 08, 2018 at 06:06:19PM +0000, Leonard Crestez wrote:
+> The DISPLAY power domain on imx6sx has 7 clocks.
+> 
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index d3fe012ad84e..636c739b2981 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -88,6 +88,16 @@
- 			reg = <0 0x86200000 0 0x2d00000>;
- 			no-map;
- 		};
-+
-+		mpss_region: memory@8e000000 {
-+			reg = <0 0x8e000000 0 0x7800000>;
-+			no-map;
-+		};
-+
-+		mba_region: memory@96500000 {
-+			reg = <0 0x96500000 0 0x200000>;
-+			no-map;
-+		};
- 	};
- 
- 	cpus {
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+Applied, thanks.
