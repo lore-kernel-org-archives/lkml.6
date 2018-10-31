@@ -2,147 +2,151 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EEDEC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:32:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64B4CECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:35:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B5F42081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:32:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="K/wUl7n8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B5F42081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
+	by mail.kernel.org (Postfix) with ESMTP id 2360720664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:35:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2360720664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726032AbeKAGck (ORCPT
+        id S1726094AbeKAGf0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 02:32:40 -0400
-Received: from mail-co1nam03on0128.outbound.protection.outlook.com ([104.47.40.128]:18016
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725736AbeKAGcj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 02:32:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ys7lbmU41IXO/uSHR3Wut7ymp7bMUmsURN0buoRSLh0=;
- b=K/wUl7n86R8YrMbELzn7IN6tFKyOMjhp1Uh5YCV5gn+YFdQD1sdLQH0NOaHTXRvhLi8t+H1vXTyFQ3tuC07AGOI4uJ4hkcs6TI9CfqcnAYk+rFZ4dBihqwDbSeXzN3U31pcMCK/edUSSo6lTDNgkKHnxv2PDoI3AE2vnLmL7wGQ=
-Received: from MWHSPR00MB117.namprd22.prod.outlook.com (10.175.52.23) by
- MWHPR2201MB1311.namprd22.prod.outlook.com (10.174.162.138) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.21; Wed, 31 Oct 2018 21:32:43 +0000
-Received: from MWHSPR00MB117.namprd22.prod.outlook.com
- ([fe80::b95a:a3f9:be06:b045]) by MWHSPR00MB117.namprd22.prod.outlook.com
- ([fe80::b95a:a3f9:be06:b045%2]) with mapi id 15.20.1294.021; Wed, 31 Oct 2018
- 21:32:43 +0000
-From:   Paul Burton <paul.burton@mips.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-CC:     Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>
-Subject: Re: [RFC PATCH] lib: Introduce generic __cmpxchg_u64() and use it
- where needed
-Thread-Topic: [RFC PATCH] lib: Introduce generic __cmpxchg_u64() and use it
- where needed
-Thread-Index: AQHUcVNC5jTXGaDPOkOnkxlkE4DPdqU539kA
-Date:   Wed, 31 Oct 2018 21:32:43 +0000
-Message-ID: <20181031213240.zhh7dfcm47ucuyfl@pburton-laptop>
-References: <1541015538-11382-1-git-send-email-linux@roeck-us.net>
-In-Reply-To: <1541015538-11382-1-git-send-email-linux@roeck-us.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR21CA0048.namprd21.prod.outlook.com
- (2603:10b6:300:129::34) To MWHSPR00MB117.namprd22.prod.outlook.com
- (2603:10b6:300:10c::23)
-user-agent: NeoMutt/20180716
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [4.16.204.77]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR2201MB1311;6:ZwqnOBosNoeuCJ1YwqMiJWEC31c4HZW4tQSr/ccc4lacvUuyGq43hoxsh1r06wWQyokls4gEx9cIqN0t8d1bB69wH9bT9850CbGey+rMv5OL7f535mqp1ZaQApgKfOz2ISaw23qdDSY40ZROIWmOGTr36utf/HTijFfrUuWw4wUSNSXR0KROG+4Ife/rj9mIUIUfZEzqMedzmfburtTNUmsSfTvNNHeC1Uw/NPpq5HHYG0nljP9N6O63gQNP/GJjLAmjY6mFPqU6mDIEulpo0z5aAf5J7NslZWp2L3J0J8qM0EI2mFN2Qsorrra1CzdzvEbsa/HTDUPIGXJcnFT8f9cP4KngCZQMO1DAEixS4e/+mEVvOksF9rc1G3Hsv+7HURi1md0fivnbKlXiga6N7esRXul6FVNE7CKBputouN04Ykd+9yQ5jptMNDu3kSMpwO6xuTsPyRav31OqMPKXYA==;5:IMJYs2pbDuWtwHv3JcQaOI5gkJHhYjiHbyUZNIFRPFPy2HYidcKp0X5Vhz3CdM6RDnVXIbYGGtzqy3ifDfqNDarLI8rRhGWlEqh7mnrVMtrvFnqx/+PGSJXJqYWcBCSTl62xdGObBrDxd7V9QnaxDMAYncG0gspKQ7oL1SOKfT8=;7:CsWGJVf9dxBWESQvLwKkn7HDq6MMwLcrofqgGnXDUzeInYAzIYsrpOsUWldgZ7y6en6p3Gc8ItOxytGvT6Zuo6dEkTkt2kkUEfRzHYGlGrkogmw/Kqeu9EAWaGpAycC7B95GHJjNk27ybWoIdNLyiA==
-x-ms-office365-filtering-correlation-id: 1d8a36e6-99d5-49c9-a9d0-08d63f7863d8
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021145)(8989299)(5600074)(711020)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(2017052603328)(7153060)(7193020);SRVR:MWHPR2201MB1311;
-x-ms-traffictypediagnostic: MWHPR2201MB1311:
-x-microsoft-antispam-prvs: <MWHPR2201MB13115DA32C22374041069F43C1CD0@MWHPR2201MB1311.namprd22.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(10201501046)(3002001)(3231382)(944501410)(52105095)(148016)(149066)(150057)(6041310)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(2016111802025)(6043046)(201708071742011)(7699051)(76991095);SRVR:MWHPR2201MB1311;BCL:0;PCL:0;RULEID:;SRVR:MWHPR2201MB1311;
-x-forefront-prvs: 084285FC5C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(39840400004)(136003)(366004)(376002)(346002)(396003)(199004)(189003)(66066001)(5250100002)(33716001)(14454004)(8936002)(81156014)(81166006)(6246003)(58126008)(53936002)(508600001)(105586002)(316002)(54906003)(8676002)(68736007)(7736002)(97736004)(2906002)(7416002)(106356001)(1076002)(305945005)(4326008)(6512007)(9686003)(14444005)(256004)(71190400001)(3846002)(6116002)(6436002)(42882007)(6486002)(76176011)(26005)(44832011)(386003)(6506007)(11346002)(446003)(5660300001)(6916009)(229853002)(25786009)(186003)(486006)(52116002)(71200400001)(2900100001)(33896004)(102836004)(476003)(99286004)(41533002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1311;H:MWHSPR00MB117.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: C4g2B0ZHSjeZgre6/f8x7EvzxsnH8FuLidkhBf7TR/qnSNop+HKMvdlDt7abOsd0qoA1q35Bn0vFdF7FZ/kubaDXgMin9LVDdyJtiJItxkX70jw+bGwFXz86O0uySsGvlLjoiz0w1Sie7cW+LOCWaHvQY0HkUIyBHug/tcakrAbjV5+VpIEypI93EwrZdYdzKu0hx5Yaoib7qBE9Qv2Y8yNx+PHogBTk1E0vBRXRAWq6zFIuDCuI3azG7CPn6aRiHauk3qY3AGKD28YkWQhvc8I5R55UX4yc78gSost9H13wmC+Gl0aGNrOpQCL9zbuppotu9CPXAS68fq3ZAcAwa8GdpcGDhiYkMKOiyrMDBv8=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <CF6263EB0779FC42BD1B1A9965D7E79A@namprd22.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Thu, 1 Nov 2018 02:35:26 -0400
+Received: from mga17.intel.com ([192.55.52.151]:44187 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725736AbeKAGf0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 02:35:26 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2018 14:35:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,449,1534834800"; 
+   d="scan'208";a="104388698"
+Received: from ray.jf.intel.com (HELO [10.7.201.133]) ([10.7.201.133])
+  by orsmga001.jf.intel.com with ESMTP; 31 Oct 2018 14:35:34 -0700
+Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/
+ PF_SGX
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Andrew Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20180926173516.GA10920@linux.intel.com>
+ <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
+ <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
+ <20180926204400.GA11446@linux.intel.com>
+ <b7e14c6e-fc05-93fa-eef9-5e3f06ab4729@intel.com>
+ <CALCETrXByb2UVuZ6AXUeOd8y90NAikbZuvdN3wf_TjHZ+CxNhA@mail.gmail.com>
+ <992b1d6d-cc0f-776f-d938-2a1f7cad52c8@intel.com>
+ <20180927135603.GF8242@linux.intel.com>
+ <ae76dfe7-3587-0d21-37b7-535279edc235@fortanix.com>
+ <2e7b81e1-818f-7d76-e2b4-793d9ec5d5a6@intel.com>
+ <20181031213036.GA23089@linux.intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <a9c23203-476d-875d-9fbb-263716833e17@intel.com>
+Date:   Wed, 31 Oct 2018 14:35:34 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d8a36e6-99d5-49c9-a9d0-08d63f7863d8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Oct 2018 21:32:43.4352
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1311
+In-Reply-To: <20181031213036.GA23089@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Guenter,
+On 10/31/18 2:30 PM, Sean Christopherson wrote:
+> On Mon, Oct 01, 2018 at 03:03:30PM -0700, Dave Hansen wrote:
+>> On 10/01/2018 02:42 PM, Jethro Beekman wrote:
+>>>
+>>> 1) Even though the vDSO function exists, userspace may still call 
+>>> `ENCLU[EENTER]` manually, so the fault handling as described in the 
+>>> current patch should also be maintained.
+>>
+>> Why?
+> 
+> Circling back to this question, what if we take the easy way out and
+> simply signal SIGSEGV without an SGX-specific code?  I.e. treat #PF
+> with X86_PF_SGX as an access error, no more no less.  That should be
+> sufficient for userspace to function, albeit with a little more effort,
+> but presumably no more than would be needed to run on SGX1 hardware.
 
-On Wed, Oct 31, 2018 at 12:52:18PM -0700, Guenter Roeck wrote:
-> +/*
-> + * Generic version of __cmpxchg_u64, to be used for cmpxchg64().
-> + * Takes u64 parameters.
-> + */
-> +u64 __cmpxchg_u64(u64 *ptr, u64 old, u64 new)
-> +{
-> +	raw_spinlock_t *lock =3D lock_addr(ptr);
-> +	unsigned long flags;
-> +	u64 prev;
-> +
-> +	raw_spin_lock_irqsave(lock, flags);
-> +	prev =3D READ_ONCE(*ptr);
-> +	if (prev =3D=3D old)
-> +		*ptr =3D new;
-> +	raw_spin_unlock_irqrestore(lock, flags);
-> +
-> +	return prev;
-> +}
-> +EXPORT_SYMBOL(__cmpxchg_u64);
+There are two sides to this ABI: what the kernel does to support SGX and
+what userspace does.  If we do what you suggest, we remove any (most?)
+needed kernel changes and foist the burden entirely into userspace.
+But, we end up with two ABIs: the old one and the new vDSO one.
 
-This is only going to work if we know that memory modified using
-__cmpxchg_u64() is *always* modified using __cmpxchg_u64(). Without that
-guarantee there's nothing to stop some other CPU writing to *ptr after
-the READ_ONCE() above but before we write new to it.
+IOW, once we start doing SIGSEGV, we have to do it forever, despite if
+we have a newer mechanism.
 
-As far as I'm aware this is not a guarantee we currently provide, so it
-would mean making that a requirement for cmpxchg64() users & auditing
-them all. That would also leave cmpxchg64() with semantics that differ
-from plain cmpxchg(), and semantics that may surprise people. In my view
-that's probably not worth it, and it would be better to avoid using
-cmpxchg64() on systems that can't properly support it.
+> AFAIK there isn't a way to prevent userspace from manually invoking
+> EENTER, short of doing some really nasty text poking or PTE swizzling.
+> We could declare using EENTER as unsupported,
 
-For MIPS the problem will go away with the nanoMIPS ISA which includes &
-requires LLWP/SCWP (W =3D word, P =3D paired) instructions that we can use
-to implement cmpxchg64() properly, but of course that won't help older
-systems.
-
-Thanks,
-    Paul
+Yep, userspace can call it all it wants, and we can also say that
+calling it outside the vdso is "undefined".
