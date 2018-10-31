@@ -7,48 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFA98ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:05:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A72C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:05:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6EF520838
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:05:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58F5E20664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:05:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CJIgkllD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6EF520838
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="T9N+IX8f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58F5E20664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727265AbeKAIGC (ORCPT
+        id S1727412AbeKAIGE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:06:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52610 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:06:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52622 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726532AbeKAIGA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:06:00 -0400
+        id S1727231AbeKAIGC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:06:02 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A663A2082E;
-        Wed, 31 Oct 2018 23:05:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6CFF20823;
+        Wed, 31 Oct 2018 23:05:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027150;
-        bh=ToxnrrhxxSr0PfB0tmJ2tkh02ll8nPU8XTq3Jj5S3NY=;
+        s=default; t=1541027152;
+        bh=sRHdMLuRL0azgA1ZgiD0C1h/NEZIHaVdZ+3wxv0vcdw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CJIgkllDSxgsPDYo9ZtlhMYvT1kXS+10kqgmU9q/wDrQc8tZ7CqInYgNqIezvqi48
-         7jWrh0he+NgbhetVDR8gS4bWuYhPosNfSq4Z/9xn/Qq7CnaTwWaRQJQAXJzx5J7XZr
-         TfHj2Q9NojeAyQb7i4XKzIbvnNObW0esgbH//6s0=
+        b=T9N+IX8fb7pX0yR9oCxFg82wTQkrUuo/rcrZ+oKA/c+dAZ9Es9Ftt1TNJ5UMt/oqx
+         6TG13am9vynrJazrpQZ0pf3mGYXpauskBet8rJCJgMlMcYv6gywfmEA9vSkXJ5Y4UW
+         XiZu+zleMKcSWB+g80P+5026bIJK0XNplwfvxG5Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Philip Elcan <pelcan@codeaurora.org>,
-        Shanker Donthineni <shankerd@codeaurora.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+Cc:     Ryan C Goodfellow <rgoodfel@isi.edu>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 008/146] arm64: cpufeature: ctr: Fix cpu capability check for late CPUs
-Date:   Wed, 31 Oct 2018 19:03:23 -0400
-Message-Id: <20181031230541.28822-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 010/146] nfp: devlink port split support for 1x100G CXP NIC
+Date:   Wed, 31 Oct 2018 19:03:25 -0400
+Message-Id: <20181031230541.28822-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -57,73 +53,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
+From: Ryan C Goodfellow <rgoodfel@isi.edu>
 
-[ Upstream commit 8ab66cbe63aeaf9e5970fb4aaef1c660fca59321 ]
+[ Upstream commit 5948185b97fa1f83d7855e638a72982a1073ebf5 ]
 
-The matches() routine for a capability must honor the "scope"
-passed to it and return the proper results.
-i.e, when passed with SCOPE_LOCAL_CPU, it should check the
-status of the capability on the current CPU. This is used by
-verify_local_cpu_capabilities() on a late secondary CPU to make
-sure that it's compliant with the established system features.
-However, ARM64_HAS_CACHE_{IDC/DIC} always checks the system wide
-registers and this could mean that a late secondary CPU could return
-"true" (since the CPU hasn't updated the system wide registers yet)
-and thus lead the system in an inconsistent state, where
-the system assumes it has IDC/DIC feature, while the new CPU
-doesn't.
+This commit makes it possible to use devlink to split the 100G CXP
+Netronome into two 40G interfaces. Currently when you ask for 2
+interfaces, the math in src/nfp_devlink.c:nfp_devlink_port_split
+calculates that you want 5 lanes per port because for some reason
+eth_port.port_lanes=10 (shouldn't this be 12 for CXP?). What we really
+want when asking for 2 breakout interfaces is 4 lanes per port. This
+commit makes that happen by calculating based on 8 lanes if 10 are
+present.
 
-Fixes: commit 6ae4b6e0578886eb36 ("arm64: Add support for new control bits CTR_EL0.DIC and CTR_EL0.IDC")
-Cc: Philip Elcan <pelcan@codeaurora.org>
-Cc: Shanker Donthineni <shankerd@codeaurora.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Ryan C Goodfellow <rgoodfel@isi.edu>
+Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Reviewed-by: Greg Weeks <greg.weeks@netronome.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/kernel/cpufeature.c | 22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
+ .../net/ethernet/netronome/nfp/nfp_devlink.c    | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index e238b7932096..93f69d82225d 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -848,15 +848,29 @@ static bool has_no_fpsimd(const struct arm64_cpu_capabilities *entry, int __unus
- }
- 
- static bool has_cache_idc(const struct arm64_cpu_capabilities *entry,
--			  int __unused)
-+			  int scope)
+diff --git a/drivers/net/ethernet/netronome/nfp/nfp_devlink.c b/drivers/net/ethernet/netronome/nfp/nfp_devlink.c
+index db463e20a876..e9a4179e7e48 100644
+--- a/drivers/net/ethernet/netronome/nfp/nfp_devlink.c
++++ b/drivers/net/ethernet/netronome/nfp/nfp_devlink.c
+@@ -96,6 +96,7 @@ nfp_devlink_port_split(struct devlink *devlink, unsigned int port_index,
  {
--	return read_sanitised_ftr_reg(SYS_CTR_EL0) & BIT(CTR_IDC_SHIFT);
-+	u64 ctr;
-+
-+	if (scope == SCOPE_SYSTEM)
-+		ctr = arm64_ftr_reg_ctrel0.sys_val;
-+	else
-+		ctr = read_cpuid_cachetype();
-+
-+	return ctr & BIT(CTR_IDC_SHIFT);
- }
+ 	struct nfp_pf *pf = devlink_priv(devlink);
+ 	struct nfp_eth_table_port eth_port;
++	unsigned int lanes;
+ 	int ret;
  
- static bool has_cache_dic(const struct arm64_cpu_capabilities *entry,
--			  int __unused)
-+			  int scope)
+ 	if (count < 2)
+@@ -114,8 +115,12 @@ nfp_devlink_port_split(struct devlink *devlink, unsigned int port_index,
+ 		goto out;
+ 	}
+ 
+-	ret = nfp_devlink_set_lanes(pf, eth_port.index,
+-				    eth_port.port_lanes / count);
++	/* Special case the 100G CXP -> 2x40G split */
++	lanes = eth_port.port_lanes / count;
++	if (eth_port.lanes == 10 && count == 2)
++		lanes = 8 / count;
++
++	ret = nfp_devlink_set_lanes(pf, eth_port.index, lanes);
+ out:
+ 	mutex_unlock(&pf->lock);
+ 
+@@ -128,6 +133,7 @@ nfp_devlink_port_unsplit(struct devlink *devlink, unsigned int port_index,
  {
--	return read_sanitised_ftr_reg(SYS_CTR_EL0) & BIT(CTR_DIC_SHIFT);
-+	u64 ctr;
-+
-+	if (scope == SCOPE_SYSTEM)
-+		ctr = arm64_ftr_reg_ctrel0.sys_val;
-+	else
-+		ctr = read_cpuid_cachetype();
-+
-+	return ctr & BIT(CTR_DIC_SHIFT);
- }
+ 	struct nfp_pf *pf = devlink_priv(devlink);
+ 	struct nfp_eth_table_port eth_port;
++	unsigned int lanes;
+ 	int ret;
  
- #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+ 	mutex_lock(&pf->lock);
+@@ -143,7 +149,12 @@ nfp_devlink_port_unsplit(struct devlink *devlink, unsigned int port_index,
+ 		goto out;
+ 	}
+ 
+-	ret = nfp_devlink_set_lanes(pf, eth_port.index, eth_port.port_lanes);
++	/* Special case the 100G CXP -> 2x40G unsplit */
++	lanes = eth_port.port_lanes;
++	if (eth_port.port_lanes == 8)
++		lanes = 10;
++
++	ret = nfp_devlink_set_lanes(pf, eth_port.index, lanes);
+ out:
+ 	mutex_unlock(&pf->lock);
+ 
 -- 
 2.17.1
 
