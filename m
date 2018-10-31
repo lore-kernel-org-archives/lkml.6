@@ -2,122 +2,99 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E520DECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 02:24:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88CF4C6786F
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 02:26:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B47982082B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 02:24:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B47982082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 28D3F2082B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 02:26:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28D3F2082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728826AbeJaLUr (ORCPT
+        id S1728860AbeJaLWf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 07:20:47 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38651 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728671AbeJaLUq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 07:20:46 -0400
-Received: by mail-ed1-f67.google.com with SMTP id c1-v6so12300108ede.5;
-        Tue, 30 Oct 2018 19:24:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qisjhRzqYftCgGXLPIeSirkSfWPEJ3OepZwWig78/Bc=;
-        b=jQUFmmT5FOJLhz/aD1EJCJ6Oxp2NZc/2VPLsYha8qeQtft2y9QsXUQnnR7F+NiLWBG
-         ZbcQ8gElhR2stgmsCKCUdwRRICzpowpWh1vi2DQkRC4jXqWVcrsrW1eSk+teIPz3dhzt
-         zbBNdcCquaVe41b/+VGDh5tSYwQPOsCChs/IUWB5cM7JMm0xMT4WwJ2yCUyNAzhGs2Wa
-         BlH84FVzWQTFStjaM9wjnWG22v8UYIA5YijUKLrAZ9kU5/WDNOxNUBZS7pLv96MVi93e
-         sk2PMUfJndNTGB2IFnViaL7byg3CbHrt8njsbmIfKMMI/xTW1aKR6B2I5LqEsL5VT+25
-         24bw==
-X-Gm-Message-State: AGRZ1gLYm4MU0KP2PzSxNtegRkbCap0vF2OofRW3YJQDs0707rj4piTn
-        na8/aSnC1dcdB6gYKSt2YUIM43QvTfU=
-X-Google-Smtp-Source: AJdET5csxfhohntJ1U/4DiuCQ/zKp+l662vuSsLvSZrQwQQvV2WoszXOiuZRsiiIDQAWN33B8dyjMA==
-X-Received: by 2002:a50:a8a2:: with SMTP id k31-v6mr606871edc.192.1540952686432;
-        Tue, 30 Oct 2018 19:24:46 -0700 (PDT)
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com. [209.85.221.47])
-        by smtp.gmail.com with ESMTPSA id b2-v6sm6464656edy.52.2018.10.30.19.24.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 19:24:46 -0700 (PDT)
-Received: by mail-wr1-f47.google.com with SMTP id w5-v6so14746491wrt.2;
-        Tue, 30 Oct 2018 19:24:45 -0700 (PDT)
-X-Received: by 2002:adf:e307:: with SMTP id b7-v6mr988673wrj.91.1540952685177;
- Tue, 30 Oct 2018 19:24:45 -0700 (PDT)
+        Wed, 31 Oct 2018 07:22:35 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42104 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728671AbeJaLWf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 07:22:35 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 159DB307B969;
+        Wed, 31 Oct 2018 02:26:37 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-109.pek2.redhat.com [10.72.12.109])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7439560C47;
+        Wed, 31 Oct 2018 02:26:28 +0000 (UTC)
+Subject: Re: [PATCH] kdump, vmcoreinfo: Export sme_me_mask value to vmcoreinfo
+To:     Baoquan He <bhe@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Young <dyoung@redhat.com>
+Cc:     Petr Tesarik <ptesarik@suse.cz>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, kexec@lists.infradead.org, mingo@redhat.com,
+        tglx@linutronix.de
+References: <20181029083118.GC1884@MiWiFi-R3L-srv>
+ <d6f93848-c750-f29c-4ca7-9661596cad62@redhat.com>
+ <20181029095738.GB20101@zn.tnic>
+ <15897206-c1a6-ced6-3a1b-f71da8fc9c83@redhat.com>
+ <20181029114414.GA11408@MiWiFi-R3L-srv>
+ <90385882-7fd1-a674-ec5a-19bd42471a5e@redhat.com>
+ <20181029134918.GB32150@zn.tnic>
+ <699ab34e-1373-582d-4e58-e76bd57ec34f@redhat.com>
+ <20181030050900.GA25987@dhcp-128-65.nay.redhat.com>
+ <20181030091542.GD32102@zn.tnic> <20181030092314.GC14493@MiWiFi-R3L-srv>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <dcbc925f-6935-6a34-fde1-7aa1ea378891@redhat.com>
+Date:   Wed, 31 Oct 2018 10:26:23 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20181026144344.27778-1-jagan@amarulasolutions.com> <20181026144344.27778-23-jagan@amarulasolutions.com>
-In-Reply-To: <20181026144344.27778-23-jagan@amarulasolutions.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Wed, 31 Oct 2018 10:24:32 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65a-+-U74QWBvHLJ9e+_dWY3Cy+h9CfAFHqmFnB0GmcBw@mail.gmail.com>
-Message-ID: <CAGb2v65a-+-U74QWBvHLJ9e+_dWY3Cy+h9CfAFHqmFnB0GmcBw@mail.gmail.com>
-Subject: Re: [PATCH v3 22/25] dt-bindings: sun6i-dsi: Add compatible for A64 DPHY
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181030092314.GC14493@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Wed, 31 Oct 2018 02:26:37 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 10:46 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> The MIPI DSI PHY HDMI controller on Allwinner A64 is similar
-> on the one on A31.
->
-> Add A64 compatible and append A31 compatible as fallback.
->
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
-> Changes for v3:
-> - none
-> Changes for v2:
-> - new patch
->
->  Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
-> index 9fa6e7a758ad..704fb31962f2 100644
-> --- a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
-> +++ b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
-> @@ -36,7 +36,7 @@ D-PHY
->
->  Required properties:
->    - compatible: value must be one of:
-> -    * allwinner,sun6i-a31-mipi-dphy
-> +    * "allwinner,sun50i-a64-mipi-dphy", "allwinner,sun6i-a31-mipi-dphy"
+在 2018年10月30日 17:23, Baoquan He 写道:
+> 
+> Hi Boris, DaveY and Lianbo,
+> 
+> On 10/30/18 at 10:15am, Borislav Petkov wrote:
+>> On Tue, Oct 30, 2018 at 01:09:00PM +0800, Dave Young wrote:
+>>> It is not the content, I think it is a good catch from Boris, it would
+>>> be good to document the exported things in somewhere eg.
+>>> Documentation/kdump/vmcoreinfo.txt
+> 
+> For the vmcoreinfo variables document, I personally think it might be
+> not necessary. The reason is that all the old varialbles are exported
+> with the name of themselves. We know what they are or what they
+> represent since they are all kernel symbols or macro. Only this me_mask,
+> it's a local variable and store the value of sme_me_mask for now, may
+> store more info later like Petr mentioned, and also will store the memory
+> encryption information of TME (which is intel's transparent memory encryption).
+> We can add code comment around to tell these.
+> 
+Thank you, everyone.
 
-The format for this is one "combination" per line. You need to keep the
-original "allwinner,sun6i-a31-mipi-dphy".
+I personally agree with Baoquan's opinion. What do you think about? Boris and other reviewer?
 
-ChenYu
+If the vmcoreinfo document is necessary, would you like to help me to provide an outline?
+I can try my best to write the document.
 
->    - reg: base address and size of memory-mapped region
->    - clocks: phandles to the clocks feeding the DSI encoder
->      * bus: the DSI interface clock
-> --
-> 2.18.0.321.gffc6fa0e3
->
+Anyway, we should make a choice.
+
+Regards,
+Lianbo
+
+> Personal opinion.
+> 
+> Thanks
+> Baoquan
+> 
