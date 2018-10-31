@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3382FECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:42:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27DD8C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:43:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEFD520664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:42:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC1E620664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:43:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RYyKMLTj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEFD520664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="g4CNcrft"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC1E620664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729458AbeKAInP (ORCPT
+        id S1729175AbeKAIHr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:43:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55992 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:07:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729065AbeKAIHu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:07:50 -0400
+        id S1729065AbeKAIHq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:07:46 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9468C20840;
-        Wed, 31 Oct 2018 23:07:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31337208A3;
+        Wed, 31 Oct 2018 23:07:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027259;
-        bh=xabz9EZSl4Bi8I4yTd1ERkZFSI1yeG7rjxrQv/i/IeM=;
+        s=default; t=1541027255;
+        bh=TZh0kuaNJUgcZ4KfLemz3qOvrVg8+bivLoE6Cm/itNI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RYyKMLTjaq2Lp+UzoofZWQlCaKhXc8AkovPzYGLeBHrdP9Iy4yyZJUbzXJykSVq8f
-         Gh0/haEaqBvBUbs9mOK44uXQlSXbFDN09T60UL+fsjb5LyBcPc4T1jF1cvr2tTLMs+
-         E2mzCGs435cxY7xSkhPIe8rE374cQPVbbqurGoHw=
+        b=g4CNcrftIJyTYJc926JsNKniyW4AMXoygheCQf2wqjPRIbBzfckTpD0A9yWz/lEtm
+         gFIJP8DRWUTJJZl+8QpWi/LPFHDige/YIQbfAF1h8Re/76pAtdNg+MBHLKLS1r01A3
+         RxXhCaktVZWrjg4LfMzicLwI1WStIIOBcNbp/WII=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Casey Schaufler <casey.schaufler@intel.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
+Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 130/146] Smack: ptrace capability use fixes
-Date:   Wed, 31 Oct 2018 19:05:25 -0400
-Message-Id: <20181031230541.28822-130-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 126/146] coresight: etb10: Fix handling of perf mode
+Date:   Wed, 31 Oct 2018 19:05:21 -0400
+Message-Id: <20181031230541.28822-126-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -53,76 +54,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Casey Schaufler <casey.schaufler@intel.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-[ Upstream commit dcb569cf6ac99ca899b8109c128b6ae52477a015 ]
+[ Upstream commit 987d1e8dcd370d96029a3d76a0031b043c4a69ae ]
 
-This fixes a pair of problems in the Smack ptrace checks
-related to checking capabilities. In both cases, as reported
-by Lukasz Pawelczyk, the raw capability calls are used rather
-than the Smack wrapper that check addition restrictions.
-In one case, as reported by Jann Horn, the wrong task is being
-checked for capabilities.
+If the ETB is already enabled in sysfs mode, the ETB reports
+success even if a perf mode is requested. Fix this by checking
+the requested mode.
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/smack/smack_lsm.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/hwtracing/coresight/coresight-etb10.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 340fc30ad85d..70d3066e69fe 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -421,6 +421,7 @@ static int smk_ptrace_rule_check(struct task_struct *tracer,
- 	struct smk_audit_info ad, *saip = NULL;
- 	struct task_smack *tsp;
- 	struct smack_known *tracer_known;
-+	const struct cred *tracercred;
+diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
+index 306119eaf16a..0dad8626bcfb 100644
+--- a/drivers/hwtracing/coresight/coresight-etb10.c
++++ b/drivers/hwtracing/coresight/coresight-etb10.c
+@@ -147,6 +147,10 @@ static int etb_enable(struct coresight_device *csdev, u32 mode)
+ 	if (val == CS_MODE_PERF)
+ 		return -EBUSY;
  
- 	if ((mode & PTRACE_MODE_NOAUDIT) == 0) {
- 		smk_ad_init(&ad, func, LSM_AUDIT_DATA_TASK);
-@@ -429,7 +430,8 @@ static int smk_ptrace_rule_check(struct task_struct *tracer,
- 	}
- 
- 	rcu_read_lock();
--	tsp = __task_cred(tracer)->security;
-+	tracercred = __task_cred(tracer);
-+	tsp = tracercred->security;
- 	tracer_known = smk_of_task(tsp);
- 
- 	if ((mode & PTRACE_MODE_ATTACH) &&
-@@ -439,7 +441,7 @@ static int smk_ptrace_rule_check(struct task_struct *tracer,
- 			rc = 0;
- 		else if (smack_ptrace_rule == SMACK_PTRACE_DRACONIAN)
- 			rc = -EACCES;
--		else if (capable(CAP_SYS_PTRACE))
-+		else if (smack_privileged_cred(CAP_SYS_PTRACE, tracercred))
- 			rc = 0;
- 		else
- 			rc = -EACCES;
-@@ -1841,6 +1843,7 @@ static int smack_file_send_sigiotask(struct task_struct *tsk,
- {
- 	struct smack_known *skp;
- 	struct smack_known *tkp = smk_of_task(tsk->cred->security);
-+	const struct cred *tcred;
- 	struct file *file;
- 	int rc;
- 	struct smk_audit_info ad;
-@@ -1854,8 +1857,12 @@ static int smack_file_send_sigiotask(struct task_struct *tsk,
- 	skp = file->f_security;
- 	rc = smk_access(skp, tkp, MAY_DELIVER, NULL);
- 	rc = smk_bu_note("sigiotask", skp, tkp, MAY_DELIVER, rc);
--	if (rc != 0 && has_capability(tsk, CAP_MAC_OVERRIDE))
++	/* Don't let perf disturb sysFS sessions */
++	if (val == CS_MODE_SYSFS && mode == CS_MODE_PERF)
++		return -EBUSY;
 +
-+	rcu_read_lock();
-+	tcred = __task_cred(tsk);
-+	if (rc != 0 && smack_privileged_cred(CAP_MAC_OVERRIDE, tcred))
- 		rc = 0;
-+	rcu_read_unlock();
- 
- 	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_TASK);
- 	smk_ad_setfield_u_tsk(&ad, tsk);
+ 	/* Nothing to do, the tracer is already enabled. */
+ 	if (val == CS_MODE_SYSFS)
+ 		goto out;
 -- 
 2.17.1
 
