@@ -2,102 +2,104 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27513ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:06:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D256ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:06:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC4AD2081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:06:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC4AD2081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 55C392081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:06:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UETGPHMh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55C392081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729296AbeKAAEc (ORCPT
+        id S1729370AbeKAAEg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 20:04:32 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42468 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728649AbeKAAEb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 20:04:31 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 23E24341;
-        Wed, 31 Oct 2018 08:06:08 -0700 (PDT)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 54A3F3F71D;
-        Wed, 31 Oct 2018 08:06:05 -0700 (PDT)
-Date:   Wed, 31 Oct 2018 15:05:59 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Stefan Agner <stefan@agner.ch>, Marek Vasut <marex@denx.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 4/4] ARM: dts: imx6sx: Add DISPLAY power domain support
-Message-ID: <20181031150559.GA20437@e107981-ln.cambridge.arm.com>
-References: <cover.1539020938.git.leonard.crestez@nxp.com>
- <a3265a84052a7c11ae96e61e39adc988ca980d66.1539020938.git.leonard.crestez@nxp.com>
- <20181031061134.GB10386@tiger>
- <AM0PR04MB4290F31234D75AC7029F066FEECD0@AM0PR04MB4290.eurprd04.prod.outlook.com>
+        Wed, 31 Oct 2018 20:04:36 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:42742 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729315AbeKAAEf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 20:04:35 -0400
+Received: by mail-vs1-f66.google.com with SMTP id e126so10189907vsc.9
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 08:06:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=b4crfMsl3Wc2J4jxKAjIepRxTDy5s9OpjesFvpaqHOY=;
+        b=UETGPHMhKbXe4GowD+lrhsOxcw5tFA/a+jILfhjdCwRR+7I7fCEN0pkp+gwOKVDcN6
+         8bV9ifPmEfKAkTOoOTl5G329ll5PqnV7rD8g3SNSxUQk9sZEQco9ymfRQ7kwVmC/qirA
+         3YfRPavg1vsHSmaPOzOtu6Udc27uVTZuMz34c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=b4crfMsl3Wc2J4jxKAjIepRxTDy5s9OpjesFvpaqHOY=;
+        b=bdCj55cFDMp22U7iIOJuve2rA5E4gpvmIHZN9kU4gbr4ZtnifjLpahwIwASxrqeB4O
+         5bZ45eoXKFcJv7mbjAL99cvCeg3gSGCwofihrmfGglR+Gw9oRcKSMpyt5dcSJBRuUkEz
+         aax/UF4SIcT6byf056By2SFaX3U/sZfVOPOhIkznx0Zt9gfViKX0PhMGQG4Km6+edG5e
+         C/OHaaf7+kmPox5FP4i7/qMJM+I05UYzrZIyLSZopkrme++bFVr0/mLzB3GPJgpcpgX5
+         k10CtsJ2tRODUsb4h1ZsVLed6VXgPtUadIlqS7SOdP4/JGw1MFSAWhEJ9gEkKITg8jiC
+         VLWQ==
+X-Gm-Message-State: AGRZ1gLbHczCnVagPfW+57KUFHgFVIuRsdhP6PwEXAVE52eMO/CsFeO8
+        8HfISDgrxyrKh4pcHtVPCjpcUEp2/AA=
+X-Google-Smtp-Source: AJdET5dn5qjOr2ptjzvxmMduV1G5fltaseMlWIj2drpHRUX2JPwhF8XPEMfMx5FUjOzTtA05zRJliA==
+X-Received: by 2002:a67:7b83:: with SMTP id w125mr1436439vsc.5.1540998370683;
+        Wed, 31 Oct 2018 08:06:10 -0700 (PDT)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
+        by smtp.gmail.com with ESMTPSA id k22-v6sm8011765vkk.29.2018.10.31.08.06.09
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Oct 2018 08:06:09 -0700 (PDT)
+Received: by mail-ua1-f52.google.com with SMTP id g10so6019077uak.5
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 08:06:09 -0700 (PDT)
+X-Received: by 2002:a9f:3743:: with SMTP id a3mr1583335uae.86.1540998367995;
+ Wed, 31 Oct 2018 08:06:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM0PR04MB4290F31234D75AC7029F066FEECD0@AM0PR04MB4290.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20181030205334.148162-1-dianders@chromium.org> <20181031115910.5bqgtnzf2zujnp5b@holly.lan>
+In-Reply-To: <20181031115910.5bqgtnzf2zujnp5b@holly.lan>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 31 Oct 2018 08:05:54 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=W+NScZ8KCcBhULwmx3VMx0uUro=jKm7og9-OsRKmNdmA@mail.gmail.com>
+Message-ID: <CAD=FV=W+NScZ8KCcBhULwmx3VMx0uUro=jKm7og9-OsRKmNdmA@mail.gmail.com>
+Subject: Re: [PATCH] kdb: Fix btc (backtrace on each cpu) crash
+To:     Daniel Thompson <daniel.thompson@linaro.org>
+Cc:     Jason Wessel <jason.wessel@windriver.com>, me@tobin.cc,
+        Joe Perches <joe@perches.com>, stable@vger.kernel.org,
+        kgdb-bugreport@lists.sourceforge.net,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 12:17:50PM +0000, Leonard Crestez wrote:
-> On 10/31/2018 8:12 AM, Shawn Guo wrote:
-> > On Mon, Oct 08, 2018 at 06:06:23PM +0000, Leonard Crestez wrote:
-> >> This was implemented in the driver but not actually defined and
-> >> referenced in dts. This makes it always on.
-> >>
-> >>  From reference manual in section "10.4.1.4.1 Power Distribution":
-> >>
-> >> "Display domain - The DISPLAY domain contains GIS, CSI, PXP, LCDIF,
-> >> PCIe, DCIC, and LDB. It is supplied by internal regulator."
-> >>
-> >> The current pd_pcie is actually only for PCIE_PHY, the PCIE ip block is
-> >> actually inside the DISPLAY domain. Handle this by adding the pcie node
-> >> in both power domains.
-> >>
-> >> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-> > 
-> > Applied, thanks.
-> 
-> As mentioned in the cover letter this requires multi-PD support in 
-> imx-pci to be implemented, specifically PATCH 3/4 of this series:
-> 
-> 	https://lore.kernel.org/patchwork/patch/996810/
-> 
-> Unless that also gets merged soon via pci I expect issues in linux-next. 
+Hi,
 
-I do not know what you mean by "issues in linux-next" (I assume you mean
-when Shawn sends the patches to linux-next in preparation for v4.21); we
-have not planned any other PCI pull request for v4.20-rc1 material.
+On Wed, Oct 31, 2018 at 4:59 AM Daniel Thompson
+<daniel.thompson@linaro.org> wrote:
+>
+> On Tue, Oct 30, 2018 at 01:53:34PM -0700, Douglas Anderson wrote:
+> > Typing 'btc' on kdb doing all sorts of fail.  Sometimes it would
+> > crash, sometimes display nothing, and sometimes hang.
+> >
+> > Bisect tracked this down to the commit ad67b74d2469 ("printk: hash
+> > addresses printed with %p"), suggesting an obvious fix.  The pointer
+> > used internally in kdb shouldn't be hashed, so switch it to %px.
+> >
+> > Fixes: ad67b74d2469 ("printk: hash addresses printed with %p")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
+>
+> I think we've already got a fix for this:
+> https://git.kernel.org/pub/scm/linux/kernel/git/jwessel/kgdb.git/commit/?h=kgdb-next&id=a0ca72c2d1ac83d0853a23ffde8f3624648b1ee8
 
-> The patch already has reviewed-by tags so "merging it soon" is not 
-> unreasonable.
+Ah ha.  Nice!  Sorry for not noticing this.  The newest I tested was 4.19.
 
-I can ACK it if Shawn wants to pull it, it may take a while to see it
-in -next if it has to go through the PCI tree, I think it is better
-to queue the series without splitting the patches across multiple
-channels though.
-
-Lorenzo
+-Doug
