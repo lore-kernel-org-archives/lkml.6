@@ -7,48 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 187BFECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:24:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B11C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:24:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D207D2084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:24:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E033220847
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:24:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qpUuLyjj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D207D2084A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="O995AjaU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E033220847
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731612AbeKAIYm (ORCPT
+        id S1730298AbeKAIZA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:24:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33634 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:25:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729209AbeKAIKr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:10:47 -0400
+        id S1731218AbeKAIKo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:10:44 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB9A520870;
-        Wed, 31 Oct 2018 23:10:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC15C2085A;
+        Wed, 31 Oct 2018 23:10:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027435;
-        bh=7rU3CT/K4Vz5EVwVCBxraRVK9bYBIoBpjI/z4XCXqQE=;
+        s=default; t=1541027432;
+        bh=Prz2yyqbfMWvbBTgphACYPuwkila1hfGa4sSxSaeUTw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qpUuLyjjg5ievuLKn+UW4Bwx40kdNrKlo/lYsakb7IAbeyOTTJ0NeNwl3YSY54R16
-         PK8UMRfS/lqG5OHNhBBq/jye4avP1Sbt50ecMkZbHWV7+T5QbBrc7jgMo7tBzdEKql
-         sabuekf0mAm3Xt4PBxR46krf6sGJ2xxTm8TcxBE4=
+        b=O995AjaUIsqEy/v3khFJjMYVe4H2OwwQYIjKoeIBu4WJ670l1EJUdn5qAt74bikxL
+         VOJYajFnEDBwBNLf0YIdqcW9vCFPShCFFpy/HosthmavpFrDrJpJ+8URzgeFjcAg6Y
+         ncdYosByQUKTOINlf9S0u/M1o/R5DEt+JpJ7Wq8U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dexuan Cui <decui@microsoft.com>,
-        "K . Y . Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Stable@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     Honghui Zhang <honghui.zhang@mediatek.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 52/73] Drivers: hv: kvp: Fix two "this statement may fall through" warnings
-Date:   Wed, 31 Oct 2018 19:09:27 -0400
-Message-Id: <20181031230948.29203-52-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 49/73] PCI: mediatek: Fix mtk_pcie_find_port() endpoint/port matching logic
+Date:   Wed, 31 Oct 2018 19:09:24 -0400
+Message-Id: <20181031230948.29203-49-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230948.29203-1-sashal@kernel.org>
 References: <20181031230948.29203-1-sashal@kernel.org>
@@ -57,67 +53,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dexuan Cui <decui@microsoft.com>
+From: Honghui Zhang <honghui.zhang@mediatek.com>
 
-[ Upstream commit fc62c3b1977d62e6374fd6e28d371bb42dfa5c9d ]
+[ Upstream commit 074d6f32689ce05a084b6fa3db38445745bf11cc ]
 
-We don't need to call process_ib_ipinfo() if message->kvp_hdr.operation is
-KVP_OP_GET_IP_INFO in kvp_send_key(), because here we just need to pass on
-the op code from the host to the userspace; when the userspace returns
-the info requested by the host, we pass the info on to the host in
-kvp_respond_to_host() -> process_ob_ipinfo(). BTW, the current buggy code
-actually doesn't cause any harm, because only message->kvp_hdr.operation
-is used by the userspace, in the case of KVP_OP_GET_IP_INFO.
+The Mediatek's host controller has two slots, each with its own control
+registers. The host driver needs to identify what slot is connected to
+what port in order to access the device's configuration space.
 
-The patch also adds a missing "break;" in kvp_send_key(). BTW, the current
-buggy code actually doesn't cause any harm, because in the case of
-KVP_OP_SET, the unexpected fall-through corrupts
-message->body.kvp_set.data.key_size, but that is not really used: see
-the definition of struct hv_kvp_exchg_msg_value.
+Current code retrieving slot connected to a given endpoint device.
 
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Assuming each slot is connected to one endpoint device as below:
+
+                host bridge
+  bus 0 --> __________|_______
+           |                  |
+           |                  |
+         slot 0             slot 1
+  bus 1 -->|        bus 2 --> |
+           |                  |
+         EP 0               EP 1
+
+During PCI enumeration, system software will scan all the PCI devices on
+every bus starting from devfn 0. Using PCI_SLOT(devfn) for matching an
+endpoint to its slot is erroneous in that the devfn does not contain the
+hierarchical bus numbering in it. In order to match an endpoint with its
+slot (and related port), the PCI tree must be walked up to the root bus
+(where the root ports are situated) and then the PCI_SLOT(devfn)
+matching logic can be correctly applied for matching.
+
+This patch fixes the mtk_pcie_find_port() slot matching logic by adding
+appropriate PCI tree walking code to retrieve the slot/port a given
+endpoint is connected to.
+
+Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+[lorenzo.pieralisi@arm.com: rewrote the commit log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Acked-by: Ryder Lee <ryder.lee@mediatek.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hv/hv_kvp.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/pci/host/pcie-mediatek.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/hv/hv_kvp.c b/drivers/hv/hv_kvp.c
-index 5eed1e7da15c..57715a0c8120 100644
---- a/drivers/hv/hv_kvp.c
-+++ b/drivers/hv/hv_kvp.c
-@@ -353,7 +353,6 @@ static void process_ib_ipinfo(void *in_msg, void *out_msg, int op)
- 
- 		out->body.kvp_ip_val.dhcp_enabled = in->kvp_ip_val.dhcp_enabled;
- 
--	default:
- 		utf16s_to_utf8s((wchar_t *)in->kvp_ip_val.adapter_id,
- 				MAX_ADAPTER_ID_SIZE,
- 				UTF16_LITTLE_ENDIAN,
-@@ -406,7 +405,7 @@ kvp_send_key(struct work_struct *dummy)
- 		process_ib_ipinfo(in_msg, message, KVP_OP_SET_IP_INFO);
- 		break;
- 	case KVP_OP_GET_IP_INFO:
--		process_ib_ipinfo(in_msg, message, KVP_OP_GET_IP_INFO);
-+		/* We only need to pass on message->kvp_hdr.operation.  */
- 		break;
- 	case KVP_OP_SET:
- 		switch (in_msg->body.kvp_set.data.value_type) {
-@@ -446,6 +445,9 @@ kvp_send_key(struct work_struct *dummy)
- 			break;
- 
- 		}
+diff --git a/drivers/pci/host/pcie-mediatek.c b/drivers/pci/host/pcie-mediatek.c
+index db93efdf1d63..c896bb9ef968 100644
+--- a/drivers/pci/host/pcie-mediatek.c
++++ b/drivers/pci/host/pcie-mediatek.c
+@@ -333,6 +333,17 @@ static struct mtk_pcie_port *mtk_pcie_find_port(struct pci_bus *bus,
+ {
+ 	struct mtk_pcie *pcie = bus->sysdata;
+ 	struct mtk_pcie_port *port;
++	struct pci_dev *dev = NULL;
 +
-+		break;
-+
- 	case KVP_OP_GET:
- 		message->body.kvp_set.data.key_size =
- 			utf16s_to_utf8s(
++	/*
++	 * Walk the bus hierarchy to get the devfn value
++	 * of the port in the root bus.
++	 */
++	while (bus && bus->number) {
++		dev = bus->self;
++		bus = dev->bus;
++		devfn = dev->devfn;
++	}
+ 
+ 	list_for_each_entry(port, &pcie->ports, list)
+ 		if (port->slot == PCI_SLOT(devfn))
 -- 
 2.17.1
 
