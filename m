@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71815ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:07:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FEEDECDE47
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:07:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C4EF2080A
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:07:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C4EF2080A
+	by mail.kernel.org (Postfix) with ESMTP id 082BC20821
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:07:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 082BC20821
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730253AbeKAGHF (ORCPT
+        id S1730348AbeKAGHG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 02:07:05 -0400
-Received: from mga11.intel.com ([192.55.52.93]:6768 "EHLO mga11.intel.com"
+        Thu, 1 Nov 2018 02:07:06 -0400
+Received: from mga11.intel.com ([192.55.52.93]:6767 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730172AbeKAGHE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 02:07:04 -0400
+        id S1730104AbeKAGHF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 02:07:05 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
   by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2018 14:07:18 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,449,1534834800"; 
-   d="scan'208";a="102369384"
+   d="scan'208";a="102369378"
 Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
   by fmsmga004.fm.intel.com with ESMTP; 31 Oct 2018 14:07:18 -0700
 From:   Fenghua Yu <fenghua.yu@intel.com>
@@ -44,9 +44,9 @@ To:     "Thomas Gleixner" <tglx@linutronix.de>,
         "Arshiya Hayatkhan Pathan" <arshiya.hayatkhan.pathan@intel.com>
 Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
         Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH v3 6/8] selftests/resctrl: Add MBM test
-Date:   Wed, 31 Oct 2018 14:02:32 -0700
-Message-Id: <1541019754-192204-7-git-send-email-fenghua.yu@intel.com>
+Subject: [PATCH v3 4/8] selftests/resctrl: Add callback to start a benchmark
+Date:   Wed, 31 Oct 2018 14:02:30 -0700
+Message-Id: <1541019754-192204-5-git-send-email-fenghua.yu@intel.com>
 X-Mailer: git-send-email 2.5.0
 In-Reply-To: <1541019754-192204-1-git-send-email-fenghua.yu@intel.com>
 References: <1541019754-192204-1-git-send-email-fenghua.yu@intel.com>
@@ -55,361 +55,361 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>
+From: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
 
-MBM (Memory Bandwidth Monitoring) test is the first implemented selftest.
-It starts a stressful memory bandwidth benchmark and assigns the
-bandwidth pid in a resctrl monitoring group. Read and compare perf IMC
-counter and MBM total bytes for the benchmark. The numbers should be
-close enough to pass the test.
+The callback starts a child process and puts the child pid in created
+resctrl group with specified memory bandwidth in schemata. The child
+starts running benchmark.
 
-Default benchmark is built-in fill_buf. But users can specify their
-own benchmark by option "-b".
-
-We can add memory bandwidth monitoring for multiple processes in the
-future.
-
+Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
 Signed-off-by: Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
 Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
 ---
- tools/testing/selftests/resctrl/Makefile        |   8 +-
- tools/testing/selftests/resctrl/mbm_test.c      | 145 ++++++++++++++++++++++++
- tools/testing/selftests/resctrl/membw.c         |   2 +
- tools/testing/selftests/resctrl/resctrl.h       |   3 +
- tools/testing/selftests/resctrl/resctrl_tests.c | 123 ++++++++++++++++++++
- 5 files changed, 280 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/resctrl/mbm_test.c
- create mode 100644 tools/testing/selftests/resctrl/resctrl_tests.c
+ tools/testing/selftests/resctrl/membw.c   | 272 ++++++++++++++++++++++++++++++
+ tools/testing/selftests/resctrl/resctrl.h |  27 +++
+ 2 files changed, 299 insertions(+)
 
-diff --git a/tools/testing/selftests/resctrl/Makefile b/tools/testing/selftests/resctrl/Makefile
-index bd5c5418961e..51165f9f8a9d 100644
---- a/tools/testing/selftests/resctrl/Makefile
-+++ b/tools/testing/selftests/resctrl/Makefile
-@@ -1,10 +1,16 @@
- CC = gcc
- CFLAGS = -g -Wall
+diff --git a/tools/testing/selftests/resctrl/membw.c b/tools/testing/selftests/resctrl/membw.c
+index 3146cf8b7468..75a20de0ff71 100644
+--- a/tools/testing/selftests/resctrl/membw.c
++++ b/tools/testing/selftests/resctrl/membw.c
+@@ -11,6 +11,7 @@
+  */
+ #include "resctrl.h"
  
-+all: resctrl_tests
-+
- *.o: *.c
- 	$(CC) $(CFLAGS) -c *.c
++#define MB			(1024 * 1024)
+ #define UNCORE_IMC		"uncore_imc"
+ #define READ_FILE_NAME		"events/cas_count_read"
+ #define WRITE_FILE_NAME		"events/cas_count_write"
+@@ -429,3 +430,274 @@ static unsigned long get_mem_bw_resctrl(void)
  
-+resctrl_tests: *.o
-+	$(CC) $(CFLAGS) -o resctrl_tests resctrl_tests.o resctrlfs.o \
-+		 membw.o fill_buf.o mbm_test.o
+ 	return mbm_total;
+ }
 +
- .PHONY: clean
- 
- clean:
--	$(RM) *.o *~
-+	$(RM) *.o *~ resctrl_tests
-diff --git a/tools/testing/selftests/resctrl/mbm_test.c b/tools/testing/selftests/resctrl/mbm_test.c
-new file mode 100644
-index 000000000000..fc1b8bab1c71
---- /dev/null
-+++ b/tools/testing/selftests/resctrl/mbm_test.c
-@@ -0,0 +1,145 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Memory Bandwidth Monitoring (MBM) test
-+ *
-+ * Copyright (C) 2018 Intel Corporation
-+ *
-+ * Authors:
-+ *    Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>
-+ *    Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-+ *    Fenghua Yu <fenghua.yu@intel.com>
-+ */
-+#include "resctrl.h"
++pid_t bm_pid, ppid;
 +
-+#define RESULT_FILE_NAME	"result_mbm"
-+#define MAX_DIFF		300
-+#define NUM_OF_RUNS		5
-+
-+static void
-+show_bw_info(unsigned long *bw_imc, unsigned long *bw_resc, int span)
++static void ctrlc_handler(int signum, siginfo_t *info, void *ptr)
 +{
-+	unsigned long avg_bw_imc = 0, avg_bw_resc = 0;
-+	unsigned long sum_bw_imc = 0, sum_bw_resc = 0;
-+	long avg_diff = 0;
-+	int runs;
++	kill(bm_pid, SIGKILL);
++	printf("Ending\n\n");
 +
-+	/*
-+	 * Discard the first value which is inaccurate due to monitoring setup
-+	 * transition phase.
-+	 */
-+	for (runs = 1; runs < NUM_OF_RUNS ; runs++) {
-+		sum_bw_imc += bw_imc[runs];
-+		sum_bw_resc += bw_resc[runs];
-+	}
-+
-+	avg_bw_imc = sum_bw_imc / 4;
-+	avg_bw_resc = sum_bw_resc / 4;
-+	avg_diff = avg_bw_resc - avg_bw_imc;
-+
-+	printf("\nSpan (MB): %d \t", span);
-+	printf("avg_bw_imc: %lu\t", avg_bw_imc);
-+	printf("avg_bw_resc: %lu\t", avg_bw_resc);
-+	printf("avg_diff: %lu\t", labs(avg_diff));
-+
-+	if (labs(avg_diff) > MAX_DIFF)
-+		printf(" failed\n");
-+	else
-+		printf(" passed\n");
++	exit(EXIT_SUCCESS);
 +}
 +
-+static int check_results(int span)
++/*
++ * print_results_bw:	the memory bandwidth results are stored in a file
++ * @filename:		file that stores the results
++ * @bm_pid:		child pid that runs benchmark
++ * @bw_imc:		perf imc counter value
++ * @bw_resc:		memory bandwidth value
++ *
++ * Return:		0 on success. non-zero on failure.
++ */
++static int print_results_bw(char *filename,  int bm_pid, float bw_imc,
++			    unsigned long bw_resc)
 +{
-+	unsigned long bw_imc[NUM_OF_RUNS], bw_resc[NUM_OF_RUNS];
-+	char temp[1024], *token_array[8];
-+	char output[] = RESULT_FILE_NAME;
-+	int runs;
++	unsigned long diff = labs(bw_imc - bw_resc);
 +	FILE *fp;
 +
-+	printf("\nChecking for pass/fail\n");
++	if (strcmp(filename, "stdio") == 0 || strcmp(filename, "stderr") == 0) {
++		printf("Pid: %d \t Mem_BW_iMC: %f \t ", bm_pid, bw_imc);
++		printf("Mem_BW_resc: %lu \t Difference: %lu\n", bw_resc, diff);
++	} else {
++		fp = fopen(filename, "a");
++		if (!fp) {
++			perror("Cannot open results file");
 +
-+	fp = fopen(output, "r");
-+	if (!fp) {
-+		perror("Error in opening file\n");
-+
-+		return errno;
-+	}
-+
-+	runs = 0;
-+	while (fgets(temp, 1024, fp)) {
-+		char *token = strtok(temp, ":\t");
-+		int i = 0;
-+
-+		while (token) {
-+			token_array[i++] = token;
-+			token = strtok(NULL, ":\t");
++			return errno;
 +		}
++		if (fprintf(fp, "Pid: %d \t Mem_BW_iMC: %f \t Mem_BW_resc: %lu \t Difference: %lu\n",
++			    bm_pid, bw_imc, bw_resc, diff) <= 0) {
++			fclose(fp);
++			perror("Could not log results.");
 +
-+		bw_resc[runs] = atol(token_array[5]);
-+		bw_imc[runs] = atol(token_array[3]);
-+		runs++;
++			return errno;
++		}
++		fclose(fp);
 +	}
-+
-+	show_bw_info(bw_imc, bw_resc, span);
-+
-+	fclose(fp);
 +
 +	return 0;
 +}
 +
-+static int mbm_setup(int num, ...)
++static int
++measure_vals(struct resctrl_val_param *param, unsigned long *bw_resc_start)
 +{
-+	struct resctrl_val_param *p;
-+	static int num_of_runs;
-+	va_list param;
-+	int ret = 0;
++	unsigned long bw_imc, bw_resc, bw_resc_end;
++	int ret;
 +
-+	/* Run NUM_OF_RUNS times */
-+	if (num_of_runs++ >= NUM_OF_RUNS)
++	/*
++	 * Measure memory bandwidth from resctrl and from
++	 * another source which is perf imc value or could
++	 * be something else if perf imc event is not available.
++	 * Compare the two values to validate resctrl value.
++	 * It takes 1sec to measure the data.
++	 */
++	bw_imc = get_mem_bw_imc(param->cpu_no, param->bw_report);
++	if (bw_imc < 0)
++		return bw_imc;
++
++	bw_resc_end = get_mem_bw_resctrl();
++	if (bw_resc_end < 0)
++		return bw_resc_end;
++
++	bw_resc = (bw_resc_end - *bw_resc_start) / MB;
++	ret = print_results_bw(param->filename, bm_pid, bw_imc, bw_resc);
++	if (ret)
++		return ret;
++
++	*bw_resc_start = bw_resc_end;
++
++	return 0;
++}
++
++/*
++ * membw_val:		execute benchmark and measure memory bandwidth on
++ *			the benchmark
++ * @benchmark_cmd:	benchmark command and its arguments
++ * @param:		parameters passed to membw_val()
++ *
++ * Return:		0 on success. non-zero on failure.
++ */
++int membw_val(char **benchmark_cmd, struct resctrl_val_param *param)
++{
++	int ret = 0, pipefd[2], pipe_message = 0;
++	char *resctrl_val = param->resctrl_val;
++	unsigned long bw_resc_start = 0;
++	struct sigaction sigact;
++	union sigval value;
++	FILE *fp;
++
++	if (strcmp(param->filename, "") == 0)
++		sprintf(param->filename, "stdio");
++
++	if (strcmp(param->bw_report, "") == 0)
++		param->bw_report = "total";
++
++	ret = validate_resctrl_feature_request(resctrl_val);
++	if (ret)
++		return ret;
++
++	if ((strcmp(resctrl_val, "mba")) == 0 ||
++	    (strcmp(resctrl_val, "mbm")) == 0) {
++		ret = validate_bw_report_request(param->bw_report);
++		if (ret)
++			return ret;
++	}
++
++	ret = remount_resctrlfs(param->mum_resctrlfs);
++	if (ret)
++		return ret;
++
++	/*
++	 * If benchmark wasn't successfully started by child, then child should
++	 * kill parent, so save parent's pid
++	 */
++	ppid = getpid();
++
++	/* File based synchronization between parent and child */
++	fp = fopen("sig", "w");
++	if (!fp) {
++		perror("Failed to open sig file");
++
 +		return -1;
++	}
++	if (fprintf(fp, "%d\n", 0) <= 0) {
++		perror("Unable to establish sync bw parent & child");
++		fclose(fp);
 +
-+	va_start(param, num);
-+	p = va_arg(param, struct resctrl_val_param *);
-+	va_end(param);
++		return -1;
++	}
++	fclose(fp);
 +
-+	/* Set up shemata with 100% allocation on the first run. */
-+	if (num_of_runs == 0)
-+		ret = write_schemata(p->ctrlgrp, "100", p->cpu_no,
-+				     p->resctrl_val);
++	if (pipe(pipefd)) {
++		perror("Unable to create pipe");
++
++		return -1;
++	}
++
++	/*
++	 * Fork to start benchmark, save child's pid so that it can be killed
++	 * when needed
++	 */
++	bm_pid = fork();
++	if (bm_pid == -1) {
++		perror("Unable to fork");
++
++		return -1;
++	}
++
++	if (bm_pid == 0) {
++		/*
++		 * Mask all signals except SIGUSR1, parent uses SIGUSR1 to
++		 * start benchmark
++		 */
++		sigfillset(&sigact.sa_mask);
++		sigdelset(&sigact.sa_mask, SIGUSR1);
++
++		sigact.sa_sigaction = run_benchmark;
++		sigact.sa_flags = SA_SIGINFO;
++
++		/* Register for "SIGUSR1" signal from parent */
++		if (sigaction(SIGUSR1, &sigact, NULL))
++			PARENT_EXIT("Can't register child for signal");
++
++		/* Tell parent that child is ready */
++		close(pipefd[0]);
++		pipe_message = 1;
++		write(pipefd[1], &pipe_message, sizeof(pipe_message));
++		close(pipefd[1]);
++
++		/* Suspend child until delivery of "SIGUSR1" from parent */
++		sigsuspend(&sigact.sa_mask);
++
++		PARENT_EXIT("Child is done");
++	}
++
++	printf("Benchmark PID: %d\n", bm_pid);
++
++	/*
++	 * Register CTRL-C handler for parent, as it has to kill benchmark
++	 * before exiting
++	 */
++	sigact.sa_sigaction = ctrlc_handler;
++	sigemptyset(&sigact.sa_mask);
++	sigact.sa_flags = SA_SIGINFO;
++	if (sigaction(SIGINT, &sigact, NULL) ||
++	    sigaction(SIGHUP, &sigact, NULL)) {
++		perror("Can't register parent for CTRL-C handler");
++		ret = errno;
++		goto out;
++	}
++
++	value.sival_ptr = benchmark_cmd;
++
++	/* Taskset benchmark to specified cpu */
++	ret = taskset_benchmark(bm_pid, param->cpu_no);
++	if (ret)
++		goto out;
++
++	/* Write benchmark to specified control&monitoring grp in resctrl FS */
++	ret = write_bm_pid_to_resctrl(bm_pid, param->ctrlgrp, param->mongrp,
++				      resctrl_val);
++	if (ret)
++		goto out;
++
++	if ((strcmp(resctrl_val, "mbm") == 0) ||
++	    (strcmp(resctrl_val, "mba") == 0)) {
++		ret = initialize_mem_bw_imc();
++		if (ret)
++			goto out;
++
++		initialize_mem_bw_resctrl(param->ctrlgrp, param->mongrp,
++					  param->cpu_no, resctrl_val);
++	}
++
++	/* Parent waits for child to be ready. */
++	close(pipefd[1]);
++	while (pipe_message != 1)
++		read(pipefd[0], &pipe_message, sizeof(pipe_message));
++	close(pipefd[0]);
++
++	/* Signal child to start benchmark */
++	if (sigqueue(bm_pid, SIGUSR1, value) == -1) {
++		perror("Unable to signal child to start execution");
++		ret = errno;
++		goto out;
++	}
++
++	/* Give benchmark enough time to fully run */
++	sleep(1);
++
++	/* Test runs until the callback setup() tells the test to stop. */
++	while (1) {
++		if (strcmp(resctrl_val, "mbm") == 0) {
++			ret = param->setup(1, param);
++			if (ret) {
++				ret = 0;
++				break;
++			}
++
++			ret = measure_vals(param, &bw_resc_start);
++			if (ret)
++				break;
++		} else if ((strcmp(resctrl_val, "mba") == 0)) {
++			ret = param->setup(1, param);
++			if (ret) {
++				ret = 0;
++				break;
++			}
++
++			ret = measure_vals(param, &bw_resc_start);
++			if (ret)
++				break;
++		} else {
++			break;
++		}
++	}
++
++out:
++	kill(bm_pid, SIGKILL);
++	umount_resctrlfs();
 +
 +	return ret;
 +}
-+
-+void mbm_test_cleanup(void)
-+{
-+	remove(RESULT_FILE_NAME);
-+}
-+
-+int mbm_bw_change(int span, int core_id, char *bw_report, char **benchmark_cmd)
-+{
-+	struct resctrl_val_param param = {
-+		.resctrl_val	= "mbm",
-+		.ctrlgrp	= "c1",
-+		.mongrp		= "m1",
-+		.span		= span,
-+		.cpu_no		= core_id,
-+		.mum_resctrlfs	= 1,
-+		.filename	= RESULT_FILE_NAME,
-+		.bw_report	=  bw_report,
-+		.setup		= mbm_setup
-+	};
-+	int ret;
-+
-+	remove(RESULT_FILE_NAME);
-+
-+	ret = membw_val(benchmark_cmd, &param);
-+	if (ret)
-+		return ret;
-+
-+	ret = check_results(span);
-+	if (ret)
-+		return ret;
-+
-+	mbm_test_cleanup();
-+
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/resctrl/membw.c b/tools/testing/selftests/resctrl/membw.c
-index 75a20de0ff71..607e764a7b7a 100644
---- a/tools/testing/selftests/resctrl/membw.c
-+++ b/tools/testing/selftests/resctrl/membw.c
-@@ -436,6 +436,8 @@ pid_t bm_pid, ppid;
- static void ctrlc_handler(int signum, siginfo_t *info, void *ptr)
- {
- 	kill(bm_pid, SIGKILL);
-+	umount_resctrlfs();
-+	tests_cleanup();
- 	printf("Ending\n\n");
- 
- 	exit(EXIT_SUCCESS);
 diff --git a/tools/testing/selftests/resctrl/resctrl.h b/tools/testing/selftests/resctrl/resctrl.h
-index 9820af253d4d..231c1eac54e0 100644
+index 01822f6258af..9820af253d4d 100644
 --- a/tools/testing/selftests/resctrl/resctrl.h
 +++ b/tools/testing/selftests/resctrl/resctrl.h
-@@ -70,5 +70,8 @@ int perf_event_open(struct perf_event_attr *hw_event, pid_t pid, int cpu,
+@@ -3,6 +3,7 @@
+ #ifndef RESCTRL_H
+ #define RESCTRL_H
+ #include <stdio.h>
++#include <stdarg.h>
+ #include <errno.h>
+ #include <sched.h>
+ #include <stdlib.h>
+@@ -28,9 +29,34 @@
+ 		exit(EXIT_FAILURE);		\
+ 	} while (0)
+ 
++/*
++ * resctrl_val_param:	resctrl test parameters
++ * @resctrl_val:	Resctrl feature (Eg: mbm, mba.. etc)
++ * @ctrlgrp:		Name of the control monitor group (con_mon grp)
++ * @mongrp:		Name of the monitor group (mon grp)
++ * @cpu_no:		CPU number to which the benchmark would be binded
++ * @span:		Memory bytes accessed in each benchmark iteration
++ * @mum_resctrlfs:	Should the resctrl FS be remounted?
++ * @filename:		Name of file to which the o/p should be written
++ * @bw_report:		Bandwidth report type (reads vs writes)
++ * @setup:		Call back function to setup test environment
++ */
++struct resctrl_val_param {
++	char	*resctrl_val;
++	char	ctrlgrp[64];
++	char	mongrp[64];
++	int	cpu_no;
++	int	span;
++	int	mum_resctrlfs;
++	char	filename[64];
++	char	*bw_report;
++	int	(*setup)(int num, ...);
++};
++
+ pid_t bm_pid, ppid;
+ 
+ int remount_resctrlfs(bool mum_resctrlfs);
++int umount_resctrlfs(void);
+ char get_sock_num(int cpu_no);
+ int validate_bw_report_request(char *bw_report);
+ int validate_resctrl_feature_request(char *resctrl_val);
+@@ -43,5 +69,6 @@ int write_bm_pid_to_resctrl(pid_t bm_pid, char *ctrlgrp, char *mongrp,
+ int perf_event_open(struct perf_event_attr *hw_event, pid_t pid, int cpu,
  		    int group_fd, unsigned long flags);
  int run_fill_buf(int span, int malloc_and_init_memory, int memflush, int op);
- int membw_val(char **benchmark_cmd, struct resctrl_val_param *param);
-+int mbm_bw_change(int span, int core_id, char *bw_report, char **benchmark_cmd);
-+void tests_cleanup(void);
-+void mbm_test_cleanup(void);
++int membw_val(char **benchmark_cmd, struct resctrl_val_param *param);
  
  #endif /* RESCTRL_H */
-diff --git a/tools/testing/selftests/resctrl/resctrl_tests.c b/tools/testing/selftests/resctrl/resctrl_tests.c
-new file mode 100644
-index 000000000000..8a33809ee196
---- /dev/null
-+++ b/tools/testing/selftests/resctrl/resctrl_tests.c
-@@ -0,0 +1,123 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Resctrl tests
-+ *
-+ * Copyright (C) 2018 Intel Corporation
-+ *
-+ * Authors:
-+ *    Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>
-+ *    Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-+ *    Fenghua Yu <fenghua.yu@intel.com>
-+ */
-+#include "resctrl.h"
-+
-+#define BENCHMARK_ARGS		64
-+#define BENCHMARK_ARG_SIZE	64
-+
-+int ben_count;
-+
-+static void cmd_help(void)
-+{
-+	printf("usage: resctrl_tests [-h] [-b \"benchmark_cmd [options]\"] [-t test list]\n");
-+	printf("\t-b benchmark_cmd [options]: run specified benchmark\n");
-+	printf("\t default benchmark is builtin fill_buf\n");
-+	printf("\t-t test list: run tests specified in the test list, ");
-+	printf("e.g. -t mbm,mba\n");
-+	printf("\t-h: help\n");
-+}
-+
-+void tests_cleanup(void)
-+{
-+	mbm_test_cleanup();
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	char benchmark_cmd_area[BENCHMARK_ARGS][BENCHMARK_ARG_SIZE];
-+	int res, c, core_id = 0, span = 250, argc_new = argc, i;
-+	bool has_ben = false, mbm_test = true;
-+	char *benchmark_cmd[BENCHMARK_ARGS];
-+	char bw_report[64], bm_type[64];
-+
-+	while ((c = getopt(argc_new, argv, "ht:b:")) != -1) {
-+		char *token;
-+
-+		switch (c) {
-+		case 't':
-+			token = strtok(optarg, ",");
-+
-+			mbm_test = false;
-+			while (token) {
-+				if (!strcmp(token, "mbm")) {
-+					mbm_test = true;
-+				} else {
-+					printf("invalid argument\n");
-+
-+					return -1;
-+				}
-+				token = strtok(NULL, ":\t");
-+			}
-+			break;
-+		case 'b':
-+			/* Extract benchmark command from command line. */
-+			token = strtok(optarg, " ");
-+			i = 0;
-+			while (token) {
-+				benchmark_cmd[i] = benchmark_cmd_area[i];
-+				strcpy(benchmark_cmd[i++], token);
-+				if (i >= BENCHMARK_ARGS) {
-+					printf("Too many benchmark args\n");
-+
-+					return -1;
-+				}
-+				token = strtok(NULL, " ");
-+			}
-+			benchmark_cmd[i] = NULL;
-+			has_ben = true;
-+			break;
-+		case 'h':
-+			cmd_help();
-+
-+			return 0;
-+		default:
-+			printf("invalid argument\n");
-+
-+			return -1;
-+		}
-+	}
-+
-+	/*
-+	 * We need root privileges to run because
-+	 * 1. We write to resctrl FS
-+	 * 2. We execute perf commands
-+	 */
-+	if (geteuid() != 0) {
-+		perror("Please run this program as root\n");
-+
-+		return errno;
-+	}
-+
-+	if (!has_ben) {
-+		/* If no benchmark is given by "-b" argument, use fill_buf. */
-+		for (i = 0; i < 5; i++)
-+			benchmark_cmd[i] = benchmark_cmd_area[i];
-+		strcpy(benchmark_cmd[0], "fill_buf");
-+		sprintf(benchmark_cmd[1], "%d", span);
-+		strcpy(benchmark_cmd[2], "1");
-+		strcpy(benchmark_cmd[3], "1");
-+		strcpy(benchmark_cmd[4], "0");
-+		benchmark_cmd[5] = NULL;
-+	}
-+
-+	sprintf(bw_report, "reads");
-+	sprintf(bm_type, "fill_buf");
-+
-+	if (mbm_test) {
-+		printf("\nMBM BW Change Starting..\n");
-+		res = mbm_bw_change(span, core_id, bw_report, benchmark_cmd);
-+		if (res)
-+			printf("Error in running tests for mbm bw change!\n");
-+	}
-+
-+	return 0;
-+}
 -- 
 2.5.0
 
