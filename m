@@ -2,177 +2,159 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95142C6786F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 01:59:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45E66C6786F
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 02:09:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 389232082B
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 01:59:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WO2OzfpM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 389232082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id D8ECA2081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 02:09:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8ECA2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728773AbeJaKzf (ORCPT
+        id S1728765AbeJaLE4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 06:55:35 -0400
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:44711 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728341AbeJaKze (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 06:55:34 -0400
-Received: by mail-ua1-f65.google.com with SMTP id i30so5305589uae.11
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 18:59:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Lyu9KCi+MzHiyQ39Z2tQjEYQpsqwkrB+OjxLY3Xas9k=;
-        b=WO2OzfpMr8lWQ2T/SOPZVe5nobGWoueT6/eSqslZ3cAaAGcqA42a40FVXbYe1NZeRZ
-         jM+HOCbBY2rsss0KP8NRyoDUyRqLJrBFOGl5Z0UuX33Mud8vuB/8eo6Z4TTiBxVp1VEp
-         0oMj9NAQ86k2DuTCfePvJJN8hpw2GyEZbXxQiJdSUilAKbySE//Ehu+l35NnMU3k6QXl
-         E/IYbyZ+e3g2dfi16k5d4sZhaydE4EhVXO4xJZsVh1pC2DGoIO52vnfeeMzCQq7UbKV7
-         rGLTPKHV1a61Amboxxu6e98ukGNbuK6GWhNOQjZu/mbALChpLnkd1CJGCUrVNlljPnxe
-         K3Aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Lyu9KCi+MzHiyQ39Z2tQjEYQpsqwkrB+OjxLY3Xas9k=;
-        b=FHhWeAFSt0qA1GofqUfoqa58qygRLMQTWF2/QwkG07ia7Bx7+HGWoR3JVvLZK8IBqk
-         wVBc9+6XunCMyW5F+dGMqqUZ7Wf/fHJOBFsq9Z6HWjSkUKgj7NKySHuBlMLbpjnGH0td
-         NqKPPWa3986briIANWO+Qpwjxkr9/c9dJXP2QbaW9XLkJar406MXJdDDqMB7coUzXB48
-         KDtcwrLOseGWxv9dcZ4I3LMpWfjtnAR/1yfOtZlOvxErCTJtJdILyKHR6AfOQzWFSm+M
-         GcP3sNOzwUHpuucy0ydirNO8LqZEuQPK/qmH29q4LJB5HIAQ2St+K/RgflqjgqKNpcH8
-         eCBQ==
-X-Gm-Message-State: AGRZ1gLrRtaDDns5008U68eMRJwRKhsO4HGXDlxSZzDDf6hJ0ZjqJ5MW
-        hOWOis6jvMl+0Pd5h0jW4GZucy0o4Rlwb8DkZV2rsw==
-X-Google-Smtp-Source: AJdET5dPxr88RcYj3PmcpVJ7J1xTwtxdFatEUMqEzRpSbJJBu8z3m5rRzKqzIyHE+BmGJ1weD0XnAB2M1lwpS21P9Xw=
-X-Received: by 2002:ab0:648b:: with SMTP id p11mr545166uam.128.1540951178964;
- Tue, 30 Oct 2018 18:59:38 -0700 (PDT)
+        Wed, 31 Oct 2018 07:04:56 -0400
+Received: from mga17.intel.com ([192.55.52.151]:42689 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728665AbeJaLE4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 07:04:56 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 19:08:59 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,446,1534834800"; 
+   d="scan'208";a="82861110"
+Received: from yisun1-ubuntu.bj.intel.com (HELO localhost) ([10.238.156.104])
+  by fmsmga008.fm.intel.com with ESMTP; 30 Oct 2018 19:08:57 -0700
+Date:   Wed, 31 Oct 2018 10:06:10 +0800
+From:   Yi Sun <yi.y.sun@linux.intel.com>
+To:     Michael Kelley <mikelley@microsoft.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "jgross@suse.com" <jgross@suse.com>,
+        "chao.p.peng@intel.com" <chao.p.peng@intel.com>,
+        "chao.gao@intel.com" <chao.gao@intel.com>,
+        "isaku.yamahata@intel.com" <isaku.yamahata@intel.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>
+Subject: Re: [PATCH v1 2/2] x86/hyperv: make HvNotifyLongSpinWait hypercall
+Message-ID: <20181031020610.GD15378@yi.y.sun>
+References: <1539954835-34035-1-git-send-email-yi.y.sun@linux.intel.com>
+ <1539954835-34035-3-git-send-email-yi.y.sun@linux.intel.com>
+ <CY4PR21MB07737AA8E3F7E7353D42F5C8D7F60@CY4PR21MB0773.namprd21.prod.outlook.com>
 MIME-Version: 1.0
-Received: by 2002:a67:f48d:0:0:0:0:0 with HTTP; Tue, 30 Oct 2018 18:59:37
- -0700 (PDT)
-In-Reply-To: <20181031004216.GC224709@google.com>
-References: <20181029221037.87724-1-dancol@google.com> <20181030050012.u43lcvydy6nom3ul@yavin>
- <CAKOZuesKVic-5epRj8XcFNR_63SgvaPcbjDQuSLxNrEfS=O=Jg@mail.gmail.com>
- <20181030204501.jnbe7dyqui47hd2x@yavin> <20181030214243.GB32621@google.com>
- <20181030222339.ud4wfp75tidowuo4@yavin> <20181030223343.GB105735@joelaf.mtv.corp.google.com>
- <20181030224908.5rsldg4jsos7o5sa@yavin> <20181031004216.GC224709@google.com>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Wed, 31 Oct 2018 01:59:37 +0000
-Message-ID: <CAKOZues-+RB3-Eq26p2BGY5JiaFPBiV1FXn4FTqSFcnb2S2CJg@mail.gmail.com>
-Subject: Re: [RFC PATCH] Implement /proc/pid/kill
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CY4PR21MB07737AA8E3F7E7353D42F5C8D7F60@CY4PR21MB0773.namprd21.prod.outlook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 12:42 AM, Joel Fernandes <joel@joelfernandes.org> wrote:
-> On Wed, Oct 31, 2018 at 09:49:08AM +1100, Aleksa Sarai wrote:
->> On 2018-10-30, Joel Fernandes <joel@joelfernandes.org> wrote:
->> > > > [...]
->> > > > > > > (Unfortunately
->> > > > > > > there are lots of things that make it a bit difficult to use /proc/$pid
->> > > > > > > exclusively for introspection of a process -- especially in the context
->> > > > > > > of containers.)
->> > > > > >
->> > > > > > Tons of things already break without a working /proc. What do you have in mind?
->> > > > >
->> > > > > Heh, if only that was the only blocker. :P
->> > > > >
->> > > > > The basic problem is that currently container runtimes either depend on
->> > > > > some non-transient on-disk state (which becomes invalid on machine
->> > > > > reboots or dead processes and so on), or on long-running processes that
->> > > > > keep file descriptors required for administration of a container alive
->> > > > > (think O_PATH to /dev/pts/ptmx to avoid malicious container filesystem
->> > > > > attacks). Usually both.
->> > > > >
->> > > > > What would be really useful would be having some way of "hiding away" a
->> > > > > mount namespace (of the pid1 of the container) that has all of the
->> > > > > information and bind-mounts-to-file-descriptors that are necessary for
->> > > > > administration. If the container's pid1 dies all of the transient state
->> > > > > has disappeared automatically -- because the stashed mount namespace has
->> > > > > died. In addition, if this was done the way I'm thinking with (and this
->> > > > > is the contentious bit) hierarchical mount namespaces you could make it
->> > > > > so that the pid1 could not manipulate its current mount namespace to
->> > > > > confuse the administrative process. You would also then create an
->> > > > > intermediate user namespace to help with several race conditions (that
->> > > > > have caused security bugs like CVE-2016-9962) we've seen when joining
->> > > > > containers.
->> > > > >
->> > > > > Unfortunately this all depends on hierarchical mount namespaces (and
->> > > > > note that this would just be that NS_GET_PARENT gives you the mount
->> > > > > namespace that it was created in -- I'm not suggesting we redesign peers
->> > > > > or anything like that). This makes it basically a non-starter.
->> > > > >
->> > > > > But if, on top of this ground-work, we then referenced containers
->> > > > > entirely via an fd to /proc/$pid then you could also avoid PID reuse
->> > > > > races (as well as being able to find out implicitly whether a container
->> > > > > has died thanks to the error semantics of /proc/$pid). And that's the
->> > > > > way I would suggest doing it (if we had these other things in place).
->> > > >
->> > > > I didn't fully follow exactly what you mean. If you can explain for the
->> > > > layman who doesn't know much experience with containers..
->> > > >
->> > > > Are you saying that keeping open a /proc/$pid directory handle is not
->> > > > sufficient to prevent PID reuse while the proc entries under /proc/$pid are
->> > > > being looked into? If its not sufficient, then isn't that a bug? If it is
->> > > > sufficient, then can we not just keep the handle open while we do whatever we
->> > > > want under /proc/$pid ?
->> > >
->> > > Sorry, I went on a bit of a tangent about various internals of container
->> > > runtimes. My main point is that I would love to use /proc/$pid because
->> > > it makes reuse handling very trivial and is always correct, but that
->> > > there are things which stop us from being able to use it for everything
->> > > (which is what my incoherent rambling was on about).
->> >
->> > Ok thanks. So I am guessing if the following sequence works, then Dan's patch is not
->> > needed.
->> >
->> > 1. open /proc/<pid> directory
->> > 2. inspect /proc/<pid> or do whatever with <pid>
->> > 3. Issue the kill on <pid>
->> > 4. Close the /proc/<pid> directory opened in step 1.
->> >
->> > So unless I missed something, the above sequence will not cause any PID reuse
->> > races.
->>
->> (Sorry, I misunderstood your original question.)
->>
->> The problem is that holding /proc/$pid doesn't stop the PID from dying
->> and being reused. The benefit of holding open /proc/$pid is that you
->> will get an error if you try to use it *after* the PID has died -- which
->> means that you don't need to worry about explicitly checking for PID
->> reuse if you are only operating with the file descriptor and not the
->> PID.
->>
->> So that sequence won't always work. There is a race where the pid might
->> die and be recycled by the time you call kill(2) -- after you've done
->> step 2. By tying step 2 and 3 together -- in this patch -- you remove
->> the race (since in order to resolve the "kill" procfs file VFS must
->> resolve the PID first -- atomically).
->
-> Makes sense, thanks.
->
->> Though this race window is likely very tiny, and I wonder how much PID
->> churn you really need to hit it.
->
-> Yeah that's what I asked initially how much of a problem it really is.
+After syncing with Hyper-V team, we have got answers as below.
 
-It's fundamentally impossible to use the process stuff today in a
-race-free manner today. That the race occurs rarely isn't a good
-reason to fix it. The fixes people are proposing are all lightweight,
-so I don't understand this desire to stick with the status quo.
-There's a longstanding API bug here. We can fix it, so we should.
+On 18-10-24 16:53:00, Michael Kelley wrote:
+> From: Yi Sun <yi.y.sun@linux.intel.com>  Sent: Friday, October 19, 2018 6:14 AM
+> > 
+> > The HvNotifyLongSpinWait hypercall (HVCALL_NOTIFY_LONG_SPIN_WAIT)
+> > is used by a guest OS to notify the hypervisor that the calling
+> > virtual processor is attempting to acquire a resource that is
+> > potentially held by another virtual processor within the same
+> > Virtual Machine. This scheduling hint improves the scalability of
+> > VMs with more than one virtual processor on Hyper-V.
+> > 
+> > Per MSFT TLFS, the retry number (SpinWaitInfo) is sent to hypervisor
+> > only when the retry number exceeds the recommended number. If
+> > recommended number is 0xFFFFFFFF, never retry.
+> 
+> The HvNotifyLongSpinWait hypercall should be understood to be
+> advisory only.  As you noted, it is a scheduling hint to the
+> hypervisor that some virtual CPU in the VM holds a spin lock.  Even
+> though Linux knows which vCPU holds the spin lock, the hypercall
+> does not provide a way to give that information to Hyper-V.  The
+> hypercall always returns immediately.
+> 
+> The "retry number" is a bit mis-named in the Hyper-V Top Level
+> Functional Spec (TLFS).  It is essentially a threshold value.  Hyper-V is
+> saying "don't bother to advise me about the spin lock until you have
+> done a certain number of spins."  This threshold prevents
+> over-notifying Hyper-V such that the notification becomes somewhat
+> meaningless.   It's not immediately clear to me why the hypercall passes
+> that value as an input, but maybe it lets the Hyper-V scheduler prioritize
+> among vCPUs based on how many times they have spun for a lock.  I
+> think we were told that current Hyper-V implementations ignore this
+> input value anyway.
+> 
+> I believe the description of the sentinel value 0xFFFFFFFF in the
+> Hyper-V TLFS is incorrect.  Because it is the max possible threshold
+> value, that value in the EBX register just means to not ever bother to
+> notify.   The description should be "0xFFFFFFFF indicates never to notify."
+> The value does *not* indicate anything about retrying to obtain the
+> spin lock.
+> 
+You are right. 0xFFFFFFFF only indicates never to notify. We should not
+break the spin loop.
+
+> >  static bool __initdata hv_pvspin = true;
+> > 
+> > +bool hv_notify_long_spin_wait(int retry_num)
+> 
+> retry_num should probably be declared as unsigned int.  You
+> don't want it to be treated as a negative number if the high
+> order bit is set.
+> 
+Yes, thanks!
+
+> > +{
+> > +	/*
+> > +	 * Per MSFT TLFS, the SpinWaitInfo is sent to hypervisor only when
+> > +	 * the retry number exceeds the recommended number.
+> > +	 *
+> > +	 * If recommended number is 0xFFFFFFFF, never retry.
+> > +	 */
+> > +	if (ms_hyperv.num_spin_retry == HYPERV_SPINLOCK_RETRY_NEVER)
+> > +		return false;
+> > +
+> > +	if ((0 == retry_num % ms_hyperv.num_spin_retry) && retry_num)
+> 
+> I don't know if the "%" function is right here.  Your implementation will
+> notify Hyper-V on every multiple of num_spin_retry.   The alternative is to
+> notify once when the threshold is exceeded, and never again for this
+> particular attempt to obtain a spin lock.  We should check with the Hyper-V
+> team for which approach they expect to be used.
+> 
+We should send the notification on every multiple of the recommended
+number.
+
+> > +		hv_do_fast_hypercall8(HVCALL_NOTIFY_LONG_SPIN_WAIT,
+> > +				      retry_num);
+> 
+> The Hyper-V TLFS seems to be inconsistent on whether the input parameter
+> is 32-bits or 64-bits.   In one place it is typed as UINT64, but in another place
+> it is shown as only 4 bytes.  Need to clear this up with the Hyper-V team as
+> well.
+> 
+It is 32-bits.
+
+> > +
+> > +	return true;
+> 
+> I don't see a need for this function to return true vs. false.  Any calling code
+> should not change its behavior based on num_spin_retry.   This function will
+> either notify Hyper-V or not notify Hyper-V, depending on whether the number
+> of attempts to obtain the spinlock meets the threshold.  But calling code will
+> do the same thing regardless of whether such a notification is made. 
+> 
+You are right. I will change it to 'void'.
+
+> Michael
