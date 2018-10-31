@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC9CC0044C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE36DECDE44
 	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:28:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2474B2084A
+	by mail.kernel.org (Postfix) with ESMTP id B3E4220847
 	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:28:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kox65m5A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2474B2084A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EUqlvBjW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3E4220847
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730884AbeKAIKL (ORCPT
+        id S1731055AbeKAI2n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:10:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60542 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:28:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60694 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730831AbeKAIKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:10:07 -0400
+        id S1730875AbeKAIKL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:10:11 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2818820840;
-        Wed, 31 Oct 2018 23:09:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7FBC22081B;
+        Wed, 31 Oct 2018 23:09:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027395;
-        bh=P5b7XY2/FRnRvOTciHXKWMaS/KNMHFA9TIpyVAsLkjg=;
+        s=default; t=1541027400;
+        bh=KVWLaDOaE4tvYmGnj3cNPGhtP3CDHYkkpCQw/lXmsuI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kox65m5A/XEvXXijNoNy9Mle779YEridPJcSEumTM5wsCJ2CjIsSsxyFoIE5qAaF+
-         6CyaG6g/PALtidCnmlV6VVDdK/8SYF6HIZAyWylgEjCSOHy97PEVu8uBJEzXHyMtbd
-         phlb68/2DG5kgxMdFGkMxIAXosWGFBe9KVd7VnRA=
+        b=EUqlvBjWB/2belEHSvrddnyzh4K0AZ4uc/qJkK8RNW/12QnMsIAH3loxoffnTjtoe
+         gnEEUjgJzdY9GXdEbbMt9cC1QxKTm6f0hmJDwNP/qTGLwvKzeW6/8DjN5vd5ZIvpk5
+         QoD4316kBY9ZFWfAab+MEArdVRhI5YN6T7C4DT6A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Janosch Frank <frankja@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+Cc:     Sanskriti Sharma <sansharm@redhat.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 07/73] s390/sthyi: Fix machine name validity indication
-Date:   Wed, 31 Oct 2018 19:08:42 -0400
-Message-Id: <20181031230948.29203-7-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 12/73] perf tools: Cleanup trace-event-info 'tdata' leak
+Date:   Wed, 31 Oct 2018 19:08:47 -0400
+Message-Id: <20181031230948.29203-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230948.29203-1-sashal@kernel.org>
 References: <20181031230948.29203-1-sashal@kernel.org>
@@ -52,53 +53,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Janosch Frank <frankja@linux.ibm.com>
+From: Sanskriti Sharma <sansharm@redhat.com>
 
-[ Upstream commit b5130dc2224d1881f24224c0590c6d97f2168d6a ]
+[ Upstream commit faedbf3fd19f2511a39397f76359e4cc6ee93072 ]
 
-When running as a level 3 guest with no host provided sthyi support
-sclp_ocf_cpc_name_copy() will only return zeroes. Zeroes are not a
-valid group name, so let's not indicate that the group name field is
-valid.
+Free tracing_data structure in tracing_data_get() error paths.
 
-Also the group name is not dependent on stsi, let's not return based
-on stsi before setting it.
+Fixes the following coverity complaint:
 
-Fixes: 95ca2cb57985 ("KVM: s390: Add sthyi emulation")
-Signed-off-by: Janosch Frank <frankja@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+  Error: RESOURCE_LEAK (CWE-772):
+  leaked_storage: Variable "tdata" going out of scope leaks the storage
+
+Signed-off-by: Sanskriti Sharma <sansharm@redhat.com>
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Joe Lawrence <joe.lawrence@redhat.com>
+Link: http://lkml.kernel.org/r/1538490554-8161-3-git-send-email-sansharm@redhat.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/kvm/sthyi.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ tools/perf/util/trace-event-info.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/s390/kvm/sthyi.c b/arch/s390/kvm/sthyi.c
-index 395926b8c1ed..ffba4617d108 100644
---- a/arch/s390/kvm/sthyi.c
-+++ b/arch/s390/kvm/sthyi.c
-@@ -174,17 +174,19 @@ static void fill_hdr(struct sthyi_sctns *sctns)
- static void fill_stsi_mac(struct sthyi_sctns *sctns,
- 			  struct sysinfo_1_1_1 *sysinfo)
- {
-+	sclp_ocf_cpc_name_copy(sctns->mac.infmname);
-+	if (*(u64 *)sctns->mac.infmname != 0)
-+		sctns->mac.infmval1 |= MAC_NAME_VLD;
-+
- 	if (stsi(sysinfo, 1, 1, 1))
- 		return;
+diff --git a/tools/perf/util/trace-event-info.c b/tools/perf/util/trace-event-info.c
+index 8f3b7ef221f2..71a5b4863707 100644
+--- a/tools/perf/util/trace-event-info.c
++++ b/tools/perf/util/trace-event-info.c
+@@ -533,12 +533,14 @@ struct tracing_data *tracing_data_get(struct list_head *pattrs,
+ 			 "/tmp/perf-XXXXXX");
+ 		if (!mkstemp(tdata->temp_file)) {
+ 			pr_debug("Can't make temp file");
++			free(tdata);
+ 			return NULL;
+ 		}
  
--	sclp_ocf_cpc_name_copy(sctns->mac.infmname);
--
- 	memcpy(sctns->mac.infmtype, sysinfo->type, sizeof(sctns->mac.infmtype));
- 	memcpy(sctns->mac.infmmanu, sysinfo->manufacturer, sizeof(sctns->mac.infmmanu));
- 	memcpy(sctns->mac.infmpman, sysinfo->plant, sizeof(sctns->mac.infmpman));
- 	memcpy(sctns->mac.infmseq, sysinfo->sequence, sizeof(sctns->mac.infmseq));
+ 		temp_fd = open(tdata->temp_file, O_RDWR);
+ 		if (temp_fd < 0) {
+ 			pr_debug("Can't read '%s'", tdata->temp_file);
++			free(tdata);
+ 			return NULL;
+ 		}
  
--	sctns->mac.infmval1 |= MAC_ID_VLD | MAC_NAME_VLD;
-+	sctns->mac.infmval1 |= MAC_ID_VLD;
- }
- 
- static void fill_stsi_par(struct sthyi_sctns *sctns,
 -- 
 2.17.1
 
