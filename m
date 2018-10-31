@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8D52C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA4B7ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A59A620847
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B28AC2081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:08:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pDYLoP5q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A59A620847
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bdlcTNgG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B28AC2081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729677AbeKAIIZ (ORCPT
+        id S1729697AbeKAII0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:08:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57258 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:08:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729597AbeKAIIY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:08:24 -0400
+        id S1728334AbeKAIIZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:08:25 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E25952064C;
-        Wed, 31 Oct 2018 23:08:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB1D120664;
+        Wed, 31 Oct 2018 23:08:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027293;
-        bh=42DA8Gcd7UySTRbtMG9kqar9y/sSvVbbDhuGHs2fD5A=;
+        s=default; t=1541027294;
+        bh=lf4tvG9aqCQyojjAUSfl5A0vOH/1k+Hi4jj6+OvvbNg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pDYLoP5qJwCdPA8ykcebsn47bFGy+RxlKy802RqChtgMSTBoAL8ToFBitM9cxr6TH
-         xL9eo16wrb7q7/u1z2FQoWywlOCr82ELt1+OHi5Q0IDkuhkvSJ09O3+2jHGZJejvOp
-         serT+cou9BJeQObsXGTllJl3uMnD9FRSWRbyBGPc=
+        b=bdlcTNgGe//4FYefJ9tNlwi2nJKTpAvQjRy8R/AS5An5wYF56xYEVtf/dzENrvU9M
+         JWiYgb3pZDKD739y4gaFKjXqfcoJk9W0MNo/wVcQrjIx3YWl9RmNmngBvN1zQcTPo5
+         zQylCll3TXerZaG2Qk3Ip4c/97ey12li6u4op35s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Ben Peddell <klightspeed@killerwolves.net>,
-        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
+Cc:     Yu Zhao <yuzhao@google.com>, Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 020/126] bcache: Populate writeback_rate_minimum attribute
-Date:   Wed, 31 Oct 2018 19:06:08 -0400
-Message-Id: <20181031230754.29029-20-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 021/126] mmc: sdhci-pci-o2micro: Add quirk for O2 Micro dev 0x8620 rev 0x01
+Date:   Wed, 31 Oct 2018 19:06:09 -0400
+Message-Id: <20181031230754.29029-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -53,50 +52,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Peddell <klightspeed@killerwolves.net>
+From: Yu Zhao <yuzhao@google.com>
 
-[ Upstream commit 7567c2a2ad9e80a2ce977eef535e64b61899633e ]
+[ Upstream commit 5169894982bb67486d93cc1e10151712bb86bcb6 ]
 
-Forgot to include the maintainers with my first email.
+This device reports SDHCI_CLOCK_INT_STABLE even though it's not
+ready to take SDHCI_CLOCK_CARD_EN. The symptom is that reading
+SDHCI_CLOCK_CONTROL after enabling the clock shows absence of the
+bit from the register (e.g. expecting 0x0000fa07 = 0x0000fa03 |
+SDHCI_CLOCK_CARD_EN but only observed the first operand).
 
-Somewhere between Michael Lyle's original
-"bcache: PI controller for writeback rate V2" patch dated 07 Sep 2017
-and 1d316e6 bcache: implement PI controller for writeback rate,
-the mapping of the writeback_rate_minimum attribute was dropped.
+mmc1: Timeout waiting for hardware cmd interrupt.
+mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
+mmc1: sdhci: Sys addr:  0x00000000 | Version:  0x00000603
+mmc1: sdhci: Blk size:  0x00000000 | Blk cnt:  0x00000000
+mmc1: sdhci: Argument:  0x00000000 | Trn mode: 0x00000000
+mmc1: sdhci: Present:   0x01ff0001 | Host ctl: 0x00000001
+mmc1: sdhci: Power:     0x0000000f | Blk gap:  0x00000000
+mmc1: sdhci: Wake-up:   0x00000000 | Clock:    0x0000fa03
+mmc1: sdhci: Timeout:   0x00000000 | Int stat: 0x00000000
+mmc1: sdhci: Int enab:  0x00ff0083 | Sig enab: 0x00ff0083
+mmc1: sdhci: AC12 err:  0x00000000 | Slot int: 0x00000000
+mmc1: sdhci: Caps:      0x25fcc8bf | Caps_1:   0x00002077
+mmc1: sdhci: Cmd:       0x00000000 | Max curr: 0x005800c8
+mmc1: sdhci: Resp[0]:   0x00000000 | Resp[1]:  0x00000000
+mmc1: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
+mmc1: sdhci: Host ctl2: 0x00000008
+mmc1: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x00000000
+mmc1: sdhci: ============================================
 
-Re-add the missing sysfs writeback_rate_minimum attribute mapping to
-"allow the user to specify a minimum rate at which dirty blocks are
-retired."
+The problem happens during wakeup from S3. Adding a delay quirk
+after power up reliably fixes the problem.
 
-Fixes: 1d316e6 ("bcache: implement PI controller for writeback rate")
-Signed-off-by: Ben Peddell <klightspeed@killerwolves.net>
-Signed-off-by: Coly Li <colyli@suse.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Yu Zhao <yuzhao@google.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/bcache/sysfs.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/mmc/host/sdhci-pci-o2micro.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-index 225b15aa0340..34819f2c257d 100644
---- a/drivers/md/bcache/sysfs.c
-+++ b/drivers/md/bcache/sysfs.c
-@@ -263,6 +263,7 @@ STORE(__cached_dev)
- 			    1, WRITEBACK_RATE_UPDATE_SECS_MAX);
- 	d_strtoul(writeback_rate_i_term_inverse);
- 	d_strtoul_nonzero(writeback_rate_p_term_inverse);
-+	d_strtoul_nonzero(writeback_rate_minimum);
- 
- 	sysfs_strtoul_clamp(io_error_limit, dc->error_limit, 0, INT_MAX);
- 
-@@ -389,6 +390,7 @@ static struct attribute *bch_cached_dev_files[] = {
- 	&sysfs_writeback_rate_update_seconds,
- 	&sysfs_writeback_rate_i_term_inverse,
- 	&sysfs_writeback_rate_p_term_inverse,
-+	&sysfs_writeback_rate_minimum,
- 	&sysfs_writeback_rate_debug,
- 	&sysfs_errors,
- 	&sysfs_io_error_limit,
+diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
+index 555970a29c94..34326d95d254 100644
+--- a/drivers/mmc/host/sdhci-pci-o2micro.c
++++ b/drivers/mmc/host/sdhci-pci-o2micro.c
+@@ -367,6 +367,9 @@ int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
+ 		pci_write_config_byte(chip->pdev, O2_SD_LOCK_WP, scratch);
+ 		break;
+ 	case PCI_DEVICE_ID_O2_SEABIRD0:
++		if (chip->pdev->revision == 0x01)
++			chip->quirks |= SDHCI_QUIRK_DELAY_AFTER_POWER;
++		/* fall through */
+ 	case PCI_DEVICE_ID_O2_SEABIRD1:
+ 		/* UnLock WP */
+ 		ret = pci_read_config_byte(chip->pdev,
 -- 
 2.17.1
 
