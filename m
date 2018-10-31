@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78A07ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:25:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34606C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:25:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FC9A2084A
+	by mail.kernel.org (Postfix) with ESMTP id ECDFF20847
 	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:25:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gmKt4O3n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FC9A2084A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2s3alyFH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECDFF20847
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731156AbeKAIKi (ORCPT
+        id S1731340AbeKAIZj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:10:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33280 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:25:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731134AbeKAIKh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:10:37 -0400
+        id S1729913AbeKAIKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:10:38 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3823420840;
-        Wed, 31 Oct 2018 23:10:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D45642085A;
+        Wed, 31 Oct 2018 23:10:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027424;
-        bh=v5JwRh15q1fAOl0WuDZ1q8ubyHl4ldwk4yi9VO2bUeU=;
+        s=default; t=1541027426;
+        bh=rcNyCzLiMrEaw+rG3mWDaQPW2Myb78LbLCDeCp7aewE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gmKt4O3nLTJySTQ3d6yK1L3mkruolKS0PCn9E/99jIvKgUQvlmzcQr07xU7HIUzsr
-         j4zwrVNh38JNEjkViyCuZ0UhkuEX7uG4YxbFw2xlDKqZ3U8a05P5zd1t7QB1rI1Txe
-         R8JwWKfMezXWoS/1qqXXD2uWOyEHSm1TxwyevPpg=
+        b=2s3alyFH28T3ctWXozRKnDqEX8vpUAI3grz5S5SX6HtfqH9ppyED1UfhOUtM7D3Mr
+         ua6Rqlbnff9iYUbtYTM+PKwIEpFMa2l9x7RE2il4/G5r8+Mb0qGd4+BygMq9dq6Gi2
+         7wCS3KNBfVuxTRaSdkXekFGHS8fBrcgATwRKvUHE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Michal Hocko <mhocko@suse.com>, Tejun Heo <tj@kernel.org>,
+Cc:     David Howells <dhowells@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 40/73] cgroup, netclassid: add a preemption point to write_classid
-Date:   Wed, 31 Oct 2018 19:09:15 -0400
-Message-Id: <20181031230948.29203-40-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 42/73] UAPI: ndctl: Fix g++-unsupported initialisation in headers
+Date:   Wed, 31 Oct 2018 19:09:17 -0400
+Message-Id: <20181031230948.29203-42-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230948.29203-1-sashal@kernel.org>
 References: <20181031230948.29203-1-sashal@kernel.org>
@@ -52,67 +53,115 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit a90e90b7d55e789c71d85b946ffb5c1ab2f137ca ]
+[ Upstream commit 9607871f37dc3e717639694b8d0dc738f2a68efc ]
 
-We have seen a customer complaining about soft lockups on !PREEMPT
-kernel config with 4.4 based kernel
+The following code in the linux/ndctl header file:
 
-[1072141.435366] NMI watchdog: BUG: soft lockup - CPU#21 stuck for 22s! [systemd:1]
-[1072141.444090] Modules linked in: mpt3sas raid_class binfmt_misc af_packet 8021q garp mrp stp llc xfs libcrc32c bonding iscsi_ibft iscsi_boot_sysfs msr ext4 crc16 jbd2 mbcache cdc_ether usbnet mii joydev hid_generic usbhid intel_rapl x86_pkg_temp_thermal intel_powerclamp coretemp crct10dif_pclmul crc32_pclmul ghash_clmulni_intel ipmi_ssif mgag200 i2c_algo_bit ttm ipmi_devintf drbg ixgbe drm_kms_helper vxlan ansi_cprng ip6_udp_tunnel drm aesni_intel udp_tunnel aes_x86_64 iTCO_wdt syscopyarea ptp xhci_pci lrw iTCO_vendor_support pps_core gf128mul ehci_pci glue_helper sysfillrect mdio pcspkr sb_edac ablk_helper cryptd ehci_hcd sysimgblt xhci_hcd fb_sys_fops edac_core mei_me lpc_ich ses usbcore enclosure dca mfd_core ipmi_si mei i2c_i801 scsi_transport_sas usb_common ipmi_msghandler shpchp fjes wmi processor button acpi_pad btrfs xor raid6_pq sd_mod crc32c_intel megaraid_sas sg dm_multipath dm_mod scsi_dh_rdac scsi_dh_emc scsi_dh_alua scsi_mod md_mod autofs4
-[1072141.444146] Supported: Yes
-[1072141.444149] CPU: 21 PID: 1 Comm: systemd Not tainted 4.4.121-92.80-default #1
-[1072141.444150] Hardware name: LENOVO Lenovo System x3650 M5 -[5462P4U]- -[5462P4U]-/01GR451, BIOS -[TCE136H-2.70]- 06/13/2018
-[1072141.444151] task: ffff880191bd0040 ti: ffff880191bd4000 task.ti: ffff880191bd4000
-[1072141.444153] RIP: 0010:[<ffffffff815229f9>]  [<ffffffff815229f9>] update_classid_sock+0x29/0x40
-[1072141.444157] RSP: 0018:ffff880191bd7d58  EFLAGS: 00000286
-[1072141.444158] RAX: ffff883b177cb7c0 RBX: 0000000000000000 RCX: 0000000000000000
-[1072141.444159] RDX: 00000000000009c7 RSI: ffff880191bd7d5c RDI: ffff8822e29bb200
-[1072141.444160] RBP: ffff883a72230980 R08: 0000000000000101 R09: 0000000000000000
-[1072141.444161] R10: 0000000000000008 R11: f000000000000000 R12: ffffffff815229d0
-[1072141.444162] R13: 0000000000000000 R14: ffff881fd0a47ac0 R15: ffff880191bd7f28
-[1072141.444163] FS:  00007f3e2f1eb8c0(0000) GS:ffff882000340000(0000) knlGS:0000000000000000
-[1072141.444164] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[1072141.444165] CR2: 00007f3e2f200000 CR3: 0000001ffea4e000 CR4: 00000000001606f0
-[1072141.444166] Stack:
-[1072141.444166]  ffffffa800000246 00000000000009c7 ffffffff8121d583 ffff8818312a05c0
-[1072141.444168]  ffff8818312a1100 ffff880197c3b280 ffff881861422858 ffffffffffffffea
-[1072141.444170]  ffffffff81522b1c ffffffff81d0ca20 ffff8817fa17b950 ffff883fdd8121e0
-[1072141.444171] Call Trace:
-[1072141.444179]  [<ffffffff8121d583>] iterate_fd+0x53/0x80
-[1072141.444182]  [<ffffffff81522b1c>] write_classid+0x4c/0x80
-[1072141.444187]  [<ffffffff8111328b>] cgroup_file_write+0x9b/0x100
-[1072141.444193]  [<ffffffff81278bcb>] kernfs_fop_write+0x11b/0x150
-[1072141.444198]  [<ffffffff81201566>] __vfs_write+0x26/0x100
-[1072141.444201]  [<ffffffff81201bed>] vfs_write+0x9d/0x190
-[1072141.444203]  [<ffffffff812028c2>] SyS_write+0x42/0xa0
-[1072141.444207]  [<ffffffff815f58c3>] entry_SYSCALL_64_fastpath+0x1e/0xca
-[1072141.445490] DWARF2 unwinder stuck at entry_SYSCALL_64_fastpath+0x1e/0xca
+	static inline const char *nvdimm_bus_cmd_name(unsigned cmd)
+	{
+		static const char * const names[] = {
+			[ND_CMD_ARS_CAP] = "ars_cap",
+			[ND_CMD_ARS_START] = "ars_start",
+			[ND_CMD_ARS_STATUS] = "ars_status",
+			[ND_CMD_CLEAR_ERROR] = "clear_error",
+			[ND_CMD_CALL] = "cmd_call",
+		};
 
-If a cgroup has many tasks with many open file descriptors then we would
-end up in a large loop without any rescheduling point throught the
-operation. Add cond_resched once per task.
+		if (cmd < ARRAY_SIZE(names) && names[cmd])
+			return names[cmd];
+		return "unknown";
+	}
 
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+is broken in a number of ways:
+
+ (1) ARRAY_SIZE() is not generally defined.
+
+ (2) g++ does not support "non-trivial" array initialisers fully yet.
+
+ (3) Every file that calls this function will acquire a copy of names[].
+
+The same goes for nvdimm_cmd_name().
+
+Fix all three by converting to a switch statement where each case returns a
+string.  That way if cmd is a constant, the compiler can trivially reduce it
+and, if not, the compiler can use a shared lookup table if it thinks that is
+more efficient.
+
+A better way would be to remove these functions and their arrays from the
+header entirely.
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/netclassid_cgroup.c | 1 +
- 1 file changed, 1 insertion(+)
+ include/uapi/linux/ndctl.h | 48 +++++++++++++++++---------------------
+ 1 file changed, 21 insertions(+), 27 deletions(-)
 
-diff --git a/net/core/netclassid_cgroup.c b/net/core/netclassid_cgroup.c
-index 5e4f04004a49..7bf833598615 100644
---- a/net/core/netclassid_cgroup.c
-+++ b/net/core/netclassid_cgroup.c
-@@ -106,6 +106,7 @@ static int write_classid(struct cgroup_subsys_state *css, struct cftype *cft,
- 		iterate_fd(p->files, 0, update_classid_sock,
- 			   (void *)(unsigned long)cs->classid);
- 		task_unlock(p);
-+		cond_resched();
- 	}
- 	css_task_iter_end(&it);
+diff --git a/include/uapi/linux/ndctl.h b/include/uapi/linux/ndctl.h
+index 3f03567631cb..145f242c7c90 100644
+--- a/include/uapi/linux/ndctl.h
++++ b/include/uapi/linux/ndctl.h
+@@ -176,37 +176,31 @@ enum {
  
+ static inline const char *nvdimm_bus_cmd_name(unsigned cmd)
+ {
+-	static const char * const names[] = {
+-		[ND_CMD_ARS_CAP] = "ars_cap",
+-		[ND_CMD_ARS_START] = "ars_start",
+-		[ND_CMD_ARS_STATUS] = "ars_status",
+-		[ND_CMD_CLEAR_ERROR] = "clear_error",
+-		[ND_CMD_CALL] = "cmd_call",
+-	};
+-
+-	if (cmd < ARRAY_SIZE(names) && names[cmd])
+-		return names[cmd];
+-	return "unknown";
++	switch (cmd) {
++	case ND_CMD_ARS_CAP:		return "ars_cap";
++	case ND_CMD_ARS_START:		return "ars_start";
++	case ND_CMD_ARS_STATUS:		return "ars_status";
++	case ND_CMD_CLEAR_ERROR:	return "clear_error";
++	case ND_CMD_CALL:		return "cmd_call";
++	default:			return "unknown";
++	}
+ }
+ 
+ static inline const char *nvdimm_cmd_name(unsigned cmd)
+ {
+-	static const char * const names[] = {
+-		[ND_CMD_SMART] = "smart",
+-		[ND_CMD_SMART_THRESHOLD] = "smart_thresh",
+-		[ND_CMD_DIMM_FLAGS] = "flags",
+-		[ND_CMD_GET_CONFIG_SIZE] = "get_size",
+-		[ND_CMD_GET_CONFIG_DATA] = "get_data",
+-		[ND_CMD_SET_CONFIG_DATA] = "set_data",
+-		[ND_CMD_VENDOR_EFFECT_LOG_SIZE] = "effect_size",
+-		[ND_CMD_VENDOR_EFFECT_LOG] = "effect_log",
+-		[ND_CMD_VENDOR] = "vendor",
+-		[ND_CMD_CALL] = "cmd_call",
+-	};
+-
+-	if (cmd < ARRAY_SIZE(names) && names[cmd])
+-		return names[cmd];
+-	return "unknown";
++	switch (cmd) {
++	case ND_CMD_SMART:			return "smart";
++	case ND_CMD_SMART_THRESHOLD:		return "smart_thresh";
++	case ND_CMD_DIMM_FLAGS:			return "flags";
++	case ND_CMD_GET_CONFIG_SIZE:		return "get_size";
++	case ND_CMD_GET_CONFIG_DATA:		return "get_data";
++	case ND_CMD_SET_CONFIG_DATA:		return "set_data";
++	case ND_CMD_VENDOR_EFFECT_LOG_SIZE:	return "effect_size";
++	case ND_CMD_VENDOR_EFFECT_LOG:		return "effect_log";
++	case ND_CMD_VENDOR:			return "vendor";
++	case ND_CMD_CALL:			return "cmd_call";
++	default:				return "unknown";
++	}
+ }
+ 
+ #define ND_IOCTL 'N'
 -- 
 2.17.1
 
