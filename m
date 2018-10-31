@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA22ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF101C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8680B20838
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5B922081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SIWF5p3O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8680B20838
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zIuYon3z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5B922081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727978AbeKAIGZ (ORCPT
+        id S1728003AbeKAIG0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:06:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53188 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:06:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53318 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727784AbeKAIGU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:06:20 -0400
+        id S1727945AbeKAIGZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:06:25 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2AB032082E;
-        Wed, 31 Oct 2018 23:06:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7466120838;
+        Wed, 31 Oct 2018 23:06:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027170;
-        bh=KPiJvz4He0AwSZ0ySKEL1Gu0R0Z7OVpxUWh1vKcO0so=;
+        s=default; t=1541027174;
+        bh=VBXsMqhmxXoiCeVeo9pOALxeXQzW0h+eRtgfqb5gFCs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SIWF5p3OCYz98e4VS0b9mDyajC2JIWieMcvYiXYbJm/JIYNySOhh5M8fVsyYkrjVV
-         lXEa1u76yP8zLAdjSrB9E43MCz1/gxbaEf80hPZZZ1q8QP/hZc9CFV9S+qwRc4oYIi
-         1ZaEppCbQrhuUVe97trrPbaTCuAEF1lZxS22SvFc=
+        b=zIuYon3zBfU3Zb2lNPOZsgia5ZVPO26/tVVOBa2YUWrXF0v25WZ5MlO62bQsRRSlY
+         pA9J8rKQcr+23V8twL9pS4c5+cqpeWigiP1oywuXBWMGse+c5Zc5EORcZ7ZcdvIdvM
+         fseenFEXfKJiHQS2cr7lGUegvLPpUDQjyiQ/K/1A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Lubomir Rintel <lkundrak@v3.sk>, Borislav Petkov <bp@suse.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        x86-ml <x86@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 030/146] x86/olpc: Indicate that legacy PC XO-1 platform should not register RTC
-Date:   Wed, 31 Oct 2018 19:03:45 -0400
-Message-Id: <20181031230541.28822-30-sashal@kernel.org>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 036/146] cpufreq: dt: Try freeing static OPPs only if we have added them
+Date:   Wed, 31 Oct 2018 19:03:51 -0400
+Message-Id: <20181031230541.28822-36-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -53,73 +52,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lubomir Rintel <lkundrak@v3.sk>
+From: Viresh Kumar <viresh.kumar@linaro.org>
 
-[ Upstream commit d92116b800fb79a72ad26121f5011f6aa3ad94c2 ]
+[ Upstream commit 51c99dd2c06b234575661fa1e0a1dea6c3ef566f ]
 
-On OLPC XO-1, the RTC is discovered via device tree from the arch
-initcall. Don't let the PC platform register another one from its device
-initcall, it's not going to work:
+We can not call dev_pm_opp_of_cpumask_remove_table() freely anymore
+since the latest OPP core updates as that uses reference counting to
+free resources. There are cases where no static OPPs are added (using
+DT) for a platform and trying to remove the OPP table may end up
+decrementing refcount which is already zero and hence generating
+warnings.
 
-  sysfs: cannot create duplicate filename '/devices/platform/rtc_cmos'
-  CPU: 0 PID: 1 Comm: swapper Not tainted 4.19.0-rc6 #12
-  Hardware name: OLPC XO/XO, BIOS OLPC Ver 1.00.01 06/11/2014
-  Call Trace:
-   dump_stack+0x16/0x18
-   sysfs_warn_dup+0x46/0x58
-   sysfs_create_dir_ns+0x76/0x9b
-   kobject_add_internal+0xed/0x209
-   ? __schedule+0x3fa/0x447
-   kobject_add+0x5b/0x66
-   device_add+0x298/0x535
-   ? insert_resource_conflict+0x2a/0x3e
-   platform_device_add+0x14d/0x192
-   ? io_delay_init+0x19/0x19
-   platform_device_register+0x1c/0x1f
-   add_rtc_cmos+0x16/0x31
-   do_one_initcall+0x78/0x14a
-   ? do_early_param+0x75/0x75
-   kernel_init_freeable+0x152/0x1e0
-   ? rest_init+0xa2/0xa2
-   kernel_init+0x8/0xd5
-   ret_from_fork+0x2e/0x38
-  kobject_add_internal failed for rtc_cmos with -EEXIST, don't try to
-    register things with the same name in the same directory.
-  platform rtc_cmos: registered platform RTC device (no PNP device found)
+Lets track if we were able to add static OPPs or not and then only
+remove the table based on that. Some reshuffling of code is also done to
+do that.
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: x86-ml <x86@kernel.org>
-Link: http://lkml.kernel.org/r/20181004160808.307738-1-lkundrak@v3.sk
+Reported-by: Niklas Cassel <niklas.cassel@linaro.org>
+Tested-by: Niklas Cassel <niklas.cassel@linaro.org>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/platform/olpc/olpc-xo1-rtc.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/cpufreq/cpufreq-dt.c | 34 +++++++++++++++++++---------------
+ 1 file changed, 19 insertions(+), 15 deletions(-)
 
-diff --git a/arch/x86/platform/olpc/olpc-xo1-rtc.c b/arch/x86/platform/olpc/olpc-xo1-rtc.c
-index a2b4efddd61a..8e7ddd7e313a 100644
---- a/arch/x86/platform/olpc/olpc-xo1-rtc.c
-+++ b/arch/x86/platform/olpc/olpc-xo1-rtc.c
-@@ -16,6 +16,7 @@
+diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+index 0a9ebf00be46..e58bfcb1169e 100644
+--- a/drivers/cpufreq/cpufreq-dt.c
++++ b/drivers/cpufreq/cpufreq-dt.c
+@@ -32,6 +32,7 @@ struct private_data {
+ 	struct device *cpu_dev;
+ 	struct thermal_cooling_device *cdev;
+ 	const char *reg_name;
++	bool have_static_opps;
+ };
  
- #include <asm/msr.h>
- #include <asm/olpc.h>
-+#include <asm/x86_init.h>
+ static struct freq_attr *cpufreq_dt_attr[] = {
+@@ -204,6 +205,15 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 		}
+ 	}
  
- static void rtc_wake_on(struct device *dev)
- {
-@@ -75,6 +76,8 @@ static int __init xo1_rtc_init(void)
- 	if (r)
- 		return r;
- 
-+	x86_platform.legacy.rtc = 0;
++	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
++	if (!priv) {
++		ret = -ENOMEM;
++		goto out_put_regulator;
++	}
 +
- 	device_init_wakeup(&xo1_rtc_device.dev, 1);
- 	return 0;
- }
++	priv->reg_name = name;
++	priv->opp_table = opp_table;
++
+ 	/*
+ 	 * Initialize OPP tables for all policy->cpus. They will be shared by
+ 	 * all CPUs which have marked their CPUs shared with OPP bindings.
+@@ -214,7 +224,8 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 	 *
+ 	 * OPPs might be populated at runtime, don't check for error here
+ 	 */
+-	dev_pm_opp_of_cpumask_add_table(policy->cpus);
++	if (!dev_pm_opp_of_cpumask_add_table(policy->cpus))
++		priv->have_static_opps = true;
+ 
+ 	/*
+ 	 * But we need OPP table to function so if it is not there let's
+@@ -240,19 +251,10 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 				__func__, ret);
+ 	}
+ 
+-	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+-	if (!priv) {
+-		ret = -ENOMEM;
+-		goto out_free_opp;
+-	}
+-
+-	priv->reg_name = name;
+-	priv->opp_table = opp_table;
+-
+ 	ret = dev_pm_opp_init_cpufreq_table(cpu_dev, &freq_table);
+ 	if (ret) {
+ 		dev_err(cpu_dev, "failed to init cpufreq table: %d\n", ret);
+-		goto out_free_priv;
++		goto out_free_opp;
+ 	}
+ 
+ 	priv->cpu_dev = cpu_dev;
+@@ -282,10 +284,11 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 
+ out_free_cpufreq_table:
+ 	dev_pm_opp_free_cpufreq_table(cpu_dev, &freq_table);
+-out_free_priv:
+-	kfree(priv);
+ out_free_opp:
+-	dev_pm_opp_of_cpumask_remove_table(policy->cpus);
++	if (priv->have_static_opps)
++		dev_pm_opp_of_cpumask_remove_table(policy->cpus);
++	kfree(priv);
++out_put_regulator:
+ 	if (name)
+ 		dev_pm_opp_put_regulators(opp_table);
+ out_put_clk:
+@@ -300,7 +303,8 @@ static int cpufreq_exit(struct cpufreq_policy *policy)
+ 
+ 	cpufreq_cooling_unregister(priv->cdev);
+ 	dev_pm_opp_free_cpufreq_table(priv->cpu_dev, &policy->freq_table);
+-	dev_pm_opp_of_cpumask_remove_table(policy->related_cpus);
++	if (priv->have_static_opps)
++		dev_pm_opp_of_cpumask_remove_table(policy->related_cpus);
+ 	if (priv->reg_name)
+ 		dev_pm_opp_put_regulators(priv->opp_table);
+ 
 -- 
 2.17.1
 
