@@ -2,128 +2,164 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3710ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:29:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8A35ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:29:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEE5F20847
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:29:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FD152084A
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:29:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hUxO0972"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEE5F20847
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YrCy9o3Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FD152084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731112AbeKAI3k (ORCPT
+        id S1730995AbeKAI34 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:29:40 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:44259 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728548AbeKAI3j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:29:39 -0400
-Received: by mail-qt1-f193.google.com with SMTP id b22-v6so19177992qtr.11
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 16:29:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6n3Fa3s2tYUQmeQAFGjRIB4HmMMdT977kTmuv4qasK8=;
-        b=hUxO0972wQsb5C5VOAJL11QMPx07OjQmBTdiWEZcF391QAuwqIl36eenT/19NXHlwF
-         cjs6IbM/dIj1myxSYrjboBG/QuvNtujT9lsIpePXXJAOWfgHdUS/oQ5DXYUqQk12UwhC
-         vsb2BS0fxk07GFlO6svOqX7IExJfejvhw0sPHQKRridUpY0fsWoPfg21SLLME088Knl6
-         hJHUlN1QEggFF8OO0hjn602Wk/pZJgcBDQPAGCG9Z4TC76OWZwhucCqYQCd+s3eIKpFY
-         Hcg51C7JqworedLrQSKRnNfXT6WbxCKM+jF7gC3nB1Jbj/kl1fCieYx8Xw+hHqvX1huL
-         miyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6n3Fa3s2tYUQmeQAFGjRIB4HmMMdT977kTmuv4qasK8=;
-        b=DkT+SMCfpx8bkwsp/HXwjPZAi3R3m9sFsbxooqvA6h67vFzFBTmlqnQ0Q3JKVJSyiI
-         sxmCgUZdWPCgn8YZq3eOOuBFi+o1PoLBMItMh4sy/MW/lB/jex6AGIEP68WSYDD4q+6t
-         ohMANgLiTXusJ6ofpNV+j8NKTVUokHkQO3Ld827lyWm3lDJQbmXgtG0WqB6XUYAOljY3
-         htbtr5Olkfgyd/c2LRy7mGzmD1eciJKJ8Ci7H9Q3InW2+SZRoz74pkEPwau6htxwY02v
-         weerat5bq5ivmhparXj1bYGXD8mEBa9MP3lpJqSzJ/BwaX3pzi9on4wkd949snahOqTE
-         7ZFw==
-X-Gm-Message-State: AGRZ1gKLQDSKheyIXTfxzbaqJ5zSbp5GYit9WJ/j3hz9Y/IjleoAgBrf
-        tJ2mBwpSyNJ3rhWD2p+aEg0=
-X-Google-Smtp-Source: AJdET5eDyZxidPNxI//2nigBzqOahRNW0mxY5Wb4wK39/vAEwZ8W3HNGM26Q91RTMfcKonJZCmYu1g==
-X-Received: by 2002:a0c:aecb:: with SMTP id n11mr4592599qvd.151.1541028560538;
-        Wed, 31 Oct 2018 16:29:20 -0700 (PDT)
-Received: from smtp.gmail.com ([143.107.45.1])
-        by smtp.gmail.com with ESMTPSA id g46-v6sm12989607qta.79.2018.10.31.16.29.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 31 Oct 2018 16:29:19 -0700 (PDT)
-Date:   Wed, 31 Oct 2018 20:29:15 -0300
-From:   Shayenne Moura <shayenneluzmoura@gmail.com>
-To:     Julia Lawall <julia.lawall@lip6.fr>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        outreachy-kernel@googlegroups.com
-Subject: Re: [Outreachy kernel] [PATCH] drm: Rename crtc_idr as object_idr to
- KMS cleanups
-Message-ID: <20181031232915.rvni33tf6m2orbbx@smtp.gmail.com>
-References: <20181031205737.cingeaqget7hkbs6@smtp.gmail.com>
- <alpine.DEB.2.21.1810312200520.2391@hadrien>
- <20181031211935.p2pxr7fh26m5dc7v@smtp.gmail.com>
- <alpine.DEB.2.21.1810312229530.5416@hadrien>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1810312229530.5416@hadrien>
-User-Agent: NeoMutt/20171215
+        Thu, 1 Nov 2018 04:29:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60310 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730744AbeKAIJ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:09:59 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 750572064C;
+        Wed, 31 Oct 2018 23:09:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541027387;
+        bh=bYj1Ov7nzNc/91AD8qt6NfHJ+X+vL2VYXyef635gxXc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=YrCy9o3Y8iTzDU3XUT2+ElUl7/jHB/dq6EAQD3G6dq9MNuGfUJWfIO0rwMEPbSXS1
+         r5SmWE7+sDT9KI6BLFCShNWtTip+WblnFfHltHWVugd8VVyNnuZ4w4C6l7sbUx9I7e
+         VwqzyPqdnny6S1DePkweCJ2KNYVfF2t9WOsloqQk=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Vijay Immanuel <vijayi@attalasystems.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 125/126] IB/rxe: fix for duplicate request processing and ack psns
+Date:   Wed, 31 Oct 2018 19:07:53 -0400
+Message-Id: <20181031230754.29029-125-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
+References: <20181031230754.29029-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/31, Julia Lawall wrote:
-> 
-> 
-> On Wed, 31 Oct 2018, Shayenne Moura wrote:
-> 
-> > On 10/31, Julia Lawall wrote:
-> > >
-> > >
-> > > On Wed, 31 Oct 2018, Shayenne da Luz Moura wrote:
-> > >
-> > > > Rename 'drm_mode_config.crtc_idr' as 'drm_mode_config.object_idr',
-> > > > as proposed in the task description in TODO list for KMS cleanups.
-> > >
-> > > Is object_idr a field that already exists?  If so, "Rename" is not the
-> > > best choice of words.  It should be something like "use the object_idr
-> > > field instead of the crtc_idr field" and then explain why.  "task
-> > > description in TODO list for KMS cleanups" isn't very helpful to
-> > > understand why the change should be made.
-> > >
-> > > julia
-> >
-> > Hi Julia,
-> >
-> > Thank you for your review!
-> >
-> > This patch is to solve this TODO task:
-> >  drm_mode_config.crtc_idr is misnamed, since it contains all KMS object.
-> >  Should be renamed to drm_mode_config.object_idr.
-> >
-> > Do you think I need to use this description in my commit message?
-> 
-> That seems more helpful.
-> 
-> But it seems that the name should actually be changed.  Which means that
-> the structure definition should be changed too.  Was that done?
-> 
-> julia
+From: Vijay Immanuel <vijayi@attalasystems.com>
 
-Yes, you are right. I did not add the header file. 
+[ Upstream commit b97db58557f4aa6d9903f8e1deea6b3d1ed0ba43 ]
 
-Thanks again!
+Don't reset the resp opcode for a replayed read response.
+The resp opcode could be in the middle of a write or send
+sequence, when the duplicate read request was received.
+An example sequence is as follows:
+- Receive read request for 12KB PSN 20. Transmit read response
+  first, middle and last with PSNs 20,21,22.
+- Receive write first PSN 23.
+  At this point the resp psn is 24 and resp opcode is write first.
+- The sender notices that PSN 20 is dropped and retransmits.
+  Receive read request for 12KB PSN 20. Transmit read response
+  first, middle and last with PSNs 20,21,22. The resp opcode is
+  set to -1, the resp psn remains 24.
+- Receive write first PSN 23. This is processed by duplicate_request().
+  The resp opcode remains -1 and resp psn remains 24.
+- Receive write middle PSN 24. check_op_seq() reports a missing
+  first error since the resp opcode is -1.
 
-Shayenne
+When sending an ack for a duplicate send or write request,
+use the psn of the previous ack sent. Do not use the psn
+of a read response for the ack.
+An example sequence is as follows:
+- Receive write PSN 30. Transmit ACK for PSN 30.
+- Receive read request 4KB PSN 31. Transmit read response with
+  PSN 31. The resp psn is now 32.
+- The sender notices that PSN 30 is dropped and retransmits.
+  Receive write PSN 30. duplicate_request() sends an ACK with
+  PSN 31. That is incorrect since PSN 31 was a read request.
+
+Signed-off-by: Vijay Immanuel <vijayi@attalasystems.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/infiniband/sw/rxe/rxe_resp.c  | 8 ++++++--
+ drivers/infiniband/sw/rxe/rxe_verbs.h | 2 ++
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/infiniband/sw/rxe/rxe_resp.c b/drivers/infiniband/sw/rxe/rxe_resp.c
+index 5b57de30dee4..b8104d50b1a0 100644
+--- a/drivers/infiniband/sw/rxe/rxe_resp.c
++++ b/drivers/infiniband/sw/rxe/rxe_resp.c
+@@ -682,6 +682,7 @@ static enum resp_states read_reply(struct rxe_qp *qp,
+ 		rxe_advance_resp_resource(qp);
+ 
+ 		res->type		= RXE_READ_MASK;
++		res->replay		= 0;
+ 
+ 		res->read.va		= qp->resp.va;
+ 		res->read.va_org	= qp->resp.va;
+@@ -752,7 +753,8 @@ static enum resp_states read_reply(struct rxe_qp *qp,
+ 		state = RESPST_DONE;
+ 	} else {
+ 		qp->resp.res = NULL;
+-		qp->resp.opcode = -1;
++		if (!res->replay)
++			qp->resp.opcode = -1;
+ 		if (psn_compare(res->cur_psn, qp->resp.psn) >= 0)
+ 			qp->resp.psn = res->cur_psn;
+ 		state = RESPST_CLEANUP;
+@@ -814,6 +816,7 @@ static enum resp_states execute(struct rxe_qp *qp, struct rxe_pkt_info *pkt)
+ 
+ 	/* next expected psn, read handles this separately */
+ 	qp->resp.psn = (pkt->psn + 1) & BTH_PSN_MASK;
++	qp->resp.ack_psn = qp->resp.psn;
+ 
+ 	qp->resp.opcode = pkt->opcode;
+ 	qp->resp.status = IB_WC_SUCCESS;
+@@ -1060,7 +1063,7 @@ static enum resp_states duplicate_request(struct rxe_qp *qp,
+ 					  struct rxe_pkt_info *pkt)
+ {
+ 	enum resp_states rc;
+-	u32 prev_psn = (qp->resp.psn - 1) & BTH_PSN_MASK;
++	u32 prev_psn = (qp->resp.ack_psn - 1) & BTH_PSN_MASK;
+ 
+ 	if (pkt->mask & RXE_SEND_MASK ||
+ 	    pkt->mask & RXE_WRITE_MASK) {
+@@ -1103,6 +1106,7 @@ static enum resp_states duplicate_request(struct rxe_qp *qp,
+ 			res->state = (pkt->psn == res->first_psn) ?
+ 					rdatm_res_state_new :
+ 					rdatm_res_state_replay;
++			res->replay = 1;
+ 
+ 			/* Reset the resource, except length. */
+ 			res->read.va_org = iova;
+diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
+index af1470d29391..332a16dad2a7 100644
+--- a/drivers/infiniband/sw/rxe/rxe_verbs.h
++++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
+@@ -171,6 +171,7 @@ enum rdatm_res_state {
+ 
+ struct resp_res {
+ 	int			type;
++	int			replay;
+ 	u32			first_psn;
+ 	u32			last_psn;
+ 	u32			cur_psn;
+@@ -195,6 +196,7 @@ struct rxe_resp_info {
+ 	enum rxe_qp_state	state;
+ 	u32			msn;
+ 	u32			psn;
++	u32			ack_psn;
+ 	int			opcode;
+ 	int			drop_msg;
+ 	int			goto_error;
+-- 
+2.17.1
+
