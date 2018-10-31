@@ -7,42 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24613ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:44:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40919ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:44:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E157320664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:44:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08ACB2082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:44:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WSbKyshi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E157320664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="axcijbLw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08ACB2082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729061AbeKAIHk (ORCPT
+        id S1728995AbeKAIHg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:07:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55622 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:07:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729010AbeKAIHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:07:39 -0400
+        id S1728910AbeKAIHf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:07:35 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49F0D2064C;
-        Wed, 31 Oct 2018 23:07:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0A9C2064C;
+        Wed, 31 Oct 2018 23:07:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027248;
-        bh=fPNt1fLPY/M2cFSppIkgLY6AvDWzZ04HAbWQpGRe/C4=;
+        s=default; t=1541027244;
+        bh=DrvpFuZ8C1WZGOUneKjTLBox+gqu0umAjhbt2Uiu8rA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WSbKyshiE6it7iLhkxRGMclzHyuRfIA9cdimS/FepllshC0VMMX7VHw8wOdAjBtm4
-         0WfD7/u/VkTO2gvY24ewavYNZwOCoI+yJX+dh0/B+Ubkxi+nWl9ltbOGMzJnTd2uTI
-         rFRhDGjo8aGB2RrZAhjm7kHYip9PyLLdtww0UXEM=
+        b=axcijbLwRTMK82T4gkPzywm1Vm1gkcSCWKNLk8pQ4MaGtwHypPqAsSFGzNH1pedv8
+         DdTPfUYI9ucu5sFzf2taJ4CpTJlh6t2+C4G9uGvlXiqcNY9pClXxkVpPJrpxXKCQjc
+         0t1ErGqUEVJX9F8V0ugvZTi40hj/tcRxJNoI48rE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Shaohua Li <shli@fb.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 118/146] MD: fix invalid stored role for a disk
-Date:   Wed, 31 Oct 2018 19:05:13 -0400
-Message-Id: <20181031230541.28822-118-sashal@kernel.org>
+Cc:     Lina Iyer <ilina@codeaurora.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 113/146] irqchip/pdc: Setup all edge interrupts as rising edge at GIC
+Date:   Wed, 31 Oct 2018 19:05:08 -0400
+Message-Id: <20181031230541.28822-113-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -51,45 +53,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shaohua Li <shli@fb.com>
+From: Lina Iyer <ilina@codeaurora.org>
 
-[ Upstream commit d595567dc4f0c1d90685ec1e2e296e2cad2643ac ]
+[ Upstream commit 7bae48b22c8d38c5cd50f52b6e15d134e2bb3935 ]
 
-If we change the number of array's device after device is removed from array,
-then add the device back to array, we can see that device is added as active
-role instead of spare which we expected.
+The PDC irqchp can convert a falling edge or level low interrupt to a
+rising edge or level high interrupt at the GIC. We just need to setup
+the GIC correctly. Set up the interrupt type for the IRQ_TYPE_EDGE_BOTH
+as IRQ_TYPE_EDGE_RISING at the GIC.
 
-Please see the below link for details:
-https://marc.info/?l=linux-raid&m=153736982015076&w=2
-
-This is caused by that we prefer to use device's previous role which is
-recorded by saved_raid_disk, but we should respect the new number of
-conf->raid_disks since it could be changed after device is removed.
-
-Reported-by: Gioh Kim <gi-oh.kim@profitbricks.com>
-Tested-by: Gioh Kim <gi-oh.kim@profitbricks.com>
-Acked-by: Guoqing Jiang <gqjiang@suse.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
+Fixes: f55c73aef890 ("irqchip/pdc: Add PDC interrupt controller for QCOM SoCs")
+Reported-by: Evan Green <evgreen@chromium.org>
+Reviewed-by: Evan Green <evgreen@chromium.org>
+Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/md.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/irqchip/qcom-pdc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index 8668793262d0..85459c17cc60 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -1776,6 +1776,10 @@ static int super_1_validate(struct mddev *mddev, struct md_rdev *rdev)
- 			} else
- 				set_bit(In_sync, &rdev->flags);
- 			rdev->raid_disk = role;
-+			if (role >= mddev->raid_disks) {
-+				rdev->saved_raid_disk = -1;
-+				rdev->raid_disk = -1;
-+			}
- 			break;
- 		}
- 		if (sb->devflags & WriteMostly1)
+diff --git a/drivers/irqchip/qcom-pdc.c b/drivers/irqchip/qcom-pdc.c
+index b1b47a40a278..faa7d61b9d6c 100644
+--- a/drivers/irqchip/qcom-pdc.c
++++ b/drivers/irqchip/qcom-pdc.c
+@@ -124,6 +124,7 @@ static int qcom_pdc_gic_set_type(struct irq_data *d, unsigned int type)
+ 		break;
+ 	case IRQ_TYPE_EDGE_BOTH:
+ 		pdc_type = PDC_EDGE_DUAL;
++		type = IRQ_TYPE_EDGE_RISING;
+ 		break;
+ 	case IRQ_TYPE_LEVEL_HIGH:
+ 		pdc_type = PDC_LEVEL_HIGH;
 -- 
 2.17.1
 
