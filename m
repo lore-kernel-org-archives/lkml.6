@@ -6,58 +6,58 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E93CC6786F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 03:04:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E33ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 03:05:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 322C420664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 03:04:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 322C420664
+	by mail.kernel.org (Postfix) with ESMTP id CA6DE20664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 03:05:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA6DE20664
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728840AbeJaMBC (ORCPT
+        id S1728936AbeJaMBd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 08:01:02 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:44031 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728157AbeJaMBB (ORCPT
+        Wed, 31 Oct 2018 08:01:33 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40605 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728157AbeJaMBc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 08:01:01 -0400
-Received: by mail-ed1-f65.google.com with SMTP id y20-v6so12342982eds.10;
-        Tue, 30 Oct 2018 20:04:54 -0700 (PDT)
+        Wed, 31 Oct 2018 08:01:32 -0400
+Received: by mail-ed1-f67.google.com with SMTP id z12-v6so6575690edp.7;
+        Tue, 30 Oct 2018 20:05:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=3kinJVyv/a2nqy6YbZQfjLuU2cHZLi482BYxu0jIYVQ=;
-        b=YObiSpJM2O9stl6PTj7V+z6KHpjETLpexjm8NwLgPrvgGjrb175VtUGXr09y3KFgLh
-         iEXUdkNApvEFSn9GcfTuhRHcG4clhJ3hcBs3NzcNc/22AaqBzqEFuwvq7GcKxiCBaTFd
-         qPdDrc83xO4pIGUuPnZYEkd5/NyMP4ukBtf3C9kwB7vFmYSqLHFodKfYZrBkwqCTowhA
-         UUILH3yqLqndfoA6jZvMPF7O9a/qJ6JLjdWL4QFc5KXdFLywabM1nQiVd7t5FM2kN3ov
-         qEH4VHUNFXTHw81ohclzDZm/V6fP6MOxtNdaoMJ+0BIBI2ufX1TqtV1G80lGd9m2yiwQ
-         madA==
-X-Gm-Message-State: AGRZ1gJOjwY2J7MWISbwNkLOnaEQ1AWkwminbhtthhyM6mIPN6ikta7t
-        qgFNsildhOFo1WflnGo6LF6RCZwhDr0=
-X-Google-Smtp-Source: AJdET5esK+WCgPZ9LalN07I3Pszyh6AvsOv9XIavu5NBO9T6xB3RcwyJP8FOBvVN/AzlJppM2UBO8g==
-X-Received: by 2002:a17:906:958c:: with SMTP id r12-v6mr471059ejx.125.1540955093877;
-        Tue, 30 Oct 2018 20:04:53 -0700 (PDT)
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com. [209.85.128.47])
-        by smtp.gmail.com with ESMTPSA id x15-v6sm8111131edm.26.2018.10.30.20.04.51
+        bh=wOq5ODwl0vI6gbQZ4fu1SBDl8ND8yWp3RtRwx7QAc/0=;
+        b=dloceeOd3oigWvGXk2PmcNuTcWw19lr2ggeigCLtuWhWAc7uLFk/zwH0Hxj+aab/EC
+         k8TWj8gBvl0wft7DIFDqS/k/uZ9aoWzu0fzqg2cO/ALX8Fv4dnHhnPO6I6FVhsEUTMgM
+         AenrOAdfO0PBWX7J2TAglXMftNN8/mR5agGXD7bpQIyMQC6sM15EqzenuckpYIItH63H
+         ofv3UCP4tqn56JtiwB65qSozlnvw/d7M5BbHjYbwYeENGD3QkNsJGmWGPDo7Kasw7uuS
+         UywyK5C+Cbgod0W1J/faKNsX5Fn5gPu0vlQjYkwqWwV7dRE6FXNCh+6B1IN2L0O7c/Fq
+         O5RQ==
+X-Gm-Message-State: AGRZ1gJszjnQz9KwzDrp86x1LLfdFTH9OBx6zDTe42tXSkMCdt9YIA1F
+        KBN6gHM7FOk04B2XQMBPL/Q/ufgtw9A=
+X-Google-Smtp-Source: AJdET5fKf+zsTV57P2neTTk/03nhh7ma2lTIBhHVikIaWst8oSI7mmdlF5p6TDiY0LamTSe9rg/SaA==
+X-Received: by 2002:a50:892d:: with SMTP id e42-v6mr599463ede.201.1540955124918;
+        Tue, 30 Oct 2018 20:05:24 -0700 (PDT)
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com. [209.85.221.53])
+        by smtp.gmail.com with ESMTPSA id t1-v6sm5994181eds.44.2018.10.30.20.05.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 20:04:52 -0700 (PDT)
-Received: by mail-wm1-f47.google.com with SMTP id v24-v6so3831649wmh.3;
-        Tue, 30 Oct 2018 20:04:51 -0700 (PDT)
-X-Received: by 2002:a1c:9f01:: with SMTP id i1-v6mr841736wme.8.1540955091416;
- Tue, 30 Oct 2018 20:04:51 -0700 (PDT)
+        Tue, 30 Oct 2018 20:05:24 -0700 (PDT)
+Received: by mail-wr1-f53.google.com with SMTP id j26-v6so624798wre.1;
+        Tue, 30 Oct 2018 20:05:24 -0700 (PDT)
+X-Received: by 2002:a5d:4844:: with SMTP id n4-v6mr1089109wrs.28.1540955124171;
+ Tue, 30 Oct 2018 20:05:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181023185330.10472-1-oskari@lemmela.net> <20181023185330.10472-7-oskari@lemmela.net>
-In-Reply-To: <20181023185330.10472-7-oskari@lemmela.net>
+References: <20181023185330.10472-1-oskari@lemmela.net> <20181023185330.10472-8-oskari@lemmela.net>
+In-Reply-To: <20181023185330.10472-8-oskari@lemmela.net>
 From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Wed, 31 Oct 2018 11:04:38 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64ZPHVcruMVhuo_SiFe-z0QsS-w7AT+_0zco7K36zp-8w@mail.gmail.com>
-Message-ID: <CAGb2v64ZPHVcruMVhuo_SiFe-z0QsS-w7AT+_0zco7K36zp-8w@mail.gmail.com>
-Subject: Re: [PATCH v5 06/11] arm64: dts: allwinner: axp803: add AC and
- battery power supplies
+Date:   Wed, 31 Oct 2018 11:05:11 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66dY87HN6HQz3=ER=yr6arV3LcxCxpVVwojKpqwj7m7dQ@mail.gmail.com>
+Message-ID: <CAGb2v66dY87HN6HQz3=ER=yr6arV3LcxCxpVVwojKpqwj7m7dQ@mail.gmail.com>
+Subject: Re: [PATCH v5 07/11] arm64: dts: allwinner: a64: sopine-baseboard:
+ enable power supplies
 To:     oskari@lemmela.net
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Sebastian Reichel <sre@kernel.org>,
@@ -83,11 +83,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Wed, Oct 24, 2018 at 2:54 AM Oskari Lemmela <oskari@lemmela.net> wrote:
 >
-> Parts of the AXP803 are compatible with their counterparts on the AXP813.
-> Add DT nodes ADC, GPIO, AC and battery power supplies.
+> AXP803 ACIN pins are routed from SOM to the DC jack on the baseboard.
+> AXP803 charger pins BATSENSE, LOADSENSE, N_BATDRV, LX_CHG, VIN_CHG
+> and IPSOUT are connected via PMOS driver to SOM VBAT pins. VBAT and
+> AXP803 TS pins are routed to the baseboard 3-pin battery connector.
 >
 > Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
 > Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
-> Tested-by: Vasily Khoruzhick <anarsoul@gmail.com>
 
 Reviewed-by: Chen-Yu Tsai <wens@csie.org>
