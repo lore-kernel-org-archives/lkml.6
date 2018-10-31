@@ -2,117 +2,134 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00976C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:05:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF5B2ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:06:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6D2B20821
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:05:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6D2B20821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 746E720821
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 16:06:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="JqvdN7ba"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 746E720821
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729807AbeKABDm (ORCPT
+        id S1729745AbeKABEt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 21:03:42 -0400
-Received: from mga11.intel.com ([192.55.52.93]:47312 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729782AbeKABDm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 21:03:42 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2018 09:05:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,447,1534834800"; 
-   d="scan'208";a="96609430"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga003.jf.intel.com with ESMTP; 31 Oct 2018 09:05:04 -0700
-Message-ID: <a7c1bc0ed1e68cbc32c4dd6753fa9f8ff7f1421f.camel@linux.intel.com>
-Subject: Re: [mm PATCH v4 3/6] mm: Use memblock/zone specific iterator for
- handling deferred page init
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     Pasha Tatashin <Pavel.Tatashin@microsoft.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Cc:     "mhocko@suse.com" <mhocko@suse.com>,
-        "dave.jiang@intel.com" <dave.jiang@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "yi.z.zhang@linux.intel.com" <yi.z.zhang@linux.intel.com>,
-        "khalid.aziz@oracle.com" <khalid.aziz@oracle.com>,
-        "rppt@linux.vnet.ibm.com" <rppt@linux.vnet.ibm.com>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "ldufour@linux.vnet.ibm.com" <ldufour@linux.vnet.ibm.com>,
-        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>
-Date:   Wed, 31 Oct 2018 09:05:04 -0700
-In-Reply-To: <5b937f29-a6e1-6622-b035-246229021d3e@microsoft.com>
-References: <20181017235043.17213.92459.stgit@localhost.localdomain>
-         <20181017235419.17213.68425.stgit@localhost.localdomain>
-         <5b937f29-a6e1-6622-b035-246229021d3e@microsoft.com>
+        Wed, 31 Oct 2018 21:04:49 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:43616 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728048AbeKABEs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 21:04:48 -0400
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id w9VG63AO018968;
+        Thu, 1 Nov 2018 01:06:04 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w9VG63AO018968
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1541001964;
+        bh=rm4KBd9Y1DjyNm7gMyiNo8tn1N+1kLxAGdNLudCccdI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=JqvdN7baYjxm3y4SffjP5dcqILVQxN1PONQylmH4GekjpfMQrGc0Gs20G1DxmPwwf
+         2Ulw9WdymD1ePio94lpLlfQ1YS4kpIsF+0a4a5KtZ+7jTPhbfudfn7NsiqwCCotI9g
+         1Bib5DRqKCQVrpddlKGJ6PZM/kUk3uUImVBaun4a/pyHQLn1ja3reeDiQBXUORPBIZ
+         DYNxeCtBchszGB1DRll9bVzF3cxEoEmK04Xa4I9jSgsmhPLyLxBgkVbuXt7bDfQKHT
+         U0mzY7fNxM2rWftsNgEhMYlolBjnLDPS2q9ZIEqNibzyyVveuQX4NBZnIWcYhvMpTR
+         FQHlP5fw5dFZg==
+X-Nifty-SrcIP: [209.85.222.49]
+Received: by mail-ua1-f49.google.com with SMTP id c5so4460886uak.4;
+        Wed, 31 Oct 2018 09:06:04 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gLpP87rj7DH89BBn0AR/vNNVOMIj1RN2wbr/m8/L4SMBinv4kyg
+        etAxGBPaJ3YuBP8Ljo6HW8XMecA+ovNs2arbGww=
+X-Google-Smtp-Source: AJdET5cPwAWbY9PNn2LZNg5TFvXRL1rtx5qnkG8+zSU8HbppT4T4TbtM5UymtdBlQNISyrl8mdSfRVTcQzB5blYEUyo=
+X-Received: by 2002:ab0:5444:: with SMTP id o4mr1665827uaa.55.1541001962702;
+ Wed, 31 Oct 2018 09:06:02 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181019120952.32763-1-hch@lst.de> <20181019120952.32763-7-hch@lst.de>
+ <20181019122228.GJ30658@n2100.armlinux.org.uk> <CAK7LNATZ8LagrTrTae_QCQbSuTW7_y6sDrdTHfTyONPrsYDs4A@mail.gmail.com>
+In-Reply-To: <CAK7LNATZ8LagrTrTae_QCQbSuTW7_y6sDrdTHfTyONPrsYDs4A@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 1 Nov 2018 01:05:26 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASUArREw1AWUzcOoQCe5=4jyifbs+x2CdCK+qXJ+woAdw@mail.gmail.com>
+Message-ID: <CAK7LNASUArREw1AWUzcOoQCe5=4jyifbs+x2CdCK+qXJ+woAdw@mail.gmail.com>
+Subject: Re: [PATCH 6/9] PCI: consolidate PCI config entry in drivers/pci
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Alex Bounine <alex.bou9@gmail.com>,
+        mporter@kernel.crashing.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Russell King <linux@armlinux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-10-31 at 15:40 +0000, Pasha Tatashin wrote:
-> 
-> On 10/17/18 7:54 PM, Alexander Duyck wrote:
-> > This patch introduces a new iterator for_each_free_mem_pfn_range_in_zone.
-> > 
-> > This iterator will take care of making sure a given memory range provided
-> > is in fact contained within a zone. It takes are of all the bounds checking
-> > we were doing in deferred_grow_zone, and deferred_init_memmap. In addition
-> > it should help to speed up the search a bit by iterating until the end of a
-> > range is greater than the start of the zone pfn range, and will exit
-> > completely if the start is beyond the end of the zone.
-> > 
-> > This patch adds yet another iterator called
-> > for_each_free_mem_range_in_zone_from and then uses it to support
-> > initializing and freeing pages in groups no larger than MAX_ORDER_NR_PAGES.
-> > By doing this we can greatly improve the cache locality of the pages while
-> > we do several loops over them in the init and freeing process.
-> > 
-> > We are able to tighten the loops as a result since we only really need the
-> > checks for first_init_pfn in our first iteration and after that we can
-> > assume that all future values will be greater than this. So I have added a
-> > function called deferred_init_mem_pfn_range_in_zone that primes the
-> > iterators and if it fails we can just exit.
-> > 
-> > On my x86_64 test system with 384GB of memory per node I saw a reduction in
-> > initialization time from 1.85s to 1.38s as a result of this patch.
-> > 
-> > Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> 
-> Hi Alex,
-> 
-> Could you please split this patch into two parts:
-> 
-> 1. Add deferred_init_maxorder()
-> 2. Add memblock iterator?
-> 
-> This would allow a better bisecting in case of problems. Chaning two
-> loops into deferred_init_maxorder() while a good idea, is still
-> non-trivial and might lead to bugs.
-> 
-> Thank you,
-> Pavel
+Hi Christoph,
 
-I can do that, but I will need to flip the order. I will add the new
-iterator first and then deferred_init_maxorder. Otherwise the
-intermediate step ends up being too much throw-away code.
 
-- Alex
+On Fri, Oct 19, 2018 at 9:58 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> On Fri, Oct 19, 2018 at 9:23 PM Russell King - ARM Linux
+> <linux@armlinux.org.uk> wrote:
+>
+> > > index a68b34183107..b185794549be 100644
+> > > --- a/arch/arm/mach-pxa/Kconfig
+> > > +++ b/arch/arm/mach-pxa/Kconfig
+> > > @@ -125,7 +125,7 @@ config MACH_ARMCORE
+> > >       bool "CompuLab CM-X255/CM-X270 modules"
+> > >       select ARCH_HAS_DMA_SET_COHERENT_MASK if PCI
+> > >       select IWMMXT
+> > > -     select MIGHT_HAVE_PCI
+> > > +     select HAVE_PCI
+> > >       select NEED_MACH_IO_H if PCI
+> > >       select PXA25x
+> > >       select PXA27x
+> >
+> > This is wrong.  "MIGHT_HAVE_PCI" is _not_ the same as "HAVE_PCI" - we
+> > have a bunch of platforms that mandatorily have PCI and these select
+> > PCI directly.  "MIGHT_HAVE_PCI" controls the _visibility_ of the PCI
+> > menu option, but does not prevent it being selected.  Your patch will
+> > cause Kconfig to complain for those which mandatorily have PCI but
+> > do not set HAVE_PCI.
+>
+>
+> Good catch!
+> But, adding a bunch of 'select HAVE_PCI' along with 'select PCI' is ugly.
+>
+> Do you have any suggestion?
+>
+> How about letting CONFIG_ARM to select HAVE_PCI ?
+>
 
+
+I applied 1/9, 3/9, 4/9, 5/9.
+(I think 2/9 should be squashed to 9/9)
+
+As Russell pointed out, we need to avoid
+the unmet dependency.
+
+
+Are you planning to send
+the updated version for 6/9 through - 9/9 ?
+
+If so, could you please rebase 6/9
+so that it is cleanly applicable ?
+
+
+Thanks.
+
+
+--
+Best Regards
+Masahiro Yamada
