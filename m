@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26FDCC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:18:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4005C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:19:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3CC020843
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:18:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7905F20664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:19:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ChcPGIuU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3CC020843
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="q9zNulno"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7905F20664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731761AbeKAILh (ORCPT
+        id S1731748AbeKAILh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 1 Nov 2018 04:11:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35272 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:35402 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731646AbeKAILd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:11:33 -0400
+        id S1731717AbeKAILf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:11:35 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C01522086D;
-        Wed, 31 Oct 2018 23:11:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B29020880;
+        Wed, 31 Oct 2018 23:11:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027480;
-        bh=vhSu8B/avVRpE3msSMHtbA+HJ3J/a8PWhgCm93F+va8=;
+        s=default; t=1541027483;
+        bh=RWXbBJtmaMm32DMGkI0IVylxevzO18eICw3L80EFb9Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ChcPGIuUZ9kg0D+6UxHkfGwCSHcM3nWAJRN+uO9BZbB+ZdSumOslI9TkKFduj7DVH
-         7a9Lqs0LE2rfhPWXZU9youmvEHN/5YP+WapmXtInUECjcz/XR+ut4OYQvZawu8Aaqj
-         2z/mpNUXMBLEwxyxq6qQirnakS1AiDG78YygiejM=
+        b=q9zNulnoHU9zzC/WJ9hQx7QiDQTbKyKoaLRUPnHzD/FOONIPzLMtiqK0cXk3Zez+P
+         hawwimKJojfuJt+3qaap9u5CHEWZjdKhODSHcvANgcg+Alzjua8A5Oo/MPk2IcrP94
+         Dr20q69+fTOnMUmfieS1Xpvf2Fm28h3tEryBUeqE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Finn Thain <fthain@telegraphics.com.au>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
+Cc:     Javier Martinez Canillas <javierm@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 29/48] scsi: esp_scsi: Track residual for PIO transfers
-Date:   Wed, 31 Oct 2018 19:10:35 -0400
-Message-Id: <20181031231054.29333-29-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 33/48] tpm: suppress transmit cmd error logs when TPM 1.2 is disabled/deactivated
+Date:   Wed, 31 Oct 2018 19:10:39 -0400
+Message-Id: <20181031231054.29333-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031231054.29333-1-sashal@kernel.org>
 References: <20181031231054.29333-1-sashal@kernel.org>
@@ -53,74 +53,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Finn Thain <fthain@telegraphics.com.au>
+From: Javier Martinez Canillas <javierm@redhat.com>
 
-[ Upstream commit fd47d919d0c336e7c22862b51ee94927ffea227a ]
+[ Upstream commit 0d6d0d62d9505a9816716aa484ebd0b04c795063 ]
 
-If a target disconnects during a PIO data transfer the command may fail
-when the target reconnects:
+For TPM 1.2 chips the system setup utility allows to set the TPM device in
+one of the following states:
 
-scsi host1: DMA length is zero!
-scsi host1: cur adr[04380000] len[00000000]
+  * Active: Security chip is functional
+  * Inactive: Security chip is visible, but is not functional
+  * Disabled: Security chip is hidden and is not functional
 
-The scsi bus is then reset. This happens because the residual reached
-zero before the transfer was completed.
+When choosing the "Inactive" state, the TPM 1.2 device is enumerated and
+registered, but sending TPM commands fail with either TPM_DEACTIVATED or
+TPM_DISABLED depending if the firmware deactivated or disabled the TPM.
 
-The usual residual calculation relies on the Transfer Count registers.
-That works for DMA transfers but not for PIO transfers. Fix the problem
-by storing the PIO transfer residual and using that to correctly
-calculate bytes_sent.
+Since these TPM 1.2 error codes don't have special treatment, inactivating
+the TPM leads to a very noisy kernel log buffer that shows messages like
+the following:
 
-Fixes: 6fe07aaffbf0 ("[SCSI] m68k: new mac_esp scsi driver")
-Tested-by: Stan Johnson <userm57@yahoo.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Tested-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+  tpm_tis 00:05: 1.2 TPM (device-id 0x0, rev-id 78)
+  tpm tpm0: A TPM error (6) occurred attempting to read a pcr value
+  tpm tpm0: TPM is disabled/deactivated (0x6)
+  tpm tpm0: A TPM error (6) occurred attempting get random
+  tpm tpm0: A TPM error (6) occurred attempting to read a pcr value
+  ima: No TPM chip found, activating TPM-bypass! (rc=6)
+  tpm tpm0: A TPM error (6) occurred attempting get random
+  tpm tpm0: A TPM error (6) occurred attempting get random
+  tpm tpm0: A TPM error (6) occurred attempting get random
+  tpm tpm0: A TPM error (6) occurred attempting get random
+
+Let's just suppress error log messages for the TPM_{DEACTIVATED,DISABLED}
+return codes, since this is expected when the TPM 1.2 is set to Inactive.
+
+In that case the kernel log is cleaner and less confusing for users, i.e:
+
+  tpm_tis 00:05: 1.2 TPM (device-id 0x0, rev-id 78)
+  tpm tpm0: TPM is disabled/deactivated (0x6)
+  ima: No TPM chip found, activating TPM-bypass! (rc=6)
+
+Reported-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/esp_scsi.c | 1 +
- drivers/scsi/esp_scsi.h | 2 ++
- drivers/scsi/mac_esp.c  | 2 ++
- 3 files changed, 5 insertions(+)
+ drivers/char/tpm/tpm-interface.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/esp_scsi.c b/drivers/scsi/esp_scsi.c
-index 71cb05b1c3eb..60be0742e2c8 100644
---- a/drivers/scsi/esp_scsi.c
-+++ b/drivers/scsi/esp_scsi.c
-@@ -1349,6 +1349,7 @@ static int esp_data_bytes_sent(struct esp *esp, struct esp_cmd_entry *ent,
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index faf2db122ab9..4f0b1945d020 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -420,7 +420,8 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, const void *cmd,
+ 	header = cmd;
  
- 	bytes_sent = esp->data_dma_len;
- 	bytes_sent -= ecount;
-+	bytes_sent -= esp->send_cmd_residual;
+ 	err = be32_to_cpu(header->return_code);
+-	if (err != 0 && desc)
++	if (err != 0 && err != TPM_ERR_DISABLED && err != TPM_ERR_DEACTIVATED
++	    && desc)
+ 		dev_err(&chip->dev, "A TPM error (%d) occurred %s\n", err,
+ 			desc);
  
- 	/*
- 	 * The am53c974 has a DMA 'pecularity'. The doc states:
-diff --git a/drivers/scsi/esp_scsi.h b/drivers/scsi/esp_scsi.h
-index 84dcbe4a6268..55be43fe7667 100644
---- a/drivers/scsi/esp_scsi.h
-+++ b/drivers/scsi/esp_scsi.h
-@@ -540,6 +540,8 @@ struct esp {
- 
- 	void			*dma;
- 	int			dmarev;
-+
-+	u32			send_cmd_residual;
- };
- 
- /* A front-end driver for the ESP chip should do the following in
-diff --git a/drivers/scsi/mac_esp.c b/drivers/scsi/mac_esp.c
-index 26c67c42985c..1002124bd8bf 100644
---- a/drivers/scsi/mac_esp.c
-+++ b/drivers/scsi/mac_esp.c
-@@ -426,6 +426,8 @@ static void mac_esp_send_pio_cmd(struct esp *esp, u32 addr, u32 esp_count,
- 			scsi_esp_cmd(esp, ESP_CMD_TI);
- 		}
- 	}
-+
-+	esp->send_cmd_residual = esp_count;
- }
- 
- static int mac_esp_irq_pending(struct esp *esp)
 -- 
 2.17.1
 
