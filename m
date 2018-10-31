@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D73F4ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:46:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF142ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:46:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0AD220664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:46:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B798620664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:46:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wmjhJPdR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0AD220664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OKWs37k1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B798620664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729066AbeKAIqr (ORCPT
+        id S1728728AbeKAIHS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:46:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54942 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728705AbeKAIHS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 1 Nov 2018 04:07:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54918 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728704AbeKAIHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:07:16 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 643292081B;
-        Wed, 31 Oct 2018 23:07:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F2E820848;
+        Wed, 31 Oct 2018 23:07:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027227;
-        bh=5I9G2dYuYHbM8b7hQ5md1BXNzHe3WaUGgQqzR0Tnmqw=;
+        s=default; t=1541027226;
+        bh=34y4eytW8REGCP0YpMIKjpVLx2aLXV0OepI83a3odA8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wmjhJPdRd1nXHdXJsWi8ez8gYye/7xpZIDx69uUScD5eej8yMh5tBi14sR/W1R7tx
-         C1dRpZfeaPn/rnuSLrM+2iTVnNWg2pfR/Pyag+OlfEEMqhKtniSEWtHajqRq4WHvBb
-         w6BVHJ4T4zXNuHoxbTEvEJ8QYsRoC6HPdWnC5IIc=
+        b=OKWs37k1Njr8U2OYjmbUB/mJDHBACB8M+V6YcdRCPBy1yvEqqaYK6EfmhJ8g9OGjC
+         CE2XObdYT5dzU/Rhawk1fAxcCerVc1UHxBQUiiaZVNbXr9c7YjY/rFnASUKve1Ikw1
+         NkftIqwklzcO2i3sWT+ORoqz3+q4z6rL2De/9LFU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Evan Green <evgreen@chromium.org>,
+Cc:     Finn Thain <fthain@telegraphics.com.au>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 093/146] scsi: ufs: Schedule clk gating work on correct queue
-Date:   Wed, 31 Oct 2018 19:04:48 -0400
-Message-Id: <20181031230541.28822-93-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 092/146] scsi: esp_scsi: Track residual for PIO transfers
+Date:   Wed, 31 Oct 2018 19:04:47 -0400
+Message-Id: <20181031230541.28822-92-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -53,68 +53,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Evan Green <evgreen@chromium.org>
+From: Finn Thain <fthain@telegraphics.com.au>
 
-[ Upstream commit f4bb7704699beee9edfbee875daa9089c86cf724 ]
+[ Upstream commit fd47d919d0c336e7c22862b51ee94927ffea227a ]
 
-With commit 10e5e37581fc ("scsi: ufs: Add clock ungating to a separate
-workqueue"), clock gating work was moved to a separate work queue with
-WQ_MEM_RECLAIM set, since clock gating could occur from a memory reclaim
-context. Unfortunately, clk_gating.gate_work was left queued via
-schedule_delayed_work, which is a system workqueue that does not have
-WQ_MEM_RECLAIM set.  Because ufshcd_ungate_work attempts to cancel
-gate_work, the following warning appears:
+If a target disconnects during a PIO data transfer the command may fail
+when the target reconnects:
 
-[   14.174170] workqueue: WQ_MEM_RECLAIM ufs_clk_gating_0:ufshcd_ungate_work is flushing !WQ_MEM_RECLAIM events:ufshcd_gate_work
-[   14.174179] WARNING: CPU: 4 PID: 173 at kernel/workqueue.c:2440 check_flush_dependency+0x110/0x118
-[   14.205725] CPU: 4 PID: 173 Comm: kworker/u16:3 Not tainted 4.14.68 #1
-[   14.212437] Hardware name: Google Cheza (rev1) (DT)
-[   14.217459] Workqueue: ufs_clk_gating_0 ufshcd_ungate_work
-[   14.223107] task: ffffffc0f6a40080 task.stack: ffffff800a490000
-[   14.229195] PC is at check_flush_dependency+0x110/0x118
-[   14.234569] LR is at check_flush_dependency+0x110/0x118
-[   14.239944] pc : [<ffffff80080cad14>] lr : [<ffffff80080cad14>] pstate: 60c001c9
-[   14.333050] Call trace:
-[   14.427767] [<ffffff80080cad14>] check_flush_dependency+0x110/0x118
-[   14.434219] [<ffffff80080cafec>] start_flush_work+0xac/0x1fc
-[   14.440046] [<ffffff80080caeec>] flush_work+0x40/0x94
-[   14.445246] [<ffffff80080cb288>] __cancel_work_timer+0x11c/0x1b8
-[   14.451433] [<ffffff80080cb4b8>] cancel_delayed_work_sync+0x20/0x30
-[   14.457886] [<ffffff80085b9294>] ufshcd_ungate_work+0x24/0xd0
-[   14.463800] [<ffffff80080cfb04>] process_one_work+0x32c/0x690
-[   14.469713] [<ffffff80080d0154>] worker_thread+0x218/0x338
-[   14.475361] [<ffffff80080d527c>] kthread+0x120/0x130
-[   14.480470] [<ffffff8008084814>] ret_from_fork+0x10/0x18
+scsi host1: DMA length is zero!
+scsi host1: cur adr[04380000] len[00000000]
 
-The simple solution is to put the gate_work on the same WQ_MEM_RECLAIM
-work queue as the ungate_work.
+The scsi bus is then reset. This happens because the residual reached
+zero before the transfer was completed.
 
-Fixes: 10e5e37581fc ("scsi: ufs: Add clock ungating to a separate workqueue")
-Signed-off-by: Evan Green <evgreen@chromium.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+The usual residual calculation relies on the Transfer Count registers.
+That works for DMA transfers but not for PIO transfers. Fix the problem
+by storing the PIO transfer residual and using that to correctly
+calculate bytes_sent.
+
+Fixes: 6fe07aaffbf0 ("[SCSI] m68k: new mac_esp scsi driver")
+Tested-by: Stan Johnson <userm57@yahoo.com>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Tested-by: Michael Schmitz <schmitzmic@gmail.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/ufs/ufshcd.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/scsi/esp_scsi.c | 1 +
+ drivers/scsi/esp_scsi.h | 2 ++
+ drivers/scsi/mac_esp.c  | 2 ++
+ 3 files changed, 5 insertions(+)
 
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index c55f38ec391c..54074dd483a7 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -1691,8 +1691,9 @@ static void __ufshcd_release(struct ufs_hba *hba)
+diff --git a/drivers/scsi/esp_scsi.c b/drivers/scsi/esp_scsi.c
+index c3fc34b9964d..9e5d3f7d29ae 100644
+--- a/drivers/scsi/esp_scsi.c
++++ b/drivers/scsi/esp_scsi.c
+@@ -1338,6 +1338,7 @@ static int esp_data_bytes_sent(struct esp *esp, struct esp_cmd_entry *ent,
  
- 	hba->clk_gating.state = REQ_CLKS_OFF;
- 	trace_ufshcd_clk_gating(dev_name(hba->dev), hba->clk_gating.state);
--	schedule_delayed_work(&hba->clk_gating.gate_work,
--			msecs_to_jiffies(hba->clk_gating.delay_ms));
-+	queue_delayed_work(hba->clk_gating.clk_gating_workq,
-+			   &hba->clk_gating.gate_work,
-+			   msecs_to_jiffies(hba->clk_gating.delay_ms));
+ 	bytes_sent = esp->data_dma_len;
+ 	bytes_sent -= ecount;
++	bytes_sent -= esp->send_cmd_residual;
+ 
+ 	/*
+ 	 * The am53c974 has a DMA 'pecularity'. The doc states:
+diff --git a/drivers/scsi/esp_scsi.h b/drivers/scsi/esp_scsi.h
+index 8163dca2071b..a77772777a30 100644
+--- a/drivers/scsi/esp_scsi.h
++++ b/drivers/scsi/esp_scsi.h
+@@ -540,6 +540,8 @@ struct esp {
+ 
+ 	void			*dma;
+ 	int			dmarev;
++
++	u32			send_cmd_residual;
+ };
+ 
+ /* A front-end driver for the ESP chip should do the following in
+diff --git a/drivers/scsi/mac_esp.c b/drivers/scsi/mac_esp.c
+index eb551f3cc471..71879f2207e0 100644
+--- a/drivers/scsi/mac_esp.c
++++ b/drivers/scsi/mac_esp.c
+@@ -427,6 +427,8 @@ static void mac_esp_send_pio_cmd(struct esp *esp, u32 addr, u32 esp_count,
+ 			scsi_esp_cmd(esp, ESP_CMD_TI);
+ 		}
+ 	}
++
++	esp->send_cmd_residual = esp_count;
  }
  
- void ufshcd_release(struct ufs_hba *hba)
+ static int mac_esp_irq_pending(struct esp *esp)
 -- 
 2.17.1
 
