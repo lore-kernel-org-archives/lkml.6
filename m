@@ -7,46 +7,43 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21AA4C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EDA6ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D47A22064C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DB8A2064C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:09:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ql2xjsmf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D47A22064C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QSb9HT3m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DB8A2064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730721AbeKAIJy (ORCPT
+        id S1730759AbeKAIJ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:09:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60130 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:09:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730659AbeKAIJx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:09:53 -0400
+        id S1730722AbeKAIJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:09:56 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58BE920664;
-        Wed, 31 Oct 2018 23:09:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1939220664;
+        Wed, 31 Oct 2018 23:09:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027382;
-        bh=T8OeCwzhTo+0rk4FgpOODPVJ89RJlS63o8OhJiFlr4Q=;
+        s=default; t=1541027384;
+        bh=uHjYdV9L6R9HX9hPjAUwyhbf2iLgcyn02fZ8eBRnsJ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ql2xjsmfeJjC6GYzAQLPVumrrDyZtp8UC1DU5GAe1P2P1Iv/HarHw6cRuqiRVbyW5
-         ZnbI62L5qPy7gvDbV5X0AIe9MTDLKGmwE1QbTqmGGaetANbZUTbI4mRJZorSPI9cxA
-         THxe5XVG7AyD3Z8m6b69iBYTC4/QhLAnsub8sZj0=
+        b=QSb9HT3mac1iYKUIGzH/REQX1sZ2ieDKtbFhso+xnoBUadR3XjS56PZeQKpETD3u9
+         o7cbi1fc8/2xDOxN3QVWYV186bTrQtsw36AWNC9hDlMJNj3DPDbFl9w8Zo6aJvKksR
+         mARClBmj5zqm5vKDg5HiYarTMjyB6D35CcO8+vTw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     James Smart <jsmart2021@gmail.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <james.smart@broadcom.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 119/126] scsi: lpfc: Correct race with abort on completion path
-Date:   Wed, 31 Oct 2018 19:07:47 -0400
-Message-Id: <20181031230754.29029-119-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 122/126] signal: Always deliver the kernel's SIGKILL and SIGSTOP to a pid namespace init
+Date:   Wed, 31 Oct 2018 19:07:50 -0400
+Message-Id: <20181031230754.29029-122-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -55,57 +52,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Smart <jsmart2021@gmail.com>
+From: "Eric W. Biederman" <ebiederm@xmission.com>
 
-[ Upstream commit ca7fb76e091f889cfda1287c07a9358f73832b39 ]
+[ Upstream commit 3597dfe01d12f570bc739da67f857fd222a3ea66 ]
 
-On io completion, the driver is taking an adapter wide lock and nulling the
-scsi command back pointer.  The nulling of the back pointer is to signify the
-io was completed and the scsi_done() routine was called.  However, the routine
-makes no check to see if the abort routine had done the same thing and
-possibly nulled the pointer. Thus it may doubly-complete the io.
+Instead of playing whack-a-mole and changing SEND_SIG_PRIV to
+SEND_SIG_FORCED throughout the kernel to ensure a pid namespace init
+gets signals sent by the kernel, stop allowing a pid namespace init to
+ignore SIGKILL or SIGSTOP sent by the kernel.  A pid namespace init is
+only supposed to be able to ignore signals sent from itself and
+children with SIG_DFL.
 
-Make the following mods:
-
-- Check to make sure forward progress (call scsi_done()) only happens if the
-  command pointer was non-null.
-
-- As the taking of the lock, which is adapter wide, is very costly on a system
-  under load, null the pointer using an xchg operation rather than under lock.
-
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <james.smart@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 921cf9f63089 ("signals: protect cinit from unblocked SIG_DFL signals")
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/lpfc/lpfc_scsi.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ kernel/signal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_scsi.c b/drivers/scsi/lpfc/lpfc_scsi.c
-index a94fb9f8bb44..3b3af1459008 100644
---- a/drivers/scsi/lpfc/lpfc_scsi.c
-+++ b/drivers/scsi/lpfc/lpfc_scsi.c
-@@ -4140,9 +4140,17 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba *phba, struct lpfc_iocbq *pIocbIn,
- 	}
- 	lpfc_scsi_unprep_dma_buf(phba, lpfc_cmd);
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 41a5dd2df27d..1628b67992d6 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -1009,7 +1009,7 @@ static int __send_signal(int sig, struct siginfo *info, struct task_struct *t,
  
--	spin_lock_irqsave(&phba->hbalock, flags);
--	lpfc_cmd->pCmd = NULL;
--	spin_unlock_irqrestore(&phba->hbalock, flags);
-+	/* If pCmd was set to NULL from abort path, do not call scsi_done */
-+	if (xchg(&lpfc_cmd->pCmd, NULL) == NULL) {
-+		lpfc_printf_vlog(vport, KERN_INFO, LOG_FCP,
-+				 "0711 FCP cmd already NULL, sid: 0x%06x, "
-+				 "did: 0x%06x, oxid: 0x%04x\n",
-+				 vport->fc_myDID,
-+				 (pnode) ? pnode->nlp_DID : 0,
-+				 phba->sli_rev == LPFC_SLI_REV4 ?
-+				 lpfc_cmd->cur_iocbq.sli4_xritag : 0xffff);
-+		return;
-+	}
+ 	result = TRACE_SIGNAL_IGNORED;
+ 	if (!prepare_signal(sig, t,
+-			from_ancestor_ns || (info == SEND_SIG_FORCED)))
++			from_ancestor_ns || (info == SEND_SIG_PRIV) || (info == SEND_SIG_FORCED)))
+ 		goto ret;
  
- 	/* The sdev is not guaranteed to be valid post scsi_done upcall. */
- 	cmd->scsi_done(cmd);
+ 	pending = group ? &t->signal->shared_pending : &t->pending;
 -- 
 2.17.1
 
