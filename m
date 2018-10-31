@@ -2,38 +2,37 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3E60ECDE44
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7E0FC0044C
 	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 05:27:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 721C320821
+	by mail.kernel.org (Postfix) with ESMTP id A081120838
 	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 05:27:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 721C320821
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A081120838
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728645AbeJaOX3 (ORCPT
+        id S1728712AbeJaOXa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 10:23:29 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:26236 "EHLO mxhk.zte.com.cn"
+        Wed, 31 Oct 2018 10:23:30 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:25490 "EHLO mxhk.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726200AbeJaOX2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 10:23:28 -0400
+        id S1728564AbeJaOX3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 10:23:29 -0400
 Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id E4BAA8EF76413111040A;
-        Wed, 31 Oct 2018 13:26:53 +0800 (CST)
+        by Forcepoint Email with ESMTPS id E2A6BDED23694E23EF8C;
+        Wed, 31 Oct 2018 13:26:54 +0800 (CST)
 Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id w9V5Qk2T037555;
-        Wed, 31 Oct 2018 13:26:46 +0800 (GMT-8)
+        by mse01.zte.com.cn with ESMTP id w9V5QmZa037582;
+        Wed, 31 Oct 2018 13:26:48 +0800 (GMT-8)
         (envelope-from peng.hao2@zte.com.cn)
 Received: from localhost.localdomain.localdomain ([10.74.120.59])
           by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018103113270743-7767263 ;
-          Wed, 31 Oct 2018 13:27:07 +0800 
+          with ESMTP id 2018103113270896-7767264 ;
+          Wed, 31 Oct 2018 13:27:08 +0800 
 From:   Peng Hao <peng.hao2@zte.com.cn>
 To:     robh+dt@kernel.org, mark.rutland@arm.com, arnd@arndb.de,
         gregkh@linuxfoundation.org, andy@infradead.org,
@@ -41,137 +40,66 @@ To:     robh+dt@kernel.org, mark.rutland@arm.com, arnd@arndb.de,
 Cc:     linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
         hutao@cn.fujitsu.com, linux-doc@vger.kernel.org,
         Peng Hao <peng.hao2@zte.com.cn>
-Subject: [PATCH V4 4/5]  misc/pvpanic: add support to get pvpanic device info by FDT
-Date:   Wed, 31 Oct 2018 21:37:20 +0800
-Message-Id: <1540993041-25611-4-git-send-email-peng.hao2@zte.com.cn>
+Subject: [PATCH V4 5/5]  dt-bindings/misc/pvpanic :add document for pvpanic-mmio
+Date:   Wed, 31 Oct 2018 21:37:21 +0800
+Message-Id: <1540993041-25611-5-git-send-email-peng.hao2@zte.com.cn>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1540993041-25611-1-git-send-email-peng.hao2@zte.com.cn>
 References: <1540993041-25611-1-git-send-email-peng.hao2@zte.com.cn>
 X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-10-31 13:27:07,
+ 21, 2013) at 2018-10-31 13:27:09,
         Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-10-31 13:26:38,
-        Serialize complete at 2018-10-31 13:26:38
-X-MAIL: mse01.zte.com.cn w9V5Qk2T037555
+ 2018-10-31 13:26:39,
+        Serialize complete at 2018-10-31 13:26:39
+X-MAIL: mse01.zte.com.cn w9V5QmZa037582
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By default, when ACPI tables and FDT coexist for ARM64,
-current kernel takes precedence over FDT to get device information.
-Virt machine in qemu provides both FDT and ACPI table. This patch
-increases the way to get information through FDT.
+ Add dt-bindings document for "qemu:pvpanic-mmio".
 
 Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
 ---
- drivers/misc/pvpanic.c | 68 +++++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 64 insertions(+), 4 deletions(-)
+ .../devicetree/bindings/misc/pvpanic-mmio.txt      | 29 ++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/misc/pvpanic-mmio.txt
 
-diff --git a/drivers/misc/pvpanic.c b/drivers/misc/pvpanic.c
-index d0e28b2..861a0eb 100644
---- a/drivers/misc/pvpanic.c
-+++ b/drivers/misc/pvpanic.c
-@@ -3,15 +3,18 @@
-  *  Pvpanic Device Support
-  *
-  *  Copyright (C) 2013 Fujitsu.
-+ *  Copyright (C) 2018 ZTE.
-  */
- 
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
-+#include <linux/acpi.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
--#include <linux/init.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
- #include <linux/types.h>
--#include <linux/acpi.h>
- 
- MODULE_AUTHOR("Hu Tao <hutao@cn.fujitsu.com>");
- MODULE_DESCRIPTION("pvpanic device driver");
-@@ -22,7 +25,7 @@
- 
- static const struct acpi_device_id pvpanic_device_ids[] = {
- 	{ "QEMU0001", 0 },
--	{ "", 0 },
-+	{ "", 0 }
- };
- MODULE_DEVICE_TABLE(acpi, pvpanic_device_ids);
- 
-@@ -60,6 +63,32 @@
- 	.priority = 1, /* let this called before broken drm_fb_helper */
- };
- 
-+static int pvpanic_mmio_probe(struct platform_device *pdev)
-+{
-+	struct resource *mem;
+diff --git a/Documentation/devicetree/bindings/misc/pvpanic-mmio.txt b/Documentation/devicetree/bindings/misc/pvpanic-mmio.txt
+new file mode 100644
+index 0000000..985e907
+--- /dev/null
++++ b/Documentation/devicetree/bindings/misc/pvpanic-mmio.txt
+@@ -0,0 +1,29 @@
++* QEMU PVPANIC MMIO Configuration bindings
 +
-+	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!mem)
-+		return -EINVAL;
++QEMU's emulation / virtualization targets provide the following PVPANIC
++MMIO Configuration interface on the "virt" machine.
++type:
 +
-+	base = devm_ioremap_resource(&pdev->dev, mem);
-+	if (base == NULL)
-+		return -EFAULT;
++- a read-write, 16-bit wide data register.
 +
-+	atomic_notifier_chain_register(&panic_notifier_list,
-+				       &pvpanic_panic_nb);
++QEMU exposes the data register to guests as memory mapped registers.
 +
-+	return 0;
-+}
++Required properties:
 +
-+static int pvpanic_mmio_remove(struct platform_device *pdev)
-+{
++- compatible: "qemu,pvpanic-mmio".
++- reg: the MMIO region used by the device.
++  * Bytes 0x0  Write panic event to the reg when guest OS panics.
++  * Bytes 0x1  Reserved.
 +
-+	atomic_notifier_chain_unregister(&panic_notifier_list,
-+					 &pvpanic_panic_nb);
++Example:
 +
-+	return 0;
-+}
- 
- static acpi_status
- pvpanic_walk_resources(struct acpi_resource *res, void *context)
-@@ -120,4 +149,35 @@ static int pvpanic_remove(struct acpi_device *device)
- 	return 0;
- }
- 
--module_acpi_driver(pvpanic_driver);
-+static const struct of_device_id pvpanic_mmio_match[] = {
-+	{ .compatible = "qemu,pvpanic-mmio", },
-+	{}
++/ {
++        #size-cells = <0x2>;
++        #address-cells = <0x2>;
++
++        pvpanic-mmio@9060000 {
++                compatible = "qemu,pvpanic-mmio";
++                reg = <0x0 0x9060000 0x0 0x2>;
++        };
 +};
 +
-+static struct platform_driver pvpanic_mmio_driver = {
-+	.driver = {
-+		.name = "pvpanic-mmio",
-+		.of_match_table = pvpanic_mmio_match,
-+	},
-+	.probe = pvpanic_mmio_probe,
-+	.remove = pvpanic_mmio_remove,
-+};
-+
-+static int __init pvpanic_mmio_init(void)
-+{
-+	if (acpi_disabled)
-+		return platform_driver_register(&pvpanic_mmio_driver);
-+	else
-+		return acpi_bus_register_driver(&pvpanic_driver);
-+}
-+
-+static void __exit pvpanic_mmio_exit(void)
-+{
-+	if (acpi_disabled)
-+		platform_driver_unregister(&pvpanic_mmio_driver);
-+	else
-+		acpi_bus_unregister_driver(&pvpanic_driver);
-+}
-+
-+module_init(pvpanic_mmio_init);
-+module_exit(pvpanic_mmio_exit);
 -- 
 1.8.3.1
 
