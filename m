@@ -2,95 +2,78 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A30A8C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 07:20:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 127A5C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 07:27:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 391C820657
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 07:20:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 391C820657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id CC96C20838
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 07:27:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tpMJ8J1q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC96C20838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727115AbeJaQRn (ORCPT
+        id S1726665AbeJaQYE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 12:17:43 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36570 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726097AbeJaQRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 12:17:43 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C8F4C80D;
-        Wed, 31 Oct 2018 00:20:48 -0700 (PDT)
-Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.194.38])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 716323F557;
-        Wed, 31 Oct 2018 00:20:46 -0700 (PDT)
-Subject: Re: [PATCH v5 2/2] sched/fair: update scale invariance of PELT
-To:     Vincent Guittot <vincent.guittot@linaro.org>, peterz@infradead.org,
-        mingo@kernel.org, linux-kernel@vger.kernel.org
-Cc:     rjw@rjwysocki.net, Morten.Rasmussen@arm.com,
-        patrick.bellasi@arm.com, pjt@google.com, bsegall@google.com,
-        thara.gopinath@linaro.org, pkondeti@codeaurora.org
-References: <1540570303-6097-1-git-send-email-vincent.guittot@linaro.org>
- <1540570303-6097-3-git-send-email-vincent.guittot@linaro.org>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <6d0b324e-5e26-a510-9bcd-97f475e515ed@arm.com>
-Date:   Wed, 31 Oct 2018 08:20:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 31 Oct 2018 12:24:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35948 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725992AbeJaQYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 12:24:04 -0400
+Received: from tiger (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 342DA205F4;
+        Wed, 31 Oct 2018 07:26:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540970828;
+        bh=AFPIwubJbUYo6sDFilTlnrEq6pQIrVx6OpKTAwRdHEE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tpMJ8J1qaQACckEEqnxlfQDpzTrPDc9bwg+Fw90GDMa4jQXlN4JWtUq4qAM4lKPHj
+         ZiLsEUBqROp2rzzUw6OKKGatOiEW1JDrxPadHhGIhpbsDUVg/jFQfDTjqzVLFSB4PN
+         +3Ji1O41P7Iy8kQ18ZthgPfytfvCgvIQea0QsOGk=
+Date:   Wed, 31 Oct 2018 15:26:39 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Fabio Estevam <fabio.estevam@nxp.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Franck Lenormand <franck.lenormand@nxp.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "David S . Miller " <davem@davemloft.net>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH v4 3/4] ARM: dts: imx6ull: Add dcp node
+Message-ID: <20181031072637.GJ10386@tiger>
+References: <cover.1539779579.git.leonard.crestez@nxp.com>
+ <f503eea6c702aeff091f4c03d4059b67ec17b2b4.1539779579.git.leonard.crestez@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <1540570303-6097-3-git-send-email-vincent.guittot@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f503eea6c702aeff091f4c03d4059b67ec17b2b4.1539779579.git.leonard.crestez@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/26/18 6:11 PM, Vincent Guittot wrote:
+On Wed, Oct 17, 2018 at 12:37:54PM +0000, Leonard Crestez wrote:
+> The DCP block on 6ull has no major differences other than requiring
+> explicit clock enabling.
+> 
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+> Reviewed-by: Fabio Estevam <festevam@gmail.com>
 
-[...]
-
->   static int select_idle_sibling(struct task_struct *p, int prev_cpu, int cpu);
->   static unsigned long task_h_load(struct task_struct *p);
-> @@ -764,7 +763,7 @@ void post_init_entity_util_avg(struct sched_entity *se)
->   			 * such that the next switched_to_fair() has the
->   			 * expected state.
->   			 */
-> -			se->avg.last_update_time = cfs_rq_clock_task(cfs_rq);
-> +			se->avg.last_update_time = cfs_rq_clock_pelt(cfs_rq);
->   			return;
->   		}
->   	}
-
-There is this 1/cpu scaling of se->avg.util_sum (running_sum) in 
-update_tg_cfs_runnable() so it can be used to calculate 
-se->avg.runnable_load_sum (runnable_sum). I guess with your approach 
-this should be removed.
-
-> @@ -3466,7 +3465,7 @@ static void detach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
->   /* Update task and its cfs_rq load average */
->   static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
->   {
-> -	u64 now = cfs_rq_clock_task(cfs_rq);
-> +	u64 now = cfs_rq_clock_pelt(cfs_rq);
->   	struct rq *rq = rq_of(cfs_rq);
->   	int cpu = cpu_of(rq);
->   	int decayed;
-> @@ -6694,6 +6693,12 @@ done: __maybe_unused;
->   	if (new_tasks > 0)
->   		goto again;
->   
-> +	/*
-> +	 * rq is about to be idle, check if we need to update the
-> +	 * lost_idle_time of clock_pelt
-> +	 */
-> +	update_idle_rq_clock_pelt(rq);
-> +
->   	return NULL;
->   }
-
-[...]
+Applied, thanks.
