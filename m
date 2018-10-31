@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEE3EC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB31BECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77BEC20843
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7368420821
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:06:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="x2i39ULR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77BEC20843
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCp2qZ+/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7368420821
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728061AbeKAIGa (ORCPT
+        id S1728097AbeKAIGd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:06:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53400 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:06:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728027AbeKAIG3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:06:29 -0400
+        id S1727984AbeKAIGa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:06:30 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E446520838;
-        Wed, 31 Oct 2018 23:06:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB3AD20843;
+        Wed, 31 Oct 2018 23:06:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027178;
-        bh=Xg6sbxXu+ozFHaqwMu2qmxQMNArdSDC4OQGg43cNYpc=;
+        s=default; t=1541027179;
+        bh=VJIveXiCnAmoabm4oI36g6Ps2qFbn500SMnUQfuGQ00=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x2i39ULRZFJ1U+wtWuJIURptLxejU6QR+TfUfpXL9LNS3+pZA0IIv2LiRE0OZFR4R
-         qn1ru2GcxvjAT8+xxDsaniurIscFB8dpDe0a9YiVYcaDkRdUOe59+ZN5oKXTWhStnc
-         KKVwC7tNRI1Q1kgqWW0TbHG+heqJy3mN5wlnyGOI=
+        b=aCp2qZ+/GTQYS1ibw7zQBbXTD+iD3AvJ7vEGqisfHE6SAPjEIlcF3diERchqMrbE0
+         zs6PDqmUFzZNZPMd9Utx2NBdebUhT46JRABeDyOAvpJsr5STkPsZPy6MMz8YWd83r6
+         VsLXBf1v9gemtYi9bBr4NzGHxn1fQqkLIXhbaljA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     James Smart <jsmart2021@gmail.com>, Christoph Hellwig <hch@lst.de>,
+Cc:     Rakesh Pillai <pillair@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 040/146] nvme: call nvme_complete_rq when nvmf_check_ready fails for mpath I/O
-Date:   Wed, 31 Oct 2018 19:03:55 -0400
-Message-Id: <20181031230541.28822-40-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 041/146] ath10k: fix tx status flag setting for management frames
+Date:   Wed, 31 Oct 2018 19:03:56 -0400
+Message-Id: <20181031230541.28822-41-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -52,101 +53,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Smart <jsmart2021@gmail.com>
+From: Rakesh Pillai <pillair@codeaurora.org>
 
-[ Upstream commit 783f4a4408e1251d17f333ad56abac24dde988b9 ]
+[ Upstream commit 058a7eab9d9ee12f57282eb0b606668dada70d7a ]
 
-When an io is rejected by nvmf_check_ready() due to validation of the
-controller state, the nvmf_fail_nonready_command() will normally return
-BLK_STS_RESOURCE to requeue and retry.  However, if the controller is
-dying or the I/O is marked for NVMe multipath, the I/O is failed so that
-the controller can terminate or so that the io can be issued on a
-different path.  Unfortunately, as this reject point is before the
-transport has accepted the command, blk-mq ends up completing the I/O
-and never calls nvme_complete_rq(), which is where multipath may preserve
-or re-route the I/O. The end result is, the device user ends up seeing an
-EIO error.
+The tx_status for management frames is being filled
+incorrectly in the flags of skb_cb. This incorrect
+flag setting causes the upper layers to consider that
+the particular frame was not transmitted properly,
+leading to improper behavior.
 
-Example: single path connectivity, controller is under load, and a reset
-is induced.  An I/O is received:
+Set the IEEE80211_TX_STAT_ACK flag in the info flags
+of skb_cb, to indicate the successful transmission of
+the management frame.
 
-  a) while the reset state has been set but the queues have yet to be
-     stopped; or
-  b) after queues are started (at end of reset) but before the reconnect
-     has completed.
+Tested HW: WCN3990
+Tested FW: WLAN.HL.2.0-01188-QCAHLSWMTPLZ-1
 
-The I/O finishes with an EIO status.
-
-This patch makes the following changes:
-
-  - Adds the HOST_PATH_ERROR pathing status from TP4028
-  - Modifies the reject point such that it appears to queue successfully,
-    but actually completes the io with the new pathing status and calls
-    nvme_complete_rq().
-  - nvme_complete_rq() recognizes the new status, avoids resetting the
-    controller (likely was already done in order to get this new status),
-    and calls the multipather to clear the current path that errored.
-    This allows the next command (retry or new command) to select a new
-    path if there is one.
-
-Signed-off-by: James Smart <jsmart2021@gmail.com>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Fixes: dc405152bb64d4ae01c9ac669de25b2d1fb6fc2d
+Signed-off-by: Rakesh Pillai <pillair@codeaurora.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/fabrics.c   | 7 +++++--
- drivers/nvme/host/multipath.c | 7 +++++++
- include/linux/nvme.h          | 1 +
- 3 files changed, 13 insertions(+), 2 deletions(-)
+ drivers/net/wireless/ath/ath10k/wmi.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/nvme/host/fabrics.c b/drivers/nvme/host/fabrics.c
-index 206d63cb1afc..bcd09d3a44da 100644
---- a/drivers/nvme/host/fabrics.c
-+++ b/drivers/nvme/host/fabrics.c
-@@ -552,8 +552,11 @@ blk_status_t nvmf_fail_nonready_command(struct nvme_ctrl *ctrl,
- 	    ctrl->state != NVME_CTRL_DEAD &&
- 	    !blk_noretry_request(rq) && !(rq->cmd_flags & REQ_NVME_MPATH))
- 		return BLK_STS_RESOURCE;
--	nvme_req(rq)->status = NVME_SC_ABORT_REQ;
--	return BLK_STS_IOERR;
+diff --git a/drivers/net/wireless/ath/ath10k/wmi.c b/drivers/net/wireless/ath/ath10k/wmi.c
+index fd612d2905b0..1dced0dae9cd 100644
+--- a/drivers/net/wireless/ath/ath10k/wmi.c
++++ b/drivers/net/wireless/ath/ath10k/wmi.c
+@@ -2336,7 +2336,12 @@ static int wmi_process_mgmt_tx_comp(struct ath10k *ar, u32 desc_id,
+ 	dma_unmap_single(ar->dev, pkt_addr->paddr,
+ 			 msdu->len, DMA_FROM_DEVICE);
+ 	info = IEEE80211_SKB_CB(msdu);
+-	info->flags |= status;
 +
-+	nvme_req(rq)->status = NVME_SC_HOST_PATH_ERROR;
-+	blk_mq_start_request(rq);
-+	nvme_complete_rq(rq);
-+	return BLK_STS_OK;
- }
- EXPORT_SYMBOL_GPL(nvmf_fail_nonready_command);
++	if (status)
++		info->flags &= ~IEEE80211_TX_STAT_ACK;
++	else
++		info->flags |= IEEE80211_TX_STAT_ACK;
++
+ 	ieee80211_tx_status_irqsafe(ar->hw, msdu);
  
-diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index 9fe3fff818b8..b71c9ad1bf45 100644
---- a/drivers/nvme/host/multipath.c
-+++ b/drivers/nvme/host/multipath.c
-@@ -77,6 +77,13 @@ void nvme_failover_req(struct request *req)
- 			queue_work(nvme_wq, &ns->ctrl->ana_work);
- 		}
- 		break;
-+	case NVME_SC_HOST_PATH_ERROR:
-+		/*
-+		 * Temporary transport disruption in talking to the controller.
-+		 * Try to send on a new path.
-+		 */
-+		nvme_mpath_clear_current_path(ns);
-+		break;
- 	default:
- 		/*
- 		 * Reset the controller for any non-ANA error as we don't know
-diff --git a/include/linux/nvme.h b/include/linux/nvme.h
-index 68e91ef5494c..818dbe9331be 100644
---- a/include/linux/nvme.h
-+++ b/include/linux/nvme.h
-@@ -1241,6 +1241,7 @@ enum {
- 	NVME_SC_ANA_PERSISTENT_LOSS	= 0x301,
- 	NVME_SC_ANA_INACCESSIBLE	= 0x302,
- 	NVME_SC_ANA_TRANSITION		= 0x303,
-+	NVME_SC_HOST_PATH_ERROR		= 0x370,
- 
- 	NVME_SC_DNR			= 0x4000,
- };
+ 	ret = 0;
 -- 
 2.17.1
 
