@@ -2,133 +2,318 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MIME_BASE64_TEXT,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 401E6C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:58:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C9E8ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:59:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04BAC20823
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:58:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4020D20821
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 15:59:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sck5c5mL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04BAC20823
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KSTrDzaa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4020D20821
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729740AbeKAA5J (ORCPT
+        id S1729752AbeKAA5g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 20:57:09 -0400
-Received: from mail-yb1-f171.google.com ([209.85.219.171]:43370 "EHLO
-        mail-yb1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729613AbeKAA5J (ORCPT
+        Wed, 31 Oct 2018 20:57:36 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38642 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729613AbeKAA5g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 20:57:09 -0400
-Received: by mail-yb1-f171.google.com with SMTP id g75-v6so6821475yba.10
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 08:58:32 -0700 (PDT)
+        Wed, 31 Oct 2018 20:57:36 -0400
+Received: by mail-pf1-f195.google.com with SMTP id b11-v6so7828985pfi.5;
+        Wed, 31 Oct 2018 08:59:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:mime-version;
-        bh=gIuNUifm++NfLKX2FT/u+YlnmoZZ/CHZyOYngG1xAnw=;
-        b=sck5c5mLLKTiol3mSr7B4m9l7OMSM55AyW1Q/3v88K9cRuFXSzRchLndxuFwOgIG/h
-         a/81nSBKLS1SBW0YBzluzDvhBLqPqP0HdcczfpkkqU/iYJX3TIzfoJNcnNOM/R0BnyOr
-         VB+mbUoffYW15SB9nBaG1vpTjCyLruOYVs+NliESJIWto3qUKoeZSeIbFLptoPAR+mx2
-         Mp6yP2bjiY5Nah0vEy2G1hIE9zQyruhqT8TtHWN67z2uWwSyjbH5p5FxTQfCazfjWVAg
-         FSqQeG12whUVa6vuz16pGN4Xp+p/ifLlonKcYMgN11lMERXUKA71I1FvHZ7u3YyzOJmn
-         Eilw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2w9Mcpjm7MYB5Rop0fmMMmUwu5zTLpOe3lPx2S6vcfU=;
+        b=KSTrDzaaRgCJv3I5gePJ41GHeWAsPzM6ALuCEm0TNTbbhIA+F3j6uTUVyJn8H3y2gU
+         IuUYOJq2n5BmHbO/pPuwqxlXGUhGnT/HpYwmWIjo5r4V7tVvJvIXFl2wOLFkuS2TYvmI
+         mFKi98u6Tl2k/zKbWlm8MJwOKriVBTXY2TY0SMEuP2sh2bT4sD40mkKUzjEx94cxOiME
+         ieOtINq0u4QJETc47eWT3Fycvd8UTXfhTEYDPAB+68DLWO1bTGH5HaQ1RdTa8Pup9DRN
+         7PsxRyEQqGfFawsqLAr+wfYn2dp+KYZxhIDksMaHXAsu+aYSa6bV5XJ1VI3WxW6rH0a8
+         t1rQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:mime-version;
-        bh=gIuNUifm++NfLKX2FT/u+YlnmoZZ/CHZyOYngG1xAnw=;
-        b=O+6fWPgJ+Cums2tMO7tYulLEmf5m9YDJkgYsF9fGIQ+iwHOL9aSxj61lLCVcVbACN4
-         gC4A53wpGtHsxzK5w6/cfiTcGVcTRMsx9cU9JEbr3XRmaiQyfA61bqwdjfSdLyGhlvLq
-         WastI2FCWmnclF/o7zSwWRGzauYqFL2d0IMMF7R+nRMTT7TlvdtJcFN9LIK+fzG0xA4m
-         Gt9GHDk2Kbzs0LY1jmkJyHJ2LZGe+BpxHDT8c9e+6akhK5QN3YsQgi6cNkACu0QIFJHe
-         x37hE/N4IGhKutmCT/rJTmz6YD/vnCRlnq3o+5WVKatS4PtTNH7sCkkuE3uIHsH45409
-         gMSQ==
-X-Gm-Message-State: AGRZ1gJl94IUjMkGwsZSWRKxyhc3cGU+ggS+Knldla9WPswZseBlDES6
-        Qjf0ZsYiI34GqulkB8/cug==
-X-Google-Smtp-Source: AJdET5cKytIRtzTO/FOrOtb9EfC0PvGWMOaNw622GLbyzQGEU/AWd7wp8H3u9Ul7oF8e+EQaBdt2MQ==
-X-Received: by 2002:a25:fc0d:: with SMTP id v13-v6mr3749876ybd.320.1541001511591;
-        Wed, 31 Oct 2018 08:58:31 -0700 (PDT)
-Received: from 960 ([130.254.104.55])
-        by smtp.gmail.com with ESMTPSA id 207-v6sm7503671yww.21.2018.10.31.08.58.30
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2w9Mcpjm7MYB5Rop0fmMMmUwu5zTLpOe3lPx2S6vcfU=;
+        b=uQmaR+EWOQTMZGN0XmQYGbabMtQCiMK1+Vv3waLTyHSxX+T6aUNzTqPtsFzCxIsg+d
+         VIgRcMr5uJANyh0Xql9WD6+nbbvV/FgUyuXY5wCUO/zSL/sJSqrQYQxtQrXT7ij3CJUm
+         Q7NfuzrEowSOsX+4+vgR1wCtwNZdU992Psx0P15MDP1KVWCvmg+qGNtMqELl3+vKGtvq
+         28UO8Q5xqEzKdpqTBOJPVkc0uTXf6h9KvvDLVKIQuiT4eZ1u0rh0wfVVedylCX0E27RA
+         Kp/f5KoE76ML9nvfaVsShYU0gqgz5LmcJb4m982gQ902U8ouhOp1jt7AxqaMsl2CQNv2
+         dy+A==
+X-Gm-Message-State: AGRZ1gJSWj3mksfcqDNOZgXP1fmgahpQmfKyXxRwiP8S5qEMVPwWQWxZ
+        GqKiryBqPbRXJb2KzoQLDIw=
+X-Google-Smtp-Source: AJdET5ekj3ZuRUsPLA4RPeGB0TdlIh0H2bDwnMF5ewlV/cgcmNI/K6e0e1NQkiv63QFcoCxUriuNmg==
+X-Received: by 2002:a63:1848:: with SMTP id 8mr3645014pgy.81.1541001539893;
+        Wed, 31 Oct 2018 08:58:59 -0700 (PDT)
+Received: from nishad ([106.51.27.228])
+        by smtp.gmail.com with ESMTPSA id k72-v6sm60536001pfj.63.2018.10.31.08.58.55
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 31 Oct 2018 08:58:30 -0700 (PDT)
-Message-ID: <ae9b5692e758aba6f4077c9d1dd777e9c096518b.camel@gmail.com>
-Subject: [PATCH] ALSA:hda: fix front speakers on Huawei MBXP.
-From:   ayman.bagabas@gmail.com
-To:     perex@perex.cz, tiwai@suse.com, kailang@realtek.com,
-        hui.wang@canonical.com, alsa-devel@alsa-project.org,
+        Wed, 31 Oct 2018 08:58:59 -0700 (PDT)
+Date:   Wed, 31 Oct 2018 21:28:52 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Slawomir Stepien <sst@poczta.fm>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org
-Cc:     Ayman Bagabas <ayman.bagabas@gmail.com>
-Date:   Wed, 31 Oct 2018 11:58:30 -0400
-Content-Type: multipart/mixed; boundary="=-byBTJOeQLHYICFJ/ioVQ"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
+Subject: [PATCH v7 1/3] staging: iio: ad2s1210: Switch to the gpio descriptor
+ interface
+Message-ID: <1626698317a8f0b1caf5596374088f6d5b6141c9.1541000375.git.nishadkamdar@gmail.com>
+References: <cover.1541000375.git.nishadkamdar@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1541000375.git.nishadkamdar@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Use the gpiod interface instead of the deprecated old non-descriptor
+interface.
 
---=-byBTJOeQLHYICFJ/ioVQ
-Content-Type: text/plain
-Content-Transfer-Encoding: base64
+Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+---
+ drivers/staging/iio/resolver/ad2s1210.c | 106 ++++++++++++++----------
+ drivers/staging/iio/resolver/ad2s1210.h |   3 -
+ 2 files changed, 62 insertions(+), 47 deletions(-)
 
-Cg0K
-
-
---=-byBTJOeQLHYICFJ/ioVQ
-Content-Disposition: attachment;
-	filename="0002-ALSA-hda-fix-front-speakers-on-Huawei-MBXP.patch"
-Content-Transfer-Encoding: base64
-Content-Type: text/x-patch; name="0002-ALSA-hda-fix-front-speakers-on-Huawei-MBXP.patch";
-	charset="UTF-8"
-
-RnJvbSBkNDcyYzA2ODk4Y2Y1YTJhZWJmMWE2ZWY3ZDUwOTVhNjcyZTA4OTAxIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBBeW1hbiBCYWdhYmFzIDxheW1hbi5iYWdhYmFzQGdtYWlsLmNv
-bT4KRGF0ZTogV2VkLCAzMSBPY3QgMjAxOCAxMTozNDoxNSAtMDQwMApTdWJqZWN0OiBbUEFUQ0gg
-Mi8zXSBBTFNBOmhkYTogZml4IGZyb250IHNwZWFrZXJzIG9uIEh1YXdlaSBNQlhQLgoKVGhpcyBw
-YXRjaCBlbmFibGVzIHRoZSBmcm9udCBzcGVha2VycyBvbiBIdWF3ZWkgTWF0ZWJvb2sgWCBQcm8g
-bGFwdG9wcy4KVGhlc2UgbGFwdG9wcyBjb21lIHdpdGggRG9sYnkgQXRtb3Mgc291bmQgc3lzdGVt
-IGFuZCB0aGVzZSBwaW5zCmNvbmZpZ3VyYXRpb24gZW5hYmxlcyB0aGUgZnJvbnQgc3BlYWtlcnMu
-CgpTaWduZWQtb2ZmLWJ5OiBBeW1hbiBCYWdhYmFzIDxheW1hbi5iYWdhYmFzQGdtYWlsLmNvbT4K
-LS0tCiBzb3VuZC9wY2kvaGRhL3BhdGNoX3JlYWx0ZWsuYyB8IDE4ICsrKysrKysrKysrKysrKysr
-KwogMSBmaWxlIGNoYW5nZWQsIDE4IGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9zb3VuZC9w
-Y2kvaGRhL3BhdGNoX3JlYWx0ZWsuYyBiL3NvdW5kL3BjaS9oZGEvcGF0Y2hfcmVhbHRlay5jCmlu
-ZGV4IDNhYzdiYTliMzQyZC4uNGY3YTM5Yzc4ODNjIDEwMDY0NAotLS0gYS9zb3VuZC9wY2kvaGRh
-L3BhdGNoX3JlYWx0ZWsuYworKysgYi9zb3VuZC9wY2kvaGRhL3BhdGNoX3JlYWx0ZWsuYwpAQCAt
-NTQ5Myw2ICs1NDkzLDcgQEAgZW51bSB7CiAJQUxDMjk4X0ZJWFVQX1RQVDQ3MF9ET0NLLAogCUFM
-QzI1NV9GSVhVUF9EVU1NWV9MSU5FT1VUX1ZFUkIsCiAJQUxDMjU1X0ZJWFVQX0RFTExfSEVBRFNF
-VF9NSUMsCisJQUxDMjU2X0ZJWFVQX0hVQVdFSV9NQlhQX1BJTlMsCiAJQUxDMjk1X0ZJWFVQX0hQ
-X1gzNjAsCiAJQUxDMjIxX0ZJWFVQX0hQX0hFQURTRVRfTUlDLAogfTsKQEAgLTYzNDcsNiArNjM0
-OCwyMiBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGhkYV9maXh1cCBhbGMyNjlfZml4dXBzW10gPSB7
-CiAJCS5jaGFpbmVkID0gdHJ1ZSwKIAkJLmNoYWluX2lkID0gQUxDMjY5X0ZJWFVQX0hFQURTRVRf
-TUlDCiAJfSwKKwlbQUxDMjU2X0ZJWFVQX0hVQVdFSV9NQlhQX1BJTlNdID0geworCQkudHlwZSA9
-IEhEQV9GSVhVUF9QSU5TLAorCQkudi5waW5zID0gKGNvbnN0IHN0cnVjdCBoZGFfcGludGJsW10p
-IHsKKwkJCXsweDEyLCAweDkwYTYwMTMwfSwKKwkJCXsweDEzLCAweDQwMDAwMDAwfSwKKwkJCXsw
-eDE0LCAweDkwMTcwMTEwfSwKKwkJCXsweDE4LCAweDQxMTExMWYwfSwKKwkJCXsweDE5LCAweDA0
-YTExMDQwfSwKKwkJCXsweDFhLCAweDQxMTExMWYwfSwKKwkJCXsweDFiLCAweDkwMTcwMTEyfSwK
-KwkJCXsweDFkLCAweDQwNzU5YTA1fSwKKwkJCXsweDFlLCAweDQxMTExMWYwfSwKKwkJCXsweDIx
-LCAweDA0MjExMDIwfSwKKwkJCXsgfSwKKwkJfSwKKwl9LAogCVtBTEMyOTVfRklYVVBfSFBfWDM2
-MF0gPSB7CiAJCS50eXBlID0gSERBX0ZJWFVQX0ZVTkMsCiAJCS52LmZ1bmMgPSBhbGMyOTVfZml4
-dXBfaHBfdG9wX3NwZWFrZXJzLApAQCAtNjU5Miw2ICs2NjA5LDcgQEAgc3RhdGljIGNvbnN0IHN0
-cnVjdCBzbmRfcGNpX3F1aXJrIGFsYzI2OV9maXh1cF90YmxbXSA9IHsKIAlTTkRfUENJX1FVSVJL
-KDB4MTdhYSwgMHg1MTA5LCAiVGhpbmtwYWQiLCBBTEMyNjlfRklYVVBfTElNSVRfSU5UX01JQ19C
-T09TVCksCiAJU05EX1BDSV9RVUlSSygweDE3YWEsIDB4NTExZSwgIlRoaW5rcGFkIiwgQUxDMjk4
-X0ZJWFVQX1RQVDQ3MF9ET0NLKSwKIAlTTkRfUENJX1FVSVJLKDB4MTdhYSwgMHg1MTFmLCAiVGhp
-bmtwYWQiLCBBTEMyOThfRklYVVBfVFBUNDcwX0RPQ0spLAorCVNORF9QQ0lfUVVJUksoMHgxOWU1
-LCAweDMyMDQsICJIdWF3ZWkgTUJYUCIsIEFMQzI1Nl9GSVhVUF9IVUFXRUlfTUJYUF9QSU5TKSwK
-IAlTTkRfUENJX1FVSVJLKDB4MTdhYSwgMHgzYmY4LCAiUXVhbnRhIEZMMSIsIEFMQzI2OV9GSVhV
-UF9QQ01fNDRLKSwKIAlTTkRfUENJX1FVSVJLKDB4MTdhYSwgMHg5ZTU0LCAiTEVOT1ZPIE5CIiwg
-QUxDMjY5X0ZJWFVQX0xFTk9WT19FQVBEKSwKIAlTTkRfUENJX1FVSVJLKDB4MWI3ZCwgMHhhODMx
-LCAiT3JkaXNzaW1vIEVWRTIgIiwgQUxDMjY5VkJfRklYVVBfT1JESVNTSU1PX0VWRTIpLCAvKiBB
-bHNvIGtub3duIGFzIE1hbGF0YSBQQy1CMTMwMyAqLwotLSAKMi4xNy4yCgo=
-
-
---=-byBTJOeQLHYICFJ/ioVQ--
+diff --git a/drivers/staging/iio/resolver/ad2s1210.c b/drivers/staging/iio/resolver/ad2s1210.c
+index ac13b99bd9cb..82ac9847f6f4 100644
+--- a/drivers/staging/iio/resolver/ad2s1210.c
++++ b/drivers/staging/iio/resolver/ad2s1210.c
+@@ -15,7 +15,7 @@
+ #include <linux/slab.h>
+ #include <linux/sysfs.h>
+ #include <linux/delay.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/module.h>
+ 
+ #include <linux/iio/iio.h>
+@@ -67,12 +67,42 @@ enum ad2s1210_mode {
+ 	MOD_RESERVED,
+ };
+ 
++enum ad2s1210_gpios {
++	AD2S1210_SAMPLE,
++	AD2S1210_A0,
++	AD2S1210_A1,
++	AD2S1210_RES0,
++	AD2S1210_RES1,
++};
++
++struct ad2s1210_gpio {
++	const char *name;
++	unsigned long flags;
++};
++
++static const struct ad2s1210_gpio gpios_in[] = {
++	[AD2S1210_SAMPLE] = { .name = "adi,sample", .flags = GPIOD_IN },
++	[AD2S1210_A0] = { .name = "adi,a0", .flags = GPIOD_IN },
++	[AD2S1210_A1] = { .name = "adi,a1", .flags = GPIOD_IN },
++	[AD2S1210_RES0] = { .name = "adi,res0", .flags = GPIOD_IN },
++	[AD2S1210_RES1] = { .name = "adi,res1", .flags = GPIOD_IN },
++};
++
++static const struct ad2s1210_gpio gpios_out[] = {
++	[AD2S1210_SAMPLE] = { .name = "adi,sample", .flags = GPIOD_OUT_LOW },
++	[AD2S1210_A0] = { .name = "adi,a0", .flags = GPIOD_OUT_LOW },
++	[AD2S1210_A1] = { .name = "adi,a1", .flags = GPIOD_OUT_LOW },
++	[AD2S1210_RES0] = { .name = "adi,res0", .flags = GPIOD_OUT_LOW },
++	[AD2S1210_RES1] = { .name = "adi,res1", .flags = GPIOD_OUT_LOW },
++};
++
+ static const unsigned int ad2s1210_resolution_value[] = { 10, 12, 14, 16 };
+ 
+ struct ad2s1210_state {
+ 	const struct ad2s1210_platform_data *pdata;
+ 	struct mutex lock;
+ 	struct spi_device *sdev;
++	struct gpio_desc *gpios[5];
+ 	unsigned int fclkin;
+ 	unsigned int fexcit;
+ 	bool hysteresis;
+@@ -91,8 +121,8 @@ static const int ad2s1210_mode_vals[4][2] = {
+ static inline void ad2s1210_set_mode(enum ad2s1210_mode mode,
+ 				     struct ad2s1210_state *st)
+ {
+-	gpio_set_value(st->pdata->a[0], ad2s1210_mode_vals[mode][0]);
+-	gpio_set_value(st->pdata->a[1], ad2s1210_mode_vals[mode][1]);
++	gpiod_set_value(st->gpios[AD2S1210_A0], ad2s1210_mode_vals[mode][0]);
++	gpiod_set_value(st->gpios[AD2S1210_A1], ad2s1210_mode_vals[mode][1]);
+ 	st->mode = mode;
+ }
+ 
+@@ -152,8 +182,8 @@ int ad2s1210_update_frequency_control_word(struct ad2s1210_state *st)
+ 
+ static unsigned char ad2s1210_read_resolution_pin(struct ad2s1210_state *st)
+ {
+-	int resolution = (gpio_get_value(st->pdata->res[0]) << 1) |
+-			  gpio_get_value(st->pdata->res[1]);
++	int resolution = (gpiod_get_value(st->gpios[AD2S1210_RES0]) << 1) |
++			  gpiod_get_value(st->gpios[AD2S1210_RES1]);
+ 
+ 	return ad2s1210_resolution_value[resolution];
+ }
+@@ -164,10 +194,10 @@ static const int ad2s1210_res_pins[4][2] = {
+ 
+ static inline void ad2s1210_set_resolution_pin(struct ad2s1210_state *st)
+ {
+-	gpio_set_value(st->pdata->res[0],
+-		       ad2s1210_res_pins[(st->resolution - 10) / 2][0]);
+-	gpio_set_value(st->pdata->res[1],
+-		       ad2s1210_res_pins[(st->resolution - 10) / 2][1]);
++	gpiod_set_value(st->gpios[AD2S1210_RES0],
++			ad2s1210_res_pins[(st->resolution - 10) / 2][0]);
++	gpiod_set_value(st->gpios[AD2S1210_RES1],
++			ad2s1210_res_pins[(st->resolution - 10) / 2][1]);
+ }
+ 
+ static inline int ad2s1210_soft_reset(struct ad2s1210_state *st)
+@@ -401,15 +431,15 @@ static ssize_t ad2s1210_clear_fault(struct device *dev,
+ 	int ret;
+ 
+ 	mutex_lock(&st->lock);
+-	gpio_set_value(st->pdata->sample, 0);
++	gpiod_set_value(st->gpios[AD2S1210_SAMPLE], 0);
+ 	/* delay (2 * tck + 20) nano seconds */
+ 	udelay(1);
+-	gpio_set_value(st->pdata->sample, 1);
++	gpiod_set_value(st->gpios[AD2S1210_SAMPLE], 1);
+ 	ret = ad2s1210_config_read(st, AD2S1210_REG_FAULT);
+ 	if (ret < 0)
+ 		goto error_ret;
+-	gpio_set_value(st->pdata->sample, 0);
+-	gpio_set_value(st->pdata->sample, 1);
++	gpiod_set_value(st->gpios[AD2S1210_SAMPLE], 0);
++	gpiod_set_value(st->gpios[AD2S1210_SAMPLE], 1);
+ error_ret:
+ 	mutex_unlock(&st->lock);
+ 
+@@ -466,7 +496,7 @@ static int ad2s1210_read_raw(struct iio_dev *indio_dev,
+ 	s16 vel;
+ 
+ 	mutex_lock(&st->lock);
+-	gpio_set_value(st->pdata->sample, 0);
++	gpiod_set_value(st->gpios[AD2S1210_SAMPLE], 0);
+ 	/* delay (6 * tck + 20) nano seconds */
+ 	udelay(1);
+ 
+@@ -512,7 +542,7 @@ static int ad2s1210_read_raw(struct iio_dev *indio_dev,
+ 	}
+ 
+ error_ret:
+-	gpio_set_value(st->pdata->sample, 1);
++	gpiod_set_value(st->gpios[AD2S1210_SAMPLE], 1);
+ 	/* delay (2 * tck + 20) nano seconds */
+ 	udelay(1);
+ 	mutex_unlock(&st->lock);
+@@ -630,30 +660,23 @@ static const struct iio_info ad2s1210_info = {
+ 
+ static int ad2s1210_setup_gpios(struct ad2s1210_state *st)
+ {
+-	unsigned long flags = st->pdata->gpioin ? GPIOF_DIR_IN : GPIOF_DIR_OUT;
+-	struct gpio ad2s1210_gpios[] = {
+-		{ st->pdata->sample, GPIOF_DIR_IN, "sample" },
+-		{ st->pdata->a[0], flags, "a0" },
+-		{ st->pdata->a[1], flags, "a1" },
+-		{ st->pdata->res[0], flags, "res0" },
+-		{ st->pdata->res[0], flags, "res1" },
+-	};
+-
+-	return gpio_request_array(ad2s1210_gpios, ARRAY_SIZE(ad2s1210_gpios));
+-}
+-
+-static void ad2s1210_free_gpios(struct ad2s1210_state *st)
+-{
+-	unsigned long flags = st->pdata->gpioin ? GPIOF_DIR_IN : GPIOF_DIR_OUT;
+-	struct gpio ad2s1210_gpios[] = {
+-		{ st->pdata->sample, GPIOF_DIR_IN, "sample" },
+-		{ st->pdata->a[0], flags, "a0" },
+-		{ st->pdata->a[1], flags, "a1" },
+-		{ st->pdata->res[0], flags, "res0" },
+-		{ st->pdata->res[0], flags, "res1" },
+-	};
++	struct ad2s1210_gpio *pin = st->pdata->gpioin ? &gpios_in[0] : &gpios_out[0];
++	struct spi_device *spi = st->sdev;
++	int i, ret;
++
++	for (i = 0; i < ARRAY_SIZE(gpios_in); i++) {
++		st->gpios[i] = devm_gpiod_get(&spi->dev, pin[i].name,
++					      pin[i].flags);
++		if (IS_ERR(st->gpios[i])) {
++			ret = PTR_ERR(st->gpios[i]);
++			dev_err(&spi->dev,
++				"ad2s1210: failed to request %s GPIO: %d\n",
++				pin[i].name, ret);
++			return ret;
++		}
++	}
+ 
+-	gpio_free_array(ad2s1210_gpios, ARRAY_SIZE(ad2s1210_gpios));
++	return 0;
+ }
+ 
+ static int ad2s1210_probe(struct spi_device *spi)
+@@ -692,7 +715,7 @@ static int ad2s1210_probe(struct spi_device *spi)
+ 
+ 	ret = iio_device_register(indio_dev);
+ 	if (ret)
+-		goto error_free_gpios;
++		return ret;
+ 
+ 	st->fclkin = spi->max_speed_hz;
+ 	spi->mode = SPI_MODE_3;
+@@ -700,10 +723,6 @@ static int ad2s1210_probe(struct spi_device *spi)
+ 	ad2s1210_initial(st);
+ 
+ 	return 0;
+-
+-error_free_gpios:
+-	ad2s1210_free_gpios(st);
+-	return ret;
+ }
+ 
+ static int ad2s1210_remove(struct spi_device *spi)
+@@ -711,7 +730,6 @@ static int ad2s1210_remove(struct spi_device *spi)
+ 	struct iio_dev *indio_dev = spi_get_drvdata(spi);
+ 
+ 	iio_device_unregister(indio_dev);
+-	ad2s1210_free_gpios(iio_priv(indio_dev));
+ 
+ 	return 0;
+ }
+diff --git a/drivers/staging/iio/resolver/ad2s1210.h b/drivers/staging/iio/resolver/ad2s1210.h
+index e9b2147701fc..63d479b20a6c 100644
+--- a/drivers/staging/iio/resolver/ad2s1210.h
++++ b/drivers/staging/iio/resolver/ad2s1210.h
+@@ -12,9 +12,6 @@
+ #define _AD2S1210_H
+ 
+ struct ad2s1210_platform_data {
+-	unsigned int		sample;
+-	unsigned int		a[2];
+-	unsigned int		res[2];
+ 	bool			gpioin;
+ };
+ #endif /* _AD2S1210_H */
+-- 
+2.17.1
 
