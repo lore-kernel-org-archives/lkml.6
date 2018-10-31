@@ -2,143 +2,188 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 007B2ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:33:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7CEAECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:33:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79D9820664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:33:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4F1920664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:33:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yBnPkpiH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79D9820664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KUbVmR6v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4F1920664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730466AbeKAIJa (ORCPT
+        id S1730751AbeKAIdY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:09:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59294 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:33:24 -0400
+Received: from ozlabs.org ([203.11.71.1]:39883 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730380AbeKAIJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:09:25 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1729152AbeKAIdX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:33:23 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F77B20880;
-        Wed, 31 Oct 2018 23:09:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027353;
-        bh=PwOWO/HO6CdLbUGyUS1z5sBSXeT97GHfaG0HdQyfkic=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yBnPkpiH8KPrkrx/XMi5qIaZaxTklrOyIhatakCxKkOoNMQ5BSZood/XhAvdtO/8o
-         L0M6MxqxasP32A7O0tSiYGS2wW2B4fRo53FByffJgDbzwHHVcYQET8KOgeX+ycyeh6
-         5uUlkQ+THuwQa/7IYCS0QS7Pln0SZ/AuoIqdiypU=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Selvin Xavier <selvin.xavier@broadcom.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 087/126] RDMA/bnxt_re: Fix recursive lock warning in debug kernel
-Date:   Wed, 31 Oct 2018 19:07:15 -0400
-Message-Id: <20181031230754.29029-87-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
-References: <20181031230754.29029-1-sashal@kernel.org>
+        by ozlabs.org (Postfix) with ESMTPSA id 42ll4q4cvbz9s1x;
+        Thu,  1 Nov 2018 10:32:59 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1541028781;
+        bh=pPc9r7pQo6TOLdh0UKsCx1LBOxUvYTfayMMxpy3jyj8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=KUbVmR6vvEXH2ZMSZuaNNc9RbTJpSEDCwGL6rC6o/4mv6CytdKkayiPXR9oqEpgTS
+         4kwmUzsbIPhRZw3y56/VLSjjkGTQ0HPbmGMJSKfxCQCxFEpgl75ku4mEjf62BGE224
+         HW2AFJy7UDEo7YwT6rwwRpdVIRliYnMVzVHCpq+ZjGwvPK4djQlYwslNjx1lxIl4gT
+         PjsyyT466W2jDmmi7YaZrNdYcjc4Gqk9/499qiMeHZqyIapsN5WkDG924kPzTmx1E+
+         BueFO2Fh+ilPu7qID8++TP37BIXx3HFCORffFoqBMB7XdU2TBIr09boGtKjz+exboi
+         oN4Ww5A2cxBYA==
+Date:   Thu, 1 Nov 2018 10:32:45 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
+        David Howells <dhowells@redhat.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] sunrpc: Fix flood of warnings from iov_iter_kvec in
+ linux-next
+Message-ID: <20181101103245.59e9fffa@canb.auug.org.au>
+In-Reply-To: <8a65d1322e08b9590d18a53cd623f71b0fe559e8.1540989230.git.leonard.crestez@nxp.com>
+References: <8a65d1322e08b9590d18a53cd623f71b0fe559e8.1540989230.git.leonard.crestez@nxp.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/IXIjWGrGDKi6w6EXEC=RVWa"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Selvin Xavier <selvin.xavier@broadcom.com>
+--Sig_/IXIjWGrGDKi6w6EXEC=RVWa
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-[ Upstream commit d455f29f6d76a5f94881ca1289aaa1e90617ff5d ]
+Hi all,
 
-Fix possible recursive lock warning. Its a false warning as the locks are
-part of two differnt HW Queue data structure - cmdq and creq. Debug kernel
-is throwing the following warning and stack trace.
+On Wed, 31 Oct 2018 12:49:52 +0000 Leonard Crestez <leonard.crestez@nxp.com=
+> wrote:
+>
+> Since commit aa563d7bca6e ("iov_iter: Separate type from direction and
+> use accessor functions") the iov_iter_kvec and iov_iter_bvec functions
+> warn if the direction parameter contains anything other than READ/WRITE.
+>=20
+> That commit also updated users of iov_iter_kvec/bvec but a new call was
+> added on a different branch by commit 277e4ab7d530 ("SUNRPC: Simplify
+> TCP receive code by switching to using iterators")
+>=20
+> This causes a flood of warnings in linux-next like this:
+>=20
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 110 at ../lib/iov_iter.c:1082 iov_iter_kvec+0x4c/0x5c
+> Modules linked in:
+> CPU: 0 PID: 110 Comm: kworker/u3:2 Tainted: G        W         4.19.0-nex=
+t-20181031 #157
+> Hardware name: Freescale i.MX6 SoloLite (Device Tree)
+> Workqueue: xprtiod xs_stream_data_receive_workfn
+> [<c0112908>] (unwind_backtrace) from [<c010d238>] (show_stack+0x10/0x14)
+> [<c010d238>] (show_stack) from [<c0b3894c>] (dump_stack+0xb0/0xe8)
+> [<c0b3894c>] (dump_stack) from [<c0126e14>] (__warn+0xe0/0x10c)
+> [<c0126e14>] (__warn) from [<c0126f54>] (warn_slowpath_null+0x3c/0x48)
+> [<c0126f54>] (warn_slowpath_null) from [<c04b225c>] (iov_iter_kvec+0x4c/0=
+x5c)
+> [<c04b225c>] (iov_iter_kvec) from [<c0a2c650>] (xs_stream_data_receive_wo=
+rkfn+0x538/0x8e0)
+> [<c0a2c650>] (xs_stream_data_receive_workfn) from [<c014609c>] (process_o=
+ne_work+0x2ac/0x6fc)
+> [<c014609c>] (process_one_work) from [<c014678c>] (worker_thread+0x2a0/0x=
+574)
+> [<c014678c>] (worker_thread) from [<c014c43c>] (kthread+0x134/0x14c)
+> [<c014c43c>] (kthread) from [<c01010b4>] (ret_from_fork+0x14/0x20)
+> Exception stack(0xec9fbfb0 to 0xec9fbff8)
+> bfa0:                                     00000000 00000000 00000000 0000=
+0000
+> bfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 0000=
+0000
+> bfe0: 00000000 00000000 00000000 00000000 00000013 00000000
+> irq event stamp: 91225
+> hardirqs last  enabled at (91233): [<c0186630>] console_unlock+0x3e4/0x5d0
+> hardirqs last disabled at (91250): [<c01862c8>] console_unlock+0x7c/0x5d0
+> softirqs last  enabled at (91266): [<c0102500>] __do_softirq+0x360/0x524
+> softirqs last disabled at (91277): [<c012e66c>] irq_exit+0xf8/0x1a4
+> ---[ end trace bc12311e869d672a ]---
+>=20
+> This fix updates sunrpc code and make nfs boot cleanly.
+>=20
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+> ---
+>  net/sunrpc/xprtsock.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> You can treat this as a bug report; I did a brief search and didn't see
+> anyone else complain about this specific issue. Big ugly stacktrace was
+> included so that it hopefully shows up in searches.
+>=20
+> Here is a mention of a different conflict between iov_iter and sunrpc:
+> 	https://lkml.org/lkml/2018/10/29/64
+>=20
+> diff --git a/net/sunrpc/xprtsock.c b/net/sunrpc/xprtsock.c
+> index 1b51e04d3566..ae77c71c1f64 100644
+> --- a/net/sunrpc/xprtsock.c
+> +++ b/net/sunrpc/xprtsock.c
+> @@ -359,20 +359,20 @@ xs_sock_recvmsg(struct socket *sock, struct msghdr =
+*msg, int flags, size_t seek)
+> =20
+>  static ssize_t
+>  xs_read_kvec(struct socket *sock, struct msghdr *msg, int flags,
+>  		struct kvec *kvec, size_t count, size_t seek)
+>  {
+> -	iov_iter_kvec(&msg->msg_iter, READ | ITER_KVEC, kvec, 1, count);
+> +	iov_iter_kvec(&msg->msg_iter, READ, kvec, 1, count);
+>  	return xs_sock_recvmsg(sock, msg, flags, seek);
+>  }
+> =20
+>  static ssize_t
+>  xs_read_bvec(struct socket *sock, struct msghdr *msg, int flags,
+>  		struct bio_vec *bvec, unsigned long nr, size_t count,
+>  		size_t seek)
+>  {
+> -	iov_iter_bvec(&msg->msg_iter, READ | ITER_BVEC, bvec, nr, count);
+> +	iov_iter_bvec(&msg->msg_iter, READ, bvec, nr, count);
+>  	return xs_sock_recvmsg(sock, msg, flags, seek);
+>  }
+> =20
+>  static ssize_t
+>  xs_read_discard(struct socket *sock, struct msghdr *msg, int flags,
+> --=20
+> 2.17.1
 
-[  783.914967] ============================================
-[  783.914970] WARNING: possible recursive locking detected
-[  783.914973] 4.19.0-rc2+ #33 Not tainted
-[  783.914976] --------------------------------------------
-[  783.914979] swapper/2/0 is trying to acquire lock:
-[  783.914982] 000000002aa3949d (&(&hwq->lock)->rlock){..-.}, at: bnxt_qplib_service_creq+0x232/0x350 [bnxt_re]
-[  783.914999]
-but task is already holding lock:
-[  783.915002] 00000000be73920d (&(&hwq->lock)->rlock){..-.}, at: bnxt_qplib_service_creq+0x2a/0x350 [bnxt_re]
-[  783.915013]
-other info that might help us debug this:
-[  783.915016]  Possible unsafe locking scenario:
+I have added that as a merge resolution for the merge of the vfs tree
+in linux-next today.  Please remember to tell Linus about it.
 
-[  783.915019]        CPU0
-[  783.915021]        ----
-[  783.915034]   lock(&(&hwq->lock)->rlock);
-[  783.915035]   lock(&(&hwq->lock)->rlock);
-[  783.915037]
- *** DEADLOCK ***
+--=20
+Cheers,
+Stephen Rothwell
 
-[  783.915038]  May be due to missing lock nesting notation
+--Sig_/IXIjWGrGDKi6w6EXEC=RVWa
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-[  783.915039] 1 lock held by swapper/2/0:
-[  783.915040]  #0: 00000000be73920d (&(&hwq->lock)->rlock){..-.}, at: bnxt_qplib_service_creq+0x2a/0x350 [bnxt_re]
-[  783.915044]
-stack backtrace:
-[  783.915046] CPU: 2 PID: 0 Comm: swapper/2 Not tainted 4.19.0-rc2+ #33
-[  783.915047] Hardware name: Dell Inc. PowerEdge R730/0599V5, BIOS 1.0.4 08/28/2014
-[  783.915048] Call Trace:
-[  783.915049]  <IRQ>
-[  783.915054]  dump_stack+0x90/0xe3
-[  783.915058]  __lock_acquire+0x106c/0x1080
-[  783.915061]  ? sched_clock+0x5/0x10
-[  783.915063]  lock_acquire+0xbd/0x1a0
-[  783.915065]  ? bnxt_qplib_service_creq+0x232/0x350 [bnxt_re]
-[  783.915069]  _raw_spin_lock_irqsave+0x4a/0x90
-[  783.915071]  ? bnxt_qplib_service_creq+0x232/0x350 [bnxt_re]
-[  783.915073]  bnxt_qplib_service_creq+0x232/0x350 [bnxt_re]
-[  783.915078]  tasklet_action_common.isra.17+0x197/0x1b0
-[  783.915081]  __do_softirq+0xcb/0x3a6
-[  783.915084]  irq_exit+0xe9/0x100
-[  783.915085]  do_IRQ+0x6a/0x120
-[  783.915087]  common_interrupt+0xf/0xf
-[  783.915088]  </IRQ>
+-----BEGIN PGP SIGNATURE-----
 
-Use nested notation for the spin_lock to avoid this warning.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvaO50ACgkQAVBC80lX
+0GzbvAf8CUN9Qay3gm1q9qM4tfWJZxiKcHOPD/8w1wzjJogJChc6DdtfX9cky0X5
+jEX4s4GI1ae6O2C5d5RUxXHtme2HjmryJR8/Uu7pDb80fqfG+DkWDd1F46+67MrQ
+mdLNbbnWq6loLFWOV5pu2xfwGyLr0nN26+cX8SbD3NaN9MJqM8E4eegVsr6yOtNq
+szwdT3VSdA23hfGfMNXi2qJ7qh2Wpvbfu2EbGjggvvMOPyf25tpi2IxIJfo/iOk5
+XHfY+PQoYQOmt/bg2TO3uWGBYsnmvGjEV41171ZSzSm5u/7mNBFGZHuGcM+Jp8As
+yLsQ1RWmBn9OAbuc9f9WyfTyrMwhdw==
+=IfMf
+-----END PGP SIGNATURE-----
 
-Signed-off-by: Selvin Xavier <selvin.xavier@broadcom.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/infiniband/hw/bnxt_re/qplib_rcfw.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
-index 2852d350ada1..6637df77d236 100644
---- a/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
-+++ b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
-@@ -309,8 +309,17 @@ static int bnxt_qplib_process_qp_event(struct bnxt_qplib_rcfw *rcfw,
- 		rcfw->aeq_handler(rcfw, qp_event, qp);
- 		break;
- 	default:
--		/* Command Response */
--		spin_lock_irqsave(&cmdq->lock, flags);
-+		/*
-+		 * Command Response
-+		 * cmdq->lock needs to be acquired to synchronie
-+		 * the command send and completion reaping. This function
-+		 * is always called with creq->lock held. Using
-+		 * the nested variant of spin_lock.
-+		 *
-+		 */
-+
-+		spin_lock_irqsave_nested(&cmdq->lock, flags,
-+					 SINGLE_DEPTH_NESTING);
- 		cookie = le16_to_cpu(qp_event->cookie);
- 		mcookie = qp_event->cookie;
- 		blocked = cookie & RCFW_CMD_IS_BLOCKING;
--- 
-2.17.1
-
+--Sig_/IXIjWGrGDKi6w6EXEC=RVWa--
