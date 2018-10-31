@@ -2,167 +2,196 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53272C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 07:43:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E872EECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 07:43:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08E8C20821
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 07:43:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08E8C20821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B358420821
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 07:43:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B358420821
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727339AbeJaQk3 (ORCPT
+        id S1727477AbeJaQki (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 12:40:29 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49474 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725955AbeJaQk3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 12:40:29 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 71AD0308403E;
-        Wed, 31 Oct 2018 07:43:30 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-109.pek2.redhat.com [10.72.12.109])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D083960F87;
-        Wed, 31 Oct 2018 07:43:07 +0000 (UTC)
-Subject: Re: [PATCH] kdump, vmcoreinfo: Export sme_me_mask value to vmcoreinfo
-To:     Dave Young <dyoung@redhat.com>
-Cc:     Baoquan He <bhe@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Petr Tesarik <ptesarik@suse.cz>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, kexec@lists.infradead.org, mingo@redhat.com,
-        tglx@linutronix.de, Kazuhito Hagio <khagio@redhat.com>
-References: <20181029095738.GB20101@zn.tnic>
- <15897206-c1a6-ced6-3a1b-f71da8fc9c83@redhat.com>
- <20181029114414.GA11408@MiWiFi-R3L-srv>
- <90385882-7fd1-a674-ec5a-19bd42471a5e@redhat.com>
- <20181029134918.GB32150@zn.tnic>
- <699ab34e-1373-582d-4e58-e76bd57ec34f@redhat.com>
- <20181030050900.GA25987@dhcp-128-65.nay.redhat.com>
- <20181030091542.GD32102@zn.tnic> <20181030092314.GC14493@MiWiFi-R3L-srv>
- <dcbc925f-6935-6a34-fde1-7aa1ea378891@redhat.com>
- <20181031024748.GA2058@dhcp-128-65.nay.redhat.com>
-From:   lijiang <lijiang@redhat.com>
-Message-ID: <e735e1d8-ec07-4de7-858e-7fc4ae711db7@redhat.com>
-Date:   Wed, 31 Oct 2018 15:43:02 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 31 Oct 2018 12:40:38 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:59217 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725955AbeJaQki (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 12:40:38 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="47045658"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 31 Oct 2018 15:43:34 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 6EEDE4B7117F;
+        Wed, 31 Oct 2018 15:43:31 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 31 Oct 2018 15:43:37 +0800
+Date:   Wed, 31 Oct 2018 15:42:34 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+        <linux-efi@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+        <bp@alien8.de>, <tglx@linutronix.de>, <mingo@redhat.com>,
+        <hpa@zytor.com>, <keescook@chromium.org>, <bhe@redhat.com>,
+        <msys.mizuma@gmail.com>
+CC:     <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v10 0/7] x86/boot/KASLR: Parse ACPI table and limit kaslr
+ in immovable memory
+Message-ID: <20181031074234.GB6609@localhost.localdomain>
+References: <20181022093720.21426-1-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
-In-Reply-To: <20181031024748.GA2058@dhcp-128-65.nay.redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 31 Oct 2018 07:43:30 +0000 (UTC)
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20181022093720.21426-1-fanc.fnst@cn.fujitsu.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 6EEDE4B7117F.AD943
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018年10月31日 10:47, Dave Young 写道:
-> Add Kazu, the makedumpfile maintainer in cc.
-> 
-> On 10/31/18 at 10:26am, lijiang wrote:
->> 在 2018年10月30日 17:23, Baoquan He 写道:
->>>
->>> Hi Boris, DaveY and Lianbo,
->>>
->>> On 10/30/18 at 10:15am, Borislav Petkov wrote:
->>>> On Tue, Oct 30, 2018 at 01:09:00PM +0800, Dave Young wrote:
->>>>> It is not the content, I think it is a good catch from Boris, it would
->>>>> be good to document the exported things in somewhere eg.
->>>>> Documentation/kdump/vmcoreinfo.txt
->>>
->>> For the vmcoreinfo variables document, I personally think it might be
->>> not necessary. The reason is that all the old varialbles are exported
->>> with the name of themselves. We know what they are or what they
->>> represent since they are all kernel symbols or macro. Only this me_mask,
->>> it's a local variable and store the value of sme_me_mask for now, may
->>> store more info later like Petr mentioned, and also will store the memory
->>> encryption information of TME (which is intel's transparent memory encryption).
->>> We can add code comment around to tell these.
->>>
->> Thank you, everyone.
->>
->> I personally agree with Baoquan's opinion. What do you think about? Boris and other reviewer?
->>
->> If the vmcoreinfo document is necessary, would you like to help me to provide an outline?
->> I can try my best to write the document.
-> 
-> It is true like what Baoquan said, these information are mainly used by
-> makedumpfile tool for creating a filtered vmcore.  But these vmcoreinfo
-> hide in a lot of different code paths:
-> kernel/crash_core.c,  printk code, arch code etc. 
-> 
-> It is a mist only a few kdump people know them, documenting them will help
-> people to understand and review. It will also be clearer instead of
-> digging into code?
-> 
-> The document can briefly explain what is vmcoreinfo, why we need it, and
-> some background info.  Then list the exported values with some
-> classifying by core kernel, arch related,  string or number etc.  For
-> most of them like Baoquan said no need more explanation, but add
-> explanations for something if needed like this sme mask.
-> 
-> But I think this can be done separately instead of blocking this patch.
-For this patch, i think that it had been reached an agreement. So i will
-update my patch log and post v2 if there is no objection.
+Hi all,
 
-diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
-index 4c8acdfdc5a7..ca9bdf46b8e7 100644
---- a/arch/x86/kernel/machine_kexec_64.c
-+++ b/arch/x86/kernel/machine_kexec_64.c
-@@ -352,10 +352,23 @@ void machine_kexec(struct kimage *image)
- 
- void arch_crash_save_vmcoreinfo(void)
- {
-+       u64 sme_mask = sme_me_mask;
-+
-        VMCOREINFO_NUMBER(phys_base);
-        VMCOREINFO_SYMBOL(init_top_pgt);
-        vmcoreinfo_append_str("NUMBER(pgtable_l5_enabled)=%d\n",
-                        pgtable_l5_enabled());
-+       /*
-+        * Currently, the local variable 'sme_mask' stores the value of
-+        * sme_me_mask(bit 47), and also write the value of sme_mask to
-+        * the vmcoreinfo.
-+        * If need, the bit(sme_mask) might be redefined in the future.
-+        * For example:
-+        * [ misc          ][ enc bit  ][ other misc SME info       ]
-+        * 0000_0000_0000_0000_1000_0000_0000_0000_0000_0000_..._0000
-+        * 63   59   55   51   47   43   39   35   31   27   ... 3
-+        */
-+       VMCOREINFO_NUMBER(sme_mask);
- 
- #ifdef CONFIG_NUMA
-        VMCOREINFO_SYMBOL(node_data);
+Sorry for disturbance.
+No reply to this version for more than one week,
+any comments?
 
-> Maybe Kazu knows more about it, so I would like to ask Kazu about his opinion
-> and if he want to do it.
-> Ok, thank you, Dave Young.
+Thanks,
+Chao Fan
 
-About the vmcoreinfo document issue, once make a decision, i will try my best to
-do this based on your outline.
+On Mon, Oct 22, 2018 at 05:37:13PM +0800, Chao Fan wrote:
+>***Background:
+>People reported that kaslr may randomly chooses some positions
+>which are located in movable memory regions. This will break memory
+>hotplug feature and make the movable memory chosen by KASLR can't be
+>removed.
+>
+>***Solutions:
+>There should be a method to limit kaslr to choosing immovable memory
+>regions, so there are 2 solutions:
+>1) Add a kernel parameter to specify the memory regions.
+>2) Get the information of memory hot-remove, then kaslr will know the
+>   right regions.
+>In method 2, information about memory hot-remove is in ACPI
+>tables, which will be parsed after start_kernel(), kaslr can't get
+>the information.
+>In method 1, users should know the regions address and specify in
+>kernel parameter.
+>
+>In the earliest time, I tried to dig ACPI tabls to solve this problem.
+>But I didn't splite the code in 'compressed/' and ACPI code, so the patch
+>is hard to follow so refused by community.
+>Somebody suggest to add a kernel parameter to specify the
+>immovable memory so that limit kaslr in these regions. Then I make
+>a new patchset. After several versions, Ingo gave a suggestion:
+>https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1634024.html
+>Follow Ingo's suggestion, imitate the ACPI code to parse the acpi
+>tables, so that the kaslr can get necessary memory information in
+>ACPI tables.
+>I think ACPI code is an independent part, so imitate the codes
+>and functions to 'compressed/' directory, so that kaslr won't
+>influence the initialization of ACPI.
+>
+>PATCH 1/7 Introduce cmdline_find_option_arg() to detect if option=arg
+>          in cmdline
+>PATCH 2/7 Copy kstrtoull() to compressed period, used to convert memory
+>          address from string to unsigned long long.
+>PATCH 3/7 Add efi_get_rsdp_addr() to dig out RSDP from EFI table when
+>          booting from EFI.
+>PATCH 4/7 Add bios_get_rsdp_addr() to search RSDP in memory when EFI
+>          table not found.
+>PATCH 5/7 Add get_acpi_rsdp() to parse RSDP in cmdline from kexec
+>PATCH 6/7 Dig out SRAT table from RSDP and walk SRAT table to store
+>          the immovable memory regions.
+>PATCH 7/7 Calculate the intersection between memory regions from e820/efi
+>          memory table and immovable memory regions. Limit KASLR choose
+>          these regions for randomization.
+>
+>v1->v2:
+> -  Simplify some code.
+>Follow Baoquan He's suggestion:
+> - Reuse the head file of acpi code.
+>
+>v2->v3:
+> - Test in more conditions, so remove the 'RFC' tag.
+> - Change some comments.
+>
+>v3->v4:
+>Follow Thomas Gleixner's suggetsion:
+> - Put the whole efi related function into #define CONFIG_EFI and return
+>   false in the other stub.
+>
+>v4->v5:
+>Follow Dou Liyang's suggestion:
+> - Add more comments about some functions based on kernel code.
+> - Change some typo in comments.
+> - Clean useless variable.
+> - Add check for the boundary of array.
+> - Add check for 'movable_node' parameter
+>
+>v5->v6:
+>Follow Baoquan He's suggestion:
+> - Change some log.
+> - Add the check for acpi_rsdp
+> - Change some code logical to make code clear
+>
+>v6->v7:
+>Follow Rafael's suggestion:
+> - Add more comments and patch log.
+>Follow test robot's suggestion:
+> - Add "static" tag for function
+>
+>v7-v8:
+>Follow Kees Cook's suggestion:
+> - Use mem_overlaps() to check memory region.
+> - Use #ifdef in the definition of function.
+>
+>v8-v9:
+>Follow Boris' suggetion:
+> - Change code style.
+> - Splite PATCH 1/3 to more path.
+> - Introduce some new function
+> - Use existing function to rework some code
+>Follow Masayoshi's suggetion:
+> - Make code more readable
+>
+>v9->v10:
+>Follow Baoquan's suggestion:
+> - Change some log
+> - Merge last two patch together.
+>
+>Any comments will be welcome.
+>
+>Chao Fan (7):
+>  x86/boot: Introduce cmdline_find_option_arg()to detect if option=arg
+>    in cmdline
+>  x86/boot: Copy kstrtoull() to compressed period
+>  x86/boot: Add efi_get_rsdp_addr() to dig out RSDP from EFI table
+>  x86/boot: Add bios_get_rsdp_addr() to search RSDP in memory
+>  x86/boot: Add get_acpi_rsdp() to parse RSDP in cmdlien from kexec
+>  x86/boot: Dig out SRAT table from RSDP and find immovable memory
+>  x86/boot/KASLR: Limit kaslr to choosing the immovable memory
+>
+> arch/x86/boot/compressed/Makefile  |   4 +
+> arch/x86/boot/compressed/acpitb.c  | 352 +++++++++++++++++++++++++++++
+> arch/x86/boot/compressed/cmdline.c |  15 ++
+> arch/x86/boot/compressed/kaslr.c   |  81 +++++--
+> arch/x86/boot/compressed/misc.c    |  88 ++++++++
+> arch/x86/boot/compressed/misc.h    |  20 ++
+> 6 files changed, 545 insertions(+), 15 deletions(-)
+> create mode 100644 arch/x86/boot/compressed/acpitb.c
+>
+>-- 
+>2.17.2
+>
 
-Regards,
-Lianbo
 
->>
->> Anyway, we should make a choice.
->>
->> Regards,
->> Lianbo
->>
->>> Personal opinion.
->>>
->>> Thanks
->>> Baoquan
->>>
-> 
-> Thanks
-> Dave
-> 
