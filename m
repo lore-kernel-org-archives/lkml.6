@@ -2,97 +2,156 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24859ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:31:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2284DC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:35:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCFE620821
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:31:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="U5IymNAl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCFE620821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id CBC7420821
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 09:35:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBC7420821
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728370AbeJaS2T (ORCPT
+        id S1727743AbeJaSdG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 14:28:19 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38876 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728223AbeJaS2R (ORCPT
+        Wed, 31 Oct 2018 14:33:06 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38722 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727436AbeJaSdF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 14:28:17 -0400
-Received: by mail-wr1-f68.google.com with SMTP id d10-v6so15647816wrs.5
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 02:30:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=yyRbW79BND4C408UyY/nhuusJ4qXhHx099cfs+zi2aw=;
-        b=U5IymNAlVU/1CSK7CG52MQsYlUiiiPA8uI8HRUj1dHQqWRGsOqUumdMI7ftoYNr+19
-         XGs6zEbQ6BZ+BTmXu9ptiuNM6ckgaPw/t4ST5bi9g2TmcOONZRI1rg21WfpkP5K/yvQw
-         SUrFhlNtrZFY9lTCBCxk6fNaTpP+oaPStEOfU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=yyRbW79BND4C408UyY/nhuusJ4qXhHx099cfs+zi2aw=;
-        b=bbAQHemW1EDQ/NuuRKlifjUXDpEOXe/5nJfDJvHu6cyjmwrh7AUn3StyIpnfJjMQae
-         soTguw7yXCh9mtyzfssU4avjibkFMMPgPlevc0ulRyL0J8VZS47PEyohUvW0mp0kuDBo
-         sfa6N2Ckg79mDycNMktf5QVdqT3yqZg4VeFfuAPoQ+GLMQglqkUh61JHCYpoUQpFZssh
-         Q4jqVChj2fVGUu56xQiDIRC8ldapE/xDXVpDvDo5NmnCf5T2WHo1RDfB1cwxLQtr/1ne
-         Mdi/Tst0SvEyV+7EoRn6fz/TeMaxohvZWHZtf2gktcu42T4RxXr4MiPUShSBjwKIZVyY
-         b8+A==
-X-Gm-Message-State: AGRZ1gKs+8Nlh0l72KjdAuFm4/IZked/Ly263wTzJuROzCH2rsUZKyGk
-        Hi667vK/ipTTR+dR6mhy5j1yCg==
-X-Google-Smtp-Source: AJdET5erSSSmVSXvhBZi7XFgOEfgHcibX1jxkevUGUm9LD9cQ0Bm5dtW9d2Zy1dR8e94tQx1DeTJZA==
-X-Received: by 2002:adf:ff05:: with SMTP id k5-v6mr1959110wrr.73.1540978256559;
-        Wed, 31 Oct 2018 02:30:56 -0700 (PDT)
-Received: from lmecxl0911.lme.st.com ([2a04:cec0:1086:999:fd1b:8629:a7fc:68b])
-        by smtp.gmail.com with ESMTPSA id w14-v6sm10737377wrt.73.2018.10.31.02.30.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 31 Oct 2018 02:30:56 -0700 (PDT)
-From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
-X-Google-Original-From: Benjamin Gaignard <benjamin.gaignard@st.com>
-To:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, alexandre.torgue@st.com
-Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH 4/5] ARM: dts: stm32: enable hwspinlock on stm32mp157c-ed1
-Date:   Wed, 31 Oct 2018 10:30:31 +0100
-Message-Id: <20181031093032.20386-5-benjamin.gaignard@st.com>
-X-Mailer: git-send-email 2.15.0
-In-Reply-To: <20181031093032.20386-1-benjamin.gaignard@st.com>
-References: <20181031093032.20386-1-benjamin.gaignard@st.com>
+        Wed, 31 Oct 2018 14:33:05 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9V9ZD1S067174
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 05:35:44 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2nf9rhrce2-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 05:35:43 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
+        Wed, 31 Oct 2018 09:35:42 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 31 Oct 2018 09:35:39 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9V9Zcgl63635472
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 31 Oct 2018 09:35:38 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 26357A4053;
+        Wed, 31 Oct 2018 09:35:38 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D97C3A4040;
+        Wed, 31 Oct 2018 09:35:37 +0000 (GMT)
+Received: from mschwideX1 (unknown [9.152.212.191])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 31 Oct 2018 09:35:37 +0000 (GMT)
+Date:   Wed, 31 Oct 2018 10:35:36 +0100
+From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Li Wang <liwang@redhat.com>, Guenter Roeck <linux@roeck-us.net>,
+        Janosch Frank <frankja@linux.vnet.ibm.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+Subject: Re: [PATCH 1/3] mm: introduce mm_[p4d|pud|pmd]_folded
+In-Reply-To: <20181031090255.bvmp3jnsdaunhzn7@kshutemo-mobl1>
+References: <1539621759-5967-1-git-send-email-schwidefsky@de.ibm.com>
+        <1539621759-5967-2-git-send-email-schwidefsky@de.ibm.com>
+        <20181031090255.bvmp3jnsdaunhzn7@kshutemo-mobl1>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+X-TM-AS-GCONF: 00
+x-cbid: 18103109-0016-0000-0000-0000021CDFAE
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18103109-0017-0000-0000-000032750916
+Message-Id: <20181031103536.0cab673d@mschwideX1>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-31_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=980 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810310081
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable hwspinlock on stm32mp157c-ed1
+On Wed, 31 Oct 2018 12:02:55 +0300
+"Kirill A. Shutemov" <kirill@shutemov.name> wrote:
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
----
- arch/arm/boot/dts/stm32mp157c-ed1.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+> On Mon, Oct 15, 2018 at 06:42:37PM +0200, Martin Schwidefsky wrote:
+> > Add three architecture overrideable function to test if the
+> > p4d, pud, or pmd layer of a page table is folded or not.
+> > 
+> > Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+> > ---
+> >  include/linux/mm.h | 40 ++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 40 insertions(+)
+> > 
+> > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > index 0416a7204be3..d1029972541c 100644
+> > --- a/include/linux/mm.h
+> > +++ b/include/linux/mm.h  
+> 
+> Shouldn't it be somewhere in asm-generic/pgtable*?
 
-diff --git a/arch/arm/boot/dts/stm32mp157c-ed1.dts b/arch/arm/boot/dts/stm32mp157c-ed1.dts
-index f77bea49c079..158a337b3129 100644
---- a/arch/arm/boot/dts/stm32mp157c-ed1.dts
-+++ b/arch/arm/boot/dts/stm32mp157c-ed1.dts
-@@ -94,3 +94,7 @@
- 	vdda1v1-supply = <&reg11>;
- 	vdda1v8-supply = <&reg18>;
- };
-+
-+&hsem {
-+	status = "okay";
-+};
+If you prefer the definitions in asm-generic that is fine with me.
+I'll give it a try to see if it still compiles.
+
+> > @@ -105,6 +105,46 @@ extern int mmap_rnd_compat_bits __read_mostly;
+> >  #define mm_zero_struct_page(pp)  ((void)memset((pp), 0, sizeof(struct page)))
+> >  #endif
+> >  
+> > +/*
+> > + * On some architectures it depends on the mm if the p4d/pud or pmd
+> > + * layer of the page table hierarchy is folded or not.
+> > + */
+> > +#ifndef mm_p4d_folded
+> > +#define mm_p4d_folded(mm) mm_p4d_folded(mm)  
+> 
+> Do we need to define it in generic header?
+
+That is true, it should work without the #define in the generic header.
+
+> > +static inline bool mm_p4d_folded(struct mm_struct *mm)
+> > +{
+> > +#ifdef __PAGETABLE_P4D_FOLDED
+> > +	return 1;
+> > +#else
+> > +	return 0;
+> > +#endif  
+> 
+> Maybe
+> 	return __is_defined(__PAGETABLE_P4D_FOLDED);
+> 
+> ?
+ 
+I have tried that, doesn't work. The reason is that the
+__PAGETABLE_xxx_FOLDED defines to not have a value.
+
+#define __PAGETABLE_P4D_FOLDED
+#define __PAGETABLE_PMD_FOLDED
+#define __PAGETABLE_PUD_FOLDED
+
+While the definition of CONFIG_xxx symbols looks like this
+
+#define CONFIG_xxx 1
+
+The __is_defined needs the value for the __take_second_arg trick.
+
 -- 
-2.15.0
+blue skies,
+   Martin.
+
+"Reality continues to ruin my life." - Calvin.
 
