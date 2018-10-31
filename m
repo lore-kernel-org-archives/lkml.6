@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC23ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:52:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 900C6C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:53:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42B482054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:52:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 430182054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:53:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cu2Q/km0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42B482054F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OmmTyM1d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 430182054F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728135AbeKAIxH (ORCPT
+        id S1728125AbeKAIxY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:53:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53130 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:53:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727774AbeKAIGT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:06:19 -0400
+        id S1727729AbeKAIGQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:06:16 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91CC420830;
-        Wed, 31 Oct 2018 23:06:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15ADC20823;
+        Wed, 31 Oct 2018 23:06:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027168;
-        bh=Abeb/3xh2K6r5HmarrDpF17xN8h08gxUkz0UTITx8dU=;
+        s=default; t=1541027165;
+        bh=rQkjh6Jbx/gYVbPJxx78KPtQMKnAz+tNa+RYimnIHck=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cu2Q/km0oHOXGd/ijlaMc3yE++CunhSOdTT9n8bwmwQli0XGZy7mfgv/8F+opanj1
-         6j5HXZS+81jPC93iFeOPI8XkI9kusmETx6aibYR1Spa5JoVTpncRaThW+vGo+qgrBb
-         qZgDsyoOh/yflACOIhF5cNpmks3fnMhPR9Qqw3KM=
+        b=OmmTyM1duX6LbaZo34XL+vfz0/xSidO6h6TcIsGYVD1lnyifzj53HhdNSyhRF3KZx
+         qj+9sYqskoQo2IWbPbkFol4AGG1HSX2Nto5fOYJYsxe1sG1nFrMAFfhdbNoTqkRLHH
+         cdjcOK/NivR1AGYMjFA6aOAIg9X06TJDWwYPxVKY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+Cc:     Wang Dongsheng <dongsheng.wang@hxt-semitech.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 028/146] iwlwifi: mvm: clear HW_RESTART_REQUESTED when stopping the interface
-Date:   Wed, 31 Oct 2018 19:03:43 -0400
-Message-Id: <20181031230541.28822-28-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 025/146] sdhci: acpi: add free_slot callback
+Date:   Wed, 31 Oct 2018 19:03:40 -0400
+Message-Id: <20181031230541.28822-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
@@ -53,118 +53,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+From: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
 
-[ Upstream commit 155f7e0441cd121b1e673d465a35e99f4b9b2f0b ]
+[ Upstream commit c7eabbee3de99347105faa7fd925a500ccf43baf ]
 
-Fix a bug that happens in the following scenario:
-1) suspend without WoWLAN
-2) mac80211 calls drv_stop because of the suspend
-3) __iwl_mvm_mac_stop deallocates the aux station
-4) during drv_stop the firmware crashes
-5) iwlmvm:
-	* sets IWL_MVM_STATUS_HW_RESTART_REQUESTED
-	* asks mac80211 to kick the restart flow
-6) mac80211 puts the restart worker into a freezable
-   queue which means that the worker will not run for now
-   since the workqueue is already frozen
-7) ...
-8) resume
-9) mac80211 runs ieee80211_reconfig as part of the resume
-10) mac80211 detects that a restart flow has been requested
-    and that we are now resuming from suspend and cancels
-    the restart worker
-11) mac80211 calls drv_start()
-12) __iwl_mvm_mac_start checks that IWL_MVM_STATUS_HW_RESTART_REQUESTED
-    clears it, sets IWL_MVM_STATUS_IN_HW_RESTART and calls
-    iwl_mvm_restart_cleanup()
-13) iwl_fw_error_dump gets called and accesses the device
-    to get debug data
-14) iwl_mvm_up adds the aux station
-15) iwl_mvm_add_aux_sta() allocates an internal station for
-    the aux station
-16) iwl_mvm_allocate_int_sta() tests IWL_MVM_STATUS_IN_HW_RESTART
-    and doesn't really allocate a station ID for the aux
-    station
-17) a new queue is added for the aux station
+The device specific resource can be free in free_slot after
+removing host controller.
 
-Note that steps from 5 to 9 aren't really part of the
-problem but were described for the sake of completeness.
-
-Once the iwl_mvm_mac_stop() is called, the device is not
-accessible, meaning that step 12) can't succeed and we'll
-see the following:
-
-drivers/net/wireless/intel/iwlwifi/pcie/trans.c:2122 iwl_trans_pcie_grab_nic_access+0xc0/0x1d6 [iwlwifi]()
-Timeout waiting for hardware access (CSR_GP_CNTRL 0x080403d8)
-Call Trace:
-[<ffffffffc03e6ad3>] iwl_trans_pcie_grab_nic_access+0xc0/0x1d6 [iwlwifi]
-[<ffffffffc03e6a13>] iwl_trans_pcie_dump_regs+0x3fd/0x3fd [iwlwifi]
-[<ffffffffc03dad42>] iwl_fw_error_dump+0x4f5/0xe8b [iwlwifi]
-[<ffffffffc04bd43e>] __iwl_mvm_mac_start+0x5a/0x21a [iwlmvm]
-[<ffffffffc04bd6d2>] iwl_mvm_mac_start+0xd4/0x103 [iwlmvm]
-[<ffffffffc042d378>] drv_start+0xa1/0xc5 [iwl7000_mac80211]
-[<ffffffffc045a339>] ieee80211_reconfig+0x145/0xf50 [mac80211]
-[<ffffffffc044788b>] ieee80211_resume+0x62/0x66 [mac80211]
-[<ffffffffc0366c5b>] wiphy_resume+0xa9/0xc6 [cfg80211]
-
-The station id of the aux station is set to 0xff in step 3
-and because we don't really allocate a new station id for
-the auxliary station (as explained in 16), we end up sending
-a command to the firmware asking to connect the queue
-to station id 0xff. This makes the firmware crash with the
-following information:
-
-0x00002093 | ADVANCED_SYSASSERT
-0x000002F0 | trm_hw_status0
-0x00000000 | trm_hw_status1
-0x00000B38 | branchlink2
-0x0001978C | interruptlink1
-0x00000000 | interruptlink2
-0xFF080501 | data1
-0xDEADBEEF | data2
-0xDEADBEEF | data3
-Firmware error during reconfiguration - reprobe!
-FW error in SYNC CMD SCD_QUEUE_CFG
-
-Fix this by clearing IWL_MVM_STATUS_HW_RESTART_REQUESTED
-in iwl_mvm_mac_stop(). We won't be able to collect debug
-data anyway and when we will brought up again, we will
-have a clean state from the firmware perspective.
-Since we won't have IWL_MVM_STATUS_IN_HW_RESTART set in
-step 12) we won't get to the 2093 ASSERT either.
-
-Fixes: bf8b286f86fc ("iwlwifi: mvm: defer setting IWL_MVM_STATUS_IN_HW_RESTART")
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/mmc/host/sdhci-acpi.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-index b15b0d84bb7e..155cc2ac0120 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-@@ -1233,12 +1233,15 @@ void __iwl_mvm_mac_stop(struct iwl_mvm *mvm)
- 	iwl_mvm_del_aux_sta(mvm);
+diff --git a/drivers/mmc/host/sdhci-acpi.c b/drivers/mmc/host/sdhci-acpi.c
+index 32321bd596d8..c61109f7b793 100644
+--- a/drivers/mmc/host/sdhci-acpi.c
++++ b/drivers/mmc/host/sdhci-acpi.c
+@@ -76,6 +76,7 @@ struct sdhci_acpi_slot {
+ 	size_t		priv_size;
+ 	int (*probe_slot)(struct platform_device *, const char *, const char *);
+ 	int (*remove_slot)(struct platform_device *);
++	int (*free_slot)(struct platform_device *pdev);
+ 	int (*setup_host)(struct platform_device *pdev);
+ };
  
- 	/*
--	 * Clear IN_HW_RESTART flag when stopping the hw (as restart_complete()
--	 * won't be called in this case).
-+	 * Clear IN_HW_RESTART and HW_RESTART_REQUESTED flag when stopping the
-+	 * hw (as restart_complete() won't be called in this case) and mac80211
-+	 * won't execute the restart.
- 	 * But make sure to cleanup interfaces that have gone down before/during
- 	 * HW restart was requested.
- 	 */
--	if (test_and_clear_bit(IWL_MVM_STATUS_IN_HW_RESTART, &mvm->status))
-+	if (test_and_clear_bit(IWL_MVM_STATUS_IN_HW_RESTART, &mvm->status) ||
-+	    test_and_clear_bit(IWL_MVM_STATUS_HW_RESTART_REQUESTED,
-+			       &mvm->status))
- 		ieee80211_iterate_interfaces(mvm->hw, 0,
- 					     iwl_mvm_cleanup_iterator, mvm);
+@@ -756,6 +757,9 @@ static int sdhci_acpi_probe(struct platform_device *pdev)
+ err_cleanup:
+ 	sdhci_cleanup_host(c->host);
+ err_free:
++	if (c->slot && c->slot->free_slot)
++		c->slot->free_slot(pdev);
++
+ 	sdhci_free_host(c->host);
+ 	return err;
+ }
+@@ -777,6 +781,10 @@ static int sdhci_acpi_remove(struct platform_device *pdev)
  
+ 	dead = (sdhci_readl(c->host, SDHCI_INT_STATUS) == ~0);
+ 	sdhci_remove_host(c->host, dead);
++
++	if (c->slot && c->slot->free_slot)
++		c->slot->free_slot(pdev);
++
+ 	sdhci_free_host(c->host);
+ 
+ 	return 0;
 -- 
 2.17.1
 
