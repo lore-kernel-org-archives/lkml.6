@@ -2,119 +2,121 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD7B7C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D892ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:54:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E25020821
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:54:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D79262054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:54:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0Tpe26hv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E25020821
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="z3KBEurY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D79262054F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727518AbeKAIGG (ORCPT
+        id S1727945AbeKAIyj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:06:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52782 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:54:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727231AbeKAIGF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727417AbeKAIGF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 1 Nov 2018 04:06:05 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 283502081B;
+        by mail.kernel.org (Postfix) with ESMTPSA id EFF3620823;
         Wed, 31 Oct 2018 23:05:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027154;
-        bh=ixUZkOVKcxgbGYsuykHXlGnNiMl6OJKGDCgw9JPoNjE=;
+        s=default; t=1541027155;
+        bh=oWbdDq+iHpSgGXWpuZGrdKnhqz/tA/mZEIhJ5VoFtog=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0Tpe26hvuOmIiJZ2JnUKFBNohqafOIj/neAjBgMfVnz8/7uemFKBwd63tXweQIg/g
-         17r8SJ/8EdLLCRQ0euLRsEb2rA7fctBPPJiWHWIR+47NjtDr9IStShwmogBZC/UL03
-         62DElRsy8nmSuwk8tIF1BMvN4vJpDqfP2RNvJYxI=
+        b=z3KBEurYHBUbkm3LvPP33z9N0WwsKr0ubfNE8ffYq7vn+y96LhbUzIeUpe4pC+pYX
+         sTfu2B7+W+KdRhclcnCzc8PLf9TqY4jj9vE2Zc1M7bdwEHPPI2MCC8ZfKAYoVqoTiM
+         +gWKUSMeVP8YGjz5X6svQW5h4FAYj+sZJEzqTgqo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Thierry Reding <treding@nvidia.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 013/146] hwmon: (pwm-fan) Set fan speed to 0 on suspend
-Date:   Wed, 31 Oct 2018 19:03:28 -0400
-Message-Id: <20181031230541.28822-13-sashal@kernel.org>
+Cc:     =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 014/146] lightnvm: pblk: fix race on sysfs line state
+Date:   Wed, 31 Oct 2018 19:03:29 -0400
+Message-Id: <20181031230541.28822-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230541.28822-1-sashal@kernel.org>
 References: <20181031230541.28822-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Javier González <javier@javigon.com>
 
-[ Upstream commit 95dcd64bc5a27080beaa344edfe5bdcca3d2e7dc ]
+[ Upstream commit 44cdbdc657b23f75736eca3e88b781f009104363 ]
 
-Technically this is not required because disabling the PWM should be
-enough. However, when support for atomic operations was implemented in
-the PWM subsystem, only actual changes to the PWM channel are applied
-during pwm_config(), which means that during after resume from suspend
-the old settings won't be applied.
+pblk exposes a sysfs interface that represents its internal state. Part
+of this state is the map bitmap for the current open line, which should
+be protected by the line lock to avoid a race when freeing the line
+metadata. Currently, it is not.
 
-One possible solution is for the PWM driver to implement its own PM
-operations such that settings from before suspend get applied on resume.
-This has the disadvantage of completely ignoring any particular ordering
-requirements that PWM user drivers might have, so it is best to leave it
-up to the user drivers to apply the settings that they want at the
-appropriate time.
+This patch makes sure that the line state is consistent and NULL
+bitmap pointers are not dereferenced.
 
-Another way to solve this would be to read back the current state of the
-PWM at the time of resume. That way, in case the configuration was lost
-during suspend, applying the old settings in PWM user drivers would
-actually get them applied because they differ from the current settings.
-However, not all PWM drivers support reading the hardware state, and not
-all hardware may support it.
-
-The best workaround at this point seems to be to let PWM user drivers
-tell the PWM subsystem that the PWM is turned off by, in addition to
-disabling it, also setting the duty cycle to 0. This causes the resume
-operation to apply a configuration that is different from the current
-configuration, resulting in the proper state from before suspend getting
-restored.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Javier González <javier@cnexlabs.com>
+Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/pwm-fan.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/lightnvm/pblk-core.c  | 5 +++--
+ drivers/lightnvm/pblk-sysfs.c | 8 +++++++-
+ 2 files changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
-index 7838af58f92d..9d611dd268e1 100644
---- a/drivers/hwmon/pwm-fan.c
-+++ b/drivers/hwmon/pwm-fan.c
-@@ -290,9 +290,19 @@ static int pwm_fan_remove(struct platform_device *pdev)
- static int pwm_fan_suspend(struct device *dev)
- {
- 	struct pwm_fan_ctx *ctx = dev_get_drvdata(dev);
-+	struct pwm_args args;
-+	int ret;
-+
-+	pwm_get_args(ctx->pwm, &args);
-+
-+	if (ctx->pwm_value) {
-+		ret = pwm_config(ctx->pwm, 0, args.period);
-+		if (ret < 0)
-+			return ret;
+diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+index 00984b486fea..2940cdc87af1 100644
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -1539,13 +1539,14 @@ struct pblk_line *pblk_line_replace_data(struct pblk *pblk)
+ 	struct pblk_line *cur, *new = NULL;
+ 	unsigned int left_seblks;
  
--	if (ctx->pwm_value)
- 		pwm_disable(ctx->pwm);
-+	}
+-	cur = l_mg->data_line;
+ 	new = l_mg->data_next;
+ 	if (!new)
+ 		goto out;
+-	l_mg->data_line = new;
+ 
+ 	spin_lock(&l_mg->free_lock);
++	cur = l_mg->data_line;
++	l_mg->data_line = new;
 +
- 	return 0;
- }
+ 	pblk_line_setup_metadata(new, l_mg, &pblk->lm);
+ 	spin_unlock(&l_mg->free_lock);
+ 
+diff --git a/drivers/lightnvm/pblk-sysfs.c b/drivers/lightnvm/pblk-sysfs.c
+index 9fc3dfa168b4..8d2ed510c04b 100644
+--- a/drivers/lightnvm/pblk-sysfs.c
++++ b/drivers/lightnvm/pblk-sysfs.c
+@@ -262,8 +262,14 @@ static ssize_t pblk_sysfs_lines(struct pblk *pblk, char *page)
+ 		sec_in_line = l_mg->data_line->sec_in_line;
+ 		meta_weight = bitmap_weight(&l_mg->meta_bitmap,
+ 							PBLK_DATA_LINES);
+-		map_weight = bitmap_weight(l_mg->data_line->map_bitmap,
++
++		spin_lock(&l_mg->data_line->lock);
++		if (l_mg->data_line->map_bitmap)
++			map_weight = bitmap_weight(l_mg->data_line->map_bitmap,
+ 							lm->sec_per_line);
++		else
++			map_weight = 0;
++		spin_unlock(&l_mg->data_line->lock);
+ 	}
+ 	spin_unlock(&l_mg->free_lock);
  
 -- 
 2.17.1
