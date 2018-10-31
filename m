@@ -2,108 +2,102 @@ Return-Path: <SRS0=IMz2=NL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82048C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:30:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD22DECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:30:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 477592054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:30:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XQVwDx48"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 477592054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 66C4D2054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 21:30:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66C4D2054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726187AbeKAGaY (ORCPT
+        id S1726237AbeKAGa2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 02:30:24 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36754 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725999AbeKAGaY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 02:30:24 -0400
-Received: by mail-lj1-f196.google.com with SMTP id s15-v6so16244294lji.3
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 14:30:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1zVxuEYHA0OjT0GBGxNcDM0Kyu3TPQo/tjna7UCNe4A=;
-        b=XQVwDx48gboYDBcFkyNV+veyMdOGbUZG4bJnNRRWpoVJQn/ZjL9j3i6FUI4PNRMX5t
-         //UixLDMte0FI0E++uHHqQK5A+A7I8JOo5BizaXWUjvCJI21tejWBsqMZIS64Ac3BcZC
-         8B8icMjkqBAYC6h1HZ4h/0OYNHiwL8i8jZXTw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1zVxuEYHA0OjT0GBGxNcDM0Kyu3TPQo/tjna7UCNe4A=;
-        b=bVbwPxlA2++xhXlrAo6w9A8txky/hGfEyuQkSM2RbAvFM9amceZtHMkMNwpjfLgkcI
-         eCLWtiU9n/2HGtqd4GndmBerS2LKImnqm8USkV4EKZ/FbzIY4jmYmHKTsPq1CiqVaFn7
-         2/7HV7x/4KlQWo5q8KfwQFgFX6p4411UfcQa2lSYOcQNx+G7Hb11SWkuA12n17jUF2KM
-         5lbEuLr/Zj2nsymDiMoMasDLa8Xiq57Qv2zqI8GpdJMThftDVo/eBcP8ZPBJSFatBzGZ
-         Y7Q7HU2zizzQ26wLQbgnr2AtnHEVW77cg3fBIfNlut3wHhwCFvqn9xWbkZfp+xbt73MH
-         wHxQ==
-X-Gm-Message-State: AGRZ1gKaKJ4f8up+nqS/PLOMsbVzoK8wTpjzS//QRLlKLdFV8CaZIbf7
-        FItVxmCWy9nAl2HdsqTuqK8tZIrALnquXwW6Mwep3g==
-X-Google-Smtp-Source: AJdET5d4YzYiAQSo9tOiK+kEWJYxEgb2DdR5sAIIKChwhlTwt110MViPIGts/7KhMvU9ZXGv6wU4P7J8ncVbp0QdLC4=
-X-Received: by 2002:a2e:9107:: with SMTP id m7-v6mr3184566ljg.23.1541021432468;
- Wed, 31 Oct 2018 14:30:32 -0700 (PDT)
-MIME-Version: 1.0
-References: <1539969334-24577-1-git-send-email-dan@emutex.com>
- <1541018689-20625-1-git-send-email-dan@emutex.com> <1541018689-20625-4-git-send-email-dan@emutex.com>
-In-Reply-To: <1541018689-20625-4-git-send-email-dan@emutex.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 31 Oct 2018 22:30:20 +0100
-Message-ID: <CACRpkdajUt7Brrf9jCOhEvrzvx24A8tp1NpGKuDPi_0uh5++eg@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] pinctrl: upboard: Add UP2 pinctrl and gpio driver
-To:     "Dan O'Donovan" <dan@emutex.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Thu, 1 Nov 2018 02:30:28 -0400
+Received: from mga04.intel.com ([192.55.52.120]:41562 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725901AbeKAGa1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 02:30:27 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2018 14:30:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,449,1534834800"; 
+   d="scan'208";a="277316362"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.193])
+  by fmsmga006.fm.intel.com with ESMTP; 31 Oct 2018 14:30:36 -0700
+Date:   Wed, 31 Oct 2018 14:30:36 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Andrew Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-leds@vger.kernel.org, carlos.iglesias@emutex.com
-Content-Type: text/plain; charset="UTF-8"
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs
+ w/ PF_SGX
+Message-ID: <20181031213036.GA23089@linux.intel.com>
+References: <20180926173516.GA10920@linux.intel.com>
+ <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
+ <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
+ <20180926204400.GA11446@linux.intel.com>
+ <b7e14c6e-fc05-93fa-eef9-5e3f06ab4729@intel.com>
+ <CALCETrXByb2UVuZ6AXUeOd8y90NAikbZuvdN3wf_TjHZ+CxNhA@mail.gmail.com>
+ <992b1d6d-cc0f-776f-d938-2a1f7cad52c8@intel.com>
+ <20180927135603.GF8242@linux.intel.com>
+ <ae76dfe7-3587-0d21-37b7-535279edc235@fortanix.com>
+ <2e7b81e1-818f-7d76-e2b4-793d9ec5d5a6@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2e7b81e1-818f-7d76-e2b4-793d9ec5d5a6@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dan,
+On Mon, Oct 01, 2018 at 03:03:30PM -0700, Dave Hansen wrote:
+> On 10/01/2018 02:42 PM, Jethro Beekman wrote:
+> > 
+> > 1) Even though the vDSO function exists, userspace may still call 
+> > `ENCLU[EENTER]` manually, so the fault handling as described in the 
+> > current patch should also be maintained.
+> 
+> Why?
 
-On Wed, Oct 31, 2018 at 9:45 PM Dan O'Donovan <dan@emutex.com> wrote:
+Circling back to this question, what if we take the easy way out and
+simply signal SIGSEGV without an SGX-specific code?  I.e. treat #PF
+with X86_PF_SGX as an access error, no more no less.  That should be
+sufficient for userspace to function, albeit with a little more effort,
+but presumably no more than would be needed to run on SGX1 hardware.
 
-> The UP2 board features a Raspberry Pi compatible pin header (HAT) and a
-> board-specific expansion connector (EXHAT). Both expose assorted
-> functions from either the SoC (such as GPIO, I2C, SPI, UART...) or other
-> on-board devices (ADC, FPGA IP blocks...).
->
-> These lines are routed through an on-board FPGA. The platform controller
-> in its stock firmware provides register fields to change:
->
-> - Line enable (FPGA pins enabled / high impedance)
-> - Line direction (SoC driven / FPGA driven)
->
-> To enable using SoC GPIOs on the pin header, this arrangement requires
-> both configuring the platform controller, and updating the SoC pad
-> registers in sync.
->
-> Add a frontend pinctrl/GPIO driver that registers a new set of GPIO
-> lines for the header pins. When these are requested, the driver
-> propagates this request to the backend SoC pinctrl/GPIO driver by
-> grabbing a GPIO descriptor for the matching SoC GPIO line. The needed
-> mapping for this is retrieved via ACPI properties.
->
-> Signed-off-by: Dan O'Donovan <dan@emutex.com>
+AFAIK there isn't a way to prevent userspace from manually invoking
+EENTER, short of doing some really nasty text poking or PTE swizzling.
+We could declare using EENTER as unsupported, but that seems like
+cutting off the nose to spite the face.  Supporting userspace EENTER
+in a limited capacity would allow people to do whatever crazy tricks
+they're wont to do without having to deal with absurd requests for
+the vDSO interface.
 
-It appears you missed my review comments so please read them
-and reply or respin the patch accordingly.
-
-Yours,
-Linus Walleij
+If we go this route we could also add the vDSO stuff after basic SGX
+support is in mainline, obviously with approval from the powers that
+be.
