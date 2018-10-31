@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D625FECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:35:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E85F7C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:35:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B78220664
-	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:35:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2BB320664
+	for <linux-kernel@archiver.kernel.org>; Wed, 31 Oct 2018 23:35:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="c4HmD2xd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B78220664
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nH1rK6UK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2BB320664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730499AbeKAIfk (ORCPT
+        id S1730424AbeKAIfu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:35:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58824 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 04:35:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730255AbeKAIJL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:09:11 -0400
+        id S1730244AbeKAIJJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 04:09:09 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6313F2081B;
-        Wed, 31 Oct 2018 23:08:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E101120664;
+        Wed, 31 Oct 2018 23:08:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541027340;
-        bh=VRRnCaeiF4oUnCzgOggLu75dDRm5tTpA4QMRMSJ1xPw=;
+        s=default; t=1541027337;
+        bh=CcRV/kLR6yrTXK2LsYZVJ1fn+J7L4h2aDCegqemHkzY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c4HmD2xd2p1/ZbGBCeaklnG5T4hf8XqJS0JAXI+bmYLGn7jdJblS1JLJhWzinL58F
-         Otcfj1qM0wKfCw9ki/c7795G3YPJXAqNMwK7UPxbtmFU7wmr9wriB5Ji+KhttFV+Y9
-         Z7pqSCKoscp1lfsOZe5kDI4zYIxYm8BGFMTRY/kM=
+        b=nH1rK6UKz/6sKe7CMqE62nIR7yvGjFaDA/3KSu49uXeAhOeNwG1d6d9nkNhB3RqrS
+         sAO35sRJNLpDdbL/Jr6SOL8Vp2zmbZSNtiBSL5f7bc51SpwX+cJePcWUOOi/qQb7rD
+         wNdnhpBIsrJF5VNocninFwi192gQfUWa6Qf5CJlE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Diego Viola <diego.viola@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+Cc:     Shannon Nelson <shannon.nelson@oracle.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 071/126] libata: Apply NOLPM quirk for SAMSUNG MZ7TD256HAFV-000L9
-Date:   Wed, 31 Oct 2018 19:06:59 -0400
-Message-Id: <20181031230754.29029-71-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 068/126] ixgbe: disallow IPsec Tx offload when in SR-IOV mode
+Date:   Wed, 31 Oct 2018 19:06:56 -0400
+Message-Id: <20181031230754.29029-68-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181031230754.29029-1-sashal@kernel.org>
 References: <20181031230754.29029-1-sashal@kernel.org>
@@ -52,35 +53,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Diego Viola <diego.viola@gmail.com>
+From: Shannon Nelson <shannon.nelson@oracle.com>
 
-[ Upstream commit a435ab4f80f983c53b4ca4f8c12b3ddd3ca17670 ]
+[ Upstream commit 47b6f50077e68bcd544f657526dad4bfdce7e87d ]
 
-med_power_with_dipm causes my T450 to freeze with a SAMSUNG
-MZ7TD256HAFV-000L9 SSD (firmware DXT02L5Q).
+There seems to be a problem in the x540's internal switch wherein if SR-IOV
+mode is enabled and an offloaded IPsec packet is sent to a local VF,
+the packet is silently dropped.  This might never be a problem as it is
+somewhat a corner case, but if someone happens to be using IPsec offload
+from the PF to a VF that just happens to get migrated to the local box,
+communication will mysteriously fail.
 
-Switching the LPM to max_performance fixes this issue.
+Not good.
 
-Acked-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Diego Viola <diego.viola@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+A simple way to protect from this is to simply not allow any IPsec offloads
+for outgoing packets when num_vfs != 0.  This doesn't help any offloads that
+were created before SR-IOV was enabled, but we'll get to that later.
+
+Signed-off-by: Shannon Nelson <shannon.nelson@oracle.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ata/libata-core.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-index 99bf0c0394f8..321a9579556d 100644
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -4552,6 +4552,7 @@ static const struct ata_blacklist_entry ata_device_blacklist [] = {
- 	/* These specific Samsung models/firmware-revs do not handle LPM well */
- 	{ "SAMSUNG MZMPC128HBFU-000MV", "CXM14M1Q", ATA_HORKAGE_NOLPM, },
- 	{ "SAMSUNG SSD PM830 mSATA *",  "CXM13D1Q", ATA_HORKAGE_NOLPM, },
-+	{ "SAMSUNG MZ7TD256HAFV-000L9", "DXT02L5Q", ATA_HORKAGE_NOLPM, },
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
+index da4322e4daed..add124e0381d 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
+@@ -676,6 +676,9 @@ static int ixgbe_ipsec_add_sa(struct xfrm_state *xs)
+ 	} else {
+ 		struct tx_sa tsa;
  
- 	/* devices that don't properly handle queued TRIM commands */
- 	{ "Micron_M500IT_*",		"MU01",	ATA_HORKAGE_NO_NCQ_TRIM |
++		if (adapter->num_vfs)
++			return -EOPNOTSUPP;
++
+ 		/* find the first unused index */
+ 		ret = ixgbe_ipsec_find_empty_idx(ipsec, false);
+ 		if (ret < 0) {
 -- 
 2.17.1
 
