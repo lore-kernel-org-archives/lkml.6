@@ -7,67 +7,68 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 666DAC6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:43:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 905A0C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:43:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ACE22082E
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:43:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 548AD2082E
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:43:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nY10gtsG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ACE22082E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zqu4lf9L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 548AD2082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728989AbeKAXqp (ORCPT
+        id S1728992AbeKAXrD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 19:46:45 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:44981 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728832AbeKAXqp (ORCPT
+        Thu, 1 Nov 2018 19:47:03 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:45200 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728352AbeKAXrC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 19:46:45 -0400
-Received: by mail-qk1-f195.google.com with SMTP id n12so12381058qkh.11;
-        Thu, 01 Nov 2018 07:43:28 -0700 (PDT)
+        Thu, 1 Nov 2018 19:47:02 -0400
+Received: by mail-qt1-f194.google.com with SMTP id l9-v6so21292759qtj.12;
+        Thu, 01 Nov 2018 07:43:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=o1HuJO1RUvHYO8Q8iTB6hQuobWCheoadrs6aZ7vHCNI=;
-        b=nY10gtsG93nvrNjcVAcVuNlAnF+w1oTirQeSx2bZ/VkxfPvH69rp+m3ckEThXQvzvz
-         vi/jgf2hipPe1tUnQ443J8Ld6JZacTZ08WoznWxmFWpaScFGkyRgQhlLQgwKGstxMvPR
-         LIZypJp1hUmuklmJQ2gopUvmzUblfof2S2DKiHAYwQHn7DOJRYHevNkDcCrZIYK8SHgR
-         cwrQDqdfmbvIjDrL4kH5OA/QDoNe0Xifh56YFRel8tr1SJgq7VFCrFLRKlwcT29dpDOO
-         6WF1Fd3fKRCe2o1mJQWabouYZr5fDJqVPmLMD441335iSRrunhGIuI1VZPp3rjwfO3TK
-         acJQ==
+        bh=50YKaMUXZTtrepHYaXBxTyw7j/sLoX4pes7YMM1sdIA=;
+        b=Zqu4lf9LEdI0JPVj8jo6iyJKhAc3Vf1Ky5bh/jyecME978KCvUvdi6l4PsE1BNFwrI
+         i+9HOGB31BBMkKmiAamykmx//rwpewgM4H1L99OfohOKOxhaI74dcvaq5tbfY6U+KccH
+         j2wueHie5ZOmiFvws8m4wFIPmauC+amohBSPban3Y4XpvNqOOw8RnecAgqibx/ING8qX
+         XU0TgfSxdEmJvHx49PyCpimd4PVTRXiuPDLsXl6uoFd2/3UN/4uVZyRiwDEO2M/XR6VW
+         1nuyLoMZPAjSyMHUKmFGXR8ew+jyBQS86zNI73sYoi+GnIHKpj79UeRWfb1JgnPu9tOC
+         jTnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=o1HuJO1RUvHYO8Q8iTB6hQuobWCheoadrs6aZ7vHCNI=;
-        b=lW5DaWNPVH4z0qto/7NSgi1rIsGMfrN9zRELFHUXCAwAjq+kKNMst0tonEYVruY+B3
-         tEoVfLb03kpxOZF9k5ZwCIi0mXSa03rSfIsZ0awZA+UpAiduFfhB0gmUnM+i+zEZY7L0
-         m0knVsZMLgPdEMw7uQipkNpDu7W9/JxhGpi8Tq+3yxGTezZKLR0067RaZwLz2Ma3VvvL
-         0XRkwgFc3Zt5PJKVHfpLbKM/I1Qs3KYt9GPQgSLUPa1xMZh85x1ZfrdbJBOK7ylqWueg
-         rAfCIExpC2nix4OnRYmx7X1OgL14IsyUTIJ5xd4ZFfJBF06EvaLufKa8fRLxcS02H6Ti
-         QUAg==
-X-Gm-Message-State: AGRZ1gLF/wxgqWjf+ataGsU0Qlkap7Y2E5KKRTq5HJV3vK8JLM51DpdE
-        0oB84+dhZM1U8+MrUXCFcHY=
-X-Google-Smtp-Source: AJdET5dsEA8KZ9vsxcTNEyCOcjO6zWEfZxkll7bQ17+Ly2lhlUvJi0MkaxOJfIrLD8OQzgieQc2oEg==
-X-Received: by 2002:a37:8006:: with SMTP id b6-v6mr6658028qkd.178.1541083407989;
-        Thu, 01 Nov 2018 07:43:27 -0700 (PDT)
+        bh=50YKaMUXZTtrepHYaXBxTyw7j/sLoX4pes7YMM1sdIA=;
+        b=HJvQIwA+yzBaqNDrJR0sLtFmpH4HM60H/x6fsJphqegRHjp0VxOsklhDQpCDTUA6BG
+         gv/rcZIKO0uKpQpbs9erDgQQE/KPmDTgeIGu8aA7aWaFZsvoA6gkK3RN4CaXR/vMkP8D
+         Xf9VDF4MLAI46yH+NMw3iBuJmHIDV24S00o2hvDMe+HNF7ul7h5tSUWJoS1sh+g3efaK
+         416D/CnL6m5wA0nAYgSFqz8PgbT78rX2KfH4BBsoXK35mfvNeuWFMz+62I/dmCXu4VVd
+         gkdNWYZekFB0P4FqNu0tA4Tj8k9a7H4hn8+lmRIFPqzWadoMzRFvcYatH9lJBcg2UzeZ
+         OGhw==
+X-Gm-Message-State: AGRZ1gLjtgr3B9u9JvcRr1UVKbZ6UdvV+OfZNzv+OuRNFZY2rb6vl/YW
+        6LF7IqDaiTsVaImt2ByjRlo=
+X-Google-Smtp-Source: AJdET5eOnG5jnq5AI+JLmbs8efVFFw9CoUwubLYmzm7ARmwiWtyezKpVw1jfAKBmdODus7eKY6NfVw==
+X-Received: by 2002:a0c:ae76:: with SMTP id z51-v6mr7098225qvc.108.1541083426113;
+        Thu, 01 Nov 2018 07:43:46 -0700 (PDT)
 Received: from renatolg ([143.107.45.1])
-        by smtp.gmail.com with ESMTPSA id b134sm1201946qkg.78.2018.11.01.07.43.25
+        by smtp.gmail.com with ESMTPSA id l123-v6sm5729208qkd.95.2018.11.01.07.43.43
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 01 Nov 2018 07:43:27 -0700 (PDT)
-Date:   Thu, 1 Nov 2018 11:43:23 -0300
+        Thu, 01 Nov 2018 07:43:45 -0700 (PDT)
+Date:   Thu, 1 Nov 2018 11:43:41 -0300
 From:   Renato Lui Geh <renatogeh@gmail.com>
 To:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
         knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
         giuliano.belinassi@usp.br
 Cc:     linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
-Subject: [PATCH v3 2/3] staging: iio: ad7780: update voltage on read
-Message-ID: <1bc4bdf6342d4bc0c2fea17fb3bcd79fabf0e1d1.1541082656.git.renatogeh@gmail.com>
+Subject: [PATCH v3 3/3] staging: iio: ad7780: remove unnecessary stashed
+ voltage value
+Message-ID: <d6b6aeda46121f59a53b43599bf0200580d7a79d.1541082656.git.renatogeh@gmail.com>
 References: <cover.1541082656.git.renatogeh@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
@@ -79,41 +80,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ad7780 driver previously did not read the correct device output, as
-it read an outdated value set at initialization. It now updates its
-voltage on read.
+This patch removes the unnecessary field int_vref_mv in ad7780_state
+referring to the device's voltage.
 
 Signed-off-by: Renato Lui Geh <renatogeh@gmail.com>
 ---
 Changes in v3:
-	- removed initialization (int voltage_uv = 0)
-	- returns error when voltage_uv is null
+	- removed unnecessary int_vref_mv from ad7780_state
 
- drivers/staging/iio/adc/ad7780.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/staging/iio/adc/ad7780.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
 diff --git a/drivers/staging/iio/adc/ad7780.c b/drivers/staging/iio/adc/ad7780.c
-index 91e016d534ed..f2a11e9424cd 100644
+index f2a11e9424cd..f250370efcf7 100644
 --- a/drivers/staging/iio/adc/ad7780.c
 +++ b/drivers/staging/iio/adc/ad7780.c
-@@ -87,12 +87,16 @@ static int ad7780_read_raw(struct iio_dev *indio_dev,
- 			   long m)
- {
- 	struct ad7780_state *st = iio_priv(indio_dev);
-+	int voltage_uv;
+@@ -42,7 +42,6 @@ struct ad7780_state {
+ 	struct regulator		*reg;
+ 	struct gpio_desc		*powerdown_gpio;
+ 	unsigned int	gain;
+-	u16				int_vref_mv;
  
- 	switch (m) {
- 	case IIO_CHAN_INFO_RAW:
- 		return ad_sigma_delta_single_conversion(indio_dev, chan, val);
- 	case IIO_CHAN_INFO_SCALE:
--		*val = st->int_vref_mv * st->gain;
-+		voltage_uv = regulator_get_voltage(st->reg);
-+		if (!voltage_uv)
-+			return -EINVAL;
-+		*val = (voltage_uv / 1000) * st->gain;
- 		*val2 = chan->scan_type.realbits - 1;
- 		return IIO_VAL_FRACTIONAL_LOG2;
- 	case IIO_CHAN_INFO_OFFSET:
+ 	struct ad_sigma_delta sd;
+ };
+@@ -190,9 +189,7 @@ static int ad7780_probe(struct spi_device *spi)
+ 	st->chip_info =
+ 		&ad7780_chip_info_tbl[spi_get_device_id(spi)->driver_data];
+ 
+-	if (voltage_uv)
+-		st->int_vref_mv = voltage_uv / 1000;
+-	else
++	if (!voltage_uv)
+ 		dev_warn(&spi->dev, "Reference voltage unspecified\n");
+ 
+ 	spi_set_drvdata(spi, indio_dev);
 -- 
 2.19.1
 
