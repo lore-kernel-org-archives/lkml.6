@@ -2,78 +2,122 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32891C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:29:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00215C6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:30:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDEF9205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:29:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MjP8wKhA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDEF9205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B2F6D20830
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:30:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2F6D20830
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728667AbeKAXdG (ORCPT
+        id S1728693AbeKAXdo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 19:33:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47474 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 19:33:44 -0400
+Received: from mga17.intel.com ([192.55.52.151]:12442 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728016AbeKAXdE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 19:33:04 -0400
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2DDA205F4;
-        Thu,  1 Nov 2018 14:29:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541082592;
-        bh=KFIU1K1QVcHoR+w3k/YGDu2HbvtH4Xj2PcRFhc7bo/8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=MjP8wKhA5AgTlSI0bvGhA/GfU5ATnddOLgGYCunO99mQe7DeY9fh1ktgKps8Ol8jO
-         i0+FXfgwQcYnBY5oNL6S17lomhwQ0p+wojiS+2AgshjwPlHTBU2XJjiET1LjU1k/U4
-         wt8dT42eCSoXWzCQSLslzUbgSRhtWorKyomMQugg=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [BUGFIX PATCH] tracing/kprobes: Fix strpbrk() argument order
-Date:   Thu,  1 Nov 2018 23:29:28 +0900
-Message-Id: <154108256792.2604.1816052586385217811.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-User-Agent: StGit/0.17.1-dirty
+        id S1728016AbeKAXdo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 19:33:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Nov 2018 07:30:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,452,1534834800"; 
+   d="scan'208";a="104583168"
+Received: from jhuerta-mobl.amr.corp.intel.com (HELO [10.251.4.227]) ([10.251.4.227])
+  by orsmga001.jf.intel.com with ESMTP; 01 Nov 2018 07:30:31 -0700
+Subject: Re: [PATCH v3] mm, drm/i915: mark pinned shmemfs pages as unevictable
+To:     Vovo Yang <vovoy@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mm@kvack.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Michal Hocko <mhocko@suse.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20181031081945.207709-1-vovoy@chromium.org>
+ <039b2768-39ff-6196-9615-1f0302ee3e0e@intel.com>
+ <CAEHM+4q7V3d+EiHR6+TKoJC=6Ga0eCLWik0oJgDRQCpWps=wMA@mail.gmail.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <80347465-38fd-54d3-facf-bcd6bf38228a@intel.com>
+Date:   Thu, 1 Nov 2018 07:30:30 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAEHM+4q7V3d+EiHR6+TKoJC=6Ga0eCLWik0oJgDRQCpWps=wMA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix strpbrk()'s argument order, it must pass acceptable string
-in 2nd argument. Note that this can cause a kernel panic where
-it recovers backup character to code->data.
+On 11/1/18 5:06 AM, Vovo Yang wrote:
+>> mlock() and ramfs usage are pretty easy to track down.  /proc/$pid/smaps
+>> or /proc/meminfo can show us mlock() and good ol' 'df' and friends can
+>> show us ramfs the extent of pinned memory.
+>>
+>> With these, if we see "Unevictable" in meminfo bump up, we at least have
+>> a starting point to find the cause.
+>>
+>> Do we have an equivalent for i915?
+> AFAIK, there is no way to get i915 unevictable page count, some
+> modification to i915 debugfs is required.
 
-Fixes: a6682814f371 ("tracing/kprobes: Allow kprobe-events to record module symbol")
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- kernel/trace/trace_probe.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Is something like this feasible to add to this patch set before it gets
+merged?  For now, it's probably easy to tell if i915 is at fault because
+if the unevictable memory isn't from mlock or ramfs, it must be i915.
 
-diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
-index 3ef15a6683c0..bd30e9398d2a 100644
---- a/kernel/trace/trace_probe.c
-+++ b/kernel/trace/trace_probe.c
-@@ -535,7 +535,7 @@ int traceprobe_update_arg(struct probe_arg *arg)
- 			if (code[1].op != FETCH_OP_IMM)
- 				return -EINVAL;
- 
--			tmp = strpbrk("+-", code->data);
-+			tmp = strpbrk(code->data, "+-");
- 			if (tmp)
- 				c = *tmp;
- 			ret = traceprobe_split_symbol_offset(code->data,
+But, if we leave it as-is, it'll just defer the issue to the fourth user
+of the unevictable list, who will have to come back and add some
+debugging for this.
 
+Seems prudent to just do it now.
