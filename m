@@ -6,47 +6,50 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11683C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:08:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13312C6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:09:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A049F2081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:08:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A049F2081B
+	by mail.kernel.org (Postfix) with ESMTP id 765212081B
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:09:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 765212081B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728063AbeKATKq (ORCPT
+        id S1728090AbeKATL0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 15:10:46 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:56511 "EHLO
+        Thu, 1 Nov 2018 15:11:26 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53161 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727203AbeKATKp (ORCPT
+        with ESMTP id S1726320AbeKATL0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 15:10:45 -0400
+        Thu, 1 Nov 2018 15:11:26 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA1A806W2769726
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA1A8X1G2769765
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 1 Nov 2018 03:08:00 -0700
+        Thu, 1 Nov 2018 03:08:33 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA1A80A82769723;
-        Thu, 1 Nov 2018 03:08:00 -0700
-Date:   Thu, 1 Nov 2018 03:08:00 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA1A8XYf2769762;
+        Thu, 1 Nov 2018 03:08:33 -0700
+Date:   Thu, 1 Nov 2018 03:08:33 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Mark Rutland <tipbot@zytor.com>
-Message-ID: <tip-b5d47ef9ea5c5fe31d7eabeb79f697629bd9e2cb@git.kernel.org>
-Cc:     arnd@arndb.de, will.deacon@arm.com, hpa@zytor.com,
-        mark.rutland@arm.com, boqun.feng@gmail.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de,
-        peterz@infradead.org
-Reply-To: arnd@arndb.de, mark.rutland@arm.com,
-          linux-kernel@vger.kernel.org, boqun.feng@gmail.com,
-          will.deacon@arm.com, hpa@zytor.com, tglx@linutronix.de,
-          mingo@kernel.org, peterz@infradead.org
-In-Reply-To: <20180904104830.2975-4-mark.rutland@arm.com>
-References: <20180904104830.2975-4-mark.rutland@arm.com>
+Message-ID: <tip-aa525d063851a98e020b827fdd1d7776ae652301@git.kernel.org>
+Cc:     dvyukov@google.com, arnd@arndb.de, aryabinin@virtuozzo.com,
+        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        glider@google.com, mark.rutland@arm.com, mingo@kernel.org,
+        hpa@zytor.com
+Reply-To: dvyukov@google.com, arnd@arndb.de, aryabinin@virtuozzo.com,
+          will.deacon@arm.com, boqun.feng@gmail.com, peterz@infradead.org,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          glider@google.com, mark.rutland@arm.com, hpa@zytor.com,
+          mingo@kernel.org
+In-Reply-To: <20180904104830.2975-5-mark.rutland@arm.com>
+References: <20180904104830.2975-5-mark.rutland@arm.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] locking/atomics: Switch to generated atomic-long
-Git-Commit-ID: b5d47ef9ea5c5fe31d7eabeb79f697629bd9e2cb
+Subject: [tip:locking/core] locking/atomics: Switch to generated
+ instrumentation
+Git-Commit-ID: aa525d063851a98e020b827fdd1d7776ae652301
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,19 +63,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b5d47ef9ea5c5fe31d7eabeb79f697629bd9e2cb
-Gitweb:     https://git.kernel.org/tip/b5d47ef9ea5c5fe31d7eabeb79f697629bd9e2cb
+Commit-ID:  aa525d063851a98e020b827fdd1d7776ae652301
+Gitweb:     https://git.kernel.org/tip/aa525d063851a98e020b827fdd1d7776ae652301
 Author:     Mark Rutland <mark.rutland@arm.com>
-AuthorDate: Tue, 4 Sep 2018 11:48:27 +0100
+AuthorDate: Tue, 4 Sep 2018 11:48:28 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 1 Nov 2018 11:00:55 +0100
+CommitDate: Thu, 1 Nov 2018 11:01:03 +0100
 
-locking/atomics: Switch to generated atomic-long
+locking/atomics: Switch to generated instrumentation
 
 As a step towards ensuring the atomic* APIs are consistent, let's switch
-to wrappers generated by gen-atomic-long.h, using the same table that
-gen-atomic-fallbacks.h uses to fill in gaps in the atomic_* and
-atomic64_* APIs.
+to wrappers generated by gen-atomic-instrumented.h, using the same table
+used to generate the fallbacks and atomic-long wrappers.
 
 These are checked in rather than generated with Kbuild, since:
 
@@ -87,21 +89,21 @@ These are checked in rather than generated with Kbuild, since:
   (e.g. for generating bounds.h), and we'd rather not complicate the
   top-level Kbuild file with dependencies.
 
-Other than *_INIT() and *_cond_read_acquire(), all API functions are
-implemented as static inline C functions, ensuring consistent type
-promotion and/or truncation without requiring explicit casts to be
-applied to parameters or return values.
+Generating the atomic headers means that the instrumented wrappers will
+remain in sync with the rest of the atomic APIs, and we gain all the
+ordering variants of each atomic without having to manually expanded
+them all.
 
-Since we typedef atomic_long_t to either atomic_t or atomic64_t, we know
-these types are equivalent, and don't require explicit casts between
-them. However, as the try_cmpxchg*() functions take a pointer for the
-'old' parameter, which may be an int or s64, an explicit cast is
-generated for this.
+The KASAN checks are automatically generated based on the function
+parameters defined in atomics.tbl. Note that try_cmpxchg() now correctly
+treats 'old' as a parameter that may be written to, and not only read as
+the hand-written instrumentation assumed.
 
-There should be no functional change as a result of this patch (i.e.
-existing code should not be affected). However, this introduces a number
-of functions into the atomic_long_* API, bringing it into line with the
-atomic_* and atomic64_* APIs.
+Other than the change to try_cmpxchg(), existing code should not be
+affected by this patch. The patch introduces instrumentation for all
+optional atomics (and ordering variants), along with the ifdeffery this
+requires, enabling other architectures to make use of the instrumented
+atomics.
 
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
@@ -109,1246 +111,1986 @@ Acked-by: Will Deacon <will.deacon@arm.com>
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: catalin.marinas@arm.com
 Cc: linuxdrivers@attotech.com
-Cc: dvyukov@google.com
+Cc: Dmitry Vyukov <dvyukov@google.com>
 Cc: Boqun Feng <boqun.feng@gmail.com>
 Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: aryabinin@virtuozzo.com
-Cc: glider@google.com
-Link: http://lkml.kernel.org/r/20180904104830.2975-4-mark.rutland@arm.com
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Alexander Potapenko <glider@google.com>
+Link: http://lkml.kernel.org/r/20180904104830.2975-5-mark.rutland@arm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- include/asm-generic/atomic-long.h | 1173 ++++++++++++++++++++++++++++++-------
- 1 file changed, 958 insertions(+), 215 deletions(-)
+ include/asm-generic/atomic-instrumented.h | 1688 +++++++++++++++++++++++++----
+ 1 file changed, 1504 insertions(+), 184 deletions(-)
 
-diff --git a/include/asm-generic/atomic-long.h b/include/asm-generic/atomic-long.h
-index 87d14476edc2..a833d385a70b 100644
---- a/include/asm-generic/atomic-long.h
-+++ b/include/asm-generic/atomic-long.h
-@@ -1,269 +1,1012 @@
--/* SPDX-License-Identifier: GPL-2.0 */
+diff --git a/include/asm-generic/atomic-instrumented.h b/include/asm-generic/atomic-instrumented.h
+index 0d4b1d3dbc1e..b8f5b35216e1 100644
+--- a/include/asm-generic/atomic-instrumented.h
++++ b/include/asm-generic/atomic-instrumented.h
+@@ -1,3 +1,8 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
-+// Generated by scripts/atomic/gen-atomic-long.sh
++// Generated by scripts/atomic/gen-atomic-instrumented.sh
 +// DO NOT MODIFY THIS FILE DIRECTLY
 +
- #ifndef _ASM_GENERIC_ATOMIC_LONG_H
- #define _ASM_GENERIC_ATOMIC_LONG_H
--/*
-- * Copyright (C) 2005 Silicon Graphics, Inc.
-- *	Christoph Lameter
-- *
-- * Allows to provide arch independent atomic definitions without the need to
-- * edit all arch specific atomic.h files.
-- */
+ /*
+  * This file provides wrappers with KASAN instrumentation for atomic operations.
+  * To use this functionality an arch's atomic.h file needs to define all
+@@ -9,459 +14,1774 @@
+  * arch_ variants (i.e. arch_atomic_read()/arch_atomic_cmpxchg()) to avoid
+  * double instrumentation.
+  */
++#ifndef _ASM_GENERIC_ATOMIC_INSTRUMENTED_H
++#define _ASM_GENERIC_ATOMIC_INSTRUMENTED_H
++
++#include <linux/build_bug.h>
++#include <linux/kasan-checks.h>
++
++static inline int
++atomic_read(const atomic_t *v)
++{
++	kasan_check_read(v, sizeof(*v));
++	return arch_atomic_read(v);
++}
++#define atomic_read atomic_read
++
++#if defined(arch_atomic_read_acquire)
++static inline int
++atomic_read_acquire(const atomic_t *v)
++{
++	kasan_check_read(v, sizeof(*v));
++	return arch_atomic_read_acquire(v);
++}
++#define atomic_read_acquire atomic_read_acquire
++#endif
++
++static inline void
++atomic_set(atomic_t *v, int i)
++{
++	kasan_check_write(v, sizeof(*v));
++	arch_atomic_set(v, i);
++}
++#define atomic_set atomic_set
++
++#if defined(arch_atomic_set_release)
++static inline void
++atomic_set_release(atomic_t *v, int i)
++{
++	kasan_check_write(v, sizeof(*v));
++	arch_atomic_set_release(v, i);
++}
++#define atomic_set_release atomic_set_release
++#endif
++
++static inline void
++atomic_add(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	arch_atomic_add(i, v);
++}
++#define atomic_add atomic_add
++
++#if !defined(arch_atomic_add_return_relaxed) || defined(arch_atomic_add_return)
++static inline int
++atomic_add_return(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_add_return(i, v);
++}
++#define atomic_add_return atomic_add_return
++#endif
++
++#if defined(arch_atomic_add_return_acquire)
++static inline int
++atomic_add_return_acquire(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_add_return_acquire(i, v);
++}
++#define atomic_add_return_acquire atomic_add_return_acquire
++#endif
++
++#if defined(arch_atomic_add_return_release)
++static inline int
++atomic_add_return_release(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_add_return_release(i, v);
++}
++#define atomic_add_return_release atomic_add_return_release
++#endif
++
++#if defined(arch_atomic_add_return_relaxed)
++static inline int
++atomic_add_return_relaxed(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_add_return_relaxed(i, v);
++}
++#define atomic_add_return_relaxed atomic_add_return_relaxed
++#endif
++
++#if !defined(arch_atomic_fetch_add_relaxed) || defined(arch_atomic_fetch_add)
++static inline int
++atomic_fetch_add(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_add(i, v);
++}
++#define atomic_fetch_add atomic_fetch_add
++#endif
++
++#if defined(arch_atomic_fetch_add_acquire)
++static inline int
++atomic_fetch_add_acquire(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_add_acquire(i, v);
++}
++#define atomic_fetch_add_acquire atomic_fetch_add_acquire
++#endif
++
++#if defined(arch_atomic_fetch_add_release)
++static inline int
++atomic_fetch_add_release(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_add_release(i, v);
++}
++#define atomic_fetch_add_release atomic_fetch_add_release
++#endif
++
++#if defined(arch_atomic_fetch_add_relaxed)
++static inline int
++atomic_fetch_add_relaxed(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_add_relaxed(i, v);
++}
++#define atomic_fetch_add_relaxed atomic_fetch_add_relaxed
++#endif
++
++static inline void
++atomic_sub(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	arch_atomic_sub(i, v);
++}
++#define atomic_sub atomic_sub
++
++#if !defined(arch_atomic_sub_return_relaxed) || defined(arch_atomic_sub_return)
++static inline int
++atomic_sub_return(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_sub_return(i, v);
++}
++#define atomic_sub_return atomic_sub_return
++#endif
++
++#if defined(arch_atomic_sub_return_acquire)
++static inline int
++atomic_sub_return_acquire(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_sub_return_acquire(i, v);
++}
++#define atomic_sub_return_acquire atomic_sub_return_acquire
++#endif
++
++#if defined(arch_atomic_sub_return_release)
++static inline int
++atomic_sub_return_release(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_sub_return_release(i, v);
++}
++#define atomic_sub_return_release atomic_sub_return_release
++#endif
++
++#if defined(arch_atomic_sub_return_relaxed)
++static inline int
++atomic_sub_return_relaxed(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_sub_return_relaxed(i, v);
++}
++#define atomic_sub_return_relaxed atomic_sub_return_relaxed
++#endif
++
++#if !defined(arch_atomic_fetch_sub_relaxed) || defined(arch_atomic_fetch_sub)
++static inline int
++atomic_fetch_sub(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_sub(i, v);
++}
++#define atomic_fetch_sub atomic_fetch_sub
++#endif
++
++#if defined(arch_atomic_fetch_sub_acquire)
++static inline int
++atomic_fetch_sub_acquire(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_sub_acquire(i, v);
++}
++#define atomic_fetch_sub_acquire atomic_fetch_sub_acquire
++#endif
++
++#if defined(arch_atomic_fetch_sub_release)
++static inline int
++atomic_fetch_sub_release(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_sub_release(i, v);
++}
++#define atomic_fetch_sub_release atomic_fetch_sub_release
++#endif
++
++#if defined(arch_atomic_fetch_sub_relaxed)
++static inline int
++atomic_fetch_sub_relaxed(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_sub_relaxed(i, v);
++}
++#define atomic_fetch_sub_relaxed atomic_fetch_sub_relaxed
++#endif
++
++#if defined(arch_atomic_inc)
++static inline void
++atomic_inc(atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	arch_atomic_inc(v);
++}
++#define atomic_inc atomic_inc
++#endif
++
++#if defined(arch_atomic_inc_return)
++static inline int
++atomic_inc_return(atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_inc_return(v);
++}
++#define atomic_inc_return atomic_inc_return
++#endif
++
++#if defined(arch_atomic_inc_return_acquire)
++static inline int
++atomic_inc_return_acquire(atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_inc_return_acquire(v);
++}
++#define atomic_inc_return_acquire atomic_inc_return_acquire
++#endif
++
++#if defined(arch_atomic_inc_return_release)
++static inline int
++atomic_inc_return_release(atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_inc_return_release(v);
++}
++#define atomic_inc_return_release atomic_inc_return_release
++#endif
++
++#if defined(arch_atomic_inc_return_relaxed)
++static inline int
++atomic_inc_return_relaxed(atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_inc_return_relaxed(v);
++}
++#define atomic_inc_return_relaxed atomic_inc_return_relaxed
++#endif
++
++#if defined(arch_atomic_fetch_inc)
++static inline int
++atomic_fetch_inc(atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_inc(v);
++}
++#define atomic_fetch_inc atomic_fetch_inc
++#endif
++
++#if defined(arch_atomic_fetch_inc_acquire)
++static inline int
++atomic_fetch_inc_acquire(atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_inc_acquire(v);
++}
++#define atomic_fetch_inc_acquire atomic_fetch_inc_acquire
++#endif
++
++#if defined(arch_atomic_fetch_inc_release)
++static inline int
++atomic_fetch_inc_release(atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_inc_release(v);
++}
++#define atomic_fetch_inc_release atomic_fetch_inc_release
++#endif
++
++#if defined(arch_atomic_fetch_inc_relaxed)
++static inline int
++atomic_fetch_inc_relaxed(atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_inc_relaxed(v);
++}
++#define atomic_fetch_inc_relaxed atomic_fetch_inc_relaxed
++#endif
++
++#if defined(arch_atomic_dec)
++static inline void
++atomic_dec(atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	arch_atomic_dec(v);
++}
++#define atomic_dec atomic_dec
++#endif
++
++#if defined(arch_atomic_dec_return)
++static inline int
++atomic_dec_return(atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_dec_return(v);
++}
++#define atomic_dec_return atomic_dec_return
++#endif
++
++#if defined(arch_atomic_dec_return_acquire)
++static inline int
++atomic_dec_return_acquire(atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_dec_return_acquire(v);
++}
++#define atomic_dec_return_acquire atomic_dec_return_acquire
++#endif
++
++#if defined(arch_atomic_dec_return_release)
++static inline int
++atomic_dec_return_release(atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_dec_return_release(v);
++}
++#define atomic_dec_return_release atomic_dec_return_release
++#endif
++
++#if defined(arch_atomic_dec_return_relaxed)
++static inline int
++atomic_dec_return_relaxed(atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_dec_return_relaxed(v);
++}
++#define atomic_dec_return_relaxed atomic_dec_return_relaxed
++#endif
++
++#if defined(arch_atomic_fetch_dec)
++static inline int
++atomic_fetch_dec(atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_dec(v);
++}
++#define atomic_fetch_dec atomic_fetch_dec
++#endif
++
++#if defined(arch_atomic_fetch_dec_acquire)
++static inline int
++atomic_fetch_dec_acquire(atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_dec_acquire(v);
++}
++#define atomic_fetch_dec_acquire atomic_fetch_dec_acquire
++#endif
++
++#if defined(arch_atomic_fetch_dec_release)
++static inline int
++atomic_fetch_dec_release(atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_dec_release(v);
++}
++#define atomic_fetch_dec_release atomic_fetch_dec_release
++#endif
++
++#if defined(arch_atomic_fetch_dec_relaxed)
++static inline int
++atomic_fetch_dec_relaxed(atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_dec_relaxed(v);
++}
++#define atomic_fetch_dec_relaxed atomic_fetch_dec_relaxed
++#endif
++
++static inline void
++atomic_and(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	arch_atomic_and(i, v);
++}
++#define atomic_and atomic_and
++
++#if !defined(arch_atomic_fetch_and_relaxed) || defined(arch_atomic_fetch_and)
++static inline int
++atomic_fetch_and(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_and(i, v);
++}
++#define atomic_fetch_and atomic_fetch_and
++#endif
++
++#if defined(arch_atomic_fetch_and_acquire)
++static inline int
++atomic_fetch_and_acquire(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_and_acquire(i, v);
++}
++#define atomic_fetch_and_acquire atomic_fetch_and_acquire
++#endif
++
++#if defined(arch_atomic_fetch_and_release)
++static inline int
++atomic_fetch_and_release(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_and_release(i, v);
++}
++#define atomic_fetch_and_release atomic_fetch_and_release
++#endif
++
++#if defined(arch_atomic_fetch_and_relaxed)
++static inline int
++atomic_fetch_and_relaxed(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_and_relaxed(i, v);
++}
++#define atomic_fetch_and_relaxed atomic_fetch_and_relaxed
++#endif
++
++#if defined(arch_atomic_andnot)
++static inline void
++atomic_andnot(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	arch_atomic_andnot(i, v);
++}
++#define atomic_andnot atomic_andnot
++#endif
++
++#if defined(arch_atomic_fetch_andnot)
++static inline int
++atomic_fetch_andnot(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_andnot(i, v);
++}
++#define atomic_fetch_andnot atomic_fetch_andnot
++#endif
++
++#if defined(arch_atomic_fetch_andnot_acquire)
++static inline int
++atomic_fetch_andnot_acquire(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_andnot_acquire(i, v);
++}
++#define atomic_fetch_andnot_acquire atomic_fetch_andnot_acquire
++#endif
++
++#if defined(arch_atomic_fetch_andnot_release)
++static inline int
++atomic_fetch_andnot_release(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_andnot_release(i, v);
++}
++#define atomic_fetch_andnot_release atomic_fetch_andnot_release
++#endif
++
++#if defined(arch_atomic_fetch_andnot_relaxed)
++static inline int
++atomic_fetch_andnot_relaxed(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_andnot_relaxed(i, v);
++}
++#define atomic_fetch_andnot_relaxed atomic_fetch_andnot_relaxed
++#endif
++
++static inline void
++atomic_or(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	arch_atomic_or(i, v);
++}
++#define atomic_or atomic_or
++
++#if !defined(arch_atomic_fetch_or_relaxed) || defined(arch_atomic_fetch_or)
++static inline int
++atomic_fetch_or(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_or(i, v);
++}
++#define atomic_fetch_or atomic_fetch_or
++#endif
++
++#if defined(arch_atomic_fetch_or_acquire)
++static inline int
++atomic_fetch_or_acquire(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_or_acquire(i, v);
++}
++#define atomic_fetch_or_acquire atomic_fetch_or_acquire
++#endif
++
++#if defined(arch_atomic_fetch_or_release)
++static inline int
++atomic_fetch_or_release(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_or_release(i, v);
++}
++#define atomic_fetch_or_release atomic_fetch_or_release
++#endif
++
++#if defined(arch_atomic_fetch_or_relaxed)
++static inline int
++atomic_fetch_or_relaxed(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_or_relaxed(i, v);
++}
++#define atomic_fetch_or_relaxed atomic_fetch_or_relaxed
++#endif
++
++static inline void
++atomic_xor(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	arch_atomic_xor(i, v);
++}
++#define atomic_xor atomic_xor
++
++#if !defined(arch_atomic_fetch_xor_relaxed) || defined(arch_atomic_fetch_xor)
++static inline int
++atomic_fetch_xor(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_xor(i, v);
++}
++#define atomic_fetch_xor atomic_fetch_xor
++#endif
++
++#if defined(arch_atomic_fetch_xor_acquire)
++static inline int
++atomic_fetch_xor_acquire(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_xor_acquire(i, v);
++}
++#define atomic_fetch_xor_acquire atomic_fetch_xor_acquire
++#endif
++
++#if defined(arch_atomic_fetch_xor_release)
++static inline int
++atomic_fetch_xor_release(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_xor_release(i, v);
++}
++#define atomic_fetch_xor_release atomic_fetch_xor_release
++#endif
++
++#if defined(arch_atomic_fetch_xor_relaxed)
++static inline int
++atomic_fetch_xor_relaxed(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_xor_relaxed(i, v);
++}
++#define atomic_fetch_xor_relaxed atomic_fetch_xor_relaxed
++#endif
++
++#if !defined(arch_atomic_xchg_relaxed) || defined(arch_atomic_xchg)
++static inline int
++atomic_xchg(atomic_t *v, int i)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_xchg(v, i);
++}
++#define atomic_xchg atomic_xchg
++#endif
++
++#if defined(arch_atomic_xchg_acquire)
++static inline int
++atomic_xchg_acquire(atomic_t *v, int i)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_xchg_acquire(v, i);
++}
++#define atomic_xchg_acquire atomic_xchg_acquire
++#endif
++
++#if defined(arch_atomic_xchg_release)
++static inline int
++atomic_xchg_release(atomic_t *v, int i)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_xchg_release(v, i);
++}
++#define atomic_xchg_release atomic_xchg_release
++#endif
++
++#if defined(arch_atomic_xchg_relaxed)
++static inline int
++atomic_xchg_relaxed(atomic_t *v, int i)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_xchg_relaxed(v, i);
++}
++#define atomic_xchg_relaxed atomic_xchg_relaxed
++#endif
++
++#if !defined(arch_atomic_cmpxchg_relaxed) || defined(arch_atomic_cmpxchg)
++static inline int
++atomic_cmpxchg(atomic_t *v, int old, int new)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_cmpxchg(v, old, new);
++}
++#define atomic_cmpxchg atomic_cmpxchg
++#endif
++
++#if defined(arch_atomic_cmpxchg_acquire)
++static inline int
++atomic_cmpxchg_acquire(atomic_t *v, int old, int new)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_cmpxchg_acquire(v, old, new);
++}
++#define atomic_cmpxchg_acquire atomic_cmpxchg_acquire
++#endif
++
++#if defined(arch_atomic_cmpxchg_release)
++static inline int
++atomic_cmpxchg_release(atomic_t *v, int old, int new)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_cmpxchg_release(v, old, new);
++}
++#define atomic_cmpxchg_release atomic_cmpxchg_release
++#endif
++
++#if defined(arch_atomic_cmpxchg_relaxed)
++static inline int
++atomic_cmpxchg_relaxed(atomic_t *v, int old, int new)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_cmpxchg_relaxed(v, old, new);
++}
++#define atomic_cmpxchg_relaxed atomic_cmpxchg_relaxed
++#endif
++
++#if defined(arch_atomic_try_cmpxchg)
++static inline bool
++atomic_try_cmpxchg(atomic_t *v, int *old, int new)
++{
++	kasan_check_write(v, sizeof(*v));
++	kasan_check_write(old, sizeof(*old));
++	return arch_atomic_try_cmpxchg(v, old, new);
++}
++#define atomic_try_cmpxchg atomic_try_cmpxchg
++#endif
++
++#if defined(arch_atomic_try_cmpxchg_acquire)
++static inline bool
++atomic_try_cmpxchg_acquire(atomic_t *v, int *old, int new)
++{
++	kasan_check_write(v, sizeof(*v));
++	kasan_check_write(old, sizeof(*old));
++	return arch_atomic_try_cmpxchg_acquire(v, old, new);
++}
++#define atomic_try_cmpxchg_acquire atomic_try_cmpxchg_acquire
++#endif
++
++#if defined(arch_atomic_try_cmpxchg_release)
++static inline bool
++atomic_try_cmpxchg_release(atomic_t *v, int *old, int new)
++{
++	kasan_check_write(v, sizeof(*v));
++	kasan_check_write(old, sizeof(*old));
++	return arch_atomic_try_cmpxchg_release(v, old, new);
++}
++#define atomic_try_cmpxchg_release atomic_try_cmpxchg_release
++#endif
++
++#if defined(arch_atomic_try_cmpxchg_relaxed)
++static inline bool
++atomic_try_cmpxchg_relaxed(atomic_t *v, int *old, int new)
++{
++	kasan_check_write(v, sizeof(*v));
++	kasan_check_write(old, sizeof(*old));
++	return arch_atomic_try_cmpxchg_relaxed(v, old, new);
++}
++#define atomic_try_cmpxchg_relaxed atomic_try_cmpxchg_relaxed
++#endif
++
++#if defined(arch_atomic_sub_and_test)
++static inline bool
++atomic_sub_and_test(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_sub_and_test(i, v);
++}
++#define atomic_sub_and_test atomic_sub_and_test
++#endif
++
++#if defined(arch_atomic_dec_and_test)
++static inline bool
++atomic_dec_and_test(atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_dec_and_test(v);
++}
++#define atomic_dec_and_test atomic_dec_and_test
++#endif
++
++#if defined(arch_atomic_inc_and_test)
++static inline bool
++atomic_inc_and_test(atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_inc_and_test(v);
++}
++#define atomic_inc_and_test atomic_inc_and_test
++#endif
++
++#if defined(arch_atomic_add_negative)
++static inline bool
++atomic_add_negative(int i, atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_add_negative(i, v);
++}
++#define atomic_add_negative atomic_add_negative
++#endif
++
++#if defined(arch_atomic_fetch_add_unless)
++static inline int
++atomic_fetch_add_unless(atomic_t *v, int a, int u)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_fetch_add_unless(v, a, u);
++}
++#define atomic_fetch_add_unless atomic_fetch_add_unless
++#endif
++
++#if defined(arch_atomic_add_unless)
++static inline bool
++atomic_add_unless(atomic_t *v, int a, int u)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_add_unless(v, a, u);
++}
++#define atomic_add_unless atomic_add_unless
++#endif
++
++#if defined(arch_atomic_inc_not_zero)
++static inline bool
++atomic_inc_not_zero(atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_inc_not_zero(v);
++}
++#define atomic_inc_not_zero atomic_inc_not_zero
++#endif
++
++#if defined(arch_atomic_inc_unless_negative)
++static inline bool
++atomic_inc_unless_negative(atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_inc_unless_negative(v);
++}
++#define atomic_inc_unless_negative atomic_inc_unless_negative
++#endif
++
++#if defined(arch_atomic_dec_unless_positive)
++static inline bool
++atomic_dec_unless_positive(atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_dec_unless_positive(v);
++}
++#define atomic_dec_unless_positive atomic_dec_unless_positive
++#endif
++
++#if defined(arch_atomic_dec_if_positive)
++static inline int
++atomic_dec_if_positive(atomic_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic_dec_if_positive(v);
++}
++#define atomic_dec_if_positive atomic_dec_if_positive
++#endif
++
++static inline s64
++atomic64_read(const atomic64_t *v)
++{
++	kasan_check_read(v, sizeof(*v));
++	return arch_atomic64_read(v);
++}
++#define atomic64_read atomic64_read
++
++#if defined(arch_atomic64_read_acquire)
++static inline s64
++atomic64_read_acquire(const atomic64_t *v)
++{
++	kasan_check_read(v, sizeof(*v));
++	return arch_atomic64_read_acquire(v);
++}
++#define atomic64_read_acquire atomic64_read_acquire
++#endif
++
++static inline void
++atomic64_set(atomic64_t *v, s64 i)
++{
++	kasan_check_write(v, sizeof(*v));
++	arch_atomic64_set(v, i);
++}
++#define atomic64_set atomic64_set
++
++#if defined(arch_atomic64_set_release)
++static inline void
++atomic64_set_release(atomic64_t *v, s64 i)
++{
++	kasan_check_write(v, sizeof(*v));
++	arch_atomic64_set_release(v, i);
++}
++#define atomic64_set_release atomic64_set_release
++#endif
++
++static inline void
++atomic64_add(s64 i, atomic64_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	arch_atomic64_add(i, v);
++}
++#define atomic64_add atomic64_add
++
++#if !defined(arch_atomic64_add_return_relaxed) || defined(arch_atomic64_add_return)
++static inline s64
++atomic64_add_return(s64 i, atomic64_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic64_add_return(i, v);
++}
++#define atomic64_add_return atomic64_add_return
++#endif
++
++#if defined(arch_atomic64_add_return_acquire)
++static inline s64
++atomic64_add_return_acquire(s64 i, atomic64_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic64_add_return_acquire(i, v);
++}
++#define atomic64_add_return_acquire atomic64_add_return_acquire
++#endif
++
++#if defined(arch_atomic64_add_return_release)
++static inline s64
++atomic64_add_return_release(s64 i, atomic64_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic64_add_return_release(i, v);
++}
++#define atomic64_add_return_release atomic64_add_return_release
++#endif
++
++#if defined(arch_atomic64_add_return_relaxed)
++static inline s64
++atomic64_add_return_relaxed(s64 i, atomic64_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic64_add_return_relaxed(i, v);
++}
++#define atomic64_add_return_relaxed atomic64_add_return_relaxed
++#endif
++
++#if !defined(arch_atomic64_fetch_add_relaxed) || defined(arch_atomic64_fetch_add)
++static inline s64
++atomic64_fetch_add(s64 i, atomic64_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic64_fetch_add(i, v);
++}
++#define atomic64_fetch_add atomic64_fetch_add
++#endif
++
++#if defined(arch_atomic64_fetch_add_acquire)
++static inline s64
++atomic64_fetch_add_acquire(s64 i, atomic64_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic64_fetch_add_acquire(i, v);
++}
++#define atomic64_fetch_add_acquire atomic64_fetch_add_acquire
++#endif
++
++#if defined(arch_atomic64_fetch_add_release)
++static inline s64
++atomic64_fetch_add_release(s64 i, atomic64_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic64_fetch_add_release(i, v);
++}
++#define atomic64_fetch_add_release atomic64_fetch_add_release
++#endif
++
++#if defined(arch_atomic64_fetch_add_relaxed)
++static inline s64
++atomic64_fetch_add_relaxed(s64 i, atomic64_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic64_fetch_add_relaxed(i, v);
++}
++#define atomic64_fetch_add_relaxed atomic64_fetch_add_relaxed
++#endif
++
++static inline void
++atomic64_sub(s64 i, atomic64_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	arch_atomic64_sub(i, v);
++}
++#define atomic64_sub atomic64_sub
  
- #include <asm/types.h>
- 
--/*
-- * Suppport for atomic_long_t
-- *
-- * Casts for parameters are avoided for existing atomic functions in order to
-- * avoid issues with cast-as-lval under gcc 4.x and other limitations that the
-- * macros of a platform may have.
-- */
-+#ifdef CONFIG_64BIT
-+typedef atomic64_t atomic_long_t;
-+#define ATOMIC_LONG_INIT(i)		ATOMIC64_INIT(i)
-+#define atomic_long_cond_read_acquire	atomic64_cond_read_acquire
-+#define atomic_long_cond_read_relaxed	atomic64_cond_read_relaxed
-+#else
-+typedef atomic_t atomic_long_t;
-+#define ATOMIC_LONG_INIT(i)		ATOMIC_INIT(i)
-+#define atomic_long_cond_read_acquire	atomic_cond_read_acquire
-+#define atomic_long_cond_read_relaxed	atomic_cond_read_relaxed
+-#ifndef _LINUX_ATOMIC_INSTRUMENTED_H
+-#define _LINUX_ATOMIC_INSTRUMENTED_H
++#if !defined(arch_atomic64_sub_return_relaxed) || defined(arch_atomic64_sub_return)
++static inline s64
++atomic64_sub_return(s64 i, atomic64_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic64_sub_return(i, v);
++}
++#define atomic64_sub_return atomic64_sub_return
 +#endif
  
--#if BITS_PER_LONG == 64
-+#ifdef CONFIG_64BIT
+-#include <linux/build_bug.h>
+-#include <linux/kasan-checks.h>
++#if defined(arch_atomic64_sub_return_acquire)
++static inline s64
++atomic64_sub_return_acquire(s64 i, atomic64_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic64_sub_return_acquire(i, v);
++}
++#define atomic64_sub_return_acquire atomic64_sub_return_acquire
++#endif
  
--typedef atomic64_t atomic_long_t;
-+static inline long
-+atomic_long_read(const atomic_long_t *v)
-+{
-+	return atomic64_read(v);
-+}
- 
--#define ATOMIC_LONG_INIT(i)	ATOMIC64_INIT(i)
--#define ATOMIC_LONG_PFX(x)	atomic64 ## x
--#define ATOMIC_LONG_TYPE	s64
-+static inline long
-+atomic_long_read_acquire(const atomic_long_t *v)
-+{
-+	return atomic64_read_acquire(v);
-+}
- 
--#else
-+static inline void
-+atomic_long_set(atomic_long_t *v, long i)
-+{
-+	atomic64_set(v, i);
-+}
- 
--typedef atomic_t atomic_long_t;
-+static inline void
-+atomic_long_set_release(atomic_long_t *v, long i)
-+{
-+	atomic64_set_release(v, i);
-+}
- 
--#define ATOMIC_LONG_INIT(i)	ATOMIC_INIT(i)
--#define ATOMIC_LONG_PFX(x)	atomic ## x
--#define ATOMIC_LONG_TYPE	int
-+static inline void
-+atomic_long_add(long i, atomic_long_t *v)
-+{
-+	atomic64_add(i, v);
-+}
- 
--#endif
-+static inline long
-+atomic_long_add_return(long i, atomic_long_t *v)
-+{
-+	return atomic64_add_return(i, v);
-+}
-+
-+static inline long
-+atomic_long_add_return_acquire(long i, atomic_long_t *v)
-+{
-+	return atomic64_add_return_acquire(i, v);
-+}
-+
-+static inline long
-+atomic_long_add_return_release(long i, atomic_long_t *v)
-+{
-+	return atomic64_add_return_release(i, v);
-+}
-+
-+static inline long
-+atomic_long_add_return_relaxed(long i, atomic_long_t *v)
-+{
-+	return atomic64_add_return_relaxed(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_add(long i, atomic_long_t *v)
-+{
-+	return atomic64_fetch_add(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_add_acquire(long i, atomic_long_t *v)
-+{
-+	return atomic64_fetch_add_acquire(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_add_release(long i, atomic_long_t *v)
-+{
-+	return atomic64_fetch_add_release(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_add_relaxed(long i, atomic_long_t *v)
-+{
-+	return atomic64_fetch_add_relaxed(i, v);
-+}
-+
-+static inline void
-+atomic_long_sub(long i, atomic_long_t *v)
-+{
-+	atomic64_sub(i, v);
-+}
-+
-+static inline long
-+atomic_long_sub_return(long i, atomic_long_t *v)
-+{
-+	return atomic64_sub_return(i, v);
-+}
-+
-+static inline long
-+atomic_long_sub_return_acquire(long i, atomic_long_t *v)
-+{
-+	return atomic64_sub_return_acquire(i, v);
-+}
-+
-+static inline long
-+atomic_long_sub_return_release(long i, atomic_long_t *v)
-+{
-+	return atomic64_sub_return_release(i, v);
-+}
-+
-+static inline long
-+atomic_long_sub_return_relaxed(long i, atomic_long_t *v)
-+{
-+	return atomic64_sub_return_relaxed(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_sub(long i, atomic_long_t *v)
-+{
-+	return atomic64_fetch_sub(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_sub_acquire(long i, atomic_long_t *v)
-+{
-+	return atomic64_fetch_sub_acquire(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_sub_release(long i, atomic_long_t *v)
-+{
-+	return atomic64_fetch_sub_release(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_sub_relaxed(long i, atomic_long_t *v)
-+{
-+	return atomic64_fetch_sub_relaxed(i, v);
-+}
-+
-+static inline void
-+atomic_long_inc(atomic_long_t *v)
-+{
-+	atomic64_inc(v);
-+}
-+
-+static inline long
-+atomic_long_inc_return(atomic_long_t *v)
-+{
-+	return atomic64_inc_return(v);
-+}
-+
-+static inline long
-+atomic_long_inc_return_acquire(atomic_long_t *v)
-+{
-+	return atomic64_inc_return_acquire(v);
-+}
-+
-+static inline long
-+atomic_long_inc_return_release(atomic_long_t *v)
-+{
-+	return atomic64_inc_return_release(v);
-+}
-+
-+static inline long
-+atomic_long_inc_return_relaxed(atomic_long_t *v)
-+{
-+	return atomic64_inc_return_relaxed(v);
-+}
-+
-+static inline long
-+atomic_long_fetch_inc(atomic_long_t *v)
-+{
-+	return atomic64_fetch_inc(v);
-+}
-+
-+static inline long
-+atomic_long_fetch_inc_acquire(atomic_long_t *v)
-+{
-+	return atomic64_fetch_inc_acquire(v);
-+}
-+
-+static inline long
-+atomic_long_fetch_inc_release(atomic_long_t *v)
-+{
-+	return atomic64_fetch_inc_release(v);
-+}
-+
-+static inline long
-+atomic_long_fetch_inc_relaxed(atomic_long_t *v)
-+{
-+	return atomic64_fetch_inc_relaxed(v);
-+}
-+
-+static inline void
-+atomic_long_dec(atomic_long_t *v)
-+{
-+	atomic64_dec(v);
-+}
-+
-+static inline long
-+atomic_long_dec_return(atomic_long_t *v)
-+{
-+	return atomic64_dec_return(v);
-+}
-+
-+static inline long
-+atomic_long_dec_return_acquire(atomic_long_t *v)
-+{
-+	return atomic64_dec_return_acquire(v);
-+}
-+
-+static inline long
-+atomic_long_dec_return_release(atomic_long_t *v)
-+{
-+	return atomic64_dec_return_release(v);
-+}
-+
-+static inline long
-+atomic_long_dec_return_relaxed(atomic_long_t *v)
-+{
-+	return atomic64_dec_return_relaxed(v);
-+}
-+
-+static inline long
-+atomic_long_fetch_dec(atomic_long_t *v)
-+{
-+	return atomic64_fetch_dec(v);
-+}
-+
-+static inline long
-+atomic_long_fetch_dec_acquire(atomic_long_t *v)
-+{
-+	return atomic64_fetch_dec_acquire(v);
-+}
-+
-+static inline long
-+atomic_long_fetch_dec_release(atomic_long_t *v)
-+{
-+	return atomic64_fetch_dec_release(v);
-+}
-+
-+static inline long
-+atomic_long_fetch_dec_relaxed(atomic_long_t *v)
-+{
-+	return atomic64_fetch_dec_relaxed(v);
-+}
-+
-+static inline void
-+atomic_long_and(long i, atomic_long_t *v)
-+{
-+	atomic64_and(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_and(long i, atomic_long_t *v)
-+{
-+	return atomic64_fetch_and(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_and_acquire(long i, atomic_long_t *v)
-+{
-+	return atomic64_fetch_and_acquire(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_and_release(long i, atomic_long_t *v)
-+{
-+	return atomic64_fetch_and_release(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_and_relaxed(long i, atomic_long_t *v)
-+{
-+	return atomic64_fetch_and_relaxed(i, v);
-+}
-+
-+static inline void
-+atomic_long_andnot(long i, atomic_long_t *v)
-+{
-+	atomic64_andnot(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_andnot(long i, atomic_long_t *v)
-+{
-+	return atomic64_fetch_andnot(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_andnot_acquire(long i, atomic_long_t *v)
-+{
-+	return atomic64_fetch_andnot_acquire(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_andnot_release(long i, atomic_long_t *v)
-+{
-+	return atomic64_fetch_andnot_release(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_andnot_relaxed(long i, atomic_long_t *v)
-+{
-+	return atomic64_fetch_andnot_relaxed(i, v);
-+}
-+
-+static inline void
-+atomic_long_or(long i, atomic_long_t *v)
-+{
-+	atomic64_or(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_or(long i, atomic_long_t *v)
-+{
-+	return atomic64_fetch_or(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_or_acquire(long i, atomic_long_t *v)
-+{
-+	return atomic64_fetch_or_acquire(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_or_release(long i, atomic_long_t *v)
-+{
-+	return atomic64_fetch_or_release(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_or_relaxed(long i, atomic_long_t *v)
-+{
-+	return atomic64_fetch_or_relaxed(i, v);
-+}
-+
-+static inline void
-+atomic_long_xor(long i, atomic_long_t *v)
-+{
-+	atomic64_xor(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_xor(long i, atomic_long_t *v)
-+{
-+	return atomic64_fetch_xor(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_xor_acquire(long i, atomic_long_t *v)
-+{
-+	return atomic64_fetch_xor_acquire(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_xor_release(long i, atomic_long_t *v)
-+{
-+	return atomic64_fetch_xor_release(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_xor_relaxed(long i, atomic_long_t *v)
-+{
-+	return atomic64_fetch_xor_relaxed(i, v);
-+}
-+
-+static inline long
-+atomic_long_xchg(atomic_long_t *v, long i)
-+{
-+	return atomic64_xchg(v, i);
-+}
-+
-+static inline long
-+atomic_long_xchg_acquire(atomic_long_t *v, long i)
-+{
-+	return atomic64_xchg_acquire(v, i);
-+}
-+
-+static inline long
-+atomic_long_xchg_release(atomic_long_t *v, long i)
-+{
-+	return atomic64_xchg_release(v, i);
-+}
-+
-+static inline long
-+atomic_long_xchg_relaxed(atomic_long_t *v, long i)
-+{
-+	return atomic64_xchg_relaxed(v, i);
-+}
-+
-+static inline long
-+atomic_long_cmpxchg(atomic_long_t *v, long old, long new)
-+{
-+	return atomic64_cmpxchg(v, old, new);
-+}
-+
-+static inline long
-+atomic_long_cmpxchg_acquire(atomic_long_t *v, long old, long new)
-+{
-+	return atomic64_cmpxchg_acquire(v, old, new);
-+}
-+
-+static inline long
-+atomic_long_cmpxchg_release(atomic_long_t *v, long old, long new)
-+{
-+	return atomic64_cmpxchg_release(v, old, new);
-+}
-+
-+static inline long
-+atomic_long_cmpxchg_relaxed(atomic_long_t *v, long old, long new)
-+{
-+	return atomic64_cmpxchg_relaxed(v, old, new);
-+}
-+
-+static inline bool
-+atomic_long_try_cmpxchg(atomic_long_t *v, long *old, long new)
-+{
-+	return atomic64_try_cmpxchg(v, (s64 *)old, new);
-+}
-+
-+static inline bool
-+atomic_long_try_cmpxchg_acquire(atomic_long_t *v, long *old, long new)
-+{
-+	return atomic64_try_cmpxchg_acquire(v, (s64 *)old, new);
-+}
-+
-+static inline bool
-+atomic_long_try_cmpxchg_release(atomic_long_t *v, long *old, long new)
-+{
-+	return atomic64_try_cmpxchg_release(v, (s64 *)old, new);
-+}
-+
-+static inline bool
-+atomic_long_try_cmpxchg_relaxed(atomic_long_t *v, long *old, long new)
-+{
-+	return atomic64_try_cmpxchg_relaxed(v, (s64 *)old, new);
-+}
-+
-+static inline bool
-+atomic_long_sub_and_test(long i, atomic_long_t *v)
-+{
-+	return atomic64_sub_and_test(i, v);
-+}
-+
-+static inline bool
-+atomic_long_dec_and_test(atomic_long_t *v)
-+{
-+	return atomic64_dec_and_test(v);
-+}
-+
-+static inline bool
-+atomic_long_inc_and_test(atomic_long_t *v)
-+{
-+	return atomic64_inc_and_test(v);
-+}
-+
-+static inline bool
-+atomic_long_add_negative(long i, atomic_long_t *v)
-+{
-+	return atomic64_add_negative(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_add_unless(atomic_long_t *v, long a, long u)
-+{
-+	return atomic64_fetch_add_unless(v, a, u);
-+}
-+
-+static inline bool
-+atomic_long_add_unless(atomic_long_t *v, long a, long u)
-+{
-+	return atomic64_add_unless(v, a, u);
-+}
-+
-+static inline bool
-+atomic_long_inc_not_zero(atomic_long_t *v)
-+{
-+	return atomic64_inc_not_zero(v);
-+}
-+
-+static inline bool
-+atomic_long_inc_unless_negative(atomic_long_t *v)
-+{
-+	return atomic64_inc_unless_negative(v);
-+}
-+
-+static inline bool
-+atomic_long_dec_unless_positive(atomic_long_t *v)
-+{
-+	return atomic64_dec_unless_positive(v);
-+}
-+
-+static inline long
-+atomic_long_dec_if_positive(atomic_long_t *v)
-+{
-+	return atomic64_dec_if_positive(v);
-+}
-+
-+#else /* CONFIG_64BIT */
-+
-+static inline long
-+atomic_long_read(const atomic_long_t *v)
-+{
-+	return atomic_read(v);
-+}
-+
-+static inline long
-+atomic_long_read_acquire(const atomic_long_t *v)
-+{
-+	return atomic_read_acquire(v);
-+}
-+
-+static inline void
-+atomic_long_set(atomic_long_t *v, long i)
-+{
-+	atomic_set(v, i);
-+}
-+
-+static inline void
-+atomic_long_set_release(atomic_long_t *v, long i)
-+{
-+	atomic_set_release(v, i);
-+}
-+
-+static inline void
-+atomic_long_add(long i, atomic_long_t *v)
-+{
-+	atomic_add(i, v);
-+}
-+
-+static inline long
-+atomic_long_add_return(long i, atomic_long_t *v)
-+{
-+	return atomic_add_return(i, v);
-+}
-+
-+static inline long
-+atomic_long_add_return_acquire(long i, atomic_long_t *v)
-+{
-+	return atomic_add_return_acquire(i, v);
-+}
-+
-+static inline long
-+atomic_long_add_return_release(long i, atomic_long_t *v)
-+{
-+	return atomic_add_return_release(i, v);
-+}
-+
-+static inline long
-+atomic_long_add_return_relaxed(long i, atomic_long_t *v)
-+{
-+	return atomic_add_return_relaxed(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_add(long i, atomic_long_t *v)
-+{
-+	return atomic_fetch_add(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_add_acquire(long i, atomic_long_t *v)
-+{
-+	return atomic_fetch_add_acquire(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_add_release(long i, atomic_long_t *v)
-+{
-+	return atomic_fetch_add_release(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_add_relaxed(long i, atomic_long_t *v)
-+{
-+	return atomic_fetch_add_relaxed(i, v);
-+}
-+
-+static inline void
-+atomic_long_sub(long i, atomic_long_t *v)
-+{
-+	atomic_sub(i, v);
-+}
-+
-+static inline long
-+atomic_long_sub_return(long i, atomic_long_t *v)
-+{
-+	return atomic_sub_return(i, v);
-+}
-+
-+static inline long
-+atomic_long_sub_return_acquire(long i, atomic_long_t *v)
-+{
-+	return atomic_sub_return_acquire(i, v);
-+}
-+
-+static inline long
-+atomic_long_sub_return_release(long i, atomic_long_t *v)
-+{
-+	return atomic_sub_return_release(i, v);
-+}
-+
-+static inline long
-+atomic_long_sub_return_relaxed(long i, atomic_long_t *v)
-+{
-+	return atomic_sub_return_relaxed(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_sub(long i, atomic_long_t *v)
-+{
-+	return atomic_fetch_sub(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_sub_acquire(long i, atomic_long_t *v)
-+{
-+	return atomic_fetch_sub_acquire(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_sub_release(long i, atomic_long_t *v)
-+{
-+	return atomic_fetch_sub_release(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_sub_relaxed(long i, atomic_long_t *v)
-+{
-+	return atomic_fetch_sub_relaxed(i, v);
-+}
-+
-+static inline void
-+atomic_long_inc(atomic_long_t *v)
-+{
-+	atomic_inc(v);
-+}
-+
-+static inline long
-+atomic_long_inc_return(atomic_long_t *v)
-+{
-+	return atomic_inc_return(v);
-+}
-+
-+static inline long
-+atomic_long_inc_return_acquire(atomic_long_t *v)
-+{
-+	return atomic_inc_return_acquire(v);
-+}
-+
-+static inline long
-+atomic_long_inc_return_release(atomic_long_t *v)
-+{
-+	return atomic_inc_return_release(v);
-+}
-+
-+static inline long
-+atomic_long_inc_return_relaxed(atomic_long_t *v)
-+{
-+	return atomic_inc_return_relaxed(v);
-+}
-+
-+static inline long
-+atomic_long_fetch_inc(atomic_long_t *v)
-+{
-+	return atomic_fetch_inc(v);
-+}
-+
-+static inline long
-+atomic_long_fetch_inc_acquire(atomic_long_t *v)
-+{
-+	return atomic_fetch_inc_acquire(v);
-+}
-+
-+static inline long
-+atomic_long_fetch_inc_release(atomic_long_t *v)
-+{
-+	return atomic_fetch_inc_release(v);
-+}
-+
-+static inline long
-+atomic_long_fetch_inc_relaxed(atomic_long_t *v)
-+{
-+	return atomic_fetch_inc_relaxed(v);
-+}
-+
-+static inline void
-+atomic_long_dec(atomic_long_t *v)
-+{
-+	atomic_dec(v);
-+}
-+
-+static inline long
-+atomic_long_dec_return(atomic_long_t *v)
-+{
-+	return atomic_dec_return(v);
-+}
-+
-+static inline long
-+atomic_long_dec_return_acquire(atomic_long_t *v)
-+{
-+	return atomic_dec_return_acquire(v);
-+}
-+
-+static inline long
-+atomic_long_dec_return_release(atomic_long_t *v)
-+{
-+	return atomic_dec_return_release(v);
-+}
-+
-+static inline long
-+atomic_long_dec_return_relaxed(atomic_long_t *v)
-+{
-+	return atomic_dec_return_relaxed(v);
-+}
-+
-+static inline long
-+atomic_long_fetch_dec(atomic_long_t *v)
-+{
-+	return atomic_fetch_dec(v);
-+}
-+
-+static inline long
-+atomic_long_fetch_dec_acquire(atomic_long_t *v)
-+{
-+	return atomic_fetch_dec_acquire(v);
-+}
-+
-+static inline long
-+atomic_long_fetch_dec_release(atomic_long_t *v)
-+{
-+	return atomic_fetch_dec_release(v);
-+}
-+
-+static inline long
-+atomic_long_fetch_dec_relaxed(atomic_long_t *v)
-+{
-+	return atomic_fetch_dec_relaxed(v);
-+}
-+
-+static inline void
-+atomic_long_and(long i, atomic_long_t *v)
-+{
-+	atomic_and(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_and(long i, atomic_long_t *v)
-+{
-+	return atomic_fetch_and(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_and_acquire(long i, atomic_long_t *v)
-+{
-+	return atomic_fetch_and_acquire(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_and_release(long i, atomic_long_t *v)
-+{
-+	return atomic_fetch_and_release(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_and_relaxed(long i, atomic_long_t *v)
-+{
-+	return atomic_fetch_and_relaxed(i, v);
-+}
-+
-+static inline void
-+atomic_long_andnot(long i, atomic_long_t *v)
-+{
-+	atomic_andnot(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_andnot(long i, atomic_long_t *v)
-+{
-+	return atomic_fetch_andnot(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_andnot_acquire(long i, atomic_long_t *v)
-+{
-+	return atomic_fetch_andnot_acquire(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_andnot_release(long i, atomic_long_t *v)
-+{
-+	return atomic_fetch_andnot_release(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_andnot_relaxed(long i, atomic_long_t *v)
-+{
-+	return atomic_fetch_andnot_relaxed(i, v);
-+}
- 
--#define ATOMIC_LONG_READ_OP(mo)						\
--static inline long atomic_long_read##mo(const atomic_long_t *l)		\
--{									\
--	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;		\
--									\
--	return (long)ATOMIC_LONG_PFX(_read##mo)(v);			\
--}
--ATOMIC_LONG_READ_OP()
--ATOMIC_LONG_READ_OP(_acquire)
--
--#undef ATOMIC_LONG_READ_OP
--
--#define ATOMIC_LONG_SET_OP(mo)						\
--static inline void atomic_long_set##mo(atomic_long_t *l, long i)	\
--{									\
--	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;		\
--									\
--	ATOMIC_LONG_PFX(_set##mo)(v, i);				\
--}
--ATOMIC_LONG_SET_OP()
--ATOMIC_LONG_SET_OP(_release)
--
--#undef ATOMIC_LONG_SET_OP
--
--#define ATOMIC_LONG_ADD_SUB_OP(op, mo)					\
--static inline long							\
--atomic_long_##op##_return##mo(long i, atomic_long_t *l)			\
--{									\
--	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;		\
--									\
--	return (long)ATOMIC_LONG_PFX(_##op##_return##mo)(i, v);		\
--}
--ATOMIC_LONG_ADD_SUB_OP(add,)
--ATOMIC_LONG_ADD_SUB_OP(add, _relaxed)
--ATOMIC_LONG_ADD_SUB_OP(add, _acquire)
--ATOMIC_LONG_ADD_SUB_OP(add, _release)
--ATOMIC_LONG_ADD_SUB_OP(sub,)
--ATOMIC_LONG_ADD_SUB_OP(sub, _relaxed)
--ATOMIC_LONG_ADD_SUB_OP(sub, _acquire)
--ATOMIC_LONG_ADD_SUB_OP(sub, _release)
--
--#undef ATOMIC_LONG_ADD_SUB_OP
--
--#define atomic_long_cmpxchg_relaxed(l, old, new) \
--	(ATOMIC_LONG_PFX(_cmpxchg_relaxed)((ATOMIC_LONG_PFX(_t) *)(l), \
--					   (old), (new)))
--#define atomic_long_cmpxchg_acquire(l, old, new) \
--	(ATOMIC_LONG_PFX(_cmpxchg_acquire)((ATOMIC_LONG_PFX(_t) *)(l), \
--					   (old), (new)))
--#define atomic_long_cmpxchg_release(l, old, new) \
--	(ATOMIC_LONG_PFX(_cmpxchg_release)((ATOMIC_LONG_PFX(_t) *)(l), \
--					   (old), (new)))
--#define atomic_long_cmpxchg(l, old, new) \
--	(ATOMIC_LONG_PFX(_cmpxchg)((ATOMIC_LONG_PFX(_t) *)(l), (old), (new)))
--
--
--#define atomic_long_try_cmpxchg_relaxed(l, old, new) \
--	(ATOMIC_LONG_PFX(_try_cmpxchg_relaxed)((ATOMIC_LONG_PFX(_t) *)(l), \
--					   (ATOMIC_LONG_TYPE *)(old), (ATOMIC_LONG_TYPE)(new)))
--#define atomic_long_try_cmpxchg_acquire(l, old, new) \
--	(ATOMIC_LONG_PFX(_try_cmpxchg_acquire)((ATOMIC_LONG_PFX(_t) *)(l), \
--					   (ATOMIC_LONG_TYPE *)(old), (ATOMIC_LONG_TYPE)(new)))
--#define atomic_long_try_cmpxchg_release(l, old, new) \
--	(ATOMIC_LONG_PFX(_try_cmpxchg_release)((ATOMIC_LONG_PFX(_t) *)(l), \
--					   (ATOMIC_LONG_TYPE *)(old), (ATOMIC_LONG_TYPE)(new)))
--#define atomic_long_try_cmpxchg(l, old, new) \
--	(ATOMIC_LONG_PFX(_try_cmpxchg)((ATOMIC_LONG_PFX(_t) *)(l), \
--				       (ATOMIC_LONG_TYPE *)(old), (ATOMIC_LONG_TYPE)(new)))
--
--
--#define atomic_long_xchg_relaxed(v, new) \
--	(ATOMIC_LONG_PFX(_xchg_relaxed)((ATOMIC_LONG_PFX(_t) *)(v), (new)))
--#define atomic_long_xchg_acquire(v, new) \
--	(ATOMIC_LONG_PFX(_xchg_acquire)((ATOMIC_LONG_PFX(_t) *)(v), (new)))
--#define atomic_long_xchg_release(v, new) \
--	(ATOMIC_LONG_PFX(_xchg_release)((ATOMIC_LONG_PFX(_t) *)(v), (new)))
--#define atomic_long_xchg(v, new) \
--	(ATOMIC_LONG_PFX(_xchg)((ATOMIC_LONG_PFX(_t) *)(v), (new)))
--
--static __always_inline void atomic_long_inc(atomic_long_t *l)
--{
--	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;
--
--	ATOMIC_LONG_PFX(_inc)(v);
--}
--
--static __always_inline void atomic_long_dec(atomic_long_t *l)
-+static inline void
-+atomic_long_or(long i, atomic_long_t *v)
+-static __always_inline int atomic_read(const atomic_t *v)
++#if defined(arch_atomic64_sub_return_release)
++static inline s64
++atomic64_sub_return_release(s64 i, atomic64_t *v)
  {
--	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;
-+	atomic_or(i, v);
-+}
- 
--	ATOMIC_LONG_PFX(_dec)(v);
-+static inline long
-+atomic_long_fetch_or(long i, atomic_long_t *v)
-+{
-+	return atomic_fetch_or(i, v);
+-	kasan_check_read(v, sizeof(*v));
+-	return arch_atomic_read(v);
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic64_sub_return_release(i, v);
  }
++#define atomic64_sub_return_release atomic64_sub_return_release
++#endif
  
--#define ATOMIC_LONG_FETCH_OP(op, mo)					\
--static inline long							\
--atomic_long_fetch_##op##mo(long i, atomic_long_t *l)			\
--{									\
--	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;		\
--									\
--	return (long)ATOMIC_LONG_PFX(_fetch_##op##mo)(i, v);		\
-+static inline long
-+atomic_long_fetch_or_acquire(long i, atomic_long_t *v)
-+{
-+	return atomic_fetch_or_acquire(i, v);
+-static __always_inline s64 atomic64_read(const atomic64_t *v)
++#if defined(arch_atomic64_sub_return_relaxed)
++static inline s64
++atomic64_sub_return_relaxed(s64 i, atomic64_t *v)
+ {
+-	kasan_check_read(v, sizeof(*v));
+-	return arch_atomic64_read(v);
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic64_sub_return_relaxed(i, v);
  }
++#define atomic64_sub_return_relaxed atomic64_sub_return_relaxed
++#endif
  
--ATOMIC_LONG_FETCH_OP(add, )
--ATOMIC_LONG_FETCH_OP(add, _relaxed)
--ATOMIC_LONG_FETCH_OP(add, _acquire)
--ATOMIC_LONG_FETCH_OP(add, _release)
--ATOMIC_LONG_FETCH_OP(sub, )
--ATOMIC_LONG_FETCH_OP(sub, _relaxed)
--ATOMIC_LONG_FETCH_OP(sub, _acquire)
--ATOMIC_LONG_FETCH_OP(sub, _release)
--ATOMIC_LONG_FETCH_OP(and, )
--ATOMIC_LONG_FETCH_OP(and, _relaxed)
--ATOMIC_LONG_FETCH_OP(and, _acquire)
--ATOMIC_LONG_FETCH_OP(and, _release)
--ATOMIC_LONG_FETCH_OP(andnot, )
--ATOMIC_LONG_FETCH_OP(andnot, _relaxed)
--ATOMIC_LONG_FETCH_OP(andnot, _acquire)
--ATOMIC_LONG_FETCH_OP(andnot, _release)
--ATOMIC_LONG_FETCH_OP(or, )
--ATOMIC_LONG_FETCH_OP(or, _relaxed)
--ATOMIC_LONG_FETCH_OP(or, _acquire)
--ATOMIC_LONG_FETCH_OP(or, _release)
--ATOMIC_LONG_FETCH_OP(xor, )
--ATOMIC_LONG_FETCH_OP(xor, _relaxed)
--ATOMIC_LONG_FETCH_OP(xor, _acquire)
--ATOMIC_LONG_FETCH_OP(xor, _release)
-+static inline long
-+atomic_long_fetch_or_release(long i, atomic_long_t *v)
-+{
-+	return atomic_fetch_or_release(i, v);
-+}
+-static __always_inline void atomic_set(atomic_t *v, int i)
++#if !defined(arch_atomic64_fetch_sub_relaxed) || defined(arch_atomic64_fetch_sub)
++static inline s64
++atomic64_fetch_sub(s64 i, atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	arch_atomic_set(v, i);
++	return arch_atomic64_fetch_sub(i, v);
+ }
++#define atomic64_fetch_sub atomic64_fetch_sub
++#endif
  
--#undef ATOMIC_LONG_FETCH_OP
-+static inline long
-+atomic_long_fetch_or_relaxed(long i, atomic_long_t *v)
-+{
-+	return atomic_fetch_or_relaxed(i, v);
-+}
+-static __always_inline void atomic64_set(atomic64_t *v, s64 i)
++#if defined(arch_atomic64_fetch_sub_acquire)
++static inline s64
++atomic64_fetch_sub_acquire(s64 i, atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	arch_atomic64_set(v, i);
++	return arch_atomic64_fetch_sub_acquire(i, v);
+ }
++#define atomic64_fetch_sub_acquire atomic64_fetch_sub_acquire
++#endif
  
--#define ATOMIC_LONG_FETCH_INC_DEC_OP(op, mo)					\
--static inline long							\
--atomic_long_fetch_##op##mo(atomic_long_t *l)				\
--{									\
--	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;		\
--									\
--	return (long)ATOMIC_LONG_PFX(_fetch_##op##mo)(v);		\
+-static __always_inline int atomic_xchg(atomic_t *v, int i)
++#if defined(arch_atomic64_fetch_sub_release)
++static inline s64
++atomic64_fetch_sub_release(s64 i, atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic_xchg(v, i);
++	return arch_atomic64_fetch_sub_release(i, v);
+ }
++#define atomic64_fetch_sub_release atomic64_fetch_sub_release
++#endif
+ 
+-static __always_inline s64 atomic64_xchg(atomic64_t *v, s64 i)
++#if defined(arch_atomic64_fetch_sub_relaxed)
++static inline s64
++atomic64_fetch_sub_relaxed(s64 i, atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic64_xchg(v, i);
++	return arch_atomic64_fetch_sub_relaxed(i, v);
+ }
++#define atomic64_fetch_sub_relaxed atomic64_fetch_sub_relaxed
++#endif
+ 
+-static __always_inline int atomic_cmpxchg(atomic_t *v, int old, int new)
++#if defined(arch_atomic64_inc)
 +static inline void
-+atomic_long_xor(long i, atomic_long_t *v)
-+{
-+	atomic_xor(i, v);
- }
- 
--ATOMIC_LONG_FETCH_INC_DEC_OP(inc,)
--ATOMIC_LONG_FETCH_INC_DEC_OP(inc, _relaxed)
--ATOMIC_LONG_FETCH_INC_DEC_OP(inc, _acquire)
--ATOMIC_LONG_FETCH_INC_DEC_OP(inc, _release)
--ATOMIC_LONG_FETCH_INC_DEC_OP(dec,)
--ATOMIC_LONG_FETCH_INC_DEC_OP(dec, _relaxed)
--ATOMIC_LONG_FETCH_INC_DEC_OP(dec, _acquire)
--ATOMIC_LONG_FETCH_INC_DEC_OP(dec, _release)
-+static inline long
-+atomic_long_fetch_xor(long i, atomic_long_t *v)
-+{
-+	return atomic_fetch_xor(i, v);
-+}
- 
--#undef ATOMIC_LONG_FETCH_INC_DEC_OP
-+static inline long
-+atomic_long_fetch_xor_acquire(long i, atomic_long_t *v)
-+{
-+	return atomic_fetch_xor_acquire(i, v);
-+}
- 
--#define ATOMIC_LONG_OP(op)						\
--static __always_inline void						\
--atomic_long_##op(long i, atomic_long_t *l)				\
--{									\
--	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;		\
--									\
--	ATOMIC_LONG_PFX(_##op)(i, v);					\
-+static inline long
-+atomic_long_fetch_xor_release(long i, atomic_long_t *v)
-+{
-+	return atomic_fetch_xor_release(i, v);
- }
- 
--ATOMIC_LONG_OP(add)
--ATOMIC_LONG_OP(sub)
--ATOMIC_LONG_OP(and)
--ATOMIC_LONG_OP(andnot)
--ATOMIC_LONG_OP(or)
--ATOMIC_LONG_OP(xor)
-+static inline long
-+atomic_long_fetch_xor_relaxed(long i, atomic_long_t *v)
-+{
-+	return atomic_fetch_xor_relaxed(i, v);
-+}
- 
--#undef ATOMIC_LONG_OP
-+static inline long
-+atomic_long_xchg(atomic_long_t *v, long i)
-+{
-+	return atomic_xchg(v, i);
-+}
- 
--static inline int atomic_long_sub_and_test(long i, atomic_long_t *l)
-+static inline long
-+atomic_long_xchg_acquire(atomic_long_t *v, long i)
++atomic64_inc(atomic64_t *v)
  {
--	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;
-+	return atomic_xchg_acquire(v, i);
-+}
- 
--	return ATOMIC_LONG_PFX(_sub_and_test)(i, v);
-+static inline long
-+atomic_long_xchg_release(atomic_long_t *v, long i)
-+{
-+	return atomic_xchg_release(v, i);
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic_cmpxchg(v, old, new);
++	arch_atomic64_inc(v);
  }
++#define atomic64_inc atomic64_inc
++#endif
  
--static inline int atomic_long_dec_and_test(atomic_long_t *l)
-+static inline long
-+atomic_long_xchg_relaxed(atomic_long_t *v, long i)
+-static __always_inline s64 atomic64_cmpxchg(atomic64_t *v, s64 old, s64 new)
++#if defined(arch_atomic64_inc_return)
++static inline s64
++atomic64_inc_return(atomic64_t *v)
  {
--	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;
-+	return atomic_xchg_relaxed(v, i);
-+}
- 
--	return ATOMIC_LONG_PFX(_dec_and_test)(v);
-+static inline long
-+atomic_long_cmpxchg(atomic_long_t *v, long old, long new)
-+{
-+	return atomic_cmpxchg(v, old, new);
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic64_cmpxchg(v, old, new);
++	return arch_atomic64_inc_return(v);
  }
++#define atomic64_inc_return atomic64_inc_return
++#endif
  
--static inline int atomic_long_inc_and_test(atomic_long_t *l)
-+static inline long
-+atomic_long_cmpxchg_acquire(atomic_long_t *v, long old, long new)
+-#ifdef arch_atomic_try_cmpxchg
+-#define atomic_try_cmpxchg atomic_try_cmpxchg
+-static __always_inline bool atomic_try_cmpxchg(atomic_t *v, int *old, int new)
++#if defined(arch_atomic64_inc_return_acquire)
++static inline s64
++atomic64_inc_return_acquire(atomic64_t *v)
  {
--	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;
-+	return atomic_cmpxchg_acquire(v, old, new);
-+}
- 
--	return ATOMIC_LONG_PFX(_inc_and_test)(v);
-+static inline long
-+atomic_long_cmpxchg_release(atomic_long_t *v, long old, long new)
-+{
-+	return atomic_cmpxchg_release(v, old, new);
+ 	kasan_check_write(v, sizeof(*v));
+-	kasan_check_read(old, sizeof(*old));
+-	return arch_atomic_try_cmpxchg(v, old, new);
++	return arch_atomic64_inc_return_acquire(v);
  }
++#define atomic64_inc_return_acquire atomic64_inc_return_acquire
+ #endif
  
--static inline int atomic_long_add_negative(long i, atomic_long_t *l)
-+static inline long
-+atomic_long_cmpxchg_relaxed(atomic_long_t *v, long old, long new)
+-#ifdef arch_atomic64_try_cmpxchg
+-#define atomic64_try_cmpxchg atomic64_try_cmpxchg
+-static __always_inline bool atomic64_try_cmpxchg(atomic64_t *v, s64 *old, s64 new)
++#if defined(arch_atomic64_inc_return_release)
++static inline s64
++atomic64_inc_return_release(atomic64_t *v)
  {
--	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;
-+	return atomic_cmpxchg_relaxed(v, old, new);
-+}
- 
--	return ATOMIC_LONG_PFX(_add_negative)(i, v);
-+static inline bool
-+atomic_long_try_cmpxchg(atomic_long_t *v, long *old, long new)
-+{
-+	return atomic_try_cmpxchg(v, (int *)old, new);
+ 	kasan_check_write(v, sizeof(*v));
+-	kasan_check_read(old, sizeof(*old));
+-	return arch_atomic64_try_cmpxchg(v, old, new);
++	return arch_atomic64_inc_return_release(v);
  }
++#define atomic64_inc_return_release atomic64_inc_return_release
+ #endif
  
--#define ATOMIC_LONG_INC_DEC_OP(op, mo)					\
--static inline long							\
--atomic_long_##op##_return##mo(atomic_long_t *l)				\
--{									\
--	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;		\
--									\
--	return (long)ATOMIC_LONG_PFX(_##op##_return##mo)(v);		\
-+static inline bool
-+atomic_long_try_cmpxchg_acquire(atomic_long_t *v, long *old, long new)
-+{
-+	return atomic_try_cmpxchg_acquire(v, (int *)old, new);
- }
--ATOMIC_LONG_INC_DEC_OP(inc,)
--ATOMIC_LONG_INC_DEC_OP(inc, _relaxed)
--ATOMIC_LONG_INC_DEC_OP(inc, _acquire)
--ATOMIC_LONG_INC_DEC_OP(inc, _release)
--ATOMIC_LONG_INC_DEC_OP(dec,)
--ATOMIC_LONG_INC_DEC_OP(dec, _relaxed)
--ATOMIC_LONG_INC_DEC_OP(dec, _acquire)
--ATOMIC_LONG_INC_DEC_OP(dec, _release)
- 
--#undef ATOMIC_LONG_INC_DEC_OP
-+static inline bool
-+atomic_long_try_cmpxchg_release(atomic_long_t *v, long *old, long new)
-+{
-+	return atomic_try_cmpxchg_release(v, (int *)old, new);
-+}
-+
-+static inline bool
-+atomic_long_try_cmpxchg_relaxed(atomic_long_t *v, long *old, long new)
-+{
-+	return atomic_try_cmpxchg_relaxed(v, (int *)old, new);
-+}
-+
-+static inline bool
-+atomic_long_sub_and_test(long i, atomic_long_t *v)
-+{
-+	return atomic_sub_and_test(i, v);
-+}
-+
-+static inline bool
-+atomic_long_dec_and_test(atomic_long_t *v)
-+{
-+	return atomic_dec_and_test(v);
-+}
-+
-+static inline bool
-+atomic_long_inc_and_test(atomic_long_t *v)
-+{
-+	return atomic_inc_and_test(v);
-+}
-+
-+static inline bool
-+atomic_long_add_negative(long i, atomic_long_t *v)
-+{
-+	return atomic_add_negative(i, v);
-+}
-+
-+static inline long
-+atomic_long_fetch_add_unless(atomic_long_t *v, long a, long u)
-+{
-+	return atomic_fetch_add_unless(v, a, u);
-+}
-+
-+static inline bool
-+atomic_long_add_unless(atomic_long_t *v, long a, long u)
-+{
-+	return atomic_add_unless(v, a, u);
-+}
- 
--static inline long atomic_long_add_unless(atomic_long_t *l, long a, long u)
-+static inline bool
-+atomic_long_inc_not_zero(atomic_long_t *v)
+-#ifdef arch_atomic_fetch_add_unless
+-#define atomic_fetch_add_unless atomic_fetch_add_unless
+-static __always_inline int atomic_fetch_add_unless(atomic_t *v, int a, int u)
++#if defined(arch_atomic64_inc_return_relaxed)
++static inline s64
++atomic64_inc_return_relaxed(atomic64_t *v)
  {
--	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;
-+	return atomic_inc_not_zero(v);
-+}
- 
--	return (long)ATOMIC_LONG_PFX(_add_unless)(v, a, u);
-+static inline bool
-+atomic_long_inc_unless_negative(atomic_long_t *v)
-+{
-+	return atomic_inc_unless_negative(v);
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic_fetch_add_unless(v, a, u);
++	return arch_atomic64_inc_return_relaxed(v);
  }
++#define atomic64_inc_return_relaxed atomic64_inc_return_relaxed
+ #endif
  
--#define atomic_long_inc_not_zero(l) \
--	ATOMIC_LONG_PFX(_inc_not_zero)((ATOMIC_LONG_PFX(_t) *)(l))
+-#ifdef arch_atomic64_fetch_add_unless
+-#define atomic64_fetch_add_unless atomic64_fetch_add_unless
+-static __always_inline s64 atomic64_fetch_add_unless(atomic64_t *v, s64 a, s64 u)
++#if defined(arch_atomic64_fetch_inc)
++static inline s64
++atomic64_fetch_inc(atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic64_fetch_add_unless(v, a, u);
++	return arch_atomic64_fetch_inc(v);
+ }
++#define atomic64_fetch_inc atomic64_fetch_inc
+ #endif
+ 
+-#ifdef arch_atomic_inc
+-#define atomic_inc atomic_inc
+-static __always_inline void atomic_inc(atomic_t *v)
++#if defined(arch_atomic64_fetch_inc_acquire)
++static inline s64
++atomic64_fetch_inc_acquire(atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	arch_atomic_inc(v);
++	return arch_atomic64_fetch_inc_acquire(v);
+ }
++#define atomic64_fetch_inc_acquire atomic64_fetch_inc_acquire
+ #endif
+ 
+-#ifdef arch_atomic64_inc
+-#define atomic64_inc atomic64_inc
+-static __always_inline void atomic64_inc(atomic64_t *v)
++#if defined(arch_atomic64_fetch_inc_release)
++static inline s64
++atomic64_fetch_inc_release(atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	arch_atomic64_inc(v);
++	return arch_atomic64_fetch_inc_release(v);
+ }
++#define atomic64_fetch_inc_release atomic64_fetch_inc_release
+ #endif
+ 
+-#ifdef arch_atomic_dec
+-#define atomic_dec atomic_dec
+-static __always_inline void atomic_dec(atomic_t *v)
++#if defined(arch_atomic64_fetch_inc_relaxed)
++static inline s64
++atomic64_fetch_inc_relaxed(atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	arch_atomic_dec(v);
++	return arch_atomic64_fetch_inc_relaxed(v);
+ }
++#define atomic64_fetch_inc_relaxed atomic64_fetch_inc_relaxed
+ #endif
+ 
+-#ifdef atch_atomic64_dec
+-#define atomic64_dec
+-static __always_inline void atomic64_dec(atomic64_t *v)
++#if defined(arch_atomic64_dec)
++static inline void
++atomic64_dec(atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+ 	arch_atomic64_dec(v);
+ }
++#define atomic64_dec atomic64_dec
+ #endif
+ 
+-static __always_inline void atomic_add(int i, atomic_t *v)
++#if defined(arch_atomic64_dec_return)
++static inline s64
++atomic64_dec_return(atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	arch_atomic_add(i, v);
++	return arch_atomic64_dec_return(v);
+ }
++#define atomic64_dec_return atomic64_dec_return
++#endif
+ 
+-static __always_inline void atomic64_add(s64 i, atomic64_t *v)
++#if defined(arch_atomic64_dec_return_acquire)
++static inline s64
++atomic64_dec_return_acquire(atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	arch_atomic64_add(i, v);
++	return arch_atomic64_dec_return_acquire(v);
+ }
++#define atomic64_dec_return_acquire atomic64_dec_return_acquire
++#endif
+ 
+-static __always_inline void atomic_sub(int i, atomic_t *v)
++#if defined(arch_atomic64_dec_return_release)
++static inline s64
++atomic64_dec_return_release(atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	arch_atomic_sub(i, v);
++	return arch_atomic64_dec_return_release(v);
+ }
++#define atomic64_dec_return_release atomic64_dec_return_release
++#endif
+ 
+-static __always_inline void atomic64_sub(s64 i, atomic64_t *v)
++#if defined(arch_atomic64_dec_return_relaxed)
++static inline s64
++atomic64_dec_return_relaxed(atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	arch_atomic64_sub(i, v);
++	return arch_atomic64_dec_return_relaxed(v);
+ }
++#define atomic64_dec_return_relaxed atomic64_dec_return_relaxed
++#endif
+ 
+-static __always_inline void atomic_and(int i, atomic_t *v)
++#if defined(arch_atomic64_fetch_dec)
++static inline s64
++atomic64_fetch_dec(atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	arch_atomic_and(i, v);
++	return arch_atomic64_fetch_dec(v);
++}
++#define atomic64_fetch_dec atomic64_fetch_dec
++#endif
++
++#if defined(arch_atomic64_fetch_dec_acquire)
++static inline s64
++atomic64_fetch_dec_acquire(atomic64_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic64_fetch_dec_acquire(v);
++}
++#define atomic64_fetch_dec_acquire atomic64_fetch_dec_acquire
++#endif
++
++#if defined(arch_atomic64_fetch_dec_release)
++static inline s64
++atomic64_fetch_dec_release(atomic64_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic64_fetch_dec_release(v);
+ }
++#define atomic64_fetch_dec_release atomic64_fetch_dec_release
++#endif
++
++#if defined(arch_atomic64_fetch_dec_relaxed)
++static inline s64
++atomic64_fetch_dec_relaxed(atomic64_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic64_fetch_dec_relaxed(v);
++}
++#define atomic64_fetch_dec_relaxed atomic64_fetch_dec_relaxed
++#endif
+ 
+-static __always_inline void atomic64_and(s64 i, atomic64_t *v)
++static inline void
++atomic64_and(s64 i, atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+ 	arch_atomic64_and(i, v);
+ }
++#define atomic64_and atomic64_and
+ 
+-static __always_inline void atomic_or(int i, atomic_t *v)
++#if !defined(arch_atomic64_fetch_and_relaxed) || defined(arch_atomic64_fetch_and)
++static inline s64
++atomic64_fetch_and(s64 i, atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	arch_atomic_or(i, v);
++	return arch_atomic64_fetch_and(i, v);
+ }
++#define atomic64_fetch_and atomic64_fetch_and
++#endif
+ 
+-static __always_inline void atomic64_or(s64 i, atomic64_t *v)
++#if defined(arch_atomic64_fetch_and_acquire)
++static inline s64
++atomic64_fetch_and_acquire(s64 i, atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	arch_atomic64_or(i, v);
++	return arch_atomic64_fetch_and_acquire(i, v);
+ }
++#define atomic64_fetch_and_acquire atomic64_fetch_and_acquire
++#endif
+ 
+-static __always_inline void atomic_xor(int i, atomic_t *v)
++#if defined(arch_atomic64_fetch_and_release)
++static inline s64
++atomic64_fetch_and_release(s64 i, atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	arch_atomic_xor(i, v);
++	return arch_atomic64_fetch_and_release(i, v);
+ }
++#define atomic64_fetch_and_release atomic64_fetch_and_release
++#endif
+ 
+-static __always_inline void atomic64_xor(s64 i, atomic64_t *v)
++#if defined(arch_atomic64_fetch_and_relaxed)
++static inline s64
++atomic64_fetch_and_relaxed(s64 i, atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	arch_atomic64_xor(i, v);
++	return arch_atomic64_fetch_and_relaxed(i, v);
+ }
++#define atomic64_fetch_and_relaxed atomic64_fetch_and_relaxed
++#endif
+ 
+-#ifdef arch_atomic_inc_return
+-#define atomic_inc_return atomic_inc_return
+-static __always_inline int atomic_inc_return(atomic_t *v)
++#if defined(arch_atomic64_andnot)
++static inline void
++atomic64_andnot(s64 i, atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic_inc_return(v);
++	arch_atomic64_andnot(i, v);
+ }
++#define atomic64_andnot atomic64_andnot
+ #endif
+ 
+-#ifdef arch_atomic64_in_return
+-#define atomic64_inc_return atomic64_inc_return
+-static __always_inline s64 atomic64_inc_return(atomic64_t *v)
++#if defined(arch_atomic64_fetch_andnot)
++static inline s64
++atomic64_fetch_andnot(s64 i, atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic64_inc_return(v);
++	return arch_atomic64_fetch_andnot(i, v);
+ }
++#define atomic64_fetch_andnot atomic64_fetch_andnot
+ #endif
+ 
+-#ifdef arch_atomic_dec_return
+-#define atomic_dec_return atomic_dec_return
+-static __always_inline int atomic_dec_return(atomic_t *v)
++#if defined(arch_atomic64_fetch_andnot_acquire)
++static inline s64
++atomic64_fetch_andnot_acquire(s64 i, atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic_dec_return(v);
++	return arch_atomic64_fetch_andnot_acquire(i, v);
+ }
++#define atomic64_fetch_andnot_acquire atomic64_fetch_andnot_acquire
+ #endif
+ 
+-#ifdef arch_atomic64_dec_return
+-#define atomic64_dec_return atomic64_dec_return
+-static __always_inline s64 atomic64_dec_return(atomic64_t *v)
++#if defined(arch_atomic64_fetch_andnot_release)
++static inline s64
++atomic64_fetch_andnot_release(s64 i, atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic64_dec_return(v);
++	return arch_atomic64_fetch_andnot_release(i, v);
+ }
++#define atomic64_fetch_andnot_release atomic64_fetch_andnot_release
+ #endif
+ 
+-#ifdef arch_atomic64_inc_not_zero
+-#define atomic64_inc_not_zero atomic64_inc_not_zero
+-static __always_inline bool atomic64_inc_not_zero(atomic64_t *v)
++#if defined(arch_atomic64_fetch_andnot_relaxed)
++static inline s64
++atomic64_fetch_andnot_relaxed(s64 i, atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic64_inc_not_zero(v);
++	return arch_atomic64_fetch_andnot_relaxed(i, v);
+ }
++#define atomic64_fetch_andnot_relaxed atomic64_fetch_andnot_relaxed
+ #endif
+ 
+-#ifdef arch_atomic64_dec_if_positive
+-#define atomic64_dec_if_positive atomic64_dec_if_positive
+-static __always_inline s64 atomic64_dec_if_positive(atomic64_t *v)
++static inline void
++atomic64_or(s64 i, atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic64_dec_if_positive(v);
++	arch_atomic64_or(i, v);
++}
++#define atomic64_or atomic64_or
++
++#if !defined(arch_atomic64_fetch_or_relaxed) || defined(arch_atomic64_fetch_or)
++static inline s64
++atomic64_fetch_or(s64 i, atomic64_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic64_fetch_or(i, v);
+ }
++#define atomic64_fetch_or atomic64_fetch_or
+ #endif
+ 
+-#ifdef arch_atomic_dec_and_test
+-#define atomic_dec_and_test atomic_dec_and_test
+-static __always_inline bool atomic_dec_and_test(atomic_t *v)
++#if defined(arch_atomic64_fetch_or_acquire)
++static inline s64
++atomic64_fetch_or_acquire(s64 i, atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic_dec_and_test(v);
++	return arch_atomic64_fetch_or_acquire(i, v);
+ }
++#define atomic64_fetch_or_acquire atomic64_fetch_or_acquire
+ #endif
+ 
+-#ifdef arch_atomic64_dec_and_test
+-#define atomic64_dec_and_test atomic64_dec_and_test
+-static __always_inline bool atomic64_dec_and_test(atomic64_t *v)
++#if defined(arch_atomic64_fetch_or_release)
++static inline s64
++atomic64_fetch_or_release(s64 i, atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic64_dec_and_test(v);
++	return arch_atomic64_fetch_or_release(i, v);
+ }
++#define atomic64_fetch_or_release atomic64_fetch_or_release
+ #endif
+ 
+-#ifdef arch_atomic_inc_and_test
+-#define atomic_inc_and_test atomic_inc_and_test
+-static __always_inline bool atomic_inc_and_test(atomic_t *v)
++#if defined(arch_atomic64_fetch_or_relaxed)
++static inline s64
++atomic64_fetch_or_relaxed(s64 i, atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic_inc_and_test(v);
++	return arch_atomic64_fetch_or_relaxed(i, v);
+ }
++#define atomic64_fetch_or_relaxed atomic64_fetch_or_relaxed
+ #endif
+ 
+-#ifdef arch_atomic64_inc_and_test
+-#define atomic64_inc_and_test atomic64_inc_and_test
+-static __always_inline bool atomic64_inc_and_test(atomic64_t *v)
++static inline void
++atomic64_xor(s64 i, atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic64_inc_and_test(v);
++	arch_atomic64_xor(i, v);
++}
++#define atomic64_xor atomic64_xor
++
++#if !defined(arch_atomic64_fetch_xor_relaxed) || defined(arch_atomic64_fetch_xor)
++static inline s64
++atomic64_fetch_xor(s64 i, atomic64_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic64_fetch_xor(i, v);
+ }
++#define atomic64_fetch_xor atomic64_fetch_xor
+ #endif
+ 
+-static __always_inline int atomic_add_return(int i, atomic_t *v)
++#if defined(arch_atomic64_fetch_xor_acquire)
++static inline s64
++atomic64_fetch_xor_acquire(s64 i, atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic_add_return(i, v);
++	return arch_atomic64_fetch_xor_acquire(i, v);
+ }
++#define atomic64_fetch_xor_acquire atomic64_fetch_xor_acquire
++#endif
+ 
+-static __always_inline s64 atomic64_add_return(s64 i, atomic64_t *v)
++#if defined(arch_atomic64_fetch_xor_release)
++static inline s64
++atomic64_fetch_xor_release(s64 i, atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic64_add_return(i, v);
++	return arch_atomic64_fetch_xor_release(i, v);
+ }
++#define atomic64_fetch_xor_release atomic64_fetch_xor_release
++#endif
+ 
+-static __always_inline int atomic_sub_return(int i, atomic_t *v)
++#if defined(arch_atomic64_fetch_xor_relaxed)
++static inline s64
++atomic64_fetch_xor_relaxed(s64 i, atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic_sub_return(i, v);
++	return arch_atomic64_fetch_xor_relaxed(i, v);
+ }
++#define atomic64_fetch_xor_relaxed atomic64_fetch_xor_relaxed
++#endif
+ 
+-static __always_inline s64 atomic64_sub_return(s64 i, atomic64_t *v)
++#if !defined(arch_atomic64_xchg_relaxed) || defined(arch_atomic64_xchg)
++static inline s64
++atomic64_xchg(atomic64_t *v, s64 i)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic64_sub_return(i, v);
++	return arch_atomic64_xchg(v, i);
+ }
++#define atomic64_xchg atomic64_xchg
++#endif
+ 
+-static __always_inline int atomic_fetch_add(int i, atomic_t *v)
++#if defined(arch_atomic64_xchg_acquire)
++static inline s64
++atomic64_xchg_acquire(atomic64_t *v, s64 i)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic_fetch_add(i, v);
++	return arch_atomic64_xchg_acquire(v, i);
+ }
++#define atomic64_xchg_acquire atomic64_xchg_acquire
++#endif
+ 
+-static __always_inline s64 atomic64_fetch_add(s64 i, atomic64_t *v)
++#if defined(arch_atomic64_xchg_release)
++static inline s64
++atomic64_xchg_release(atomic64_t *v, s64 i)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic64_fetch_add(i, v);
++	return arch_atomic64_xchg_release(v, i);
+ }
++#define atomic64_xchg_release atomic64_xchg_release
++#endif
+ 
+-static __always_inline int atomic_fetch_sub(int i, atomic_t *v)
++#if defined(arch_atomic64_xchg_relaxed)
++static inline s64
++atomic64_xchg_relaxed(atomic64_t *v, s64 i)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic_fetch_sub(i, v);
++	return arch_atomic64_xchg_relaxed(v, i);
+ }
++#define atomic64_xchg_relaxed atomic64_xchg_relaxed
++#endif
+ 
+-static __always_inline s64 atomic64_fetch_sub(s64 i, atomic64_t *v)
++#if !defined(arch_atomic64_cmpxchg_relaxed) || defined(arch_atomic64_cmpxchg)
++static inline s64
++atomic64_cmpxchg(atomic64_t *v, s64 old, s64 new)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic64_fetch_sub(i, v);
++	return arch_atomic64_cmpxchg(v, old, new);
+ }
++#define atomic64_cmpxchg atomic64_cmpxchg
++#endif
+ 
+-static __always_inline int atomic_fetch_and(int i, atomic_t *v)
++#if defined(arch_atomic64_cmpxchg_acquire)
++static inline s64
++atomic64_cmpxchg_acquire(atomic64_t *v, s64 old, s64 new)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic_fetch_and(i, v);
++	return arch_atomic64_cmpxchg_acquire(v, old, new);
+ }
++#define atomic64_cmpxchg_acquire atomic64_cmpxchg_acquire
++#endif
+ 
+-static __always_inline s64 atomic64_fetch_and(s64 i, atomic64_t *v)
++#if defined(arch_atomic64_cmpxchg_release)
++static inline s64
++atomic64_cmpxchg_release(atomic64_t *v, s64 old, s64 new)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic64_fetch_and(i, v);
++	return arch_atomic64_cmpxchg_release(v, old, new);
+ }
++#define atomic64_cmpxchg_release atomic64_cmpxchg_release
++#endif
+ 
+-static __always_inline int atomic_fetch_or(int i, atomic_t *v)
++#if defined(arch_atomic64_cmpxchg_relaxed)
++static inline s64
++atomic64_cmpxchg_relaxed(atomic64_t *v, s64 old, s64 new)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic_fetch_or(i, v);
++	return arch_atomic64_cmpxchg_relaxed(v, old, new);
+ }
++#define atomic64_cmpxchg_relaxed atomic64_cmpxchg_relaxed
++#endif
+ 
+-static __always_inline s64 atomic64_fetch_or(s64 i, atomic64_t *v)
++#if defined(arch_atomic64_try_cmpxchg)
 +static inline bool
-+atomic_long_dec_unless_positive(atomic_long_t *v)
-+{
-+	return atomic_dec_unless_positive(v);
-+}
++atomic64_try_cmpxchg(atomic64_t *v, s64 *old, s64 new)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic64_fetch_or(i, v);
++	kasan_check_write(old, sizeof(*old));
++	return arch_atomic64_try_cmpxchg(v, old, new);
+ }
++#define atomic64_try_cmpxchg atomic64_try_cmpxchg
++#endif
  
--#define atomic_long_cond_read_relaxed(v, c) \
--	ATOMIC_LONG_PFX(_cond_read_relaxed)((ATOMIC_LONG_PFX(_t) *)(v), (c))
--#define atomic_long_cond_read_acquire(v, c) \
--	ATOMIC_LONG_PFX(_cond_read_acquire)((ATOMIC_LONG_PFX(_t) *)(v), (c))
-+static inline long
-+atomic_long_dec_if_positive(atomic_long_t *v)
-+{
-+	return atomic_dec_if_positive(v);
-+}
+-static __always_inline int atomic_fetch_xor(int i, atomic_t *v)
++#if defined(arch_atomic64_try_cmpxchg_acquire)
++static inline bool
++atomic64_try_cmpxchg_acquire(atomic64_t *v, s64 *old, s64 new)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic_fetch_xor(i, v);
++	kasan_check_write(old, sizeof(*old));
++	return arch_atomic64_try_cmpxchg_acquire(v, old, new);
+ }
++#define atomic64_try_cmpxchg_acquire atomic64_try_cmpxchg_acquire
++#endif
  
--#endif  /*  _ASM_GENERIC_ATOMIC_LONG_H  */
-+#endif /* CONFIG_64BIT */
-+#endif /* _ASM_GENERIC_ATOMIC_LONG_H */
+-static __always_inline s64 atomic64_fetch_xor(s64 i, atomic64_t *v)
++#if defined(arch_atomic64_try_cmpxchg_release)
++static inline bool
++atomic64_try_cmpxchg_release(atomic64_t *v, s64 *old, s64 new)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic64_fetch_xor(i, v);
++	kasan_check_write(old, sizeof(*old));
++	return arch_atomic64_try_cmpxchg_release(v, old, new);
+ }
++#define atomic64_try_cmpxchg_release atomic64_try_cmpxchg_release
++#endif
+ 
+-#ifdef arch_atomic_sub_and_test
+-#define atomic_sub_and_test atomic_sub_and_test
+-static __always_inline bool atomic_sub_and_test(int i, atomic_t *v)
++#if defined(arch_atomic64_try_cmpxchg_relaxed)
++static inline bool
++atomic64_try_cmpxchg_relaxed(atomic64_t *v, s64 *old, s64 new)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic_sub_and_test(i, v);
++	kasan_check_write(old, sizeof(*old));
++	return arch_atomic64_try_cmpxchg_relaxed(v, old, new);
+ }
++#define atomic64_try_cmpxchg_relaxed atomic64_try_cmpxchg_relaxed
+ #endif
+ 
+-#ifdef arch_atomic64_sub_and_test
+-#define atomic64_sub_and_test atomic64_sub_and_test
+-static __always_inline bool atomic64_sub_and_test(s64 i, atomic64_t *v)
++#if defined(arch_atomic64_sub_and_test)
++static inline bool
++atomic64_sub_and_test(s64 i, atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+ 	return arch_atomic64_sub_and_test(i, v);
+ }
++#define atomic64_sub_and_test atomic64_sub_and_test
+ #endif
+ 
+-#ifdef arch_atomic_add_negative
+-#define atomic_add_negative atomic_add_negative
+-static __always_inline bool atomic_add_negative(int i, atomic_t *v)
++#if defined(arch_atomic64_dec_and_test)
++static inline bool
++atomic64_dec_and_test(atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+-	return arch_atomic_add_negative(i, v);
++	return arch_atomic64_dec_and_test(v);
+ }
++#define atomic64_dec_and_test atomic64_dec_and_test
+ #endif
+ 
+-#ifdef arch_atomic64_add_negative
+-#define atomic64_add_negative atomic64_add_negative
+-static __always_inline bool atomic64_add_negative(s64 i, atomic64_t *v)
++#if defined(arch_atomic64_inc_and_test)
++static inline bool
++atomic64_inc_and_test(atomic64_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic64_inc_and_test(v);
++}
++#define atomic64_inc_and_test atomic64_inc_and_test
++#endif
++
++#if defined(arch_atomic64_add_negative)
++static inline bool
++atomic64_add_negative(s64 i, atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+ 	return arch_atomic64_add_negative(i, v);
+ }
++#define atomic64_add_negative atomic64_add_negative
++#endif
++
++#if defined(arch_atomic64_fetch_add_unless)
++static inline s64
++atomic64_fetch_add_unless(atomic64_t *v, s64 a, s64 u)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic64_fetch_add_unless(v, a, u);
++}
++#define atomic64_fetch_add_unless atomic64_fetch_add_unless
++#endif
++
++#if defined(arch_atomic64_add_unless)
++static inline bool
++atomic64_add_unless(atomic64_t *v, s64 a, s64 u)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic64_add_unless(v, a, u);
++}
++#define atomic64_add_unless atomic64_add_unless
++#endif
++
++#if defined(arch_atomic64_inc_not_zero)
++static inline bool
++atomic64_inc_not_zero(atomic64_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic64_inc_not_zero(v);
++}
++#define atomic64_inc_not_zero atomic64_inc_not_zero
++#endif
++
++#if defined(arch_atomic64_inc_unless_negative)
++static inline bool
++atomic64_inc_unless_negative(atomic64_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic64_inc_unless_negative(v);
++}
++#define atomic64_inc_unless_negative atomic64_inc_unless_negative
+ #endif
+ 
+-#define xchg(ptr, new)							\
++#if defined(arch_atomic64_dec_unless_positive)
++static inline bool
++atomic64_dec_unless_positive(atomic64_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic64_dec_unless_positive(v);
++}
++#define atomic64_dec_unless_positive atomic64_dec_unless_positive
++#endif
++
++#if defined(arch_atomic64_dec_if_positive)
++static inline s64
++atomic64_dec_if_positive(atomic64_t *v)
++{
++	kasan_check_write(v, sizeof(*v));
++	return arch_atomic64_dec_if_positive(v);
++}
++#define atomic64_dec_if_positive atomic64_dec_if_positive
++#endif
++
++#if !defined(arch_xchg_relaxed) || defined(arch_xchg)
++#define xchg(ptr, ...)						\
++({									\
++	typeof(ptr) __ai_ptr = (ptr);					\
++	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));		\
++	arch_xchg(__ai_ptr, __VA_ARGS__);				\
++})
++#endif
++
++#if defined(arch_xchg_acquire)
++#define xchg_acquire(ptr, ...)						\
++({									\
++	typeof(ptr) __ai_ptr = (ptr);					\
++	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));		\
++	arch_xchg_acquire(__ai_ptr, __VA_ARGS__);				\
++})
++#endif
++
++#if defined(arch_xchg_release)
++#define xchg_release(ptr, ...)						\
++({									\
++	typeof(ptr) __ai_ptr = (ptr);					\
++	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));		\
++	arch_xchg_release(__ai_ptr, __VA_ARGS__);				\
++})
++#endif
++
++#if defined(arch_xchg_relaxed)
++#define xchg_relaxed(ptr, ...)						\
++({									\
++	typeof(ptr) __ai_ptr = (ptr);					\
++	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));		\
++	arch_xchg_relaxed(__ai_ptr, __VA_ARGS__);				\
++})
++#endif
++
++#if !defined(arch_cmpxchg_relaxed) || defined(arch_cmpxchg)
++#define cmpxchg(ptr, ...)						\
+ ({									\
+ 	typeof(ptr) __ai_ptr = (ptr);					\
+-	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));			\
+-	arch_xchg(__ai_ptr, (new));					\
++	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));		\
++	arch_cmpxchg(__ai_ptr, __VA_ARGS__);				\
+ })
++#endif
++
++#if defined(arch_cmpxchg_acquire)
++#define cmpxchg_acquire(ptr, ...)						\
++({									\
++	typeof(ptr) __ai_ptr = (ptr);					\
++	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));		\
++	arch_cmpxchg_acquire(__ai_ptr, __VA_ARGS__);				\
++})
++#endif
++
++#if defined(arch_cmpxchg_release)
++#define cmpxchg_release(ptr, ...)						\
++({									\
++	typeof(ptr) __ai_ptr = (ptr);					\
++	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));		\
++	arch_cmpxchg_release(__ai_ptr, __VA_ARGS__);				\
++})
++#endif
++
++#if defined(arch_cmpxchg_relaxed)
++#define cmpxchg_relaxed(ptr, ...)						\
++({									\
++	typeof(ptr) __ai_ptr = (ptr);					\
++	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));		\
++	arch_cmpxchg_relaxed(__ai_ptr, __VA_ARGS__);				\
++})
++#endif
+ 
+-#define cmpxchg(ptr, old, new)						\
++#if !defined(arch_cmpxchg64_relaxed) || defined(arch_cmpxchg64)
++#define cmpxchg64(ptr, ...)						\
+ ({									\
+ 	typeof(ptr) __ai_ptr = (ptr);					\
+-	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));			\
+-	arch_cmpxchg(__ai_ptr, (old), (new));				\
++	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));		\
++	arch_cmpxchg64(__ai_ptr, __VA_ARGS__);				\
+ })
++#endif
++
++#if defined(arch_cmpxchg64_acquire)
++#define cmpxchg64_acquire(ptr, ...)						\
++({									\
++	typeof(ptr) __ai_ptr = (ptr);					\
++	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));		\
++	arch_cmpxchg64_acquire(__ai_ptr, __VA_ARGS__);				\
++})
++#endif
++
++#if defined(arch_cmpxchg64_release)
++#define cmpxchg64_release(ptr, ...)						\
++({									\
++	typeof(ptr) __ai_ptr = (ptr);					\
++	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));		\
++	arch_cmpxchg64_release(__ai_ptr, __VA_ARGS__);				\
++})
++#endif
+ 
+-#define sync_cmpxchg(ptr, old, new)					\
++#if defined(arch_cmpxchg64_relaxed)
++#define cmpxchg64_relaxed(ptr, ...)						\
+ ({									\
+ 	typeof(ptr) __ai_ptr = (ptr);					\
+-	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));			\
+-	arch_sync_cmpxchg(__ai_ptr, (old), (new));			\
++	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));		\
++	arch_cmpxchg64_relaxed(__ai_ptr, __VA_ARGS__);				\
+ })
++#endif
+ 
+-#define cmpxchg_local(ptr, old, new)					\
++#define cmpxchg_local(ptr, ...)						\
+ ({									\
+ 	typeof(ptr) __ai_ptr = (ptr);					\
+-	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));			\
+-	arch_cmpxchg_local(__ai_ptr, (old), (new));			\
++	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));		\
++	arch_cmpxchg_local(__ai_ptr, __VA_ARGS__);				\
+ })
+ 
+-#define cmpxchg64(ptr, old, new)					\
++#define cmpxchg64_local(ptr, ...)						\
+ ({									\
+ 	typeof(ptr) __ai_ptr = (ptr);					\
+-	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));			\
+-	arch_cmpxchg64(__ai_ptr, (old), (new));				\
++	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));		\
++	arch_cmpxchg64_local(__ai_ptr, __VA_ARGS__);				\
+ })
+ 
+-#define cmpxchg64_local(ptr, old, new)					\
++#define sync_cmpxchg(ptr, ...)						\
+ ({									\
+ 	typeof(ptr) __ai_ptr = (ptr);					\
+-	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));			\
+-	arch_cmpxchg64_local(__ai_ptr, (old), (new));			\
++	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));		\
++	arch_sync_cmpxchg(__ai_ptr, __VA_ARGS__);				\
+ })
+ 
+-#define cmpxchg_double(p1, p2, o1, o2, n1, n2)				\
++#define cmpxchg_double(ptr, ...)						\
+ ({									\
+-	typeof(p1) __ai_p1 = (p1);					\
+-	kasan_check_write(__ai_p1, 2 * sizeof(*__ai_p1));		\
+-	arch_cmpxchg_double(__ai_p1, (p2), (o1), (o2), (n1), (n2));	\
++	typeof(ptr) __ai_ptr = (ptr);					\
++	kasan_check_write(__ai_ptr, 2 * sizeof(*__ai_ptr));		\
++	arch_cmpxchg_double(__ai_ptr, __VA_ARGS__);				\
+ })
+ 
+-#define cmpxchg_double_local(p1, p2, o1, o2, n1, n2)				\
+-({										\
+-	typeof(p1) __ai_p1 = (p1);						\
+-	kasan_check_write(__ai_p1, 2 * sizeof(*__ai_p1));			\
+-	arch_cmpxchg_double_local(__ai_p1, (p2), (o1), (o2), (n1), (n2));	\
++
++#define cmpxchg_double_local(ptr, ...)						\
++({									\
++	typeof(ptr) __ai_ptr = (ptr);					\
++	kasan_check_write(__ai_ptr, 2 * sizeof(*__ai_ptr));		\
++	arch_cmpxchg_double_local(__ai_ptr, __VA_ARGS__);				\
+ })
+ 
+-#endif /* _LINUX_ATOMIC_INSTRUMENTED_H */
++#endif /* _ASM_GENERIC_ATOMIC_INSTRUMENTED_H */
