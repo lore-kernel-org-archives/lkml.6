@@ -7,61 +7,62 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D6AECDE44
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 331AFC0044C
 	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:25:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3001B20830
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:25:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E23C62064C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:25:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="FAyHIiOG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3001B20830
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="TWrlQ88e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E23C62064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727598AbeKAJZk (ORCPT
+        id S1727546AbeKAJZj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 05:25:40 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:34423 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727465AbeKAJZi (ORCPT
+        Thu, 1 Nov 2018 05:25:39 -0400
+Received: from mail-ed1-f48.google.com ([209.85.208.48]:41482 "EHLO
+        mail-ed1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727308AbeKAJZi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 1 Nov 2018 05:25:38 -0400
-Received: by mail-ed1-f66.google.com with SMTP id w19-v6so15187396eds.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 17:25:05 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id c25-v6so876166edt.8
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 17:25:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=9yBpMe8bZONmbG+T6QYM7RuhqpeWJdERGMTR2wSH4X8=;
-        b=FAyHIiOGvbazTRsu8glKhqADCozbrQTW0r30QiOJbpyIALehTsMCIwuTRgvc4nbk2c
-         DNX5ovXwmKUYJ1hDOe8m2bbYkoujGdSgmYYRPdh+fdRvDpdUqBNU2yvi9UGKHcuUAKZX
-         Rxs2hyY/wKulkoG/9xX7mLZ9NoJfU2l+Q6ck1sY79KaxvCdIj5nEQWxLTRrCCm05gV8n
-         h5YJ23k9PEQsUxJXOuBsrjVuF3TVuAXp8wZ/7MhpcJ6ILiaLp1Su14RJTuOnDpa6CPgu
-         91G4wtW7GyYLZuf8A7eg8YaAqT1vRjNZQl6mWbzR0wCZxNJqXuT65+8UUry3AZD4WC+A
-         UPdg==
+        bh=KhI++D9l9Tw9qvqOVGEphWbNGOXNC4cnwmRw0qkUnqI=;
+        b=TWrlQ88eQj9m2yGUw72u43ZwTpk4k2cpQJduIm/D8tDDBX8ltolOf69MsudVTvHmP2
+         vfZ+StBZNT+5e814+dZN6+fQd4gWn8zJX2QZkr5awxFl5lw2urB1T585VXpIeo8laNEU
+         rKTpdxGrTmY9HapvrDH69e1RBVItlfNAaecfyepaNa/zdHfi91L0Qf1ovLA+/jyWQOb0
+         A2ZnKb6X7ya2WAY9qRaAkD5XRyNmOyMrfuzv5HzPtaDn2HKQuJp6yu5VWbSMoYTxx38h
+         qEJPVK6OSZ/xMC4UfmMthdcpZFCPlt7lCoYRFKHxvqlIv4uHcDh/EYZHnTaZGLKFQMfS
+         v52g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=9yBpMe8bZONmbG+T6QYM7RuhqpeWJdERGMTR2wSH4X8=;
-        b=Txi7t440vXAbK+ZPYAPZz9zmTFvU0Gx81JIphUaSWuE5icDgcNqzGCwm8uMXa3oQ3w
-         Edhhc5YPfA55hfvtoT+0QlQCmFYB1g1h4ecjL7C8dfx/LhYyeTlfoaOau/E3jtJ9ZdNg
-         QukpgZLSTnWlh8L4s+2LhsqQHaasXyYXOXSwmS8Vi0P4TRHuWQ9OZhlobSnj9bF7v9jS
-         KPY2wAghSrFx6cvJXNDdqBrqJMHPkTwnuXvR065sJsJqBo2nko/7369ROfFP1AIb/e01
-         RY2UIcmPMfeu9O+WLX656WrKPZBtTWRT3N52Rik8N0Q0Mq8E+6/B/KKAIO1bukAzwGwG
-         tciA==
-X-Gm-Message-State: AGRZ1gKF7Uy/0bdTKp0/6vjvI3HvrADNh0a2PVOQ8qL6FhcW4dasapcO
-        pNnfCUc+lC8s5hrokvcaxyj/egU1t+o=
-X-Google-Smtp-Source: AJdET5eHQP1yoLfPXMjIpc2UH84iPSDuf/46SpD5jC/R7VfF3ym+HVB5TF3aj52U8fu+IXAFZbi5wA==
-X-Received: by 2002:a17:906:1353:: with SMTP id x19-v6mr2788062ejb.23.1541031904817;
-        Wed, 31 Oct 2018 17:25:04 -0700 (PDT)
-Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id s12-v6sm10188175edd.39.2018.10.31.17.25.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        bh=KhI++D9l9Tw9qvqOVGEphWbNGOXNC4cnwmRw0qkUnqI=;
+        b=BqjDn8VvH3jPUOOcRGLPepgLgKxCVZIXhm8IVhdUyLUHdGaGNzE2yrkiFjhg0+bSbE
+         E/7TyfnyunIFV67M0qZv0fdi3GKzhZWerNQi9tAi6Pdkn9o5WDyJH6a02e8/I9R0djNR
+         l8HZv89fUzWTgvW0TRVJ4hHfvXfHQf+qg4WDWV/mE85d0Sg3LfqsfDJBY4nY0uqq6WLO
+         q878kX3O0Z30R4aHzFMknz4OYvOExgp7JdE3T28yMbpqaZgNlW+mOw+hEJY8JjeQOemb
+         AkzNAg68pCPttEga0AMPriQFItqdlGESrlwyIHiU6crEHQ95uaEw76SN+lsAc5Udqbnh
+         S7JA==
+X-Gm-Message-State: AGRZ1gLb0D+OFNdhh8dGM8UE5piRBNkTptMODwOvgxtkMoS0x6U11mW8
+        A6ocbLyKnijMCVIQzqn3FI+5ndqzTfc=
+X-Google-Smtp-Source: AJdET5ebWK+z4QwLrBRnfs5uVsbMAzrUsiANmBMRjUKxbcj85EHhLp5voYMVcRWNr/g4cRCCCITfQQ==
+X-Received: by 2002:a50:a938:: with SMTP id l53-v6mr3751672edc.30.1541031903178;
         Wed, 31 Oct 2018 17:25:03 -0700 (PDT)
+Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id s12-v6sm10188175edd.39.2018.10.31.17.25.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Oct 2018 17:25:02 -0700 (PDT)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         Dmitry Safonov <dima@arista.com>,
         Daniel Axtens <dja@axtens.net>,
         Dmitry Vyukov <dvyukov@google.com>,
@@ -71,16 +72,15 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Nathan March <nathan@gt.net>,
         =?UTF-8?q?Pasi=20K=C3=A4rkk=C3=A4inen?= <pasik@iki.fi>,
         Peter Hurley <peter@hurleysoftware.com>,
-        Peter Zijlstra <peterz@infradead.org>,
         "Rong, Chen" <rong.a.chen@intel.com>,
         Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
         Tan Xiaojun <tanxiaojun@huawei.com>,
         Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>
-Subject: [PATCHv6 6/7] tty/ldsem: Add lockdep asserts for ldisc_sem
-Date:   Thu,  1 Nov 2018 00:24:51 +0000
-Message-Id: <20181101002452.5483-7-dima@arista.com>
+Subject: [PATCHv6 5/7] tty/ldsem: Convert to regular lockdep annotations
+Date:   Thu,  1 Nov 2018 00:24:50 +0000
+Message-Id: <20181101002452.5483-6-dima@arista.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181101002452.5483-1-dima@arista.com>
 References: <20181101002452.5483-1-dima@arista.com>
@@ -91,82 +91,136 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make sure under CONFIG_LOCKDEP that each change to line discipline
-is done with held write semaphor.
-Otherwise potential reader will have a good time dereferencing
-incomplete/uninitialized ldisc.
+From: Peter Zijlstra <peterz@infradead.org>
 
-An exception here is tty_ldisc_open(), as it's called without ldisc_sem
-locked by tty_init_dev() => tty_ldisc_setup() for the tty->link.
-
-It seem valid as tty_init_dev() will call tty_driver_install_tty()
-which will find ops->install(). Install will establish tty->link in
-pty_common_install(), just after allocation of slave tty with
-alloc_tty_struct(). So, no one should have a reference to slave pty yet.
+For some reason ldsem has its own lockdep wrappers, make them go away.
 
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Jiri Slaby <jslaby@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- drivers/tty/tty_ldisc.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/tty/tty_ldsem.c | 51 +++++++++++------------------------------
+ 1 file changed, 14 insertions(+), 37 deletions(-)
 
-diff --git a/drivers/tty/tty_ldisc.c b/drivers/tty/tty_ldisc.c
-index 9434d20cf3ca..45eda69b150c 100644
---- a/drivers/tty/tty_ldisc.c
-+++ b/drivers/tty/tty_ldisc.c
-@@ -478,6 +478,7 @@ static int tty_ldisc_open(struct tty_struct *tty, struct tty_ldisc *ld)
+diff --git a/drivers/tty/tty_ldsem.c b/drivers/tty/tty_ldsem.c
+index b989ca26fc78..d4d0dbf4a6d9 100644
+--- a/drivers/tty/tty_ldsem.c
++++ b/drivers/tty/tty_ldsem.c
+@@ -34,29 +34,6 @@
+ #include <linux/sched/task.h>
  
- static void tty_ldisc_close(struct tty_struct *tty, struct tty_ldisc *ld)
+ 
+-#ifdef CONFIG_DEBUG_LOCK_ALLOC
+-# define __acq(l, s, t, r, c, n, i)		\
+-				lock_acquire(&(l)->dep_map, s, t, r, c, n, i)
+-# define __rel(l, n, i)				\
+-				lock_release(&(l)->dep_map, n, i)
+-#define lockdep_acquire(l, s, t, i)		__acq(l, s, t, 0, 1, NULL, i)
+-#define lockdep_acquire_nest(l, s, t, n, i)	__acq(l, s, t, 0, 1, n, i)
+-#define lockdep_acquire_read(l, s, t, i)	__acq(l, s, t, 1, 1, NULL, i)
+-#define lockdep_release(l, n, i)		__rel(l, n, i)
+-#else
+-# define lockdep_acquire(l, s, t, i)		do { } while (0)
+-# define lockdep_acquire_nest(l, s, t, n, i)	do { } while (0)
+-# define lockdep_acquire_read(l, s, t, i)	do { } while (0)
+-# define lockdep_release(l, n, i)		do { } while (0)
+-#endif
+-
+-#ifdef CONFIG_LOCK_STAT
+-# define lock_stat(_lock, stat)		lock_##stat(&(_lock)->dep_map, _RET_IP_)
+-#else
+-# define lock_stat(_lock, stat)		do { } while (0)
+-#endif
+-
+-
+ #if BITS_PER_LONG == 64
+ # define LDSEM_ACTIVE_MASK	0xffffffffL
+ #else
+@@ -320,17 +297,17 @@ static int __ldsem_down_read_nested(struct ld_semaphore *sem,
  {
-+	lockdep_assert_held_exclusive(&tty->ldisc_sem);
- 	WARN_ON(!test_bit(TTY_LDISC_OPEN, &tty->flags));
- 	clear_bit(TTY_LDISC_OPEN, &tty->flags);
- 	if (ld->ops->close)
-@@ -499,6 +500,7 @@ static int tty_ldisc_failto(struct tty_struct *tty, int ld)
- 	struct tty_ldisc *disc = tty_ldisc_get(tty, ld);
- 	int r;
+ 	long count;
  
-+	lockdep_assert_held_exclusive(&tty->ldisc_sem);
- 	if (IS_ERR(disc))
- 		return PTR_ERR(disc);
- 	tty->ldisc = disc;
-@@ -622,6 +624,7 @@ EXPORT_SYMBOL_GPL(tty_set_ldisc);
-  */
- static void tty_ldisc_kill(struct tty_struct *tty)
+-	lockdep_acquire_read(sem, subclass, 0, _RET_IP_);
++	rwsem_acquire_read(&sem->dep_map, subclass, 0, _RET_IP_);
+ 
+ 	count = atomic_long_add_return(LDSEM_READ_BIAS, &sem->count);
+ 	if (count <= 0) {
+-		lock_stat(sem, contended);
++		lock_contended(&sem->dep_map, _RET_IP_);
+ 		if (!down_read_failed(sem, count, timeout)) {
+-			lockdep_release(sem, 1, _RET_IP_);
++			rwsem_release(&sem->dep_map, 1, _RET_IP_);
+ 			return 0;
+ 		}
+ 	}
+-	lock_stat(sem, acquired);
++	lock_acquired(&sem->dep_map, _RET_IP_);
+ 	return 1;
+ }
+ 
+@@ -339,17 +316,17 @@ static int __ldsem_down_write_nested(struct ld_semaphore *sem,
  {
-+	lockdep_assert_held_exclusive(&tty->ldisc_sem);
- 	if (!tty->ldisc)
- 		return;
- 	/*
-@@ -669,6 +672,7 @@ int tty_ldisc_reinit(struct tty_struct *tty, int disc)
- 	struct tty_ldisc *ld;
- 	int retval;
+ 	long count;
  
-+	lockdep_assert_held_exclusive(&tty->ldisc_sem);
- 	ld = tty_ldisc_get(tty, disc);
- 	if (IS_ERR(ld)) {
- 		BUG_ON(disc == N_TTY);
-@@ -767,6 +771,10 @@ int tty_ldisc_setup(struct tty_struct *tty, struct tty_struct *o_tty)
- 		return retval;
+-	lockdep_acquire(sem, subclass, 0, _RET_IP_);
++	rwsem_acquire(&sem->dep_map, subclass, 0, _RET_IP_);
  
- 	if (o_tty) {
-+		/*
-+		 * Called without o_tty->ldisc_sem held, as o_tty has been
-+		 * just allocated and no one has a reference to it.
-+		 */
- 		retval = tty_ldisc_open(o_tty, o_tty->ldisc);
- 		if (retval) {
- 			tty_ldisc_close(tty, tty->ldisc);
-@@ -832,6 +840,7 @@ int tty_ldisc_init(struct tty_struct *tty)
-  */
- void tty_ldisc_deinit(struct tty_struct *tty)
+ 	count = atomic_long_add_return(LDSEM_WRITE_BIAS, &sem->count);
+ 	if ((count & LDSEM_ACTIVE_MASK) != LDSEM_ACTIVE_BIAS) {
+-		lock_stat(sem, contended);
++		lock_contended(&sem->dep_map, _RET_IP_);
+ 		if (!down_write_failed(sem, count, timeout)) {
+-			lockdep_release(sem, 1, _RET_IP_);
++			rwsem_release(&sem->dep_map, 1, _RET_IP_);
+ 			return 0;
+ 		}
+ 	}
+-	lock_stat(sem, acquired);
++	lock_acquired(&sem->dep_map, _RET_IP_);
+ 	return 1;
+ }
+ 
+@@ -372,8 +349,8 @@ int ldsem_down_read_trylock(struct ld_semaphore *sem)
+ 
+ 	while (count >= 0) {
+ 		if (atomic_long_try_cmpxchg(&sem->count, &count, count + LDSEM_READ_BIAS)) {
+-			lockdep_acquire_read(sem, 0, 1, _RET_IP_);
+-			lock_stat(sem, acquired);
++			rwsem_acquire_read(&sem->dep_map, 0, 1, _RET_IP_);
++			lock_acquired(&sem->dep_map, _RET_IP_);
+ 			return 1;
+ 		}
+ 	}
+@@ -398,8 +375,8 @@ int ldsem_down_write_trylock(struct ld_semaphore *sem)
+ 
+ 	while ((count & LDSEM_ACTIVE_MASK) == 0) {
+ 		if (atomic_long_try_cmpxchg(&sem->count, &count, count + LDSEM_WRITE_BIAS)) {
+-			lockdep_acquire(sem, 0, 1, _RET_IP_);
+-			lock_stat(sem, acquired);
++			rwsem_acquire(&sem->dep_map, 0, 1, _RET_IP_);
++			lock_acquired(&sem->dep_map, _RET_IP_);
+ 			return 1;
+ 		}
+ 	}
+@@ -413,7 +390,7 @@ void ldsem_up_read(struct ld_semaphore *sem)
  {
-+	/* no ldisc_sem, tty is being destroyed */
- 	if (tty->ldisc)
- 		tty_ldisc_put(tty->ldisc);
- 	tty->ldisc = NULL;
+ 	long count;
+ 
+-	lockdep_release(sem, 1, _RET_IP_);
++	rwsem_release(&sem->dep_map, 1, _RET_IP_);
+ 
+ 	count = atomic_long_add_return(-LDSEM_READ_BIAS, &sem->count);
+ 	if (count < 0 && (count & LDSEM_ACTIVE_MASK) == 0)
+@@ -427,7 +404,7 @@ void ldsem_up_write(struct ld_semaphore *sem)
+ {
+ 	long count;
+ 
+-	lockdep_release(sem, 1, _RET_IP_);
++	rwsem_release(&sem->dep_map, 1, _RET_IP_);
+ 
+ 	count = atomic_long_add_return(-LDSEM_WRITE_BIAS, &sem->count);
+ 	if (count < 0)
 -- 
 2.19.1
 
