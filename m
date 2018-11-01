@@ -2,172 +2,123 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F495C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:13:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3026C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:16:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CC532081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:13:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CC532081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=interlog.com
+	by mail.kernel.org (Postfix) with ESMTP id 64B5920833
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:16:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uFa8k/Zd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64B5920833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728060AbeKAUPi (ORCPT
+        id S1728079AbeKAUSs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 16:15:38 -0400
-Received: from smtp.infotech.no ([82.134.31.41]:35810 "EHLO smtp.infotech.no"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726520AbeKAUPi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 16:15:38 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp.infotech.no (Postfix) with ESMTP id B47022041E3;
-        Thu,  1 Nov 2018 12:13:06 +0100 (CET)
-X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
-Received: from smtp.infotech.no ([127.0.0.1])
-        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id bmUNgCzBHP9W; Thu,  1 Nov 2018 12:13:06 +0100 (CET)
-Received: from [82.134.31.187] (unknown [82.134.31.187])
-        by smtp.infotech.no (Postfix) with ESMTPA id 871E9204191;
-        Thu,  1 Nov 2018 12:13:06 +0100 (CET)
-Reply-To: dgilbert@interlog.com
-Subject: Re: remove exofs and the T10 OSD code V2
-To:     Boaz Harrosh <ooo@electrozaur.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, martin.petersen@oracle.com,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        osd-dev@open-osd.org, linux-scsi@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181027082019.20838-1-hch@lst.de>
- <f9423180-e0fc-efba-e759-dfa4725953ad@kernel.dk>
- <20181030074542.GB24697@lst.de>
- <ea317f79-37bb-1149-fc43-fb07f46c15e9@electrozaur.com>
- <57a73f2b-29be-6301-2f4b-df582b7d23ff@interlog.com>
- <a711a25d-e866-aabe-95c8-53bcd212a173@electrozaur.com>
-From:   Douglas Gilbert <dgilbert@interlog.com>
-Message-ID: <4dbfc5c0-e824-0186-03df-0e235b3901f3@interlog.com>
-Date:   Thu, 1 Nov 2018 12:13:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 1 Nov 2018 16:18:48 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43572 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727736AbeKAUSs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 16:18:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gWqOTYZkHgjjHyE9vSrkJN0G7zLuwwNT6oQ9KO2L7ag=; b=uFa8k/Zd3Vzx87d6FpfON25l6
+        zjexHnR5O/wM8N69BYmbQtfbC++QKvzEnFq9xpKudVtL0SUrPSfs0sVuqXk5p3sGyU1VrKz1AwHfw
+        xNqKmabxJlyBJqqX+szytNO+eRhS6KauPRhTGYQxFuUhnRR66tprTc08w2yPPMEeYxS37p9w7kmJJ
+        facNjJGZGvqSFdxWjlilUTI7LitTsuvZW3ejiBK2QqjDWz4Mp16zuQP6asd8GJFiF+owJ7Wrqxb4T
+        tzdpRnffLnb2PnSc+W5rDGYbvGItnBCEVAktNXjbqw8OfVqv6R/+gRhlg3AMipirbbvoh5rhDqx7B
+        Y3SIl/iWQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gIAxB-0007bN-80; Thu, 01 Nov 2018 11:15:57 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 4321520296EF3; Thu,  1 Nov 2018 12:15:54 +0100 (CET)
+Date:   Thu, 1 Nov 2018 12:15:54 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Richard Biener <rguenther@suse.de>,
+        Michael Matz <matz@suse.de>, gcc@gcc.gnu.org,
+        Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Alok Kataria <akataria@vmware.com>,
+        Christopher Li <sparse@chrisli.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Jan Beulich <JBeulich@suse.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        linux-sparse@vger.kernel.org,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        linux-xtensa@linux-xtensa.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: PROPOSAL: Extend inline asm syntax with size spec
+Message-ID: <20181101111554.GC3178@hirez.programming.kicks-ass.net>
+References: <20181010072240.GB103159@gmail.com>
+ <20181010080324.GV29268@gate.crashing.org>
+ <20181010081906.GA5533@zn.tnic>
+ <20181010185432.GB29268@gate.crashing.org>
+ <20181010191427.GF5533@zn.tnic>
+ <20181013193335.GD31650@zn.tnic>
+ <20181031125526.GA13219@hirez.programming.kicks-ass.net>
+ <5f987ecbb4962b4796615928d9d71f2cf9b21a3b.camel@perches.com>
+ <20181101090114.GE3159@hirez.programming.kicks-ass.net>
+ <02085d90af8a81b69cb38e0fdd6a018f151a58d8.camel@perches.com>
 MIME-Version: 1.0
-In-Reply-To: <a711a25d-e866-aabe-95c8-53bcd212a173@electrozaur.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <02085d90af8a81b69cb38e0fdd6a018f151a58d8.camel@perches.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-11-01 1:03 a.m., Boaz Harrosh wrote:
-> On 31/10/18 23:10, Douglas Gilbert wrote:
->> On 2018-10-31 4:57 p.m., Boaz Harrosh wrote:
->>> On 30/10/18 09:45, Christoph Hellwig wrote:
->>>> On Mon, Oct 29, 2018 at 02:42:12PM -0600, Jens Axboe wrote:
->>>>> LGTM, for both:
->>>>
->>>> I also have this one on top as requested by Martin.  The core block
->>>> bidi support is unfortunately also used by bsg-lib, although it is
->>>> not anywhere near as invasive.  But that is another argument for
->>>> looking into moving bsg-lib away from using block queues..
->>>>
->>>
->>> BUT this patch is very very wrong.
->>>
->>> Totally apart from T10-OSD and its use in the field. Support for scsi BIDI
->>> commands is not exclusive to T10-OSD at all. Even the simple scsi-array
->>> command-set has BIDI operations defined. for example the write-return-xor
->>> and so on.
->>>
->>> Also some private administrative CDBs of some vendor devices uses SCSI-BIDI.
->>> So this patch just broke some drivers. (User-mode apps use bsg pass through)
->>>
->>> Also you might (try hard and) remove all usage of scsi-bidi as an initiator
->>> from the Linux Kernel. But what about target mode. As a target we have supported
->>> on the wire bidi protocols like write-return-xor and others for a long time.
->>> Are you willing to silently break all these setups in the field on the next update?
->>> Are you so sure these are never used?
->>>
->>> PLEASE, I beg of you guys. Do not remove SCSI-BIDI. It is a cry of generations.
->>>
->>> And I think by the rules of Linus, as far as target mode. You are not allowed
->>> to break users in this way.
->>
->> Hi,
->> I'm in the process of rebuilding the sg driver with the following goals:
->>
->>     - undo 20 years of road wear, some of which is caused by literally
->>       hundreds of "laparoscopic" patches that gradually ruin a driver,
->>       at least from the maintainer's viewpoint. Comments that once made
->>       sense become cryptic or just nonsense; naming schemes that
->>       obliterate variable names to the extent that a random name
->>       generator would be easier to follow; and just plain broken code.
->>       For example, why sort out the existing locking at a particular
->>       level when you can add a new lock in a completely non-orthogonal
->>       way? [Yes, I looking at you, google.] Anyway, my first cut at this
->>       is out there (on the linux-scsi list, see: "[PATCH v3 0/8] sg:
->>       major cleanup, remove max_queue limit"). Not much new there,
->>       unless you look very closely
->>
->>     - the next step is to add to the sg driver async SCSI command
->>       capability based on the sg_io_v4 structure previously only used
->>       by the bsg driver and now removed from bsg. The main advantage
->>       of the sg_io_v4 structure over previous pass-through interface
->>       attempts is the support of SCSI bidi commands
->>
->>     - as part of this effort introduce two new ioctls: SG_IOSUBMIT and
->>       SG_IORECEIVE to replace the write()/read() technique currently
->>       in use (since Linux 1.0 in 1992). The write()/read() technique
->>       seems to be responsible for various security folks losing clumps
->>       of their hair. One advantage of ioctls, as Alan Cox pointed out,
->>       is the ability to write to and read back from the kernel in a way
->>       that is naturally synchronized. [Actually, those security folks
->>       shouldn't look too closely at sg_read() in that respect.]
->>
->> In discussions with several folks who are on the T10 committee, I
->> wondered why there was no READ GATHERED command (there has been a
->> WRITE SCATTERED for 2 years). The answer was lack of interest ***,
->> plus the difficultly of implementation. You see, READ GATHERED needs
->> to send a scatter gather list to the device and get the corresponding
->> data back (as a linear array). And that requires either:
->>     a) bidi commands (scatter gather list in the data-out, corresponding
->>        "read" data in the data-in), or
->>     b) loooong SCSI commands, up to around 256 bytes long in which the
->>        sgat list is the latter part of that command
->>
->> And the T10 folks say neither of those options is well supported or
->> is expensive.
+On Thu, Nov 01, 2018 at 02:20:40AM -0700, Joe Perches wrote:
+> On Thu, 2018-11-01 at 10:01 +0100, Peter Zijlstra wrote:
+> > On Wed, Oct 31, 2018 at 10:20:00PM -0700, Joe Perches wrote:
+> > > On Wed, 2018-10-31 at 13:55 +0100, Peter Zijlstra wrote:
+> > > > Anyway, with the below patch, I get:
+> > > > 
+> > > >    text    data     bss     dec     hex filename
+> > > > 17385183        5064780 1953892 24403855        1745f8f defconfig-build/vmlinux
+> > > > 17385678        5064780 1953892 24404350        174617e defconfig-build/vmlinux
+> > > > 
+> > > > Which shows we inline more (look for asm_volatile for the actual
+> > > > changes).
+> > > []
+> > > >  scripts/checkpatch.pl                              |  8 ++---
+> > > >  scripts/genksyms/keywords.c                        |  4 +--
+> > > >  scripts/kernel-doc                                 |  4 +--
+> > > 
+> > > I believe these should be excluded from the conversions.
+> > 
+> > Probably, yes. It compiled, which was all I cared about :-)
+> > 
+> > BTW, if we do that conversion, we should upgrade the checkpatch warn to
+> > an error I suppose.
 > 
-> It is supported in Linux scsi/osd driver is a proof of that. And expensive
-> it is not. I have demonstrated the ability to saturate a 10G link over
-> a raid of devices from a single writer. In OSD everything is bidi.
-> 
->> I'm guessing they are referring to Linux and Windows.
->> I haven't argued much beyond that point, but it looks like a bit of
->> a chicken and egg situation.
->>
->>
->> Don't know too much about the T10 OSD stuff. But I can see that it
->> uses both long SCSI commands and a lot of bidi. IMO it seems to be
->> 10 or 20 years before its time. Maybe ibm/redhat need to
->> (re-)discover it for it to catch on.
->>
->>
->> Plus there are proprietary SCSI bidi commands out there. People contact
->> me and ask me how to issue them with sg3_utils package. Easy, I tell them,
->> just use sg_raw with a bsg device. Typically, in my experience, "no news
->> is good news" after suggestions like that. When I give bad advice, I
->> usually hear back relatively quickly. Anyone who wants SCSI bidi _async_
->> support is currently out of luck.
+> More like remove altogether as __inline and __inline__
+> will no longer be #defined
 
-And I forgot to mention that the scsi_debug driver has had an implementation
-of the SCSI XDWRITEREAD(10) command with T10 semantics. That is a bidi
-command and facilitates testing of SCSI bidi from other block/SCSI
-drivers and user space programs. It has been there for over 4 years with
-no problems reported. As mentioned above it can be exercised with the
-sg_raw utility in the sg3_utils package via a bsg device.
-
-Doug Gilbert
-
+That's the point, therefore checkpatch should error when it sees them.
+Otherwise we'll grow new instances, because it will compile just file.
