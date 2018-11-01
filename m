@@ -2,126 +2,137 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 348C1C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 19:32:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2442CC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 19:32:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E24DC2064C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 19:32:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aDgaLYpI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E24DC2064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id EEA202064C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 19:32:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEA202064C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726602AbeKBEgs (ORCPT
+        id S1726717AbeKBEhC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 00:36:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48974 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725792AbeKBEgs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 00:36:48 -0400
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0EEE92084C;
-        Thu,  1 Nov 2018 19:32:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541100748;
-        bh=/x7S6wOFLQr8W3UDRcyWSs0Pz9v1coUTlDM/AkRrcxA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=aDgaLYpIBaFFLpQpRfHzTttNxmSf76DT07+GB1LRCOJ7QosM1oP+h0/VKEjHr8HsQ
-         9pgLlxbnWI/yk14E0rGvb1mDQY2oLU6CMSmVuXA0i+DLgttmQK7a8Fc4JTIkSjGX8Y
-         73wHVUfEknan10S9vXrb3ToiUGg67F2OglIOh3mw=
-Received: by mail-qk1-f178.google.com with SMTP id 189so11713104qkj.8;
-        Thu, 01 Nov 2018 12:32:28 -0700 (PDT)
-X-Gm-Message-State: AGRZ1gL3tcoaUHr7RdKgAqe6WI/2nSCnwIJmgpezUxa/+NpXoct0N09d
-        6T61cyzPWvw3Svau6w6V3hwzDSvhC5llbba6pg==
-X-Google-Smtp-Source: AJdET5fZTGJGL+FIAeOcyrSMk/63EwuYM5K3XvuDEugOn3TDRJWlPs+FR3PYDr/iUceerCdQiWwU851OBn49EgkjnZI=
-X-Received: by 2002:aed:29a5:: with SMTP id o34mr1170272qtd.257.1541100747137;
- Thu, 01 Nov 2018 12:32:27 -0700 (PDT)
+        Fri, 2 Nov 2018 00:37:02 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60968 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725792AbeKBEhC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 00:37:02 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 872FAA78;
+        Thu,  1 Nov 2018 12:32:42 -0700 (PDT)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6C0AE3F71D;
+        Thu,  1 Nov 2018 12:32:41 -0700 (PDT)
+Subject: Re: [PATCH RFC] dma-direct: do not allocate a single page from CMA
+ area
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+Cc:     hch@lst.de, m.szyprowski@samsung.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        vdumpa@nvidia.com
+References: <20181031200355.19945-1-nicoleotsuka@gmail.com>
+ <13d60076-33ad-b542-4d17-4d717d5aa4d3@arm.com>
+ <20181101180439.GA4746@Asurada-Nvidia.nvidia.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <58e3d16e-837c-0610-9e1c-0562babcdd82@arm.com>
+Date:   Thu, 1 Nov 2018 19:32:39 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181005165848.3474-1-robh@kernel.org> <20181005165848.3474-14-robh@kernel.org>
- <20181009115713.GE6248@arm.com>
-In-Reply-To: <20181009115713.GE6248@arm.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 1 Nov 2018 14:32:14 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJh08wZCyGxg7HMbtKjOJTZKMoQcNOB_hPuSfJKQQK8JA@mail.gmail.com>
-Message-ID: <CAL_JsqJh08wZCyGxg7HMbtKjOJTZKMoQcNOB_hPuSfJKQQK8JA@mail.gmail.com>
-Subject: Re: [PATCH 13/36] dt-bindings: arm: Convert PMU binding to json-schema
-To:     Will Deacon <will.deacon@arm.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Grant Likely <glikely@secretlab.ca>,
-        Kumar Gala <kumar.gala@linaro.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        Mark Brown <broonie@kernel.org>, Tom Rini <trini@konsulko.com>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181101180439.GA4746@Asurada-Nvidia.nvidia.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 9, 2018 at 6:57 AM Will Deacon <will.deacon@arm.com> wrote:
->
-> Hi Rob,
->
-> On Fri, Oct 05, 2018 at 11:58:25AM -0500, Rob Herring wrote:
-> > Convert ARM PMU binding to DT schema format using json-schema.
-> >
-> > Cc: Will Deacon <will.deacon@arm.com>
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Cc: devicetree@vger.kernel.org
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> > ---
-> >  Documentation/devicetree/bindings/arm/pmu.txt | 70 --------------
-> >  .../devicetree/bindings/arm/pmu.yaml          | 96 +++++++++++++++++++
-> >  2 files changed, 96 insertions(+), 70 deletions(-)
-> >  delete mode 100644 Documentation/devicetree/bindings/arm/pmu.txt
-> >  create mode 100644 Documentation/devicetree/bindings/arm/pmu.yaml
->
-> [...]
->
-> > -- interrupts : 1 combined interrupt or 1 per core. If the interrupt is a per-cpu
-> > -               interrupt (PPI) then 1 interrupt should be specified.
->
-> [...]
->
-> > +  interrupts:
-> > +    oneOf:
-> > +      - maxItems: 1
-> > +      - minItems: 2
-> > +        maxItems: 8
-> > +        description: 1 interrupt per core.
-> > +
-> > +  interrupts-extended:
-> > +    $ref: '#/properties/interrupts'
->
-> This seems like a semantic different between the two representations, or am
-> I missing something here? Specifically, both the introduction of
-> interrupts-extended and also dropping any mention of using a single per-cpu
-> interrupt (the single combined case is no longer support by Linux; not sure
-> if you want to keep it in the binding).
+On 01/11/2018 18:04, Nicolin Chen wrote:
+> Hi Robin,
+> 
+> Thanks for the comments.
+> 
+> On Thu, Nov 01, 2018 at 02:07:55PM +0000, Robin Murphy wrote:
+>> On 31/10/2018 20:03, Nicolin Chen wrote:
+>>> The addresses within a single page are always contiguous, so it's
+>>> not so necessary to allocate one single page from CMA area. Since
+>>> the CMA area has a limited predefined size of space, it might run
+>>> out of space in some heavy use case, where there might be quite a
+>>> lot CMA pages being allocated for single pages.
+>>>
+>>> This patch tries to skip CMA allocations of single pages and lets
+>>> them go through normal page allocations. This would save resource
+>>> in the CMA area for further more CMA allocations.
+>>
+>> In general, this seems to make sense to me. It does represent a theoretical
+>> change in behaviour for devices which have their own CMA area somewhere
+>> other than kernel memory, and only ever make non-atomic allocations, but I'm
+>> not sure whether that's a realistic or common enough case to really worry
+>> about.
+> 
+> Hmm..I don't quite understand the part of worrying its realisticness.
+> Would you mind elaborating a bit?
 
-In regards to no support for the single combined interrupt, it looks
-like Marvell Armada SoCs at least (armada-375 is what I'm looking at)
-have only a single interrupt. Though the interrupt gets routed to MPIC
-which then has a GIC PPI. So it isn't supported or happens to work
-still since it is a PPI?
+I only mean the case where a driver previously happened to get single 
+pages allocated from a per-device CMA area, would now always get them 
+fulfilled from regular kernel memory instead, and actually cares about 
+the difference. As I say, that's a contrived case that I doubt is 
+honestly a significant concern, but it's not *entirely* inconceivable. 
+I've just been bitten before by drivers relying on specific DMA API 
+implementation behaviour which was never guaranteed or even necessarily 
+correct by the terms of the API itself, so I'm naturally wary of the 
+corner cases ;)
 
-Rob
+On second thought, however, I suppose we could always key this off 
+DMA_ATTR_FORCE_CONTIGUOUS as well if we really want - technically it has 
+a more general meaning than "only ever allocate from CMA", but in 
+practice if that's the behaviour a driver wants, then that flag is 
+already the only way it can even hope to get dma_alloc_coherent() to 
+comply anywhere near reliably.
+
+> As I tested this change on Tegra186
+> board, and saw some single-page allocations have been directed to the
+> normal allocation; and the "CmaFree" size reported from /proc/meminfo
+> is also increased. Does this mean it's realistic?
+
+Indeed - I happen to have CMA debug enabled for no good reason in my 
+current development config, and on my relatively unexciting Juno board 
+single-page allocations turn out to be the majority by number, even if 
+not by total consumption:
+
+[    0.519663] cma: cma_alloc(cma (____ptrval____), count 64, align 6)
+[    0.527508] cma: cma_alloc(): returned (____ptrval____)
+[    3.768066] cma: cma_alloc(cma (____ptrval____), count 1, align 0)
+[    3.774566] cma: cma_alloc(): returned (____ptrval____)
+[    3.860097] cma: cma_alloc(cma (____ptrval____), count 1875, align 8)
+[    3.867150] cma: cma_alloc(): returned (____ptrval____)
+[    3.920796] cma: cma_alloc(cma (____ptrval____), count 31, align 5)
+[    3.927093] cma: cma_alloc(): returned (____ptrval____)
+[    3.932326] cma: cma_alloc(cma (____ptrval____), count 31, align 5)
+[    3.938643] cma: cma_alloc(): returned (____ptrval____)
+[    4.022188] cma: cma_alloc(cma (____ptrval____), count 1, align 0)
+[    4.028415] cma: cma_alloc(): returned (____ptrval____)
+[    4.033600] cma: cma_alloc(cma (____ptrval____), count 1, align 0)
+[    4.039786] cma: cma_alloc(): returned (____ptrval____)
+[    4.044968] cma: cma_alloc(cma (____ptrval____), count 1, align 0)
+[    4.051150] cma: cma_alloc(): returned (____ptrval____)
+[    4.113556] cma: cma_alloc(cma (____ptrval____), count 1, align 0)
+[    4.119785] cma: cma_alloc(): returned (____ptrval____)
+[    5.012654] cma: cma_alloc(cma (____ptrval____), count 1, align 0)
+[    5.019047] cma: cma_alloc(): returned (____ptrval____)
+[   11.485179] cma: cma_alloc(cma 000000009dd074ee, count 1, align 0)
+[   11.492096] cma: cma_alloc(): returned 000000009264a86c
+[   12.269355] cma: cma_alloc(cma 000000009dd074ee, count 1875, align 8)
+[   12.277535] cma: cma_alloc(): returned 00000000d7bb9ae5
+[   12.286110] cma: cma_alloc(cma 000000009dd074ee, count 4, align 2)
+[   12.292507] cma: cma_alloc(): returned 0000000007ba7a39
+
+I don't have any exciting peripherals to really exercise the coherent 
+allocator, but I imagine that fragmentation is probably just as good a 
+reason as total CMA usage for avoiding trivial allocations by default.
+
+Robin.
