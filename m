@@ -2,186 +2,293 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94373C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 20:02:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A831EC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 20:16:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 691AE20657
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 20:02:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 691AE20657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
+	by mail.kernel.org (Postfix) with ESMTP id 2F0B02064C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 20:16:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kfT8ixVq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F0B02064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728008AbeKBFHS (ORCPT
+        id S1727771AbeKBFVU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 01:07:18 -0400
-Received: from leonov.paulk.fr ([185.233.101.22]:46046 "EHLO leonov.paulk.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726717AbeKBFHS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 01:07:18 -0400
-Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
-        by leonov.paulk.fr (Postfix) with ESMTPS id 42822BFA47;
-        Thu,  1 Nov 2018 21:02:50 +0100 (CET)
-Received: by gagarine.paulk.fr (Postfix, from userid 114)
-        id B023AC1084; Thu,  1 Nov 2018 21:02:49 +0100 (CET)
-Received: from localhost.localdomain (collins [192.168.1.129])
-        by gagarine.paulk.fr (Postfix) with ESMTP id 6FE77C105C;
-        Thu,  1 Nov 2018 21:00:35 +0100 (CET)
-From:   Paul Kocialkowski <contact@paulk.fr>
-To:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
-        Paul Kocialkowski <contact@paulk.fr>
-Subject: [PATCH NOT FOR MERGE v2 7/7] ARM: dts: sun7i-a20-bananapi: Add bindings for the LeMaker 3.5" LCD
-Date:   Thu,  1 Nov 2018 21:00:45 +0100
-Message-Id: <20181101200045.6078-8-contact@paulk.fr>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181101200045.6078-1-contact@paulk.fr>
-References: <20181101200045.6078-1-contact@paulk.fr>
+        Fri, 2 Nov 2018 01:21:20 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:33234 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727727AbeKBFVU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 01:21:20 -0400
+Received: by mail-ua1-f66.google.com with SMTP id s26so5562627uao.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 13:16:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RDCDd0p4OmFseFi2wBnsj0C8loIAFcE/ArZDMAjsLkQ=;
+        b=kfT8ixVqkLL5HtNNvmNNFp5dOjfv+B8Ej8abtSuoS32uTtrzyyd6SdgeVzJclM3Y5v
+         AIdJNtWBXhXlkNRg2aY9f2nU2J9grgl9Ftw0NuJKQAFRhAVmq8pGChTn67q9eyHn4zDe
+         tgsWsSqXHiATO47NdJO0FBhj8cR+exUzBmFKZa7065N9jvLWkoiwYeRTaY+iioHyiKaL
+         RbBdgLmFRBQRVBK2q/8CgiJsZKrWfMrAXiOEalEKZjwVpRlJCjxK/AzAylacKzOrD/Jf
+         4LtUWqH7KOvrYSYVgx/wOtzi76Gh47R13ngeLrt+njvcwHY577iuuPMQ5bGPLTl0DD7/
+         S31A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RDCDd0p4OmFseFi2wBnsj0C8loIAFcE/ArZDMAjsLkQ=;
+        b=tAjSB0AAhUndJYKI4E5/okhVeP2al0i/yq++1oibIQ1I7RiOKvjaYGXYkRWcLDVNPJ
+         f+Hn6xA9ofLSmOgVuJzFdyUpdh8v8dNA+BwFZ1lgfslaq1/uIY46e1PgilMUB8K/pDTu
+         4CAv+QzFaK+iVv/y1CZVxv2v+77VYvTLt49taxzW3Akdquv0j+U7RjrXUvjK/u69WMq5
+         0FyjhCc0GUSkMMCoQEcl5CbU/FmM6RgEvEnzb6rs7ZQ147obbUWNi3vqLbGgUKcLrUei
+         0pl6a+XgKAF6hHQ6QAGnLTygWJ9TQOYHL8iMMZe1HKw7vnrG8/ns145vC84lsIS9SVwn
+         nhaA==
+X-Gm-Message-State: AGRZ1gLB8E5CwfLAzp7A0gWcHY5zuo0cwb3xRwwWEXBrRx/wryJe8Kj6
+        E/BxSMGXOc/noYJQNEYnbPdPik2tXCISqvC1J47ROw==
+X-Google-Smtp-Source: AJdET5cFBrfEMGpEb6loaW9cQy091IfqFKtbs+Yu82CWKqztZ+FEsGKC2qOoF6H1Tiu4zS0vWTrQHHhdW2GJoWFKhyI=
+X-Received: by 2002:ab0:7488:: with SMTP id n8mr4196822uap.115.1541103410109;
+ Thu, 01 Nov 2018 13:16:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1541073999-11752-1-git-send-email-vbadigan@codeaurora.org> <1541073999-11752-3-git-send-email-vbadigan@codeaurora.org>
+In-Reply-To: <1541073999-11752-3-git-send-email-vbadigan@codeaurora.org>
+From:   Doug Anderson <dianders@google.com>
+Date:   Thu, 1 Nov 2018 13:16:37 -0700
+Message-ID: <CAD=FV=XbCGQ2v1EAGOxiY_7PVH0WmOy0MMnUtKi9TkJYmhe4=A@mail.gmail.com>
+Subject: Re: [PATCH V3 2/2] mmc: sdhci-msm: Re-initialize DLL if MCLK is gated dynamically
+To:     vbadigan@codeaurora.org
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Evan Green <evgreen@chromium.org>,
+        Asutosh Das <asutoshd@codeaurora.org>, riteshh@codeaurora.org,
+        stummala@codeaurora.org, sayalil@codeaurora.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the backlight panel, power, pwm and tcon0 device-tree bindings
-required for supporting the 3.5" LCD from LeMaker on the BananaPi M1.
+Hi,
 
-Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
----
- arch/arm/boot/dts/sun7i-a20-bananapi.dts | 89 ++++++++++++++++++++++++
- 1 file changed, 89 insertions(+)
+On Thu, Nov 1, 2018 at 5:08 AM Veerabhadrarao Badiganti
+<vbadigan@codeaurora.org> wrote:
+>
+> On few SDHCI-MSM controllers, the host controller's clock tuning
+> circuit may go out of sync if controller clocks are gated which
+> eventually will result in data CRC, command CRC/timeout errors.
+> To overcome this h/w limitation, the DLL needs to be re-initialized
+> and restored with its old settings once clocks are ungated.
+>
+> Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+> ---
+>  drivers/mmc/host/sdhci-msm.c | 59 ++++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 57 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> index 3cc8bfe..e38a4e8 100644
+> --- a/drivers/mmc/host/sdhci-msm.c
+> +++ b/drivers/mmc/host/sdhci-msm.c
+> @@ -232,6 +232,7 @@ struct sdhci_msm_variant_ops {
+>   */
+>  struct sdhci_msm_variant_info {
+>         bool mci_removed;
+> +       bool restore_dll_config;
+>         const struct sdhci_msm_variant_ops *var_ops;
+>         const struct sdhci_msm_offset *offset;
+>  };
+> @@ -256,6 +257,7 @@ struct sdhci_msm_host {
+>         bool pwr_irq_flag;
+>         u32 caps_0;
+>         bool mci_removed;
+> +       bool restore_dll_config;
+>         const struct sdhci_msm_variant_ops *var_ops;
+>         const struct sdhci_msm_offset *offset;
+>  };
+> @@ -1025,6 +1027,36 @@ static int sdhci_msm_hs400_dll_calibration(struct sdhci_host *host)
+>         return ret;
+>  }
+>
+> +static int sdhci_msm_restore_sdr_dll_config(struct sdhci_host *host)
+> +{
+> +       struct mmc_ios ios = host->mmc->ios;
 
-diff --git a/arch/arm/boot/dts/sun7i-a20-bananapi.dts b/arch/arm/boot/dts/sun7i-a20-bananapi.dts
-index 70dfc4ac0bb5..dd2f8bc41fae 100644
---- a/arch/arm/boot/dts/sun7i-a20-bananapi.dts
-+++ b/arch/arm/boot/dts/sun7i-a20-bananapi.dts
-@@ -48,6 +48,7 @@
- 
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/pwm/pwm.h>
- 
- / {
- 	model = "LeMaker Banana Pi";
-@@ -63,6 +64,75 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm 0 50000 0>;
-+		brightness-levels = <  0   1   1   1   1   2   2   2
-+				       2   3   3   3   3   4   4   4
-+				       5   5   5   6   6   6   7   7
-+				       8   8   8   9   9   9  10  10
-+				      10  11  11  12  12  12  13  13
-+				      14  14  14  15  15  16  16  17
-+				      17  17  18  18  19  19  20  20
-+				      21  21  21  22  22  23  23  24
-+				      24  25  25  26  26  27  27  28
-+				      28  29  30  30  31  31  32  32
-+				      33  33  34  35  35  36  36  37
-+				      38  38  39  39  40  41  41  42
-+				      43  43  44  44  45  46  47  47
-+				      48  49  49  50  51  51  52  53
-+				      54  54  55  56  57  57  58  59
-+				      60  61  61  62  63  64  65  65
-+				      66  67  68  69  70  71  71  72
-+				      73  74  75  76  77  78  79  80
-+				      81  82  83  84  85  86  87  88
-+				      89  90  91  92  93  94  95  96
-+				      97  98  99 101 102 103 104 105
-+				     106 108 109 110 111 112 114 115
-+				     116 117 119 120 121 123 124 125
-+				     127 128 129 131 132 133 135 136
-+				     138 139 141 142 144 145 147 148
-+				     150 151 153 154 156 157 159 161
-+				     162 164 166 167 169 171 173 174
-+				     176 178 180 181 183 185 187 189
-+				     191 192 194 196 198 200 202 204
-+				     206 208 210 212 214 216 219 221
-+				     223 225 227 229 232 234 236 238
-+				     241 242 244 246 248 250 253 255>;
-+		default-brightness-level = <128>;
-+		enable-gpios = <&pio 7 8 GPIO_ACTIVE_HIGH>; /* PH8 */
-+	};
-+
-+	panel: panel {
-+		compatible = "lemaker,bl035";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		power-supply = <&panel_power>;
-+		backlight = <&backlight>;
-+
-+		port@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			panel_input: endpoint@0 {
-+				reg = <0>;
-+				remote-endpoint = <&tcon0_out_panel>;
-+			};
-+		};
-+	};
-+
-+	panel_power: panel_power {
-+		compatible = "regulator-fixed";
-+		regulator-name = "panel-power";
-+		regulator-min-microvolt = <10400000>;
-+		regulator-max-microvolt = <10400000>;
-+		gpio = <&pio 7 12 GPIO_ACTIVE_HIGH>; /* PH12 */
-+		enable-active-high;
-+		regulator-boot-on;
-+	};
-+
- 	hdmi-connector {
- 		compatible = "hdmi-connector";
- 		type = "a";
-@@ -275,6 +345,12 @@
- 	};
- };
- 
-+&pwm {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pwm0_pins_a>;
-+	status = "okay";
-+};
-+
- #include "axp209.dtsi"
- 
- &reg_dcdc2 {
-@@ -322,6 +398,19 @@
- 	status = "okay";
- };
- 
-+&tcon0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&lcd0_rgb888_pins>;
-+	status = "okay";
-+};
-+
-+&tcon0_out {
-+	tcon0_out_panel: endpoint@0 {
-+		reg = <0>;
-+		remote-endpoint = <&panel_input>;
-+	};
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
--- 
-2.19.1
+Please use a pointer.  Right now you're copying the whole structure
+onto the stack.  Sure it's maybe only 20 bytes, but why?
 
+...for bonus points add a separate patch that fixes all the other
+places in this file that do the same thing.  A grep can see that msm
+is the only one that does this, everyone else uses a pointer:
+
+$ git grep 'struct mmc_ios.*=' -- drivers/mmc/host
+drivers/mmc/host/omap_hsmmc.c:  struct mmc_ios *ios = &mmc->ios;
+drivers/mmc/host/omap_hsmmc.c:  struct mmc_ios *ios = &host->mmc->ios;
+drivers/mmc/host/omap_hsmmc.c:  struct mmc_ios *ios = &host->mmc->ios;
+drivers/mmc/host/omap_hsmmc.c:  struct mmc_ios *ios = &host->mmc->ios;
+drivers/mmc/host/omap_hsmmc.c:  struct mmc_ios *ios = &host->mmc->ios;
+drivers/mmc/host/sdhci-msm.c:   struct mmc_ios ios = host->mmc->ios;
+drivers/mmc/host/sdhci-msm.c:   struct mmc_ios curr_ios = host->mmc->ios;
+drivers/mmc/host/sdhci-msm.c:   struct mmc_ios ios = host->mmc->ios;
+drivers/mmc/host/sdhci-msm.c:   struct mmc_ios ios = host->mmc->ios;
+drivers/mmc/host/sdhci-msm.c:   struct mmc_ios ios = host->mmc->ios;
+drivers/mmc/host/sdhci-msm.c:   struct mmc_ios ios = host->mmc->ios;
+drivers/mmc/host/sdhci-omap.c:  struct mmc_ios *ios = &mmc->ios;
+drivers/mmc/host/sdhci.c:       struct mmc_ios *ios = &mmc->ios;
+
+
+> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +       struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+> +       int ret;
+> +
+> +       /*
+> +        * SDR DLL comes into picure only if clock frequency is greater than
+> +        * 100MHz. And its needed only for SDR104, HS200 and HS400 cards.
+> +        * Its not needed for HS400es cards.
+> +        */
+> +       if (host->clock <= CORE_FREQ_100MHZ ||
+> +           !(ios.timing == MMC_TIMING_MMC_HS400 ||
+> +           ios.timing == MMC_TIMING_MMC_HS200 ||
+> +           ios.timing == MMC_TIMING_UHS_SDR104) ||
+> +           ios.enhanced_strobe)
+
+This if test is nearly copied from sdhci_msm_execute_tuning().  My
+first thought it that this is complicated enough logic that you should
+write a helper.
+
+...looking at this is makes me feel like there's a bug in
+sdhci_msm_execute_tuning() because it doesn't check for
+"enhanced_strobe".  ...but maybe the answer is that the test in
+sdhci_msm_execute_tuning() is pointless anyway because the core code
+should only call execute_tuning() if we're using a mode that needs
+tuning.  So maybe the answer is to remove the code from
+sdhci_msm_execute_tuning()...
+
+...but thinking even more: do we really need this logic?  Basically
+you want to invalidate the saved dll config whenever the timing mode
+changes, right?  ...because execute_tuning() won't be called if you go
+down to a timing change that doesn't use tuning?  Maybe you can just
+save the timing mode at the same time you save the phase.  If the
+current timing mode doesn't equal the saved timing mode then you don't
+restore the phase.
+
+
+> +               return 0;
+> +
+> +       /* Reset the tuning block */
+> +       ret = msm_init_cm_dll(host);
+> +       if (ret)
+> +               return ret;
+> +
+> +       /* Restore the tuning block */
+> +       ret = msm_config_cm_dll_phase(host, msm_host->saved_tuning_phase);
+> +
+> +       return ret;
+> +}
+> +
+>  static int sdhci_msm_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>  {
+>         struct sdhci_host *host = mmc_priv(mmc);
+> @@ -1069,7 +1101,6 @@ static int sdhci_msm_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>                 if (rc)
+>                         return rc;
+>
+> -               msm_host->saved_tuning_phase = phase;
+>                 rc = mmc_send_tuning(mmc, opcode, NULL);
+>                 if (!rc) {
+>                         /* Tuning is successful at this tuning point */
+> @@ -1094,6 +1125,7 @@ static int sdhci_msm_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>                 rc = msm_config_cm_dll_phase(host, phase);
+>                 if (rc)
+>                         return rc;
+> +               msm_host->saved_tuning_phase = phase;
+>                 dev_dbg(mmc_dev(mmc), "%s: Setting the tuning phase to %d\n",
+>                          mmc_hostname(mmc), phase);
+>         } else {
+> @@ -1617,12 +1649,21 @@ static void sdhci_msm_set_regulator_caps(struct sdhci_msm_host *msm_host)
+>
+>  static const struct sdhci_msm_variant_info sdhci_msm_mci_var = {
+>         .mci_removed = false,
+> +       .restore_dll_config = false,
+
+nit: Linux convention is to rely on static structures to be initted to
+0 / false / NULL.  ...so no need to add an "= false" here.
+
+
+>         .var_ops = &mci_var_ops,
+>         .offset = &sdhci_msm_mci_offset,
+>  };
+>
+>  static const struct sdhci_msm_variant_info sdhci_msm_v5_var = {
+>         .mci_removed = true,
+> +       .restore_dll_config = false,
+
+...and here...
+
+
+> +       .var_ops = &v5_var_ops,
+> +       .offset = &sdhci_msm_v5_offset,
+> +};
+> +
+> +static const struct sdhci_msm_variant_info sdm845_sdhci_var = {
+> +       .mci_removed = true,
+> +       .restore_dll_config = true,
+>         .var_ops = &v5_var_ops,
+>         .offset = &sdhci_msm_v5_offset,
+>  };
+> @@ -1630,6 +1671,7 @@ static void sdhci_msm_set_regulator_caps(struct sdhci_msm_host *msm_host)
+>  static const struct of_device_id sdhci_msm_dt_match[] = {
+>         {.compatible = "qcom,sdhci-msm-v4", .data = &sdhci_msm_mci_var},
+>         {.compatible = "qcom,sdhci-msm-v5", .data = &sdhci_msm_v5_var},
+> +       {.compatible = "qcom,sdm845-sdhci", .data = &sdm845_sdhci_var},
+>         {},
+>  };
+>
+> @@ -1689,6 +1731,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+>         var_info = of_device_get_match_data(&pdev->dev);
+>
+>         msm_host->mci_removed = var_info->mci_removed;
+> +       msm_host->restore_dll_config = var_info->restore_dll_config;
+>         msm_host->var_ops = var_info->var_ops;
+>         msm_host->offset = var_info->offset;
+>
+> @@ -1928,9 +1971,21 @@ static int sdhci_msm_runtime_resume(struct device *dev)
+>         struct sdhci_host *host = dev_get_drvdata(dev);
+>         struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>         struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+> +       int ret;
+>
+> -       return clk_bulk_prepare_enable(ARRAY_SIZE(msm_host->bulk_clks),
+> +       ret = clk_bulk_prepare_enable(ARRAY_SIZE(msm_host->bulk_clks),
+>                                        msm_host->bulk_clks);
+> +       if (ret)
+> +               goto out;
+
+no need for a goto since you're not undoing anything.  Just:
+
+if (ret)
+  return ret;
+
+
+> +       /*
+> +        * Whenever core-clock is gated dynamically, it's needed to
+> +        * restore the SDR DLL settings when the clock is ungated.
+> +        */
+> +       if (msm_host->restore_dll_config && msm_host->clk_rate)
+> +               ret = sdhci_msm_restore_sdr_dll_config(host);
+> +
+> +out:
+> +       return ret;
+
+No need for 'ret' variable:
+
+if (msm_host->restore_dll_config && msm_host->clk_rate)
+  return sdhci_msm_restore_sdr_dll_config(host);
+
+return 0;
