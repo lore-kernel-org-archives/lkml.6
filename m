@@ -2,445 +2,152 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 493B8C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:31:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F394FC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:32:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0148A2064C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:31:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0148A2064C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id B77332082E
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:32:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AATcQtgw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B77332082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729145AbeKBBe5 (ORCPT
+        id S1729164AbeKBBfu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 21:34:57 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:40999 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728372AbeKBBe5 (ORCPT
+        Thu, 1 Nov 2018 21:35:50 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34468 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728372AbeKBBfu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 21:34:57 -0400
-Received: from localhost.localdomain (10.18.11.217) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Fri, 2 Nov 2018
- 00:31:07 +0800
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-CC:     Yixun Lan <yixun.lan@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v6 3/3] clk: meson: add sub MMC clock controller driver
-Date:   Fri, 2 Nov 2018 00:30:55 +0800
-Message-ID: <1541089855-19356-4-git-send-email-jianxin.pan@amlogic.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1541089855-19356-1-git-send-email-jianxin.pan@amlogic.com>
-References: <1541089855-19356-1-git-send-email-jianxin.pan@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.18.11.217]
+        Thu, 1 Nov 2018 21:35:50 -0400
+Received: by mail-pf1-f195.google.com with SMTP id f78-v6so9598297pfe.1;
+        Thu, 01 Nov 2018 09:32:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=nX6+O2gcmN+wf5wYI35jSqSfPHK0o+mAaMNAqvcu52I=;
+        b=AATcQtgw4OgBirkGwvnev1NHDLu20mOrNOBTk3mtc8rtBaSE7Rb1gc9g+oGWLVauTy
+         bC5LUZf64mIdb5FT1gqpKHTxXhQeTaaGUOmhyGfJzfWQ9nOMLPfSQgWKQ5chJEls2bNz
+         x6cTy4F0mA4fiKKhEFX16FkS/1U7a+pZPPfCD6pk0h+VxN0Uv+L2a015nfDLvpUJlTRO
+         pbVyzv/j4vNsdLtGTsq9DtZJ/IQN5ub2PnGDUqhO4NxSYNoA8kvkcPiJ3/Mf6e+zdUEw
+         VoHNbDZbexpieUNxDjQrya2xUCNW4zhk5nbE3zqXsoMnz/PQ14UmKipJQGaHrzIMFAFp
+         6Clg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=nX6+O2gcmN+wf5wYI35jSqSfPHK0o+mAaMNAqvcu52I=;
+        b=j6VIoGe9nXMOC8jnzLO51R5Av0NYSe0D0xLZ3AitxamzyyP23m88jiBwLEMkQcN7+0
+         oUpkGvuDbKdmqWKjR7CXYJfjBHx5OdMRR5NAhrKGKIblsufZ2KpaXLp8gLi5ZvEE1F/q
+         Id0p2MDJ6fcls53ECB54En3TmceiBtvZxebrZbc2VHP5sTWXnPxbvjqk2L2S1L2tbQ5r
+         Krfw8CZAaFQuerYLeNwTOmwAX8776FjPsWqqVZZjKq4wsWOu/J/RqsYNXBEM2CIy99+p
+         C5dmMeJj8JIAZTkirbWwUuBOHdhymUs+2y/1qS8+/hwz+RECcivsy6iis6t8RLz0tDxK
+         AKfA==
+X-Gm-Message-State: AGRZ1gLdHnbS0K5GYzXyVGCrm3GGbmixQULP72xcz+NaWMPLXSr+Nqbn
+        nxU74/qV/hCYSjdZRMbU54k=
+X-Google-Smtp-Source: AJdET5fgJblcobbtWN43vziOs7OA7inJWEFOO1N2KO5+PVOr8+1H0QPwzWqA786ws/jd50RrRywtsg==
+X-Received: by 2002:a63:e918:: with SMTP id i24-v6mr7767635pgh.64.1541089928101;
+        Thu, 01 Nov 2018 09:32:08 -0700 (PDT)
+Received: from [172.20.5.66] (rrcs-24-227-212-35.sw.biz.rr.com. [24.227.212.35])
+        by smtp.gmail.com with ESMTPSA id d67-v6sm9436155pfg.2.2018.11.01.09.32.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Nov 2018 09:32:06 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [PATCH 10/17] prmem: documentation
+From:   Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <20181031090835.GG744@hirez.programming.kicks-ass.net>
+Date:   Thu, 1 Nov 2018 11:31:59 -0500
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        Igor Stoppa <igor.stoppa@gmail.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <59E8A6FB-9762-499F-89AC-D85E1498BE38@gmail.com>
+References: <20181026092609.GB3159@worktop.c.hoisthospitality.com>
+ <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
+ <20181028183126.GB744@hirez.programming.kicks-ass.net>
+ <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
+ <20181030152641.GE8177@hirez.programming.kicks-ass.net>
+ <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
+ <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
+ <20181030175814.GB10491@bombadil.infradead.org>
+ <28C8CD2A-BDC0-49A5-854E-1E18968528B8@amacapital.net>
+ <CAC99157-7A9B-4AC6-BA41-EAA7A99FE53D@gmail.com>
+ <20181031090835.GG744@hirez.programming.kicks-ass.net>
+To:     Peter Zijlstra <peterz@infradead.org>
+X-Mailer: Apple Mail (2.3445.9.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yixun Lan <yixun.lan@amlogic.com>
+From: Peter Zijlstra
+Sent: October 31, 2018 at 9:08:35 AM GMT
+> To: Nadav Amit <nadav.amit@gmail.com>
+> Cc: Andy Lutomirski <luto@amacapital.net>, Matthew Wilcox =
+<willy@infradead.org>, Kees Cook <keescook@chromium.org>, Igor Stoppa =
+<igor.stoppa@gmail.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>, Dave =
+Chinner <david@fromorbit.com>, James Morris <jmorris@namei.org>, Michal =
+Hocko <mhocko@kernel.org>, Kernel Hardening =
+<kernel-hardening@lists.openwall.com>, linux-integrity =
+<linux-integrity@vger.kernel.org>, linux-security-module =
+<linux-security-module@vger.kernel.org>, Igor Stoppa =
+<igor.stoppa@huawei.com>, Dave Hansen <dave.hansen@linux.intel.com>, =
+Jonathan Corbet <corbet@lwn.net>, Laura Abbott <labbott@redhat.com>, =
+Randy Dunlap <rdunlap@infradead.org>, Mike Rapoport =
+<rppt@linux.vnet.ibm.com>, open list:DOCUMENTATION =
+<linux-doc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Thomas =
+Gleixner <tglx@linutronix.de>
+> Subject: Re: [PATCH 10/17] prmem: documentation
+>=20
+>=20
+> On Tue, Oct 30, 2018 at 04:18:39PM -0700, Nadav Amit wrote:
+>>> Nadav, want to resubmit your series? IIRC the only thing wrong with =
+it was
+>>> that it was a big change and we wanted a simpler fix to backport. =
+But
+>>> that=E2=80=99s all done now, and I, at least, rather liked your =
+code. :)
+>>=20
+>> I guess since it was based on your ideas=E2=80=A6
+>>=20
+>> Anyhow, the only open issue that I have with v2 is Peter=E2=80=99s =
+wish that I would
+>> make kgdb use of poke_text() less disgusting. I still don=E2=80=99t =
+know exactly
+>> how to deal with it.
+>>=20
+>> Perhaps it (fixing kgdb) can be postponed? In that case I can just =
+resend
+>> v2.
+>=20
+> Oh man, I completely forgot about kgdb :/
+>=20
+> Also, would it be possible to entirely remove that kmap fallback path?
 
-The patch will add a MMC clock controller driver which used by MMC or NAND,
-It provide a mux and divider clock, and three phase clocks - core, tx, tx.
-
-Two clocks are provided as the parent of MMC clock controller from
-upper layer clock controller - eg "amlogic,axg-clkc" in AXG platform.
-
-To specify which clock the MMC or NAND driver may consume,
-the preprocessor macros in the dt-bindings/clock/amlogic,mmc-clkc.h header
-can be used in the device tree sources.
-
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
----
- drivers/clk/meson/Kconfig      |  10 ++
- drivers/clk/meson/Makefile     |   1 +
- drivers/clk/meson/clk-regmap.c |   1 -
- drivers/clk/meson/mmc-clkc.c   | 310 +++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 321 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/meson/mmc-clkc.c
-
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index efaa70f..6bb0d44 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -15,6 +15,16 @@ config COMMON_CLK_MESON_AO
- 	select COMMON_CLK_REGMAP_MESON
- 	select RESET_CONTROLLER
- 
-+config COMMON_CLK_MMC_MESON
-+	tristate "Meson MMC Sub Clock Controller Driver"
-+	select MFD_SYSCON
-+	select COMMON_CLK_AMLOGIC
-+	select COMMON_CLK_AMLOGIC_AUDIO
-+	help
-+	  Support for the MMC sub clock controller on Amlogic Meson Platform,
-+	  which include S905 (GXBB, GXL), A113D/X (AXG) devices.
-+	  Say Y if you want this clock enabled.
-+
- config COMMON_CLK_REGMAP_MESON
- 	bool
- 	select REGMAP
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index 39ce566..31c16d5 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -9,4 +9,5 @@ obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
- obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
- obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o axg-aoclk.o
- obj-$(CONFIG_COMMON_CLK_AXG_AUDIO)	+= axg-audio.o
-+obj-$(CONFIG_COMMON_CLK_MMC_MESON) 	+= mmc-clkc.o
- obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
-diff --git a/drivers/clk/meson/clk-regmap.c b/drivers/clk/meson/clk-regmap.c
-index 305ee30..89cee4a 100644
---- a/drivers/clk/meson/clk-regmap.c
-+++ b/drivers/clk/meson/clk-regmap.c
-@@ -114,7 +114,6 @@ static int clk_regmap_div_set_rate(struct clk_hw *hw, unsigned long rate,
- };
- 
- /* Would prefer clk_regmap_div_ro_ops but clashes with qcom */
--
- const struct clk_ops clk_regmap_divider_ops = {
- 	.recalc_rate = clk_regmap_div_recalc_rate,
- 	.round_rate = clk_regmap_div_round_rate,
-diff --git a/drivers/clk/meson/mmc-clkc.c b/drivers/clk/meson/mmc-clkc.c
-new file mode 100644
-index 0000000..a3e4c91
---- /dev/null
-+++ b/drivers/clk/meson/mmc-clkc.c
-@@ -0,0 +1,310 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Amlogic Meson MMC Sub Clock Controller Driver
-+ *
-+ * Copyright (c) 2017 Baylibre SAS.
-+ * Author: Jerome Brunet <jbrunet@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Yixun Lan <yixun.lan@amlogic.com>
-+ * Author: Jianxin Pan <jianxin.pan@amlogic.com>
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+#include <linux/of_device.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/platform_device.h>
-+#include <dt-bindings/clock/amlogic,mmc-clkc.h>
-+
-+#include "clkc.h"
-+#include "clkc-audio.h"
-+
-+/* clock ID used by internal driver */
-+#define CLKID_MMC_MUX			0
-+
-+#define   SD_EMMC_CLOCK		0
-+#define   CLK_DELAY_STEP_PS		200
-+#define   CLK_PHASE_STEP		30
-+#define   CLK_PHASE_POINT_NUM		(360 / CLK_PHASE_STEP)
-+
-+#define MUX_CLK_NUM_PARENTS		2
-+#define MMC_MAX_CLKS			5
-+
-+struct mmc_clkc_data {
-+	struct meson_clk_phase_delay_data	tx;
-+	struct meson_clk_phase_delay_data	rx;
-+};
-+
-+static struct clk_regmap_mux_data mmc_clkc_mux_data = {
-+	.offset		= SD_EMMC_CLOCK,
-+	.mask		= 0x3,
-+	.shift		= 6,
-+};
-+
-+struct meson_sclk_div_data  mmc_clkc_div_data = {
-+	.div = {
-+		.reg_off = SD_EMMC_CLOCK,
-+		.shift   = (0),
-+		.width   = (6),
-+	},
-+	.hi = {
-+		.reg_off = 0,
-+		.shift   = 0,
-+		.width   = 0,
-+	},
-+};
-+
-+static struct meson_clk_phase_data mmc_clkc_core_phase = {
-+	.ph = {
-+		.reg_off	= SD_EMMC_CLOCK,
-+		.shift	= 8,
-+		.width	= 2,
-+	}
-+};
-+
-+static const struct mmc_clkc_data mmc_clkc_gx_data = {
-+	.tx = {
-+		.phase = {
-+			.reg_off	= SD_EMMC_CLOCK,
-+			.shift	= 10,
-+			.width	= 2,
-+		},
-+		.delay = {
-+			.reg_off	= SD_EMMC_CLOCK,
-+			.shift	= 16,
-+			.width	= 4,
-+		},
-+		.delay_step_ps	= CLK_DELAY_STEP_PS,
-+	},
-+	.rx = {
-+		.phase = {
-+			.reg_off	= SD_EMMC_CLOCK,
-+			.shift	= 12,
-+			.width	= 2,
-+		},
-+		.delay = {
-+			.reg_off	= SD_EMMC_CLOCK,
-+			.shift	= 20,
-+			.width	= 4,
-+		},
-+		.delay_step_ps	= CLK_DELAY_STEP_PS,
-+	},
-+};
-+
-+static const struct mmc_clkc_data mmc_clkc_axg_data = {
-+	.tx = {
-+		.phase = {
-+			.reg_off	= SD_EMMC_CLOCK,
-+			.shift	= 10,
-+			.width	= 2,
-+		},
-+		.delay = {
-+			.reg_off	= SD_EMMC_CLOCK,
-+			.shift	= 16,
-+			.width	= 6,
-+		},
-+		.delay_step_ps	= CLK_DELAY_STEP_PS,
-+	},
-+	.rx = {
-+		.phase = {
-+			.reg_off	= SD_EMMC_CLOCK,
-+			.shift	= 12,
-+			.width	= 2,
-+		},
-+		.delay = {
-+			.reg_off	= SD_EMMC_CLOCK,
-+			.shift	= 22,
-+			.width	= 6,
-+		},
-+		.delay_step_ps	= CLK_DELAY_STEP_PS,
-+	},
-+};
-+
-+static const struct of_device_id mmc_clkc_match_table[] = {
-+	{
-+		.compatible	= "amlogic,gx-mmc-clkc",
-+		.data		= &mmc_clkc_gx_data
-+	},
-+	{
-+		.compatible	= "amlogic,axg-mmc-clkc",
-+		.data		= &mmc_clkc_axg_data
-+	},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, mmc_clkc_match_table);
-+
-+static struct clk_regmap *
-+mmc_clkc_register_clk(struct device *dev, struct regmap *map,
-+		      struct clk_init_data *init,
-+		      const char *suffix, void *data)
-+{
-+	struct clk_regmap *clk;
-+	char *name;
-+	int ret;
-+
-+	clk = devm_kzalloc(dev, sizeof(*clk), GFP_KERNEL);
-+	if (!clk)
-+		return ERR_PTR(-ENOMEM);
-+
-+	name = kasprintf(GFP_KERNEL, "%s#%s", dev_name(dev), suffix);
-+	if (!name)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init->name = name;
-+
-+	clk->map = map;
-+	clk->data = data;
-+	clk->hw.init = init;
-+
-+	ret = devm_clk_hw_register(dev, &clk->hw);
-+	if (ret)
-+		clk = ERR_PTR(ret);
-+
-+	kfree(name);
-+	return clk;
-+}
-+
-+static struct clk_regmap *mmc_clkc_register_mux(struct device *dev,
-+						struct regmap *map)
-+{
-+	const char *parent_names[MUX_CLK_NUM_PARENTS];
-+	struct clk_init_data init;
-+	struct clk_regmap *mux;
-+	struct clk *clk;
-+	int i;
-+
-+	for (i = 0; i < MUX_CLK_NUM_PARENTS; i++) {
-+		char name[8];
-+
-+		snprintf(name, sizeof(name), "clkin%d", i);
-+		clk = devm_clk_get(dev, name);
-+		if (IS_ERR(clk)) {
-+			if (clk != ERR_PTR(-EPROBE_DEFER))
-+				dev_err(dev, "Missing clock %s\n", name);
-+			return ERR_PTR((long)clk);
-+		}
-+
-+		parent_names[i] = __clk_get_name(clk);
-+	}
-+
-+	init.ops = &clk_regmap_mux_ops;
-+	init.flags = CLK_SET_RATE_PARENT;
-+	init.parent_names = parent_names;
-+	init.num_parents = MUX_CLK_NUM_PARENTS;
-+
-+	mux = mmc_clkc_register_clk(dev, map, &init, "mux", &mmc_clkc_mux_data);
-+	if (IS_ERR(mux))
-+		dev_err(dev, "Mux clock registration failed\n");
-+
-+	return mux;
-+}
-+
-+static struct clk_regmap *
-+mmc_clkc_register_clk_with_parent(struct device *dev, struct regmap *map,
-+				  char *suffix, const struct clk_hw *hw,
-+				  unsigned long flags,
-+				  const struct clk_ops *ops, void *data)
-+{
-+	struct clk_init_data init;
-+	struct clk_regmap *clk;
-+	const char *parent_name = clk_hw_get_name(hw);
-+
-+	init.ops = ops;
-+	init.flags = flags;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+
-+	clk = mmc_clkc_register_clk(dev, map, &init, suffix, data);
-+	if (IS_ERR(clk))
-+		dev_err(dev, "Core %s clock registration failed\n", suffix);
-+
-+	return clk;
-+}
-+
-+static int mmc_clkc_probe(struct platform_device *pdev)
-+{
-+	struct clk_hw_onecell_data *onecell_data;
-+	struct device *dev = &pdev->dev;
-+	struct mmc_clkc_data *data;
-+	struct regmap *map;
-+	struct clk_regmap *clk, *core;
-+
-+	/*cast to drop the const in match->data*/
-+	data = (struct mmc_clkc_data *)of_device_get_match_data(dev);
-+	if (!data)
-+		return -ENODEV;
-+
-+	map = syscon_node_to_regmap(dev->of_node);
-+	if (IS_ERR(map)) {
-+		dev_err(dev, "could not find mmc clock controller\n");
-+		return PTR_ERR(map);
-+	}
-+
-+	onecell_data = devm_kzalloc(dev, sizeof(*onecell_data) +
-+				    sizeof(*onecell_data->hws) * MMC_MAX_CLKS,
-+				    GFP_KERNEL);
-+	if (!onecell_data)
-+		return -ENOMEM;
-+
-+	clk = mmc_clkc_register_mux(dev, map);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+	onecell_data->hws[CLKID_MMC_MUX]		= &clk->hw,
-+
-+	clk = mmc_clkc_register_clk_with_parent(dev, map, "div",
-+						&clk->hw,
-+						CLK_SET_RATE_PARENT,
-+						&meson_sclk_div_ops,
-+						&mmc_clkc_div_data);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+	onecell_data->hws[CLKID_MMC_DIV]		= &clk->hw,
-+
-+	core = mmc_clkc_register_clk_with_parent(dev, map, "core",
-+						 &clk->hw,
-+						 CLK_SET_RATE_PARENT,
-+						 &meson_clk_phase_ops,
-+						 &mmc_clkc_core_phase);
-+	if (IS_ERR(core))
-+		return PTR_ERR(core);
-+	onecell_data->hws[CLKID_MMC_PHASE_CORE]		= &core->hw,
-+
-+	clk = mmc_clkc_register_clk_with_parent(dev, map, "rx",
-+						&core->hw,  0,
-+						&meson_clk_phase_delay_ops,
-+						&data->rx);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+	onecell_data->hws[CLKID_MMC_PHASE_RX]		= &clk->hw,
-+
-+	clk = mmc_clkc_register_clk_with_parent(dev, map, "tx",
-+						&core->hw,  0,
-+						&meson_clk_phase_delay_ops,
-+						&data->tx);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+	onecell_data->hws[CLKID_MMC_PHASE_TX]		= &clk->hw,
-+
-+	onecell_data->num				= MMC_MAX_CLKS;
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-+					   onecell_data);
-+}
-+
-+static struct platform_driver mmc_clkc_driver = {
-+	.probe		= mmc_clkc_probe,
-+	.driver		= {
-+		.name	= "meson-mmc-clkc",
-+		.of_match_table = of_match_ptr(mmc_clkc_match_table),
-+	},
-+};
-+
-+module_platform_driver(mmc_clkc_driver);
-+
-+MODULE_DESCRIPTION("Amlogic AXG MMC clock driver");
-+MODULE_AUTHOR("Jianxin Pan <jianxin.pan@amlogic.com>");
-+MODULE_LICENSE("GPL v2");
--- 
-1.9.1
-
+Let me see what I can do about it.=
