@@ -2,214 +2,142 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C53C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:30:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 215F4C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:30:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BE1C20866
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:30:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BE1C20866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id DD56A20866
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:30:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD56A20866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728239AbeKBIfe (ORCPT
+        id S1728267AbeKBIfk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 04:35:34 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:59385 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727749AbeKBIfd (ORCPT
+        Fri, 2 Nov 2018 04:35:40 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44556 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727749AbeKBIfk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 04:35:33 -0400
-Received: from 1.general.cascardo.us.vpn ([10.172.70.58] helo=localhost.localdomain)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <cascardo@canonical.com>)
-        id 1gIMPy-00053v-91; Thu, 01 Nov 2018 23:30:26 +0000
-From:   Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
-To:     linux-nvme@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>,
-        Jens Axboe <axboe@fb.com>,
-        Thadeu Lima de Souza Cascardo <cascardo@canonical.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Potnuri Bharat Teja <bharat@chelsio.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH v2] nvme: create 'paths' entries for hidden controllers
-Date:   Thu,  1 Nov 2018 20:29:55 -0300
-Message-Id: <20181101232955.19329-1-cascardo@canonical.com>
-X-Mailer: git-send-email 2.19.1
+        Fri, 2 Nov 2018 04:35:40 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA1NUBSo012305
+        for <linux-kernel@vger.kernel.org>; Thu, 1 Nov 2018 19:30:36 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ng8vrn7eh-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 19:30:35 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 1 Nov 2018 23:30:35 -0000
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 1 Nov 2018 23:30:32 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA1NUV8n19464408
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 1 Nov 2018 23:30:31 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 88D18B206A;
+        Thu,  1 Nov 2018 23:30:31 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6155FB2066;
+        Thu,  1 Nov 2018 23:30:31 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.141])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  1 Nov 2018 23:30:31 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id CD1CC16C34AA; Thu,  1 Nov 2018 16:30:31 -0700 (PDT)
+Date:   Thu, 1 Nov 2018 16:30:31 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     bigeasy@linutronix.de
+Cc:     linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: EXP rcu: Revert expedited GP parallelization cleverness
+Reply-To: paulmck@linux.ibm.com
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18110123-0060-0000-0000-000002CB7712
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009968; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01111307; UDB=6.00575901; IPR=6.00891399;
+ MB=3.00023997; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-01 23:30:34
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110123-0061-0000-0000-0000470E5CFF
+Message-Id: <20181101233031.GA13002@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-01_17:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811010196
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When using initramfs-tools with only the necessary dependencies to mount
-the root filesystem, it will fail to include nvme drivers for a root on a
-multipath nvme. That happens because the slaves relationship is not
-present.
+> (Commit 258ba8e089db23f760139266c232f01bad73f85c from linux-rcu)
+> 
+> This commit reverts a series of commits starting with fcc635436501 ("rcu:
+> Make expedited GPs handle CPU 0 being offline") and its successors, thus
+> queueing each rcu_node structure's expedited grace-period initialization
+> work on the first CPU of that rcu_node structure.
+> 
+> Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> 
+> diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+> index 0b2c2ad69629..a0486414edb4 100644
+> --- a/kernel/rcu/tree_exp.h
+> +++ b/kernel/rcu/tree_exp.h
+> @@ -472,7 +472,6 @@ static void sync_rcu_exp_select_node_cpus(struct work_struct *wp)
+>  static void sync_rcu_exp_select_cpus(struct rcu_state *rsp,
+>  				     smp_call_func_t func)
+>  {
+> -	int cpu;
+>  	struct rcu_node *rnp;
+>  
+>  	trace_rcu_exp_grace_period(rsp->name, rcu_exp_gp_seq_endval(rsp), TPS("reset"));
+> @@ -494,13 +493,7 @@ static void sync_rcu_exp_select_cpus(struct rcu_state *rsp,
+>  			continue;
+>  		}
+>  		INIT_WORK(&rnp->rew.rew_work, sync_rcu_exp_select_node_cpus);
+> -		preempt_disable();
+> -		cpu = cpumask_next(rnp->grplo - 1, cpu_online_mask);
+> -		/* If all offline, queue the work on an unbound CPU. */
+> -		if (unlikely(cpu > rnp->grphi))
+> -			cpu = WORK_CPU_UNBOUND;
+> -		queue_work_on(cpu, rcu_par_gp_wq, &rnp->rew.rew_work);
+> -		preempt_enable();
+> +		queue_work_on(rnp->grplo, rcu_par_gp_wq, &rnp->rew.rew_work);
+>  		rnp->exp_need_flush = true;
+>  	}
 
-As discussed in [1], using slaves will break lsblk, because the slaves are
-hidden from userspace, that is, they have no real block device, just an
-entry under sysfs.
+How about instead changing the earlier "if" statement to read as follows?
 
-Introducing the paths subdir and using that on initramfs-tools makes it
-possible to now boot a system with nvme multipath as root.
+		if (!READ_ONCE(rcu_par_gp_wq) ||
+		    rcu_scheduler_active != RCU_SCHEDULER_RUNNING ||
+		    rcu_is_last_leaf_node(rnp) ||
+		    IS_ENABLED(CONFIG_PREEMPT_RT_FULL)) {
+			/* No workqueues yet or last leaf, do direct call. */
+			sync_rcu_exp_select_node_cpus(&rnp->rew.rew_work);
+			continue;
+		}
 
-[1] https://www.spinics.net/lists/stable/msg222779.html
+This just adds the "|| IS_ENABLED(CONFIG_PREEMPT_RT_FULL)" to the "if"
+condition.
 
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Potnuri Bharat Teja <bharat@chelsio.com>
-Cc: Keith Busch <keith.busch@intel.com>
-Cc: Hannes Reinecke <hare@suse.com>
-Cc: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
----
- Documentation/ABI/testing/sysfs-block-nvme | 10 ++++++++
- drivers/nvme/host/core.c                   |  2 ++
- drivers/nvme/host/multipath.c              | 29 ++++++++++++++++++++--
- drivers/nvme/host/nvme.h                   |  9 +++++++
- 4 files changed, 48 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-block-nvme
+The advantage of this approach is that it leaves the parallelization
+alone for mainline, and avoids the overhead of the workqueues for -rt.
 
-diff --git a/Documentation/ABI/testing/sysfs-block-nvme b/Documentation/ABI/testing/sysfs-block-nvme
-new file mode 100644
-index 000000000000..3fe51b7be1e1
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-block-nvme
-@@ -0,0 +1,10 @@
-+What:		/sys/block/nvme*/paths
-+Date:		Oct, 2019
-+KernelVersion:	v4.21
-+Contact:	Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
-+Description:
-+		This is a directory containing symlinks to other block
-+		devices, when the block device is a nvme multipath
-+		device.
-+Users:		initramfs-tools
-+
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 9e4a30b05bd2..06be47e878f5 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -3115,6 +3115,7 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
- 	device_add_disk(ctrl->device, ns->disk, nvme_ns_id_attr_groups);
- 
- 	nvme_mpath_add_disk(ns, id);
-+	nvme_mpath_add_disk_links(ns);
- 	nvme_fault_inject_init(ns);
- 	kfree(id);
- 
-@@ -3138,6 +3139,7 @@ static void nvme_ns_remove(struct nvme_ns *ns)
- 
- 	nvme_fault_inject_fini(ns);
- 	if (ns->disk && ns->disk->flags & GENHD_FL_UP) {
-+		nvme_mpath_remove_disk_links(ns);
- 		del_gendisk(ns->disk);
- 		blk_cleanup_queue(ns->queue);
- 		if (blk_get_integrity(ns->disk))
-diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index 5e3cc8c59a39..65dabe7d6d7c 100644
---- a/drivers/nvme/host/multipath.c
-+++ b/drivers/nvme/host/multipath.c
-@@ -317,9 +317,12 @@ static void nvme_mpath_set_live(struct nvme_ns *ns)
- 	if (!head->disk)
- 		return;
- 
--	if (!(head->disk->flags & GENHD_FL_UP))
-+	if (!(head->disk->flags & GENHD_FL_UP)) {
-+		struct kobject *hd_kobj = &disk_to_dev(head->disk)->kobj;
- 		device_add_disk(&head->subsys->dev, head->disk,
- 				nvme_ns_id_attr_groups);
-+		head->path_dir = kobject_create_and_add("paths", hd_kobj);
-+	}
- 
- 	if (nvme_path_is_optimized(ns)) {
- 		int node, srcu_idx;
-@@ -530,6 +533,19 @@ void nvme_mpath_add_disk(struct nvme_ns *ns, struct nvme_id_ns *id)
- 	}
- }
- 
-+void nvme_mpath_add_disk_links(struct nvme_ns *ns)
-+{
-+	struct kobject *path_disk_kobj;
-+
-+	if (!ns->head->disk)
-+		return;
-+
-+	path_disk_kobj = &disk_to_dev(ns->disk)->kobj;
-+	if (sysfs_create_link(ns->head->path_dir, path_disk_kobj,
-+			kobject_name(path_disk_kobj)))
-+		return;
-+}
-+
- void nvme_mpath_remove_disk(struct nvme_ns_head *head)
- {
- 	if (!head->disk)
-@@ -541,9 +557,19 @@ void nvme_mpath_remove_disk(struct nvme_ns_head *head)
- 	kblockd_schedule_work(&head->requeue_work);
- 	flush_work(&head->requeue_work);
- 	blk_cleanup_queue(head->disk->queue);
-+	kobject_put(head->path_dir);
- 	put_disk(head->disk);
- }
- 
-+void nvme_mpath_remove_disk_links(struct nvme_ns *ns)
-+{
-+	if (!ns->head->disk)
-+		return;
-+
-+	sysfs_remove_link(ns->head->path_dir,
-+			kobject_name(&disk_to_dev(ns->disk)->kobj));
-+}
-+
- int nvme_mpath_init(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
- {
- 	int error;
-@@ -593,4 +619,3 @@ void nvme_mpath_uninit(struct nvme_ctrl *ctrl)
- {
- 	kfree(ctrl->ana_log_buf);
- }
--
-diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index 9fefba039d1e..6093649d4696 100644
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -287,6 +287,7 @@ struct nvme_ns_head {
- 	int			instance;
- #ifdef CONFIG_NVME_MULTIPATH
- 	struct gendisk		*disk;
-+	struct kobject		*path_dir;
- 	struct bio_list		requeue_list;
- 	spinlock_t		requeue_lock;
- 	struct work_struct	requeue_work;
-@@ -471,6 +472,8 @@ void nvme_kick_requeue_lists(struct nvme_ctrl *ctrl);
- int nvme_mpath_alloc_disk(struct nvme_ctrl *ctrl,struct nvme_ns_head *head);
- void nvme_mpath_add_disk(struct nvme_ns *ns, struct nvme_id_ns *id);
- void nvme_mpath_remove_disk(struct nvme_ns_head *head);
-+void nvme_mpath_add_disk_links(struct nvme_ns *ns);
-+void nvme_mpath_remove_disk_links(struct nvme_ns *ns);
- int nvme_mpath_init(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id);
- void nvme_mpath_uninit(struct nvme_ctrl *ctrl);
- void nvme_mpath_stop(struct nvme_ctrl *ctrl);
-@@ -521,6 +524,12 @@ static inline void nvme_mpath_add_disk(struct nvme_ns *ns,
- static inline void nvme_mpath_remove_disk(struct nvme_ns_head *head)
- {
- }
-+static inline void nvme_mpath_add_disk_links(struct nvme_ns *ns)
-+{
-+}
-+static inline void nvme_mpath_remove_disk_links(struct nvme_ns *ns)
-+{
-+}
- static inline void nvme_mpath_clear_current_path(struct nvme_ns *ns)
- {
- }
--- 
-2.19.1
+							Thanx, Paul
 
