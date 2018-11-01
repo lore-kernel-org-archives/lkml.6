@@ -2,122 +2,161 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00215C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:30:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FA3CC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:30:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2F6D20830
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:30:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2F6D20830
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5743D20830
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:30:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jd3KvYvp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5743D20830
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728693AbeKAXdo (ORCPT
+        id S1728748AbeKAXdx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 19:33:44 -0400
-Received: from mga17.intel.com ([192.55.52.151]:12442 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728016AbeKAXdo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 19:33:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Nov 2018 07:30:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,452,1534834800"; 
-   d="scan'208";a="104583168"
-Received: from jhuerta-mobl.amr.corp.intel.com (HELO [10.251.4.227]) ([10.251.4.227])
-  by orsmga001.jf.intel.com with ESMTP; 01 Nov 2018 07:30:31 -0700
-Subject: Re: [PATCH v3] mm, drm/i915: mark pinned shmemfs pages as unevictable
-To:     Vovo Yang <vovoy@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mm@kvack.org, Chris Wilson <chris@chris-wilson.co.uk>,
-        Michal Hocko <mhocko@suse.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20181031081945.207709-1-vovoy@chromium.org>
- <039b2768-39ff-6196-9615-1f0302ee3e0e@intel.com>
- <CAEHM+4q7V3d+EiHR6+TKoJC=6Ga0eCLWik0oJgDRQCpWps=wMA@mail.gmail.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <80347465-38fd-54d3-facf-bcd6bf38228a@intel.com>
-Date:   Thu, 1 Nov 2018 07:30:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 1 Nov 2018 19:33:53 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:42085 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728016AbeKAXdx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 19:33:53 -0400
+Received: by mail-yb1-f195.google.com with SMTP id o204-v6so8179665yba.9
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 07:30:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OvOiUtWG8Duts/WcGpmokgnW9ez6MB+usziPACy9+Ls=;
+        b=jd3KvYvpo9myxoLMJAiu9o4OVUEAi9vur0s8zChcu4KaU2RKO8z4+kQA2Hel6MHsjB
+         DSU8OwhURxA824SXKbzbqXbKgzPDyHw0BEDEFFgejopBpqNhpRSywgnygjoluD4SqKOB
+         ZY8yJm4ZFWefRKKtjCiFPHroQ1RJryIvv6maI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OvOiUtWG8Duts/WcGpmokgnW9ez6MB+usziPACy9+Ls=;
+        b=OF2flfv7S5RtXptxVyqFhVEdEKDJkHzTmHPQ2qh2XT48rTV/Z5FXFNirTs6ZdSsrBF
+         IP9XIALoA7iEElJbdydDbWXLLFlBtwXQ+KzV8Fb9R8zrQ+5KX9YsNofjkKJdfIJ3fpKE
+         MrLv3McX5xfxSmmvB8fYcJgwT5/QxlbY9OW2ETihd1zvFluo76qaQ1H6UXE6kHvfeXzZ
+         xo2LG3woSlDxz9Pm5DeWuvD9lEy6qFaG/dz/hagEHRd84suZUDBN5jXYmFfIjtpD+WEr
+         VxVgUwyAfhOWaSYTq/pijlUZyfuyxYt3BO/d0zfhN/l0EUlJrhOjYNjPczchDEjS64/8
+         DzWg==
+X-Gm-Message-State: AGRZ1gKLoGVV+mkSpOXTaMMFU6wU2HyuJdnhfePcBkr+YiM1AuVXrr9O
+        aIeBkJyx4C9tNrZ1A3o7S/bs4rjYJ9E=
+X-Google-Smtp-Source: AJdET5dXWOpOsTDaADZlE4SAn2GdH95GF3kIhkegK6PHrTq39n4Z2gaSJPoyxt/v29XvaX1MuBIehw==
+X-Received: by 2002:a5b:c45:: with SMTP id d5-v6mr7550711ybr.366.1541082639934;
+        Thu, 01 Nov 2018 07:30:39 -0700 (PDT)
+Received: from mail-yw1-f54.google.com (mail-yw1-f54.google.com. [209.85.161.54])
+        by smtp.gmail.com with ESMTPSA id s187-v6sm8039742ywe.10.2018.11.01.07.30.39
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Nov 2018 07:30:39 -0700 (PDT)
+Received: by mail-yw1-f54.google.com with SMTP id i185-v6so7960265ywa.12
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 07:30:39 -0700 (PDT)
+X-Received: by 2002:a81:4786:: with SMTP id u128-v6mr7808191ywa.164.1541082638529;
+ Thu, 01 Nov 2018 07:30:38 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAEHM+4q7V3d+EiHR6+TKoJC=6Ga0eCLWik0oJgDRQCpWps=wMA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20181017075242.21790-1-henryhsu@chromium.org> <CAAFQd5AL2CnnWLk+i133RRa36HTa0baFkezRhpTXf9YP0DSF1Q@mail.gmail.com>
+ <CAHNYxRwbSSp02Zr4a1z5gh0q6cHUUDnZCqRQU7QtP8LMe3Jp2A@mail.gmail.com> <1610184.U7oo9Z4Yep@avalon>
+In-Reply-To: <1610184.U7oo9Z4Yep@avalon>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Thu, 1 Nov 2018 23:30:26 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5A7k2VgmawF-x=AcKhJiG-shrJiCP4Tu9054J0eE91+9w@mail.gmail.com>
+Message-ID: <CAAFQd5A7k2VgmawF-x=AcKhJiG-shrJiCP4Tu9054J0eE91+9w@mail.gmail.com>
+Subject: Re: [PATCH] media: uvcvideo: Add boottime clock support
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Alexandru Stan <amstan@chromium.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Heng-Ruey Hsu <henryhsu@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ricky Liang <jcliang@chromium.org>, linux-iio@vger.kernel.org,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/1/18 5:06 AM, Vovo Yang wrote:
->> mlock() and ramfs usage are pretty easy to track down.  /proc/$pid/smaps
->> or /proc/meminfo can show us mlock() and good ol' 'df' and friends can
->> show us ramfs the extent of pinned memory.
->>
->> With these, if we see "Unevictable" in meminfo bump up, we at least have
->> a starting point to find the cause.
->>
->> Do we have an equivalent for i915?
-> AFAIK, there is no way to get i915 unevictable page count, some
-> modification to i915 debugfs is required.
+On Thu, Nov 1, 2018 at 11:03 PM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Alexandru,
+>
+> On Thursday, 18 October 2018 20:28:06 EET Alexandru M Stan wrote:
+> > On Wed, Oct 17, 2018 at 9:31 PM, Tomasz Figa wrote:
+> > > On Thu, Oct 18, 2018 at 5:50 AM Laurent Pinchart wrote:
+> > >> On Wednesday, 17 October 2018 11:28:52 EEST Tomasz Figa wrote:
+> > >>> On Wed, Oct 17, 2018 at 5:02 PM Laurent Pinchart wrote:
+> > >>>> On Wednesday, 17 October 2018 10:52:42 EEST Heng-Ruey Hsu wrote:
+> > >>>>> Android requires camera timestamps to be reported with
+> > >>>>> CLOCK_BOOTTIME to sync timestamp with other sensor sources.
+> > >>>>
+> > >>>> What's the rationale behind this, why can't CLOCK_MONOTONIC work ? If
+> > >>>> the monotonic clock has shortcomings that make its use impossible for
+> > >>>> proper synchronization, then we should consider switching to
+> > >>>> CLOCK_BOOTTIME globally in V4L2, not in selected drivers only.
+> > >>>
+> > >>> CLOCK_BOOTTIME includes the time spent in suspend, while
+> > >>> CLOCK_MONOTONIC doesn't. I can imagine the former being much more
+> > >>> useful for anything that cares about the actual, long term, time
+> > >>> tracking. Especially important since suspend is a very common event on
+> > >>> Android and doesn't stop the time flow there, i.e. applications might
+> > >>> wake up the device to perform various tasks at necessary times.
+> > >>
+> > >> Sure, but this patch mentions timestamp synchronization with other
+> > >> sensors, and from that point of view, I'd like to know what is wrong with
+> > >> the monotonic clock if all devices use it.
+> > >
+> > > AFAIK the sensors mentioned there are not camera sensors, but rather
+> > > things we normally put under IIO, e.g. accelerometers, gyroscopes and
+> > > so on. I'm not sure how IIO deals with timestamps, but Android seems
+> > > to operate in the CLOCK_BOTTIME domain. Let me add some IIO folks.
+> > >
+> > > Gwendal, Alexandru, do you think you could shed some light on how we
+> > > handle IIO sensors timestamps across the kernel, Chrome OS and
+> > > Android?
+> >
+> > On our devices of interest have a specialized "sensor" that comes via
+> > IIO (from the EC, cros-ec-ring driver) that can be used to more
+> > accurately timestamp each frame (since it's recorded with very low
+> > jitter by a realtime-ish OS). In some high level userspace thing
+> > (specifically the Android Camera HAL) we try to pick the best
+> > timestamp from the IIO, whatever's closest to what the V4L stuff gives
+> > us.
+> >
+> > I guess the Android convention is for sensor timestamps to be in
+> > CLOCK_BOOTTIME (maybe because it likes sleeping so much). There's
+> > probably no advantage to using one over the other, but the important
+> > thing is that they have to be the same, otherwise the closest match
+> > logic would fail.
+>
+> That's my understanding too, I don't think CLOCK_BOOTTIME really brings much
+> benefit in this case,
 
-Is something like this feasible to add to this patch set before it gets
-merged?  For now, it's probably easy to tell if i915 is at fault because
-if the unevictable memory isn't from mlock or ramfs, it must be i915.
+I think it does have a significant benefit. CLOCK_MONOTONIC stops when
+the device is sleeping, but the sensors can still capture various
+actions. We would lose the time keeping of those actions if we use
+CLOCK_MONOTONIC.
 
-But, if we leave it as-is, it'll just defer the issue to the fourth user
-of the unevictable list, who will have to come back and add some
-debugging for this.
+> but it's important than all timestamps use the same
+> clock. The question is thus which clock we should select. Mainline mostly uses
+> CLOCK_MONOTONIC, and Android CLOCK_BOOTTIME. Would you like to submit patches
+> to switch Android to CLOCK_MONOTONIC ? :-)
 
-Seems prudent to just do it now.
+Is it Android using CLOCK_BOOTTIME or the sensors (IIO?). I have
+almost zero familiarity with the IIO subsystem and was hoping someone
+from there could comment on what time domain is used for those
+sensors.
+
+Best regards,
+Tomasz
