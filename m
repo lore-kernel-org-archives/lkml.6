@@ -2,132 +2,170 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD8EC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 18:33:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9231FC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 18:34:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF66F2082E
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 18:33:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 497E220843
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 18:34:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fnDfbY9q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF66F2082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hky0196a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 497E220843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727616AbeKBDh6 (ORCPT
+        id S1727690AbeKBDiH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 23:37:58 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39967 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726322AbeKBDh6 (ORCPT
+        Thu, 1 Nov 2018 23:38:07 -0400
+Received: from mail-oi1-f172.google.com ([209.85.167.172]:42505 "EHLO
+        mail-oi1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727519AbeKBDiH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 23:37:58 -0400
-Received: by mail-lj1-f194.google.com with SMTP id t22-v6so18936888lji.7
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 11:33:50 -0700 (PDT)
+        Thu, 1 Nov 2018 23:38:07 -0400
+Received: by mail-oi1-f172.google.com with SMTP id h23-v6so17440035oih.9
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 11:34:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=NgZN2fOHhdE1HktUMGbNX9SDpKkmsiImhMyZAsfux3E=;
-        b=fnDfbY9qaEgLbS2VnwRwSdwcGPPYVk3xYV4RtesuJZmdQQJ0Ov6Zh2qeBEp5gasPfc
-         c7uVVwptE7b5S3emA+8syVoFh2N/2TXJbtAcTlSMGx83asjLzZ9drssjZC7RxTBaV9lV
-         m4gBmgl7j7ttMEs0AS2UCmCOn3U3tykrgLD5w=
+        bh=VydAecWCb2O6SNfJkI4cq4re5+yo1Xcs1mpLrFucJa8=;
+        b=hky0196a7cwB2rM7dJ30lrKv6D/YrNg34ugSwkgvw+RPxl9GcztNQ9LAdVy7e58s5D
+         geN9s6d96KFlsVvpImymSAP60bf1h7XHcJjX0TYklEmI6N6ZEk+Iwb7GJDBYPk5yt1wX
+         SzxJPtWpH4ko2GEMAwILpy+SBbGIFjQg+03AwXulXiu1pwfP9B6fE9xWG7KXFl1tb0Yc
+         YYU+C8g1S6Vb1Gin7TPKxgQKapyeq7X2NeFg2xqXn6IClC+6UU3t8yHxUzIn9RAdTANy
+         Ly300kWRlYLPl14ju3fLBJJergir/Q7O+k+jBM/1rNMJsO7/pvY9XmugFVZpGxqdhMzW
+         uvSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=NgZN2fOHhdE1HktUMGbNX9SDpKkmsiImhMyZAsfux3E=;
-        b=JZbxWvFVDz1FIYPTyZb63RBqs1plpEEtWZ0Eq4tB8x7CTf/0bWVadjpT7FjTsJg8m6
-         h5Ah9cabnevFoCVzGJMzsFyta8cMW+NK5Z4jUoNGlcEoxmhppFEFBLx/Okp1aXDc7L+1
-         sIGJI3WW3FWvHb9H4gj8ciuw5LYpzmm7l7AE/hkvAmuK1BYtk2HLjIrxGPEYS2IvP89t
-         wvhJ5CTPyfIhJjkIGpy/qKppEVhrgn6vff39TqBJqrpXrqPU8v8Vnza9pcbLVSuAwldw
-         B59P8/HLNtZwHn41d/BVxmXD6ypTb02CrmhzYmICfWU2MVnuL0lHWCVGrsnPkRE17MkE
-         yuww==
-X-Gm-Message-State: AGRZ1gIZi0/gs103OC6EUsb4TgZ9ZP4NXf2KW/h9G1FWvWxI7nozdQ2X
-        tA3b+f6fm2ScFYCpHXpcvUORSzhiotb+Ow==
-X-Google-Smtp-Source: AJdET5dQWLenTQAjYOZ4rPLWuFQ8t+rHFSUz5f9phQFWf7Oie3flsEPbmusO9qvuXdEh9z0gIvFhCg==
-X-Received: by 2002:a2e:3603:: with SMTP id d3-v6mr5519988lja.108.1541097229407;
-        Thu, 01 Nov 2018 11:33:49 -0700 (PDT)
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
-        by smtp.gmail.com with ESMTPSA id a18-v6sm1600838ljk.86.2018.11.01.11.33.48
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Nov 2018 11:33:48 -0700 (PDT)
-Received: by mail-lj1-f175.google.com with SMTP id f3-v6so18938255ljk.9
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 11:33:48 -0700 (PDT)
-X-Received: by 2002:a2e:9819:: with SMTP id a25-v6mr6099315ljj.6.1541097227764;
- Thu, 01 Nov 2018 11:33:47 -0700 (PDT)
+        bh=VydAecWCb2O6SNfJkI4cq4re5+yo1Xcs1mpLrFucJa8=;
+        b=M/d8dLr/Ew32nAysZWpzKFX1RaPxWXwzEfeewswl2a2Lme1HI68lOm99AFWpNc4X9E
+         l+0QUWAn6rtdCAlS95mc9w/5lPVzVasSJEM2b0t1zJkOKmYruQoDO48YgqSmgFNddnuQ
+         kNr3QF6BeKY3lLMYDf2kFFJzLWJ9tlPRiScIe6UT8VL7KOalNYtvHOP8WO+ocJ34Azbx
+         ViLYePEvU/dZ5OkWt1xZ7t9Jt4tBbpKImO/rmdEaWhB87XR9oAyKiGln7e/PUOgvqsl9
+         XzP2qs5U8EEx6Th0JaJxj+kkSEQ/tm+kvM6RqLGo7xXePOiz7cXZGIcbVpiOWKIfZE0v
+         jViQ==
+X-Gm-Message-State: AGRZ1gLJy8u02a9zVKXEIsbuLewNq6k9CnxU4/dGmjrK8zT/ztaZwoKo
+        PdjyLDy+YkVKsyd+MokfW8qK5KDe69WuJ7P7Ib/ZtA==
+X-Google-Smtp-Source: AJdET5fxbCEKKYRxCYfCMya3XFKcH8+zAYsJxDu6iRAyPhJ6EMyTbpiOsleLP8QdXNP3IoCptXZ5VjYWpWssRlzgsKE=
+X-Received: by 2002:aca:b05:: with SMTP id 5-v6mr5168286oil.157.1541097239392;
+ Thu, 01 Nov 2018 11:33:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181031053355.GQ32577@ZenIV.linux.org.uk> <CAHk-=whAE6gVi18=u4sSWe1m2RWPh19YCkKQmW4Kx+NQX1mg8w@mail.gmail.com>
- <af28fc2c-d207-875e-8070-f64ead878b5a@redhat.com> <CAHk-=wjjVRQVZL+QMnb=CyCOY8yzEZ=S1DBCE7=FiiWsQfV_5Q@mail.gmail.com>
- <28156.1541092687@warthog.procyon.org.uk>
-In-Reply-To: <28156.1541092687@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 1 Nov 2018 11:33:31 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whysoVxJU8+TBw=D3xN00HOOqg-9Chc=i0Pt+Ozm3Z0Tg@mail.gmail.com>
-Message-ID: <CAHk-=whysoVxJU8+TBw=D3xN00HOOqg-9Chc=i0Pt+Ozm3Z0Tg@mail.gmail.com>
-Subject: Re: [git pull] mount API series
-To:     dhowells@redhat.com
-Cc:     swhiteho@redhat.com, john.johansen@canonical.com,
-        alan.christopher.jenkins@gmail.com,
-        Al Viro <viro@zeniv.linux.org.uk>, ebiederm@redhat.com,
-        linux-fsdevel@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
+In-Reply-To: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 1 Nov 2018 19:33:33 +0100
+Message-ID: <CAG48ez0vBqL0tyfWwmuc_cq+OAUoEi88=r+t6h64a-Fw8z59zA@mail.gmail.com>
+Subject: Re: RFC: userspace exception fixups
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        sean.j.christopherson@intel.com, jethro@fortanix.com,
+        jarkko.sakkinen@linux.intel.com,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, dalias@libc.org,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        andriy.shevchenko@linux.intel.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        carlos@redhat.com, adhemerval.zanella@linaro.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 1, 2018 at 10:18 AM David Howells <dhowells@redhat.com> wrote:
+On Thu, Nov 1, 2018 at 6:53 PM Andy Lutomirski <luto@kernel.org> wrote:
+> The people working on SGX enablement are grappling with a somewhat
+> annoying issue: the x86 EENTER instruction is used from user code and
+> can, as part of its normal-ish operation, raise an exception.  It is
+> also highly likely to be used from a library, and signal handling in
+> libraries is unpleasant at best.
 >
-> No.  What we have upstream now is most definitely *not* atomic.  That said,
-> some of the steps of the sequence are atomic in their own right:
+> There's been some discussion of adding a vDSO entry point to wrap
+> EENTER and do something sensible with the exceptions,
 
-It's more that what we have traditionally is atomic wrt user space.
-Use space does *one* indivisible operation. There's no way for
-user-space to do a half-way mount and say "ok, that's it, I'll just
-exit now" (or skip a phase and fool the kernel into handling a
-half-way setup issue).
+This sounds reasonable to me.
 
-So the new model does require a bit more care in tear-down etc. I'm
-not so worried about this, actually, but it *is* different.
+> but I'm
+> wondering if a more general mechanism would be helpful.
+>
+> The basic idea would be to allow libc, or maybe even any library, to
+> register a handler that gets a chance to act on an exception caused by
+> a user instruction before a signal is delivered.  As a straw-man
+> example for how this could work, there could be a new syscall:
+>
+> long register_exception_handler(void (*handler)(int, siginfo_t *, void *));
+>
+> If a handler is registered, then, if a synchronous exception happens
+> (page fault, etc), the kernel would set up an exception frame as usual
+> but, rather than checking for signal handlers, it would just call the
+> registered handler.
 
-Afaik, some of the bugs were exactly in this half-way state bits.
+> That handler is expected to either handle the
+> exception entirely on its own or to call one of two new syscalls to
+> ask for normal signal delivery
 
-[ And yes, looking back at some the reports I found, it was Alan
-Jenkins and mainly the open-tree thing. ]
+If you do it this way, these exception handlers would have to chain,
+with an API convention that you're obligated to always ask for
+resumption of signal delivery if you don't recognize the address,
+right? Kind of like a notifier chain. (Except that, unless this is
+implemented in the vDSO, each notifier invocation would cross the
+kernel-user boundary twice.)
 
-> Would you be willing to take just the *internal* fs_context changes and leave
-> the UAPI for the next window?
+> or to ask to retry the faulting instruction.
 
-Hmm. I had to think about that, but the more I thought about it, the
-more I liked it.
+Why would that have to be a syscall? For signal handlers registered
+with SA_NODEFER, you can basically leave the signal handler with a
+longjmp, right?
 
-Yes. Depending on how that is done, that would make a lot of my
-worries go away. *Particularly* if it then allows us to do the
-per-filesystem conversion one by one.
+> Alternatively, we could do something a lot more like the kernel's
+> internal fixups where there's a table in user memory that maps
+> potentially faulting instructions to landing pads that handle
+> exceptions.
 
-So if the patch series can be split up into a prep-phase that doesn't
-change any user-visible semantics (including the security side), but
-that uses the fs_context internally and allows the filesystems to be
-converted to the new world order, than that would make merging the
-early work much easier (and then my worry about the later phases would
-probably be much less too).
+I like this direction more, although I'm not sure whether the table
+the kernel sees should be at instruction-level granularity. Perhaps
+you could associate an exception handler with a VMA? Any instruction
+that faults in the VMA triggers the fault handler?
 
-It would be _really_ nice to see that prep-phase be done in a way
-where each individual patch very obviously doesn't change semantics.
-If it's obvious, then I'm happy to consider that pure prep-work and
-willing to merge it after the merge window in order to make the _next_
-merge window easier.
-
-Al - can I ask you to look at helping David with something like that?
-You tend to be very good at generating those patch-series with
-"obviously no changes" for the individual patches, but the end result
-ends up being totally different from the starting point (I'm thinking
-of all the locking and dentry refcounting series).
-
-              Linus
+> Do you think this would be useful?  Here are some use cases that I
+> think are valid:
+>
+> (a) Enter an SGX enclave and handle errors.  There would be two
+> instructions that would need special handling: EENTER and ERESUME.
+>
+> (b) Do some math and catch division by zero.  I think it would be a
+> bad idea to have user code call a function and say that it wants to
+> handle *any* division by zero, but having certain specified division
+> instructions have special handling seems entirely reasonable.
+>
+> (c) Ditto for floating point errors.
+>
+> (d) Try an instruction and see if it gets #UD.
+>
+> (e) Run a bunch of code and handle page faults to a given address
+> range by faulting something in.  This is not like the others, in that
+> a handler wants to handle a range of target addresses, not
+> instructions.  And userfaultfd is plausibly a better solution anyway.
+>
+> (f) Run NaCl-like sandboxed code where the code can cause page faults
+> to certain mapped-but-intentionally-not-present ranges and those need
+> to be handled.
+>
+> On Windows, you can use SEH to do crazy things like running
+> known-buggy code and eating the page faults.  I don't think we want to
+> go there.
+>
+> All of this makes me think that the right solution is to have a way to
+> register fault handlers for instructions to cover (a) - (d) and to
+> treat (e) and (f) as something else entirely if there's enough demand.
