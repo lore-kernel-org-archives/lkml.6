@@ -2,70 +2,70 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_LOCAL_NOVOWEL,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF9AC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 21:04:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CF50C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 21:06:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9B5120657
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 21:04:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9931D20657
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 21:06:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GsgI6GcH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9B5120657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="g1RLGOHH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9931D20657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726294AbeKBGIl (ORCPT
+        id S1726329AbeKBGKy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 02:08:41 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:43837 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725780AbeKBGIk (ORCPT
+        Fri, 2 Nov 2018 02:10:54 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35684 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725780AbeKBGKx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 02:08:40 -0400
-Received: by mail-lj1-f193.google.com with SMTP id g26-v6so18067071lja.10
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 14:04:02 -0700 (PDT)
+        Fri, 2 Nov 2018 02:10:53 -0400
+Received: by mail-wr1-f65.google.com with SMTP id z16-v6so3541007wrv.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 14:06:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=axIt/JsyqaW8BlUNcu2AIWVALAuZYz1u2D+F7P8WTrA=;
-        b=GsgI6GcHqnFsoNAvAHQbxqnC6AoC14LVJuzYLyilppcsSsA5n+/oDd1h35zgsnxw0u
-         t9cSxXFYtRmI8OhMbBVd2r1UV5SwUMqu2lxIPzhYFNPylIAsEpQ9XtzqjY3p+xaQ9H3n
-         Cc92x+6SjCRTIsVnBOzeVRzZX6p3eYeBHhSCb8mJtXwrhCLWx+kGfSSDeBmTdv4S+d3e
-         HTO8IJ9U0iR4D3guZbRLFUtRDXOyf85233T4FFg9Jh0uWKC73aySrlq6y429LlbqQLoY
-         JW41Nt0TEENwISIrlU8thduROKrv2N6l3N8YwrXVqSoHTLmYgenxAaAW/dpI+dyK21on
-         APjA==
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=8dGuMLi8shuYtle0yeVROFuQkDRxAaOMJ/BWEdD4lCg=;
+        b=g1RLGOHHrYLexTlHWvI6Tcn8ueZAIyNWZDHTMXYcKKhKOJBDMcCBC9C4Z19BUUX0tV
+         r/LSWBWEQb4uUfPPzHXzq62Z+F1kuQAub3xVUzJRFYTEXglw4m8o1jUckjEt4W0S7Z6x
+         xoFcCONY5hDZOAd2ODhKHsxzd/vMGk+e7fKyY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=axIt/JsyqaW8BlUNcu2AIWVALAuZYz1u2D+F7P8WTrA=;
-        b=gduLdu6ZxpFZ0nlHBZDabzub23Gna9I7SsqwZt3zkyVdhXGktOKz+6J70yB9b3ECTL
-         TAS9Pgx2FyM9XvTUZmmb1DYKb6eTue55SXFf4aY1kV2+ZG30euhiLPSPV/oA5AccF+nt
-         kYTm00+fLwhjOsQHKLg5EJopuq0nz81Yi+kRkC63sR4t4Tu5E7wnf2k52f+9fb/HJHvt
-         IUmn/R2SzR2g8slcKFUYmhUM4ZmmdwE8fbvGvdSAAuDVvdp3Zs19LwEZ6jIThxxsJj55
-         s+LJNyhqcKk6OtfHqSizOjNwdLNX5jmDCU2J7t/nWSzBSyR6SWbgDNAMTiCyX8j+rPxc
-         DySw==
-X-Gm-Message-State: AGRZ1gL3rkq6Er9sQ0wVfnsIHvFtj+ZPZbihrRHxu8fXCW6o4db31YB4
-        EPwFXel5eAKW7DlkdbgJk84HujLybxM=
-X-Google-Smtp-Source: AJdET5dH28BOQi8TC3vBQEY+Mos7wnpe5EB+fjk8lkTdKpBozC3JBvlz4SG7JWz8JI7xn0bJRWl4/g==
-X-Received: by 2002:a2e:9c08:: with SMTP id s8-v6mr5053873lji.149.1541106242031;
-        Thu, 01 Nov 2018 14:04:02 -0700 (PDT)
-Received: from octofox.cadence.com (jcmvbkbc-1-pt.tunnel.tserv24.sto1.ipv6.he.net. [2001:470:27:1fa::2])
-        by smtp.gmail.com with ESMTPSA id r76-v6sm100922ljr.83.2018.11.01.14.03.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Nov 2018 14:04:01 -0700 (PDT)
-From:   Max Filippov <jcmvbkbc@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=8dGuMLi8shuYtle0yeVROFuQkDRxAaOMJ/BWEdD4lCg=;
+        b=pi5ZKSl9adYXkvwY4Pe4hqiUaYxk14MThj+v9UHDAH5ljWvxgUtT8GklM31tIg3KuT
+         FQ80V9YewvZfS7EK3GdUd0dKxEpoBCePwk2OV43nha4McX1gCkKv+i4bPOzzDyuWWgic
+         BvGq35FyNQw09An4CxyjD+UaZ9ho256gA6blEjO8h+CseizQcwGiuUi/D9HeJvmNjdYf
+         X0wEJ9ZDwJ9BQab2LkG3YJVTsoplajmrsmBu8r/vQ6lWWFgLZo+a7lOXZwo1vxGy5sE4
+         3tbknm6xau48/i/tbXrA6kP0dawFWNr3+YbXvXyxe7x9kTO6sBSKsUmMioZtlbw2HkUJ
+         qKbA==
+X-Gm-Message-State: AGRZ1gK3pTKlWRCISYc51wKcbftSB9cAw8/uyM3Y5h1qR6R7NR5w2wxq
+        54jFRigmkORGFgl08fLoW67Z/w==
+X-Google-Smtp-Source: AJdET5cfiIwrOAqT+0HENU2Cw7IZj91BJqXDwYXbE3KP8v6Zilqg4ZJ+JN5NGNaHrz5j48VPcbyGSA==
+X-Received: by 2002:adf:e0ce:: with SMTP id e14-v6mr8093295wri.199.1541106374917;
+        Thu, 01 Nov 2018 14:06:14 -0700 (PDT)
+Received: from veci.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
+        by smtp.gmail.com with ESMTPSA id g10-v6sm2258184wru.39.2018.11.01.14.06.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 01 Nov 2018 14:06:14 -0700 (PDT)
+Date:   Thu, 1 Nov 2018 22:06:11 +0100
+From:   Miklos Szeredi <miklos@szeredi.hu>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PULL 0/4] Xtensa fixes for v4.20
-Date:   Thu,  1 Nov 2018 14:03:45 -0700
-Message-Id: <20181101210345.9076-1-jcmvbkbc@gmail.com>
-X-Mailer: git-send-email 2.11.0
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org
+Subject: [GIT PULL] overlayfs update for 4.20
+Message-ID: <20181101210611.GH23439@veci.piliscsaba.redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -73,42 +73,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Linus,
 
-please pull the following batch of fixes and cleanups for the Xtensa
-architecture:
-The following changes since commit 35a7f35ad1b150ddf59a41dcac7b2fa32982be0e:
+Please pull from:
 
-  Linux 4.19-rc8 (2018-10-15 07:20:24 +0200)
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git tags/ovl-update-4.20
 
-are available in the git repository at:
+This contains a mix of fixes and cleanups.
 
-  git://github.com/jcmvbkbc/linux-xtensa.git tags/xtensa-20181101
-
-for you to fetch changes up to 960b82c383d38fea4439e4182b5be4352a6048e2:
-
-  xtensa: clean up xtensa-specific property sections (2018-10-30 01:28:56 -0700)
+Thanks,
+Miklos
 
 ----------------------------------------------------------------
-Xtensa fixes and cleanups for v4.20:
+Amir Goldstein (7):
+      ovl: fix error handling in ovl_verify_set_fh()
+      vfs: fix FIGETBSZ ioctl on an overlayfs file
+      ovl: fix recursive oi->lock in ovl_link()
+      ovl: untangle copy up call chain
+      ovl: relax requirement for non null uuid of lower fs
+      ovl: remove the 'locked' argument of ovl_nlink_{start,end}
+      ovl: abstract ovl_inode lock with a helper
 
-- use ZONE_NORMAL instead of ZONE_DMA;
-- fix Image.elf build error caused by assignment of incorrect address
-  to the .note.Linux section;
-- clean up debug and property sections in the vmlinux.lds.S.
+Chengguang Xu (1):
+      ovl: using posix_acl_xattr_size() to get size instead of posix_acl_to_xattr()
 
-----------------------------------------------------------------
-Christoph Hellwig (1):
-      xtensa: remove ZONE_DMA
+Miklos Szeredi (5):
+      ovl: clean up error handling in ovl_get_tmpfile()
+      ovl: relax permission checking on underlying layers
+      ovl: fold copy-up helpers into callers
+      ovl: check whiteout in ovl_create_over_whiteout()
+      ovl: automatically enable redirect_dir on metacopy=on
 
-Max Filippov (3):
-      xtensa: add NOTES section to the linker script
-      xtensa: use DWARF_DEBUG in the vmlinux.lds.S
-      xtensa: clean up xtensa-specific property sections
-
- arch/xtensa/Kconfig              |  3 ---
- arch/xtensa/boot/Makefile        |  2 +-
- arch/xtensa/kernel/vmlinux.lds.S | 36 +++++-------------------------------
- arch/xtensa/mm/init.c            |  2 +-
- 4 files changed, 7 insertions(+), 36 deletions(-)
-
-Thanks.
--- Max
+---
+ Documentation/filesystems/overlayfs.txt |   6 +
+ fs/ioctl.c                              |   3 +
+ fs/overlayfs/copy_up.c                  | 213 ++++++++++++++++++--------------
+ fs/overlayfs/dir.c                      |  34 +++--
+ fs/overlayfs/inode.c                    |  17 ++-
+ fs/overlayfs/namei.c                    |   4 +-
+ fs/overlayfs/overlayfs.h                |  14 ++-
+ fs/overlayfs/super.c                    |  68 ++++++++--
+ fs/overlayfs/util.c                     |  46 ++++---
+ 9 files changed, 260 insertions(+), 145 deletions(-)
