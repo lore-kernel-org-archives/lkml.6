@@ -2,288 +2,242 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,PLING_QUERY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 254FDC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:07:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6B62C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:08:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE5B1204FD
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:07:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE5B1204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5D5E1204FD
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:08:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kdab.com header.i=@kdab.com header.b="YgBul9Rb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D5E1204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kdab.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728078AbeKBHMc (ORCPT
+        id S1728086AbeKBHNS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 03:12:32 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48058 "EHLO mx1.redhat.com"
+        Fri, 2 Nov 2018 03:13:18 -0400
+Received: from mail.kdab.com ([176.9.126.58]:18470 "EHLO mail.kdab.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727412AbeKBHMc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 03:12:32 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EC63A307EA8D;
-        Thu,  1 Nov 2018 22:07:40 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-24.phx2.redhat.com [10.3.112.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7245960BF1;
-        Thu,  1 Nov 2018 22:07:27 +0000 (UTC)
-Date:   Thu, 1 Nov 2018 18:07:24 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        linux-audit@redhat.com, linux-kernel@vger.kernel.org,
-        ebiederm@xmission.com, luto@kernel.org, dhowells@redhat.com,
-        viro@zeniv.linux.org.uk, simo@redhat.com,
-        Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>
-Subject: Re: [PATCH ghak90 (was ghak32) V4 01/10] audit: collect audit task
- parameters
-Message-ID: <20181101220724.ggkqyf5kjv7lhabx@madcap2.tricolour.ca>
-References: <cover.1533065887.git.rgb@redhat.com>
- <8e617ab568df28a66dfbe3284452de186b42fb0f.1533065887.git.rgb@redhat.com>
- <CAHC9VhQFqs1SyvximK+8XJG5Fk3p9WsWhEV5sY6kksN9tc6eKw@mail.gmail.com>
+        id S1727638AbeKBHNS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 03:13:18 -0400
+Authentication-Results: mail.kdab.com (amavisd-new); dkim=pass (1024-bit key)
+ reason="pass (just generated,
+ assumed good)" header.d=kdab.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kdab.com; h=
+ content-type:content-type:mime-version:references:in-reply-to
+ :organization:message-id:date:date:subject:subject:from:from; s=
+ dkim; t=1541110102; x=1541974103; bh=8/dmUfKL/9WohGldhTICxy4V4Ud
+ 6O3h4Ry/FAjT04i0=; b=YgBul9Rbuk6ZdBuNItvvpg7kGrcC7XY4UAbuWBGnNMO
+ xBXV1ZLDuVEjV5sOTWpLf0nATiB4UxqABQzWfPeiwBsxNKan+Q9RfiLV6P62b9qw
+ 21carLBv++gKcU/SpqTDOYqCbbxWGp1pbCUfnMb/LB+5YiNXLxcYD8OCXA5DJsEw
+ =
+X-Virus-Scanned: amavisd-new at kdab.com
+From:   Milian Wolff <milian.wolff@kdab.com>
+To:     Milian Wolff <milian.wolff@kdab.com>
+Cc:     Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
+        Jiri Olsa <jolsa@kernel.org>, namhyung@kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho <acme@kernel.org>
+Subject: PEBS level 2/3 breaks dwarf unwinding! [WAS: Re: Broken dwarf
+ unwinding - wrong stack pointer register value?]
+Date:   Thu, 01 Nov 2018 23:08:18 +0100
+Message-ID: <13521319.OzbRBoFVZM@agathebauer>
+Organization: KDAB
+In-Reply-To: <2122395.LD3O1NFKj8@agathebauer>
+References: <2335309.gnWok9HYb4@agathebauer>
+ <20181024144818.GF6218@tassilo.jf.intel.com> <2122395.LD3O1NFKj8@agathebauer>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhQFqs1SyvximK+8XJG5Fk3p9WsWhEV5sY6kksN9tc6eKw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 01 Nov 2018 22:07:41 +0000 (UTC)
+Content-Type: multipart/signed; boundary="nextPart2198123.MMhLtkTpF4";
+ micalg="sha256"; protocol="application/pkcs7-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-19 19:15, Paul Moore wrote:
-> On Sun, Aug 5, 2018 at 4:32 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > The audit-related parameters in struct task_struct should ideally be
-> > collected together and accessed through a standard audit API.
-> >
-> > Collect the existing loginuid, sessionid and audit_context together in a
-> > new struct audit_task_info called "audit" in struct task_struct.
-> >
-> > Use kmem_cache to manage this pool of memory.
-> > Un-inline audit_free() to be able to always recover that memory.
-> >
-> > See: https://github.com/linux-audit/audit-kernel/issues/81
-> >
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> >  include/linux/audit.h | 34 ++++++++++++++++++++++++----------
-> >  include/linux/sched.h |  5 +----
-> >  init/init_task.c      |  3 +--
-> >  init/main.c           |  2 ++
-> >  kernel/auditsc.c      | 51 ++++++++++++++++++++++++++++++++++++++++++---------
-> >  kernel/fork.c         |  4 +++-
-> >  6 files changed, 73 insertions(+), 26 deletions(-)
-> 
-> ...
-> 
-> > diff --git a/include/linux/audit.h b/include/linux/audit.h
-> > index 9334fbe..8964332 100644
-> > --- a/include/linux/audit.h
-> > +++ b/include/linux/audit.h
-> > @@ -219,8 +219,15 @@ static inline void audit_log_task_info(struct audit_buffer *ab,
-> >
-> >  /* These are defined in auditsc.c */
-> >                                 /* Public API */
-> > +struct audit_task_info {
-> > +       kuid_t                  loginuid;
-> > +       unsigned int            sessionid;
-> > +       struct audit_context    *ctx;
-> > +};
-> 
-> ...
-> 
-> > diff --git a/include/linux/sched.h b/include/linux/sched.h
-> > index 87bf02d..e117272 100644
-> > --- a/include/linux/sched.h
-> > +++ b/include/linux/sched.h
-> > @@ -873,10 +872,8 @@ struct task_struct {
-> >
-> >         struct callback_head            *task_works;
-> >
-> > -       struct audit_context            *audit_context;
-> >  #ifdef CONFIG_AUDITSYSCALL
-> > -       kuid_t                          loginuid;
-> > -       unsigned int                    sessionid;
-> > +       struct audit_task_info          *audit;
-> >  #endif
-> >         struct seccomp                  seccomp;
-> 
-> Prior to this patch audit_context was available regardless of
-> CONFIG_AUDITSYSCALL, after this patch the corresponding audit_context
-> is only available when CONFIG_AUDITSYSCALL is defined.
+--nextPart2198123.MMhLtkTpF4
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-This was intentional since audit_context is not used when AUDITSYSCALL is
-disabled.  audit_alloc() was stubbed in that case to return 0.  audit_context()
-returned NULL.
+On Dienstag, 30. Oktober 2018 23:34:35 CET Milian Wolff wrote:
+> On Mittwoch, 24. Oktober 2018 16:48:18 CET Andi Kleen wrote:
+> > > Can someone at least confirm whether unwinding from a function prologue
+> > > via
+> > > .eh_frame (but without .debug_frame) should actually be possible?
+> > 
+> > Yes it should be possible. Asynchronous unwind tables should work
+> > from any instruction.
 
-The fact that audit_context was still present in struct task_struct was an
-oversight in the two patches already accepted:
-	("audit: use inline function to get audit context")
-	("audit: use inline function to get audit context")
-that failed to hide or remove it from struct task_struct when it was no longer
-relevant.
+<snip>
 
-The 0-day kbuildbot was happy and it tests many configs.
+> We can find `7f91345bdaf8+1 = 7f91345bdaf9" at offset 16 (search for "f9 da
+> 5b 34 91 7f"). Using that address makes unwinding work for this sample.
+> What could be the reason for this shift?
 
-On further digging, loginuid and sessionid (and audit_log_session_info) should
-be part of CONFIG_AUDIT scope and not CONFIG_AUDITSYSCALL since it is used in
-CONFIG_CHANGE, ANOM_LINK, FEATURE_CHANGE(, INTEGRITY_RULE), none of which are
-otherwise dependent on AUDITSYSCALL.
+I believe I have found the culprit: PEBS seems to be at fault here - i.e. the 
+RIP/RSP and the ustack dump of the sample simply don't fit together.
 
-Looking ahead, contid should be treated like loginuid and sessionid, which are
-currently only available when syscall auditting is.
+Check this out:
 
-Converting records from standalone to syscall and checking audit_dummy_context
-changes the nature of CONFIG_AUDIT/!CONFIG_AUDITSYSCALL separation.
-eg: ANOM_LINK accompanied by PATH record (which needed CWD addition to be
-complete anyways)
+```
+$ for i in $(seq 10); do perf record -q -e "cycles:" --call-graph dwarf ./cpp-
+inlining > /dev/null; perf script | pcre2grep -c -M "hypot_finite.*\n.*\
+[unknown\]"; done
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
 
-> > diff --git a/init/main.c b/init/main.c
-> > index 3b4ada1..6aba171 100644
-> > --- a/init/main.c
-> > +++ b/init/main.c
-> > @@ -92,6 +92,7 @@
-> >  #include <linux/rodata_test.h>
-> >  #include <linux/jump_label.h>
-> >  #include <linux/mem_encrypt.h>
-> > +#include <linux/audit.h>
-> >
-> >  #include <asm/io.h>
-> >  #include <asm/bugs.h>
-> > @@ -721,6 +722,7 @@ asmlinkage __visible void __init start_kernel(void)
-> >         nsfs_init();
-> >         cpuset_init();
-> >         cgroup_init();
-> > +       audit_task_init();
-> >         taskstats_init_early();
-> >         delayacct_init();
-> 
-> It seems like we would need either init_struct_audit or
-> audit_task_init(), but not both, yes?
+$ for i in $(seq 10); do perf record -q -e "cycles:p" --call-graph dwarf ./
+cpp-inlining > /dev/null; perf script | pcre2grep -c -M "hypot_finite.*\n.*\
+[unknown\]"; done
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
 
-One sets initial values of init task via an included struct, other makes a call
-to create the kmem cache.  Both seem appropriate to me unless we move the
-initialization from a struct to assignments in audit_task_init(), but I'm not
-that comfortable separating the audit init values from the rest of the
-task_struct init task initializers (though there are other subsystems that need
-to do so dynamically).
+$ for i in $(seq 10); do perf record -q -e "cycles:pp" --call-graph dwarf ./
+cpp-inlining > /dev/null; perf script | pcre2grep -c -M "hypot_finite.*\n.*\
+[unknown\]"; done
+37
+39
+35
+28
+40
+39
+29
+37
+31
+26
 
-> > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> > index fb20746..88779a7 100644
-> > --- a/kernel/auditsc.c
-> > +++ b/kernel/auditsc.c
-> > @@ -841,7 +841,7 @@ static inline struct audit_context *audit_take_context(struct task_struct *tsk,
-> >                                                       int return_valid,
-> >                                                       long return_code)
-> >  {
-> > -       struct audit_context *context = tsk->audit_context;
-> > +       struct audit_context *context = tsk->audit->ctx;
-> >
-> >         if (!context)
-> >                 return NULL;
-> > @@ -926,6 +926,15 @@ static inline struct audit_context *audit_alloc_context(enum audit_state state)
-> >         return context;
-> >  }
-> >
-> > +static struct kmem_cache *audit_task_cache;
-> > +
-> > +void __init audit_task_init(void)
-> > +{
-> > +       audit_task_cache = kmem_cache_create("audit_task",
-> > +                                            sizeof(struct audit_task_info),
-> > +                                            0, SLAB_PANIC, NULL);
-> > +}
-> 
-> This is somewhat related to the CONFIG_AUDITSYSCALL comment above, but
-> since the audit_task_info contains generic audit state (not just
-> syscall related state), it seems like this, and the audit_task_info
-> accessors/helpers, should live in kernel/audit.c.
+$ for i in $(seq 10); do perf record -q -e "cycles:ppp" --call-graph dwarf ./
+cpp-inlining > /dev/null; perf script | pcre2grep -c -M "hypot_finite.*\n.*\
+[unknown\]"; done
+79
+70
+76
+77
+70
+90
+64
+78
+86
+74
+```
 
-Well, in fact it was only containing syscall related state.
+Note how precise levels 0 and 1 do not produce any samples where unwinding 
+fails. But precise level 2 produces some, and precise level 3 increases the 
+amount (by ca. ~2x).
 
-> There are probably a few other things that should move to
-> kernel/audit.c too, e.g. audit_alloc().  Have you verified that this
-> builds/runs correctly on architectures that define CONFIG_AUDIT but
-> not CONFIG_AUDITSYSCALL?
+I can reproduce this pattern on two separate Intel CPUs and kernel versions 
+currently:
 
-I was under the mistaken impression that all this went away and wondered why
-not just rip out the AUDITSYSCALL config option, but that was not completely
-solved by cb74ed278f80 ("audit: always enable syscall auditing when supported
-and audit is enabled").
-I vaguely knew that AUDITSYSCALL was not implemented on all platforms but that
-a number were expunged recently from mainline.  It turns out that 5-10+ remain.
+Intel(R) Core(TM) i7-5600U CPU @ 2.60GHz with 4.18.16-arch1-1-ARCH
+Intel(R) Core(TM) i7-4770 CPU @ 3.40GHz with 4.14.78-1-lts
 
-> >  /**
-> >   * audit_alloc - allocate an audit context block for a task
-> >   * @tsk: task
-> > @@ -940,17 +949,28 @@ int audit_alloc(struct task_struct *tsk)
-> >         struct audit_context *context;
-> >         enum audit_state     state;
-> >         char *key = NULL;
-> > +       struct audit_task_info *info;
-> > +
-> > +       info = kmem_cache_zalloc(audit_task_cache, GFP_KERNEL);
-> > +       if (!info)
-> > +               return -ENOMEM;
-> > +       info->loginuid = audit_get_loginuid(current);
-> > +       info->sessionid = audit_get_sessionid(current);
-> > +       tsk->audit = info;
-> >
-> >         if (likely(!audit_ever_enabled))
-> >                 return 0; /* Return if not auditing. */
-> 
-> I don't view this as necessary for initial acceptance, and
-> synchronization/locking might render this undesirable, but it would be
-> curious to see if we could do something clever with refcnts and
-> copy-on-write to minimize the number of kmem_cache objects in use in
-> the !audit_ever_enabled (and possibly the AUDIT_DISABLED) case.
-> 
-> >         state = audit_filter_task(tsk, &key);
-> >         if (state == AUDIT_DISABLED) {
-> > +               audit_set_context(tsk, NULL);
-> 
-> It's already NULL, isn't it?
+Could someone else try this? What about AMD and IBS - is it also affected? 
+What about newer/different Intel CPUs?
 
-Yes, holdover from copying audit_task_info as a struct from the parent task.
-Fixed.
+Better yet, can someone come up with a fix for this on Intel with maximum 
+precise level?
 
-> >                 clear_tsk_thread_flag(tsk, TIF_SYSCALL_AUDIT);
-> >                 return 0;
-> >         }
-> >
-> >         if (!(context = audit_alloc_context(state))) {
-> > +               tsk->audit = NULL;
-> > +               kmem_cache_free(audit_task_cache, info);
-> >                 kfree(key);
-> >                 audit_log_lost("out of memory in audit_alloc");
-> >                 return -ENOMEM;
-> > @@ -962,6 +982,12 @@ int audit_alloc(struct task_struct *tsk)
-> >         return 0;
-> >  }
-> >
-> > +struct audit_task_info init_struct_audit = {
-> > +       .loginuid = INVALID_UID,
-> > +       .sessionid = AUDIT_SID_UNSET,
-> > +       .ctx = NULL,
-> > +};
-> > +
-> >  static inline void audit_free_context(struct audit_context *context)
-> >  {
-> >         audit_free_names(context);
-> 
-> paul moore
+Thanks
 
-- RGB
+-- 
+Milian Wolff | milian.wolff@kdab.com | Senior Software Engineer
+KDAB (Deutschland) GmbH, a KDAB Group company
+Tel: +49-30-521325470
+KDAB - The Qt, C++ and OpenGL Experts
+--nextPart2198123.MMhLtkTpF4
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCDEIw
+ggXmMIIDzqADAgECAhBqm+E4O/8ra58B1dm4p1JWMA0GCSqGSIb3DQEBDAUAMIGFMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
+VQQKExFDT01PRE8gQ0EgTGltaXRlZDErMCkGA1UEAxMiQ09NT0RPIFJTQSBDZXJ0aWZpY2F0aW9u
+IEF1dGhvcml0eTAeFw0xMzAxMTAwMDAwMDBaFw0yODAxMDkyMzU5NTlaMIGXMQswCQYDVQQGEwJH
+QjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQK
+ExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGlj
+YXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
+AL6znlesKHZ1QBbHOAOY08YYdiFQ8yV5C0y1oNF9Olg+nKcxLqf2NHbZhGra0D00SOTq9bus3/mx
+gUsg/Wh/eXQ0pnp8tZ8XZWAnlyKMpjL+qUByRjXCA6RQyDMqVaVUkbIr5SU0RDX/kSsKwer3H1pT
+/HUrBN0X8sKtPTdGX8XAWt/VdMLBrZBlgvnkCos+KQWWCo63OTTqRvaq8aWccm+KOMjTcE6s2mj6
+RkalweyDI7X+7U5lNo6jzC8RTXtVV4/Vwdax720YpMPJQaDaElmOupyTf1Qib+cpukNJnQmwygjD
+8m046DQkLnpXNCAGjuJy1F5NATksUsbfJAr7FLUCAwEAAaOCATwwggE4MB8GA1UdIwQYMBaAFLuv
+fgI9+qbxPISOre44mOzZMjLUMB0GA1UdDgQWBBSCr2yM+MX+lmF86B89K3FIXsSLwDAOBgNVHQ8B
+Af8EBAMCAYYwEgYDVR0TAQH/BAgwBgEB/wIBADARBgNVHSAECjAIMAYGBFUdIAAwTAYDVR0fBEUw
+QzBBoD+gPYY7aHR0cDovL2NybC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQ2VydGlmaWNhdGlvbkF1
+dGhvcml0eS5jcmwwcQYIKwYBBQUHAQEEZTBjMDsGCCsGAQUFBzAChi9odHRwOi8vY3J0LmNvbW9k
+b2NhLmNvbS9DT01PRE9SU0FBZGRUcnVzdENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3Au
+Y29tb2RvY2EuY29tMA0GCSqGSIb3DQEBDAUAA4ICAQB4XLKBKDRPPO5fVs6fl1bsj6JrF/bz9kkI
+BtTYLzXN30D+03Hj6OxCDBEaIeNmsBhrJmuubvyE7HtoSmR809AgcYboW+rcTNZ/8u/Hv+GTrNI/
+AhqX2/kiQNxmgUPt/eJPs92Qclj0HnVyy9TnSvGkSDU7I5Px+TbO+88G4zipA2psZaWeEykgzClZ
+lPz1FjTCkk77ZXp5cQYYexE6zeeN4/0OqqoAloFrjAF4o50YJafX8mnahjp3I2Y2mkjhk0xQfhNq
+bzlLWPoT3m7j7U26u7zg6swjOq8hITYc3/np5tM5aVyu6t99p17bTbY7+1RTWBviN9YJzK8HxzOb
+XYWBf/L+VGOYNsQDTxAk0Hbvb1j6KjUhg7fO294F29QIhhmiNOr84JHoy+fNLpfvYc/Q9EtFOI5I
+SYgOxLk3nD/whbUe9rmEQXLp8MB933Ij474gwwCPUpwv9mj2PMnXoc7mbrS22XUSeTwxCTP9bcmU
+dp4jmIoWfhQm7X9w/Zgddg+JZ/YnIHOwsGsaTUgj7fIvxqith7DoJC91WJ8Lce3CVJqb1XWeKIJ8
+4F7YLXZN0oa7TktYgDdmQVxYkZo1c5noaDKH9Oq9cbm/vOYRUM1cWcef20Wkyk5S/GFyyPJwG0fR
+1nRas3DqAf4cXxMiEKcff7PNa4M3RGTqH0pWR8p6EjCCBlQwggU8oAMCAQICEAf6KCF9+1doL2oE
+OTPysLwwDQYJKoZIhvcNAQELBQAwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJHcmVhdGVyIE1h
+bmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBMaW1pdGVkMT0w
+OwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWls
+IENBMB4XDTE3MDUyMzAwMDAwMFoXDTIwMDUyMjIzNTk1OVowggFZMQswCQYDVQQGEwJTRTEPMA0G
+A1UEERMGNjgzIDMxMRIwEAYDVQQIEwlWYWVybWxhbmQxEDAOBgNVBAcTB0hhZ2ZvcnMxGDAWBgNV
+BAkTD05vcnJpbmdzIHZhZWcgMjEPMA0GA1UEEhMGQm94IDMwMSYwJAYDVQQKDB1LbGFyw6RsdmRh
+bGVucyBEYXRha29uc3VsdCBBQjEdMBsGA1UECxMUQSBLREFCIEdyb3VwIENvbXBhbnkxQzBBBgNV
+BAsMOklzc3VlZCB0aHJvdWdoIEtsYXLDpGx2ZGFsZW5zIERhdGFrb25zdWx0IEFCIEUtUEtJIE1h
+bmFnZXIxHzAdBgNVBAsTFkNvcnBvcmF0ZSBTZWN1cmUgRW1haWwxFTATBgNVBAMTDE1pbGlhbiBX
+b2xmZjEkMCIGCSqGSIb3DQEJARYVbWlsaWFuLndvbGZmQGtkYWIuY29tMIIBIjANBgkqhkiG9w0B
+AQEFAAOCAQ8AMIIBCgKCAQEAxrzfNBVvRbiAknuTBXuQnNm9sLIFLo0vbPB6kswk78A3tA++Zn5c
+lQUHhGlQq1cdYxagnUpqwvG3Sod15mPSOLkAPf/mabLN7p+lFbRaUP+97ZkTZtvb4BCC3osIEFI4
+G393OSFWqc2qmIPE/SwSASbAA20Fcaa2M6P1lhOk/ttUh2jIurTPF0wUycIA7lBddrOgaOA8e2m6
+iLTNHtlrfRbBaUX91D5ebY+UWmIjXSQ9+CtutMzBkwnF0rZKririvOkklg9VzEGNQVHrQfDF2s/U
+pOtmtuVSwElauGT/KALyCFuIrYC1pmaKH8S1xODJqiRaf6jH8E+KQzKjyM/ErwIDAQABo4IB1TCC
+AdEwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8AwHQYDVR0OBBYEFN+m99RtIuA1bSdw
+6b1brOX7X3AJMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8EAjAAMB0GA1UdJQQWMBQGCCsGAQUF
+BwMEBggrBgEFBQcDAjBGBgNVHSAEPzA9MDsGDCsGAQQBsjEBAgEDBTArMCkGCCsGAQUFBwIBFh1o
+dHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8EUzBRME+gTaBLhklodHRwOi8vY3Js
+LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWls
+Q0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKGSWh0dHA6Ly9jcnQuY29tb2RvY2Eu
+Y29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcnQwJAYI
+KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAgBgNVHREEGTAXgRVtaWxpYW4ud29s
+ZmZAa2RhYi5jb20wDQYJKoZIhvcNAQELBQADggEBABf47LSJADqH+ow9INv3QM1NC/qq2bjxGvsZ
+68iD11VEUAFlsYfsVTgQqUirwPVTYenXtwVBELHZyywsui1JxL7HKQetLQegDDP/RyfjReVaWxhy
+3OpuItsgLVbru9QVgPifnoBFPtfZcwjeJDmeSbLT8oj4Rd0KYBOIve7WKvsfNPsNwfbLwY2zILkE
+LjxZcVi2AwZHDyab+dzL/3YcLuJj1lSawBGn7ilpcdZydlv4aye51pD/MemLIYLcylt+ImrmjnTV
+y+QlAHRF3s5FE8yAr+W1MBD/1bKZCSgFt8VQoAlz3hiQh8QqZp4Zl8WuVL4+mP/mT6VDEWgq/0Bo
+cukxggJuMIICagIBATCBrDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hl
+c3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNV
+BAMTNENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EC
+EAf6KCF9+1doL2oEOTPysLwwDQYJYIZIAWUDBAIBBQCggZMwGAYJKoZIhvcNAQkDMQsGCSqGSIb3
+DQEHATAcBgkqhkiG9w0BCQUxDxcNMTgxMTAxMjIwODE4WjAoBgkqhkiG9w0BCQ8xGzAZMAsGCWCG
+SAFlAwQBAjAKBggqhkiG9w0DBzAvBgkqhkiG9w0BCQQxIgQgreI4R6LV7qOsr4BK7J7dOioGOoVC
+YP0Jhmpe4N+hJfUwDQYJKoZIhvcNAQEBBQAEggEAf+bacf+P6UZXEgksCB6HCdyMPeCL+HRRVkmH
+AfQmi+2DP2kQY562hAUueOmkALIt0nyJOs3eEeCHx5n14QMPX0qhKT5W+CPPugNRjRysLac1TZLU
+aPt2Eg2pm/k4NY/8DqqNal7yTGPHTKqmaj0CptW2sMjcvdgYfF700fKrwbFAUCAFeGdDFrfsaimN
+rcYyjQL3f+TOAulj1ERFJoL6HLCVV+J3VkfaKj1lE+6vxwxCyCUs2xr77jC6fJ/wqf6CUsJZC+qt
+vLhExmQlXVIGbz3FcSujUQ7LO2eelW5EzenNkZq1RSUzyYypSykrlOzuuaosFy/r1RCvMZADN1s4
+agAAAAAAAA==
+
+
+--nextPart2198123.MMhLtkTpF4--
+
+
