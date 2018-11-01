@@ -2,202 +2,103 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16EB8C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:40:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21DB6C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:40:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D276B20657
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:40:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D276B20657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id DCBD920657
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:40:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="Kpt2cVKY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCBD920657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728685AbeKAWnS (ORCPT
+        id S1728701AbeKAWne (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 18:43:18 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56626 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728009AbeKAWnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 18:43:17 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B355DA78;
-        Thu,  1 Nov 2018 06:40:17 -0700 (PDT)
-Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.144.41])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 459B43F6A8;
-        Thu,  1 Nov 2018 06:40:17 -0700 (PDT)
-Date:   Thu, 1 Nov 2018 14:40:15 +0100
-From:   Christoffer Dall <christoffer.dall@arm.com>
-To:     Punit Agrawal <punit.agrawal@arm.com>
-Cc:     kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, suzuki.poulose@arm.com,
-        punitagrawal@gmail.com, Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH v9 6/8] KVM: arm64: Support handling access faults for
- PUD hugepages
-Message-ID: <20181101134015.GM12057@e113682-lin.lund.arm.com>
-References: <20181031175745.18650-1-punit.agrawal@arm.com>
- <20181031175745.18650-7-punit.agrawal@arm.com>
+        Thu, 1 Nov 2018 18:43:34 -0400
+Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:6972 "EHLO
+        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727998AbeKAWne (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 18:43:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1541079633; x=1572615633;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:mime-version:
+   content-transfer-encoding;
+  bh=KeCd6o/Ju2Y1QKho1lyW6drPDc/sWWg1jEFbUo9SzMI=;
+  b=Kpt2cVKY+ZwWPr2nBCLfj2dBVgdfZQzTAMpIp4h/8bfR4sHm7ch8THKV
+   BOXXF6O4zmwCwdSdeGfBGq2Zj9b0pWk3f3GPbLbom5U5erl+eJdtCuh++
+   tk+uWYTXBT4PXpwgJoav4LJlA2mXSf0z2yVDPEs9JitSIwxNPJZVZbiSx
+   s=;
+X-IronPort-AV: E=Sophos;i="5.54,452,1534809600"; 
+   d="scan'208";a="702529784"
+Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-2a-6e2fc477.us-west-2.amazon.com) ([10.124.125.2])
+  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 01 Nov 2018 13:40:32 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan3.pdx.amazon.com [10.236.137.198])
+        by email-inbound-relay-2a-6e2fc477.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id wA1DeSxJ003600
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Thu, 1 Nov 2018 13:40:31 GMT
+Received: from EX13D02EUB004.ant.amazon.com (10.43.166.221) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 1 Nov 2018 13:40:30 +0000
+Received: from EX13D02EUB004.ant.amazon.com (10.43.166.221) by
+ EX13D02EUB004.ant.amazon.com (10.43.166.221) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 1 Nov 2018 13:40:29 +0000
+Received: from EX13D02EUB004.ant.amazon.com ([10.43.166.221]) by
+ EX13D02EUB004.ant.amazon.com ([10.43.166.221]) with mapi id 15.00.1367.000;
+ Thu, 1 Nov 2018 13:40:29 +0000
+From:   "Stecklina, Julian" <jsteckli@amazon.de>
+To:     "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "js@alien8.de" <js@alien8.de>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>
+Subject: Re: [PATCH v2 2/3] kvm, vmx: move register clearing out of assembly
+ path
+Thread-Topic: [PATCH v2 2/3] kvm, vmx: move register clearing out of assembly
+ path
+Thread-Index: AQHUb53WOBPhh7i/m0C/9MDRKTcm1aU2ebkAgAR38oA=
+Date:   Thu, 1 Nov 2018 13:40:29 +0000
+Message-ID: <1541079629.1777.9.camel@amazon.de>
+References: <74fa3809ea293cc05d37b1449b16e08480c4ddbd.1540822350.git.jsteckli@amazon.de>
+         <33085f6c98496ed8094ce68855b49851abb86406.1540822350.git.jsteckli@amazon.de>
+         <20181029172608.GB27762@linux.intel.com>
+In-Reply-To: <20181029172608.GB27762@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.43.164.116]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2D825498576DA74698656C57BA50716B@amazon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181031175745.18650-7-punit.agrawal@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 05:57:43PM +0000, Punit Agrawal wrote:
-> In preparation for creating larger hugepages at Stage 2, extend the
-> access fault handling at Stage 2 to support PUD hugepages when
-> encountered.
-> 
-> Provide trivial helpers for arm32 to allow sharing of code.
-> 
-> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Cc: Christoffer Dall <christoffer.dall@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> ---
->  arch/arm/include/asm/kvm_mmu.h   |  9 +++++++++
->  arch/arm64/include/asm/kvm_mmu.h |  7 +++++++
->  arch/arm64/include/asm/pgtable.h |  6 ++++++
->  virt/kvm/arm/mmu.c               | 22 +++++++++++-----------
->  4 files changed, 33 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
-> index 839a619873d3..fea5e723e3ac 100644
-> --- a/arch/arm/include/asm/kvm_mmu.h
-> +++ b/arch/arm/include/asm/kvm_mmu.h
-> @@ -85,6 +85,9 @@ void kvm_clear_hyp_idmap(void);
->  #define kvm_pfn_pte(pfn, prot)	pfn_pte(pfn, prot)
->  #define kvm_pfn_pmd(pfn, prot)	pfn_pmd(pfn, prot)
->  
-> +#define kvm_pud_pfn(pud)	({ BUG(); 0; })
-> +
-> +
->  #define kvm_pmd_mkhuge(pmd)	pmd_mkhuge(pmd)
->  
->  /*
-> @@ -108,6 +111,12 @@ static inline bool kvm_s2pud_exec(pud_t *pud)
->  	return false;
->  }
->  
-> +static inline pud_t kvm_s2pud_mkyoung(pud_t pud)
-> +{
-> +	BUG();
+T24gTW9uLCAyMDE4LTEwLTI5IGF0IDEwOjI2IC0wNzAwLCBTZWFuIENocmlzdG9waGVyc29uIHdy
+b3RlOg0KPiBJIHRoaW5rIGl0J3MgYSBnb29kIGlkZWEgdG8gZXhwbGljaXRseSBjYWxsIG91dCB0
+aGF0IGNsZWFyaW5nIHRoZQ0KPiBHUFJzDQo+IGlzIGRvbmUgdG8gcHJldmVudCBzcGVjdWxhdGl2
+ZSB1c2UuwqAgU2ltcGx5IHN0YXRpbmcgdGhhdCB3ZSBkb24ndA0KPiB3YW50DQo+IHRvIGxldCBn
+dWVzdCByZWdpc3RlciB2YWx1ZXMgc3Vydml2ZSBkb2Vzbid0IGV4cGxhaW4gKndoeSouDQo+IA0K
+PiBXaGF0IGFib3V0Og0KPiANCj4gwqDCoMKgwqDCoMKgwqDCoC8qDQo+IMKgwqDCoMKgwqDCoMKg
+wqAgKiBFeHBsaWNpdGx5IGNsZWFyIChpbiBhZGRpdGlvbiB0byBtYXJraW5nIHRoZW0gYXMNCj4g
+Y2xvYmJlcmVkKSBhbGwgR1BScw0KPiDCoMKgwqDCoMKgwqDCoMKgICogdGhhdCBoYXZlIG5vdCBi
+ZWVuIGxvYWRlZCB3aXRoIGhvc3Qgc3RhdGUgdG8gcHJldmVudA0KPiBzcGVjdWxhdGl2ZWx5DQo+
+IMKgwqDCoMKgwqDCoMKgwqAgKiB1c2luZyB0aGUgZ3Vlc3QncyB2YWx1ZXMuDQo+IMKgwqDCoMKg
+wqDCoMKgwqAgKi8NCg0KU291bmRzIGdvb2QuIEkndmUgYWxzbyB1cGRhdGVkIHRoZSBjb21taXQg
+bWVzc2FnZSBmb3IgdGhlIHJlZ2lzdGVyDQpjbGVhcmluZyBjb21taXQuIEknbGwgcmVwb3N0IHRo
+ZSBwYXRjaGVzLg0KDQpKdWxpYW4KCgoKQW1hem9uIERldmVsb3BtZW50IENlbnRlciBHZXJtYW55
+IEdtYkgKS3JhdXNlbnN0ci4gMzgKMTAxMTcgQmVybGluCkdlc2NoYWVmdHNmdWVocmVyOiBDaHJp
+c3RpYW4gU2NobGFlZ2VyLCBSYWxmIEhlcmJyaWNoClVzdC1JRDogREUgMjg5IDIzNyA4NzkKRWlu
+Z2V0cmFnZW4gYW0gQW10c2dlcmljaHQgQ2hhcmxvdHRlbmJ1cmcgSFJCIDE0OTE3MyBCCgo=
 
-nit: I think this should be WARN now.
-
-> +	return pud;
-> +}
-> +
->  static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
->  {
->  	pte_val(pte) |= L_PTE_S2_RDWR;
-> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-> index c755b37b3f92..612032bbb428 100644
-> --- a/arch/arm64/include/asm/kvm_mmu.h
-> +++ b/arch/arm64/include/asm/kvm_mmu.h
-> @@ -187,6 +187,8 @@ void kvm_clear_hyp_idmap(void);
->  #define kvm_pfn_pte(pfn, prot)		pfn_pte(pfn, prot)
->  #define kvm_pfn_pmd(pfn, prot)		pfn_pmd(pfn, prot)
->  
-> +#define kvm_pud_pfn(pud)		pud_pfn(pud)
-> +
->  #define kvm_pmd_mkhuge(pmd)		pmd_mkhuge(pmd)
->  
->  static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
-> @@ -266,6 +268,11 @@ static inline bool kvm_s2pud_exec(pud_t *pudp)
->  	return !(READ_ONCE(pud_val(*pudp)) & PUD_S2_XN);
->  }
->  
-> +static inline pud_t kvm_s2pud_mkyoung(pud_t pud)
-> +{
-> +	return pud_mkyoung(pud);
-> +}
-> +
->  #define hyp_pte_table_empty(ptep) kvm_page_empty(ptep)
->  
->  #ifdef __PAGETABLE_PMD_FOLDED
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index 50b1ef8584c0..f51e2271e6a3 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -314,6 +314,11 @@ static inline pte_t pud_pte(pud_t pud)
->  	return __pte(pud_val(pud));
->  }
->  
-> +static inline pud_t pte_pud(pte_t pte)
-> +{
-> +	return __pud(pte_val(pte));
-> +}
-> +
->  static inline pmd_t pud_pmd(pud_t pud)
->  {
->  	return __pmd(pud_val(pud));
-> @@ -381,6 +386,7 @@ static inline int pmd_protnone(pmd_t pmd)
->  #define pfn_pmd(pfn,prot)	__pmd(__phys_to_pmd_val((phys_addr_t)(pfn) << PAGE_SHIFT) | pgprot_val(prot))
->  #define mk_pmd(page,prot)	pfn_pmd(page_to_pfn(page),prot)
->  
-> +#define pud_mkyoung(pud)	pte_pud(pte_mkyoung(pud_pte(pud)))
->  #define pud_write(pud)		pte_write(pud_pte(pud))
->  
->  #define __pud_to_phys(pud)	__pte_to_phys(pud_pte(pud))
-> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-> index 8e44dccd1b47..bd749601195f 100644
-> --- a/virt/kvm/arm/mmu.c
-> +++ b/virt/kvm/arm/mmu.c
-> @@ -1698,6 +1698,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->   */
->  static void handle_access_fault(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa)
->  {
-> +	pud_t *pud;
->  	pmd_t *pmd;
->  	pte_t *pte;
->  	kvm_pfn_t pfn;
-> @@ -1707,24 +1708,23 @@ static void handle_access_fault(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa)
->  
->  	spin_lock(&vcpu->kvm->mmu_lock);
->  
-> -	pmd = stage2_get_pmd(vcpu->kvm, NULL, fault_ipa);
-> -	if (!pmd || pmd_none(*pmd))	/* Nothing there */
-> +	if (!stage2_get_leaf_entry(vcpu->kvm, fault_ipa, &pud, &pmd, &pte))
->  		goto out;
->  
-> -	if (pmd_thp_or_huge(*pmd)) {	/* THP, HugeTLB */
-> +	if (pud) {		/* HugeTLB */
-> +		*pud = kvm_s2pud_mkyoung(*pud);
-> +		pfn = kvm_pud_pfn(*pud);
-> +		pfn_valid = true;
-> +	} else	if (pmd) {	/* THP, HugeTLB */
->  		*pmd = pmd_mkyoung(*pmd);
->  		pfn = pmd_pfn(*pmd);
->  		pfn_valid = true;
-> -		goto out;
-> +	} else {
-> +		*pte = pte_mkyoung(*pte);	/* Just a page... */
-> +		pfn = pte_pfn(*pte);
-> +		pfn_valid = true;
->  	}
->  
-> -	pte = pte_offset_kernel(pmd, fault_ipa);
-> -	if (pte_none(*pte))		/* Nothing there either */
-> -		goto out;
-> -
-> -	*pte = pte_mkyoung(*pte);	/* Just a page... */
-> -	pfn = pte_pfn(*pte);
-> -	pfn_valid = true;
->  out:
->  	spin_unlock(&vcpu->kvm->mmu_lock);
->  	if (pfn_valid)
-> -- 
-> 2.19.1
-> 
