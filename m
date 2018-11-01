@@ -2,462 +2,344 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23AAEC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:03:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 556A6C6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:03:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D38E8205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:03:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D38E8205F4
+	by mail.kernel.org (Postfix) with ESMTP id 1AC6E205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:03:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AC6E205F4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lemonage.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728322AbeKATF5 (ORCPT
+        id S1728337AbeKATGJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 15:05:57 -0400
-Received: from smtp3-1.goneo.de ([85.220.129.38]:44569 "EHLO smtp3-1.goneo.de"
+        Thu, 1 Nov 2018 15:06:09 -0400
+Received: from smtp3-1.goneo.de ([85.220.129.38]:59255 "EHLO smtp3-1.goneo.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726320AbeKATF4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 15:05:56 -0400
+        id S1727875AbeKATGI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 15:06:08 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by smtp3.goneo.de (Postfix) with ESMTP id 1B4D623F356;
-        Thu,  1 Nov 2018 11:03:36 +0100 (CET)
+        by smtp3.goneo.de (Postfix) with ESMTP id 22A5823F020;
+        Thu,  1 Nov 2018 11:03:48 +0100 (CET)
 X-Virus-Scanned: by goneo
 Received: from smtp3.goneo.de ([127.0.0.1])
         by localhost (smtp3.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id vzuCJC8ZuCQc; Thu,  1 Nov 2018 11:03:34 +0100 (CET)
+        with ESMTP id dKwWfsCqXITZ; Thu,  1 Nov 2018 11:03:46 +0100 (CET)
 Received: from lem-wkst-02.lemonage.de. (hq.lemonage.de [87.138.178.34])
-        by smtp3.goneo.de (Postfix) with ESMTPA id 7FEB12400CA;
-        Thu,  1 Nov 2018 11:03:34 +0100 (CET)
+        by smtp3.goneo.de (Postfix) with ESMTPA id 7E49623F3BB;
+        Thu,  1 Nov 2018 11:03:46 +0100 (CET)
 From:   Lars Poeschel <poeschel@lemonage.de>
 To:     devicetree@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>,
-        "GitAuthor: Lars Poeschel" <poeschel@lemonage.de>,
-        linux-kernel@vger.kernel.org (open list),
-        linux-wireless@vger.kernel.org (open list:NFC SUBSYSTEM)
-Subject: [PATCH v4 4/6] nfc: pn533: add UART phy driver
-Date:   Thu,  1 Nov 2018 11:02:12 +0100
-Message-Id: <20181101100216.613-4-poeschel@lemonage.de>
+        Kees Cook <keescook@chromium.org>,
+        Lars Poeschel <poeschel@lemonage.de>,
+        linux-wireless@vger.kernel.org (open list:NFC SUBSYSTEM),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v4 5/6] nfc: pn533: Add autopoll capability
+Date:   Thu,  1 Nov 2018 11:02:13 +0100
+Message-Id: <20181101100216.613-5-poeschel@lemonage.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181101100216.613-1-poeschel@lemonage.de>
 References: <20181101100216.613-1-poeschel@lemonage.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the UART phy interface for the pn533 driver.
-The pn533 driver can be used through UART interface this way.
-It is implemented as a serdev device.
+pn532 devices support an autopoll command, that lets the chip
+automatically poll for selected nfc technologies instead of manually
+looping through every single nfc technology the user is interested in.
+This is faster and less cpu and bus intensive than manually polling.
+This adds this autopoll capability to the pn533 driver.
 
 Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
 ---
-Changes in v4:
-- SPDX-License-Identifier: GPL-2.0+
-- Source code comments above refering items
-- Error check for serdev_device_write's
-- Change if (xxx == NULL) to if (!xxx)
-- Remove device name from a dev_err
-- move pn533_register in _probe a bit towards the end of _probe
-- make use of newly added dev_up / dev_down phy_ops
-- control send_wakeup variable from dev_up / dev_down
+ drivers/nfc/pn533/pn533.c | 193 +++++++++++++++++++++++++++++++++++++-
+ drivers/nfc/pn533/pn533.h |  10 +-
+ 2 files changed, 197 insertions(+), 6 deletions(-)
 
-Changes in v3:
-- depend on SERIAL_DEV_BUS in Kconfig
-
-Changes in v2:
-- switched from tty line discipline to serdev, resulting in many
-  simplifications
-- SPDX License Identifier
-
- drivers/nfc/pn533/Kconfig  |  11 ++
- drivers/nfc/pn533/Makefile |   2 +
- drivers/nfc/pn533/pn533.h  |   8 +
- drivers/nfc/pn533/uart.c   | 311 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 332 insertions(+)
- create mode 100644 drivers/nfc/pn533/uart.c
-
-diff --git a/drivers/nfc/pn533/Kconfig b/drivers/nfc/pn533/Kconfig
-index d94122dd30e4..29df7d97d209 100644
---- a/drivers/nfc/pn533/Kconfig
-+++ b/drivers/nfc/pn533/Kconfig
-@@ -25,3 +25,14 @@ config NFC_PN533_I2C
+diff --git a/drivers/nfc/pn533/pn533.c b/drivers/nfc/pn533/pn533.c
+index f0c541152777..8c21ee72832f 100644
+--- a/drivers/nfc/pn533/pn533.c
++++ b/drivers/nfc/pn533/pn533.c
+@@ -197,6 +197,32 @@ struct pn533_cmd_jump_dep_response {
+ 	u8 gt[];
+ } __packed;
  
- 	  If you choose to build a module, it'll be called pn533_i2c.
- 	  Say N if unsure.
++struct pn532_autopoll_resp {
++	u8 type;
++	u8 ln;
++	u8 tg;
++	u8 tgdata[];
++} __packed;
 +
-+config NFC_PN532_UART
-+	tristate "NFC PN532 device support (UART)"
-+	depends on SERIAL_DEV_BUS
-+	select NFC_PN533
-+	---help---
-+	  This module adds support for the NXP pn532 UART interface.
-+	  Select this if your platform is using the UART bus.
++/* PN532_CMD_IN_AUTOPOLL */
++#define PN532_AUTOPOLL_POLLNR_INFINITE	0xff
++#define PN532_AUTOPOLL_PERIOD		0x03 /* in units of 150 ms */
 +
-+	  If you choose to build a module, it'll be called pn532_uart.
-+	  Say N if unsure.
-diff --git a/drivers/nfc/pn533/Makefile b/drivers/nfc/pn533/Makefile
-index 51d24c622fcb..bdfd6860d5e4 100644
---- a/drivers/nfc/pn533/Makefile
-+++ b/drivers/nfc/pn533/Makefile
-@@ -3,7 +3,9 @@
- #
- pn533_usb-objs  = usb.o
- pn533_i2c-objs  = i2c.o
-+pn532_uart-objs  = uart.o
++#define PN532_AUTOPOLL_TYPE_GENERIC_106		0x00
++#define PN532_AUTOPOLL_TYPE_GENERIC_212		0x01
++#define PN532_AUTOPOLL_TYPE_GENERIC_424		0x02
++#define PN532_AUTOPOLL_TYPE_JEWEL		0x04
++#define PN532_AUTOPOLL_TYPE_MIFARE		0x10
++#define PN532_AUTOPOLL_TYPE_FELICA212		0x11
++#define PN532_AUTOPOLL_TYPE_FELICA424		0x12
++#define PN532_AUTOPOLL_TYPE_ISOA		0x20
++#define PN532_AUTOPOLL_TYPE_ISOB		0x23
++#define PN532_AUTOPOLL_TYPE_DEP_PASSIVE_106	0x40
++#define PN532_AUTOPOLL_TYPE_DEP_PASSIVE_212	0x41
++#define PN532_AUTOPOLL_TYPE_DEP_PASSIVE_424	0x42
++#define PN532_AUTOPOLL_TYPE_DEP_ACTIVE_106	0x80
++#define PN532_AUTOPOLL_TYPE_DEP_ACTIVE_212	0x81
++#define PN532_AUTOPOLL_TYPE_DEP_ACTIVE_424	0x82
  
- obj-$(CONFIG_NFC_PN533)     += pn533.o
- obj-$(CONFIG_NFC_PN533_USB) += pn533_usb.o
- obj-$(CONFIG_NFC_PN533_I2C) += pn533_i2c.o
-+obj-$(CONFIG_NFC_PN532_UART) += pn532_uart.o
-diff --git a/drivers/nfc/pn533/pn533.h b/drivers/nfc/pn533/pn533.h
-index eb5ccefc32e5..d1a0543f66a8 100644
---- a/drivers/nfc/pn533/pn533.h
-+++ b/drivers/nfc/pn533/pn533.h
-@@ -55,6 +55,11 @@
+ /* PN533_TG_INIT_AS_TARGET */
+ #define PN533_INIT_TARGET_PASSIVE 0x1
+@@ -1401,6 +1427,101 @@ static int pn533_poll_dep(struct nfc_dev *nfc_dev)
+ 	return rc;
+ }
  
- /* Preamble (1), SoPC (2), ACK Code (2), Postamble (1) */
- #define PN533_STD_FRAME_ACK_SIZE 6
-+/*
-+ * Preamble (1), SoPC (2), Packet Length (1), Packet Length Checksum (1),
-+ * Specific Application Level Error Code (1) , Postamble (1)
-+ */
-+#define PN533_STD_ERROR_FRAME_SIZE 8
- #define PN533_STD_FRAME_CHECKSUM(f) (f->data[f->datalen])
- #define PN533_STD_FRAME_POSTAMBLE(f) (f->data[f->datalen + 1])
- /* Half start code (3), LEN (4) should be 0xffff for extended frame */
-@@ -96,6 +101,9 @@
- #define PN533_CMD_MI_MASK 0x40
- #define PN533_CMD_RET_SUCCESS 0x00
- 
-+#define PN533_FRAME_DATALEN_ACK 0x00
-+#define PN533_FRAME_DATALEN_ERROR 0x01
-+#define PN533_FRAME_DATALEN_EXTENDED 0xFF
- 
- enum  pn533_protocol_type {
- 	PN533_PROTO_REQ_ACK_RESP = 0,
-diff --git a/drivers/nfc/pn533/uart.c b/drivers/nfc/pn533/uart.c
-new file mode 100644
-index 000000000000..7df6d2fb8466
---- /dev/null
-+++ b/drivers/nfc/pn533/uart.c
-@@ -0,0 +1,311 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Driver for NXP PN532 NFC Chip - UART transport layer
-+ *
-+ * Copyright (C) 2018 Lemonage Software GmbH
-+ * Author: Lars Pöschel <poeschel@lemonage.de>
-+ * All rights reserved.
-+ */
-+
-+#include <linux/device.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/nfc.h>
-+#include <linux/netdevice.h>
-+#include <linux/of.h>
-+#include <linux/serdev.h>
-+#include "pn533.h"
-+
-+#define PN532_UART_SKB_BUFF_LEN	(PN533_CMD_DATAEXCH_DATA_MAXLEN * 2)
-+
-+enum send_wakeup {
-+	PN532_SEND_NO_WAKEUP = 0,
-+	PN532_SEND_WAKEUP,
-+	PN532_SEND_LAST_WAKEUP,
-+};
-+
-+
-+struct pn532_uart_phy {
-+	struct serdev_device *serdev;
-+	struct sk_buff *recv_skb;
-+	struct pn533 *priv;
-+	enum send_wakeup send_wakeup;
-+	struct timer_list cmd_timeout;
-+	struct sk_buff *cur_out_buf;
-+};
-+
-+static int pn532_uart_send_frame(struct pn533 *dev,
-+				struct sk_buff *out)
++static int pn533_autopoll_complete(struct pn533 *dev, void *arg,
++			       struct sk_buff *resp)
 +{
-+	/* wakeup sequence and dummy bytes for waiting time */
-+	static const u8 wakeup[] = {
-+		0x55, 0x55, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-+	struct pn532_uart_phy *pn532 = dev->phy;
-+	int err;
++	u8 nbtg;
++	int rc;
++	struct pn532_autopoll_resp *apr;
++	struct nfc_target nfc_tgt;
 +
-+	print_hex_dump_debug("PN532_uart TX: ", DUMP_PREFIX_NONE, 16, 1,
-+			     out->data, out->len, false);
++	if (IS_ERR(resp)) {
++		rc = PTR_ERR(resp);
 +
-+	pn532->cur_out_buf = out;
-+	if (pn532->send_wakeup) {
-+		err= serdev_device_write(pn532->serdev,
-+				wakeup, sizeof(wakeup),
-+				MAX_SCHEDULE_TIMEOUT);
-+		if (err < 0)
-+			return err;
-+	}
++		nfc_err(dev->dev, "%s  autopoll complete error %d\n",
++			__func__, rc);
 +
-+	if (pn532->send_wakeup == PN532_SEND_LAST_WAKEUP) {
-+		pn532->send_wakeup = PN532_SEND_NO_WAKEUP;
-+	}
-+
-+	err = serdev_device_write(pn532->serdev, out->data, out->len,
-+			MAX_SCHEDULE_TIMEOUT);
-+	if (err < 0)
-+		return err;
-+
-+	mod_timer(&pn532->cmd_timeout, HZ / 40 + jiffies);
-+	return 0;
-+}
-+
-+static int pn532_uart_send_ack(struct pn533 *dev, gfp_t flags)
-+{
-+	struct pn532_uart_phy *pn532 = dev->phy;
-+	/* spec 7.1.1.3:  Preamble, SoPC (2), ACK Code (2), Postamble */
-+	static const u8 ack[PN533_STD_FRAME_ACK_SIZE] = {
-+			0x00, 0x00, 0xff, 0x00, 0xff, 0x00};
-+	int err;
-+
-+	err = serdev_device_write(pn532->serdev, ack, sizeof(ack),
-+			MAX_SCHEDULE_TIMEOUT);
-+	if (err < 0)
-+		return err;
-+
-+	return 0;
-+}
-+
-+static void pn532_uart_abort_cmd(struct pn533 *dev, gfp_t flags)
-+{
-+	/* An ack will cancel the last issued command */
-+	pn532_uart_send_ack(dev, flags);
-+	/* schedule cmd_complete_work to finish current command execution */
-+	pn533_recv_frame(dev, NULL, -ENOENT);
-+}
-+
-+static void pn532_dev_up(struct pn533 *dev)
-+{
-+	struct pn532_uart_phy *pn532 = dev->phy;
-+
-+	serdev_device_open(pn532->serdev);
-+	pn532->send_wakeup = PN532_SEND_LAST_WAKEUP;
-+}
-+
-+static void pn532_dev_down(struct pn533 *dev)
-+{
-+	struct pn532_uart_phy *pn532 = dev->phy;
-+
-+	serdev_device_close(pn532->serdev);
-+	pn532->send_wakeup = PN532_SEND_WAKEUP;
-+}
-+
-+static struct pn533_phy_ops uart_phy_ops = {
-+	.send_frame = pn532_uart_send_frame,
-+	.send_ack = pn532_uart_send_ack,
-+	.abort_cmd = pn532_uart_abort_cmd,
-+	.dev_up = pn532_dev_up,
-+	.dev_down = pn532_dev_down,
-+};
-+
-+static void pn532_cmd_timeout(struct timer_list *t)
-+{
-+	struct pn532_uart_phy *dev = from_timer(dev, t, cmd_timeout);
-+
-+	pn532_uart_send_frame(dev->priv, dev->cur_out_buf);
-+}
-+
-+/*
-+ * scans the buffer if it contains a pn532 frame. It is not checked if the
-+ * frame is really valid. This is later done with pn533_rx_frame_is_valid.
-+ * This is useful for malformed or errornous transmitted frames. Adjusts the
-+ * bufferposition where the frame starts, since pn533_recv_frame expects a
-+ * well formed frame.
-+ */
-+static int pn532_uart_rx_is_frame(struct sk_buff *skb)
-+{
-+	int i;
-+	u16 frame_len;
-+	struct pn533_std_frame *std;
-+	struct pn533_ext_frame *ext;
-+
-+	for (i = 0; i + PN533_STD_FRAME_ACK_SIZE <= skb->len; i++) {
-+		std = (struct pn533_std_frame *)&skb->data[i];
-+		/* search start code */
-+		if (std->start_frame != cpu_to_be16(PN533_STD_FRAME_SOF))
-+			continue;
-+
-+		/* frame type */
-+		switch (std->datalen) {
-+		case PN533_FRAME_DATALEN_ACK:
-+			if (std->datalen_checksum == 0xff) {
-+				skb_pull(skb, i);
-+				return 1;
-+			}
-+
-+			break;
-+		case PN533_FRAME_DATALEN_ERROR:
-+			if ((std->datalen_checksum == 0xff) &&
-+					(skb->len >=
-+					 PN533_STD_ERROR_FRAME_SIZE)) {
-+				skb_pull(skb, i);
-+				return 1;
-+			}
-+
-+			break;
-+		case PN533_FRAME_DATALEN_EXTENDED:
-+			ext = (struct pn533_ext_frame *)&skb->data[i];
-+			frame_len = ext->datalen;
-+			if (skb->len >= frame_len +
-+					sizeof(struct pn533_ext_frame) +
-+					2 /* CKS + Postamble */) {
-+				skb_pull(skb, i);
-+				return 1;
-+			}
-+
-+			break;
-+		default: /* normal information frame */
-+			frame_len = std->datalen;
-+			if (skb->len >= frame_len +
-+					sizeof(struct pn533_std_frame) +
-+					2 /* CKS + Postamble */) {
-+				skb_pull(skb, i);
-+				return 1;
-+			}
-+
-+			break;
++		if (rc == -ENOENT) {
++			if (dev->poll_mod_count != 0)
++				return rc;
++			goto stop_poll;
++		} else if (rc < 0) {
++			nfc_err(dev->dev,
++				"Error %d when running autopoll\n", rc);
++			goto stop_poll;
 +		}
 +	}
 +
-+	return 0;
-+}
++	nbtg = resp->data[0];
++	if ((nbtg > 2) || (nbtg <= 0))
++		return -EAGAIN;
 +
-+static int pn532_receive_buf(struct serdev_device *serdev,
-+		const unsigned char *data, size_t count)
-+{
-+	struct pn532_uart_phy *dev = serdev_device_get_drvdata(serdev);
-+	size_t i;
++	apr = (struct pn532_autopoll_resp *)&resp->data[1];
++	while (nbtg--) {
++		memset(&nfc_tgt, 0, sizeof(struct nfc_target));
++		switch (apr->type) {
++		case PN532_AUTOPOLL_TYPE_ISOA:
++			dev_dbg(dev->dev, "ISOA");
++			rc = pn533_target_found_type_a(&nfc_tgt, apr->tgdata,
++						       apr->ln - 1);
++			break;
++		case PN532_AUTOPOLL_TYPE_FELICA212:
++		case PN532_AUTOPOLL_TYPE_FELICA424:
++			dev_dbg(dev->dev, "FELICA");
++			rc = pn533_target_found_felica(&nfc_tgt, apr->tgdata,
++						       apr->ln - 1);
++			break;
++		case PN532_AUTOPOLL_TYPE_JEWEL:
++			dev_dbg(dev->dev, "JEWEL");
++			rc = pn533_target_found_jewel(&nfc_tgt, apr->tgdata,
++						      apr->ln - 1);
++			break;
++		case PN532_AUTOPOLL_TYPE_ISOB:
++			dev_dbg(dev->dev, "ISOB");
++			rc = pn533_target_found_type_b(&nfc_tgt, apr->tgdata,
++						       apr->ln - 1);
++			break;
++		case PN532_AUTOPOLL_TYPE_MIFARE:
++			dev_dbg(dev->dev, "Mifare");
++			rc = pn533_target_found_type_a(&nfc_tgt, apr->tgdata,
++						       apr->ln - 1);
++			break;
++		default:
++			nfc_err(dev->dev,
++				    "Unknown current poll modulation");
++			rc = -EPROTO;
++		}
 +
-+	del_timer(&dev->cmd_timeout);
-+	for (i = 0; i < count; i++) {
-+		skb_put_u8(dev->recv_skb, *data++);
-+		if (!pn532_uart_rx_is_frame(dev->recv_skb))
-+			continue;
++		if (rc)
++			goto done;
 +
-+		pn533_recv_frame(dev->priv, dev->recv_skb, 0);
-+		dev->recv_skb = alloc_skb(PN532_UART_SKB_BUFF_LEN, GFP_KERNEL);
-+		if (!dev->recv_skb)
-+			return 0;
++		if (!(nfc_tgt.supported_protocols & dev->poll_protocols)) {
++			nfc_err(dev->dev,
++				    "The Tg found doesn't have the desired protocol");
++			rc = -EAGAIN;
++			goto done;
++		}
++
++		dev->tgt_available_prots = nfc_tgt.supported_protocols;
++		apr = (struct pn532_autopoll_resp *)
++			(apr->tgdata + (apr->ln - 1));
 +	}
 +
-+	return i;
++	pn533_poll_reset_mod_list(dev);
++	nfc_targets_found(dev->nfc_dev, &nfc_tgt, 1);
++
++done:
++	dev_kfree_skb(resp);
++	return rc;
++
++stop_poll:
++	nfc_err(dev->dev, "autopoll operation has been stopped\n");
++
++	pn533_poll_reset_mod_list(dev);
++	dev->poll_protocols = 0;
++	return rc;
 +}
 +
-+static struct serdev_device_ops pn532_serdev_ops = {
-+	.receive_buf = pn532_receive_buf,
-+	.write_wakeup = serdev_device_write_wakeup,
-+};
+ static int pn533_poll_complete(struct pn533 *dev, void *arg,
+ 			       struct sk_buff *resp)
+ {
+@@ -1546,6 +1667,7 @@ static int pn533_start_poll(struct nfc_dev *nfc_dev,
+ 	struct pn533_poll_modulations *cur_mod;
+ 	u8 rand_mod;
+ 	int rc;
++	struct sk_buff *skb;
+ 
+ 	dev_dbg(dev->dev,
+ 		"%s: im protocols 0x%x tm protocols 0x%x\n",
+@@ -1569,9 +1691,73 @@ static int pn533_start_poll(struct nfc_dev *nfc_dev,
+ 			tm_protocols = 0;
+ 	}
+ 
+-	pn533_poll_create_mod_list(dev, im_protocols, tm_protocols);
+ 	dev->poll_protocols = im_protocols;
+ 	dev->listen_protocols = tm_protocols;
++	if (dev->device_type == PN533_DEVICE_PN532_AUTOPOLL) {
++		skb = pn533_alloc_skb(dev, 4 + 6);
++		if (!skb)
++			return -ENOMEM;
 +
-+static const struct of_device_id pn532_uart_of_match[] = {
-+	{ .compatible = "nxp,pn532-uart", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, pn532_uart_of_match);
++		*((u8 *)skb_put(skb, sizeof(u8))) =
++			PN532_AUTOPOLL_POLLNR_INFINITE;
++		*((u8 *)skb_put(skb, sizeof(u8))) = PN532_AUTOPOLL_PERIOD;
 +
-+static int pn532_uart_probe(struct serdev_device *serdev)
-+{
-+	struct pn532_uart_phy *pn532;
-+	struct pn533 *priv;
-+	int err;
++		if ((im_protocols & NFC_PROTO_MIFARE_MASK) &&
++				(im_protocols & NFC_PROTO_ISO14443_MASK) &&
++				(im_protocols & NFC_PROTO_NFC_DEP_MASK))
++			*((u8 *)skb_put(skb, sizeof(u8))) =
++				PN532_AUTOPOLL_TYPE_GENERIC_106;
++		else {
++			if (im_protocols & NFC_PROTO_MIFARE_MASK)
++				*((u8 *)skb_put(skb, sizeof(u8))) =
++					PN532_AUTOPOLL_TYPE_MIFARE;
 +
-+	err = -ENOMEM;
-+	pn532 = kzalloc(sizeof(*pn532), GFP_KERNEL);
-+	if (!pn532)
-+		goto err_exit;
++			if (im_protocols & NFC_PROTO_ISO14443_MASK)
++				*((u8 *)skb_put(skb, sizeof(u8))) =
++					PN532_AUTOPOLL_TYPE_ISOA;
 +
-+	pn532->recv_skb = alloc_skb(PN532_UART_SKB_BUFF_LEN, GFP_KERNEL);
-+	if (!pn532->recv_skb)
-+		goto err_free;
++			if (im_protocols & NFC_PROTO_NFC_DEP_MASK) {
++				*((u8 *)skb_put(skb, sizeof(u8))) =
++					PN532_AUTOPOLL_TYPE_DEP_PASSIVE_106;
++				*((u8 *)skb_put(skb, sizeof(u8))) =
++					PN532_AUTOPOLL_TYPE_DEP_PASSIVE_212;
++				*((u8 *)skb_put(skb, sizeof(u8))) =
++					PN532_AUTOPOLL_TYPE_DEP_PASSIVE_424;
++			}
++		}
 +
-+	pn532->serdev = serdev;
-+	serdev_device_set_drvdata(serdev, pn532);
-+	serdev_device_set_client_ops(serdev, &pn532_serdev_ops);
-+	err = serdev_device_open(serdev);
-+	if (err) {
-+		dev_err(&serdev->dev, "Unable to open device\n");
-+		goto err_skb;
++		if (im_protocols & NFC_PROTO_FELICA_MASK ||
++				im_protocols & NFC_PROTO_NFC_DEP_MASK) {
++			*((u8 *)skb_put(skb, sizeof(u8))) =
++				PN532_AUTOPOLL_TYPE_FELICA212;
++			*((u8 *)skb_put(skb, sizeof(u8))) =
++				PN532_AUTOPOLL_TYPE_FELICA424;
++		}
++
++		if (im_protocols & NFC_PROTO_JEWEL_MASK)
++			*((u8 *)skb_put(skb, sizeof(u8))) =
++				PN532_AUTOPOLL_TYPE_JEWEL;
++
++		if (im_protocols & NFC_PROTO_ISO14443_B_MASK)
++			*((u8 *)skb_put(skb, sizeof(u8))) =
++				PN532_AUTOPOLL_TYPE_ISOB;
++
++		if (tm_protocols)
++			*((u8 *)skb_put(skb, sizeof(u8))) =
++				PN532_AUTOPOLL_TYPE_DEP_ACTIVE_106;
++
++		rc = pn533_send_cmd_async(dev, PN533_CMD_IN_AUTOPOLL, skb,
++				pn533_autopoll_complete, NULL);
++
++		if (rc < 0)
++			dev_kfree_skb(skb);
++		else
++			dev->poll_mod_count++;
++
++		return rc;
 +	}
 +
-+	err = serdev_device_set_baudrate(serdev, 115200);
-+	if (err != 115200) {
-+		err = -EINVAL;
-+		goto err_serdev;
-+	}
-+
-+	serdev_device_set_flow_control(serdev, false);
-+	pn532->send_wakeup = PN532_SEND_WAKEUP;
-+	timer_setup(&pn532->cmd_timeout, pn532_cmd_timeout, 0);
-+	priv = pn533_register_device(PN533_DEVICE_PN532,
-+				     PN533_NO_TYPE_B_PROTOCOLS,
-+				     PN533_PROTO_REQ_ACK_RESP,
-+				     pn532, &uart_phy_ops, NULL,
-+				     &pn532->serdev->dev,
-+				     &serdev->dev);
-+	if (IS_ERR(priv)) {
-+		err = PTR_ERR(priv);
-+		goto err_serdev;
-+	}
-+
-+	pn532->priv = priv;
-+	err = pn533_finalize_setup(pn532->priv);
-+	if (err)
-+		goto err_unregister;
-+
-+	serdev_device_close(serdev);
-+	return 0;
-+
-+err_unregister:
-+	pn533_unregister_device(pn532->priv);
-+err_serdev:
-+	serdev_device_close(serdev);
-+err_skb:
-+	kfree_skb(pn532->recv_skb);
-+err_free:
-+	kfree(pn532);
-+err_exit:
-+	return err;
-+}
-+
-+static void pn532_uart_remove(struct serdev_device *serdev)
-+{
-+	struct pn532_uart_phy *pn532 = serdev_device_get_drvdata(serdev);
-+
-+	pn533_unregister_device(pn532->priv);
-+	serdev_device_close(serdev);
-+	kfree_skb(pn532->recv_skb);
-+	kfree(pn532);
-+}
-+
-+static struct serdev_device_driver pn532_uart_driver = {
-+	.probe = pn532_uart_probe,
-+	.remove = pn532_uart_remove,
-+	.driver = {
-+		.name = "pn532_uart",
-+		.of_match_table = of_match_ptr(pn532_uart_of_match),
-+	},
-+};
-+
-+module_serdev_device_driver(pn532_uart_driver);
-+
-+MODULE_AUTHOR("Lars Pöschel <poeschel@lemonage.de>");
-+MODULE_DESCRIPTION("PN532 UART driver");
-+MODULE_LICENSE("GPL");
++	pn533_poll_create_mod_list(dev, im_protocols, tm_protocols);
+ 
+ 	/* Do not always start polling from the same modulation */
+ 	get_random_bytes(&rand_mod, sizeof(rand_mod));
+@@ -2471,7 +2657,8 @@ static int pn533_dev_up(struct nfc_dev *nfc_dev)
+ 	if (dev->phy_ops)
+ 		dev->phy_ops->dev_up(dev);
+ 
+-	if (dev->device_type == PN533_DEVICE_PN532) {
++	if ((dev->device_type == PN533_DEVICE_PN532) ||
++		(dev->device_type == PN533_DEVICE_PN532_AUTOPOLL)) {
+ 		int rc = pn532_sam_configuration(nfc_dev);
+ 
+ 		if (rc)
+@@ -2518,6 +2705,7 @@ static int pn533_setup(struct pn533 *dev)
+ 	case PN533_DEVICE_PASORI:
+ 	case PN533_DEVICE_ACR122U:
+ 	case PN533_DEVICE_PN532:
++	case PN533_DEVICE_PN532_AUTOPOLL:
+ 		max_retries.mx_rty_atr = 0x2;
+ 		max_retries.mx_rty_psl = 0x1;
+ 		max_retries.mx_rty_passive_act =
+@@ -2554,6 +2742,7 @@ static int pn533_setup(struct pn533 *dev)
+ 	switch (dev->device_type) {
+ 	case PN533_DEVICE_STD:
+ 	case PN533_DEVICE_PN532:
++	case PN533_DEVICE_PN532_AUTOPOLL:
+ 		break;
+ 
+ 	case PN533_DEVICE_PASORI:
+diff --git a/drivers/nfc/pn533/pn533.h b/drivers/nfc/pn533/pn533.h
+index d1a0543f66a8..e0636263911d 100644
+--- a/drivers/nfc/pn533/pn533.h
++++ b/drivers/nfc/pn533/pn533.h
+@@ -18,10 +18,11 @@
+  * along with this program; if not, see <http://www.gnu.org/licenses/>.
+  */
+ 
+-#define PN533_DEVICE_STD     0x1
+-#define PN533_DEVICE_PASORI  0x2
+-#define PN533_DEVICE_ACR122U 0x3
+-#define PN533_DEVICE_PN532   0x4
++#define PN533_DEVICE_STD		0x1
++#define PN533_DEVICE_PASORI		0x2
++#define PN533_DEVICE_ACR122U		0x3
++#define PN533_DEVICE_PN532		0x4
++#define PN533_DEVICE_PN532_AUTOPOLL	0x5
+ 
+ #define PN533_ALL_PROTOCOLS (NFC_PROTO_JEWEL_MASK | NFC_PROTO_MIFARE_MASK |\
+ 			     NFC_PROTO_FELICA_MASK | NFC_PROTO_ISO14443_MASK |\
+@@ -87,6 +88,7 @@
+ #define PN533_CMD_IN_ATR 0x50
+ #define PN533_CMD_IN_RELEASE 0x52
+ #define PN533_CMD_IN_JUMP_FOR_DEP 0x56
++#define PN533_CMD_IN_AUTOPOLL 0x60
+ 
+ #define PN533_CMD_TG_INIT_AS_TARGET 0x8c
+ #define PN533_CMD_TG_GET_DATA 0x86
 -- 
 2.19.1
 
