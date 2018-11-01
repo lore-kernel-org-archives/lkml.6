@@ -2,224 +2,117 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A22DBC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 03:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C79C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 03:31:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44CD4205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 03:30:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB40820821
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 03:31:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DuezBhGe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44CD4205F4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P5/impSg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB40820821
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbeKAMbu (ORCPT
+        id S1727721AbeKAMc4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 08:31:50 -0400
-Received: from mail-qt1-f174.google.com ([209.85.160.174]:42906 "EHLO
-        mail-qt1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726095AbeKAMbt (ORCPT
+        Thu, 1 Nov 2018 08:32:56 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:43804 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726095AbeKAMc4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 08:31:49 -0400
-Received: by mail-qt1-f174.google.com with SMTP id z20-v6so19664183qti.9;
-        Wed, 31 Oct 2018 20:30:44 -0700 (PDT)
+        Thu, 1 Nov 2018 08:32:56 -0400
+Received: by mail-qt1-f193.google.com with SMTP id q41-v6so19665046qtq.10;
+        Wed, 31 Oct 2018 20:31:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=cuLNrA7rriyAhJkMEFnPydKWkWCnPgwIADQDCUFLAjQ=;
-        b=DuezBhGe3fOCv3TBGPdSZb3kL2By1e3DJyKQyyu1ffKwrDf+2cuZTWhxNMorlYPsVk
-         Yb0+zZgEyIlxeVUt/izJATaUCH9Eql9Ody0v4Ny+BJLFmdPxU+G7Nrn7nJslg/EUIlF+
-         aylg/OoDgg9lY4grBNLlDA+9/wiFzQ+aEofjsY/6yjZWYa3bmE20J/D8A+8Oq9ad8pAB
-         /cKNazvEWFUed68Azl1XF/F4zeqy/HsWM6fBC0ZRT6rTWrHxkoBxQPgMn/dzloInpLWl
-         XlcaguJA9pLJgevCvTELY0LKV8/KL9KUUKfeWfYRziuQcpMkvM2r4cWnhPZXc2a3fEbH
-         DYWQ==
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=lWf37p3dhx7nWeWFHqzSLi9W8b8nayEV+RYUolXDX/Y=;
+        b=P5/impSgtyzVMe9u7MCYJ5rBkDGYafY70KPQXDnyNbH+O9msr1esswl3PKdyYMtGOs
+         4mJAZzDnnTFCZ6PHrQpO40qR565vRPAW64euajyGpjRHlMmyVUJC8u/GCF8PCCNWDz4T
+         U+rr7j4CehdGgIeSpuxkTjhevSj/7phIe4PLaoEkopxOmcmHpMZ4jMoh9SbdwYCSO9zP
+         6rVk/dH9cwHhFA2z/ASksW7iYmQnzSqty1aO1U/m3sH9fyfdd9Mh2tRlU3PBDBNDY15h
+         DTDqzulQEkhV6q/2FT55XJqDc0+edB4Az68gtxeXxZYbCfFWQbaR30A0kzhuBPYGouAP
+         hfRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=cuLNrA7rriyAhJkMEFnPydKWkWCnPgwIADQDCUFLAjQ=;
-        b=En9EiMvfyEfhb8NytsAf+VdKJ661ZC/Y+aNZvDpfNGdOp60N00V1MiSOAh+kQx6KR1
-         SojpRWzzCjC1zR8j4lgEnxVmt8Epw+Y9o9mHhXpmF+/TjRafD97AAbj335SKCIeAsE+S
-         sDu4FTKbbLOyS1atlVImfbw+GpfEG6O2RLAm7ZJFqryPAEWzEvWzO36YqerHoCJQqpvx
-         cJlNB8MqYhyqcrKKRWbnJPsc33ymdFR2SDr+XVs1Zc0BRQsNWARxFmUsw5va7Z1wkBdj
-         KuM98K6MjCxbgokIqbAJaQQoEGvW2Gqp4nrsoUN5LUZ9HyNuZPjY4fHw5RsB2BDDIc1Q
-         0W5g==
-X-Gm-Message-State: AGRZ1gISH+k8TIpFOwFiHWKULxo9Pg/nxYs1rXkTNsmlglboScQB84KP
-        EBn7U3thh1rpCbU/yJcfA0o=
-X-Google-Smtp-Source: AJdET5c/jTr4Wm+dP8r3hPXzQ6km+SOwzxqK1MB5H4pSuCfya/L2jWijh3GYh8/dhrd5ub5989NhMQ==
-X-Received: by 2002:a0c:94e5:: with SMTP id k34mr5285950qvk.215.1541043043833;
-        Wed, 31 Oct 2018 20:30:43 -0700 (PDT)
-Received: from localhost.localdomain ([179.159.21.48])
-        by smtp.gmail.com with ESMTPSA id 83sm29956779qkz.73.2018.10.31.20.30.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 20:30:43 -0700 (PDT)
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=lWf37p3dhx7nWeWFHqzSLi9W8b8nayEV+RYUolXDX/Y=;
+        b=SStJHR4pVzZs3XgG0OeYbTBK7cW7Xm1sJwCi4r1+yZ/8+I/URRzCqrqzKvPomR4zqb
+         EA6/5GfXK9M5oP7fskDklJaNnNySjk9A5uZElZWp0Xf7JF9oMCOgNi5m0SKf+wfx1s+k
+         FtOoTDj8Uk4gisBIK4ggn64rpgZxn2G0EjZogRCPpi93DjK7zlYpS+2KkAvyRr3zaAgS
+         aL62Sy5+c5NuR3qHf1qpBwYXRVx8V2F6itKRJuQIJH+8dG4RwtY/NHzw49FbUu+V9iX8
+         6oDbhbfSKnCky7XjkZFqSxDtGza9kNR8RP2xPm+/zaZn68Xkzc2ISup+CwjnPY1Byk3d
+         PCzg==
+X-Gm-Message-State: AGRZ1gJ3fTBG89pamMmhc0DSbqG9sH5jauCZJiGoLzX7zkru5ArcVARr
+        9u9Fxz5jcDUlcmzDYQC6yus=
+X-Google-Smtp-Source: AJdET5eyHyUwKSLQA51TjzjNW7nLjuVK1OHeNAO/4BT6CP8kyGJXQuQXkIlPMBQJWGjADpb/t+4HrA==
+X-Received: by 2002:aed:2663:: with SMTP id z90-v6mr5231900qtc.301.1541043109386;
+        Wed, 31 Oct 2018 20:31:49 -0700 (PDT)
+Received: from WindFlash ([179.159.21.48])
+        by smtp.gmail.com with ESMTPSA id d8-v6sm1859164qtd.34.2018.10.31.20.31.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 31 Oct 2018 20:31:48 -0700 (PDT)
+Message-ID: <0c600eb1a48f7ad1b903a9497b1104b172607dc3.camel@gmail.com>
+Subject: Re: [PATCH v3 4/5] modpost: Changes parameter name to avoid
+ shadowing.
 From:   Leonardo Bras <leobras.c@gmail.com>
-To:     lkcamp@lists.libreplanetbr.org
-Cc:     Leonardo Bras <leobras.c@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     lkcamp@lists.libreplanetbr.org, Borislav Petkov <bp@alien8.de>,
+        David.Laight@aculab.com, Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, helen@koikeco.de,
         Michal Marek <michal.lkml@markovi.net>,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] modpost: Refactor and removes global variable *modules
-Date:   Thu,  1 Nov 2018 00:30:38 -0300
-Message-Id: <20181101033038.24142-1-leobras.c@gmail.com>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Thu, 01 Nov 2018 00:31:44 -0300
+In-Reply-To: <16b6518d7b36787e1813d62336b661bf603d54b2.camel@gmail.com>
+References: <20181024040354.24879-1-leobras.c@gmail.com>
+         <20181024040354.24879-5-leobras.c@gmail.com>
+         <CAK7LNAQzgdFPpwHEtfDazLd2jAhNy8=f_4mvOQMWfOWCb07E1Q@mail.gmail.com>
+         <16b6518d7b36787e1813d62336b661bf603d54b2.camel@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Refactors the code to accept the modules list as a parameter in
-the functions that need it, and moves the variable from the
-global scope to the main function scope.
+Em qua, 2018-10-31 às 20:24 -0300, Leonardo Bras escreveu:
+> Em seg, 2018-10-29 às 01:42 +0900, Masahiro Yamada escreveu:
+> > On Wed, Oct 24, 2018 at 1:05 PM Leonardo Bras <leobras.c@gmail.com>
+> > wrote:
+> > > Changes the parameter name to avoid shadowing a variable.
+> > > 
+> > > Signed-off-by: Leonardo Bras <leobras.c@gmail.com>
+> > 
+> > For this one, I'd rather like to see code refactoring
+> > than renaming the variable.
+> > 
+> > I will take a closer look.
+> 
+> What do you suggest to refactor?
+> I volunteer for this work.
+> 
+> Leonardo Bras
+> 
 
-This also fixes the parameter shadowing of add_depends.
+I refactored the code to move the global variable *modules to a local
+context at function main, and changed the functions to accept *modules
+as a parameter.
 
-Signed-off-by: Leonardo Bras <leobras.c@gmail.com>
----
- scripts/mod/modpost.c | 39 ++++++++++++++++++++-------------------
- 1 file changed, 20 insertions(+), 19 deletions(-)
+Is that what you had in mind?
 
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index 0d998c54564d..bebe65ed957a 100644
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -118,10 +118,7 @@ void *do_nofail(void *ptr, const char *expr)
- 	return ptr;
- }
- 
--/* A list of all modules we processed */
--static struct module *modules;
--
--static struct module *find_module(const char *modname)
-+static struct module *find_module(const char *modname, struct module *modules)
- {
- 	struct module *mod;
- 
-@@ -131,7 +128,7 @@ static struct module *find_module(const char *modname)
- 	return mod;
- }
- 
--static struct module *new_module(const char *modname)
-+static struct module *new_module(const char *modname, struct module **pmodules)
- {
- 	struct module *mod;
- 	char *p;
-@@ -149,8 +146,8 @@ static struct module *new_module(const char *modname)
- 	/* add to list */
- 	mod->name = p;
- 	mod->gpl_compatible = -1;
--	mod->next = modules;
--	modules = mod;
-+	mod->next = *pmodules;
-+	*pmodules = mod;
- 
- 	return mod;
- }
-@@ -1929,7 +1926,7 @@ static char *remove_dot(char *s)
- 	return s;
- }
- 
--static void read_symbols(const char *modname)
-+static void read_symbols(const char *modname, struct module **pmodules)
- {
- 	const char *symname;
- 	char *version;
-@@ -1941,7 +1938,7 @@ static void read_symbols(const char *modname)
- 	if (!parse_elf(&info, modname))
- 		return;
- 
--	mod = new_module(modname);
-+	mod = new_module(modname, pmodules);
- 
- 	/* When there's no vmlinux, don't print warnings about
- 	 * unresolved symbols (since there'll be too many ;) */
-@@ -1992,7 +1989,8 @@ static void read_symbols(const char *modname)
- 		mod->unres = alloc_symbol("module_layout", 0, mod->unres);
- }
- 
--static void read_symbols_from_files(const char *filename)
-+static void read_symbols_from_files(const char *filename,
-+				    struct module **pmodules)
- {
- 	FILE *in = stdin;
- 	char fname[PATH_MAX];
-@@ -2006,7 +2004,7 @@ static void read_symbols_from_files(const char *filename)
- 	while (fgets(fname, PATH_MAX, in) != NULL) {
- 		if (strends(fname, "\n"))
- 			fname[strlen(fname)-1] = '\0';
--		read_symbols(fname);
-+		read_symbols(fname, pmodules);
- 	}
- 
- 	if (in != stdin)
-@@ -2318,7 +2316,8 @@ static void write_if_changed(struct buffer *b, const char *fname)
- /* parse Module.symvers file. line format:
-  * 0x12345678<tab>symbol<tab>module[[<tab>export]<tab>something]
-  **/
--static void read_dump(const char *fname, unsigned int kernel)
-+static void read_dump(const char *fname, unsigned int kernel,
-+		      struct module **pmodules)
- {
- 	unsigned long size, pos = 0;
- 	void *file = grab_file(fname, &size);
-@@ -2347,11 +2346,11 @@ static void read_dump(const char *fname, unsigned int kernel)
- 		crc = strtoul(line, &d, 16);
- 		if (*symname == '\0' || *modname == '\0' || *d != '\0')
- 			goto fail;
--		mod = find_module(modname);
-+		mod = find_module(modname, *pmodules);
- 		if (!mod) {
- 			if (is_vmlinux(modname))
- 				have_vmlinux = 1;
--			mod = new_module(modname);
-+			mod = new_module(modname, pmodules);
- 			mod->skip = 1;
- 		}
- 		s = sym_add_exported(symname, mod, export_no(export));
-@@ -2415,6 +2414,8 @@ int main(int argc, char **argv)
- 	int err;
- 	struct ext_sym_list *extsym_iter;
- 	struct ext_sym_list *extsym_start = NULL;
-+	/* A list of all modules we processed */
-+	static struct module *modules;
- 
- 	while ((opt = getopt(argc, argv, "i:I:e:mnsST:o:awM:K:E")) != -1) {
- 		switch (opt) {
-@@ -2466,21 +2467,21 @@ int main(int argc, char **argv)
- 	}
- 
- 	if (kernel_read)
--		read_dump(kernel_read, 1);
-+		read_dump(kernel_read, 1, &modules);
- 	if (module_read)
--		read_dump(module_read, 0);
-+		read_dump(module_read, 0, &modules);
- 	while (extsym_start) {
--		read_dump(extsym_start->file, 0);
-+		read_dump(extsym_start->file, 0, &modules);
- 		extsym_iter = extsym_start->next;
- 		free(extsym_start);
- 		extsym_start = extsym_iter;
- 	}
- 
- 	while (optind < argc)
--		read_symbols(argv[optind++]);
-+		read_symbols(argv[optind++], &modules);
- 
- 	if (files_source)
--		read_symbols_from_files(files_source);
-+		read_symbols_from_files(files_source, &modules);
- 
- 	for (mod = modules; mod; mod = mod->next) {
- 		if (mod->skip)
--- 
-2.19.1
+https://lkml.org/lkml/2018/11/1/725
+
+Thanks for reading,
+
+Leonardo Bras
 
