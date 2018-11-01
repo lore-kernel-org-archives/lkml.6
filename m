@@ -2,100 +2,110 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 097DEC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9981EC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:41:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C22632081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:41:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 572D120820
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:41:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ldyq8k4U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C22632081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wTfgoxsi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 572D120820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728996AbeKAXoQ (ORCPT
+        id S1728965AbeKAXoV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 19:44:16 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:47013 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728680AbeKAXoO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 19:44:14 -0400
-Received: by mail-lf1-f68.google.com with SMTP id o2-v6so14344078lfl.13;
-        Thu, 01 Nov 2018 07:40:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=5CYC7TvGqETSeFhRceruurl+Tb4FvS5Rq+MfygM9JIE=;
-        b=ldyq8k4UGUALcCMImtgsxylY25oIybGcspBl7nRnW+x1BYyd+9KUuy9UrjRBRImv9l
-         ch5ryhkP7ogRGHUXT6AeG9P3WIj9pms47fJJfyeLG01ExZvTP12arQpHSrgK1DZIErSX
-         EEE9NobQBuSFuGXsMJtQHJ+FFMjMF5Zn/BAG89N3R+II6NCllF68oUOftI28C517plq5
-         iK59jDCHmWfOmso82BLDfbMciUJjiVpEmCzyYFzJmMonrXhNgZEGyrGbX7pPRWQ7AAMp
-         kkuGyMTrq4CXir1I0IbDGFudO0btDQ1ZLYQ/A9jGYWjxeuQshWtpigY6n9ga5RzFJ9Wt
-         d96A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5CYC7TvGqETSeFhRceruurl+Tb4FvS5Rq+MfygM9JIE=;
-        b=V0rQF4afjMVXysOhGp34fm6aN2fUZfXquAtxiYj4+FQU5+pTT32hdYOI1I0K4nG3Wt
-         M2uX2YDmD+MS9AVzMKCggjNEPSWK92msjRIqZptSFXIp0hAbe+WsBcrPU6jtn3qZsWq5
-         GkovegoipOrR3wNGZdgC+7d+GLtCdrzd5kY4BRNbD43B5iJBCGt3cM1NNL7VadhKVZ9j
-         NlekI08RxdtOR86AA3W44mx2WPpY4HlUpWSnFBgBhdnra9p/O6mpgMqivAfdhnLPhW8x
-         Z7O3ThjW8KZ0Vpuh+OxZ4KxQYrLDdHCy0V2odwsdIMN34eYsE/ZkKDBb9TOHwTI8LAVq
-         49qg==
-X-Gm-Message-State: AGRZ1gIwy3jsf9dp5gkS3a61kONRj9jriElw/7FTOzw4CIFewMb81+mJ
-        5B/zJdOyxpDLqReMAgG2ZoCpOUc62ZE=
-X-Google-Smtp-Source: AJdET5d2brU6ngoxn/SJdoTVamVE+k0NE8Fen/E0tFmNKLgjL51cZFZEclNcM+vT+fRrxI+/vthGpg==
-X-Received: by 2002:a19:7111:: with SMTP id m17mr4506320lfc.64.1541083257059;
-        Thu, 01 Nov 2018 07:40:57 -0700 (PDT)
-Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
-        by smtp.gmail.com with ESMTPSA id a9sm404870lfa.19.2018.11.01.07.40.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Nov 2018 07:40:54 -0700 (PDT)
-From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-To:     Stephen Boyd <sboyd@kernel.org>, Alan Tull <atull@kernel.org>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH 5/5] clk: gpio: Use devm_of_clk_add_provider
-Date:   Thu,  1 Nov 2018 15:40:44 +0100
-Message-Id: <20181101144044.11495-6-ricardo.ribalda@gmail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181101144044.11495-1-ricardo.ribalda@gmail.com>
-References: <20181101144044.11495-1-ricardo.ribalda@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 1 Nov 2018 19:44:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59488 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728181AbeKAXoV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 19:44:21 -0400
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D6E62081B;
+        Thu,  1 Nov 2018 14:41:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541083265;
+        bh=Fj3spcqpyIj9z8XTS0x+jk3+jcYVF4EUhv/wUnSwNto=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=wTfgoxsi6v9cnv2ZfFGgCxy+GrN8vWW8tg/URJTWS5S1YAzfeGcIvf2KdlM7BvV6Y
+         euTbAH9yrMgHnffKyRw5i4w87Qae+lv2k3fzGMX5Od5eBXXY+gfegVPDMFWq5H2cNb
+         Nom15Vgqlju+0LbxtVsb8oDIYPcHFcDk490Q9B+M=
+Date:   Thu, 1 Nov 2018 23:41:02 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     William Cohen <wcohen@redhat.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Laura Abbott <labbott@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] ARM: kprobes: Fix false positive with FORTIFY_SOURCE
+Message-Id: <20181101234102.5fd16894fefffe18fccd6999@kernel.org>
+In-Reply-To: <cbeccaf1-33ec-0e54-0cfa-8cff81bbc1cd@redhat.com>
+References: <20181022093023.GA8920@beast>
+        <cbeccaf1-33ec-0e54-0cfa-8cff81bbc1cd@redhat.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_clk_add_provider. It will take care of clk un-registering.
+On Tue, 30 Oct 2018 13:40:27 -0400
+William Cohen <wcohen@redhat.com> wrote:
 
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
----
- drivers/clk/clk-gpio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On 10/22/18 5:30 AM, Kees Cook wrote:
+> > The arm compiler internally interprets an inline assembly label
+> > as an unsigned long value, not a pointer. As a result, under
+> > CONFIG_FORTIFY_SOURCE, the size of the array pointed to by an address
+> > of a label is 4 bytes, which was tripping the runtime checks. Instead,
+> > we can just cast the label (as done with the size calculations earlier)
+> > to avoid the problem.
+> > 
+> > Reported-by: William Cohen <wcohen@redhat.com>
+> > Fixes: 6974f0c4555e ("include/linux/string.h: add the option of fortified string.h functions")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > ---
+> >  arch/arm/probes/kprobes/opt-arm.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/arm/probes/kprobes/opt-arm.c b/arch/arm/probes/kprobes/opt-arm.c
+> > index b2aa9b32bff2..2c118a6ab358 100644
+> > --- a/arch/arm/probes/kprobes/opt-arm.c
+> > +++ b/arch/arm/probes/kprobes/opt-arm.c
+> > @@ -247,7 +247,7 @@ int arch_prepare_optimized_kprobe(struct optimized_kprobe *op, struct kprobe *or
+> >  	}
+> >  
+> >  	/* Copy arch-dep-instance from template. */
+> > -	memcpy(code, &optprobe_template_entry,
+> > +	memcpy(code, (unsigned char *)optprobe_template_entry,
+> >  			TMPL_END_IDX * sizeof(kprobe_opcode_t));
+> >  
+> >  	/* Adjust buffer according to instruction. */
+> > 
+> 
+> The patch fixes the issue for kretprobes.  It looks good to me.
 
-diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
-index 40af4fbab4d2..6eedb4bd779c 100644
---- a/drivers/clk/clk-gpio.c
-+++ b/drivers/clk/clk-gpio.c
-@@ -252,7 +252,7 @@ static int gpio_clk_driver_probe(struct platform_device *pdev)
- 	if (IS_ERR(clk))
- 		return PTR_ERR(clk);
- 
--	return of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	return devm_of_clk_add_provider(&pdev->dev, of_clk_src_simple_get, clk);
- }
- 
- static const struct of_device_id gpio_clk_match_table[] = {
+This looks good to me too. Thank you for finding and fixing it :)
+
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+
+Thanks!
+
+> 
+> Thanks,
+> 
+> -Will
+
+
 -- 
-2.19.1
-
+Masami Hiramatsu <mhiramat@kernel.org>
