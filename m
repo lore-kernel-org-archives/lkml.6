@@ -2,57 +2,57 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D80B2C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:00:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A80DC6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:00:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A0E520820
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:00:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8691220820
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:00:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="FZN9Oe/9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A0E520820
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="KtlDA2mh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8691220820
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728485AbeKATCz (ORCPT
+        id S1728497AbeKATDD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 15:02:55 -0400
-Received: from mail.efficios.com ([167.114.142.138]:42418 "EHLO
+        Thu, 1 Nov 2018 15:03:03 -0400
+Received: from mail.efficios.com ([167.114.142.138]:42536 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727753AbeKATCy (ORCPT
+        with ESMTP id S1727727AbeKATDC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 15:02:54 -0400
+        Thu, 1 Nov 2018 15:03:02 -0400
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id E945D2277B0;
-        Thu,  1 Nov 2018 06:00:35 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTP id B2AAB2277C3;
+        Thu,  1 Nov 2018 06:00:42 -0400 (EDT)
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id 2E4CQsVDm0Nu; Thu,  1 Nov 2018 06:00:35 -0400 (EDT)
+        with ESMTP id JfQyIQEdS5zL; Thu,  1 Nov 2018 06:00:41 -0400 (EDT)
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 57D112277A1;
-        Thu,  1 Nov 2018 06:00:35 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 57D112277A1
+        by mail.efficios.com (Postfix) with ESMTP id 982742277BC;
+        Thu,  1 Nov 2018 06:00:41 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 982742277BC
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1541066435;
-        bh=gHir4rIYo1hBb6B/d1ojb7dvAjlqUhljmuhdjIhh484=;
+        s=default; t=1541066441;
+        bh=eGLfT5gYO0I4d7mjTFvY/gLSwB5YKXpBorg1EyXmg/A=;
         h=From:To:Date:Message-Id;
-        b=FZN9Oe/9VANIXjBsU1kn5V8fUHdGKD71PXkib3wgbBgzPzwS34PZQK8RR7FVHlDWR
-         Xhnzua/zqemzxsKTywFTyzaiDKYnQF8x1BHVWxaDBu1N8iP+RU/cUKCG3MWa+VpXzh
-         CXZ09ODfWrgcdvV7OrlkKY2sP6Ks0gAY1QRxujHefVbuTEqw4rOE9xY5rrvXnUPiCJ
-         SaHC3VEAl+3dxYdIk/pdDocIjrrbWZiOO7XC82KHki3VqImdTbuJO6vkB2XlDWATSS
-         c+P6Kek/TJE7VazAdclk02Q1LaJBJDxsKp1gFFPPUb6kDTbdj9j/Wr7UZDz+p7lhe0
-         bypF3QhZQ5N+g==
+        b=KtlDA2mhpFP4ncAo3PI6eYZb83Pw5ATWj8q+r7fikVUKLfCrB/SKTIzT1witKO6pT
+         366XDrVQEFMapnMftExoRDbMPOoK51ZLdNnmp6F4BVe3aUgD0TQixUnK4MQnA7aIGP
+         Rs+scwF7elQ+Slaa9qG4WVWbtmqcV4G/UJ5BerfHPbX6WA31aeDVHAsFS7qLRJ1S44
+         l4LkVbmbyygZSIzKnURXk+nyqskg8dJsinXTEx8NMhmSlvKCFzlZy8vZB+S3XXf+Ga
+         Hl2zAtn343P+OHeIMDFu151xiPy6P+Y+bgDWm5xmgI/ZfVsYEXAVQqW/FlgboJ540T
+         F0uJG+hiChroA==
 X-Virus-Scanned: amavisd-new at efficios.com
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id TfK9ymmtWeAj; Thu,  1 Nov 2018 06:00:35 -0400 (EDT)
+        with ESMTP id HK2gVC3HzSaM; Thu,  1 Nov 2018 06:00:41 -0400 (EDT)
 Received: from thinkos.etherlink (sessfw99-sesbfw99-92.ericsson.net [192.176.1.92])
-        by mail.efficios.com (Postfix) with ESMTPSA id EAB8A227787;
-        Thu,  1 Nov 2018 06:00:29 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTPSA id 90F112277A6;
+        Thu,  1 Nov 2018 06:00:35 -0400 (EDT)
 From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
@@ -76,9 +76,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Joel Fernandes <joelaf@google.com>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
-Subject: [RFC PATCH for 4.21 14/16] cpu-opv/selftests: Provide basic percpu ops test
-Date:   Thu,  1 Nov 2018 10:58:42 +0100
-Message-Id: <20181101095844.24462-15-mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 4.21 15/16] cpu-opv/selftests: Provide parametrized tests
+Date:   Thu,  1 Nov 2018 10:58:43 +0100
+Message-Id: <20181101095844.24462-16-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20181101095844.24462-1-mathieu.desnoyers@efficios.com>
 References: <20181101095844.24462-1-mathieu.desnoyers@efficios.com>
@@ -87,11 +87,20 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"basic_percpu_ops_test" implements a few simple per-cpu operations and
-testing their correctness.
+"param_test" is a parametrizable percpu operations test using
+both restartable sequences and cpu_opv. See the "--help" output for
+usage.
+
+"param_test_benchmark" is the same as "param_test", but it removes
+testing book-keeping code to allow accurate benchmarks.
+
+"param_test_compare_twice" is the same as "param_test", but it performs
+each comparison within rseq critical section twice, thus validating
+invariants. If any of the second comparisons fails, an error message
+is printed and the test aborts.
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-CC: Thomas Gleixner <tglx@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Joel Fernandes <joelaf@google.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
@@ -115,16 +124,16 @@ Cc: Andy Lutomirski <luto@amacapital.net>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 ---
- .../selftests/cpu-opv/basic_percpu_ops_test.c      | 295 +++++++++++++++++++++
- 1 file changed, 295 insertions(+)
- create mode 100644 tools/testing/selftests/cpu-opv/basic_percpu_ops_test.c
+ tools/testing/selftests/cpu-opv/param_test.c | 1187 ++++++++++++++++++++++++++
+ 1 file changed, 1187 insertions(+)
+ create mode 100644 tools/testing/selftests/cpu-opv/param_test.c
 
-diff --git a/tools/testing/selftests/cpu-opv/basic_percpu_ops_test.c b/tools/testing/selftests/cpu-opv/basic_percpu_ops_test.c
+diff --git a/tools/testing/selftests/cpu-opv/param_test.c b/tools/testing/selftests/cpu-opv/param_test.c
 new file mode 100644
-index 000000000000..2ce5202f25b2
+index 000000000000..c62e75f07385
 --- /dev/null
-+++ b/tools/testing/selftests/cpu-opv/basic_percpu_ops_test.c
-@@ -0,0 +1,295 @@
++++ b/tools/testing/selftests/cpu-opv/param_test.c
+@@ -0,0 +1,1187 @@
 +// SPDX-License-Identifier: LGPL-2.1
 +#define _GNU_SOURCE
 +#include <assert.h>
@@ -134,11 +143,173 @@ index 000000000000..2ce5202f25b2
 +#include <stdio.h>
 +#include <stdlib.h>
 +#include <string.h>
++#include <syscall.h>
++#include <unistd.h>
++#include <poll.h>
++#include <sys/types.h>
++#include <signal.h>
++#include <errno.h>
 +#include <stddef.h>
 +
-+#include "percpu-op.h"
++static inline pid_t gettid(void)
++{
++	return syscall(__NR_gettid);
++}
 +
-+#define ARRAY_SIZE(arr)	(sizeof(arr) / sizeof((arr)[0]))
++#define NR_INJECT	9
++static int loop_cnt[NR_INJECT + 1];
++
++static int loop_cnt_1 asm("asm_loop_cnt_1") __attribute__((used));
++static int loop_cnt_2 asm("asm_loop_cnt_2") __attribute__((used));
++static int loop_cnt_3 asm("asm_loop_cnt_3") __attribute__((used));
++static int loop_cnt_4 asm("asm_loop_cnt_4") __attribute__((used));
++static int loop_cnt_5 asm("asm_loop_cnt_5") __attribute__((used));
++static int loop_cnt_6 asm("asm_loop_cnt_6") __attribute__((used));
++
++static int opt_modulo, verbose;
++
++static int opt_yield, opt_signal, opt_sleep,
++		opt_disable_rseq, opt_threads = 200,
++		opt_disable_mod = 0, opt_test = 's', opt_mb = 0;
++
++#ifndef RSEQ_SKIP_FASTPATH
++static long long opt_reps = 5000;
++#else
++static long long opt_reps = 100;
++#endif
++
++static __thread __attribute__((tls_model("initial-exec")))
++unsigned int signals_delivered;
++
++#ifndef BENCHMARK
++
++static __thread __attribute__((tls_model("initial-exec"), unused))
++unsigned int yield_mod_cnt, nr_abort;
++
++#define printf_verbose(fmt, ...)			\
++	do {						\
++		if (verbose)				\
++			printf(fmt, ## __VA_ARGS__);	\
++	} while (0)
++
++#ifdef __i386__
++
++#define INJECT_ASM_REG	"eax"
++
++#define RSEQ_INJECT_CLOBBER \
++	, INJECT_ASM_REG
++
++#define RSEQ_INJECT_ASM(n) \
++	"mov asm_loop_cnt_" #n ", %%" INJECT_ASM_REG "\n\t" \
++	"test %%" INJECT_ASM_REG ",%%" INJECT_ASM_REG "\n\t" \
++	"jz 333f\n\t" \
++	"222:\n\t" \
++	"dec %%" INJECT_ASM_REG "\n\t" \
++	"jnz 222b\n\t" \
++	"333:\n\t"
++
++#elif defined(__x86_64__)
++
++#define INJECT_ASM_REG_P	"rax"
++#define INJECT_ASM_REG		"eax"
++
++#define RSEQ_INJECT_CLOBBER \
++	, INJECT_ASM_REG_P \
++	, INJECT_ASM_REG
++
++#define RSEQ_INJECT_ASM(n) \
++	"lea asm_loop_cnt_" #n "(%%rip), %%" INJECT_ASM_REG_P "\n\t" \
++	"mov (%%" INJECT_ASM_REG_P "), %%" INJECT_ASM_REG "\n\t" \
++	"test %%" INJECT_ASM_REG ",%%" INJECT_ASM_REG "\n\t" \
++	"jz 333f\n\t" \
++	"222:\n\t" \
++	"dec %%" INJECT_ASM_REG "\n\t" \
++	"jnz 222b\n\t" \
++	"333:\n\t"
++
++#elif defined(__ARMEL__)
++
++#define RSEQ_INJECT_INPUT \
++	, [loop_cnt_1]"m"(loop_cnt[1]) \
++	, [loop_cnt_2]"m"(loop_cnt[2]) \
++	, [loop_cnt_3]"m"(loop_cnt[3]) \
++	, [loop_cnt_4]"m"(loop_cnt[4]) \
++	, [loop_cnt_5]"m"(loop_cnt[5]) \
++	, [loop_cnt_6]"m"(loop_cnt[6])
++
++#define INJECT_ASM_REG	"r4"
++
++#define RSEQ_INJECT_CLOBBER \
++	, INJECT_ASM_REG
++
++#define RSEQ_INJECT_ASM(n) \
++	"ldr " INJECT_ASM_REG ", %[loop_cnt_" #n "]\n\t" \
++	"cmp " INJECT_ASM_REG ", #0\n\t" \
++	"beq 333f\n\t" \
++	"222:\n\t" \
++	"subs " INJECT_ASM_REG ", #1\n\t" \
++	"bne 222b\n\t" \
++	"333:\n\t"
++
++#elif __PPC__
++
++#define RSEQ_INJECT_INPUT \
++	, [loop_cnt_1]"m"(loop_cnt[1]) \
++	, [loop_cnt_2]"m"(loop_cnt[2]) \
++	, [loop_cnt_3]"m"(loop_cnt[3]) \
++	, [loop_cnt_4]"m"(loop_cnt[4]) \
++	, [loop_cnt_5]"m"(loop_cnt[5]) \
++	, [loop_cnt_6]"m"(loop_cnt[6])
++
++#define INJECT_ASM_REG	"r18"
++
++#define RSEQ_INJECT_CLOBBER \
++	, INJECT_ASM_REG
++
++#define RSEQ_INJECT_ASM(n) \
++	"lwz %%" INJECT_ASM_REG ", %[loop_cnt_" #n "]\n\t" \
++	"cmpwi %%" INJECT_ASM_REG ", 0\n\t" \
++	"beq 333f\n\t" \
++	"222:\n\t" \
++	"subic. %%" INJECT_ASM_REG ", %%" INJECT_ASM_REG ", 1\n\t" \
++	"bne 222b\n\t" \
++	"333:\n\t"
++#else
++#error unsupported target
++#endif
++
++#define RSEQ_INJECT_FAILED \
++	nr_abort++;
++
++#define RSEQ_INJECT_C(n) \
++{ \
++	int loc_i, loc_nr_loops = loop_cnt[n]; \
++	\
++	for (loc_i = 0; loc_i < loc_nr_loops; loc_i++) { \
++		rseq_barrier(); \
++	} \
++	if (loc_nr_loops == -1 && opt_modulo) { \
++		if (yield_mod_cnt == opt_modulo - 1) { \
++			if (opt_sleep > 0) \
++				poll(NULL, 0, opt_sleep); \
++			if (opt_yield) \
++				sched_yield(); \
++			if (opt_signal) \
++				raise(SIGUSR1); \
++			yield_mod_cnt = 0; \
++		} else { \
++			yield_mod_cnt++; \
++		} \
++	} \
++}
++
++#else
++
++#define printf_verbose(fmt, ...)
++
++#endif /* BENCHMARK */
++
++#include "percpu-op.h"
 +
 +struct percpu_lock_entry {
 +	intptr_t v;
@@ -155,7 +326,22 @@ index 000000000000..2ce5202f25b2
 +struct spinlock_test_data {
 +	struct percpu_lock lock;
 +	struct test_data_entry c[CPU_SETSIZE];
-+	int reps;
++};
++
++struct spinlock_thread_test_data {
++	struct spinlock_test_data *data;
++	long long reps;
++	int reg;
++};
++
++struct inc_test_data {
++	struct test_data_entry c[CPU_SETSIZE];
++};
++
++struct inc_thread_test_data {
++	struct inc_test_data *data;
++	long long reps;
++	int reg;
 +};
 +
 +struct percpu_list_node {
@@ -171,8 +357,41 @@ index 000000000000..2ce5202f25b2
 +	struct percpu_list_entry c[CPU_SETSIZE];
 +};
 +
++#define BUFFER_ITEM_PER_CPU	100
++
++struct percpu_buffer_node {
++	intptr_t data;
++};
++
++struct percpu_buffer_entry {
++	intptr_t offset;
++	intptr_t buflen;
++	struct percpu_buffer_node **array;
++} __attribute__((aligned(128)));
++
++struct percpu_buffer {
++	struct percpu_buffer_entry c[CPU_SETSIZE];
++};
++
++#define MEMCPY_BUFFER_ITEM_PER_CPU	100
++
++struct percpu_memcpy_buffer_node {
++	intptr_t data1;
++	uint64_t data2;
++};
++
++struct percpu_memcpy_buffer_entry {
++	intptr_t offset;
++	intptr_t buflen;
++	struct percpu_memcpy_buffer_node *array;
++} __attribute__((aligned(128)));
++
++struct percpu_memcpy_buffer {
++	struct percpu_memcpy_buffer_entry c[CPU_SETSIZE];
++};
++
 +/* A simple percpu spinlock. */
-+void rseq_percpu_lock(struct percpu_lock *lock, int cpu)
++static void rseq_percpu_lock(struct percpu_lock *lock, int cpu)
 +{
 +	for (;;) {
 +		int ret;
@@ -194,7 +413,7 @@ index 000000000000..2ce5202f25b2
 +	rseq_smp_acquire__after_ctrl_dep();
 +}
 +
-+void rseq_percpu_unlock(struct percpu_lock *lock, int cpu)
++static void rseq_percpu_unlock(struct percpu_lock *lock, int cpu)
 +{
 +	assert(lock->c[cpu].v == 1);
 +	/*
@@ -206,27 +425,30 @@ index 000000000000..2ce5202f25b2
 +
 +void *test_percpu_spinlock_thread(void *arg)
 +{
-+	struct spinlock_test_data *data = arg;
-+	int i;
++	struct spinlock_thread_test_data *thread_data = arg;
++	struct spinlock_test_data *data = thread_data->data;
++	long long i, reps;
 +
-+	if (rseq_register_current_thread()) {
-+		fprintf(stderr, "Error: rseq_register_current_thread(...) failed(%d): %s\n",
-+			errno, strerror(errno));
++	if (!opt_disable_rseq && thread_data->reg &&
++	    rseq_register_current_thread())
 +		abort();
-+	}
-+	for (i = 0; i < data->reps; i++) {
-+		int cpu = percpu_current_cpu();
++	reps = thread_data->reps;
++	for (i = 0; i < reps; i++) {
++		int cpu = rseq_cpu_start();
 +
 +		rseq_percpu_lock(&data->lock, cpu);
 +		data->c[cpu].count++;
 +		rseq_percpu_unlock(&data->lock, cpu);
++#ifndef BENCHMARK
++		if (i != 0 && !(i % (reps / 10)))
++			printf_verbose("tid %d: count %lld\n", (int) gettid(), i);
++#endif
 +	}
-+	if (rseq_unregister_current_thread()) {
-+		fprintf(stderr, "Error: rseq_unregister_current_thread(...) failed(%d): %s\n",
-+			errno, strerror(errno));
++	printf_verbose("tid %d: number of rseq abort: %d, signals delivered: %u\n",
++		       (int) gettid(), nr_abort, signals_delivered);
++	if (!opt_disable_rseq && thread_data->reg &&
++	    rseq_unregister_current_thread())
 +		abort();
-+	}
-+
 +	return NULL;
 +}
 +
@@ -238,31 +460,125 @@ index 000000000000..2ce5202f25b2
 + */
 +void test_percpu_spinlock(void)
 +{
-+	const int num_threads = 200;
-+	int i;
++	const int num_threads = opt_threads;
++	int i, ret;
 +	uint64_t sum;
 +	pthread_t test_threads[num_threads];
 +	struct spinlock_test_data data;
++	struct spinlock_thread_test_data thread_data[num_threads];
 +
 +	memset(&data, 0, sizeof(data));
-+	data.reps = 5000;
++	for (i = 0; i < num_threads; i++) {
++		thread_data[i].reps = opt_reps;
++		if (opt_disable_mod <= 0 || (i % opt_disable_mod))
++			thread_data[i].reg = 1;
++		else
++			thread_data[i].reg = 0;
++		thread_data[i].data = &data;
++		ret = pthread_create(&test_threads[i], NULL,
++				     test_percpu_spinlock_thread,
++				     &thread_data[i]);
++		if (ret) {
++			errno = ret;
++			perror("pthread_create");
++			abort();
++		}
++	}
 +
-+	for (i = 0; i < num_threads; i++)
-+		pthread_create(&test_threads[i], NULL,
-+			       test_percpu_spinlock_thread, &data);
-+
-+	for (i = 0; i < num_threads; i++)
-+		pthread_join(test_threads[i], NULL);
++	for (i = 0; i < num_threads; i++) {
++		ret = pthread_join(test_threads[i], NULL);
++		if (ret) {
++			errno = ret;
++			perror("pthread_join");
++			abort();
++		}
++	}
 +
 +	sum = 0;
 +	for (i = 0; i < CPU_SETSIZE; i++)
 +		sum += data.c[i].count;
 +
-+	assert(sum == (uint64_t)data.reps * num_threads);
++	assert(sum == (uint64_t)opt_reps * num_threads);
 +}
 +
-+int percpu_list_push(struct percpu_list *list, struct percpu_list_node *node,
-+		     int cpu)
++void *test_percpu_inc_thread(void *arg)
++{
++	struct inc_thread_test_data *thread_data = arg;
++	struct inc_test_data *data = thread_data->data;
++	long long i, reps;
++
++	if (!opt_disable_rseq && thread_data->reg &&
++	    rseq_register_current_thread())
++		abort();
++	reps = thread_data->reps;
++	for (i = 0; i < reps; i++) {
++		int cpu, ret;
++
++		cpu = rseq_cpu_start();
++		ret = percpu_addv(&data->c[cpu].count, 1, cpu);
++		if (rseq_unlikely(ret)) {
++			perror("cpu_opv");
++			abort();
++		}
++#ifndef BENCHMARK
++		if (i != 0 && !(i % (reps / 10)))
++			printf_verbose("tid %d: count %lld\n", (int) gettid(), i);
++#endif
++	}
++	printf_verbose("tid %d: number of rseq abort: %d, signals delivered: %u\n",
++		       (int) gettid(), nr_abort, signals_delivered);
++	if (!opt_disable_rseq && thread_data->reg &&
++	    rseq_unregister_current_thread())
++		abort();
++	return NULL;
++}
++
++void test_percpu_inc(void)
++{
++	const int num_threads = opt_threads;
++	int i, ret;
++	uint64_t sum;
++	pthread_t test_threads[num_threads];
++	struct inc_test_data data;
++	struct inc_thread_test_data thread_data[num_threads];
++
++	memset(&data, 0, sizeof(data));
++	for (i = 0; i < num_threads; i++) {
++		thread_data[i].reps = opt_reps;
++		if (opt_disable_mod <= 0 || (i % opt_disable_mod))
++			thread_data[i].reg = 1;
++		else
++			thread_data[i].reg = 0;
++		thread_data[i].data = &data;
++		ret = pthread_create(&test_threads[i], NULL,
++				     test_percpu_inc_thread,
++				     &thread_data[i]);
++		if (ret) {
++			errno = ret;
++			perror("pthread_create");
++			abort();
++		}
++	}
++
++	for (i = 0; i < num_threads; i++) {
++		ret = pthread_join(test_threads[i], NULL);
++		if (ret) {
++			errno = ret;
++			perror("pthread_join");
++			abort();
++		}
++	}
++
++	sum = 0;
++	for (i = 0; i < CPU_SETSIZE; i++)
++		sum += data.c[i].count;
++
++	assert(sum == (uint64_t)opt_reps * num_threads);
++}
++
++void percpu_list_push(struct percpu_list *list,
++		      struct percpu_list_node *node,
++		      int cpu)
 +{
 +	for (;;) {
 +		intptr_t *targetptr, newval, expect;
@@ -282,7 +598,6 @@ index 000000000000..2ce5202f25b2
 +		}
 +		/* Retry if comparison fails. */
 +	}
-+	return cpu;
 +}
 +
 +/*
@@ -315,29 +630,27 @@ index 000000000000..2ce5202f25b2
 +
 +void *test_percpu_list_thread(void *arg)
 +{
-+	int i;
++	long long i, reps;
 +	struct percpu_list *list = (struct percpu_list *)arg;
 +
-+	if (rseq_register_current_thread()) {
-+		fprintf(stderr, "Error: rseq_register_current_thread(...) failed(%d): %s\n",
-+			errno, strerror(errno));
++	if (!opt_disable_rseq && rseq_register_current_thread())
 +		abort();
-+	}
 +
-+	for (i = 0; i < 100000; i++) {
++	reps = opt_reps;
++	for (i = 0; i < reps; i++) {
 +		struct percpu_list_node *node;
 +
-+		node = percpu_list_pop(list, percpu_current_cpu());
-+		sched_yield();  /* encourage shuffling */
++		node = percpu_list_pop(list, rseq_cpu_start());
++		if (opt_yield)
++			sched_yield();  /* encourage shuffling */
 +		if (node)
-+			percpu_list_push(list, node, percpu_current_cpu());
++			percpu_list_push(list, node, rseq_cpu_start());
 +	}
 +
-+	if (rseq_unregister_current_thread()) {
-+		fprintf(stderr, "Error: rseq_unregister_current_thread(...) failed(%d): %s\n",
-+			errno, strerror(errno));
++	printf_verbose("tid %d: number of rseq abort: %d, signals delivered: %u\n",
++		       (int) gettid(), nr_abort, signals_delivered);
++	if (!opt_disable_rseq && rseq_unregister_current_thread())
 +		abort();
-+	}
 +
 +	return NULL;
 +}
@@ -345,10 +658,11 @@ index 000000000000..2ce5202f25b2
 +/* Simultaneous modification to a per-cpu linked list from many threads.  */
 +void test_percpu_list(void)
 +{
-+	int i, j;
++	const int num_threads = opt_threads;
++	int i, j, ret;
 +	uint64_t sum = 0, expected_sum = 0;
 +	struct percpu_list list;
-+	pthread_t test_threads[200];
++	pthread_t test_threads[num_threads];
 +	cpu_set_t allowed_cpus;
 +
 +	memset(&list, 0, sizeof(list));
@@ -371,12 +685,24 @@ index 000000000000..2ce5202f25b2
 +		}
 +	}
 +
-+	for (i = 0; i < 200; i++)
-+		pthread_create(&test_threads[i], NULL,
-+		       test_percpu_list_thread, &list);
++	for (i = 0; i < num_threads; i++) {
++		ret = pthread_create(&test_threads[i], NULL,
++				     test_percpu_list_thread, &list);
++		if (ret) {
++			errno = ret;
++			perror("pthread_create");
++			abort();
++		}
++	}
 +
-+	for (i = 0; i < 200; i++)
-+		pthread_join(test_threads[i], NULL);
++	for (i = 0; i < num_threads; i++) {
++		ret = pthread_join(test_threads[i], NULL);
++		if (ret) {
++			errno = ret;
++			perror("pthread_join");
++			abort();
++		}
++	}
 +
 +	for (i = 0; i < CPU_SETSIZE; i++) {
 +		struct percpu_list_node *node;
@@ -398,28 +724,603 @@ index 000000000000..2ce5202f25b2
 +	assert(sum == expected_sum);
 +}
 +
++bool percpu_buffer_push(struct percpu_buffer *buffer,
++			struct percpu_buffer_node *node,
++			int cpu)
++{
++	for (;;) {
++		intptr_t *targetptr_spec, newval_spec;
++		intptr_t *targetptr_final, newval_final;
++		intptr_t offset;
++		int ret;
++
++		offset = RSEQ_READ_ONCE(buffer->c[cpu].offset);
++		if (offset == buffer->c[cpu].buflen)
++			return false;
++		newval_spec = (intptr_t)node;
++		targetptr_spec = (intptr_t *)&buffer->c[cpu].array[offset];
++		newval_final = offset + 1;
++		targetptr_final = &buffer->c[cpu].offset;
++		if (opt_mb)
++			ret = percpu_cmpeqv_storev_storev_release(
++				targetptr_final, offset, targetptr_spec,
++				newval_spec, newval_final, cpu);
++		else
++			ret = percpu_cmpeqv_storev_storev(targetptr_final,
++				offset, targetptr_spec, newval_spec,
++				newval_final, cpu);
++		if (rseq_likely(!ret))
++			break;
++		if (rseq_unlikely(ret < 0)) {
++			perror("cpu_opv");
++			abort();
++		}
++		/* Retry if comparison fails. */
++	}
++	return true;
++}
++
++struct percpu_buffer_node *percpu_buffer_pop(struct percpu_buffer *buffer,
++					     int cpu)
++{
++	struct percpu_buffer_node *head;
++
++	for (;;) {
++		intptr_t *targetptr, newval;
++		intptr_t offset;
++		int ret;
++
++		/* Load offset with single-copy atomicity. */
++		offset = RSEQ_READ_ONCE(buffer->c[cpu].offset);
++		if (offset == 0)
++			return NULL;
++		head = RSEQ_READ_ONCE(buffer->c[cpu].array[offset - 1]);
++		newval = offset - 1;
++		targetptr = (intptr_t *)&buffer->c[cpu].offset;
++		ret = percpu_cmpeqv_cmpeqv_storev(targetptr, offset,
++			(intptr_t *)&buffer->c[cpu].array[offset - 1],
++			(intptr_t)head, newval, cpu);
++		if (rseq_likely(!ret))
++			break;
++		if (rseq_unlikely(ret < 0)) {
++			perror("cpu_opv");
++			abort();
++		}
++		/* Retry if comparison fails. */
++	}
++	return head;
++}
++
++void *test_percpu_buffer_thread(void *arg)
++{
++	long long i, reps;
++	struct percpu_buffer *buffer = (struct percpu_buffer *)arg;
++
++	if (!opt_disable_rseq && rseq_register_current_thread())
++		abort();
++
++	reps = opt_reps;
++	for (i = 0; i < reps; i++) {
++		struct percpu_buffer_node *node;
++
++		node = percpu_buffer_pop(buffer, rseq_cpu_start());
++		if (opt_yield)
++			sched_yield();  /* encourage shuffling */
++		if (node) {
++			if (!percpu_buffer_push(buffer, node,
++						rseq_cpu_start())) {
++				/* Should increase buffer size. */
++				abort();
++			}
++		}
++	}
++
++	printf_verbose("tid %d: number of rseq abort: %d, signals delivered: %u\n",
++		       (int) gettid(), nr_abort, signals_delivered);
++	if (!opt_disable_rseq && rseq_unregister_current_thread())
++		abort();
++
++	return NULL;
++}
++
++/* Simultaneous modification to a per-cpu buffer from many threads.  */
++void test_percpu_buffer(void)
++{
++	const int num_threads = opt_threads;
++	int i, j, ret;
++	uint64_t sum = 0, expected_sum = 0;
++	struct percpu_buffer buffer;
++	pthread_t test_threads[num_threads];
++	cpu_set_t allowed_cpus;
++
++	memset(&buffer, 0, sizeof(buffer));
++
++	/* Generate list entries for every usable cpu. */
++	sched_getaffinity(0, sizeof(allowed_cpus), &allowed_cpus);
++	for (i = 0; i < CPU_SETSIZE; i++) {
++		if (!CPU_ISSET(i, &allowed_cpus))
++			continue;
++		/* Worse-case is every item in same CPU. */
++		buffer.c[i].array =
++			malloc(sizeof(*buffer.c[i].array) * CPU_SETSIZE *
++			       BUFFER_ITEM_PER_CPU);
++		assert(buffer.c[i].array);
++		buffer.c[i].buflen = CPU_SETSIZE * BUFFER_ITEM_PER_CPU;
++		for (j = 1; j <= BUFFER_ITEM_PER_CPU; j++) {
++			struct percpu_buffer_node *node;
++
++			expected_sum += j;
++
++			/*
++			 * We could theoretically put the word-sized
++			 * "data" directly in the buffer. However, we
++			 * want to model objects that would not fit
++			 * within a single word, so allocate an object
++			 * for each node.
++			 */
++			node = malloc(sizeof(*node));
++			assert(node);
++			node->data = j;
++			buffer.c[i].array[j - 1] = node;
++			buffer.c[i].offset++;
++		}
++	}
++
++	for (i = 0; i < num_threads; i++) {
++		ret = pthread_create(&test_threads[i], NULL,
++				     test_percpu_buffer_thread, &buffer);
++		if (ret) {
++			errno = ret;
++			perror("pthread_create");
++			abort();
++		}
++	}
++
++	for (i = 0; i < num_threads; i++) {
++		ret = pthread_join(test_threads[i], NULL);
++		if (ret) {
++			errno = ret;
++			perror("pthread_join");
++			abort();
++		}
++	}
++
++	for (i = 0; i < CPU_SETSIZE; i++) {
++		struct percpu_buffer_node *node;
++
++		if (!CPU_ISSET(i, &allowed_cpus))
++			continue;
++
++		while ((node = percpu_buffer_pop(&buffer, i))) {
++			sum += node->data;
++			free(node);
++		}
++		free(buffer.c[i].array);
++	}
++
++	/*
++	 * All entries should now be accounted for (unless some external
++	 * actor is interfering with our allowed affinity while this
++	 * test is running).
++	 */
++	assert(sum == expected_sum);
++}
++
++bool percpu_memcpy_buffer_push(struct percpu_memcpy_buffer *buffer,
++			       struct percpu_memcpy_buffer_node item, int cpu)
++{
++	for (;;) {
++		intptr_t *targetptr_final, newval_final, offset;
++		char *destptr, *srcptr;
++		size_t copylen;
++		int ret;
++
++		/* Load offset with single-copy atomicity. */
++		offset = RSEQ_READ_ONCE(buffer->c[cpu].offset);
++		if (offset == buffer->c[cpu].buflen)
++			return false;
++		destptr = (char *)&buffer->c[cpu].array[offset];
++		srcptr = (char *)&item;
++		/* copylen must be <= 4kB. */
++		copylen = sizeof(item);
++		newval_final = offset + 1;
++		targetptr_final = &buffer->c[cpu].offset;
++		if (opt_mb)
++			ret = percpu_cmpeqv_memcpy_storev_release(
++				targetptr_final, offset,
++				destptr, srcptr, copylen,
++				newval_final, cpu);
++		else
++			ret = percpu_cmpeqv_memcpy_storev(targetptr_final,
++				offset, destptr, srcptr, copylen,
++				newval_final, cpu);
++		if (rseq_likely(!ret))
++			break;
++		if (rseq_unlikely(ret < 0)) {
++			perror("cpu_opv");
++			abort();
++		}
++		/* Retry if comparison fails. */
++	}
++	return true;
++}
++
++bool percpu_memcpy_buffer_pop(struct percpu_memcpy_buffer *buffer,
++		struct percpu_memcpy_buffer_node *item, int cpu)
++{
++	for (;;) {
++		intptr_t *targetptr_final, newval_final, offset;
++		char *destptr, *srcptr;
++		size_t copylen;
++		int ret;
++
++		/* Load offset with single-copy atomicity. */
++		offset = RSEQ_READ_ONCE(buffer->c[cpu].offset);
++		if (offset == 0)
++			return false;
++		destptr = (char *)item;
++		srcptr = (char *)&buffer->c[cpu].array[offset - 1];
++		/* copylen must be <= 4kB. */
++		copylen = sizeof(*item);
++		newval_final = offset - 1;
++		targetptr_final = &buffer->c[cpu].offset;
++		ret = percpu_cmpeqv_memcpy_storev(targetptr_final,
++			offset, destptr, srcptr, copylen,
++			newval_final, cpu);
++		if (rseq_likely(!ret))
++			break;
++		if (rseq_unlikely(ret < 0)) {
++			perror("cpu_opv");
++			abort();
++		}
++		/* Retry if comparison fails. */
++	}
++	return true;
++}
++
++void *test_percpu_memcpy_buffer_thread(void *arg)
++{
++	long long i, reps;
++	struct percpu_memcpy_buffer *buffer = (struct percpu_memcpy_buffer *)arg;
++
++	if (!opt_disable_rseq && rseq_register_current_thread())
++		abort();
++
++	reps = opt_reps;
++	for (i = 0; i < reps; i++) {
++		struct percpu_memcpy_buffer_node item;
++		bool result;
++
++		result = percpu_memcpy_buffer_pop(buffer, &item,
++						  rseq_cpu_start());
++		if (opt_yield)
++			sched_yield();  /* encourage shuffling */
++		if (result) {
++			if (!percpu_memcpy_buffer_push(buffer, item,
++						       rseq_cpu_start())) {
++				/* Should increase buffer size. */
++				abort();
++			}
++		}
++	}
++
++	printf_verbose("tid %d: number of rseq abort: %d, signals delivered: %u\n",
++		       (int) gettid(), nr_abort, signals_delivered);
++	if (!opt_disable_rseq && rseq_unregister_current_thread())
++		abort();
++
++	return NULL;
++}
++
++/* Simultaneous modification to a per-cpu buffer from many threads.  */
++void test_percpu_memcpy_buffer(void)
++{
++	const int num_threads = opt_threads;
++	int i, j, ret;
++	uint64_t sum = 0, expected_sum = 0;
++	struct percpu_memcpy_buffer buffer;
++	pthread_t test_threads[num_threads];
++	cpu_set_t allowed_cpus;
++
++	memset(&buffer, 0, sizeof(buffer));
++
++	/* Generate list entries for every usable cpu. */
++	sched_getaffinity(0, sizeof(allowed_cpus), &allowed_cpus);
++	for (i = 0; i < CPU_SETSIZE; i++) {
++		if (!CPU_ISSET(i, &allowed_cpus))
++			continue;
++		/* Worse-case is every item in same CPU. */
++		buffer.c[i].array =
++			malloc(sizeof(*buffer.c[i].array) * CPU_SETSIZE *
++			       MEMCPY_BUFFER_ITEM_PER_CPU);
++		assert(buffer.c[i].array);
++		buffer.c[i].buflen = CPU_SETSIZE * MEMCPY_BUFFER_ITEM_PER_CPU;
++		for (j = 1; j <= MEMCPY_BUFFER_ITEM_PER_CPU; j++) {
++			expected_sum += 2 * j + 1;
++
++			/*
++			 * We could theoretically put the word-sized
++			 * "data" directly in the buffer. However, we
++			 * want to model objects that would not fit
++			 * within a single word, so allocate an object
++			 * for each node.
++			 */
++			buffer.c[i].array[j - 1].data1 = j;
++			buffer.c[i].array[j - 1].data2 = j + 1;
++			buffer.c[i].offset++;
++		}
++	}
++
++	for (i = 0; i < num_threads; i++) {
++		ret = pthread_create(&test_threads[i], NULL,
++				     test_percpu_memcpy_buffer_thread,
++				     &buffer);
++		if (ret) {
++			errno = ret;
++			perror("pthread_create");
++			abort();
++		}
++	}
++
++	for (i = 0; i < num_threads; i++) {
++		ret = pthread_join(test_threads[i], NULL);
++		if (ret) {
++			errno = ret;
++			perror("pthread_join");
++			abort();
++		}
++	}
++
++	for (i = 0; i < CPU_SETSIZE; i++) {
++		struct percpu_memcpy_buffer_node item;
++
++		if (!CPU_ISSET(i, &allowed_cpus))
++			continue;
++
++		while (percpu_memcpy_buffer_pop(&buffer, &item, i)) {
++			sum += item.data1;
++			sum += item.data2;
++		}
++		free(buffer.c[i].array);
++	}
++
++	/*
++	 * All entries should now be accounted for (unless some external
++	 * actor is interfering with our allowed affinity while this
++	 * test is running).
++	 */
++	assert(sum == expected_sum);
++}
++
++static void test_signal_interrupt_handler(int signo)
++{
++	signals_delivered++;
++}
++
++static int set_signal_handler(void)
++{
++	int ret = 0;
++	struct sigaction sa;
++	sigset_t sigset;
++
++	ret = sigemptyset(&sigset);
++	if (ret < 0) {
++		perror("sigemptyset");
++		return ret;
++	}
++
++	sa.sa_handler = test_signal_interrupt_handler;
++	sa.sa_mask = sigset;
++	sa.sa_flags = 0;
++	ret = sigaction(SIGUSR1, &sa, NULL);
++	if (ret < 0) {
++		perror("sigaction");
++		return ret;
++	}
++
++	printf_verbose("Signal handler set for SIGUSR1\n");
++
++	return ret;
++}
++
++static void show_usage(int argc, char **argv)
++{
++	printf("Usage : %s <OPTIONS>\n",
++		argv[0]);
++	printf("OPTIONS:\n");
++	printf("	[-1 loops] Number of loops for delay injection 1\n");
++	printf("	[-2 loops] Number of loops for delay injection 2\n");
++	printf("	[-3 loops] Number of loops for delay injection 3\n");
++	printf("	[-4 loops] Number of loops for delay injection 4\n");
++	printf("	[-5 loops] Number of loops for delay injection 5\n");
++	printf("	[-6 loops] Number of loops for delay injection 6\n");
++	printf("	[-7 loops] Number of loops for delay injection 7 (-1 to enable -m)\n");
++	printf("	[-8 loops] Number of loops for delay injection 8 (-1 to enable -m)\n");
++	printf("	[-9 loops] Number of loops for delay injection 9 (-1 to enable -m)\n");
++	printf("	[-m N] Yield/sleep/kill every modulo N (default 0: disabled) (>= 0)\n");
++	printf("	[-y] Yield\n");
++	printf("	[-k] Kill thread with signal\n");
++	printf("	[-s S] S: =0: disabled (default), >0: sleep time (ms)\n");
++	printf("	[-t N] Number of threads (default 200)\n");
++	printf("	[-r N] Number of repetitions per thread (default 5000)\n");
++	printf("	[-d] Disable rseq system call (no initialization)\n");
++	printf("	[-D M] Disable rseq for each M threads\n");
++	printf("	[-T test] Choose test: (s)pinlock, (l)ist, (b)uffer, (m)emcpy, (i)ncrement\n");
++	printf("	[-M] Push into buffer and memcpy buffer with memory barriers.\n");
++	printf("	[-v] Verbose output.\n");
++	printf("	[-h] Show this help.\n");
++	printf("\n");
++}
++
 +int main(int argc, char **argv)
 +{
-+	if (rseq_register_current_thread()) {
-+		fprintf(stderr, "Error: rseq_register_current_thread(...) failed(%d): %s\n",
-+			errno, strerror(errno));
-+		goto error;
++	int i;
++
++	for (i = 1; i < argc; i++) {
++		if (argv[i][0] != '-')
++			continue;
++		switch (argv[i][1]) {
++		case '1':
++		case '2':
++		case '3':
++		case '4':
++		case '5':
++		case '6':
++		case '7':
++		case '8':
++		case '9':
++			if (argc < i + 2) {
++				show_usage(argc, argv);
++				goto error;
++			}
++			loop_cnt[argv[i][1] - '0'] = atol(argv[i + 1]);
++			i++;
++			break;
++		case 'm':
++			if (argc < i + 2) {
++				show_usage(argc, argv);
++				goto error;
++			}
++			opt_modulo = atol(argv[i + 1]);
++			if (opt_modulo < 0) {
++				show_usage(argc, argv);
++				goto error;
++			}
++			i++;
++			break;
++		case 's':
++			if (argc < i + 2) {
++				show_usage(argc, argv);
++				goto error;
++			}
++			opt_sleep = atol(argv[i + 1]);
++			if (opt_sleep < 0) {
++				show_usage(argc, argv);
++				goto error;
++			}
++			i++;
++			break;
++		case 'y':
++			opt_yield = 1;
++			break;
++		case 'k':
++			opt_signal = 1;
++			break;
++		case 'd':
++			opt_disable_rseq = 1;
++			break;
++		case 'D':
++			if (argc < i + 2) {
++				show_usage(argc, argv);
++				goto error;
++			}
++			opt_disable_mod = atol(argv[i + 1]);
++			if (opt_disable_mod < 0) {
++				show_usage(argc, argv);
++				goto error;
++			}
++			i++;
++			break;
++		case 't':
++			if (argc < i + 2) {
++				show_usage(argc, argv);
++				goto error;
++			}
++			opt_threads = atol(argv[i + 1]);
++			if (opt_threads < 0) {
++				show_usage(argc, argv);
++				goto error;
++			}
++			i++;
++			break;
++		case 'r':
++			if (argc < i + 2) {
++				show_usage(argc, argv);
++				goto error;
++			}
++			opt_reps = atoll(argv[i + 1]);
++			if (opt_reps < 0) {
++				show_usage(argc, argv);
++				goto error;
++			}
++			i++;
++			break;
++		case 'h':
++			show_usage(argc, argv);
++			goto end;
++		case 'T':
++			if (argc < i + 2) {
++				show_usage(argc, argv);
++				goto error;
++			}
++			opt_test = *argv[i + 1];
++			switch (opt_test) {
++			case 's':
++			case 'l':
++			case 'i':
++			case 'b':
++			case 'm':
++				break;
++			default:
++				show_usage(argc, argv);
++				goto error;
++			}
++			i++;
++			break;
++		case 'v':
++			verbose = 1;
++			break;
++		case 'M':
++			opt_mb = 1;
++			break;
++		default:
++			show_usage(argc, argv);
++			goto error;
++		}
 +	}
-+	printf("spinlock\n");
-+	test_percpu_spinlock();
-+	printf("percpu_list\n");
-+	test_percpu_list();
-+	if (rseq_unregister_current_thread()) {
-+		fprintf(stderr, "Error: rseq_unregister_current_thread(...) failed(%d): %s\n",
-+			errno, strerror(errno));
++
++	loop_cnt_1 = loop_cnt[1];
++	loop_cnt_2 = loop_cnt[2];
++	loop_cnt_3 = loop_cnt[3];
++	loop_cnt_4 = loop_cnt[4];
++	loop_cnt_5 = loop_cnt[5];
++	loop_cnt_6 = loop_cnt[6];
++
++	if (set_signal_handler())
 +		goto error;
++
++	if (!opt_disable_rseq && rseq_register_current_thread())
++		goto error;
++	switch (opt_test) {
++	case 's':
++		printf_verbose("spinlock\n");
++		test_percpu_spinlock();
++		break;
++	case 'l':
++		printf_verbose("linked list\n");
++		test_percpu_list();
++		break;
++	case 'b':
++		printf_verbose("buffer\n");
++		test_percpu_buffer();
++		break;
++	case 'm':
++		printf_verbose("memcpy buffer\n");
++		test_percpu_memcpy_buffer();
++		break;
++	case 'i':
++		printf_verbose("counter increment\n");
++		test_percpu_inc();
++		break;
 +	}
++	if (!opt_disable_rseq && rseq_unregister_current_thread())
++		abort();
++end:
 +	return 0;
 +
 +error:
 +	return -1;
 +}
-+
 -- 
 2.11.0
 
