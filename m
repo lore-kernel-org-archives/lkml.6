@@ -2,157 +2,101 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 013DEC6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:06:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F57EC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:06:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A445120657
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:06:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5081A20657
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:06:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="ajjJKtRy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A445120657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SiujZf+1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5081A20657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728102AbeKBILN (ORCPT
+        id S1728134AbeKBILj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 04:11:13 -0400
-Received: from alln-iport-2.cisco.com ([173.37.142.89]:4428 "EHLO
-        alln-iport-2.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726386AbeKBILM (ORCPT
+        Fri, 2 Nov 2018 04:11:39 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:43684 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726386AbeKBILj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 04:11:12 -0400
-X-Greylist: delayed 568 seconds by postgrey-1.27 at vger.kernel.org; Fri, 02 Nov 2018 04:11:11 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=2987; q=dns/txt; s=iport;
-  t=1541113571; x=1542323171;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=PjG4dp8Wrf8iJY2QV4+vWPxe+e11A/Oco55XnNa4W2o=;
-  b=ajjJKtRy1d5gxyQHoiBuM8KnYFHZLYsAsnZ2Xbm+mxDs7D4BI6DGVfpf
-   BxaaZ6Wg7KbskxS+4P85IxzYBeTR4bakJtr368VTlEIU9fsPxucS+K+aT
-   WYrVVxAk7hvVyQIRVR6KoMq01PF6X9kIXTu9CUcW0BCp1pLam5E74Bpm7
-   8=;
-X-IronPort-AV: E=Sophos;i="5.54,454,1534809600"; 
-   d="scan'208";a="195171145"
-Received: from alln-core-4.cisco.com ([173.36.13.137])
-  by alln-iport-2.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Nov 2018 22:56:44 +0000
-Received: from sjc-ads-2614.cisco.com (sjc-ads-2614.cisco.com [171.70.32.49])
-        by alln-core-4.cisco.com (8.15.2/8.15.2) with ESMTP id wA1Muirh013034;
-        Thu, 1 Nov 2018 22:56:44 GMT
-From:   Nikunj Kela <nkela@cisco.com>
-To:     David Woodhouse <dwmw2@infradead.org>
-Cc:     Nikunj Kela <nkela@cisco.com>, xe-linux-external@cisco.com,
-        Rod Whitby <rod@whitby.id.au>, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] Make JFFS2 endianness configurable
-Date:   Thu,  1 Nov 2018 15:56:03 -0700
-Message-Id: <20181101225603.17806-1-nkela@cisco.com>
-X-Mailer: git-send-email 2.19.1
+        Fri, 2 Nov 2018 04:11:39 -0400
+Received: by mail-lf1-f65.google.com with SMTP id u18so72490lff.10
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 16:06:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JK7AVYBL18PspaXDAhKnWR3redHMvvAm28q/cu6N5mc=;
+        b=SiujZf+1Ptp1RlRhBVl7UAcrh0NLbUL1ELLokiHM0yUZsN3b3N0/XxSFG2OZwb2PiJ
+         7echAW10emwhK9iqLm/DIT5PZDSjWKmLY+Ih/drLvPAqAAc7vFYYBKbEtAdsi8D2obCJ
+         BscHl2AzSxkKaELdP2hKG0MEaGTw8irpx8hcw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JK7AVYBL18PspaXDAhKnWR3redHMvvAm28q/cu6N5mc=;
+        b=SS9nRmH0ArxrD660shhqt99EEs2zWMkTJEh039072SdhqpVJyJPgmMJO2KzIfElmPA
+         a/lTVBLTpZTgGuBpQg3WpaHpziJwSsRTbso72sZTpuPWIrakwsyfReFaIFq6Ocu6AZ48
+         cuk9ZBU7hl/aoX8C+DlVlZDFrIz9vIrmODKAoTKklh3+Z1CHviCYQdySLc/bD44kzoJv
+         QIOqgnKgrNzh50W7PAlHwbILOjQ8LYUgIfCkBduREVD7mGClch2buCEsyLbkiA5TPCEa
+         Isx7QsIWRaJcJ2JVfXKGuA7ndymNUUlMTeMMItgLDBbD+yV0qg2udu0EZB/+I3DZBi8B
+         wS5Q==
+X-Gm-Message-State: AGRZ1gJJKZZep4rSBS54OHt/W5wD5hU7Xp5SqPQahITGQkkdtj9Zd8Qm
+        8ffDVmn/fmY/dYcAk5z+c0O18mmvOeU=
+X-Google-Smtp-Source: AJdET5c/ke9jZ/Akmv4koVO5RRzW9UiMQgpyOa07MdPUi3X9pVD6htCM5j3ql0gfJMRFMe5w0E1hyg==
+X-Received: by 2002:a19:48d0:: with SMTP id v199mr5657292lfa.104.1541113597119;
+        Thu, 01 Nov 2018 16:06:37 -0700 (PDT)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
+        by smtp.gmail.com with ESMTPSA id x29-v6sm3523468ljb.69.2018.11.01.16.06.36
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Nov 2018 16:06:36 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id u6-v6so134215ljd.1
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 16:06:36 -0700 (PDT)
+X-Received: by 2002:a2e:2416:: with SMTP id k22-v6mr217382ljk.80.1541113595783;
+ Thu, 01 Nov 2018 16:06:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-Outbound-SMTP-Client: 171.70.32.49, sjc-ads-2614.cisco.com
-X-Outbound-Node: alln-core-4.cisco.com
+References: <20181101171938-mutt-send-email-mst@kernel.org> <CAGXu5jJ0HgV2qN=wohEgro6ixqXHOHBTsvS5a9Dcpz8gxVo3bA@mail.gmail.com>
+In-Reply-To: <CAGXu5jJ0HgV2qN=wohEgro6ixqXHOHBTsvS5a9Dcpz8gxVo3bA@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 1 Nov 2018 16:06:19 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wicvws38JqzVF6oNEZ0jGzP6RecR6yAGtyzX3AkoJ321g@mail.gmail.com>
+Message-ID: <CAHk-=wicvws38JqzVF6oNEZ0jGzP6RecR6yAGtyzX3AkoJ321g@mail.gmail.com>
+Subject: Re: [PULL] vhost: cleanups and fixes
+To:     Kees Cook <keescook@chromium.org>
+Cc:     mst@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        bijan.mottahedeh@oracle.com, gedwards@ddn.com, joe@perches.com,
+        lenaic@lhuard.fr, liang.z.li@intel.com, mhocko@kernel.org,
+        mhocko@suse.com, stefanha@redhat.com, wei.w.wang@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch allows the endianness of the JFSS2 filesystem to be
-specified by config options.
+On Thu, Nov 1, 2018 at 4:00 PM Kees Cook <keescook@chromium.org> wrote:
+>
+> +       memset(&rsp, 0, sizeof(rsp));
+> +       rsp.response = VIRTIO_SCSI_S_FUNCTION_REJECTED;
+> +       resp = vq->iov[out].iov_base;
+> +       ret = __copy_to_user(resp, &rsp, sizeof(rsp));
+>
+> Is it actually safe to trust that iov_base has passed an earlier
+> access_ok() check here? Why not just use copy_to_user() instead?
 
-It defaults to native-endian (the previously hard-coded option).
+Good point.
 
-Some architectures benefit from having a single known endianness
-of JFFS2 filesystem (for data, not executables) independent of the
-endianness of the processor (ARM processors can be switched to either
-endianness at run-time).
+We really should have removed those double-underscore things ages ago.
 
-This patch is taken from:
-http://www.infradead.org/pipermail/linux-mtd/2006-January/014717.html
+Also, apart from the address, what about the size? Wouldn't it be
+better to use copy_to_iter() rather than implement it badly by hand?
 
-Cc: xe-linux-external@cisco.com
-Signed-off-by: Rod Whitby <rod@whitby.id.au>
-Signed-off-by: Nikunj Kela <nkela@cisco.com>
----
- fs/jffs2/Kconfig    | 25 +++++++++++++++++++++++++
- fs/jffs2/nodelist.h |  8 +++-----
- 2 files changed, 28 insertions(+), 5 deletions(-)
-
-diff --git a/fs/jffs2/Kconfig b/fs/jffs2/Kconfig
-index ad850c5bf2ca..86e93fbc9d74 100644
---- a/fs/jffs2/Kconfig
-+++ b/fs/jffs2/Kconfig
-@@ -182,3 +182,28 @@ config JFFS2_CMODE_FAVOURLZO
- 	  decompression) at the expense of size.
- 
- endchoice
-+
-+choice
-+	prompt "JFFS2 endianness"
-+	default JFFS2_NATIVE_ENDIAN
-+	depends on JFFS2_FS
-+	help
-+	  You can set here the default endianness of JFFS2 from
-+	  the available options. Do not touch if unsure.
-+
-+config JFFS2_NATIVE_ENDIAN
-+	bool "native endian"
-+	help
-+	  Uses a native endian bytestream.
-+
-+config JFFS2_BIG_ENDIAN
-+	bool "big endian"
-+	help
-+	  Uses a big endian bytestream.
-+
-+config JFFS2_LITTLE_ENDIAN
-+	bool "little endian"
-+	help
-+	  Uses a little endian bytestream.
-+
-+endchoice
-diff --git a/fs/jffs2/nodelist.h b/fs/jffs2/nodelist.h
-index 0637271f3770..a1ebf04f217c 100644
---- a/fs/jffs2/nodelist.h
-+++ b/fs/jffs2/nodelist.h
-@@ -27,12 +27,10 @@
- #include "os-linux.h"
- #endif
- 
--#define JFFS2_NATIVE_ENDIAN
--
- /* Note we handle mode bits conversion from JFFS2 (i.e. Linux) to/from
-    whatever OS we're actually running on here too. */
- 
--#if defined(JFFS2_NATIVE_ENDIAN)
-+#if defined(CONFIG_JFFS2_NATIVE_ENDIAN)
- #define cpu_to_je16(x) ((jint16_t){x})
- #define cpu_to_je32(x) ((jint32_t){x})
- #define cpu_to_jemode(x) ((jmode_t){os_to_jffs2_mode(x)})
-@@ -43,7 +41,7 @@
- #define je16_to_cpu(x) ((x).v16)
- #define je32_to_cpu(x) ((x).v32)
- #define jemode_to_cpu(x) (jffs2_to_os_mode((x).m))
--#elif defined(JFFS2_BIG_ENDIAN)
-+#elif defined(CONFIG_JFFS2_BIG_ENDIAN)
- #define cpu_to_je16(x) ((jint16_t){cpu_to_be16(x)})
- #define cpu_to_je32(x) ((jint32_t){cpu_to_be32(x)})
- #define cpu_to_jemode(x) ((jmode_t){cpu_to_be32(os_to_jffs2_mode(x))})
-@@ -54,7 +52,7 @@
- #define je16_to_cpu(x) (be16_to_cpu(x.v16))
- #define je32_to_cpu(x) (be32_to_cpu(x.v32))
- #define jemode_to_cpu(x) (be32_to_cpu(jffs2_to_os_mode((x).m)))
--#elif defined(JFFS2_LITTLE_ENDIAN)
-+#elif defined(CONFIG_JFFS2_LITTLE_ENDIAN)
- #define cpu_to_je16(x) ((jint16_t){cpu_to_le16(x)})
- #define cpu_to_je32(x) ((jint32_t){cpu_to_le32(x)})
- #define cpu_to_jemode(x) ((jmode_t){cpu_to_le32(os_to_jffs2_mode(x))})
--- 
-2.19.1
-
+               Linus
