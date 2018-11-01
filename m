@@ -2,106 +2,178 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74107C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 20:33:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB44BC6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 20:33:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4507A205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 20:33:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4507A205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 59570205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 20:33:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="hdzRHGDj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59570205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726164AbeKBFhv (ORCPT
+        id S1726234AbeKBFiF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 01:37:51 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:46142 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725780AbeKBFhu (ORCPT
+        Fri, 2 Nov 2018 01:38:05 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:42236 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726032AbeKBFiE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 01:37:50 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id CFE831401B0FA;
-        Thu,  1 Nov 2018 13:33:18 -0700 (PDT)
-Date:   Thu, 01 Nov 2018 13:33:15 -0700 (PDT)
-Message-Id: <20181101.133315.47887636039827313.davem@davemloft.net>
-To:     firoz.khan@linaro.org
-Cc:     sparclinux@vger.kernel.org, gregkh@linuxfoundation.org,
-        pombredanne@nexb.com, tglx@linutronix.de,
-        kstewart@linuxfoundation.org, y2038@lists.linaro.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        arnd@arndb.de, deepa.kernel@gmail.com,
-        marcin.juszkiewicz@linaro.org
-Subject: Re: [PATCH v2 3/4] sparc: add system call table generation support
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1541080391-3890-4-git-send-email-firoz.khan@linaro.org>
-References: <1541080391-3890-1-git-send-email-firoz.khan@linaro.org>
-        <1541080391-3890-4-git-send-email-firoz.khan@linaro.org>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 01 Nov 2018 13:33:19 -0700 (PDT)
+        Fri, 2 Nov 2018 01:38:04 -0400
+Received: by mail-qk1-f195.google.com with SMTP id u68so9512699qkg.9
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 13:33:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8glHKttFH9I5zyY3UWTD3U/2jmUFuiCfepetv/PmuPg=;
+        b=hdzRHGDjfBw3ggtuhLbxOpNjE05mbddOfhPBO/ZW5fJyxG8zibFyjPSmJqA0+9gu7X
+         nlYOO3jRk2SRPMp4mvTnPUTB7xpYhdUNcgEW0Fezh+fiFFZseB+5gR/3jFrEGtfDw9xB
+         pCYD4rKdFnW0nrtlZ2KzGsnfRRHJ2BYfQKkCKoCBgPl2CkaFhBRKU9PVcHhkTOw1ISJH
+         fKhQ/+Nn1cPejwuBnvUUOoHdU6gJ4dFq07xHg5QsKOe6bSwPUk9oTfttFiM1XBAbhxK4
+         /DTVDRmCjelWVBuFkAy71ye/T0trlz2Vhs0jwEXvYqLor4kNXR4hLHk/ROnUIOm+/cwj
+         ZsZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8glHKttFH9I5zyY3UWTD3U/2jmUFuiCfepetv/PmuPg=;
+        b=CxFitkh8Tluj8P1VlSZTuDSexghsQdN0FsqqWU1ZMK7Dr5qrOk+eiLSVlTZ/7Ufpnr
+         EORtoQcLz5QSkDGhDSPfk/pt4qUcgJZ/DVH8AC7Crb9LbTyrWtbngG/obBIUHCNpR9V0
+         x5dfQROPeMAkU6BJtZVqubaEywJcwwgARzdk3D+R1G0/KpGopGHGSFNEj8oqQSySMfpb
+         1CXM0k562pH0TWBmPRfwxSJuPkB+IdSmZFyaMWlp2NdKjKgSSQx4etQe+yG/WOrJmoOw
+         /chq5Uhs5WqbIBRaPy8PwOExZd+4hJEVCpaJWk81LG6U/SKEdkFOHGIZ7hpN4zxvNZXb
+         BroQ==
+X-Gm-Message-State: AGRZ1gKvf5ZHppnG7anxqgo/gbCXhlUI6y+2RGptPgNpgQtL2GclzYm7
+        YbzXq4QIteLo6pL+3+guZ6Dw9A==
+X-Google-Smtp-Source: AJdET5ew9D9zzs2mJncxavhVPn87vmHDtvDzRNJJAgnQnMvgRyzUC2FDTiq997zllGhRTfSIixcvYw==
+X-Received: by 2002:a37:8b84:: with SMTP id n126mr2955520qkd.355.1541104412116;
+        Thu, 01 Nov 2018 13:33:32 -0700 (PDT)
+Received: from cisco ([173.38.117.87])
+        by smtp.gmail.com with ESMTPSA id i65sm30423807qkh.49.2018.11.01.13.33.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 01 Nov 2018 13:33:31 -0700 (PDT)
+Date:   Thu, 1 Nov 2018 14:33:28 -0600
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian@brauner.io>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Aleksa Sarai <asarai@suse.de>, linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v8 1/2] seccomp: add a return code to trap to userspace
+Message-ID: <20181101203328.GI2180@cisco>
+References: <20181029224031.29809-1-tycho@tycho.ws>
+ <20181029224031.29809-2-tycho@tycho.ws>
+ <20181030143235.GA3385@redhat.com>
+ <20181030153231.GB7343@cisco>
+ <20181101144804.GD23232@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181101144804.GD23232@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Firoz Khan <firoz.khan@linaro.org>
-Date: Thu,  1 Nov 2018 19:23:10 +0530
+On Thu, Nov 01, 2018 at 03:48:05PM +0100, Oleg Nesterov wrote:
+> On 10/30, Tycho Andersen wrote:
+> >
+> > > I am not sure I understand the value of signaled/SECCOMP_NOTIF_FLAG_SIGNALED...
+> > > I mean, why it is actually useful?
+> > >
+> > > Sorry if this was already discussed.
+> >
+> > :) no problem, many people have complained about this. This is an
+> > implementation of Andy's suggestion here:
+> > https://lkml.org/lkml/2018/3/15/1122
+> >
+> > You can see some more detailed discussion here:
+> > https://lkml.org/lkml/2018/9/21/138
+> 
+> Cough, sorry, I simply can't understand what are you talking about ;)
+> It seems that I need to read all the previous emails... So let me ask
+> a stupid question below.
+> 
+> > > But my main concern is that either way wait_for_completion_killable() allows
+> > > to trivially create a process which doesn't react to SIGSTOP, not good...
+> > >
+> > > Note also that this can happen if, say, both the tracer and tracee run in the
+> > > same process group and SIGSTOP is sent to their pgid, if the tracer gets the
+> > > signal first the tracee won't stop.
+> > >
+> > > Of freezer. try_to_freeze_tasks() can fail if it freezes the tracer before
+> > > it does SECCOMP_IOCTL_NOTIF_SEND.
+> >
+> > I think in general the way this is intended to be used these things
+> > wouldn't happen.
+> 
+> Why?
 
-> +141	common	getpeername		sys_getpeername			sys_nis_syscall
- ...
-> +150	common	getsockname		sys_getsockname			sys_nis_syscall
+The intent is to run the tracer on the host and have it trace
+containers, which would live in a different freezer cgroup, process
+group, etc. Of course you could use it in a situation where they would
+be, so the concern is still valid, but I'm not sure why you'd do that.
 
-The sys_nis_syscall in these two entries is incorrect, see the patch
-below.
+> > was malicious and had the ability to create a user namespace to
+> > exhaust pids this way,
+> 
+> Not sure I understand how this connects to my question... nevermind.
+> 
+> > so perhaps we should drop this part of the
+> > patch. I have no real need for it, but perhaps Andy can elaborate?
+> 
+> Yes I think it would be nice to avoid wait_for_completion_killable().
+> 
+> So please help me to understand the problem. Once again, why can not
+> seccomp_do_user_notification() use wait_for_completion_interruptible() only?
+>
+> This is called before the task actually starts the syscall, so
+> -ERESTARTNOINTR if signal_pending() can't hurt.
 
-One of my worst fears about this change has been realized, that
-instead of helping us find problems, it is so automated to the point
-that it fails to question issues like this.
+The idea was that when the tracee gets a signal, it notifies the
+tracer exactly once, and then waits for the tracer to decide what to
+do. So if we use another wait_for_completion_interruptible(), doesn't
+it just get re-woken immediately because the signal is still pending?
 
-If sys_nis_syscall for the compat syscall shows up in a situation where the
-native 32-bit syscall does have an entry, that's a BUG and the script should
-point this out so that the bug can be fixed.
+...actually I just tested it, and it doesn't. So it seems we could use
+_interruptible() here and achieve the same thing.
 
-Thank you.
+> Now lets suppose seccomp_do_user_notification() simply does
+> 
+> 	err = wait_for_completion_interruptible(&n.ready);
+> 
+> 	if (err < 0 && state != SECCOMP_NOTIFY_REPLIED) {
+> 		syscall_set_return_value(ERESTARTNOINTR);
+> 		list_del(&n.list);
+> 		return -1;
+> 	}
+> 
+> (I am ignoring the locking/etc). Now the obvious problem is that the listener
+> doing SECCOMP_IOCTL_NOTIF_SEND can't distinguish -ENOENT from the case when the
+> tracee was killed, yes?
+> 
+> Is it that important?
 
-====================
-From 1f2b5b8e2df4591fbca430aff9c5a072dcc0f408 Mon Sep 17 00:00:00 2001
-From: "David S. Miller" <davem@davemloft.net>
-Date: Wed, 31 Oct 2018 18:30:21 -0700
-Subject: [PATCH] sparc64: Wire up compat getpeername and getsockname.
+The answer to this question depends on how we want the listener to be
+able to react. For example, if the listener is in the middle of doing
+a mount() on behalf of the task and it gets a signal and we return
+immediately, the listener will complete the mount(), try to respond
+with success and get -ENOENT. If the task handles the signal and
+restarts the mount(), it'll happen twice unless the listener undoes
+it when it sees the -ENOENT. If we send another notification with the
+SIGNALED flag, the listener has a better picture of what's going on,
+which might be nice.
 
-Fixes: 8b30ca73b7cc ("sparc: Add all necessary direct socket system calls.")
-Reported-by: Joseph Myers  <joseph@codesourcery.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
----
- arch/sparc/kernel/systbls_64.S | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/sparc/kernel/systbls_64.S b/arch/sparc/kernel/systbls_64.S
-index bb68c80..ff9389a 100644
---- a/arch/sparc/kernel/systbls_64.S
-+++ b/arch/sparc/kernel/systbls_64.S
-@@ -47,9 +47,9 @@ sys_call_table32:
- 	.word sys_recvfrom, sys_setreuid16, sys_setregid16, sys_rename, compat_sys_truncate
- /*130*/	.word compat_sys_ftruncate, sys_flock, compat_sys_lstat64, sys_sendto, sys_shutdown
- 	.word sys_socketpair, sys_mkdir, sys_rmdir, compat_sys_utimes, compat_sys_stat64
--/*140*/	.word sys_sendfile64, sys_nis_syscall, compat_sys_futex, sys_gettid, compat_sys_getrlimit
-+/*140*/	.word sys_sendfile64, sys_getpeername, compat_sys_futex, sys_gettid, compat_sys_getrlimit
- 	.word compat_sys_setrlimit, sys_pivot_root, sys_prctl, sys_pciconfig_read, sys_pciconfig_write
--/*150*/	.word sys_nis_syscall, sys_inotify_init, sys_inotify_add_watch, sys_poll, sys_getdents64
-+/*150*/	.word sys_getsockname, sys_inotify_init, sys_inotify_add_watch, sys_poll, sys_getdents64
- 	.word compat_sys_fcntl64, sys_inotify_rm_watch, compat_sys_statfs, compat_sys_fstatfs, sys_oldumount
- /*160*/	.word compat_sys_sched_setaffinity, compat_sys_sched_getaffinity, sys_getdomainname, sys_setdomainname, sys_nis_syscall
- 	.word sys_quotactl, sys_set_tid_address, compat_sys_mount, compat_sys_ustat, sys_setxattr
--- 
-2.1.2.532.g19b5d50
-
+Tycho
