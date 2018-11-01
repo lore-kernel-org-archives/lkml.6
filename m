@@ -2,145 +2,108 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 262E1C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:56:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 225B8C6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:56:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA6BB20820
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:56:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA6BB20820
+	by mail.kernel.org (Postfix) with ESMTP id C157C2081B
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:56:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C157C2081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728759AbeKAW7M (ORCPT
+        id S1728803AbeKAW7n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 18:59:12 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:34208 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728748AbeKAW7M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 18:59:12 -0400
-Received: by mail-ed1-f68.google.com with SMTP id w19-v6so16620861eds.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 06:56:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+jtBHWjsOfJeGigaOTutCncOXz9WX65sCAtVadnxm58=;
-        b=gcSr8CICu9LkHd3u2KH4vaWWHmQzlrdQ2sjxGHwY1wwx9nXWuSVr8ZmYowOMlcEMza
-         Rzef9ezwFiyCDShDqCSghr/48KTgRMYvtN0T0XA6WgvnKfx6r/NTkjgfAohavnFu0J/I
-         BNEHP1UcDGiG8eNlQoQJRqZT3vrYqFCF2J6kICp2HdU9Cd293d2W4Z7+/MiZ5AUf+kXV
-         ahsCVX0OtvgqAdVy05w3RwYwfEzOqBlItXKZhGeQYgx7aGxjgZOBuBeWP19x6IvLuNR8
-         8/p1uShbgoSBjn2BmbF8iRuY9ONUiuzLlCvk8xkphY3XIXTXwP9i1PLyw0cGTg8I0Lin
-         2RRw==
-X-Gm-Message-State: AGRZ1gIu0QbXRCUzCcZ+iUr8afkMxGMhW3y4O51xRo6n7lt1OcKt4Ydl
-        1+UjTECBJl6eQCkmqhwwinMEBQ==
-X-Google-Smtp-Source: AJdET5d3XQjW5TuHEoT7CgqW6GFW39ERbZGu3hzILkZVe8OxTMwGi8In+dwCks15c5vaTbamlfeDuQ==
-X-Received: by 2002:a17:906:2d4a:: with SMTP id e10-v6mr4033911eji.105.1541080566033;
-        Thu, 01 Nov 2018 06:56:06 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id d23-v6sm730003ejk.21.2018.11.01.06.56.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Nov 2018 06:56:05 -0700 (PDT)
-Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Dean Wallace <duffydack73@gmail.com>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Johannes Stezenbach <js@sig21.net>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mogens Jensen <mogens-jensen@protonmail.com>
-References: <CAHp75VctdBE-GM60udJawBCXdmoOqZn4N=kFWz5GLHzjPG2iQQ@mail.gmail.com>
- <20181029190819.2ivlx73n6y6sx4vk@picard>
- <ffc4bcc9-62c3-8940-85d6-d0fd01f3a1b8@linux.intel.com>
- <c8fb730a-c160-41b4-dad0-8ed8594e5687@redhat.com>
- <20181030143836.feo7zcxiestylxoo@picard>
- <2d429c87-24c5-4075-683e-b0d12c3eb1c2@linux.intel.com>
- <d00df762-e4fc-06c5-701e-d5100bfd0e35@redhat.com>
- <e48696f0-aa3e-e20e-d038-9d8dda9cbfce@redhat.com>
- <20181030161534.wk5cf7nxbwhp2far@picard>
- <307c2074-d268-a87a-6040-1240a2091a4d@redhat.com>
- <20181031200709.xrmu6wsdel7dtcjq@picard>
- <da025116-580d-e442-d96f-875282306f1b@linux.intel.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <a3720a0f-2d6b-f536-a306-df9676bc44a6@redhat.com>
-Date:   Thu, 1 Nov 2018 14:56:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 1 Nov 2018 18:59:43 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55493 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728500AbeKAW7n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 18:59:43 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 043B27F3FF;
+        Thu,  1 Nov 2018 13:56:39 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.31])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 64D365D6B5;
+        Thu,  1 Nov 2018 13:56:36 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Thu,  1 Nov 2018 14:56:37 +0100 (CET)
+Date:   Thu, 1 Nov 2018 14:56:34 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian@brauner.io>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Aleksa Sarai <asarai@suse.de>, linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v8 1/2] seccomp: add a return code to trap to userspace
+Message-ID: <20181101135633.GB23232@redhat.com>
+References: <20181029224031.29809-1-tycho@tycho.ws>
+ <20181029224031.29809-2-tycho@tycho.ws>
 MIME-Version: 1.0
-In-Reply-To: <da025116-580d-e442-d96f-875282306f1b@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181029224031.29809-2-tycho@tycho.ws>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 01 Nov 2018 13:56:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 10/29, Tycho Andersen wrote:
+>
+> +static int seccomp_notify_release(struct inode *inode, struct file *file)
+> +{
+> +	struct seccomp_filter *filter = file->private_data;
+> +	struct seccomp_knotif *knotif;
+> +
+> +	mutex_lock(&filter->notify_lock);
+> +
+> +	/*
+> +	 * If this file is being closed because e.g. the task who owned it
+> +	 * died, let's wake everyone up who was waiting on us.
+> +	 */
+> +	list_for_each_entry(knotif, &filter->notif->notifications, list) {
+> +		if (knotif->state == SECCOMP_NOTIFY_REPLIED)
+> +			continue;
+> +
+> +		knotif->state = SECCOMP_NOTIFY_REPLIED;
+> +		knotif->error = -ENOSYS;
+> +		knotif->val = 0;
+> +
+> +		complete(&knotif->ready);
+> +	}
+> +
+> +	wake_up_all(&filter->notif->wqh);
 
-On 31-10-18 23:27, Pierre-Louis Bossart wrote:
-> 
->> Just thought it worth mentioning, this new patch that fixes sound
->> again, seems to have ressurected an old issue with PLL unlock.  I'm
->> seeing journal entries after fresh boot ......
->>
->> ```
->> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
->> picard systemd[462]: Started Sound Service.
->> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
->> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
->> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
->> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
->> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
->> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
->> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
->> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
->> picard kernel: max98090_pll_work: 141 callbacks suppressed
->> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
->> ```
->>
->> sound is ok, but sometimes plugging in headphones spams journal with
->> those PLL messages, and sound turns into "daleks", and I have to
->> remove/insert headphones few times or stop/start audio to fix it.
->> It's a very old issue, maybe you'd know more about it.
-> 
-> I noticed this error on my Orco device used for tests many moons ago, but I could never find out what led to this error case, it wasn't deterministic and didn't impact the audio quality. All I could do is rate_limit it... If we have an A vs. B situation it'd be really helpful to diagnose further.
-> 
-> Is there really a causality between the changes from Hans and this PLL unlock error?
+Why? __fput() is not possible if there is another user of this file sleeping
+in seccomp_notify_poll().
 
-That is actually not unlikely. We have the mclk as the source clk for the PLL
-and if we enable/disable it and/or change the src-clk then the PLL will loose
-its lock and it needs some time to re-lock.
+> +	kfree(filter->notif);
 
-So these errors indicate that we need to either:
+Hmm, this looks wrong... we can't kfree ->notif if its ->notifications list
+is not empty, otherwise seccomp_do_user_notification()->list_del(&n.list)
+can write to the freed memory.
 
-1) Sleep a bit after enabling the mclk;
-    (and/or after changing the PLL src clk I've not checked if this driver does this)
-2) Or poll the PLL locked bit after enabling the mclk until it indicate it has locked
-    (and/or after changing the PLL src clk)
+I think _release() should do list_for_each_entry_safe() + list_del_init()
+and seccomp_do_user_notification() should use list_del_init() too.
 
-I've had to do similar things in u-boot when turning on PLL-s for DRAM and
-stuff, so this sounds familiar.
+Or, simpler, seccomp_do_user_notification() should do
 
-Dean since you have the hardware, this is probably easiest for you to fix
-(since you can reproduce the issue) do you feel up to giving fixing this
-a shot? I think it is fine if you just go with the simple solution of
-adding a msleep(xx) at the right place. I would expect 10 (ms) to do
-the trick. If that works you may also try to give 5ms a shot.
+	if (!match->notif)
+		goto out;
 
-Regards,
+instead of "goto remove_list".
 
-Hans
-
-
-
+Oleg.
 
