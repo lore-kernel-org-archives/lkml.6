@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC511C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:12:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01BC6ECDE44
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:12:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8100D20664
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:12:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B782420664
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:12:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="Ri7E5TzM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8100D20664
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="NipsQLyX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B782420664
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=onstation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727609AbeKAJNM (ORCPT
+        id S1727646AbeKAJNU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 05:13:12 -0400
-Received: from onstation.org ([52.200.56.107]:44756 "EHLO onstation.org"
+        Thu, 1 Nov 2018 05:13:20 -0400
+Received: from onstation.org ([52.200.56.107]:44736 "EHLO onstation.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726322AbeKAJMm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 05:12:42 -0400
+        id S1725823AbeKAJMl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 05:12:41 -0400
 Received: from localhost.localdomain (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id BB9ADB12;
-        Thu,  1 Nov 2018 00:12:11 +0000 (UTC)
+        by onstation.org (Postfix) with ESMTPSA id 802CAB0C;
+        Thu,  1 Nov 2018 00:12:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1541031132;
-        bh=nd62Lix9kepB8HvNJdVZyApb/XrXmBdkuO7lgcPCO9A=;
+        s=default; t=1541031131;
+        bh=iezGjImedq/LkxrzjpD62LOtq1MXGldLnWtale4QFC8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ri7E5TzMG3eRtJzt7IqOTkMgRTmZffohvRy2N2PHKkYczWc/xuanaqXtiAnty0XQw
-         blbd4D3eaJYB7Zb9GWzLO4lZ4zSFjHn5M95cRC+S/U6byFmH7CB+wEwFp/ci3jJfAg
-         o4+ENdGDS/tVyZ4SKQzdUZSCxdxFdsM/gICBDu7c=
+        b=NipsQLyXdupZtXv21zSjgnBJGQO2a8x7yt+mm9dFaDTPJwk4aJhZ0Anvm/Btd/mS+
+         KjdgRR/hJEhgDKixHY7akj+/feQXhtwmREvvfy2R3ZF1g/2Ev5ejeAuwCx3PRmdB+U
+         01DhWGdu5R/ieQcy5wBOl5b8N1TGNlvR3vL+RpQ0=
 From:   Brian Masney <masneyb@onstation.org>
 To:     sre@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
         andy.gross@linaro.org, david.brown@linaro.org,
@@ -46,9 +46,9 @@ Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         jonathan@marek.ca, masneyb@onstation.org
-Subject: [PATCH v2 4/7] power: supply: bq24190_charger: add extcon support for USB OTG
-Date:   Wed, 31 Oct 2018 20:11:46 -0400
-Message-Id: <20181101001149.13453-5-masneyb@onstation.org>
+Subject: [PATCH v2 2/7] power: supply: bq24190_charger: add support for bq24192 variant
+Date:   Wed, 31 Oct 2018 20:11:44 -0400
+Message-Id: <20181101001149.13453-3-masneyb@onstation.org>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20181101001149.13453-1-masneyb@onstation.org>
 References: <20181101001149.13453-1-masneyb@onstation.org>
@@ -57,106 +57,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add extcon support so that we can notify USB drivers of cable state
-changes. Based on work from Jonathan Marek. USB OTG was tested on a LG
-Nexus 5 (hammerhead) phone.
+From: Jonathan Marek <jonathan@marek.ca>
 
+This patch adds support for the bq24192 variant to bq24190_charger.
+
+Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+[masneyb@onstation.org: Changed if statement to a switch based on
+feedback from Sebastian Reichel.]
 Signed-off-by: Brian Masney <masneyb@onstation.org>
 ---
- drivers/power/supply/bq24190_charger.c | 37 +++++++++++++++++++++++++-
- 1 file changed, 36 insertions(+), 1 deletion(-)
+ drivers/power/supply/bq24190_charger.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/power/supply/bq24190_charger.c b/drivers/power/supply/bq24190_charger.c
-index 9e7f3e33458a..4e64e6ac95c5 100644
+index b58df04d03b3..44d3aff32885 100644
 --- a/drivers/power/supply/bq24190_charger.c
 +++ b/drivers/power/supply/bq24190_charger.c
-@@ -21,6 +21,7 @@
- #include <linux/workqueue.h>
- #include <linux/gpio.h>
- #include <linux/i2c.h>
-+#include <linux/extcon-provider.h>
+@@ -1637,8 +1637,12 @@ static int bq24190_hw_init(struct bq24190_dev_info *bdi)
+ 	if (ret < 0)
+ 		return ret;
  
- #define	BQ24190_MANUFACTURER	"Texas Instruments"
+-	if (v != BQ24190_REG_VPRS_PN_24190 &&
+-	    v != BQ24190_REG_VPRS_PN_24192I) {
++	switch (v) {
++	case BQ24190_REG_VPRS_PN_24190:
++	case BQ24190_REG_VPRS_PN_24192:
++	case BQ24190_REG_VPRS_PN_24192I:
++		break;
++	default:
+ 		dev_err(bdi->dev, "Error unknown model: 0x%02x\n", v);
+ 		return -ENODEV;
+ 	}
+@@ -1931,6 +1935,7 @@ static const struct dev_pm_ops bq24190_pm_ops = {
  
-@@ -159,6 +160,7 @@
- struct bq24190_dev_info {
- 	struct i2c_client		*client;
- 	struct device			*dev;
-+	struct extcon_dev		*edev;
- 	struct power_supply		*charger;
- 	struct power_supply		*battery;
- 	struct delayed_work		input_current_limit_work;
-@@ -174,6 +176,11 @@ struct bq24190_dev_info {
- 	u8				watchdog;
+ static const struct i2c_device_id bq24190_i2c_ids[] = {
+ 	{ "bq24190" },
++	{ "bq24192" },
+ 	{ "bq24192i" },
+ 	{ },
  };
- 
-+static const unsigned int bq24190_usb_extcon_cable[] = {
-+	EXTCON_USB,
-+	EXTCON_NONE,
-+};
-+
- /*
-  * The tables below provide a 2-way mapping for the value that goes in
-  * the register field and the real-world value that it represents.
-@@ -1528,6 +1535,20 @@ static const struct power_supply_desc bq24190_battery_desc = {
- 	.property_is_writeable	= bq24190_battery_property_is_writeable,
+@@ -1939,6 +1944,7 @@ MODULE_DEVICE_TABLE(i2c, bq24190_i2c_ids);
+ #ifdef CONFIG_OF
+ static const struct of_device_id bq24190_of_match[] = {
+ 	{ .compatible = "ti,bq24190", },
++	{ .compatible = "ti,bq24192", },
+ 	{ .compatible = "ti,bq24192i", },
+ 	{ },
  };
- 
-+static int bq24190_configure_usb_otg(struct bq24190_dev_info *bdi, u8 ss_reg)
-+{
-+	bool otg_enabled;
-+	int ret;
-+
-+	otg_enabled = !!(ss_reg & BQ24190_REG_SS_VBUS_STAT_MASK);
-+	ret = extcon_set_state_sync(bdi->edev, EXTCON_USB, otg_enabled);
-+	if (ret < 0)
-+		dev_err(bdi->dev, "Can't set extcon state to %d: %d\n",
-+			otg_enabled, ret);
-+
-+	return ret;
-+}
-+
- static void bq24190_check_status(struct bq24190_dev_info *bdi)
- {
- 	const u8 battery_mask_ss = BQ24190_REG_SS_CHRG_STAT_MASK;
-@@ -1597,8 +1618,10 @@ static void bq24190_check_status(struct bq24190_dev_info *bdi)
- 		bdi->ss_reg = ss_reg;
- 	}
- 
--	if (alert_charger || alert_battery)
-+	if (alert_charger || alert_battery) {
- 		power_supply_changed(bdi->charger);
-+		bq24190_configure_usb_otg(bdi, ss_reg);
-+	}
- 	if (alert_battery && bdi->battery)
- 		power_supply_changed(bdi->battery);
- 
-@@ -1732,6 +1755,14 @@ static int bq24190_probe(struct i2c_client *client,
- 		return -EINVAL;
- 	}
- 
-+	bdi->edev = devm_extcon_dev_allocate(dev, bq24190_usb_extcon_cable);
-+	if (IS_ERR(bdi->edev))
-+		return PTR_ERR(bdi->edev);
-+
-+	ret = devm_extcon_dev_register(dev, bdi->edev);
-+	if (ret < 0)
-+		return ret;
-+
- 	pm_runtime_enable(dev);
- 	pm_runtime_use_autosuspend(dev);
- 	pm_runtime_set_autosuspend_delay(dev, 600);
-@@ -1778,6 +1809,10 @@ static int bq24190_probe(struct i2c_client *client,
- 		goto out_charger;
- 	}
- 
-+	ret = bq24190_configure_usb_otg(bdi, bdi->ss_reg);
-+	if (ret < 0)
-+		goto out_charger;
-+
- 	ret = bq24190_sysfs_create_group(bdi);
- 	if (ret < 0) {
- 		dev_err(dev, "Can't create sysfs entries\n");
 -- 
 2.17.2
 
