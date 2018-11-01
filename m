@@ -2,112 +2,126 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7DBDC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:10:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 121B8C6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:10:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2414204FD
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:10:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2414204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CAEE9204FD
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:10:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bCGTAhDX";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bCGTAhDX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAEE9204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728461AbeKAWNH (ORCPT
+        id S1728532AbeKAWNb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 18:13:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55066 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727644AbeKAWNH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 18:13:07 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CB16BADD6;
-        Thu,  1 Nov 2018 13:10:11 +0000 (UTC)
-Date:   Thu, 1 Nov 2018 14:09:10 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Vovo Yang <vovoy@chromium.org>
-Cc:     dave.hansen@intel.com, linux-kernel@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, linux-mm@kvack.org,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        peterz@infradead.org, akpm@linux-foundation.org
-Subject: Re: [PATCH v3] mm, drm/i915: mark pinned shmemfs pages as unevictable
-Message-ID: <20181101130910.GI23921@dhcp22.suse.cz>
-References: <20181031081945.207709-1-vovoy@chromium.org>
- <20181031142458.GP32673@dhcp22.suse.cz>
- <cc44aa53-8705-02ea-6c59-f311427d93af@intel.com>
- <20181031164231.GQ32673@dhcp22.suse.cz>
- <CAEHM+4pSkv_fD3Yb2KX1xFrOmRHU1e=+wCBrCyLAAMBG3zP75w@mail.gmail.com>
+        Thu, 1 Nov 2018 18:13:31 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39716 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727644AbeKAWNb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 18:13:31 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id D9BDD6083C; Thu,  1 Nov 2018 13:10:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541077835;
+        bh=Ozq+WnTVtO0/pL37GikBYdZtPiusfJi1TtQ7m01/Ggw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=bCGTAhDXdF3p3Au5Qtako2l250233w0aWLJpPMPXUFwatbBNCILn1KxoDdP3KZvhW
+         n1Egh3llLMUhz/fDMrJomSwcJA+QhrNBPVaNb9nXlj+k8QmTJn0gJXPOZ+m+K9GAsC
+         g2BfBYnwbWYCwqJK/CDUcrkEQWeIF4u6ZfSZRySg=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 1BBA360795;
+        Thu,  1 Nov 2018 13:10:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541077835;
+        bh=Ozq+WnTVtO0/pL37GikBYdZtPiusfJi1TtQ7m01/Ggw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=bCGTAhDXdF3p3Au5Qtako2l250233w0aWLJpPMPXUFwatbBNCILn1KxoDdP3KZvhW
+         n1Egh3llLMUhz/fDMrJomSwcJA+QhrNBPVaNb9nXlj+k8QmTJn0gJXPOZ+m+K9GAsC
+         g2BfBYnwbWYCwqJK/CDUcrkEQWeIF4u6ZfSZRySg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEHM+4pSkv_fD3Yb2KX1xFrOmRHU1e=+wCBrCyLAAMBG3zP75w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 01 Nov 2018 18:40:35 +0530
+From:   mgottam@codeaurora.org
+To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc:     hverkuil@xs4all.nl, mchehab@kernel.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, acourbot@chromium.org,
+        vgarodia@codeaurora.org
+Subject: Re: [PATCH] media: venus: add support for selection rectangles
+In-Reply-To: <0e0f689e-f6e3-73a6-e145-deb2ef7cafc8@linaro.org>
+References: <1539071603-1588-1-git-send-email-mgottam@codeaurora.org>
+ <0e0f689e-f6e3-73a6-e145-deb2ef7cafc8@linaro.org>
+Message-ID: <5037ca4b0dd0de80750e35ca889d4225@codeaurora.org>
+X-Sender: mgottam@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 01-11-18 19:28:46, Vovo Yang wrote:
-> On Thu, Nov 1, 2018 at 12:42 AM Michal Hocko <mhocko@kernel.org> wrote:
-> > On Wed 31-10-18 07:40:14, Dave Hansen wrote:
-> > > Didn't we create the unevictable lists in the first place because
-> > > scanning alone was observed to be so expensive in some scenarios?
-> >
-> > Yes, that is the case. I might just misunderstood the code I thought
-> > those pages were already on the LRU when unevictable flag was set and
-> > we would only move these pages to the unevictable list lazy during the
-> > reclaim. If the flag is set at the time when the page is added to the
-> > LRU then it should get to the proper LRU list right away. But then I do
-> > not understand the test results from previous run at all.
+On 2018-10-16 15:11, Stanimir Varbanov wrote:
+> Hi Malathi,
 > 
-> "gem_syslatency -t 120 -b -m" allocates a lot of anon pages, it consists of
-> these looping threads:
->   * ncpu threads to alloc i915 shmem buffers, these buffers are freed by i915
-> shrinker.
->   * ncpu threads to mmap, write, munmap an 2 MiB mapping.
->   * 1 thread to cat all files to /dev/null
+> On 10/09/2018 10:53 AM, Malathi Gottam wrote:
+>> Handles target type crop by setting the new active rectangle
+>> to hardware. The new rectangle should be within YUV size.
+>> 
+>> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
+>> ---
+>>  drivers/media/platform/qcom/venus/venc.c | 19 +++++++++++++++++--
+>>  1 file changed, 17 insertions(+), 2 deletions(-)
+>> 
+>> diff --git a/drivers/media/platform/qcom/venus/venc.c 
+>> b/drivers/media/platform/qcom/venus/venc.c
+>> index 3f50cd0..754c19a 100644
+>> --- a/drivers/media/platform/qcom/venus/venc.c
+>> +++ b/drivers/media/platform/qcom/venus/venc.c
+>> @@ -478,16 +478,31 @@ static int venc_g_fmt(struct file *file, void 
+>> *fh, struct v4l2_format *f)
+>>  venc_s_selection(struct file *file, void *fh, struct v4l2_selection 
+>> *s)
+>>  {
+>>  	struct venus_inst *inst = to_inst(file);
+>> +	int ret;
+>> +	u32 buftype;
+>> 
+>>  	if (s->type != V4L2_BUF_TYPE_VIDEO_OUTPUT)
+>>  		return -EINVAL;
+>> 
+>>  	switch (s->target) {
+>>  	case V4L2_SEL_TGT_CROP:
+>> -		if (s->r.width != inst->out_width ||
+>> -		    s->r.height != inst->out_height ||
+>> +		if (s->r.width > inst->out_width ||
+>> +		    s->r.height > inst->out_height ||
+>>  		    s->r.top != 0 || s->r.left != 0)
+>>  			return -EINVAL;
+>> +		if (s->r.width != inst->width ||
+>> +		    s->r.height != inst->height) {
+>> +			buftype = HFI_BUFFER_OUTPUT;
+>> +			ret = venus_helper_set_output_resolution(inst,
+>> +								 s->r.width,
+>> +								 s->r.height,
+>> +								 buftype);
 > 
-> Without the unevictable patch, after rebooting and running
-> "gem_syslatency -t 120 -b -m", I got these custom vmstat:
->   pgsteal_kswapd_anon 29261
->   pgsteal_kswapd_file 1153696
->   pgsteal_direct_anon 255
->   pgsteal_direct_file 13050
->   pgscan_kswapd_anon 14524536
->   pgscan_kswapd_file 1488683
->   pgscan_direct_anon 1702448
->   pgscan_direct_file 25849
-> 
-> And meminfo shows large anon lru size during test.
->   # cat /proc/meminfo | grep -i "active("
->   Active(anon):     377760 kB
->   Inactive(anon):  3195392 kB
->   Active(file):      19216 kB
->   Inactive(file):    16044 kB
-> 
-> With this patch, the custom vmstat after test:
->   pgsteal_kswapd_anon 74962
->   pgsteal_kswapd_file 903588
->   pgsteal_direct_anon 4434
->   pgsteal_direct_file 14969
->   pgscan_kswapd_anon 2814791
->   pgscan_kswapd_file 1113676
->   pgscan_direct_anon 526766
->   pgscan_direct_file 32432
-> 
-> The anon pgscan count is reduced.
+> I'm afraid that set_output_resolution cannot be called at any time. Do
+> you think we can set it after start_session?
 
-OK, so that explain my question about the test case. Even though you
-generate a lot of page cache, the amount is still too small to trigger
-pagecache mostly reclaim and anon LRUs are scanned as well.
+Yes Stan, we can set output_resolution after the session has been 
+initialization.
+As per the spec, this call s_selection is an optional step under 
+Initialization
+procedure of encoder even before we request buffers.
 
-Now to the difference with the previous version which simply set the
-UNEVICTABLE flag on mapping. Am I right assuming that pages are already
-at LRU at the time? Is there any reason the mapping cannot have the flag
-set before they are added to the LRU?
--- 
-Michal Hocko
-SUSE Labs
+So I think setting output resolution in this api shouldn't cause any 
+issue once
+we are confident on the instance state.
