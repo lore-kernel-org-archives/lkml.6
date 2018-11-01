@@ -2,100 +2,131 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41021ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 08:22:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 216FAC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 08:30:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1050F2081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 08:22:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1050F2081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id B204C20833
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 08:30:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="IITSHWBL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B204C20833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728024AbeKARX7 (ORCPT
+        id S1728021AbeKARcJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 13:23:59 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:57034 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727774AbeKARX7 (ORCPT
+        Thu, 1 Nov 2018 13:32:09 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:37328 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727753AbeKARcJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 13:23:59 -0400
-Received: from p5492fe24.dip0.t-ipconnect.de ([84.146.254.36] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gI8ER-0000Qm-3H; Thu, 01 Nov 2018 09:21:35 +0100
-Date:   Thu, 1 Nov 2018 09:21:34 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Igor Stoppa <igor.stoppa@gmail.com>
-cc:     Andy Lutomirski <luto@amacapital.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Kees Cook <keescook@chromium.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 10/17] prmem: documentation
-In-Reply-To: <8675e9d8-0ef0-7515-a894-097d4be25b73@gmail.com>
-Message-ID: <alpine.DEB.2.21.1811010909480.1642@nanos.tec.linutronix.de>
-References: <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com> <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net> <20181030175814.GB10491@bombadil.infradead.org> <20181030182841.GE7343@cisco> <20181030192021.GC10491@bombadil.infradead.org>
- <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com> <20181030213557.GE10491@bombadil.infradead.org> <CALCETrW1FcT88u0QY9k_PMOeZj0G8H6KNb5Bnreo-12NvmmCEQ@mail.gmail.com> <20181031100237.GN744@hirez.programming.kicks-ass.net> <659CFC78-22BF-492B-B2E4-B8E89AA08446@amacapital.net>
- <20181031210032.GA3159@hirez.programming.kicks-ass.net> <2E29C35B-3F98-473D-A874-0D9B9B15B399@amacapital.net> <4124995b-4363-9b37-19b1-1879bf04978b@gmail.com> <CALCETrWCvAfyfBWgcmhy8TGByiX3ZXXSOkLtZFdM385fDqYJVw@mail.gmail.com>
- <8675e9d8-0ef0-7515-a894-097d4be25b73@gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 1 Nov 2018 13:32:09 -0400
+Received: by mail-ed1-f66.google.com with SMTP id u12-v6so13013058eds.4
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 01:30:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/J12Bw/Qsfna16g+PFOdV+6ud+rYvff1d2xZWlM+Igw=;
+        b=IITSHWBLMflN9Q2R1hMUK/xqZMkPt/6Bi4AOM9zA1/HDTwFOCKTVu/+naLCH2ZDy7T
+         X4A5noI2wrhhRqQYXOXnytZBZL8nJgNs+jXaKq8b4wFgDnVh15n174U5QZja9IG8NBR4
+         4NAq/s5jnUDIOI5cMBRjExBlM6So6kY3h/0fM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=/J12Bw/Qsfna16g+PFOdV+6ud+rYvff1d2xZWlM+Igw=;
+        b=GrGGi1auRhzln8GBZAn6hYz7syDCsLUOvjkG6iRWKFkK4CPyhLCgaQWVg5BJ3Mg02l
+         nD4t9FFdN+GJkdBpr+iLSZbtPbUs6ZC7zdWkAneRhrkRm2vYMpn3fewQNWNj13+0JFRR
+         aWiqEhhZ0qfUnVPhmvdOEr67OLktaV80pvsT0ODMCuCVjXbvnznWFxftSfk7XO/VeNYX
+         uBlAWeoRASjQGc/Q2JIVEFll8tYB6Nr608AkOGg/la+W4+H6vXuSRmC85tkBNyTLlgn6
+         vXkPBxY5A4ZW7/UMTBVhRYtTBZJJVuHCAL+lPka6hubDZ1RDLqMKs/o9IxHKQrierdUk
+         5zdQ==
+X-Gm-Message-State: AGRZ1gI7mPBq0NhAwW8H3iL5L22gUroxvdXnk5qhdZ84+99eHmSKDPMT
+        6EK8zaA+eFVj9cIqEAOPYbJRrHnXrCQ=
+X-Google-Smtp-Source: AJdET5chZhln48kh+c7wL7nluZIPzI6fhnniL5HKGHPqBQLUes5Ystndn+ggSm5mHiG+Wh7XmhIaOA==
+X-Received: by 2002:a50:8636:: with SMTP id o51-v6mr4402528edo.209.1541061008616;
+        Thu, 01 Nov 2018 01:30:08 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id d11-v6sm54092ejl.7.2018.11.01.01.30.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 01 Nov 2018 01:30:07 -0700 (PDT)
+Date:   Thu, 1 Nov 2018 09:30:05 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Shayenne da Luz Moura <shayenneluzmoura@gmail.com>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        outreachy-kernel@googlegroups.com
+Subject: Re: [Outreachy kernel] [PATCH v2] drm: Remove 80-column line in
+ drm_mode_object.c
+Message-ID: <20181101083005.GX21967@phenom.ffwll.local>
+Mail-Followup-To: Shayenne da Luz Moura <shayenneluzmoura@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        outreachy-kernel@googlegroups.com
+References: <20181031174424.odljb6obj25wm47d@smtp.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181031174424.odljb6obj25wm47d@smtp.gmail.com>
+X-Operating-System: Linux phenom 4.18.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Igor,
-
-On Thu, 1 Nov 2018, Igor Stoppa wrote:
-> On 01/11/2018 01:19, Andy Lutomirski wrote:
+On Wed, Oct 31, 2018 at 02:44:24PM -0300, Shayenne da Luz Moura wrote:
+> Break line after NULL to decrease the line size.
 > 
-> > ISTM you don't need that atomic operation -- you could take a spinlock
-> > and then just add one directly to the variable.
+> Signed-off-by: Shayenne da Luz Moura <shayenneluzmoura@gmail.com>
 > 
-> It was my intention to provide a 1:1 conversion of existing code, as it should
-> be easier to verify the correctness of the conversion, as long as there isn't
-> any significant degradation in performance.
+> ---
+> Changes in v2:
+>   - Remove aditional variable added in v1 and add a line break
+
+Applied, thanks.
+-Daniel
+
 > 
-> The rework could be done afterward.
+>  drivers/gpu/drm/drm_mode_object.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_mode_object.c b/drivers/gpu/drm/drm_mode_object.c
+> index be8b754eaf60..cd9bc0ce9be0 100644
+> --- a/drivers/gpu/drm/drm_mode_object.c
+> +++ b/drivers/gpu/drm/drm_mode_object.c
+> @@ -38,7 +38,8 @@ int __drm_mode_object_add(struct drm_device *dev, struct drm_mode_object *obj,
+>  	int ret;
+>  
+>  	mutex_lock(&dev->mode_config.idr_mutex);
+> -	ret = idr_alloc(&dev->mode_config.crtc_idr, register_obj ? obj : NULL, 1, 0, GFP_KERNEL);
+> +	ret = idr_alloc(&dev->mode_config.crtc_idr, register_obj ? obj : NULL,
+> +			1, 0, GFP_KERNEL);
+>  	if (ret >= 0) {
+>  		/*
+>  		 * Set up the object linking under the protection of the idr
+> -- 
+> 2.19.1
+> 
+> -- 
+> You received this message because you are subscribed to the Google Groups "outreachy-kernel" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to outreachy-kernel+unsubscribe@googlegroups.com.
+> To post to this group, send email to outreachy-kernel@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/outreachy-kernel/20181031174424.odljb6obj25wm47d%40smtp.gmail.com.
+> For more options, visit https://groups.google.com/d/optout.
 
-Please don't go there. The usual approach is to
-
-  1) Rework existing code in a way that the new functionality can be added
-     with minimal effort afterwards and without creating API horrors.
-
-  2) Verify correctness of the rework
-
-  3) Add the new functionality
-  
-That avoids creation of odd functionality and APIs in the first place, so
-they won't be used in other places and does not leave half cleaned up code
-around which will stick for a long time.
-
-Thanks,
-
-	tglx
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
