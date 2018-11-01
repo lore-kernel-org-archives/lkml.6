@@ -2,140 +2,96 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76F41C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E8F3C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:34:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43467205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:33:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43467205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 29D03205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:34:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eWMbQFct"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29D03205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727823AbeKBChA (ORCPT
+        id S1727836AbeKBCiP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 22:37:00 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:35515 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727747AbeKBCg7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 22:36:59 -0400
-Received: by mail-io1-f72.google.com with SMTP id w13-v6so18326325iop.2
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 10:33:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=ODBAMQMM9Ff4X2eBatoj7wkI5//xO2/DgYlQYDeptS4=;
-        b=Owg55AJffIJzxkf2f+KkFhuvF6rQHOoGnRQ167txH/gCY/T1SPOC/kXUyywH0T7vEu
-         GWdMNxJ0TGKcKt3zSfvihpCf+rKZ29rcSx/kB4awNaGEWVojIdQHwflAc4sZsEs7fgFI
-         5yyj+fckKI15uFai83pE4ZzI36ETlAq6KwO4aaxzTEgUI8yVXwCiypwbFRu6sxqeIOnq
-         FNvkzOYlwS2baC5Yn+BGnciFI5XIVEVR2zgDnUCGyTtNExiGlVzHEOkHe3ETiugifpie
-         9DJDpeAZ3mGsU8g4iqBTLHlsJCXo36XSLS1F4THy07LYvseBfOzi56DZ0dsmt0i6JxWf
-         5WKA==
-X-Gm-Message-State: AGRZ1gLWq+MD75rWFgPaVB5Fexbfer/HDuRmHFgFVCZvedg7P83jgIbi
-        m4H80MFASEa4dDZMepavExD69wQmmQnDuR7wclf4ixD61/xd
-X-Google-Smtp-Source: AJdET5d4ETmudW9LMVSdUyX2qpjBzfO0giImq5vAwUlegGIkrH7jWW7DFrEnn5Buk4qpsvMXXlXin8VZ2dHqpyN5txOjyuJY6A63
-MIME-Version: 1.0
-X-Received: by 2002:a24:8903:: with SMTP id s3-v6mr6237988itd.26.1541093584145;
- Thu, 01 Nov 2018 10:33:04 -0700 (PDT)
-Date:   Thu, 01 Nov 2018 10:33:04 -0700
-In-Reply-To: <000000000000fd734c05799d3c90@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a6278f05799dcf0a@google.com>
-Subject: Re: BUG: pagefault on kernel address ADDR in non-whitelisted uaccess
-From:   syzbot <syzbot+0cc8e3cc63ca373722c6@syzkaller.appspotmail.com>
-To:     hverkuil@xs4all.nl, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, mchehab@kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Thu, 1 Nov 2018 22:38:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55660 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727532AbeKBCiO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 22:38:14 -0400
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B00A2205F4;
+        Thu,  1 Nov 2018 17:34:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541093659;
+        bh=Jh8gdHTlq1TnXgLQu5yKNVVyuP80ka3kc6eRUTpRhbk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=eWMbQFctleQQvMi7CZeZSQ8brdt/Lm8TaT1kGQFw9AxcBzdQe9PhS2gQvq/My+Kwj
+         5yG2j3f6mLlmXmxfgvVDO+i9vRhrQnpyb+VMu9rnN7aGiNkpna9xaT6a4vtbSBcSsa
+         irgLpMxdh48Qv92XgNFZQC7pFT/121VXveqyUWpY=
+Date:   Fri, 2 Nov 2018 02:34:16 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH AUTOSEL 4.14 17/19] selftests: ftrace: Add synthetic
+ event syntax testcase
+Message-Id: <20181102023416.6cf8e9236d8d3cd78484a516@kernel.org>
+In-Reply-To: <20181030182112.GB194472@sasha-vm>
+References: <20181030132824.218056-1-sashal@kernel.org>
+        <20181030132824.218056-17-sashal@kernel.org>
+        <20181030105815.36974eb4@vmware.local.home>
+        <20181030182112.GB194472@sasha-vm>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+On Tue, 30 Oct 2018 14:21:12 -0400
+Sasha Levin <sashal@kernel.org> wrote:
 
-HEAD commit:    4db9d11bcbef Add linux-next specific files for 20181101
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13fa9e05400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2a22859d870756c1
-dashboard link: https://syzkaller.appspot.com/bug?extid=0cc8e3cc63ca373722c6
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11227e05400000
+> On Tue, Oct 30, 2018 at 10:58:15AM -0400, Steven Rostedt wrote:
+> >On Tue, 30 Oct 2018 09:28:22 -0400
+> >Sasha Levin <sashal@kernel.org> wrote:
+> >
+> >> From: Masami Hiramatsu <mhiramat@kernel.org>
+> >>
+> >> [ Upstream commit ba0e41ca81b935b958006c7120466e2217357827 ]
+> >>
+> >> Add a testcase to check the syntax and field types for
+> >> synthetic_events interface.
+> >>
+> >> Link: http://lkml.kernel.org/r/153986838264.18251.16627517536956299922.stgit@devbox
+> >>
+> >> Acked-by: Shuah Khan <shuah@kernel.org>
+> >> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> >> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> >> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> >
+> >Why are you adding selftests for old kernels to test a feature that
+> >wasn't added until 4.17?
+> 
+> We backport all selftest patches to stable to keep selftest on stable
+> kernels as similar as possible to upstream.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+0cc8e3cc63ca373722c6@syzkaller.appspotmail.com
+Hi Sasha,
+Yes, you can feel free to backport selftests fix, but also please backport
+corresponding bugfix patches. Unless it, the stable tree will fail the test.
 
-BUG: pagefault on kernel address 0xffffc90003dbe000 in non-whitelisted  
-uaccess
-BUG: unable to handle kernel paging request at ffffc90003dbe000
-PGD 1da948067 P4D 1da948067 PUD 1da949067 PMD 1d884f067 PTE 0
-Oops: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 12256 Comm: syz-executor3 Not tainted 4.19.0-next-20181101+ #103
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:copy_user_enhanced_fast_string+0xe/0x20  
-arch/x86/lib/copy_user_64.S:180
-Code: 89 d1 c1 e9 03 83 e2 07 f3 48 a5 89 d1 f3 a4 31 c0 0f 1f 00 c3 0f 1f  
-80 00 00 00 00 0f 1f 00 83 fa 40 0f 82 70 ff ff ff 89 d1 <f3> a4 31 c0 0f  
-1f 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 83
-RSP: 0018:ffff8801a779f680 EFLAGS: 00010206
-RAX: 0000000000000000 RBX: 00000000000fd200 RCX: 00000000000f5200
-RDX: 00000000000fd200 RSI: ffffc90003dbe000 RDI: 00000000200080c0
-RBP: ffff8801a779f6b8 R08: 0000000000000000 R09: 0000000000003f48
-R10: fffff520007d663f R11: ffffc90003eb31ff R12: 00000000200fd2c0
-R13: 00000000200000c0 R14: ffffc90003db6000 R15: 00007ffffffff000
-FS:  00007f6d98b26700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffc90003dbe000 CR3: 00000001d794d000 CR4: 00000000001406e0
-Call Trace:
-  copy_to_user include/linux/uaccess.h:155 [inline]
-  vidioc_g_fmt_vid_overlay+0x392/0x550  
-drivers/media/platform/vivid/vivid-vid-cap.c:1084
-  v4l_g_fmt+0x2ad/0x640 drivers/media/v4l2-core/v4l2-ioctl.c:1489
-  __video_do_ioctl+0x8b1/0x1050 drivers/media/v4l2-core/v4l2-ioctl.c:2853
-  video_usercopy+0x5c1/0x1750 drivers/media/v4l2-core/v4l2-ioctl.c:3035
-  video_ioctl2+0x2c/0x33 drivers/media/v4l2-core/v4l2-ioctl.c:3079
-  v4l2_ioctl+0x154/0x1b0 drivers/media/v4l2-core/v4l2-dev.c:364
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:509 [inline]
-  do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
-  __do_sys_ioctl fs/ioctl.c:720 [inline]
-  __se_sys_ioctl fs/ioctl.c:718 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457569
-Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f6d98b25c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457569
-RDX: 00000000200000c0 RSI: 00000000c0d05604 RDI: 0000000000000012
-RBP: 000000000072c220 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6d98b266d4
-R13: 00000000004c1acf R14: 00000000004d29c8 R15: 00000000ffffffff
-Modules linked in:
-CR2: ffffc90003dbe000
----[ end trace faa0b92998172ee0 ]---
-RIP: 0010:copy_user_enhanced_fast_string+0xe/0x20  
-arch/x86/lib/copy_user_64.S:180
-Code: 89 d1 c1 e9 03 83 e2 07 f3 48 a5 89 d1 f3 a4 31 c0 0f 1f 00 c3 0f 1f  
-80 00 00 00 00 0f 1f 00 83 fa 40 0f 82 70 ff ff ff 89 d1 <f3> a4 31 c0 0f  
-1f 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 83
-RSP: 0018:ffff8801a779f680 EFLAGS: 00010206
-RAX: 0000000000000000 RBX: 00000000000fd200 RCX: 00000000000f5200
-RDX: 00000000000fd200 RSI: ffffc90003dbe000 RDI: 00000000200080c0
-RBP: ffff8801a779f6b8 R08: 0000000000000000 R09: 0000000000003f48
-R10: fffff520007d663f R11: ffffc90003eb31ff R12: 00000000200fd2c0
-R13: 00000000200000c0 R14: ffffc90003db6000 R15: 00007ffffffff000
-FS:  00007f6d98b26700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffc90003dbe000 CR3: 00000001d794d000 CR4: 00000000001406e0
+Thank you,
 
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
