@@ -7,63 +7,62 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0550C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:40:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3436C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:41:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D2AE20820
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:40:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 760A32064C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:41:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pUlSxGyu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D2AE20820
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RfOnD/NO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 760A32064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728997AbeKBAn7 (ORCPT
+        id S1728853AbeKBAp0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 20:43:59 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44825 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728197AbeKBAn7 (ORCPT
+        Thu, 1 Nov 2018 20:45:26 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40563 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727950AbeKBAp0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 20:43:59 -0400
-Received: by mail-pl1-f196.google.com with SMTP id s5-v6so7443868plq.11;
-        Thu, 01 Nov 2018 08:40:30 -0700 (PDT)
+        Thu, 1 Nov 2018 20:45:26 -0400
+Received: by mail-pg1-f195.google.com with SMTP id o14-v6so9202948pgv.7
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 08:41:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=9RFP00laA7HyBvSrC18XR2I/wXaE2SWkQtly9nfFytA=;
-        b=pUlSxGyum+XGuqzLzmFBZ8EoX05f76mu7b3uWKoF7UnxF+LX0iz/rbKviXAOu74HMT
-         GhmKWg4byr48vDp4aDbfkAM+KrjjvIchfbXpf6l9jS217ZxhQAPR4lnrIdhei8o5E+Zr
-         3mkenHbwyDBoiZaOtv8GLVgamNuNShphuYM1A80IyD9Mo2hX6xzvHIFecH5/+CApxyLS
-         U4VhfniPktRR+3jYppYUojOTrZVMMMgE2fOch1c3iqd0idwAQQ7Qse6orxpf/1Ca7bve
-         acO3nu/kyYF8XTd3aCG36tigs89cnxbGmK3Qoa0EzTNhs3vnE+Qde/w0yeaN69w6abD/
-         v+Cw==
+        bh=RC92vL8QvvqnjQ8w3b8PwZCx2i+sM4l1FarSO3qj2u8=;
+        b=RfOnD/NOlhMNg1XUg99GiOgXy5n6ioW+dhxYN/uzOdhb6WHbXfi/CnDHx7JkBKf8vL
+         o/6CAj6AUvR89uz5nA3e5Ai77mQo7Bkh7cMZHywJ+lS4RFyKH4L/59VYOXQ7VUql1xUC
+         ILIiMbXaEE6iWjiGU27he+eCaCcUAldqLLL7YeucG9RxmHPpsprGRJjnvJCsmZksMayz
+         2ifD6JZEl5MNOcRCnmh80UO58Li5FUOOf/2flfntD2Ip/BO2HgKNHHnpKvdoUizLunex
+         mxzer9LS15IaXN/3CGEwNqnheL7pUdMz9jdy+FRSi56H3BX4Z0Utcg5DbUJo3HvU4O8L
+         /Pww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=9RFP00laA7HyBvSrC18XR2I/wXaE2SWkQtly9nfFytA=;
-        b=ewXVFwlShje/Us2wBaWNZRdPX5Cp5+/UMs2X7V0Y0iCYR1KsjvRBfOvbGuqn0Jq/ji
-         va3ljjsfMIBCh5SK+OwHYUleHcqvScCZHJoQ/N6GYR3WCdEwHfrEhrXHwGadmvP3Rh73
-         R4/sekSHXznVklFynnevPnrS9nArTNP5D7ZMooeFmlwRLIBpKdNaSTg6g0q/m00jD7gZ
-         CCDd256zDHoqD0QjbfBerDbHfaw0URZMoGITugBuejCjf/lVSrsUOIuLZF3svKgtvlh2
-         ronOaJbyxIZzMxBgpwZuiY7mepGYiN+dotB3lJV7yZ5fVR9s6AnNHM1JDe9VW7+JRctM
-         etLQ==
-X-Gm-Message-State: AGRZ1gIdKa07SKWil2P+9i8nsUNj38VppF2Z/BeksYtKI/CU4jEZNRmr
-        QPDytIPyLRm8C8Ri/UJlLL8=
-X-Google-Smtp-Source: AJdET5c1NljKsVW0GZOg5M6fy7s2IOn9MYI2THq004zNTNpybu4BU1UCp/SpQ/CdZaH3IUvgOPrg/g==
-X-Received: by 2002:a17:902:107:: with SMTP id 7-v6mr8171914plb.267.1541086830169;
-        Thu, 01 Nov 2018 08:40:30 -0700 (PDT)
+        bh=RC92vL8QvvqnjQ8w3b8PwZCx2i+sM4l1FarSO3qj2u8=;
+        b=H7z4+Wdmqxkd1spZO6hrrrGvtH/nFhdGhp0PfNxMS0/fSivXvPUQ7+Lqh2bAX/KkCz
+         izQJq7XYdHVX89RG1KJLLA2szzcip7vOJlCsB9PkYExZR4BQ3DHl/BhWhe+hjVXwmCBe
+         vxQzRh9FMnePcFaWNxKFfaatJ+G/GvGEGwSFBvDBZiN0bbwKiPzuV5A23EShKNjYImtS
+         W6El0b1T+MXZgcU3uwblwtLMUI3MAX4C0KeCVcRyqcVYAerIbcN/OeJ/k9OhTUFTXJA+
+         Ze9ey8d3RqV+MFoJAgq98hNccLKgVhwUfeLGH7UG+TigNma/RlspTTuAp1TWZ52QGRyN
+         vbMw==
+X-Gm-Message-State: AGRZ1gIcAkLRbp9lKjXOMDM4pb+TK01P8LeoWXj1R3Linl4DF6LrzgIb
+        BwaEYHIa+1blHAGAoBxWyGQDqrZMxzo=
+X-Google-Smtp-Source: AJdET5dHGaTSyJuRJvLGEBbFr6OjtvkPGU6tms/6+YNyMMyjNOdJ9TVPDCL7X2kaTo46vf35Lgrcow==
+X-Received: by 2002:a63:e348:: with SMTP id o8mr7508070pgj.158.1541086917082;
+        Thu, 01 Nov 2018 08:41:57 -0700 (PDT)
 Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id p64-v6sm30334789pfi.22.2018.11.01.08.40.29
+        by smtp.gmail.com with ESMTPSA id 145-v6sm45160637pfw.17.2018.11.01.08.41.56
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 01 Nov 2018 08:40:29 -0700 (PDT)
+        Thu, 01 Nov 2018 08:41:56 -0700 (PDT)
 From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     sgruszka@redhat.com, kvalo@codeaurora.org, davem@davemloft.net
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] iwlegacy: fix small typo
-Date:   Thu,  1 Nov 2018 11:40:23 -0400
-Message-Id: <20181101154023.22990-1-tiny.windzz@gmail.com>
+To:     lee.jones@linaro.org
+Cc:     linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] mfd: fix small typo
+Date:   Thu,  1 Nov 2018 11:41:53 -0400
+Message-Id: <20181101154153.23042-1-tiny.windzz@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -72,22 +71,22 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/net/wireless/intel/iwlegacy/3945-rs.c | 2 +-
+ drivers/mfd/rave-sp.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/intel/iwlegacy/3945-rs.c b/drivers/net/wireless/intel/iwlegacy/3945-rs.c
-index e8983c6a2b7b..a697edd46e7f 100644
---- a/drivers/net/wireless/intel/iwlegacy/3945-rs.c
-+++ b/drivers/net/wireless/intel/iwlegacy/3945-rs.c
-@@ -781,7 +781,7 @@ il3945_rs_get_rate(void *il_r, struct ieee80211_sta *sta, void *il_sta,
- 
- 	switch (scale_action) {
- 	case -1:
--		/* Decrese rate */
-+		/* Decrease rate */
- 		if (low != RATE_INVALID)
- 			idx = low;
- 		break;
+diff --git a/drivers/mfd/rave-sp.c b/drivers/mfd/rave-sp.c
+index 2a8369657e38..26c7b63e008a 100644
+--- a/drivers/mfd/rave-sp.c
++++ b/drivers/mfd/rave-sp.c
+@@ -109,7 +109,7 @@ struct rave_sp_reply {
+ /**
+  * struct rave_sp_checksum - Variant specific checksum implementation details
+  *
+- * @length:	Caculated checksum length
++ * @length:	Calculated checksum length
+  * @subroutine:	Utilized checksum algorithm implementation
+  */
+ struct rave_sp_checksum {
 -- 
 2.17.0
 
