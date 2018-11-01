@@ -2,102 +2,131 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC50BC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:06:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3867C6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:07:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7FF7204FD
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:06:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7FF7204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 6C023204FD
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:07:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bYNxDG2o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C023204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728026AbeKBHLp (ORCPT
+        id S1728035AbeKBHMI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 03:11:45 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55764 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726966AbeKBHLp (ORCPT
+        Fri, 2 Nov 2018 03:12:08 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:34558 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726966AbeKBHMH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 03:11:45 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 254C0808B9; Thu,  1 Nov 2018 23:06:51 +0100 (CET)
-Date:   Thu, 1 Nov 2018 23:06:52 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/25] amd-gpu: Don't undefine READ and WRITE [ver #2]
-Message-ID: <20181101220652.GB27132@amd>
-References: <154033906284.12041.12908874734066278152.stgit@warthog.procyon.org.uk>
- <154033907037.12041.8420716608719361104.stgit@warthog.procyon.org.uk>
+        Fri, 2 Nov 2018 03:12:07 -0400
+Received: by mail-lf1-f68.google.com with SMTP id n26-v6so20741lfl.1
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 15:07:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rT6gI7BrNi009KxaSg3ZD2FAM0Z+ST+3A4bR2b2INR8=;
+        b=bYNxDG2oLMRhRuKZl8oR52RQxfXzW2v7y9mL2JvDla7HnMyXsm1Gh96hYsSu7gf29n
+         4SwkB8X9Y9Wy27vsH6ePlvo4ECMwlKlFrzFU7WXQPzy0qxvP8kWRP5tUy0A6F1sODaxs
+         S3YqvFNf0YNTAKcTNzZ2U12do+Qgj3YDztcjk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rT6gI7BrNi009KxaSg3ZD2FAM0Z+ST+3A4bR2b2INR8=;
+        b=itDd0h/bZiQTSD0DGgxMx8sKHyvkoyM4tLGSLfZ+3ow8kADy087y49BZ6AfqmxJ7aU
+         HzlKtIMAeejBdQrGlrIMiVHXdyf07CqBhfc+Bbwhx1XyrZtVpN90hJNmXVu3pV5AZ5q2
+         rb4VKO8tcU6FNjLEsT0MiW6cz2iQHsze3I7xhp8WMr7rlYut9Nt0+I6ekBZvRpshjtu8
+         qsNdz4qrDnCY+CZyC9YmXs87qym3l7ZkWjaCVDUiJ9Lf645NltQBLPF5Q3RNislsGLfn
+         tckwAfdEbfGYir/ilRq4soCzzL09GJ6Cj4BkqL6CKX1uerEyZvh27Q4GwQqHKVqa5/qA
+         SX8Q==
+X-Gm-Message-State: AGRZ1gK47ZZxXPNR2s+L42cb6OZIltMNOhB/gPPdP9PBysURzQhg3ECZ
+        fq6WO+ymdiFeq+o9x95Y+V/VrHf7O0PFcw==
+X-Google-Smtp-Source: AJdET5caiT0YryXFJUyuyKtUaCEUoXBXfw/NiH7D3W2FaP5A8qHcJVGNtG92QVAc1BCaIz8v51NTeQ==
+X-Received: by 2002:a19:5a84:: with SMTP id y4mr5601496lfk.156.1541110035044;
+        Thu, 01 Nov 2018 15:07:15 -0700 (PDT)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id 10-v6sm95457ljv.6.2018.11.01.15.07.14
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Nov 2018 15:07:14 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id t22-v6so761lji.7
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 15:07:14 -0700 (PDT)
+X-Received: by 2002:a2e:9819:: with SMTP id a25-v6mr6518668ljj.6.1541109649937;
+ Thu, 01 Nov 2018 15:00:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="rJwd6BRFiFCcLxzm"
-Content-Disposition: inline
-In-Reply-To: <154033907037.12041.8420716608719361104.stgit@warthog.procyon.org.uk>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20181101095844.24462-1-mathieu.desnoyers@efficios.com>
+ <20181101095844.24462-4-mathieu.desnoyers@efficios.com> <alpine.DEB.2.21.1811011320160.1642@nanos.tec.linutronix.de>
+ <20181101144623.61d43102@gandalf.local.home> <278477314.3995.1541102273591.JavaMail.zimbra@efficios.com>
+In-Reply-To: <278477314.3995.1541102273591.JavaMail.zimbra@efficios.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 1 Nov 2018 15:00:34 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiOm8x5KnBQH+FYN76sSjCeP2_9cxgzu4WArR3jP0MD8g@mail.gmail.com>
+Message-ID: <CAHk-=wiOm8x5KnBQH+FYN76sSjCeP2_9cxgzu4WArR3jP0MD8g@mail.gmail.com>
+Subject: Re: [RFC PATCH for 4.21 03/16] mm: Replace BUG_ON() by WARN_ON() in vm_unmap_ram()
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     rostedt@goodmis.org, tglx@linutronix.de,
+        Peter Zijlstra <peterz@infradead.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        boqun.feng@gmail.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-api@vger.kernel.org, luto@amacapital.net, davejwatson@fb.com,
+        Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux@arm.linux.org.uk, Ingo Molnar <mingo@redhat.com>,
+        Peter Anvin <hpa@zytor.com>, andi@firstfloor.org,
+        Christoph Lameter <cl@linux.com>, bmaurer@fb.com,
+        josh@joshtriplett.org, Catalin Marinas <catalin.marinas@arm.com>,
+        will.deacon@arm.com,
+        Michael Kerrisk-manpages <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        mawilcox@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Nov 1, 2018 at 12:57 PM Mathieu Desnoyers
+<mathieu.desnoyers@efficios.com> wrote:
+>
+> > I think the graceful recovery is to simply return:
+> >
+> >       if (WARN_ON(cond))
+> >               return;
+> >
+> > is better than just
+> >
+> >       BUG_ON(cond);
+> >
+> > As that's what Linus made pretty clear at the Maintainer's Summit.
+>
+> That's it. For an unmap function, this basically boils down to
+> print a warning and leak the memory on internal unmap error.
+>
+> I will update the commit message describing this behavior.
 
---rJwd6BRFiFCcLxzm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It might be even better to use WARN_ON_ONCE().
 
-On Wed 2018-10-24 00:57:50, David Howells wrote:
-> Remove the undefinition of READ and WRITE because these constants may be
-> used elsewhere in subsequently included header files, thus breaking them.
->=20
-> These constants don't actually appear to be used in the driver, so the
-> undefinition seems pointless.
->=20
-> Fixes: 4562236b3bc0 ("drm/amd/dc: Add dc display driver (v2)")
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> ---
->=20
->  drivers/gpu/drm/amd/display/dc/os_types.h |    2 --
->  1 file changed, 2 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/amd/display/dc/os_types.h b/drivers/gpu/drm/=
-amd/display/dc/os_types.h
-> index a407892905af..c0d9f332baed 100644
-> --- a/drivers/gpu/drm/amd/display/dc/os_types.h
-> +++ b/drivers/gpu/drm/amd/display/dc/os_types.h
-> @@ -40,8 +40,6 @@
->  #define LITTLEENDIAN_CPU
->  #endif
-> =20
-> -#undef READ
-> -#undef WRITE
->  #undef FRAME_SIZE
-> =20
+If it's a "this shouldn't happen" situation, the advantage of
+WARN_ON_ONCE() is that it will still show the backtrace of the "how
+the heck did it happen after all" situation, but if it turns ouit to
+be user-triggerable (or simply triggerable by some odd hw situation),
+it won't spam your logs forever.
 
-While you are at it... is undefining FRAME_SIZE good idea? It seems
-like this is another bug waiting to be discovered.
+Obviously, things like rate limiting etc can also be good ideas, but
+that's just overkill for "this really should never happen" cases.
 
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+(Side note: WARN_ON_ONCE() will _warn_ just once, but will always
+return the condition that it warns for, so the return value is _not_
+"I have warned", but "I have seen the condition that I should warn
+about". Just in case people are worried about it).
 
---rJwd6BRFiFCcLxzm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlvbePwACgkQMOfwapXb+vJPUgCeMTZ34bgsZ5UTB8DB74lkZZDd
-leIAnjM91bWXpudUDqahcbOe/KWOYVQy
-=Oh+v
------END PGP SIGNATURE-----
-
---rJwd6BRFiFCcLxzm--
+                  Linus
