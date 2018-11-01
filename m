@@ -2,104 +2,151 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C3A4C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 873E0ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:43:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C82D82081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:43:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="siZpDaWw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C82D82081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 521C82081B
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:43:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 521C82081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728939AbeKAXqY (ORCPT
+        id S1728970AbeKAXqd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 19:46:24 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:45090 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728175AbeKAXqY (ORCPT
+        Thu, 1 Nov 2018 19:46:33 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53786 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728843AbeKAXqd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 19:46:24 -0400
-Received: by mail-qt1-f194.google.com with SMTP id l9-v6so21290203qtj.12;
-        Thu, 01 Nov 2018 07:43:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tfdzyVc2dvWvT4n/qpMEEt+E0mRmUmqg0MbxEnbWuGY=;
-        b=siZpDaWwcnzlnpZ7Mi+9PRLG/8noeYjczwWHZmH8aOhw60SmileiRHoV/9HjFMvpDt
-         /WFEK1VKCrC0dw9HR47J+7IUFB+uJBThQE5GQx3Bb69BUU+sNo6J/Z1F2UmuZydG03K1
-         bWNuc79MA9oJ0tl7Oocpq/x3swzUNZ7E+S23LbkPzZ7bcKMbqm5HNJFWsSTOe5+PO29H
-         UoKWywscoiI1QXE82PAtknVRjK5a/LQP9qAavdCp3psyAPbUt+zwvW300aaJ6snF631z
-         riYJgwSiPkUqwiAMbt8tvla9reH1wnFzs9n5bTkOzribK4LMxtJrIlwkvh3tg7mTAAE3
-         r4wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tfdzyVc2dvWvT4n/qpMEEt+E0mRmUmqg0MbxEnbWuGY=;
-        b=alswjpV58V8PRlgN6qAsZoLirYtKJcXNND+gaA43a1ZC0kYoPjn0WvgY+GYQ6UF5j+
-         DUl18hEQzLOouxjn2MMKt2p+A/okBDKxPp/FDGNMDnBfSprQu27SBVWlb6LTg1bGF5XC
-         YcpXswsz7+C6/czoxLEVCHvRk5mktLu7XjAc6T0bd+VhOftfh2KpYi2iUOMlD10k7r7M
-         B0Z5LFDDMHZuPVEitJshl5JAM+F3j1oGKR0yalAvaGJCLImUfb+al04rPgwyeQ1Ykr3O
-         dMRToXGXkAnOSueLyUse9AZ8Xa4LrQI3LkT/0KXIkDYGgvzGNpblnEfPkkxF0KB1XEs4
-         6R/g==
-X-Gm-Message-State: AGRZ1gK2SqjkMUfP8oNyQbMmx5FmbWcRnWa4elbGmyxUiNlwEN36uHer
-        KpBLWf68gbgDeyBpo9c0/zg=
-X-Google-Smtp-Source: AJdET5cNRcrzQvYhKBre6Yd6MySbFyaFRTWYN+1g3/dTr/KmN46dzEULKeuoLNv/SDtTOKg16iSCkw==
-X-Received: by 2002:ac8:2579:: with SMTP id 54-v6mr6646752qtn.88.1541083387382;
-        Thu, 01 Nov 2018 07:43:07 -0700 (PDT)
-Received: from renatolg ([143.107.45.1])
-        by smtp.gmail.com with ESMTPSA id d8-v6sm2893938qtd.34.2018.11.01.07.43.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 01 Nov 2018 07:43:07 -0700 (PDT)
-Date:   Thu, 1 Nov 2018 11:43:02 -0300
-From:   Renato Lui Geh <renatogeh@gmail.com>
-To:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-        knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
-        giuliano.belinassi@usp.br
-Cc:     linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
-Subject: [PATCH v3 1/3] staging: iio: ad7780: fix offset read value
-Message-ID: <2191be4d531651db39682178ec0660eeb5697439.1541082656.git.renatogeh@gmail.com>
-References: <cover.1541082656.git.renatogeh@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <cover.1541082656.git.renatogeh@gmail.com>
-User-Agent: NeoMutt/20180716
+        Thu, 1 Nov 2018 19:46:33 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA1ETMpx081656
+        for <linux-kernel@vger.kernel.org>; Thu, 1 Nov 2018 10:43:16 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ng2ejk7tm-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 10:43:16 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 1 Nov 2018 14:43:14 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 1 Nov 2018 14:43:10 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA1Eh9rj65273986
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 1 Nov 2018 14:43:09 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 031C011C050;
+        Thu,  1 Nov 2018 14:43:09 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 236A611C054;
+        Thu,  1 Nov 2018 14:43:08 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.105.26])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  1 Nov 2018 14:43:07 +0000 (GMT)
+Subject: Re: [PATCH v3 1/5] tpm: change the end marker of the active_banks
+ array to zero
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        jarkko.sakkinen@linux.intel.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Date:   Thu, 01 Nov 2018 10:42:57 -0400
+In-Reply-To: <1540996980.11273.67.camel@linux.ibm.com>
+References: <20181030154711.2782-1-roberto.sassu@huawei.com>
+         <20181030154711.2782-2-roberto.sassu@huawei.com>
+         <1540996980.11273.67.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18110114-0008-0000-0000-00000289A9A5
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110114-0009-0000-0000-000021F3D0DA
+Message-Id: <1541083377.4035.13.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-01_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811010127
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Variable val subtracted an uninitialized value on IIO_CHAN_INFO_OFFSET.
-This was fixed by assigning the correct value instead.
+On Wed, 2018-10-31 at 10:43 -0400, Mimi Zohar wrote:
+> On Tue, 2018-10-30 at 16:47 +0100, Roberto Sassu wrote:
+> > This patch changes the end marker of the active_banks array from
+> > TPM2_ALG_ERROR to zero.
+> 
+> The patch description is a bit off.
+> 
+> TPM2_ALG_ERROR is defined as zero.  Since tpm_chip_alloc() calls
+> kzalloc to allocate the structure, there is no need to explicitly set
+> the active_banks end marker to TPM2_ALG_ERROR, nor is there a need to
+> explicitly test for the end marker.
+> 
+> This patch removes explicitly setting the end marker and changes the
+> coding style.
+> 
+> > 
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > ---
+> >  drivers/char/tpm/tpm-interface.c | 2 +-
+> >  drivers/char/tpm/tpm2-cmd.c      | 3 ---
+> >  2 files changed, 1 insertion(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> > index 1a803b0cf980..f7fc4b5ee239 100644
+> > --- a/drivers/char/tpm/tpm-interface.c
+> > +++ b/drivers/char/tpm/tpm-interface.c
+> > @@ -1051,7 +1051,7 @@ int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
+> >  		memset(digest_list, 0, sizeof(digest_list));
+> >  
+> >  		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
+> > -			    chip->active_banks[i] != TPM2_ALG_ERROR; i++) {
+> > +			    chip->active_banks[i]; i++) {
+> >  			digest_list[i].alg_id = chip->active_banks[i];
+> >  			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
+> >  			count++;
 
-Signed-off-by: Renato Lui Geh <renatogeh@gmail.com>
----
- drivers/staging/iio/adc/ad7780.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The fourth patch further updates this code.  Please move those changes
+to this first patch.  No need to touch the same code in both places.
 
-diff --git a/drivers/staging/iio/adc/ad7780.c b/drivers/staging/iio/adc/ad7780.c
-index b67412db0318..91e016d534ed 100644
---- a/drivers/staging/iio/adc/ad7780.c
-+++ b/drivers/staging/iio/adc/ad7780.c
-@@ -96,7 +96,7 @@ static int ad7780_read_raw(struct iio_dev *indio_dev,
- 		*val2 = chan->scan_type.realbits - 1;
- 		return IIO_VAL_FRACTIONAL_LOG2;
- 	case IIO_CHAN_INFO_OFFSET:
--		*val -= (1 << (chan->scan_type.realbits - 1));
-+		*val = -(1 << (chan->scan_type.realbits - 1));
- 		return IIO_VAL_INT;
- 	}
- 
--- 
-2.19.1
+                for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
+-                           chip->active_banks[i]; i++) {
+-                       digest_list[i].alg_id = chip->active_banks[i];
++                           chip->active_banks[i].alg_id; i++) {
++                       digest_list[i].alg_id = chip->active_banks[i].alg_id;
+                        memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
+                        count++;
+                }
+Mimi
+
+> > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> > index c31b490bd41d..046c9d8f3c1e 100644
+> > --- a/drivers/char/tpm/tpm2-cmd.c
+> > +++ b/drivers/char/tpm/tpm2-cmd.c
+> > @@ -908,9 +908,6 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+> >  	}
+> >  
+> >  out:
+> > -	if (i < ARRAY_SIZE(chip->active_banks))
+> > -		chip->active_banks[i] = TPM2_ALG_ERROR;
+> > -
+> >  	tpm_buf_destroy(&buf);
+> >  
+> >  	return rc;
+> 
 
