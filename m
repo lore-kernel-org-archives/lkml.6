@@ -2,92 +2,104 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2389C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:22:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5449BC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:30:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75D4720820
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:22:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75D4720820
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 065D72081B
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:30:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 065D72081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728527AbeKAWZo (ORCPT
+        id S1728472AbeKAWdc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 18:25:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46138 "EHLO mail.kernel.org"
+        Thu, 1 Nov 2018 18:33:32 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56114 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727644AbeKAWZo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 18:25:44 -0400
-Received: from vmware.local.home (unknown [12.156.218.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727644AbeKAWdb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 18:33:31 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 116012081B;
-        Thu,  1 Nov 2018 13:22:45 +0000 (UTC)
-Date:   Thu, 1 Nov 2018 09:22:44 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Christian Brauner <christian@brauner.io>,
-        Aleksa Sarai <asarai@suse.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kretprobe: produce sane stack traces
-Message-ID: <20181101092244.2ad82f18@vmware.local.home>
-In-Reply-To: <20181101104948.bc7wk453bfryhhk7@yavin>
-References: <20181026132210.12569-1-cyphar@cyphar.com>
-        <20181030101206.2e5998ca3c75496c91ba5b09@kernel.org>
-        <20181031090317.4e211fdd@vmware.local.home>
-        <20181031133912.3j5tryq2vyhkdn4d@yavin>
-        <20181101191347.74eadff4a5d1fab2d79d7efe@kernel.org>
-        <20181101104948.bc7wk453bfryhhk7@yavin>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        by mx1.redhat.com (Postfix) with ESMTPS id C0E3F3084044;
+        Thu,  1 Nov 2018 13:30:33 +0000 (UTC)
+Received: from loberhel74.redhat.com (ovpn-125-191.rdu2.redhat.com [10.10.125.191])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F2DD6600CC;
+        Thu,  1 Nov 2018 13:30:20 +0000 (UTC)
+From:   Laurence Oberman <loberman@redhat.com>
+To:     tglx@linutronix.de
+Cc:     linux-kernel@vger.kernel.org, rdunlap@infradead.org,
+        prarit@redhat.com, Laurence Oberman <loberman@redhat.com>
+Subject: [PATCH V8] watchdog/core: Add watchdog_thresh command line parameter
+Date:   Thu,  1 Nov 2018 09:30:18 -0400
+Message-Id: <1541079018-13953-1-git-send-email-loberman@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 01 Nov 2018 13:30:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 1 Nov 2018 21:49:48 +1100
-Aleksa Sarai <cyphar@cyphar.com> wrote:
+The hard and soft lockup detector threshold has a default value of 10
+seconds which can only be changed via sysctl.
 
+During early boot lockup detection can trigger when noisy debugging emits
+a large amount of messages to the console, but there is no way to set a
+larger threshold on the kernel command line. The detector can only be
+completely disabled.
 
-> > > Should I continue working on this patchset?  
-> > 
-> > Yes, until we finally introduce Steven's algorithm on all arch (yeah, we still
-> > have some archs which don't support graph-tracer but supports kprobes),
-> > I think your patch is the best fix for this issue.  
+Add a new watchdog_thresh= command line parameter to allow boot time
+control over the threshold. It works in the same way as the sysctl and
+affects both the soft and the hard lockup detectors.
 
-Agreed.
+Signed-off-by: Laurence Oberman <loberman@redhat.com>
 
-> 
-> Thanks, I just sent a v3.
+---
+ Documentation/admin-guide/kernel-parameters.txt | 8 ++++++++
+ kernel/watchdog.c                               | 7 +++++++
+ 2 files changed, 15 insertions(+)
 
-Thanks. Hopefully I can take a look at it today or tomorrow. I'm still
-trying to get home (sitting at yet another airport as I write this).
-
-> 
-> Though, even with Steven's hooking of kprobes I think you'd still need
-> to stash away the stack trace somewhere (or am I misunderstanding the
-> proposal?).
-
-I'll start working on it and then we can see what is needed when there
-is actual code. I need to probably change the func graph generic
-interface which will require changes in all the archs that support
-function graph tracer.
-
--- Steve
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index e129cd8..3dcfb78 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4932,6 +4932,14 @@
+ 			or other driver-specific files in the
+ 			Documentation/watchdog/ directory.
+ 
++	watchdog_thresh=
++			[KNL]
++			Set the hard lockup detector stall duration
++			threshold in seconds. The soft lockup detector
++			threshold is set to twice the value. A value of 0
++			disables both lockup detectors. Default is 10
++			seconds.
++
+ 	workqueue.watchdog_thresh=
+ 			If CONFIG_WQ_WATCHDOG is configured, workqueue can
+ 			warn stall conditions and dump internal state to
+diff --git a/kernel/watchdog.c b/kernel/watchdog.c
+index 977918d..8fbfda9 100644
+--- a/kernel/watchdog.c
++++ b/kernel/watchdog.c
+@@ -199,6 +199,13 @@ static int __init nosoftlockup_setup(char *str)
+ }
+ __setup("nosoftlockup", nosoftlockup_setup);
+ 
++static int __init watchdog_thresh_setup(char *str)
++{
++	get_option(&str, &watchdog_thresh);
++	return 1;
++}
++__setup("watchdog_thresh=", watchdog_thresh_setup);
++
+ #ifdef CONFIG_SMP
+ int __read_mostly sysctl_softlockup_all_cpu_backtrace;
+ 
+-- 
+1.8.3.1
 
