@@ -2,184 +2,183 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F7A5C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:10:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D96E5C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:13:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 593C2204FD
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:10:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92A15204FD
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:13:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EDe8rrmk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 593C2204FD
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rd7PhlVM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92A15204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728577AbeKAWNs (ORCPT
+        id S1728507AbeKAWQJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 18:13:48 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:39683 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727644AbeKAWNs (ORCPT
+        Thu, 1 Nov 2018 18:16:09 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33000 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728351AbeKAWQI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 18:13:48 -0400
-Received: by mail-qt1-f193.google.com with SMTP id g10-v6so20932089qtq.6;
-        Thu, 01 Nov 2018 06:10:53 -0700 (PDT)
+        Thu, 1 Nov 2018 18:16:08 -0400
+Received: by mail-pg1-f195.google.com with SMTP id q5-v6so5326544pgv.0;
+        Thu, 01 Nov 2018 06:13:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QBY5sL5Zy9mI+DssTb3NLs4hwmm/8avIY7AmyIZGvOA=;
-        b=EDe8rrmki4lbc8lw8XkNLJ8s5Kgfpy6dy7S+91bkIIMm+ev2pz4gj0xJu/un7tWzRB
-         JpSsBENuWLTN7nJinqK1fyLRR9lTeo174qblRTLEw9refIVa1KOKl6SpK9BkqD44nLV/
-         55blvL3meg6Hj3XH6WWoPY/Y4H1BtpXQt/NjkDFoir+GNPr5kXwlU6OxU+zwCWJARQJL
-         6kC6fYdqPNRK2lWBmpG1e5VCdtNAqHFK8suCtTDwvXz6BDtRGuVm3eMZZQntxiyvEeZc
-         p3oQxguIOVzs+MXS1DMvFmOU2t8+0bRuTnhFipgIvcWQA3aCG5KC0HWLq5+WwG35eYoq
-         /x0g==
+        h=from:to:cc:subject:date:message-id;
+        bh=K/UZKMyROPf83f0UxSJeA3os/fw2EDFboY7BMLq5Mss=;
+        b=rd7PhlVMR8Cast9Ra8kTK6/IqL/iFzEetx/2bugsr6uOUAF9RWYdXyLtwm3YTqwq7z
+         dfi5YOBbhBZd/cVMQS7tozk7Bbk2ZI4exugSkAnYgbfYsB5jR9quZ474t5HKM/qkd9Pd
+         SYgI1gwbikdTR/9kAh14R/YEEPx9WGNhlP0AFcmYBZdHK1gOBV0olgEoH4OqfMv9H+x+
+         N6Os+vNw8ZiCd6zq7RYNwmZgGm8KpRo3bBeaqxD2Mx1WovLW76zV0JccT8DOeeY5TbeX
+         Bb44S2KQXfSqrZOFj3U+brUzGxvxR/iDenVnxRnCU08xqobXMiGwYTvrEUjkvJKVcA4+
+         bjYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QBY5sL5Zy9mI+DssTb3NLs4hwmm/8avIY7AmyIZGvOA=;
-        b=l/1s1vHM1K7ai7W1Wk9txvaZopGRE2jQRBf2pfkL8TnXlzM1ZMuaoswZT3B+aELFL8
-         +HiwSiXT3lHE8HKTBlTcBzHTgOL+hzb8UUKAj9KiFYDvx7lNWZSPPdOmGTpSbErzQ/Kt
-         W50WWvthVouVgkAgBYs9YmP8/CbRopfK92vCieSLY4Enoq/6iEMbP++wiBAMcZhreWh2
-         pObUuu/WQ4Q/d8S1UCxX0FTVh+V7EVtUjwSPrQAklDsGeDKJ9+5cHs9deNeyQ2Jf4xOG
-         EA67GuweKW91lZMI4pEspqFCUYqlUyDfxRAkixyhKGN2ZT97jLTbOfX3sKAkWMfroH1P
-         2I1A==
-X-Gm-Message-State: AGRZ1gIoSWJyOb5DeqQFNs4/jPNnIU5o6XighEhCJfKP9FuaUEu6hIny
-        clfsdr5Z6dSMmfKAH+AYxPzNwb2uQgx0YF3nctE=
-X-Google-Smtp-Source: AJdET5fGRKGoNfoOgpKUcuxjMiLuz3Js4Yw+4qjT5waJ7Q9gdcS+agGk06Mfi9nIRcnhcvQgDZ/tGV7/nDaefxEiJ4Y=
-X-Received: by 2002:aed:3e49:: with SMTP id m9mr4887532qtf.99.1541077853051;
- Thu, 01 Nov 2018 06:10:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <1541085002-42993-1-git-send-email-peng.hao2@zte.com.cn>
-In-Reply-To: <1541085002-42993-1-git-send-email-peng.hao2@zte.com.cn>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 1 Nov 2018 15:10:40 +0200
-Message-ID: <CAHp75VeLikOzXrdZ4zP_Ccr8DGx81hdhLRTdUrLJ85NPo3DHDw@mail.gmail.com>
-Subject: Re: [PATCH V5 1/8] pvpanic: move pvpanic to misc as common driver
-To:     peng.hao2@zte.com.cn
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        hutao@cn.fujitsu.com,
-        Linux Documentation List <linux-doc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=K/UZKMyROPf83f0UxSJeA3os/fw2EDFboY7BMLq5Mss=;
+        b=kiFvA8p+ffpA9yuD6AyZKaasrvY6Hv9TWG0KZQkjZzU4SGNt6sNUIQaZ6rTmGmFG3w
+         eqdIhREFaPOktgPv47qgtKV1oUm6zvoOHSEfMsRK77BvCR3cNwOQRjOETcgDTl8e5xDJ
+         FXvMn/AC3HAp89JndFJ2igcQOgiqZ17pJe/Lvi5jKv4xFwjvoSxJYtNMFBbk9NL+aIR7
+         Dkq5XO4m+aPeC7bESvcxnIAaynPcwrbO5ULDE8UhHGStpmD5z5lus0Nt5OKIUIjLtea5
+         0G9g0kV600e/NX0KPxtTmBVb7yxe31/TiQFuNbaYdSgqYvHaBkkSe1b1aN92d+Rw1mOt
+         KJww==
+X-Gm-Message-State: AGRZ1gLQzoQFo2bL1EXJRzXGfhO2+kcH4D2ANWYB516GXr0ftl3/Wqxn
+        NmtfSOYxWNWGfZ1xz2CeB9olKQjI
+X-Google-Smtp-Source: AJdET5cM/lybRs+kATNgZ5jg2nN8L/dF3IOzo7xpRHvGlL9kuBoTlWz3ahDOPuHZy6TcKQDKqWo4SA==
+X-Received: by 2002:a63:e302:: with SMTP id f2mr7240523pgh.320.1541077992808;
+        Thu, 01 Nov 2018 06:13:12 -0700 (PDT)
+Received: from localhost.localdomain ([104.238.150.158])
+        by smtp.gmail.com with ESMTPSA id f3-v6sm31659442pgd.41.2018.11.01.06.13.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Nov 2018 06:13:12 -0700 (PDT)
+From:   Muchun Song <smuchun@gmail.com>
+To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] gpiolib: Fix possible use after free on label
+Date:   Thu,  1 Nov 2018 21:12:50 +0800
+Message-Id: <20181101131250.41636-1-smuchun@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 1, 2018 at 8:59 AM Peng Hao <peng.hao2@zte.com.cn> wrote:
->
-> move pvpanic.c from drivers/platform/x86 to drivers/misc.
-> following patches will use pvpanic device in arm64.
+gpiod_request_commit() copies the pointer to the label passed as
+an argument only to be used later. But there's a chance the caller
+could immediately free the passed string(e.g., local variable).
+This could trigger a use after free when we use gpio label(e.g.,
+gpiochip_unlock_as_irq(), gpiochip_is_requested()).
 
-There are few items you need to address in the next revision:
-- use proper English grammar, i.e. Capitalize beginning of sentenses
-- don't forget the tags people gave you in case you didn't (much) change a patch
+To be on the safe side: duplicate the string with kstrdup_const()
+so that if an unaware user passes an address to a stack-allocated
+buffer, we won't get the arbitrary label.
 
-Other than that, this one looks good to me
+Also fix gpiod_set_consumer_name().
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Muchun Song <smuchun@gmail.com>
+---
+ drivers/gpio/gpiolib.c        | 25 +++++++++++++++++++++----
+ include/linux/gpio/consumer.h |  6 ++++--
+ 2 files changed, 25 insertions(+), 6 deletions(-)
 
-P.S. WRT tags this one in v6 should have something like:
-...
-
-Reviewed-by: me
-Acked-by: Mark
-Signed-off-by: you
-
-at the end of commit message
-
->
-> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
-> ---
->  drivers/misc/Kconfig                     | 8 +++++++
->  drivers/misc/Makefile                    | 1 +
->  drivers/{platform/x86 => misc}/pvpanic.c | 0
->  drivers/platform/x86/Kconfig             | 8 --------
->  drivers/platform/x86/Makefile            | 1 -
->  5 files changed, 9 insertions(+), 9 deletions(-)
->  rename drivers/{platform/x86 => misc}/pvpanic.c (100%)
->
-> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-> index 3726eac..1ba0f62 100644
-> --- a/drivers/misc/Kconfig
-> +++ b/drivers/misc/Kconfig
-> @@ -513,6 +513,14 @@ config MISC_RTSX
->         tristate
->         default MISC_RTSX_PCI || MISC_RTSX_USB
->
-> +config PVPANIC
-> +       tristate "pvpanic device support"
-> +       depends on ACPI || OF
-> +       help
-> +         This driver provides support for the pvpanic device.  pvpanic is
-> +         a paravirtualized device provided by QEMU; it lets a virtual machine
-> +         (guest) communicate panic events to the host.
-> +
->  source "drivers/misc/c2port/Kconfig"
->  source "drivers/misc/eeprom/Kconfig"
->  source "drivers/misc/cb710/Kconfig"
-> diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-> index af22bbc..df951f4 100644
-> --- a/drivers/misc/Makefile
-> +++ b/drivers/misc/Makefile
-> @@ -58,3 +58,4 @@ obj-$(CONFIG_ASPEED_LPC_SNOOP)        += aspeed-lpc-snoop.o
->  obj-$(CONFIG_PCI_ENDPOINT_TEST)        += pci_endpoint_test.o
->  obj-$(CONFIG_OCXL)             += ocxl/
->  obj-$(CONFIG_MISC_RTSX)                += cardreader/
-> +obj-$(CONFIG_PVPANIC)          += pvpanic.o
-> diff --git a/drivers/platform/x86/pvpanic.c b/drivers/misc/pvpanic.c
-> similarity index 100%
-> rename from drivers/platform/x86/pvpanic.c
-> rename to drivers/misc/pvpanic.c
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index 0c1aa6c..4ac276c 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -1121,14 +1121,6 @@ config INTEL_SMARTCONNECT
->           This driver checks to determine whether the device has Intel Smart
->           Connect enabled, and if so disables it.
->
-> -config PVPANIC
-> -       tristate "pvpanic device support"
-> -       depends on ACPI
-> -       ---help---
-> -         This driver provides support for the pvpanic device.  pvpanic is
-> -         a paravirtualized device provided by QEMU; it lets a virtual machine
-> -         (guest) communicate panic events to the host.
-> -
->  config INTEL_PMC_IPC
->         tristate "Intel PMC IPC Driver"
->         depends on ACPI
-> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-> index e6d1bec..e88f44e 100644
-> --- a/drivers/platform/x86/Makefile
-> +++ b/drivers/platform/x86/Makefile
-> @@ -75,7 +75,6 @@ obj-$(CONFIG_APPLE_GMUX)      += apple-gmux.o
->  obj-$(CONFIG_INTEL_RST)                += intel-rst.o
->  obj-$(CONFIG_INTEL_SMARTCONNECT)       += intel-smartconnect.o
->
-> -obj-$(CONFIG_PVPANIC)           += pvpanic.o
->  obj-$(CONFIG_ALIENWARE_WMI)    += alienware-wmi.o
->  obj-$(CONFIG_INTEL_PMC_IPC)    += intel_pmc_ipc.o
->  obj-$(CONFIG_TOUCHSCREEN_DMI)  += touchscreen_dmi.o
-> --
-> 1.8.3.1
->
-
-
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 25187403e3ac..550918268549 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2270,6 +2270,12 @@ static int gpiod_request_commit(struct gpio_desc *desc, const char *label)
+ 	unsigned long		flags;
+ 	unsigned		offset;
+ 
++	if (label) {
++		label = kstrdup_const(label, GFP_KERNEL);
++		if (!label)
++			return -ENOMEM;
++	}
++
+ 	spin_lock_irqsave(&gpio_lock, flags);
+ 
+ 	/* NOTE:  gpio_request() can be called in early boot,
+@@ -2280,6 +2286,7 @@ static int gpiod_request_commit(struct gpio_desc *desc, const char *label)
+ 		desc_set_label(desc, label ? : "?");
+ 		status = 0;
+ 	} else {
++		kfree_const(label);
+ 		status = -EBUSY;
+ 		goto done;
+ 	}
+@@ -2296,6 +2303,7 @@ static int gpiod_request_commit(struct gpio_desc *desc, const char *label)
+ 
+ 		if (status < 0) {
+ 			desc_set_label(desc, NULL);
++			kfree_const(label);
+ 			clear_bit(FLAG_REQUESTED, &desc->flags);
+ 			goto done;
+ 		}
+@@ -2391,6 +2399,7 @@ static bool gpiod_free_commit(struct gpio_desc *desc)
+ 			chip->free(chip, gpio_chip_hwgpio(desc));
+ 			spin_lock_irqsave(&gpio_lock, flags);
+ 		}
++		kfree_const(desc->label);
+ 		desc_set_label(desc, NULL);
+ 		clear_bit(FLAG_ACTIVE_LOW, &desc->flags);
+ 		clear_bit(FLAG_REQUESTED, &desc->flags);
+@@ -3212,11 +3221,19 @@ EXPORT_SYMBOL_GPL(gpiod_cansleep);
+  * @desc: gpio to set the consumer name on
+  * @name: the new consumer name
+  */
+-void gpiod_set_consumer_name(struct gpio_desc *desc, const char *name)
++int gpiod_set_consumer_name(struct gpio_desc *desc, const char *name)
+ {
+-	VALIDATE_DESC_VOID(desc);
+-	/* Just overwrite whatever the previous name was */
+-	desc->label = name;
++	VALIDATE_DESC(desc);
++	if (name) {
++		name = kstrdup_const(name, GFP_KERNEL);
++		if (!name)
++			return -ENOMEM;
++	}
++
++	kfree_const(desc->label);
++	desc_set_label(desc, name);
++
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(gpiod_set_consumer_name);
+ 
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index 21ddbe440030..acc4279ad5e3 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -142,7 +142,7 @@ int gpiod_is_active_low(const struct gpio_desc *desc);
+ int gpiod_cansleep(const struct gpio_desc *desc);
+ 
+ int gpiod_to_irq(const struct gpio_desc *desc);
+-void gpiod_set_consumer_name(struct gpio_desc *desc, const char *name);
++int gpiod_set_consumer_name(struct gpio_desc *desc, const char *name);
+ 
+ /* Convert between the old gpio_ and new gpiod_ interfaces */
+ struct gpio_desc *gpio_to_desc(unsigned gpio);
+@@ -465,10 +465,12 @@ static inline int gpiod_to_irq(const struct gpio_desc *desc)
+ 	return -EINVAL;
+ }
+ 
+-static inline void gpiod_set_consumer_name(struct gpio_desc *desc, const char *name)
++static inline int gpiod_set_consumer_name(struct gpio_desc *desc,
++					  const char *name)
+ {
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
++	return -EINVAL;
+ }
+ 
+ static inline struct gpio_desc *gpio_to_desc(unsigned gpio)
 -- 
-With Best Regards,
-Andy Shevchenko
+2.17.1
+
