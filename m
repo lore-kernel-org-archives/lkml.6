@@ -2,269 +2,394 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B0BCC6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:04:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6148C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:06:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1A58204FD
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:04:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71857204FD
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:06:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fFzAV66w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1A58204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Pzoka5Os"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71857204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728176AbeKAUGr (ORCPT
+        id S1728088AbeKAUIg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 16:06:47 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:42884 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727825AbeKAUGr (ORCPT
+        Thu, 1 Nov 2018 16:08:36 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:52129 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727806AbeKAUIg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 16:06:47 -0400
-Received: by mail-yw1-f68.google.com with SMTP id l2-v6so3208402ywb.9
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 04:04:18 -0700 (PDT)
+        Thu, 1 Nov 2018 16:08:36 -0400
+Received: by mail-it1-f194.google.com with SMTP id h13so1515327itl.1
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 04:06:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=IejkXRVBbq2pp+V1bi+TPbmd4y7x+1kIJmwZu4kBjes=;
-        b=fFzAV66wCbzhVG44oA1cYwhDBmwr5TNV0rI0QUJeYk5iDs25eT80L9ouRwfSLxW6Hi
-         jgBg+RC7UTc6lgYNh6nHXsCmX15AovdUdeTEjOHV6cxoqoWTwek9aE1r2cfYjNdEJ20h
-         lL2jrmjLyrdz+XlDddS7Lu1KThKPUtxU2YCLY=
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=mofrCE8Qm+l0aiEmyMN4c2S/wQI5sTrb3VZdk4UvPX4=;
+        b=Pzoka5OsX8U1dT5ilixx3ul4YgPcatBX/ja4flA6UUTU2VqIXAamI9KG4QOXAafu1f
+         NeNqSDQ9X+I4/oicx9vhxG8UZkxgVlwQjTlkj/IVq6SReV1XbP2tuQEl0Yo4y+pO6qtP
+         3K9vez2fmeIXOdKYhTqr4RgMNWTR+DRXX7QAUya2UhTID1eePw13mmjvIiFDLDcfk1Tr
+         dPTdT0ulViMU4JTyCkYOK/K/q+0iNiRp+XU1OKWw7nqzxplHpr/0KQQVr9jPU0mHxETB
+         w+/srgYV+xHhK4CQRB47rqDuOSRMPZKTgOoI1eSg6z+uBqC3q0fmBzqNgSIqiga2JpG0
+         YPJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=IejkXRVBbq2pp+V1bi+TPbmd4y7x+1kIJmwZu4kBjes=;
-        b=a5ZIC9BoNG5ypO5La3EYD1wLL7W56pG/y+yet5XpReQILQH6LzxWUp1WNzpIk6TSlv
-         m2PyhgfoL5kSb1NwaaSriGCkPIWwy25wkE5LhgAbpXhAyeTv8yJy6hsZdQd0b3SBekt3
-         RfIPD5PHEn3HUnMehMJ1PwTZF9p3N1U2zLgCW3V+CeuRYXt1HUXdhqHiEa/bWZ8do3ce
-         MnlH0WTsnx04zvIdNDbfyN4XnhGf5Fn+fWcD8Q5cI6pjCJLe0Hvdcf9QZx+hLAEMps36
-         9cqO1OLuq4rDM1/1wSYTNe1yougH48v4iUgSkvOQkm2kQZdCplVYuK8z+zFhbXsnbaSc
-         HuSA==
-X-Gm-Message-State: AGRZ1gLQnLY2hPfavn0FSDAHj18YgnnWRe2HgS0rAkW9URFouEQ7ZP8M
-        P6xra6ZaSUPOLawb7h8gNIIt7sISxeFfQk0fjji+Hw==
-X-Google-Smtp-Source: AJdET5dPiFUU55Ys7byxWSOFcXrGJaPZv64t9M/ty/3xOuNHfXbUQsT69iwzhte9O8KJdy9cVq4UejO6lNaYp84pLqc=
-X-Received: by 2002:a81:25cb:: with SMTP id l194-v6mr6645201ywl.204.1541070258299;
- Thu, 01 Nov 2018 04:04:18 -0700 (PDT)
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=mofrCE8Qm+l0aiEmyMN4c2S/wQI5sTrb3VZdk4UvPX4=;
+        b=ulKGaQWlR3OLvAcWRaE2MVGc+lauk3LBLoz3XeyJECpzkpCvSqSBZwXVkerCTkb0lo
+         6DrPOoCqk2GzjD3wB5rjFdI9xlufiRV9soEtSiiA66M0NfOXNe5J27St/pvX1+j75Sfe
+         OFduxH0qNAT+rzbq0iysQTLxNm5EICkiyDb5BQxI4u1wSREBJ4j0/Nh2+NRc2v1BnVvc
+         HADfnCUJaV1hRVPXsfDdSSST+614P/sX1yr4StR/if6GtDvdpF2xUGFOzhjK5w0cL2ex
+         s/qJTF/SUj8zrTQXo4qLUrMsnNBRUyXoIXZxCtd1AMSZo2Io1n0aS/V/tbeSEIN8cZ49
+         sy8w==
+X-Gm-Message-State: AGRZ1gJz2xVPgf4Gc6ULpSVY5b+2shQLRvz59VSXmFYH52u9Cs3nriG3
+        LJtjpr105m7Mm+kIwaGcvu4XUiz4JWqYSxPBpD7q2A==
+X-Google-Smtp-Source: AJdET5dfWjKsgmz7hy7vqCv4yA11efxi3bnlc4l3RD5rRaXVXRV9XAALJEPzM9iFTsmBAYMDpo4XATZW+j9rZXZfSuc=
+X-Received: by 2002:a24:940f:: with SMTP id j15-v6mr5086585ite.12.1541070366297;
+ Thu, 01 Nov 2018 04:06:06 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181031121356.30654-1-anders.roxell@linaro.org>
- <405fca92-dd11-0a52-119e-9f3065b1a48a@arm.com> <CADYN=9KEwTrZR6NooYANbbVXERD-_AQOW7b+tgW-dhkVnkNhYg@mail.gmail.com>
-In-Reply-To: <CADYN=9KEwTrZR6NooYANbbVXERD-_AQOW7b+tgW-dhkVnkNhYg@mail.gmail.com>
-From:   Anders Roxell <anders.roxell@linaro.org>
-Date:   Thu, 1 Nov 2018 12:04:07 +0100
-Message-ID: <CADYN=9+NZ9w5P0xPak48CHusPOqbru1PdmFBknrKHzqWf0fZsQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] arm64/mm: hit DEBUG_LOCKS_WARN_ON
-To:     james.morse@arm.com
-Cc:     will.deacon@arm.com, jason.wessel@windriver.com,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        kgdb-bugreport@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Received: by 2002:a02:1003:0:0:0:0:0 with HTTP; Thu, 1 Nov 2018 04:05:45 -0700 (PDT)
+In-Reply-To: <000000000000c25cca0579982a05@google.com>
+References: <000000000000c25cca0579982a05@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 1 Nov 2018 12:05:45 +0100
+Message-ID: <CACT4Y+YLFp4OXRyroL8coE5Mw6yMdbajKPeu8kzkHunVGypx0Q@mail.gmail.com>
+Subject: Re: INFO: task hung in fuse_sb_destroy
+To:     syzbot <syzbot+6339eda9cb4ebbc4c37b@syzkaller.appspotmail.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 31 Oct 2018 at 16:30, Anders Roxell <anders.roxell@linaro.org> wrot=
-e:
+On Thu, Nov 1, 2018 at 11:49 AM, syzbot
+<syzbot+6339eda9cb4ebbc4c37b@syzkaller.appspotmail.com> wrote:
+> Hello,
 >
-> On Wed, 31 Oct 2018 at 13:37, James Morse <james.morse@arm.com> wrote:
-> >
-> > Hi Anders,
-> >
+> syzbot found the following crash on:
 >
-> Hi James,
->
-> > (CC: +linux-arm-kernel@lists.infradead.org)
->
-> Thanks, I missed that.
->
-> >
-> > On 31/10/2018 12:13, Anders Roxell wrote:
-> > > I'm running an arm64 kernel in a qemu guest and I hit this
-> > > DEBUG_LOCKS_WARN_ON and this patch removes the warning. The
-> > > interrupts_enabled(reqs) should reflect the irq->enabled state of the
-> > > kgdb test process
-> >
-> > (I know nothing about kgdb, please forgive the stupid questions:)
-> >
-> > Where does this 'irq->enabled state of the kgdb test process' come from=
-?
-> > What happens if it takes an interrupt, then you single-step the
-> > interrupt handler? (How can any state in memory get updated...)
-> >
-> >
-> > > when it hit the breakpoint, and that should be the
-> > > same as the current->hardirqs_enabled flag
-> > >
-> > > [   25.682116] kgdbts:RUN singlestep test 1000 iterations
-> > > [   25.695926] ------------[ cut here ]------------
-> > > [   25.696410] DEBUG_LOCKS_WARN_ON(current->hardirqs_enabled)
-> > > [   25.697407] WARNING: CPU: 0 PID: 1 at ../kernel/locking/lockdep.c:=
-3761 check_flags+0x64/0x198
-> > > [   25.698349] Modules linked in:
-> > > [   25.699144] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G              =
-  T 4.19.0-next-20181030+ #6
-> > > [   25.699739] Hardware name: linux,dummy-virt (DT)
-> > > [   25.700359] pstate: 404003c5 (nZcv DAIF +PAN -UAO)
-> > > [   25.700901] pc : check_flags+0x64/0x198
-> > > [   25.701381] lr : check_flags+0x64/0x198
-> >
-> > > [   25.710104] Call trace:
-> > > [   25.710553]  check_flags+0x64/0x198
-> > > [   25.711023]  lock_acquire+0x60/0x248
-> > > [   25.711477]  call_step_hook+0x5c/0x190
-> > > [   25.711937]  single_step_handler+0x48/0xa0
-> > > [   25.712399]  do_debug_exception+0x104/0x160
-> > > [   25.712846]  el1_dbg+0x18/0xa8
-> > > [   25.713252]  el1_irq+0xa8/0x1c0
-> > > [   25.713709]  kgdbts_break_test+0x0/0x40
-> > > [   25.714171]  kgdbts_run_tests+0x2b0/0x430
-> > > [   25.714637]  configure_kgdbts+0x7c/0xb0
-> > > [   25.715110]  init_kgdbts+0x70/0xac
-> > > [   25.715551]  do_one_initcall+0x1fc/0x490
-> > > [   25.716010]  do_initcall_level+0x458/0x49c
-> > > [   25.716462]  do_initcalls+0x60/0xa4
-> > > [   25.716892]  do_basic_setup+0x3c/0x68
-> > > [   25.717343]  kernel_init_freeable+0x170/0x2b8
-> > > [   25.717860]  kernel_init+0x20/0x130
-> > > [   25.718302]  ret_from_fork+0x10/0x18
-> > > [   25.718712] irq event stamp: 266621
-> > > [   25.719209] hardirqs last  enabled at (266621): [<ffffff80081e935c=
->] do_debug_exception+0x13c/0x160
-> > > [   25.719949] hardirqs last disabled at (266620): [<ffffff8008215a58=
->] kgdb_roundup_cpus+0x30/0x38
-> > > [   25.720675] softirqs last  enabled at (266616): [<ffffff80081e9f24=
->] __do_softirq+0x4e4/0x52c
-> > > [   25.721374] softirqs last disabled at (266609): [<ffffff8008279694=
->] irq_exit+0xbc/0x128
-> > > [   25.722050] ---[ end trace ecb2b85abf3c30a2 ]---
-> > > [   25.722537] possible reason: unannotated irqs-off.
-> > > [   25.722960] irq event stamp: 266621
-> > >
-> > > Rework code to drop the 'if (interrupts_enabled(regs))' before
-> > > trace_hardirqs_*() in function do_debug_exception().
-> > >
-> > > We don't know why current->hardirqs_enabled and interrupts_enabled(re=
-gs)
-> > > don't match.
-> >
-> > You took an IRQ from kgdbts_break_test(). This causes the CPU to mask
-> > interrupts, we tell trace_hardirqs_off() about this in the entry asm.
-> >
-> >  From arch/arm64/kernel/entry.S:
-> > | el1_irq:
-> > |=E2=80=83=E2=80=83=E2=80=83=E2=80=83=E2=80=83=E2=80=83=E2=80=83kernel_=
-entry 1
-> > |=E2=80=83=E2=80=83=E2=80=83=E2=80=83=E2=80=83=E2=80=83=E2=80=83enable_=
-da_f
-> > | #ifdef CONFIG_TRACE_IRQFLAGS
-> > |=E2=80=83=E2=80=83=E2=80=83=E2=80=83=E2=80=83=E2=80=83=E2=80=83bl=E2=
-=80=83=E2=80=83=E2=80=83=E2=80=83=E2=80=83trace_hardirqs_off
-> > | #endif
-> > |
-> > |=E2=80=83=E2=80=83=E2=80=83=E2=80=83=E2=80=83=E2=80=83=E2=80=83irq_han=
-dler
-> >
-> >
-> > Could you faddr2line 'el1_irq+0xa8/0x1c0'? I bet that is the
-> > 'enable_da_f' line which re-enables debug, just _before_ we update call
-> > trace_hardirqs_off.
->
-> I used objdump and found this:
->
-> ffffff800819f600 <el1_irq>:
-> ffffff800819f600:       a90007e0        stp     x0, x1, [sp]
-> ...
-> ffffff800819f6a0:       a9105ff6        stp     x22, x23, [sp, #256]
-> ffffff800819f6a4:       d5034dff        msr     daifclr, #0xd
-> ffffff800819f6a8:       94082970        bl      ffffff80083a9c68
-> <trace_hardirqs_off>
-> ffffff800819f6ac:       d0008641        adrp    x1, ffffff8009269000
-> <cpu_ops+0x108>
-> ffffff800819f6b0:       f940e021        ldr     x1, [x1, #448]
->
->
->
-> >
-> > The problem is debug exceptions can jump in this gap and see an
-> > inconsistent trace_hardirqs_off/regs state.
-> >
-> >
-> > > diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-> > > index 7d9571f4ae3d..9afe5a7ba55b 100644
-> > > --- a/arch/arm64/mm/fault.c
-> > > +++ b/arch/arm64/mm/fault.c
-> > > @@ -819,11 +819,9 @@ asmlinkage int __exception do_debug_exception(un=
-signed long addr,
-> > >       int rv;
-> > >
-> > >       /*
-> > > -      * Tell lockdep we disabled irqs in entry.S. Do nothing if they=
- were
-> > > -      * already disabled to preserve the last enabled/disabled addre=
-sses.
-> > > +      * Tell lockdep we disabled irqs in entry.S.
-> > >        */
-> > > -     if (interrupts_enabled(regs))
-> > > -             trace_hardirqs_off();
-> > > +     trace_hardirqs_off();
-> >
-> > Taking a debug-exception from irq-unmasked code will cause IRQs to be
-> > disabled. This code updates trace_hardirqs_off().
-> >
-> > But, taking a debug-exception from irq-masked code doesn't change
-> > anything. Making this trace_hardirqs_off() unconditional means you now
-> > overwrite the original location where irqs were masked.
-> >
-> >
-> > Would making sure debug exceptions can't see current->hardirqs_enabled
-> > and interrupts_enabled(regs) as having different states fix this proble=
-m?
-> >
-> > If so moving the 'enable_da_f' line in el1_irq below the #ifdef block
-> > should fix it.
->
-> reverting this RFC patch and did this patch that you suggested (see below=
-) and
-> I couldn't see the DEBUG_LOCKS_WARN_ON.
+> HEAD commit:    59fc453b21f7 Merge branch 'akpm' (patches from Andrew)
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15fb2447400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=ea045471e4c756e8
+> dashboard link: https://syzkaller.appspot.com/bug?extid=6339eda9cb4ebbc4c37b
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=178a105d400000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16651133400000
 
-I'm sorry for my ignorance but, but moving enable_da_f below the
-#ifdef block solved
-the problem. But I'm not sure that I understand why it solved it. Can
-you please elaborate
-a bit more ?
 
-Should I move the 'enable_da_f' line in el0_ia below the #ifdef block as we=
-ll?
+I can easily reproduce this.
 
-Cheers,
-Anders
+The repro gives me a task hanged at:
 
-> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-> index 039144ecbcb2..c509213b2afc 100644
-> --- a/arch/arm64/kernel/entry.S
-> +++ b/arch/arm64/kernel/entry.S
-> @@ -614,10 +614,10 @@ ENDPROC(el1_sync)
->         .align  6
->  el1_irq:
->         kernel_entry 1
-> -       enable_da_f
->  #ifdef CONFIG_TRACE_IRQFLAGS
->         bl      trace_hardirqs_off
->  #endif
-> +       enable_da_f
+# cat /proc/7563/task/*/stack
+[<0>] fuse_wait_aborted+0x20b/0x320
+[<0>] fuse_sb_destroy+0xe2/0x1d0
+[<0>] fuse_kill_sb_anon+0x15/0x20
+[<0>] deactivate_locked_super+0x97/0x100
+[<0>] deactivate_super+0x2bb/0x320
+[<0>] cleanup_mnt+0xbf/0x160
+[<0>] __cleanup_mnt+0x16/0x20
+[<0>] task_work_run+0x1e8/0x2a0
+[<0>] exit_to_usermode_loop+0x318/0x380
+[<0>] do_syscall_64+0x6be/0x820
+[<0>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[<0>] 0xffffffffffffffff
+
+I double checked that writing to /sys/fs/fuse/connections/44/abort did
+not help (the only entry in fuse/connections). Wrote multiple times,
+and tried to kill the task, nothing helps.
+
+
+
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+6339eda9cb4ebbc4c37b@syzkaller.appspotmail.com
 >
->         irq_handler
+> INFO: task syz-executor221:17414 blocked for more than 140 seconds.
+>       Not tainted 4.19.0+ #313
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> syz-executor221 D23048 17414   5652 0x00000004
+> Call Trace:
+>  context_switch kernel/sched/core.c:2831 [inline]
+>  __schedule+0x8cf/0x21d0 kernel/sched/core.c:3472
+>  schedule+0xfe/0x460 kernel/sched/core.c:3516
+>  fuse_wait_aborted+0x20b/0x320 fs/fuse/dev.c:2155
+>  fuse_sb_destroy+0xe2/0x1d0 fs/fuse/inode.c:1224
+>  fuse_kill_sb_anon+0x15/0x20 fs/fuse/inode.c:1234
+>  deactivate_locked_super+0x97/0x100 fs/super.c:329
+>  deactivate_super+0x2bb/0x320 fs/super.c:360
+>  cleanup_mnt+0xbf/0x160 fs/namespace.c:1098
+>  __cleanup_mnt+0x16/0x20 fs/namespace.c:1105
+>  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+>  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+>  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
+>  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+>  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+>  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x446689
+> Code: e8 0c e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
+> 0f 83 7b 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007f621e979da8 EFLAGS: 00000293 ORIG_RAX: 00000000000000a6
+> RAX: 0000000000000000 RBX: 00000000006dbc28 RCX: 0000000000446689
+> RDX: 0000000000446689 RSI: 000000000000000a RDI: 0000000020000180
+> RBP: 00000000006dbc20 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000293 R12: 00000000006dbc2c
+> R13: 0030656c69662f2e R14: 65646f6d746f6f72 R15: 0000000000000000
+>
+> Showing all locks held in the system:
+> 1 lock held by khungtaskd/1009:
+>  #0: 0000000095618e4f (rcu_read_lock){....}, at:
+> debug_show_all_locks+0xd0/0x424 kernel/locking/lockdep.c:4379
+> 5 locks held by rsyslogd/5530:
+>  #0: 0000000028bad575 (&f->f_pos_lock){+.+.}, at: __fdget_pos+0x1bb/0x200
+> fs/file.c:766
+>  #1: 00000000e31592cd (&rq->lock){-.-.}, at: rq_lock
+> kernel/sched/sched.h:1126 [inline]
+>  #1: 00000000e31592cd (&rq->lock){-.-.}, at: __schedule+0x236/0x21d0
+> kernel/sched/core.c:3410
+>  #2: 0000000095618e4f (rcu_read_lock){....}, at: trace_sched_stat_runtime
+> include/trace/events/sched.h:418 [inline]
+>  #2: 0000000095618e4f (rcu_read_lock){....}, at: update_curr+0x383/0xbd0
+> kernel/sched/fair.c:830
+>  #3: 00000000e31592cd (&rq->lock){-.-.}, at: rq_lock
+> kernel/sched/sched.h:1126 [inline]
+>  #3: 00000000e31592cd (&rq->lock){-.-.}, at: ttwu_queue
+> kernel/sched/core.c:1845 [inline]
+>  #3: 00000000e31592cd (&rq->lock){-.-.}, at: try_to_wake_up+0x9f6/0x1490
+> kernel/sched/core.c:2057
+>  #4: 0000000095618e4f (rcu_read_lock){....}, at: trace_sched_stat_runtime
+> include/trace/events/sched.h:418 [inline]
+>  #4: 0000000095618e4f (rcu_read_lock){....}, at: update_curr+0x383/0xbd0
+> kernel/sched/fair.c:830
+> 2 locks held by getty/5620:
+>  #0: 00000000492d5ad8 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x32/0x40
+> drivers/tty/tty_ldsem.c:353
+>  #1: 0000000088c4d769 (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
+> 2 locks held by getty/5621:
+>  #0: 00000000ed56cf3c (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x32/0x40
+> drivers/tty/tty_ldsem.c:353
+>  #1: 00000000a8112d49 (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
+> 2 locks held by getty/5622:
+>  #0: 00000000858703c2 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x32/0x40
+> drivers/tty/tty_ldsem.c:353
+>  #1: 00000000b20ff0f8 (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
+> 2 locks held by getty/5623:
+>  #0: 00000000a0163126 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x32/0x40
+> drivers/tty/tty_ldsem.c:353
+>  #1: 00000000cb4be99e (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
+> 2 locks held by getty/5624:
+>  #0: 000000006eab39a0 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x32/0x40
+> drivers/tty/tty_ldsem.c:353
+>  #1: 00000000341e7ea5 (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
+> 2 locks held by getty/5625:
+>  #0: 00000000e1bb9e75 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x32/0x40
+> drivers/tty/tty_ldsem.c:353
+>  #1: 00000000e6c38e03 (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
+> 2 locks held by getty/5626:
+>  #0: 00000000437eab2d (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x32/0x40
+> drivers/tty/tty_ldsem.c:353
+>  #1: 00000000031acd5c (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
+> 2 locks held by kworker/1:0/5718:
+>  #0: 0000000003693dce ((wq_completion)"rcu_gp"){+.+.}, at: __write_once_size
+> include/linux/compiler.h:206 [inline]
+>  #0: 0000000003693dce ((wq_completion)"rcu_gp"){+.+.}, at: arch_atomic64_set
+> arch/x86/include/asm/atomic64_64.h:34 [inline]
+>  #0: 0000000003693dce ((wq_completion)"rcu_gp"){+.+.}, at: atomic64_set
+> include/asm-generic/atomic-instrumented.h:40 [inline]
+>  #0: 0000000003693dce ((wq_completion)"rcu_gp"){+.+.}, at: atomic_long_set
+> include/asm-generic/atomic-long.h:59 [inline]
+>  #0: 0000000003693dce ((wq_completion)"rcu_gp"){+.+.}, at: set_work_data
+> kernel/workqueue.c:617 [inline]
+>  #0: 0000000003693dce ((wq_completion)"rcu_gp"){+.+.}, at:
+> set_work_pool_and_clear_pending kernel/workqueue.c:644 [inline]
+>  #0: 0000000003693dce ((wq_completion)"rcu_gp"){+.+.}, at:
+> process_one_work+0xb43/0x1c40 kernel/workqueue.c:2124
+>  #1: 00000000fdcab2d3 ((work_completion)(&rew.rew_work)){+.+.}, at:
+> process_one_work+0xb9a/0x1c40 kernel/workqueue.c:2128
+> 1 lock held by syz-executor221/17414:
+>  #0: 000000003df3056e (&type->s_umount_key#39){+.+.}, at:
+> deactivate_super+0x2b3/0x320 fs/super.c:359
+> 1 lock held by syz-executor221/18647:
+>  #0: 00000000dd0c9ec5 (rcu_state.exp_mutex){+.+.}, at: exp_funnel_lock
+> kernel/rcu/tree_exp.h:296 [inline]
+>  #0: 00000000dd0c9ec5 (rcu_state.exp_mutex){+.+.}, at:
+> _synchronize_rcu_expedited.constprop.58+0x7c7/0x9d0
+> kernel/rcu/tree_exp.h:620
+> 1 lock held by syz-executor221/18653:
+>  #0: 00000000dd0c9ec5 (rcu_state.exp_mutex){+.+.}, at: exp_funnel_lock
+> kernel/rcu/tree_exp.h:328 [inline]
+>  #0: 00000000dd0c9ec5 (rcu_state.exp_mutex){+.+.}, at:
+> _synchronize_rcu_expedited.constprop.58+0x7af/0x9d0
+> kernel/rcu/tree_exp.h:620
+>
+> =============================================
+>
+> NMI backtrace for cpu 0
+> CPU: 0 PID: 1009 Comm: khungtaskd Not tainted 4.19.0+ #313
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x244/0x39d lib/dump_stack.c:113
+>  nmi_cpu_backtrace.cold.2+0x5c/0xa1 lib/nmi_backtrace.c:101
+>  nmi_trigger_cpumask_backtrace+0x1e8/0x22a lib/nmi_backtrace.c:62
+>  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+>  trigger_all_cpu_backtrace include/linux/nmi.h:144 [inline]
+>  check_hung_uninterruptible_tasks kernel/hung_task.c:205 [inline]
+>  watchdog+0xb51/0x1060 kernel/hung_task.c:289
+>  kthread+0x35a/0x440 kernel/kthread.c:246
+>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:350
+> Sending NMI from CPU 0 to CPUs 1:
+> NMI backtrace for cpu 1
+> CPU: 1 PID: 18647 Comm: syz-executor221 Not tainted 4.19.0+ #313
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> RIP: 0010:outb arch/x86/include/asm/io.h:334 [inline]
+> RIP: 0010:io_serial_out+0x73/0x90 drivers/tty/serial/8250/8250_port.c:455
+> Code: 00 49 8d 7c 24 38 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03
+> d3 e3 80 3c 02 00 75 19 41 03 5c 24 38 44 89 e8 89 da ee <5b> 41 5c 41 5d 5d
+> c3 e8 e1 66 e0 fd eb c0 e8 3a 67 e0 fd eb e0 0f
+> RSP: 0018:ffff8801cc666f90 EFLAGS: 00000006
+> RAX: 0000000000000000 RBX: 00000000000003f9 RCX: 0000000000000000
+> RDX: 00000000000003f9 RSI: ffffffff83e257a6 RDI: ffffffff8bae5158
+> RBP: ffff8801cc666fa8 R08: ffff8801bf0b0600 R09: ffffed00398ccde3
+> R10: ffffed00398ccde3 R11: 0000000000000003 R12: ffffffff8bae5120
+> R13: 0000000000000000 R14: 0000000000000001 R15: ffffffff8bae5168
+> FS:  00007f621e97a700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f313a840000 CR3: 00000001c3654000 CR4: 00000000001406e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  serial_port_out include/linux/serial_core.h:276 [inline]
+>  serial8250_console_write+0x34b/0xb10
+> drivers/tty/serial/8250/8250_port.c:3276
+>  univ8250_console_write+0x5f/0x70 drivers/tty/serial/8250/8250_core.c:586
+>  call_console_drivers kernel/printk/printk.c:1728 [inline]
+>  console_unlock+0xb1f/0x1190 kernel/printk/printk.c:2414
+>  vprintk_emit+0x391/0x990 kernel/printk/printk.c:1922
+>  vprintk_default+0x28/0x30 kernel/printk/printk.c:1964
+>  vprintk_func+0x7e/0x181 kernel/printk/printk_safe.c:398
+>  printk+0xa7/0xcf kernel/printk/printk.c:1997
+>  kobject_cleanup lib/kobject.c:638 [inline]
+>  kobject_release lib/kobject.c:691 [inline]
+>  kref_put include/linux/kref.h:70 [inline]
+>  kobject_put.cold.9+0x83/0x2e4 lib/kobject.c:708
+>  put_device drivers/base/core.c:2024 [inline]
+>  device_unregister+0x28/0x30 drivers/base/core.c:2114
+>  bdi_unregister+0x5ed/0x880 mm/backing-dev.c:948
+>  release_bdi mm/backing-dev.c:964 [inline]
+>  kref_put include/linux/kref.h:70 [inline]
+>  bdi_put+0x153/0x180 mm/backing-dev.c:973
+>  generic_shutdown_super+0x3c8/0x530 fs/super.c:470
+>  kill_anon_super+0x3e/0x60 fs/super.c:1032
+>  fuse_kill_sb_anon+0x1d/0x20 fs/fuse/inode.c:1235
+>  deactivate_locked_super+0x97/0x100 fs/super.c:329
+>  deactivate_super+0x2bb/0x320 fs/super.c:360
+>  cleanup_mnt+0xbf/0x160 fs/namespace.c:1098
+>  __cleanup_mnt+0x16/0x20 fs/namespace.c:1105
+>  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+>  get_signal+0x1558/0x1980 kernel/signal.c:2347
+>  do_signal+0x9c/0x21c0 arch/x86/kernel/signal.c:816
+>  exit_to_usermode_loop+0x2e5/0x380 arch/x86/entry/common.c:162
+>  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+>  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+>  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x446689
+> Code: e8 0c e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
+> 0f 83 7b 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007f621e979da8 EFLAGS: 00000293 ORIG_RAX: 00000000000000a6
+> RAX: 0000000000000000 RBX: 00000000006dbc28 RCX: 0000000000446689
+> RDX: 0000000000446689 RSI: 000000000000000a RDI: 0000000020000180
+> RBP: 00000000006dbc20 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000293 R12: 00000000006dbc2c
+> R13: 0030656c69662f2e R14: 65646f6d746f6f72 R15: 0000000000000000
+> INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.274
+> msecs
+> kobject: '0:31' (0000000050d00699): fill_kobj_path: path =
+> '/devices/virtual/bdi/0:31'
+> kobject: '0:32' (00000000d2d168d9): kobject_cleanup, parent           (null)
+> kobject: '0:31' (0000000050d00699): kobject_cleanup, parent           (null)
+> kobject: '0:32' (00000000d2d168d9): calling ktype release
+> kobject: '0:33' (00000000d76406a3): kobject_cleanup, parent           (null)
+> kobject: '0:28' (000000002da84317): calling ktype release
+> kobject: '0:29' (00000000e2434e73): kobject_cleanup, parent           (null)
+> kobject: '0:32': free name
+> kobject: '0:33' (00000000d76406a3): calling ktype release
+> kobject: '0:33': free name
+> kobject: '0:29' (00000000e2434e73): calling ktype release
+> kobject: '0:28': free name
+> kobject: '0:29': free name
+> kobject: '0:31' (0000000050d00699): calling ktype release
+> kobject: '0:28' (0000000080474e07): kobject_add_internal: parent: 'bdi',
+> set: 'devices'
+> kobject: '0:29' (0000000051f8f0a5): kobject_add_internal: parent: 'bdi',
+> set: 'devices'
+> kobject: '0:28' (0000000080474e07): kobject_uevent_env
+> kobject: '0:32' (0000000075558c25): kobject_add_internal: parent: 'bdi',
+> set: 'devices'
+> kobject: '0:33' (00000000c8dd3226): kobject_add_internal: parent: 'bdi',
+> set: 'devices'
+> kobject: '0:29' (0000000051f8f0a5): kobject_uevent_env
+> kobject: '0:33' (00000000c8dd3226): kobject_uevent_env
+> kobject: '0:31': free name
+> kobject: '0:28' (0000000080474e07): fill_kobj_path: path =
+> '/devices/virtual/bdi/0:28'
+> kobject: '0:29' (0000000051f8f0a5): fill_kobj_path: path =
+> '/devices/virtual/bdi/0:29'
+> kobject: '0:34' (000000008aa55f96): kobject_add_internal: parent: 'bdi',
+> set: 'devices'
+> kobject: '0:33' (00000000c8dd3226): fill_kobj_path: path =
+> '/devices/virtual/bdi/0:33'
+> kobject: '0:31' (000000008e78fdc7): kobject_add_internal: parent: 'bdi',
+> set: 'devices'
+> kobject: '0:32' (0000000075558c25): kobject_uevent_env
+> kobject: '0:34' (000000008aa55f96): kobject_uevent_env
+> kobject: '0:32' (0000000075558c25): fill_kobj_path: path =
+> '/devices/virtual/bdi/0:32'
+> kobject: '0:34' (000000008aa55f96): fill_kobj_path: path =
+> '/devices/virtual/bdi/0:34'
 >
 >
-> Cheers,
-> Anders
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit
+> https://groups.google.com/d/msgid/syzkaller-bugs/000000000000c25cca0579982a05%40google.com.
+> For more options, visit https://groups.google.com/d/optout.
