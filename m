@@ -2,277 +2,168 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0771C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:25:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC56C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:26:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A776204FD
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:25:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A776204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 32558204FD
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:26:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32558204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727638AbeKBHaq (ORCPT
+        id S1727841AbeKBHbp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 03:30:46 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:46542 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726115AbeKBHaq (ORCPT
+        Fri, 2 Nov 2018 03:31:45 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48558 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726115AbeKBHbo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 03:30:46 -0400
-Received: from [192.168.4.242] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gILPQ-0004lV-Se; Thu, 01 Nov 2018 22:25:48 +0000
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gILPQ-0000WW-MY; Thu, 01 Nov 2018 22:25:48 +0000
-Message-ID: <5d134c818828ddecf1ab9768b126c15c267c099e.camel@decadent.org.uk>
-Subject: Re: [PATCH 4.9 23/35] x86/mm: Expand static page table for fixmap
- space
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Feng Tang <feng.tang@intel.com>,
-        kernel test robot <rong.a.chen@intel.com>,
-        H Peter Anvin <hpa@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Yinghai Lu <yinghai@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Andy Lutomirsky <luto@kernel.org>
-Date:   Thu, 01 Nov 2018 22:25:43 +0000
-In-Reply-To: <20181011152521.098965859@linuxfoundation.org>
-References: <20181011152520.174949126@linuxfoundation.org>
-         <20181011152521.098965859@linuxfoundation.org>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-VzV2VgtRZdKJpHD5S+LT"
-User-Agent: Evolution 3.30.1-1 
-Mime-Version: 1.0
-X-SA-Exim-Connect-IP: 192.168.4.242
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Fri, 2 Nov 2018 03:31:44 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA1MNpnk129164
+        for <linux-kernel@vger.kernel.org>; Thu, 1 Nov 2018 18:26:49 -0400
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ng7r46gre-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 18:26:48 -0400
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 1 Nov 2018 22:26:48 -0000
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 1 Nov 2018 22:26:41 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA1MQf7i25100518
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 1 Nov 2018 22:26:41 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EB775B205F;
+        Thu,  1 Nov 2018 22:26:40 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B4B29B2064;
+        Thu,  1 Nov 2018 22:26:40 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.141])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  1 Nov 2018 22:26:40 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 3AAED16C0598; Thu,  1 Nov 2018 15:26:41 -0700 (PDT)
+Date:   Thu, 1 Nov 2018 15:26:41 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ralf@linux-mips.org" <ralf@linux-mips.org>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "bfields@fieldses.org" <bfields@fieldses.org>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
+        "paul.burton@mips.com" <paul.burton@mips.com>,
+        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
+        "jhogan@kernel.org" <jhogan@kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "paulus@samba.org" <paulus@samba.org>,
+        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        aryabinin@virtuozzo.com, dvyukov@google.com
+Subject: Re: [RFC PATCH] lib: Introduce generic __cmpxchg_u64() and use it
+ where needed
+Reply-To: paulmck@linux.ibm.com
+References: <4e2438a23d2edf03368950a72ec058d1d299c32e.camel@hammerspace.com>
+ <20181101131846.biyilr2msonljmij@lakrids.cambridge.arm.com>
+ <20181101145926.GE3178@hirez.programming.kicks-ass.net>
+ <f38e272f7a96e983549e4281aa9fd02833a4277a.camel@hammerspace.com>
+ <20181101163212.GF3159@hirez.programming.kicks-ass.net>
+ <b0160f4b-b996-b0ee-405a-3d5f1866272e@gmail.com>
+ <20181101171432.GH3178@hirez.programming.kicks-ass.net>
+ <20181101172739.GA3196@hirez.programming.kicks-ass.net>
+ <20181101202910.GB4170@linux.ibm.com>
+ <20181101213834.GA3339@worktop.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181101213834.GA3339@worktop.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18110122-0064-0000-0000-0000036C7196
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009968; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01111286; UDB=6.00575888; IPR=6.00891378;
+ MB=3.00023997; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-01 22:26:47
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110122-0065-0000-0000-00003B313D77
+Message-Id: <20181101222641.GI4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-01_16:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=649 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811010187
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Nov 01, 2018 at 10:38:34PM +0100, Peter Zijlstra wrote:
+> On Thu, Nov 01, 2018 at 01:29:10PM -0700, Paul E. McKenney wrote:
+> > On Thu, Nov 01, 2018 at 06:27:39PM +0100, Peter Zijlstra wrote:
+> > > On Thu, Nov 01, 2018 at 06:14:32PM +0100, Peter Zijlstra wrote:
+> > > > > This reminds me of this sooooo silly patch :/
+> > > > > 
+> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=adb03115f4590baa280ddc440a8eff08a6be0cb7
+> > > 
+> > > You'd probably want to write it like so; +- some ordering stuff, that
+> > > code didn't look like it really needs the memory barriers implied by
+> > > these, but I didn't look too hard.
+> > 
+> > The atomic_fetch_add() API would need to be propagated out to the other
+> > architectures, correct?
+> 
+> Like these commits I did like 2 years ago ? :-)
 
---=-VzV2VgtRZdKJpHD5S+LT
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Color me blind and stupid!  ;-)
 
-On Thu, 2018-10-11 at 17:35 +0200, Greg Kroah-Hartman wrote:
-> 4.9-stable review patch.  If anyone has any objections, please let me kno=
-w.
->=20
-> ------------------
->=20
-> From: Feng Tang <feng.tang@intel.com>
->=20
-> commit 05ab1d8a4b36ee912b7087c6da127439ed0a903e upstream.
+							Thanx, Paul
 
-This backport is incorrect.  The part that updated __startup_64() in
-arch/x86/kernel/head64.c was dropped, presumably because that function
-doesn't exist in 4.9.  However that seems to be an essential of the
-fix.  In 4.9 the startup_64 routine in arch/x86/kernel/head_64.S would
-need to be changed instead.
+> $ git log --oneline 6dc25876cdb1...1f51dee7ca74
+> 6dc25876cdb1 locking/atomic, arch/xtensa: Implement atomic_fetch_{add,sub,and,or,xor}()
+> a8bcccaba162 locking/atomic, arch/x86: Implement atomic{,64}_fetch_{add,sub,and,or,xor}()
+> 1af5de9af138 locking/atomic, arch/tile: Implement atomic{,64}_fetch_{add,sub,and,or,xor}()
+> 3a1adb23a52c locking/atomic, arch/sparc: Implement atomic{,64}_fetch_{add,sub,and,or,xor}()
+> 7d9794e75237 locking/atomic, arch/sh: Implement atomic_fetch_{add,sub,and,or,xor}()
+> 56fefbbc3f13 locking/atomic, arch/s390: Implement atomic{,64}_fetch_{add,sub,and,or,xor}()
+> a28cc7bbe8e3 locking/atomic, arch/powerpc: Implement atomic{,64}_fetch_{add,sub,and,or,xor}{,_relaxed,_acquire,_release}()
+> e5857a6ed600 locking/atomic, arch/parisc: Implement atomic{,64}_fetch_{add,sub,and,or,xor}()
+> f8d638e28d7c locking/atomic, arch/mn10300: Implement atomic_fetch_{add,sub,and,or,xor}()
+> 4edac529eb62 locking/atomic, arch/mips: Implement atomic{,64}_fetch_{add,sub,and,or,xor}()
+> e898eb27ffd8 locking/atomic, arch/metag: Implement atomic_fetch_{add,sub,and,or,xor}()
+> e39d88ea3ce4 locking/atomic, arch/m68k: Implement atomic_fetch_{add,sub,and,or,xor}()
+> f64937052303 locking/atomic, arch/m32r: Implement atomic_fetch_{add,sub,and,or,xor}()
+> cc102507fac7 locking/atomic, arch/ia64: Implement atomic{,64}_fetch_{add,sub,and,or,xor}()
+> 4be7dd393515 locking/atomic, arch/hexagon: Implement atomic_fetch_{add,sub,and,or,xor}()
+> 0c074cbc3309 locking/atomic, arch/h8300: Implement atomic_fetch_{add,sub,and,or,xor}()
+> d9c730281617 locking/atomic, arch/frv: Implement atomic{,64}_fetch_{add,sub,and,or,xor}()
+> e87fc0ec0705 locking/atomic, arch/blackfin: Implement atomic_fetch_{add,sub,and,or,xor}()
+> 1a6eafacd481 locking/atomic, arch/avr32: Implement atomic_fetch_{add,sub,and,or,xor}()
+> 2efe95fe6952 locking/atomic, arch/arm64: Implement atomic{,64}_fetch_{add,sub,and,andnot,or,xor}{,_relaxed,_acquire,_release}() for LSE instructions
+> 6822a84dd4e3 locking/atomic, arch/arm64: Generate LSE non-return cases using common macros
+> e490f9b1d3b4 locking/atomic, arch/arm64: Implement atomic{,64}_fetch_{add,sub,and,andnot,or,xor}{,_relaxed,_acquire,_release}()
+> 6da068c1beba locking/atomic, arch/arm: Implement atomic{,64}_fetch_{add,sub,and,andnot,or,xor}{,_relaxed,_acquire,_release}()
+> fbffe892e525 locking/atomic, arch/arc: Implement atomic_fetch_{add,sub,and,andnot,or,xor}()
+> 
 
-I also found that this introduces new boot-time warnings on some
-systems if CONFIG_DEBUG_WX is enabled.
-
-So, unless someone provides fixes for those issues, I think this should
-be reverted for the 4.9 branch.
-
-Ben.
-
-> We met a kernel panic when enabling earlycon, which is due to the fixmap
-> address of earlycon is not statically setup.
->=20
-> Currently the static fixmap setup in head_64.S only covers 2M virtual
-> address space, while it actually could be in 4M space with different
-> kernel configurations, e.g. when VSYSCALL emulation is disabled.
->=20
-> So increase the static space to 4M for now by defining FIXMAP_PMD_NUM to =
-2,
-> and add a build time check to ensure that the fixmap is covered by the
-> initial static page tables.
->=20
-> Fixes: 1ad83c858c7d ("x86_64,vsyscall: Make vsyscall emulation configurab=
-le")
-> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Feng Tang <feng.tang@intel.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Tested-by: kernel test robot <rong.a.chen@intel.com>
-> Reviewed-by: Juergen Gross <jgross@suse.com> (Xen parts)
-> Cc: H Peter Anvin <hpa@linux.intel.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Yinghai Lu <yinghai@kernel.org>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Cc: Andi Kleen <ak@linux.intel.com>
-> Cc: Andy Lutomirsky <luto@kernel.org>
-> Cc: stable@vger.kernel.org
-> Link: https://lkml.kernel.org/r/20180920025828.23699-1-feng.tang@intel.co=
-m
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  arch/x86/include/asm/fixmap.h     |   10 ++++++++++
->  arch/x86/include/asm/pgtable_64.h |    3 ++-
->  arch/x86/kernel/head_64.S         |   16 ++++++++++++----
->  arch/x86/mm/pgtable.c             |    9 +++++++++
->  arch/x86/xen/mmu.c                |    8 ++++++--
->  5 files changed, 39 insertions(+), 7 deletions(-)
->=20
-> --- a/arch/x86/include/asm/fixmap.h
-> +++ b/arch/x86/include/asm/fixmap.h
-> @@ -14,6 +14,16 @@
->  #ifndef _ASM_X86_FIXMAP_H
->  #define _ASM_X86_FIXMAP_H
-> =20
-> +/*
-> + * Exposed to assembly code for setting up initial page tables. Cannot b=
-e
-> + * calculated in assembly code (fixmap entries are an enum), but is sani=
-ty
-> + * checked in the actual fixmap C code to make sure that the fixmap is
-> + * covered fully.
-> + */
-> +#define FIXMAP_PMD_NUM	2
-> +/* fixmap starts downwards from the 507th entry in level2_fixmap_pgt */
-> +#define FIXMAP_PMD_TOP	507
-> +
->  #ifndef __ASSEMBLY__
->  #include <linux/kernel.h>
->  #include <asm/acpi.h>
-> --- a/arch/x86/include/asm/pgtable_64.h
-> +++ b/arch/x86/include/asm/pgtable_64.h
-> @@ -13,13 +13,14 @@
->  #include <asm/processor.h>
->  #include <linux/bitops.h>
->  #include <linux/threads.h>
-> +#include <asm/fixmap.h>
-> =20
->  extern pud_t level3_kernel_pgt[512];
->  extern pud_t level3_ident_pgt[512];
->  extern pmd_t level2_kernel_pgt[512];
->  extern pmd_t level2_fixmap_pgt[512];
->  extern pmd_t level2_ident_pgt[512];
-> -extern pte_t level1_fixmap_pgt[512];
-> +extern pte_t level1_fixmap_pgt[512 * FIXMAP_PMD_NUM];
->  extern pgd_t init_level4_pgt[];
-> =20
->  #define swapper_pg_dir init_level4_pgt
-> --- a/arch/x86/kernel/head_64.S
-> +++ b/arch/x86/kernel/head_64.S
-> @@ -23,6 +23,7 @@
->  #include "../entry/calling.h"
->  #include <asm/export.h>
->  #include <asm/nospec-branch.h>
-> +#include <asm/fixmap.h>
-> =20
->  #ifdef CONFIG_PARAVIRT
->  #include <asm/asm-offsets.h>
-> @@ -493,13 +494,20 @@ NEXT_PAGE(level2_kernel_pgt)
->  		KERNEL_IMAGE_SIZE/PMD_SIZE)
-> =20
->  NEXT_PAGE(level2_fixmap_pgt)
-> -	.fill	506,8,0
-> -	.quad	level1_fixmap_pgt - __START_KERNEL_map + _PAGE_TABLE
-> -	/* 8MB reserved for vsyscalls + a 2MB hole =3D 4 + 1 entries */
-> -	.fill	5,8,0
-> +	.fill	(512 - 4 - FIXMAP_PMD_NUM),8,0
-> +	pgtno =3D 0
-> +	.rept (FIXMAP_PMD_NUM)
-> +	.quad level1_fixmap_pgt + (pgtno << PAGE_SHIFT) - __START_KERNEL_map \
-> +		+ _PAGE_TABLE;
-> +	pgtno =3D pgtno + 1
-> +	.endr
-> +	/* 6 MB reserved space + a 2MB hole */
-> +	.fill	4,8,0
-> =20
->  NEXT_PAGE(level1_fixmap_pgt)
-> +	.rept (FIXMAP_PMD_NUM)
->  	.fill	512,8,0
-> +	.endr
-> =20
->  #undef PMDS
-> =20
-> --- a/arch/x86/mm/pgtable.c
-> +++ b/arch/x86/mm/pgtable.c
-> @@ -536,6 +536,15 @@ void __native_set_fixmap(enum fixed_addr
->  {
->  	unsigned long address =3D __fix_to_virt(idx);
-> =20
-> +#ifdef CONFIG_X86_64
-> +       /*
-> +	* Ensure that the static initial page tables are covering the
-> +	* fixmap completely.
-> +	*/
-> +	BUILD_BUG_ON(__end_of_permanent_fixed_addresses >
-> +		     (FIXMAP_PMD_NUM * PTRS_PER_PTE));
-> +#endif
-> +
->  	if (idx >=3D __end_of_fixed_addresses) {
->  		BUG();
->  		return;
-> --- a/arch/x86/xen/mmu.c
-> +++ b/arch/x86/xen/mmu.c
-> @@ -1936,7 +1936,7 @@ void __init xen_setup_kernel_pagetable(p
->  		 * L3_k[511] -> level2_fixmap_pgt */
->  		convert_pfn_mfn(level3_kernel_pgt);
-> =20
-> -		/* L3_k[511][506] -> level1_fixmap_pgt */
-> +		/* L3_k[511][508-FIXMAP_PMD_NUM ... 507] -> level1_fixmap_pgt */
->  		convert_pfn_mfn(level2_fixmap_pgt);
->  	}
->  	/* We get [511][511] and have Xen's version of level2_kernel_pgt */
-> @@ -1970,7 +1970,11 @@ void __init xen_setup_kernel_pagetable(p
->  		set_page_prot(level2_ident_pgt, PAGE_KERNEL_RO);
->  		set_page_prot(level2_kernel_pgt, PAGE_KERNEL_RO);
->  		set_page_prot(level2_fixmap_pgt, PAGE_KERNEL_RO);
-> -		set_page_prot(level1_fixmap_pgt, PAGE_KERNEL_RO);
-> +
-> +		for (i =3D 0; i < FIXMAP_PMD_NUM; i++) {
-> +			set_page_prot(level1_fixmap_pgt + i * PTRS_PER_PTE,
-> +				      PAGE_KERNEL_RO);
-> +		}
-> =20
->  		/* Pin down new L4 */
->  		pin_pagetable_pfn(MMUEXT_PIN_L4_TABLE,
->=20
->=20
---=20
-Ben Hutchings
-Absolutum obsoletum. (If it works, it's out of date.) - Stafford Beer
-
-
-
---=-VzV2VgtRZdKJpHD5S+LT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAlvbfWcACgkQ57/I7JWG
-EQlG+hAAkrsRI4+rFHP/NGQHSnyJc3xBUdhb3YiAPTF7hJbMvcp4pJgfK5e3tUhB
-Zpb6agg8uLX9VBE+plZhfDvv60fisSEmjoflCTBAUeIo1sZYdIycw3xbv9P1RXlX
-pbjzeF8X76Jlg7zageHdpcTN1ULzqma5clN1A/AEoPy/V8yO5XNsZsYLYFAOwfUg
-4+cM6qKQpZzpFPVgpFGilVhPudQQMIx9WR0hGscpLA5b8BdSWGetZwfLxMBe2+yU
-a9jERnAhe3lOu6fwaaRWV57TeJGGvp7T+SU2QPq6zpRHrE+TFrsdScIOovm7CJgy
-z3rzOv2qkP0Mz0DKgkiuD2BYrOFvEJSbNenFK1noirwt+X5sgOqWocM7CexLDBT+
-UT1X+GdCskMGSRE3M4Vma4QWMznPwFXY7ZB6ak0s+VQr18QSmjdESRX13yuniKvf
-nlezy60Fx/Q/iVAUKLNsYyxfBXvFI+tKrPuMQ1IxlrSxTmK0vNHptv5W3G5/7sR4
-xf+km2ITKrXmxaRhNJctKdMe5PvXO4y07nT3+cYU2rIgBIhj8wPdfcQwrTjsv0B6
-SKVbH15hnnqGio1CDQ75yuLJlfEv7BN+G+EzcPs09yMs/NAMz0ODNnDhDAQt7z8n
-+dtqI8mUQnVACulSqaQeAjAudWY/pK/bEDMKr3z8prv8u+FNbHs=
-=JTUY
------END PGP SIGNATURE-----
-
---=-VzV2VgtRZdKJpHD5S+LT--
