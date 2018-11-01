@@ -2,213 +2,108 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD8CBC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 04:12:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C91CC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 04:15:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95774205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 04:12:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95774205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id AB447205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 04:15:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oBBAoQOg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB447205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727633AbeKANNc (ORCPT
+        id S1727676AbeKANQx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 09:13:32 -0400
-Received: from smtp2.provo.novell.com ([137.65.250.81]:57788 "EHLO
-        smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726419AbeKANNc (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Thu, 1 Nov 2018 09:13:32 -0400
-Received: from [10.67.18.174] (prv-ext-foundry1int.gns.novell.com [137.65.251.240])
-        by smtp2.provo.novell.com with ESMTP (TLS encrypted); Wed, 31 Oct 2018 22:12:09 -0600
-Subject: Re: [Ocfs2-devel] [PATCH V2] ocfs2: fix dead lock caused by
- ocfs2_defrag_extent
-To:     Changwei Ge <ge.changwei@h3c.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>
-References: <20180902091455.23862-1-lchen@suse.com>
- <20181031142632.c523108bc137caa8cb1c6282@linux-foundation.org>
- <63ADC13FD55D6546B7DECE290D39E37301277DDF02@H3CMLB12-EX.srv.huawei-3com.com>
-From:   Larry Chen <lchen@suse.com>
-Message-ID: <c01c0e95-0964-aab1-1758-a66439e619ba@suse.com>
-Date:   Thu, 1 Nov 2018 12:12:05 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 1 Nov 2018 09:16:53 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45328 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726419AbeKANQx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 09:16:53 -0400
+Received: by mail-pf1-f196.google.com with SMTP id v5-v6so3760089pfm.12;
+        Wed, 31 Oct 2018 21:15:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=EodhFOsZNap0gDvJ5wabtGzaaP1v4TvIoj4MvGxyPAQ=;
+        b=oBBAoQOgMUCoekwU1h/z2LKlTvlQlOKk8aRFy4La3XRjOKwvQxxzQtB0cXixl4AA/2
+         tmiTTYyg5ngBTW2ehz9yj96A9wGknYkDcPrwoAcurDmRI9iqGWCfznURTrnNtMcasWjy
+         VWN1TnrI0jwA2rzahpKYca8uB5vxxwHmnSHlQXrCaTmeTfcOlzyHud7OWoHrsA/GvniX
+         1J6XBv+jKjobYvR9bJeuT9GnDX58V2a3gXMnnvV3JdZSK2sCp6Los9P80qm0VcKwdLOH
+         MpXEy0UDvjtW6jEmvjhfpHHLW7plLZ93uVZ6aVR29ZPoFAZny1qYfQHr8moXIS9TZsj1
+         BSRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=EodhFOsZNap0gDvJ5wabtGzaaP1v4TvIoj4MvGxyPAQ=;
+        b=UuSk67eZNBAtLTASork9Gn1Dql0/YHXa8TgNBxIa3V+98R6vCdof36NbBz3A+xb8si
+         BPlnf3WMAPAcLAT2gtMP5k0fxTrcgsQii2tUXyFaH08T/lMYHTqCHh6DMmIB2n9dWLyg
+         z/AHS1lvwd/6Uc+4Q2UYAjAREKV2z3d2JoJciYA2GaJyszVQOTSbAAT4CfRHF1ux++K2
+         UKZ5txNMHPn0ksi5D07wGNXUlZUSWMeZiK/2i8a9gyvGV/UzWiN74XpIMvlzXmoMS0H8
+         jV1UMbK8iR2uKUd7gKTfBp/qZ7V8qluSychR8VaYjJVIe4vvQVFIN6DIJBWSUIQXCMxL
+         U4+g==
+X-Gm-Message-State: AGRZ1gKiwA+lb0cjhj/Iam0TvciNd9LdRaRnOXDBAl10r1j9tyirvgkQ
+        Uc3QuzmKd6/w49Aym6kK4sE=
+X-Google-Smtp-Source: AJdET5fl+qec++28R6c8W808UO+e/Jz8++lpknNZC2WmzOYiCVEre6/WgAhR8rWqd/KlE1A3toAh8Q==
+X-Received: by 2002:a63:bd01:: with SMTP id a1-v6mr5795887pgf.58.1541045739396;
+        Wed, 31 Oct 2018 21:15:39 -0700 (PDT)
+Received: from jordon-HP-15-Notebook-PC ([103.227.96.201])
+        by smtp.gmail.com with ESMTPSA id w16-v6sm8480703pga.65.2018.10.31.21.15.37
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 31 Oct 2018 21:15:37 -0700 (PDT)
+Date:   Thu, 1 Nov 2018 09:49:09 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        keescook@chromium.org
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        brajeswar.linux@gmail.com, sabyasachi.linux@gmail.com
+Subject: [PATCH] scsi/aic94xx/aic94xx_hwi.c: Use dma_pool_zalloc
+Message-ID: <20181101041909.GA3241@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-In-Reply-To: <63ADC13FD55D6546B7DECE290D39E37301277DDF02@H3CMLB12-EX.srv.huawei-3com.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Changwei,
+Replaced dma_pool_alloc + memset with dma_pool_zalloc
 
-Thanks for your review, I'll improve my patch and resend it later.
+Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+---
+ drivers/scsi/aic94xx/aic94xx_hwi.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Thanks
-Larry
-
-On 11/1/18 11:11 AM, Changwei Ge wrote:
-> Hi Larry,
-> 
-> I still have a few tiny comments for your patch, please refer to them.
-> 
-> On 2018/11/1 5:28, Andrew Morton wrote:
->>
->> Folks, could we please review this patch for upstream inclusion?
->>
->> Thanks.
->>
->>
->> From: Larry Chen <lchen@suse.com>
->> Subject: ocfs2: fix deadlock caused by ocfs2_defrag_extent
->>
->> ocfs2_defrag_extent may fall into deadlock.
->>
->> ocfs2_ioctl_move_extents
->>     ocfs2_ioctl_move_extents
->>       ocfs2_move_extents
->>         ocfs2_defrag_extent
->>           ocfs2_lock_allocators_move_extents
->>
->>             ocfs2_reserve_clusters
->>               inode_lock GLOBAL_BITMAP_SYSTEM_INODE
->>
->> 	  __ocfs2_flush_truncate_log
->>               inode_lock GLOBAL_BITMAP_SYSTEM_INODE
->>
->> As backtrace shows above, ocfs2_reserve_clusters() will call inode_lock
->> against the global bitmap if local allocator has not sufficient cluters.
->> Once global bitmap could meet the demand, ocfs2_reserve_cluster will
->> return success with global bitmap locked.
->>
->> After ocfs2_reserve_cluster(), if truncate log is full,
->> __ocfs2_flush_truncate_log() will definitely fall into deadlock because it
->> needs to inode_lock global bitmap, which has already been locked.
->>
->> To fix this bug, we could remove from ocfs2_lock_allocators_move_extents()
->> the code which intends to lock global allocator, and put the removed code
->> after __ocfs2_flush_truncate_log().
->>
->> ocfs2_lock_allocators_move_extents() is refered by 2 places, one is here,
->> the other does not need the data allocator context, which means this patch
->> does not affect the caller so far.
->>
->> [lchen@suse.com: rename ocfs2_lock_allocators_move_extents() to ocfs2_lock_meta_allocator_move_extents(), add some comments]
->>     Link: https://urldefense.proofpoint.com/v2/url?u=http-3A__lkml.kernel.org_r_20180902091455.23862-2D1-2Dlchen-40suse.com&d=DwICAg&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=C7gAd4uDxlAvTdc0vmU6X8CMk6L2iDY8-HD0qT6Fo7Y&m=K8aRgOiMescamJW-IuHq-cW4mWedGQv2JTT-2KPy1RI&s=3fQHFtwgixirPeQ5Px4fRBnd_UcSx3rvSsLKLidwESo&e=
->> Link: https://urldefense.proofpoint.com/v2/url?u=http-3A__lkml.kernel.org_r_20180827080121.31145-2D1-2Dlchen-40suse.com&d=DwICAg&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=C7gAd4uDxlAvTdc0vmU6X8CMk6L2iDY8-HD0qT6Fo7Y&m=K8aRgOiMescamJW-IuHq-cW4mWedGQv2JTT-2KPy1RI&s=PQOJREyeElsg_1IlINdSGefNqA6w_cUrI1ezdVxyi7o&e=
->> Signed-off-by: Larry Chen <lchen@suse.com>
->> Cc: Mark Fasheh <mark@fasheh.com>
->> Cc: Joel Becker <jlbec@evilplan.org>
->> Cc: Junxiao Bi <junxiao.bi@oracle.com>
->> Cc: Joseph Qi <jiangqi903@gmail.com>
->> Cc: Changwei Ge <ge.changwei@h3c.com>
->> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
->> ---
->>
->>    fs/ocfs2/move_extents.c |   40 +++++++++++++++++++++++---------------
->>    1 file changed, 25 insertions(+), 15 deletions(-)
->>
->> --- a/fs/ocfs2/move_extents.c~fix-dead-lock-caused-by-ocfs2_defrag_extent
->> +++ a/fs/ocfs2/move_extents.c
->> @@ -162,7 +162,7 @@ out:
->>     * in some cases, we don't need to reserve clusters, just let data_ac
->>     * be NULL.
->>     */
->> -static int ocfs2_lock_allocators_move_extents(struct inode *inode,
->> +static int ocfs2_lock_meta_allocator_move_extents(struct inode *inode,
->>    					struct ocfs2_extent_tree *et,
->>    					u32 clusters_to_move,
->>    					u32 extents_to_split,
-> 
-> After removing 'reserving clusters logic' out of this function, I suggest to also change the function header comments.
-> And I think there is no need for arguments _data_ac_ now.
-> Otherwise this patch looks sane to me.
-> 
-> Thanks,
-> Changwei
-> 
->> @@ -192,13 +192,6 @@ static int ocfs2_lock_allocators_move_ex
->>    		goto out;
->>    	}
->>    
->> -	if (data_ac) {
->> -		ret = ocfs2_reserve_clusters(osb, clusters_to_move, data_ac);
->> -		if (ret) {
->> -			mlog_errno(ret);
->> -			goto out;
->> -		}
->> -	}
->>    
->>    	*credits += ocfs2_calc_extend_credits(osb->sb, et->et_root_el);
->>    
->> @@ -257,10 +250,11 @@ static int ocfs2_defrag_extent(struct oc
->>    		}
->>    	}
->>    
->> -	ret = ocfs2_lock_allocators_move_extents(inode, &context->et, *len, 1,
->> -						 &context->meta_ac,
->> -						 &context->data_ac,
->> -						 extra_blocks, &credits);
->> +	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
->> +						*len, 1,
->> +						&context->meta_ac,
->> +						&context->data_ac,
->> +						extra_blocks, &credits);
->>    	if (ret) {
->>    		mlog_errno(ret);
->>    		goto out;
->> @@ -283,6 +277,21 @@ static int ocfs2_defrag_extent(struct oc
->>    		}
->>    	}
->>    
->> +	/*
->> +	 * Make sure ocfs2_reserve_cluster is called after
->> +	 * __ocfs2_flush_truncate_log, otherwise, dead lock may happen.
->> +	 *
->> +	 * If ocfs2_reserve_cluster is called
->> +	 * before __ocfs2_flush_truncate_log, dead lock on global bitmap
->> +	 * may happen.
->> +	 *
->> +	 */
->> +	ret = ocfs2_reserve_clusters(osb, *len, &context->data_ac);
->> +	if (ret) {
->> +		mlog_errno(ret);
->> +		goto out_unlock_mutex;
->> +	}
->> +
->>    	handle = ocfs2_start_trans(osb, credits);
->>    	if (IS_ERR(handle)) {
->>    		ret = PTR_ERR(handle);
->> @@ -600,9 +609,10 @@ static int ocfs2_move_extent(struct ocfs
->>    		}
->>    	}
->>    
->> -	ret = ocfs2_lock_allocators_move_extents(inode, &context->et, len, 1,
->> -						 &context->meta_ac,
->> -						 NULL, extra_blocks, &credits);
->> +	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
->> +						len, 1,
->> +						&context->meta_ac,
->> +						NULL, extra_blocks, &credits);
->>    	if (ret) {
->>    		mlog_errno(ret);
->>    		goto out;
->> _
->>
->>
->> _______________________________________________
->> Ocfs2-devel mailing list
->> Ocfs2-devel@oss.oracle.com
->> https://oss.oracle.com/mailman/listinfo/ocfs2-devel
->>
-> 
+diff --git a/drivers/scsi/aic94xx/aic94xx_hwi.c b/drivers/scsi/aic94xx/aic94xx_hwi.c
+index 3b8ad55e59de..2bc7615193bd 100644
+--- a/drivers/scsi/aic94xx/aic94xx_hwi.c
++++ b/drivers/scsi/aic94xx/aic94xx_hwi.c
+@@ -1057,14 +1057,13 @@ static struct asd_ascb *asd_ascb_alloc(struct asd_ha_struct *asd_ha,
+ 
+ 	if (ascb) {
+ 		ascb->dma_scb.size = sizeof(struct scb);
+-		ascb->dma_scb.vaddr = dma_pool_alloc(asd_ha->scb_pool,
++		ascb->dma_scb.vaddr = dma_pool_zalloc(asd_ha->scb_pool,
+ 						     gfp_flags,
+ 						    &ascb->dma_scb.dma_handle);
+ 		if (!ascb->dma_scb.vaddr) {
+ 			kmem_cache_free(asd_ascb_cache, ascb);
+ 			return NULL;
+ 		}
+-		memset(ascb->dma_scb.vaddr, 0, sizeof(struct scb));
+ 		asd_init_ascb(asd_ha, ascb);
+ 
+ 		spin_lock_irqsave(&seq->tc_index_lock, flags);
+-- 
+2.17.1
 
