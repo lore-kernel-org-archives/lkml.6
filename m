@@ -2,118 +2,260 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F728ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E0C1C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:16:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 569CE2064C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:15:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4BEF2064C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:16:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gdTDPDZT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 569CE2064C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QLmR/BKD";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QLmR/BKD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4BEF2064C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727465AbeKBCSx (ORCPT
+        id S1727561AbeKBCUY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 22:18:53 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57006 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725843AbeKBCSx (ORCPT
+        Thu, 1 Nov 2018 22:20:24 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58486 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727418AbeKBCUY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 22:18:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ma3LP1JT+d0hJ1ipGHv8/xbHP5Yk8y77+qZqZv7uYZ0=; b=gdTDPDZTLiwW6lM1tuILcZdvw
-        qqVhAeWF4ynHujkSXNAEm/u7v6nK4ymMaziRzE5VoQilbCorYXURmXQXThpxN+5pzZJGmKAFeOYbV
-        2hkhje3QKPRjEozGs8wVDDesg5fzq3YFIxroaz3rpvmqOXq0izC3fW66p5U7s49Q3EfsoOy7q1cNe
-        +fgoba1e0ElZACsL6oNJGyjYtkR70ojujtiT0RpOV3UhGXtMiO2FmeZwr+KLhJV7jBoBGqp+BxSkZ
-        po3276nyM4q9EkqWYj72vF5FmU+E0W2bcNbN9C7BkL1+xjui2LPjpAqrw9onDSVX/SS/hmQX/qFw5
-        5jL0XRh2g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gIGYE-0007Uw-ME; Thu, 01 Nov 2018 17:14:34 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 339352029F9FF; Thu,  1 Nov 2018 18:14:32 +0100 (CET)
-Date:   Thu, 1 Nov 2018 18:14:32 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Eric Dumazet <eric.dumazet@gmail.com>
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ralf@linux-mips.org" <ralf@linux-mips.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
-        "paul.burton@mips.com" <paul.burton@mips.com>,
-        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        "jhogan@kernel.org" <jhogan@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        aryabinin@virtuozzo.com, dvyukov@google.com
-Subject: Re: [RFC PATCH] lib: Introduce generic __cmpxchg_u64() and use it
- where needed
-Message-ID: <20181101171432.GH3178@hirez.programming.kicks-ass.net>
-References: <1541015538-11382-1-git-send-email-linux@roeck-us.net>
- <20181031213240.zhh7dfcm47ucuyfl@pburton-laptop>
- <20181031220253.GA15505@roeck-us.net>
- <20181031233235.qbedw3pinxcuk7me@pburton-laptop>
- <4e2438a23d2edf03368950a72ec058d1d299c32e.camel@hammerspace.com>
- <20181101131846.biyilr2msonljmij@lakrids.cambridge.arm.com>
- <20181101145926.GE3178@hirez.programming.kicks-ass.net>
- <f38e272f7a96e983549e4281aa9fd02833a4277a.camel@hammerspace.com>
- <20181101163212.GF3159@hirez.programming.kicks-ass.net>
- <b0160f4b-b996-b0ee-405a-3d5f1866272e@gmail.com>
+        Thu, 1 Nov 2018 22:20:24 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id CDFA460744; Thu,  1 Nov 2018 17:16:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541092591;
+        bh=TZdXzqdZ4gFlCsXGswljVfTrtp5x9KbJH/jojCfDK98=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QLmR/BKDPxMSEXhm50btL6NSqb3ojI0owjkdJghHV8n1j3CY230jbFDbxeNBPS9sD
+         VbuWov+unr2eUjqt3m8OaC6K3xHjwbkjY/i7wEqc/YNbHOsh9S5e79Wly/Yd8nDek7
+         DLVDTkyTcft4SVwIXDLQldeC/eYT/kJCZDjUD8uA=
+Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E0D2B6053D;
+        Thu,  1 Nov 2018 17:16:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541092591;
+        bh=TZdXzqdZ4gFlCsXGswljVfTrtp5x9KbJH/jojCfDK98=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QLmR/BKDPxMSEXhm50btL6NSqb3ojI0owjkdJghHV8n1j3CY230jbFDbxeNBPS9sD
+         VbuWov+unr2eUjqt3m8OaC6K3xHjwbkjY/i7wEqc/YNbHOsh9S5e79Wly/Yd8nDek7
+         DLVDTkyTcft4SVwIXDLQldeC/eYT/kJCZDjUD8uA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E0D2B6053D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date:   Thu, 1 Nov 2018 11:16:30 -0600
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, evgreen@chromium.org,
+        marc.zyngier@arm.com
+Subject: Re: [PATCH RFC 1/1] drivers: pinctrl: qcom: add wakeup capability to
+ GPIO
+Message-ID: <20181101171630.GM17444@codeaurora.org>
+References: <20181011002958.2597-1-ilina@codeaurora.org>
+ <20181011002958.2597-2-ilina@codeaurora.org>
+ <154096954339.98144.12348474096990107321@swboyd.mtv.corp.google.com>
+ <20181031164650.GJ17444@codeaurora.org>
+ <154103121313.98144.17090840121035743646@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <b0160f4b-b996-b0ee-405a-3d5f1866272e@gmail.com>
+In-Reply-To: <154103121313.98144.17090840121035743646@swboyd.mtv.corp.google.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 01, 2018 at 09:59:38AM -0700, Eric Dumazet wrote:
-> On 11/01/2018 09:32 AM, Peter Zijlstra wrote:
-> 
-> >> Anyhow, if the atomic maintainers are willing to stand up and state for
-> >> the record that the atomic counters are guaranteed to wrap modulo 2^n
-> >> just like unsigned integers, then I'm happy to take Paul's patch.
-> > 
-> > I myself am certainly relying on it.
-> 
-> Could we get uatomic_t support maybe ?
+On Wed, Oct 31 2018 at 18:13 -0600, Stephen Boyd wrote:
+>Quoting Lina Iyer (2018-10-31 09:46:50)
+>> On Wed, Oct 31 2018 at 01:05 -0600, Stephen Boyd wrote:
+>> >Hi Lina,
+>> >
+>> >Quoting Lina Iyer (2018-10-10 17:29:58)
+>> >> QCOM SoC's that have Power Domain Controller (PDC) chip in the always-on
+>> >> domain can wakeup the SoC, when interrupts and GPIOs are routed to its
+>> >> interrupt controller. Only select GPIOs that are deemed wakeup capable
+>> >> are routed to specific PDC pins. During low power state, the pinmux
+>> >> interrupt controller may be non-functional but the PDC would be. The PDC
+>> >> can detect the wakeup GPIO is triggered and bring the TLMM to an
+>> >> operational state.
+>> >>
+>> >> Interrupts that are level triggered will be detected at the TLMM when
+>> >> the controller becomes operational. Edge interrupts however need to be
+>> >> replayed again.
+>> >>
+>> >> Request the corresponding PDC IRQ, when the GPIO is requested as an IRQ,
+>> >> but keep it disabled. During suspend, we can enable the PDC IRQ instead
+>> >> of the GPIO IRQ, which may or not be detected.
+>> >>
+>> >> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+>> >> ---
+>> >
+>> >I spoke with Marc about this at ELCE last week and I think we came up
+>> >with a plan for how to make this all work while keeping the TLMM driver
+>> >largely unaware of what's happening. One important point that we need to
+>> >keep in mind is that we don't want the interrupt to appear twice at the
+>> >GIC for the same TLMM irq, once in TLMM and once in PDC. That situation
+>> >would be quite bad and confuse things.
+>> >
+>> >So the plan is as follows:
+>> >
+>> > 1) Split PDC irqdomain into two domains. One for GIC interrupts and one
+>> >    for TLMM interrupts
+>> >
+>> > 2) Support hierarchical irq domains in the TLMM driver and/or gpiolib
+>> >
+>> > 3) Stack the irq controllers into a hierarchy so that GIC is the parent
+>> >    of PDC and PDC is the parent of TLMM while also leaving the TLMM
+>> >    summary IRQ chained directly from the GIC irqdomain
+>> >
+>> > 4) Mask a TLMM irq in the TLMM driver and unmask the PDC irq in the PDC
+>> >    driver when an irq_set_wake() call is made on a TLMM gpio irq that
+>> >    PDC can monitor (and vice versa)
+>> >
+>> > 5) Have the PDC driver be the only driver that knows if a TLMM pin is
+>> >    wakeup capable or not expressed in some DT table
+>> >
+>> >Implementing #4 will require changing TLMM irqchip to call
+>> >irq_chip_set_wake_parent() for the .irq_set_wake op and then checking
+>> >the return value to figure out if PDC is monitoring the pin or not and
+>> >doing the mask/unmask dance. Furthermore, implementing #2 will be a bit
+>> >of work that Thierry has already started for Nvidia Tegra pinctrl
+>> >drivers.
+>> >
+>> We have been doing something similar downstream. But it has been quite
+>> lot of code. The approach was to treat PDC-GPIO as a separate as
+>> interrupt controller whose parent is the PDC. GPIOs that have PDC lines,
+>> will be handled by the PDC-GPIO, while other GPIOs will continue to use
+>> summary line. The hierarchy helps with the masking/unmasking and
+>> prevents PDC interrupt from being detected as a separate interrupt than
+>> the TLMM.
+>>
+>> >The important part of #4 is that the irq can only happen in TLMM or in
+>> >PDC, and not in both places because of how we mask and unmask in
+>> >different drivers. The TLMM summary irq line can't be triggered when the
+>> >PDC is monitoring the line.
+>> >
+>> >This also limits the usage of PDC to pins that are really waking up the
+>> >system from some sort of sleep mode. Either the device driver is trying
+>> >to wakeup from suspend so it's setting irq wake in the driver suspend
+>> >path, or it's runtime suspending a device and wanting to wakeup from
+>> >that device suspend state so it's again setting irq wake in runtime
+>> >suspend. Either way, in "normal" active modes the irq path will be
+>> >through the TLMM summary irq line and not through PDC. I don't know if
+>> >a similar design would work for pre-PDC qcom hardware where the MPM is
+>> >handled by RPM software.
+>> >
+>> Yes, we need a solution that works with both. But we can be assured that
+>> the architecture will have either MPM or PDC, never both. The PDC is a
+>> parallel line that is always active, while the MPM line is enabled only
+>> when the SoC is in sleep mode.
+>>
+>> >And finally, thinking about this after writing this mail I'm a little
+>> >concerned that doing any sort of mask/unmask or irq movement from TLMM
+>> >to PDC at runtime will miss edges for edge triggered interrupts. Is that
+>> >also your concern? How is this handled with MPM? We would leave the TLMM
+>> >interrupt enabled in that case and then have to replay the edge in
+>> >software when resuming from suspend or idle paths but otherwise ignore
+>> >the level type interrupts that MPM sees? I suppose MPM never gets an
+>> >edge if TLMM gets the edge so this just works.
+>> >
+>> This is partly correct. Let me explain the key differences between the
+>> current and the previous generation of the hardware to help with that.
+>> (Let's call them PDC-based and MPM-based architectures respectively).
+>>
+>> In MPM-based solution, the TLMM is active and is solely responsible for
+>> notifying the CPU of the GPIOs until powered off (as part of
+>> idle/suspend). At which point, the always-on MPM is configured for
+>> wakeup from the GPIO. Upon sensing a signal will wake up the application
+>> CPU using a separate MPM interrupt. The TLMM is powered on at the same
+>> time. The CPU is interrupted by the MPM and if the GPIO was a level
+>> interrupt the TLMM summary line will handle the GPIO. If the GPIO was an
+>> edge interrupt the Linux MPM driver will replay the interrupt at TLMM.
+>> Note that the MPM is not active after sending the interrupt to wakeup
+>> the CPU.
+>>
+>> With PDC-based solutions, the PDC is always active and can be used to
+>> detect the interrupt even when the TLMM is active. But it could be a
+>> problem if both the interrupt lines are configured. If we could use the
+>> PDC interrupt line always for such GPIOs, it will solve the problem.
+>> This patch does just that.
+>
+>Right. Let's scrap the plan to do the wakeup based mask/unmask in both
+>chips. It won't work because of the edge trigger type.
+>
+>The difference I see is that this patch does the irq "forwarding" by
+>making the TLMM driver highly aware of the PDC irq domain. It explicitly
+>lists each PDC irq as interrupts in DT. Why are we doing that?
+The DT interrupts are a way of mapping the GPIO to their corresponding
+PDC lines.
 
-Whatever for; it'd be the exact identical same functions as for
-atomic_t, except for a giant amount of code duplication to deal with the
-new type.
+>If we used hierarchical irq domains then only the PDC would be aware of
+>what irqs are wakeup capable, and TLMM would just need to be told to
+>mask or not mask the irq when an irq is monitored by the PDC (and maybe
+>not even that).
+>
+The reason, why I didn't use hierarchical irq domains is that not all
+GPIO interrupts are routed to the PDC and the summary line doesn't go
+into the PDC.
 
-That is; today we merged a bunch of scripts that generates most of
-atomic*_t, so we could probably script uatomic*_t wrappers with minimal
-effort, but it would add several thousand lines of code to each compile
-for absolutely no reason what so ever.
+>This is also the only major difference I see between MPM and PDC based
+>designs. In the PDC case, we need to mask the irq in TLMM when PDC can
+>monitor it, while in the MPM case we want to keep it unmasked in TLMM
+>all the time and only have MPM configure the wakeup on irq_set_wake().
+>
+In MPM based solutions, there is a clear handover between when MPM takes
+over and when TLMM is responsible for the GPIO interrupt. It is not the
+case with PDC. The PDC is always on and monitoring. We dont know when
+the TLMM will be rendered incapable of sensing interrupt. To avoid
+sensing two interrupts you want only one of the two active. That is the
+tricky part, to know when to switch over.
 
-> This reminds me of this sooooo silly patch :/
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=adb03115f4590baa280ddc440a8eff08a6be0cb7
+>In the end, supporting MPM is simpler because it sits in-between TLMM
+>and GIC, watches all TLMM irqs get allocated and hooks the irq_set_wake
+>calls for the ones that it cares to wakeup with and masks the non-wakeup
+>irqs during suspend, and then does edge trigger replays when the MPM
+>interrupt handler runs by poking the TLMM hardware directly. That poke
+>causes the summary irq line to go high and the GIC SPI line for TLMM
+>summary services the GPIO irq. We would leave the level type irqs alone
+>because hardware takes care of it all for us.
+>
+Yes, but more importantly, the remote processor knows when to switch
+over to MPM and knows if we are going to lose TLMM's interrupt sensing
+capability. With PDC there is no central entity to do that.
 
-Yes, that's stupid. UBSAN is just wrong there.
+>Can PDC be made to do the same thing as MPM? On resume we can replay any
+>pending irq that's edge triggered by replaying the edge into the TLMM.
+>That will cause the summary irq line at the GIC to go high and then the
+>chained irq handler will run as normal. As long as we don't need to
+>replay edges during deep idle states I think this can work, and given
+>that MPM isn't replaying edges during deep idle I suspect this is all
+>fine.
+>
+MPM replays the edges during deep idle. There is no difference between
+deep idle and suspend/resume. If the devices are not in use, we would go
+into a idle state that would disable the TLMM's interrupt controller and
+when we come out of idle, we will replay the wakeup interrupt in the MPM
+driver.
+
+>Yes we have a GIC SPI line for each pin that PDC can monitor, but
+>that's largely an implementation detail here.
+>
+>It would be nice to make MPM and PDC the same, so that we don't need to
+>decide to mask or not mask in TLMM or move a GPIO irq out of the TLMM
+>summary GIC SPI to some other GIC SPI from PDC. Then supporting both
+>designs is nothing more than parenting the MPM or PDC to TLMM and having
+>those drivers poke the edges into the hardware on resume.
+>
+Agreed. That should the do-able.
+
+-- Lina
+
