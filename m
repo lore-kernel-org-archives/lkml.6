@@ -2,137 +2,158 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E74BC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:35:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A75C6C6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:38:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41CCF20820
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:35:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EjDVk916"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41CCF20820
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 59557205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:38:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59557205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729110AbeKBBi6 (ORCPT
+        id S1726032AbeKBBlr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 21:38:58 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41986 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726042AbeKBBi5 (ORCPT
+        Thu, 1 Nov 2018 21:41:47 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:41547 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbeKBBlq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 21:38:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=72R9GSVv7q61E8s94sqJXn1GeQMfmrRmyrChueXaE7o=; b=EjDVk916koSID/y6g6cHYn2U0
-        H0Dp44Xq9Z4gsV937jqvr0H8/OvdnyAJrPM4MSc0DghXIXDQYKRd7XszAq73m8jiPtcLDA3RaNcF6
-        s8jDzxwGB42zer9eDKYQt23SthtpPQlMYaFTagbfYWlXx3pkhZD6gWoS4l77j4T3ez0XXgBh4mvw5
-        pU3DqmA8ykYhW06wZLT+Vx+KEzEdOLoM+E/BtFiW1AejvhVkSTK7xo8ryt7EnpoyDHSb/MArxg/rG
-        rkuf7fCmBhGO3jJy0j1x25iy9pwUK0V1tTxDAIvfGEuqOcV+Rv+HVv4Fct2rw8aPBmQOKRKlQ7IsW
-        UFvIJi2NA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gIFtH-0002L3-Pg; Thu, 01 Nov 2018 16:32:16 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 7CAE020297B7F; Thu,  1 Nov 2018 17:32:12 +0100 (CET)
-Date:   Thu, 1 Nov 2018 17:32:12 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Trond Myklebust <trondmy@hammerspace.com>
-Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ralf@linux-mips.org" <ralf@linux-mips.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
-        "paul.burton@mips.com" <paul.burton@mips.com>,
-        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        "jhogan@kernel.org" <jhogan@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        aryabinin@virtuozzo.com, dvyukov@google.com
-Subject: Re: [RFC PATCH] lib: Introduce generic __cmpxchg_u64() and use it
- where needed
-Message-ID: <20181101163212.GF3159@hirez.programming.kicks-ass.net>
-References: <1541015538-11382-1-git-send-email-linux@roeck-us.net>
- <20181031213240.zhh7dfcm47ucuyfl@pburton-laptop>
- <20181031220253.GA15505@roeck-us.net>
- <20181031233235.qbedw3pinxcuk7me@pburton-laptop>
- <4e2438a23d2edf03368950a72ec058d1d299c32e.camel@hammerspace.com>
- <20181101131846.biyilr2msonljmij@lakrids.cambridge.arm.com>
- <20181101145926.GE3178@hirez.programming.kicks-ass.net>
- <f38e272f7a96e983549e4281aa9fd02833a4277a.camel@hammerspace.com>
+        Thu, 1 Nov 2018 21:41:46 -0400
+Received: by mail-io1-f71.google.com with SMTP id k3-v6so7991147ioq.8
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 09:38:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=iwx04Y64soGjaZrxJ2yxkFmJ8Ysh6GrlEEI1FL2WH98=;
+        b=ggmrpFYNt7steoau51mAKz/T8KG60CNKp+ZwSRMjzXe5Gkq4DZIR0o4s6Ngozu4hfL
+         /zbD5WQqbirfiXv28TkiNhlWMJXk6AZmMaQppOxavCYser0jDFrAC3QVU0T2oY5Dg4f4
+         C3/ZvLxjK8pMJSu5kkptxQAEQaUItLPP6bM/GfAjSVe0sdMiHT4wVxZ10yOmrR3RRsUx
+         /7V97XYXx9Kogav53CDsjheFydeZBpzIRhdVIGyzsWkIhpskD5nrLNTPNMFqOcjaKkzk
+         E8663KauedOAOdQ1j/j/RuZZct/9wb+9pOc5SZJqLE9lyjSVs81i0OzfXnF5fouQFoha
+         WZQw==
+X-Gm-Message-State: AGRZ1gJcO8q3dEduXUDPrn65m+7pa2t+08soYDSv7jwejpkdF3PGnIIe
+        6LWnfkPXNcw4Q8XNrlJ92IIZeW52peuGNI6lm30Rs577pOm5
+X-Google-Smtp-Source: AJdET5fHEQuIanblypFWNlP4PSmEttJR4HNcHdRUvsHbht/lMrpl6s99DpxAjv76uckKyWIyn2ZDudSJto1Jr4fNVxgrhWBfRRSS
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f38e272f7a96e983549e4281aa9fd02833a4277a.camel@hammerspace.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a24:610e:: with SMTP id s14-v6mr1862428itc.38.1541090283621;
+ Thu, 01 Nov 2018 09:38:03 -0700 (PDT)
+Date:   Thu, 01 Nov 2018 09:38:03 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ec1b3805799d0a56@google.com>
+Subject: general protection fault in delayed_uprobe_remove
+From:   syzbot <syzbot+eab6e18f95a9fe69005e@syzkaller.appspotmail.com>
+To:     acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, linux-kernel@vger.kernel.org, mingo@redhat.com,
+        namhyung@kernel.org, peterz@infradead.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 01, 2018 at 03:22:15PM +0000, Trond Myklebust wrote:
-> On Thu, 2018-11-01 at 15:59 +0100, Peter Zijlstra wrote:
-> > On Thu, Nov 01, 2018 at 01:18:46PM +0000, Mark Rutland wrote:
+Hello,
 
-> > > > My one question (and the reason why I went with cmpxchg() in the
-> > > > first place) would be about the overflow behaviour for
-> > > > atomic_fetch_inc() and friends. I believe those functions should
-> > > > be OK on x86, so that when we overflow the counter, it behaves
-> > > > like an unsigned value and wraps back around.  Is that the case
-> > > > for all architectures?
-> > > > 
-> > > > i.e. are atomic_t/atomic64_t always guaranteed to behave like
-> > > > u32/u64 on increment?
-> > > > 
-> > > > I could not find any documentation that explicitly stated that
-> > > > they should.
-> > > 
-> > > Peter, Will, I understand that the atomic_t/atomic64_t ops are
-> > > required to wrap per 2's-complement. IIUC the refcount code relies
-> > > on this.
-> > > 
-> > > Can you confirm?
-> > 
-> > There is quite a bit of core code that hard assumes 2s-complement.
-> > Not only for atomics but for any signed integer type. Also see the
-> > kernel using -fno-strict-overflow which implies -fwrapv, which
-> > defines signed overflow to behave like 2s-complement (and rids us of
-> > that particular UB).
-> 
-> Fair enough, but there have also been bugfixes to explicitly fix unsafe
-> C standards assumptions for signed integers. See, for instance commit
-> 5a581b367b5d "jiffies: Avoid undefined behavior from signed overflow"
-> from Paul McKenney.
+syzbot found the following crash on:
 
-Yes, I feel Paul has been to too many C/C++ committee meetings and got
-properly paranoid. Which isn't always a bad thing :-)
+HEAD commit:    5b7449810ae6 Merge tag 'tag-chrome-platform-for-v4.20' of ..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15805e33400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4e8e3fa31e0cc680
+dashboard link: https://syzkaller.appspot.com/bug?extid=eab6e18f95a9fe69005e
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1756fca3400000
 
-But for us using -fno-strict-overflow which actually defines signed
-overflow, I myself am really not worried. I'm also not sure if KASAN has
-been taught about this, or if it will still (incorrectly) warn about UB
-for signed types.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+eab6e18f95a9fe69005e@syzkaller.appspotmail.com
 
-> Anyhow, if the atomic maintainers are willing to stand up and state for
-> the record that the atomic counters are guaranteed to wrap modulo 2^n
-> just like unsigned integers, then I'm happy to take Paul's patch.
+8021q: adding VLAN 0 to HW filter on device team0
+8021q: adding VLAN 0 to HW filter on device team0
+8021q: adding VLAN 0 to HW filter on device team0
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 8497 Comm: syz-executor3 Not tainted 4.19.0+ #91
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:delayed_uprobe_remove+0x6f/0x140 kernel/events/uprobes.c:339
+Code: 00 00 00 48 81 fb 80 f0 5f 89 4c 8b 23 49 bd 00 00 00 00 00 fc ff df  
+75 2f e9 98 00 00 00 e8 e8 1d e5 ff 4c 89 e0 48 c1 e8 03 <42> 80 3c 28 00  
+0f 85 91 00 00 00 49 81 fc 80 f0 5f 89 49 8b 04 24
+RSP: 0018:ffff8801abd97380 EFLAGS: 00010a02
+RAX: 1bd5a00000000020 RBX: ffff8801cb304800 RCX: 1ffff100357b5d54
+RDX: 0000000000000000 RSI: ffffffff819a5b18 RDI: ffff8801cb304810
+RBP: ffff8801abd973a8 R08: ffff8801abdaeaa0 R09: 0000000000000006
+R10: 0000000000000000 R11: ffff8801abdae200 R12: dead000000000100
+R13: dffffc0000000000 R14: ffff8801cefeb540 R15: 0000000000000000
+FS:  0000000001283940(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000004cc6e0 CR3: 00000001d16cf000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  put_uprobe+0x4d/0x60 kernel/events/uprobes.c:575
+  uprobe_unregister+0x56/0x70 kernel/events/uprobes.c:1088
+  probe_event_disable.part.16+0x16a/0x2c0 kernel/trace/trace_uprobe.c:990
+  probe_event_disable kernel/trace/trace_uprobe.c:1224 [inline]
+  trace_uprobe_register+0x52c/0xcf0 kernel/trace/trace_uprobe.c:1223
+  perf_trace_event_unreg.isra.3+0xbb/0x220  
+kernel/trace/trace_event_perf.c:157
+  perf_uprobe_destroy+0xc3/0x130 kernel/trace/trace_event_perf.c:342
+  _free_event+0x414/0x1660 kernel/events/core.c:4446
+  put_event+0x48/0x60 kernel/events/core.c:4532
+  perf_event_release_kernel+0x8d0/0x10e0 kernel/events/core.c:4638
+  perf_release+0x37/0x50 kernel/events/core.c:4648
+  __fput+0x385/0xa30 fs/file_table.c:278
+  ____fput+0x15/0x20 fs/file_table.c:309
+  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x411021
+Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 34 19 00 00 c3 48  
+83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48  
+89 c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
+RSP: 002b:00007ffda00105b0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+RAX: 0000000000000000 RBX: 0000000000000005 RCX: 0000000000411021
+RDX: 0000000000000000 RSI: 0000000000730b80 RDI: 0000000000000004
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000730b70 R11: 0000000000000293 R12: 0000000000000000
+R13: 0000000000000001 R14: 0000000000000033 R15: 0000000000000003
+Modules linked in:
+---[ end trace 0f8af665f1aa3802 ]---
+RIP: 0010:delayed_uprobe_remove+0x6f/0x140 kernel/events/uprobes.c:339
+Code: 00 00 00 48 81 fb 80 f0 5f 89 4c 8b 23 49 bd 00 00 00 00 00 fc ff df  
+75 2f e9 98 00 00 00 e8 e8 1d e5 ff 4c 89 e0 48 c1 e8 03 <42> 80 3c 28 00  
+0f 85 91 00 00 00 49 81 fc 80 f0 5f 89 49 8b 04 24
+RSP: 0018:ffff8801abd97380 EFLAGS: 00010a02
+RAX: 1bd5a00000000020 RBX: ffff8801cb304800 RCX: 1ffff100357b5d54
+RDX: 0000000000000000 RSI: ffffffff819a5b18 RDI: ffff8801cb304810
+RBP: ffff8801abd973a8 R08: ffff8801abdaeaa0 R09: 0000000000000006
+R10: 0000000000000000 R11: ffff8801abdae200 R12: dead000000000100
+R13: dffffc0000000000 R14: ffff8801cefeb540 R15: 0000000000000000
+FS:  0000000001283940(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000004cc6e0 CR3: 00000001d16cf000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-I myself am certainly relying on it.
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
