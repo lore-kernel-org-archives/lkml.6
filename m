@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE71C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:40:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A23F3C6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:40:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43F472081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:40:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67CED2082E
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:40:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eKdar9Lc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43F472081B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nkvtKgLq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67CED2082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728804AbeKAXoH (ORCPT
+        id S1728874AbeKAXoJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 19:44:07 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40182 "EHLO
+        Thu, 1 Nov 2018 19:44:09 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36188 "EHLO
         mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728178AbeKAXoF (ORCPT
+        with ESMTP id S1728680AbeKAXoI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 19:44:05 -0400
-Received: by mail-lj1-f195.google.com with SMTP id t22-v6so18265843lji.7;
-        Thu, 01 Nov 2018 07:40:49 -0700 (PDT)
+        Thu, 1 Nov 2018 19:44:08 -0400
+Received: by mail-lj1-f195.google.com with SMTP id s15-v6so18290533lji.3;
+        Thu, 01 Nov 2018 07:40:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=35XjVyJKaPXi3eDOVrzg+ahSd5WiXKjGMHZpZ9TPAEU=;
-        b=eKdar9Lc36XpSl0KXlHuQCVdgojy7S2VIwtPWnpjVjRJTsAJ0RCaUzOXiRKbwky4qS
-         5f3k3EeFY3G8ueO+Kko6FGz3Ymc2nBOx+xQaQ3Ulr0BOTfUq9zBE5sjMZADX8ZsWtbt1
-         N9J7mprDYuT1xJthMAujIIh5l6ImF0s2sL4+dHQ5PsFmrcP7r/W0XDPsSJvVzWnAZnI4
-         t3LlZMLX5GpLk1oCpLgFOYaDtXYzu2mhqNz6AgUs5wBdj7OeoF1cgeXvmqmvcmf+IF4g
-         cTAl7gB5fpvlwRvbyffaJ71gbza48RV4iZFKGa2R8y6Q3JLYQe4B66lQRbeKdfhyxoOH
-         D+Vg==
+        bh=VimP1qjpqygKIez+BYIo7GsWa4+fe+wj595JxxLPTUg=;
+        b=nkvtKgLqul6YhnnlJcG8kHjNcRTTXWAuNWrvW6UJVlQSMG+GprQ+JBxkO2tlO7N7f+
+         G7POu80hzGPSiYvWqZzpU4FFWYj1OOkFR03Xhqo8EpsLKa1k2v4heGRR82KMeHnf2u1m
+         4GIAcK8hIYOM+ANZBZZk5xLuYCZKc96QX2aGDYN35mhlgrhr14npKaJyntx90mCq7L3L
+         wCX1XZse9NchuOxEmzJaKZAjuTRhDBLv57SjJMvmSDMoNxJKXafDcob+uTDYhgLxnddJ
+         0bZ64VImrJQqAKds1WmlK4v+acyJoaq0Sh3m4dopJbK8338Xb/pOfYiKsZ+AZtuU63gK
+         mW7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=35XjVyJKaPXi3eDOVrzg+ahSd5WiXKjGMHZpZ9TPAEU=;
-        b=sdTzwV9qWAyWhiJt6JUu01lnyC5Nn/rGtzhot62kDyOVTAZpAR4vBPlWFsOfuYLUQD
-         4/Xlzh8mU3ssYuwHkjsqiz5SPVjmbtgsIH7KZjBM71l+CcvZ+iDjWG1M8X+pizyX4L98
-         k4MGbLBMnxtQoW3zBoD4ylCoGYTltgIgjqxbDeHlUZLHvny+T/L5P8FSLTGw84LH2nHu
-         MKulIx1IrujMMwwj0+OfQdp1sEeYtFN6RA+RIwqpHfuI1lLugn7iyEgQrpynw725Ext6
-         EJH6z+Nr8HXQ6RPYtha09EFdoZdHpg9n6v6tGVySy/9aHK0fcCbB8KN/MGHoTcm92gGA
-         hl0g==
-X-Gm-Message-State: AGRZ1gJeohqb/Hc+kAXac36tXvz9DHkCkQT8TKyw90J9sBuQE+vXMyyg
-        x9kiRmu3Ifc1eJOC5IiRX0Y=
-X-Google-Smtp-Source: AJdET5cTr4+3nMax9jGqZ3BpPFsSY5QA7Q/YwRu85pJUyBqyII3sQ0EUXsy8e8+gZ2+HhKtj7wFvrQ==
-X-Received: by 2002:a2e:9547:: with SMTP id t7-v6mr5010980ljh.63.1541083248464;
-        Thu, 01 Nov 2018 07:40:48 -0700 (PDT)
+        bh=VimP1qjpqygKIez+BYIo7GsWa4+fe+wj595JxxLPTUg=;
+        b=BiF+RkxhxgQ+XXgj/MsTlxyh8o+yxfJMtluruut4o9CkYzyY0VuKQPJ0sCZ1/f4T4A
+         tG8ReDd3tMJX9KRdlhWtqlQNjLgsP+m42PJ5Noq0tNFV4sXHMSP1FAkATJUNjfqr6DDv
+         xQUKbn1UPvkJbTQsZ15PzTctUZ58J3xTndC/Bgf+YrMaMKX/1iSplWsoZgWZxFgAUqYq
+         L3LNCw+Ykhw/iA0TyOwyFpZWNZEU9HQjI4CLhhGJnOMi6zCvTILUDQlYcOonSJPnoNFt
+         a+nEFjk1Fr0IR7P/0aeneTptZo2urmpljxymX/LDpCPyb5jX7CkAf8wIJ+eLSQ/YCQiF
+         DPkw==
+X-Gm-Message-State: AGRZ1gKV9Dd8zy1QthJJlvTYzKCk4M76KtmfRS/RPvncOnPwXxIm4REP
+        ajaLlLhFWk0ZTBDM/pXY9twCDd3nJhg=
+X-Google-Smtp-Source: AJdET5c3ENFWhCHxUAbLv2oiLIe4xZHza0SC/6q5VrmlrEq4UWuF4T2VUGqEOH8Sr4zK6h61HZwiBA==
+X-Received: by 2002:a2e:3012:: with SMTP id w18-v6mr4945282ljw.75.1541083250445;
+        Thu, 01 Nov 2018 07:40:50 -0700 (PDT)
 Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
-        by smtp.gmail.com with ESMTPSA id a9sm404870lfa.19.2018.11.01.07.40.47
+        by smtp.gmail.com with ESMTPSA id a9sm404870lfa.19.2018.11.01.07.40.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Nov 2018 07:40:47 -0700 (PDT)
+        Thu, 01 Nov 2018 07:40:48 -0700 (PDT)
 From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 To:     Stephen Boyd <sboyd@kernel.org>, Alan Tull <atull@kernel.org>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH 1/5] clk: Refactor of_clk_add_provider and of_clk_add_hw_provider
-Date:   Thu,  1 Nov 2018 15:40:40 +0100
-Message-Id: <20181101144044.11495-2-ricardo.ribalda@gmail.com>
+Subject: [PATCH 2/5] clk: Create devm_of_clk_add_provider
+Date:   Thu,  1 Nov 2018 15:40:41 +0100
+Message-Id: <20181101144044.11495-3-ricardo.ribalda@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181101144044.11495-1-ricardo.ribalda@gmail.com>
 References: <20181101144044.11495-1-ricardo.ribalda@gmail.com>
@@ -76,101 +76,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both functions have almost the same functionality. Create a helper
-function that is called by both functions.
+Implement devm_ flavour of of_clk_add_provider. This will help fixing
+of_node_get-put imbalances.
 
 Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 ---
- drivers/clk/clk.c | 49 +++++++++++++++++++----------------------------
- 1 file changed, 20 insertions(+), 29 deletions(-)
+ Documentation/driver-model/devres.txt |  1 +
+ drivers/clk/clk.c                     | 29 ++++++++++++++++++++++-----
+ include/linux/clk-provider.h          | 11 ++++++++++
+ 3 files changed, 36 insertions(+), 5 deletions(-)
 
+diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver-model/devres.txt
+index 43681ca0837f..a8e066d42355 100644
+--- a/Documentation/driver-model/devres.txt
++++ b/Documentation/driver-model/devres.txt
+@@ -237,6 +237,7 @@ CLOCK
+   devm_clk_get()
+   devm_clk_put()
+   devm_clk_hw_register()
++  devm_of_clk_add_provider()
+   devm_of_clk_add_hw_provider()
+ 
+ DMA
 diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index d31055ae6ec6..cd3117e66ab8 100644
+index cd3117e66ab8..d315ffa6a32f 100644
 --- a/drivers/clk/clk.c
 +++ b/drivers/clk/clk.c
-@@ -3723,15 +3723,11 @@ of_clk_hw_onecell_get(struct of_phandle_args *clkspec, void *data)
+@@ -3789,10 +3789,12 @@ static void devm_of_clk_release_provider(struct device *dev, void *res)
+ 	of_clk_del_provider(*(struct device_node **)res);
  }
- EXPORT_SYMBOL_GPL(of_clk_hw_onecell_get);
  
--/**
-- * of_clk_add_provider() - Register a clock provider for a node
-- * @np: Device node pointer associated with clock provider
-- * @clk_src_get: callback for decoding clock
-- * @data: context pointer for @clk_src_get callback.
-- */
--int of_clk_add_provider(struct device_node *np,
-+static int __of_clk_add_provider(struct device_node *np,
- 			struct clk *(*clk_src_get)(struct of_phandle_args *clkspec,
- 						   void *data),
-+			struct clk_hw *(*get)(struct of_phandle_args *clkspec,
-+						 void *data),
- 			void *data)
+-int devm_of_clk_add_hw_provider(struct device *dev,
+-			struct clk_hw *(*get)(struct of_phandle_args *clkspec,
+-					      void *data),
+-			void *data)
++static int __devm_of_clk_add_provider(struct device *dev,
++		struct clk *(*clk_src_get)(struct of_phandle_args *clkspec,
++					   void *data),
++		struct clk_hw *(*get)(struct of_phandle_args *clkspec,
++				      void *data),
++		void *data)
  {
- 	struct of_clk_provider *cp;
-@@ -3744,11 +3740,12 @@ int of_clk_add_provider(struct device_node *np,
- 	cp->node = of_node_get(np);
- 	cp->data = data;
- 	cp->get = clk_src_get;
-+	cp->get_hw = get;
+ 	struct device_node **ptr, *np;
+ 	int ret;
+@@ -3803,7 +3805,7 @@ int devm_of_clk_add_hw_provider(struct device *dev,
+ 		return -ENOMEM;
  
- 	mutex_lock(&of_clk_mutex);
- 	list_add(&cp->link, &of_clk_providers);
- 	mutex_unlock(&of_clk_mutex);
--	pr_debug("Added clock from %pOF\n", np);
-+	pr_debug("Added clock%s from %pOF\n", get?"_hw provider":"", np);
- 
- 	ret = of_clk_set_defaults(np, true);
- 	if (ret < 0)
-@@ -3756,6 +3753,20 @@ int of_clk_add_provider(struct device_node *np,
+ 	np = dev->of_node;
+-	ret = of_clk_add_hw_provider(np, get, data);
++	ret = __of_clk_add_provider(np, clk_src_get, get, data);
+ 	if (!ret) {
+ 		*ptr = np;
+ 		devres_add(dev, ptr);
+@@ -3813,6 +3815,23 @@ int devm_of_clk_add_hw_provider(struct device *dev,
  
  	return ret;
  }
 +
-+/**
-+ * of_clk_add_provider() - Register a clock provider for a node
-+ * @np: Device node pointer associated with clock provider
-+ * @clk_src_get: callback for decoding clock
-+ * @data: context pointer for @clk_src_get callback.
-+ */
-+int of_clk_add_provider(struct device_node *np,
++int devm_of_clk_add_provider(struct device *dev,
 +		struct clk *(*clk_src_get)(struct of_phandle_args *clkspec,
 +					   void *data),
 +		void *data)
 +{
-+	return  __of_clk_add_provider(np, clk_src_get, NULL, data);
++	return __devm_of_clk_add_provider(dev, clk_src_get, NULL, data);
 +}
- EXPORT_SYMBOL_GPL(of_clk_add_provider);
++EXPORT_SYMBOL_GPL(devm_of_clk_add_provider);
++
++int devm_of_clk_add_hw_provider(struct device *dev,
++			struct clk_hw *(*get)(struct of_phandle_args *clkspec,
++					      void *data),
++			void *data)
++{
++	return __devm_of_clk_add_provider(dev, NULL, get, data);
++}
+ EXPORT_SYMBOL_GPL(devm_of_clk_add_hw_provider);
  
  /**
-@@ -3769,27 +3780,7 @@ int of_clk_add_hw_provider(struct device_node *np,
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 08b1aa70a38d..bbd86fe656ef 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -905,6 +905,10 @@ int of_clk_add_hw_provider(struct device_node *np,
+ 			   struct clk_hw *(*get)(struct of_phandle_args *clkspec,
  						 void *data),
- 			   void *data)
+ 			   void *data);
++int devm_of_clk_add_provider(struct device *dev,
++		struct clk *(*clk_src_get)(struct of_phandle_args *clkspec,
++					   void *data),
++		void *data);
+ int devm_of_clk_add_hw_provider(struct device *dev,
+ 			   struct clk_hw *(*get)(struct of_phandle_args *clkspec,
+ 						 void *data),
+@@ -939,6 +943,13 @@ static inline int of_clk_add_hw_provider(struct device_node *np,
  {
--	struct of_clk_provider *cp;
--	int ret;
--
--	cp = kzalloc(sizeof(*cp), GFP_KERNEL);
--	if (!cp)
--		return -ENOMEM;
--
--	cp->node = of_node_get(np);
--	cp->data = data;
--	cp->get_hw = get;
--
--	mutex_lock(&of_clk_mutex);
--	list_add(&cp->link, &of_clk_providers);
--	mutex_unlock(&of_clk_mutex);
--	pr_debug("Added clk_hw provider from %pOF\n", np);
--
--	ret = of_clk_set_defaults(np, true);
--	if (ret < 0)
--		of_clk_del_provider(np);
--
--	return ret;
-+	return  __of_clk_add_provider(np, NULL, get, data);
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(of_clk_add_hw_provider);
- 
++static inline int devm_of_clk_add_provider(struct device *dev,
++		struct clk *(*clk_src_get)(struct of_phandle_args *clkspec,
++					   void *data),
++		void *data)
++{
++	return 0;
++}
+ static inline int devm_of_clk_add_hw_provider(struct device *dev,
+ 			   struct clk_hw *(*get)(struct of_phandle_args *clkspec,
+ 						 void *data),
 -- 
 2.19.1
 
