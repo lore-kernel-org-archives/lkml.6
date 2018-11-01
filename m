@@ -2,747 +2,152 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDDE9C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 09:58:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0593CC6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 09:58:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 460F620820
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 09:58:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 460F620820
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id BB1E520820
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 09:58:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="S7P5NeUy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB1E520820
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728174AbeKATAT (ORCPT
+        id S1728196AbeKATAe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 15:00:19 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:55469 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727644AbeKATAT (ORCPT
+        Thu, 1 Nov 2018 15:00:34 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:43898 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727644AbeKATAd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 15:00:19 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA19vbsm2765602
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 1 Nov 2018 02:57:37 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA19vbUc2765599;
-        Thu, 1 Nov 2018 02:57:37 -0700
-Date:   Thu, 1 Nov 2018 02:57:37 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Mark Rutland <tipbot@zytor.com>
-Message-ID: <tip-30bc7baa9de81efc0584b9290ce8040a1130f156@git.kernel.org>
-Cc:     catalin.marinas@arm.com, mark.rutland@arm.com, mingo@kernel.org,
-        peterz@infradead.org, will.deacon@arm.com, hpa@zytor.com,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org
-Reply-To: peterz@infradead.org, mark.rutland@arm.com,
-          catalin.marinas@arm.com, mingo@kernel.org, will.deacon@arm.com,
-          hpa@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de
-In-Reply-To: <20180904104830.2975-7-mark.rutland@arm.com>
-References: <20180904104830.2975-7-mark.rutland@arm.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] arm64: Use instrumented atomics
-Git-Commit-ID: 30bc7baa9de81efc0584b9290ce8040a1130f156
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 1 Nov 2018 15:00:33 -0400
+Received: by mail-ot1-f66.google.com with SMTP id k9so17206507otl.10
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 02:58:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:user-agent:in-reply-to:references:mime-version
+         :content-transfer-encoding:subject:to:cc:from:message-id;
+        bh=ZepkorcyZiwyCOVkKDEV55KjUuM7/W2DRZbSVsNObeA=;
+        b=S7P5NeUyymwf1szi59fFovvJQYSgOh6UrXLGmuCGeAOPDWNRqLuO2UK7iVVjlkJnLv
+         NLmzfRzpo8yKI0t4f/YVw6STbQJ/nsbQFnYbgvCqjQn4A+47Sr7KKsm/EsewzV51Xt0g
+         noYHU50NM8wNzkGXS36rLbudWgu5sQB0eQBg1u+ZIujlxM1ZRV/BGybN0vb6jdi26ovW
+         ZgoJJmYzPyeHibKe36KKbNiexn8nd5j/OqewNJyAqJpMnwHFMJ5B7XwdJpzcED580JTp
+         4B3PPKJxOqhugUN687UFsuNNU1lqlmhrjZJK86YKZs7RoZ9Qy0rb8ee17yHMx3EwTcrw
+         MUcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=ZepkorcyZiwyCOVkKDEV55KjUuM7/W2DRZbSVsNObeA=;
+        b=cXrihkb8IuXGzM5W0NgS/fTLx2ysCsH+R0+eXx/Fe/Hct+Ohh8F4s3dW6Zb+twG/CJ
+         a5NdW+TszE0k9hkCC9r+SIlj3qv55ayMLNBEOO3V4sroGnm59vXL4eWzkufujAbmXeg6
+         C96L9+x0/MEDMm26HX1Mc5vLoPRDeCrkyfVAr39yB0QvfMSkT8SEbn/m3Zz7D3VN+mft
+         mb+SCyc4+dae0aU7506yLa/xkrTld6uHrgIgffpT4FG+SedTlIK2+tfUF/ghDp4g5TnK
+         M/Hd4ZgnF0w9Jd1jS8lx7ta7eoyCZ6MdCsCwX0lfuUzRJYoyx6bOJo1OsIWUyZZ0PvFT
+         CJsg==
+X-Gm-Message-State: AGRZ1gJemK+wwHEI0tuwk3qrI9+mnYHPJZynrPaqidOlMqwTqpE3uSs2
+        jlrxJ3TJ7l7lUZ5+WfD+3rZ/+3THAZsRtw==
+X-Google-Smtp-Source: AJdET5eVYaTveFIRw4jme2iVKqFWuon1EYbPFJ0Ka/DuNH9AcybiH9vtplABqsJQvMJV87h0efMjbg==
+X-Received: by 2002:a9d:6a1a:: with SMTP id g26mr4402121otn.172.1541066295835;
+        Thu, 01 Nov 2018 02:58:15 -0700 (PDT)
+Received: from [100.146.196.109] ([172.56.6.91])
+        by smtp.gmail.com with ESMTPSA id 96sm773549ota.28.2018.11.01.02.58.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Nov 2018 02:58:14 -0700 (PDT)
+Date:   Thu, 01 Nov 2018 10:58:09 +0100
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20181101070652.jrc3jgdmykc27t4w@yavin>
+References: <20181029175322.189042-1-dancol@google.com> <20181029192250.130551-1-dancol@google.com> <20181101070036.l24c2p432ohuwmqf@yavin> <20181101070652.jrc3jgdmykc27t4w@yavin>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RFC PATCH v2] Minimal non-child process exit notification support
+To:     Aleksa Sarai <cyphar@cyphar.com>,
+        Daniel Colascione <dancol@google.com>
+CC:     linux-kernel@vger.kernel.org, timmurray@google.com,
+        joelaf@google.com, Joel Fernandes <joel@joelfernandes.org>
+From:   Christian Brauner <christian@brauner.io>
+Message-ID: <09DBEEE6-57B8-4DA8-9C2B-4B19FDD53F04@brauner.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  30bc7baa9de81efc0584b9290ce8040a1130f156
-Gitweb:     https://git.kernel.org/tip/30bc7baa9de81efc0584b9290ce8040a1130f156
-Author:     Mark Rutland <mark.rutland@arm.com>
-AuthorDate: Tue, 4 Sep 2018 11:48:30 +0100
-Committer:  Peter Zijlstra <peterz@infradead.org>
-CommitDate: Thu, 1 Nov 2018 10:48:19 +0100
+On November 1, 2018 8:06:52 AM GMT+01:00, Aleksa Sarai <cyphar@cyphar=2Ecom=
+> wrote:
+>On 2018-11-01, Aleksa Sarai <cyphar@cyphar=2Ecom> wrote:
+>> On 2018-10-29, Daniel Colascione <dancol@google=2Ecom> wrote:
+>> > This patch adds a new file under /proc/pid, /proc/pid/exithand=2E
+>> > Attempting to read from an exithand file will block until the
+>> > corresponding process exits, at which point the read will
+>successfully
+>> > complete with EOF=2E  The file descriptor supports both blocking
+>> > operations and poll(2)=2E It's intended to be a minimal interface for
+>> > allowing a program to wait for the exit of a process that is not
+>one
+>> > of its children=2E
+>> >=20
+>> > Why might we want this interface? Android's lmkd kills processes in
+>> > order to free memory in response to various memory pressure
+>> > signals=2E It's desirable to wait until a killed process actually
+>exits
+>> > before moving on (if needed) to killing the next process=2E Since the
+>> > processes that lmkd kills are not lmkd's children, lmkd currently
+>> > lacks a way to wait for a process to actually die after being sent
+>> > SIGKILL; today, lmkd resorts to polling the proc filesystem pid
+>> > entry=2E This interface allow lmkd to give up polling and instead
+>block
+>> > and wait for process death=2E
+>>=20
+>> I agree with the need for this interface (with a few caveats), but
+>there
+>> are a few points I'd like to make:
+>>=20
+>>  * I don't think that making a new procfile is necessary=2E When you
+>open
+>>    /proc/$pid you already have a handle for the underlying process,
+>and
+>>    you can already poll to check whether the process has died
+>(fstatat
+>>    fails for instance)=2E What if we just used an inotify event to tell
+>>    userspace that the process has died -- to avoid userspace doing a
+>>    poll loop?
+>>=20
+>>  * There is a fairly old interface called the proc_connector which
+>gives
+>>    you global fork+exec+exit events (similar to kevents from FreeBSD
+>>    though much less full-featured)=2E I was working on some patches to
+>>    extend proc_connector so that it could be used inside containers
+>as
+>>    well as unprivileged users=2E This would be another way we could
+>>    implement this=2E
+>>=20
+>> I'm really not a huge fan of the "blocking read" semantic (though if
+>we
+>> have to have it, can we at least provide as much information as you
+>get
+>> from proc_connector -- such as the exit status?)=2E Also maybe we
+>should
+>> integrate this into the exit machinery instead of this loop=2E=2E=2E
+>
+>In addition, given that you've posted two patches in the similar vein
+>but as separate patchsets -- would you mind re-sending them as a single
+>patchset (with all the relevant folks added to Cc)?
 
-arm64: Use instrumented atomics
+Please make sure to run get_maintainers=2Epl against your patches
+if you haven't already done so to make sure that the right people are=20
+Cc'ed=2E
+I would suggest to a least Cc Eric, Serge, Andy, Kees, and Oleg=2E
 
-Now that the generic atomic headers provide instrumented wrappers of all
-the atomics implemented by arm64, let's migrate arm64 over to these.
+>
+>If the idea is to extend /proc/$pid to allow for various
+>fd-as-process-handle operations (which I agree with in principle), then
+>they should be a single patchset=2E I'm also a bit cautious about how
+>many procfiles the eventual goal is to add=2E
 
-The additional instrumentation will help to find bugs (e.g. when fuzzing
-with Syzkaller).
-
-Mostly this change involves adding an arch_ prefix to a number of
-function names and macro definitions. When LSE atomics are used, the
-out-of-line LL/SC atomics will be named __ll_sc_arch_atomic_${OP}.
-
-Adding the arch_ prefix requires some whitespace fixups to keep things
-aligned. Some other unusual whitespace is fixed up at the same time
-(e.g. in the cmpxchg wrappers).
-
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: linuxdrivers@attotech.com
-Cc: dvyukov@google.com
-Cc: boqun.feng@gmail.com
-Cc: arnd@arndb.de
-Cc: aryabinin@virtuozzo.com
-Cc: glider@google.com
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180904104830.2975-7-mark.rutland@arm.com
----
- arch/arm64/include/asm/atomic.h       | 237 +++++++++++++++++-----------------
- arch/arm64/include/asm/atomic_ll_sc.h |  28 ++--
- arch/arm64/include/asm/atomic_lse.h   |  38 +++---
- arch/arm64/include/asm/cmpxchg.h      |  60 ++++-----
- arch/arm64/include/asm/sync_bitops.h  |  16 +--
- 5 files changed, 193 insertions(+), 186 deletions(-)
-
-diff --git a/arch/arm64/include/asm/atomic.h b/arch/arm64/include/asm/atomic.h
-index 9bca54dda75c..1f4e9ee641c9 100644
---- a/arch/arm64/include/asm/atomic.h
-+++ b/arch/arm64/include/asm/atomic.h
-@@ -42,124 +42,131 @@
- 
- #define ATOMIC_INIT(i)	{ (i) }
- 
--#define atomic_read(v)			READ_ONCE((v)->counter)
--#define atomic_set(v, i)		WRITE_ONCE(((v)->counter), (i))
--
--#define atomic_add_return_relaxed	atomic_add_return_relaxed
--#define atomic_add_return_acquire	atomic_add_return_acquire
--#define atomic_add_return_release	atomic_add_return_release
--#define atomic_add_return		atomic_add_return
--
--#define atomic_sub_return_relaxed	atomic_sub_return_relaxed
--#define atomic_sub_return_acquire	atomic_sub_return_acquire
--#define atomic_sub_return_release	atomic_sub_return_release
--#define atomic_sub_return		atomic_sub_return
--
--#define atomic_fetch_add_relaxed	atomic_fetch_add_relaxed
--#define atomic_fetch_add_acquire	atomic_fetch_add_acquire
--#define atomic_fetch_add_release	atomic_fetch_add_release
--#define atomic_fetch_add		atomic_fetch_add
--
--#define atomic_fetch_sub_relaxed	atomic_fetch_sub_relaxed
--#define atomic_fetch_sub_acquire	atomic_fetch_sub_acquire
--#define atomic_fetch_sub_release	atomic_fetch_sub_release
--#define atomic_fetch_sub		atomic_fetch_sub
--
--#define atomic_fetch_and_relaxed	atomic_fetch_and_relaxed
--#define atomic_fetch_and_acquire	atomic_fetch_and_acquire
--#define atomic_fetch_and_release	atomic_fetch_and_release
--#define atomic_fetch_and		atomic_fetch_and
--
--#define atomic_fetch_andnot_relaxed	atomic_fetch_andnot_relaxed
--#define atomic_fetch_andnot_acquire	atomic_fetch_andnot_acquire
--#define atomic_fetch_andnot_release	atomic_fetch_andnot_release
--#define atomic_fetch_andnot		atomic_fetch_andnot
--
--#define atomic_fetch_or_relaxed		atomic_fetch_or_relaxed
--#define atomic_fetch_or_acquire		atomic_fetch_or_acquire
--#define atomic_fetch_or_release		atomic_fetch_or_release
--#define atomic_fetch_or			atomic_fetch_or
--
--#define atomic_fetch_xor_relaxed	atomic_fetch_xor_relaxed
--#define atomic_fetch_xor_acquire	atomic_fetch_xor_acquire
--#define atomic_fetch_xor_release	atomic_fetch_xor_release
--#define atomic_fetch_xor		atomic_fetch_xor
--
--#define atomic_xchg_relaxed(v, new)	xchg_relaxed(&((v)->counter), (new))
--#define atomic_xchg_acquire(v, new)	xchg_acquire(&((v)->counter), (new))
--#define atomic_xchg_release(v, new)	xchg_release(&((v)->counter), (new))
--#define atomic_xchg(v, new)		xchg(&((v)->counter), (new))
--
--#define atomic_cmpxchg_relaxed(v, old, new)				\
--	cmpxchg_relaxed(&((v)->counter), (old), (new))
--#define atomic_cmpxchg_acquire(v, old, new)				\
--	cmpxchg_acquire(&((v)->counter), (old), (new))
--#define atomic_cmpxchg_release(v, old, new)				\
--	cmpxchg_release(&((v)->counter), (old), (new))
--#define atomic_cmpxchg(v, old, new)	cmpxchg(&((v)->counter), (old), (new))
--
--#define atomic_andnot			atomic_andnot
-+#define arch_atomic_read(v)			READ_ONCE((v)->counter)
-+#define arch_atomic_set(v, i)			WRITE_ONCE(((v)->counter), (i))
-+
-+#define arch_atomic_add_return_relaxed		arch_atomic_add_return_relaxed
-+#define arch_atomic_add_return_acquire		arch_atomic_add_return_acquire
-+#define arch_atomic_add_return_release		arch_atomic_add_return_release
-+#define arch_atomic_add_return			arch_atomic_add_return
-+
-+#define arch_atomic_sub_return_relaxed		arch_atomic_sub_return_relaxed
-+#define arch_atomic_sub_return_acquire		arch_atomic_sub_return_acquire
-+#define arch_atomic_sub_return_release		arch_atomic_sub_return_release
-+#define arch_atomic_sub_return			arch_atomic_sub_return
-+
-+#define arch_atomic_fetch_add_relaxed		arch_atomic_fetch_add_relaxed
-+#define arch_atomic_fetch_add_acquire		arch_atomic_fetch_add_acquire
-+#define arch_atomic_fetch_add_release		arch_atomic_fetch_add_release
-+#define arch_atomic_fetch_add			arch_atomic_fetch_add
-+
-+#define arch_atomic_fetch_sub_relaxed		arch_atomic_fetch_sub_relaxed
-+#define arch_atomic_fetch_sub_acquire		arch_atomic_fetch_sub_acquire
-+#define arch_atomic_fetch_sub_release		arch_atomic_fetch_sub_release
-+#define arch_atomic_fetch_sub			arch_atomic_fetch_sub
-+
-+#define arch_atomic_fetch_and_relaxed		arch_atomic_fetch_and_relaxed
-+#define arch_atomic_fetch_and_acquire		arch_atomic_fetch_and_acquire
-+#define arch_atomic_fetch_and_release		arch_atomic_fetch_and_release
-+#define arch_atomic_fetch_and			arch_atomic_fetch_and
-+
-+#define arch_atomic_fetch_andnot_relaxed	arch_atomic_fetch_andnot_relaxed
-+#define arch_atomic_fetch_andnot_acquire	arch_atomic_fetch_andnot_acquire
-+#define arch_atomic_fetch_andnot_release	arch_atomic_fetch_andnot_release
-+#define arch_atomic_fetch_andnot		arch_atomic_fetch_andnot
-+
-+#define arch_atomic_fetch_or_relaxed		arch_atomic_fetch_or_relaxed
-+#define arch_atomic_fetch_or_acquire		arch_atomic_fetch_or_acquire
-+#define arch_atomic_fetch_or_release		arch_atomic_fetch_or_release
-+#define arch_atomic_fetch_or			arch_atomic_fetch_or
-+
-+#define arch_atomic_fetch_xor_relaxed		arch_atomic_fetch_xor_relaxed
-+#define arch_atomic_fetch_xor_acquire		arch_atomic_fetch_xor_acquire
-+#define arch_atomic_fetch_xor_release		arch_atomic_fetch_xor_release
-+#define arch_atomic_fetch_xor			arch_atomic_fetch_xor
-+
-+#define arch_atomic_xchg_relaxed(v, new) \
-+	arch_xchg_relaxed(&((v)->counter), (new))
-+#define arch_atomic_xchg_acquire(v, new) \
-+	arch_xchg_acquire(&((v)->counter), (new))
-+#define arch_atomic_xchg_release(v, new) \
-+	arch_xchg_release(&((v)->counter), (new))
-+#define arch_atomic_xchg(v, new) \
-+	arch_xchg(&((v)->counter), (new))
-+
-+#define arch_atomic_cmpxchg_relaxed(v, old, new) \
-+	arch_cmpxchg_relaxed(&((v)->counter), (old), (new))
-+#define arch_atomic_cmpxchg_acquire(v, old, new) \
-+	arch_cmpxchg_acquire(&((v)->counter), (old), (new))
-+#define arch_atomic_cmpxchg_release(v, old, new) \
-+	arch_cmpxchg_release(&((v)->counter), (old), (new))
-+#define arch_atomic_cmpxchg(v, old, new) \
-+	arch_cmpxchg(&((v)->counter), (old), (new))
-+
-+#define arch_atomic_andnot			arch_atomic_andnot
- 
- /*
-- * 64-bit atomic operations.
-+ * 64-bit arch_atomic operations.
-  */
--#define ATOMIC64_INIT			ATOMIC_INIT
--#define atomic64_read			atomic_read
--#define atomic64_set			atomic_set
--
--#define atomic64_add_return_relaxed	atomic64_add_return_relaxed
--#define atomic64_add_return_acquire	atomic64_add_return_acquire
--#define atomic64_add_return_release	atomic64_add_return_release
--#define atomic64_add_return		atomic64_add_return
--
--#define atomic64_sub_return_relaxed	atomic64_sub_return_relaxed
--#define atomic64_sub_return_acquire	atomic64_sub_return_acquire
--#define atomic64_sub_return_release	atomic64_sub_return_release
--#define atomic64_sub_return		atomic64_sub_return
--
--#define atomic64_fetch_add_relaxed	atomic64_fetch_add_relaxed
--#define atomic64_fetch_add_acquire	atomic64_fetch_add_acquire
--#define atomic64_fetch_add_release	atomic64_fetch_add_release
--#define atomic64_fetch_add		atomic64_fetch_add
--
--#define atomic64_fetch_sub_relaxed	atomic64_fetch_sub_relaxed
--#define atomic64_fetch_sub_acquire	atomic64_fetch_sub_acquire
--#define atomic64_fetch_sub_release	atomic64_fetch_sub_release
--#define atomic64_fetch_sub		atomic64_fetch_sub
--
--#define atomic64_fetch_and_relaxed	atomic64_fetch_and_relaxed
--#define atomic64_fetch_and_acquire	atomic64_fetch_and_acquire
--#define atomic64_fetch_and_release	atomic64_fetch_and_release
--#define atomic64_fetch_and		atomic64_fetch_and
--
--#define atomic64_fetch_andnot_relaxed	atomic64_fetch_andnot_relaxed
--#define atomic64_fetch_andnot_acquire	atomic64_fetch_andnot_acquire
--#define atomic64_fetch_andnot_release	atomic64_fetch_andnot_release
--#define atomic64_fetch_andnot		atomic64_fetch_andnot
--
--#define atomic64_fetch_or_relaxed	atomic64_fetch_or_relaxed
--#define atomic64_fetch_or_acquire	atomic64_fetch_or_acquire
--#define atomic64_fetch_or_release	atomic64_fetch_or_release
--#define atomic64_fetch_or		atomic64_fetch_or
--
--#define atomic64_fetch_xor_relaxed	atomic64_fetch_xor_relaxed
--#define atomic64_fetch_xor_acquire	atomic64_fetch_xor_acquire
--#define atomic64_fetch_xor_release	atomic64_fetch_xor_release
--#define atomic64_fetch_xor		atomic64_fetch_xor
--
--#define atomic64_xchg_relaxed		atomic_xchg_relaxed
--#define atomic64_xchg_acquire		atomic_xchg_acquire
--#define atomic64_xchg_release		atomic_xchg_release
--#define atomic64_xchg			atomic_xchg
--
--#define atomic64_cmpxchg_relaxed	atomic_cmpxchg_relaxed
--#define atomic64_cmpxchg_acquire	atomic_cmpxchg_acquire
--#define atomic64_cmpxchg_release	atomic_cmpxchg_release
--#define atomic64_cmpxchg		atomic_cmpxchg
--
--#define atomic64_andnot			atomic64_andnot
--
--#define atomic64_dec_if_positive	atomic64_dec_if_positive
-+#define ATOMIC64_INIT				ATOMIC_INIT
-+#define arch_atomic64_read			arch_atomic_read
-+#define arch_atomic64_set			arch_atomic_set
-+
-+#define arch_atomic64_add_return_relaxed	arch_atomic64_add_return_relaxed
-+#define arch_atomic64_add_return_acquire	arch_atomic64_add_return_acquire
-+#define arch_atomic64_add_return_release	arch_atomic64_add_return_release
-+#define arch_atomic64_add_return		arch_atomic64_add_return
-+
-+#define arch_atomic64_sub_return_relaxed	arch_atomic64_sub_return_relaxed
-+#define arch_atomic64_sub_return_acquire	arch_atomic64_sub_return_acquire
-+#define arch_atomic64_sub_return_release	arch_atomic64_sub_return_release
-+#define arch_atomic64_sub_return		arch_atomic64_sub_return
-+
-+#define arch_atomic64_fetch_add_relaxed		arch_atomic64_fetch_add_relaxed
-+#define arch_atomic64_fetch_add_acquire		arch_atomic64_fetch_add_acquire
-+#define arch_atomic64_fetch_add_release		arch_atomic64_fetch_add_release
-+#define arch_atomic64_fetch_add			arch_atomic64_fetch_add
-+
-+#define arch_atomic64_fetch_sub_relaxed		arch_atomic64_fetch_sub_relaxed
-+#define arch_atomic64_fetch_sub_acquire		arch_atomic64_fetch_sub_acquire
-+#define arch_atomic64_fetch_sub_release		arch_atomic64_fetch_sub_release
-+#define arch_atomic64_fetch_sub			arch_atomic64_fetch_sub
-+
-+#define arch_atomic64_fetch_and_relaxed		arch_atomic64_fetch_and_relaxed
-+#define arch_atomic64_fetch_and_acquire		arch_atomic64_fetch_and_acquire
-+#define arch_atomic64_fetch_and_release		arch_atomic64_fetch_and_release
-+#define arch_atomic64_fetch_and			arch_atomic64_fetch_and
-+
-+#define arch_atomic64_fetch_andnot_relaxed	arch_atomic64_fetch_andnot_relaxed
-+#define arch_atomic64_fetch_andnot_acquire	arch_atomic64_fetch_andnot_acquire
-+#define arch_atomic64_fetch_andnot_release	arch_atomic64_fetch_andnot_release
-+#define arch_atomic64_fetch_andnot		arch_atomic64_fetch_andnot
-+
-+#define arch_atomic64_fetch_or_relaxed		arch_atomic64_fetch_or_relaxed
-+#define arch_atomic64_fetch_or_acquire		arch_atomic64_fetch_or_acquire
-+#define arch_atomic64_fetch_or_release		arch_atomic64_fetch_or_release
-+#define arch_atomic64_fetch_or			arch_atomic64_fetch_or
-+
-+#define arch_atomic64_fetch_xor_relaxed		arch_atomic64_fetch_xor_relaxed
-+#define arch_atomic64_fetch_xor_acquire		arch_atomic64_fetch_xor_acquire
-+#define arch_atomic64_fetch_xor_release		arch_atomic64_fetch_xor_release
-+#define arch_atomic64_fetch_xor			arch_atomic64_fetch_xor
-+
-+#define arch_atomic64_xchg_relaxed		arch_atomic_xchg_relaxed
-+#define arch_atomic64_xchg_acquire		arch_atomic_xchg_acquire
-+#define arch_atomic64_xchg_release		arch_atomic_xchg_release
-+#define arch_atomic64_xchg			arch_atomic_xchg
-+
-+#define arch_atomic64_cmpxchg_relaxed		arch_atomic_cmpxchg_relaxed
-+#define arch_atomic64_cmpxchg_acquire		arch_atomic_cmpxchg_acquire
-+#define arch_atomic64_cmpxchg_release		arch_atomic_cmpxchg_release
-+#define arch_atomic64_cmpxchg			arch_atomic_cmpxchg
-+
-+#define arch_atomic64_andnot			arch_atomic64_andnot
-+
-+#define arch_atomic64_dec_if_positive		arch_atomic64_dec_if_positive
-+
-+#include <asm-generic/atomic-instrumented.h>
- 
- #endif
- #endif
-diff --git a/arch/arm64/include/asm/atomic_ll_sc.h b/arch/arm64/include/asm/atomic_ll_sc.h
-index f5a2d09afb38..3b5e28d64582 100644
---- a/arch/arm64/include/asm/atomic_ll_sc.h
-+++ b/arch/arm64/include/asm/atomic_ll_sc.h
-@@ -39,7 +39,7 @@
- 
- #define ATOMIC_OP(op, asm_op)						\
- __LL_SC_INLINE void							\
--__LL_SC_PREFIX(atomic_##op(int i, atomic_t *v))				\
-+__LL_SC_PREFIX(arch_atomic_##op(int i, atomic_t *v))			\
- {									\
- 	unsigned long tmp;						\
- 	int result;							\
-@@ -53,11 +53,11 @@ __LL_SC_PREFIX(atomic_##op(int i, atomic_t *v))				\
- 	: "=&r" (result), "=&r" (tmp), "+Q" (v->counter)		\
- 	: "Ir" (i));							\
- }									\
--__LL_SC_EXPORT(atomic_##op);
-+__LL_SC_EXPORT(arch_atomic_##op);
- 
- #define ATOMIC_OP_RETURN(name, mb, acq, rel, cl, op, asm_op)		\
- __LL_SC_INLINE int							\
--__LL_SC_PREFIX(atomic_##op##_return##name(int i, atomic_t *v))		\
-+__LL_SC_PREFIX(arch_atomic_##op##_return##name(int i, atomic_t *v))	\
- {									\
- 	unsigned long tmp;						\
- 	int result;							\
-@@ -75,11 +75,11 @@ __LL_SC_PREFIX(atomic_##op##_return##name(int i, atomic_t *v))		\
- 									\
- 	return result;							\
- }									\
--__LL_SC_EXPORT(atomic_##op##_return##name);
-+__LL_SC_EXPORT(arch_atomic_##op##_return##name);
- 
- #define ATOMIC_FETCH_OP(name, mb, acq, rel, cl, op, asm_op)		\
- __LL_SC_INLINE int							\
--__LL_SC_PREFIX(atomic_fetch_##op##name(int i, atomic_t *v))		\
-+__LL_SC_PREFIX(arch_atomic_fetch_##op##name(int i, atomic_t *v))	\
- {									\
- 	unsigned long tmp;						\
- 	int val, result;						\
-@@ -97,7 +97,7 @@ __LL_SC_PREFIX(atomic_fetch_##op##name(int i, atomic_t *v))		\
- 									\
- 	return result;							\
- }									\
--__LL_SC_EXPORT(atomic_fetch_##op##name);
-+__LL_SC_EXPORT(arch_atomic_fetch_##op##name);
- 
- #define ATOMIC_OPS(...)							\
- 	ATOMIC_OP(__VA_ARGS__)						\
-@@ -133,7 +133,7 @@ ATOMIC_OPS(xor, eor)
- 
- #define ATOMIC64_OP(op, asm_op)						\
- __LL_SC_INLINE void							\
--__LL_SC_PREFIX(atomic64_##op(long i, atomic64_t *v))			\
-+__LL_SC_PREFIX(arch_atomic64_##op(long i, atomic64_t *v))		\
- {									\
- 	long result;							\
- 	unsigned long tmp;						\
-@@ -147,11 +147,11 @@ __LL_SC_PREFIX(atomic64_##op(long i, atomic64_t *v))			\
- 	: "=&r" (result), "=&r" (tmp), "+Q" (v->counter)		\
- 	: "Ir" (i));							\
- }									\
--__LL_SC_EXPORT(atomic64_##op);
-+__LL_SC_EXPORT(arch_atomic64_##op);
- 
- #define ATOMIC64_OP_RETURN(name, mb, acq, rel, cl, op, asm_op)		\
- __LL_SC_INLINE long							\
--__LL_SC_PREFIX(atomic64_##op##_return##name(long i, atomic64_t *v))	\
-+__LL_SC_PREFIX(arch_atomic64_##op##_return##name(long i, atomic64_t *v))\
- {									\
- 	long result;							\
- 	unsigned long tmp;						\
-@@ -169,11 +169,11 @@ __LL_SC_PREFIX(atomic64_##op##_return##name(long i, atomic64_t *v))	\
- 									\
- 	return result;							\
- }									\
--__LL_SC_EXPORT(atomic64_##op##_return##name);
-+__LL_SC_EXPORT(arch_atomic64_##op##_return##name);
- 
- #define ATOMIC64_FETCH_OP(name, mb, acq, rel, cl, op, asm_op)		\
- __LL_SC_INLINE long							\
--__LL_SC_PREFIX(atomic64_fetch_##op##name(long i, atomic64_t *v))	\
-+__LL_SC_PREFIX(arch_atomic64_fetch_##op##name(long i, atomic64_t *v))	\
- {									\
- 	long result, val;						\
- 	unsigned long tmp;						\
-@@ -191,7 +191,7 @@ __LL_SC_PREFIX(atomic64_fetch_##op##name(long i, atomic64_t *v))	\
- 									\
- 	return result;							\
- }									\
--__LL_SC_EXPORT(atomic64_fetch_##op##name);
-+__LL_SC_EXPORT(arch_atomic64_fetch_##op##name);
- 
- #define ATOMIC64_OPS(...)						\
- 	ATOMIC64_OP(__VA_ARGS__)					\
-@@ -226,7 +226,7 @@ ATOMIC64_OPS(xor, eor)
- #undef ATOMIC64_OP
- 
- __LL_SC_INLINE long
--__LL_SC_PREFIX(atomic64_dec_if_positive(atomic64_t *v))
-+__LL_SC_PREFIX(arch_atomic64_dec_if_positive(atomic64_t *v))
- {
- 	long result;
- 	unsigned long tmp;
-@@ -246,7 +246,7 @@ __LL_SC_PREFIX(atomic64_dec_if_positive(atomic64_t *v))
- 
- 	return result;
- }
--__LL_SC_EXPORT(atomic64_dec_if_positive);
-+__LL_SC_EXPORT(arch_atomic64_dec_if_positive);
- 
- #define __CMPXCHG_CASE(w, sz, name, mb, acq, rel, cl)			\
- __LL_SC_INLINE unsigned long						\
-diff --git a/arch/arm64/include/asm/atomic_lse.h b/arch/arm64/include/asm/atomic_lse.h
-index f9b0b09153e0..d854e91fa5f1 100644
---- a/arch/arm64/include/asm/atomic_lse.h
-+++ b/arch/arm64/include/asm/atomic_lse.h
-@@ -25,9 +25,9 @@
- #error "please don't include this file directly"
- #endif
- 
--#define __LL_SC_ATOMIC(op)	__LL_SC_CALL(atomic_##op)
-+#define __LL_SC_ATOMIC(op)	__LL_SC_CALL(arch_atomic_##op)
- #define ATOMIC_OP(op, asm_op)						\
--static inline void atomic_##op(int i, atomic_t *v)			\
-+static inline void arch_atomic_##op(int i, atomic_t *v)			\
- {									\
- 	register int w0 asm ("w0") = i;					\
- 	register atomic_t *x1 asm ("x1") = v;				\
-@@ -47,7 +47,7 @@ ATOMIC_OP(add, stadd)
- #undef ATOMIC_OP
- 
- #define ATOMIC_FETCH_OP(name, mb, op, asm_op, cl...)			\
--static inline int atomic_fetch_##op##name(int i, atomic_t *v)		\
-+static inline int arch_atomic_fetch_##op##name(int i, atomic_t *v)	\
- {									\
- 	register int w0 asm ("w0") = i;					\
- 	register atomic_t *x1 asm ("x1") = v;				\
-@@ -79,7 +79,7 @@ ATOMIC_FETCH_OPS(add, ldadd)
- #undef ATOMIC_FETCH_OPS
- 
- #define ATOMIC_OP_ADD_RETURN(name, mb, cl...)				\
--static inline int atomic_add_return##name(int i, atomic_t *v)		\
-+static inline int arch_atomic_add_return##name(int i, atomic_t *v)	\
- {									\
- 	register int w0 asm ("w0") = i;					\
- 	register atomic_t *x1 asm ("x1") = v;				\
-@@ -105,7 +105,7 @@ ATOMIC_OP_ADD_RETURN(        , al, "memory")
- 
- #undef ATOMIC_OP_ADD_RETURN
- 
--static inline void atomic_and(int i, atomic_t *v)
-+static inline void arch_atomic_and(int i, atomic_t *v)
- {
- 	register int w0 asm ("w0") = i;
- 	register atomic_t *x1 asm ("x1") = v;
-@@ -123,7 +123,7 @@ static inline void atomic_and(int i, atomic_t *v)
- }
- 
- #define ATOMIC_FETCH_OP_AND(name, mb, cl...)				\
--static inline int atomic_fetch_and##name(int i, atomic_t *v)		\
-+static inline int arch_atomic_fetch_and##name(int i, atomic_t *v)	\
- {									\
- 	register int w0 asm ("w0") = i;					\
- 	register atomic_t *x1 asm ("x1") = v;				\
-@@ -149,7 +149,7 @@ ATOMIC_FETCH_OP_AND(        , al, "memory")
- 
- #undef ATOMIC_FETCH_OP_AND
- 
--static inline void atomic_sub(int i, atomic_t *v)
-+static inline void arch_atomic_sub(int i, atomic_t *v)
- {
- 	register int w0 asm ("w0") = i;
- 	register atomic_t *x1 asm ("x1") = v;
-@@ -167,7 +167,7 @@ static inline void atomic_sub(int i, atomic_t *v)
- }
- 
- #define ATOMIC_OP_SUB_RETURN(name, mb, cl...)				\
--static inline int atomic_sub_return##name(int i, atomic_t *v)		\
-+static inline int arch_atomic_sub_return##name(int i, atomic_t *v)	\
- {									\
- 	register int w0 asm ("w0") = i;					\
- 	register atomic_t *x1 asm ("x1") = v;				\
-@@ -195,7 +195,7 @@ ATOMIC_OP_SUB_RETURN(        , al, "memory")
- #undef ATOMIC_OP_SUB_RETURN
- 
- #define ATOMIC_FETCH_OP_SUB(name, mb, cl...)				\
--static inline int atomic_fetch_sub##name(int i, atomic_t *v)		\
-+static inline int arch_atomic_fetch_sub##name(int i, atomic_t *v)	\
- {									\
- 	register int w0 asm ("w0") = i;					\
- 	register atomic_t *x1 asm ("x1") = v;				\
-@@ -222,9 +222,9 @@ ATOMIC_FETCH_OP_SUB(        , al, "memory")
- #undef ATOMIC_FETCH_OP_SUB
- #undef __LL_SC_ATOMIC
- 
--#define __LL_SC_ATOMIC64(op)	__LL_SC_CALL(atomic64_##op)
-+#define __LL_SC_ATOMIC64(op)	__LL_SC_CALL(arch_atomic64_##op)
- #define ATOMIC64_OP(op, asm_op)						\
--static inline void atomic64_##op(long i, atomic64_t *v)			\
-+static inline void arch_atomic64_##op(long i, atomic64_t *v)		\
- {									\
- 	register long x0 asm ("x0") = i;				\
- 	register atomic64_t *x1 asm ("x1") = v;				\
-@@ -244,7 +244,7 @@ ATOMIC64_OP(add, stadd)
- #undef ATOMIC64_OP
- 
- #define ATOMIC64_FETCH_OP(name, mb, op, asm_op, cl...)			\
--static inline long atomic64_fetch_##op##name(long i, atomic64_t *v)	\
-+static inline long arch_atomic64_fetch_##op##name(long i, atomic64_t *v)\
- {									\
- 	register long x0 asm ("x0") = i;				\
- 	register atomic64_t *x1 asm ("x1") = v;				\
-@@ -276,7 +276,7 @@ ATOMIC64_FETCH_OPS(add, ldadd)
- #undef ATOMIC64_FETCH_OPS
- 
- #define ATOMIC64_OP_ADD_RETURN(name, mb, cl...)				\
--static inline long atomic64_add_return##name(long i, atomic64_t *v)	\
-+static inline long arch_atomic64_add_return##name(long i, atomic64_t *v)\
- {									\
- 	register long x0 asm ("x0") = i;				\
- 	register atomic64_t *x1 asm ("x1") = v;				\
-@@ -302,7 +302,7 @@ ATOMIC64_OP_ADD_RETURN(        , al, "memory")
- 
- #undef ATOMIC64_OP_ADD_RETURN
- 
--static inline void atomic64_and(long i, atomic64_t *v)
-+static inline void arch_atomic64_and(long i, atomic64_t *v)
- {
- 	register long x0 asm ("x0") = i;
- 	register atomic64_t *x1 asm ("x1") = v;
-@@ -320,7 +320,7 @@ static inline void atomic64_and(long i, atomic64_t *v)
- }
- 
- #define ATOMIC64_FETCH_OP_AND(name, mb, cl...)				\
--static inline long atomic64_fetch_and##name(long i, atomic64_t *v)	\
-+static inline long arch_atomic64_fetch_and##name(long i, atomic64_t *v)	\
- {									\
- 	register long x0 asm ("x0") = i;				\
- 	register atomic64_t *x1 asm ("x1") = v;				\
-@@ -346,7 +346,7 @@ ATOMIC64_FETCH_OP_AND(        , al, "memory")
- 
- #undef ATOMIC64_FETCH_OP_AND
- 
--static inline void atomic64_sub(long i, atomic64_t *v)
-+static inline void arch_atomic64_sub(long i, atomic64_t *v)
- {
- 	register long x0 asm ("x0") = i;
- 	register atomic64_t *x1 asm ("x1") = v;
-@@ -364,7 +364,7 @@ static inline void atomic64_sub(long i, atomic64_t *v)
- }
- 
- #define ATOMIC64_OP_SUB_RETURN(name, mb, cl...)				\
--static inline long atomic64_sub_return##name(long i, atomic64_t *v)	\
-+static inline long arch_atomic64_sub_return##name(long i, atomic64_t *v)\
- {									\
- 	register long x0 asm ("x0") = i;				\
- 	register atomic64_t *x1 asm ("x1") = v;				\
-@@ -392,7 +392,7 @@ ATOMIC64_OP_SUB_RETURN(        , al, "memory")
- #undef ATOMIC64_OP_SUB_RETURN
- 
- #define ATOMIC64_FETCH_OP_SUB(name, mb, cl...)				\
--static inline long atomic64_fetch_sub##name(long i, atomic64_t *v)	\
-+static inline long arch_atomic64_fetch_sub##name(long i, atomic64_t *v)	\
- {									\
- 	register long x0 asm ("x0") = i;				\
- 	register atomic64_t *x1 asm ("x1") = v;				\
-@@ -418,7 +418,7 @@ ATOMIC64_FETCH_OP_SUB(        , al, "memory")
- 
- #undef ATOMIC64_FETCH_OP_SUB
- 
--static inline long atomic64_dec_if_positive(atomic64_t *v)
-+static inline long arch_atomic64_dec_if_positive(atomic64_t *v)
- {
- 	register long x0 asm ("x0") = (long)v;
- 
-diff --git a/arch/arm64/include/asm/cmpxchg.h b/arch/arm64/include/asm/cmpxchg.h
-index 3b0938281541..e825e61bbfe2 100644
---- a/arch/arm64/include/asm/cmpxchg.h
-+++ b/arch/arm64/include/asm/cmpxchg.h
-@@ -110,10 +110,10 @@ __XCHG_GEN(_mb)
- })
- 
- /* xchg */
--#define xchg_relaxed(...)	__xchg_wrapper(    , __VA_ARGS__)
--#define xchg_acquire(...)	__xchg_wrapper(_acq, __VA_ARGS__)
--#define xchg_release(...)	__xchg_wrapper(_rel, __VA_ARGS__)
--#define xchg(...)		__xchg_wrapper( _mb, __VA_ARGS__)
-+#define arch_xchg_relaxed(...)	__xchg_wrapper(    , __VA_ARGS__)
-+#define arch_xchg_acquire(...)	__xchg_wrapper(_acq, __VA_ARGS__)
-+#define arch_xchg_release(...)	__xchg_wrapper(_rel, __VA_ARGS__)
-+#define arch_xchg(...)		__xchg_wrapper( _mb, __VA_ARGS__)
- 
- #define __CMPXCHG_GEN(sfx)						\
- static inline unsigned long __cmpxchg##sfx(volatile void *ptr,		\
-@@ -154,18 +154,18 @@ __CMPXCHG_GEN(_mb)
- })
- 
- /* cmpxchg */
--#define cmpxchg_relaxed(...)	__cmpxchg_wrapper(    , __VA_ARGS__)
--#define cmpxchg_acquire(...)	__cmpxchg_wrapper(_acq, __VA_ARGS__)
--#define cmpxchg_release(...)	__cmpxchg_wrapper(_rel, __VA_ARGS__)
--#define cmpxchg(...)		__cmpxchg_wrapper( _mb, __VA_ARGS__)
--#define cmpxchg_local		cmpxchg_relaxed
-+#define arch_cmpxchg_relaxed(...)	__cmpxchg_wrapper(    , __VA_ARGS__)
-+#define arch_cmpxchg_acquire(...)	__cmpxchg_wrapper(_acq, __VA_ARGS__)
-+#define arch_cmpxchg_release(...)	__cmpxchg_wrapper(_rel, __VA_ARGS__)
-+#define arch_cmpxchg(...)		__cmpxchg_wrapper( _mb, __VA_ARGS__)
-+#define arch_cmpxchg_local		arch_cmpxchg_relaxed
- 
- /* cmpxchg64 */
--#define cmpxchg64_relaxed	cmpxchg_relaxed
--#define cmpxchg64_acquire	cmpxchg_acquire
--#define cmpxchg64_release	cmpxchg_release
--#define cmpxchg64		cmpxchg
--#define cmpxchg64_local		cmpxchg_local
-+#define arch_cmpxchg64_relaxed		arch_cmpxchg_relaxed
-+#define arch_cmpxchg64_acquire		arch_cmpxchg_acquire
-+#define arch_cmpxchg64_release		arch_cmpxchg_release
-+#define arch_cmpxchg64			arch_cmpxchg
-+#define arch_cmpxchg64_local		arch_cmpxchg_local
- 
- /* cmpxchg_double */
- #define system_has_cmpxchg_double()     1
-@@ -177,24 +177,24 @@ __CMPXCHG_GEN(_mb)
- 	VM_BUG_ON((unsigned long *)(ptr2) - (unsigned long *)(ptr1) != 1);	\
- })
- 
--#define cmpxchg_double(ptr1, ptr2, o1, o2, n1, n2) \
--({\
--	int __ret;\
--	__cmpxchg_double_check(ptr1, ptr2); \
--	__ret = !__cmpxchg_double_mb((unsigned long)(o1), (unsigned long)(o2), \
--				     (unsigned long)(n1), (unsigned long)(n2), \
--				     ptr1); \
--	__ret; \
-+#define arch_cmpxchg_double(ptr1, ptr2, o1, o2, n1, n2)				\
-+({										\
-+	int __ret;								\
-+	__cmpxchg_double_check(ptr1, ptr2);					\
-+	__ret = !__cmpxchg_double_mb((unsigned long)(o1), (unsigned long)(o2),	\
-+				     (unsigned long)(n1), (unsigned long)(n2),	\
-+				     ptr1);					\
-+	__ret;									\
- })
- 
--#define cmpxchg_double_local(ptr1, ptr2, o1, o2, n1, n2) \
--({\
--	int __ret;\
--	__cmpxchg_double_check(ptr1, ptr2); \
--	__ret = !__cmpxchg_double((unsigned long)(o1), (unsigned long)(o2), \
--				  (unsigned long)(n1), (unsigned long)(n2), \
--				  ptr1); \
--	__ret; \
-+#define arch_cmpxchg_double_local(ptr1, ptr2, o1, o2, n1, n2)			\
-+({										\
-+	int __ret;								\
-+	__cmpxchg_double_check(ptr1, ptr2);					\
-+	__ret = !__cmpxchg_double((unsigned long)(o1), (unsigned long)(o2),	\
-+				  (unsigned long)(n1), (unsigned long)(n2),	\
-+				  ptr1);					\
-+	__ret;									\
- })
- 
- #define __CMPWAIT_CASE(w, sz, name)					\
-diff --git a/arch/arm64/include/asm/sync_bitops.h b/arch/arm64/include/asm/sync_bitops.h
-index eee31a9f72a5..e9c1a02c2154 100644
---- a/arch/arm64/include/asm/sync_bitops.h
-+++ b/arch/arm64/include/asm/sync_bitops.h
-@@ -15,13 +15,13 @@
-  * ops which are SMP safe even on a UP kernel.
-  */
- 
--#define sync_set_bit(nr, p)            set_bit(nr, p)
--#define sync_clear_bit(nr, p)          clear_bit(nr, p)
--#define sync_change_bit(nr, p)         change_bit(nr, p)
--#define sync_test_and_set_bit(nr, p)   test_and_set_bit(nr, p)
--#define sync_test_and_clear_bit(nr, p) test_and_clear_bit(nr, p)
--#define sync_test_and_change_bit(nr, p)        test_and_change_bit(nr, p)
--#define sync_test_bit(nr, addr)                test_bit(nr, addr)
--#define sync_cmpxchg                   cmpxchg
-+#define sync_set_bit(nr, p)			set_bit(nr, p)
-+#define sync_clear_bit(nr, p)			clear_bit(nr, p)
-+#define sync_change_bit(nr, p)			change_bit(nr, p)
-+#define sync_test_and_set_bit(nr, p)		test_and_set_bit(nr, p)
-+#define sync_test_and_clear_bit(nr, p)		test_and_clear_bit(nr, p)
-+#define sync_test_and_change_bit(nr, p)		test_and_change_bit(nr, p)
-+#define sync_test_bit(nr, addr)			test_bit(nr, addr)
-+#define arch_sync_cmpxchg			arch_cmpxchg
- 
- #endif
