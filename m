@@ -2,57 +2,59 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78269C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:53:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61D52C6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 284952081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:53:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 277BF20820
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:53:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UOiHO0AA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 284952081B
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="K63pyOxM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 277BF20820
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728738AbeKAW4o (ORCPT
+        id S1728785AbeKAW4u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 18:56:44 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43997 "EHLO
+        Thu, 1 Nov 2018 18:56:50 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:40514 "EHLO
         mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728585AbeKAW4o (ORCPT
+        with ESMTP id S1728743AbeKAW4t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 18:56:44 -0400
-Received: by mail-pg1-f194.google.com with SMTP id n10-v6so9054621pgv.10
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 06:53:39 -0700 (PDT)
+        Thu, 1 Nov 2018 18:56:49 -0400
+Received: by mail-pg1-f194.google.com with SMTP id o14-v6so9068787pgv.7
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 06:53:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=kTeC/f707l2ldAme0+D1nBXrNU98i8iFLzaptPO7VgI=;
-        b=UOiHO0AAwOcOTFG/XWLp3apqTquH57KYJh05RbFQYjrRJS+VLhE8GrZEXRfUBW1xJy
-         Vm3P6zjRNq9E0iSZl0NCRnfO7WFc4q+pWuHOO9ovwsxO2lRNDT9lPa0157ABZsYCiQqX
-         xYjylYk3U+NprLp2Kkx1YX94bglA2AIAbwZMY=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=QL4HBtXy2kdUzZVg3cM04W+gwHD2rDZgr2KGTmJMb5w=;
+        b=K63pyOxMrHb+GRMxlnKfjNGblG+PKrLj5vy7bj9zVvXM9VQk7uwiwWxQd/wW1q/cfY
+         SxWLQ9vYiYkIXyMvv41gSQGGtq26Laybx38qne5w/xiqtYg1DfYgj9E/pdTqE4LI1/RK
+         t7aiViG1AP8Wv9aeXvW9hGa0wk4nxFCyJHhbE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=kTeC/f707l2ldAme0+D1nBXrNU98i8iFLzaptPO7VgI=;
-        b=VSKsjx/x6pMvRZNQB0lPE391mly0Hwb4aJbhgNiaVPfy8vdtratyqB5y3YlmOONraw
-         2mVOYfkw6u7s4LBGK4bCUxKNtXA0Q2TfdoqvCMQbCwXTjwt16FxJHt7vHKbwJGglZP0f
-         Tb8tmet2CIHLdcrAFyTtNL+4AucquXeenGSIuSoGfo/zN1fQtBVTTbWf63Qx4VLQDjug
-         m4GVAE7VD7tcYsn7ntwWwrTixgkrkuPRlhlxE/iTtIMaSxiy+o2cfVuTXFLHGfWnJwuN
-         vx4fsmHVyW7X9yMlKQVrNmK/fRdGD07YilvebLyBEofIveEVtAs9aGXnwgEVpisCEnyL
-         65bA==
-X-Gm-Message-State: AGRZ1gKW/sGMuENM2IjnzapyewHllV15ph5pSMsbwCMTq9mm2BtjU29m
-        QrzAR1j/WO5zhA/bLkXVfYA7ZQ==
-X-Google-Smtp-Source: AJdET5dDaBdU2WhUEyh3YL7/qnKakimnqlHC+ekEQcs9lgx08EQFf+7wj7FDgrYpbG1X//inKxqNOQ==
-X-Received: by 2002:aa7:814f:: with SMTP id d15-v6mr7915726pfn.78.1541080419587;
-        Thu, 01 Nov 2018 06:53:39 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=QL4HBtXy2kdUzZVg3cM04W+gwHD2rDZgr2KGTmJMb5w=;
+        b=pt5dPR7RjzdpK7uoic79/8mJzFqvMNA7mEEwXqimmI78Sd6WNERgZn8xUJK4933Nr1
+         DcFyItFo3nm+W9BPIr4HbbU9d+qzxscUIcNVIR6CzJtEmFuG62g2j5FcaukV80FxAzWO
+         RK0pt8qDr95qvUMaopB+pnWb2w0YTDagrzKZcTt4LbVXM0McA4SdE65xE3EXWLMyxmvC
+         Gxxiyp/oIH6bcJ9TkMmpIfnnK09ExfPztl+IZit/mioyAjbXCMQOfMJRkpA72LBjA6UJ
+         tIwplcC/VrY5zZx1YvH/tAVmkoyVJVGW41R+IZbD1BH38VH7dCyuZRh7HClpWVat1ZDd
+         eKYQ==
+X-Gm-Message-State: AGRZ1gIvBCBv2n5+LaV2L2QUnbwHq4NMet9Di3Ziykz3Jl4qhYiF1Cny
+        iLna0uhIqR8O+YUimYg3RTsoAw==
+X-Google-Smtp-Source: AJdET5cOBtuJzSisXDhMGeywuttr5+t+ireBl5kAx4XFMVc73eLAUqwV0/QJAyfseh7Wmhd9MsoRQg==
+X-Received: by 2002:a62:50ca:: with SMTP id g71-v6mr7795039pfj.62.1541080425106;
+        Thu, 01 Nov 2018 06:53:45 -0700 (PDT)
 Received: from qualcomm-HP-ZBook-14-G2.domain.name ([106.51.104.211])
-        by smtp.gmail.com with ESMTPSA id 131-v6sm2224716pfa.120.2018.11.01.06.53.34
+        by smtp.gmail.com with ESMTPSA id 131-v6sm2224716pfa.120.2018.11.01.06.53.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 01 Nov 2018 06:53:39 -0700 (PDT)
+        Thu, 01 Nov 2018 06:53:44 -0700 (PDT)
 From:   Firoz Khan <firoz.khan@linaro.org>
 To:     "David S . Miller" <davem@davemloft.net>,
         sparclinux@vger.kernel.org,
@@ -63,88 +65,85 @@ To:     "David S . Miller" <davem@davemloft.net>,
 Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
         linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
         marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH v2 0/4] sparc: system call table generation support
-Date:   Thu,  1 Nov 2018 19:23:07 +0530
-Message-Id: <1541080391-3890-1-git-send-email-firoz.khan@linaro.org>
+Subject: [PATCH v2 1/4] sparc: move __IGNORE* entries to non uapi header
+Date:   Thu,  1 Nov 2018 19:23:08 +0530
+Message-Id: <1541080391-3890-2-git-send-email-firoz.khan@linaro.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1541080391-3890-1-git-send-email-firoz.khan@linaro.org>
+References: <1541080391-3890-1-git-send-email-firoz.khan@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The purpose of this patch series is, we can easily
-add/modify/delete system call table support by cha-
-nging entry in syscall.tbl file instead of manually
-changing many files. The other goal is to unify the 
-system call table generation support implementation 
-across all the architectures. 
+All the __IGNORE* entries are resides in the uapi header
+file move to non uapi header asm/unistd.h as it is not
+used by any user space applications.
 
-The system call tables are in different format in 
-all architecture. It will be difficult to manually
-add, modify or delete the system calls in the resp-
-ective files manually. To make it easy by keeping a 
-script and which'll generate uapi header file and 
-syscall table file.
+It is correct to keep __IGNORE* entry in non uapi header
+asm/unistd.h while uapi/asm/unistd.h must hold information
+only useful for user space applications.
 
-syscall.tbl contains the list of available system 
-calls along with system call number and correspond-
-ing entry point. Add a new system call in this arch-
-itecture will be possible by adding new entry in 
-the syscall.tbl file.
+One of the patch in this patch series will generate uapi
+header file. The information which directly used by the
+user space application must be present in uapi file.
 
-Adding a new table entry consisting of:
-        - System call number.
-        - ABI.
-        - System call name.
-        - Entry point name.
-	- Compat entry name, if required.
+Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
+---
+ arch/sparc/include/asm/unistd.h      | 16 ++++++++++++++++
+ arch/sparc/include/uapi/asm/unistd.h | 16 ----------------
+ 2 files changed, 16 insertions(+), 16 deletions(-)
 
-ARM, s390 and x86 architecuture does exist the sim-
-ilar support. I leverage their implementation to 
-come up with a generic solution.
-
-I have done the same support for work for alpha, 
-ia64, m68k, microblaze, mips, parisc, powerpc, sh 
-and xtensa. Below mentioned git repository contains
-more details about the workflow.
-
- https://github.com/frzkhn/system_call_table_generator/
-
-Finally, this is the ground work to solve the Y2038
-issue. We need to add two dozen of system calls to 
-solve Y2038 issue. So this patch series will help to
-add new system calls easily by adding new entry in the
-syscall.tbl.
-
-Changes since v1:
- - optimized/updated the syscall table generation 
-   scripts.
- - fixed all mixed indentation issues in syscall.tbl.
- - added "comments" in syscall.tbl.
-
-Firoz Khan (4):
-  sparc: move __IGNORE* entries to non uapi header
-  sparc: add __NR_syscalls along with NR_syscalls
-  sparc: add system call table generation support
-  sparc: generate uapi header and system call table files
-
- arch/sparc/Makefile                      |   3 +
- arch/sparc/include/asm/Kbuild            |   4 +-
- arch/sparc/include/asm/unistd.h          |  18 ++
- arch/sparc/include/uapi/asm/Kbuild       |   2 +
- arch/sparc/include/uapi/asm/unistd.h     | 425 +------------------------------
- arch/sparc/kernel/syscalls/Makefile      |  55 ++++
- arch/sparc/kernel/syscalls/syscall.tbl   | 408 +++++++++++++++++++++++++++++
- arch/sparc/kernel/syscalls/syscallhdr.sh |  36 +++
- arch/sparc/kernel/syscalls/syscalltbl.sh |  36 +++
- arch/sparc/kernel/systbls_32.S           |  81 +-----
- arch/sparc/kernel/systbls_64.S           | 157 +-----------
- 11 files changed, 571 insertions(+), 654 deletions(-)
- create mode 100644 arch/sparc/kernel/syscalls/Makefile
- create mode 100644 arch/sparc/kernel/syscalls/syscall.tbl
- create mode 100644 arch/sparc/kernel/syscalls/syscallhdr.sh
- create mode 100644 arch/sparc/kernel/syscalls/syscalltbl.sh
-
+diff --git a/arch/sparc/include/asm/unistd.h b/arch/sparc/include/asm/unistd.h
+index b2a6a95..6dfd752 100644
+--- a/arch/sparc/include/asm/unistd.h
++++ b/arch/sparc/include/asm/unistd.h
+@@ -45,4 +45,20 @@
+ #define __ARCH_WANT_COMPAT_SYS_SENDFILE
+ #endif
+ 
++#ifdef __32bit_syscall_numbers__
++/* Sparc 32-bit only has the "setresuid32", "getresuid32" variants,
++ * it never had the plain ones and there is no value to adding those
++ * old versions into the syscall table.
++ */
++#define __IGNORE_setresuid
++#define __IGNORE_getresuid
++#define __IGNORE_setresgid
++#define __IGNORE_getresgid
++#endif
++
++/* Sparc doesn't have protection keys. */
++#define __IGNORE_pkey_mprotect
++#define __IGNORE_pkey_alloc
++#define __IGNORE_pkey_free
++
+ #endif /* _SPARC_UNISTD_H */
+diff --git a/arch/sparc/include/uapi/asm/unistd.h b/arch/sparc/include/uapi/asm/unistd.h
+index 09acf0d..6e59037 100644
+--- a/arch/sparc/include/uapi/asm/unistd.h
++++ b/arch/sparc/include/uapi/asm/unistd.h
+@@ -433,20 +433,4 @@
+ /* Bitmask values returned from kern_features system call.  */
+ #define KERN_FEATURE_MIXED_MODE_STACK	0x00000001
+ 
+-#ifdef __32bit_syscall_numbers__
+-/* Sparc 32-bit only has the "setresuid32", "getresuid32" variants,
+- * it never had the plain ones and there is no value to adding those
+- * old versions into the syscall table.
+- */
+-#define __IGNORE_setresuid
+-#define __IGNORE_getresuid
+-#define __IGNORE_setresgid
+-#define __IGNORE_getresgid
+-#endif
+-
+-/* Sparc doesn't have protection keys. */
+-#define __IGNORE_pkey_mprotect
+-#define __IGNORE_pkey_alloc
+-#define __IGNORE_pkey_free
+-
+ #endif /* _UAPI_SPARC_UNISTD_H */
 -- 
 1.9.1
 
