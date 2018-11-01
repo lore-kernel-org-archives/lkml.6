@@ -6,92 +6,65 @@ X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48F6AC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 08:31:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2298BC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 08:33:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C3592081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 08:31:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C3592081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D81CC204FD
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 08:33:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D81CC204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728075AbeKARdY (ORCPT
+        id S1728042AbeKARfr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 13:33:24 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53030 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727753AbeKARdY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 13:33:24 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2A0DE80D;
-        Thu,  1 Nov 2018 01:31:24 -0700 (PDT)
-Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.144.41])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 866623F557;
-        Thu,  1 Nov 2018 01:31:23 -0700 (PDT)
-Date:   Thu, 1 Nov 2018 09:31:21 +0100
-From:   Christoffer Dall <christoffer.dall@arm.com>
-To:     Punit Agrawal <punit.agrawal@arm.com>
-Cc:     kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, suzuki.poulose@arm.com,
+        Thu, 1 Nov 2018 13:35:47 -0400
+Received: from verein.lst.de ([213.95.11.211]:43098 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727704AbeKARfr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 13:35:47 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 196CC7F1C0; Thu,  1 Nov 2018 09:33:46 +0100 (CET)
+Date:   Thu, 1 Nov 2018 09:33:46 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     "Maciej W. Rozycki" <macro@linux-mips.org>
+Cc:     Christoph Hellwig <hch@lst.de>, Paul Burton <paul.burton@mips.com>,
+        iommu@lists.linux-foundation.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org,
         stable@vger.kernel.org
-Subject: Re: [PATCH v8 1/9] KVM: arm/arm64: Ensure only THP is candidate for
- adjustment
-Message-ID: <20181101083121.GG12057@e113682-lin.lund.arm.com>
-References: <20181001155443.23032-1-punit.agrawal@arm.com>
- <20181001155443.23032-2-punit.agrawal@arm.com>
- <20181031143646.GE12057@e113682-lin.lund.arm.com>
- <87h8h2rwwr.fsf@e105922-lin.cambridge.arm.com>
+Subject: Re: [PATCH] MIPS: Fix `dma_alloc_coherent' returning a
+ non-coherent allocation
+Message-ID: <20181101083346.GA7136@lst.de>
+References: <20180914095808.22202-1-hch@lst.de> <20180914095808.22202-5-hch@lst.de> <alpine.LFD.2.21.1810311414200.20378@eddie.linux-mips.org> <alpine.LFD.2.21.1810311559590.20378@eddie.linux-mips.org> <20181031203206.GA28337@lst.de> <alpine.LFD.2.21.1810312043250.20378@eddie.linux-mips.org> <20181101051359.GA4164@lst.de> <alpine.LFD.2.21.1811010523440.20378@eddie.linux-mips.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87h8h2rwwr.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <alpine.LFD.2.21.1811010523440.20378@eddie.linux-mips.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 02:52:20PM +0000, Punit Agrawal wrote:
-> Christoffer Dall <christoffer.dall@arm.com> writes:
+On Thu, Nov 01, 2018 at 07:54:24AM +0000, Maciej W. Rozycki wrote:
+> Fix a MIPS `dma_alloc_coherent' regression from commit bc3ec75de545 
+> ("dma-mapping: merge direct and noncoherent ops") that causes a cached 
+> allocation to be returned on noncoherent cache systems.
 > 
-> > On Mon, Oct 01, 2018 at 04:54:35PM +0100, Punit Agrawal wrote:
-> >> PageTransCompoundMap() returns true for hugetlbfs and THP
-> >> hugepages. This behaviour incorrectly leads to stage 2 faults for
-> >> unsupported hugepage sizes (e.g., 64K hugepage with 4K pages) to be
-> >> treated as THP faults.
-> >> 
-> >> Tighten the check to filter out hugetlbfs pages. This also leads to
-> >> consistently mapping all unsupported hugepage sizes as PTE level
-> >> entries at stage 2.
-> >> 
-> >> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-> >> Reviewed-by: Suzuki Poulose <suzuki.poulose@arm.com>
-> >> Cc: Christoffer Dall <christoffer.dall@arm.com>
-> >> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> >> Cc: stable@vger.kernel.org # v4.13+
-> >
-> >
-> > Hmm, this function is only actually called from user_mem_abort() if we
-> > have (!hugetlb), so I'm not sure the cc stable here was actually
-> > warranted, nor that this patch is strictly necessary.
-> >
-> > It doesn't hurt, and makes the code potentially more robust for the
-> > future though.
-> >
-> > Am I missing something?
+> This is due to an inverted check now used in the MIPS implementation of 
+> `arch_dma_alloc' on the result from `dma_direct_alloc_pages' before 
+> doing the cached-to-uncached mapping of the allocation address obtained.  
+> The mapping has to be done for a non-NULL rather than NULL result, 
+> because a NULL result means the allocation has failed.
 > 
-> !hugetlb is only true for hugepage sizes supported at stage 2. The
-> function also got called for unsupported hugepage size at stage 2, e.g.,
-> 64k hugepage with 4k page size, which then ended up doing the wrong
-> thing.
+> Invert the check for correct operation then.
 > 
-> Hope that adds some context. I should've added this to the commit log.
-> 
+> Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
+> Fixes: bc3ec75de545 ("dma-mapping: merge direct and noncoherent ops")
+> Cc: stable@vger.kernel.org # 4.19+
 
-To be fair you did say that this was for unsupported hugepage sizes.
+Oops, yes this looks good:
 
-Thanks for the explanation.
-
-
-    Christoffer
+Reviewed-by: Christoph Hellwig <hch@lst.de>
