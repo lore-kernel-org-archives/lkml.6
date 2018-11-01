@@ -2,542 +2,156 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7498C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:00:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40915C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:00:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58C0C20831
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:00:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="RQsjeoOB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58C0C20831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	by mail.kernel.org (Postfix) with ESMTP id 078D220833
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:00:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 078D220833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728429AbeKATCh (ORCPT
+        id S1728438AbeKATCm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 15:02:37 -0400
-Received: from mail.efficios.com ([167.114.142.138]:42076 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728207AbeKATCh (ORCPT
+        Thu, 1 Nov 2018 15:02:42 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:5751 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728110AbeKATCl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 15:02:37 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id C9681227754;
-        Thu,  1 Nov 2018 06:00:18 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id Yj5tQMsyjb47; Thu,  1 Nov 2018 06:00:18 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 2519F227750;
-        Thu,  1 Nov 2018 06:00:18 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 2519F227750
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1541066418;
-        bh=Vj8AAHlV7YW4TWnB/pJ/RCkZAruFfnqjDu69sbCjJtU=;
-        h=From:To:Date:Message-Id;
-        b=RQsjeoOBms0t7uHoLE+WYKM1/eWxhawGugytEa++ANms/V0AQo51lMjqwzTr/WQ+L
-         6n0s0908xZbGprgxPyzmA4j+6Gk1UodMSPo99vhDLVBSq645/sgsWGw0HXqXlXPff1
-         FnDHqAR5OGi6uklqeE233M2QdxvRFgWse9XNPWbynbkbjP1swbAD3L2/doFIaQmRKx
-         vExI0EezTOcr4mmAXDh224//xtcmz0+j0yQrUnSUu0rOzR6Dkcv6ZMwaAhadNUKjfl
-         115NOX1bL/5TWK0kfzePnV4PpeEy6N8qLhKaFcuEQ7uV/WEZ7Zu2XbwfshQg82NT0v
-         /DsvYigzGAwaw==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id 5T1F_hPYUES2; Thu,  1 Nov 2018 06:00:18 -0400 (EDT)
-Received: from thinkos.etherlink (sessfw99-sesbfw99-92.ericsson.net [192.176.1.92])
-        by mail.efficios.com (Postfix) with ESMTPSA id 6E328227745;
-        Thu,  1 Nov 2018 06:00:12 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <andi@firstfloor.org>, Chris Lameter <cl@linux.com>,
-        Ben Maurer <bmaurer@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
-Subject: [RFC PATCH for 4.21 11/16] cpu-opv/selftests: Provide cpu-op library
-Date:   Thu,  1 Nov 2018 10:58:39 +0100
-Message-Id: <20181101095844.24462-12-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20181101095844.24462-1-mathieu.desnoyers@efficios.com>
-References: <20181101095844.24462-1-mathieu.desnoyers@efficios.com>
+        Thu, 1 Nov 2018 15:02:41 -0400
+X-UUID: 231f544c196141b9b9c97d8430f4790c-20181101
+X-UUID: 231f544c196141b9b9c97d8430f4790c-20181101
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1889526776; Thu, 01 Nov 2018 18:00:13 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 1 Nov 2018 18:00:12 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 1 Nov 2018 18:00:12 +0800
+Message-ID: <1541066412.31492.10.camel@mtkswgap22>
+Subject: Re: [PATCH v3] mm/page_owner: use kvmalloc instead of kmalloc
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     Michal Hocko <mhocko@kernel.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Joe Perches <joe@perches.com>,
+        Matthew Wilcox <willy@infradead.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>
+Date:   Thu, 1 Nov 2018 18:00:12 +0800
+In-Reply-To: <20181031114107.GM32673@dhcp22.suse.cz>
+References: <1540790176-32339-1-git-send-email-miles.chen@mediatek.com>
+         <20181029080708.GA32673@dhcp22.suse.cz>
+         <20181029081706.GC32673@dhcp22.suse.cz>
+         <1540862950.12374.40.camel@mtkswgap22>
+         <20181030060601.GR32673@dhcp22.suse.cz>
+         <1540882551.23278.12.camel@mtkswgap22>
+         <20181030081537.GV32673@dhcp22.suse.cz>
+         <1540975637.10275.10.camel@mtkswgap22>
+         <20181031101501.GL32673@dhcp22.suse.cz>
+         <1540981182.16084.1.camel@mtkswgap22>
+         <20181031114107.GM32673@dhcp22.suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-TM-SNTS-SMTP: 6423753B92B0DDE292E4BBE4CD6C9323F6C0E2A3901B41243E62C9671074546A2000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This cpu-op helper library provides a user-space API to the cpu_opv()
-system call.
+On Wed, 2018-10-31 at 12:41 +0100, Michal Hocko wrote:
+> On Wed 31-10-18 18:19:42, Miles Chen wrote:
+> > On Wed, 2018-10-31 at 11:15 +0100, Michal Hocko wrote:
+> > > On Wed 31-10-18 16:47:17, Miles Chen wrote:
+> > > > On Tue, 2018-10-30 at 09:15 +0100, Michal Hocko wrote:
+> > > > > On Tue 30-10-18 14:55:51, Miles Chen wrote:
+> > > > > [...]
+> > > > > > It's a real problem when using page_owner.
+> > > > > > I found this issue recently: I'm not able to read page_owner information
+> > > > > > during a overnight test. (error: read failed: Out of memory). I replace
+> > > > > > kmalloc() with vmalloc() and it worked well.
+> > > > > 
+> > > > > Is this with trimming the allocation to a single page and doing shorter
+> > > > > than requested reads?
+> > > > 
+> > > > 
+> > > > I printed out the allocate count on my device the request count is <=
+> > > > 4096. So I tested this scenario by trimming the count to from 4096 to
+> > > > 1024 bytes and it works fine. 
+> > > > 
+> > > > count = count > 1024? 1024: count;
+> > > > 
+> > > > It tested it on both 32bit and 64bit kernel.
+> > > 
+> > > Are you saying that you see OOMs for 4k size?
+> > > 
+> > yes, because kmalloc only use normal memor, not highmem + normal memory
+> > I think that's why vmalloc() works.
+> 
+> Can I see an OOM report please? I am especially interested that 1k
+> doesn't cause the problem because there shouldn't be that much of a
+> difference between the two. Larger allocations could be a result of
+> memory fragmentation but 1k vs. 4k to make a difference really seems
+> unexpected.
+> 
+You're right.
 
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Joel Fernandes <joelaf@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Dave Watson <davejwatson@fb.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Andi Kleen <andi@firstfloor.org>
-Cc: linux-kselftest@vger.kernel.org
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: Chris Lameter <cl@linux.com>
-Cc: Russell King <linux@arm.linux.org.uk>
-Cc: Michael Kerrisk <mtk.manpages@gmail.com>
-Cc: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Paul Turner <pjt@google.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Josh Triplett <josh@joshtriplett.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ben Maurer <bmaurer@fb.com>
-Cc: linux-api@vger.kernel.org
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
----
- tools/testing/selftests/cpu-opv/cpu-op.c | 362 +++++++++++++++++++++++++++++++
- tools/testing/selftests/cpu-opv/cpu-op.h |  43 ++++
- 2 files changed, 405 insertions(+)
- create mode 100644 tools/testing/selftests/cpu-opv/cpu-op.c
- create mode 100644 tools/testing/selftests/cpu-opv/cpu-op.h
+I pulled out the log and found  that the allocation fail is for order=4.
 
-diff --git a/tools/testing/selftests/cpu-opv/cpu-op.c b/tools/testing/selftests/cpu-opv/cpu-op.c
-new file mode 100644
-index 000000000000..0cdc39bffbbf
---- /dev/null
-+++ b/tools/testing/selftests/cpu-opv/cpu-op.c
-@@ -0,0 +1,362 @@
-+// SPDX-License-Identifier: LGPL-2.1
-+/*
-+ * cpu-op.c
-+ *
-+ * Copyright (C) 2017 Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-+ *
-+ * This library is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU Lesser General Public
-+ * License as published by the Free Software Foundation; only
-+ * version 2.1 of the License.
-+ *
-+ * This library is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-+ * Lesser General Public License for more details.
-+ */
-+
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <sched.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <syscall.h>
-+#include <assert.h>
-+#include <signal.h>
-+
-+#include "cpu-op.h"
-+
-+#define ARRAY_SIZE(arr)	(sizeof(arr) / sizeof((arr)[0]))
-+
-+#define ACCESS_ONCE(x)		(*(__volatile__  __typeof__(x) *)&(x))
-+#define WRITE_ONCE(x, v)	__extension__ ({ ACCESS_ONCE(x) = (v); })
-+#define READ_ONCE(x)		ACCESS_ONCE(x)
-+
-+int cpu_opv(struct cpu_op *cpu_opv, int cpuopcnt, int cpu, int flags)
-+{
-+	return syscall(__NR_cpu_opv, cpu_opv, cpuopcnt, cpu, flags);
-+}
-+
-+int cpu_op_get_current_cpu(void)
-+{
-+	int cpu;
-+
-+	cpu = sched_getcpu();
-+	if (cpu < 0) {
-+		perror("sched_getcpu()");
-+		abort();
-+	}
-+	return cpu;
-+}
-+
-+int cpu_op_cmpxchg(void *v, void *expect, void *old, void *n, size_t len,
-+		   int cpu)
-+{
-+	struct cpu_op opvec[] = {
-+		[0] = {
-+			.op = CPU_MEMCPY_OP,
-+			.len = len,
-+			.u.memcpy_op.dst = (unsigned long)old,
-+			.u.memcpy_op.src = (unsigned long)v,
-+			.u.memcpy_op.expect_fault_dst = 0,
-+			.u.memcpy_op.expect_fault_src = 0,
-+		},
-+		[1] = {
-+			.op = CPU_COMPARE_EQ_OP,
-+			.len = len,
-+			.u.compare_op.a = (unsigned long)v,
-+			.u.compare_op.b = (unsigned long)expect,
-+			.u.compare_op.expect_fault_a = 0,
-+			.u.compare_op.expect_fault_b = 0,
-+		},
-+		[2] = {
-+			.op = CPU_MEMCPY_OP,
-+			.len = len,
-+			.u.memcpy_op.dst = (unsigned long)v,
-+			.u.memcpy_op.src = (unsigned long)n,
-+			.u.memcpy_op.expect_fault_dst = 0,
-+			.u.memcpy_op.expect_fault_src = 0,
-+		},
-+	};
-+
-+	return cpu_opv(opvec, ARRAY_SIZE(opvec), cpu, 0);
-+}
-+
-+int cpu_op_add(void *v, int64_t count, size_t len, int cpu)
-+{
-+	struct cpu_op opvec[] = {
-+		[0] = {
-+			.op = CPU_ADD_OP,
-+			.len = len,
-+			.u.arithmetic_op.p = (unsigned long)v,
-+			.u.arithmetic_op.count = count,
-+			.u.arithmetic_op.expect_fault_p = 0,
-+		},
-+	};
-+
-+	return cpu_opv(opvec, ARRAY_SIZE(opvec), cpu, 0);
-+}
-+
-+int cpu_op_add_release(void *v, int64_t count, size_t len, int cpu)
-+{
-+	struct cpu_op opvec[] = {
-+		[0] = {
-+			.op = CPU_ADD_RELEASE_OP,
-+			.len = len,
-+			.u.arithmetic_op.p = (unsigned long)v,
-+			.u.arithmetic_op.count = count,
-+			.u.arithmetic_op.expect_fault_p = 0,
-+		},
-+	};
-+
-+	return cpu_opv(opvec, ARRAY_SIZE(opvec), cpu, 0);
-+}
-+
-+int cpu_op_cmpeqv_storev(intptr_t *v, intptr_t expect, intptr_t newv,
-+			 int cpu)
-+{
-+	struct cpu_op opvec[] = {
-+		[0] = {
-+			.op = CPU_COMPARE_EQ_OP,
-+			.len = sizeof(intptr_t),
-+			.u.compare_op.a = (unsigned long)v,
-+			.u.compare_op.b = (unsigned long)&expect,
-+			.u.compare_op.expect_fault_a = 0,
-+			.u.compare_op.expect_fault_b = 0,
-+		},
-+		[1] = {
-+			.op = CPU_MEMCPY_OP,
-+			.len = sizeof(intptr_t),
-+			.u.memcpy_op.dst = (unsigned long)v,
-+			.u.memcpy_op.src = (unsigned long)&newv,
-+			.u.memcpy_op.expect_fault_dst = 0,
-+			.u.memcpy_op.expect_fault_src = 0,
-+		},
-+	};
-+
-+	return cpu_opv(opvec, ARRAY_SIZE(opvec), cpu, 0);
-+}
-+
-+static int cpu_op_cmpeqv_storep_expect_fault(intptr_t *v, intptr_t expect,
-+					     intptr_t *newp, int cpu)
-+{
-+	struct cpu_op opvec[] = {
-+		[0] = {
-+			.op = CPU_COMPARE_EQ_OP,
-+			.len = sizeof(intptr_t),
-+			.u.compare_op.a = (unsigned long)v,
-+			.u.compare_op.b = (unsigned long)&expect,
-+			.u.compare_op.expect_fault_a = 0,
-+			.u.compare_op.expect_fault_b = 0,
-+		},
-+		[1] = {
-+			.op = CPU_MEMCPY_OP,
-+			.len = sizeof(intptr_t),
-+			.u.memcpy_op.dst = (unsigned long)v,
-+			.u.memcpy_op.src = (unsigned long)newp,
-+			.u.memcpy_op.expect_fault_dst = 0,
-+			/* Return EAGAIN on src fault. */
-+			.u.memcpy_op.expect_fault_src = 1,
-+		},
-+	};
-+
-+	return cpu_opv(opvec, ARRAY_SIZE(opvec), cpu, 0);
-+}
-+
-+int cpu_op_cmpnev_storeoffp_load(intptr_t *v, intptr_t expectnot,
-+				 off_t voffp, intptr_t *load, int cpu)
-+{
-+	int ret;
-+
-+	do {
-+		intptr_t oldv = READ_ONCE(*v);
-+		intptr_t *newp = (intptr_t *)(oldv + voffp);
-+
-+		if (oldv == expectnot)
-+			return 1;
-+		ret = cpu_op_cmpeqv_storep_expect_fault(v, oldv, newp, cpu);
-+		if (!ret) {
-+			*load = oldv;
-+			return 0;
-+		}
-+	} while (ret > 0);
-+
-+	return -1;
-+}
-+
-+int cpu_op_cmpeqv_storev_storev(intptr_t *v, intptr_t expect,
-+				intptr_t *v2, intptr_t newv2,
-+				intptr_t newv, int cpu)
-+{
-+	struct cpu_op opvec[] = {
-+		[0] = {
-+			.op = CPU_COMPARE_EQ_OP,
-+			.len = sizeof(intptr_t),
-+			.u.compare_op.a = (unsigned long)v,
-+			.u.compare_op.b = (unsigned long)&expect,
-+			.u.compare_op.expect_fault_a = 0,
-+			.u.compare_op.expect_fault_b = 0,
-+		},
-+		[1] = {
-+			.op = CPU_MEMCPY_OP,
-+			.len = sizeof(intptr_t),
-+			.u.memcpy_op.dst = (unsigned long)v2,
-+			.u.memcpy_op.src = (unsigned long)&newv2,
-+			.u.memcpy_op.expect_fault_dst = 0,
-+			.u.memcpy_op.expect_fault_src = 0,
-+		},
-+		[2] = {
-+			.op = CPU_MEMCPY_OP,
-+			.len = sizeof(intptr_t),
-+			.u.memcpy_op.dst = (unsigned long)v,
-+			.u.memcpy_op.src = (unsigned long)&newv,
-+			.u.memcpy_op.expect_fault_dst = 0,
-+			.u.memcpy_op.expect_fault_src = 0,
-+		},
-+	};
-+
-+	return cpu_opv(opvec, ARRAY_SIZE(opvec), cpu, 0);
-+}
-+
-+int cpu_op_cmpeqv_storev_storev_release(intptr_t *v, intptr_t expect,
-+				   intptr_t *v2, intptr_t newv2,
-+				   intptr_t newv, int cpu)
-+{
-+	struct cpu_op opvec[] = {
-+		[0] = {
-+			.op = CPU_COMPARE_EQ_OP,
-+			.len = sizeof(intptr_t),
-+			.u.compare_op.a = (unsigned long)v,
-+			.u.compare_op.b = (unsigned long)&expect,
-+			.u.compare_op.expect_fault_a = 0,
-+			.u.compare_op.expect_fault_b = 0,
-+		},
-+		[1] = {
-+			.op = CPU_MEMCPY_OP,
-+			.len = sizeof(intptr_t),
-+			.u.memcpy_op.dst = (unsigned long)v2,
-+			.u.memcpy_op.src = (unsigned long)&newv2,
-+			.u.memcpy_op.expect_fault_dst = 0,
-+			.u.memcpy_op.expect_fault_src = 0,
-+		},
-+		[2] = {
-+			.op = CPU_MEMCPY_RELEASE_OP,
-+			.len = sizeof(intptr_t),
-+			.u.memcpy_op.dst = (unsigned long)v,
-+			.u.memcpy_op.src = (unsigned long)&newv,
-+			.u.memcpy_op.expect_fault_dst = 0,
-+			.u.memcpy_op.expect_fault_src = 0,
-+		},
-+	};
-+
-+	return cpu_opv(opvec, ARRAY_SIZE(opvec), cpu, 0);
-+}
-+
-+int cpu_op_cmpeqv_cmpeqv_storev(intptr_t *v, intptr_t expect,
-+				intptr_t *v2, intptr_t expect2,
-+				intptr_t newv, int cpu)
-+{
-+	struct cpu_op opvec[] = {
-+		[0] = {
-+			.op = CPU_COMPARE_EQ_OP,
-+			.len = sizeof(intptr_t),
-+			.u.compare_op.a = (unsigned long)v,
-+			.u.compare_op.b = (unsigned long)&expect,
-+			.u.compare_op.expect_fault_a = 0,
-+			.u.compare_op.expect_fault_b = 0,
-+		},
-+		[1] = {
-+			.op = CPU_COMPARE_EQ_OP,
-+			.len = sizeof(intptr_t),
-+			.u.compare_op.a = (unsigned long)v2,
-+			.u.compare_op.b = (unsigned long)&expect2,
-+			.u.compare_op.expect_fault_a = 0,
-+			.u.compare_op.expect_fault_b = 0,
-+		},
-+		[2] = {
-+			.op = CPU_MEMCPY_OP,
-+			.len = sizeof(intptr_t),
-+			.u.memcpy_op.dst = (unsigned long)v,
-+			.u.memcpy_op.src = (unsigned long)&newv,
-+			.u.memcpy_op.expect_fault_dst = 0,
-+			.u.memcpy_op.expect_fault_src = 0,
-+		},
-+	};
-+
-+	return cpu_opv(opvec, ARRAY_SIZE(opvec), cpu, 0);
-+}
-+
-+int cpu_op_cmpeqv_memcpy_storev(intptr_t *v, intptr_t expect,
-+				void *dst, void *src, size_t len,
-+				intptr_t newv, int cpu)
-+{
-+	struct cpu_op opvec[] = {
-+		[0] = {
-+			.op = CPU_COMPARE_EQ_OP,
-+			.len = sizeof(intptr_t),
-+			.u.compare_op.a = (unsigned long)v,
-+			.u.compare_op.b = (unsigned long)&expect,
-+			.u.compare_op.expect_fault_a = 0,
-+			.u.compare_op.expect_fault_b = 0,
-+		},
-+		[1] = {
-+			.op = CPU_MEMCPY_OP,
-+			.len = len,
-+			.u.memcpy_op.dst = (unsigned long)dst,
-+			.u.memcpy_op.src = (unsigned long)src,
-+			.u.memcpy_op.expect_fault_dst = 0,
-+			.u.memcpy_op.expect_fault_src = 0,
-+		},
-+		[2] = {
-+			.op = CPU_MEMCPY_OP,
-+			.len = sizeof(intptr_t),
-+			.u.memcpy_op.dst = (unsigned long)v,
-+			.u.memcpy_op.src = (unsigned long)&newv,
-+			.u.memcpy_op.expect_fault_dst = 0,
-+			.u.memcpy_op.expect_fault_src = 0,
-+		},
-+	};
-+
-+	return cpu_opv(opvec, ARRAY_SIZE(opvec), cpu, 0);
-+}
-+
-+int cpu_op_cmpeqv_memcpy_storev_release(intptr_t *v, intptr_t expect,
-+				   void *dst, void *src, size_t len,
-+				   intptr_t newv, int cpu)
-+{
-+	struct cpu_op opvec[] = {
-+		[0] = {
-+			.op = CPU_COMPARE_EQ_OP,
-+			.len = sizeof(intptr_t),
-+			.u.compare_op.a = (unsigned long)v,
-+			.u.compare_op.b = (unsigned long)&expect,
-+			.u.compare_op.expect_fault_a = 0,
-+			.u.compare_op.expect_fault_b = 0,
-+		},
-+		[1] = {
-+			.op = CPU_MEMCPY_OP,
-+			.len = len,
-+			.u.memcpy_op.dst = (unsigned long)dst,
-+			.u.memcpy_op.src = (unsigned long)src,
-+			.u.memcpy_op.expect_fault_dst = 0,
-+			.u.memcpy_op.expect_fault_src = 0,
-+		},
-+		[2] = {
-+			.op = CPU_MEMCPY_RELEASE_OP,
-+			.len = sizeof(intptr_t),
-+			.u.memcpy_op.dst = (unsigned long)v,
-+			.u.memcpy_op.src = (unsigned long)&newv,
-+			.u.memcpy_op.expect_fault_dst = 0,
-+			.u.memcpy_op.expect_fault_src = 0,
-+		},
-+	};
-+
-+	return cpu_opv(opvec, ARRAY_SIZE(opvec), cpu, 0);
-+}
-+
-+int cpu_op_addv(intptr_t *v, int64_t count, int cpu)
-+{
-+	return cpu_op_add(v, count, sizeof(intptr_t), cpu);
-+}
-diff --git a/tools/testing/selftests/cpu-opv/cpu-op.h b/tools/testing/selftests/cpu-opv/cpu-op.h
-new file mode 100644
-index 000000000000..853fcb302516
---- /dev/null
-+++ b/tools/testing/selftests/cpu-opv/cpu-op.h
-@@ -0,0 +1,43 @@
-+/* SPDX-License-Identifier: LGPL-2.1 OR MIT */
-+/*
-+ * cpu-op.h
-+ *
-+ * (C) Copyright 2017-2018 - Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-+ */
-+
-+#ifndef CPU_OPV_H
-+#define CPU_OPV_H
-+
-+#include <stdlib.h>
-+#include <stdint.h>
-+#include <linux/cpu_opv.h>
-+
-+int cpu_opv(struct cpu_op *cpuopv, int cpuopcnt, int cpu, int flags);
-+int cpu_op_get_current_cpu(void);
-+
-+int cpu_op_cmpxchg(void *v, void *expect, void *old, void *_new, size_t len,
-+		   int cpu);
-+int cpu_op_add(void *v, int64_t count, size_t len, int cpu);
-+int cpu_op_add_release(void *v, int64_t count, size_t len, int cpu);
-+
-+int cpu_op_cmpeqv_storev(intptr_t *v, intptr_t expect, intptr_t newv, int cpu);
-+int cpu_op_cmpnev_storeoffp_load(intptr_t *v, intptr_t expectnot,
-+				 off_t voffp, intptr_t *load, int cpu);
-+int cpu_op_cmpeqv_storev_storev(intptr_t *v, intptr_t expect,
-+				intptr_t *v2, intptr_t newv2,
-+				intptr_t newv, int cpu);
-+int cpu_op_cmpeqv_storev_storev_release(intptr_t *v, intptr_t expect,
-+				   intptr_t *v2, intptr_t newv2,
-+				   intptr_t newv, int cpu);
-+int cpu_op_cmpeqv_cmpeqv_storev(intptr_t *v, intptr_t expect,
-+				intptr_t *v2, intptr_t expect2,
-+				intptr_t newv, int cpu);
-+int cpu_op_cmpeqv_memcpy_storev(intptr_t *v, intptr_t expect,
-+				void *dst, void *src, size_t len,
-+				intptr_t newv, int cpu);
-+int cpu_op_cmpeqv_memcpy_storev_release(intptr_t *v, intptr_t expect,
-+				   void *dst, void *src, size_t len,
-+				   intptr_t newv, int cpu);
-+int cpu_op_addv(intptr_t *v, int64_t count, int cpu);
-+
-+#endif  /* CPU_OPV_H_ */
--- 
-2.11.0
+I found that the if I do the read on the device, the read count is <=
+4096; if I do the read by 'adb pull' from my host PC, the read count
+becomes 65532. (I'm working on a android device)
+
+The overnight test used 'adb pull' command, so allocation fail occurred
+because of the large read count and the arbitrary size allocation design
+of page_owner. That also explains why vmalloc() works.
+
+I did a test today, the only code changed is to clamp to read count to
+PAGE_SIZE and it worked well. Maybe we can solve this issue by just
+clamping the read count.
+
+count = count > PAGE_SIZE ? PAGE_SIZE : count;
+
+
+Here is the log:
+
+<4>[  261.841770] (0)[2880:sync svc 43]sync svc 43: page allocation
+failure: order:4, mode:0x24040c0
+<4>[  261.841815]-(0)[2880:sync svc 43]CPU: 0 PID: 2880 Comm: sync svc
+43 Tainted: G        W  O    4.4.146+ #16
+<4>[  261.841825]-(0)[2880:sync svc 43]Hardware name: Generic DT based
+system
+<4>[  261.841834]-(0)[2880:sync svc 43]Backtrace:
+<4>[  261.841844]-(0)[2880:sync svc 43][<c010d57c>] (dump_backtrace)
+from [<c010d7a4>] (show_stack+0x18/0x1c)
+<4>[  261.841866]-(0)[2880:sync svc 43] r6:60030013 r5:c123d488
+r4:00000000 r3:dc8ba692
+<4>[  261.841880]-(0)[2880:sync svc 43][<c010d78c>] (show_stack) from
+[<c0470b84>] (dump_stack+0x94/0xa8)
+<4>[  261.841892]-(0)[2880:sync svc 43][<c0470af0>] (dump_stack) from
+[<c0236060>] (warn_alloc_failed+0x108/0x148)
+<4>[  261.841905]-(0)[2880:sync svc 43] r6:00000000 r5:024040c0
+r4:c1204948 r3:dc8ba692
+<4>[  261.841919]-(0)[2880:sync svc 43][<c0235f5c>] (warn_alloc_failed)
+from [<c023a284>] (__alloc_pages_nodemask+0xa08/0xbd8)
+<4>[  261.841929]-(0)[2880:sync svc 43] r3:0000000f r2:00000000
+<4>[  261.841939]-(0)[2880:sync svc 43] r8:0000002f r7:00000004
+r6:dbb7a000 r5:024040c0
+<4>[  261.841953]-(0)[2880:sync svc 43][<c023987c>]
+(__alloc_pages_nodemask) from [<c023a5fc>] (alloc_kmem_pages+0x18/0x20)
+<4>[  261.841963]-(0)[2880:sync svc 43] r10:c0286560 r9:c027b348
+r8:0000fff8 r7:00000004
+<4>[  261.841978]-(0)[2880:sync svc 43][<c023a5e4>] (alloc_kmem_pages)
+from [<c02573c0>] (kmalloc_order_trace+0x2c/0xec)
+
 
