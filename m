@@ -2,129 +2,166 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A5FC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:59:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7722DC6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:00:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC2C920820
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:59:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CsL5aqC3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC2C920820
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 418C620820
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:00:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 418C620820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727350AbeKBCD2 (ORCPT
+        id S1727465AbeKBCDx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 22:03:28 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41439 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726042AbeKBCD2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 22:03:28 -0400
-Received: by mail-pg1-f196.google.com with SMTP id k13so978408pga.8;
-        Thu, 01 Nov 2018 09:59:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=uiasgtM/p2VjObQyowWTRMYBJV4UN1vpzjydvWmpilw=;
-        b=CsL5aqC3fgiWUT/vnO3c3Iz6dowQUJGH0LtWvq37CQkceZVg7q9lfb2nJokjeut3eg
-         uutEzFXPiRF2SuEDNe2tOGJKEA0GpbIi8xfgI3bb5neR91zQr0opxUxOoe0FdWE849nL
-         ThYqgTV7KEg6hDd0vXnCAUXj/zZbx3bwxlwqUd8G9+1mw8Hrepwn695WW+cHC11z6UTk
-         B/sCZmZHaElfOybrgyjSqI/jzdQLygz8ed7V5A1XiKETD/2kKExaQPTlAuirLMj7Ucv8
-         +8bGff0edSwtGLkq56+AGyWh5lVKRWshTvFVXf5FSn1hQOog04TCVgw+d04fvk5y51bK
-         PsdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uiasgtM/p2VjObQyowWTRMYBJV4UN1vpzjydvWmpilw=;
-        b=cjmnfm3f8re4hmvA0J2BlGBDAV82aK+fGS79Dx0d0Y24pQab48pwyQwdcnJRnAnxnd
-         4oSJcpbsNCOPKy4ct20oO0uByYuoi1OsOvv7rFce2GAsaYop2c7Hrw8TuwMnCEPHgfvE
-         DIzH4PxQSZ1ppFz+oZ952gWNzV18YbWLcks3ODuBV0bojM9lhS5CcZL618tWSPtN1Jmr
-         LQ/6xvLcHkqdvpCMD1Fx/N3ji2gpe2lxFVDayryca4eyYJwHvy04W+TYsqIPlwug/tjG
-         niH+1a7G+4lDNslqE+iXwXfKwF9zGDFfWiIi/tOdjSypjUOwvBDp9q+iYdoyuMUNDTWY
-         RRKg==
-X-Gm-Message-State: AGRZ1gK04vvZFzhLu2WzHUaOUteE+0kWsFGa40qsl4CDfXdH2WnIQ4gK
-        rW7VyRXsrOxsbX0EhYrBUp4=
-X-Google-Smtp-Source: AJdET5dZ17VY146v8M8MAXofuxvt+4Be+sC26ENz/XUmO6FhZfoX1HeV6Bo7f7nv+PI/WAq9YyKzJQ==
-X-Received: by 2002:a62:9f90:: with SMTP id v16-v6mr8498448pfk.207.1541091580382;
-        Thu, 01 Nov 2018 09:59:40 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2c1:200:55c7:81e6:c7d8:94b? ([2620:15c:2c1:200:55c7:81e6:c7d8:94b])
-        by smtp.gmail.com with ESMTPSA id u62-v6sm53459766pfu.69.2018.11.01.09.59.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Nov 2018 09:59:39 -0700 (PDT)
-Subject: Re: [RFC PATCH] lib: Introduce generic __cmpxchg_u64() and use it
- where needed
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Trond Myklebust <trondmy@hammerspace.com>
-Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ralf@linux-mips.org" <ralf@linux-mips.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
-        "paul.burton@mips.com" <paul.burton@mips.com>,
-        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        "jhogan@kernel.org" <jhogan@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        aryabinin@virtuozzo.com, dvyukov@google.com
-References: <1541015538-11382-1-git-send-email-linux@roeck-us.net>
- <20181031213240.zhh7dfcm47ucuyfl@pburton-laptop>
- <20181031220253.GA15505@roeck-us.net>
- <20181031233235.qbedw3pinxcuk7me@pburton-laptop>
- <4e2438a23d2edf03368950a72ec058d1d299c32e.camel@hammerspace.com>
- <20181101131846.biyilr2msonljmij@lakrids.cambridge.arm.com>
- <20181101145926.GE3178@hirez.programming.kicks-ass.net>
- <f38e272f7a96e983549e4281aa9fd02833a4277a.camel@hammerspace.com>
- <20181101163212.GF3159@hirez.programming.kicks-ass.net>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <b0160f4b-b996-b0ee-405a-3d5f1866272e@gmail.com>
-Date:   Thu, 1 Nov 2018 09:59:38 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181101163212.GF3159@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 1 Nov 2018 22:03:53 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56548 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726042AbeKBCDx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 22:03:53 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5DCC05CC;
+        Thu,  1 Nov 2018 17:00:04 +0000 (UTC)
+Received: from krava.brq.redhat.com (unknown [10.43.17.150])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0D189612BF;
+        Thu,  1 Nov 2018 17:00:01 +0000 (UTC)
+From:   Jiri Olsa <jolsa@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Krister Johansen <kjlx@templeofstupid.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: [PATCH] perf tools: Restore proper cwd on return from mnt ns
+Date:   Thu,  1 Nov 2018 18:00:01 +0100
+Message-Id: <20181101170001.30019-1-jolsa@kernel.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 01 Nov 2018 17:00:04 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When reporting on 'record' server we try to retrieve/use
+the mnt namespace of the profiled tasks. We use following
+API with cookie to hold the return namespace, roughly:
 
+  nsinfo__mountns_enter(struct nsinfo *nsi, struct nscookie *nc)
+    setns(newns, 0);
+  ...
+  new ns related open..
+  ...
+  nsinfo__mountns_exit(struct nscookie *nc)
+    setns(nc->oldns)
 
-On 11/01/2018 09:32 AM, Peter Zijlstra wrote:
+Once finished we setns to old namespace, which also sets the
+current working directory (cwd) to "/", trashing the cwd we had.
 
->> Anyhow, if the atomic maintainers are willing to stand up and state for
->> the record that the atomic counters are guaranteed to wrap modulo 2^n
->> just like unsigned integers, then I'm happy to take Paul's patch.
-> 
-> I myself am certainly relying on it.
+This is mostly fine, because we use absolute paths almost everywhere,
+but it screws up perf diff:
 
+  # perf diff
+  failed to open perf.data: No such file or directory  (try 'perf record' first)
+  ...
 
-Could we get uatomic_t support maybe ?
+Adding the current working directory to be part of the cookie
+and restoring it in the nsinfo__mountns_exit call.
 
-This reminds me of this sooooo silly patch :/
+Cc: Krister Johansen <kjlx@templeofstupid.com>
+Fixes: 843ff37bb59e ("perf symbols: Find symbols in different mount namespace")
+Link: http://lkml.kernel.org/n/tip-zg3vz7kjr86cco7lo91v8yhj@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ tools/perf/util/namespaces.c | 18 ++++++++++++++++--
+ tools/perf/util/namespaces.h |  1 +
+ 2 files changed, 17 insertions(+), 2 deletions(-)
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=adb03115f4590baa280ddc440a8eff08a6be0cb7
+diff --git a/tools/perf/util/namespaces.c b/tools/perf/util/namespaces.c
+index cf8bd123cf73..fb0458b7e6aa 100644
+--- a/tools/perf/util/namespaces.c
++++ b/tools/perf/util/namespaces.c
+@@ -18,6 +18,7 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <unistd.h>
++#include <asm/bug.h>
+ 
+ struct namespaces *namespaces__new(struct namespaces_event *event)
+ {
+@@ -186,6 +187,7 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
+ 	char curpath[PATH_MAX];
+ 	int oldns = -1;
+ 	int newns = -1;
++	char *oldcwd = NULL;
+ 
+ 	if (nc == NULL)
+ 		return;
+@@ -199,9 +201,13 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
+ 	if (snprintf(curpath, PATH_MAX, "/proc/self/ns/mnt") >= PATH_MAX)
+ 		return;
+ 
++	oldcwd = get_current_dir_name();
++	if (!oldcwd)
++		return;
++
+ 	oldns = open(curpath, O_RDONLY);
+ 	if (oldns < 0)
+-		return;
++		goto errout;
+ 
+ 	newns = open(nsi->mntns_path, O_RDONLY);
+ 	if (newns < 0)
+@@ -210,11 +216,14 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
+ 	if (setns(newns, CLONE_NEWNS) < 0)
+ 		goto errout;
+ 
++	nc->oldcwd = oldcwd;
+ 	nc->oldns = oldns;
+ 	nc->newns = newns;
+ 	return;
+ 
+ errout:
++	if (oldcwd)
++		free(oldcwd);
+ 	if (oldns > -1)
+ 		close(oldns);
+ 	if (newns > -1)
+@@ -223,11 +232,16 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
+ 
+ void nsinfo__mountns_exit(struct nscookie *nc)
+ {
+-	if (nc == NULL || nc->oldns == -1 || nc->newns == -1)
++	if (nc == NULL || nc->oldns == -1 || nc->newns == -1 || !nc->oldcwd)
+ 		return;
+ 
+ 	setns(nc->oldns, CLONE_NEWNS);
+ 
++	if (nc->oldcwd) {
++		WARN_ON_ONCE(chdir(nc->oldcwd));
++		free(nc->oldcwd);
++	}
++
+ 	if (nc->oldns > -1) {
+ 		close(nc->oldns);
+ 		nc->oldns = -1;
+diff --git a/tools/perf/util/namespaces.h b/tools/perf/util/namespaces.h
+index cae1a9a39722..d5f46c09ea31 100644
+--- a/tools/perf/util/namespaces.h
++++ b/tools/perf/util/namespaces.h
+@@ -38,6 +38,7 @@ struct nsinfo {
+ struct nscookie {
+ 	int			oldns;
+ 	int			newns;
++	char			*oldcwd;
+ };
+ 
+ int nsinfo__init(struct nsinfo *nsi);
+-- 
+2.17.2
 
