@@ -2,245 +2,149 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1479BC6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:50:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78269C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:53:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD0242064C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:50:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD0242064C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 284952081B
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:53:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UOiHO0AA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 284952081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728833AbeKAWxW (ORCPT
+        id S1728738AbeKAW4o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 18:53:22 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41352 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728520AbeKAWxW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 18:53:22 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 677B0206D8; Thu,  1 Nov 2018 14:50:16 +0100 (CET)
-Received: from qschulz (lfbn-1-10589-128.w90-89.abo.wanadoo.fr [90.89.181.128])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 06C4320717;
-        Thu,  1 Nov 2018 14:50:06 +0100 (CET)
-Date:   Thu, 1 Nov 2018 14:50:05 +0100
-From:   Quentin Schulz <quentin.schulz@bootlin.com>
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, yuanjiang.yu@unisoc.com,
-        Mark Brown <broonie@kernel.org>,
-        Craig Tatlor <ctatlor97@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Chen-Yu Tsai <wens@csie.org>, maxime.ripard@bootlin.com,
-        Hans de Goede <hdegoede@redhat.com>, icenowy@aosc.io
-Subject: Re: [PATCH v6 4/6] power: supply: core: Add some helpers to use the
- battery OCV capacity table
-Message-ID: <20181101135005.cqufebdryffm6ray@qschulz>
-References: <e7c061535f2dcca54d6498405fdd5ed7098b19f9.1540189330.git.baolin.wang@linaro.org>
- <f1529c567a340e4d31354a4b117954eeebf89942.1540189330.git.baolin.wang@linaro.org>
- <CAMz4kuJm5eO1QwW7L+QyD_5VcTWqtq4gz9m_QDpQ-zn4zzukvQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="4bx2txevspscynaw"
-Content-Disposition: inline
-In-Reply-To: <CAMz4kuJm5eO1QwW7L+QyD_5VcTWqtq4gz9m_QDpQ-zn4zzukvQ@mail.gmail.com>
-User-Agent: NeoMutt/20171215
+        Thu, 1 Nov 2018 18:56:44 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43997 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728585AbeKAW4o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 18:56:44 -0400
+Received: by mail-pg1-f194.google.com with SMTP id n10-v6so9054621pgv.10
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 06:53:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=kTeC/f707l2ldAme0+D1nBXrNU98i8iFLzaptPO7VgI=;
+        b=UOiHO0AAwOcOTFG/XWLp3apqTquH57KYJh05RbFQYjrRJS+VLhE8GrZEXRfUBW1xJy
+         Vm3P6zjRNq9E0iSZl0NCRnfO7WFc4q+pWuHOO9ovwsxO2lRNDT9lPa0157ABZsYCiQqX
+         xYjylYk3U+NprLp2Kkx1YX94bglA2AIAbwZMY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=kTeC/f707l2ldAme0+D1nBXrNU98i8iFLzaptPO7VgI=;
+        b=VSKsjx/x6pMvRZNQB0lPE391mly0Hwb4aJbhgNiaVPfy8vdtratyqB5y3YlmOONraw
+         2mVOYfkw6u7s4LBGK4bCUxKNtXA0Q2TfdoqvCMQbCwXTjwt16FxJHt7vHKbwJGglZP0f
+         Tb8tmet2CIHLdcrAFyTtNL+4AucquXeenGSIuSoGfo/zN1fQtBVTTbWf63Qx4VLQDjug
+         m4GVAE7VD7tcYsn7ntwWwrTixgkrkuPRlhlxE/iTtIMaSxiy+o2cfVuTXFLHGfWnJwuN
+         vx4fsmHVyW7X9yMlKQVrNmK/fRdGD07YilvebLyBEofIveEVtAs9aGXnwgEVpisCEnyL
+         65bA==
+X-Gm-Message-State: AGRZ1gKW/sGMuENM2IjnzapyewHllV15ph5pSMsbwCMTq9mm2BtjU29m
+        QrzAR1j/WO5zhA/bLkXVfYA7ZQ==
+X-Google-Smtp-Source: AJdET5dDaBdU2WhUEyh3YL7/qnKakimnqlHC+ekEQcs9lgx08EQFf+7wj7FDgrYpbG1X//inKxqNOQ==
+X-Received: by 2002:aa7:814f:: with SMTP id d15-v6mr7915726pfn.78.1541080419587;
+        Thu, 01 Nov 2018 06:53:39 -0700 (PDT)
+Received: from qualcomm-HP-ZBook-14-G2.domain.name ([106.51.104.211])
+        by smtp.gmail.com with ESMTPSA id 131-v6sm2224716pfa.120.2018.11.01.06.53.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 01 Nov 2018 06:53:39 -0700 (PDT)
+From:   Firoz Khan <firoz.khan@linaro.org>
+To:     "David S . Miller" <davem@davemloft.net>,
+        sparclinux@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
+        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
+Subject: [PATCH v2 0/4] sparc: system call table generation support
+Date:   Thu,  1 Nov 2018 19:23:07 +0530
+Message-Id: <1541080391-3890-1-git-send-email-firoz.khan@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The purpose of this patch series is, we can easily
+add/modify/delete system call table support by cha-
+nging entry in syscall.tbl file instead of manually
+changing many files. The other goal is to unify the 
+system call table generation support implementation 
+across all the architectures. 
 
---4bx2txevspscynaw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The system call tables are in different format in 
+all architecture. It will be difficult to manually
+add, modify or delete the system calls in the resp-
+ective files manually. To make it easy by keeping a 
+script and which'll generate uapi header file and 
+syscall table file.
 
-Hi Baolin,
+syscall.tbl contains the list of available system 
+calls along with system call number and correspond-
+ing entry point. Add a new system call in this arch-
+itecture will be possible by adding new entry in 
+the syscall.tbl file.
 
-On Thu, Nov 01, 2018 at 03:22:18PM +0800, Baolin Wang wrote:
-> Hi Quentin,
->=20
-> On 29 October 2018 at 22:48, Quentin Schulz <quentin.schulz@bootlin.com> =
-wrote:
-[...]
-> >
-> >> +             return len;
-> >> +     } else if (len > POWER_SUPPLY_OCV_TEMP_MAX) {
-> >> +             dev_err(&psy->dev, "Too many temperature values\n");
-> >> +             return -EINVAL;
-> >> +     } else if (len > 0) {
-> >> +             of_property_read_u32_array(battery_np, "ocv-capacity-cel=
-sius",
-> >> +                                        info->ocv_temp, len);
-> >> +     }
-> >> +
-> >> +     for (index =3D 0; index < len; index++) {
-> >
-> > This won't work as intended as we can reach this part of the code with
-> > len =3D -EINVAL;
->=20
-> No, the condition (index < len) is false if len =3D -EINVAL, maybe one
-> reason keep index as 'int' type.
->=20
+Adding a new table entry consisting of:
+        - System call number.
+        - ABI.
+        - System call name.
+        - Entry point name.
+	- Compat entry name, if required.
 
-Ugh. Next time I'll make sure my brain is wired before reviewing a
-patch, sorry :)
+ARM, s390 and x86 architecuture does exist the sim-
+ilar support. I leverage their implementation to 
+come up with a generic solution.
 
-[...]
-> >> +             if (!info->ocv_table[index]) {
-> >> +                     power_supply_put_battery_info(psy, info);
-> >> +                     return -ENOMEM;
-> >> +             }
-> >> +
-> >> +             for (i =3D 0; i < tab_len; i++) {
-> >> +                     table[i].ocv =3D be32_to_cpu(*list++);
-> >> +                     table[i].capacity =3D be32_to_cpu(*list++);
-> >
-> > Please check these are valid values.
->=20
-> Um, It is hard to validate the values for OCV and capacity, because
-> now we do not know each battery's parameters. Any good suggestion?
->=20
+I have done the same support for work for alpha, 
+ia64, m68k, microblaze, mips, parisc, powerpc, sh 
+and xtensa. Below mentioned git repository contains
+more details about the workflow.
 
-You know the capacity is between 0 and 100 (since it's an unsigned
-value, checking against 100 is enough), that's a good start.
+ https://github.com/frzkhn/system_call_table_generator/
 
-For the OCV, I'd say it's basically between the minimum and maximum
-voltage a battery can hold. I don't know enough about batteries to
-give the correct bounds unfortunately :(
+Finally, this is the ground work to solve the Y2038
+issue. We need to add two dozen of system calls to 
+solve Y2038 issue. So this patch series will help to
+add new system calls easily by adding new entry in the
+syscall.tbl.
 
-[...]
-> > What is the use case for letting a user call this function? I can
-> > understand you want to delete the arrays if they're invalid in the
-> > get_function, which could be done thanks to a goto statement or with
-> > this function if you really want (if it does not mess with refs) but I
-> > don't see why you want to export this function.
->=20
-> Cause some drivers will copy the OCV tables into their own structures,
-> one helper function to help to free memory of battery information. In
-> future, this can be expanded to clean up more resources of battery
-> information.
->=20
+Changes since v1:
+ - optimized/updated the syscall table generation 
+   scripts.
+ - fixed all mixed indentation issues in syscall.tbl.
+ - added "comments" in syscall.tbl.
 
-Couldn't they only use a pointer to the appropriate table? Or do you
-plan on the drivers directly modifying the table but wanting to keep a
-clean copy on the core side?
+Firoz Khan (4):
+  sparc: move __IGNORE* entries to non uapi header
+  sparc: add __NR_syscalls along with NR_syscalls
+  sparc: add system call table generation support
+  sparc: generate uapi header and system call table files
 
-I find it weird to free the tables. I'd suppose that a driver wants to
-keep all tables available to be able to chose the appropriate one
-depending on the current temperature of the battery (which is what
-power_supply_batinfo_ocv2cap is for if I understood correctly) and not
-only at definite time (probe function for the driver you attached to the
-patch series IIRC). If you need to keep all tables, why would you want
-to copy them to the driver and not keep them in the core and use a
-pointer to the table in current use?
+ arch/sparc/Makefile                      |   3 +
+ arch/sparc/include/asm/Kbuild            |   4 +-
+ arch/sparc/include/asm/unistd.h          |  18 ++
+ arch/sparc/include/uapi/asm/Kbuild       |   2 +
+ arch/sparc/include/uapi/asm/unistd.h     | 425 +------------------------------
+ arch/sparc/kernel/syscalls/Makefile      |  55 ++++
+ arch/sparc/kernel/syscalls/syscall.tbl   | 408 +++++++++++++++++++++++++++++
+ arch/sparc/kernel/syscalls/syscallhdr.sh |  36 +++
+ arch/sparc/kernel/syscalls/syscalltbl.sh |  36 +++
+ arch/sparc/kernel/systbls_32.S           |  81 +-----
+ arch/sparc/kernel/systbls_64.S           | 157 +-----------
+ 11 files changed, 571 insertions(+), 654 deletions(-)
+ create mode 100644 arch/sparc/kernel/syscalls/Makefile
+ create mode 100644 arch/sparc/kernel/syscalls/syscall.tbl
+ create mode 100644 arch/sparc/kernel/syscalls/syscallhdr.sh
+ create mode 100644 arch/sparc/kernel/syscalls/syscalltbl.sh
 
-I'm sure I'm missing something, let me know what it is. Thanks.
+-- 
+1.9.1
 
-[...]
-> > I would like to give my specific use case of the OCV on X-Powers PMICs
-> > so that hopefully we can get things sorted out before it's too late to
-> > make modifications that might be needed.
-> >
-> > I'm adding a few people on Cc that work on the X-Power PMICs so that
-> > hopefully we can have all the correct pieces of information and go
-> > towards the right solution.
-> >
-> > In the AXP818/AXP288 datasheet[1] (p.57), we have access to OCV values
-> > and battery RDC register.
-> >
-> > The hardware learns from the battery or from the given OCV and RDC
-> > values and then updates the returned battery capacity accordingly (in
-> > another register).
-> > I've 32 values (see the issue with a max of 20 values?) to be written in
->=20
-> I think you misunderstood the 20, it is means we can have max 20 OCV tabl=
-es now.
->=20
-
-Indeed, misread the patch, thanks for clarifying.
-
-> > different registers that represent the battery capacity at a given
-> > voltage. I do not have to do any computation on the kernel side, I just
-> > have to set the registers with the correct values and the battery
-> > capacity will be auto-updated by the PMIC. With this patch series,
-> > should I just call power_supply_get_battery_info, get the OCV tables and
->=20
-> I think so.
->=20
-> > do my thing in the driver? Could we have a more generic way to do it
-> > (does it make sense to have a generic one?)?
->=20
-> Sorry, maybe I did not follow you here. You said your hardware will
-> help to get the capacity automatically if you set the register, so
-> what generic way you want to introduce? Could you elaborate on?
->=20
-
-I think I got my thoughts tangled-up, I can't honestly find a generic
-way right now.
-
-> >
-> > We also definitely need a sysfs entry so that the user can enter the new
-> > values of the RDC/OCV since it changes during the life cycle of the
-> > battery IIRC.
->=20
-> Why it changed? Due to different temperatures or other factors? If the
-> factor is temperature, I think we have supplied one generic way:
-> https://lore.kernel.org/patchwork/patch/1002350/
->=20
-
-Apparently age is a factor in the OCV curve. I don't know if it's
-substantial enough to care about though.
-
-Anyway, I have a very strong bias towards not having to modify the
-Device Tree or recompile the kernel when a piece of hardware can be
-replaced easily by something different. I see the battery as such a
-piece of hardware. I understand the need to define the battery that
-comes with a product but I also like to let the users switch the battery
-(for a bigger one for example) without getting their hands dirty with
-getting the kernel sources, recompiling, etc.
-
-What if the provided OCV curves are not the best ones and the user has
-found better ones?
-
-For that, I like to let the user configure parameters that impact the
-battery after we've optionaly set the default one.
-
-I'd be mad to have to recompile the Device Tree or kernel when switching
-devices on a USB bus for example.
-
-Does that make sense?
-
-Thanks,
-Quentin
-
---4bx2txevspscynaw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAlvbBIwACgkQhLiadT7g
-8aM45g/9GwhwslT3Lj0CjLOa//X03/Eye8gfaDKvgrGoRQDt6+ykaVgwL5BVpeVM
-x0OkKD0XcSCaNztmeJRj3czg2cvyUoax9g42Ep0mEC6uJI6U45FxfnUMebUwU1Kf
-fxxcDx0EkOnjxUTAqnG2Nhs/3dS96VVxuFoG93bbRAJMmmwgCeTNagqv6sSfWJu1
-NWIhT18SaC2i1RGxHxyNm+Mo0ZbtkntA5heYsj+E0Rwo1XTjCW8E+7pdj6WJ/x1p
-6fFPacgKCiWyZ4EhyzE32sRhgYoYmH9EAmNlNk48xv8TEP4xazysg5P2mcLwwlvl
-FbX7v1bFdmlxvPsuLKi6RmJ3V9IfiSbsaGiHhVzyeg2hWezv/vRJ07PYZ+9hYp3f
-iu8mX6QxCfoZw4KbyNWQtzFhVtzU4yKH1/bCqIiE1CRcai+BGSeRaTF5YGI1yvck
-EaimFbnqhYTumxaEWbKBI4wKSMDpc1qv2d079Q7+qsnUOwU7HrXvD4xNvlfOZig1
-4Q1QTbZBlcn6yRmvL8nDSxdr81qsyQWMjDRxRA/9aNyw+KFyOpjCm5ljNGm5+P14
-wt0meHJ3okGc6HJAWLyNHrB5WU6GvC6ejUbKp9mroybgnhYsEiD4QoC61JQpSpZF
-w0MSCyeO+YtRt/F6eZbv8nbxoEYLrNMMqOo9zFKHz/MOMY+6v1I=
-=+Gfk
------END PGP SIGNATURE-----
-
---4bx2txevspscynaw--
