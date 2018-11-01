@@ -2,106 +2,84 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4CC3C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:04:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B561C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:07:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79CA42081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:04:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dRWMfbIY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79CA42081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DA6002064C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:07:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA6002064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727519AbeKBCID (ORCPT
+        id S1726265AbeKBCLJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 22:08:03 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:43937 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725982AbeKBCIC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 22:08:02 -0400
-Received: by mail-qk1-f194.google.com with SMTP id r71so12696593qkr.10;
-        Thu, 01 Nov 2018 10:04:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EgwtFZkC/rR7koRrJEVoHDkT2WR/nSpGr7t0u1xCW7E=;
-        b=dRWMfbIY0vHpLvHnKtS95RxAQRe4OFFNIuteYBqAC7kAPiJYKz/80JKem10zpHmUhB
-         iyw5vUN93IfUrWkhh4H9zcZk3tffPeKugvp9gxpGPjmxt2RtoO0LiDxF814JS3ffA1xT
-         MPm8Rm9gXACaSIO6JAKIDCK3E7TeOkAZ8yUK2dr3eGXbm43Nu5GWJl5RrJOQcVv5RyO1
-         FcDNwuXKlVoh5/ZozX6l3E/fDBnL4y3OZayfOarkPOTGWh1WAK9cKvo3bHHqgm6ndOmC
-         1hsOiFk4N6Tn+HxtwLErlyNQOsH1kD85LhzMWYlw6yX7PzZU0mA0m+GpjouFd3GRisRz
-         e/SQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EgwtFZkC/rR7koRrJEVoHDkT2WR/nSpGr7t0u1xCW7E=;
-        b=bynke+9CuzWQPMUNXos/mScP0hyfoxJS+EaOOJnxrSfRGgvIPkyTjD7oN7qpQl0z1P
-         rn9IomVAQHt4WHR8+a05A6opj9ZMBxUC8Gp30O6r+EAUaO2Cmvxb05p09NPnZRh6p8Z3
-         RPeV8YIU8e5d/f6z09RoHV9XXqUY0UtGLGspsEHeTF2U0WLfzQuyUdg3iACEqlhtrTVU
-         KW7fmNbVwjnWLgDAnyiUO9CWcChb1ed1PVYKLPbQQJy1clXWgW+t1/A6cqUA9qnU9Caf
-         ual2K5Mwlu+lGG1vGqau9SviEd2xC8HK3s+LLze6F8NlM5RIDrhmiwHPd+5Cj1RYR92D
-         caVQ==
-X-Gm-Message-State: AGRZ1gIkcWD6KixKxXGSWv1HjFyrbQijaoRa+gUJUbGXpHipNDSemoqJ
-        nkXyctr87DnZ0MOerOLFXRLmf9ex+IfS3m0u++I=
-X-Google-Smtp-Source: AJdET5ffotE2aCRaWlgJzyYe5LJiHvS6ZTiw5uC01dgaJQYsSBphiNcF51BLfeX9rG9/8qAxrk/Y22/mIXG3cp7l3xY=
-X-Received: by 2002:a37:7983:: with SMTP id u125-v6mr6883413qkc.219.1541091853184;
- Thu, 01 Nov 2018 10:04:13 -0700 (PDT)
+        Thu, 1 Nov 2018 22:11:09 -0400
+Received: from mga01.intel.com ([192.55.52.88]:57818 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725982AbeKBCLJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 22:11:09 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Nov 2018 10:07:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,452,1534834800"; 
+   d="scan'208";a="82682643"
+Received: from kohsamui.iil.intel.com (HELO [10.236.193.12]) ([10.236.193.12])
+  by fmsmga007.fm.intel.com with ESMTP; 01 Nov 2018 10:07:18 -0700
+Subject: Re: lib/genalloc
+To:     Stephen Bates <sbates@raithlin.com>,
+        "danielmentz@google.com" <danielmentz@google.com>,
+        "mathieu.desnoyers@efficios.co" <mathieu.desnoyers@efficios.co>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Laura Abbott <labbott@redhat.com>
+References: <a170cf65-6884-3592-1de9-4c235888cc8a@intel.com>
+ <4DECD467-AD45-419D-8F0F-1456863274FD@raithlin.com>
+From:   Alexey Skidanov <alexey.skidanov@intel.com>
+Message-ID: <d127f28f-71fe-c175-c0e4-a368ff1d01a1@intel.com>
+Date:   Thu, 1 Nov 2018 19:08:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <1541085002-42993-1-git-send-email-peng.hao2@zte.com.cn> <1541085002-42993-6-git-send-email-peng.hao2@zte.com.cn>
-In-Reply-To: <1541085002-42993-6-git-send-email-peng.hao2@zte.com.cn>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 1 Nov 2018 19:04:00 +0200
-Message-ID: <CAHp75VfNDKgenuc0ApMODfCw6h9azwBDskPuV2S4E8nLFsuTxw@mail.gmail.com>
-Subject: Re: [PATCH V5 6/8] misc/pvpanic: add MMIO support
-To:     peng.hao2@zte.com.cn
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        hutao@cn.fujitsu.com,
-        Linux Documentation List <linux-doc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <4DECD467-AD45-419D-8F0F-1456863274FD@raithlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 1, 2018 at 9:00 AM Peng Hao <peng.hao2@zte.com.cn> wrote:
->
-> On some architectures (e.g. arm64), it's preferable to use MMIO, since
-> this can be used standalone. Add MMIO support to the pvpanic driver.
-
-> -       if (acpi_dev_resource_io(res, &r) {
-> -               port = r.start;
-> +       if (acpi_dev_resource_io(res, &r) ||
-> +           acpi_dev_resource_memory(res, &r)) {
 
 
-> +               if (r.flags & IORESOURCE_IO)
+On 11/1/18 18:48, Stephen  Bates wrote:
+>>    I use gen_pool_first_fit_align() as pool allocation algorithm allocating
+>>    buffers with requested alignment. But if a chunk base address is not
+>>    aligned to the requested alignment(from some reason), the returned
+>>    address is not aligned too.
+>     
+> Alexey
+> 
+> Can you try using gen_pool_first_fit_order_align()? Will that give you the alignment you need?
+> 
+> Stephen
+>     
+> 
+I think it will not help me. Let's assume that the chunk base address is
+0x2F400000 and I want to allocate 16MB aligned buffer. I get back the
+0x2F400000. I think it happens because of this string in the
+gen_pool_alloc_algo():
 
-You need spend some time to understand better how acpi_dev_resource_*() works.
-Hint: this condition is redundant.
+addr = chunk->start_addr + ((unsigned long)start_bit << order);
 
-> +                       base = (void __iomem *) ioport_map(r.start,
-> +                                               r.end - r.start + 1);
-> +               else
-> +                       base = ioremap(r.start, r.end - r.start + 1);
-> +
+and the gen_pool_first_fit_align() implementation that doesn't take into
+account the "incorrect" chunk base alignment.
 
+It might be easily fixed, by rounding the start address up (0x2F400000
+-> 0x30000000) and start looking from this, aligned, address.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Thanks,
+Alexey
