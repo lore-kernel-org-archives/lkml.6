@@ -2,96 +2,131 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE37C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:34:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D63C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:35:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A453205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:34:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A453205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=olimex.com
+	by mail.kernel.org (Postfix) with ESMTP id 3CB67205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:35:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kudzu-us.20150623.gappssmtp.com header.i=@kudzu-us.20150623.gappssmtp.com header.b="vrbI7anJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CB67205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kudzu.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728895AbeKAXiJ (ORCPT
+        id S1728901AbeKAXih (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 19:38:09 -0400
-Received: from olimex.com ([184.105.72.32]:55188 "EHLO olimex.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728016AbeKAXiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 19:38:09 -0400
-Received: from 195.238.85.143 ([195.238.85.143])
-        by olimex.com with ESMTPSA (ECDHE-RSA-AES128-GCM-SHA256:TLSv1.2:Kx=ECDH:Au=RSA:Enc=AESGCM(128):Mac=AEAD) (SMTP-AUTH username stefan@olimex.com, mechanism PLAIN)
-        for <linux-kernel@vger.kernel.org>; Thu, 1 Nov 2018 07:34:46 -0700
-Subject: Re: [PATCH v3 1/1] drm/panel: Add support for Olimex LCD-OLinuXino
- panel
-To:     Rob Herring <robh@kernel.org>, Stefan Mavrodiev <stefan@olimex.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <1531383729-13932-1-git-send-email-stefan@olimex.com>
- <20180716150836.GA16895@rob-hp-laptop>
-From:   Stefan Mavrodiev <stefan@olimex.com>
-Message-ID: <e677488e-34e0-512c-db13-15ccf78c5ea0@olimex.com>
-Date:   Thu, 1 Nov 2018 16:34:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 1 Nov 2018 19:38:37 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:43188 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728122AbeKAXih (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 19:38:37 -0400
+Received: by mail-yw1-f65.google.com with SMTP id j75-v6so7972498ywj.10
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 07:35:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kudzu-us.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=fElzWe2NNg7U5IzTkze/2y/3Xx+Q4y3yBOMkhfvRtA4=;
+        b=vrbI7anJ+W8dR+iY6HtRpTf9lC9nlFz5D9Zxs0Crfq/l9K8w0ZnGaJklc74wPQKm0O
+         fgLCTbU7OSa95yY18aLDztEwfELQFzdQaJkdFJoF1idhp0BASn2P4NeqzivBY9dqvGgY
+         +SeOPYPodGqP8GobhZNPuWjNUFeoHcToinGYjei5sonB6jtMh1eJ+BwnI8sW/aQ+xLov
+         Yi9iO+/jBMOxQM70N4ENQ4qLAWl5VjuSXAvykGvawZ8sIEUp0vu0C9J1Wc2UWGwPinNl
+         p85mzpEvUs5DJW+Nr4d97rDwATcsi7PXEcDwJ+BHDtH4MrRiR0XdlO5lqYQwTNzIU2mu
+         96Sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fElzWe2NNg7U5IzTkze/2y/3Xx+Q4y3yBOMkhfvRtA4=;
+        b=e/QdraLaz2C4JFdmrAGtRmBmZvRpbQQkeYPEfZuAEcqAHEt7R6IY9++MA8XeYEbdmF
+         0noQdENLVUG18AmCxAMt31lpTypuJl8T7D2UsG+gCNCug+dYZzK6wzuM+zMfgbSMLSGM
+         d93mQe0cnMJ4CvNrxp814R1qA0UJQ3+TjEt+bzSZHl6e/w8ds69FCx0o2Wx2iWWxs4Cv
+         1FaGcHiWbTAZg76dfWWFcFgFesGAuy0Udn/3Dx7ZDnZ/58NkiSB7hx7q+o4PILpTJL37
+         LF75lSMk0xxbrCxIYeWZ4Q+SGWoceCxVpVaeZiGrvER8tMKpwm009ob5CeElLKVTbbct
+         UmWw==
+X-Gm-Message-State: AGRZ1gJNANpEoZVd5bWpmXJ71gqqAOcH+W8W7Mrp+m+ZnGnwNVrO5ZFv
+        rxdm+ZP4RIMbhQFYUOnwOFWFPA==
+X-Google-Smtp-Source: AJdET5ek7Sgb/eqiqQCfqYN3r1elE3kfiQbTRTjEBTuL5p4ZIHYB8pVWPx+cr/SHk67tDfuWFKz0eA==
+X-Received: by 2002:a0d:ebd7:: with SMTP id u206-v6mr7843304ywe.40.1541082922540;
+        Thu, 01 Nov 2018 07:35:22 -0700 (PDT)
+Received: from kudzu.us (76-230-155-4.lightspeed.rlghnc.sbcglobal.net. [76.230.155.4])
+        by smtp.gmail.com with ESMTPSA id x3-v6sm6603045ywc.56.2018.11.01.07.35.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 01 Nov 2018 07:35:22 -0700 (PDT)
+Date:   Thu, 1 Nov 2018 10:35:20 -0400
+From:   Jon Mason <jdmason@kudzu.us>
+To:     Serge Semin <fancer.lancer@gmail.com>
+Cc:     dave.jiang@intel.com, allenbh@gmail.com,
+        Sergey.Semin@t-platforms.ru, linux-ntb@googlegroups.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] ntb: idt: Add hwmon temperature sensor interface
+Message-ID: <20181101143520.GA1939@kudzu.us>
+References: <20180714115834.3350-1-fancer.lancer@gmail.com>
+ <20180717092437.18918-1-fancer.lancer@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180716150836.GA16895@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: bg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180717092437.18918-1-fancer.lancer@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/16/18 6:08 PM, Rob Herring wrote:
-> On Thu, Jul 12, 2018 at 11:21:53AM +0300, Stefan Mavrodiev wrote:
->> This patch adds Olimex Ltd. LCD-OLinuXino bridge panel driver. The
->> panel is used with different LCDs (currently from 480x272 to 1280x800).
->> Small EEPROM chip is used for identification, which holds some
->> factory data and timing requirements.
->>
->> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
->> ---
->> Changes for v3:
->>    - Change module license from "GPL v2" to "GPL"
->>    - Make use of backlight_enable()/backlight_disable() helpers
->>    - Rework backlight device request
->>    - Remove drm_panel_detach()
->>    - Use module_i2c_driver() for initialization
->>    - Make the first mode preferred
->>    - If num_modes value is invalid, overwrite it with 4, which is the maximum
->>    - Some variable types optimizations
->>
->> Changes for v2:
->>    - Changed lcd_olinuxino_funcs to static const
->>
->>   .../display/panel/olimex,lcd-olinuxino.txt         |  42 +++
-> Reviewed-by: Rob Herring <robh@kernel.org>
->
->>   MAINTAINERS                                        |   6 +
->>   drivers/gpu/drm/panel/Kconfig                      |  10 +
->>   drivers/gpu/drm/panel/Makefile                     |   1 +
->>   drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c | 331 +++++++++++++++++++++
->>   5 files changed, 390 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/display/panel/olimex,lcd-olinuxino.txt
->>   create mode 100644 drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c
+On Tue, Jul 17, 2018 at 12:24:33PM +0300, Serge Semin wrote:
+> IDT PCIe-switches are equipped with an embedded temperature sensor. It
+> works within the range [0; 127.5]C with a resolution of 0.5C. It can
+> be used to monitor the chip core temperature so to have prevent it from
+> possible overheating. It might be very topical for the chip, since it
+> gets heated like in hell especially if ASPM isn't enabled.
+> 
+> Other than the current sampled temperatur, the sensor interface exposes
+> history registors with lowest and highest measured temperature, thresholds
+> and alarm IRQs enabled/disable bits, ADC/filter settings. The device manual
+> states that the switch is able to generate a msi interrupt on PCIe upstreams
+> if the temperature crosses one of three configurable thresholds. But in
+> practice we discovered that the enable/disable threshold IRQs bits interface
+> is very broken (see the third patch commit message), so it can't be used
+> to create the hwmon alarm interface. As the result we had to remove the
+> already available temperature sensor IRQ handler and disable the corresponding
+> interrupt.
+> 
+> Current version of the driver provides following standard hwmon sysfs
+> files: temperature input, lowest and highest measured temperature
+> with possibility to reset the history, temperature offset. The rest of the
+> nodes can't be safely implemented for the chip due to the described issues.
+> 
+> Changelog v2:
+> - Add "select HWMON" to the NTB_IDT kconfig
+> 
+> Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
 
-I would like to ask if there will be any progress on this patch?
+ was waiting on you to address the kbuild errors, and it appears you
+ did already.  Somehow I missed v2 of this series and just found it now.
+ Sorry :(
 
-Best regards,
-Stefan Mavrodiev
+Applied to the ntb-next branch
 
+Thanks,
+Jon
+
+> 
+> Serge Semin (4):
+>   ntb: idt: Alter temperature read method
+>   ntb: idt: Add basic hwmon sysfs interface
+>   ntb: idt: Discard temperature sensor IRQ handler
+>   ntb: idt: Alter the driver info comments
+> 
+>  drivers/ntb/hw/idt/Kconfig      |   4 +-
+>  drivers/ntb/hw/idt/ntb_hw_idt.c | 317 ++++++++++++++++++++++++++++++++++------
+>  drivers/ntb/hw/idt/ntb_hw_idt.h |  87 ++++++++++-
+>  3 files changed, 353 insertions(+), 55 deletions(-)
+> 
+> -- 
+> 2.12.0
+> 
