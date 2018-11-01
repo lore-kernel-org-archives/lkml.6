@@ -2,174 +2,127 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 270A6C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:19:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F21C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E319C2064C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:19:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 036282064C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:20:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gnSJ9EM5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E319C2064C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="NaiY80cQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 036282064C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727653AbeKBCXr (ORCPT
+        id S1727679AbeKBCYN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 22:23:47 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:54938 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726362AbeKBCXr (ORCPT
+        Thu, 1 Nov 2018 22:24:13 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:35435 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726242AbeKBCYN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 22:23:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=O9mYa/rmeeVfQNGgOPaQg2kcrK4it59yo1d7DnPkWvE=; b=gnSJ9EM5OrIgQqirgYJiYUGPW
-        ZTUjNSVtiZfsDPD7k2VzCoOuc63jfeMQ+7Om7om4QYvA3mGK+Tf6EKXSBFKD327whbDDZfDtUv/76
-        RW9hP+f70jeSU14Q6HqvgdMAwc2Ac+iYyv0Z9Z8ag+bVzW2Kv2LLK7rWerl24sxsevwu0GwXhlx1g
-        t6oPj61yh20X9yiGhZvKsrwaf691UPi6G9/eb9QLkpB/gjw5e4A4bZ42+40qLQ8z8Oa0g5H4pt5oH
-        DYLPE19C9NKBMU52eQkJhXN4fCgZePofw3qK6ojxe4YkvgvDHIIFf6HSA5F8TWIo6Qr4xggWlelC7
-        Wfpz+litg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gIGcL-0005sn-Bi; Thu, 01 Nov 2018 17:18:49 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 001322029F9FF; Thu,  1 Nov 2018 18:18:46 +0100 (CET)
-Date:   Thu, 1 Nov 2018 18:18:46 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ralf@linux-mips.org" <ralf@linux-mips.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
-        "paul.burton@mips.com" <paul.burton@mips.com>,
-        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        "jhogan@kernel.org" <jhogan@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        aryabinin@virtuozzo.com, dvyukov@google.com
-Subject: Re: [RFC PATCH] lib: Introduce generic __cmpxchg_u64() and use it
- where needed
-Message-ID: <20181101171846.GI3178@hirez.programming.kicks-ass.net>
-References: <1541015538-11382-1-git-send-email-linux@roeck-us.net>
- <20181031213240.zhh7dfcm47ucuyfl@pburton-laptop>
- <20181031220253.GA15505@roeck-us.net>
- <20181031233235.qbedw3pinxcuk7me@pburton-laptop>
- <4e2438a23d2edf03368950a72ec058d1d299c32e.camel@hammerspace.com>
- <20181101131846.biyilr2msonljmij@lakrids.cambridge.arm.com>
- <20181101145926.GE3178@hirez.programming.kicks-ass.net>
- <f38e272f7a96e983549e4281aa9fd02833a4277a.camel@hammerspace.com>
- <20181101163212.GF3159@hirez.programming.kicks-ass.net>
- <20181101170146.GQ4170@linux.ibm.com>
+        Thu, 1 Nov 2018 22:24:13 -0400
+Received: by mail-lf1-f65.google.com with SMTP id d7-v6so14752480lfi.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 10:20:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nSai6ptFovwf12HhXChp9SksxZNPqvxDg9dyqxc5eqM=;
+        b=NaiY80cQlgfVrO1fqSVryJYTWU2Uk5xgdwq4aHvqHnfXa1YaA2YU0i+wuaF8ErVEU4
+         dyz7MsigK3s+D9BisRK1j/VHNABNEK1Oa1hOJxx/YVYBxHcxek11LeKeHgA9+Z8t/MD0
+         T+zOXyHP75iEBUMw5wY0I59Vi5x/C6+jWp7QphBKb0xc/2iqjf0/0T343vcQPdntn0cZ
+         +nVIpUDZrFha1m/xwjx2MiuuhKSmJBgkEkueBtKOmZKGmmKY8ngn7auVYadnccKSro6/
+         DMZZw/tKMw1Ztqohty7y9E0XMwl0MOtvehGgU8RAslhRc6yJtuBTlw8z0cnku01DDNBy
+         oy2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nSai6ptFovwf12HhXChp9SksxZNPqvxDg9dyqxc5eqM=;
+        b=JLWM2h231Tevt30S/BVLYrsPYqYEW87ZBfrDDtZts5yjxj2L4990qYo3xnd9iW1A/q
+         r8Umsjqom1xnz/JWCCZlw0RpGqTJ/Ur4QNcLhxNO3nLDpI4i0rhlMNTowtUa/5g0qzYj
+         hwQc9tk/+gPpdc0C5iSXw6ievbmnh7REkmSLWGEcSEaHIX2v+kA15lhf8RkouooosLCr
+         xhsnFTRFb6gdwkkrgl87dnBy2NQPaOm2qnLaIkb2nkzBOntQrwXz7KCpkArZ2k2IU5aN
+         ylZiDx5sLRuONlqW8ZPAaOZqZOaGqzBwWGLocQwo1BkdemIvgCFqTev1NSGxY9v/h8ol
+         WXDg==
+X-Gm-Message-State: AGRZ1gJpKg1eZIAe4noEcFkO2bptRAfV3u7npf/XdsJ1DIIsTkqzN9jK
+        ppHMC+TRuA2a5GDNaAFmPHt7sHES4hHrZqD0t9jplg==
+X-Google-Smtp-Source: AJdET5f2ARpNgZ006YwGjijg/38ijicAbnvk3dZ9yyhsUy17OVtcQEP5T0RYeogKjdfTVhKWHZVppE8snjGwDKlhvBA=
+X-Received: by 2002:a19:a28e:: with SMTP id l136mr5279633lfe.87.1541092818819;
+ Thu, 01 Nov 2018 10:20:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181101170146.GQ4170@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <da34ca57-ea7b-7fb9-bc45-4b315513e43f@deltatee.com> <mhng-b2753147-e1db-4a2a-8dfb-710e71a38bed@palmer-si-x1c4>
+In-Reply-To: <mhng-b2753147-e1db-4a2a-8dfb-710e71a38bed@palmer-si-x1c4>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Thu, 1 Nov 2018 10:20:06 -0700
+Message-ID: <CAOesGMjOfE8KADq2hDORvVtYw8sa7GbL6MtbiDRRgPbWMiXQCA@mail.gmail.com>
+Subject: Re: [PATCH 0/3] RISC-V: A few build/warning fixes and cleanup
+To:     Palmer Dabbelt <palmer@sifive.com>
+Cc:     logang@deltatee.com, philip.li@intel.com,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        kbuild test robot <lkp@intel.com>, kbuild@lists.01.org,
+        Zong Li <zongbox@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 01, 2018 at 10:01:46AM -0700, Paul E. McKenney wrote:
-> On Thu, Nov 01, 2018 at 05:32:12PM +0100, Peter Zijlstra wrote:
-> > On Thu, Nov 01, 2018 at 03:22:15PM +0000, Trond Myklebust wrote:
-> > > On Thu, 2018-11-01 at 15:59 +0100, Peter Zijlstra wrote:
-> > > > On Thu, Nov 01, 2018 at 01:18:46PM +0000, Mark Rutland wrote:
-> > 
-> > > > > > My one question (and the reason why I went with cmpxchg() in the
-> > > > > > first place) would be about the overflow behaviour for
-> > > > > > atomic_fetch_inc() and friends. I believe those functions should
-> > > > > > be OK on x86, so that when we overflow the counter, it behaves
-> > > > > > like an unsigned value and wraps back around.  Is that the case
-> > > > > > for all architectures?
-> > > > > > 
-> > > > > > i.e. are atomic_t/atomic64_t always guaranteed to behave like
-> > > > > > u32/u64 on increment?
-> > > > > > 
-> > > > > > I could not find any documentation that explicitly stated that
-> > > > > > they should.
-> > > > > 
-> > > > > Peter, Will, I understand that the atomic_t/atomic64_t ops are
-> > > > > required to wrap per 2's-complement. IIUC the refcount code relies
-> > > > > on this.
-> > > > > 
-> > > > > Can you confirm?
-> > > > 
-> > > > There is quite a bit of core code that hard assumes 2s-complement.
-> > > > Not only for atomics but for any signed integer type. Also see the
-> > > > kernel using -fno-strict-overflow which implies -fwrapv, which
-> > > > defines signed overflow to behave like 2s-complement (and rids us of
-> > > > that particular UB).
-> > > 
-> > > Fair enough, but there have also been bugfixes to explicitly fix unsafe
-> > > C standards assumptions for signed integers. See, for instance commit
-> > > 5a581b367b5d "jiffies: Avoid undefined behavior from signed overflow"
-> > > from Paul McKenney.
-> > 
-> > Yes, I feel Paul has been to too many C/C++ committee meetings and got
-> > properly paranoid. Which isn't always a bad thing :-)
-> 
-> Even the C standard defines 2s complement for atomics.  
+On Thu, Nov 1, 2018 at 9:17 AM Palmer Dabbelt <palmer@sifive.com> wrote:
+>
+> On Thu, 01 Nov 2018 08:43:15 PDT (-0700), logang@deltatee.com wrote:
+> >
+> >
+> > On 2018-10-31 8:19 p.m., Li, Philip wrote:
+> >>>> I think it would also be very nice to get the existing kbuild test robot
+> >>>> to start compile testing a few riscv configs. It already does most of
+> >> thanks Logan, the support to riscv and nds32 has been in our TODO list for
+> >> a while, but whole team is blocked by other effort. We will focus on this soon
+> >> to complete it within 2-3 weeks.
+> >
+> > Thanks! Glad to hear it.
+>
+> We should probably at least have builds for rv32imac, rv32imafdc, rv64imac, and
+> rv64imafdc.  It's probably also good to test SMP/non-SMP as well as
+> medlow/medany, as I doubt those get regularly tested.  If you'd like I can
+> write up the configs, just point me to something that describes what I should
+> do.
 
-Ooh good to know.
+It might make sense to either do a pseudo-arch for riscv32, or maybe a
+config snippet to generate these arch-specific configs.
 
-> Just not for
-> normal arithmetic, where yes, signed overflow is UB.  And yes, I do
-> know about -fwrapv, but I would like to avoid at least some copy-pasta
-> UB from my kernel code to who knows what user-mode environment.  :-/
-> 
-> At least where it is reasonably easy to do so.
+For the ISA options, it's a bit trickier. Ideally we want to build
+just one kernel that can boot everywhere, and enable the rest
+dynamically ('fd' in particular). Whether the kernel itself is built
+with 'c' could be a config option to enable (like THUMB kernel on
+32-bit ARM), but in general we probably want to watch out for
+explosions of combinations here.
 
-Fair enough I suppose; I just always make sure to include the same
--fknobs for the userspace thing when I lift code.
+Embedded/low-end users will want a way to disable whatever they don't
+need, so there's a balance to be found.
 
-> And there is a push to define C++ signed arithmetic as 2s complement,
-> but there are still 1s complement systems with C compilers.  Just not
-> C++ compilers.  Legacy...
+FWIW, the configs I build today are:
 
-*groan*; how about those ancient hardwares keep using ancient compilers
-and we all move on to the 70s :-)
+if [ -f arch/riscv/Makefile ] ; then
+        (grep -v "CONFIG_SMP=y" arch/riscv/configs/defconfig ; echo
+"CONFIG_SMP=n") > arch/riscv/configs/nosmp_defconfig
+        (grep -v "CONFIG_ARCH_RV32I is not"
+arch/riscv/configs/defconfig ; echo "CONFIG_ARCH_RV32I=y") >
+arch/riscv/configs/rv32_defconfig
+fi
 
-> > But for us using -fno-strict-overflow which actually defines signed
-> > overflow, I myself am really not worried. I'm also not sure if KASAN has
-> > been taught about this, or if it will still (incorrectly) warn about UB
-> > for signed types.
-> 
-> UBSAN gave me a signed-overflow warning a few days ago.  Which I have
-> fixed, even though 2s complement did the right thing.  I am also taking
-> advantage of the change to use better naming.
++ tinyconfig, allmodconfig, allnoconfig and in some cases
+allyesconfig. allmod and allyes take forever so I'm trying to figure
+out what targets to build those for. Maybe linux-next only or
+something. So doing allmod+ISA combinations would be quite a time
+addition for build turnarounds for me.
 
-Oh too many *SANs I suppose; and yes, if you can make the code better,
-why not.
 
-> > > Anyhow, if the atomic maintainers are willing to stand up and state for
-> > > the record that the atomic counters are guaranteed to wrap modulo 2^n
-> > > just like unsigned integers, then I'm happy to take Paul's patch.
-> > 
-> > I myself am certainly relying on it.
-> 
-> Color me confused.  My 5a581b367b5d is from 2013.  Or is "Paul" instead
-> intended to mean Paul Mackerras, who happens to be on CC?
-
-Paul Burton I think, on a part of the thread before we joined :-)
+-Olof
