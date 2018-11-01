@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80FCFC6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 09:59:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78692C6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 09:59:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E15C20820
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 09:59:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D73E20820
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 09:59:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="c3wRclJF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E15C20820
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="TbhuP1e0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D73E20820
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728296AbeKATBo (ORCPT
+        id S1728321AbeKATBu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 15:01:44 -0400
-Received: from mail.efficios.com ([167.114.142.138]:41054 "EHLO
+        Thu, 1 Nov 2018 15:01:50 -0400
+Received: from mail.efficios.com ([167.114.142.138]:41180 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726520AbeKATBo (ORCPT
+        with ESMTP id S1726520AbeKATBu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 15:01:44 -0400
+        Thu, 1 Nov 2018 15:01:50 -0400
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id DF50E227654;
-        Thu,  1 Nov 2018 05:59:25 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTP id 53EC6227675;
+        Thu,  1 Nov 2018 05:59:32 -0400 (EDT)
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id a77V0K7FUJSC; Thu,  1 Nov 2018 05:59:25 -0400 (EDT)
+        with ESMTP id X6zKOFr8iNaF; Thu,  1 Nov 2018 05:59:31 -0400 (EDT)
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 65171227650;
-        Thu,  1 Nov 2018 05:59:25 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 65171227650
+        by mail.efficios.com (Postfix) with ESMTP id BBC3A22766F;
+        Thu,  1 Nov 2018 05:59:31 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com BBC3A22766F
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1541066365;
-        bh=gFEK/lC/jUbqNWiuQ/zKOEooKr/O6Cn2r+UjhLPcrA8=;
+        s=default; t=1541066371;
+        bh=N3v2LzU7/zfxpIewN1Lf4Ei0VdWx18Nl2AhIPWVI0IE=;
         h=From:To:Date:Message-Id;
-        b=c3wRclJF8yvQa4S9Yx11D49t9F7R82VpT0emvy7FVrO96lxovQtiQa5JTsVbXCDtG
-         7tps24c8vtgRt+VC744jPgOa4JVay/p27Qrk5z9a4frakyvYF4PnBDLX0pb6Upq9RB
-         ibttjPmcQV/i2bgyZRlQJkXJy9RdqrtS4kbacUvR9SoCzFelYfPeG/GHYZ9/VkWizu
-         kNVuuWC8lxiYihMn+QVdEzdWQFvpaAScBazBZlYwUGCwTGfWT2gYxP+Rp+8DIOmWgv
-         ypjahiAncvH9cl36QTSR85HBTgHKuZILGAstB3LpqaxB2lBYrtfMAFKU/HW3tkpfuB
-         ckcMi5zI/X4eg==
+        b=TbhuP1e0bdHIwDB0cwHVKv+Z+psJKG9+mIKl7f157uPcoc7c7NurDCULzSizcRQQQ
+         VDewX/KkZihjislKs/3eIcE98ePjZlsghsFBjUQziVMaQ7/KmQkfEwSQSpTJZQmPfE
+         gVCwWZym9W0sFLcxRvkcvkhQVb9Nx5OEgpog9jnE7RoFDQnwrKktqS1e7aKK3t9VfG
+         icm75LePQvAZlL/xNspY08nop3jLusGzT+CWJqUK7dFxsNItdfq5J9YcH4OEmDjPJr
+         0WAcCvAYZn58El4hgfq4F/P3JB3IUOsC37ah/nOHTJLTLw2M6JGpWy2hNLOcwNz1Em
+         8wt27ni6gZH6Q==
 X-Virus-Scanned: amavisd-new at efficios.com
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id Bg3boQxWXxpO; Thu,  1 Nov 2018 05:59:25 -0400 (EDT)
+        with ESMTP id N5HyUErGjTqi; Thu,  1 Nov 2018 05:59:31 -0400 (EDT)
 Received: from thinkos.etherlink (sessfw99-sesbfw99-92.ericsson.net [192.176.1.92])
-        by mail.efficios.com (Postfix) with ESMTPSA id 375F2227620;
-        Thu,  1 Nov 2018 05:59:20 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTPSA id CF580227653;
+        Thu,  1 Nov 2018 05:59:25 -0400 (EDT)
 From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
@@ -74,10 +74,11 @@ Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Will Deacon <will.deacon@arm.com>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Joel Fernandes <joelaf@google.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [RFC PATCH for 4.21 04/16] mm: Introduce vm_map_user_ram, vm_unmap_user_ram (v2)
-Date:   Thu,  1 Nov 2018 10:58:32 +0100
-Message-Id: <20181101095844.24462-5-mathieu.desnoyers@efficios.com>
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-mm@kvack.org
+Subject: [RFC PATCH for 4.21 05/16] mm: Provide is_vma_noncached
+Date:   Thu,  1 Nov 2018 10:58:33 +0100
+Message-Id: <20181101095844.24462-6-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20181101095844.24462-1-mathieu.desnoyers@efficios.com>
 References: <20181101095844.24462-1-mathieu.desnoyers@efficios.com>
@@ -86,14 +87,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create and destroy mappings aliased to a user-space mapping with the same
-cache coloring as the userspace mapping. Allow the kernel to load from
-and store to pages shared with user-space through its own mapping in
-kernel virtual addresses while ensuring cache conherency between kernel
-and userspace mappings for virtually aliased architectures.
+Provide is_vma_noncached() static inline to allow generic code to
+check whether the given vma consists of noncached memory.
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
 CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 CC: Peter Zijlstra <peterz@infradead.org>
 CC: Paul Turner <pjt@google.com>
@@ -114,106 +111,46 @@ CC: Catalin Marinas <catalin.marinas@arm.com>
 CC: Will Deacon <will.deacon@arm.com>
 CC: Michael Kerrisk <mtk.manpages@gmail.com>
 CC: Boqun Feng <boqun.feng@gmail.com>
+CC: linux-mm@kvack.org
 ---
-Changes since v1:
-- Use WARN_ON() rather than BUG_ON().
----
- include/linux/vmalloc.h |  4 +++
- mm/vmalloc.c            | 66 +++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 70 insertions(+)
+ include/linux/mm.h | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-index 398e9c95cd61..899657b3d469 100644
---- a/include/linux/vmalloc.h
-+++ b/include/linux/vmalloc.h
-@@ -59,6 +59,10 @@ struct vmap_area {
- extern void vm_unmap_ram(const void *mem, unsigned int count);
- extern void *vm_map_ram(struct page **pages, unsigned int count,
- 				int node, pgprot_t prot);
-+extern void vm_unmap_user_ram(const void *mem, unsigned int count);
-+extern void *vm_map_user_ram(struct page **pages, unsigned int count,
-+				unsigned long uaddr, int node, pgprot_t prot);
-+
- extern void vm_unmap_aliases(void);
- 
- #ifdef CONFIG_MMU
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index a236bac872f0..8df3c572036c 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -1188,6 +1188,72 @@ void *vm_map_ram(struct page **pages, unsigned int count, int node, pgprot_t pro
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 0416a7204be3..18acf4f339f8 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2551,6 +2551,30 @@ static inline struct page *follow_page(struct vm_area_struct *vma,
+ 	return follow_page_mask(vma, address, foll_flags, &unused_page_mask);
  }
- EXPORT_SYMBOL(vm_map_ram);
  
-+/**
-+ * vm_unmap_user_ram - unmap linear kernel address space set up by vm_map_user_ram
-+ * @mem: the pointer returned by vm_map_user_ram
-+ * @count: the count passed to that vm_map_user_ram call (cannot unmap partial)
-+ */
-+void vm_unmap_user_ram(const void *mem, unsigned int count)
++static inline bool pgprot_same(pgprot_t a, pgprot_t b)
 +{
-+	unsigned long size = (unsigned long)count << PAGE_SHIFT;
-+	unsigned long addr = (unsigned long)mem;
-+	struct vmap_area *va;
-+
-+	might_sleep();
-+	if (WARN_ON(!addr) ||
-+	    WARN_ON(addr < VMALLOC_START) ||
-+	    WARN_ON(addr > VMALLOC_END) ||
-+	    WARN_ON(!PAGE_ALIGNED(addr)))
-+		return;
-+
-+	debug_check_no_locks_freed(mem, size);
-+	va = find_vmap_area(addr);
-+	if (WARN_ON(!va))
-+		return;
-+	free_unmap_vmap_area(va);
++	return pgprot_val(a) == pgprot_val(b);
 +}
-+EXPORT_SYMBOL(vm_unmap_user_ram);
 +
-+/**
-+ * vm_map_user_ram - map user space pages linearly into kernel virtual address
-+ * @pages: an array of pointers to the virtually contiguous pages to be mapped
-+ * @count: number of pages
-+ * @uaddr: address within the first page in the userspace mapping
-+ * @node: prefer to allocate data structures on this node
-+ * @prot: memory protection to use. PAGE_KERNEL for regular RAM
-+ *
-+ * Create a mapping aliased to a user-space mapping with the same cache
-+ * coloring as the userspace mapping. Allow the kernel to load from and
-+ * store to pages shared with user-space through its own mapping in kernel
-+ * virtual addresses while ensuring cache conherency between kernel and
-+ * userspace mappings for virtually aliased architectures.
-+ *
-+ * Returns: a pointer to the address that has been mapped, or %NULL on failure
-+ */
-+void *vm_map_user_ram(struct page **pages, unsigned int count,
-+		unsigned long uaddr, int node, pgprot_t prot)
++#ifdef pgprot_noncached
++static inline bool is_vma_noncached(struct vm_area_struct *vma)
 +{
-+	unsigned long size = (unsigned long)count << PAGE_SHIFT;
-+	unsigned long va_offset = ALIGN_DOWN(uaddr, PAGE_SIZE) & (SHMLBA - 1);
-+	unsigned long alloc_size = ALIGN(va_offset + size, SHMLBA);
-+	struct vmap_area *va;
-+	unsigned long addr;
-+	void *mem;
++	pgprot_t pgprot = vma->vm_page_prot;
 +
-+	va = alloc_vmap_area(alloc_size, SHMLBA, VMALLOC_START, VMALLOC_END,
-+			node, GFP_KERNEL);
-+	if (IS_ERR(va))
-+		return NULL;
-+	addr = va->va_start + va_offset;
-+	mem = (void *)addr;
-+	if (vmap_page_range(addr, addr + size, prot, pages) < 0) {
-+		vm_unmap_user_ram(mem, count);
-+		return NULL;
-+	}
-+	return mem;
++	/* Check whether architecture implements noncached pages. */
++	if (pgprot_same(pgprot_noncached(PAGE_KERNEL), PAGE_KERNEL))
++		return false;
++	if (!pgprot_same(pgprot, pgprot_noncached(pgprot)))
++		return false;
++	return true;
 +}
-+EXPORT_SYMBOL(vm_map_user_ram);
++#else
++static inline bool is_vma_noncached(struct vm_area_struct *vma)
++{
++	return false;
++}
++#endif
 +
- static struct vm_struct *vmlist __initdata;
- /**
-  * vm_area_add_early - add vmap area early during boot
+ #define FOLL_WRITE	0x01	/* check pte is writable */
+ #define FOLL_TOUCH	0x02	/* mark page accessed */
+ #define FOLL_GET	0x04	/* do get_page on page */
 -- 
 2.11.0
 
