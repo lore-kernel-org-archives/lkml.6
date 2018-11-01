@@ -2,182 +2,144 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02A4AC6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:47:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E15B6C6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:49:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6D102082E
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:47:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Xfu7lthm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6D102082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id B690020830
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:49:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B690020830
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728040AbeKBCvK (ORCPT
+        id S1727955AbeKBCxU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 22:51:10 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:42989 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726920AbeKBCvK (ORCPT
+        Thu, 1 Nov 2018 22:53:20 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:40303 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbeKBCxU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 22:51:10 -0400
-Received: by mail-io1-f65.google.com with SMTP id h19-v6so4133565iog.9
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 10:47:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=GZ3g5TRsHSoiWmTwurfiPS0thu9nmyugmKBuMq6OY2A=;
-        b=Xfu7lthmFocaTqqm4oUshXSI+8ZnFrLXuhIeV7gzUSUo30oBrQ5Ot2i+XioUneRAvV
-         4epi7aEXKZ2l5Szj190g6sKE1JcSxDYxoqp9AwJqy5NgcFR+1OUpVW2rHTdHGgC84w6w
-         rJk3BEGQ0GoCNSv6vVGJ2awh2d92AETxPMAx3BFNYBA9qK8vSdDKxs8mYtSAAdQ1vqc7
-         2eq2Mr5CwIcdUI3FxTGIrq4yC6nBtV7V0v9o/angn1/tud8AP4QLjqYLwb3oHlZzpLfg
-         UNGxORvSLriKk1PMRkRjec2lAKl6K/vaHjWtYefQJ+AXaANzPOLimMazCGwXmaxC/b3S
-         x4Bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=GZ3g5TRsHSoiWmTwurfiPS0thu9nmyugmKBuMq6OY2A=;
-        b=dXGwPdyXpUr7O1J9VnRgN+vgIbeuS8CU20SBqY1vsRix0Wp77JCED/VWOnavC8xfNk
-         csX6z99zjT+qBZIUzCnZd31hmg1Flr70vpnENC9T51Ki+i6kD8d6Y7Vf3T+0gZ9P6dgM
-         RNFbn6Zz8B/lvovuH9VQmbvgqaPaWKshtbl0wc2mMLYmSvX4IwrNXkgjtLRqa6qy6B3L
-         Y3Q6d12NZslHywcmfGppAMgQK4vB6hn8NTvc1jKkGLuG/lIr0fXFgn9KcK4U68fWB140
-         Ef5Ren9B8CzkO+T7SvJw2pE41TM1ZAWA06/OnplCP8ygyifmapBmkyXZHOER2FgG656y
-         IpwA==
-X-Gm-Message-State: AGRZ1gLm+nSX2ksx/WGMzMYllXe6QdQYPHtgV2DCeUqHEh+b4SGDnzKR
-        j5bgIGPSBnO3zgCZ5PnRvRgnOHmmeqS/bsY6rnEeeg==
-X-Google-Smtp-Source: AJdET5eg28D2pB1ekw21nVpAOzB/FyaT3cOuFpZ8dio02aUzgoBPNz7gY7dCeb7ej+mqfTI72Lcai/crr0MgJ5sQxfE=
-X-Received: by 2002:a6b:9383:: with SMTP id v125-v6mr5274871iod.282.1541094431071;
- Thu, 01 Nov 2018 10:47:11 -0700 (PDT)
+        Thu, 1 Nov 2018 22:53:20 -0400
+Received: from excalibur.cnev.de ([213.196.202.171]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1MlfGs-1frQnW186M-00ilkM; Thu, 01 Nov 2018 18:49:00 +0100
+Received: from excalibur.cnev.de ([213.196.202.171]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1MlfGs-1frQnW186M-00ilkM; Thu, 01 Nov 2018 18:49:00 +0100
+Received: from karsten by excalibur.cnev.de with local (Exim 4.89)
+        (envelope-from <merker@debian.org>)
+        id 1gIH5W-00060g-0g; Thu, 01 Nov 2018 18:48:58 +0100
+Date:   Thu, 1 Nov 2018 18:48:57 +0100
+From:   Karsten Merker <merker@debian.org>
+To:     Palmer Dabbelt <palmer@sifive.com>
+Cc:     anup@brainfault.org, zong@andestech.com, aou@eecs.berkeley.edu,
+        Arnd Bergmann <arnd@arndb.de>, alankao@andestech.com,
+        greentime@andestech.com, linux-kernel@vger.kernel.org,
+        vincentc@andestech.com, linux-riscv@lists.infradead.org,
+        deanbo422@gmail.com
+Subject: Re: [RFC 0/2] RISC-V: A proposal to add vendor-specific code
+Message-ID: <20181101174857.du2zu4vnrhpu5asf@excalibur.cnev.de>
+References: <CAAhSdy0Y_jdc=2Lf8epof_+7HigCfhDxMNe8EF0fHfncqhs-zA@mail.gmail.com>
+ <mhng-01f0ac6a-c2fd-41be-9d53-44d1c139d453@palmer-si-x1c4>
 MIME-Version: 1.0
-Received: by 2002:a02:1003:0:0:0:0:0 with HTTP; Thu, 1 Nov 2018 10:46:50 -0700 (PDT)
-In-Reply-To: <20181101171846.GI3178@hirez.programming.kicks-ass.net>
-References: <1541015538-11382-1-git-send-email-linux@roeck-us.net>
- <20181031213240.zhh7dfcm47ucuyfl@pburton-laptop> <20181031220253.GA15505@roeck-us.net>
- <20181031233235.qbedw3pinxcuk7me@pburton-laptop> <4e2438a23d2edf03368950a72ec058d1d299c32e.camel@hammerspace.com>
- <20181101131846.biyilr2msonljmij@lakrids.cambridge.arm.com>
- <20181101145926.GE3178@hirez.programming.kicks-ass.net> <f38e272f7a96e983549e4281aa9fd02833a4277a.camel@hammerspace.com>
- <20181101163212.GF3159@hirez.programming.kicks-ass.net> <20181101170146.GQ4170@linux.ibm.com>
- <20181101171846.GI3178@hirez.programming.kicks-ass.net>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 1 Nov 2018 18:46:50 +0100
-Message-ID: <CACT4Y+aC45BtS88DXarn3A+LV2RRRsPQoSs_3_DnKjU4O3AMHQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] lib: Introduce generic __cmpxchg_u64() and use it
- where needed
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ralf@linux-mips.org" <ralf@linux-mips.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
-        "paul.burton@mips.com" <paul.burton@mips.com>,
-        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        "jhogan@kernel.org" <jhogan@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <mhng-01f0ac6a-c2fd-41be-9d53-44d1c139d453@palmer-si-x1c4>
+X-No-Archive: yes
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Provags-ID: V03:K1:tUOLTyi1OuMqiWoSJtJD7MQCytwhy4PpEEBTgMGAU8nEmOdagoI
+ +9nAgF8L5sni3jCk2QRBnggBT5EeNdj7Vaa8SrJ4Ejts7F7/TDqsTq4ZUtlC8UsNftR4pdJ
+ GTWs/vyevt5qWaQbrO/hFF79vFpAIPG67G5rw/wTB4cU1atgring34lZ3v3hAd9Kn2pyUg7
+ sqs1dikjyg3tZ6ytIJw/A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:RbnT+6yzs0g=:hptnew0/RBH6Akk4UbXkar
+ aAwjwjWkSMtYD4bN9YMm+K7yoZWu24PC2saniJZoASW5BXrw1qkxDET1MgAWUoXOxZmaMn/dQ
+ LOaL2cYNOooX74o66JRfG1v5MRslu4RYzzwYjm2DDjMj3Ct/g2Mk1M0sQtE4MDi+IO8cs6G8b
+ 2x0KFQO4Ii73iFUdEQf7AiprCll6BNRpz2fkj7ydOhzGzqBAoSqEBtYCWxqsoe51n/es98F2B
+ KeOeQPjvvDWI1gmfRXawg5HlLdA8Teg6//hY8IhMEkkhWskneeGaUymjJOVcAEqKacGYcemzf
+ IQGGZMNosVVZPojasdpAXmWwFCs0lVvTgBNzdw9+p+oZ4wCR1ne/CuG/m8k3jbpbOwAKGennM
+ 2h1uhQ2m0tFnhiP0wBe1Wha8LVyA24oyHENTgtONXQbU2e5DDe5fvx36V61AO4weG7TeHruKg
+ xvftFZP2k4eJeqhnxg4DYalDfYfxGxZ8PH+8mcuGmPByKPNMhWGiN97ej5dHFq8YkQhvmJznt
+ /pkfOFiD4Hb4btPIm+IYSZ7UeBs+72jYp+6RYx1+e8YRbi3ubZ+6z8gxSYy0fac2OnDp7wr11
+ b5JTnzoI7UGaZV7FK16x5YAj2oKcEfrkxf+u0IvJaqo5cRSaPjJ66vYGTnzuT5/oMjX326RQ0
+ bmSu0ooCG2KcBHABSbnHs98dhkAcNtqIEfCbmXj0aV8s4W40tQrfRd49yu68ai37PZrw=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 1, 2018 at 6:18 PM, Peter Zijlstra <peterz@infradead.org> wrote:
->> > > > > > My one question (and the reason why I went with cmpxchg() in the
->> > > > > > first place) would be about the overflow behaviour for
->> > > > > > atomic_fetch_inc() and friends. I believe those functions should
->> > > > > > be OK on x86, so that when we overflow the counter, it behaves
->> > > > > > like an unsigned value and wraps back around.  Is that the case
->> > > > > > for all architectures?
->> > > > > >
->> > > > > > i.e. are atomic_t/atomic64_t always guaranteed to behave like
->> > > > > > u32/u64 on increment?
->> > > > > >
->> > > > > > I could not find any documentation that explicitly stated that
->> > > > > > they should.
->> > > > >
->> > > > > Peter, Will, I understand that the atomic_t/atomic64_t ops are
->> > > > > required to wrap per 2's-complement. IIUC the refcount code relies
->> > > > > on this.
->> > > > >
->> > > > > Can you confirm?
->> > > >
->> > > > There is quite a bit of core code that hard assumes 2s-complement.
->> > > > Not only for atomics but for any signed integer type. Also see the
->> > > > kernel using -fno-strict-overflow which implies -fwrapv, which
->> > > > defines signed overflow to behave like 2s-complement (and rids us of
->> > > > that particular UB).
->> > >
->> > > Fair enough, but there have also been bugfixes to explicitly fix unsafe
->> > > C standards assumptions for signed integers. See, for instance commit
->> > > 5a581b367b5d "jiffies: Avoid undefined behavior from signed overflow"
->> > > from Paul McKenney.
->> >
->> > Yes, I feel Paul has been to too many C/C++ committee meetings and got
->> > properly paranoid. Which isn't always a bad thing :-)
->>
->> Even the C standard defines 2s complement for atomics.
->
-> Ooh good to know.
->
->> Just not for
->> normal arithmetic, where yes, signed overflow is UB.  And yes, I do
->> know about -fwrapv, but I would like to avoid at least some copy-pasta
->> UB from my kernel code to who knows what user-mode environment.  :-/
->>
->> At least where it is reasonably easy to do so.
->
-> Fair enough I suppose; I just always make sure to include the same
-> -fknobs for the userspace thing when I lift code.
->
->> And there is a push to define C++ signed arithmetic as 2s complement,
->> but there are still 1s complement systems with C compilers.  Just not
->> C++ compilers.  Legacy...
->
-> *groan*; how about those ancient hardwares keep using ancient compilers
-> and we all move on to the 70s :-)
->
->> > But for us using -fno-strict-overflow which actually defines signed
->> > overflow, I myself am really not worried. I'm also not sure if KASAN has
->> > been taught about this, or if it will still (incorrectly) warn about UB
->> > for signed types.
->>
->> UBSAN gave me a signed-overflow warning a few days ago.  Which I have
->> fixed, even though 2s complement did the right thing.  I am also taking
->> advantage of the change to use better naming.
->
-> Oh too many *SANs I suppose; and yes, if you can make the code better,
-> why not.
+On Wed, Oct 31, 2018 at 10:27:05AM -0700, Palmer Dabbelt wrote:
+> On Wed, 31 Oct 2018 04:16:10 PDT (-0700), anup@brainfault.org wrote:
+> > On Wed, Oct 31, 2018 at 4:06 PM Vincent Chen <vincentc@andestech.com> wrote:
+> > > 
+> > >   RISC-V permits each vendor to develop respective extension ISA based
+> > > on RISC-V standard ISA. This means that these vendor-specific features
+> > > may be compatible to their compiler and CPU. Therefore, each vendor may
+> > > be considered a sub-architecture of RISC-V. Currently, vendors do not
+> > > have the appropriate examples to add these specific features to the
+> > > kernel. In this RFC set, we propose an infrastructure that vendor can
+> > > easily hook their specific features into kernel. The first commit is
+> > > the main body of this infrastructure. In the second commit, we provide
+> > > a solution that allows dma_map_ops() to work without cache coherent
+> > > agent support. Cache coherent agent is unsupported for low-end CPUs in
+> > > the AndeStar RISC-V series. In order for Linux to run on these CPUs, we
+> > > need this solution to overcome the limitation of cache coherent agent
+> > > support. Hence, it also can be used as an example for the first commit.
+> > > 
+> > >   I am glad to discuss any ideas, so if you have any idea, please give
+> > > me some feedback.
+> > > 
+> > I agree that we need a place for vendor-specific ISA extensions and
+> > having vendor-specific directories is also good.
+> > 
+> > What I don't support is the approach of having compile time selection
+> > of vendor-specific ISA extension.
+> > 
+> > We should have runtime probing for compatible vendor-specific ISA
+> > extension. Also, it should be possible to link multiple vendor-specific
+> > SA extensions to same kernel image. This way we can have a single
+> > kernel image (along with various vendor-specific ISA extensions) which
+> > works on variety of targets/hosts.
+> > 
+> > As an example or runtime probing you can look at how IRQCHIP or
+> > CLOCKSOURCE drivers are probed. The vendor-specific ISA extension
+> > hooks should called in similar fashion.
+> 
+> Yes, I agree.  My biggest concern here is that we ensure that
+> one kernel can boot on implementations from all vendors.  I
+> haven't had a chance to look at the patches yet, but it should
+> be possible to:
+> 
+> * Build a kernel that has vendor-specific code from multiple vendors.
+> * Detect the implementation an run time and select the correct extra
+>   code.
 
-If there is a warning that we don't want to see at all, then we can
-disable it. It supposed to be a useful tool, rather than a thing in
-itself that lives own life. We already I think removed 1 particularly
-noisy warning and made another optional via a config.
-But the thing with overflows is that, even if it's defined, it's not
-necessary the intended behavior. For example, take allocation size
-calculation done via unsigned size_t. If it overflows it does not help
-if C defines result or not, it still gives a user controlled write
-primitive. We've seen similar cases with timeout/deadline calculation
-in kernel, we really don't want it to just wrap modulo-2, right. Some
-user-space projects even test with unsigned overflow warnings or
-implicit truncation warnings, which are formally legal, but frequently
-bugs.
+From a distro point of view we definitely want to have one kernel
+image that is bootable everywhere.  Debian won't support any
+platform that requires a per-platform or per-vendor kernel, and I
+assume that the same will be true for Fedora and Suse.
+
+One thing that I have stumbled upon while looking at the patches
+is that they seem to assume that X-type ISA extensions are
+strictly per vendor.  Although that is probably true in the
+majority of cases, it doesn't necessarily have to be - I could
+e.g. imagine that the DSP extensions from the PULP cores might
+be used by multiple vendors.  If such an extension would have
+state that needs to be saved on context switch, it would need
+corresponding kernel support.  Using "PULP" (or any other
+open-source project) as the vendor in such a case leads to
+another potential issue: the patches base everything on a JEDEC
+vendor ID that is compared to the contents of the mvendorid CSR,
+but such a JEDEC vendor ID usually doesn't exist for open-source
+implementations; the majority of those have mvendorid set to
+zero.
+
+Regards,
+Karsten
+-- 
+Gem. Par. 28 Abs. 4 Bundesdatenschutzgesetz widerspreche ich der Nutzung
+sowie der Weitergabe meiner personenbezogenen Daten für Zwecke der
+Werbung sowie der Markt- oder Meinungsforschung.
