@@ -2,80 +2,173 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_DIGITS,
+	FROM_LOCAL_HEX,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6DECC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:32:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E19FC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:33:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 740C620820
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:32:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 740C620820
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D3303205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:33:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3303205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728784AbeKAXgF (ORCPT
+        id S1728855AbeKAXgR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 19:36:05 -0400
-Received: from mga01.intel.com ([192.55.52.88]:44835 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728436AbeKAXgF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 19:36:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Nov 2018 07:32:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,452,1534834800"; 
-   d="scan'208";a="105118268"
-Received: from jsakkine-mobl1.tm.intel.com ([10.237.50.155])
-  by orsmga002.jf.intel.com with ESMTP; 01 Nov 2018 07:32:50 -0700
-Date:   Thu, 1 Nov 2018 16:32:48 +0200 (EET)
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-X-Sender: jsakkine@jsakkine-mobl1
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v3 5/5] tpm: ensure that output of PCR read contains the
- correct digest size
-In-Reply-To: <7adca046-ae80-7453-9fee-a802b46ceb86@huawei.com>
-Message-ID: <alpine.DEB.2.21.1811011631010.14303@jsakkine-mobl1>
-References: <20181030154711.2782-1-roberto.sassu@huawei.com> <20181030154711.2782-6-roberto.sassu@huawei.com> <alpine.DEB.2.21.1810302151580.5058@jsakkine-mobl1> <7adca046-ae80-7453-9fee-a802b46ceb86@huawei.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 1 Nov 2018 19:36:17 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:34836 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728563AbeKAXgQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 19:36:16 -0400
+Received: by mail-io1-f72.google.com with SMTP id w13-v6so17826585iop.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 07:33:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=hQIyUSitTBs39SdG09Ky3Woh/1dCFuu0jzk4P4YQzek=;
+        b=MUrkoMKrrQ7KF/j4pNA/hHylhUGIO8dGQplxyvVgAZWuPUaudgsI0yxo2WfHirvBuL
+         2xtlu9C/TDjnAp6vEiPyAFSyW/4f7R2tOqjT8W9xP26wGxBEF2w8PF99K6oP80d8VQ7l
+         RzHJUqn2muugH5dRlEJbEIEN6woMvYtrTnHys9MqeAzULBxqVxDQS+rYRDT4MPWQKzzW
+         I2jq496bITir1Wo4UVoVLYqWHbEy2IUhqHB4Vh7YP4yL8xf4hUdWOXKBWobWCltuGnwP
+         xNt4LiUrPCq0DvIHXjgh6234DerpOYT+j8dNqLGQZMDz6RvfysZlSZeUvw9tqXcQHaeM
+         HR9Q==
+X-Gm-Message-State: AGRZ1gLKl8XNLE3SmZZVs2uTIKmlTy132bxpnLO73k9txhX9CzrAvHBJ
+        wFzfEzQJ6YknNmdL4hi1uhGwAdCT24nIy9RRADLcLZ1MpyAh
+X-Google-Smtp-Source: AJdET5fFQG4vwEVECbOMg7Xa/pAdzTR03hRf+nDJhtWUhIDzIzztsuxuHbxGMOjKhNJoPjwRqLbiCry7WsD8CjcCgINJNsRs3Laq
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+X-Received: by 2002:a24:b64a:: with SMTP id d10-v6mr1544631itj.27.1541082782663;
+ Thu, 01 Nov 2018 07:33:02 -0700 (PDT)
+Date:   Thu, 01 Nov 2018 07:33:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d4940a05799b4b72@google.com>
+Subject: KASAN: use-after-free Read in ucma_event_handler
+From:   syzbot <syzbot+f3f3a1734458129344f5@syzkaller.appspotmail.com>
+To:     dledford@redhat.com, jgg@ziepe.ca, leon@kernel.org,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        parav@mellanox.com, roland@purestorage.com,
+        swise@opengridcomputing.com, syzkaller-bugs@googlegroups.com,
+        xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 31 Oct 2018, Roberto Sassu wrote:
-> On 10/30/2018 8:52 PM, Jarkko Sakkinen wrote:
->> On Tue, 30 Oct 2018, Roberto Sassu wrote:
->>> This patch ensures that the digest size returned by the TPM during a PCR
->>> read matches the size of the algorithm passed as argument to
->>> tpm2_pcr_read(). The check is performed after information about the PCR
->>> banks has been retrieved.
->>> 
->>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->> 
->> What is the scenarion when this can happen (should be explained in
->> the commit message)?
->
-> Without an HMAC session, the request/response payload can be modified.
-> This patch ensures that the digest size in the payload is equal to the
-> size of the algorithm specified by the caller.
+Hello,
 
-i.e. it protect against memory corruption that could happen in the bus?
-Please state this.
+syzbot found the following crash on:
 
-> For me it is ok to remove this patch from the set. It was requested by
-> Mimi.
+HEAD commit:    11743c56785c Merge tag 'rpmsg-v4.20' of git://github.com/a..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=166b07cb400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=93932074d01b4a5
+dashboard link: https://syzkaller.appspot.com/bug?extid=f3f3a1734458129344f5
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-For me it is not ok remove this patch :-) I just want that note to the
-commit message in order to have it documented.
+Unfortunately, I don't have any reproducer for this crash yet.
 
-/Jarkko
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+f3f3a1734458129344f5@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: use-after-free in __mutex_lock_common  
+kernel/locking/mutex.c:1009 [inline]
+BUG: KASAN: use-after-free in __mutex_lock+0x1601/0x16f0  
+kernel/locking/mutex.c:1072
+Read of size 8 at addr ffff8801c1918188 by task kworker/u4:1/21
+
+CPU: 0 PID: 21 Comm: kworker/u4:1 Not tainted 4.19.0+ #88
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: ib_addr process_one_req
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  __mutex_lock_common kernel/locking/mutex.c:1009 [inline]
+  __mutex_lock+0x1601/0x16f0 kernel/locking/mutex.c:1072
+  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
+  ucma_event_handler+0x116/0x1000 drivers/infiniband/core/ucma.c:354
+  addr_handler+0x305/0x420 drivers/infiniband/core/cma.c:2991
+  process_one_req+0x1a9/0x920 drivers/infiniband/core/addr.c:643
+  process_one_work+0xc90/0x1c40 kernel/workqueue.c:2153
+  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
+  kthread+0x35a/0x440 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:350
+
+Allocated by task 13266:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+  kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
+  kmalloc include/linux/slab.h:546 [inline]
+  ucma_open+0xb5/0x3f0 drivers/infiniband/core/ucma.c:1721
+  misc_open+0x3ca/0x560 drivers/char/misc.c:141
+  chrdev_open+0x25a/0x710 fs/char_dev.c:417
+  do_dentry_open+0x499/0x1250 fs/open.c:771
+  vfs_open+0xa0/0xd0 fs/open.c:880
+  do_last fs/namei.c:3418 [inline]
+  path_openat+0x12bc/0x5150 fs/namei.c:3534
+  do_filp_open+0x255/0x380 fs/namei.c:3564
+  do_sys_open+0x568/0x700 fs/open.c:1063
+  __do_sys_openat fs/open.c:1090 [inline]
+  __se_sys_openat fs/open.c:1084 [inline]
+  __x64_sys_openat+0x9d/0x100 fs/open.c:1084
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 13265:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3817
+  ucma_close+0x27e/0x310 drivers/infiniband/core/ucma.c:1780
+  __fput+0x385/0xa30 fs/file_table.c:278
+  ____fput+0x15/0x20 fs/file_table.c:309
+  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8801c1918140
+  which belongs to the cache kmalloc-256 of size 256
+The buggy address is located 72 bytes inside of
+  256-byte region [ffff8801c1918140, ffff8801c1918240)
+The buggy address belongs to the page:
+page:ffffea0007064600 count:1 mapcount:0 mapping:ffff8801da8007c0  
+index:0xffff8801c1918640
+flags: 0x2fffc0000000200(slab)
+raw: 02fffc0000000200 ffffea000707bd88 ffffea0007498608 ffff8801da8007c0
+raw: ffff8801c1918640 ffff8801c1918000 0000000100000005 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801c1918080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801c1918100: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+> ffff8801c1918180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                       ^
+  ffff8801c1918200: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+  ffff8801c1918280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
