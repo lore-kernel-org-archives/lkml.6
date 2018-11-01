@@ -2,200 +2,100 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 403BCC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72EE8C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:48:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F112720866
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:45:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F112720866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0D030205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:48:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=raithlin.onmicrosoft.com header.i=@raithlin.onmicrosoft.com header.b="cUkZgqnq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D030205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=raithlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727115AbeKBBtg (ORCPT
+        id S1726370AbeKBBwd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 21:49:36 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54016 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726375AbeKBBtg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 21:49:36 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA1GivwD127257
-        for <linux-kernel@vger.kernel.org>; Thu, 1 Nov 2018 12:45:51 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ng49y2sq1-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 12:45:50 -0400
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 1 Nov 2018 16:45:49 -0000
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 1 Nov 2018 16:45:45 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA1GjiUC29753524
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 1 Nov 2018 16:45:45 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DD991B2065;
-        Thu,  1 Nov 2018 16:45:44 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ACBAFB2066;
-        Thu,  1 Nov 2018 16:45:44 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.141])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  1 Nov 2018 16:45:44 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 0049416C35A8; Thu,  1 Nov 2018 09:45:44 -0700 (PDT)
-Date:   Thu, 1 Nov 2018 09:45:44 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Josh Triplett <josh@joshtriplett.org>
-Cc:     NeilBrown <neil@brown.name>, Mishi Choudhary <mishi@linux.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        ksummit-discuss@lists.linuxfoundation.org
-Subject: Re: [Ksummit-discuss] Call to Action Re: [PATCH 0/7] Code of
- Conduct: Fix some wording, and add an interpretation document
-Reply-To: paulmck@linux.ibm.com
-References: <20181020134908.GA32218@kroah.com>
- <87y3ar80ac.fsf@notabene.neil.brown.name>
- <20181021222608.GA24845@localhost>
- <875zxt919d.fsf@notabene.neil.brown.name>
- <20181024121622.GA10942@localhost>
- <87ftwt6850.fsf@notabene.neil.brown.name>
- <20181027011010.GA29769@localhost>
+        Thu, 1 Nov 2018 21:52:33 -0400
+Received: from mail-eopbgr670117.outbound.protection.outlook.com ([40.107.67.117]:46246
+        "EHLO CAN01-TO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725959AbeKBBwd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 21:52:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=raithlin.onmicrosoft.com; s=selector1-raithlin-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6ErZhwsL0ec+G3mXNwr8RrU8NEwmKhDxeg+ivpFAKYo=;
+ b=cUkZgqnqIyJIMzaQ3AnIDhC8ystSQZXP1ImvE6crA/+J7PwiE/ptglUceJzaSzJHbK3cBbXwm/Qm+ARvAO0B4JGEBGtZajYah/YQtS8PiJofXSJiucank5zaGIGyIAj0OaV51ky9vXh9mCYpBUBH9dxkMWkr/kBeL/vjOOuFYmk=
+Received: from YQXPR0101MB0728.CANPRD01.PROD.OUTLOOK.COM (52.132.75.145) by
+ YQXPR0101MB1478.CANPRD01.PROD.OUTLOOK.COM (52.132.81.152) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.26; Thu, 1 Nov 2018 16:48:45 +0000
+Received: from YQXPR0101MB0728.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::c11b:dc57:9ee6:5fd]) by YQXPR0101MB0728.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::c11b:dc57:9ee6:5fd%4]) with mapi id 15.20.1294.021; Thu, 1 Nov 2018
+ 16:48:45 +0000
+From:   "Stephen  Bates" <sbates@raithlin.com>
+To:     Alexey Skidanov <alexey.skidanov@intel.com>,
+        "danielmentz@google.com" <danielmentz@google.com>,
+        "mathieu.desnoyers@efficios.co" <mathieu.desnoyers@efficios.co>
+CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Laura Abbott <labbott@redhat.com>
+Subject: Re: lib/genalloc
+Thread-Topic: lib/genalloc
+Thread-Index: AQHUcgHgz+DjXH5b20mPLBIp3KnEDqU6vOiA
+Date:   Thu, 1 Nov 2018 16:48:45 +0000
+Message-ID: <4DECD467-AD45-419D-8F0F-1456863274FD@raithlin.com>
+References: <a170cf65-6884-3592-1de9-4c235888cc8a@intel.com>
+In-Reply-To: <a170cf65-6884-3592-1de9-4c235888cc8a@intel.com>
+Accept-Language: en-CA, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Microsoft-MacOutlook/10.12.0.181014
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=sbates@raithlin.com; 
+x-originating-ip: [70.65.250.31]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;YQXPR0101MB1478;6:yWgghuWQL8Tx9By3K9uvEMDZdHYEIQkdmO0IY1BMTX89XQRZzO/9NgEr90b2pO0wTZVuP76aN8H8P4j4FqEZCzkJdLYkgEKvjYyltMAC8B1dwPKygK0HGvgxvUc+lohFkWA1g40+srHyKitfdm+cUgSxMeU9nSECaMfNc0AyIZuYMGnmsjVlBVp8Np6nGUGMKOIL7HQfj/cVIQhmxLGAVZsHSVbXBrv9QfAM+RpDgtNk2DN1UmWt66gozbU/qNydsaEA0zCC0zyoG6QUFD+bFq4RCFuYSDHKRaEPRf+wPTdTSVtaaQG1U2V2mOoJzf9PF93LYXQAVgCr0+egEY1NWO4uwQiBR4DVnw7FF7kBmxdwBkantWcSFBAIkPXf1XSdosW/P3KFlP+xRzGl6sSVDeuPjy48ufjucGkLebLmnBuDEIpYfaHQAUN3mrAKaDd8JvmAdSDfl85qgjI6CidC5Q==;5:DkQigZzWPAGv4PP5hw4TF0iFb0/Vxs4h92/bLzAuCHfJryt60EI/mNJc4dqFooRYyUnKyFufSrf73+J2k1vqHF4rxCAuTCVwfYvqRSHl/b00TL+GaKA9yr+FpU9nTZWb7X2Hpj28bGYm7KhyZAMhMntWso4I9ixdwqYXmr3K584=;7:RasYZLALAKUpS/Smv6VV5/BkKSR6mDsGGgj7v1Ri2+TaT3qfaps068oSY9nDUp0qMTTm1osVOhdHo6/94/mHibNLvQbTJ4MM8HA1e6II6IdbMnErz6A/ipkRe/VlJYE2k0BjP6FBKBOrZX0jitP/9A==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 50fb55d8-a86e-47f4-3f6c-08d64019e3b7
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:YQXPR0101MB1478;
+x-ms-traffictypediagnostic: YQXPR0101MB1478:
+x-microsoft-antispam-prvs: <YQXPR0101MB1478287EBAC2E52090A4D3F0AACE0@YQXPR0101MB1478.CANPRD01.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231382)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(148016)(149066)(150057)(6041310)(2016111802025)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(6043046)(201708071742011)(7699051)(76991095);SRVR:YQXPR0101MB1478;BCL:0;PCL:0;RULEID:;SRVR:YQXPR0101MB1478;
+x-forefront-prvs: 0843C17679
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(366004)(39830400003)(396003)(346002)(376002)(199004)(189003)(36756003)(4326008)(33656002)(2906002)(186003)(25786009)(66066001)(2501003)(5250100002)(6116002)(3846002)(102836004)(229853002)(26005)(83716004)(71200400001)(71190400001)(99286004)(82746002)(5660300001)(6512007)(6436002)(6486002)(76176011)(14454004)(508600001)(58126008)(110136005)(54906003)(6506007)(316002)(8936002)(105586002)(8676002)(106356001)(6246003)(81166006)(81156014)(68736007)(53936002)(2616005)(97736004)(486006)(476003)(2201001)(11346002)(446003)(7736002)(14444005)(256004)(86362001)(305945005)(2900100001);DIR:OUT;SFP:1102;SCL:1;SRVR:YQXPR0101MB1478;H:YQXPR0101MB0728.CANPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: raithlin.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: MIuGO0JLDQsP4DJ6ye7JgVOVL2bYe+sPUA7lH3oTXnZydG+euLdDFiELKd8UR3twyU530aCZWkmRaBqLBVaCYJ7PbgKteTE9A9yILzKbWRu9wHLkZhp5PXokwTbqTOBFV307C0XPskJirABusAs5jnpc73Q/C2nq5KkKdopxEH3RUGsClc8THm8YwWq9T3CeD+0/9tkrCELYi62vUZx9s1HWADkUSNze316qO0uH9N/3bFxjJbH1qJRRkE+7T5IwCC2YC8ACYe6JKpA0rTnz/ddMJ4XZM20g2PzDjeq4l3STx4jK/F3vye4eopukcyauPPvSIt/pYlFqEQbXJ2R7Cbt/0TNDgHbul6d6JFchYeo=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2CCE403BA2BB1D4EB43A5CB60653040B@CANPRD01.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181027011010.GA29769@localhost>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18110116-0040-0000-0000-0000048AD30E
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009966; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01111172; UDB=6.00575820; IPR=6.00891264;
- MB=3.00023993; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-01 16:45:48
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110116-0041-0000-0000-00000893D3BC
-Message-Id: <20181101164544.GA31540@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-01_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811010142
+X-OriginatorOrg: raithlin.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 50fb55d8-a86e-47f4-3f6c-08d64019e3b7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Nov 2018 16:48:45.7720
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 18519031-7ff4-4cbb-bbcb-c3252d330f4b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQXPR0101MB1478
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 27, 2018 at 02:10:10AM +0100, Josh Triplett wrote:
-> On Fri, Oct 26, 2018 at 08:14:51AM +1100, NeilBrown wrote:
-> > On Wed, Oct 24 2018, Josh Triplett wrote:
-> > 
-> > > On Tue, Oct 23, 2018 at 07:26:06AM +1100, NeilBrown wrote:
-> > >> On Sun, Oct 21 2018, Josh Triplett wrote:
-> > >> 
-> > >> > On Mon, Oct 22, 2018 at 08:20:11AM +1100, NeilBrown wrote:
-> > >> >> I call on you, Greg:
-> > >> >>  - to abandon this divisive attempt to impose a "Code of Conduct"
-> > >> >>  - to revert 8a104f8b5867c68
-> > >> >>  - to return to your core competence of building a great team around
-> > >> >>    a great kernel
-> > >> >> 
-> > >> >>  #Isupportreversion
-> > >> >> 
-> > >> >> I call on the community to consider what *does* need to be said, about
-> > >> >> conduct, to people outside the community and who have recently joined.
-> > >> >> What is the document that you would have liked to have read as you were
-> > >> >> starting out?  It is all too long ago for me to remember clearly, and so
-> > >> >> much has changed.
-> > >> >
-> > >> > The document I would have liked to have read when starting out is
-> > >> > currently checked into the source tree in
-> > >> > Documentation/process/code-of-conduct.rst .
-> > >> 
-> > >> I'm curious - what would you have gained by reading that document?
-> > >
-> > > I would have then had rather less of a pervasive feeling of "if I make
-> > > even a single mistake I get made an example of in ways that will feed
-> > > people's quotes files for years to come".
-> > 
-> > Thanks for your reply.  Certainly feeling safe is important, and having
-> > clear statements that the community values and promotes psychological
-> > safety is valuable.
-> > 
-> > The old "code of conflict" said
-> >    If however, anyone feels personally abused, threatened, or otherwise
-> >    uncomfortable due to this process, that is not acceptable. 
-> > 
-> > would you have not found this a strong enough statement to ward off that
-> > pervasive feeling?
-> 
-> Not when that document started out effectively saying, in an elaborate
-> way, "code > people".
-
-Interesting.
-
-I am curious what leads you to your "code > people" statement.  Of course,
-one could argue that this does not really matter given that the code of
-conflict is no longer.  However, I would like to understand for future
-reference, if for no other reason.
-
-One possibility is that you are restricting the "people" to only those
-people directly contributing in one way or another.  But those using the
-kernel (both directly and indirectly) are important as well, and it is
-exactly this group that is served by "the most robust operating system
-kernel ever", the chest-beating sentiment notwithstanding.  Which is in
-fact why I must reject (or rework or whatever) any patch that might result
-in too-short RCU grace periods:  The needs of the patch's submitter are
-quite emphatically outweighed by the needs of the kernel's many users,
-and many of the various technical requirements and restrictions are in
-fact proxies for the needs of these users.
-
-But you knew that already.
-
-Similarly for the Linux kernel's various code-style strictures, which
-serve the surprisingly large group of people reading the kernel's code.
-Including the stricture that I most love to hate, which is the one
-stating that single-line do/for/if/while statements must not be enclosed
-in braces, which sometimes causes me trouble when inserting debug code,
-but which also makes more code fit into a window of a given size.  ;-)
-
-But you knew that already, too.
-
-The maintainability requirements can be argued to mostly serve the
-maintainers, but if the code becomes unmaintainable, future users
-will be inconvenienced, to say the least.  So even the maintainability
-requirements serve the kernel's many users.
-
-But you also knew that already.
-
-So what am I missing here?
-
-							Thanx, Paul
-
->                       (Leaving aside that the more important detail
-> would be the community actually acting consistently with the code of
-> conduct it espoused.)
-> 
-> > In the current code, would The "Our Pledge" section have been
-> > sufficient, or do you think the other sections would have actually
-> > helped you?
-> 
-> "Our Standards" would have been at least as important to me personally,
-> as would "Enforcement" (and more importantly, examples of that applying
-> in practice and not just as empty words).
-> _______________________________________________
-> Ksummit-discuss mailing list
-> Ksummit-discuss@lists.linuxfoundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/ksummit-discuss
-> 
-
+PiAgICBJIHVzZSBnZW5fcG9vbF9maXJzdF9maXRfYWxpZ24oKSBhcyBwb29sIGFsbG9jYXRpb24g
+YWxnb3JpdGhtIGFsbG9jYXRpbmcNCj4gICAgYnVmZmVycyB3aXRoIHJlcXVlc3RlZCBhbGlnbm1l
+bnQuIEJ1dCBpZiBhIGNodW5rIGJhc2UgYWRkcmVzcyBpcyBub3QNCj4gICAgYWxpZ25lZCB0byB0
+aGUgcmVxdWVzdGVkIGFsaWdubWVudChmcm9tIHNvbWUgcmVhc29uKSwgdGhlIHJldHVybmVkDQo+
+ICAgIGFkZHJlc3MgaXMgbm90IGFsaWduZWQgdG9vLg0KICAgIA0KQWxleGV5DQoNCkNhbiB5b3Ug
+dHJ5IHVzaW5nIGdlbl9wb29sX2ZpcnN0X2ZpdF9vcmRlcl9hbGlnbigpPyBXaWxsIHRoYXQgZ2l2
+ZSB5b3UgdGhlIGFsaWdubWVudCB5b3UgbmVlZD8NCg0KU3RlcGhlbg0KICAgIA0KDQo=
