@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FE5CC6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:00:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5267AC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:00:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 040D720831
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:00:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10CF020820
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:00:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="LQJsPRvk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 040D720831
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="pJSq0OKC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10CF020820
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728394AbeKATCZ (ORCPT
+        id S1728412AbeKATCc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 15:02:25 -0400
-Received: from mail.efficios.com ([167.114.142.138]:41804 "EHLO
+        Thu, 1 Nov 2018 15:02:32 -0400
+Received: from mail.efficios.com ([167.114.142.138]:41944 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728100AbeKATCY (ORCPT
+        with ESMTP id S1728100AbeKATCa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 15:02:24 -0400
+        Thu, 1 Nov 2018 15:02:30 -0400
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 73B6F22771A;
-        Thu,  1 Nov 2018 06:00:06 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTP id 750E3227746;
+        Thu,  1 Nov 2018 06:00:12 -0400 (EDT)
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id U7cbJwXUbdjq; Thu,  1 Nov 2018 06:00:05 -0400 (EDT)
+        with ESMTP id orJMdCH7Twif; Thu,  1 Nov 2018 06:00:12 -0400 (EDT)
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 14C3F227716;
-        Thu,  1 Nov 2018 06:00:05 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 14C3F227716
+        by mail.efficios.com (Postfix) with ESMTP id 1B5FF227742;
+        Thu,  1 Nov 2018 06:00:12 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 1B5FF227742
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1541066405;
-        bh=gM7Kec0aqOSc74Mk9mz7nq5+r7lpkxUKvOiAtaED5o0=;
+        s=default; t=1541066412;
+        bh=UuH7rJzlG0cBsTPcfHzzWT3w4eIUtDaw5dmUqgwXqm0=;
         h=From:To:Date:Message-Id;
-        b=LQJsPRvkx4KNc3y8OvP02BzWos1dzII9+Tkm2bvJX98dTyJtkxN2B1kpUVTGlb4qr
-         Wg0JMrv5XMLSvvK0UN7gDFS3qNRZmNChXSQ6JAfII1FoFGa3r+NyNFcaOO2byNsTii
-         8Kbxcy5diwscLEAMGtg3Cc7W7zNJh4SaKyGM50rghVJEYL8mXikyWynUx4YPtv8HIL
-         sQzATFuvZ1VMf83anB87YZaMHBjNxTHcDCiBI5dY36yF1kJxXqD5gBAftGmG8Q7aJc
-         Bh4sOIEsf8maFZtD3YJS+w/pfm3wavjkufO32mJic+k3R+HFs1COpXcjV61hP+diSi
-         ekjSAGr3X0RxQ==
+        b=pJSq0OKCCDw5Jg5JE7GjNrgtbRO5lUqHGQqJaVUM0SarALjMwlS5BHBSFbBGNG+gC
+         Nhcx6hYkbdOp4P60/aex1F4crv3WSWEEQFXlhCom/GX51P7DNQvqwub04fN097pp4I
+         lupX1vmf13EbW5mzgdreF7Y7APYPOQ+gYPk5gfYvY7oYWMUf1VthBfMgiHcyJZol2c
+         02ZbhZtf7Xzy6AEJBK0Ir1HdsywkE6QEaN/Mzil9kLDHXdj5QxJb5Moc9f8z5sPz1a
+         V2NBoawTZZqKJy6LbLQWzn+QY3YjrTOYawtLmQZDBpH3zKlAeq8jFpOOkOptxe/M0K
+         UZ+mK/9XbCgAg==
 X-Virus-Scanned: amavisd-new at efficios.com
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id xJbU_vLP5yGr; Thu,  1 Nov 2018 06:00:04 -0400 (EDT)
+        with ESMTP id FxVJ-mFp1WLz; Thu,  1 Nov 2018 06:00:12 -0400 (EDT)
 Received: from thinkos.etherlink (sessfw99-sesbfw99-92.ericsson.net [192.176.1.92])
-        by mail.efficios.com (Postfix) with ESMTPSA id DF8B92276B4;
-        Thu,  1 Nov 2018 05:59:53 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTPSA id 94E0822771D;
+        Thu,  1 Nov 2018 06:00:05 -0400 (EDT)
 From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
@@ -74,14 +74,10 @@ Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Will Deacon <will.deacon@arm.com>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Joel Fernandes <joelaf@google.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [RFC PATCH for 4.21 09/16] powerpc: Wire up cpu_opv system call
-Date:   Thu,  1 Nov 2018 10:58:37 +0100
-Message-Id: <20181101095844.24462-10-mathieu.desnoyers@efficios.com>
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 4.21 10/16] arm: Wire up cpu_opv system call
+Date:   Thu,  1 Nov 2018 10:58:38 +0100
+Message-Id: <20181101095844.24462-11-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20181101095844.24462-1-mathieu.desnoyers@efficios.com>
 References: <20181101095844.24462-1-mathieu.desnoyers@efficios.com>
@@ -91,38 +87,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-CC: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-CC: Paul Mackerras <paulus@samba.org>
-CC: Michael Ellerman <mpe@ellerman.id.au>
-CC: Boqun Feng <boqun.feng@gmail.com>
+CC: Russell King <linux@arm.linux.org.uk>
+CC: Catalin Marinas <catalin.marinas@arm.com>
+CC: Will Deacon <will.deacon@arm.com>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Paul Turner <pjt@google.com>
 CC: Peter Zijlstra <peterz@infradead.org>
+CC: Andy Lutomirski <luto@amacapital.net>
+CC: Andi Kleen <andi@firstfloor.org>
+CC: Dave Watson <davejwatson@fb.com>
+CC: Chris Lameter <cl@linux.com>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: Ben Maurer <bmaurer@fb.com>
+CC: Steven Rostedt <rostedt@goodmis.org>
 CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-CC: linuxppc-dev@lists.ozlabs.org
+CC: Josh Triplett <josh@joshtriplett.org>
+CC: Linus Torvalds <torvalds@linux-foundation.org>
+CC: Andrew Morton <akpm@linux-foundation.org>
+CC: Boqun Feng <boqun.feng@gmail.com>
+CC: linux-api@vger.kernel.org
 ---
- arch/powerpc/include/asm/systbl.h      | 1 +
- arch/powerpc/include/uapi/asm/unistd.h | 1 +
- 2 files changed, 2 insertions(+)
+ arch/arm/tools/syscall.tbl | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/powerpc/include/asm/systbl.h b/arch/powerpc/include/asm/systbl.h
-index 01b5171ea189..8f58710f5e8b 100644
---- a/arch/powerpc/include/asm/systbl.h
-+++ b/arch/powerpc/include/asm/systbl.h
-@@ -394,3 +394,4 @@ SYSCALL(pkey_free)
- SYSCALL(pkey_mprotect)
- SYSCALL(rseq)
- COMPAT_SYS(io_pgetevents)
-+SYSCALL(cpu_opv)
-diff --git a/arch/powerpc/include/uapi/asm/unistd.h b/arch/powerpc/include/uapi/asm/unistd.h
-index 985534d0b448..112e2c54750a 100644
---- a/arch/powerpc/include/uapi/asm/unistd.h
-+++ b/arch/powerpc/include/uapi/asm/unistd.h
-@@ -400,5 +400,6 @@
- #define __NR_pkey_mprotect	386
- #define __NR_rseq		387
- #define __NR_io_pgetevents	388
-+#define __NR_cpu_opv		389
- 
- #endif /* _UAPI_ASM_POWERPC_UNISTD_H_ */
+diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
+index 8edf93b4490f..da2cb7a12644 100644
+--- a/arch/arm/tools/syscall.tbl
++++ b/arch/arm/tools/syscall.tbl
+@@ -414,3 +414,4 @@
+ 397	common	statx			sys_statx
+ 398	common	rseq			sys_rseq
+ 399	common	io_pgetevents		sys_io_pgetevents
++400	common	cpu_opv			sys_cpu_opv
 -- 
 2.11.0
 
