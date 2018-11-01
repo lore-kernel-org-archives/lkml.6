@@ -2,139 +2,136 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EBB0C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:53:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9B53C6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:54:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A8582082E
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:53:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61D9F2082E
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:54:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pe+oRCX9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A8582082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="eWEHfWku"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61D9F2082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727978AbeKBC5x (ORCPT
+        id S1728008AbeKBC6q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 22:57:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32810 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725843AbeKBC5x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 22:57:53 -0400
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4019620833
-        for <linux-kernel@vger.kernel.org>; Thu,  1 Nov 2018 17:53:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541094833;
-        bh=lxfRkIbnNn5vEkPpgT7ExdEPOv3fuXsZCA4uvAwxVlU=;
-        h=From:Date:Subject:To:From;
-        b=Pe+oRCX9f30bzoz0mr0Pr1nDUrIKq9CbrzWQLrSDkljBCc5BAaNTkbqvoWMVufnYk
-         aErJTnMyiHDwgKdxPCx+SDFbLfVyZzd8CjmhlkdBfM++O7VcUpa4xL8TEmOzEqcps+
-         rMb9r5+P8Znzc+ekus0w+1fi9U3l5m0CLV5bujBM=
-Received: by mail-wr1-f50.google.com with SMTP id n5-v6so20875050wrw.12
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 10:53:53 -0700 (PDT)
-X-Gm-Message-State: AGRZ1gIRU5OWvgZEJupYQOGv+Ih7YaTaffXcAKjzdmdm7tjW9YXUnWlM
-        1fq0vk+adiwWbwU3ZR2ksjaFY/h4dqyNqZt2iF19UA==
-X-Google-Smtp-Source: AJdET5fNAj8WjIWXQkwlGqI7e+GsUgpY92//3LOVIjLeUFVQApbdPQ0OiOC21mmbHFeS6dHLfb2F58SVqURAUImiS5g=
-X-Received: by 2002:adf:97d3:: with SMTP id t19-v6mr7793210wrb.283.1541094831751;
- Thu, 01 Nov 2018 10:53:51 -0700 (PDT)
-MIME-Version: 1.0
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 1 Nov 2018 10:53:40 -0700
-X-Gmail-Original-Message-ID: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
-Message-ID: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
-Subject: RFC: userspace exception fixups
-To:     Dave Hansen <dave.hansen@linux.intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rich Felker <dalias@libc.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 1 Nov 2018 22:58:46 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:41388 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727417AbeKBC6q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 22:58:46 -0400
+Received: by mail-pl1-f194.google.com with SMTP id p16-v6so3148305plr.8
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 10:54:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9KgwBlYpYDkghRGbPCHP71HsA3TMqpUT3WsqDusrMYM=;
+        b=eWEHfWku09Oh9mfUM3m0afw2+BjOK0rOuP3lTPJBBLjivYqymLcd6h6tKZ7ULVXK8e
+         53ZkASc4vufLxVuVFyJiZGcZr5uKIiPd9eRoUyDbIMQSwRlRhkh4rg0WCVraHZ4FE/Sq
+         HIcuIsLWX60wxUfgrY+EpNYKHBNPiH0v9mJS+gtMzH7OO0UBQ7yTQN0KXGO7i2UZAZ2x
+         jazxCOPbi7dJVFgSFFMXku4bgEhtj3ZfJpv/3yDNB62udmTF9nAzqh21bfANFFNu/+kK
+         2XW9371WZPnv4XM82wzeoR58XN8xIwa7dXogaCkBP9dS2D3QcpjkVYFhT3AiDs7VA2Qt
+         hvlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=9KgwBlYpYDkghRGbPCHP71HsA3TMqpUT3WsqDusrMYM=;
+        b=CXVeZ83jr7s5Of70Ff21MTmrBfx6GVJN/01Sol7TDMPtPoml3lX2rhp20Xpmmimfu8
+         0p3zozvnL9uuvIjFrKR9KmzEkjUAMmspLO1niiEKBLpEwl47BLfqdut3p87coF0qyhbB
+         /gff7sSVj05Q9sGvDSqIrSGxYQt25ZslwiZ8hpS2WXE+PS+HsIuev71sar6D+lIDHAgu
+         lBCntOunKKHPX72JSs4kWR4LptbS50dk0OBl6CBgelCHVg0ZqPBhqtN2VGWJhHYFAbc9
+         ZB4mI9RvFJQrFh1fCeF0mgelTyjPk2hvfMJ8ybABevunHkCWAIb1Ka+WompuIfMBCkfu
+         hmvw==
+X-Gm-Message-State: AGRZ1gLX7sAGbv5EFz/OkQOzxIKBEoSbHpfpPjL8fufTz1i9MhwHCgF3
+        76P2C0zfReHA9bUVcEKFzT71lQ==
+X-Google-Smtp-Source: AJdET5dAzdlnjsHIdNaxLOOtev7t4PpKsdc2pwkvDY9v/6gCdRpfznXL8YTtW1Y2RrF9gTumkvBKSA==
+X-Received: by 2002:a17:902:5ac9:: with SMTP id g9-v6mr8651330plm.311.1541094886490;
+        Thu, 01 Nov 2018 10:54:46 -0700 (PDT)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id h25-v6sm31549892pgv.27.2018.11.01.10.54.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Nov 2018 10:54:45 -0700 (PDT)
+Date:   Thu, 01 Nov 2018 10:54:45 -0700 (PDT)
+X-Google-Original-Date: Thu, 01 Nov 2018 10:53:15 PDT (-0700)
+Subject:     Re: [PATCH v2 1/2] RISC-V: refresh defconfig
+In-Reply-To: <20181101051033.10089-1-anup@brainfault.org>
+CC:     aou@eecs.berkeley.edu, Olof Johansson <olof@lixom.net>,
+        atish.patra@wdc.com, Christoph Hellwig <hch@infradead.org>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        anup@brainfault.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     anup@brainfault.org
+Message-ID: <mhng-aa34e7bb-f14c-4fc8-8ff6-cb70ba397746@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all-
+On Wed, 31 Oct 2018 22:10:32 PDT (-0700), anup@brainfault.org wrote:
+> This patch updates defconfig using savedefconfig on Linux-4.19.
+>
+> Signed-off-by: Anup Patel <anup@brainfault.org>
+> ---
+>  arch/riscv/configs/defconfig | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+>
+> diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
+> index 36473d7dbaac..07fa9ea75fea 100644
+> --- a/arch/riscv/configs/defconfig
+> +++ b/arch/riscv/configs/defconfig
+> @@ -1,6 +1,3 @@
+> -CONFIG_SMP=y
+> -CONFIG_PCI=y
+> -CONFIG_PCIE_XILINX=y
+>  CONFIG_SYSVIPC=y
+>  CONFIG_POSIX_MQUEUE=y
+>  CONFIG_IKCONFIG=y
+> @@ -11,10 +8,15 @@ CONFIG_CFS_BANDWIDTH=y
+>  CONFIG_CGROUP_BPF=y
+>  CONFIG_NAMESPACES=y
+>  CONFIG_USER_NS=y
+> +CONFIG_CHECKPOINT_RESTORE=y
+>  CONFIG_BLK_DEV_INITRD=y
+>  CONFIG_EXPERT=y
+> -CONFIG_CHECKPOINT_RESTORE=y
+>  CONFIG_BPF_SYSCALL=y
+> +CONFIG_SMP=y
+> +CONFIG_PCI=y
+> +CONFIG_PCIE_XILINX=y
+> +CONFIG_MODULES=y
+> +CONFIG_MODULE_UNLOAD=y
+>  CONFIG_NET=y
+>  CONFIG_PACKET=y
+>  CONFIG_UNIX=y
+> @@ -59,6 +61,7 @@ CONFIG_USB_OHCI_HCD_PLATFORM=y
+>  CONFIG_USB_STORAGE=y
+>  CONFIG_USB_UAS=y
+>  CONFIG_VIRTIO_MMIO=y
+> +CONFIG_SIFIVE_PLIC=y
+>  CONFIG_RAS=y
+>  CONFIG_EXT4_FS=y
+>  CONFIG_EXT4_FS_POSIX_ACL=y
+> @@ -72,8 +75,5 @@ CONFIG_NFS_V4=y
+>  CONFIG_NFS_V4_1=y
+>  CONFIG_NFS_V4_2=y
+>  CONFIG_ROOT_NFS=y
+> -# CONFIG_RCU_TRACE is not set
+>  CONFIG_CRYPTO_USER_API_HASH=y
+> -CONFIG_MODULES=y
+> -CONFIG_MODULE_UNLOAD=y
+> -CONFIG_SIFIVE_PLIC=y
+> +# CONFIG_RCU_TRACE is not set
 
-The people working on SGX enablement are grappling with a somewhat
-annoying issue: the x86 EENTER instruction is used from user code and
-can, as part of its normal-ish operation, raise an exception.  It is
-also highly likely to be used from a library, and signal handling in
-libraries is unpleasant at best.
-
-There's been some discussion of adding a vDSO entry point to wrap
-EENTER and do something sensible with the exceptions, but I'm
-wondering if a more general mechanism would be helpful.
-
-The basic idea would be to allow libc, or maybe even any library, to
-register a handler that gets a chance to act on an exception caused by
-a user instruction before a signal is delivered.  As a straw-man
-example for how this could work, there could be a new syscall:
-
-long register_exception_handler(void (*handler)(int, siginfo_t *, void *));
-
-If a handler is registered, then, if a synchronous exception happens
-(page fault, etc), the kernel would set up an exception frame as usual
-but, rather than checking for signal handlers, it would just call the
-registered handler.  That handler is expected to either handle the
-exception entirely on its own or to call one of two new syscalls to
-ask for normal signal delivery or to ask to retry the faulting
-instruction.
-
-Alternatively, we could do something a lot more like the kernel's
-internal fixups where there's a table in user memory that maps
-potentially faulting instructions to landing pads that handle
-exceptions.
-
-Do you think this would be useful?  Here are some use cases that I
-think are valid:
-
-(a) Enter an SGX enclave and handle errors.  There would be two
-instructions that would need special handling: EENTER and ERESUME.
-
-(b) Do some math and catch division by zero.  I think it would be a
-bad idea to have user code call a function and say that it wants to
-handle *any* division by zero, but having certain specified division
-instructions have special handling seems entirely reasonable.
-
-(c) Ditto for floating point errors.
-
-(d) Try an instruction and see if it gets #UD.
-
-(e) Run a bunch of code and handle page faults to a given address
-range by faulting something in.  This is not like the others, in that
-a handler wants to handle a range of target addresses, not
-instructions.  And userfaultfd is plausibly a better solution anyway.
-
-(f) Run NaCl-like sandboxed code where the code can cause page faults
-to certain mapped-but-intentionally-not-present ranges and those need
-to be handled.
-
-On Windows, you can use SEH to do crazy things like running
-known-buggy code and eating the page faults.  I don't think we want to
-go there.
-
-All of this makes me think that the right solution is to have a way to
-register fault handlers for instructions to cover (a) - (d) and to
-treat (e) and (f) as something else entirely if there's enough demand.
-
---Andy
+Oh, sorry, I sent my version before seeing yours.  Looks like they're exactly 
+the same, which is probably a good sign.  I'll send this one instead.
