@@ -2,116 +2,86 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A32C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 21:46:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5114DC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 21:47:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8229A20657
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 21:46:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F21E020657
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 21:47:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ls+xdu4o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8229A20657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="enksLmc/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F21E020657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727838AbeKBGuq (ORCPT
+        id S1727115AbeKBGvw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 02:50:46 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:57064 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727151AbeKBGuq (ORCPT
+        Fri, 2 Nov 2018 02:51:52 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:46241 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726167AbeKBGvw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 02:50:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=MEJyokPYI7oa2A6Ix9ONUmGbnct/Kvmgb/sJnQOStxc=; b=ls+xdu4ozQ7c4yvsm9ovqZ/4f
-        fiFuSHac7Q2elKhmdle5qz3kdC0phtzafFsg4Fo2K2xfxrjjRsDtWE8XnThq8D8sZp3qGvjfpHNYJ
-        KPaE2XjSwPvKGaCuIvf0YpWpc37Hen7TUH95ZQP0r4vzo5jp+Nq2MzUx1YnyYOG061j3OHyzTmnlr
-        s4Jw3VZyfp0csnbleNLXSg2xp268RVktS0DawCGK+9p+MdaTrMQynXvZgyztm7d70YjSIr84TKOug
-        92DT3I1mDBUZhew+WI6z8TpS90qReNeQaT3Sba2tf1zJwoV+RlbOUgr7lAc/5xwwbeYpK4YRYEmbD
-        9zqkC8MRw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gIKmR-00079A-Uh; Thu, 01 Nov 2018 21:45:32 +0000
-Received: by worktop (Postfix, from userid 1000)
-        id 4A4CE6E07D9; Thu,  1 Nov 2018 22:45:29 +0100 (CET)
-Date:   Thu, 1 Nov 2018 22:45:29 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ralf@linux-mips.org" <ralf@linux-mips.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
-        "paul.burton@mips.com" <paul.burton@mips.com>,
-        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        "jhogan@kernel.org" <jhogan@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>
-Subject: Re: [RFC PATCH] lib: Introduce generic __cmpxchg_u64() and use it
- where needed
-Message-ID: <20181101214529.GB3339@worktop.programming.kicks-ass.net>
-References: <20181031220253.GA15505@roeck-us.net>
- <20181031233235.qbedw3pinxcuk7me@pburton-laptop>
- <4e2438a23d2edf03368950a72ec058d1d299c32e.camel@hammerspace.com>
- <20181101131846.biyilr2msonljmij@lakrids.cambridge.arm.com>
- <20181101145926.GE3178@hirez.programming.kicks-ass.net>
- <f38e272f7a96e983549e4281aa9fd02833a4277a.camel@hammerspace.com>
- <20181101163212.GF3159@hirez.programming.kicks-ass.net>
- <20181101170146.GQ4170@linux.ibm.com>
- <20181101171846.GI3178@hirez.programming.kicks-ass.net>
- <CACT4Y+aC45BtS88DXarn3A+LV2RRRsPQoSs_3_DnKjU4O3AMHQ@mail.gmail.com>
+        Fri, 2 Nov 2018 02:51:52 -0400
+Received: by mail-lj1-f196.google.com with SMTP id x3-v6so19421789lji.13
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 14:47:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=scJLHu2TTIrq5LinSEQoVo2J6r0LzcOFa2NSAPjn1Wk=;
+        b=enksLmc/Xu6FXbuWIjb8n3qOfpg3MozQSF71+v4rBIOQSm+eLltZNm+tZePaj6ru+s
+         HjK+fT1lSebe7K9ox+4UXCoCQ7hWpvCSX3G+RFsBTkFc0q1/pzaBJoVCPPBhuFOBhz1l
+         u4vwq8ayjuiD/KFoxJfhAfgpjFu8bZEfCz5JA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=scJLHu2TTIrq5LinSEQoVo2J6r0LzcOFa2NSAPjn1Wk=;
+        b=bL6RdoCqPm6RX0qJTG7flA2u2XolLzcrolK0IWYXLfNZVN8/JsWPKsD6P9dXq+dc5z
+         UZkyCk+sG5gybO20r1rN9j1l53uX6x7c5hasGy6p+8OXKm3UXnw3Uu8OK21bf6TTskkK
+         o6DKEoVS/qypd4fkAWotc4Nr7jPx0WesPLEIRnkT4ozgVyGXMb4+2RHUgo4NzSL632YB
+         2Uz6Nvi70njwXmkO/TuU7YYDWU2ylMbwwu1CtggrbSN33yQsXMJk/gU5+qmNtsaauzP2
+         Ycj8rlL0j/nc6cw8uB4bg1Zf5V6tws1j86VzDaI9/6gs9D3iWknHfrEPKgp4Mxg//lQD
+         B3SQ==
+X-Gm-Message-State: AGRZ1gKc68Q1V21yU9co6xxluF3yqolVZpjSTVPjVQKGjzVo/gDhwyqo
+        Fm4LGshsWDWvhbu2afCS0gH8Bm32h6aKKw==
+X-Google-Smtp-Source: AJdET5erqZnDfqXDfuWQKvfcJg8uxdU/ZEPoy7MEbDHLUXzBl1iGsmrXk2B71k07yCm0jnbXWuhnEg==
+X-Received: by 2002:a2e:9b84:: with SMTP id z4-v6mr5839347lji.93.1541108823845;
+        Thu, 01 Nov 2018 14:47:03 -0700 (PDT)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
+        by smtp.gmail.com with ESMTPSA id v13-v6sm4985056lfb.70.2018.11.01.14.47.02
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Nov 2018 14:47:03 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id n3-v6so15282440lfe.7
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 14:47:02 -0700 (PDT)
+X-Received: by 2002:a19:4948:: with SMTP id l8-v6mr5076380lfj.16.1541108822210;
+ Thu, 01 Nov 2018 14:47:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+aC45BtS88DXarn3A+LV2RRRsPQoSs_3_DnKjU4O3AMHQ@mail.gmail.com>
-User-Agent: Mutt/1.5.22.1 (2013-10-16)
+References: <CAL_JsqJ8tAUbbHp9Ymu3gsfSGSK=qgPDofxA9yH8T9k67QjPNQ@mail.gmail.com>
+In-Reply-To: <CAL_JsqJ8tAUbbHp9Ymu3gsfSGSK=qgPDofxA9yH8T9k67QjPNQ@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 1 Nov 2018 14:46:46 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj011xVwnTcUXYGpLQh9e7h4TMwzJGNdtijpr8yzgmUjw@mail.gmail.com>
+Message-ID: <CAHk-=wj011xVwnTcUXYGpLQh9e7h4TMwzJGNdtijpr8yzgmUjw@mail.gmail.com>
+Subject: Re: [GIT PULL] Devicetree fixes for 4.20-rc1
+To:     Rob Herring <robherring2@gmail.com>
+Cc:     Frank Rowand <frowand.list@gmail.com>, mpe@ellerman.id.au,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 01, 2018 at 06:46:50PM +0100, Dmitry Vyukov wrote:
-> If there is a warning that we don't want to see at all, then we can
-> disable it. It supposed to be a useful tool, rather than a thing in
-> itself that lives own life. We already I think removed 1 particularly
-> noisy warning and made another optional via a config.
+On Thu, Nov 1, 2018 at 2:23 PM Rob Herring <robherring2@gmail.com> wrote:
+>
+> Please pull a couple of fixes for rc1.
 
-> But the thing with overflows is that, even if it's defined, it's not
-> necessary the intended behavior. For example, take allocation size
-> calculation done via unsigned size_t. If it overflows it does not help
-> if C defines result or not, it still gives a user controlled write
-> primitive. We've seen similar cases with timeout/deadline calculation
-> in kernel, we really don't want it to just wrap modulo-2, right. Some
-> user-space projects even test with unsigned overflow warnings or
-> implicit truncation warnings, which are formally legal, but frequently
-> bugs.
+Pulled,
 
-Sure; but then don't call it UB.
-
-If we want to have an additional integer over/underflow checker (ideally
-with a gcc plugin that has explicit annotations like __wrap to make it
-go away) that is fine; and it can be done on unsigned and signed.
-
-
+                  Linus
