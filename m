@@ -2,293 +2,178 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A831EC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 20:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D43C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 20:22:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F0B02064C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 20:16:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CCAF205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 20:22:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kfT8ixVq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F0B02064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ryhIDcKK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CCAF205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727771AbeKBFVU (ORCPT
+        id S1727806AbeKBF0g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 01:21:20 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:33234 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727727AbeKBFVU (ORCPT
+        Fri, 2 Nov 2018 01:26:36 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36780 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727735AbeKBF0g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 01:21:20 -0400
-Received: by mail-ua1-f66.google.com with SMTP id s26so5562627uao.0
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 13:16:51 -0700 (PDT)
+        Fri, 2 Nov 2018 01:26:36 -0400
+Received: by mail-pg1-f195.google.com with SMTP id z17-v6so9549368pgv.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 13:22:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RDCDd0p4OmFseFi2wBnsj0C8loIAFcE/ArZDMAjsLkQ=;
-        b=kfT8ixVqkLL5HtNNvmNNFp5dOjfv+B8Ej8abtSuoS32uTtrzyyd6SdgeVzJclM3Y5v
-         AIdJNtWBXhXlkNRg2aY9f2nU2J9grgl9Ftw0NuJKQAFRhAVmq8pGChTn67q9eyHn4zDe
-         tgsWsSqXHiATO47NdJO0FBhj8cR+exUzBmFKZa7065N9jvLWkoiwYeRTaY+iioHyiKaL
-         RbBdgLmFRBQRVBK2q/8CgiJsZKrWfMrAXiOEalEKZjwVpRlJCjxK/AzAylacKzOrD/Jf
-         4LtUWqH7KOvrYSYVgx/wOtzi76Gh47R13ngeLrt+njvcwHY577iuuPMQ5bGPLTl0DD7/
-         S31A==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=gSurDRYkvdTCg5swseyrJHrzViD1QpozUgc/rwT7xfI=;
+        b=ryhIDcKKer3hQ54CA97/JEjKZ01e5rnpI4Le5IaQUPjeUg0EY4sSshaYTtoYQcVEpM
+         36CvZiN4W3FaMelzYdPLs9Tk4UWdvuUh7nrs08sXmpnis9/msIHemKu2RAHfnKaNsBe1
+         vbFnXVAnBEFJmSCTawSJI4mWxvTmOMjSLrhpLRTATHl4khFusB2AS3KTYpzK30P0Wmca
+         Qvv+r4GMlpaTIT+Tj5R/tvsCAoSJDCgAt3dM7WtGyojRxnsc/MHFo+ubTjFfL3n5e+aN
+         3x8m0LCIG1hkyX234S0AjM3f7YvKiS/0jm/kvSTSX8oFI/9Dk+Qhrkjohsaohvi+nI52
+         5yGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RDCDd0p4OmFseFi2wBnsj0C8loIAFcE/ArZDMAjsLkQ=;
-        b=tAjSB0AAhUndJYKI4E5/okhVeP2al0i/yq++1oibIQ1I7RiOKvjaYGXYkRWcLDVNPJ
-         f+Hn6xA9ofLSmOgVuJzFdyUpdh8v8dNA+BwFZ1lgfslaq1/uIY46e1PgilMUB8K/pDTu
-         4CAv+QzFaK+iVv/y1CZVxv2v+77VYvTLt49taxzW3Akdquv0j+U7RjrXUvjK/u69WMq5
-         0FyjhCc0GUSkMMCoQEcl5CbU/FmM6RgEvEnzb6rs7ZQ147obbUWNi3vqLbGgUKcLrUei
-         0pl6a+XgKAF6hHQ6QAGnLTygWJ9TQOYHL8iMMZe1HKw7vnrG8/ns145vC84lsIS9SVwn
-         nhaA==
-X-Gm-Message-State: AGRZ1gLB8E5CwfLAzp7A0gWcHY5zuo0cwb3xRwwWEXBrRx/wryJe8Kj6
-        E/BxSMGXOc/noYJQNEYnbPdPik2tXCISqvC1J47ROw==
-X-Google-Smtp-Source: AJdET5cFBrfEMGpEb6loaW9cQy091IfqFKtbs+Yu82CWKqztZ+FEsGKC2qOoF6H1Tiu4zS0vWTrQHHhdW2GJoWFKhyI=
-X-Received: by 2002:ab0:7488:: with SMTP id n8mr4196822uap.115.1541103410109;
- Thu, 01 Nov 2018 13:16:50 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=gSurDRYkvdTCg5swseyrJHrzViD1QpozUgc/rwT7xfI=;
+        b=cKThM9Q30ylFltj737zxABJNl3y03iPZVOM5XqVbxA0nGiiiokHREuN8Zd8liOdSwA
+         rz35MA3BEeNicItBIAyaqq4hAxa39+927Zhm4FUh35WcaCTs93fVgk0Cqa1ligQMfg5L
+         G+U7YkSaqjmiiudfy0CjoVzg8XaCd/ErPWHW6/8izMMZn/hMUVUX7TamunABpSXLbnif
+         43tyexUmpkaz4oXY8r6Wdz0DQtHsy8FNwIIDQb8z2cGzHLPSq/YryZoIv7O+568jApzY
+         O5GE0scsHq9L/IUjxAY1RcMDWOx4QdyVdWZE1bSoZxPS4ZCWERzib9uFvGbusPnsb27F
+         fA6w==
+X-Gm-Message-State: AGRZ1gKmOi1pcI3sAG5/3DaSA9/14dG25GvC8HqMvsF+IeyKzGShS94Z
+        B3ropg5XXtB7OcW0I4kTPnINoVwt
+X-Google-Smtp-Source: AJdET5f/xoh5xAQg4urIgJivhdKsYRsBur58CDqn78PbgBGpjHFkq9AxrJCMpzYf/jaDXcUwfKstpg==
+X-Received: by 2002:a62:250:: with SMTP id 77-v6mr9350243pfc.16.1541103725655;
+        Thu, 01 Nov 2018 13:22:05 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id w2-v6sm30230620pfw.26.2018.11.01.13.22.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 01 Nov 2018 13:22:05 -0700 (PDT)
+Date:   Thu, 1 Nov 2018 13:22:01 -0700
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     hch@lst.de, m.szyprowski@samsung.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        vdumpa@nvidia.com
+Subject: Re: [PATCH RFC] dma-direct: do not allocate a single page from CMA
+ area
+Message-ID: <20181101202200.GA30950@Asurada-Nvidia.nvidia.com>
+References: <20181031200355.19945-1-nicoleotsuka@gmail.com>
+ <13d60076-33ad-b542-4d17-4d717d5aa4d3@arm.com>
+ <20181101180439.GA4746@Asurada-Nvidia.nvidia.com>
+ <58e3d16e-837c-0610-9e1c-0562babcdd82@arm.com>
 MIME-Version: 1.0
-References: <1541073999-11752-1-git-send-email-vbadigan@codeaurora.org> <1541073999-11752-3-git-send-email-vbadigan@codeaurora.org>
-In-Reply-To: <1541073999-11752-3-git-send-email-vbadigan@codeaurora.org>
-From:   Doug Anderson <dianders@google.com>
-Date:   Thu, 1 Nov 2018 13:16:37 -0700
-Message-ID: <CAD=FV=XbCGQ2v1EAGOxiY_7PVH0WmOy0MMnUtKi9TkJYmhe4=A@mail.gmail.com>
-Subject: Re: [PATCH V3 2/2] mmc: sdhci-msm: Re-initialize DLL if MCLK is gated dynamically
-To:     vbadigan@codeaurora.org
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Evan Green <evgreen@chromium.org>,
-        Asutosh Das <asutoshd@codeaurora.org>, riteshh@codeaurora.org,
-        stummala@codeaurora.org, sayalil@codeaurora.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <58e3d16e-837c-0610-9e1c-0562babcdd82@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Nov 01, 2018 at 07:32:39PM +0000, Robin Murphy wrote:
 
-On Thu, Nov 1, 2018 at 5:08 AM Veerabhadrarao Badiganti
-<vbadigan@codeaurora.org> wrote:
->
-> On few SDHCI-MSM controllers, the host controller's clock tuning
-> circuit may go out of sync if controller clocks are gated which
-> eventually will result in data CRC, command CRC/timeout errors.
-> To overcome this h/w limitation, the DLL needs to be re-initialized
-> and restored with its old settings once clocks are ungated.
->
-> Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-> ---
->  drivers/mmc/host/sdhci-msm.c | 59 ++++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 57 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-> index 3cc8bfe..e38a4e8 100644
-> --- a/drivers/mmc/host/sdhci-msm.c
-> +++ b/drivers/mmc/host/sdhci-msm.c
-> @@ -232,6 +232,7 @@ struct sdhci_msm_variant_ops {
->   */
->  struct sdhci_msm_variant_info {
->         bool mci_removed;
-> +       bool restore_dll_config;
->         const struct sdhci_msm_variant_ops *var_ops;
->         const struct sdhci_msm_offset *offset;
->  };
-> @@ -256,6 +257,7 @@ struct sdhci_msm_host {
->         bool pwr_irq_flag;
->         u32 caps_0;
->         bool mci_removed;
-> +       bool restore_dll_config;
->         const struct sdhci_msm_variant_ops *var_ops;
->         const struct sdhci_msm_offset *offset;
->  };
-> @@ -1025,6 +1027,36 @@ static int sdhci_msm_hs400_dll_calibration(struct sdhci_host *host)
->         return ret;
->  }
->
-> +static int sdhci_msm_restore_sdr_dll_config(struct sdhci_host *host)
-> +{
-> +       struct mmc_ios ios = host->mmc->ios;
+> > On Thu, Nov 01, 2018 at 02:07:55PM +0000, Robin Murphy wrote:
+> > > On 31/10/2018 20:03, Nicolin Chen wrote:
+> > > > The addresses within a single page are always contiguous, so it's
+> > > > not so necessary to allocate one single page from CMA area. Since
+> > > > the CMA area has a limited predefined size of space, it might run
+> > > > out of space in some heavy use case, where there might be quite a
+> > > > lot CMA pages being allocated for single pages.
+> > > > 
+> > > > This patch tries to skip CMA allocations of single pages and lets
+> > > > them go through normal page allocations. This would save resource
+> > > > in the CMA area for further more CMA allocations.
+> > > 
+> > > In general, this seems to make sense to me. It does represent a theoretical
+> > > change in behaviour for devices which have their own CMA area somewhere
+> > > other than kernel memory, and only ever make non-atomic allocations, but I'm
+> > > not sure whether that's a realistic or common enough case to really worry
+> > > about.
+> > 
+> > Hmm..I don't quite understand the part of worrying its realisticness.
+> > Would you mind elaborating a bit?
+> 
+> I only mean the case where a driver previously happened to get single pages
+> allocated from a per-device CMA area, would now always get them fulfilled
+> from regular kernel memory instead, and actually cares about the difference.
 
-Please use a pointer.  Right now you're copying the whole structure
-onto the stack.  Sure it's maybe only 20 bytes, but why?
+I see. I think that's a good question.
 
-...for bonus points add a separate patch that fixes all the other
-places in this file that do the same thing.  A grep can see that msm
-is the only one that does this, everyone else uses a pointer:
+> As I say, that's a contrived case that I doubt is honestly a significant
+> concern, but it's not *entirely* inconceivable. I've just been bitten before
+> by drivers relying on specific DMA API implementation behaviour which was
+> never guaranteed or even necessarily correct by the terms of the API itself,
+> so I'm naturally wary of the corner cases ;)
 
-$ git grep 'struct mmc_ios.*=' -- drivers/mmc/host
-drivers/mmc/host/omap_hsmmc.c:  struct mmc_ios *ios = &mmc->ios;
-drivers/mmc/host/omap_hsmmc.c:  struct mmc_ios *ios = &host->mmc->ios;
-drivers/mmc/host/omap_hsmmc.c:  struct mmc_ios *ios = &host->mmc->ios;
-drivers/mmc/host/omap_hsmmc.c:  struct mmc_ios *ios = &host->mmc->ios;
-drivers/mmc/host/omap_hsmmc.c:  struct mmc_ios *ios = &host->mmc->ios;
-drivers/mmc/host/sdhci-msm.c:   struct mmc_ios ios = host->mmc->ios;
-drivers/mmc/host/sdhci-msm.c:   struct mmc_ios curr_ios = host->mmc->ios;
-drivers/mmc/host/sdhci-msm.c:   struct mmc_ios ios = host->mmc->ios;
-drivers/mmc/host/sdhci-msm.c:   struct mmc_ios ios = host->mmc->ios;
-drivers/mmc/host/sdhci-msm.c:   struct mmc_ios ios = host->mmc->ios;
-drivers/mmc/host/sdhci-msm.c:   struct mmc_ios ios = host->mmc->ios;
-drivers/mmc/host/sdhci-omap.c:  struct mmc_ios *ios = &mmc->ios;
-drivers/mmc/host/sdhci.c:       struct mmc_ios *ios = &mmc->ios;
+I also have a vague concern that CMA pages might turn out to be
+special so this change would make some differences in stability
+or performance for those who actually rely on actual CMA pages,
+though I ain't sure if it can be true or realistic as you said.
 
+> On second thought, however, I suppose we could always key this off
+> DMA_ATTR_FORCE_CONTIGUOUS as well if we really want - technically it has a
+> more general meaning than "only ever allocate from CMA", but in practice if
+> that's the behaviour a driver wants, then that flag is already the only way
+> it can even hope to get dma_alloc_coherent() to comply anywhere near
+> reliably.
 
-> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +       struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
-> +       int ret;
-> +
-> +       /*
-> +        * SDR DLL comes into picure only if clock frequency is greater than
-> +        * 100MHz. And its needed only for SDR104, HS200 and HS400 cards.
-> +        * Its not needed for HS400es cards.
-> +        */
-> +       if (host->clock <= CORE_FREQ_100MHZ ||
-> +           !(ios.timing == MMC_TIMING_MMC_HS400 ||
-> +           ios.timing == MMC_TIMING_MMC_HS200 ||
-> +           ios.timing == MMC_TIMING_UHS_SDR104) ||
-> +           ios.enhanced_strobe)
+That is a good input. Would you prefer to have it in condition
+check now with this patch?
 
-This if test is nearly copied from sdhci_msm_execute_tuning().  My
-first thought it that this is complicated enough logic that you should
-write a helper.
+> > As I tested this change on Tegra186
+> > board, and saw some single-page allocations have been directed to the
+> > normal allocation; and the "CmaFree" size reported from /proc/meminfo
+> > is also increased. Does this mean it's realistic?
+> 
+> Indeed - I happen to have CMA debug enabled for no good reason in my current
+> development config, and on my relatively unexciting Juno board single-page
+> allocations turn out to be the majority by number, even if not by total
+> consumption:
+> 
+> [    0.519663] cma: cma_alloc(cma (____ptrval____), count 64, align 6)
+> [    0.527508] cma: cma_alloc(): returned (____ptrval____)
+> [    3.768066] cma: cma_alloc(cma (____ptrval____), count 1, align 0)
+> [    3.774566] cma: cma_alloc(): returned (____ptrval____)
+> [    3.860097] cma: cma_alloc(cma (____ptrval____), count 1875, align 8)
+> [    3.867150] cma: cma_alloc(): returned (____ptrval____)
+> [    3.920796] cma: cma_alloc(cma (____ptrval____), count 31, align 5)
+> [    3.927093] cma: cma_alloc(): returned (____ptrval____)
+> [    3.932326] cma: cma_alloc(cma (____ptrval____), count 31, align 5)
+> [    3.938643] cma: cma_alloc(): returned (____ptrval____)
+> [    4.022188] cma: cma_alloc(cma (____ptrval____), count 1, align 0)
+> [    4.028415] cma: cma_alloc(): returned (____ptrval____)
+> [    4.033600] cma: cma_alloc(cma (____ptrval____), count 1, align 0)
+> [    4.039786] cma: cma_alloc(): returned (____ptrval____)
+> [    4.044968] cma: cma_alloc(cma (____ptrval____), count 1, align 0)
+> [    4.051150] cma: cma_alloc(): returned (____ptrval____)
+> [    4.113556] cma: cma_alloc(cma (____ptrval____), count 1, align 0)
+> [    4.119785] cma: cma_alloc(): returned (____ptrval____)
+> [    5.012654] cma: cma_alloc(cma (____ptrval____), count 1, align 0)
+> [    5.019047] cma: cma_alloc(): returned (____ptrval____)
+> [   11.485179] cma: cma_alloc(cma 000000009dd074ee, count 1, align 0)
+> [   11.492096] cma: cma_alloc(): returned 000000009264a86c
+> [   12.269355] cma: cma_alloc(cma 000000009dd074ee, count 1875, align 8)
+> [   12.277535] cma: cma_alloc(): returned 00000000d7bb9ae5
+> [   12.286110] cma: cma_alloc(cma 000000009dd074ee, count 4, align 2)
+> [   12.292507] cma: cma_alloc(): returned 0000000007ba7a39
+> 
+> I don't have any exciting peripherals to really exercise the coherent
+> allocator, but I imagine that fragmentation is probably just as good a
+> reason as total CMA usage for avoiding trivial allocations by default.
 
-...looking at this is makes me feel like there's a bug in
-sdhci_msm_execute_tuning() because it doesn't check for
-"enhanced_strobe".  ...but maybe the answer is that the test in
-sdhci_msm_execute_tuning() is pointless anyway because the core code
-should only call execute_tuning() if we're using a mode that needs
-tuning.  So maybe the answer is to remove the code from
-sdhci_msm_execute_tuning()...
+I will also add to the commit message fragmentation reduction.
 
-...but thinking even more: do we really need this logic?  Basically
-you want to invalidate the saved dll config whenever the timing mode
-changes, right?  ...because execute_tuning() won't be called if you go
-down to a timing change that doesn't use tuning?  Maybe you can just
-save the timing mode at the same time you save the phase.  If the
-current timing mode doesn't equal the saved timing mode then you don't
-restore the phase.
-
-
-> +               return 0;
-> +
-> +       /* Reset the tuning block */
-> +       ret = msm_init_cm_dll(host);
-> +       if (ret)
-> +               return ret;
-> +
-> +       /* Restore the tuning block */
-> +       ret = msm_config_cm_dll_phase(host, msm_host->saved_tuning_phase);
-> +
-> +       return ret;
-> +}
-> +
->  static int sdhci_msm_execute_tuning(struct mmc_host *mmc, u32 opcode)
->  {
->         struct sdhci_host *host = mmc_priv(mmc);
-> @@ -1069,7 +1101,6 @@ static int sdhci_msm_execute_tuning(struct mmc_host *mmc, u32 opcode)
->                 if (rc)
->                         return rc;
->
-> -               msm_host->saved_tuning_phase = phase;
->                 rc = mmc_send_tuning(mmc, opcode, NULL);
->                 if (!rc) {
->                         /* Tuning is successful at this tuning point */
-> @@ -1094,6 +1125,7 @@ static int sdhci_msm_execute_tuning(struct mmc_host *mmc, u32 opcode)
->                 rc = msm_config_cm_dll_phase(host, phase);
->                 if (rc)
->                         return rc;
-> +               msm_host->saved_tuning_phase = phase;
->                 dev_dbg(mmc_dev(mmc), "%s: Setting the tuning phase to %d\n",
->                          mmc_hostname(mmc), phase);
->         } else {
-> @@ -1617,12 +1649,21 @@ static void sdhci_msm_set_regulator_caps(struct sdhci_msm_host *msm_host)
->
->  static const struct sdhci_msm_variant_info sdhci_msm_mci_var = {
->         .mci_removed = false,
-> +       .restore_dll_config = false,
-
-nit: Linux convention is to rely on static structures to be initted to
-0 / false / NULL.  ...so no need to add an "= false" here.
-
-
->         .var_ops = &mci_var_ops,
->         .offset = &sdhci_msm_mci_offset,
->  };
->
->  static const struct sdhci_msm_variant_info sdhci_msm_v5_var = {
->         .mci_removed = true,
-> +       .restore_dll_config = false,
-
-...and here...
-
-
-> +       .var_ops = &v5_var_ops,
-> +       .offset = &sdhci_msm_v5_offset,
-> +};
-> +
-> +static const struct sdhci_msm_variant_info sdm845_sdhci_var = {
-> +       .mci_removed = true,
-> +       .restore_dll_config = true,
->         .var_ops = &v5_var_ops,
->         .offset = &sdhci_msm_v5_offset,
->  };
-> @@ -1630,6 +1671,7 @@ static void sdhci_msm_set_regulator_caps(struct sdhci_msm_host *msm_host)
->  static const struct of_device_id sdhci_msm_dt_match[] = {
->         {.compatible = "qcom,sdhci-msm-v4", .data = &sdhci_msm_mci_var},
->         {.compatible = "qcom,sdhci-msm-v5", .data = &sdhci_msm_v5_var},
-> +       {.compatible = "qcom,sdm845-sdhci", .data = &sdm845_sdhci_var},
->         {},
->  };
->
-> @@ -1689,6 +1731,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
->         var_info = of_device_get_match_data(&pdev->dev);
->
->         msm_host->mci_removed = var_info->mci_removed;
-> +       msm_host->restore_dll_config = var_info->restore_dll_config;
->         msm_host->var_ops = var_info->var_ops;
->         msm_host->offset = var_info->offset;
->
-> @@ -1928,9 +1971,21 @@ static int sdhci_msm_runtime_resume(struct device *dev)
->         struct sdhci_host *host = dev_get_drvdata(dev);
->         struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->         struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
-> +       int ret;
->
-> -       return clk_bulk_prepare_enable(ARRAY_SIZE(msm_host->bulk_clks),
-> +       ret = clk_bulk_prepare_enable(ARRAY_SIZE(msm_host->bulk_clks),
->                                        msm_host->bulk_clks);
-> +       if (ret)
-> +               goto out;
-
-no need for a goto since you're not undoing anything.  Just:
-
-if (ret)
-  return ret;
-
-
-> +       /*
-> +        * Whenever core-clock is gated dynamically, it's needed to
-> +        * restore the SDR DLL settings when the clock is ungated.
-> +        */
-> +       if (msm_host->restore_dll_config && msm_host->clk_rate)
-> +               ret = sdhci_msm_restore_sdr_dll_config(host);
-> +
-> +out:
-> +       return ret;
-
-No need for 'ret' variable:
-
-if (msm_host->restore_dll_config && msm_host->clk_rate)
-  return sdhci_msm_restore_sdr_dll_config(host);
-
-return 0;
+Thanks
+Nicolin
