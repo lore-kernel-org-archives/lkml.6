@@ -2,125 +2,229 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56E2BC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:10:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23840C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:16:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCB9420657
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:10:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCB9420657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id AC8E520657
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:16:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="goXaIwUT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC8E520657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728576AbeKAVNg (ORCPT
+        id S1728523AbeKAVSs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 17:13:36 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:37843 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728389AbeKAVNf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 17:13:35 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id B41BEC7073CEE;
-        Thu,  1 Nov 2018 20:10:50 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.75) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 1 Nov 2018 20:10:45 +0800
-From:   Yunsheng Lin <linyunsheng@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <huangdaode@hisilicon.com>, <xuwei5@hisilicon.com>,
-        <liguozhu@hisilicon.com>, <Yisen.Zhuang@huawei.com>,
-        <john.garry@huawei.com>, <linuxarm@huawei.com>,
-        <yisen.zhuang@huawei.com>, <salil.mehta@huawei.com>,
-        <lipeng321@huawei.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH net] net: hns3: Fix for out-of-bounds access when setting pfc back pressure
-Date:   Thu, 1 Nov 2018 20:12:43 +0800
-Message-ID: <1541074363-98630-1-git-send-email-linyunsheng@huawei.com>
-X-Mailer: git-send-email 2.8.1
+        Thu, 1 Nov 2018 17:18:48 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:42118 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728326AbeKAVSs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 17:18:48 -0400
+Received: by mail-oi1-f196.google.com with SMTP id h23-v6so16391512oih.9
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 05:16:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=BWgaB3EEVsV+i7XOhMQZSwzQH6K5RrOr97/lwgXbhNQ=;
+        b=goXaIwUTcEHYfJQW5IlSmt0TMcLKozunufEsTfpbYyhnd/qIe7NwkcmRuIpOsguCXp
+         w6E2eptfchrOUReQp0gnsz67PtQtP65vQ/5wRgCE4ii4fcD6MdF43ENmkjTGbJFe19d1
+         boIiAtUpGGSv/L7zxWTLd0pVyN1HRJNa9DJuBspHzO4bQPira5f14c6Yox61LiwIbgxR
+         L09hAC2kMBYBGrPfLcGdZexdQC1ELy7Dik0hdUrHYG1s/eQGqtw4z0eWwkJ4QJTlIkFq
+         HdmKc/zLe6rRn8Ky31ckYcbmcS7EnVwpoY1LTMtOIWnoEQmuWhC98ZX+hqAavl7EQKQi
+         no2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=BWgaB3EEVsV+i7XOhMQZSwzQH6K5RrOr97/lwgXbhNQ=;
+        b=trYJyJHjpE9aubZYZpysOJWf/6To5epbCocUBpIZNnOFwI3mmWOp4zn0pnD8ypzYPY
+         +uDzAoIAaxrJwhE78eIMKIaPYVZMoQWcd8sAQlDwPpgdFfgL5KuXi6APc9pvjsZyco8C
+         4/n0NDZLLvI6sYNkTLkRWoKI7xohyY+h9jUvmim4stJWmPdzatqu1CjeMCxtZjP5FO6h
+         xaZYEpZ3WcQhwoYFvZjCw5nT1AKasgKMjuCa9GL868D/9tD+dlVHuEkJ6s8AUkxJI4Kb
+         U4u4r6UwdpHpN7f8BIx1Q+gJXjgPcmQ9eK2I2OdVC6oqjD3glPRSTdMrudgqnQgiMEod
+         J7Jw==
+X-Gm-Message-State: AGRZ1gIpdt9Id2H9qbtXP3xlwuqMs4vGCZ/1cbVXuzbN6jL8AH9HpEPK
+        e3yiU7ULP+w2XwBo+G0BR5A=
+X-Google-Smtp-Source: AJdET5cDOMpueE3rg/sFlCtKBzNtaObCXeW95V+FYI7TDDh7HnC2sFkw5f+y6yQhb82axyfJbaAmgw==
+X-Received: by 2002:aca:b504:: with SMTP id e4-v6mr4317375oif.25.1541074564576;
+        Thu, 01 Nov 2018 05:16:04 -0700 (PDT)
+Received: from JosephdeMacBook-Pro.local ([47.89.83.53])
+        by smtp.gmail.com with ESMTPSA id c29sm11450468otj.58.2018.11.01.05.15.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Nov 2018 05:16:03 -0700 (PDT)
+Subject: Re: [Ocfs2-devel] [PATCH V3] ocfs2: fix dead lock caused by
+ ocfs2_defrag_extent
+To:     Changwei Ge <ge.changwei@h3c.com>, Larry Chen <lchen@suse.com>,
+        "mark@fasheh.com" <mark@fasheh.com>,
+        "jlbec@evilplan.org" <jlbec@evilplan.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20181101071422.14470-1-lchen@suse.com>
+ <c07c65cb-8492-d866-6a1f-ffa64b293ea0@gmail.com>
+ <63ADC13FD55D6546B7DECE290D39E37301277DE397@H3CMLB12-EX.srv.huawei-3com.com>
+From:   Joseph Qi <jiangqi903@gmail.com>
+Message-ID: <4f96339a-6209-eee1-3792-4720eca35688@gmail.com>
+Date:   Thu, 1 Nov 2018 20:15:52 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+In-Reply-To: <63ADC13FD55D6546B7DECE290D39E37301277DE397@H3CMLB12-EX.srv.huawei-3com.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The vport should be initialized to hdev->vport for each bp group,
-otherwise it will cause out-of-bounds access and bp setting not
-correct problem.
 
-[   35.254124] BUG: KASAN: slab-out-of-bounds in hclge_pause_setup_hw+0x2a0/0x3f8 [hclge]
-[   35.254126] Read of size 2 at addr ffff803b6651581a by task kworker/0:1/14
 
-[   35.254132] CPU: 0 PID: 14 Comm: kworker/0:1 Not tainted 4.19.0-rc7-hulk+ #85
-[   35.254133] Hardware name: Huawei D06/D06, BIOS Hisilicon D06 UEFI RC0 - B052 (V0.52) 09/14/2018
-[   35.254141] Workqueue: events work_for_cpu_fn
-[   35.254144] Call trace:
-[   35.254147]  dump_backtrace+0x0/0x2f0
-[   35.254149]  show_stack+0x24/0x30
-[   35.254154]  dump_stack+0x110/0x184
-[   35.254157]  print_address_description+0x168/0x2b0
-[   35.254160]  kasan_report+0x184/0x310
-[   35.254162]  __asan_load2+0x7c/0xa0
-[   35.254170]  hclge_pause_setup_hw+0x2a0/0x3f8 [hclge]
-[   35.254177]  hclge_tm_init_hw+0x794/0x9f0 [hclge]
-[   35.254184]  hclge_tm_schd_init+0x48/0x58 [hclge]
-[   35.254191]  hclge_init_ae_dev+0x778/0x1168 [hclge]
-[   35.254196]  hnae3_register_ae_dev+0x14c/0x298 [hnae3]
-[   35.254206]  hns3_probe+0x88/0xa8 [hns3]
-[   35.254210]  local_pci_probe+0x7c/0xf0
-[   35.254212]  work_for_cpu_fn+0x34/0x50
-[   35.254214]  process_one_work+0x4d4/0xa38
-[   35.254216]  worker_thread+0x55c/0x8d8
-[   35.254219]  kthread+0x1b0/0x1b8
-[   35.254222]  ret_from_fork+0x10/0x1c
+On 18/11/1 19:52, Changwei Ge wrote:
+> Hello Joseph,
+> 
+> On 2018/11/1 17:01, Joseph Qi wrote:
+>> Hi Larry,
+>>
+>> On 18/11/1 15:14, Larry Chen wrote:
+>>> ocfs2_defrag_extent may fall into deadlock.
+>>>
+>>> ocfs2_ioctl_move_extents
+>>>      ocfs2_ioctl_move_extents
+>>>        ocfs2_move_extents
+>>>          ocfs2_defrag_extent
+>>>            ocfs2_lock_allocators_move_extents
+>>>
+>>>              ocfs2_reserve_clusters
+>>>                inode_lock GLOBAL_BITMAP_SYSTEM_INODE
+>>>
+>>> 	  __ocfs2_flush_truncate_log
+>>>                inode_lock GLOBAL_BITMAP_SYSTEM_INODE
+>>>
+>>> As backtrace shows above, ocfs2_reserve_clusters() will call inode_lock
+>>> against the global bitmap if local allocator has not sufficient cluters.
+>>> Once global bitmap could meet the demand, ocfs2_reserve_cluster will
+>>> return success with global bitmap locked.
+>>>
+>>> After ocfs2_reserve_cluster(), if truncate log is full,
+>>> __ocfs2_flush_truncate_log() will definitely fall into deadlock because it
+>>> needs to inode_lock global bitmap, which has already been locked.
+>>>
+>>> To fix this bug, we could remove from ocfs2_lock_allocators_move_extents()
+>>> the code which intends to lock global allocator, and put the removed code
+>>> after __ocfs2_flush_truncate_log().
+>>>
+>>> ocfs2_lock_allocators_move_extents() is referred by 2 places, one is here,
+>>> the other does not need the data allocator context, which means this patch
+>>> does not affect the caller so far.
+>>>
+>>> Change log:
+>>> 1. Correct the function comment.
+>>> 2. Remove unused argument from ocfs2_lock_meta_allocator_move_extents.
+>>>
+>>> Signed-off-by: Larry Chen <lchen@suse.com>
+>>> ---
+>>>   fs/ocfs2/move_extents.c | 47 ++++++++++++++++++++++++++---------------------
+>>>   1 file changed, 26 insertions(+), 21 deletions(-)
+>>>
+> 
+>> IMO, here clusters_to_move is only for data_ac, since we change this
+>> function to only handle meta_ac, I'm afraid clusters_to_move related
+>> logic has to been changed correspondingly.
+> 
+> I think we can't remove *clusters_to_move* from here as clusters can be reserved latter outsides this function, but we
+> still have to reserve metadata(extents) in advance.
+> So we need that argument.
+> 
+I was not saying just remove it.
+IIUC, clusters_to_move is for reserving data clusters (for meta_ac, we
+mostly talk about blocks). Since we have moved data cluster reserve
+logic out of ocfs2_lock_allocators_move_extents() now, then left
+clusters_to_move related logic here is odd.
 
-[   35.254224] The buggy address belongs to the page:
-[   35.254228] page:ffff7e00ed994400 count:1 mapcount:0 mapping:0000000000000000 index:0x0 compound_mapcount: 0
-[   35.273835] flags: 0xfffff8000008000(head)
-[   35.282007] raw: 0fffff8000008000 dead000000000100 dead000000000200 0000000000000000
-[   35.282010] raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-[   35.282012] page dumped because: kasan: bad access detected
-
-[   35.282014] Memory state around the buggy address:
-[   35.282017]  ffff803b66515700: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-[   35.282019]  ffff803b66515780: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-[   35.282021] >ffff803b66515800: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-[   35.282022]                             ^
-[   35.282024]  ffff803b66515880: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-[   35.282026]  ffff803b66515900: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-[   35.282028] ==================================================================
-[   35.282029] Disabling lock debugging due to kernel taint
-[   35.282747] hclge driver initialization finished.
-
-Fixes: 67bf2541f4b9 ("net: hns3: Fixes the back pressure setting when sriov is enabled")
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-index aa5cb98..0c9c6ae 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-@@ -1168,11 +1168,12 @@ static int hclge_pfc_setup_hw(struct hclge_dev *hdev)
-  */
- static int hclge_bp_setup_hw(struct hclge_dev *hdev, u8 tc)
- {
--	struct hclge_vport *vport = hdev->vport;
- 	u32 i, k, qs_bitmap;
- 	int ret;
- 
- 	for (i = 0; i < HCLGE_BP_GRP_NUM; i++) {
-+		struct hclge_vport *vport = hdev->vport;
-+
- 		qs_bitmap = 0;
- 
- 		for (k = 0; k < hdev->num_alloc_vport; k++) {
--- 
-2.8.1
-
+>>>   					u32 extents_to_split,
+>>>   					struct ocfs2_alloc_context **meta_ac,
+>>> -					struct ocfs2_alloc_context **data_ac,
+>>>   					int extra_blocks,
+>>>   					int *credits)
+>>>   {
+>>> @@ -192,13 +188,6 @@ static int ocfs2_lock_allocators_move_extents(struct inode *inode,
+>>>   		goto out;
+>>>   	}
+>>>   
+>>> -	if (data_ac) {
+>>> -		ret = ocfs2_reserve_clusters(osb, clusters_to_move, data_ac);
+>>> -		if (ret) {
+>>> -			mlog_errno(ret);
+>>> -			goto out;
+>>> -		}
+>>> -	}
+>>>   
+>>>   	*credits += ocfs2_calc_extend_credits(osb->sb, et->et_root_el);
+>>>   
+>>> @@ -257,10 +246,10 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
+>>>   		}
+>>>   	}
+>>>   
+>>> -	ret = ocfs2_lock_allocators_move_extents(inode, &context->et, *len, 1,
+>>> -						 &context->meta_ac,
+>>> -						 &context->data_ac,
+>>> -						 extra_blocks, &credits);
+>>> +	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
+>>> +						*len, 1,
+>>> +						&context->meta_ac,
+>>> +						extra_blocks, &credits);
+>>>   	if (ret) {
+>>>   		mlog_errno(ret);
+>>>   		goto out;
+>>> @@ -283,6 +272,21 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
+>>>   		}
+>>>   	}
+>>>   
+>>> +	/*
+>>> +	 * Make sure ocfs2_reserve_cluster is called after
+>>> +	 * __ocfs2_flush_truncate_log, otherwise, dead lock may happen.
+>>> +	 *
+>>> +	 * If ocfs2_reserve_cluster is called
+>>> +	 * before __ocfs2_flush_truncate_log, dead lock on global bitmap
+>>> +	 * may happen.
+>>> +	 *
+>>> +	 */
+>>> +	ret = ocfs2_reserve_clusters(osb, *len, &context->data_ac);
+>>> +	if (ret) {
+>>> +		mlog_errno(ret);
+>>> +		goto out_unlock_mutex;
+>>> +	}
+>>> +
+>>>   	handle = ocfs2_start_trans(osb, credits);
+>>>   	if (IS_ERR(handle)) {
+>>>   		ret = PTR_ERR(handle);
+>>> @@ -600,9 +604,10 @@ static int ocfs2_move_extent(struct ocfs2_move_extents_context *context,
+>>>   		}
+>>>   	}
+>>>   
+>>> -	ret = ocfs2_lock_allocators_move_extents(inode, &context->et, len, 1,
+>>> -						 &context->meta_ac,
+>>> -						 NULL, extra_blocks, &credits);
+>>> +	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
+>>> +						len, 1,
+>>> +						&context->meta_ac,
+>>> +						extra_blocks, &credits);
+>>>   	if (ret) {
+>>>   		mlog_errno(ret);
+>>>   		goto out;
+>>>
+>>
+>> _______________________________________________
+>> Ocfs2-devel mailing list
+>> Ocfs2-devel@oss.oracle.com
+>> https://oss.oracle.com/mailman/listinfo/ocfs2-devel
+>>
