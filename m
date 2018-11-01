@@ -2,170 +2,193 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DFE4C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:08:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6741DC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:12:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DA752081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:08:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G2ilfaQJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DA752081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 18485205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:12:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18485205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728067AbeKBINh (ORCPT
+        id S1728079AbeKBIRf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 04:13:37 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:41841 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726386AbeKBINh (ORCPT
+        Fri, 2 Nov 2018 04:17:35 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54474 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726386AbeKBIRe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 04:13:37 -0400
-Received: by mail-yb1-f193.google.com with SMTP id t13-v6so54067ybb.8
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 16:08:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=9SPLquZYIA1PR5GbZs1M33G5+BrUBCq60TyqQhJWhKE=;
-        b=G2ilfaQJ6zn2a251hU6IE//KdWy4P4v4spKZdftnCby6Yp7Jd5Aeiryrv3P3RxV4FC
-         Ao/OqDLsGAoLDtJaPBbpZVIWZHsGzZU+ip+jRCNUdSAg0m3xAXvEI3rBS+dXEtEZJEMv
-         dhEoMdjZGCjtFb9BsLHhqxhbrGaFBGsWCZdBg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=9SPLquZYIA1PR5GbZs1M33G5+BrUBCq60TyqQhJWhKE=;
-        b=FsOA1qsAontemBDIPGV3u8x97ov27Whv/3McIiQuuQ7eX1eEG8wiYc/eKz3wo1h4z7
-         m7NjXZuDbvPGKtzrIxVrEPgQuiu1kWdoMTCDXlRkzz3NgP23JqPRKdeQ38MrF2tPVcI9
-         MJ0W7exbyKLwvNolj8i2H3lZaSRIZAHjCK8zkFmxEW+PdC1DjdnEZuL0ZThSlysNNcop
-         rCSUPHvQGGAefyr7wxAqK5bCZKcAuZzzMjJRvEYQOyF5BwZW/Gei4Vmyu1Y/SMWyx9w5
-         CPsjIkOTfGMH5tmSTXj1g8qRHu/13g4HYGlGnJcCWL94jVQT/qgnKG6IwEdgu40iZH9n
-         DswQ==
-X-Gm-Message-State: AGRZ1gILEUxctoFkL7j1l49r4TBXGKDC6XDaMQmM/jkGLRp1aUeAhb0z
-        kTn+asCaYlRERi35tj0Uj3MkgEes4Pk=
-X-Google-Smtp-Source: AJdET5eomySiviUL+q/EFvfWpYuXimKEYG0+lN6efHCs4PhCS6cKRpXt5xfWJnmuL3VrC1zmBGD8Og==
-X-Received: by 2002:a25:dbcd:: with SMTP id g196-v6mr9951042ybf.391.1541113715515;
-        Thu, 01 Nov 2018 16:08:35 -0700 (PDT)
-Received: from mail-yw1-f46.google.com (mail-yw1-f46.google.com. [209.85.161.46])
-        by smtp.gmail.com with ESMTPSA id g21-v6sm13260778ywk.5.2018.11.01.16.08.35
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Nov 2018 16:08:35 -0700 (PDT)
-Received: by mail-yw1-f46.google.com with SMTP id j202-v6so43884ywa.13
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 16:08:35 -0700 (PDT)
-X-Received: by 2002:a81:2953:: with SMTP id p80-v6mr9637804ywp.407.1541113224617;
- Thu, 01 Nov 2018 16:00:24 -0700 (PDT)
+        Fri, 2 Nov 2018 04:17:34 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA1N46bN111261
+        for <linux-kernel@vger.kernel.org>; Thu, 1 Nov 2018 19:12:32 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ngah7rv69-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 19:12:32 -0400
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 1 Nov 2018 23:12:31 -0000
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 1 Nov 2018 23:12:28 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA1NCRbW22478872
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 1 Nov 2018 23:12:27 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AEEA8B2064;
+        Thu,  1 Nov 2018 23:12:27 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7F1EBB205F;
+        Thu,  1 Nov 2018 23:12:27 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.141])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  1 Nov 2018 23:12:27 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 10A1216C359F; Thu,  1 Nov 2018 16:12:28 -0700 (PDT)
+Date:   Thu, 1 Nov 2018 16:12:28 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     bigeasy@linutronix.de
+Cc:     linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: srcu: use cpu_online() instead custom check
+Reply-To: paulmck@linux.ibm.com
 MIME-Version: 1.0
-Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Thu, 1 Nov 2018 16:00:23 -0700 (PDT)
-In-Reply-To: <20181101171938-mutt-send-email-mst@kernel.org>
-References: <20181101171938-mutt-send-email-mst@kernel.org>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 1 Nov 2018 16:00:23 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jJ0HgV2qN=wohEgro6ixqXHOHBTsvS5a9Dcpz8gxVo3bA@mail.gmail.com>
-Message-ID: <CAGXu5jJ0HgV2qN=wohEgro6ixqXHOHBTsvS5a9Dcpz8gxVo3bA@mail.gmail.com>
-Subject: Re: [PULL] vhost: cleanups and fixes
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        KVM <kvm@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        bijan.mottahedeh@oracle.com, gedwards@ddn.com,
-        Joe Perches <joe@perches.com>, lenaic@lhuard.fr,
-        liang.z.li@intel.com, Michal Hocko <mhocko@kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>, wei.w.wang@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18110123-0052-0000-0000-0000034E7A76
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009968; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01111301; UDB=6.00575897; IPR=6.00891393;
+ MB=3.00023997; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-01 23:12:29
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110123-0053-0000-0000-00005E9F5131
+Message-Id: <20181101231228.GA9118@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-01_16:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811010192
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 1, 2018 at 2:19 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
-> The following changes since commit 84df9525b0c27f3ebc2ebb1864fa62a97fdedb=
-7d:
->
->   Linux 4.19 (2018-10-22 07:37:37 +0100)
->
-> are available in the Git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_li=
-nus
->
-> for you to fetch changes up to 79f800b2e76923cd8ce0aa659cb5c019d9643bc9:
->
->   MAINTAINERS: remove reference to bogus vsock file (2018-10-24 21:16:14 =
--0400)
->
-> ----------------------------------------------------------------
-> virtio, vhost: fixes, tweaks
->
-> virtio balloon page hinting support
-> vhost scsi control queue
->
-> misc fixes.
->
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
->
-> ----------------------------------------------------------------
-> Bijan Mottahedeh (3):
->       vhost/scsi: Respond to control queue operations
+> The current check via srcu_online is slightly racy because after looking
+> at srcu_online there could be an interrupt that interrupted us long
+> enough until the CPU we checked against went offline.
 
-+static void
-+vhost_scsi_send_tmf_resp(struct vhost_scsi *vs,
-+                          struct vhost_virtqueue *vq,
-+                          int head, unsigned int out)
-+{
-+       struct virtio_scsi_ctrl_tmf_resp __user *resp;
-+       struct virtio_scsi_ctrl_tmf_resp rsp;
-+       int ret;
-+
-+       pr_debug("%s\n", __func__);
-+       memset(&rsp, 0, sizeof(rsp));
-+       rsp.response =3D VIRTIO_SCSI_S_FUNCTION_REJECTED;
-+       resp =3D vq->iov[out].iov_base;
-+       ret =3D __copy_to_user(resp, &rsp, sizeof(rsp));
+I don't see how this can happen, even in -rt.  The call to
+srcu_offline_cpu() happens very early in the CPU removal process,
+which means that the synchronize_rcu_mult(call_rcu, call_rcu_sched)
+in sched_cpu_deactivate() would wait for the interrupt to complete.
+And for the enclosing preempt_disable region to complete.
 
-Is it actually safe to trust that iov_base has passed an earlier
-access_ok() check here? Why not just use copy_to_user() instead?
+Or is getting rid of that preempt_disable region the real reason for
+this change?
 
--Kees
+> An alternative would be to hold the hotplug rwsem (so the CPUs don't
+> change their state) and then check based on cpu_online() if we queue it
+> on a specific CPU or not. queue_work_on() itself can handle if something
+> is enqueued on an offline CPU but a timer which is enqueued on an offline
+> CPU won't fire until the CPU is back online.
+> 
+> I am not sure if the removal in rcu_init() is okay or not. I assume that
+> SRCU won't enqueue a work item before SRCU is up and ready.
 
->       vhost/scsi: Extract common handling code from control queue handler
->       vhost/scsi: Use common handling code in request queue handler
->
-> Greg Edwards (1):
->       vhost/scsi: truncate T10 PI iov_iter to prot_bytes
->
-> L=C3=A9na=C3=AFc Huard (1):
->       kvm_config: add CONFIG_VIRTIO_MENU
->
-> Stefan Hajnoczi (1):
->       MAINTAINERS: remove reference to bogus vsock file
->
-> Wei Wang (3):
->       virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
->       mm/page_poison: expose page_poisoning_enabled to kernel modules
->       virtio-balloon: VIRTIO_BALLOON_F_PAGE_POISON
->
->  MAINTAINERS                         |   1 -
->  drivers/vhost/scsi.c                | 426 ++++++++++++++++++++++++++++--=
-------
->  drivers/virtio/virtio_balloon.c     | 380 +++++++++++++++++++++++++++++-=
---
->  include/uapi/linux/virtio_balloon.h |   8 +
->  kernel/configs/kvm_guest.config     |   1 +
->  mm/page_poison.c                    |   6 +
->  6 files changed, 688 insertions(+), 134 deletions(-)
+That was the case before the current merge window, but use of call_srcu()
+by tracing means that SRCU needs to be able to deal with call_srcu()
+long before any initialization has happened.  The actual callbacks
+won't be invoked until much later, after the scheduler and workqueues
+are completely up and running, but call_srcu() can be invoked very early.
 
+But I am not seeing any removal in rcu_init() in this patch, so I might
+be missing something.
 
+							Thanx, Paul
 
---=20
-Kees Cook
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> 
+> diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+> index 6c9866a854b1..3428a40a813e 100644
+> --- a/kernel/rcu/srcutree.c
+> +++ b/kernel/rcu/srcutree.c
+> @@ -38,6 +38,7 @@
+>  #include <linux/delay.h>
+>  #include <linux/module.h>
+>  #include <linux/srcu.h>
+> +#include <linux/cpu.h>
+>  
+>  #include "rcu.h"
+>  #include "rcu_segcblist.h"
+> @@ -458,21 +459,6 @@ static void srcu_gp_start(struct srcu_struct *sp)
+>  	WARN_ON_ONCE(state != SRCU_STATE_SCAN1);
+>  }
+>  
+> -/*
+> - * Track online CPUs to guide callback workqueue placement.
+> - */
+> -DEFINE_PER_CPU(bool, srcu_online);
+> -
+> -void srcu_online_cpu(unsigned int cpu)
+> -{
+> -	WRITE_ONCE(per_cpu(srcu_online, cpu), true);
+> -}
+> -
+> -void srcu_offline_cpu(unsigned int cpu)
+> -{
+> -	WRITE_ONCE(per_cpu(srcu_online, cpu), false);
+> -}
+> -
+>  /*
+>   * Place the workqueue handler on the specified CPU if online, otherwise
+>   * just run it whereever.  This is useful for placing workqueue handlers
+> @@ -484,12 +470,12 @@ static bool srcu_queue_delayed_work_on(int cpu, struct workqueue_struct *wq,
+>  {
+>  	bool ret;
+>  
+> -	preempt_disable();
+> -	if (READ_ONCE(per_cpu(srcu_online, cpu)))
+> +	cpus_read_lock();
+> +	if (cpu_online(cpu))
+>  		ret = queue_delayed_work_on(cpu, wq, dwork, delay);
+>  	else
+>  		ret = queue_delayed_work(wq, dwork, delay);
+> -	preempt_enable();
+> +	cpus_read_unlock();
+>  	return ret;
+>  }
+>  
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index 6868ef417e9f..e2e68250009b 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -3767,8 +3767,6 @@ int rcutree_online_cpu(unsigned int cpu)
+>  		rnp->ffmask |= rdp->grpmask;
+>  		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+>  	}
+> -	if (IS_ENABLED(CONFIG_TREE_SRCU))
+> -		srcu_online_cpu(cpu);
+>  	if (rcu_scheduler_active == RCU_SCHEDULER_INACTIVE)
+>  		return 0; /* Too early in boot for scheduler work. */
+>  	sync_sched_exp_online_cleanup(cpu);
+> @@ -3796,8 +3794,6 @@ int rcutree_offline_cpu(unsigned int cpu)
+>  	}
+>  
+>  	rcutree_affinity_setting(cpu, cpu);
+> -	if (IS_ENABLED(CONFIG_TREE_SRCU))
+> -		srcu_offline_cpu(cpu);
+>  	return 0;
+>  }
+>  
+
