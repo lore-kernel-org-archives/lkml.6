@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CE5FC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:52:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D310C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:52:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E15E02146E
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:52:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C5DB205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:52:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BSiENkum"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E15E02146E
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ghzf3ows"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C5DB205F4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728429AbeKBI53 (ORCPT
+        id S1728440AbeKBI5h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 04:57:29 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45137 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728382AbeKBI5S (ORCPT
+        Fri, 2 Nov 2018 04:57:37 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:41411 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728058AbeKBI5Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 04:57:18 -0400
-Received: by mail-pl1-f194.google.com with SMTP id o19-v6so93516pll.12
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 16:52:11 -0700 (PDT)
+        Fri, 2 Nov 2018 04:57:16 -0400
+Received: by mail-pg1-f195.google.com with SMTP id k13so102247pga.8
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 16:52:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=gkebQX8ZhFr9PQSx9bfOcE0V+2Bc8HeqM0sduXA/rPU=;
-        b=BSiENkumH02ZKa9mgxe36PDhL+/GUoKyxSxp8C0m/iYyPWqr8VaHmhpSlrA7lwV1/Y
-         zI3+PJeREg6zqudvtTDuBt+3gHYK1AhPbZh2o8upcCVlum342cIVziUgI2lP7/6ED17c
-         D52awj6ZU2eW61GKUZejszzs+nGim3Wuj+bdw=
+        bh=mqwkVDx8u21GZbkxyEls8saDvhV3qOz0dHFNVOWzQMc=;
+        b=ghzf3owsbJIK+PJoK3cC+CdhuUv60OBp8ax7gZKsHciTLIK8NKtyqwBVgqfu5NMzVz
+         i5psgC2FJiv/qUsDBTAJK7l8/n0abs22B7BgXoYcazUEfAgfrEN03l3rUr0h82UVY1p4
+         XI4Mz8y3d0OmCQIcH/Xls4uVKQ21M0n/qGZgc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=gkebQX8ZhFr9PQSx9bfOcE0V+2Bc8HeqM0sduXA/rPU=;
-        b=QvM8OEhmGf7WmdQArwjnGzBUnQLq6CVlY6fMDLvzPKjwDeLCqSd4tuzdO0gV14dF1+
-         3GVCkrR8M28APT/JFJ+BvLyQadH+2UKufPmbq9NpH5NQaiFDQ2eFo7HAj52TUgM7R1ls
-         9QaOlHXLarJxtRs3iDRx+9fk3y0xFciim7F6LcOXzcI/hzuhyFc5AfCqSJVHn8i53HRU
-         YJrsjU2MPxyihiwherjk117AglQok2mhyRt5Cd6EgI6DHXrRANCAT7zaTahFKpi/UeUW
-         InvScwux+JCfANThHi2W5JkbGOtwlvVoe2cpJ/Z4CVg3Idrn5i3VJcDjcmr/TJY+zfPc
-         rVwA==
-X-Gm-Message-State: AGRZ1gJkGT0TjS9Fdg7W0ZBasDbwg+2QiaD3Hjh32DbL8PZS9G1k0KIK
-        NWXJNTC4K+4F+YLJIgG4nGSAtQ==
-X-Google-Smtp-Source: AJdET5cu14Gaeu4VkwpAzZnxGgNQrZFQN/vOC/Nstzt9Wl8VO4ESRt6nUN17oXdNXM/WwgMKsKoUew==
-X-Received: by 2002:a17:902:5066:: with SMTP id f35-v6mr9371062plh.145.1541116331371;
-        Thu, 01 Nov 2018 16:52:11 -0700 (PDT)
+        bh=mqwkVDx8u21GZbkxyEls8saDvhV3qOz0dHFNVOWzQMc=;
+        b=YDGnGZ7UDXK+gsY+d8e+fc02Fe8FUxe94e6lVEMCxO0Y7n1xzZdxAemiwnxeiOP2Ot
+         Plhlk68OmHu+VsnfXb/nik8X19+KFK8KQDttwCbZV07+LZOs/8MH94YXRDOfXpphRfzj
+         Wxv2H3K3KnXNxLCiZ9EsHYdCp4XsBlAYpZxPxwC6TNCtDb0mGtsJnXNvF84MG8hT6IJJ
+         JSih1Bfb6OFXO37y+7f6obV0Y9XLb7vItZJdvu1Ter1AaMJVce6s7bUPk08ifOY7wP1n
+         vF1hgXzXM6y1ZclHkrjzxS6ha3347AaHCV09qQ3ZX2mbQUoutw/53iTj0jL5BK2gyfgH
+         TkIQ==
+X-Gm-Message-State: AGRZ1gJEBBmDSQ5SpblHNF9eNaeu3y7AQgcP/nQIh/iankcp9lctRxea
+        SqYQ05GPtHXJ+B1DtD6wJtTFFLrIAn61uw==
+X-Google-Smtp-Source: AJdET5chxSgFncYycqyj0cEiVkQHMwSWVi7kyjaJ4Qfm1xD2Lx0cQZf2/W8VEXfiIF9l+SfJCgqu5A==
+X-Received: by 2002:a63:eb42:: with SMTP id b2-v6mr8870158pgk.348.1541116329557;
+        Thu, 01 Nov 2018 16:52:09 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id b77-v6sm28297879pfm.3.2018.11.01.16.52.06
+        by smtp.gmail.com with ESMTPSA id d2-v6sm35463574pfn.118.2018.11.01.16.52.05
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Thu, 01 Nov 2018 16:52:08 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -62,9 +62,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Anton Vorontsov <anton@enomsg.org>,
         Colin Cross <ccross@android.com>,
         Tony Luck <tony.luck@intel.com>
-Subject: [PATCH 7/8] pstore: Remove needless lock during console writes
-Date:   Thu,  1 Nov 2018 16:51:59 -0700
-Message-Id: <20181101235200.28584-8-keescook@chromium.org>
+Subject: [PATCH 6/8] pstore: Replace open-coded << with BIT()
+Date:   Thu,  1 Nov 2018 16:51:58 -0700
+Message-Id: <20181101235200.28584-7-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181101235200.28584-1-keescook@chromium.org>
 References: <20181101235200.28584-1-keescook@chromium.org>
@@ -73,57 +73,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit 70ad35db3321 ("pstore: Convert console write to use
-->write_buf"), the console writer does not use the preallocated crash
-dump buffer any more, so there is no reason to perform locking around it.
+Minor clean-up to use BIT() (as already done in pstore_ram.h).
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- fs/pstore/platform.c | 29 ++++++-----------------------
- 1 file changed, 6 insertions(+), 23 deletions(-)
+ include/linux/pstore.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
-index a956c7bc3f67..32340e7dd6a5 100644
---- a/fs/pstore/platform.c
-+++ b/fs/pstore/platform.c
-@@ -461,31 +461,14 @@ static void pstore_unregister_kmsg(void)
- #ifdef CONFIG_PSTORE_CONSOLE
- static void pstore_console_write(struct console *con, const char *s, unsigned c)
- {
--	const char *e = s + c;
-+	struct pstore_record record;
+diff --git a/include/linux/pstore.h b/include/linux/pstore.h
+index 877ed81de346..3549f2ba865c 100644
+--- a/include/linux/pstore.h
++++ b/include/linux/pstore.h
+@@ -189,10 +189,10 @@ struct pstore_info {
+ };
  
--	while (s < e) {
--		struct pstore_record record;
--		unsigned long flags;
--
--		pstore_record_init(&record, psinfo);
--		record.type = PSTORE_TYPE_CONSOLE;
--
--		if (c > psinfo->bufsize)
--			c = psinfo->bufsize;
-+	pstore_record_init(&record, psinfo);
-+	record.type = PSTORE_TYPE_CONSOLE;
+ /* Supported frontends */
+-#define PSTORE_FLAGS_DMESG	(1 << 0)
+-#define PSTORE_FLAGS_CONSOLE	(1 << 1)
+-#define PSTORE_FLAGS_FTRACE	(1 << 2)
+-#define PSTORE_FLAGS_PMSG	(1 << 3)
++#define PSTORE_FLAGS_DMESG	BIT(0)
++#define PSTORE_FLAGS_CONSOLE	BIT(1)
++#define PSTORE_FLAGS_FTRACE	BIT(2)
++#define PSTORE_FLAGS_PMSG	BIT(3)
  
--		if (oops_in_progress) {
--			if (!spin_trylock_irqsave(&psinfo->buf_lock, flags))
--				break;
--		} else {
--			spin_lock_irqsave(&psinfo->buf_lock, flags);
--		}
--		record.buf = (char *)s;
--		record.size = c;
--		psinfo->write(&record);
--		spin_unlock_irqrestore(&psinfo->buf_lock, flags);
--		s += c;
--		c = e - s;
--	}
-+	record.buf = (char *)s;
-+	record.size = c;
-+	psinfo->write(&record);
- }
- 
- static struct console pstore_console = {
+ extern int pstore_register(struct pstore_info *);
+ extern void pstore_unregister(struct pstore_info *);
 -- 
 2.17.1
 
