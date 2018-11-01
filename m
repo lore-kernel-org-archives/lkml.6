@@ -2,88 +2,104 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02B19C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:16:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B353C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:21:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C72AE2081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:16:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C72AE2081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C0DC520820
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:21:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0DC520820
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728150AbeKAUTL (ORCPT
+        id S1728035AbeKAUXq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 16:19:11 -0400
-Received: from foss.arm.com ([217.140.101.70]:55026 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727736AbeKAUTL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 16:19:11 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 98861A78;
-        Thu,  1 Nov 2018 04:16:41 -0700 (PDT)
-Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4AA0D3F71D;
-        Thu,  1 Nov 2018 04:16:39 -0700 (PDT)
-Subject: Re: [PATCH 07/10] sched/fair: Provide can_migrate_task_llc
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Steven Sistare <steven.sistare@oracle.com>, mingo@redhat.com,
-        subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
-        rohit.k.jain@oracle.com, daniel.m.jordan@oracle.com,
-        pavel.tatashin@microsoft.com, matt@codeblueprint.co.uk,
-        umgwanakikbuti@gmail.com, riel@redhat.com, jbacik@fb.com,
-        juri.lelli@redhat.com, linux-kernel@vger.kernel.org
-References: <1540220381-424433-1-git-send-email-steven.sistare@oracle.com>
- <1540220381-424433-8-git-send-email-steven.sistare@oracle.com>
- <f75ddcd5-f9a0-30c5-94e4-c4077e17ffb0@arm.com>
- <b9915490-661b-0d0e-ae60-d5803357e1ec@oracle.com>
- <b7d91b1d-5da1-5d70-f266-93b108379b64@arm.com>
- <20181031191459.GA3141@hirez.programming.kicks-ass.net>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <10491016-9eec-846f-9632-f6de965508b6@arm.com>
-Date:   Thu, 1 Nov 2018 11:16:37 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 1 Nov 2018 16:23:46 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:14165 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727736AbeKAUXq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 16:23:46 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 4BC5959B0D180;
+        Thu,  1 Nov 2018 19:21:11 +0800 (CST)
+Received: from localhost (10.177.25.132) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.408.0; Thu, 1 Nov 2018
+ 19:21:03 +0800
+From:   Wang Yufen <wangyufen@huawei.com>
+To:     <linux@armlinux.org.uk>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <akpm@linux-foundation.org>,
+        <kstewart@linuxfoundation.org>, <rppt@linux.vnet.ibm.com>,
+        <gregkh@linuxfoundation.org>, <tglx@linutronix.de>,
+        <pombredanne@nexb.com>, <weiyongjun1@huawei.com>,
+        <huawei.libin@huawei.com>, Yufen Wang <wangyufen@huawei.com>
+Subject: [PATCH] ARM:kexec:offline panic_smp_self_stop CPU
+Date:   Thu, 1 Nov 2018 19:20:49 +0800
+Message-ID: <1541071249-15660-1-git-send-email-wangyufen@huawei.com>
+X-Mailer: git-send-email 1.8.1.msysgit.1
 MIME-Version: 1.0
-In-Reply-To: <20181031191459.GA3141@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.177.25.132]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/10/2018 19:14, Peter Zijlstra wrote:
-> On Mon, Oct 29, 2018 at 07:34:50PM +0000, Valentin Schneider wrote:
->> On a sidenote, I find it a bit odd that the exec_start threshold depends on
->> sysctl_sched_migration_cost, which to me is more about idle_balance() cost
->> than "how long does it take for a previously run task to go cache cold".
-> 
-> A long long (think 2.6.20 long ago) there was code that did boot-time
-> measurement of the various cache topology costs and that threshold was
-> related to that.
-> 
-> That code got killed because of boot to boot variance and dubious
-> benefits.
-> 
-> The migration cost is what it was replaced with as a single measure.
-> 
-> migration cost was then later abused in the newidle balance because it
-> was over eager.
+From: Yufen Wang <wangyufen@huawei.com>
+
+In case panic() and panic() called at the same time on different CPUS.
+For example:
+CPU 0:
+  panic()
+     __crash_kexec
+       machine_crash_shutdown
+         crash_smp_send_stop
+       machine_kexec
+         BUG_ON(num_online_cpus() > 1);
+
+CPU 1:
+  panic()
+    local_irq_disable
+    panic_smp_self_stop
+
+If CPU 1 calls panic_smp_self_stop() before crash_smp_send_stop(), kdump
+fails. CPU1 can't receive the ipi irq, CPU1 will be always online.
+I changed BUG_ON to WARN in kexec crash as arm64 does, kdump also fails.
+Because num_online_cpus() > 1, can't disable the L2 in _soft_restart.
+To fix this problem, this patch split out the panic_smp_self_stop()
+and add set_cpu_online(smp_processor_id(), false).
+
+Signed-off-by: Yufen Wang <wangyufen@huawei.com>
+---
+ arch/arm/kernel/setup.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
+index 31940bd..151861f 100644
+--- a/arch/arm/kernel/setup.c
++++ b/arch/arm/kernel/setup.c
+@@ -602,6 +602,16 @@ static void __init smp_build_mpidr_hash(void)
+ }
+ #endif
+ 
++void panic_smp_self_stop(void)
++{
++	printk(KERN_DEBUG "CPU %u will stop doing anything useful since another CPU has paniced\n",
++			smp_processor_id());
++	set_cpu_online(smp_processor_id(), false);
++	while (1)
++		cpu_relax();
++
++}
++
+ static void __init setup_processor(void)
+ {
+ 	struct proc_info_list *list;
+-- 
+2.7.4
 
 
-Thanks! I tried following the blame rabbit hole but got a bit lost along
-the way.
-
-> Ideally we'd get rid of it there, because we've now got
-> that much more elaborate accounting, but Rohit tried and found some
-> regression because of that.
-> 
-> Maybe we should remove it from newidle anyway.
-> 
-
-Well, if we ditch idle_balance() in favor of stealing, that would "solve"
-it...
