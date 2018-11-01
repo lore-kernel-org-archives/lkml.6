@@ -2,119 +2,104 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F0E0C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:27:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F71DC6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:27:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DB7520820
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:27:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DB7520820
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 4819B2064C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:27:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="X0kCR/tI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4819B2064C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728864AbeKBBbB (ORCPT
+        id S1728955AbeKBBbV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 21:31:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57126 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728372AbeKBBbA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 21:31:00 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 23F6BAF4F;
-        Thu,  1 Nov 2018 16:27:19 +0000 (UTC)
-Subject: Re: [Xen-devel] [PATCH] xen: remove size limit of privcmd-buf mapping
- interface
-To:     Jan Beulich <jbeulich@suse.com>
-Cc:     sstabellini@kernel.org, xen-devel@lists.xenproject.org,
-        boris.ostrovsky@oracle.com, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <20181101123307.8424-1-jgross@suse.com>
- <5BDB0B240200007800142507@prv1-mh.provo.novell.com>
- <b64f7fa4-a553-bcb4-6051-c91080642b8e@suse.com>
- <5BDB20AB020000780014251B@suse.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <12dd8625-2cad-f156-8bae-487e909af412@suse.com>
-Date:   Thu, 1 Nov 2018 17:27:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 1 Nov 2018 21:31:21 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:42284 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728239AbeKBBbU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 21:31:20 -0400
+Received: by mail-lf1-f68.google.com with SMTP id q6-v6so14606567lfh.9
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 09:27:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=w0Eis5kZeCYTKiKrzatZwcHwlUp0InGER0lXLFHN+a0=;
+        b=X0kCR/tI7UpHrnmpFGB5BhwPRD0u4O2KvoyBZV+HLWEP89Mf9K31ggGk5wyPwr3fxv
+         x/DTtA6Hy+XM5HIQtRlnZYUPgLNwd52xAlDWu2UqtaQL0aNnsodW9T3ZSrmz/bp7LOx5
+         te2dRPkr1vOmZKyQ5vhw1dikBXwEKUN7YFEjE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=w0Eis5kZeCYTKiKrzatZwcHwlUp0InGER0lXLFHN+a0=;
+        b=ptVn3PIEeu4LF51kXyB+JU8kLaETj/VGgmcKSVLx/DN7aLFaN6vNQWTl1S/sQo/QW2
+         qyn4ochgacoKBrkemkFg6Hb2rWELfiiT/TPHgFlSQi+IqVEy8cPR1CKVz8aB07GRTHr2
+         10FHqxMlSg5SsnaDX8cOawxXQTPbUBsDdkFZBHSLFqcwEgQwwBt10JlHtRiJK9jAdB+F
+         MXbVpDbkNz5XZEbbN3n+ze9zCj8IWIVH61QpnhE25/CS12kNeIcqLvbBozX0XddBwvcD
+         amfr0YK/r0JkDBupNR9CoD6c4If2xMjceKSINezMnL7doMyVJ/CEuXZPPrbCTQIISu2o
+         HmRA==
+X-Gm-Message-State: AGRZ1gJhn4xvxxLx7IifvcVQUX7+kSZFjEVAWFCrNrvgEUvP387u8/lI
+        QepIK4moOwHCl7pT1Th0EQ3vetIpl2JeVA==
+X-Google-Smtp-Source: AJdET5f7uRbsnRrO4kRx6XII9uW9nxSLbSMu6+H8oSJxQmh8zer8Na42WmFD5kY7k8f/9vtY+2c/hQ==
+X-Received: by 2002:a19:9209:: with SMTP id u9-v6mr5075338lfd.26.1541089658670;
+        Thu, 01 Nov 2018 09:27:38 -0700 (PDT)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id t15-v6sm4605982lji.75.2018.11.01.09.27.36
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Nov 2018 09:27:38 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id k19-v6so10071678lji.11
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 09:27:36 -0700 (PDT)
+X-Received: by 2002:a2e:9584:: with SMTP id w4-v6mr5434532ljh.118.1541089655958;
+ Thu, 01 Nov 2018 09:27:35 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <5BDB20AB020000780014251B@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181101063523.26bdbe28@bbrezillon>
+In-Reply-To: <20181101063523.26bdbe28@bbrezillon>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 1 Nov 2018 09:27:20 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg3r8QmJGKep9PK-8o3HM1-4aJJqQKsGaZJAk93Ad1pNw@mail.gmail.com>
+Message-ID: <CAHk-=wg3r8QmJGKep9PK-8o3HM1-4aJJqQKsGaZJAk93Ad1pNw@mail.gmail.com>
+Subject: Re: [GIT PULL] Addition of the I3C subsystem in 4.20 (5.0)?
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, wsa@the-dreams.de,
+        Vitor.Soares@synopsys.com, pgaj@cadence.com, rafalc@cadence.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/11/2018 16:50, Jan Beulich wrote:
->>>> Juergen Gross <jgross@suse.com> 11/01/18 3:23 PM >>>
->> On 01/11/2018 15:18, Jan Beulich wrote:
->>>>>> Juergen Gross <jgross@suse.com> 11/01/18 1:34 PM >>>
->>>> Currently the size of hypercall buffers allocated via
->>>> /dev/xen/hypercall is limited to a default of 64 memory pages. For live
->>>> migration of guests this might be too small as the page dirty bitmask
->>>> needs to be sized according to the size of the guest. This means
->>>> migrating a 8GB sized guest is already exhausting the default buffer
->>>> size for the dirty bitmap.
->>>>
->>>> There is no sensible way to set a sane limit, so just remove it
->>>> completely. The device node's usage is limited to root anyway, so there
->>>> is no additional DOS scenario added by allowing unlimited buffers.
->>>
->>> But is this setting of permissions what we want long term? What about a
->>> de-privileged qemu, which still needs to be able to issue at least dm-op
->>> hypercalls?
->>
->> Wouldn't that qemu have opened the node while still being privileged?
-> 
-> Possibly, but how does this help? As soon as it's unprivileged it must not
-> be able to hog resources anymore.
-> 
-> Anyway, with Andrew's reply my point may be irrelevant, but I have to
-> admit I'm not entirely sure.
+On Wed, Oct 31, 2018 at 10:35 PM Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+>
+> Greg, I didn't get your feedback on v10 of the i3c patchset [1] where I
+> was asking if you'd agree to have this framework merged in 4.20 (I know
+> you were busy with the 4.19 release and after that the Kernel Summit, so
+> that's not a surprise), so I'm sending this PR. It's really not an attempt
+> to bypass you, more like a ping that, if positively acknowledged, might
+> lead to inclusion of the I3C framework in 4.20 (5.0?) :-).
 
-I guess we want Xen tools to close /dev/xen/hypercall (or more precise:
-don't dup2() it) when qemu is de-privileging itself. This will make it
-very clear that it can't hog memory via mmap().
+Regardless of any other issues, this is now too late in the merge
+window for me to accept.
 
-When you are fine with that I'll send a Xen patch for this.
+Yes, the merge window is two weeks, but that's not because people
+should send me pull requests for two weeks. A large part of it is that
+it takes time to merge stuff, and I want to have time in the later
+part of the merge window for things I have to look at and ponder.
 
+So that's why I want new stuff to be ready *before* the merge window,
+and I want to see the actual pull requests early. The two weeks is not
+for development and to let people delay things a bit, it's to make it
+possible to synchronize and to work out issues.
 
-Juergen
+                  Linus
