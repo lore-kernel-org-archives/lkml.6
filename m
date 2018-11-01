@@ -2,160 +2,115 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B96C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 18:53:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB51C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 18:56:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6174320820
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 18:53:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECF5920820
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 18:56:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="iX8LCu/G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6174320820
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OaUH8Lma"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECF5920820
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727854AbeKBD6A (ORCPT
+        id S1726250AbeKBEAy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 23:58:00 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:35763 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727065AbeKBD57 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 23:57:59 -0400
-Received: by mail-pl1-f193.google.com with SMTP id n4-v6so8804411plp.2
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 11:53:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=uTpWpNZGhoVK3YWg4IywStWPJDkNPjsQamkC499X1uM=;
-        b=iX8LCu/Guh6pwDFuWrVoOZFNlWKDTpqQbSJo/uYVh9++VyPldRsUVcEgJiFw5myTYS
-         TVtmZQ89g4XlZkyJziloQV2LPQodCB3EMup6hdaBHyhy0xkMR23qoNImPx3vNkEIqpC6
-         8Cypjp1eDnX+nzXe/UIMNQdkorrJVYW+8xcc12GLQW/cwYyKGOLD9K2wqwLFx1K/srJe
-         7g5l90pEk60+8smTBJkwPvtLvNHRcCxKh3xzeuZLQX2R+61+F7f3tNc/Jq/Y30OG8bvH
-         aih6UmOYIzaViJQg79EyoToN5JTOT6jEXJcUN5ze//WZsPpNb27o6hthhJadbD4wvhIT
-         SruA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=uTpWpNZGhoVK3YWg4IywStWPJDkNPjsQamkC499X1uM=;
-        b=aidylPio8iROVq3w34ER1YpMN6gDJKrroAV1SlkfiQTIwSm6Fr/5PPIbfkqMfqqcvN
-         5Bkwq/L7EVtXCUc0G6owmVN+QGTC9KGaNyZZPPlLtLotzKewYufbwHQH+ab1z+CkUmz/
-         mk6ua5wkZi2qnKZDgiFqdM4Yu6ug364yXtgj4jgGIz5Gev5DEhfWBEMvjxgr4D5BkvHr
-         K2OY27VS0eHlqbNol9ySgbKFoW6sTdoBXY3Jy7M0X5ofWYK00/SzQZtl37Hp5xSwFAgp
-         4XhrLz63oRPkHj+z3HJGv1gwDRUlXtlaYw4gn0sszAcncTht7dwnmj+dC2+a7n1xp+rJ
-         2vwQ==
-X-Gm-Message-State: AGRZ1gK472HNm1rSg+ynRKcOJMzr7oAViVmdP6DFhckr+cwYhZVMXBrR
-        2+N209pOnCl+DJgdqKBqdnhFEw==
-X-Google-Smtp-Source: AJdET5eZ8IYS6rH9uSRonPJPbqUrCWJcKFW2Hfor1iCEqsinGdb7OpCDZGID8T99P3XN0yv9DbeQYg==
-X-Received: by 2002:a17:902:4e25:: with SMTP id f34-v6mr8543351ple.43.1541098427750;
-        Thu, 01 Nov 2018 11:53:47 -0700 (PDT)
-Received: from localhost.localdomain (99-152-116-91.lightspeed.sntcca.sbcglobal.net. [99.152.116.91])
-        by smtp.gmail.com with ESMTPSA id u69-v6sm46298545pfk.68.2018.11.01.11.53.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Nov 2018 11:53:46 -0700 (PDT)
-From:   Olof Johansson <olof@lixom.net>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Olof Johansson <olof@lixom.net>
-Subject: [PATCH] ARM64: dma: move swiotlb helpers under CONFIG_IOMMU_DMA
-Date:   Thu,  1 Nov 2018 11:53:40 -0700
-Message-Id: <20181101185340.32664-1-olof@lixom.net>
-X-Mailer: git-send-email 2.11.0
+        Fri, 2 Nov 2018 00:00:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43200 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725722AbeKBEAy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 00:00:54 -0400
+Received: from localhost (unknown [95.99.172.123])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA8BD205F4;
+        Thu,  1 Nov 2018 18:56:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541098601;
+        bh=1YWxeI45ZPNEUm3vGEtZVvCHQjvh1a4hNwnKrWoJV8Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OaUH8LmaQJOPRns2Wk8+8rNwZASSF6ARjKRSO/gJ46cRFjmCmPIHXFaFnTunY9VoR
+         iynxt5LV3yfe9qgyYfDrPOxJ+VMm7ba2CTddnH3JlH0Bxo6+/mW2DTCB3j/hxb5eiR
+         2s6M/YqZTFccf6zXchKLYZbT9PZWzRN+zMXUsXU4=
+Date:   Thu, 1 Nov 2018 19:56:38 +0100
+From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To:     Dexuan Cui <decui@microsoft.com>
+Cc:     Michael Kelley <mikelley@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+        "olaf@aepfle.de" <olaf@aepfle.de>,
+        "apw@canonical.com" <apw@canonical.com>,
+        "jasowang@redhat.com" <jasowang@redhat.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        vkuznets <vkuznets@redhat.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        "Stable@vger.kernel.org" <Stable@vger.kernel.org>
+Subject: Re: [PATCH V2 3/5] Drivers: hv: kvp: Fix the recent regression
+ caused by incorrect clean-up
+Message-ID: <20181101185638.GB10263@kroah.com>
+References: <20181018050835.27828-1-kys@linuxonhyperv.com>
+ <20181018050932.27932-1-kys@linuxonhyperv.com>
+ <20181018050932.27932-3-kys@linuxonhyperv.com>
+ <CY4PR21MB077329FE239A11054FFDD661D7F60@CY4PR21MB0773.namprd21.prod.outlook.com>
+ <PU1P153MB0169588D48E567E0551D4A9FBFCD0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PU1P153MB0169588D48E567E0551D4A9FBFCD0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes the following tinyconfig warnings:
-arch/arm64/mm/dma-mapping.c:174:12: warning: '__swiotlb_mmap_pfn' defined but not used [-Wunused-function]
-arch/arm64/mm/dma-mapping.c:163:12: warning: '__swiotlb_get_sgtable_page' defined but not used [-Wunused-function]
+On Wed, Oct 31, 2018 at 11:23:54PM +0000, Dexuan Cui wrote:
+> > From: Michael Kelley <mikelley@microsoft.com>
+> > Sent: Wednesday, October 24, 2018 08:38
+> > From: kys@linuxonhyperv.com <kys@linuxonhyperv.com>  Sent: Wednesday,
+> > October 17, 2018 10:10 PM
+> > > From: Dexuan Cui <decui@microsoft.com>
+> > >
+> > > In kvp_send_key(), we do need call process_ib_ipinfo() if
+> > > message->kvp_hdr.operation is KVP_OP_GET_IP_INFO, because it turns out
+> > > the userland hv_kvp_daemon needs the info of operation, adapter_id and
+> > > addr_family. With the incorrect fc62c3b1977d, the host can't get the
+> > > VM's IP via KVP.
+> > >
+> > > And, fc62c3b1977d added a "break;", but actually forgot to initialize
+> > > the key_size/value in the case of KVP_OP_SET, so the default key_size of
+> > > 0 is passed to the kvp daemon, and the pool files
+> > > /var/lib/hyperv/.kvp_pool_* can't be updated.
+> > >
+> > > This patch effectively rolls back the previous fc62c3b1977d, and
+> > > correctly fixes the "this statement may fall through" warnings.
+> > >
+> > > This patch is tested on WS 2012 R2 and 2016.
+> > >
+> > > Fixes: fc62c3b1977d ("Drivers: hv: kvp: Fix two "this statement may fall
+> > through" warnings")
+> > > Signed-off-by: Dexuan Cui <decui@microsoft.com>
+> > > Cc: K. Y. Srinivasan <kys@microsoft.com>
+> > > Cc: Haiyang Zhang <haiyangz@microsoft.com>
+> > > Cc: Stephen Hemminger <sthemmin@microsoft.com>
+> > > Cc: <Stable@vger.kernel.org>
+> > > Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+> > > ---
+> > >  drivers/hv/hv_kvp.c | 26 ++++++++++++++++++++++----
+> > >  1 file changed, 22 insertions(+), 4 deletions(-)
+> > >
+> > Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+> 
+> Hi Greg,
+> Can you please take a look at this patch?
 
-Signed-off-by: Olof Johansson <olof@lixom.net>
----
- arch/arm64/mm/dma-mapping.c | 58 ++++++++++++++++++++++-----------------------
- 1 file changed, 29 insertions(+), 29 deletions(-)
+Nope, I'm not the hv maintainer, they need to look at this and ack it,
+not me :)
 
-diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
-index 3a703e5d4e32..62356c64e180 100644
---- a/arch/arm64/mm/dma-mapping.c
-+++ b/arch/arm64/mm/dma-mapping.c
-@@ -160,35 +160,6 @@ void arch_sync_dma_for_cpu(struct device *dev, phys_addr_t paddr,
- 	__dma_unmap_area(phys_to_virt(paddr), size, dir);
- }
- 
--static int __swiotlb_get_sgtable_page(struct sg_table *sgt,
--				      struct page *page, size_t size)
--{
--	int ret = sg_alloc_table(sgt, 1, GFP_KERNEL);
--
--	if (!ret)
--		sg_set_page(sgt->sgl, page, PAGE_ALIGN(size), 0);
--
--	return ret;
--}
--
--static int __swiotlb_mmap_pfn(struct vm_area_struct *vma,
--			      unsigned long pfn, size_t size)
--{
--	int ret = -ENXIO;
--	unsigned long nr_vma_pages = vma_pages(vma);
--	unsigned long nr_pages = PAGE_ALIGN(size) >> PAGE_SHIFT;
--	unsigned long off = vma->vm_pgoff;
--
--	if (off < nr_pages && nr_vma_pages <= (nr_pages - off)) {
--		ret = remap_pfn_range(vma, vma->vm_start,
--				      pfn + off,
--				      vma->vm_end - vma->vm_start,
--				      vma->vm_page_prot);
--	}
--
--	return ret;
--}
--
- static int __init atomic_pool_init(void)
- {
- 	pgprot_t prot = __pgprot(PROT_NORMAL_NC);
-@@ -358,6 +329,35 @@ arch_initcall(arm64_dma_init);
- #include <linux/platform_device.h>
- #include <linux/amba/bus.h>
- 
-+static int __swiotlb_get_sgtable_page(struct sg_table *sgt,
-+				      struct page *page, size_t size)
-+{
-+	int ret = sg_alloc_table(sgt, 1, GFP_KERNEL);
-+
-+	if (!ret)
-+		sg_set_page(sgt->sgl, page, PAGE_ALIGN(size), 0);
-+
-+	return ret;
-+}
-+
-+static int __swiotlb_mmap_pfn(struct vm_area_struct *vma,
-+			      unsigned long pfn, size_t size)
-+{
-+	int ret = -ENXIO;
-+	unsigned long nr_vma_pages = vma_pages(vma);
-+	unsigned long nr_pages = PAGE_ALIGN(size) >> PAGE_SHIFT;
-+	unsigned long off = vma->vm_pgoff;
-+
-+	if (off < nr_pages && nr_vma_pages <= (nr_pages - off)) {
-+		ret = remap_pfn_range(vma, vma->vm_start,
-+				      pfn + off,
-+				      vma->vm_end - vma->vm_start,
-+				      vma->vm_page_prot);
-+	}
-+
-+	return ret;
-+}
-+
- /* Thankfully, all cache ops are by VA so we can ignore phys here */
- static void flush_page(struct device *dev, const void *virt, phys_addr_t phys)
- {
--- 
-2.11.0
-
+greg k-h
