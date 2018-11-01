@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A711AECDE44
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:25:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1297BECDE44
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:25:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C4B42064C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:25:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDB3D2064C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:25:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="oLseqnDH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C4B42064C
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="fsid4hQb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDB3D2064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbeKAJZn (ORCPT
+        id S1727662AbeKAJZ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 05:25:43 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:46534 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727485AbeKAJZk (ORCPT
+        Thu, 1 Nov 2018 05:25:56 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35871 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726322AbeKAJZf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 05:25:40 -0400
-Received: by mail-ed1-f66.google.com with SMTP id f8-v6so2837052edt.13
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 17:25:07 -0700 (PDT)
+        Thu, 1 Nov 2018 05:25:35 -0400
+Received: by mail-ed1-f67.google.com with SMTP id x2-v6so15195204eds.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 17:25:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ZpTN5pGA7IFAwGBczXrryaSm+c6IlC0lW6r8xaAIF8A=;
-        b=oLseqnDHr4p5PB7/ES8hk1xtj9E6ekh/vEPRkxzPe7sRa5WieveThRzItz3Z/LoY/P
-         jAyWk4LZCNVz6OnNQZgvItK6AB/t0pdDzRVcTH1+dVIcE6fKh9XHc4kyTTC7Uz5zvWGl
-         gJek8PSnJA7qgmVEcV96BET7dfyxefWHuYhwXHZ7YTFoGhqYaXfiT9shFgz6EAa02sXR
-         OlWInqZG/cOZQW2Fj7N98MuPP8Y+UTl6Ox9cd5SfKvIkSYoSRPxOyhqlGS2F/VeaDCbB
-         5hiyxrhzUOxmeogKY2Lwl2YJbnPfJPcYS8+plIpJGEfOnAPGgj+bFBeP7VKjL7wwJ1LY
-         0M0g==
+        bh=ULrcMT5uKPuLdCU8vVAvTwBXq/D+pzzDFL372xkTj58=;
+        b=fsid4hQbRPThKO/alpNFOUV9nnbk78ajSGJdat+OXkog/L45/PFstnaOFPLGGax9ZU
+         BPjiisJEOUMGJv+acPEyeIT+zk4gY7XXj6hRw6aAkj/gXXzSXQyswBxD8U6WBMt3iOlI
+         IDLf+Ajy04TNxB35uLkTTMKGYuaMVF/lJt2eR7hUv9ZcqgEPmj8dFVPV4Hx30V4m0rd4
+         CFwLTA3qzqhG940MSW9FLJgx7JTeb58U0OVymk3c1fvLXfKht8xWo7hsIOPbjsSeWB+n
+         liKrY7qAq1CcbqU66EHyr97xHSpwmsSs7JuO+7cD00fW431TTVqQva5MEYP6oOfiANDY
+         SDOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ZpTN5pGA7IFAwGBczXrryaSm+c6IlC0lW6r8xaAIF8A=;
-        b=uKyGcRRev6JDwCaB0IilqBwHnQIyWoouHK1A5x3g0r4blqLCTtmInpjjU7g9zc/Beu
-         PCqSALGDE9V5UK1puUigNDlxp0X3eD19SeBvcu4m6kUEfFoJ2Z+tvVTkwDa38MQaxejc
-         qzxlfd7vwMuEAlLUpgjMG0USZ2q9sp07w8cyiIS61ALrQNwqFjhr78BKTOd12uKRisZJ
-         8BFE6TTXErHQJ34JEDQOse0bFnpKpBBy4zfMg656c4toMvAGJmNKaO/gcNe4u0U6zodU
-         xdmkz/CUGfGVr45actYYK1arhMhi0RIYp7pL2ZLdcPjzH1agLgE8Wdy2fJ+v3eWTo8Sz
-         qCGQ==
-X-Gm-Message-State: AGRZ1gL7u/dl0axUYe31wCbGn5wg+53SPEi7sO8+4mXHQhsK4jiYrdec
-        TLvINgo0uDA/n9fi3MoLTlYQiW3lxv0=
-X-Google-Smtp-Source: AJdET5c4wOFKjJazBTYcLh5V2Z+H2q3Mk/+81MxDV79n6gd3H57gSkYJ159h1Yu/1yxYwVYQTs3kOg==
-X-Received: by 2002:a17:906:2ec8:: with SMTP id s8-v6mr2795559eji.192.1541031906337;
-        Wed, 31 Oct 2018 17:25:06 -0700 (PDT)
+        bh=ULrcMT5uKPuLdCU8vVAvTwBXq/D+pzzDFL372xkTj58=;
+        b=OIJ+T1Z2sxqe/+eui9O5mnUqcKSQhXoo2dUOLIEqa/PH9Ndo9YjK/vW1M3kaufQyin
+         zDKkyjf13taSINcZRwiiHCXclh6a/ocg49nMCcLuLJpcN3rJZ5Ow2i3k/HT/K1EO5xJt
+         wTU0gX2AJhYYS0VOAetBrUhdi8MNDxN8FCObGsZXtHLqI4AzHDhjFSGt6N/pW5q47Myv
+         SknATieb/4qS/vz4bj7/c4dNfqfNcDUNl/oN0NccOtL5lz6UBnRtoi2ZswhIu55+KX/m
+         vRxVldK4R2yZoa9kwpnORElrwZbUGkcftL7YcPEFigl8x4leDMbU1CTorZwK7Mfqr1tO
+         MVFg==
+X-Gm-Message-State: AGRZ1gKJA8/AtICeNf0zJVb0qfyuRUFpHA/W5rZw6jC0u+eKu5f41UBF
+        mCWtL2KDoOp7QcxzBrrw9ltYLfFgzYk=
+X-Google-Smtp-Source: AJdET5dTDprHfXvkEyNWR7TgjyH+BLkhBBtfEz9fbjt5J9IJgahLuZtrtnO7/L4OnVDgiHpek9t/Xw==
+X-Received: by 2002:a17:906:70c3:: with SMTP id g3-v6mr2749078ejk.194.1541031901534;
+        Wed, 31 Oct 2018 17:25:01 -0700 (PDT)
 Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id s12-v6sm10188175edd.39.2018.10.31.17.25.04
+        by smtp.gmail.com with ESMTPSA id s12-v6sm10188175edd.39.2018.10.31.17.24.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 17:25:05 -0700 (PDT)
+        Wed, 31 Oct 2018 17:25:00 -0700 (PDT)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
@@ -76,11 +76,11 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
         Tan Xiaojun <tanxiaojun@huawei.com>,
         Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Subject: [PATCHv6 7/7] tty/ldsem: Decrement wait_readers on timeouted down_read()
-Date:   Thu,  1 Nov 2018 00:24:52 +0000
-Message-Id: <20181101002452.5483-8-dima@arista.com>
+        Jiri Slaby <jslaby@suse.com>, Jiri Slaby <jslaby@suse.cz>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCHv6 4/7] tty: Simplify tty->count math in tty_reopen()
+Date:   Thu,  1 Nov 2018 00:24:49 +0000
+Message-Id: <20181101002452.5483-5-dima@arista.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181101002452.5483-1-dima@arista.com>
 References: <20181101002452.5483-1-dima@arista.com>
@@ -91,39 +91,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It seems like when ldsem_down_read() fails with timeout, it misses
-update for sem->wait_readers. By that reason, when writer finally
-releases write end of the semaphore __ldsem_wake_readers() does adjust
-sem->count with wrong value:
-sem->wait_readers * (LDSEM_ACTIVE_BIAS - LDSEM_WAIT_BIAS)
-
-I.e, if update comes with 1 missed wait_readers decrement, sem->count
-will be 0x100000001 which means that there is active reader and it'll
-make any further writer to fail in acquiring the semaphore.
-
-It looks like, this is a dead-code, because ldsem_down_read() is never
-called with timeout different than MAX_SCHEDULE_TIMEOUT, so it might be
-worth to delete timeout parameter and error path fall-back..
+As notted by Jiri, tty_ldisc_reinit() shouldn't rely on tty counter.
+Simplify math by increasing the counter after reinit success.
 
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Jiri Slaby <jslaby@suse.com>
+Link: lkml.kernel.org/r/<20180829022353.23568-2-dima@arista.com>
+Suggested-by: Jiri Slaby <jslaby@suse.com>
+Reviewed-by: Jiri Slaby <jslaby@suse.cz>
+Tested-by: Mark Rutland <mark.rutland@arm.com>
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- drivers/tty/tty_ldsem.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/tty/tty_io.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/tty/tty_ldsem.c b/drivers/tty/tty_ldsem.c
-index d4d0dbf4a6d9..717292c1c0df 100644
---- a/drivers/tty/tty_ldsem.c
-+++ b/drivers/tty/tty_ldsem.c
-@@ -212,6 +212,7 @@ down_read_failed(struct ld_semaphore *sem, long count, long timeout)
- 		raw_spin_lock_irq(&sem->wait_lock);
- 		if (waiter.task) {
- 			atomic_long_add_return(-LDSEM_WAIT_BIAS, &sem->count);
-+			sem->wait_readers--;
- 			list_del(&waiter.list);
- 			raw_spin_unlock_irq(&sem->wait_lock);
- 			put_task_struct(waiter.task);
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index f73d8fa7f02b..57d06eda5b2f 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -1272,16 +1272,13 @@ static int tty_reopen(struct tty_struct *tty)
+ 	if (retval)
+ 		return retval;
+ 
+-	tty->count++;
+-	if (tty->ldisc)
+-		goto out_unlock;
++	if (!tty->ldisc)
++		retval = tty_ldisc_reinit(tty, tty->termios.c_line);
++	tty_ldisc_unlock(tty);
+ 
+-	retval = tty_ldisc_reinit(tty, tty->termios.c_line);
+-	if (retval)
+-		tty->count--;
++	if (retval == 0)
++		tty->count++;
+ 
+-out_unlock:
+-	tty_ldisc_unlock(tty);
+ 	return retval;
+ }
+ 
 -- 
 2.19.1
 
