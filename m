@@ -2,117 +2,169 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C79C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 03:31:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 089A2C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 03:33:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB40820821
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 03:31:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5E2B20821
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 03:33:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P5/impSg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB40820821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="GDM9SXKu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5E2B20821
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727721AbeKAMc4 (ORCPT
+        id S1727722AbeKAMep (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 08:32:56 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:43804 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726095AbeKAMc4 (ORCPT
+        Thu, 1 Nov 2018 08:34:45 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:64240 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726095AbeKAMeo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 08:32:56 -0400
-Received: by mail-qt1-f193.google.com with SMTP id q41-v6so19665046qtq.10;
-        Wed, 31 Oct 2018 20:31:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=lWf37p3dhx7nWeWFHqzSLi9W8b8nayEV+RYUolXDX/Y=;
-        b=P5/impSgtyzVMe9u7MCYJ5rBkDGYafY70KPQXDnyNbH+O9msr1esswl3PKdyYMtGOs
-         4mJAZzDnnTFCZ6PHrQpO40qR565vRPAW64euajyGpjRHlMmyVUJC8u/GCF8PCCNWDz4T
-         U+rr7j4CehdGgIeSpuxkTjhevSj/7phIe4PLaoEkopxOmcmHpMZ4jMoh9SbdwYCSO9zP
-         6rVk/dH9cwHhFA2z/ASksW7iYmQnzSqty1aO1U/m3sH9fyfdd9Mh2tRlU3PBDBNDY15h
-         DTDqzulQEkhV6q/2FT55XJqDc0+edB4Az68gtxeXxZYbCfFWQbaR30A0kzhuBPYGouAP
-         hfRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=lWf37p3dhx7nWeWFHqzSLi9W8b8nayEV+RYUolXDX/Y=;
-        b=SStJHR4pVzZs3XgG0OeYbTBK7cW7Xm1sJwCi4r1+yZ/8+I/URRzCqrqzKvPomR4zqb
-         EA6/5GfXK9M5oP7fskDklJaNnNySjk9A5uZElZWp0Xf7JF9oMCOgNi5m0SKf+wfx1s+k
-         FtOoTDj8Uk4gisBIK4ggn64rpgZxn2G0EjZogRCPpi93DjK7zlYpS+2KkAvyRr3zaAgS
-         aL62Sy5+c5NuR3qHf1qpBwYXRVx8V2F6itKRJuQIJH+8dG4RwtY/NHzw49FbUu+V9iX8
-         6oDbhbfSKnCky7XjkZFqSxDtGza9kNR8RP2xPm+/zaZn68Xkzc2ISup+CwjnPY1Byk3d
-         PCzg==
-X-Gm-Message-State: AGRZ1gJ3fTBG89pamMmhc0DSbqG9sH5jauCZJiGoLzX7zkru5ArcVARr
-        9u9Fxz5jcDUlcmzDYQC6yus=
-X-Google-Smtp-Source: AJdET5eyHyUwKSLQA51TjzjNW7nLjuVK1OHeNAO/4BT6CP8kyGJXQuQXkIlPMBQJWGjADpb/t+4HrA==
-X-Received: by 2002:aed:2663:: with SMTP id z90-v6mr5231900qtc.301.1541043109386;
-        Wed, 31 Oct 2018 20:31:49 -0700 (PDT)
-Received: from WindFlash ([179.159.21.48])
-        by smtp.gmail.com with ESMTPSA id d8-v6sm1859164qtd.34.2018.10.31.20.31.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 31 Oct 2018 20:31:48 -0700 (PDT)
-Message-ID: <0c600eb1a48f7ad1b903a9497b1104b172607dc3.camel@gmail.com>
-Subject: Re: [PATCH v3 4/5] modpost: Changes parameter name to avoid
- shadowing.
-From:   Leonardo Bras <leobras.c@gmail.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     lkcamp@lists.libreplanetbr.org, Borislav Petkov <bp@alien8.de>,
-        David.Laight@aculab.com, Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, helen@koikeco.de,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Thu, 01 Nov 2018 00:31:44 -0300
-In-Reply-To: <16b6518d7b36787e1813d62336b661bf603d54b2.camel@gmail.com>
-References: <20181024040354.24879-1-leobras.c@gmail.com>
-         <20181024040354.24879-5-leobras.c@gmail.com>
-         <CAK7LNAQzgdFPpwHEtfDazLd2jAhNy8=f_4mvOQMWfOWCb07E1Q@mail.gmail.com>
-         <16b6518d7b36787e1813d62336b661bf603d54b2.camel@gmail.com>
+        Thu, 1 Nov 2018 08:34:44 -0400
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id wA13XPdY002650;
+        Thu, 1 Nov 2018 12:33:26 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com wA13XPdY002650
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1541043206;
+        bh=rZwgGJIbmqUwKwIjVioty/meABZBord0fvxK7ZB6M1c=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=GDM9SXKukcyCLl3JLUtJiUUuNVequqnDBP01TnGvfwRHPe6ee2eHDhtwGQ3e1+JkK
+         mor/e77XB2+zkUkURvWXOBN7TTdC3NhyZyLdnEf7m1lv0LIB10heJphkEDcugfUSWe
+         xAHhW9nEMFmdsvpAmFzFaXncvgkhSbyxv6lCSM8aMkRvTGxJn+qvQ/3nE5WZlJNZK9
+         zWG2sXvstHFBzy3XFw3yBU/SkU5cTxoXAKRWtRZiysdDk3sg+rLG+Jmfx5VY3u7nBf
+         yqMRK2eskqIC0H0QDuZpED6IbAXoJHA5Yowfgg9roDuMHaS5WlwKb8KYf7GmbL2OxY
+         4XC5nYG73CX8A==
+X-Nifty-SrcIP: [209.85.217.44]
+Received: by mail-vs1-f44.google.com with SMTP id t17so8274206vsc.8;
+        Wed, 31 Oct 2018 20:33:26 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gLn685vOF6rPP1GEyawnV1CVWZlBHJe+eopbYaMXGPp+F2Oxdrs
+        AVZWMFur2JhITeviE+L9ef5eJWfcIDY6+aqUrug=
+X-Google-Smtp-Source: AJdET5cJSu2h+khmGG1KEdOwhCZLijngc9jY+MZeR0Xq3IG9+wxEpVHMu1GFoo1PZsdegVBg/fhzanyZTtPR08WGZo4=
+X-Received: by 2002:a67:a858:: with SMTP id r85mr2498052vse.215.1541043205014;
+ Wed, 31 Oct 2018 20:33:25 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181031145907.1ee2e866@canb.auug.org.au> <661e44c7-396a-6d58-efa7-ed292f2677c6@infradead.org>
+ <CAK8P3a3aygFrD3PyZ8P==JzeYamE-x--MWCL54xzXDE_8u_R6Q@mail.gmail.com>
+In-Reply-To: <CAK8P3a3aygFrD3PyZ8P==JzeYamE-x--MWCL54xzXDE_8u_R6Q@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 1 Nov 2018 12:32:48 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATirQwke8tqk5XukhkwKra6mWEXZ3AHcywNcwGFD2-voA@mail.gmail.com>
+Message-ID: <CAK7LNATirQwke8tqk5XukhkwKra6mWEXZ3AHcywNcwGFD2-voA@mail.gmail.com>
+Subject: Re: linux-next: Tree for Oct 31 (vboxguest)
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Changbin Du <changbin.du@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em qua, 2018-10-31 às 20:24 -0300, Leonardo Bras escreveu:
-> Em seg, 2018-10-29 às 01:42 +0900, Masahiro Yamada escreveu:
-> > On Wed, Oct 24, 2018 at 1:05 PM Leonardo Bras <leobras.c@gmail.com>
-> > wrote:
-> > > Changes the parameter name to avoid shadowing a variable.
-> > > 
-> > > Signed-off-by: Leonardo Bras <leobras.c@gmail.com>
-> > 
-> > For this one, I'd rather like to see code refactoring
-> > than renaming the variable.
-> > 
-> > I will take a closer look.
-> 
-> What do you suggest to refactor?
-> I volunteer for this work.
-> 
-> Leonardo Bras
-> 
+Hi Arnd,
 
-I refactored the code to move the global variable *modules to a local
-context at function main, and changed the functions to accept *modules
-as a parameter.
 
-Is that what you had in mind?
+On Thu, Nov 1, 2018 at 6:42 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On 10/31/18, Randy Dunlap <rdunlap@infradead.org> wrote:
+> > On 10/30/18 8:59 PM, Stephen Rothwell wrote:
+> >> Hi all,
+> >>
+> >> Please do not add any v4.21/v5.1 code to your linux-next included trees
+> >> until after the merge window closes.
+> >>
+> >> Changes since 20181030:
+> >>
+> >
+> >
+> > on i386:
+> >
+> > ld: drivers/virt/vboxguest/vboxguest_core.o: in function
+> > `vbg_ioctl_hgcm_call':
+> > vboxguest_core.c:(.text+0x212b): undefined reference to `vbg_hgcm_call32'
+> >
+> >
+> > Full randconfig file is attached.
+> >
+> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
+>
+> I ran into the same thing, and lots of others like it; they all go back to
+> the -Og compiler option introduced in commit 94c7dfd01652 ("kernel
+> hacking: support building kernel with -Og optimization level").
+>
+>
+> I have patches for most of these, but I'd prefer if we could leave
+> that patch out of 4.20 for now, and have it in linux-next for merging
+> into the next merge window, to give us more time to fix up all the
+> regressions. This particular instance is fixed by the patch below.
 
-https://lkml.org/lkml/2018/11/1/725
 
-Thanks for reading,
+Hmm, I was considering the -Og support for the current MW,
+but it might be better to postpone it for 4.21-rc1...
 
-Leonardo Bras
 
+
+> Other symptoms caused by the change are tons of 'section mismatch'
+> warnings for functions that are no longer automatically inlined, and
+> sprintf format string overflow warnings when gcc fails to propagate
+> an upper bound on an integer argument that is printed into a fixed
+> length string.
+>
+>      Arnd
+> ---
+> From 8172e650c6797b9cc64c6f7b1c9e5433156290cc Mon Sep 17 00:00:00 2001
+> From: Arnd Bergmann <arnd@arndb.de>
+> Date: Wed, 31 Oct 2018 16:24:35 +0100
+> Subject: [PATCH] vbox: fix link error with 'gcc -Og'
+>
+> With the new CONFIG_CC_OPTIMIZE_FOR_DEBUGGING option, we get a link
+> error in the vboxguest driver, when that fails to optimize out the
+> call to the compat handler:
+>
+> drivers/virt/vboxguest/vboxguest_core.o: In function `vbg_ioctl_hgcm_call':
+> vboxguest_core.c:(.text+0x1f6e): undefined reference to `vbg_hgcm_call32'
+>
+> Another compile-time check documents better what we want and avoids
+> the error.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>
+> diff --git a/drivers/virt/vboxguest/vboxguest_core.c
+> b/drivers/virt/vboxguest/vboxguest_core.c
+> index 3093655c7b92..1475ed5ffcde 100644
+> --- a/drivers/virt/vboxguest/vboxguest_core.c
+> +++ b/drivers/virt/vboxguest/vboxguest_core.c
+> @@ -1312,7 +1312,7 @@ static int vbg_ioctl_hgcm_call(struct vbg_dev *gdev,
+>                 return -EINVAL;
+>         }
+>
+> -       if (f32bit)
+> +       if (IS_ENABLED(CONFIG_COMPAT) && f32bit)
+>                 ret = vbg_hgcm_call32(gdev, client_id,
+>                                       call->function, call->timeout_ms,
+>                                       VBG_IOCTL_HGCM_CALL_PARMS32(call),
+
+Right, but adding the CONFIG_COMPAT guard to both the caller and the callee
+looks a bit redundant...
+
+
+I think most cases causing this kind of problem
+rely on the assumption that 'static' functions are inlined.
+
+We can force the compiler to do so
+by replacing 'static' with 'static __always_inline'
+
+
+-- 
+Best Regards
+Masahiro Yamada
