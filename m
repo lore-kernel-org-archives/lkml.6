@@ -2,109 +2,206 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C910C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:39:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4E92C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:39:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61FFE2081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:39:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="S4YJ/rA6";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="S4YJ/rA6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61FFE2081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 5B7662081B
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:39:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B7662081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728593AbeKAVlx (ORCPT
+        id S1728601AbeKAVmX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 17:41:53 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:51112 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727862AbeKAVlw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 17:41:52 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id DF90C6085C; Thu,  1 Nov 2018 12:39:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541075944;
-        bh=R3bHSdhkPAirrQJ44AWDG6tJeDJqJ2j5HNKjMFw2bUQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=S4YJ/rA6853fR34PPl7aLUmkeOA7Sm0bUOk/fKLlwvmGSok2shXewDFRxSjPUy3tw
-         1fCdCDXrVNRUx+/elkTgxUBjgR118WNDSux5/Pl6Hua3GxuE6tLcFCW87+G/+GBkUD
-         bH+umS0I4nNGCiUaXwsCox++1Ddc41slo0V5Vjqo=
-Received: from rohkumar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rohitkr@codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 807536021C;
-        Thu,  1 Nov 2018 12:39:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541075944;
-        bh=R3bHSdhkPAirrQJ44AWDG6tJeDJqJ2j5HNKjMFw2bUQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=S4YJ/rA6853fR34PPl7aLUmkeOA7Sm0bUOk/fKLlwvmGSok2shXewDFRxSjPUy3tw
-         1fCdCDXrVNRUx+/elkTgxUBjgR118WNDSux5/Pl6Hua3GxuE6tLcFCW87+G/+GBkUD
-         bH+umS0I4nNGCiUaXwsCox++1Ddc41slo0V5Vjqo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 807536021C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
-From:   Rohit kumar <rohitkr@codeaurora.org>
-To:     plai@codeaurora.org, bgoswami@codeaurora.org, lgirdwood@gmail.com,
-        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        rohkumar@qti.qualcomm.com, srinivas.kandagatla@linaro.org
-Cc:     Rohit kumar <rohitkr@codeaurora.org>
-Subject: [PATCH] ASoC: core: Invoke pcm_new() for all DAI-link
-Date:   Thu,  1 Nov 2018 18:08:49 +0530
-Message-Id: <1541075929-29323-1-git-send-email-rohitkr@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Thu, 1 Nov 2018 17:42:23 -0400
+Received: from smtp2.provo.novell.com ([137.65.250.81]:42481 "EHLO
+        smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727736AbeKAVmW (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Thu, 1 Nov 2018 17:42:22 -0400
+Received: from [10.67.18.174] (prv-ext-foundry1int.gns.novell.com [137.65.251.240])
+        by smtp2.provo.novell.com with ESMTP (TLS encrypted); Thu, 01 Nov 2018 06:39:30 -0600
+Subject: Re: [Ocfs2-devel] [PATCH V3] ocfs2: fix dead lock caused by
+ ocfs2_defrag_extent
+To:     Changwei Ge <ge.changwei@h3c.com>, Joseph Qi <jiangqi903@gmail.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20181101071422.14470-1-lchen@suse.com>
+ <c07c65cb-8492-d866-6a1f-ffa64b293ea0@gmail.com>
+ <63ADC13FD55D6546B7DECE290D39E37301277DE397@H3CMLB12-EX.srv.huawei-3com.com>
+From:   Larry Chen <lchen@suse.com>
+Message-ID: <24a08d67-dd33-7fc1-628a-af55cd2de1fe@suse.com>
+Date:   Thu, 1 Nov 2018 20:39:26 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <63ADC13FD55D6546B7DECE290D39E37301277DE397@H3CMLB12-EX.srv.huawei-3com.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove no_pcm check to invoke pcm_new() for backend dai-links
-too. This fixes crash in hdmi codec driver during hdmi_codec_startup()
-while accessing chmap_info struct. chmap_info struct memory is
-allocated in pcm_new() of hdmi codec driver which is not invoked
-in case of DPCM when hdmi codec driver is part of backend dai-link.
+Hi Joseph,
 
-Below is the crash stack:
+On 11/1/18 7:52 PM, Changwei Ge wrote:
+> Hello Joseph,
+> 
+> On 2018/11/1 17:01, Joseph Qi wrote:
+>> Hi Larry,
+>>
+>> On 18/11/1 15:14, Larry Chen wrote:
+>>> ocfs2_defrag_extent may fall into deadlock.
+>>>
+>>> ocfs2_ioctl_move_extents
+>>>       ocfs2_ioctl_move_extents
+>>>         ocfs2_move_extents
+>>>           ocfs2_defrag_extent
+>>>             ocfs2_lock_allocators_move_extents
+>>>
+>>>               ocfs2_reserve_clusters
+>>>                 inode_lock GLOBAL_BITMAP_SYSTEM_INODE
+>>>
+>>> 	  __ocfs2_flush_truncate_log
+>>>                 inode_lock GLOBAL_BITMAP_SYSTEM_INODE
+>>>
+>>> As backtrace shows above, ocfs2_reserve_clusters() will call inode_lock
+>>> against the global bitmap if local allocator has not sufficient cluters.
+>>> Once global bitmap could meet the demand, ocfs2_reserve_cluster will
+>>> return success with global bitmap locked.
+>>>
+>>> After ocfs2_reserve_cluster(), if truncate log is full,
+>>> __ocfs2_flush_truncate_log() will definitely fall into deadlock because it
+>>> needs to inode_lock global bitmap, which has already been locked.
+>>>
+>>> To fix this bug, we could remove from ocfs2_lock_allocators_move_extents()
+>>> the code which intends to lock global allocator, and put the removed code
+>>> after __ocfs2_flush_truncate_log().
+>>>
+>>> ocfs2_lock_allocators_move_extents() is referred by 2 places, one is here,
+>>> the other does not need the data allocator context, which means this patch
+>>> does not affect the caller so far.
+>>>
+>>> Change log:
+>>> 1. Correct the function comment.
+>>> 2. Remove unused argument from ocfs2_lock_meta_allocator_move_extents.
+>>>
+>>> Signed-off-by: Larry Chen <lchen@suse.com>
+>>> ---
+>>>    fs/ocfs2/move_extents.c | 47 ++++++++++++++++++++++++++---------------------
+>>>    1 file changed, 26 insertions(+), 21 deletions(-)
+>>>
+> 
+>> IMO, here clusters_to_move is only for data_ac, since we change this
+>> function to only handle meta_ac, I'm afraid clusters_to_move related
+>> logic has to been changed correspondingly.
+> 
+> I think we can't remove *clusters_to_move* from here as clusters can be reserved latter outsides this function, but we
+> still have to reserve metadata(extents) in advance.
+> So we need that argument.
+> 
 
-[   61.635493] Unable to handle kernel NULL pointer dereference at virtual address 00000018
-..
-[   61.666696]   CM = 0, WnR = 1
-[   61.669778] user pgtable: 4k pages, 39-bit VAs, pgd = ffffffc0d6633000
-[   61.676526] [0000000000000018] *pgd=0000000153fc8003, *pud=0000000153fc8003, *pmd=0000000000000000
-[   61.685793] Internal error: Oops: 96000046 [#1] PREEMPT SMP
-[   61.722955] CPU: 7 PID: 2238 Comm: aplay Not tainted 4.14.72 #21
-..
-[   61.740269] PC is at hdmi_codec_startup+0x124/0x164
-[   61.745308] LR is at hdmi_codec_startup+0xe4/0x164
+Yeah, I think clusters_to_move should be reserved, in order to keep the 
+original logic as it was.
 
-Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
----
- sound/soc/soc-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+But I'm curious about why max_recs_needed should be equal to
+2 * extents_to_split + cluster_to_move?
+Does that mean that each cluster might form an extent??
 
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 6ddcf12..abdc460 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -1467,7 +1467,7 @@ static int soc_link_dai_pcm_new(struct snd_soc_dai **dais, int num_dais,
- 	for (i = 0; i < num_dais; ++i) {
- 		struct snd_soc_dai_driver *drv = dais[i]->driver;
- 
--		if (!rtd->dai_link->no_pcm && drv->pcm_new)
-+		if (drv->pcm_new)
- 			ret = drv->pcm_new(rtd, dais[i]);
- 		if (ret < 0) {
- 			dev_err(dais[i]->dev,
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
-is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+Thanks,
+Larry
+
+
+> Thanks,
+> Changwei
+> 
+>>
+>> Thanks,
+>> Joseph
+>>>    					u32 extents_to_split,
+>>>    					struct ocfs2_alloc_context **meta_ac,
+>>> -					struct ocfs2_alloc_context **data_ac,
+>>>    					int extra_blocks,
+>>>    					int *credits)
+>>>    {
+>>> @@ -192,13 +188,6 @@ static int ocfs2_lock_allocators_move_extents(struct inode *inode,
+>>>    		goto out;
+>>>    	}
+>>>    
+>>> -	if (data_ac) {
+>>> -		ret = ocfs2_reserve_clusters(osb, clusters_to_move, data_ac);
+>>> -		if (ret) {
+>>> -			mlog_errno(ret);
+>>> -			goto out;
+>>> -		}
+>>> -	}
+>>>    
+>>>    	*credits += ocfs2_calc_extend_credits(osb->sb, et->et_root_el);
+>>>    
+>>> @@ -257,10 +246,10 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
+>>>    		}
+>>>    	}
+>>>    
+>>> -	ret = ocfs2_lock_allocators_move_extents(inode, &context->et, *len, 1,
+>>> -						 &context->meta_ac,
+>>> -						 &context->data_ac,
+>>> -						 extra_blocks, &credits);
+>>> +	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
+>>> +						*len, 1,
+>>> +						&context->meta_ac,
+>>> +						extra_blocks, &credits);
+>>>    	if (ret) {
+>>>    		mlog_errno(ret);
+>>>    		goto out;
+>>> @@ -283,6 +272,21 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
+>>>    		}
+>>>    	}
+>>>    
+>>> +	/*
+>>> +	 * Make sure ocfs2_reserve_cluster is called after
+>>> +	 * __ocfs2_flush_truncate_log, otherwise, dead lock may happen.
+>>> +	 *
+>>> +	 * If ocfs2_reserve_cluster is called
+>>> +	 * before __ocfs2_flush_truncate_log, dead lock on global bitmap
+>>> +	 * may happen.
+>>> +	 *
+>>> +	 */
+>>> +	ret = ocfs2_reserve_clusters(osb, *len, &context->data_ac);
+>>> +	if (ret) {
+>>> +		mlog_errno(ret);
+>>> +		goto out_unlock_mutex;
+>>> +	}
+>>> +
+>>>    	handle = ocfs2_start_trans(osb, credits);
+>>>    	if (IS_ERR(handle)) {
+>>>    		ret = PTR_ERR(handle);
+>>> @@ -600,9 +604,10 @@ static int ocfs2_move_extent(struct ocfs2_move_extents_context *context,
+>>>    		}
+>>>    	}
+>>>    
+>>> -	ret = ocfs2_lock_allocators_move_extents(inode, &context->et, len, 1,
+>>> -						 &context->meta_ac,
+>>> -						 NULL, extra_blocks, &credits);
+>>> +	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
+>>> +						len, 1,
+>>> +						&context->meta_ac,
+>>> +						extra_blocks, &credits);
+>>>    	if (ret) {
+>>>    		mlog_errno(ret);
+>>>    		goto out;
+>>>
+>>
+>> _______________________________________________
+>> Ocfs2-devel mailing list
+>> Ocfs2-devel@oss.oracle.com
+>> https://oss.oracle.com/mailman/listinfo/ocfs2-devel
+>>
+> 
 
