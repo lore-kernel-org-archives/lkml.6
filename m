@@ -2,118 +2,90 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 870DAC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:02:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A85E4C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:04:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EDAF20657
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:02:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EDAF20657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 48A7620657
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:04:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="KNKTjC8r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48A7620657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728114AbeKBIHl (ORCPT
+        id S1728078AbeKBIJ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 04:07:41 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49750 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726386AbeKBIHl (ORCPT
+        Fri, 2 Nov 2018 04:09:29 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:34533 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727749AbeKBIJ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 04:07:41 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA1MxH4C157733
-        for <linux-kernel@vger.kernel.org>; Thu, 1 Nov 2018 19:02:40 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ng6vss9cf-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 19:02:39 -0400
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 1 Nov 2018 23:02:39 -0000
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 1 Nov 2018 23:02:36 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA1N2ZAK29163762
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 1 Nov 2018 23:02:35 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 13C8EB2067;
-        Thu,  1 Nov 2018 23:02:35 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E7313B2064;
-        Thu,  1 Nov 2018 23:02:34 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.141])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  1 Nov 2018 23:02:34 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 72E5016C359F; Thu,  1 Nov 2018 16:02:35 -0700 (PDT)
-Date:   Thu, 1 Nov 2018 16:02:35 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     lcapitulino@redhat.com, julia@ni.com, bigeasy@linutronix.de
-Cc:     linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: rcu: enable rcu_normal_after_boot by default for RT
-Reply-To: paulmck@linux.ibm.com
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18110123-0040-0000-0000-0000048B0641
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009968; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01111298; UDB=6.00575895; IPR=6.00891389;
- MB=3.00023997; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-01 23:02:37
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110123-0041-0000-0000-000008940724
-Message-Id: <20181101230235.GA8757@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-01_16:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811010191
+        Fri, 2 Nov 2018 04:09:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1541113469; x=1572649469;
+  h=from:to:cc:subject:date:message-id;
+  bh=u58J7OBrDe40sG+JE5QsBGfXlwVdiMnwpU4kzKzSGGo=;
+  b=KNKTjC8rIZUeJWiEBuYArLWlJZoiGZ31EQdtfrMyfklNg1hrBBdb1A7w
+   RjEO8OnMRONJ+DkrCpd6edMovEhPzTbRTo4YoG1oH2n5S3U2SgAgGTMgJ
+   T51ioXLPCvHEyCCzOl4P/s1s9LCRylGYDbFCoH30Y1j7HEuuEbiqOMnXC
+   uxaIxoIBytinCAomyT0t3PjreUVit9JQMi0MvdChFBHPeZw5hI19+r4Jx
+   zTPqGJWh3x3CYXy4FDkB0BkS61nDLYtdQTlDQapChwynozJa/oOCewpbO
+   Bitfyb1azGpsJ3CCmOljtXm9ZcG38KxMQWvXbIZlCPztYBv5QamTMRpBC
+   g==;
+X-IronPort-AV: E=Sophos;i="5.54,454,1534780800"; 
+   d="scan'208";a="197776149"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 02 Nov 2018 07:04:28 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP; 01 Nov 2018 15:48:30 -0700
+Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
+  by uls-op-cesaip02.wdc.com with ESMTP; 01 Nov 2018 16:04:29 -0700
+From:   Atish Patra <atish.patra@wdc.com>
+To:     linux-riscv@lists.infradead.org
+Cc:     palmer@sifive.com, anup@brainfault.org, hch@infradead.org,
+        Damien.LeMoal@wdc.com, tglx@linutronix.de, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, alankao@andestech.com,
+        zong@andestech.com
+Subject: [RFC 0/2] Add RISC-V cpu topology
+Date:   Thu,  1 Nov 2018 16:04:26 -0700
+Message-Id: <1541113468-22097-1-git-send-email-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> The forcing of an expedited grace period is an expensive and very
-> RT-application unfriendly operation, as it forcibly preempts all running
-> tasks on CPUs which are preventing the gp from expiring.
-> 
-> By default, as a policy decision, disable the expediting of grace
-> periods (after boot) on configurations which enable PREEMPT_RT_FULL.
-> 
-> Suggested-by: Luiz Capitulino <lcapitulino@redhat.com>
-> Signed-off-by: Julia Cartwright <julia@ni.com>
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+This patch series adds the cpu topology for RISC-V. It contains
+both the DT binding and actual source code. It has been tested on
+QEMU & Unleashed board. 
 
-In case it matters:
+The idea is based on cpu-map in ARM with changes related to how
+we define SMT systems. The reason for adopting a similar approach
+to ARM as I feel it provides a very clear way of defining the
+topology compared to parsing cache nodes to figure out which cpus
+share the same package or core.  I am open to any other idea to
+implement cpu-topology as well.
 
-Acked-by: Paul E. McKenney <paulmck@linux.ibm.com>
+Atish Patra (2):
+  dt-bindings: topology: Add RISC-V cpu topology.
+  RISC-V: Introduce cpu topology.
 
-Alternatively, any reason that I should not pull this into -rcu?
+ .../devicetree/bindings/riscv/topology.txt         | 154 ++++++++++++++++
+ arch/riscv/include/asm/topology.h                  |  28 +++
+ arch/riscv/kernel/Makefile                         |   1 +
+ arch/riscv/kernel/smpboot.c                        |   5 +-
+ arch/riscv/kernel/topology.c                       | 194 +++++++++++++++++++++
+ 5 files changed, 381 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/riscv/topology.txt
+ create mode 100644 arch/riscv/include/asm/topology.h
+ create mode 100644 arch/riscv/kernel/topology.c
 
-							Thanx, Paul
-
-> diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-> index f56c0fbdf22e..12027723abaf 100644
-> --- a/kernel/rcu/update.c
-> +++ b/kernel/rcu/update.c
-> @@ -67,7 +67,7 @@ extern int rcu_expedited; /* from sysctl */
->  module_param(rcu_expedited, int, 0);
->  extern int rcu_normal; /* from sysctl */
->  module_param(rcu_normal, int, 0);
-> -static int rcu_normal_after_boot;
-> +static int rcu_normal_after_boot = IS_ENABLED(CONFIG_PREEMPT_RT_FULL);
->  module_param(rcu_normal_after_boot, int, 0);
->  #endif /* #ifndef CONFIG_TINY_RCU */
->  
+-- 
+2.7.4
 
