@@ -5,92 +5,125 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB4E6C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:54:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B577C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:55:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB42D2081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:54:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB42D2081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sakamocchi.jp
+	by mail.kernel.org (Postfix) with ESMTP id 0902320820
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:55:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0902320820
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728468AbeKAU5a (ORCPT
+        id S1728493AbeKAU5t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 16:57:30 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37657 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728012AbeKAU5a (ORCPT
+        Thu, 1 Nov 2018 16:57:49 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:57331 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728012AbeKAU5t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 16:57:30 -0400
-Received: by mail-pg1-f194.google.com with SMTP id c10-v6so8932683pgq.4;
-        Thu, 01 Nov 2018 04:54:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=78i3pg8ptuOTmsNl18pKOHvOKUcCxjd24l9hQWTyZX0=;
-        b=Lv8LwtiedJRthP3rlIHxjRblu94UrvNGeSaioUXTKeHIk5+ApLrknW06aOA/DPeRSg
-         Rd8ZUkACWrMfi6FSN31AGpZSC2thotzoGHkFGDSGgJCulf+pUw91MZOLH/ih2ByCW5zR
-         S1tlDQQwuFiCDotFqvlj0Id8gP+XEu26WtrHvwMLo8WSICTfg5drsHXdK7UyuJiTSppo
-         0B+O57+iIvQk2//yTJjdXBSpegElwEAcHn4sSGcfhnNxVJpNyjKwenoQiNjpTBQOL5YF
-         8883/28aBtGoluU4nkHSQL8sTcdhLKUmqcn0VJz+7YqrA+zum+4uZ2CvA4t7lZR+cRqH
-         qP6A==
-X-Gm-Message-State: AGRZ1gKAvXIfSP65dl1XTdANyDmDxTfYFz0Mr6e2BXsZQEWmUCAwq8K9
-        euNtj96rIchxVihlHkY+eOQ=
-X-Google-Smtp-Source: AJdET5eQr//F6fChGCFgYqN5VR3R0SKQpQ7mQ4HILhn8ZrvKXcZenYizl1K4a5sg1281g04mlvOsqA==
-X-Received: by 2002:a62:2bd4:: with SMTP id r203-v6mr5766294pfr.105.1541073290168;
-        Thu, 01 Nov 2018 04:54:50 -0700 (PDT)
-Received: from ?IPv6:2405:6580:9660:3200:14e5:990f:76c0:4949? ([2405:6580:9660:3200:14e5:990f:76c0:4949])
-        by smtp.gmail.com with ESMTPSA id s85-v6sm44257642pfi.15.2018.11.01.04.54.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Nov 2018 04:54:49 -0700 (PDT)
-Subject: Re: [PATCH 17/28] tools include uapi: Update asound.h copy
-To:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Joe Perches <joe@perches.com>
-Cc:     Takashi Iwai <tiwai@suse.de>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>
-References: <20181031164508.4784-1-acme@kernel.org>
- <20181031164508.4784-18-acme@kernel.org> <s5hlg6ehwzk.wl-tiwai@suse.de>
- <97ff58b75de70d2b9dd8524f7899063d563a6a71.camel@perches.com>
- <20181031192951.GE6669@redhat.com>
-From:   Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Message-ID: <68477e3f-695f-b269-c44d-dbca4295ad05@sakamocchi.jp>
-Date:   Thu, 1 Nov 2018 20:54:45 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 1 Nov 2018 16:57:49 -0400
+Received: from p5492fe24.dip0.t-ipconnect.de ([84.146.254.36] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gIBZ6-0003P6-IX; Thu, 01 Nov 2018 12:55:08 +0100
+Date:   Thu, 1 Nov 2018 12:55:08 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Laurence Oberman <loberman@redhat.com>
+cc:     linux-kernel@vger.kernel.org, rdunlap@infradead.org,
+        prarit@redhat.com
+Subject: Re: [PATCH] [PATCH V7] watchdog/core: Add watchdog_thresh command
+ line parameter
+In-Reply-To: <1540911004-11539-1-git-send-email-loberman@redhat.com>
+Message-ID: <alpine.DEB.2.21.1811011240310.1642@nanos.tec.linutronix.de>
+References: <1540911004-11539-1-git-send-email-loberman@redhat.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20181031192951.GE6669@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnaldo,
+Laurence,
 
-On Nov 1 2018 4:29, Arnaldo Carvalho de Melo wrote:
->> Wouldn't a symlink be simpler?
-> 
-> That would be equivalent to using it directly, see my response to
-> Takashi for a few of the reasons this is done this way.
+On Tue, 30 Oct 2018, Laurence Oberman wrote:
 
-I have a plan to add changes to 'include/uapi/sound/asound.h' in a
-development period for Linux kernel v4.21[1]. Would I need to add you to
-C.C list of the future patch to notify the change, or things go well
-without such special care for your side?
+This looks much better.
 
-[1] 
-https://github.com/takaswie/presentations/blob/master/20181021/contents.md
+But please send your patches first to yourself. Your subject ended up with
+'[PATCH] [PATCH V7]' instead of just '[PATCH V7]'
 
+> Both graphics and serial consoles are exposed to hard lockups
+> when handling a large amount of messaging. The kernel watchdog_thresh
+> parameter up to now has not been available to be set on the kernel line for
 
-Regards
+kernel command line please. kernel line does not mean anything,
 
-Takashi Sakamoto
+> early boot.
+> This patch allows the setting of watchdog_thresh to be increased
+
+Again:
+
+ git grep 'This patch' Documentation/process/
+
+This leads you to:
+
+ "Describe your changes in imperative mood, e.g. "make xyzzy do frotz"
+  instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy
+  to do frotz", as if you are giving orders to the codebase to change
+  its behaviour."
+
+Documentation is there for a reason.
+
+> Both graphics and serial consoles are exposed to hard lockups
+> when handling a large amount of messaging. The kernel watchdog_thresh
+> parameter up to now has not been available to be set on the kernel line for
+> early boot.
+> This patch allows the setting of watchdog_thresh to be increased
+> when needed to extend the hard lockup timer in the console code.
+> Note that this also affects the soft lockup detector
+
+Just for nitpickings sake. The change log is slightly confusing. Let me
+give you a suggestion:
+
+  The hard and soft lockup detector threshold has a default value of 10
+  seconds which can only be changed via sysctl.
+
+  During early boot lockup detection can trigger when noisy debugging emits
+  a large amount of messages to the console, but there is no way to set a
+  larger threshold on the kernel command line. The detector can only be
+  completely disabled.
+
+  Add a new watchdog_thresh= command line parameter to allow boot time
+  control over the threshold. It works in the same way as the sysctl and
+  affects both the soft and the hard lockup detectors.
+
+Hmm?
+
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -4957,6 +4957,14 @@
+>  			or other driver-specific files in the
+>  			Documentation/watchdog/ directory.
+>  
+> +        watchdog_thresh=
+
+Please use tabs instead of spaces
+
+> +                        [KNL]
+> +                        Set the hard lockup detector stall duration
+> +                        threshold in seconds. The soft lockup detector
+> +                        threshold is set to twice the value. A value of 0
+> +                        disables both lockup detectors. Default is 10
+> +                        seconds.
+
+Same here.
+
+Thanks,
+
+	tglx
+
