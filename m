@@ -2,51 +2,50 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E12F8C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 07:20:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B364C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 07:20:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1FE42082E
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 07:20:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1FE42082E
+	by mail.kernel.org (Postfix) with ESMTP id F16DE2064C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 07:20:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F16DE2064C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728145AbeKAQVv (ORCPT
+        id S1728164AbeKAQWW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 12:21:51 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46408 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727573AbeKAQVv (ORCPT
+        Thu, 1 Nov 2018 12:22:22 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:42328 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727573AbeKAQWW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 12:21:51 -0400
-Received: by mail-lj1-f195.google.com with SMTP id x3-v6so17160065lji.13;
-        Thu, 01 Nov 2018 00:20:03 -0700 (PDT)
+        Thu, 1 Nov 2018 12:22:22 -0400
+Received: by mail-lf1-f67.google.com with SMTP id q6-v6so13488119lfh.9;
+        Thu, 01 Nov 2018 00:20:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=COmn/EezDX/GWsah2t8NJRxiKg5KtxdFjJeZJYU4E4A=;
-        b=Lb/URk0SWipRrwkLENGZMY+odU1ImpkJRbav8JtwI1QqkRE3xCw0vIBwyujF68SDxF
-         GWbjjXE6iCWRoBzEZXFmt5O3X17Aaj8LnxQ5nR44PNev0nTaZmlDla4Jzy77FYIDOzWv
-         Uv9tkivkhXRDJ+vzYo/1z0PtBD0HX08s94yssgGFJYAeMQ8EF3SU0uaIYinOMy6LyzB+
-         P5vkecnZ46WzVslIeTDOloiMXtfdYUjzyiJIdEYY1V2T6r6sZ6txREd+GvYFxsNzey1I
-         QN5hccD3vEloSODWIVgf8P9xeqIoUGJsps/tEx5ldNOwjic+j+JXKCQzyufbaEQ0eD1G
-         pQ9A==
-X-Gm-Message-State: AGRZ1gLfFWcT8DZZ9pEw4UQcedJRFxMbgXqL8vv0voAGa6h2cuThRdP8
-        9LCSRWcPC5fvckY1fVCDvOo=
-X-Google-Smtp-Source: AJdET5dbBu6/6HNqM4lOnlLDkviqHw5Hcqrx59D528L/oO8JWWPh6wz73Uh4svbCjTCjKVFBg2hFlw==
-X-Received: by 2002:a2e:6503:: with SMTP id z3-v6mr3898709ljb.153.1541056802566;
-        Thu, 01 Nov 2018 00:20:02 -0700 (PDT)
+        bh=KJKi78f3BmTlbgbFoV5YXjiBkX7wj5R8W+WOr3C0zec=;
+        b=DBw9X+6/tqDY6z2NiDIHzqxeMVWidla0ho9Yw8W2TDNFIM5ekNQ4Yx0TMW8MU1vEjY
+         ryEfR9JEXn6Ve3TVA/BJcOCJXHxFXRw9hZbgfroVzhf+s9hvDEQPdYRzEEunFzxe4wJC
+         h4dfekfnIe9lPtw9NSv5+L9qbC+6NSyTNnL20FN58nZ0PMWqxD2x928fC1uNv12PJgr7
+         RiH8Ges+2r8XN3EshE8qSJei77ocJSBRy7bxMa68LpBPsht4yQ2nVsOo0AJKjfbk5IS/
+         TlsuqmC1UO3I0YBJgr/xKrMwS8HOAJTA2gKHrPlqfhgXpmstsHZ40jL8637b4sYdWykt
+         1QWQ==
+X-Gm-Message-State: AGRZ1gLtGbsMgJnlNmTRFZ0BLiqZju2a52dZqlLidRPU6j7Et9hMdJmL
+        iNmCjvOhYjlH9w3yXX0eTTk=
+X-Google-Smtp-Source: AJdET5dAOVKivRGpFyMwJ0rc2aWE1+zCj+Mct0ZJ7P9yPLK4ADxnHxz6ml/uPyWRtu2zrsPJaeEk9w==
+X-Received: by 2002:a19:a086:: with SMTP id j128mr3438420lfe.93.1541056833783;
+        Thu, 01 Nov 2018 00:20:33 -0700 (PDT)
 Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id s126-v6sm2524051lja.4.2018.11.01.00.20.00
+        by smtp.gmail.com with ESMTPSA id u26-v6sm753622lji.85.2018.11.01.00.20.32
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 01 Nov 2018 00:20:01 -0700 (PDT)
-Date:   Thu, 1 Nov 2018 09:19:53 +0200
+        Thu, 01 Nov 2018 00:20:33 -0700 (PDT)
+Date:   Thu, 1 Nov 2018 09:20:20 +0200
 From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 To:     Jonathan Corbet <corbet@lwn.net>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -74,8 +73,8 @@ Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org,
         matti.vaittinen@fi.rohmeurope.com
-Subject: [PATCH v2 4/8] clk: clk-st: avoid clkdev lookup leak at remove
-Message-ID: <37078c99cc7d7de6847a3bbdf0cc67fbd7281efd.1541054985.git.matti.vaittinen@fi.rohmeurope.com>
+Subject: [PATCH v2 5/8] clk: clk-hi655x: Free of_provider at remove
+Message-ID: <3b6742f090502f1f75cba283bc6d29e8ccbd92d3.1541054985.git.matti.vaittinen@fi.rohmeurope.com>
 References: <cover.1541054985.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -87,28 +86,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm based clkdev lookup registration to avoid leaking lookup
-structures.
+use devm variant for of_provider registration so provider is freed
+at exit.
 
 Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
- drivers/clk/x86/clk-st.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/clk-hi655x.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/x86/clk-st.c b/drivers/clk/x86/clk-st.c
-index fb62f3938008..32d8df9bd853 100644
---- a/drivers/clk/x86/clk-st.c
-+++ b/drivers/clk/x86/clk-st.c
-@@ -52,7 +52,8 @@ static int st_clk_probe(struct platform_device *pdev)
- 		0, st_data->base + MISCCLKCNTL1, OSCCLKENB,
- 		CLK_GATE_SET_TO_DISABLE, NULL);
+diff --git a/drivers/clk/clk-hi655x.c b/drivers/clk/clk-hi655x.c
+index 403a0188634a..394d0109104d 100644
+--- a/drivers/clk/clk-hi655x.c
++++ b/drivers/clk/clk-hi655x.c
+@@ -107,8 +107,8 @@ static int hi655x_clk_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
  
--	clk_hw_register_clkdev(hws[ST_CLK_GATE], "oscout1", NULL);
-+	devm_clk_hw_register_clkdev(&pdev->dev, hws[ST_CLK_GATE], "oscout1",
-+				    NULL);
- 
- 	return 0;
+-	return of_clk_add_hw_provider(parent->of_node, of_clk_hw_simple_get,
+-				     &hi655x_clk->clk_hw);
++	return devm_of_clk_add_parent_hw_provider(&pdev->dev,
++				of_clk_hw_simple_get, &hi655x_clk->clk_hw);
  }
+ 
+ static struct platform_driver hi655x_clk_driver = {
 -- 
 2.14.3
 
