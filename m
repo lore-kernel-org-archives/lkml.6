@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09734ECDE44
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:25:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D6AECDE44
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:25:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B49D92064C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:25:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3001B20830
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:25:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="IjMLk3J0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B49D92064C
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="FAyHIiOG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3001B20830
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727462AbeKAJZg (ORCPT
+        id S1727598AbeKAJZk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 05:25:36 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40426 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726012AbeKAJZe (ORCPT
+        Thu, 1 Nov 2018 05:25:40 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:34423 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727465AbeKAJZi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 05:25:34 -0400
-Received: by mail-ed1-f67.google.com with SMTP id z12-v6so9411255edp.7
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 17:25:00 -0700 (PDT)
+        Thu, 1 Nov 2018 05:25:38 -0400
+Received: by mail-ed1-f66.google.com with SMTP id w19-v6so15187396eds.1
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 17:25:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=vXTWl8A4VzfUjFkIUP0VHJzOn4CYUXUd72JEuznvemU=;
-        b=IjMLk3J0onJR0Bao6zT9Kbt1uO+SQMVmt/vWGvjqkhnksytozcJkH1M2YfLykRk0f3
-         8LyTYcUvGuzPWmHFHVYjwDyN2hpGFkLhFTKgHqtJqklYCrnkmSKQWPM9PjSdL/ibufoi
-         2Sq+xRC9JYro14l6rfXHPhZusEOqGbtNVSpT89zfobP3Y6rT0CRHaJWLGBkaQPItszvn
-         5Vy9NDwKdmfUVbhLPcpvOPncZoNUlMViBDb6nRhdGxlG68c0Ewzjs8xrw0EEC379MmpE
-         x0AfrRyPBbqRhQLPU+P6MW16McROmEUcB16m/wQnYGRrwPAw/MgNT3S1IXmoXKZZOUL/
-         8NJg==
+        bh=9yBpMe8bZONmbG+T6QYM7RuhqpeWJdERGMTR2wSH4X8=;
+        b=FAyHIiOGvbazTRsu8glKhqADCozbrQTW0r30QiOJbpyIALehTsMCIwuTRgvc4nbk2c
+         DNX5ovXwmKUYJ1hDOe8m2bbYkoujGdSgmYYRPdh+fdRvDpdUqBNU2yvi9UGKHcuUAKZX
+         Rxs2hyY/wKulkoG/9xX7mLZ9NoJfU2l+Q6ck1sY79KaxvCdIj5nEQWxLTRrCCm05gV8n
+         h5YJ23k9PEQsUxJXOuBsrjVuF3TVuAXp8wZ/7MhpcJ6ILiaLp1Su14RJTuOnDpa6CPgu
+         91G4wtW7GyYLZuf8A7eg8YaAqT1vRjNZQl6mWbzR0wCZxNJqXuT65+8UUry3AZD4WC+A
+         UPdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=vXTWl8A4VzfUjFkIUP0VHJzOn4CYUXUd72JEuznvemU=;
-        b=PPfHO9jg/TDqmyPTq9LeatWj7j9+VP7u7UR5EuYyugwZAELgxrO2kKqQh7DDYIrM9W
-         8I0m2nIUh1NMOw+zq3+JuP9bUEeJ/x3vm3Kwp1FWqTMy7vFljUPuQkzVBCr3IlVORMlq
-         alp7B0uJRwvQgHkvN9uGwwTUB7AHimA/FdYdDkuVdrpWgzyjgwPO7ydFlWX6ILdrflMy
-         WHqL456qbuEro7e6Sg9SeQenLgrxFDbrbbipsUOF6oYWFe8gdy+wUTvm/iXtWyZV1gsB
-         ugwlHfk6k2ai9QAPWaUJAS9QkdFjaBukA9LGu8NJIhDK4vZjbYQJ4Jn8ofQA5JQwXT7i
-         vG4g==
-X-Gm-Message-State: AGRZ1gKSb1pUH/5yoTaFg6bvXTFiaW9cFWmGLi1BHbUJai2zPvn/TF0G
-        arN9PmOSJqGX6mXMN7zRw/07SLPKtdY=
-X-Google-Smtp-Source: AJdET5dD2NwSh10eluYpYS2gBTP/NwW5Zb6pyQiTmPtqsFve3pH3wJgzDANANaSslSm7ubypCWXczg==
-X-Received: by 2002:a50:b0e5:: with SMTP id j92-v6mr3625632edd.294.1541031899757;
-        Wed, 31 Oct 2018 17:24:59 -0700 (PDT)
+        bh=9yBpMe8bZONmbG+T6QYM7RuhqpeWJdERGMTR2wSH4X8=;
+        b=Txi7t440vXAbK+ZPYAPZz9zmTFvU0Gx81JIphUaSWuE5icDgcNqzGCwm8uMXa3oQ3w
+         Edhhc5YPfA55hfvtoT+0QlQCmFYB1g1h4ecjL7C8dfx/LhYyeTlfoaOau/E3jtJ9ZdNg
+         QukpgZLSTnWlh8L4s+2LhsqQHaasXyYXOXSwmS8Vi0P4TRHuWQ9OZhlobSnj9bF7v9jS
+         KPY2wAghSrFx6cvJXNDdqBrqJMHPkTwnuXvR065sJsJqBo2nko/7369ROfFP1AIb/e01
+         RY2UIcmPMfeu9O+WLX656WrKPZBtTWRT3N52Rik8N0Q0Mq8E+6/B/KKAIO1bukAzwGwG
+         tciA==
+X-Gm-Message-State: AGRZ1gKF7Uy/0bdTKp0/6vjvI3HvrADNh0a2PVOQ8qL6FhcW4dasapcO
+        pNnfCUc+lC8s5hrokvcaxyj/egU1t+o=
+X-Google-Smtp-Source: AJdET5eHQP1yoLfPXMjIpc2UH84iPSDuf/46SpD5jC/R7VfF3ym+HVB5TF3aj52U8fu+IXAFZbi5wA==
+X-Received: by 2002:a17:906:1353:: with SMTP id x19-v6mr2788062ejb.23.1541031904817;
+        Wed, 31 Oct 2018 17:25:04 -0700 (PDT)
 Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id s12-v6sm10188175edd.39.2018.10.31.17.24.58
+        by smtp.gmail.com with ESMTPSA id s12-v6sm10188175edd.39.2018.10.31.17.25.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 17:24:58 -0700 (PDT)
+        Wed, 31 Oct 2018 17:25:03 -0700 (PDT)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
@@ -78,9 +78,9 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>
-Subject: [PATCHv6 3/7] tty: Don't block on IO when ldisc change is pending
-Date:   Thu,  1 Nov 2018 00:24:48 +0000
-Message-Id: <20181101002452.5483-4-dima@arista.com>
+Subject: [PATCHv6 6/7] tty/ldsem: Add lockdep asserts for ldisc_sem
+Date:   Thu,  1 Nov 2018 00:24:51 +0000
+Message-Id: <20181101002452.5483-7-dima@arista.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181101002452.5483-1-dima@arista.com>
 References: <20181101002452.5483-1-dima@arista.com>
@@ -91,154 +91,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There might be situations where tty_ldisc_lock() has blocked, but there
-is already IO on tty and it prevents line discipline changes.
-It might theoretically turn into dead-lock.
+Make sure under CONFIG_LOCKDEP that each change to line discipline
+is done with held write semaphor.
+Otherwise potential reader will have a good time dereferencing
+incomplete/uninitialized ldisc.
 
-Basically, provide more priority to pending tty_ldisc_lock() than to
-servicing reads/writes over tty.
+An exception here is tty_ldisc_open(), as it's called without ldisc_sem
+locked by tty_init_dev() => tty_ldisc_setup() for the tty->link.
 
-User-visible issue was reported by Mikulas where on pa-risc with
-Debian 5 reboot took either 80 seconds, 3 minutes or 3:25 after proper
-locking in tty_reopen().
+It seem valid as tty_init_dev() will call tty_driver_install_tty()
+which will find ops->install(). Install will establish tty->link in
+pty_common_install(), just after allocation of slave tty with
+alloc_tty_struct(). So, no one should have a reference to slave pty yet.
 
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Jiri Slaby <jslaby@suse.com>
-Reported-by: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- drivers/tty/n_hdlc.c    | 4 ++--
- drivers/tty/n_r3964.c   | 2 +-
- drivers/tty/n_tty.c     | 8 ++++----
- drivers/tty/tty_ldisc.c | 7 +++++++
- include/linux/tty.h     | 7 +++++++
- 5 files changed, 21 insertions(+), 7 deletions(-)
+ drivers/tty/tty_ldisc.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/tty/n_hdlc.c b/drivers/tty/n_hdlc.c
-index dabb391909aa..99460af61b77 100644
---- a/drivers/tty/n_hdlc.c
-+++ b/drivers/tty/n_hdlc.c
-@@ -612,7 +612,7 @@ static ssize_t n_hdlc_tty_read(struct tty_struct *tty, struct file *file,
- 		}
- 			
- 		/* no data */
--		if (file->f_flags & O_NONBLOCK) {
-+		if (tty_io_nonblock(tty, file)) {
- 			ret = -EAGAIN;
- 			break;
- 		}
-@@ -679,7 +679,7 @@ static ssize_t n_hdlc_tty_write(struct tty_struct *tty, struct file *file,
- 		if (tbuf)
- 			break;
- 
--		if (file->f_flags & O_NONBLOCK) {
-+		if (tty_io_nonblock(tty, file)) {
- 			error = -EAGAIN;
- 			break;
- 		}
-diff --git a/drivers/tty/n_r3964.c b/drivers/tty/n_r3964.c
-index 749a608c40b0..f75696f0ee2d 100644
---- a/drivers/tty/n_r3964.c
-+++ b/drivers/tty/n_r3964.c
-@@ -1085,7 +1085,7 @@ static ssize_t r3964_read(struct tty_struct *tty, struct file *file,
- 		pMsg = remove_msg(pInfo, pClient);
- 		if (pMsg == NULL) {
- 			/* no messages available. */
--			if (file->f_flags & O_NONBLOCK) {
-+			if (tty_io_nonblock(tty, file)) {
- 				ret = -EAGAIN;
- 				goto unlock;
- 			}
-diff --git a/drivers/tty/n_tty.c b/drivers/tty/n_tty.c
-index 3ad460219fd6..5dc9686697cf 100644
---- a/drivers/tty/n_tty.c
-+++ b/drivers/tty/n_tty.c
-@@ -1702,7 +1702,7 @@ n_tty_receive_buf_common(struct tty_struct *tty, const unsigned char *cp,
- 
- 	down_read(&tty->termios_rwsem);
- 
--	while (1) {
-+	do {
- 		/*
- 		 * When PARMRK is set, each input char may take up to 3 chars
- 		 * in the read buf; reduce the buffer space avail by 3x
-@@ -1744,7 +1744,7 @@ n_tty_receive_buf_common(struct tty_struct *tty, const unsigned char *cp,
- 			fp += n;
- 		count -= n;
- 		rcvd += n;
--	}
-+	} while (!test_bit(TTY_LDISC_CHANGING, &tty->flags));
- 
- 	tty->receive_room = room;
- 
-@@ -2211,7 +2211,7 @@ static ssize_t n_tty_read(struct tty_struct *tty, struct file *file,
- 					break;
- 				if (!timeout)
- 					break;
--				if (file->f_flags & O_NONBLOCK) {
-+				if (tty_io_nonblock(tty, file)) {
- 					retval = -EAGAIN;
- 					break;
- 				}
-@@ -2365,7 +2365,7 @@ static ssize_t n_tty_write(struct tty_struct *tty, struct file *file,
- 		}
- 		if (!nr)
- 			break;
--		if (file->f_flags & O_NONBLOCK) {
-+		if (tty_io_nonblock(tty, file)) {
- 			retval = -EAGAIN;
- 			break;
- 		}
 diff --git a/drivers/tty/tty_ldisc.c b/drivers/tty/tty_ldisc.c
-index fc4c97cae01e..9434d20cf3ca 100644
+index 9434d20cf3ca..45eda69b150c 100644
 --- a/drivers/tty/tty_ldisc.c
 +++ b/drivers/tty/tty_ldisc.c
-@@ -327,6 +327,11 @@ int tty_ldisc_lock(struct tty_struct *tty, unsigned long timeout)
+@@ -478,6 +478,7 @@ static int tty_ldisc_open(struct tty_struct *tty, struct tty_ldisc *ld)
+ 
+ static void tty_ldisc_close(struct tty_struct *tty, struct tty_ldisc *ld)
  {
- 	int ret;
++	lockdep_assert_held_exclusive(&tty->ldisc_sem);
+ 	WARN_ON(!test_bit(TTY_LDISC_OPEN, &tty->flags));
+ 	clear_bit(TTY_LDISC_OPEN, &tty->flags);
+ 	if (ld->ops->close)
+@@ -499,6 +500,7 @@ static int tty_ldisc_failto(struct tty_struct *tty, int ld)
+ 	struct tty_ldisc *disc = tty_ldisc_get(tty, ld);
+ 	int r;
  
-+	/* Kindly asking blocked readers to release the read side */
-+	set_bit(TTY_LDISC_CHANGING, &tty->flags);
-+	wake_up_interruptible_all(&tty->read_wait);
-+	wake_up_interruptible_all(&tty->write_wait);
-+
- 	ret = __tty_ldisc_lock(tty, timeout);
- 	if (!ret)
- 		return -EBUSY;
-@@ -337,6 +342,8 @@ int tty_ldisc_lock(struct tty_struct *tty, unsigned long timeout)
- void tty_ldisc_unlock(struct tty_struct *tty)
++	lockdep_assert_held_exclusive(&tty->ldisc_sem);
+ 	if (IS_ERR(disc))
+ 		return PTR_ERR(disc);
+ 	tty->ldisc = disc;
+@@ -622,6 +624,7 @@ EXPORT_SYMBOL_GPL(tty_set_ldisc);
+  */
+ static void tty_ldisc_kill(struct tty_struct *tty)
  {
- 	clear_bit(TTY_LDISC_HALTED, &tty->flags);
-+	/* Can be cleared here - ldisc_unlock will wake up writers firstly */
-+	clear_bit(TTY_LDISC_CHANGING, &tty->flags);
- 	__tty_ldisc_unlock(tty);
- }
++	lockdep_assert_held_exclusive(&tty->ldisc_sem);
+ 	if (!tty->ldisc)
+ 		return;
+ 	/*
+@@ -669,6 +672,7 @@ int tty_ldisc_reinit(struct tty_struct *tty, int disc)
+ 	struct tty_ldisc *ld;
+ 	int retval;
  
-diff --git a/include/linux/tty.h b/include/linux/tty.h
-index 414db2bce715..80ae5528ef8e 100644
---- a/include/linux/tty.h
-+++ b/include/linux/tty.h
-@@ -366,6 +366,7 @@ struct tty_file_private {
- #define TTY_NO_WRITE_SPLIT 	17	/* Preserve write boundaries to driver */
- #define TTY_HUPPED 		18	/* Post driver->hangup() */
- #define TTY_HUPPING		19	/* Hangup in progress */
-+#define TTY_LDISC_CHANGING	20	/* Change pending - non-block IO */
- #define TTY_LDISC_HALTED	22	/* Line discipline is halted */
++	lockdep_assert_held_exclusive(&tty->ldisc_sem);
+ 	ld = tty_ldisc_get(tty, disc);
+ 	if (IS_ERR(ld)) {
+ 		BUG_ON(disc == N_TTY);
+@@ -767,6 +771,10 @@ int tty_ldisc_setup(struct tty_struct *tty, struct tty_struct *o_tty)
+ 		return retval;
  
- /* Values for tty->flow_change */
-@@ -383,6 +384,12 @@ static inline void tty_set_flow_change(struct tty_struct *tty, int val)
- 	smp_mb();
- }
- 
-+static inline bool tty_io_nonblock(struct tty_struct *tty, struct file *file)
-+{
-+	return file->f_flags & O_NONBLOCK ||
-+		test_bit(TTY_LDISC_CHANGING, &tty->flags);
-+}
-+
- static inline bool tty_io_error(struct tty_struct *tty)
+ 	if (o_tty) {
++		/*
++		 * Called without o_tty->ldisc_sem held, as o_tty has been
++		 * just allocated and no one has a reference to it.
++		 */
+ 		retval = tty_ldisc_open(o_tty, o_tty->ldisc);
+ 		if (retval) {
+ 			tty_ldisc_close(tty, tty->ldisc);
+@@ -832,6 +840,7 @@ int tty_ldisc_init(struct tty_struct *tty)
+  */
+ void tty_ldisc_deinit(struct tty_struct *tty)
  {
- 	return test_bit(TTY_IO_ERROR, &tty->flags);
++	/* no ldisc_sem, tty is being destroyed */
+ 	if (tty->ldisc)
+ 		tty_ldisc_put(tty->ldisc);
+ 	tty->ldisc = NULL;
 -- 
 2.19.1
 
