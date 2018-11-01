@@ -2,78 +2,76 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B2F8C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 09:22:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 735CFC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 09:27:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF9F120820
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 09:22:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF9F120820
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2BCAD20820
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 09:27:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BCAD20820
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728005AbeKASYd (ORCPT
+        id S1727775AbeKAS3a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 14:24:33 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53654 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726520AbeKASYc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 14:24:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BFC27341;
-        Thu,  1 Nov 2018 02:22:22 -0700 (PDT)
-Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4A20E3F557;
-        Thu,  1 Nov 2018 02:22:21 -0700 (PDT)
-Date:   Thu, 1 Nov 2018 09:22:18 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>, kbuild-all@01.org,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
-Subject: Re: arch/x86/include/asm/rmwcc.h:23:17: error: jump into statement
- expression
-Message-ID: <20181101092217.GB1565@brain-police>
-References: <201811010946.KVmoo2CH%fengguang.wu@intel.com>
+        Thu, 1 Nov 2018 14:29:30 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50082 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725800AbeKAS3a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 14:29:30 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 64601AF6A;
+        Thu,  1 Nov 2018 09:27:18 +0000 (UTC)
+Subject: Re: [PATCH 09/16] blk-mq: cache request hardware queue mapping
+To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20181030183252.17857-1-axboe@kernel.dk>
+ <20181030183252.17857-10-axboe@kernel.dk>
+From:   Hannes Reinecke <hare@suse.de>
+Message-ID: <222351ec-bf5b-526c-33dd-bd2e8ba051fa@suse.de>
+Date:   Thu, 1 Nov 2018 10:27:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201811010946.KVmoo2CH%fengguang.wu@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181030183252.17857-10-axboe@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Peter,
-
-On Thu, Nov 01, 2018 at 09:11:52AM +0800, kbuild test robot wrote:
-> FYI, the error/warning still remains.
+On 10/30/18 7:32 PM, Jens Axboe wrote:
+> We call blk_mq_map_queue() a lot, at least two times for each
+> request per IO, sometimes more. Since we now have an indirect
+> call as well in that function. cache the mapping so we don't
+> have to re-call blk_mq_map_queue() for the same request
+> multiple times.
 > 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   5b7449810ae6d652629c550d3974c8453836d229
-> commit: 7aa54be2976550f17c11a1c3e3630002dea39303 locking/qspinlock, x86: Provide liveness guarantee
-> date:   2 weeks ago
-> config: x86_64-randconfig-j0-10290909 (attached as .config)
-> compiler: gcc-4.9 (Debian 4.9.4-2) 4.9.4
-> reproduce:
->         git checkout 7aa54be2976550f17c11a1c3e3630002dea39303
->         # save the attached .config to linux build tree
->         make ARCH=x86_64 
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>   block/blk-flush.c      | 12 ++++--------
+>   block/blk-mq-debugfs.c |  4 +---
+>   block/blk-mq-sched.c   |  6 ++----
+>   block/blk-mq-tag.c     |  9 +--------
+>   block/blk-mq.c         | 22 +++++++++-------------
+>   block/blk-mq.h         |  5 +----
+>   include/linux/blkdev.h |  1 +
+>   7 files changed, 19 insertions(+), 40 deletions(-)
 > 
-> All errors (new ones prefixed by >>):
-> 
->    In file included from arch/x86/include/asm/atomic.h:5:0,
->                     from include/linux/atomic.h:7,
->                     from include/linux/crypto.h:20,
->                     from arch/x86/kernel/asm-offsets.c:9:
->    arch/x86/include/asm/qspinlock.h: In function 'queued_fetch_set_pending_acquire':
-> >> arch/x86/include/asm/rmwcc.h:23:17: error: jump into statement expression
->        : clobbers : cc_label);    \
+Hehe.
+I had been wondering about this since the original mq implementation, 
+but was told not to worry :-)
 
-You wrote a fix for this last week, right? Do we need to get it queued
-someplace for -rc1?
+Reviewed-by: Hannes Reinecke <hare@suse.com>
 
-Will
+Cheers,
+
+Hannes
+
+
