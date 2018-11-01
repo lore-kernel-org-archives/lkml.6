@@ -2,140 +2,224 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02880C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 03:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A22DBC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 03:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96A2A205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 03:28:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44CD4205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 03:30:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cnTIdqoV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96A2A205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DuezBhGe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44CD4205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727689AbeKAM3o (ORCPT
+        id S1727702AbeKAMbu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 08:29:44 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:34171 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726095AbeKAM3o (ORCPT
+        Thu, 1 Nov 2018 08:31:50 -0400
+Received: from mail-qt1-f174.google.com ([209.85.160.174]:42906 "EHLO
+        mail-qt1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726095AbeKAMbt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 08:29:44 -0400
-Received: by mail-yw1-f66.google.com with SMTP id v199-v6so7389204ywg.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 20:28:39 -0700 (PDT)
+        Thu, 1 Nov 2018 08:31:49 -0400
+Received: by mail-qt1-f174.google.com with SMTP id z20-v6so19664183qti.9;
+        Wed, 31 Oct 2018 20:30:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=zamWPB7Zrsbk1HU+g6DyYhjI1LOLXffcsrjOS1cfmoc=;
-        b=cnTIdqoVbcehNhb9FKMitRDNdejZO0Uh4fHM64GEX5NlGgV/K5FQMWArwEJN8bWFnU
-         yjVdKN2oGs+Fl4ZFjEZR0f48ZsnrB0TnFnAapbuRW3YuhENboxof8QwfUdgneZQ6xT0n
-         mPwb4THqjBtZ6Wm7eNfxvBNDmeQla1kSlCmV8=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cuLNrA7rriyAhJkMEFnPydKWkWCnPgwIADQDCUFLAjQ=;
+        b=DuezBhGe3fOCv3TBGPdSZb3kL2By1e3DJyKQyyu1ffKwrDf+2cuZTWhxNMorlYPsVk
+         Yb0+zZgEyIlxeVUt/izJATaUCH9Eql9Ody0v4Ny+BJLFmdPxU+G7Nrn7nJslg/EUIlF+
+         aylg/OoDgg9lY4grBNLlDA+9/wiFzQ+aEofjsY/6yjZWYa3bmE20J/D8A+8Oq9ad8pAB
+         /cKNazvEWFUed68Azl1XF/F4zeqy/HsWM6fBC0ZRT6rTWrHxkoBxQPgMn/dzloInpLWl
+         XlcaguJA9pLJgevCvTELY0LKV8/KL9KUUKfeWfYRziuQcpMkvM2r4cWnhPZXc2a3fEbH
+         DYWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=zamWPB7Zrsbk1HU+g6DyYhjI1LOLXffcsrjOS1cfmoc=;
-        b=XgOrdot6dPscyRARjp2CxbdNdfIaA5q0YqY3y+G4PqYQTP+WfXm/KPWYZn89ZDr7Ug
-         wQDuDH3u4lCcgM5z0gZhr0PdIhrZq09rRQVQ4Hf3B3zEE+AZFoRTUBP80WxlTXzP0kEb
-         FykyrrEU0BKsbsB2LODABons3K3Z+k6s1SoAHhfmgXDx+873SAnzpCItf83/1V6DzRZc
-         SD8NAxzxF/KnwiVCCdjF12rMv/Th0/yNgkMVX0fb/oNkyfv9T7Ig5HZn8MSdDCn2rFeL
-         iY1xiLbJ0OS7gbLWRCdpH0hpI2F0FemAqvhpf22IJEft+2/vwqO79a7iuJ3qXaRrUI7V
-         O4Wg==
-X-Gm-Message-State: AGRZ1gJV4H1/E+LoCi8Nd5RkxOZqlwH/acf/rz+kfOkr0G0yGdenXcuT
-        aRs1Nomt1kxiSPcutA3PHkHReAikbOo=
-X-Google-Smtp-Source: AJdET5f1gU+eT47z1P3cGfUWDudQ9VE3dIsCztQuPWY2QcbMVk91eFmVS7NB7z3BAM0zoZRUZSmBww==
-X-Received: by 2002:a0d:f606:: with SMTP id g6-v6mr5728967ywf.235.1541042918274;
-        Wed, 31 Oct 2018 20:28:38 -0700 (PDT)
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
-        by smtp.gmail.com with ESMTPSA id t184-v6sm3417118ywd.37.2018.10.31.20.28.35
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cuLNrA7rriyAhJkMEFnPydKWkWCnPgwIADQDCUFLAjQ=;
+        b=En9EiMvfyEfhb8NytsAf+VdKJ661ZC/Y+aNZvDpfNGdOp60N00V1MiSOAh+kQx6KR1
+         SojpRWzzCjC1zR8j4lgEnxVmt8Epw+Y9o9mHhXpmF+/TjRafD97AAbj335SKCIeAsE+S
+         sDu4FTKbbLOyS1atlVImfbw+GpfEG6O2RLAm7ZJFqryPAEWzEvWzO36YqerHoCJQqpvx
+         cJlNB8MqYhyqcrKKRWbnJPsc33ymdFR2SDr+XVs1Zc0BRQsNWARxFmUsw5va7Z1wkBdj
+         KuM98K6MjCxbgokIqbAJaQQoEGvW2Gqp4nrsoUN5LUZ9HyNuZPjY4fHw5RsB2BDDIc1Q
+         0W5g==
+X-Gm-Message-State: AGRZ1gISH+k8TIpFOwFiHWKULxo9Pg/nxYs1rXkTNsmlglboScQB84KP
+        EBn7U3thh1rpCbU/yJcfA0o=
+X-Google-Smtp-Source: AJdET5c/jTr4Wm+dP8r3hPXzQ6km+SOwzxqK1MB5H4pSuCfya/L2jWijh3GYh8/dhrd5ub5989NhMQ==
+X-Received: by 2002:a0c:94e5:: with SMTP id k34mr5285950qvk.215.1541043043833;
+        Wed, 31 Oct 2018 20:30:43 -0700 (PDT)
+Received: from localhost.localdomain ([179.159.21.48])
+        by smtp.gmail.com with ESMTPSA id 83sm29956779qkz.73.2018.10.31.20.30.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 20:28:36 -0700 (PDT)
-Received: by mail-yb1-f175.google.com with SMTP id g9-v6so7564340ybh.7
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 20:28:35 -0700 (PDT)
-X-Received: by 2002:a25:7643:: with SMTP id r64-v6mr5969887ybc.403.1541042915047;
- Wed, 31 Oct 2018 20:28:35 -0700 (PDT)
+        Wed, 31 Oct 2018 20:30:43 -0700 (PDT)
+From:   Leonardo Bras <leobras.c@gmail.com>
+To:     lkcamp@lists.libreplanetbr.org
+Cc:     Leonardo Bras <leobras.c@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] modpost: Refactor and removes global variable *modules
+Date:   Thu,  1 Nov 2018 00:30:38 -0300
+Message-Id: <20181101033038.24142-1-leobras.c@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Wed, 31 Oct 2018 20:28:33
- -0700 (PDT)
-In-Reply-To: <20181031091048.GH744@hirez.programming.kicks-ass.net>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-17-igor.stoppa@huawei.com> <20181025001312.GA3159@worktop.c.hoisthospitality.com>
- <806bfff0-8d62-9918-480d-ec791b93841e@gmail.com> <20181030155841.GF8177@hirez.programming.kicks-ass.net>
- <20181030162815.GB20827@arm.com> <20181031091048.GH744@hirez.programming.kicks-ass.net>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 31 Oct 2018 20:28:33 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jKmhoSsOTqDJmr3ijwDAh57Bfq3KVE+AjrBdLXjPz83+g@mail.gmail.com>
-Message-ID: <CAGXu5jKmhoSsOTqDJmr3ijwDAh57Bfq3KVE+AjrBdLXjPz83+g@mail.gmail.com>
-Subject: Re: [PATCH 16/17] prmem: pratomic-long
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Igor Stoppa <igor.stoppa@gmail.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 2:10 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-> On Tue, Oct 30, 2018 at 04:28:16PM +0000, Will Deacon wrote:
->> On Tue, Oct 30, 2018 at 04:58:41PM +0100, Peter Zijlstra wrote:
->> > Like mentioned elsewhere; if you do write_enable() + write_disable()
->> > thingies, it all becomes:
->> >
->> >     write_enable();
->> >     atomic_foo(&bar);
->> >     write_disable();
->> >
->> > No magic gunk infested duplication at all. Of course, ideally you'd then
->> > teach objtool about this (or a GCC plugin I suppose) to ensure any
->> > enable reached a disable.
->>
->> Isn't the issue here that we don't want to change the page tables for the
->> mapping of &bar, but instead want to create a temporary writable alias
->> at a random virtual address?
->>
->> So you'd want:
->>
->>       wbar = write_enable(&bar);
->>       atomic_foo(wbar);
->>       write_disable(wbar);
->>
->> which is probably better expressed as a map/unmap API. I suspect this
->> would also be the only way to do things for cmpxchg() loops, where you
->> want to create the mapping outside of the loop to minimise your time in
->> the critical section.
->
-> Ah, so I was thikning that the altnerative mm would have stuff in the
-> same location, just RW instead of RO.
+Refactors the code to accept the modules list as a parameter in
+the functions that need it, and moves the variable from the
+global scope to the main function scope.
 
-I was hoping for the same location too. That allows use to use a gcc
-plugin to mark, say, function pointer tables, as read-only, and
-annotate their rare updates with write_rare() without any
-recalculation.
+This also fixes the parameter shadowing of add_depends.
 
--Kees
+Signed-off-by: Leonardo Bras <leobras.c@gmail.com>
+---
+ scripts/mod/modpost.c | 39 ++++++++++++++++++++-------------------
+ 1 file changed, 20 insertions(+), 19 deletions(-)
 
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index 0d998c54564d..bebe65ed957a 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -118,10 +118,7 @@ void *do_nofail(void *ptr, const char *expr)
+ 	return ptr;
+ }
+ 
+-/* A list of all modules we processed */
+-static struct module *modules;
+-
+-static struct module *find_module(const char *modname)
++static struct module *find_module(const char *modname, struct module *modules)
+ {
+ 	struct module *mod;
+ 
+@@ -131,7 +128,7 @@ static struct module *find_module(const char *modname)
+ 	return mod;
+ }
+ 
+-static struct module *new_module(const char *modname)
++static struct module *new_module(const char *modname, struct module **pmodules)
+ {
+ 	struct module *mod;
+ 	char *p;
+@@ -149,8 +146,8 @@ static struct module *new_module(const char *modname)
+ 	/* add to list */
+ 	mod->name = p;
+ 	mod->gpl_compatible = -1;
+-	mod->next = modules;
+-	modules = mod;
++	mod->next = *pmodules;
++	*pmodules = mod;
+ 
+ 	return mod;
+ }
+@@ -1929,7 +1926,7 @@ static char *remove_dot(char *s)
+ 	return s;
+ }
+ 
+-static void read_symbols(const char *modname)
++static void read_symbols(const char *modname, struct module **pmodules)
+ {
+ 	const char *symname;
+ 	char *version;
+@@ -1941,7 +1938,7 @@ static void read_symbols(const char *modname)
+ 	if (!parse_elf(&info, modname))
+ 		return;
+ 
+-	mod = new_module(modname);
++	mod = new_module(modname, pmodules);
+ 
+ 	/* When there's no vmlinux, don't print warnings about
+ 	 * unresolved symbols (since there'll be too many ;) */
+@@ -1992,7 +1989,8 @@ static void read_symbols(const char *modname)
+ 		mod->unres = alloc_symbol("module_layout", 0, mod->unres);
+ }
+ 
+-static void read_symbols_from_files(const char *filename)
++static void read_symbols_from_files(const char *filename,
++				    struct module **pmodules)
+ {
+ 	FILE *in = stdin;
+ 	char fname[PATH_MAX];
+@@ -2006,7 +2004,7 @@ static void read_symbols_from_files(const char *filename)
+ 	while (fgets(fname, PATH_MAX, in) != NULL) {
+ 		if (strends(fname, "\n"))
+ 			fname[strlen(fname)-1] = '\0';
+-		read_symbols(fname);
++		read_symbols(fname, pmodules);
+ 	}
+ 
+ 	if (in != stdin)
+@@ -2318,7 +2316,8 @@ static void write_if_changed(struct buffer *b, const char *fname)
+ /* parse Module.symvers file. line format:
+  * 0x12345678<tab>symbol<tab>module[[<tab>export]<tab>something]
+  **/
+-static void read_dump(const char *fname, unsigned int kernel)
++static void read_dump(const char *fname, unsigned int kernel,
++		      struct module **pmodules)
+ {
+ 	unsigned long size, pos = 0;
+ 	void *file = grab_file(fname, &size);
+@@ -2347,11 +2346,11 @@ static void read_dump(const char *fname, unsigned int kernel)
+ 		crc = strtoul(line, &d, 16);
+ 		if (*symname == '\0' || *modname == '\0' || *d != '\0')
+ 			goto fail;
+-		mod = find_module(modname);
++		mod = find_module(modname, *pmodules);
+ 		if (!mod) {
+ 			if (is_vmlinux(modname))
+ 				have_vmlinux = 1;
+-			mod = new_module(modname);
++			mod = new_module(modname, pmodules);
+ 			mod->skip = 1;
+ 		}
+ 		s = sym_add_exported(symname, mod, export_no(export));
+@@ -2415,6 +2414,8 @@ int main(int argc, char **argv)
+ 	int err;
+ 	struct ext_sym_list *extsym_iter;
+ 	struct ext_sym_list *extsym_start = NULL;
++	/* A list of all modules we processed */
++	static struct module *modules;
+ 
+ 	while ((opt = getopt(argc, argv, "i:I:e:mnsST:o:awM:K:E")) != -1) {
+ 		switch (opt) {
+@@ -2466,21 +2467,21 @@ int main(int argc, char **argv)
+ 	}
+ 
+ 	if (kernel_read)
+-		read_dump(kernel_read, 1);
++		read_dump(kernel_read, 1, &modules);
+ 	if (module_read)
+-		read_dump(module_read, 0);
++		read_dump(module_read, 0, &modules);
+ 	while (extsym_start) {
+-		read_dump(extsym_start->file, 0);
++		read_dump(extsym_start->file, 0, &modules);
+ 		extsym_iter = extsym_start->next;
+ 		free(extsym_start);
+ 		extsym_start = extsym_iter;
+ 	}
+ 
+ 	while (optind < argc)
+-		read_symbols(argv[optind++]);
++		read_symbols(argv[optind++], &modules);
+ 
+ 	if (files_source)
+-		read_symbols_from_files(files_source);
++		read_symbols_from_files(files_source, &modules);
+ 
+ 	for (mod = modules; mod; mod = mod->next) {
+ 		if (mod->skip)
 -- 
-Kees Cook
+2.19.1
+
