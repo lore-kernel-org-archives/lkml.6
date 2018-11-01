@@ -2,160 +2,70 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13DE1C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:11:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7514C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:12:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA443205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:11:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA443205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 96554205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:12:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96554205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728811AbeKBAOX (ORCPT
+        id S1728896AbeKBAPt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 20:14:23 -0400
-Received: from mga07.intel.com ([134.134.136.100]:8884 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728364AbeKBAOX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 20:14:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Nov 2018 08:10:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,452,1534834800"; 
-   d="scan'208";a="246211859"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga004.jf.intel.com with ESMTP; 01 Nov 2018 08:10:48 -0700
-Message-ID: <5eb92a4b34a934459e8558d0f7695a89ee178f89.camel@linux.intel.com>
-Subject: Re: [mm PATCH v4 3/6] mm: Use memblock/zone specific iterator for
- handling deferred page init
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     Mike Rapoport <rppt@linux.ibm.com>,
-        Pasha Tatashin <Pavel.Tatashin@microsoft.com>
-Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mhocko@suse.com" <mhocko@suse.com>,
-        "dave.jiang@intel.com" <dave.jiang@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "yi.z.zhang@linux.intel.com" <yi.z.zhang@linux.intel.com>,
-        "khalid.aziz@oracle.com" <khalid.aziz@oracle.com>,
-        "rppt@linux.vnet.ibm.com" <rppt@linux.vnet.ibm.com>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "ldufour@linux.vnet.ibm.com" <ldufour@linux.vnet.ibm.com>,
-        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>
-Date:   Thu, 01 Nov 2018 08:10:48 -0700
-In-Reply-To: <20181101061733.GA8866@rapoport-lnx>
-References: <20181017235043.17213.92459.stgit@localhost.localdomain>
-         <20181017235419.17213.68425.stgit@localhost.localdomain>
-         <5b937f29-a6e1-6622-b035-246229021d3e@microsoft.com>
-         <20181101061733.GA8866@rapoport-lnx>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 1 Nov 2018 20:15:49 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:51260 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728364AbeKBAPt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 20:15:49 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gIEe1-0001mr-BX; Thu, 01 Nov 2018 15:12:25 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] input: atkbd: clean up indentation issue, add missing tab in an if statement
+Date:   Thu,  1 Nov 2018 15:12:24 +0000
+Message-Id: <20181101151224.14840-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-11-01 at 08:17 +0200, Mike Rapoport wrote:
-> On Wed, Oct 31, 2018 at 03:40:02PM +0000, Pasha Tatashin wrote:
-> > 
-> > 
-> > On 10/17/18 7:54 PM, Alexander Duyck wrote:
-> > > This patch introduces a new iterator for_each_free_mem_pfn_range_in_zone.
-> > > 
-> > > This iterator will take care of making sure a given memory range provided
-> > > is in fact contained within a zone. It takes are of all the bounds checking
-> > > we were doing in deferred_grow_zone, and deferred_init_memmap. In addition
-> > > it should help to speed up the search a bit by iterating until the end of a
-> > > range is greater than the start of the zone pfn range, and will exit
-> > > completely if the start is beyond the end of the zone.
-> > > 
-> > > This patch adds yet another iterator called
-> > > for_each_free_mem_range_in_zone_from and then uses it to support
-> > > initializing and freeing pages in groups no larger than MAX_ORDER_NR_PAGES.
-> > > By doing this we can greatly improve the cache locality of the pages while
-> > > we do several loops over them in the init and freeing process.
-> > > 
-> > > We are able to tighten the loops as a result since we only really need the
-> > > checks for first_init_pfn in our first iteration and after that we can
-> > > assume that all future values will be greater than this. So I have added a
-> > > function called deferred_init_mem_pfn_range_in_zone that primes the
-> > > iterators and if it fails we can just exit.
-> > > 
-> > > On my x86_64 test system with 384GB of memory per node I saw a reduction in
-> > > initialization time from 1.85s to 1.38s as a result of this patch.
-> > > 
-> > > Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> 
->  
-> [ ... ] 
-> 
-> > > ---
-> > >  include/linux/memblock.h |   58 +++++++++++++++
-> > >  mm/memblock.c            |   63 ++++++++++++++++
-> > >  mm/page_alloc.c          |  176 ++++++++++++++++++++++++++++++++--------------
-> > >  3 files changed, 242 insertions(+), 55 deletions(-)
-> > > 
-> > > diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-> > > index aee299a6aa76..2ddd1bafdd03 100644
-> > > --- a/include/linux/memblock.h
-> > > +++ b/include/linux/memblock.h
-> > > @@ -178,6 +178,25 @@ void __next_reserved_mem_region(u64 *idx, phys_addr_t *out_start,
-> > >  			      p_start, p_end, p_nid))
-> > >  
-> > >  /**
-> > > + * for_each_mem_range_from - iterate through memblock areas from type_a and not
-> > > + * included in type_b. Or just type_a if type_b is NULL.
-> > > + * @i: u64 used as loop variable
-> > > + * @type_a: ptr to memblock_type to iterate
-> > > + * @type_b: ptr to memblock_type which excludes from the iteration
-> > > + * @nid: node selector, %NUMA_NO_NODE for all nodes
-> > > + * @flags: pick from blocks based on memory attributes
-> > > + * @p_start: ptr to phys_addr_t for start address of the range, can be %NULL
-> > > + * @p_end: ptr to phys_addr_t for end address of the range, can be %NULL
-> > > + * @p_nid: ptr to int for nid of the range, can be %NULL
-> > > + */
-> > > +#define for_each_mem_range_from(i, type_a, type_b, nid, flags,		\
-> > > +			   p_start, p_end, p_nid)			\
-> > > +	for (i = 0, __next_mem_range(&i, nid, flags, type_a, type_b,	\
-> > > +				     p_start, p_end, p_nid);		\
-> > > +	     i != (u64)ULLONG_MAX;					\
-> > > +	     __next_mem_range(&i, nid, flags, type_a, type_b,		\
-> > > +			      p_start, p_end, p_nid))
-> > > +/**
-> > >   * for_each_mem_range_rev - reverse iterate through memblock areas from
-> > >   * type_a and not included in type_b. Or just type_a if type_b is NULL.
-> > >   * @i: u64 used as loop variable
-> > > @@ -248,6 +267,45 @@ void __next_mem_pfn_range(int *idx, int nid, unsigned long *out_start_pfn,
-> > >  	     i >= 0; __next_mem_pfn_range(&i, nid, p_start, p_end, p_nid))
-> > >  #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
-> > >  
-> > > +#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
-> 
-> Sorry for jumping late, but I've noticed this only now.
-> Do the new iterators have to be restricted by
-> CONFIG_DEFERRED_STRUCT_PAGE_INIT?
+From: Colin Ian King <colin.king@canonical.com>
 
-They don't have to be. I just wrapped them since I figured it is better
-to just strip the code if it isn't going to be used rather then leave
-it floating around taking up space.
+Trivial fix to clean up indentation issues, add missing tab
 
-Thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/input/keyboard/atkbd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-- Alex
-
-
+diff --git a/drivers/input/keyboard/atkbd.c b/drivers/input/keyboard/atkbd.c
+index 7e75835e220f..850bb259c20e 100644
+--- a/drivers/input/keyboard/atkbd.c
++++ b/drivers/input/keyboard/atkbd.c
+@@ -841,7 +841,7 @@ static int atkbd_select_set(struct atkbd *atkbd, int target_set, int allow_extra
+ 	if (param[0] != 3) {
+ 		param[0] = 2;
+ 		if (ps2_command(ps2dev, param, ATKBD_CMD_SSCANSET))
+-		return 2;
++			return 2;
+ 	}
+ 
+ 	ps2_command(ps2dev, param, ATKBD_CMD_SETALL_MBR);
+-- 
+2.19.1
 
