@@ -2,154 +2,140 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6583AC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:32:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76F41C6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:33:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13610205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:32:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="CMKfpgqh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13610205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	by mail.kernel.org (Postfix) with ESMTP id 43467205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:33:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43467205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727793AbeKBCg3 (ORCPT
+        id S1727823AbeKBChA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 22:36:29 -0400
-Received: from mail-eopbgr690117.outbound.protection.outlook.com ([40.107.69.117]:11227
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727564AbeKBCg3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 22:36:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pOooNRGXziLT7uj/g7LFOhKS8zy+iyTDPBngi7PkCGU=;
- b=CMKfpgqhKJayjZ2GP6AF00ct8zyI7bU87P9Mdn22cq1bBTnCsQaSuVntegrhmSiiprl7ukdQQc76IgJNXFGntHKc2qOG03NV03cNcauTTsXtFswTy/VdaPrChPBztND8DUiNp7ZSWYhNQc2qdt7iulzvVMZy1sEVIaZ8YlMnN3I=
-Received: from MWHPR21MB0766.namprd21.prod.outlook.com (10.173.51.20) by
- MWHPR21MB0174.namprd21.prod.outlook.com (10.173.52.20) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1294.25; Thu, 1 Nov 2018 17:32:33 +0000
-Received: from MWHPR21MB0766.namprd21.prod.outlook.com
- ([fe80::1982:5e59:2489:88e6]) by MWHPR21MB0766.namprd21.prod.outlook.com
- ([fe80::1982:5e59:2489:88e6%14]) with mapi id 15.20.1294.009; Thu, 1 Nov 2018
- 17:32:32 +0000
-From:   Michael Kelley <mikelley@microsoft.com>
-To:     "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "jgross@suse.com" <jgross@suse.com>,
-        "akataria@vmware.com" <akataria@vmware.com>,
-        "olaf@aepfle.de" <olaf@aepfle.de>,
-        "apw@canonical.com" <apw@canonical.com>,
-        vkuznets <vkuznets@redhat.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>,
-        KY Srinivasan <kys@microsoft.com>
-CC:     Michael Kelley <mikelley@microsoft.com>
-Subject: [PATCH 2/2] i8253: Fix PIT shutdown quirk on Hyper-V
-Thread-Topic: [PATCH 2/2] i8253: Fix PIT shutdown quirk on Hyper-V
-Thread-Index: AQHUcgjfA60j6IBiX0OFt2M1khyPxA==
-Date:   Thu, 1 Nov 2018 17:32:32 +0000
-Message-ID: <1541093509-10576-1-git-send-email-mikelley@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MW2PR2101CA0023.namprd21.prod.outlook.com
- (2603:10b6:302:1::36) To MWHPR21MB0766.namprd21.prod.outlook.com
- (2603:10b6:300:76::20)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [131.107.147.136]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR21MB0174;6:3E/zV8giyDLvWUC5F7cJD/lUTlsxyha2rCVdQb6LNhFXEb/33NqygFtAQ0sdEujYoeLqqp6JmZG9Kmy0xzMC1e+p98ybsiTqsCRXVBwR1WCahIdrv+DUuIszvifzxGq3H60JS5zS7kFMslOp7LKIftvRXFLHRQrWNOqq/U/fHt7DRgc9x/AFtynzR0w0AwUbU6daGi9fzuYC2poSTbmuTgyLd/OT2yctsNTYYQGu3Em8AstovEOJU52aLxe6ODMFRuDuRog0EIOa/tygjZeiCXZmnSNDJnYrINUXfnAsJoYwrYxNrhzc0osQfY0HiiyNGHprahudJljrucO2opt1fbRH5d3yqLh4dj0ZPgiydzVfInx4LGLmYeTw6BSoaAMOCu8SrvZXPOdwZMm6dx5gEECkJF/T+QRMR65/loPI0/ZuyLYrqL2ZRkfyEtE9n3cDMxdXenOmqbmfjJsdkSWa6g==;5:mqGQq8OuOmx1ER/W9ncKscI0hbBPKIxBTMpH+xkkn0ZoFA/JjRAYu6VlPB/s4ld0uT+y+oOlfRLn4/EzAk6ICgMQTqQRlp7mhVAuA5xvDDKmm9hXctxfD3YhqXx3hIY3654oyzv6Dy1aiETeKeC5aLDZZa4l4BCT4qWhG4IwXYY=;7:sk8HbSmxbMsEaY9VsHkGSeBxTcOnxJxrJXidteOMEHWme+93qEWxO9gGFRBAdstVbsrLPa9IV7xgqEg6uEhBpX8kviXv4+K/10uEjyCCUvhqQreifcdexWkuKJVr14kYQmFTObgkEzPve3ET6Urznw==
-x-ms-office365-filtering-correlation-id: 70d1710a-7f6e-44c8-c7a4-08d640200160
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:MWHPR21MB0174;
-x-ms-traffictypediagnostic: MWHPR21MB0174:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=mikelley@microsoft.com; 
-x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-x-o365eop-header: O365_EOP: Allow for Unauthenticated Relay
-x-o365ent-eop-header: Message processed by -  O365_ENT: Allow from ranges
- (Engineering ONLY)
-x-microsoft-antispam-prvs: <MWHPR21MB017471C29EFCD78E1D8AFA0CD7CE0@MWHPR21MB0174.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(8220035)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231382)(944501410)(52105095)(2018427008)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:MWHPR21MB0174;BCL:0;PCL:0;RULEID:;SRVR:MWHPR21MB0174;
-x-forefront-prvs: 0843C17679
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(366004)(136003)(396003)(39860400002)(189003)(199004)(476003)(8676002)(6636002)(5250100002)(486006)(6436002)(22452003)(53936002)(6512007)(316002)(25786009)(186003)(14454004)(26005)(68736007)(4326008)(14444005)(2616005)(6486002)(256004)(71200400001)(81166006)(81156014)(10090500001)(8936002)(2501003)(107886003)(36756003)(10290500003)(110136005)(478600001)(71190400001)(2900100001)(86612001)(2201001)(6116002)(106356001)(3846002)(52116002)(99286004)(97736004)(5660300001)(86362001)(66066001)(386003)(6506007)(102836004)(2906002)(1511001)(7416002)(7736002)(105586002)(305945005)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR21MB0174;H:MWHPR21MB0766.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 4UEM+lSuKDkdJUyh2rVdwDKSku4MiXuqeyUvG9WoM3Q9wL48Lu9TfEGpEL/70+ukI2+F7d7MmFZjw/r9sdngO6ymaNCiOyH9qWEs8hv8EvVHNmp/0XnWYGSt9CmplYLB5k1KSbcWEsXakPanem9QupUb7jRHN13nQkSSu9AYWh+cKU2xvUDGLEw7yfNZdUaUlkB9g5F1V1AV6lZ8j9qiy4bqMjR4C0x5JuEHqPoK9MXBC4LkhWGZPCknGKK5/Mzt6bqUMCUDKKBcw54XOdtsv2CxSHRo/25aZPGbIXOo38mvM4SfOGYmwR1zU8x4pp43u2vRgJ52VepgVtJB/CQHD2AD9zvvpqMRKYRHx7+kXnI=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 1 Nov 2018 22:37:00 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:35515 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727747AbeKBCg7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 22:36:59 -0400
+Received: by mail-io1-f72.google.com with SMTP id w13-v6so18326325iop.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 10:33:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=ODBAMQMM9Ff4X2eBatoj7wkI5//xO2/DgYlQYDeptS4=;
+        b=Owg55AJffIJzxkf2f+KkFhuvF6rQHOoGnRQ167txH/gCY/T1SPOC/kXUyywH0T7vEu
+         GWdMNxJ0TGKcKt3zSfvihpCf+rKZ29rcSx/kB4awNaGEWVojIdQHwflAc4sZsEs7fgFI
+         5yyj+fckKI15uFai83pE4ZzI36ETlAq6KwO4aaxzTEgUI8yVXwCiypwbFRu6sxqeIOnq
+         FNvkzOYlwS2baC5Yn+BGnciFI5XIVEVR2zgDnUCGyTtNExiGlVzHEOkHe3ETiugifpie
+         9DJDpeAZ3mGsU8g4iqBTLHlsJCXo36XSLS1F4THy07LYvseBfOzi56DZ0dsmt0i6JxWf
+         5WKA==
+X-Gm-Message-State: AGRZ1gLWq+MD75rWFgPaVB5Fexbfer/HDuRmHFgFVCZvedg7P83jgIbi
+        m4H80MFASEa4dDZMepavExD69wQmmQnDuR7wclf4ixD61/xd
+X-Google-Smtp-Source: AJdET5d4ETmudW9LMVSdUyX2qpjBzfO0giImq5vAwUlegGIkrH7jWW7DFrEnn5Buk4qpsvMXXlXin8VZ2dHqpyN5txOjyuJY6A63
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 70d1710a-7f6e-44c8-c7a4-08d640200160
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Nov 2018 17:32:32.8098
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR21MB0174
+X-Received: by 2002:a24:8903:: with SMTP id s3-v6mr6237988itd.26.1541093584145;
+ Thu, 01 Nov 2018 10:33:04 -0700 (PDT)
+Date:   Thu, 01 Nov 2018 10:33:04 -0700
+In-Reply-To: <000000000000fd734c05799d3c90@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a6278f05799dcf0a@google.com>
+Subject: Re: BUG: pagefault on kernel address ADDR in non-whitelisted uaccess
+From:   syzbot <syzbot+0cc8e3cc63ca373722c6@syzkaller.appspotmail.com>
+To:     hverkuil@xs4all.nl, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, mchehab@kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pit_shutdown() doesn't work on Hyper-V because of a quirk in the
-PIT emulation. This problem exists in all versions of Hyper-V and
-had not been noticed previously. When the counter register is set
-to zero, the emulated PIT continues to interrupt @18.2 HZ. So
-skip setting the counter register when running on Hyper-V.
+syzbot has found a reproducer for the following crash on:
 
-Signed-off-by: Michael Kelley <mikelley@microsoft.com>
----
- drivers/clocksource/i8253.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+HEAD commit:    4db9d11bcbef Add linux-next specific files for 20181101
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=13fa9e05400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2a22859d870756c1
+dashboard link: https://syzkaller.appspot.com/bug?extid=0cc8e3cc63ca373722c6
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11227e05400000
 
-diff --git a/drivers/clocksource/i8253.c b/drivers/clocksource/i8253.c
-index 9c38895..62025c8 100644
---- a/drivers/clocksource/i8253.c
-+++ b/drivers/clocksource/i8253.c
-@@ -10,6 +10,7 @@
- #include <linux/module.h>
- #include <linux/i8253.h>
- #include <linux/smp.h>
-+#include <linux/hypervisor.h>
-=20
- /*
-  * Protects access to I/O ports
-@@ -109,8 +110,17 @@ static int pit_shutdown(struct clock_event_device *evt=
-)
- 	raw_spin_lock(&i8253_lock);
-=20
- 	outb_p(0x30, PIT_MODE);
--	outb_p(0, PIT_CH0);
--	outb_p(0, PIT_CH0);
-+
-+	/*
-+	 * A quirk in Hyper-V's emulation of the PIT causes the PIT
-+	 * to continue to run and interrupt @18.2 Hz when the counter
-+	 * register is set to zero. So skip setting the counter
-+	 * register when running as a guest on Hyper-V.
-+	 */
-+	if (!hypervisor_is_mshyperv()) {
-+		outb_p(0, PIT_CH0);
-+		outb_p(0, PIT_CH0);
-+	}
-=20
- 	raw_spin_unlock(&i8253_lock);
- 	return 0;
---=20
-1.8.3.1
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+0cc8e3cc63ca373722c6@syzkaller.appspotmail.com
+
+BUG: pagefault on kernel address 0xffffc90003dbe000 in non-whitelisted  
+uaccess
+BUG: unable to handle kernel paging request at ffffc90003dbe000
+PGD 1da948067 P4D 1da948067 PUD 1da949067 PMD 1d884f067 PTE 0
+Oops: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 12256 Comm: syz-executor3 Not tainted 4.19.0-next-20181101+ #103
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:copy_user_enhanced_fast_string+0xe/0x20  
+arch/x86/lib/copy_user_64.S:180
+Code: 89 d1 c1 e9 03 83 e2 07 f3 48 a5 89 d1 f3 a4 31 c0 0f 1f 00 c3 0f 1f  
+80 00 00 00 00 0f 1f 00 83 fa 40 0f 82 70 ff ff ff 89 d1 <f3> a4 31 c0 0f  
+1f 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 83
+RSP: 0018:ffff8801a779f680 EFLAGS: 00010206
+RAX: 0000000000000000 RBX: 00000000000fd200 RCX: 00000000000f5200
+RDX: 00000000000fd200 RSI: ffffc90003dbe000 RDI: 00000000200080c0
+RBP: ffff8801a779f6b8 R08: 0000000000000000 R09: 0000000000003f48
+R10: fffff520007d663f R11: ffffc90003eb31ff R12: 00000000200fd2c0
+R13: 00000000200000c0 R14: ffffc90003db6000 R15: 00007ffffffff000
+FS:  00007f6d98b26700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffc90003dbe000 CR3: 00000001d794d000 CR4: 00000000001406e0
+Call Trace:
+  copy_to_user include/linux/uaccess.h:155 [inline]
+  vidioc_g_fmt_vid_overlay+0x392/0x550  
+drivers/media/platform/vivid/vivid-vid-cap.c:1084
+  v4l_g_fmt+0x2ad/0x640 drivers/media/v4l2-core/v4l2-ioctl.c:1489
+  __video_do_ioctl+0x8b1/0x1050 drivers/media/v4l2-core/v4l2-ioctl.c:2853
+  video_usercopy+0x5c1/0x1750 drivers/media/v4l2-core/v4l2-ioctl.c:3035
+  video_ioctl2+0x2c/0x33 drivers/media/v4l2-core/v4l2-ioctl.c:3079
+  v4l2_ioctl+0x154/0x1b0 drivers/media/v4l2-core/v4l2-dev.c:364
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457569
+Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f6d98b25c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457569
+RDX: 00000000200000c0 RSI: 00000000c0d05604 RDI: 0000000000000012
+RBP: 000000000072c220 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6d98b266d4
+R13: 00000000004c1acf R14: 00000000004d29c8 R15: 00000000ffffffff
+Modules linked in:
+CR2: ffffc90003dbe000
+---[ end trace faa0b92998172ee0 ]---
+RIP: 0010:copy_user_enhanced_fast_string+0xe/0x20  
+arch/x86/lib/copy_user_64.S:180
+Code: 89 d1 c1 e9 03 83 e2 07 f3 48 a5 89 d1 f3 a4 31 c0 0f 1f 00 c3 0f 1f  
+80 00 00 00 00 0f 1f 00 83 fa 40 0f 82 70 ff ff ff 89 d1 <f3> a4 31 c0 0f  
+1f 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 83
+RSP: 0018:ffff8801a779f680 EFLAGS: 00010206
+RAX: 0000000000000000 RBX: 00000000000fd200 RCX: 00000000000f5200
+RDX: 00000000000fd200 RSI: ffffc90003dbe000 RDI: 00000000200080c0
+RBP: ffff8801a779f6b8 R08: 0000000000000000 R09: 0000000000003f48
+R10: fffff520007d663f R11: ffffc90003eb31ff R12: 00000000200fd2c0
+R13: 00000000200000c0 R14: ffffc90003db6000 R15: 00007ffffffff000
+FS:  00007f6d98b26700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffc90003dbe000 CR3: 00000001d794d000 CR4: 00000000001406e0
 
