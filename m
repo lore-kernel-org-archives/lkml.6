@@ -2,216 +2,243 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23EE4C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58A95C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:39:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5DE720820
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:38:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5DE720820
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0E9DF20820
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:39:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E9DF20820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728640AbeKAWlu (ORCPT
+        id S1728656AbeKAWm4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 18:41:50 -0400
-Received: from foss.arm.com ([217.140.101.70]:56580 "EHLO foss.arm.com"
+        Thu, 1 Nov 2018 18:42:56 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:32846 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728548AbeKAWlu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 18:41:50 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF663A78;
-        Thu,  1 Nov 2018 06:38:50 -0700 (PDT)
-Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.144.41])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5EDA83F6A8;
-        Thu,  1 Nov 2018 06:38:50 -0700 (PDT)
-Date:   Thu, 1 Nov 2018 14:38:48 +0100
-From:   Christoffer Dall <christoffer.dall@arm.com>
-To:     Punit Agrawal <punit.agrawal@arm.com>
-Cc:     kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, suzuki.poulose@arm.com,
-        punitagrawal@gmail.com, Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH v9 5/8] KVM: arm64: Support PUD hugepage in
- stage2_is_exec()
-Message-ID: <20181101133848.GL12057@e113682-lin.lund.arm.com>
-References: <20181031175745.18650-1-punit.agrawal@arm.com>
- <20181031175745.18650-6-punit.agrawal@arm.com>
+        id S1728295AbeKAWmz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 18:42:55 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7D5CD30820F0;
+        Thu,  1 Nov 2018 13:39:55 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-113.rdu2.redhat.com [10.10.120.113])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4A3911054FD6;
+        Thu,  1 Nov 2018 13:39:54 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH net] rxrpc: Fix lockup due to no error backoff after ack
+ transmit error
+From:   David Howells <dhowells@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dhowells@redhat.com
+Date:   Thu, 01 Nov 2018 13:39:53 +0000
+Message-ID: <154107959336.26689.262397874166625147.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181031175745.18650-6-punit.agrawal@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 01 Nov 2018 13:39:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 05:57:42PM +0000, Punit Agrawal wrote:
-> In preparation for creating PUD hugepages at stage 2, add support for
-> detecting execute permissions on PUD page table entries. Faults due to
-> lack of execute permissions on page table entries is used to perform
-> i-cache invalidation on first execute.
-> 
-> Provide trivial implementations of arm32 helpers to allow sharing of
-> code.
-> 
-> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Cc: Christoffer Dall <christoffer.dall@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> ---
->  arch/arm/include/asm/kvm_mmu.h         |  6 +++
->  arch/arm64/include/asm/kvm_mmu.h       |  5 +++
->  arch/arm64/include/asm/pgtable-hwdef.h |  2 +
->  virt/kvm/arm/mmu.c                     | 53 +++++++++++++++++++++++---
->  4 files changed, 61 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
-> index 37bf85d39607..839a619873d3 100644
-> --- a/arch/arm/include/asm/kvm_mmu.h
-> +++ b/arch/arm/include/asm/kvm_mmu.h
-> @@ -102,6 +102,12 @@ static inline bool kvm_s2pud_readonly(pud_t *pud)
->  	return false;
->  }
->  
-> +static inline bool kvm_s2pud_exec(pud_t *pud)
-> +{
-> +	BUG();
+If the network becomes (partially) unavailable, say by disabling IPv6, the
+background ACK transmission routine can get itself into a tizzy by
+proposing immediate ACK retransmission.  Since we're in the call event
+processor, that happens immediately without returning to the workqueue
+manager.
 
-nit: I think this should be WARN() now :)
+The condition should clear after a while when either the network comes back
+or the call times out.
 
-> +	return false;
-> +}
-> +
->  static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
->  {
->  	pte_val(pte) |= L_PTE_S2_RDWR;
-> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-> index 8da6d1b2a196..c755b37b3f92 100644
-> --- a/arch/arm64/include/asm/kvm_mmu.h
-> +++ b/arch/arm64/include/asm/kvm_mmu.h
-> @@ -261,6 +261,11 @@ static inline bool kvm_s2pud_readonly(pud_t *pudp)
->  	return kvm_s2pte_readonly((pte_t *)pudp);
->  }
->  
-> +static inline bool kvm_s2pud_exec(pud_t *pudp)
-> +{
-> +	return !(READ_ONCE(pud_val(*pudp)) & PUD_S2_XN);
-> +}
-> +
->  #define hyp_pte_table_empty(ptep) kvm_page_empty(ptep)
->  
->  #ifdef __PAGETABLE_PMD_FOLDED
-> diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
-> index 1d7d8da2ef9b..336e24cddc87 100644
-> --- a/arch/arm64/include/asm/pgtable-hwdef.h
-> +++ b/arch/arm64/include/asm/pgtable-hwdef.h
-> @@ -193,6 +193,8 @@
->  #define PMD_S2_RDWR		(_AT(pmdval_t, 3) << 6)   /* HAP[2:1] */
->  #define PMD_S2_XN		(_AT(pmdval_t, 2) << 53)  /* XN[1:0] */
->  
-> +#define PUD_S2_XN		(_AT(pudval_t, 2) << 53)  /* XN[1:0] */
-> +
->  /*
->   * Memory Attribute override for Stage-2 (MemAttr[3:0])
->   */
-> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-> index 1c669c3c1208..8e44dccd1b47 100644
-> --- a/virt/kvm/arm/mmu.c
-> +++ b/virt/kvm/arm/mmu.c
-> @@ -1083,23 +1083,66 @@ static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
->  	return 0;
->  }
->  
-> -static bool stage2_is_exec(struct kvm *kvm, phys_addr_t addr)
-> +/*
-> + * stage2_get_leaf_entry - walk the stage2 VM page tables and return
-> + * true if a valid and present leaf-entry is found. A pointer to the
-> + * leaf-entry is returned in the appropriate level variable - pudpp,
-> + * pmdpp, ptepp.
-> + */
-> +static bool stage2_get_leaf_entry(struct kvm *kvm, phys_addr_t addr,
-> +				  pud_t **pudpp, pmd_t **pmdpp, pte_t **ptepp)
+Fix this by:
 
-Do we need this type madness or could this just return a u64 pointer
-(NULL if nothing is found) and pass that to kvm_s2pte_exec (because we
-know it's the same bit we need to check regardless of the pgtable level
-on both arm and arm64)?
+ (1) When re-proposing an ACK on failed Tx, don't schedule it immediately.
+     This will allow a certain amount of time to elapse before we try
+     again.
 
-Or do we consider that bad for some reason?
+ (2) Enforce a return to the workqueue manager after a certain number of
+     iterations of the call processing loop.
 
+ (3) Add a backoff delay that increases the delay on deferred ACKs by a
+     jiffy per failed transmission to a limit of HZ.  The backoff delay is
+     cleared on a successful return from kernel_sendmsg().
 
-Thanks,
+ (4) Cancel calls immediately if the opening sendmsg fails.  The layer
+     above can arrange retransmission or rotate to another server.
 
-    Christoffer
+Fixes: 248f219cb8bc ("rxrpc: Rewrite the data and ack handling code")
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
 
->  {
-> +	pud_t *pudp;
->  	pmd_t *pmdp;
->  	pte_t *ptep;
->  
-> -	pmdp = stage2_get_pmd(kvm, NULL, addr);
-> +	*pudpp = NULL;
-> +	*pmdpp = NULL;
-> +	*ptepp = NULL;
-> +
-> +	pudp = stage2_get_pud(kvm, NULL, addr);
-> +	if (!pudp || stage2_pud_none(kvm, *pudp) || !stage2_pud_present(kvm, *pudp))
-> +		return false;
-> +
-> +	if (stage2_pud_huge(kvm, *pudp)) {
-> +		*pudpp = pudp;
-> +		return true;
-> +	}
-> +
-> +	pmdp = stage2_pmd_offset(kvm, pudp, addr);
->  	if (!pmdp || pmd_none(*pmdp) || !pmd_present(*pmdp))
->  		return false;
->  
-> -	if (pmd_thp_or_huge(*pmdp))
-> -		return kvm_s2pmd_exec(pmdp);
-> +	if (pmd_thp_or_huge(*pmdp)) {
-> +		*pmdpp = pmdp;
-> +		return true;
-> +	}
->  
->  	ptep = pte_offset_kernel(pmdp, addr);
->  	if (!ptep || pte_none(*ptep) || !pte_present(*ptep))
->  		return false;
->  
-> -	return kvm_s2pte_exec(ptep);
-> +	*ptepp = ptep;
-> +	return true;
-> +}
-> +
-> +static bool stage2_is_exec(struct kvm *kvm, phys_addr_t addr)
-> +{
-> +	pud_t *pudp;
-> +	pmd_t *pmdp;
-> +	pte_t *ptep;
-> +	bool found;
-> +
-> +	found = stage2_get_leaf_entry(kvm, addr, &pudp, &pmdp, &ptep);
-> +	if (!found)
-> +		return false;
-> +
-> +	if (pudp)
-> +		return kvm_s2pud_exec(pudp);
-> +	else if (pmdp)
-> +		return kvm_s2pmd_exec(pmdp);
-> +	else
-> +		return kvm_s2pte_exec(ptep);
->  }
->  
->  static int stage2_set_pte(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
-> -- 
-> 2.19.1
-> 
+ net/rxrpc/ar-internal.h |    1 +
+ net/rxrpc/call_event.c  |   18 ++++++++++++++----
+ net/rxrpc/output.c      |   35 +++++++++++++++++++++++++++++++----
+ 3 files changed, 46 insertions(+), 8 deletions(-)
+
+diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
+index 382196e57a26..bc628acf4f4f 100644
+--- a/net/rxrpc/ar-internal.h
++++ b/net/rxrpc/ar-internal.h
+@@ -611,6 +611,7 @@ struct rxrpc_call {
+ 						 * not hard-ACK'd packet follows this.
+ 						 */
+ 	rxrpc_seq_t		tx_top;		/* Highest Tx slot allocated. */
++	u16			tx_backoff;	/* Delay to insert due to Tx failure */
+ 
+ 	/* TCP-style slow-start congestion control [RFC5681].  Since the SMSS
+ 	 * is fixed, we keep these numbers in terms of segments (ie. DATA
+diff --git a/net/rxrpc/call_event.c b/net/rxrpc/call_event.c
+index 8e7434e92097..468efc3660c0 100644
+--- a/net/rxrpc/call_event.c
++++ b/net/rxrpc/call_event.c
+@@ -123,6 +123,7 @@ static void __rxrpc_propose_ACK(struct rxrpc_call *call, u8 ack_reason,
+ 		else
+ 			ack_at = expiry;
+ 
++		ack_at += READ_ONCE(call->tx_backoff);
+ 		ack_at += now;
+ 		if (time_before(ack_at, call->ack_at)) {
+ 			WRITE_ONCE(call->ack_at, ack_at);
+@@ -311,6 +312,7 @@ void rxrpc_process_call(struct work_struct *work)
+ 		container_of(work, struct rxrpc_call, processor);
+ 	rxrpc_serial_t *send_ack;
+ 	unsigned long now, next, t;
++	unsigned int iterations = 0;
+ 
+ 	rxrpc_see_call(call);
+ 
+@@ -319,6 +321,11 @@ void rxrpc_process_call(struct work_struct *work)
+ 	       call->debug_id, rxrpc_call_states[call->state], call->events);
+ 
+ recheck_state:
++	/* Limit the number of times we do this before returning to the manager */
++	iterations++;
++	if (iterations > 5)
++		goto requeue;
++
+ 	if (test_and_clear_bit(RXRPC_CALL_EV_ABORT, &call->events)) {
+ 		rxrpc_send_abort_packet(call);
+ 		goto recheck_state;
+@@ -447,13 +454,16 @@ void rxrpc_process_call(struct work_struct *work)
+ 	rxrpc_reduce_call_timer(call, next, now, rxrpc_timer_restart);
+ 
+ 	/* other events may have been raised since we started checking */
+-	if (call->events && call->state < RXRPC_CALL_COMPLETE) {
+-		__rxrpc_queue_call(call);
+-		goto out;
+-	}
++	if (call->events && call->state < RXRPC_CALL_COMPLETE)
++		goto requeue;
+ 
+ out_put:
+ 	rxrpc_put_call(call, rxrpc_call_put);
+ out:
+ 	_leave("");
++	return;
++
++requeue:
++	__rxrpc_queue_call(call);
++	goto out;
+ }
+diff --git a/net/rxrpc/output.c b/net/rxrpc/output.c
+index 189418888839..736aa9281100 100644
+--- a/net/rxrpc/output.c
++++ b/net/rxrpc/output.c
+@@ -34,6 +34,21 @@ struct rxrpc_abort_buffer {
+ 
+ static const char rxrpc_keepalive_string[] = "";
+ 
++/*
++ * Increase Tx backoff on transmission failure and clear it on success.
++ */
++static void rxrpc_tx_backoff(struct rxrpc_call *call, int ret)
++{
++	if (ret < 0) {
++		u16 tx_backoff = READ_ONCE(call->tx_backoff);
++
++		if (tx_backoff < HZ)
++			WRITE_ONCE(call->tx_backoff, tx_backoff + 1);
++	} else {
++		WRITE_ONCE(call->tx_backoff, 0);
++	}
++}
++
+ /*
+  * Arrange for a keepalive ping a certain time after we last transmitted.  This
+  * lets the far side know we're still interested in this call and helps keep
+@@ -210,6 +225,7 @@ int rxrpc_send_ack_packet(struct rxrpc_call *call, bool ping,
+ 	else
+ 		trace_rxrpc_tx_packet(call->debug_id, &pkt->whdr,
+ 				      rxrpc_tx_point_call_ack);
++	rxrpc_tx_backoff(call, ret);
+ 
+ 	if (call->state < RXRPC_CALL_COMPLETE) {
+ 		if (ret < 0) {
+@@ -218,7 +234,7 @@ int rxrpc_send_ack_packet(struct rxrpc_call *call, bool ping,
+ 			rxrpc_propose_ACK(call, pkt->ack.reason,
+ 					  ntohs(pkt->ack.maxSkew),
+ 					  ntohl(pkt->ack.serial),
+-					  true, true,
++					  false, true,
+ 					  rxrpc_propose_ack_retry_tx);
+ 		} else {
+ 			spin_lock_bh(&call->lock);
+@@ -300,7 +316,7 @@ int rxrpc_send_abort_packet(struct rxrpc_call *call)
+ 	else
+ 		trace_rxrpc_tx_packet(call->debug_id, &pkt.whdr,
+ 				      rxrpc_tx_point_call_abort);
+-
++	rxrpc_tx_backoff(call, ret);
+ 
+ 	rxrpc_put_connection(conn);
+ 	return ret;
+@@ -413,6 +429,7 @@ int rxrpc_send_data_packet(struct rxrpc_call *call, struct sk_buff *skb,
+ 	else
+ 		trace_rxrpc_tx_packet(call->debug_id, &whdr,
+ 				      rxrpc_tx_point_call_data_nofrag);
++	rxrpc_tx_backoff(call, ret);
+ 	if (ret == -EMSGSIZE)
+ 		goto send_fragmentable;
+ 
+@@ -445,9 +462,18 @@ int rxrpc_send_data_packet(struct rxrpc_call *call, struct sk_buff *skb,
+ 			rxrpc_reduce_call_timer(call, expect_rx_by, nowj,
+ 						rxrpc_timer_set_for_normal);
+ 		}
+-	}
+ 
+-	rxrpc_set_keepalive(call);
++		rxrpc_set_keepalive(call);
++	} else {
++		/* Cancel the call if the initial transmission fails,
++		 * particularly if that's due to network routing issues that
++		 * aren't going away anytime soon.  The layer above can arrange
++		 * the retransmission.
++		 */
++		if (!test_and_set_bit(RXRPC_CALL_BEGAN_RX_TIMER, &call->flags))
++			rxrpc_set_call_completion(call, RXRPC_CALL_LOCAL_ERROR,
++						  RX_USER_ABORT, ret);
++	}
+ 
+ 	_leave(" = %d [%u]", ret, call->peer->maxdata);
+ 	return ret;
+@@ -506,6 +532,7 @@ int rxrpc_send_data_packet(struct rxrpc_call *call, struct sk_buff *skb,
+ 	else
+ 		trace_rxrpc_tx_packet(call->debug_id, &whdr,
+ 				      rxrpc_tx_point_call_data_frag);
++	rxrpc_tx_backoff(call, ret);
+ 
+ 	up_write(&conn->params.local->defrag_sem);
+ 	goto done;
+
