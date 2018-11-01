@@ -2,224 +2,151 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A7F5C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:48:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11C33C6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:48:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B127205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:48:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B127205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
+	by mail.kernel.org (Postfix) with ESMTP id CC474205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:48:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="PzrXlU0r";
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="PzrXlU0r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC474205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=yandex-team.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728143AbeKATu1 (ORCPT
+        id S1728201AbeKATur (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 15:50:27 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:52154 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727806AbeKATu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 15:50:27 -0400
-Received: from smtp2.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:2:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id 2618B4BAF5;
-        Thu,  1 Nov 2018 11:48:00 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by hefe.heinlein-support.de (hefe.heinlein-support.de [91.198.250.172]) (amavisd-new, port 10030)
-        with ESMTP id cdNTyhMREMlW; Thu,  1 Nov 2018 11:47:58 +0100 (CET)
-Date:   Thu, 1 Nov 2018 21:47:51 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Daniel Colascione <dancol@google.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        Joel Fernandes <joelaf@google.com>
-Subject: Re: [RFC PATCH v2] Minimal non-child process exit notification
- support
-Message-ID: <20181101104750.q23rb3hczx2tzakq@yavin>
-References: <20181029175322.189042-1-dancol@google.com>
- <20181029192250.130551-1-dancol@google.com>
- <20181101070036.l24c2p432ohuwmqf@yavin>
- <CAKOZueszfoSM0pxhmuFLOuPmJqSfYXxgutstyCgqxAyoUi4h3w@mail.gmail.com>
+        Thu, 1 Nov 2018 15:50:47 -0400
+Received: from forwardcorp1g.cmail.yandex.net ([87.250.241.190]:48272 "EHLO
+        forwardcorp1g.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727806AbeKATur (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 15:50:47 -0400
+Received: from mxbackcorp1o.mail.yandex.net (mxbackcorp1o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::301])
+        by forwardcorp1g.cmail.yandex.net (Yandex) with ESMTP id 6866F20732;
+        Thu,  1 Nov 2018 13:48:18 +0300 (MSK)
+Received: from smtpcorp1o.mail.yandex.net (smtpcorp1o.mail.yandex.net [2a02:6b8:0:1a2d::30])
+        by mxbackcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id IcFel0mSOA-mI7KDSQk;
+        Thu, 01 Nov 2018 13:48:18 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1541069298; bh=1YOw1OHb5VXryIAn2MEwRrniElNMizar/8GskRbEtuM=;
+        h=Subject:To:Cc:References:From:Message-ID:Date:In-Reply-To;
+        b=PzrXlU0rEh+GLib3YH9LdMiPkuk/NBq2zqy9E50nDrGnYIi2ZmQeP3ns4jDR5KN3d
+         038W1jhsnt8O+gYQbpKcFs61jg3i0q75TU+1wMZHHQznnF7Fj5JN5WtvgnM9tf9unk
+         e6AMp4/joBXEzf/L8nEXcJybGfAh07ZClHDkVewo=
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:2501:1cc0:44e4:e39a])
+        by smtpcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id 96xQgDfbT5-mIoakKJ3;
+        Thu, 01 Nov 2018 13:48:18 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1541069298; bh=1YOw1OHb5VXryIAn2MEwRrniElNMizar/8GskRbEtuM=;
+        h=Subject:To:Cc:References:From:Message-ID:Date:In-Reply-To;
+        b=PzrXlU0rEh+GLib3YH9LdMiPkuk/NBq2zqy9E50nDrGnYIi2ZmQeP3ns4jDR5KN3d
+         038W1jhsnt8O+gYQbpKcFs61jg3i0q75TU+1wMZHHQznnF7Fj5JN5WtvgnM9tf9unk
+         e6AMp4/joBXEzf/L8nEXcJybGfAh07ZClHDkVewo=
+Authentication-Results: smtpcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Subject: Re: [PATCH 2] mm/kvmalloc: do not call kmalloc for size >
+ KMALLOC_MAX_SIZE
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+References: <154106356066.887821.4649178319705436373.stgit@buzz>
+ <154106695670.898059.5301435081426064314.stgit@buzz>
+ <20181101102405.GE23921@dhcp22.suse.cz>
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Message-ID: <cd2a55be-17f1-5da9-1154-8e291fe958cd@yandex-team.ru>
+Date:   Thu, 1 Nov 2018 13:48:17 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="snyupnd52lalsuup"
-Content-Disposition: inline
-In-Reply-To: <CAKOZueszfoSM0pxhmuFLOuPmJqSfYXxgutstyCgqxAyoUi4h3w@mail.gmail.com>
+In-Reply-To: <20181101102405.GE23921@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---snyupnd52lalsuup
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On 2018-11-01, Daniel Colascione <dancol@google.com> wrote:
-> On Thu, Nov 1, 2018 at 7:00 AM, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> > On 2018-10-29, Daniel Colascione <dancol@google.com> wrote:
-> >> This patch adds a new file under /proc/pid, /proc/pid/exithand.
-> >> Attempting to read from an exithand file will block until the
-> >> corresponding process exits, at which point the read will successfully
-> >> complete with EOF.  The file descriptor supports both blocking
-> >> operations and poll(2). It's intended to be a minimal interface for
-> >> allowing a program to wait for the exit of a process that is not one
-> >> of its children.
-> >>
-> >> Why might we want this interface? Android's lmkd kills processes in
-> >> order to free memory in response to various memory pressure
-> >> signals. It's desirable to wait until a killed process actually exits
-> >> before moving on (if needed) to killing the next process. Since the
-> >> processes that lmkd kills are not lmkd's children, lmkd currently
-> >> lacks a way to wait for a process to actually die after being sent
-> >> SIGKILL; today, lmkd resorts to polling the proc filesystem pid
-> >> entry. This interface allow lmkd to give up polling and instead block
-> >> and wait for process death.
-> >
-> > I agree with the need for this interface (with a few caveats), but there
-> > are a few points I'd like to make:
-> >
-> >  * I don't think that making a new procfile is necessary. When you open
-> >    /proc/$pid you already have a handle for the underlying process, and
-> >    you can already poll to check whether the process has died (fstatat
-> >    fails for instance). What if we just used an inotify event to tell
-> >    userspace that the process has died -- to avoid userspace doing a
-> >    poll loop?
->=20
-> I'm trying to make a simple interface. The basic unix data access
-> model is that a userspace application wants information (e.g., next
-> bunch of bytes in a file, next packet from a socket, next signal from
-> a signal FD, etc.), and tells the kernel so by making a system call on
-> a file descriptor. Ordinarily, the kernel returns to userspace with
-> the requested information when it's available, potentially after
-> blocking until the information is available. Sometimes userspace
-> doesn't want to block, so it adds O_NONBLOCK to the open file mode,
-> and in this mode, the kernel can tell the userspace requestor "try
-> again later", but the source of truth is still that
-> ordinarily-blocking system call. How does userspace know when to try
-> again in the "try again later" case? By using
-> select/poll/epoll/whatever, which suggests a good time for that "try
-> again later" retry, but is not dispositive about it, since that
-> ordinarily-blocking system call is still the sole source of truth, and
-> that poll is allowed to report spurious readabilty.
+On 01.11.2018 13:24, Michal Hocko wrote:
+> On Thu 01-11-18 13:09:16, Konstantin Khlebnikov wrote:
+>> Allocations over KMALLOC_MAX_SIZE could be served only by vmalloc.
+> 
+> I would go on and say that allocations with sizes too large can actually
+> trigger a warning (once you have posted in the previous version outside
+> of the changelog area) because that might be interesting to people -
+> there are deployments to panic on warning and then a warning is much
+> more important.
 
-inotify gives you an event if a file or directory is deleted. A pid
-dying semantically is similar to the idea of a /proc/$pid being deleted.
-I don't see how a blocking read on a new procfile is simpler than using
-the existing notification-on-file-events infrastructure -- not to
-mention that the idea of "this file blocks until the thing we are
-indirectly referencing by this file is gone" seems to me to be a really
-strange interface.
+It seems that warning isn't completely valid.
 
-Sure, it uses read(2) -- but is that the only constraint on designing
-simple interfaces?
 
-> The event file I'm proposing is so ordinary, in fact, that it works
-> from the shell. Without some specific technical reason to do something
-> different, we shouldn't do something unusual.
+__alloc_pages_slowpath() handles this more gracefully:
 
-inotify-tools are available on effectively every distribution.
+	/*
+	 * In the slowpath, we sanity check order to avoid ever trying to
+	 * reclaim >= MAX_ORDER areas which will never succeed. Callers may
+	 * be using allocators in order of preference for an area that is
+	 * too large.
+	 */
+	if (order >= MAX_ORDER) {
+		WARN_ON_ONCE(!(gfp_mask & __GFP_NOWARN));
+		return NULL;
+	}
 
-> Given that we *can*, cheaply, provide a clean and consistent API to
-> userspace, why would we instead want to inflict some exotic and
-> hard-to-use interface on userspace instead? Asking that userspace poll
-> on a directory file descriptor and, when poll returns, check by
-> looking for certain errors (we'd have to spec which ones) from fstatat
-> is awkward. /proc/pid is a directory. In what other context does the
-> kernel ask userspace to use a directory this way?
 
-I'm not sure you understood my proposal. I said that we need an
-interface to do this, and I was trying to explain (by noting what the
-current way of doing it would be) what I think the interface should be.
+Fast path is ready for order >= MAX_ORDER
 
-To reiterate, I believe that having an inotify event (IN_DELETE_SELF on
-/proc/$pid) would be in keeping with the current way of doing things but
-allowing userspace to avoid all of the annoyances you just mentioned and
-I was alluding to.
 
-I *don't* think that the current scheme of looping on fstatat is the way
-it should be left. And there is an argument the inotify is not
-sufficient to=20
+Problem is in node_reclaim() which is called earlier than __alloc_pages_slowpath()
+from surprising place - get_page_from_freelist()
 
-> > I'm really not a huge fan of the "blocking read" semantic (though if we
-> > have to have it, can we at least provide as much information as you get
-> > from proc_connector -- such as the exit status?).
-> [...]
-> The exit status in /proc/pid/stat is zeroed out for readers that fail
-> do_task_stat's ptrace_may_access call. (Falsifying the exit status in
-> stat seems a privilege check fails seems like a bad idea from a
-> correctness POV.)
 
-It's not clear to me what the purpose of that field is within procfs for
-*dead* proceses -- which is what we're discussing here. As far as I can
-tell, you will get an ESRCH when you try to read it. When testing this
-it also looked like you didn't even get the exit_status as a zombie but
-I might be mistaken.
+Probably node_reclaim() simply needs something like this:
 
-So while it is masked for !ptrace_may_access, it's also zero (or
-unreadable) for almost every case outside of stopped processes (AFAICS).
-Am I missing something?
+	if (order >= MAX_ORDER)
+		return NODE_RECLAIM_NOSCAN;
 
-> Should open() on exithand perform the same ptrace_may_access privilege
-> check? What if the process *becomes* untraceable during its lifetime
-> (e.g., with setuid). Should that read() on the exithand FD still yield
-> a siginfo_t? Just having exithand yield EOF all the time punts the
-> privilege problem to a later discussion because this approach doesn't
-> leak information. We can always add an "exithand_full" or something
-> that actually yields a siginfo_t.
 
-I agree that read(2) makes this hard. I don't think we should use it.
-But if we have to use it, I would like us to have feature parity with
-features that FreeBSD had 18 years ago.
-
-> Another option would be to make exithand's read() always yield a
-> siginfo_t, but have the open() just fail if the caller couldn't
-> ptrace_may_access it. But why shouldn't you be able to wait on other
-> processes? If you can see it in /proc, you should be able to wait on
-> it exiting.
-
-I would suggest looking at FreeBSD's kevent semantics for inspiration
-(or at least to see an alternative way of doing things). In particular,
-EVFILT_PROC+NOTE_EXIT -- which is attached to a particular process. I
-wonder what their view is on these sorts of questions.
-
-> > Also maybe we should
-> > integrate this into the exit machinery instead of this loop...
->=20
-> I don't know what you mean. It's already integrated into the exit
-> machinery: it's what runs the waitqueue.
-
-My mistake, I missed the last hunk of the patch.
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---snyupnd52lalsuup
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEb6Gz4/mhjNy+aiz1Snvnv3Dem58FAlva2dQACgkQSnvnv3De
-m5+qAxAA1x2Kbzbwil79xUBlcjKcEehEww8PpIKyZ9hdUHImdjTJlP4Yzo7sJfwz
-xCfiUPUG1I8etcBDSgmAowAzPqFfyRQGhj0QcRI/BfK1RDMEit1ndGtm7UJEZgse
-LpCYh7jv0l5pvZK85AyaXJx/JcRE2t8Ec8fVNQeEIfwxpKp6C+vYQLaNV7+X95+f
-lW5fC4ek6z9+KpZPOxJw31XZgBUyZZHq4zhxLwHCdNOHAyN/EMXHhXxd1OdWFi0A
-Z9DAnW17aeqSbVY69mgWOYBnK0cSXf0LMYeD85hNlJpLVrfG96QRw/sU+TyZ0+Sb
-0cOwI8Kgp2WW3LoSiXULnk/U0aP1uPg7WCpmOsZ1fb/SLpOOqEfm8SaJqDlpF0kq
-rv3r0VYbo0y2KADzC0A+HokPzorJ3fhWScGFfoBeKgpyhDr9wUxLA8tRVW6jM5LG
-QIxjcn0ww2HolUR1shRNt9bl2Ffuvkj4LVPd4wD6WY8mk+yEvxS15WZZzBatulYb
-zWzqQXfPB8RbIYX+bO1/m/ZaeClraQz3BnzrrFmvbAiJeSLvkDugBfvTGFYCoP0t
-sPRvmKmQF5zTYgsYXfvjLOW2SD8pYyWrUvpyD3gJr0JF1MXrdGMLMp9MAz7cHKH4
-o/DWJNNerVNjcajMncfB+1lkfMzl7590z67VoFswcKNCj8PMA3o=
-=kCkq
------END PGP SIGNATURE-----
-
---snyupnd52lalsuup--
+> 
+>> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> 
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> 
+> Thanks!
+> 
+>> ---
+>>   mm/util.c |    4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/mm/util.c b/mm/util.c
+>> index 8bf08b5b5760..f5f04fa22814 100644
+>> --- a/mm/util.c
+>> +++ b/mm/util.c
+>> @@ -392,6 +392,9 @@ void *kvmalloc_node(size_t size, gfp_t flags, int node)
+>>   	gfp_t kmalloc_flags = flags;
+>>   	void *ret;
+>>   
+>> +	if (size > KMALLOC_MAX_SIZE)
+>> +		goto fallback;
+>> +
+>>   	/*
+>>   	 * vmalloc uses GFP_KERNEL for some internal allocations (e.g page tables)
+>>   	 * so the given set of flags has to be compatible.
+>> @@ -422,6 +425,7 @@ void *kvmalloc_node(size_t size, gfp_t flags, int node)
+>>   	if (ret || size <= PAGE_SIZE)
+>>   		return ret;
+>>   
+>> +fallback:
+>>   	return __vmalloc_node_flags_caller(size, node, flags,
+>>   			__builtin_return_address(0));
+>>   }
+>>
+> 
