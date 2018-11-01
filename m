@@ -2,69 +2,104 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C735EC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:30:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7061C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:36:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71A762081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:30:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71A762081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6F7792081B
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:36:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F7792081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728153AbeKATdN (ORCPT
+        id S1728177AbeKATis (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 15:33:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58558 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727453AbeKATdN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 15:33:13 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 26389ADD3;
-        Thu,  1 Nov 2018 10:30:51 +0000 (UTC)
-Date:   Thu, 1 Nov 2018 11:30:50 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     =?utf-8?B?56a56Iif6ZSu?= <ufo19890607@gmail.com>
-Cc:     akpm@linux-foundation.org, rientjes@google.com,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
-        yang.s@alibaba-inc.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Wind Yu <yuzhoujian@didichuxing.com>
-Subject: Re: [PATCH v15 1/2] Reorganize the oom report in dump_header
-Message-ID: <20181101103050.GG23921@dhcp22.suse.cz>
-References: <1538226387-16600-1-git-send-email-ufo19890607@gmail.com>
- <20181031135049.GO32673@dhcp22.suse.cz>
- <CAHCio2jpqfdgrqOqyXQ=HUc-9kzDmtaYXH+9juVQS6hBHhSdPA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHCio2jpqfdgrqOqyXQ=HUc-9kzDmtaYXH+9juVQS6hBHhSdPA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 1 Nov 2018 15:38:48 -0400
+Received: from mga06.intel.com ([134.134.136.31]:52047 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726320AbeKATir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 15:38:47 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Nov 2018 03:36:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,451,1534834800"; 
+   d="scan'208";a="100601930"
+Received: from devel-ww.sh.intel.com ([10.239.48.119])
+  by fmsmga002.fm.intel.com with ESMTP; 01 Nov 2018 03:36:21 -0700
+From:   Wei Wang <wei.w.wang@intel.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        pbonzini@redhat.com, ak@linux.intel.com, peterz@infradead.org
+Cc:     mingo@redhat.com, rkrcmar@redhat.com, like.xu@intel.com,
+        wei.w.wang@intel.com
+Subject: [PATCH v1 0/8] Intel Virtual PMU Optimization
+Date:   Thu,  1 Nov 2018 18:04:00 +0800
+Message-Id: <1541066648-40690-1-git-send-email-wei.w.wang@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 01-11-18 18:09:39, 禹舟键 wrote:
-> Hi Michal
-> The null pointer is possible when calling the dump_header, this bug was
-> detected by LKP. Below is the context 3 months ago.
+This patch series optimizes the Intel PMU virtualization by reducing the
+PMU virtualization overhead and providing guests with accurate PMU
+statistics.
 
-Yeah I remember it was 0day report but I coundn't find it in my email
-archive. Do you happen to have a message-id?
+The differences of the traditional approach and the optimized apporach
+are depicted in the figures here:
+https://github.com/weiwangwork/vPMU/blob/master/vPMU%20Optimization.pdf
 
-Anyway
-        if (__ratelimit(&oom_rs))
-                dump_header(oc, p);
-+       if (oc)
-+               dump_oom_summary(oc, victim);
+The traditional approach of PMU virtualization is host perf event oriented.
+The KVM vPMU layer sits on top of the host perf subsystem and each guest's
+update to the vPMU is translated into a new host perf event, which needs
+to go through the host perf software stack (e.g. releasing the old perf
+event, re-creating a new one and getting it rescheduled to a hardware perf
+counter) for a reconfiguration.
 
-Clearly cannot solve any NULL ptr because oc is never NULL unless I am
-missing something terribly.
+With this optimization, we intend to make the virtualization layer to be
+register oriented. The KVM vPMU layer is moved down to directly sit on the
+hardware perf counters. The guest accesses to the vPMU registers can be
+directly applied to the related hardware counter by the vPMU. It can
+reduce the virtualization overhead from around 2500000ns to 400ns.
+(Tested on Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz, and added host
+booting parameter "nowatchdog" to avoid the noise from watchdog_hld)
+
+We still need the vPMU to get the ownership of the physical perf counters
+from the host perf core. The guest used counters are taken from the host
+perf core via x86_perf_mask_perf_counters, which in most cases is a
+bit-setting of the guest mask.
+
+This series currently covers the basic perf counter virtualization. Other
+features, such as pebs and lbr, will come after this series.
+
+Wei Wang (8):
+  perf/x86: add support to mask counters from host
+  perf/x86/intel: add pmi callback support
+  KVM/x86/vPMU: optimize intel vPMU
+  KVM/x86/vPMU: support msr switch on vmx transitions
+  KVM/x86/vPMU: intel_pmu_read_pmc
+  KVM/x86/vPMU: remove some unused functions
+  KVM/x86/vPMU: save/restore guest perf counters on vCPU switching
+  KVM/x86/vPMU: return the counters to host if guest is torn down
+
+ arch/x86/events/core.c            |  47 ++++
+ arch/x86/events/intel/core.c      |  65 ++----
+ arch/x86/events/perf_event.h      |  10 +-
+ arch/x86/include/asm/kvm_host.h   |  13 ++
+ arch/x86/include/asm/perf_event.h |  16 +-
+ arch/x86/kvm/pmu.c                |  15 ++
+ arch/x86/kvm/pmu.h                |   7 +
+ arch/x86/kvm/pmu_intel.c          | 448 +++++++++++++++++++++++++-------------
+ arch/x86/kvm/vmx.c                |   6 +-
+ arch/x86/kvm/x86.c                |   6 +
+ include/linux/kvm_host.h          |   1 +
+ virt/kvm/kvm_main.c               |   3 +
+ 12 files changed, 416 insertions(+), 221 deletions(-)
+
 -- 
-Michal Hocko
-SUSE Labs
+2.7.4
+
