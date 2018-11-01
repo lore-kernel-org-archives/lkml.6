@@ -2,108 +2,99 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52862C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:09:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F4BC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:11:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F28BC20820
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:09:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F28BC20820
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8B66620820
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:11:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ka3MZW/F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B66620820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbeKBCNl (ORCPT
+        id S1727265AbeKBCPQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 22:13:41 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36488 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725843AbeKBCNl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 22:13:41 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CB3DBAE61;
-        Thu,  1 Nov 2018 17:09:49 +0000 (UTC)
-Date:   Thu, 1 Nov 2018 18:09:48 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     miles.chen@mediatek.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Joe Perches <joe@perches.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, wsd_upstream@mediatek.com
-Subject: Re: [PATCH v4] mm/page_owner: clamp read count to PAGE_SIZE
-Message-ID: <20181101170948.GN23921@dhcp22.suse.cz>
-References: <1541091607-27402-1-git-send-email-miles.chen@mediatek.com>
+        Thu, 1 Nov 2018 22:15:16 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:32987 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbeKBCPQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 22:15:16 -0400
+Received: by mail-lj1-f194.google.com with SMTP id z21-v6so18727251ljz.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 10:11:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1bw2yW+h0eGS/RMnaF4u47fsjJQb66zNNoQ/6mxicf8=;
+        b=ka3MZW/Fk0SsAl3l/4I9AbcRSXgjR+VGFDmpEcFZ7ZjY4NCGVQxLVIJKsNkvgxfP7m
+         ct5CKM8HSf6mshwf+6eQy4mwJhZweqr+yg5CpwSFlVoL/isTObIe07y981ei1P0fJ9+A
+         G3yJ0tSI6Tyw7/H5TQsngo4A/2EKSwOq0VwQ0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1bw2yW+h0eGS/RMnaF4u47fsjJQb66zNNoQ/6mxicf8=;
+        b=l1PyaITThEpw/CatRF6lotspNNhud2j9X6eprzCQVVTT6i4AGLg4zpre5iqmN6dKKb
+         ctarDiudEzFoNmWrrOdkOa1/VRLy9w/InMPLIw7coZY+k6MPt1bUWNL+CEGwujl66O5+
+         Y671ZMjMhMbzcy7OuEandpivJ4fSAuWbygk+kiTned1OB1tJ+nMlmRAkos1Uw1V8Hfc9
+         UKpidfOwk5Jf6pMcYcHVKvRHXqKpJH0CO60RkHQTJYfaebXPiK+mcLaDp4MBOtma7PFW
+         ArFymWQmpo21bGXVmuHuZWyI4nmKqxoBt1JUaVLGW5DLSI2iPVF6EWHYE36/kZbExHgr
+         x/qw==
+X-Gm-Message-State: AGRZ1gKdg4H3LM2KpFdw7RR/RdBVctZlMMUJTihxgDwKMuDN7IgZxXt3
+        eZCKt8pfQiPbab3oguzYUC29EdTQeac=
+X-Google-Smtp-Source: AJdET5ec141XMAepNdgeEtz/R2H66JWVr/BbhBRbSSm1syzPyRsfxK73AP21GIB43CnqwKvoKdY9Yw==
+X-Received: by 2002:a2e:6c0c:: with SMTP id h12-v6mr5385430ljc.112.1541092283955;
+        Thu, 01 Nov 2018 10:11:23 -0700 (PDT)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id n3-v6sm4773594lfe.8.2018.11.01.10.11.21
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Nov 2018 10:11:22 -0700 (PDT)
+Received: by mail-lj1-f181.google.com with SMTP id x85-v6so14511834ljb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 10:11:21 -0700 (PDT)
+X-Received: by 2002:a2e:12c1:: with SMTP id 62-v6mr5955225ljs.74.1541092280983;
+ Thu, 01 Nov 2018 10:11:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1541091607-27402-1-git-send-email-miles.chen@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1541073999-11752-1-git-send-email-vbadigan@codeaurora.org> <1541073999-11752-3-git-send-email-vbadigan@codeaurora.org>
+In-Reply-To: <1541073999-11752-3-git-send-email-vbadigan@codeaurora.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Thu, 1 Nov 2018 10:10:44 -0700
+X-Gmail-Original-Message-ID: <CAE=gft6FiC5mkCDkzdhrOuj2qAfwmPxDJNbekca+EVg5yhLYgg@mail.gmail.com>
+Message-ID: <CAE=gft6FiC5mkCDkzdhrOuj2qAfwmPxDJNbekca+EVg5yhLYgg@mail.gmail.com>
+Subject: Re: [PATCH V3 2/2] mmc: sdhci-msm: Re-initialize DLL if MCLK is gated dynamically
+To:     vbadigan@codeaurora.org
+Cc:     adrian.hunter@intel.com, Ulf Hansson <ulf.hansson@linaro.org>,
+        robh+dt@kernel.org, Doug Anderson <dianders@google.com>,
+        asutoshd@codeaurora.org, riteshh@codeaurora.org,
+        stummala@codeaurora.org, sayali <sayalil@codeaurora.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 02-11-18 01:00:07, miles.chen@mediatek.com wrote:
-> From: Miles Chen <miles.chen@mediatek.com>
-> 
-> The page owner read might allocate a large size of memory with
-> a large read count. Allocation fails can easily occur when doing
-> high order allocations.
-> 
-> Clamp buffer size to PAGE_SIZE to avoid arbitrary size allocation
-> and avoid allocation fails due to high order allocation.
-
-It is good to mention that interface is root only so the harm due to
-unbounded allocation request is somehow reduced.
-
-I believe we want to use seq_file infrastructure in the long term
-solution.
- 
-> Change since v3:
->   - remove the change in kvmalloc
->   - keep kmalloc in page_owner.c
-> 
-> Change since v2:
->   - improve kvmalloc, allow sub page allocations fallback to
->     vmalloc when CONFIG_HIGHMEM=y
-> 
-> Change since v1:
->   - use kvmalloc()
->   - clamp buffer size to PAGE_SIZE
-> 
-> Signed-off-by: Miles Chen <miles.chen@mediatek.com>
-> Cc: Joe Perches <joe@perches.com>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Michal Hocko <mhocko@kernel.org>
-
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-Thanks!
-
+On Thu, Nov 1, 2018 at 5:08 AM Veerabhadrarao Badiganti
+<vbadigan@codeaurora.org> wrote:
+>
+> On few SDHCI-MSM controllers, the host controller's clock tuning
+> circuit may go out of sync if controller clocks are gated which
+> eventually will result in data CRC, command CRC/timeout errors.
+> To overcome this h/w limitation, the DLL needs to be re-initialized
+> and restored with its old settings once clocks are ungated.
+>
+> Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
 > ---
->  mm/page_owner.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/mm/page_owner.c b/mm/page_owner.c
-> index 87bc0dfdb52b..b83f295e4eca 100644
-> --- a/mm/page_owner.c
-> +++ b/mm/page_owner.c
-> @@ -351,6 +351,7 @@ print_page_owner(char __user *buf, size_t count, unsigned long pfn,
->  		.skip = 0
->  	};
->  
-> +	count = count > PAGE_SIZE ? PAGE_SIZE : count;
->  	kbuf = kmalloc(count, GFP_KERNEL);
->  	if (!kbuf)
->  		return -ENOMEM;
-> -- 
-> 2.18.0
-> 
+>  drivers/mmc/host/sdhci-msm.c | 59 ++++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 57 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
 
--- 
-Michal Hocko
-SUSE Labs
+Reviewed-by: Evan Green <evgreen@chromium.org>
