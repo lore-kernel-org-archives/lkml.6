@@ -2,137 +2,105 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBBDEC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 21:35:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D63BFC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 21:35:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E9B020866
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 21:35:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AD3C204FD
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 21:35:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SMAauyh0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E9B020866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=impinj.com header.i=@impinj.com header.b="GVwzS2CI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AD3C204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=impinj.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727629AbeKBGjy (ORCPT
+        id S1727666AbeKBGkS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 02:39:54 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45358 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726701AbeKBGjy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 02:39:54 -0400
-Received: by mail-pf1-f195.google.com with SMTP id v5-v6so5058596pfm.12
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 14:35:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=rjrUyw1RPZidI5kOdNW3wqYtFmnuv+jbS2ZhN+LzVYs=;
-        b=SMAauyh0rPJ22d1n3OvssA1B0MyVw7I5CklMny2bZKrbrY6n8CHl0fbpGQUgJ3R8Jr
-         BWEWmZ+PFBEaauFUPYzVCMbWpBls/EdBHulDhsMjmzCqMbKsFw0txBsUHl0z2j2HlJRE
-         3rWgg9lyVJ7WOzHZeo/b3wFcLiEqCbRAtRIigx3NF/mLySSAfOR3rmFyT4GUKBbMa2s2
-         hKec6+A6tcCiDrpgha6YC2wpJVzF08NAxzVXWawCbNQiSyub0zwnmICWM9eHMBWTw1Cx
-         0Cm4OnC1Ym6gvG4WlnXz3ltZYyRnQmmaaIbuuUy8dnfEKodNZUlOBPRnB6PMTvKZ6r8Y
-         tONQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=rjrUyw1RPZidI5kOdNW3wqYtFmnuv+jbS2ZhN+LzVYs=;
-        b=HLXuK/vcB3Z8iWryzIXl9eMkgEOE/qniB+02FqvmWX12LdYkA3WS21U67NWWrib5r+
-         iMZPjazHsLQVyl4EFcBcKTmij/WYGa4MxS9r2kAbwN75TvvB5cA9GLF90Zwjqf3sv8FC
-         vJjI32KrN+aAXT5h+3ES31z+7eSmdCwUMe6IvB6i6BspTSNblJfTX7qe0XkYwPz4jgfs
-         IcwIkts3G2Ok8awcMHh3gwjOPqEI3P5KgJBt3v4MnbmEAfpg3v5i5v3wRVZfLz3wMvAr
-         Ts/1Y+2jlTxGtD5hJEdET6UR/zZYKi9o9Q3k8PUWIT70e27PMrbabnUOLe4otIOG8ipy
-         G2iw==
-X-Gm-Message-State: AGRZ1gJV/+0yQJ9tGXCL2lbdb7KQc31wlS9iyDJXNeSTOpzvteAaPVC0
-        Abc0QS12UqmHTUB3dqfJ934=
-X-Google-Smtp-Source: AJdET5cnwBC8kf8uSN3zsHk6xhJbvlRTQfA9pK/q8hsEg/I/zxMJl+kCyqvFt2iLYYSMUXlwGTXH/Q==
-X-Received: by 2002:a63:1013:: with SMTP id f19-v6mr8731982pgl.38.1541108110392;
-        Thu, 01 Nov 2018 14:35:10 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id q11-v6sm9052227pgp.62.2018.11.01.14.35.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Nov 2018 14:35:09 -0700 (PDT)
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     joro@8bytes.org
-Cc:     vdumpa@nvidia.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] iommu/dma: Zero pages manually in a length of scatterlist
-Date:   Thu,  1 Nov 2018 14:35:00 -0700
-Message-Id: <20181101213500.21800-1-nicoleotsuka@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 2 Nov 2018 02:40:18 -0400
+Received: from mail-eopbgr690133.outbound.protection.outlook.com ([40.107.69.133]:6077
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726701AbeKBGkR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 02:40:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=impinj.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UscI8yYdS4RWIFBvIZfR/8JOWERilZzkbIq+vR31Nto=;
+ b=GVwzS2CI0Nhsb2GU1/Vk5fbfiw9F/eam7vYbhAKnQsWIz+MOzooigocu4IQCn+moIGKiZlYFq6OmH03G1OSIlcza2dSnw/et1WHqTf4/9wlq1sJqvNf4pfdk+VVurrJLGbPIBJmHfbsyY6xp8dgdPSlNxfp7uTyp1ZFGDNYyKSE=
+Received: from MWHPR0601MB3708.namprd06.prod.outlook.com (10.167.236.38) by
+ MWHPR0601MB3771.namprd06.prod.outlook.com (10.167.236.152) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.21; Thu, 1 Nov 2018 21:35:32 +0000
+Received: from MWHPR0601MB3708.namprd06.prod.outlook.com
+ ([fe80::f51a:d8dd:1aad:3bf9]) by MWHPR0601MB3708.namprd06.prod.outlook.com
+ ([fe80::f51a:d8dd:1aad:3bf9%3]) with mapi id 15.20.1294.024; Thu, 1 Nov 2018
+ 21:35:32 +0000
+From:   Trent Piepho <tpiepho@impinj.com>
+To:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "thesven73@gmail.com" <thesven73@gmail.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: No interrupt was generated using MSI
+Thread-Topic: No interrupt was generated using MSI
+Thread-Index: AQHUciorCF62BleFDkSqupekCTk/fqU7cUyA
+Date:   Thu, 1 Nov 2018 21:35:31 +0000
+Message-ID: <1541108131.30311.181.camel@impinj.com>
+References: <20181101213044.27844-1-TheSven73@googlemail.com>
+In-Reply-To: <20181101213044.27844-1-TheSven73@googlemail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=tpiepho@impinj.com; 
+x-originating-ip: [216.207.205.253]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR0601MB3771;6:s0CJNXZUSPwNFOAqAS2w2AL5xH91Ir48AO1L/MrgbmLe0Eodhp4LpEbw/Vd4mumDHQcvKKd2S9deaNqmvR8uTc0bfITMAFza+Laj7LEH2eHda4Eg6MWZ6NUsPdOrx6ecExvNdNgzZUuRDhmepfPn/WwVSMpZDu08GzEL57c2hgOsPjmmATc6ynv3aycZdZrPYuwfoTpT1vNBtTGPLNYSaBPI4j/iMdwT+l58P5NFwfYlGOlEyCj9qgiJ8J3k46wxF6KRU3ula3pAWZUe1qVUPpvOE84ECB6Oe7bzG5mBZNrpM29AXLnE7QcgNwwPNofzFk4zZfSzlCs4ZEeLv1l46L7cFJsAEzRqFHhA0BWajOYtsIz9zeqF1chmQeZkC26iRO4WviCkgtW4OfbTA1suhjrLJh2+juejOu6tJNhwG6SlH9bvVJfKjgFRnOIo4DxZmW8LpEdkkVp1UZfWC0C+Fg==;5:5dmEzbR43XYcfQ0S1QX+V1f6A+LQf8w8R2I7BelK9B0UzrLy85MtfwH7m8V73nJINh6QKtXsIpPA86n4xwEjep1FL38V5C4MH6PnKaZx4ytj9D2X80qSvvLTCqtqgU+bA0Et5jotTGVYgZ2y43G0ugHkVnaGCqYpsRv3xXQ3BgE=;7:whl2Uj5IstGHeyEQgR3zdOk994G5KC6r5x0N2mmixTjy/uMs1y6ep5P7CHwPZaa0o3TcZ41/eeNfeIX8cBk5O6Gi2Sw3D+vHCPbgtwlZAis9s269EENacnxJNltp7Pw/vXRDtwQUGFaJ1WZDxq84RA==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 1a5c81eb-3d9a-435b-14c3-08d64041f369
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR0601MB3771;
+x-ms-traffictypediagnostic: MWHPR0601MB3771:
+x-microsoft-antispam-prvs: <MWHPR0601MB3771665B46E616D9933DF852D3CE0@MWHPR0601MB3771.namprd06.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(85827821059158);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231382)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:MWHPR0601MB3771;BCL:0;PCL:0;RULEID:;SRVR:MWHPR0601MB3771;
+x-forefront-prvs: 0843C17679
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(376002)(366004)(39850400004)(346002)(136003)(396003)(189003)(199004)(81156014)(6512007)(71190400001)(14444005)(81166006)(71200400001)(256004)(36756003)(76176011)(66066001)(478600001)(53936002)(316002)(2900100001)(105586002)(106356001)(39060400002)(6306002)(8936002)(6246003)(110136005)(476003)(6486002)(14454004)(486006)(186003)(6116002)(2616005)(6436002)(446003)(4326008)(3846002)(11346002)(305945005)(8676002)(68736007)(25786009)(7736002)(2906002)(6506007)(102836004)(229853002)(86362001)(5660300001)(103116003)(2501003)(97736004)(966005)(26005)(99286004)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR0601MB3771;H:MWHPR0601MB3708.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: impinj.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: RAsm7rXnjzGPjwia9FYQHbvlLbzS7nSR+CYYg3uZoWrm44gwfNJFIgtWZQrsYyXeDuuqrwoPcd0WxoESdPkp3CHj/PeSOd27MG6NyACtulJlcwG/ZhcZT2kiPvnApsN5lMbbBH+yjcESlHq8q0Et4Lfu2+PZnw5Fc37QpGJrbRlih7LDT63iMWBfYtYGw6xlajHJFn8v5rn8m1URh3Rhax+Yg7LLAmnLbmsmWkSpuYcaruGpQKJoCHXPy9TnQqyvT8bwd5iziK0dErNppQylwZGUBz/FUOIYDbTIkO5dC+g+tw0sRDqA1KcZttaFsE6oG70rSeMceRgbVNlf20gU5gsaj55ViOayEtyNpMWOXdc=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <228E71C8EAF77A459293F3956628603E@namprd06.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: impinj.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1a5c81eb-3d9a-435b-14c3-08d64041f369
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Nov 2018 21:35:31.9405
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 6de70f0f-7357-4529-a415-d8cbb7e93e5e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR0601MB3771
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The __GFP_ZERO will be passed down to the generic page allocation
-routine which zeros everything page by page. This is safe to be a
-generic way but not efficient for iommu allocation that organizes
-contiguous pages using scatterlist.
-
-So this changes drops __GFP_ZERO from the flag, and adds a manual
-memset after page/sg allocations, using the length of scatterlist.
-
-My test result of a 2.5MB size allocation shows iommu_dma_alloc()
-takes 46% less time, reduced from averagely 925 usec to 500 usec.
-
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
----
- drivers/iommu/dma-iommu.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index d1b04753b204..e48d995e65c5 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -551,10 +551,13 @@ struct page **iommu_dma_alloc(struct device *dev, size_t size, gfp_t gfp,
- 	struct iommu_domain *domain = iommu_get_dma_domain(dev);
- 	struct iommu_dma_cookie *cookie = domain->iova_cookie;
- 	struct iova_domain *iovad = &cookie->iovad;
-+	struct scatterlist *s;
- 	struct page **pages;
- 	struct sg_table sgt;
- 	dma_addr_t iova;
- 	unsigned int count, min_size, alloc_sizes = domain->pgsize_bitmap;
-+	bool gfp_zero = false;
-+	int i;
- 
- 	*handle = IOMMU_MAPPING_ERROR;
- 
-@@ -568,6 +571,15 @@ struct page **iommu_dma_alloc(struct device *dev, size_t size, gfp_t gfp,
- 	if (attrs & DMA_ATTR_ALLOC_SINGLE_PAGES)
- 		alloc_sizes = min_size;
- 
-+	/*
-+	 * The generic zeroing in a length of one page size is slow,
-+	 * so do it manually in a length of scatterlist size instead
-+	 */
-+	if (gfp & __GFP_ZERO) {
-+		gfp &= ~__GFP_ZERO;
-+		gfp_zero = true;
-+	}
-+
- 	count = PAGE_ALIGN(size) >> PAGE_SHIFT;
- 	pages = __iommu_dma_alloc_pages(count, alloc_sizes >> PAGE_SHIFT, gfp);
- 	if (!pages)
-@@ -581,6 +593,12 @@ struct page **iommu_dma_alloc(struct device *dev, size_t size, gfp_t gfp,
- 	if (sg_alloc_table_from_pages(&sgt, pages, count, 0, size, GFP_KERNEL))
- 		goto out_free_iova;
- 
-+	if (gfp_zero) {
-+		/* Now zero all the pages in the scatterlist */
-+		for_each_sg(sgt.sgl, s, sgt.orig_nents, i)
-+			memset(sg_virt(s), 0, s->length);
-+	}
-+
- 	if (!(prot & IOMMU_CACHE)) {
- 		struct sg_mapping_iter miter;
- 		/*
--- 
-2.17.1
-
+T24gVGh1LCAyMDE4LTExLTAxIGF0IDE3OjMwIC0wNDAwLCB0aGVzdmVuNzNAZ21haWwuY29tIHdy
+b3RlOg0KPiBJIGFtIHNlZWluZyB0aGlzIGluIG15IGtlcm5lbCBsb2c6DQo+IA0KPiBbICAgMTAu
+MjM1NjI1XSB0ZzMgMDAwMDowMzowMC4wIGV0aDIwOiBObyBpbnRlcnJ1cHQgd2FzIGdlbmVyYXRl
+ZA0KPiB1c2luZyBNU0kuDQo+IAlTd2l0Y2hpbmcgdG8gSU5UeCBtb2RlLiBQbGVhc2UgcmVwb3J0
+IHRoaXMgZmFpbHVyZSB0byB0aGUgUENJDQo+IAltYWludGFpbmVyIGFuZCBpbmNsdWRlIHN5c3Rl
+bSBjaGlwc2V0IGluZm9ybWF0aW9uDQo+IA0KPiBJIGxvb2tlZCB0aHJvdWdoIE1BSU5UQUlORVJT
+LCBidXQgSSBjYW4ndCBmaW5kIHRoZSBQQ0kgbWFpbnRhaW5lci4NCj4gQ2FuIGFueW9uZSBoZWxw
+Pw0KPiANCj4gQ2hpcHNldCBpbmZvOiB0aGlzIGhhcHBlbnMgb24gYSBGcmVlc2NhbGUgaS5NWDZR
+LiBNYWlubGluZSA0LjE5DQo+IGtlcm5lbC4NCj4gVGhlIGRldmljZXRyZWUgZW50cnkgZm9yIHRo
+ZSBwY2llIGNoaXBzZXQgaXMgaGVyZToNCj4gDQo+IGFyY2gvYXJtL2Jvb3QvZHRzL2lteDZxZGwu
+ZHRzaToNCj4gDQo+IHBjaWU6IHBjaWVAMWZmYzAwMCB7DQo+IAljb21wYXRpYmxlID0gImZzbCxp
+bXg2cS1wY2llIiwgInNucHMsZHctcGNpZSI7DQo+IAk8c25pcD4NCj4gfTsNCg0KSXQgc291bmRz
+IGxpa2UgeW91IG1pZ2h0IGJlIGhpdHRpbmcgdGhlIGJ1ZyBJIHBvc3RlZCBhIGZpeCBmb3INCnJl
+Y2VudGx5Lg0KDQpodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNoLzEwNjU3OTg3Lw0K
+DQo=
