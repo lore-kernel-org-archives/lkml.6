@@ -2,252 +2,253 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41882ECDE44
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:13:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3299AECDE44
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:17:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D11FD20664
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:13:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C967720823
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:17:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gwDk/IpN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D11FD20664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b="L8jj/f7e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C967720823
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=hammerspace.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727673AbeKAJOF (ORCPT
+        id S1726655AbeKAJSK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 05:14:05 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45308 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbeKAJOF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 05:14:05 -0400
-Received: by mail-pg1-f195.google.com with SMTP id s3-v6so8134778pga.12
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 17:13:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=WoxJcE5euy/BEp6dcM4CO82IMHqtkWgaz67wmj1xeLQ=;
-        b=gwDk/IpNHuMZ0fsqhZlTb/T0+Ec6RIGaX5EQG35OMKOSv1N+APOHresCOZDsJl+VO0
-         AasgM2tg2/EIBjxU+ESZkyGLIFTm+tidLXJEGF9YXl0KjhkBv9kNLAOvHbuzxEo7iUgP
-         uxmvS2CFPMbe6GISL8NVJjMUM9Wtt2pZm3T7Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=WoxJcE5euy/BEp6dcM4CO82IMHqtkWgaz67wmj1xeLQ=;
-        b=BcyZ27LERz5dGwt6/YafgLflC/hw7cYOYnaOn2Sg7jDr5GY3nRaiwaopBXHL1n6rhK
-         ZHdgsQuBI3wviUw0bpjZxm1qX08eP4/ocwt9wSWSLN4/5pBxuxkrW8lr1J1Mp3MQiFIc
-         muR/JdY90gnTtGqRFtzkVfT5IavJJjg5JlDRklMZOxup4IgtWFb0arUMLZvKoRc+SJ/e
-         k98Jsx9BcumDMKds1r1GG/dC7b4gIVQr4X3zV0syHlmpxpWoeIoTrQkmi+KDEP2rQHE9
-         uHIyegROx7ukiHLI77ZRGTGsOISrEWroILcLoh1OXpokVXB6bafOPowUo7YO0dBTYh+a
-         kLfA==
-X-Gm-Message-State: AGRZ1gK5XpNzrxow5WIu4nG0Zgr8YxZ1hqOv6WXYJ1pFJ5f55zwYnLEW
-        6Nkte+ezcB/aT0IsSwniYS2oK5Tkd9U=
-X-Google-Smtp-Source: AJdET5cdtDywClDFWEvRHL02wbL1Wd+/1cuG0jqCHqXABHwpyZBnXDlDdwR5eT/wE1xRYFCSLRdVHg==
-X-Received: by 2002:a63:4c4e:: with SMTP id m14-v6mr5115206pgl.173.1541031214884;
-        Wed, 31 Oct 2018 17:13:34 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:fed3:9637:a13a:6c15])
-        by smtp.gmail.com with ESMTPSA id z9-v6sm1640975pfg.174.2018.10.31.17.13.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 31 Oct 2018 17:13:34 -0700 (PDT)
+        Thu, 1 Nov 2018 05:18:10 -0400
+Received: from mail-eopbgr720131.outbound.protection.outlook.com ([40.107.72.131]:18578
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725970AbeKAJSK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 05:18:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SA/kaxRjXr5BaWEe02Uq60tzOEPUY/KvDbehGtrBqlg=;
+ b=L8jj/f7euq8//tVFk6kjSCZHT15rB7KZlCltmTEMLQ6+JYTt3vgzzNyV9XeMbfjYjYGOh01+4r22uCOLm2/lbi6X4mFfU9OELN/xhFAZhq7XFu2tbyJa9c4BxPtPBrcDs+wcM322rTrw7haluBQCoSH5wdxJ2D8Lzt8/CAVkTDM=
+Received: from SN6PR13MB2494.namprd13.prod.outlook.com (52.135.95.148) by
+ SN6PR13MB2240.namprd13.prod.outlook.com (52.135.93.153) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.13; Thu, 1 Nov 2018 00:17:32 +0000
+Received: from SN6PR13MB2494.namprd13.prod.outlook.com
+ ([fe80::205a:69c2:1cf5:b475]) by SN6PR13MB2494.namprd13.prod.outlook.com
+ ([fe80::205a:69c2:1cf5:b475%3]) with mapi id 15.20.1294.021; Thu, 1 Nov 2018
+ 00:17:32 +0000
+From:   Trond Myklebust <trondmy@hammerspace.com>
+To:     "linux@roeck-us.net" <linux@roeck-us.net>,
+        "paul.burton@mips.com" <paul.burton@mips.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ralf@linux-mips.org" <ralf@linux-mips.org>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "bfields@fieldses.org" <bfields@fieldses.org>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
+        "jhogan@kernel.org" <jhogan@kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "paulus@samba.org" <paulus@samba.org>,
+        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>
+Subject: Re: [RFC PATCH] lib: Introduce generic __cmpxchg_u64() and use it
+ where needed
+Thread-Topic: [RFC PATCH] lib: Introduce generic __cmpxchg_u64() and use it
+ where needed
+Thread-Index: AQHUcVNDmGGj0g6AA0y1ofQdOo8K7KU5392AgAAIbYCAABkRAIAADIkA
+Date:   Thu, 1 Nov 2018 00:17:31 +0000
+Message-ID: <4e2438a23d2edf03368950a72ec058d1d299c32e.camel@hammerspace.com>
+References: <1541015538-11382-1-git-send-email-linux@roeck-us.net>
+         <20181031213240.zhh7dfcm47ucuyfl@pburton-laptop>
+         <20181031220253.GA15505@roeck-us.net>
+         <20181031233235.qbedw3pinxcuk7me@pburton-laptop>
+In-Reply-To: <20181031233235.qbedw3pinxcuk7me@pburton-laptop>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=trondmy@hammerspace.com; 
+x-originating-ip: [68.40.195.73]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN6PR13MB2240;6:ZdIxH/NNyq4Sx4mS9KcyQ9bb4l7/mJ99NBhsN3z/Qaiuw0LaxFQYc7H/aulkw3NRHiYTycIfqVTRa3Pcy/k6ODsLUKzkW6vx9fk43utO7sUJzTzai6b0q0Ue1IsZvkQpdLBew3kGBG2DWYqPL1BhkKDl2uG2AmKh3eu5AWw6adFXakmUsPbhFlLCJNipcre7BgP1Ql2jcLkuhvGGDGx8HRPsjI1i6Rth6pH+ZUIONyGKr1F3uZEDpXYYopVG/QE3ZX77XzDypPXpVrx9+e8sr86M/r8lB5+wF7tzNnrKlFCVbtFh7/tyLgryiz72mpG0d5hm7hBrvSdoRjyJ6mwMpZiY0WkN73ItlTF32DoVTCPAdNmSR6h5rJ1zYM8Xf9Lzu0AlSpF3MunBb6Q2+84BbfFv+HPpe/xyDCAsRdHCqGMUNV4tVp2KtL/FG3D4CcUKLUZ2r9GUEndO1ZXWVfg2hw==;5:7bMKekBVet5oRl/h5DWw/zj/+8tgbhdvjv8TLuyYZ9mjWcIBXEsAuc4z2932rq+WBj4LYr70mKCs/eQUrbEj5WHtosN47LaBHEj+UHSELGN1fyORRiM6iaIMKPAyDt45J6QLOmawdXxIZ34l6ruphnwlTvq3oaQp/jPqGREObCQ=;7:fhqPtZreLeSiWpaySsqv6YAgBC0El9qET4KOvm99XnC+Ae5AymJOMaIBoRUR/SEbSZc21O5Hz138KhVEkRCFVixGR103qgsExYokHVGhgtNpQHuFzhrISlUgDOW9NpzeRBOlvLXKa3oFGUvvB6LPAQ==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: f3a8f48b-fa4a-4a14-e4c4-08d63f8f6aa4
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:SN6PR13MB2240;
+x-ms-traffictypediagnostic: SN6PR13MB2240:
+x-microsoft-antispam-prvs: <SN6PR13MB224013FD8CB16AC25442A0D2B8CE0@SN6PR13MB2240.namprd13.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231382)(944501410)(52105095)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:SN6PR13MB2240;BCL:0;PCL:0;RULEID:;SRVR:SN6PR13MB2240;
+x-forefront-prvs: 0843C17679
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(346002)(136003)(376002)(39830400003)(366004)(396003)(199004)(189003)(4001150100001)(81166006)(81156014)(6486002)(478600001)(53936002)(68736007)(105586002)(6436002)(4326008)(102836004)(6306002)(76176011)(99286004)(6512007)(8676002)(8936002)(66066001)(7416002)(6506007)(86362001)(5250100002)(305945005)(7736002)(6246003)(36756003)(2501003)(5660300001)(26005)(14444005)(106356001)(93886005)(15974865002)(2906002)(446003)(71190400001)(2616005)(11346002)(186003)(110136005)(71200400001)(316002)(25786009)(476003)(2900100001)(118296001)(256004)(966005)(6116002)(486006)(54906003)(14454004)(97736004)(3846002)(229853002)(41533002)(21314003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR13MB2240;H:SN6PR13MB2494.namprd13.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: hammerspace.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 4QHe6B6LWWJdwfL3trInNxCaUcbebzVK8SVy0RiKPmAGpnvoGdBoVzPxo2GO/uA2OP1KzDlfwySWR6fA8rK9+FDeWp3DxVSuHz4al6JTVVZeS372r1HuACCuQ61MKy5V0cL8lRHSpf5F2RinbkYJUT+TXwAXm/Qygy4W+G7x6zoSn3dTLumEDzXKeFP9VxK1vxxBEHp1OMJMtA8YgS7XwOiHsZZcnk0tPkvjXVDDXckPS5aDEGt0PqIMt8vQJ7gtgvD1hoGejdGzVBXfvyY6wQPCfbaprTT2uEHe7AmNR+QVsiQTfG4I8F1nhzjE1qQx4DdBwuMuO8AaF/mgNLp7diy9iTLPamx0FgPXuEhI9YA=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="utf-8"
+Content-ID: <2DC2E59D54857A4C9E6FD81F927F5E22@namprd13.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Lina Iyer <ilina@codeaurora.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20181031164650.GJ17444@codeaurora.org>
-Cc:     linux-kernel@vger.kernel.org, evgreen@chromium.org,
-        marc.zyngier@arm.com
-References: <20181011002958.2597-1-ilina@codeaurora.org>
- <20181011002958.2597-2-ilina@codeaurora.org>
- <154096954339.98144.12348474096990107321@swboyd.mtv.corp.google.com>
- <20181031164650.GJ17444@codeaurora.org>
-Message-ID: <154103121313.98144.17090840121035743646@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH RFC 1/1] drivers: pinctrl: qcom: add wakeup capability to GPIO
-Date:   Wed, 31 Oct 2018 17:13:33 -0700
+X-OriginatorOrg: hammerspace.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f3a8f48b-fa4a-4a14-e4c4-08d63f8f6aa4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Nov 2018 00:17:31.9767
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR13MB2240
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Lina Iyer (2018-10-31 09:46:50)
-> On Wed, Oct 31 2018 at 01:05 -0600, Stephen Boyd wrote:
-> >Hi Lina,
-> >
-> >Quoting Lina Iyer (2018-10-10 17:29:58)
-> >> QCOM SoC's that have Power Domain Controller (PDC) chip in the always-=
-on
-> >> domain can wakeup the SoC, when interrupts and GPIOs are routed to its
-> >> interrupt controller. Only select GPIOs that are deemed wakeup capable
-> >> are routed to specific PDC pins. During low power state, the pinmux
-> >> interrupt controller may be non-functional but the PDC would be. The P=
-DC
-> >> can detect the wakeup GPIO is triggered and bring the TLMM to an
-> >> operational state.
-> >>
-> >> Interrupts that are level triggered will be detected at the TLMM when
-> >> the controller becomes operational. Edge interrupts however need to be
-> >> replayed again.
-> >>
-> >> Request the corresponding PDC IRQ, when the GPIO is requested as an IR=
-Q,
-> >> but keep it disabled. During suspend, we can enable the PDC IRQ instead
-> >> of the GPIO IRQ, which may or not be detected.
-> >>
-> >> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-> >> ---
-> >
-> >I spoke with Marc about this at ELCE last week and I think we came up
-> >with a plan for how to make this all work while keeping the TLMM driver
-> >largely unaware of what's happening. One important point that we need to
-> >keep in mind is that we don't want the interrupt to appear twice at the
-> >GIC for the same TLMM irq, once in TLMM and once in PDC. That situation
-> >would be quite bad and confuse things.
-> >
-> >So the plan is as follows:
-> >
-> > 1) Split PDC irqdomain into two domains. One for GIC interrupts and one
-> >    for TLMM interrupts
-> >
-> > 2) Support hierarchical irq domains in the TLMM driver and/or gpiolib
-> >
-> > 3) Stack the irq controllers into a hierarchy so that GIC is the parent
-> >    of PDC and PDC is the parent of TLMM while also leaving the TLMM
-> >    summary IRQ chained directly from the GIC irqdomain
-> >
-> > 4) Mask a TLMM irq in the TLMM driver and unmask the PDC irq in the PDC
-> >    driver when an irq_set_wake() call is made on a TLMM gpio irq that
-> >    PDC can monitor (and vice versa)
-> >
-> > 5) Have the PDC driver be the only driver that knows if a TLMM pin is
-> >    wakeup capable or not expressed in some DT table
-> >
-> >Implementing #4 will require changing TLMM irqchip to call
-> >irq_chip_set_wake_parent() for the .irq_set_wake op and then checking
-> >the return value to figure out if PDC is monitoring the pin or not and
-> >doing the mask/unmask dance. Furthermore, implementing #2 will be a bit
-> >of work that Thierry has already started for Nvidia Tegra pinctrl
-> >drivers.
-> >
-> We have been doing something similar downstream. But it has been quite
-> lot of code. The approach was to treat PDC-GPIO as a separate as
-> interrupt controller whose parent is the PDC. GPIOs that have PDC lines,
-> will be handled by the PDC-GPIO, while other GPIOs will continue to use
-> summary line. The hierarchy helps with the masking/unmasking and
-> prevents PDC interrupt from being detected as a separate interrupt than
-> the TLMM.
-> =
-
-> >The important part of #4 is that the irq can only happen in TLMM or in
-> >PDC, and not in both places because of how we mask and unmask in
-> >different drivers. The TLMM summary irq line can't be triggered when the
-> >PDC is monitoring the line.
-> >
-> >This also limits the usage of PDC to pins that are really waking up the
-> >system from some sort of sleep mode. Either the device driver is trying
-> >to wakeup from suspend so it's setting irq wake in the driver suspend
-> >path, or it's runtime suspending a device and wanting to wakeup from
-> >that device suspend state so it's again setting irq wake in runtime
-> >suspend. Either way, in "normal" active modes the irq path will be
-> >through the TLMM summary irq line and not through PDC. I don't know if
-> >a similar design would work for pre-PDC qcom hardware where the MPM is
-> >handled by RPM software.
-> >
-> Yes, we need a solution that works with both. But we can be assured that
-> the architecture will have either MPM or PDC, never both. The PDC is a
-> parallel line that is always active, while the MPM line is enabled only
-> when the SoC is in sleep mode.
-> =
-
-> >And finally, thinking about this after writing this mail I'm a little
-> >concerned that doing any sort of mask/unmask or irq movement from TLMM
-> >to PDC at runtime will miss edges for edge triggered interrupts. Is that
-> >also your concern? How is this handled with MPM? We would leave the TLMM
-> >interrupt enabled in that case and then have to replay the edge in
-> >software when resuming from suspend or idle paths but otherwise ignore
-> >the level type interrupts that MPM sees? I suppose MPM never gets an
-> >edge if TLMM gets the edge so this just works.
-> >
-> This is partly correct. Let me explain the key differences between the
-> current and the previous generation of the hardware to help with that.
-> (Let's call them PDC-based and MPM-based architectures respectively).
-> =
-
-> In MPM-based solution, the TLMM is active and is solely responsible for
-> notifying the CPU of the GPIOs until powered off (as part of
-> idle/suspend). At which point, the always-on MPM is configured for
-> wakeup from the GPIO. Upon sensing a signal will wake up the application
-> CPU using a separate MPM interrupt. The TLMM is powered on at the same
-> time. The CPU is interrupted by the MPM and if the GPIO was a level
-> interrupt the TLMM summary line will handle the GPIO. If the GPIO was an
-> edge interrupt the Linux MPM driver will replay the interrupt at TLMM.
-> Note that the MPM is not active after sending the interrupt to wakeup
-> the CPU.
-> =
-
-> With PDC-based solutions, the PDC is always active and can be used to
-> detect the interrupt even when the TLMM is active. But it could be a
-> problem if both the interrupt lines are configured. If we could use the
-> PDC interrupt line always for such GPIOs, it will solve the problem.
-> This patch does just that.
-
-Right. Let's scrap the plan to do the wakeup based mask/unmask in both
-chips. It won't work because of the edge trigger type.
-
-The difference I see is that this patch does the irq "forwarding" by
-making the TLMM driver highly aware of the PDC irq domain. It explicitly
-lists each PDC irq as interrupts in DT. Why are we doing that? If we
-used hierarchical irq domains then only the PDC would be aware of what
-irqs are wakeup capable, and TLMM would just need to be told to mask or
-not mask the irq when an irq is monitored by the PDC (and maybe not even
-that).
-
-This is also the only major difference I see between MPM and PDC based
-designs. In the PDC case, we need to mask the irq in TLMM when PDC can
-monitor it, while in the MPM case we want to keep it unmasked in TLMM
-all the time and only have MPM configure the wakeup on irq_set_wake().
-In the end, supporting MPM is simpler because it sits in-between TLMM
-and GIC, watches all TLMM irqs get allocated and hooks the irq_set_wake
-calls for the ones that it cares to wakeup with and masks the non-wakeup
-irqs during suspend, and then does edge trigger replays when the MPM
-interrupt handler runs by poking the TLMM hardware directly. That poke
-causes the summary irq line to go high and the GIC SPI line for TLMM
-summary services the GPIO irq. We would leave the level type irqs alone
-because hardware takes care of it all for us.
-
-Can PDC be made to do the same thing as MPM? On resume we can replay any
-pending irq that's edge triggered by replaying the edge into the TLMM.
-That will cause the summary irq line at the GIC to go high and then the
-chained irq handler will run as normal. As long as we don't need to
-replay edges during deep idle states I think this can work, and given
-that MPM isn't replaying edges during deep idle I suspect this is all
-fine. Yes we have a GIC SPI line for each pin that PDC can monitor, but
-that's largely an implementation detail here.
-
-It would be nice to make MPM and PDC the same, so that we don't need to
-decide to mask or not mask in TLMM or move a GPIO irq out of the TLMM
-summary GIC SPI to some other GIC SPI from PDC. Then supporting both
-designs is nothing more than parenting the MPM or PDC to TLMM and having
-those drivers poke the edges into the hardware on resume.
-
-> =
-
-> By using the PDC line for the PDC-based architectures, we will not
-> intersect the MPM-based architectures and they both can continue to use
-> the same driver. Only in the PDC-based architecture we will find a map
-> of the PDC interrupts in DT for the corresponding GPIOs. If the map is
-> missing or the PDC is not available, it will not be a error.
-> =
-
-
-Well given that we don't have any MPM based solutions upstream I'm not
-sure how well we can make sure both designs work together, but yes, we
-should strive to do this in case MPM solutions get upstreamed.
-
+SGkgUGF1bCwNCg0KT24gV2VkLCAyMDE4LTEwLTMxIGF0IDIzOjMyICswMDAwLCBQYXVsIEJ1cnRv
+biB3cm90ZToNCj4gKENvcHlpbmcgU3VuUlBDICYgbmV0IG1haW50YWluZXJzLikNCj4gDQo+IEhp
+IEd1ZW50ZXIsDQo+IA0KPiBPbiBXZWQsIE9jdCAzMSwgMjAxOCBhdCAwMzowMjo1M1BNIC0wNzAw
+LCBHdWVudGVyIFJvZWNrIHdyb3RlOg0KPiA+IFRoZSBhbHRlcm5hdGl2ZXMgSSBjYW4gc2VlIGFy
+ZQ0KPiA+IC0gRG8gbm90IHVzZSBjbXB4Y2hnNjQoKSBvdXRzaWRlIGFyY2hpdGVjdHVyZSBjb2Rl
+IChpZSBkcm9wIGl0cyB1c2UNCj4gPiBmcm9tDQo+ID4gICB0aGUgb2ZmZW5kaW5nIGRyaXZlciwg
+YW5kIGtlZXAgZG9pbmcgdGhlIHNhbWUgd2hlbmV2ZXIgdGhlDQo+ID4gcHJvYmxlbSBjb21lcw0K
+PiA+ICAgdXAgYWdhaW4pLg0KPiA+IG9yDQo+ID4gLSBJbnRyb2R1Y2Ugc29tZXRoaW5nIGxpa2Ug
+QVJDSF9IQVNfQ01QWENIRzY0IGFuZCB1c2UgaXQgdG8NCj4gPiBkZXRlcm1pbmUNCj4gPiAgIGlm
+IGNtcHhjaGc2NCBpcyBzdXBwb3J0ZWQgb3Igbm90Lg0KPiA+IA0KPiA+IEFueSBwcmVmZXJlbmNl
+ID8NCj4gDQo+IE15IHByZWZlcmVuY2Ugd291bGQgYmUgb3B0aW9uIDEgLSBhdm9pZGluZyBjbXB4
+Y2hnNjQoKSB3aGVyZSBwb3NzaWJsZQ0KPiBpbg0KPiBnZW5lcmljIGNvZGUuIEkgd291bGRuJ3Qg
+YmUgb3Bwb3NlZCB0byB0aGUgS2NvbmZpZyBvcHRpb24gaWYgdGhlcmUNCj4gYXJlDQo+IGNhc2Vz
+IHdoZXJlIGNtcHhjaGc2NCgpIGNhbiByZWFsbHkgaGVscCBwZXJmb3JtYW5jZSB0aG91Z2guDQo+
+IA0KPiBUaGUgbGFzdCB0aW1lIEknbSBhd2FyZSBvZiB0aGlzIGNvbWluZyB1cCB0aGUgYWZmZWN0
+ZWQgZHJpdmVyIHdhcw0KPiBtb2RpZmllZCB0byBhdm9pZCBjbXB4Y2hnNjQoKSBbMV0uDQo+IA0K
+PiBJbiB0aGlzIHBhcnRpY3VsYXIgY2FzZSBJIGhhdmUgbm8gaWRlYSB3aHkNCj4gbmV0L3N1bnJw
+Yy9hdXRoX2dzcy9nc3Nfa3JiNV9zZWFsLmMgaXMgdXNpbmcgY21weGNoZzY0KCkgYXQgYWxsLiBJ
+dCdzDQo+IGVzc2VudGlhbGx5IHJlaW52ZW50aW5nIGF0b21pYzY0X2ZldGNoX2luYygpIHdoaWNo
+IGlzIGFscmVhZHkNCj4gcHJvdmlkZWQNCj4gZXZlcnl3aGVyZSB2aWEgQ09ORklHX0dFTkVSSUNf
+QVRPTUlDNjQgJiB0aGUgc3BpbmxvY2sgYXBwcm9hY2guIEF0DQo+IGxlYXN0DQo+IGZvciBhdG9t
+aWM2NF8qIGZ1bmN0aW9ucyB0aGUgYXNzdW1wdGlvbiB0aGF0IGFsbCBhY2Nlc3Mgd2lsbCBiZQ0K
+PiBwZXJmb3JtZWQgdXNpbmcgdGhvc2Ugc2FtZSBmdW5jdGlvbnMgc2VlbXMgc29tZXdoYXQgcmVh
+c29uYWJsZS4NCj4gDQo+IFNvIGhvdyBkb2VzIHRoZSBiZWxvdyBsb29rPyBUcm9uZD8NCj4gDQoN
+Ck15IG9uZSBxdWVzdGlvbiAoYW5kIHRoZSByZWFzb24gd2h5IEkgd2VudCB3aXRoIGNtcHhjaGco
+KSBpbiB0aGUgZmlyc3QNCnBsYWNlKSB3b3VsZCBiZSBhYm91dCB0aGUgb3ZlcmZsb3cgYmVoYXZp
+b3VyIGZvciBhdG9taWNfZmV0Y2hfaW5jKCkgYW5kDQpmcmllbmRzLiBJIGJlbGlldmUgdGhvc2Ug
+ZnVuY3Rpb25zIHNob3VsZCBiZSBPSyBvbiB4ODYsIHNvIHRoYXQgd2hlbiB3ZQ0Kb3ZlcmZsb3cg
+dGhlIGNvdW50ZXIsIGl0IGJlaGF2ZXMgbGlrZSBhbiB1bnNpZ25lZCB2YWx1ZSBhbmQgd3JhcHMg
+YmFjaw0KYXJvdW5kLiAgSXMgdGhhdCB0aGUgY2FzZSBmb3IgYWxsIGFyY2hpdGVjdHVyZXM/DQoN
+CmkuZS4gYXJlIGF0b21pY190L2F0b21pYzY0X3QgYWx3YXlzIGd1YXJhbnRlZWQgdG8gYmVoYXZl
+IGxpa2UgdTMyL3U2NA0Kb24gaW5jcmVtZW50Pw0KDQpJIGNvdWxkIG5vdCBmaW5kIGFueSBkb2N1
+bWVudGF0aW9uIHRoYXQgZXhwbGljaXRseSBzdGF0ZWQgdGhhdCB0aGV5DQpzaG91bGQuDQoNCkNo
+ZWVycw0KICBUcm9uZA0KDQo+IFRoYW5rcywNCj4gICAgIFBhdWwNCj4gDQo+IFsxXSBodHRwczov
+L3BhdGNod29yay5vemxhYnMub3JnL2NvdmVyLzg5MTI4NC8NCj4gDQo+IC0tLQ0KPiBkaWZmIC0t
+Z2l0IGEvaW5jbHVkZS9saW51eC9zdW5ycGMvZ3NzX2tyYjUuaA0KPiBiL2luY2x1ZGUvbGludXgv
+c3VucnBjL2dzc19rcmI1LmgNCj4gaW5kZXggMTMxNDI0Y2VmYzZhLi4wMmMwNDEyZTM2OGMgMTAw
+NjQ0DQo+IC0tLSBhL2luY2x1ZGUvbGludXgvc3VucnBjL2dzc19rcmI1LmgNCj4gKysrIGIvaW5j
+bHVkZS9saW51eC9zdW5ycGMvZ3NzX2tyYjUuaA0KPiBAQCAtMTA3LDggKzEwNyw4IEBAIHN0cnVj
+dCBrcmI1X2N0eCB7DQo+ICAJdTgJCQlLc2Vzc1tHU1NfS1JCNV9NQVhfS0VZTEVOXTsgLyoNCj4g
+c2Vzc2lvbiBrZXkgKi8NCj4gIAl1OAkJCWNrc3VtW0dTU19LUkI1X01BWF9LRVlMRU5dOw0KPiAg
+CXMzMgkJCWVuZHRpbWU7DQo+IC0JdTMyCQkJc2VxX3NlbmQ7DQo+IC0JdTY0CQkJc2VxX3NlbmQ2
+NDsNCj4gKwlhdG9taWNfdAkJc2VxX3NlbmQ7DQo+ICsJYXRvbWljNjRfdAkJc2VxX3NlbmQ2NDsN
+Cj4gIAlzdHJ1Y3QgeGRyX25ldG9iagltZWNoX3VzZWQ7DQo+ICAJdTgJCQlpbml0aWF0b3Jfc2ln
+bltHU1NfS1JCNV9NQVhfS0VZTEVOXTsNCj4gIAl1OAkJCWFjY2VwdG9yX3NpZ25bR1NTX0tSQjVf
+TUFYX0tFWUxFTl07DQo+IEBAIC0xMTgsOSArMTE4LDYgQEAgc3RydWN0IGtyYjVfY3R4IHsNCj4g
+IAl1OAkJCWFjY2VwdG9yX2ludGVnW0dTU19LUkI1X01BWF9LRVlMRU5dOw0KPiAgfTsNCj4gIA0K
+PiAtZXh0ZXJuIHUzMiBnc3Nfc2VxX3NlbmRfZmV0Y2hfYW5kX2luYyhzdHJ1Y3Qga3JiNV9jdHgg
+KmN0eCk7DQo+IC1leHRlcm4gdTY0IGdzc19zZXFfc2VuZDY0X2ZldGNoX2FuZF9pbmMoc3RydWN0
+IGtyYjVfY3R4ICpjdHgpOw0KPiAtDQo+ICAvKiBUaGUgbGVuZ3RoIG9mIHRoZSBLZXJiZXJvcyBH
+U1MgdG9rZW4gaGVhZGVyICovDQo+ICAjZGVmaW5lIEdTU19LUkI1X1RPS19IRFJfTEVOCSgxNikN
+Cj4gIA0KPiBkaWZmIC0tZ2l0IGEvbmV0L3N1bnJwYy9hdXRoX2dzcy9nc3Nfa3JiNV9tZWNoLmMN
+Cj4gYi9uZXQvc3VucnBjL2F1dGhfZ3NzL2dzc19rcmI1X21lY2guYw0KPiBpbmRleCA3ZjA0MjRk
+ZmE4ZjYuLmVhYjcxZmM3YWYzZSAxMDA2NDQNCj4gLS0tIGEvbmV0L3N1bnJwYy9hdXRoX2dzcy9n
+c3Nfa3JiNV9tZWNoLmMNCj4gKysrIGIvbmV0L3N1bnJwYy9hdXRoX2dzcy9nc3Nfa3JiNV9tZWNo
+LmMNCj4gQEAgLTI3NCw2ICsyNzQsNyBAQCBnZXRfa2V5KGNvbnN0IHZvaWQgKnAsIGNvbnN0IHZv
+aWQgKmVuZCwNCj4gIHN0YXRpYyBpbnQNCj4gIGdzc19pbXBvcnRfdjFfY29udGV4dChjb25zdCB2
+b2lkICpwLCBjb25zdCB2b2lkICplbmQsIHN0cnVjdA0KPiBrcmI1X2N0eCAqY3R4KQ0KPiAgew0K
+PiArCXUzMiBzZXFfc2VuZDsNCj4gIAlpbnQgdG1wOw0KPiAgDQo+ICAJcCA9IHNpbXBsZV9nZXRf
+Ynl0ZXMocCwgZW5kLCAmY3R4LT5pbml0aWF0ZSwgc2l6ZW9mKGN0eC0NCj4gPmluaXRpYXRlKSk7
+DQo+IEBAIC0zMTUsOSArMzE2LDEwIEBAIGdzc19pbXBvcnRfdjFfY29udGV4dChjb25zdCB2b2lk
+ICpwLCBjb25zdCB2b2lkDQo+ICplbmQsIHN0cnVjdCBrcmI1X2N0eCAqY3R4KQ0KPiAgCXAgPSBz
+aW1wbGVfZ2V0X2J5dGVzKHAsIGVuZCwgJmN0eC0+ZW5kdGltZSwgc2l6ZW9mKGN0eC0NCj4gPmVu
+ZHRpbWUpKTsNCj4gIAlpZiAoSVNfRVJSKHApKQ0KPiAgCQlnb3RvIG91dF9lcnI7DQo+IC0JcCA9
+IHNpbXBsZV9nZXRfYnl0ZXMocCwgZW5kLCAmY3R4LT5zZXFfc2VuZCwgc2l6ZW9mKGN0eC0NCj4g
+PnNlcV9zZW5kKSk7DQo+ICsJcCA9IHNpbXBsZV9nZXRfYnl0ZXMocCwgZW5kLCAmc2VxX3NlbmQs
+IHNpemVvZihzZXFfc2VuZCkpOw0KPiAgCWlmIChJU19FUlIocCkpDQo+ICAJCWdvdG8gb3V0X2Vy
+cjsNCj4gKwlhdG9taWNfc2V0KCZjdHgtPnNlcV9zZW5kLCBzZXFfc2VuZCk7DQo+ICAJcCA9IHNp
+bXBsZV9nZXRfbmV0b2JqKHAsIGVuZCwgJmN0eC0+bWVjaF91c2VkKTsNCj4gIAlpZiAoSVNfRVJS
+KHApKQ0KPiAgCQlnb3RvIG91dF9lcnI7DQo+IEBAIC02MDcsNiArNjA5LDcgQEAgc3RhdGljIGlu
+dA0KPiAgZ3NzX2ltcG9ydF92Ml9jb250ZXh0KGNvbnN0IHZvaWQgKnAsIGNvbnN0IHZvaWQgKmVu
+ZCwgc3RydWN0DQo+IGtyYjVfY3R4ICpjdHgsDQo+ICAJCWdmcF90IGdmcF9tYXNrKQ0KPiAgew0K
+PiArCXU2NCBzZXFfc2VuZDY0Ow0KPiAgCWludCBrZXlsZW47DQo+ICANCj4gIAlwID0gc2ltcGxl
+X2dldF9ieXRlcyhwLCBlbmQsICZjdHgtPmZsYWdzLCBzaXplb2YoY3R4LT5mbGFncykpOw0KPiBA
+QCAtNjE3LDE0ICs2MjAsMTUgQEAgZ3NzX2ltcG9ydF92Ml9jb250ZXh0KGNvbnN0IHZvaWQgKnAs
+IGNvbnN0IHZvaWQNCj4gKmVuZCwgc3RydWN0IGtyYjVfY3R4ICpjdHgsDQo+ICAJcCA9IHNpbXBs
+ZV9nZXRfYnl0ZXMocCwgZW5kLCAmY3R4LT5lbmR0aW1lLCBzaXplb2YoY3R4LQ0KPiA+ZW5kdGlt
+ZSkpOw0KPiAgCWlmIChJU19FUlIocCkpDQo+ICAJCWdvdG8gb3V0X2VycjsNCj4gLQlwID0gc2lt
+cGxlX2dldF9ieXRlcyhwLCBlbmQsICZjdHgtPnNlcV9zZW5kNjQsIHNpemVvZihjdHgtDQo+ID5z
+ZXFfc2VuZDY0KSk7DQo+ICsJcCA9IHNpbXBsZV9nZXRfYnl0ZXMocCwgZW5kLCAmc2VxX3NlbmQ2
+NCwgc2l6ZW9mKHNlcV9zZW5kNjQpKTsNCj4gIAlpZiAoSVNfRVJSKHApKQ0KPiAgCQlnb3RvIG91
+dF9lcnI7DQo+ICsJYXRvbWljNjRfc2V0KCZjdHgtPnNlcV9zZW5kNjQsIHNlcV9zZW5kNjQpOw0K
+PiAgCS8qIHNldCBzZXFfc2VuZCBmb3IgdXNlIGJ5ICJvbGRlciIgZW5jdHlwZXMgKi8NCj4gLQlj
+dHgtPnNlcV9zZW5kID0gY3R4LT5zZXFfc2VuZDY0Ow0KPiAtCWlmIChjdHgtPnNlcV9zZW5kNjQg
+IT0gY3R4LT5zZXFfc2VuZCkgew0KPiAtCQlkcHJpbnRrKCIlczogc2VxX3NlbmQ2NCAlbHgsIHNl
+cV9zZW5kICV4IG92ZXJmbG93P1xuIiwNCj4gX19mdW5jX18sDQo+IC0JCQkodW5zaWduZWQgbG9u
+ZyljdHgtPnNlcV9zZW5kNjQsIGN0eC0+c2VxX3NlbmQpOw0KPiArCWF0b21pY19zZXQoJmN0eC0+
+c2VxX3NlbmQsIHNlcV9zZW5kNjQpOw0KPiArCWlmIChzZXFfc2VuZDY0ICE9IGF0b21pY19yZWFk
+KCZjdHgtPnNlcV9zZW5kKSkgew0KPiArCQlkcHJpbnRrKCIlczogc2VxX3NlbmQ2NCAlbGx4LCBz
+ZXFfc2VuZCAleCBvdmVyZmxvdz9cbiIsDQo+IF9fZnVuY19fLA0KPiArCQkJc2VxX3NlbmQ2NCwg
+YXRvbWljX3JlYWQoJmN0eC0+c2VxX3NlbmQpKTsNCj4gIAkJcCA9IEVSUl9QVFIoLUVJTlZBTCk7
+DQo+ICAJCWdvdG8gb3V0X2VycjsNCj4gIAl9DQo+IGRpZmYgLS1naXQgYS9uZXQvc3VucnBjL2F1
+dGhfZ3NzL2dzc19rcmI1X3NlYWwuYw0KPiBiL25ldC9zdW5ycGMvYXV0aF9nc3MvZ3NzX2tyYjVf
+c2VhbC5jDQo+IGluZGV4IGI0YWRlYjA2NjYwYi4uNDhmZTRhNTkxYjU0IDEwMDY0NA0KPiAtLS0g
+YS9uZXQvc3VucnBjL2F1dGhfZ3NzL2dzc19rcmI1X3NlYWwuYw0KPiArKysgYi9uZXQvc3VucnBj
+L2F1dGhfZ3NzL2dzc19rcmI1X3NlYWwuYw0KPiBAQCAtMTIzLDMwICsxMjMsNiBAQCBzZXR1cF90
+b2tlbl92MihzdHJ1Y3Qga3JiNV9jdHggKmN0eCwgc3RydWN0DQo+IHhkcl9uZXRvYmogKnRva2Vu
+KQ0KPiAgCXJldHVybiBrcmI1X2hkcjsNCj4gIH0NCj4gIA0KPiAtdTMyDQo+IC1nc3Nfc2VxX3Nl
+bmRfZmV0Y2hfYW5kX2luYyhzdHJ1Y3Qga3JiNV9jdHggKmN0eCkNCj4gLXsNCj4gLQl1MzIgb2xk
+LCBzZXFfc2VuZCA9IFJFQURfT05DRShjdHgtPnNlcV9zZW5kKTsNCj4gLQ0KPiAtCWRvIHsNCj4g
+LQkJb2xkID0gc2VxX3NlbmQ7DQo+IC0JCXNlcV9zZW5kID0gY21weGNoZygmY3R4LT5zZXFfc2Vu
+ZCwgb2xkLCBvbGQgKyAxKTsNCj4gLQl9IHdoaWxlIChvbGQgIT0gc2VxX3NlbmQpOw0KPiAtCXJl
+dHVybiBzZXFfc2VuZDsNCj4gLX0NCj4gLQ0KPiAtdTY0DQo+IC1nc3Nfc2VxX3NlbmQ2NF9mZXRj
+aF9hbmRfaW5jKHN0cnVjdCBrcmI1X2N0eCAqY3R4KQ0KPiAtew0KPiAtCXU2NCBvbGQsIHNlcV9z
+ZW5kID0gUkVBRF9PTkNFKGN0eC0+c2VxX3NlbmQpOw0KPiAtDQo+IC0JZG8gew0KPiAtCQlvbGQg
+PSBzZXFfc2VuZDsNCj4gLQkJc2VxX3NlbmQgPSBjbXB4Y2hnNjQoJmN0eC0+c2VxX3NlbmQ2NCwg
+b2xkLCBvbGQgKyAxKTsNCj4gLQl9IHdoaWxlIChvbGQgIT0gc2VxX3NlbmQpOw0KPiAtCXJldHVy
+biBzZXFfc2VuZDsNCj4gLX0NCj4gLQ0KPiAgc3RhdGljIHUzMg0KPiAgZ3NzX2dldF9taWNfdjEo
+c3RydWN0IGtyYjVfY3R4ICpjdHgsIHN0cnVjdCB4ZHJfYnVmICp0ZXh0LA0KPiAgCQlzdHJ1Y3Qg
+eGRyX25ldG9iaiAqdG9rZW4pDQo+IEBAIC0xNzcsNyArMTUzLDcgQEAgZ3NzX2dldF9taWNfdjEo
+c3RydWN0IGtyYjVfY3R4ICpjdHgsIHN0cnVjdA0KPiB4ZHJfYnVmICp0ZXh0LA0KPiAgDQo+ICAJ
+bWVtY3B5KHB0ciArIEdTU19LUkI1X1RPS19IRFJfTEVOLCBtZDVja3N1bS5kYXRhLA0KPiBtZDVj
+a3N1bS5sZW4pOw0KPiAgDQo+IC0Jc2VxX3NlbmQgPSBnc3Nfc2VxX3NlbmRfZmV0Y2hfYW5kX2lu
+YyhjdHgpOw0KPiArCXNlcV9zZW5kID0gYXRvbWljX2ZldGNoX2luYygmY3R4LT5zZXFfc2VuZCk7
+DQo+ICANCj4gIAlpZiAoa3JiNV9tYWtlX3NlcV9udW0oY3R4LCBjdHgtPnNlcSwgY3R4LT5pbml0
+aWF0ZSA/IDAgOiAweGZmLA0KPiAgCQkJICAgICAgc2VxX3NlbmQsIHB0ciArIEdTU19LUkI1X1RP
+S19IRFJfTEVOLCBwdHINCj4gKyA4KSkNCj4gQEAgLTIwNSw3ICsxODEsNyBAQCBnc3NfZ2V0X21p
+Y192MihzdHJ1Y3Qga3JiNV9jdHggKmN0eCwgc3RydWN0DQo+IHhkcl9idWYgKnRleHQsDQo+ICAN
+Cj4gIAkvKiBTZXQgdXAgdGhlIHNlcXVlbmNlIG51bWJlci4gTm93IDY0LWJpdHMgaW4gY2xlYXIN
+Cj4gIAkgKiB0ZXh0IGFuZCB3L28gZGlyZWN0aW9uIGluZGljYXRvciAqLw0KPiAtCXNlcV9zZW5k
+X2JlNjQgPSBjcHVfdG9fYmU2NChnc3Nfc2VxX3NlbmQ2NF9mZXRjaF9hbmRfaW5jKGN0eCkpOw0K
+PiArCXNlcV9zZW5kX2JlNjQgPSBjcHVfdG9fYmU2NChhdG9taWM2NF9mZXRjaF9pbmMoJmN0eC0N
+Cj4gPnNlcV9zZW5kNjQpKTsNCj4gIAltZW1jcHkoa3JiNV9oZHIgKyA4LCAoY2hhciAqKSAmc2Vx
+X3NlbmRfYmU2NCwgOCk7DQo+ICANCj4gIAlpZiAoY3R4LT5pbml0aWF0ZSkgew0KPiBkaWZmIC0t
+Z2l0IGEvbmV0L3N1bnJwYy9hdXRoX2dzcy9nc3Nfa3JiNV93cmFwLmMNCj4gYi9uZXQvc3VucnBj
+L2F1dGhfZ3NzL2dzc19rcmI1X3dyYXAuYw0KPiBpbmRleCA5NjJmYTg0ZTZkYjEuLjVjZGRlNmNi
+NzAzYSAxMDA2NDQNCj4gLS0tIGEvbmV0L3N1bnJwYy9hdXRoX2dzcy9nc3Nfa3JiNV93cmFwLmMN
+Cj4gKysrIGIvbmV0L3N1bnJwYy9hdXRoX2dzcy9nc3Nfa3JiNV93cmFwLmMNCj4gQEAgLTIyOCw3
+ICsyMjgsNyBAQCBnc3Nfd3JhcF9rZXJiZXJvc192MShzdHJ1Y3Qga3JiNV9jdHggKmtjdHgsIGlu
+dA0KPiBvZmZzZXQsDQo+ICANCj4gIAltZW1jcHkocHRyICsgR1NTX0tSQjVfVE9LX0hEUl9MRU4s
+IG1kNWNrc3VtLmRhdGEsDQo+IG1kNWNrc3VtLmxlbik7DQo+ICANCj4gLQlzZXFfc2VuZCA9IGdz
+c19zZXFfc2VuZF9mZXRjaF9hbmRfaW5jKGtjdHgpOw0KPiArCXNlcV9zZW5kID0gYXRvbWljX2Zl
+dGNoX2luYygma2N0eC0+c2VxX3NlbmQpOw0KPiAgDQo+ICAJLyogWFhYIHdvdWxkIHByb2JhYmx5
+IGJlIG1vcmUgZWZmaWNpZW50IHRvIGNvbXB1dGUgY2hlY2tzdW0NCj4gIAkgKiBhbmQgZW5jcnlw
+dCBhdCB0aGUgc2FtZSB0aW1lOiAqLw0KPiBAQCAtNDc1LDcgKzQ3NSw3IEBAIGdzc193cmFwX2tl
+cmJlcm9zX3YyKHN0cnVjdCBrcmI1X2N0eCAqa2N0eCwgdTMyDQo+IG9mZnNldCwNCj4gIAkqYmUx
+NnB0cisrID0gMDsNCj4gIA0KPiAgCWJlNjRwdHIgPSAoX19iZTY0ICopYmUxNnB0cjsNCj4gLQkq
+YmU2NHB0ciA9IGNwdV90b19iZTY0KGdzc19zZXFfc2VuZDY0X2ZldGNoX2FuZF9pbmMoa2N0eCkp
+Ow0KPiArCSpiZTY0cHRyID0gY3B1X3RvX2JlNjQoYXRvbWljNjRfZmV0Y2hfaW5jKCZrY3R4LT5z
+ZXFfc2VuZDY0KSk7DQo+ICANCj4gIAllcnIgPSAoKmtjdHgtPmdrNWUtPmVuY3J5cHRfdjIpKGtj
+dHgsIG9mZnNldCwgYnVmLCBwYWdlcyk7DQo+ICAJaWYgKGVycikNCi0tIA0KVHJvbmQgTXlrbGVi
+dXN0DQpDVE8sIEhhbW1lcnNwYWNlIEluYw0KNDMwMCBFbCBDYW1pbm8gUmVhbCwgU3VpdGUgMTA1
+DQpMb3MgQWx0b3MsIENBIDk0MDIyDQp3d3cuaGFtbWVyLnNwYWNlDQoNCg0K
