@@ -2,166 +2,130 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 244D5C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:34:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53409C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:34:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE048205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:34:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1045E205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:34:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Z83arXip";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Z83arXip"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE048205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fzM2gZrc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1045E205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728870AbeKAXhf (ORCPT
+        id S1728887AbeKAXhl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 19:37:35 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60288 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728016AbeKAXhf (ORCPT
+        Thu, 1 Nov 2018 19:37:41 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:33871 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728016AbeKAXhl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 19:37:35 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id EDE5860B19; Thu,  1 Nov 2018 14:34:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541082860;
-        bh=e9A71YFGN4EAGGFIj6In4wnBi23/O8HU8avNM9NxrZ4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Z83arXipk8mmsJgadgC3D/F3XCnfEB/YS9bvg8HzNqFzVpqiKiIZjghr6dI5w1fgR
-         Q5jVfZa5Sy5bVTR0pXhsK19PIpJxfZ3bieDy8pw2Lhwv8nBI4jtcaEo02CBY87KEVh
-         iEvUZ7ouh22oKg+t0hgLTl588p6fSiimtypqR+5U=
-Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: bgodavar@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C268D60744;
-        Thu,  1 Nov 2018 14:34:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541082860;
-        bh=e9A71YFGN4EAGGFIj6In4wnBi23/O8HU8avNM9NxrZ4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Z83arXipk8mmsJgadgC3D/F3XCnfEB/YS9bvg8HzNqFzVpqiKiIZjghr6dI5w1fgR
-         Q5jVfZa5Sy5bVTR0pXhsK19PIpJxfZ3bieDy8pw2Lhwv8nBI4jtcaEo02CBY87KEVh
-         iEvUZ7ouh22oKg+t0hgLTl588p6fSiimtypqR+5U=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C268D60744
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     marcel@holtmann.org, johan.hedberg@gmail.com
-Cc:     mka@chromium.org, linux-kernel@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org,
-        Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Subject: [PATCH v2] Bluetooth: hci_qca: Add helper to set device address.
-Date:   Thu,  1 Nov 2018 20:04:10 +0530
-Message-Id: <20181101143410.31531-1-bgodavar@codeaurora.org>
-X-Mailer: git-send-email 2.19.1
+        Thu, 1 Nov 2018 19:37:41 -0400
+Received: by mail-wm1-f67.google.com with SMTP id f1-v6so1917300wmg.1
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 07:34:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=doC4a68ijO/gdT3cIlg+bwo6fuYr/HydJ/wMXO1+oO4=;
+        b=fzM2gZrciwxBzvpjalznnpMW1h+znxViaT9pxKpW363vnKptTcTsFRwKGxxJA2Umdh
+         klNiaY9BYQmiiOXKXrHA/KAi5jOTQuRGDZQP41Ve3mxs0eah2VAe9LQK66YOJOsLmTTz
+         QaYdIWW2tDlD+Kh/GpV+DukJh9OPf1kR1RPTxJYSXNTlwOfrjLmGkGvV2L2nCrMr5YFA
+         89ZN1ntALb7zgWq/T/ofL8aCOi5oiDGPtgTZAIhhnxsZW6xIBWjs1wRMWZ76O+zLBQtH
+         sYOfJmS81nmOzR8D5imO8YAS9IW/HDvdKqfzvs2X380E0oh4vB81x/4sCniecEF7NH4S
+         lnJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=doC4a68ijO/gdT3cIlg+bwo6fuYr/HydJ/wMXO1+oO4=;
+        b=prgtg+niMl47pQr3PqXItUpVVsYvijxfvaKQJ3Huvjyn7wLfM3Pls1R0FQqrNYPE1C
+         iSQVsLtkRsgbukrka9yPZPo7qNUIHTsJQD0gQy3FwD3Lts9uMhJ9eN1mMPsfNWhdTDK2
+         J0qNALxS6gjgrR16DYV6DAXCYC0gS4nF3KflNja8sgV1OIzu4et6QjAdz3XS/85FifuW
+         UosNro7xURnB495oZ3FVikWSHhGLmfrewFV8JURdWsJBCf2hH/uqf0siPr9pTolWUC7Q
+         szIcBt86CHIyrx4WdjGh282/nj9o+jeaLp+ON/dcvSxpfsXCKx4oCk3rxbTtSY04pgde
+         p0Kw==
+X-Gm-Message-State: AGRZ1gIxdDIdK7WZ9qnx5ipYWCDbEwsWKmHCM1GZdyux5li+15BVW3La
+        ukwATcsV4ITkiziLSNVmeUY=
+X-Google-Smtp-Source: AJdET5dzA39rnBkVQgZ4NZkz8YCDEGQmTL3k6mFFOWpBU+M5qYzzE/KqBRXRHZQYtOm5LIZsTRzRzg==
+X-Received: by 2002:a1c:32ca:: with SMTP id y193-v6mr5710658wmy.29.1541082865800;
+        Thu, 01 Nov 2018 07:34:25 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id g76-v6sm24702360wmd.25.2018.11.01.07.34.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 01 Nov 2018 07:34:24 -0700 (PDT)
+Date:   Thu, 1 Nov 2018 15:34:21 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     "Woodhouse, David" <dwmw@amazon.co.uk>,
+        "zhenzhong.duan@oracle.com" <zhenzhong.duan@oracle.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "bp@suse.de" <bp@suse.de>,
+        "srinivas.eeda@oracle.com" <srinivas.eeda@oracle.com>,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        "michal.lkml@markovi.net" <michal.lkml@markovi.net>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "luto@kernel.org" <luto@kernel.org>
+Subject: Re: [PATCH v2 1/2] retpolines: Only enable retpoline support when
+ compiler support it
+Message-ID: <20181101143421.GA81370@gmail.com>
+References: <991cbe9b-1e31-4b12-b572-91fde5c79699@default>
+ <20181101095002.GA118944@gmail.com>
+ <90a9eed724b28d5af57a71694a95b4cd92728ccc.camel@amazon.co.uk>
+ <alpine.DEB.2.21.1811011317400.1642@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1811011317400.1642@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add qca_set_bdaddr() to set the device
-address for latest Qualcomm Bluetooth chipset wcn3990 and above.
 
-Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Tested-by: Matthias Kaehlcke <mka@chromium.org>
----
-v2: addressed review comments
-v1: intial patch
----
- drivers/bluetooth/btqca.c   | 19 +++++++++++++++++++
- drivers/bluetooth/btqca.h   |  8 +++++++-
- drivers/bluetooth/hci_qca.c |  5 ++++-
- 3 files changed, 30 insertions(+), 2 deletions(-)
+* Thomas Gleixner <tglx@linutronix.de> wrote:
 
-diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
-index ec9e03a6b778..612268574fc7 100644
---- a/drivers/bluetooth/btqca.c
-+++ b/drivers/bluetooth/btqca.c
-@@ -391,6 +391,25 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
- }
- EXPORT_SYMBOL_GPL(qca_uart_setup);
- 
-+int qca_set_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr)
-+{
-+	struct sk_buff *skb;
-+	int err;
-+
-+	skb = __hci_cmd_sync_ev(hdev, EDL_WRITE_BD_ADDR_OPCODE, 6, bdaddr,
-+				HCI_EV_VENDOR, HCI_INIT_TIMEOUT);
-+	if (IS_ERR(skb)) {
-+		err = PTR_ERR(skb);
-+		bt_dev_err(hdev, "QCA Change address cmd failed (%d)", err);
-+		return err;
-+	}
-+
-+	kfree_skb(skb);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(qca_set_bdaddr);
-+
- MODULE_AUTHOR("Ben Young Tae Kim <ytkim@qca.qualcomm.com>");
- MODULE_DESCRIPTION("Bluetooth support for Qualcomm Atheros family ver " VERSION);
- MODULE_VERSION(VERSION);
-diff --git a/drivers/bluetooth/btqca.h b/drivers/bluetooth/btqca.h
-index 0c01f375fe83..c72c56ea7480 100644
---- a/drivers/bluetooth/btqca.h
-+++ b/drivers/bluetooth/btqca.h
-@@ -20,6 +20,7 @@
- 
- #define EDL_PATCH_CMD_OPCODE		(0xFC00)
- #define EDL_NVM_ACCESS_OPCODE		(0xFC0B)
-+#define EDL_WRITE_BD_ADDR_OPCODE	(0xFC14)
- #define EDL_PATCH_CMD_LEN		(1)
- #define EDL_PATCH_VER_REQ_CMD		(0x19)
- #define EDL_PATCH_TLV_REQ_CMD		(0x1E)
-@@ -140,7 +141,7 @@ int qca_set_bdaddr_rome(struct hci_dev *hdev, const bdaddr_t *bdaddr);
- int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
- 		   enum qca_btsoc_type soc_type, u32 soc_ver);
- int qca_read_soc_version(struct hci_dev *hdev, u32 *soc_version);
--
-+int qca_set_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr);
- #else
- 
- static inline int qca_set_bdaddr_rome(struct hci_dev *hdev, const bdaddr_t *bdaddr)
-@@ -159,4 +160,9 @@ static inline int qca_read_soc_version(struct hci_dev *hdev, u32 *soc_version)
- 	return -EOPNOTSUPP;
- }
- 
-+static inline int qca_set_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
- #endif
-diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index f036c8f98ea3..53ac5ade532b 100644
---- a/drivers/bluetooth/hci_qca.c
-+++ b/drivers/bluetooth/hci_qca.c
-@@ -1241,7 +1241,10 @@ static int qca_setup(struct hci_uart *hu)
- 	}
- 
- 	/* Setup bdaddr */
--	hu->hdev->set_bdaddr = qca_set_bdaddr_rome;
-+	if (qcadev->btsoc_type == QCA_WCN3990)
-+		hu->hdev->set_bdaddr = qca_set_bdaddr;
-+	else
-+		hu->hdev->set_bdaddr = qca_set_bdaddr_rome;
- 
- 	return ret;
- }
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> On Thu, 1 Nov 2018, Woodhouse, David wrote:
+> > On Thu, 2018-11-01 at 10:50 +0100, Ingo Molnar wrote:
+> > > * Zhenzhong Duan <zhenzhong.duan@oracle.com> wrote:
+> > > 
+> > > > Since retpoline capable compilers are widely available, make
+> > > > CONFIG_RETPOLINE hard depend on it.
+> > > > 
+> > > > The check of RETPOLINE is changed to CONFIG_RETPOLINE.
+> > > > 
+> > > > This change is based on suggestion in https://lkml.org/lkml/2018/9/18/1016
+> > > > 
+> > > > Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+> > > > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > > > Cc: Peter Zijlstra <peterz@infradead.org>
+> > > 
+> > > Please turn such 'based on suggestions' into proper tags as well, i.e. 
+> > > something like:
+> > > 
+> > >   Suggested-by: David Woodhouse <dwmw2@infradead.org>
+> > 
+> > I think the suggestion came from PeterZ; I just acked it.
+> > 
+> > Although on furthe reflection, I think I'd prefer a build break if
+> > retpoline is enabled in the kernel config and the compiler doesn't
+> > support it. This patch would make it silently fail to be secure.
+> 
+> Agreed.
 
+Yeah, I agree that that's the best policy: if someone wants retpoline 
+support it shouldn't silently turn off just because the wrong toolchain 
+was used to build the kernel ...
+
+Thanks,
+
+	Ingo
