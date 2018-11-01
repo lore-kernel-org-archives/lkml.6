@@ -2,103 +2,118 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62A3CC6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:01:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 870DAC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:02:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F37B920657
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:01:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="vOyqO3Fb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F37B920657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 4EDAF20657
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:02:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EDAF20657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728100AbeKBIGq (ORCPT
+        id S1728114AbeKBIHl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 04:06:46 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35399 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726386AbeKBIGq (ORCPT
+        Fri, 2 Nov 2018 04:07:41 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49750 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726386AbeKBIHl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 04:06:46 -0400
-Received: by mail-pg1-f193.google.com with SMTP id 32-v6so67812pgu.2
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 16:01:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PUTUmuA4BAAHF0QIxrg9myki0Ae0g45BmwJh4otzHA0=;
-        b=vOyqO3FbBRXH/w9LKQMSyqE59hQ+kwOTdVejlhHC3JVw6Ikc+p9Uez/rh1kapEQl0+
-         lS9+xUwMH0e9M6E2NxqV1ClqWrO5Fw0HMmisSPTToRPtaDq7KocG34FM1Gz+/2zndW9T
-         28niaNnRPfVZJn/6z8MC/hmZkwzPv9rB/FRDYOn0oShEwssM7pG9UcYZJ5CRx3y2RRkw
-         wCSaIwA7h4qc4l8a+XoRmffbn9cynfOOQX4HrPW/JMVrIJjqVLqIHViEu8vijJNJM9Ph
-         4xXYMV4+cPg78Pv0hX2VOoK1iPo41qiZl8SlHXIcO2kuuZXsnyEaDdI8UOSqNFVluHjf
-         r9lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=PUTUmuA4BAAHF0QIxrg9myki0Ae0g45BmwJh4otzHA0=;
-        b=GFXV1QX2jfbpJtyYzcdZWGxQzRBH2NULrUjbdtnQRLfIPRTS1hNcksLDDT3o3+SOBA
-         JYOKLH2rQq1gjXjcc6uQyuKlGxP7u0BHQUpHlPfZUl1TQsY9IyJMzxjsm9/pRTipicM9
-         k5mxZTtMK3v9t2T8pF2YBofxSS/ceaDEt8YCqllqhvFZhCwRsNgO4pVXGWANWGfpMi9T
-         riemXcRkGGVKQ61d6BPoBV0VyqH3jMhXLBbQqR+9ahM7DQfeG4oeiKdBZmZJcrVvkwFE
-         PUMaWjVCjEpTjvimK0/FiyC+cvIKyqzFl2VKVY8kovB0jiZhQ+WW0AkwUq51bxB5FSv1
-         EB6A==
-X-Gm-Message-State: AGRZ1gLO4nAgSZ8Njtrd9YCf/Cu0odxJg1Phd7/KdbKV5Rz2Gr6XLzAQ
-        VUIEqtLK1vbbfEUFnNJ5tQCispDprro=
-X-Google-Smtp-Source: AJdET5evOU3AJfZHaU0fCaBcnVw7Jkz2gk2pskHlnfFn3FlLuhQpUyvVVT4Zh6hrfNVmxJYi27aYUA==
-X-Received: by 2002:a62:b09:: with SMTP id t9-v6mr9592159pfi.36.1541113305949;
-        Thu, 01 Nov 2018 16:01:45 -0700 (PDT)
-Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
-        by smtp.gmail.com with ESMTPSA id v20-v6sm52479689pfj.107.2018.11.01.16.01.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Nov 2018 16:01:44 -0700 (PDT)
-Subject: Re: [PATCH] blkcg: revert blkcg cleanups series
-To:     Dennis Zhou <dennis@kernel.org>
-Cc:     Tejun Heo <tj@kernel.org>, kernel-team@fb.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181101212410.47569-1-dennis@kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <fd8428ce-21d0-c817-3187-fb9a43feb389@kernel.dk>
-Date:   Thu, 1 Nov 2018 17:01:43 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 2 Nov 2018 04:07:41 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA1MxH4C157733
+        for <linux-kernel@vger.kernel.org>; Thu, 1 Nov 2018 19:02:40 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ng6vss9cf-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 19:02:39 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 1 Nov 2018 23:02:39 -0000
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 1 Nov 2018 23:02:36 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA1N2ZAK29163762
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 1 Nov 2018 23:02:35 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 13C8EB2067;
+        Thu,  1 Nov 2018 23:02:35 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E7313B2064;
+        Thu,  1 Nov 2018 23:02:34 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.141])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  1 Nov 2018 23:02:34 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 72E5016C359F; Thu,  1 Nov 2018 16:02:35 -0700 (PDT)
+Date:   Thu, 1 Nov 2018 16:02:35 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     lcapitulino@redhat.com, julia@ni.com, bigeasy@linutronix.de
+Cc:     linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: rcu: enable rcu_normal_after_boot by default for RT
+Reply-To: paulmck@linux.ibm.com
 MIME-Version: 1.0
-In-Reply-To: <20181101212410.47569-1-dennis@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18110123-0040-0000-0000-0000048B0641
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009968; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01111298; UDB=6.00575895; IPR=6.00891389;
+ MB=3.00023997; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-01 23:02:37
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110123-0041-0000-0000-000008940724
+Message-Id: <20181101230235.GA8757@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-01_16:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811010191
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/1/18 3:24 PM, Dennis Zhou wrote:
-> This reverts a series committed earlier due to null pointer exception
-> bug report in [1]. It seems there are edge case interactions that I did
-> not consider and will need some time to understand what causes the
-> adverse interactions.
+> The forcing of an expedited grace period is an expensive and very
+> RT-application unfriendly operation, as it forcibly preempts all running
+> tasks on CPUs which are preventing the gp from expiring.
 > 
-> The original series can be found in [2] with a follow up series in [3].
+> By default, as a policy decision, disable the expediting of grace
+> periods (after boot) on configurations which enable PREEMPT_RT_FULL.
 > 
-> [1] https://www.spinics.net/lists/cgroups/msg20719.html
-> [2] https://lore.kernel.org/lkml/20180911184137.35897-1-dennisszhou@gmail.com/
-> [3] https://lore.kernel.org/lkml/20181020185612.51587-1-dennis@kernel.org/
-> 
-> This reverts the following commits:
-> d459d853c2ed, b2c3fa546705, 101246ec02b5, b3b9f24f5fcc, e2b0989954ae,
-> f0fcb3ec89f3, c839e7a03f92, bdc2491708c4, 74b7c02a9bc1, 5bf9a1f3b4ef,
-> a7b39b4e961c, 07b05bcc3213, 49f4c2dc2b50, 27e6fa996c53
+> Suggested-by: Luiz Capitulino <lcapitulino@redhat.com>
+> Signed-off-by: Julia Cartwright <julia@ni.com>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-Thanks Dennis, I think this is the best way forward. Then you can
-work on getting the stacked setups working correctly for 4.21.
+In case it matters:
 
--- 
-Jens Axboe
+Acked-by: Paul E. McKenney <paulmck@linux.ibm.com>
+
+Alternatively, any reason that I should not pull this into -rcu?
+
+							Thanx, Paul
+
+> diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+> index f56c0fbdf22e..12027723abaf 100644
+> --- a/kernel/rcu/update.c
+> +++ b/kernel/rcu/update.c
+> @@ -67,7 +67,7 @@ extern int rcu_expedited; /* from sysctl */
+>  module_param(rcu_expedited, int, 0);
+>  extern int rcu_normal; /* from sysctl */
+>  module_param(rcu_normal, int, 0);
+> -static int rcu_normal_after_boot;
+> +static int rcu_normal_after_boot = IS_ENABLED(CONFIG_PREEMPT_RT_FULL);
+>  module_param(rcu_normal_after_boot, int, 0);
+>  #endif /* #ifndef CONFIG_TINY_RCU */
+>  
 
