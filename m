@@ -2,97 +2,98 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD58C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:06:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C648EC6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:07:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6734B2081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:06:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E06120657
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:07:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="ZRlTiqbC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6734B2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kunKR+QD";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nsy9TE5T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E06120657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728490AbeKAVJN (ORCPT
+        id S1728505AbeKAVKC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 17:09:13 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46402 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728085AbeKAVJN (ORCPT
+        Thu, 1 Nov 2018 17:10:02 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:57644 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728397AbeKAVKC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 17:09:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=pMDQAeklvgbByodv3ha4umpLX8gnPDDDdDG/WwjOvZI=; b=ZRlTiqbCOvFPscsfZvAY334uW
-        bV6omm7UQ5J/VBSdMJBWqblAtj/n5icvJHlTSvBvEPGs4FiDGaFtZ3QCaXToSMEeL/ZSaE9nUxmB6
-        RtueWCXDXwXh026uBoU2eeCrWnSsNQsUBmHmGS3W5CuuhzLpoAWzHbVdZqcfTHzVXFx/8=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gIBk6-0005TP-MU; Thu, 01 Nov 2018 12:06:30 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 5E029112260E; Thu,  1 Nov 2018 12:06:30 +0000 (GMT)
-Date:   Thu, 1 Nov 2018 12:06:30 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH AUTOSEL 4.14 22/73] regulator: fixed: Default enable high
- on DT regulators
-Message-ID: <20181101120630.GD6425@sirena.org.uk>
-References: <20181031230948.29203-1-sashal@kernel.org>
- <20181031230948.29203-22-sashal@kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="zbGR4y+acU1DwHSi"
-Content-Disposition: inline
-In-Reply-To: <20181031230948.29203-22-sashal@kernel.org>
-X-Cookie: Excellent day to have a rotten day.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 1 Nov 2018 17:10:02 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 6EA2460A34; Thu,  1 Nov 2018 12:07:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541074041;
+        bh=j6k2jueKREAlqukUd/Hbhcqzh5EU7vsRwqSvkR+mUBg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=kunKR+QDVkqV3LMdjaZu0rbAAVahjMB4fM3zsAmpYYdh2rnerr0iLVWb6lUP3tE/L
+         C1MCMHZhNl1Mq0F6qgqCdypyREU1a/ExswAqSZ/AyXAWDxgQXkAkv78qugKn7XUMvf
+         mztdMutnWSkAnGnPmPNJIZBlm+44kGvMDGv70bmo=
+Received: from vbadigan-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vbadigan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9021F6021C;
+        Thu,  1 Nov 2018 12:07:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541074040;
+        bh=j6k2jueKREAlqukUd/Hbhcqzh5EU7vsRwqSvkR+mUBg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=nsy9TE5TqGBLh4XKLxqtwqlmgQTrhx+Jq/aCNg5QCpOiEorcwYhcnPs4Xco4n9hmp
+         Bygr/ujNYPSwhjF1sJAiPw+As34qq2qAIEfMRSdACo8wYZaI9xx84WZVCuB9O0AawD
+         9SolhKa6EFnu3tWQWiuVbZA09qRBN+Ipsx2uQFyM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9021F6021C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vbadigan@codeaurora.org
+From:   Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+To:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
+        robh+dt@kernel.org, evgreen@chromium.org, dianders@google.com
+Cc:     asutoshd@codeaurora.org, riteshh@codeaurora.org,
+        stummala@codeaurora.org, sayalil@codeaurora.org,
+        Veerabhadrarao Badiganti <vbadigan@codeaurora.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-mmc@vger.kernel.org (open list:MULTIMEDIA CARD (MMC), SECURE
+        DIGITAL (SD) AND...),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH V3 1/2] dt-bindings: mmc: sdhci-msm: Add new compatible string for SDM845 SOC
+Date:   Thu,  1 Nov 2018 17:36:38 +0530
+Message-Id: <1541073999-11752-2-git-send-email-vbadigan@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1541073999-11752-1-git-send-email-vbadigan@codeaurora.org>
+References: <1541073999-11752-1-git-send-email-vbadigan@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+For SDM845 SOC, new compatible string  "qcom,sdm845-sdhci" is added.
 
---zbGR4y+acU1DwHSi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+---
+ Documentation/devicetree/bindings/mmc/sdhci-msm.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Wed, Oct 31, 2018 at 07:08:57PM -0400, Sasha Levin wrote:
-> From: Linus Walleij <linus.walleij@linaro.org>
->=20
-> [ Upstream commit 28be5f15df2ee6882b0a122693159c96a28203c7 ]
->=20
-> commit efdfeb079cc3
-> ("regulator: fixed: Convert to use GPIO descriptor only")
-> switched to use gpiod_get() to look up the regulator from the
-> gpiolib core whether that is device tree or boardfile.
+diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+index 502b3b8..f2ffbeb 100644
+--- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
++++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+@@ -7,6 +7,7 @@ Required properties:
+ - compatible: Should contain:
+ 		"qcom,sdhci-msm-v4" for sdcc versions less than 5.0
+ 		"qcom,sdhci-msm-v5" for sdcc versions >= 5.0
++		"qcom,sdm845-sdhci" for sdm845 SOC
+ 		For SDCC version 5.0.0, MCI registers are removed from SDCC
+ 		interface and some registers are moved to HC. New compatible
+ 		string is added to support this change - "qcom,sdhci-msm-v5".
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
 
-This patch is only introduced in v4.19...
-
---zbGR4y+acU1DwHSi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlva7EUACgkQJNaLcl1U
-h9ASnwf+JKSPfJeC5Xqg9msOA7vXlnQwQCcYBHAsdDy8/n0TAmuaGqEUsZnPIBvW
-w7jEW3N8zNm7ly6djc1bozkhlf0SHuGP36oCZYim4o5uWaG7xgTkK6G3j0LAgEbn
-ysrwBUIX8tILGX+zrf8tn724IU3r9+wtbkEBsyL2astUXU9/xPBXh5WwBt3HE7IV
-nRlVg0H3e39DD2du+pvXatXjoldzLfU75x7XsYgVAQO2JmpKp2K95TarqpEZv2IP
-8yi6HHw+FZMdqQxbUsdZaUjJhy76woUu1kRpCMbcmtA1iM4UyJRbdMZlaC/O+/GM
-5AZ3HYQNg2O/r90s6ZleP5C8Ly4zeA==
-=tEBz
------END PGP SIGNATURE-----
-
---zbGR4y+acU1DwHSi--
