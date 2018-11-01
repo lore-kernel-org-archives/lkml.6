@@ -2,138 +2,138 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6454AC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 07:07:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78C42C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 07:09:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2008D2064C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 07:07:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2008D2064C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A2332064C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 07:09:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A2332064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727870AbeKAQIt (ORCPT
+        id S1727944AbeKAQKw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 12:08:49 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:55766 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727716AbeKAQIs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 12:08:48 -0400
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id 753FD4BA77;
-        Thu,  1 Nov 2018 08:07:03 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
-        with ESMTP id eYYAC7niajHw; Thu,  1 Nov 2018 08:07:00 +0100 (CET)
-Date:   Thu, 1 Nov 2018 18:06:52 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
+        Thu, 1 Nov 2018 12:10:52 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58518 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727716AbeKAQKw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 12:10:52 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA175gGE103520
+        for <linux-kernel@vger.kernel.org>; Thu, 1 Nov 2018 03:09:08 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nfvswg407-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 03:09:07 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Thu, 1 Nov 2018 07:09:05 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 1 Nov 2018 07:09:00 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA1790Gh59703406
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 1 Nov 2018 07:09:00 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EBA0B4C040;
+        Thu,  1 Nov 2018 07:08:59 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BB6454C04A;
+        Thu,  1 Nov 2018 07:08:58 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.68])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu,  1 Nov 2018 07:08:58 +0000 (GMT)
+Date:   Thu, 1 Nov 2018 09:08:57 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
 To:     Daniel Colascione <dancol@google.com>
 Cc:     linux-kernel@vger.kernel.org, timmurray@google.com,
-        joelaf@google.com, christian@brauner.io,
-        Joel Fernandes <joel@joelfernandes.org>
-Subject: Re: [RFC PATCH v2] Minimal non-child process exit notification
- support
-Message-ID: <20181101070652.jrc3jgdmykc27t4w@yavin>
-References: <20181029175322.189042-1-dancol@google.com>
- <20181029192250.130551-1-dancol@google.com>
- <20181101070036.l24c2p432ohuwmqf@yavin>
+        joelaf@google.com, surenb@google.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Prashant Dhamdhere <pdhamdhe@redhat.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+Subject: Re: [PATCH] Document /proc/pid PID reuse behavior
+References: <20181031150625.147369-1-dancol@google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="q523ya7z4aumdipt"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181101070036.l24c2p432ohuwmqf@yavin>
+In-Reply-To: <20181031150625.147369-1-dancol@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18110107-0020-0000-0000-000002DDFA68
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110107-0021-0000-0000-0000212D54F5
+Message-Id: <20181101070856.GB8866@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-01_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811010062
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Oct 31, 2018 at 03:06:22PM +0000, Daniel Colascione wrote:
+> State explicitly that holding a /proc/pid file descriptor open does
+> not reserve the PID. Also note that in the event of PID reuse, these
+> open file descriptors refer to the old, now-dead process, and not the
+> new one that happens to be named the same numeric PID.
 
---q523ya7z4aumdipt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off is missing.
 
-On 2018-11-01, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> On 2018-10-29, Daniel Colascione <dancol@google.com> wrote:
-> > This patch adds a new file under /proc/pid, /proc/pid/exithand.
-> > Attempting to read from an exithand file will block until the
-> > corresponding process exits, at which point the read will successfully
-> > complete with EOF.  The file descriptor supports both blocking
-> > operations and poll(2). It's intended to be a minimal interface for
-> > allowing a program to wait for the exit of a process that is not one
-> > of its children.
-> >=20
-> > Why might we want this interface? Android's lmkd kills processes in
-> > order to free memory in response to various memory pressure
-> > signals. It's desirable to wait until a killed process actually exits
-> > before moving on (if needed) to killing the next process. Since the
-> > processes that lmkd kills are not lmkd's children, lmkd currently
-> > lacks a way to wait for a process to actually die after being sent
-> > SIGKILL; today, lmkd resorts to polling the proc filesystem pid
-> > entry. This interface allow lmkd to give up polling and instead block
-> > and wait for process death.
->=20
-> I agree with the need for this interface (with a few caveats), but there
-> are a few points I'd like to make:
->=20
->  * I don't think that making a new procfile is necessary. When you open
->    /proc/$pid you already have a handle for the underlying process, and
->    you can already poll to check whether the process has died (fstatat
->    fails for instance). What if we just used an inotify event to tell
->    userspace that the process has died -- to avoid userspace doing a
->    poll loop?
->=20
->  * There is a fairly old interface called the proc_connector which gives
->    you global fork+exec+exit events (similar to kevents from FreeBSD
->    though much less full-featured). I was working on some patches to
->    extend proc_connector so that it could be used inside containers as
->    well as unprivileged users. This would be another way we could
->    implement this.
->=20
-> I'm really not a huge fan of the "blocking read" semantic (though if we
-> have to have it, can we at least provide as much information as you get
-> from proc_connector -- such as the exit status?). Also maybe we should
-> integrate this into the exit machinery instead of this loop...
+> ---
+>  Documentation/filesystems/proc.txt | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+> index 12a5e6e693b6..567f66a8a23c 100644
+> --- a/Documentation/filesystems/proc.txt
+> +++ b/Documentation/filesystems/proc.txt
+> @@ -214,6 +214,14 @@ asynchronous manner and the value may not be very precise. To see a precise
+>  snapshot of a moment, you can see /proc/<pid>/smaps file and scan page table.
+>  It's slow but very precise.
+> 
+> +Note that an open a file descriptor to /proc/<pid> or to any of its
+> +contained files or subdirectories does not prevent <pid> being reused
+> +for some other process in the event that <pid> exits. Operations on
+> +open /proc/<pid> file descriptors corresponding to dead processes
+> +never act on any new process that the kernel may, through chance, have
+> +also assigned the process ID <pid>. Instead, operations on these FDs
+> +usually fail with ESRCH.
+> +
 
-In addition, given that you've posted two patches in the similar vein
-but as separate patchsets -- would you mind re-sending them as a single
-patchset (with all the relevant folks added to Cc)?
+I'd put this text in the beginning of the section, just before table 1-1.
+Otherwise looks good.
 
-If the idea is to extend /proc/$pid to allow for various
-fd-as-process-handle operations (which I agree with in principle), then
-they should be a single patchset. I'm also a bit cautious about how
-many procfiles the eventual goal is to add.
+It maybe also useful to update 'man 5 proc' (1) as well
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+[1] https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/tree/man5/proc.5
 
---q523ya7z4aumdipt
-Content-Type: application/pgp-signature; name="signature.asc"
+>  Table 1-2: Contents of the status files (as of 4.8)
+>  ..............................................................................
+>   Field                       Content
+> -- 
+> 2.19.1.568.g152ad8e336-goog
+> 
 
------BEGIN PGP SIGNATURE-----
+-- 
+Sincerely yours,
+Mike.
 
-iQIzBAABCAAdFiEEb6Gz4/mhjNy+aiz1Snvnv3Dem58FAlvapgwACgkQSnvnv3De
-m5/VXA//dOMH+ASbpNogjnZluZaN6P2PnEWymuHIBenVgDdMQ3f3HpNNQfGqEPDW
-d0Pezoyk8h3AyNzKxAtQzTUIFZKg7bzuchfP2TKdV9Apt5Y+BKX8q9BXQbOmPzkY
-SN0yFSpT0zwPOFRRgymgJi4J55rBbXDapdoRfDay7zvSz4HrFQJbh9E8JCjILcmk
-353BGSWyGbGCxm1dgsUuPpzY+of7bk1WLqL8oSIO4jcUQxM+c1BeeOOWxN0f4tDW
-MlwMu6Z5qwtOw2SmovJdZgNhHsmhMyqs+JmHOxEw9ZOIA0Vx4nTUNYb5UtRiQ3hf
-yUTZcqABVcXgMnV48Dx6EwQKrBr3Rf71qiHUnOtbar0jKNMOFdtaiM1KXtA3aawO
-aeAD+VqtCxq0awxpT18Rr2xVlQCA+syQyoln4Rrs2Fc6zyN/tkI3imhGOOnUJLZj
-cPsKPfZa1jsX0vDfhpqP0NmePnBJUubwVCZS5sF1a4IPMQw8O/No9FTCUF5H60uI
-TIuZo7QwpHxl7bZOqa0PMQ+UwM1M3k1QpaCEJb4Pteo57SihkDVw9lyGlAIS2eDF
-B/evkh9EreGEbv2wyN7V5xc8MSkA30SVJ6sM33U8L/a1D7GB/ZpwU4NFlpRFUFrZ
-ltL0wLEEvsw85Ghh3OPyAACU880E8Xwbys1PPeO2XqeZjbTfGqQ=
-=3qhz
------END PGP SIGNATURE-----
-
---q523ya7z4aumdipt--
