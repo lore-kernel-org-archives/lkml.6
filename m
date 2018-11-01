@@ -6,54 +6,47 @@ X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E50C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:38:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08DCFC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:41:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19A9B22522
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:38:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9745F22522
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 23:41:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="2ibINdkW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19A9B22522
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="F8jByxE9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9745F22522
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728256AbeKBInt (ORCPT
+        id S1728177AbeKBIqM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 04:43:49 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:57726 "EHLO
+        Fri, 2 Nov 2018 04:46:12 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:57754 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728038AbeKBInt (ORCPT
+        with ESMTP id S1728060AbeKBIqM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 04:43:49 -0400
+        Fri, 2 Nov 2018 04:46:12 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
         MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=kpcWE+zbht9Tn69VGclKa+3YkXkZpIudfI0ZgNQobfQ=; b=2ibINdkWB0IQHTWNQRy9ELwLk0
-        me+E30n0uEHkTdwUmmN+vXAn5nlobJrTDLVd+5BVZX1TzStY1VUzVSDJ85tMC5citvD/cxzDzi1SJ
-        ur25CAwBcHVsNcxfdhPavzgN4dIfJfSUSJOUmIamnl9EuH9WiXWrqalB23oqDqp6Klq7u06fxRmH8
-        /x+hVV8Yzq/MT9/5B4kpY6MSuRFfGoOpPWZ+acHXmLKVcAE0iRVQ/08KzMPPHo5hKCyG5IV/+Y2/2
-        F0t5j0JblYCeUGeFJlGp+pZbPzlxV4gRN4GXH/Z30LtGKyOYN/oZgyX/pQmOOPcB0tqATFmS13/mI
-        kZFmYwcA==;
+        bh=HJ5k3QlzdEmj+GQC4/fLMMUMGoRO8JTowgk0si9Dr2E=; b=F8jByxE9OyauRHOpqtkIjRYhLE
+        FbJ3p7oCcM+w7rU314GtlnLNbWmkedwpwlniMI7KiAkbJh5u4OVnjhcQpp/eaXFfnUkuoNzgUhgIK
+        4i+7ctKsur82Trgx3wG2EirbuWWpXfUzC1IsaQI6YS2GQXBimrEJVir+hvu6RLhljn9QaRe39thOw
+        IDFvpyjUtp1J4lxY8Lw/J2+bsQqQToHvWjXieC6EbUClyE3PQa0C7XlR2eiq0RG9pjYwk/cNxVlb0
+        YCZCkxYh4NGMqbld4c/4lE75RPQlyYhSA62OJT1sxd/mr0/pxJkbYD0oTZS1LxjVQb0eHWSrBTk1o
+        0b5vZf6Q==;
 Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
         by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gIMXs-0000jt-JR; Thu, 01 Nov 2018 23:38:36 +0000
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-mtd@lists.infradead.org, linux-sh@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
+        id 1gIMaG-0000ma-DD; Thu, 01 Nov 2018 23:41:04 +0000
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Evgeniy Polyakov <zbr@ioremap.net>
+Cc:     Andrew Morton <akpm@linux-foundation.org>
 From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH resend] arch/sh: mach-kfr2r09: fix struct mtd_oob_ops build
- warning
-Message-ID: <702f0a25-c63e-6912-4640-6ab0f00afbc7@infradead.org>
-Date:   Thu, 1 Nov 2018 16:38:30 -0700
+Subject: [PATCH resend] w1: add missing kernel-doc entry for of_match_table
+Message-ID: <60723da5-8ef1-80bf-8b30-95e87173c884@infradead.org>
+Date:   Thu, 1 Nov 2018 16:41:03 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
@@ -67,39 +60,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Randy Dunlap <rdunlap@infradead.org>
 
-arch/sh/boards/mach-kfr2r09/setup.c does not need to #include
-<mtd/onenand.h>, and doing so causes a build warning, so drop
-that header file.
+Fix kernel-doc warning for missing struct member description:
 
-In file included from ../arch/sh/boards/mach-kfr2r09/setup.c:28:
-../include/linux/mtd/onenand.h:225:12: warning: 'struct mtd_oob_ops' declared inside parameter list will not be visible outside of this definition or declaration
-     struct mtd_oob_ops *ops);
+../include/linux/w1.h:281: warning: Function parameter or member 'of_match_table' not described in 'w1_family'
 
-Fixes: f3590dc32974 ("media: arch: sh: kfr2r09: Use new renesas-ceu camera driver")
-
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Suggested-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Rich Felker <dalias@libc.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-mtd@lists.infradead.org
-Cc: linux-sh@vger.kernel.org
+Cc: Evgeniy Polyakov <zbr@ioremap.net>
 ---
- arch/sh/boards/mach-kfr2r09/setup.c |    1 -
- 1 file changed, 1 deletion(-)
+ include/linux/w1.h |    1 +
+ 1 file changed, 1 insertion(+)
 
---- linux-next-20181101.orig/arch/sh/boards/mach-kfr2r09/setup.c
-+++ linux-next-20181101/arch/sh/boards/mach-kfr2r09/setup.c
-@@ -25,7 +25,6 @@
- #include <linux/memblock.h>
- #include <linux/mfd/tmio.h>
- #include <linux/mmc/host.h>
--#include <linux/mtd/onenand.h>
- #include <linux/mtd/physmap.h>
- #include <linux/platform_data/lv5207lp.h>
- #include <linux/platform_device.h>
+--- linux-next-20181101.orig/include/linux/w1.h
++++ linux-next-20181101/include/linux/w1.h
+@@ -266,6 +266,7 @@ struct w1_family_ops {
+  * @family_entry:	family linked list
+  * @fid:		8 bit family identifier
+  * @fops:		operations for this family
++ * @of_match_table:	Open Firmware device matching table
+  * @refcnt:		reference counter
+  */
+ struct w1_family {
 
 
