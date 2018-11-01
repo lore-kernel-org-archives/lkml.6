@@ -2,70 +2,66 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7514C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:12:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC0E0C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:12:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96554205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:12:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96554205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id B9EA4205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:12:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9EA4205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728896AbeKBAPt (ORCPT
+        id S1728938AbeKBAQF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 20:15:49 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:51260 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728364AbeKBAPt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 20:15:49 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gIEe1-0001mr-BX; Thu, 01 Nov 2018 15:12:25 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] input: atkbd: clean up indentation issue, add missing tab in an if statement
-Date:   Thu,  1 Nov 2018 15:12:24 +0000
-Message-Id: <20181101151224.14840-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Thu, 1 Nov 2018 20:16:05 -0400
+Received: from gate.crashing.org ([63.228.1.57]:58347 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728089AbeKBAQF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 20:16:05 -0400
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id wA1FCCjs007553;
+        Thu, 1 Nov 2018 10:12:13 -0500
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id wA1FC26b007532;
+        Thu, 1 Nov 2018 10:12:02 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Thu, 1 Nov 2018 10:12:02 -0500
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Subject: Re: [PATCH 01/21] of: Add cpu node iterator for_each_of_cpu_node()
+Message-ID: <20181101151201.GJ5994@gate.crashing.org>
+References: <20180905193738.19325-1-robh@kernel.org> <20180905193738.19325-2-robh@kernel.org> <874ld3jz6v.fsf@concordia.ellerman.id.au> <871s87jz3g.fsf@concordia.ellerman.id.au> <CABGGisw_bd+bJedZ_T2e-dxmRnXf2N_gGBZj8u+QVGQxj_gc+Q@mail.gmail.com> <87tvl1dq7q.fsf@concordia.ellerman.id.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87tvl1dq7q.fsf@concordia.ellerman.id.au>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, Nov 01, 2018 at 09:52:57PM +1100, Michael Ellerman wrote:
+> Rob Herring <robh@kernel.org> writes:
+> > Yes, I was aware at least older powerpc DTs don't use 'cpu' for node names.
+> 
+> Actually newer ones too, see below :)
 
-Trivial fix to clean up indentation issues, add missing tab
+Good, because that is required by the Open Firmware standard (the PowerPC
+binding, to be exact):
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/input/keyboard/atkbd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+http://www.openbios.org/data/docs/ppc-2_1.ps
 
-diff --git a/drivers/input/keyboard/atkbd.c b/drivers/input/keyboard/atkbd.c
-index 7e75835e220f..850bb259c20e 100644
---- a/drivers/input/keyboard/atkbd.c
-+++ b/drivers/input/keyboard/atkbd.c
-@@ -841,7 +841,7 @@ static int atkbd_select_set(struct atkbd *atkbd, int target_set, int allow_extra
- 	if (param[0] != 3) {
- 		param[0] = 2;
- 		if (ps2_command(ps2dev, param, ATKBD_CMD_SSCANSET))
--		return 2;
-+			return 2;
- 	}
- 
- 	ps2_command(ps2dev, param, ATKBD_CMD_SETALL_MBR);
--- 
-2.19.1
+(see 5.1.4, "name").
 
+
+Segher
