@@ -2,168 +2,94 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC56C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:26:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10AECC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:32:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32558204FD
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:26:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32558204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id ACE98204FD
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:32:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="T8Jvo/XG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACE98204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727841AbeKBHbp (ORCPT
+        id S1727802AbeKBHhn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 03:31:45 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48558 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726115AbeKBHbo (ORCPT
+        Fri, 2 Nov 2018 03:37:43 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41542 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727115AbeKBHhn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 03:31:44 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA1MNpnk129164
-        for <linux-kernel@vger.kernel.org>; Thu, 1 Nov 2018 18:26:49 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ng7r46gre-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 18:26:48 -0400
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 1 Nov 2018 22:26:48 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 1 Nov 2018 22:26:41 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA1MQf7i25100518
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 1 Nov 2018 22:26:41 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EB775B205F;
-        Thu,  1 Nov 2018 22:26:40 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B4B29B2064;
-        Thu,  1 Nov 2018 22:26:40 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.141])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  1 Nov 2018 22:26:40 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 3AAED16C0598; Thu,  1 Nov 2018 15:26:41 -0700 (PDT)
-Date:   Thu, 1 Nov 2018 15:26:41 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ralf@linux-mips.org" <ralf@linux-mips.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
-        "paul.burton@mips.com" <paul.burton@mips.com>,
-        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        "jhogan@kernel.org" <jhogan@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        aryabinin@virtuozzo.com, dvyukov@google.com
-Subject: Re: [RFC PATCH] lib: Introduce generic __cmpxchg_u64() and use it
- where needed
-Reply-To: paulmck@linux.ibm.com
-References: <4e2438a23d2edf03368950a72ec058d1d299c32e.camel@hammerspace.com>
- <20181101131846.biyilr2msonljmij@lakrids.cambridge.arm.com>
- <20181101145926.GE3178@hirez.programming.kicks-ass.net>
- <f38e272f7a96e983549e4281aa9fd02833a4277a.camel@hammerspace.com>
- <20181101163212.GF3159@hirez.programming.kicks-ass.net>
- <b0160f4b-b996-b0ee-405a-3d5f1866272e@gmail.com>
- <20181101171432.GH3178@hirez.programming.kicks-ass.net>
- <20181101172739.GA3196@hirez.programming.kicks-ass.net>
- <20181101202910.GB4170@linux.ibm.com>
- <20181101213834.GA3339@worktop.programming.kicks-ass.net>
+        Fri, 2 Nov 2018 03:37:43 -0400
+Received: by mail-lj1-f195.google.com with SMTP id z80-v6so44995ljb.8
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 15:32:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bmb61KaE3nVV/km7pxh+AG3gjbCBwkcZpKgeNbBOiNg=;
+        b=T8Jvo/XGlN9+Y7FRYd3AA/hg5sr0rzpTQzpmCfaCnCJNqSZP3GFuKqa0hlKHp91pys
+         a7bedABRU8E8xj2zOz+8AYnwkpBCgyEexDSfK7q7asawHkwxTyHq71NdJJmmKc3OuGKJ
+         fFN0xfv+eygXQaon6UUISluJ49+UR5RBpMo6o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bmb61KaE3nVV/km7pxh+AG3gjbCBwkcZpKgeNbBOiNg=;
+        b=Rb4pWC6H8Ju3Dc5GLIsCThxQjzJRVHs6UABfLHAasr2L+NpAA8EHPfuRKAqSFFROy3
+         huHRCCJ9yFK4Bzy1b0b/JLIktHxTRQCalPqZMZp86U9e9on9fxZ8RnKdf8UxhLE31Pu7
+         eiMHItds3JmqLzEF0Q0HFE5D7mZkPQ91NEaepIXJip0kpvcUWIduTHhVG+71y7cKGc/1
+         CL604EQ9kKcYVqivBioXe59GnrqJS/Wl0g83b3YkY+1dNcJ+TbvueXfIcFzMr37dQsmS
+         k/y2FEFaz0E4R3fnNOmumoW5RfZOwOVKI8MLAC0i715jOwWNjk2YV0X4PWfeyw6KpwVq
+         BYJQ==
+X-Gm-Message-State: AGRZ1gIlW30Op4ogr5rnh5bNNISiCO/SeG31zW0LKcCJ8CoQbCHPBq4s
+        DJqWS8yF1A+DM9mNYdjv0FaWorkn7n9ziA==
+X-Google-Smtp-Source: AJdET5dELAnCIEOrSHYRpBNgY8nwOojPaQD23CtkZuLBF2iqzOiAqI/l6qjXPtL0oVCcrsR3sqQ5oA==
+X-Received: by 2002:a2e:7c13:: with SMTP id x19-v6mr6023535ljc.83.1541111565513;
+        Thu, 01 Nov 2018 15:32:45 -0700 (PDT)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
+        by smtp.gmail.com with ESMTPSA id n24-v6sm561191lfl.44.2018.11.01.15.32.44
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Nov 2018 15:32:44 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id x85-v6so72529ljb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 15:32:44 -0700 (PDT)
+X-Received: by 2002:a2e:3e06:: with SMTP id l6-v6mr2868322lja.148.1541111563482;
+ Thu, 01 Nov 2018 15:32:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181101213834.GA3339@worktop.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18110122-0064-0000-0000-0000036C7196
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009968; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01111286; UDB=6.00575888; IPR=6.00891378;
- MB=3.00023997; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-01 22:26:47
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110122-0065-0000-0000-00003B313D77
-Message-Id: <20181101222641.GI4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-01_16:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=649 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811010187
+References: <alpine.LRH.2.21.1810262033270.5228@namei.org>
+In-Reply-To: <alpine.LRH.2.21.1810262033270.5228@namei.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 1 Nov 2018 15:32:27 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgiWxgsvmSs=BewWpfLB=vjCJ4U3yzaKzDsZVFA0L3Xtw@mail.gmail.com>
+Message-ID: <CAHk-=wgiWxgsvmSs=BewWpfLB=vjCJ4U3yzaKzDsZVFA0L3Xtw@mail.gmail.com>
+Subject: Re: [GIT PULL] security: keys updates for v4.20
+To:     jmorris@namei.org
+Cc:     linux-security-module@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 01, 2018 at 10:38:34PM +0100, Peter Zijlstra wrote:
-> On Thu, Nov 01, 2018 at 01:29:10PM -0700, Paul E. McKenney wrote:
-> > On Thu, Nov 01, 2018 at 06:27:39PM +0100, Peter Zijlstra wrote:
-> > > On Thu, Nov 01, 2018 at 06:14:32PM +0100, Peter Zijlstra wrote:
-> > > > > This reminds me of this sooooo silly patch :/
-> > > > > 
-> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=adb03115f4590baa280ddc440a8eff08a6be0cb7
-> > > 
-> > > You'd probably want to write it like so; +- some ordering stuff, that
-> > > code didn't look like it really needs the memory barriers implied by
-> > > these, but I didn't look too hard.
-> > 
-> > The atomic_fetch_add() API would need to be propagated out to the other
-> > architectures, correct?
-> 
-> Like these commits I did like 2 years ago ? :-)
+On Fri, Oct 26, 2018 at 2:36 AM James Morris <jmorris@namei.org> wrote:
+>
+> From David: "Provide five new operations in the key_type struct that can
+> be used to provide access to asymmetric key operations.  These will be
+> implemented for the asymmetric key type in a later patch and may refer to
+> a key retained in RAM by the kernel or a key retained in crypto hardware.
 
-Color me blind and stupid!  ;-)
+Pulled.
 
-							Thanx, Paul
+However. I really would have expected some of the TPM people to have
+acked these, or at least looked at them. There was no sign of that in
+any of the tpm commits that I could see..
 
-> $ git log --oneline 6dc25876cdb1...1f51dee7ca74
-> 6dc25876cdb1 locking/atomic, arch/xtensa: Implement atomic_fetch_{add,sub,and,or,xor}()
-> a8bcccaba162 locking/atomic, arch/x86: Implement atomic{,64}_fetch_{add,sub,and,or,xor}()
-> 1af5de9af138 locking/atomic, arch/tile: Implement atomic{,64}_fetch_{add,sub,and,or,xor}()
-> 3a1adb23a52c locking/atomic, arch/sparc: Implement atomic{,64}_fetch_{add,sub,and,or,xor}()
-> 7d9794e75237 locking/atomic, arch/sh: Implement atomic_fetch_{add,sub,and,or,xor}()
-> 56fefbbc3f13 locking/atomic, arch/s390: Implement atomic{,64}_fetch_{add,sub,and,or,xor}()
-> a28cc7bbe8e3 locking/atomic, arch/powerpc: Implement atomic{,64}_fetch_{add,sub,and,or,xor}{,_relaxed,_acquire,_release}()
-> e5857a6ed600 locking/atomic, arch/parisc: Implement atomic{,64}_fetch_{add,sub,and,or,xor}()
-> f8d638e28d7c locking/atomic, arch/mn10300: Implement atomic_fetch_{add,sub,and,or,xor}()
-> 4edac529eb62 locking/atomic, arch/mips: Implement atomic{,64}_fetch_{add,sub,and,or,xor}()
-> e898eb27ffd8 locking/atomic, arch/metag: Implement atomic_fetch_{add,sub,and,or,xor}()
-> e39d88ea3ce4 locking/atomic, arch/m68k: Implement atomic_fetch_{add,sub,and,or,xor}()
-> f64937052303 locking/atomic, arch/m32r: Implement atomic_fetch_{add,sub,and,or,xor}()
-> cc102507fac7 locking/atomic, arch/ia64: Implement atomic{,64}_fetch_{add,sub,and,or,xor}()
-> 4be7dd393515 locking/atomic, arch/hexagon: Implement atomic_fetch_{add,sub,and,or,xor}()
-> 0c074cbc3309 locking/atomic, arch/h8300: Implement atomic_fetch_{add,sub,and,or,xor}()
-> d9c730281617 locking/atomic, arch/frv: Implement atomic{,64}_fetch_{add,sub,and,or,xor}()
-> e87fc0ec0705 locking/atomic, arch/blackfin: Implement atomic_fetch_{add,sub,and,or,xor}()
-> 1a6eafacd481 locking/atomic, arch/avr32: Implement atomic_fetch_{add,sub,and,or,xor}()
-> 2efe95fe6952 locking/atomic, arch/arm64: Implement atomic{,64}_fetch_{add,sub,and,andnot,or,xor}{,_relaxed,_acquire,_release}() for LSE instructions
-> 6822a84dd4e3 locking/atomic, arch/arm64: Generate LSE non-return cases using common macros
-> e490f9b1d3b4 locking/atomic, arch/arm64: Implement atomic{,64}_fetch_{add,sub,and,andnot,or,xor}{,_relaxed,_acquire,_release}()
-> 6da068c1beba locking/atomic, arch/arm: Implement atomic{,64}_fetch_{add,sub,and,andnot,or,xor}{,_relaxed,_acquire,_release}()
-> fbffe892e525 locking/atomic, arch/arc: Implement atomic_fetch_{add,sub,and,andnot,or,xor}()
-> 
+Hmm?
 
+               Linus
