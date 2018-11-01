@@ -2,80 +2,126 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B49C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 08:56:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D75FC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 08:57:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0056A20820
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 08:56:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 336102081B
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 08:57:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="upgnXJwQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0056A20820
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z8EiBnG8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 336102081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728121AbeKAR6q (ORCPT
+        id S1727749AbeKAR70 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 13:58:46 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33326 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727008AbeKAR6q (ORCPT
+        Thu, 1 Nov 2018 13:59:26 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:32824 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727008AbeKAR7Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 13:58:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=3wRT7muTyIV4pFRdJFffwKR8WBv1D/kBcY4kzhUZeC0=; b=upgnXJwQUGiMfYJbAGVnmwE8N
-        myBtVphSaxOhWY7XXiwDXYw/MyWlvw1pcLKmi7DCuvp7FLTE1jpTwgdnUxEYk/r3GWbpPSbc2rXHy
-        Evwfd668DBShD9RiMEmWPypYiRlmVegV/O1UMofoV5Yod7K+LgSmkiX3p0L4Upd7d1ieIDBmnW6Xo
-        4oITbkdmHBN23XRyc6TEudu4MDq5XKhV4EtFCTBglLNyAjgQnM7YlW/MXZXcx51ChcJXZ//mzy16K
-        eJEh98IrqiHj7Lni8ZqF22FU/iC8F9CXFKCZvLspuqpu/XT5FUJw2JNxeNWJ7cJlYCjEMmWj+uzy4
-        Rp3DYu1sg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gI8mL-0005eO-Fj; Thu, 01 Nov 2018 08:56:37 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id DDB0E20296F15; Thu,  1 Nov 2018 09:56:34 +0100 (CET)
-Date:   Thu, 1 Nov 2018 09:56:34 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Cc:     Linux-Kernel <linux-kernel@vger.kernel.org>, mingo@redhat.com,
-        konrad.wilk@oracle.com, dwmw@amazon.co.uk, tglx@linutronix.de,
-        Srinivas REDDY Eeda <srinivas.eeda@oracle.com>, bp@suse.de,
-        hpa@zytor.com
-Subject: Re: [PATCH 3/3] kprobes/x86: Simplify indirect-jump check in
- retpoline
-Message-ID: <20181101085634.GC3159@hirez.programming.kicks-ass.net>
-References: <cc8f9981-f327-4238-8378-262579584db4@default>
- <20181030083650.GB1459@hirez.programming.kicks-ass.net>
- <849ae148-85cd-5f46-d98b-b827cc9c605c@oracle.com>
- <20181031135320.GC13237@hirez.programming.kicks-ass.net>
- <20181031140032.GB13257@hirez.programming.kicks-ass.net>
- <04040fa2-02c6-9aa6-15fe-609ad21b3426@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <04040fa2-02c6-9aa6-15fe-609ad21b3426@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 1 Nov 2018 13:59:25 -0400
+Received: by mail-wr1-f65.google.com with SMTP id u1-v6so19323864wrn.0;
+        Thu, 01 Nov 2018 01:57:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=emoO1uNFgH2/vZ9/8K/yC1aOxYxdWJfqUqwN0u0t4E0=;
+        b=Z8EiBnG8EhLVnA64YwvG1g2uaVLLd7JSwPLr4SpYUHursW31lMqWJxx325YlaUZQpZ
+         XK1x5TUMmnXOvBjuePu0zA/Q2U/KwFM3R+2rcHSF1JXp5bxNeVFRYzSK1EJqbN1+4l8r
+         g+a6SlB3VBDYQwt15PGBTAqiGXF40WjQK8Vfk7skRy1rq+oWMwu7ucxDTYPpZP8I5BdL
+         nzwKHOzx66opqEPTjboO3woqksIJCRH90/miPenm9nCUCU4n3exZt0EsZuJJmROwYENx
+         2Ai1esaIADPW46ecbmlpVo4eXgcnrYhZEXyNXm0TmjdAtG7LQ2R6YrHnkyKg3m/lsGIY
+         h3+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=emoO1uNFgH2/vZ9/8K/yC1aOxYxdWJfqUqwN0u0t4E0=;
+        b=EOOXdzx99PD/Eswf7SDmibuT4eW50JfdMPW1G/JSqYYu/Gt57+GUuljIyV/4Y+aRvU
+         599UpB3JjVvjkzRaMPt68/IEZzHIbnwrP7VXtaB7BFK0D2KIuvnHy/U797W1OOXoBQ5L
+         QODXmcZ/cvekMfra2bvXQZUycnZ87pOvYQehD2+Kb9/cbomjmo1JGyxXgShwLKi/qc1S
+         nzqJPi2KRsHra94vrtlw7ZIuHc5M8zem3e11tBjRj6Txp9Xm+7n1WVcYambvG/zJ1qA9
+         m6CqAwubBxre9L3BRf0ZtSuQKc0ho+3MqbitB2wRtWznXutz0J8z5pGCJBdkM+R0bc2B
+         TvJg==
+X-Gm-Message-State: AGRZ1gKzlRcMyl0PGWuTTmT3E5eJ/21ksLld1swFHajCANFDymuHySdq
+        nOExP1edHeza9K+Ur1X18xA=
+X-Google-Smtp-Source: AJdET5eNVL9UQwakiKs2hQUnciBSHWagm2XTMIY+myrGgE2Gjv/zU9Nm+EXxHE0nPV+1cZlWBLD1vQ==
+X-Received: by 2002:a5d:634f:: with SMTP id b15-v6mr6071212wrw.14.1541062639561;
+        Thu, 01 Nov 2018 01:57:19 -0700 (PDT)
+Received: from xeon.fritz.box (p508DB575.dip0.t-ipconnect.de. [80.141.181.117])
+        by smtp.gmail.com with ESMTPSA id u15-v6sm6357132wrt.53.2018.11.01.01.57.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Nov 2018 01:57:18 -0700 (PDT)
+From:   Lothar Felten <lothar.felten@gmail.com>
+To:     linux-sunxi@googlegroups.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     maxime.ripard@bootlin.com, jernej.skrabec@siol.net,
+        robh+dt@kernel.org, mark.rutland@arm.com, wens@csie.org,
+        Lothar Felten <lothar.felten@gmail.com>
+Subject: [PATCH v3] ARM: dtsi: sun8i-r40: add mali node
+Date:   Thu,  1 Nov 2018 09:57:10 +0100
+Message-Id: <20181101085710.15774-1-lothar.felten@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 01, 2018 at 10:02:14AM +0800, Zhenzhong Duan wrote:
-> > Hmm, what about the case where we have RETPOLINE runtime disabled? Then
-> > the CALL_NOSPEC alternative patches in an indirect call again, and the
-> > retpolines are gone.
-> 
-> Is RETPOLINE runtime toggle supported in upstream? I don't see such code.
+This patch adds a node for the mali 400 GPU of the R40/V40 SoC
 
-arch/x86/kernel/cpu/bugs.c look for the "nospectre_v2" and related
-options. That will avoid X86_FEATURE_RETPOLINE from being set, and thus
-the JMP_NOSPEC and CALL_NOSPEC alternatives will not patch out the
-indirect jump / call.
+Signed-off-by: Lothar Felten <lothar.felten@gmail.com>
+---
+Changes v2->v3:
+- remove mali clock rates
+- drop hdmi-phy sun50i-a64 compatibility  
+- patch version, change log added
+
+Changes v1->v2:
+- commit message uppercase ARM prefix
+- wrong patch submitted by mistake
+---
+
+ arch/arm/boot/dts/sun8i-r40.dtsi | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi b/arch/arm/boot/dts/sun8i-r40.dtsi
+index 6f4c9ca5a3ee..136c248cc7d1 100644
+--- a/arch/arm/boot/dts/sun8i-r40.dtsi
++++ b/arch/arm/boot/dts/sun8i-r40.dtsi
+@@ -542,6 +542,28 @@
+ 
+ 		};
+ 
++		mali: gpu@1c40000 {
++			compatible = "allwinner,sun7i-a20-mali", "arm,mali-400";
++			reg = <0x01c40000 0x10000>;
++			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "gp",
++					  "gpmmu",
++					  "pp0",
++					  "ppmmu0",
++					  "pp1",
++					  "ppmmu1",
++					  "pmu";
++			clocks = <&ccu CLK_BUS_GPU>, <&ccu CLK_GPU>;
++			clock-names = "bus", "core";
++			resets = <&ccu RST_BUS_GPU>;
++		};
++
+ 		gmac: ethernet@1c50000 {
+ 			compatible = "allwinner,sun8i-r40-gmac";
+ 			syscon = <&ccu>;
+-- 
+2.11.0
+
