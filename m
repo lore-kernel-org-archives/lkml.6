@@ -2,156 +2,1335 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40915C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:00:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 138F5ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:00:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 078D220833
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:00:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 078D220833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 9396020831
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:00:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="bgl66Z9H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9396020831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728438AbeKATCm (ORCPT
+        id S1728455AbeKATCo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 15:02:42 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:5751 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728110AbeKATCl (ORCPT
+        Thu, 1 Nov 2018 15:02:44 -0400
+Received: from mail.efficios.com ([167.114.142.138]:42162 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728110AbeKATCn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 15:02:41 -0400
-X-UUID: 231f544c196141b9b9c97d8430f4790c-20181101
-X-UUID: 231f544c196141b9b9c97d8430f4790c-20181101
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1889526776; Thu, 01 Nov 2018 18:00:13 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 1 Nov 2018 18:00:12 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 1 Nov 2018 18:00:12 +0800
-Message-ID: <1541066412.31492.10.camel@mtkswgap22>
-Subject: Re: [PATCH v3] mm/page_owner: use kvmalloc instead of kmalloc
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     Michal Hocko <mhocko@kernel.org>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Joe Perches <joe@perches.com>,
-        Matthew Wilcox <willy@infradead.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>
-Date:   Thu, 1 Nov 2018 18:00:12 +0800
-In-Reply-To: <20181031114107.GM32673@dhcp22.suse.cz>
-References: <1540790176-32339-1-git-send-email-miles.chen@mediatek.com>
-         <20181029080708.GA32673@dhcp22.suse.cz>
-         <20181029081706.GC32673@dhcp22.suse.cz>
-         <1540862950.12374.40.camel@mtkswgap22>
-         <20181030060601.GR32673@dhcp22.suse.cz>
-         <1540882551.23278.12.camel@mtkswgap22>
-         <20181030081537.GV32673@dhcp22.suse.cz>
-         <1540975637.10275.10.camel@mtkswgap22>
-         <20181031101501.GL32673@dhcp22.suse.cz>
-         <1540981182.16084.1.camel@mtkswgap22>
-         <20181031114107.GM32673@dhcp22.suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-TM-SNTS-SMTP: 6423753B92B0DDE292E4BBE4CD6C9323F6C0E2A3901B41243E62C9671074546A2000:8
-X-MTK:  N
+        Thu, 1 Nov 2018 15:02:43 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 0DF31227766;
+        Thu,  1 Nov 2018 06:00:25 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id rkqov--H9-KD; Thu,  1 Nov 2018 06:00:24 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id E10C6227761;
+        Thu,  1 Nov 2018 06:00:23 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com E10C6227761
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1541066423;
+        bh=PhqN8JXINLRxPLWT1IQI9pBvHZgFWiRKicOFHrhIh5M=;
+        h=From:To:Date:Message-Id;
+        b=bgl66Z9HZB6lik7Qx1ZpZKuLQIpK1QNjHnws9mrpFR13+tVT/MAq/kOXvp4/wsj54
+         CQMVHL3AEU1pyakGKygKRCH96voDgY6+bT6ezcCqZOo7ppnCR6qeRFbJsUHnD1Fy0J
+         LaN5i/4wR1SB5KEOG6iHGrzEDLYjxdbWT6aciBcIhEc/d4SDqdvPkXbja5f15zJhpB
+         XBrt11HfXb4pXs8ptRmGk2kQWH3hpL14MuACz3QMbo5cUQif9ghVdJJSjjLJCa4e/h
+         8tCsHQWFypfPWkd/hCRIj+9CnjQnb3Rm6CSR4apyh04jk7+NBARtmSJP8+SiAXFvnJ
+         Vxva//igVk04g==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id 0-KdI4cJEYlV; Thu,  1 Nov 2018 06:00:23 -0400 (EDT)
+Received: from thinkos.etherlink (sessfw99-sesbfw99-92.ericsson.net [192.176.1.92])
+        by mail.efficios.com (Postfix) with ESMTPSA id 5F138227753;
+        Thu,  1 Nov 2018 06:00:18 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Andi Kleen <andi@firstfloor.org>, Chris Lameter <cl@linux.com>,
+        Ben Maurer <bmaurer@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
+Subject: [RFC PATCH for 4.21 12/16] cpu-opv/selftests: Provide basic test
+Date:   Thu,  1 Nov 2018 10:58:40 +0100
+Message-Id: <20181101095844.24462-13-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20181101095844.24462-1-mathieu.desnoyers@efficios.com>
+References: <20181101095844.24462-1-mathieu.desnoyers@efficios.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-10-31 at 12:41 +0100, Michal Hocko wrote:
-> On Wed 31-10-18 18:19:42, Miles Chen wrote:
-> > On Wed, 2018-10-31 at 11:15 +0100, Michal Hocko wrote:
-> > > On Wed 31-10-18 16:47:17, Miles Chen wrote:
-> > > > On Tue, 2018-10-30 at 09:15 +0100, Michal Hocko wrote:
-> > > > > On Tue 30-10-18 14:55:51, Miles Chen wrote:
-> > > > > [...]
-> > > > > > It's a real problem when using page_owner.
-> > > > > > I found this issue recently: I'm not able to read page_owner information
-> > > > > > during a overnight test. (error: read failed: Out of memory). I replace
-> > > > > > kmalloc() with vmalloc() and it worked well.
-> > > > > 
-> > > > > Is this with trimming the allocation to a single page and doing shorter
-> > > > > than requested reads?
-> > > > 
-> > > > 
-> > > > I printed out the allocate count on my device the request count is <=
-> > > > 4096. So I tested this scenario by trimming the count to from 4096 to
-> > > > 1024 bytes and it works fine. 
-> > > > 
-> > > > count = count > 1024? 1024: count;
-> > > > 
-> > > > It tested it on both 32bit and 64bit kernel.
-> > > 
-> > > Are you saying that you see OOMs for 4k size?
-> > > 
-> > yes, because kmalloc only use normal memor, not highmem + normal memory
-> > I think that's why vmalloc() works.
-> 
-> Can I see an OOM report please? I am especially interested that 1k
-> doesn't cause the problem because there shouldn't be that much of a
-> difference between the two. Larger allocations could be a result of
-> memory fragmentation but 1k vs. 4k to make a difference really seems
-> unexpected.
-> 
-You're right.
+"basic_cpu_opv_test" tests basic functionality of cpu_opv.
 
-I pulled out the log and found  that the allocation fail is for order=4.
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Joel Fernandes <joelaf@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Dave Watson <davejwatson@fb.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: linux-kselftest@vger.kernel.org
+Cc: "H . Peter Anvin" <hpa@zytor.com>
+Cc: Chris Lameter <cl@linux.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Michael Kerrisk <mtk.manpages@gmail.com>
+Cc: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Paul Turner <pjt@google.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Josh Triplett <josh@joshtriplett.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ben Maurer <bmaurer@fb.com>
+Cc: linux-api@vger.kernel.org
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+---
+ .../testing/selftests/cpu-opv/basic_cpu_opv_test.c | 1207 ++++++++++++++++++++
+ 1 file changed, 1207 insertions(+)
+ create mode 100644 tools/testing/selftests/cpu-opv/basic_cpu_opv_test.c
 
-I found that the if I do the read on the device, the read count is <=
-4096; if I do the read by 'adb pull' from my host PC, the read count
-becomes 65532. (I'm working on a android device)
-
-The overnight test used 'adb pull' command, so allocation fail occurred
-because of the large read count and the arbitrary size allocation design
-of page_owner. That also explains why vmalloc() works.
-
-I did a test today, the only code changed is to clamp to read count to
-PAGE_SIZE and it worked well. Maybe we can solve this issue by just
-clamping the read count.
-
-count = count > PAGE_SIZE ? PAGE_SIZE : count;
-
-
-Here is the log:
-
-<4>[  261.841770] (0)[2880:sync svc 43]sync svc 43: page allocation
-failure: order:4, mode:0x24040c0
-<4>[  261.841815]-(0)[2880:sync svc 43]CPU: 0 PID: 2880 Comm: sync svc
-43 Tainted: G        W  O    4.4.146+ #16
-<4>[  261.841825]-(0)[2880:sync svc 43]Hardware name: Generic DT based
-system
-<4>[  261.841834]-(0)[2880:sync svc 43]Backtrace:
-<4>[  261.841844]-(0)[2880:sync svc 43][<c010d57c>] (dump_backtrace)
-from [<c010d7a4>] (show_stack+0x18/0x1c)
-<4>[  261.841866]-(0)[2880:sync svc 43] r6:60030013 r5:c123d488
-r4:00000000 r3:dc8ba692
-<4>[  261.841880]-(0)[2880:sync svc 43][<c010d78c>] (show_stack) from
-[<c0470b84>] (dump_stack+0x94/0xa8)
-<4>[  261.841892]-(0)[2880:sync svc 43][<c0470af0>] (dump_stack) from
-[<c0236060>] (warn_alloc_failed+0x108/0x148)
-<4>[  261.841905]-(0)[2880:sync svc 43] r6:00000000 r5:024040c0
-r4:c1204948 r3:dc8ba692
-<4>[  261.841919]-(0)[2880:sync svc 43][<c0235f5c>] (warn_alloc_failed)
-from [<c023a284>] (__alloc_pages_nodemask+0xa08/0xbd8)
-<4>[  261.841929]-(0)[2880:sync svc 43] r3:0000000f r2:00000000
-<4>[  261.841939]-(0)[2880:sync svc 43] r8:0000002f r7:00000004
-r6:dbb7a000 r5:024040c0
-<4>[  261.841953]-(0)[2880:sync svc 43][<c023987c>]
-(__alloc_pages_nodemask) from [<c023a5fc>] (alloc_kmem_pages+0x18/0x20)
-<4>[  261.841963]-(0)[2880:sync svc 43] r10:c0286560 r9:c027b348
-r8:0000fff8 r7:00000004
-<4>[  261.841978]-(0)[2880:sync svc 43][<c023a5e4>] (alloc_kmem_pages)
-from [<c02573c0>] (kmalloc_order_trace+0x2c/0xec)
-
+diff --git a/tools/testing/selftests/cpu-opv/basic_cpu_opv_test.c b/tools/testing/selftests/cpu-opv/basic_cpu_opv_test.c
+new file mode 100644
+index 000000000000..28221b0260fa
+--- /dev/null
++++ b/tools/testing/selftests/cpu-opv/basic_cpu_opv_test.c
+@@ -0,0 +1,1207 @@
++// SPDX-License-Identifier: LGPL-2.1
++/*
++ * Basic test coverage for cpu_opv system call.
++ */
++
++#define _GNU_SOURCE
++#include <assert.h>
++#include <sched.h>
++#include <signal.h>
++#include <stdio.h>
++#include <string.h>
++#include <errno.h>
++#include <stdlib.h>
++#include <sys/time.h>
++#include <sys/mman.h>
++#include <sched.h>
++
++#include "../kselftest.h"
++
++#include "cpu-op.h"
++
++#define ARRAY_SIZE(arr)	(sizeof(arr) / sizeof((arr)[0]))
++
++#define TESTBUFLEN	4096
++#define TESTBUFLEN_CMP	16
++
++#define TESTBUFLEN_PAGE_MAX	65536
++
++#define NR_PF_ARRAY	16384
++#define PF_ARRAY_LEN	4096
++
++#define NR_HUGE_ARRAY	512
++#define HUGEMAPLEN	(NR_HUGE_ARRAY * PF_ARRAY_LEN)
++
++/* 64 MB arrays for page fault testing. */
++char pf_array_dst[NR_PF_ARRAY][PF_ARRAY_LEN];
++char pf_array_src[NR_PF_ARRAY][PF_ARRAY_LEN];
++
++static int test_ops_supported(void)
++{
++	const char *test_name = "test_ops_supported";
++	int ret;
++
++	ret = cpu_opv(NULL, 0, -1, CPU_OP_NR_FLAG);
++	if (ret < 0) {
++		ksft_test_result_fail("%s test: returned with %d, errno = %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	if (ret < NR_CPU_OPS) {
++		ksft_test_result_fail("%s test: only %d operations supported, expecting at least %d\n",
++				      test_name, ret, NR_CPU_OPS);
++		return -1;
++	}
++	ksft_test_result_pass("%s test\n", test_name);
++	return 0;
++}
++
++static int test_compare_eq_op(char *a, char *b, size_t len)
++{
++	struct cpu_op opvec[] = {
++		[0] = {
++			.op = CPU_COMPARE_EQ_OP,
++			.len = len,
++			.u.compare_op.a = (unsigned long)a,
++			.u.compare_op.b = (unsigned long)b,
++			.u.compare_op.expect_fault_a = 0,
++			.u.compare_op.expect_fault_b = 0,
++		},
++	};
++	int ret, cpu;
++
++	do {
++		cpu = cpu_op_get_current_cpu();
++		ret = cpu_opv(opvec, ARRAY_SIZE(opvec), cpu, 0);
++	} while (ret == -1 && errno == EAGAIN);
++
++	return ret;
++}
++
++static int test_compare_eq_same(void)
++{
++	int i, ret;
++	char buf1[TESTBUFLEN];
++	char buf2[TESTBUFLEN];
++	const char *test_name = "test_compare_eq same";
++
++	/* Test compare_eq */
++	for (i = 0; i < TESTBUFLEN; i++)
++		buf1[i] = (char)i;
++	for (i = 0; i < TESTBUFLEN; i++)
++		buf2[i] = (char)i;
++	ret = test_compare_eq_op(buf2, buf1, TESTBUFLEN);
++	if (ret < 0) {
++		ksft_test_result_fail("%s test: returned with %d, errno = %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	if (ret > 0) {
++		ksft_test_result_fail("%s test: unexpected value %d. Should be %d.\n",
++				      test_name, ret, 0);
++		return -1;
++	}
++	ksft_test_result_pass("%s test\n", test_name);
++	return 0;
++}
++
++static int test_compare_eq_diff(void)
++{
++	int i, ret;
++	char buf1[TESTBUFLEN];
++	char buf2[TESTBUFLEN];
++	const char *test_name = "test_compare_eq different";
++
++	for (i = 0; i < TESTBUFLEN; i++)
++		buf1[i] = (char)i;
++	memset(buf2, 0, TESTBUFLEN);
++	ret = test_compare_eq_op(buf2, buf1, TESTBUFLEN);
++	if (ret < 0) {
++		ksft_test_result_fail("%s test: returned with %d, errno = %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	if (ret == 0) {
++		ksft_test_result_fail("%s test: unexpected value %d. Should be %d.\n",
++				      test_name, ret, 1);
++		return -1;
++	}
++	ksft_test_result_pass("%s test\n", test_name);
++	return 0;
++}
++
++static int test_compare_ne_op(char *a, char *b, size_t len)
++{
++	struct cpu_op opvec[] = {
++		[0] = {
++			.op = CPU_COMPARE_NE_OP,
++			.len = len,
++			.u.compare_op.a = (unsigned long)a,
++			.u.compare_op.b = (unsigned long)b,
++			.u.compare_op.expect_fault_a = 0,
++			.u.compare_op.expect_fault_b = 0,
++		},
++	};
++	int ret, cpu;
++
++	do {
++		cpu = cpu_op_get_current_cpu();
++		ret = cpu_opv(opvec, ARRAY_SIZE(opvec), cpu, 0);
++	} while (ret == -1 && errno == EAGAIN);
++
++	return ret;
++}
++
++static int test_compare_ne_same(void)
++{
++	int i, ret;
++	char buf1[TESTBUFLEN];
++	char buf2[TESTBUFLEN];
++	const char *test_name = "test_compare_ne same";
++
++	/* Test compare_ne */
++	for (i = 0; i < TESTBUFLEN; i++)
++		buf1[i] = (char)i;
++	for (i = 0; i < TESTBUFLEN; i++)
++		buf2[i] = (char)i;
++	ret = test_compare_ne_op(buf2, buf1, TESTBUFLEN);
++	if (ret < 0) {
++		ksft_test_result_fail("%s test: returned with %d, errno = %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	if (ret == 0) {
++		ksft_test_result_fail("%s test: unexpected value %d. Should be %d.\n",
++				      test_name, ret, 1);
++		return -1;
++	}
++	ksft_test_result_pass("%s test\n", test_name);
++	return 0;
++}
++
++static int test_compare_ne_diff(void)
++{
++	int i, ret;
++	char buf1[TESTBUFLEN];
++	char buf2[TESTBUFLEN];
++	const char *test_name = "test_compare_ne different";
++
++	for (i = 0; i < TESTBUFLEN; i++)
++		buf1[i] = (char)i;
++	memset(buf2, 0, TESTBUFLEN);
++	ret = test_compare_ne_op(buf2, buf1, TESTBUFLEN);
++	if (ret < 0) {
++		ksft_test_result_fail("%s test: returned with %d, errno = %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	if (ret != 0) {
++		ksft_test_result_fail("%s test: unexpected value %d. Should be %d.\n",
++				      test_name, ret, 0);
++		return -1;
++	}
++	ksft_test_result_pass("%s test\n", test_name);
++	return 0;
++}
++
++static int test_2compare_eq_op(char *a, char *b, char *c, char *d,
++		size_t len)
++{
++	struct cpu_op opvec[] = {
++		[0] = {
++			.op = CPU_COMPARE_EQ_OP,
++			.len = len,
++			.u.compare_op.a = (unsigned long)a,
++			.u.compare_op.b = (unsigned long)b,
++			.u.compare_op.expect_fault_a = 0,
++			.u.compare_op.expect_fault_b = 0,
++		},
++		[1] = {
++			.op = CPU_COMPARE_EQ_OP,
++			.len = len,
++			.u.compare_op.a = (unsigned long)c,
++			.u.compare_op.b = (unsigned long)d,
++			.u.compare_op.expect_fault_a = 0,
++			.u.compare_op.expect_fault_b = 0,
++		},
++	};
++	int ret, cpu;
++
++	do {
++		cpu = cpu_op_get_current_cpu();
++		ret = cpu_opv(opvec, ARRAY_SIZE(opvec), cpu, 0);
++	} while (ret == -1 && errno == EAGAIN);
++
++	return ret;
++}
++
++static int test_2compare_eq_index(void)
++{
++	int i, ret;
++	char buf1[TESTBUFLEN_CMP];
++	char buf2[TESTBUFLEN_CMP];
++	char buf3[TESTBUFLEN_CMP];
++	char buf4[TESTBUFLEN_CMP];
++	const char *test_name = "test_2compare_eq index";
++
++	for (i = 0; i < TESTBUFLEN_CMP; i++)
++		buf1[i] = (char)i;
++	memset(buf2, 0, TESTBUFLEN_CMP);
++	memset(buf3, 0, TESTBUFLEN_CMP);
++	memset(buf4, 0, TESTBUFLEN_CMP);
++
++	/* First compare failure is op[0], expect 1. */
++	ret = test_2compare_eq_op(buf2, buf1, buf4, buf3, TESTBUFLEN_CMP);
++	if (ret < 0) {
++		ksft_test_result_fail("%s test: returned with %d, errno = %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	if (ret != 1) {
++		ksft_test_result_fail("%s test: unexpected value %d. Should be %d.\n",
++				      test_name, ret, 1);
++		return -1;
++	}
++
++	/* All compares succeed. */
++	for (i = 0; i < TESTBUFLEN_CMP; i++)
++		buf2[i] = (char)i;
++	ret = test_2compare_eq_op(buf2, buf1, buf4, buf3, TESTBUFLEN_CMP);
++	if (ret < 0) {
++		ksft_test_result_fail("%s test: returned with %d, errno = %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	if (ret != 0) {
++		ksft_test_result_fail("%s test: unexpected value %d. Should be %d.\n",
++				      test_name, ret, 0);
++		return -1;
++	}
++
++	/* First compare failure is op[1], expect 2. */
++	for (i = 0; i < TESTBUFLEN_CMP; i++)
++		buf3[i] = (char)i;
++	ret = test_2compare_eq_op(buf2, buf1, buf4, buf3, TESTBUFLEN_CMP);
++	if (ret < 0) {
++		ksft_test_result_fail("%s test: returned with %d, errno = %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	if (ret != 2) {
++		ksft_test_result_fail("%s test: unexpected value %d. Should be %d.\n",
++				      test_name, ret, 2);
++		return -1;
++	}
++	ksft_test_result_pass("%s test\n", test_name);
++	return 0;
++}
++
++static int test_2compare_ne_op(char *a, char *b, char *c, char *d,
++		size_t len)
++{
++	struct cpu_op opvec[] = {
++		[0] = {
++			.op = CPU_COMPARE_NE_OP,
++			.len = len,
++			.u.compare_op.a = (unsigned long)a,
++			.u.compare_op.b = (unsigned long)b,
++			.u.compare_op.expect_fault_a = 0,
++			.u.compare_op.expect_fault_b = 0,
++		},
++		[1] = {
++			.op = CPU_COMPARE_NE_OP,
++			.len = len,
++			.u.compare_op.a = (unsigned long)c,
++			.u.compare_op.b = (unsigned long)d,
++			.u.compare_op.expect_fault_a = 0,
++			.u.compare_op.expect_fault_b = 0,
++		},
++	};
++	int ret, cpu;
++
++	do {
++		cpu = cpu_op_get_current_cpu();
++		ret = cpu_opv(opvec, ARRAY_SIZE(opvec), cpu, 0);
++	} while (ret == -1 && errno == EAGAIN);
++
++	return ret;
++}
++
++static int test_2compare_ne_index(void)
++{
++	int i, ret;
++	char buf1[TESTBUFLEN_CMP];
++	char buf2[TESTBUFLEN_CMP];
++	char buf3[TESTBUFLEN_CMP];
++	char buf4[TESTBUFLEN_CMP];
++	const char *test_name = "test_2compare_ne index";
++
++	memset(buf1, 0, TESTBUFLEN_CMP);
++	memset(buf2, 0, TESTBUFLEN_CMP);
++	memset(buf3, 0, TESTBUFLEN_CMP);
++	memset(buf4, 0, TESTBUFLEN_CMP);
++
++	/* First compare ne failure is op[0], expect 1. */
++	ret = test_2compare_ne_op(buf2, buf1, buf4, buf3, TESTBUFLEN_CMP);
++	if (ret < 0) {
++		ksft_test_result_fail("%s test: returned with %d, errno = %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	if (ret != 1) {
++		ksft_test_result_fail("%s test: unexpected value %d. Should be %d.\n",
++				      test_name, ret, 1);
++		return -1;
++	}
++
++	/* All compare ne succeed. */
++	for (i = 0; i < TESTBUFLEN_CMP; i++)
++		buf1[i] = (char)i;
++	for (i = 0; i < TESTBUFLEN_CMP; i++)
++		buf3[i] = (char)i;
++	ret = test_2compare_ne_op(buf2, buf1, buf4, buf3, TESTBUFLEN_CMP);
++	if (ret < 0) {
++		ksft_test_result_fail("%s test: returned with %d, errno = %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	if (ret != 0) {
++		ksft_test_result_fail("%s test: unexpected value %d. Should be %d.\n",
++				      test_name, ret, 0);
++		return -1;
++	}
++
++	/* First compare failure is op[1], expect 2. */
++	for (i = 0; i < TESTBUFLEN_CMP; i++)
++		buf4[i] = (char)i;
++	ret = test_2compare_ne_op(buf2, buf1, buf4, buf3, TESTBUFLEN_CMP);
++	if (ret < 0) {
++		ksft_test_result_fail("%s test: returned with %d, errno = %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	if (ret != 2) {
++		ksft_test_result_fail("%s test: unexpected value %d. Should be %d.\n",
++				      test_name, ret, 2);
++		return -1;
++	}
++	ksft_test_result_pass("%s test\n", test_name);
++	return 0;
++}
++
++static int test_memcpy_op(void *dst, void *src, size_t len)
++{
++	struct cpu_op opvec[] = {
++		[0] = {
++			.op = CPU_MEMCPY_OP,
++			.len = len,
++			.u.memcpy_op.dst = (unsigned long)dst,
++			.u.memcpy_op.src = (unsigned long)src,
++			.u.memcpy_op.expect_fault_dst = 0,
++			.u.memcpy_op.expect_fault_src = 0,
++		},
++	};
++	int ret, cpu;
++
++	do {
++		cpu = cpu_op_get_current_cpu();
++		ret = cpu_opv(opvec, ARRAY_SIZE(opvec), cpu, 0);
++	} while (ret == -1 && errno == EAGAIN);
++
++	return ret;
++}
++
++static int test_memcpy(void)
++{
++	int i, ret;
++	char buf1[TESTBUFLEN];
++	char buf2[TESTBUFLEN];
++	const char *test_name = "test_memcpy";
++
++	/* Test memcpy */
++	for (i = 0; i < TESTBUFLEN; i++)
++		buf1[i] = (char)i;
++	memset(buf2, 0, TESTBUFLEN);
++	ret = test_memcpy_op(buf2, buf1, TESTBUFLEN);
++	if (ret) {
++		ksft_test_result_fail("%s test: returned with %d, errno = %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	for (i = 0; i < TESTBUFLEN; i++) {
++		if (buf2[i] != (char)i) {
++			ksft_test_result_fail("%s test: unexpected value at offset %d. Found %d. Should be %d.\n",
++					      test_name, i, buf2[i], (char)i);
++			return -1;
++		}
++	}
++	ksft_test_result_pass("%s test\n", test_name);
++	return 0;
++}
++
++static int test_memcpy_u32(void)
++{
++	int ret;
++	uint32_t v1, v2;
++	const char *test_name = "test_memcpy_u32";
++
++	/* Test memcpy_u32 */
++	v1 = 42;
++	v2 = 0;
++	ret = test_memcpy_op(&v2, &v1, sizeof(v1));
++	if (ret) {
++		ksft_test_result_fail("%s test: returned with %d, errno = %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	if (v1 != v2) {
++		ksft_test_result_fail("%s test: unexpected value %d. Should be %d.\n",
++				      test_name, v2, v1);
++		return -1;
++	}
++	ksft_test_result_pass("%s test\n", test_name);
++	return 0;
++}
++
++static int test_memcpy_memcpy_release_op(void *dst1, void *src1,
++		void *dst2, void *src2, size_t len)
++{
++	struct cpu_op opvec[] = {
++		[0] = {
++			.op = CPU_MEMCPY_OP,
++			.len = len,
++			.u.memcpy_op.dst = (unsigned long)dst1,
++			.u.memcpy_op.src = (unsigned long)src1,
++			.u.memcpy_op.expect_fault_dst = 0,
++			.u.memcpy_op.expect_fault_src = 0,
++		},
++		[1] = {
++			.op = CPU_MEMCPY_RELEASE_OP,
++			.len = len,
++			.u.memcpy_op.dst = (unsigned long)dst2,
++			.u.memcpy_op.src = (unsigned long)src2,
++			.u.memcpy_op.expect_fault_dst = 0,
++			.u.memcpy_op.expect_fault_src = 0,
++		},
++	};
++	int ret, cpu;
++
++	do {
++		cpu = cpu_op_get_current_cpu();
++		ret = cpu_opv(opvec, ARRAY_SIZE(opvec), cpu, 0);
++	} while (ret == -1 && errno == EAGAIN);
++
++	return ret;
++}
++
++static int test_memcpy_memcpy_release(void)
++{
++	int ret;
++	int v1, v2, v3;
++	const char *test_name = "test_memcpy_memcpy_release";
++
++	/* Test memcpy */
++	v1 = 42;
++	v2 = v3 = 0;
++	ret = test_memcpy_memcpy_release_op(&v2, &v1, &v3, &v2, sizeof(int));
++	if (ret) {
++		ksft_test_result_fail("%s test: returned with %d, errno = %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	if (v3 != v1) {
++		ksft_test_result_fail("%s test: unexpected value %d. Should be %d.\n",
++				      test_name, v3, v1);
++		return -1;
++	}
++	ksft_test_result_pass("%s test\n", test_name);
++	return 0;
++}
++
++static int test_add_op(int *v, int64_t increment)
++{
++	int ret, cpu;
++
++	do {
++		cpu = cpu_op_get_current_cpu();
++		ret = cpu_op_add(v, increment, sizeof(*v), cpu);
++	} while (ret == -1 && errno == EAGAIN);
++
++	return ret;
++}
++
++static int test_add(void)
++{
++	int orig_v = 42, v, ret;
++	int increment = 1;
++	const char *test_name = "test_add";
++
++	v = orig_v;
++	ret = test_add_op(&v, increment);
++	if (ret) {
++		ksft_test_result_fail("%s test: returned with %d, errno = %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	if (v != orig_v + increment) {
++		ksft_test_result_fail("%s test: unexpected value %d. Should be %d.\n",
++				      test_name, v,
++				      orig_v + increment);
++		return -1;
++	}
++	ksft_test_result_pass("%s test\n", test_name);
++	return 0;
++}
++
++static int test_add_release_op(int *v, int64_t increment)
++{
++	int ret, cpu;
++
++	do {
++		cpu = cpu_op_get_current_cpu();
++		ret = cpu_op_add_release(v, increment, sizeof(*v), cpu);
++	} while (ret == -1 && errno == EAGAIN);
++
++	return ret;
++}
++
++static int test_add_release(void)
++{
++	int orig_v = 42, v, ret;
++	int increment = 1;
++	const char *test_name = "test_add_release";
++
++	v = orig_v;
++	ret = test_add_release_op(&v, increment);
++	if (ret) {
++		ksft_test_result_fail("%s test: returned with %d, errno = %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	if (v != orig_v + increment) {
++		ksft_test_result_fail("%s test: unexpected value %d. Should be %d.\n",
++				      test_name, v,
++				      orig_v + increment);
++		return -1;
++	}
++	ksft_test_result_pass("%s test\n", test_name);
++	return 0;
++}
++
++static int test_two_add_op(int *v, int64_t *increments)
++{
++	struct cpu_op opvec[] = {
++		[0] = {
++			.op = CPU_ADD_OP,
++			.len = sizeof(*v),
++			.u.arithmetic_op.p = (unsigned long)v,
++			.u.arithmetic_op.count = increments[0],
++			.u.arithmetic_op.expect_fault_p = 0,
++		},
++		[1] = {
++			.op = CPU_ADD_OP,
++			.len = sizeof(*v),
++			.u.arithmetic_op.p = (unsigned long)v,
++			.u.arithmetic_op.count = increments[1],
++			.u.arithmetic_op.expect_fault_p = 0,
++		},
++	};
++	int ret, cpu;
++
++	do {
++		cpu = cpu_op_get_current_cpu();
++		ret = cpu_opv(opvec, ARRAY_SIZE(opvec), cpu, 0);
++	} while (ret == -1 && errno == EAGAIN);
++
++	return ret;
++}
++
++static int test_two_add(void)
++{
++	int orig_v = 42, v, ret;
++	int64_t increments[2] = { 99, 123 };
++	const char *test_name = "test_two_add";
++
++	v = orig_v;
++	ret = test_two_add_op(&v, increments);
++	if (ret) {
++		ksft_test_result_fail("%s test: returned with %d, errno = %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	if (v != orig_v + increments[0] + increments[1]) {
++		ksft_test_result_fail("%s test: unexpected value %d. Should be %d.\n",
++				      test_name, v,
++				      orig_v + increments[0] + increments[1]);
++		return -1;
++	}
++	ksft_test_result_pass("%s test\n", test_name);
++	return 0;
++}
++
++static int test_cmpxchg_op(void *v, void *expect, void *old, void *n,
++		size_t len)
++{
++	int ret, cpu;
++
++	do {
++		cpu = cpu_op_get_current_cpu();
++		ret = cpu_op_cmpxchg(v, expect, old, n, len, cpu);
++	} while (ret == -1 && errno == EAGAIN);
++
++	return ret;
++}
++
++static int test_cmpxchg_success(void)
++{
++	int ret;
++	uint64_t orig_v = 1, v, expect = 1, old = 0, n = 3;
++	const char *test_name = "test_cmpxchg success";
++
++	v = orig_v;
++	ret = test_cmpxchg_op(&v, &expect, &old, &n, sizeof(uint64_t));
++	if (ret < 0) {
++		ksft_test_result_fail("%s test: ret = %d, errno = %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	if (ret) {
++		ksft_test_result_fail("%s returned %d, expecting %d\n",
++				      test_name, ret, 0);
++		return -1;
++	}
++	if (v != n) {
++		ksft_test_result_fail("%s v is %lld, expecting %lld\n",
++				      test_name, (long long)v, (long long)n);
++		return -1;
++	}
++	if (old != orig_v) {
++		ksft_test_result_fail("%s old is %lld, expecting %lld\n",
++				      test_name, (long long)old,
++				      (long long)orig_v);
++		return -1;
++	}
++	ksft_test_result_pass("%s test\n", test_name);
++	return 0;
++}
++
++static int test_cmpxchg_fail(void)
++{
++	int ret;
++	uint64_t orig_v = 1, v, expect = 123, old = 0, n = 3;
++	const char *test_name = "test_cmpxchg fail";
++
++	v = orig_v;
++	ret = test_cmpxchg_op(&v, &expect, &old, &n, sizeof(uint64_t));
++	if (ret < 0) {
++		ksft_test_result_fail("%s test: ret = %d, errno = %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	if (ret == 0) {
++		ksft_test_result_fail("%s returned %d, expecting %d\n",
++				      test_name, ret, 1);
++		return -1;
++	}
++	if (v == n) {
++		ksft_test_result_fail("%s returned %lld, expecting %lld\n",
++				      test_name, (long long)v,
++				      (long long)orig_v);
++		return -1;
++	}
++	if (old != orig_v) {
++		ksft_test_result_fail("%s old is %lld, expecting %lld\n",
++				      test_name, (long long)old,
++				      (long long)orig_v);
++		return -1;
++	}
++	ksft_test_result_pass("%s test\n", test_name);
++	return 0;
++}
++
++static int test_memcpy_expect_fault_op(void *dst, void *src, size_t len)
++{
++	struct cpu_op opvec[] = {
++		[0] = {
++			.op = CPU_MEMCPY_OP,
++			.len = len,
++			.u.memcpy_op.dst = (unsigned long)dst,
++			.u.memcpy_op.src = (unsigned long)src,
++			.u.memcpy_op.expect_fault_dst = 0,
++			/* Return EAGAIN on fault. */
++			.u.memcpy_op.expect_fault_src = 1,
++		},
++	};
++	int cpu;
++
++	cpu = cpu_op_get_current_cpu();
++	return cpu_opv(opvec, ARRAY_SIZE(opvec), cpu, 0);
++}
++
++static int test_memcpy_fault(void)
++{
++	int ret;
++	char buf1[TESTBUFLEN];
++	const char *test_name = "test_memcpy_fault";
++
++	/* Test memcpy */
++	ret = test_memcpy_op(buf1, NULL, TESTBUFLEN);
++	if (!ret || (ret < 0 && errno != EFAULT)) {
++		ksft_test_result_fail("%s test: ret = %d, errno = %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	/* Test memcpy expect fault */
++	ret = test_memcpy_expect_fault_op(buf1, NULL, TESTBUFLEN);
++	if (!ret || (ret < 0 && errno != EAGAIN)) {
++		ksft_test_result_fail("%s test: ret = %d, errno = %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	ksft_test_result_pass("%s test\n", test_name);
++	return 0;
++}
++
++static int do_test_unknown_op(void)
++{
++	struct cpu_op opvec[] = {
++		[0] = {
++			.op = -1,	/* Unknown */
++			.len = 0,
++		},
++	};
++	int cpu;
++
++	cpu = cpu_op_get_current_cpu();
++	return cpu_opv(opvec, ARRAY_SIZE(opvec), cpu, 0);
++}
++
++static int test_unknown_op(void)
++{
++	int ret;
++	const char *test_name = "test_unknown_op";
++
++	ret = do_test_unknown_op();
++	if (!ret || (ret < 0 && errno != EINVAL)) {
++		ksft_test_result_fail("%s test: ret = %d, errno = %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	ksft_test_result_pass("%s test\n", test_name);
++	return 0;
++}
++
++static int do_test_max_ops(void)
++{
++	int v = 0;
++	struct cpu_op opvec[] = {
++		[0] = {
++			.op = CPU_ADD_OP,
++			.len = sizeof(v),
++			.u.arithmetic_op.p = (unsigned long)&v,
++			.u.arithmetic_op.count = 0,
++			.u.arithmetic_op.expect_fault_p = 0,
++		},
++		[1] = {
++			.op = CPU_ADD_OP,
++			.len = sizeof(v),
++			.u.arithmetic_op.p = (unsigned long)&v,
++			.u.arithmetic_op.count = 0,
++			.u.arithmetic_op.expect_fault_p = 0,
++		},
++		[2] = {
++			.op = CPU_ADD_OP,
++			.len = sizeof(v),
++			.u.arithmetic_op.p = (unsigned long)&v,
++			.u.arithmetic_op.count = 0,
++			.u.arithmetic_op.expect_fault_p = 0,
++		},
++		[3] = {
++			.op = CPU_ADD_OP,
++			.len = sizeof(v),
++			.u.arithmetic_op.p = (unsigned long)&v,
++			.u.arithmetic_op.count = 0,
++			.u.arithmetic_op.expect_fault_p = 0,
++		},
++	};
++	int cpu;
++
++	cpu = cpu_op_get_current_cpu();
++	return cpu_opv(opvec, ARRAY_SIZE(opvec), cpu, 0);
++}
++
++static int test_max_ops(void)
++{
++	int ret;
++	const char *test_name = "test_max_ops";
++
++	ret = do_test_max_ops();
++	if (ret < 0) {
++		ksft_test_result_fail("%s test: ret = %d, errno = %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	ksft_test_result_pass("%s test\n", test_name);
++	return 0;
++}
++
++static int do_test_too_many_ops(void)
++{
++	int v = 0;
++	struct cpu_op opvec[] = {
++		[0] = {
++			.op = CPU_ADD_OP,
++			.len = sizeof(v),
++			.u.arithmetic_op.p = (unsigned long)&v,
++			.u.arithmetic_op.count = 0,
++			.u.arithmetic_op.expect_fault_p = 0,
++		},
++		[1] = {
++			.op = CPU_ADD_OP,
++			.len = sizeof(v),
++			.u.arithmetic_op.p = (unsigned long)&v,
++			.u.arithmetic_op.count = 0,
++			.u.arithmetic_op.expect_fault_p = 0,
++		},
++		[2] = {
++			.op = CPU_ADD_OP,
++			.len = sizeof(v),
++			.u.arithmetic_op.p = (unsigned long)&v,
++			.u.arithmetic_op.count = 0,
++			.u.arithmetic_op.expect_fault_p = 0,
++		},
++		[3] = {
++			.op = CPU_ADD_OP,
++			.len = sizeof(v),
++			.u.arithmetic_op.p = (unsigned long)&v,
++			.u.arithmetic_op.count = 0,
++			.u.arithmetic_op.expect_fault_p = 0,
++		},
++		[4] = {
++			.op = CPU_ADD_OP,
++			.len = sizeof(v),
++			.u.arithmetic_op.p = (unsigned long)&v,
++			.u.arithmetic_op.count = 0,
++			.u.arithmetic_op.expect_fault_p = 0,
++		},
++	};
++	int cpu;
++
++	cpu = cpu_op_get_current_cpu();
++	return cpu_opv(opvec, ARRAY_SIZE(opvec), cpu, 0);
++}
++
++static int test_too_many_ops(void)
++{
++	int ret;
++	const char *test_name = "test_too_many_ops";
++
++	ret = do_test_too_many_ops();
++	if (!ret || (ret < 0 && errno != EINVAL)) {
++		ksft_test_result_fail("%s test: ret = %d, errno = %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	ksft_test_result_pass("%s test\n", test_name);
++	return 0;
++}
++
++/* Use 64kB len, largest page size known on Linux. */
++static int test_memcpy_single_too_large(void)
++{
++	int i, ret;
++	char buf1[TESTBUFLEN_PAGE_MAX + 1];
++	char buf2[TESTBUFLEN_PAGE_MAX + 1];
++	const char *test_name = "test_memcpy_single_too_large";
++
++	/* Test memcpy */
++	for (i = 0; i < TESTBUFLEN_PAGE_MAX + 1; i++)
++		buf1[i] = (char)i;
++	memset(buf2, 0, TESTBUFLEN_PAGE_MAX + 1);
++	ret = test_memcpy_op(buf2, buf1, TESTBUFLEN_PAGE_MAX + 1);
++	if (!ret || (ret < 0 && errno != EINVAL)) {
++		ksft_test_result_fail("%s test: ret = %d, errno = %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	ksft_test_result_pass("%s test\n", test_name);
++	return 0;
++}
++
++static int test_memcpy_single_ok_sum_too_large_op(void *dst, void *src,
++						  size_t len)
++{
++	struct cpu_op opvec[] = {
++		[0] = {
++			.op = CPU_MEMCPY_OP,
++			.len = len,
++			.u.memcpy_op.dst = (unsigned long)dst,
++			.u.memcpy_op.src = (unsigned long)src,
++			.u.memcpy_op.expect_fault_dst = 0,
++			.u.memcpy_op.expect_fault_src = 0,
++		},
++		[1] = {
++			.op = CPU_MEMCPY_OP,
++			.len = len,
++			.u.memcpy_op.dst = (unsigned long)dst,
++			.u.memcpy_op.src = (unsigned long)src,
++			.u.memcpy_op.expect_fault_dst = 0,
++			.u.memcpy_op.expect_fault_src = 0,
++		},
++	};
++	int ret, cpu;
++
++	do {
++		cpu = cpu_op_get_current_cpu();
++		ret = cpu_opv(opvec, ARRAY_SIZE(opvec), cpu, 0);
++	} while (ret == -1 && errno == EAGAIN);
++
++	return ret;
++}
++
++static int test_memcpy_single_ok_sum_too_large(void)
++{
++	int i, ret;
++	char buf1[TESTBUFLEN];
++	char buf2[TESTBUFLEN];
++	const char *test_name = "test_memcpy_single_ok_sum_too_large";
++
++	/* Test memcpy */
++	for (i = 0; i < TESTBUFLEN; i++)
++		buf1[i] = (char)i;
++	memset(buf2, 0, TESTBUFLEN);
++	ret = test_memcpy_single_ok_sum_too_large_op(buf2, buf1, TESTBUFLEN);
++	if (!ret || (ret < 0 && errno != EINVAL)) {
++		ksft_test_result_fail("%s test: ret = %d, errno = %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	ksft_test_result_pass("%s test\n", test_name);
++	return 0;
++}
++
++/*
++ * Iterate over large uninitialized arrays to trigger page faults.
++ * This includes reading from zero pages.
++ */
++int test_page_fault(void)
++{
++	int ret = 0;
++	uint64_t i;
++	const char *test_name = "test_page_fault";
++
++	for (i = 0; i < NR_PF_ARRAY; i++) {
++		ret = test_memcpy_op(pf_array_dst[i],
++				     pf_array_src[i],
++				     PF_ARRAY_LEN);
++		if (ret) {
++			ksft_test_result_fail("%s test: ret = %d, errno = %s\n",
++					      test_name, ret, strerror(errno));
++			return ret;
++		}
++	}
++	ksft_test_result_pass("%s test\n", test_name);
++	return 0;
++}
++
++/*
++ * Try to use 2MB huge pages.
++ */
++int test_hugetlb(void)
++{
++	int ret = 0;
++	uint64_t i;
++	const char *test_name = "test_hugetlb";
++	int *dst, *src;
++
++	dst = mmap(NULL, HUGEMAPLEN, PROT_READ | PROT_WRITE,
++		   MAP_HUGETLB | MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
++	if (dst == MAP_FAILED) {
++		switch (errno) {
++		case ENOMEM:
++		case ENOENT:
++		case EINVAL:
++			ksft_test_result_skip("%s test.\n", test_name);
++			goto end;
++		default:
++			break;
++		}
++		perror("mmap");
++		abort();
++	}
++	src = mmap(NULL, HUGEMAPLEN, PROT_READ | PROT_WRITE,
++		   MAP_HUGETLB | MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
++	if (src == MAP_FAILED) {
++		if (errno == ENOMEM) {
++			ksft_test_result_skip("%s test.\n", test_name);
++			goto unmap_dst;
++		}
++		perror("mmap");
++		abort();
++	}
++
++	/* Read/write from/to huge zero pages. */
++	for (i = 0; i < NR_HUGE_ARRAY; i++) {
++		ret = test_memcpy_op(dst + (i * PF_ARRAY_LEN / sizeof(int)),
++				     src + (i * PF_ARRAY_LEN / sizeof(int)),
++				     PF_ARRAY_LEN);
++		if (ret) {
++			ksft_test_result_fail("%s test: ret = %d, errno = %s\n",
++					      test_name, ret, strerror(errno));
++			return ret;
++		}
++	}
++	for (i = 0; i < NR_HUGE_ARRAY * (PF_ARRAY_LEN / sizeof(int)); i++)
++		src[i] = i;
++
++	for (i = 0; i < NR_HUGE_ARRAY; i++) {
++		ret = test_memcpy_op(dst + (i * PF_ARRAY_LEN / sizeof(int)),
++				     src + (i * PF_ARRAY_LEN / sizeof(int)),
++				     PF_ARRAY_LEN);
++		if (ret) {
++			ksft_test_result_fail("%s test: ret = %d, errno = %s\n",
++					      test_name, ret, strerror(errno));
++			return ret;
++		}
++	}
++
++	for (i = 0; i < NR_HUGE_ARRAY * (PF_ARRAY_LEN / sizeof(int)); i++) {
++		if (dst[i] != i) {
++			ksft_test_result_fail("%s mismatch, expect %d, got %d\n",
++					      test_name, i, dst[i]);
++			return ret;
++		}
++	}
++
++	ksft_test_result_pass("%s test\n", test_name);
++
++	if (munmap(src, HUGEMAPLEN)) {
++		perror("munmap");
++		abort();
++	}
++unmap_dst:
++	if (munmap(dst, HUGEMAPLEN)) {
++		perror("munmap");
++		abort();
++	}
++end:
++	return 0;
++}
++
++static int test_cmpxchg_op_cpu(void *v, void *expect, void *old, void *n,
++		size_t len, int cpu)
++{
++	int ret;
++
++	do {
++		ret = cpu_op_cmpxchg(v, expect, old, n, len, cpu);
++	} while (ret == -1 && errno == EAGAIN);
++
++	return ret;
++}
++
++static int test_over_possible_cpu(void)
++{
++	int ret;
++	uint64_t orig_v = 1, v, expect = 1, old = 0, n = 3;
++	const char *test_name = "test_over_possible_cpu";
++
++	v = orig_v;
++	ret = test_cmpxchg_op_cpu(&v, &expect, &old, &n, sizeof(uint64_t),
++				  0xFFFFFFFF);
++	if (ret == 0) {
++		ksft_test_result_fail("%s test: ret = %d\n",
++				      test_name, ret);
++		return -1;
++	}
++	if (ret < 0 && errno == EINVAL) {
++		ksft_test_result_pass("%s test\n", test_name);
++		return 0;
++	}
++	ksft_test_result_fail("%s returned %d, errno %s, expecting %d, errno %s\n",
++			      test_name, ret, strerror(errno),
++			      0, strerror(EINVAL));
++	return -1;
++}
++
++static int test_allowed_affinity(void)
++{
++	int ret;
++	uint64_t orig_v = 1, v, expect = 1, old = 0, n = 3;
++	const char *test_name = "test_allowed_affinity";
++	cpu_set_t allowed_cpus, cpuset;
++
++	ret = sched_getaffinity(0, sizeof(allowed_cpus), &allowed_cpus);
++	if (ret) {
++		ksft_test_result_fail("%s returned %d, errno %s\n",
++				      test_name, ret, strerror(errno));
++		return -1;
++	}
++	if (!(CPU_ISSET(0, &allowed_cpus) && CPU_ISSET(1, &allowed_cpus))) {
++		ksft_test_result_skip("%s test. Requiring allowed CPUs 0 and 1.\n",
++				      test_name);
++		return 0;
++	}
++	CPU_ZERO(&cpuset);
++	CPU_SET(0, &cpuset);
++	if (sched_setaffinity(0, sizeof(cpuset), &cpuset) != 0) {
++		ksft_test_result_fail("%s test. Unable to set affinity. errno = %s\n",
++				      test_name, strerror(errno));
++		return -1;
++	}
++	v = orig_v;
++	ret = test_cmpxchg_op_cpu(&v, &expect, &old, &n, sizeof(uint64_t),
++				  1);
++	if (sched_setaffinity(0, sizeof(allowed_cpus), &allowed_cpus) != 0) {
++		ksft_test_result_fail("%s test. Unable to set affinity. errno = %s\n",
++				      test_name, strerror(errno));
++		return -1;
++	}
++	if (ret == 0) {
++		ksft_test_result_fail("%s test: ret = %d\n",
++				      test_name, ret);
++		return -1;
++	}
++
++	if (ret < 0 && errno == EINVAL) {
++		ksft_test_result_pass("%s test\n", test_name);
++		return 0;
++	}
++	ksft_test_result_fail("%s returned %d, errno %s, expecting %d, errno %s\n",
++			      test_name, ret, strerror(errno),
++			      0, strerror(EINVAL));
++	return -1;
++}
++
++int main(int argc, char **argv)
++{
++	ksft_print_header();
++
++	test_ops_supported();
++	test_compare_eq_same();
++	test_compare_eq_diff();
++	test_compare_ne_same();
++	test_compare_ne_diff();
++	test_2compare_eq_index();
++	test_2compare_ne_index();
++	test_memcpy();
++	test_memcpy_u32();
++	test_memcpy_memcpy_release();
++	test_add();
++	test_add_release();
++	test_two_add();
++	test_cmpxchg_success();
++	test_cmpxchg_fail();
++	test_memcpy_fault();
++	test_unknown_op();
++	test_max_ops();
++	test_too_many_ops();
++	test_memcpy_single_too_large();
++	test_memcpy_single_ok_sum_too_large();
++	test_page_fault();
++	test_hugetlb();
++	test_over_possible_cpu();
++	test_allowed_affinity();
++
++	return ksft_exit_pass();
++}
+-- 
+2.11.0
 
