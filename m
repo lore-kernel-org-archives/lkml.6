@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72D52C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A843C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:52:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DBE220830
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:52:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DBE220830
+	by mail.kernel.org (Postfix) with ESMTP id 21D6020830
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:52:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21D6020830
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727525AbeKBBzv (ORCPT
+        id S1727556AbeKBB4B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 21:55:51 -0400
-Received: from mail-it1-f198.google.com ([209.85.166.198]:57638 "EHLO
-        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726115AbeKBBzu (ORCPT
+        Thu, 1 Nov 2018 21:56:01 -0400
+Received: from mail-it1-f197.google.com ([209.85.166.197]:33131 "EHLO
+        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726033AbeKBBzu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 1 Nov 2018 21:55:50 -0400
-Received: by mail-it1-f198.google.com with SMTP id q7so2283060itj.7
+Received: by mail-it1-f197.google.com with SMTP id i15-v6so2738480itb.0
         for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 09:52:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=WVOutJVhm4dhQe7McfVDIb46g0xOU4UEvTNTRuFh36g=;
-        b=KkzXF81aXVgYCeu2nIuF0QiE0cAbhseaHmOaT3rKkIowrDgJw0rFjt+22afIBmJBHm
-         RKESKj3a63K87mReHH11gykBgolBRK0tWFBr26aHJV+5gjznY7ndHU5V7qXjQVLaFS8g
-         l1yXiRz9Vhafd+2z2KwjAY+aLTVSQlyqiIDAeYwsmjeIWuPo5vGdhuZdGsobwJgGdW5g
-         Ldi20w7PKlZkZ7ZCDWQgj7QvpnTbHzsP4DxBLpIVBl8keev9jBX7QxsB0VdjlVwNV7iv
-         Inp7y643fJxGu/3wjR0S3A3utHNj990EGVSg0GQZI9uwkGlCicN4sUFBtegPYdt4SRTK
-         36vg==
-X-Gm-Message-State: AGRZ1gJ8NzjLyVm8DhalwcNlJj5EVvjyrEI70u6GybIki/OVoAZf53kC
-        X1L+hf7euxy62B3rMMu9ny7SF8qTi5yNxZV3h1oVzzxYdsTN
-X-Google-Smtp-Source: AJdET5dQdb/CTRYLgpUUY19Q13DrbzZMfmT/PSbnvizL1MQMH9PvVN4oIlECfL6yUIIESsjJJ6DQLQHgSQk7msClTlCTzo3ADZlo
+        bh=mogCSHy6FetDS0BtWyPr5fYAzBr6BSXR6diWB0SUNnI=;
+        b=FWP0sUhPIwM+1tfCwS6CAFLD4lS0+wRbE5/Nq8Ti0fUA6DMW2UYiOFITSep9K/QI1p
+         XZ7Uj4AP6Zarg3uWxyo04tDxYqDMeKyrNtKmdA3KpNZi1j+vmsST+OeK23nFNyktOBVG
+         fRYW5zeOm5AeX18p+tHA6ABOB/OHCLXsnhjQLaz/uH6zTgPXu8WOqtCE4ew9Do2bdRLc
+         2I/QKxh1R1ggg4WOuDxjZlnPHSUNOtJk7dSBtpwNOsXagMU0sXb0S7yD6QM4jO8keGu1
+         O3iuw3v/7SSvqCZfxxLnA/mn4J2zhLGwtXvpKgaSfv/UdhA+BoAdRWes4T+AOBdhW6R2
+         HpZw==
+X-Gm-Message-State: AGRZ1gK9Bdal5Fci/rhGMHRRFD9WoDhLZ6dS6Ef7yR/3bvGEWN1bFj4u
+        8N/vtiEFILKgBKp3CeUqqkywdjbqzU5aqCVWQ9IzUK012wvQ
+X-Google-Smtp-Source: AJdET5dB3Q3S+1lKOzrz32NmRzA9I1LDJmg+zLyf/hOnC3WSIrlRZ+gZLGEbi47TsPbjd95Sl7D73excZAsr1KeF4p2JlZgQgEQS
 MIME-Version: 1.0
-X-Received: by 2002:a24:2ecd:: with SMTP id i196-v6mr6124932ita.7.1541091124039;
- Thu, 01 Nov 2018 09:52:04 -0700 (PDT)
-Date:   Thu, 01 Nov 2018 09:52:04 -0700
+X-Received: by 2002:a24:10cd:: with SMTP id 196-v6mr5875002ity.21.1541091123832;
+ Thu, 01 Nov 2018 09:52:03 -0700 (PDT)
+Date:   Thu, 01 Nov 2018 09:52:03 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000003dc7805799d3dd8@google.com>
-Subject: INFO: task hung in flush_workqueue
-From:   syzbot <syzbot+69780d144754b8071f4b@syzkaller.appspotmail.com>
-To:     ezequiel@collabora.com, hansverk@cisco.com, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        mchehab@kernel.org, sakari.ailus@linux.intel.com,
-        scileont@gmail.com, syzkaller-bugs@googlegroups.com
+Message-ID: <00000000000000d55405799d3d58@google.com>
+Subject: KASAN: use-after-free Read in delayed_uprobe_remove
+From:   syzbot <syzbot+cb1fb754b771caca0a88@syzkaller.appspotmail.com>
+To:     acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, linux-kernel@vger.kernel.org, mingo@redhat.com,
+        namhyung@kernel.org, peterz@infradead.org,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -61,48 +61,115 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    4db9d11bcbef Add linux-next specific files for 20181101
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=16bb4425400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2a22859d870756c1
-dashboard link: https://syzkaller.appspot.com/bug?extid=69780d144754b8071f4b
+HEAD commit:    5b7449810ae6 Merge tag 'tag-chrome-platform-for-v4.20' of ..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15a89825400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4e8e3fa31e0cc680
+dashboard link: https://syzkaller.appspot.com/bug?extid=cb1fb754b771caca0a88
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
 Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+69780d144754b8071f4b@syzkaller.appspotmail.com
+Reported-by: syzbot+cb1fb754b771caca0a88@syzkaller.appspotmail.com
 
-IPVS: wrr: SCTP 172.20.20.170:0 - no destination available
-EXT4-fs error (device sda1): ext4_remount:5216: Abort forced by user
-EXT4-fs (sda1): Remounting filesystem read-only
-INFO: task syz-executor0:12469 blocked for more than 140 seconds.
-       Not tainted 4.19.0-next-20181101+ #103
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor0   D21208 12469  11524 0x00000004
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000005
+RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fbaf376a6d4
+R13: 00000000004efe32 R14: 00000000004cc6e0 R15: 0000000000000007
+==================================================================
+BUG: KASAN: use-after-free in delayed_uprobe_remove+0x124/0x140  
+kernel/events/uprobes.c:344
+Read of size 8 at addr ffff8801cd7b6358 by task syz-executor3/14242
+
+CPU: 1 PID: 14242 Comm: syz-executor3 Not tainted 4.19.0+ #91
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
 Call Trace:
-  context_switch kernel/sched/core.c:2831 [inline]
-  __schedule+0x8cf/0x21d0 kernel/sched/core.c:3472
-  schedule+0xfe/0x460 kernel/sched/core.c:3516
-  schedule_timeout+0x1cc/0x260 kernel/time/timer.c:1780
-  do_wait_for_common kernel/sched/completion.c:83 [inline]
-  __wait_for_common kernel/sched/completion.c:104 [inline]
-  wait_for_common kernel/sched/completion.c:115 [inline]
-  wait_for_completion+0x427/0x8a0 kernel/sched/completion.c:136
-  flush_workqueue+0x742/0x1e10 kernel/workqueue.c:2707
-  flush_scheduled_work include/linux/workqueue.h:599 [inline]
-  vim2m_stop_streaming+0x7c/0x2c0 drivers/media/platform/vim2m.c:811
-  __vb2_queue_cancel+0x171/0xd20  
-drivers/media/common/videobuf2/videobuf2-core.c:1823
-  vb2_core_queue_release+0x26/0x80  
-drivers/media/common/videobuf2/videobuf2-core.c:2229
-  vb2_queue_release+0x15/0x20  
-drivers/media/common/videobuf2/videobuf2-v4l2.c:837
-  v4l2_m2m_ctx_release+0x2a/0x35 drivers/media/v4l2-core/v4l2-mem2mem.c:931
-  vim2m_release+0xe6/0x150 drivers/media/platform/vim2m.c:977
-  v4l2_release+0x224/0x3a0 drivers/media/v4l2-core/v4l2-dev.c:456
-  __fput+0x3bc/0xa70 fs/file_table.c:279
-  ____fput+0x15/0x20 fs/file_table.c:312
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  delayed_uprobe_remove+0x124/0x140 kernel/events/uprobes.c:344
+  uprobe_clear_state+0xbe/0x390 kernel/events/uprobes.c:1510
+  __mmput kernel/fork.c:1040 [inline]
+  mmput+0x1bc/0x610 kernel/fork.c:1065
+  exit_mm kernel/exit.c:545 [inline]
+  do_exit+0xe74/0x26d0 kernel/exit.c:854
+  do_group_exit+0x177/0x440 kernel/exit.c:970
+  get_signal+0x8b0/0x1980 kernel/signal.c:2517
+  do_signal+0x9c/0x21c0 arch/x86/kernel/signal.c:816
+  exit_to_usermode_loop+0x2e5/0x380 arch/x86/entry/common.c:162
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457569
+Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f719e958c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffe0 RBX: 0000000000000003 RCX: 0000000000457569
+RDX: 0000000000000447 RSI: 00000000200008c0 RDI: 0000000000000003
+RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f719e9596d4
+R13: 00000000004c57ab R14: 00000000004d9370 R15: 00000000ffffffff
+
+Allocated by task 14239:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+  kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
+  kmalloc include/linux/slab.h:546 [inline]
+  kzalloc include/linux/slab.h:741 [inline]
+  delayed_uprobe_add kernel/events/uprobes.c:313 [inline]
+  update_ref_ctr+0x36f/0x590 kernel/events/uprobes.c:447
+  uprobe_write_opcode+0x94b/0xc50 kernel/events/uprobes.c:496
+  set_swbp+0x2a/0x40
+  install_breakpoint.isra.24+0x161/0x840 kernel/events/uprobes.c:883
+  register_for_each_vma+0xa38/0xee0 kernel/events/uprobes.c:1039
+  uprobe_apply+0xee/0x140 kernel/events/uprobes.c:1190
+  uprobe_perf_open kernel/trace/trace_uprobe.c:1087 [inline]
+  trace_uprobe_register+0x771/0xcf0 kernel/trace/trace_uprobe.c:1227
+  perf_trace_event_open kernel/trace/trace_event_perf.c:181 [inline]
+  perf_trace_event_init+0x1a5/0x990 kernel/trace/trace_event_perf.c:203
+  perf_uprobe_init+0x1f1/0x280 kernel/trace/trace_event_perf.c:329
+  perf_uprobe_event_init+0x106/0x1a0 kernel/events/core.c:8503
+  perf_try_init_event+0x137/0x2f0 kernel/events/core.c:9770
+  perf_init_event kernel/events/core.c:9801 [inline]
+  perf_event_alloc.part.94+0x1d54/0x3740 kernel/events/core.c:10074
+  perf_event_alloc kernel/events/core.c:10430 [inline]
+  __do_sys_perf_event_open+0xada/0x3020 kernel/events/core.c:10531
+  __se_sys_perf_event_open kernel/events/core.c:10420 [inline]
+  __x64_sys_perf_event_open+0xbe/0x150 kernel/events/core.c:10420
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 14239:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3817
+  delayed_uprobe_delete+0x1b0/0x2b0 kernel/events/uprobes.c:328
+  delayed_uprobe_remove+0xe8/0x140 kernel/events/uprobes.c:347
+  put_uprobe+0x4d/0x60 kernel/events/uprobes.c:575
+  uprobe_unregister+0x56/0x70 kernel/events/uprobes.c:1088
+  probe_event_disable.part.16+0x16a/0x2c0 kernel/trace/trace_uprobe.c:990
+  probe_event_disable kernel/trace/trace_uprobe.c:1224 [inline]
+  trace_uprobe_register+0x52c/0xcf0 kernel/trace/trace_uprobe.c:1223
+  perf_trace_event_unreg.isra.3+0xbb/0x220  
+kernel/trace/trace_event_perf.c:157
+  perf_uprobe_destroy+0xc3/0x130 kernel/trace/trace_event_perf.c:342
+  _free_event+0x414/0x1660 kernel/events/core.c:4446
+  put_event+0x48/0x60 kernel/events/core.c:4532
+  perf_event_release_kernel+0x8d0/0x10e0 kernel/events/core.c:4638
+  perf_release+0x37/0x50 kernel/events/core.c:4648
+  __fput+0x385/0xa30 fs/file_table.c:278
+  ____fput+0x15/0x20 fs/file_table.c:309
   task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
   tracehook_notify_resume include/linux/tracehook.h:188 [inline]
   exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
@@ -110,144 +177,27 @@ drivers/media/common/videobuf2/videobuf2-v4l2.c:837
   syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
   do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457569
-Code: Bad RIP value.
-RSP: 002b:00007fac56403c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
-RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000457569
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000003
-RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fac564046d4
-R13: 00000000004efe32 R14: 00000000004cc6e0 R15: 00000000ffffffff
 
-Showing all locks held in the system:
-1 lock held by khungtaskd/1009:
-  #0: 00000000e84c6b38 (rcu_read_lock){....}, at:  
-debug_show_all_locks+0xd0/0x424 kernel/locking/lockdep.c:4379
-1 lock held by udevd/3501:
-1 lock held by rsyslogd/5533:
-  #0: 000000006dc20f7b (&f->f_pos_lock){+.+.}, at: __fdget_pos+0x1bb/0x200  
-fs/file.c:766
-2 locks held by getty/5623:
-  #0: 0000000031a1a60d (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 0000000015d4fdea (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
-2 locks held by getty/5624:
-  #0: 000000004fa09fe3 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 00000000e2ec2afa (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
-2 locks held by getty/5625:
-  #0: 000000000b6bdc9d (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 000000000ad48c56 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
-2 locks held by getty/5626:
-  #0: 000000007720a28b (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 0000000090a35a2c (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
-2 locks held by getty/5627:
-  #0: 00000000c511ad6c (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 00000000beb7d44a (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
-2 locks held by getty/5628:
-  #0: 000000009dbb3d36 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 00000000de06e26d (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
-2 locks held by getty/5629:
-  #0: 00000000ccb92b09 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 00000000191edc69 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
-2 locks held by kworker/0:4/7412:
-  #0: 00000000062cd1fa ((wq_completion)"events"){+.+.}, at:  
-__write_once_size include/linux/compiler.h:209 [inline]
-  #0: 00000000062cd1fa ((wq_completion)"events"){+.+.}, at:  
-arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
-  #0: 00000000062cd1fa ((wq_completion)"events"){+.+.}, at: atomic64_set  
-include/asm-generic/atomic-instrumented.h:40 [inline]
-  #0: 00000000062cd1fa ((wq_completion)"events"){+.+.}, at: atomic_long_set  
-include/asm-generic/atomic-long.h:59 [inline]
-  #0: 00000000062cd1fa ((wq_completion)"events"){+.+.}, at: set_work_data  
-kernel/workqueue.c:617 [inline]
-  #0: 00000000062cd1fa ((wq_completion)"events"){+.+.}, at:  
-set_work_pool_and_clear_pending kernel/workqueue.c:644 [inline]
-  #0: 00000000062cd1fa ((wq_completion)"events"){+.+.}, at:  
-process_one_work+0xb43/0x1c40 kernel/workqueue.c:2124
-  #1: 000000003fe6abd7 ((work_completion)(&smc->tcp_listen_work)){+.+.}, at:  
-process_one_work+0xb9a/0x1c40 kernel/workqueue.c:2128
-2 locks held by syz-executor0/12469:
-  #0: 00000000e32d2d8c (&mdev->req_queue_mutex){+.+.}, at:  
-v4l2_release+0x1d7/0x3a0 drivers/media/v4l2-core/v4l2-dev.c:455
-  #1: 0000000023d4a01f (&dev->dev_mutex){+.+.}, at: vim2m_release+0xbc/0x150  
-drivers/media/platform/vim2m.c:976
+The buggy address belongs to the object at ffff8801cd7b6340
+  which belongs to the cache kmalloc-32 of size 32
+The buggy address is located 24 bytes inside of
+  32-byte region [ffff8801cd7b6340, ffff8801cd7b6360)
+The buggy address belongs to the page:
+page:ffffea000735ed80 count:1 mapcount:0 mapping:ffff8801da8001c0  
+index:0xffff8801cd7b6fc1
+flags: 0x2fffc0000000200(slab)
+raw: 02fffc0000000200 ffffea000732d188 ffffea00075aff08 ffff8801da8001c0
+raw: ffff8801cd7b6fc1 ffff8801cd7b6000 000000010000003f 0000000000000000
+page dumped because: kasan: bad access detected
 
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 PID: 1009 Comm: khungtaskd Not tainted 4.19.0-next-20181101+ #103
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  nmi_cpu_backtrace.cold.2+0x5c/0xa1 lib/nmi_backtrace.c:101
-  nmi_trigger_cpumask_backtrace+0x1e8/0x22a lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_all_cpu_backtrace include/linux/nmi.h:144 [inline]
-  check_hung_uninterruptible_tasks kernel/hung_task.c:205 [inline]
-  watchdog+0xb4c/0x1060 kernel/hung_task.c:289
-  kthread+0x35a/0x440 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-Sending NMI from CPU 1 to CPUs 0:
-INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.004  
-msecs
-NMI backtrace for cpu 0
-CPU: 0 PID: 3501 Comm: udevd Not tainted 4.19.0-next-20181101+ #103
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__lock_acquire+0xc9/0x4c20 kernel/locking/lockdep.c:3206
-Code: c7 40 24 f2 f2 f2 f2 c7 40 28 04 f2 f2 f2 c7 40 2c f2 f2 f2 f2 c7 40  
-30 00 f2 f2 f2 c7 40 34 f2 f2 f2 f2 c7 40 38 00 f2 f2 f2 <c7> 40 3c f2 f2  
-f2 f2 c7 40 40 00 f2 f2 f2 c7 40 44 f2 f2 f2 f2 c7
-RSP: 0018:ffff8801c7387190 EFLAGS: 00000082
-RAX: ffffed0038e70e46 RBX: 1ffff10038e70eae RCX: 0000000000000000
-RDX: dffffc0000000000 RSI: 0000000000000000 RDI: ffff8801c6a42b18
-RBP: ffff8801c7387518 R08: 0000000000000001 R09: 0000000000000001
-R10: ffffed0038e6c6f7 R11: ffff8801c73637bf R12: ffff8801c7378580
-R13: ffff8801c6a42b18 R14: 0000000000000000 R15: 0000000000000000
-FS:  00007fa5bdbf37a0(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffff600400 CR3: 00000001c72bd000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000020000000 DR2: 0000000020000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000010602
-Call Trace:
-  lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
-  __raw_spin_lock_irq include/linux/spinlock_api_smp.h:128 [inline]
-  _raw_spin_lock_irq+0x61/0x80 kernel/locking/spinlock.c:160
-  spin_lock_irq include/linux/spinlock.h:354 [inline]
-  ep_scan_ready_list+0x4cb/0x1050 fs/eventpoll.c:710
-  ep_send_events fs/eventpoll.c:1713 [inline]
-  ep_poll+0x572/0x13d0 fs/eventpoll.c:1840
-  do_epoll_wait+0x1b0/0x200 fs/eventpoll.c:2198
-  __do_sys_epoll_wait fs/eventpoll.c:2208 [inline]
-  __se_sys_epoll_wait fs/eventpoll.c:2205 [inline]
-  __x64_sys_epoll_wait+0x97/0xf0 fs/eventpoll.c:2205
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7fa5bd307943
-Code: 00 31 d2 48 29 c2 64 89 11 48 83 c8 ff eb ea 90 90 90 90 90 90 90 90  
-83 3d b5 dc 2a 00 00 75 13 49 89 ca b8 e8 00 00 00 0f 05 <48> 3d 01 f0 ff  
-ff 73 34 c3 48 83 ec 08 e8 3b c4 00 00 48 89 04 24
-RSP: 002b:00007ffd0f4810e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e8
-RAX: ffffffffffffffda RBX: 0000000000000bb8 RCX: 00007fa5bd307943
-RDX: 0000000000000008 RSI: 00007ffd0f4811e0 RDI: 000000000000000a
-RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000001
-R10: 0000000000000bb8 R11: 0000000000000246 R12: 0000000000000003
-R13: 0000000000000000 R14: 0000000000db8230 R15: 0000000000db2250
+Memory state around the buggy address:
+  ffff8801cd7b6200: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
+  ffff8801cd7b6280: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
+> ffff8801cd7b6300: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
+                                                     ^
+  ffff8801cd7b6380: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
+  ffff8801cd7b6400: 06 fc fc fc fc fc fc fc fb fb fb fb fc fc fc fc
+==================================================================
 
 
 ---
