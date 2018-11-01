@@ -2,127 +2,126 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 142BCC6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 08:42:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 191A0C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 08:49:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C85C920820
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 08:42:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="rJeqMJOb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C85C920820
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id A2BB420657
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 08:49:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2BB420657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728102AbeKARoB (ORCPT
+        id S1728147AbeKARvH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 13:44:01 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:6369 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727774AbeKARoB (ORCPT
+        Thu, 1 Nov 2018 13:51:07 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:57052 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727953AbeKARvG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 13:44:01 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bdabc490000>; Thu, 01 Nov 2018 01:41:45 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 01 Nov 2018 01:41:58 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 01 Nov 2018 01:41:58 -0700
-Received: from tbergstrom-lnx.Nvidia.com (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 1 Nov
- 2018 08:41:58 +0000
-Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1002)
-        id AE9E3F80143; Thu,  1 Nov 2018 10:41:52 +0200 (EET)
-Date:   Thu, 1 Nov 2018 10:41:52 +0200
-From:   Peter De Schrijver <pdeschrijver@nvidia.com>
-To:     Marcel Ziswiler <marcel@ziswiler.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v1 2/3] clk: tegra: ignore unused vfir clock shared with
- uartb
-Message-ID: <20181101084152.GS7636@tbergstrom-lnx.Nvidia.com>
-References: <20181101015230.27310-1-marcel@ziswiler.com>
- <20181101015230.27310-3-marcel@ziswiler.com>
+        Thu, 1 Nov 2018 13:51:06 -0400
+Received: from p5492fe24.dip0.t-ipconnect.de ([84.146.254.36] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gI8ez-0000oa-6F; Thu, 01 Nov 2018 09:49:01 +0100
+Date:   Thu, 1 Nov 2018 09:49:00 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Long Li <longli@microsoft.com>
+cc:     Michael Kelley <mikelley@microsoft.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [Patch v2] genirq/matrix: Choose CPU for assigning interrupts
+ based on allocated IRQs
+In-Reply-To: <20181101031332.7404-1-longli@linuxonhyperv.com>
+Message-ID: <alpine.DEB.2.21.1811010931400.1642@nanos.tec.linutronix.de>
+References: <20181101031332.7404-1-longli@linuxonhyperv.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181101015230.27310-3-marcel@ziswiler.com>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL101.nvidia.com (172.20.187.10)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1541061705; bh=8EcqfMJMdhYlS+RS+ewflCAkYqdCMm1kTNSMo6nVSuo=;
-        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
-         MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-         X-NVConfidentiality:User-Agent:X-Originating-IP:X-ClientProxiedBy;
-        b=rJeqMJObir49oe77o2u8FCM2x54UJJm4R8NZXpTSvp1L1ZpDsJpockSXqpZY+kFkP
-         MZ6r0RPmaNQElPBIE/oWjnCgiYTUvg6EhmL42AVQF89CcjepRJp9CfUth/Y60zHdiG
-         HGe2Zyg5Gf2d6wHuGzDpv8EsuJxBdrHxJZkVW8/FWmUNalOOoufqdbJztxTB/LNUpG
-         mhckVVtbZmyIw/WulqONI77y72TZd31Xl6L343HCnA+hLCoRNJCK+wZ3jopFdYuhjs
-         GQEMG+WR0iSS6LYc8xUHnSFsQ6PdyadDHv9OBgUSaZ8YQb8muZ4Df1jZXP9SpjWcyW
-         KCnwYzvmj+thg==
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 01, 2018 at 02:52:29AM +0100, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> As UARTB and VFIR share their clock enable bit it is rather unwise for
-> the kernel to turn off the VFIR one should that be unused (and
-> potentially vice versa but so far there anyway is no VFIR driver).
-> 
-> Without this patch trying to use UARTB with the regular 8250 driver
-> will freeze as soon as ttyS1 is accessed after boot. Luckily, using the
-> high-speed Tegra serial driver won't exhibit the issue as clocks are
-> dynamically enabled/disabled on every access.
-> 
-> This has been reproduced both on Apalis T30 as well as Apalis TK1 but
-> may be an issue on all Tegra UARTB's which share the clock enable with
-> VFIR.
-> 
+Long,
 
-Ah.. the correct fix for this is to initialize the enable_refcnt based on the
-hw state. This is done in 9619dba8325fce098bbc9ee2911d1b0150fec0c9 for
-periph gate clocks, but obviously also applies to normal periph clocks.
+On Thu, 1 Nov 2018, Long Li wrote:
+> On a large system with multiple devices of the same class (e.g. NVMe disks,
+> using managed IRQs), the kernel tends to concentrate their IRQs on several
+> CPUs.
+> 
+> The issue is that when NVMe calls irq_matrix_alloc_managed(), the assigned
+> CPU tends to be the first several CPUs in the cpumask, because they check for
+> cpumap->available that will not change after managed IRQs are reserved.
+> 
+> In irq_matrix->cpumap, "available" is set when IRQs are allocated earlier
+> in the IRQ allocation process. This value is caculated based on
 
-Peter.
+calculated
 
-> Reported-by: Kory Swain <kory.swain@trapezegroup.com>
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> 1. how many unmanaged IRQs are allocated on this CPU
+> 2. how many managed IRQs are reserved on this CPU
 > 
-> ---
+> But "available" is not accurate in accouting the real IRQs load on a given CPU.
 > 
->  drivers/clk/tegra/clk-tegra-periph.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> For a managed IRQ, it tends to reserve more than one CPU, based on cpumask in
+> irq_matrix_reserve_managed. But later when actually allocating CPU for this
+> IRQ, only one CPU is allocated. Because "available" is calculated at the time
+> managed IRQ is reserved, it tends to indicate a CPU has more IRQs than it's
+> actually assigned.
 > 
-> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-> index cc5275ec2c01..116c74340fb7 100644
-> --- a/drivers/clk/tegra/clk-tegra-periph.c
-> +++ b/drivers/clk/tegra/clk-tegra-periph.c
-> @@ -668,7 +668,7 @@ static struct tegra_periph_init_data periph_clks[] = {
->  	MUX("hda", mux_pllp_pllc_clkm, CLK_SOURCE_HDA, 125, TEGRA_PERIPH_ON_APB, tegra_clk_hda_8),
->  	MUX("hda2codec_2x", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_HDA2CODEC_2X, 111, TEGRA_PERIPH_ON_APB, tegra_clk_hda2codec_2x),
->  	MUX8("hda2codec_2x", mux_pllp_pllc_plla_clkm, CLK_SOURCE_HDA2CODEC_2X, 111, TEGRA_PERIPH_ON_APB, tegra_clk_hda2codec_2x_8),
-> -	MUX("vfir", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_VFIR, 7, TEGRA_PERIPH_ON_APB, tegra_clk_vfir),
-> +	MUX_FLAGS("vfir", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_VFIR, 7, TEGRA_PERIPH_ON_APB, tegra_clk_vfir, CLK_IGNORE_UNUSED),
->  	MUX("sdmmc1", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_SDMMC1, 14, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc1),
->  	MUX("sdmmc2", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_SDMMC2, 9, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc2),
->  	MUX("sdmmc3", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_SDMMC3, 69, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc3),
-> -- 
-> 2.14.5
-> 
+> When a managed IRQ is assigned to a CPU in irq_matrix_alloc_managed(), it
+> decreases "allocated" based on the actually assignment of this IRQ to this CPU.
+
+decreases?
+
+> Unmanaged IRQ also decreases "allocated" after allocating an IRQ on this CPU.
+
+ditto
+
+> For this reason, checking "allocated" is more accurate than checking
+> "available" for a given CPU, and result in a more evenly distributed IRQ
+> across all CPUs.
+
+Again, this approach is only correct for managed interrupts. Why?
+
+Assume that total vector space size  = 10
+
+CPU 0:
+       allocated	=  8
+       available	=  1
+
+       i.e. there are 2 managed reserved, but not assigned interrupts
+
+CPU 1:
+       allocated	=  7
+       available	=  0
+
+       i.e. there are 3 managed reserved, but not assigned interrupts
+
+Now allocate a non managed interrupt:
+
+irq_matrix_alloc()
+
+	cpu = find_best_cpu() <-- returns CPU1
+
+	---> FAIL
+
+The allocation fails because it cannot allocate from the managed reserved
+space. The managed reserved space is guaranteed even if the vectors are not
+assigned. This is required to make hotplug work and to allow late
+activation without breaking the guarantees.
+
+Non managed has no guarantees, it's a best effort approach, so it can fail.
+But the fail above is just wrong.
+
+You really need to treat managed and unmanaged CPU selection differently.
+
+Thanks,
+
+	tglx
