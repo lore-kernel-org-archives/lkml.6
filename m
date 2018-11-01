@@ -2,102 +2,74 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14FF5C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 05:20:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ACBFC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 05:28:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 644692064C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 05:20:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 644692064C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 45CF520820
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 05:28:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45CF520820
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727603AbeKAOVc (ORCPT
+        id S1727693AbeKAOaC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 10:21:32 -0400
-Received: from smtprelay0063.hostedemail.com ([216.40.44.63]:55888 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726396AbeKAOVc (ORCPT
+        Thu, 1 Nov 2018 10:30:02 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:36891 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727355AbeKAOaC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 10:21:32 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 5859B100E806B;
-        Thu,  1 Nov 2018 05:20:06 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: smell34_579324f2a8451
-X-Filterd-Recvd-Size: 3005
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf08.hostedemail.com (Postfix) with ESMTPA;
-        Thu,  1 Nov 2018 05:20:01 +0000 (UTC)
-Message-ID: <5f987ecbb4962b4796615928d9d71f2cf9b21a3b.camel@perches.com>
-Subject: Re: PROPOSAL: Extend inline asm syntax with size spec
-From:   Joe Perches <joe@perches.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>
-Cc:     Segher Boessenkool <segher@kernel.crashing.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Richard Biener <rguenther@suse.de>,
-        Michael Matz <matz@suse.de>, gcc@gcc.gnu.org,
-        Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Alok Kataria <akataria@vmware.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jan Beulich <JBeulich@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-sparse@vger.kernel.org,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        linux-xtensa@linux-xtensa.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Date:   Wed, 31 Oct 2018 22:20:00 -0700
-In-Reply-To: <20181031125526.GA13219@hirez.programming.kicks-ass.net>
-References: <20181008073128.GL29268@gate.crashing.org>
-         <alpine.LSU.2.20.1810081105350.16707@zhemvz.fhfr.qr>
-         <20181009145330.GT29268@gate.crashing.org>
-         <alpine.LSU.2.20.1810100909140.16707@zhemvz.fhfr.qr>
-         <20181010072240.GB103159@gmail.com>
-         <20181010080324.GV29268@gate.crashing.org> <20181010081906.GA5533@zn.tnic>
-         <20181010185432.GB29268@gate.crashing.org> <20181010191427.GF5533@zn.tnic>
-         <20181013193335.GD31650@zn.tnic>
-         <20181031125526.GA13219@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 1 Nov 2018 10:30:02 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08029076|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01l10423;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=7;RT=7;SR=0;TI=SMTPD_---.DBaNG7Q_1541050107;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.DBaNG7Q_1541050107)
+          by smtp.aliyun-inc.com(10.147.41.199);
+          Thu, 01 Nov 2018 13:28:27 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     torvalds@linux-foundation.org
+Cc:     arnd@arndb.de, robh@kernel.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, guoren1983@gmail.com,
+        Guo Ren <ren_guo@c-sky.com>
+Subject: [GIT PULL] fixup dtb Kbuild for C-SKY(csky) Port
+Date:   Thu,  1 Nov 2018 13:28:25 +0800
+Message-Id: <1541050105-14469-1-git-send-email-ren_guo@c-sky.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-10-31 at 13:55 +0100, Peter Zijlstra wrote:
-> 
-> Anyway, with the below patch, I get:
-> 
->    text    data     bss     dec     hex filename
-> 17385183        5064780 1953892 24403855        1745f8f defconfig-build/vmlinux
-> 17385678        5064780 1953892 24404350        174617e defconfig-build/vmlinux
-> 
-> Which shows we inline more (look for asm_volatile for the actual
-> changes).
-[]
->  scripts/checkpatch.pl                              |  8 ++---
->  scripts/genksyms/keywords.c                        |  4 +--
->  scripts/kernel-doc                                 |  4 +--
+Please pull this to fixup dtb Kbuild rules for csky subsystem.
 
-I believe these should be excluded from the conversions.
+The following changes since commit ac435075892e3e651c667b4a9f2267cf3ef1d5a2:
 
-Other than that, generic conversion by script seems a good idea.
+  Merge tag 'csky-for-linus-4.20' of https://github.com/c-sky/csky-linux (2018-10-29 08:25:00 -0700)
 
+are available in the git repository at:
+
+  https://github.com/c-sky/csky-linux.git tags/csky-for-linus-4.20-fixup-dtb
+
+for you to fetch changes up to e8d0c9a726cd1eae410148fcc6a1db23019f0334:
+
+  csky: use common dtb build rules (2018-11-01 10:52:27 +0800)
+
+----------------------------------------------------------------
+csky: dtb Kbuild fixup patches for linux-4.20-rc1
+
+These patches are complementary to "C-SKY(csky) Port for Linux 4.20" and
+fixup dtb Kbuild to follow the new Devicetree dtb build rules.
+
+Link: https://lore.kernel.org/lkml/CABGGisxiWaQn9qDqpfxEWcckkGJfMzFvSPGvuhQK7oB404-6DQ@mail.gmail.com/
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+
+----------------------------------------------------------------
+Guo Ren (2):
+      csky: remove builtin-dtb Kbuild
+      csky: use common dtb build rules
+
+ arch/csky/Kconfig.debug     | 10 +---------
+ arch/csky/Makefile          | 13 +------------
+ arch/csky/boot/dts/Makefile | 10 ----------
+ 3 files changed, 2 insertions(+), 31 deletions(-)
