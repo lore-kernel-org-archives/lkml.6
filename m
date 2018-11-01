@@ -2,144 +2,213 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91EB1C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 03:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD8CBC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 04:12:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FBE820820
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 03:54:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="DhgXrzVY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FBE820820
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 95774205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 04:12:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95774205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727699AbeKAMzS (ORCPT
+        id S1727633AbeKANNc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 08:55:18 -0400
-Received: from ozlabs.org ([203.11.71.1]:39085 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727203AbeKAMzR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 08:55:17 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42lrt53d6gz9sPp;
-        Thu,  1 Nov 2018 14:54:05 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1541044446;
-        bh=W3Pgfygs0tB9nGNZq3RmpICPjaT3AK2N9oD5Lxfboik=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=DhgXrzVY86xxYRgw0JLSlIZCjO71K5oz1mdEOSy0PxFNuowHtPEbzLXqeKbw20JBs
-         c3QFr+4+jy3J0eNcc7913CRD2Mcx2Y0YHA0L9aTQ/xgl05uyFsfCyJKfqu9nuaQirv
-         hxOM4n+TemAkQdgGnWejwZzJ4B4dBWMpgkkN3lNJnyUiuWLg/NIpkEhTjkHQohS7XC
-         Zc4jlWIPFLXALCGKjPwDHQb0lxhD0HI0juDyJZyYtx+yVQGPfu3PQ40+jN/I+fdMLL
-         1VWLK8sDew3uQ+Y4wP+2KKxejE2d8xndNIQsdiB1rc4yuySznHq2BRQ0RVO7RGT+hA
-         wDXhzugw8xHRw==
-Date:   Thu, 1 Nov 2018 14:54:04 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     kernel test robot <rong.a.chen@intel.com>
-Cc:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, LKP <lkp@01.org>
-Subject: Re: [LKP] b179f0826c BUG: kernel hang in boot stage
-Message-ID: <20181101145404.396c0973@canb.auug.org.au>
-In-Reply-To: <20181101011307.GW24195@shao2-debian>
-References: <20181101011307.GW24195@shao2-debian>
+        Thu, 1 Nov 2018 09:13:32 -0400
+Received: from smtp2.provo.novell.com ([137.65.250.81]:57788 "EHLO
+        smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726419AbeKANNc (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Thu, 1 Nov 2018 09:13:32 -0400
+Received: from [10.67.18.174] (prv-ext-foundry1int.gns.novell.com [137.65.251.240])
+        by smtp2.provo.novell.com with ESMTP (TLS encrypted); Wed, 31 Oct 2018 22:12:09 -0600
+Subject: Re: [Ocfs2-devel] [PATCH V2] ocfs2: fix dead lock caused by
+ ocfs2_defrag_extent
+To:     Changwei Ge <ge.changwei@h3c.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>
+References: <20180902091455.23862-1-lchen@suse.com>
+ <20181031142632.c523108bc137caa8cb1c6282@linux-foundation.org>
+ <63ADC13FD55D6546B7DECE290D39E37301277DDF02@H3CMLB12-EX.srv.huawei-3com.com>
+From:   Larry Chen <lchen@suse.com>
+Message-ID: <c01c0e95-0964-aab1-1758-a66439e619ba@suse.com>
+Date:   Thu, 1 Nov 2018 12:12:05 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/i9A6T4lRLSjTyiH8kXZSqyR"; protocol="application/pgp-signature"
+In-Reply-To: <63ADC13FD55D6546B7DECE290D39E37301277DDF02@H3CMLB12-EX.srv.huawei-3com.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/i9A6T4lRLSjTyiH8kXZSqyR
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Changwei,
 
-Hi all,
+Thanks for your review, I'll improve my patch and resend it later.
 
-On Thu, 1 Nov 2018 09:13:07 +0800 kernel test robot <rong.a.chen@intel.com>=
- wrote:
->
-> Greetings,
->=20
-> 0day kernel testing robot got the below dmesg and the first bad commit is
->=20
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
->=20
-> commit b179f0826c6a13563c5ce0554c6da6748a1fa699
-> Author:     Stephen Rothwell <sfr@canb.auug.org.au>
-> AuthorDate: Mon Oct 29 16:55:21 2018 +1100
-> Commit:     Stephen Rothwell <sfr@canb.auug.org.au>
-> CommitDate: Mon Oct 29 16:55:21 2018 +1100
->=20
->     Add linux-next specific files for 20181029
->    =20
->     Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
->=20
-> a3bbfc79c4  Merge branch 'akpm/master'
-> b179f0826c  Add linux-next specific files for 20181029
-> +------------------------------------------------+------------+----------=
------+
-> |                                                | a3bbfc79c4 | next-2018=
-1029 |
-> +------------------------------------------------+------------+----------=
------+
-> | boot_successes                                 | 33         | 0        =
-     |
-> | boot_failures                                  | 2          | 30       =
-     |
-> | BUG:kernel_hang_in_boot_stage                  | 1          | 30       =
-     |
-> | IP-Config:Auto-configuration_of_network_failed | 1          |          =
-     |
-> +------------------------------------------------+------------+----------=
------+
+Thanks
+Larry
 
-That is really hard to believe given that the commit above only adds
-documentation to the tree :-)
+On 11/1/18 11:11 AM, Changwei Ge wrote:
+> Hi Larry,
+> 
+> I still have a few tiny comments for your patch, please refer to them.
+> 
+> On 2018/11/1 5:28, Andrew Morton wrote:
+>>
+>> Folks, could we please review this patch for upstream inclusion?
+>>
+>> Thanks.
+>>
+>>
+>> From: Larry Chen <lchen@suse.com>
+>> Subject: ocfs2: fix deadlock caused by ocfs2_defrag_extent
+>>
+>> ocfs2_defrag_extent may fall into deadlock.
+>>
+>> ocfs2_ioctl_move_extents
+>>     ocfs2_ioctl_move_extents
+>>       ocfs2_move_extents
+>>         ocfs2_defrag_extent
+>>           ocfs2_lock_allocators_move_extents
+>>
+>>             ocfs2_reserve_clusters
+>>               inode_lock GLOBAL_BITMAP_SYSTEM_INODE
+>>
+>> 	  __ocfs2_flush_truncate_log
+>>               inode_lock GLOBAL_BITMAP_SYSTEM_INODE
+>>
+>> As backtrace shows above, ocfs2_reserve_clusters() will call inode_lock
+>> against the global bitmap if local allocator has not sufficient cluters.
+>> Once global bitmap could meet the demand, ocfs2_reserve_cluster will
+>> return success with global bitmap locked.
+>>
+>> After ocfs2_reserve_cluster(), if truncate log is full,
+>> __ocfs2_flush_truncate_log() will definitely fall into deadlock because it
+>> needs to inode_lock global bitmap, which has already been locked.
+>>
+>> To fix this bug, we could remove from ocfs2_lock_allocators_move_extents()
+>> the code which intends to lock global allocator, and put the removed code
+>> after __ocfs2_flush_truncate_log().
+>>
+>> ocfs2_lock_allocators_move_extents() is refered by 2 places, one is here,
+>> the other does not need the data allocator context, which means this patch
+>> does not affect the caller so far.
+>>
+>> [lchen@suse.com: rename ocfs2_lock_allocators_move_extents() to ocfs2_lock_meta_allocator_move_extents(), add some comments]
+>>     Link: https://urldefense.proofpoint.com/v2/url?u=http-3A__lkml.kernel.org_r_20180902091455.23862-2D1-2Dlchen-40suse.com&d=DwICAg&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=C7gAd4uDxlAvTdc0vmU6X8CMk6L2iDY8-HD0qT6Fo7Y&m=K8aRgOiMescamJW-IuHq-cW4mWedGQv2JTT-2KPy1RI&s=3fQHFtwgixirPeQ5Px4fRBnd_UcSx3rvSsLKLidwESo&e=
+>> Link: https://urldefense.proofpoint.com/v2/url?u=http-3A__lkml.kernel.org_r_20180827080121.31145-2D1-2Dlchen-40suse.com&d=DwICAg&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=C7gAd4uDxlAvTdc0vmU6X8CMk6L2iDY8-HD0qT6Fo7Y&m=K8aRgOiMescamJW-IuHq-cW4mWedGQv2JTT-2KPy1RI&s=PQOJREyeElsg_1IlINdSGefNqA6w_cUrI1ezdVxyi7o&e=
+>> Signed-off-by: Larry Chen <lchen@suse.com>
+>> Cc: Mark Fasheh <mark@fasheh.com>
+>> Cc: Joel Becker <jlbec@evilplan.org>
+>> Cc: Junxiao Bi <junxiao.bi@oracle.com>
+>> Cc: Joseph Qi <jiangqi903@gmail.com>
+>> Cc: Changwei Ge <ge.changwei@h3c.com>
+>> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+>> ---
+>>
+>>    fs/ocfs2/move_extents.c |   40 +++++++++++++++++++++++---------------
+>>    1 file changed, 25 insertions(+), 15 deletions(-)
+>>
+>> --- a/fs/ocfs2/move_extents.c~fix-dead-lock-caused-by-ocfs2_defrag_extent
+>> +++ a/fs/ocfs2/move_extents.c
+>> @@ -162,7 +162,7 @@ out:
+>>     * in some cases, we don't need to reserve clusters, just let data_ac
+>>     * be NULL.
+>>     */
+>> -static int ocfs2_lock_allocators_move_extents(struct inode *inode,
+>> +static int ocfs2_lock_meta_allocator_move_extents(struct inode *inode,
+>>    					struct ocfs2_extent_tree *et,
+>>    					u32 clusters_to_move,
+>>    					u32 extents_to_split,
+> 
+> After removing 'reserving clusters logic' out of this function, I suggest to also change the function header comments.
+> And I think there is no need for arguments _data_ac_ now.
+> Otherwise this patch looks sane to me.
+> 
+> Thanks,
+> Changwei
+> 
+>> @@ -192,13 +192,6 @@ static int ocfs2_lock_allocators_move_ex
+>>    		goto out;
+>>    	}
+>>    
+>> -	if (data_ac) {
+>> -		ret = ocfs2_reserve_clusters(osb, clusters_to_move, data_ac);
+>> -		if (ret) {
+>> -			mlog_errno(ret);
+>> -			goto out;
+>> -		}
+>> -	}
+>>    
+>>    	*credits += ocfs2_calc_extend_credits(osb->sb, et->et_root_el);
+>>    
+>> @@ -257,10 +250,11 @@ static int ocfs2_defrag_extent(struct oc
+>>    		}
+>>    	}
+>>    
+>> -	ret = ocfs2_lock_allocators_move_extents(inode, &context->et, *len, 1,
+>> -						 &context->meta_ac,
+>> -						 &context->data_ac,
+>> -						 extra_blocks, &credits);
+>> +	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
+>> +						*len, 1,
+>> +						&context->meta_ac,
+>> +						&context->data_ac,
+>> +						extra_blocks, &credits);
+>>    	if (ret) {
+>>    		mlog_errno(ret);
+>>    		goto out;
+>> @@ -283,6 +277,21 @@ static int ocfs2_defrag_extent(struct oc
+>>    		}
+>>    	}
+>>    
+>> +	/*
+>> +	 * Make sure ocfs2_reserve_cluster is called after
+>> +	 * __ocfs2_flush_truncate_log, otherwise, dead lock may happen.
+>> +	 *
+>> +	 * If ocfs2_reserve_cluster is called
+>> +	 * before __ocfs2_flush_truncate_log, dead lock on global bitmap
+>> +	 * may happen.
+>> +	 *
+>> +	 */
+>> +	ret = ocfs2_reserve_clusters(osb, *len, &context->data_ac);
+>> +	if (ret) {
+>> +		mlog_errno(ret);
+>> +		goto out_unlock_mutex;
+>> +	}
+>> +
+>>    	handle = ocfs2_start_trans(osb, credits);
+>>    	if (IS_ERR(handle)) {
+>>    		ret = PTR_ERR(handle);
+>> @@ -600,9 +609,10 @@ static int ocfs2_move_extent(struct ocfs
+>>    		}
+>>    	}
+>>    
+>> -	ret = ocfs2_lock_allocators_move_extents(inode, &context->et, len, 1,
+>> -						 &context->meta_ac,
+>> -						 NULL, extra_blocks, &credits);
+>> +	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
+>> +						len, 1,
+>> +						&context->meta_ac,
+>> +						NULL, extra_blocks, &credits);
+>>    	if (ret) {
+>>    		mlog_errno(ret);
+>>    		goto out;
+>> _
+>>
+>>
+>> _______________________________________________
+>> Ocfs2-devel mailing list
+>> Ocfs2-devel@oss.oracle.com
+>> https://oss.oracle.com/mailman/listinfo/ocfs2-devel
+>>
+> 
 
-$ git log --stat -1 next-20181029
-commit b179f0826c6a13563c5ce0554c6da6748a1fa699 (tag: next-20181029)
-Author: Stephen Rothwell <sfr@canb.auug.org.au>
-Date:   Mon Oct 29 16:55:21 2018 +1100
-
-    Add linux-next specific files for 20181029
-   =20
-    Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-
- Next/SHA1s            |   292 +
- Next/Trees            |   294 +
- Next/merge.log        | 14253 ++++++++++++++++++++++++++++++++++++++++++++=
-++++
- Next/quilt-import.log |     2 +
- localversion-next     |     1 +
- 5 files changed, 14842 insertions(+)
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/i9A6T4lRLSjTyiH8kXZSqyR
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvaeNwACgkQAVBC80lX
-0GxOLggAnpk6HxvLIYKe/CZLw9/oOqmU/ixfyjjnScAZwP1353VTSaUClwtTQ7gs
-2HiWBR+7IKqmjkFrzdrOMj999LvRdsmsp1Da5sr7fdSmc6xYBinCorwkwd3jR4RA
-sMsmvTJSn1mgwbe7ENDqz8JMZ2wy2mift2D5BLqWSfS1OogInAqzZVU6EV1nuzXO
-navO+D07GIXanphTw5ct3e/XLYU/IEMvDdge/ApJ9pClKOPO80kI+BLn2ngeZaeR
-Ss5Exs9MJvFh4/0uzT+HVozJLNTlDBrfaxB53QvCQanfCTIh3Ax81isDBWuSI+Od
-fadFxwSTiFPX3GMJ8yQQJhuSIkdsTQ==
-=Wmy1
------END PGP SIGNATURE-----
-
---Sig_/i9A6T4lRLSjTyiH8kXZSqyR--
