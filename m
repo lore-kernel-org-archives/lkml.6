@@ -2,168 +2,125 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8339C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:44:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 881E6C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:46:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 590672081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:44:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 590672081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 107352081B
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:46:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="aSBKFXTh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 107352081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728356AbeKAVqt (ORCPT
+        id S1728216AbeKAVs6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 17:46:49 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:56620 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728211AbeKAVqt (ORCPT
+        Thu, 1 Nov 2018 17:48:58 -0400
+Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.22]:27813 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727644AbeKAVs5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 17:46:49 -0400
-Received: from [IPv6:2a02:8109:92c0:207d:3d24:60ad:a75d:194d] (unknown [IPv6:2a02:8109:92c0:207d:3d24:60ad:a75d:194d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: robertfoss)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id E322C260560;
-        Thu,  1 Nov 2018 12:43:53 +0000 (GMT)
-Subject: Re: [PATCH 1/5] drm/virtio: add virtio_gpu_alloc_fence()
-To:     Emil Velikov <emil.l.velikov@gmail.com>
-Cc:     David Airlie <airlied@linux.ie>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        ML dri-devel <dri-devel@lists.freedesktop.org>,
-        "open list:VIRTIO GPU DRIVER" 
-        <virtualization@lists.linux-foundation.org>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Emil Velikov <emil.velikov@collabora.com>
-References: <20181025183739.9375-1-robert.foss@collabora.com>
- <20181025183739.9375-2-robert.foss@collabora.com>
- <CACvgo516JGdfBZ8zM73bQ-TCeNEbOp9ioBy9jh0AAtpUsu5tOg@mail.gmail.com>
-From:   Robert Foss <robert.foss@collabora.com>
-Message-ID: <1c92b6dc-4152-c81b-5180-2f48799b959f@collabora.com>
-Date:   Thu, 1 Nov 2018 13:43:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 1 Nov 2018 17:48:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1541076363;
+        s=strato-dkim-0002; d=xenosoft.de;
+        h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=h8T47b5XVCRlDscN1+vTd3FKbVRtSjeCHHTDSyHbxT8=;
+        b=aSBKFXThF0eECY8b2lmE0gs5ERbWkVDK1XhOeAT1nCOy7hU77d/9ks+Z9CeQ3ZK/Cd
+        Jggy7KC2g6/yNCtpisZSFMWrWPshvgp8EWnVy1EiQIohVsaWdmlzgLThbLh6zUrVWw2Q
+        w/cAnCVRCStySWIXKdnzWm7uMRjt0D5SiQzNOpkJaZQ/yojy+qVRMOMFYZodcnmo6xY+
+        CzLbgO8chgGWnaay9TN1J3EgVhA3pDRSkcRZ+Mw0Vo/KtI71ST+UwGFxXpQ2dkKfp0eW
+        H5AzbRreRK+SSHKA7iiPbDrCGR1Z5qUh2eQIs6hiYhs30JqiACaWP8AS2Zrs6WQ6G4cg
+        khOg==
+X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkK3TmjrJUcWHjjnEOaMwSIQqdV"
+X-RZG-CLASS-ID: mo00
+Received: from [IPv6:2a02:8109:a400:162c:5c96:3539:c69c:189]
+        by smtp.strato.de (RZmta 44.3 AUTH)
+        with ESMTPSA id Z0624cuA1CjmNcK
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Thu, 1 Nov 2018 13:45:48 +0100 (CET)
+Subject: Re: [PATCH] of: Fix cpu node iterator to not ignore disabled cpu
+ nodes
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Frank Rowand <frowand.list@gmail.com>
+References: <20181031144226.26747-1-robh@kernel.org>
+ <87o9b9dphd.fsf@concordia.ellerman.id.au>
+From:   Christian Zigotzky <chzigotzky@xenosoft.de>
+Message-ID: <1055f6ae-a25b-117a-e9e4-44dd4f978803@xenosoft.de>
+Date:   Thu, 1 Nov 2018 13:45:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CACvgo516JGdfBZ8zM73bQ-TCeNEbOp9ioBy9jh0AAtpUsu5tOg@mail.gmail.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
+In-Reply-To: <87o9b9dphd.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Emil,
-
-On 2018-10-31 10:38, Emil Velikov wrote:
-> Hi Rob,
-> 
-> On Thu, 25 Oct 2018 at 19:38, Robert Foss <robert.foss@collabora.com> wrote:
+On 01 November 2018 at 12:08PM, Michael Ellerman wrote:
+> Rob Herring <robh@kernel.org> writes:
+>
+>> In most cases, nodes with 'status = "disabled";' are treated as if the
+>> node is not present though it is a common bug to forget to check that.
+>> However, cpu nodes are different in that "disabled" simply means offline
+>> and the OS can bring the CPU core online. Commit f1f207e43b8a ("of: Add
+>> cpu node iterator for_each_of_cpu_node()") followed the common behavior
+>> of ignoring disabled cpu nodes. This breaks some powerpc systems (at
+>> least NXP P50XX/e5500). Fix this by dropping the status check.
 >>
->> From: Gustavo Padovan <gustavo.padovan@collabora.com>
->>
->> Refactor fence creation to remove the potential allocation failure from
->> the cmd_submit and atomic_commit paths. Now the fence should be allocated
->> first and just after we should proceed with the rest of the execution.
->>
-> 
-> Commit does a bit more that what the above says:
->   - dummy, factor out fence creation/destruction
->   - use per virtio_gpu_framebuffer fence
-> 
-> Personally I'd keep the two separate patches and elaborate on the latter.
-> Obviously in that case, one will need to add 3 lines worth of
-> virtio_gpu_fence_alloc() in virtio_gpu_cursor_plane_update which will be nuked
-> with the next patch.
-> 
-> Not a big deal, but it's up-to the maintainer to make the final call if it's
-> worth splitting or not.
+>> Fixes: 651d44f9679c ("of: use for_each_of_cpu_node iterator")
+>> Fixes: f1f207e43b8a ("of: Add cpu node iterator for_each_of_cpu_node()")
+>> Reported-by: Michael Ellerman <mpe@ellerman.id.au>
+>> Cc: Christian Zigotzky <chzigotzky@xenosoft.de>
+>> Cc: Frank Rowand <frowand.list@gmail.com>
+>> Signed-off-by: Rob Herring <robh@kernel.org>
+>> ---
+>>   drivers/of/base.c | 2 --
+>>   1 file changed, 2 deletions(-)
+> This fixes my machine, thanks.
+>
+> Tested-by: Michael Ellerman <mpe@ellerman.id.au>
+>
+> It was actually originally reported to me by Christian, so also:
+>
+> Reported-by: Christian Zigotzky <chzigotzky@xenosoft.de>
+>
+>
+> cheers
+>
+>> diff --git a/drivers/of/base.c b/drivers/of/base.c
+>> index cc62da278663..e47c5ce6cd58 100644
+>> --- a/drivers/of/base.c
+>> +++ b/drivers/of/base.c
+>> @@ -776,8 +776,6 @@ struct device_node *of_get_next_cpu_node(struct device_node *prev)
+>>   		if (!(of_node_name_eq(next, "cpu") ||
+>>   		      (next->type && !of_node_cmp(next->type, "cpu"))))
+>>   			continue;
+>> -		if (!__of_device_is_available(next))
+>> -			continue;
+>>   		if (of_node_get(next))
+>>   			break;
+>>   	}
+>> -- 
+>> 2.19.1
 
-Agreed, I'll hold off with this change until then.
+Hi All,
 
-> 
-> Couple of minor nitpicks below.
-> 
->>          struct virtio_gpu_device *vgdev = dev->dev_private;
->>          struct virtio_gpu_output *output = NULL;
->>          struct virtio_gpu_framebuffer *vgfb;
->> -       struct virtio_gpu_fence *fence = NULL;
->>          struct virtio_gpu_object *bo = NULL;
->>          uint32_t handle;
->>          int ret = 0;
-> 
-> Add the virtio_gpu_fence_alloc()? And yes it will be nuked with patch 2/...
-> 
-> 
-> 
->> +struct virtio_gpu_fence *virtio_gpu_fence_alloc(struct virtio_gpu_device *vgdev)
->> +{
->> +       struct virtio_gpu_fence_driver *drv = &vgdev->fence_drv;
->> +       struct virtio_gpu_fence *fence = kzalloc(sizeof(struct virtio_gpu_fence), GFP_ATOMIC);
->> +       if (!fence)
->> +               return fence;
->> +
->> +       fence->drv = drv;
->> +       dma_fence_init(&fence->f, &virtio_fence_ops, &drv->lock, drv->context, 0);
-> Oh no, lines over 80 col... while the original code is pretty and neat.
+Many thanks for your help! This patch fixes my P5020 board (dual core) 
+and my virtual QEMU ppce500 machine (quad core).
 
-Ack
+Have a nice day!
 
-> 
->> +
->> +       return fence;
->> +}
->> +
->> +void virtio_gpu_fence_cleanup(struct virtio_gpu_fence *fence)
->> +{
->> +       if (!fence)
->> +               return;
->> +
->> +       if (fence->drv)
->> +               dma_fence_put(&fence->f);
->> +       else
->> +               kfree(fence);
-> I'm not sure if/how we reach the else case here?
+Cheers,
+Christian
 
-That case should never be hit, and if it is that's a bug.
-Fixed in v4.
-
-> 
->> +}
->> +
->>   int virtio_gpu_fence_emit(struct virtio_gpu_device *vgdev,
->>                            struct virtio_gpu_ctrl_hdr *cmd_hdr,
->> -                         struct virtio_gpu_fence **fence)
->> +                         struct virtio_gpu_fence *fence)
->>   {
-> 
-> With a follow-up commit, we can drop the no longer needed return type.
-> Which it turns out was never checked ...
-> 
-
-Fixed during drm-misc-next rebase for v4.
-
-> 
-> 
->> @@ -319,6 +332,8 @@ static int virtio_gpu_resource_create_ioctl(struct drm_device *dev, void *data,
->>                  dma_fence_put(&fence->f);
->>          }
->>          return 0;
->> +fail_fence:
-> 
-> The error labels seems to be called after what they do, not what
-> fails. fail_backoff seems better IMHO.
-
-Agreed. Fixed in v4.
-
-> 
->> +ttm_eu_backoff_reservation(&ticket, &validate_list);
-> Indentation seems off (or my client ate it)?
-
-No, the indentation is bad here. Fixed in v4.
-
-Thanks for the feedback Emil.
