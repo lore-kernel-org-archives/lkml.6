@@ -2,109 +2,109 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C154C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:00:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CCDEC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:02:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 338D12082E
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:00:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C340A20820
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:02:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QxfYez8d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 338D12082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uspwl2m4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C340A20820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728918AbeKBAEG (ORCPT
+        id S1728926AbeKBAFV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 20:04:06 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:52034 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728440AbeKBAEF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 20:04:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=+Rt73Dkjs07M2EcZc58W7I7bXnGaShUh703bpJozHxs=; b=QxfYez8di/tjSKl0d4uXLdjw8
-        Qh9+4+H80o9W5ZaFFgn2RytbCxiV+XYrXcvapx57mvZ/kjzhFJL4TuwB0jfiv5LXADFrx3xlWH/3F
-        Bm4mv7XcnrUfzuyfhKr6P2XDMxrwSxZnNrIa7e0CfmWz81voW81Dp7XMuj8m0yYza3cd+99CbxPRO
-        Vz4pf9+v1WoNlCM8G7mY3IDP4ecPaf3AOavv1l4AcDlvagHUCRGR5oa0Wr5J1I0hFLZnS7rjyifsz
-        NT5fkdg5sA+rlsNuofZqBu9htiulkOWkzurb4sVM206Ddsnxp8eFlbHinDCwsI7NxJ4YkyQiUz2Db
-        bKC4siUSQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gIERU-0003x5-92; Thu, 01 Nov 2018 14:59:28 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3C67620297BC6; Thu,  1 Nov 2018 15:59:26 +0100 (CET)
-Date:   Thu, 1 Nov 2018 15:59:26 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "paul.burton@mips.com" <paul.burton@mips.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ralf@linux-mips.org" <ralf@linux-mips.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        "jhogan@kernel.org" <jhogan@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Boqun Feng <boqun.feng@gmail.com>
-Subject: Re: [RFC PATCH] lib: Introduce generic __cmpxchg_u64() and use it
- where needed
-Message-ID: <20181101145926.GE3178@hirez.programming.kicks-ass.net>
-References: <1541015538-11382-1-git-send-email-linux@roeck-us.net>
- <20181031213240.zhh7dfcm47ucuyfl@pburton-laptop>
- <20181031220253.GA15505@roeck-us.net>
- <20181031233235.qbedw3pinxcuk7me@pburton-laptop>
- <4e2438a23d2edf03368950a72ec058d1d299c32e.camel@hammerspace.com>
- <20181101131846.biyilr2msonljmij@lakrids.cambridge.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181101131846.biyilr2msonljmij@lakrids.cambridge.arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 1 Nov 2018 20:05:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37832 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728440AbeKBAFU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 20:05:20 -0400
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60C912064C;
+        Thu,  1 Nov 2018 15:01:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541084520;
+        bh=KGl9or9EVnZdYg5a/ggsiGlZuUnpSi830BiYPxcIsgY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=uspwl2m4rTmykYyyIp8m8TSaL6KB1lapXqzI+K1AbqWbq0KgIt8dLniDu8+/nFknf
+         dgNyzWYyWtJKeCSXU29ifX3dhh/Mf5XtJnt/VDlTZ+lgYa5OuVQRzjpXepeht6pDML
+         mzUo8p8WjY9y/Z7kdYgnULlpxqnmM7TvjBAKEy8w=
+Date:   Fri, 2 Nov 2018 00:01:56 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Christian Brauner <christian@brauner.io>,
+        Aleksa Sarai <asarai@suse.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kretprobe: produce sane stack traces
+Message-Id: <20181102000156.21304d571e756352b36d2bf2@kernel.org>
+In-Reply-To: <20181101104948.bc7wk453bfryhhk7@yavin>
+References: <20181026132210.12569-1-cyphar@cyphar.com>
+        <20181030101206.2e5998ca3c75496c91ba5b09@kernel.org>
+        <20181031090317.4e211fdd@vmware.local.home>
+        <20181031133912.3j5tryq2vyhkdn4d@yavin>
+        <20181101191347.74eadff4a5d1fab2d79d7efe@kernel.org>
+        <20181101104948.bc7wk453bfryhhk7@yavin>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 01, 2018 at 01:18:46PM +0000, Mark Rutland wrote:
-> > My one question (and the reason why I went with cmpxchg() in the first
-> > place) would be about the overflow behaviour for atomic_fetch_inc() and
-> > friends. I believe those functions should be OK on x86, so that when we
-> > overflow the counter, it behaves like an unsigned value and wraps back
-> > around.  Is that the case for all architectures?
-> > 
-> > i.e. are atomic_t/atomic64_t always guaranteed to behave like u32/u64
-> > on increment?
-> > 
-> > I could not find any documentation that explicitly stated that they
-> > should.
-> 
-> Peter, Will, I understand that the atomic_t/atomic64_t ops are required
-> to wrap per 2's-complement. IIUC the refcount code relies on this.
-> 
-> Can you confirm?
+On Thu, 1 Nov 2018 21:49:48 +1100
+Aleksa Sarai <cyphar@cyphar.com> wrote:
 
-There is quite a bit of core code that hard assumes 2s-complement. Not
-only for atomics but for any signed integer type. Also see the kernel
-using -fno-strict-overflow which implies -fwrapv, which defines signed
-overflow to behave like 2s-complement (and rids us of that particular
-UB).
+> On 2018-11-01, Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> > > > > Anyway, until that merge happens, this patch looks good to avoid
+> > > > > this issue for generic solution (e.g. for the arch which doesn't
+> > > > > supports retstack).
+> > > > 
+> > > > I think its time to come up with an algorithm that makes function graph
+> > > > work with multiple users, and have kretprobes be able to hook into it
+> > > > just like kprobes hooks into function tracer.
+> > > > 
+> > > > I have some ideas on how to get this done, and will try to have an RFC
+> > > > patch set ready by plumbers.
+> > > 
+> > > Should I continue working on this patchset?
+> > 
+> > Yes, until we finally introduce Steven's algorithm on all arch (yeah, we still
+> > have some archs which don't support graph-tracer but supports kprobes),
+> > I think your patch is the best fix for this issue.
+> 
+> Thanks, I just sent a v3.
+> 
+> Though, even with Steven's hooking of kprobes I think you'd still need
+> to stash away the stack trace somewhere (or am I misunderstanding the
+> proposal?).
+
+Wait, I might miss something. kretprobe and func-graph tracer just swap the
+return address on the stack but no change on other stuffs on the stack.
+In that case, if we can restore the stack, isn't it enough?
+
+And anyway, even if using func-graph tracer, stack unwinding works correctly.
+I thought it means we don't need to backup whole the stack, doesn't it?
+
+Thank you,
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
