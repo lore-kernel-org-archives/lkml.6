@@ -2,130 +2,96 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53409C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:34:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE37C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:34:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1045E205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:34:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fzM2gZrc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1045E205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2A453205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:34:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A453205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=olimex.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728887AbeKAXhl (ORCPT
+        id S1728895AbeKAXiJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 19:37:41 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:33871 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728016AbeKAXhl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 19:37:41 -0400
-Received: by mail-wm1-f67.google.com with SMTP id f1-v6so1917300wmg.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 07:34:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=doC4a68ijO/gdT3cIlg+bwo6fuYr/HydJ/wMXO1+oO4=;
-        b=fzM2gZrciwxBzvpjalznnpMW1h+znxViaT9pxKpW363vnKptTcTsFRwKGxxJA2Umdh
-         klNiaY9BYQmiiOXKXrHA/KAi5jOTQuRGDZQP41Ve3mxs0eah2VAe9LQK66YOJOsLmTTz
-         QaYdIWW2tDlD+Kh/GpV+DukJh9OPf1kR1RPTxJYSXNTlwOfrjLmGkGvV2L2nCrMr5YFA
-         89ZN1ntALb7zgWq/T/ofL8aCOi5oiDGPtgTZAIhhnxsZW6xIBWjs1wRMWZ76O+zLBQtH
-         sYOfJmS81nmOzR8D5imO8YAS9IW/HDvdKqfzvs2X380E0oh4vB81x/4sCniecEF7NH4S
-         lnJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=doC4a68ijO/gdT3cIlg+bwo6fuYr/HydJ/wMXO1+oO4=;
-        b=prgtg+niMl47pQr3PqXItUpVVsYvijxfvaKQJ3Huvjyn7wLfM3Pls1R0FQqrNYPE1C
-         iSQVsLtkRsgbukrka9yPZPo7qNUIHTsJQD0gQy3FwD3Lts9uMhJ9eN1mMPsfNWhdTDK2
-         J0qNALxS6gjgrR16DYV6DAXCYC0gS4nF3KflNja8sgV1OIzu4et6QjAdz3XS/85FifuW
-         UosNro7xURnB495oZ3FVikWSHhGLmfrewFV8JURdWsJBCf2hH/uqf0siPr9pTolWUC7Q
-         szIcBt86CHIyrx4WdjGh282/nj9o+jeaLp+ON/dcvSxpfsXCKx4oCk3rxbTtSY04pgde
-         p0Kw==
-X-Gm-Message-State: AGRZ1gIxdDIdK7WZ9qnx5ipYWCDbEwsWKmHCM1GZdyux5li+15BVW3La
-        ukwATcsV4ITkiziLSNVmeUY=
-X-Google-Smtp-Source: AJdET5dzA39rnBkVQgZ4NZkz8YCDEGQmTL3k6mFFOWpBU+M5qYzzE/KqBRXRHZQYtOm5LIZsTRzRzg==
-X-Received: by 2002:a1c:32ca:: with SMTP id y193-v6mr5710658wmy.29.1541082865800;
-        Thu, 01 Nov 2018 07:34:25 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id g76-v6sm24702360wmd.25.2018.11.01.07.34.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 01 Nov 2018 07:34:24 -0700 (PDT)
-Date:   Thu, 1 Nov 2018 15:34:21 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     "Woodhouse, David" <dwmw@amazon.co.uk>,
-        "zhenzhong.duan@oracle.com" <zhenzhong.duan@oracle.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "bp@suse.de" <bp@suse.de>,
-        "srinivas.eeda@oracle.com" <srinivas.eeda@oracle.com>,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
-        "michal.lkml@markovi.net" <michal.lkml@markovi.net>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        "luto@kernel.org" <luto@kernel.org>
-Subject: Re: [PATCH v2 1/2] retpolines: Only enable retpoline support when
- compiler support it
-Message-ID: <20181101143421.GA81370@gmail.com>
-References: <991cbe9b-1e31-4b12-b572-91fde5c79699@default>
- <20181101095002.GA118944@gmail.com>
- <90a9eed724b28d5af57a71694a95b4cd92728ccc.camel@amazon.co.uk>
- <alpine.DEB.2.21.1811011317400.1642@nanos.tec.linutronix.de>
+        Thu, 1 Nov 2018 19:38:09 -0400
+Received: from olimex.com ([184.105.72.32]:55188 "EHLO olimex.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728016AbeKAXiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 19:38:09 -0400
+Received: from 195.238.85.143 ([195.238.85.143])
+        by olimex.com with ESMTPSA (ECDHE-RSA-AES128-GCM-SHA256:TLSv1.2:Kx=ECDH:Au=RSA:Enc=AESGCM(128):Mac=AEAD) (SMTP-AUTH username stefan@olimex.com, mechanism PLAIN)
+        for <linux-kernel@vger.kernel.org>; Thu, 1 Nov 2018 07:34:46 -0700
+Subject: Re: [PATCH v3 1/1] drm/panel: Add support for Olimex LCD-OLinuXino
+ panel
+To:     Rob Herring <robh@kernel.org>, Stefan Mavrodiev <stefan@olimex.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1531383729-13932-1-git-send-email-stefan@olimex.com>
+ <20180716150836.GA16895@rob-hp-laptop>
+From:   Stefan Mavrodiev <stefan@olimex.com>
+Message-ID: <e677488e-34e0-512c-db13-15ccf78c5ea0@olimex.com>
+Date:   Thu, 1 Nov 2018 16:34:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1811011317400.1642@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180716150836.GA16895@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: bg
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 7/16/18 6:08 PM, Rob Herring wrote:
+> On Thu, Jul 12, 2018 at 11:21:53AM +0300, Stefan Mavrodiev wrote:
+>> This patch adds Olimex Ltd. LCD-OLinuXino bridge panel driver. The
+>> panel is used with different LCDs (currently from 480x272 to 1280x800).
+>> Small EEPROM chip is used for identification, which holds some
+>> factory data and timing requirements.
+>>
+>> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
+>> ---
+>> Changes for v3:
+>>    - Change module license from "GPL v2" to "GPL"
+>>    - Make use of backlight_enable()/backlight_disable() helpers
+>>    - Rework backlight device request
+>>    - Remove drm_panel_detach()
+>>    - Use module_i2c_driver() for initialization
+>>    - Make the first mode preferred
+>>    - If num_modes value is invalid, overwrite it with 4, which is the maximum
+>>    - Some variable types optimizations
+>>
+>> Changes for v2:
+>>    - Changed lcd_olinuxino_funcs to static const
+>>
+>>   .../display/panel/olimex,lcd-olinuxino.txt         |  42 +++
+> Reviewed-by: Rob Herring <robh@kernel.org>
+>
+>>   MAINTAINERS                                        |   6 +
+>>   drivers/gpu/drm/panel/Kconfig                      |  10 +
+>>   drivers/gpu/drm/panel/Makefile                     |   1 +
+>>   drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c | 331 +++++++++++++++++++++
+>>   5 files changed, 390 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/display/panel/olimex,lcd-olinuxino.txt
+>>   create mode 100644 drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c
 
-* Thomas Gleixner <tglx@linutronix.de> wrote:
+I would like to ask if there will be any progress on this patch?
 
-> On Thu, 1 Nov 2018, Woodhouse, David wrote:
-> > On Thu, 2018-11-01 at 10:50 +0100, Ingo Molnar wrote:
-> > > * Zhenzhong Duan <zhenzhong.duan@oracle.com> wrote:
-> > > 
-> > > > Since retpoline capable compilers are widely available, make
-> > > > CONFIG_RETPOLINE hard depend on it.
-> > > > 
-> > > > The check of RETPOLINE is changed to CONFIG_RETPOLINE.
-> > > > 
-> > > > This change is based on suggestion in https://lkml.org/lkml/2018/9/18/1016
-> > > > 
-> > > > Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-> > > > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > > > Cc: Peter Zijlstra <peterz@infradead.org>
-> > > 
-> > > Please turn such 'based on suggestions' into proper tags as well, i.e. 
-> > > something like:
-> > > 
-> > >   Suggested-by: David Woodhouse <dwmw2@infradead.org>
-> > 
-> > I think the suggestion came from PeterZ; I just acked it.
-> > 
-> > Although on furthe reflection, I think I'd prefer a build break if
-> > retpoline is enabled in the kernel config and the compiler doesn't
-> > support it. This patch would make it silently fail to be secure.
-> 
-> Agreed.
+Best regards,
+Stefan Mavrodiev
 
-Yeah, I agree that that's the best policy: if someone wants retpoline 
-support it shouldn't silently turn off just because the wrong toolchain 
-was used to build the kernel ...
-
-Thanks,
-
-	Ingo
