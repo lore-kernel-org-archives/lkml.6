@@ -2,140 +2,120 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9F13C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:27:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37468C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:29:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A598F20820
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:27:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A598F20820
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id DFEA2205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:29:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HzadiFe8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFEA2205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728205AbeKAUaI (ORCPT
+        id S1728256AbeKAUbb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 16:30:08 -0400
-Received: from foss.arm.com ([217.140.101.70]:55124 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727507AbeKAUaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 16:30:08 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CC752A78;
-        Thu,  1 Nov 2018 04:27:35 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9B90D3F71D;
-        Thu,  1 Nov 2018 04:27:35 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id B42511AE0C3E; Thu,  1 Nov 2018 11:27:43 +0000 (GMT)
-Date:   Thu, 1 Nov 2018 11:27:43 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     John Garry <john.garry@huawei.com>, catalin.marinas@arm.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linuxarm@huawei.com
-Subject: Re: [PATCH] arm64/numa: Add more vetting in numa_set_distance()
-Message-ID: <20181101112743.GB31099@arm.com>
-References: <1540562267-101152-1-git-send-email-john.garry@huawei.com>
- <20181029112504.GF14127@arm.com>
- <925009c6-226d-213f-dbcb-68b772d80a18@huawei.com>
- <20181029121638.GB15446@arm.com>
- <839acfc7-6b3a-b7ac-2f4a-713960ece457@huawei.com>
- <17e3006a-7ecd-968e-7e67-ea7d08858ec3@arm.com>
- <bc7bd118-82f2-86be-71ea-46704df864a5@huawei.com>
- <45a8e09d-b32b-df32-ba34-5aa1909fb11f@arm.com>
+        Thu, 1 Nov 2018 16:31:31 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:40469 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727976AbeKAUbb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 16:31:31 -0400
+Received: by mail-ot1-f65.google.com with SMTP id m15so17417722otl.7
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 04:28:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=j6PF0RiTcJwkIcly71gREdGcceqUcI7V7FLfCAd/vnk=;
+        b=HzadiFe8GF1u9jwmpnGnmyHhyB6lXlryobbYWLasu/qlWD5Lr5KKRzC3Z/HzcXInCR
+         27kMxLDhrlnM0U0Vjek5jkoiBt49TIqvG0OYqYFWqxjYd3hToupHSAe0GTStTt4oXYY1
+         hp4X2FAQs7hm+XsNA59KGaSzxJVse7i8KWp+0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=j6PF0RiTcJwkIcly71gREdGcceqUcI7V7FLfCAd/vnk=;
+        b=Z155A7qE59DS5oGl5Rs3nBylEx//xeM7Yl2h2I6CZLADB6EXVu8grkDKd2Yx608V2B
+         d9oaXM8sVD/4NB9bcxw+Eh4zp45+3DPm+YFUVLoCyGU89165LIIiND7eeLE5k/9Zt/cV
+         bbmEqNzKbwoQ1Wjy7xmA5rviUM6P/ACO2k0jQCpEqmwmUfIr0+Ol/t7dq482uEI5mEY9
+         WJaTdwqCUibSOuk6a9cZXXvKD9iAABbas2KN3psI9pYqKJXaozRE5hhaMurbYi9P2Al4
+         w0Ig12xaQ9ZWIhVn4icq8gfh5r9bTnvNPpEpjUijCZrN3GQSAux8e+woloctAGbpSA2k
+         c2mw==
+X-Gm-Message-State: AGRZ1gKo4YzE+Fb3Qw1qIcCTwBHlrzy7PB7q8tnf3oqyl38ts+sS/MrC
+        NrKpjYVQEDik7NltBOL4LQUUJhtnqphqk/u2qjS8
+X-Google-Smtp-Source: AJdET5cehRw6kq4kEpFBE56j0n3kK52rgi/F0yGKwPyNBM9lS2JA7Np1ZWSl++D/+l3bUhPNL2fLUf8YujjG56YPYMw=
+X-Received: by 2002:a9d:738a:: with SMTP id j10mr4455367otk.188.1541071737898;
+ Thu, 01 Nov 2018 04:28:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <45a8e09d-b32b-df32-ba34-5aa1909fb11f@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20181031081945.207709-1-vovoy@chromium.org> <20181031142458.GP32673@dhcp22.suse.cz>
+ <cc44aa53-8705-02ea-6c59-f311427d93af@intel.com> <20181031164231.GQ32673@dhcp22.suse.cz>
+In-Reply-To: <20181031164231.GQ32673@dhcp22.suse.cz>
+From:   Vovo Yang <vovoy@chromium.org>
+Date:   Thu, 1 Nov 2018 19:28:46 +0800
+Message-ID: <CAEHM+4pSkv_fD3Yb2KX1xFrOmRHU1e=+wCBrCyLAAMBG3zP75w@mail.gmail.com>
+Subject: Re: [PATCH v3] mm, drm/i915: mark pinned shmemfs pages as unevictable
+To:     mhocko@kernel.org
+Cc:     dave.hansen@intel.com, linux-kernel@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-mm@kvack.org,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        peterz@infradead.org, akpm@linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Nit: Please wrap your lines when replying -- I've done it for you here ]
+On Thu, Nov 1, 2018 at 12:42 AM Michal Hocko <mhocko@kernel.org> wrote:
+> On Wed 31-10-18 07:40:14, Dave Hansen wrote:
+> > Didn't we create the unevictable lists in the first place because
+> > scanning alone was observed to be so expensive in some scenarios?
+>
+> Yes, that is the case. I might just misunderstood the code I thought
+> those pages were already on the LRU when unevictable flag was set and
+> we would only move these pages to the unevictable list lazy during the
+> reclaim. If the flag is set at the time when the page is added to the
+> LRU then it should get to the proper LRU list right away. But then I do
+> not understand the test results from previous run at all.
 
-On Tue, Oct 30, 2018 at 08:16:21AM +0530, Anshuman Khandual wrote:
-> On 10/29/2018 08:14 PM, John Garry wrote:
-> >>>>>  I think we should either factor out the sanity check
-> >>>>>> into a core helper or make the core code robust to these funny configurations.
-> >>>>>
-> >>>>> OK, so to me it would make sense to factor out a sanity check into a core
-> >>>>> helper.
-> >>>>
-> >>>> That, or have the OF code perform the same validation that slit_valid() is
-> >>>> doing for ACPI. I'm just trying to avoid other architectures running into
-> >>>> this problem down the line.
-> >>>>
-> >>>
-> >>> Right, OF code should do this validation job if ACPI is doing it
-> >>> (especially since the DT bindings actually specify the distance
-> >>> rules), and not rely on the arch NUMA code to accept/reject
-> >>> numa_set_distance() combinations.
-> >>
-> >> I would say this particular condition checking still falls under arch NUMA init
-> >> code sanity check like other basic tests what numa_set_distance() currently does
-> >> already but it should not be a necessity for the OF driver to check these.
-> > 
-> > The checks in the arch NUMA code mean that invalid inter-node distance
-> > combinations are ignored.
-> 
-> Right and should not this new test (from != to && distance == LOCAL_DISTANCE) be
-> one of them as well ? numa_set_distance() updates the table or just throws some
-> warnings while skipping entries it deems invalid. It would be okay to have this
-> new check there in addition to others like this patch suggests.
+"gem_syslatency -t 120 -b -m" allocates a lot of anon pages, it consists of
+these looping threads:
+  * ncpu threads to alloc i915 shmem buffers, these buffers are freed by i915
+shrinker.
+  * ncpu threads to mmap, write, munmap an 2 MiB mapping.
+  * 1 thread to cat all files to /dev/null
 
-If we're changing numa_set_distance(), I'd actually be inclined to do the
-opposite of what you're suggesting and move as much of this boilerplate
-checking into the core code. Perhaps we could add something like
-check_fw_numa_topology() and have both ACPI and OF call that so that the
-arch doesn't need to worry about malformed tables at all.
+Without the unevictable patch, after rebooting and running
+"gem_syslatency -t 120 -b -m", I got these custom vmstat:
+  pgsteal_kswapd_anon 29261
+  pgsteal_kswapd_file 1153696
+  pgsteal_direct_anon 255
+  pgsteal_direct_file 13050
+  pgscan_kswapd_anon 14524536
+  pgscan_kswapd_file 1488683
+  pgscan_direct_anon 1702448
+  pgscan_direct_file 25849
 
-> > However, if any entries in the table are invalid, then the whole table
-> > can be discarded as none of it can be believed, i.e. it's better to
-> > validate the table.
-> >
-> 
-> Agreed. slit_valid() on the ACPI parsing is currently enforcing that before
-> acpi_numa_slit_init() which would call into numa_set_distance(). Hence arch
-> NUMA code numa_set_distance() never had the opportunity to do the sanity
-> checks as ACPI slit_valid() has completely invalidated the table.
-> 
-> Unlike ACPI path, of_numa_parse_distance_map_v1() does not do any sanity
-> checks on the distance values parse from the "distance-matrix" property
-> and all the checks directly falls on numa_set_distance(). This needs to
-> be fixed in line with ACPI
-> 
-> * If (to == from) ---> distance = LOCAL_DISTANCE
-> * If (to != from) ---> distance > LOCAL_DISTANCE
-> 
-> At the same time its okay to just enhance numa_set_distance() test coverage
-> to include this new test. If we would have trusted firmware parsing all the
-> way, existing basic checks about node range, distance stuff should not have
-> been there in numa_set_distance(). Hence IMHO even if we fix the OF driver
-> part, we should include this new check there as well.
+And meminfo shows large anon lru size during test.
+  # cat /proc/meminfo | grep -i "active("
+  Active(anon):     377760 kB
+  Inactive(anon):  3195392 kB
+  Active(file):      19216 kB
+  Inactive(file):    16044 kB
 
-I don't see what we gain by duplicating the check. In fact, it has a few
-downsides:
+With this patch, the custom vmstat after test:
+  pgsteal_kswapd_anon 74962
+  pgsteal_kswapd_file 903588
+  pgsteal_direct_anon 4434
+  pgsteal_direct_file 14969
+  pgscan_kswapd_anon 2814791
+  pgscan_kswapd_file 1113676
+  pgscan_direct_anon 526766
+  pgscan_direct_file 32432
 
-  (1) It confuses the semantics of the API, because it is no longer clear
-      who "owns" the check
-
-  (2) It duplicates code in each architecture
-
-  (3) Some clever-cloggs will remove at least some of the duplication in
-      future
-
-I'm not willing to accept the check in the arm64 code if we update the
-OF code.
-
-I think the way forward here is for John to fix the crash he reported by
-adding the check to the OF code. If somebody wants to follow up with
-subsequent patches to move more of the checking out of the arch code, then
-we can review that as a separate series.
-
-Will
+The anon pgscan count is reduced.
