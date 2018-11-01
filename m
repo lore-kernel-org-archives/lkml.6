@@ -2,199 +2,225 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7717C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 04:21:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF656C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 04:30:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C7B9205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 04:21:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F9C42064C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 04:30:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="rwgVWrIX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C7B9205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+	dkim=pass (2048-bit key) header.d=mendozajonas.com header.i=@mendozajonas.com header.b="m451Bn5Y";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pKdkrq+j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F9C42064C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mendozajonas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727690AbeKANWz (ORCPT
+        id S1727696AbeKANcA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 09:22:55 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38245 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726840AbeKANWz (ORCPT
+        Thu, 1 Nov 2018 09:32:00 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:38225 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726396AbeKANcA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 09:22:55 -0400
-Received: by mail-wr1-f67.google.com with SMTP id d10-v6so18746481wrs.5
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 21:21:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=j16l5dr4MqYSx094xWUe0/P9jIVKP+hv7JWO+T5J8ic=;
-        b=rwgVWrIXg9mRXMHeQ2B4btxvwj97tNOe1i/n1I877ArZpI8047SYuB99Q1oYJO0ZJI
-         vWVsPSk5ZXiN9VBkUPyFJF6Ur3tDeTFR67nxxH6HLEtMivrOhxTrIvpkucnilClwV11C
-         RpkI/0OxGpauhkx0JsDuznEGHALFsUEsPEEjCiir3WDG87V/la7MmSrMsmSN+9vZNGAP
-         B/q0lEnn+l972XnKr9wBN2hNjnCGrDZC3rhDeLCKsrv3xrDyjjpgwMHVY3DWa+0bIRq/
-         BnG+pL5WQtLRhu6jpSaVbnmW5BABn0EoR8yohLaLlgdBCIh0HU+ZOX/lPUiUUWFfwNxr
-         q43A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=j16l5dr4MqYSx094xWUe0/P9jIVKP+hv7JWO+T5J8ic=;
-        b=OoRux/rtTNDS84okk5L4nnFmY7s7g3NX77MKpTT2EnWZVmkrcW5eckj9bZ5S63ZFHG
-         w/eghM6hGjo2tUSqRdCoPeCV2+r5hMZZyctNftnHZR8l8l4XjVNGcv7d+OdaLPHx66ZF
-         YLoz5PE5qJPoK6v2Qp9eOIe+2Rf3uB5k9WATRb/Z70HcmCjezuoig9oBy/gAWxm7pYZp
-         Ae22hUwX7gadz36PcQOLUdBgVXdJ04vqfrG8cvoaDlqj+F7DIiyGqZxatVPwZOrnEtFg
-         O87Fl/O1wG97H9q0Rs0KuutOLUowI62qkV4zNbB8r85uSkyiaUWy4H0af+VLMZdVSpZB
-         I8qg==
-X-Gm-Message-State: AGRZ1gIVUL1fNuJkMaXh38dg4a12kDjV7kPtGuQa1WG2GdaT4GZvXC46
-        NiO0ajL9krkelbNkAJBgYt7iDDX/z+zgWHaE6h0axg==
-X-Google-Smtp-Source: AJdET5e95u3WZPSh9/1hvoCsdZQlLz2Xd5Ro79DftSLmeT+m7eT0MBgRxWGJuf+8F3RwXUq8KWYE+vXLayuAn4Qm53U=
-X-Received: by 2002:adf:eb8e:: with SMTP id t14-v6mr5156851wrn.109.1541046099000;
- Wed, 31 Oct 2018 21:21:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAOesGMjXZNURZ4SdKjssYCcFv3=4MYLBpBpzvvb1rNM-fo=QHQ@mail.gmail.com>
- <mhng-111820e6-59c0-479a-a10f-f3729007ba70@palmer-si-x1c4> <CAOesGMj+wXcN_7yvakC=SvtYjO=TTqrs8YiVX1xT7-4p1pC_Mg@mail.gmail.com>
-In-Reply-To: <CAOesGMj+wXcN_7yvakC=SvtYjO=TTqrs8YiVX1xT7-4p1pC_Mg@mail.gmail.com>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Thu, 1 Nov 2018 09:51:28 +0530
-Message-ID: <CAAhSdy2YeEw7gamK3z=ZD_+qkoDgNRC-CpJaHCJhpZFQpxxefg@mail.gmail.com>
-Subject: Re: [PATCH] RISC-V: defconfig: Enable printk timestamps
-To:     Olof Johansson <olof@lixom.net>
-Cc:     Palmer Dabbelt <palmer@sifive.com>, davem@sunset.davemloft.net,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Atish Patra <atish.patra@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-riscv@lists.infradead.org,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
+        Thu, 1 Nov 2018 09:32:00 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailout.nyi.internal (Postfix) with ESMTP id EBCBE22444;
+        Thu,  1 Nov 2018 00:30:43 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Thu, 01 Nov 2018 00:30:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        mendozajonas.com; h=message-id:subject:from:to:cc:date
+        :in-reply-to:references:content-type:mime-version
+        :content-transfer-encoding; s=fm1; bh=8sxYpk5eLwsk5iXa/2gYvUiyTu
+        YyFl1QOAdiRRPoMJc=; b=m451Bn5YTTvmSnlCWpMyFraJozAgdCkued6N9/2YJa
+        oZCt9+cYQp79M77ijQ+fkBvOy3r/UEy+iwiYSJmautxw7j6xGoVRaaAqkRp6ybrc
+        RjzECqakSyrCax7hYggY//srVVVWP2q3VcO2AuvgrMOFncaITWb7R/8K+H+dQoIY
+        azaYeiOkMCcdsSDa0kDnQwXVSeBXHrapMt9vPR5NIw7Zl/9e1n0f6kzuU2irC2Ee
+        TbhY3z7j2aS1lbdBk4BV8AqTfRuFz+vaRiS4CXgvPy69e/r8Bf//x8RYShpxeq3k
+        6s+E+/HwSw38wLMEHFINnE+mxC6GIOhh0fqHjdqy69KQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=8sxYpk5eLwsk5iXa/2gYvUiyTuYyFl1QOAdiRRPoM
+        Jc=; b=pKdkrq+jDBf7Gj+yYMFJafIyelNLFbkMJLKq03qv5PmpFz2KrJ1sd8cYJ
+        iDhYqTPTSgaAJ93q2+PLejW10dV5cdeT4UGhOvowXaG5DnBO4rhgdKITdFpc7YI3
+        M+Hvo/gXysqAmdS/ukuTT8rqbND/HRISq2ZIKasX4MTYeUdy5lhnicHxyhF7EQYy
+        efjbcNb9KXqxCZoI23Pp1WoTqdx7sMFqvmgCzBn/1u9zecUOb97fgVRokY/+ZkEP
+        TBLZc+jINTlXHXO4pzVVtR3FSweq5uio9Ttg/zdKZG6FiKmFtCIP5u/aVbSnXnpT
+        UTCmh7no749zZ/nuU3Vpyi2cfNPFg==
+X-ME-Sender: <xms:c4HaWxpgY39fnb-e18IE3x6VtCNlT71ibA3lnxlub5c4TZBDY93kig>
+X-ME-Proxy: <xmx:c4HaWwIkPOLGxvk2Yl8HAz46XUYeea_eINns8xlRmx118-9_oCvLog>
+    <xmx:c4HaW-amRazImVBKdv5LFffpJZuQh1IO18wC4W1WBnGbMEDRrsV6zA>
+    <xmx:c4HaW6D38DTcmoD5Cn-_7d_Hfw0oxzMQHhERHd4rnhhj73JsK7jDLQ>
+    <xmx:c4HaWwYCeAda06wc0js12ReVNNCWucjDiFtppZaRktfGYkJv_RCApQ>
+    <xmx:c4HaW6lbPeF__wWgpynwWl1T6fb-nIE28oa8K4rJ181bw-BtBFvEbg>
+    <xmx:c4HaW1PXcR-HXCypKnVFqm21LUhTGDOK1HjXo0alDn6Ui9IZlal57w>
+Received: from v4 (unknown [122.99.82.10])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 1D4A6E425A;
+        Thu,  1 Nov 2018 00:30:40 -0400 (EDT)
+Message-ID: <8004d6c236582253a82004ce72425b45f09d7d56.camel@mendozajonas.com>
+Subject: Re: [PATCH net-next v2 5/6] net/ncsi: Reset channel state in
+ ncsi_start_dev()
+From:   Samuel Mendoza-Jonas <sam@mendozajonas.com>
+To:     Justin.Lee1@Dell.com, netdev@vger.kernel.org
+Cc:     davem@davemloft.net, linux-kernel@vger.kernel.org,
+        openbmc@lists.ozlabs.org
+Date:   Thu, 01 Nov 2018 15:30:38 +1100
+In-Reply-To: <2be6038ad8cb43559495e6f84e97b8a6@AUSX13MPS306.AMER.DELL.COM>
+References: <20181023215201.27315-1-sam@mendozajonas.com>
+         <20181023215201.27315-6-sam@mendozajonas.com>
+         <d6172566ffe94dec83c1026108e24c98@AUSX13MPS306.AMER.DELL.COM>
+         <b0fd357b1fc4b9aed6300019557dc8a391ecf52d.camel@mendozajonas.com>
+         <2be6038ad8cb43559495e6f84e97b8a6@AUSX13MPS306.AMER.DELL.COM>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 1, 2018 at 4:20 AM Olof Johansson <olof@lixom.net> wrote:
->
-> On Wed, Oct 31, 2018 at 1:42 PM Palmer Dabbelt <palmer@sifive.com> wrote:
-> >
-> > On Wed, 31 Oct 2018 12:20:40 PDT (-0700), Olof Johansson wrote:
-> > > On Tue, Oct 30, 2018 at 5:37 AM Anup Patel <anup@brainfault.org> wrote:
-> > >>
-> > >> The printk timestamps are very useful information to visually see
-> > >> where kernel is spending time during boot. It also helps us see
-> > >> the timing of hotplug events at runtime.
-> > >>
-> > >> This patch enables printk timestamps in RISC-V defconfig so that
-> > >> we have it enabled by default (similar to other architectures
-> > >> such as x86_64, arm64, etc).
-> > >>
-> > >> Signed-off-by: Anup Patel <anup@brainfault.org>
-> > >
-> > > Acked-by: Olof Johansson <olof@lixom.net>
-> > >
-> > > For next time: doing a re-format of the defconfig (to shuffle config
-> > > order), plus changes in the same patch, tends to be a bit fragile. For
-> > > cases like these, I'd recommend hand-pruning to just flip the one
-> > > option if needed, and then have Palmer or Andrew refresh the defconfig
-> > > during a merge window if needed (usually quite rare).
-> >
-> > I poked around and it looks like most architectures have this enabled for at
-> > least one defconfig, with the big architectures having it enabled for all of
-> > them.
->
-> It's pretty convenient to have it on, and I think those who haven't
-> probably don't use those defconfigs much.
->
-> > I decided to do a bit of a case study here to try and figure out why some
-> > architectures have this enabled for some defconfigs but not for others, and as
-> > far as I can tell it's just an oversight.  Specifically, looking at sparc32 (#
-> > CONFIG_PRINTK_TIME is not set) vs sparc64 (CONFIG_PRINTK_TIME=y) I can't find
-> > any reason for the difference.  sparc32's setting can be traced back to
->
-> I'm not sure sparc32 is overly active these days, which might help explain it?
->
-> >     commit 216da721b881838d639a3987bf8a825e6b4aacdd
-> >     Author: David S. Miller <davem@sunset.davemloft.net>
-> >     Date:   Sun Dec 17 14:21:34 2006 -0800
-> >
-> >         [SPARC]: Update defconfig.
-> >
-> >         Signed-off-by: David S. Miller <davem@davemloft.net>
-> >
-> > which changes everything in the defconfig, while the sparc64 version dates back to
-> >
-> >     commit 3ebc284d52757cf39788731f8fddd70a89f7fc23
-> >     Author: David S. Miller <davem@sunset.davemloft.net>
-> >     Date:   Mon Jan 9 14:36:49 2006 -0800
-> >
-> >         [SPARC64]: Update defconfig.
-> >
-> >         Signed-off-by: David S. Miller <davem@davemloft.net>
-> >
-> > When we first submitted out port upstream we had an empty defconfig, with the
-> > theory being that we should just pick whatever the default in Kconfig is for
-> > everything.  That's obviously the wrong thing to do because most of those
-> > options are bogus.  At the time I didn't care enough to look because I just
-> > wanted something to work, but now I find myself asking the question "what goes
-> > in a defconfig?"  Is it:
-> >
-> > * What I, as the maintainer of arch/riscv, want?  That's essentially what it is
-> >   now, as we have things like "CONFIG_R8169=y" in there because I happened to
-> >   have one sitting around when we needed to plug in an Ethernet card to test
-> >   out PCIe.
-> > * What distributions expect?  There's a major element of this in there right
-> >   now, as half this stuff was just selected because the Debian and Fedora guys
-> >   suggested we do so because adding things to the RISC-V defconfig made it
-> >   easier to put together their build scripts.  For example, we ended up with
-> >   "CONFIG_EXPERT=y" because some setting necessary for the distros was hidden
-> >   behind it -- that seems like an odd default.
-> > * What users expect?  I'm not even sure who users are in this case, as from my
-> >   understating most people use distro kernels and don't twiddle Kconfig
-> >   options.
-> > * What is necessary to work on RISC-V hardware?  This seems like the most
-> >   reasonable use for an arch-specific defconfig, and subsumes things like
-> >   "CONFIG_SIFIVE_PLIC=y" because without the PLIC driver nothing will work (but
-> >   the PLIC driver shouldn't be enabled by default for all architectures, as
-> >   it's useless everywhere else).
-> >
-> > Maybe I've opened up a big can of worms here...  It just seems silly to have
-> > most of our current defconfig be RISC-V specific.
->
-> So, on 32-bit ARM we have heavy defconfig proliferation, and for arm64
-> there was a push to only have one defconfig. I'm heavily in favor of
-> the latter.
->
-> On ARM64, the options turned on, are more or less "what makes the
-> kernel useful on systems". Anything that would be needed to boot to a
-> rootfs tends to be =y, while some other things that might be optional
-> and not used everywhere tends to go in as modules.
->
-> Beyond that, for the most part it is maintainer preference. I've
-> normally turned on platforms and drivers I need for my boot farm on
-> the multi*defconfig configs on 32-bit ARM, and the same has been going
-> for 64-bit.
->
-> Distros will always want something different, for policy reasons or
-> otherwise. Main purpose of mainline defconfigs is to make mainline
-> kernels useful and bootable, so having more of a superset approach
-> makes a lot of sense in my mind.
->
-> > Anyway, I'm happy with the change because it meets my "what I want" criteria
-> > :).  I'll split it into two parts, though, as that way when someone else has to
-> > go to some archaeology on our port they'll be less likely to get lost.
->
-> Sounds good to me. On ARM, we sometimes do the "refresh defconfig"
-> runs across the board, but not for every release since it tends to get
-> churny. Make sure you do it before -rc1 to avoid conflicts if
-> contributors base branches on -rc1 and send them to you (probably not
-> that common yet).
->
+On Tue, 2018-10-30 at 18:23 +0000, Justin.Lee1@Dell.com wrote:
+> > On Fri, 2018-10-26 at 17:25 +0000, Justin.Lee1@Dell.com wrote:
+> > > Hi Samuel,
+> > > 
+> > > I noticed a few issues and commented below.
+> > > 
+> > > Thanks,
+> > > Justin
+> > > 
+> > > 
+> > > >  /* Resources */
+> > > > +int ncsi_reset_dev(struct ncsi_dev *nd);
+> > > >  void ncsi_start_channel_monitor(struct ncsi_channel *nc);
+> > > >  void ncsi_stop_channel_monitor(struct ncsi_channel *nc);
+> > > >  struct ncsi_channel *ncsi_find_channel(struct ncsi_package *np,
+> > > > diff --git a/net/ncsi/ncsi-manage.c b/net/ncsi/ncsi-manage.c
+> > > > index 014321ad31d3..9bad03e3fa5e 100644
+> > > > --- a/net/ncsi/ncsi-manage.c
+> > > > +++ b/net/ncsi/ncsi-manage.c
+> > > > @@ -550,8 +550,10 @@ static void ncsi_suspend_channel(struct ncsi_dev_priv *ndp)
+> > > >  		spin_lock_irqsave(&nc->lock, flags);
+> > > >  		nc->state = NCSI_CHANNEL_INACTIVE;
+> > > >  		spin_unlock_irqrestore(&nc->lock, flags);
+> > > > -		ncsi_process_next_channel(ndp);
+> > > > -
+> > > > +		if (ndp->flags & NCSI_DEV_RESET)
+> > > > +			ncsi_reset_dev(nd);
+> > > > +		else
+> > > > +			ncsi_process_next_channel(ndp);
+> > > >  		break;
+> > > >  	default:
+> > > >  		netdev_warn(nd->dev, "Wrong NCSI state 0x%x in suspend\n",
+> > > > @@ -1554,7 +1556,7 @@ int ncsi_start_dev(struct ncsi_dev *nd)
+> > > >  		return 0;
+> > > >  	}
+> > > >  
+> > > > -	return ncsi_choose_active_channel(nd);
+> > > > +	return ncsi_reset_dev(nd);
+> > > 
+> > > If there is no available channel due to the whitelist, ncsi_start_dev() function will return failed
+> > > Status and the network interface may fail to bring up too. It is possible for user to disable all 
+> > > channels and leave the interface up for checking the LOM status.
+> > > 
+> > 
+> > I'm not sure that that is a bug, or at least not in the scope of this
+> > series. If the whitelist is set such that no channels are valid then
+> > there's nothing for NCSI to do. If we want to do something like always
+> > monitor all channels then that would be best to do in another patch.
+> > 
+> > > >  }
+> > > >  EXPORT_SYMBOL_GPL(ncsi_start_dev);
+> > > 
+> > > Also, if I send set_package_mask and set_channel_mask commands back to back in a program,
+> > > the state machine doesn't work well. If I use command line and wait for it to complete for 
+> > > each step, then it is fine.
+> > 
+> > Yeah that's not great; probably hitting some corner cases in the NCSI
+> > locking. I'll look into the multi-channel related stuff but I have a
+> > feeling that if you tried this with the existing set/clear commands you
+> > would probably hit something similar, especially on your dual core
+> > platform. If so this is probably something to fix separately.
+> > 
+> 
+> It is possible that it is causing by the following code in ncsi_reset_dev() function.
+> The state might be overwritten and the previous operation is interrupted.
+> 
+> 	spin_lock_irqsave(&ndp->lock, flags);
+> 	ndp->flags |= NCSI_DEV_RESET;
+> 	ndp->active_channel = active;
+> 	ndp->active_package = active->package;
+> 	spin_unlock_irqrestore(&ndp->lock, flags);
+> 
+> 	nd->state = ncsi_dev_state_suspend;
 
-Thanks for the comments Olof and Palmar.
+Yep, we should probably add a check before calling ncsi_reset_dev() in
+the netlink code if we're already in reset, and check in ncsi_reset_dev()
+if we mid-configuration.
 
-I will break it into two patches and send it right away.
+For your trace below can you share exactly which commands you were
+sending? Those messages aren't upstream so it's not 100% clear what's
+being sent.
 
-Regards,
-Anup
+Thanks!
+Sam
+
+> 
+> > > npcm7xx-emc f0825000.eth eth2: NCSI: Multi-package enabled on ifindex 2, mask 0x00000001
+> > > npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_stop_channel_monitor() - pkg 0 ch 0
+> > > npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_dev_work()
+> > > npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_suspend_channel() - pkg 0 ch 0 state 0400
+> > > npcm7xx-emc f0825000.eth eth2: NCSI: pkg 0 ch 0 set as preferred channel
+> > > npcm7xx-emc f0825000.eth eth2: NCSI: Multi-channel enabled on ifindex 2, mask 0x00000003
+> > > npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_stop_channel_monitor() - pkg 0 ch 1
+> > > npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_dev_work()
+> > > npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_suspend_channel() - pkg 0 ch 1 state 0400
+> > > npcm7xx-emc f0825000.eth eth2: NCSI: Package 1 set to all channels disabled
+> > > npcm7xx-emc f0825000.eth eth2: NCSI: Multi-channel enabled on ifindex 2, mask 0x00000000
+> > > npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_choose_active_channel()
+> > > npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_choose_active_channel() - pkg 0
+> > > npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_choose_active_channel() - pass pkg whitelist
+> > > npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_choose_active_channel() - ch 0
+> > > npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_choose_active_channel() - pass ch whitelist
+> > > npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_choose_active_channel() - skip
+> > > npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_choose_active_channel() - ch 1
+> > > npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_choose_active_channel() - pass ch whitelist
+> > > npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_choose_active_channel() - skip
+> > > npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_choose_active_channel() - next pkg
+> > > npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_choose_active_channel() - pkg 1
+> > > npcm7xx-emc f0825000.eth eth2: NCSI: No channel found to configure!
+> > > npcm7xx-emc f0825000.eth eth2: NCSI interface down
+> > > npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_dev_work()
+> > > npcm7xx-emc f0825000.eth eth2: Wrong NCSI state 0x100 in workqueue
+> > > 
+> > > All masks are set correctly, but you can see the PS column is not right and channel doesn't
+> > > configure correctly.
+> > > 
+> > > /sys/kernel/debug/ncsi_protocol# cat ncsi_device_status
+> > > IFIDX IFNAME NAME   PID CID RX TX MP MC WP WC PC PS LS RU CR NQ HA
+> > > ===================================================================
+> > >   2   eth2   ncsi0  000 000 1  1  1  1  1  1  1  0  1  1  1  0  1
+> > >   2   eth2   ncsi1  000 001 1  0  1  1  1  1  0  0  1  1  1  0  1
+> > >   2   eth2   ncsi2  001 000 0  0  1  1  0  0  0  0  1  1  1  0  1
+> > >   2   eth2   ncsi3  001 001 0  0  1  1  0  0  0  0  1  1  1  0  1
+> > > ===================================================================
+> > > MP: Multi-mode Package     WP: Whitelist Package
+> > > MC: Multi-mode Channel     WC: Whitelist Channel
+> > > PC: Primary Channel
+> > > PS: Poll Status
+> > > LS: Link Status
+> > > RU: Running
+> > > CR: Carrier OK
+> > > NQ: Queue Stopped
+> > > HA: Hardware Arbitration
+> > > 
+> > > PS column is getting from (int)nc->monitor.enabled.
+> 
+> 
+
+
