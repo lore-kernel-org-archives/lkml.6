@@ -2,254 +2,161 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38363C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:32:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64A0CC6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:33:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E201F2081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:32:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=scalemp.com header.i=@scalemp.com header.b="QALDpeMe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E201F2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=scalemp.com
+	by mail.kernel.org (Postfix) with ESMTP id 264B52081B
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:33:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 264B52081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728572AbeKAWfE (ORCPT
+        id S1728587AbeKAWgs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 18:35:04 -0400
-Received: from www.scalemp.com ([169.44.78.149]:52300 "EHLO scalemp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728479AbeKAWfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 18:35:03 -0400
-X-Greylist: delayed 1281 seconds by postgrey-1.27 at vger.kernel.org; Thu, 01 Nov 2018 18:35:02 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=scalemp.com
-        ; s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=cFO5IlEdkEV4SLoncBVmeUsiP/n/+M6O2Itqp7Gzl/g=; b=QALDpeMe6Gk71KVkusLp4Vnoma
-        LtGnpuMV946nr5v5fYHTqBGaWJRfEoo6MiC7BjdhcGBzM5M3Ms0s719de4GeQR5JJqDpoxXtEA/1w
-        7CwwJ0xa2TpUzDD0OVWHv+aLpr1pEWgf2YpgoEyG3yCxqHYUFi8MG5Ygm0WBAZwy/s80=;
-Received: from bzq-80-45-146.static.bezeqint.net ([82.80.45.146]:23238 helo=[10.100.0.120])
-        by hosting.virtualsmp.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <eial@scalemp.com>)
-        id 1gICkB-001OLY-RA; Thu, 01 Nov 2018 09:10:40 -0400
-Subject: Re: [PATCH] x86/build: Build VSMP support only if selected
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Randy Dunlap <rdunlap@infradead.org>
-Cc:     "Shai Fultheim (Shai@ScaleMP.com)" <Shai@ScaleMP.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "mhocko@suse.cz" <mhocko@suse.cz>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "mm-commits@vger.kernel.org" <mm-commits@vger.kernel.org>,
-        X86 ML <x86@kernel.org>, 'Oren Twaig' <oren@scalemp.com>
-References: <20181030230905.xHZmM%akpm@linux-foundation.org>
- <9e14d183-55a4-8299-7a18-0404e50bf004@infradead.org>
- <alpine.DEB.2.21.1811011032190.1642@nanos.tec.linutronix.de>
- <SN6PR15MB2366D7688B41535AF0A331F9C3CE0@SN6PR15MB2366.namprd15.prod.outlook.com>
-From:   Eial Czerwacki <eial@scalemp.com>
-Organization: ScaleMP
-Message-ID: <a8f2ac8e-45dc-1c12-e888-6ad880b1306f@scalemp.com>
-Date:   Thu, 1 Nov 2018 15:10:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 1 Nov 2018 18:36:48 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:56895 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727963AbeKAWgs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 18:36:48 -0400
+Received: from excalibur.cnev.de ([213.196.202.171]) by
+ mrelayeu.kundenserver.de (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1MowT0-1flxxB3QII-00qQn4; Thu, 01 Nov 2018 14:32:55 +0100
+Received: from excalibur.cnev.de ([213.196.202.171]) by
+ mrelayeu.kundenserver.de (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1MowT0-1flxxB3QII-00qQn4; Thu, 01 Nov 2018 14:32:55 +0100
+Received: from karsten by excalibur.cnev.de with local (Exim 4.89)
+        (envelope-from <merker@debian.org>)
+        id 1gID5f-0002wh-T1; Thu, 01 Nov 2018 14:32:51 +0100
+Date:   Thu, 1 Nov 2018 14:32:51 +0100
+From:   Karsten Merker <merker@debian.org>
+To:     Olof Johansson <olof@lixom.net>, Palmer Dabbelt <palmer@sifive.com>
+Cc:     Albert Ou <aou@eecs.berkeley.edu>, anup@brainfault.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>, atish.patra@wdc.com,
+        davem@sunset.davemloft.net, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH] RISC-V: defconfig: Enable printk timestamps
+Message-ID: <20181101133249.g4ieomqb3wrawwvj@excalibur.cnev.de>
+References: <CAOesGMjXZNURZ4SdKjssYCcFv3=4MYLBpBpzvvb1rNM-fo=QHQ@mail.gmail.com>
+ <mhng-111820e6-59c0-479a-a10f-f3729007ba70@palmer-si-x1c4>
+ <CAOesGMj+wXcN_7yvakC=SvtYjO=TTqrs8YiVX1xT7-4p1pC_Mg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <SN6PR15MB2366D7688B41535AF0A331F9C3CE0@SN6PR15MB2366.namprd15.prod.outlook.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hosting.virtualsmp.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - scalemp.com
-X-Get-Message-Sender-Via: hosting.virtualsmp.com: authenticated_id: eial@scalemp.com
-X-Authenticated-Sender: hosting.virtualsmp.com: eial@scalemp.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOesGMj+wXcN_7yvakC=SvtYjO=TTqrs8YiVX1xT7-4p1pC_Mg@mail.gmail.com>
+X-No-Archive: yes
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Provags-ID: V03:K1:ptvvzb8zboLO6w2D/RqbhYNL3pbgI9sqtqHkQ3f55+WyGix5YSE
+ mT2KaM2YUXaHPjLtXvIeVpqQ2cGqJ+B2mfgjQ9FK6s8JjmE/Y4KMTMXqvIKYJV3Y65SoKQu
+ hBxpx2usr0hRAH70cKiHtXXsjOUhcFoOggH/jL9yjDq9XUpigKI6iCi18k6bNRQg9gHCaMY
+ VqI0c5yzlnDDRTIak4qMg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:d87MbgMKuLI=:cgD6xAVYZKv8qIBJLNT73Q
+ dkc1W9VdCA9wrcZeouzfAt0Io0xrZvVr1zNKNxG/QxJta+B7jljOtyqse3ZZY+HdS5RjXRPC8
+ OqMwjPM19oyP+CpYSPtg6tOdp+4IKCFaLPX2p4eI6gbEmvEwl2BffNdmziTJI29FTE6SFzHmW
+ AtUJ9cZUWTkBDus3MTuI+HhWTudyhh5n4/7cRJRDt1xmvaEV8FCVcoLiYi7cIT3gXlDYTklIF
+ y5XKr6hv9mPwzfniFBzkv6h2vk+R3O+7TpCPEtxhYYu3SEGb30+IkGA6CQ/xDgt9xjWHW2B2e
+ m/cHF9PcraVGpVaGIgWkR8KSWZ1HEGmptHfu2ZsvkUNDboDDJAY0eqJ+/T/QYSxUBPiw6PcHU
+ 5v0FtSFxhQJ9vSnxjqQ7hkJXVLesyeBa5v40ZldyGYWb8SUzITGxhfijMcu7nk0uo2v693Jt1
+ 8ZPj69rmYWrVHJaqQsjZyzBj8wjkcAIn+/cSPmgSLmBzN9EMtpGsPV7Kf/L1kacvQY73Cmv45
+ auPZrRnaFC8riBIfQPlM8UVqWxNoCSxZJ28YlWbP+dgwKn7Pj5joqjaSGci1nomj/NEtToP4m
+ TQSkB/TcMXJX0SWf1+qoX1hyWC42Ksu0mjmyDIR/G7xolj+j8s+Nr3ajzpeEYqI7B0acOEglm
+ kB6R4ZUFlRF9FS3pRo5UIGTJZGPfpyyJqPChsfd4fe8pvqEtlVp7XciKpIzZwM9R6vCA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings,
-
-On 11/01/2018 12:39 PM, Shai Fultheim (Shai@ScaleMP.com) wrote:
-> On 01/11/18 11:37, Thomas Gleixner wrote:
+On Wed, Oct 31, 2018 at 03:50:38PM -0700, Olof Johansson wrote:
+> On Wed, Oct 31, 2018 at 1:42 PM Palmer Dabbelt <palmer@sifive.com> wrote:
+[...]
+> > When we first submitted out port upstream we had an empty defconfig, with the
+> > theory being that we should just pick whatever the default in Kconfig is for
+> > everything.  That's obviously the wrong thing to do because most of those
+> > options are bogus.  At the time I didn't care enough to look because I just
+> > wanted something to work, but now I find myself asking the question "what goes
+> > in a defconfig?"  Is it:
+> >
+> > * What I, as the maintainer of arch/riscv, want?  That's essentially what it is
+> >   now, as we have things like "CONFIG_R8169=y" in there because I happened to
+> >   have one sitting around when we needed to plug in an Ethernet card to test
+> >   out PCIe.
+> > * What distributions expect?  There's a major element of this in there right
+> >   now, as half this stuff was just selected because the Debian and Fedora guys
+> >   suggested we do so because adding things to the RISC-V defconfig made it
+> >   easier to put together their build scripts.  For example, we ended up with
+> >   "CONFIG_EXPERT=y" because some setting necessary for the distros was hidden
+> >   behind it -- that seems like an odd default.
+> > * What users expect?  I'm not even sure who users are in this case, as from my
+> >   understating most people use distro kernels and don't twiddle Kconfig
+> >   options.
+> > * What is necessary to work on RISC-V hardware?  This seems like the most
+> >   reasonable use for an arch-specific defconfig, and subsumes things like
+> >   "CONFIG_SIFIVE_PLIC=y" because without the PLIC driver nothing will work (but
+> >   the PLIC driver shouldn't be enabled by default for all architectures, as
+> >   it's useless everywhere else).
+> >
+> > Maybe I've opened up a big can of worms here...  It just seems silly to have
+> > most of our current defconfig be RISC-V specific.
 > 
->> VSMP support is built even if CONFIG_X86_VSMP is not set. This leads to a build
->> breakage when CONFIG_PCI is disabled as well.
->>
->> Build VSMP code only when selected.
+> So, on 32-bit ARM we have heavy defconfig proliferation, and for arm64
+> there was a push to only have one defconfig. I'm heavily in favor of
+> the latter.
+
+ACK.
+
+> On ARM64, the options turned on, are more or less "what makes the
+> kernel useful on systems". Anything that would be needed to boot to a
+> rootfs tends to be =y, while some other things that might be optional
+> and not used everywhere tends to go in as modules.
+
+ACK.
+
+> Beyond that, for the most part it is maintainer preference. I've
+> normally turned on platforms and drivers I need for my boot farm on
+> the multi*defconfig configs on 32-bit ARM, and the same has been going
+> for 64-bit.
 > 
-> This patch disables detect_vsmp_box() on systems without CONFIG_X86_VSMP, due to
-> the recent 6da63eb241a05b0e676d68975e793c0521387141.  This is significant
-> regression that will affect significant number of deployments.
-> 
-> We will reply shortly with an updated patch that fix the dependency on pv_irq_ops,
-> and revert to CONFIG_PARAVIRT, with proper protection for CONFIG_PCI.
-> 
+> Distros will always want something different, for policy reasons or
+> otherwise. Main purpose of mainline defconfigs is to make mainline
+> kernels useful and bootable, so having more of a superset approach
+> makes a lot of sense in my mind.
 
-here is the proper patch which fixes the issue on hand:
-From ebff534f8cfa55d7c3ab798c44abe879f3fbe2b8 Mon Sep 17 00:00:00 2001
-From: Eial Czerwacki <eial@scalemp.com>
-Date: Thu, 1 Nov 2018 15:08:32 +0200
-Subject: [PATCH] x86/build: Build VSMP support only if CONFIG_PCI is
-selected
+My personal approach to defconfigs is that they should try to
+provide the minimum hardware-related options required to boot on
+existing hardware or virtual machines for the corresponding
+architecture, and the minimum non-hardware related kernel options
+that are required to run a typical disto userland, but not more. 
+This "minimum" can still be a rather long list, though.  On the
+hardware side that can include lots of low-level drivers (e.g. 
+various PMICs, USB and AHCI PHYs, the various platform-specifc
+frontends for (more or less) generic drivers such as
+OHCI/EHCI/XHCI/AHCI/DWMAC/MUSB, etc.).  On the software side,
+that minimum includes common filesystems (ext*, FAT, NFS),
+everything required for systemd as the latter is nowadays used to
+boot a significant proportion of all Linux distros, and basic
+network support, but not much more.  I don't think that a
+defconfig should follow the "everything and the kitchen sink"
+approach that the distros use for their kernel builds (and which
+of course makes sense for their userbase) - the defconfig is
+usually used for development builds and should be small to keep
+build times down.  The typical "I want it all" distro user
+usually doesn't build a defconfig but either uses a pre-built
+distro kernel or re-builds with an existing distro kernel config,
+so the primary criterion for a defconfig should IMHO be the needs
+of developers.
 
-vsmp dependency of pv_irq_ops removed some years ago, so now let's clean
-it up from vsmp_64.c.
+The "CONFIG_EXPERT=y" mentioned above was IIRC necessary to
+enable some feature required by systemd, so unfortunately it is
+quasi-essential to run common distro userlands nowadays.
 
-In short, "cap & ctl & (1 << 4)" was always returning 0, as such we can
-remove all the PARAVIRT/PARAVIRT_XXL code handling that.
-
-However, the rest of the code depends on CONFIG_PCI, so fix it accordingly.
-
-Signed-off-by: Eial Czerwacki <eial@scalemp.com>
-Acked-by: Shai Fultheim <shai@scalemp.com>
----
- arch/x86/Kconfig          |  1 -
- arch/x86/kernel/vsmp_64.c | 80
-+++--------------------------------------------
- 2 files changed, 5 insertions(+), 76 deletions(-)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index c51c989..4b187ca 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -524,7 +524,6 @@ config X86_VSMP
-        bool "ScaleMP vSMP"
-        select HYPERVISOR_GUEST
-        select PARAVIRT
--       select PARAVIRT_XXL
-        depends on X86_64 && PCI
-        depends on X86_EXTENDED_PLATFORM
-        depends on SMP
-diff --git a/arch/x86/kernel/vsmp_64.c b/arch/x86/kernel/vsmp_64.c
-index 1eae5af..c6d2b76 100644
---- a/arch/x86/kernel/vsmp_64.c
-+++ b/arch/x86/kernel/vsmp_64.c
-@@ -26,64 +26,7 @@
-
- #define TOPOLOGY_REGISTER_OFFSET 0x10
-
--#if defined CONFIG_PCI && defined CONFIG_PARAVIRT_XXL
--/*
-- * Interrupt control on vSMPowered systems:
-- * ~AC is a shadow of IF.  If IF is 'on' AC should be 'off'
-- * and vice versa.
-- */
--
--asmlinkage __visible unsigned long vsmp_save_fl(void)
--{
--       unsigned long flags = native_save_fl();
--
--       if (!(flags & X86_EFLAGS_IF) || (flags & X86_EFLAGS_AC))
--               flags &= ~X86_EFLAGS_IF;
--       return flags;
--}
--PV_CALLEE_SAVE_REGS_THUNK(vsmp_save_fl);
--
--__visible void vsmp_restore_fl(unsigned long flags)
--{
--       if (flags & X86_EFLAGS_IF)
--               flags &= ~X86_EFLAGS_AC;
--       else
--               flags |= X86_EFLAGS_AC;
--       native_restore_fl(flags);
--}
--PV_CALLEE_SAVE_REGS_THUNK(vsmp_restore_fl);
--
--asmlinkage __visible void vsmp_irq_disable(void)
--{
--       unsigned long flags = native_save_fl();
--
--       native_restore_fl((flags & ~X86_EFLAGS_IF) | X86_EFLAGS_AC);
--}
--PV_CALLEE_SAVE_REGS_THUNK(vsmp_irq_disable);
--
--asmlinkage __visible void vsmp_irq_enable(void)
--{
--       unsigned long flags = native_save_fl();
--
--       native_restore_fl((flags | X86_EFLAGS_IF) & (~X86_EFLAGS_AC));
--}
--PV_CALLEE_SAVE_REGS_THUNK(vsmp_irq_enable);
--
--static unsigned __init vsmp_patch(u8 type, void *ibuf,
--                                 unsigned long addr, unsigned len)
--{
--       switch (type) {
--       case PARAVIRT_PATCH(irq.irq_enable):
--       case PARAVIRT_PATCH(irq.irq_disable):
--       case PARAVIRT_PATCH(irq.save_fl):
--       case PARAVIRT_PATCH(irq.restore_fl):
--               return paravirt_patch_default(type, ibuf, addr, len);
--       default:
--               return native_patch(type, ibuf, addr, len);
--       }
--
--}
--
-+#if defined CONFIG_PCI
- static void __init set_vsmp_pv_ops(void)
- {
-        void __iomem *address;
-@@ -109,28 +52,12 @@ static void __init set_vsmp_pv_ops(void)
-        }
- #endif
-
--       if (cap & ctl & (1 << 4)) {
--               /* Setup irq ops and turn on vSMP  IRQ fastpath handling */
--               pv_ops.irq.irq_disable = PV_CALLEE_SAVE(vsmp_irq_disable);
--               pv_ops.irq.irq_enable = PV_CALLEE_SAVE(vsmp_irq_enable);
--               pv_ops.irq.save_fl = PV_CALLEE_SAVE(vsmp_save_fl);
--               pv_ops.irq.restore_fl = PV_CALLEE_SAVE(vsmp_restore_fl);
--               pv_ops.init.patch = vsmp_patch;
--               ctl &= ~(1 << 4);
--       }
-        writel(ctl, address + 4);
-        ctl = readl(address + 4);
-        pr_info("vSMP CTL: control set to:0x%08x\n", ctl);
-
-        early_iounmap(address, 8);
- }
--#else
--static void __init set_vsmp_pv_ops(void)
--{
--}
--#endif
--
--#ifdef CONFIG_PCI
- static int is_vsmp = -1;
-
- static void __init detect_vsmp_box(void)
-@@ -164,11 +91,14 @@ static int is_vsmp_box(void)
- {
-        return 0;
- }
-+static void __init set_vsmp_pv_ops(void)
-+{
-+}
- #endif
-
- static void __init vsmp_cap_cpus(void)
- {
--#if !defined(CONFIG_X86_VSMP) && defined(CONFIG_SMP)
-+#if !defined(CONFIG_X86_VSMP) && defined(CONFIG_SMP) && defined(CONFIG_PCI)
-        void __iomem *address;
-        unsigned int cfg, topology, node_shift, maxcpus;
-
+Regards,
+Karsten
 -- 
-2.7.4
+Gem. Par. 28 Abs. 4 Bundesdatenschutzgesetz widerspreche ich der Nutzung
+sowie der Weitergabe meiner personenbezogenen Daten für Zwecke der
+Werbung sowie der Markt- oder Meinungsforschung.
