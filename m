@@ -2,104 +2,254 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5449BC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:30:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38363C6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:32:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 065D72081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:30:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 065D72081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E201F2081B
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:32:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=scalemp.com header.i=@scalemp.com header.b="QALDpeMe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E201F2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=scalemp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728472AbeKAWdc (ORCPT
+        id S1728572AbeKAWfE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 18:33:32 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56114 "EHLO mx1.redhat.com"
+        Thu, 1 Nov 2018 18:35:04 -0400
+Received: from www.scalemp.com ([169.44.78.149]:52300 "EHLO scalemp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727644AbeKAWdb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 18:33:31 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C0E3F3084044;
-        Thu,  1 Nov 2018 13:30:33 +0000 (UTC)
-Received: from loberhel74.redhat.com (ovpn-125-191.rdu2.redhat.com [10.10.125.191])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F2DD6600CC;
-        Thu,  1 Nov 2018 13:30:20 +0000 (UTC)
-From:   Laurence Oberman <loberman@redhat.com>
-To:     tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org, rdunlap@infradead.org,
-        prarit@redhat.com, Laurence Oberman <loberman@redhat.com>
-Subject: [PATCH V8] watchdog/core: Add watchdog_thresh command line parameter
-Date:   Thu,  1 Nov 2018 09:30:18 -0400
-Message-Id: <1541079018-13953-1-git-send-email-loberman@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 01 Nov 2018 13:30:33 +0000 (UTC)
+        id S1728479AbeKAWfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 18:35:03 -0400
+X-Greylist: delayed 1281 seconds by postgrey-1.27 at vger.kernel.org; Thu, 01 Nov 2018 18:35:02 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=scalemp.com
+        ; s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=cFO5IlEdkEV4SLoncBVmeUsiP/n/+M6O2Itqp7Gzl/g=; b=QALDpeMe6Gk71KVkusLp4Vnoma
+        LtGnpuMV946nr5v5fYHTqBGaWJRfEoo6MiC7BjdhcGBzM5M3Ms0s719de4GeQR5JJqDpoxXtEA/1w
+        7CwwJ0xa2TpUzDD0OVWHv+aLpr1pEWgf2YpgoEyG3yCxqHYUFi8MG5Ygm0WBAZwy/s80=;
+Received: from bzq-80-45-146.static.bezeqint.net ([82.80.45.146]:23238 helo=[10.100.0.120])
+        by hosting.virtualsmp.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <eial@scalemp.com>)
+        id 1gICkB-001OLY-RA; Thu, 01 Nov 2018 09:10:40 -0400
+Subject: Re: [PATCH] x86/build: Build VSMP support only if selected
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc:     "Shai Fultheim (Shai@ScaleMP.com)" <Shai@ScaleMP.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "mhocko@suse.cz" <mhocko@suse.cz>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "mm-commits@vger.kernel.org" <mm-commits@vger.kernel.org>,
+        X86 ML <x86@kernel.org>, 'Oren Twaig' <oren@scalemp.com>
+References: <20181030230905.xHZmM%akpm@linux-foundation.org>
+ <9e14d183-55a4-8299-7a18-0404e50bf004@infradead.org>
+ <alpine.DEB.2.21.1811011032190.1642@nanos.tec.linutronix.de>
+ <SN6PR15MB2366D7688B41535AF0A331F9C3CE0@SN6PR15MB2366.namprd15.prod.outlook.com>
+From:   Eial Czerwacki <eial@scalemp.com>
+Organization: ScaleMP
+Message-ID: <a8f2ac8e-45dc-1c12-e888-6ad880b1306f@scalemp.com>
+Date:   Thu, 1 Nov 2018 15:10:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <SN6PR15MB2366D7688B41535AF0A331F9C3CE0@SN6PR15MB2366.namprd15.prod.outlook.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hosting.virtualsmp.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - scalemp.com
+X-Get-Message-Sender-Via: hosting.virtualsmp.com: authenticated_id: eial@scalemp.com
+X-Authenticated-Sender: hosting.virtualsmp.com: eial@scalemp.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The hard and soft lockup detector threshold has a default value of 10
-seconds which can only be changed via sysctl.
+Greetings,
 
-During early boot lockup detection can trigger when noisy debugging emits
-a large amount of messages to the console, but there is no way to set a
-larger threshold on the kernel command line. The detector can only be
-completely disabled.
+On 11/01/2018 12:39 PM, Shai Fultheim (Shai@ScaleMP.com) wrote:
+> On 01/11/18 11:37, Thomas Gleixner wrote:
+> 
+>> VSMP support is built even if CONFIG_X86_VSMP is not set. This leads to a build
+>> breakage when CONFIG_PCI is disabled as well.
+>>
+>> Build VSMP code only when selected.
+> 
+> This patch disables detect_vsmp_box() on systems without CONFIG_X86_VSMP, due to
+> the recent 6da63eb241a05b0e676d68975e793c0521387141.  This is significant
+> regression that will affect significant number of deployments.
+> 
+> We will reply shortly with an updated patch that fix the dependency on pv_irq_ops,
+> and revert to CONFIG_PARAVIRT, with proper protection for CONFIG_PCI.
+> 
 
-Add a new watchdog_thresh= command line parameter to allow boot time
-control over the threshold. It works in the same way as the sysctl and
-affects both the soft and the hard lockup detectors.
+here is the proper patch which fixes the issue on hand:
+From ebff534f8cfa55d7c3ab798c44abe879f3fbe2b8 Mon Sep 17 00:00:00 2001
+From: Eial Czerwacki <eial@scalemp.com>
+Date: Thu, 1 Nov 2018 15:08:32 +0200
+Subject: [PATCH] x86/build: Build VSMP support only if CONFIG_PCI is
+selected
 
-Signed-off-by: Laurence Oberman <loberman@redhat.com>
+vsmp dependency of pv_irq_ops removed some years ago, so now let's clean
+it up from vsmp_64.c.
 
+In short, "cap & ctl & (1 << 4)" was always returning 0, as such we can
+remove all the PARAVIRT/PARAVIRT_XXL code handling that.
+
+However, the rest of the code depends on CONFIG_PCI, so fix it accordingly.
+
+Signed-off-by: Eial Czerwacki <eial@scalemp.com>
+Acked-by: Shai Fultheim <shai@scalemp.com>
 ---
- Documentation/admin-guide/kernel-parameters.txt | 8 ++++++++
- kernel/watchdog.c                               | 7 +++++++
- 2 files changed, 15 insertions(+)
+ arch/x86/Kconfig          |  1 -
+ arch/x86/kernel/vsmp_64.c | 80
++++--------------------------------------------
+ 2 files changed, 5 insertions(+), 76 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index e129cd8..3dcfb78 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4932,6 +4932,14 @@
- 			or other driver-specific files in the
- 			Documentation/watchdog/ directory.
- 
-+	watchdog_thresh=
-+			[KNL]
-+			Set the hard lockup detector stall duration
-+			threshold in seconds. The soft lockup detector
-+			threshold is set to twice the value. A value of 0
-+			disables both lockup detectors. Default is 10
-+			seconds.
-+
- 	workqueue.watchdog_thresh=
- 			If CONFIG_WQ_WATCHDOG is configured, workqueue can
- 			warn stall conditions and dump internal state to
-diff --git a/kernel/watchdog.c b/kernel/watchdog.c
-index 977918d..8fbfda9 100644
---- a/kernel/watchdog.c
-+++ b/kernel/watchdog.c
-@@ -199,6 +199,13 @@ static int __init nosoftlockup_setup(char *str)
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index c51c989..4b187ca 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -524,7 +524,6 @@ config X86_VSMP
+        bool "ScaleMP vSMP"
+        select HYPERVISOR_GUEST
+        select PARAVIRT
+-       select PARAVIRT_XXL
+        depends on X86_64 && PCI
+        depends on X86_EXTENDED_PLATFORM
+        depends on SMP
+diff --git a/arch/x86/kernel/vsmp_64.c b/arch/x86/kernel/vsmp_64.c
+index 1eae5af..c6d2b76 100644
+--- a/arch/x86/kernel/vsmp_64.c
++++ b/arch/x86/kernel/vsmp_64.c
+@@ -26,64 +26,7 @@
+
+ #define TOPOLOGY_REGISTER_OFFSET 0x10
+
+-#if defined CONFIG_PCI && defined CONFIG_PARAVIRT_XXL
+-/*
+- * Interrupt control on vSMPowered systems:
+- * ~AC is a shadow of IF.  If IF is 'on' AC should be 'off'
+- * and vice versa.
+- */
+-
+-asmlinkage __visible unsigned long vsmp_save_fl(void)
+-{
+-       unsigned long flags = native_save_fl();
+-
+-       if (!(flags & X86_EFLAGS_IF) || (flags & X86_EFLAGS_AC))
+-               flags &= ~X86_EFLAGS_IF;
+-       return flags;
+-}
+-PV_CALLEE_SAVE_REGS_THUNK(vsmp_save_fl);
+-
+-__visible void vsmp_restore_fl(unsigned long flags)
+-{
+-       if (flags & X86_EFLAGS_IF)
+-               flags &= ~X86_EFLAGS_AC;
+-       else
+-               flags |= X86_EFLAGS_AC;
+-       native_restore_fl(flags);
+-}
+-PV_CALLEE_SAVE_REGS_THUNK(vsmp_restore_fl);
+-
+-asmlinkage __visible void vsmp_irq_disable(void)
+-{
+-       unsigned long flags = native_save_fl();
+-
+-       native_restore_fl((flags & ~X86_EFLAGS_IF) | X86_EFLAGS_AC);
+-}
+-PV_CALLEE_SAVE_REGS_THUNK(vsmp_irq_disable);
+-
+-asmlinkage __visible void vsmp_irq_enable(void)
+-{
+-       unsigned long flags = native_save_fl();
+-
+-       native_restore_fl((flags | X86_EFLAGS_IF) & (~X86_EFLAGS_AC));
+-}
+-PV_CALLEE_SAVE_REGS_THUNK(vsmp_irq_enable);
+-
+-static unsigned __init vsmp_patch(u8 type, void *ibuf,
+-                                 unsigned long addr, unsigned len)
+-{
+-       switch (type) {
+-       case PARAVIRT_PATCH(irq.irq_enable):
+-       case PARAVIRT_PATCH(irq.irq_disable):
+-       case PARAVIRT_PATCH(irq.save_fl):
+-       case PARAVIRT_PATCH(irq.restore_fl):
+-               return paravirt_patch_default(type, ibuf, addr, len);
+-       default:
+-               return native_patch(type, ibuf, addr, len);
+-       }
+-
+-}
+-
++#if defined CONFIG_PCI
+ static void __init set_vsmp_pv_ops(void)
+ {
+        void __iomem *address;
+@@ -109,28 +52,12 @@ static void __init set_vsmp_pv_ops(void)
+        }
+ #endif
+
+-       if (cap & ctl & (1 << 4)) {
+-               /* Setup irq ops and turn on vSMP  IRQ fastpath handling */
+-               pv_ops.irq.irq_disable = PV_CALLEE_SAVE(vsmp_irq_disable);
+-               pv_ops.irq.irq_enable = PV_CALLEE_SAVE(vsmp_irq_enable);
+-               pv_ops.irq.save_fl = PV_CALLEE_SAVE(vsmp_save_fl);
+-               pv_ops.irq.restore_fl = PV_CALLEE_SAVE(vsmp_restore_fl);
+-               pv_ops.init.patch = vsmp_patch;
+-               ctl &= ~(1 << 4);
+-       }
+        writel(ctl, address + 4);
+        ctl = readl(address + 4);
+        pr_info("vSMP CTL: control set to:0x%08x\n", ctl);
+
+        early_iounmap(address, 8);
  }
- __setup("nosoftlockup", nosoftlockup_setup);
- 
-+static int __init watchdog_thresh_setup(char *str)
-+{
-+	get_option(&str, &watchdog_thresh);
-+	return 1;
-+}
-+__setup("watchdog_thresh=", watchdog_thresh_setup);
-+
- #ifdef CONFIG_SMP
- int __read_mostly sysctl_softlockup_all_cpu_backtrace;
- 
--- 
-1.8.3.1
+-#else
+-static void __init set_vsmp_pv_ops(void)
+-{
+-}
+-#endif
+-
+-#ifdef CONFIG_PCI
+ static int is_vsmp = -1;
 
+ static void __init detect_vsmp_box(void)
+@@ -164,11 +91,14 @@ static int is_vsmp_box(void)
+ {
+        return 0;
+ }
++static void __init set_vsmp_pv_ops(void)
++{
++}
+ #endif
+
+ static void __init vsmp_cap_cpus(void)
+ {
+-#if !defined(CONFIG_X86_VSMP) && defined(CONFIG_SMP)
++#if !defined(CONFIG_X86_VSMP) && defined(CONFIG_SMP) && defined(CONFIG_PCI)
+        void __iomem *address;
+        unsigned int cfg, topology, node_shift, maxcpus;
+
+-- 
+2.7.4
