@@ -2,124 +2,118 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50D5CC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:50:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE0A7C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:50:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13798205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:50:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13798205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
+	by mail.kernel.org (Postfix) with ESMTP id BF7CA20820
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:50:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF7CA20820
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728111AbeKATwi (ORCPT
+        id S1728301AbeKATxD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 15:52:38 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:55278 "EHLO mx1.mailbox.org"
+        Thu, 1 Nov 2018 15:53:03 -0400
+Received: from sauhun.de ([88.99.104.3]:35386 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726712AbeKATwi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 15:52:38 -0400
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id 9F63D4B6C5;
-        Thu,  1 Nov 2018 11:50:10 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
-        with ESMTP id vwuC7OzXJZOW; Thu,  1 Nov 2018 11:49:59 +0100 (CET)
-Date:   Thu, 1 Nov 2018 21:49:48 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Christian Brauner <christian@brauner.io>,
-        Aleksa Sarai <asarai@suse.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kretprobe: produce sane stack traces
-Message-ID: <20181101104948.bc7wk453bfryhhk7@yavin>
-References: <20181026132210.12569-1-cyphar@cyphar.com>
- <20181030101206.2e5998ca3c75496c91ba5b09@kernel.org>
- <20181031090317.4e211fdd@vmware.local.home>
- <20181031133912.3j5tryq2vyhkdn4d@yavin>
- <20181101191347.74eadff4a5d1fab2d79d7efe@kernel.org>
+        id S1726520AbeKATxD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 15:53:03 -0400
+Received: from localhost (unknown [87.114.85.207])
+        by pokefinder.org (Postfix) with ESMTPSA id 05EFB2E35E9;
+        Thu,  1 Nov 2018 11:50:35 +0100 (CET)
+Date:   Thu, 1 Nov 2018 10:50:35 +0000
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Rosin <peda@axentia.se>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PULL REQUEST] i2c for 4.20
+Message-ID: <20181101105031.GA2096@kunai>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mfvf6vzxsoivpjki"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="6c2NcOVqGQ03X4Wi"
 Content-Disposition: inline
-In-Reply-To: <20181101191347.74eadff4a5d1fab2d79d7efe@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---mfvf6vzxsoivpjki
+--6c2NcOVqGQ03X4Wi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On 2018-11-01, Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > > > Anyway, until that merge happens, this patch looks good to avoid
-> > > > this issue for generic solution (e.g. for the arch which doesn't
-> > > > supports retstack).
-> > >=20
-> > > I think its time to come up with an algorithm that makes function gra=
-ph
-> > > work with multiple users, and have kretprobes be able to hook into it
-> > > just like kprobes hooks into function tracer.
-> > >=20
-> > > I have some ideas on how to get this done, and will try to have an RFC
-> > > patch set ready by plumbers.
-> >=20
-> > Should I continue working on this patchset?
->=20
-> Yes, until we finally introduce Steven's algorithm on all arch (yeah, we =
-still
-> have some archs which don't support graph-tracer but supports kprobes),
-> I think your patch is the best fix for this issue.
+Linus,
 
-Thanks, I just sent a v3.
+I2C has a core bugfix & cleanup as well as an ID addition and
+MAINTAINERS update for you.
 
-Though, even with Steven's hooking of kprobes I think you'd still need
-to stash away the stack trace somewhere (or am I misunderstanding the
-proposal?).
+Please pull.
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+Thanks,
 
---mfvf6vzxsoivpjki
+   Wolfram
+
+
+The following changes since commit 9bb9d4fdce9e6b351b7b905f150745a0fccccc06:
+
+  Merge branch 'for-linus-4.20-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/rw/uml (2018-10-31 15:46:16 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-next
+
+for you to fetch changes up to 012ebc3b7801fcf424d0ebb4689c98f90a8593e0:
+
+  MAINTAINERS: add maintainer for IMX LPI2C driver (2018-10-31 23:37:34 +0000)
+
+----------------------------------------------------------------
+A.s. Dong (2):
+      dt-bindings: i2c: i2c-imx-lpi2c: add imx8qxp compatible string
+      MAINTAINERS: add maintainer for IMX LPI2C driver
+
+Charles Keepax (2):
+      i2c: Remove unnecessary call to irq_find_mapping
+      i2c: Clear client->irq in i2c_device_remove
+
+
+with much appreciated quality assurance from
+----------------------------------------------------------------
+Benjamin Tissoires (2):
+      (Rev.) i2c: Clear client->irq in i2c_device_remove
+      (Rev.) i2c: Remove unnecessary call to irq_find_mapping
+
+Rob Herring (1):
+      (Rev.) dt-bindings: i2c: i2c-imx-lpi2c: add imx8qxp compatible string
+
+ Documentation/devicetree/bindings/i2c/i2c-imx-lpi2c.txt | 1 +
+ MAINTAINERS                                             | 8 ++++++++
+ drivers/i2c/i2c-core-base.c                             | 7 +++----
+ 3 files changed, 12 insertions(+), 4 deletions(-)
+
+--6c2NcOVqGQ03X4Wi
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEb6Gz4/mhjNy+aiz1Snvnv3Dem58FAlva2ksACgkQSnvnv3De
-m5+IKA//fWlK5aWXmaK9C+YmWL1Q3IG+m4i6rzoV42tQO3bZkFWwomExK/zvk6p0
-ojzzXTffRBApcmUGqGEZPVHI1evGwHx5Xb60yFSFYXeIJmp5soeZuQEjK+NVpMo+
-onnd+yNNevsBgRd6wEM+RM19mu8RaoakdYKB3D9m020p7VSkpXY1nHHznKdxzm+O
-xhD3ePM6ObgTPRVxy30FvtjNtf4RNaLKBBJfoflAnRsKsLaHCUt+yXISHaL0TpbR
-FDpZ+p01AE5nOA6hjM33ekYM4/p0TQ4YRNtCQz5lxUALcdyngkzD14f3DvUyuKQl
-wQRxe8S5LU3ePHeocLCvcVVZ3jgz9bxooeyRVTd4pjlSxrPn26lWMYBxN+U4LRoA
-qhwkccS9vgqJwMfhPdvmI97iiMm2Y9bD5htZK80Tmb6bLNnnJR4kFiKYcIcpPcG2
-Ml/qoYLdn0MXE+SEQ25Rao0ql8YZsiWXqyNMBWcJCWwIg2dJ1oldZGnajjGRL9wy
-lly6v8RpS5tPBOnDvP4glazDj8mIXCCXbOj/3RnAvR6ci3PneWCKm2fA1kM1T5YK
-HTnCSpkKkPySYhafQUF+CP/hiUuFQg4mo3opjbug8i9jhjNrj8ffUlzMFF2z1VDZ
-SQMRu9KUCX+mC34h2yYuq8H/tVZ+exv4Xxm6m5UUR00Z9H3S6Y4=
-=bD1t
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlva2nMACgkQFA3kzBSg
+KbbfNQ//RILjBiO83eUiTXB832m8vNiru5x6FiiS9ckQGX7cOgVckmJ/NxYF1b3n
+mjUi4e8K/uzSqpe0sTc667saxxNMK6xvbr27ttNLOQ5umAXIyy93thesXVHcchAF
+MytE4yNVP+ir97LVbSJDFg1pglXi7YVrCaqsPr2eGStxGP98fk8x2e0qByBg3HhQ
+pDG0kZWjPadx6237n0T87ZzOaN0qOT4vxL5VTVgMlmCl/5TBeFAIL4CQ4KGCR656
+cTuaMqxLnyf6ipWejjCWF9M6ChHUlvKdsg5XCkRmy8axNQtesB5fqZW8JTK2TC92
+WsNEadK9mNVhHRPpEz8A4KWOG3FnhkGJkv91Fm+1C2ttajCm6p8x5jItTj/aVZDU
+yGCspqLa369q4pK/tSl+3lbUksg5BSREKNEeuAMb0+7H155u3oNTM2/54CcdHW5q
+xLkW99rcWmEr93lpE6TYSV3olMpFA5Efz/KLzv2SY1o29a+EkMi4mdQ3cCIlRZDq
+AmGMPurYPvttonmRnCgoXf4LWdXy2zNUtCb5GsXjk2q9FZ1PdSobMEQxCGwe85Av
+ATzFk9hwxFfV1b4cEXOeOKVmGhg1jIaxVX0QzrVrdlhuqgIV5lteyoQYGiywefm6
+u1+FjNPhM2tn/khH9fC48MITEjYgwF65wCNK6YvFwsFJ067C/rw=
+=EycZ
 -----END PGP SIGNATURE-----
 
---mfvf6vzxsoivpjki--
+--6c2NcOVqGQ03X4Wi--
