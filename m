@@ -2,75 +2,1354 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22661C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:03:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D5F8C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:06:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7BF02082E
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:03:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7BF02082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lemonage.de
+	by mail.kernel.org (Postfix) with ESMTP id 9E93820830
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 09:56:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E93820830
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728367AbeKATGN (ORCPT
+        id S1728071AbeKAS6n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 15:06:13 -0400
-Received: from smtp3-1.goneo.de ([85.220.129.38]:41185 "EHLO smtp3-1.goneo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727203AbeKATGM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 15:06:12 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp3.goneo.de (Postfix) with ESMTP id 212B823F3BE;
-        Thu,  1 Nov 2018 11:03:52 +0100 (CET)
-X-Virus-Scanned: by goneo
-Received: from smtp3.goneo.de ([127.0.0.1])
-        by localhost (smtp3.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id WqcLaKRnis-4; Thu,  1 Nov 2018 11:03:51 +0100 (CET)
-Received: from lem-wkst-02.lemonage.de. (hq.lemonage.de [87.138.178.34])
-        by smtp3.goneo.de (Postfix) with ESMTPA id 26B8423F3BB;
-        Thu,  1 Nov 2018 11:03:51 +0100 (CET)
-From:   Lars Poeschel <poeschel@lemonage.de>
-To:     devicetree@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>,
-        "GitAuthor: Lars Poeschel" <poeschel@lemonage.de>,
-        linux-wireless@vger.kernel.org (open list:NFC SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4 6/6] nfc: pn532_uart: Make use of pn532 autopoll
-Date:   Thu,  1 Nov 2018 11:02:14 +0100
-Message-Id: <20181101100216.613-6-poeschel@lemonage.de>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181101100216.613-1-poeschel@lemonage.de>
-References: <20181101100216.613-1-poeschel@lemonage.de>
+        Thu, 1 Nov 2018 14:58:43 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:58097 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727762AbeKAS6m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 14:58:42 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA19twwD2765261
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 1 Nov 2018 02:55:58 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA19tw6W2765258;
+        Thu, 1 Nov 2018 02:55:58 -0700
+Date:   Thu, 1 Nov 2018 02:55:58 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Mark Rutland <tipbot@zytor.com>
+Message-ID: <tip-acf81221804111bec24b399c9f44c28a5a3c9367@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
+        will.deacon@arm.com, boqun.feng@gmail.com, arnd@arndb.de,
+        mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        mark.rutland@arm.com
+Reply-To: tglx@linutronix.de, mark.rutland@arm.com, hpa@zytor.com,
+          mingo@kernel.org, arnd@arndb.de, boqun.feng@gmail.com,
+          linux-kernel@vger.kernel.org, will.deacon@arm.com,
+          peterz@infradead.org
+In-Reply-To: <20180904104830.2975-4-mark.rutland@arm.com>
+References: <20180904104830.2975-4-mark.rutland@arm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:locking/core] locking/atomics: Switch to generated atomic-long
+Git-Commit-ID: acf81221804111bec24b399c9f44c28a5a3c9367
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This switches the pn532 UART phy driver from manually polling to the new
-autopoll mechanism.
+Commit-ID:  acf81221804111bec24b399c9f44c28a5a3c9367
+Gitweb:     https://git.kernel.org/tip/acf81221804111bec24b399c9f44c28a5a3c9367
+Author:     Mark Rutland <mark.rutland@arm.com>
+AuthorDate: Tue, 4 Sep 2018 11:48:27 +0100
+Committer:  Peter Zijlstra <peterz@infradead.org>
+CommitDate: Thu, 1 Nov 2018 10:48:19 +0100
 
-Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
+locking/atomics: Switch to generated atomic-long
+
+As a step towards ensuring the atomic* APIs are consistent, let's switch
+to wrappers generated by gen-atomic-long.h, using the same table that
+gen-atomic-fallbacks.h uses to fill in gaps in the atomic_* and
+atomic64_* APIs.
+
+These are checked in rather than generated with Kbuild, since:
+
+* This allows inspection of the atomics with git grep and ctags on a
+  pristine tree, which Linus strongly prefers being able to do.
+
+* The fallbacks are not affected by machine details or configuration
+  options, so it is not necessary to regenerate them to take these into
+  account.
+
+* These are included by files required *very* early in the build process
+  (e.g. for generating bounds.h), and we'd rather not complicate the
+  top-level Kbuild file with dependencies.
+
+Other than *_INIT() and *_cond_read_acquire(), all API functions are
+implemented as static inline C functions, ensuring consistent type
+promotion and/or truncation without requiring explicit casts to be
+applied to parameters or return values.
+
+Since we typedef atomic_long_t to either atomic_t or atomic64_t, we know
+these types are equivalent, and don't require explicit casts between
+them. However, as the try_cmpxchg*() functions take a pointer for the
+'old' parameter, which may be an int or s64, an explicit cast is
+generated for this.
+
+There should be no functional change as a result of this patch (i.e.
+existing code should not be affected). However, this introduces a number
+of functions into the atomic_long_* API, bringing it into line with the
+atomic_* and atomic64_* APIs.
+
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: catalin.marinas@arm.com
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: linuxdrivers@attotech.com
+Cc: dvyukov@google.com
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: aryabinin@virtuozzo.com
+Cc: glider@google.com
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180904104830.2975-4-mark.rutland@arm.com
 ---
- drivers/nfc/pn533/uart.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/asm-generic/atomic-long.h | 1173 ++++++++++++++++++++++++++++++-------
+ 1 file changed, 958 insertions(+), 215 deletions(-)
 
-diff --git a/drivers/nfc/pn533/uart.c b/drivers/nfc/pn533/uart.c
-index 7df6d2fb8466..1d862caeda55 100644
---- a/drivers/nfc/pn533/uart.c
-+++ b/drivers/nfc/pn533/uart.c
-@@ -254,7 +254,7 @@ static int pn532_uart_probe(struct serdev_device *serdev)
- 	serdev_device_set_flow_control(serdev, false);
- 	pn532->send_wakeup = PN532_SEND_WAKEUP;
- 	timer_setup(&pn532->cmd_timeout, pn532_cmd_timeout, 0);
--	priv = pn533_register_device(PN533_DEVICE_PN532,
-+	priv = pn533_register_device(PN533_DEVICE_PN532_AUTOPOLL,
- 				     PN533_NO_TYPE_B_PROTOCOLS,
- 				     PN533_PROTO_REQ_ACK_RESP,
- 				     pn532, &uart_phy_ops, NULL,
--- 
-2.19.1
-
+diff --git a/include/asm-generic/atomic-long.h b/include/asm-generic/atomic-long.h
+index 87d14476edc2..a833d385a70b 100644
+--- a/include/asm-generic/atomic-long.h
++++ b/include/asm-generic/atomic-long.h
+@@ -1,269 +1,1012 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
++// SPDX-License-Identifier: GPL-2.0
++
++// Generated by scripts/atomic/gen-atomic-long.sh
++// DO NOT MODIFY THIS FILE DIRECTLY
++
+ #ifndef _ASM_GENERIC_ATOMIC_LONG_H
+ #define _ASM_GENERIC_ATOMIC_LONG_H
+-/*
+- * Copyright (C) 2005 Silicon Graphics, Inc.
+- *	Christoph Lameter
+- *
+- * Allows to provide arch independent atomic definitions without the need to
+- * edit all arch specific atomic.h files.
+- */
+ 
+ #include <asm/types.h>
+ 
+-/*
+- * Suppport for atomic_long_t
+- *
+- * Casts for parameters are avoided for existing atomic functions in order to
+- * avoid issues with cast-as-lval under gcc 4.x and other limitations that the
+- * macros of a platform may have.
+- */
++#ifdef CONFIG_64BIT
++typedef atomic64_t atomic_long_t;
++#define ATOMIC_LONG_INIT(i)		ATOMIC64_INIT(i)
++#define atomic_long_cond_read_acquire	atomic64_cond_read_acquire
++#define atomic_long_cond_read_relaxed	atomic64_cond_read_relaxed
++#else
++typedef atomic_t atomic_long_t;
++#define ATOMIC_LONG_INIT(i)		ATOMIC_INIT(i)
++#define atomic_long_cond_read_acquire	atomic_cond_read_acquire
++#define atomic_long_cond_read_relaxed	atomic_cond_read_relaxed
++#endif
+ 
+-#if BITS_PER_LONG == 64
++#ifdef CONFIG_64BIT
+ 
+-typedef atomic64_t atomic_long_t;
++static inline long
++atomic_long_read(const atomic_long_t *v)
++{
++	return atomic64_read(v);
++}
+ 
+-#define ATOMIC_LONG_INIT(i)	ATOMIC64_INIT(i)
+-#define ATOMIC_LONG_PFX(x)	atomic64 ## x
+-#define ATOMIC_LONG_TYPE	s64
++static inline long
++atomic_long_read_acquire(const atomic_long_t *v)
++{
++	return atomic64_read_acquire(v);
++}
+ 
+-#else
++static inline void
++atomic_long_set(atomic_long_t *v, long i)
++{
++	atomic64_set(v, i);
++}
+ 
+-typedef atomic_t atomic_long_t;
++static inline void
++atomic_long_set_release(atomic_long_t *v, long i)
++{
++	atomic64_set_release(v, i);
++}
+ 
+-#define ATOMIC_LONG_INIT(i)	ATOMIC_INIT(i)
+-#define ATOMIC_LONG_PFX(x)	atomic ## x
+-#define ATOMIC_LONG_TYPE	int
++static inline void
++atomic_long_add(long i, atomic_long_t *v)
++{
++	atomic64_add(i, v);
++}
+ 
+-#endif
++static inline long
++atomic_long_add_return(long i, atomic_long_t *v)
++{
++	return atomic64_add_return(i, v);
++}
++
++static inline long
++atomic_long_add_return_acquire(long i, atomic_long_t *v)
++{
++	return atomic64_add_return_acquire(i, v);
++}
++
++static inline long
++atomic_long_add_return_release(long i, atomic_long_t *v)
++{
++	return atomic64_add_return_release(i, v);
++}
++
++static inline long
++atomic_long_add_return_relaxed(long i, atomic_long_t *v)
++{
++	return atomic64_add_return_relaxed(i, v);
++}
++
++static inline long
++atomic_long_fetch_add(long i, atomic_long_t *v)
++{
++	return atomic64_fetch_add(i, v);
++}
++
++static inline long
++atomic_long_fetch_add_acquire(long i, atomic_long_t *v)
++{
++	return atomic64_fetch_add_acquire(i, v);
++}
++
++static inline long
++atomic_long_fetch_add_release(long i, atomic_long_t *v)
++{
++	return atomic64_fetch_add_release(i, v);
++}
++
++static inline long
++atomic_long_fetch_add_relaxed(long i, atomic_long_t *v)
++{
++	return atomic64_fetch_add_relaxed(i, v);
++}
++
++static inline void
++atomic_long_sub(long i, atomic_long_t *v)
++{
++	atomic64_sub(i, v);
++}
++
++static inline long
++atomic_long_sub_return(long i, atomic_long_t *v)
++{
++	return atomic64_sub_return(i, v);
++}
++
++static inline long
++atomic_long_sub_return_acquire(long i, atomic_long_t *v)
++{
++	return atomic64_sub_return_acquire(i, v);
++}
++
++static inline long
++atomic_long_sub_return_release(long i, atomic_long_t *v)
++{
++	return atomic64_sub_return_release(i, v);
++}
++
++static inline long
++atomic_long_sub_return_relaxed(long i, atomic_long_t *v)
++{
++	return atomic64_sub_return_relaxed(i, v);
++}
++
++static inline long
++atomic_long_fetch_sub(long i, atomic_long_t *v)
++{
++	return atomic64_fetch_sub(i, v);
++}
++
++static inline long
++atomic_long_fetch_sub_acquire(long i, atomic_long_t *v)
++{
++	return atomic64_fetch_sub_acquire(i, v);
++}
++
++static inline long
++atomic_long_fetch_sub_release(long i, atomic_long_t *v)
++{
++	return atomic64_fetch_sub_release(i, v);
++}
++
++static inline long
++atomic_long_fetch_sub_relaxed(long i, atomic_long_t *v)
++{
++	return atomic64_fetch_sub_relaxed(i, v);
++}
++
++static inline void
++atomic_long_inc(atomic_long_t *v)
++{
++	atomic64_inc(v);
++}
++
++static inline long
++atomic_long_inc_return(atomic_long_t *v)
++{
++	return atomic64_inc_return(v);
++}
++
++static inline long
++atomic_long_inc_return_acquire(atomic_long_t *v)
++{
++	return atomic64_inc_return_acquire(v);
++}
++
++static inline long
++atomic_long_inc_return_release(atomic_long_t *v)
++{
++	return atomic64_inc_return_release(v);
++}
++
++static inline long
++atomic_long_inc_return_relaxed(atomic_long_t *v)
++{
++	return atomic64_inc_return_relaxed(v);
++}
++
++static inline long
++atomic_long_fetch_inc(atomic_long_t *v)
++{
++	return atomic64_fetch_inc(v);
++}
++
++static inline long
++atomic_long_fetch_inc_acquire(atomic_long_t *v)
++{
++	return atomic64_fetch_inc_acquire(v);
++}
++
++static inline long
++atomic_long_fetch_inc_release(atomic_long_t *v)
++{
++	return atomic64_fetch_inc_release(v);
++}
++
++static inline long
++atomic_long_fetch_inc_relaxed(atomic_long_t *v)
++{
++	return atomic64_fetch_inc_relaxed(v);
++}
++
++static inline void
++atomic_long_dec(atomic_long_t *v)
++{
++	atomic64_dec(v);
++}
++
++static inline long
++atomic_long_dec_return(atomic_long_t *v)
++{
++	return atomic64_dec_return(v);
++}
++
++static inline long
++atomic_long_dec_return_acquire(atomic_long_t *v)
++{
++	return atomic64_dec_return_acquire(v);
++}
++
++static inline long
++atomic_long_dec_return_release(atomic_long_t *v)
++{
++	return atomic64_dec_return_release(v);
++}
++
++static inline long
++atomic_long_dec_return_relaxed(atomic_long_t *v)
++{
++	return atomic64_dec_return_relaxed(v);
++}
++
++static inline long
++atomic_long_fetch_dec(atomic_long_t *v)
++{
++	return atomic64_fetch_dec(v);
++}
++
++static inline long
++atomic_long_fetch_dec_acquire(atomic_long_t *v)
++{
++	return atomic64_fetch_dec_acquire(v);
++}
++
++static inline long
++atomic_long_fetch_dec_release(atomic_long_t *v)
++{
++	return atomic64_fetch_dec_release(v);
++}
++
++static inline long
++atomic_long_fetch_dec_relaxed(atomic_long_t *v)
++{
++	return atomic64_fetch_dec_relaxed(v);
++}
++
++static inline void
++atomic_long_and(long i, atomic_long_t *v)
++{
++	atomic64_and(i, v);
++}
++
++static inline long
++atomic_long_fetch_and(long i, atomic_long_t *v)
++{
++	return atomic64_fetch_and(i, v);
++}
++
++static inline long
++atomic_long_fetch_and_acquire(long i, atomic_long_t *v)
++{
++	return atomic64_fetch_and_acquire(i, v);
++}
++
++static inline long
++atomic_long_fetch_and_release(long i, atomic_long_t *v)
++{
++	return atomic64_fetch_and_release(i, v);
++}
++
++static inline long
++atomic_long_fetch_and_relaxed(long i, atomic_long_t *v)
++{
++	return atomic64_fetch_and_relaxed(i, v);
++}
++
++static inline void
++atomic_long_andnot(long i, atomic_long_t *v)
++{
++	atomic64_andnot(i, v);
++}
++
++static inline long
++atomic_long_fetch_andnot(long i, atomic_long_t *v)
++{
++	return atomic64_fetch_andnot(i, v);
++}
++
++static inline long
++atomic_long_fetch_andnot_acquire(long i, atomic_long_t *v)
++{
++	return atomic64_fetch_andnot_acquire(i, v);
++}
++
++static inline long
++atomic_long_fetch_andnot_release(long i, atomic_long_t *v)
++{
++	return atomic64_fetch_andnot_release(i, v);
++}
++
++static inline long
++atomic_long_fetch_andnot_relaxed(long i, atomic_long_t *v)
++{
++	return atomic64_fetch_andnot_relaxed(i, v);
++}
++
++static inline void
++atomic_long_or(long i, atomic_long_t *v)
++{
++	atomic64_or(i, v);
++}
++
++static inline long
++atomic_long_fetch_or(long i, atomic_long_t *v)
++{
++	return atomic64_fetch_or(i, v);
++}
++
++static inline long
++atomic_long_fetch_or_acquire(long i, atomic_long_t *v)
++{
++	return atomic64_fetch_or_acquire(i, v);
++}
++
++static inline long
++atomic_long_fetch_or_release(long i, atomic_long_t *v)
++{
++	return atomic64_fetch_or_release(i, v);
++}
++
++static inline long
++atomic_long_fetch_or_relaxed(long i, atomic_long_t *v)
++{
++	return atomic64_fetch_or_relaxed(i, v);
++}
++
++static inline void
++atomic_long_xor(long i, atomic_long_t *v)
++{
++	atomic64_xor(i, v);
++}
++
++static inline long
++atomic_long_fetch_xor(long i, atomic_long_t *v)
++{
++	return atomic64_fetch_xor(i, v);
++}
++
++static inline long
++atomic_long_fetch_xor_acquire(long i, atomic_long_t *v)
++{
++	return atomic64_fetch_xor_acquire(i, v);
++}
++
++static inline long
++atomic_long_fetch_xor_release(long i, atomic_long_t *v)
++{
++	return atomic64_fetch_xor_release(i, v);
++}
++
++static inline long
++atomic_long_fetch_xor_relaxed(long i, atomic_long_t *v)
++{
++	return atomic64_fetch_xor_relaxed(i, v);
++}
++
++static inline long
++atomic_long_xchg(atomic_long_t *v, long i)
++{
++	return atomic64_xchg(v, i);
++}
++
++static inline long
++atomic_long_xchg_acquire(atomic_long_t *v, long i)
++{
++	return atomic64_xchg_acquire(v, i);
++}
++
++static inline long
++atomic_long_xchg_release(atomic_long_t *v, long i)
++{
++	return atomic64_xchg_release(v, i);
++}
++
++static inline long
++atomic_long_xchg_relaxed(atomic_long_t *v, long i)
++{
++	return atomic64_xchg_relaxed(v, i);
++}
++
++static inline long
++atomic_long_cmpxchg(atomic_long_t *v, long old, long new)
++{
++	return atomic64_cmpxchg(v, old, new);
++}
++
++static inline long
++atomic_long_cmpxchg_acquire(atomic_long_t *v, long old, long new)
++{
++	return atomic64_cmpxchg_acquire(v, old, new);
++}
++
++static inline long
++atomic_long_cmpxchg_release(atomic_long_t *v, long old, long new)
++{
++	return atomic64_cmpxchg_release(v, old, new);
++}
++
++static inline long
++atomic_long_cmpxchg_relaxed(atomic_long_t *v, long old, long new)
++{
++	return atomic64_cmpxchg_relaxed(v, old, new);
++}
++
++static inline bool
++atomic_long_try_cmpxchg(atomic_long_t *v, long *old, long new)
++{
++	return atomic64_try_cmpxchg(v, (s64 *)old, new);
++}
++
++static inline bool
++atomic_long_try_cmpxchg_acquire(atomic_long_t *v, long *old, long new)
++{
++	return atomic64_try_cmpxchg_acquire(v, (s64 *)old, new);
++}
++
++static inline bool
++atomic_long_try_cmpxchg_release(atomic_long_t *v, long *old, long new)
++{
++	return atomic64_try_cmpxchg_release(v, (s64 *)old, new);
++}
++
++static inline bool
++atomic_long_try_cmpxchg_relaxed(atomic_long_t *v, long *old, long new)
++{
++	return atomic64_try_cmpxchg_relaxed(v, (s64 *)old, new);
++}
++
++static inline bool
++atomic_long_sub_and_test(long i, atomic_long_t *v)
++{
++	return atomic64_sub_and_test(i, v);
++}
++
++static inline bool
++atomic_long_dec_and_test(atomic_long_t *v)
++{
++	return atomic64_dec_and_test(v);
++}
++
++static inline bool
++atomic_long_inc_and_test(atomic_long_t *v)
++{
++	return atomic64_inc_and_test(v);
++}
++
++static inline bool
++atomic_long_add_negative(long i, atomic_long_t *v)
++{
++	return atomic64_add_negative(i, v);
++}
++
++static inline long
++atomic_long_fetch_add_unless(atomic_long_t *v, long a, long u)
++{
++	return atomic64_fetch_add_unless(v, a, u);
++}
++
++static inline bool
++atomic_long_add_unless(atomic_long_t *v, long a, long u)
++{
++	return atomic64_add_unless(v, a, u);
++}
++
++static inline bool
++atomic_long_inc_not_zero(atomic_long_t *v)
++{
++	return atomic64_inc_not_zero(v);
++}
++
++static inline bool
++atomic_long_inc_unless_negative(atomic_long_t *v)
++{
++	return atomic64_inc_unless_negative(v);
++}
++
++static inline bool
++atomic_long_dec_unless_positive(atomic_long_t *v)
++{
++	return atomic64_dec_unless_positive(v);
++}
++
++static inline long
++atomic_long_dec_if_positive(atomic_long_t *v)
++{
++	return atomic64_dec_if_positive(v);
++}
++
++#else /* CONFIG_64BIT */
++
++static inline long
++atomic_long_read(const atomic_long_t *v)
++{
++	return atomic_read(v);
++}
++
++static inline long
++atomic_long_read_acquire(const atomic_long_t *v)
++{
++	return atomic_read_acquire(v);
++}
++
++static inline void
++atomic_long_set(atomic_long_t *v, long i)
++{
++	atomic_set(v, i);
++}
++
++static inline void
++atomic_long_set_release(atomic_long_t *v, long i)
++{
++	atomic_set_release(v, i);
++}
++
++static inline void
++atomic_long_add(long i, atomic_long_t *v)
++{
++	atomic_add(i, v);
++}
++
++static inline long
++atomic_long_add_return(long i, atomic_long_t *v)
++{
++	return atomic_add_return(i, v);
++}
++
++static inline long
++atomic_long_add_return_acquire(long i, atomic_long_t *v)
++{
++	return atomic_add_return_acquire(i, v);
++}
++
++static inline long
++atomic_long_add_return_release(long i, atomic_long_t *v)
++{
++	return atomic_add_return_release(i, v);
++}
++
++static inline long
++atomic_long_add_return_relaxed(long i, atomic_long_t *v)
++{
++	return atomic_add_return_relaxed(i, v);
++}
++
++static inline long
++atomic_long_fetch_add(long i, atomic_long_t *v)
++{
++	return atomic_fetch_add(i, v);
++}
++
++static inline long
++atomic_long_fetch_add_acquire(long i, atomic_long_t *v)
++{
++	return atomic_fetch_add_acquire(i, v);
++}
++
++static inline long
++atomic_long_fetch_add_release(long i, atomic_long_t *v)
++{
++	return atomic_fetch_add_release(i, v);
++}
++
++static inline long
++atomic_long_fetch_add_relaxed(long i, atomic_long_t *v)
++{
++	return atomic_fetch_add_relaxed(i, v);
++}
++
++static inline void
++atomic_long_sub(long i, atomic_long_t *v)
++{
++	atomic_sub(i, v);
++}
++
++static inline long
++atomic_long_sub_return(long i, atomic_long_t *v)
++{
++	return atomic_sub_return(i, v);
++}
++
++static inline long
++atomic_long_sub_return_acquire(long i, atomic_long_t *v)
++{
++	return atomic_sub_return_acquire(i, v);
++}
++
++static inline long
++atomic_long_sub_return_release(long i, atomic_long_t *v)
++{
++	return atomic_sub_return_release(i, v);
++}
++
++static inline long
++atomic_long_sub_return_relaxed(long i, atomic_long_t *v)
++{
++	return atomic_sub_return_relaxed(i, v);
++}
++
++static inline long
++atomic_long_fetch_sub(long i, atomic_long_t *v)
++{
++	return atomic_fetch_sub(i, v);
++}
++
++static inline long
++atomic_long_fetch_sub_acquire(long i, atomic_long_t *v)
++{
++	return atomic_fetch_sub_acquire(i, v);
++}
++
++static inline long
++atomic_long_fetch_sub_release(long i, atomic_long_t *v)
++{
++	return atomic_fetch_sub_release(i, v);
++}
++
++static inline long
++atomic_long_fetch_sub_relaxed(long i, atomic_long_t *v)
++{
++	return atomic_fetch_sub_relaxed(i, v);
++}
++
++static inline void
++atomic_long_inc(atomic_long_t *v)
++{
++	atomic_inc(v);
++}
++
++static inline long
++atomic_long_inc_return(atomic_long_t *v)
++{
++	return atomic_inc_return(v);
++}
++
++static inline long
++atomic_long_inc_return_acquire(atomic_long_t *v)
++{
++	return atomic_inc_return_acquire(v);
++}
++
++static inline long
++atomic_long_inc_return_release(atomic_long_t *v)
++{
++	return atomic_inc_return_release(v);
++}
++
++static inline long
++atomic_long_inc_return_relaxed(atomic_long_t *v)
++{
++	return atomic_inc_return_relaxed(v);
++}
++
++static inline long
++atomic_long_fetch_inc(atomic_long_t *v)
++{
++	return atomic_fetch_inc(v);
++}
++
++static inline long
++atomic_long_fetch_inc_acquire(atomic_long_t *v)
++{
++	return atomic_fetch_inc_acquire(v);
++}
++
++static inline long
++atomic_long_fetch_inc_release(atomic_long_t *v)
++{
++	return atomic_fetch_inc_release(v);
++}
++
++static inline long
++atomic_long_fetch_inc_relaxed(atomic_long_t *v)
++{
++	return atomic_fetch_inc_relaxed(v);
++}
++
++static inline void
++atomic_long_dec(atomic_long_t *v)
++{
++	atomic_dec(v);
++}
++
++static inline long
++atomic_long_dec_return(atomic_long_t *v)
++{
++	return atomic_dec_return(v);
++}
++
++static inline long
++atomic_long_dec_return_acquire(atomic_long_t *v)
++{
++	return atomic_dec_return_acquire(v);
++}
++
++static inline long
++atomic_long_dec_return_release(atomic_long_t *v)
++{
++	return atomic_dec_return_release(v);
++}
++
++static inline long
++atomic_long_dec_return_relaxed(atomic_long_t *v)
++{
++	return atomic_dec_return_relaxed(v);
++}
++
++static inline long
++atomic_long_fetch_dec(atomic_long_t *v)
++{
++	return atomic_fetch_dec(v);
++}
++
++static inline long
++atomic_long_fetch_dec_acquire(atomic_long_t *v)
++{
++	return atomic_fetch_dec_acquire(v);
++}
++
++static inline long
++atomic_long_fetch_dec_release(atomic_long_t *v)
++{
++	return atomic_fetch_dec_release(v);
++}
++
++static inline long
++atomic_long_fetch_dec_relaxed(atomic_long_t *v)
++{
++	return atomic_fetch_dec_relaxed(v);
++}
++
++static inline void
++atomic_long_and(long i, atomic_long_t *v)
++{
++	atomic_and(i, v);
++}
++
++static inline long
++atomic_long_fetch_and(long i, atomic_long_t *v)
++{
++	return atomic_fetch_and(i, v);
++}
++
++static inline long
++atomic_long_fetch_and_acquire(long i, atomic_long_t *v)
++{
++	return atomic_fetch_and_acquire(i, v);
++}
++
++static inline long
++atomic_long_fetch_and_release(long i, atomic_long_t *v)
++{
++	return atomic_fetch_and_release(i, v);
++}
++
++static inline long
++atomic_long_fetch_and_relaxed(long i, atomic_long_t *v)
++{
++	return atomic_fetch_and_relaxed(i, v);
++}
++
++static inline void
++atomic_long_andnot(long i, atomic_long_t *v)
++{
++	atomic_andnot(i, v);
++}
++
++static inline long
++atomic_long_fetch_andnot(long i, atomic_long_t *v)
++{
++	return atomic_fetch_andnot(i, v);
++}
++
++static inline long
++atomic_long_fetch_andnot_acquire(long i, atomic_long_t *v)
++{
++	return atomic_fetch_andnot_acquire(i, v);
++}
++
++static inline long
++atomic_long_fetch_andnot_release(long i, atomic_long_t *v)
++{
++	return atomic_fetch_andnot_release(i, v);
++}
++
++static inline long
++atomic_long_fetch_andnot_relaxed(long i, atomic_long_t *v)
++{
++	return atomic_fetch_andnot_relaxed(i, v);
++}
+ 
+-#define ATOMIC_LONG_READ_OP(mo)						\
+-static inline long atomic_long_read##mo(const atomic_long_t *l)		\
+-{									\
+-	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;		\
+-									\
+-	return (long)ATOMIC_LONG_PFX(_read##mo)(v);			\
+-}
+-ATOMIC_LONG_READ_OP()
+-ATOMIC_LONG_READ_OP(_acquire)
+-
+-#undef ATOMIC_LONG_READ_OP
+-
+-#define ATOMIC_LONG_SET_OP(mo)						\
+-static inline void atomic_long_set##mo(atomic_long_t *l, long i)	\
+-{									\
+-	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;		\
+-									\
+-	ATOMIC_LONG_PFX(_set##mo)(v, i);				\
+-}
+-ATOMIC_LONG_SET_OP()
+-ATOMIC_LONG_SET_OP(_release)
+-
+-#undef ATOMIC_LONG_SET_OP
+-
+-#define ATOMIC_LONG_ADD_SUB_OP(op, mo)					\
+-static inline long							\
+-atomic_long_##op##_return##mo(long i, atomic_long_t *l)			\
+-{									\
+-	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;		\
+-									\
+-	return (long)ATOMIC_LONG_PFX(_##op##_return##mo)(i, v);		\
+-}
+-ATOMIC_LONG_ADD_SUB_OP(add,)
+-ATOMIC_LONG_ADD_SUB_OP(add, _relaxed)
+-ATOMIC_LONG_ADD_SUB_OP(add, _acquire)
+-ATOMIC_LONG_ADD_SUB_OP(add, _release)
+-ATOMIC_LONG_ADD_SUB_OP(sub,)
+-ATOMIC_LONG_ADD_SUB_OP(sub, _relaxed)
+-ATOMIC_LONG_ADD_SUB_OP(sub, _acquire)
+-ATOMIC_LONG_ADD_SUB_OP(sub, _release)
+-
+-#undef ATOMIC_LONG_ADD_SUB_OP
+-
+-#define atomic_long_cmpxchg_relaxed(l, old, new) \
+-	(ATOMIC_LONG_PFX(_cmpxchg_relaxed)((ATOMIC_LONG_PFX(_t) *)(l), \
+-					   (old), (new)))
+-#define atomic_long_cmpxchg_acquire(l, old, new) \
+-	(ATOMIC_LONG_PFX(_cmpxchg_acquire)((ATOMIC_LONG_PFX(_t) *)(l), \
+-					   (old), (new)))
+-#define atomic_long_cmpxchg_release(l, old, new) \
+-	(ATOMIC_LONG_PFX(_cmpxchg_release)((ATOMIC_LONG_PFX(_t) *)(l), \
+-					   (old), (new)))
+-#define atomic_long_cmpxchg(l, old, new) \
+-	(ATOMIC_LONG_PFX(_cmpxchg)((ATOMIC_LONG_PFX(_t) *)(l), (old), (new)))
+-
+-
+-#define atomic_long_try_cmpxchg_relaxed(l, old, new) \
+-	(ATOMIC_LONG_PFX(_try_cmpxchg_relaxed)((ATOMIC_LONG_PFX(_t) *)(l), \
+-					   (ATOMIC_LONG_TYPE *)(old), (ATOMIC_LONG_TYPE)(new)))
+-#define atomic_long_try_cmpxchg_acquire(l, old, new) \
+-	(ATOMIC_LONG_PFX(_try_cmpxchg_acquire)((ATOMIC_LONG_PFX(_t) *)(l), \
+-					   (ATOMIC_LONG_TYPE *)(old), (ATOMIC_LONG_TYPE)(new)))
+-#define atomic_long_try_cmpxchg_release(l, old, new) \
+-	(ATOMIC_LONG_PFX(_try_cmpxchg_release)((ATOMIC_LONG_PFX(_t) *)(l), \
+-					   (ATOMIC_LONG_TYPE *)(old), (ATOMIC_LONG_TYPE)(new)))
+-#define atomic_long_try_cmpxchg(l, old, new) \
+-	(ATOMIC_LONG_PFX(_try_cmpxchg)((ATOMIC_LONG_PFX(_t) *)(l), \
+-				       (ATOMIC_LONG_TYPE *)(old), (ATOMIC_LONG_TYPE)(new)))
+-
+-
+-#define atomic_long_xchg_relaxed(v, new) \
+-	(ATOMIC_LONG_PFX(_xchg_relaxed)((ATOMIC_LONG_PFX(_t) *)(v), (new)))
+-#define atomic_long_xchg_acquire(v, new) \
+-	(ATOMIC_LONG_PFX(_xchg_acquire)((ATOMIC_LONG_PFX(_t) *)(v), (new)))
+-#define atomic_long_xchg_release(v, new) \
+-	(ATOMIC_LONG_PFX(_xchg_release)((ATOMIC_LONG_PFX(_t) *)(v), (new)))
+-#define atomic_long_xchg(v, new) \
+-	(ATOMIC_LONG_PFX(_xchg)((ATOMIC_LONG_PFX(_t) *)(v), (new)))
+-
+-static __always_inline void atomic_long_inc(atomic_long_t *l)
+-{
+-	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;
+-
+-	ATOMIC_LONG_PFX(_inc)(v);
+-}
+-
+-static __always_inline void atomic_long_dec(atomic_long_t *l)
++static inline void
++atomic_long_or(long i, atomic_long_t *v)
+ {
+-	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;
++	atomic_or(i, v);
++}
+ 
+-	ATOMIC_LONG_PFX(_dec)(v);
++static inline long
++atomic_long_fetch_or(long i, atomic_long_t *v)
++{
++	return atomic_fetch_or(i, v);
+ }
+ 
+-#define ATOMIC_LONG_FETCH_OP(op, mo)					\
+-static inline long							\
+-atomic_long_fetch_##op##mo(long i, atomic_long_t *l)			\
+-{									\
+-	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;		\
+-									\
+-	return (long)ATOMIC_LONG_PFX(_fetch_##op##mo)(i, v);		\
++static inline long
++atomic_long_fetch_or_acquire(long i, atomic_long_t *v)
++{
++	return atomic_fetch_or_acquire(i, v);
+ }
+ 
+-ATOMIC_LONG_FETCH_OP(add, )
+-ATOMIC_LONG_FETCH_OP(add, _relaxed)
+-ATOMIC_LONG_FETCH_OP(add, _acquire)
+-ATOMIC_LONG_FETCH_OP(add, _release)
+-ATOMIC_LONG_FETCH_OP(sub, )
+-ATOMIC_LONG_FETCH_OP(sub, _relaxed)
+-ATOMIC_LONG_FETCH_OP(sub, _acquire)
+-ATOMIC_LONG_FETCH_OP(sub, _release)
+-ATOMIC_LONG_FETCH_OP(and, )
+-ATOMIC_LONG_FETCH_OP(and, _relaxed)
+-ATOMIC_LONG_FETCH_OP(and, _acquire)
+-ATOMIC_LONG_FETCH_OP(and, _release)
+-ATOMIC_LONG_FETCH_OP(andnot, )
+-ATOMIC_LONG_FETCH_OP(andnot, _relaxed)
+-ATOMIC_LONG_FETCH_OP(andnot, _acquire)
+-ATOMIC_LONG_FETCH_OP(andnot, _release)
+-ATOMIC_LONG_FETCH_OP(or, )
+-ATOMIC_LONG_FETCH_OP(or, _relaxed)
+-ATOMIC_LONG_FETCH_OP(or, _acquire)
+-ATOMIC_LONG_FETCH_OP(or, _release)
+-ATOMIC_LONG_FETCH_OP(xor, )
+-ATOMIC_LONG_FETCH_OP(xor, _relaxed)
+-ATOMIC_LONG_FETCH_OP(xor, _acquire)
+-ATOMIC_LONG_FETCH_OP(xor, _release)
++static inline long
++atomic_long_fetch_or_release(long i, atomic_long_t *v)
++{
++	return atomic_fetch_or_release(i, v);
++}
+ 
+-#undef ATOMIC_LONG_FETCH_OP
++static inline long
++atomic_long_fetch_or_relaxed(long i, atomic_long_t *v)
++{
++	return atomic_fetch_or_relaxed(i, v);
++}
+ 
+-#define ATOMIC_LONG_FETCH_INC_DEC_OP(op, mo)					\
+-static inline long							\
+-atomic_long_fetch_##op##mo(atomic_long_t *l)				\
+-{									\
+-	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;		\
+-									\
+-	return (long)ATOMIC_LONG_PFX(_fetch_##op##mo)(v);		\
++static inline void
++atomic_long_xor(long i, atomic_long_t *v)
++{
++	atomic_xor(i, v);
+ }
+ 
+-ATOMIC_LONG_FETCH_INC_DEC_OP(inc,)
+-ATOMIC_LONG_FETCH_INC_DEC_OP(inc, _relaxed)
+-ATOMIC_LONG_FETCH_INC_DEC_OP(inc, _acquire)
+-ATOMIC_LONG_FETCH_INC_DEC_OP(inc, _release)
+-ATOMIC_LONG_FETCH_INC_DEC_OP(dec,)
+-ATOMIC_LONG_FETCH_INC_DEC_OP(dec, _relaxed)
+-ATOMIC_LONG_FETCH_INC_DEC_OP(dec, _acquire)
+-ATOMIC_LONG_FETCH_INC_DEC_OP(dec, _release)
++static inline long
++atomic_long_fetch_xor(long i, atomic_long_t *v)
++{
++	return atomic_fetch_xor(i, v);
++}
+ 
+-#undef ATOMIC_LONG_FETCH_INC_DEC_OP
++static inline long
++atomic_long_fetch_xor_acquire(long i, atomic_long_t *v)
++{
++	return atomic_fetch_xor_acquire(i, v);
++}
+ 
+-#define ATOMIC_LONG_OP(op)						\
+-static __always_inline void						\
+-atomic_long_##op(long i, atomic_long_t *l)				\
+-{									\
+-	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;		\
+-									\
+-	ATOMIC_LONG_PFX(_##op)(i, v);					\
++static inline long
++atomic_long_fetch_xor_release(long i, atomic_long_t *v)
++{
++	return atomic_fetch_xor_release(i, v);
+ }
+ 
+-ATOMIC_LONG_OP(add)
+-ATOMIC_LONG_OP(sub)
+-ATOMIC_LONG_OP(and)
+-ATOMIC_LONG_OP(andnot)
+-ATOMIC_LONG_OP(or)
+-ATOMIC_LONG_OP(xor)
++static inline long
++atomic_long_fetch_xor_relaxed(long i, atomic_long_t *v)
++{
++	return atomic_fetch_xor_relaxed(i, v);
++}
+ 
+-#undef ATOMIC_LONG_OP
++static inline long
++atomic_long_xchg(atomic_long_t *v, long i)
++{
++	return atomic_xchg(v, i);
++}
+ 
+-static inline int atomic_long_sub_and_test(long i, atomic_long_t *l)
++static inline long
++atomic_long_xchg_acquire(atomic_long_t *v, long i)
+ {
+-	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;
++	return atomic_xchg_acquire(v, i);
++}
+ 
+-	return ATOMIC_LONG_PFX(_sub_and_test)(i, v);
++static inline long
++atomic_long_xchg_release(atomic_long_t *v, long i)
++{
++	return atomic_xchg_release(v, i);
+ }
+ 
+-static inline int atomic_long_dec_and_test(atomic_long_t *l)
++static inline long
++atomic_long_xchg_relaxed(atomic_long_t *v, long i)
+ {
+-	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;
++	return atomic_xchg_relaxed(v, i);
++}
+ 
+-	return ATOMIC_LONG_PFX(_dec_and_test)(v);
++static inline long
++atomic_long_cmpxchg(atomic_long_t *v, long old, long new)
++{
++	return atomic_cmpxchg(v, old, new);
+ }
+ 
+-static inline int atomic_long_inc_and_test(atomic_long_t *l)
++static inline long
++atomic_long_cmpxchg_acquire(atomic_long_t *v, long old, long new)
+ {
+-	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;
++	return atomic_cmpxchg_acquire(v, old, new);
++}
+ 
+-	return ATOMIC_LONG_PFX(_inc_and_test)(v);
++static inline long
++atomic_long_cmpxchg_release(atomic_long_t *v, long old, long new)
++{
++	return atomic_cmpxchg_release(v, old, new);
+ }
+ 
+-static inline int atomic_long_add_negative(long i, atomic_long_t *l)
++static inline long
++atomic_long_cmpxchg_relaxed(atomic_long_t *v, long old, long new)
+ {
+-	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;
++	return atomic_cmpxchg_relaxed(v, old, new);
++}
+ 
+-	return ATOMIC_LONG_PFX(_add_negative)(i, v);
++static inline bool
++atomic_long_try_cmpxchg(atomic_long_t *v, long *old, long new)
++{
++	return atomic_try_cmpxchg(v, (int *)old, new);
+ }
+ 
+-#define ATOMIC_LONG_INC_DEC_OP(op, mo)					\
+-static inline long							\
+-atomic_long_##op##_return##mo(atomic_long_t *l)				\
+-{									\
+-	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;		\
+-									\
+-	return (long)ATOMIC_LONG_PFX(_##op##_return##mo)(v);		\
++static inline bool
++atomic_long_try_cmpxchg_acquire(atomic_long_t *v, long *old, long new)
++{
++	return atomic_try_cmpxchg_acquire(v, (int *)old, new);
+ }
+-ATOMIC_LONG_INC_DEC_OP(inc,)
+-ATOMIC_LONG_INC_DEC_OP(inc, _relaxed)
+-ATOMIC_LONG_INC_DEC_OP(inc, _acquire)
+-ATOMIC_LONG_INC_DEC_OP(inc, _release)
+-ATOMIC_LONG_INC_DEC_OP(dec,)
+-ATOMIC_LONG_INC_DEC_OP(dec, _relaxed)
+-ATOMIC_LONG_INC_DEC_OP(dec, _acquire)
+-ATOMIC_LONG_INC_DEC_OP(dec, _release)
+ 
+-#undef ATOMIC_LONG_INC_DEC_OP
++static inline bool
++atomic_long_try_cmpxchg_release(atomic_long_t *v, long *old, long new)
++{
++	return atomic_try_cmpxchg_release(v, (int *)old, new);
++}
++
++static inline bool
++atomic_long_try_cmpxchg_relaxed(atomic_long_t *v, long *old, long new)
++{
++	return atomic_try_cmpxchg_relaxed(v, (int *)old, new);
++}
++
++static inline bool
++atomic_long_sub_and_test(long i, atomic_long_t *v)
++{
++	return atomic_sub_and_test(i, v);
++}
++
++static inline bool
++atomic_long_dec_and_test(atomic_long_t *v)
++{
++	return atomic_dec_and_test(v);
++}
++
++static inline bool
++atomic_long_inc_and_test(atomic_long_t *v)
++{
++	return atomic_inc_and_test(v);
++}
++
++static inline bool
++atomic_long_add_negative(long i, atomic_long_t *v)
++{
++	return atomic_add_negative(i, v);
++}
++
++static inline long
++atomic_long_fetch_add_unless(atomic_long_t *v, long a, long u)
++{
++	return atomic_fetch_add_unless(v, a, u);
++}
++
++static inline bool
++atomic_long_add_unless(atomic_long_t *v, long a, long u)
++{
++	return atomic_add_unless(v, a, u);
++}
+ 
+-static inline long atomic_long_add_unless(atomic_long_t *l, long a, long u)
++static inline bool
++atomic_long_inc_not_zero(atomic_long_t *v)
+ {
+-	ATOMIC_LONG_PFX(_t) *v = (ATOMIC_LONG_PFX(_t) *)l;
++	return atomic_inc_not_zero(v);
++}
+ 
+-	return (long)ATOMIC_LONG_PFX(_add_unless)(v, a, u);
++static inline bool
++atomic_long_inc_unless_negative(atomic_long_t *v)
++{
++	return atomic_inc_unless_negative(v);
+ }
+ 
+-#define atomic_long_inc_not_zero(l) \
+-	ATOMIC_LONG_PFX(_inc_not_zero)((ATOMIC_LONG_PFX(_t) *)(l))
++static inline bool
++atomic_long_dec_unless_positive(atomic_long_t *v)
++{
++	return atomic_dec_unless_positive(v);
++}
+ 
+-#define atomic_long_cond_read_relaxed(v, c) \
+-	ATOMIC_LONG_PFX(_cond_read_relaxed)((ATOMIC_LONG_PFX(_t) *)(v), (c))
+-#define atomic_long_cond_read_acquire(v, c) \
+-	ATOMIC_LONG_PFX(_cond_read_acquire)((ATOMIC_LONG_PFX(_t) *)(v), (c))
++static inline long
++atomic_long_dec_if_positive(atomic_long_t *v)
++{
++	return atomic_dec_if_positive(v);
++}
+ 
+-#endif  /*  _ASM_GENERIC_ATOMIC_LONG_H  */
++#endif /* CONFIG_64BIT */
++#endif /* _ASM_GENERIC_ATOMIC_LONG_H */
