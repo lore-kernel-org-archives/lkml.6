@@ -2,97 +2,94 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B076C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 18:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79BA3C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 18:46:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 255352064C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 18:45:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 255352064C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org
+	by mail.kernel.org (Postfix) with ESMTP id 289F62082E
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 18:46:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 289F62082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727721AbeKBDuB (ORCPT
+        id S1727752AbeKBDuh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 23:50:01 -0400
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:57902 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725961AbeKBDuA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 23:50:00 -0400
-Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
-        id 1gIHjp-0001W4-00; Thu, 01 Nov 2018 18:30:37 +0000
-Date:   Thu, 1 Nov 2018 14:30:37 -0400
-From:   Rich Felker <dalias@libc.org>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Jann Horn <jannh@google.com>,
+        Thu, 1 Nov 2018 23:50:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41616 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725961AbeKBDuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 23:50:37 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 000FD2064C;
+        Thu,  1 Nov 2018 18:46:24 +0000 (UTC)
+Date:   Thu, 1 Nov 2018 14:46:23 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Andi Kleen <andi@firstfloor.org>, Chris Lameter <cl@linux.com>,
+        Ben Maurer <bmaurer@fb.com>,
+        Josh Triplett <josh@joshtriplett.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Adhemerval Zanella <adhemerval.zanella@linaro.org>,
-        carlos@redhat.com
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181101183037.GB5150@brightrain.aerifal.cx>
-References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
- <877ehwisaa.fsf@oldenburg.str.redhat.com>
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>
+Subject: Re: [RFC PATCH for 4.21 03/16] mm: Replace BUG_ON() by WARN_ON() in
+ vm_unmap_ram()
+Message-ID: <20181101144623.61d43102@gandalf.local.home>
+In-Reply-To: <alpine.DEB.2.21.1811011320160.1642@nanos.tec.linutronix.de>
+References: <20181101095844.24462-1-mathieu.desnoyers@efficios.com>
+        <20181101095844.24462-4-mathieu.desnoyers@efficios.com>
+        <alpine.DEB.2.21.1811011320160.1642@nanos.tec.linutronix.de>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <877ehwisaa.fsf@oldenburg.str.redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 01, 2018 at 07:09:17PM +0100, Florian Weimer wrote:
-> * Andy Lutomirski:
-> 
-> > The basic idea would be to allow libc, or maybe even any library, to
-> > register a handler that gets a chance to act on an exception caused by
-> > a user instruction before a signal is delivered.  As a straw-man
-> > example for how this could work, there could be a new syscall:
-> >
-> > long register_exception_handler(void (*handler)(int, siginfo_t *, void *));
-> >
-> > If a handler is registered, then, if a synchronous exception happens
-> > (page fault, etc), the kernel would set up an exception frame as usual
-> > but, rather than checking for signal handlers, it would just call the
-> > registered handler.  That handler is expected to either handle the
-> > exception entirely on its own or to call one of two new syscalls to
-> > ask for normal signal delivery or to ask to retry the faulting
-> > instruction.
-> 
-> Would the exception handler be a per-thread resource?
-> 
-> If it is: Would the setup and teardown overhead be prohibitive for many
-> use cases (at least those do not expect a fault)?
-> 
-> Something peripherally related to this interface: Wrappers for signal
-> handlers (and not just CPU exceptions).  Ideally, we want to maintain a
-> flag that indicates whether we are in a signal handler, and save and
-> restore errno around the installed handler.
+On Thu, 1 Nov 2018 13:21:12 +0100 (CET)
+Thomas Gleixner <tglx@linutronix.de> wrote:
 
-I think the right way to make it per-thread AND low-cost would be to
-register not the handler, but the (per-thread) address of a
-function-pointer object pointing to the handler. Then switching the
-handler just requires a single volatile store to thread-local memory,
-no syscall.
+> Mathieu,
+> 
+> On Thu, 1 Nov 2018, Mathieu Desnoyers wrote:
+> 
+> > It is encouraged to warn and return rather than use BUG_ON() when
+> > the condition can be recovered from in ways that are more graceful than
+> > halting the whole system.  
+> 
+> You're failing to desribe how that graceful recovery works.
+> 
 
-Rich
+I think the graceful recovery is to simply return:
+
+	if (WARN_ON(cond))
+		return;
+
+is better than just
+
+	BUG_ON(cond);
+
+As that's what Linus made pretty clear at the Maintainer's Summit.
+
+-- Steve
