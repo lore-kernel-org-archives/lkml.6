@@ -2,107 +2,125 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0643BC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:21:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5476BC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:21:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD6BD20820
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:21:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD6BD20820
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=chris-wilson.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 1C64220657
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:21:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Su9YOYYS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C64220657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728530AbeKAVXn convert rfc822-to-8bit (ORCPT
+        id S1728578AbeKAVXv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 17:23:43 -0400
-Received: from mail.fireflyinternet.com ([109.228.58.192]:60599 "EHLO
-        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728414AbeKAVXn (ORCPT
+        Thu, 1 Nov 2018 17:23:51 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35307 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728414AbeKAVXu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 17:23:43 -0400
-X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
-Received: from localhost (unverified [78.156.65.138]) 
-        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 14313774-1500050 
-        for multiple; Thu, 01 Nov 2018 12:20:16 +0000
-Content-Type: text/plain; charset="utf-8"
+        Thu, 1 Nov 2018 17:23:50 -0400
+Received: by mail-wm1-f68.google.com with SMTP id q12-v6so1182344wmq.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 05:21:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=lji5OxB3m1oEwXs/Y9yrmQyvxmjSrhthjs27reVFMYs=;
+        b=Su9YOYYSabZqLbDqhU9l9fgDJ2BbZ89Q5ZAODX1zKICYZCAxz19rIjmxnlHIYZ+zl8
+         D1dRpG8GUhjP5bbeXxUUBYgikWewFZB5v49cJW4qx8J3YEMK2LNQkqcSY60tTJjIc6MT
+         tEcHTlBogFypzrmpncogQOWFqf9jBF7xwhtHU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lji5OxB3m1oEwXs/Y9yrmQyvxmjSrhthjs27reVFMYs=;
+        b=gtOQtrUo33Pc7Wk8k8BL+ElX9t0GP/f0qRFcHNzdPuoxnX9KXSFGKXK9DVepH2BFwg
+         4q31P05xemEaaTBT6pXA5xHIASlqgdPhfK1spoMsZVNGpbey2h5uuwheo1rz1YLVvC46
+         7nbA5R9mz7+Dzq+5Owf0DphXiVQcNkKZyxu771smCULu6yox622xGrrZlApDqChIG3GM
+         dz1dQR4sL7pKChE9nm4N/CYcgHz/vq4JRXlYb4ySnPIuvs+H1z+JFO+y91uHx/F2UPOK
+         mVZYOttSeIAu7h3aw78rsF08JVL8Hspq+Crr/hz/aUQaIPLHJCqbA8HVo782rRJFALzz
+         QvIw==
+X-Gm-Message-State: AGRZ1gJp23CFxjvyzr8zdKAIm+Fj4JbclkbUVDuX5OZNrQqKRYF8tDtA
+        bhlLbghNQzQ9tbmWI2KlCziAiQ==
+X-Google-Smtp-Source: AJdET5fJy3KyTe+735gs2t8NcelCDniF6B1bHBzbyncqzuQzIlzzl4gbq4y9qsf9wwYV7Smp9lUaOA==
+X-Received: by 2002:a1c:5d01:: with SMTP id r1-v6mr5098220wmb.25.1541074865380;
+        Thu, 01 Nov 2018 05:21:05 -0700 (PDT)
+Received: from [192.168.27.209] ([37.157.136.206])
+        by smtp.googlemail.com with ESMTPSA id o15-v6sm5105214wrw.47.2018.11.01.05.21.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Nov 2018 05:21:04 -0700 (PDT)
+Subject: Re: [PATCH v2] media: venus: handle peak bitrate set property
+To:     Malathi Gottam <mgottam@codeaurora.org>, hverkuil@xs4all.nl,
+        mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, acourbot@chromium.org,
+        vgarodia@codeaurora.org
+References: <1540209912-24834-1-git-send-email-mgottam@codeaurora.org>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <5e7de7d5-cd5b-7a88-6015-df28d45b122e@linaro.org>
+Date:   Thu, 1 Nov 2018 14:21:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To:     Kuo-Hsin Yang <vovoy@chromium.org>,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-From:   Chris Wilson <chris@chris-wilson.co.uk>
-In-Reply-To: <154097891543.4007.9898414288875202246@skylake-alporthouse-com>
-Cc:     Kuo-Hsin Yang <vovoy@chromium.org>, Michal Hocko <mhocko@suse.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>
-References: <20181031081945.207709-1-vovoy@chromium.org>
- <154097891543.4007.9898414288875202246@skylake-alporthouse-com>
-Message-ID: <154107481370.4007.2421593962367820741@skylake-alporthouse-com>
-User-Agent: alot/0.6
-Subject: Re: [PATCH v3] mm, drm/i915: mark pinned shmemfs pages as unevictable
-Date:   Thu, 01 Nov 2018 12:20:13 +0000
+In-Reply-To: <1540209912-24834-1-git-send-email-mgottam@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Chris Wilson (2018-10-31 09:41:55)
-> Quoting Kuo-Hsin Yang (2018-10-31 08:19:45)
-> > The i915 driver uses shmemfs to allocate backing storage for gem
-> > objects. These shmemfs pages can be pinned (increased ref count) by
-> > shmem_read_mapping_page_gfp(). When a lot of pages are pinned, vmscan
-> > wastes a lot of time scanning these pinned pages. In some extreme case,
-> > all pages in the inactive anon lru are pinned, and only the inactive
-> > anon lru is scanned due to inactive_ratio, the system cannot swap and
-> > invokes the oom-killer. Mark these pinned pages as unevictable to speed
-> > up vmscan.
-> > 
-> > Add check_move_lru_page() to move page to appropriate lru list.
-> > 
-> > This patch was inspired by Chris Wilson's change [1].
-> > 
-> > [1]: https://patchwork.kernel.org/patch/9768741/
-> > 
-> > Cc: Chris Wilson <chris@chris-wilson.co.uk>
-> > Cc: Michal Hocko <mhocko@suse.com>
-> > Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: Dave Hansen <dave.hansen@intel.com>
-> > Signed-off-by: Kuo-Hsin Yang <vovoy@chromium.org>
-> > ---
-> > The previous mapping_set_unevictable patch is worse on gem_syslatency
-> > because it defers to vmscan to move these pages to the unevictable list
-> > and the test measures latency to allocate 2MiB pages. This performance
-> > impact can be solved by explicit moving pages to the unevictable list in
-> > the i915 function.
-> > 
-> > Chris, can you help to run the "igt/benchmarks/gem_syslatency -t 120 -b -m"
-> > test with this patch on your testing machine? I tried to run the test on
-> > a Celeron N4000, 4GB Ram machine. The mean value with this patch is
-> > similar to that with the mlock patch.
+Malathi, thanks for the patch!
+
+On 10/22/18 3:05 PM, Malathi Gottam wrote:
+> Max bitrate property is not supported for venus version 4xx.
+> Return unsupported from packetization layer. Handle it in 
+> hfi_venus layer to exit gracefully to venc layer.
 > 
-> Will do. As you are confident, I'll try a few different machines. :)
+> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
+> ---
+>  drivers/media/platform/qcom/venus/hfi_cmds.c  | 2 +-
+>  drivers/media/platform/qcom/venus/hfi_venus.c | 2 ++
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/qcom/venus/hfi_cmds.c b/drivers/media/platform/qcom/venus/hfi_cmds.c
+> index e8389d8..87a4414 100644
+> --- a/drivers/media/platform/qcom/venus/hfi_cmds.c
+> +++ b/drivers/media/platform/qcom/venus/hfi_cmds.c
+> @@ -1215,7 +1215,7 @@ static int pkt_session_set_property_1x(struct hfi_session_set_property_pkt *pkt,
+>  	}
+>  	case HFI_PROPERTY_CONFIG_VENC_MAX_BITRATE:
+>  		/* not implemented on Venus 4xx */
+> -		break;
+> +		return -ENOTSUPP;
+>  	default:
+>  		return pkt_session_set_property_3xx(pkt, cookie, ptype, pdata);
+>  	}
+> diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
+> index 1240855..9d086b9 100644
+> --- a/drivers/media/platform/qcom/venus/hfi_venus.c
+> +++ b/drivers/media/platform/qcom/venus/hfi_venus.c
+> @@ -1355,6 +1355,8 @@ static int venus_session_set_property(struct venus_inst *inst, u32 ptype,
+>  	pkt = (struct hfi_session_set_property_pkt *)packet;
+>  
+>  	ret = pkt_session_set_property(pkt, inst, ptype, pdata);
+> +	if (ret == -ENOTSUPP)
+> +		return 0;
+>  	if (ret)
+>  		return ret;
+>  
 
-I had one anomalous result with Ivybridge, but 3/4 different machines
-confirm this is effective. I normalized the latency results from each
-such that 0 is the baseline median latency (no i915 activity) and 1 is
-the median latency with i915 running drm-tip.
+Acked-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 
-    N           Min           Max        Median           Avg        Stddev
-ivb 120      0.701641       2.79209       1.24469     1.3333911    0.40871825
-byt 120     -0.108194     0.0777012     0.0485302    0.01343581   0.061524734
-bxt 120     -0.262057       6.27002     0.0801667    0.15963388    0.63528121
-kbl 120    -0.0891262       1.22326    -0.0245336   0.041492506    0.14929689
-
-Just need to go back and check on ivb, perhaps running on a few older 
-chipsets as well. But the evidence so far indicates that this eliminates
-the impact of i915 activity on the performance of shrink_page_list,
-reducing the amount of crippling stalls under mempressure and often
-preventing them.
--Chris
+-- 
+regards,
+Stan
