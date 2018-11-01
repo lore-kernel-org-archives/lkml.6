@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90E20C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:00:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D80B2C6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:00:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 499D420833
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:00:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A0E520820
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:00:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="KGrvekRl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 499D420833
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="FZN9Oe/9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A0E520820
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728467AbeKATCt (ORCPT
+        id S1728485AbeKATCz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 15:02:49 -0400
-Received: from mail.efficios.com ([167.114.142.138]:42284 "EHLO
+        Thu, 1 Nov 2018 15:02:55 -0400
+Received: from mail.efficios.com ([167.114.142.138]:42418 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727753AbeKATCs (ORCPT
+        with ESMTP id S1727753AbeKATCy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 15:02:48 -0400
+        Thu, 1 Nov 2018 15:02:54 -0400
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 35516227788;
-        Thu,  1 Nov 2018 06:00:30 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTP id E945D2277B0;
+        Thu,  1 Nov 2018 06:00:35 -0400 (EDT)
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id owT6ESA2hF2d; Thu,  1 Nov 2018 06:00:29 -0400 (EDT)
+        with ESMTP id 2E4CQsVDm0Nu; Thu,  1 Nov 2018 06:00:35 -0400 (EDT)
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id AFC3E227784;
-        Thu,  1 Nov 2018 06:00:29 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com AFC3E227784
+        by mail.efficios.com (Postfix) with ESMTP id 57D112277A1;
+        Thu,  1 Nov 2018 06:00:35 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 57D112277A1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1541066429;
-        bh=Wmr+x68fy7F/7bENG8ddgm+54zrdjV0ctHdI6GeBYvM=;
+        s=default; t=1541066435;
+        bh=gHir4rIYo1hBb6B/d1ojb7dvAjlqUhljmuhdjIhh484=;
         h=From:To:Date:Message-Id;
-        b=KGrvekRlsWN9Puzlbw/DKt+5Wn7RNBQVXHp2wfvS+UTzqQxJxRh8qGIkApOyc0Cuq
-         gZeFG4ubaODouWJEQDHKPFOrRKT5utdpd/X/uH76IICUxoaLGXojd+YVd/haP8bYKo
-         yNSYsQa2SHXk2f1TycCfSrhJAzIhYQbldmn4NaFlpXCAmf++eypEzLnX+IoLc9IIh5
-         x2rnHPv7pHQpQSvgWRb8O3mL26et5nb4z2SC/zcJGm/z0sRn63WW7XYAXWpR9olkDt
-         EqiHfhcC0XcX2xyHq1OA/hPVUtTyI/SzMXPLbb/OmsiuqsQb5KNzX01Wh7LrhAF7Rc
-         09H4vtzs1QyLQ==
+        b=FZN9Oe/9VANIXjBsU1kn5V8fUHdGKD71PXkib3wgbBgzPzwS34PZQK8RR7FVHlDWR
+         Xhnzua/zqemzxsKTywFTyzaiDKYnQF8x1BHVWxaDBu1N8iP+RU/cUKCG3MWa+VpXzh
+         CXZ09ODfWrgcdvV7OrlkKY2sP6Ks0gAY1QRxujHefVbuTEqw4rOE9xY5rrvXnUPiCJ
+         SaHC3VEAl+3dxYdIk/pdDocIjrrbWZiOO7XC82KHki3VqImdTbuJO6vkB2XlDWATSS
+         c+P6Kek/TJE7VazAdclk02Q1LaJBJDxsKp1gFFPPUb6kDTbdj9j/Wr7UZDz+p7lhe0
+         bypF3QhZQ5N+g==
 X-Virus-Scanned: amavisd-new at efficios.com
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id y0WEUikXqYFi; Thu,  1 Nov 2018 06:00:29 -0400 (EDT)
+        with ESMTP id TfK9ymmtWeAj; Thu,  1 Nov 2018 06:00:35 -0400 (EDT)
 Received: from thinkos.etherlink (sessfw99-sesbfw99-92.ericsson.net [192.176.1.92])
-        by mail.efficios.com (Postfix) with ESMTPSA id 1BFC4227764;
-        Thu,  1 Nov 2018 06:00:24 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTPSA id EAB8A227787;
+        Thu,  1 Nov 2018 06:00:29 -0400 (EDT)
 From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
@@ -76,9 +76,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Joel Fernandes <joelaf@google.com>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
-Subject: [RFC PATCH for 4.21 13/16] cpu-opv/selftests: Provide percpu_op API
-Date:   Thu,  1 Nov 2018 10:58:41 +0100
-Message-Id: <20181101095844.24462-14-mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 4.21 14/16] cpu-opv/selftests: Provide basic percpu ops test
+Date:   Thu,  1 Nov 2018 10:58:42 +0100
+Message-Id: <20181101095844.24462-15-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20181101095844.24462-1-mathieu.desnoyers@efficios.com>
 References: <20181101095844.24462-1-mathieu.desnoyers@efficios.com>
@@ -87,213 +87,339 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce percpu-op.h API. It uses rseq internally as fast-path if
-invoked from the right CPU, else cpu_opv as slow-path if called
-from the wrong CPU or if rseq fails.
-
-This allows acting on per-cpu data from various CPUs transparently from
-user-space: cpu_opv will take care of migrating the thread to the
-requested CPU. Use-cases such as rebalancing memory across per-cpu
-memory pools, or migrating tasks for a user-space scheduler, are thus
-facilitated. This also handles debugger single-stepping.
-
-The use from userspace is, e.g. for a counter increment:
-
-    int cpu, ret;
-
-    cpu = percpu_current_cpu();
-    ret = percpu_addv(&data->c[cpu].count, 1, cpu);
-    if (unlikely(ret)) {
-         perror("percpu_addv");
-         return -1;
-    }
-    return 0;
+"basic_percpu_ops_test" implements a few simple per-cpu operations and
+testing their correctness.
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-CC: Shuah Khan <shuah@kernel.org>
-CC: Russell King <linux@arm.linux.org.uk>
-CC: Catalin Marinas <catalin.marinas@arm.com>
-CC: Will Deacon <will.deacon@arm.com>
 CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Paul Turner <pjt@google.com>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: Andy Lutomirski <luto@amacapital.net>
-CC: Andi Kleen <andi@firstfloor.org>
-CC: Dave Watson <davejwatson@fb.com>
-CC: Chris Lameter <cl@linux.com>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: Ben Maurer <bmaurer@fb.com>
-CC: Steven Rostedt <rostedt@goodmis.org>
-CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-CC: Josh Triplett <josh@joshtriplett.org>
-CC: Linus Torvalds <torvalds@linux-foundation.org>
-CC: Andrew Morton <akpm@linux-foundation.org>
-CC: Boqun Feng <boqun.feng@gmail.com>
-CC: linux-kselftest@vger.kernel.org
-CC: linux-api@vger.kernel.org
+Cc: Joel Fernandes <joelaf@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Dave Watson <davejwatson@fb.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: linux-kselftest@vger.kernel.org
+Cc: "H . Peter Anvin" <hpa@zytor.com>
+Cc: Chris Lameter <cl@linux.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Michael Kerrisk <mtk.manpages@gmail.com>
+Cc: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Paul Turner <pjt@google.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Josh Triplett <josh@joshtriplett.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ben Maurer <bmaurer@fb.com>
+Cc: linux-api@vger.kernel.org
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 ---
- tools/testing/selftests/cpu-opv/percpu-op.h | 151 ++++++++++++++++++++++++++++
- 1 file changed, 151 insertions(+)
- create mode 100644 tools/testing/selftests/cpu-opv/percpu-op.h
+ .../selftests/cpu-opv/basic_percpu_ops_test.c      | 295 +++++++++++++++++++++
+ 1 file changed, 295 insertions(+)
+ create mode 100644 tools/testing/selftests/cpu-opv/basic_percpu_ops_test.c
 
-diff --git a/tools/testing/selftests/cpu-opv/percpu-op.h b/tools/testing/selftests/cpu-opv/percpu-op.h
+diff --git a/tools/testing/selftests/cpu-opv/basic_percpu_ops_test.c b/tools/testing/selftests/cpu-opv/basic_percpu_ops_test.c
 new file mode 100644
-index 000000000000..918171e585d7
+index 000000000000..2ce5202f25b2
 --- /dev/null
-+++ b/tools/testing/selftests/cpu-opv/percpu-op.h
-@@ -0,0 +1,151 @@
-+/* SPDX-License-Identifier: LGPL-2.1 OR MIT */
-+/*
-+ * percpu-op.h
-+ *
-+ * (C) Copyright 2017-2018 - Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-+ */
-+
-+#ifndef PERCPU_OP_H
-+#define PERCPU_OP_H
-+
++++ b/tools/testing/selftests/cpu-opv/basic_percpu_ops_test.c
+@@ -0,0 +1,295 @@
++// SPDX-License-Identifier: LGPL-2.1
++#define _GNU_SOURCE
++#include <assert.h>
++#include <pthread.h>
++#include <sched.h>
 +#include <stdint.h>
-+#include <stdbool.h>
-+#include <errno.h>
++#include <stdio.h>
 +#include <stdlib.h>
-+#include "rseq.h"
-+#include "cpu-op.h"
++#include <string.h>
++#include <stddef.h>
 +
-+static inline uint32_t percpu_current_cpu(void)
++#include "percpu-op.h"
++
++#define ARRAY_SIZE(arr)	(sizeof(arr) / sizeof((arr)[0]))
++
++struct percpu_lock_entry {
++	intptr_t v;
++} __attribute__((aligned(128)));
++
++struct percpu_lock {
++	struct percpu_lock_entry c[CPU_SETSIZE];
++};
++
++struct test_data_entry {
++	intptr_t count;
++} __attribute__((aligned(128)));
++
++struct spinlock_test_data {
++	struct percpu_lock lock;
++	struct test_data_entry c[CPU_SETSIZE];
++	int reps;
++};
++
++struct percpu_list_node {
++	intptr_t data;
++	struct percpu_list_node *next;
++};
++
++struct percpu_list_entry {
++	struct percpu_list_node *head;
++} __attribute__((aligned(128)));
++
++struct percpu_list {
++	struct percpu_list_entry c[CPU_SETSIZE];
++};
++
++/* A simple percpu spinlock. */
++void rseq_percpu_lock(struct percpu_lock *lock, int cpu)
 +{
-+	return rseq_current_cpu();
++	for (;;) {
++		int ret;
++
++		ret = percpu_cmpeqv_storev(&lock->c[cpu].v,
++					   0, 1, cpu);
++		if (rseq_likely(!ret))
++			break;
++		if (rseq_unlikely(ret < 0)) {
++			perror("cpu_opv");
++			abort();
++		}
++		/* Retry if comparison fails. */
++	}
++	/*
++	 * Acquire semantic when taking lock after control dependency.
++	 * Matches rseq_smp_store_release().
++	 */
++	rseq_smp_acquire__after_ctrl_dep();
 +}
 +
-+static inline __attribute__((always_inline))
-+int percpu_cmpeqv_storev(intptr_t *v, intptr_t expect, intptr_t newv,
-+			 int cpu)
++void rseq_percpu_unlock(struct percpu_lock *lock, int cpu)
 +{
++	assert(lock->c[cpu].v == 1);
++	/*
++	 * Release lock, with release semantic. Matches
++	 * rseq_smp_acquire__after_ctrl_dep().
++	 */
++	rseq_smp_store_release(&lock->c[cpu].v, 0);
++}
++
++void *test_percpu_spinlock_thread(void *arg)
++{
++	struct spinlock_test_data *data = arg;
++	int i;
++
++	if (rseq_register_current_thread()) {
++		fprintf(stderr, "Error: rseq_register_current_thread(...) failed(%d): %s\n",
++			errno, strerror(errno));
++		abort();
++	}
++	for (i = 0; i < data->reps; i++) {
++		int cpu = percpu_current_cpu();
++
++		rseq_percpu_lock(&data->lock, cpu);
++		data->c[cpu].count++;
++		rseq_percpu_unlock(&data->lock, cpu);
++	}
++	if (rseq_unregister_current_thread()) {
++		fprintf(stderr, "Error: rseq_unregister_current_thread(...) failed(%d): %s\n",
++			errno, strerror(errno));
++		abort();
++	}
++
++	return NULL;
++}
++
++/*
++ * A simple test which implements a sharded counter using a per-cpu
++ * lock.  Obviously real applications might prefer to simply use a
++ * per-cpu increment; however, this is reasonable for a test and the
++ * lock can be extended to synchronize more complicated operations.
++ */
++void test_percpu_spinlock(void)
++{
++	const int num_threads = 200;
++	int i;
++	uint64_t sum;
++	pthread_t test_threads[num_threads];
++	struct spinlock_test_data data;
++
++	memset(&data, 0, sizeof(data));
++	data.reps = 5000;
++
++	for (i = 0; i < num_threads; i++)
++		pthread_create(&test_threads[i], NULL,
++			       test_percpu_spinlock_thread, &data);
++
++	for (i = 0; i < num_threads; i++)
++		pthread_join(test_threads[i], NULL);
++
++	sum = 0;
++	for (i = 0; i < CPU_SETSIZE; i++)
++		sum += data.c[i].count;
++
++	assert(sum == (uint64_t)data.reps * num_threads);
++}
++
++int percpu_list_push(struct percpu_list *list, struct percpu_list_node *node,
++		     int cpu)
++{
++	for (;;) {
++		intptr_t *targetptr, newval, expect;
++		int ret;
++
++		/* Load list->c[cpu].head with single-copy atomicity. */
++		expect = (intptr_t)RSEQ_READ_ONCE(list->c[cpu].head);
++		newval = (intptr_t)node;
++		targetptr = (intptr_t *)&list->c[cpu].head;
++		node->next = (struct percpu_list_node *)expect;
++		ret = percpu_cmpeqv_storev(targetptr, expect, newval, cpu);
++		if (rseq_likely(!ret))
++			break;
++		if (rseq_unlikely(ret < 0)) {
++			perror("cpu_opv");
++			abort();
++		}
++		/* Retry if comparison fails. */
++	}
++	return cpu;
++}
++
++/*
++ * Unlike a traditional lock-less linked list; the availability of a
++ * rseq primitive allows us to implement pop without concerns over
++ * ABA-type races.
++ */
++struct percpu_list_node *percpu_list_pop(struct percpu_list *list,
++					 int cpu)
++{
++	struct percpu_list_node *head;
++	intptr_t *targetptr, expectnot, *load;
++	off_t offset;
 +	int ret;
 +
-+	ret = rseq_cmpeqv_storev(v, expect, newv, cpu);
-+	if (rseq_unlikely(ret)) {
-+		if (ret > 0)
-+			return ret;
-+		return cpu_op_cmpeqv_storev(v, expect, newv, cpu);
++	targetptr = (intptr_t *)&list->c[cpu].head;
++	expectnot = (intptr_t)NULL;
++	offset = offsetof(struct percpu_list_node, next);
++	load = (intptr_t *)&head;
++	ret = percpu_cmpnev_storeoffp_load(targetptr, expectnot,
++					   offset, load, cpu);
++	if (rseq_unlikely(ret < 0)) {
++		perror("cpu_opv");
++		abort();
++	}
++	if (ret > 0)
++		return NULL;
++	return head;
++}
++
++void *test_percpu_list_thread(void *arg)
++{
++	int i;
++	struct percpu_list *list = (struct percpu_list *)arg;
++
++	if (rseq_register_current_thread()) {
++		fprintf(stderr, "Error: rseq_register_current_thread(...) failed(%d): %s\n",
++			errno, strerror(errno));
++		abort();
++	}
++
++	for (i = 0; i < 100000; i++) {
++		struct percpu_list_node *node;
++
++		node = percpu_list_pop(list, percpu_current_cpu());
++		sched_yield();  /* encourage shuffling */
++		if (node)
++			percpu_list_push(list, node, percpu_current_cpu());
++	}
++
++	if (rseq_unregister_current_thread()) {
++		fprintf(stderr, "Error: rseq_unregister_current_thread(...) failed(%d): %s\n",
++			errno, strerror(errno));
++		abort();
++	}
++
++	return NULL;
++}
++
++/* Simultaneous modification to a per-cpu linked list from many threads.  */
++void test_percpu_list(void)
++{
++	int i, j;
++	uint64_t sum = 0, expected_sum = 0;
++	struct percpu_list list;
++	pthread_t test_threads[200];
++	cpu_set_t allowed_cpus;
++
++	memset(&list, 0, sizeof(list));
++
++	/* Generate list entries for every usable cpu. */
++	sched_getaffinity(0, sizeof(allowed_cpus), &allowed_cpus);
++	for (i = 0; i < CPU_SETSIZE; i++) {
++		if (!CPU_ISSET(i, &allowed_cpus))
++			continue;
++		for (j = 1; j <= 100; j++) {
++			struct percpu_list_node *node;
++
++			expected_sum += j;
++
++			node = malloc(sizeof(*node));
++			assert(node);
++			node->data = j;
++			node->next = list.c[i].head;
++			list.c[i].head = node;
++		}
++	}
++
++	for (i = 0; i < 200; i++)
++		pthread_create(&test_threads[i], NULL,
++		       test_percpu_list_thread, &list);
++
++	for (i = 0; i < 200; i++)
++		pthread_join(test_threads[i], NULL);
++
++	for (i = 0; i < CPU_SETSIZE; i++) {
++		struct percpu_list_node *node;
++
++		if (!CPU_ISSET(i, &allowed_cpus))
++			continue;
++
++		while ((node = percpu_list_pop(&list, i))) {
++			sum += node->data;
++			free(node);
++		}
++	}
++
++	/*
++	 * All entries should now be accounted for (unless some external
++	 * actor is interfering with our allowed affinity while this
++	 * test is running).
++	 */
++	assert(sum == expected_sum);
++}
++
++int main(int argc, char **argv)
++{
++	if (rseq_register_current_thread()) {
++		fprintf(stderr, "Error: rseq_register_current_thread(...) failed(%d): %s\n",
++			errno, strerror(errno));
++		goto error;
++	}
++	printf("spinlock\n");
++	test_percpu_spinlock();
++	printf("percpu_list\n");
++	test_percpu_list();
++	if (rseq_unregister_current_thread()) {
++		fprintf(stderr, "Error: rseq_unregister_current_thread(...) failed(%d): %s\n",
++			errno, strerror(errno));
++		goto error;
 +	}
 +	return 0;
++
++error:
++	return -1;
 +}
 +
-+static inline __attribute__((always_inline))
-+int percpu_cmpnev_storeoffp_load(intptr_t *v, intptr_t expectnot,
-+			       off_t voffp, intptr_t *load, int cpu)
-+{
-+	int ret;
-+
-+	ret = rseq_cmpnev_storeoffp_load(v, expectnot, voffp, load, cpu);
-+	if (rseq_unlikely(ret)) {
-+		if (ret > 0)
-+			return ret;
-+		return cpu_op_cmpnev_storeoffp_load(v, expectnot, voffp,
-+						    load, cpu);
-+	}
-+	return 0;
-+}
-+
-+static inline __attribute__((always_inline))
-+int percpu_addv(intptr_t *v, intptr_t count, int cpu)
-+{
-+	if (rseq_unlikely(rseq_addv(v, count, cpu)))
-+		return cpu_op_addv(v, count, cpu);
-+	return 0;
-+}
-+
-+static inline __attribute__((always_inline))
-+int percpu_cmpeqv_storev_storev(intptr_t *v, intptr_t expect,
-+				intptr_t *v2, intptr_t newv2,
-+				intptr_t newv, int cpu)
-+{
-+	int ret;
-+
-+	ret = rseq_cmpeqv_trystorev_storev(v, expect, v2, newv2,
-+					   newv, cpu);
-+	if (rseq_unlikely(ret)) {
-+		if (ret > 0)
-+			return ret;
-+		return cpu_op_cmpeqv_storev_storev(v, expect, v2, newv2,
-+						   newv, cpu);
-+	}
-+	return 0;
-+}
-+
-+static inline __attribute__((always_inline))
-+int percpu_cmpeqv_storev_storev_release(intptr_t *v, intptr_t expect,
-+					intptr_t *v2, intptr_t newv2,
-+					intptr_t newv, int cpu)
-+{
-+	int ret;
-+
-+	ret = rseq_cmpeqv_trystorev_storev_release(v, expect, v2, newv2,
-+						   newv, cpu);
-+	if (rseq_unlikely(ret)) {
-+		if (ret > 0)
-+			return ret;
-+		return cpu_op_cmpeqv_storev_storev_release(v, expect, v2, newv2,
-+							   newv, cpu);
-+	}
-+	return 0;
-+}
-+
-+static inline __attribute__((always_inline))
-+int percpu_cmpeqv_cmpeqv_storev(intptr_t *v, intptr_t expect,
-+				intptr_t *v2, intptr_t expect2,
-+				intptr_t newv, int cpu)
-+{
-+	int ret;
-+
-+	ret = rseq_cmpeqv_cmpeqv_storev(v, expect, v2, expect2, newv, cpu);
-+	if (rseq_unlikely(ret)) {
-+		if (ret > 0)
-+			return ret;
-+		return cpu_op_cmpeqv_cmpeqv_storev(v, expect, v2, expect2,
-+						   newv, cpu);
-+	}
-+	return 0;
-+}
-+
-+static inline __attribute__((always_inline))
-+int percpu_cmpeqv_memcpy_storev(intptr_t *v, intptr_t expect,
-+				void *dst, void *src, size_t len,
-+				intptr_t newv, int cpu)
-+{
-+	int ret;
-+
-+	ret = rseq_cmpeqv_trymemcpy_storev(v, expect, dst, src, len,
-+					   newv, cpu);
-+	if (rseq_unlikely(ret)) {
-+		if (ret > 0)
-+			return ret;
-+		return cpu_op_cmpeqv_memcpy_storev(v, expect, dst, src, len,
-+						   newv, cpu);
-+	}
-+	return 0;
-+}
-+
-+static inline __attribute__((always_inline))
-+int percpu_cmpeqv_memcpy_storev_release(intptr_t *v, intptr_t expect,
-+					void *dst, void *src, size_t len,
-+					intptr_t newv, int cpu)
-+{
-+	int ret;
-+
-+	ret = rseq_cmpeqv_trymemcpy_storev_release(v, expect, dst, src, len,
-+						   newv, cpu);
-+	if (rseq_unlikely(ret)) {
-+		if (ret > 0)
-+			return ret;
-+		return cpu_op_cmpeqv_memcpy_storev_release(v, expect, dst, src,
-+							   len, newv, cpu);
-+	}
-+	return 0;
-+}
-+
-+#endif  /* PERCPU_OP_H_ */
 -- 
 2.11.0
 
