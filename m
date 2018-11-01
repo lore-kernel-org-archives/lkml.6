@@ -6,61 +6,61 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 679B9C0044C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F35DC6786F
 	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 21:49:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 244A620657
+	by mail.kernel.org (Postfix) with ESMTP id 61D112082E
 	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 21:49:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 244A620657
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61D112082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727759AbeKBGxy (ORCPT
+        id S1727826AbeKBGxz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 02:53:54 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:58252 "EHLO
+        Fri, 2 Nov 2018 02:53:55 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:58250 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727653AbeKBGxx (ORCPT
+        with ESMTP id S1727650AbeKBGxy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 02:53:53 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71])
+        Fri, 2 Nov 2018 02:53:54 -0400
+Received: from mail-it1-f200.google.com ([209.85.166.200])
         by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
         (Exim 4.76)
         (envelope-from <seth.forshee@canonical.com>)
-        id 1gIKpu-0008JJ-43
-        for linux-kernel@vger.kernel.org; Thu, 01 Nov 2018 21:49:06 +0000
-Received: by mail-io1-f71.google.com with SMTP id q22-v6so2561329iog.9
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 14:49:06 -0700 (PDT)
+        id 1gIKpt-0008JI-JP
+        for linux-kernel@vger.kernel.org; Thu, 01 Nov 2018 21:49:05 +0000
+Received: by mail-it1-f200.google.com with SMTP id v125-v6so456266ita.7
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 14:49:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=HqO+O/aNpZPwRvx4yB9/pL17OMe9OsdTMxTohpBwNEc=;
-        b=rURW5yCm5EB6e9japAXXavp/qQn8kffMePBUSCJxGUvVrDJzZTTnpnxOuP9/ikXed6
-         Zq3M7MHHB8HundItq15pWQJ/DkI+dknONCM3qCJy9761NG15zIrdAD46zhI3S9jM9DGN
-         vwI/O4B3fjW+Nz9iWKkcGyXaABlNkqHRQqJyA0cCP39JmjUghjcNY+UaAIsXCTBbmckj
-         p/dGX+VnPbESt0t5CzjA1gHTNJKX8uKRoUjt7cBlwPONQUB/uVCPTUh8m2yP1sAyn+w0
-         /feOMfIqXhkXRmZpcfz4LJ4/jxysydq+Fqk2oj6EKvpm8Idz1EoxsEbEJVJzHfFh39mZ
-         xRRA==
-X-Gm-Message-State: AGRZ1gLHV7emK9Un0kO5hKPPy2paXQ+8MMwvJaktjPKCN8dLifUWxxAZ
-        +4WRETSqdUO93hquDl9TlHK53JjC2IyDGXELg6+/9GPX5NMiAGwcibLRA83cS1Wk2ofUObU/O34
-        LOA0MSqLhKvVhOKwpfKCpLhw1tY7Vpt4EQl79p9pjpg==
-X-Received: by 2002:a5e:980f:: with SMTP id s15-v6mr6702572ioj.87.1541108944830;
-        Thu, 01 Nov 2018 14:49:04 -0700 (PDT)
-X-Google-Smtp-Source: AJdET5ePUeRP/Exu0eFfpjFT6LSRHDYkH5G6cJyaQ+egHUuzEBr7b+uaZWetTlGcUMc0BptAWoumag==
-X-Received: by 2002:a5e:980f:: with SMTP id s15-v6mr6702555ioj.87.1541108944308;
-        Thu, 01 Nov 2018 14:49:04 -0700 (PDT)
-Received: from localhost ([2605:a601:ac7:2a20:7c8b:4047:a2ef:69cd])
-        by smtp.gmail.com with ESMTPSA id z9-v6sm9648532iom.12.2018.11.01.14.49.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        bh=iV6f50cfbE2+B8qKD5+AQCH/eJ9IChkzB4fSfQjBUEU=;
+        b=pCcyHhtx15H0mkSWt1CFqToqbn9GRLUBXokdUutpJHj7IMmXllioZUd6DyVAZeINnJ
+         jBJJ2pnUVZhI2czFgn/fJSezHHguu7sqSzeXW1R6Cg73IdRWe/GmWXqwNV/rVfjNO8V/
+         GGDkOz9n4JhkGDsNhUatD5uFIl0PZuufTGxXFECaN1XPDfs6SoKxWR83sDnLxPa36cDZ
+         sxXmdryYb3F9Ytk9g7agB3yHDjnlqVJx7XeeP3BwMK9n3TLMPOnBngkOxNVaMv34eejm
+         aU7oBOvvc6bgHv2lZIkUh2brlXVHKbsonAK2MOVnYzfSlUBbU7csNtGnyiR+nz5yaU6u
+         uOIg==
+X-Gm-Message-State: AGRZ1gI7+nbtcxcctT2skOZXKl2MotLkTp0V125ryDD4pfA+CKS5vScD
+        bTWwJnNhVZ3hpUntOGFUOSCqgGJaHBfplJaRKzSWUcP0bEdCjWQRKSd/35nZL9v87VVcl2TgeYt
+        FmK04b+5TPoP7gHk0QDdnbwuTsr/cqxl5HuV2gVGJoA==
+X-Received: by 2002:a24:68f:: with SMTP id 137-v6mr7506044itv.54.1541108943322;
         Thu, 01 Nov 2018 14:49:03 -0700 (PDT)
+X-Google-Smtp-Source: AJdET5fXd/FCTpAfiXJMRR3K072buiL2OSq1KhS9C2+M8kQWTSAZt8QLwmZBhiTYcIbpVmYuhHcrkA==
+X-Received: by 2002:a24:68f:: with SMTP id 137-v6mr7506011itv.54.1541108942726;
+        Thu, 01 Nov 2018 14:49:02 -0700 (PDT)
+Received: from localhost ([2605:a601:ac7:2a20:7c8b:4047:a2ef:69cd])
+        by smtp.gmail.com with ESMTPSA id j19-v6sm11506360itb.25.2018.11.01.14.49.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 01 Nov 2018 14:49:01 -0700 (PDT)
 From:   Seth Forshee <seth.forshee@canonical.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         containers@lists.linux-foundation.org,
         James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: [RFC PATCH 2/6] shiftfs: map inodes to lower fs inodes instead of dentries
-Date:   Thu,  1 Nov 2018 16:48:52 -0500
-Message-Id: <20181101214856.4563-3-seth.forshee@canonical.com>
+Subject: [RFC PATCH 1/6] shiftfs: uid/gid shifting bind mount
+Date:   Thu,  1 Nov 2018 16:48:51 -0500
+Message-Id: <20181101214856.4563-2-seth.forshee@canonical.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181101214856.4563-1-seth.forshee@canonical.com>
 References: <20181101214856.4563-1-seth.forshee@canonical.com>
@@ -71,233 +71,870 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since shiftfs inodes map to dentries in the lower fs, two links
-to the same lowerfs inode create separate inodes in shiftfs. This
-causes problems for inotify, as a watch on one of these files in
-shiftfs will not see changes made to the underlying inode via the
-other file.
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
 
-Fix this by updating shiftfs to map its inodes to corresponding
-inodes in the lower fs. Inodes are cached using the pointer to
-the lower fs inode as the hash value. This fixes a second inotify
-problem whereby a watch is set on an inode, the dentry is evicted
-from the cache, and events on a new dentry are not reported back
-to the watch original inode.
+This allows any subtree to be uid/gid shifted and bound elsewhere.  It
+does this by operating simlarly to overlayfs.  Its primary use is for
+shifting the underlying uids of filesystems used to support
+unpriviliged (uid shifted) containers.  The usual use case here is
+that the container is operating with an uid shifted unprivileged root
+but sometimes needs to make use of or work with a filesystem image
+that has root at real uid 0.
 
+The mechanism is to allow any subordinate mount namespace to mount a
+shiftfs filesystem (by marking it FS_USERNS_MOUNT) but only allowing
+it to mount marked subtrees (using the -o mark option as root).  Once
+mounted, the subtree is mapped via the super block user namespace so
+that the interior ids of the mounting user namespace are the ids
+written to the filesystem.
+
+Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+[ saf: use designated initializers for path declarations to fix errors
+  with struct randomization ]
 Signed-off-by: Seth Forshee <seth.forshee@canonical.com>
----
- fs/shiftfs.c | 105 ++++++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 79 insertions(+), 26 deletions(-)
 
+---
+
+v3 - update to 4.14 (d_real changes)
+v1 - based on original shiftfs with uid mappings now done via s_user_ns
+v2 - fix revalidation of dentries
+     add inode aliasing
+---
+ fs/Kconfig                 |   8 +
+ fs/Makefile                |   1 +
+ fs/shiftfs.c               | 783 +++++++++++++++++++++++++++++++++++++
+ include/uapi/linux/magic.h |   2 +
+ 4 files changed, 794 insertions(+)
+ create mode 100644 fs/shiftfs.c
+
+diff --git a/fs/Kconfig b/fs/Kconfig
+index ac474a61be37..392c5a41a9f9 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -113,6 +113,14 @@ source "fs/autofs/Kconfig"
+ source "fs/fuse/Kconfig"
+ source "fs/overlayfs/Kconfig"
+ 
++config SHIFT_FS
++	tristate "UID/GID shifting overlay filesystem for containers"
++	help
++	  This filesystem can overlay any mounted filesystem and shift
++	  the uid/gid the files appear at.  The idea is that
++	  unprivileged containers can use this to mount root volumes
++	  using this technique.
++
+ menu "Caches"
+ 
+ source "fs/fscache/Kconfig"
+diff --git a/fs/Makefile b/fs/Makefile
+index 293733f61594..d0222f3816bd 100644
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -128,3 +128,4 @@ obj-y				+= exofs/ # Multiple modules
+ obj-$(CONFIG_CEPH_FS)		+= ceph/
+ obj-$(CONFIG_PSTORE)		+= pstore/
+ obj-$(CONFIG_EFIVAR_FS)		+= efivarfs/
++obj-$(CONFIG_SHIFT_FS)		+= shiftfs.o
 diff --git a/fs/shiftfs.c b/fs/shiftfs.c
-index 6028244c2f42..b179a1be7bc1 100644
---- a/fs/shiftfs.c
+new file mode 100644
+index 000000000000..6028244c2f42
+--- /dev/null
 +++ b/fs/shiftfs.c
-@@ -22,6 +22,7 @@ struct shiftfs_super_info {
- 
- static struct inode *shiftfs_new_inode(struct super_block *sb, umode_t mode,
- 				       struct dentry *dentry);
-+static void shiftfs_init_inode(struct inode *inode, umode_t mode);
- 
- enum {
- 	OPT_MARK,
-@@ -278,15 +279,27 @@ static void shiftfs_fill_inode(struct inode *inode, struct dentry *dentry)
- 		inode->i_opflags |= IOP_NOFOLLOW;
- 
- 	inode->i_mapping = reali->i_mapping;
--	inode->i_private = dentry;
-+	inode->i_private = reali;
-+	set_nlink(inode, reali->i_nlink);
+@@ -0,0 +1,783 @@
++#include <linux/cred.h>
++#include <linux/mount.h>
++#include <linux/file.h>
++#include <linux/fs.h>
++#include <linux/namei.h>
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/magic.h>
++#include <linux/parser.h>
++#include <linux/seq_file.h>
++#include <linux/statfs.h>
++#include <linux/slab.h>
++#include <linux/user_namespace.h>
++#include <linux/uidgid.h>
++#include <linux/xattr.h>
++
++struct shiftfs_super_info {
++	struct vfsmount *mnt;
++	struct user_namespace *userns;
++	bool mark;
++};
++
++static struct inode *shiftfs_new_inode(struct super_block *sb, umode_t mode,
++				       struct dentry *dentry);
++
++enum {
++	OPT_MARK,
++	OPT_LAST,
++};
++
++/* global filesystem options */
++static const match_table_t tokens = {
++	{ OPT_MARK, "mark" },
++	{ OPT_LAST, NULL }
++};
++
++static const struct cred *shiftfs_get_up_creds(struct super_block *sb)
++{
++	struct shiftfs_super_info *ssi = sb->s_fs_info;
++	struct cred *cred = prepare_creds();
++
++	if (!cred)
++		return NULL;
++
++	cred->fsuid = KUIDT_INIT(from_kuid(sb->s_user_ns, cred->fsuid));
++	cred->fsgid = KGIDT_INIT(from_kgid(sb->s_user_ns, cred->fsgid));
++	put_user_ns(cred->user_ns);
++	cred->user_ns = get_user_ns(ssi->userns);
++
++	return cred;
 +}
 +
-+static int shiftfs_inode_test(struct inode *inode, void *data)
++static const struct cred *shiftfs_new_creds(const struct cred **newcred,
++					    struct super_block *sb)
 +{
-+	return inode->i_private == data;
++	const struct cred *cred = shiftfs_get_up_creds(sb);
++
++	*newcred = cred;
++
++	if (cred)
++		cred = override_creds(cred);
++	else
++		printk(KERN_ERR "shiftfs: Credential override failed: no memory\n");
++
++	return cred;
 +}
 +
-+static int shiftfs_inode_set(struct inode *inode, void *data)
++static void shiftfs_old_creds(const struct cred *oldcred,
++			      const struct cred **newcred)
 +{
-+	inode->i_private = data;
-+	return 0;
- }
- 
- static int shiftfs_make_object(struct inode *dir, struct dentry *dentry,
- 			       umode_t mode, const char *symlink,
- 			       struct dentry *hardlink, bool excl)
- {
--	struct dentry *real = dir->i_private, *new = dentry->d_fsdata;
--	struct inode *reali = real->d_inode, *newi;
-+	struct dentry *new = dentry->d_fsdata;
-+	struct inode *reali = dir->i_private, *inode, *newi;
- 	const struct inode_operations *iop = reali->i_op;
- 	int err;
- 	const struct cred *oldcred, *newcred;
-@@ -310,9 +323,14 @@ static int shiftfs_make_object(struct inode *dir, struct dentry *dentry,
- 		return -EINVAL;
- 
- 
--	newi = shiftfs_new_inode(dentry->d_sb, mode, NULL);
--	if (!newi)
--		return -ENOMEM;
-+	if (hardlink) {
-+		inode = d_inode(hardlink);
-+		ihold(inode);
-+	} else {
-+		inode = shiftfs_new_inode(dentry->d_sb, mode, NULL);
-+		if (!inode)
-+			return -ENOMEM;
++	if (!*newcred)
++		return;
++
++	revert_creds(oldcred);
++	put_cred(*newcred);
++}
++
++static int shiftfs_parse_options(struct shiftfs_super_info *ssi, char *options)
++{
++	char *p;
++	substring_t args[MAX_OPT_ARGS];
++
++	ssi->mark = false;
++
++	while ((p = strsep(&options, ",")) != NULL) {
++		int token;
++
++		if (!*p)
++			continue;
++
++		token = match_token(p, tokens, args);
++		switch (token) {
++		case OPT_MARK:
++			ssi->mark = true;
++			break;
++		default:
++			return -EINVAL;
++		}
 +	}
- 
- 	oldcred = shiftfs_new_creds(&newcred, dentry->d_sb);
- 
-@@ -341,16 +359,33 @@ static int shiftfs_make_object(struct inode *dir, struct dentry *dentry,
- 	if (err)
- 		goto out_dput;
- 
--	shiftfs_fill_inode(newi, new);
-+	if (hardlink) {
-+		WARN_ON(inode->i_private != new->d_inode);
-+		inc_nlink(inode);
-+	} else {
-+		shiftfs_fill_inode(inode, new);
++	return 0;
++}
 +
-+		newi = inode_insert5(inode, (unsigned long)new->d_inode,
-+				     shiftfs_inode_test, shiftfs_inode_set,
-+				     new->d_inode);
-+		if (newi != inode) {
-+			pr_warn_ratelimited("shiftfs: newly created inode found in cache\n");
-+			iput(inode);
-+			inode = newi;
++static void shiftfs_d_release(struct dentry *dentry)
++{
++	struct dentry *real = dentry->d_fsdata;
++
++	dput(real);
++}
++
++static struct dentry *shiftfs_d_real(struct dentry *dentry,
++				     const struct inode *inode,
++				     unsigned int open_flags,
++				     unsigned int dreal_flags)
++{
++	struct dentry *real = dentry->d_fsdata;
++
++	if (unlikely(real->d_flags & DCACHE_OP_REAL))
++		return real->d_op->d_real(real, real->d_inode,
++					  open_flags, dreal_flags);
++
++	return real;
++}
++
++static int shiftfs_d_weak_revalidate(struct dentry *dentry, unsigned int flags)
++{
++	struct dentry *real = dentry->d_fsdata;
++
++	if (d_unhashed(real))
++		return 0;
++
++	if (!(real->d_flags & DCACHE_OP_WEAK_REVALIDATE))
++		return 1;
++
++	return real->d_op->d_weak_revalidate(real, flags);
++}
++
++static int shiftfs_d_revalidate(struct dentry *dentry, unsigned int flags)
++{
++	struct dentry *real = dentry->d_fsdata;
++	int ret;
++
++	if (d_unhashed(real))
++		return 0;
++
++	/*
++	 * inode state of underlying changed from positive to negative
++	 * or vice versa; force a lookup to update our view
++	 */
++	if (d_is_negative(real) != d_is_negative(dentry))
++		return 0;
++
++	if (!(real->d_flags & DCACHE_OP_REVALIDATE))
++		return 1;
++
++	ret = real->d_op->d_revalidate(real, flags);
++
++	if (ret == 0 && !(flags & LOOKUP_RCU))
++		d_invalidate(real);
++
++	return ret;
++}
++
++static const struct dentry_operations shiftfs_dentry_ops = {
++	.d_release	= shiftfs_d_release,
++	.d_real		= shiftfs_d_real,
++	.d_revalidate	= shiftfs_d_revalidate,
++	.d_weak_revalidate = shiftfs_d_weak_revalidate,
++};
++
++static int shiftfs_readlink(struct dentry *dentry, char __user *data,
++			    int flags)
++{
++	struct dentry *real = dentry->d_fsdata;
++	const struct inode_operations *iop = real->d_inode->i_op;
++
++	if (iop->readlink)
++		return iop->readlink(real, data, flags);
++
++	return -EINVAL;
++}
++
++static const char *shiftfs_get_link(struct dentry *dentry, struct inode *inode,
++				    struct delayed_call *done)
++{
++	if (dentry) {
++		struct dentry *real = dentry->d_fsdata;
++		struct inode *reali = real->d_inode;
++		const struct inode_operations *iop = reali->i_op;
++		const char *res = ERR_PTR(-EPERM);
++
++		if (iop->get_link)
++			res = iop->get_link(real, reali, done);
++
++		return res;
++	} else {
++		/* RCU lookup not supported */
++		return ERR_PTR(-ECHILD);
++	}
++}
++
++static int shiftfs_setxattr(struct dentry *dentry, struct inode *inode,
++			    const char *name, const void *value,
++			    size_t size, int flags)
++{
++	struct dentry *real = dentry->d_fsdata;
++	int err = -EOPNOTSUPP;
++	const struct cred *oldcred, *newcred;
++
++	oldcred = shiftfs_new_creds(&newcred, dentry->d_sb);
++	err = vfs_setxattr(real, name, value, size, flags);
++	shiftfs_old_creds(oldcred, &newcred);
++
++	return err;
++}
++
++static int shiftfs_xattr_get(const struct xattr_handler *handler,
++			     struct dentry *dentry, struct inode *inode,
++			     const char *name, void *value, size_t size)
++{
++	struct dentry *real = dentry->d_fsdata;
++	int err;
++	const struct cred *oldcred, *newcred;
++
++	oldcred = shiftfs_new_creds(&newcred, dentry->d_sb);
++	err = vfs_getxattr(real, name, value, size);
++	shiftfs_old_creds(oldcred, &newcred);
++
++	return err;
++}
++
++static ssize_t shiftfs_listxattr(struct dentry *dentry, char *list,
++				 size_t size)
++{
++	struct dentry *real = dentry->d_fsdata;
++	int err;
++	const struct cred *oldcred, *newcred;
++
++	oldcred = shiftfs_new_creds(&newcred, dentry->d_sb);
++	err = vfs_listxattr(real, list, size);
++	shiftfs_old_creds(oldcred, &newcred);
++
++	return err;
++}
++
++static int shiftfs_removexattr(struct dentry *dentry, const char *name)
++{
++	struct dentry *real = dentry->d_fsdata;
++	int err;
++	const struct cred *oldcred, *newcred;
++
++	oldcred = shiftfs_new_creds(&newcred, dentry->d_sb);
++	err = vfs_removexattr(real, name);
++	shiftfs_old_creds(oldcred, &newcred);
++
++	return err;
++}
++
++static int shiftfs_xattr_set(const struct xattr_handler *handler,
++			     struct dentry *dentry, struct inode *inode,
++			     const char *name, const void *value, size_t size,
++			     int flags)
++{
++	if (!value)
++		return shiftfs_removexattr(dentry, name);
++	return shiftfs_setxattr(dentry, inode, name, value, size, flags);
++}
++
++static void shiftfs_fill_inode(struct inode *inode, struct dentry *dentry)
++{
++	struct inode *reali;
++
++	if (!dentry)
++		return;
++
++	reali = dentry->d_inode;
++
++	if (!reali->i_op->get_link)
++		inode->i_opflags |= IOP_NOFOLLOW;
++
++	inode->i_mapping = reali->i_mapping;
++	inode->i_private = dentry;
++}
++
++static int shiftfs_make_object(struct inode *dir, struct dentry *dentry,
++			       umode_t mode, const char *symlink,
++			       struct dentry *hardlink, bool excl)
++{
++	struct dentry *real = dir->i_private, *new = dentry->d_fsdata;
++	struct inode *reali = real->d_inode, *newi;
++	const struct inode_operations *iop = reali->i_op;
++	int err;
++	const struct cred *oldcred, *newcred;
++	bool op_ok = false;
++
++	if (hardlink) {
++		op_ok = iop->link;
++	} else {
++		switch (mode & S_IFMT) {
++		case S_IFDIR:
++			op_ok = iop->mkdir;
++			break;
++		case S_IFREG:
++			op_ok = iop->create;
++			break;
++		case S_IFLNK:
++			op_ok = iop->symlink;
++		}
++	}
++	if (!op_ok)
++		return -EINVAL;
++
++
++	newi = shiftfs_new_inode(dentry->d_sb, mode, NULL);
++	if (!newi)
++		return -ENOMEM;
++
++	oldcred = shiftfs_new_creds(&newcred, dentry->d_sb);
++
++	inode_lock_nested(reali, I_MUTEX_PARENT);
++
++	err = -EINVAL;		/* shut gcc up about uninit var */
++	if (hardlink) {
++		struct dentry *realhardlink = hardlink->d_fsdata;
++
++		err = vfs_link(realhardlink, reali, new, NULL);
++	} else {
++		switch (mode & S_IFMT) {
++		case S_IFDIR:
++			err = vfs_mkdir(reali, new, mode);
++			break;
++		case S_IFREG:
++			err = vfs_create(reali, new, mode, excl);
++			break;
++		case S_IFLNK:
++			err = vfs_symlink(reali, new, symlink);
 +		}
 +	}
 +
-+	if (inode->i_state & I_NEW)
-+		unlock_new_inode(inode);
- 
--	d_instantiate(dentry, newi);
-+	d_instantiate(dentry, inode);
- 
- 	new = NULL;
--	newi = NULL;
-+	inode = NULL;
- 
-  out_dput:
- 	dput(new);
--	iput(newi);
-+	iput(inode);
- 	inode_unlock(reali);
- 
- 	return err;
-@@ -386,8 +421,8 @@ static int shiftfs_symlink(struct inode *dir, struct dentry *dentry,
- 
- static int shiftfs_rm(struct inode *dir, struct dentry *dentry, bool rmdir)
- {
--	struct dentry *real = dir->i_private, *new = dentry->d_fsdata;
--	struct inode *reali = real->d_inode;
-+	struct dentry *new = dentry->d_fsdata;
-+	struct inode *reali = dir->i_private;
- 	int err;
- 	const struct cred *oldcred, *newcred;
- 
-@@ -400,6 +435,13 @@ static int shiftfs_rm(struct inode *dir, struct dentry *dentry, bool rmdir)
- 	else
- 		err = vfs_unlink(reali, new, NULL);
- 
-+	if (!err) {
-+		if (rmdir)
-+			clear_nlink(d_inode(dentry));
-+		else
-+			drop_nlink(d_inode(dentry));
++	shiftfs_old_creds(oldcred, &newcred);
++
++	if (err)
++		goto out_dput;
++
++	shiftfs_fill_inode(newi, new);
++
++	d_instantiate(dentry, newi);
++
++	new = NULL;
++	newi = NULL;
++
++ out_dput:
++	dput(new);
++	iput(newi);
++	inode_unlock(reali);
++
++	return err;
++}
++
++static int shiftfs_create(struct inode *dir, struct dentry *dentry,
++			  umode_t mode,  bool excl)
++{
++	mode |= S_IFREG;
++
++	return shiftfs_make_object(dir, dentry, mode, NULL, NULL, excl);
++}
++
++static int shiftfs_mkdir(struct inode *dir, struct dentry *dentry,
++			 umode_t mode)
++{
++	mode |= S_IFDIR;
++
++	return shiftfs_make_object(dir, dentry, mode, NULL, NULL, false);
++}
++
++static int shiftfs_link(struct dentry *hardlink, struct inode *dir,
++			struct dentry *dentry)
++{
++	return shiftfs_make_object(dir, dentry, 0, NULL, hardlink, false);
++}
++
++static int shiftfs_symlink(struct inode *dir, struct dentry *dentry,
++			   const char *symlink)
++{
++	return shiftfs_make_object(dir, dentry, S_IFLNK, symlink, NULL, false);
++}
++
++static int shiftfs_rm(struct inode *dir, struct dentry *dentry, bool rmdir)
++{
++	struct dentry *real = dir->i_private, *new = dentry->d_fsdata;
++	struct inode *reali = real->d_inode;
++	int err;
++	const struct cred *oldcred, *newcred;
++
++	inode_lock_nested(reali, I_MUTEX_PARENT);
++
++	oldcred = shiftfs_new_creds(&newcred, dentry->d_sb);
++
++	if (rmdir)
++		err = vfs_rmdir(reali, new);
++	else
++		err = vfs_unlink(reali, new, NULL);
++
++	shiftfs_old_creds(oldcred, &newcred);
++	inode_unlock(reali);
++
++	return err;
++}
++
++static int shiftfs_unlink(struct inode *dir, struct dentry *dentry)
++{
++	return shiftfs_rm(dir, dentry, false);
++}
++
++static int shiftfs_rmdir(struct inode *dir, struct dentry *dentry)
++{
++	return shiftfs_rm(dir, dentry, true);
++}
++
++static int shiftfs_rename(struct inode *olddir, struct dentry *old,
++			  struct inode *newdir, struct dentry *new,
++			  unsigned int flags)
++{
++	struct dentry *rodd = olddir->i_private, *rndd = newdir->i_private,
++		*realold = old->d_fsdata,
++		*realnew = new->d_fsdata, *trap;
++	struct inode *realolddir = rodd->d_inode, *realnewdir = rndd->d_inode;
++	int err = -EINVAL;
++	const struct cred *oldcred, *newcred;
++
++	trap = lock_rename(rndd, rodd);
++
++	if (trap == realold || trap == realnew)
++		goto out_unlock;
++
++	oldcred = shiftfs_new_creds(&newcred, old->d_sb);
++
++	err = vfs_rename(realolddir, realold, realnewdir,
++			 realnew, NULL, flags);
++
++	shiftfs_old_creds(oldcred, &newcred);
++
++ out_unlock:
++	unlock_rename(rndd, rodd);
++
++	return err;
++}
++
++static struct dentry *shiftfs_lookup(struct inode *dir, struct dentry *dentry,
++				     unsigned int flags)
++{
++	struct dentry *real = dir->i_private, *new;
++	struct inode *reali = real->d_inode, *newi;
++	const struct cred *oldcred, *newcred;
++
++	inode_lock(reali);
++	oldcred = shiftfs_new_creds(&newcred, dentry->d_sb);
++	new = lookup_one_len(dentry->d_name.name, real, dentry->d_name.len);
++	shiftfs_old_creds(oldcred, &newcred);
++	inode_unlock(reali);
++
++	if (IS_ERR(new))
++		return new;
++
++	dentry->d_fsdata = new;
++
++	newi = NULL;
++	if (!new->d_inode)
++		goto out;
++
++	newi = shiftfs_new_inode(dentry->d_sb, new->d_inode->i_mode, new);
++	if (!newi) {
++		dput(new);
++		return ERR_PTR(-ENOMEM);
 +	}
 +
- 	shiftfs_old_creds(oldcred, &newcred);
- 	inode_unlock(reali);
- 
-@@ -420,7 +462,8 @@ static int shiftfs_rename(struct inode *olddir, struct dentry *old,
- 			  struct inode *newdir, struct dentry *new,
- 			  unsigned int flags)
- {
--	struct dentry *rodd = olddir->i_private, *rndd = newdir->i_private,
-+	struct dentry *rodd = old->d_parent->d_fsdata,
-+		*rndd = new->d_parent->d_fsdata,
- 		*realold = old->d_fsdata,
- 		*realnew = new->d_fsdata, *trap;
- 	struct inode *realolddir = rodd->d_inode, *realnewdir = rndd->d_inode;
-@@ -448,8 +491,8 @@ static int shiftfs_rename(struct inode *olddir, struct dentry *old,
- static struct dentry *shiftfs_lookup(struct inode *dir, struct dentry *dentry,
- 				     unsigned int flags)
- {
--	struct dentry *real = dir->i_private, *new;
--	struct inode *reali = real->d_inode, *newi;
-+	struct dentry *real = dentry->d_parent->d_fsdata, *new;
-+	struct inode *reali = real->d_inode, *newi, *inode;
- 	const struct cred *oldcred, *newcred;
- 
- 	inode_lock(reali);
-@@ -463,24 +506,30 @@ static struct dentry *shiftfs_lookup(struct inode *dir, struct dentry *dentry,
- 
- 	dentry->d_fsdata = new;
- 
--	newi = NULL;
--	if (!new->d_inode)
-+	inode = NULL;
-+	newi = new->d_inode;
-+	if (!newi)
- 		goto out;
- 
--	newi = shiftfs_new_inode(dentry->d_sb, new->d_inode->i_mode, new);
--	if (!newi) {
-+	inode = iget5_locked(dentry->d_sb, (unsigned long)newi,
-+			     shiftfs_inode_test, shiftfs_inode_set, newi);
-+	if (!inode) {
- 		dput(new);
- 		return ERR_PTR(-ENOMEM);
- 	}
-+	if (inode->i_state & I_NEW) {
-+		shiftfs_init_inode(inode, newi->i_mode);
-+		shiftfs_fill_inode(inode, new);
-+		unlock_new_inode(inode);
-+	}
- 
-  out:
--	return d_splice_alias(newi, dentry);
-+	return d_splice_alias(inode, dentry);
- }
- 
- static int shiftfs_permission(struct inode *inode, int mask)
- {
--	struct dentry *real = inode->i_private;
--	struct inode *reali = real->d_inode;
-+	struct inode *reali = inode->i_private;
- 	const struct inode_operations *iop = reali->i_op;
- 	int err;
- 	const struct cred *oldcred, *newcred;
-@@ -579,6 +628,14 @@ static struct inode *shiftfs_new_inode(struct super_block *sb, umode_t mode,
- 	if (!inode)
- 		return NULL;
- 
-+	shiftfs_init_inode(inode, mode);
++ out:
++	return d_splice_alias(newi, dentry);
++}
++
++static int shiftfs_permission(struct inode *inode, int mask)
++{
++	struct dentry *real = inode->i_private;
++	struct inode *reali = real->d_inode;
++	const struct inode_operations *iop = reali->i_op;
++	int err;
++	const struct cred *oldcred, *newcred;
++
++	if (mask & MAY_NOT_BLOCK)
++		return -ECHILD;
++
++	oldcred = shiftfs_new_creds(&newcred, inode->i_sb);
++	if (iop->permission)
++		err = iop->permission(reali, mask);
++	else
++		err = generic_permission(reali, mask);
++	shiftfs_old_creds(oldcred, &newcred);
++
++	return err;
++}
++
++static int shiftfs_setattr(struct dentry *dentry, struct iattr *attr)
++{
++	struct dentry *real = dentry->d_fsdata;
++	struct inode *reali = real->d_inode;
++	const struct inode_operations *iop = reali->i_op;
++	struct iattr newattr = *attr;
++	const struct cred *oldcred, *newcred;
++	struct super_block *sb = dentry->d_sb;
++	int err;
++
++	newattr.ia_uid = KUIDT_INIT(from_kuid(sb->s_user_ns, attr->ia_uid));
++	newattr.ia_gid = KGIDT_INIT(from_kgid(sb->s_user_ns, attr->ia_gid));
++
++	oldcred = shiftfs_new_creds(&newcred, dentry->d_sb);
++	inode_lock(reali);
++	if (iop->setattr)
++		err = iop->setattr(real, &newattr);
++	else
++		err = simple_setattr(real, &newattr);
++	inode_unlock(reali);
++	shiftfs_old_creds(oldcred, &newcred);
++
++	if (err)
++		return err;
++
++	/* all OK, reflect the change on our inode */
++	setattr_copy(d_inode(dentry), attr);
++	return 0;
++}
++
++static int shiftfs_getattr(const struct path *path, struct kstat *stat,
++			   u32 request_mask, unsigned int query_flags)
++{
++	struct inode *inode = path->dentry->d_inode;
++	struct dentry *real = path->dentry->d_fsdata;
++	struct inode *reali = real->d_inode;
++	const struct inode_operations *iop = reali->i_op;
++	struct path newpath = { .mnt = path->dentry->d_sb->s_fs_info, .dentry = real };
++	int err = 0;
++
++	if (iop->getattr)
++		err = iop->getattr(&newpath, stat, request_mask, query_flags);
++	else
++		generic_fillattr(reali, stat);
++
++	if (err)
++		return err;
++
++	/* transform the underlying id */
++	stat->uid = make_kuid(inode->i_sb->s_user_ns, __kuid_val(stat->uid));
++	stat->gid = make_kgid(inode->i_sb->s_user_ns, __kgid_val(stat->gid));
++	return 0;
++}
++
++static const struct inode_operations shiftfs_inode_ops = {
++	.lookup		= shiftfs_lookup,
++	.getattr	= shiftfs_getattr,
++	.setattr	= shiftfs_setattr,
++	.permission	= shiftfs_permission,
++	.mkdir		= shiftfs_mkdir,
++	.symlink	= shiftfs_symlink,
++	.get_link	= shiftfs_get_link,
++	.readlink	= shiftfs_readlink,
++	.unlink		= shiftfs_unlink,
++	.rmdir		= shiftfs_rmdir,
++	.rename		= shiftfs_rename,
++	.link		= shiftfs_link,
++	.create		= shiftfs_create,
++	.mknod		= NULL,	/* no special files currently */
++	.listxattr	= shiftfs_listxattr,
++};
++
++static struct inode *shiftfs_new_inode(struct super_block *sb, umode_t mode,
++				       struct dentry *dentry)
++{
++	struct inode *inode;
++
++	inode = new_inode(sb);
++	if (!inode)
++		return NULL;
++
++	/*
++	 * our inode is completely vestigial.  All lookups, getattr
++	 * and permission checks are done on the underlying inode, so
++	 * what the user sees is entirely from the underlying inode.
++	 */
++	mode &= S_IFMT;
++
++	inode->i_ino = get_next_ino();
++	inode->i_mode = mode;
++	inode->i_flags |= S_NOATIME | S_NOCMTIME;
++
++	inode->i_op = &shiftfs_inode_ops;
++
 +	shiftfs_fill_inode(inode, dentry);
 +
 +	return inode;
 +}
 +
-+static void shiftfs_init_inode(struct inode *inode, umode_t mode)
++static int shiftfs_show_options(struct seq_file *m, struct dentry *dentry)
 +{
- 	/*
- 	 * our inode is completely vestigial.  All lookups, getattr
- 	 * and permission checks are done on the underlying inode, so
-@@ -591,10 +648,6 @@ static struct inode *shiftfs_new_inode(struct super_block *sb, umode_t mode,
- 	inode->i_flags |= S_NOATIME | S_NOCMTIME;
++	struct super_block *sb = dentry->d_sb;
++	struct shiftfs_super_info *ssi = sb->s_fs_info;
++
++	if (ssi->mark)
++		seq_show_option(m, "mark", NULL);
++
++	return 0;
++}
++
++static int shiftfs_statfs(struct dentry *dentry, struct kstatfs *buf)
++{
++	struct super_block *sb = dentry->d_sb;
++	struct shiftfs_super_info *ssi = sb->s_fs_info;
++	struct dentry *root = sb->s_root;
++	struct dentry *realroot = root->d_fsdata;
++	struct path realpath = { .mnt = ssi->mnt, .dentry = realroot };
++	int err;
++
++	err = vfs_statfs(&realpath, buf);
++	if (err)
++		return err;
++
++	buf->f_type = sb->s_magic;
++
++	return 0;
++}
++
++static void shiftfs_put_super(struct super_block *sb)
++{
++	struct shiftfs_super_info *ssi = sb->s_fs_info;
++
++	mntput(ssi->mnt);
++	put_user_ns(ssi->userns);
++	kfree(ssi);
++}
++
++static const struct xattr_handler shiftfs_xattr_handler = {
++	.prefix = "",
++	.get    = shiftfs_xattr_get,
++	.set    = shiftfs_xattr_set,
++};
++
++const struct xattr_handler *shiftfs_xattr_handlers[] = {
++	&shiftfs_xattr_handler,
++	NULL
++};
++
++static const struct super_operations shiftfs_super_ops = {
++	.put_super	= shiftfs_put_super,
++	.show_options	= shiftfs_show_options,
++	.statfs		= shiftfs_statfs,
++};
++
++struct shiftfs_data {
++	void *data;
++	const char *path;
++};
++
++static int shiftfs_fill_super(struct super_block *sb, void *raw_data,
++			      int silent)
++{
++	struct shiftfs_data *data = raw_data;
++	char *name = kstrdup(data->path, GFP_KERNEL);
++	int err = -ENOMEM;
++	struct shiftfs_super_info *ssi = NULL;
++	struct path path;
++	struct dentry *dentry;
++
++	if (!name)
++		goto out;
++
++	ssi = kzalloc(sizeof(*ssi), GFP_KERNEL);
++	if (!ssi)
++		goto out;
++
++	err = -EPERM;
++	err = shiftfs_parse_options(ssi, data->data);
++	if (err)
++		goto out;
++
++	/* to mark a mount point, must be real root */
++	if (ssi->mark && !capable(CAP_SYS_ADMIN))
++		goto out;
++
++	/* else to mount a mark, must be userns admin */
++	if (!ssi->mark && !ns_capable(current_user_ns(), CAP_SYS_ADMIN))
++		goto out;
++
++	err = kern_path(name, LOOKUP_FOLLOW, &path);
++	if (err)
++		goto out;
++
++	err = -EPERM;
++
++	if (!S_ISDIR(path.dentry->d_inode->i_mode)) {
++		err = -ENOTDIR;
++		goto out_put;
++	}
++
++	sb->s_stack_depth = path.dentry->d_sb->s_stack_depth + 1;
++	if (sb->s_stack_depth > FILESYSTEM_MAX_STACK_DEPTH) {
++		printk(KERN_ERR "shiftfs: maximum stacking depth exceeded\n");
++		err = -EINVAL;
++		goto out_put;
++	}
++
++	if (ssi->mark) {
++		/*
++		 * this part is visible unshifted, so make sure no
++		 * executables that could be used to give suid
++		 * privileges
++		 */
++		sb->s_iflags = SB_I_NOEXEC;
++		ssi->mnt = path.mnt;
++		dentry = path.dentry;
++	} else {
++		struct shiftfs_super_info *mp_ssi;
++
++		/*
++		 * this leg executes if we're admin capable in
++		 * the namespace, so be very careful
++		 */
++		if (path.dentry->d_sb->s_magic != SHIFTFS_MAGIC)
++			goto out_put;
++		mp_ssi = path.dentry->d_sb->s_fs_info;
++		if (!mp_ssi->mark)
++			goto out_put;
++		ssi->mnt = mntget(mp_ssi->mnt);
++		dentry = dget(path.dentry->d_fsdata);
++		path_put(&path);
++	}
++	ssi->userns = get_user_ns(dentry->d_sb->s_user_ns);
++	sb->s_fs_info = ssi;
++	sb->s_magic = SHIFTFS_MAGIC;
++	sb->s_op = &shiftfs_super_ops;
++	sb->s_xattr = shiftfs_xattr_handlers;
++	sb->s_d_op = &shiftfs_dentry_ops;
++	sb->s_root = d_make_root(shiftfs_new_inode(sb, S_IFDIR, dentry));
++	sb->s_root->d_fsdata = dentry;
++
++	return 0;
++
++ out_put:
++	path_put(&path);
++ out:
++	kfree(name);
++	kfree(ssi);
++	return err;
++}
++
++static struct dentry *shiftfs_mount(struct file_system_type *fs_type,
++				    int flags, const char *dev_name, void *data)
++{
++	struct shiftfs_data d = { data, dev_name };
++
++	return mount_nodev(fs_type, flags, &d, shiftfs_fill_super);
++}
++
++static struct file_system_type shiftfs_type = {
++	.owner		= THIS_MODULE,
++	.name		= "shiftfs",
++	.mount		= shiftfs_mount,
++	.kill_sb	= kill_anon_super,
++	.fs_flags	= FS_USERNS_MOUNT,
++};
++
++static int __init shiftfs_init(void)
++{
++	return register_filesystem(&shiftfs_type);
++}
++
++static void __exit shiftfs_exit(void)
++{
++	unregister_filesystem(&shiftfs_type);
++}
++
++MODULE_ALIAS_FS("shiftfs");
++MODULE_AUTHOR("James Bottomley");
++MODULE_DESCRIPTION("uid/gid shifting bind filesystem");
++MODULE_LICENSE("GPL v2");
++module_init(shiftfs_init)
++module_exit(shiftfs_exit)
+diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
+index 1a6fee974116..671b0c6d0754 100644
+--- a/include/uapi/linux/magic.h
++++ b/include/uapi/linux/magic.h
+@@ -90,4 +90,6 @@
+ #define BALLOON_KVM_MAGIC	0x13661366
+ #define ZSMALLOC_MAGIC		0x58295829
  
- 	inode->i_op = &shiftfs_inode_ops;
--
--	shiftfs_fill_inode(inode, dentry);
--
--	return inode;
- }
- 
- static int shiftfs_show_options(struct seq_file *m, struct dentry *dentry)
++#define SHIFTFS_MAGIC		0x6a656a62
++
+ #endif /* __LINUX_MAGIC_H__ */
 -- 
 2.19.1
 
