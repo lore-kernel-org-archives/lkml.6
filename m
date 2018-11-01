@@ -2,91 +2,168 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC4E1C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 07:35:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC45C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 07:37:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8881820820
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 07:35:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="XMSEN8ne"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8881820820
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id 101822064C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 07:37:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 101822064C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728036AbeKAQhK (ORCPT
+        id S1728000AbeKAQjk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 12:37:10 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:33091 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727821AbeKAQhK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 12:37:10 -0400
-Received: by mail-it1-f193.google.com with SMTP id p11-v6so1555954itf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 00:35:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TlBphSNXM+25aNa0t3XL1G1zVEdZhJeAo7gibeIipLA=;
-        b=XMSEN8neQeTcY7ViYCFhHMis8MXEEwy2cgVVSMkMEUwjzHacU1hciO2D1pF8/buHXX
-         yMAumKNUl4hlkdqf5Xc4snzM9Os+Ek/0l7/XKCIalkEUTrNe8bgktHqK9ucHoMcRTmi9
-         +FNMcIqjkxFaMWZctVwLns3sH0QpcUODawEdk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TlBphSNXM+25aNa0t3XL1G1zVEdZhJeAo7gibeIipLA=;
-        b=pnmrE8TZcu0or2adZ1NpU/jab8R2snFcu1hEU33OzP9jnNALxiU2MqRTOXNN3nTVW2
-         HH5XSDe7Av6hO6Bda5tNZYpLWFlSvREsSgrZdZx7FwWVEl97jPOjB/LQxdM86sXVNvf4
-         z0w6X6kfKcG2OeJxpaYHSSwT2eframejtyYcBw+ELGYONgzmZSQ8A8e1TH6unxMmrgkN
-         66oz9yT1fUTGeJlrf6h/ViOM7RLnX2MsjJVHdMoWPwoKaolszPX/E6CBgUlYIRUJNU/T
-         PYKOjPTTy3fJopOcqB9ub3tn3ISmbWEwDcsMcBI5vmVY1DSeHLPR6eZ0PSx8yp4TEUu0
-         /xVw==
-X-Gm-Message-State: AGRZ1gKpb2VmLOfo0Akb+9k38u4dwY1CNTkT5BshxOXPkXfQ1i1RdDjq
-        0ti4QMpdcJeuNcsZCpRUe1IyF/UT2Dw/XrSXA0R/Zw==
-X-Google-Smtp-Source: AJdET5frMPf25m+VeHBhfCYM94GZq83FFsVEUHtgkKqHKBb/8JbpGa8eAiPCfcnIkzJIsHZZhjDJTlKplZ+2hT888h8=
-X-Received: by 2002:a02:e43:: with SMTP id 64-v6mr5261884jae.58.1541057719960;
- Thu, 01 Nov 2018 00:35:19 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181031183634.29640-1-jagan@amarulasolutions.com> <20181031183634.29640-7-jagan@amarulasolutions.com>
-In-Reply-To: <20181031183634.29640-7-jagan@amarulasolutions.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Thu, 1 Nov 2018 13:05:08 +0530
-Message-ID: <CAMty3ZCeZzXYy4XRwTeQjYfpB6KKjEVRWyhjoca9Os4foLYL4g@mail.gmail.com>
-Subject: Re: [RFC PATCH 7/7] arm64: allwinner: h6: orangepi-liet2: Enable
- AP6356S WiFi support
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com
-Cc:     Jagan Teki <jagan@openedev.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 1 Nov 2018 12:39:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38500 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727803AbeKAQjk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 12:39:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id F2AC6AEC2;
+        Thu,  1 Nov 2018 07:37:48 +0000 (UTC)
+Date:   Thu, 01 Nov 2018 08:37:47 +0100
+Message-ID: <s5hd0rpgsdw.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     "Ayman Bagabas" <ayman.bagabas@gmail.com>
+Cc:     <alsa-devel@alsa-project.org>, "Hui Wang" <hui.wang@canonical.com>,
+        "Jaroslav Kysela" <perex@perex.cz>,
+        "Kailang Yang" <kailang@realtek.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/3] ALSA:hda: add support for Huawei WMI MicMute LED
+In-Reply-To: <20181031192045.7877-1-ayman.bagabas@gmail.com>
+References: <20181031192045.7877-1-ayman.bagabas@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 1, 2018 at 12:07 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> From: Jagan Teki <jagan@openedev.com>
->
-> Enable AP6356S WiFi/BT combo chip on Orangepi Lite2 board:
-> - WiFi SDIO interface is connected to MMC1
-> - WiFi WL-PMU-EN pin connected to gpio PM3: attach to mmc-pwrseq
-> - WiFi WL-WAKE-AP pin connected to gpio PM0
-> - 32kHz external oscillator gate clock from RTC
->
-> Signed-off-by: Jagan Teki <jagan@openedev.com>
+On Wed, 31 Oct 2018 20:20:38 +0100,
+Ayman Bagabas wrote:
+> 
+> Some of Huawei laptops come with a LED in the mic mute key. This patch
+> enables and disable this LED when the internal microphone status is
+> changed.
+> 
+> Signed-off-by: Ayman Bagabas <ayman.bagabas@gmail.com>
 > ---
-> Note:
-> - chip detected, but failed to connect
-> [  129.084504] brcmfmac: brcmf_sdio_hostmail: mailbox indicates firmware halted
-> [  135.906409] brcmfmac: brcmf_sdio_bus_rxctl: resumed on timeout
+>  include/linux/huawei_wmi.h        |  7 ++++
+>  sound/pci/hda/huawei_wmi_helper.c | 66 +++++++++++++++++++++++++++++++
+>  sound/pci/hda/patch_realtek.c     | 12 ++++++
+>  3 files changed, 85 insertions(+)
+>  create mode 100644 include/linux/huawei_wmi.h
+>  create mode 100644 sound/pci/hda/huawei_wmi_helper.c
+> 
+> diff --git a/include/linux/huawei_wmi.h b/include/linux/huawei_wmi.h
+> new file mode 100644
+> index 000000000000..69b656c5029b
+> --- /dev/null
+> +++ b/include/linux/huawei_wmi.h
+> @@ -0,0 +1,7 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef __HUAWEI_WMI_H__
+> +#define __HUAWEI_WMI_H__
+> +
+> +int huawei_wmi_micmute_led_set(bool on);
+> +
+> +#endif
+> diff --git a/sound/pci/hda/huawei_wmi_helper.c b/sound/pci/hda/huawei_wmi_helper.c
+> new file mode 100644
+> index 000000000000..57256f51fd88
+> --- /dev/null
+> +++ b/sound/pci/hda/huawei_wmi_helper.c
+> @@ -0,0 +1,66 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Helper functions for Huawei WMI Mic Mute LED;
+> + * to be included from codec driver
+> + */
+> +
+> +#if IS_ENABLED(CONFIG_HUAWEI_LAPTOP)
+> +#include <linux/huawei_wmi.h>
+> +
+> +static int (*huawei_wmi_micmute_led_set_func)(bool);
+> +
+> +static void update_huawei_wmi_micmute_led(struct hda_codec *codec,
+> +					  struct snd_kcontrol *kcontrol,
+> +					  struct snd_ctl_elem_value *ucontrol)
+> +{
+> +	if (!ucontrol || !huawei_wmi_micmute_led_set_func)
+> +		return;
+> +	if (strcmp("Capture Switch", ucontrol->id.name) == 0 && ucontrol->id.index == 0) {
+> +		/* TODO: How do I verify if it's a mono or stereo here? */
+> +		bool val = ucontrol->value.integer.value[0] || ucontrol->value.integer.value[1];
+> +		huawei_wmi_micmute_led_set_func(!val);
+> +	}
+> +}
+> +
+> +static void alc_fixup_huawei_wmi(struct hda_codec *codec,
+> +				   const struct hda_fixup *fix, int action)
+> +{
+> +	struct hda_gen_spec *spec = codec->spec;
+> +	bool removefunc = false;
+> +
+> +	codec_info(codec, "In alc_fixup_huawei_wmi\n");
+> +
+> +	if (action == HDA_FIXUP_ACT_PROBE) {
+> +		if (!huawei_wmi_micmute_led_set_func)
+> +			huawei_wmi_micmute_led_set_func = symbol_request(huawei_wmi_micmute_led_set);
+> +		if (!huawei_wmi_micmute_led_set_func) {
+> +			codec_warn(codec, "Failed to find huawei_wmi symbol huawei_wmi_micmute_led_set\n");
+> +			return;
+> +		}
+> +
+> +		removefunc = true;
+> +		if (huawei_wmi_micmute_led_set_func(false) >= 0) {
+> +			if (spec->num_adc_nids > 1 && !spec->dyn_adc_switch)
+> +				codec_dbg(codec, "Skipping micmute LED control due to several ADCs");
+> +			else {
+> +				spec->cap_sync_hook = update_huawei_wmi_micmute_led;
+> +				removefunc = false;
+> +			}
+> +		}
+> +		codec_info(codec, "In alc_fixup_huawei_wmi IF\n");
+> +
+> +	}
+> +
+> +	if (huawei_wmi_micmute_led_set_func && (action == HDA_FIXUP_ACT_FREE || removefunc)) {
+> +		symbol_put(huawei_wmi_micmute_led_set);
+> +		huawei_wmi_micmute_led_set_func = NULL;
+> +	}
+> +}
 
-This got fixed. Will send next version.
+There is a new snd_hda_gen_add_micmute_led() helper.  Please use it
+instead.
+
+
+> @@ -6610,6 +6620,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+>  	SND_PCI_QUIRK(0x17aa, 0x511e, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
+>  	SND_PCI_QUIRK(0x17aa, 0x511f, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
+>  	SND_PCI_QUIRK(0x19e5, 0x3204, "Huawei MBXP", ALC256_FIXUP_HUAWEI_MBXP_PINS),
+> +	SND_PCI_QUIRK(0x19e5, 0x3204, "Huawei MBXP", ALC256_FIXUP_HUAWEI_WMI_MICMUTE_LED),
+
+You must not have two entries with the very same ID.
+And this implies that you didn't test the latest patches.  In the
+quirk list, only the first matching is applied, so this WMI hook won't
+be executed at all.
+
+Anyways: the submission is confusing at this time since you posted in
+may times by some reason, once mixed up all, once incomplete patchset,
+etc.
+
+At the next submission, could you give a proper cover letter (PATCH
+0/3) and submit together with other patches?  git-format-patch will
+give you a nice template with --cover-letter option.
+
+
+thanks,
+
+Takashi
