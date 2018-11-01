@@ -3,102 +3,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28DB5C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C92F1C6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:53:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC042204FD
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:53:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC042204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 983B820820
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:53:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 983B820820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728031AbeKATz3 (ORCPT
+        id S1728215AbeKATzu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 15:55:29 -0400
-Received: from ozlabs.org ([203.11.71.1]:57969 "EHLO ozlabs.org"
+        Thu, 1 Nov 2018 15:55:50 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58684 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726520AbeKATz3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 15:55:29 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726520AbeKATzu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 15:55:50 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42m29S65HXz9sSq;
-        Thu,  1 Nov 2018 21:53:00 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Frank Rowand <frowand.list@gmail.com>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Subject: Re: [PATCH 01/21] of: Add cpu node iterator for_each_of_cpu_node()
-In-Reply-To: <CABGGisw_bd+bJedZ_T2e-dxmRnXf2N_gGBZj8u+QVGQxj_gc+Q@mail.gmail.com>
-References: <20180905193738.19325-1-robh@kernel.org> <20180905193738.19325-2-robh@kernel.org> <874ld3jz6v.fsf@concordia.ellerman.id.au> <871s87jz3g.fsf@concordia.ellerman.id.au> <CABGGisw_bd+bJedZ_T2e-dxmRnXf2N_gGBZj8u+QVGQxj_gc+Q@mail.gmail.com>
-Date:   Thu, 01 Nov 2018 21:52:57 +1100
-Message-ID: <87tvl1dq7q.fsf@concordia.ellerman.id.au>
+        by mx1.redhat.com (Postfix) with ESMTPS id 2BFCD37E85;
+        Thu,  1 Nov 2018 10:53:24 +0000 (UTC)
+Received: from 117.195.187.81.in-addr.arpa (unknown [10.33.36.41])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9066F5D9CB;
+        Thu,  1 Nov 2018 10:53:22 +0000 (UTC)
+Subject: Re: [git pull] mount API series
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Eric W. Biederman" <ebiederm@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181031053355.GQ32577@ZenIV.linux.org.uk>
+ <CAHk-=whAE6gVi18=u4sSWe1m2RWPh19YCkKQmW4Kx+NQX1mg8w@mail.gmail.com>
+From:   Steven Whitehouse <swhiteho@redhat.com>
+Message-ID: <af28fc2c-d207-875e-8070-f64ead878b5a@redhat.com>
+Date:   Thu, 1 Nov 2018 10:53:21 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <CAHk-=whAE6gVi18=u4sSWe1m2RWPh19YCkKQmW4Kx+NQX1mg8w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 01 Nov 2018 10:53:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rob Herring <robh@kernel.org> writes:
-> On Tue, Oct 30, 2018 at 9:20 AM Michael Ellerman <mpe@ellerman.id.au> wrote:
->>
->> Michael Ellerman <mpe@ellerman.id.au> writes:
->> > Hi Rob,
->> >
->> > Sorry I missed this when you posted it.
->> >
->> > Rob Herring <robh@kernel.org> writes:
->> >> Iterating thru cpu nodes is a common pattern. Create a common iterator
->> >> which can find child nodes either by node name or device_type == cpu.
->> >> Using the former will allow for eventually dropping device_type
->> >> properties which are deprecated for FDT.
->> >
->> > Device trees we see on powerpc generally don't (never?) use "cpu" as the
->> > node name for CPU nodes. And many of those device trees come from
->> > firmware, so we can't update them.
->> >
->> > So dropping support for device_type is a non-starter from our POV.
->>
->> ps. presumably that's what you meant by deprecated *for FDT*.
+Hi,
+
+
+On 31/10/18 16:18, Linus Torvalds wrote:
+> On Tue, Oct 30, 2018 at 10:34 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>>          mount API series from David Howells.  Last cycle's objections
+>> had been of the "I'd do it differently" variety and with no such
+>> differently done variants having ever materialized over several
+>> cycles...
+> Having just lurked on the discussions about the bugs in here, I don't
+> think this is ready. Maybe they got fixed, but if so, it was recent
+> and it was pretty fundamental.
 >
-> Right.
+> The stated aim of the series is to make the mount API _better_, not
+> worse. And right now it looks like a "two steps back, one theoretical
+> step forwards" kind of better.
 >
->> But anyway just wanted to make sure we are on the same page.
->
-> Yes, I was aware at least older powerpc DTs don't use 'cpu' for node names.
+>                Linus
 
-Actually newer ones too, see below :)
+The design of the new mount API has been under discussion for some time, 
+both on the mailing lists, and also at LSF/MM too. Al and David (and 
+others) have put a lot of work into getting to the current position, and 
+have specifically requested input from Eric about his concerns over past 
+cycles.
 
-And there's code out there that expects this, so we can't realistically
-change it any time soon :/
+When I look at the discussions I'm seeing two main issues (please 
+correct me if you think I'm wrong about this) which are (a) whether the 
+design is correct and (b) whether there are still bugs in the current 
+patch set.
 
-  https://github.com/ibm-power-utilities/powerpc-utils/blob/master/src/drmgr/common_cpu.c#L186
-  https://github.com/ibm-power-utilities/powerpc-utils/blob/master/src/ppc64_cpu.c#L344
+Which of these are you most concerned about? It seems to me that there 
+is not a lot of point in spending a large amount of time in additional 
+review/testing of the current patch set if the overall design is set to 
+be rejected. If your concerns are only with the robustness/stability of 
+the patch set, then that provides a clear route to resolving the current 
+impasse, at least assuming that Eric is able to enumerate the issues 
+that he has discovered.
 
-cheers
+It looks like David has already provided a fix for one of the issues 
+which Eric mentioned in his recent email. Eric it would be good if you 
+could confirm that this addresses that particular concern,
 
-$ ls -d1 /proc/device-tree/cpus/PowerPC\,POWER9@*
-/proc/device-tree/cpus/PowerPC,POWER9@14
-/proc/device-tree/cpus/PowerPC,POWER9@1c
-/proc/device-tree/cpus/PowerPC,POWER9@34
-/proc/device-tree/cpus/PowerPC,POWER9@3c
-/proc/device-tree/cpus/PowerPC,POWER9@4
-/proc/device-tree/cpus/PowerPC,POWER9@48
-/proc/device-tree/cpus/PowerPC,POWER9@54
-/proc/device-tree/cpus/PowerPC,POWER9@804
-/proc/device-tree/cpus/PowerPC,POWER9@80c
-/proc/device-tree/cpus/PowerPC,POWER9@814
-/proc/device-tree/cpus/PowerPC,POWER9@81c
-/proc/device-tree/cpus/PowerPC,POWER9@834
-/proc/device-tree/cpus/PowerPC,POWER9@83c
-/proc/device-tree/cpus/PowerPC,POWER9@844
-/proc/device-tree/cpus/PowerPC,POWER9@84c
-/proc/device-tree/cpus/PowerPC,POWER9@c
+Steve.
+
