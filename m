@@ -2,138 +2,164 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91BB6C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:43:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F9FC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:43:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EE4A20657
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:43:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="fI9muOfi";
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="fI9muOfi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EE4A20657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=yandex-team.ru
+	by mail.kernel.org (Postfix) with ESMTP id AA4D320657
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:43:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA4D320657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728007AbeKBCrd (ORCPT
+        id S1728035AbeKBCrl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 22:47:33 -0400
-Received: from forwardcorp1o.cmail.yandex.net ([37.9.109.47]:51891 "EHLO
-        forwardcorp1o.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726920AbeKBCrc (ORCPT
+        Thu, 1 Nov 2018 22:47:41 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58500 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728014AbeKBCrl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 22:47:32 -0400
-Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
-        by forwardcorp1o.cmail.yandex.net (Yandex) with ESMTP id ABECF20F05;
-        Thu,  1 Nov 2018 20:43:32 +0300 (MSK)
-Received: from smtpcorp1o.mail.yandex.net (smtpcorp1o.mail.yandex.net [2a02:6b8:0:1a2d::30])
-        by mxbackcorp1g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id LYuBW6zPJP-hWJCMSuC;
-        Thu, 01 Nov 2018 20:43:32 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1541094212; bh=eRU2kFacb0z8kYcguZg7DOd1aIqte4oGyyswvwLMlp0=;
-        h=Subject:From:To:Date:Message-ID;
-        b=fI9muOfiBHcNcEHFycuNKwcAtHMZexjUWhLFreLvfcKuUd0QNV+mZz1Y5ZQiCM2zQ
-         X+TzkI8BNdujqJr1riHlR3YFjjlVGp6T6u9nlx7chqY7IouXC45/I6ChkWtsP2eAgP
-         0SBuiNhlsEV0ncFE/2LrWK4X+2nNejE4/FIcb7Ps=
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:2501:1cc0:44e4:e39a])
-        by smtpcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id t5zWZvkUa8-hWoaoSJm;
-        Thu, 01 Nov 2018 20:43:32 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1541094212; bh=eRU2kFacb0z8kYcguZg7DOd1aIqte4oGyyswvwLMlp0=;
-        h=Subject:From:To:Date:Message-ID;
-        b=fI9muOfiBHcNcEHFycuNKwcAtHMZexjUWhLFreLvfcKuUd0QNV+mZz1Y5ZQiCM2zQ
-         X+TzkI8BNdujqJr1riHlR3YFjjlVGp6T6u9nlx7chqY7IouXC45/I6ChkWtsP2eAgP
-         0SBuiNhlsEV0ncFE/2LrWK4X+2nNejE4/FIcb7Ps=
-Authentication-Results: smtpcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Subject: [PATCH RFC] block,
- bfq: set default slice_idle to zero for non-rotational devices
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-To:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Paolo Valente <paolo.valente@linaro.org>,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 01 Nov 2018 20:43:30 +0300
-Message-ID: <154109421062.925711.4117729151502021084.stgit@buzz>
-User-Agent: StGit/0.17.1-dirty
+        Thu, 1 Nov 2018 22:47:41 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA1HXwcg136111
+        for <linux-kernel@vger.kernel.org>; Thu, 1 Nov 2018 13:43:44 -0400
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ng49y50nx-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 13:43:43 -0400
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 1 Nov 2018 17:43:42 -0000
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 1 Nov 2018 17:43:34 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA1HhX6E3932446
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 1 Nov 2018 17:43:33 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1C43DB205F;
+        Thu,  1 Nov 2018 17:43:33 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D19B7B2064;
+        Thu,  1 Nov 2018 17:43:32 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.141])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  1 Nov 2018 17:43:32 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 2DF8416C0598; Thu,  1 Nov 2018 10:43:33 -0700 (PDT)
+Date:   Thu, 1 Nov 2018 10:43:33 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ralf@linux-mips.org" <ralf@linux-mips.org>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "bfields@fieldses.org" <bfields@fieldses.org>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
+        "paul.burton@mips.com" <paul.burton@mips.com>,
+        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
+        "jhogan@kernel.org" <jhogan@kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "paulus@samba.org" <paulus@samba.org>,
+        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        aryabinin@virtuozzo.com, dvyukov@google.com
+Subject: Re: [RFC PATCH] lib: Introduce generic __cmpxchg_u64() and use it
+ where needed
+Reply-To: paulmck@linux.ibm.com
+References: <20181031213240.zhh7dfcm47ucuyfl@pburton-laptop>
+ <20181031220253.GA15505@roeck-us.net>
+ <20181031233235.qbedw3pinxcuk7me@pburton-laptop>
+ <4e2438a23d2edf03368950a72ec058d1d299c32e.camel@hammerspace.com>
+ <20181101131846.biyilr2msonljmij@lakrids.cambridge.arm.com>
+ <20181101145926.GE3178@hirez.programming.kicks-ass.net>
+ <f38e272f7a96e983549e4281aa9fd02833a4277a.camel@hammerspace.com>
+ <20181101163212.GF3159@hirez.programming.kicks-ass.net>
+ <b0160f4b-b996-b0ee-405a-3d5f1866272e@gmail.com>
+ <20181101171432.GH3178@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181101171432.GH3178@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18110117-0072-0000-0000-000003C0DA37
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009966; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01111192; UDB=6.00575832; IPR=6.00891283;
+ MB=3.00023993; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-01 17:43:40
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110117-0073-0000-0000-000049F69FF0
+Message-Id: <20181101174333.GV4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-01_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=839 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811010149
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With default 8ms idle slice BFQ is up to 10 times slower than CFQ
-for massive random read workloads for common SATA SSD.
+On Thu, Nov 01, 2018 at 06:14:32PM +0100, Peter Zijlstra wrote:
+> On Thu, Nov 01, 2018 at 09:59:38AM -0700, Eric Dumazet wrote:
+> > On 11/01/2018 09:32 AM, Peter Zijlstra wrote:
+> > 
+> > >> Anyhow, if the atomic maintainers are willing to stand up and state for
+> > >> the record that the atomic counters are guaranteed to wrap modulo 2^n
+> > >> just like unsigned integers, then I'm happy to take Paul's patch.
+> > > 
+> > > I myself am certainly relying on it.
+> > 
+> > Could we get uatomic_t support maybe ?
+> 
+> Whatever for; it'd be the exact identical same functions as for
+> atomic_t, except for a giant amount of code duplication to deal with the
+> new type.
+> 
+> That is; today we merged a bunch of scripts that generates most of
+> atomic*_t, so we could probably script uatomic*_t wrappers with minimal
+> effort, but it would add several thousand lines of code to each compile
+> for absolutely no reason what so ever.
+> 
+> > This reminds me of this sooooo silly patch :/
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=adb03115f4590baa280ddc440a8eff08a6be0cb7
+> 
+> Yes, that's stupid. UBSAN is just wrong there.
 
-For now zero idle slice gives better out of box experience.
-CFQ employs this since commit 41c0126b3f22 ("block: Make CFQ default
-to IOPS mode on SSDs")
+It would be good for UBSAN to treat atomic operations as guaranteed
+2s complement with no UB for signed integer overflow.  After all, if
+even the C standard is willing to do this...
 
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
----
- Documentation/block/bfq-iosched.txt |   12 +++++++-----
- block/bfq-iosched.c                 |    8 ++++----
- 2 files changed, 11 insertions(+), 9 deletions(-)
+Ah, but don't we disable interrupts and fall back to normal arithmetic
+for UP systems?  Hmmm...  We do so for atomic_add_return() even on
+x86, it turns out:
 
-diff --git a/Documentation/block/bfq-iosched.txt b/Documentation/block/bfq-iosched.txt
-index 8d8d8f06cab2..c4a0f8998ce6 100644
---- a/Documentation/block/bfq-iosched.txt
-+++ b/Documentation/block/bfq-iosched.txt
-@@ -307,11 +307,13 @@ slice_idle
- ----------
- 
- This parameter specifies how long BFQ should idle for next I/O
--request, when certain sync BFQ queues become empty. By default
--slice_idle is a non-zero value. Idling has a double purpose: boosting
--throughput and making sure that the desired throughput distribution is
--respected (see the description of how BFQ works, and, if needed, the
--papers referred there).
-+request, when certain sync BFQ queues become empty.
-+
-+By default slice_idle is a non-zero value for rotational devices.
-+
-+Idling has a double purpose: boosting throughput and making sure that
-+the desired throughput distribution is respected (see the description
-+of how BFQ works, and, if needed, the papers referred there).
- 
- As for throughput, idling can be very helpful on highly seeky media
- like single spindle SATA/SAS disks where we can cut down on overall
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index 6075100f03a5..d19e70a26ff0 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -177,8 +177,8 @@ static const int bfq_back_max = 16 * 1024;
- /* Penalty of a backwards seek, in number of sectors. */
- static const int bfq_back_penalty = 2;
- 
--/* Idling period duration, in ns. */
--static u64 bfq_slice_idle = NSEC_PER_SEC / 125;
-+/* Idling period duration, in ns. Zero for non-rotational devices. */
-+static u64 bfq_slice_idle[2] = { NSEC_PER_SEC / 125, 0 };
- 
- /* Minimum number of assigned budgets for which stats are safe to compute. */
- static const int bfq_stats_min_budgets = 194;
-@@ -3044,7 +3044,7 @@ static bool bfq_bfqq_is_slow(struct bfq_data *bfqd, struct bfq_queue *bfqq,
- 			  */
- 			*delta_ms = BFQ_MIN_TT / NSEC_PER_MSEC;
- 		else /* charge at least one seek */
--			*delta_ms = bfq_slice_idle / NSEC_PER_MSEC;
-+			*delta_ms = bfq_slice_idle[0] / NSEC_PER_MSEC;
- 
- 		return slow;
- 	}
-@@ -5431,7 +5431,7 @@ static int bfq_init_queue(struct request_queue *q, struct elevator_type *e)
- 	bfqd->bfq_fifo_expire[1] = bfq_fifo_expire[1];
- 	bfqd->bfq_back_max = bfq_back_max;
- 	bfqd->bfq_back_penalty = bfq_back_penalty;
--	bfqd->bfq_slice_idle = bfq_slice_idle;
-+	bfqd->bfq_slice_idle = bfq_slice_idle[blk_queue_nonrot(bfqd->queue)];
- 	bfqd->bfq_timeout = bfq_timeout;
- 
- 	bfqd->bfq_requests_within_timer = 120;
+static __always_inline int arch_atomic_add_return(int i, atomic_t *v)
+{
+	return i + xadd(&v->counter, i);
+}
+
+So UBSAN actually did have a point.  :-(
+
+							Thanx, Paul
 
