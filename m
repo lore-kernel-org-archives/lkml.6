@@ -2,242 +2,347 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,PLING_QUERY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6B62C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:08:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6EAAC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:15:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D5E1204FD
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:08:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DB232082E
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:15:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kdab.com header.i=@kdab.com header.b="YgBul9Rb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D5E1204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kdab.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cSayO5Qn";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="G1yPaMWe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DB232082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728086AbeKBHNS (ORCPT
+        id S1727613AbeKBHUC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 03:13:18 -0400
-Received: from mail.kdab.com ([176.9.126.58]:18470 "EHLO mail.kdab.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727638AbeKBHNS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 03:13:18 -0400
-Authentication-Results: mail.kdab.com (amavisd-new); dkim=pass (1024-bit key)
- reason="pass (just generated,
- assumed good)" header.d=kdab.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kdab.com; h=
- content-type:content-type:mime-version:references:in-reply-to
- :organization:message-id:date:date:subject:subject:from:from; s=
- dkim; t=1541110102; x=1541974103; bh=8/dmUfKL/9WohGldhTICxy4V4Ud
- 6O3h4Ry/FAjT04i0=; b=YgBul9Rbuk6ZdBuNItvvpg7kGrcC7XY4UAbuWBGnNMO
- xBXV1ZLDuVEjV5sOTWpLf0nATiB4UxqABQzWfPeiwBsxNKan+Q9RfiLV6P62b9qw
- 21carLBv++gKcU/SpqTDOYqCbbxWGp1pbCUfnMb/LB+5YiNXLxcYD8OCXA5DJsEw
- =
-X-Virus-Scanned: amavisd-new at kdab.com
-From:   Milian Wolff <milian.wolff@kdab.com>
-To:     Milian Wolff <milian.wolff@kdab.com>
-Cc:     Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
-        Jiri Olsa <jolsa@kernel.org>, namhyung@kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho <acme@kernel.org>
-Subject: PEBS level 2/3 breaks dwarf unwinding! [WAS: Re: Broken dwarf
- unwinding - wrong stack pointer register value?]
-Date:   Thu, 01 Nov 2018 23:08:18 +0100
-Message-ID: <13521319.OzbRBoFVZM@agathebauer>
-Organization: KDAB
-In-Reply-To: <2122395.LD3O1NFKj8@agathebauer>
-References: <2335309.gnWok9HYb4@agathebauer>
- <20181024144818.GF6218@tassilo.jf.intel.com> <2122395.LD3O1NFKj8@agathebauer>
+        Fri, 2 Nov 2018 03:20:02 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51608 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726754AbeKBHUB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 03:20:01 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id AFBBD6037C; Thu,  1 Nov 2018 22:15:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541110508;
+        bh=60uS7RfaJ8nCVg3IOqxYIbNEs4Sbt/QjpM6CwiKJi0s=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=cSayO5Qnm4gYwkSvRw4SnTwHZQ3XVO8CArzXKEr63hDsjfRK5IsIvAu1EwnWdRpzl
+         JAQblwUcByjWWrnrfnWLMiOy4ZyZJab0YqidrHMMJQrM5mJ4O3P7oDwu8uPrzjz0t9
+         vJGdW2YYAzarQbx8yiMSYtXLgqQzA8u8S+Z+aaO8=
+Received: from lmark-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: lmark@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9AE176037C;
+        Thu,  1 Nov 2018 22:15:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541110507;
+        bh=60uS7RfaJ8nCVg3IOqxYIbNEs4Sbt/QjpM6CwiKJi0s=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=G1yPaMWe3Kwimm1qibc2gOZ/N7C03dFpiH5PBu7kHw7XT/WaDNXShZvBSMIFKsj48
+         f3tLeVoIvaSP3/Jf/l9nnOAN1QoEaga4C+yBDjhqFmDfGplOzFd5ghzRN3ATaOKqYE
+         4HkXz/mnCz9nccq2slGazF1OMeDIvxoAcw20oRxs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9AE176037C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=lmark@codeaurora.org
+Date:   Thu, 1 Nov 2018 15:15:06 -0700 (PDT)
+From:   Liam Mark <lmark@codeaurora.org>
+X-X-Sender: lmark@lmark-linux.qualcomm.com
+To:     Laura Abbott <labbott@redhat.com>
+cc:     Sumit Semwal <sumit.semwal@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org, Martijn Coenen <maco@android.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Todd Kjos <tkjos@android.com>,
+        Arve Hjonnevag <arve@android.com>,
+        linaro-mm-sig@lists.linaro.org
+Subject:  [RFC PATCH v2] android: ion: How to properly clean caches for
+ uncached allocations
+In-Reply-To: <alpine.DEB.2.02.1803081635170.20592@lmark-linux.qualcomm.com>
+Message-ID: <alpine.DEB.2.10.1811011454430.23412@lmark-linux.qualcomm.com>
+References: <alpine.DEB.2.02.1802282111320.22860@lmark-linux.qualcomm.com> <b1479541-13bd-85ea-f9c7-25264c91f9b9@redhat.com> <alpine.DEB.2.02.1803081635170.20592@lmark-linux.qualcomm.com>
+User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2198123.MMhLtkTpF4";
- micalg="sha256"; protocol="application/pkcs7-signature"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---nextPart2198123.MMhLtkTpF4
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Based on the suggestions from Laura I created a first draft for a change 
+which will attempt to ensure that uncached mappings are only applied to 
+ION memory who's cache lines have been cleaned.
+It does this by providing cached mappings (for uncached ION allocations) 
+until the ION buffer is dma mapped and successfully cleaned, then it drops 
+the userspace mappings and when pages are accessed they are faulted back 
+in and uncached mappings are created.
 
-On Dienstag, 30. Oktober 2018 23:34:35 CET Milian Wolff wrote:
-> On Mittwoch, 24. Oktober 2018 16:48:18 CET Andi Kleen wrote:
-> > > Can someone at least confirm whether unwinding from a function prologue
-> > > via
-> > > .eh_frame (but without .debug_frame) should actually be possible?
-> > 
-> > Yes it should be possible. Asynchronous unwind tables should work
-> > from any instruction.
+This change has the following potential disadvantages:
+- It assumes that userpace clients won't attempt to access the buffer 
+while it is being mapped as we are removing the userpspace mappings at 
+this point (though it is okay for them to have it mapped)
+- It assumes that kernel clients won't hold a kernel mapping to the buffer 
+(ie dma_buf_kmap) while it is being dma-mapped. What should we do if there 
+is a kernel mapping at the time of dma mapping, fail the mapping, warn?
+- There may be a performance penalty as a result of having to fault in the 
+pages after removing the userspace mappings.
 
-<snip>
+It passes basic testing involving reading writing and reading from 
+uncached system heap allocations before and after dma mapping.
 
-> We can find `7f91345bdaf8+1 = 7f91345bdaf9" at offset 16 (search for "f9 da
-> 5b 34 91 7f"). Using that address makes unwinding work for this sample.
-> What could be the reason for this shift?
+Please let me know if this is heading in the right direction and if there 
+are any concerns.
 
-I believe I have found the culprit: PEBS seems to be at fault here - i.e. the 
-RIP/RSP and the ustack dump of the sample simply don't fit together.
+Signed-off-by: Liam Mark <lmark@codeaurora.org>
+---
+ drivers/staging/android/ion/ion.c | 146 +++++++++++++++++++++++++++++++++++++-
+ drivers/staging/android/ion/ion.h |   9 +++
+ 2 files changed, 152 insertions(+), 3 deletions(-)
 
-Check this out:
-
-```
-$ for i in $(seq 10); do perf record -q -e "cycles:" --call-graph dwarf ./cpp-
-inlining > /dev/null; perf script | pcre2grep -c -M "hypot_finite.*\n.*\
-[unknown\]"; done
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-
-$ for i in $(seq 10); do perf record -q -e "cycles:p" --call-graph dwarf ./
-cpp-inlining > /dev/null; perf script | pcre2grep -c -M "hypot_finite.*\n.*\
-[unknown\]"; done
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-
-$ for i in $(seq 10); do perf record -q -e "cycles:pp" --call-graph dwarf ./
-cpp-inlining > /dev/null; perf script | pcre2grep -c -M "hypot_finite.*\n.*\
-[unknown\]"; done
-37
-39
-35
-28
-40
-39
-29
-37
-31
-26
-
-$ for i in $(seq 10); do perf record -q -e "cycles:ppp" --call-graph dwarf ./
-cpp-inlining > /dev/null; perf script | pcre2grep -c -M "hypot_finite.*\n.*\
-[unknown\]"; done
-79
-70
-76
-77
-70
-90
-64
-78
-86
-74
-```
-
-Note how precise levels 0 and 1 do not produce any samples where unwinding 
-fails. But precise level 2 produces some, and precise level 3 increases the 
-amount (by ca. ~2x).
-
-I can reproduce this pattern on two separate Intel CPUs and kernel versions 
-currently:
-
-Intel(R) Core(TM) i7-5600U CPU @ 2.60GHz with 4.18.16-arch1-1-ARCH
-Intel(R) Core(TM) i7-4770 CPU @ 3.40GHz with 4.14.78-1-lts
-
-Could someone else try this? What about AMD and IBS - is it also affected? 
-What about newer/different Intel CPUs?
-
-Better yet, can someone come up with a fix for this on Intel with maximum 
-precise level?
-
-Thanks
-
+diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
+index 99073325b0c0..3dc0f5a265bf 100644
+--- a/drivers/staging/android/ion/ion.c
++++ b/drivers/staging/android/ion/ion.c
+@@ -96,6 +96,7 @@ static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
+ 	}
+ 
+ 	INIT_LIST_HEAD(&buffer->attachments);
++	INIT_LIST_HEAD(&buffer->vmas);
+ 	mutex_init(&buffer->lock);
+ 	mutex_lock(&dev->buffer_lock);
+ 	ion_buffer_add(dev, buffer);
+@@ -117,6 +118,7 @@ void ion_buffer_destroy(struct ion_buffer *buffer)
+ 		buffer->heap->ops->unmap_kernel(buffer->heap, buffer);
+ 	}
+ 	buffer->heap->ops->free(buffer);
++	vfree(buffer->pages);
+ 	kfree(buffer);
+ }
+ 
+@@ -245,11 +247,29 @@ static void ion_dma_buf_detatch(struct dma_buf *dmabuf,
+ 	kfree(a);
+ }
+ 
++static bool ion_buffer_uncached_clean(struct ion_buffer *buffer)
++{
++	return buffer->uncached_clean;
++}
++
++/* expect buffer->lock to be already taken */
++static void ion_buffer_zap_mappings(struct ion_buffer *buffer)
++{
++	struct ion_vma_list *vma_list;
++
++	list_for_each_entry(vma_list, &buffer->vmas, list) {
++		struct vm_area_struct *vma = vma_list->vma;
++
++		zap_page_range(vma, vma->vm_start, vma->vm_end - vma->vm_start);
++	}
++}
++
+ static struct sg_table *ion_map_dma_buf(struct dma_buf_attachment *attachment,
+ 					enum dma_data_direction direction)
+ {
+ 	struct ion_dma_buf_attachment *a = attachment->priv;
+ 	struct sg_table *table;
++	struct ion_buffer *buffer = attachment->dmabuf->priv;
+ 
+ 	table = a->table;
+ 
+@@ -257,6 +277,19 @@ static struct sg_table *ion_map_dma_buf(struct dma_buf_attachment *attachment,
+ 			direction))
+ 		return ERR_PTR(-ENOMEM);
+ 
++	if (!ion_buffer_cached(buffer)) {
++		mutex_lock(&buffer->lock);
++		if (!ion_buffer_uncached_clean(buffer)) {
++			ion_buffer_zap_mappings(buffer);
++			if (buffer->kmap_cnt > 0) {
++				pr_warn_once("%s: buffer still mapped in the kernel\n",
++					     __func__);
++			}
++			buffer->uncached_clean = true;
++		}
++		mutex_unlock(&buffer->lock);
++	}
++
+ 	return table;
+ }
+ 
+@@ -267,6 +300,94 @@ static void ion_unmap_dma_buf(struct dma_buf_attachment *attachment,
+ 	dma_unmap_sg(attachment->dev, table->sgl, table->nents, direction);
+ }
+ 
++static void __ion_vm_open(struct vm_area_struct *vma, bool lock)
++{
++	struct ion_buffer *buffer = vma->vm_private_data;
++	struct ion_vma_list *vma_list;
++
++	vma_list = kmalloc(sizeof(*vma_list), GFP_KERNEL);
++	if (!vma_list)
++		return;
++	vma_list->vma = vma;
++
++	if (lock)
++		mutex_lock(&buffer->lock);
++	list_add(&vma_list->list, &buffer->vmas);
++	if (lock)
++		mutex_unlock(&buffer->lock);
++}
++
++static void ion_vm_open(struct vm_area_struct *vma)
++{
++	__ion_vm_open(vma, true);
++}
++
++static void ion_vm_close(struct vm_area_struct *vma)
++{
++	struct ion_buffer *buffer = vma->vm_private_data;
++	struct ion_vma_list *vma_list, *tmp;
++
++	mutex_lock(&buffer->lock);
++	list_for_each_entry_safe(vma_list, tmp, &buffer->vmas, list) {
++		if (vma_list->vma != vma)
++			continue;
++		list_del(&vma_list->list);
++		kfree(vma_list);
++		break;
++	}
++	mutex_unlock(&buffer->lock);
++}
++
++static int ion_vm_fault(struct vm_fault *vmf)
++{
++	struct vm_area_struct *vma = vmf->vma;
++	struct ion_buffer *buffer = vma->vm_private_data;
++	unsigned long pfn;
++	int ret;
++
++	mutex_lock(&buffer->lock);
++	if (!buffer->pages || !buffer->pages[vmf->pgoff]) {
++		mutex_unlock(&buffer->lock);
++		return VM_FAULT_ERROR;
++	}
++
++	vma->vm_page_prot = pgprot_writecombine(vma->vm_page_prot);
++	pfn = page_to_pfn(buffer->pages[vmf->pgoff]);
++	ret = vm_insert_pfn(vma, vmf->address, pfn);
++	mutex_unlock(&buffer->lock);
++	if (ret)
++		return VM_FAULT_ERROR;
++
++	return VM_FAULT_NOPAGE;
++}
++
++static const struct vm_operations_struct ion_vma_ops = {
++	.open = ion_vm_open,
++	.close = ion_vm_close,
++	.fault = ion_vm_fault,
++};
++
++static int ion_init_fault_pages(struct ion_buffer *buffer)
++{
++	int num_pages = PAGE_ALIGN(buffer->size) / PAGE_SIZE;
++	struct scatterlist *sg;
++	int i, j, k = 0;
++	struct sg_table *table = buffer->sg_table;
++
++	buffer->pages = vmalloc(sizeof(struct page *) * num_pages);
++	if (!buffer->pages)
++		return -ENOMEM;
++
++	for_each_sg(table->sgl, sg, table->nents, i) {
++		struct page *page = sg_page(sg);
++
++		for (j = 0; j < sg->length / PAGE_SIZE; j++)
++			buffer->pages[k++] = page++;
++	}
++
++	return 0;
++}
++
+ static int ion_mmap(struct dma_buf *dmabuf, struct vm_area_struct *vma)
+ {
+ 	struct ion_buffer *buffer = dmabuf->priv;
+@@ -278,12 +399,31 @@ static int ion_mmap(struct dma_buf *dmabuf, struct vm_area_struct *vma)
+ 		return -EINVAL;
+ 	}
+ 
+-	if (!(buffer->flags & ION_FLAG_CACHED))
+-		vma->vm_page_prot = pgprot_writecombine(vma->vm_page_prot);
+-
+ 	mutex_lock(&buffer->lock);
++
++	if (!ion_buffer_cached(buffer)) {
++		if (!ion_buffer_uncached_clean(buffer)) {
++			if (!buffer->pages)
++				ret = ion_init_fault_pages(buffer);
++
++			if (ret)
++				goto end;
++
++			vma->vm_private_data = buffer;
++			vma->vm_ops = &ion_vma_ops;
++			vma->vm_flags |= VM_IO | VM_PFNMAP | VM_DONTEXPAND |
++					 VM_DONTDUMP;
++			__ion_vm_open(vma, false);
++		} else {
++			vma->vm_page_prot =
++				pgprot_writecombine(vma->vm_page_prot);
++		}
++	}
++
+ 	/* now map it to userspace */
+ 	ret = buffer->heap->ops->map_user(buffer->heap, buffer, vma);
++
++end:
+ 	mutex_unlock(&buffer->lock);
+ 
+ 	if (ret)
+diff --git a/drivers/staging/android/ion/ion.h b/drivers/staging/android/ion/ion.h
+index c006fc1e5a16..438c9f4fa125 100644
+--- a/drivers/staging/android/ion/ion.h
++++ b/drivers/staging/android/ion/ion.h
+@@ -44,6 +44,11 @@ struct ion_platform_heap {
+ 	void *priv;
+ };
+ 
++struct ion_vma_list {
++	struct list_head list;
++	struct vm_area_struct *vma;
++};
++
+ /**
+  * struct ion_buffer - metadata for a particular buffer
+  * @ref:		reference count
+@@ -59,6 +64,7 @@ struct ion_platform_heap {
+  * @kmap_cnt:		number of times the buffer is mapped to the kernel
+  * @vaddr:		the kernel mapping if kmap_cnt is not zero
+  * @sg_table:		the sg table for the buffer if dmap_cnt is not zero
++ * @vmas:		list of vma's mapping for uncached buffer
+  */
+ struct ion_buffer {
+ 	union {
+@@ -76,6 +82,9 @@ struct ion_buffer {
+ 	void *vaddr;
+ 	struct sg_table *sg_table;
+ 	struct list_head attachments;
++	struct list_head vmas;
++	struct page **pages;
++	bool uncached_clean;
+ };
+ 
+ void ion_buffer_destroy(struct ion_buffer *buffer);
 -- 
-Milian Wolff | milian.wolff@kdab.com | Senior Software Engineer
-KDAB (Deutschland) GmbH, a KDAB Group company
-Tel: +49-30-521325470
-KDAB - The Qt, C++ and OpenGL Experts
---nextPart2198123.MMhLtkTpF4
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCDEIw
-ggXmMIIDzqADAgECAhBqm+E4O/8ra58B1dm4p1JWMA0GCSqGSIb3DQEBDAUAMIGFMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDErMCkGA1UEAxMiQ09NT0RPIFJTQSBDZXJ0aWZpY2F0aW9u
-IEF1dGhvcml0eTAeFw0xMzAxMTAwMDAwMDBaFw0yODAxMDkyMzU5NTlaMIGXMQswCQYDVQQGEwJH
-QjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQK
-ExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGlj
-YXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
-AL6znlesKHZ1QBbHOAOY08YYdiFQ8yV5C0y1oNF9Olg+nKcxLqf2NHbZhGra0D00SOTq9bus3/mx
-gUsg/Wh/eXQ0pnp8tZ8XZWAnlyKMpjL+qUByRjXCA6RQyDMqVaVUkbIr5SU0RDX/kSsKwer3H1pT
-/HUrBN0X8sKtPTdGX8XAWt/VdMLBrZBlgvnkCos+KQWWCo63OTTqRvaq8aWccm+KOMjTcE6s2mj6
-RkalweyDI7X+7U5lNo6jzC8RTXtVV4/Vwdax720YpMPJQaDaElmOupyTf1Qib+cpukNJnQmwygjD
-8m046DQkLnpXNCAGjuJy1F5NATksUsbfJAr7FLUCAwEAAaOCATwwggE4MB8GA1UdIwQYMBaAFLuv
-fgI9+qbxPISOre44mOzZMjLUMB0GA1UdDgQWBBSCr2yM+MX+lmF86B89K3FIXsSLwDAOBgNVHQ8B
-Af8EBAMCAYYwEgYDVR0TAQH/BAgwBgEB/wIBADARBgNVHSAECjAIMAYGBFUdIAAwTAYDVR0fBEUw
-QzBBoD+gPYY7aHR0cDovL2NybC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQ2VydGlmaWNhdGlvbkF1
-dGhvcml0eS5jcmwwcQYIKwYBBQUHAQEEZTBjMDsGCCsGAQUFBzAChi9odHRwOi8vY3J0LmNvbW9k
-b2NhLmNvbS9DT01PRE9SU0FBZGRUcnVzdENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3Au
-Y29tb2RvY2EuY29tMA0GCSqGSIb3DQEBDAUAA4ICAQB4XLKBKDRPPO5fVs6fl1bsj6JrF/bz9kkI
-BtTYLzXN30D+03Hj6OxCDBEaIeNmsBhrJmuubvyE7HtoSmR809AgcYboW+rcTNZ/8u/Hv+GTrNI/
-AhqX2/kiQNxmgUPt/eJPs92Qclj0HnVyy9TnSvGkSDU7I5Px+TbO+88G4zipA2psZaWeEykgzClZ
-lPz1FjTCkk77ZXp5cQYYexE6zeeN4/0OqqoAloFrjAF4o50YJafX8mnahjp3I2Y2mkjhk0xQfhNq
-bzlLWPoT3m7j7U26u7zg6swjOq8hITYc3/np5tM5aVyu6t99p17bTbY7+1RTWBviN9YJzK8HxzOb
-XYWBf/L+VGOYNsQDTxAk0Hbvb1j6KjUhg7fO294F29QIhhmiNOr84JHoy+fNLpfvYc/Q9EtFOI5I
-SYgOxLk3nD/whbUe9rmEQXLp8MB933Ij474gwwCPUpwv9mj2PMnXoc7mbrS22XUSeTwxCTP9bcmU
-dp4jmIoWfhQm7X9w/Zgddg+JZ/YnIHOwsGsaTUgj7fIvxqith7DoJC91WJ8Lce3CVJqb1XWeKIJ8
-4F7YLXZN0oa7TktYgDdmQVxYkZo1c5noaDKH9Oq9cbm/vOYRUM1cWcef20Wkyk5S/GFyyPJwG0fR
-1nRas3DqAf4cXxMiEKcff7PNa4M3RGTqH0pWR8p6EjCCBlQwggU8oAMCAQICEAf6KCF9+1doL2oE
-OTPysLwwDQYJKoZIhvcNAQELBQAwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJHcmVhdGVyIE1h
-bmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBMaW1pdGVkMT0w
-OwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWls
-IENBMB4XDTE3MDUyMzAwMDAwMFoXDTIwMDUyMjIzNTk1OVowggFZMQswCQYDVQQGEwJTRTEPMA0G
-A1UEERMGNjgzIDMxMRIwEAYDVQQIEwlWYWVybWxhbmQxEDAOBgNVBAcTB0hhZ2ZvcnMxGDAWBgNV
-BAkTD05vcnJpbmdzIHZhZWcgMjEPMA0GA1UEEhMGQm94IDMwMSYwJAYDVQQKDB1LbGFyw6RsdmRh
-bGVucyBEYXRha29uc3VsdCBBQjEdMBsGA1UECxMUQSBLREFCIEdyb3VwIENvbXBhbnkxQzBBBgNV
-BAsMOklzc3VlZCB0aHJvdWdoIEtsYXLDpGx2ZGFsZW5zIERhdGFrb25zdWx0IEFCIEUtUEtJIE1h
-bmFnZXIxHzAdBgNVBAsTFkNvcnBvcmF0ZSBTZWN1cmUgRW1haWwxFTATBgNVBAMTDE1pbGlhbiBX
-b2xmZjEkMCIGCSqGSIb3DQEJARYVbWlsaWFuLndvbGZmQGtkYWIuY29tMIIBIjANBgkqhkiG9w0B
-AQEFAAOCAQ8AMIIBCgKCAQEAxrzfNBVvRbiAknuTBXuQnNm9sLIFLo0vbPB6kswk78A3tA++Zn5c
-lQUHhGlQq1cdYxagnUpqwvG3Sod15mPSOLkAPf/mabLN7p+lFbRaUP+97ZkTZtvb4BCC3osIEFI4
-G393OSFWqc2qmIPE/SwSASbAA20Fcaa2M6P1lhOk/ttUh2jIurTPF0wUycIA7lBddrOgaOA8e2m6
-iLTNHtlrfRbBaUX91D5ebY+UWmIjXSQ9+CtutMzBkwnF0rZKririvOkklg9VzEGNQVHrQfDF2s/U
-pOtmtuVSwElauGT/KALyCFuIrYC1pmaKH8S1xODJqiRaf6jH8E+KQzKjyM/ErwIDAQABo4IB1TCC
-AdEwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8AwHQYDVR0OBBYEFN+m99RtIuA1bSdw
-6b1brOX7X3AJMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8EAjAAMB0GA1UdJQQWMBQGCCsGAQUF
-BwMEBggrBgEFBQcDAjBGBgNVHSAEPzA9MDsGDCsGAQQBsjEBAgEDBTArMCkGCCsGAQUFBwIBFh1o
-dHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8EUzBRME+gTaBLhklodHRwOi8vY3Js
-LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWls
-Q0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKGSWh0dHA6Ly9jcnQuY29tb2RvY2Eu
-Y29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcnQwJAYI
-KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAgBgNVHREEGTAXgRVtaWxpYW4ud29s
-ZmZAa2RhYi5jb20wDQYJKoZIhvcNAQELBQADggEBABf47LSJADqH+ow9INv3QM1NC/qq2bjxGvsZ
-68iD11VEUAFlsYfsVTgQqUirwPVTYenXtwVBELHZyywsui1JxL7HKQetLQegDDP/RyfjReVaWxhy
-3OpuItsgLVbru9QVgPifnoBFPtfZcwjeJDmeSbLT8oj4Rd0KYBOIve7WKvsfNPsNwfbLwY2zILkE
-LjxZcVi2AwZHDyab+dzL/3YcLuJj1lSawBGn7ilpcdZydlv4aye51pD/MemLIYLcylt+ImrmjnTV
-y+QlAHRF3s5FE8yAr+W1MBD/1bKZCSgFt8VQoAlz3hiQh8QqZp4Zl8WuVL4+mP/mT6VDEWgq/0Bo
-cukxggJuMIICagIBATCBrDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hl
-c3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNV
-BAMTNENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EC
-EAf6KCF9+1doL2oEOTPysLwwDQYJYIZIAWUDBAIBBQCggZMwGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMTgxMTAxMjIwODE4WjAoBgkqhkiG9w0BCQ8xGzAZMAsGCWCG
-SAFlAwQBAjAKBggqhkiG9w0DBzAvBgkqhkiG9w0BCQQxIgQgreI4R6LV7qOsr4BK7J7dOioGOoVC
-YP0Jhmpe4N+hJfUwDQYJKoZIhvcNAQEBBQAEggEAf+bacf+P6UZXEgksCB6HCdyMPeCL+HRRVkmH
-AfQmi+2DP2kQY562hAUueOmkALIt0nyJOs3eEeCHx5n14QMPX0qhKT5W+CPPugNRjRysLac1TZLU
-aPt2Eg2pm/k4NY/8DqqNal7yTGPHTKqmaj0CptW2sMjcvdgYfF700fKrwbFAUCAFeGdDFrfsaimN
-rcYyjQL3f+TOAulj1ERFJoL6HLCVV+J3VkfaKj1lE+6vxwxCyCUs2xr77jC6fJ/wqf6CUsJZC+qt
-vLhExmQlXVIGbz3FcSujUQ7LO2eelW5EzenNkZq1RSUzyYypSykrlOzuuaosFy/r1RCvMZADN1s4
-agAAAAAAAA==
+1.9.1
 
 
---nextPart2198123.MMhLtkTpF4--
-
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
