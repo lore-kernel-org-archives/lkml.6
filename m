@@ -2,125 +2,164 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 881E6C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:46:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8921AC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:50:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 107352081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:46:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="aSBKFXTh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 107352081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
+	by mail.kernel.org (Postfix) with ESMTP id 463C220820
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:50:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 463C220820
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728216AbeKAVs6 (ORCPT
+        id S1728234AbeKAVxE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 17:48:58 -0400
-Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.22]:27813 "EHLO
-        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727644AbeKAVs5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 17:48:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1541076363;
-        s=strato-dkim-0002; d=xenosoft.de;
-        h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=h8T47b5XVCRlDscN1+vTd3FKbVRtSjeCHHTDSyHbxT8=;
-        b=aSBKFXThF0eECY8b2lmE0gs5ERbWkVDK1XhOeAT1nCOy7hU77d/9ks+Z9CeQ3ZK/Cd
-        Jggy7KC2g6/yNCtpisZSFMWrWPshvgp8EWnVy1EiQIohVsaWdmlzgLThbLh6zUrVWw2Q
-        w/cAnCVRCStySWIXKdnzWm7uMRjt0D5SiQzNOpkJaZQ/yojy+qVRMOMFYZodcnmo6xY+
-        CzLbgO8chgGWnaay9TN1J3EgVhA3pDRSkcRZ+Mw0Vo/KtI71ST+UwGFxXpQ2dkKfp0eW
-        H5AzbRreRK+SSHKA7iiPbDrCGR1Z5qUh2eQIs6hiYhs30JqiACaWP8AS2Zrs6WQ6G4cg
-        khOg==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkK3TmjrJUcWHjjnEOaMwSIQqdV"
-X-RZG-CLASS-ID: mo00
-Received: from [IPv6:2a02:8109:a400:162c:5c96:3539:c69c:189]
-        by smtp.strato.de (RZmta 44.3 AUTH)
-        with ESMTPSA id Z0624cuA1CjmNcK
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Thu, 1 Nov 2018 13:45:48 +0100 (CET)
-Subject: Re: [PATCH] of: Fix cpu node iterator to not ignore disabled cpu
- nodes
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Frank Rowand <frowand.list@gmail.com>
-References: <20181031144226.26747-1-robh@kernel.org>
- <87o9b9dphd.fsf@concordia.ellerman.id.au>
-From:   Christian Zigotzky <chzigotzky@xenosoft.de>
-Message-ID: <1055f6ae-a25b-117a-e9e4-44dd4f978803@xenosoft.de>
-Date:   Thu, 1 Nov 2018 13:45:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 1 Nov 2018 17:53:04 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:48657 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727862AbeKAVxE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 17:53:04 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id CE12FB595B34D;
+        Thu,  1 Nov 2018 20:50:08 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.41) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.408.0; Thu, 1 Nov 2018
+ 20:50:01 +0800
+Subject: Re: [PATCH net] net: hns3: Fix for out-of-bounds access when setting
+ pfc back pressure
+To:     Yunsheng Lin <linyunsheng@huawei.com>, <davem@davemloft.net>
+References: <1541074363-98630-1-git-send-email-linyunsheng@huawei.com>
+CC:     <huangdaode@hisilicon.com>, <xuwei5@hisilicon.com>,
+        <liguozhu@hisilicon.com>, <Yisen.Zhuang@huawei.com>,
+        <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
+        <lipeng321@huawei.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <4b5d0e04-df53-6123-0562-7f0146d33ae9@huawei.com>
+Date:   Thu, 1 Nov 2018 12:49:54 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-In-Reply-To: <87o9b9dphd.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1541074363-98630-1-git-send-email-linyunsheng@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Language: de-DE
+X-Originating-IP: [10.202.226.41]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01 November 2018 at 12:08PM, Michael Ellerman wrote:
-> Rob Herring <robh@kernel.org> writes:
+On 01/11/2018 12:12, Yunsheng Lin wrote:
+> The vport should be initialized to hdev->vport for each bp group,
+> otherwise it will cause out-of-bounds access and bp setting not
+> correct problem.
 >
->> In most cases, nodes with 'status = "disabled";' are treated as if the
->> node is not present though it is a common bug to forget to check that.
->> However, cpu nodes are different in that "disabled" simply means offline
->> and the OS can bring the CPU core online. Commit f1f207e43b8a ("of: Add
->> cpu node iterator for_each_of_cpu_node()") followed the common behavior
->> of ignoring disabled cpu nodes. This breaks some powerpc systems (at
->> least NXP P50XX/e5500). Fix this by dropping the status check.
->>
->> Fixes: 651d44f9679c ("of: use for_each_of_cpu_node iterator")
->> Fixes: f1f207e43b8a ("of: Add cpu node iterator for_each_of_cpu_node()")
->> Reported-by: Michael Ellerman <mpe@ellerman.id.au>
->> Cc: Christian Zigotzky <chzigotzky@xenosoft.de>
->> Cc: Frank Rowand <frowand.list@gmail.com>
->> Signed-off-by: Rob Herring <robh@kernel.org>
->> ---
->>   drivers/of/base.c | 2 --
->>   1 file changed, 2 deletions(-)
-> This fixes my machine, thanks.
+> [   35.254124] BUG: KASAN: slab-out-of-bounds in hclge_pause_setup_hw+0x2a0/0x3f8 [hclge]
+> [   35.254126] Read of size 2 at addr ffff803b6651581a by task kworker/0:1/14
 >
-> Tested-by: Michael Ellerman <mpe@ellerman.id.au>
+> [   35.254132] CPU: 0 PID: 14 Comm: kworker/0:1 Not tainted 4.19.0-rc7-hulk+ #85
+> [   35.254133] Hardware name: Huawei D06/D06, BIOS Hisilicon D06 UEFI RC0 - B052 (V0.52) 09/14/2018
+> [   35.254141] Workqueue: events work_for_cpu_fn
+> [   35.254144] Call trace:
+> [   35.254147]  dump_backtrace+0x0/0x2f0
+> [   35.254149]  show_stack+0x24/0x30
+> [   35.254154]  dump_stack+0x110/0x184
+> [   35.254157]  print_address_description+0x168/0x2b0
+> [   35.254160]  kasan_report+0x184/0x310
+> [   35.254162]  __asan_load2+0x7c/0xa0
+> [   35.254170]  hclge_pause_setup_hw+0x2a0/0x3f8 [hclge]
+> [   35.254177]  hclge_tm_init_hw+0x794/0x9f0 [hclge]
+> [   35.254184]  hclge_tm_schd_init+0x48/0x58 [hclge]
+> [   35.254191]  hclge_init_ae_dev+0x778/0x1168 [hclge]
+> [   35.254196]  hnae3_register_ae_dev+0x14c/0x298 [hnae3]
+> [   35.254206]  hns3_probe+0x88/0xa8 [hns3]
+> [   35.254210]  local_pci_probe+0x7c/0xf0
+> [   35.254212]  work_for_cpu_fn+0x34/0x50
+> [   35.254214]  process_one_work+0x4d4/0xa38
+> [   35.254216]  worker_thread+0x55c/0x8d8
+> [   35.254219]  kthread+0x1b0/0x1b8
+> [   35.254222]  ret_from_fork+0x10/0x1c
 >
-> It was actually originally reported to me by Christian, so also:
+> [   35.254224] The buggy address belongs to the page:
+> [   35.254228] page:ffff7e00ed994400 count:1 mapcount:0 mapping:0000000000000000 index:0x0 compound_mapcount: 0
+> [   35.273835] flags: 0xfffff8000008000(head)
+> [   35.282007] raw: 0fffff8000008000 dead000000000100 dead000000000200 0000000000000000
+> [   35.282010] raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+> [   35.282012] page dumped because: kasan: bad access detected
 >
-> Reported-by: Christian Zigotzky <chzigotzky@xenosoft.de>
+> [   35.282014] Memory state around the buggy address:
+> [   35.282017]  ffff803b66515700: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+> [   35.282019]  ffff803b66515780: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+> [   35.282021] >ffff803b66515800: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+> [   35.282022]                             ^
+> [   35.282024]  ffff803b66515880: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+> [   35.282026]  ffff803b66515900: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+> [   35.282028] ==================================================================
+> [   35.282029] Disabling lock debugging due to kernel taint
+> [   35.282747] hclge driver initialization finished.
 >
+> Fixes: 67bf2541f4b9 ("net: hns3: Fixes the back pressure setting when sriov is enabled")
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> ---
+>  drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 >
-> cheers
+> diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+> index aa5cb98..0c9c6ae 100644
+> --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+> +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+> @@ -1168,11 +1168,12 @@ static int hclge_pfc_setup_hw(struct hclge_dev *hdev)
+>   */
+>  static int hclge_bp_setup_hw(struct hclge_dev *hdev, u8 tc)
+>  {
+> -	struct hclge_vport *vport = hdev->vport;
+>  	u32 i, k, qs_bitmap;
+>  	int ret;
 >
->> diff --git a/drivers/of/base.c b/drivers/of/base.c
->> index cc62da278663..e47c5ce6cd58 100644
->> --- a/drivers/of/base.c
->> +++ b/drivers/of/base.c
->> @@ -776,8 +776,6 @@ struct device_node *of_get_next_cpu_node(struct device_node *prev)
->>   		if (!(of_node_name_eq(next, "cpu") ||
->>   		      (next->type && !of_node_cmp(next->type, "cpu"))))
->>   			continue;
->> -		if (!__of_device_is_available(next))
->> -			continue;
->>   		if (of_node_get(next))
->>   			break;
->>   	}
->> -- 
->> 2.19.1
+>  	for (i = 0; i < HCLGE_BP_GRP_NUM; i++) {
+> +		struct hclge_vport *vport = hdev->vport;
+> +
 
-Hi All,
+It seems to me that the bug is fixed but the code is not much better.
 
-Many thanks for your help! This patch fixes my P5020 board (dual core) 
-and my virtual QEMU ppce500 machine (quad core).
+Since variable vport is only referenced in the inner loop, I would 
+define it there.
 
-Have a nice day!
+>  		qs_bitmap = 0;
+>
+>  		for (k = 0; k < hdev->num_alloc_vport; k++) {
+>
 
-Cheers,
-Christian
+static int hclge_bp_setup_hw(struct hclge_dev *hdev, u8 tc)
+  {
+-       struct hclge_vport *vport = hdev->vport;
+-       u32 i, k, qs_bitmap;
+-       int ret;
++       int ret, i;
+
+         for (i = 0; i < HCLGE_BP_GRP_NUM; i++) {
+-               qs_bitmap = 0;
++               u32 qs_bitmap = 0;
++               int k;
+
+                 for (k = 0; k < hdev->num_alloc_vport; k++) {
++                       struct hclge_vport *vport = &hdev->vport[k];
+                         u16 qs_id = vport->qs_offset + tc;
+                         u8 grp, sub_grp;
+
+...
+
+                         if (i == grp)
+                                 qs_bitmap |= (1 << sub_grp);
+-
+-                       vport++;
+
+
+... so this seems better and safer, as you're explicitly limiting vport 
+within bounds of hdev->num_alloc_vport.
+
 
