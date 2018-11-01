@@ -2,85 +2,80 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D2BC6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 21:35:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A46A3C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 21:37:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34026204FD
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 21:35:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E8B22082E
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 21:37:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WfdJFWiQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34026204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XC4/Q65y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E8B22082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbeKBGkY (ORCPT
+        id S1727530AbeKBGmj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 02:40:24 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:35755 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726701AbeKBGkY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 02:40:24 -0400
-Received: by mail-lj1-f196.google.com with SMTP id x85-v6so15207345ljb.2
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 14:35:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rh62i0JHX7Kdt5RMUfOCsjsgkCoZpytmxbLT1d6Kw4o=;
-        b=WfdJFWiQPlRqsW53aMjcb40rDZB/DKd+hvlqhWMLe7u8v3TyUNgHexg6jsUWKz79Nh
-         kwMdvhA8kg5zXOJCLeHCiSm7nPudXpgAgTPpJiFkjEWSq06pKAb3iSp+eJW8Jjp8+AKY
-         53RmURDCQW/qfaryTikkN4iRIWYu47XaIQj+o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rh62i0JHX7Kdt5RMUfOCsjsgkCoZpytmxbLT1d6Kw4o=;
-        b=eQmA+P+zfLmsCEYfUtQgqGv2RBfadZvLTLUrasux+othc6sH6iECSD10IBHEg3Lp5M
-         H9WFCfL44JDrA8ZOZbt/H3mVjTlm83KD5dhyqvNshm9OQJxxjs7aPrXwO9+Yzl3arL8b
-         X4NSWotEo0oCkAwYMw85lok+BMZEhkY/nJyZ4eu5Pj7HuYY/7g6Zo5MzIY4T5H62Uyft
-         6/PkGY3xA4zdNRTauRrHNbZdAjaRZP05+Im3A6UJi6hPF0nf3HB2AkGoLHEr712DR4yO
-         XYMor1xfD6ktHs1jN3CMzCaj5TB75zox+iUOjZvSDYTH2x81C0jJugavmFQWfm6R1Zc8
-         rPLQ==
-X-Gm-Message-State: AGRZ1gI/AjRpimZdQe1bWFu7mcUYuDaJO8o+uOF0FVbfAyV5B6c4qEil
-        hIbtTDqSi+NUEQPZ57An/R1ejsNAViRTJg==
-X-Google-Smtp-Source: AJdET5chnzfQvtdvUxru0GR4FsOQW8eYtcfdFVV4K2ITE5uCwrSjtgLNMJhRwV0SmVRXglGAwJ8Clw==
-X-Received: by 2002:a2e:197:: with SMTP id f23-v6mr6029041lji.144.1541108137347;
-        Thu, 01 Nov 2018 14:35:37 -0700 (PDT)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id t77-v6sm5333852lfi.63.2018.11.01.14.35.36
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Nov 2018 14:35:36 -0700 (PDT)
-Received: by mail-lj1-f169.google.com with SMTP id c4-v6so19407771lja.4
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 14:35:36 -0700 (PDT)
-X-Received: by 2002:a2e:95c6:: with SMTP id y6-v6mr5786886ljh.59.1541108135729;
- Thu, 01 Nov 2018 14:35:35 -0700 (PDT)
+        Fri, 2 Nov 2018 02:42:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41974 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726395AbeKBGmj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 02:42:39 -0400
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E41CA20833
+        for <linux-kernel@vger.kernel.org>; Thu,  1 Nov 2018 21:37:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541108275;
+        bh=ZeMq+xRiWwUT+2ZVCyRlPSj5zWtRBpQpeZ2coZ01PJ8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=XC4/Q65y8lgOPk0kGRqg8Q5OxqdYAxGWxriuXXEeM9HrsPTzSAq9czcrcxeLyJAji
+         AfNDCjipSCzq4N6H3R2AquPWJiZOmT8pr1+2Si5+Kp+P3nJuDkLpV+x0hPOu7I+F3M
+         4Z+eGyqVK8pQJHwXaAllhqbHt8YWQrKqb8VFXN5o=
+Received: by mail-qk1-f181.google.com with SMTP id 189so12371779qkj.8
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 14:37:54 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gKFFcFsALPZBD7MSM4AbjH8dUbPIMKLF4T2vfn/ZPIzF6n7oNow
+        CCKlv0kSRQWF/RiRKQA39XLhCslGLM1KtRY9IA==
+X-Google-Smtp-Source: AJdET5cTlA6nic3JSIDqfqRJGgn2eq6HtpfM/RTzcHi29C0Y3iLUyGPfiNlc4Ss/B3jno+SthhzMqxAcwkMCEiqpD3M=
+X-Received: by 2002:aed:29a5:: with SMTP id o34mr1565163qtd.257.1541108274106;
+ Thu, 01 Nov 2018 14:37:54 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181101210345.9076-1-jcmvbkbc@gmail.com>
-In-Reply-To: <20181101210345.9076-1-jcmvbkbc@gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 1 Nov 2018 14:35:20 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj=3KDNmCRaiRxACkgfDR-QNKsptFCgXe7hij9dGZep+A@mail.gmail.com>
-Message-ID: <CAHk-=wj=3KDNmCRaiRxACkgfDR-QNKsptFCgXe7hij9dGZep+A@mail.gmail.com>
-Subject: Re: [PULL 0/4] Xtensa fixes for v4.20
-To:     jcmvbkbc@gmail.com
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xtensa@linux-xtensa.org, chris@zankel.net
+References: <201811011054.ZGhrqvwa%fengguang.wu@intel.com>
+In-Reply-To: <201811011054.ZGhrqvwa%fengguang.wu@intel.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 1 Nov 2018 16:37:42 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJG9AjQVLSLZg_H4-Msq5h8xhtSQqbBikfKXMfD7pwjqA@mail.gmail.com>
+Message-ID: <CAL_JsqJG9AjQVLSLZg_H4-Msq5h8xhtSQqbBikfKXMfD7pwjqA@mail.gmail.com>
+Subject: Re: make[3]: *** No rule to make target 'arch/mips/boot/dts/brcm/bcm93384wvg.dtb',
+ needed by '__build'.
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@01.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 1, 2018 at 2:04 PM Max Filippov <jcmvbkbc@gmail.com> wrote:
+On Wed, Oct 31, 2018 at 9:18 PM kbuild test robot <lkp@intel.com> wrote:
 >
-> Xtensa fixes and cleanups for v4.20:
+> Hi Rob,
+>
+> FYI, the error/warning still remains.
 
-Pulled,
+I replied on another one of these reports that these failures need to
+be fixed by using "CONFIG_OF_ALL_DTBS=y CONFIG_DTC=y" instead of just
+"CONFIG_OF_ALL_DTBS=y" as specifying kconfig options on the command
+line ignores any select or depends AFAICT.
 
-              Linus
+I partially fixed these in some cases by making 'all' only include
+'dtbs' target when CONFIG_OF_EARLY_FLATTREE is enabled. I'm not
+exactly sure why mips and xtensa still fail.
+
+Rob
