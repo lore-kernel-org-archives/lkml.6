@@ -2,100 +2,74 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1600DC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 18:52:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24777C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 18:53:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5668205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 18:52:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5668205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org
+	by mail.kernel.org (Postfix) with ESMTP id F0ADA205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 18:53:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0ADA205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727821AbeKBD4t (ORCPT
+        id S1727837AbeKBD5g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 23:56:49 -0400
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:57918 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727065AbeKBD4t (ORCPT
+        Thu, 1 Nov 2018 23:57:36 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:44152 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727065AbeKBD5g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 23:56:49 -0400
-Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
-        id 1gII4v-0001aI-00; Thu, 01 Nov 2018 18:52:25 +0000
-Date:   Thu, 1 Nov 2018 14:52:25 -0400
-From:   Rich Felker <dalias@libc.org>
-To:     Jann Horn <jannh@google.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        sean.j.christopherson@intel.com, jethro@fortanix.com,
-        jarkko.sakkinen@linux.intel.com,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        andriy.shevchenko@linux.intel.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        carlos@redhat.com, adhemerval.zanella@linaro.org
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181101185225.GC5150@brightrain.aerifal.cx>
-References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
- <CAG48ez0vBqL0tyfWwmuc_cq+OAUoEi88=r+t6h64a-Fw8z59zA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG48ez0vBqL0tyfWwmuc_cq+OAUoEi88=r+t6h64a-Fw8z59zA@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Thu, 1 Nov 2018 23:57:36 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id D325713FEE803;
+        Thu,  1 Nov 2018 11:53:24 -0700 (PDT)
+Date:   Thu, 01 Nov 2018 11:53:13 -0700 (PDT)
+Message-Id: <20181101.115313.2041743634297599056.davem@davemloft.net>
+To:     khlebnikov@yandex-team.ru
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        vfedorenko@yandex-team.ru
+Subject: Re: [PATCH resend] macvlan: use per-cpu queues for broadcast and
+ multicast packets
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <154108883150.919735.10620997593741055347.stgit@buzz>
+References: <154108883150.919735.10620997593741055347.stgit@buzz>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 01 Nov 2018 11:53:25 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 01, 2018 at 07:33:33PM +0100, Jann Horn wrote:
-> > but I'm
-> > wondering if a more general mechanism would be helpful.
-> >
-> > The basic idea would be to allow libc, or maybe even any library, to
-> > register a handler that gets a chance to act on an exception caused by
-> > a user instruction before a signal is delivered.  As a straw-man
-> > example for how this could work, there could be a new syscall:
-> >
-> > long register_exception_handler(void (*handler)(int, siginfo_t *, void *));
-> >
-> > If a handler is registered, then, if a synchronous exception happens
-> > (page fault, etc), the kernel would set up an exception frame as usual
-> > but, rather than checking for signal handlers, it would just call the
-> > registered handler.
+From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Date: Thu, 01 Nov 2018 19:13:51 +0300
+
+> Currently macvlan has single per-port queue for broadcast and multicast.
+> This disrupts order of packets when flows from different cpus are mixed.
 > 
-> > That handler is expected to either handle the
-> > exception entirely on its own or to call one of two new syscalls to
-> > ask for normal signal delivery
+> This patch replaces this queue with single set of per-cpu queues.
+> Pointer to macvlan port is passed in skb control block.
 > 
-> If you do it this way, these exception handlers would have to chain,
+> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> Reported-add-tested-by: Vadim Fedorenko <vfedorenko@yandex-team.ru>
 
-There's no need to chain if the handler is specific to the context
-where the fault happens. You just replace the handler with the one
-relevant to the code you're about to run before you run it.
+Konstantin, all of your postings to vger.kernel.org are being rejected.
 
-> > or to ask to retry the faulting instruction.
-> 
-> Why would that have to be a syscall? For signal handlers registered
-> with SA_NODEFER, you can basically leave the signal handler with a
-> longjmp, right?
+They are because of the:
 
-longjmp needs a jmp_buf; it can't return to the faulting instruction.
-Normally (though this is not defined) signal handlers return to the
-faulting instruction if they return, but if returning from the
-exception handler meant passing through to the signal disposition,
-a different mechanism would be needed to signal that you want to retry
-the faulting instruction.
+"List-Unsubscribe: <https://ml.yandex-team.ru/lists/vfedorenko@yandex-team.ru/unsubscribe-click>"
 
-Rich
+and similar strings that appear in your email headers.
+
+Please disable whatever is producing these email headers, otherwise
+nobody (including me) will see and process your postings.
+
+Thank you.
