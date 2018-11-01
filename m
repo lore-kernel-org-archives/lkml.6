@@ -2,222 +2,94 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F182C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CCD3C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:37:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68F4C205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:34:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68F4C205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 14ED52081B
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:37:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="cQ6nP1rq";
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="YjQfs1/o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14ED52081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=yandex-team.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727870AbeKBCic (ORCPT
+        id S1727879AbeKBClw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 22:38:32 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36586 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727837AbeKBCia (ORCPT
+        Thu, 1 Nov 2018 22:41:52 -0400
+Received: from forwardcorp1j.cmail.yandex.net ([5.255.227.105]:46920 "EHLO
+        forwardcorp1j.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727726AbeKBClw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 22:38:30 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA1HYPiO052839
-        for <linux-kernel@vger.kernel.org>; Thu, 1 Nov 2018 13:34:34 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ng3byy8wv-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 13:34:33 -0400
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 1 Nov 2018 17:34:32 -0000
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 1 Nov 2018 17:34:25 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA1HYOFA65601682
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 1 Nov 2018 17:34:24 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8952DB2071;
-        Thu,  1 Nov 2018 17:34:24 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5C629B205F;
-        Thu,  1 Nov 2018 17:34:24 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.141])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  1 Nov 2018 17:34:24 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id AAFDA16C0292; Thu,  1 Nov 2018 10:34:24 -0700 (PDT)
-Date:   Thu, 1 Nov 2018 10:34:24 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ralf@linux-mips.org" <ralf@linux-mips.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
-        "paul.burton@mips.com" <paul.burton@mips.com>,
-        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        "jhogan@kernel.org" <jhogan@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        aryabinin@virtuozzo.com, dvyukov@google.com
-Subject: Re: [RFC PATCH] lib: Introduce generic __cmpxchg_u64() and use it
- where needed
-Reply-To: paulmck@linux.ibm.com
-References: <20181031213240.zhh7dfcm47ucuyfl@pburton-laptop>
- <20181031220253.GA15505@roeck-us.net>
- <20181031233235.qbedw3pinxcuk7me@pburton-laptop>
- <4e2438a23d2edf03368950a72ec058d1d299c32e.camel@hammerspace.com>
- <20181101131846.biyilr2msonljmij@lakrids.cambridge.arm.com>
- <20181101145926.GE3178@hirez.programming.kicks-ass.net>
- <f38e272f7a96e983549e4281aa9fd02833a4277a.camel@hammerspace.com>
- <20181101163212.GF3159@hirez.programming.kicks-ass.net>
- <20181101170146.GQ4170@linux.ibm.com>
- <20181101171846.GI3178@hirez.programming.kicks-ass.net>
+        Thu, 1 Nov 2018 22:41:52 -0400
+Received: from mxbackcorp1o.mail.yandex.net (mxbackcorp1o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::301])
+        by forwardcorp1j.cmail.yandex.net (Yandex) with ESMTP id 3CDF92115A;
+        Thu,  1 Nov 2018 20:37:54 +0300 (MSK)
+Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:10])
+        by mxbackcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 9Eetnn9lym-br785SsF;
+        Thu, 01 Nov 2018 20:37:54 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1541093874; bh=9NSKQD9TC6CWOvQJHMbTYziFeV12lZg9YoYRZ3Vv2jQ=;
+        h=Subject:From:To:Date:Message-ID;
+        b=cQ6nP1rqfCJuNrTHvm5j/it7y/lCJV9JrOxuiHnaMCWsbhlrr+VejkxJ5S/0nDbvs
+         V0FGi5LWm46kPtrQvlWTxsT/GScMIDXY6x/IWWVozKjlVAsiB17F2LHoAUmjchpYRC
+         2ocHJrX0ZYmui+oCLVvHRZlXfxjNBIanM77f7gsQ=
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:2501:1cc0:44e4:e39a])
+        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id 2bn0JepsrD-brJ8svCg;
+        Thu, 01 Nov 2018 20:37:53 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1541093873; bh=9NSKQD9TC6CWOvQJHMbTYziFeV12lZg9YoYRZ3Vv2jQ=;
+        h=Subject:From:To:Date:Message-ID;
+        b=YjQfs1/oojFxHwS1lXBorLFoxTAGLzobHNmKCP/+F440FQQq2Jpj6j5fk8UX/+CyH
+         wFP4++cZNNp7Fxtecq/HagLwBnbYcIjni+T2HkTBS/OOzIo1bxdOSqty+xIKEJPz+h
+         9lvSL9inm3MHqUTUa737CDN2P9nDPbDWLssisC6M=
+Authentication-Results: smtpcorp1p.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Subject: [PATCH RFC] mm: do not start node_reclaim for page order > MAX_ORDER
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, linux-kernel@vger.kernel.org
+Date:   Thu, 01 Nov 2018 20:37:52 +0300
+Message-ID: <154109387197.925352.10499549042420271600.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181101171846.GI3178@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18110117-0040-0000-0000-0000048AD9C2
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009966; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01111189; UDB=6.00575830; IPR=6.00891280;
- MB=3.00023993; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-01 17:34:31
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110117-0041-0000-0000-00000893DA77
-Message-Id: <20181101173424.GU4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-01_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=505 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811010149
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 01, 2018 at 06:18:46PM +0100, Peter Zijlstra wrote:
-> On Thu, Nov 01, 2018 at 10:01:46AM -0700, Paul E. McKenney wrote:
-> > On Thu, Nov 01, 2018 at 05:32:12PM +0100, Peter Zijlstra wrote:
-> > > On Thu, Nov 01, 2018 at 03:22:15PM +0000, Trond Myklebust wrote:
-> > > > On Thu, 2018-11-01 at 15:59 +0100, Peter Zijlstra wrote:
-> > > > > On Thu, Nov 01, 2018 at 01:18:46PM +0000, Mark Rutland wrote:
-> > > 
-> > > > > > > My one question (and the reason why I went with cmpxchg() in the
-> > > > > > > first place) would be about the overflow behaviour for
-> > > > > > > atomic_fetch_inc() and friends. I believe those functions should
-> > > > > > > be OK on x86, so that when we overflow the counter, it behaves
-> > > > > > > like an unsigned value and wraps back around.  Is that the case
-> > > > > > > for all architectures?
-> > > > > > > 
-> > > > > > > i.e. are atomic_t/atomic64_t always guaranteed to behave like
-> > > > > > > u32/u64 on increment?
-> > > > > > > 
-> > > > > > > I could not find any documentation that explicitly stated that
-> > > > > > > they should.
-> > > > > > 
-> > > > > > Peter, Will, I understand that the atomic_t/atomic64_t ops are
-> > > > > > required to wrap per 2's-complement. IIUC the refcount code relies
-> > > > > > on this.
-> > > > > > 
-> > > > > > Can you confirm?
-> > > > > 
-> > > > > There is quite a bit of core code that hard assumes 2s-complement.
-> > > > > Not only for atomics but for any signed integer type. Also see the
-> > > > > kernel using -fno-strict-overflow which implies -fwrapv, which
-> > > > > defines signed overflow to behave like 2s-complement (and rids us of
-> > > > > that particular UB).
-> > > > 
-> > > > Fair enough, but there have also been bugfixes to explicitly fix unsafe
-> > > > C standards assumptions for signed integers. See, for instance commit
-> > > > 5a581b367b5d "jiffies: Avoid undefined behavior from signed overflow"
-> > > > from Paul McKenney.
-> > > 
-> > > Yes, I feel Paul has been to too many C/C++ committee meetings and got
-> > > properly paranoid. Which isn't always a bad thing :-)
-> > 
-> > Even the C standard defines 2s complement for atomics.  
-> 
-> Ooh good to know.
+Page allocator has check in __alloc_pages_slowpath() but nowdays
+there is earlier entry point into reclimer without such check:
+get_page_from_freelist() -> node_reclaim().
 
-Must be some mistake, right?  ;-)
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+---
+ mm/vmscan.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> > Just not for
-> > normal arithmetic, where yes, signed overflow is UB.  And yes, I do
-> > know about -fwrapv, but I would like to avoid at least some copy-pasta
-> > UB from my kernel code to who knows what user-mode environment.  :-/
-> > 
-> > At least where it is reasonably easy to do so.
-> 
-> Fair enough I suppose; I just always make sure to include the same
-> -fknobs for the userspace thing when I lift code.
-
-Agreed!  But when it is other people lifting the code...
-
-> > And there is a push to define C++ signed arithmetic as 2s complement,
-> > but there are still 1s complement systems with C compilers.  Just not
-> > C++ compilers.  Legacy...
-> 
-> *groan*; how about those ancient hardwares keep using ancient compilers
-> and we all move on to the 70s :-)
-
-Hey!!!  Some of that 70s (and 60s!) 1s-complement hardware helped pay
-my way through university the first time around!!!  ;-)
-
-Though where it once filled a room it is now on a single small chip.
-Go figure...
-
-> > > But for us using -fno-strict-overflow which actually defines signed
-> > > overflow, I myself am really not worried. I'm also not sure if KASAN has
-> > > been taught about this, or if it will still (incorrectly) warn about UB
-> > > for signed types.
-> > 
-> > UBSAN gave me a signed-overflow warning a few days ago.  Which I have
-> > fixed, even though 2s complement did the right thing.  I am also taking
-> > advantage of the change to use better naming.
-> 
-> Oh too many *SANs I suppose; and yes, if you can make the code better,
-> why not.
-
-Yeah, when INT_MIN was confined to a single function, no problem.
-But thanks to the RCU flavor consolidation, it has to be spread out a
-bit more...  Plus there is now INT_MAX, INT_MAX/2, ...
-
-> > > > Anyhow, if the atomic maintainers are willing to stand up and state for
-> > > > the record that the atomic counters are guaranteed to wrap modulo 2^n
-> > > > just like unsigned integers, then I'm happy to take Paul's patch.
-> > > 
-> > > I myself am certainly relying on it.
-> > 
-> > Color me confused.  My 5a581b367b5d is from 2013.  Or is "Paul" instead
-> > intended to mean Paul Mackerras, who happens to be on CC?
-> 
-> Paul Burton I think, on a part of the thread before we joined :-)
-
-Couldn't be bothered to look up the earlier part of the thread.  Getting
-lazy in my old age.  ;-)
-
-							Thanx, Paul
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 62ac0c488624..52f672420f0b 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -4117,6 +4117,12 @@ int node_reclaim(struct pglist_data *pgdat, gfp_t gfp_mask, unsigned int order)
+ {
+ 	int ret;
+ 
++	/*
++	 * Do not scan if allocation will never succeed.
++	 */
++	if (order >= MAX_ORDER)
++		return NODE_RECLAIM_NOSCAN;
++
+ 	/*
+ 	 * Node reclaim reclaims unmapped file backed pages and
+ 	 * slab pages if we are over the defined limits.
 
