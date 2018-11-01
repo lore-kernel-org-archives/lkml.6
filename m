@@ -2,220 +2,203 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09F44C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:08:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70783C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:09:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFF6520657
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:08:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HPLY60ye";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kzHRMm20"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFF6520657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 2A0DD20657
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:09:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A0DD20657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728544AbeKAVKj (ORCPT
+        id S1728549AbeKAVLq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 17:10:39 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58176 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728452AbeKAVKj (ORCPT
+        Thu, 1 Nov 2018 17:11:46 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:60463 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728345AbeKAVLq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 17:10:39 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 131B56085C; Thu,  1 Nov 2018 12:07:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541074078;
-        bh=gQbWq7iAcKIbBSiUrhu5qpO0Pm4yge8Kxhd2Tli5aBU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HPLY60yey6uN3mr9MnoOB9c96TGF9Ho/EQnXBsu2T5D4yRMz3Z/fZrlCjzgfiAm41
-         W/UNcrRfUip9Aswxdd47BXGgtioyYmygG7kdXJsaHglI70xT+zlc0uuE6E2uuHj+fq
-         02j6wpZJ9hJYQzaPBbQeqM1IDiaRst6fLyVPQxns=
-Received: from vbadigan-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vbadigan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id CC88260767;
-        Thu,  1 Nov 2018 12:07:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541074076;
-        bh=gQbWq7iAcKIbBSiUrhu5qpO0Pm4yge8Kxhd2Tli5aBU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kzHRMm20l1VagAJI35FTvxIcnHTaEfHfLakSppP3YOTdNUKSoIYHDNXpgGwFi3lYs
-         B0VICnteXZNIjZLQd1AVu3Utsi6WNY022L5+LOaqXVgh+qLx1pLf03IqtlbYZ/Tf0I
-         jFUcYuOdvnd4z9vhiE2sAQm2P95vOSpeRuTfGi9c=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CC88260767
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vbadigan@codeaurora.org
-From:   Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-To:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
-        robh+dt@kernel.org, evgreen@chromium.org, dianders@google.com
-Cc:     asutoshd@codeaurora.org, riteshh@codeaurora.org,
-        stummala@codeaurora.org, sayalil@codeaurora.org,
-        Veerabhadrarao Badiganti <vbadigan@codeaurora.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH V3 2/2] mmc: sdhci-msm: Re-initialize DLL if MCLK is gated dynamically
-Date:   Thu,  1 Nov 2018 17:36:39 +0530
-Message-Id: <1541073999-11752-3-git-send-email-vbadigan@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1541073999-11752-1-git-send-email-vbadigan@codeaurora.org>
-References: <1541073999-11752-1-git-send-email-vbadigan@codeaurora.org>
+        Thu, 1 Nov 2018 17:11:46 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA1C7SnH2805816
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 1 Nov 2018 05:07:28 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA1C7RHp2805813;
+        Thu, 1 Nov 2018 05:07:27 -0700
+Date:   Thu, 1 Nov 2018 05:07:27 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Dmitry Safonov <tipbot@zytor.com>
+Message-ID: <tip-98f76206b33504b934209d16196477dfa519a807@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, luto@kernel.org,
+        steffen.klassert@secunet.com, davem@davemloft.net, dima@arista.com,
+        rostedt@goodmis.org, hpa@zytor.com,
+        kirill.shutemov@linux.intel.com, herbert@gondor.apana.org.au,
+        sboyd@kernel.org, 0x7f454c46@gmail.com, oleg@redhat.com,
+        tglx@linutronix.de, mingo@kernel.org, john.stultz@linaro.org,
+        ard.biesheuvel@linaro.org
+Reply-To: davem@davemloft.net, steffen.klassert@secunet.com,
+          luto@kernel.org, linux-kernel@vger.kernel.org,
+          herbert@gondor.apana.org.au, kirill.shutemov@linux.intel.com,
+          dima@arista.com, rostedt@goodmis.org, hpa@zytor.com,
+          sboyd@kernel.org, 0x7f454c46@gmail.com, tglx@linutronix.de,
+          john.stultz@linaro.org, mingo@kernel.org,
+          ard.biesheuvel@linaro.org, oleg@redhat.com
+In-Reply-To: <20181012134253.23266-3-dima@arista.com>
+References: <20181012134253.23266-3-dima@arista.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] compat: Cleanup in_compat_syscall() callers
+Git-Commit-ID: 98f76206b33504b934209d16196477dfa519a807
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On few SDHCI-MSM controllers, the host controller's clock tuning
-circuit may go out of sync if controller clocks are gated which
-eventually will result in data CRC, command CRC/timeout errors.
-To overcome this h/w limitation, the DLL needs to be re-initialized
-and restored with its old settings once clocks are ungated.
+Commit-ID:  98f76206b33504b934209d16196477dfa519a807
+Gitweb:     https://git.kernel.org/tip/98f76206b33504b934209d16196477dfa519a807
+Author:     Dmitry Safonov <dima@arista.com>
+AuthorDate: Fri, 12 Oct 2018 14:42:53 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 1 Nov 2018 13:02:21 +0100
 
-Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+compat: Cleanup in_compat_syscall() callers
+
+Now that in_compat_syscall() is consistent on all architectures and does
+not longer report true on native i686, the workarounds (ifdeffery and
+helpers) can be removed.
+
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Dmitry Safonov <0x7f454c46@gmail.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Andy Lutomirsky <luto@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-efi@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Link: https://lkml.kernel.org/r/20181012134253.23266-3-dima@arista.com
+
 ---
- drivers/mmc/host/sdhci-msm.c | 59 ++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 57 insertions(+), 2 deletions(-)
+ drivers/firmware/efi/efivars.c | 16 ++++------------
+ kernel/time/time.c             |  2 +-
+ net/xfrm/xfrm_state.c          |  2 --
+ net/xfrm/xfrm_user.c           |  2 --
+ 4 files changed, 5 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index 3cc8bfe..e38a4e8 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -232,6 +232,7 @@ struct sdhci_msm_variant_ops {
-  */
- struct sdhci_msm_variant_info {
- 	bool mci_removed;
-+	bool restore_dll_config;
- 	const struct sdhci_msm_variant_ops *var_ops;
- 	const struct sdhci_msm_offset *offset;
- };
-@@ -256,6 +257,7 @@ struct sdhci_msm_host {
- 	bool pwr_irq_flag;
- 	u32 caps_0;
- 	bool mci_removed;
-+	bool restore_dll_config;
- 	const struct sdhci_msm_variant_ops *var_ops;
- 	const struct sdhci_msm_offset *offset;
- };
-@@ -1025,6 +1027,36 @@ static int sdhci_msm_hs400_dll_calibration(struct sdhci_host *host)
- 	return ret;
+diff --git a/drivers/firmware/efi/efivars.c b/drivers/firmware/efi/efivars.c
+index 3e626fd9bd4e..8061667a6765 100644
+--- a/drivers/firmware/efi/efivars.c
++++ b/drivers/firmware/efi/efivars.c
+@@ -229,14 +229,6 @@ sanity_check(struct efi_variable *var, efi_char16_t *name, efi_guid_t vendor,
+ 	return 0;
  }
  
-+static int sdhci_msm_restore_sdr_dll_config(struct sdhci_host *host)
-+{
-+	struct mmc_ios ios = host->mmc->ios;
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
-+	int ret;
-+
-+	/*
-+	 * SDR DLL comes into picure only if clock frequency is greater than
-+	 * 100MHz. And its needed only for SDR104, HS200 and HS400 cards.
-+	 * Its not needed for HS400es cards.
-+	 */
-+	if (host->clock <= CORE_FREQ_100MHZ ||
-+	    !(ios.timing == MMC_TIMING_MMC_HS400 ||
-+	    ios.timing == MMC_TIMING_MMC_HS200 ||
-+	    ios.timing == MMC_TIMING_UHS_SDR104) ||
-+	    ios.enhanced_strobe)
-+		return 0;
-+
-+	/* Reset the tuning block */
-+	ret = msm_init_cm_dll(host);
-+	if (ret)
-+		return ret;
-+
-+	/* Restore the tuning block */
-+	ret = msm_config_cm_dll_phase(host, msm_host->saved_tuning_phase);
-+
-+	return ret;
-+}
-+
- static int sdhci_msm_execute_tuning(struct mmc_host *mmc, u32 opcode)
+-static inline bool is_compat(void)
+-{
+-	if (IS_ENABLED(CONFIG_COMPAT) && in_compat_syscall())
+-		return true;
+-
+-	return false;
+-}
+-
+ static void
+ copy_out_compat(struct efi_variable *dst, struct compat_efi_variable *src)
  {
- 	struct sdhci_host *host = mmc_priv(mmc);
-@@ -1069,7 +1101,6 @@ static int sdhci_msm_execute_tuning(struct mmc_host *mmc, u32 opcode)
- 		if (rc)
- 			return rc;
+@@ -263,7 +255,7 @@ efivar_store_raw(struct efivar_entry *entry, const char *buf, size_t count)
+ 	u8 *data;
+ 	int err;
  
--		msm_host->saved_tuning_phase = phase;
- 		rc = mmc_send_tuning(mmc, opcode, NULL);
- 		if (!rc) {
- 			/* Tuning is successful at this tuning point */
-@@ -1094,6 +1125,7 @@ static int sdhci_msm_execute_tuning(struct mmc_host *mmc, u32 opcode)
- 		rc = msm_config_cm_dll_phase(host, phase);
- 		if (rc)
- 			return rc;
-+		msm_host->saved_tuning_phase = phase;
- 		dev_dbg(mmc_dev(mmc), "%s: Setting the tuning phase to %d\n",
- 			 mmc_hostname(mmc), phase);
- 	} else {
-@@ -1617,12 +1649,21 @@ static void sdhci_msm_set_regulator_caps(struct sdhci_msm_host *msm_host)
+-	if (is_compat()) {
++	if (in_compat_syscall()) {
+ 		struct compat_efi_variable *compat;
  
- static const struct sdhci_msm_variant_info sdhci_msm_mci_var = {
- 	.mci_removed = false,
-+	.restore_dll_config = false,
- 	.var_ops = &mci_var_ops,
- 	.offset = &sdhci_msm_mci_offset,
- };
+ 		if (count != sizeof(*compat))
+@@ -324,7 +316,7 @@ efivar_show_raw(struct efivar_entry *entry, char *buf)
+ 			     &entry->var.DataSize, entry->var.Data))
+ 		return -EIO;
  
- static const struct sdhci_msm_variant_info sdhci_msm_v5_var = {
- 	.mci_removed = true,
-+	.restore_dll_config = false,
-+	.var_ops = &v5_var_ops,
-+	.offset = &sdhci_msm_v5_offset,
-+};
-+
-+static const struct sdhci_msm_variant_info sdm845_sdhci_var = {
-+	.mci_removed = true,
-+	.restore_dll_config = true,
- 	.var_ops = &v5_var_ops,
- 	.offset = &sdhci_msm_v5_offset,
- };
-@@ -1630,6 +1671,7 @@ static void sdhci_msm_set_regulator_caps(struct sdhci_msm_host *msm_host)
- static const struct of_device_id sdhci_msm_dt_match[] = {
- 	{.compatible = "qcom,sdhci-msm-v4", .data = &sdhci_msm_mci_var},
- 	{.compatible = "qcom,sdhci-msm-v5", .data = &sdhci_msm_v5_var},
-+	{.compatible = "qcom,sdm845-sdhci", .data = &sdm845_sdhci_var},
- 	{},
- };
+-	if (is_compat()) {
++	if (in_compat_syscall()) {
+ 		compat = (struct compat_efi_variable *)buf;
  
-@@ -1689,6 +1731,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
- 	var_info = of_device_get_match_data(&pdev->dev);
+ 		size = sizeof(*compat);
+@@ -418,7 +410,7 @@ static ssize_t efivar_create(struct file *filp, struct kobject *kobj,
+ 	struct compat_efi_variable *compat = (struct compat_efi_variable *)buf;
+ 	struct efi_variable *new_var = (struct efi_variable *)buf;
+ 	struct efivar_entry *new_entry;
+-	bool need_compat = is_compat();
++	bool need_compat = in_compat_syscall();
+ 	efi_char16_t *name;
+ 	unsigned long size;
+ 	u32 attributes;
+@@ -495,7 +487,7 @@ static ssize_t efivar_delete(struct file *filp, struct kobject *kobj,
+ 	if (!capable(CAP_SYS_ADMIN))
+ 		return -EACCES;
  
- 	msm_host->mci_removed = var_info->mci_removed;
-+	msm_host->restore_dll_config = var_info->restore_dll_config;
- 	msm_host->var_ops = var_info->var_ops;
- 	msm_host->offset = var_info->offset;
+-	if (is_compat()) {
++	if (in_compat_syscall()) {
+ 		if (count != sizeof(*compat))
+ 			return -EINVAL;
  
-@@ -1928,9 +1971,21 @@ static int sdhci_msm_runtime_resume(struct device *dev)
- 	struct sdhci_host *host = dev_get_drvdata(dev);
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
- 	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
-+	int ret;
+diff --git a/kernel/time/time.c b/kernel/time/time.c
+index e3a7f7fd3abc..ad204cf6d001 100644
+--- a/kernel/time/time.c
++++ b/kernel/time/time.c
+@@ -842,7 +842,7 @@ int get_timespec64(struct timespec64 *ts,
+ 	ts->tv_sec = kts.tv_sec;
  
--	return clk_bulk_prepare_enable(ARRAY_SIZE(msm_host->bulk_clks),
-+	ret = clk_bulk_prepare_enable(ARRAY_SIZE(msm_host->bulk_clks),
- 				       msm_host->bulk_clks);
-+	if (ret)
-+		goto out;
-+	/*
-+	 * Whenever core-clock is gated dynamically, it's needed to
-+	 * restore the SDR DLL settings when the clock is ungated.
-+	 */
-+	if (msm_host->restore_dll_config && msm_host->clk_rate)
-+		ret = sdhci_msm_restore_sdr_dll_config(host);
-+
-+out:
-+	return ret;
- }
- #endif
+ 	/* Zero out the padding for 32 bit systems or in compat mode */
+-	if (IS_ENABLED(CONFIG_64BIT_TIME) && (!IS_ENABLED(CONFIG_64BIT) || in_compat_syscall()))
++	if (IS_ENABLED(CONFIG_64BIT_TIME) && in_compat_syscall())
+ 		kts.tv_nsec &= 0xFFFFFFFFUL;
  
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
-
+ 	ts->tv_nsec = kts.tv_nsec;
+diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
+index b669262682c9..dc4a9f1fb941 100644
+--- a/net/xfrm/xfrm_state.c
++++ b/net/xfrm/xfrm_state.c
+@@ -2077,10 +2077,8 @@ int xfrm_user_policy(struct sock *sk, int optname, u8 __user *optval, int optlen
+ 	struct xfrm_mgr *km;
+ 	struct xfrm_policy *pol = NULL;
+ 
+-#ifdef CONFIG_COMPAT
+ 	if (in_compat_syscall())
+ 		return -EOPNOTSUPP;
+-#endif
+ 
+ 	if (!optval && !optlen) {
+ 		xfrm_sk_policy_insert(sk, XFRM_POLICY_IN, NULL);
+diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
+index ca7a207b81a9..c9a84e22f5d5 100644
+--- a/net/xfrm/xfrm_user.c
++++ b/net/xfrm/xfrm_user.c
+@@ -2621,10 +2621,8 @@ static int xfrm_user_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh,
+ 	const struct xfrm_link *link;
+ 	int type, err;
+ 
+-#ifdef CONFIG_COMPAT
+ 	if (in_compat_syscall())
+ 		return -EOPNOTSUPP;
+-#endif
+ 
+ 	type = nlh->nlmsg_type;
+ 	if (type > XFRM_MSG_MAX)
