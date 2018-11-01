@@ -2,150 +2,129 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09F75C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 01:40:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C9FDC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 01:41:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D4FD20823
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 01:40:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D4FD20823
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=electrozaur.com
+	by mail.kernel.org (Postfix) with ESMTP id 46E8A2081B
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 01:41:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o2BBJ5zQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46E8A2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbeKAKkq (ORCPT
+        id S1727420AbeKAKm3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 06:40:46 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34990 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbeKAKkp (ORCPT
+        Thu, 1 Nov 2018 06:42:29 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36839 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726070AbeKAKm2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 06:40:45 -0400
-Received: by mail-wr1-f66.google.com with SMTP id z16-v6so610550wrv.2;
-        Wed, 31 Oct 2018 18:39:58 -0700 (PDT)
+        Thu, 1 Nov 2018 06:42:28 -0400
+Received: by mail-pf1-f194.google.com with SMTP id j22-v6so4688143pfh.3;
+        Wed, 31 Oct 2018 18:41:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GU1ioPxTyrjVE/jzOFBKkMcDEXxiiSzRJyn0kDmOMoE=;
+        b=o2BBJ5zQgvgOFpWyUaGvaMxm6EprRBnl91Z0VVEud0W6PyKSfnzhJcOM9cAblCM4ZC
+         wn6MTbdw7FP83aB9H5tvQcoFyI4y8+BFpLxD5ssz61cqVIhe/opfo8leY4saxx0o94Dv
+         ClybdUKCEojt4ah3AO4cihsa64oTf7bJclyhDQ0uvxLsPtqRxhQwBzQC0/EA4p10ku4x
+         JbISYxlEZyK/MBiaKloBgdJxxzNCSLAwhmB7SjA7uZZNgnY1m6xw3taly2PsTGf8btDI
+         8SLyyXB89LzOle64O4k+5MnnKNEyguREOC2OxL3aPrJ5b/A3R9QkrDY/Y91cuki8qq5x
+         z5Ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=HHzLiT9Ap/pSWhAU06QyHqArkXsKnNg8xqdtbNQegjg=;
-        b=R+2G4XRwCUhshLN8UQ3mMSk8hQrmRqfUXhBdyhYhi6RfV8z0nlM/1gBC8lCvT0K93F
-         QqvxCArYzOTVEgJr4/yUuQWXHcy/9ZLM//K+VXGFD1Jo8P+ZYSpHTgvPUN9xhPykPfs/
-         Ts2nWf7NQZKQ4aEjDd9KNtyDg87LgP3qzF4UYSiCph6BOiUt297yLf+LD1eNg9NBWJVn
-         ivbdnFQCCltozY88PzjDul9z/t4eQHUpFvPsTQeWF8s7cL0LwuCUkyp9HqedjEqz6Rut
-         p12v+H1KXoNHpcBEjdn9L1HxpBqLU87scda/afUfuGqSVB7KCU6DQH/nJPYO3vPmgg7f
-         bXRw==
-X-Gm-Message-State: AGRZ1gJZRMQGdWeuXNLjVmEJGx4wxIBJjiV1AvC4/96QfEyQ6ohTiaCk
-        cwKcu3Bzwa/AVprgpFUpBf77DBb0
-X-Google-Smtp-Source: AJdET5dtPg85tgFU64HSRT0ImpeWj89ToqKEH0ZomYoOEhk0Da1e8k8td9QuWxi0joTzUaNjMryCcg==
-X-Received: by 2002:a5d:53cd:: with SMTP id a13-v6mr4621480wrw.71.1541036396878;
-        Wed, 31 Oct 2018 18:39:56 -0700 (PDT)
-Received: from [10.0.0.5] ([207.232.55.62])
-        by smtp.gmail.com with ESMTPSA id t17sm18039716wrx.9.2018.10.31.18.39.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 18:39:55 -0700 (PDT)
-Subject: Re: [PATCH] libosd: Remove ignored __weak attribute
-To:     Nathan Chancellor <natechancellor@gmail.com>,
-        Bart Van Assche <bvanassche@acm.org>
-References: <20180930205448.26205-1-natechancellor@gmail.com>
- <10b12992-3570-4646-374b-82cbd7276839@acm.org>
- <CAKwvOd=wgxB69dMxzMeH2edCn=TdQGPGkNVW1e=QHPTJtO9ZNw@mail.gmail.com>
- <1538503063.193396.6.camel@acm.org>
- <CAKwvOdmsNEexQL9R8rgcRcXTZButYM6YWwG8bhVWCoJ8bOqCrA@mail.gmail.com>
- <1538521591.193396.8.camel@acm.org> <20181025213144.GB24709@flashbox>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-From:   Boaz Harrosh <ooo@electrozaur.com>
-Message-ID: <1c58c82f-5cfa-f483-097a-5b82904e5e9a@electrozaur.com>
-Date:   Thu, 1 Nov 2018 03:39:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GU1ioPxTyrjVE/jzOFBKkMcDEXxiiSzRJyn0kDmOMoE=;
+        b=rSRjTABJ9nH3eASQ1OERANOTbi20m/wepM1zcEHXiMWRaM6icvsp0iGHkuudtc4964
+         4gHuDCl7aozW14rPcWBXIju2mxCAvzxJfyfVD2EbolAFEE+tq3/iYGwfsBio7aPkqFYb
+         9RoK0N0qdS/Pz2J5xjbQCzeyv+JYjj+nalgPxHMQ8/V7f4DAM9RwcV0jKg8qmFEA1Jmg
+         M/ZM7Jphtdnk/OC9K1q3HwpdZfqSrGCZi7qxPU8Oku6Xh0KmT+ArF56fs2C51ynSijwa
+         A9rnvrbqj1d6sykWtEyA6G+iUscjdJ0RXhe7nIffkrVvTaZgs9oQZ3fh/VgXA3kBpX8T
+         w34w==
+X-Gm-Message-State: AGRZ1gI/6lzg9sqqRnRNAYzQR/23P7Us9COpk1rQYTc5NCO2muEwEzHc
+        hPBLs84gQCdDsdxJ89h5wV0IkEXyiDMXjgqPr3rpKA==
+X-Google-Smtp-Source: AJdET5cEkqA1CUYGrD6LwTte9qhqMOn+/wsy9eDTI23nD1rF3uhoq+/K68/EJwJeF/stLBMr0unNvjtHK3r69AAlxZU=
+X-Received: by 2002:a65:6684:: with SMTP id b4mr5375507pgw.55.1541036500738;
+ Wed, 31 Oct 2018 18:41:40 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181025213144.GB24709@flashbox>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+References: <20181031221311.2596-1-longli@linuxonhyperv.com> <20181031221311.2596-3-longli@linuxonhyperv.com>
+In-Reply-To: <20181031221311.2596-3-longli@linuxonhyperv.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Wed, 31 Oct 2018 20:41:29 -0500
+Message-ID: <CAH2r5mu0KcrHcfmdBgM4fz7qtrN8xa=A3SRxt+CupnT=iLgR9w@mail.gmail.com>
+Subject: Re: [Patch v4 3/3] CIFS: Add direct I/O functions to file_operations
+To:     Long Li <longli@microsoft.com>
+Cc:     CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/10/18 00:31, Nathan Chancellor wrote:
-> On Tue, Oct 02, 2018 at 04:06:31PM -0700, Bart Van Assche wrote:
-<>
-> 
-> Hi Bart,
-> 
-> I'm sorry if I didn't follow the conclusion of this conversation properly
-> but this is the below diff you were initially looking for, correct?
-> 
-> If so, Boaz and Nick, do you have any objections if this is v2? I'd like
-> to get this patch accepted so the warning can be fixed for everyone.
-> 
-
-ACK on both the original and below code they will all work just fine.
-
-I do like the original "just remove the _weak thingy". But this one
-will work as well.
-
-The "with extern" version suggested before is more cumbersome because it will
-need an EXPORT_SYMBOL() but will also work.
-
-The all use of osd_root_object is just. A properly C-types pointer to couple
-of ZEROS. but since the Interface needs a pointer, those zeros need storage
-somewhere. It does not matter where. (The value of the pointer is not used
-only its content)
-
-Do you need that I send a proper patch? Actually the original first patch
-is the version I like. (And again all 3 approaches will work)
-
-Thanks
-Boaz
-
-> Thanks,
-> Nathan
-> 
-> ================================================================================
-> 
-> diff --git a/drivers/scsi/osd/osd_initiator.c b/drivers/scsi/osd/osd_initiator.c
-> index e19fa883376f..4250f739beb3 100644
-> --- a/drivers/scsi/osd/osd_initiator.c
-> +++ b/drivers/scsi/osd/osd_initiator.c
-> @@ -58,6 +58,8 @@
-> 
->  enum { OSD_REQ_RETRIES = 1 };
-> 
-> +static const struct osd_obj_id osd_root_object;
-> +
->  MODULE_AUTHOR("Boaz Harrosh <ooo@electrozaur.com>");
->  MODULE_DESCRIPTION("open-osd initiator library libosd.ko");
->  MODULE_LICENSE("GPL");
-> diff --git a/drivers/scsi/osd/osd_uld.c b/drivers/scsi/osd/osd_uld.c
-> index eaf36ccf58db..770c758baaa9 100644
-> --- a/drivers/scsi/osd/osd_uld.c
-> +++ b/drivers/scsi/osd/osd_uld.c
-> @@ -73,6 +73,7 @@
-> 
->  static const char osd_name[] = "osd";
->  static const char *osd_version_string = "open-osd 0.2.1";
-> +static const struct osd_obj_id osd_root_object;
-> 
->  MODULE_AUTHOR("Boaz Harrosh <ooo@electrozaur.com>");
->  MODULE_DESCRIPTION("open-osd Upper-Layer-Driver osd.ko");
-> diff --git a/include/scsi/osd_types.h b/include/scsi/osd_types.h
-> index 48e8a165e136..eb31357ec8b3 100644
-> --- a/include/scsi/osd_types.h
-> +++ b/include/scsi/osd_types.h
-> @@ -28,8 +28,6 @@ struct osd_obj_id {
->         osd_id id;
+made minor cleanup to patch 1 and 2, added Ronnie's reviewed to patch
+3, and tentatively merged to cifs-2.6.git for-next
+On Wed, Oct 31, 2018 at 5:16 PM Long Li <longli@linuxonhyperv.com> wrote:
+>
+> From: Long Li <longli@microsoft.com>
+>
+> With direct read/write functions implemented, add them to file_operations.
+>
+> Dircet I/O is used under two conditions:
+> 1. When mounting with "cache=none", CIFS uses direct I/O for all user file
+> data transfer.
+> 2. When opening a file with O_DIRECT, CIFS uses direct I/O for all data
+> transfer on this file.
+>
+> Signed-off-by: Long Li <longli@microsoft.com>
+> ---
+>  fs/cifs/cifsfs.c | 10 ++++------
+>  1 file changed, 4 insertions(+), 6 deletions(-)
+>
+> diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+> index 62f1662..f18091b 100644
+> --- a/fs/cifs/cifsfs.c
+> +++ b/fs/cifs/cifsfs.c
+> @@ -1113,9 +1113,8 @@ const struct file_operations cifs_file_strict_ops = {
 >  };
-> 
-> -static const struct __weak osd_obj_id osd_root_object = {0, 0};
-> -
->  struct osd_attr {
->         u32 attr_page;
->         u32 attr_id;
-> 
+>
+>  const struct file_operations cifs_file_direct_ops = {
+> -       /* BB reevaluate whether they can be done with directio, no cache */
+> -       .read_iter = cifs_user_readv,
+> -       .write_iter = cifs_user_writev,
+> +       .read_iter = cifs_direct_readv,
+> +       .write_iter = cifs_direct_writev,
+>         .open = cifs_open,
+>         .release = cifs_close,
+>         .lock = cifs_lock,
+> @@ -1169,9 +1168,8 @@ const struct file_operations cifs_file_strict_nobrl_ops = {
+>  };
+>
+>  const struct file_operations cifs_file_direct_nobrl_ops = {
+> -       /* BB reevaluate whether they can be done with directio, no cache */
+> -       .read_iter = cifs_user_readv,
+> -       .write_iter = cifs_user_writev,
+> +       .read_iter = cifs_direct_readv,
+> +       .write_iter = cifs_direct_writev,
+>         .open = cifs_open,
+>         .release = cifs_close,
+>         .fsync = cifs_fsync,
+> --
+> 2.7.4
+>
 
+
+-- 
+Thanks,
+
+Steve
