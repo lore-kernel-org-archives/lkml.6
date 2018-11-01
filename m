@@ -2,99 +2,132 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32922C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:42:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50C3FC6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE2D420820
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:41:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 012F62064C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:42:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pr0Jnkwb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE2D420820
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oGhSWv7X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 012F62064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728718AbeKAWo6 (ORCPT
+        id S1728736AbeKAWpd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 18:44:58 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34739 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727998AbeKAWo6 (ORCPT
+        Thu, 1 Nov 2018 18:45:33 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:38578 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728198AbeKAWpd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 18:44:58 -0400
-Received: by mail-wr1-f67.google.com with SMTP id j26-v6so5946497wre.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 06:41:57 -0700 (PDT)
+        Thu, 1 Nov 2018 18:45:33 -0400
+Received: by mail-qt1-f195.google.com with SMTP id v1-v6so16845353qtq.5;
+        Thu, 01 Nov 2018 06:42:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=PjAe/SDyD9Gvb5FvZsuBgorI5jx9L+QPU0jYOhnQLSo=;
-        b=pr0JnkwbFNhuBnMQU5rcpBkvbcNhLJLx++TOSentAfo0Iq6wHPP/rmXjjjQWpE1+Jc
-         xz6xxuIkcqtBmWCVqQjpKqU7fZV+cA6N04Hf/+gny6F5gsWn6Nnitk2ujDt54wH12JBj
-         heja0EEo4MAxAqQo49EvtmZBDmV8LYg492FHhEISXyFqaP/0w4lA28JvpToOybOLPnIZ
-         NJb3ctz+jwjBEeWpct9+CmiMg6k9c/aczA7FwfxHuJNZG9Loj+I5p9PnR1NQItbSoBXR
-         PlR6Gscwwzt9E07iS0x4Vz2+BsJ7FQtKe0je7U8dJUbGaI1ZgnjxEK72CjgzMQ7UlGEj
-         jopw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pMB5PMrMTYCRVJ3Z5w7mSTwmfDrCS/MwLqLqMx4V+Wk=;
+        b=oGhSWv7XODIa9r6+NVuo9v7LooSBgas1OtvW1F4D86BJlS09aDZb7aAuhmSUqHjWzE
+         v883+NSZDDmVMKRMufZo3FnpSU4/vRifYZCbx9+ybZZYfBmqA6rSB5SubYHigfJzP+7v
+         fzfqzQEbGkLYIC2LXl+g5wVU6ZMwgRJjrhjreMXL3vb9Hm1ySO2mwhh8ZoEIsBeFHQvk
+         aH5tXmUCQCUXMecvyC5EzZ2MbuViUMhttPP5v8M7AefNiagMGY35XqZ9p0dCV2Wx7TKm
+         IKwrKMjvNp7hfsiENCPPjCQ/PZu07ojRIgdwHZ3JPTEl4DUusZn/FBNGWME6G83T5Oy7
+         AOAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=PjAe/SDyD9Gvb5FvZsuBgorI5jx9L+QPU0jYOhnQLSo=;
-        b=ill2+gtOOIjkK9iWVX7knVmBd6/Nb8rOe6dG9M7eFnp2cTjvEaTRVN+nc3r3kJBg82
-         Z9IHW7cWRZJRp/wHHDSmO+cEliz6gOgmfrgT5UXUYRVEjxOLUco1mdVP4A0CCa8jNtyU
-         Zp6bIdH2gF4e9sqaAuUyOWeHX/N7qpRZO7VRaiwCmaXkV5wAmSToym47LmwQNbxj38/0
-         vPqYG6IKNJ5vrzJlcgGkWlDobVSEcat75zQJTcOSf5gxc9P80L2ne/cLMqaI4LmiRS0C
-         /TtjPOpRyWDvjQ6B1VbLftGLeaGR5fTmEoVjhwPZdwLSkUsGs+DskU8ZCWanagrrcAGo
-         78gg==
-X-Gm-Message-State: AGRZ1gLdNIEcjw7ozTOZXg0IZ+sWpysnxR4zyCN/dtXCsxduUw9Hu3az
-        AW9DQRLJRzC+rObkLgYckBGYQwo=
-X-Google-Smtp-Source: AJdET5fxD78xr8CjKXkOuZBL5t59XZszumsuQMhBUqtk9uxvWJ0/+SS7qWm6fJURfXm+MrS7kCP2zg==
-X-Received: by 2002:adf:8547:: with SMTP id 65-v6mr6650932wrh.69.1541079716492;
-        Thu, 01 Nov 2018 06:41:56 -0700 (PDT)
-Received: from avx2 (nat5-minsk-pool-46-53-217-92.telecom.by. [46.53.217.92])
-        by smtp.gmail.com with ESMTPSA id h64-v6sm15470631wmh.27.2018.11.01.06.41.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Nov 2018 06:41:55 -0700 (PDT)
-Date:   Thu, 1 Nov 2018 16:41:53 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     akpm@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] coding style: don't use "extern" with function prototypes
-Message-ID: <20181101134153.GA29267@avx2>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pMB5PMrMTYCRVJ3Z5w7mSTwmfDrCS/MwLqLqMx4V+Wk=;
+        b=iah1mXNSkcs03NEb7Re/9HMdjxKvh5y5d9q6ylV0aHGJ+IDSZ5Bck8PYZw3Z4CPHIc
+         neYp6koWN4vaZZbyVwn/LAw46Hb6C8wF1zX1Krhrnu1hh+CcB6upgDxe5kRJPkR4TvYE
+         XTnXHxYr+ADlX0kMcV5lgJ1fpREbXbHcRCemFGRyZGpWTf3mWADqZ3gGftUDkxeuE9MK
+         hI6RPlTPnUlMDQw24uo/J2UlwSc5wzkoKseQ+ZTZwaoyCn0N3Oq0k294SivfGRAZmqIa
+         5YxGCXiqrCsFOj/bAyJveEp3TBN3OQWMW7gDJ9CptOID0AJKVGIAgLpshMNcJFotdfbb
+         ifjQ==
+X-Gm-Message-State: AGRZ1gIJOgGL1bSxbtn3eF0QirDAg1v9bwGuGDLP8853xj3UQP+OBtpy
+        aAMZfYJQPtKpRgzAeRnqJO0EKyKJll3Ty2Nh7l0MttfxLro=
+X-Google-Smtp-Source: AJdET5cIWmvZnw9Hp9j7szNy24cgSCOPzwnjb7QDDvwjTyQfz7T2uOgfmGtK9b1ncr6EtMgtRMOZpAIpqhAffcKQxEw=
+X-Received: by 2002:aed:3b76:: with SMTP id q51mr3578512qte.229.1541079752224;
+ Thu, 01 Nov 2018 06:42:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1541085002-42993-1-git-send-email-peng.hao2@zte.com.cn> <1541085002-42993-4-git-send-email-peng.hao2@zte.com.cn>
+In-Reply-To: <1541085002-42993-4-git-send-email-peng.hao2@zte.com.cn>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 1 Nov 2018 15:42:21 +0200
+Message-ID: <CAHp75VcvWwUJ=_LupAeuOFGLMTaBfB-g17kwQ=G1KF-zDS_8Hg@mail.gmail.com>
+Subject: Re: [PATCH V5 4/8] misc/pvpanic :convert to SPDX license tags
+To:     peng.hao2@zte.com.cn
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        hutao@cn.fujitsu.com,
+        Linux Documentation List <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As the patch says "extern" with function prototypes makes lines longer
-and creates more characters on the screen.
+On Thu, Nov 1, 2018 at 9:00 AM Peng Hao <peng.hao2@zte.com.cn> wrote:
+>
+> This patch updates license to use SPDX-License-Identifier
+> instead of verbose license text.
+>
 
-Do not bug people with checkpatch.pl warnings for now as fallout can be
-devastating.
+After addressing Mark's comment consider to move this to be patch 7/8
+in the series.
+Otherwise,
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+> ---
+>  drivers/misc/pvpanic.c | 16 ++--------------
+>  1 file changed, 2 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/misc/pvpanic.c b/drivers/misc/pvpanic.c
+> index 66534d4..0bcf1cd 100644
+> --- a/drivers/misc/pvpanic.c
+> +++ b/drivers/misc/pvpanic.c
+> @@ -1,21 +1,9 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+>  /*
+> - *  pvpanic.c - pvpanic Device Support
+> + *  Pvpanic Device Support
+>   *
+>   *  Copyright (C) 2013 Fujitsu.
+>   *
+> - *  This program is free software; you can redistribute it and/or modify
+> - *  it under the terms of the GNU General Public License as published by
+> - *  the Free Software Foundation; either version 2 of the License, or
+> - *  (at your option) any later version.
+> - *
+> - *  This program is distributed in the hope that it will be useful,
+> - *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+> - *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> - *  GNU General Public License for more details.
+> - *
+> - *  You should have received a copy of the GNU General Public License
+> - *  along with this program; if not, write to the Free Software
+> - *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+>   */
+>
+>  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> --
+> 1.8.3.1
+>
 
- Documentation/process/coding-style.rst |    3 +++
- 1 file changed, 3 insertions(+)
 
---- a/Documentation/process/coding-style.rst
-+++ b/Documentation/process/coding-style.rst
-@@ -443,6 +443,9 @@ In function prototypes, include parameter names with their data types.
- Although this is not required by the C language, it is preferred in Linux
- because it is a simple way to add valuable information for the reader.
- 
-+Do not use ``extern`` keyword with function prototypes as it makes lines
-+longer and isn't strictly necessary.
-+
- 
- 7) Centralized exiting of functions
- -----------------------------------
+-- 
+With Best Regards,
+Andy Shevchenko
