@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC45C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 07:37:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0CB5C6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 07:38:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 101822064C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 07:37:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 101822064C
+	by mail.kernel.org (Postfix) with ESMTP id 90ADF2064C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 07:38:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90ADF2064C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728000AbeKAQjk (ORCPT
+        id S1728072AbeKAQj7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 12:39:40 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38500 "EHLO mx1.suse.de"
+        Thu, 1 Nov 2018 12:39:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38538 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727803AbeKAQjk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 12:39:40 -0400
+        id S1727846AbeKAQj7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 12:39:59 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F2AC6AEC2;
-        Thu,  1 Nov 2018 07:37:48 +0000 (UTC)
-Date:   Thu, 01 Nov 2018 08:37:47 +0100
-Message-ID: <s5hd0rpgsdw.wl-tiwai@suse.de>
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E2C62AEC2;
+        Thu,  1 Nov 2018 07:38:08 +0000 (UTC)
+Date:   Thu, 01 Nov 2018 08:38:08 +0100
+Message-ID: <s5hbm79gsdb.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
-To:     "Ayman Bagabas" <ayman.bagabas@gmail.com>
+To:     <ayman.bagabas@gmail.com>
 Cc:     <alsa-devel@alsa-project.org>, "Hui Wang" <hui.wang@canonical.com>,
         "Jaroslav Kysela" <perex@perex.cz>,
-        "Kailang Yang" <kailang@realtek.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] ALSA:hda: add support for Huawei WMI MicMute LED
-In-Reply-To: <20181031192045.7877-1-ayman.bagabas@gmail.com>
-References: <20181031192045.7877-1-ayman.bagabas@gmail.com>
+        "KailangYang" <kailang@realtek.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/3] ALSA:hda: fix front speakers on Huawei MBXP.
+In-Reply-To: <60bede7d2cc0a0c06575da2bcbf06367f15bf4ca.camel@gmail.com>
+References: <20181031192013.7701-1-ayman.bagabas@gmail.com>
+        <60bede7d2cc0a0c06575da2bcbf06367f15bf4ca.camel@gmail.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -47,123 +47,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 31 Oct 2018 20:20:38 +0100,
-Ayman Bagabas wrote:
+On Wed, 31 Oct 2018 21:08:18 +0100,
+<ayman.bagabas@gmail.com> wrote:
 > 
-> Some of Huawei laptops come with a LED in the mic mute key. This patch
-> enables and disable this LED when the internal microphone status is
-> changed.
-> 
-> Signed-off-by: Ayman Bagabas <ayman.bagabas@gmail.com>
-> ---
->  include/linux/huawei_wmi.h        |  7 ++++
->  sound/pci/hda/huawei_wmi_helper.c | 66 +++++++++++++++++++++++++++++++
->  sound/pci/hda/patch_realtek.c     | 12 ++++++
->  3 files changed, 85 insertions(+)
->  create mode 100644 include/linux/huawei_wmi.h
->  create mode 100644 sound/pci/hda/huawei_wmi_helper.c
-> 
-> diff --git a/include/linux/huawei_wmi.h b/include/linux/huawei_wmi.h
-> new file mode 100644
-> index 000000000000..69b656c5029b
-> --- /dev/null
-> +++ b/include/linux/huawei_wmi.h
-> @@ -0,0 +1,7 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __HUAWEI_WMI_H__
-> +#define __HUAWEI_WMI_H__
-> +
-> +int huawei_wmi_micmute_led_set(bool on);
-> +
-> +#endif
-> diff --git a/sound/pci/hda/huawei_wmi_helper.c b/sound/pci/hda/huawei_wmi_helper.c
-> new file mode 100644
-> index 000000000000..57256f51fd88
-> --- /dev/null
-> +++ b/sound/pci/hda/huawei_wmi_helper.c
-> @@ -0,0 +1,66 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/* Helper functions for Huawei WMI Mic Mute LED;
-> + * to be included from codec driver
-> + */
-> +
-> +#if IS_ENABLED(CONFIG_HUAWEI_LAPTOP)
-> +#include <linux/huawei_wmi.h>
-> +
-> +static int (*huawei_wmi_micmute_led_set_func)(bool);
-> +
-> +static void update_huawei_wmi_micmute_led(struct hda_codec *codec,
-> +					  struct snd_kcontrol *kcontrol,
-> +					  struct snd_ctl_elem_value *ucontrol)
-> +{
-> +	if (!ucontrol || !huawei_wmi_micmute_led_set_func)
-> +		return;
-> +	if (strcmp("Capture Switch", ucontrol->id.name) == 0 && ucontrol->id.index == 0) {
-> +		/* TODO: How do I verify if it's a mono or stereo here? */
-> +		bool val = ucontrol->value.integer.value[0] || ucontrol->value.integer.value[1];
-> +		huawei_wmi_micmute_led_set_func(!val);
-> +	}
-> +}
-> +
-> +static void alc_fixup_huawei_wmi(struct hda_codec *codec,
-> +				   const struct hda_fixup *fix, int action)
-> +{
-> +	struct hda_gen_spec *spec = codec->spec;
-> +	bool removefunc = false;
-> +
-> +	codec_info(codec, "In alc_fixup_huawei_wmi\n");
-> +
-> +	if (action == HDA_FIXUP_ACT_PROBE) {
-> +		if (!huawei_wmi_micmute_led_set_func)
-> +			huawei_wmi_micmute_led_set_func = symbol_request(huawei_wmi_micmute_led_set);
-> +		if (!huawei_wmi_micmute_led_set_func) {
-> +			codec_warn(codec, "Failed to find huawei_wmi symbol huawei_wmi_micmute_led_set\n");
-> +			return;
-> +		}
-> +
-> +		removefunc = true;
-> +		if (huawei_wmi_micmute_led_set_func(false) >= 0) {
-> +			if (spec->num_adc_nids > 1 && !spec->dyn_adc_switch)
-> +				codec_dbg(codec, "Skipping micmute LED control due to several ADCs");
-> +			else {
-> +				spec->cap_sync_hook = update_huawei_wmi_micmute_led;
-> +				removefunc = false;
-> +			}
-> +		}
-> +		codec_info(codec, "In alc_fixup_huawei_wmi IF\n");
-> +
-> +	}
-> +
-> +	if (huawei_wmi_micmute_led_set_func && (action == HDA_FIXUP_ACT_FREE || removefunc)) {
-> +		symbol_put(huawei_wmi_micmute_led_set);
-> +		huawei_wmi_micmute_led_set_func = NULL;
-> +	}
-> +}
+> This patch solves bug 200501 'Only 2 of 4 speakers playing sound.' 
+> https://bugzilla.kernel.org/show_bug.cgi?id=200501
 
-There is a new snd_hda_gen_add_micmute_led() helper.  Please use it
-instead.
-
-
-> @@ -6610,6 +6620,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
->  	SND_PCI_QUIRK(0x17aa, 0x511e, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
->  	SND_PCI_QUIRK(0x17aa, 0x511f, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
->  	SND_PCI_QUIRK(0x19e5, 0x3204, "Huawei MBXP", ALC256_FIXUP_HUAWEI_MBXP_PINS),
-> +	SND_PCI_QUIRK(0x19e5, 0x3204, "Huawei MBXP", ALC256_FIXUP_HUAWEI_WMI_MICMUTE_LED),
-
-You must not have two entries with the very same ID.
-And this implies that you didn't test the latest patches.  In the
-quirk list, only the first matching is applied, so this WMI hook won't
-be executed at all.
-
-Anyways: the submission is confusing at this time since you posted in
-may times by some reason, once mixed up all, once incomplete patchset,
-etc.
-
-At the next submission, could you give a proper cover letter (PATCH
-0/3) and submit together with other patches?  git-format-patch will
-give you a nice template with --cover-letter option.
+The information should be put in the patch description.
 
 
 thanks,
 
 Takashi
+
+> 
+> On Wed, 2018-10-31 at 15:20 -0400, Ayman Bagabas wrote:
+> > This patch enables the front speakers on Huawei Matebook X Pro
+> > laptops.
+> > These laptops come with Dolby Atmos sound system and these pins
+> > configuration enables the front speakers.
+> > 
+> > Signed-off-by: Ayman Bagabas <ayman.bagabas@gmail.com>
+> > ---
+> >  sound/pci/hda/patch_realtek.c | 18 ++++++++++++++++++
+> >  1 file changed, 18 insertions(+)
+> > 
+> > diff --git a/sound/pci/hda/patch_realtek.c
+> > b/sound/pci/hda/patch_realtek.c
+> > index 3ac7ba9b342d..4f7a39c7883c 100644
+> > --- a/sound/pci/hda/patch_realtek.c
+> > +++ b/sound/pci/hda/patch_realtek.c
+> > @@ -5493,6 +5493,7 @@ enum {
+> >  	ALC298_FIXUP_TPT470_DOCK,
+> >  	ALC255_FIXUP_DUMMY_LINEOUT_VERB,
+> >  	ALC255_FIXUP_DELL_HEADSET_MIC,
+> > +	ALC256_FIXUP_HUAWEI_MBXP_PINS,
+> >  	ALC295_FIXUP_HP_X360,
+> >  	ALC221_FIXUP_HP_HEADSET_MIC,
+> >  };
+> > @@ -6347,6 +6348,22 @@ static const struct hda_fixup alc269_fixups[]
+> > = {
+> >  		.chained = true,
+> >  		.chain_id = ALC269_FIXUP_HEADSET_MIC
+> >  	},
+> > +	[ALC256_FIXUP_HUAWEI_MBXP_PINS] = {
+> > +		.type = HDA_FIXUP_PINS,
+> > +		.v.pins = (const struct hda_pintbl[]) {
+> > +			{0x12, 0x90a60130},
+> > +			{0x13, 0x40000000},
+> > +			{0x14, 0x90170110},
+> > +			{0x18, 0x411111f0},
+> > +			{0x19, 0x04a11040},
+> > +			{0x1a, 0x411111f0},
+> > +			{0x1b, 0x90170112},
+> > +			{0x1d, 0x40759a05},
+> > +			{0x1e, 0x411111f0},
+> > +			{0x21, 0x04211020},
+> > +			{ },
+> > +		},
+> > +	},
+> >  	[ALC295_FIXUP_HP_X360] = {
+> >  		.type = HDA_FIXUP_FUNC,
+> >  		.v.func = alc295_fixup_hp_top_speakers,
+> > @@ -6592,6 +6609,7 @@ static const struct snd_pci_quirk
+> > alc269_fixup_tbl[] = {
+> >  	SND_PCI_QUIRK(0x17aa, 0x5109, "Thinkpad",
+> > ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
+> >  	SND_PCI_QUIRK(0x17aa, 0x511e, "Thinkpad",
+> > ALC298_FIXUP_TPT470_DOCK),
+> >  	SND_PCI_QUIRK(0x17aa, 0x511f, "Thinkpad",
+> > ALC298_FIXUP_TPT470_DOCK),
+> > +	SND_PCI_QUIRK(0x19e5, 0x3204, "Huawei MBXP",
+> > ALC256_FIXUP_HUAWEI_MBXP_PINS),
+> >  	SND_PCI_QUIRK(0x17aa, 0x3bf8, "Quanta FL1",
+> > ALC269_FIXUP_PCM_44K),
+> >  	SND_PCI_QUIRK(0x17aa, 0x9e54, "LENOVO NB",
+> > ALC269_FIXUP_LENOVO_EAPD),
+> >  	SND_PCI_QUIRK(0x1b7d, 0xa831, "Ordissimo EVE2 ",
+> > ALC269VB_FIXUP_ORDISSIMO_EVE2), /* Also known as Malata PC-B1303 */
+> 
+> 
