@@ -3,90 +3,84 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C207C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 21:55:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C02C6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 21:55:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A79B205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 21:55:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDC9120820
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 21:55:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jfuUNUR2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A79B205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RTiTKfEl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDC9120820
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727696AbeKBHAE (ORCPT
+        id S1727800AbeKBHAT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 03:00:04 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45697 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726273AbeKBHAE (ORCPT
+        Fri, 2 Nov 2018 03:00:19 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:37303 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726273AbeKBHAS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 03:00:04 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n5-v6so21507392wrw.12
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 14:55:14 -0700 (PDT)
+        Fri, 2 Nov 2018 03:00:18 -0400
+Received: by mail-lj1-f195.google.com with SMTP id c4-v6so19448220lja.4
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 14:55:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=gk0V0ymG+8OtXqs+0leQ5UmRvL35/lixyxJousAOs8M=;
-        b=jfuUNUR2xCSu6WfD9zBWRhKfUqZyOHZ6bRluR6A++rTd/xpuTyMyb2BJMkoYoJes4o
-         6HCfPbgTegXejrU5vJgyW/XaHPvai7wUk2yfAZOHF1QXNRKWfhT4U1RjKaXz9hc38TOd
-         0l3G+dv7RYyHWfwJh8DfYr1sk5box9F8F5rLLU7hbhXrfqt9xJzGkOhBpXBRdRhRUp6X
-         OBsAxgqtz2GctEinD/7J5Ms2lwkExy3BIW6++SRyuBgemXM2sSN7EQMCTYXic2eyqJ6P
-         oxLODlJAui1WdMhYbbpKUljjxdRv4Na++LvzLwXDBAiDQcq5Pakq2d+Qlr0alo84vx4Q
-         mreg==
+        bh=ubVf0j4p2TkcNVcUxI8KUFKFgRuTzTdn9sUIfyr+qlc=;
+        b=RTiTKfElc7newFy7i4fpPgCGwkkIaL9InUXmMnR34vULPIml6QBlnUB3OutD2wpQrz
+         kDptqkVmEwPkitdnc04E+DH6nNNZ2/BgyoH6ydf7x6rkIG5VRZYNHGRyYqEoCQSw9Maw
+         IoAQTdQvzLl0VFmm+412GLp6NcssrqvUtI3xs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=gk0V0ymG+8OtXqs+0leQ5UmRvL35/lixyxJousAOs8M=;
-        b=GaXpOln6Uz8In2NYv4P1912AjijreXI/u+HNAGG3plO9NOzJHGHiFFKiTc57N9UzqA
-         V2YP+xAn8dEc7Pe2PU2/UFqgJV2A9Zj5Sb7xiShfHoUVTIPnbH4OX2YIngl582xswrQL
-         xv+zovQo/ZX4JgPaCwefV0YqcON6xyICMeShKMEuzV3OSHxcggazTS6Lgpy/tawTacjK
-         9ne67/Fjs2WEtXKzwAYfKTJMg3t9gTSjk012Pj4iyhFAhVeL+3Ni/rNzJN/Owngl0iXj
-         lCM+7E2Sr2c9rBUUzTgoyGoKeO/6R7t+DTnrurNmsWKNDq9tO3pemhCrxxPt1aLpWdCk
-         ZYcQ==
-X-Gm-Message-State: AGRZ1gKqcHLzi35qtd1MOy8HOiP3ECqcCD+WBJd786ys/e53usxJS514
-        Hp33gmgBIIBck98z9QVImi1ZP9z7MAYzsGVvD9s=
-X-Google-Smtp-Source: AJdET5e9nZ/czWjtbbzWiQPaDpnJtte7TIzB2wGPxRNA3iaS8XvjqDGrtf0wBEn6mC++MwfCZGNDaM71l/FBURxNQGk=
-X-Received: by 2002:adf:de0b:: with SMTP id b11-v6mr3773918wrm.119.1541109314112;
- Thu, 01 Nov 2018 14:55:14 -0700 (PDT)
+        bh=ubVf0j4p2TkcNVcUxI8KUFKFgRuTzTdn9sUIfyr+qlc=;
+        b=D13udfZAf563wvEHBvLy+1RxOtLms8gLXPGRnGa+vkz1KHniqE7G0UkfeyUgu5OjDT
+         f5RAHt/fDjkdVjq0RjmPzTj5JSRrK6/Wh/ezLVqAo/g9T5TyNdzhK02UUAE0ibivDmg0
+         A9GLw8oVh54/bZ5tV/pRzGTml+FL58TY+7+Bo6EVwRntNIV17pZoxq7nORR3skS2plBT
+         3PEbMWHKN60/e/F8CKSjb2PkwQgastRG7H4p637BK/cGm3KhwlEcXsdEdVdTaJpgk2wh
+         z66stLYd1XhSdXolrnIIeYyMqkTrCoWm1JkrK6XRyJejE6YfpHNUDeAUJW0l2LZ2HHkE
+         1jRQ==
+X-Gm-Message-State: AGRZ1gK02TKpCs4Zrq5+XlaVahmtJhhyq00r+apEmnRSl+kaPGA5FPM6
+        6l2NsA+U8w0/i4fDV4WCVu+DcdC/lFKgTw==
+X-Google-Smtp-Source: AJdET5c4UgIFDU12DuyhwixgejCMjY0Esm2zdw11/vYQvznQcfceV2E3FuapECk9sFLfYtxVLcJgCg==
+X-Received: by 2002:a2e:7e07:: with SMTP id z7-v6mr5929984ljc.84.1541109328685;
+        Thu, 01 Nov 2018 14:55:28 -0700 (PDT)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
+        by smtp.gmail.com with ESMTPSA id v18-v6sm4723995lja.26.2018.11.01.14.55.27
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Nov 2018 14:55:27 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id d7-v6so15298914lfi.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 14:55:27 -0700 (PDT)
+X-Received: by 2002:a19:4948:: with SMTP id l8-v6mr5086996lfj.16.1541109327107;
+ Thu, 01 Nov 2018 14:55:27 -0700 (PDT)
 MIME-Version: 1.0
-References: <2346471.iD2boZGiFq@blindfold>
-In-Reply-To: <2346471.iD2boZGiFq@blindfold>
-From:   Richard Weinberger <richard.weinberger@gmail.com>
-Date:   Thu, 1 Nov 2018 22:55:01 +0100
-Message-ID: <CAFLxGvzR5XCyBiR2tyFw5ouB+aekPrL1KD6zwiaL3VqCnznTaQ@mail.gmail.com>
-Subject: Re: [GIT PULL] UBIFS updates for 4.20-rc1
-To:     Richard Weinberger <richard@nod.at>
-Cc:     torvalds@linuxfoundation.org,
-        "linux-mtd @ lists . infradead . org" <linux-mtd@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20181101210611.GH23439@veci.piliscsaba.redhat.com>
+In-Reply-To: <20181101210611.GH23439@veci.piliscsaba.redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 1 Nov 2018 14:55:11 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg3ERf_YXP0=cYh39WueWW9_ygnU8yZ0q92RvbCykQ_qQ@mail.gmail.com>
+Message-ID: <CAHk-=wg3ERf_YXP0=cYh39WueWW9_ygnU8yZ0q92RvbCykQ_qQ@mail.gmail.com>
+Subject: Re: [GIT PULL] overlayfs update for 4.20
+To:     miklos@szeredi.hu
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
-
-On Wed, Oct 31, 2018 at 10:22 PM Richard Weinberger <richard@nod.at> wrote:
-> The following changes since commit 84df9525b0c27f3ebc2ebb1864fa62a97fdedb7d:
+On Thu, Nov 1, 2018 at 2:06 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
 >
->   Linux 4.19 (2018-10-22 07:37:37 +0100)
->
-> are available in the Git repository at:
->
->   git://git.infradead.org/linux-ubifs.git tags/tags/upstream-4.20-rc1
+> This contains a mix of fixes and cleanups.
 
-Just a kind ping to make sure that this pull request didn't get lost
-in your spam folder.
-Since you pulled the UML stuff,but this not, I'm a little worried.
+Pulled,
 
--- 
-Thanks,
-//richard
+                     Linus
