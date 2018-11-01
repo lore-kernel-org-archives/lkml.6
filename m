@@ -2,531 +2,245 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 297C0C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:49:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1479BC6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:50:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD99F2064C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:49:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UhhEMoZ3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD99F2064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id CD0242064C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:50:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD0242064C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728868AbeKAWwj (ORCPT
+        id S1728833AbeKAWxW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 18:52:39 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42363 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728520AbeKAWwj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 18:52:39 -0400
-Received: by mail-pl1-f196.google.com with SMTP id t6-v6so8971259plo.9
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 06:49:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Ybk1cfPOCsx0QxafKcSWTpjAZcg2/h0LTnOKx3Xs0eU=;
-        b=UhhEMoZ3+n4RnDAmnHjMzm+VHoogn0naqH+pi7bJbVxhu+GIJuT+yHrAf+k9q09r/e
-         hDmy6lFrkqIlmjzPfHQBJkf1dxZgsf469Bb1mq8l8o9N2msHgdriyZElh6t1DyD1aKjs
-         w307MmFmmVH3SV8z3ECxzoBMG+SU6m8zFc5xI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Ybk1cfPOCsx0QxafKcSWTpjAZcg2/h0LTnOKx3Xs0eU=;
-        b=O/+v/JNI1ojiJ9T+1Vbz9KmoGlaOH9H2GAikohdTPPhcEKjcvYYrSGaZcvE3CxfLlr
-         HbYR8KaBqc/BRluhiVt6w+c1qYw/u1oTpY+Q/pkOq9feAIJsL10uoUWIhxlws3Mw+ECE
-         PE8Wc96LeGNEcUjHHDEddtwBvT8LkFYzHYnHfAp+MKwxN6rrb//XUdYRluBGfO2oZ2wJ
-         UTJoThD3fKwLdJ+PFKNLHcmVu73lFVGeoDWC+TmmD3C9/lWw69wThon02fAbqC6nnzwQ
-         hrMEGDV8tRrrFN3yUcO9+UvXe37sq0bPxXyGMwzxSfSL8c9+1TyXci/QbsDEoEf7q6Sx
-         Tbmg==
-X-Gm-Message-State: AGRZ1gI22bRMtRAQzF5mqbBN1hzPUdM0aDtSJOI3uKBbg9O2iWWwIgDw
-        0xuZ+AT/flH7x0Bak/+CcknhPg==
-X-Google-Smtp-Source: AJdET5eYMqLOb2L1FQbZdLdtp4rfdi/ePz3o+6B4thKv3GqpfItdR085MOqM7TQ0tPBVi48ljyoyrg==
-X-Received: by 2002:a17:902:b612:: with SMTP id b18-v6mr7827588pls.205.1541080175647;
-        Thu, 01 Nov 2018 06:49:35 -0700 (PDT)
-Received: from qualcomm-HP-ZBook-14-G2.domain.name ([106.51.104.211])
-        by smtp.gmail.com with ESMTPSA id p11-v6sm16567307pfn.53.2018.11.01.06.49.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 01 Nov 2018 06:49:35 -0700 (PDT)
-From:   Firoz Khan <firoz.khan@linaro.org>
-To:     linux-sh@vger.kernel.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
-        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH v2 3/3] sh: generate uapi header and syscall table header files
-Date:   Thu,  1 Nov 2018 19:18:50 +0530
-Message-Id: <1541080130-3678-4-git-send-email-firoz.khan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1541080130-3678-1-git-send-email-firoz.khan@linaro.org>
-References: <1541080130-3678-1-git-send-email-firoz.khan@linaro.org>
+        Thu, 1 Nov 2018 18:53:22 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41352 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728520AbeKAWxW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 18:53:22 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 677B0206D8; Thu,  1 Nov 2018 14:50:16 +0100 (CET)
+Received: from qschulz (lfbn-1-10589-128.w90-89.abo.wanadoo.fr [90.89.181.128])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 06C4320717;
+        Thu,  1 Nov 2018 14:50:06 +0100 (CET)
+Date:   Thu, 1 Nov 2018 14:50:05 +0100
+From:   Quentin Schulz <quentin.schulz@bootlin.com>
+To:     Baolin Wang <baolin.wang@linaro.org>
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, yuanjiang.yu@unisoc.com,
+        Mark Brown <broonie@kernel.org>,
+        Craig Tatlor <ctatlor97@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Chen-Yu Tsai <wens@csie.org>, maxime.ripard@bootlin.com,
+        Hans de Goede <hdegoede@redhat.com>, icenowy@aosc.io
+Subject: Re: [PATCH v6 4/6] power: supply: core: Add some helpers to use the
+ battery OCV capacity table
+Message-ID: <20181101135005.cqufebdryffm6ray@qschulz>
+References: <e7c061535f2dcca54d6498405fdd5ed7098b19f9.1540189330.git.baolin.wang@linaro.org>
+ <f1529c567a340e4d31354a4b117954eeebf89942.1540189330.git.baolin.wang@linaro.org>
+ <CAMz4kuJm5eO1QwW7L+QyD_5VcTWqtq4gz9m_QDpQ-zn4zzukvQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="4bx2txevspscynaw"
+Content-Disposition: inline
+In-Reply-To: <CAMz4kuJm5eO1QwW7L+QyD_5VcTWqtq4gz9m_QDpQ-zn4zzukvQ@mail.gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-System call table generation script must be run to gener-
-ate unistd_32.h and syscall_table.h files. This patch will
-have changes which will invokes the script.
 
-This patch will generate unistd_32.h and syscall_table.h
-files by the syscall table generation script invoked by
-sh/Makefile and the generated files against the removed
-files must be identical.
+--4bx2txevspscynaw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The generated uapi header file will be included in uapi/-
-asm/unistd.h and generated system call table header file
-will be included by kernel/syscall_32.S file.
+Hi Baolin,
 
-Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
----
- arch/sh/Makefile                |   3 +
- arch/sh/include/asm/Kbuild      |   1 +
- arch/sh/include/uapi/asm/Kbuild |   1 +
- arch/sh/kernel/syscalls_32.S    | 387 +---------------------------------------
- 4 files changed, 8 insertions(+), 384 deletions(-)
+On Thu, Nov 01, 2018 at 03:22:18PM +0800, Baolin Wang wrote:
+> Hi Quentin,
+>=20
+> On 29 October 2018 at 22:48, Quentin Schulz <quentin.schulz@bootlin.com> =
+wrote:
+[...]
+> >
+> >> +             return len;
+> >> +     } else if (len > POWER_SUPPLY_OCV_TEMP_MAX) {
+> >> +             dev_err(&psy->dev, "Too many temperature values\n");
+> >> +             return -EINVAL;
+> >> +     } else if (len > 0) {
+> >> +             of_property_read_u32_array(battery_np, "ocv-capacity-cel=
+sius",
+> >> +                                        info->ocv_temp, len);
+> >> +     }
+> >> +
+> >> +     for (index =3D 0; index < len; index++) {
+> >
+> > This won't work as intended as we can reach this part of the code with
+> > len =3D -EINVAL;
+>=20
+> No, the condition (index < len) is false if len =3D -EINVAL, maybe one
+> reason keep index as 'int' type.
+>=20
 
-diff --git a/arch/sh/Makefile b/arch/sh/Makefile
-index c521ade..4009bef 100644
---- a/arch/sh/Makefile
-+++ b/arch/sh/Makefile
-@@ -228,6 +228,9 @@ archclean:
- 	$(Q)$(MAKE) $(clean)=$(boot)
- 	$(Q)$(MAKE) $(clean)=arch/sh/kernel/vsyscall
- 
-+archheaders:
-+	$(Q)$(MAKE) $(build)=arch/sh/kernel/syscalls all
-+
- define archhelp
- 	@echo '  zImage 	           - Compressed kernel image'
- 	@echo '  romImage	           - Compressed ROM image, if supported'
-diff --git a/arch/sh/include/asm/Kbuild b/arch/sh/include/asm/Kbuild
-index 6a5609a..5c3a36d 100644
---- a/arch/sh/include/asm/Kbuild
-+++ b/arch/sh/include/asm/Kbuild
-@@ -19,3 +19,4 @@ generic-y += serial.h
- generic-y += sizes.h
- generic-y += trace_clock.h
- generic-y += xor.h
-+generic-y += syscall_table.h
-diff --git a/arch/sh/include/uapi/asm/Kbuild b/arch/sh/include/uapi/asm/Kbuild
-index ba4d39c..f7b2130 100644
---- a/arch/sh/include/uapi/asm/Kbuild
-+++ b/arch/sh/include/uapi/asm/Kbuild
-@@ -21,3 +21,4 @@ generic-y += statfs.h
- generic-y += termbits.h
- generic-y += termios.h
- generic-y += ucontext.h
-+generic-y += unistd_32.h
-diff --git a/arch/sh/kernel/syscalls_32.S b/arch/sh/kernel/syscalls_32.S
-index 254bc22..54978e0 100644
---- a/arch/sh/kernel/syscalls_32.S
-+++ b/arch/sh/kernel/syscalls_32.S
-@@ -14,389 +14,8 @@
- #include <linux/sys.h>
- #include <linux/linkage.h>
- 
-+#define __SYSCALL(nr, entry, nargs) .long entry
- 	.data
- ENTRY(sys_call_table)
--	.long sys_restart_syscall	/* 0  -  old "setup()" system call*/
--	.long sys_exit
--	.long sys_fork
--	.long sys_read
--	.long sys_write
--	.long sys_open		/* 5 */
--	.long sys_close
--	.long sys_waitpid
--	.long sys_creat
--	.long sys_link
--	.long sys_unlink		/* 10 */
--	.long sys_execve
--	.long sys_chdir
--	.long sys_time
--	.long sys_mknod
--	.long sys_chmod		/* 15 */
--	.long sys_lchown16
--	.long sys_ni_syscall	/* old break syscall holder */
--	.long sys_stat
--	.long sys_lseek
--	.long sys_getpid		/* 20 */
--	.long sys_mount
--	.long sys_oldumount
--	.long sys_setuid16
--	.long sys_getuid16
--	.long sys_stime		/* 25 */
--	.long sys_ptrace
--	.long sys_alarm
--	.long sys_fstat
--	.long sys_pause
--	.long sys_utime		/* 30 */
--	.long sys_ni_syscall	/* old stty syscall holder */
--	.long sys_ni_syscall	/* old gtty syscall holder */
--	.long sys_access
--	.long sys_nice
--	.long sys_ni_syscall	/* 35 */		/* old ftime syscall holder */
--	.long sys_sync
--	.long sys_kill
--	.long sys_rename
--	.long sys_mkdir
--	.long sys_rmdir		/* 40 */
--	.long sys_dup
--	.long sys_sh_pipe
--	.long sys_times
--	.long sys_ni_syscall	/* old prof syscall holder */
--	.long sys_brk		/* 45 */
--	.long sys_setgid16
--	.long sys_getgid16
--	.long sys_signal
--	.long sys_geteuid16
--	.long sys_getegid16	/* 50 */
--	.long sys_acct
--	.long sys_umount		/* recycled never used phys() */
--	.long sys_ni_syscall	/* old lock syscall holder */
--	.long sys_ioctl
--	.long sys_fcntl		/* 55 */
--	.long sys_ni_syscall	/* old mpx syscall holder */
--	.long sys_setpgid
--	.long sys_ni_syscall	/* old ulimit syscall holder */
--	.long sys_ni_syscall	/* sys_olduname */
--	.long sys_umask		/* 60 */
--	.long sys_chroot
--	.long sys_ustat
--	.long sys_dup2
--	.long sys_getppid
--	.long sys_getpgrp		/* 65 */
--	.long sys_setsid
--	.long sys_sigaction
--	.long sys_sgetmask
--	.long sys_ssetmask
--	.long sys_setreuid16	/* 70 */
--	.long sys_setregid16
--	.long sys_sigsuspend
--	.long sys_sigpending
--	.long sys_sethostname
--	.long sys_setrlimit	/* 75 */
--	.long sys_old_getrlimit
--	.long sys_getrusage
--	.long sys_gettimeofday
--	.long sys_settimeofday
--	.long sys_getgroups16	/* 80 */
--	.long sys_setgroups16
--	.long sys_ni_syscall	/* sys_oldselect */
--	.long sys_symlink
--	.long sys_lstat
--	.long sys_readlink		/* 85 */
--	.long sys_uselib
--	.long sys_swapon
--	.long sys_reboot
--	.long sys_old_readdir
--	.long old_mmap		/* 90 */
--	.long sys_munmap
--	.long sys_truncate
--	.long sys_ftruncate
--	.long sys_fchmod
--	.long sys_fchown16		/* 95 */
--	.long sys_getpriority
--	.long sys_setpriority
--	.long sys_ni_syscall	/* old profil syscall holder */
--	.long sys_statfs
--	.long sys_fstatfs		/* 100 */
--	.long sys_ni_syscall	/* ioperm */
--	.long sys_socketcall
--	.long sys_syslog
--	.long sys_setitimer
--	.long sys_getitimer	/* 105 */
--	.long sys_newstat
--	.long sys_newlstat
--	.long sys_newfstat
--	.long sys_uname
--	.long sys_ni_syscall	/* 110 */ /* iopl */
--	.long sys_vhangup
--	.long sys_ni_syscall	/* idle */
--	.long sys_ni_syscall	/* vm86old */
--	.long sys_wait4
--	.long sys_swapoff		/* 115 */
--	.long sys_sysinfo
--	.long sys_ipc
--	.long sys_fsync
--	.long sys_sigreturn
--	.long sys_clone		/* 120 */
--	.long sys_setdomainname
--	.long sys_newuname
--	.long sys_cacheflush	/* x86: sys_modify_ldt */
--	.long sys_adjtimex
--	.long sys_mprotect		/* 125 */
--	.long sys_sigprocmask
--	.long sys_ni_syscall	/* old "create_module" */
--	.long sys_init_module
--	.long sys_delete_module
--	.long sys_ni_syscall	/* 130: old "get_kernel_syms" */
--	.long sys_quotactl
--	.long sys_getpgid
--	.long sys_fchdir
--	.long sys_bdflush
--	.long sys_sysfs		/* 135 */
--	.long sys_personality
--	.long sys_ni_syscall	/* for afs_syscall */
--	.long sys_setfsuid16
--	.long sys_setfsgid16
--	.long sys_llseek		/* 140 */
--	.long sys_getdents
--	.long sys_select
--	.long sys_flock
--	.long sys_msync
--	.long sys_readv		/* 145 */
--	.long sys_writev
--	.long sys_getsid
--	.long sys_fdatasync
--	.long sys_sysctl
--	.long sys_mlock		/* 150 */
--	.long sys_munlock
--	.long sys_mlockall
--	.long sys_munlockall
--	.long sys_sched_setparam
--	.long sys_sched_getparam   /* 155 */
--	.long sys_sched_setscheduler
--	.long sys_sched_getscheduler
--	.long sys_sched_yield
--	.long sys_sched_get_priority_max
--	.long sys_sched_get_priority_min  /* 160 */
--	.long sys_sched_rr_get_interval
--	.long sys_nanosleep
--	.long sys_mremap
--	.long sys_setresuid16
--	.long sys_getresuid16	/* 165 */
--	.long sys_ni_syscall	/* vm86 */
--	.long sys_ni_syscall	/* old "query_module" */
--	.long sys_poll
--	.long sys_ni_syscall	/* was nfsservctl */
--	.long sys_setresgid16	/* 170 */
--	.long sys_getresgid16
--	.long sys_prctl
--	.long sys_rt_sigreturn
--	.long sys_rt_sigaction
--	.long sys_rt_sigprocmask	/* 175 */
--	.long sys_rt_sigpending
--	.long sys_rt_sigtimedwait
--	.long sys_rt_sigqueueinfo
--	.long sys_rt_sigsuspend
--	.long sys_pread_wrapper	   /* 180 */
--	.long sys_pwrite_wrapper
--	.long sys_chown16
--	.long sys_getcwd
--	.long sys_capget
--	.long sys_capset           /* 185 */
--	.long sys_sigaltstack
--	.long sys_sendfile
--	.long sys_ni_syscall	/* getpmsg */
--	.long sys_ni_syscall	/* putpmsg */
--	.long sys_vfork            /* 190 */
--	.long sys_getrlimit
--	.long sys_mmap2
--	.long sys_truncate64
--	.long sys_ftruncate64
--	.long sys_stat64		/* 195 */
--	.long sys_lstat64
--	.long sys_fstat64
--	.long sys_lchown
--	.long sys_getuid
--	.long sys_getgid		/* 200 */
--	.long sys_geteuid
--	.long sys_getegid
--	.long sys_setreuid
--	.long sys_setregid
--	.long sys_getgroups	/* 205 */
--	.long sys_setgroups
--	.long sys_fchown
--	.long sys_setresuid
--	.long sys_getresuid
--	.long sys_setresgid	/* 210 */
--	.long sys_getresgid
--	.long sys_chown
--	.long sys_setuid
--	.long sys_setgid
--	.long sys_setfsuid		/* 215 */
--	.long sys_setfsgid
--	.long sys_pivot_root
--	.long sys_mincore
--	.long sys_madvise
--	.long sys_getdents64	/* 220 */
--	.long sys_fcntl64
--	.long sys_ni_syscall	/* reserved for TUX */
--	.long sys_ni_syscall	/* Reserved for Security */
--	.long sys_gettid
--	.long sys_readahead	/* 225 */
--	.long sys_setxattr
--	.long sys_lsetxattr
--	.long sys_fsetxattr
--	.long sys_getxattr
--	.long sys_lgetxattr	/* 230 */
--	.long sys_fgetxattr
--	.long sys_listxattr
--	.long sys_llistxattr
--	.long sys_flistxattr
--	.long sys_removexattr	/* 235 */
--	.long sys_lremovexattr
--	.long sys_fremovexattr
--	.long sys_tkill
--	.long sys_sendfile64
--	.long sys_futex		/* 240 */
--	.long sys_sched_setaffinity
--	.long sys_sched_getaffinity
--	.long sys_ni_syscall	/* reserved for set_thread_area */
--	.long sys_ni_syscall	/* reserved for get_thread_area */
--	.long sys_io_setup	/* 245 */
--	.long sys_io_destroy
--	.long sys_io_getevents
--	.long sys_io_submit
--	.long sys_io_cancel
--	.long sys_fadvise64	/* 250 */
--	.long sys_ni_syscall
--	.long sys_exit_group
--	.long sys_lookup_dcookie
--	.long sys_epoll_create
--	.long sys_epoll_ctl	/* 255 */
--	.long sys_epoll_wait
-- 	.long sys_remap_file_pages
-- 	.long sys_set_tid_address
-- 	.long sys_timer_create
-- 	.long sys_timer_settime		/* 260 */
-- 	.long sys_timer_gettime
-- 	.long sys_timer_getoverrun
-- 	.long sys_timer_delete
-- 	.long sys_clock_settime
-- 	.long sys_clock_gettime		/* 265 */
-- 	.long sys_clock_getres
-- 	.long sys_clock_nanosleep
--	.long sys_statfs64
--	.long sys_fstatfs64
--	.long sys_tgkill		/* 270 */
--	.long sys_utimes
-- 	.long sys_fadvise64_64_wrapper
--	.long sys_ni_syscall	/* Reserved for vserver */
--	.long sys_mbind
--	.long sys_get_mempolicy		/* 275 */
--	.long sys_set_mempolicy
--	.long sys_mq_open
--	.long sys_mq_unlink
--	.long sys_mq_timedsend
--	.long sys_mq_timedreceive       /* 280 */
--	.long sys_mq_notify
--	.long sys_mq_getsetattr
--	.long sys_kexec_load
--	.long sys_waitid
--	.long sys_add_key		/* 285 */
--	.long sys_request_key
--	.long sys_keyctl
--	.long sys_ioprio_set
--	.long sys_ioprio_get
--	.long sys_inotify_init		/* 290 */
--	.long sys_inotify_add_watch
--	.long sys_inotify_rm_watch
--	.long sys_ni_syscall
--	.long sys_migrate_pages
--	.long sys_openat		/* 295 */
--	.long sys_mkdirat
--	.long sys_mknodat
--	.long sys_fchownat
--	.long sys_futimesat
--	.long sys_fstatat64		/* 300 */
--	.long sys_unlinkat
--	.long sys_renameat
--	.long sys_linkat
--	.long sys_symlinkat
--	.long sys_readlinkat		/* 305 */
--	.long sys_fchmodat
--	.long sys_faccessat
--	.long sys_pselect6
--	.long sys_ppoll
--	.long sys_unshare		/* 310 */
--	.long sys_set_robust_list
--	.long sys_get_robust_list
--	.long sys_splice
--	.long sys_sync_file_range
--	.long sys_tee			/* 315 */
--	.long sys_vmsplice
--	.long sys_move_pages
--	.long sys_getcpu
--	.long sys_epoll_pwait
--	.long sys_utimensat		/* 320 */
--	.long sys_signalfd
--	.long sys_timerfd_create
--	.long sys_eventfd
--	.long sys_fallocate
--	.long sys_timerfd_settime	/* 325 */
--	.long sys_timerfd_gettime
--	.long sys_signalfd4
--	.long sys_eventfd2
--	.long sys_epoll_create1
--	.long sys_dup3			/* 330 */
--	.long sys_pipe2
--	.long sys_inotify_init1
--	.long sys_preadv
--	.long sys_pwritev
--	.long sys_rt_tgsigqueueinfo	/* 335 */
--	.long sys_perf_event_open
--	.long sys_fanotify_init
--	.long sys_fanotify_mark
--	.long sys_prlimit64
--	/* Broken-out socket family */
--	.long sys_socket		/* 340 */
--	.long sys_bind
--	.long sys_connect
--	.long sys_listen
--	.long sys_accept
--	.long sys_getsockname	/* 345 */
--	.long sys_getpeername
--	.long sys_socketpair
--	.long sys_send
--	.long sys_sendto
--	.long sys_recv			/* 350 */
--	.long sys_recvfrom
--	.long sys_shutdown
--	.long sys_setsockopt
--	.long sys_getsockopt
--	.long sys_sendmsg		/* 355 */
--	.long sys_recvmsg
--	.long sys_recvmmsg
--	.long sys_accept4
--	.long sys_name_to_handle_at
--	.long sys_open_by_handle_at	/* 360 */
--	.long sys_clock_adjtime
--	.long sys_syncfs
--	.long sys_sendmmsg
--	.long sys_setns
--	.long sys_process_vm_readv	/* 365 */
--	.long sys_process_vm_writev
--	.long sys_kcmp
--	.long sys_finit_module
--	.long sys_sched_getattr
--	.long sys_sched_setattr		/* 370 */
--	.long sys_renameat2
--	.long sys_seccomp
--	.long sys_getrandom
--	.long sys_memfd_create
--	.long sys_bpf			/* 375 */
--	.long sys_execveat
--	.long sys_userfaultfd
--	.long sys_membarrier
--	.long sys_mlock2
--	.long sys_copy_file_range	/* 380 */
--	.long sys_preadv2
--	.long sys_pwritev2
-+#include <asm/syscall_table.h>
-+#undef __SYSCALL
--- 
-1.9.1
+Ugh. Next time I'll make sure my brain is wired before reviewing a
+patch, sorry :)
 
+[...]
+> >> +             if (!info->ocv_table[index]) {
+> >> +                     power_supply_put_battery_info(psy, info);
+> >> +                     return -ENOMEM;
+> >> +             }
+> >> +
+> >> +             for (i =3D 0; i < tab_len; i++) {
+> >> +                     table[i].ocv =3D be32_to_cpu(*list++);
+> >> +                     table[i].capacity =3D be32_to_cpu(*list++);
+> >
+> > Please check these are valid values.
+>=20
+> Um, It is hard to validate the values for OCV and capacity, because
+> now we do not know each battery's parameters. Any good suggestion?
+>=20
+
+You know the capacity is between 0 and 100 (since it's an unsigned
+value, checking against 100 is enough), that's a good start.
+
+For the OCV, I'd say it's basically between the minimum and maximum
+voltage a battery can hold. I don't know enough about batteries to
+give the correct bounds unfortunately :(
+
+[...]
+> > What is the use case for letting a user call this function? I can
+> > understand you want to delete the arrays if they're invalid in the
+> > get_function, which could be done thanks to a goto statement or with
+> > this function if you really want (if it does not mess with refs) but I
+> > don't see why you want to export this function.
+>=20
+> Cause some drivers will copy the OCV tables into their own structures,
+> one helper function to help to free memory of battery information. In
+> future, this can be expanded to clean up more resources of battery
+> information.
+>=20
+
+Couldn't they only use a pointer to the appropriate table? Or do you
+plan on the drivers directly modifying the table but wanting to keep a
+clean copy on the core side?
+
+I find it weird to free the tables. I'd suppose that a driver wants to
+keep all tables available to be able to chose the appropriate one
+depending on the current temperature of the battery (which is what
+power_supply_batinfo_ocv2cap is for if I understood correctly) and not
+only at definite time (probe function for the driver you attached to the
+patch series IIRC). If you need to keep all tables, why would you want
+to copy them to the driver and not keep them in the core and use a
+pointer to the table in current use?
+
+I'm sure I'm missing something, let me know what it is. Thanks.
+
+[...]
+> > I would like to give my specific use case of the OCV on X-Powers PMICs
+> > so that hopefully we can get things sorted out before it's too late to
+> > make modifications that might be needed.
+> >
+> > I'm adding a few people on Cc that work on the X-Power PMICs so that
+> > hopefully we can have all the correct pieces of information and go
+> > towards the right solution.
+> >
+> > In the AXP818/AXP288 datasheet[1] (p.57), we have access to OCV values
+> > and battery RDC register.
+> >
+> > The hardware learns from the battery or from the given OCV and RDC
+> > values and then updates the returned battery capacity accordingly (in
+> > another register).
+> > I've 32 values (see the issue with a max of 20 values?) to be written in
+>=20
+> I think you misunderstood the 20, it is means we can have max 20 OCV tabl=
+es now.
+>=20
+
+Indeed, misread the patch, thanks for clarifying.
+
+> > different registers that represent the battery capacity at a given
+> > voltage. I do not have to do any computation on the kernel side, I just
+> > have to set the registers with the correct values and the battery
+> > capacity will be auto-updated by the PMIC. With this patch series,
+> > should I just call power_supply_get_battery_info, get the OCV tables and
+>=20
+> I think so.
+>=20
+> > do my thing in the driver? Could we have a more generic way to do it
+> > (does it make sense to have a generic one?)?
+>=20
+> Sorry, maybe I did not follow you here. You said your hardware will
+> help to get the capacity automatically if you set the register, so
+> what generic way you want to introduce? Could you elaborate on?
+>=20
+
+I think I got my thoughts tangled-up, I can't honestly find a generic
+way right now.
+
+> >
+> > We also definitely need a sysfs entry so that the user can enter the new
+> > values of the RDC/OCV since it changes during the life cycle of the
+> > battery IIRC.
+>=20
+> Why it changed? Due to different temperatures or other factors? If the
+> factor is temperature, I think we have supplied one generic way:
+> https://lore.kernel.org/patchwork/patch/1002350/
+>=20
+
+Apparently age is a factor in the OCV curve. I don't know if it's
+substantial enough to care about though.
+
+Anyway, I have a very strong bias towards not having to modify the
+Device Tree or recompile the kernel when a piece of hardware can be
+replaced easily by something different. I see the battery as such a
+piece of hardware. I understand the need to define the battery that
+comes with a product but I also like to let the users switch the battery
+(for a bigger one for example) without getting their hands dirty with
+getting the kernel sources, recompiling, etc.
+
+What if the provided OCV curves are not the best ones and the user has
+found better ones?
+
+For that, I like to let the user configure parameters that impact the
+battery after we've optionaly set the default one.
+
+I'd be mad to have to recompile the Device Tree or kernel when switching
+devices on a USB bus for example.
+
+Does that make sense?
+
+Thanks,
+Quentin
+
+--4bx2txevspscynaw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAlvbBIwACgkQhLiadT7g
+8aM45g/9GwhwslT3Lj0CjLOa//X03/Eye8gfaDKvgrGoRQDt6+ykaVgwL5BVpeVM
+x0OkKD0XcSCaNztmeJRj3czg2cvyUoax9g42Ep0mEC6uJI6U45FxfnUMebUwU1Kf
+fxxcDx0EkOnjxUTAqnG2Nhs/3dS96VVxuFoG93bbRAJMmmwgCeTNagqv6sSfWJu1
+NWIhT18SaC2i1RGxHxyNm+Mo0ZbtkntA5heYsj+E0Rwo1XTjCW8E+7pdj6WJ/x1p
+6fFPacgKCiWyZ4EhyzE32sRhgYoYmH9EAmNlNk48xv8TEP4xazysg5P2mcLwwlvl
+FbX7v1bFdmlxvPsuLKi6RmJ3V9IfiSbsaGiHhVzyeg2hWezv/vRJ07PYZ+9hYp3f
+iu8mX6QxCfoZw4KbyNWQtzFhVtzU4yKH1/bCqIiE1CRcai+BGSeRaTF5YGI1yvck
+EaimFbnqhYTumxaEWbKBI4wKSMDpc1qv2d079Q7+qsnUOwU7HrXvD4xNvlfOZig1
+4Q1QTbZBlcn6yRmvL8nDSxdr81qsyQWMjDRxRA/9aNyw+KFyOpjCm5ljNGm5+P14
+wt0meHJ3okGc6HJAWLyNHrB5WU6GvC6ejUbKp9mroybgnhYsEiD4QoC61JQpSpZF
+w0MSCyeO+YtRt/F6eZbv8nbxoEYLrNMMqOo9zFKHz/MOMY+6v1I=
+=+Gfk
+-----END PGP SIGNATURE-----
+
+--4bx2txevspscynaw--
