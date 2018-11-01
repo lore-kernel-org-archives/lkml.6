@@ -2,151 +2,118 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 873E0ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:43:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 666DAC6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:43:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 521C82081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:43:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 521C82081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1ACE22082E
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:43:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nY10gtsG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ACE22082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728970AbeKAXqd (ORCPT
+        id S1728989AbeKAXqp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 19:46:33 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53786 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728843AbeKAXqd (ORCPT
+        Thu, 1 Nov 2018 19:46:45 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:44981 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728832AbeKAXqp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 19:46:33 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA1ETMpx081656
-        for <linux-kernel@vger.kernel.org>; Thu, 1 Nov 2018 10:43:16 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ng2ejk7tm-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 10:43:16 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 1 Nov 2018 14:43:14 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 1 Nov 2018 14:43:10 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA1Eh9rj65273986
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 1 Nov 2018 14:43:09 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 031C011C050;
-        Thu,  1 Nov 2018 14:43:09 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 236A611C054;
-        Thu,  1 Nov 2018 14:43:08 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.105.26])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  1 Nov 2018 14:43:07 +0000 (GMT)
-Subject: Re: [PATCH v3 1/5] tpm: change the end marker of the active_banks
- array to zero
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        jarkko.sakkinen@linux.intel.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Date:   Thu, 01 Nov 2018 10:42:57 -0400
-In-Reply-To: <1540996980.11273.67.camel@linux.ibm.com>
-References: <20181030154711.2782-1-roberto.sassu@huawei.com>
-         <20181030154711.2782-2-roberto.sassu@huawei.com>
-         <1540996980.11273.67.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18110114-0008-0000-0000-00000289A9A5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110114-0009-0000-0000-000021F3D0DA
-Message-Id: <1541083377.4035.13.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-01_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811010127
+        Thu, 1 Nov 2018 19:46:45 -0400
+Received: by mail-qk1-f195.google.com with SMTP id n12so12381058qkh.11;
+        Thu, 01 Nov 2018 07:43:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=o1HuJO1RUvHYO8Q8iTB6hQuobWCheoadrs6aZ7vHCNI=;
+        b=nY10gtsG93nvrNjcVAcVuNlAnF+w1oTirQeSx2bZ/VkxfPvH69rp+m3ckEThXQvzvz
+         vi/jgf2hipPe1tUnQ443J8Ld6JZacTZ08WoznWxmFWpaScFGkyRgQhlLQgwKGstxMvPR
+         LIZypJp1hUmuklmJQ2gopUvmzUblfof2S2DKiHAYwQHn7DOJRYHevNkDcCrZIYK8SHgR
+         cwrQDqdfmbvIjDrL4kH5OA/QDoNe0Xifh56YFRel8tr1SJgq7VFCrFLRKlwcT29dpDOO
+         6WF1Fd3fKRCe2o1mJQWabouYZr5fDJqVPmLMD441335iSRrunhGIuI1VZPp3rjwfO3TK
+         acJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=o1HuJO1RUvHYO8Q8iTB6hQuobWCheoadrs6aZ7vHCNI=;
+        b=lW5DaWNPVH4z0qto/7NSgi1rIsGMfrN9zRELFHUXCAwAjq+kKNMst0tonEYVruY+B3
+         tEoVfLb03kpxOZF9k5ZwCIi0mXSa03rSfIsZ0awZA+UpAiduFfhB0gmUnM+i+zEZY7L0
+         m0knVsZMLgPdEMw7uQipkNpDu7W9/JxhGpi8Tq+3yxGTezZKLR0067RaZwLz2Ma3VvvL
+         0XRkwgFc3Zt5PJKVHfpLbKM/I1Qs3KYt9GPQgSLUPa1xMZh85x1ZfrdbJBOK7ylqWueg
+         rAfCIExpC2nix4OnRYmx7X1OgL14IsyUTIJ5xd4ZFfJBF06EvaLufKa8fRLxcS02H6Ti
+         QUAg==
+X-Gm-Message-State: AGRZ1gLF/wxgqWjf+ataGsU0Qlkap7Y2E5KKRTq5HJV3vK8JLM51DpdE
+        0oB84+dhZM1U8+MrUXCFcHY=
+X-Google-Smtp-Source: AJdET5dsEA8KZ9vsxcTNEyCOcjO6zWEfZxkll7bQ17+Ly2lhlUvJi0MkaxOJfIrLD8OQzgieQc2oEg==
+X-Received: by 2002:a37:8006:: with SMTP id b6-v6mr6658028qkd.178.1541083407989;
+        Thu, 01 Nov 2018 07:43:27 -0700 (PDT)
+Received: from renatolg ([143.107.45.1])
+        by smtp.gmail.com with ESMTPSA id b134sm1201946qkg.78.2018.11.01.07.43.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 01 Nov 2018 07:43:27 -0700 (PDT)
+Date:   Thu, 1 Nov 2018 11:43:23 -0300
+From:   Renato Lui Geh <renatogeh@gmail.com>
+To:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+        knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+        giuliano.belinassi@usp.br
+Cc:     linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
+Subject: [PATCH v3 2/3] staging: iio: ad7780: update voltage on read
+Message-ID: <1bc4bdf6342d4bc0c2fea17fb3bcd79fabf0e1d1.1541082656.git.renatogeh@gmail.com>
+References: <cover.1541082656.git.renatogeh@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+In-Reply-To: <cover.1541082656.git.renatogeh@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-10-31 at 10:43 -0400, Mimi Zohar wrote:
-> On Tue, 2018-10-30 at 16:47 +0100, Roberto Sassu wrote:
-> > This patch changes the end marker of the active_banks array from
-> > TPM2_ALG_ERROR to zero.
-> 
-> The patch description is a bit off.
-> 
-> TPM2_ALG_ERROR is defined as zero.  Since tpm_chip_alloc() calls
-> kzalloc to allocate the structure, there is no need to explicitly set
-> the active_banks end marker to TPM2_ALG_ERROR, nor is there a need to
-> explicitly test for the end marker.
-> 
-> This patch removes explicitly setting the end marker and changes the
-> coding style.
-> 
-> > 
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > ---
-> >  drivers/char/tpm/tpm-interface.c | 2 +-
-> >  drivers/char/tpm/tpm2-cmd.c      | 3 ---
-> >  2 files changed, 1 insertion(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> > index 1a803b0cf980..f7fc4b5ee239 100644
-> > --- a/drivers/char/tpm/tpm-interface.c
-> > +++ b/drivers/char/tpm/tpm-interface.c
-> > @@ -1051,7 +1051,7 @@ int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
-> >  		memset(digest_list, 0, sizeof(digest_list));
-> >  
-> >  		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
-> > -			    chip->active_banks[i] != TPM2_ALG_ERROR; i++) {
-> > +			    chip->active_banks[i]; i++) {
-> >  			digest_list[i].alg_id = chip->active_banks[i];
-> >  			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
-> >  			count++;
+The ad7780 driver previously did not read the correct device output, as
+it read an outdated value set at initialization. It now updates its
+voltage on read.
 
-The fourth patch further updates this code.  Please move those changes
-to this first patch.  No need to touch the same code in both places.
+Signed-off-by: Renato Lui Geh <renatogeh@gmail.com>
+---
+Changes in v3:
+	- removed initialization (int voltage_uv = 0)
+	- returns error when voltage_uv is null
 
-                for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
--                           chip->active_banks[i]; i++) {
--                       digest_list[i].alg_id = chip->active_banks[i];
-+                           chip->active_banks[i].alg_id; i++) {
-+                       digest_list[i].alg_id = chip->active_banks[i].alg_id;
-                        memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
-                        count++;
-                }
-Mimi
+ drivers/staging/iio/adc/ad7780.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-> > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> > index c31b490bd41d..046c9d8f3c1e 100644
-> > --- a/drivers/char/tpm/tpm2-cmd.c
-> > +++ b/drivers/char/tpm/tpm2-cmd.c
-> > @@ -908,9 +908,6 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
-> >  	}
-> >  
-> >  out:
-> > -	if (i < ARRAY_SIZE(chip->active_banks))
-> > -		chip->active_banks[i] = TPM2_ALG_ERROR;
-> > -
-> >  	tpm_buf_destroy(&buf);
-> >  
-> >  	return rc;
-> 
+diff --git a/drivers/staging/iio/adc/ad7780.c b/drivers/staging/iio/adc/ad7780.c
+index 91e016d534ed..f2a11e9424cd 100644
+--- a/drivers/staging/iio/adc/ad7780.c
++++ b/drivers/staging/iio/adc/ad7780.c
+@@ -87,12 +87,16 @@ static int ad7780_read_raw(struct iio_dev *indio_dev,
+ 			   long m)
+ {
+ 	struct ad7780_state *st = iio_priv(indio_dev);
++	int voltage_uv;
+ 
+ 	switch (m) {
+ 	case IIO_CHAN_INFO_RAW:
+ 		return ad_sigma_delta_single_conversion(indio_dev, chan, val);
+ 	case IIO_CHAN_INFO_SCALE:
+-		*val = st->int_vref_mv * st->gain;
++		voltage_uv = regulator_get_voltage(st->reg);
++		if (!voltage_uv)
++			return -EINVAL;
++		*val = (voltage_uv / 1000) * st->gain;
+ 		*val2 = chan->scan_type.realbits - 1;
+ 		return IIO_VAL_FRACTIONAL_LOG2;
+ 	case IIO_CHAN_INFO_OFFSET:
+-- 
+2.19.1
 
