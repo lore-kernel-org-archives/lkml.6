@@ -2,150 +2,176 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0DA3C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 06:42:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBCA2ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 06:56:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 896212064C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 06:42:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 857E920833
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 06:56:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DQpaUfaz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 896212064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="tCKWqKbM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 857E920833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=protonmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727802AbeKAPny (ORCPT
+        id S1727826AbeKAP5m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 11:43:54 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:37256 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727742AbeKAPny (ORCPT
+        Thu, 1 Nov 2018 11:57:42 -0400
+Received: from mail-40130.protonmail.ch ([185.70.40.130]:22859 "EHLO
+        mail-40130.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727774AbeKAP5m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 11:43:54 -0400
-Received: by mail-lj1-f194.google.com with SMTP id c4-v6so17094059lja.4
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 23:42:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=D3bpK1GmB4/nEYAhTMt5b8cAzvVwhRnx8VLexy3aBA0=;
-        b=DQpaUfazow9NLSGWrRbS+yzmXeiFQeFGmPVRHwLXt9+zwSjBANPoVYPymUKYAu2oMv
-         78Qqv1bHbKoHNvrOYHGsB7BUc05v2+INrFKT+Vv1Zd5pY/unrgEWJMbydgsyWG/afD+B
-         AnxIcFpwIDE7C/lK5K+xS2qJrcFAZy17kDSXs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=D3bpK1GmB4/nEYAhTMt5b8cAzvVwhRnx8VLexy3aBA0=;
-        b=HPbEn41P6pupUNyfi228DhVeluWXNXHcacaNHhaogfGlL2bhXV2WlfexVtZAOlRLZF
-         z1994Kc9TgPqM8UYme+W+x6gXQ4wvNB6Lto0RK3oeh15EApAqHv0uXkZORDi2B6SLvT7
-         6wmc0UVDljZ8prdEKkTVynYjTbGoYNjB9QqV7IPrW2qGVAuHnDO0QlRAk7t0WDW8sRft
-         iIcGiZmq8+y8e1rOYLENSpjCZcENQO/H7c5xpnzymyGUNEig5I0GNLDdgyj5frctU3nd
-         Anvwhzyoosvl8glFabRX7isV0vEv3QvejaXbx6IPl/ptRH7Wy7jMCzdWV+3fGMFDv+/x
-         AWuQ==
-X-Gm-Message-State: AGRZ1gIDB+QH07fKDYAPEgPFKDCoDGEpk2bbDKYhcn5HOe4xXHZPFDFG
-        Me3hzzw0oCLdNoRWz7jLPhNo/0vzzTBeRoRhHBgomw==
-X-Google-Smtp-Source: AJdET5dV1FDMOZ5IZUEy+nlfC9mOH5i0dXBAIupFG40OSCGW+XX/lq5mn0hdyEnPtoxU001kN7ONgjV9PbSQhXfh/ck=
-X-Received: by 2002:a2e:5109:: with SMTP id f9-v6mr3397456ljb.52.1541054533786;
- Wed, 31 Oct 2018 23:42:13 -0700 (PDT)
+        Thu, 1 Nov 2018 11:57:42 -0400
+Date:   Thu, 01 Nov 2018 06:55:54 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=default; t=1541055358;
+        bh=L7pjiLKAAkIotQ282W5/hBG97JL9XoWNivu+3AJESS8=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
+         Feedback-ID:From;
+        b=tCKWqKbMvh3ptrsJ1NaxTrePQz4gxNsdaPna4h3vK9i1d8NGXyQ0QJWpj2WjLLBOh
+         I1G8I1wNXVQzuQTOvCrQxkpFFZ3Sa2874gLUF5Y3x36Pp6TsirTW04EZi1FNlauojp
+         dSMfQsPb+c/SiDVZ2uDuA4j+tyeOImBxP4XoWqV0=
+To:     Hans de Goede <hdegoede@redhat.com>
+From:   Mogens Jensen <mogens-jensen@protonmail.com>
+Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Dean Wallace <duffydack73@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Johannes Stezenbach <js@sig21.net>,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Reply-To: Mogens Jensen <mogens-jensen@protonmail.com>
+Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
+Message-ID: <3iO9ehQbZm_haTV0IuZ0qhsVHR0QLUbTgRJT8ZenGuRsnz2_uBvO93f0bHVYnsApibUT16JsJ0dgphLhUBd-u0t-lDBNsbvvlKWTgq8XOlw=@protonmail.com>
+In-Reply-To: <b8849ae1-5a38-e7a1-da14-dc7f9d164825@redhat.com>
+References: <20181025232517.ywnw54qibemosjws@picard>
+ <20181030143836.feo7zcxiestylxoo@picard>
+ <2d429c87-24c5-4075-683e-b0d12c3eb1c2@linux.intel.com>
+ <d00df762-e4fc-06c5-701e-d5100bfd0e35@redhat.com>
+ <e48696f0-aa3e-e20e-d038-9d8dda9cbfce@redhat.com>
+ <BaxBOBmUCld7THAnRIDXUpKq8uQ2oJ49EaNlq0mZ11gFjA5JjhbfhVouLZGc1q74PrQC6uGfddKklIP059D_DtQwBqK-sn9rd4xEPhW9E6s=@protonmail.com>
+ <d53738e1-4ba5-640e-7ef7-1705ab205061@redhat.com>
+ <kAuINEBUUnlS5_uJafGtvryMEJVkDO4pb_yLfClwMcTS1h3sB1gYPcXBvg9X3RINfp5Uch7kLXuhTRX_JtouTYxoS6xNr77_b46e-mugl3k=@protonmail.com>
+ <b8849ae1-5a38-e7a1-da14-dc7f9d164825@redhat.com>
+Feedback-ID: 4dFv7M8pOtP7CMTtfNdOwXARWpF2vcQYB4dRuX1h9mb-6008qkzO2MVweOzrAYHEdkjJ6P5PUdgJEubk4l9Lhg==:Ext:ProtonMail
 MIME-Version: 1.0
-Received: by 2002:a2e:95d7:0:0:0:0:0 with HTTP; Wed, 31 Oct 2018 23:42:13
- -0700 (PDT)
-In-Reply-To: <CACRpkdaDB2f5FTY-sk6Ak49GMtqFzV_5Jkway49zSLA6XJkq0A@mail.gmail.com>
-References: <e7c061535f2dcca54d6498405fdd5ed7098b19f9.1540189330.git.baolin.wang@linaro.org>
- <6a4c15368e0bf34f8e6aad4d788bc899cfb9d61e.1540189330.git.baolin.wang@linaro.org>
- <CACRpkdaDB2f5FTY-sk6Ak49GMtqFzV_5Jkway49zSLA6XJkq0A@mail.gmail.com>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Thu, 1 Nov 2018 14:42:13 +0800
-Message-ID: <CAMz4kuLwmk+F8w=3QKTn29OArMfCpZc-429m_nFn8bqFVQekgA@mail.gmail.com>
-Subject: Re: [PATCH v6 6/6] power: supply: Add Spreadtrum SC27XX fuel gauge
- unit driver
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        yuanjiang.yu@unisoc.com, Mark Brown <broonie@kernel.org>,
-        Craig Tatlor <ctatlor97@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31 October 2018 at 16:56, Linus Walleij <linus.walleij@linaro.org> wrote=
-:
-> On Mon, Oct 22, 2018 at 9:44 AM Baolin Wang <baolin.wang@linaro.org> wrot=
-e:
+=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
+ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
+On Wednesday, October 31, 2018 9:29 AM, Hans de Goede <hdegoede@redhat.com>=
+ wrote:
+
+> Hi,
 >
->> This patch adds the Spreadtrum SC27XX serial PMICs fuel gauge support,
->> which is used to calculate the battery capacity.
->>
->> Original-by: Yuanjiang Yu <yuanjiang.yu@unisoc.com>
->> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->> Acked-by: Linus Walleij <linus.walleij@linaro.org>
->> ---
->> Changes from v5:
->>  - Save the OCV values in micro volts for OCV capacity table.
->>  - Use devm_kmemdup() instead of devm_kzalloc() in sc27xx_fgu_hw_init()
+> On 31-10-18 07:02, Mogens Jensen wrote:
 >
-> Hi Baolin, you can keep my ACK, just adding some nitpicking:
-
-Thanks.
-
+> > =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Origina=
+l Message =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=
+=90
+> > On Tuesday, October 30, 2018 7:10 PM, Hans de Goede hdegoede@redhat.com=
+ wrote:
+> >
+> > > Hi,
+> > > On 30-10-18 19:56, Mogens Jensen wrote:
+> > >
+> > > > =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Ori=
+ginal Message =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=
+=E2=80=90
+> > > > On Tuesday, October 30, 2018 4:04 PM, Hans de Goede hdegoede@redhat=
+.com wrote:
+> > > >
+> > > > > Hi,
+> > > > > On 30-10-18 16:46, Hans de Goede wrote:
+> > > > >
+> > > > > > Hi,
+> > > > > > On 30-10-18 16:04, Pierre-Louis Bossart wrote:
+> > > > > >
+> > > > > > > In addition I am not aware of any baytrail device using plt_c=
+lk_0, so moving a common machine driver such a cht_bsw_max98090_ti to use p=
+lt_clk0 only would break other devices (e.g. Rambi/Orco). Asking for both c=
+locks to be on might work though,
+> > > > > >
+> > > > > > Ok, so we need to have a DMI based quirk for the Swanky and may=
+be also
+> > > > > > the clapper to use plt_clk_0 there. Asking for 2 clks if we onl=
+y need
+> > > > > > one does not seem like a good plan.
+> > > > >
+> > > > > Dean, Mogens,
+> > > > > To write a proper patch for this I'm going to need DMI strings
+> > > > > from your devices.
+> > > > > Can you please run (as normal user):
+> > > > > grep . /sys/class/dmi/id/* 2> /dev/null
+> > > > > And reply with the output of this command?
+> > > > > I have attached the output from a coreboot seabios based clapper.
+> > >
+> > > Thank you.
+> > >
+> > > > Should I still test 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt=
+_clk_0-ins.patch with SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH and asoundrc f=
+rom Dean? There seems to have been some development in the case since that =
+request was made.
+> > >
+> > > Yes please test that, I expect that to also fix things for the
+> > > Clapper, but I need to have that confirmed before submitting a
+> > > patch upstream adding a quirk for the Clapper to use pmc_plt_clk_0
+> > > instead of pmc_plt_clk_3.
+> > > Regards,
+> > > Hans
+> >
+> > Unfortunately I only have access to longterm kernel 4.14 for building/r=
+unning on this system, and 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_=
+clk_0-ins.patch does not patch against 4.14.78. Can a test patch for 4.14 b=
+e created?
 >
->> +struct sc27xx_fgu_data {
->> +       struct regmap *regmap;
->> +       struct device *dev;
->> +       struct power_supply *battery;
->> +       u32 base;
->> +       struct mutex lock;
->> +       struct gpio_desc *gpiod;
->> +       struct iio_channel *channel;
->> +       bool bat_present;
->> +       int internal_resist;
->> +       int total_cap;
->> +       int init_cap;
->> +       int init_clbcnt;
->> +       int max_volt;
->> +       int table_len;
+> Can you run (as root):
 >
-> Can  the above really be negative or should these int:s really
-> be unsigned int?
-
- I think the table_len can be changed to u32, but for others, I'd like
-to keep consistency with the power supply battery information=E3=80=82
-
+> for i in /sys/kernel/debug/clk/pmc_plt_clk_?; do echo -n "$i: "; cat $i/c=
+lk_flags; echo; done
 >
->> +static int sc27xx_fgu_adc_to_current(int adc)
->> +{
->> +       return (adc * 1000) / SC27XX_FGU_1000MA_ADC;
->> +}
->> +
->> +static int sc27xx_fgu_adc_to_voltage(int adc)
->> +{
->> +       return (adc * 1000) / SC27XX_FGU_1000MV_ADC;
->> +}
+> When running a kernel with working audio?
 >
-> Would you maybe use
-> DIV_ROUND_CLOSEST(adc*1000, SC27XX_FGU_1000MV_ADC)
-> on these?
-
-Good point. Will change in next version. Thanks for your comments.
-
+> Then I can confirm that the Clapper is also using pmc_plt_clk_0, so that =
+I can
+> fix this for the clapper for 4.18+
 >
-> Overall this is a very fine driver and really pretty compared to some
-> other stuff we have in drivers/power.
+> I've just checked the 4.14 sources and in 4.14 the SND_SOC_INTEL_CHT_BSW_=
+MAX98090_TI_MACH
+> driver does not support mclk control yet, so for the 4.14 kernel the only=
+ way to
+> fix this is to revert the 648e921888ad ("clk: x86: Stop marking clocks as=
+ CLK_IS_CRITICAL")
+> commit.
+>
+> Regards,
+>
+> Hans
+>
+Here is the output from the Clapper with 4.14.78 and working sound:
 
-Thanks.
+/sys/kernel/debug/clk/pmc_plt_clk_0: 0x00000800
+/sys/kernel/debug/clk/pmc_plt_clk_1: 0x00000000
+/sys/kernel/debug/clk/pmc_plt_clk_2: 0x00000000
+/sys/kernel/debug/clk/pmc_plt_clk_3: 0x00000000
+/sys/kernel/debug/clk/pmc_plt_clk_4: 0x00000000
+/sys/kernel/debug/clk/pmc_plt_clk_5: 0x00000000
 
---=20
-Baolin Wang
-Best Regards
+Will 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL") be r=
+everted upstream for 4.14?
+
+Dean, Thank you, but I will see if I can change the build system to accept =
+a newer kernel, if I get some time later today.
