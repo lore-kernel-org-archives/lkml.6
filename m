@@ -2,104 +2,144 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7061C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:36:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8C22C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:36:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F7792081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:36:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F7792081B
+	by mail.kernel.org (Postfix) with ESMTP id B36F92081B
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:36:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B36F92081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728177AbeKATis (ORCPT
+        id S1728243AbeKATiv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 15:38:48 -0400
+        Thu, 1 Nov 2018 15:38:51 -0400
 Received: from mga06.intel.com ([134.134.136.31]:52047 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726320AbeKATir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 15:38:47 -0400
+        id S1726320AbeKATit (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 15:38:49 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Nov 2018 03:36:25 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Nov 2018 03:36:27 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,451,1534834800"; 
-   d="scan'208";a="100601930"
+   d="scan'208";a="100601943"
 Received: from devel-ww.sh.intel.com ([10.239.48.119])
-  by fmsmga002.fm.intel.com with ESMTP; 01 Nov 2018 03:36:21 -0700
+  by fmsmga002.fm.intel.com with ESMTP; 01 Nov 2018 03:36:23 -0700
 From:   Wei Wang <wei.w.wang@intel.com>
 To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
         pbonzini@redhat.com, ak@linux.intel.com, peterz@infradead.org
 Cc:     mingo@redhat.com, rkrcmar@redhat.com, like.xu@intel.com,
         wei.w.wang@intel.com
-Subject: [PATCH v1 0/8] Intel Virtual PMU Optimization
-Date:   Thu,  1 Nov 2018 18:04:00 +0800
-Message-Id: <1541066648-40690-1-git-send-email-wei.w.wang@intel.com>
+Subject: [PATCH v1 1/8] perf/x86: add support to mask counters from host
+Date:   Thu,  1 Nov 2018 18:04:01 +0800
+Message-Id: <1541066648-40690-2-git-send-email-wei.w.wang@intel.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1541066648-40690-1-git-send-email-wei.w.wang@intel.com>
+References: <1541066648-40690-1-git-send-email-wei.w.wang@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series optimizes the Intel PMU virtualization by reducing the
-PMU virtualization overhead and providing guests with accurate PMU
-statistics.
+Add x86_perf_mask_perf_counters to reserve counters from the host perf
+subsystem. The masked counters will not be assigned to any host perf
+events. This can be used by the hypervisor to reserve perf counters for
+a guest to use.
 
-The differences of the traditional approach and the optimized apporach
-are depicted in the figures here:
-https://github.com/weiwangwork/vPMU/blob/master/vPMU%20Optimization.pdf
+This function is currently supported on Intel CPUs only, but put in x86
+perf core because the counter assignment is implemented here and we need
+to re-enable the pmu which is defined in the x86 perf core in the case
+that a counter to be masked happens to be used by the host.
 
-The traditional approach of PMU virtualization is host perf event oriented.
-The KVM vPMU layer sits on top of the host perf subsystem and each guest's
-update to the vPMU is translated into a new host perf event, which needs
-to go through the host perf software stack (e.g. releasing the old perf
-event, re-creating a new one and getting it rescheduled to a hardware perf
-counter) for a reconfiguration.
+Signed-off-by: Wei Wang <wei.w.wang@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+---
+ arch/x86/events/core.c            | 37 +++++++++++++++++++++++++++++++++++++
+ arch/x86/include/asm/perf_event.h |  1 +
+ 2 files changed, 38 insertions(+)
 
-With this optimization, we intend to make the virtualization layer to be
-register oriented. The KVM vPMU layer is moved down to directly sit on the
-hardware perf counters. The guest accesses to the vPMU registers can be
-directly applied to the related hardware counter by the vPMU. It can
-reduce the virtualization overhead from around 2500000ns to 400ns.
-(Tested on Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz, and added host
-booting parameter "nowatchdog" to avoid the noise from watchdog_hld)
-
-We still need the vPMU to get the ownership of the physical perf counters
-from the host perf core. The guest used counters are taken from the host
-perf core via x86_perf_mask_perf_counters, which in most cases is a
-bit-setting of the guest mask.
-
-This series currently covers the basic perf counter virtualization. Other
-features, such as pebs and lbr, will come after this series.
-
-Wei Wang (8):
-  perf/x86: add support to mask counters from host
-  perf/x86/intel: add pmi callback support
-  KVM/x86/vPMU: optimize intel vPMU
-  KVM/x86/vPMU: support msr switch on vmx transitions
-  KVM/x86/vPMU: intel_pmu_read_pmc
-  KVM/x86/vPMU: remove some unused functions
-  KVM/x86/vPMU: save/restore guest perf counters on vCPU switching
-  KVM/x86/vPMU: return the counters to host if guest is torn down
-
- arch/x86/events/core.c            |  47 ++++
- arch/x86/events/intel/core.c      |  65 ++----
- arch/x86/events/perf_event.h      |  10 +-
- arch/x86/include/asm/kvm_host.h   |  13 ++
- arch/x86/include/asm/perf_event.h |  16 +-
- arch/x86/kvm/pmu.c                |  15 ++
- arch/x86/kvm/pmu.h                |   7 +
- arch/x86/kvm/pmu_intel.c          | 448 +++++++++++++++++++++++++-------------
- arch/x86/kvm/vmx.c                |   6 +-
- arch/x86/kvm/x86.c                |   6 +
- include/linux/kvm_host.h          |   1 +
- virt/kvm/kvm_main.c               |   3 +
- 12 files changed, 416 insertions(+), 221 deletions(-)
-
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 106911b..e73135a 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -716,6 +716,7 @@ struct perf_sched {
+ static void perf_sched_init(struct perf_sched *sched, struct event_constraint **constraints,
+ 			    int num, int wmin, int wmax, int gpmax)
+ {
++	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
+ 	int idx;
+ 
+ 	memset(sched, 0, sizeof(*sched));
+@@ -723,6 +724,9 @@ static void perf_sched_init(struct perf_sched *sched, struct event_constraint **
+ 	sched->max_weight	= wmax;
+ 	sched->max_gp		= gpmax;
+ 	sched->constraints	= constraints;
++#ifdef CONFIG_CPU_SUP_INTEL
++	sched->state.used[0]	= cpuc->intel_ctrl_guest_mask;
++#endif
+ 
+ 	for (idx = 0; idx < num; idx++) {
+ 		if (constraints[idx]->weight == wmin)
+@@ -2386,6 +2390,39 @@ perf_callchain_kernel(struct perf_callchain_entry_ctx *entry, struct pt_regs *re
+ 	}
+ }
+ 
++#ifdef CONFIG_CPU_SUP_INTEL
++/**
++ * x86_perf_mask_perf_counters - mask perf counters
++ * @mask: the bitmask of counters
++ *
++ * Mask the perf counters that are not available to be used by the perf core.
++ * If the counter to be masked has been assigned, it will be taken back and
++ * then the perf core will re-assign usable counters to its events.
++ *
++ * This can be used by a component outside the perf core to reserve counters.
++ * For example, a hypervisor uses it to reserve counters for a guest to use,
++ * and later return the counters by another call with the related bits cleared.
++ */
++void x86_perf_mask_perf_counters(u64 mask)
++{
++	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
++
++	/*
++	 * If the counter happens to be used by a host event, take it back
++	 * first, and then restart the pmu after mask that counter as being
++	 * reserved.
++	 */
++	if (mask & cpuc->intel_ctrl_host_mask) {
++		perf_pmu_disable(&pmu);
++		cpuc->intel_ctrl_guest_mask = mask;
++		perf_pmu_enable(&pmu);
++	} else {
++		cpuc->intel_ctrl_guest_mask = mask;
++	}
++}
++EXPORT_SYMBOL_GPL(x86_perf_mask_perf_counters);
++#endif
++
+ static inline int
+ valid_user_frame(const void __user *fp, unsigned long size)
+ {
+diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
+index 8bdf749..5b4463e 100644
+--- a/arch/x86/include/asm/perf_event.h
++++ b/arch/x86/include/asm/perf_event.h
+@@ -297,6 +297,7 @@ static inline void perf_check_microcode(void) { }
+ 
+ #ifdef CONFIG_CPU_SUP_INTEL
+  extern void intel_pt_handle_vmx(int on);
++extern void x86_perf_mask_perf_counters(u64 mask);
+ #endif
+ 
+ #if defined(CONFIG_PERF_EVENTS) && defined(CONFIG_CPU_SUP_AMD)
 -- 
 2.7.4
 
