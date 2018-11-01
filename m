@@ -2,339 +2,85 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60183C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22856C6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:49:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A4CA205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:49:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A4CA205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E50022081B
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:49:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E50022081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728251AbeKATva (ORCPT
+        id S1728294AbeKATvs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 15:51:30 -0400
-Received: from mail-it1-f197.google.com ([209.85.166.197]:42672 "EHLO
-        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727008AbeKATv3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 15:51:29 -0400
-Received: by mail-it1-f197.google.com with SMTP id v125-v6so1289385ita.7
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 03:49:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=PqpBDQURZH1GtAp94jB98UjTcJaiZjWxvwTCBiFh7dU=;
-        b=Vr5xWTtfBNbNYQ1UA5kkDnnVBTj7mm5A2GbQIzI6cj6Q3iANPtw3b/xgJUIkXsAos/
-         G6aOdlRgWxniGCkDFu8m0yNUlcoLDmPfug96Mz85DozQxYqLiIkPNUhtIjAVloXajDHI
-         zhuAdpgbsMRPcOKQYd9V78f6t1WJXiVSQ1seVoWhW3elmqYkPb37u4eKlvqaSkQ00MLs
-         x2wLYO0/Swkhg8sNhiz9VzQLu1n9fdJ3+cAsFUl1jYpSfp5n/r0jm5QWg4IhId763yMS
-         dIpTCIQonDpw48R642yzRdw46zYzqjqGNRQyEGN5HG5kWb5a6HQIF2TTbnwhvRzh55Af
-         TKiA==
-X-Gm-Message-State: AGRZ1gJryVuncHMWGA2MJw6c529eS2BnSf2IFDzPpUCor3LOonzFTtsK
-        1hQsIqVNYyzh8weH4eSvsH9rdfpvy0I/SqszKPcwdAjokaXY
-X-Google-Smtp-Source: AJdET5fgGwmKyWmc/nU7qUnep77Xwx9D3TbtzFJW+L8c1RHy1SwUqSCiFkYUqg65qbQ6BJ5GbIq0nx0tjzHZRLqvJN6AvnNR/+fL
+        Thu, 1 Nov 2018 15:51:48 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:38996 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727008AbeKATvs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 15:51:48 -0400
+Received: from ip5f5a86be.dynamic.kabel-deutschland.de ([95.90.134.190] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1gIAXF-0000oD-Gl; Thu, 01 Nov 2018 11:49:09 +0100
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Michal Simek <monstr@monstr.eu>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-arm-msm@vger.kernel.org,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        Xu Wei <xuwei5@hisilicon.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+        Koen Kooi <koen.kooi@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Andy Gross <andy.gross@linaro.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        ezequiel@collabora.com, linux-leds@vger.kernel.org
+Subject: Re: [PATCH v3 0/7] Standardize onboard LED support for 96Boards
+Date:   Thu, 01 Nov 2018 11:49:08 +0100
+Message-ID: <1590147.nMxYQPWRVN@diego>
+In-Reply-To: <CACRpkdarkLuErC_F4ALqOB5Wuf7TnDXmWZVKvfR7iGvOy=j++g@mail.gmail.com>
+References: <20181029094245.7886-1-manivannan.sadhasivam@linaro.org> <CAHTX3dJTXtuA0i-ffPjoiWuxEcF_5JY55VJtWd9zxW4HxK1K3w@mail.gmail.com> <CACRpkdarkLuErC_F4ALqOB5Wuf7TnDXmWZVKvfR7iGvOy=j++g@mail.gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a24:3d14:: with SMTP id n20-v6mr4991640itn.13.1541069342919;
- Thu, 01 Nov 2018 03:49:02 -0700 (PDT)
-Date:   Thu, 01 Nov 2018 03:49:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c25cca0579982a05@google.com>
-Subject: INFO: task hung in fuse_sb_destroy
-From:   syzbot <syzbot+6339eda9cb4ebbc4c37b@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Am Mittwoch, 31. Oktober 2018, 22:17:29 CET schrieb Linus Walleij:
+> On Wed, Oct 31, 2018 at 4:47 PM Michal Simek <monstr@monstr.eu> wrote:
+> > No doubt about it that this is good. If this is there from day 1 all will
+> > be good. I am just saying that we are all the time
+> > saying that we shouldn't break userspace. Right now if there is single
+> > application which uses existing names we are breaking it.
+> 
+> Yeah that's the problem, the approach is usually that if a tree falls
+> in the forest and noone is there to hear it, then it doesn't make a
+> sound.
+> 
+> But we can't assume someone is there as the safe default either.
+> 
+> I'd say apply it and see what happens, people are supposed to test.
 
-syzbot found the following crash on:
+At least for the Rockchip boards I'm somewhat confident, that they should
+be new enough to not have anybody building cludges - especially as I think
+LEDs might not be the most interesting device on such boards :-) .
 
-HEAD commit:    59fc453b21f7 Merge branch 'akpm' (patches from Andrew)
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15fb2447400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ea045471e4c756e8
-dashboard link: https://syzkaller.appspot.com/bug?extid=6339eda9cb4ebbc4c37b
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=178a105d400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16651133400000
+So while I can apply the Rockchip patches, I'm still hoping for some
+kind of consensus beforehand, least we roll it back after the fact  ;-) .
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+6339eda9cb4ebbc4c37b@syzkaller.appspotmail.com
-
-INFO: task syz-executor221:17414 blocked for more than 140 seconds.
-       Not tainted 4.19.0+ #313
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor221 D23048 17414   5652 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:2831 [inline]
-  __schedule+0x8cf/0x21d0 kernel/sched/core.c:3472
-  schedule+0xfe/0x460 kernel/sched/core.c:3516
-  fuse_wait_aborted+0x20b/0x320 fs/fuse/dev.c:2155
-  fuse_sb_destroy+0xe2/0x1d0 fs/fuse/inode.c:1224
-  fuse_kill_sb_anon+0x15/0x20 fs/fuse/inode.c:1234
-  deactivate_locked_super+0x97/0x100 fs/super.c:329
-  deactivate_super+0x2bb/0x320 fs/super.c:360
-  cleanup_mnt+0xbf/0x160 fs/namespace.c:1098
-  __cleanup_mnt+0x16/0x20 fs/namespace.c:1105
-  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
-  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x446689
-Code: e8 0c e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 7b 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f621e979da8 EFLAGS: 00000293 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 00000000006dbc28 RCX: 0000000000446689
-RDX: 0000000000446689 RSI: 000000000000000a RDI: 0000000020000180
-RBP: 00000000006dbc20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000293 R12: 00000000006dbc2c
-R13: 0030656c69662f2e R14: 65646f6d746f6f72 R15: 0000000000000000
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/1009:
-  #0: 0000000095618e4f (rcu_read_lock){....}, at:  
-debug_show_all_locks+0xd0/0x424 kernel/locking/lockdep.c:4379
-5 locks held by rsyslogd/5530:
-  #0: 0000000028bad575 (&f->f_pos_lock){+.+.}, at: __fdget_pos+0x1bb/0x200  
-fs/file.c:766
-  #1: 00000000e31592cd (&rq->lock){-.-.}, at: rq_lock  
-kernel/sched/sched.h:1126 [inline]
-  #1: 00000000e31592cd (&rq->lock){-.-.}, at: __schedule+0x236/0x21d0  
-kernel/sched/core.c:3410
-  #2: 0000000095618e4f (rcu_read_lock){....}, at: trace_sched_stat_runtime  
-include/trace/events/sched.h:418 [inline]
-  #2: 0000000095618e4f (rcu_read_lock){....}, at: update_curr+0x383/0xbd0  
-kernel/sched/fair.c:830
-  #3: 00000000e31592cd (&rq->lock){-.-.}, at: rq_lock  
-kernel/sched/sched.h:1126 [inline]
-  #3: 00000000e31592cd (&rq->lock){-.-.}, at: ttwu_queue  
-kernel/sched/core.c:1845 [inline]
-  #3: 00000000e31592cd (&rq->lock){-.-.}, at: try_to_wake_up+0x9f6/0x1490  
-kernel/sched/core.c:2057
-  #4: 0000000095618e4f (rcu_read_lock){....}, at: trace_sched_stat_runtime  
-include/trace/events/sched.h:418 [inline]
-  #4: 0000000095618e4f (rcu_read_lock){....}, at: update_curr+0x383/0xbd0  
-kernel/sched/fair.c:830
-2 locks held by getty/5620:
-  #0: 00000000492d5ad8 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 0000000088c4d769 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
-2 locks held by getty/5621:
-  #0: 00000000ed56cf3c (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 00000000a8112d49 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
-2 locks held by getty/5622:
-  #0: 00000000858703c2 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 00000000b20ff0f8 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
-2 locks held by getty/5623:
-  #0: 00000000a0163126 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 00000000cb4be99e (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
-2 locks held by getty/5624:
-  #0: 000000006eab39a0 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 00000000341e7ea5 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
-2 locks held by getty/5625:
-  #0: 00000000e1bb9e75 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 00000000e6c38e03 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
-2 locks held by getty/5626:
-  #0: 00000000437eab2d (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 00000000031acd5c (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
-2 locks held by kworker/1:0/5718:
-  #0: 0000000003693dce ((wq_completion)"rcu_gp"){+.+.}, at:  
-__write_once_size include/linux/compiler.h:206 [inline]
-  #0: 0000000003693dce ((wq_completion)"rcu_gp"){+.+.}, at:  
-arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
-  #0: 0000000003693dce ((wq_completion)"rcu_gp"){+.+.}, at: atomic64_set  
-include/asm-generic/atomic-instrumented.h:40 [inline]
-  #0: 0000000003693dce ((wq_completion)"rcu_gp"){+.+.}, at: atomic_long_set  
-include/asm-generic/atomic-long.h:59 [inline]
-  #0: 0000000003693dce ((wq_completion)"rcu_gp"){+.+.}, at: set_work_data  
-kernel/workqueue.c:617 [inline]
-  #0: 0000000003693dce ((wq_completion)"rcu_gp"){+.+.}, at:  
-set_work_pool_and_clear_pending kernel/workqueue.c:644 [inline]
-  #0: 0000000003693dce ((wq_completion)"rcu_gp"){+.+.}, at:  
-process_one_work+0xb43/0x1c40 kernel/workqueue.c:2124
-  #1: 00000000fdcab2d3 ((work_completion)(&rew.rew_work)){+.+.}, at:  
-process_one_work+0xb9a/0x1c40 kernel/workqueue.c:2128
-1 lock held by syz-executor221/17414:
-  #0: 000000003df3056e (&type->s_umount_key#39){+.+.}, at:  
-deactivate_super+0x2b3/0x320 fs/super.c:359
-1 lock held by syz-executor221/18647:
-  #0: 00000000dd0c9ec5 (rcu_state.exp_mutex){+.+.}, at: exp_funnel_lock  
-kernel/rcu/tree_exp.h:296 [inline]
-  #0: 00000000dd0c9ec5 (rcu_state.exp_mutex){+.+.}, at:  
-_synchronize_rcu_expedited.constprop.58+0x7c7/0x9d0  
-kernel/rcu/tree_exp.h:620
-1 lock held by syz-executor221/18653:
-  #0: 00000000dd0c9ec5 (rcu_state.exp_mutex){+.+.}, at: exp_funnel_lock  
-kernel/rcu/tree_exp.h:328 [inline]
-  #0: 00000000dd0c9ec5 (rcu_state.exp_mutex){+.+.}, at:  
-_synchronize_rcu_expedited.constprop.58+0x7af/0x9d0  
-kernel/rcu/tree_exp.h:620
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 PID: 1009 Comm: khungtaskd Not tainted 4.19.0+ #313
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  nmi_cpu_backtrace.cold.2+0x5c/0xa1 lib/nmi_backtrace.c:101
-  nmi_trigger_cpumask_backtrace+0x1e8/0x22a lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_all_cpu_backtrace include/linux/nmi.h:144 [inline]
-  check_hung_uninterruptible_tasks kernel/hung_task.c:205 [inline]
-  watchdog+0xb51/0x1060 kernel/hung_task.c:289
-  kthread+0x35a/0x440 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:350
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 PID: 18647 Comm: syz-executor221 Not tainted 4.19.0+ #313
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:outb arch/x86/include/asm/io.h:334 [inline]
-RIP: 0010:io_serial_out+0x73/0x90 drivers/tty/serial/8250/8250_port.c:455
-Code: 00 49 8d 7c 24 38 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03  
-d3 e3 80 3c 02 00 75 19 41 03 5c 24 38 44 89 e8 89 da ee <5b> 41 5c 41 5d  
-5d c3 e8 e1 66 e0 fd eb c0 e8 3a 67 e0 fd eb e0 0f
-RSP: 0018:ffff8801cc666f90 EFLAGS: 00000006
-RAX: 0000000000000000 RBX: 00000000000003f9 RCX: 0000000000000000
-RDX: 00000000000003f9 RSI: ffffffff83e257a6 RDI: ffffffff8bae5158
-RBP: ffff8801cc666fa8 R08: ffff8801bf0b0600 R09: ffffed00398ccde3
-R10: ffffed00398ccde3 R11: 0000000000000003 R12: ffffffff8bae5120
-R13: 0000000000000000 R14: 0000000000000001 R15: ffffffff8bae5168
-FS:  00007f621e97a700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f313a840000 CR3: 00000001c3654000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  serial_port_out include/linux/serial_core.h:276 [inline]
-  serial8250_console_write+0x34b/0xb10  
-drivers/tty/serial/8250/8250_port.c:3276
-  univ8250_console_write+0x5f/0x70 drivers/tty/serial/8250/8250_core.c:586
-  call_console_drivers kernel/printk/printk.c:1728 [inline]
-  console_unlock+0xb1f/0x1190 kernel/printk/printk.c:2414
-  vprintk_emit+0x391/0x990 kernel/printk/printk.c:1922
-  vprintk_default+0x28/0x30 kernel/printk/printk.c:1964
-  vprintk_func+0x7e/0x181 kernel/printk/printk_safe.c:398
-  printk+0xa7/0xcf kernel/printk/printk.c:1997
-  kobject_cleanup lib/kobject.c:638 [inline]
-  kobject_release lib/kobject.c:691 [inline]
-  kref_put include/linux/kref.h:70 [inline]
-  kobject_put.cold.9+0x83/0x2e4 lib/kobject.c:708
-  put_device drivers/base/core.c:2024 [inline]
-  device_unregister+0x28/0x30 drivers/base/core.c:2114
-  bdi_unregister+0x5ed/0x880 mm/backing-dev.c:948
-  release_bdi mm/backing-dev.c:964 [inline]
-  kref_put include/linux/kref.h:70 [inline]
-  bdi_put+0x153/0x180 mm/backing-dev.c:973
-  generic_shutdown_super+0x3c8/0x530 fs/super.c:470
-  kill_anon_super+0x3e/0x60 fs/super.c:1032
-  fuse_kill_sb_anon+0x1d/0x20 fs/fuse/inode.c:1235
-  deactivate_locked_super+0x97/0x100 fs/super.c:329
-  deactivate_super+0x2bb/0x320 fs/super.c:360
-  cleanup_mnt+0xbf/0x160 fs/namespace.c:1098
-  __cleanup_mnt+0x16/0x20 fs/namespace.c:1105
-  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
-  get_signal+0x1558/0x1980 kernel/signal.c:2347
-  do_signal+0x9c/0x21c0 arch/x86/kernel/signal.c:816
-  exit_to_usermode_loop+0x2e5/0x380 arch/x86/entry/common.c:162
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x446689
-Code: e8 0c e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 7b 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f621e979da8 EFLAGS: 00000293 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 00000000006dbc28 RCX: 0000000000446689
-RDX: 0000000000446689 RSI: 000000000000000a RDI: 0000000020000180
-RBP: 00000000006dbc20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000293 R12: 00000000006dbc2c
-R13: 0030656c69662f2e R14: 65646f6d746f6f72 R15: 0000000000000000
-INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.274  
-msecs
-kobject: '0:31' (0000000050d00699): fill_kobj_path: path  
-= '/devices/virtual/bdi/0:31'
-kobject: '0:32' (00000000d2d168d9): kobject_cleanup, parent           (null)
-kobject: '0:31' (0000000050d00699): kobject_cleanup, parent           (null)
-kobject: '0:32' (00000000d2d168d9): calling ktype release
-kobject: '0:33' (00000000d76406a3): kobject_cleanup, parent           (null)
-kobject: '0:28' (000000002da84317): calling ktype release
-kobject: '0:29' (00000000e2434e73): kobject_cleanup, parent           (null)
-kobject: '0:32': free name
-kobject: '0:33' (00000000d76406a3): calling ktype release
-kobject: '0:33': free name
-kobject: '0:29' (00000000e2434e73): calling ktype release
-kobject: '0:28': free name
-kobject: '0:29': free name
-kobject: '0:31' (0000000050d00699): calling ktype release
-kobject: '0:28' (0000000080474e07): kobject_add_internal: parent: 'bdi',  
-set: 'devices'
-kobject: '0:29' (0000000051f8f0a5): kobject_add_internal: parent: 'bdi',  
-set: 'devices'
-kobject: '0:28' (0000000080474e07): kobject_uevent_env
-kobject: '0:32' (0000000075558c25): kobject_add_internal: parent: 'bdi',  
-set: 'devices'
-kobject: '0:33' (00000000c8dd3226): kobject_add_internal: parent: 'bdi',  
-set: 'devices'
-kobject: '0:29' (0000000051f8f0a5): kobject_uevent_env
-kobject: '0:33' (00000000c8dd3226): kobject_uevent_env
-kobject: '0:31': free name
-kobject: '0:28' (0000000080474e07): fill_kobj_path: path  
-= '/devices/virtual/bdi/0:28'
-kobject: '0:29' (0000000051f8f0a5): fill_kobj_path: path  
-= '/devices/virtual/bdi/0:29'
-kobject: '0:34' (000000008aa55f96): kobject_add_internal: parent: 'bdi',  
-set: 'devices'
-kobject: '0:33' (00000000c8dd3226): fill_kobj_path: path  
-= '/devices/virtual/bdi/0:33'
-kobject: '0:31' (000000008e78fdc7): kobject_add_internal: parent: 'bdi',  
-set: 'devices'
-kobject: '0:32' (0000000075558c25): kobject_uevent_env
-kobject: '0:34' (000000008aa55f96): kobject_uevent_env
-kobject: '0:32' (0000000075558c25): fill_kobj_path: path  
-= '/devices/virtual/bdi/0:32'
-kobject: '0:34' (000000008aa55f96): fill_kobj_path: path  
-= '/devices/virtual/bdi/0:34'
+Heiko
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
