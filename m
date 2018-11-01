@@ -2,136 +2,108 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71229C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 07:56:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF569C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 07:58:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FF0F205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 07:56:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FF0F205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-mips.org
+	by mail.kernel.org (Postfix) with ESMTP id 9C43F205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 07:58:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C43F205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728099AbeKAQ6G (ORCPT
+        id S1727824AbeKARAY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 12:58:06 -0400
-Received: from eddie.linux-mips.org ([148.251.95.138]:47630 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727704AbeKAQ6G (ORCPT
+        Thu, 1 Nov 2018 13:00:24 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:46325 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727704AbeKARAX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 12:58:06 -0400
-Received: (from localhost user: 'macro', uid#1010) by eddie.linux-mips.org
-        with ESMTP id S23990474AbeKAHyY1WCoB (ORCPT
-        <rfc822;stable@vger.kernel.org> + 1 other);
-        Thu, 1 Nov 2018 08:54:24 +0100
-Date:   Thu, 1 Nov 2018 07:54:24 +0000 (GMT)
-From:   "Maciej W. Rozycki" <macro@linux-mips.org>
-To:     Christoph Hellwig <hch@lst.de>, Paul Burton <paul.burton@mips.com>
-cc:     iommu@lists.linux-foundation.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: [PATCH] MIPS: Fix `dma_alloc_coherent' returning a non-coherent
- allocation
-In-Reply-To: <20181101051359.GA4164@lst.de>
-Message-ID: <alpine.LFD.2.21.1811010523440.20378@eddie.linux-mips.org>
-References: <20180914095808.22202-1-hch@lst.de> <20180914095808.22202-5-hch@lst.de> <alpine.LFD.2.21.1810311414200.20378@eddie.linux-mips.org> <alpine.LFD.2.21.1810311559590.20378@eddie.linux-mips.org> <20181031203206.GA28337@lst.de>
- <alpine.LFD.2.21.1810312043250.20378@eddie.linux-mips.org> <20181101051359.GA4164@lst.de>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        Thu, 1 Nov 2018 13:00:23 -0400
+Received: by mail-ed1-f68.google.com with SMTP id f8-v6so3471972edt.13;
+        Thu, 01 Nov 2018 00:58:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MUV3OWQzBRs+Rfb55yoiC4Pom0da7pcMUAJW0kZkg0g=;
+        b=CfkSokPi8/J5ofMr+zJsulhlu1MP0eZKYaEQpxeIvpRUVOA67rlSR2nas7O1kFaJDe
+         +v2101MWxQXM1+nYoEGy36U+LDR6seXsYcIooLlhfOSo/tx1yR3L2eIBAFK80wowyGSP
+         CwzUus+WA+2VHrX8feNUKwMi4KJUeewGpOQWeqmCVJt0lrLwY4kmx+t63lbijCEoyF58
+         kFcNE1tnRIrmVnB4sepDxNyUEiY1AJSZChjBTXGH1y9e48P1cpiDNYdhXYC9AZxAq3Xy
+         OsjyPXLM4OqiZ1m7/oA1HG9ptr4YdVZ2qikwWIwCD17Ce77m6+O/M5NAAphvRZ+eF5JN
+         zJcA==
+X-Gm-Message-State: AGRZ1gKKBFz4dNrEfou+EA6FOKatyQWVnUeAQ+UfhDijpXKzvKz/tXVr
+        1Qlm6Orhpau7LS6XmXOsDkLoGllik+c=
+X-Google-Smtp-Source: AJdET5dkFVfTO4nUg7y4LMRNxAU+N1mAeuV4TvpVHyCm76n1/cvsIbB3LhzNte8jpiB33+LQ5cJ1Vg==
+X-Received: by 2002:a50:e00e:: with SMTP id e14-v6mr4593164edl.152.1541059107798;
+        Thu, 01 Nov 2018 00:58:27 -0700 (PDT)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com. [209.85.221.54])
+        by smtp.gmail.com with ESMTPSA id n12-v6sm4453222ejl.29.2018.11.01.00.58.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Nov 2018 00:58:27 -0700 (PDT)
+Received: by mail-wr1-f54.google.com with SMTP id 74-v6so10932643wrb.13;
+        Thu, 01 Nov 2018 00:58:27 -0700 (PDT)
+X-Received: by 2002:adf:f9d2:: with SMTP id w18-v6mr5699930wrr.134.1541059106632;
+ Thu, 01 Nov 2018 00:58:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+References: <20181031183634.29640-1-jagan@amarulasolutions.com>
+ <20181031183634.29640-7-jagan@amarulasolutions.com> <CAMty3ZCeZzXYy4XRwTeQjYfpB6KKjEVRWyhjoca9Os4foLYL4g@mail.gmail.com>
+In-Reply-To: <CAMty3ZCeZzXYy4XRwTeQjYfpB6KKjEVRWyhjoca9Os4foLYL4g@mail.gmail.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Thu, 1 Nov 2018 15:58:13 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67xCnH20Hga2P2Ekk3vhhOWUSgtOmRVAte+HDuodjsjkw@mail.gmail.com>
+Message-ID: <CAGb2v67xCnH20Hga2P2Ekk3vhhOWUSgtOmRVAte+HDuodjsjkw@mail.gmail.com>
+Subject: Re: [RFC PATCH 7/7] arm64: allwinner: h6: orangepi-liet2: Enable
+ AP6356S WiFi support
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com, Jagan Teki <jagan@openedev.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix a MIPS `dma_alloc_coherent' regression from commit bc3ec75de545 
-("dma-mapping: merge direct and noncoherent ops") that causes a cached 
-allocation to be returned on noncoherent cache systems.
+On Thu, Nov 1, 2018 at 3:35 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+>
+> On Thu, Nov 1, 2018 at 12:07 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
+> >
+> > From: Jagan Teki <jagan@openedev.com>
+> >
+> > Enable AP6356S WiFi/BT combo chip on Orangepi Lite2 board:
+> > - WiFi SDIO interface is connected to MMC1
+> > - WiFi WL-PMU-EN pin connected to gpio PM3: attach to mmc-pwrseq
+> > - WiFi WL-WAKE-AP pin connected to gpio PM0
+> > - 32kHz external oscillator gate clock from RTC
 
-This is due to an inverted check now used in the MIPS implementation of 
-`arch_dma_alloc' on the result from `dma_direct_alloc_pages' before 
-doing the cached-to-uncached mapping of the allocation address obtained.  
-The mapping has to be done for a non-NULL rather than NULL result, 
-because a NULL result means the allocation has failed.
+You never specified a clock rate for it, so it might actually be wrong.
+The default clock rate would be something "around" 32 kHz, but not very
+accurate. Meanwhile the WiFi module would have very specific requirements
+on frequency and accuracy of this clock. The WiFi part doesn't seem to
+care that much, but the Bluetooth part cares very much. It doesn't work
+or it would seem to work but you don't get anything off the radio if the
+frequency is off (as in off-frequency).
 
-Invert the check for correct operation then.
+> >
+> > Signed-off-by: Jagan Teki <jagan@openedev.com>
+> > ---
+> > Note:
+> > - chip detected, but failed to connect
+> > [  129.084504] brcmfmac: brcmf_sdio_hostmail: mailbox indicates firmware halted
+> > [  135.906409] brcmfmac: brcmf_sdio_bus_rxctl: resumed on timeout
+>
+> This got fixed. Will send next version.
 
-Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
-Fixes: bc3ec75de545 ("dma-mapping: merge direct and noncoherent ops")
-Cc: stable@vger.kernel.org # 4.19+
----
-On Thu, 1 Nov 2018, Christoph Hellwig wrote:
+Could you wait until I get my RTC changes out? I also have some Bluetooth
+patches for AP621x, which is what started all this RTC work, which you might
+find interesting.
 
-> Fails to compile for me with:
-> 
-> cc1: error: ‘-march=r3000’ requires ‘-mfp32’
-> 
-> using the x86_64 corss gcc 8 from Debian testing.
-
- Hmm, that seems related to the FPXX ABI, which the R3000 does not support 
-and which they may have configured as the default for GCC (`-mfpxx').  
-That's not relevant to the kernel, so we probably just ought to force 
-`-mfp32' and `-mfp64' for 32-bit and 64-bit builds respectively these 
-days.
-
-> Either way the config looks like we have all the required bits for
-> non-coherent dma support.  The only guess is that somehow
-> dma_cache_wback_inv aren't hooked up to the right functions for some
-> reason, but I can't really think off why.
-
- Well, `dma_cache_wback_inv' isn't actually called and with the 64-bit 
-configuration I switched to the address returned is in the XKPHYS cached 
-noncoherent space, as proved with a simple diagnostic patch applied to 
-`dma_direct_alloc' showing the results of `dev_is_dma_coherent' and the 
-actual allocation:
-
-tc1: DEFTA at MMIO addr = 0x1e900000, IRQ = 20, Hardware addr = 08-00-2b-a3-a3-29
-defxx tc1: dma_direct_alloc: coherent: 0
-defxx tc1: dma_direct_alloc: returned: 9800000003db8000
-tc1: registered as fddi0
-
-(the value of 3 in bits 61:59 of the virtual address denotes the cached 
-noncoherent attribute).
-
- The cause is commit bc3ec75de545 ("dma-mapping: merge direct and 
-noncoherent ops") reversed the interpretation of the `dma_direct_alloc*' 
-result in `arch_dma_alloc'.  I guess this change was unlucky not to have 
-this part of the API actually verified at run-time by anyone anywhere.
-
- Fixed thus, with debug output now as expected:
-
-defxx tc1: dma_direct_alloc: coherent: 0
-defxx tc1: dma_direct_alloc: returned: 9000000003db8000
-
-showing the address returned in the XKPHYS uncached space (the value of 2 
-in bits 61:59 of the virtual address denotes the uncached attribute), and 
-the network interface working properly.
-
- Please apply, and backport as required.
-
-  Maciej
----
- arch/mips/mm/dma-noncoherent.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-linux-mips-arch-dma-alloc-err.patch
-Index: linux-20181028-4maxp64-defconfig/arch/mips/mm/dma-noncoherent.c
-===================================================================
---- linux-20181028-4maxp64-defconfig.orig/arch/mips/mm/dma-noncoherent.c
-+++ linux-20181028-4maxp64-defconfig/arch/mips/mm/dma-noncoherent.c
-@@ -50,7 +50,7 @@ void *arch_dma_alloc(struct device *dev,
- 	void *ret;
- 
- 	ret = dma_direct_alloc_pages(dev, size, dma_handle, gfp, attrs);
--	if (!ret && !(attrs & DMA_ATTR_NON_CONSISTENT)) {
-+	if (ret && !(attrs & DMA_ATTR_NON_CONSISTENT)) {
- 		dma_cache_wback_inv((unsigned long) ret, size);
- 		ret = (void *)UNCAC_ADDR(ret);
- 	}
+ChenYu
