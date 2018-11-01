@@ -2,178 +2,105 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB44BC6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 20:33:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8CABC6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 20:33:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59570205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 20:33:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F734205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 20:33:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="hdzRHGDj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59570205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VfqdU7e2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F734205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726234AbeKBFiF (ORCPT
+        id S1726316AbeKBFiG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 01:38:05 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:42236 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726032AbeKBFiE (ORCPT
+        Fri, 2 Nov 2018 01:38:06 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:34625 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbeKBFiF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 01:38:04 -0400
-Received: by mail-qk1-f195.google.com with SMTP id u68so9512699qkg.9
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 13:33:32 -0700 (PDT)
+        Fri, 2 Nov 2018 01:38:05 -0400
+Received: by mail-ua1-f65.google.com with SMTP id e16so7705652uam.1
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 13:33:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8glHKttFH9I5zyY3UWTD3U/2jmUFuiCfepetv/PmuPg=;
-        b=hdzRHGDjfBw3ggtuhLbxOpNjE05mbddOfhPBO/ZW5fJyxG8zibFyjPSmJqA0+9gu7X
-         nlYOO3jRk2SRPMp4mvTnPUTB7xpYhdUNcgEW0Fezh+fiFFZseB+5gR/3jFrEGtfDw9xB
-         pCYD4rKdFnW0nrtlZ2KzGsnfRRHJ2BYfQKkCKoCBgPl2CkaFhBRKU9PVcHhkTOw1ISJH
-         fKhQ/+Nn1cPejwuBnvUUOoHdU6gJ4dFq07xHg5QsKOe6bSwPUk9oTfttFiM1XBAbhxK4
-         /DTVDRmCjelWVBuFkAy71ye/T0trlz2Vhs0jwEXvYqLor4kNXR4hLHk/ROnUIOm+/cwj
-         ZsZQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=A1ccitTiEnIn0NIxNEiZUO7Pg547IWf6T2kcK+zCA7g=;
+        b=VfqdU7e2tSu4CFbVigp0aLqLR32bOTcTCJHlhSXC06DiVZRwJ2hanS33beGVXRVwut
+         dyMpBhBu6tMNbQuaLAcSI5H6pUiCuoJGNo7nlhvWK6kwiniqYNGJvMTODL+g0TgrMf2l
+         PGoKXYLXhJ5GPIodzzXl3WCzNXLLs709P8TNRjaI9bsyzUnA84t0dbQMV2lgUQkrue0I
+         mjhNaqGrX/xBw7jsvI8w0VywUVDw2J0YxRwtFGi1Jb61GCCmc49cMdrxxPtqnys4acFn
+         hICeQ5Nh0V8OkiteskvbJgSNDuMRyK+VcJ8G/qjwN/IM3R7QNuyXqc4yPZ7iYC6s9kl9
+         JRHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8glHKttFH9I5zyY3UWTD3U/2jmUFuiCfepetv/PmuPg=;
-        b=CxFitkh8Tluj8P1VlSZTuDSexghsQdN0FsqqWU1ZMK7Dr5qrOk+eiLSVlTZ/7Ufpnr
-         EORtoQcLz5QSkDGhDSPfk/pt4qUcgJZ/DVH8AC7Crb9LbTyrWtbngG/obBIUHCNpR9V0
-         x5dfQROPeMAkU6BJtZVqubaEywJcwwgARzdk3D+R1G0/KpGopGHGSFNEj8oqQSySMfpb
-         1CXM0k562pH0TWBmPRfwxSJuPkB+IdSmZFyaMWlp2NdKjKgSSQx4etQe+yG/WOrJmoOw
-         /chq5Uhs5WqbIBRaPy8PwOExZd+4hJEVCpaJWk81LG6U/SKEdkFOHGIZ7hpN4zxvNZXb
-         BroQ==
-X-Gm-Message-State: AGRZ1gKvf5ZHppnG7anxqgo/gbCXhlUI6y+2RGptPgNpgQtL2GclzYm7
-        YbzXq4QIteLo6pL+3+guZ6Dw9A==
-X-Google-Smtp-Source: AJdET5ew9D9zzs2mJncxavhVPn87vmHDtvDzRNJJAgnQnMvgRyzUC2FDTiq997zllGhRTfSIixcvYw==
-X-Received: by 2002:a37:8b84:: with SMTP id n126mr2955520qkd.355.1541104412116;
-        Thu, 01 Nov 2018 13:33:32 -0700 (PDT)
-Received: from cisco ([173.38.117.87])
-        by smtp.gmail.com with ESMTPSA id i65sm30423807qkh.49.2018.11.01.13.33.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 01 Nov 2018 13:33:31 -0700 (PDT)
-Date:   Thu, 1 Nov 2018 14:33:28 -0600
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian@brauner.io>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Aleksa Sarai <asarai@suse.de>, linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v8 1/2] seccomp: add a return code to trap to userspace
-Message-ID: <20181101203328.GI2180@cisco>
-References: <20181029224031.29809-1-tycho@tycho.ws>
- <20181029224031.29809-2-tycho@tycho.ws>
- <20181030143235.GA3385@redhat.com>
- <20181030153231.GB7343@cisco>
- <20181101144804.GD23232@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=A1ccitTiEnIn0NIxNEiZUO7Pg547IWf6T2kcK+zCA7g=;
+        b=imyQ19FU437mKw8S29rlFAnmALVsHtI92SJe7v+HOZ1kBlvk6oQLY1vFtfUr+cV7Zc
+         4To2Fy1qib3msQCTpi0Yfm1ltZN/mEFpJ6oQrizJEe8MSttzEMkmGEWWHaFhNNrwQXll
+         JaA8Dppr4AIdz+gKnI8Ci2Ioak/K+RcFwAZx7FswlGoJmU6bB3b1kyKBYydh2Vu3qyUj
+         FjIRC2YlR7PomDAahBS57k904gcbIVwrZ7uN7ISq4CG4BOynQaSVFzEyFNvMrIv2TYdn
+         ZVE09jK7xiMGQ+8Mv1UYGVI6KblyOLJWMKC2hcCb8U++S/Jmcju7nnpqJGZwswcOFUlM
+         lbhQ==
+X-Gm-Message-State: AGRZ1gIGOJSaMFp0SLrcX9QGj9P1teUv0uZcamqcr2G0NGMzvwBqlh9M
+        TZe+k1V117IvdwcMv/v9IcIb04qh5cqSMYpRiniT6g==
+X-Google-Smtp-Source: AJdET5f00YPG05jAd9wuAU84T6GSgRQ/LBCAx3n2DYi67Z60XhmnPFtcNiCm9Th1R+jmDfj/7yWeI3xGFPopow3ySIc=
+X-Received: by 2002:ab0:650e:: with SMTP id w14mr3427660uam.83.1541104413025;
+ Thu, 01 Nov 2018 13:33:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181101144804.GD23232@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <1541073999-11752-1-git-send-email-vbadigan@codeaurora.org> <1541073999-11752-3-git-send-email-vbadigan@codeaurora.org>
+In-Reply-To: <1541073999-11752-3-git-send-email-vbadigan@codeaurora.org>
+From:   Doug Anderson <dianders@google.com>
+Date:   Thu, 1 Nov 2018 13:33:21 -0700
+Message-ID: <CAD=FV=U7FGn0Jt_63SJ0zeU9u4vh5J9EFtbLHGtjGOUV7AceKw@mail.gmail.com>
+Subject: Re: [PATCH V3 2/2] mmc: sdhci-msm: Re-initialize DLL if MCLK is gated dynamically
+To:     vbadigan@codeaurora.org
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Evan Green <evgreen@chromium.org>,
+        Asutosh Das <asutoshd@codeaurora.org>, riteshh@codeaurora.org,
+        stummala@codeaurora.org, sayalil@codeaurora.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 01, 2018 at 03:48:05PM +0100, Oleg Nesterov wrote:
-> On 10/30, Tycho Andersen wrote:
-> >
-> > > I am not sure I understand the value of signaled/SECCOMP_NOTIF_FLAG_SIGNALED...
-> > > I mean, why it is actually useful?
-> > >
-> > > Sorry if this was already discussed.
-> >
-> > :) no problem, many people have complained about this. This is an
-> > implementation of Andy's suggestion here:
-> > https://lkml.org/lkml/2018/3/15/1122
-> >
-> > You can see some more detailed discussion here:
-> > https://lkml.org/lkml/2018/9/21/138
-> 
-> Cough, sorry, I simply can't understand what are you talking about ;)
-> It seems that I need to read all the previous emails... So let me ask
-> a stupid question below.
-> 
-> > > But my main concern is that either way wait_for_completion_killable() allows
-> > > to trivially create a process which doesn't react to SIGSTOP, not good...
-> > >
-> > > Note also that this can happen if, say, both the tracer and tracee run in the
-> > > same process group and SIGSTOP is sent to their pgid, if the tracer gets the
-> > > signal first the tracee won't stop.
-> > >
-> > > Of freezer. try_to_freeze_tasks() can fail if it freezes the tracer before
-> > > it does SECCOMP_IOCTL_NOTIF_SEND.
-> >
-> > I think in general the way this is intended to be used these things
-> > wouldn't happen.
-> 
-> Why?
+Hi,
 
-The intent is to run the tracer on the host and have it trace
-containers, which would live in a different freezer cgroup, process
-group, etc. Of course you could use it in a situation where they would
-be, so the concern is still valid, but I'm not sure why you'd do that.
+On Thu, Nov 1, 2018 at 5:08 AM Veerabhadrarao Badiganti
+<vbadigan@codeaurora.org> wrote:
+>  static const struct sdhci_msm_variant_info sdhci_msm_v5_var = {
+>         .mci_removed = true,
+> +       .restore_dll_config = false,
+> +       .var_ops = &v5_var_ops,
+> +       .offset = &sdhci_msm_v5_offset,
+> +};
+> +
+> +static const struct sdhci_msm_variant_info sdm845_sdhci_var = {
+> +       .mci_removed = true,
+> +       .restore_dll_config = true,
+>         .var_ops = &v5_var_ops,
+>         .offset = &sdhci_msm_v5_offset,
+>  };
 
-> > was malicious and had the ability to create a user namespace to
-> > exhaust pids this way,
-> 
-> Not sure I understand how this connects to my question... nevermind.
-> 
-> > so perhaps we should drop this part of the
-> > patch. I have no real need for it, but perhaps Andy can elaborate?
-> 
-> Yes I think it would be nice to avoid wait_for_completion_killable().
-> 
-> So please help me to understand the problem. Once again, why can not
-> seccomp_do_user_notification() use wait_for_completion_interruptible() only?
->
-> This is called before the task actually starts the syscall, so
-> -ERESTARTNOINTR if signal_pending() can't hurt.
+One last thing: are there actually any "v5" controllers that _don't_
+require restoring the DLL?  Since "sdm845" is currently the only v5
+controller maybe just set "restore_dll_config = true" for all v5
+controllers and when there's a new v5 controller that doesn't need it
+then match off the SoC-specific compatible string.  As per my review
+of the bindings patch IMO you should include both the "v5" and the
+SoC-specific string for SDM845 (and all future SoCs) so you could make
+the generic v5 case do this...
 
-The idea was that when the tracee gets a signal, it notifies the
-tracer exactly once, and then waits for the tracer to decide what to
-do. So if we use another wait_for_completion_interruptible(), doesn't
-it just get re-woken immediately because the signal is still pending?
 
-...actually I just tested it, and it doesn't. So it seems we could use
-_interruptible() here and achieve the same thing.
-
-> Now lets suppose seccomp_do_user_notification() simply does
-> 
-> 	err = wait_for_completion_interruptible(&n.ready);
-> 
-> 	if (err < 0 && state != SECCOMP_NOTIFY_REPLIED) {
-> 		syscall_set_return_value(ERESTARTNOINTR);
-> 		list_del(&n.list);
-> 		return -1;
-> 	}
-> 
-> (I am ignoring the locking/etc). Now the obvious problem is that the listener
-> doing SECCOMP_IOCTL_NOTIF_SEND can't distinguish -ENOENT from the case when the
-> tracee was killed, yes?
-> 
-> Is it that important?
-
-The answer to this question depends on how we want the listener to be
-able to react. For example, if the listener is in the middle of doing
-a mount() on behalf of the task and it gets a signal and we return
-immediately, the listener will complete the mount(), try to respond
-with success and get -ENOENT. If the task handles the signal and
-restarts the mount(), it'll happen twice unless the listener undoes
-it when it sees the -ENOENT. If we send another notification with the
-SIGNALED flag, the listener has a better picture of what's going on,
-which might be nice.
-
-Tycho
+-Doug
