@@ -2,92 +2,98 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 090F2C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:52:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B11BC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:53:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE7A920847
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:52:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TT5fhev9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE7A920847
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1650E205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:53:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1650E205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729036AbeKBA41 (ORCPT
+        id S1729046AbeKBA5B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 20:56:27 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33590 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727996AbeKBA41 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 20:56:27 -0400
-Received: by mail-pf1-f195.google.com with SMTP id i62-v6so1679855pfi.0
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 08:52:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=+DXyXu+3FN346qfNwuLZJrjQXpEgFC8GgqCpR02Dv+o=;
-        b=TT5fhev9yXGk8UICUbLQ5gzY7+O5EdQxy5U+KNkidACTEhzAsoPB/ReoJsICMlr0uv
-         M3wlpKcabdyZLFPymQ8NXG95vYKB3LdvEnOLSS27kAdypdfhoGQiuN5heTGDWw67Dyl8
-         YEYp3dD0AgjYpPD9t4F7Hwu7fKD6QoH+ez7wMC60wo3rnyspEV4SZ22g62p4VPIPBVIO
-         wrV73ouQ7tuewFRmw94NEuAFgknxnrYVGic62FbDD3Vu1deC801wGNM7bHDPe5Bmnvgy
-         Qb9+k0OtOZDVz4g0sWHXhAacvZOZfAMiyDozF5+HSRmz+iTartxqfgVs9IhHDnSl+n12
-         Upxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=+DXyXu+3FN346qfNwuLZJrjQXpEgFC8GgqCpR02Dv+o=;
-        b=CPONj/GVJPpf1yKZt00G5UQVuHyGG+SlnG+7kh5O6Jf25TO3E1huSObneUiJq657g7
-         7jPxgifd+hYCyqZ7FpuCj+OlzCSh3DTSFNp/+Z/6Wqw+v9SSVilrIZZnXyKDKlkrb5Mr
-         joqOQ8xMYAuYzwOAbQ7y0cfPHkzRcVxXvHGnLPm1xbnkQf/ifLdo0RkoD3QM5L1fBSv6
-         WqPOgmrMV1aMfEI9Pvxh81tJ3PgthDD7iHfneK84zrVxT+Ru7d1Mt0geSl6RWWJOPw0m
-         LnuzKrBGSBxXbJxp2ir6FStK6a2D+9I70g+68v1M+FNSw6QTRktnSP54KyYOe8XOHExy
-         uPug==
-X-Gm-Message-State: AGRZ1gL7Jfs3pFbOOj26TJOw6FZsIFdcrn8lej93/pTptgpjxuy/cn2I
-        FeC89eayzpdlD/vAivYxuqU=
-X-Google-Smtp-Source: AJdET5dLkmjORxUWhkw2c68Mn8rdcGjXPuNPK+rz47fI2lg2YI4s6AA3GkWYbdDEEjlWlsrLFMNFGA==
-X-Received: by 2002:a63:4384:: with SMTP id q126mr7609705pga.160.1541087575251;
-        Thu, 01 Nov 2018 08:52:55 -0700 (PDT)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id q7-v6sm25478253pgv.78.2018.11.01.08.52.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 01 Nov 2018 08:52:54 -0700 (PDT)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     forest@alittletooquiet.net, gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] staging: vt6655: fix small typo
-Date:   Thu,  1 Nov 2018 11:52:51 -0400
-Message-Id: <20181101155251.23330-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Thu, 1 Nov 2018 20:57:01 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:38736 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727996AbeKBA5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 20:57:00 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id CqXfvSCyWd3y; Thu,  1 Nov 2018 16:53:27 +0100 (CET)
+Received: from zn.tnic (p200300EC2BCBDC00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:dc00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id ED66D1EC037D;
+        Thu,  1 Nov 2018 16:53:26 +0100 (CET)
+From:   Borislav Petkov <bp@alien8.de>
+To:     X86 ML <x86@kernel.org>
+Cc:     Mike Rapoport <rppt@linux.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH] x86/gart: Rewrite early_gart_iommu_check() comment
+Date:   Thu,  1 Nov 2018 16:53:14 +0100
+Message-Id: <20181101155314.30690-1-bp@alien8.de>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/staging/vt6655/baseband.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+From: Borislav Petkov <bp@suse.de>
 
-diff --git a/drivers/staging/vt6655/baseband.c b/drivers/staging/vt6655/baseband.c
-index f0b163473426..b5ba0c76fb43 100644
---- a/drivers/staging/vt6655/baseband.c
-+++ b/drivers/staging/vt6655/baseband.c
-@@ -13,7 +13,7 @@
-  *
-  * Functions:
-  *      BBuGetFrameTime        - Calculate data frame transmitting time
-- *      BBvCaculateParameter   - Caculate PhyLength, PhyService and Phy Signal
-+ *      BBvCalculateParameter   - Calculate PhyLength, PhyService and Phy Signal
-  *                               parameter for baseband Tx
-  *      BBbReadEmbedded         - Embedded read baseband register via MAC
-  *      BBbWriteEmbedded        - Embedded write baseband register via MAC
+... to actually explain what the function is trying to do.
+
+Reported-by: Mike Rapoport <rppt@linux.ibm.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+---
+ arch/x86/kernel/aperture_64.c | 25 +++++++++++++++----------
+ 1 file changed, 15 insertions(+), 10 deletions(-)
+
+diff --git a/arch/x86/kernel/aperture_64.c b/arch/x86/kernel/aperture_64.c
+index 2c4d5ece7456..4fb4b7f53568 100644
+--- a/arch/x86/kernel/aperture_64.c
++++ b/arch/x86/kernel/aperture_64.c
+@@ -264,18 +264,23 @@ static int __init parse_gart_mem(char *p)
+ }
+ early_param("gart_fix_e820", parse_gart_mem);
+ 
++/*
++ * With kexec/kdump, if the first kernel doesn't shutdown the GART and the
++ * second kernel allocates a different GART region, there might be two
++ * overlapping GART regions present:
++ *
++ * - the first still used by the GART initialized in the first kernel.
++ * - (sub-)set of it used as normal RAM by the second kernel.
++ *
++ * which leads to memory corruptions and a kernel panic eventually.
++ *
++ * This can also happen if the BIOS has forgotten to mark the GART region
++ * as reserved.
++ *
++ * Try to update the e820 map to mark that new region as reserved.
++ */
+ void __init early_gart_iommu_check(void)
+ {
+-	/*
+-	 * in case it is enabled before, esp for kexec/kdump,
+-	 * previous kernel already enable that. memset called
+-	 * by allocate_aperture/__alloc_bootmem_nopanic cause restart.
+-	 * or second kernel have different position for GART hole. and new
+-	 * kernel could use hole as RAM that is still used by GART set by
+-	 * first kernel
+-	 * or BIOS forget to put that in reserved.
+-	 * try to update e820 to make that region as reserved.
+-	 */
+ 	u32 agp_aper_order = 0;
+ 	int i, fix, slot, valid_agp = 0;
+ 	u32 ctl;
 -- 
-2.17.0
+2.19.1
 
