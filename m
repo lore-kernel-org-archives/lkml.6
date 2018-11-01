@@ -2,147 +2,145 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B5AC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 262E1C6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:56:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 000512081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:54:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Nnc4iR5p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 000512081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id EA6BB20820
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:56:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA6BB20820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728922AbeKAW5N (ORCPT
+        id S1728759AbeKAW7M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 18:57:13 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:33472 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728847AbeKAW5M (ORCPT
+        Thu, 1 Nov 2018 18:59:12 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:34208 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728748AbeKAW7M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 18:57:12 -0400
-Received: by mail-yw1-f66.google.com with SMTP id z72-v6so3642869ywa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 06:54:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ETzPVJMUPu1nPGTn1124ZvpKmzdt7HVej18GLODBnkw=;
-        b=Nnc4iR5pKzPoEspUSoX8zD14K4ug/qAW9FYMwtcleLvPFaXAQjkE9IRH1YXUgk9Flx
-         OFqX4fzItAIM03BqYcZ5Wruzl4CY7fL8pnqVpU5uHySM85Iv0Mqg00lP22pnugdlwXiQ
-         xyBCbdZNjqH2fGiqxTE1CK4RtaT97vcLvknwA=
+        Thu, 1 Nov 2018 18:59:12 -0400
+Received: by mail-ed1-f68.google.com with SMTP id w19-v6so16620861eds.1
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 06:56:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ETzPVJMUPu1nPGTn1124ZvpKmzdt7HVej18GLODBnkw=;
-        b=aaL/phcAV2wFGFw5KYMW3QsVPvthZZYMK9FyJTHJkgfSh+MYi4Vr+pIVe0eyMVo/XC
-         aUKe5XXcg0iZ6j3iMvICXLCnlA9hyRXgf9E0oJsz9b9QaKnGQgp7shg6pEcyFsicN7Bf
-         GeMdNAmG9Ooe9AnHj6yQxT99Xk2RZThX49tAhE4axNF9/zHdHkVyNygNdbnKWb3gZVYr
-         Ee5uDboHb/VTQmqul+zHbjlQTb0UskPiF+7hS3aI2g5HDQxvmTCrYZ2r3JlTMOJVn7RJ
-         4kwbbZw1lXKSviZWWFex/R3i5DVnX+oC8tmnB9SM6W5dE9zX1cRcOFLp7/IADAIVNQSP
-         C5nQ==
-X-Gm-Message-State: AGRZ1gKnu/ktML9yTKl125qbfHH7JsptHlT/W0fQSnA9q75MSny5vqQW
-        rlXn8UNJlbuV7HMJwkw7Qkdog7jYQ9w=
-X-Google-Smtp-Source: AJdET5fA9+G7XbSzp6GVHdhKxMnrnGscDsM6XB0hZ6Qnmc5tvNKhikXkFriNr+63CrWdoP3eRfz7ag==
-X-Received: by 2002:a0d:ec55:: with SMTP id v82-v6mr7424882ywe.384.1541080447338;
-        Thu, 01 Nov 2018 06:54:07 -0700 (PDT)
-Received: from mail-yw1-f41.google.com (mail-yw1-f41.google.com. [209.85.161.41])
-        by smtp.gmail.com with ESMTPSA id 207-v6sm9012798yww.21.2018.11.01.06.54.05
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+jtBHWjsOfJeGigaOTutCncOXz9WX65sCAtVadnxm58=;
+        b=gcSr8CICu9LkHd3u2KH4vaWWHmQzlrdQ2sjxGHwY1wwx9nXWuSVr8ZmYowOMlcEMza
+         Rzef9ezwFiyCDShDqCSghr/48KTgRMYvtN0T0XA6WgvnKfx6r/NTkjgfAohavnFu0J/I
+         BNEHP1UcDGiG8eNlQoQJRqZT3vrYqFCF2J6kICp2HdU9Cd293d2W4Z7+/MiZ5AUf+kXV
+         ahsCVX0OtvgqAdVy05w3RwYwfEzOqBlItXKZhGeQYgx7aGxjgZOBuBeWP19x6IvLuNR8
+         8/p1uShbgoSBjn2BmbF8iRuY9ONUiuzLlCvk8xkphY3XIXTXwP9i1PLyw0cGTg8I0Lin
+         2RRw==
+X-Gm-Message-State: AGRZ1gIu0QbXRCUzCcZ+iUr8afkMxGMhW3y4O51xRo6n7lt1OcKt4Ydl
+        1+UjTECBJl6eQCkmqhwwinMEBQ==
+X-Google-Smtp-Source: AJdET5d3XQjW5TuHEoT7CgqW6GFW39ERbZGu3hzILkZVe8OxTMwGi8In+dwCks15c5vaTbamlfeDuQ==
+X-Received: by 2002:a17:906:2d4a:: with SMTP id e10-v6mr4033911eji.105.1541080566033;
+        Thu, 01 Nov 2018 06:56:06 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id d23-v6sm730003ejk.21.2018.11.01.06.56.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Nov 2018 06:54:05 -0700 (PDT)
-Received: by mail-yw1-f41.google.com with SMTP id f192-v6so244843ywh.7
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 06:54:05 -0700 (PDT)
-X-Received: by 2002:a0d:fd82:: with SMTP id n124-v6mr784510ywf.443.1541080445030;
- Thu, 01 Nov 2018 06:54:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <1540971728-26789-1-git-send-email-mgottam@codeaurora.org>
- <3ff2c3dd-434d-960b-6806-f4bb8ec0d954@linaro.org> <3364115421e89c7710725c06b820f8c6@codeaurora.org>
-In-Reply-To: <3364115421e89c7710725c06b820f8c6@codeaurora.org>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Thu, 1 Nov 2018 22:53:53 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5A+9GWmn4aD4D2JMf1e1m-6Dtc3xUdMZsf8fPtgi34QVQ@mail.gmail.com>
-Message-ID: <CAAFQd5A+9GWmn4aD4D2JMf1e1m-6Dtc3xUdMZsf8fPtgi34QVQ@mail.gmail.com>
-Subject: Re: [PATCH] media: venus: dynamic handling of bitrate
-To:     mgottam@codeaurora.org
-Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Thu, 01 Nov 2018 06:56:05 -0700 (PDT)
+Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Dean Wallace <duffydack73@gmail.com>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Johannes Stezenbach <js@sig21.net>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        vgarodia@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+        Mogens Jensen <mogens-jensen@protonmail.com>
+References: <CAHp75VctdBE-GM60udJawBCXdmoOqZn4N=kFWz5GLHzjPG2iQQ@mail.gmail.com>
+ <20181029190819.2ivlx73n6y6sx4vk@picard>
+ <ffc4bcc9-62c3-8940-85d6-d0fd01f3a1b8@linux.intel.com>
+ <c8fb730a-c160-41b4-dad0-8ed8594e5687@redhat.com>
+ <20181030143836.feo7zcxiestylxoo@picard>
+ <2d429c87-24c5-4075-683e-b0d12c3eb1c2@linux.intel.com>
+ <d00df762-e4fc-06c5-701e-d5100bfd0e35@redhat.com>
+ <e48696f0-aa3e-e20e-d038-9d8dda9cbfce@redhat.com>
+ <20181030161534.wk5cf7nxbwhp2far@picard>
+ <307c2074-d268-a87a-6040-1240a2091a4d@redhat.com>
+ <20181031200709.xrmu6wsdel7dtcjq@picard>
+ <da025116-580d-e442-d96f-875282306f1b@linux.intel.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <a3720a0f-2d6b-f536-a306-df9676bc44a6@redhat.com>
+Date:   Thu, 1 Nov 2018 14:56:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <da025116-580d-e442-d96f-875282306f1b@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 1, 2018 at 10:01 PM <mgottam@codeaurora.org> wrote:
->
-> On 2018-11-01 17:48, Stanimir Varbanov wrote:
-> > Hi Malathi,
-> >
-> > Thanks for the patch!
-> >
-> > On 10/31/18 9:42 AM, Malathi Gottam wrote:
-> >> Any request for a change in bitrate after both planes
-> >> are streamed on is handled by setting the target bitrate
-> >> property to hardware.
-> >>
-> >> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
-> >> ---
-> >>  drivers/media/platform/qcom/venus/venc_ctrls.c | 11 +++++++++++
-> >>  1 file changed, 11 insertions(+)
-> >>
-> >> diff --git a/drivers/media/platform/qcom/venus/venc_ctrls.c
-> >> b/drivers/media/platform/qcom/venus/venc_ctrls.c
-> >> index 45910172..54f310c 100644
-> >> --- a/drivers/media/platform/qcom/venus/venc_ctrls.c
-> >> +++ b/drivers/media/platform/qcom/venus/venc_ctrls.c
-> >> @@ -79,7 +79,9 @@ static int venc_op_s_ctrl(struct v4l2_ctrl *ctrl)
-> >>  {
-> >>      struct venus_inst *inst = ctrl_to_inst(ctrl);
-> >>      struct venc_controls *ctr = &inst->controls.enc;
-> >> +    struct hfi_bitrate brate;
-> >>      u32 bframes;
-> >> +    u32 ptype;
-> >>      int ret;
-> >>
-> >>      switch (ctrl->id) {
-> >> @@ -88,6 +90,15 @@ static int venc_op_s_ctrl(struct v4l2_ctrl *ctrl)
-> >>              break;
-> >>      case V4L2_CID_MPEG_VIDEO_BITRATE:
-> >>              ctr->bitrate = ctrl->val;
-> >> +            if (inst->streamon_out && inst->streamon_cap) {
-> >
-> > Hmm, hfi_session_set_property already checks the instance state so I
-> > don't think those checks are needed. Another thing is that we need to
-> > take the instance mutex to check the instance state.
->
-> Yes Stan, "hfi_session_set_property" this property check the instance
-> state,
-> but returns EINVAL if this is set at UNINIT instance state.
->
-> Controls initialization happens much earlier than session init and
-> instance init.
-> So the instance is still in UNINIT state which causes failure while
-> setting.
->
-> Through this patch we try to meet the client request of changing bitrate
-> only
-> when both planes are streamed on.
+Hi,
 
-Where does this requirement come from? It should be possible to set
-the control at any time and it should apply to any encoding happening
-after the control is set.
+On 31-10-18 23:27, Pierre-Louis Bossart wrote:
+> 
+>> Just thought it worth mentioning, this new patch that fixes sound
+>> again, seems to have ressurected an old issue with PLL unlock.  I'm
+>> seeing journal entries after fresh boot ......
+>>
+>> ```
+>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+>> picard systemd[462]: Started Sound Service.
+>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+>> picard kernel: max98090_pll_work: 141 callbacks suppressed
+>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+>> ```
+>>
+>> sound is ok, but sometimes plugging in headphones spams journal with
+>> those PLL messages, and sound turns into "daleks", and I have to
+>> remove/insert headphones few times or stop/start audio to fix it.
+>> It's a very old issue, maybe you'd know more about it.
+> 
+> I noticed this error on my Orco device used for tests many moons ago, but I could never find out what led to this error case, it wasn't deterministic and didn't impact the audio quality. All I could do is rate_limit it... If we have an A vs. B situation it'd be really helpful to diagnose further.
+> 
+> Is there really a causality between the changes from Hans and this PLL unlock error?
 
-Best regards,
-Tomasz
+That is actually not unlikely. We have the mclk as the source clk for the PLL
+and if we enable/disable it and/or change the src-clk then the PLL will loose
+its lock and it needs some time to re-lock.
+
+So these errors indicate that we need to either:
+
+1) Sleep a bit after enabling the mclk;
+    (and/or after changing the PLL src clk I've not checked if this driver does this)
+2) Or poll the PLL locked bit after enabling the mclk until it indicate it has locked
+    (and/or after changing the PLL src clk)
+
+I've had to do similar things in u-boot when turning on PLL-s for DRAM and
+stuff, so this sounds familiar.
+
+Dean since you have the hardware, this is probably easiest for you to fix
+(since you can reproduce the issue) do you feel up to giving fixing this
+a shot? I think it is fine if you just go with the simple solution of
+adding a msleep(xx) at the right place. I would expect 10 (ms) to do
+the trick. If that works you may also try to give 5ms a shot.
+
+Regards,
+
+Hans
+
+
+
+
