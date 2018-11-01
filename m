@@ -2,109 +2,103 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E114C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:44:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1F5DC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:50:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20BAE2081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:44:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 764BD2064C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:50:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hb8Wql21"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20BAE2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="PR3tO1RQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 764BD2064C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728020AbeKBHtk (ORCPT
+        id S1728032AbeKBHzY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 03:49:40 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:53063 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727645AbeKBHtk (ORCPT
+        Fri, 2 Nov 2018 03:55:24 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40042 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727151AbeKBHzY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 03:49:40 -0400
-Received: by mail-it1-f195.google.com with SMTP id r5-v6so808966ith.2
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 15:44:42 -0700 (PDT)
+        Fri, 2 Nov 2018 03:55:24 -0400
+Received: by mail-pf1-f193.google.com with SMTP id g21-v6so46228pfi.7
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 15:50:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=C86infv4Nu9WWba+HJ9Xwkr8kCyH2cmtkPC1zUdk5ns=;
-        b=hb8Wql21P5nSR/BUTIEQIzPuYfPRVNzsHVB1jFodVDEtf3pzczi5wF5zBZoUn2quv2
-         EowFeTpeyTT9Z9jHllTmI9sS2QQBVydch+/3T/MiOhOLbmjLsczwMcnoNGTOzHnZMMtq
-         JEQlr0zWUDyCAnK6b5duh4pWxMn4XdOF5T34E=
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=TRQhdaKLLcber9B2Js4e48V71FbQxEqTYQjA/ZyGrjI=;
+        b=PR3tO1RQY31oyIP2TtU/zhQMtrB0IWaWV/U+mKXJFRagMHrusZlTN7AtyLeB0vH2OB
+         PKIazSSD/bbXLIkR0aBtGs1SRe/oXkwNRZiLLHlR2NE36uM4e7Ljz9anQHg5iimuol3L
+         wI0wFyrZ6VK+kgcqR/nGo+DhvDeqgYJFvHuK/NJcdKZHk92jsOrj83w90CigJeHEhowa
+         UVTBEU94XrWSU/miOz79t2Bjnzkk4PCTaukl8nAXZqTmQSVYSl+/7m/vw8NeGggNGLFH
+         uuo7WiDSxmr8Vtgk9FzMuLXL/xpf5YURRQm7n+uEzF3HbvvJ0NwLmzYSsxevESqkv9p9
+         bvJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=C86infv4Nu9WWba+HJ9Xwkr8kCyH2cmtkPC1zUdk5ns=;
-        b=W9nYsr+1i1vsXKvL73c1hIWtbWwFxRe/3pbKrfL6tO91UoYeZvwzaF6HnQAQ0i3Jlk
-         9a463+Z8gYWR+uCUkmXFtjzMd6F5OST69w3iigZrVRDGinnxF5jFd9kd9FFE1JmilfvE
-         d0xUtxkjVsRJTN9v6uA9ivTQj36vBuGcn78yAvC40dGxX7QL8BLyidI0pimXPkfPWl6j
-         vFs5thb9vfyqYdnv4+fSX27pWchUyOrQtcYNGOixKdNFEcNjanUz7q7FgvY6VSxDl4NG
-         +4Q/TbY/c1qHbl14FjdJNFhAMtPIDFPR8+H3jNw5XGHS+ltUb7HFiMpda7T1TqSUCcD4
-         h7iw==
-X-Gm-Message-State: AGRZ1gK2UqosmTefJnM1lM4W7S4Ya7KDtX8qX0Yb+AXRE1DxZzwcKec4
-        b3lGUTpyYgUF3tX1DdWgqok+lzMq54JATYZNcoJw6A==
-X-Google-Smtp-Source: AJdET5caSfH+8sB5FdCX/Ice5v22q7VrooJ0qhfXkwUgIuM+jNStOZXdVk699I8xpuF2U2G6o/qYVASxH3V6LTgCT9U=
-X-Received: by 2002:a24:d602:: with SMTP id o2-v6mr7983548itg.71.1541112282305;
- Thu, 01 Nov 2018 15:44:42 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=TRQhdaKLLcber9B2Js4e48V71FbQxEqTYQjA/ZyGrjI=;
+        b=Lvsfd5gwpiJwY41m4Bw84wsyIh753IhC8gi9S7fmU/xwmsZapdDVxc+ZFp+uQaftW+
+         Iay1UZIhwxKXd2GDry/KMGcW8eFB1lS9s0fPkyZPkhEn0fOZogTBMzqRPeLbfGmJ3TdI
+         T53RHGTd6n11nmg+Jx4MmZvCdIt1jP9a/7ZRbtt9JrMbRlHcx7ZK1TgemkpN61VXjTjX
+         4V+fLW/UrzcUew0TVvjZiE/rDpzvZzsRS6R5GcR2/C/sS5EQxHmKikiqpCOTH5M29jJg
+         vNzXJrf+99jKHL3bJKeiEb+NIOjrtyRlrheYx1ycLfoXdkDO/qqdgc+0r8wfhVJOqGQh
+         gZLA==
+X-Gm-Message-State: AGRZ1gKoibzdNsLy3m3f7M4QXuJhAEwOh74GkcPgBQ7KrlnLctiRld2l
+        b2UkvltXZY8AFFB6hSSR1ic8pKWi2ns=
+X-Google-Smtp-Source: AJdET5eCYKjEnwCKWZt+aKZf4LDiiKZBGqeqvckyZMTMw8qMUbJj203BP160x89hKafKHd6ecs002Q==
+X-Received: by 2002:a62:7e93:: with SMTP id z141-v6mr9738359pfc.241.1541112625287;
+        Thu, 01 Nov 2018 15:50:25 -0700 (PDT)
+Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
+        by smtp.gmail.com with ESMTPSA id 11-v6sm57210564pfs.108.2018.11.01.15.50.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Nov 2018 15:50:24 -0700 (PDT)
+Subject: Re: [PATCH 06/16] blk-mq: add 'type' attribute to the sysfs hctx
+ directory
+To:     Omar Sandoval <osandov@osandov.com>
+Cc:     linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20181030183252.17857-1-axboe@kernel.dk>
+ <20181030183252.17857-7-axboe@kernel.dk> <20181101215957.GH18005@vader>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <163b5cc9-8106-9369-9675-f93bca24cd81@kernel.dk>
+Date:   Thu, 1 Nov 2018 16:50:22 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181030230624.61834-1-evgreen@chromium.org> <1540943443.196084.131.camel@acm.org>
- <CAE=gft4xwXuJ=aHbF08SxFxtSRX_6KBzPHxCCMbA6F7RnGQ8jA@mail.gmail.com>
-In-Reply-To: <CAE=gft4xwXuJ=aHbF08SxFxtSRX_6KBzPHxCCMbA6F7RnGQ8jA@mail.gmail.com>
-From:   Gwendal Grignou <gwendal@chromium.org>
-Date:   Thu, 1 Nov 2018 15:44:31 -0700
-Message-ID: <CAPUE2uuhfk7kstwO2kp_Rs=9QQPgGQGY+QqR76zpZpTkKp5Mig@mail.gmail.com>
-Subject: Re: [PATCH 0/2] loop: Better discard for block devices
-To:     evgreen@chromium.org
-Cc:     bvanassche@acm.org, axboe@kernel.dk, asavery@chromium.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181101215957.GH18005@vader>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 1, 2018 at 11:15 AM Evan Green <evgreen@chromium.org> wrote:
->
-> On Tue, Oct 30, 2018 at 4:50 PM Bart Van Assche <bvanassche@acm.org> wrote:
-> >
-> > On Tue, 2018-10-30 at 16:06 -0700, Evan Green wrote:
-> > > This series addresses some errors seen when using the loop
-> > > device directly backed by a block device. The first change plumbs
-> > > out the correct error message, and the second change prevents the
-> > > error from occurring in many cases.
-> >
-> > Hi Evan,
-> >
-> > Can you provide some information about the use case? Why do you think that
-> > it would be useful to support backing a loop device by a block device? Why
-> > to use the loop driver instead of dm-linear for this use case?
-> >
->
-> Hi Bart,
-> In our case, the Chrome OS installer uses the loop device to map
-> slices of the disk that will ultimately represent partitions [1]. I
-> believe it has been doing install this way for a very long time, and
-> has been working well. It actually continues to work, but on block
-> devices that don't support discard operations, things are a tiny bit
-> bumpy. This series is meant to smooth out those bumps. As far as I
-> knew this was a supported scenario.
->
-> -Evan
-> [1] https://chromium.googlesource.com/chromiumos/platform/installer/+/master/chromeos-install
+On 11/1/18 3:59 PM, Omar Sandoval wrote:
+> On Tue, Oct 30, 2018 at 12:32:42PM -0600, Jens Axboe wrote:
+>> It can be useful for a user to verify what type a given hardware
+>> queue is, expose this information in sysfs.
+>>
+>> Reviewed-by: Hannes Reinecke <hare@suse.com>
+>> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>> ---
+>>  block/blk-mq-sysfs.c | 10 ++++++++++
+>>  1 file changed, 10 insertions(+)
+> 
+> Out of curiousity, why sysfs instead of debugfs?
 
-The code has moved to
-https://chromium.googlesource.com/chromiumos/platform2/+/master/installer/chromeos-install
-but the idea is the same. We create a loop device to abstract the
-persistent destination. The destination can be a block device or a
-file. The later case is used for creating master images to be flashed
-on memory chip before soldering on the production line.
-It is handy when the final device is 4K block aligned but the builder
-is using 512b block aligned device, we can mount a device over a file
-that will behave like the real device we will flash the image on.
+I don't feel that strongly about it, but it is a property
+like the mapped CPUs, for instance, so kind of makes sense to
+put it there rather than in debugfs.
 
-Gwendal.
+-- 
+Jens Axboe
+
