@@ -2,107 +2,93 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3008BC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:18:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2DFEC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:24:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE1EB2084A
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:18:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE1EB2084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 5BE3F2082E
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:24:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BE3F2082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727953AbeKATU4 (ORCPT
+        id S1728074AbeKAT01 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 15:20:56 -0400
-Received: from ozlabs.org ([203.11.71.1]:42331 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726320AbeKATU4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 15:20:56 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42m1Pf2BxFz9sTc;
-        Thu,  1 Nov 2018 21:18:30 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Mark Brown <broonie@kernel.org>,
-        Rob Herring <rob.herring@linaro.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        kirill@shutemov.name, Linus Walleij <linus.walleij@linaro.org>,
-        boris.brezillon@bootlin.com,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Guenter Roeck <linux@roeck-us.net>, jacek.anaszewski@gmail.com,
-        axboe@kernel.dk, Ulf Hansson <ulf.hansson@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Git pull ack emails..
-In-Reply-To: <20181026211504.GG27137@sirena.org.uk>
-References: <CAHk-=wjS6cjjP+fkZWzzrdZ_fZ1F=PrAGcBc57vKCpNyoD73Vw@mail.gmail.com> <CACRpkdbi2gqqc271eMgHjD68bqf2mzw8zw+iAhYv2LFajfo-eQ@mail.gmail.com> <CAHk-=wiiC65aZFrDp69vdcSALLDZNPkTL1diadxNL54tBPeAzQ@mail.gmail.com> <20181023093521.dm3l5oen2j7etsot@kshutemo-mobl1> <CAHk-=wh6i5t5jYHrC-ZCdj8qoZWP3BptV87U=G9G4UyunzPf7Q@mail.gmail.com> <20181023200408.GA13179@chatter.qube.local> <CAHk-=wjVJ1w=MYXhu42+1rPybtztz+7q=KWo53nQmasR7R4SNA@mail.gmail.com> <CABGGiszsw=QXPwTe3mf26BG=Pxig6zGcXXJfRA+w0Pawrm5qpQ@mail.gmail.com> <20181026211504.GG27137@sirena.org.uk>
-Date:   Thu, 01 Nov 2018 21:18:28 +1100
-Message-ID: <87zhutdrt7.fsf@concordia.ellerman.id.au>
+        Thu, 1 Nov 2018 15:26:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57754 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727880AbeKAT01 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 15:26:27 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C7F1CAA7C;
+        Thu,  1 Nov 2018 10:24:05 +0000 (UTC)
+Date:   Thu, 1 Nov 2018 11:24:05 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2] mm/kvmalloc: do not call kmalloc for size >
+ KMALLOC_MAX_SIZE
+Message-ID: <20181101102405.GE23921@dhcp22.suse.cz>
+References: <154106356066.887821.4649178319705436373.stgit@buzz>
+ <154106695670.898059.5301435081426064314.stgit@buzz>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154106695670.898059.5301435081426064314.stgit@buzz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mark Brown <broonie@kernel.org> writes:
+On Thu 01-11-18 13:09:16, Konstantin Khlebnikov wrote:
+> Allocations over KMALLOC_MAX_SIZE could be served only by vmalloc.
 
-> On Fri, Oct 26, 2018 at 12:36:14PM -0500, Rob Herring wrote:
->> On Thu, Oct 25, 2018 at 9:14 AM Linus Torvalds
->> <torvalds@linux-foundation.org> wrote:
->
->> > Are there other situations where you might want to track something
->> > _outside_ of a pull request? Maybe. I can't really think of a lot of
->> > them, though. Patches etc don't have commit ID's to track, but it
->
-> patchwork gives them IDs and lets you do lookups using them, that's what
-> I'm doing.  You can get the ID from a git commit by piping the output of
-> git show into parser.py from the patchwork source, it works a lot of the
-> time but things like editing the commit message will break it (this is a
-> theme with my scripting around the mail stuff...).
->
->> submissions. For example, with Greg and Mark B you can expect an
->> automated replies. Mark's reply gets threaded with the original, but
->> Greg's do not. For networking, you may or may not get a manual reply,
->
-> Mine *mostly* gets threaded, it's relying on being able to talk to
-> patchwork to figure out the message ID at the minute so if the patchwork
-> lookup fails for whatever reason it'll just use on what's in the commit
-> for the CC list and not thread.  That isn't ideal, especially when I'm
-> travelling and my network connection isn't the best, I keep meaning to
-> try to figure out a better way which would probably be based on git
-> notes as discussed earlier.
+I would go on and say that allocations with sizes too large can actually
+trigger a warning (once you have posted in the previous version outside
+of the changelog area) because that might be interesting to people -
+there are deployments to panic on warning and then a warning is much
+more important.
 
-Yeah I use git notes for this.
+> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-When I apply a patch I record the patchwork id in a git note, I have a
-custom hacked pwclient that does it automatically. I also download the
-full mbox from patchwork and stash it in .git/patchwork/<patch id>.
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-Then I have everything I need to generate a properly threaded reply to
-the original mail.
+Thanks!
 
-The git notes work well, if you add the following to your .git/config:
+> ---
+>  mm/util.c |    4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/mm/util.c b/mm/util.c
+> index 8bf08b5b5760..f5f04fa22814 100644
+> --- a/mm/util.c
+> +++ b/mm/util.c
+> @@ -392,6 +392,9 @@ void *kvmalloc_node(size_t size, gfp_t flags, int node)
+>  	gfp_t kmalloc_flags = flags;
+>  	void *ret;
+>  
+> +	if (size > KMALLOC_MAX_SIZE)
+> +		goto fallback;
+> +
+>  	/*
+>  	 * vmalloc uses GFP_KERNEL for some internal allocations (e.g page tables)
+>  	 * so the given set of flags has to be compatible.
+> @@ -422,6 +425,7 @@ void *kvmalloc_node(size_t size, gfp_t flags, int node)
+>  	if (ret || size <= PAGE_SIZE)
+>  		return ret;
+>  
+> +fallback:
+>  	return __vmalloc_node_flags_caller(size, node, flags,
+>  			__builtin_return_address(0));
+>  }
+> 
 
-[notes]
-	rewriteRef = refs/notes/*
-	displayRef = refs/notes/*
-
-Then all notes are copied when you rewrite a commit (rebase), and also
-displayed by eg. git show.
-
-Every now and then if you do extensive rebasing/splitting you get
-commits with the wrong or no patchwork ids. But that's pretty rare and
-not that hard to fixup when it happens.
-
-There's a slightly sanitised version of some of my scripts here:
-  https://github.com/mpe/patchwork-scripts
-
-cheers
+-- 
+Michal Hocko
+SUSE Labs
