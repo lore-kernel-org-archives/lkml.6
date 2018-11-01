@@ -2,166 +2,131 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E04B9C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:47:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E93F0C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:50:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFA4B20820
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:47:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFA4B20820
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9F99F204FD
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:50:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F99F204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728427AbeKAUts (ORCPT
+        id S1728327AbeKAUwk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 16:49:48 -0400
-Received: from foss.arm.com ([217.140.101.70]:55494 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728085AbeKAUts (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 16:49:48 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 84D01A78;
-        Thu,  1 Nov 2018 04:47:11 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A70E63F71D;
-        Thu,  1 Nov 2018 04:47:09 -0700 (PDT)
-Date:   Thu, 1 Nov 2018 11:47:07 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Peng Hao <peng.hao2@zte.com.cn>
-Cc:     robh+dt@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
-        andy@infradead.org, dvhart@infradead.org,
-        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        hutao@cn.fujitsu.com, linux-doc@vger.kernel.org
-Subject: Re: [PATCH V5 7/8]  misc/pvpanic: add support to get pvpanic device
- info by FDT
-Message-ID: <20181101114706.5mde3n7xwidlcugs@lakrids.cambridge.arm.com>
-References: <1541085002-42993-1-git-send-email-peng.hao2@zte.com.cn>
- <1541085002-42993-7-git-send-email-peng.hao2@zte.com.cn>
+        Thu, 1 Nov 2018 16:52:40 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:56366 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728085AbeKAUwk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 16:52:40 -0400
+Received: from [IPv6:2804:431:9718:2bff:decf:69f2:c4e6:79a6] (unknown [IPv6:2804:431:9718:2bff:decf:69f2:c4e6:79a6])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: koike)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 7E887276E38;
+        Thu,  1 Nov 2018 11:49:52 +0000 (GMT)
+Subject: Re: [PATCH 2/2] media: vimc: constify structures stored in fields of
+ v4l2_subdev_ops structure
+To:     Julia Lawall <Julia.Lawall@lip6.fr>
+Cc:     kernel-janitors@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1540644545-26184-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1540644545-26184-3-git-send-email-Julia.Lawall@lip6.fr>
+From:   Helen Koike <helen.koike@collabora.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=helen.koike@collabora.com; keydata=
+ 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
+Message-ID: <317df861-530f-7700-7098-3a91855363a9@collabora.com>
+Date:   Thu, 1 Nov 2018 08:49:50 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1541085002-42993-7-git-send-email-peng.hao2@zte.com.cn>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1540644545-26184-3-git-send-email-Julia.Lawall@lip6.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 01, 2018 at 11:10:01PM +0800, Peng Hao wrote:
-> By default, when ACPI tables and FDT coexist for ARM64,
-> current kernel takes precedence over FDT to get device information.
-> Virt machine in qemu provides both FDT and ACPI table. This patch
-> increases the way to get information through FDT.
+Hi Julia,
+
+Thanks, I had missed that one.
+
+On 10/27/18 10:49 AM, Julia Lawall wrote:
+> The fields of a v4l2_subdev_ops structure are all const, so the
+> structures that are stored there and are not used elsewhere can be
+> const as well.
 > 
-> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+> Done with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
+Acked-by: Helen Koike <helen.koike@collabora.com>
 
-Mark.
-
+> 
 > ---
->  drivers/misc/pvpanic.c | 66 +++++++++++++++++++++++++++++++++++++++++++++++---
->  1 file changed, 63 insertions(+), 3 deletions(-)
+>  drivers/media/platform/vimc/vimc-sensor.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/misc/pvpanic.c b/drivers/misc/pvpanic.c
-> index c0b787e..9d9f0d7 100644
-> --- a/drivers/misc/pvpanic.c
-> +++ b/drivers/misc/pvpanic.c
-> @@ -3,15 +3,18 @@
->   *  Pvpanic Device Support
->   *
->   *  Copyright (C) 2013 Fujitsu.
-> - *
-> + *  Copyright (C) 2018 ZTE.
->   */
->  
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
->  
-> +#include <linux/acpi.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/platform_device.h>
->  #include <linux/types.h>
-> -#include <linux/acpi.h>
->  
->  MODULE_AUTHOR("Hu Tao <hutao@cn.fujitsu.com>");
->  MODULE_DESCRIPTION("pvpanic device driver");
-> @@ -60,6 +63,32 @@
->  	.priority = 1, /* let this called before broken drm_fb_helper */
->  };
->  
-> +static int pvpanic_mmio_probe(struct platform_device *pdev)
-> +{
-> +	struct resource *mem;
-> +
-> +	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	if (!mem)
-> +		return -EINVAL;
-> +
-> +	base = devm_ioremap_resource(&pdev->dev, mem);
-> +	if (base == NULL)
-> +		return -EFAULT;
-> +
-> +	atomic_notifier_chain_register(&panic_notifier_list,
-> +				       &pvpanic_panic_nb);
-> +
-> +	return 0;
-> +}
-> +
-> +static int pvpanic_mmio_remove(struct platform_device *pdev)
-> +{
-> +
-> +	atomic_notifier_chain_unregister(&panic_notifier_list,
-> +					 &pvpanic_panic_nb);
-> +
-> +	return 0;
-> +}
->  
->  static acpi_status
->  pvpanic_walk_resources(struct acpi_resource *res, void *context)
-> @@ -114,4 +143,35 @@ static int pvpanic_remove(struct acpi_device *device)
+> diff --git a/drivers/media/platform/vimc/vimc-sensor.c b/drivers/media/platform/vimc/vimc-sensor.c
+> index edf4c85ae63d..32ca9c6172b1 100644
+> --- a/drivers/media/platform/vimc/vimc-sensor.c
+> +++ b/drivers/media/platform/vimc/vimc-sensor.c
+> @@ -286,7 +286,7 @@ static int vimc_sen_s_stream(struct v4l2_subdev *sd, int enable)
 >  	return 0;
 >  }
 >  
-> -module_acpi_driver(pvpanic_driver);
-> +static const struct of_device_id pvpanic_mmio_match[] = {
-> +	{ .compatible = "qemu,pvpanic-mmio", },
-> +	{}
-> +};
-> +
-> +static struct platform_driver pvpanic_mmio_driver = {
-> +	.driver = {
-> +		.name = "pvpanic-mmio",
-> +		.of_match_table = pvpanic_mmio_match,
-> +	},
-> +	.probe = pvpanic_mmio_probe,
-> +	.remove = pvpanic_mmio_remove,
-> +};
-> +
-> +static int __init pvpanic_mmio_init(void)
-> +{
-> +	if (acpi_disabled)
-> +		return platform_driver_register(&pvpanic_mmio_driver);
-> +	else
-> +		return acpi_bus_register_driver(&pvpanic_driver);
-> +}
-> +
-> +static void __exit pvpanic_mmio_exit(void)
-> +{
-> +	if (acpi_disabled)
-> +		platform_driver_unregister(&pvpanic_mmio_driver);
-> +	else
-> +		acpi_bus_unregister_driver(&pvpanic_driver);
-> +}
-> +
-> +module_init(pvpanic_mmio_init);
-> +module_exit(pvpanic_mmio_exit);
-> -- 
-> 1.8.3.1
+> -static struct v4l2_subdev_core_ops vimc_sen_core_ops = {
+> +static const struct v4l2_subdev_core_ops vimc_sen_core_ops = {
+>  	.log_status = v4l2_ctrl_subdev_log_status,
+>  	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
+>  	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
 > 
