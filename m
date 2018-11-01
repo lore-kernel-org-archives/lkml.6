@@ -6,127 +6,88 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3867C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:07:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBD64C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:07:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C023204FD
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:07:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A71CF204FD
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 22:07:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bYNxDG2o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C023204FD
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NMnHts3k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A71CF204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728035AbeKBHMI (ORCPT
+        id S1728058AbeKBHM1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 03:12:08 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:34558 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726966AbeKBHMH (ORCPT
+        Fri, 2 Nov 2018 03:12:27 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:47075 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727412AbeKBHM1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 03:12:07 -0400
-Received: by mail-lf1-f68.google.com with SMTP id n26-v6so20741lfl.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 15:07:16 -0700 (PDT)
+        Fri, 2 Nov 2018 03:12:27 -0400
+Received: by mail-lj1-f194.google.com with SMTP id x3-v6so19464262lji.13
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 15:07:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=rT6gI7BrNi009KxaSg3ZD2FAM0Z+ST+3A4bR2b2INR8=;
-        b=bYNxDG2oLMRhRuKZl8oR52RQxfXzW2v7y9mL2JvDla7HnMyXsm1Gh96hYsSu7gf29n
-         4SwkB8X9Y9Wy27vsH6ePlvo4ECMwlKlFrzFU7WXQPzy0qxvP8kWRP5tUy0A6F1sODaxs
-         S3YqvFNf0YNTAKcTNzZ2U12do+Qgj3YDztcjk=
+        bh=dZkIkymw17XE3cqn53DMJkvZ47QXl3j9f8ocvL8XoAc=;
+        b=NMnHts3k/sBoKSN2U20EWKkFVumIMMCc0807xeoG/kbx04C5mqyZK4MZtxQkmnsMaP
+         kq74Y4T7Jn0/hMWcVNtHP8VV7RztFLQkPsCXFZNDllbVscBDuAw7uyXXFuKQWBgB71KV
+         00h6YjmoRIkRSzOGLoRK30QgQrcsJmhI8jl3E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=rT6gI7BrNi009KxaSg3ZD2FAM0Z+ST+3A4bR2b2INR8=;
-        b=itDd0h/bZiQTSD0DGgxMx8sKHyvkoyM4tLGSLfZ+3ow8kADy087y49BZ6AfqmxJ7aU
-         HzlKtIMAeejBdQrGlrIMiVHXdyf07CqBhfc+Bbwhx1XyrZtVpN90hJNmXVu3pV5AZ5q2
-         rb4VKO8tcU6FNjLEsT0MiW6cz2iQHsze3I7xhp8WMr7rlYut9Nt0+I6ekBZvRpshjtu8
-         qsNdz4qrDnCY+CZyC9YmXs87qym3l7ZkWjaCVDUiJ9Lf645NltQBLPF5Q3RNislsGLfn
-         tckwAfdEbfGYir/ilRq4soCzzL09GJ6Cj4BkqL6CKX1uerEyZvh27Q4GwQqHKVqa5/qA
-         SX8Q==
-X-Gm-Message-State: AGRZ1gK47ZZxXPNR2s+L42cb6OZIltMNOhB/gPPdP9PBysURzQhg3ECZ
-        fq6WO+ymdiFeq+o9x95Y+V/VrHf7O0PFcw==
-X-Google-Smtp-Source: AJdET5caiT0YryXFJUyuyKtUaCEUoXBXfw/NiH7D3W2FaP5A8qHcJVGNtG92QVAc1BCaIz8v51NTeQ==
-X-Received: by 2002:a19:5a84:: with SMTP id y4mr5601496lfk.156.1541110035044;
-        Thu, 01 Nov 2018 15:07:15 -0700 (PDT)
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
-        by smtp.gmail.com with ESMTPSA id 10-v6sm95457ljv.6.2018.11.01.15.07.14
+        bh=dZkIkymw17XE3cqn53DMJkvZ47QXl3j9f8ocvL8XoAc=;
+        b=KkCRvTEijPzJNkXsxp64O7VbyZIx+n6Rwmvz3yzrDkwLAXzDXJPeiMXBLYUtCN76WB
+         J0ixaNb/3zTtqRC73l05xtbbtzJeuQrAK3g01yJfA8PmTpMRLTu7iylYSki1UkBS7Etd
+         5zLIX1Yz5tDF9ovdCzotrW9Ym7ApMfc/cz7kmStanH3Bicol0EvUNXBwrcnpWFvXkgIq
+         m8K4xFY1o5oVsYieDgAtw1pBe+i7ZoJ3MtUJGDUxg/DEZlAqwgTf9BS0FU3UVeVCoig1
+         M/UkvlGOTKWgCVza9W88Oi0LOu7CuLgL4xCxQ0TM0no+DCgV+d2NAIjm6Dp9kD0jceHL
+         zElA==
+X-Gm-Message-State: AGRZ1gLgzN+YarDCr/kid7T4lILpsKcqtagGD7iZIDKS8uqS9iCyuJfS
+        wjwsolKKrMz4RpDUTZrceSkDha3dYtJUmA==
+X-Google-Smtp-Source: AJdET5cAuX8D0FYkMEXAYPAfq9IXq2QCs5dZ4MhaBnFlJLBpZXDqAE0T7IfLzspCfBhtmeuShyZv0Q==
+X-Received: by 2002:a2e:2a46:: with SMTP id q67-v6mr3106573ljq.38.1541110054622;
+        Thu, 01 Nov 2018 15:07:34 -0700 (PDT)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
+        by smtp.gmail.com with ESMTPSA id b79-v6sm3514127lfb.40.2018.11.01.15.07.33
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Nov 2018 15:07:14 -0700 (PDT)
-Received: by mail-lj1-f178.google.com with SMTP id t22-v6so761lji.7
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 15:07:14 -0700 (PDT)
-X-Received: by 2002:a2e:9819:: with SMTP id a25-v6mr6518668ljj.6.1541109649937;
- Thu, 01 Nov 2018 15:00:49 -0700 (PDT)
+        Thu, 01 Nov 2018 15:07:34 -0700 (PDT)
+Received: by mail-lj1-f175.google.com with SMTP id t22-v6so2011lji.7
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 15:07:33 -0700 (PDT)
+X-Received: by 2002:a2e:3e06:: with SMTP id l6-v6mr2830900lja.148.1541110052845;
+ Thu, 01 Nov 2018 15:07:32 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181101095844.24462-1-mathieu.desnoyers@efficios.com>
- <20181101095844.24462-4-mathieu.desnoyers@efficios.com> <alpine.DEB.2.21.1811011320160.1642@nanos.tec.linutronix.de>
- <20181101144623.61d43102@gandalf.local.home> <278477314.3995.1541102273591.JavaMail.zimbra@efficios.com>
-In-Reply-To: <278477314.3995.1541102273591.JavaMail.zimbra@efficios.com>
+References: <20181031053355.GQ32577@ZenIV.linux.org.uk> <CAHk-=whAE6gVi18=u4sSWe1m2RWPh19YCkKQmW4Kx+NQX1mg8w@mail.gmail.com>
+ <af28fc2c-d207-875e-8070-f64ead878b5a@redhat.com> <CAHk-=wjjVRQVZL+QMnb=CyCOY8yzEZ=S1DBCE7=FiiWsQfV_5Q@mail.gmail.com>
+ <28156.1541092687@warthog.procyon.org.uk> <CAHk-=whysoVxJU8+TBw=D3xN00HOOqg-9Chc=i0Pt+Ozm3Z0Tg@mail.gmail.com>
+ <20181101220518.GT32577@ZenIV.linux.org.uk>
+In-Reply-To: <20181101220518.GT32577@ZenIV.linux.org.uk>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 1 Nov 2018 15:00:34 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiOm8x5KnBQH+FYN76sSjCeP2_9cxgzu4WArR3jP0MD8g@mail.gmail.com>
-Message-ID: <CAHk-=wiOm8x5KnBQH+FYN76sSjCeP2_9cxgzu4WArR3jP0MD8g@mail.gmail.com>
-Subject: Re: [RFC PATCH for 4.21 03/16] mm: Replace BUG_ON() by WARN_ON() in vm_unmap_ram()
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     rostedt@goodmis.org, tglx@linutronix.de,
-        Peter Zijlstra <peterz@infradead.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        boqun.feng@gmail.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-api@vger.kernel.org, luto@amacapital.net, davejwatson@fb.com,
-        Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux@arm.linux.org.uk, Ingo Molnar <mingo@redhat.com>,
-        Peter Anvin <hpa@zytor.com>, andi@firstfloor.org,
-        Christoph Lameter <cl@linux.com>, bmaurer@fb.com,
-        josh@joshtriplett.org, Catalin Marinas <catalin.marinas@arm.com>,
-        will.deacon@arm.com,
-        Michael Kerrisk-manpages <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        mawilcox@microsoft.com
+Date:   Thu, 1 Nov 2018 15:07:17 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg+=W1HN4CCp-_awNs9+WGSt3iDq_dWBhyYGu=iF_aHTw@mail.gmail.com>
+Message-ID: <CAHk-=wg+=W1HN4CCp-_awNs9+WGSt3iDq_dWBhyYGu=iF_aHTw@mail.gmail.com>
+Subject: Re: [git pull] mount API series
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     dhowells@redhat.com, swhiteho@redhat.com,
+        john.johansen@canonical.com, alan.christopher.jenkins@gmail.com,
+        ebiederm@redhat.com, linux-fsdevel@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 1, 2018 at 12:57 PM Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
+On Thu, Nov 1, 2018 at 3:05 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
 >
-> > I think the graceful recovery is to simply return:
-> >
-> >       if (WARN_ON(cond))
-> >               return;
-> >
-> > is better than just
-> >
-> >       BUG_ON(cond);
-> >
-> > As that's what Linus made pretty clear at the Maintainer's Summit.
->
-> That's it. For an unmap function, this basically boils down to
-> print a warning and leak the memory on internal unmap error.
->
-> I will update the commit message describing this behavior.
+>  Do you mind if we end up with work.mount rebased?
+> The usual objections re testing in -next do not apply in this case,
+> AFAICS...
 
-It might be even better to use WARN_ON_ONCE().
+I was assuming that the work.mount branch would be entirely re-done, yes.
 
-If it's a "this shouldn't happen" situation, the advantage of
-WARN_ON_ONCE() is that it will still show the backtrace of the "how
-the heck did it happen after all" situation, but if it turns ouit to
-be user-triggerable (or simply triggerable by some odd hw situation),
-it won't spam your logs forever.
-
-Obviously, things like rate limiting etc can also be good ideas, but
-that's just overkill for "this really should never happen" cases.
-
-(Side note: WARN_ON_ONCE() will _warn_ just once, but will always
-return the condition that it warns for, so the return value is _not_
-"I have warned", but "I have seen the condition that I should warn
-about". Just in case people are worried about it).
-
-                  Linus
+              Linus
