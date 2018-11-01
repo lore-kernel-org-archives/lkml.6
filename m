@@ -2,94 +2,142 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE58C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 18:04:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69628C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 18:04:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79C372064C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 18:04:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79C372064C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 323122064C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 18:04:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FmOvKuNL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 323122064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727989AbeKBDH7 (ORCPT
+        id S1728026AbeKBDIs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 23:07:59 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:57917 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727417AbeKBDH7 (ORCPT
+        Thu, 1 Nov 2018 23:08:48 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44043 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726174AbeKBDIr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 23:07:59 -0400
-Received: from p5492fe24.dip0.t-ipconnect.de ([84.146.254.36] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gIHJh-00088J-Sg; Thu, 01 Nov 2018 19:03:38 +0100
-Date:   Thu, 1 Nov 2018 19:03:37 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     John Stultz <john.stultz@linaro.org>
-cc:     Christopher Hall <christopher.s.hall@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        jesus.sanchez-palencia@intel.com,
-        Gavin Hindman <gavin.hindman@intel.com>,
-        liam.r.girdwood@intel.com, Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Miroslav Lichvar <mlichvar@redhat.com>
-Subject: Re: TSC to Mono-raw Drift
-In-Reply-To: <CALAqxLV7SGRx_jKyM_RmzBGmnqAtDRXQLcH4Yjj+HKCY1O9sOQ@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1811011859590.1642@nanos.tec.linutronix.de>
-References: <20181015160945.5993-1-christopher.s.hall@intel.com> <alpine.DEB.2.21.1810191720590.6075@nanos.tec.linutronix.de> <alpine.DEB.2.21.1810191955250.1651@nanos.tec.linutronix.de> <CALAqxLWHdZn9RCcYbYicKXeu3QiCuVna27mWBQPbFvaj9gm-fw@mail.gmail.com>
- <alpine.DEB.2.21.1810192050250.1651@nanos.tec.linutronix.de> <CALAqxLVrPH-SFacys6pWBvL79OBwiAMUOL55oy3S7C+7pNffHA@mail.gmail.com> <alpine.DEB.2.21.1810192244150.1651@nanos.tec.linutronix.de> <CALAqxLUpKU73kzBh6mxgoCX4nEueuE42REcXw6F6DYYk4Hry6Q@mail.gmail.com>
- <CALAqxLUKOYYm=bzn4owZC_UgWTqrVPiz2TSnLFm1RNak3tm8-g@mail.gmail.com> <alpine.DEB.2.21.1811011841060.1642@nanos.tec.linutronix.de> <CALAqxLV7SGRx_jKyM_RmzBGmnqAtDRXQLcH4Yjj+HKCY1O9sOQ@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 1 Nov 2018 23:08:47 -0400
+Received: by mail-pl1-f195.google.com with SMTP id s5-v6so7625774plq.11
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 11:04:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=L+sb9eWuy7tjdMyPMkxoJGa1rM46uiI7uXbqd4fxzRQ=;
+        b=FmOvKuNLwyTAZ22gqBEXCl5n0gwVS8lhp6yxYlOrEewGrbCtJakVRyuEqdLzze3m2U
+         dTchYj7S30vPaEzoEiny9KBz26cMOOMzitlPGI4Tkky5iJQX7I3gGhpjqt+MLGsBUphD
+         uP197oGImKDqPpfHbmIgFI4asXBc7nGxRmmXYTqrKc8PDbr7t3sBTxp7O4Sq+glxZBEm
+         ITPCOXSgfsYZw7nkH6mzWcVtVs7kp7UkP7vpP0xjmtaY5r00EWcBIiPpnJpWAmUdqSVd
+         1QS0LYTZQ4CrJri2EnCPfEdPg3nq8OPGZVzUW20AfmEk11TdBB2E32dcfG3aSwBGmCBl
+         jhbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=L+sb9eWuy7tjdMyPMkxoJGa1rM46uiI7uXbqd4fxzRQ=;
+        b=AbzSBRw+CSWMzN4jnH68idXlQiz1/J8mFSyQWiR6rkHSRt0j/h5K1Yj4+wSXzdNfKw
+         Xk3zU1+ZPmcdVDwxGBjFQFSlp9Je4VYHUYhe/SEUXkKx7MbeWDxt2MdUvf4L/isYE5PN
+         2G4sJTDDOgqGxrHoZq6qns7qpG6WbKRkx/Vz2SJdf4WH1QzZ31HGp8mYXjJxJ61iPZDz
+         paw+Htf/0+Pa6MOyEShhszL24/8SxUf5oE/vLvZHm2JrPZ6jfCeIwAFKEohOT4lbPxQQ
+         QSdob0cete5LFB2P/zWkFVsWoUzGnd/8BoIBcshl8gmU+9qTmX4yyIYlEi+RarO8Lwtg
+         31sg==
+X-Gm-Message-State: AGRZ1gJ2WBrLocrVr4talf2J6zf6GeaGtIQnDyV2Ya4tmDZfsSwnx1lA
+        UNLwPWa5EeFeEfUZo2URTxE=
+X-Google-Smtp-Source: AJdET5emNcCT+kiwInxtYlA2fDZ3XHatGTsYPKyLsPlBjamTic8RwECvWVfqGqqIo1JcIm4q/n2V1w==
+X-Received: by 2002:a17:902:6801:: with SMTP id h1-v6mr8500114plk.177.1541095485384;
+        Thu, 01 Nov 2018 11:04:45 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id f193-v6sm38025289pfc.74.2018.11.01.11.04.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 01 Nov 2018 11:04:44 -0700 (PDT)
+Date:   Thu, 1 Nov 2018 11:04:40 -0700
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     hch@lst.de, m.szyprowski@samsung.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        vdumpa@nvidia.com
+Subject: Re: [PATCH RFC] dma-direct: do not allocate a single page from CMA
+ area
+Message-ID: <20181101180439.GA4746@Asurada-Nvidia.nvidia.com>
+References: <20181031200355.19945-1-nicoleotsuka@gmail.com>
+ <13d60076-33ad-b542-4d17-4d717d5aa4d3@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <13d60076-33ad-b542-4d17-4d717d5aa4d3@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 1 Nov 2018, John Stultz wrote:
-> On Thu, Nov 1, 2018 at 10:44 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> > On Tue, 23 Oct 2018, John Stultz wrote:
-> >> On Fri, Oct 19, 2018 at 3:36 PM, John Stultz <john.stultz@linaro.org> wrote:
-> >> I spent a little bit of time thinking this out. Unfortunately I don't
-> >> think its a simple matter of calculating the granularity error on the
-> >> raw clock and adding it in each interval. The other trouble spot is
-> >> that the adjusted clocks (monotonic/realtime) are adjusted off of that
-> >> raw clock. So they would need to have that error added as well,
-> >> otherwise the raw and a otherwise non-adjusted monotonic clock would
-> >> drift.
-> >>
-> >> However, to be correct, the ntp adjustments made would have to be made
-> >> to both the base interval + error, which mucks the math up a fair bit.
-> >
-> > Hmm, confused as usual. Why would you need to do anything like that?
+Hi Robin,
+
+Thanks for the comments.
+
+On Thu, Nov 01, 2018 at 02:07:55PM +0000, Robin Murphy wrote:
+> On 31/10/2018 20:03, Nicolin Chen wrote:
+> > The addresses within a single page are always contiguous, so it's
+> > not so necessary to allocate one single page from CMA area. Since
+> > the CMA area has a limited predefined size of space, it might run
+> > out of space in some heavy use case, where there might be quite a
+> > lot CMA pages being allocated for single pages.
+> > 
+> > This patch tries to skip CMA allocations of single pages and lets
+> > them go through normal page allocations. This would save resource
+> > in the CMA area for further more CMA allocations.
 > 
-> Because the NTP adjustment is done off of what is now the raw clock.
-> If the raw clock is "corrected" the ppb adjustment has to be done off
-> of that corrected rate.
+> In general, this seems to make sense to me. It does represent a theoretical
+> change in behaviour for devices which have their own CMA area somewhere
+> other than kernel memory, and only ever make non-atomic allocations, but I'm
+> not sure whether that's a realistic or common enough case to really worry
+> about.
 
-Sure, but why would that require any change? Right now the raw clock is
-slightly off and you correct clock monotonic against NTP. So with that
-extra correction you just see a slightly different raw clock slew and work
-from there.
+Hmm..I don't quite understand the part of worrying its realisticness.
+Would you mind elaborating a bit? As I tested this change on Tegra186
+board, and saw some single-page allocations have been directed to the
+normal allocation; and the "CmaFree" size reported from /proc/meminfo
+is also increased. Does this mean it's realistic?
 
-> Otherwise with no correction, the raw clock and the monotonic clock
-> would drift apart.
+Thank you
+Nicolin
 
-They drift apart today already if you do NTP correction. They stay in sync
-w/o NTP/PTP/PPS.
+-----
 
-But maybe I confused myself completely by now.
-
-Thanks,
-
-	tglx
+> 
+> Robin.
+> 
+> > Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> > ---
+> >   kernel/dma/direct.c | 8 ++++++--
+> >   1 file changed, 6 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+> > index 22a12ab5a5e9..14c5d49eded2 100644
+> > --- a/kernel/dma/direct.c
+> > +++ b/kernel/dma/direct.c
+> > @@ -120,8 +120,12 @@ void *dma_direct_alloc_pages(struct device *dev, size_t size,
+> >   	gfp |= __dma_direct_optimal_gfp_mask(dev, dev->coherent_dma_mask,
+> >   			&phys_mask);
+> >   again:
+> > -	/* CMA can be used only in the context which permits sleeping */
+> > -	if (gfpflags_allow_blocking(gfp)) {
+> > +	/*
+> > +	 * CMA can be used only in the context which permits sleeping.
+> > +	 * Since addresses within one PAGE are always contiguous, skip
+> > +	 * CMA allocation for a single page to save CMA reserved space
+> > +	 */
+> > +	if (gfpflags_allow_blocking(gfp) && count > 1) {
+> >   		page = dma_alloc_from_contiguous(dev, count, page_order,
+> >   						 gfp & __GFP_NOWARN);
+> >   		if (page && !dma_coherent_ok(dev, page_to_phys(page), size)) {
+> > 
