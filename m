@@ -2,132 +2,134 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AAEFC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 19:56:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 074E9C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 19:57:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AABDA20657
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 19:56:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5B8720657
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 19:57:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="Irc4MEGr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AABDA20657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="IedkSYVV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5B8720657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727531AbeKBFBE (ORCPT
+        id S1727639AbeKBFCT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 01:01:04 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:37898 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726602AbeKBFBE (ORCPT
+        Fri, 2 Nov 2018 01:02:19 -0400
+Received: from mail.efficios.com ([167.114.142.138]:51224 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726594AbeKBFCT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 01:01:04 -0400
-Received: by mail-qk1-f193.google.com with SMTP id d19so2733471qkg.5
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 12:56:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=w8EX9DyP27t+5ZTQBjl2uq3Kd+oOoLjCwILy/qKcEyM=;
-        b=Irc4MEGrFFGw28hQ9UE41MsDyB5UdtJkEEu9r4l5sJJxYMxrAZ956EXsEhNFHDq+qF
-         fo4YOm1NM0ckkS2HI5gyd209ULwZaAvFhoIMz3i/eW1ycZTtkcporOzbM5SW3DhFsoTQ
-         dIDGBkSMPIJpcjfMG0mK0D2gxZRsKDBPXllQKYzWDTqkGjYeMBGEvtg16fIdoXOeVsCC
-         80f66AgkXTWw7h07zXdavq4oK3wbNI5aZOLpDQBOotER5UupDR4ao8WdD4kMFn/iAlon
-         fdCVejtA8dNklgP2eZWt7+boajTdlcJX2FDO3MlyZ6RU5q1MS3uyb7S9WlwOKE4PyRQK
-         MvzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=w8EX9DyP27t+5ZTQBjl2uq3Kd+oOoLjCwILy/qKcEyM=;
-        b=gbnqcoDFe39RsPnDXN5Vy9o8fKqjDiFJuKcoN2L/Blce4QaU+kcPOw/6C71I5P62O0
-         yCOUYp/xTFgfgZ9uSeXdeQ1/met9piVuniwMejzgLikD299SxE6I1BDzohKE60LtXTbq
-         DhTujwmA3qfo4CyBwOZ4tVvPIygvHH++yaQHTXmM1RUVevxaMWTtGqBTB/9vkqmjilcw
-         kebxUp/efXlUyo1KAxd9rOmgl8M4EGJ+dfxxiDPrFQTDEh859i2/KnY5QaU41JGDx90O
-         lRpxtBvSw8Y8u/+9vh5EYZygywzMJhDwMCsZOQ8286V4c4hWwhBEQQSnnLJ4Heltp7pJ
-         ZrWg==
-X-Gm-Message-State: AGRZ1gIP6jWCN4C/PoFGD8KLy6j4ICtEizVeAjbjtQZHjWFtyJsByXKc
-        Znsq4FebfuIUYZNrZNLrPPue0g==
-X-Google-Smtp-Source: AJdET5dvGJSiZ0h+hphFRev4Hw8gtl5Z52JWV86xpDrYkd1lYE/JGHYlZ6J6l1Y9r7YX40D7hzc0bw==
-X-Received: by 2002:ae9:e901:: with SMTP id x1mr7278669qkf.332.1541102199398;
-        Thu, 01 Nov 2018 12:56:39 -0700 (PDT)
-Received: from cisco ([173.38.117.87])
-        by smtp.gmail.com with ESMTPSA id g2-v6sm19145365qkf.91.2018.11.01.12.56.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 01 Nov 2018 12:56:38 -0700 (PDT)
-Date:   Thu, 1 Nov 2018 13:56:35 -0600
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Kees Cook <keescook@chromium.org>,
+        Fri, 2 Nov 2018 01:02:19 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 448852482FE;
+        Thu,  1 Nov 2018 15:57:54 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id EdxFZyWQrIt7; Thu,  1 Nov 2018 15:57:53 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id BA5E02482F4;
+        Thu,  1 Nov 2018 15:57:53 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com BA5E02482F4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1541102273;
+        bh=I54LXg8G7Yu6uVetGBffLIwevssflFZPgNPEdsdiies=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=IedkSYVVfsapo/dBsr4fWqNxN8ZADhwkW9AduVSIhXOFBEE92jelUSAX3R40e3D8d
+         9PkpTiZrZWmTN4ciuC9upuPeDAS5icNjsDdJm0Gc4PRh3LXQGMkwMN9Xw9/8YayA2z
+         XY2itCA7xk6wODk9Zwa4skBhG7JMPQVNsZXoRRBCkllvvQLU0mmL8eoETY0QpcfL3Y
+         o3CIKKbVC9fZq5nZyuVGgpg+wKs1VwvytfYD0nHR9a81NgllnkuH8uhLFPgG9G36OE
+         ZxTF/2w425SBPERSyZpTGwgAmUqYphQGziF0eZ2hMldxur/3W5/W0y8VR+Ho3R1aQV
+         3+PXvfRjkxD+A==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id pXf4ByOwEYnX; Thu,  1 Nov 2018 15:57:53 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 958582482E5;
+        Thu,  1 Nov 2018 15:57:53 -0400 (EDT)
+Date:   Thu, 1 Nov 2018 15:57:53 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     rostedt <rostedt@goodmis.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>,
         Andy Lutomirski <luto@amacapital.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian@brauner.io>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Aleksa Sarai <asarai@suse.de>, linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v8 1/2] seccomp: add a return code to trap to userspace
-Message-ID: <20181101195635.GG2180@cisco>
-References: <20181029224031.29809-1-tycho@tycho.ws>
- <20181029224031.29809-2-tycho@tycho.ws>
- <20181101134001.GA23232@redhat.com>
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
+        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>
+Message-ID: <278477314.3995.1541102273591.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20181101144623.61d43102@gandalf.local.home>
+References: <20181101095844.24462-1-mathieu.desnoyers@efficios.com> <20181101095844.24462-4-mathieu.desnoyers@efficios.com> <alpine.DEB.2.21.1811011320160.1642@nanos.tec.linutronix.de> <20181101144623.61d43102@gandalf.local.home>
+Subject: Re: [RFC PATCH for 4.21 03/16] mm: Replace BUG_ON() by WARN_ON() in
+ vm_unmap_ram()
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181101134001.GA23232@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.10_GA_3039 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3041)
+Thread-Topic: Replace BUG_ON() by WARN_ON() in vm_unmap_ram()
+Thread-Index: aRy8zL1toyfw8/U3g76qqZpsB4Tqwg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 01, 2018 at 02:40:02PM +0100, Oleg Nesterov wrote:
-> On 10/29, Tycho Andersen wrote:
-> >
-> > +static struct file *init_listener(struct seccomp_filter *filter)
-> > +{
-> > +	struct file *ret = ERR_PTR(-EBUSY);
-> > +	struct seccomp_filter *cur, *last_locked = NULL;
-> > +	int filter_nesting = 0;
-> > +
-> > +	for (cur = current->seccomp.filter; cur; cur = cur->prev) {
-> > +		mutex_lock_nested(&cur->notify_lock, filter_nesting);
-> > +		filter_nesting++;
-> > +		last_locked = cur;
-> > +		if (cur->notif)
-> > +			goto out;
-> > +	}
-> 
-> Somehow I no longer understand why do you need to take all locks. Isn't
-> the first filter's notify_lock enough? IOW,
-> 
-> 		for (cur = current->seccomp.filter; cur; cur = cur->prev) {
-> 			if (cur->notif)
-> 				return ERR_PTR(-EBUSY);
-> 			first = cur;
-> 		}
-> 
-> 		if (first)
-> 			mutex_lock(&first->notify_lock);
-> 
-> 		... initialize filter->notif ...
-> 
-> 	out:
-> 		if (first)
-> 			mutex_unlock(&first->notify_lock);
-> 
-> 		return ret;
+----- On Nov 1, 2018, at 7:46 PM, rostedt rostedt@goodmis.org wrote:
 
-The idea here is to prevent people from "nesting" notify filters. So
-if any filter in the chain has a listener attached, it refuses to
-install another filter with a listener.
+> On Thu, 1 Nov 2018 13:21:12 +0100 (CET)
+> Thomas Gleixner <tglx@linutronix.de> wrote:
+> 
+>> Mathieu,
+>> 
+>> On Thu, 1 Nov 2018, Mathieu Desnoyers wrote:
+>> 
+>> > It is encouraged to warn and return rather than use BUG_ON() when
+>> > the condition can be recovered from in ways that are more graceful than
+>> > halting the whole system.
+>> 
+>> You're failing to desribe how that graceful recovery works.
+>> 
+> 
+> I think the graceful recovery is to simply return:
+> 
+>	if (WARN_ON(cond))
+>		return;
+> 
+> is better than just
+> 
+>	BUG_ON(cond);
+> 
+> As that's what Linus made pretty clear at the Maintainer's Summit.
 
-But it just occurred to me that we don't handle the TSYNC case
-correctly by doing it this way, and it's not necessarily obvious to me
-how we can :). So let me look into that.
+That's it. For an unmap function, this basically boils down to
+print a warning and leak the memory on internal unmap error.
 
-Tycho
+I will update the commit message describing this behavior.
+
+Thanks,
+
+Mathieu
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
