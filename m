@@ -2,142 +2,216 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60A48C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:38:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23EE4C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:38:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 178C420657
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:38:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kefc4CO8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 178C420657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E5DE720820
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:38:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5DE720820
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728618AbeKAWlh (ORCPT
+        id S1728640AbeKAWlu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 18:41:37 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:45200 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727998AbeKAWlh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 18:41:37 -0400
-Received: by mail-qt1-f193.google.com with SMTP id l9-v6so21023067qtj.12;
-        Thu, 01 Nov 2018 06:38:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HuTM7sGgHhD8wQ9YZaORRLHinF9WKXho2xHRzXJox0M=;
-        b=kefc4CO8HWx6jl2LZxK4T/wtgpykW4UtwjaPddq50BLqDT7mExQgrdH0gutYeF6jc6
-         zq2sxdYh9H1GW0FzTmfOsm22mLiudJEAil8M+sxIPu/tiyha3tVjydeFuumPhwqzZm9Z
-         R2i/3XzNLf0QKzpEMh8q0EyKZktR8Pj9kqnQoIhOtrkbHZOF1QZIXEnyEtwhgb+qsQeh
-         98MCfGLbJx3GqL0l+ze0QXqbVANPuI94lCzCCskdKBTVgpt6UZdYdLP0ljVijlplJuTd
-         fRILQRmRE1g3A5EJ/HR8NWQWOcBxs1gpi9NIagGQezDehPmevqxJuEF8bNNmYMsXOeB1
-         t5eQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HuTM7sGgHhD8wQ9YZaORRLHinF9WKXho2xHRzXJox0M=;
-        b=F0q+canzvGuKs6y1p6kczBZDKn50p//9miRhGiMy+4VLY5r44gnyOriqHardzolDlR
-         7qHnNs68XyQWbZvJzmdfPfTzsRetL7SmD7rpjMHKRnYUlq3kDYeQm9EE72KM6PxRTQSG
-         SC+3pFDzj3GJDMkB51BQQIfhiLKQ+0TlDFEMD5TlnK9LeYYkbU9n3ItObhdUWS1q2iOO
-         UfOTXyJISO2sGEKtAPFcFL6AcSffAiLB0TYzYmvotcZmgnh3vFGPaUmbwqQOPjdBHuHR
-         Uc9SEGmC45AGAE5Fl7IDj8ys6S+G6HHI28akpE4La+I+tkaRfyGPmri/laK+9gOeGETr
-         TNNw==
-X-Gm-Message-State: AGRZ1gJScafYWYKG1dA/GuiY2T9jtduwjiAhm/1Pzrqqex/3pnNegSXc
-        HbLFF8pX1xYO5R4UXzNODwS60VHVboDY2ny0EZs=
-X-Google-Smtp-Source: AJdET5d2yUTvwkC2ugstAvEEo92NYRXUc0rDzt5PrwH4HBgIb+suc9/F9sANBTnkipt7RUGlR07apEoECIKzTokuihc=
-X-Received: by 2002:ac8:1909:: with SMTP id t9mr6468488qtj.327.1541079516292;
- Thu, 01 Nov 2018 06:38:36 -0700 (PDT)
+        Thu, 1 Nov 2018 18:41:50 -0400
+Received: from foss.arm.com ([217.140.101.70]:56580 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728548AbeKAWlu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 18:41:50 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF663A78;
+        Thu,  1 Nov 2018 06:38:50 -0700 (PDT)
+Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.144.41])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5EDA83F6A8;
+        Thu,  1 Nov 2018 06:38:50 -0700 (PDT)
+Date:   Thu, 1 Nov 2018 14:38:48 +0100
+From:   Christoffer Dall <christoffer.dall@arm.com>
+To:     Punit Agrawal <punit.agrawal@arm.com>
+Cc:     kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, suzuki.poulose@arm.com,
+        punitagrawal@gmail.com, Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH v9 5/8] KVM: arm64: Support PUD hugepage in
+ stage2_is_exec()
+Message-ID: <20181101133848.GL12057@e113682-lin.lund.arm.com>
+References: <20181031175745.18650-1-punit.agrawal@arm.com>
+ <20181031175745.18650-6-punit.agrawal@arm.com>
 MIME-Version: 1.0
-References: <1541085002-42993-1-git-send-email-peng.hao2@zte.com.cn>
- <1541085002-42993-2-git-send-email-peng.hao2@zte.com.cn> <20181101113355.z6l3l33buhcpukl4@lakrids.cambridge.arm.com>
-In-Reply-To: <20181101113355.z6l3l33buhcpukl4@lakrids.cambridge.arm.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 1 Nov 2018 15:38:24 +0200
-Message-ID: <CAHp75VdTzFJ9ggQ+eMn-bAfbtXC4w69R+7UjYvWom6ALV9NfPA@mail.gmail.com>
-Subject: Re: [PATCH V5 2/8] misc/pvpanic: Remove one extra semicolon
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     peng.hao2@zte.com.cn, Rob Herring <robh+dt@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        hutao@cn.fujitsu.com,
-        Linux Documentation List <linux-doc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181031175745.18650-6-punit.agrawal@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 1, 2018 at 1:34 PM Mark Rutland <mark.rutland@arm.com> wrote:
->
-> On Thu, Nov 01, 2018 at 11:09:56PM +0800, Peng Hao wrote:
-> > There is an extra semicolon in pvpanic_device_ids, remove it.
->
-> This is a comma, not a semicolon.
->
-> How about:
->
->   Since there should be nothing after the sentinel entry in an
->   acpi_device_id list, it doesn't make sense for it to have a trailing
->   comma.
->
->   This patch removes the redundant comma.
->
-> ... with that commit message (and the title fixed to say 'comma' rather
-> than 'semicolon':
+On Wed, Oct 31, 2018 at 05:57:42PM +0000, Punit Agrawal wrote:
+> In preparation for creating PUD hugepages at stage 2, add support for
+> detecting execute permissions on PUD page table entries. Faults due to
+> lack of execute permissions on page table entries is used to perform
+> i-cache invalidation on first execute.
+> 
+> Provide trivial implementations of arm32 helpers to allow sharing of
+> code.
+> 
+> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Cc: Christoffer Dall <christoffer.dall@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> ---
+>  arch/arm/include/asm/kvm_mmu.h         |  6 +++
+>  arch/arm64/include/asm/kvm_mmu.h       |  5 +++
+>  arch/arm64/include/asm/pgtable-hwdef.h |  2 +
+>  virt/kvm/arm/mmu.c                     | 53 +++++++++++++++++++++++---
+>  4 files changed, 61 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
+> index 37bf85d39607..839a619873d3 100644
+> --- a/arch/arm/include/asm/kvm_mmu.h
+> +++ b/arch/arm/include/asm/kvm_mmu.h
+> @@ -102,6 +102,12 @@ static inline bool kvm_s2pud_readonly(pud_t *pud)
+>  	return false;
+>  }
+>  
+> +static inline bool kvm_s2pud_exec(pud_t *pud)
+> +{
+> +	BUG();
 
-Agree on this, but...
+nit: I think this should be WARN() now :)
 
->
-> Acked-by: Mark Rutland <mark.rutland@arm.com>
->
-> Either that, or simply drop this patch entirely.
+> +	return false;
+> +}
+> +
+>  static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
+>  {
+>  	pte_val(pte) |= L_PTE_S2_RDWR;
+> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
+> index 8da6d1b2a196..c755b37b3f92 100644
+> --- a/arch/arm64/include/asm/kvm_mmu.h
+> +++ b/arch/arm64/include/asm/kvm_mmu.h
+> @@ -261,6 +261,11 @@ static inline bool kvm_s2pud_readonly(pud_t *pudp)
+>  	return kvm_s2pte_readonly((pte_t *)pudp);
+>  }
+>  
+> +static inline bool kvm_s2pud_exec(pud_t *pudp)
+> +{
+> +	return !(READ_ONCE(pud_val(*pudp)) & PUD_S2_XN);
+> +}
+> +
+>  #define hyp_pte_table_empty(ptep) kvm_page_empty(ptep)
+>  
+>  #ifdef __PAGETABLE_PMD_FOLDED
+> diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
+> index 1d7d8da2ef9b..336e24cddc87 100644
+> --- a/arch/arm64/include/asm/pgtable-hwdef.h
+> +++ b/arch/arm64/include/asm/pgtable-hwdef.h
+> @@ -193,6 +193,8 @@
+>  #define PMD_S2_RDWR		(_AT(pmdval_t, 3) << 6)   /* HAP[2:1] */
+>  #define PMD_S2_XN		(_AT(pmdval_t, 2) << 53)  /* XN[1:0] */
+>  
+> +#define PUD_S2_XN		(_AT(pudval_t, 2) << 53)  /* XN[1:0] */
+> +
+>  /*
+>   * Memory Attribute override for Stage-2 (MemAttr[3:0])
+>   */
+> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+> index 1c669c3c1208..8e44dccd1b47 100644
+> --- a/virt/kvm/arm/mmu.c
+> +++ b/virt/kvm/arm/mmu.c
+> @@ -1083,23 +1083,66 @@ static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
+>  	return 0;
+>  }
+>  
+> -static bool stage2_is_exec(struct kvm *kvm, phys_addr_t addr)
+> +/*
+> + * stage2_get_leaf_entry - walk the stage2 VM page tables and return
+> + * true if a valid and present leaf-entry is found. A pointer to the
+> + * leaf-entry is returned in the appropriate level variable - pudpp,
+> + * pmdpp, ptepp.
+> + */
+> +static bool stage2_get_leaf_entry(struct kvm *kvm, phys_addr_t addr,
+> +				  pud_t **pudpp, pmd_t **pmdpp, pte_t **ptepp)
 
-...point was to gather style changes here, like moving linux/acpi.h.
+Do we need this type madness or could this just return a u64 pointer
+(NULL if nothing is found) and pass that to kvm_s2pte_exec (because we
+know it's the same bit we need to check regardless of the pgtable level
+on both arm and arm64)?
 
-And definitely the style changes should go last in the series.
-If you decide to leave this patch, it would be 8/8.
-
->
-> Thanks,
-> Mark.
->
-> >
-> > Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
-> > ---
-> >  drivers/misc/pvpanic.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/misc/pvpanic.c b/drivers/misc/pvpanic.c
-> > index fd86dab..059005c 100644
-> > --- a/drivers/misc/pvpanic.c
-> > +++ b/drivers/misc/pvpanic.c
-> > @@ -35,7 +35,7 @@
-> >
-> >  static const struct acpi_device_id pvpanic_device_ids[] = {
-> >       { "QEMU0001", 0 },
-> > -     { "", 0 },
-> > +     { "", 0 }
-> >  };
-> >  MODULE_DEVICE_TABLE(acpi, pvpanic_device_ids);
-> >
-> > --
-> > 1.8.3.1
-> >
+Or do we consider that bad for some reason?
 
 
+Thanks,
 
--- 
-With Best Regards,
-Andy Shevchenko
+    Christoffer
+
+>  {
+> +	pud_t *pudp;
+>  	pmd_t *pmdp;
+>  	pte_t *ptep;
+>  
+> -	pmdp = stage2_get_pmd(kvm, NULL, addr);
+> +	*pudpp = NULL;
+> +	*pmdpp = NULL;
+> +	*ptepp = NULL;
+> +
+> +	pudp = stage2_get_pud(kvm, NULL, addr);
+> +	if (!pudp || stage2_pud_none(kvm, *pudp) || !stage2_pud_present(kvm, *pudp))
+> +		return false;
+> +
+> +	if (stage2_pud_huge(kvm, *pudp)) {
+> +		*pudpp = pudp;
+> +		return true;
+> +	}
+> +
+> +	pmdp = stage2_pmd_offset(kvm, pudp, addr);
+>  	if (!pmdp || pmd_none(*pmdp) || !pmd_present(*pmdp))
+>  		return false;
+>  
+> -	if (pmd_thp_or_huge(*pmdp))
+> -		return kvm_s2pmd_exec(pmdp);
+> +	if (pmd_thp_or_huge(*pmdp)) {
+> +		*pmdpp = pmdp;
+> +		return true;
+> +	}
+>  
+>  	ptep = pte_offset_kernel(pmdp, addr);
+>  	if (!ptep || pte_none(*ptep) || !pte_present(*ptep))
+>  		return false;
+>  
+> -	return kvm_s2pte_exec(ptep);
+> +	*ptepp = ptep;
+> +	return true;
+> +}
+> +
+> +static bool stage2_is_exec(struct kvm *kvm, phys_addr_t addr)
+> +{
+> +	pud_t *pudp;
+> +	pmd_t *pmdp;
+> +	pte_t *ptep;
+> +	bool found;
+> +
+> +	found = stage2_get_leaf_entry(kvm, addr, &pudp, &pmdp, &ptep);
+> +	if (!found)
+> +		return false;
+> +
+> +	if (pudp)
+> +		return kvm_s2pud_exec(pudp);
+> +	else if (pmdp)
+> +		return kvm_s2pmd_exec(pmdp);
+> +	else
+> +		return kvm_s2pte_exec(ptep);
+>  }
+>  
+>  static int stage2_set_pte(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
+> -- 
+> 2.19.1
+> 
