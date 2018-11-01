@@ -2,136 +2,128 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0EB9C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:57:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 065D6C6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:01:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CC942081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:57:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C490520820
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:01:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="tH06o0Hn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CC942081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="TBo8cXhV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C490520820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728336AbeKAVAD (ORCPT
+        id S1728415AbeKAVEU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 17:00:03 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:56516 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728085AbeKAVAD (ORCPT
+        Thu, 1 Nov 2018 17:04:20 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38206 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728085AbeKAVEU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 17:00:03 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA1BnR4f144570;
-        Thu, 1 Nov 2018 11:56:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : subject : to :
- cc : references : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=PVUuYKfEiJ81hjalAKLPtYFk+Rl9UJtj2dFNjRa5X4I=;
- b=tH06o0Hnk546JcJTcrJ8BPJM9XSAIz7OXwAh3AAZL+p0VoVwLi9cE5i3UMOSqxqOpskT
- /bTJT89oQFUtz2Z6/dx90mbbLYEsYgAjA9o7Zos+7IthW9pdw7wd6mztFQd/VU6GDk9V
- zwBaNaQ4+jjtccQgYg+yh//DcNdpaeOwIkYHp1ej9VAdNiHhDKyK7aVfGIwWNxlm5IYg
- W0dajrZYwytoXDNGG5emETA6NtqXE+1q+9Q0DeBoT3Nzo3PC2ffZz5hIwPIBRLt+z/Bp
- K+uLp1WRgDSLfgm4RXEEUZvD2s7gPfEYhi7DpOEvqiTMjskPcFHKdCLfXYOerNIvjP5g 4A== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2120.oracle.com with ESMTP id 2ncfyq8c12-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 01 Nov 2018 11:56:59 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wA1Buw2T002010
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 1 Nov 2018 11:56:58 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wA1BuvRI024532;
-        Thu, 1 Nov 2018 11:56:57 GMT
-Received: from [10.152.33.198] (/10.152.33.198)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 01 Nov 2018 04:56:56 -0700
-From:   Steven Sistare <steven.sistare@oracle.com>
-Subject: Re: [PATCH 00/10] steal tasks to improve CPU utilization
-To:     mingo@redhat.com, peterz@infradead.org
-Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
-        daniel.m.jordan@oracle.com, pavel.tatashin@microsoft.com,
-        matt@codeblueprint.co.uk, umgwanakikbuti@gmail.com,
-        riel@redhat.com, jbacik@fb.com, juri.lelli@redhat.com,
-        linux-kernel@vger.kernel.org, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, quentin.perret@arm.com
-References: <1540220381-424433-1-git-send-email-steven.sistare@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <0e136ac6-1a08-bc7c-e4a5-5a7e967f8514@oracle.com>
-Date:   Thu, 1 Nov 2018 07:56:33 -0400
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 1 Nov 2018 17:04:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=9+x+q/gTPOaB/E48b+KYJQc8O7pe8JZf6u5qoAu4kdw=; b=TBo8cXhVzPxg7xuccQX0QaySv
+        iY5zd4lxRniV8n/MWaG2rTVoOiUwn3ov5jFujXmfDMy5jOM4IZxE1GKBMmTfViM7i7+At1W5CXP5G
+        DO8iPJ5Suilb1FfXs8DUXq4ZkYfCk2wV2H/lzYGMvqpgzdTZ6w6mpj33z4Sf6QQ7wFkJs=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gIBfI-0005Si-Mp; Thu, 01 Nov 2018 12:01:32 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 51B76112260E; Thu,  1 Nov 2018 12:01:32 +0000 (GMT)
+Date:   Thu, 1 Nov 2018 12:01:32 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] mfd: lochnagar: Add support for the Cirrus Logic
+ Lochnagar
+Message-ID: <20181101120132.GB6425@sirena.org.uk>
+References: <20181008132542.19775-2-ckeepax@opensource.cirrus.com>
+ <20181025074459.GF4939@dell>
+ <20181025082621.GD16508@imbe.wolfsonmicro.main>
+ <b2f85f45-cbe9-5a27-e9e8-ad28f2bd9bd6@opensource.cirrus.com>
+ <20181025114205.GC4870@dell>
+ <33ea391c-aa6e-2709-6faf-4905e84229e4@opensource.cirrus.com>
+ <20181026080051.GK4870@dell>
+ <20181026203223.GC27137@sirena.org.uk>
+ <20181029110439.GS4870@dell>
+ <20181101102828.GM16508@imbe.wolfsonmicro.main>
 MIME-Version: 1.0
-In-Reply-To: <1540220381-424433-1-git-send-email-steven.sistare@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9063 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1811010106
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="b5gNqxB1S1yM7hjW"
+Content-Disposition: inline
+In-Reply-To: <20181101102828.GM16508@imbe.wolfsonmicro.main>
+X-Cookie: Excellent day to have a rotten day.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/22/2018 10:59 AM, Steve Sistare wrote:
-> When a CPU has no more CFS tasks to run, and idle_balance() fails to
-> find a task, then attempt to steal a task from an overloaded CPU in the
-> same LLC. Maintain and use a bitmap of overloaded CPUs to efficiently
-> identify candidates.  To minimize search time, steal the first migratable
-> task that is found when the bitmap is traversed.  For fairness, search
-> for migratable tasks on an overloaded CPU in order of next to run.
-> [...] 
-> Steve Sistare (10):
->   sched: Provide sparsemask, a reduced contention bitmap
->   sched/topology: Provide hooks to allocate data shared per LLC
->   sched/topology: Provide cfs_overload_cpus bitmap
->   sched/fair: Dynamically update cfs_overload_cpus
->   sched/fair: Hoist idle_stamp up from idle_balance
->   sched/fair: Generalize the detach_task interface
->   sched/fair: Provide can_migrate_task_llc
->   sched/fair: Steal work from an overloaded CPU when CPU goes idle
->   sched/fair: disable stealing if too many NUMA nodes
->   sched/fair: Provide idle search schedstats
 
-(resend, reformatted)
+--b5gNqxB1S1yM7hjW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks very much to everyone who has commented on my patch series.
-Here are the issues to be addressed in V2 of the series, and the person
-that suggested it, or raised the issue that led to it.
+On Thu, Nov 01, 2018 at 10:28:28AM +0000, Charles Keepax wrote:
 
-Changes for V2:
-  * Remove stray patch 10 hunk from patch 5 (Valentin)
-  * Fix "warning: label out defined but not used" for !CONFIG_SCHED_SMT
-    (Valentin)
-  * Set SCHED_STEAL_NODE_LIMIT_DEFAULT to 2 (Steve)
-  * Call try_steal iff avg_idle exceeds some small threshold (Steve, Valentin)
+>      1.2) Read all the registers from the device on boot
+>           + Uses less memory
+>           - Potentially very slow boot time
+>      1.3) Only read values as you touch registers
+>           + Uses less memory
+>           + Usually no significant impact on boot time
+>           - Can't do read or read/write/modify operations on
+>             previously untouched registers whilst chip is off
 
-Possible future work:
-  * Use sparsemask and stealing for RT (Steve, Peter)
-  * Remove the core and socket levels from idle_balance() and let stealing
-    handle those levels (Steve, Peter)
-  * Delete idle_balance() and use stealing exclusively for handling new idle
-    (Steve, Peter)
-  * Test specjbb multi-warehouse on 8-node systems when stealing for
-    large NUMA systems is revisited (Peter)
-  * Enhance stealing to handle misfits (Valentin)
-  * Lower time threshold for task_hot within LLC (Valentin)
+Both of these options also require that you be able to reset the device
+which isn't possible with all devices and systems.
 
-Dropped:
-  * Skip try_steal() if we bail out of idle_balance() because !this_rq->rd->overload 
-    (Valentin)
-    I tried it and saw no difference.  Dropped for simplicity.
+> I think this really the crux of my concerns here about updating
+> the regmap API are that it feels like almost any path we take
+> from here results in worse runtime performance and probably
+> equal or worse memory usage. In return we gain a reduction of
+> some, whilst admittedly large, very simple data tables from
+> the driver. Which is a trade it feels hard to get invested in.
 
-Does anyone else plan to review the code?  Please tell me now, even if your
-review will be delayed.  If yes, I will wait for all comments before producing
-V2.  The code changes so far are small.
+Right, I don't see an urgent problem either - if the tables were
+complicated to think about it'd be a bit different but they aren't
+particularly and like you say there's tradeoffs both at runtime and
+at development time for trying to make the source code smaller.
 
-- Steve
+Equally if there are useful things we can add to the API for some use
+cases I'm all for that so long as they don't get in the way of other
+users, most of the extensions in the API have come from someone having
+problems and coming up with a fix that meets their needs.
+
+--b5gNqxB1S1yM7hjW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlva6xsACgkQJNaLcl1U
+h9AUYwf+IUmDzPcdlodvzcs+ZOUhcBjC7S/MICFtj7twgXZi+BO5NgW1PaM8h7Lf
+AS37zt9SaHAuEIiSjUMx4NCrVxyJde5vXCIpTgMSZDtcRcIkZupkoXhK7Wsugdou
+gNPlXZTCn05PUocMgD+krPxt82X5mvaFwIQN82YATqZ35FAdGGAX60r+aJUIfqdQ
+Qdk0TpfiAbbigxC9r440lOdx0SD96GNrOhNF8bpF97AyGUQbwDMrgDWMxYewjxKI
+hdY8rsQjteyNl9OrD8efCfTsMzdv3Oc+ttdOqWuC7sLtEO60FCvwUWc48cDw1KOl
+oKDtYPqeEHWjNjT6JMzsjsrH8w2FqQ==
+=w1Pu
+-----END PGP SIGNATURE-----
+
+--b5gNqxB1S1yM7hjW--
