@@ -2,116 +2,127 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1692BC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 09:08:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F5CBC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 09:09:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C00D2204FD
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 09:08:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="ZuHyxirq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C00D2204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id 08EB42082E
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 09:09:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08EB42082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727757AbeKASKm (ORCPT
+        id S1727805AbeKASLn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 14:10:42 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:32803 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727520AbeKASKm (ORCPT
+        Thu, 1 Nov 2018 14:11:43 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:38472 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726070AbeKASLm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 14:10:42 -0400
-Received: by mail-io1-f65.google.com with SMTP id f12-v6so8456930iog.0
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 02:08:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=m5h20GUykvwxNqrxE/u//qTABB49PVKmBLpCXGRhzYA=;
-        b=ZuHyxirqXtRgbpnsoCyI/5bL3YvPNUoT9jwMCJ3XvEhbs+fGd8m0tRw6N4Ms2R+1vU
-         H0RyV50fY39DA23Yn8bc8rC80Hj7qc5dIXPTMqyzRQjL5czbosmpzIVdzWKwp35i04Y2
-         FWZhA5PHxk5Ar4NaUk5dQcqU6yUhoB6c3nRds=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=m5h20GUykvwxNqrxE/u//qTABB49PVKmBLpCXGRhzYA=;
-        b=UFqFE13QoKXVto4aChyg4XSFf7PEMqmOgRKrE7Gvfz/quPTOp7pdLnR32l46V4TrrG
-         MjfyiYvUAhJ4W+8AteJiC+Bgh8ioxnK8Le1kAzaLmS+vbzFh0eHRUmGG6ZkHQ5XLOV0+
-         4mhWkgmfbnJFysNEJ7JG/M90udJ4dt9UM/cgm0743iRiqEAfmVwF0wluaoJATTGC6FBA
-         4uDKEVBqNEqxXruayKQFQsGrFzTgT+Cp9S/yV2ZalHgvqAvOoUIPITACvvSLs6pu7mmu
-         CaoLFPyqdqCoiAMYEtTV22GX1z8aCHaRIGY45l2MmYLDl7MS8toQft3w+hicjRA+tCLC
-         Ebog==
-X-Gm-Message-State: AGRZ1gL5352ZgeWN8kBynuEpGj37AZKUlSm2sytXz22wuNVgsvfOUTha
-        S/wP9O23ICub8h/ar0wYs/VHmAFrpKZFSHqvQ0WEIw==
-X-Google-Smtp-Source: AJdET5cyf4mxLH2L2LsjILd+HUMr6cnYQWIkWN7jrqu/BESgs/fat6IMzc/rIrDZ0Z4Oe5htl7BXPsEQdf2guaisgm4=
-X-Received: by 2002:a6b:918b:: with SMTP id t133-v6mr4673021iod.267.1541063313839;
- Thu, 01 Nov 2018 02:08:33 -0700 (PDT)
+        Thu, 1 Nov 2018 14:11:42 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wA1996iU095185;
+        Thu, 1 Nov 2018 04:09:06 -0500
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wA19961v015869
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 1 Nov 2018 04:09:06 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 1 Nov
+ 2018 04:09:05 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 1 Nov 2018 04:09:05 -0500
+Received: from [192.168.2.10] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wA1992cF008782;
+        Thu, 1 Nov 2018 04:09:02 -0500
+Subject: Re: [PATCH v2 09/10] irqchip: ti-sci-inta: Add support for Interrupt
+ Aggregator driver
+To:     Marc Zyngier <marc.zyngier@arm.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Lokesh Vutla <lokeshvutla@ti.com>
+CC:     Nishanth Menon <nm@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, <tglx@linutronix.de>,
+        <jason@lakedaemon.net>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Device Tree Mailing List <devicetree@vger.kernel.org>
+References: <20181018154017.7112-1-lokeshvutla@ti.com>
+ <20181018154017.7112-10-lokeshvutla@ti.com>
+ <b20127dc-be43-3b00-9960-663738df0069@arm.com>
+ <9969f24c-cdb0-1f5c-d0f4-b1c1f587325c@ti.com>
+ <86va5ssrfm.wl-marc.zyngier@arm.com>
+ <2369ea50-55db-c97b-5b43-99d572c97dc9@ti.com>
+ <da27ecc5-db32-cf3a-c194-962c44bc782f@arm.com>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <2a869e38-47c1-0f11-8f4e-176d0d895a45@ti.com>
+Date:   Thu, 1 Nov 2018 11:09:24 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181031183634.29640-1-jagan@amarulasolutions.com>
- <20181031183634.29640-7-jagan@amarulasolutions.com> <CAMty3ZCeZzXYy4XRwTeQjYfpB6KKjEVRWyhjoca9Os4foLYL4g@mail.gmail.com>
- <CAGb2v67xCnH20Hga2P2Ekk3vhhOWUSgtOmRVAte+HDuodjsjkw@mail.gmail.com>
-In-Reply-To: <CAGb2v67xCnH20Hga2P2Ekk3vhhOWUSgtOmRVAte+HDuodjsjkw@mail.gmail.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Thu, 1 Nov 2018 14:38:21 +0530
-Message-ID: <CAMty3ZBNdg43nL-HviyHufwQtTbC4wv20JVYBBT8LDpWiV0wTQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 7/7] arm64: allwinner: h6: orangepi-liet2: Enable
- AP6356S WiFi support
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com, Jagan Teki <jagan@openedev.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <da27ecc5-db32-cf3a-c194-962c44bc782f@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 1, 2018 at 1:28 PM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> On Thu, Nov 1, 2018 at 3:35 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> >
-> > On Thu, Nov 1, 2018 at 12:07 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > >
-> > > From: Jagan Teki <jagan@openedev.com>
-> > >
-> > > Enable AP6356S WiFi/BT combo chip on Orangepi Lite2 board:
-> > > - WiFi SDIO interface is connected to MMC1
-> > > - WiFi WL-PMU-EN pin connected to gpio PM3: attach to mmc-pwrseq
-> > > - WiFi WL-WAKE-AP pin connected to gpio PM0
-> > > - 32kHz external oscillator gate clock from RTC
->
-> You never specified a clock rate for it, so it might actually be wrong.
-> The default clock rate would be something "around" 32 kHz, but not very
-> accurate. Meanwhile the WiFi module would have very specific requirements
-> on frequency and accuracy of this clock. The WiFi part doesn't seem to
-> care that much, but the Bluetooth part cares very much. It doesn't work
-> or it would seem to work but you don't get anything off the radio if the
-> frequency is off (as in off-frequency).
+Hi Marc,
 
-True, but why it's not 32K which is stated in manual and schematics do
-we need to measure the actual rate with oscilloscope?
+On 10/31/18 8:21 PM, Marc Zyngier wrote:
+> Well, I'm convinced that we do not want a networking driver to be tied
+> to an interrupt architecture, and that the two should be completely
+> independent. But that's my own opinion. I can only see two solutions
+> moving forward:
+> 
+> 1) You make the IA a real interrupt controller that exposes real
+> interrupts (one per event), and write your networking driver
+> independently of the underlying interrupt architecture.
+> 
+> 2) you make the IA an integral part of your network driver, not exposing
+> anything outside of it, and limiting the interactions with the IR
+> *through the standard IRQ API*. You duplicate this knowledge throughout
+> the other client drivers.
+> 
+> I believe that (2) would be a massive design mistake as it locks the
+> driver to a single of the HW (and potentially a single revision of the
+> firmware) while (1) gives you the required level of flexibility by
+> hiding the whole event "concept" at a single location.
+> 
+> Yes, (1) makes you rewrite your existing, out of tree drivers. Oh well...
 
->
-> > >
-> > > Signed-off-by: Jagan Teki <jagan@openedev.com>
-> > > ---
-> > > Note:
-> > > - chip detected, but failed to connect
-> > > [  129.084504] brcmfmac: brcmf_sdio_hostmail: mailbox indicates firmware halted
-> > > [  135.906409] brcmfmac: brcmf_sdio_bus_rxctl: resumed on timeout
-> >
-> > This got fixed. Will send next version.
->
-> Could you wait until I get my RTC changes out? I also have some Bluetooth
-> patches for AP621x, which is what started all this RTC work, which you might
-> find interesting.
+We need to have generic support for INTA within the NAVSS for Linux. The
+UDMA (also part of the NAVSS) is used as system DMA and for the
+DMAengine driver we need to have ability to handle the events from Rings
+and from the UDMA itself.
 
-Yes, my intention is the same.
+Option 2 is not really an option as other components need to configure
+INTA to get interrupts from the Events flying within NAVSS.
+
+In the past with Keystone II we did have similar PacketDMA engine but it
+was dedicated to service networking and crypto. For all other
+peripherals we had EDMA as generic system DMA.
+
+With AM654 this is no longer the case as we no longer have EDMA and the
+NAVSS is tasked to service all peripherals, like networking and the ones
+we used to use EDMA.
+
+> 
+> Thanks,
+> 	
+> 	M.
+> 
+
+- Peter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
