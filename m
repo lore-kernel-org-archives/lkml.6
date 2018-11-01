@@ -2,103 +2,125 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B61D7C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F137ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:28:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 822A7205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:22:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6E0C205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:28:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NcW3Bm/B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 822A7205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gWLRh4r6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6E0C205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727680AbeKBC0D (ORCPT
+        id S1727617AbeKBCcE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 22:26:03 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:43547 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727308AbeKBC0C (ORCPT
+        Thu, 1 Nov 2018 22:32:04 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:55028 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726242AbeKBCcE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 22:26:02 -0400
-Received: by mail-lf1-f65.google.com with SMTP id u18so14739885lff.10
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 10:22:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+5CPG5/MAt5dtPdWlNMCRHHM+n5fvu8fNVtIfISuNiE=;
-        b=NcW3Bm/BY0w7sCKRZ7u+enScTnW6fM2GkCrk8WjcLAXCCKysfdvZcrLghjxBiehPuG
-         QAP27+uVa2FGdMnDl+b/xOi0TOR99aUKBvjvrjdedC1zIneKBW9qNUNgXYuyP+9va2Ny
-         PQ/qmeewjojpQ0+Gb7v6ksBlAmZWkKnRiFOic=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+5CPG5/MAt5dtPdWlNMCRHHM+n5fvu8fNVtIfISuNiE=;
-        b=eNd4OsO0tjk6XZMm71ajHvnnwPO0B0p/JK/9OS/5WpKuoQhx6uJ5QRLIASypp/rWKk
-         t18LEHdjNdCKWJjegJ3/67Cd7kIcBmJGJUSDhmETp9rraqHl5WxSVZQ0qeNsXdVwIN4m
-         t4WilueA5S0IyPcRBSa+tsMLMyGBoUQDZbU5L+aHBdwAj++3YGkQodQa2eInhl2NN2bu
-         ksnwMvPETZ19ZHXANP7WncooNtPTDhvBYfaCm4/1iIO+aetpdrw5GZ+akwxKJ6lX7VRQ
-         rC8TcRCQidZ1V2weVMtz9elPuqA1pDp5LzcoIkTf6sJmDJKihM4vr67wKy9Pewz+2hMi
-         5wRg==
-X-Gm-Message-State: AGRZ1gIHfVqJq4kavojfmuEaWzBOflQFRfYzkf5473u9aGhr19d3/GUY
-        1TkjgbYhJUa41eqlna/SayNqQYMUwqg=
-X-Google-Smtp-Source: AJdET5fk2FIFOIhwH2C+Aheo7l/TsCsfX1D4ZtYY2Fh6dwjRb96iijLakFJNT9Ja2kiqITGVE0B/Pw==
-X-Received: by 2002:a19:be16:: with SMTP id o22mr4873077lff.22.1541092928276;
-        Thu, 01 Nov 2018 10:22:08 -0700 (PDT)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
-        by smtp.gmail.com with ESMTPSA id r199sm2137860lff.50.2018.11.01.10.22.04
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Nov 2018 10:22:05 -0700 (PDT)
-Received: by mail-lf1-f54.google.com with SMTP id p17so8294824lfh.4
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 10:22:04 -0700 (PDT)
-X-Received: by 2002:a19:a60c:: with SMTP id p12mr2092425lfe.63.1541092924434;
- Thu, 01 Nov 2018 10:22:04 -0700 (PDT)
+        Thu, 1 Nov 2018 22:32:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=cqmmiMgCoNcYZQd3PjTzf7yi7hw7o8SwAHEWFTCrXl8=; b=gWLRh4r6aXQzNSHXyEu6rBCZ0
+        CXntVUXtJM7/5EOPwODwlXeSL7EmyL0qVWbo1al8RQrIRBjiboIjqi1FRwPHUki+FEub2DgMCN16q
+        qQJaNWTsghoRMRDX0mBRay5LsKTKLlz6KH0pNTYOt3kVNhGjD4gcDjSzhQlnVMO7RqvtddOHMAcgX
+        F5wImHGmImAKF8mI96vG+8qR0gVOdYlCWxwzkuxlkePVLDG9x+donUW01Scn0HYp5Vwwobmi3G5YW
+        40rP5Rj7NmuIJaVbrW1E0pLR+BS3THdg2CScMj7zCN/sGDRUUBuZ9BCNVRVhHd43UyIqAwZg30xnZ
+        NFI5GOftA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gIGkx-0005xd-BU; Thu, 01 Nov 2018 17:27:43 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 6E0512029F9FF; Thu,  1 Nov 2018 18:27:39 +0100 (CET)
+Date:   Thu, 1 Nov 2018 18:27:39 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Eric Dumazet <eric.dumazet@gmail.com>
+Cc:     Trond Myklebust <trondmy@hammerspace.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ralf@linux-mips.org" <ralf@linux-mips.org>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "bfields@fieldses.org" <bfields@fieldses.org>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
+        "paul.burton@mips.com" <paul.burton@mips.com>,
+        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
+        "jhogan@kernel.org" <jhogan@kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "paulus@samba.org" <paulus@samba.org>,
+        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        aryabinin@virtuozzo.com, dvyukov@google.com
+Subject: Re: [RFC PATCH] lib: Introduce generic __cmpxchg_u64() and use it
+ where needed
+Message-ID: <20181101172739.GA3196@hirez.programming.kicks-ass.net>
+References: <20181031213240.zhh7dfcm47ucuyfl@pburton-laptop>
+ <20181031220253.GA15505@roeck-us.net>
+ <20181031233235.qbedw3pinxcuk7me@pburton-laptop>
+ <4e2438a23d2edf03368950a72ec058d1d299c32e.camel@hammerspace.com>
+ <20181101131846.biyilr2msonljmij@lakrids.cambridge.arm.com>
+ <20181101145926.GE3178@hirez.programming.kicks-ass.net>
+ <f38e272f7a96e983549e4281aa9fd02833a4277a.camel@hammerspace.com>
+ <20181101163212.GF3159@hirez.programming.kicks-ass.net>
+ <b0160f4b-b996-b0ee-405a-3d5f1866272e@gmail.com>
+ <20181101171432.GH3178@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-References: <1540920209-28954-1-git-send-email-rplsssn@codeaurora.org>
-In-Reply-To: <1540920209-28954-1-git-send-email-rplsssn@codeaurora.org>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Thu, 1 Nov 2018 10:21:27 -0700
-X-Gmail-Original-Message-ID: <CAE=gft59UWM4=WhLkcLR3+FCEeD5OVwaJjZ8w_t=Fgtt=vFFpA@mail.gmail.com>
-Message-ID: <CAE=gft59UWM4=WhLkcLR3+FCEeD5OVwaJjZ8w_t=Fgtt=vFFpA@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: dts: sdm845: Add PSCI cpuidle low power states
-To:     rplsssn@codeaurora.org
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, sboyd@kernel.org,
-        Doug Anderson <dianders@chromium.org>, mka@chromium.org,
-        Lina Iyer <ilina@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181101171432.GH3178@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 10:23 AM Raju P.L.S.S.S.N
-<rplsssn@codeaurora.org> wrote:
->
-> Add device bindings for cpuidle states for cpu devices.
->
-> Cc: <devicetree@vger.kernel.org>
-> Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
-> ---
-> Changes in v2
->  - Address comments from Doug
-> ---
-> ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 62 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 62 insertions(+)
->
+On Thu, Nov 01, 2018 at 06:14:32PM +0100, Peter Zijlstra wrote:
+> > This reminds me of this sooooo silly patch :/
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=adb03115f4590baa280ddc440a8eff08a6be0cb7
 
-Reviewed-by: Evan Green <evgreen@chromium.org>
+You'd probably want to write it like so; +- some ordering stuff, that
+code didn't look like it really needs the memory barriers implied by
+these, but I didn't look too hard.
+
+diff --git a/net/ipv4/route.c b/net/ipv4/route.c
+index c0a9d26c06ce..11deb1d7e96b 100644
+--- a/net/ipv4/route.c
++++ b/net/ipv4/route.c
+@@ -485,16 +485,10 @@ u32 ip_idents_reserve(u32 hash, int segs)
+ 	u32 now = (u32)jiffies;
+ 	u32 new, delta = 0;
+ 
+-	if (old != now && cmpxchg(p_tstamp, old, now) == old)
++	if (old != now && try_cmpxchg(p_tstamp, &old, now))
+ 		delta = prandom_u32_max(now - old);
+ 
+-	/* Do not use atomic_add_return() as it makes UBSAN unhappy */
+-	do {
+-		old = (u32)atomic_read(p_id);
+-		new = old + delta + segs;
+-	} while (atomic_cmpxchg(p_id, old, new) != old);
+-
+-	return new - segs;
++	return atomic_fetch_add(segs + delta, p_id) + delta;
+ }
+ EXPORT_SYMBOL(ip_idents_reserve);
+ 
