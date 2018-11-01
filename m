@@ -2,74 +2,132 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ACBFC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 05:28:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99023C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 05:35:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45CF520820
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 05:28:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45CF520820
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 0B0F420820
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 05:35:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B0F420820
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727693AbeKAOaC (ORCPT
+        id S1727711AbeKAOgx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 10:30:02 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:36891 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727355AbeKAOaC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 10:30:02 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08029076|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01l10423;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=7;RT=7;SR=0;TI=SMTPD_---.DBaNG7Q_1541050107;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.DBaNG7Q_1541050107)
-          by smtp.aliyun-inc.com(10.147.41.199);
-          Thu, 01 Nov 2018 13:28:27 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     torvalds@linux-foundation.org
-Cc:     arnd@arndb.de, robh@kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, guoren1983@gmail.com,
-        Guo Ren <ren_guo@c-sky.com>
-Subject: [GIT PULL] fixup dtb Kbuild for C-SKY(csky) Port
-Date:   Thu,  1 Nov 2018 13:28:25 +0800
-Message-Id: <1541050105-14469-1-git-send-email-ren_guo@c-sky.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 1 Nov 2018 10:36:53 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:53042 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726263AbeKAOgx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 10:36:53 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id EAC1D20798; Thu,  1 Nov 2018 06:35:23 +0100 (CET)
+Received: from bbrezillon (unknown [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A8E3920726;
+        Thu,  1 Nov 2018 06:35:23 +0100 (CET)
+Date:   Thu, 1 Nov 2018 06:35:23 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Wolfram Sang <wsa@the-dreams.de>,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        Przemyslaw Gaj <pgaj@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] Addition of the I3C subsystem in 4.20 (5.0)?
+Message-ID: <20181101063523.26bdbe28@bbrezillon>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please pull this to fixup dtb Kbuild rules for csky subsystem.
+Hello Greg, Linus,
 
-The following changes since commit ac435075892e3e651c667b4a9f2267cf3ef1d5a2:
+Greg, I didn't get your feedback on v10 of the i3c patchset [1] where I
+was asking if you'd agree to have this framework merged in 4.20 (I know
+you were busy with the 4.19 release and after that the Kernel Summit, so
+that's not a surprise), so I'm sending this PR. It's really not an attempt
+to bypass you, more like a ping that, if positively acknowledged, might
+lead to inclusion of the I3C framework in 4.20 (5.0?) :-).
 
-  Merge tag 'csky-for-linus-4.20' of https://github.com/c-sky/csky-linux (2018-10-29 08:25:00 -0700)
+Please let me know if you're opposed to the idea.
 
-are available in the git repository at:
+Regards,
 
-  https://github.com/c-sky/csky-linux.git tags/csky-for-linus-4.20-fixup-dtb
+Boris
 
-for you to fetch changes up to e8d0c9a726cd1eae410148fcc6a1db23019f0334:
+[1]https://lkml.org/lkml/2018/10/26/552 
 
-  csky: use common dtb build rules (2018-11-01 10:52:27 +0800)
+The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+
+  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/i3c/linux.git tags/i3c/for-4.20
+
+for you to fetch changes up to 71e60757e1eab6f7b821585948317961ccdc61d1:
+
+  dt-bindings: i3c: Document Cadence I3C master bindings (2018-11-01 06:12:05 +0100)
 
 ----------------------------------------------------------------
-csky: dtb Kbuild fixup patches for linux-4.20-rc1
-
-These patches are complementary to "C-SKY(csky) Port for Linux 4.20" and
-fixup dtb Kbuild to follow the new Devicetree dtb build rules.
-
-Link: https://lore.kernel.org/lkml/CABGGisxiWaQn9qDqpfxEWcckkGJfMzFvSPGvuhQK7oB404-6DQ@mail.gmail.com/
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+Add the I3C framework + an I3C controller driver for Cadence IP
 
 ----------------------------------------------------------------
-Guo Ren (2):
-      csky: remove builtin-dtb Kbuild
-      csky: use common dtb build rules
+Boris Brezillon (7):
+      i3c: Add core I3C infrastructure
+      docs: driver-api: Add I3C documentation
+      i3c: Add sysfs ABI spec
+      dt-bindings: i3c: Document core bindings
+      MAINTAINERS: Add myself as the I3C subsystem maintainer
+      i3c: master: Add driver for Cadence IP
+      dt-bindings: i3c: Document Cadence I3C master bindings
 
- arch/csky/Kconfig.debug     | 10 +---------
- arch/csky/Makefile          | 13 +------------
- arch/csky/boot/dts/Makefile | 10 ----------
- 3 files changed, 2 insertions(+), 31 deletions(-)
+ Documentation/ABI/testing/sysfs-bus-i3c                   |  146 ++
+ Documentation/devicetree/bindings/i3c/cdns,i3c-master.txt |   44 +
+ Documentation/devicetree/bindings/i3c/i3c.txt             |  139 ++
+ Documentation/driver-api/i3c/device-driver-api.rst        |    9 +
+ Documentation/driver-api/i3c/index.rst                    |   11 +
+ Documentation/driver-api/i3c/master-driver-api.rst        |   10 +
+ Documentation/driver-api/i3c/protocol.rst                 |  203 +++
+ Documentation/driver-api/index.rst                        |    1 +
+ MAINTAINERS                                               |   12 +
+ drivers/Kconfig                                           |    2 +
+ drivers/Makefile                                          |    2 +-
+ drivers/i3c/Kconfig                                       |   24 +
+ drivers/i3c/Makefile                                      |    4 +
+ drivers/i3c/device.c                                      |  233 ++++
+ drivers/i3c/internals.h                                   |   26 +
+ drivers/i3c/master.c                                      | 2661 +++++++++++++++++++++++++++++++++++++
+ drivers/i3c/master/Kconfig                                |    6 +
+ drivers/i3c/master/Makefile                               |    1 +
+ drivers/i3c/master/i3c-master-cdns.c                      | 1671 +++++++++++++++++++++++
+ include/linux/i3c/ccc.h                                   |  385 ++++++
+ include/linux/i3c/device.h                                |  331 +++++
+ include/linux/i3c/master.h                                |  648 +++++++++
+ include/linux/mod_devicetable.h                           |   17 +
+ 23 files changed, 6585 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-i3c
+ create mode 100644 Documentation/devicetree/bindings/i3c/cdns,i3c-master.txt
+ create mode 100644 Documentation/devicetree/bindings/i3c/i3c.txt
+ create mode 100644 Documentation/driver-api/i3c/device-driver-api.rst
+ create mode 100644 Documentation/driver-api/i3c/index.rst
+ create mode 100644 Documentation/driver-api/i3c/master-driver-api.rst
+ create mode 100644 Documentation/driver-api/i3c/protocol.rst
+ create mode 100644 drivers/i3c/Kconfig
+ create mode 100644 drivers/i3c/Makefile
+ create mode 100644 drivers/i3c/device.c
+ create mode 100644 drivers/i3c/internals.h
+ create mode 100644 drivers/i3c/master.c
+ create mode 100644 drivers/i3c/master/Kconfig
+ create mode 100644 drivers/i3c/master/Makefile
+ create mode 100644 drivers/i3c/master/i3c-master-cdns.c
+ create mode 100644 include/linux/i3c/ccc.h
+ create mode 100644 include/linux/i3c/device.h
+ create mode 100644 include/linux/i3c/master.h
