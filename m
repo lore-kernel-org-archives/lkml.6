@@ -2,132 +2,123 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0211C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:33:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C24FAC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:38:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5457F204FD
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:33:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5457F204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 75E8C2081B
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 12:38:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HYaHWFbn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75E8C2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728545AbeKAVgB (ORCPT
+        id S1728516AbeKAVk4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 17:36:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49860 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728326AbeKAVgA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 17:36:00 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3CB6CAC11;
-        Thu,  1 Nov 2018 12:33:13 +0000 (UTC)
-From:   Juergen Gross <jgross@suse.com>
-To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
-Cc:     boris.ostrovsky@oracle.com, sstabellini@kernel.org,
-        Juergen Gross <jgross@suse.com>, stable@vger.kernel.org
-Subject: [PATCH] xen: remove size limit of privcmd-buf mapping interface
-Date:   Thu,  1 Nov 2018 13:33:07 +0100
-Message-Id: <20181101123307.8424-1-jgross@suse.com>
-X-Mailer: git-send-email 2.16.4
+        Thu, 1 Nov 2018 17:40:56 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35506 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728514AbeKAVkz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 17:40:55 -0400
+Received: by mail-wr1-f65.google.com with SMTP id z16-v6so2038809wrv.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 05:38:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Q5lswyodOMjqPgoCH0kHtwsx/mpC876GHRYElJ66Q78=;
+        b=HYaHWFbn+fStUCHTYUt0OOnrY3rLQo9dao4QXxtRxO4QnWnSsp2V52ywqiy61luXKp
+         PcjWB1E/pyvxcezZSf06T3Hpm+t/lfE+LP1xPOFrNhCRDNv5TlM+wzjfNEYnBGgLs2FA
+         IT/iA7HzPmEge0s00eEXc2xRXvWsMEcbygkvo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Q5lswyodOMjqPgoCH0kHtwsx/mpC876GHRYElJ66Q78=;
+        b=GeYpW+2EMv5XynSl5AO6J4e1sLDKAYnP32SuNxH8NoGPV/BlsVv9oK5YEk/2D8Zu/h
+         fr7TCXsLJmYlmRNB6ajixKFYT5xkN3rXqQikO4tft8LewIcnAiXksKugv5H5AGtL32Hm
+         mU6hMxRFXnmSx+ZPYBg9Y7rEdgAYNrBZEuP9IUCoh/NEi137i2mtD3scA8ke867HcMdJ
+         aNwLYR9NHq8zQDZbG8a/qPDplbZRx+uzaztlQLtNXHHmrToMRplNojujCmL2cI2sYSZm
+         ZCFNmo4fvTQL89lgo5zHK4srtSVbkWdRlTv5YfGnU5EAa0buOKdqGEbbpuLJNHa7moI0
+         /tgw==
+X-Gm-Message-State: AGRZ1gJA1HW6380mC2rDgjFWFDXZvj94SQRSUGYQeZoG9U9c5d39cI8W
+        vaxScBhDKcjyUg2Xy1dgKPobmg==
+X-Google-Smtp-Source: AJdET5eTAPTil2Kal5n5yHqYXimCl9hz1PXhl9G9PrVRSXh250D02KsB16UbnsJ28yDvzcbSwUSiFQ==
+X-Received: by 2002:adf:83a4:: with SMTP id 33-v6mr6288585wre.13.1541075886665;
+        Thu, 01 Nov 2018 05:38:06 -0700 (PDT)
+Received: from [192.168.27.209] ([37.157.136.206])
+        by smtp.googlemail.com with ESMTPSA id m2-v6sm25059617wrj.80.2018.11.01.05.38.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Nov 2018 05:38:05 -0700 (PDT)
+Subject: Re: [PATCH] media: venus: add support for USERPTR to queue
+To:     Malathi Gottam <mgottam@codeaurora.org>,
+        stanimir.varbanov@linaro.org, hverkuil@xs4all.nl,
+        mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, acourbot@chromium.org,
+        vgarodia@codeaurora.org
+References: <1539071557-1500-1-git-send-email-mgottam@codeaurora.org>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <eef03e29-0057-0101-6188-f91715a9eb06@linaro.org>
+Date:   Thu, 1 Nov 2018 14:38:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <1539071557-1500-1-git-send-email-mgottam@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the size of hypercall buffers allocated via
-/dev/xen/hypercall is limited to a default of 64 memory pages. For live
-migration of guests this might be too small as the page dirty bitmask
-needs to be sized according to the size of the guest. This means
-migrating a 8GB sized guest is already exhausting the default buffer
-size for the dirty bitmap.
+Hi Malathi,
 
-There is no sensible way to set a sane limit, so just remove it
-completely. The device node's usage is limited to root anyway, so there
-is no additional DOS scenario added by allowing unlimited buffers.
+Thanks for the patch!
 
-While at it make the error path for the -ENOMEM case a little bit
-cleaner by setting n_pages to the number of successfully allocated
-pages instead of the target size.
+On 10/9/18 10:52 AM, Malathi Gottam wrote:
+> Add USERPTR to queue access methods by adding this
+> support to io_modes on both the planes.
+> 
+> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
+> ---
+>  drivers/media/platform/qcom/venus/venc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
+> index 754c19a..b86994c 100644
+> --- a/drivers/media/platform/qcom/venus/venc.c
+> +++ b/drivers/media/platform/qcom/venus/venc.c
+> @@ -1096,7 +1096,7 @@ static int m2m_queue_init(void *priv, struct vb2_queue *src_vq,
+>  	int ret;
+>  
+>  	src_vq->type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
+> -	src_vq->io_modes = VB2_MMAP | VB2_DMABUF;
+> +	src_vq->io_modes = VB2_MMAP | VB2_USERPTR | VB2_DMABUF;
+>  	src_vq->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_COPY;
+>  	src_vq->ops = &venc_vb2_ops;
+>  	src_vq->mem_ops = &vb2_dma_sg_memops;
+> @@ -1112,7 +1112,7 @@ static int m2m_queue_init(void *priv, struct vb2_queue *src_vq,
+>  		return ret;
+>  
+>  	dst_vq->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+> -	dst_vq->io_modes = VB2_MMAP | VB2_DMABUF;
+> +	dst_vq->io_modes = VB2_MMAP | VB2_USERPTR | VB2_DMABUF;
+>  	dst_vq->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_COPY;
+>  	dst_vq->ops = &venc_vb2_ops;
+>  	dst_vq->mem_ops = &vb2_dma_sg_memops;
+> 
 
-Fixes: c51b3c639e01f2 ("xen: add new hypercall buffer mapping device")
-Cc: <stable@vger.kernel.org> #4.18
-Signed-off-by: Juergen Gross <jgross@suse.com>
----
- drivers/xen/privcmd-buf.c | 22 ++++------------------
- 1 file changed, 4 insertions(+), 18 deletions(-)
+Acked-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 
-diff --git a/drivers/xen/privcmd-buf.c b/drivers/xen/privcmd-buf.c
-index df1ed37c3269..de01a6d0059d 100644
---- a/drivers/xen/privcmd-buf.c
-+++ b/drivers/xen/privcmd-buf.c
-@@ -21,15 +21,9 @@
- 
- MODULE_LICENSE("GPL");
- 
--static unsigned int limit = 64;
--module_param(limit, uint, 0644);
--MODULE_PARM_DESC(limit, "Maximum number of pages that may be allocated by "
--			"the privcmd-buf device per open file");
--
- struct privcmd_buf_private {
- 	struct mutex lock;
- 	struct list_head list;
--	unsigned int allocated;
- };
- 
- struct privcmd_buf_vma_private {
-@@ -60,13 +54,10 @@ static void privcmd_buf_vmapriv_free(struct privcmd_buf_vma_private *vma_priv)
- {
- 	unsigned int i;
- 
--	vma_priv->file_priv->allocated -= vma_priv->n_pages;
--
- 	list_del(&vma_priv->list);
- 
- 	for (i = 0; i < vma_priv->n_pages; i++)
--		if (vma_priv->pages[i])
--			__free_page(vma_priv->pages[i]);
-+		__free_page(vma_priv->pages[i]);
- 
- 	kfree(vma_priv);
- }
-@@ -146,8 +137,7 @@ static int privcmd_buf_mmap(struct file *file, struct vm_area_struct *vma)
- 	unsigned int i;
- 	int ret = 0;
- 
--	if (!(vma->vm_flags & VM_SHARED) || count > limit ||
--	    file_priv->allocated + count > limit)
-+	if (!(vma->vm_flags & VM_SHARED))
- 		return -EINVAL;
- 
- 	vma_priv = kzalloc(sizeof(*vma_priv) + count * sizeof(void *),
-@@ -155,19 +145,15 @@ static int privcmd_buf_mmap(struct file *file, struct vm_area_struct *vma)
- 	if (!vma_priv)
- 		return -ENOMEM;
- 
--	vma_priv->n_pages = count;
--	count = 0;
--	for (i = 0; i < vma_priv->n_pages; i++) {
-+	for (i = 0; i < count; i++) {
- 		vma_priv->pages[i] = alloc_page(GFP_KERNEL | __GFP_ZERO);
- 		if (!vma_priv->pages[i])
- 			break;
--		count++;
-+		vma_priv->n_pages++;
- 	}
- 
- 	mutex_lock(&file_priv->lock);
- 
--	file_priv->allocated += count;
--
- 	vma_priv->file_priv = file_priv;
- 	vma_priv->users = 1;
- 
 -- 
-2.16.4
-
+regards,
+Stan
