@@ -3,108 +3,122 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97DB2C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:43:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A4A2C6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:43:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E12E204FD
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:43:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E12E204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 265F8204FD
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 11:43:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 265F8204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728374AbeKAUpt (ORCPT
+        id S1728424AbeKAUqM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 16:45:49 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57255 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728012AbeKAUps (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 16:45:48 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA1BgqnI2796160
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 1 Nov 2018 04:42:52 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA1BgpL32796157;
-        Thu, 1 Nov 2018 04:42:51 -0700
-Date:   Thu, 1 Nov 2018 04:42:51 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Dan Carpenter <tipbot@zytor.com>
-Message-ID: <tip-3424243e39e8ec138486926949e3668e7553125d@git.kernel.org>
-Cc:     gregory.clement@bootlin.com, tglx@linutronix.de, andrew@lunn.ch,
-        mingo@kernel.org, linux-kernel@vger.kernel.org,
-        miquel.raynal@bootlin.com, jason@lakedaemon.net,
-        sebastian.hesselbarth@gmail.com, marc.zyngier@arm.com,
-        hpa@zytor.com, dan.carpenter@oracle.com
-Reply-To: linux-kernel@vger.kernel.org, miquel.raynal@bootlin.com,
-          jason@lakedaemon.net, sebastian.hesselbarth@gmail.com,
-          marc.zyngier@arm.com, hpa@zytor.com, dan.carpenter@oracle.com,
-          gregory.clement@bootlin.com, tglx@linutronix.de, andrew@lunn.ch,
-          mingo@kernel.org
-In-Reply-To: <20181013102246.GD16086@mwanda>
-References: <20181013102246.GD16086@mwanda>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/urgent] irqchip/irq-mvebu-sei: Fix a NULL vs IS_ERR() bug
- in probe function
-Git-Commit-ID: 3424243e39e8ec138486926949e3668e7553125d
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 1 Nov 2018 16:46:12 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:18554 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728012AbeKAUqM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 16:46:12 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 315F231256CB;
+        Thu,  1 Nov 2018 11:43:36 +0000 (UTC)
+Received: from prarit.bos.redhat.com (prarit-guest.khw1.lab.eng.bos.redhat.com [10.16.200.63])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 90AB61054FBB;
+        Thu,  1 Nov 2018 11:43:35 +0000 (UTC)
+Subject: Re: [PATCH AUTOSEL 4.19 022/146] cpupower: Fix coredump on VMWare
+To:     Sasha Levin <sashal@kernel.org>, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Shuah Khan <shuah@kernel.org>, Stafford Horne <shorne@gmail.com>
+References: <20181031230541.28822-1-sashal@kernel.org>
+ <20181031230541.28822-22-sashal@kernel.org>
+From:   Prarit Bhargava <prarit@redhat.com>
+Message-ID: <7c08983b-a8c5-0dbc-c8aa-2c6a6799e1ee@redhat.com>
+Date:   Thu, 1 Nov 2018 07:43:35 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <20181031230541.28822-22-sashal@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 01 Nov 2018 11:43:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  3424243e39e8ec138486926949e3668e7553125d
-Gitweb:     https://git.kernel.org/tip/3424243e39e8ec138486926949e3668e7553125d
-Author:     Dan Carpenter <dan.carpenter@oracle.com>
-AuthorDate: Sat, 13 Oct 2018 13:22:46 +0300
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 1 Nov 2018 12:38:48 +0100
 
-irqchip/irq-mvebu-sei: Fix a NULL vs IS_ERR() bug in probe function
 
-The devm_ioremap_resource() function never returns NULL, it returns
-error pointers.
+On 10/31/2018 07:03 PM, Sasha Levin wrote:
+> From: Prarit Bhargava <prarit@redhat.com>
+> 
+> [ Upstream commit f69ffc5d3db8f1f03fd6d1df5930f9a1fbd787b6 ]
+> 
+> cpupower crashes on VMWare guests.  The guests have the AMD PStateDef MSR
+> (0xC0010064 + state number) set to zero.  As a result fid and did are zero
+> and the crash occurs because of a divide by zero (cof = fid/did).  This
+> can be prevented by checking the enable bit in the PStateDef MSR before
+> calculating cof.  By doing this the value of pstate[i] remains zero and
+> the value can be tested before displaying the active Pstates.
+> 
+> Check the enable bit in the PstateDef register for all supported families
+> and only print out enabled Pstates.
+> 
 
-Fixes: 61ce8d8d8a81 ("irqchip/irq-mvebu-sei: Add new driver for Marvell SEI")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Jason Cooper <jason@lakedaemon.net>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Gregory Clement <gregory.clement@bootlin.com>
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181013102246.GD16086@mwanda
+Hi Sasha,
 
----
- drivers/irqchip/irq-mvebu-sei.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This patch, f69ffc5d3db8, depends on 8c22e2f69592 ("cpupower: Fix AMD Family
+0x17 msr_pstate size").  Without 8c22e2f69592 the patch below will always read a
+value of "0" and not output the correct data.
 
-diff --git a/drivers/irqchip/irq-mvebu-sei.c b/drivers/irqchip/irq-mvebu-sei.c
-index 566d69a2edbc..add4c9c934c8 100644
---- a/drivers/irqchip/irq-mvebu-sei.c
-+++ b/drivers/irqchip/irq-mvebu-sei.c
-@@ -384,9 +384,9 @@ static int mvebu_sei_probe(struct platform_device *pdev)
- 
- 	sei->res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	sei->base = devm_ioremap_resource(sei->dev, sei->res);
--	if (!sei->base) {
-+	if (IS_ERR(sei->base)) {
- 		dev_err(sei->dev, "Failed to remap SEI resource\n");
--		return -ENODEV;
-+		return PTR_ERR(sei->base);
- 	}
- 
- 	/* Retrieve the SEI capabilities with the interrupt ranges */
+8c22e2f69592 must be applied to any stable branch that f69ffc5d3db8 is applied to.
+
+P.
+
+
+> Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+> Cc: Shuah Khan <shuah@kernel.org>
+> Cc: Stafford Horne <shorne@gmail.com>
+> Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  tools/power/cpupower/utils/cpufreq-info.c | 2 ++
+>  tools/power/cpupower/utils/helpers/amd.c  | 5 +++++
+>  2 files changed, 7 insertions(+)
+> 
+> diff --git a/tools/power/cpupower/utils/cpufreq-info.c b/tools/power/cpupower/utils/cpufreq-info.c
+> index df43cd45d810..ccd08dd00996 100644
+> --- a/tools/power/cpupower/utils/cpufreq-info.c
+> +++ b/tools/power/cpupower/utils/cpufreq-info.c
+> @@ -200,6 +200,8 @@ static int get_boost_mode(unsigned int cpu)
+>  		printf(_("    Boost States: %d\n"), b_states);
+>  		printf(_("    Total States: %d\n"), pstate_no);
+>  		for (i = 0; i < pstate_no; i++) {
+> +			if (!pstates[i])
+> +				continue;
+>  			if (i < b_states)
+>  				printf(_("    Pstate-Pb%d: %luMHz (boost state)"
+>  					 "\n"), i, pstates[i]);
+> diff --git a/tools/power/cpupower/utils/helpers/amd.c b/tools/power/cpupower/utils/helpers/amd.c
+> index bb41cdd0df6b..58d23997424d 100644
+> --- a/tools/power/cpupower/utils/helpers/amd.c
+> +++ b/tools/power/cpupower/utils/helpers/amd.c
+> @@ -119,6 +119,11 @@ int decode_pstates(unsigned int cpu, unsigned int cpu_family,
+>  		}
+>  		if (read_msr(cpu, MSR_AMD_PSTATE + i, &pstate.val))
+>  			return -1;
+> +		if ((cpu_family == 0x17) && (!pstate.fam17h_bits.en))
+> +			continue;
+> +		else if (!pstate.bits.en)
+> +			continue;
+> +
+>  		pstates[i] = get_cof(cpu_family, pstate);
+>  	}
+>  	*no = i;
+> 
