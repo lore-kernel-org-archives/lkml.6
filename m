@@ -2,137 +2,79 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72834C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 19:06:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F7BDC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 19:10:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E399205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 19:06:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QLm6iK3y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E399205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id B7C9C20657
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 19:10:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7C9C20657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726687AbeKBEK4 (ORCPT
+        id S1726628AbeKBEOc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 00:10:56 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:41507 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725722AbeKBEK4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 00:10:56 -0400
-Received: by mail-lf1-f65.google.com with SMTP id c16so14971130lfj.8
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 12:06:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sAdyijJANdHXrZS7Rhy3SlpitoiP+F4HljNHFT3Q6h0=;
-        b=QLm6iK3yWs27nIzZ2pM2WZg7LUjUDqDg6URDt6pOhlyh7k3cN660A+J6c18S1uCc/y
-         tnr/I7p4mnFgSUp1kKhTS23iB5r1GfpvS5afsvW42SSgPiQgKGNAbVhs8EMfYgndu93g
-         jrqkQ7wkUdB0OzKlCzqwTIoBCMuuAmFqL5ScE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sAdyijJANdHXrZS7Rhy3SlpitoiP+F4HljNHFT3Q6h0=;
-        b=iIBHiIkRyRQlX2HrRqFZaPbQDOonDokPBfVDGBubq+0wJ0DcKUdUT8cbHruH8Xk2aV
-         AjByDgdZkd2mrs/tCXjhjhP+gcWPz2gORL2A0exZhcaVJsGXR2z1+aDUe+bZDQhzJfT+
-         hLja4bF7sPhv9TEBqWbsZOXv3g2WE1JPjurNNXZohwlsOeayatGth+BEEhn0reSu2gDA
-         lFX/97XCphVo7fyisLD54ByI6120oVO89VwP55MuRSl78XXoQr6OWM3cY39eyMAfegJj
-         sFkoF9j2Eye+BNznsbPg1nQSFGX4KUBb8ROwOxOqMqUMwY6xQMoLrf5P1ywug7AslSYs
-         ShCw==
-X-Gm-Message-State: AGRZ1gKyWdTeQQPW7weUczV3LXkXRt8YkTZqrLYaxu8hIuEvvesuVoy7
-        SSCMyYQG2PT2iHxD3VCqzZut6x5sVIvsNQ==
-X-Google-Smtp-Source: AJdET5d2NXsHn5RvQyzI0YubfU2LxfDr7/UpU/a4/IEmkVOn40hLP1ixxx4F2xaFb1K0Z9gqG/f2Gg==
-X-Received: by 2002:a19:db4a:: with SMTP id s71mr5289551lfg.36.1541099199732;
-        Thu, 01 Nov 2018 12:06:39 -0700 (PDT)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id p134-v6sm5188886lfd.80.2018.11.01.12.06.38
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Nov 2018 12:06:38 -0700 (PDT)
-Received: by mail-lj1-f174.google.com with SMTP id f3-v6so19029764ljk.9
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 12:06:38 -0700 (PDT)
-X-Received: by 2002:a2e:95c6:: with SMTP id y6-v6mr5513348ljh.59.1541099197588;
- Thu, 01 Nov 2018 12:06:37 -0700 (PDT)
+        Fri, 2 Nov 2018 00:14:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45926 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726124AbeKBEOc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 00:14:32 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C74820657;
+        Thu,  1 Nov 2018 19:10:16 +0000 (UTC)
+Date:   Thu, 1 Nov 2018 15:10:14 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [BUGFIX PATCH] tracing/kprobes: Fix strpbrk() argument order
+Message-ID: <20181101151014.2feccd51@gandalf.local.home>
+In-Reply-To: <154108256792.2604.1816052586385217811.stgit@devbox>
+References: <154108256792.2604.1816052586385217811.stgit@devbox>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
-In-Reply-To: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 1 Nov 2018 12:06:21 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjJhdr3JCnGrMKqL-prxYd__kkAspKVYBO3BYYmq2hu4A@mail.gmail.com>
-Message-ID: <CAHk-=wjJhdr3JCnGrMKqL-prxYd__kkAspKVYBO3BYYmq2hu4A@mail.gmail.com>
-Subject: Re: RFC: userspace exception fixups
-To:     luto@kernel.org
-Cc:     dave.hansen@linux.intel.com, sean.j.christopherson@intel.com,
-        jethro@fortanix.com, jarkko.sakkinen@linux.intel.com,
-        fweimer@redhat.com, linux-api@vger.kernel.org,
-        Jann Horn <jannh@google.com>, x86@kernel.org,
-        linux-arch@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, dalias@libc.org,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        Ingo Molnar <mingo@redhat.com>, bp@alien8.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 1, 2018 at 10:53 AM Andy Lutomirski <luto@kernel.org> wrote:
->
-> There's been some discussion of adding a vDSO entry point to wrap
-> EENTER and do something sensible with the exceptions,
+On Thu,  1 Nov 2018 23:29:28 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-I think that's likely the right thing to do, and would be similar to sysenter.
+> Fix strpbrk()'s argument order, it must pass acceptable string
+> in 2nd argument. Note that this can cause a kernel panic where
+> it recovers backup character to code->data.
+> 
+> Fixes: a6682814f371 ("tracing/kprobes: Allow kprobe-events to record module symbol")
+> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 
-> The basic idea would be to allow libc, or maybe even any library, to
-> register a handler that gets a chance to act on an exception caused by
-> a user instruction before a signal is delivered.  As a straw-man
-> example for how this could work, there could be a new syscall:
->
-> long register_exception_handler(void (*handler)(int, siginfo_t *, void *));
+Thanks Masami,
 
-I'm not a huge fan of signals, but the above is an abomination.
+I'm pulling this and starting to test it.
 
-It has all the problems of signals _and_ then some.
+-- Steve
 
-And it in absolutely no way fixes the problem with libraires. In fact,
-it arguably makes it much much worse, since now there's only one
-single library that can register it.
+> ---
+>  kernel/trace/trace_probe.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
+> index 3ef15a6683c0..bd30e9398d2a 100644
+> --- a/kernel/trace/trace_probe.c
+> +++ b/kernel/trace/trace_probe.c
+> @@ -535,7 +535,7 @@ int traceprobe_update_arg(struct probe_arg *arg)
+>  			if (code[1].op != FETCH_OP_IMM)
+>  				return -EINVAL;
+>  
+> -			tmp = strpbrk("+-", code->data);
+> +			tmp = strpbrk(code->data, "+-");
+>  			if (tmp)
+>  				c = *tmp;
+>  			ret = traceprobe_split_symbol_offset(code->data,
 
-Yes yes, maybe a library would then expose _another_ interface to
-other libraries and act as some kind of dispatch point, but on the
-whole the above is just crazy and fundamentally broken.
-
-If you want to register an exception, you need to make it clear
-
- (a) which _thread_ the exception registration is valid for
-
- (b) which _range_ the exception registration is valid for
-
- (c) which _fault_ the exception registration is valid for (page
-fault, div-by-zero, whatever)
-
- (d) which save area (aka stack) and exception handler point.
-
-Note that (b) might be more than just an exception IP range. It might
-well be interesting to register the exception by page fault address
-(in addition to code range).
-
-If you do something that does all of (a)-(d), and you allow some
-limited number of exception registrations, then maybe. Because at that
-point, you have something that is actually actively more powerful than
-signal handling is.
-
-But your suggested "just register a broken form of signal handling for
-a special case" is just wrong. Don't do it.
-
-              Linus
