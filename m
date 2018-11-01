@@ -2,109 +2,101 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C376C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:07:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B472C6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:12:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D49A12081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:07:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D49A12081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 073962081B
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:12:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 073962081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728952AbeKBBL3 (ORCPT
+        id S1728810AbeKBBQ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 21:11:29 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58578 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728078AbeKBBL3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 21:11:29 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D7DF2341;
-        Thu,  1 Nov 2018 09:07:51 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 955B53F716;
-        Thu,  1 Nov 2018 09:07:51 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id C0A0F1AE0D51; Thu,  1 Nov 2018 16:07:59 +0000 (GMT)
-Date:   Thu, 1 Nov 2018 16:07:59 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Jessica Yu <jeyu@kernel.org>
-Cc:     Torsten Duwe <duwe@lst.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        live-patching@vger.kernel.org
-Subject: Re: [PATCH v2] arm64/module: use mod->klp_info section header
- information for livepatch modules
-Message-ID: <20181101160759.GB17659@arm.com>
-References: <20181001140910.086E768BC7@newverein.lst.de>
- <20181001141652.5478C68BE1@newverein.lst.de>
- <20181023175553.gaobskk26koft6s2@linux-8ccs>
- <20181026172500.g65bl2p7cvey3qsx@linux-8ccs>
- <20181029152834.GA16289@arm.com>
- <20181030131910.zuqw523rq4pi7apb@linux-8ccs>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181030131910.zuqw523rq4pi7apb@linux-8ccs>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Thu, 1 Nov 2018 21:16:29 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:57622 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728156AbeKBBQ3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 21:16:29 -0400
+Received: from localhost.localdomain (unknown [IPv6:2a02:8109:92c0:207d:3d24:60ad:a75d:194d])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: robertfoss)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 75B3E2726B9;
+        Thu,  1 Nov 2018 16:12:51 +0000 (GMT)
+From:   Robert Foss <robert.foss@collabora.com>
+To:     robdclark@gmail.com, airlied@linux.ie,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Chris Wilson <chris@chris-wilson.co.uk>
+Cc:     Robert Foss <robert.foss@collabora.com>
+Subject: [PATCH v1] drm/msm: Move fence put to where failure occurs
+Date:   Thu,  1 Nov 2018 17:12:28 +0100
+Message-Id: <20181101161228.19432-1-robert.foss@collabora.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Jessica,
+If dma_fence_wait fails to wait for a supplied in-fence in
+msm_ioctl_gem_submit, make sure we release that in-fence.
 
-On Tue, Oct 30, 2018 at 02:19:10PM +0100, Jessica Yu wrote:
-> +++ Will Deacon [29/10/18 15:28 +0000]:
-> >On Fri, Oct 26, 2018 at 07:25:01PM +0200, Jessica Yu wrote:
-> >>diff --git a/arch/arm64/include/asm/module.h b/arch/arm64/include/asm/module.h
-> >>index fef773c94e9d..ac9b97f9ae5e 100644
-> >>--- a/arch/arm64/include/asm/module.h
-> >>+++ b/arch/arm64/include/asm/module.h
-> >>@@ -25,6 +25,7 @@ struct mod_plt_sec {
-> >>	struct elf64_shdr	*plt;
-> >>	int			plt_num_entries;
-> >>	int			plt_max_entries;
-> >>+	int			plt_shndx;
-> >>};
-> >
-> >Does this mean we can drop the plt pointer from this struct altogether, and
-> >simply offset into the section headers when applying the relocations?
-> 
-> Hmm, if everyone is OK with dropping the plt pointer from struct
-> mod_plt_sec, then I think we can simplify this patch even further.
-> 
-> With the plt shndx saved, we can additionally pass a pointer to
-> sechdrs to module_emit_plt_entry(), and with that just offset into the
-> section headers as you suggest. Since livepatch *already* passes in
-> the correct copy of the section headers (mod->klp_info->sechdrs) to
-> apply_relocate_add(), we wouldn't even need to modify the arm64
-> module_finalize() to change mod->arch.core.plt to point into
-> mod->klp_info->sechdrs anymore and we can drop all the changes to the
-> module loader too.
-> 
-> Something like the following maybe?
+Also remove this dma_fence_put() from the 'out' label.
 
-This looks pretty good, thanks! My only (minor) objection is that the
-renaming of plt_sec -> plt_info throughout makes the patch a lot more
-churny than it needs to be, for questionable gain.
+Signed-off-by: Robert Foss <robert.foss@collabora.com>
+---
+ drivers/gpu/drm/msm/msm_gem_submit.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Anyway, it looks functionally correct and I've tested loading/unloading
-the "hello world" test module with both PLTs enabled and disabled.
+diff --git a/drivers/gpu/drm/msm/msm_gem_submit.c b/drivers/gpu/drm/msm/msm_gem_submit.c
+index a90aedd6883a..3e7704af5b24 100644
+--- a/drivers/gpu/drm/msm/msm_gem_submit.c
++++ b/drivers/gpu/drm/msm/msm_gem_submit.c
+@@ -411,7 +411,6 @@ int msm_ioctl_gem_submit(struct drm_device *dev, void *data,
+ 	struct msm_file_private *ctx = file->driver_priv;
+ 	struct msm_gem_submit *submit;
+ 	struct msm_gpu *gpu = priv->gpu;
+-	struct dma_fence *in_fence = NULL;
+ 	struct sync_file *sync_file = NULL;
+ 	struct msm_gpu_submitqueue *queue;
+ 	struct msm_ringbuffer *ring;
+@@ -444,7 +443,8 @@ int msm_ioctl_gem_submit(struct drm_device *dev, void *data,
+ 	ring = gpu->rb[queue->prio];
+ 
+ 	if (args->flags & MSM_SUBMIT_FENCE_FD_IN) {
+-		in_fence = sync_file_get_fence(args->fence_fd);
++		struct dma_fence *in_fence = sync_file_get_fence(
++			args->fence_fd);
+ 
+ 		if (!in_fence)
+ 			return -EINVAL;
+@@ -455,8 +455,10 @@ int msm_ioctl_gem_submit(struct drm_device *dev, void *data,
+ 		 */
+ 		if (!dma_fence_match_context(in_fence, ring->fctx->context)) {
+ 			ret = dma_fence_wait(in_fence, true);
+-			if (ret)
++			if (ret) {
++				dma_fence_put(in_fence);
+ 				return ret;
++			}
+ 		}
+ 	}
+ 
+@@ -583,8 +585,6 @@ int msm_ioctl_gem_submit(struct drm_device *dev, void *data,
+ 	}
+ 
+ out:
+-	if (in_fence)
+-		dma_fence_put(in_fence);
+ 	submit_cleanup(submit);
+ 	if (ret)
+ 		msm_gem_submit_free(submit);
+-- 
+2.17.1
 
-Acked-by: Will Deacon <will.deacon@arm.com>
-
-Will
