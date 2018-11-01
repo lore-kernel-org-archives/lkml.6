@@ -2,110 +2,210 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61573C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 03:23:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB65FC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 03:23:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16C8620821
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 03:23:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16C8620821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6DC5E205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 03:23:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DC5E205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727634AbeKAMYP (ORCPT
+        id S1727674AbeKAMY3 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 08:24:15 -0400
-Received: from mga04.intel.com ([192.55.52.120]:28693 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726327AbeKAMYO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 08:24:14 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2018 20:23:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,450,1534834800"; 
-   d="scan'208";a="83156716"
-Received: from yisun1-ubuntu.bj.intel.com (HELO localhost) ([10.238.156.104])
-  by fmsmga008.fm.intel.com with ESMTP; 31 Oct 2018 20:23:07 -0700
-Date:   Thu, 1 Nov 2018 11:20:21 +0800
-From:   Yi Sun <yi.y.sun@linux.intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Waiman Long <longman@redhat.com>, Juergen Gross <jgross@suse.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
-        chao.p.peng@intel.com, chao.gao@intel.com,
-        isaku.yamahata@intel.com, michael.h.kelley@microsoft.com,
-        tianyu.lan@microsoft.com, "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v1 2/2] x86/hyperv: make HvNotifyLongSpinWait hypercall
-Message-ID: <20181101032020.GE15378@yi.y.sun>
-References: <2e0d62cb-b706-a5b4-65f7-982a913fb32b@suse.com>
- <ba75b994-c1a6-6e91-6499-b9af90636fcf@redhat.com>
- <20181022171516.GH3117@worktop.programming.kicks-ass.net>
- <20181023025740.GL11769@yi.y.sun>
- <20181023085127.GG3109@worktop.c.hoisthospitality.com>
- <20181023093328.GA15378@yi.y.sun>
- <20181031015417.GC15378@yi.y.sun>
- <20181031141030.GB13219@hirez.programming.kicks-ass.net>
- <fc0bf563-b1ae-4d4b-1341-11c44b759b8a@redhat.com>
- <20181031171538.GC13219@hirez.programming.kicks-ass.net>
+        Thu, 1 Nov 2018 08:24:29 -0400
+Received: from smtp.h3c.com ([60.191.123.56]:21435 "EHLO h3cmg01-ex.h3c.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726327AbeKAMY3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 08:24:29 -0400
+X-Greylist: delayed 607 seconds by postgrey-1.27 at vger.kernel.org; Thu, 01 Nov 2018 08:24:25 EDT
+Received: from BJHUB02-EX.srv.huawei-3com.com (unknown [10.63.20.170]) by h3cmg01-ex.h3c.com with smtp
+         id 7ac6_01e0_b675df94_e4f9_4095_b887_b176608f198e;
+        Thu, 01 Nov 2018 11:12:06 +0800
+Received: from H3CMLB12-EX.srv.huawei-3com.com ([fe80::10fe:abde:731b:fdde])
+ by BJHUB02-EX.srv.huawei-3com.com ([::1]) with mapi id 14.03.0415.000; Thu, 1
+ Nov 2018 11:11:58 +0800
+From:   Changwei Ge <ge.changwei@h3c.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Larry Chen <lchen@suse.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>
+Subject: Re: [Ocfs2-devel] [PATCH V2] ocfs2: fix dead lock caused by
+ ocfs2_defrag_extent
+Thread-Topic: [Ocfs2-devel] [PATCH V2] ocfs2: fix dead lock caused by
+ ocfs2_defrag_extent
+Thread-Index: AQHUcZCliDsYf2/a3U2eb5J9pSi3vQ==
+Date:   Thu, 1 Nov 2018 03:11:57 +0000
+Message-ID: <63ADC13FD55D6546B7DECE290D39E37301277DDF02@H3CMLB12-EX.srv.huawei-3com.com>
+References: <20180902091455.23862-1-lchen@suse.com>
+ <20181031142632.c523108bc137caa8cb1c6282@linux-foundation.org>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.125.20.206]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181031171538.GC13219@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-10-31 18:15:39, Peter Zijlstra wrote:
-> On Wed, Oct 31, 2018 at 11:07:22AM -0400, Waiman Long wrote:
-> > On 10/31/2018 10:10 AM, Peter Zijlstra wrote:
-> > > On Wed, Oct 31, 2018 at 09:54:17AM +0800, Yi Sun wrote:
-> > >> On 18-10-23 17:33:28, Yi Sun wrote:
-> > >>> On 18-10-23 10:51:27, Peter Zijlstra wrote:
-> > >>>> Can you try and explain why vcpu_is_preempted() doesn't work for you?
-> > >>> I thought HvSpinWaitInfo is used to notify hypervisor the spin number
-> > >>> which is different with vcpu_is_preempted. So I did not consider
-> > >>> vcpu_is_preempted.
-> > >>>
-> > >>> But HvSpinWaitInfo is a quite simple function and could be combined
-> > >>> with vcpu_is_preempted together. So I think it is OK to use
-> > >>> vcpu_is_preempted to make codes clean. I will have a try.
-> > >> After checking codes, there is one issue to call vcpu_is_preempted.
-> > >> There are two spin loops in qspinlock_paravirt.h. One loop in
-> > >> 'pv_wait_node' calls vcpu_is_preempted. But another loop in
-> > >> 'pv_wait_head_or_lock' does not call vcpu_is_preempted. It also does
-> > >> not call any other ops of 'pv_lock_ops' in the loop. So I am afraid
-> > >> we have to add one more ops in 'pv_lock_ops' to do this.
-> > > Why? Would not something like the below cure that? Waiman, can you have
-> > > a look at this; I always forget how that paravirt crud works.
-> > 
-> > There are two major reasons why the vcpu_is_preempt() test isn't done at
-> > pv_wait_head_or_lock(). First of all, we may not have a valid prev
-> > pointer after all if it is the first one to enter the queue while the
-> > lock is busy. Secondly, because of lock stealing, the cpu number pointed
-> > by a valid prev pointer may not be the actual cpu that is currently
-> > holding the lock. Another minor reason is that we want to minimize the
-> > lock transfer latency and so don't want to sleep too early while waiting
-> > at the queue head.
+Hi Larry,
+
+I still have a few tiny comments for your patch, please refer to them.
+
+On 2018/11/1 5:28, Andrew Morton wrote:
 > 
-> So Yi, are you actually seeing a problem? If so, can you give details?
+> Folks, could we please review this patch for upstream inclusion?
+> 
+> Thanks.
+> 
+> 
+> From: Larry Chen <lchen@suse.com>
+> Subject: ocfs2: fix deadlock caused by ocfs2_defrag_extent
+> 
+> ocfs2_defrag_extent may fall into deadlock.
+> 
+> ocfs2_ioctl_move_extents
+>    ocfs2_ioctl_move_extents
+>      ocfs2_move_extents
+>        ocfs2_defrag_extent
+>          ocfs2_lock_allocators_move_extents
+> 
+>            ocfs2_reserve_clusters
+>              inode_lock GLOBAL_BITMAP_SYSTEM_INODE
+> 
+> 	  __ocfs2_flush_truncate_log
+>              inode_lock GLOBAL_BITMAP_SYSTEM_INODE
+> 
+> As backtrace shows above, ocfs2_reserve_clusters() will call inode_lock
+> against the global bitmap if local allocator has not sufficient cluters.
+> Once global bitmap could meet the demand, ocfs2_reserve_cluster will
+> return success with global bitmap locked.
+> 
+> After ocfs2_reserve_cluster(), if truncate log is full,
+> __ocfs2_flush_truncate_log() will definitely fall into deadlock because it
+> needs to inode_lock global bitmap, which has already been locked.
+> 
+> To fix this bug, we could remove from ocfs2_lock_allocators_move_extents()
+> the code which intends to lock global allocator, and put the removed code
+> after __ocfs2_flush_truncate_log().
+> 
+> ocfs2_lock_allocators_move_extents() is refered by 2 places, one is here,
+> the other does not need the data allocator context, which means this patch
+> does not affect the caller so far.
+> 
+> [lchen@suse.com: rename ocfs2_lock_allocators_move_extents() to ocfs2_lock_meta_allocator_move_extents(), add some comments]
+>    Link: https://urldefense.proofpoint.com/v2/url?u=http-3A__lkml.kernel.org_r_20180902091455.23862-2D1-2Dlchen-40suse.com&d=DwICAg&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=C7gAd4uDxlAvTdc0vmU6X8CMk6L2iDY8-HD0qT6Fo7Y&m=K8aRgOiMescamJW-IuHq-cW4mWedGQv2JTT-2KPy1RI&s=3fQHFtwgixirPeQ5Px4fRBnd_UcSx3rvSsLKLidwESo&e=
+> Link: https://urldefense.proofpoint.com/v2/url?u=http-3A__lkml.kernel.org_r_20180827080121.31145-2D1-2Dlchen-40suse.com&d=DwICAg&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=C7gAd4uDxlAvTdc0vmU6X8CMk6L2iDY8-HD0qT6Fo7Y&m=K8aRgOiMescamJW-IuHq-cW4mWedGQv2JTT-2KPy1RI&s=PQOJREyeElsg_1IlINdSGefNqA6w_cUrI1ezdVxyi7o&e=
+> Signed-off-by: Larry Chen <lchen@suse.com>
+> Cc: Mark Fasheh <mark@fasheh.com>
+> Cc: Joel Becker <jlbec@evilplan.org>
+> Cc: Junxiao Bi <junxiao.bi@oracle.com>
+> Cc: Joseph Qi <jiangqi903@gmail.com>
+> Cc: Changwei Ge <ge.changwei@h3c.com>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> ---
+> 
+>   fs/ocfs2/move_extents.c |   40 +++++++++++++++++++++++---------------
+>   1 file changed, 25 insertions(+), 15 deletions(-)
+> 
+> --- a/fs/ocfs2/move_extents.c~fix-dead-lock-caused-by-ocfs2_defrag_extent
+> +++ a/fs/ocfs2/move_extents.c
+> @@ -162,7 +162,7 @@ out:
+>    * in some cases, we don't need to reserve clusters, just let data_ac
+>    * be NULL.
+>    */
+> -static int ocfs2_lock_allocators_move_extents(struct inode *inode,
+> +static int ocfs2_lock_meta_allocator_move_extents(struct inode *inode,
+>   					struct ocfs2_extent_tree *et,
+>   					u32 clusters_to_move,
+>   					u32 extents_to_split,
 
-Where does the patch come from? I cannot find it through google.
+After removing 'reserving clusters logic' out of this function, I suggest to also change the function header comments.
+And I think there is no need for arguments _data_ac_ now.
+Otherwise this patch looks sane to me.
 
-Per Waiman's comment, it seems not suitable to call vcpu_is_preempted()
-in pv_wait_head_or_lock(). So, we cannot make HvSpinWaitInfo notification
-through vcpu_is_preempted() for such case. Based on that, I suggest to
-add one more callback function in pv_lock_ops.
+Thanks,
+Changwei
 
-BTW, which performance test do you suggest? I am trying to test it by
-AIM7.
+> @@ -192,13 +192,6 @@ static int ocfs2_lock_allocators_move_ex
+>   		goto out;
+>   	}
+>   
+> -	if (data_ac) {
+> -		ret = ocfs2_reserve_clusters(osb, clusters_to_move, data_ac);
+> -		if (ret) {
+> -			mlog_errno(ret);
+> -			goto out;
+> -		}
+> -	}
+>   
+>   	*credits += ocfs2_calc_extend_credits(osb->sb, et->et_root_el);
+>   
+> @@ -257,10 +250,11 @@ static int ocfs2_defrag_extent(struct oc
+>   		}
+>   	}
+>   
+> -	ret = ocfs2_lock_allocators_move_extents(inode, &context->et, *len, 1,
+> -						 &context->meta_ac,
+> -						 &context->data_ac,
+> -						 extra_blocks, &credits);
+> +	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
+> +						*len, 1,
+> +						&context->meta_ac,
+> +						&context->data_ac,
+> +						extra_blocks, &credits);
+>   	if (ret) {
+>   		mlog_errno(ret);
+>   		goto out;
+> @@ -283,6 +277,21 @@ static int ocfs2_defrag_extent(struct oc
+>   		}
+>   	}
+>   
+> +	/*
+> +	 * Make sure ocfs2_reserve_cluster is called after
+> +	 * __ocfs2_flush_truncate_log, otherwise, dead lock may happen.
+> +	 *
+> +	 * If ocfs2_reserve_cluster is called
+> +	 * before __ocfs2_flush_truncate_log, dead lock on global bitmap
+> +	 * may happen.
+> +	 *
+> +	 */
+> +	ret = ocfs2_reserve_clusters(osb, *len, &context->data_ac);
+> +	if (ret) {
+> +		mlog_errno(ret);
+> +		goto out_unlock_mutex;
+> +	}
+> +
+>   	handle = ocfs2_start_trans(osb, credits);
+>   	if (IS_ERR(handle)) {
+>   		ret = PTR_ERR(handle);
+> @@ -600,9 +609,10 @@ static int ocfs2_move_extent(struct ocfs
+>   		}
+>   	}
+>   
+> -	ret = ocfs2_lock_allocators_move_extents(inode, &context->et, len, 1,
+> -						 &context->meta_ac,
+> -						 NULL, extra_blocks, &credits);
+> +	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
+> +						len, 1,
+> +						&context->meta_ac,
+> +						NULL, extra_blocks, &credits);
+>   	if (ret) {
+>   		mlog_errno(ret);
+>   		goto out;
+> _
+> 
+> 
+> _______________________________________________
+> Ocfs2-devel mailing list
+> Ocfs2-devel@oss.oracle.com
+> https://oss.oracle.com/mailman/listinfo/ocfs2-devel
+> 
