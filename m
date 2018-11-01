@@ -2,279 +2,220 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 999C0C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 18:47:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FB0BC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 18:49:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49D762082E
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 18:47:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JagDbMBz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49D762082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2E2EE2064C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 18:49:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E2EE2064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727710AbeKBDvz (ORCPT
+        id S1727759AbeKBDxW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 23:51:55 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:42401 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725961AbeKBDvy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 23:51:54 -0400
-Received: by mail-qt1-f196.google.com with SMTP id z20-v6so22255046qti.9
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 11:47:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5nYWpLGnNiZiMINgsxABC7LPTW8BjU1QK3MpX/ZZQ8U=;
-        b=JagDbMBzA9Q8ChPMJtJTzA8PDcJTc6XPz4QC5L2pvR9jzgtuGEXYehKI1vbdJBSyLb
-         vGcctn2LasT2VkAUCkBtwyvn8gk24LfsHRMqypdO1b/eE1O4RNEp0nLpVlOrhoMZS6T3
-         9gDE6Bge/QeYF6ggU8F5DkDjq/EHqtHuCjYXaC+kNGPw6xtITwPEXWFT27z7YWMrA2fC
-         1a6hLlhgx7LRvvR2EUaFppHWWIxagx0dwcGtZXLZBJ2TLBVxSl5wFo8P7eBMT3/2DdPX
-         7vrGV4fOhZ/5usFGj+DWUHy1dPAC+nkPNzEO5WdSztfzxV/7/r19nWo5YAPGvvYX4ZG+
-         ANMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5nYWpLGnNiZiMINgsxABC7LPTW8BjU1QK3MpX/ZZQ8U=;
-        b=pwUeW3Q6InyaEur3UEdUi/F24m3Xfh86ZCx0d3tpNAEx3KZvwNhBuDJvE/gsT45+aR
-         nAGVJAn/MUs8wUBXVWK7MvaNQsl5AZUHEuj38BFD3K05AUqf+XloehyU1H35mlvlITZn
-         eMDEC5cEB6aL7I3J+YiIeT4jxxNm/QexxFJou+RPP57IKCJ2udO4nSJeN3dR/zqQpj6P
-         DrPifLuBCAqIQ6jsybdQB5N/PwgA6CltaSHKka4TDI4ZzxUHA+cGRHxfCjuf25be6P5c
-         MaENG6bAWH42rwA9k6LcDy6ed15xEf7R7ATpTC839V35K5lBGecl6VKQLcmd0wluGei6
-         jEMg==
-X-Gm-Message-State: AGRZ1gJAg6ZL1JYUoLYsfD22geobcMMwhlwE4obG5csy8QBTYwgmyfRL
-        Hrb+DQANXTgcfN7cHS0GSWhEMAA/t8hHP4/lqTTz5DKw
-X-Google-Smtp-Source: AJdET5d3urj+ZwWswMfWYHFubsR8VmooAo/EEZF8q1OoxF3DD5kdM+FzT/LE6rxeLv4m3S0ROva3vtoXVOFsaTuka88=
-X-Received: by 2002:ac8:3312:: with SMTP id t18mr7947956qta.225.1541098063266;
- Thu, 01 Nov 2018 11:47:43 -0700 (PDT)
+        Thu, 1 Nov 2018 23:53:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49210 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726322AbeKBDxV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 23:53:21 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BA2E93082AF5;
+        Thu,  1 Nov 2018 18:49:10 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-24.phx2.redhat.com [10.3.112.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1F3DD5E1BC;
+        Thu,  1 Nov 2018 18:48:55 +0000 (UTC)
+Date:   Thu, 1 Nov 2018 14:48:53 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     containers@lists.linux-foundation.org, linux-audit@redhat.com,
+        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        ebiederm@xmission.com, luto@kernel.org, carlos@redhat.com,
+        dhowells@redhat.com, viro@zeniv.linux.org.uk, simo@redhat.com,
+        Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>
+Subject: Re: [PATCH ghak90 (was ghak32) V4 05/10] audit: add support for
+ non-syscall auxiliary records
+Message-ID: <20181101184853.vxel3dfdntzmhcnq@madcap2.tricolour.ca>
+References: <cover.1533065887.git.rgb@redhat.com>
+ <2827530000d6b4972d446b0226adab153ff3b5c5.1533065887.git.rgb@redhat.com>
+ <CAHC9VhSG3Hk2zrNP3w=CfEBXN7_LcywiTpvhGp48661xYhRq2A@mail.gmail.com>
 MIME-Version: 1.0
-References: <d6bd3626-8c7c-ca12-8adf-31fe15726446@linux.intel.com> <dccb0cfc-c0db-d32c-d4ec-03c8674aeaa9@linux.intel.com>
-In-Reply-To: <dccb0cfc-c0db-d32c-d4ec-03c8674aeaa9@linux.intel.com>
-From:   Song Liu <liu.song.a23@gmail.com>
-Date:   Thu, 1 Nov 2018 11:47:32 -0700
-Message-ID: <CAPhsuW41FUczTCPau1pqPq7pcvVF2vvxeAkB5j3EV3G5my9WOQ@mail.gmail.com>
-Subject: Re: [PATCH v14 1/3]: perf util: map data buffer for preserving
- collected data
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org, ak@linux.intel.com,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhSG3Hk2zrNP3w=CfEBXN7_LcywiTpvhGp48661xYhRq2A@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 01 Nov 2018 18:49:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 14, 2018 at 11:44 PM Alexey Budankov
-<alexey.budankov@linux.intel.com> wrote:
->
->
-> The map->data buffer is used to preserve map->base profiling data
-> for writing to disk. AIO map->cblock is used to queue corresponding
-> map->data buffer for asynchronous writing.
->
-> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+On 2018-10-19 19:17, Paul Moore wrote:
+> On Sun, Aug 5, 2018 at 4:33 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > Standalone audit records have the timestamp and serial number generated
+> > on the fly and as such are unique, making them standalone.  This new
+> > function audit_alloc_local() generates a local audit context that will
+> > be used only for a standalone record and its auxiliary record(s).  The
+> > context is discarded immediately after the local associated records are
+> > produced.
+> >
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > Acked-by: Serge Hallyn <serge@hallyn.com>
+> > ---
+> >  include/linux/audit.h |  8 ++++++++
+> >  kernel/audit.h        |  1 +
+> >  kernel/auditsc.c      | 33 ++++++++++++++++++++++++++++-----
+> >  3 files changed, 37 insertions(+), 5 deletions(-)
+> 
+> I'm not in love with the local flag, and the whole local context in
+> general, but that's a larger discussion and not something I want to
+> force on this patchset; we can fix it later.
 
-Acked-by: Song Liu <songliubraving@fb.com>
+I understand your reasoning to combine it so that if one patch gets
+backported then both do, or if one gets reverted both do, but I really
+prefer them seperate for similar reasons if there is more than one user.
 
-Shall we add libaio to tools/build/Makefile.feature? It will be great to see
-whether aio is enabled in "Auto-detecting system features:".
+> I think this patch looks fine, but it seems a bit odd standalone; it's
+> almost always better to include new capabilities/functions in the same
+> patch as the user.  Since the only user is the networking bits, it
+> might make more sense to fold this patch into that one.
 
-Thanks for implementing this!
+It was kept seperate due to tty_audit usage.  See my reasoning for patch
+6, but I'm willing to negotiate if that merits an exception like the
+USER records do.
 
-Song
+> > diff --git a/include/linux/audit.h b/include/linux/audit.h
+> > index 4f514ed..1f340ad 100644
+> > --- a/include/linux/audit.h
+> > +++ b/include/linux/audit.h
+> > @@ -234,7 +234,9 @@ struct audit_task_info {
+> >  extern struct audit_task_info init_struct_audit;
+> >  extern void __init audit_task_init(void);
+> >  extern int  audit_alloc(struct task_struct *task);
+> > +extern struct audit_context *audit_alloc_local(gfp_t gfpflags);
+> >  extern void audit_free(struct task_struct *task);
+> > +extern void audit_free_context(struct audit_context *context);
+> >  extern void __audit_syscall_entry(int major, unsigned long a0, unsigned long a1,
+> >                                   unsigned long a2, unsigned long a3);
+> >  extern void __audit_syscall_exit(int ret_success, long ret_value);
+> > @@ -495,6 +497,12 @@ static inline int audit_alloc(struct task_struct *task)
+> >  {
+> >         return 0;
+> >  }
+> > +static inline struct audit_context *audit_alloc_local(gfp_t gfpflags)
+> > +{
+> > +       return NULL;
+> > +}
+> > +static inline void audit_free_context(struct audit_context *context)
+> > +{ }
+> >  static inline void audit_free(struct task_struct *task)
+> >  { }
+> >  static inline void audit_syscall_entry(int major, unsigned long a0,
+> > diff --git a/kernel/audit.h b/kernel/audit.h
+> > index 1cf1c35..a6d00a5 100644
+> > --- a/kernel/audit.h
+> > +++ b/kernel/audit.h
+> > @@ -110,6 +110,7 @@ struct audit_proctitle {
+> >  struct audit_context {
+> >         int                 dummy;      /* must be the first element */
+> >         int                 in_syscall; /* 1 if task is in a syscall */
+> > +       bool                local;      /* local context needed */
+> >         enum audit_state    state, current_state;
+> >         unsigned int        serial;     /* serial number for record */
+> >         int                 major;      /* syscall number */
+> > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > index cdb24cf..7627f21 100644
+> > --- a/kernel/auditsc.c
+> > +++ b/kernel/auditsc.c
+> > @@ -913,11 +913,13 @@ static inline void audit_free_aux(struct audit_context *context)
+> >         }
+> >  }
+> >
+> > -static inline struct audit_context *audit_alloc_context(enum audit_state state)
+> > +static inline struct audit_context *audit_alloc_context(enum audit_state state,
+> > +                                                       gfp_t gfpflags)
+> >  {
+> >         struct audit_context *context;
+> >
+> > -       context = kzalloc(sizeof(*context), GFP_KERNEL);
+> > +       /* We can be called in atomic context via audit_tg() */
+> > +       context = kzalloc(sizeof(*context), gfpflags);
+> >         if (!context)
+> >                 return NULL;
+> >         context->state = state;
+> > @@ -970,7 +972,8 @@ int audit_alloc(struct task_struct *tsk)
+> >                 return 0;
+> >         }
+> >
+> > -       if (!(context = audit_alloc_context(state))) {
+> > +       context = audit_alloc_context(state, GFP_KERNEL);
+> > +       if (!(context)) {
+> >                 tsk->audit = NULL;
+> >                 kmem_cache_free(audit_task_cache, info);
+> >                 kfree(key);
+> > @@ -991,8 +994,27 @@ struct audit_task_info init_struct_audit = {
+> >         .ctx = NULL,
+> >  };
+> >
+> > -static inline void audit_free_context(struct audit_context *context)
+> > +struct audit_context *audit_alloc_local(gfp_t gfpflags)
+> >  {
+> > +       struct audit_context *context;
+> > +
+> > +       if (!audit_ever_enabled)
+> > +               return NULL; /* Return if not auditing. */
+> > +
+> > +       context = audit_alloc_context(AUDIT_RECORD_CONTEXT, gfpflags);
+> > +       if (!context)
+> > +               return NULL;
+> > +       context->serial = audit_serial();
+> > +       context->ctime = current_kernel_time64();
+> > +       context->local = true;
+> > +       return context;
+> > +}
+> > +EXPORT_SYMBOL(audit_alloc_local);
+> > +
+> > +void audit_free_context(struct audit_context *context)
+> > +{
+> > +       if (!context)
+> > +               return;
+> >         audit_free_names(context);
+> >         unroll_tree_refs(context, NULL, 0);
+> >         free_tree_refs(context);
+> > @@ -1002,6 +1024,7 @@ static inline void audit_free_context(struct audit_context *context)
+> >         audit_proctitle_free(context);
+> >         kfree(context);
+> >  }
+> > +EXPORT_SYMBOL(audit_free_context);
+> >
+> >  static int audit_log_pid_context(struct audit_context *context, pid_t pid,
+> >                                  kuid_t auid, kuid_t uid, unsigned int sessionid,
+> > @@ -2024,7 +2047,7 @@ void __audit_inode_child(struct inode *parent,
+> >  int auditsc_get_stamp(struct audit_context *ctx,
+> >                        struct timespec64 *t, unsigned int *serial)
+> >  {
+> > -       if (!ctx->in_syscall)
+> > +       if (!ctx->in_syscall && !ctx->local)
+> >                 return 0;
+> >         if (!ctx->serial)
+> >                 ctx->serial = audit_serial();
+> 
+> --
+> paul moore
+> www.paul-moore.com
 
-> ---
-> Changes in v13:
->  - grouped aio functions under single #ifdef HAVE_AIO_SUPPORT
-> Changes in v12:
->  - applied stub functions design for the whole patch kit
->  - grouped AIO related data into a struct under struct perf_mmap
-> Changes in v10:
->  - moved specific code to perf_mmap__aio_mmap(), perf_mmap__aio_munmap()
->  - adjusted error reporting by using %m
-> Changes in v9:
->   - implemented NO_AIO and HAVE_AIO_SUPPORT defines to cover cases of
->     libc implementations without Posix AIO API support
-> Changes in v7:
->   - implemented handling record.aio setting from perfconfig file
->  Changes in v6:
->   - adjusted setting of priorities for cblocks;
->  Changes in v5:
->   - reshaped layout of data structures;
->   - implemented --aio option;
->  Changes in v4:
->   - converted mmap()/munmap() to malloc()/free() for mmap->data buffer management
->  Changes in v2:
->   - converted zalloc() to calloc() for allocation of mmap_aio array,
->   - cleared typo and adjusted fallback branch code;
-> ---
->  tools/perf/Makefile.config |  5 +++++
->  tools/perf/Makefile.perf   |  7 ++++++-
->  tools/perf/util/evlist.c   |  2 +-
->  tools/perf/util/mmap.c     | 49 +++++++++++++++++++++++++++++++++++++++++++++-
->  tools/perf/util/mmap.h     | 11 ++++++++++-
->  5 files changed, 70 insertions(+), 4 deletions(-)
->
-> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-> index f6d1a03c7523..2e90f4ce9214 100644
-> --- a/tools/perf/Makefile.config
-> +++ b/tools/perf/Makefile.config
-> @@ -355,6 +355,11 @@ endif # NO_LIBELF
->
->  ifeq ($(feature-glibc), 1)
->    CFLAGS += -DHAVE_GLIBC_SUPPORT
-> +  ifndef NO_AIO
-> +    ifndef BIONIC
-> +        CFLAGS += -DHAVE_AIO_SUPPORT
-> +    endif
-> +  endif
->  endif
->
->  ifdef NO_DWARF
-> diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-> index 92514fb3689f..7becc6a72cf2 100644
-> --- a/tools/perf/Makefile.perf
-> +++ b/tools/perf/Makefile.perf
-> @@ -97,8 +97,13 @@ include ../scripts/utilities.mak
->  # Define LIBCLANGLLVM if you DO want builtin clang and llvm support.
->  # When selected, pass LLVM_CONFIG=/path/to/llvm-config to `make' if
->  # llvm-config is not in $PATH.
-> -
-> +#
->  # Define NO_CORESIGHT if you do not want support for CoreSight trace decoding.
-> +#
-> +# Define NO_AIO if you do not want support of Posix AIO based trace
-> +# streaming for record mode. Currently Posix AIO trace streaming is
-> +# supported only when linking with glibc.
-> +#
->
->  # As per kernel Makefile, avoid funny character set dependencies
->  unexport LC_ALL
-> diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-> index be440df29615..1a83bf2c069c 100644
-> --- a/tools/perf/util/evlist.c
-> +++ b/tools/perf/util/evlist.c
-> @@ -1028,7 +1028,7 @@ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
->          * Its value is decided by evsel's write_backward.
->          * So &mp should not be passed through const pointer.
->          */
-> -       struct mmap_params mp;
-> +       struct mmap_params mp = { .nr_cblocks = 0 };
->
->         if (!evlist->mmap)
->                 evlist->mmap = perf_evlist__alloc_mmap(evlist, false);
-> diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-> index cdb95b3a1213..47cdc3ad6546 100644
-> --- a/tools/perf/util/mmap.c
-> +++ b/tools/perf/util/mmap.c
-> @@ -153,8 +153,55 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
->  {
->  }
->
-> +#ifdef HAVE_AIO_SUPPORT
-> +static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
-> +{
-> +       int delta_max;
-> +
-> +       if (mp->nr_cblocks) {
-> +               map->aio.data = malloc(perf_mmap__mmap_len(map));
-> +               if (!map->aio.data) {
-> +                       pr_debug2("failed to allocate data buffer, error %m\n");
-> +                       return -1;
-> +               }
-> +               /*
-> +                * Use cblock.aio_fildes value different from -1
-> +                * to denote started aio write operation on the
-> +                * cblock so it requires explicit record__aio_sync()
-> +                * call prior the cblock may be reused again.
-> +                */
-> +               map->aio.cblock.aio_fildes = -1;
-> +               /*
-> +                * Allocate cblock with max priority delta to
-> +                * have faster aio write system calls.
-> +                */
-> +               delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
-> +               map->aio.cblock.aio_reqprio = delta_max;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static void perf_mmap__aio_munmap(struct perf_mmap *map)
-> +{
-> +       if (map->aio.data)
-> +               zfree(&map->aio.data);
-> +}
-> +#else
-> +static int perf_mmap__aio_mmap(struct perf_mmap *map __maybe_unused,
-> +                              struct mmap_params *mp __maybe_unused)
-> +{
-> +       return 0;
-> +}
-> +
-> +static void perf_mmap__aio_munmap(struct perf_mmap *map __maybe_unused)
-> +{
-> +}
-> +#endif
-> +
->  void perf_mmap__munmap(struct perf_mmap *map)
->  {
-> +       perf_mmap__aio_munmap(map);
->         if (map->base != NULL) {
->                 munmap(map->base, perf_mmap__mmap_len(map));
->                 map->base = NULL;
-> @@ -197,7 +244,7 @@ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd, int c
->                                 &mp->auxtrace_mp, map->base, fd))
->                 return -1;
->
-> -       return 0;
-> +       return perf_mmap__aio_mmap(map, mp);
->  }
->
->  static int overwrite_rb_find_range(void *buf, int mask, u64 *start, u64 *end)
-> diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-> index e603314dc792..a46dbdcdcc8a 100644
-> --- a/tools/perf/util/mmap.h
-> +++ b/tools/perf/util/mmap.h
-> @@ -6,6 +6,9 @@
->  #include <linux/types.h>
->  #include <asm/barrier.h>
->  #include <stdbool.h>
-> +#ifdef HAVE_AIO_SUPPORT
-> +#include <aio.h>
-> +#endif
->  #include "auxtrace.h"
->  #include "event.h"
->
-> @@ -26,6 +29,12 @@ struct perf_mmap {
->         bool             overwrite;
->         struct auxtrace_mmap auxtrace_mmap;
->         char             event_copy[PERF_SAMPLE_MAX_SIZE] __aligned(8);
-> +#ifdef HAVE_AIO_SUPPORT
-> +       struct {
-> +               void             *data;
-> +               struct aiocb     cblock;
-> +       } aio;
-> +#endif
->  };
->
->  /*
-> @@ -57,7 +66,7 @@ enum bkw_mmap_state {
->  };
->
->  struct mmap_params {
-> -       int                         prot, mask;
-> +       int                         prot, mask, nr_cblocks;
->         struct auxtrace_mmap_params auxtrace_mp;
->  };
->
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
