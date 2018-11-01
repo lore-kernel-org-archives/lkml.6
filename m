@@ -5,69 +5,69 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2BCDC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF3CEECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:55:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A27820664
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:53:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92A3C20664
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:55:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lfrzm4PB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A27820664
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HxE7w3ZW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92A3C20664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbeKAJxt (ORCPT
+        id S1726549AbeKAJzw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 05:53:49 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33134 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbeKAJxt (ORCPT
+        Thu, 1 Nov 2018 05:55:52 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53725 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725823AbeKAJzw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 05:53:49 -0400
-Received: by mail-wr1-f66.google.com with SMTP id u1-v6so18460873wrn.0;
-        Wed, 31 Oct 2018 17:53:10 -0700 (PDT)
+        Thu, 1 Nov 2018 05:55:52 -0400
+Received: by mail-wm1-f68.google.com with SMTP id v24-v6so7567wmh.3;
+        Wed, 31 Oct 2018 17:55:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=BxnkFIw1Q+i5FsURVac8qkSHIwEh/FivfEkua9BcaYQ=;
-        b=lfrzm4PBamDlflpvUeEIKTKa2N0P0q2UXYVeQINe6l2Rwba4t5wCvbJvR2ivYVN4GM
-         3IfB6559wZUO6jiWBFudA/n+VPu0KwZmLDcZu9Lwcf5RMMqHjHr1zFcNBTg+1Sx5shCj
-         VoXddsAQHvCkVR1oP+U/B7Pxc3g8QoR9290y9Ru1OU1a0/UvDbbjlyDwP3dguXY5hFsI
-         nFOq3JwNuOZK3pKy3GxJMCFllP/IqJO69QI59h1gTzmRjJ7/9c3BwwK7vGfFNmTaJ7r0
-         k619lZaafiBg1gShppEPOHqo0sjCj6/K5Yq9k+fYb+6isMbWTapMbvih+LFftzWiFS+s
-         spGQ==
+        bh=HCCaHXvijIiAzo5CiyBcFqYv52WTzp8fRwRJ9sFKKL8=;
+        b=HxE7w3ZWR0soQMvtPZztLmguJxyhhttqpcv7oOqmAyqNhTTArD6UQ3h6/pZWPjIW3k
+         VfBMT7FV5VCt1boXW9zdJdXxUdyrEBxn+HeqYvMWSdqaXGsaxd6toOqDyq8NyCyRQWpn
+         Joat5XPSq2O1iJlOSXKEGfR90ZI1r0yXO3XoCjWGPwA283Q71F6z+PWX2LmmJqB2yVwC
+         b9JU/wbsOMa+5wl17KcDlkaQN/fiYC34hr05WOWCmSrddDAvCtanqlpmg31B4Wj6sZ/E
+         R2mXAOq//ndKHUHyGLNmGdOWME4v583BB7yWmW8cquQkzeoZe/K1ODUW6RqFQVrxGEnD
+         4kFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=BxnkFIw1Q+i5FsURVac8qkSHIwEh/FivfEkua9BcaYQ=;
-        b=Rsgcc5bTr1tnCQ5oShBx48+8afz0eWIYWDcb6b5Na22JlvtPiCHbskwCdFLfSyN60s
-         HTmgK2gXpUtCofFHd4NpDKhvwDwvSat/vn2YM0ZgVdf4lDoLYV3aPqQ2FgJFAPT++WMy
-         hiMVI1zzfUBaToTfWsVNB573I+jijDBShPYBWVXYwEVoaKHNpjd/9n0bl6aCdax+fQ28
-         YVdbyveCmrxKw4nmaVTNPue7AanQz8VvPxqyyq1peUhiDgbi3L0NWYAcEEf0cCILkmVz
-         mQG480uI8h/DIaQjLsXFNeRPgnAX8Yt8PvDE5D/UUF6x9LpnYnzecsUCnwTR0UtVZ3kD
-         KSgQ==
-X-Gm-Message-State: AGRZ1gJ1/vhe6lwvFiajdqDs1HIsa2N2+Qm22HDXoiWef8oSDFl70Vxo
-        O144o1qP19iL7yWTkt744yw=
-X-Google-Smtp-Source: AJdET5f7c0m5l4YBCzeg/lqf4vx8lw54pMqdLoidw0SBHIvyrRVb6GOTl5pbzpZ0581+02LY/FZNjw==
-X-Received: by 2002:adf:b3c1:: with SMTP id x1-v6mr781270wrd.179.1541033589349;
-        Wed, 31 Oct 2018 17:53:09 -0700 (PDT)
+        bh=HCCaHXvijIiAzo5CiyBcFqYv52WTzp8fRwRJ9sFKKL8=;
+        b=RRgAkyHy4THVRAL694MwhVuIrNaRuN+dg2yy7M+h51RaG2t/ZqowqFEVejjeuFLqeo
+         CTbo9tmJX5feWPk2kSRpMD0IzNemCOv8RA/ErR3Ad9ItmCmwpiAIM/jc2g6MzMgGgXhk
+         KLjv00Md/thw7UGHc8ezwBug5DU/20QtHcC2NMf4vF3r3ss1z7Vgbcs+Bs/9ROEybgRn
+         KaaXUdTGPPMGEDuqymGurnwiejDFIWI9v7nHTWz6mwiUMxnkaisOmxvng77KtZN5AQNb
+         9kO2nh9/wdHANII5RQRArLHAIMHpET/f4HIwPg7sjy+A/5hVzLO83b+yKuy+W4KmDYg7
+         Niog==
+X-Gm-Message-State: AGRZ1gL+WxAaorrdOUYVW/0CeYKR2KKuRI05mWFmKYLJmkr34OlxTT0p
+        avW0uO+EOLnPUAR33EQ/afc=
+X-Google-Smtp-Source: AJdET5cwEuI/1MnoFqinQOe2yvlt3YupcRa9GDze3bOGiG9QuAiE91qVVQ92d+xxRJx5WJl1SOSO4g==
+X-Received: by 2002:a1c:cf02:: with SMTP id f2-v6mr4338280wmg.34.1541033711844;
+        Wed, 31 Oct 2018 17:55:11 -0700 (PDT)
 Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id o17-v6sm41180879wro.2.2018.10.31.17.53.08
+        by smtp.gmail.com with ESMTPSA id d11sm3232986wrx.78.2018.10.31.17.55.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 17:53:08 -0700 (PDT)
+        Wed, 31 Oct 2018 17:55:11 -0700 (PDT)
 From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Vladimir Zapolskiy <vz@mleia.com>, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Nick Desaulniers <ndesaulniers@google.com>,
         Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] pinctrl: lpc18xx: Use define directive for PIN_CONFIG_GPIO_PIN_INT
-Date:   Wed, 31 Oct 2018 17:52:57 -0700
-Message-Id: <20181101005257.8778-1-natechancellor@gmail.com>
+Subject: [PATCH] rtc: omap: Use define directive for PIN_CONFIG_ACTIVE_HIGH
+Date:   Wed, 31 Oct 2018 17:55:02 -0700
+Message-Id: <20181101005502.9171-1-natechancellor@gmail.com>
 X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -78,16 +78,16 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Clang warns when one enumerated type is implicitly converted to another:
 
-drivers/pinctrl/pinctrl-lpc18xx.c:643:29: warning: implicit conversion
-from enumeration type 'enum lpc18xx_pin_config_param' to different
-enumeration type 'enum pin_config_param' [-Wenum-conversion]
-        {"nxp,gpio-pin-interrupt", PIN_CONFIG_GPIO_PIN_INT, 0},
-        ~                          ^~~~~~~~~~~~~~~~~~~~~~~
-drivers/pinctrl/pinctrl-lpc18xx.c:648:12: warning: implicit conversion
-from enumeration type 'enum lpc18xx_pin_config_param' to different
-enumeration type 'enum pin_config_param' [-Wenum-conversion]
-        PCONFDUMP(PIN_CONFIG_GPIO_PIN_INT, "gpio pin int", NULL, true),
-        ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/rtc/rtc-omap.c:574:21: warning: implicit conversion from
+enumeration type 'enum rtc_pin_config_param' to different enumeration
+type 'enum pin_config_param' [-Wenum-conversion]
+        {"ti,active-high", PIN_CONFIG_ACTIVE_HIGH, 0},
+        ~                  ^~~~~~~~~~~~~~~~~~~~~~
+drivers/rtc/rtc-omap.c:579:12: warning: implicit conversion from
+enumeration type 'enum rtc_pin_config_param' to different enumeration
+type 'enum pin_config_param' [-Wenum-conversion]
+        PCONFDUMP(PIN_CONFIG_ACTIVE_HIGH, "input active high", NULL, false),
+        ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ./include/linux/pinctrl/pinconf-generic.h:163:11: note: expanded from
 macro 'PCONFDUMP'
         .param = a, .display = b, .format = c, .has_arg = d     \
@@ -100,31 +100,27 @@ isn't an issue. Most drivers that take advantage of this define the
 PIN_CONFIG variables as constants, rather than enumerated values. Do the
 same thing here so that Clang no longer warns.
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/140
+Link: https://github.com/ClangBuiltLinux/linux/issues/144
 Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- drivers/pinctrl/pinctrl-lpc18xx.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/rtc/rtc-omap.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-lpc18xx.c b/drivers/pinctrl/pinctrl-lpc18xx.c
-index a14bc5e5fc24..4bee606088e1 100644
---- a/drivers/pinctrl/pinctrl-lpc18xx.c
-+++ b/drivers/pinctrl/pinctrl-lpc18xx.c
-@@ -631,13 +631,10 @@ static const struct pinctrl_pin_desc lpc18xx_pins[] = {
+diff --git a/drivers/rtc/rtc-omap.c b/drivers/rtc/rtc-omap.c
+index 320b4a520eb3..bbff0e2deb84 100644
+--- a/drivers/rtc/rtc-omap.c
++++ b/drivers/rtc/rtc-omap.c
+@@ -566,9 +566,7 @@ static const struct pinctrl_ops rtc_pinctrl_ops = {
+ 	.dt_free_map = pinconf_generic_dt_free_map,
  };
  
- /**
-- * enum lpc18xx_pin_config_param - possible pin configuration parameters
-  * @PIN_CONFIG_GPIO_PIN_INT: route gpio to the gpio pin interrupt
-  * 	controller.
-  */
--enum lpc18xx_pin_config_param {
--	PIN_CONFIG_GPIO_PIN_INT = PIN_CONFIG_END + 1,
+-enum rtc_pin_config_param {
+-	PIN_CONFIG_ACTIVE_HIGH = PIN_CONFIG_END + 1,
 -};
-+#define PIN_CONFIG_GPIO_PIN_INT		(PIN_CONFIG_END + 1)
++#define PIN_CONFIG_ACTIVE_HIGH		(PIN_CONFIG_END + 1)
  
- static const struct pinconf_generic_params lpc18xx_params[] = {
- 	{"nxp,gpio-pin-interrupt", PIN_CONFIG_GPIO_PIN_INT, 0},
+ static const struct pinconf_generic_params rtc_params[] = {
+ 	{"ti,active-high", PIN_CONFIG_ACTIVE_HIGH, 0},
 -- 
 2.19.1
 
