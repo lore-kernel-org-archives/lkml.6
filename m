@@ -2,125 +2,275 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F137ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:28:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E05C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:30:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6E0C205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:28:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0866C205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 17:30:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gWLRh4r6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6E0C205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kyE40WiI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0866C205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727617AbeKBCcE (ORCPT
+        id S1727699AbeKBCeH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 22:32:04 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:55028 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbeKBCcE (ORCPT
+        Thu, 1 Nov 2018 22:34:07 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37558 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727672AbeKBCeG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 22:32:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=cqmmiMgCoNcYZQd3PjTzf7yi7hw7o8SwAHEWFTCrXl8=; b=gWLRh4r6aXQzNSHXyEu6rBCZ0
-        CXntVUXtJM7/5EOPwODwlXeSL7EmyL0qVWbo1al8RQrIRBjiboIjqi1FRwPHUki+FEub2DgMCN16q
-        qQJaNWTsghoRMRDX0mBRay5LsKTKLlz6KH0pNTYOt3kVNhGjD4gcDjSzhQlnVMO7RqvtddOHMAcgX
-        F5wImHGmImAKF8mI96vG+8qR0gVOdYlCWxwzkuxlkePVLDG9x+donUW01Scn0HYp5Vwwobmi3G5YW
-        40rP5Rj7NmuIJaVbrW1E0pLR+BS3THdg2CScMj7zCN/sGDRUUBuZ9BCNVRVhHd43UyIqAwZg30xnZ
-        NFI5GOftA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gIGkx-0005xd-BU; Thu, 01 Nov 2018 17:27:43 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 6E0512029F9FF; Thu,  1 Nov 2018 18:27:39 +0100 (CET)
-Date:   Thu, 1 Nov 2018 18:27:39 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Eric Dumazet <eric.dumazet@gmail.com>
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ralf@linux-mips.org" <ralf@linux-mips.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
-        "paul.burton@mips.com" <paul.burton@mips.com>,
-        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        "jhogan@kernel.org" <jhogan@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        aryabinin@virtuozzo.com, dvyukov@google.com
-Subject: Re: [RFC PATCH] lib: Introduce generic __cmpxchg_u64() and use it
- where needed
-Message-ID: <20181101172739.GA3196@hirez.programming.kicks-ass.net>
-References: <20181031213240.zhh7dfcm47ucuyfl@pburton-laptop>
- <20181031220253.GA15505@roeck-us.net>
- <20181031233235.qbedw3pinxcuk7me@pburton-laptop>
- <4e2438a23d2edf03368950a72ec058d1d299c32e.camel@hammerspace.com>
- <20181101131846.biyilr2msonljmij@lakrids.cambridge.arm.com>
- <20181101145926.GE3178@hirez.programming.kicks-ass.net>
- <f38e272f7a96e983549e4281aa9fd02833a4277a.camel@hammerspace.com>
- <20181101163212.GF3159@hirez.programming.kicks-ass.net>
- <b0160f4b-b996-b0ee-405a-3d5f1866272e@gmail.com>
- <20181101171432.GH3178@hirez.programming.kicks-ass.net>
+        Thu, 1 Nov 2018 22:34:06 -0400
+Received: by mail-lj1-f194.google.com with SMTP id c4-v6so18770182lja.4
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 10:30:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Tl6YL8uUkgOveXxNbW7OikbelExAGwuFsRJ2H4Vl/3U=;
+        b=kyE40WiIiIQd/LsHHxPzHBFrZa/aFRXF6pLaOyYMRNiDjQhSM6Xn69/W3LTA6Tofsq
+         po2mjS0RWg7M5wWZ+qVnkk6H1N1CqmJRcXkC9N+O9vRl6LLsqMyJoXNgAKEQB/+5e6FK
+         jA1CUnkyl7WzeG34wV/ImbwyDbvwSlM/e8zOg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Tl6YL8uUkgOveXxNbW7OikbelExAGwuFsRJ2H4Vl/3U=;
+        b=h6CkrP1m6/GCtVqU8HSG8vzIKFde9dJTTJFziebkulXqC2EEWjwFYLvws4iHvvFiNF
+         aJSj0W87YTiuHy3KXRoaBVyFP4pz8FrHNoBfXnhY54dcLa+oo4Qg/OobBiXLeXXmqrLd
+         B8UBy0mL2UhiMo9878f4oM6RC+D8Om91T3k3YrT5KpdiKW9JdRk6w0UA5Ce528g4ZOvF
+         f5oinEEZ2XOHbWW54YISTnBUPRkAXZc7dLcXRna2d7UoNSLVHl9z/V6bYOkP5UV3M2px
+         SGyo1Esq4OpbDNnTAYJ+hsoJFyUFgIWFu0nA1Pkkw5KfkMeRJ7CSyPoneE+qmao+Ceh9
+         Qjdw==
+X-Gm-Message-State: AGRZ1gLaKNQguv3f+EKLpYQQH1qRUfiEmPoKfXMbAyc9zkbNuE/L2i8G
+        JeJrQLIPDlSuXx1KSlRs3aldFypRRB6QQy1oErTKRw==
+X-Google-Smtp-Source: AJdET5eE84ieLXNUA299vGFntqArtKG8d8DAiTnPUSWzQscuqcOnz8K6KGecnCexYdcGl08Wgc9wu4SCSrSSBkzz3Zs=
+X-Received: by 2002:a2e:5109:: with SMTP id f9-v6mr4963809ljb.52.1541093410165;
+ Thu, 01 Nov 2018 10:30:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181101171432.GH3178@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a2e:95d7:0:0:0:0:0 with HTTP; Thu, 1 Nov 2018 10:30:09 -0700 (PDT)
+In-Reply-To: <20181101135005.cqufebdryffm6ray@qschulz>
+References: <e7c061535f2dcca54d6498405fdd5ed7098b19f9.1540189330.git.baolin.wang@linaro.org>
+ <f1529c567a340e4d31354a4b117954eeebf89942.1540189330.git.baolin.wang@linaro.org>
+ <CAMz4kuJm5eO1QwW7L+QyD_5VcTWqtq4gz9m_QDpQ-zn4zzukvQ@mail.gmail.com> <20181101135005.cqufebdryffm6ray@qschulz>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Fri, 2 Nov 2018 01:30:09 +0800
+Message-ID: <CAMz4kuJg5QKg2kGhU8kHgmM-Yrhe_kw1=Ph4-9_x3YX8BWY1xw@mail.gmail.com>
+Subject: Re: [PATCH v6 4/6] power: supply: core: Add some helpers to use the
+ battery OCV capacity table
+To:     Quentin Schulz <quentin.schulz@bootlin.com>
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, yuanjiang.yu@unisoc.com,
+        Mark Brown <broonie@kernel.org>,
+        Craig Tatlor <ctatlor97@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Chen-Yu Tsai <wens@csie.org>, maxime.ripard@bootlin.com,
+        Hans de Goede <hdegoede@redhat.com>, icenowy@aosc.io
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 01, 2018 at 06:14:32PM +0100, Peter Zijlstra wrote:
-> > This reminds me of this sooooo silly patch :/
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=adb03115f4590baa280ddc440a8eff08a6be0cb7
+Hi Quentin,
 
-You'd probably want to write it like so; +- some ordering stuff, that
-code didn't look like it really needs the memory barriers implied by
-these, but I didn't look too hard.
+On 1 November 2018 at 21:50, Quentin Schulz <quentin.schulz@bootlin.com> wrote:
+> Hi Baolin,
+>
+> On Thu, Nov 01, 2018 at 03:22:18PM +0800, Baolin Wang wrote:
+>> Hi Quentin,
+>>
+>> On 29 October 2018 at 22:48, Quentin Schulz <quentin.schulz@bootlin.com> wrote:
+> [...]
+>> >
+>> >> +             return len;
+>> >> +     } else if (len > POWER_SUPPLY_OCV_TEMP_MAX) {
+>> >> +             dev_err(&psy->dev, "Too many temperature values\n");
+>> >> +             return -EINVAL;
+>> >> +     } else if (len > 0) {
+>> >> +             of_property_read_u32_array(battery_np, "ocv-capacity-celsius",
+>> >> +                                        info->ocv_temp, len);
+>> >> +     }
+>> >> +
+>> >> +     for (index = 0; index < len; index++) {
+>> >
+>> > This won't work as intended as we can reach this part of the code with
+>> > len = -EINVAL;
+>>
+>> No, the condition (index < len) is false if len = -EINVAL, maybe one
+>> reason keep index as 'int' type.
+>>
+>
+> Ugh. Next time I'll make sure my brain is wired before reviewing a
+> patch, sorry :)
 
-diff --git a/net/ipv4/route.c b/net/ipv4/route.c
-index c0a9d26c06ce..11deb1d7e96b 100644
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -485,16 +485,10 @@ u32 ip_idents_reserve(u32 hash, int segs)
- 	u32 now = (u32)jiffies;
- 	u32 new, delta = 0;
- 
--	if (old != now && cmpxchg(p_tstamp, old, now) == old)
-+	if (old != now && try_cmpxchg(p_tstamp, &old, now))
- 		delta = prandom_u32_max(now - old);
- 
--	/* Do not use atomic_add_return() as it makes UBSAN unhappy */
--	do {
--		old = (u32)atomic_read(p_id);
--		new = old + delta + segs;
--	} while (atomic_cmpxchg(p_id, old, new) != old);
--
--	return new - segs;
-+	return atomic_fetch_add(segs + delta, p_id) + delta;
- }
- EXPORT_SYMBOL(ip_idents_reserve);
- 
+No worries, just make things clear :)
+
+>
+> [...]
+>> >> +             if (!info->ocv_table[index]) {
+>> >> +                     power_supply_put_battery_info(psy, info);
+>> >> +                     return -ENOMEM;
+>> >> +             }
+>> >> +
+>> >> +             for (i = 0; i < tab_len; i++) {
+>> >> +                     table[i].ocv = be32_to_cpu(*list++);
+>> >> +                     table[i].capacity = be32_to_cpu(*list++);
+>> >
+>> > Please check these are valid values.
+>>
+>> Um, It is hard to validate the values for OCV and capacity, because
+>> now we do not know each battery's parameters. Any good suggestion?
+>>
+>
+> You know the capacity is between 0 and 100 (since it's an unsigned
+> value, checking against 100 is enough), that's a good start.
+
+Yeah, we can validate the percent values.
+
+>
+> For the OCV, I'd say it's basically between the minimum and maximum
+> voltage a battery can hold. I don't know enough about batteries to
+> give the correct bounds unfortunately :(
+
+But in this function, we may can not know the minimum and maximum
+voltage of a battery. Some drivers will set the minimum and maximum
+voltage in their drivers. So I would like to move the OCV values
+validation to drivers.
+
+>
+> [...]
+>> > What is the use case for letting a user call this function? I can
+>> > understand you want to delete the arrays if they're invalid in the
+>> > get_function, which could be done thanks to a goto statement or with
+>> > this function if you really want (if it does not mess with refs) but I
+>> > don't see why you want to export this function.
+>>
+>> Cause some drivers will copy the OCV tables into their own structures,
+>> one helper function to help to free memory of battery information. In
+>> future, this can be expanded to clean up more resources of battery
+>> information.
+>>
+>
+> Couldn't they only use a pointer to the appropriate table? Or do you
+> plan on the drivers directly modifying the table but wanting to keep a
+> clean copy on the core side?
+>
+> I find it weird to free the tables. I'd suppose that a driver wants to
+> keep all tables available to be able to chose the appropriate one
+> depending on the current temperature of the battery (which is what
+> power_supply_batinfo_ocv2cap is for if I understood correctly) and not
+> only at definite time (probe function for the driver you attached to the
+> patch series IIRC). If you need to keep all tables, why would you want
+> to copy them to the driver and not keep them in the core and use a
+> pointer to the table in current use?
+>
+> I'm sure I'm missing something, let me know what it is. Thanks.
+
+Some drivers won't use all of the battery information in struct
+power_supply_battery_info, so they can copy the required fields into
+their drivers' data structure instead of holding all fields in struct
+power_supply_battery_info, which can save some memory (especially we
+introduced temperature tables for struct power_supply_battery_info).
+So for this case, we only use the OCV table in struct
+power_supply_battery_info, I did not use one pointer to the struct
+power_supply_battery_info, just copy the required OCV tables into my
+data structure and ignore other fields. So I should free the OCV
+tables of battery information. Hope I make things clear here.
+
+[1] https://elixir.bootlin.com/linux/latest/source/drivers/power/supply/axp20x_battery.c#L604
+[2] https://elixir.bootlin.com/linux/latest/source/drivers/power/supply/bq24190_charger.c#L1673
+
+>
+> [...]
+>> > I would like to give my specific use case of the OCV on X-Powers PMICs
+>> > so that hopefully we can get things sorted out before it's too late to
+>> > make modifications that might be needed.
+>> >
+>> > I'm adding a few people on Cc that work on the X-Power PMICs so that
+>> > hopefully we can have all the correct pieces of information and go
+>> > towards the right solution.
+>> >
+>> > In the AXP818/AXP288 datasheet[1] (p.57), we have access to OCV values
+>> > and battery RDC register.
+>> >
+>> > The hardware learns from the battery or from the given OCV and RDC
+>> > values and then updates the returned battery capacity accordingly (in
+>> > another register).
+>> > I've 32 values (see the issue with a max of 20 values?) to be written in
+>>
+>> I think you misunderstood the 20, it is means we can have max 20 OCV tables now.
+>>
+>
+> Indeed, misread the patch, thanks for clarifying.
+>
+>> > different registers that represent the battery capacity at a given
+>> > voltage. I do not have to do any computation on the kernel side, I just
+>> > have to set the registers with the correct values and the battery
+>> > capacity will be auto-updated by the PMIC. With this patch series,
+>> > should I just call power_supply_get_battery_info, get the OCV tables and
+>>
+>> I think so.
+>>
+>> > do my thing in the driver? Could we have a more generic way to do it
+>> > (does it make sense to have a generic one?)?
+>>
+>> Sorry, maybe I did not follow you here. You said your hardware will
+>> help to get the capacity automatically if you set the register, so
+>> what generic way you want to introduce? Could you elaborate on?
+>>
+>
+> I think I got my thoughts tangled-up, I can't honestly find a generic
+> way right now.
+
+OK.
+
+>
+>> >
+>> > We also definitely need a sysfs entry so that the user can enter the new
+>> > values of the RDC/OCV since it changes during the life cycle of the
+>> > battery IIRC.
+>>
+>> Why it changed? Due to different temperatures or other factors? If the
+>> factor is temperature, I think we have supplied one generic way:
+>> https://lore.kernel.org/patchwork/patch/1002350/
+>>
+>
+> Apparently age is a factor in the OCV curve. I don't know if it's
+> substantial enough to care about though.
+>
+> Anyway, I have a very strong bias towards not having to modify the
+> Device Tree or recompile the kernel when a piece of hardware can be
+> replaced easily by something different. I see the battery as such a
+> piece of hardware. I understand the need to define the battery that
+> comes with a product but I also like to let the users switch the battery
+> (for a bigger one for example) without getting their hands dirty with
+> getting the kernel sources, recompiling, etc.
+>
+> What if the provided OCV curves are not the best ones and the user has
+> found better ones?
+>
+> For that, I like to let the user configure parameters that impact the
+> battery after we've optionaly set the default one.
+>
+> I'd be mad to have to recompile the Device Tree or kernel when switching
+> devices on a USB bus for example.
+>
+> Does that make sense?
+
+Yes, understood. But I can not add this feature in my patch series,
+since we have no this usage for SC27xx FGU. So I think it will be good
+to submit one separate patch, which can let other guys focus on your
+case and maybe give a better solution. Thanks for your comments.
+
+-- 
+Baolin Wang
+Best Regards
