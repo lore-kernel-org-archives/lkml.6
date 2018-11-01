@@ -2,82 +2,217 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7550C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63922C6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:03:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74244205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:02:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74244205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lemonage.de
+	by mail.kernel.org (Postfix) with ESMTP id 25D8B205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 10:03:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25D8B205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728134AbeKATEp (ORCPT
+        id S1728149AbeKATFU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 15:04:45 -0400
-Received: from smtp3-1.goneo.de ([85.220.129.38]:39790 "EHLO smtp3-1.goneo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726320AbeKATEo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 15:04:44 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp3.goneo.de (Postfix) with ESMTP id 8D75A23F63A;
-        Thu,  1 Nov 2018 11:02:24 +0100 (CET)
-X-Virus-Scanned: by goneo
-Received: from smtp3.goneo.de ([127.0.0.1])
-        by localhost (smtp3.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id VSyp8upPFAom; Thu,  1 Nov 2018 11:02:22 +0100 (CET)
-Received: from lem-wkst-02.lemonage.de. (hq.lemonage.de [87.138.178.34])
-        by smtp3.goneo.de (Postfix) with ESMTPA id 5B50523F32E;
-        Thu,  1 Nov 2018 11:02:22 +0100 (CET)
-From:   Lars Poeschel <poeschel@lemonage.de>
-To:     devicetree@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Lars Poeschel <poeschel@lemonage.de>,
-        linux-wireless@vger.kernel.org (open list:NFC SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4 1/6] nfc: pn533: i2c: "pn532" as dt compatible string
-Date:   Thu,  1 Nov 2018 11:02:09 +0100
-Message-Id: <20181101100216.613-1-poeschel@lemonage.de>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 1 Nov 2018 15:05:20 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:42133 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726320AbeKATFU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 15:05:20 -0400
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1gI9oW-00005O-KK; Thu, 01 Nov 2018 11:02:56 +0100
+Message-ID: <1541066574.3593.1.camel@pengutronix.de>
+Subject: Re: [PATCH] PCI: imx: Add imx6sx suspend/resume support
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Leonard Crestez <leonard.crestez@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Richard Zhu <hongxing.zhu@nxp.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Date:   Thu, 01 Nov 2018 11:02:54 +0100
+In-Reply-To: <AM0PR04MB42907F7BFDBF9648381DED49EECD0@AM0PR04MB4290.eurprd04.prod.outlook.com>
+References: <e57884e2dbc429918db81662ddbafe22c472385c.1539019758.git.leonard.crestez@nxp.com>
+         <AM0PR04MB42907F7BFDBF9648381DED49EECD0@AM0PR04MB4290.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is favourable to have one unified compatible string for devices that
-have multiple interfaces. So this adds simply "pn532" as the devicetree
-binding compatible string and makes a note that the old ones are
-deprecated.
+Hi Leonard,
 
-Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
----
-Changes in v3:
-- This patch is new in v3
+On Wed, 2018-10-31 at 11:02 +0000, Leonard Crestez wrote:
+> On 10/8/2018 8:38 PM, Leonard Crestez wrote:
+> > Enable PCI suspend/resume support on imx6sx socs. This is similar to
+> > imx7d with a few differences:
+> > 
+> > * The PM_Turn_Off bit is exposed through an IOMUX GPR, like all other
+> > pcie control bits on 6sx.
+> > * The pcie_inbound_axi clk needs to be turned off in suspend. On resume
+> > it is restored via resume -> deassert_core_reset -> enable_ref_clk.
+> > 
+> > Most of the resume logic is shared with the initial reset after probe.
+> > 
+> > Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+> 
+> This is a gentle reminder that this patch was posted ~3 weeks ago and 
+> there is yet no reply. It's a mostly straight-forward extension of imx7d 
+> pci suspend/resume support to a different SOC.
+> 
+> Lucas/Philipp: can you please take a brief look?
 
- drivers/nfc/pn533/i2c.c | 5 +++++
- 1 file changed, 5 insertions(+)
+This is a bit out of my wheelhouse, but I'll try my best.
 
-diff --git a/drivers/nfc/pn533/i2c.c b/drivers/nfc/pn533/i2c.c
-index 4389eb4c8d0b..f4eae9dd5305 100644
---- a/drivers/nfc/pn533/i2c.c
-+++ b/drivers/nfc/pn533/i2c.c
-@@ -258,6 +258,11 @@ static int pn533_i2c_remove(struct i2c_client *client)
- }
- 
- static const struct of_device_id of_pn533_i2c_match[] = {
-+	{ .compatible = "nxp,pn532", },
-+	/*
-+	 * NOTE: The use of the compatibles with the trailing "...-i2c" is
-+	 * deprecated and will be removed.
-+	 */
- 	{ .compatible = "nxp,pn533-i2c", },
- 	{ .compatible = "nxp,pn532-i2c", },
- 	{},
--- 
-2.19.1
+> > ---
+> >   drivers/pci/controller/dwc/pci-imx6.c       | 40 ++++++++++++++++++---
+> >   include/linux/mfd/syscon/imx6q-iomuxc-gpr.h |  1 +
+> >   2 files changed, 36 insertions(+), 5 deletions(-)
+> > 
+> > Patch is again linux-next, meant to apply here:
+> >   https://git.kernel.org/pub/scm/linux/kernel/git/lpieralisi/pci.git/log/?h=pci/dwc
+> > 
+> > This is quite an old patch, mostly did it to prove that imx7d suspend
+> > support is indeed generic.
+> > 
+> > diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> > index 2cbef2d7c207..6171171db1fc 100644
+> > --- a/drivers/pci/controller/dwc/pci-imx6.c
+> > +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> > @@ -771,12 +771,29 @@ static void imx6_pcie_ltssm_disable(struct device *dev)
+> >   	}
+> >   }
+> >   
+> >   static void imx6_pcie_pm_turnoff(struct imx6_pcie *imx6_pcie)
+> >   {
+> > -	reset_control_assert(imx6_pcie->turnoff_reset);
+> > -	reset_control_deassert(imx6_pcie->turnoff_reset);
+> > +	struct device *dev = imx6_pcie->pci->dev;
+> > +
+> > +	/*
+> > +	 * Some variants have a turnoff reset in DT while
+> > +	 * others poke at iomuxc registers.
+> > +	 */
+> > +	if (imx6_pcie->turnoff_reset) {
+> > +		reset_control_assert(imx6_pcie->turnoff_reset);
+> > +		reset_control_deassert(imx6_pcie->turnoff_reset);
+> > +	} else if (imx6_pcie->variant == IMX6SX) {
+> > +		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+> > +				IMX6SX_GPR12_PCIE_PM_TURN_OFF,
+> > +				IMX6SX_GPR12_PCIE_PM_TURN_OFF);
+> > +		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+> > +				IMX6SX_GPR12_PCIE_PM_TURN_OFF, 0);
+> > +	} else {
+> > +		dev_err(dev, "PME_Turn_Off not implemented\n");
+> > +		return;
+> > +	}
 
+I'd use switch(imx6_pcie->variant) for consistency with the other places
+where different variants need to be handled separately.
+
+> >   
+> >   	/*
+> >   	 * Components with an upstream port must respond to
+> >   	 * PME_Turn_Off with PME_TO_Ack but we can't check.
+> >   	 *
+> > @@ -790,22 +807,35 @@ static void imx6_pcie_clk_disable(struct imx6_pcie *imx6_pcie)
+> >   {
+> >   	clk_disable_unprepare(imx6_pcie->pcie);
+> >   	clk_disable_unprepare(imx6_pcie->pcie_phy);
+> >   	clk_disable_unprepare(imx6_pcie->pcie_bus);
+> >   
+> > -	if (imx6_pcie->variant == IMX7D) {
+> > +	switch (imx6_pcie->variant) {
+> > +	case IMX6SX:
+> > +		clk_disable_unprepare(imx6_pcie->pcie_inbound_axi);
+> > +		break;
+> > +	case IMX7D:
+> >   		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+> >   				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL,
+> >   				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL);
+> > +		break;
+> > +	default:
+> > +		break;
+> >   	}
+
+This disables the ref clock. Should this be split into a separate
+function imx6_pcie_disable_ref_clk() for symmetry with the already
+existing imx6_pcie_enable_ref_clk() ?
+
+That could then also be used to disable pcie_inbound_axi in the error
+path of imx6_pcie_deassert_core_reset().
+
+> >   }
+> >   
+> > +static inline bool imx6_pcie_supports_suspend(struct imx6_pcie *imx6_pcie)
+> > +{
+> > +	return (imx6_pcie->variant == IMX7D ||
+> > +		imx6_pcie->variant == IMX6SX);
+> > +}
+> > +
+> >   static int imx6_pcie_suspend_noirq(struct device *dev)
+> >   {
+> >   	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
+> >   
+> > -	if (imx6_pcie->variant != IMX7D)
+> > +	if (!imx6_pcie_supports_suspend(imx6_pcie))
+> >   		return 0;
+> >   
+> >   	imx6_pcie_pm_turnoff(imx6_pcie);
+> >   	imx6_pcie_clk_disable(imx6_pcie);
+> >   	imx6_pcie_ltssm_disable(dev);
+> > @@ -817,11 +847,11 @@ static int imx6_pcie_resume_noirq(struct device *dev)
+> >   {
+> >   	int ret;
+> >   	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
+> >   	struct pcie_port *pp = &imx6_pcie->pci->pp;
+> >   
+> > -	if (imx6_pcie->variant != IMX7D)
+> > +	if (!imx6_pcie_supports_suspend(imx6_pcie))
+> >   		return 0;
+> >   
+> >   	imx6_pcie_assert_core_reset(imx6_pcie);
+> >   	imx6_pcie_init_phy(imx6_pcie);
+> >   	imx6_pcie_deassert_core_reset(imx6_pcie);
+> > diff --git a/include/linux/mfd/syscon/imx6q-iomuxc-gpr.h b/include/linux/mfd/syscon/imx6q-iomuxc-gpr.h
+> > index 6c1ad160ed87..c1b25f5e386d 100644
+> > --- a/include/linux/mfd/syscon/imx6q-iomuxc-gpr.h
+> > +++ b/include/linux/mfd/syscon/imx6q-iomuxc-gpr.h
+> > @@ -438,10 +438,11 @@
+> >   #define IMX6SX_GPR5_DISP_MUX_DCIC1_LCDIF1		(0x0 << 1)
+> >   #define IMX6SX_GPR5_DISP_MUX_DCIC1_LVDS			(0x1 << 1)
+> >   #define IMX6SX_GPR5_DISP_MUX_DCIC1_MASK			(0x1 << 1)
+> >   
+> >   #define IMX6SX_GPR12_PCIE_TEST_POWERDOWN		BIT(30)
+> > +#define IMX6SX_GPR12_PCIE_PM_TURN_OFF			BIT(16)
+> >   #define IMX6SX_GPR12_PCIE_RX_EQ_MASK			(0x7 << 0)
+> >   #define IMX6SX_GPR12_PCIE_RX_EQ_2			(0x2 << 0)
+> >   
+> >   /* For imx6ul iomux gpr register field define */
+> >   #define IMX6UL_GPR1_ENET1_CLK_DIR		(0x1 << 17)
+> > 
+
+regards
+Philipp
