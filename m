@@ -2,92 +2,103 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F4E6C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:33:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F17CC6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:33:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0371E2081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:33:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B3172081B
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:33:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tw7EaPec"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0371E2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MrVqwu3K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B3172081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728743AbeKBAgz (ORCPT
+        id S1728843AbeKBAhW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 20:36:55 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45900 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728197AbeKBAgz (ORCPT
+        Thu, 1 Nov 2018 20:37:22 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:35295 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727996AbeKBAhV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 20:36:55 -0400
-Received: by mail-pf1-f195.google.com with SMTP id v5-v6so4603554pfm.12;
-        Thu, 01 Nov 2018 08:33:27 -0700 (PDT)
+        Thu, 1 Nov 2018 20:37:21 -0400
+Received: by mail-lf1-f67.google.com with SMTP id d7-v6so14502790lfi.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 08:33:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=BNYxv/qYmo0S6AhlHULE0WXrirze8X6OKODaRiSASAc=;
-        b=Tw7EaPecIUXbJlIHx8RqGelON9RSfUDcQs8JynCm9B0BBTubg+dbZPf06zycMvyj7Q
-         Aymc1IMcbNxvEPWdkX5IHy7JSsoqbAqt8u1KpZm9MDM4yXaL09+TZA7CCqfvXiky5E4i
-         aP0ljeaJm8SPag6aYwrljXHYCZvJ89bz8pFZFkJmQ1cwWCQdfNtCE+tannMMuWTOkr1r
-         Xc/QOscmt0n5EYIBR4AawdWsZ9evC6H1uScFwZe+/uFymMYopTTHkaMIKCYTGeGrggfr
-         gCwRNWvPOHDhiDWP/Bedsx0J6HqUbwNcHdfMJ4SbAd1Lk1QBWWE3nEw0F8XIbTn0UgFQ
-         yTow==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=egKIjUBO7rTC1Nw+Ekbq2UHQPHX01tyVGykEgaGfB4s=;
+        b=MrVqwu3Kc87dpUvdaDLIQTp88fAAekaljK2k2yhDdkH19sDNRC9COQXL7HdeSbmKPQ
+         btGFbvU+sSQ6ts9iPHU4XbKb2KpCkGYR0RH25f0ZJMP+cUvUHgtvRSH0QtS8PZ5DvbnO
+         5DQ/zRfvYW13ktNghb35agLIlElLTZekxy4sw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=BNYxv/qYmo0S6AhlHULE0WXrirze8X6OKODaRiSASAc=;
-        b=F6bGWYLp2AIu2r4vn8IoHsSVsc/tNL3V5c3K0RNL4bX/kHuW5iy5thUoPF5aBz4K29
-         WHrcVrs91DtXPyuLuNYLHNjZKjLiBFxE4CNDGdYA7kwo57ZURzi31fv0/DT8PxH6/hzN
-         KozmvLiBK7gRzVoGgexOOkiDFrYClq1IFtgCycrV7s8kcD8I46lypd2ilHGFT1cwSfYg
-         1o3yfwVJ1NiMkrFYcH3o5CB1md5444evsbbrHR9TGNEdkNBrL1VbpXu2z3A74+WAEgvN
-         1kWKCN3XX5VjTqSYhahCGbhpW53M07JIDg6I62SP7+kw4S69xjwmyhv3sBoqTp7AJGSX
-         YFOQ==
-X-Gm-Message-State: AGRZ1gIxz8+Fr/0iZ2NHKgrmHIj35458V5W3UWrDTFxYBXsjKzuVErAM
-        dR9tzwcHKDAF6BvcE+SRZFw=
-X-Google-Smtp-Source: AJdET5cmFdIbJ+eL0zuaP3hIVfDmdIszTCPlRaHaScIu9mdbt9SFWODxqYyWjwm/WP96KSQtIaaUhg==
-X-Received: by 2002:a63:a35c:: with SMTP id v28mr7546861pgn.205.1541086407538;
-        Thu, 01 Nov 2018 08:33:27 -0700 (PDT)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id x19-v6sm45698938pga.15.2018.11.01.08.33.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 01 Nov 2018 08:33:26 -0700 (PDT)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     pizza@shaftnet.org, kvalo@codeaurora.org, davem@davemloft.net
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] cw1200: fix small typo
-Date:   Thu,  1 Nov 2018 11:33:19 -0400
-Message-Id: <20181101153319.22830-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=egKIjUBO7rTC1Nw+Ekbq2UHQPHX01tyVGykEgaGfB4s=;
+        b=EgSE5KSXcCAOxMc6DIfNcAK5aKZtCGo8iRAbIaOl0TmNqZ0aid8vxBWLxcHUE3lBQG
+         aOSgw+NinFAr/LInQHNd5GnTRPCDZtw0ToJk98WPzGqIHztmUdfF4F1TuBxAkjTRUnWE
+         K4sULJQRciYOoTQb2tpJ0P5m4LJwHh0JputjsTp9YmZ1UB1nTh3WyTDVX8ym8AXpecE6
+         DIzycOVONe5lIbWKUoxGGFdC6LtXd0zYWWTlHUlVLzmu8os31fC1BZ26xUWzXQ2m0bfc
+         chjxQZPRunFzG8AEx3spEt+uKSCwDNcQabQOvDWj0RGrM4VaEEXfvKnxX0z+PZgb8ayl
+         zGOQ==
+X-Gm-Message-State: AGRZ1gKjGi9kku5YOQWQ54Y/kB9p5+rzeKenvL7G0PwSwBBPiK2pOrsi
+        kcMSv2lOwOGJR6rJQCj8L1jwHcvZBuA=
+X-Google-Smtp-Source: AJdET5dj+4AOqLFd6X37fbp85M6MI//MsjlWpuczDyOpiUJnmj5lGVOhdT0P6wmpgx36+dzJy1vB7A==
+X-Received: by 2002:a19:4287:: with SMTP id p129mr4930790lfa.135.1541086432975;
+        Thu, 01 Nov 2018 08:33:52 -0700 (PDT)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
+        by smtp.gmail.com with ESMTPSA id r199sm2092082lff.50.2018.11.01.08.33.52
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Nov 2018 08:33:52 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id p17so8039261lfh.4
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 08:33:52 -0700 (PDT)
+X-Received: by 2002:ac2:41d8:: with SMTP id d24-v6mr4493834lfi.138.1541086431420;
+ Thu, 01 Nov 2018 08:33:51 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181101095844.24462-1-mathieu.desnoyers@efficios.com>
+In-Reply-To: <20181101095844.24462-1-mathieu.desnoyers@efficios.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 1 Nov 2018 08:33:35 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjk-2c4XvWjdzc-bs9Hbgvy-p7ASSnKKphggr5qDoXRDQ@mail.gmail.com>
+Message-ID: <CAHk-=wjk-2c4XvWjdzc-bs9Hbgvy-p7ASSnKKphggr5qDoXRDQ@mail.gmail.com>
+Subject: Re: [RFC PATCH for 4.21 00/16] rseq updates, new cpu_opv system call (v2)
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        boqun.feng@gmail.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-api@vger.kernel.org, tglx@linutronix.de, luto@amacapital.net,
+        davejwatson@fb.com, pjt@google.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux@arm.linux.org.uk, Ingo Molnar <mingo@redhat.com>,
+        Peter Anvin <hpa@zytor.com>, andi@firstfloor.org,
+        Christoph Lameter <cl@linux.com>, bmaurer@fb.com,
+        rostedt@goodmis.org, josh@joshtriplett.org,
+        Catalin Marinas <catalin.marinas@arm.com>, will.deacon@arm.com,
+        mtk.manpages@gmail.com, joelaf@google.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/net/wireless/st/cw1200/sta.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Nov 1, 2018 at 2:59 AM Mathieu Desnoyers
+<mathieu.desnoyers@efficios.com> wrote:
+>
+> Here is an updated patchset submitted as RFC for 4.21 (next merge
+> window).
 
-diff --git a/drivers/net/wireless/st/cw1200/sta.c b/drivers/net/wireless/st/cw1200/sta.c
-index 38678e9a0562..8dae92a79fe1 100644
---- a/drivers/net/wireless/st/cw1200/sta.c
-+++ b/drivers/net/wireless/st/cw1200/sta.c
-@@ -1123,7 +1123,7 @@ int cw1200_setup_mac(struct cw1200_common *priv)
- 	 *
- 	 * NOTE2: RSSI based reports have been switched to RCPI, since
- 	 * FW has a bug and RSSI reported values are not stable,
--	 * what can leads to signal level oscilations in user-end applications
-+	 * what can lead to signal level oscilations in user-end applications
- 	 */
- 	struct wsm_rcpi_rssi_threshold threshold = {
- 		.rssiRcpiMode = WSM_RCPI_RSSI_THRESHOLD_ENABLE |
--- 
-2.17.0
+So I'm not willing to take the cpu_opv system call until I see the the
+regular rseq code getting more real-life use.
 
+Maybe people are using it. Maybe they aren't. I want to hold off and
+wait until we _know_ it's getting used, and not just in test
+libraries.
+
+                   Linus
