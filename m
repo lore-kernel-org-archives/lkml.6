@@ -2,56 +2,54 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_DIGITS,
-	FROM_LOCAL_HEX,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E19FC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41667C6786F
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:33:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3303205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:33:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3303205F4
+	by mail.kernel.org (Postfix) with ESMTP id DE0DC205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 14:33:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE0DC205F4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728855AbeKAXgR (ORCPT
+        id S1728825AbeKAXgR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 1 Nov 2018 19:36:17 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:34836 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728563AbeKAXgQ (ORCPT
+Received: from mail-it1-f199.google.com ([209.85.166.199]:43560 "EHLO
+        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728793AbeKAXgQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 1 Nov 2018 19:36:16 -0400
-Received: by mail-io1-f72.google.com with SMTP id w13-v6so17826585iop.2
+Received: by mail-it1-f199.google.com with SMTP id m198-v6so1979278itm.8
         for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 07:33:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=hQIyUSitTBs39SdG09Ky3Woh/1dCFuu0jzk4P4YQzek=;
-        b=MUrkoMKrrQ7KF/j4pNA/hHylhUGIO8dGQplxyvVgAZWuPUaudgsI0yxo2WfHirvBuL
-         2xtlu9C/TDjnAp6vEiPyAFSyW/4f7R2tOqjT8W9xP26wGxBEF2w8PF99K6oP80d8VQ7l
-         RzHJUqn2muugH5dRlEJbEIEN6woMvYtrTnHys9MqeAzULBxqVxDQS+rYRDT4MPWQKzzW
-         I2jq496bITir1Wo4UVoVLYqWHbEy2IUhqHB4Vh7YP4yL8xf4hUdWOXKBWobWCltuGnwP
-         xNt4LiUrPCq0DvIHXjgh6234DerpOYT+j8dNqLGQZMDz6RvfysZlSZeUvw9tqXcQHaeM
-         HR9Q==
-X-Gm-Message-State: AGRZ1gLKl8XNLE3SmZZVs2uTIKmlTy132bxpnLO73k9txhX9CzrAvHBJ
-        wFzfEzQJ6YknNmdL4hi1uhGwAdCT24nIy9RRADLcLZ1MpyAh
-X-Google-Smtp-Source: AJdET5fFQG4vwEVECbOMg7Xa/pAdzTR03hRf+nDJhtWUhIDzIzztsuxuHbxGMOjKhNJoPjwRqLbiCry7WsD8CjcCgINJNsRs3Laq
+        bh=rn3gDp+k/YdzJq14PpvvkrRLb3S7madv+qNICau4c28=;
+        b=cAX6fmYYWR9QwqL5SzE9rIubjzYpWTcEOIQn/HAcQ5fxKbAc7lv7eOfMIIJ7UomcLf
+         I3htCWzf70kPTuK6Z4prOdLNJeNmb8nhM7oiH51HVfsiRlWtRDUcN/kQ220YIq3TsQJB
+         uUS1QxP7x586bec5vhNHS1vsTiLyjyFyq0wFwgScsXFZYcOfgJE2C5lT3VeRRSWXeY0T
+         oRrJ4nZD52oR7J02iDz96E8jvU0yamwnUgFl9beqgwEow7j5APihfqLgRP82Zji6G5X9
+         88dLcH1+iEFjpKchEQxQmQJOBw88o7TFZAk8eVEH7Zk7FbTeYABUW4EHne9xFSxAACOc
+         6JoA==
+X-Gm-Message-State: AGRZ1gIRBXlT+bjdnn/Gpp7ZuhxHcthmwvP+SpltZB2ueRb+uqJT34vL
+        R40c0cYGEIqf9FzQHSnE6N4nedQkQwIwxv06nw/xrf4mCGHz
+X-Google-Smtp-Source: AJdET5d+VceXEve4eya+8niy7y3iDJ84EXUHMcnZzh6JlyeDrGpZwo3ItFV7EWZDeUvv+xw8t9WS1QPMyIyHqK6PM9lFZ6vdLW13
 MIME-Version: 1.0
-X-Received: by 2002:a24:b64a:: with SMTP id d10-v6mr1544631itj.27.1541082782663;
+X-Received: by 2002:a24:2795:: with SMTP id g143-v6mr1517258ita.38.1541082782889;
  Thu, 01 Nov 2018 07:33:02 -0700 (PDT)
 Date:   Thu, 01 Nov 2018 07:33:02 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d4940a05799b4b72@google.com>
-Subject: KASAN: use-after-free Read in ucma_event_handler
-From:   syzbot <syzbot+f3f3a1734458129344f5@syzkaller.appspotmail.com>
-To:     dledford@redhat.com, jgg@ziepe.ca, leon@kernel.org,
-        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        parav@mellanox.com, roland@purestorage.com,
-        swise@opengridcomputing.com, syzkaller-bugs@googlegroups.com,
-        xiyou.wangcong@gmail.com
+Message-ID: <000000000000d8053d05799b4b86@google.com>
+Subject: KASAN: use-after-free Read in skcipher_recvmsg
+From:   syzbot <syzbot+6939a606a5305e9e9799@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, herbert@gondor.apana.org.au,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -62,105 +60,129 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    11743c56785c Merge tag 'rpmsg-v4.20' of git://github.com/a..
+HEAD commit:    59fc453b21f7 Merge branch 'akpm' (patches from Andrew)
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=166b07cb400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=93932074d01b4a5
-dashboard link: https://syzkaller.appspot.com/bug?extid=f3f3a1734458129344f5
+console output: https://syzkaller.appspot.com/x/log.txt?x=14bc682b400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ea045471e4c756e8
+dashboard link: https://syzkaller.appspot.com/bug?extid=6939a606a5305e9e9799
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
 Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+f3f3a1734458129344f5@syzkaller.appspotmail.com
+Reported-by: syzbot+6939a606a5305e9e9799@syzkaller.appspotmail.com
 
 ==================================================================
-BUG: KASAN: use-after-free in __mutex_lock_common  
-kernel/locking/mutex.c:1009 [inline]
-BUG: KASAN: use-after-free in __mutex_lock+0x1601/0x16f0  
-kernel/locking/mutex.c:1072
-Read of size 8 at addr ffff8801c1918188 by task kworker/u4:1/21
+BUG: KASAN: use-after-free in crypto_stat_skcipher_decrypt  
+include/crypto/skcipher.h:510 [inline]
+BUG: KASAN: use-after-free in crypto_skcipher_decrypt  
+include/crypto/skcipher.h:559 [inline]
+BUG: KASAN: use-after-free in _skcipher_recvmsg crypto/algif_skcipher.c:131  
+[inline]
+BUG: KASAN: use-after-free in skcipher_recvmsg+0x160f/0x1780  
+crypto/algif_skcipher.c:165
+Read of size 4 at addr ffff8801b69239c0 by task syz-executor3/23539
 
-CPU: 0 PID: 21 Comm: kworker/u4:1 Not tainted 4.19.0+ #88
+CPU: 0 PID: 23539 Comm: syz-executor3 Not tainted 4.19.0+ #313
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-Workqueue: ib_addr process_one_req
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0x244/0x39d lib/dump_stack.c:113
   print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
   kasan_report_error mm/kasan/report.c:354 [inline]
   kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  __mutex_lock_common kernel/locking/mutex.c:1009 [inline]
-  __mutex_lock+0x1601/0x16f0 kernel/locking/mutex.c:1072
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
-  ucma_event_handler+0x116/0x1000 drivers/infiniband/core/ucma.c:354
-  addr_handler+0x305/0x420 drivers/infiniband/core/cma.c:2991
-  process_one_req+0x1a9/0x920 drivers/infiniband/core/addr.c:643
-  process_one_work+0xc90/0x1c40 kernel/workqueue.c:2153
-  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
-  kthread+0x35a/0x440 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:350
+  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
+  crypto_stat_skcipher_decrypt include/crypto/skcipher.h:510 [inline]
+  crypto_skcipher_decrypt include/crypto/skcipher.h:559 [inline]
+  _skcipher_recvmsg crypto/algif_skcipher.c:131 [inline]
+  skcipher_recvmsg+0x160f/0x1780 crypto/algif_skcipher.c:165
+  sock_recvmsg_nosec net/socket.c:794 [inline]
+  sock_recvmsg+0xd0/0x110 net/socket.c:801
+  sock_read_iter+0x39b/0x570 net/socket.c:878
+kvm [23531]: vcpu0, guest rIP: 0xfff0 unimplemented HWCR wrmsr: 0x80000280
+  call_read_iter include/linux/fs.h:1833 [inline]
+  aio_read+0x297/0x490 fs/aio.c:1516
+  io_submit_one+0xac2/0xf80 fs/aio.c:1832
+  __do_sys_io_submit fs/aio.c:1916 [inline]
+  __se_sys_io_submit fs/aio.c:1887 [inline]
+  __x64_sys_io_submit+0x1b7/0x580 fs/aio.c:1887
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+binder: 23534:23545 ioctl c018620b 20000340 returned -14
+RIP: 0033:0x457569
+Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f351c0cdc78 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457569
+RDX: 0000000020bd9fe0 RSI: 0000000000000001 RDI: 00007f351c0ad000
+RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f351c0ce6d4
+R13: 00000000004be72d R14: 00000000004ce600 R15: 00000000ffffffff
 
-Allocated by task 13266:
+Allocated by task 23539:
   save_stack+0x43/0xd0 mm/kasan/kasan.c:448
   set_track mm/kasan/kasan.c:460 [inline]
   kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
-  kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
-  kmalloc include/linux/slab.h:546 [inline]
-  ucma_open+0xb5/0x3f0 drivers/infiniband/core/ucma.c:1721
-  misc_open+0x3ca/0x560 drivers/char/misc.c:141
-  chrdev_open+0x25a/0x710 fs/char_dev.c:417
-  do_dentry_open+0x499/0x1250 fs/open.c:771
-  vfs_open+0xa0/0xd0 fs/open.c:880
-  do_last fs/namei.c:3418 [inline]
-  path_openat+0x12bc/0x5150 fs/namei.c:3534
-  do_filp_open+0x255/0x380 fs/namei.c:3564
-  do_sys_open+0x568/0x700 fs/open.c:1063
-  __do_sys_openat fs/open.c:1090 [inline]
-  __se_sys_openat fs/open.c:1084 [inline]
-  __x64_sys_openat+0x9d/0x100 fs/open.c:1084
+  __do_kmalloc mm/slab.c:3722 [inline]
+  __kmalloc+0x15b/0x760 mm/slab.c:3731
+  kmalloc include/linux/slab.h:551 [inline]
+  sock_kmalloc+0x15a/0x1f0 net/core/sock.c:1984
+  af_alg_alloc_areq+0x83/0x280 crypto/af_alg.c:1097
+  _skcipher_recvmsg crypto/algif_skcipher.c:75 [inline]
+  skcipher_recvmsg+0x354/0x1780 crypto/algif_skcipher.c:165
+  sock_recvmsg_nosec net/socket.c:794 [inline]
+  sock_recvmsg+0xd0/0x110 net/socket.c:801
+  sock_read_iter+0x39b/0x570 net/socket.c:878
+  call_read_iter include/linux/fs.h:1833 [inline]
+  aio_read+0x297/0x490 fs/aio.c:1516
+  io_submit_one+0xac2/0xf80 fs/aio.c:1832
+  __do_sys_io_submit fs/aio.c:1916 [inline]
+  __se_sys_io_submit fs/aio.c:1887 [inline]
+  __x64_sys_io_submit+0x1b7/0x580 fs/aio.c:1887
   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Freed by task 13265:
+Freed by task 19019:
   save_stack+0x43/0xd0 mm/kasan/kasan.c:448
   set_track mm/kasan/kasan.c:460 [inline]
   __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
   kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
   __cache_free mm/slab.c:3498 [inline]
   kfree+0xcf/0x230 mm/slab.c:3817
-  ucma_close+0x27e/0x310 drivers/infiniband/core/ucma.c:1780
-  __fput+0x385/0xa30 fs/file_table.c:278
-  ____fput+0x15/0x20 fs/file_table.c:309
-  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
-  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+  __sock_kfree_s net/core/sock.c:2005 [inline]
+  sock_kfree_s+0x29/0x60 net/core/sock.c:2011
+  af_alg_free_resources+0x6b/0x80 crypto/af_alg.c:1033
+  af_alg_async_cb+0xbc/0x180 crypto/af_alg.c:1056
+  cryptd_skcipher_complete+0x14c/0x250 crypto/cryptd.c:474
+  cryptd_skcipher_decrypt+0x4e2/0x750 crypto/cryptd.c:534
+  cryptd_queue_worker+0x12d/0x200 crypto/cryptd.c:193
+  process_one_work+0xc90/0x1c40 kernel/workqueue.c:2153
+  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
+  kthread+0x35a/0x440 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:350
 
-The buggy address belongs to the object at ffff8801c1918140
-  which belongs to the cache kmalloc-256 of size 256
-The buggy address is located 72 bytes inside of
-  256-byte region [ffff8801c1918140, ffff8801c1918240)
+The buggy address belongs to the object at ffff8801b69236c0
+  which belongs to the cache kmalloc-1k of size 1024
+The buggy address is located 768 bytes inside of
+  1024-byte region [ffff8801b69236c0, ffff8801b6923ac0)
 The buggy address belongs to the page:
-page:ffffea0007064600 count:1 mapcount:0 mapping:ffff8801da8007c0  
-index:0xffff8801c1918640
-flags: 0x2fffc0000000200(slab)
-raw: 02fffc0000000200 ffffea000707bd88 ffffea0007498608 ffff8801da8007c0
-raw: ffff8801c1918640 ffff8801c1918000 0000000100000005 0000000000000000
+page:ffffea0006da4880 count:1 mapcount:0 mapping:ffff8801da800ac0  
+index:0xffff8801b6922940 compound_mapcount: 0
+flags: 0x2fffc0000010200(slab|head)
+raw: 02fffc0000010200 ffffea00070a7b08 ffffea00063a1608 ffff8801da800ac0
+kvm [23547]: vcpu0, guest rIP: 0xfff0 unimplemented HWCR wrmsr: 0x80000280
+raw: ffff8801b6922940 ffff8801b6922040 0000000100000006 0000000000000000
 page dumped because: kasan: bad access detected
 
 Memory state around the buggy address:
-  ffff8801c1918080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801c1918100: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
-> ffff8801c1918180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                       ^
-  ffff8801c1918200: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-  ffff8801c1918280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801b6923880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801b6923900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8801b6923980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                            ^
+  ffff8801b6923a00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801b6923a80: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
 ==================================================================
 
 
