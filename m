@@ -2,123 +2,144 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE08C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:35:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93871C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:42:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E33B2064C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:35:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AB9720821
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 00:42:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="KjscmW90"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E33B2064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	dkim=pass (2048-bit key) header.d=dilger-ca.20150623.gappssmtp.com header.i=@dilger-ca.20150623.gappssmtp.com header.b="BDDDlL2P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AB9720821
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726342AbeKAJfn (ORCPT
+        id S1726503AbeKAJmt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 05:35:43 -0400
-Received: from mail-eopbgr690122.outbound.protection.outlook.com ([40.107.69.122]:21680
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725946AbeKAJfm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 05:35:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LJ2o60m7gpvHzdSg1JF76OXxJu+7zkEF8KMPq/rFGVQ=;
- b=KjscmW90fOBi8DXjl17XdZgWd/RmYL7EAQ5Zl1EuQzMELJupD8qpyQ7VBu3jMxKr+zJhb4c0afun2h2GD6DORKf2B85DEcQtVYoci/z8K9LB2glY7QP/k4m9wwZ3/6UDaax/sB4E4IYob8zNh7jjTgZxjZCxpaO1jkvYIcz9rY8=
-Received: from MWHPR21MB0766.namprd21.prod.outlook.com (10.173.51.20) by
- MWHPR21MB0192.namprd21.prod.outlook.com (10.173.52.138) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1294.2; Thu, 1 Nov 2018 00:35:05 +0000
-Received: from MWHPR21MB0766.namprd21.prod.outlook.com
- ([fe80::1982:5e59:2489:88e6]) by MWHPR21MB0766.namprd21.prod.outlook.com
- ([fe80::1982:5e59:2489:88e6%14]) with mapi id 15.20.1294.009; Thu, 1 Nov 2018
- 00:35:05 +0000
-From:   Michael Kelley <mikelley@microsoft.com>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>
-CC:     Michael Kelley <mikelley@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>
-Subject: [PATCH 1/1] irq/matrix: Fix memory overallocation
-Thread-Topic: [PATCH 1/1] irq/matrix: Fix memory overallocation
-Thread-Index: AQHUcXq7SA6G9rZh3EKUDa9NxVMDQg==
-Date:   Thu, 1 Nov 2018 00:35:05 +0000
-Message-ID: <1541032428-10392-1-git-send-email-mikelley@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: CY4PR0101CA0026.prod.exchangelabs.com
- (2603:10b6:910:3c::39) To MWHPR21MB0766.namprd21.prod.outlook.com
- (2603:10b6:300:76::20)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [131.107.159.8]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR21MB0192;6:r4hSUwoM/yGlZq8erb3jz1OTbETwRt7UV1ov8pTLjubQHrXRqgAPgX0qsGS3VS0507DP3RWbOH43covFjoZC7I23z8KNlbyL424oFaMwyiglS06SylNkjxpisjtUXaVLEziJ3TlauIGFAborGsM4+1/9FtrzIK/XLkJm/joBpqrHNCVuKI8KiPi1/uPIbtbXheJBdRuTfIOJLfrq4J5ff2HjzZP8dM3mbAubrVZZmPGObL2k4asIBj2zY8rDOgqlQexcSGLdaPJOZNL7qX5dGPnpQ+hfHiMhZ7Mi44LHpRi5LeUMexxQAU7DWkS+tAMxJru9khKlIrLtfZrVr2SL9bQZrFl6+JIOkDsRsvX4o1YQeLlUcN6bpIabHR/KTzcYgVeyN93bLfk+W407QFzgWlU6j/Ovc6XGY59COhvI/84jSxtz06cox8b/RaU/XwgSSfDrOR4dPZHG/uOs3nipCA==;5:RhPF4TraXFnbRexKDpPwjebr5pAdEdMcibnQ+9KkS1oAeMkL64SNWSXhRFsOyuluxRR8RMIVtHNUjWJl8gnNMxf1/YssPv+SSGJCJk5Qr6hX6Rp0pE7/dWk9VJ9VmJiYEKyuTj+KUGqsZ8Wf+3PfP13bnsLyJ67NWGGy9tqYvLM=;7:fAcHHEZUObzlCFaqPehOxcqckJIXh3JIU7CiyxLNPlknq7WeWWn+GgIST0zMzM/+zY7l9X558V7mKOTieO0GFjFi84oM+g9MkHRburyWHdJkZN5bqaObOfmeBFBJeIKbrmeTt+h2BTc4LZW1fgAoEA==
-x-ms-office365-filtering-correlation-id: c033b77a-9f83-4e44-799e-08d63f91dddf
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:MWHPR21MB0192;
-x-ms-traffictypediagnostic: MWHPR21MB0192:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=mikelley@microsoft.com; 
-x-o365ent-eop-header: Message processed by -  O365_ENT: Allow from ranges
- (Engineering ONLY)
-x-microsoft-antispam-prvs: <MWHPR21MB01925C3D6FE81CB941AE51B1D7CE0@MWHPR21MB0192.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(8220035)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231382)(944501410)(52105095)(2018427008)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:MWHPR21MB0192;BCL:0;PCL:0;RULEID:;SRVR:MWHPR21MB0192;
-x-forefront-prvs: 0843C17679
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(136003)(366004)(39860400002)(376002)(189003)(199004)(305945005)(2616005)(6486002)(7736002)(6436002)(476003)(53936002)(486006)(6512007)(66066001)(26005)(81156014)(81166006)(478600001)(386003)(6506007)(97736004)(102836004)(8676002)(186003)(99286004)(10290500003)(52116002)(8936002)(316002)(2906002)(2900100001)(10090500001)(22452003)(2501003)(5660300001)(5250100002)(14454004)(54906003)(36756003)(107886003)(256004)(14444005)(68736007)(105586002)(110136005)(3846002)(4326008)(6116002)(86362001)(106356001)(86612001)(71190400001)(25786009)(71200400001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR21MB0192;H:MWHPR21MB0766.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: phb3YXEgdQBeDll4rEgQqD+IsaalZw5w6F/gG50qlJYDBrS6KFY3Pit6BFAnLGhZIvPwnZJF42KVnnQ3eMp1s2f6kq/uVOzkv1lpFl0+hNfOOgMzJh6rUJG1SRlTL0sPjJlDsWwWZ8NCyP5dW08ZqdNIs837ara0IsALxn/XmqjxCKCVLb6oYpyVLwW5LZiGcauljOzYlQKLPhdP36C+1XIdqT0nmjYNr/Iq+hV7TyVwjfQiu0Op4i1axvnGVioGA05JhPD9qV6iaq1dMCL/R6SJN4g/kMCzyStmbkP+TAeJYDY+i/BLhJYKDutj9lreUN1e+OuL78ndMo3ei0w/mHPnUFaIwO5e6gfJrV9FgRQ=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c033b77a-9f83-4e44-799e-08d63f91dddf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Nov 2018 00:35:05.5347
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR21MB0192
+        Thu, 1 Nov 2018 05:42:49 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:37062 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726023AbeKAJms (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 05:42:48 -0400
+Received: by mail-it1-f194.google.com with SMTP id e74-v6so20871676ita.2
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Oct 2018 17:42:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=uQXlImkrl2nTjz9JBL6YVGlrwL7X11elajqEQpmyrQs=;
+        b=BDDDlL2PEJu5oGxw5kEIKRT/kLWhZh5I3VBcRGWZNnt0a787l1lKJV9XaZupuJvfj1
+         zFa8zJZbqNbHEv6HgEJF223aFkBCd0223TgK+4CoRxCr+ho5UnzYUjOGBbVfITt30anV
+         EeQbl27MUb1xXI6eH0ydmtxBLmFgpxCMEh2RAWvbUT4p5aHn+0gASu8mx9iPEsduDCxT
+         DsWyePa7Q2MpnpZMUTvhifz91X87H+IxL1HNv4dd6rprNfDj+aIKrfHp3uFIFt6EQYTv
+         3VQrqy4rNXQM2RTAhrbDh01G46cLkJS5+EHPSzK8bSmG7jz5l330WqE5foXVgjnoRnVB
+         xTFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=uQXlImkrl2nTjz9JBL6YVGlrwL7X11elajqEQpmyrQs=;
+        b=UiAXkPFe+Bixlkzcap9F9gtVhxLiSZNditfnrP1syyMiLrSoH+4yzBgzqkGb3WyvYr
+         a9AKp6/deVbIDBO5ZYc9KNu32Zecjsr67kdnpp4HLyzJnP/drjWtHyCLNEwCOuuhX79C
+         OXyCNBsFwoxeY4wDmKycFiKsBTcxA8gfW3ABfSKx9rExLp2PFHpqQgS88UDa8yNAFvCr
+         kDBDqGqpP79eiO/ugnkhrBuq3Ec5jNrWO38gzXMtoJJ7pzd+mJhgOTkHVRluYRqYJWp0
+         qA3ERdIX5erMvunz/eSVZdQdXWud/189Q82yo/5CZO0qeJUMWsK5XkQgGuar8WlotZLv
+         ZB+A==
+X-Gm-Message-State: AGRZ1gI1e9QD+H3KKfmGyQERgd/J/jBYYW/Qlok73XbBN2/LaQQPhNxb
+        OmHdDtdfepqsRh9iJx9w+ACNDQ==
+X-Google-Smtp-Source: AJdET5egB11hsgsHAz3uXfzo8OpgM5UInzm0GV7fapHGMUNVVhnqTNRJfFaMjGdipLM9PqobPxMALw==
+X-Received: by 2002:a24:61cc:: with SMTP id s195-v6mr3726168itc.140.1541032932112;
+        Wed, 31 Oct 2018 17:42:12 -0700 (PDT)
+Received: from cabot-wlan.adilger.int (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
+        by smtp.gmail.com with ESMTPSA id v204-v6sm1142581itb.6.2018.10.31.17.42.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Oct 2018 17:42:10 -0700 (PDT)
+From:   Andreas Dilger <adilger@dilger.ca>
+Message-Id: <0C3DF51C-F627-47F7-879B-0A0D5BC143C0@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_6DAA99BE-CD7D-493C-85AD-DD18080505DA";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH v2 11/11] ext4: access to uninitialized bh fields in
+ ext4_xattr_set_handle()
+Date:   Wed, 31 Oct 2018 18:42:01 -0600
+In-Reply-To: <0db97e14-c87d-9507-4c87-875835b64212@virtuozzo.com>
+Cc:     Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        LKML <linux-kernel@vger.kernel.org>
+To:     Vasily Averin <vvs@virtuozzo.com>
+References: <cover.1540935522.git.vvs@virtuozzo.com>
+ <b8523c3a-0eb2-3aeb-fdf9-2e9d6d320d5c@virtuozzo.com>
+ <48BA929C-9BF7-4092-BDD3-BECB64AF0599@dilger.ca>
+ <0db97e14-c87d-9507-4c87-875835b64212@virtuozzo.com>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IRQ_MATRIX_SIZE is the number of longs needed for a bitmap,
-multiplied by the size of a long, yielding a byte count. But
-it is used as the size of an array of longs, which is way more
-memory than is needed.  Change IRQ_MATRIX_SIZE so it is just the
-number of longs needed and the arrays come out the correct size.
 
-Signed-off-by: Michael Kelley <mikelley@microsoft.com>
----
- kernel/irq/matrix.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--Apple-Mail=_6DAA99BE-CD7D-493C-85AD-DD18080505DA
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset=us-ascii
 
-diff --git a/kernel/irq/matrix.c b/kernel/irq/matrix.c
-index 6e6d467..1f0985a 100644
---- a/kernel/irq/matrix.c
-+++ b/kernel/irq/matrix.c
-@@ -8,7 +8,7 @@
- #include <linux/cpu.h>
- #include <linux/irq.h>
-=20
--#define IRQ_MATRIX_SIZE	(BITS_TO_LONGS(IRQ_MATRIX_BITS) * sizeof(unsigned =
-long))
-+#define IRQ_MATRIX_SIZE	(BITS_TO_LONGS(IRQ_MATRIX_BITS))
-=20
- struct cpumap {
- 	unsigned int		available;
---=20
-1.8.3.1
+On Oct 30, 2018, at 9:39 PM, Vasily Averin <vvs@virtuozzo.com> wrote:
+> 
+> On 10/31/2018 04:30 AM, Andreas Dilger wrote:
+>> Could you please explain your statement below that on-stack
+>> initialization does not zero unspecified fields?  According
+>> to documents I found, for example:
+>> 
+>> https://gcc.gnu.org/onlinedocs/gcc/Designated-Inits.html
+>> 
+>> they *are* initialized to zero.
+> 
+> I did not know it,
+> I re-checked it in generated assembler code and found that you
+> are right and I was wrong.
+> 
+> Please drop this patch,
+> should I resend of rest of this patch set once again?
 
+I don't think it is necessary to resend the whole patch series.
+Ted should notice these emails on this patch and not apply it.
+
+Cheers, Andreas
+
+
+
+
+
+
+--Apple-Mail=_6DAA99BE-CD7D-493C-85AD-DD18080505DA
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAlvaS9kACgkQcqXauRfM
+H+APEQ/+LKwBcyDcl5jacJue16RzP2SkekzEfNoBT7Im5yphpPaqVHj2mnrMkeKZ
+SZ47lyRwtLTSahMGOK3jur1AIBg4pcdcBZzM8ydtIXnqs9Yqq3oCGQX1F0oz2aGQ
+FlLKwNRphxhHlv2GfTpKs0eCkhZXlgWiLCfTZW++w/Xi7mypDYenQFLaTaZfVIgC
+5z45X0KDaBy3oJWKT61EVAMlGVDJzD5oaFXUJyloi8iMgSGTV/Hlzrh+U7mw75nE
+ENfmSqMb5CHBaFVkFhlNUCg8VUvJJr1X/kR4UXdsN48xlnDkKDTNwXMVyat4NOCH
+6PX9cTAzRnngbjSxuvOvMy3/Ybov5K1mPWSr3FeKJFbXf0E2krMp8TjxOUGglsH5
+F9Eefhr+33zufHYnkO3NMiCBXqe+Wyoaw7SuoRZGvaRJzHlEDKjgT/xOBhs/eWWE
+iM/02LkXL2DGEmTS6WdW/BUMyNcCQWOWcZ11SsE04K1SpaKFhCWEr+dEMF+QDrYH
+h9phvwVGwCczEHDdMaisj2/t81nFeqiYBimSaYGIMo8Qvoe6Y6ozadlJw3iShNmP
+W+g2BOpii2Fl2KQq5WR+Cwewd9b+RpAsYELYqxiGtJL7Rw/zzCbsy9GMbRxO7hkU
+eClUvYutAekvi7CutkHIu0ngeHFAK/ti+zbeabJNlokHZUXkwnE=
+=aigz
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_6DAA99BE-CD7D-493C-85AD-DD18080505DA--
