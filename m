@@ -2,77 +2,104 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E940C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:50:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 256A6C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:50:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D04D2064C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:50:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D04D2064C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id DA1AB2064C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 15:50:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c8/xKqj0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA1AB2064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729052AbeKBAxh convert rfc822-to-8bit (ORCPT
+        id S1729065AbeKBAxy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 20:53:37 -0400
-Received: from prv1-mh.provo.novell.com ([137.65.248.33]:45995 "EHLO
-        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727950AbeKBAxg (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:5:1>);
-        Thu, 1 Nov 2018 20:53:36 -0400
-Received: from INET-PRV1-MTA by prv1-mh.provo.novell.com
-        with Novell_GroupWise; Thu, 01 Nov 2018 09:50:05 -0600
-Message-Id: <5BDB20AB020000780014251B@prv1-mh.provo.novell.com>
-X-Mailer: Novell GroupWise Internet Agent 18.0.2 
-Date:   Thu, 01 Nov 2018 09:50:03 -0600
-From:   "Jan Beulich" <jbeulich@suse.com>
-To:     "Juergen Gross" <jgross@suse.com>
-Cc:     <sstabellini@kernel.org>, <xen-devel@lists.xenproject.org>,
-        <boris.ostrovsky@oracle.com>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-Subject: Re: [Xen-devel] [PATCH] xen: remove size limit of privcmd-buf
- mapping interface
-References: <20181101123307.8424-1-jgross@suse.com>
- <5BDB0B240200007800142507@prv1-mh.provo.novell.com>
- <b64f7fa4-a553-bcb4-6051-c91080642b8e@suse.com>
-In-Reply-To: <b64f7fa4-a553-bcb4-6051-c91080642b8e@suse.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
-Content-Disposition: inline
+        Thu, 1 Nov 2018 20:53:54 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:44652 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727950AbeKBAxy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 20:53:54 -0400
+Received: by mail-vs1-f68.google.com with SMTP id w194so12432440vsc.11
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 08:50:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=InpizKkZGP6vpOoWAuZYCvEQx7tLohXSb/i5fUYeT8A=;
+        b=c8/xKqj0IH+gqrGb5hwwbG04KG7FMeara3baRwSNywrFrOY82ho5PXUIYUuQLHWlGm
+         FSBVTmIZvnsjPi0RHlpboSXgDlnpP4gJqbaxm9KLTFG9RiwjN+oA2/i+1eqMcZVWalRq
+         Gdaapl6zeBfXf4aoNZKPsXsqFq3zadTyxW6e/hyiRG/GCbOXWwN5nV+tDl7TAbFbpmQe
+         07W7HgEOzE0x5ezXpkiQ8sgqYfH7S4fJrVn+C1h6CWDI3wQEzY2LiCUHgcC+HfihDJkz
+         EnwxHf3SkUf9rOiEPaPT/dwKyUrkFBQAyrqK2csMboNas0/msXfdQBfzytPzwTGGFPHm
+         TAXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=InpizKkZGP6vpOoWAuZYCvEQx7tLohXSb/i5fUYeT8A=;
+        b=ieQymcY05QGILnNAtqNUtuceSEi11a9q4Uoxpf5/dqLFbkadESml6UHyCidvc3iC1a
+         E1U88k54T/QsckpmWTfavgpwWaPdFNgFjAfTP5PCGLSod0rBbHHSclk+sDgbhkvWnmdu
+         BhXoEkaS2f9nOWtaglCu4a2GimPWYvpzeCH4SJlbIOkl+k8acUcs/crvbfxb8C6uJWrM
+         QhBiE2IHE2V3kez1nzJpFcS0o/uUwV2MT+v29n7oU0AFx81eKnf5TZf8KrwZrb5l2kN0
+         ouD9uBhcx7r8TEWKdOyx1IwYH+9M2s8TXIecC2yt33KfIHCFo0eX4Rcb/VmMn47YjIFQ
+         fQYg==
+X-Gm-Message-State: AGRZ1gK+JxtEtWXNvfB23schzklC/+wvOH7v1rBu633AVjO6PkjZmq3J
+        4DTkryim6FTpgnadDnpQKHZFppllddp0Kcgqln7K2g==
+X-Google-Smtp-Source: AJdET5fjPWAXHJPtHuVaATZfK24BoI7f+/CEbpEw/qb1IzeLqtv8gpCKd2sEcksNH10xmvMHJXCf9zogFuxwJv9wNlw=
+X-Received: by 2002:a67:105:: with SMTP id 5mr3359275vsb.183.1541087421797;
+ Thu, 01 Nov 2018 08:50:21 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a67:f48d:0:0:0:0:0 with HTTP; Thu, 1 Nov 2018 08:50:20 -0700 (PDT)
+In-Reply-To: <061df748f65d41b5bbd4749074dbce29@AcuMS.aculab.com>
+References: <20181029221037.87724-1-dancol@google.com> <87bm7a3et9.fsf@xmission.com>
+ <20181031124435.GA9007@redhat.com> <CAKOZuevTF2cjJ0-nK7nv7jbgFexyW-deScaYVzE3iEPC48SAJg@mail.gmail.com>
+ <061df748f65d41b5bbd4749074dbce29@AcuMS.aculab.com>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Thu, 1 Nov 2018 15:50:20 +0000
+Message-ID: <CAKOZueuRbYh5dKoT4R6_t87yKZR_bzX+7s4KevvSmfcBk+YeYw@mail.gmail.com>
+Subject: Re: [RFC PATCH] Implement /proc/pid/kill
+To:     David Laight <David.Laight@aculab.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Christian Brauner <christian.brauner@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>> Juergen Gross <jgross@suse.com> 11/01/18 3:23 PM >>>
->On 01/11/2018 15:18, Jan Beulich wrote:
->>>>> Juergen Gross <jgross@suse.com> 11/01/18 1:34 PM >>>
->>> Currently the size of hypercall buffers allocated via
->>> /dev/xen/hypercall is limited to a default of 64 memory pages. For live
->>> migration of guests this might be too small as the page dirty bitmask
->>> needs to be sized according to the size of the guest. This means
->>> migrating a 8GB sized guest is already exhausting the default buffer
->>> size for the dirty bitmap.
->>>
->>> There is no sensible way to set a sane limit, so just remove it
->>> completely. The device node's usage is limited to root anyway, so there
->>> is no additional DOS scenario added by allowing unlimited buffers.
->> 
->> But is this setting of permissions what we want long term? What about a
->> de-privileged qemu, which still needs to be able to issue at least dm-op
->> hypercalls?
+On Thu, Nov 1, 2018 at 11:53 AM, David Laight <David.Laight@aculab.com> wrote:
+> From: Sent: 31 October 2018 13:28
+> ...
+>> * I actually have a local variant of the patch that would have you
+>> open "/proc/$PID/kill/$SIGNO" instead, since different signal numbers
+>> have different permission checks.
 >
->Wouldn't that qemu have opened the node while still being privileged?
+> I think you'd need the open() to specify some specific unusual
+> open modes.
+> Otherwise it'll be far too easy for scripts (and people) to
+> accidentally send every signal to every process.
 
-Possibly, but how does this help? As soon as it's unprivileged it must not
-be able to hog resources anymore.
+I think the /proc/$PID/kill/$SIGNO idea is dead anyway, and even
+dead-er since Linus banned write() for commands. (Looks like we'll
+need a system call after all.)
 
-Anyway, with Andrew's reply my point may be irrelevant, but I have to
-admit I'm not entirely sure.
+That said, for the record, I was talking about the *write* sending the
+signal, not the open, so grep of /proc wouldn't send random signals to
+every process.
 
-Jan
+> Also think of the memory footprint.
 
-
+Proc inodes are created on-demand, so AIUI, the memory overhead of
+heaving a per-FD directory of stuff isn't very high.
