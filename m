@@ -2,108 +2,140 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 225B8C6786F
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:56:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05426C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:56:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C157C2081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:56:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C157C2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BCF262081B
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 13:56:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bg3hQDpA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCF262081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728803AbeKAW7n (ORCPT
+        id S1728851AbeKAW7z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 18:59:43 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55493 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728500AbeKAW7n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 18:59:43 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 043B27F3FF;
-        Thu,  1 Nov 2018 13:56:39 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.31])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 64D365D6B5;
-        Thu,  1 Nov 2018 13:56:36 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Thu,  1 Nov 2018 14:56:37 +0100 (CET)
-Date:   Thu, 1 Nov 2018 14:56:34 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian@brauner.io>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Aleksa Sarai <asarai@suse.de>, linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v8 1/2] seccomp: add a return code to trap to userspace
-Message-ID: <20181101135633.GB23232@redhat.com>
-References: <20181029224031.29809-1-tycho@tycho.ws>
- <20181029224031.29809-2-tycho@tycho.ws>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181029224031.29809-2-tycho@tycho.ws>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 01 Nov 2018 13:56:39 +0000 (UTC)
+        Thu, 1 Nov 2018 18:59:55 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44909 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728198AbeKAW7z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Nov 2018 18:59:55 -0400
+Received: by mail-pf1-f195.google.com with SMTP id j13-v6so5879544pff.11
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 06:56:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=qj0H6KSKOBtfKDabJ0HskYVa1VvjJFP6J9GaMlrOBZ4=;
+        b=Bg3hQDpAjwAKACpnuTe0mnU8qY5rd5YNP1Hd1kSbUYBexjYfepj+/HTllLctenVNj4
+         HDh0QN3j/g5a/s5qtmTxUdZbWJd21kCtjRazRZpRtnRWbPKsG/v92CY/Ak9ZqMyLpIAO
+         XS5EMdpLwhAl+Dps5a4udmU/gB0QNsdBDHvEo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=qj0H6KSKOBtfKDabJ0HskYVa1VvjJFP6J9GaMlrOBZ4=;
+        b=d61Zhwd5XSgqMW9aMVdoML7hY/eio96rtmHfOG0pDXZL9B970dBvV5h+TR4t7QpRV2
+         hOI09JHu7x9sUim9F0RnYJ24DYAKZWvWywV80I+Qa95GEl7osdT93CGERPoMpUBWpy6i
+         9CwKYUjJ0r4n5mkG7B7QGh8Ln6f/nzgWjrOgUhsrOJgNdM7K9iM2ZXZ2LOBZ5dwiwQjz
+         Vr63OJar78yP0O30zpKWeLylWUBrlVPpoa0/m1MXqxJFwpk2uZbN5ZXnoLJmNf20kKYZ
+         LaD7W9FAn7PZIfe0Aqar0TRSKnzyq3wn8uRgyG5aSv7queop5XRd5PeiLd31uscePd6L
+         J2iA==
+X-Gm-Message-State: AGRZ1gKJpEpLpzH+53dzr0S202GyOVG9/SPuZc3hbZMJ60ZZeFi2rvxb
+        NCncNhJK8xN6rrzkPssPgr3qsw==
+X-Google-Smtp-Source: AJdET5eovoRRCBWd3Fxu/kHNBN5QIs0Ubgtw34FPwUJ8iTWSFkzAN+CuJsOpoNNSRVW+kqMsYCtESQ==
+X-Received: by 2002:a63:6643:: with SMTP id a64-v6mr4498655pgc.15.1541080610216;
+        Thu, 01 Nov 2018 06:56:50 -0700 (PDT)
+Received: from qualcomm-HP-ZBook-14-G2.domain.name ([106.51.104.211])
+        by smtp.gmail.com with ESMTPSA id m18-v6sm39076169pfk.149.2018.11.01.06.56.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 01 Nov 2018 06:56:49 -0700 (PDT)
+From:   Firoz Khan <firoz.khan@linaro.org>
+To:     Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>,
+        linux-xtensa@linux-xtensa.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
+        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
+Subject: [PATCH v1 0/4] xtensa: system call table generation support
+Date:   Thu,  1 Nov 2018 19:26:17 +0530
+Message-Id: <1541080581-4072-1-git-send-email-firoz.khan@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/29, Tycho Andersen wrote:
->
-> +static int seccomp_notify_release(struct inode *inode, struct file *file)
-> +{
-> +	struct seccomp_filter *filter = file->private_data;
-> +	struct seccomp_knotif *knotif;
-> +
-> +	mutex_lock(&filter->notify_lock);
-> +
-> +	/*
-> +	 * If this file is being closed because e.g. the task who owned it
-> +	 * died, let's wake everyone up who was waiting on us.
-> +	 */
-> +	list_for_each_entry(knotif, &filter->notif->notifications, list) {
-> +		if (knotif->state == SECCOMP_NOTIFY_REPLIED)
-> +			continue;
-> +
-> +		knotif->state = SECCOMP_NOTIFY_REPLIED;
-> +		knotif->error = -ENOSYS;
-> +		knotif->val = 0;
-> +
-> +		complete(&knotif->ready);
-> +	}
-> +
-> +	wake_up_all(&filter->notif->wqh);
+The purpose of this patch series is, we can easily
+add/modify/delete system call table support by cha-
+nging entry in syscall.tbl file instead of manually
+changing many files. The other goal is to unify the 
+system call table generation support implementation 
+across all the architectures. 
 
-Why? __fput() is not possible if there is another user of this file sleeping
-in seccomp_notify_poll().
+The system call tables are in different format in 
+all architecture. It will be difficult to manually
+add, modify or delete the system calls in the resp-
+ective files manually. To make it easy by keeping a 
+script and which'll generate uapi header file and 
+syscall table file.
 
-> +	kfree(filter->notif);
+syscall.tbl contains the list of available system 
+calls along with system call number and correspond-
+ing entry point. Add a new system call in this arch-
+itecture will be possible by adding new entry in the
+syscall.tbl file.
 
-Hmm, this looks wrong... we can't kfree ->notif if its ->notifications list
-is not empty, otherwise seccomp_do_user_notification()->list_del(&n.list)
-can write to the freed memory.
+Adding a new table entry consisting of:
+        - System call number.
+        - ABI.
+        - System call name.
+        - Entry point name.
 
-I think _release() should do list_for_each_entry_safe() + list_del_init()
-and seccomp_do_user_notification() should use list_del_init() too.
+ARM, s390 and x86 architecuture does exist the sim-
+ilar support. I leverage their implementation to come
+up with a generic solution.
 
-Or, simpler, seccomp_do_user_notification() should do
+I have done the same support for work for alpha, ia64,
+m68k, microblaze, mips, parisc, powerpc, sh and sparc.
+Below mentioned git repository contains more details 
+about the workflow.
 
-	if (!match->notif)
-		goto out;
+ https://github.com/frzkhn/system_call_table_generator/
 
-instead of "goto remove_list".
+Finally, this is the ground work to solve the Y2038
+issue. We need to add two dozen of system calls to solve
+Y2038 issue. So this patch series will help to add new 
+system calls easily by adding new entry in the syscall.tbl.
 
-Oleg.
+Firoz Khan (4):
+  xtensa: move SYS_XTENSA_* macros to non uapi header
+  xtensa: add __NR_syscalls along with __NR_syscall_count
+  xtensa: add system call table generation support
+  xtensa: generate uapi header and syscall table header files
+
+ arch/xtensa/Makefile                      |   3 +
+ arch/xtensa/include/asm/Kbuild            |   1 +
+ arch/xtensa/include/asm/unistd.h          |  20 +
+ arch/xtensa/include/uapi/asm/Kbuild       |   1 +
+ arch/xtensa/include/uapi/asm/unistd.h     | 798 +-----------------------------
+ arch/xtensa/kernel/syscall.c              |   5 +-
+ arch/xtensa/kernel/syscalls/Makefile      |  38 ++
+ arch/xtensa/kernel/syscalls/syscall.tbl   | 374 ++++++++++++++
+ arch/xtensa/kernel/syscalls/syscallhdr.sh |  36 ++
+ arch/xtensa/kernel/syscalls/syscalltbl.sh |  32 ++
+ 10 files changed, 510 insertions(+), 798 deletions(-)
+ create mode 100644 arch/xtensa/kernel/syscalls/Makefile
+ create mode 100644 arch/xtensa/kernel/syscalls/syscall.tbl
+ create mode 100644 arch/xtensa/kernel/syscalls/syscallhdr.sh
+ create mode 100644 arch/xtensa/kernel/syscalls/syscalltbl.sh
+
+-- 
+1.9.1
 
