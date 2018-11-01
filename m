@@ -2,149 +2,73 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F4CC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:51:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9368C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:51:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3567E20820
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:51:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3567E20820
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id ACAC8205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 16:51:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACAC8205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727286AbeKBByw (ORCPT
+        id S1727412AbeKBBzL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 1 Nov 2018 21:54:52 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:42403 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726033AbeKBByv (ORCPT
+        Thu, 1 Nov 2018 21:55:11 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:53168 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726265AbeKBBzL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Nov 2018 21:54:51 -0400
-Received: by mail-io1-f72.google.com with SMTP id q22-v6so1722686iog.9
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 09:51:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to
-         :content-transfer-encoding;
-        bh=CYA2lWuiJMSscQLZOpmly49VdGEbKbUqeMEMqqVNjOA=;
-        b=gVnazB/5zDoDRzgTNlGAMuMxbdBXl5AHkfIKl8Gn0gZzn8aLzSGB3Vh+sFbdALVHS6
-         CUByIXi5M33l2Wu9TpO3e7BNSIRLyCc0iaXD0OyTZS/tZBTQQnsfzgEeyKzeTucxhVp4
-         kuzUSlz1D9ADaKSGsIjisUnLfDEVG8SPeGMZBsVvMoxzguLDz67SpC5A8V5ueW6Z5MWV
-         UfpS47xXsafoHmlgAhkW5RbhtjOnfHdrQ1d/eAhw/KGDKx7GlgItVjITdK706QhQln9I
-         7avMwbYY2+XibmocP5kcXYmZT/cbFwCTwy9ZiOTXxl6AxNE0r8HtZUQEO/BZO14Hx4Eu
-         JGig==
-X-Gm-Message-State: AGRZ1gLRlTB/F9NvLOvvrFS0w2wodqcSiX960kH+0s8YvgVwlOkdl3sy
-        D0veIRvVmTOIMmuc9NBolt/BKbicV007xwty/mGAg01RflGX
-X-Google-Smtp-Source: AJdET5fyAdKiqmceJwHPnIMAsp2dmGXarS8ygmbW4IfwdoGpRQM4psv7jyoUC9ictfZUp7pBjkzx6ctTXXwE0yoWcZibi9D5uSlS
+        Thu, 1 Nov 2018 21:55:11 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gIGBm-0006Oy-0k; Thu, 01 Nov 2018 16:51:22 +0000
+Date:   Thu, 1 Nov 2018 16:51:21 +0000
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [git pull] mount API series
+Message-ID: <20181101165121.GS32577@ZenIV.linux.org.uk>
+References: <20181031053355.GQ32577@ZenIV.linux.org.uk>
+ <87a7mut9cm.fsf@xmission.com>
+ <20181031163601.GR32577@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-X-Received: by 2002:a02:4804:: with SMTP id p4-v6mr6673165jaa.4.1541091064381;
- Thu, 01 Nov 2018 09:51:04 -0700 (PDT)
-Date:   Thu, 01 Nov 2018 09:51:04 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000075906805799d39b4@google.com>
-Subject: KASAN: use-after-free Read in ip6_tnl_parse_tlv_enc_lim
-From:   syzbot <syzbot+2c8d8fccd6cece4ede2a@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181031163601.GR32577@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8sDQoNCnN5emJvdCBmb3VuZCB0aGUgZm9sbG93aW5nIGNyYXNoIG9uOg0KDQpIRUFEIGNv
-bW1pdDogICAgNDRhZGJhYzhmNzIxIE1lcmdlIGJyYW5jaCAnd29yay50dHktaW9jdGwnIG9mIGdp
-dDovL2dpdC5rZS4uDQpnaXQgdHJlZTogICAgICAgYnBmLW5leHQNCmNvbnNvbGUgb3V0cHV0OiBo
-dHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS94L2xvZy50eHQ/eD0xNjA0MzE4MzQwMDAwMA0K
-a2VybmVsIGNvbmZpZzogIGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvLmNvbmZpZz94
-PTljYjk4MWVlMDE0NjNkZWENCmRhc2hib2FyZCBsaW5rOiBodHRwczovL3N5emthbGxlci5hcHBz
-cG90LmNvbS9idWc/ZXh0aWQ9MmM4ZDhmY2NkNmNlY2U0ZWRlMmENCmNvbXBpbGVyOiAgICAgICBn
-Y2MgKEdDQykgOC4wLjEgMjAxODA0MTMgKGV4cGVyaW1lbnRhbCkNCg0KVW5mb3J0dW5hdGVseSwg
-SSBkb24ndCBoYXZlIGFueSByZXByb2R1Y2VyIGZvciB0aGlzIGNyYXNoIHlldC4NCg0KSU1QT1JU
-QU5UOiBpZiB5b3UgZml4IHRoZSBidWcsIHBsZWFzZSBhZGQgdGhlIGZvbGxvd2luZyB0YWcgdG8g
-dGhlIGNvbW1pdDoNClJlcG9ydGVkLWJ5OiBzeXpib3QrMmM4ZDhmY2NkNmNlY2U0ZWRlMmFAc3l6
-a2FsbGVyLmFwcHNwb3RtYWlsLmNvbQ0KDQrvv73vv70277+977+9Ye+/vX5JeU3vv70S77+9OiBy
-ZW5hbWVkIGZyb20gbnIwAQ0KPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09DQpCVUc6IEtBU0FOOiB1c2UtYWZ0ZXItZnJlZSBp
-biBpcDZfdG5sX3BhcnNlX3Rsdl9lbmNfbGltKzB4NWRmLzB4NjYwICANCm5ldC9pcHY2L2lwNl90
-dW5uZWwuYzo0MTcNClJlYWQgb2Ygc2l6ZSAxIGF0IGFkZHIgZmZmZjg4MDFjYTIxMjI3ZiBieSB0
-YXNrIHN5ei1leGVjdXRvcjAvMTEyMzkNCg0KQ1BVOiAxIFBJRDogMTEyMzkgQ29tbTogc3l6LWV4
-ZWN1dG9yMCBOb3QgdGFpbnRlZCA0LjE5LjArICMxMzUNCkhhcmR3YXJlIG5hbWU6IEdvb2dsZSBH
-b29nbGUgQ29tcHV0ZSBFbmdpbmUvR29vZ2xlIENvbXB1dGUgRW5naW5lLCBCSU9TICANCkdvb2ds
-ZSAwMS8wMS8yMDExDQpDYWxsIFRyYWNlOg0KICBfX2R1bXBfc3RhY2sgbGliL2R1bXBfc3RhY2su
-Yzo3NyBbaW5saW5lXQ0KICBkdW1wX3N0YWNrKzB4MjQ0LzB4MzlkIGxpYi9kdW1wX3N0YWNrLmM6
-MTEzDQogIHByaW50X2FkZHJlc3NfZGVzY3JpcHRpb24uY29sZC43KzB4OS8weDFmZiBtbS9rYXNh
-bi9yZXBvcnQuYzoyNTYNCiAga2FzYW5fcmVwb3J0X2Vycm9yIG1tL2thc2FuL3JlcG9ydC5jOjM1
-NCBbaW5saW5lXQ0KICBrYXNhbl9yZXBvcnQuY29sZC44KzB4MjQyLzB4MzA5IG1tL2thc2FuL3Jl
-cG9ydC5jOjQxMg0KICBfX2FzYW5fcmVwb3J0X2xvYWQxX25vYWJvcnQrMHgxNC8weDIwIG1tL2th
-c2FuL3JlcG9ydC5jOjQzMA0KICBpcDZfdG5sX3BhcnNlX3Rsdl9lbmNfbGltKzB4NWRmLzB4NjYw
-IG5ldC9pcHY2L2lwNl90dW5uZWwuYzo0MTcNCiAgaXA2aXA2X3RubF94bWl0IG5ldC9pcHY2L2lw
-Nl90dW5uZWwuYzoxMzQ4IFtpbmxpbmVdDQogIGlwNl90bmxfc3RhcnRfeG1pdCsweDQ5Zi8weDI1
-YTAgbmV0L2lwdjYvaXA2X3R1bm5lbC5jOjE0MTINCiAgX19uZXRkZXZfc3RhcnRfeG1pdCBpbmNs
-dWRlL2xpbnV4L25ldGRldmljZS5oOjQzMzYgW2lubGluZV0NCiAgbmV0ZGV2X3N0YXJ0X3htaXQg
-aW5jbHVkZS9saW51eC9uZXRkZXZpY2UuaDo0MzQ1IFtpbmxpbmVdDQogIHhtaXRfb25lIG5ldC9j
-b3JlL2Rldi5jOjMyNTIgW2lubGluZV0NCiAgZGV2X2hhcmRfc3RhcnRfeG1pdCsweDI5NS8weGM5
-MCBuZXQvY29yZS9kZXYuYzozMjY4DQogIF9fZGV2X3F1ZXVlX3htaXQrMHgyZjcxLzB4M2FkMCBu
-ZXQvY29yZS9kZXYuYzozODM4DQogIGRldl9xdWV1ZV94bWl0KzB4MTcvMHgyMCBuZXQvY29yZS9k
-ZXYuYzozODcxDQogIF9fYnBmX3R4X3NrYiBuZXQvY29yZS9maWx0ZXIuYzoyMDE3IFtpbmxpbmVd
-DQogIF9fYnBmX3JlZGlyZWN0X2NvbW1vbiBuZXQvY29yZS9maWx0ZXIuYzoyMDU1IFtpbmxpbmVd
-DQogIF9fYnBmX3JlZGlyZWN0KzB4NWNmLzB4YjIwIG5ldC9jb3JlL2ZpbHRlci5jOjIwNjINCiAg
-X19fX2JwZl9jbG9uZV9yZWRpcmVjdCBuZXQvY29yZS9maWx0ZXIuYzoyMDk1IFtpbmxpbmVdDQog
-IGJwZl9jbG9uZV9yZWRpcmVjdCsweDJmNi8weDQ5MCBuZXQvY29yZS9maWx0ZXIuYzoyMDY3DQog
-IGJwZl9wcm9nXzc1OWE5OTJjNTc4YTM4OTQrMHg3ZDcvMHgxMDAwDQoNCkFsbG9jYXRlZCBieSB0
-YXNrIDEwNzcxOg0KICBzYXZlX3N0YWNrKzB4NDMvMHhkMCBtbS9rYXNhbi9rYXNhbi5jOjQ0OA0K
-ICBzZXRfdHJhY2sgbW0va2FzYW4va2FzYW4uYzo0NjAgW2lubGluZV0NCiAga2FzYW5fa21hbGxv
-YysweGM3LzB4ZTAgbW0va2FzYW4va2FzYW4uYzo1NTMNCiAga2FzYW5fc2xhYl9hbGxvYysweDEy
-LzB4MjAgbW0va2FzYW4va2FzYW4uYzo0OTANCiAga21lbV9jYWNoZV9hbGxvYysweDEyZS8weDcz
-MCBtbS9zbGFiLmM6MzU1NA0KICBnZXRuYW1lX2ZsYWdzKzB4ZDAvMHg1YTAgZnMvbmFtZWkuYzox
-NDANCiAgZ2V0bmFtZSBmcy9uYW1laS5jOjIxMSBbaW5saW5lXQ0KICB1c2VyX3BhdGhfY3JlYXRl
-IGZzL25hbWVpLmM6MzY5MyBbaW5saW5lXQ0KICBkb19zeW1saW5rYXQrMHhlOS8weDJkMCBmcy9u
-YW1laS5jOjQxNDcNCiAgX19kb19zeXNfc3ltbGluayBmcy9uYW1laS5jOjQxNzMgW2lubGluZV0N
-CiAgX19zZV9zeXNfc3ltbGluayBmcy9uYW1laS5jOjQxNzEgW2lubGluZV0NCiAgX194NjRfc3lz
-X3N5bWxpbmsrMHg1OS8weDgwIGZzL25hbWVpLmM6NDE3MQ0KICBkb19zeXNjYWxsXzY0KzB4MWI5
-LzB4ODIwIGFyY2gveDg2L2VudHJ5L2NvbW1vbi5jOjI5MA0KICBlbnRyeV9TWVNDQUxMXzY0X2Fm
-dGVyX2h3ZnJhbWUrMHg0OS8weGJlDQoNCkZyZWVkIGJ5IHRhc2sgMTA3NzE6DQogIHNhdmVfc3Rh
-Y2srMHg0My8weGQwIG1tL2thc2FuL2thc2FuLmM6NDQ4DQogIHNldF90cmFjayBtbS9rYXNhbi9r
-YXNhbi5jOjQ2MCBbaW5saW5lXQ0KICBfX2thc2FuX3NsYWJfZnJlZSsweDEwMi8weDE1MCBtbS9r
-YXNhbi9rYXNhbi5jOjUyMQ0KICBrYXNhbl9zbGFiX2ZyZWUrMHhlLzB4MTAgbW0va2FzYW4va2Fz
-YW4uYzo1MjgNCiAgX19jYWNoZV9mcmVlIG1tL3NsYWIuYzozNDk4IFtpbmxpbmVdDQogIGttZW1f
-Y2FjaGVfZnJlZSsweDgzLzB4MjkwIG1tL3NsYWIuYzozNzU2DQogIHB1dG5hbWUrMHhmMi8weDEz
-MCBmcy9uYW1laS5jOjI2MQ0KICBmaWxlbmFtZV9jcmVhdGUrMHgyYjIvMHg1YjAgZnMvbmFtZWku
-YzozNjU4DQogIHVzZXJfcGF0aF9jcmVhdGUgZnMvbmFtZWkuYzozNjkzIFtpbmxpbmVdDQogIGRv
-X3N5bWxpbmthdCsweGZlLzB4MmQwIGZzL25hbWVpLmM6NDE0Nw0KICBfX2RvX3N5c19zeW1saW5r
-IGZzL25hbWVpLmM6NDE3MyBbaW5saW5lXQ0KICBfX3NlX3N5c19zeW1saW5rIGZzL25hbWVpLmM6
-NDE3MSBbaW5saW5lXQ0KICBfX3g2NF9zeXNfc3ltbGluaysweDU5LzB4ODAgZnMvbmFtZWkuYzo0
-MTcxDQogIGRvX3N5c2NhbGxfNjQrMHgxYjkvMHg4MjAgYXJjaC94ODYvZW50cnkvY29tbW9uLmM6
-MjkwDQogIGVudHJ5X1NZU0NBTExfNjRfYWZ0ZXJfaHdmcmFtZSsweDQ5LzB4YmUNCg0KVGhlIGJ1
-Z2d5IGFkZHJlc3MgYmVsb25ncyB0byB0aGUgb2JqZWN0IGF0IGZmZmY4ODAxY2EyMTIxNDANCiAg
-d2hpY2ggYmVsb25ncyB0byB0aGUgY2FjaGUgbmFtZXNfY2FjaGUgb2Ygc2l6ZSA0MDk2DQpUaGUg
-YnVnZ3kgYWRkcmVzcyBpcyBsb2NhdGVkIDMxOSBieXRlcyBpbnNpZGUgb2YNCiAgNDA5Ni1ieXRl
-IHJlZ2lvbiBbZmZmZjg4MDFjYTIxMjE0MCwgZmZmZjg4MDFjYTIxMzE0MCkNClRoZSBidWdneSBh
-ZGRyZXNzIGJlbG9uZ3MgdG8gdGhlIHBhZ2U6DQpwYWdlOmZmZmZlYTAwMDcyODg0ODAgY291bnQ6
-MSBtYXBjb3VudDowIG1hcHBpbmc6ZmZmZjg4MDFkYTk3M2Q4MCBpbmRleDoweDAgIA0KY29tcG91
-bmRfbWFwY291bnQ6IDANCmZsYWdzOiAweDJmZmZjMDAwMDAwODEwMChzbGFifGhlYWQpDQpyYXc6
-IDAyZmZmYzAwMDAwMDgxMDAgZmZmZmVhMDAwNmRkNjI4OCBmZmZmZWEwMDA3MjIzOTg4IGZmZmY4
-ODAxZGE5NzNkODANCnJhdzogMDAwMDAwMDAwMDAwMDAwMCBmZmZmODgwMWNhMjEyMTQwIDAwMDAw
-MDAxMDAwMDAwMDEgMDAwMDAwMDAwMDAwMDAwMA0KcGFnZSBkdW1wZWQgYmVjYXVzZToga2FzYW46
-IGJhZCBhY2Nlc3MgZGV0ZWN0ZWQNCg0KTWVtb3J5IHN0YXRlIGFyb3VuZCB0aGUgYnVnZ3kgYWRk
-cmVzczoNCiAgZmZmZjg4MDFjYTIxMjEwMDogZmMgZmMgZmMgZmMgZmMgZmMgZmMgZmMgZmIgZmIg
-ZmIgZmIgZmIgZmIgZmIgZmINCiAgZmZmZjg4MDFjYTIxMjE4MDogZmIgZmIgZmIgZmIgZmIgZmIg
-ZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmINCj4gZmZmZjg4MDFjYTIxMjIwMDogZmIgZmIg
-ZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmINCiAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXg0KICBm
-ZmZmODgwMWNhMjEyMjgwOiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBm
-YiBmYiBmYg0KICBmZmZmODgwMWNhMjEyMzAwOiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBm
-YiBmYiBmYiBmYiBmYiBmYiBmYg0KPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09DQoNCg0KLS0tDQpUaGlzIGJ1ZyBpcyBnZW5l
-cmF0ZWQgYnkgYSBib3QuIEl0IG1heSBjb250YWluIGVycm9ycy4NClNlZSBodHRwczovL2dvby5n
-bC90cHNtRUogZm9yIG1vcmUgaW5mb3JtYXRpb24gYWJvdXQgc3l6Ym90Lg0Kc3l6Ym90IGVuZ2lu
-ZWVycyBjYW4gYmUgcmVhY2hlZCBhdCBzeXprYWxsZXJAZ29vZ2xlZ3JvdXBzLmNvbS4NCg0Kc3l6
-Ym90IHdpbGwga2VlcCB0cmFjayBvZiB0aGlzIGJ1ZyByZXBvcnQuIFNlZToNCmh0dHBzOi8vZ29v
-LmdsL3Rwc21FSiNidWctc3RhdHVzLXRyYWNraW5nIGZvciBob3cgdG8gY29tbXVuaWNhdGUgd2l0
-aCAgDQpzeXpib3QuDQo=
+On Wed, Oct 31, 2018 at 04:36:01PM +0000, Al Viro wrote:
+> On Wed, Oct 31, 2018 at 10:38:17AM -0500, Eric W. Biederman wrote:
+> > A couple of bugs that I can see quickly.  Several of which I have
+> > previously reported:
+> > 
+> > - There is an easily triggered NULL pointer deference with open_tree
+> >   and mount propagation.
+> 
+> What the hell?  If the fixes that went in do not handle something,
+> especially if you have testcases, where the fuck have you been and
+> where _are_ those testcases, while we are at it?
+> 
+> Eric, this is bloody ridiculous - "I have an easily triggered NULL pointer
+> dereference in..., here it is" is hard to miscommunicate.  Sure, any such
+> needs to be fixed.  For crying out loud, that thing has not been hidden -
+> it sat in -next, it's been reposted several times...
+
+Again, would you mind telling what exactly does the above refer to and whether
+it is still true?  I'm not asking to put details in every time you mention
+something of that sort, but generally one is expected to come up with those
+on demand, especially if the bug _is_ easily triggered.
+
+You, IIRC, had been Cc'd on the threads where open_tree breakage was
+dealt with.  I can certainly believe that there might be something else
+in that area (or any other, for that matter).  I *am* interested in finding
+and fixing that and I would rather appreciate the details of what you
+are seeing.
