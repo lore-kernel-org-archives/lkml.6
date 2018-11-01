@@ -2,114 +2,91 @@ Return-Path: <SRS0=Fmhj=NM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0068BC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 21:54:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C207C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 21:55:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1BD5205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 21:54:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A79B205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  1 Nov 2018 21:55:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XS+2YOkb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1BD5205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jfuUNUR2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A79B205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727613AbeKBG6s (ORCPT
+        id S1727696AbeKBHAE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 02:58:48 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:42448 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726273AbeKBG6s (ORCPT
+        Fri, 2 Nov 2018 03:00:04 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45697 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726273AbeKBHAE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 02:58:48 -0400
-Received: by mail-lf1-f68.google.com with SMTP id q6-v6so15267941lfh.9
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 14:53:59 -0700 (PDT)
+        Fri, 2 Nov 2018 03:00:04 -0400
+Received: by mail-wr1-f68.google.com with SMTP id n5-v6so21507392wrw.12
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 14:55:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=uCZJ3nHxCwDoSPUNAwLklQQEK7UGVlV2Zp4EOFDBd4M=;
-        b=XS+2YOkb82UXAo/8D9jI00Rwy3O3XCMYjJhJkBlY84sDi/vh82fAj/B6H00R0vi6WE
-         BgkVUVdle4rcsmLLqrnRx8YB4xTiQG2itWjo1dpi5I+2afgTBK7MXCF252vkgP34F93g
-         OvdMUDUD571W0LQItDPbwP6nGrVLgQwZXAUhI=
+        bh=gk0V0ymG+8OtXqs+0leQ5UmRvL35/lixyxJousAOs8M=;
+        b=jfuUNUR2xCSu6WfD9zBWRhKfUqZyOHZ6bRluR6A++rTd/xpuTyMyb2BJMkoYoJes4o
+         6HCfPbgTegXejrU5vJgyW/XaHPvai7wUk2yfAZOHF1QXNRKWfhT4U1RjKaXz9hc38TOd
+         0l3G+dv7RYyHWfwJh8DfYr1sk5box9F8F5rLLU7hbhXrfqt9xJzGkOhBpXBRdRhRUp6X
+         OBsAxgqtz2GctEinD/7J5Ms2lwkExy3BIW6++SRyuBgemXM2sSN7EQMCTYXic2eyqJ6P
+         oxLODlJAui1WdMhYbbpKUljjxdRv4Na++LvzLwXDBAiDQcq5Pakq2d+Qlr0alo84vx4Q
+         mreg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=uCZJ3nHxCwDoSPUNAwLklQQEK7UGVlV2Zp4EOFDBd4M=;
-        b=VzlSOmzKTIO1a6lRMY1RgiVZEFVAiwDOmlaSMPDdh6RrGloU60DLHWM9RrBo9KiGqR
-         0ZQO24sg4lyJNq+z39XjBZGftJgrOt2xhwNLhOv+ZuUePeJR9cxRQOU/jT6Wkj75hsqF
-         2X4aVl+EfiHweFcKSitNfN8KPjx8tGvNgqF7Nu4NYI1Bho4JHqAlcymiEVfRI5njUQlr
-         L2q5L8CS2NR5oDSnOq8ZZRvdJ9mjGSMigGIZ6HUwDoyhuqyf4R7z1xeuP/2yTWMULAQd
-         nXiU8n6DZOpCThX+Rjvh8JRCY0GghfuAycaYk3AjIXiPij0CBgwR5KdEXbKdH7m3Dzvy
-         Niow==
-X-Gm-Message-State: AGRZ1gIeJpmdIwWqKzMbQYXmYsnbR9dzAcCpVtB/6+fxM7OiZLSWtBmt
-        vuWVtCkabAkK0oE8/PYJM1VnsOUtVM5GkorgD3HzYg==
-X-Google-Smtp-Source: AJdET5feTJxns45wZATobDdXelgcq1srv6dVTYuf3wzMYz999YxuraE9SVeg7Fs+QfQVNZRNrgAVCsNoTZKvTY8VYA0=
-X-Received: by 2002:a19:f813:: with SMTP id a19mr5269273lff.67.1541109238360;
- Thu, 01 Nov 2018 14:53:58 -0700 (PDT)
+        bh=gk0V0ymG+8OtXqs+0leQ5UmRvL35/lixyxJousAOs8M=;
+        b=GaXpOln6Uz8In2NYv4P1912AjijreXI/u+HNAGG3plO9NOzJHGHiFFKiTc57N9UzqA
+         V2YP+xAn8dEc7Pe2PU2/UFqgJV2A9Zj5Sb7xiShfHoUVTIPnbH4OX2YIngl582xswrQL
+         xv+zovQo/ZX4JgPaCwefV0YqcON6xyICMeShKMEuzV3OSHxcggazTS6Lgpy/tawTacjK
+         9ne67/Fjs2WEtXKzwAYfKTJMg3t9gTSjk012Pj4iyhFAhVeL+3Ni/rNzJN/Owngl0iXj
+         lCM+7E2Sr2c9rBUUzTgoyGoKeO/6R7t+DTnrurNmsWKNDq9tO3pemhCrxxPt1aLpWdCk
+         ZYcQ==
+X-Gm-Message-State: AGRZ1gKqcHLzi35qtd1MOy8HOiP3ECqcCD+WBJd786ys/e53usxJS514
+        Hp33gmgBIIBck98z9QVImi1ZP9z7MAYzsGVvD9s=
+X-Google-Smtp-Source: AJdET5e9nZ/czWjtbbzWiQPaDpnJtte7TIzB2wGPxRNA3iaS8XvjqDGrtf0wBEn6mC++MwfCZGNDaM71l/FBURxNQGk=
+X-Received: by 2002:adf:de0b:: with SMTP id b11-v6mr3773918wrm.119.1541109314112;
+ Thu, 01 Nov 2018 14:55:14 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181031194425.32132-1-TheSven73@googlemail.com>
- <20181031194425.32132-2-TheSven73@googlemail.com> <CACRpkdai-6iNbz4EGuHNHkQYyR+yhTEJdRXP4G6fUKpA+XApjQ@mail.gmail.com>
- <CAGngYiVorxYY+8e75068i4=PJi1gEvnGkgvBfi0+9H+c1qD-oQ@mail.gmail.com>
-In-Reply-To: <CAGngYiVorxYY+8e75068i4=PJi1gEvnGkgvBfi0+9H+c1qD-oQ@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 1 Nov 2018 22:53:46 +0100
-Message-ID: <CACRpkdZkv6ikrFmJptBTwftj7TkR5Bce9e2R1ceTw_pLqH1LcA@mail.gmail.com>
-Subject: Re: [PATCH anybus v2 1/5] misc: support the Arcx anybus bridge.
-To:     Sven Van Asbroeck <thesven73@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, svendev@arcx.com,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Thierry Reding <treding@nvidia.com>,
-        David Lechner <david@lechnology.com>,
-        =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Johan Hovold <johan@kernel.org>,
-        Michal Simek <monstr@monstr.eu>, michal.vokac@ysoft.com,
-        Greg KH <gregkh@linuxfoundation.org>, john.garry@huawei.com,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
+References: <2346471.iD2boZGiFq@blindfold>
+In-Reply-To: <2346471.iD2boZGiFq@blindfold>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Thu, 1 Nov 2018 22:55:01 +0100
+Message-ID: <CAFLxGvzR5XCyBiR2tyFw5ouB+aekPrL1KD6zwiaL3VqCnznTaQ@mail.gmail.com>
+Subject: Re: [GIT PULL] UBIFS updates for 4.20-rc1
+To:     Richard Weinberger <richard@nod.at>
+Cc:     torvalds@linuxfoundation.org,
+        "linux-mtd @ lists . infradead . org" <linux-mtd@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 1, 2018 at 6:17 PM Sven Van Asbroeck <thesven73@gmail.com> wrote:
+Linus,
 
-> >> +static DEVICE_ATTR_RO(version);
-> >
-> > Do you need this in userspace really?
-> >
-> >> +static DEVICE_ATTR_RO(design_number);
-> >
-> > And this?
+On Wed, Oct 31, 2018 at 10:22 PM Richard Weinberger <richard@nod.at> wrote:
+> The following changes since commit 84df9525b0c27f3ebc2ebb1864fa62a97fdedb7d:
 >
-> Unfortunately, I do :(
-> The application software reads these out and displays them in an UI. It's
-> important to be able to see these on a running device.
+>   Linux 4.19 (2018-10-22 07:37:37 +0100)
+>
+> are available in the Git repository at:
+>
+>   git://git.infradead.org/linux-ubifs.git tags/tags/upstream-4.20-rc1
 
-OK...
+Just a kind ping to make sure that this pull request didn't get lost
+in your spam folder.
+Since you pulled the UML stuff,but this not, I'm a little worried.
 
-> Perhaps there is another kernel abstraction I could use?
-
-I don't think so. If you want to be pedantic, document the sysfs
-files in Documentation/ABI/testing/sysfs-*
-
-Maybe the properties should be on the bus though? I don't know :/
-
-Yours,
-Linus Walleij
+-- 
+Thanks,
+//richard
