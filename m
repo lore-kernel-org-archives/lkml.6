@@ -2,199 +2,104 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_NEOMUTT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC49BC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 21:14:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5868C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 21:14:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F6B72081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 21:14:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 924662081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 21:14:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="Qkz2RLSJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F6B72081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="PeFDjQzS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 924662081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728101AbeKCGXP (ORCPT
+        id S1728211AbeKCGXd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 02:23:15 -0400
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:31664 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726106AbeKCGXP (ORCPT
+        Sat, 3 Nov 2018 02:23:33 -0400
+Received: from alln-iport-4.cisco.com ([173.37.142.91]:37735 "EHLO
+        alln-iport-4.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726106AbeKCGXc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 02:23:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1541193272; x=1572729272;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=4+i51fRxigkTF2mXa0noRy1cmn2afNEARp6SCWUQGdI=;
-  b=Qkz2RLSJvNWUzPHNC+4r99m45+I09wxhGIqOqIolekwOTF4q4tFJNg8l
-   u/iw9F5LdRb6c5DJtiHuhlYGa8f2ioWiQbORj8+gxLOZ6emHMCSmnrPn7
-   KXMyR/XFlmZpj0a0vK5aAjclcnk7pG0DaDzBJCBrCS9DqznfWobgXSp/1
-   DXmmT6OJkccc8WV3vSwFjBDe008uX2Y+6vf4vpJhwYRo2G5rtwilb/yJ1
-   EzClXDI6mFqCmh8Dwc8oknmY+Lcb6lOBXXmPIsvLWX6uSAt89CMpxYg9B
-   qJ51Qq57221XLU88j8kE1+exPzWJsJhKwBE3Wn1qHDUoknJZsGjtPtFwq
-   w==;
-X-IronPort-AV: E=Sophos;i="5.54,457,1534780800"; 
-   d="scan'208";a="93415111"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 03 Nov 2018 05:14:32 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP; 02 Nov 2018 13:58:15 -0700
-Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.111.69.187]) ([10.111.69.187])
-  by uls-op-cesaip02.wdc.com with ESMTP; 02 Nov 2018 14:14:31 -0700
-Subject: Re: [RFC 0/2] Add RISC-V cpu topology
-To:     Nick Kossifidis <mick@ics.forth.gr>
-Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        "alankao@andestech.com" <alankao@andestech.com>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "anup@brainfault.org" <anup@brainfault.org>,
-        "palmer@sifive.com" <palmer@sifive.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "zong@andestech.com" <zong@andestech.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>
-References: <1541113468-22097-1-git-send-email-atish.patra@wdc.com>
- <866dedbc78ab4fa0e3b040697e112106@mailhost.ics.forth.gr>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <9385b2eb-4729-8247-b0ae-1540793d078b@wdc.com>
-Date:   Fri, 2 Nov 2018 14:14:30 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Sat, 3 Nov 2018 02:23:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=1094; q=dns/txt; s=iport;
+  t=1541193289; x=1542402889;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=K6AS13gXCOwa9AguBgQyVGngMmafF7uZ3EdQIES0qPI=;
+  b=PeFDjQzStRMDgmbet4x7yNdF9zTRwfepcWIja3cQmNvqi3PVNmZuBz58
+   lHU4K6q6l7MZjPqrUPevQmtVdaH5JP5Zor1JwjgrGMAPKwsH8T1F8TXPm
+   cFT6wjamzSEA+UG68YBQQu9W5jz4y7D9R4tgmHKrEb3cyBXpq4wTTrKX9
+   0=;
+X-IronPort-AV: E=Sophos;i="5.54,457,1534809600"; 
+   d="scan'208";a="195671246"
+Received: from alln-core-11.cisco.com ([173.36.13.133])
+  by alln-iport-4.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 21:14:48 +0000
+Received: from zorba ([10.24.90.186])
+        by alln-core-11.cisco.com (8.15.2/8.15.2) with ESMTPS id wA2LEj39016747
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 2 Nov 2018 21:14:47 GMT
+Date:   Fri, 2 Nov 2018 14:14:44 -0700
+From:   Daniel Walker <danielwa@cisco.com>
+To:     Richard Weinberger <richard.weinberger@gmail.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, nkela@cisco.com,
+        xe-linux-external@cisco.com, LKML <linux-kernel@vger.kernel.org>,
+        "linux-mtd @ lists . infradead . org" <linux-mtd@lists.infradead.org>,
+        Rod Whitby <rod@whitby.id.au>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH] Make JFFS2 endianness configurable
+Message-ID: <20181102211444.nqqqbd4w5diyqrfw@zorba>
+References: <20181101225603.17806-1-nkela@cisco.com>
+ <20181102000236.rqho7txtb7gv543t@zorba>
+ <20181102003434.GW32577@ZenIV.linux.org.uk>
+ <20181102140420.jiuhcsrahoeqe5vk@zorba>
+ <CAFLxGvy-0-A1Ta1vf=o4q0tcJAdr+uv9eQc7UrnwqF9NkJiWUw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <866dedbc78ab4fa0e3b040697e112106@mailhost.ics.forth.gr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFLxGvy-0-A1Ta1vf=o4q0tcJAdr+uv9eQc7UrnwqF9NkJiWUw@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Auto-Response-Suppress: DR, OOF, AutoReply
+X-Outbound-SMTP-Client: 10.24.90.186, [10.24.90.186]
+X-Outbound-Node: alln-core-11.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/2/18 11:59 AM, Nick Kossifidis wrote:
-> Hello All,
+On Fri, Nov 02, 2018 at 09:15:06PM +0100, Richard Weinberger wrote:
+> On Fri, Nov 2, 2018 at 3:04 PM Daniel Walker <danielwa@cisco.com> wrote:
+> > Do you have any thought on how to implement it ? I was think abstracting the
+> > endian functions in the nodelist.h
 > 
-> Στις 2018-11-02 01:04, Atish Patra έγραψε:
->> This patch series adds the cpu topology for RISC-V. It contains
->> both the DT binding and actual source code. It has been tested on
->> QEMU & Unleashed board.
->>
->> The idea is based on cpu-map in ARM with changes related to how
->> we define SMT systems. The reason for adopting a similar approach
->> to ARM as I feel it provides a very clear way of defining the
->> topology compared to parsing cache nodes to figure out which cpus
->> share the same package or core.  I am open to any other idea to
->> implement cpu-topology as well.
->>
+> Yes, see what UFS does.
 > 
-> I was also about to start a discussion about CPU topology on RISC-V
-> after the last swtools group meeting. The goal is to provide the
-> scheduler with hints on how to distribute tasks more efficiently
-> between harts, by populating the scheduling domain topology levels
-> (https://elixir.bootlin.com/linux/v4.19/ident/sched_domain_topology_level).
-> What we want to do is define cpu groups and assign them to
-> scheduling domains with the appropriate SD_ flags
-> (https://github.com/torvalds/linux/blob/master/include/linux/sched/topology.h#L16).
+> > static inline jint16_t cpu_to_je16(jint16_t x) {
+> >         if (check_big_endian()) {
+> >                 return cpu_to_be16(x);
+> >         } else if (check_little_endian()) {
+> >                 return cpu_to_le16(x);
+> >         }
+> > }
+> >
+> > but how would you setup the checking ?
 > 
+> Make it a mount option and store the endianness mode in the super block.
 
-Scheduler domain topology is already getting all the hints in the 
-following way.
+It's actually a mkfs option currently. I'm not sure how that factors in,
 
-static struct sched_domain_topology_level default_topology[] = {
-#ifdef CONFIG_SCHED_SMT
-         { cpu_smt_mask, cpu_smt_flags, SD_INIT_NAME(SMT) },
-#endif
-#ifdef CONFIG_SCHED_MC
-         { cpu_coregroup_mask, cpu_core_flags, SD_INIT_NAME(MC) },
-#endif
-         { cpu_cpu_mask, SD_INIT_NAME(DIE) },
-         { NULL, },
-};
+from the mkfs.jffs2 man page,
 
-#ifdef CONFIG_SCHED_SMT
-static inline const struct cpumask *cpu_smt_mask(int cpu)
-{
-         return topology_sibling_cpumask(cpu);
-}
-#endif
+       -l, --little-endian
+              Create a little-endian JFFS2 image.  Default is to make an image with the same endianness as the host.
 
-const struct cpumask *cpu_coregroup_mask(int cpu)
-{
-         return &cpu_topology[cpu].core_sibling;
-}
+       -b, --big-endian
+              Create a big-endian JFFS2 image.  Default is to make an image with the same endianness as the host.
 
 
-> So the cores that belong to a scheduling domain may share:
-> CPU capacity (SD_SHARE_CPUCAPACITY / SD_ASYM_CPUCAPACITY)
-> Package resources -e.g. caches, units etc- (SD_SHARE_PKG_RESOURCES)
-> Power domain (SD_SHARE_POWERDOMAIN)
-> 
-> In this context I believe using words like "core", "package",
-> "socket" etc can be misleading. For example the sample topology you
-> use on the documentation says that there are 4 cores that are part
-> of a package, however "package" has a different meaning to the
-> scheduler. Also we don't say anything in case they share a power
-> domain or if they have the same capacity or not. This mapping deals
-> only with cache hierarchy or other shared resources.
-> 
-> How about defining a dt scheme to describe the scheduler domain
-> topology levels instead ? e.g:
-> 
-> 2 sets (or clusters if you prefer) of 2 SMT cores, each set with
-> a different capacity and power domain:
-> 
-> sched_topology {
->    level0 { // SMT
->     shared = "power", "capacity", "resources";
->     group0 {
->      members = <&hart0>, <&hart1>;
->     }
->     group1 {
->      members = <&hart2>, <&hart3>;
->     }
->     group2 {
->      members = <&hart4>, <&hart5>;
->     }
->     group3 {
->      members = <&hart6>, <&hart7>;
->     }
->    }
->    level1 { // MC
->     shared = "power", "capacity"
->     group0 {
->      members = <&hart0>, <&hart1>, <&hart2>, <&hart3>;
->     }
->     group1 {
->      members = <&hart4>, <&hart5>, <&hart6>, <&hart7>;
->     }
->    }
->    top_level { // A group with all harts in it
->     shared = "" // There is nothing common for ALL harts, we could have
-> capacity here
->    }
-> }
-> 
-
-I agree that naming could have been better in the past. But it is what 
-it is now. I don't see any big advantages in this approach compared to 
-the existing approach where DT specifies what hardware looks like and 
-scheduler sets up it's domain based on different cpumasks.
-
-
-Regards,
-Atish
-> Regards,
-> Nick
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
-> 
-
+Daniel
