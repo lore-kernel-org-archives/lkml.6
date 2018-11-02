@@ -2,109 +2,140 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DC68C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:42:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9E4DC65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:42:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57F172081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:42:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57F172081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id B90952081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:42:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B90952081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727939AbeKBXtz (ORCPT
+        id S1727990AbeKBXt7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 19:49:55 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:59216 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726557AbeKBXty (ORCPT
+        Fri, 2 Nov 2018 19:49:59 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:34466 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726557AbeKBXt7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 19:49:54 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1gIaea-0007UL-7s; Fri, 02 Nov 2018 15:42:28 +0100
-Date:   Fri, 2 Nov 2018 15:42:28 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>
-Subject: Re: [PATCH 08/11] x86/fpu: Always store the registers in
- copy_fpstate_to_sigframe()
-Message-ID: <20181102144227.nugzdwmis6oecis7@linutronix.de>
-References: <20181004140547.13014-1-bigeasy@linutronix.de>
- <20181004140547.13014-9-bigeasy@linutronix.de>
- <53f013ca-d6ff-2387-f9b0-d6c6df66d082@linux.intel.com>
+        Fri, 2 Nov 2018 19:49:59 -0400
+Received: from [IPv6:2a02:8109:92c0:207d:adf1:b546:cba2:bcad] (unknown [IPv6:2a02:8109:92c0:207d:adf1:b546:cba2:bcad])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: robertfoss)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 0984D27DFBE;
+        Fri,  2 Nov 2018 14:42:36 +0000 (GMT)
+Subject: Re: [PATCH 2/5] drm/virtio: add uapi for in and out explicit fences
+To:     Emil Velikov <emil.l.velikov@gmail.com>
+Cc:     David Airlie <airlied@linux.ie>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        ML dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:VIRTIO GPU DRIVER" 
+        <virtualization@lists.linux-foundation.org>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Emil Velikov <emil.velikov@collabora.com>
+References: <20181025183739.9375-1-robert.foss@collabora.com>
+ <20181025183739.9375-3-robert.foss@collabora.com>
+ <CACvgo51LU3dAfO-jNcV02ZyYBOv8fKLhG_2QyRrB9XYfGJrzHQ@mail.gmail.com>
+ <3a8a03d6-a544-b9f3-15a2-f6a2411bdb28@collabora.com>
+ <CACvgo50ARCHZckjxj-eoZbY6U4LA7O4iHQd6X4iQE-xu+Q5hRg@mail.gmail.com>
+From:   Robert Foss <robert.foss@collabora.com>
+Message-ID: <2a3f25cc-d14c-c0bb-152c-03a6a154df6a@collabora.com>
+Date:   Fri, 2 Nov 2018 15:42:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <53f013ca-d6ff-2387-f9b0-d6c6df66d082@linux.intel.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CACvgo50ARCHZckjxj-eoZbY6U4LA7O4iHQd6X4iQE-xu+Q5hRg@mail.gmail.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-12 11:15:51 [-0700], Dave Hansen wrote:
-> > @@ -172,27 +155,20 @@ int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
-> >  			sizeof(struct user_i387_ia32_struct), NULL,
-> >  			(struct _fpstate_32 __user *) buf) ? -1 : 1;
-> >  
-> > -	if (fpu->initialized || using_compacted_format()) {
-> > -		/* Save the live register state to the user directly. */
-> > -		if (copy_fpregs_to_sigframe(buf_fx))
-> > -			return -1;
-> > -		/* Update the thread's fxstate to save the fsave header. */
-> > -		if (ia32_fxstate)
-> > -			copy_fxregs_to_kernel(fpu);
-> > +	/* Update the thread's fxstate to save the fsave header. */
-> > +	if (ia32_fxstate) {
-> > +		copy_fxregs_to_kernel(fpu);
-> >  	} else {
-> > -		/*
-> > -		 * It is a *bug* if kernel uses compacted-format for xsave
-> > -		 * area and we copy it out directly to a signal frame. It
-> > -		 * should have been handled above by saving the registers
-> > -		 * directly.
-> > -		 */
-> > -		if (boot_cpu_has(X86_FEATURE_XSAVES)) {
-> > -			WARN_ONCE(1, "x86/fpu: saving compacted-format xsave area to a signal frame!\n");
-> > -			return -1;
-> > -		}
-> > +		copy_fpregs_to_fpstate(fpu);
-> > +		fpregs_deactivate(fpu);
-> > +	}
+Hey Emil,
+
+On 2018-11-02 14:34, Emil Velikov wrote:
+> On Thu, 1 Nov 2018 at 12:56, Robert Foss <robert.foss@collabora.com> wrote:
+>> On 2018-10-31 10:38, Emil Velikov wrote:
+>>> Hi Rob,
+>>>
+>>> On Thu, 25 Oct 2018 at 19:38, Robert Foss <robert.foss@collabora.com> wrote:
+>>>>
+>>>> Add a new field called fence_fd that will be used by userspace to send
+>>>> in-fences to the kernel and receive out-fences created by the kernel.
+>>>>
+>>>> This uapi enables virtio to take advantage of explicit synchronization of
+>>>> dma-bufs.
+>>>>
+>>>> There are two new flags:
+>>>>
+>>>> * VIRTGPU_EXECBUF_FENCE_FD_IN to be used when passing an in-fence fd.
+>>>> * VIRTGPU_EXECBUF_FENCE_FD_OUT to be used when requesting an out-fence fd
+>>>>
+>>>> The execbuffer IOCTL is now read-write to allow the userspace to read the
+>>>> out-fence.
+>>>>
+>>>> On error -1 should be returned in the fence_fd field.
+>>>>
+>>>> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+>>>> Signed-off-by: Robert Foss <robert.foss@collabora.com>
+>>>> ---
+>>>> Changes since v2:
+>>>>    - Since exbuf-flags is a new flag, check that unsupported
+>>>>      flags aren't set.
+>>>>
+>>>>    drivers/gpu/drm/virtio/virtgpu_ioctl.c |  5 +++++
+>>>>    include/uapi/drm/virtgpu_drm.h         | 13 ++++++++++---
+>>>>    2 files changed, 15 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
+>>>> index d01a9ed100d1..1af289b28fc4 100644
+>>>> --- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
+>>>> +++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
+>>>> @@ -116,9 +116,14 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
+>>>>           struct ww_acquire_ctx ticket;
+>>>>           void *buf;
+>>>>
+>>>> +       exbuf->fence_fd = -1;
+>>>> +
+>>> Move this after the sanity checking.
+>>
+>> Agreed. Fixed in v4
+>>
+>>>
+>>>>           if (vgdev->has_virgl_3d == false)
+>>>>                   return -ENOSYS;
+>>>>
+>>>> +       if ((exbuf->flags & ~VIRTGPU_EXECBUF_FLAGS))
+>>>> +               return -EINVAL;
+>>>> +
+>>> I assume this did this trigger when using old userspace?
+>>
+>> No, not as far as I'm aware. This check is there to prevent userspace from
+>> polluting the bitspace of flag, so that all free bits can be used for new flags.
+>>
+>> As far as I understand this is pointed out by a drm driver development document
+>> written by danvet, which I unfortunately can't seem to find the link for at the
+>> moment.
+>>
+> Yes that is correct. What I was asking is:
 > 
-> Could you add a high-level comment for this if{}else{} block that says
-> something like:
+> Does a kernel with this patch, work with mesa lacking the corresponding updates?
+> I'd imagine things work just fine.
+
+Yes it does!
+
 > 
-> 	/* Save the registers to the fpstate. */
+> -Emil
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 > 
-> I also think it's worthwhile to explain the asymmetry between the
-> ia32_fxstate case and the other branch.  Why don't we
-> fpregs_deactivate() in the ia32_fxstate path, for instance?
-
-Since the ->initialized is gone, the whole hunk here looks differently
-and probably easier to understand.
-
-> > +	if (using_compacted_format()) {
-> > +		copy_xstate_to_user(buf_fx, xsave, 0, size);
-> > +	} else {
-> >  		fpstate_sanitize_xstate(fpu);
-> > -		if (__copy_to_user(buf_fx, xsave, fpu_user_xstate_size))
-> > +		size = fpu_user_xstate_size;
-> > +		if (__copy_to_user(buf_fx, xsave, size))
-> >  			return -1;
-> >  	}
-
-dropped this.
-
-> This seems unnecessary.  Why are you updating 'size' like this?
-
-Sebastian
