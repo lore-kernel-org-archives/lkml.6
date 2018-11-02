@@ -2,138 +2,173 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87A98C6786F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:40:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABB51C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:43:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F19A2081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:40:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F19A2081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 4217A2081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:43:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4217A2081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728073AbeKCAre (ORCPT
+        id S1727803AbeKCAvC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 20:47:34 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:38847 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727576AbeKCArd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 20:47:33 -0400
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MCb2L-1gSBuw3auR-009eu7; Fri, 02 Nov 2018 16:39:33 +0100
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MCb2L-1gSBuw3auR-009eu7; Fri, 02 Nov 2018 16:39:33 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Richard Weinberger <richard@nod.at>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ubifs: replay: fix high stack usage
-Date:   Fri,  2 Nov 2018 16:39:24 +0100
-Message-Id: <20181102153932.1750967-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:Gy7xVXvuiokBNjKUv/MCIilGtPZe6keHML0M6mEtEiu3doG0h8G
- QkA2VJLyhjwvQMI24kK/+27IpGcZ7AbC+BaC1ZkFAGA8+OTuoknkoST1OKzDr6/yCgZ++eB
- uAPpjWxdWbsyjDcMzn9yFwfor8mNZd/k0ei//Rph0iPvNrWPrkNkDbfSwQCNYuSdKpQs161
- RwfLMuJapu6qoMXN6c7uw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:TO3gOLLOteQ=:cUiqOXhbF1IEQBMYsv7rnX
- mXsjk5MqT8ENpZCJ8QdgAHJIHrMF/xyQyVCECzoNyt64qJApoy4CJB786yxxTV9e+nYkHPSTd
- /eC0ZfO3EpzpSGMEFKN8chRbZW2l28wgNDfZOdnHW8Ty+1axTKNrDW8DW56S13dWVVwnojXrC
- KN7Eq4YpL6m4byd5K8ut7OPx81QlxIotTvvaFm/7iuW3v40j50NUmNJbatRF0NorqPOKz050v
- v84yh0xAHz8ua9uDBQEA1/d+vqd7mtbmguoDG8DDPqaG8V1XfBNPbBuJDA0RfgxbcJCeiJNAi
- Vlp1+p/8/cS0d409T/BV1kdiaPaIZQ1pP3T8vUDXeSwtRWJn6Ed0N1BcpTJ27mklRpw65BBnt
- JXfGDTfFSyzYMBJWKxbiC/URaIAGxujZFpTNTmRzWQNlfiJqErUme/GKU4+RO4uwTzCyek0QV
- PNvBP3lr8VONYw9RwDgypnn5YTla9H+vsiPEoJThrZee8l3txZ4le+MGCrbRjOXgOjqVWw1sp
- PukRYq/xuJckr/e7LHhSr3WU0oZx7MQW2bgpeDufX9M0FeQRhHoY+7ignKCK2hwiUxmgkXFuz
- ESE3mEb/NxLToKjy+u9DmyfqCCML+dgbQEY+pIpRTjcMbA1MXNQEdKeYJpslF4maRIAZoJ2xl
- 7eC+56XNWOFSGcwvE98haB0I4393C1p0LXnlwFk2sPyTT9Al2c/JHQw+BZb48TK4f+4U=
+        Fri, 2 Nov 2018 20:51:02 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42798 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726229AbeKCAvC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 20:51:02 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 90267394D3C;
+        Fri,  2 Nov 2018 15:43:31 +0000 (UTC)
+Received: from treble (ovpn-123-155.rdu2.redhat.com [10.10.123.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 187F860BF1;
+        Fri,  2 Nov 2018 15:43:27 +0000 (UTC)
+Date:   Fri, 2 Nov 2018 10:43:26 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Christian Brauner <christian@brauner.io>,
+        Aleksa Sarai <asarai@suse.de>, netdev@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] kretprobe: produce sane stack traces
+Message-ID: <20181102154325.bt6xoysl4xdl33wd@treble>
+References: <20181101083551.3805-1-cyphar@cyphar.com>
+ <20181101083551.3805-2-cyphar@cyphar.com>
+ <20181101204720.6ed3fe37@vmware.local.home>
+ <20181102050509.tw3dhvj5urudvtjl@yavin>
+ <20181102065932.bdt4pubbrkvql4mp@yavin>
+ <20181102091658.1bc979a4@gandalf.local.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181102091658.1bc979a4@gandalf.local.home>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 02 Nov 2018 15:43:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Having two shash descriptors on the stack cause a very significant kernel
-stack usage that can cross the warning threshold:
+On Fri, Nov 02, 2018 at 09:16:58AM -0400, Steven Rostedt wrote:
+> On Fri, 2 Nov 2018 17:59:32 +1100
+> Aleksa Sarai <cyphar@cyphar.com> wrote:
+> 
+> > As an aside, I just tested with the frame unwinder and it isn't thrown
+> > off-course by kretprobe_trampoline (though obviously the stack is still
+> > wrong). So I think we just need to hook into the ORC unwinder to get it
+> > to continue skipping up the stack, as well as add the rewriting code for
+> > the stack traces (for all unwinders I guess -- though ideally we should
+> 
+> I agree that this is the right solution.
 
-fs/ubifs/replay.c: In function 'authenticate_sleb':
-fs/ubifs/replay.c:633:1: error: the frame size of 1144 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
+Sounds good to me.
 
-Normally, gcc optimizes the out, but with CONFIG_CC_OPTIMIZE_FOR_DEBUGGING,
-it does not. Splitting the two stack allocations into separate functions
-means that they will use the same memory again. In normal configurations
-(optimizing for size or performance), those should get inlined and we get
-the same behavior as before.
+However, it would be *really* nice if function graph and kretprobes
+shared the same infrastructure, like they do for function entry.
+There's a lot of duplicated effort there.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/ubifs/replay.c | 35 ++++++++++++++++++++++++-----------
- 1 file changed, 24 insertions(+), 11 deletions(-)
+> > do this without having to add the same code to every architecture).
+> 
+> True, and there's an art to consolidating the code between
+> architectures.
+> 
+> I'm currently looking at function graph and seeing if I can consolidate
+> it too. And I'm also trying to get multiple uses to hook into its
+> infrastructure. I think I finally figured out a way to do so.
+> 
+> The reason it is difficult, is that you need to maintain state between
+> the entry of a function and the exit for each task and callback that is
+> registered. Hence, it's a 3x tuple (function stack, task, callbacks).
+> And this must be maintained with preemption. A task may sleep for
+> minutes, and the state needs to be retained.
+> 
+> The only state that must be retained is the function stack with the
+> task, because if that gets out of sync, the system crashes. But the
+> callback state can be removed.
+> 
+> Here's what is there now:
+> 
+>  When something is registered with the function graph tracer, every
+>  task gets a shadowed stack. A hook is added to fork to add shadow
+>  stacks to new tasks. Once a shadow stack is added to a task, that
+>  shadow stack is never removed until the task exits.
+> 
+>  When the function is entered, the real return code is stored in the
+>  shadow stack and the trampoline address is put in its place.
+> 
+>  On return, the trampoline is called, and it will pop off the return
+>  code from the shadow stack and return to that.
+> 
+> The issue with multiple users, is that different users may want to
+> trace different functions. On entry, the user could say it doesn't want
+> to trace the current function, and the return part must not be called
+> on exit. Keeping track of which user needs the return called is the
+> tricky part.
+> 
+> Here's what I plan on implementing:
+> 
+>  Along with a shadow stack, I was going to add a 4096 byte (one page)
+>  array that holds 64 8 byte masks to every task as well. This will allow
+>  64 simultaneous users (which is rather extreme). If we need to support
+>  more, we could allocate another page for all tasks. The 8 byte mask
+>  will represent each depth (allowing to do this for 64 function call
+>  stack depth, which should also be enough).
+> 
+>  Each user will be assigned one of the masks. Each bit in the mask
+>  represents the depth of the shadow stack. When a function is called,
+>  each user registered with the function graph tracer will get called
+>  (if they asked to be called for this function, via the ftrace_ops
+>  hashes) and if they want to trace the function, then the bit is set in
+>  the mask for that stack depth.
+> 
+>  When the function exits the function and we pop off the return code
+>  from the shadow stack, we then look at all the bits set for the
+>  corresponding users, and call their return callbacks, and ignore
+>  anything that is not set.
+> 
+> 
+> When a user is unregistered, it the corresponding bits that represent
+> it are cleared, and it the return callback will not be called. But the
+> tasks being traced will still have their shadow stack to allow it to
+> get back to normal.
+> 
+> I'll hopefully have a prototype ready by plumbers.
 
-diff --git a/fs/ubifs/replay.c b/fs/ubifs/replay.c
-index 75f961c4c044..a08c5b7030ea 100644
---- a/fs/ubifs/replay.c
-+++ b/fs/ubifs/replay.c
-@@ -533,6 +533,28 @@ static int is_last_bud(struct ubifs_info *c, struct ubifs_bud *bud)
- 	return data == 0xFFFFFFFF;
- }
- 
-+/* authenticate_sleb_hash and authenticate_sleb_hmac are split out for stack usage */
-+static int authenticate_sleb_hash(struct ubifs_info *c, struct shash_desc *log_hash, u8 *hash)
-+{
-+	SHASH_DESC_ON_STACK(hash_desc, c->hash_tfm);
-+
-+	hash_desc->tfm = c->hash_tfm;
-+	hash_desc->flags = CRYPTO_TFM_REQ_MAY_SLEEP;
-+
-+	ubifs_shash_copy_state(c, log_hash, hash_desc);
-+	return crypto_shash_final(hash_desc, hash);
-+}
-+
-+static int authenticate_sleb_hmac(struct ubifs_info *c, u8 *hash, u8 *hmac)
-+{
-+	SHASH_DESC_ON_STACK(hmac_desc, c->hmac_tfm);
-+
-+	hmac_desc->tfm = c->hmac_tfm;
-+	hmac_desc->flags = CRYPTO_TFM_REQ_MAY_SLEEP;
-+
-+	return crypto_shash_digest(hmac_desc, hash, c->hash_len, hmac);
-+}
-+
- /**
-  * authenticate_sleb - authenticate one scan LEB
-  * @c: UBIFS file-system description object
-@@ -574,21 +596,12 @@ static int authenticate_sleb(struct ubifs_info *c, struct ubifs_scan_leb *sleb,
- 
- 		if (snod->type == UBIFS_AUTH_NODE) {
- 			struct ubifs_auth_node *auth = snod->node;
--			SHASH_DESC_ON_STACK(hash_desc, c->hash_tfm);
--			SHASH_DESC_ON_STACK(hmac_desc, c->hmac_tfm);
--
--			hash_desc->tfm = c->hash_tfm;
--			hash_desc->flags = CRYPTO_TFM_REQ_MAY_SLEEP;
- 
--			ubifs_shash_copy_state(c, log_hash, hash_desc);
--			err = crypto_shash_final(hash_desc, hash);
-+			err = authenticate_sleb_hash(c, log_hash, hash);
- 			if (err)
- 				goto out;
- 
--			hmac_desc->tfm = c->hmac_tfm;
--			hmac_desc->flags = CRYPTO_TFM_REQ_MAY_SLEEP;
--			err = crypto_shash_digest(hmac_desc, hash, c->hash_len,
--						  hmac);
-+			err = authenticate_sleb_hmac(c, hash, hmac);
- 			if (err)
- 				goto out;
- 
+Why do we need multiple users?  It would be a lot simpler if we could
+just enforce a single user per fgraphed/kretprobed function (and return
+-EBUSY if it's already being traced/probed).
+
+> And this too will require each architecture to probably change. As a
+> side project to this, I'm going to try to consolidate the function
+> graph code among all the architectures as well. Not an easy task.
+
+Do you mean implementing HAVE_FUNCTION_GRAPH_RET_ADDR_PTR for all the
+arches?  If so, I think have an old crusty patch which attempted to
+that.  I could try to dig it up if you're interested.
+
 -- 
-2.18.0
-
+Josh
