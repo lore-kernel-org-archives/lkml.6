@@ -2,183 +2,181 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIMWL_WL_MED,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E3CC65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DEDAC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:50:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBF702082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:47:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBF702082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 19E4A204FD
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:50:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=usp-br.20150623.gappssmtp.com header.i=@usp-br.20150623.gappssmtp.com header.b="io7Dv7w8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19E4A204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=usp.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727866AbeKBWy1 (ORCPT
+        id S1727530AbeKBW5W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 18:54:27 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:45653 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726026AbeKBWy0 (ORCPT
+        Fri, 2 Nov 2018 18:57:22 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:33469 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726026AbeKBW5W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 18:54:26 -0400
-Received: from mail-yb1-f197.google.com ([209.85.219.197])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <seth.forshee@canonical.com>)
-        id 1gIZn6-0002HE-2r
-        for linux-kernel@vger.kernel.org; Fri, 02 Nov 2018 13:47:12 +0000
-Received: by mail-yb1-f197.google.com with SMTP id e73-v6so1368637ybb.16
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 06:47:12 -0700 (PDT)
+        Fri, 2 Nov 2018 18:57:22 -0400
+Received: by mail-qk1-f193.google.com with SMTP id o89so3149851qko.0
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 06:50:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=usp-br.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=5IrRo836/EZuNtecTHHEBsqnp85MzPlSS4Bg+Ua1VEc=;
+        b=io7Dv7w8ZcC4qKlPesPZ505vBn42poyeBa52VNxI3QRRtUiuR+Bms+Vlf97RNGPdbl
+         K8t/kCzZdlBWVpULVEe1V14StyBz+UXsUl+t4eUMYEAggwggXLJl6k4bxB4IuGdlva4/
+         qAdRS8Fpmyzm29zidjSZlnJcej13HNCEadK+q/njeiE5C479Z/FULxIpMeELzxwcbv5l
+         2sw+SHKbH2ac+mNNAT/P2EJV6OgahIIrJSboTOEkCWcJPA7U0zNII7rW9Ekm90IiFwPA
+         L1qL+l/ZeVecjIExikZs2/vGZ4uvZHCEez6oksnbbh5cM7yyqrrOe3+hdQk3q8MmC+JT
+         SEDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wHjuCDqeObBE15CayekquH8wJz/oreOBeDvsYn7ZLG0=;
-        b=Lc/xSyIupxawOm6TK8er1XwRFT1D9Zd+wXbAx3w91ryvbIw+HF++PP0IWgYsny1vQn
-         W5JPtkEKqj9D/4IP5yR1rvkCBAYiipcgu4zw+IuyLQuqCUiezsuO5ExzXDrQ9Y2Yl1iR
-         /3bzEYSiF7rlFz1sn8KCXIx5R6xw7sblD5EGZ67ngsVKNlJxQDs2czLesDn6Uw1xzJjZ
-         1HGWj6ZMHUw85A04VlM7bmV1NTj5X7f/1a7I0PFXj1osJT9phf5qaL7xuT9bt/NyYaiE
-         3A7SCrZCF4j5Ljpu15uKAbZbFCHqswLgrDlDXXZF8egqtiG+q40q8tGVqMPLZmw8Ar0x
-         jDnw==
-X-Gm-Message-State: AGRZ1gIh0HEKl9dQv1KC+hrq5i1+q9oIqgz3yz/InaiD3klhqbSdQqVO
-        j25tq627E33j1z8UhIXdfgLz4crkRjHK0vwXOFwsdezbKJ4vtLNJOx5FWt4Vge4c9WVHLzQysOc
-        OMD6JmRNq8WdqgynLR7xFYTy3L5Mhj7hK9/nSrt3OAg==
-X-Received: by 2002:a25:c4c5:: with SMTP id u188-v6mr11554341ybf.424.1541166430922;
-        Fri, 02 Nov 2018 06:47:10 -0700 (PDT)
-X-Google-Smtp-Source: AJdET5cNoYcoWZXt+ahyNISeYSykAPAVwGJTcdr0PX+EBijK6H9ltmyraZQqd5kq7zFqkKxNvlEh6g==
-X-Received: by 2002:a25:c4c5:: with SMTP id u188-v6mr11554293ybf.424.1541166430180;
-        Fri, 02 Nov 2018 06:47:10 -0700 (PDT)
-Received: from localhost ([2605:a601:ac7:2a20:7c8b:4047:a2ef:69cd])
-        by smtp.gmail.com with ESMTPSA id e129-v6sm949019ywf.77.2018.11.02.06.47.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 02 Nov 2018 06:47:08 -0700 (PDT)
-Date:   Fri, 2 Nov 2018 08:47:07 -0500
-From:   Seth Forshee <seth.forshee@canonical.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>
-Subject: Re: [RFC PATCH 6/6] shiftfs: support nested shiftfs mounts
-Message-ID: <20181102134707.GI29262@ubuntu-xps13>
-References: <20181101214856.4563-1-seth.forshee@canonical.com>
- <20181101214856.4563-7-seth.forshee@canonical.com>
- <CAOQ4uxhkH+0tchHkrgvBZGYzeLD2fGGgtkKstt3JmhPDaGW_dg@mail.gmail.com>
- <20181102124400.GB29262@ubuntu-xps13>
- <CAOQ4uxhbgzYzdRBwbDNBKgjjmM3M=hya5-LJhiKmxxZxOo=2CQ@mail.gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=5IrRo836/EZuNtecTHHEBsqnp85MzPlSS4Bg+Ua1VEc=;
+        b=jnMaCwRckVC030Z8jQdVXwix33hscr2XZE+7YqweT2IIjAA3oYLYjIbtmIOj1VSeD8
+         vBc+vAvNNiFIIH78Age8wTArP5End2CkBK3KcvhEic16kvd2U6PJfWHoItepwZm95ev+
+         wIifYM2WKht/EdLjeBNPschgszxVfj3wloeWS/v0EIV07FKnnVIJc1Vyy+ZQTtrY38oE
+         4fAbDPahQHbPz6e0iC69bTESUztGXgIUdMN8/Z15YNvo5dr1U7ZVsuZrWu0CNM9WZNKL
+         /7vZ+8QEX/S6wn7yZTrVw/yIhKC0zBnCSTeqcbUEXHlgE5FWUObQkM3Cu6ClqXu1uKRX
+         7TFQ==
+X-Gm-Message-State: AGRZ1gKG8/zPBbE3ACL3+/T69jbsKg1A9MbxgGkDNBSyGTnhKv26zWXT
+        jBkmQuhl9w17JstTiNjjib8tzQ==
+X-Google-Smtp-Source: AJdET5c5gQdh3X9Aq88qX0Z1pPeegk8tHM0YiQeN9slGkyZSwQZDcHIkxJQJQhDCQKJF3T1xf9QpTg==
+X-Received: by 2002:a0c:bb82:: with SMTP id i2mr1500246qvg.159.1541166604366;
+        Fri, 02 Nov 2018 06:50:04 -0700 (PDT)
+Received: from ?IPv6:2804:14c:81:942d::1? ([2804:14c:81:942d::1])
+        by smtp.gmail.com with ESMTPSA id 38sm13245612qkw.56.2018.11.02.06.50.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 02 Nov 2018 06:50:03 -0700 (PDT)
+Subject: Re: [PATCH v2 1/6] staging:iio:ad2s90: Make read_raw return
+ spi_read's error code
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
+References: <20181027020005.3140-1-matheus.bernardino@usp.br>
+ <20181027020005.3140-2-matheus.bernardino@usp.br>
+ <20181028164038.0c920358@archlinux>
+From:   Matheus Tavares <matheus.bernardino@usp.br>
+Message-ID: <707d385e-7c08-91a3-2925-0cadf5bc2ac4@usp.br>
+Date:   Fri, 2 Nov 2018 10:49:59 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhbgzYzdRBwbDNBKgjjmM3M=hya5-LJhiKmxxZxOo=2CQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181028164038.0c920358@archlinux>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 03:16:05PM +0200, Amir Goldstein wrote:
-> On Fri, Nov 2, 2018 at 2:44 PM Seth Forshee <seth.forshee@canonical.com> wrote:
-> >
-> > On Fri, Nov 02, 2018 at 12:02:45PM +0200, Amir Goldstein wrote:
-> > > On Thu, Nov 1, 2018 at 11:49 PM Seth Forshee <seth.forshee@canonical.com> wrote:
-> > > >
-> > > > shiftfs mounts cannot be nested for two reasons -- global
-> > > > CAP_SYS_ADMIN is required to set up a mark mount, and a single
-> > > > functional shiftfs mount meets the filesystem stacking depth
-> > > > limit.
-> > > >
-> > > > The CAP_SYS_ADMIN requirement can be relaxed. All of the kernel
-> > > > ids in a mount must be within that mount's s_user_ns, so all that
-> > > > is needed is CAP_SYS_ADMIN within that s_user_ns.
-> > > >
-> > > > The stack depth issue can be worked around with a couple of
-> > > > adjustments. First, a mark mount doesn't really need to count
-> > > > against the stacking depth as it doesn't contribute to the call
-> > > > stack depth during filesystem operations. Therefore the mount
-> > > > over the mark mount only needs to count as one more than the
-> > > > lower filesystems stack depth.
-> > >
-> > > That's true, but it also highlights the point that the "mark" sb is
-> > > completely unneeded and it really is just a nice little hack.
-> > > All the information it really stores is a lower mount reference,
-> > > a lower root dentry and a declarative statement "I am shiftable!".
-> >
-> > Seems I should have saved some of the things I said in my previous
-> > response for this one. As you no doubt gleaned from that email, I agree
-> > with this.
-> >
-> > > Come to think about it, "container shiftable" really isn't that different from
-> > > NFS export with "no_root_squash" and auto mounted USB drive.
-> > > I mean the shifting itself is different of course, but the
-> > > declaration, not so much.
-> > > If I am allowing sudoers on another machine to mess with root owned
-> > > files visible
-> > > on my machine, I am pretty much have the same issues as container admins
-> > > accessing root owned files on my init_user_ns filesystem. In all those cases,
-> > > I'd better not be executing suid binaries from the untrusted "external" source.
-> > >
-> > > Instead of mounting a dummy filesystem to make the declaration, you could
-> > > get the same thing with:
-> > >    mount(path, path, "none", MS_BIND | MS_EXTERN | MS_NOEXEC)
-> > > and all you need to do is add MS_EXTERN (MS_SHIFTABLE MS_UNTRUSTED
-> > > or whatnot)  constant to uapi and manage to come up good man page description.
-> > >
-> > > Then users could actually mount a filesystem in init_user_ns MS_EXTERN and
-> > > avoid the extra bind mount step (for a full filesystem tree export).
-> > > Declaring a mounted image MS_EXTERN has merits on its own even without
-> > > containers and shitfs, for example with pluggable storage. Other LSMs could make
-> > > good use of that declaration.
-> >
-> > I'm missing how we figure out the target user ns in this scheme. We need
-> > a context with privileges towards the source path's s_user_ns to say
-> > it's okay to shift ids for the files under the source path, and then we
-> > need a target user ns for the id shifts. Currently the target is
-> > current_user_ns when the final shiftfs mount is created.
-> >
-> > So, how do we determine the target s_user_ns in your scheme?
-> >
-> 
-> Unless I am completely misunderstanding shiftfs, I think we are saying the
-> same thing. You said you wish to get rid of the "mark" fs and that you had
-> a POC of implementing the "mark" using xattr.
 
-The PoC was using filesystem contexts and (an earlier version of) the
-new mount API, but yes I do think we're in agreement about the mark fs
-being awkward.
+On 10/28/18 1:40 PM, Jonathan Cameron wrote:
+> On Fri, 26 Oct 2018 23:00:00 -0300
+> Matheus Tavares <matheus.bernardino@usp.br> wrote:
+>
+>> Previously, when spi_read returned an error code inside ad2s90_read_raw,
+>> the code was ignored and IIO_VAL_INT was returned. This patch makes the
+>> function return the error code returned by spi_read when it fails.
+>>
+>> Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
+> Hi Matheus,
+>
+> One quick process note is that it takes people a while to get around to reviewing
+> a series, so whilst it's tempting to very quickly send out a fix the moment
+> someone points out something that needs fixing, it is perhaps better to wait
+> at least a few days to see if you can pick up a few more reviews before you
+> do a V2.
+>
+> A few comments on this one inline.  I think it can be done 'slightly'
+> (and I mean only slightly) nicer than the version you have.  Result is the
+> same though.
+>
+> Thanks,
+>
+> Jonathan
+>
+>> ---
+>>   drivers/staging/iio/resolver/ad2s90.c | 9 ++++++---
+>>   1 file changed, 6 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/staging/iio/resolver/ad2s90.c
+>> index 59586947a936..11fac9f90148 100644
+>> --- a/drivers/staging/iio/resolver/ad2s90.c
+>> +++ b/drivers/staging/iio/resolver/ad2s90.c
+>> @@ -35,12 +35,15 @@ static int ad2s90_read_raw(struct iio_dev *indio_dev,
+>>   	struct ad2s90_state *st = iio_priv(indio_dev);
+>>   
+>>   	mutex_lock(&st->lock);
+>> +
+> Unconnected change.  I'm not against the change in principle but please
+> group white space tidying up in it's own patch.
+>
+>>   	ret = spi_read(st->sdev, st->rx, 2);
+>> -	if (ret)
+>> -		goto error_ret;
+>> +	if (ret < 0) {
+>> +		mutex_unlock(&st->lock);
+>> +		return ret;
+> I'd actually prefer to keep the return path the same as before as then
+> it is easy (if the function gets more complex in future) to be sure
+> that all paths unlock the mutex.
 
-> I'm just saying another option to implement the mark is using a super block
-> flag and you get the target s_user_ns from mnt_sb.
-> I did miss the fact that a mount flag is not enough, so that makes the bind
-> mount concept fail. Unless, maybe, the mount in the container is a slave
-> mount and the "shiftable" mark is set on the master.
-> I know too little about mount ns vs. user ns to tell if any of this makes sense.
 
-We need a source and target user ns for the shifting, currently they are
-the lower filesystem's s_user_ns and the s_user_ns of the shiftfs fs
-(which is current_user_ns at the time the real shiftfs fs is mounted). I
-think doing it this way makes sense.
+Ok, got it! But then, in patch 5, when we add the switch for 
+IIO_CHAN_INFO_SCALE and IIO_CHAN_INFO_RAW, should I keep the goto and 
+label inside the switch case? I mean, should it be something like this:
 
-The problem with the slave mount idea is that s_user_ns for the shiftfs
-sb is still not the target ns for the id shifting, which is going to
-cause all kinds of problems. Unless all of this is done in the vfs, then
-it could really be a bind mount. The shifting could be done based on the
-mount namespace's user_ns and all permission checks in the vfs could
-take this into account. This approach certainly has benefits and is one
-of the things I want to discuss.
 
-> Feel free to ignore MS_EXTERN idea.
-> 
-> Hopefully, mount API v2 will provide the proper facility to implement mark.
+     switch (m) {
+     case IIO_CHAN_INFO_SCALE:
+         ... // Does not use mutex
+     case IIO_CHAN_INFO_RAW:
+         mutex_lock(&st->lock);
+         ret = spi_read(st->sdev, st->rx, 2);
+         if (ret)
+             goto error_ret;
+         *val = (((u16)(st->rx[0])) << 4) | ((st->rx[1] & 0xF0) >> 4);
 
-The approach I took was to have the source user_ns context set up an fd
-that was passed to the target user_ns context. Then that fd was used to
-attach the mount to the mount tree, and when that happened the target
-s_user_ns was set. It worked, but there were some awkware bits. I
-haven't kept up with the changes since then to know if things are any
-better or worse with the current patches.
+error_ret:
+         mutex_unlock(&st->lock);
 
-Thanks,
-Seth
+         return ret ? ret : IIO_VAL_INT;
+     default:
+         break;
+     }
+
+
+Matheus
+
+
+>> +	}
+>> +
+>>   	*val = (((u16)(st->rx[0])) << 4) | ((st->rx[1] & 0xF0) >> 4);
+>>   
+>> -error_ret:
+>>   	mutex_unlock(&st->lock);
+>>   
+>>   	return IIO_VAL_INT;
+> The 'standard' if slightly nasty way of doing this is:
+>
+> 	return ret ? ret : IIO_VAL_INT;
+>
