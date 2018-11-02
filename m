@@ -2,55 +2,49 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A17B2C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:43:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A933EC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:43:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 712A02084A
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:43:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B2512084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:43:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qRegot0M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 712A02084A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="F+Fx3Xe2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B2512084D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729967AbeKCDwA (ORCPT
+        id S1729974AbeKCDwE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:52:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47226 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:52:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728788AbeKCDwA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:52:00 -0400
+        id S1728565AbeKCDwE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:52:04 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7B2320847;
-        Fri,  2 Nov 2018 18:43:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BDA020854;
+        Fri,  2 Nov 2018 18:43:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184227;
-        bh=nhhw1ACULqTvjSfnYM5J53aK3U6I/fvJlCWLBWKlt88=;
+        s=default; t=1541184231;
+        bh=P79rj0hN0MtIOh+Dqs0wpOEfGPMC1We9rHekZIe5Jcw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qRegot0Mh4ObVf+r4dz2pc+cJVMhSyIAn4S5MmeFw815bHQd8vYzJEEWHDie9Hipm
-         J6LOuDHhYM3rTMlBk2HKiU19bba12gKwqlhLHjyDWfYxzLmn5JasuRybtg1GeFmNzN
-         mZSlcVJEjBafPEjVu4T3nCNt90bk+qCWn/CU2WSw=
+        b=F+Fx3Xe2Tw0NApAhlONGewYyFkEC+fkU5WiDddD+Zt1GVgCQq5Z0E7YhomjLKKXj2
+         GBZSLGemnomjf73jh0lrpqklOjMqDeXCBo1cPviBdg6mrJwcS4e7LRNSmFGVNhQqpQ
+         ZURWO2CTFEe2k0kl+krNYKPVGbL5uGUinAxNPS2s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Pawe=C5=82=20Staszewski?= <pstaszewski@itcare.pl>,
-        Eric Dumazet <edumazet@google.com>,
-        Eran Ben Elisha <eranbe@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Dimitris Michailidis <dmichail@google.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Maria Pasechnik <mariap@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 110/150] net/mlx5e: fix csum adjustments caused by RXFCS
-Date:   Fri,  2 Nov 2018 19:34:32 +0100
-Message-Id: <20181102182910.865154019@linuxfoundation.org>
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.18 084/150] rxrpc: Carry call state out of locked section in rxrpc_rotate_tx_window()
+Date:   Fri,  2 Nov 2018 19:34:06 +0100
+Message-Id: <20181102182909.382656762@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -68,108 +62,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+[ Upstream commit dfe995224693798e554ab4770f6d8a096afc60cd ]
 
-[ Upstream commit d48051c5b8376038c2b287c3b1bd55b8d391d567 ]
+Carry the call state out of the locked section in rxrpc_rotate_tx_window()
+rather than sampling it afterwards.  This is only used to select tracepoint
+data, but could have changed by the time we do the tracepoint.
 
-As shown by Dmitris, we need to use csum_block_add() instead of csum_add()
-when adding the FCS contribution to skb csum.
-
-Before 4.18 (more exactly commit 88078d98d1bb "net: pskb_trim_rcsum()
-and CHECKSUM_COMPLETE are friends"), the whole skb csum was thrown away,
-so RXFCS changes were ignored.
-
-Then before commit d55bef5059dd ("net: fix pskb_trim_rcsum_slow() with
-odd trim offset") both mlx5 and pskb_trim_rcsum_slow() bugs were canceling
-each other.
-
-Now we fixed pskb_trim_rcsum_slow() we need to fix mlx5.
-
-Note that this patch also rewrites mlx5e_get_fcs() to :
-
-- Use skb_header_pointer() instead of reinventing it.
-- Use __get_unaligned_cpu32() to avoid possible non aligned accesses
-  as Dmitris pointed out.
-
-Fixes: 902a545904c7 ("net/mlx5e: When RXFCS is set, add FCS data into checksum calculation")
-Reported-by: Paweł Staszewski <pstaszewski@itcare.pl>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Eran Ben Elisha <eranbe@mellanox.com>
-Cc: Saeed Mahameed <saeedm@mellanox.com>
-Cc: Dimitris Michailidis <dmichail@google.com>
-Cc: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: Paweł Staszewski <pstaszewski@itcare.pl>
-Reviewed-by: Eran Ben Elisha <eranbe@mellanox.com>
-Tested-By: Maria Pasechnik <mariap@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_rx.c |   45 ++++--------------------
- 1 file changed, 9 insertions(+), 36 deletions(-)
+ net/rxrpc/input.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-@@ -693,43 +693,15 @@ static inline bool is_last_ethertype_ip(
- 	return (ethertype == htons(ETH_P_IP) || ethertype == htons(ETH_P_IPV6));
- }
- 
--static __be32 mlx5e_get_fcs(struct sk_buff *skb)
-+static u32 mlx5e_get_fcs(const struct sk_buff *skb)
+diff --git a/net/rxrpc/input.c b/net/rxrpc/input.c
+index 5e180a3c2d01..fe1cf206d12a 100644
+--- a/net/rxrpc/input.c
++++ b/net/rxrpc/input.c
+@@ -278,23 +278,26 @@ static bool rxrpc_rotate_tx_window(struct rxrpc_call *call, rxrpc_seq_t to,
+ static bool rxrpc_end_tx_phase(struct rxrpc_call *call, bool reply_begun,
+ 			       const char *abort_why)
  {
--	int last_frag_sz, bytes_in_prev, nr_frags;
--	u8 *fcs_p1, *fcs_p2;
--	skb_frag_t *last_frag;
--	__be32 fcs_bytes;
--
--	if (!skb_is_nonlinear(skb))
--		return *(__be32 *)(skb->data + skb->len - ETH_FCS_LEN);
--
--	nr_frags = skb_shinfo(skb)->nr_frags;
--	last_frag = &skb_shinfo(skb)->frags[nr_frags - 1];
--	last_frag_sz = skb_frag_size(last_frag);
--
--	/* If all FCS data is in last frag */
--	if (last_frag_sz >= ETH_FCS_LEN)
--		return *(__be32 *)(skb_frag_address(last_frag) +
--				   last_frag_sz - ETH_FCS_LEN);
--
--	fcs_p2 = (u8 *)skb_frag_address(last_frag);
--	bytes_in_prev = ETH_FCS_LEN - last_frag_sz;
--
--	/* Find where the other part of the FCS is - Linear or another frag */
--	if (nr_frags == 1) {
--		fcs_p1 = skb_tail_pointer(skb);
--	} else {
--		skb_frag_t *prev_frag = &skb_shinfo(skb)->frags[nr_frags - 2];
-+	const void *fcs_bytes;
-+	u32 _fcs_bytes;
++	unsigned int state;
  
--		fcs_p1 = skb_frag_address(prev_frag) +
--			    skb_frag_size(prev_frag);
--	}
--	fcs_p1 -= bytes_in_prev;
--
--	memcpy(&fcs_bytes, fcs_p1, bytes_in_prev);
--	memcpy(((u8 *)&fcs_bytes) + bytes_in_prev, fcs_p2, last_frag_sz);
-+	fcs_bytes = skb_header_pointer(skb, skb->len - ETH_FCS_LEN,
-+				       ETH_FCS_LEN, &_fcs_bytes);
+ 	ASSERT(test_bit(RXRPC_CALL_TX_LAST, &call->flags));
  
--	return fcs_bytes;
-+	return __get_unaligned_cpu32(fcs_bytes);
- }
+ 	write_lock(&call->state_lock);
  
- static inline void mlx5e_handle_csum(struct net_device *netdev,
-@@ -762,8 +734,9 @@ static inline void mlx5e_handle_csum(str
- 						 network_depth - ETH_HLEN,
- 						 skb->csum);
- 		if (unlikely(netdev->features & NETIF_F_RXFCS))
--			skb->csum = csum_add(skb->csum,
--					     (__force __wsum)mlx5e_get_fcs(skb));
-+			skb->csum = csum_block_add(skb->csum,
-+						   (__force __wsum)mlx5e_get_fcs(skb),
-+						   skb->len - ETH_FCS_LEN);
- 		stats->csum_complete++;
- 		return;
+-	switch (call->state) {
++	state = call->state;
++	switch (state) {
+ 	case RXRPC_CALL_CLIENT_SEND_REQUEST:
+ 	case RXRPC_CALL_CLIENT_AWAIT_REPLY:
+ 		if (reply_begun)
+-			call->state = RXRPC_CALL_CLIENT_RECV_REPLY;
++			call->state = state = RXRPC_CALL_CLIENT_RECV_REPLY;
+ 		else
+-			call->state = RXRPC_CALL_CLIENT_AWAIT_REPLY;
++			call->state = state = RXRPC_CALL_CLIENT_AWAIT_REPLY;
+ 		break;
+ 
+ 	case RXRPC_CALL_SERVER_AWAIT_ACK:
+ 		__rxrpc_call_completed(call);
+ 		rxrpc_notify_socket(call);
++		state = call->state;
+ 		break;
+ 
+ 	default:
+@@ -302,11 +305,10 @@ static bool rxrpc_end_tx_phase(struct rxrpc_call *call, bool reply_begun,
  	}
+ 
+ 	write_unlock(&call->state_lock);
+-	if (call->state == RXRPC_CALL_CLIENT_AWAIT_REPLY) {
++	if (state == RXRPC_CALL_CLIENT_AWAIT_REPLY)
+ 		trace_rxrpc_transmit(call, rxrpc_transmit_await_reply);
+-	} else {
++	else
+ 		trace_rxrpc_transmit(call, rxrpc_transmit_end);
+-	}
+ 	_leave(" = ok");
+ 	return true;
+ 
+-- 
+2.17.1
+
 
 
