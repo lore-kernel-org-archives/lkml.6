@@ -2,138 +2,248 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D699EC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:56:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E970C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:56:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7259820657
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:56:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 064C52082E
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:56:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="nm5BJa7p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7259820657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=ysoft.com
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="atczp3DT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 064C52082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727851AbeKCAD7 (ORCPT
+        id S1728004AbeKCAEH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 20:03:59 -0400
-Received: from mail-eopbgr60052.outbound.protection.outlook.com ([40.107.6.52]:28981
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726265AbeKCAD6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 20:03:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cqUCYAXI6tNpi0pOG8fUMtHqXiqsWhnuOYbMFftS4aY=;
- b=nm5BJa7pRpcuWbfDMnomTfmEcagXzdUeWobxnejv4edos1HG7Pc7b7w11ONYxy99DWOh+mNQftxILpf11vFupAC+oIY/muzrfXVbef3L4LXFeP5Iyw3GXDNvexAy8lxjh7p6yPCuSG3gs1Fl/8kHxvH7VVPSlblwWBLzP4chF3o=
-Received: from DB7PR04MB4667.eurprd04.prod.outlook.com (52.135.139.13) by
- DB7PR04MB4987.eurprd04.prod.outlook.com (20.176.234.87) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.26; Fri, 2 Nov 2018 14:56:32 +0000
-Received: from DB7PR04MB4667.eurprd04.prod.outlook.com
- ([fe80::2849:23b4:7b26:a421]) by DB7PR04MB4667.eurprd04.prod.outlook.com
- ([fe80::2849:23b4:7b26:a421%3]) with mapi id 15.20.1294.024; Fri, 2 Nov 2018
- 14:56:32 +0000
-From:   =?utf-8?B?Vm9rw6HEjSBNaWNoYWw=?= <Michal.Vokac@ysoft.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-CC:     "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Jyri Sarha <jsarha@ti.com>,
-        =?utf-8?B?Vm9rw6HEjSBNaWNoYWw=?= <Michal.Vokac@ysoft.com>
-Subject: [PATCH fbdev-for-next 1/2] dt-bindings: display: ssd1307fb: Add
- reset-active-low property
-Thread-Topic: [PATCH fbdev-for-next 1/2] dt-bindings: display: ssd1307fb: Add
- reset-active-low property
-Thread-Index: AQHUcrw+i/ut91AHCkuAoUzkq/OHRQ==
-Date:   Fri, 2 Nov 2018 14:56:32 +0000
-Message-ID: <1541170556-75032-1-git-send-email-michal.vokac@ysoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6P194CA0086.EURP194.PROD.OUTLOOK.COM
- (2603:10a6:209:8f::27) To DB7PR04MB4667.eurprd04.prod.outlook.com
- (2603:10a6:5:37::13)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Michal.Vokac@ysoft.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [89.24.100.190]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB7PR04MB4987;6:t0IAdz5Q/FZGzgImE2Hq+P2NUKmaxf0bmsEsW7dX3DYuk8z7WereNnWSGUw+jwcON1QW5THiZQsHbVTCaqj7rIZW2+IPfdLFy1KZW2IP/8DPRAWBKTu5WcVrFU4ZqM5pehBT5QC6OHN5Ky0hf+hY5Ei7fzPZybbJOLPuGhfp3dahu2ALR33czIrH0uY56wjPdoqAlyBynSaDSg+hlYMXBlLmIpp4Y3NXlUPkk8yqssV0EMP8LJYdoq3OK20P6lB6mau2vltpRc418S4/UB0nBsWF+QQiIIJwBEvLXzWUvIJD0Lkpud2o4BbVT94ZKV8GSlnmvsj7pFU/4MeiQSnu2pNEJcxlVaYOPTwYoqks8TexF/l8cZVCqJaBAuytogY2E0JBpTvjHcKX51E5pUedZb2lSlpBtzOK+HB+9d11am4ABjhUUzrsSLzEvJEp4FJ444zfVv8sg3Kor9IF/53hxg==;5:K17n+yVqL8poO6mCkm31Vq6QjO8ps+yyZnDpa0mReRcKWeMQse5owajPfjcVZCb6bC7SxNPGrQEiAUBhn5XyO/XROqvcG2kQUoarxQV9GfvIcCeoc1zdtyTgLRp5B5q5BrOO2SHOKRCt80XVPDiqSFoAJeoxYBhf9DKmX8m4nwA=;7:/DUyjev/zQx9NBYq0wM0xnzSmBMVbs1qISPjHD44BwUsIKMKQLsQqdbB7es0CvomiWa/6Pefywb0inwcv+nAqSLrNlJLyROdH5ronrkh3GY7aJxckZgWC+MKF9B5TuGQU289WQXEsutp4r1XVNDHvg==
-x-ms-office365-filtering-correlation-id: 437bc04f-6e28-44ba-3f1f-08d640d3609d
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:DB7PR04MB4987;
-x-ms-traffictypediagnostic: DB7PR04MB4987:
-x-microsoft-antispam-prvs: <DB7PR04MB4987117A1D74F1F1E7E548909ECF0@DB7PR04MB4987.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231382)(944501410)(52105095)(3002001)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:DB7PR04MB4987;BCL:0;PCL:0;RULEID:;SRVR:DB7PR04MB4987;
-x-forefront-prvs: 08444C7C87
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39850400004)(366004)(376002)(346002)(396003)(189003)(199004)(6512007)(52116002)(54906003)(110136005)(386003)(53936002)(6116002)(2906002)(3846002)(6506007)(476003)(486006)(2900100001)(186003)(8676002)(575784001)(86362001)(26005)(6436002)(316002)(102836004)(66066001)(99286004)(85182001)(81166006)(81156014)(7736002)(8936002)(305945005)(25786009)(68736007)(36756003)(14454004)(5660300001)(107886003)(6486002)(97736004)(478600001)(71200400001)(4326008)(2616005)(106356001)(105586002)(72206003)(256004)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4987;H:DB7PR04MB4667.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: ysoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 41ySgJHwbaZskK7/6QF6LPhOCyAoPQBrqF4VE7s7eh8rp9+gzF1WTOvB9RpHUF0xQ5hXF/7gNC8kIw07/o6DRj61fZbInV/wH3nR8hA9j68zfZYUESbe3Y24/XGtcsCnJt4Y62DqHIN1bwUzrZKP/KIPCSx0UcZXa++nO5lqGxHlkXvsksu8yc4KkejAhyPmptb1vh3AvJ46T96CnS9++z4r2xl/wduXOy6KpSYupsDFQkNOH35S2D2wRPnP8myRK9gEt0fjtweKLrHVQoAqO9iJsY1Vbr9X20qi7KeSamONRb8cISPwyn1rCogkjh3fIuVfDXemBVTiejpxvGQPQ8s6ZU1mFqXvT5nuZaGyZM8=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <180BA1B53F1D93458920604DE1CA8E09@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Fri, 2 Nov 2018 20:04:07 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:39302 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727744AbeKCAEH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 20:04:07 -0400
+Received: by mail-pl1-f195.google.com with SMTP id b5-v6so1129837pla.6
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 07:56:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=pFoxizr4Xshbd5d8jK4zxzhTO29DQ2bXf51DghjpV14=;
+        b=atczp3DTmvRl9d5b9+DIRIxwMnoTGityuk2T04GsRV1LshZYOdifXOeoDrv0MovV5Q
+         DR0Q7/1yozXzvT1hI5WpYyo9/vOD/Di3TG4hOi3381BlWZcwELAUb8sZPJeKc2uuJngt
+         KV5r+ZYtoNjyRhDkyAZfaOh6ZaPN9Kvng2qzkLpwHAxmhv5e7G0q/HH7wNYqastANj+b
+         VummX3qLHjMzhXqnyoO9Gg7q2lH0wNNzB3FOOa7svL21akwFPZgia2FKTaL6jNYesfdp
+         mzy6JnXkoOoavZGy9Uyf9fcNSxXdc1T6MPjozdErhjF04n7UcbIBYgG/8V4W9XRZ9aDQ
+         uChw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pFoxizr4Xshbd5d8jK4zxzhTO29DQ2bXf51DghjpV14=;
+        b=OiPmL6OMO8x7hv+hPSoIFM4mijwNClZTVqgS/yGhwIxnV5h8GsNR02KcPa53/JWi7U
+         3BaN0PJbEs9PkqLFshDAw3d3uRWLYFn8VuIQxoNDaiSD8lZP+wl2/jyyYLLQWVhOry2/
+         qoRaUCKBKkNcfUAp1VKurUnj28sJ7YLFSpd8b8pkbZg4kqXgV0basPndkCKhadKI6ztR
+         T/Nz29S+Xd/Mq0zdL2uH/27lS73W0X08KTL74le6LvEMnGM27E7PvVfo6mRNC9Uq4pbo
+         lfK9w854xUSusbdArp2C1AGPObDPDVncPIyTADAviRXjVffqG/pmf4J6WEPiQ2NYr+fG
+         3AgQ==
+X-Gm-Message-State: AGRZ1gK00H280q8jwL78SFqIKA6kliJVTHWtrogFpmzzO2WuXSjttBAF
+        Z0ql/EBOG0pqkdxDYaGaSygFQA==
+X-Google-Smtp-Source: AJdET5ej91OyV+0PsCQ/XK6Teze5aYjPT19TnnDkpiRVy3OHYO7f2dkehftK8+tn2xhZ/DerbNLBVQ==
+X-Received: by 2002:a17:902:7682:: with SMTP id m2-v6mr12128606pll.89.1541170604724;
+        Fri, 02 Nov 2018 07:56:44 -0700 (PDT)
+Received: from kshutemo-mobl1.localdomain (fmdmzpr03-ext.fm.intel.com. [192.55.54.38])
+        by smtp.gmail.com with ESMTPSA id z2sm2539911pgu.4.2018.11.02.07.56.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 02 Nov 2018 07:56:43 -0700 (PDT)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id E9F4630164F; Fri,  2 Nov 2018 17:56:38 +0300 (+03)
+Date:   Fri, 2 Nov 2018 17:56:38 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     torvalds@linux-foundation.org
+Cc:     Will Deacon <will.deacon@arm.com>, gregkh@linuxfoundation.org,
+        stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jannh@google.com, mingo@kernel.org, peterz@infradead.org,
+        linux-mm@kvack.org, mhocko@kernel.org, hughd@google.com
+Subject: Re: [PATCH] mremap: properly flush TLB before releasing the page
+Message-ID: <20181102145638.gehn7eszv22lelh6@kshutemo-mobl1>
+References: <1541164962-28533-1-git-send-email-will.deacon@arm.com>
 MIME-Version: 1.0
-X-OriginatorOrg: ysoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 437bc04f-6e28-44ba-3f1f-08d640d3609d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Nov 2018 14:56:32.4800
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b5839965-430f-4be2-b282-d7a3149f2b37
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4987
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1541164962-28533-1-git-send-email-will.deacon@arm.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VGhpcyByZXZlcnRzIGNvbW1pdCA1MTliNGRiYTU4NjE5OGVlZDhmNzJiYTA3YmM3MTgwOGFmMmUw
-ZTMyLg0KSXQgaXMgdHJ1ZSB0aGF0IHRoZSBhY3R1YWwgaW1wbGVtZW50YXRpb24gaGFzIG5ldmVy
-IGJlZW4gdGhlcmUuIEJ1dA0KY29udHJhcnkgdG8gd2hhdCB0aGUgcmV2ZXJ0ZWQgY29tbWl0IG1l
-c3NhZ2Ugc2F5cyBpdCBkb2VzIG1ha2Ugc2Vuc2UNCnRvIGFkZCBpdC4NCg0KQ3VycmVudCBpbXBs
-ZW1lbnRhdGlvbiBvZiB0aGUgcmVzZXQgc2lnbmFsIGlzIGhhcmQtY29kZWQgdG8gYWN0aXZlIGxv
-dw0Kd2l0aCB0aGUgYXNzdW1wdGlvbiB0aGF0IHJlc2V0LWdwaW9zIGlzIHNwZWNpZmllZCBhcyBH
-UElPX0FDVElWRV9ISUdILg0KVGhhdCBpcyB0ZWNobmljYWxseSB3cm9uZyBhcyB0aGUgRFRTIGF1
-dGhvcnMgc2hvdWxkIGtub3cgdGhhdCBTU0QxMzB4DQpkaXNwbGF5cyBuZWVkIGFjdGl2ZSBsb3cg
-cmVzZXQgYW5kIGhlbmNlIHRoZXkgYXJlIHRlbXBlZCB0byB1c2UNCkdQSU9fQUNUSVZFX0xPVy4g
-QnV0IHdpdGggdGhhdCB0aGUgcmVzZXQgaXMgYnJva2VuLiBTbyByZXNldC1hY2l2ZS1sb3cNCnBy
-b3BlcnR5IGNhbiBiZSB1c2VkIHRvIGludmVydCB0aGUgc2lnbmFsIG9uY2UgYWdhaW4gdG8gZml4
-IHRoaXMuDQoNClNpZ25lZC1vZmYtYnk6IE1pY2hhbCBWb2vDocSNIDxtaWNoYWwudm9rYWNAeXNv
-ZnQuY29tPg0KLS0tDQogRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkv
-c3NkMTMwN2ZiLnR4dCB8IDYgKysrKy0tDQogMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygr
-KSwgMiBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJl
-ZS9iaW5kaW5ncy9kaXNwbGF5L3NzZDEzMDdmYi50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRy
-ZWUvYmluZGluZ3MvZGlzcGxheS9zc2QxMzA3ZmIudHh0DQppbmRleCAyMDlkOTMxLi5hNWVhZDEw
-IDEwMDY0NA0KLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkv
-c3NkMTMwN2ZiLnR4dA0KKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rp
-c3BsYXkvc3NkMTMwN2ZiLnR4dA0KQEAgLTE2LDYgKzE2LDggQEAgUmVxdWlyZWQgcHJvcGVydGll
-czoNCiBPcHRpb25hbCBwcm9wZXJ0aWVzOg0KICAgLSByZXNldC1ncGlvczogVGhlIEdQSU8gdXNl
-ZCB0byByZXNldCB0aGUgT0xFRCBkaXNwbGF5LCBpZiBhdmFpbGFibGUuIFNlZQ0KICAgICAgICAg
-ICAgICAgICAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwaW8vZ3Bpby50eHQg
-Zm9yIGRldGFpbHMuDQorICAtIHJlc2V0LWFjdGl2ZS1sb3c6IEJvb2wgZmxhZyB0byBpbmRpY2F0
-ZSB0aGUgR1BJTyBzcGVjaWZpZWQgaW4gInJlc2V0LWdwaW9zIg0KKyAgICAgICAgICAgICAgICAg
-ICAgICBwcm9wZXJ0eSBpcyBhY3RpdmUgbG93Lg0KICAgLSB2YmF0LXN1cHBseTogVGhlIHN1cHBs
-eSBmb3IgVkJBVA0KICAgLSBzb2xvbW9uLHNlZ21lbnQtbm8tcmVtYXA6IERpc3BsYXkgbmVlZHMg
-bm9ybWFsIChub24taW52ZXJ0ZWQpIGRhdGEgY29sdW1uDQogICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgdG8gc2VnbWVudCBtYXBwaW5nDQpAQCAtMzUsNyArMzcsNyBAQCBzc2QxMzA3OiBv
-bGVkQDNjIHsNCiAgICAgICAgIGNvbXBhdGlibGUgPSAic29sb21vbixzc2QxMzA3ZmItaTJjIjsN
-CiAgICAgICAgIHJlZyA9IDwweDNjPjsNCiAgICAgICAgIHB3bXMgPSA8JnB3bSA0IDMwMDA+Ow0K
-LSAgICAgICAgcmVzZXQtZ3Bpb3MgPSA8JmdwaW8yIDc+Ow0KKyAgICAgICAgcmVzZXQtZ3Bpb3Mg
-PSA8JmdwaW8yIDcgR1BJT19BQ1RJVkVfTE9XPjsNCiAgICAgICAgIHJlc2V0LWFjdGl2ZS1sb3c7
-DQogfTsNCiANCkBAIC00Myw3ICs0NSw3IEBAIHNzZDEzMDY6IG9sZWRAM2Mgew0KICAgICAgICAg
-Y29tcGF0aWJsZSA9ICJzb2xvbW9uLHNzZDEzMDZmYi1pMmMiOw0KICAgICAgICAgcmVnID0gPDB4
-M2M+Ow0KICAgICAgICAgcHdtcyA9IDwmcHdtIDQgMzAwMD47DQotICAgICAgICByZXNldC1ncGlv
-cyA9IDwmZ3BpbzIgNz47DQorICAgICAgICByZXNldC1ncGlvcyA9IDwmZ3BpbzIgNyBHUElPX0FD
-VElWRV9MT1c+Ow0KICAgICAgICAgcmVzZXQtYWN0aXZlLWxvdzsNCiAgICAgICAgIHNvbG9tb24s
-Y29tLWxycmVtYXA7DQogICAgICAgICBzb2xvbW9uLGNvbS1pbnZkaXI7DQotLSANCjIuMS40DQoN
-Cg==
+On Fri, Nov 02, 2018 at 01:22:42PM +0000, Will Deacon wrote:
+> From: Linus Torvalds <torvalds@linux-foundation.org>
+> 
+> Commit eb66ae030829605d61fbef1909ce310e29f78821 upstream.
+
+I have never seen the original patch on mailing lists, so I'll reply to
+the backport.
+
+> 
+> This is a backport to stable 4.4.y.
+> 
+> Jann Horn points out that our TLB flushing was subtly wrong for the
+> mremap() case.  What makes mremap() special is that we don't follow the
+> usual "add page to list of pages to be freed, then flush tlb, and then
+> free pages".  No, mremap() obviously just _moves_ the page from one page
+> table location to another.
+> 
+> That matters, because mremap() thus doesn't directly control the
+> lifetime of the moved page with a freelist: instead, the lifetime of the
+> page is controlled by the page table locking, that serializes access to
+> the entry.
+
+I believe we do control the lifetime of the page with mmap_sem, don't we?
+
+I mean any shoot down of the page from a mapping would require at least
+down_read(mmap_sem) and we hold down_write(mmap_sem). Hm?
+
+> As a result, we need to flush the TLB not just before releasing the lock
+> for the source location (to avoid any concurrent accesses to the entry),
+> but also before we release the destination page table lock (to avoid the
+> TLB being flushed after somebody else has already done something to that
+> page).
+> 
+> This also makes the whole "need_flush" logic unnecessary, since we now
+> always end up flushing the TLB for every valid entry.
+> 
+> Reported-and-tested-by: Jann Horn <jannh@google.com>
+> Acked-by: Will Deacon <will.deacon@arm.com>
+> Tested-by: Ingo Molnar <mingo@kernel.org>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> [will: backport to 4.4 stable]
+> Signed-off-by: Will Deacon <will.deacon@arm.com>
+> ---
+>  mm/huge_memory.c |  6 +++++-
+>  mm/mremap.c      | 21 ++++++++++++++++-----
+>  2 files changed, 21 insertions(+), 6 deletions(-)
+> 
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index c4ea57ee2fd1..465786cd6490 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -1511,7 +1511,7 @@ int move_huge_pmd(struct vm_area_struct *vma, struct vm_area_struct *new_vma,
+>  	spinlock_t *old_ptl, *new_ptl;
+>  	int ret = 0;
+>  	pmd_t pmd;
+> -
+> +	bool force_flush = false;
+>  	struct mm_struct *mm = vma->vm_mm;
+>  
+>  	if ((old_addr & ~HPAGE_PMD_MASK) ||
+> @@ -1539,6 +1539,8 @@ int move_huge_pmd(struct vm_area_struct *vma, struct vm_area_struct *new_vma,
+>  		if (new_ptl != old_ptl)
+>  			spin_lock_nested(new_ptl, SINGLE_DEPTH_NESTING);
+>  		pmd = pmdp_huge_get_and_clear(mm, old_addr, old_pmd);
+> +		if (pmd_present(pmd))
+> +			force_flush = true;
+>  		VM_BUG_ON(!pmd_none(*new_pmd));
+>  
+>  		if (pmd_move_must_withdraw(new_ptl, old_ptl)) {
+> @@ -1547,6 +1549,8 @@ int move_huge_pmd(struct vm_area_struct *vma, struct vm_area_struct *new_vma,
+>  			pgtable_trans_huge_deposit(mm, new_pmd, pgtable);
+>  		}
+>  		set_pmd_at(mm, new_addr, new_pmd, pmd_mksoft_dirty(pmd));
+> +		if (force_flush)
+> +			flush_tlb_range(vma, old_addr, old_addr + PMD_SIZE);
+>  		if (new_ptl != old_ptl)
+>  			spin_unlock(new_ptl);
+>  		spin_unlock(old_ptl);
+> diff --git a/mm/mremap.c b/mm/mremap.c
+> index fe7b7f65f4f4..450b306d473e 100644
+> --- a/mm/mremap.c
+> +++ b/mm/mremap.c
+> @@ -96,6 +96,8 @@ static void move_ptes(struct vm_area_struct *vma, pmd_t *old_pmd,
+>  	struct mm_struct *mm = vma->vm_mm;
+>  	pte_t *old_pte, *new_pte, pte;
+>  	spinlock_t *old_ptl, *new_ptl;
+> +	bool force_flush = false;
+> +	unsigned long len = old_end - old_addr;
+>  
+>  	/*
+>  	 * When need_rmap_locks is true, we take the i_mmap_rwsem and anon_vma
+> @@ -143,12 +145,26 @@ static void move_ptes(struct vm_area_struct *vma, pmd_t *old_pmd,
+>  		if (pte_none(*old_pte))
+>  			continue;
+>  		pte = ptep_get_and_clear(mm, old_addr, old_pte);
+> +		/*
+> +		 * If we are remapping a valid PTE, make sure
+> +		 * to flush TLB before we drop the PTL for the PTE.
+> +		 *
+> +		 * NOTE! Both old and new PTL matter: the old one
+> +		 * for racing with page_mkclean(), the new one to
+> +		 * make sure the physical page stays valid until
+> +		 * the TLB entry for the old mapping has been
+> +		 * flushed.
+> +		 */
+
+Could you elaborate on the race with page_mkclean()?
+
+I think the new logic is unnecessary strict (and slow).
+
+Any barely sane userspace must not access the old mapping after
+mremap(MREMAP_MAYMOVE) called and must not access the new mapping
+before the mremap() returns.
+
+The old logic *should* be safe if this argument valid.
+
+Do I miss something?
+
+> +		if (pte_present(pte))
+> +			force_flush = true;
+>  		pte = move_pte(pte, new_vma->vm_page_prot, old_addr, new_addr);
+>  		pte = move_soft_dirty_pte(pte);
+>  		set_pte_at(mm, new_addr, new_pte, pte);
+>  	}
+>  
+>  	arch_leave_lazy_mmu_mode();
+> +	if (force_flush)
+> +		flush_tlb_range(vma, old_end - len, old_end);
+>  	if (new_ptl != old_ptl)
+>  		spin_unlock(new_ptl);
+>  	pte_unmap(new_pte - 1);
+> @@ -168,7 +184,6 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
+>  {
+>  	unsigned long extent, next, old_end;
+>  	pmd_t *old_pmd, *new_pmd;
+> -	bool need_flush = false;
+>  	unsigned long mmun_start;	/* For mmu_notifiers */
+>  	unsigned long mmun_end;		/* For mmu_notifiers */
+>  
+> @@ -207,7 +222,6 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
+>  					anon_vma_unlock_write(vma->anon_vma);
+>  			}
+>  			if (err > 0) {
+> -				need_flush = true;
+>  				continue;
+>  			} else if (!err) {
+>  				split_huge_page_pmd(vma, old_addr, old_pmd);
+> @@ -224,10 +238,7 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
+>  			extent = LATENCY_LIMIT;
+>  		move_ptes(vma, old_pmd, old_addr, old_addr + extent,
+>  			  new_vma, new_pmd, new_addr, need_rmap_locks);
+> -		need_flush = true;
+>  	}
+> -	if (likely(need_flush))
+> -		flush_tlb_range(vma, old_end-len, old_addr);
+>  
+>  	mmu_notifier_invalidate_range_end(vma->vm_mm, mmun_start, mmun_end);
+>  
+> -- 
+> 2.1.4
+> 
+
+-- 
+ Kirill A. Shutemov
