@@ -2,112 +2,80 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02598C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A373FC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:40:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C77EA2082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:39:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C77EA2082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id 523572081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:40:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="X/MbPQuw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 523572081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727991AbeKBXqc (ORCPT
+        id S1727973AbeKBXr6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 19:46:32 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:44408 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727751AbeKBXqc (ORCPT
+        Fri, 2 Nov 2018 19:47:58 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50510 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727668AbeKBXr5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 19:46:32 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.23/8.16.0.23) with SMTP id wA2EYTUT021266;
-        Fri, 2 Nov 2018 09:38:19 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2ncne2yjn1-1;
-        Fri, 02 Nov 2018 09:38:19 -0500
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id 19889611E123;
-        Fri,  2 Nov 2018 09:38:19 -0500 (CDT)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Fri, 2 Nov 2018
- 14:38:18 +0000
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wA2EcHV9006678; Fri,
- 2 Nov 2018 14:38:17 GMT
-Date:   Fri, 2 Nov 2018 14:38:17 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-CC:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        "Robert Jarzmik" <robert.jarzmik@free.fr>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-Subject: Re: [PATCH] ASoC: wm97xx: fix uninitialized regmap pointer problem
-Message-ID: <20181102143817.GP16508@imbe.wolfsonmicro.main>
-References: <20181102112341.753642-1-arnd@arndb.de>
+        Fri, 2 Nov 2018 19:47:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=bFS2yIYcp1WZoHF9vc1jvGkeQNloqX4R+3yx8Emmfpo=; b=X/MbPQuwL77C1JhIgM6A4ijyM
+        WX7QyfgT2fp/K3l50vNP14s92OSZvDGcFnino6GB/F4bO5l/Bm4fdOzt5FqZrB3+caJrKElisreLv
+        IDj9zx4vLqrXpR4XBqqVlJL/J9330sxKGJ3JTAkFLWQcWUt/Yy1oWBoak/MnZdJLFogXdGOv/i+ar
+        JM4LV70OVyS0AyNg7B8BP0mSE9NdOCMlpiBieZBiRH+TSZAId31D8UmrAHhANvqwYXP7W0LS50N0D
+        TBnXptVG3CiyHTak+TvfEsMOuY0Q+JCuvGHjz5T0EYyb1DJf6Qk44AErGnhkDmPFtArC0m3qrX8vE
+        lkZNzcjUg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gIacf-0005BT-4J; Fri, 02 Nov 2018 14:40:29 +0000
+Date:   Fri, 2 Nov 2018 07:40:28 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Alexander Potapenko <glider@google.com>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v6 1/3] printk: Add line-buffered printk() API.
+Message-ID: <20181102144028.GQ10491@bombadil.infradead.org>
+References: <1541165517-3557-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181102112341.753642-1-arnd@arndb.de>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=876 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
- definitions=main-1811020133
+In-Reply-To: <1541165517-3557-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 12:23:08PM +0100, Arnd Bergmann wrote:
-> gcc notices that without either the ac97 bus or the pdata, we never
-> initialize the regmap pointer, which leads to an uninitialized variable
-> access:
-> 
-> sound/soc/codecs/wm9712.c: In function 'wm9712_soc_probe':
-> sound/soc/codecs/wm9712.c:666:2: error: 'regmap' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-> 
-> Since that configuration is invalid, it's better to return an error
-> here. I tried to avoid adding complexity to the conditions, and turned
-> the #ifdef into a regular if(IS_ENABLED()) check for readability.
-> This in turn requires moving some header file declarations out of
-> an #ifdef.
-> 
-> The same code is used in three drivers, all of which I'm changing
-> the same way.
-> 
-> Fixes: 2ed1a8e0ce8d ("ASoC: wm9712: add ac97 new bus support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  static void wm9713_soc_remove(struct snd_soc_component *component)
->  {
-> -#ifdef CONFIG_SND_SOC_AC97_BUS
->  	struct wm9713_priv *wm9713 = snd_soc_component_get_drvdata(component);
->  
-> -	if (!wm9713->mfd_pdata) {
-> +	if (IS_ENABLED(CONFIG_SND_SOC_AC97_BUS)) {
+On Fri, Nov 02, 2018 at 10:31:55PM +0900, Tetsuo Handa wrote:
+>   get_printk_buffer() tries to assign a "struct printk_buffer" from
+>   statically preallocated array. get_printk_buffer() returns NULL if
+>   all "struct printk_buffer" are in use, but the caller does not need to
+>   check for NULL.
 
-Should this one not also have an && !wm9713->mfd_pdata?
+This seems like a great way of wasting 16kB of memory.  Since you've
+already made printk_buffered() work with a NULL initial argument, what's
+the advantage over just doing kmalloc(1024, GFP_ATOMIC)?
 
-Thanks,
-Charles
-
->  		snd_soc_component_exit_regmap(component);
->  		snd_soc_free_ac97_component(wm9713->ac97);
->  	}
-> -#endif
->  }
->  
->  static const struct snd_soc_component_driver soc_component_dev_wm9713 = {
-> -- 
-> 2.18.0
