@@ -2,147 +2,213 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05803C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E732C6786F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:16:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A419A20657
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:13:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 565982082E
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:16:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nokia.onmicrosoft.com header.i=@nokia.onmicrosoft.com header.b="EAf9XjCK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A419A20657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nokia.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rQ1CluB0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 565982082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727369AbeKBUUG (ORCPT
+        id S1726620AbeKBUWw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 16:20:06 -0400
-Received: from mail-eopbgr50090.outbound.protection.outlook.com ([40.107.5.90]:29764
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726775AbeKBUUG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 16:20:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
- s=selector1-nokia-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YA7ItzCMpHPMu6W/LbaW0hhXKKDhUh7wzlykuO3OgJY=;
- b=EAf9XjCKtKqClDZw086NvKGdt3WVv/FRXpNX8nrAvvoSX/W0vor7E+h8CZGf7vhj7riejV494zLly1UL1DO2ScxeXPzabOCa0fuzX5wT86haM0ogee969bgG//Te4B+TGJsexdZmCtQy83H91uC2qgDGrqNAk4Pb7WC6zxoZXs8=
-Received: from HE1PR07MB1307.eurprd07.prod.outlook.com (10.164.51.157) by
- HE1PR07MB4409.eurprd07.prod.outlook.com (20.176.167.138) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.16; Fri, 2 Nov 2018 11:13:14 +0000
-Received: from HE1PR07MB1307.eurprd07.prod.outlook.com
- ([fe80::b998:435b:155e:8c3b]) by HE1PR07MB1307.eurprd07.prod.outlook.com
- ([fe80::b998:435b:155e:8c3b%3]) with mapi id 15.20.1294.024; Fri, 2 Nov 2018
- 11:13:14 +0000
-From:   "Koskinen, Aaro (Nokia - FI/Espoo)" <aaro.koskinen@nokia.com>
-To:     Dinh Nguyen <dinguyen@kernel.org>,
-        Thor Thayer <thor.thayer@linux.intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "Koskinen, Aaro (Nokia - FI/Espoo)" <aaro.koskinen@nokia.com>
-Subject: [PATCH v2] arm64: dts: stratix10: fix multicast filtering
-Thread-Topic: [PATCH v2] arm64: dts: stratix10: fix multicast filtering
-Thread-Index: AQHUcp0MQUsx/YwAnUyT3CyI6LJndg==
-Date:   Fri, 2 Nov 2018 11:13:14 +0000
-Message-ID: <20181102111258.18748-1-aaro.koskinen@nokia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [131.228.2.16]
-x-mailer: git-send-email 2.11.0
-x-clientproxiedby: HE1PR06CA0149.eurprd06.prod.outlook.com
- (2603:10a6:7:16::36) To HE1PR07MB1307.eurprd07.prod.outlook.com
- (2a01:111:e400:59af::29)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aaro.koskinen@nokia.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1PR07MB4409;6:Ux5hHHPCY6werNZoZwgKf7kAfCcWHBvCrChsaWpRLXehqIL9Iqp9CWVN7xk6wUhS/YY/gg/qOM6BC4oMl8LX18N+GrZHS0hOhfRBoNxI/cVNPvR/W2nsGqGx3kiEnLyfqrALGbLt0PW2SqiYkHLdddvQ/X6+ggV8Sl+U/n+8vgc28i+W/m27FFvt8J8fLvYpFre+F0Yh+MtH24JOFWkvowOu/2v7kBjXiSyx3LnLtsgYOo2xpMaujSCE9uUK5MCHZc382ti81AoACovQgSZYeInQdXnQ77kDCVNkspcYn+6OQSzGjBRZOamRPOwD3T7BsQSu0lQtckfJWfTToG9I80g1AALniQlWIRvt6keJm4PNASTrywpmck1ndvMDk07j/QSQ3GWLdv+S/qRVsOudSKePJFmiKtSuPC/Ad7/JjxURktc5DpErqlcoFGNYmBJ19YVM+tuD5QsA+yTiUmGCdg==;5:DZ4r4a9/nnbarMSOHPfjo4DySGNefBg6oUcn7bF1NCD0nDDFYx+ydLh13fMwzfZh6mSjaGVhPFwWpWD7h60EGbLxrXKbaLiWBRixgVyyv8bIxybc7fywxgVbPrOPsvn+kHbzAhWv2ZOJnuqezUSZteBpd/TTKUXTO35Myq+Vu7Y=;7:E6wDxg5RfXEBVpM0awTpNTuNHGph14h+jvKwdJAgwfU5FsCKSQW2Kv8PS6hQNP8mcBfa3o4HeLP6JN5lbbGSeCUpfjZWOUz9YTXzaZE7kZXqUlk/N4cgSMEYuPwfAiVLqqjZsjhY7R4PcRKsHQ6+Vg==
-x-ms-office365-filtering-correlation-id: 73d9c1a2-1d26-4de1-c89c-08d640b42e31
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:HE1PR07MB4409;
-x-ms-traffictypediagnostic: HE1PR07MB4409:
-x-microsoft-antispam-prvs: <HE1PR07MB440972C1DB51367E0A3ABE2CF4CF0@HE1PR07MB4409.eurprd07.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(158342451672863)(109105607167333)(195916259791689)(82608151540597);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231382)(11241501184)(806099)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:HE1PR07MB4409;BCL:0;PCL:0;RULEID:;SRVR:HE1PR07MB4409;
-x-forefront-prvs: 08444C7C87
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(39860400002)(136003)(346002)(396003)(199004)(189003)(26005)(386003)(6506007)(99286004)(86362001)(1076002)(6116002)(3846002)(478600001)(2906002)(102836004)(6512007)(7736002)(486006)(105586002)(106356001)(52116002)(25786009)(186003)(36756003)(305945005)(97736004)(476003)(5660300001)(6486002)(107886003)(2616005)(6436002)(110136005)(8936002)(68736007)(316002)(54906003)(66066001)(53936002)(8676002)(71190400001)(71200400001)(14444005)(256004)(81156014)(50226002)(81166006)(4326008)(14454004)(2900100001);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR07MB4409;H:HE1PR07MB1307.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nokia.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: +AFAXrTJ2REWYvQwe0cK5YWYmo2DsWMQOj1oAsg6sk1SvMfy078z9y88C/9NCWeml6789UDsLiGDb5k+/5SUXRNezMf58v/b4oEARe1Q53qrmdkmg6jle8mvIv5wNB6Mg4yBBrONvxeeMzRQFWkPL6uHmoP6ha4OE9IB/rLZ3VdBlojBdfv8x5vlTLfpWOBLEEuvDtwjJxh5j9dLuRf+9uNf8SV0LMmWmNrSXEe8M4XL7c1wGM/rhf54eDOvlJ2vW/5QXwfNpgzQKmug5Ojf5hr3m8Wic3Q1ADTcFpzK3htzltbaRevHVM1dQ+aliiBUse2yboPqx5HQVZvyNFTkgvQYzQnv/zoCRLubrOPjrBk=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 2 Nov 2018 16:22:52 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45551 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726008AbeKBUWw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 16:22:52 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n5-v6so1565484wrw.12;
+        Fri, 02 Nov 2018 04:16:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=H5gjf2b363bjsYcwOfjSvwIxzvDH6Obt1DJWqED7bk0=;
+        b=rQ1CluB0pG0uqrL2cf7RHvE/syLbry5eaecF+EbgvlqO48uwLstB5R61zHHDKFiYAK
+         G0+yYQuHCZDMSy/VruKyoQRqxf23cg3BukoRy3SGWTJJf+ElJV1/wxeP8p/yEAYN+pln
+         5m8I/XUQ+utK5NmH50wxI+sLs7DypSyM3KtWz0gOg3u/ex1ww2Z5GNvxoQ95jSpaa6Ze
+         rU+HnhR7HDQlc1iROvLfsnUwGJvB/zJGdFCWSGmwe3VEteA+uLEMe1ojZj6Kq/LZlmyS
+         0eJwSdsjspqdTNC+wW/g7VuExgZc0c6idnj8vF8xaFPAXrRl4leSoidIl2VgwMcHL4Ls
+         ugBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=H5gjf2b363bjsYcwOfjSvwIxzvDH6Obt1DJWqED7bk0=;
+        b=tc834sgsCkuGj+q6jOcgYgr3XCONXMxQ47Q/y9CSZBccTfGRns0plpeGTzy18gKHcC
+         xkYQr6KZ0+gpSFgriEksPSXmhu6RhG7GahViVVqZt6nqIaacffGz1Pomx1nkP+TGDRON
+         AJisjv2R+ePHtUcngZnCxVYte4RdKtcAFayWH4Kid0a+oIlgiqrcF49H/XQfyk/a9DrD
+         lpXbOKyqAq5aGeb70pVc12Grv8Re+CAO1yQ9B/eSGgkrkVevD91lSrmsD9wl8PD4V6KT
+         zRy91RV29iwP95fRgE1pylNZGTurxO8bTXOUepJlky4t8CqBZAXFOa+K9qbv3uT5ioUV
+         y9JQ==
+X-Gm-Message-State: AGRZ1gKMI6L4EFPreiPnT8pBU5R6pP5mhEIjvbJ3flsv7qhUdayiSbWz
+        /m+v7H8BinRlIO7LGDFRgEA=
+X-Google-Smtp-Source: AJdET5eUdhXwXG2UHowq81I+D4/jywrBBWB1g3ZLDuffmFl8dhpTyBkkslq9lWPBicAvq0vGko3P0Q==
+X-Received: by 2002:a5d:4b8b:: with SMTP id b11-v6mr8302099wrt.72.1541157361845;
+        Fri, 02 Nov 2018 04:16:01 -0700 (PDT)
+Received: from picard ([194.207.103.1])
+        by smtp.gmail.com with ESMTPSA id o4-v6sm24968645wrj.45.2018.11.02.04.15.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 02 Nov 2018 04:16:00 -0700 (PDT)
+Date:   Fri, 2 Nov 2018 11:15:58 +0000
+From:   Dean Wallace <duffydack73@gmail.com>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Johannes Stezenbach <js@sig21.net>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mogens Jensen <mogens-jensen@protonmail.com>
+Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
+Message-ID: <20181102111558.lw67jfyhfneqzhl4@picard>
+References: <20181030161534.wk5cf7nxbwhp2far@picard>
+ <307c2074-d268-a87a-6040-1240a2091a4d@redhat.com>
+ <20181031200709.xrmu6wsdel7dtcjq@picard>
+ <da025116-580d-e442-d96f-875282306f1b@linux.intel.com>
+ <20181101103705.ay36te4qr5pxtgop@picard>
+ <37e44480-44d3-9355-6119-ae46bb38678a@redhat.com>
+ <20181101142859.oxtuhbwtt44h2u3r@picard>
+ <67a7d54b-49cc-aa4e-fe47-bb6277f02bc8@redhat.com>
+ <20181101155036.vkdrc7ajmkyd73o5@picard>
+ <685e6291-7064-af8d-1211-72796d880f5b@redhat.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 73d9c1a2-1d26-4de1-c89c-08d640b42e31
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Nov 2018 11:13:14.5459
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR07MB4409
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <685e6291-7064-af8d-1211-72796d880f5b@redhat.com>
+X-Info: Keep It Simple, Stupid.
+X-Operating-System: Linux, kernel 4.19.0-arch1-1-ARCH-dirty
+X-Message-Flag: WARNING!! Outlook sucks
+User-Agent: Every email client sucks, this one just sucks less.
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aaro Koskinen <aaro.koskinen+linux@nokia.com>
+On 02-11-18, Hans de Goede wrote:
+> Hi,
+> 
+> On 01-11-18 16:50, Dean Wallace wrote:
+> > On 01-11-18, Hans de Goede wrote:
+> > > Hi,
+> > > 
+> > > On 01-11-18 15:28, Dean Wallace wrote:
+> > > > On 01-11-18, Hans de Goede wrote:
+> > > > > Hi,
+> > > > > 
+> > > > > On 01-11-18 11:37, Dean Wallace wrote:
+> > > > > > On 31-10-18, Pierre-Louis Bossart wrote:
+> > > > > > > 
+> > > > > > > > Just thought it worth mentioning, this new patch that fixes sound
+> > > > > > > > again, seems to have ressurected an old issue with PLL unlock.  I'm
+> > > > > > > > seeing journal entries after fresh boot ......
+> > > > > > > > 
+> > > > > > > > ```
+> > > > > > > > picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+> > > > > > > > picard systemd[462]: Started Sound Service.
+> > > > > > > > picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+> > > > > > > > picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+> > > > > > > > picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+> > > > > > > > picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+> > > > > > > > picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+> > > > > > > > picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+> > > > > > > > picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+> > > > > > > > picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+> > > > > > > > picard kernel: max98090_pll_work: 141 callbacks suppressed
+> > > > > > > > picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+> > > > > > > > ```
+> > > > > > > > 
+> > > > > > > > sound is ok, but sometimes plugging in headphones spams journal with
+> > > > > > > > those PLL messages, and sound turns into "daleks", and I have to
+> > > > > > > > remove/insert headphones few times or stop/start audio to fix it.
+> > > > > > > > It's a very old issue, maybe you'd know more about it.
+> > > > > > > 
+> > > > > > > I noticed this error on my Orco device used for tests many moons ago, but I
+> > > > > > > could never find out what led to this error case, it wasn't deterministic
+> > > > > > > and didn't impact the audio quality. All I could do is rate_limit it... If
+> > > > > > > we have an A vs. B situation it'd be really helpful to diagnose further.
+> > > > > > > 
+> > > > > > > Is there really a causality between the changes from Hans and this PLL
+> > > > > > > unlock error? Are you 100% sure this was not present in the previous install
+> > > > > > > you used (4.18.14 as mentioned earlier in the thread)?
+> > > > > > > 
+> > > > > > > Thanks
+> > > > > > > 
+> > > > > > > -Pierre
+> > > > > > > 
+> > > > > > Well, numerous boots, kernels, headphone inserting - no PLL or
+> > > > > > 'Daleks'.  My laptop must have been haunted that day (halloween).
+> > > > > > I'll put it to bed.
+> > > > > 
+> > > > > So you can no longer reproduce. Bummer. Note this might be caused by
+> > > > > the temperature of the laptop when you were running the tests...
+> > > > > 
+> > > > > Anyways if you hit this again and you can reproduce it, please
+> > > > > give adding a msleep(10) after code mucking with the clk a try.
+> > > > > 
+> > > > > Regards,
+> > > > > 
+> > > > > Hans
+> > > > > 
+> > > > Right then, I can make it unlock and 'daleks' by going into
+> > > > pavucontrol and switching the Profile back and forth from Stereo
+> > > > Output to Stereo Output+Analog Mono Input, which is actually something
+> > > > I've done to make it correct itself as well.  I don't use the mic or
+> > > > anything so I've had it set to Stereo Ouput only which I 'think' has
+> > > > somehow made it more stable for me.  With all my playing around, one
+> > > > of the things I did was clean out my .config/pulse folder which meant
+> > > > by default the 'Profile' in pavucontrol was set to Output+Input, which
+> > > > seems to help trigger the PLL issue when inserting headphones.
+> > > > 
+> > > > So what would you like me to do, as I can trigger it on demand it
+> > > > seems.
+> > > 
+> > > Please give the attached patch a try (on top of my patch for the clk quirk)
+> > > and let us know if that fixes these errors.
+> > > 
+> > > Regards,
+> > > 
+> > > Hans
+> > > 
+> > Sorry, it's not being consistent with me  Now, fresh boot again, no errors
+> > in journal, no errors while plugging/unplugging earphones.  I think it's
+> > definitely more stable with the profile in pavucontrol set to Output
+> > only (no + Input), but I can still trigger it by switching it, and it
+> > never corrects itself until I switch a few more times.
+> 
+> Ok, so there are 2 issues here as I see it:
+> 
+> 1) It does not always reproduce
+> 2) It does still reproduce sometimes with the patch, so the patch does not
+> fix it.
+> 
+> So I think we just have to live with this for now.
+> 
+> Regards,
+> 
+> Hans
+>
+Yeah, I've never known it act any different so I'm used to it.  I do
+know a few people in the past who have just bought a usb sound device
+because they want to use a mic as well, and that just didn't work
+quite right for them, even if sound output worked they had issues as
+soon as they tried using mic.  I forget which, 4.1 or 4.4, 1 guy
+mentioned still using it just because output/input worked flawlessly.
+¯\_(ツ)_/¯
 
-From: Aaro Koskinen <aaro.koskinen@nokia.com>
-
-On Stratix 10, the EMAC has 256 hash buckets for multicast filtering. This
-needs to be specified in DTS, otherwise the stmmac driver defaults to 64
-buckets and initializes the filter incorrectly. As a result, e.g. valid
-IPv6 multicast traffic ends up being dropped.
-
-Fixes: 78cd6a9d8e15 ("arm64: dts: Add base stratix 10 dtsi")
-Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
----
- arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
-
-	v2: Provide a correct From: due to SMTP server issue.
-
-diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi b/arch/arm64=
-/boot/dts/altera/socfpga_stratix10.dtsi
-index 8253a1a9e985..fef7351e9f67 100644
---- a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-+++ b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-@@ -139,6 +139,7 @@
- 			clock-names =3D "stmmaceth";
- 			tx-fifo-depth =3D <16384>;
- 			rx-fifo-depth =3D <16384>;
-+			snps,multicast-filter-bins =3D <256>;
- 			status =3D "disabled";
- 		};
-=20
-@@ -154,6 +155,7 @@
- 			clock-names =3D "stmmaceth";
- 			tx-fifo-depth =3D <16384>;
- 			rx-fifo-depth =3D <16384>;
-+			snps,multicast-filter-bins =3D <256>;
- 			status =3D "disabled";
- 		};
-=20
-@@ -169,6 +171,7 @@
- 			clock-names =3D "stmmaceth";
- 			tx-fifo-depth =3D <16384>;
- 			rx-fifo-depth =3D <16384>;
-+			snps,multicast-filter-bins =3D <256>;
- 			status =3D "disabled";
- 		};
-=20
---=20
-2.11.0
-
+-Dean
