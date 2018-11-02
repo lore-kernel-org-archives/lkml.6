@@ -7,50 +7,45 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76982C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14E21C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 471542085A
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 937442084A
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CNC0LJzT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 471542085A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hC2+tfQ0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 937442084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729580AbeKCDtf (ORCPT
+        id S1729592AbeKCDth (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:49:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44234 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:49:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728699AbeKCDtd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:49:33 -0400
+        id S1728699AbeKCDth (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:49:37 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53B2920843;
-        Fri,  2 Nov 2018 18:41:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E8C42084A;
+        Fri,  2 Nov 2018 18:41:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184082;
-        bh=f2/nTAchtoTRkKydaBMHi3oeQMwbGC5nas97pzytlz8=;
+        s=default; t=1541184085;
+        bh=BJS3jJhoUfL1HsO0gIvV2lgLk5K5TSNSSIuJBdC+04o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CNC0LJzTiSiiI9wIkZME+BsWSKAfDdeQDzCleNrhcp+Le6w/CLxBmgfjkfPxIw5UU
-         eso5irHKuplJnpHnPNu2j4HFd0Bz93XXuOe9MN0yhTgIpz8VN6SSk4D/uOw8BaFDms
-         BRGxbN66O0hUhJQIq88cRzb5zWHW9ubIqGYly2HE=
+        b=hC2+tfQ0kJkaNxwtEggrevFGpvVauGtMlN/VN5nUiI0pQ/+CeM1MWmQHdnxCY0MRL
+         +LIqfYBwWTfuGQPl74W8DEO6HI45L22T/sLoSLvbHGXIY5MVaE7vVSZcZ62Wh1YNvT
+         SZjD0Wc2CnC35mXO/4Zw3kczLrV70xl/16p1RbUQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alok Kataria <akataria@vmware.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        virtualization@lists.linux-foundation.org,
-        kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 073/150] x86/paravirt: Fix some warning messages
-Date:   Fri,  2 Nov 2018 19:33:55 +0100
-Message-Id: <20181102182908.682563548@linuxfoundation.org>
+        stable@vger.kernel.org, Anders Roxell <anders.roxell@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.18 074/150] clk: mvebu: armada-37xx-periph: Remove unused var num_parents
+Date:   Fri,  2 Nov 2018 19:33:56 +0100
+Message-Id: <20181102182908.745071073@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -68,47 +63,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 571d0563c8881595f4ab027aef9ed1c55e3e7b7c ]
+[ Upstream commit 8927c27b32703e28041ae19bf25ea53461be83a1 ]
 
-The first argument to WARN_ONCE() is a condition.
+When building armada-37xx-periph, num_parents isn't used in function
+clk_pm_cpu_get_parent:
+drivers/clk/mvebu/armada-37xx-periph.c: In function ‘clk_pm_cpu_get_parent’:
+drivers/clk/mvebu/armada-37xx-periph.c:419:6: warning: unused variable ‘num_parents’ [-Wunused-variable]
+  int num_parents = clk_hw_get_num_parents(hw);
+      ^~~~~~~~~~~
+Remove the declaration of num_parents to dispose the warning.
 
-Fixes: 5800dc5c19f3 ("x86/paravirt: Fix spectre-v2 mitigations for paravirt guests")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Alok Kataria <akataria@vmware.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: virtualization@lists.linux-foundation.org
-Cc: kernel-janitors@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180919103553.GD9238@mwanda
+Fixes: 616bf80d381d ("clk: mvebu: armada-37xx-periph: Fix wrong return value in get_parent")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/paravirt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/mvebu/armada-37xx-periph.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-index 930c88341e4e..1fbf38dde84c 100644
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -90,7 +90,7 @@ unsigned paravirt_patch_call(void *insnbuf,
+diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
+index 6f7637b19738..e764dfdea53f 100644
+--- a/drivers/clk/mvebu/armada-37xx-periph.c
++++ b/drivers/clk/mvebu/armada-37xx-periph.c
+@@ -419,7 +419,6 @@ static unsigned int armada_3700_pm_dvfs_get_cpu_parent(struct regmap *base)
+ static u8 clk_pm_cpu_get_parent(struct clk_hw *hw)
+ {
+ 	struct clk_pm_cpu *pm_cpu = to_clk_pm_cpu(hw);
+-	int num_parents = clk_hw_get_num_parents(hw);
+ 	u32 val;
  
- 	if (len < 5) {
- #ifdef CONFIG_RETPOLINE
--		WARN_ONCE("Failing to patch indirect CALL in %ps\n", (void *)addr);
-+		WARN_ONCE(1, "Failing to patch indirect CALL in %ps\n", (void *)addr);
- #endif
- 		return len;	/* call too long for patch site */
- 	}
-@@ -110,7 +110,7 @@ unsigned paravirt_patch_jmp(void *insnbuf, const void *target,
- 
- 	if (len < 5) {
- #ifdef CONFIG_RETPOLINE
--		WARN_ONCE("Failing to patch indirect JMP in %ps\n", (void *)addr);
-+		WARN_ONCE(1, "Failing to patch indirect JMP in %ps\n", (void *)addr);
- #endif
- 		return len;	/* call too long for patch site */
- 	}
+ 	if (armada_3700_pm_dvfs_is_enabled(pm_cpu->nb_pm_base)) {
 -- 
 2.17.1
 
