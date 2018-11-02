@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ACE3C6786F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 04:11:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 388DEC6786F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 04:11:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 019F92081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 04:11:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0D4F2081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 04:11:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YKnvLS6X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 019F92081B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HPiLRerk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0D4F2081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727689AbeKBNRb (ORCPT
+        id S1727729AbeKBNRg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 09:17:31 -0400
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:34092 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726925AbeKBNRa (ORCPT
+        Fri, 2 Nov 2018 09:17:36 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:40133 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726925AbeKBNRg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 09:17:30 -0400
-Received: by mail-vk1-f194.google.com with SMTP id y14so156400vkd.1;
-        Thu, 01 Nov 2018 21:11:46 -0700 (PDT)
+        Fri, 2 Nov 2018 09:17:36 -0400
+Received: by mail-vs1-f67.google.com with SMTP id s9so366401vsk.7;
+        Thu, 01 Nov 2018 21:11:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references;
-        bh=Ziut4ebdY6pgpbsJWeBt1ROGCKxjpKn2B/jm2lTBiG0=;
-        b=YKnvLS6XLxuNYfYzJH8i/eLzkYMHyrrmrwXdGwhxi2PjZdPQjiPuZA2VsK3GHf8zq2
-         N8MaB4D4ImOSt6WuUejLwEIuNTsGq1tPOld8lAXYghC0Lfnz3PN6AYeFbCqMoPYq3E2X
-         AFH4y1sGitf00LuSKc4OAwbr8+YrV8Ml9txXQTdp4MmAGGsVrDa3d2TLNixrWmmGpOB/
-         MuRzlzCrT8ycFuK6VBrNAX90rlrDD5Te74sWh0s0InAjHZyI5ckgFEROAPD7cqvKe/6D
-         GwISC4N47NBqa4S1ZZn5tYRAmh8tbDhXf5OQNUbEMGqLZlzXd3EveCBUh6TY6xKpH6lQ
-         QMaA==
+        bh=5SMTWRHblam50hFXCZFpH9+3ZtgrRgiP4fXKZNWtfJ4=;
+        b=HPiLRerkAYVujBw+9k4TpapXG3ghOiEkffXYkePKjdYbpAkBfFyD/6cNX8UzpVktw0
+         p9oxG6M2dY0im+id5/rBrGjCE8N6kLD8thALVx+YgvhxPSeLLoz+9Mfs02EQza5AKm70
+         +Q8RF2yOIjr12rxrzUsuB8QoE4OdO3PegwbBEj73B5DjxOQW0zY5QvHt9dBIUQCt3mgN
+         7h46OZFt3y7NkO/P3toxSSnsjgKonCOBPlBIVLkPqzuD7liIpksV8GRyTkCD4WJ+oDrE
+         6HMcYuiP8pwIpudh7TrslnvexeaUiyLKht2EwJPxZbfUQZhlkYQ2KWa2it6EuA2KShiF
+         9WPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references;
-        bh=Ziut4ebdY6pgpbsJWeBt1ROGCKxjpKn2B/jm2lTBiG0=;
-        b=K2pz91Y57CIn/Hww80fe7u9B3UZU/WogWUadvVzo4Dt3ZNeflVrs3AGeXhjvEiT4zs
-         TeM49OJQQb2T30i9qfnuqD3sP068JdwLDCceBi0gUKffsPrVKdJbeyv9UlMGufEDOtUe
-         NDXelz/hHf7iodervIqgXSlWNf2y8m2+xf2z9wcxCokh1Z9rgCgHrNXSi+P1yPElBmMZ
-         irQngJlp4GzCd/MJX6fjxyS1E94JwYibdPFJ6MTu/D+2iUgEPccXnvp1q2nTV06tZGrk
-         HOblwRBlqA9UgyWYhixGuxclAzCfjFsc4yCItmyMPd+sibSZreAjENtJP9ZrD9Bk1G0+
-         tZDA==
-X-Gm-Message-State: AGRZ1gLAYq4xfxvdyQaUzKY5V4Z9ZdDTQJJtanHOakJ1c214WeMDpEsv
-        xVGuwuV5Bu6hL6EeC7ZbXw==
-X-Google-Smtp-Source: AJdET5etaneLpnF9O4pYTO5fiKNvubzdlFvF0r71/GXEzcpvywKo0E1Vftgdjl6RwS+0llJTO1LYlw==
-X-Received: by 2002:a1f:ae88:: with SMTP id x130-v6mr4353901vke.91.1541131906077;
-        Thu, 01 Nov 2018 21:11:46 -0700 (PDT)
+        bh=5SMTWRHblam50hFXCZFpH9+3ZtgrRgiP4fXKZNWtfJ4=;
+        b=XLTpgdf0XqQXOIBOlEtxaBkJPWsOY1H46/HszlJHq85SsNF51ZAooTSeIxcETIlQuq
+         /B4kcEH5YNuryECgaFj2Axw/YJknJ6vrGxp3FBdUIoBDeHBXdh4lh3wsiNgw0XY3Tl8a
+         IZaoQiaWlplAS9hh+2/uF/9DPjYpG4e5sqkITDX/y2cYedEpIhmx6oCJhLZohnU8PbuE
+         twu3j5D38wm0jEF4KHuN5WrCjFO3CG4ta0dCVl0qgad26EjgJc1ty5txbQ/usvNP1JEe
+         BZ7b1Amn9dqAsSi9kw/OmJPfRkY7ArGja/tdde8EK5R3zrYJNtSHym8KeuR/g6K0lWC2
+         F8sg==
+X-Gm-Message-State: AGRZ1gJeRIaqfjAaRBbX83PFiSYmNaGLKqP5+ZeWEOYWJFJ8M7U9XV1Y
+        qV+rLheOvm3Kth0yl4GyZg==
+X-Google-Smtp-Source: AJdET5ddNVCQaStRGQHiZ8wrxnFW5fZf00R9K6xBoxsZk6UAppM4gkXiWQ3MNxQmd9hf55NxTF51sQ==
+X-Received: by 2002:a67:d81:: with SMTP id 123mr3880137vsn.211.1541131912606;
+        Thu, 01 Nov 2018 21:11:52 -0700 (PDT)
 Received: from localhost.localdomain ([2601:902:c200:6512:a50b:fc5d:3604:d966])
-        by smtp.gmail.com with ESMTPSA id a2sm1661150uaa.15.2018.11.01.21.11.44
+        by smtp.gmail.com with ESMTPSA id a2sm1661150uaa.15.2018.11.01.21.11.51
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 01 Nov 2018 21:11:45 -0700 (PDT)
+        Thu, 01 Nov 2018 21:11:52 -0700 (PDT)
 From:   Ayman Bagabas <ayman.bagabas@gmail.com>
 To:     Darren Hart <dvhart@infradead.org>,
         Andy Shevchenko <andy@infradead.org>,
@@ -68,9 +68,9 @@ To:     Darren Hart <dvhart@infradead.org>,
         Hui Wang <hui.wang@canonical.com>,
         linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
         alsa-devel@alsa-project.org
-Subject: [PATCH v2 2/3] ALSA: hda: fix front speakers on Huawei MBXP.
-Date:   Fri,  2 Nov 2018 00:11:14 -0400
-Message-Id: <20181102041120.7603-3-ayman.bagabas@gmail.com>
+Subject: [PATCH v2 3/3] ALSA: hda: add support for Huawei WMI MicMute LED
+Date:   Fri,  2 Nov 2018 00:11:15 -0400
+Message-Id: <20181102041120.7603-4-ayman.bagabas@gmail.com>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20181102041120.7603-1-ayman.bagabas@gmail.com>
 References: <20181102041120.7603-1-ayman.bagabas@gmail.com>
@@ -79,60 +79,140 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch solves bug 200501 'Only 2 of 4 speakers playing sound.'
-https://bugzilla.kernel.org/show_bug.cgi?id=200501
-It enables the front speakers on Huawei Matebook X Pro laptops.
-These laptops come with Dolby Atmos sound system and these pins
-configuration enables the front speakers.
+Some of Huawei laptops come with a LED in the mic mute key. This patch
+enables and disable this LED accordingly.
 
 Signed-off-by: Ayman Bagabas <ayman.bagabas@gmail.com>
 ---
- sound/pci/hda/patch_realtek.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/platform/x86/huawei_wmi.c |  1 +
+ include/linux/huawei_wmi.h        |  7 +++++
+ sound/pci/hda/huawei_wmi_helper.c | 48 +++++++++++++++++++++++++++++++
+ sound/pci/hda/patch_realtek.c     | 10 +++++++
+ 4 files changed, 66 insertions(+)
+ create mode 100644 include/linux/huawei_wmi.h
+ create mode 100644 sound/pci/hda/huawei_wmi_helper.c
 
+diff --git a/drivers/platform/x86/huawei_wmi.c b/drivers/platform/x86/huawei_wmi.c
+index 83545217ac19..cc5492571727 100644
+--- a/drivers/platform/x86/huawei_wmi.c
++++ b/drivers/platform/x86/huawei_wmi.c
+@@ -26,6 +26,7 @@
+ #include <linux/input/sparse-keymap.h>
+ #include <linux/acpi.h>
+ #include <linux/wmi.h>
++#include <linux/huawei_wmi.h>
+ 
+ MODULE_AUTHOR("Ayman Bagabas <ayman.bagabas@gmail.com>");
+ MODULE_DESCRIPTION("Huawei WMI hotkeys");
+diff --git a/include/linux/huawei_wmi.h b/include/linux/huawei_wmi.h
+new file mode 100644
+index 000000000000..69b656c5029b
+--- /dev/null
++++ b/include/linux/huawei_wmi.h
+@@ -0,0 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __HUAWEI_WMI_H__
++#define __HUAWEI_WMI_H__
++
++int huawei_wmi_micmute_led_set(bool on);
++
++#endif
+diff --git a/sound/pci/hda/huawei_wmi_helper.c b/sound/pci/hda/huawei_wmi_helper.c
+new file mode 100644
+index 000000000000..77edb658cbf0
+--- /dev/null
++++ b/sound/pci/hda/huawei_wmi_helper.c
+@@ -0,0 +1,48 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Helper functions for Huawei WMI Mic Mute LED;
++ * to be included from codec driver
++ */
++
++#if IS_ENABLED(CONFIG_HUAWEI_LAPTOP)
++#include <linux/huawei_wmi.h>
++
++static int (*huawei_wmi_micmute_led_set_func)(bool);
++
++static void update_huawei_wmi_micmute_led(struct hda_codec *codec)
++{
++	struct hda_gen_spec *spec = codec->spec;
++
++	huawei_wmi_micmute_led_set_func(spec->micmute_led.led_value);
++}
++
++static void alc_fixup_huawei_wmi(struct hda_codec *codec,
++				   const struct hda_fixup *fix, int action)
++{
++	bool removefunc = false;
++
++	if (action == HDA_FIXUP_ACT_PROBE) {
++		if (!huawei_wmi_micmute_led_set_func)
++			huawei_wmi_micmute_led_set_func = symbol_request(huawei_wmi_micmute_led_set);
++		if (!huawei_wmi_micmute_led_set_func) {
++			codec_warn(codec, "Failed to find huawei_wmi symbol huawei_wmi_micmute_led_set\n");
++			return;
++		}
++		removefunc = (huawei_wmi_micmute_led_set_func(false) < 0)
++			|| (snd_hda_gen_add_micmute_led(codec, update_huawei_wmi_micmute_led) < 0);
++
++	}
++
++	if (huawei_wmi_micmute_led_set_func && (action == HDA_FIXUP_ACT_FREE || removefunc)) {
++		symbol_put(huawei_wmi_micmute_led_set);
++		huawei_wmi_micmute_led_set_func = NULL;
++	}
++}
++
++#else
++
++static void alc_fixup_huawei_wmi(struct hda_codec *codec,
++				const struct hda_fixup *fix, int action)
++{
++}
++
++#endif
 diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 3ac7ba9b342d..4f7a39c7883c 100644
+index 4f7a39c7883c..d09457d2a4f3 100644
 --- a/sound/pci/hda/patch_realtek.c
 +++ b/sound/pci/hda/patch_realtek.c
-@@ -5493,6 +5493,7 @@ enum {
- 	ALC298_FIXUP_TPT470_DOCK,
+@@ -5374,6 +5374,9 @@ static void alc_fixup_thinkpad_acpi(struct hda_codec *codec,
+ /* for alc295_fixup_hp_top_speakers */
+ #include "hp_x360_helper.c"
+ 
++/* for alc_fixup_huawei_micmute_led */
++#include "huawei_wmi_helper.c"
++
+ enum {
+ 	ALC269_FIXUP_SONY_VAIO,
+ 	ALC275_FIXUP_SONY_VAIO_GPIO2,
+@@ -5494,6 +5497,7 @@ enum {
  	ALC255_FIXUP_DUMMY_LINEOUT_VERB,
  	ALC255_FIXUP_DELL_HEADSET_MIC,
-+	ALC256_FIXUP_HUAWEI_MBXP_PINS,
+ 	ALC256_FIXUP_HUAWEI_MBXP_PINS,
++	ALC256_FIXUP_HUAWEI_WMI_MICMUTE_LED,
  	ALC295_FIXUP_HP_X360,
  	ALC221_FIXUP_HP_HEADSET_MIC,
  };
-@@ -6347,6 +6348,22 @@ static const struct hda_fixup alc269_fixups[] = {
+@@ -6348,6 +6352,10 @@ static const struct hda_fixup alc269_fixups[] = {
  		.chained = true,
  		.chain_id = ALC269_FIXUP_HEADSET_MIC
  	},
-+	[ALC256_FIXUP_HUAWEI_MBXP_PINS] = {
-+		.type = HDA_FIXUP_PINS,
-+		.v.pins = (const struct hda_pintbl[]) {
-+			{0x12, 0x90a60130},
-+			{0x13, 0x40000000},
-+			{0x14, 0x90170110},
-+			{0x18, 0x411111f0},
-+			{0x19, 0x04a11040},
-+			{0x1a, 0x411111f0},
-+			{0x1b, 0x90170112},
-+			{0x1d, 0x40759a05},
-+			{0x1e, 0x411111f0},
-+			{0x21, 0x04211020},
-+			{ },
-+		},
++	[ALC256_FIXUP_HUAWEI_WMI_MICMUTE_LED] = {
++		.type = HDA_FIXUP_FUNC,
++		.v.func = alc_fixup_huawei_wmi
 +	},
+ 	[ALC256_FIXUP_HUAWEI_MBXP_PINS] = {
+ 		.type = HDA_FIXUP_PINS,
+ 		.v.pins = (const struct hda_pintbl[]) {
+@@ -6363,6 +6371,8 @@ static const struct hda_fixup alc269_fixups[] = {
+ 			{0x21, 0x04211020},
+ 			{ },
+ 		},
++		.chained = true,
++		.chain_id = ALC256_FIXUP_HUAWEI_WMI_MICMUTE_LED
+ 	},
  	[ALC295_FIXUP_HP_X360] = {
  		.type = HDA_FIXUP_FUNC,
- 		.v.func = alc295_fixup_hp_top_speakers,
-@@ -6592,6 +6609,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x17aa, 0x5109, "Thinkpad", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
- 	SND_PCI_QUIRK(0x17aa, 0x511e, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
- 	SND_PCI_QUIRK(0x17aa, 0x511f, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
-+	SND_PCI_QUIRK(0x19e5, 0x3204, "Huawei MBXP", ALC256_FIXUP_HUAWEI_MBXP_PINS),
- 	SND_PCI_QUIRK(0x17aa, 0x3bf8, "Quanta FL1", ALC269_FIXUP_PCM_44K),
- 	SND_PCI_QUIRK(0x17aa, 0x9e54, "LENOVO NB", ALC269_FIXUP_LENOVO_EAPD),
- 	SND_PCI_QUIRK(0x1b7d, 0xa831, "Ordissimo EVE2 ", ALC269VB_FIXUP_ORDISSIMO_EVE2), /* Also known as Malata PC-B1303 */
 -- 
 2.17.2
 
