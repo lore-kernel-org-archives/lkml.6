@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14E21C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99772C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 937442084A
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59A4E2084A
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hC2+tfQ0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 937442084A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PC+kU64A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59A4E2084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729592AbeKCDth (ORCPT
+        id S1729602AbeKCDtk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:49:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44324 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:49:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44402 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728699AbeKCDth (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:49:37 -0400
+        id S1728699AbeKCDtk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:49:40 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E8C42084A;
-        Fri,  2 Nov 2018 18:41:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A12F720848;
+        Fri,  2 Nov 2018 18:41:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184085;
-        bh=BJS3jJhoUfL1HsO0gIvV2lgLk5K5TSNSSIuJBdC+04o=;
+        s=default; t=1541184088;
+        bh=83K4bLj193cTvynHQYkzBdlGebxnZteo3f/GjYMQW1k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hC2+tfQ0kJkaNxwtEggrevFGpvVauGtMlN/VN5nUiI0pQ/+CeM1MWmQHdnxCY0MRL
-         +LIqfYBwWTfuGQPl74W8DEO6HI45L22T/sLoSLvbHGXIY5MVaE7vVSZcZ62Wh1YNvT
-         SZjD0Wc2CnC35mXO/4Zw3kczLrV70xl/16p1RbUQ=
+        b=PC+kU64A2neVBKOr2gHuY1p7/YWfUwGJ0ZwtV4Tc5lmHn8C0Hxk/PQooOJMNUjy2n
+         POz4ECTyj75SwNZvSEiW3dE5z2uETjsqkTp3zTRv7/DQe3qbElZ5zgHyTq8XbrOa8H
+         t/9m5vUbdqMiu8Ddjoj+ZhxiZeXxYqX/YpteHgng=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anders Roxell <anders.roxell@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org, Daniel Mack <daniel@zonque.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 074/150] clk: mvebu: armada-37xx-periph: Remove unused var num_parents
-Date:   Fri,  2 Nov 2018 19:33:56 +0100
-Message-Id: <20181102182908.745071073@linuxfoundation.org>
+Subject: [PATCH 4.18 075/150] libertas: call into generic suspend code before turning off power
+Date:   Fri,  2 Nov 2018 19:33:57 +0100
+Message-Id: <20181102182908.808342329@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -63,36 +64,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8927c27b32703e28041ae19bf25ea53461be83a1 ]
+[ Upstream commit 4f666675cdff0b986195413215eb062b7da6586f ]
 
-When building armada-37xx-periph, num_parents isn't used in function
-clk_pm_cpu_get_parent:
-drivers/clk/mvebu/armada-37xx-periph.c: In function ‘clk_pm_cpu_get_parent’:
-drivers/clk/mvebu/armada-37xx-periph.c:419:6: warning: unused variable ‘num_parents’ [-Wunused-variable]
-  int num_parents = clk_hw_get_num_parents(hw);
-      ^~~~~~~~~~~
-Remove the declaration of num_parents to dispose the warning.
+When powering down a SDIO connected card during suspend, make sure to call
+into the generic lbs_suspend() function before pulling the plug. This will
+make sure the card is successfully deregistered from the system to avoid
+communication to the card starving out.
 
-Fixes: 616bf80d381d ("clk: mvebu: armada-37xx-periph: Fix wrong return value in get_parent")
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Fixes: 7444a8092906 ("libertas: fix suspend and resume for SDIO connected cards")
+Signed-off-by: Daniel Mack <daniel@zonque.org>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Acked-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/mvebu/armada-37xx-periph.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/wireless/marvell/libertas/if_sdio.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
-index 6f7637b19738..e764dfdea53f 100644
---- a/drivers/clk/mvebu/armada-37xx-periph.c
-+++ b/drivers/clk/mvebu/armada-37xx-periph.c
-@@ -419,7 +419,6 @@ static unsigned int armada_3700_pm_dvfs_get_cpu_parent(struct regmap *base)
- static u8 clk_pm_cpu_get_parent(struct clk_hw *hw)
- {
- 	struct clk_pm_cpu *pm_cpu = to_clk_pm_cpu(hw);
--	int num_parents = clk_hw_get_num_parents(hw);
- 	u32 val;
- 
- 	if (armada_3700_pm_dvfs_is_enabled(pm_cpu->nb_pm_base)) {
+diff --git a/drivers/net/wireless/marvell/libertas/if_sdio.c b/drivers/net/wireless/marvell/libertas/if_sdio.c
+index 43743c26c071..39bf85d0ade0 100644
+--- a/drivers/net/wireless/marvell/libertas/if_sdio.c
++++ b/drivers/net/wireless/marvell/libertas/if_sdio.c
+@@ -1317,6 +1317,10 @@ static int if_sdio_suspend(struct device *dev)
+ 	if (priv->wol_criteria == EHS_REMOVE_WAKEUP) {
+ 		dev_info(dev, "Suspend without wake params -- powering down card\n");
+ 		if (priv->fw_ready) {
++			ret = lbs_suspend(priv);
++			if (ret)
++				return ret;
++
+ 			priv->power_up_on_resume = true;
+ 			if_sdio_power_off(card);
+ 		}
 -- 
 2.17.1
 
