@@ -2,100 +2,94 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B49C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:13:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 652BDC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:13:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE54A2082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:13:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE54A2082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 367052082E
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:13:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 367052082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728027AbeKCBUs (ORCPT
+        id S1728065AbeKCBUz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 21:20:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34564 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726085AbeKCBUs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 21:20:48 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF6E12081B;
-        Fri,  2 Nov 2018 16:13:08 +0000 (UTC)
-Date:   Fri, 2 Nov 2018 12:13:07 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Christian Brauner <christian@brauner.io>,
-        Aleksa Sarai <asarai@suse.de>, netdev@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] kretprobe: produce sane stack traces
-Message-ID: <20181102121307.32e99414@gandalf.local.home>
-In-Reply-To: <20181102154325.bt6xoysl4xdl33wd@treble>
-References: <20181101083551.3805-1-cyphar@cyphar.com>
-        <20181101083551.3805-2-cyphar@cyphar.com>
-        <20181101204720.6ed3fe37@vmware.local.home>
-        <20181102050509.tw3dhvj5urudvtjl@yavin>
-        <20181102065932.bdt4pubbrkvql4mp@yavin>
-        <20181102091658.1bc979a4@gandalf.local.home>
-        <20181102154325.bt6xoysl4xdl33wd@treble>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Fri, 2 Nov 2018 21:20:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53120 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726085AbeKCBUz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 21:20:55 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 39667ACB8;
+        Fri,  2 Nov 2018 16:13:16 +0000 (UTC)
+Date:   Fri, 2 Nov 2018 17:13:14 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Dexuan Cui <decui@microsoft.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>, Rik van Riel <riel@surriel.com>,
+        Konstantin Khlebnikov <koct9i@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Stable@vger.kernel.org" <Stable@vger.kernel.org>
+Subject: Re: Will the recent memory leak fixes be backported to longterm
+ kernels?
+Message-ID: <20181102161314.GF28039@dhcp22.suse.cz>
+References: <PU1P153MB0169CB6382E0F047579D111DBFCF0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+ <20181102005816.GA10297@tower.DHCP.thefacebook.com>
+ <PU1P153MB0169FE681EF81BCE81B005A1BFCF0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+ <20181102073009.GP23921@dhcp22.suse.cz>
+ <20181102154844.GA17619@tower.DHCP.thefacebook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181102154844.GA17619@tower.DHCP.thefacebook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2 Nov 2018 10:43:26 -0500
-Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-
-> > I'll hopefully have a prototype ready by plumbers.  
+On Fri 02-11-18 15:48:57, Roman Gushchin wrote:
+> On Fri, Nov 02, 2018 at 09:03:55AM +0100, Michal Hocko wrote:
+> > On Fri 02-11-18 02:45:42, Dexuan Cui wrote:
+> > [...]
+> > > I totally agree. I'm now just wondering if there is any temporary workaround,
+> > > even if that means we have to run the kernel with some features disabled or
+> > > with a suboptimal performance?
+> > 
+> > One way would be to disable kmem accounting (cgroup.memory=nokmem kernel
+> > option). That would reduce the memory isolation because quite a lot of
+> > memory will not be accounted for but the primary source of in-flight and
+> > hard to reclaim memory will be gone.
 > 
-> Why do we need multiple users?  It would be a lot simpler if we could
-> just enforce a single user per fgraphed/kretprobed function (and return
-> -EBUSY if it's already being traced/probed).
+> In my experience disabling the kmem accounting doesn't really solve the issue
+> (without patches), but can lower the rate of the leak.
 
-Because that means if function graph tracer is active, then you can't
-do a kretprobe, and vice versa. I'd really like to have it working for
-multiple users, then we could trace different graph functions and store
-them in different buffers. It would also allow for perf to use function
-graph tracer too.
+This is unexpected. 90cbc2508827e was introduced to address offline
+memcgs to be reclaim even when they are small. But maybe you mean that
+we still leak in an absence of the memory pressure. Or what does prevent
+memcg from going down?
 
+> > Another workaround could be to use force_empty knob we have in v1 and
+> > use it when removing a cgroup. We do not have it in cgroup v2 though.
+> > The file hasn't been added to v2 because we didn't really have any
+> > proper usecase. Working around a bug doesn't sound like a _proper_
+> > usecase but I can imagine workloads that bring a lot of metadata objects
+> > that are not really interesting for later use so something like a
+> > targeted drop_caches...
 > 
-> > And this too will require each architecture to probably change. As a
-> > side project to this, I'm going to try to consolidate the function
-> > graph code among all the architectures as well. Not an easy task.  
-> 
-> Do you mean implementing HAVE_FUNCTION_GRAPH_RET_ADDR_PTR for all the
-> arches?  If so, I think have an old crusty patch which attempted to
-> that.  I could try to dig it up if you're interested.
-> 
+> This can help a bit too, but even using the system-wide drop_caches knob
+> unfortunately doesn't return all the memory back.
 
-I'd like to have that, but it still requires some work. But I'd just
-the truly architecture dependent code be in the architecture (basically
-the asm code), and have the ability to move most of the duplicate code
-out of the archs.
+Could you be more specific please?
 
--- Steve
+-- 
+Michal Hocko
+SUSE Labs
