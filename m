@@ -4,46 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A42CC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:36:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BFB0C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:36:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 193E720833
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:36:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BB132081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:36:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zOIIqK/W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 193E720833
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SuwcUF+Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BB132081B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728351AbeKCDor (ORCPT
+        id S1728368AbeKCDo5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:44:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38618 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:44:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728336AbeKCDoq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:44:46 -0400
+        id S1728151AbeKCDo5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:44:57 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F244A20833;
-        Fri,  2 Nov 2018 18:36:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 836842081B;
+        Fri,  2 Nov 2018 18:36:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541183796;
-        bh=inLnG844OBRxKvcOyhnqXdQSzhb3kaI2QDHAeDXe7dI=;
+        s=default; t=1541183806;
+        bh=cnOh+fdb24dHIonc0UIf4ks5VZJvUH7ePYyFowNMlwI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zOIIqK/WWVDVNLTN3l2dyQHpEAefKhKShMgapbPrJkFD9fXyLIxKPTw6mEQzbaWOk
-         jMfDqbujs58pzHMwaiDsiHLXauUARLjuIZJIjNkMJJuy4dyHEn/OSQ0qDtyZJgGPM+
-         9mI8SL7teO8UUkX0rB7zi39YDmwgLkCrU+QskjXk=
+        b=SuwcUF+ZHUn2jVmjRm+PcKwH2cDjzWnjfaiWqzI1ftgQIno97jAWw4NbGoji93909
+         4lspogvJY00iAm+jDoXN80tkqa9KDhba0oDx+bHET/Y+Wi8vKNxPj30M8OMuUj4g0g
+         iPHtS27xNIWg6mb3Io1W3XBKAXQQwgKXs7N6U2r8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
+        stable@vger.kernel.org, Karsten Graul <kgraul@linux.ibm.com>,
+        Ursula Braun <ubraun@linux.ibm.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 12/24] net/ipv6: Allow onlink routes to have a device mismatch if it is the default route
-Date:   Fri,  2 Nov 2018 19:34:45 +0100
-Message-Id: <20181102182841.658276687@linuxfoundation.org>
+Subject: [PATCH 4.19 13/24] net/smc: fix smc_buf_unuse to use the lgr pointer
+Date:   Fri,  2 Nov 2018 19:34:46 +0100
+Message-Id: <20181102182841.815946299@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182839.725385066@linuxfoundation.org>
 References: <20181102182839.725385066@linuxfoundation.org>
@@ -61,81 +63,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Ahern <dsahern@gmail.com>
+From: Karsten Graul <kgraul@linux.ibm.com>
 
-[ Upstream commit 4ed591c8ab44e711e56b8e021ffaf4f407c045f5 ]
+[ Upstream commit fb692ec4117f6fd25044cfb5720d6b79d400dc65 ]
 
-The intent of ip6_route_check_nh_onlink is to make sure the gateway
-given for an onlink route is not actually on a connected route for
-a different interface (e.g., 2001:db8:1::/64 is on dev eth1 and then
-an onlink route has a via 2001:db8:1::1 dev eth2). If the gateway
-lookup hits the default route then it most likely will be a different
-interface than the onlink route which is ok.
+The pointer to the link group is unset in the smc connection structure
+right before the call to smc_buf_unuse. Provide the lgr pointer to
+smc_buf_unuse explicitly.
+And move the call to smc_lgr_schedule_free_work to the end of
+smc_conn_free.
 
-Update ip6_route_check_nh_onlink to disregard the device mismatch
-if the gateway lookup hits the default route. Turns out the existing
-onlink tests are passing because there is no default route or it is
-an unreachable default, so update the onlink tests to have a default
-route other than unreachable.
-
-Fixes: fc1e64e1092f6 ("net/ipv6: Add support for onlink flag")
-Signed-off-by: David Ahern <dsahern@gmail.com>
+Fixes: a6920d1d130c ("net/smc: handle unregistered buffers")
+Signed-off-by: Karsten Graul <kgraul@linux.ibm.com>
+Signed-off-by: Ursula Braun <ubraun@linux.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/route.c                                |    2 ++
- tools/testing/selftests/net/fib-onlink-tests.sh |   14 +++++++-------
- 2 files changed, 9 insertions(+), 7 deletions(-)
+ net/smc/smc_core.c |   25 ++++++++++++-------------
+ 1 file changed, 12 insertions(+), 13 deletions(-)
 
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -2799,6 +2799,8 @@ static int ip6_route_check_nh_onlink(str
- 	grt = ip6_nh_lookup_table(net, cfg, gw_addr, tbid, 0);
- 	if (grt) {
- 		if (!grt->dst.error &&
-+		    /* ignore match if it is the default route */
-+		    grt->from && !ipv6_addr_any(&grt->from->fib6_dst.addr) &&
- 		    (grt->rt6i_flags & flags || dev != grt->dst.dev)) {
- 			NL_SET_ERR_MSG(extack,
- 				       "Nexthop has invalid gateway or device mismatch");
---- a/tools/testing/selftests/net/fib-onlink-tests.sh
-+++ b/tools/testing/selftests/net/fib-onlink-tests.sh
-@@ -167,8 +167,8 @@ setup()
- 	# add vrf table
- 	ip li add ${VRF} type vrf table ${VRF_TABLE}
- 	ip li set ${VRF} up
--	ip ro add table ${VRF_TABLE} unreachable default
--	ip -6 ro add table ${VRF_TABLE} unreachable default
-+	ip ro add table ${VRF_TABLE} unreachable default metric 8192
-+	ip -6 ro add table ${VRF_TABLE} unreachable default metric 8192
- 
- 	# create test interfaces
- 	ip li add ${NETIFS[p1]} type veth peer name ${NETIFS[p2]}
-@@ -185,20 +185,20 @@ setup()
- 	for n in 1 3 5 7; do
- 		ip li set ${NETIFS[p${n}]} up
- 		ip addr add ${V4ADDRS[p${n}]}/24 dev ${NETIFS[p${n}]}
--		ip addr add ${V6ADDRS[p${n}]}/64 dev ${NETIFS[p${n}]}
-+		ip addr add ${V6ADDRS[p${n}]}/64 dev ${NETIFS[p${n}]} nodad
- 	done
- 
- 	# move peer interfaces to namespace and add addresses
- 	for n in 2 4 6 8; do
- 		ip li set ${NETIFS[p${n}]} netns ${PEER_NS} up
- 		ip -netns ${PEER_NS} addr add ${V4ADDRS[p${n}]}/24 dev ${NETIFS[p${n}]}
--		ip -netns ${PEER_NS} addr add ${V6ADDRS[p${n}]}/64 dev ${NETIFS[p${n}]}
-+		ip -netns ${PEER_NS} addr add ${V6ADDRS[p${n}]}/64 dev ${NETIFS[p${n}]} nodad
- 	done
- 
--	set +e
-+	ip -6 ro add default via ${V6ADDRS[p3]/::[0-9]/::64}
-+	ip -6 ro add table ${VRF_TABLE} default via ${V6ADDRS[p7]/::[0-9]/::64}
- 
--	# let DAD complete - assume default of 1 probe
--	sleep 1
-+	set +e
+--- a/net/smc/smc_core.c
++++ b/net/smc/smc_core.c
+@@ -122,22 +122,17 @@ static void __smc_lgr_unregister_conn(st
+ 	sock_put(&smc->sk); /* sock_hold in smc_lgr_register_conn() */
  }
  
- cleanup()
+-/* Unregister connection and trigger lgr freeing if applicable
++/* Unregister connection from lgr
+  */
+ static void smc_lgr_unregister_conn(struct smc_connection *conn)
+ {
+ 	struct smc_link_group *lgr = conn->lgr;
+-	int reduced = 0;
+ 
+ 	write_lock_bh(&lgr->conns_lock);
+ 	if (conn->alert_token_local) {
+-		reduced = 1;
+ 		__smc_lgr_unregister_conn(conn);
+ 	}
+ 	write_unlock_bh(&lgr->conns_lock);
+-	if (!reduced || lgr->conns_num)
+-		return;
+-	smc_lgr_schedule_free_work(lgr);
+ }
+ 
+ /* Send delete link, either as client to request the initiation
+@@ -291,7 +286,8 @@ out:
+ 	return rc;
+ }
+ 
+-static void smc_buf_unuse(struct smc_connection *conn)
++static void smc_buf_unuse(struct smc_connection *conn,
++			  struct smc_link_group *lgr)
+ {
+ 	if (conn->sndbuf_desc)
+ 		conn->sndbuf_desc->used = 0;
+@@ -301,8 +297,6 @@ static void smc_buf_unuse(struct smc_con
+ 			conn->rmb_desc->used = 0;
+ 		} else {
+ 			/* buf registration failed, reuse not possible */
+-			struct smc_link_group *lgr = conn->lgr;
+-
+ 			write_lock_bh(&lgr->rmbs_lock);
+ 			list_del(&conn->rmb_desc->list);
+ 			write_unlock_bh(&lgr->rmbs_lock);
+@@ -315,16 +309,21 @@ static void smc_buf_unuse(struct smc_con
+ /* remove a finished connection from its link group */
+ void smc_conn_free(struct smc_connection *conn)
+ {
+-	if (!conn->lgr)
++	struct smc_link_group *lgr = conn->lgr;
++
++	if (!lgr)
+ 		return;
+-	if (conn->lgr->is_smcd) {
++	if (lgr->is_smcd) {
+ 		smc_ism_unset_conn(conn);
+ 		tasklet_kill(&conn->rx_tsklet);
+ 	} else {
+ 		smc_cdc_tx_dismiss_slots(conn);
+ 	}
+-	smc_lgr_unregister_conn(conn);
+-	smc_buf_unuse(conn);
++	smc_lgr_unregister_conn(conn);		/* unsets conn->lgr */
++	smc_buf_unuse(conn, lgr);		/* allow buffer reuse */
++
++	if (!lgr->conns_num)
++		smc_lgr_schedule_free_work(lgr);
+ }
+ 
+ static void smc_link_clear(struct smc_link *lnk)
 
 
