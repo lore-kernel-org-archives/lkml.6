@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 002D6C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:48:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E76C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:48:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B91FD20847
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:48:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72C7A20847
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:48:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="v36H+WBY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B91FD20847
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vtPjjdwP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72C7A20847
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730464AbeKCD40 (ORCPT
+        id S1730475AbeKCD4a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:56:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51976 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:56:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730450AbeKCD40 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:56:26 -0400
+        id S1730351AbeKCD43 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:56:29 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07B222082D;
-        Fri,  2 Nov 2018 18:48:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 557F32082D;
+        Fri,  2 Nov 2018 18:48:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184492;
-        bh=U6G4mvS6MwXk5BPMC3O6hQtzSHwPfOi8nt6BUg+8d3c=;
+        s=default; t=1541184495;
+        bh=REXAdL1Tr0L/6uDZVVGOIyKzuGtHm+tZATWBCchcMrI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v36H+WBYTdmaRdQoeIGDEC3rKn7t6eWdjishfbLV3BLZdlDo1Pln/crqG+3j6HmLu
-         +fXu4xJqDSMrLnipxDLtTQemzq/MkOUkOiMh6x1QEirp+Oh/+F/U9UPH6kBnaKWpOW
-         dm5q0JD3IfnShNLecpHW+LUszjHKEC68z3sztW0I=
+        b=vtPjjdwPlptKBE0DUh34RLZN7AXJz1fLqzd9wkmSwKk+QMDTngkzY76epGvL4pHhh
+         LimqjU+tnWBaSKotfW00IdWUizhoPaDF4TDE3x840FTjVqv76o2zmArdtqqhSNYmIy
+         C0Q6y2wZHwbMH+qMzOgwd9KUgrKNy560TQ7yDiTc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masashi Honma <masashi.honma@gmail.com>,
+        stable@vger.kernel.org, Martin Willi <martin@strongswan.org>,
         Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 020/143] nl80211: Fix possible Spectre-v1 for NL80211_TXRATE_HT
-Date:   Fri,  2 Nov 2018 19:33:25 +0100
-Message-Id: <20181102182858.704032734@linuxfoundation.org>
+Subject: [PATCH 4.14 021/143] mac80211_hwsim: do not omit multicast announce of first added radio
+Date:   Fri,  2 Nov 2018 19:33:26 +0100
+Message-Id: <20181102182858.772977455@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -63,29 +63,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 30fe6d50eb088783c8729c7d930f65296b2b3fa7 ]
+[ Upstream commit 28ef8b49a338dc1844e86b7954cfffc7dfa2660a ]
 
-Use array_index_nospec() to sanitize ridx with respect to speculation.
+The allocation of hwsim radio identifiers uses a post-increment from 0,
+so the first radio has idx 0. This idx is explicitly excluded from
+multicast announcements ever since, but it is unclear why.
 
-Signed-off-by: Masashi Honma <masashi.honma@gmail.com>
+Drop that idx check and announce the first radio as well. This makes
+userspace happy if it relies on these events.
+
+Signed-off-by: Martin Willi <martin@strongswan.org>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/wireless/nl80211.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wireless/mac80211_hwsim.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-index 3de415bca391..5e7c9b361e8a 100644
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -3480,6 +3480,7 @@ static bool ht_rateset_to_mask(struct ieee80211_supported_band *sband,
- 			return false;
+diff --git a/drivers/net/wireless/mac80211_hwsim.c b/drivers/net/wireless/mac80211_hwsim.c
+index aafa7aa18fbd..477f9f2f6626 100644
+--- a/drivers/net/wireless/mac80211_hwsim.c
++++ b/drivers/net/wireless/mac80211_hwsim.c
+@@ -2730,8 +2730,7 @@ static int mac80211_hwsim_new_radio(struct genl_info *info,
+ 	list_add_tail(&data->list, &hwsim_radios);
+ 	spin_unlock_bh(&hwsim_radio_lock);
  
- 		/* check availability */
-+		ridx = array_index_nospec(ridx, IEEE80211_HT_MCS_MASK_LEN);
- 		if (sband->ht_cap.mcs.rx_mask[ridx] & rbit)
- 			mcs[ridx] |= rbit;
- 		else
+-	if (idx > 0)
+-		hwsim_mcast_new_radio(idx, info, param);
++	hwsim_mcast_new_radio(idx, info, param);
+ 
+ 	return idx;
+ 
 -- 
 2.17.1
 
