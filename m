@@ -2,131 +2,233 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24AD4C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:53:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EB0BC65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:53:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EFA52081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:53:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D1342082E
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:53:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="l5AldFW6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EFA52081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cKxSGpfy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D1342082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbeKBXAP (ORCPT
+        id S1727709AbeKBXAk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 19:00:15 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:34290 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726026AbeKBXAP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 19:00:15 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 1DA938EE179;
-        Fri,  2 Nov 2018 06:53:02 -0700 (PDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id H-vcvjj-KalF; Fri,  2 Nov 2018 06:53:01 -0700 (PDT)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
+        Fri, 2 Nov 2018 19:00:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35140 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727020AbeKBXAk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 19:00:40 -0400
+Received: from linux-8ccs (charybdis-ext.suse.de [195.135.221.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 593858EE0D4;
-        Fri,  2 Nov 2018 06:53:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1541166781;
-        bh=CQdFbfKMQcWbw4xtdPzbpvN4Q5nNZYWn2W8gMAs51xM=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=l5AldFW6H7Eb+O0obNvfMeQvmSSzQ/N1ysNW/Po8yq75Vcn+SpMq7tv/MQSUBmtMf
-         TvxLMUQ2Dqmp9iGjfw20OPQTzq0Om6SzJbLsfvkG2N6eK5YzndqAzVS+nvo4fcw0gB
-         hQXnwFswHNc0yeX1LgVp3ha4+gwtl8XvUw/jqbMU=
-Message-ID: <1541166774.2872.3.camel@HansenPartnership.com>
-Subject: Re: [Ksummit-discuss] Call to Action Re: [PATCH 0/7] Code of
- Conduct: Fix some wording, and add an interpretation document
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     NeilBrown <neil@brown.name>, paulmck@linux.ibm.com,
-        Josh Triplett <josh@joshtriplett.org>
-Cc:     Mishi Choudhary <mishi@linux.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        ksummit-discuss@lists.linuxfoundation.org
-Date:   Fri, 02 Nov 2018 06:52:54 -0700
-In-Reply-To: <8736sk31t8.fsf@notabene.neil.brown.name>
-References: <20181020134908.GA32218@kroah.com>
-         <87y3ar80ac.fsf@notabene.neil.brown.name>
-         <20181021222608.GA24845@localhost>
-         <875zxt919d.fsf@notabene.neil.brown.name>
-         <20181024121622.GA10942@localhost>
-         <87ftwt6850.fsf@notabene.neil.brown.name>
-         <20181027011010.GA29769@localhost> <20181101164544.GA31540@linux.ibm.com>
-         <8736sk31t8.fsf@notabene.neil.brown.name>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-o+fhgU9nAAKE//XmLa2T"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 391E72081F;
+        Fri,  2 Nov 2018 13:53:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541166806;
+        bh=aqZVIj/TFDJv+HJEIrgeLpq0pmFerbA1TaZqm3GpSj0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cKxSGpfyYD9+p12xGrC+JkqncYmp4qfOtQ/Tig2X/1AT+Sk58oSrhJHS3KhSzn6kh
+         pUfuCfepW4NfuUQM4IUu6Zfyx3B93aR6qvs/uB5wmNw/X7yTHcPJmemMYCY7uC0No8
+         c+2IsfVaD2srPm/Jql0NjQ7ABusHpJF4TDy/Kuck=
+Date:   Fri, 2 Nov 2018 14:53:22 +0100
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Vincent Whitchurch <vincent.whitchurch@axis.com>
+Cc:     linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
+Subject: Re: [PATCH v2] ARM: module: Fix function kallsyms on Thumb-2
+Message-ID: <20181102135322.GA5289@linux-8ccs>
+References: <20181031084253.9650-1-vincent.whitchurch@axis.com>
+ <20181031155341.GA27878@linux-8ccs>
+ <20181101152913.r2isskngiahi6o2u@axis.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20181101152913.r2isskngiahi6o2u@axis.com>
+X-OS:   Linux linux-8ccs 4.12.14-lp150.12.22-default x86_64
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
++++ Vincent Whitchurch [01/11/18 16:29 +0100]:
+>On Wed, Oct 31, 2018 at 04:53:41PM +0100, Jessica Yu wrote:
+>> Could this be done in modpost? I'm guessing the answer is no as some
+>> relocations may rely on that bit being set in st_value, right?
+>> Therefore we can only clear the bit _after_ relocations to the module
+>> are applied at runtime, correct?
+>
+>Yes, that's correct, it needs to be done after the relocations.
+>
+>> I'm not against having an arch-specific kallsyms fixup function, my
+>> only concern would be if this would interfere with the delayed
+>> relocations livepatching does, if there are plans in the future to
+>> have livepatching on arm (IIRC there was an attempt at a port in
+>> 2016). If there exists some Thumb-2 relocation types that rely on that
+>> lowest bit in st_value being set in order to be applied, and we clear
+>> it permanently from the symtab, then livepatching wouldn't be able to
+>> apply those types of relocations anymore. If this is a legitimate
+>> concern, then perhaps an alternative solution would be to have an
+>> arch-specific kallsyms symbol-value-fixup function for accesses to
+>> sym.st_value, without modifying the module symtab.
+>
+>I'm not familiar with livepatching, but yes, if it needs to do
+>relocations later I guess we should preserve the original value.
 
---=-o+fhgU9nAAKE//XmLa2T
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Yeah, I think the symtab needs to remain unmodified for livepatch to
+be able to do delayed relocations after module load.
 
-On Fri, 2018-11-02 at 08:50 +1100, NeilBrown wrote:
->  Firstly, you gave an analytical response to what was, in my view, an
->  emotional observation.  While I agree with your analysis, it is
-> largely  irrelevant.  It is not how people *feel* about kernel
-> development.
->=20
->  You say that the code of conflict is gone, but in fact much of it is
->  preserved in the code-of-conduct-interpretation.  If you reflect on
-> the  focus of the second para of that document (which I think was
-> directly  lifted from the code-of-conflict) you will see that value
-> is placed  squarely on the code (kernel code, not code of
-> conduct).  The code is  put forward as the thing of primary
-> importance.  People (you, me) are  only mentioned in the context of
-> being the authors of code that will be  criticised  - because (it
-> almost says this) we care about the code, but not about you.
->=20
->  So I think it is beyond argument that the value system presented by
->  this paragraph is
->       code > people
+>I gave the alternative solution a go and it seems to work.
+>add_kallsyms() currently overwrites st_info so I had to move the
+>elf_type to the unused st_other field instead to preserve st_info:
 
-Actually, I think this whole code vs people debate is a straw man and
-inherently inimical to the discussion. In neither code of conduct (old
-or new) is there any statement that allows one to make a value judgment
-of people relative to code, so the very premise you're all arguing on
-doesn't exist.
+I think that's fine, I think the only usages of st_other I've found
+are during relocations, and the field is big enough for a char, so it
+should be fine to reuse it afterwards.
 
-The two separate, but related statements present in both systems are
-that the technical quality of the code going into the kernel is
-paramount and that we should try to be respectful of others in email or
-other interactions including code reviews.  Code and people aren't
-opposites: you can give purely technical reviews with a laser like
-focus on quality and still do it respectfully.  Or to put it another
-way: respecting code doesn't automatically mean you disrespect people,
-which seems to be what the '>' was implying.
+>diff --git a/arch/arm/kernel/module.c b/arch/arm/kernel/module.c
+>index 3ff571c2c71c..f443d0ccd1a0 100644
+>--- a/arch/arm/kernel/module.c
+>+++ b/arch/arm/kernel/module.c
+>@@ -336,6 +336,16 @@ static const Elf_Shdr *find_mod_section(const Elf32_Ehdr *hdr,
+> extern void fixup_pv_table(const void *, unsigned long);
+> extern void fixup_smp(const void *, unsigned long);
+>
+>+#ifdef CONFIG_THUMB2_KERNEL
+>+unsigned long symbol_value(Elf_Sym *sym)
+>+{
+>+	if (ELF_ST_TYPE(sym->st_info) == STT_FUNC)
+>+		return sym->st_value & ~1;
+>+
+>+	return sym->st_value;
+>+}
+>+#endif
+>+
+> int module_finalize(const Elf32_Ehdr *hdr, const Elf_Shdr *sechdrs,
+> 		    struct module *mod)
+> {
+>diff --git a/include/linux/moduleloader.h b/include/linux/moduleloader.h
+>index 31013c2effd3..6bf6118db37f 100644
+>--- a/include/linux/moduleloader.h
+>+++ b/include/linux/moduleloader.h
+>@@ -86,6 +86,8 @@ void module_arch_cleanup(struct module *mod);
+> /* Any cleanup before freeing mod->module_init */
+> void module_arch_freeing_init(struct module *mod);
+>
+>+unsigned long symbol_value(Elf_Sym *sym);
+>+
+> #ifdef CONFIG_KASAN
+> #include <linux/kasan.h>
+> #define MODULE_ALIGN (PAGE_SIZE << KASAN_SHADOW_SCALE_SHIFT)
+>diff --git a/kernel/module.c b/kernel/module.c
+>index 49a405891587..871bf4450e9d 100644
+>--- a/kernel/module.c
+>+++ b/kernel/module.c
+>@@ -2682,7 +2682,7 @@ static void add_kallsyms(struct module *mod, const struct load_info *info)
+>
+> 	/* Set types up while we still have access to sections. */
+> 	for (i = 0; i < mod->kallsyms->num_symtab; i++)
+>-		mod->kallsyms->symtab[i].st_info
+>+		mod->kallsyms->symtab[i].st_other
+> 			= elf_type(&mod->kallsyms->symtab[i], info);
+>
+> 	/* Now populate the cut down core kallsyms for after init. */
+>@@ -3916,6 +3916,11 @@ static const char *symname(struct mod_kallsyms *kallsyms, unsigned int symnum)
+> 	return kallsyms->strtab + kallsyms->symtab[symnum].st_name;
+> }
+>
+>+unsigned long __weak symbol_value(Elf_Sym *sym)
+>+{
+>+	return sym->st_value;
+>+}
+>+
+> static const char *get_ksymbol(struct module *mod,
+> 			       unsigned long addr,
+> 			       unsigned long *size,
+>@@ -3934,6 +3939,9 @@ static const char *get_ksymbol(struct module *mod,
+> 	/* Scan for closest preceding symbol, and next symbol. (ELF
+> 	   starts real symbols at 1). */
+> 	for (i = 1; i < kallsyms->num_symtab; i++) {
+>+		unsigned long thisval = symbol_value(&kallsyms->symtab[i]);
+>+		unsigned long bestval = symbol_value(&kallsyms->symtab[best]);
+>+
+> 		if (kallsyms->symtab[i].st_shndx == SHN_UNDEF)
+> 			continue;
+>
+>@@ -3943,21 +3951,21 @@ static const char *get_ksymbol(struct module *mod,
+> 		    || is_arm_mapping_symbol(symname(kallsyms, i)))
+> 			continue;
+>
+>-		if (kallsyms->symtab[i].st_value <= addr
+>-		    && kallsyms->symtab[i].st_value > kallsyms->symtab[best].st_value)
+>+		if (thisval <= addr
+>+		    && thisval > bestval)
+> 			best = i;
+>-		if (kallsyms->symtab[i].st_value > addr
+>-		    && kallsyms->symtab[i].st_value < nextval)
+>-			nextval = kallsyms->symtab[i].st_value;
+>+		if (thisval > addr
+>+		    && thisval < nextval)
+>+			nextval = thisval;
+> 	}
+>
+> 	if (!best)
+> 		return NULL;
+>
+> 	if (size)
+>-		*size = nextval - kallsyms->symtab[best].st_value;
+>+		*size = nextval - symbol_value(&kallsyms->symtab[best]);
+> 	if (offset)
+>-		*offset = addr - kallsyms->symtab[best].st_value;
+>+		*offset = addr - symbol_value(&kallsyms->symtab[best]);
+> 	return symname(kallsyms, best);
+> }
+>
+>@@ -4060,8 +4068,8 @@ int module_get_kallsym(unsigned int symnum, unsigned long *value, char *type,
+> 			continue;
+> 		kallsyms = rcu_dereference_sched(mod->kallsyms);
+> 		if (symnum < kallsyms->num_symtab) {
+>-			*value = kallsyms->symtab[symnum].st_value;
+>-			*type = kallsyms->symtab[symnum].st_info;
+>+			*value = symbol_value(&kallsyms->symtab[symnum]);
+>+			*type = kallsyms->symtab[symnum].st_other;
+> 			strlcpy(name, symname(kallsyms, symnum), KSYM_NAME_LEN);
+> 			strlcpy(module_name, mod->name, MODULE_NAME_LEN);
+> 			*exported = is_exported(name, *value, mod);
+>@@ -4082,7 +4090,7 @@ static unsigned long mod_find_symname(struct module *mod, const char *name)
+> 	for (i = 0; i < kallsyms->num_symtab; i++)
+> 		if (strcmp(name, symname(kallsyms, i)) == 0 &&
+> 		    kallsyms->symtab[i].st_shndx != SHN_UNDEF)
+>-			return kallsyms->symtab[i].st_value;
+>+			return symbol_value(&kallsyms->symtab[i]);
+> 	return 0;
+> }
+>
+>@@ -4132,7 +4140,7 @@ int module_kallsyms_on_each_symbol(int (*fn)(void *, const char *,
+> 				continue;
+>
+> 			ret = fn(data, symname(kallsyms, i),
+>-				 mod, kallsyms->symtab[i].st_value);
+>+				 mod, symbol_value(&kallsyms->symtab[i]));
+> 			if (ret != 0)
+> 				return ret;
+> 		}
 
-James
+This looks pretty good, could you submit it as a real patch? My only
+suggestion is to maybe rename symbol_value() to something more
+specific, so we could distinguish it from kernel_symbol_value() and
+kernel_symbol_name(), which are used for exported syms that operate on
+struct kernel_symbol. Maybe kallsyms_symbol_value() or
+module_kallsyms_symbol_value()? (That reminds me, I really should
+clean up all the kallsyms/exported symbol code in module.c, the naming
+scheme is a confusing mess :-/)
 
+Thanks!
 
---=-o+fhgU9nAAKE//XmLa2T
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABMIAB0WIQTnYEDbdso9F2cI+arnQslM7pishQUCW9xWtgAKCRDnQslM7pis
-hZl5AQC54rjxAIANJzDTSEJBn+6ONqPcii7UXCrljm/L+5SULQD9HMYRr4SfzmPm
-VvLOoLP+HF9I/3n7AJbqLiXhcJ2GMoo=
-=aR4x
------END PGP SIGNATURE-----
-
---=-o+fhgU9nAAKE//XmLa2T--
-
+Jessica
