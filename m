@@ -2,57 +2,55 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58EA8C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 08:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2796C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 08:19:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F14920831
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 08:15:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BABCE20831
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 08:19:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hKyM6dvm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F14920831
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kcvGbL6n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BABCE20831
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728333AbeKBRVv (ORCPT
+        id S1728481AbeKBRZo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 13:21:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55728 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 13:25:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725843AbeKBRVv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 13:21:51 -0400
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+        id S1725843AbeKBRZn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 13:25:43 -0400
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E873420854;
-        Fri,  2 Nov 2018 08:15:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A676720847;
+        Fri,  2 Nov 2018 08:19:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541146531;
-        bh=EkvWRnn0Heptyyibu8w5GyDBooQmiwEveOHxIylk+gM=;
+        s=default; t=1541146764;
+        bh=VHu/m2oqXNqBTSoFBw7j54YwDQ2UAzdtPzrHV9w+6PQ=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=hKyM6dvmRnQm7cEmbua4CO0T6Uv5y4wuCTMhXPFRyiVrG+JgxUDODBoE8sXTod+o5
-         LfW2XQ3lPSa0QYMc5HLJd22s5Jt0yi+PnyXriEcBkEL1Lig+6VYuR2i+6eiW4WCqLV
-         QwAPdBUKC46ptWgod9+l0VW7CHAbOhD3zdio1enI=
-Received: by mail-lj1-f176.google.com with SMTP id x85-v6so996241ljb.2;
-        Fri, 02 Nov 2018 01:15:30 -0700 (PDT)
-X-Gm-Message-State: AGRZ1gKUGFLEfAsXMWlvNfTvz/X8EKKAdQyWR5+BKyEiM+6uxrEuvQuj
-        j6d07h4shz1XLb4LgoqxQ4m5jDOssoewZxm+2pQ=
-X-Google-Smtp-Source: AJdET5fdYFlrkf/tLEE46Lc3Hc8N/fAyxg9i9W9jlScPjH7+7uXnMQueyxWPD/lX1Q0K8IZW55ss3H8Ovium8d75Ng8=
-X-Received: by 2002:a2e:85d3:: with SMTP id h19-v6mr2412555ljj.82.1541146528933;
- Fri, 02 Nov 2018 01:15:28 -0700 (PDT)
+        b=kcvGbL6nFTtuffuFjBvMppyx4h1i/LRq4X1wR0l99vCzd0JQ6W27fC02VVmYiMpm7
+         4rlX2CAS6jA4STC6u+aUSNr7Fys2bc8cypSMQoH52/iBP1PdKGE2JLbeA4J2KDW5Dr
+         IJJQc/8zF4miY1e30x5lGeGBZuGP0KcIwvyqypks=
+Received: by mail-lj1-f182.google.com with SMTP id z21-v6so1010652ljz.0;
+        Fri, 02 Nov 2018 01:19:23 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gLFrjyvc9vr9swOLBKzhbuIQ6e/rZB62LgwALhunnwTqjZ8Fab0
+        koWijCdrWfJ4nb+uHsuVBT1sIQE6oRE94IjF5hE=
+X-Google-Smtp-Source: AJdET5ddBEeDxGY8VJnSMEPPMdA6KOdScrnbsF5cjrMUSFV91TAiY2A7xuzhwJ0VUV6awHEuXTtePLy3ihK/2/slV3o=
+X-Received: by 2002:a2e:990e:: with SMTP id v14-v6mr7563777lji.60.1541146761787;
+ Fri, 02 Nov 2018 01:19:21 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1541054985.git.matti.vaittinen@fi.rohmeurope.com> <83e985f2f60a68f89fac777aa29c55b1edb8769f.1541054985.git.matti.vaittinen@fi.rohmeurope.com>
-In-Reply-To: <83e985f2f60a68f89fac777aa29c55b1edb8769f.1541054985.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1541054985.git.matti.vaittinen@fi.rohmeurope.com> <8e396e22b328f35538a01193797fbd0d001f885d.1541054985.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <8e396e22b328f35538a01193797fbd0d001f885d.1541054985.git.matti.vaittinen@fi.rohmeurope.com>
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Fri, 2 Nov 2018 09:15:17 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPd=E+S3j3XnpCVRs3JdStY2z+pHe0bh_HNzQTmJW_dH=Q@mail.gmail.com>
-Message-ID: <CAJKOXPd=E+S3j3XnpCVRs3JdStY2z+pHe0bh_HNzQTmJW_dH=Q@mail.gmail.com>
-Subject: Re: [PATCH v2 2/8] clk: clk-max77686: Clean clkdev lookup leak and
- use devm
+Date:   Fri, 2 Nov 2018 09:19:10 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPeM18c3a2nWeGGGw+Fn-GQ2C0ridwE3eqRsd1gVQ6zB5w@mail.gmail.com>
+Message-ID: <CAJKOXPeM18c3a2nWeGGGw+Fn-GQ2C0ridwE3eqRsd1gVQ6zB5w@mail.gmail.com>
+Subject: Re: [PATCH v2 3/8] clk: clk-s3c2410-dclk: clean up clkdev lookup leak
 To:     matti.vaittinen@fi.rohmeurope.com
 Cc:     corbet@lwn.net, mturquette@baylibre.com, sboyd@kernel.org,
         Chanwoo Choi <cw00.choi@samsung.com>,
@@ -78,45 +76,16 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Thu, 1 Nov 2018 at 08:19, Matti Vaittinen
 <matti.vaittinen@fi.rohmeurope.com> wrote:
 >
-> clk-max77686 never clean clkdev lookup at remove. This can cause
-> oops if clk-max77686 is removed and inserted again. Fix leak by
-> using new devm clkdev lookup registration. Simplify also error
-> path by using new devm_of_clk_add_parent_hw_provider.
+> Use devm variant of clkdev lookup registration in order to avoid
+> clkdev lookup leak at device remove.
 >
 > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 > ---
->  drivers/clk/clk-max77686.c | 25 ++++---------------------
->  1 file changed, 4 insertions(+), 21 deletions(-)
->
-> diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
-> index 02551fe4b87c..b1920c1d9b76 100644
-> --- a/drivers/clk/clk-max77686.c
-> +++ b/drivers/clk/clk-max77686.c
-> @@ -235,7 +235,7 @@ static int max77686_clk_probe(struct platform_device *pdev)
->                         return ret;
->                 }
->
-> -               ret = clk_hw_register_clkdev(&max_clk_data->hw,
-> +               ret = devm_clk_hw_register_clkdev(dev, &max_clk_data->hw,
->                                              max_clk_data->clk_idata.name, NULL);
+>  drivers/clk/samsung/clk-s3c2410-dclk.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
 
-You need to re-align the next line.
-
->                 if (ret < 0) {
->                         dev_err(dev, "Failed to clkdev register: %d\n", ret);
-> @@ -244,8 +244,8 @@ static int max77686_clk_probe(struct platform_device *pdev)
->         }
->
->         if (parent->of_node) {
-> -               ret = of_clk_add_hw_provider(parent->of_node, of_clk_max77686_get,
-> -                                            drv_data);
-> +               ret = devm_of_clk_add_parent_hw_provider(dev,
-> +                                               of_clk_max77686_get, drv_data);
-
-The same, please.
-
-Rest looks good, so with these changes:
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Driver has suppress_bind_attrs and it cannot be built as module so
+device removal should not be possible. There is no need to use devm.
 
 Best regards,
 Krzysztof
