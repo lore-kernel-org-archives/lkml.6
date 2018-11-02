@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D47C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:44:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D7DBC65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:44:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73E9E20847
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:44:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4042F2084A
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:44:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YAjmu+xV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73E9E20847
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zVZuc242"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4042F2084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730011AbeKCDwO (ORCPT
+        id S1730020AbeKCDwS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:52:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47544 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:52:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726849AbeKCDwN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:52:13 -0400
+        id S1726849AbeKCDwR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:52:17 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75A832084A;
-        Fri,  2 Nov 2018 18:44:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BDCBD20880;
+        Fri,  2 Nov 2018 18:44:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184241;
-        bh=/onpXZFavm8KKCIrTGGj1/B3r9wvv1K53uZevfI9Rnw=;
+        s=default; t=1541184244;
+        bh=mSmejivJ1Ocy/d06LEnJolz2EXIJA7h8nxXuFFvh19M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YAjmu+xVlDTbuNIJKoxihWgyhAQoHPtyesx7ja8ve9PJZqZF+bOCa8MdjkdtFQlAC
-         oF8O5LkSnp5ylybroaAlBWiUs3WT+pBoKaqkZe/1oVio5Vxz+mCfuY/Sb3SuWA1IIV
-         2qP83Obhxy1ugeukq7N/6TMZo4KsbD61A8t1A+nQ=
+        b=zVZuc2425AK4C/e7iixUgyfjX+vmF6XGEK4iHb2VIgj+OgnvbeQHayMB0fqvzT27W
+         4l5DOQF70dhryS0fl4CjSgGk3mRsbu4wDRyEhwfnlKElHBbz7Lu5JVhqSH4ChUZvwj
+         JNl9ZvTLsrKfaY6UZMD9gjaP3y6h3MpmhJdgRPkM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
+        stable@vger.kernel.org, Sam Kumar <samanthakumar@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Sean Tranchetti <stranche@codeaurora.org>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 113/150] net: stmmac: Fix stmmac_mdio_reset() when building stmmac as modules
-Date:   Fri,  2 Nov 2018 19:34:35 +0100
-Message-Id: <20181102182911.037582613@linuxfoundation.org>
+Subject: [PATCH 4.18 114/150] net: udp: fix handling of CHECKSUM_COMPLETE packets
+Date:   Fri,  2 Nov 2018 19:34:36 +0100
+Message-Id: <20181102182911.085267155@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -62,43 +64,146 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Niklas Cassel <niklas.cassel@linaro.org>
+From: Sean Tranchetti <stranche@codeaurora.org>
 
-[ Upstream commit 30549aab146ccb1275230c3b4b4bc6b4181fd54e ]
+[ Upstream commit db4f1be3ca9b0ef7330763d07bf4ace83ad6f913 ]
 
-When building stmmac, it is only possible to select CONFIG_DWMAC_GENERIC,
-or any of the glue drivers, when CONFIG_STMMAC_PLATFORM is set.
-The only exception is CONFIG_STMMAC_PCI.
+Current handling of CHECKSUM_COMPLETE packets by the UDP stack is
+incorrect for any packet that has an incorrect checksum value.
 
-When calling of_mdiobus_register(), it will call our ->reset()
-callback, which is set to stmmac_mdio_reset().
+udp4/6_csum_init() will both make a call to
+__skb_checksum_validate_complete() to initialize/validate the csum
+field when receiving a CHECKSUM_COMPLETE packet. When this packet
+fails validation, skb->csum will be overwritten with the pseudoheader
+checksum so the packet can be fully validated by software, but the
+skb->ip_summed value will be left as CHECKSUM_COMPLETE so that way
+the stack can later warn the user about their hardware spewing bad
+checksums. Unfortunately, leaving the SKB in this state can cause
+problems later on in the checksum calculation.
 
-Most of the code in stmmac_mdio_reset() is protected by a
-"#if defined(CONFIG_STMMAC_PLATFORM)", which will evaluate
-to false when CONFIG_STMMAC_PLATFORM=m.
+Since the the packet is still marked as CHECKSUM_COMPLETE,
+udp_csum_pull_header() will SUBTRACT the checksum of the UDP header
+from skb->csum instead of adding it, leaving us with a garbage value
+in that field. Once we try to copy the packet to userspace in the
+udp4/6_recvmsg(), we'll make a call to skb_copy_and_csum_datagram_msg()
+to checksum the packet data and add it in the garbage skb->csum value
+to perform our final validation check.
 
-Because of this, the phy reset gpio will only be pulled when
-stmmac is built as built-in, but not when built as modules.
+Since the value we're validating is not the proper checksum, it's possible
+that the folded value could come out to 0, causing us not to drop the
+packet. Instead, we believe that the packet was checksummed incorrectly
+by hardware since skb->ip_summed is still CHECKSUM_COMPLETE, and we attempt
+to warn the user with netdev_rx_csum_fault(skb->dev);
 
-Fix this by using "#if IS_ENABLED()" instead of "#if defined()".
+Unfortunately, since this is the UDP path, skb->dev has been overwritten
+by skb->dev_scratch and is no longer a valid pointer, so we end up
+reading invalid memory.
 
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+This patch addresses this problem in two ways:
+	1) Do not use the dev pointer when calling netdev_rx_csum_fault()
+	   from skb_copy_and_csum_datagram_msg(). Since this gets called
+	   from the UDP path where skb->dev has been overwritten, we have
+	   no way of knowing if the pointer is still valid. Also for the
+	   sake of consistency with the other uses of
+	   netdev_rx_csum_fault(), don't attempt to call it if the
+	   packet was checksummed by software.
+
+	2) Add better CHECKSUM_COMPLETE handling to udp4/6_csum_init().
+	   If we receive a packet that's CHECKSUM_COMPLETE that fails
+	   verification (i.e. skb->csum_valid == 0), check who performed
+	   the calculation. It's possible that the checksum was done in
+	   software by the network stack earlier (such as Netfilter's
+	   CONNTRACK module), and if that says the checksum is bad,
+	   we can drop the packet immediately instead of waiting until
+	   we try and copy it to userspace. Otherwise, we need to
+	   mark the SKB as CHECKSUM_NONE, since the skb->csum field
+	   no longer contains the full packet checksum after the
+	   call to __skb_checksum_validate_complete().
+
+Fixes: e6afc8ace6dd ("udp: remove headers from UDP packets before queueing")
+Fixes: c84d949057ca ("udp: copy skb->truesize in the first cache line")
+Cc: Sam Kumar <samanthakumar@google.com>
+Cc: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Sean Tranchetti <stranche@codeaurora.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/core/datagram.c     |    5 +++--
+ net/ipv4/udp.c          |   20 ++++++++++++++++++--
+ net/ipv6/ip6_checksum.c |   20 ++++++++++++++++++--
+ 3 files changed, 39 insertions(+), 6 deletions(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-@@ -133,7 +133,7 @@ static int stmmac_mdio_write(struct mii_
-  */
- int stmmac_mdio_reset(struct mii_bus *bus)
- {
--#if defined(CONFIG_STMMAC_PLATFORM)
-+#if IS_ENABLED(CONFIG_STMMAC_PLATFORM)
- 	struct net_device *ndev = bus->priv;
- 	struct stmmac_priv *priv = netdev_priv(ndev);
- 	unsigned int mii_address = priv->hw->mii.addr;
+--- a/net/core/datagram.c
++++ b/net/core/datagram.c
+@@ -808,8 +808,9 @@ int skb_copy_and_csum_datagram_msg(struc
+ 			return -EINVAL;
+ 		}
+ 
+-		if (unlikely(skb->ip_summed == CHECKSUM_COMPLETE))
+-			netdev_rx_csum_fault(skb->dev);
++		if (unlikely(skb->ip_summed == CHECKSUM_COMPLETE) &&
++		    !skb->csum_complete_sw)
++			netdev_rx_csum_fault(NULL);
+ 	}
+ 	return 0;
+ fault:
+--- a/net/ipv4/udp.c
++++ b/net/ipv4/udp.c
+@@ -2124,8 +2124,24 @@ static inline int udp4_csum_init(struct
+ 	/* Note, we are only interested in != 0 or == 0, thus the
+ 	 * force to int.
+ 	 */
+-	return (__force int)skb_checksum_init_zero_check(skb, proto, uh->check,
+-							 inet_compute_pseudo);
++	err = (__force int)skb_checksum_init_zero_check(skb, proto, uh->check,
++							inet_compute_pseudo);
++	if (err)
++		return err;
++
++	if (skb->ip_summed == CHECKSUM_COMPLETE && !skb->csum_valid) {
++		/* If SW calculated the value, we know it's bad */
++		if (skb->csum_complete_sw)
++			return 1;
++
++		/* HW says the value is bad. Let's validate that.
++		 * skb->csum is no longer the full packet checksum,
++		 * so don't treat it as such.
++		 */
++		skb_checksum_complete_unset(skb);
++	}
++
++	return 0;
+ }
+ 
+ /* wrapper for udp_queue_rcv_skb tacking care of csum conversion and
+--- a/net/ipv6/ip6_checksum.c
++++ b/net/ipv6/ip6_checksum.c
+@@ -88,8 +88,24 @@ int udp6_csum_init(struct sk_buff *skb,
+ 	 * Note, we are only interested in != 0 or == 0, thus the
+ 	 * force to int.
+ 	 */
+-	return (__force int)skb_checksum_init_zero_check(skb, proto, uh->check,
+-							 ip6_compute_pseudo);
++	err = (__force int)skb_checksum_init_zero_check(skb, proto, uh->check,
++							ip6_compute_pseudo);
++	if (err)
++		return err;
++
++	if (skb->ip_summed == CHECKSUM_COMPLETE && !skb->csum_valid) {
++		/* If SW calculated the value, we know it's bad */
++		if (skb->csum_complete_sw)
++			return 1;
++
++		/* HW says the value is bad. Let's validate that.
++		 * skb->csum is no longer the full packet checksum,
++		 * so don't treat is as such.
++		 */
++		skb_checksum_complete_unset(skb);
++	}
++
++	return 0;
+ }
+ EXPORT_SYMBOL(udp6_csum_init);
+ 
 
 
