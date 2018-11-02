@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC435C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:39:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7A7C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:39:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DC4B20840
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:39:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C98F20833
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:39:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CY6E15AG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DC4B20840
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TRHzJWom"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C98F20833
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729102AbeKCDr3 (ORCPT
+        id S1729115AbeKCDrc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:47:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41532 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:47:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728102AbeKCDr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:47:29 -0400
+        id S1728102AbeKCDrb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:47:31 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 277C12082E;
-        Fri,  2 Nov 2018 18:39:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D73302082E;
+        Fri,  2 Nov 2018 18:39:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541183957;
-        bh=+5K6Jfh+Ocw4X/939WNa5ib60FJq5qrYGYKJsk3hJRQ=;
+        s=default; t=1541183960;
+        bh=f5pfC0kt7Y5cOgYYPOYX5XKbMoOtvFr2qmX4iB/rYfU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CY6E15AG7jafrCOcULMNy4l8jP6+ze6Uh78r78U5YGWHAOfb4VXOptePVNaox+IH6
-         N9FMhsksZbzi+DnKU1NuB1sRMkymoz5zKFrFENfwmbUsktKpCiYQMlg0zTU5ORvGs2
-         Q7pOCUVfnx8Ui42XWOdUExcsANT/Bgh+fPMI8qNI=
+        b=TRHzJWomsQgWbe+smXCea6NwrfZelPTmUXEA4ufBoKqMgLdEIv9Wr38MFzElr3aD7
+         rS6Xur6FeaBe9ECcVSzG0CVnVGM7fWKuddP/TX187j8E6YFSLf3j7YC+kfgqBKEf/m
+         bICGoECv5Y03gBQjfbveUYc1R2XOuR1ghqeweBMA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masashi Honma <masashi.honma@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Nilesh Javali <nilesh.javali@cavium.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 034/150] nl80211: Fix possible Spectre-v1 for CQM RSSI thresholds
-Date:   Fri,  2 Nov 2018 19:33:16 +0100
-Message-Id: <20181102182905.700962418@linuxfoundation.org>
+Subject: [PATCH 4.18 035/150] scsi: qedi: Initialize the stats mutex lock
+Date:   Fri,  2 Nov 2018 19:33:17 +0100
+Message-Id: <20181102182905.765343894@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -63,58 +63,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 1222a16014888ed9733c11e221730d4a8196222b ]
+[ Upstream commit 3cc5746e5ad7688e274e193fa71278d98aa52759 ]
 
-Use array_index_nospec() to sanitize i with respect to speculation.
+Fix kernel NULL pointer dereference,
 
-Note that the user doesn't control i directly, but can make it out
-of bounds by not finding a threshold in the array.
+Call Trace:
+  [<ffffffff9b7658e6>] __mutex_lock_slowpath+0xa6/0x1d0
+  [<ffffffff9b764cef>] mutex_lock+0x1f/0x2f
+  [<ffffffffc061b5e1>] qedi_get_protocol_tlv_data+0x61/0x450 [qedi]
+  [<ffffffff9b1f9d8e>] ? map_vm_area+0x2e/0x40
+  [<ffffffff9b1fc370>] ? __vmalloc_node_range+0x170/0x280
+  [<ffffffffc0b81c3d>] ? qed_mfw_process_tlv_req+0x27d/0xbd0 [qed]
+  [<ffffffffc0b6461b>] qed_mfw_fill_tlv_data+0x4b/0xb0 [qed]
+  [<ffffffffc0b81c59>] qed_mfw_process_tlv_req+0x299/0xbd0 [qed]
+  [<ffffffff9b02a59e>] ? __switch_to+0xce/0x580
+  [<ffffffffc0b61e5b>] qed_slowpath_task+0x5b/0x80 [qed]
 
-Signed-off-by: Masashi Honma <masashi.honma@gmail.com>
-[add note about user control, as explained by Masashi]
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Nilesh Javali <nilesh.javali@cavium.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/wireless/nl80211.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ drivers/scsi/qedi/qedi_main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-index 3b80cf012438..214f9ef79a64 100644
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -10125,7 +10125,7 @@ static int cfg80211_cqm_rssi_update(struct cfg80211_registered_device *rdev,
- 	struct wireless_dev *wdev = dev->ieee80211_ptr;
- 	s32 last, low, high;
- 	u32 hyst;
--	int i, n;
-+	int i, n, low_index;
- 	int err;
- 
- 	/* RSSI reporting disabled? */
-@@ -10162,10 +10162,19 @@ static int cfg80211_cqm_rssi_update(struct cfg80211_registered_device *rdev,
- 		if (last < wdev->cqm_config->rssi_thresholds[i])
- 			break;
- 
--	low = i > 0 ?
--		(wdev->cqm_config->rssi_thresholds[i - 1] - hyst) : S32_MIN;
--	high = i < n ?
--		(wdev->cqm_config->rssi_thresholds[i] + hyst - 1) : S32_MAX;
-+	low_index = i - 1;
-+	if (low_index >= 0) {
-+		low_index = array_index_nospec(low_index, n);
-+		low = wdev->cqm_config->rssi_thresholds[low_index] - hyst;
-+	} else {
-+		low = S32_MIN;
-+	}
-+	if (i < n) {
-+		i = array_index_nospec(i, n);
-+		high = wdev->cqm_config->rssi_thresholds[i] + hyst - 1;
-+	} else {
-+		high = S32_MAX;
-+	}
- 
- 	return rdev_set_cqm_rssi_range_config(rdev, dev, low, high);
- }
+diff --git a/drivers/scsi/qedi/qedi_main.c b/drivers/scsi/qedi/qedi_main.c
+index 3e18a68c2b03..054e66d93ed6 100644
+--- a/drivers/scsi/qedi/qedi_main.c
++++ b/drivers/scsi/qedi/qedi_main.c
+@@ -2472,6 +2472,7 @@ static int __qedi_probe(struct pci_dev *pdev, int mode)
+ 		/* start qedi context */
+ 		spin_lock_init(&qedi->hba_lock);
+ 		spin_lock_init(&qedi->task_idx_lock);
++		mutex_init(&qedi->stats_lock);
+ 	}
+ 	qedi_ops->ll2->register_cb_ops(qedi->cdev, &qedi_ll2_cb_ops, qedi);
+ 	qedi_ops->ll2->start(qedi->cdev, &params);
 -- 
 2.17.1
 
