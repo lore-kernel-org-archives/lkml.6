@@ -2,116 +2,94 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4CCEC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C382C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:35:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82BC420831
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:35:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82BC420831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 0C9BB2081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:35:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C9BB2081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727659AbeKCAmi (ORCPT
+        id S1727815AbeKCAmm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 20:42:38 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:35611 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726049AbeKCAmi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 20:42:38 -0400
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1M42fA-1gIbSb1SRE-0001PJ; Fri, 02 Nov 2018 16:34:09 +0100
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1M42fA-1gIbSb1SRE-0001PJ; Fri, 02 Nov 2018 16:34:09 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: sunxi: rename SND_SUN8I_ADDA_PR_REGMAP
-Date:   Fri,  2 Nov 2018 16:33:40 +0100
-Message-Id: <20181102153406.1528053-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:fT64GQCt3ITNlORRv1BBYCNCCCF4dp4AUPXGY+8Cd4hqQf6OUi0
- a9dyGNM9kkEvvpaOKWc3fznCfwMmwReEa8h3m9BWqID0DSmfY3xRXPFAITA0eKOfiVnKx1S
- Ch8STSv+ZnMwy3A4eipNfK3lBQEDOTM/AOONVQBrq/KV1YFJyEdTsBxACb0v7K28EKZ+Acs
- FAjYdeBhqFiUJVWb6MALQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:J1+RDrAoVjU=:sCZDXzLXJw5uCGCxELqcPR
- 4DBd4VR2Xm1W9enHgYlEmU/94ufNZU778ORyadVIDHqCXh9oL6h7ReWT0nyk6L08nC9vSqVkl
- axTqjpnjHP5V2JrPQUqsN9yxurvfka2TCPdWZaq0xGr3lafd5/2FD6O9Mcs+4zNoFWeUHcYgC
- ygTMJiDd0bIPYAJaxguQATlJOK2M47JPB4eFSTYS6RVS97SDRChqAL+7AMp0ijTjBrjqpWybG
- orALo2FGqehKv9oTMpYOoypET/E78zBjQtzymfdFHk0yQOLertGS9tuOXmWFGn9vvi4s3sqnC
- BITKjBAJ0/4JHKC/C8Ba3KPbgkSYBvu+05NbABtF+LQ+pLyMPUSaxQrlwfE8khtj4xBBXiZE3
- DhuQYpVL6Hd0xvjSy1AW5D9JasMBBMzBtIf0Bg/BglHFM+nKS842UTM/59IiAlaxFN7puo7ah
- 5a9G1GwGmfn/XOSIL9hc4/reUHR5DS7WCHimSIqvmOhnoHkVElxJxmDa/um1hKFDpi+Svf4SP
- yYB0MAjijk+gSYLAScCPWWsNHDCeMx8+DWQ+mh+d5iXTjR4MF+y5l7HuazLXo1cFbW2ZqsJJp
- dzci/rlXHPpUe6xOxOxPcBLhucXHZQiHA90T41xFq5nYYbkhwQAHY0VOshu0kBoUIJJQC55ve
- LGfB41DwkP82c1pLUMaoLvmarr9+pSImYvoX7l11dc1C1ivcY8oGwB5mYfx+L0f2fxpU=
+        Fri, 2 Nov 2018 20:42:42 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46254 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727518AbeKCAml (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 20:42:41 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D1524AEC0;
+        Fri,  2 Nov 2018 15:35:12 +0000 (UTC)
+Subject: Re: [PATCH] xen/grant-table: Fix incorrect gnttab_dma_free_pages()
+ pr_debug message
+To:     Liam Merwick <Liam.Merwick@oracle.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Cc:     boris.ostrovsky@oracle.com
+References: <1541167463-32024-1-git-send-email-Liam.Merwick@oracle.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <dab89b7a-f13d-39b1-b25e-a2e7325fa003@suse.com>
+Date:   Fri, 2 Nov 2018 16:35:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <1541167463-32024-1-git-send-email-Liam.Merwick@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The newly added SND_SUN50I_CODEC_ANALOG driver selects a nonexisting
-symbol SND_SUNXI_ADDA_PR_REGMAP, which was evidently intended to replace
-SND_SUN8I_ADDA_PR_REGMAP, but since they are now mismatched, we can run
-into link errors for some configurations:
+On 02/11/2018 15:04, Liam Merwick wrote:
+> If a call to xenmem_reservation_increase() in gnttab_dma_free_pages()
+> fails it triggers a message "Failed to decrease reservation..." which
+> should be "Failed to increase reservation..."
+> 
+> Fixes: 9bdc7304f536 ('xen/grant-table: Allow allocating buffers suitable for DMA')
+> Reported-by: Ross Philipson <ross.philipson@oracle.com>
+> Signed-off-by: Liam Merwick <liam.merwick@oracle.com>
+> Reviewed-by: Mark Kanda <mark.kanda@oracle.com>
 
-sound/soc/sunxi/sun50i-codec-analog.o: In function `sun50i_codec_analog_probe':
-sun50i-codec-analog.c:(.text+0x62): undefined reference to `sun8i_adda_pr_regmap_init'
+Reviewed-by: Juergen Gross <jgross@suse.com>
 
-The new name appears to be more sensible, and as the symbol is hidden,
-there are no downsides in the rename, so use that consistently now.
 
-Fixes: 42371f327df0 ("ASoC: sunxi: Add new driver for Allwinner A64 codec's analog path controls")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- sound/soc/sunxi/Kconfig  | 4 ++--
- sound/soc/sunxi/Makefile | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/sound/soc/sunxi/Kconfig b/sound/soc/sunxi/Kconfig
-index 66aad0d3f9c7..0f992bdf1a10 100644
---- a/sound/soc/sunxi/Kconfig
-+++ b/sound/soc/sunxi/Kconfig
-@@ -23,7 +23,7 @@ config SND_SUN8I_CODEC
- config SND_SUN8I_CODEC_ANALOG
- 	tristate "Allwinner sun8i Codec Analog Controls Support"
- 	depends on MACH_SUN8I || (ARM64 && ARCH_SUNXI) || COMPILE_TEST
--	select SND_SUN8I_ADDA_PR_REGMAP
-+	select SND_SUNXI_ADDA_PR_REGMAP
- 	help
- 	  Say Y or M if you want to add support for the analog controls for
- 	  the codec embedded in newer Allwinner SoCs.
-@@ -54,7 +54,7 @@ config SND_SUN4I_SPDIF
- 	  Say Y or M to add support for the S/PDIF audio block in the Allwinner
- 	  A10 and affiliated SoCs.
- 
--config SND_SUN8I_ADDA_PR_REGMAP
-+config SND_SUNXI_ADDA_PR_REGMAP
- 	tristate
- 	select REGMAP
- 
-diff --git a/sound/soc/sunxi/Makefile b/sound/soc/sunxi/Makefile
-index a86be340a076..c4dd2803a011 100644
---- a/sound/soc/sunxi/Makefile
-+++ b/sound/soc/sunxi/Makefile
-@@ -5,4 +5,4 @@ obj-$(CONFIG_SND_SUN4I_SPDIF) += sun4i-spdif.o
- obj-$(CONFIG_SND_SUN8I_CODEC_ANALOG) += sun8i-codec-analog.o
- obj-$(CONFIG_SND_SUN50I_CODEC_ANALOG) += sun50i-codec-analog.o
- obj-$(CONFIG_SND_SUN8I_CODEC) += sun8i-codec.o
--obj-$(CONFIG_SND_SUN8I_ADDA_PR_REGMAP) += sun8i-adda-pr-regmap.o
-+obj-$(CONFIG_SND_SUNXI_ADDA_PR_REGMAP) += sun8i-adda-pr-regmap.o
--- 
-2.18.0
-
+Juergen
