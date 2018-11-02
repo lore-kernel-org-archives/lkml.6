@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEE98C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:37:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CEC2C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E8812081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:37:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0D562082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:37:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pl69M3W5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E8812081B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2NGo9IlY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0D562082D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728491AbeKCDpJ (ORCPT
+        id S1728506AbeKCDpN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:45:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38944 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:45:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727629AbeKCDpI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:45:08 -0400
+        id S1727629AbeKCDpN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:45:13 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87CB82082E;
-        Fri,  2 Nov 2018 18:36:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3DD42081B;
+        Fri,  2 Nov 2018 18:37:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541183817;
-        bh=EomIiMYFnIEjecWkfWtLiEAXD00T3XlUmhUGagIcc3Q=;
+        s=default; t=1541183822;
+        bh=/awlyUUM9d7n9POnmphbP2Kt5GrKEI3QrCnFB3zNYS8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pl69M3W55T28mW7m1aerZu/9ZoyZjdyuZUq2Yzsj1ov6CHU4Tzh3EviVAUX6A+kn+
-         zE0YWZ0lZOo0UanbiMgBTitmiMqudWZG8ckM9eBrFl0wMlqyHGujMotU2FfGS7JKn2
-         dqb24vDSktbFyimFQwY2rWe/lzGO5pv1wlkcy9NI=
+        b=2NGo9IlYXjV5B/AkgYrQZ2v+tEEu7dQ9ZoGI1voFYHMOc7r87PNgmwqbfKSM6cJAb
+         nEwK+f3rFgciEC/0LdVYqxWnG/pt8l3/z2mjolEjU3h904SxudTBmNbHAJvr/Z2O8F
+         3hEVjqGYHcrCeY4o7uKqjoUBGvU95RrTQun2Z0+A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Oleksandr Natalenko <oleksandr@natalenko.name>,
+        stable@vger.kernel.org, Neil MacLeod <neil@nmacleod.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 17/24] net: Properly unlink GRO packets on overflow.
-Date:   Fri,  2 Nov 2018 19:34:50 +0100
-Message-Id: <20181102182842.423594392@linuxfoundation.org>
+Subject: [PATCH 4.19 18/24] r8169: fix broken Wake-on-LAN from S5 (poweroff)
+Date:   Fri,  2 Nov 2018 19:34:51 +0100
+Message-Id: <20181102182842.573472714@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182839.725385066@linuxfoundation.org>
 References: <20181102182839.725385066@linuxfoundation.org>
@@ -63,32 +63,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "David S. Miller" <davem@davemloft.net>
+From: Heiner Kallweit <hkallweit1@gmail.com>
 
-[ Upstream commti ece23711dd956cd5053c9cb03e9fe0668f9c8894 ]
+[ Upstream commit 649f0837a8cc2b39329f2de00fa0d04b029291c5 ]
 
-Just like with normal GRO processing, we have to initialize
-skb->next to NULL when we unlink overflow packets from the
-GRO hash lists.
+It was reported that WoL from S5 is broken (WoL from S3 works) and the
+analysis showed that during system shutdown the network interface was
+brought down already when the actual kernel shutdown started.
+Therefore netif_running() returned false and as a consequence the PHY
+was suspended. Obviously WoL wasn't working then.
+To fix this the original patch needs to be effectively reverted.
+A side effect is that when normally bringing down the interface and
+WoL is enabled the PHY will remain powered on (like it was before the
+original patch).
 
-Fixes: d4546c2509b1 ("net: Convert GRO SKB handling to list_head.")
-Reported-by: Oleksandr Natalenko <oleksandr@natalenko.name>
-Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+Fixes: fe87bef01f9b ("r8169: don't check WoL when powering down PHY and interface is down")
+Reported-by: Neil MacLeod <neil@nmacleod.com>
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/dev.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/realtek/r8169.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -5431,6 +5431,7 @@ static void gro_flush_oldest(struct list
- 	 * SKB to the chain.
- 	 */
- 	list_del(&oldest->list);
-+	oldest->next = NULL;
- 	napi_gro_complete(oldest);
- }
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -4175,10 +4175,15 @@ static void rtl_wol_suspend_quirk(struct
  
+ static bool rtl_wol_pll_power_down(struct rtl8169_private *tp)
+ {
+-	if (!netif_running(tp->dev) || !__rtl8169_get_wol(tp))
++	struct phy_device *phydev;
++
++	if (!__rtl8169_get_wol(tp))
+ 		return false;
+ 
+-	phy_speed_down(tp->dev->phydev, false);
++	/* phydev may not be attached to netdevice */
++	phydev = mdiobus_get_phy(tp->mii_bus, 0);
++
++	phy_speed_down(phydev, false);
+ 	rtl_wol_suspend_quirk(tp);
+ 
+ 	return true;
 
 
