@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52BEEC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:38:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60CD4C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:38:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 258D720833
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:38:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32FF32082E
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:38:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="z4o9HE26"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 258D720833
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gR1DWZLt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32FF32082E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728841AbeKCDqe (ORCPT
+        id S1728859AbeKCDqh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:46:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40358 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:46:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727556AbeKCDqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:46:33 -0400
+        id S1727556AbeKCDqg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:46:36 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2168E2081B;
-        Fri,  2 Nov 2018 18:38:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F9472082D;
+        Fri,  2 Nov 2018 18:38:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541183902;
-        bh=/Obbd6lxG9ZCtQe3FHn8IAknEm06mvJizVfB7TWigPw=;
+        s=default; t=1541183905;
+        bh=Gj7LeaDeP4mc4fsVtRPU+x+J2Pr1WIzt4wFF/e8c/UE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z4o9HE26Wl0MT/1R6GXMdGG1aWGS50l+mV63PhYe1sA7Ein/EdYP93WuC7BQOODKN
-         Lt30XVa7bTY/t6lmDZvIlSt0Uo8AKemuqlwacRGNj8Ejw/Bp7Knh2snAy7IRcyeZrB
-         tjQZ3p6Zd4zsjGIXZ4xk6hh3qnb719+YlpV0c/Io=
+        b=gR1DWZLt7RXHPkciAf9dBMPx9l0C9iSTjvpGz5D4aE5bWxWAo4nTYs/11Z673R11n
+         nAcmoz6lnHrfGZvomnTecvyc0GqYxiCvMMRiyFAgysmXNL6V7jliWOhczEfkGnzYLY
+         oVVnvLXtLTr9ekIRl+TFny51tyeev4p1b3AtAHsI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org, "DSouza, Nelson" <ndsouza@ciena.com>,
+        David Ahern <dsahern@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 015/150] drm/i2c: tda9950: set MAX_RETRIES for errors only
-Date:   Fri,  2 Nov 2018 19:32:57 +0100
-Message-Id: <20181102182903.857860761@linuxfoundation.org>
+Subject: [PATCH 4.18 016/150] netfilter: bridge: Dont sabotage nf_hook calls from an l3mdev
+Date:   Fri,  2 Nov 2018 19:32:58 +0100
+Message-Id: <20181102182903.967057218@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -63,35 +64,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e0dccce1193f87597548d0db6ecc942fb92c04cd ]
+[ Upstream commit a173f066c7cfc031acb8f541708041e009fc9812 ]
 
-The CEC_TX_STATUS_MAX_RETRIES should be set for errors only to
-prevent the CEC framework from retrying the transmit. If the
-transmit was successful, then don't set this flag.
+For starters, the bridge netfilter code registers operations that
+are invoked any time nh_hook is called. Specifically, ip_sabotage_in
+watches for nested calls for NF_INET_PRE_ROUTING when a bridge is in
+the stack.
 
-Found by running 'cec-compliance -A' on a beaglebone box.
+Packet wise, the bridge netfilter hook runs first. br_nf_pre_routing
+allocates nf_bridge, sets in_prerouting to 1 and calls NF_HOOK for
+NF_INET_PRE_ROUTING. It's finish function, br_nf_pre_routing_finish,
+then resets in_prerouting flag to 0 and the packet continues up the
+stack. The packet eventually makes it to the VRF driver and it invokes
+nf_hook for NF_INET_PRE_ROUTING in case any rules have been added against
+the vrf device.
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Because of the registered operations the call to nf_hook causes
+ip_sabotage_in to be invoked. That function sees the nf_bridge on the
+skb and that in_prerouting is not set. Thinking it is an invalid nested
+call it steals (drops) the packet.
+
+Update ip_sabotage_in to recognize that the bridge or one of its upper
+devices (e.g., vlan) can be enslaved to a VRF (L3 master device) and
+allow the packet to go through the nf_hook a second time.
+
+Fixes: 73e20b761acf ("net: vrf: Add support for PREROUTING rules on vrf device")
+Reported-by: D'Souza, Nelson <ndsouza@ciena.com>
+Signed-off-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/i2c/tda9950.c | 3 ++-
+ net/bridge/br_netfilter_hooks.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/i2c/tda9950.c b/drivers/gpu/drm/i2c/tda9950.c
-index f2186409f0cf..ccd355d0c123 100644
---- a/drivers/gpu/drm/i2c/tda9950.c
-+++ b/drivers/gpu/drm/i2c/tda9950.c
-@@ -188,7 +188,8 @@ static irqreturn_t tda9950_irq(int irq, void *data)
- 			break;
- 		}
- 		/* TDA9950 executes all retries for us */
--		tx_status |= CEC_TX_STATUS_MAX_RETRIES;
-+		if (tx_status != CEC_TX_STATUS_OK)
-+			tx_status |= CEC_TX_STATUS_MAX_RETRIES;
- 		cec_transmit_done(priv->adap, tx_status, arb_lost_cnt,
- 				  nack_cnt, 0, err_cnt);
- 		break;
+diff --git a/net/bridge/br_netfilter_hooks.c b/net/bridge/br_netfilter_hooks.c
+index 9b16eaf33819..58240cc185e7 100644
+--- a/net/bridge/br_netfilter_hooks.c
++++ b/net/bridge/br_netfilter_hooks.c
+@@ -834,7 +834,8 @@ static unsigned int ip_sabotage_in(void *priv,
+ 				   struct sk_buff *skb,
+ 				   const struct nf_hook_state *state)
+ {
+-	if (skb->nf_bridge && !skb->nf_bridge->in_prerouting) {
++	if (skb->nf_bridge && !skb->nf_bridge->in_prerouting &&
++	    !netif_is_l3_master(skb->dev)) {
+ 		state->okfn(state->net, state->sk, skb);
+ 		return NF_STOLEN;
+ 	}
 -- 
 2.17.1
 
