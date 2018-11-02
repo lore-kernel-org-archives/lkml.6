@@ -2,48 +2,49 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F34C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:37:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7942DC65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:37:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8C712082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:37:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4663F2081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:37:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xBvQTtbd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8C712082D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="R+vcTgvf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4663F2081B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728693AbeKCDqD (ORCPT
+        id S1728705AbeKCDqG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:46:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39726 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:46:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727556AbeKCDqD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:46:03 -0400
+        id S1727556AbeKCDqF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:46:05 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48D042081B;
-        Fri,  2 Nov 2018 18:37:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1421F2081B;
+        Fri,  2 Nov 2018 18:37:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541183871;
-        bh=1munvivSvgrJQgCu5VchE2mJMZTLOcZwFPFg8BWjYRA=;
+        s=default; t=1541183874;
+        bh=73l5uNxngE695yBOsWE+pg//hxV7LCRd9cUqm/yteIQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xBvQTtbdMD1CC+guxxRtqoaZFkiI8xpWV1WsLS2vfA/x+phcqCj0MmE5oKmotW9Cz
-         rP0YFcJJMrW/lg7d9O/5uUjfkTPowfCiqhhOG6urWWsNiG90ke30fCY4GfYnR/401I
-         b3NRE6IWjpSyd5j04iRORxEoesvf5IvR+55Nwt4M=
+        b=R+vcTgvfZ4Wr+TVR4HHF9Iy6pALdr0Akg7CQfEiJDQn4dyzLUyiuxCZtkAgwOn3r9
+         eYXzOgsHdVkrQ6ERuutnuH+DI8JDfjFSe1o7jipakLJiNxVWxVTLIyTUlev3ej31zm
+         jsjVI8QgQrjlwUPUf0yYDOeH/Sl+TtQpA8hNA9z8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 22/24] sparc64: Make corrupted user stacks more debuggable.
-Date:   Fri,  2 Nov 2018 19:34:55 +0100
-Message-Id: <20181102182843.141095174@linuxfoundation.org>
+        stable@vger.kernel.org, Joseph Myers <joseph@codesourcery.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 23/24] sparc64: Wire up compat getpeername and getsockname.
+Date:   Fri,  2 Nov 2018 19:34:56 +0100
+Message-Id: <20181102182843.299795461@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182839.725385066@linuxfoundation.org>
 References: <20181102182839.725385066@linuxfoundation.org>
@@ -61,159 +62,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Miller <davem@redhat.com>
+From: "David S. Miller" <davem@davemloft.net>
 
-[ Upstream commit 5b4fc3882a649c9411dd0dcad2ddb78e911d340e ]
+[ Upstream commit 1f2b5b8e2df4591fbca430aff9c5a072dcc0f408 ]
 
-Right now if we get a corrupted user stack frame we do a
-do_exit(SIGILL) which is not helpful.
-
-If under a debugger, this behavior causes the inferior process to
-exit.  So the register and other state cannot be examined at the time
-of the event.
-
-Instead, conditionally log a rate limited kernel log message and then
-force a SIGSEGV.
-
-With bits and ideas borrowed (as usual) from powerpc.
-
+Fixes: 8b30ca73b7cc ("sparc: Add all necessary direct socket system calls.")
+Reported-by: Joseph Myers  <joseph@codesourcery.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/sparc/include/asm/switch_to_64.h |    3 ++-
- arch/sparc/kernel/process_64.c        |   25 +++++++++++++++++++------
- arch/sparc/kernel/rtrap_64.S          |    1 +
- arch/sparc/kernel/signal32.c          |   12 ++++++++++--
- arch/sparc/kernel/signal_64.c         |    6 +++++-
- 5 files changed, 37 insertions(+), 10 deletions(-)
+ arch/sparc/kernel/systbls_64.S |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/sparc/include/asm/switch_to_64.h
-+++ b/arch/sparc/include/asm/switch_to_64.h
-@@ -67,6 +67,7 @@ do {	save_and_clear_fpu();						\
- } while(0)
- 
- void synchronize_user_stack(void);
--void fault_in_user_windows(void);
-+struct pt_regs;
-+void fault_in_user_windows(struct pt_regs *);
- 
- #endif /* __SPARC64_SWITCH_TO_64_H */
---- a/arch/sparc/kernel/process_64.c
-+++ b/arch/sparc/kernel/process_64.c
-@@ -36,6 +36,7 @@
- #include <linux/sysrq.h>
- #include <linux/nmi.h>
- #include <linux/context_tracking.h>
-+#include <linux/signal.h>
- 
- #include <linux/uaccess.h>
- #include <asm/page.h>
-@@ -521,7 +522,12 @@ static void stack_unaligned(unsigned lon
- 	force_sig_fault(SIGBUS, BUS_ADRALN, (void __user *) sp, 0, current);
- }
- 
--void fault_in_user_windows(void)
-+static const char uwfault32[] = KERN_INFO \
-+	"%s[%d]: bad register window fault: SP %08lx (orig_sp %08lx) TPC %08lx O7 %08lx\n";
-+static const char uwfault64[] = KERN_INFO \
-+	"%s[%d]: bad register window fault: SP %016lx (orig_sp %016lx) TPC %08lx O7 %016lx\n";
-+
-+void fault_in_user_windows(struct pt_regs *regs)
- {
- 	struct thread_info *t = current_thread_info();
- 	unsigned long window;
-@@ -534,9 +540,9 @@ void fault_in_user_windows(void)
- 		do {
- 			struct reg_window *rwin = &t->reg_window[window];
- 			int winsize = sizeof(struct reg_window);
--			unsigned long sp;
-+			unsigned long sp, orig_sp;
- 
--			sp = t->rwbuf_stkptrs[window];
-+			orig_sp = sp = t->rwbuf_stkptrs[window];
- 
- 			if (test_thread_64bit_stack(sp))
- 				sp += STACK_BIAS;
-@@ -547,8 +553,16 @@ void fault_in_user_windows(void)
- 				stack_unaligned(sp);
- 
- 			if (unlikely(copy_to_user((char __user *)sp,
--						  rwin, winsize)))
-+						  rwin, winsize))) {
-+				if (show_unhandled_signals)
-+					printk_ratelimited(is_compat_task() ?
-+							   uwfault32 : uwfault64,
-+							   current->comm, current->pid,
-+							   sp, orig_sp,
-+							   regs->tpc,
-+							   regs->u_regs[UREG_I7]);
- 				goto barf;
-+			}
- 		} while (window--);
- 	}
- 	set_thread_wsaved(0);
-@@ -556,8 +570,7 @@ void fault_in_user_windows(void)
- 
- barf:
- 	set_thread_wsaved(window + 1);
--	user_exit();
--	do_exit(SIGILL);
-+	force_sig(SIGSEGV, current);
- }
- 
- asmlinkage long sparc_do_fork(unsigned long clone_flags,
---- a/arch/sparc/kernel/rtrap_64.S
-+++ b/arch/sparc/kernel/rtrap_64.S
-@@ -39,6 +39,7 @@ __handle_preemption:
- 		 wrpr			%g0, RTRAP_PSTATE_IRQOFF, %pstate
- 
- __handle_user_windows:
-+		add			%sp, PTREGS_OFF, %o0
- 		call			fault_in_user_windows
- 661:		 wrpr			%g0, RTRAP_PSTATE, %pstate
- 		/* If userspace is using ADI, it could potentially pass
---- a/arch/sparc/kernel/signal32.c
-+++ b/arch/sparc/kernel/signal32.c
-@@ -371,7 +371,11 @@ static int setup_frame32(struct ksignal
- 		get_sigframe(ksig, regs, sigframe_size);
- 	
- 	if (invalid_frame_pointer(sf, sigframe_size)) {
--		do_exit(SIGILL);
-+		if (show_unhandled_signals)
-+			pr_info("%s[%d] bad frame in setup_frame32: %08lx TPC %08lx O7 %08lx\n",
-+				current->comm, current->pid, (unsigned long)sf,
-+				regs->tpc, regs->u_regs[UREG_I7]);
-+		force_sigsegv(ksig->sig, current);
- 		return -EINVAL;
- 	}
- 
-@@ -501,7 +505,11 @@ static int setup_rt_frame32(struct ksign
- 		get_sigframe(ksig, regs, sigframe_size);
- 	
- 	if (invalid_frame_pointer(sf, sigframe_size)) {
--		do_exit(SIGILL);
-+		if (show_unhandled_signals)
-+			pr_info("%s[%d] bad frame in setup_rt_frame32: %08lx TPC %08lx O7 %08lx\n",
-+				current->comm, current->pid, (unsigned long)sf,
-+				regs->tpc, regs->u_regs[UREG_I7]);
-+		force_sigsegv(ksig->sig, current);
- 		return -EINVAL;
- 	}
- 
---- a/arch/sparc/kernel/signal_64.c
-+++ b/arch/sparc/kernel/signal_64.c
-@@ -370,7 +370,11 @@ setup_rt_frame(struct ksignal *ksig, str
- 		get_sigframe(ksig, regs, sf_size);
- 
- 	if (invalid_frame_pointer (sf)) {
--		do_exit(SIGILL);	/* won't return, actually */
-+		if (show_unhandled_signals)
-+			pr_info("%s[%d] bad frame in setup_rt_frame: %016lx TPC %016lx O7 %016lx\n",
-+				current->comm, current->pid, (unsigned long)sf,
-+				regs->tpc, regs->u_regs[UREG_I7]);
-+		force_sigsegv(ksig->sig, current);
- 		return -EINVAL;
- 	}
- 
+--- a/arch/sparc/kernel/systbls_64.S
++++ b/arch/sparc/kernel/systbls_64.S
+@@ -47,9 +47,9 @@ sys_call_table32:
+ 	.word sys_recvfrom, sys_setreuid16, sys_setregid16, sys_rename, compat_sys_truncate
+ /*130*/	.word compat_sys_ftruncate, sys_flock, compat_sys_lstat64, sys_sendto, sys_shutdown
+ 	.word sys_socketpair, sys_mkdir, sys_rmdir, compat_sys_utimes, compat_sys_stat64
+-/*140*/	.word sys_sendfile64, sys_nis_syscall, compat_sys_futex, sys_gettid, compat_sys_getrlimit
++/*140*/	.word sys_sendfile64, sys_getpeername, compat_sys_futex, sys_gettid, compat_sys_getrlimit
+ 	.word compat_sys_setrlimit, sys_pivot_root, sys_prctl, sys_pciconfig_read, sys_pciconfig_write
+-/*150*/	.word sys_nis_syscall, sys_inotify_init, sys_inotify_add_watch, sys_poll, sys_getdents64
++/*150*/	.word sys_getsockname, sys_inotify_init, sys_inotify_add_watch, sys_poll, sys_getdents64
+ 	.word compat_sys_fcntl64, sys_inotify_rm_watch, compat_sys_statfs, compat_sys_fstatfs, sys_oldumount
+ /*160*/	.word compat_sys_sched_setaffinity, compat_sys_sched_getaffinity, sys_getdomainname, sys_setdomainname, sys_nis_syscall
+ 	.word sys_quotactl, sys_set_tid_address, compat_sys_mount, compat_sys_ustat, sys_setxattr
 
 
