@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6BF3C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:45:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79D66C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:45:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 879242084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:45:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B0B820847
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:45:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CTzqRTiF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 879242084D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mhQ72hOt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B0B820847
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730196AbeKCDxd (ORCPT
+        id S1730208AbeKCDxg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:53:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49194 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:53:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729726AbeKCDxc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:53:32 -0400
+        id S1729726AbeKCDxf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:53:35 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ACDBA2084A;
-        Fri,  2 Nov 2018 18:45:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 760C92084A;
+        Fri,  2 Nov 2018 18:45:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184319;
-        bh=lRPzoeZ4eCJf6uQ/H9CWi259RBT00djbNBBO+HCbF9k=;
+        s=default; t=1541184322;
+        bh=f3PcTHy5gs5rHBpWEzIGHGAfeR/JrnW6Mr6rp8Tk7Xw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CTzqRTiFXVl5vG5GzE0afky/AasQMX6Dv/1kuVBrrgqHhM/0ftXQIYch8eLmk0vkZ
-         Jc3Z+IRfVEnzQr423yVEkPCGweG6rV07ykkO8CFrhDYdqhcw9ttb2Ay4J7ZHqd3rSd
-         x+Z+Si+k4uXzqmqVL3PWn9MVQ+Z54lqc0swG7gT0=
+        b=mhQ72hOtolw7zKViVJ37xVewovsxGIj1NPN17utVOmtP9R1eIu1x9lACZ5oTmSWIR
+         wr3WKIGZAZZXZs0X87KeECgzNDKpe9hRcsEiyrGh4vVRppqlUHPBmx4yUOQUA2geOq
+         dk7tAGIdfAsafYsuBsBEuxmsl3DmVHnNGWGngh98=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Talat Batheesh <talatb@mellanox.com>,
-        Or Gerlitz <ogerlitz@mellanox.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.18 134/150] net/mlx5: Fix memory leak when setting fpga ipsec caps
-Date:   Fri,  2 Nov 2018 19:34:56 +0100
-Message-Id: <20181102182912.006225198@linuxfoundation.org>
+        stable@vger.kernel.org, Karsten Graul <kgraul@linux.ibm.com>,
+        Ursula Braun <ubraun@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.18 135/150] net/smc: fix smc_buf_unuse to use the lgr pointer
+Date:   Fri,  2 Nov 2018 19:34:57 +0100
+Message-Id: <20181102182912.056921139@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -64,54 +63,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Talat Batheesh <talatb@mellanox.com>
+From: Karsten Graul <kgraul@linux.ibm.com>
 
-[ Upstream commit fd7e848077c1a466b9187537adce16658f7cb94b ]
+[ Upstream commit fb692ec4117f6fd25044cfb5720d6b79d400dc65 ]
 
-Allocated memory for context should be freed once
-finished working with it.
+The pointer to the link group is unset in the smc connection structure
+right before the call to smc_buf_unuse. Provide the lgr pointer to
+smc_buf_unuse explicitly.
+And move the call to smc_lgr_schedule_free_work to the end of
+smc_conn_free.
 
-Fixes: d6c4f0298cec ("net/mlx5: Refactor accel IPSec code")
-Signed-off-by: Talat Batheesh <talatb@mellanox.com>
-Reviewed-by: Or Gerlitz <ogerlitz@mellanox.com>
-Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Fixes: a6920d1d130c ("net/smc: handle unregistered buffers")
+Signed-off-by: Karsten Graul <kgraul@linux.ibm.com>
+Signed-off-by: Ursula Braun <ubraun@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ net/smc/smc_core.c |   23 +++++++++++------------
+ 1 file changed, 11 insertions(+), 12 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c
-@@ -245,7 +245,7 @@ static void *mlx5_fpga_ipsec_cmd_exec(st
- 		return ERR_PTR(res);
- 	}
- 
--	/* Context will be freed by wait func after completion */
-+	/* Context should be freed by the caller after completion. */
- 	return context;
+--- a/net/smc/smc_core.c
++++ b/net/smc/smc_core.c
+@@ -114,22 +114,17 @@ static void __smc_lgr_unregister_conn(st
+ 	sock_put(&smc->sk); /* sock_hold in smc_lgr_register_conn() */
  }
  
-@@ -418,10 +418,8 @@ static int mlx5_fpga_ipsec_set_caps(stru
- 	cmd.cmd = htonl(MLX5_FPGA_IPSEC_CMD_OP_SET_CAP);
- 	cmd.flags = htonl(flags);
- 	context = mlx5_fpga_ipsec_cmd_exec(mdev, &cmd, sizeof(cmd));
--	if (IS_ERR(context)) {
--		err = PTR_ERR(context);
--		goto out;
--	}
-+	if (IS_ERR(context))
-+		return PTR_ERR(context);
+-/* Unregister connection and trigger lgr freeing if applicable
++/* Unregister connection from lgr
+  */
+ static void smc_lgr_unregister_conn(struct smc_connection *conn)
+ {
+ 	struct smc_link_group *lgr = conn->lgr;
+-	int reduced = 0;
  
- 	err = mlx5_fpga_ipsec_cmd_wait(context);
- 	if (err)
-@@ -435,6 +433,7 @@ static int mlx5_fpga_ipsec_set_caps(stru
+ 	write_lock_bh(&lgr->conns_lock);
+ 	if (conn->alert_token_local) {
+-		reduced = 1;
+ 		__smc_lgr_unregister_conn(conn);
  	}
- 
- out:
-+	kfree(context);
- 	return err;
+ 	write_unlock_bh(&lgr->conns_lock);
+-	if (!reduced || lgr->conns_num)
+-		return;
+-	smc_lgr_schedule_free_work(lgr);
  }
  
+ static void smc_lgr_free_work(struct work_struct *work)
+@@ -238,7 +233,8 @@ out:
+ 	return rc;
+ }
+ 
+-static void smc_buf_unuse(struct smc_connection *conn)
++static void smc_buf_unuse(struct smc_connection *conn,
++			  struct smc_link_group *lgr)
+ {
+ 	if (conn->sndbuf_desc)
+ 		conn->sndbuf_desc->used = 0;
+@@ -248,8 +244,6 @@ static void smc_buf_unuse(struct smc_con
+ 			conn->rmb_desc->used = 0;
+ 		} else {
+ 			/* buf registration failed, reuse not possible */
+-			struct smc_link_group *lgr = conn->lgr;
+-
+ 			write_lock_bh(&lgr->rmbs_lock);
+ 			list_del(&conn->rmb_desc->list);
+ 			write_unlock_bh(&lgr->rmbs_lock);
+@@ -262,11 +256,16 @@ static void smc_buf_unuse(struct smc_con
+ /* remove a finished connection from its link group */
+ void smc_conn_free(struct smc_connection *conn)
+ {
+-	if (!conn->lgr)
++	struct smc_link_group *lgr = conn->lgr;
++
++	if (!lgr)
+ 		return;
+ 	smc_cdc_tx_dismiss_slots(conn);
+-	smc_lgr_unregister_conn(conn);
+-	smc_buf_unuse(conn);
++	smc_lgr_unregister_conn(conn);		/* unsets conn->lgr */
++	smc_buf_unuse(conn, lgr);		/* allow buffer reuse */
++
++	if (!lgr->conns_num)
++		smc_lgr_schedule_free_work(lgr);
+ }
+ 
+ static void smc_link_clear(struct smc_link *lnk)
 
 
