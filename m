@@ -2,154 +2,151 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC284C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:16:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62126C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:17:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CAB02081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:16:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FOuZEnuO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CAB02081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1855D2082E
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:17:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1855D2082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727698AbeKBWX0 (ORCPT
+        id S1727735AbeKBWYL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 18:23:26 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:41553 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726104AbeKBWX0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 18:23:26 -0400
-Received: by mail-yw1-f68.google.com with SMTP id c126-v6so738917ywd.8;
-        Fri, 02 Nov 2018 06:16:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zII6NG7oAxAyfHK7Hd1Yrf41Dz1ahku8YMRacypeL5I=;
-        b=FOuZEnuOW2r9cxDcprEpPql/6FbYTCCZPUmdE7QI/X6aSlLgrZOzluxffSk3uK+WL0
-         QGbTEoU2MX8/EtZw8nIjXPmo8OKIjM2HdylkE5UGMnKV0Zk/KR+7HnxwYea2es6L8R7E
-         m5gj1zDqnttxDJIvUzTb/3MDP70wpj8PwP0oHAlGkdQJVSt3c6hnDhyjMRSNABbSWxnU
-         mHtHk+vAuiGBJag0QjOd0BnRb2VPvbbMZ1Yd/4uybBZ/V9l8+ARFhh+42fQDyy6no47r
-         llADMWmZNvURUgp3nk6J6U9zLcPE6rA2c4nVh/pXAEJwVyVfFcJL2TSPTVmRvepv5A5s
-         DbBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zII6NG7oAxAyfHK7Hd1Yrf41Dz1ahku8YMRacypeL5I=;
-        b=pWkrewPi+56eV55PY463DplCPkmyeGdAPDjXd2X2tu6mGvYHJdipEDwhbphG0pPat0
-         Jd8andaW3gUfN2IeYO5dR4GzLSsjv1mw1s0opdrHSBYEvXeiBfSL17vNUP1OjMdEGH14
-         ek/hyKl3kGycldiBOvJHbTSSl1VdvTaYCd7SpsAU41/BmTDhRtYMheKeveNcp8GLuy7W
-         XasElIw9zjZw7toH+ednKCx9LGyTXFdh4SO2IDdQv84yqhLiGqL4TZ6JBMWtR1iXdZc9
-         jXQOU589tuEr3SiMbi9R8las3zO/oefYeT6MfLu4uTVmCWuMQUv0zFnkS/HvW44PgSxO
-         PHsw==
-X-Gm-Message-State: AGRZ1gI0g5ykOUgb4EuVRNQHSJbPQG507p+0lBnUx9BCzmSCKEcrRrzq
-        gCtzrBx+GoYbxV8Yw0YgCqqOaG/6JGGpJpUmm+I=
-X-Google-Smtp-Source: AJdET5f7wv2HbRFE5QcIfaGLr/tVHjUBZZW/fuPDs7SHymvoYXImAoAdkXAWLb/Z3TYvKELN2HQQAIIHgcs4Z1+Xstk=
-X-Received: by 2002:a81:8644:: with SMTP id w65-v6mr1204707ywf.409.1541164577525;
- Fri, 02 Nov 2018 06:16:17 -0700 (PDT)
+        Fri, 2 Nov 2018 18:24:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46576 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726104AbeKBWYL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 18:24:11 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 905642081F;
+        Fri,  2 Nov 2018 13:17:00 +0000 (UTC)
+Date:   Fri, 2 Nov 2018 09:16:58 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Christian Brauner <christian@brauner.io>,
+        Aleksa Sarai <asarai@suse.de>, netdev@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: Re: [PATCH v3 1/2] kretprobe: produce sane stack traces
+Message-ID: <20181102091658.1bc979a4@gandalf.local.home>
+In-Reply-To: <20181102065932.bdt4pubbrkvql4mp@yavin>
+References: <20181101083551.3805-1-cyphar@cyphar.com>
+        <20181101083551.3805-2-cyphar@cyphar.com>
+        <20181101204720.6ed3fe37@vmware.local.home>
+        <20181102050509.tw3dhvj5urudvtjl@yavin>
+        <20181102065932.bdt4pubbrkvql4mp@yavin>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20181101214856.4563-1-seth.forshee@canonical.com>
- <20181101214856.4563-7-seth.forshee@canonical.com> <CAOQ4uxhkH+0tchHkrgvBZGYzeLD2fGGgtkKstt3JmhPDaGW_dg@mail.gmail.com>
- <20181102124400.GB29262@ubuntu-xps13>
-In-Reply-To: <20181102124400.GB29262@ubuntu-xps13>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 2 Nov 2018 15:16:05 +0200
-Message-ID: <CAOQ4uxhbgzYzdRBwbDNBKgjjmM3M=hya5-LJhiKmxxZxOo=2CQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 6/6] shiftfs: support nested shiftfs mounts
-To:     Seth Forshee <seth.forshee@canonical.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 2, 2018 at 2:44 PM Seth Forshee <seth.forshee@canonical.com> wrote:
->
-> On Fri, Nov 02, 2018 at 12:02:45PM +0200, Amir Goldstein wrote:
-> > On Thu, Nov 1, 2018 at 11:49 PM Seth Forshee <seth.forshee@canonical.com> wrote:
-> > >
-> > > shiftfs mounts cannot be nested for two reasons -- global
-> > > CAP_SYS_ADMIN is required to set up a mark mount, and a single
-> > > functional shiftfs mount meets the filesystem stacking depth
-> > > limit.
-> > >
-> > > The CAP_SYS_ADMIN requirement can be relaxed. All of the kernel
-> > > ids in a mount must be within that mount's s_user_ns, so all that
-> > > is needed is CAP_SYS_ADMIN within that s_user_ns.
-> > >
-> > > The stack depth issue can be worked around with a couple of
-> > > adjustments. First, a mark mount doesn't really need to count
-> > > against the stacking depth as it doesn't contribute to the call
-> > > stack depth during filesystem operations. Therefore the mount
-> > > over the mark mount only needs to count as one more than the
-> > > lower filesystems stack depth.
-> >
-> > That's true, but it also highlights the point that the "mark" sb is
-> > completely unneeded and it really is just a nice little hack.
-> > All the information it really stores is a lower mount reference,
-> > a lower root dentry and a declarative statement "I am shiftable!".
->
-> Seems I should have saved some of the things I said in my previous
-> response for this one. As you no doubt gleaned from that email, I agree
-> with this.
->
-> > Come to think about it, "container shiftable" really isn't that different from
-> > NFS export with "no_root_squash" and auto mounted USB drive.
-> > I mean the shifting itself is different of course, but the
-> > declaration, not so much.
-> > If I am allowing sudoers on another machine to mess with root owned
-> > files visible
-> > on my machine, I am pretty much have the same issues as container admins
-> > accessing root owned files on my init_user_ns filesystem. In all those cases,
-> > I'd better not be executing suid binaries from the untrusted "external" source.
-> >
-> > Instead of mounting a dummy filesystem to make the declaration, you could
-> > get the same thing with:
-> >    mount(path, path, "none", MS_BIND | MS_EXTERN | MS_NOEXEC)
-> > and all you need to do is add MS_EXTERN (MS_SHIFTABLE MS_UNTRUSTED
-> > or whatnot)  constant to uapi and manage to come up good man page description.
-> >
-> > Then users could actually mount a filesystem in init_user_ns MS_EXTERN and
-> > avoid the extra bind mount step (for a full filesystem tree export).
-> > Declaring a mounted image MS_EXTERN has merits on its own even without
-> > containers and shitfs, for example with pluggable storage. Other LSMs could make
-> > good use of that declaration.
->
-> I'm missing how we figure out the target user ns in this scheme. We need
-> a context with privileges towards the source path's s_user_ns to say
-> it's okay to shift ids for the files under the source path, and then we
-> need a target user ns for the id shifts. Currently the target is
-> current_user_ns when the final shiftfs mount is created.
->
-> So, how do we determine the target s_user_ns in your scheme?
->
+On Fri, 2 Nov 2018 17:59:32 +1100
+Aleksa Sarai <cyphar@cyphar.com> wrote:
 
-Unless I am completely misunderstanding shiftfs, I think we are saying the
-same thing. You said you wish to get rid of the "mark" fs and that you had
-a POC of implementing the "mark" using xattr.
-I'm just saying another option to implement the mark is using a super block
-flag and you get the target s_user_ns from mnt_sb.
-I did miss the fact that a mount flag is not enough, so that makes the bind
-mount concept fail. Unless, maybe, the mount in the container is a slave
-mount and the "shiftable" mark is set on the master.
-I know too little about mount ns vs. user ns to tell if any of this makes sense.
+> As an aside, I just tested with the frame unwinder and it isn't thrown
+> off-course by kretprobe_trampoline (though obviously the stack is still
+> wrong). So I think we just need to hook into the ORC unwinder to get it
+> to continue skipping up the stack, as well as add the rewriting code for
+> the stack traces (for all unwinders I guess -- though ideally we should
 
-Feel free to ignore MS_EXTERN idea.
+I agree that this is the right solution.
 
-Hopefully, mount API v2 will provide the proper facility to implement mark.
+> do this without having to add the same code to every architecture).
 
-Thanks,
-Amir.
+True, and there's an art to consolidating the code between
+architectures.
+
+I'm currently looking at function graph and seeing if I can consolidate
+it too. And I'm also trying to get multiple uses to hook into its
+infrastructure. I think I finally figured out a way to do so.
+
+The reason it is difficult, is that you need to maintain state between
+the entry of a function and the exit for each task and callback that is
+registered. Hence, it's a 3x tuple (function stack, task, callbacks).
+And this must be maintained with preemption. A task may sleep for
+minutes, and the state needs to be retained.
+
+The only state that must be retained is the function stack with the
+task, because if that gets out of sync, the system crashes. But the
+callback state can be removed.
+
+Here's what is there now:
+
+ When something is registered with the function graph tracer, every
+ task gets a shadowed stack. A hook is added to fork to add shadow
+ stacks to new tasks. Once a shadow stack is added to a task, that
+ shadow stack is never removed until the task exits.
+
+ When the function is entered, the real return code is stored in the
+ shadow stack and the trampoline address is put in its place.
+
+ On return, the trampoline is called, and it will pop off the return
+ code from the shadow stack and return to that.
+
+The issue with multiple users, is that different users may want to
+trace different functions. On entry, the user could say it doesn't want
+to trace the current function, and the return part must not be called
+on exit. Keeping track of which user needs the return called is the
+tricky part.
+
+Here's what I plan on implementing:
+
+ Along with a shadow stack, I was going to add a 4096 byte (one page)
+ array that holds 64 8 byte masks to every task as well. This will allow
+ 64 simultaneous users (which is rather extreme). If we need to support
+ more, we could allocate another page for all tasks. The 8 byte mask
+ will represent each depth (allowing to do this for 64 function call
+ stack depth, which should also be enough).
+
+ Each user will be assigned one of the masks. Each bit in the mask
+ represents the depth of the shadow stack. When a function is called,
+ each user registered with the function graph tracer will get called
+ (if they asked to be called for this function, via the ftrace_ops
+ hashes) and if they want to trace the function, then the bit is set in
+ the mask for that stack depth.
+
+ When the function exits the function and we pop off the return code
+ from the shadow stack, we then look at all the bits set for the
+ corresponding users, and call their return callbacks, and ignore
+ anything that is not set.
+
+
+When a user is unregistered, it the corresponding bits that represent
+it are cleared, and it the return callback will not be called. But the
+tasks being traced will still have their shadow stack to allow it to
+get back to normal.
+
+I'll hopefully have a prototype ready by plumbers.
+
+And this too will require each architecture to probably change. As a
+side project to this, I'm going to try to consolidate the function
+graph code among all the architectures as well. Not an easy task.
+
+-- Steve
