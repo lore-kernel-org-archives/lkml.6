@@ -2,109 +2,87 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B411C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 20:55:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFEA1C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 20:56:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8D3A2082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 20:55:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8D3A2082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 81B912082E
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 20:56:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZWGPG25y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81B912082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728270AbeKCGDt (ORCPT
+        id S1728170AbeKCGFK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 02:03:49 -0400
-Received: from mga11.intel.com ([192.55.52.93]:45897 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728193AbeKCGDs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 02:03:48 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 13:55:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,457,1534834800"; 
-   d="scan'208";a="102987150"
-Received: from kohsamui.iil.intel.com (HELO [10.236.193.12]) ([10.236.193.12])
-  by fmsmga004.fm.intel.com with ESMTP; 02 Nov 2018 13:55:03 -0700
-Subject: Re: lib/genalloc
-To:     Daniel Mentz <danielmentz@google.com>
-Cc:     Stephen Bates <sbates@raithlin.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.co>,
-        lkml <linux-kernel@vger.kernel.org>, labbott@redhat.com
-References: <a170cf65-6884-3592-1de9-4c235888cc8a@intel.com>
- <4DECD467-AD45-419D-8F0F-1456863274FD@raithlin.com>
- <d127f28f-71fe-c175-c0e4-a368ff1d01a1@intel.com>
- <CAE2F3rBifp4y=WQFC6CTcYtPUFyvLD4ZZMrZSzu4P+Fzot_f0A@mail.gmail.com>
-From:   Alexey Skidanov <alexey.skidanov@intel.com>
-Message-ID: <de2e1756-329b-7df2-559e-a603a7edc2ff@intel.com>
-Date:   Fri, 2 Nov 2018 22:56:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sat, 3 Nov 2018 02:05:10 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:39629 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727094AbeKCGFK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 02:05:10 -0400
+Received: by mail-pg1-f195.google.com with SMTP id r9-v6so1474681pgv.6
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 13:56:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=bH3gd5v1ow9gKpotBzCQq9calWLM7/jEQbLpz5vRv9Q=;
+        b=ZWGPG25yJh1XCAw72cc3ttP/UjzI98+uLSw8uUkAXQj74VvwDXXv6C4maZKbfoyPio
+         Icl3qaJhU8NbXzfJkgQo6guOZysJfWxN4EPXvffaFDD4WvieWxwBHlegdgF6Op+2hZWy
+         n2NLaUaGHtZFsdn7v7JZHm30JUeZ1+Ocg+fns=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=bH3gd5v1ow9gKpotBzCQq9calWLM7/jEQbLpz5vRv9Q=;
+        b=IpQYYi66AfHNF/OZ/vvVkS4VeQnnK98+1KBYYayker/6ocZuOj1zp0iUu2kG4usLJU
+         Jq+aXKnQy8tvldWL6DkcF4HzpyrfrXXsyfG2OZscJ6pCJoWdW2PNj5CtPvpMMn13KD8l
+         c2bLj5gCrvZ/Bq5vnk8NL8wcVCRMP2C8YT+E8GPWMYxsCk/PoHJL6fXHBnIOF6Mn/enG
+         kWVe12VUpKasTySx7K1uf5saFXB2+q17hMFq1efPVYcX6j59inMtgPe1mDprmlT1+I9/
+         Uu/t0Ux5OhnPDW4hvWJaQRFBEbagdfurwhBfd2O+vcK8qeR3qhd48oMcyO9zCpJBMNW0
+         QHDA==
+X-Gm-Message-State: AGRZ1gLM45zeoTVFEFp7VuBCguQebWVVU6egsrmD/9Z6mDs0XzBPTaG2
+        czVTt4nBJKXJSL7Ikp88gNt6ag==
+X-Google-Smtp-Source: AJdET5f42P5MTeS7lg3mTQecae2zUAvB40bQrW7ewvULYdChzJrLgYygeo0x+4P2cWrwumfjnGPSQQ==
+X-Received: by 2002:a62:1b4f:: with SMTP id b76-v6mr10756553pfb.96.1541192190684;
+        Fri, 02 Nov 2018 13:56:30 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:fed3:9637:a13a:6c15])
+        by smtp.gmail.com with ESMTPSA id b11-v6sm23105545pgi.10.2018.11.02.13.56.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 02 Nov 2018 13:56:30 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <CAE2F3rBifp4y=WQFC6CTcYtPUFyvLD4ZZMrZSzu4P+Fzot_f0A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+To:     Doug Anderson <dianders@chromium.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <CAD=FV=V7JDAP+riAFSt_CUUFvphEN1jTbkJW_+b-2gubUrCoVg@mail.gmail.com>
+Cc:     Wolfram Sang <wsa@the-dreams.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-i2c@vger.kernel.org, alokc@codeaurora.org,
+        Evan Green <evgreen@chromium.org>
+References: <20181102183537.72334-1-swboyd@chromium.org>
+ <CAD=FV=V7JDAP+riAFSt_CUUFvphEN1jTbkJW_+b-2gubUrCoVg@mail.gmail.com>
+Message-ID: <154119218930.88331.3706147618288145520@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] i2c: i2c-qcom-geni: Fix runtime PM mismatch with child devices
+Date:   Fri, 02 Nov 2018 13:56:29 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Quoting Doug Anderson (2018-11-02 13:43:25)
+> Thanks for the fix.  It looks good, but can you also swap the
+> pm_runtime_disable() and i2c_del_adapter() calls in geni_i2c_remove()
+> to match?
+> =
 
 
-On 11/2/18 9:17 PM, Daniel Mentz wrote:
-> On Thu, Nov 1, 2018 at 10:07 AM Alexey Skidanov
-> <alexey.skidanov@intel.com> wrote:
->> On 11/1/18 18:48, Stephen  Bates wrote:
->>>>    I use gen_pool_first_fit_align() as pool allocation algorithm allocating
->>>>    buffers with requested alignment. But if a chunk base address is not
->>>>    aligned to the requested alignment(from some reason), the returned
->>>>    address is not aligned too.
->>>
->>> Alexey
->>>
->>> Can you try using gen_pool_first_fit_order_align()? Will that give you the alignment you need?
->>>
->>> Stephen
->>>
->>>
->> I think it will not help me. Let's assume that the chunk base address is
->> 0x2F400000 and I want to allocate 16MB aligned buffer. I get back the
->> 0x2F400000. I think it happens because of this string in the
->> gen_pool_alloc_algo():
->>
->> addr = chunk->start_addr + ((unsigned long)start_bit << order);
->>
->> and the gen_pool_first_fit_align() implementation that doesn't take into
->> account the "incorrect" chunk base alignment.
-> 
-> gen_pool_first_fit_align() has no information about the chunk base
-> alignment. Hence, it can't take it into account.
-> 
-> How do you request the alignment in your code?
-> 
-> I agree with your analysis that gen_pool_first_fit_align() performs
-> alignment only with respect to the start of the chunk not the memory
-> address that gen_pool_alloc_algo() returns. I guess a solution would
-> be to only add chunks that satisfy all your alignment requirements. In
-> your case, you must only add chunks that are 16MB aligned.
-> I am unsure whether this is by design, but I believe it's the way that
-> the code currently works.
-> 
+Good catch. Will resend with that.
 
-Daniel,
-
-I think the better solution is to use bitmap_find_next_zero_area_off()
-that receives the bit offset (CMA allocator uses it to solve the same
-issue). Of course, we need to pass the chunk base address to the
-gen_pool_first_fit_align().
-
-What do you think?
-
-Thanks,
-Alexey
