@@ -7,44 +7,47 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36CCCC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:46:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E56C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:46:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09CD020847
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:46:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69B6C2084A
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:46:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZaX0lAvh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09CD020847
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tnQZ2b/M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69B6C2084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730331AbeKCDyU (ORCPT
+        id S1730337AbeKCDyX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:54:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50234 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:54:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729136AbeKCDyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:54:20 -0400
+        id S1729136AbeKCDyX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:54:23 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E92420837;
-        Fri,  2 Nov 2018 18:46:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60D1120837;
+        Fri,  2 Nov 2018 18:46:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184366;
-        bh=mshMeT7XF1+LNKRiBz7fGKfrMskz0GX3CZV6OViAXvU=;
+        s=default; t=1541184370;
+        bh=8NRCr/cpqpw2JFL6wTeXCBn3EmyvbkLyFOFXyfS5hIk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZaX0lAvhDGIzyMf4xoDLATrfB6AFnp28MWVA/km3oavs5Z27yE01m2M5jTM1PT1h3
-         i0rFRa2qkA/+cwsMMF9aqEyzOxDnkGEHX5ySLVFiGvfTsNMlFoAlVdDJpUHxzpxxPC
-         CJ+BXAuuwon/dWnHITg+SxHYF2yPHzYrBl/btrvE=
+        b=tnQZ2b/Mj9EcJ61tGpm227mD6LZmXbpkpaCuLZwHHbl+z11njbEeOFD2T6scMOJq1
+         U4UxzcEfzLrZFhXlWiEo299zl78kAkC/apJgaZotpUCFfIT/1NUSbWmk84oYFRSihJ
+         8iFMFmovQtc3QiRYWv/z/l0j9h7V7H4AvmOJYSbY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joseph Myers <joseph@codesourcery.com>,
+        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 146/150] sparc64: Wire up compat getpeername and getsockname.
-Date:   Fri,  2 Nov 2018 19:35:08 +0100
-Message-Id: <20181102182912.577017115@linuxfoundation.org>
+Subject: [PATCH 4.18 120/150] vhost: Fix Spectre V1 vulnerability
+Date:   Fri,  2 Nov 2018 19:34:42 +0100
+Message-Id: <20181102182911.359261123@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -62,31 +65,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "David S. Miller" <davem@davemloft.net>
+From: Jason Wang <jasowang@redhat.com>
 
-[ Upstream commit 1f2b5b8e2df4591fbca430aff9c5a072dcc0f408 ]
+[ Upstream commit ff002269a4ee9c769dbf9365acef633ebcbd6cbe ]
 
-Fixes: 8b30ca73b7cc ("sparc: Add all necessary direct socket system calls.")
-Reported-by: Joseph Myers  <joseph@codesourcery.com>
+The idx in vhost_vring_ioctl() was controlled by userspace, hence a
+potential exploitation of the Spectre variant 1 vulnerability.
+
+Fixing this by sanitizing idx before using it to index d->vqs.
+
+Cc: Michael S. Tsirkin <mst@redhat.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Signed-off-by: Jason Wang <jasowang@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/sparc/kernel/systbls_64.S |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/vhost/vhost.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/sparc/kernel/systbls_64.S
-+++ b/arch/sparc/kernel/systbls_64.S
-@@ -47,9 +47,9 @@ sys_call_table32:
- 	.word sys_recvfrom, sys_setreuid16, sys_setregid16, sys_rename, compat_sys_truncate
- /*130*/	.word compat_sys_ftruncate, sys_flock, compat_sys_lstat64, sys_sendto, sys_shutdown
- 	.word sys_socketpair, sys_mkdir, sys_rmdir, compat_sys_utimes, compat_sys_stat64
--/*140*/	.word sys_sendfile64, sys_nis_syscall, compat_sys_futex, sys_gettid, compat_sys_getrlimit
-+/*140*/	.word sys_sendfile64, sys_getpeername, compat_sys_futex, sys_gettid, compat_sys_getrlimit
- 	.word compat_sys_setrlimit, sys_pivot_root, sys_prctl, sys_pciconfig_read, sys_pciconfig_write
--/*150*/	.word sys_nis_syscall, sys_inotify_init, sys_inotify_add_watch, sys_poll, sys_getdents64
-+/*150*/	.word sys_getsockname, sys_inotify_init, sys_inotify_add_watch, sys_poll, sys_getdents64
- 	.word compat_sys_fcntl64, sys_inotify_rm_watch, compat_sys_statfs, compat_sys_fstatfs, sys_oldumount
- /*160*/	.word compat_sys_sched_setaffinity, compat_sys_sched_getaffinity, sys_getdomainname, sys_setdomainname, sys_nis_syscall
- 	.word sys_quotactl, sys_set_tid_address, compat_sys_mount, compat_sys_ustat, sys_setxattr
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -30,6 +30,7 @@
+ #include <linux/sched/mm.h>
+ #include <linux/sched/signal.h>
+ #include <linux/interval_tree_generic.h>
++#include <linux/nospec.h>
+ 
+ #include "vhost.h"
+ 
+@@ -1362,6 +1363,7 @@ long vhost_vring_ioctl(struct vhost_dev
+ 	if (idx >= d->nvqs)
+ 		return -ENOBUFS;
+ 
++	idx = array_index_nospec(idx, d->nvqs);
+ 	vq = d->vqs[idx];
+ 
+ 	mutex_lock(&vq->mutex);
 
 
