@@ -2,176 +2,131 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF057C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 288A9C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:41:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DAF02081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:37:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DAF02081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id D56E62082E
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:41:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NMF1q5mG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D56E62082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbeKBUo1 (ORCPT
+        id S1726687AbeKBUs2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 16:44:27 -0400
-Received: from ozlabs.org ([203.11.71.1]:55431 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726016AbeKBUo0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 16:44:26 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42mg6K27dwz9sjC;
-        Fri,  2 Nov 2018 22:37:29 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     aravinda@linux.vnet.ibm.com, camelia.groza@nxp.com,
-        christophe.leroy@c-s.fr, felipe.rechia@datacom.com.br,
-        joel@jms.id.au, leitao@debian.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, naveen.n.rao@linux.vnet.ibm.com,
-        oss@buserror.net, paulus@ozlabs.org, segher@kernel.crashing.org,
-        tyreld@linux.vnet.ibm.com
-Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-4.20-2 tag
-Date:   Fri, 02 Nov 2018 22:37:26 +1100
-Message-ID: <874lczemmh.fsf@concordia.ellerman.id.au>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 2 Nov 2018 16:48:28 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:35835 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726021AbeKBUs2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 16:48:28 -0400
+Received: by mail-lf1-f68.google.com with SMTP id d7-v6so1134014lfi.2
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 04:41:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=Mj2QZxUx6dVHSn2ZCozI/Vd9NNqleLHIpi3vz3MvkLE=;
+        b=NMF1q5mGzw/98bEjtQILZ5uky78p9bTsaHK7klILVQ2s+wV4x0D7In1RNDQTJd/o1f
+         iuaL4CEdJaiVWbAc09r/jZub31Ev0pR6QauLktPLenv61KCydYRC1R/ci4Lekzit+eN8
+         rQT/KhXjsPCOXwQPmlr+Jng1MoTyuDPUur2yg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Mj2QZxUx6dVHSn2ZCozI/Vd9NNqleLHIpi3vz3MvkLE=;
+        b=dTbi/Rl5IbW3KUT16ummAWOHR6tyCB2NlHtv8n/r/brR5+wOGQlNOHWKYSoZ3fU7Kg
+         KBD4ofWKN/5WZ4wfy7Q6jQ2jPg8PBHQUwsmU7M3sGGKU0dkZk3WGeCdMV2s8tf0e1zip
+         uYlO8ArKUFtDXryQ1SqHP+NOyBYw7ckBgtNYXp2caM9TxNiWK12CwBfaIh7d4ptJ1LD9
+         kLtkhyfObnXyTdlNAqOPUbFu5NQfqpoEHEKzLBgKreuQa+Tj9TIXkmo5mK2+z56YzJko
+         Na1XF252RFKGxF0AUK0JqZw1Cr9PapSXfxd3bPpZLLEJdl3KA746QQe88/qQ+IL2EQwO
+         Hq5w==
+X-Gm-Message-State: AGRZ1gKBsY2iHvKyzKxKRuQopeBVtyaqoFSBAoXPt/j9BGmaE0IlHHGq
+        Rt/2Drdk3gAAObDhZwcQgonLoA==
+X-Google-Smtp-Source: AJdET5cEbNjTJzF8LdoF+A2UfOO/3Dp+e3TmYNsMNlnzb7/I2HXZ9qEE14LtWzsXhGwMGg3KazBE+g==
+X-Received: by 2002:a19:914b:: with SMTP id y11mr6351934lfj.98.1541158892788;
+        Fri, 02 Nov 2018 04:41:32 -0700 (PDT)
+Received: from localhost (c-732171d5.07-21-73746f28.bbcust.telenor.se. [213.113.33.115])
+        by smtp.gmail.com with ESMTPSA id k9-v6sm630668ljk.97.2018.11.02.04.41.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 02 Nov 2018 04:41:32 -0700 (PDT)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     yamada.masahiro@socionext.com
+Cc:     linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dvhart@infradead.org, arnd@arndb.de,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] scripts/kconfig/merge_config: don't redefine 'y' to 'm'
+Date:   Fri,  2 Nov 2018 12:41:19 +0100
+Message-Id: <20181102114119.23859-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+In today's merge_config.sh the order of the config fragment files dictates
+the output of a config option. With this approach we will get different
+.config files depending on the order of the config fragment files.
+Adding a switch to add precedence for builtin over modules, this will
+make the .config file the same
 
-Hi Linus,
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ scripts/kconfig/merge_config.sh | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-Please pull a few more powerpc updates for 4.20:
+diff --git a/scripts/kconfig/merge_config.sh b/scripts/kconfig/merge_config.sh
+index da66e7742282..902a60b45614 100755
+--- a/scripts/kconfig/merge_config.sh
++++ b/scripts/kconfig/merge_config.sh
+@@ -32,6 +32,7 @@ usage() {
+ 	echo "  -m    only merge the fragments, do not execute the make command"
+ 	echo "  -n    use allnoconfig instead of alldefconfig"
+ 	echo "  -r    list redundant entries when merging fragments"
++	echo "  -y    make builtin have precedence over modules"
+ 	echo "  -O    dir to put generated output files.  Consider setting \$KCONFIG_CONFIG instead."
+ 	echo
+ 	echo "Used prefix: '$CONFIG_PREFIX'. You can redefine it with \$CONFIG_ environment variable."
+@@ -40,6 +41,7 @@ usage() {
+ RUNMAKE=true
+ ALLTARGET=alldefconfig
+ WARNREDUN=false
++BUILTIN=false
+ OUTPUT=.
+ CONFIG_PREFIX=${CONFIG_-CONFIG_}
+ 
+@@ -64,6 +66,11 @@ while true; do
+ 		shift
+ 		continue
+ 		;;
++	"-y")
++		BUILTIN=true
++		shift
++		continue
++		;;
+ 	"-O")
+ 		if [ -d $2 ];then
+ 			OUTPUT=$(echo $2 | sed 's/\/*$//')
+@@ -122,7 +129,13 @@ for MERGE_FILE in $MERGE_LIST ; do
+ 		grep -q -w $CFG $TMP_FILE || continue
+ 		PREV_VAL=$(grep -w $CFG $TMP_FILE)
+ 		NEW_VAL=$(grep -w $CFG $MERGE_FILE)
+-		if [ "x$PREV_VAL" != "x$NEW_VAL" ] ; then
++		if test "$BUILTIN" = "true" && echo $PREV_VAL |grep -Eq '^\w+=y' && echo $NEW_VAL |grep -Eq '^\w+=m' ; then
++			echo Value of $CFG is \'y\' and we don\'t want to redefine the fragment $MERGE_FILE:
++			echo Previous  value: $PREV_VAL
++			echo New value:       $NEW_VAL
++			echo Will use previous value.
++			echo
++		elif [ "x$PREV_VAL" != "x$NEW_VAL" ] ; then
+ 			echo Value of $CFG is redefined by fragment $MERGE_FILE:
+ 			echo Previous  value: $PREV_VAL
+ 			echo New value:       $NEW_VAL
+-- 
+2.11.0
 
-The following changes since commit 58cfbac25b1fd2b76f94566aed28a3662b0ff8c6:
-
-  Revert "selftests/powerpc: Fix out-of-tree build errors" (2018-10-26 21:58:58 +1100)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-4.20-2
-
-for you to fetch changes up to 1936f094e164cc13ebf17aba1d6b34e033e64188:
-
-  selftests/powerpc: Fix compilation issue due to asm label (2018-11-01 10:06:03 +1100)
-
-- ------------------------------------------------------------------
-powerpc fixes for 4.20 #2
-
-Some things that I missed due to travel, or that came in late.
-
-Two fixes also going to stable:
-
- - A revert of a buggy change to the 8xx TLB miss handlers.
-
- - Our flushing of SPE (Signal Processing Engine) registers on fork was broken.
-
-Other changes:
-
- - A change to the KVM decrementer emulation to use proper APIs.
-
- - Some cleanups to the way we do code patching in the 8xx code.
-
- - Expose the maximum possible memory for the system in /proc/powerpc/lparcfg.
-
- - Merge some updates from Scott: "a couple device tree updates, and a fix for a
-   missing prototype warning."
-
-A few other minor fixes and a handful of fixes for our selftests.
-
-Thanks to:
-  Aravinda Prasad, Breno Leitao, Camelia Groza, Christophe Leroy, Felipe Rechia,
-  Joel Stanley, Naveen N. Rao, Paul Mackerras, Scott Wood, Tyrel Datwyler.
-
-- ------------------------------------------------------------------
-Aravinda Prasad (1):
-      powerpc/pseries: Export maximum memory value
-
-Breno Leitao (1):
-      selftests/powerpc: Fix ptrace tm failure
-
-Camelia Groza (1):
-      powerpc/dts/fsl: t2080rdb: reorder the Cortina PHY XFI lanes
-
-Christophe Leroy (6):
-      powerpc/8xx: Add DT node for using the SEC engine of the MPC885
-      powerpc/8xx: add missing header in 8xx_mmu.c
-      Revert "powerpc/8xx: Use L1 entry APG to handle _PAGE_ACCESSED for CONFIG_SWAP"
-      powerpc/code-patching: Add a helper to get the address of a patch_site
-      powerpc/8xx: Use patch_site for memory setup patching
-      powerpc/8xx: Use patch_site for perf counters setup
-
-Felipe Rechia (1):
-      powerpc/process: Fix flush_all_to_thread for SPE
-
-Joel Stanley (5):
-      selftests: powerpc: Fix warning for security subdir
-      powerpc/xmon: Relax frame size for clang
-      selftests/powerpc/ptrace: Fix out-of-tree build
-      selftests/powerpc/signal: Fix out-of-tree build
-      selftests/powerpc/pmu: Link ebb tests with -no-pie
-
-Michael Ellerman (3):
-      Merge branch 'next' of https://git.kernel.org/.../scottwood/linux into next
-      selftests/powerpc/switch_endian: Fix out-of-tree build
-      selftests/powerpc/cache_shape: Fix out-of-tree build
-
-Naveen N. Rao (2):
-      selftests/powerpc: Relax L1d miss targets for rfi_flush test
-      selftests/powerpc: Fix compilation issue due to asm label
-
-Paul Mackerras (1):
-      KVM: PPC: Use exported tb_to_ns() function in decrementer emulation
-
-Tyrel Datwyler (1):
-      powerpc/pseries: add missing cpumask.h include file
-
-
- arch/powerpc/boot/dts/fsl/t2080rdb.dts             |  4 +-
- arch/powerpc/boot/dts/mpc885ads.dts                | 13 ++-
- arch/powerpc/include/asm/code-patching.h           |  5 ++
- arch/powerpc/include/asm/mmu-8xx.h                 | 43 ++++------
- arch/powerpc/include/asm/rtas.h                    |  1 +
- arch/powerpc/kernel/head_8xx.S                     | 97 +++++++++++++---------
- arch/powerpc/kernel/process.c                      |  3 +-
- arch/powerpc/kvm/book3s_hv.c                       |  3 +-
- arch/powerpc/kvm/emulate.c                         |  7 +-
- arch/powerpc/mm/8xx_mmu.c                          | 26 ++----
- arch/powerpc/perf/8xx-pmu.c                        | 27 +++---
- arch/powerpc/platforms/pseries/lparcfg.c           | 13 +++
- arch/powerpc/xmon/Makefile                         |  6 ++
- .../testing/selftests/powerpc/cache_shape/Makefile |  9 +-
- tools/testing/selftests/powerpc/pmu/ebb/Makefile   |  3 +
- tools/testing/selftests/powerpc/ptrace/Makefile    | 13 +--
- .../selftests/powerpc/ptrace/ptrace-tm-spd-gpr.c   |  4 +-
- tools/testing/selftests/powerpc/security/Makefile  |  1 +
- .../testing/selftests/powerpc/security/rfi_flush.c | 18 ++--
- tools/testing/selftests/powerpc/signal/Makefile    | 11 +--
- .../selftests/powerpc/switch_endian/Makefile       |  1 +
- tools/testing/selftests/powerpc/utils.c            |  6 +-
- 22 files changed, 169 insertions(+), 145 deletions(-)
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJb3DXnAAoJEFHr6jzI4aWAYKYP/i/a94GU2Otsq92OBhi0vi0F
-z465qeQYjxtLfB0+a1Pm8RE6PbiecTHdeNl11VH4Us1m0tn8RwikbfsAuM+C7R/k
-LNXfIrzz77RFXQgNs5kBMeTvQG1yznSpdDfZ2xtx72Oqdcw4JHFfjCf2Dzf8i8Dl
-Dn3NSaO0uppg/P4Eoi7eMZ+CgI9CpPzPQKj0wcIszHatoswKJg1AMglnAHeiERMh
-ne7XkKq/h0nVydTR/+OYXSAj7CBvqSXJ1PQPVzkknvgTuPiHsmzFlffm5NVobIHN
-KYI66HdJ0M0a8tpES+LovrebVGH3HPe4xtjxtxKzpUipbtsGBobroIz9EzRE+XKj
-UMgnEtQziXnUU3aI1E8ctoR+e5NeLT37Q9OH6fDZgOhVo3CaVGCYf2cJP0yfsJHu
-ovksMHfuQuJtZQtdflmYezVsWi1uQo60oMfTKYqvM3FYEqrZZdvjlj8S3LtTUOh6
-Q8EJKSTLGUF2h8rl5CYK1LHpSbv736qc3kodjvQmFAsh+U3y0ooShfoa+O8ORylE
-Q/gf4TvLPHcA/PvowUD0UQIW//SDem+CX3axORICKITjSywgIZoZj+3CSt29SFVd
-Vublxd2s3zflRGseZXURvGd9Ra4U+Al4AO/rvfPYWgp6eiieRbk4fljps0gaVbaF
-OAAyPTb2VPyGG6UCGrP2
-=gwAL
------END PGP SIGNATURE-----
