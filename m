@@ -2,258 +2,99 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D78C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:01:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DD05C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC87520657
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:01:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC87520657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C7A62081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:11:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZlehDFIH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C7A62081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728098AbeKCAIY (ORCPT
+        id S1727771AbeKCATQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 20:08:24 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39280 "EHLO mx1.redhat.com"
+        Fri, 2 Nov 2018 20:19:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726557AbeKCAIX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 20:08:23 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726318AbeKCATQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 20:19:16 -0400
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6315480F90;
-        Fri,  2 Nov 2018 15:01:00 +0000 (UTC)
-Received: from localhost (ovpn-8-27.pek2.redhat.com [10.72.8.27])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8607D5D964;
-        Fri,  2 Nov 2018 15:00:59 +0000 (UTC)
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH 4/4] irq: add support for allocating (and affinitizing) sets of IRQs
-Date:   Fri,  2 Nov 2018 22:59:51 +0800
-Message-Id: <20181102145951.31979-5-ming.lei@redhat.com>
-In-Reply-To: <20181102145951.31979-1-ming.lei@redhat.com>
-References: <20181102145951.31979-1-ming.lei@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 02 Nov 2018 15:01:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CB4E2084A;
+        Fri,  2 Nov 2018 15:11:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541171511;
+        bh=PLLSRBxH2duP2huVUvic9ejnCt3PIwq3FNbz6pgJQ3Q=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ZlehDFIH8S2yYSB2/oNyahRURIlvrwtQ8QmSaCIwCY/OptqQTCvV4MnjkrWPl64ki
+         C/ympURNIinqkFlZnc1XlGUDtNRajnrf177t+03/Y1dOhs9dnietaVWwUgjTLFIucB
+         cpbusQ2DV1ZSaf/U4w4PfDOYhgg4I004AYZ9m93s=
+Received: by mail-qk1-f181.google.com with SMTP id y16so2329943qki.7;
+        Fri, 02 Nov 2018 08:11:51 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gKabLiHlMDgojQ7xe4J5ZqS4SrWOFcQAUGPQvn8+uTD+RjHH5ps
+        JAZMemeTpHlKDXrF3t+bT7BPUlYOfq6GUbrw7g==
+X-Google-Smtp-Source: AJdET5cHO66c+SibzTkdcLkUK2Rl45VKgMq3pyIv10odKE7UWpDnLDk280BNDSRHKFYg91/7QBFTk9NpdE7J+gujPKU=
+X-Received: by 2002:a0c:e2ca:: with SMTP id t10mr11100001qvl.77.1541171510679;
+ Fri, 02 Nov 2018 08:11:50 -0700 (PDT)
+MIME-Version: 1.0
+References: <1541113468-22097-1-git-send-email-atish.patra@wdc.com>
+ <1541113468-22097-2-git-send-email-atish.patra@wdc.com> <CAL_Jsq+wProNynprMjQnrz1jmbZT9TmmA-_=vPUxCEED_8xONg@mail.gmail.com>
+ <20181102133100.GA13130@e107155-lin>
+In-Reply-To: <20181102133100.GA13130@e107155-lin>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 2 Nov 2018 10:11:38 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLO+cOcHkr41ebPtONwrzOWGhksH1ypph+tihsuOVDOug@mail.gmail.com>
+Message-ID: <CAL_JsqLO+cOcHkr41ebPtONwrzOWGhksH1ypph+tihsuOVDOug@mail.gmail.com>
+Subject: Re: [RFC 1/2] dt-bindings: topology: Add RISC-V cpu topology.
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     Atish Patra <atish.patra@wdc.com>, linux-riscv@lists.infradead.org,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Anup Patel <anup@brainfault.org>,
+        Christoph Hellwig <hch@infradead.org>, Damien.LeMoal@wdc.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, alankao@andestech.com,
+        Zong Li <zong@andestech.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jens Axboe <axboe@kernel.dk>
+On Fri, Nov 2, 2018 at 8:31 AM Sudeep Holla <sudeep.holla@arm.com> wrote:
+>
+> On Fri, Nov 02, 2018 at 08:09:39AM -0500, Rob Herring wrote:
+> > On Thu, Nov 1, 2018 at 6:04 PM Atish Patra <atish.patra@wdc.com> wrote:
+> > >
+> > > Define a RISC-V cpu topology. This is based on cpu-map in ARM world.
+> > > But it doesn't need a separate thread node for defining SMT systems.
+> > > Multiple cpu phandle properties can be parsed to identify the sibling
+> > > hardware threads. Moreover, we do not have cluster concept in RISC-V.
+> > > So package is a better word choice than cluster for RISC-V.
+> >
+> > There was a proposal to add package info for ARM recently. Not sure
+> > what happened to that, but we don't need 2 different ways.
+> >
+>
+> We still need that, I can brush it up and post what Lorenzo had previously
+> proposed[1]. We want to keep both DT and ACPI CPU topology story aligned.
 
-A driver may have a need to allocate multiple sets of MSI/MSI-X
-interrupts, and have them appropriately affinitized. Add support for
-defining a number of sets in the irq_affinity structure, of varying
-sizes, and get each set affinitized correctly across the machine.
+Frankly, I don't care what the ACPI story is. I care whether each cpu
+arch does its own thing in DT or not. If a package prop works for
+RISC-V folks and that happens to align with ACPI, then okay. Though I
+tend to prefer a package represented as a node rather than a property
+as I think that's more consistent.
 
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-Reviewed-by: Keith Busch <keith.busch@intel.com>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- drivers/pci/msi.c         | 14 ++++++++++
- include/linux/interrupt.h |  4 +++
- kernel/irq/affinity.c     | 71 ++++++++++++++++++++++++++++++++++-------------
- 3 files changed, 70 insertions(+), 19 deletions(-)
+Any comments on the thread aspect (whether it has ever been used)?
+Though I think thread as a node level is more consistent with each
+topology level being a node (same with package).
 
-diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
-index af24ed50a245..265ed3e4c920 100644
---- a/drivers/pci/msi.c
-+++ b/drivers/pci/msi.c
-@@ -1036,6 +1036,13 @@ static int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
- 	if (maxvec < minvec)
- 		return -ERANGE;
- 
-+	/*
-+	 * If the caller is passing in sets, we can't support a range of
-+	 * vectors. The caller needs to handle that.
-+	 */
-+	if (affd && affd->nr_sets && minvec != maxvec)
-+		return -EINVAL;
-+
- 	if (WARN_ON_ONCE(dev->msi_enabled))
- 		return -EINVAL;
- 
-@@ -1087,6 +1094,13 @@ static int __pci_enable_msix_range(struct pci_dev *dev,
- 	if (maxvec < minvec)
- 		return -ERANGE;
- 
-+	/*
-+	 * If the caller is passing in sets, we can't support a range of
-+	 * supported vectors. The caller needs to handle that.
-+	 */
-+	if (affd && affd->nr_sets && minvec != maxvec)
-+		return -EINVAL;
-+
- 	if (WARN_ON_ONCE(dev->msix_enabled))
- 		return -EINVAL;
- 
-diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-index 1d6711c28271..ca397ff40836 100644
---- a/include/linux/interrupt.h
-+++ b/include/linux/interrupt.h
-@@ -247,10 +247,14 @@ struct irq_affinity_notify {
-  *			the MSI(-X) vector space
-  * @post_vectors:	Don't apply affinity to @post_vectors at end of
-  *			the MSI(-X) vector space
-+ * @nr_sets:		Length of passed in *sets array
-+ * @sets:		Number of affinitized sets
-  */
- struct irq_affinity {
- 	int	pre_vectors;
- 	int	post_vectors;
-+	int	nr_sets;
-+	int	*sets;
- };
- 
- #if defined(CONFIG_SMP)
-diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
-index 9c74f21ab10e..d49d3bff702c 100644
---- a/kernel/irq/affinity.c
-+++ b/kernel/irq/affinity.c
-@@ -172,26 +172,28 @@ static int __irq_build_affinity_masks(const struct irq_affinity *affd,
-  *	2) spread other possible CPUs on these vectors
-  */
- static int irq_build_affinity_masks(const struct irq_affinity *affd,
--				    int startvec, int numvecs,
-+				    int startvec, int numvecs, int firstvec,
- 				    cpumask_var_t *node_to_cpumask,
- 				    struct cpumask *masks)
- {
--	int curvec = startvec, usedvecs = -1;
-+	int curvec = startvec, nr_present, nr_others;
-+	int ret = -ENOMEM;
- 	cpumask_var_t nmsk, npresmsk;
- 
- 	if (!zalloc_cpumask_var(&nmsk, GFP_KERNEL))
--			return usedvecs;
-+			return ret;
- 
- 	if (!zalloc_cpumask_var(&npresmsk, GFP_KERNEL))
- 			goto fail;
- 
-+	ret = 0;
- 	/* Stabilize the cpumasks */
- 	get_online_cpus();
- 	build_node_to_cpumask(node_to_cpumask);
- 
- 	/* Spread on present CPUs starting from affd->pre_vectors */
--	usedvecs = __irq_build_affinity_masks(affd, curvec, numvecs,
--					affd->pre_vectors, node_to_cpumask,
-+	nr_present = __irq_build_affinity_masks(affd, curvec, numvecs,
-+					firstvec, node_to_cpumask,
- 					cpu_present_mask, nmsk, masks);
- 
- 	/*
-@@ -200,22 +202,24 @@ static int irq_build_affinity_masks(const struct irq_affinity *affd,
- 	 * vector space, assign the non present CPUs to the already spread
- 	 * out vectors.
- 	 */
--	if (usedvecs >= numvecs)
--		curvec = affd->pre_vectors;
-+	if (nr_present >= numvecs)
-+		curvec = firstvec;
- 	else
--		curvec = affd->pre_vectors + usedvecs;
-+		curvec = firstvec + nr_present;
- 	cpumask_andnot(npresmsk, cpu_possible_mask, cpu_present_mask);
--	usedvecs += __irq_build_affinity_masks(affd, curvec, numvecs,
--					affd->pre_vectors, node_to_cpumask, npresmsk,
-+	nr_others = __irq_build_affinity_masks(affd, curvec, numvecs,
-+					firstvec, node_to_cpumask, npresmsk,
- 					nmsk, masks);
- 	put_online_cpus();
- 
-+	if (nr_present < numvecs)
-+			WARN_ON(nr_present + nr_others < numvecs);
-+
- 	free_cpumask_var(npresmsk);
- 
-  fail:
- 	free_cpumask_var(nmsk);
--
--	return usedvecs;
-+	return ret;
- }
- 
- /**
-@@ -232,6 +236,7 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
- 	int curvec, usedvecs;
- 	cpumask_var_t *node_to_cpumask;
- 	struct cpumask *masks = NULL;
-+	int i, nr_sets;
- 
- 	/*
- 	 * If there aren't any vectors left after applying the pre/post
-@@ -252,8 +257,28 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
- 	for (curvec = 0; curvec < affd->pre_vectors; curvec++)
- 		cpumask_copy(masks + curvec, irq_default_affinity);
- 
--	usedvecs = irq_build_affinity_masks(affd, curvec, affvecs,
--					    node_to_cpumask, masks);
-+	/*
-+	 * Spread on present CPUs starting from affd->pre_vectors. If we
-+	 * have multiple sets, build each sets affinity mask separately.
-+	 */
-+	nr_sets = affd->nr_sets;
-+	if (!nr_sets)
-+		nr_sets = 1;
-+
-+	for (i = 0, usedvecs = 0; i < nr_sets; i++) {
-+		int this_vecs = affd->sets ? affd->sets[i] : affvecs;
-+		int ret;
-+
-+		ret = irq_build_affinity_masks(affd, curvec, this_vecs,
-+						curvec, node_to_cpumask, masks);
-+		if (ret) {
-+				kfree(masks);
-+				masks = NULL;
-+				goto outnodemsk;
-+		}
-+		curvec += this_vecs;
-+		usedvecs += this_vecs;
-+	}
- 
- 	/* Fill out vectors at the end that don't need affinity */
- 	if (usedvecs >= affvecs)
-@@ -278,13 +303,21 @@ int irq_calc_affinity_vectors(int minvec, int maxvec, const struct irq_affinity
- {
- 	int resv = affd->pre_vectors + affd->post_vectors;
- 	int vecs = maxvec - resv;
--	int ret;
-+	int set_vecs;
- 
- 	if (resv > minvec)
- 		return 0;
- 
--	get_online_cpus();
--	ret = min_t(int, cpumask_weight(cpu_possible_mask), vecs) + resv;
--	put_online_cpus();
--	return ret;
-+	if (affd->nr_sets) {
-+		int i;
-+
-+		for (i = 0, set_vecs = 0;  i < affd->nr_sets; i++)
-+			set_vecs += affd->sets[i];
-+	} else {
-+		get_online_cpus();
-+		set_vecs = cpumask_weight(cpu_possible_mask);
-+		put_online_cpus();
-+	}
-+
-+	return resv + min(set_vecs, vecs);
- }
--- 
-2.9.5
-
+Rob
