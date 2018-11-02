@@ -7,45 +7,50 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1E5BC65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06828C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BCC72084A
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCA2620843
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Byc1mc2u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BCC72084A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qMzlwkis"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCA2620843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729516AbeKCDtU (ORCPT
+        id S1729531AbeKCDtW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:49:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43884 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:49:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728441AbeKCDtT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:49:19 -0400
+        id S1729037AbeKCDtW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:49:22 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99B8E2082E;
-        Fri,  2 Nov 2018 18:41:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ADAEA2082E;
+        Fri,  2 Nov 2018 18:41:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184067;
-        bh=NHsJWOeWxfK8K9+maimBZ+1LWZomPaco6LtWQp5TaHw=;
+        s=default; t=1541184070;
+        bh=zHfOlg8rXJs+8i5EMjg0TxOMhCBwxzRwxK1/vnbVRg4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Byc1mc2ub6e6q532cHi5PaE1vcyO2BPxhz4Png7tx0gRKAgxX51riLwhD2Lbb0GEp
-         HrNbE1BgSGITgV0cE1Ai1VoUjw7VhcfKDsKrNEcQIqBIxpryMtWnIPopN/x9yuv1bW
-         tgjtu9P7Qnv+P5tGvd47y+kBGfpRdeGZFQvjm1oI=
+        b=qMzlwkisNA0uC+z1dyfA4qbKGuFeGl4i+Pkx0fYKoRtzu7HrTmvueitudvz/+hrgz
+         n/760KdDGt6cyHIu0kmti0DajpMItd7SbQBmVc07BniXCirUnjBVAdnYNJmSmwOUl8
+         v2N+HlAzqH2llj0DjVLZS9rh7H7IqZPC1l7YiZpQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Larry Chen <lchen@suse.com>,
+        Changwei Ge <ge.changwei@h3c.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        Joseph Qi <jiangqi903@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 069/150] yam: fix a missing-check bug
-Date:   Fri,  2 Nov 2018 19:33:51 +0100
-Message-Id: <20181102182908.415893703@linuxfoundation.org>
+Subject: [PATCH 4.18 070/150] ocfs2: fix crash in ocfs2_duplicate_clusters_by_page()
+Date:   Fri,  2 Nov 2018 19:33:52 +0100
+Message-Id: <20181102182908.476713167@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -63,54 +68,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0781168e23a2fc8dceb989f11fc5b39b3ccacc35 ]
+[ Upstream commit 69eb7765b9c6902444c89c54e7043242faf981e5 ]
 
-In yam_ioctl(), the concrete ioctl command is firstly copied from the
-user-space buffer 'ifr->ifr_data' to 'ioctl_cmd' and checked through the
-following switch statement. If the command is not as expected, an error
-code EINVAL is returned. In the following execution the buffer
-'ifr->ifr_data' is copied again in the cases of the switch statement to
-specific data structures according to what kind of ioctl command is
-requested. However, after the second copy, no re-check is enforced on the
-newly-copied command. Given that the buffer 'ifr->ifr_data' is in the user
-space, a malicious user can race to change the command between the two
-copies. This way, the attacker can inject inconsistent data and cause
-undefined behavior.
+ocfs2_duplicate_clusters_by_page() may crash if one of the extent's pages
+is dirty.  When a page has not been written back, it is still in dirty
+state.  If ocfs2_duplicate_clusters_by_page() is called against the dirty
+page, the crash happens.
 
-This patch adds a re-check in each case of the switch statement if there is
-a second copy in that case, to re-check whether the command obtained in the
-second copy is the same as the one in the first copy. If not, an error code
-EINVAL will be returned.
+To fix this bug, we can just unlock the page and wait until the page until
+its not dirty.
 
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The following is the backtrace:
+
+kernel BUG at /root/code/ocfs2/refcounttree.c:2961!
+[exception RIP: ocfs2_duplicate_clusters_by_page+822]
+__ocfs2_move_extent+0x80/0x450 [ocfs2]
+? __ocfs2_claim_clusters+0x130/0x250 [ocfs2]
+ocfs2_defrag_extent+0x5b8/0x5e0 [ocfs2]
+__ocfs2_move_extents_range+0x2a4/0x470 [ocfs2]
+ocfs2_move_extents+0x180/0x3b0 [ocfs2]
+? ocfs2_wait_for_recovery+0x13/0x70 [ocfs2]
+ocfs2_ioctl_move_extents+0x133/0x2d0 [ocfs2]
+ocfs2_ioctl+0x253/0x640 [ocfs2]
+do_vfs_ioctl+0x90/0x5f0
+SyS_ioctl+0x74/0x80
+do_syscall_64+0x74/0x140
+entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+
+Once we find the page is dirty, we do not wait until it's clean, rather we
+use write_one_page() to write it back
+
+Link: http://lkml.kernel.org/r/20180829074740.9438-1-lchen@suse.com
+[lchen@suse.com: update comments]
+  Link: http://lkml.kernel.org/r/20180830075041.14879-1-lchen@suse.com
+[akpm@linux-foundation.org: coding-style fixes]
+Signed-off-by: Larry Chen <lchen@suse.com>
+Acked-by: Changwei Ge <ge.changwei@h3c.com>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Joseph Qi <jiangqi903@gmail.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/hamradio/yam.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/ocfs2/refcounttree.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/hamradio/yam.c b/drivers/net/hamradio/yam.c
-index 16ec7af6ab7b..ba9df430fca6 100644
---- a/drivers/net/hamradio/yam.c
-+++ b/drivers/net/hamradio/yam.c
-@@ -966,6 +966,8 @@ static int yam_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
- 				 sizeof(struct yamdrv_ioctl_mcs));
- 		if (IS_ERR(ym))
- 			return PTR_ERR(ym);
-+		if (ym->cmd != SIOCYAMSMCS)
-+			return -EINVAL;
- 		if (ym->bitrate > YAM_MAXBITRATE) {
- 			kfree(ym);
- 			return -EINVAL;
-@@ -981,6 +983,8 @@ static int yam_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
- 		if (copy_from_user(&yi, ifr->ifr_data, sizeof(struct yamdrv_ioctl_cfg)))
- 			 return -EFAULT;
+diff --git a/fs/ocfs2/refcounttree.c b/fs/ocfs2/refcounttree.c
+index 7869622af22a..7a5ee145c733 100644
+--- a/fs/ocfs2/refcounttree.c
++++ b/fs/ocfs2/refcounttree.c
+@@ -2946,6 +2946,7 @@ int ocfs2_duplicate_clusters_by_page(handle_t *handle,
+ 		if (map_end & (PAGE_SIZE - 1))
+ 			to = map_end & (PAGE_SIZE - 1);
  
-+		if (yi.cmd != SIOCYAMSCFG)
-+			return -EINVAL;
- 		if ((yi.cfg.mask & YAM_IOBASE) && netif_running(dev))
- 			return -EINVAL;		/* Cannot change this parameter when up */
- 		if ((yi.cfg.mask & YAM_IRQ) && netif_running(dev))
++retry:
+ 		page = find_or_create_page(mapping, page_index, GFP_NOFS);
+ 		if (!page) {
+ 			ret = -ENOMEM;
+@@ -2954,11 +2955,18 @@ int ocfs2_duplicate_clusters_by_page(handle_t *handle,
+ 		}
+ 
+ 		/*
+-		 * In case PAGE_SIZE <= CLUSTER_SIZE, This page
+-		 * can't be dirtied before we CoW it out.
++		 * In case PAGE_SIZE <= CLUSTER_SIZE, we do not expect a dirty
++		 * page, so write it back.
+ 		 */
+-		if (PAGE_SIZE <= OCFS2_SB(sb)->s_clustersize)
+-			BUG_ON(PageDirty(page));
++		if (PAGE_SIZE <= OCFS2_SB(sb)->s_clustersize) {
++			if (PageDirty(page)) {
++				/*
++				 * write_on_page will unlock the page on return
++				 */
++				ret = write_one_page(page);
++				goto retry;
++			}
++		}
+ 
+ 		if (!PageUptodate(page)) {
+ 			ret = block_read_full_page(page, ocfs2_get_block);
 -- 
 2.17.1
 
