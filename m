@@ -4,47 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE9A9C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:53:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B57EEC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:53:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FD5620848
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:53:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F6892082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:53:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZQWg8ToR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FD5620848
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2p1r+Phq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F6892082D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731133AbeKCEBt (ORCPT
+        id S1731142AbeKCEBx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 00:01:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57692 "EHLO mail.kernel.org"
+        Sat, 3 Nov 2018 00:01:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731095AbeKCEBt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 00:01:49 -0400
+        id S1730465AbeKCEBw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 00:01:52 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C96A2082D;
-        Fri,  2 Nov 2018 18:53:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 07F962082D;
+        Fri,  2 Nov 2018 18:53:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184812;
-        bh=FKywddF3f/leeIck9HYzSda2orFvp79lW0uqAofLvbI=;
+        s=default; t=1541184816;
+        bh=cSDTIZhOk5C0zfvE1CwjU18K7hIDU0+iKH06qIoD7Eg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZQWg8ToRasSa58cAwQW7RPbtl8XITjh3l/1dE7xLYC3cG3r6KsTRfsBGrI+UiL5CZ
-         BRd5E6DGLoB6r+nZg6Tq9Y8W5H+SA3+XSCVN8wEcIgoCWKt4s3hdxaxv6cNlDVIhog
-         XEyuGl9B2LnpAEnD5Avk9Kj+NF9Pnhzj1hgq34wY=
+        b=2p1r+PhqoUnOCIXh8JszaR3lQK6uvRrryXdkyEr2y1P8riQAx9gthXoEsycSbmLU3
+         1Elssw5tNJX5VNODxYNpG2Vqoq/L8/xgw4wuhdy45URK3U+Izb8DoSC1Jk3Ob+e+Q8
+         MaHpKJZid/YrroMk5uhUxNDGP30Hib7v5PD648BU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        stable@vger.kernel.org, Arthur Kiyanovski <akiyano@amazon.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 101/143] rxrpc: Fix connection-level abort handling
-Date:   Fri,  2 Nov 2018 19:34:46 +0100
-Message-Id: <20181102182905.925952147@linuxfoundation.org>
+Subject: [PATCH 4.14 102/143] net: ena: fix warning in rmmod caused by double iounmap
+Date:   Fri,  2 Nov 2018 19:34:47 +0100
+Message-Id: <20181102182906.012961551@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -62,152 +63,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 647530924f47c93db472ee3cf43b7ef1425581b6 ]
+[ Upstream commit d79c3888bde6581da7ff9f9d6f581900ecb5e632 ]
 
-Fix connection-level abort handling to cache the abort and error codes
-properly so that a new incoming call can be properly aborted if it races
-with the parent connection being aborted by another CPU.
+Memory mapped with devm_ioremap is automatically freed when the driver
+is disconnected from the device. Therefore there is no need to
+explicitly call devm_iounmap.
 
-The abort_code and error parameters can then be dropped from
-rxrpc_abort_calls().
-
-Fixes: f5c17aaeb2ae ("rxrpc: Calls should only have one terminal state")
-Signed-off-by: David Howells <dhowells@redhat.com>
+Fixes: 0857d92f71b6 ("net: ena: add missing unmap bars on device removal")
+Fixes: 411838e7b41c ("net: ena: fix rare kernel crash when bar memory remap fails")
+Signed-off-by: Arthur Kiyanovski <akiyano@amazon.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/rxrpc/ar-internal.h |  4 ++--
- net/rxrpc/call_accept.c |  4 ++--
- net/rxrpc/conn_event.c  | 26 +++++++++++++++-----------
- 3 files changed, 19 insertions(+), 15 deletions(-)
+ drivers/net/ethernet/amazon/ena/ena_netdev.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
-index e6c2c4f56fb1..71c7f1dd4599 100644
---- a/net/rxrpc/ar-internal.h
-+++ b/net/rxrpc/ar-internal.h
-@@ -424,8 +424,7 @@ struct rxrpc_connection {
- 	spinlock_t		state_lock;	/* state-change lock */
- 	enum rxrpc_conn_cache_state cache_state;
- 	enum rxrpc_conn_proto_state state;	/* current state of connection */
--	u32			local_abort;	/* local abort code */
--	u32			remote_abort;	/* remote abort code */
-+	u32			abort_code;	/* Abort code of connection abort */
- 	int			debug_id;	/* debug ID for printks */
- 	atomic_t		serial;		/* packet serial number counter */
- 	unsigned int		hi_serial;	/* highest serial number received */
-@@ -435,6 +434,7 @@ struct rxrpc_connection {
- 	u8			security_size;	/* security header size */
- 	u8			security_ix;	/* security type */
- 	u8			out_clientflag;	/* RXRPC_CLIENT_INITIATED if we are client */
-+	short			error;		/* Local error code */
- };
+diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.c b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+index 60b3ee29d82c..08c9c99a8331 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
++++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+@@ -3059,15 +3059,8 @@ err_rss_init:
  
- /*
-diff --git a/net/rxrpc/call_accept.c b/net/rxrpc/call_accept.c
-index 62b1581d44a5..2dd13f5c47c8 100644
---- a/net/rxrpc/call_accept.c
-+++ b/net/rxrpc/call_accept.c
-@@ -418,11 +418,11 @@ found_service:
- 
- 	case RXRPC_CONN_REMOTELY_ABORTED:
- 		rxrpc_set_call_completion(call, RXRPC_CALL_REMOTELY_ABORTED,
--					  conn->remote_abort, -ECONNABORTED);
-+					  conn->abort_code, conn->error);
- 		break;
- 	case RXRPC_CONN_LOCALLY_ABORTED:
- 		rxrpc_abort_call("CON", call, sp->hdr.seq,
--				 conn->local_abort, -ECONNABORTED);
-+				 conn->abort_code, conn->error);
- 		break;
- 	default:
- 		BUG();
-diff --git a/net/rxrpc/conn_event.c b/net/rxrpc/conn_event.c
-index 0435c4167a1a..75ec1ad595b7 100644
---- a/net/rxrpc/conn_event.c
-+++ b/net/rxrpc/conn_event.c
-@@ -117,7 +117,7 @@ static void rxrpc_conn_retransmit_call(struct rxrpc_connection *conn,
- 
- 	switch (chan->last_type) {
- 	case RXRPC_PACKET_TYPE_ABORT:
--		_proto("Tx ABORT %%%u { %d } [re]", serial, conn->local_abort);
-+		_proto("Tx ABORT %%%u { %d } [re]", serial, conn->abort_code);
- 		break;
- 	case RXRPC_PACKET_TYPE_ACK:
- 		trace_rxrpc_tx_ack(NULL, serial, chan->last_seq, 0,
-@@ -135,13 +135,12 @@ static void rxrpc_conn_retransmit_call(struct rxrpc_connection *conn,
-  * pass a connection-level abort onto all calls on that connection
-  */
- static void rxrpc_abort_calls(struct rxrpc_connection *conn,
--			      enum rxrpc_call_completion compl,
--			      u32 abort_code, int error)
-+			      enum rxrpc_call_completion compl)
+ static void ena_release_bars(struct ena_com_dev *ena_dev, struct pci_dev *pdev)
  {
- 	struct rxrpc_call *call;
- 	int i;
+-	int release_bars;
++	int release_bars = pci_select_bars(pdev, IORESOURCE_MEM) & ENA_BAR_MASK;
  
--	_enter("{%d},%x", conn->debug_id, abort_code);
-+	_enter("{%d},%x", conn->debug_id, conn->abort_code);
+-	if (ena_dev->mem_bar)
+-		devm_iounmap(&pdev->dev, ena_dev->mem_bar);
+-
+-	if (ena_dev->reg_bar)
+-		devm_iounmap(&pdev->dev, ena_dev->reg_bar);
+-
+-	release_bars = pci_select_bars(pdev, IORESOURCE_MEM) & ENA_BAR_MASK;
+ 	pci_release_selected_regions(pdev, release_bars);
+ }
  
- 	spin_lock(&conn->channel_lock);
- 
-@@ -153,9 +152,11 @@ static void rxrpc_abort_calls(struct rxrpc_connection *conn,
- 			if (compl == RXRPC_CALL_LOCALLY_ABORTED)
- 				trace_rxrpc_abort("CON", call->cid,
- 						  call->call_id, 0,
--						  abort_code, error);
-+						  conn->abort_code,
-+						  conn->error);
- 			if (rxrpc_set_call_completion(call, compl,
--						      abort_code, error))
-+						      conn->abort_code,
-+						      conn->error))
- 				rxrpc_notify_socket(call);
- 		}
- 	}
-@@ -188,10 +189,12 @@ static int rxrpc_abort_connection(struct rxrpc_connection *conn,
- 		return 0;
- 	}
- 
-+	conn->error = error;
-+	conn->abort_code = abort_code;
- 	conn->state = RXRPC_CONN_LOCALLY_ABORTED;
- 	spin_unlock_bh(&conn->state_lock);
- 
--	rxrpc_abort_calls(conn, RXRPC_CALL_LOCALLY_ABORTED, abort_code, error);
-+	rxrpc_abort_calls(conn, RXRPC_CALL_LOCALLY_ABORTED);
- 
- 	msg.msg_name	= &conn->params.peer->srx.transport;
- 	msg.msg_namelen	= conn->params.peer->srx.transport_len;
-@@ -210,7 +213,7 @@ static int rxrpc_abort_connection(struct rxrpc_connection *conn,
- 	whdr._rsvd	= 0;
- 	whdr.serviceId	= htons(conn->service_id);
- 
--	word		= htonl(conn->local_abort);
-+	word		= htonl(conn->abort_code);
- 
- 	iov[0].iov_base	= &whdr;
- 	iov[0].iov_len	= sizeof(whdr);
-@@ -221,7 +224,7 @@ static int rxrpc_abort_connection(struct rxrpc_connection *conn,
- 
- 	serial = atomic_inc_return(&conn->serial);
- 	whdr.serial = htonl(serial);
--	_proto("Tx CONN ABORT %%%u { %d }", serial, conn->local_abort);
-+	_proto("Tx CONN ABORT %%%u { %d }", serial, conn->abort_code);
- 
- 	ret = kernel_sendmsg(conn->params.local->socket, &msg, iov, 2, len);
- 	if (ret < 0) {
-@@ -289,9 +292,10 @@ static int rxrpc_process_event(struct rxrpc_connection *conn,
- 		abort_code = ntohl(wtmp);
- 		_proto("Rx ABORT %%%u { ac=%d }", sp->hdr.serial, abort_code);
- 
-+		conn->error = -ECONNABORTED;
-+		conn->abort_code = abort_code;
- 		conn->state = RXRPC_CONN_REMOTELY_ABORTED;
--		rxrpc_abort_calls(conn, RXRPC_CALL_REMOTELY_ABORTED,
--				  abort_code, -ECONNABORTED);
-+		rxrpc_abort_calls(conn, RXRPC_CALL_REMOTELY_ABORTED);
- 		return -ECONNABORTED;
- 
- 	case RXRPC_PACKET_TYPE_CHALLENGE:
 -- 
 2.17.1
 
