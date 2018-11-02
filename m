@@ -2,175 +2,93 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DDE5C0044C
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 00:48:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 018CBC0044C
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 00:50:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7B7D20666
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 00:48:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7B7D20666
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id AFDA920831
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 00:50:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFDA920831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbeKBJyI (ORCPT
+        id S1726631AbeKBJza convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 05:54:08 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:56369 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725722AbeKBJyH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 05:54:07 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 53BF526F16602;
-        Fri,  2 Nov 2018 08:48:50 +0800 (CST)
-Received: from [127.0.0.1] (10.74.191.121) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.408.0; Fri, 2 Nov 2018
- 08:48:43 +0800
-Subject: Re: [PATCH net] net: hns3: Fix for out-of-bounds access when setting
- pfc back pressure
-To:     John Garry <john.garry@huawei.com>, <davem@davemloft.net>
-CC:     <huangdaode@hisilicon.com>, <xuwei5@hisilicon.com>,
-        <liguozhu@hisilicon.com>, <Yisen.Zhuang@huawei.com>,
-        <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
-        <lipeng321@huawei.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1541074363-98630-1-git-send-email-linyunsheng@huawei.com>
- <4b5d0e04-df53-6123-0562-7f0146d33ae9@huawei.com>
-From:   Yunsheng Lin <linyunsheng@huawei.com>
-Message-ID: <ac8f3031-9b20-2b63-058f-ba6aa5c4c28d@huawei.com>
-Date:   Fri, 2 Nov 2018 08:48:43 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Fri, 2 Nov 2018 05:55:30 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34970 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725969AbeKBJza (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 05:55:30 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D7959307D856;
+        Fri,  2 Nov 2018 00:50:15 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-113.rdu2.redhat.com [10.10.120.113])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F12925D6A6;
+        Fri,  2 Nov 2018 00:50:12 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20181102001633.GD24195@shao2-debian>
+References: <20181102001633.GD24195@shao2-debian>
+To:     kernel test robot <rong.a.chen@intel.com>
+Cc:     dhowells@redhat.com, Leonard Crestez <leonard.crestez@nxp.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        lkp@01.org
+Subject: Re: [LKP] [sunrpc] 6a7da2a288: kernel_BUG_at_lib/iov_iter.c
 MIME-Version: 1.0
-In-Reply-To: <4b5d0e04-df53-6123-0562-7f0146d33ae9@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.74.191.121]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <7957.1541119812.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Fri, 02 Nov 2018 00:50:12 +0000
+Message-ID: <7958.1541119812@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 02 Nov 2018 00:50:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/11/1 20:49, John Garry wrote:
-> On 01/11/2018 12:12, Yunsheng Lin wrote:
->> The vport should be initialized to hdev->vport for each bp group,
->> otherwise it will cause out-of-bounds access and bp setting not
->> correct problem.
->>
->> [   35.254124] BUG: KASAN: slab-out-of-bounds in hclge_pause_setup_hw+0x2a0/0x3f8 [hclge]
->> [   35.254126] Read of size 2 at addr ffff803b6651581a by task kworker/0:1/14
->>
->> [   35.254132] CPU: 0 PID: 14 Comm: kworker/0:1 Not tainted 4.19.0-rc7-hulk+ #85
->> [   35.254133] Hardware name: Huawei D06/D06, BIOS Hisilicon D06 UEFI RC0 - B052 (V0.52) 09/14/2018
->> [   35.254141] Workqueue: events work_for_cpu_fn
->> [   35.254144] Call trace:
->> [   35.254147]  dump_backtrace+0x0/0x2f0
->> [   35.254149]  show_stack+0x24/0x30
->> [   35.254154]  dump_stack+0x110/0x184
->> [   35.254157]  print_address_description+0x168/0x2b0
->> [   35.254160]  kasan_report+0x184/0x310
->> [   35.254162]  __asan_load2+0x7c/0xa0
->> [   35.254170]  hclge_pause_setup_hw+0x2a0/0x3f8 [hclge]
->> [   35.254177]  hclge_tm_init_hw+0x794/0x9f0 [hclge]
->> [   35.254184]  hclge_tm_schd_init+0x48/0x58 [hclge]
->> [   35.254191]  hclge_init_ae_dev+0x778/0x1168 [hclge]
->> [   35.254196]  hnae3_register_ae_dev+0x14c/0x298 [hnae3]
->> [   35.254206]  hns3_probe+0x88/0xa8 [hns3]
->> [   35.254210]  local_pci_probe+0x7c/0xf0
->> [   35.254212]  work_for_cpu_fn+0x34/0x50
->> [   35.254214]  process_one_work+0x4d4/0xa38
->> [   35.254216]  worker_thread+0x55c/0x8d8
->> [   35.254219]  kthread+0x1b0/0x1b8
->> [   35.254222]  ret_from_fork+0x10/0x1c
->>
->> [   35.254224] The buggy address belongs to the page:
->> [   35.254228] page:ffff7e00ed994400 count:1 mapcount:0 mapping:0000000000000000 index:0x0 compound_mapcount: 0
->> [   35.273835] flags: 0xfffff8000008000(head)
->> [   35.282007] raw: 0fffff8000008000 dead000000000100 dead000000000200 0000000000000000
->> [   35.282010] raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
->> [   35.282012] page dumped because: kasan: bad access detected
->>
->> [   35.282014] Memory state around the buggy address:
->> [   35.282017]  ffff803b66515700: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
->> [   35.282019]  ffff803b66515780: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
->> [   35.282021] >ffff803b66515800: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
->> [   35.282022]                             ^
->> [   35.282024]  ffff803b66515880: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
->> [   35.282026]  ffff803b66515900: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
->> [   35.282028] ==================================================================
->> [   35.282029] Disabling lock debugging due to kernel taint
->> [   35.282747] hclge driver initialization finished.
->>
->> Fixes: 67bf2541f4b9 ("net: hns3: Fixes the back pressure setting when sriov is enabled")
->> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
->> ---
->>  drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
->> index aa5cb98..0c9c6ae 100644
->> --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
->> +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
->> @@ -1168,11 +1168,12 @@ static int hclge_pfc_setup_hw(struct hclge_dev *hdev)
->>   */
->>  static int hclge_bp_setup_hw(struct hclge_dev *hdev, u8 tc)
->>  {
->> -    struct hclge_vport *vport = hdev->vport;
->>      u32 i, k, qs_bitmap;
->>      int ret;
->>
->>      for (i = 0; i < HCLGE_BP_GRP_NUM; i++) {
->> +        struct hclge_vport *vport = hdev->vport;
->> +
-> 
-> It seems to me that the bug is fixed but the code is not much better.
-> 
-> Since variable vport is only referenced in the inner loop, I would define it there.
+kernel test robot <rong.a.chen@intel.com> wrote:
 
+> FYI, we noticed the following commit (built with gcc-7):
+> 
+> commit: 6a7da2a288ce412d7ac117a2912a7b0d9104ee6d ("[RFC] sunrpc: Fix flood of warnings from iov_iter_kvec in linux-next")
+> url: https://github.com/0day-ci/linux/commits/Leonard-Crestez/sunrpc-Fix-flood-of-warnings-from-iov_iter_kvec-in-linux-next/20181101-070713
+> base: git://git.linux-nfs.org/projects/trondmy/linux-nfs.git linux-next
+> 
+> in testcase: boot
+> 
+> on test machine: qemu-system-x86_64 -enable-kvm -cpu kvm64,+ssse3 -smp 2 -m 8G
+> 
+> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
 
-I am agree that it is always better to have better and safer code.
-I will provide another verion to limit local variable as much as possible.
-Thanks for the reviewing and suggestion.
+Ummm...  You can't just apply that commit to Trond's linux-next branch unless
+that branch also includes the iov_iter changes from my afs-next branch.
 
-> 
->>          qs_bitmap = 0;
->>
->>          for (k = 0; k < hdev->num_alloc_vport; k++) {
->>
-> 
-> static int hclge_bp_setup_hw(struct hclge_dev *hdev, u8 tc)
->  {
-> -       struct hclge_vport *vport = hdev->vport;
-> -       u32 i, k, qs_bitmap;
-> -       int ret;
-> +       int ret, i;
-> 
->         for (i = 0; i < HCLGE_BP_GRP_NUM; i++) {
-> -               qs_bitmap = 0;
-> +               u32 qs_bitmap = 0;
-> +               int k;
-> 
->                 for (k = 0; k < hdev->num_alloc_vport; k++) {
-> +                       struct hclge_vport *vport = &hdev->vport[k];
->                         u16 qs_id = vport->qs_offset + tc;
->                         u8 grp, sub_grp;
-> 
-> ...
-> 
->                         if (i == grp)
->                                 qs_bitmap |= (1 << sub_grp);
-> -
-> -                       vport++;
-> 
-> 
-> ... so this seems better and safer, as you're explicitly limiting vport within bounds of hdev->num_alloc_vport.
-> 
-> 
-> 
-> .
-> 
+Before those changes, ITER_KVEC is required:
 
+	BUG_ON(!(direction & ITER_KVEC));
+
+and after, it will be prohibited:
+
+	WARN_ON(direction & ~(READ | WRITE));
+
+The reason for this is that have yet more patches that split the direction
+from the iov_iter::type member into their own member and turn the types into a
+simple integer sequence instead of a bit mask.
+
+David
