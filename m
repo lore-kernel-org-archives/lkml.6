@@ -2,265 +2,108 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,PLING_QUERY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47DEBC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:57:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E615C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:59:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB03720831
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:57:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E93E42082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:59:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kdab.com header.i=@kdab.com header.b="cf0C4+uH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB03720831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kdab.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M5EtJuTL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E93E42082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728117AbeKCDE7 (ORCPT
+        id S1728085AbeKCDHT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:04:59 -0400
-Received: from mail.kdab.com ([176.9.126.58]:16093 "EHLO mail.kdab.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726707AbeKCDE7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:04:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kdab.com; h=
- content-type:content-type:mime-version:references:in-reply-to
- :organization:message-id:date:date:subject:subject:from:from; s=
- dkim; t=1541181415; x=1542045416; bh=maCZu9m34SqEu0lNUhWrLQOrVq8
- h7J5GuOge4bJac4c=; b=cf0C4+uHQvORKZH1dcuSPp+lqNe7b98HTH0XhWeBlUa
- dMckcJcW/EP9sw4RVYIktGnSXjEt4Zw1iR4/hFuu2flHzCMrjkSNOu0PG0ZflS/A
- kpb3HLfDNx3L7aXDvioSqbbGM+dl0TIFhfTFyaL+7jYpGYolrhUiqsmy3ectVzfA
- =
-X-Virus-Scanned: amavisd-new at kdab.com
-From:   Milian Wolff <milian.wolff@kdab.com>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
-        Jiri Olsa <jolsa@kernel.org>, namhyung@kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho <acme@kernel.org>
-Subject: Re: PEBS level 2/3 breaks dwarf unwinding! [WAS: Re: Broken dwarf
- unwinding - wrong stack pointer register value?]
-Date:   Fri, 02 Nov 2018 18:56:50 +0100
-Message-ID: <3227038.olIWmsCzzY@agathebauer>
-Organization: KDAB
-In-Reply-To: <20181102112635.GD5458@krava>
-References: <2335309.gnWok9HYb4@agathebauer> <13521319.OzbRBoFVZM@agathebauer>
- <20181102112635.GD5458@krava>
+        Fri, 2 Nov 2018 23:07:19 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:39862 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbeKCDHT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:07:19 -0400
+Received: by mail-it1-f194.google.com with SMTP id m15so4302312itl.4
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 10:59:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=rQmqZuno2zCIkAysoPQ/5FB5W+StQaQRHHNNFWMyqRw=;
+        b=M5EtJuTLjv0NClBlQxB3n+H0ODWX6RLPrYKe3XZVbTr54QROkoY3Ol66ENyWAl4c5w
+         wcYU8NzNS3jCr5kpidDVnVWWwibSXTqihtRmoHRpj9DFHYaFbhV7j7GVkx7DxyzWkuPj
+         K8DoO1abyEk7FFHfANM91MFB6f7+45ZJfK+ltGm38OlZK1xHqmVIDrdOXaO6VAPrpU9R
+         u1wATvkr1Kn0rwvbvk/+YX0bnV/haYX3rtojSSHllYhEdZj40+8y/PsQcskdkSj0tIPI
+         dcdZpXHeEiu45Ae3mh3PVToSOBO06ZMKvennXu2D395vcEyWhGqkMiqnwkpyIo1e9xcs
+         3fBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=rQmqZuno2zCIkAysoPQ/5FB5W+StQaQRHHNNFWMyqRw=;
+        b=EaZRTyYINT9Q9mjgaJrds7L4ei6/Z1WaSOacrLg4SNiCvecawtqKOAKSRiKr0Cr5Fy
+         b0lV3mcWGvobNQjbpwxVDt/cdBCNMC7iRmbNbNGWlmCnHFXdGz1Ugu/HCPDBMfxJtVak
+         V+X6gyHI4Dz/WJ6YCzzQzA+690XqMfXrY8vkWbV4MfiAhzYqXZAHDR593ebzSu9J6bPY
+         a21omBn3DE0K2doD+oVyyZ6Hf6ctSxIiR+cQ/EQnCz3xgyyGrlaVHuirBcWhotrm9Kwz
+         edpCVfCxGKJhrCydD9KrDaC54yIEIS/DQjTdhW8VEcEmStJ2vRvLeM+GOWRuy/DLCtp3
+         V43g==
+X-Gm-Message-State: AGRZ1gIrgllbYBbyZqfdwdFiFqzaMcKvK6bSM4ZY96Xs0aqUBobO6FLH
+        r13s95ocCOVuHPIfTx4t+9ht6OV07ui9gU5oWJf8yw==
+X-Google-Smtp-Source: AJdET5dBR3ZJ2KT1ktgvoriVDiDELF11uapflRQzg7tfwGGOXBdwrt0LNzAauGYRzNtAcjbm2bw/IkDp7RL+cjcp6Rs=
+X-Received: by 2002:a24:7fc8:: with SMTP id r191-v6mr4674itc.107.1541181558114;
+ Fri, 02 Nov 2018 10:59:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart11011248.QEtXxAIldR";
- micalg="sha256"; protocol="application/pkcs7-signature"
+From:   Alistair Strachan <astrachan@google.com>
+Date:   Fri, 2 Nov 2018 10:59:07 -0700
+Message-ID: <CANDihLFJMo7bX8kfJ7+d3yHtq5xX6bEwF6iVnDx_6QJFBksBvg@mail.gmail.com>
+Subject: "x86/mm: Introduce the 'no5lvl' kernel parameter" broke SETUP_DTB?
+To:     kirill.shutemov@linux.intel.com
+Cc:     mingo@kernel.org, tglx@linutronix.de, hughd@google.com,
+        torvalds@linux-foundation.org, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---nextPart11011248.QEtXxAIldR
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Hi Kirill,
 
-On Freitag, 2. November 2018 12:26:35 CET Jiri Olsa wrote:
-> On Thu, Nov 01, 2018 at 11:08:18PM +0100, Milian Wolff wrote:
-> > On Dienstag, 30. Oktober 2018 23:34:35 CET Milian Wolff wrote:
-> > > On Mittwoch, 24. Oktober 2018 16:48:18 CET Andi Kleen wrote:
-> > > > > Can someone at least confirm whether unwinding from a function
-> > > > > prologue
-> > > > > via
-> > > > > .eh_frame (but without .debug_frame) should actually be possible?
-> > > > 
-> > > > Yes it should be possible. Asynchronous unwind tables should work
-> > > > from any instruction.
-> > 
-> > <snip>
-> > 
-> > > We can find `7f91345bdaf8+1 = 7f91345bdaf9" at offset 16 (search for "f9
-> > > da
-> > > 5b 34 91 7f"). Using that address makes unwinding work for this sample.
-> > > What could be the reason for this shift?
-> > 
-> > I believe I have found the culprit: PEBS seems to be at fault here - i.e.
-> > the RIP/RSP and the ustack dump of the sample simply don't fit together.
-> > 
-> > Check this out:
-> > 
-> > ```
-> > $ for i in $(seq 10); do perf record -q -e "cycles:" --call-graph dwarf
-> > ./cpp- inlining > /dev/null; perf script | pcre2grep -c -M
-> > "hypot_finite.*\n.*\ [unknown\]"; done
-> > 0
-> > 0
-> > 0
-> > 0
-> > 0
-> > 0
-> > 0
-> > 0
-> > 0
-> > 0
-> > 
-> > $ for i in $(seq 10); do perf record -q -e "cycles:p" --call-graph dwarf
-> > ./
-> > cpp-inlining > /dev/null; perf script | pcre2grep -c -M
-> > "hypot_finite.*\n.*\ [unknown\]"; done
-> > 0
-> > 0
-> > 0
-> > 0
-> > 0
-> > 0
-> > 0
-> > 0
-> > 0
-> > 0
-> > 
-> > $ for i in $(seq 10); do perf record -q -e "cycles:pp" --call-graph dwarf
-> > ./ cpp-inlining > /dev/null; perf script | pcre2grep -c -M
-> > "hypot_finite.*\n.*\ [unknown\]"; done
-> > 37
-> > 39
-> > 35
-> > 28
-> > 40
-> > 39
-> > 29
-> > 37
-> > 31
-> > 26
-> > 
-> > $ for i in $(seq 10); do perf record -q -e "cycles:ppp" --call-graph dwarf
-> > ./ cpp-inlining > /dev/null; perf script | pcre2grep -c -M
-> > "hypot_finite.*\n.*\ [unknown\]"; done
-> > 79
-> > 70
-> > 76
-> > 77
-> > 70
-> > 90
-> > 64
-> > 78
-> > 86
-> > 74
-> > ```
-> > 
-> > Note how precise levels 0 and 1 do not produce any samples where unwinding
-> > fails. But precise level 2 produces some, and precise level 3 increases
-> > the
-> > amount (by ca. ~2x).
-> > 
-> > I can reproduce this pattern on two separate Intel CPUs and kernel
-> > versions
-> > currently:
-> > 
-> > Intel(R) Core(TM) i7-5600U CPU @ 2.60GHz with 4.18.16-arch1-1-ARCH
-> > Intel(R) Core(TM) i7-4770 CPU @ 3.40GHz with 4.14.78-1-lts
-> > 
-> > Could someone else try this? What about AMD and IBS - is it also affected?
-> > What about newer/different Intel CPUs?
-> 
-> I tried on intel and can't actualy see that.. how do the failed samples
-> look like? like is there the stack dump attached, what's in the regs?
-> 
-> could you please paste the 'perf report -D' output for some of the
-> failed samples?
+I noticed that booting 4.19 in qemu while injecting a FDT using the
+"-dtb /path/to/blob" feature might have been broken by your change
+372fddf70904 ("x86/mm: Introduce the 'no5lvl' kernel parameter").
 
-See here for one case: https://paste.kde.org/prryvdilq
+This manifests either as FDT corruption, which causes the setup code
+to fail to unpack it (i.e. corruption of the device-tree structure),
+or simply bad node data. If I make the below change, the problem goes
+away:
 
-What Intel CPU did you use? What microcode version? Which kernel version?
+diff --git a/arch/x86/boot/compressed/pgtable_64.c
+b/arch/x86/boot/compressed/pgtable_64.c
+index 8c5107545251..bfe5aca71254 100644
+--- a/arch/x86/boot/compressed/pgtable_64.c
++++ b/arch/x86/boot/compressed/pgtable_64.c
+@@ -40,7 +40,7 @@ struct paging_config paging_prepare(void *rmode)
+        unsigned long bios_start, ebda_start;
 
-Generally, isn't what I'm seeing actually a neccessary evil of the ustack 
-based unwinding in perf? I mean, the general procedure is as follows if I'm 
-not mistaken:
+        /* Initialize boot_params. Required for cmdline_find_option_bool(). */
+-       boot_params = rmode;
++       //boot_params = rmode;
 
-- PMU triggers interrupt and PEBS stores RIP etc.
-- code continous to execute, possibly changing the stack
-- PMU interrupt is handled, and a perf sample is generated
-  - register values are used from "past" status stored in PEBS
-  - but ustack dump is based on the "current" status
+        /*
+         * Check if LA57 is desired and supported.
 
-From this latter discrepancy, it must directly follow that *sometimes* the 
-ustack dump represents a state that cannot be unwound from, no?
+This can be reproduced with the system-root.dtb file in
+https://android.googlesource.com/device/google/cuttlefish/+archive/master.tar.gz
+using "qemu -dtb system-root.dtb -kernel /path/to/bzImage -drive
+file=root.ext4" on x86_64_defconfig with CONFIG_OF_UNITTEST enabled.
 
-Cheers
--- 
-Milian Wolff | milian.wolff@kdab.com | Senior Software Engineer
-KDAB (Deutschland) GmbH, a KDAB Group company
-Tel: +49-30-521325470
-KDAB - The Qt, C++ and OpenGL Experts
---nextPart11011248.QEtXxAIldR
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+If the FDT is unpacked successfully, the
+/proc/device-tree/firmware/android/compatible file will exist, and
+contain the string "android,firmware" instead of junk.
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCDEIw
-ggXmMIIDzqADAgECAhBqm+E4O/8ra58B1dm4p1JWMA0GCSqGSIb3DQEBDAUAMIGFMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDErMCkGA1UEAxMiQ09NT0RPIFJTQSBDZXJ0aWZpY2F0aW9u
-IEF1dGhvcml0eTAeFw0xMzAxMTAwMDAwMDBaFw0yODAxMDkyMzU5NTlaMIGXMQswCQYDVQQGEwJH
-QjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQK
-ExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGlj
-YXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
-AL6znlesKHZ1QBbHOAOY08YYdiFQ8yV5C0y1oNF9Olg+nKcxLqf2NHbZhGra0D00SOTq9bus3/mx
-gUsg/Wh/eXQ0pnp8tZ8XZWAnlyKMpjL+qUByRjXCA6RQyDMqVaVUkbIr5SU0RDX/kSsKwer3H1pT
-/HUrBN0X8sKtPTdGX8XAWt/VdMLBrZBlgvnkCos+KQWWCo63OTTqRvaq8aWccm+KOMjTcE6s2mj6
-RkalweyDI7X+7U5lNo6jzC8RTXtVV4/Vwdax720YpMPJQaDaElmOupyTf1Qib+cpukNJnQmwygjD
-8m046DQkLnpXNCAGjuJy1F5NATksUsbfJAr7FLUCAwEAAaOCATwwggE4MB8GA1UdIwQYMBaAFLuv
-fgI9+qbxPISOre44mOzZMjLUMB0GA1UdDgQWBBSCr2yM+MX+lmF86B89K3FIXsSLwDAOBgNVHQ8B
-Af8EBAMCAYYwEgYDVR0TAQH/BAgwBgEB/wIBADARBgNVHSAECjAIMAYGBFUdIAAwTAYDVR0fBEUw
-QzBBoD+gPYY7aHR0cDovL2NybC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQ2VydGlmaWNhdGlvbkF1
-dGhvcml0eS5jcmwwcQYIKwYBBQUHAQEEZTBjMDsGCCsGAQUFBzAChi9odHRwOi8vY3J0LmNvbW9k
-b2NhLmNvbS9DT01PRE9SU0FBZGRUcnVzdENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3Au
-Y29tb2RvY2EuY29tMA0GCSqGSIb3DQEBDAUAA4ICAQB4XLKBKDRPPO5fVs6fl1bsj6JrF/bz9kkI
-BtTYLzXN30D+03Hj6OxCDBEaIeNmsBhrJmuubvyE7HtoSmR809AgcYboW+rcTNZ/8u/Hv+GTrNI/
-AhqX2/kiQNxmgUPt/eJPs92Qclj0HnVyy9TnSvGkSDU7I5Px+TbO+88G4zipA2psZaWeEykgzClZ
-lPz1FjTCkk77ZXp5cQYYexE6zeeN4/0OqqoAloFrjAF4o50YJafX8mnahjp3I2Y2mkjhk0xQfhNq
-bzlLWPoT3m7j7U26u7zg6swjOq8hITYc3/np5tM5aVyu6t99p17bTbY7+1RTWBviN9YJzK8HxzOb
-XYWBf/L+VGOYNsQDTxAk0Hbvb1j6KjUhg7fO294F29QIhhmiNOr84JHoy+fNLpfvYc/Q9EtFOI5I
-SYgOxLk3nD/whbUe9rmEQXLp8MB933Ij474gwwCPUpwv9mj2PMnXoc7mbrS22XUSeTwxCTP9bcmU
-dp4jmIoWfhQm7X9w/Zgddg+JZ/YnIHOwsGsaTUgj7fIvxqith7DoJC91WJ8Lce3CVJqb1XWeKIJ8
-4F7YLXZN0oa7TktYgDdmQVxYkZo1c5noaDKH9Oq9cbm/vOYRUM1cWcef20Wkyk5S/GFyyPJwG0fR
-1nRas3DqAf4cXxMiEKcff7PNa4M3RGTqH0pWR8p6EjCCBlQwggU8oAMCAQICEAf6KCF9+1doL2oE
-OTPysLwwDQYJKoZIhvcNAQELBQAwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJHcmVhdGVyIE1h
-bmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBMaW1pdGVkMT0w
-OwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWls
-IENBMB4XDTE3MDUyMzAwMDAwMFoXDTIwMDUyMjIzNTk1OVowggFZMQswCQYDVQQGEwJTRTEPMA0G
-A1UEERMGNjgzIDMxMRIwEAYDVQQIEwlWYWVybWxhbmQxEDAOBgNVBAcTB0hhZ2ZvcnMxGDAWBgNV
-BAkTD05vcnJpbmdzIHZhZWcgMjEPMA0GA1UEEhMGQm94IDMwMSYwJAYDVQQKDB1LbGFyw6RsdmRh
-bGVucyBEYXRha29uc3VsdCBBQjEdMBsGA1UECxMUQSBLREFCIEdyb3VwIENvbXBhbnkxQzBBBgNV
-BAsMOklzc3VlZCB0aHJvdWdoIEtsYXLDpGx2ZGFsZW5zIERhdGFrb25zdWx0IEFCIEUtUEtJIE1h
-bmFnZXIxHzAdBgNVBAsTFkNvcnBvcmF0ZSBTZWN1cmUgRW1haWwxFTATBgNVBAMTDE1pbGlhbiBX
-b2xmZjEkMCIGCSqGSIb3DQEJARYVbWlsaWFuLndvbGZmQGtkYWIuY29tMIIBIjANBgkqhkiG9w0B
-AQEFAAOCAQ8AMIIBCgKCAQEAxrzfNBVvRbiAknuTBXuQnNm9sLIFLo0vbPB6kswk78A3tA++Zn5c
-lQUHhGlQq1cdYxagnUpqwvG3Sod15mPSOLkAPf/mabLN7p+lFbRaUP+97ZkTZtvb4BCC3osIEFI4
-G393OSFWqc2qmIPE/SwSASbAA20Fcaa2M6P1lhOk/ttUh2jIurTPF0wUycIA7lBddrOgaOA8e2m6
-iLTNHtlrfRbBaUX91D5ebY+UWmIjXSQ9+CtutMzBkwnF0rZKririvOkklg9VzEGNQVHrQfDF2s/U
-pOtmtuVSwElauGT/KALyCFuIrYC1pmaKH8S1xODJqiRaf6jH8E+KQzKjyM/ErwIDAQABo4IB1TCC
-AdEwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8AwHQYDVR0OBBYEFN+m99RtIuA1bSdw
-6b1brOX7X3AJMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8EAjAAMB0GA1UdJQQWMBQGCCsGAQUF
-BwMEBggrBgEFBQcDAjBGBgNVHSAEPzA9MDsGDCsGAQQBsjEBAgEDBTArMCkGCCsGAQUFBwIBFh1o
-dHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8EUzBRME+gTaBLhklodHRwOi8vY3Js
-LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWls
-Q0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKGSWh0dHA6Ly9jcnQuY29tb2RvY2Eu
-Y29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcnQwJAYI
-KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAgBgNVHREEGTAXgRVtaWxpYW4ud29s
-ZmZAa2RhYi5jb20wDQYJKoZIhvcNAQELBQADggEBABf47LSJADqH+ow9INv3QM1NC/qq2bjxGvsZ
-68iD11VEUAFlsYfsVTgQqUirwPVTYenXtwVBELHZyywsui1JxL7HKQetLQegDDP/RyfjReVaWxhy
-3OpuItsgLVbru9QVgPifnoBFPtfZcwjeJDmeSbLT8oj4Rd0KYBOIve7WKvsfNPsNwfbLwY2zILkE
-LjxZcVi2AwZHDyab+dzL/3YcLuJj1lSawBGn7ilpcdZydlv4aye51pD/MemLIYLcylt+ImrmjnTV
-y+QlAHRF3s5FE8yAr+W1MBD/1bKZCSgFt8VQoAlz3hiQh8QqZp4Zl8WuVL4+mP/mT6VDEWgq/0Bo
-cukxggJuMIICagIBATCBrDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hl
-c3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNV
-BAMTNENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EC
-EAf6KCF9+1doL2oEOTPysLwwDQYJYIZIAWUDBAIBBQCggZMwGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMTgxMTAyMTc1NjUwWjAoBgkqhkiG9w0BCQ8xGzAZMAsGCWCG
-SAFlAwQBAjAKBggqhkiG9w0DBzAvBgkqhkiG9w0BCQQxIgQgGYpJBVd7XUVe0/PyPGkNvnwInKjC
-9RHUfrA2owuFZbAwDQYJKoZIhvcNAQEBBQAEggEAUE9dVIw0R+qDBMkkPPkWownryhESy1P6RrjS
-FgRIgc0M3rVayJSo1EJGUG7yeh/Xg0UPtXvgzz0T+bBgqlVwkyHwiBLLsy1V1Elk1FSyWk8eRjTf
-No0zb7m0/9lgmXsaVfiSPMp6vnNkYVXoVrC2mfBm+Nk/nhBvDgzyWH/n1dq15WMRzb83sU/c2oti
-WrJkiXvjXvtQon5W6bSuw6he6KcDNQ71Bma205cxXRA2IgidCBxLimMsjQbqHgCrDLDML/CBIlt8
-A8Vjfq7iUrVm1cBEJNzPczHaaODUIKfW5swEK3134+pJCqhtxxWsPRgPJ3C+3PuxeBLruh0yw+Qt
-JQAAAAAAAA==
+I'm still looking into the root cause for this, but I just wanted to
+let you know.
 
-
---nextPart11011248.QEtXxAIldR--
-
-
+Alistair.
