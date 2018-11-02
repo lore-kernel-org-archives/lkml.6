@@ -2,87 +2,87 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80D04C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:29:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00368C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:29:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5112B2082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:29:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VJOibp+n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5112B2082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id CDA0F2081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:29:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDA0F2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=orcon.net.nz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728225AbeKCDhS (ORCPT
+        id S1728258AbeKCDh2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:37:18 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:46885 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726700AbeKCDhR (ORCPT
+        Fri, 2 Nov 2018 23:37:28 -0400
+Received: from smtp-1.orcon.net.nz ([60.234.4.34]:51519 "EHLO
+        smtp-1.orcon.net.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726700AbeKCDh2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:37:17 -0400
-Received: by mail-lf1-f65.google.com with SMTP id o2-v6so1947070lfl.13
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 11:29:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iaIwNjBE+rDKni9amWBasY1LkRgPcQYr40JqDmsjOEI=;
-        b=VJOibp+noxy+lHfw7qrbpRLJ1B5cSnp3puF46qov6VVL3pliJscNto2rF7QqrDEEav
-         dC6cbvSjy5iD6qZ433J5PQUeKo1v6ADryXlSG0f1w0RqAaP1pKu8w/i0IWZz+AfdHrqo
-         fYHmGRsGXyhWXqQKjvhtOQFPU6U+17vSxJHSU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iaIwNjBE+rDKni9amWBasY1LkRgPcQYr40JqDmsjOEI=;
-        b=hFz0kBRTRJnWBHiRXdEhp9248nEXK12AxtY/fjMUQDVkoYgfZD6tPs8HiQwSAJHhkG
-         aTDU418qYofbnNdBJh8jGAxsE81OlW6rphweXc/DJR+l5PKBgILGMZ7oZbHzJ6TpbPSz
-         SqZZCDmzklnm5ZtXMnEbmnLxOfTbww4Uk1D/fQjjd/rTzQX778jQn2Oo5iHkA8kJw/5K
-         IkXybhnJhPICXnzIX/9y3qE6M8f7xgVssFMAMJMW0J0CuoxgcvTRPLkaNQ7QIBQXksbn
-         oDDYLuJYHyUksXZY384iaviiSqVBz7dSFaVUoeF2E98+7p+6xSMHKpxZoycBllpcrt/9
-         W9gw==
-X-Gm-Message-State: AGRZ1gJFPpXPoUoN1+ASxazyCRsRRbb6GvxXcGthKOpDjLoTau3vpikJ
-        Gh5uA9w57H08Z32LQ5ZhCfXBVM0uMOtVvQ==
-X-Google-Smtp-Source: AJdET5ePJ3zmjQfF8LH2O+v6PzdO4QIXRBpJ/jsds32zY8LJEi1G/ChdmxpAdIk6UInunvK/eRum0A==
-X-Received: by 2002:a19:5510:: with SMTP id n16mr7391501lfe.68.1541183347024;
-        Fri, 02 Nov 2018 11:29:07 -0700 (PDT)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
-        by smtp.gmail.com with ESMTPSA id g72-v6sm5359927lfl.21.2018.11.02.11.29.06
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 02 Nov 2018 11:29:06 -0700 (PDT)
-Received: by mail-lj1-f182.google.com with SMTP id x85-v6so2580253ljb.2
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 11:29:06 -0700 (PDT)
-X-Received: by 2002:a2e:9983:: with SMTP id w3-v6mr9012045lji.133.1541183345442;
- Fri, 02 Nov 2018 11:29:05 -0700 (PDT)
+        Fri, 2 Nov 2018 23:37:28 -0400
+Received: from [121.99.228.40] (port=9980 helo=tower)
+        by smtp-1.orcon.net.nz with esmtpa (Exim 4.86_2)
+        (envelope-from <mcree@orcon.net.nz>)
+        id 1gIeBy-0007fD-Uv; Sat, 03 Nov 2018 07:29:11 +1300
+Date:   Sat, 3 Nov 2018 07:29:05 +1300
+From:   Michael Cree <mcree@orcon.net.nz>
+To:     Brajeswar Ghosh <brajeswar.linux@gmail.com>
+Cc:     rth@twiddle.net, ink@jurassic.park.msu.ru, mattst88@gmail.com,
+        parri.andrea@gmail.com, mingo@kernel.org,
+        paulmck@linux.vnet.ibm.com, jrdr.linux@gmail.com,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sabyasachi.linux@gmail.com
+Subject: Re: [PATCH] include/asm/cmpxchg.h: Remove duplicate header
+Message-ID: <20181102182905.3klrdw4dxapeoiib@tower>
+Mail-Followup-To: Michael Cree <mcree@orcon.net.nz>,
+        Brajeswar Ghosh <brajeswar.linux@gmail.com>, rth@twiddle.net,
+        ink@jurassic.park.msu.ru, mattst88@gmail.com,
+        parri.andrea@gmail.com, mingo@kernel.org,
+        paulmck@linux.vnet.ibm.com, jrdr.linux@gmail.com,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sabyasachi.linux@gmail.com
+References: <20181102152637.GA3105@hp-pavilion-15-notebook-pc-brajeswar>
 MIME-Version: 1.0
-References: <db97d76a-fad0-2a26-297a-06dbf8f8380b@canonical.com>
-In-Reply-To: <db97d76a-fad0-2a26-297a-06dbf8f8380b@canonical.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 2 Nov 2018 11:28:49 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjOO_hJ1SL2jGVg3jGuPaGiuroxJa=-c=3LaJZBwME6VQ@mail.gmail.com>
-Message-ID: <CAHk-=wjOO_hJ1SL2jGVg3jGuPaGiuroxJa=-c=3LaJZBwME6VQ@mail.gmail.com>
-Subject: Re: [GIT PULL] apparmor updates for v4.20
-To:     john.johansen@canonical.com
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181102152637.GA3105@hp-pavilion-15-notebook-pc-brajeswar>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-GeoIP: NZ
+X-Spam_score: -2.9
+X-Spam_score_int: -28
+X-Spam_bar: --
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 1, 2018 at 11:22 PM John Johansen
-<john.johansen@canonical.com> wrote:
->
-> Please pull these apparmor changes for v4.20.
+On Fri, Nov 02, 2018 at 08:56:37PM +0530, Brajeswar Ghosh wrote:
+> Remove asm/xchg.h which is included more than once
+> 
+> Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
+> ---
+>  arch/alpha/include/asm/cmpxchg.h | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/arch/alpha/include/asm/cmpxchg.h b/arch/alpha/include/asm/cmpxchg.h
+> index 6c7c39452471..bcbdac0744f9 100644
+> --- a/arch/alpha/include/asm/cmpxchg.h
+> +++ b/arch/alpha/include/asm/cmpxchg.h
+> @@ -36,7 +36,6 @@
+>  #undef ____cmpxchg
+>  #define ____xchg(type, args...)		__xchg ##type(args)
+>  #define ____cmpxchg(type, args...)	__cmpxchg ##type(args)
+> -#include <asm/xchg.h>
 
-Pulled. Although I really wish these had come in earlier (like the
-other security layer pulls did)
+It's amazing the number of times we get a patch to remove that.
 
-                   Linus
+Instead of just automatically removing a second include of a
+header file, why don't you take a closer look to see what it
+actually does?
+
+Cheers,
+Michael.
