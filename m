@@ -2,90 +2,175 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2153C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 23:17:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50D3AC65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 23:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75FFE20657
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 23:17:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wLiIaaN7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75FFE20657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1A3BB20657
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 23:17:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A3BB20657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728734AbeKCI0n (ORCPT
+        id S1728607AbeKCI07 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 04:26:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40792 "EHLO mail.kernel.org"
+        Sat, 3 Nov 2018 04:26:59 -0400
+Received: from mga03.intel.com ([134.134.136.65]:2537 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728643AbeKCI0n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 04:26:43 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31F2D20831;
-        Fri,  2 Nov 2018 23:17:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541200655;
-        bh=WZTQ+y334Cc6YsU7d91wldJ/MJOX9a2nmyrIdg9Z1Oc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=wLiIaaN79eRSlKBSHT0xd2fNVT/sIr38QbkZZdsqQ13fx9SxAydbuePE3FjiP1cNx
-         cZ2dNzt/0ARxlsSG8dmM4z7zXZJmSvgzW2TR5LaBIIEQgeuQRn05Gf9S/kMLhYupQV
-         8XUyswPNp231Q3AIlJmiU91XetcPEnqlsOy3uwYs=
-Date:   Fri, 2 Nov 2018 19:17:34 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, a.p.zijlstra@chello.nl,
-        Borislav Petkov <bp@alien8.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH 4.14 053/143] x86/power: Fix some ordering bugs in
- __restore_processor_context()
-Message-ID: <20181102231734.GI194472@sasha-vm>
-References: <20181102182857.064326086@linuxfoundation.org>
- <20181102182901.303280657@linuxfoundation.org>
- <CADVatmNE4VcpjoEKdXTf_d0_M27shgB+x6FiXo1-JzRf+0sw9w@mail.gmail.com>
+        id S1726705AbeKCI06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 04:26:58 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 16:17:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,457,1534834800"; 
+   d="scan'208";a="270988149"
+Received: from btyborox-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.138])
+  by orsmga005.jf.intel.com with ESMTP; 02 Nov 2018 16:17:42 -0700
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-sgx@vger.kernel.org
+Cc:     dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        mark.shanahan@intel.com, andriy.shevchenko@linux.intel.com,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND
+        64-BIT))
+Subject: [PATCH v15 18/23] x86/sgx: Add sgx_einit() for initializing enclaves
+Date:   Sat,  3 Nov 2018 01:11:17 +0200
+Message-Id: <20181102231320.29164-19-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CADVatmNE4VcpjoEKdXTf_d0_M27shgB+x6FiXo1-JzRf+0sw9w@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 08:19:36PM +0000, Sudip Mukherjee wrote:
->Hi Greg,
->
->On Fri, Nov 2, 2018 at 6:51 PM Greg Kroah-Hartman
-><gregkh@linuxfoundation.org> wrote:
->>
->> 4.14-stable review patch.  If anyone has any objections, please let me know.
->
->This has been fixed by another upstream commit:
->7ee18d677989 ("x86/power: Make restore_processor_context() sane")
->
->You can not directly apply it, will need backporting.
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-It depends on the following commits:
+Add a helper function to perform ENCLS(EINIT) with the correct LE
+hash MSR values.  ENCLS[EINIT] initializes an enclave, verifying the
+enclave's measurement and preparing it for execution, i.e. the enclave
+cannot be run until it has been initialized.  The measurement aspect
+of EINIT references the MSR_IA32_SGXLEPUBKEYHASH* MSRs, with the CPU
+comparing CPU compares the key (technically its hash) used to sign the
+enclave[1] with the key hash stored in the MSRs, and will reject EINIT
+if the keys do not match.
 
-5b06bbcfc2c6 x86/power: Fix some ordering bugs in __restore_processor_context()
-090edbe23ff5 x86/power/64: Use struct desc_ptr for the IDT in struct saved_context
-896c80bef4d3 x86/power/32: Move SYSENTER MSR restoration to fix_processor_context()
-7ee18d677989 x86/power: Make restore_processor_context() sane
+A per-cpu cache is used to avoid writing the MSRs as writing the MSRs
+is extraordinarily expensive, e.g. 300-400 cycles per MSR.  Because
+the cache may become stale, force update the MSRs and retry EINIT if
+the first EINIT fails due to an "invalid token".  An invalid token
+error does not necessarily mean the MSRs need to be updated, but the
+cost of an unnecessary write is minimal relative to the cost of EINIT
+itself.
 
-Greg, any objections to pulling them all in?
+[1] For EINIT's purposes, the effective signer of the enclave may be
+    the enclave's owner, or a separate Launch Enclave that has created
+    an EINIT token for the target enclave.  When using an EINIT token,
+    the key used to sign the token must match the MSRs in order for
+    EINIT to succeed.
 
---
-Thanks,
-Sasha
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ arch/x86/include/asm/sgx.h      |  2 ++
+ arch/x86/kernel/cpu/intel_sgx.c | 50 +++++++++++++++++++++++++++++++++
+ 2 files changed, 52 insertions(+)
+
+diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+index 4e39bcfad018..b6f014d0d88d 100644
+--- a/arch/x86/include/asm/sgx.h
++++ b/arch/x86/include/asm/sgx.h
+@@ -312,5 +312,7 @@ static inline int __emodt(struct sgx_secinfo *secinfo, void __iomem *addr)
+ struct sgx_epc_page *sgx_alloc_page(void);
+ int __sgx_free_page(struct sgx_epc_page *page);
+ void sgx_free_page(struct sgx_epc_page *page);
++int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
++	      struct sgx_epc_page *secs, u64 *lepubkeyhash);
+ 
+ #endif /* _ASM_X86_SGX_H */
+diff --git a/arch/x86/kernel/cpu/intel_sgx.c b/arch/x86/kernel/cpu/intel_sgx.c
+index b06709a9ea65..19041e96d1da 100644
+--- a/arch/x86/kernel/cpu/intel_sgx.c
++++ b/arch/x86/kernel/cpu/intel_sgx.c
+@@ -15,6 +15,9 @@ EXPORT_SYMBOL_GPL(sgx_epc_sections);
+ 
+ static int sgx_nr_epc_sections;
+ 
++/* A per-cpu cache for the last known values of IA32_SGXLEPUBKEYHASHx MSRs. */
++static DEFINE_PER_CPU(u64 [4], sgx_lepubkeyhash_cache);
++
+ /**
+  * sgx_alloc_page - Allocate an EPC page
+  *
+@@ -91,6 +94,53 @@ void sgx_free_page(struct sgx_epc_page *page)
+ }
+ EXPORT_SYMBOL_GPL(sgx_free_page);
+ 
++static void sgx_update_lepubkeyhash_msrs(u64 *lepubkeyhash, bool enforce)
++{
++	u64 __percpu *cache;
++	int i;
++
++	cache = per_cpu(sgx_lepubkeyhash_cache, smp_processor_id());
++	for (i = 0; i < 4; i++) {
++		if (enforce || (lepubkeyhash[i] != cache[i])) {
++			wrmsrl(MSR_IA32_SGXLEPUBKEYHASH0 + i, lepubkeyhash[i]);
++			cache[i] = lepubkeyhash[i];
++		}
++	}
++}
++
++/**
++ * sgx_einit - initialize an enclave
++ * @sigstruct:		a pointer a SIGSTRUCT
++ * @token:		a pointer an EINITTOKEN (optional)
++ * @secs:		a pointer a SECS
++ * @lepubkeyhash:	the desired value for IA32_SGXLEPUBKEYHASHx MSRs
++ *
++ * Execute ENCLS[EINIT], writing the IA32_SGXLEPUBKEYHASHx MSRs according
++ * to @lepubkeyhash (if possible and necessary).
++ *
++ * Return:
++ *   0 on success,
++ *   -errno or SGX error on failure
++ */
++int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
++	      struct sgx_epc_page *secs, u64 *lepubkeyhash)
++{
++	int ret;
++
++	if (!boot_cpu_has(X86_FEATURE_SGX_LC))
++		return __einit(sigstruct, token, sgx_epc_addr(secs));
++
++	preempt_disable();
++	sgx_update_lepubkeyhash_msrs(lepubkeyhash, false);
++	ret = __einit(sigstruct, token, sgx_epc_addr(secs));
++	if (ret == SGX_INVALID_EINITTOKEN) {
++		sgx_update_lepubkeyhash_msrs(lepubkeyhash, true);
++		ret = __einit(sigstruct, token, sgx_epc_addr(secs));
++	}
++	preempt_enable();
++	return ret;
++}
++EXPORT_SYMBOL(sgx_einit);
+ 
+ static __init void sgx_free_epc_section(struct sgx_epc_section *section)
+ {
+-- 
+2.19.1
+
