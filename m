@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE1FCC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:56:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE61BC65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:56:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0E9220854
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:56:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B099120848
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:56:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AqX/AkwP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0E9220854
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="toq5ReTv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B099120848
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731560AbeKCEEV (ORCPT
+        id S1731572AbeKCEEY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 00:04:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60388 "EHLO mail.kernel.org"
+        Sat, 3 Nov 2018 00:04:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60442 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726051AbeKCEEU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 00:04:20 -0400
+        id S1726051AbeKCEEX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 00:04:23 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6F7020848;
-        Fri,  2 Nov 2018 18:56:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A986D2084C;
+        Fri,  2 Nov 2018 18:56:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184964;
-        bh=QSbk2P2S/HPPOGTIqvjbDH4/z/MZaK6UshPAFQXeIcU=;
+        s=default; t=1541184967;
+        bh=VNukPUy2UYfDPi/R7Cux1ejfEmRb3EhkXwAyUpYkFYI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AqX/AkwPmiRk5gRThITe7iXl8X+vZtwF+EdC12RWXgCLVuUXfxDPXBoGJhzY3C+Km
-         7iP6OB94OHyiZXs1lON12s+yyHxSGyg1NJ4V0EDCwyjH4Co/O9MjG//7ozhg5apqh8
-         MiHpCylrqxLjnjDFPQMG6XbMHQOvsEYWCvXjT/qM=
+        b=toq5ReTv3Y3oX2RF2NPbuPDSO4Bg25XydFAbw6RBDq/xuWE/IFQzSrYK5D3J6PX8B
+         U84ovDCCTPKO7ye3BQ/K9A+2ZxaL65uXzTxfwwqbbuFr3GjYfPlIIoQUf7TpMydUFc
+         K4U44qFKbBoEIc0uoSyhuGFOpA8J23yl+uLgC54M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        stable@vger.kernel.org, Philipp Zabel <philipp.zabel@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 109/143] ARM: dts: r8a7790: Correct critical CPU temperature
-Date:   Fri,  2 Nov 2018 19:34:54 +0100
-Message-Id: <20181102182906.546272874@linuxfoundation.org>
+Subject: [PATCH 4.14 110/143] media: uvcvideo: Fix driver reference counting
+Date:   Fri,  2 Nov 2018 19:34:55 +0100
+Message-Id: <20181102182906.624871582@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -66,38 +65,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit fcab5651fae4258a993170b7aaf443adbd3d4d84 upstream
+commit f9ffcb0a21e1fa8e64d09ed613d884e054ae8191 upstream
 
-The R-Car H2 hardware manual states that Tc = –40°C to +105°C. The
-thermal sensor has an accuracy of ±5°C and there can be a temperature
-difference of 1 or 2 degrees between Tjmax and the thermal sensor due
-to the location of the latter.
+kref_init initializes the reference count to 1, not 0. This additional
+reference is never released since the conversion to reference counters.
+As a result, uvc_delete is not called anymore when UVC cameras are
+disconnected.
+Fix this by adding an additional kref_put in uvc_disconnect and in the
+probe error path. This also allows to remove the temporary additional
+reference in uvc_unregister_video.
 
-This means that 95°C is a safer value to use.
+Fixes: 9d15cd958c17 ("media: uvcvideo: Convert from using an atomic variable to a reference count")
 
-Fixes: a8b805f3606f7af7 ("ARM: dts: r8a7790: enable to use thermal-zone")
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Philipp Zabel <philipp.zabel@gmail.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/usb/uvc/uvc_driver.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 16358bf8d1db..97e8b9b0b750 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -153,7 +153,7 @@
+diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+index 6d22b22cb35b..064d88299adc 100644
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -1865,13 +1865,6 @@ static void uvc_unregister_video(struct uvc_device *dev)
+ {
+ 	struct uvc_streaming *stream;
  
- 			trips {
- 				cpu-crit {
--					temperature	= <115000>;
-+					temperature	= <95000>;
- 					hysteresis	= <0>;
- 					type		= "critical";
- 				};
+-	/* Unregistering all video devices might result in uvc_delete() being
+-	 * called from inside the loop if there's no open file handle. To avoid
+-	 * that, increment the refcount before iterating over the streams and
+-	 * decrement it when done.
+-	 */
+-	kref_get(&dev->ref);
+-
+ 	list_for_each_entry(stream, &dev->streams, list) {
+ 		if (!video_is_registered(&stream->vdev))
+ 			continue;
+@@ -1880,8 +1873,6 @@ static void uvc_unregister_video(struct uvc_device *dev)
+ 
+ 		uvc_debugfs_cleanup_stream(stream);
+ 	}
+-
+-	kref_put(&dev->ref, uvc_delete);
+ }
+ 
+ static int uvc_register_video(struct uvc_device *dev,
+@@ -2129,6 +2120,7 @@ static int uvc_probe(struct usb_interface *intf,
+ 
+ error:
+ 	uvc_unregister_video(dev);
++	kref_put(&dev->ref, uvc_delete);
+ 	return -ENODEV;
+ }
+ 
+@@ -2146,6 +2138,7 @@ static void uvc_disconnect(struct usb_interface *intf)
+ 		return;
+ 
+ 	uvc_unregister_video(dev);
++	kref_put(&dev->ref, uvc_delete);
+ }
+ 
+ static int uvc_suspend(struct usb_interface *intf, pm_message_t message)
 -- 
 2.17.1
 
