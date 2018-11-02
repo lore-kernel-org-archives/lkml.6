@@ -2,228 +2,188 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E241C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 20:51:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D2EC6786F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 20:52:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22BEA2082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 20:51:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22BEA2082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 88E962082E
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 20:52:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bHRMyBwM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88E962082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728169AbeKCF75 (ORCPT
+        id S1728185AbeKCGBU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 01:59:57 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52270 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726041AbeKCF75 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 01:59:57 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA2KiNZn137274
-        for <linux-kernel@vger.kernel.org>; Fri, 2 Nov 2018 16:51:18 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ngwamhed3-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 16:51:18 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Fri, 2 Nov 2018 20:51:17 -0000
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 2 Nov 2018 20:51:14 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA2KpDe733554684
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 2 Nov 2018 20:51:13 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6B00FB2065;
-        Fri,  2 Nov 2018 20:51:13 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3A059B205F;
-        Fri,  2 Nov 2018 20:51:13 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.141])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri,  2 Nov 2018 20:51:13 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 69D0516C1857; Fri,  2 Nov 2018 13:51:14 -0700 (PDT)
-Date:   Fri, 2 Nov 2018 13:51:14 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     "Krein, Dennis" <Dennis.Krein@netapp.com>
-Cc:     "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "bvanassche@acm.org" <bvanassche@acm.org>
-Subject: Re: srcu hung task panic
-Reply-To: paulmck@linux.ibm.com
-References: <20181023141415.GJ4170@linux.ibm.com>
- <SN6PR06MB433307629C43832973E0F882E5F50@SN6PR06MB4333.namprd06.prod.outlook.com>
- <20181024105326.GL4170@linux.ibm.com>
- <SN6PR06MB4333940F6EE46EDDB20934EDE5F00@SN6PR06MB4333.namprd06.prod.outlook.com>
- <20181026144835.GW4170@linux.ibm.com>
- <20181102201448.GA15234@linux.ibm.com>
- <SN6PR06MB43338B272D71F977DBBF906FE5CF0@SN6PR06MB4333.namprd06.prod.outlook.com>
+        Sat, 3 Nov 2018 02:01:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39862 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725957AbeKCGBU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 02:01:20 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4326A2082E;
+        Fri,  2 Nov 2018 20:52:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541191961;
+        bh=vJRDmfrp0jtDatYmo3aRaTmkmqRI/Xv0Ugemt64LReY=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=bHRMyBwMQfuEcZMAOsrXP9A88ZbyQnDUAH8K6XojqHQ2n37vqa8xPMhbDPO3NHD60
+         fMeuXs2YplK8sttWkllAq4DzWjtWD2bbh0SgqSmGbMeS2B3a+rOPcXFIYzlR2QWbRs
+         3zAcwkBYA0A94HvaPQJafgYnfABpBUy+P0yr9Yc0=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN6PR06MB43338B272D71F977DBBF906FE5CF0@SN6PR06MB4333.namprd06.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18110220-0072-0000-0000-000003C210CF
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009973; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01111734; UDB=6.00576157; IPR=6.00891826;
- MB=3.00024008; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-02 20:51:16
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110220-0073-0000-0000-000049FA4CA2
-Message-Id: <20181102205114.GD4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-02_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811020185
+Content-Transfer-Encoding: quoted-printable
+To:     Amit Nischal <anischal@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1534141987-29601-3-git-send-email-anischal@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Amit Nischal <anischal@codeaurora.org>
+References: <1534141987-29601-1-git-send-email-anischal@codeaurora.org>
+ <1534141987-29601-3-git-send-email-anischal@codeaurora.org>
+Message-ID: <154119196058.88331.1952304286743529280@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v3 2/4] clk: qcom: Add clk_rcg2_gfx3d_ops for SDM845
+Date:   Fri, 02 Nov 2018 13:52:40 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 08:33:25PM +0000, Krein, Dennis wrote:
-> Yes it's fine with me to sign off on this.  I have done extensive
-> additional testing with the patch in my repro setup and have run well
-> over 100 hours with no problem.  The repro setup with rcutorture and the
-> inotify app typically reproduced a crash in 4 hours and always withing 12.
-> We also did a lot of testing (several rigs all over 72 hours)  in our
-> actual test rigs where running our fail over test along with rcutorture
-> running and that always produced a crash in about 2 hours.
+Quoting Amit Nischal (2018-08-12 23:33:05)
+> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+> index 52208d4..a57ce00 100644
+> --- a/drivers/clk/qcom/clk-rcg2.c
+> +++ b/drivers/clk/qcom/clk-rcg2.c
+> @@ -866,7 +866,7 @@ static int clk_rcg2_shared_set_rate_and_parent(struct=
+ clk_hw *hw,
+>         return clk_rcg2_shared_set_rate(hw, rate, parent_rate);
+>  }
+> =
 
-Thank you very much, Dennis, both for the fix and the testing!!!
+> -static int clk_rcg2_shared_enable(struct clk_hw *hw)
+> +static int __clk_rcg2_shared_enable(struct clk_hw *hw)
 
-For the 100 hours at 4 hours MTBF, there is a 99.3% probability of having
-reduced the error rate by a factor of at least 5.  Assuming "several"
-is at least three, the 72-hour runs at 2 hours MTBF shows a 99.5%
-chance of having reduced the error rate by at least a factor of 20.
-(Assuming random memoryless error distribution, etc., etc.)  So this
-one does look like a winner.  ;-)
+Name this clk_rcg2_force_enable() please. Also add a comment above like:
 
-Is there anyone other than yourself who should get Tested-by credit
-for this patch?  For that matter, is there someone who should get
-Reported-by credit?
+/* Set RCG force enable bit and flush out any configuration settings */
 
-							Thanx, Paul
+>  {
+>         struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
+>         int ret;
+> @@ -879,7 +879,14 @@ static int clk_rcg2_shared_enable(struct clk_hw *hw)
+>         if (ret)
+>                 return ret;
+> =
 
-> ________________________________
-> From: Paul E. McKenney <paulmck@linux.ibm.com>
-> Sent: Friday, November 2, 2018 2:14:48 PM
-> To: Krein, Dennis
-> Cc: linux-nvme@lists.infradead.org; linux-kernel@vger.kernel.org; hch@infradead.org; bvanassche@acm.org
-> Subject: Re: srcu hung task panic
-> 
-> NetApp Security WARNING: This is an external email. Do not click links or open attachments unless you recognize the sender and know the content is safe.
-> 
-> 
-> 
-> 
-> On Fri, Oct 26, 2018 at 07:48:35AM -0700, Paul E. McKenney wrote:
-> > On Fri, Oct 26, 2018 at 04:00:53AM +0000, Krein, Dennis wrote:
-> > > I have a patch attached that fixes the problem for us.  I also tried a
-> > > version with an smb_mb() call added at end of rcu_segcblist_enqueue()
-> > > - but that turned out not to be needed.  I think the key part of
-> > > this is locking srcu_data in srcu_gp_start().  I also put in the
-> > > preempt_disable/enable in __call_srcu() so that it couldn't get scheduled
-> > > out and possibly moved to another CPU.  I had one hung task panic where
-> > > the callback that would complete the wait was properly set up but for some
-> > > reason the delayed work never happened.  Only thing I could determine to
-> > > cause that was if __call_srcu() got switched out after dropping spin lock.
-> >
-> > Good show!!!
-> >
-> > You are quite right, the srcu_data structure's ->lock
-> > must be held across the calls to rcu_segcblist_advance() and
-> > rcu_segcblist_accelerate().  Color me blind, given that I repeatedly
-> > looked at the "lockdep_assert_held(&ACCESS_PRIVATE(sp, lock));" and
-> > repeatedly misread it as "lockdep_assert_held(&ACCESS_PRIVATE(sdp,
-> > lock));".
-> >
-> > A few questions and comments:
-> >
-> > o     Are you OK with my adding your Signed-off-by as shown in the
-> >       updated patch below?
-> 
-> Hmmm...  I either need your Signed-off-by or to have someone cleanroom
-> recreate the patch before I can send it upstream.  I would much prefer
-> to use your Signed-off-by so that you get due credit, but one way or
-> another I do need to fix this bug.
-> 
->                                                         Thanx, Paul
-> 
-> > o     I removed the #ifdefs because this is needed everywhere.
-> >       However, I do agree that it can be quite helpful to use these
-> >       while experimenting with different potential solutions.
-> >
-> > o     Preemption is already disabled across all of srcu_gp_start()
-> >       because the sp->lock is an interrupt-disabling lock.  This means
-> >       that disabling preemption would have no effect.  I therefore
-> >       removed the preempt_disable() and preempt_enable().
-> >
-> > o     What sequence of events would lead to the work item never being
-> >       executed?  Last I knew, workqueues were supposed to be robust
-> >       against preemption.
-> >
-> > I have added Christoph and Bart on CC (along with their Reported-by tags)
-> > because they were recently seeing an intermittent failure that might
-> > have been caused gby tyhis same bug.  Could you please check to see if
-> > the below patch fixes your problem, give or take the workqueue issue?
-> >
-> >                                                       Thanx, Paul
-> >
-> > ------------------------------------------------------------------------
-> >
-> > commit 1c1d315dfb7049d0233b89948a3fbcb61ea15d26
-> > Author: Dennis Krein <Dennis.Krein@netapp.com>
-> > Date:   Fri Oct 26 07:38:24 2018 -0700
-> >
-> >     srcu: Lock srcu_data structure in srcu_gp_start()
-> >
-> >     The srcu_gp_start() function is called with the srcu_struct structure's
-> >     ->lock held, but not with the srcu_data structure's ->lock.  This is
-> >     problematic because this function accesses and updates the srcu_data
-> >     structure's ->srcu_cblist, which is protected by that lock.  Failing to
-> >     hold this lock can result in corruption of the SRCU callback lists,
-> >     which in turn can result in arbitrarily bad results.
-> >
-> >     This commit therefore makes srcu_gp_start() acquire the srcu_data
-> >     structure's ->lock across the calls to rcu_segcblist_advance() and
-> >     rcu_segcblist_accelerate(), thus preventing this corruption.
-> >
-> >     Reported-by: Bart Van Assche <bvanassche@acm.org>
-> >     Reported-by: Christoph Hellwig <hch@infradead.org>
-> >     Signed-off-by: Dennis Krein <Dennis.Krein@netapp.com>
-> >     Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-> >
-> > diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
-> > index 60f3236beaf7..697a2d7e8e8a 100644
-> > --- a/kernel/rcu/srcutree.c
-> > +++ b/kernel/rcu/srcutree.c
-> > @@ -451,10 +451,12 @@ static void srcu_gp_start(struct srcu_struct *sp)
-> >
-> >       lockdep_assert_held(&ACCESS_PRIVATE(sp, lock));
-> >       WARN_ON_ONCE(ULONG_CMP_GE(sp->srcu_gp_seq, sp->srcu_gp_seq_needed));
-> > +     spin_lock_rcu_node(sdp);  /* Interrupts already disabled. */
-> >       rcu_segcblist_advance(&sdp->srcu_cblist,
-> >                             rcu_seq_current(&sp->srcu_gp_seq));
-> >       (void)rcu_segcblist_accelerate(&sdp->srcu_cblist,
-> >                                      rcu_seq_snap(&sp->srcu_gp_seq));
-> > +     spin_unlock_rcu_node(sdp);  /* Interrupts remain disabled. */
-> >       smp_mb(); /* Order prior store to ->srcu_gp_seq_needed vs. GP start. */
-> >       rcu_seq_start(&sp->srcu_gp_seq);
-> >       state = rcu_seq_state(READ_ONCE(sp->srcu_gp_seq));
-> 
+> -       ret =3D update_config(rcg);
+> +       return update_config(rcg);
+> +}
+> +
+> +static int clk_rcg2_shared_enable(struct clk_hw *hw)
+> +{
+> +       int ret;
+> +
+> +       ret =3D __clk_rcg2_shared_enable(hw);
+>         if (ret)
+>                 return ret;
+> =
 
+> @@ -929,3 +936,78 @@ static void clk_rcg2_shared_disable(struct clk_hw *h=
+w)
+>         .set_rate_and_parent =3D clk_rcg2_shared_set_rate_and_parent,
+>  };
+>  EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
+> +
+> +static int clk_rcg2_gfx3d_enable(struct clk_hw *hw)
+> +{
+> +       return __clk_rcg2_shared_enable(hw);
+> +}
+
+And then drop this wrapper and just use clk_rcg2_force_enable() in the
+clk_ops structure.
+
+> +
+> +static int clk_rcg2_gfx3d_determine_rate(struct clk_hw *hw,
+> +                                       struct clk_rate_request *req)
+> +{
+> +       struct clk_rate_request parent_req =3D { };
+> +       struct clk_hw *p;
+> +       unsigned long rate =3D req->rate;
+> +       int ret;
+> +
+> +       rate =3D clamp(rate, req->min_rate, req->max_rate);
+
+Doesn't the core already clamp the rate for you? Seems wasteful to do it
+again.
+
+> +
+> +       /* Get fixed parent - GPU_CC_PLL0_OUT_EVEN */
+
+I hope this doesn't change in the future! Any way to make this
+detectable by storing the parent index somewhere so this op can work
+with any future index selection instead of hardcoding '1' here?
+
+> +       p =3D clk_hw_get_parent_by_index(hw, 1);
+> +
+> +       /* Parent should always run at twice of the requested rate */
+> +       parent_req.rate =3D 2 * rate;
+> +
+> +       ret =3D __clk_determine_rate(req->best_parent_hw, &parent_req);
+> +       if (ret)
+> +               return ret;
+> +
+> +       req->best_parent_hw =3D p;
+> +       req->best_parent_rate =3D parent_req.rate;
+> +       req->rate =3D parent_req.rate / 2;
+> +
+> +       return 0;
+> +}
+> +
+> +static int clk_rcg2_gfx3d_set_rate(struct clk_hw *hw, unsigned long rate,
+> +                                   unsigned long parent_rate)
+> +{
+> +       struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
+> +       int ret;
+> +       u32 cfg;
+> +
+> +       /* Configure fixed SRC and DIV */
+> +       cfg =3D rcg->parent_map[1].cfg << CFG_SRC_SEL_SHIFT;
+
+This would need to be dynamic too instead of hardcoding '1'.
+
+> +       cfg |=3D 0x3 << CFG_SRC_DIV_SHIFT;
+> +
+> +       ret =3D regmap_write(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, c=
+fg);
+> +       if (ret)
+> +               return ret;
+> +
+> +       /*
+> +        * In case clock is disabled, update the SRC and DIV only
+> +        * and return without configuration update.
+
+Add:
+
+ When the clk is enabled, we'll configure the rate to be what we
+ requested here. This allows other users of this clk (i.e. GPU)
+ to change the rate when this clk is disabled from our perspective.
+
+> +        */
+> +       if (!__clk_is_enabled(hw->clk))
+> +               return 0;
+> +
+> +       return update_config(rcg);
+> +}
