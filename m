@@ -2,35 +2,35 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE66C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:30:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC189C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:30:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDBF12082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:30:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDBF12082E
+	by mail.kernel.org (Postfix) with ESMTP id 798352082E
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:30:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 798352082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726781AbeKCEie (ORCPT
+        id S1727727AbeKCEih (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 00:38:34 -0400
-Received: from mga17.intel.com ([192.55.52.151]:61248 "EHLO mga17.intel.com"
+        Sat, 3 Nov 2018 00:38:37 -0400
+Received: from mga17.intel.com ([192.55.52.151]:61251 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725974AbeKCEie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 00:38:34 -0400
+        id S1725974AbeKCEig (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 00:38:36 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 12:30:08 -0700
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 12:30:09 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,457,1534834800"; 
-   d="scan'208";a="276669246"
+   d="scan'208";a="276669262"
 Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.168])
-  by fmsmga005.fm.intel.com with ESMTP; 02 Nov 2018 12:30:07 -0700
+  by fmsmga005.fm.intel.com with ESMTP; 02 Nov 2018 12:30:09 -0700
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
 To:     jeyu@kernel.org, akpm@linux-foundation.org, willy@infradead.org,
         tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
@@ -39,101 +39,278 @@ To:     jeyu@kernel.org, akpm@linux-foundation.org, willy@infradead.org,
         jannh@google.com, keescook@chromium.org
 Cc:     kristen@linux.intel.com, dave.hansen@intel.com,
         arjan@linux.intel.com, Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH v8 0/4] KASLR feature to randomize each loadable module
-Date:   Fri,  2 Nov 2018 12:25:16 -0700
-Message-Id: <20181102192520.4522-1-rick.p.edgecombe@intel.com>
+Subject: [PATCH v8 2/4] x86/modules: Increase randomization for modules
+Date:   Fri,  2 Nov 2018 12:25:18 -0700
+Message-Id: <20181102192520.4522-3-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181102192520.4522-1-rick.p.edgecombe@intel.com>
+References: <20181102192520.4522-1-rick.p.edgecombe@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This changes the behavior of the KASLR logic for allocating memory for the text
+sections of loadable modules. It randomizes the location of each module text
+section with about 17 bits of entropy in typical use. This is enabled on X86_64
+only. For 32 bit, the behavior is unchanged.
 
-This is V8 of the "KASLR feature to randomize each loadable module" patchset.
-The purpose is to increase the randomization and also to make the modules
-randomized in relation to each other instead of just the base, so that if one
-module leaks the location of the others can't be inferred.
+It refactors existing code around module randomization somewhat. There are now
+three different behaviors for x86 module_alloc depending on config.
+RANDOMIZE_BASE=n, and RANDOMIZE_BASE=y ARCH=x86_64, and RANDOMIZE_BASE=y
+ARCH=i386. The refactor of the existing code is to try to clearly show what
+those behaviors are without having three separate versions or threading the
+behaviors in a bunch of little spots. The reason it is not enabled on 32 bit
+yet is because the module space is much smaller and simulations haven't been
+run to see how it performs.
 
-This version gets rid of the more complex, more LOC, new logic in vmalloc that
-helped optimization around lazy the free area case, and hopefully makes this
-patchset more straightforward. Earlier versions were concerned with efficiently
-handling this case, but I have learned they are actually not common in real
-world module loader usage. So instead there are some smaller tweaks to existing
-vmalloc logic to allow an allocation to be tried without triggering a
-purge_vmap_area_lazy() and retry, when it encounters a real (non lazy free)
-area. The kselftest simulations have been updated with the logic of init
-sections getting cleaned up as well.
+The new algorithm breaks the module space in two, a random area and a backup
+area. It first tries to allocate at a number of randomly located starting pages
+inside the random section without purging any lazy free vmap areas and
+triggering the associated TLB flush. If this fails, then it will allocate in
+the backup area. The backup area base will be offset in the same way as the
+current algorithm does for the base area, 1024 possible locations.
 
-There is a small allocation performance degradation versus v7 as a trade off, but
-it is still faster on average than the existing algorithm until >7000 modules.
+Due to boot_params being defined with different types in different places,
+placing the config helpers modules.h or kaslr.h caused conflicts elsewhere, and
+so they are placed in a new file, kaslr_modules.h, instead.
 
-Changes for V8:
- - Simplify code by removing logic for optimum handling of lazy free areas
-
-Changes for V7:
- - More 0-day build fixes, readability improvements (Kees Cook)
-
-Changes for V6:
- - 0-day build fixes by removing un-needed functional testing, more error
-   handling
-
-Changes for V5:
- - Add module_alloc test module
-
-Changes for V4:
- - Fix issue caused by KASAN, kmemleak being provided different allocation
-   lengths (padding).
- - Avoid kmalloc until sure its needed in __vmalloc_node_try_addr.
- - Fixed issues reported by 0-day.
-
-Changes for V3:
- - Code cleanup based on internal feedback. (thanks to Dave Hansen and Andriy
-   Shevchenko)
- - Slight refactor of existing algorithm to more cleanly live along side new
-   one.
- - BPF synthetic benchmark
-
-Changes for V2:
- - New implementation of __vmalloc_node_try_addr based on the
-   __vmalloc_node_range implementation, that only flushes TLB when needed.
- - Modified module loading algorithm to try to reduce the TLB flushes further.
- - Increase "random area" tries in order to increase the number of modules that
-   can get high randomness.
- - Increase "random area" size to 2/3 of module area in order to increase the
-   number of modules that can get high randomness.
- - Fix for 0day failures on other architectures.
- - Fix for wrong debugfs permissions. (thanks to Jann Horn)
- - Spelling fix. (thanks to Jann Horn)
- - Data on module_alloc performance and TLB flushes. (brought up by Kees Cook
-   and Jann Horn)
- - Data on memory usage. (suggested by Jann)
-
-
-Rick Edgecombe (4):
-  vmalloc: Add __vmalloc_node_try_addr function
-  x86/modules: Increase randomization for modules
-  vmalloc: Add debugfs modfraginfo
-  Kselftest for module text allocation benchmarking
-
- arch/x86/Kconfig                              |   3 +
- arch/x86/include/asm/kaslr_modules.h          |  38 ++
- arch/x86/include/asm/pgtable_64_types.h       |   7 +
- arch/x86/kernel/module.c                      | 111 ++++--
- include/linux/vmalloc.h                       |   3 +
- lib/Kconfig.debug                             |   9 +
- lib/Makefile                                  |   1 +
- lib/test_mod_alloc.c                          | 343 ++++++++++++++++++
- mm/vmalloc.c                                  | 228 ++++++++++--
- tools/testing/selftests/bpf/test_mod_alloc.sh |  29 ++
- 10 files changed, 711 insertions(+), 61 deletions(-)
+Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+---
+ arch/x86/Kconfig                        |   3 +
+ arch/x86/include/asm/kaslr_modules.h    |  38 ++++++++
+ arch/x86/include/asm/pgtable_64_types.h |   7 ++
+ arch/x86/kernel/module.c                | 111 +++++++++++++++++++-----
+ 4 files changed, 136 insertions(+), 23 deletions(-)
  create mode 100644 arch/x86/include/asm/kaslr_modules.h
- create mode 100644 lib/test_mod_alloc.c
- create mode 100755 tools/testing/selftests/bpf/test_mod_alloc.sh
 
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 1a0be022f91d..32e1ac2e052d 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2137,6 +2137,9 @@ config RANDOMIZE_BASE
+ 
+ 	  If unsure, say Y.
+ 
++config RANDOMIZE_FINE_MODULE
++	def_bool y if RANDOMIZE_BASE && X86_64 && !CONFIG_UML
++
+ # Relocation on x86 needs some additional build support
+ config X86_NEED_RELOCS
+ 	def_bool y
+diff --git a/arch/x86/include/asm/kaslr_modules.h b/arch/x86/include/asm/kaslr_modules.h
+new file mode 100644
+index 000000000000..1da6eced4b47
+--- /dev/null
++++ b/arch/x86/include/asm/kaslr_modules.h
+@@ -0,0 +1,38 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_KASLR_MODULES_H_
++#define _ASM_KASLR_MODULES_H_
++
++#ifdef CONFIG_RANDOMIZE_BASE
++/* kaslr_enabled is not always defined */
++static inline int kaslr_mod_randomize_base(void)
++{
++	return kaslr_enabled();
++}
++#else
++static inline int kaslr_mod_randomize_base(void)
++{
++	return 0;
++}
++#endif /* CONFIG_RANDOMIZE_BASE */
++
++#ifdef CONFIG_RANDOMIZE_FINE_MODULE
++/* kaslr_enabled is not always defined */
++static inline int kaslr_mod_randomize_each_module(void)
++{
++	return kaslr_enabled();
++}
++
++static inline unsigned long get_modules_rand_len(void)
++{
++	return MODULES_RAND_LEN;
++}
++#else
++static inline int kaslr_mod_randomize_each_module(void)
++{
++	return 0;
++}
++
++unsigned long get_modules_rand_len(void);
++#endif /* CONFIG_RANDOMIZE_FINE_MODULE */
++
++#endif
+diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
+index 04edd2d58211..5e26369ab86c 100644
+--- a/arch/x86/include/asm/pgtable_64_types.h
++++ b/arch/x86/include/asm/pgtable_64_types.h
+@@ -143,6 +143,13 @@ extern unsigned int ptrs_per_p4d;
+ #define MODULES_END		_AC(0xffffffffff000000, UL)
+ #define MODULES_LEN		(MODULES_END - MODULES_VADDR)
+ 
++/*
++ * Dedicate the first part of the module space to a randomized area when KASLR
++ * is in use.  Leave the remaining part for a fallback if we are unable to
++ * allocate in the random area.
++ */
++#define MODULES_RAND_LEN	PAGE_ALIGN((MODULES_LEN/3)*2)
++
+ #define ESPFIX_PGD_ENTRY	_AC(-2, UL)
+ #define ESPFIX_BASE_ADDR	(ESPFIX_PGD_ENTRY << P4D_SHIFT)
+ 
+diff --git a/arch/x86/kernel/module.c b/arch/x86/kernel/module.c
+index f58336af095c..183f70730cda 100644
+--- a/arch/x86/kernel/module.c
++++ b/arch/x86/kernel/module.c
+@@ -36,6 +36,7 @@
+ #include <asm/pgtable.h>
+ #include <asm/setup.h>
+ #include <asm/unwind.h>
++#include <asm/kaslr_modules.h>
+ 
+ #if 0
+ #define DEBUGP(fmt, ...)				\
+@@ -48,34 +49,96 @@ do {							\
+ } while (0)
+ #endif
+ 
+-#ifdef CONFIG_RANDOMIZE_BASE
+ static unsigned long module_load_offset;
++static const unsigned long NO_TRY_RAND = 10000;
+ 
+ /* Mutex protects the module_load_offset. */
+ static DEFINE_MUTEX(module_kaslr_mutex);
+ 
+ static unsigned long int get_module_load_offset(void)
+ {
+-	if (kaslr_enabled()) {
+-		mutex_lock(&module_kaslr_mutex);
+-		/*
+-		 * Calculate the module_load_offset the first time this
+-		 * code is called. Once calculated it stays the same until
+-		 * reboot.
+-		 */
+-		if (module_load_offset == 0)
+-			module_load_offset =
+-				(get_random_int() % 1024 + 1) * PAGE_SIZE;
+-		mutex_unlock(&module_kaslr_mutex);
+-	}
++	mutex_lock(&module_kaslr_mutex);
++	/*
++	 * Calculate the module_load_offset the first time this
++	 * code is called. Once calculated it stays the same until
++	 * reboot.
++	 */
++	if (module_load_offset == 0)
++		module_load_offset = (get_random_int() % 1024 + 1) * PAGE_SIZE;
++	mutex_unlock(&module_kaslr_mutex);
++
+ 	return module_load_offset;
+ }
+-#else
+-static unsigned long int get_module_load_offset(void)
++
++static unsigned long get_module_vmalloc_start(void)
+ {
+-	return 0;
++	unsigned long addr = MODULES_VADDR;
++
++	if (kaslr_mod_randomize_base())
++		addr += get_module_load_offset();
++
++	if (kaslr_mod_randomize_each_module())
++		addr += get_modules_rand_len();
++
++	return addr;
++}
++
++static void *try_module_alloc(unsigned long addr, unsigned long size)
++{
++	const unsigned long vm_flags = 0;
++
++	return __vmalloc_node_try_addr(addr, size, GFP_KERNEL, PAGE_KERNEL_EXEC,
++					vm_flags, NUMA_NO_NODE,
++					__builtin_return_address(0));
++}
++
++/*
++ * Find a random address to try that won't obviously not fit. Random areas are
++ * allowed to overflow into the backup area
++ */
++static unsigned long get_rand_module_addr(unsigned long size)
++{
++	unsigned long nr_max_pos = (MODULES_LEN - size) / MODULE_ALIGN + 1;
++	unsigned long nr_rnd_pos = get_modules_rand_len() / MODULE_ALIGN;
++	unsigned long nr_pos = min(nr_max_pos, nr_rnd_pos);
++
++	unsigned long module_position_nr = get_random_long() % nr_pos;
++	unsigned long offset = module_position_nr * MODULE_ALIGN;
++
++	return MODULES_VADDR + offset;
++}
++
++/*
++ * Try to allocate in the random area. First 5000 times without purging, then
++ * 5000 times with purging. If these fail, return NULL.
++ */
++static void *try_module_randomize_each(unsigned long size)
++{
++	void *p = NULL;
++	unsigned int i;
++
++	/* This will have a guard page */
++	unsigned long va_size = PAGE_ALIGN(size) + PAGE_SIZE;
++
++	if (!kaslr_mod_randomize_each_module())
++		return NULL;
++
++	/* Make sure there is at least one address that might fit. */
++	if (va_size < PAGE_ALIGN(size) || va_size > MODULES_LEN)
++		return NULL;
++
++	/* Try to find a spot that doesn't need a lazy purge */
++	for (i = 0; i < NO_TRY_RAND; i++) {
++		unsigned long addr = get_rand_module_addr(va_size);
++
++		p = try_module_alloc(addr, size);
++
++		if (p)
++			return p;
++	}
++
++	return NULL;
+ }
+-#endif
+ 
+ void *module_alloc(unsigned long size)
+ {
+@@ -84,16 +147,18 @@ void *module_alloc(unsigned long size)
+ 	if (PAGE_ALIGN(size) > MODULES_LEN)
+ 		return NULL;
+ 
+-	p = __vmalloc_node_range(size, MODULE_ALIGN,
+-				    MODULES_VADDR + get_module_load_offset(),
+-				    MODULES_END, GFP_KERNEL,
+-				    PAGE_KERNEL_EXEC, 0, NUMA_NO_NODE,
+-				    __builtin_return_address(0));
++	p = try_module_randomize_each(size);
++
++	if (!p)
++		p = __vmalloc_node_range(size, MODULE_ALIGN,
++				get_module_vmalloc_start(), MODULES_END,
++				GFP_KERNEL, PAGE_KERNEL_EXEC, 0,
++				NUMA_NO_NODE, __builtin_return_address(0));
++
+ 	if (p && (kasan_module_alloc(p, size) < 0)) {
+ 		vfree(p);
+ 		return NULL;
+ 	}
+-
+ 	return p;
+ }
+ 
 -- 
 2.17.1
 
