@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F0A0C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:50:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAC61C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:50:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5162C2082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:50:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CEBC20848
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:50:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uGVJ6qMr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5162C2082D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="D8MG5K6b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CEBC20848
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730843AbeKCD6t (ORCPT
+        id S1730850AbeKCD6x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:58:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54618 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:58:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728280AbeKCD6s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:58:48 -0400
+        id S1730851AbeKCD6x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:58:53 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D9CA20837;
-        Fri,  2 Nov 2018 18:50:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A77102082D;
+        Fri,  2 Nov 2018 18:50:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184634;
-        bh=Krofk7Aj0ma3dicA/jexx6jRYFCFyxPBlNrMvFTS51E=;
+        s=default; t=1541184638;
+        bh=+ZKNUCFXSuCzkfNrkVUR7mijOe2zT+1K8u7VY+O6pfg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uGVJ6qMrbRKJfIPhekwg0E0RO4pM7/Qf7RYE1N4R27u7PEY4qu5TWrbYjvYzEK0aQ
-         cXD8kxmGbU3ylf/f4yfi0JAzIJ4sBEx0t32ofaZLhdw2Cem9xoH5dy++naOKFijDCg
-         8WvyETUudlO0cOX40lIfvuhDWxIEEm61cYwSIi1s=
+        b=D8MG5K6bcLnP+KLuozxJucI5LXZFpx9x5SMJ6iyFReMRQlpdVod3meWctLif9QvTB
+         hTgLNEbXzangejNe4FPfo6Ufj4lP4qXbAtmoEuuvORyrvMdQP7A5Y6j5UTtHmGnKTt
+         HlM8YIS4VmWrzEJlpdVD85+QinFcDIeVZzW7yD/8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>,
+        stable@vger.kernel.org, Meelis Roos <mroos@linux.ee>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 055/143] usbip: vhci_hcd: update status file header and format
-Date:   Fri,  2 Nov 2018 19:34:00 +0100
-Message-Id: <20181102182901.479206232@linuxfoundation.org>
+Subject: [PATCH 4.14 056/143] scsi: aacraid: address UBSAN warning regression
+Date:   Fri,  2 Nov 2018 19:34:01 +0100
+Message-Id: <20181102182901.543973107@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -62,65 +64,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 5468099c747240ed97dbb34340fece8ca87be34f ]
+[ Upstream commit d18539754d97876503275efc7d00a1901bb0cfad ]
 
-Commit 2f2d0088eb93
-("usbip: prevent vhci_hcd driver from leaking a socket pointer address")
-in the /sys/devices/platform/vhci_hcd/status.
+As reported by Meelis Roos, my previous patch causes an incorrect
+calculation of the timeout, through an undefined signed integer
+overflow:
 
-Fix the header and field alignment to reflect the changes and make it
-easier to read.
+[   12.228155] UBSAN: Undefined behaviour in drivers/scsi/aacraid/commsup.c:2514:49
+[   12.228229] signed integer overflow:
+[   12.228283] 964297611 * 250 cannot be represented in type 'long int'
 
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The problem is that doing a multiplication with HZ first and then
+dividing by USEC_PER_SEC worked correctly for 32-bit microseconds,
+but not for 32-bit nanoseconds, which would require up to 41 bits.
+
+This reworks the calculation to first convert the nanoseconds into
+jiffies, which should give us the same result as before and not overflow.
+
+Unfortunately I did not understand the exact intention of the algorithm,
+in particular the part where we add half a second, so it's possible that
+there is still a preexisting problem in this function. I added a comment
+that this would be handled more nicely using usleep_range(), which
+generally works better for waking up at a particular time than the
+current schedule_timeout() based implementation. I did not feel
+comfortable trying to implement that without being sure what the
+intent is here though.
+
+Fixes: 820f18865912 ("scsi: aacraid: use timespec64 instead of timeval")
+Tested-by: Meelis Roos <mroos@linux.ee>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/usbip/vhci_sysfs.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/scsi/aacraid/commsup.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/usbip/vhci_sysfs.c b/drivers/usb/usbip/vhci_sysfs.c
-index 4a22a9f06d96..eb7898353457 100644
---- a/drivers/usb/usbip/vhci_sysfs.c
-+++ b/drivers/usb/usbip/vhci_sysfs.c
-@@ -34,10 +34,10 @@
+diff --git a/drivers/scsi/aacraid/commsup.c b/drivers/scsi/aacraid/commsup.c
+index 998788a967be..3e38bae6ecde 100644
+--- a/drivers/scsi/aacraid/commsup.c
++++ b/drivers/scsi/aacraid/commsup.c
+@@ -2506,8 +2506,8 @@ int aac_command_thread(void *data)
+ 			/* Synchronize our watches */
+ 			if (((NSEC_PER_SEC - (NSEC_PER_SEC / HZ)) > now.tv_nsec)
+ 			 && (now.tv_nsec > (NSEC_PER_SEC / HZ)))
+-				difference = (((NSEC_PER_SEC - now.tv_nsec) * HZ)
+-				  + NSEC_PER_SEC / 2) / NSEC_PER_SEC;
++				difference = HZ + HZ / 2 -
++					     now.tv_nsec / (NSEC_PER_SEC / HZ);
+ 			else {
+ 				if (now.tv_nsec > NSEC_PER_SEC / 2)
+ 					++now.tv_sec;
+@@ -2531,6 +2531,10 @@ int aac_command_thread(void *data)
+ 		if (kthread_should_stop())
+ 			break;
  
- /*
-  * output example:
-- * hub port sta spd dev       sockfd    local_busid
-- * hs  0000 004 000 00000000  3         1-2.3
-+ * hub port sta spd dev       sockfd local_busid
-+ * hs  0000 004 000 00000000  000003 1-2.3
-  * ................................................
-- * ss  0008 004 000 00000000  4         2-3.4
-+ * ss  0008 004 000 00000000  000004 2-3.4
-  * ................................................
-  *
-  * Output includes socket fd instead of socket pointer address to avoid
-@@ -61,13 +61,13 @@ static void port_show_vhci(char **out, int hub, int port, struct vhci_device *vd
- 	if (vdev->ud.status == VDEV_ST_USED) {
- 		*out += sprintf(*out, "%03u %08x ",
- 				      vdev->speed, vdev->devid);
--		*out += sprintf(*out, "%u %s",
-+		*out += sprintf(*out, "%06u %s",
- 				      vdev->ud.sockfd,
- 				      dev_name(&vdev->udev->dev));
++		/*
++		 * we probably want usleep_range() here instead of the
++		 * jiffies computation
++		 */
+ 		schedule_timeout(difference);
  
- 	} else {
- 		*out += sprintf(*out, "000 00000000 ");
--		*out += sprintf(*out, "0000000000000000 0-0");
-+		*out += sprintf(*out, "000000 0-0");
- 	}
- 
- 	*out += sprintf(*out, "\n");
-@@ -165,7 +165,7 @@ static ssize_t status_show(struct device *dev,
- 	int pdev_nr;
- 
- 	out += sprintf(out,
--		       "hub port sta spd dev      socket           local_busid\n");
-+		       "hub port sta spd dev      sockfd local_busid\n");
- 
- 	pdev_nr = status_name_to_id(attr->attr.name);
- 	if (pdev_nr < 0)
+ 		if (kthread_should_stop())
 -- 
 2.17.1
 
