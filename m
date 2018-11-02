@@ -2,156 +2,143 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CFA3C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 10:59:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44546C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:04:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5531120833
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 10:59:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gI73pyGI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5531120833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 122A22081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:04:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 122A22081F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726392AbeKBUFo (ORCPT
+        id S1726725AbeKBULh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 16:05:44 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34264 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbeKBUFo (ORCPT
+        Fri, 2 Nov 2018 16:11:37 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:40051 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726104AbeKBULg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 16:05:44 -0400
-Received: by mail-wr1-f66.google.com with SMTP id j26-v6so1555049wre.1
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 03:58:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version;
-        bh=sW86KsqAsD63Ttmr4LxDMhbmg8nRrEnK66a/ifT6Enw=;
-        b=gI73pyGI2IDJR+YiNSTCl5QDXxuUbFU+31znaGEAqovCpE8kDMwX3WH0myYAdNWxb6
-         mzzyyR2QDCIfrZ2TfrSHKNx3jAG+RE6fvRltc/N+kTdC69JvL8m8P0hZWmN7uPLDbkKj
-         YZW1plg0qv6lKb+ZxAvj8NvU4UCp+YoqMSpxy450cMoUcAM+dEOxq4+04sNF7Lrd0L8p
-         sIi+Bak6pT/sZvlIn/ICejIzvn1fe4blZGB0gG/kYpuQIY+dNADcOgay/L3uIVWvqBn/
-         c0fawyhGtyKbfR0fUnniniFlt01hng7+QUkPyYxLF4xpaFqT4nxkpYCyws9yzno0QJRq
-         tv4g==
+        Fri, 2 Nov 2018 16:11:36 -0400
+Received: by mail-lf1-f68.google.com with SMTP id n3-v6so1039074lfe.7;
+        Fri, 02 Nov 2018 04:04:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version;
-        bh=sW86KsqAsD63Ttmr4LxDMhbmg8nRrEnK66a/ifT6Enw=;
-        b=dS15tDdE1k/cWFYGxoI/fDWCGbhqdbqPXI0Q9nGNftezA6ltWYBdGOc8JO20VLI5kL
-         Qr2HdXkB9PI3/75IMR51gqG2sHbSYWPrzW8o6zWHgTTDATbGxLuvTwJocXZqJggepTw9
-         k0YajUpne8Pg0z2O1sBi7X+DDsfWOWfms1Q0/0Yr1IN9Km41R81YJ8kTh8nWy7Iw3OFV
-         H29c+pdJFrJGwBjYzzGKlOgi1JuzKtqZLJZltC4sf3Z53BtouSG29HjYh3STlstlH5Eq
-         gA2Mo8ruKJLkx4fJUQg8bxhFEvC1AM3EKJBV5IrA1R31UmoXE6t7K7/DSnTS8y5rOO6+
-         S7hw==
-X-Gm-Message-State: AGRZ1gJkTcR+yAYKbuz3B4p2OiPMhHaNB4loGkuJ4Acd0sPtxx87U5nU
-        UeO+hRFfGrqsciVbD1lGWJSGniO/
-X-Google-Smtp-Source: AJdET5c+Hjz4GBDvmSKtej888x29y/o8zQ8Xltd7QiPf8q56brnRdwBrmrwdnLVz2YlcvpjzB/uCfg==
-X-Received: by 2002:adf:e388:: with SMTP id e8-v6mr9819152wrm.321.1541156337226;
-        Fri, 02 Nov 2018 03:58:57 -0700 (PDT)
-Received: from localhost (p5B3F66DD.dip0.t-ipconnect.de. [91.63.102.221])
-        by smtp.gmail.com with ESMTPSA id e11-v6sm5388006wrr.51.2018.11.02.03.58.55
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RJLBWPTobejOHjhshGYxLBc/kfbkjwTRvM5ai8I8Bw0=;
+        b=n3vHO9KXoqSoo8xSv14zyN9BkoFwwpO8aZIKRsf9EkugHASeYfM5nlTICBglSjJMWO
+         pJUQDOnYzqOdSs2n2bHFL+tSiNL2wYfAjYOBzd5REmvTr1KHI0xAUFdtHoa4caj8jRSI
+         hKUKlkGRXTFXK7cIgfPXQVkrBXa86QghNXFYOYHk51YNea4Q5ex6DixRnEgbCFGwYOEQ
+         tV0S0MX5oDWzSL0Tua6gbbIN70N77y/1nvMki9VeYh1U1K+W29Gkch/qE6hXMdIGzlwx
+         N76pkF1ow63ySupoBLZ/EjaDYVX1DCEUI6w8tx6fx0JzAdYNvK8Tug5AnrTSNwOhhDFT
+         aX+g==
+X-Gm-Message-State: AGRZ1gJXvlUvR2sLqIjeTKX1bsK/rN3b+h1G4W5HhOC/0uFYEiobbJFM
+        EFTbvBno4AzJVwJqWYrfybw=
+X-Google-Smtp-Source: AJdET5e35/vKv7iA3Xh9gFr8i8h2SbcXQIHhDKKLWUasPAu8tofQ+Tnr5qS+7G3vwILJclyQrH0z4Q==
+X-Received: by 2002:a19:2106:: with SMTP id h6mr6505915lfh.29.1541156688851;
+        Fri, 02 Nov 2018 04:04:48 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id v19-v6sm5283112lji.10.2018.11.02.04.04.47
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 02 Nov 2018 03:58:56 -0700 (PDT)
-From:   Holger Schurig <holgerschurig@gmail.com>
-To:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org
-Subject: BUG: "do_IRQ: 0.39 No irq handler for vector" from a 16550 port
-Date:   Fri, 02 Nov 2018 11:58:55 +0100
-Message-ID: <87k1lvg2z4.fsf@gmail.com>
+        Fri, 02 Nov 2018 04:04:48 -0700 (PDT)
+Date:   Fri, 2 Nov 2018 13:04:45 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     corbet@lwn.net, mturquette@baylibre.com, sboyd@kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= 
+        <b.zolnierkie@samsung.com>, linux@armlinux.org.uk,
+        andy.gross@linaro.org, david.brown@linaro.org, kgene@kernel.org,
+        s.nawrocki@samsung.com, Tomasz Figa <tomasz.figa@gmail.com>,
+        andrew.smirnov@gmail.com, sre@kernel.org, linux@roeck-us.net,
+        robh@kernel.org, sjhuang@iluvatar.ai, Akshu.Agrawal@amd.com,
+        rafael.j.wysocki@intel.com, djkurtz@chromium.org,
+        mazziesaccount@gmail.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>
+Subject: Re: [PATCH v2 2/8] clk: clk-max77686: Clean clkdev lookup leak and
+ use devm
+Message-ID: <20181102110445.GC29664@localhost.localdomain>
+References: <cover.1541054985.git.matti.vaittinen@fi.rohmeurope.com>
+ <83e985f2f60a68f89fac777aa29c55b1edb8769f.1541054985.git.matti.vaittinen@fi.rohmeurope.com>
+ <CAJKOXPd=E+S3j3XnpCVRs3JdStY2z+pHe0bh_HNzQTmJW_dH=Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJKOXPd=E+S3j3XnpCVRs3JdStY2z+pHe0bh_HNzQTmJW_dH=Q@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+Thanks for taking the time and reviewing this!
 
-I have a weird bug on systems that uses Haswell Architecture and "real"
-serial ports /dev/ttyS*.
+On Fri, Nov 02, 2018 at 09:15:17AM +0100, Krzysztof Kozlowski wrote:
+> On Thu, 1 Nov 2018 at 08:19, Matti Vaittinen
+> <matti.vaittinen@fi.rohmeurope.com> wrote:
+> >
+> > clk-max77686 never clean clkdev lookup at remove. This can cause
+> > oops if clk-max77686 is removed and inserted again. Fix leak by
+> > using new devm clkdev lookup registration. Simplify also error
+> > path by using new devm_of_clk_add_parent_hw_provider.
+> >
+> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > ---
+> >  drivers/clk/clk-max77686.c | 25 ++++---------------------
+> >  1 file changed, 4 insertions(+), 21 deletions(-)
+> >
+> > diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
+> > index 02551fe4b87c..b1920c1d9b76 100644
+> > --- a/drivers/clk/clk-max77686.c
+> > +++ b/drivers/clk/clk-max77686.c
+> > @@ -235,7 +235,7 @@ static int max77686_clk_probe(struct platform_device *pdev)
+> >                         return ret;
+> >                 }
+> >
+> > -               ret = clk_hw_register_clkdev(&max_clk_data->hw,
+> > +               ret = devm_clk_hw_register_clkdev(dev, &max_clk_data->hw,
+> >                                              max_clk_data->clk_idata.name, NULL);
+> 
+> You need to re-align the next line.
 
+I'll change this to
+		ret = devm_clk_hw_register_clkdev(dev, &max_clk_data->hw,
+						  max_clk_data->clk_idata.name,
+						  NULL);
+> >                 if (ret < 0) {
+> >                         dev_err(dev, "Failed to clkdev register: %d\n", ret);
+> > @@ -244,8 +244,8 @@ static int max77686_clk_probe(struct platform_device *pdev)
+> >         }
+> >
+> >         if (parent->of_node) {
+> > -               ret = of_clk_add_hw_provider(parent->of_node, of_clk_max77686_get,
+> > -                                            drv_data);
+> > +               ret = devm_of_clk_add_parent_hw_provider(dev,
+> > +                                               of_clk_max77686_get, drv_data);
+> 
+> The same, please.
 
-Hardware: some embedded device with "Intel(R) Celeron(R) 2980U @
-1.60GHz", I tried with microcode 0x23 and 0x24. Also on a HP Elite 840
-G1". Both have Haswell architecture.
+I will change this to 
+		ret = devm_of_clk_add_parent_hw_provider(dev,
+							 of_clk_max77686_get,
+							 drv_data);
+> 
+> Rest looks good, so with these changes:
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> Best regards,
+> Krzysztof
 
-I can plug a different CPU module into the embedded device, then I have
-an "Intel(R) Atom(TM) CPU N455 @ 1.66GHz", obviously no Haswell. With
-identical kernel, I don't get the same error.
+-- 
+Matti Vaittinen
+ROHM Semiconductors
 
-
-
-Kernel: happens with distro kernels (Debian, Ubuntu, Fedora). Common
-factor seems that the kernels are >= 4.9.x. But also with upstream
-stable kernels, I used 4.13.x, 4.14.x, 4.18.x, even with 4.18.16.
-
-
-
-
-The embedded device also behaves strange (e.g. I had once MCEs with a
-32bit kernel, which went away when using a 64bit kernel). We also
-sometimes get an error in AUFS with the same timestamp as the
-do_IRQ-message. I don't understand what AUFS has to do with hardware
-interrupts. However, I don't want to concentrate on this yet, I think
-that strange message in a mainland kernel in itself is worthwhile to be
-tracked. If some interrupt get's haywire, there is certainly the chance
-that some memory get's corrupted. Also, this might be something totally
-different, because the HP Elite doesn't show this. Also, the MCE went
-away after switching from 32bit kernel to 64bit kernel.
-
-So, let's return to the better reproducible "do_IRQ: 0.39 No irq handler
-for vector".
-
-
-I'm happy that I found a way to reproduce it: the message triggers when
-I close the serial port. printk's indicate that after the IER is
-cleared, and even after synchronize_irq() in serial8250_do_shutdown()
-the error happens.
-
-Sometimes even a "stty </dev/ttyS1" is enough, because it already
-opens/closes the port. But it happens only sometimes.
-
-A better way is to use a tool called "stress-ng" in version with various
-stressors. Some newer version (e.g. the one in Debian, 0.07.16-1) just
-open all files in /dev, run an fstat() on them, and close them again.
-All of this in a loop and very fast. This has the side-effect that
-/ttyS* are opened/closed very fast. And that shows the error message
-easily:
-
-[    6.558244] e1000e: eth0 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: Rx/Tx
-[   17.048154] fuse init (API version 7.27)
-[   17.248215] do_IRQ: 0.39 No irq handler for vector
-[   17.249622] do_IRQ: 0.39 No irq handler for vector
-[   17.252415] do_IRQ: 0.39 No irq handler for vector
-[   17.253698] do_IRQ: 0.39 No irq handler for vector
-[   18.528774] do_IRQ: 0.39 No irq handler for vector
-[   18.532305] do_IRQ: 0.39 No irq handler for vector
-[   18.532540] do_IRQ: 0.39 No irq handler for vector
-[   18.606916] do_IRQ: 0.39 No irq handler for vector
-[   20.227241] random: crng init done
-
-Here I did run stress-ng just for some seconds. Unfortunately, from
-time to time the exact same setup makes the error scarce, e.g. it can
-happen that we don't see the error for 15 minutes.
-
-So when running this for a night I had between 1500 and 30000 of this
-messages in my dmesg/journal.
-
-
-One thing that I noticed is that "noapic=1" makes the error go away.
-
-Also using the Atom cpu with the older architecture makes the error go
-away, but that one is no EOL. :-(
-
-
-
-Any advice on how to proceed further?
-
-
-Greetings,
-Holger
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
