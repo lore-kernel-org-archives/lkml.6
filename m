@@ -2,90 +2,85 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD7A3C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:12:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B41C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:12:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88C9D20657
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:12:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88C9D20657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 406CD20657
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:12:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 406CD20657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=chelsio.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726241AbeKBUSu (ORCPT
+        id S1726762AbeKBUTd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 16:18:50 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:56897 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbeKBUSu (ORCPT
+        Fri, 2 Nov 2018 16:19:33 -0400
+Received: from stargate.chelsio.com ([12.32.117.8]:51940 "EHLO
+        stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbeKBUTd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 16:18:50 -0400
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1M7JnA-1gApjS1SVo-007maI; Fri, 02 Nov 2018 12:11:30 +0100
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1M7JnA-1gApjS1SVo-007maI; Fri, 02 Nov 2018 12:11:30 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Richard Weinberger <richard@nod.at>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Stefan Agner <stefan@agner.ch>, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ubifs: auth: add CONFIG_KEYS dependency
-Date:   Fri,  2 Nov 2018 12:11:22 +0100
-Message-Id: <20181102111129.276496-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:CEEAGe1CdgavwNnrg0ejytqy3AyGSfj9TyB8ISxljeckjjICYTz
- vhxk7GABJZ0YXzIvpP2JROBy+23obH648Mwa9oApo3OCTjEJRVRN3ncPsm+ojI53orEhRaV
- 33nQ+BB3Hz26RGi02VSLKWe0/Hfl2HZLrGfNHYEGTgpiEmYAL6RcE8lckmNlKHYVI6BfoGo
- gwp9nEWsQZ9NwWq9GmAWQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:wxpjIpwPxUY=:FUCBYv2K0rgYr2De3DbKMG
- EWYWIbTE4XBUuUBkKCa2oaFnhIc/GJ3V9tKp6JNG6SM/oXv9UXhg4okNfmW/pVqn3/1bk6tTl
- vFeSbsmDb4SHoGXnc3EdGQk4wgCsbSCx2TAXV9cE56+F7NBBVS8dTrBoLRwLiP2qLrxQqBPFM
- xV7LiCKBNdVNbc0kwgZWAOUBJJQmW+QTFv57bsI84elE463R96vuhD0UVBf0V8avh4V6R9nMy
- HKFiFOyooo9L3iN5aw46zZrt8gX3N7yeBUZGfhMiIrd5f1wmEeeXBqVJ4at68Q0FuWBGOdlNU
- RviOD15PNMLuckIx5ar1J9GYOpygRP6U7QsDZxbzYnqeFOwMpXr2PjVyrGiHtpArUJNqFGcMS
- dKXSOqE/v3tSZyRC+lGTPOSdp40CWitRpgQvFkEiEZCOCHjFRrI0UC3ga0ANKh1urtDon2JM3
- ILht4/bdtTuICilh2zMnyUXh3T/WP5AYksfmOyAkT2tvWP4US9xv0sLtKAq//S5KGt+Ff8n73
- R7r/RHJTa94ib/vWnqNdCRX4CYK/AHQAJvUAT0+pUHXUjk0CZK4j1u3/wJPyZrrMgnuk4mGd1
- z4HB9p8tfc41GM/z8jf70wfgooLgZxD7shRg+4tfHtYsFwj95flQJKFu0xDa4oy1iOQCJTkqg
- y6tblQ8VInYoiINC00/WMVuqmHz4rT4cmRSy04zJyWDkxOe8NkMq9yW601NUhZOMqQ4c=
+        Fri, 2 Nov 2018 16:19:33 -0400
+Received: from localhost (victim.blr.asicdesigners.com [10.193.185.129])
+        by stargate.chelsio.com (8.13.8/8.13.8) with ESMTP id wA2BChO1024319;
+        Fri, 2 Nov 2018 04:12:44 -0700
+Date:   Fri, 2 Nov 2018 16:42:49 +0530
+From:   Ganesh Goudar <ganeshgr@chelsio.com>
+To:     linux-firmware@kernel.org
+Cc:     linux-kernel@vger.kernel.org, nirranjan@chelsio.com, dt@chelsio.com
+Subject: pull request: linux-firmware: update cxgb4 firmware
+Message-ID: <20181102111248.GA19135@chelsio.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new authentication support causes a build failure
-when CONFIG_KEYS is disabled, so add a dependency.
+Hi,
 
-fs/ubifs/auth.c: In function 'ubifs_init_authentication':
-fs/ubifs/auth.c:249:16: error: implicit declaration of function 'request_key'; did you mean 'request_irq'? [-Werror=implicit-function-declaration]
-  keyring_key = request_key(&key_type_logon, c->auth_key_name, NULL);
+Kindly pull the new firmware from the following URL.
+git://git.chelsio.net/pub/git/linux-firmware.git for-upstream
 
-Fixes: d8a22773a12c ("ubifs: Enable authentication support")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/ubifs/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Thanks
+Ganesh
 
-diff --git a/fs/ubifs/Kconfig b/fs/ubifs/Kconfig
-index 529856fbccd0..406c88dc039e 100644
---- a/fs/ubifs/Kconfig
-+++ b/fs/ubifs/Kconfig
-@@ -89,6 +89,7 @@ config UBIFS_FS_SECURITY
- 
- config UBIFS_FS_AUTHENTICATION
- 	bool "UBIFS authentication support"
-+	depends on KEYS
- 	select CRYPTO_HMAC
- 	help
- 	  Enable authentication support for UBIFS. This feature offers protection
--- 
-2.18.0
+The following changes since commit 1baa34868b2c0a004dc595b20678145e3fff83e7:
+
+  Merge branch 'nxp_mc' of https://github.com/NXP/linux-firmware (2018-10-26 08:13:19 -0400)
+
+are available in the git repository at:
+
+
+  git://git.chelsio.net/pub/git/linux-firmware.git for-upstream
+
+for you to fetch changes up to e7cdec460311a76e4f99e6bed763628af5fc2208:
+
+  cxgb4: update firmware to revision 1.21.5.0 (2018-11-02 03:38:38 -0700)
+
+----------------------------------------------------------------
+Ganesh Goudar (1):
+      cxgb4: update firmware to revision 1.21.5.0
+
+ WHENCE                  |  12 ++++++------
+ cxgb4/t4fw-1.20.8.0.bin | Bin 559616 -> 0 bytes
+ cxgb4/t4fw-1.21.5.0.bin | Bin 0 -> 561664 bytes
+ cxgb4/t4fw.bin          |   2 +-
+ cxgb4/t5fw-1.20.8.0.bin | Bin 646144 -> 0 bytes
+ cxgb4/t5fw-1.21.5.0.bin | Bin 0 -> 648704 bytes
+ cxgb4/t5fw.bin          |   2 +-
+ cxgb4/t6fw-1.20.8.0.bin | Bin 692736 -> 0 bytes
+ cxgb4/t6fw-1.21.5.0.bin | Bin 0 -> 695296 bytes
+ cxgb4/t6fw.bin          |   2 +-
+ 10 files changed, 9 insertions(+), 9 deletions(-)
+ delete mode 100644 cxgb4/t4fw-1.20.8.0.bin
+ create mode 100644 cxgb4/t4fw-1.21.5.0.bin
+ delete mode 100644 cxgb4/t5fw-1.20.8.0.bin
+ create mode 100644 cxgb4/t5fw-1.21.5.0.bin
+ delete mode 100644 cxgb4/t6fw-1.20.8.0.bin
+ create mode 100644 cxgb4/t6fw-1.21.5.0.bin
 
