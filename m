@@ -2,165 +2,141 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2556C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 10:54:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C81A5C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 10:54:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B3F72081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 10:54:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 826982081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 10:54:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="ZZ5UCdf+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B3F72081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=nokia.onmicrosoft.com header.i=@nokia.onmicrosoft.com header.b="jVGUChM7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 826982081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nokia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726708AbeKBUAs (ORCPT
+        id S1726830AbeKBUBA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 16:00:48 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:35140 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726016AbeKBUAs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 16:00:48 -0400
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id wA2ArqMu027911;
-        Fri, 2 Nov 2018 19:53:52 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com wA2ArqMu027911
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1541156033;
-        bh=bxcCeJk1bRXPwF1Rdb4SnBAsgEoyLFdGp+7crn78eFo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ZZ5UCdf+5cK6UTNg3ny+qnNba3rL/tyw9GidSoxx2+c4PDaUs5k2cQmXlYY9lPmf8
-         2AYLdeOjzykEe51zvI++8nM6pzFyjIgKk0GvGaF2UG6Xh8tsqGoca99fGm2nxeWv9B
-         lTtc4vwv6ch10LCJqCA8BRMNTZWWxYrqP54ederVYjhUscV9y5oW6TAQl67zgvHl6x
-         gIESoSEGJyPhpp5MWlx2WZ84jRS8U+9omyx3VoZ8+baLJUAB+GOYr345hREywfWrF3
-         MPKvZsUCl7l7jYWx8kUNHsQ/ukgrpCjMRBLED2/fYQSsXLzUhe38yFK19aoyYJLTIf
-         uQURfzupgEOLw==
-X-Nifty-SrcIP: [209.85.221.172]
-Received: by mail-vk1-f172.google.com with SMTP id 197so329007vkf.4;
-        Fri, 02 Nov 2018 03:53:52 -0700 (PDT)
-X-Gm-Message-State: AGRZ1gLTikKE/uarrG4LOFv+YVV3ZpPHjAVuG3ushSV4U/cgNGs3weH8
-        mWmoj7KXfFCsLSSX5mEnZAzj/OXlo7sXN+nLq8I=
-X-Google-Smtp-Source: AJdET5cOldqjcBcMutKxrlXxaUxebNSuf/d2R6+/2e0sEdYLRWHVI7HH1wEtFJOISb/PON5svaXmKVRgzVahhl7kUgE=
-X-Received: by 2002:a1f:bd5:: with SMTP id 204mr661018vkl.84.1541156031755;
- Fri, 02 Nov 2018 03:53:51 -0700 (PDT)
+        Fri, 2 Nov 2018 16:01:00 -0400
+Received: from mail-he1eur01on0100.outbound.protection.outlook.com ([104.47.0.100]:47328
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726016AbeKBUBA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 16:01:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
+ s=selector1-nokia-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uxWoppGnHpAPa6loe2iA9qL1lFjZSw+bwcP5U8q6Wwk=;
+ b=jVGUChM7V9jP5pGOp4GtBqnT1/DrhFfbKcKXAaL9mUbaR7KVHjaydnD2k0s3OA1YYJUIcVSw2BmgJsdMaIdd/fUyZbDAH1Z61LNFOOLLvR9zyhgfbU5AkPMpkBOq7/EcG0715WlEYfnfpfTl8Gfx6KieQ7a9X/mTETj00Wtn9wk=
+Received: from HE1PR07MB1307.eurprd07.prod.outlook.com (10.164.51.157) by
+ HE1PR07MB4412.eurprd07.prod.outlook.com (20.176.167.141) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.16; Fri, 2 Nov 2018 10:54:13 +0000
+Received: from HE1PR07MB1307.eurprd07.prod.outlook.com
+ ([fe80::b998:435b:155e:8c3b]) by HE1PR07MB1307.eurprd07.prod.outlook.com
+ ([fe80::b998:435b:155e:8c3b%3]) with mapi id 15.20.1294.024; Fri, 2 Nov 2018
+ 10:54:13 +0000
+From:   "Koskinen, Aaro (Nokia - FI/Espoo)" <aaro.koskinen@nokia.com>
+To:     Dinh Nguyen <dinguyen@kernel.org>,
+        Thor Thayer <thor.thayer@linux.intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "Koskinen, Aaro (Nokia - FI/Espoo)" <aaro.koskinen@nokia.com>
+Subject: [PATCH] arm64: dts: stratix10: fix multicast filtering
+Thread-Topic: [PATCH] arm64: dts: stratix10: fix multicast filtering
+Thread-Index: AQHUcppkcUhvTRsJYUaof7ZKCW1t8g==
+Date:   Fri, 2 Nov 2018 10:54:13 +0000
+Message-ID: <20181102105355.18654-1-aaro.koskinen@nokia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [131.228.2.16]
+x-mailer: git-send-email 2.11.0
+x-clientproxiedby: HE1PR0502CA0022.eurprd05.prod.outlook.com
+ (2603:10a6:3:e3::32) To HE1PR07MB1307.eurprd07.prod.outlook.com
+ (2a01:111:e400:59af::29)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HE1PR07MB4412;6:gmplPFb/nmrNCTp79vU1ANCjuvB67gg1w2PvMTLTvY6aJe7fJGVlZ6XilVAJsgNqQY54twwjhoSeBgygPoAjzNLlWQr2ngYIR/V8tvteEjEBQ8ymJPRfwh4LndC4cYxKQLIsal+yA2uDqc/4XY9mZNJu0xJpqbnysvXaG5LvMlU4V6tTGINiQEdKLjvzIJxGjmxTdvsbgzMsZBLu+ZhSk6n/t7b/heBhMzD6yLsuVBWp6p1AMRC4j1GXze9iNobWTfkWfnHE/dUpY40CpHPWrF7AA1xbXfRTVHtJGFXdX+nAwQvlQaEAihA8+0W73sazgWdCmuJqXhBjwljHPstfgt8T9T8T+5W/MRw/LBpqCUMomd2920n5xqhZNcx4pASEC574wqW3/3VCJiDRFZqlNqZAOUMx9NtL6j6kCEHsJ/yXsSr6Z8Sk4WHinqSW4miGo2UY1WDmpqbexxZASfb8hA==;5:upXkYaOOpk2R/4wQ1kZr2hEyvbFW0THPmpEWrzsRvwS1rItOQRvB40NrDk7bgNmzkK7Fs47KQL9fYvirqXgIaCcEJdJxjMnSLhAg3sNNwB9Z9w8eWRlWhDADi0C3k1Vybns+d7Gs0P+HvbhbJxfTKUo+gYWqQfI/V54fWY3WCR0=;7:NiZxrPMmgkaqCfpTQZgU7D4LL5pixPqFKQTFais54LvkrfRIeu3K2IlzkydlCb+p3bYrafQ4s0IXIsStujJcVubNWbn6MeevaeSRBd7YvK7EAOViF9z+K8AvAxuEU9F95SifNvhmN63ee3DQh3DqQg==
+x-ms-office365-filtering-correlation-id: c4de9081-0f6c-4c1b-e01e-08d640b185ed
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:HE1PR07MB4412;
+x-ms-traffictypediagnostic: HE1PR07MB4412:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aaro.koskinen@nokia.com; 
+x-microsoft-antispam-prvs: <HE1PR07MB4412D1C2BEE91550E2C26B0BF4CF0@HE1PR07MB4412.eurprd07.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(195916259791689)(109105607167333)(82608151540597);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231382)(11241501184)(806099)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:HE1PR07MB4412;BCL:0;PCL:0;RULEID:;SRVR:HE1PR07MB4412;
+x-forefront-prvs: 08444C7C87
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(346002)(376002)(39860400002)(396003)(199004)(189003)(4326008)(14454004)(71200400001)(71190400001)(50226002)(8936002)(106356001)(105586002)(8676002)(81166006)(81156014)(256004)(14444005)(66066001)(6512007)(1857600001)(2900100001)(25786009)(478600001)(26005)(53936002)(186003)(6436002)(7736002)(476003)(2616005)(6486002)(54906003)(486006)(305945005)(97736004)(110136005)(52116002)(6506007)(386003)(102836004)(86362001)(99286004)(107886003)(6116002)(1076002)(3846002)(36756003)(316002)(2906002)(5660300001)(68736007);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR07MB4412;H:HE1PR07MB1307.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nokia.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: cdIR44dewmAY9vJuyA8cCX23BY3qvKGEJIT0+wSG8GzebgV//qebmqldg/0aC/EEBBg/i1jbaUopraFMVZm0mJHdAHkKinPz1eaZNkXVmNJLia+Meh1PhaoYmYSaq7MTMCvHKhDe7vtL7MxVWk+joyygJ+AhWPIP1RKVMuYBnTWxrKoLsec9DWnV/f/TLslbXbqaiHUpXIWFNfDwOYNbKBO5i6jVXPoTNX8oaGpCGFLdxH4iXcSJnK1ynVNqOmFCMT0wO6CC8KWJSljfqyg5GPlEOaKEahyeHfxo6WXfrEA0eDr+nm7K378+BF6457AFqAuhVTSsML3FYZFFQMDS22g/o2TFp8wUPBF4FZLnYek=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <1540873965-31342-1-git-send-email-yamada.masahiro@socionext.com> <945484cd-50b4-74df-f091-d796264e5643@nvidia.com>
-In-Reply-To: <945484cd-50b4-74df-f091-d796264e5643@nvidia.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 2 Nov 2018 19:53:15 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATZnacTqmA9=K5kvQAmHmAw5Qg3SEAtAx0SQxBGFBKKZQ@mail.gmail.com>
-Message-ID: <CAK7LNATZnacTqmA9=K5kvQAmHmAw5Qg3SEAtAx0SQxBGFBKKZQ@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: consolidate single targets
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c4de9081-0f6c-4c1b-e01e-08d640b185ed
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Nov 2018 10:54:13.4864
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR07MB4412
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jon,
+On Stratix 10, the EMAC has 256 hash buckets for multicast filtering. This
+needs to be specified in DTS, otherwise the stmmac driver defaults to 64
+buckets and initializes the filter incorrectly. As a result, e.g. valid
+IPv6 multicast traffic ends up being dropped.
 
-On Fri, Nov 2, 2018 at 6:44 PM Jon Hunter <jonathanh@nvidia.com> wrote:
->
->
-> On 30/10/2018 04:32, Masahiro Yamada wrote:
-> > Instead of specifying target/source pairs, let's list patterns that we
-> > want to handle as single targets. This slightly changes the behavior;
-> > the top Makefile previously checked the presence of a source file,
-> > now Kbuild will descend into a subdirectory anyway to find out what to
-> > do there.
-> >
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > ---
-> >
-> >  Makefile | 16 +---------------
-> >  1 file changed, 1 insertion(+), 15 deletions(-)
-> >
-> > diff --git a/Makefile b/Makefile
-> > index be76e6e..7d13add 100644
-> > --- a/Makefile
-> > +++ b/Makefile
-> > @@ -1713,21 +1713,7 @@ else
-> >          target-dir = $(if $(KBUILD_EXTMOD),$(dir $<),$(dir $@))
-> >  endif
-> >
-> > -%.s: %.c prepare scripts FORCE
-> > -     $(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
-> > -%.i: %.c prepare scripts FORCE
-> > -     $(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
-> > -%.o: %.c prepare scripts FORCE
-> > -     $(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
-> > -%.lst: %.c prepare scripts FORCE
-> > -     $(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
-> > -%.s: %.S prepare scripts FORCE
-> > -     $(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
-> > -%.o: %.S prepare scripts FORCE
-> > -     $(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
-> > -%.symtypes: %.c prepare scripts FORCE
-> > -     $(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
-> > -%.ll: %.c prepare scripts FORCE
-> > +%.i %.ll %.lst %.o %.s %.symtypes: prepare scripts FORCE
-> >       $(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
-> >
-> >  # Modules
->
-> On one of my build machines (an older ubuntu 14.04 machine), this is
-> commit is causing 'make mrproper' or 'make distclean' to fail. Reverting
-> this commit fixes the problem.
->
-> $ make mrproper
-> Error: kernelrelease not valid - run 'make prepare' to update it
->   CC      kernel/bounds.s
-> In file included from <command-line>:0:0:
-> ././include/linux/kconfig.h:5:32: fatal error: generated/autoconf.h: No
-> such file or directory
->  #include <generated/autoconf.h>
->                                 ^
-> compilation terminated.
-> make[1]: *** [kernel/bounds.s] Error 1
-> make: *** [prepare0] Error 2
->
-> FWIW, this machine has ...
->
-> $ make --version
-> GNU Make 3.81
+Fixes: 78cd6a9d8e15 ("arm64: dts: Add base stratix 10 dtsi")
+Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
+---
+ arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi b/arch/arm64=
+/boot/dts/altera/socfpga_stratix10.dtsi
+index 8253a1a9e985..fef7351e9f67 100644
+--- a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
++++ b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
+@@ -139,6 +139,7 @@
+ 			clock-names =3D "stmmaceth";
+ 			tx-fifo-depth =3D <16384>;
+ 			rx-fifo-depth =3D <16384>;
++			snps,multicast-filter-bins =3D <256>;
+ 			status =3D "disabled";
+ 		};
+=20
+@@ -154,6 +155,7 @@
+ 			clock-names =3D "stmmaceth";
+ 			tx-fifo-depth =3D <16384>;
+ 			rx-fifo-depth =3D <16384>;
++			snps,multicast-filter-bins =3D <256>;
+ 			status =3D "disabled";
+ 		};
+=20
+@@ -169,6 +171,7 @@
+ 			clock-names =3D "stmmaceth";
+ 			tx-fifo-depth =3D <16384>;
+ 			rx-fifo-depth =3D <16384>;
++			snps,multicast-filter-bins =3D <256>;
+ 			status =3D "disabled";
+ 		};
+=20
+--=20
+2.11.0
 
-Confirmed.
-
-For make 3.81 or 3.82, 'make clean' will fail,
-but it will work by passing -r option.
-
-
-masahiro@pug:~/ref/linux-next$ make-3.81   clean
-make-3.81: Circular checkbin.o <- prepare dependency dropped.
-  HOSTCC  scripts/basic/fixdep
-  CC      scripts/mod/empty.o
-In file included from <command-line>:0:0:
-././include/linux/kconfig.h:5:32: fatal error: generated/autoconf.h:
-No such file or directory
-compilation terminated.
-make-3.81[2]: *** [scripts/mod/empty.o] Error 1
-make-3.81[1]: *** [scripts/mod] Error 2
-make-3.81: *** [scripts] Error 2
-masahiro@pug:~/ref/linux-next$ make-3.81  -r clean
-
-
-
-I know how to fix it, but
-I will drop the problematic commit for now.
-
-
-Thanks.
-
-
--- 
-Best Regards
-Masahiro Yamada
