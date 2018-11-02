@@ -2,110 +2,165 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE978C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:19:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EEF5C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:19:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEBE72082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:19:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEBE72082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 2E8DE2081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:19:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E8DE2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728002AbeKCB0j (ORCPT
+        id S1728048AbeKCB0s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 21:26:39 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:34937 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726098AbeKCB0j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 21:26:39 -0400
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1Mt6wz-1fPxAL0Dlp-00tVHY; Fri, 02 Nov 2018 17:18:36 +0100
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1Mt6wz-1fPxAL0Dlp-00tVHY; Fri, 02 Nov 2018 17:18:36 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Rakesh Pillai <pillair@codeaurora.org>,
-        Anilkumar Kolli <akolli@codeaurora.org>,
-        Balaji Pothunoori <bpothuno@codeaurora.org>,
-        Yingying Tang <yintang@qti.qualcomm.com>,
-        Sriram R <srirrama@codeaurora.org>, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ath10k: avoid -Wmaybe-uninitialized warning
-Date:   Fri,  2 Nov 2018 17:17:19 +0100
-Message-Id: <20181102161833.2956376-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:Q9JgcmppWO9yqO7kbS8UMQNFWZHdXHVgc53eT2yOWLmMEalFhd1
- +ckutaHxDinzSaPgjzF5OdRyOxxHzv61eflsGfMsTGLNQvwNNNuKi7mIrUcMjBeRXgrrbNV
- O0pYcFN9ZsgtYGsABV+3MZJceKtPzTFcNXT2dBYiAD5MbEkGnDtPj6W8SEFT/uqCcRAEJp2
- IvsVdJcuEjflOiuqVXKrw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:rjgWZt7H4m0=:7PUscBi6x4yMQlBzhWV27+
- FKg9BrL3fkVweEqhZ1NA+HOTRaEcMWI9xGi1PqcP0LewGfVPtsdzBVa4cVjIhmW7rkq3t/deH
- 5lspnsQXHLkfo13aSLjMLAdubShFhxFAWPXKHo+pOv9C4TyyAE8mKkhI5CUjKqAyp4wCV5GA+
- QY844YC8bIGpmjUrH9ZL0pdNxAmEC/V71icz2Z/rU/fCNCUK4mU1LxZqvDXGlovI8+yWyI4AF
- 9FiBhVyrcdAJQL/oW/UBAznSistC7xRnj/Zu3WCs5rGXI791pjgYodtU2nE33W+th8L1Hb/z7
- QQtPYq+NAkHcSlG0n/Q6jmFLg964+Lhnba63tgdSYk3BOyDQWj4lG98dEfOzPOPg3gEdBOja2
- VVNir98BP9gAvI67xEpp/nmEyP8z75MThhG/0dXWSqd9bhiTD2pvBpEtV5ElKwVvh1OGukcZB
- CwygaP0IaygQn4//cXdAM/15I8Ymcv+K1ser07JnafyBbHem9hZ0PdNZw033yTycJF+9Ew3R1
- ZudBuZiSWgHacGqKD71J+V13JQSXqvNOi6eahYFqezhoAwMXpAapxbvRhxfy5bsTbz+Atn8cc
- 08AgKkdF9/sZDZcnE+vAnXWKhp43HdOXiWwix4DFrr+7Q/zPYBuAicloG58UEIQcxivpoM4Y+
- WnvWPO82Y88EhscwfWypcpi7mFpg86GaPFNq+lRDH3b77wrcBVGrKNVyxoeIZoAqcyfc=
+        Fri, 2 Nov 2018 21:26:48 -0400
+Received: from relay.sw.ru ([185.231.240.75]:46780 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726098AbeKCB0r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 21:26:47 -0400
+Received: from [172.16.25.12]
+        by relay.sw.ru with esmtp (Exim 4.90_1)
+        (envelope-from <aryabinin@virtuozzo.com>)
+        id 1gIc9V-0006r7-Q8; Fri, 02 Nov 2018 19:18:30 +0300
+Subject: Re: [RFC PATCH] lib: Introduce generic __cmpxchg_u64() and use it
+ where needed
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Trond Myklebust <trondmy@hammerspace.com>
+Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ralf@linux-mips.org" <ralf@linux-mips.org>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "bfields@fieldses.org" <bfields@fieldses.org>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
+        "paul.burton@mips.com" <paul.burton@mips.com>,
+        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
+        "jhogan@kernel.org" <jhogan@kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "paulus@samba.org" <paulus@samba.org>,
+        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>, dvyukov@google.com
+References: <1541015538-11382-1-git-send-email-linux@roeck-us.net>
+ <20181031213240.zhh7dfcm47ucuyfl@pburton-laptop>
+ <20181031220253.GA15505@roeck-us.net>
+ <20181031233235.qbedw3pinxcuk7me@pburton-laptop>
+ <4e2438a23d2edf03368950a72ec058d1d299c32e.camel@hammerspace.com>
+ <20181101131846.biyilr2msonljmij@lakrids.cambridge.arm.com>
+ <20181101145926.GE3178@hirez.programming.kicks-ass.net>
+ <f38e272f7a96e983549e4281aa9fd02833a4277a.camel@hammerspace.com>
+ <20181101163212.GF3159@hirez.programming.kicks-ass.net>
+From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
+Message-ID: <5a846924-e642-d9d1-4e0e-810bd4d01c26@virtuozzo.com>
+Date:   Fri, 2 Nov 2018 19:19:15 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181101163212.GF3159@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In some configurations the inlining in gcc is suboptimal, causing
-a false-positive warning:
 
-drivers/net/wireless/ath/ath10k/mac.c: In function 'ath10k_mac_init_rd':
-drivers/net/wireless/ath/ath10k/mac.c:8374:39: error: 'rd' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-  ar->ath_common.regulatory.current_rd = rd;
 
-If we initialize the output of ath10k_mac_get_wrdd_regulatory()
-before returning, this problem goes away.
+On 11/01/2018 07:32 PM, Peter Zijlstra wrote:
+> On Thu, Nov 01, 2018 at 03:22:15PM +0000, Trond Myklebust wrote:
+>> On Thu, 2018-11-01 at 15:59 +0100, Peter Zijlstra wrote:
+>>> On Thu, Nov 01, 2018 at 01:18:46PM +0000, Mark Rutland wrote:
+> 
+>>>>> My one question (and the reason why I went with cmpxchg() in the
+>>>>> first place) would be about the overflow behaviour for
+>>>>> atomic_fetch_inc() and friends. I believe those functions should
+>>>>> be OK on x86, so that when we overflow the counter, it behaves
+>>>>> like an unsigned value and wraps back around.  Is that the case
+>>>>> for all architectures?
+>>>>>
+>>>>> i.e. are atomic_t/atomic64_t always guaranteed to behave like
+>>>>> u32/u64 on increment?
+>>>>>
+>>>>> I could not find any documentation that explicitly stated that
+>>>>> they should.
+>>>>
+>>>> Peter, Will, I understand that the atomic_t/atomic64_t ops are
+>>>> required to wrap per 2's-complement. IIUC the refcount code relies
+>>>> on this.
+>>>>
+>>>> Can you confirm?
+>>>
+>>> There is quite a bit of core code that hard assumes 2s-complement.
+>>> Not only for atomics but for any signed integer type. Also see the
+>>> kernel using -fno-strict-overflow which implies -fwrapv, which
+>>> defines signed overflow to behave like 2s-complement (and rids us of
+>>> that particular UB).
+>>
+>> Fair enough, but there have also been bugfixes to explicitly fix unsafe
+>> C standards assumptions for signed integers. See, for instance commit
+>> 5a581b367b5d "jiffies: Avoid undefined behavior from signed overflow"
+>> from Paul McKenney.
+> 
+> Yes, I feel Paul has been to too many C/C++ committee meetings and got
+> properly paranoid. Which isn't always a bad thing :-)
+> 
+> But for us using -fno-strict-overflow which actually defines signed
+> overflow, I myself am really not worried. I'm also not sure if KASAN has
+> been taught about this, or if it will still (incorrectly) warn about UB
+> for signed types.
+> 
 
-Fixes: 209b2a68de76 ("ath10k: add platform regulatory domain support")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/net/wireless/ath/ath10k/mac.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+UBSAN warns about signed overflows despite -fno-strict-overflow if gcc version is < 8.
+I have learned recently that UBSAN in GCC 8 ignores signed overflows if -fno-strict-overflow of fwrapv is used.
 
-diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
-index a1c2801ded10..0d5fde28ee44 100644
---- a/drivers/net/wireless/ath/ath10k/mac.c
-+++ b/drivers/net/wireless/ath/ath10k/mac.c
-@@ -8321,6 +8321,8 @@ static int ath10k_mac_get_wrdd_regulatory(struct ath10k *ar, u16 *rd)
- 	u32 alpha2_code;
- 	char alpha2[3];
- 
-+	*rd = ar->hw_eeprom_rd;
-+
- 	root_handle = ACPI_HANDLE(&pdev->dev);
- 	if (!root_handle)
- 		return -EOPNOTSUPP;
-@@ -8365,11 +8367,9 @@ static int ath10k_mac_init_rd(struct ath10k *ar)
- 	u16 rd;
- 
- 	ret = ath10k_mac_get_wrdd_regulatory(ar, &rd);
--	if (ret) {
-+	if (ret)
- 		ath10k_dbg(ar, ATH10K_DBG_BOOT,
- 			   "fallback to eeprom programmed regulatory settings\n");
--		rd = ar->hw_eeprom_rd;
--	}
- 
- 	ar->ath_common.regulatory.current_rd = rd;
- 	return 0;
--- 
-2.18.0
+$ cat signed_overflow.c 
+#include <stdio.h>
 
+__attribute__((noinline))
+int foo(int a, int b)
+{
+        return a+b;
+}
+
+int main(void)
+{
+        int a = 0x7fffffff;
+        int b = 2;
+        printf("%d\n", foo(a,b));
+        return 0;
+}
+
+$ gcc-8.2.0 -fsanitize=signed-integer-overflow signed_overflow.c && ./a.out 
+signed_overflow.c:6:10: runtime error: signed integer overflow: 2147483647 + 2 cannot be represented in type 'int'
+-2147483647
+$ gcc-8.2.0 -fno-strict-overflow -fsanitize=signed-integer-overflow signed_overflow.c && ./a.out 
+-2147483647
+$ gcc-7.3.0 -fsanitize=signed-integer-overflow signed_overflow.c && ./a.out
+signed_overflow.c:6:10: runtime error: signed integer overflow: 2147483647 + 2 cannot be represented in type 'int'
+-2147483647
+$ gcc-7.3.0 -fno-strict-overflow -fsanitize=signed-integer-overflow signed_overflow.c && ./a.out
+signed_overflow.c:6:10: runtime error: signed integer overflow: 2147483647 + 2 cannot be represented in type 'int'
+-2147483647
+
+
+clang behaves the same way as GCC 8:
+$ clang -fsanitize=signed-integer-overflow signed_overflow.c && ./a.out 
+signed_overflow.c:6:10: runtime error: signed integer overflow: 2147483647 + 2 cannot be represented in type 'int'
+-2147483647
+$ clang -fno-strict-overflow -fsanitize=signed-integer-overflow signed_overflow.c && ./a.out 
+-2147483647
+
+
+We can always just drop -fsanitize=signed-integer-overflow if it considered too noisy.
+Although it did catch some real bugs.
