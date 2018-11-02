@@ -2,128 +2,59 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 950EDC65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 12:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57420C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 12:25:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EE302081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 12:24:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Xhph0d9i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EE302081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 2510520847
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 12:25:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2510520847
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726775AbeKBVbu (ORCPT
+        id S1726886AbeKBVcm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 17:31:50 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:33810 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726099AbeKBVbt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 17:31:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=79c9zmPcOUUU1UAuRc5HBkl7+igHKIgqc4mNscycBvg=; b=Xhph0d9iIiViyCbG/1IQdhNuj
-        JIDUhhsu8Ds6cMIOM1jhZNaYInzAUorTwaE4ZgckudtUAdJGWLYaTXzRVLHAlCH66hj7fIGLHr4B4
-        iArpJcMU4Vd/DCDPt0CpAPCDej9RZl4cF+24YTKlElJQefk46wfcjrUg2xdw7YewesKJB4ESTgYAu
-        c0nWrEqFXzsoD0RBH1dMRMGsqs6ezr2VB7k2vfmx/UGUgVmW9p+/9OKaJywqEKGBsV9/gzSsgwzHG
-        hVmhudiVVKXdS9y5lEmchzijVbrdLS/7oPqGG9KXJj7mqbQh8yE3JWhAiWPh/pwasFFsq7biCe3oI
-        JmEE1iwhw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gIYU7-0002oa-2E; Fri, 02 Nov 2018 12:23:31 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 32E3F2029F9FF; Fri,  2 Nov 2018 13:23:28 +0100 (CET)
-Date:   Fri, 2 Nov 2018 13:23:28 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     "'paulmck@linux.ibm.com'" <paulmck@linux.ibm.com>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ralf@linux-mips.org" <ralf@linux-mips.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
-        "paul.burton@mips.com" <paul.burton@mips.com>,
-        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        "jhogan@kernel.org" <jhogan@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        "aryabinin@virtuozzo.com" <aryabinin@virtuozzo.com>,
-        "dvyukov@google.com" <dvyukov@google.com>
-Subject: Re: [RFC PATCH] lib: Introduce generic __cmpxchg_u64() and use it
- where needed
-Message-ID: <20181102122328.GM3178@hirez.programming.kicks-ass.net>
-References: <20181031213240.zhh7dfcm47ucuyfl@pburton-laptop>
- <20181031220253.GA15505@roeck-us.net>
- <20181031233235.qbedw3pinxcuk7me@pburton-laptop>
- <4e2438a23d2edf03368950a72ec058d1d299c32e.camel@hammerspace.com>
- <20181101131846.biyilr2msonljmij@lakrids.cambridge.arm.com>
- <20181101145926.GE3178@hirez.programming.kicks-ass.net>
- <f38e272f7a96e983549e4281aa9fd02833a4277a.camel@hammerspace.com>
- <20181101163212.GF3159@hirez.programming.kicks-ass.net>
- <20181101170146.GQ4170@linux.ibm.com>
- <7d1ecd21c4c249138dfdd42b9aaa1cea@AcuMS.aculab.com>
+        Fri, 2 Nov 2018 17:32:42 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:43992 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726116AbeKBVcm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 17:32:42 -0400
+Received: from wd0497.dip.tu-dresden.de ([141.76.109.241] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.0:ECDHE_RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1gIYW5-00061K-Ge; Fri, 02 Nov 2018 13:25:33 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 2/5] thermal: rockchip_thermal: simplify getting .driver_data
+Date:   Fri, 02 Nov 2018 13:25:32 +0100
+Message-ID: <2099094.tBqgur4jcY@phil>
+In-Reply-To: <20181021200053.2194-3-wsa+renesas@sang-engineering.com>
+References: <20181021200053.2194-1-wsa+renesas@sang-engineering.com> <20181021200053.2194-3-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7d1ecd21c4c249138dfdd42b9aaa1cea@AcuMS.aculab.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 10:56:31AM +0000, David Laight wrote:
-> From: Paul E. McKenney
-> > Sent: 01 November 2018 17:02
-> ...
-> > And there is a push to define C++ signed arithmetic as 2s complement,
-> > but there are still 1s complement systems with C compilers.  Just not
-> > C++ compilers.  Legacy...
+Am Sonntag, 21. Oktober 2018, 22:00:49 CET schrieb Wolfram Sang:
+> We should get 'driver_data' from 'struct device' directly. Going via
+> platform_device is an unneeded step back and forth.
 > 
-> Hmmm... I've used C compilers for DSPs where signed integer arithmetic
-> used the 'data registers' and would saturate, unsigned used the 'address
-> registers' and wrapped.
-> That was deliberate because it is much better to clip analogue values.
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Seems a dodgy heuristic if you ask me.
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-> Then there was the annoying cobol run time that didn't update the
-> result variable if the result wouldn't fit.
-> Took a while to notice that the sum of a list of values was even wrong!
-> That would be perfectly valid for C - if unexpected.
 
-That's just insane ;-)
 
-> > > But for us using -fno-strict-overflow which actually defines signed
-> > > overflow
-> 
-> I wonder how much real code 'strict-overflow' gets rid of?
-> IIRC gcc silently turns loops like:
-> 	int i; for (i = 1; i != 0; i *= 2) ...
-> into infinite ones.
-> Which is never what is required.
-
-Nobody said C was a 'safe' language. But less UB makes a better language
-IMO. Ideally we'd get all UBs filled in -- but I realise C has a few
-very 'interesting' ones that might be hard to get rid of.
