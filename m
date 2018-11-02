@@ -2,217 +2,197 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 388DEC6786F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 04:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A87DC6786F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 04:37:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0D4F2081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 04:11:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HPiLRerk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0D4F2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 27E4E2081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 04:37:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27E4E2081F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727729AbeKBNRg (ORCPT
+        id S1727556AbeKBNnk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 09:17:36 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:40133 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726925AbeKBNRg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 09:17:36 -0400
-Received: by mail-vs1-f67.google.com with SMTP id s9so366401vsk.7;
-        Thu, 01 Nov 2018 21:11:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references;
-        bh=5SMTWRHblam50hFXCZFpH9+3ZtgrRgiP4fXKZNWtfJ4=;
-        b=HPiLRerkAYVujBw+9k4TpapXG3ghOiEkffXYkePKjdYbpAkBfFyD/6cNX8UzpVktw0
-         p9oxG6M2dY0im+id5/rBrGjCE8N6kLD8thALVx+YgvhxPSeLLoz+9Mfs02EQza5AKm70
-         +Q8RF2yOIjr12rxrzUsuB8QoE4OdO3PegwbBEj73B5DjxOQW0zY5QvHt9dBIUQCt3mgN
-         7h46OZFt3y7NkO/P3toxSSnsjgKonCOBPlBIVLkPqzuD7liIpksV8GRyTkCD4WJ+oDrE
-         6HMcYuiP8pwIpudh7TrslnvexeaUiyLKht2EwJPxZbfUQZhlkYQ2KWa2it6EuA2KShiF
-         9WPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references;
-        bh=5SMTWRHblam50hFXCZFpH9+3ZtgrRgiP4fXKZNWtfJ4=;
-        b=XLTpgdf0XqQXOIBOlEtxaBkJPWsOY1H46/HszlJHq85SsNF51ZAooTSeIxcETIlQuq
-         /B4kcEH5YNuryECgaFj2Axw/YJknJ6vrGxp3FBdUIoBDeHBXdh4lh3wsiNgw0XY3Tl8a
-         IZaoQiaWlplAS9hh+2/uF/9DPjYpG4e5sqkITDX/y2cYedEpIhmx6oCJhLZohnU8PbuE
-         twu3j5D38wm0jEF4KHuN5WrCjFO3CG4ta0dCVl0qgad26EjgJc1ty5txbQ/usvNP1JEe
-         BZ7b1Amn9dqAsSi9kw/OmJPfRkY7ArGja/tdde8EK5R3zrYJNtSHym8KeuR/g6K0lWC2
-         F8sg==
-X-Gm-Message-State: AGRZ1gJeRIaqfjAaRBbX83PFiSYmNaGLKqP5+ZeWEOYWJFJ8M7U9XV1Y
-        qV+rLheOvm3Kth0yl4GyZg==
-X-Google-Smtp-Source: AJdET5ddNVCQaStRGQHiZ8wrxnFW5fZf00R9K6xBoxsZk6UAppM4gkXiWQ3MNxQmd9hf55NxTF51sQ==
-X-Received: by 2002:a67:d81:: with SMTP id 123mr3880137vsn.211.1541131912606;
-        Thu, 01 Nov 2018 21:11:52 -0700 (PDT)
-Received: from localhost.localdomain ([2601:902:c200:6512:a50b:fc5d:3604:d966])
-        by smtp.gmail.com with ESMTPSA id a2sm1661150uaa.15.2018.11.01.21.11.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 01 Nov 2018 21:11:52 -0700 (PDT)
-From:   Ayman Bagabas <ayman.bagabas@gmail.com>
-To:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Ayman Bagabas <ayman.bagabas@gmail.com>,
-        Kailang Yang <kailang@realtek.com>,
-        Hui Wang <hui.wang@canonical.com>,
-        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: [PATCH v2 3/3] ALSA: hda: add support for Huawei WMI MicMute LED
-Date:   Fri,  2 Nov 2018 00:11:15 -0400
-Message-Id: <20181102041120.7603-4-ayman.bagabas@gmail.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20181102041120.7603-1-ayman.bagabas@gmail.com>
-References: <20181102041120.7603-1-ayman.bagabas@gmail.com>
+        Fri, 2 Nov 2018 09:43:40 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:38024 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727008AbeKBNnj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 09:43:39 -0400
+Received: from smtp2.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:2:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id A1D89A10B8;
+        Fri,  2 Nov 2018 05:37:49 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
+        with ESMTP id VWQ71GE0pgPJ; Fri,  2 Nov 2018 05:37:46 +0100 (CET)
+Date:   Fri, 2 Nov 2018 15:37:33 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Christian Brauner <christian@brauner.io>,
+        Aleksa Sarai <asarai@suse.de>, netdev@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] kretprobe: produce sane stack traces
+Message-ID: <20181102043733.qqimup5vuevjua5w@yavin>
+References: <20181101083551.3805-1-cyphar@cyphar.com>
+ <20181101083551.3805-2-cyphar@cyphar.com>
+ <20181102002039.8f22c10fa47cae75fa709165@kernel.org>
+ <20181101211343.yooxwqfnoloprb5h@yavin>
+ <20181102120441.d00af1b57e6a739d0e7c7a91@kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="nhrb2edcfxbijqhe"
+Content-Disposition: inline
+In-Reply-To: <20181102120441.d00af1b57e6a739d0e7c7a91@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some of Huawei laptops come with a LED in the mic mute key. This patch
-enables and disable this LED accordingly.
 
-Signed-off-by: Ayman Bagabas <ayman.bagabas@gmail.com>
----
- drivers/platform/x86/huawei_wmi.c |  1 +
- include/linux/huawei_wmi.h        |  7 +++++
- sound/pci/hda/huawei_wmi_helper.c | 48 +++++++++++++++++++++++++++++++
- sound/pci/hda/patch_realtek.c     | 10 +++++++
- 4 files changed, 66 insertions(+)
- create mode 100644 include/linux/huawei_wmi.h
- create mode 100644 sound/pci/hda/huawei_wmi_helper.c
+--nhrb2edcfxbijqhe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/platform/x86/huawei_wmi.c b/drivers/platform/x86/huawei_wmi.c
-index 83545217ac19..cc5492571727 100644
---- a/drivers/platform/x86/huawei_wmi.c
-+++ b/drivers/platform/x86/huawei_wmi.c
-@@ -26,6 +26,7 @@
- #include <linux/input/sparse-keymap.h>
- #include <linux/acpi.h>
- #include <linux/wmi.h>
-+#include <linux/huawei_wmi.h>
- 
- MODULE_AUTHOR("Ayman Bagabas <ayman.bagabas@gmail.com>");
- MODULE_DESCRIPTION("Huawei WMI hotkeys");
-diff --git a/include/linux/huawei_wmi.h b/include/linux/huawei_wmi.h
-new file mode 100644
-index 000000000000..69b656c5029b
---- /dev/null
-+++ b/include/linux/huawei_wmi.h
-@@ -0,0 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __HUAWEI_WMI_H__
-+#define __HUAWEI_WMI_H__
-+
-+int huawei_wmi_micmute_led_set(bool on);
-+
-+#endif
-diff --git a/sound/pci/hda/huawei_wmi_helper.c b/sound/pci/hda/huawei_wmi_helper.c
-new file mode 100644
-index 000000000000..77edb658cbf0
---- /dev/null
-+++ b/sound/pci/hda/huawei_wmi_helper.c
-@@ -0,0 +1,48 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Helper functions for Huawei WMI Mic Mute LED;
-+ * to be included from codec driver
-+ */
-+
-+#if IS_ENABLED(CONFIG_HUAWEI_LAPTOP)
-+#include <linux/huawei_wmi.h>
-+
-+static int (*huawei_wmi_micmute_led_set_func)(bool);
-+
-+static void update_huawei_wmi_micmute_led(struct hda_codec *codec)
-+{
-+	struct hda_gen_spec *spec = codec->spec;
-+
-+	huawei_wmi_micmute_led_set_func(spec->micmute_led.led_value);
-+}
-+
-+static void alc_fixup_huawei_wmi(struct hda_codec *codec,
-+				   const struct hda_fixup *fix, int action)
-+{
-+	bool removefunc = false;
-+
-+	if (action == HDA_FIXUP_ACT_PROBE) {
-+		if (!huawei_wmi_micmute_led_set_func)
-+			huawei_wmi_micmute_led_set_func = symbol_request(huawei_wmi_micmute_led_set);
-+		if (!huawei_wmi_micmute_led_set_func) {
-+			codec_warn(codec, "Failed to find huawei_wmi symbol huawei_wmi_micmute_led_set\n");
-+			return;
-+		}
-+		removefunc = (huawei_wmi_micmute_led_set_func(false) < 0)
-+			|| (snd_hda_gen_add_micmute_led(codec, update_huawei_wmi_micmute_led) < 0);
-+
-+	}
-+
-+	if (huawei_wmi_micmute_led_set_func && (action == HDA_FIXUP_ACT_FREE || removefunc)) {
-+		symbol_put(huawei_wmi_micmute_led_set);
-+		huawei_wmi_micmute_led_set_func = NULL;
-+	}
-+}
-+
-+#else
-+
-+static void alc_fixup_huawei_wmi(struct hda_codec *codec,
-+				const struct hda_fixup *fix, int action)
-+{
-+}
-+
-+#endif
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 4f7a39c7883c..d09457d2a4f3 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -5374,6 +5374,9 @@ static void alc_fixup_thinkpad_acpi(struct hda_codec *codec,
- /* for alc295_fixup_hp_top_speakers */
- #include "hp_x360_helper.c"
- 
-+/* for alc_fixup_huawei_micmute_led */
-+#include "huawei_wmi_helper.c"
-+
- enum {
- 	ALC269_FIXUP_SONY_VAIO,
- 	ALC275_FIXUP_SONY_VAIO_GPIO2,
-@@ -5494,6 +5497,7 @@ enum {
- 	ALC255_FIXUP_DUMMY_LINEOUT_VERB,
- 	ALC255_FIXUP_DELL_HEADSET_MIC,
- 	ALC256_FIXUP_HUAWEI_MBXP_PINS,
-+	ALC256_FIXUP_HUAWEI_WMI_MICMUTE_LED,
- 	ALC295_FIXUP_HP_X360,
- 	ALC221_FIXUP_HP_HEADSET_MIC,
- };
-@@ -6348,6 +6352,10 @@ static const struct hda_fixup alc269_fixups[] = {
- 		.chained = true,
- 		.chain_id = ALC269_FIXUP_HEADSET_MIC
- 	},
-+	[ALC256_FIXUP_HUAWEI_WMI_MICMUTE_LED] = {
-+		.type = HDA_FIXUP_FUNC,
-+		.v.func = alc_fixup_huawei_wmi
-+	},
- 	[ALC256_FIXUP_HUAWEI_MBXP_PINS] = {
- 		.type = HDA_FIXUP_PINS,
- 		.v.pins = (const struct hda_pintbl[]) {
-@@ -6363,6 +6371,8 @@ static const struct hda_fixup alc269_fixups[] = {
- 			{0x21, 0x04211020},
- 			{ },
- 		},
-+		.chained = true,
-+		.chain_id = ALC256_FIXUP_HUAWEI_WMI_MICMUTE_LED
- 	},
- 	[ALC295_FIXUP_HP_X360] = {
- 		.type = HDA_FIXUP_FUNC,
--- 
-2.17.2
+On 2018-11-02, Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> On Fri, 2 Nov 2018 08:13:43 +1100
+> Aleksa Sarai <cyphar@cyphar.com> wrote:
+>=20
+> > On 2018-11-02, Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> > > Please split the test case as an independent patch.
+> >=20
+> > Will do. Should the Documentation/ change also be a separate patch?
+>=20
+> I think the Documentation change can be coupled with code change
+> if the change is small. But selftests is different, that can be
+> backported soon for testing the stable kernels.
+>=20
+>=20
+> > > > new file mode 100644
+> > > > index 000000000000..03146c6a1a3c
+> > > > --- /dev/null
+> > > > +++ b/tools/testing/selftests/ftrace/test.d/kprobe/kretprobe_stackt=
+race.tc
+> > > > @@ -0,0 +1,25 @@
+> > > > +#!/bin/sh
+> > > > +# SPDX-License-Identifier: GPL-2.0+
+> > > > +# description: Kretprobe dynamic event with a stacktrace
+> > > > +
+> > > > +[ -f kprobe_events ] || exit_unsupported # this is configurable
+> > > > +
+> > > > +echo 0 > events/enable
+> > > > +echo 1 > options/stacktrace
+> > > > +
+> > > > +echo 'r:teststackprobe sched_fork $retval' > kprobe_events
+> > > > +grep teststackprobe kprobe_events
+> > > > +test -d events/kprobes/teststackprobe
+> > >=20
+> > > Hmm, what happen if we have 2 or more kretprobes on same stack?
+> > > It seems you just save stack in pre_handler, but that stack can alrea=
+dy
+> > > includes another kretprobe's trampline address...
+> >=20
+> > Yeah, you're quite right...
+> >=20
+> > My first instinct was to do something awful like iterate over the set of
+> > "kretprobe_instance"s with ->task =3D=3D current, and then correct
+> > kretprobe_trampoline entries using ->ret_addr. (I think this would be
+> > correct because each task can only be in one context at once, and in
+> > order to get to a particular kretprobe all of your caller kretprobes
+> > were inserted before you and any sibling or later kretprobe_instances
+> > will have been removed. But I might be insanely wrong on this front.)
+>=20
+> yeah, you are right.=20
+>=20
+> >=20
+> > However (as I noted in the other thread), there is a problem where
+> > kretprobe_trampoline actually stops the unwinder in its tracks and thus
+> > you only get the first kretprobe_trampoline. This is something I'm going
+> > to look into some more (despite not having made progress on it last
+> > time) since now it's something that actually needs to be fixed (and
+> > as I mentioned in the other thread, show_stack() actually works on x86
+> > in this context unlike the other stack_trace users).
+>=20
+> I should read the unwinder code, but anyway, fixing it up in kretprobe
+> handler context is not hard. Since each instance is on an hlist, so when
+> we hit the kretprobe_trampoline, we can search it.
 
+As in, find the stored stack and merge the two? Interesting idea, though
+Steven has shot this down because of the associated cost (I was
+considering making it a kprobe flag, but that felt far too dirty).
+
+> However, the problem is the case where the out of kretprobe handler
+> context. In that context we need to try to lock the hlist and search
+> the list, which will be a costful operation.
+
+I think the best solution would be to unify all of the kretprobe-like
+things so that we don't need to handle non-kretprobe contexts for
+basically the same underlying idea. If we wanted to do it like this.
+
+I think a potentially better option would be to just fix the unwinder to
+correctly handle kretprobes (like it handles ftrace today).
+
+> On the other hand, func-graph tracer introduces a shadow return address
+> stack for each task (thread), and when we hit its trampoline on the stack,
+> we can easily search the entry from "current" task without locking the
+> shadow stack (and we already did it). This may need to pay a cost (1 page)
+> for each task, but smarter than kretprobe, which makes a system-wide=20
+> hash-table and need to search from hlist which has return addresses
+> of other context coexist.
+
+Probably a silly question (I've been staring at the function_graph code
+trying to understand how it handles return addresses -- and I'm really
+struggling), is this what ->ret_stack (and ->curr_ret_stack) do?
+
+Can you explain how the .retp handling works, because I'm really missing
+how the core arch/ hooks know to pass the correct retp value.
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--nhrb2edcfxbijqhe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEb6Gz4/mhjNy+aiz1Snvnv3Dem58FAlvb1IkACgkQSnvnv3De
+m5/VkA/+NS3/JN6MrtshS/7tlaWqTP+BVdil4b3jd4zgucfzGc9treoII3vk9beD
+0l9LXqTvHOUK1JNi7DmiKUGvI729V15FERCjb6TanYKpln2aDeJOhUT/UyMo3LWO
+2BjFZmoKlKXHEKS4wL4RE1TrmMGxw4RSdXrYpg3lC9MlHUpH8djgY7CcKrgM2ERa
+503cfbcn7g5J5/PAF9wI0EDxzN8XzBTq4/ERX5X6OVYkX3Xz8I28ijAhq6PyCIbV
+lmiMsSItpt5rMfA5dwXsJ0vPX3yLBTqGvtIsyVVETCV68sUBAUx4PSHHq4bAF+yY
+fPRt8gNk8X7EYHcCkO+63QZQd/a65QPCdnfyOrtpRwwBR/qzHoOUl4cDj4zvURT5
+5glcjr6ILHsLufF2RRHNYSrzSUX5q/DnQTki/z0iT7bKKGzooo9u4GGgJY6riosS
+73+H/dl8lcs3nrJcQGUvjDAUzOtppH1+RwVW8K3aCWdgn+L8ElR+1EaLgKfn7f09
+rtaPnoCGZbhhvMuA7psbjKYoINeKIhk77bVMhLBt+vRhMV61oDkfKE815H4lmsVe
+Omv9eV0HhvVpDisBc5GWZWvXl/AWJV+PQ/TDMZ8QGWoRU5Z5Nehlih9d4JSfLdrI
+fClbJP6OyU+rwp54fG9zb3QLX4KrvYZsNCH8vYXr7f4JxQXxJ1c=
+=CA2v
+-----END PGP SIGNATURE-----
+
+--nhrb2edcfxbijqhe--
