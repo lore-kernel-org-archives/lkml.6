@@ -2,155 +2,122 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BD7EC65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 06:57:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E9EC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 06:59:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEB742081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 06:57:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="i1oeZIMT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEB742081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id C99BA2082E
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 06:59:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C99BA2082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728429AbeKBQDm (ORCPT
+        id S1728455AbeKBQGB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 12:03:42 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:43999 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728079AbeKBQDm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 12:03:42 -0400
-Received: by mail-pl1-f194.google.com with SMTP id g59-v6so557521plb.10
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 23:57:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ci6bSjWDH9lfq4Iw2j30F/4+Idv6/6S5181xa79qhrk=;
-        b=i1oeZIMTJT7N7NuGu9gUcmocPB+gHxPeMkdyaeFgY8udsIn3T3n+LsZoGH2tjySEKQ
-         0fhNdRk74cVOcd+/aMlbh/wARVEePcjI9lIAUmzVWkhNyCygyvPbLuHTZWRNKq1f7qit
-         R464qR5JLO8UtsG2gxOyaQZjJvvlR2TvH2uso=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ci6bSjWDH9lfq4Iw2j30F/4+Idv6/6S5181xa79qhrk=;
-        b=Hkkmy1CptmyRVhhuV+4VyAbrZxLfT87yys8hH2KbKDVjJ3BDq5OaERVEJcmnQotLxt
-         aqVCZlMCKNVk8Tcr1A/x88S1O4jV6gDT7sPGnI7eIQ6/2LaWyA4mjR+gGXxLRCnb1O0+
-         PhZUrMDqTDSXWhMmIc+C/Xa2xlpXBRaOYdWGE6lsQJqwgo4BHr422qB/As1hw8+cyOIF
-         +GTE2R6ds72VulEqaNdiX9fjPz0nsEfn3OamZzmQ1HfoghJRAFpOo2Bw/pqtv1EAKVTF
-         pJoI41NZFISJp1bWLxirRjHf3+10k5Z6ffc/LhFQVtP/mSDbSkcDe/6qwuoskLh5Btl8
-         PMjw==
-X-Gm-Message-State: AGRZ1gKYubAM0vq9O2AgNGd5RU/Ya+4alX12FbZz9ehwlB0KfW16mHTq
-        8YoUZpEaQ/rFG6q/8VI+k9MZfokZmbDOFr1I7VvLpQ==
-X-Google-Smtp-Source: AJdET5fIOxemShm6dHPGjJsngMJlvyGCdUeWu8YwKzec66/UFoKt4KX8i5fcHmeC7TdHfH6W7jM2CfAkGLG/pJo/C4g=
-X-Received: by 2002:a17:902:9895:: with SMTP id s21-v6mr10588426plp.102.1541141854019;
- Thu, 01 Nov 2018 23:57:34 -0700 (PDT)
+        Fri, 2 Nov 2018 12:06:01 -0400
+Received: from mx1.mailbox.org ([80.241.60.212]:50852 "EHLO mx1.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727551AbeKBQGA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 12:06:00 -0400
+Received: from smtp1.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:1:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx1.mailbox.org (Postfix) with ESMTPS id 9F72B4B39A;
+        Fri,  2 Nov 2018 07:59:49 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
+        with ESMTP id N6g6TMfkTEix; Fri,  2 Nov 2018 07:59:47 +0100 (CET)
+Date:   Fri, 2 Nov 2018 17:59:32 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Christian Brauner <christian@brauner.io>,
+        Aleksa Sarai <asarai@suse.de>, netdev@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: Re: [PATCH v3 1/2] kretprobe: produce sane stack traces
+Message-ID: <20181102065932.bdt4pubbrkvql4mp@yavin>
+References: <20181101083551.3805-1-cyphar@cyphar.com>
+ <20181101083551.3805-2-cyphar@cyphar.com>
+ <20181101204720.6ed3fe37@vmware.local.home>
+ <20181102050509.tw3dhvj5urudvtjl@yavin>
 MIME-Version: 1.0
-References: <1517221474-19627-1-git-send-email-tqnguyen@apm.com>
- <CAKrQpStN6+UEp_CHdg3nSu7bAGPZ7N7VO_v0Srhc_Pe1ZLmEZg@mail.gmail.com> <CAKrQpSuET_Uv9cqt0+OGkhOz11KYnTs4B7nkcC0Hh995ynmZ+w@mail.gmail.com>
-In-Reply-To: <CAKrQpSuET_Uv9cqt0+OGkhOz11KYnTs4B7nkcC0Hh995ynmZ+w@mail.gmail.com>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Fri, 2 Nov 2018 14:57:23 +0800
-Message-ID: <CANMq1KA0b2LRfbc6VW+Mce==yVBYcRV+HQ5RkJj-yhRtqLgvoQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] usb: xhci: do not create and register shared_hcd
- when USB3.0 is disabled
-To:     tqnguyen@apm.com
-Cc:     mathias.nyman@intel.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
-        pvo@apm.com, lho@apm.com, tunguyen@apm.com, patches@apm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3kv2w2345ipyd7tq"
+Content-Disposition: inline
+In-Reply-To: <20181102050509.tw3dhvj5urudvtjl@yavin>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 5:53 PM Thang Q. Nguyen <tqnguyen@apm.com> wrote:
->
-> On Mon, Mar 5, 2018 at 5:22 PM, Thang Q. Nguyen <tqnguyen@apm.com> wrote:
-> > On Mon, Jan 29, 2018 at 5:24 PM, Thang Q. Nguyen <tqnguyen@apm.com> wrote:
-> >> From: Tung Nguyen <tunguyen@apm.com>
-> >>
-> >> Currently, hcd->shared_hcd always creates and registers to the usb-core.
-> >> If, for some reasons, USB3 downstream port is disabled, no roothub port for
-> >> USB3.0 is found. This causes kernel to display an error:
-> >> hub 2-0:1.0: config failed, hub doesn't have any ports! (err -19)
-> >> This patch checks and registers shared_hcd if USB3.0 downstream
-> >> port is available.
 
-I'm working on a board with similar warning on boot (XHCI controller
-without 3.0 support), and there is no more error on boot with your
-patch.
+--3kv2w2345ipyd7tq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-However, I still see the USB 3.0 root hub, so I'm wondering if that's
-expected or if we should find a way to remove it?
-Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+On 2018-11-02, Aleksa Sarai <cyphar@cyphar.com> wrote:
+> For kretprobes I think it would be fairly easy to reconstruct what
+> landed you into a kretprobe_trampoline by walking the set of
+> kretprobe_instances (since all new ones are added to the head, you can
+> get the real return address in-order).
+>=20
+> But I still have to figure out what is actually stopping the
+> save_stack_trace() unwinder that isn't stopping the show_stacks()
+> unwinder (though the show_stacks() code is more ... liberal with the
+> degree of certainty it has about the unwind).
 
-Apart from that:
+As an aside, I just tested with the frame unwinder and it isn't thrown
+off-course by kretprobe_trampoline (though obviously the stack is still
+wrong). So I think we just need to hook into the ORC unwinder to get it
+to continue skipping up the stack, as well as add the rewriting code for
+the stack traces (for all unwinders I guess -- though ideally we should
+do this without having to add the same code to every architecture).
 
-Tested-by: Nicolas Boichat <drinkcat@chromium.org>
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
-> >> Signed-off-by: Tung Nguyen <tunguyen@apm.com>
-> >> ---
-> >>  drivers/usb/host/xhci-plat.c |  9 ++++++---
-> >>  drivers/usb/host/xhci.c      | 13 +++++++++++++
-> >>  2 files changed, 19 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-> >> index 6f03830..bdb3975 100644
-> >> --- a/drivers/usb/host/xhci-plat.c
-> >> +++ b/drivers/usb/host/xhci-plat.c
-> >> @@ -293,9 +293,12 @@ static int xhci_plat_probe(struct platform_device *pdev)
-> >>         if (HCC_MAX_PSA(xhci->hcc_params) >= 4)
-> >>                 xhci->shared_hcd->can_do_streams = 1;
-> >>
-> >> -       ret = usb_add_hcd(xhci->shared_hcd, irq, IRQF_SHARED);
-> >> -       if (ret)
-> >> -               goto dealloc_usb2_hcd;
-> >> +       /* Just add the shared_hcd when USB3.0 downstream port is available */
-> >> +       if (xhci->num_usb3_ports > 0) {
-> >> +               ret = usb_add_hcd(xhci->shared_hcd, irq, IRQF_SHARED);
-> >> +               if (ret)
-> >> +                       goto dealloc_usb2_hcd;
-> >> +       }
-> >>
-> >>         device_enable_async_suspend(&pdev->dev);
-> >>         pm_runtime_put_noidle(&pdev->dev);
-> >> diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-> >> index 1eeb339..9d3b1ab 100644
-> >> --- a/drivers/usb/host/xhci.c
-> >> +++ b/drivers/usb/host/xhci.c
-> >> @@ -611,6 +611,19 @@ int xhci_run(struct usb_hcd *hcd)
-> >>                 if (ret)
-> >>                         xhci_free_command(xhci, command);
-> >>         }
-> >> +       /*
-> >> +        * In case that the USB3.0 downstream port is not available
-> >> +        * No one triggers to start the xHC which should be done
-> >> +        * before finishing xhci_run
-> >> +        */
-> >> +       if (xhci->num_usb3_ports == 0) {
-> >> +               if (xhci_start(xhci)) {
-> >> +                       xhci_halt(xhci);
-> >> +                       return -ENODEV;
-> >> +               }
-> >> +               xhci->cmd_ring_state = CMD_RING_STATE_RUNNING;
-> >> +       }
-> >> +
-> >>         xhci_dbg_trace(xhci, trace_xhci_dbg_init,
-> >>                         "Finished xhci_run for USB2 roothub");
-> >>
-> >> --
-> >> 1.8.3.1
-> >>
-> > Hi,
-> > Do you have any comment on the patch?
-> Hi,
-> Do you have any comment on the patch?
+--3kv2w2345ipyd7tq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEb6Gz4/mhjNy+aiz1Snvnv3Dem58FAlvb9dEACgkQSnvnv3De
+m58HVQ/9GjCMyDH7P29NqoKKhHNNyeyu64COmyciYvp58xSTJH+37yiVdMsL5evE
+FgRwPYWxVY0pFe8i8yfxeaiFsWN4KJDelldTKY5o2yD91tuD/g1s8zWqri8UOVYW
+0+sdchSV15VcAwt21fnoFkGTFIYYJ6DtKI6mG3bxdVeNF/A7tPgZQ7mYJKlNWWKS
+jioKf6i/AkojePH5LVofA+6wwvGQe/pyV1mHIx17AN71P9fAvn5tEW6I8e97W0my
+FArFkLbYhpkk3p2rOxOKFLPqaxyQQ8lyCpSRnI/kGIYBHP7sUrplddVO9gHpLo9i
+8OOj4/AyEzcK8Af9FweN8e57j/bUeEjR8Sdth8MH4ie6EC/N7129lWoCloUF3erJ
+XBrDtGog68p6r+L/s2k8AId8/eUnnjIaK/hoGw1NtPN6HBDunm899ufEnn8ADXJI
+hbKqMGhyUvItay/V8iZgufNfcJ8ZfaidkfvHLvRGz9lrjA27jR0OWwSjmPnvyA8i
+inNkW6rdLVO5EVjg5LolS2YKOXBTya/6ViCnA39HV+8b4oagTblJJBkw4sVoyaKQ
+IEbBAx9x3OFPK4Cnw1IG5wtoFp9RMCBO+XdKOkO3cKmlXSuD8D24HIzRWJD6M0ni
+8iz59eUZrbB42sgen64CzJvPROtxQvdB1tvrsZ6vn/NeSsWfBs4=
+=+Zfh
+-----END PGP SIGNATURE-----
+
+--3kv2w2345ipyd7tq--
