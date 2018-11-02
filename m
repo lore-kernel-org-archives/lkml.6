@@ -2,71 +2,71 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20E22C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 22:15:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4889C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 22:15:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C58E92082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 22:15:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A261220831
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 22:15:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZOC0Ew1d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C58E92082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="cdRCDy7O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A261220831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728380AbeKCHYH (ORCPT
+        id S1728409AbeKCHYv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 03:24:07 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:42298 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726083AbeKCHYH (ORCPT
+        Sat, 3 Nov 2018 03:24:51 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46393 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726083AbeKCHYv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 03:24:07 -0400
-Received: by mail-qk1-f194.google.com with SMTP id u68so5472394qkg.9;
-        Fri, 02 Nov 2018 15:15:12 -0700 (PDT)
+        Sat, 3 Nov 2018 03:24:51 -0400
+Received: by mail-pg1-f195.google.com with SMTP id w7so1530778pgp.13
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 15:15:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=+36MGkBJOIyLiqLmdqmm6g8gRAPLYxbbx/nV3fDTvsU=;
-        b=ZOC0Ew1drWhpzkD5IdzBEMBakNKlmGP27BKtECZX/0IJ5QFqlI9em4YuSaNYAjumsb
-         lM/38fo/vDCYDELKNWV5vi8K4ljBGgMLOHvM6gknydgSMVZkydC7tCVAFQuKFIgC8ZBT
-         2dsBhog/+/WzUvpMUzy0SdS4zArVNQcnvISiK4DJCiMQ5J2IYGPHNujNhcokeZ54hIVV
-         hiECMdjHtvm80q/q2We7lb7AA/KRbC3ibJXrUZxchUABKZdWWjbuWgE6AYBn4CqeCGIv
-         GQ1neEBrnQtBLsFqbOj0cKQPvcBGFdm2XqmeDIN7KeOhlqBlDFGX5+ep+/JymWp+Q9zA
-         jrRQ==
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=qj0b57hV9EgqkQpKOK/D4WFdGabmpNEqOgCWjUOkSsU=;
+        b=cdRCDy7OLv5SPxHiKjSoLoi93iTlWmC/ZPTRloPlVY0LazUdu83F+q0qA32O9lL7jB
+         s2DmmU2w1QhxCXVkShvbeyoEC+0X9mu/CNrEqEX5QT010VUAEfZeF+9OJmHt98m8wFcu
+         j4Z+HMkDEtqpy9xuZCPU6a8jrHWbbmLM/wyBl6PYpJsRAZWJVUADjNSu0FYPcBeEkwgy
+         79/iRQRubL7k2i7ozRZWinOS+aIwzVmtEcGD3KvPCMDxKptZJGovaZ1zcFjX5DCqcKv2
+         oi8QaNqI5zxxXwuHRPGnnFa5g7xTT4kVJRfEfDTpvGozrGb8T/HdkqVojKjO3AqhEgyo
+         WPVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=+36MGkBJOIyLiqLmdqmm6g8gRAPLYxbbx/nV3fDTvsU=;
-        b=mEEpBPE/PxD0Q5Loci9VkUC4DUbEZUt869SJeHis30KYrR1r00Vl6gplR8gMRrPZg2
-         HE3qxH5zx5dmozUiipCQZgcyEQJhLfHDkSkBcvU0gyy/ePeVC3S/OWcsJ6cehBR6fNJx
-         wihwprwuooW1t/ED+ttT0RMyTjpnP82n5Vep8DKMO2Xv2XIAPAgjHVQTnyfTsCGeYzcM
-         8aeTowYTMv5tYSOnrEkrAlFiCZlQfzn4v2mQTvORM+znB63in9kq1DYHz72+DFVZif8t
-         MN0+KqJ4BBpWOcI+948VXnLiC3Anci4snGn+jgxj0vBvGs2+dQcCGbUiloHQS1whakAz
-         FKEA==
-X-Gm-Message-State: AGRZ1gKxDQGdfyMZ8D8aLOyxkHe9NBMCv4MhKzTPnGemceZVSFvAkUb+
-        wQhjJFaxoE163qsI1H7XNngeH8B9ed1JOErbUP0=
-X-Google-Smtp-Source: AJdET5fcNiXJvy13IeXlPYyV/30Y5yP1rVIhQYyrw2mvhIKrtMpRnXtIKd0rOTonYtLskbJu7SlUaia3TePYDQbyMY0=
-X-Received: by 2002:a0c:dc0f:: with SMTP id s15mr4878154qvk.40.1541196911540;
- Fri, 02 Nov 2018 15:15:11 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a0c:9881:0:0:0:0:0 with HTTP; Fri, 2 Nov 2018 15:15:11 -0700 (PDT)
-In-Reply-To: <4ebfc3aeb5335a1f671602f9a906f948c39a30da.camel@mellanox.com>
-References: <20181102153316.1492515-1-arnd@arndb.de> <9f214f12ec89020ceb14c1aec25b3a0d968507aa.camel@mellanox.com>
- <2727f37b-1742-5532-317e-3be8a984266b@gmail.com> <4ebfc3aeb5335a1f671602f9a906f948c39a30da.camel@mellanox.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 2 Nov 2018 23:15:11 +0100
-X-Google-Sender-Auth: 8a0crXQUdegwRGc5lDnLHjVseBw
-Message-ID: <CAK8P3a0ybuiu_dBfUDfMYUtKZ=yGdB7An0_wx_ZGhnS5rrD3_w@mail.gmail.com>
-Subject: Re: [PATCH] net/mlx5e: fix high stack usage
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qj0b57hV9EgqkQpKOK/D4WFdGabmpNEqOgCWjUOkSsU=;
+        b=C4fYy5/7UBtLErTm5k0eG8u6AKfKVm/IQ4VIGb78TPwFvCQTIzw9aN7ugC5b5bdPd5
+         J/Z/x6dqtxTnAbLx5+Kt/Mw/erw2oWtxeOW60BEIm7IlaiQDyj1yYh9RoiVSMXNVHyXb
+         w7F9BUbpgjXFHIB99ViNChnzj0j7B2+SCdQW/MjkTfUotf+mjteOLFRfwDHf6pbeYAUe
+         ytlHg0MsYNrHUpwBqlYaQy18OsVmiTXcIwv814spvI5DkaaBnj33kdgKHNM59/nmdJXm
+         ieFfYT020L2ormPTZq7d+l4pGCL9z/r6AecxOLLkL7F1giWRd+i11Kd4polKtBNptlj6
+         Cvzw==
+X-Gm-Message-State: AGRZ1gLtU9B2kOycbMdTmc57gpBi529DklwO2cpgds5Qiw/bmiNAWuu/
+        t4yTvBaid459Apz4ZF3f29Lblg==
+X-Google-Smtp-Source: AJdET5e7jh74USg1dmHkiCrbBEVHbkALQJ4llWaZQyjt5/MVPKvLnZ8Fc5CUf+uoPy8/bthv0KUKVg==
+X-Received: by 2002:a62:6143:: with SMTP id v64-v6mr13556571pfb.125.1541196954870;
+        Fri, 02 Nov 2018 15:15:54 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id z63-v6sm39877896pfz.31.2018.11.02.15.15.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 02 Nov 2018 15:15:53 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1gIhjM-0002xd-My; Fri, 02 Nov 2018 16:15:52 -0600
+Date:   Fri, 2 Nov 2018 16:15:52 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
 To:     Saeed Mahameed <saeedm@mellanox.com>
 Cc:     "eric.dumazet@gmail.com" <eric.dumazet@gmail.com>,
         "davem@davemloft.net" <davem@davemloft.net>,
+        "arnd@arndb.de" <arnd@arndb.de>,
         "leon@kernel.org" <leon@kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Moshe Shemesh <moshe@mellanox.com>,
@@ -78,61 +78,63 @@ Cc:     "eric.dumazet@gmail.com" <eric.dumazet@gmail.com>,
         "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         Ilya Lesokhin <ilyal@mellanox.com>,
         Kamal Heib <kamalh@mellanox.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] net/mlx5e: fix high stack usage
+Message-ID: <20181102221552.GC17096@ziepe.ca>
+References: <20181102153316.1492515-1-arnd@arndb.de>
+ <9f214f12ec89020ceb14c1aec25b3a0d968507aa.camel@mellanox.com>
+ <2727f37b-1742-5532-317e-3be8a984266b@gmail.com>
+ <4ebfc3aeb5335a1f671602f9a906f948c39a30da.camel@mellanox.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4ebfc3aeb5335a1f671602f9a906f948c39a30da.camel@mellanox.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/2/18, Saeed Mahameed <saeedm@mellanox.com> wrote:
+On Fri, Nov 02, 2018 at 10:07:02PM +0000, Saeed Mahameed wrote:
 > On Fri, 2018-11-02 at 14:39 -0700, Eric Dumazet wrote:
->>
->> On 11/02/2018 02:05 PM, Saeed Mahameed wrote:
->>
->> > temp will be mem copied to priv->stats.sw at the end,
->> > memcpy(&priv->stats.sw, &s, sizeof(s));
->> >
->> > one other way to solve this as suggested by Andrew, is to get rid
->> > of
->> > the temp var and make it point directly to priv->stats.sw
->> >
->>
->> What about concurrency ?
->>
->> This temp variable is there to make sure concurrent readers of stats
->> might
->> not see mangle data (because another 'reader' just did a memset() and
->> is doing the folding)
->>
->>
->> mlx5e_get_stats() can definitely be run at the same time by multiple
->> threads.
->>
->
+> > 
+> > On 11/02/2018 02:05 PM, Saeed Mahameed wrote:
+> >  
+> > > temp will be mem copied to priv->stats.sw at the end,
+> > > memcpy(&priv->stats.sw, &s, sizeof(s)); 
+> > > 
+> > > one other way to solve this as suggested by Andrew, is to get rid
+> > > of
+> > > the temp var and make it point directly to priv->stats.sw 
+> > > 
+> > 
+> > What about concurrency ?
+> > 
+> > This temp variable is there to make sure concurrent readers of stats
+> > might
+> > not see mangle data (because another 'reader' just did a memset() and
+> > is doing the folding)
+> > 
+> > 
+> > mlx5e_get_stats() can definitely be run at the same time by multiple
+> > threads.
+> > 
+> 
 > hmm, you are right, i was thinking that mlx5e_get_Stats will trigger a
 > work to update stats and grab the state_lock, but for sw stats this is
 > not the case it is done in place.
->
+
+That was my guess when I saw this.. the confusing bit is why is there
+s and temp, why not just s?
+
 > BTW memcpy itself is not thread safe.
 
-Before commit 6c63efe4cfab ("net/mlx5e: Remove redundant active_channels
-indication"), there was a read_lock() in the function apparently intended to
-made it thread safe. This got removed with the comment
+At least on 64 bit memcpy will do > 8 byte stores when copying so on
+most architectures it will cause individual new or old u64 to be
+returned and not a mess..
 
-commit 6c63efe4cfabf230a8ed4b1d880249875ffdac13
-Author: Eran Ben Elisha <eranbe@mellanox.com>
-Date:   Tue May 29 11:06:31 2018 +0300
+32 bit will always make a mess.
 
-    net/mlx5e: Remove redundant active_channels indication
+If the stats don't update that often then kmalloc'ing a new buffer and
+RCU'ing it into view might be a reasonable alternative to this?
 
-    Now, when all channels stats are saved regardless of the channel's state
-    {open, closed}, we can safely remove this indication and the stats spin
-    lock which protects it.
-
-    Fixes: 76c3810bade3 ("net/mlx5e: Avoid reset netdev stats on
-configuration changes")
-
-I don't really understand the reasoning, but maybe we can remove
-the memcpy() if the code is thread safe, or we need the lock back if it's not.
-
-         Arnd
+Jason
