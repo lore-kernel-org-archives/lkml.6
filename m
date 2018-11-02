@@ -2,172 +2,112 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIMWL_WL_MED,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8502C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:25:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2588CC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:34:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 951A12081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:25:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="XHh5Uhb8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 951A12081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ingics.com
+	by mail.kernel.org (Postfix) with ESMTP id C828C2081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:34:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C828C2081F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727816AbeKBXcq (ORCPT
+        id S1727861AbeKBXlj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 19:32:46 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39371 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726557AbeKBXcq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 19:32:46 -0400
-Received: by mail-pg1-f193.google.com with SMTP id r9-v6so1063817pgv.6
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 07:25:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ingics-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=w519/YG26fbhkRkJFweLtcv6T6LTAB1HkD6Jg6FYlIA=;
-        b=XHh5Uhb80zYjSkaiv/1qBZ7h4kDITFp/Q3TVXaJRHU+ipObgCTKk838lSR/jjS/ckF
-         dtbeyS/KdaEfl4Zd55aki8xnoWxgV8nTcPdiUx60VT5cIG738utoouNmUTxAXxgHbT+I
-         3f+rVrT+p6+rsm+SImDWSsClOBib5H53O1ETgwPzHJ3sx8/ROW3HQa5vp/NhrXAnGHKK
-         QbSuhDyiaLVRtspjo26LzB6Qd1+J1wk9bhWXn2JBzEKSJqmwjJxuSA6qjGa3YrEggama
-         lgTXqb9Xq/JCnEWXoOX3FzLH+wseRlIjEjQAXGxtaidn5U87Iff27VqM9DTke4vVjXLl
-         vIpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=w519/YG26fbhkRkJFweLtcv6T6LTAB1HkD6Jg6FYlIA=;
-        b=dFBJC+2QlWb9pnJq3zT/esdaxVb82MjkWDpseZ1cFcEorxM9gUkHVCcIbYdwhiUKOG
-         D1xImsy8pY4z1fRYoUqPO4Qc6zFTGuHkQjXerlErAosCgKePgMtuoCMZAgT4Xqh7p9U4
-         fK3sdkZOZMnjdjn8ZCNJcObn4r0pj9kXXBwwYNJCWBRaAwa5IPMxzq5ZFRCenLJXvV7w
-         0qw6RkhPI/Tovlg5KHPM7iDtovBqA1oV3+nwhGFVFGBpH/CIX4ApgbXneTbT7zoEhlMo
-         OY/wuGbOpey8SvMiuIVaJa6CZwlT//UVSL2svS4HnM4X56pUlkmp6YfiW78/D8UX9bSj
-         0AVQ==
-X-Gm-Message-State: AGRZ1gJpXPLgLS61Ni497V3fu1gweNuOK+2gy8YC8cVBceQuM59lQxLf
-        2P5tFjOlzARe/ye/iVY1DVbIIw==
-X-Google-Smtp-Source: AJdET5etAMEgI94H61ZeBEv+NoQ1alqFstkVJKg+Uw10XeC07QoYRK97xbRt8Wbu5eWmW6xhOLOdow==
-X-Received: by 2002:a63:8f09:: with SMTP id n9-v6mr11026252pgd.222.1541168727798;
-        Fri, 02 Nov 2018 07:25:27 -0700 (PDT)
-Received: from localhost.localdomain (36-237-254-223.dynamic-ip.hinet.net. [36.237.254.223])
-        by smtp.gmail.com with ESMTPSA id z63-v6sm38958386pfz.31.2018.11.02.07.25.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 02 Nov 2018 07:25:26 -0700 (PDT)
-From:   Axel Lin <axel.lin@ingics.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     pascal paillet <p.paillet@st.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] regulator: stpmic1: Remove explicitly enable_val and disable_val settings
-Date:   Fri,  2 Nov 2018 22:25:15 +0800
-Message-Id: <20181102142515.14777-1-axel.lin@ingics.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 2 Nov 2018 19:41:39 -0400
+Received: from mail.hallyn.com ([178.63.66.53]:55046 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727668AbeKBXlj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 19:41:39 -0400
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id D291B5D3; Fri,  2 Nov 2018 14:34:17 +0000 (UTC)
+Date:   Fri, 2 Nov 2018 14:34:17 +0000
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Christian Brauner <christian.brauner@canonical.com>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Daniel Colascione <dancol@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        Suren Baghdasaryan <surenb@google.com>, ebiederm@xmission.com,
+        luto@amacapital.net, serge@hallyn.com
+Subject: Re: [RFC PATCH] Implement /proc/pid/kill
+Message-ID: <20181102143417.GA19304@mail.hallyn.com>
+References: <20181030204501.jnbe7dyqui47hd2x@yavin>
+ <20181030214243.GB32621@google.com>
+ <20181030222339.ud4wfp75tidowuo4@yavin>
+ <20181030223343.GB105735@joelaf.mtv.corp.google.com>
+ <CAKOZueuBdY_b=CVk29pzn0NAt9sJtzr6yqx9Y00WCppCm1JFWQ@mail.gmail.com>
+ <CAPP7u0VQqDvFr=-52+Tmv_K=vT730wG7w9VQqJggsXTPFvaUBQ@mail.gmail.com>
+ <20181031025655.yz7lfhswk7igb3ty@yavin>
+ <CAEXW_YQxWcQGZHrwhwsyu7GCk+WSap=tb0-asTsG8sTFmjE--g@mail.gmail.com>
+ <20181101204059.GA102756@google.com>
+ <20181102094602.z5otkwrqtchpuhfm@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181102094602.z5otkwrqtchpuhfm@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When enable_val is the same as enable_mask and disable_val is 0,
-the regulator core will use enable_mask as enable_val by default.
-So don't need to explicitly set enable_val and disable_val.
+Quoting Christian Brauner (christian.brauner@canonical.com):
+> On Thu, Nov 01, 2018 at 01:40:59PM -0700, Joel Fernandes wrote:
+> > On Tue, Oct 30, 2018 at 09:24:00PM -0700, Joel Fernandes wrote:
+> > > On Tue, Oct 30, 2018 at 7:56 PM, Aleksa Sarai <cyphar@cyphar.com> wrote:
+> > > > On 2018-10-31, Christian Brauner <christian.brauner@canonical.com> wrote:
+> > > >> > I think Aleksa's larger point is that it's useful to treat processes
+> > > >> > as other file-descriptor-named, poll-able, wait-able resources.
+> > > >> > Consistency is important. A process is just another system resource,
+> > > >> > and like any other system resource, you should be open to hold a file
+> > > >> > descriptor to it and do things to that process via that file
+> > > >> > descriptor. The precise form of this process-handle FD is up for
+> > > >> > debate. The existing /proc/$PID directory FD is a good candidate for a
+> > > >> > process handle FD, since it does almost all of what's needed. But
+> > > >> > regardless of what form a process handle FD takes, we need it. I don't
+> > > >> > see a case for continuing to treat processes in a non-unixy,
+> > > >> > non-file-descriptor-based manner.
+> > > >>
+> > > >> That's what I'm proposing in the API for which I'm gathering feedback.
+> > > >> I have presented parts of this in various discussions at LSS Europe last week
+> > > >> and will be at LPC.
+> > > >> We don't want to rush an API like this though. It was tried before in
+> > > >> other forms
+> > > >> and these proposals didn't make it.
+> > > >
+> > > > :+1: on a well thought-out and generic proposal. As we've discussed
+> > > > elsewhere, this is an issue that really would be great to (finally)
+> > > > solve.
+> > > 
+> > > Excited to see this and please count me in for discussions around this. thanks.
+> > > 
+> > 
+> > Just a quick question, is there a track planned at LPC for discussing this
+> > new proposal or topics around/related to the proposal?
+> > 
+> > If not, should that be planned?
+> 
+> There isn't currently one planned but I'm happy to have a hallway track
+> session around this.
+> 
+> But note, I think not all relevant people are going to be there (e.g.
+> Andy). File descriptors for processes seems interesting to a lot of
+> people so I'm going to send out a pitch of the idea I have and see how
+> much I'm going to get yelled at latest on Tuesday. Even if it just
+> triggers a design discussion.
+> I have been urged by people I pitched this to to send it to lkml
+> already. Sorry for the delay and the initial non-transparency. The only
+> reason I didn't do it right away was to ensure that this idea is not
+> completely crazy. :) (Eric probably still thinks I am though. :))
+> It's just that I'm at a conference and I want to have a nicer writeup of
+> this. Given the speed with which this is all coming I have given up on
+> preparing a first set of patches. :)
+> 
+> Christian
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/regulator/stpmic1_regulator.c | 17 +----------------
- 1 file changed, 1 insertion(+), 16 deletions(-)
-
-diff --git a/drivers/regulator/stpmic1_regulator.c b/drivers/regulator/stpmic1_regulator.c
-index e15634edb8ce..22d9b5f779c5 100644
---- a/drivers/regulator/stpmic1_regulator.c
-+++ b/drivers/regulator/stpmic1_regulator.c
-@@ -224,8 +224,6 @@ static struct regulator_ops stpmic1_switch_regul_ops = {
- 	.vsel_mask = LDO_VOLTAGE_MASK, \
- 	.enable_reg = ids##_ACTIVE_CR, \
- 	.enable_mask = LDO_ENABLE_MASK, \
--	.enable_val = 1, \
--	.disable_val = 0, \
- 	.enable_time = PMIC_ENABLE_TIME_US, \
- 	.pull_down_reg = ids##_PULL_DOWN_REG, \
- 	.pull_down_mask = ids##_PULL_DOWN_MASK, \
-@@ -245,8 +243,6 @@ static struct regulator_ops stpmic1_switch_regul_ops = {
- 	.vsel_mask = LDO_VOLTAGE_MASK, \
- 	.enable_reg = LDO3_ACTIVE_CR, \
- 	.enable_mask = LDO_ENABLE_MASK, \
--	.enable_val = 1, \
--	.disable_val = 0, \
- 	.enable_time = PMIC_ENABLE_TIME_US, \
- 	.bypass_reg = LDO3_ACTIVE_CR, \
- 	.bypass_mask = LDO_BYPASS_MASK, \
-@@ -268,8 +264,6 @@ static struct regulator_ops stpmic1_switch_regul_ops = {
- 	.fixed_uV = 3300000, \
- 	.enable_reg = LDO4_ACTIVE_CR, \
- 	.enable_mask = LDO_ENABLE_MASK, \
--	.enable_val = 1, \
--	.disable_val = 0, \
- 	.enable_time = PMIC_ENABLE_TIME_US, \
- 	.pull_down_reg = ids##_PULL_DOWN_REG, \
- 	.pull_down_mask = ids##_PULL_DOWN_MASK, \
-@@ -289,8 +283,6 @@ static struct regulator_ops stpmic1_switch_regul_ops = {
- 	.vsel_mask = BUCK_VOLTAGE_MASK, \
- 	.enable_reg = ids##_ACTIVE_CR, \
- 	.enable_mask = BUCK_ENABLE_MASK, \
--	.enable_val = 1, \
--	.disable_val = 0, \
- 	.enable_time = PMIC_ENABLE_TIME_US, \
- 	.of_map_mode = stpmic1_map_mode, \
- 	.pull_down_reg = ids##_PULL_DOWN_REG, \
-@@ -309,15 +301,13 @@ static struct regulator_ops stpmic1_switch_regul_ops = {
- 	.fixed_uV = 500000, \
- 	.enable_reg = VREF_DDR_ACTIVE_CR, \
- 	.enable_mask = BUCK_ENABLE_MASK, \
--	.enable_val = 1, \
--	.disable_val = 0, \
- 	.enable_time = PMIC_ENABLE_TIME_US, \
- 	.pull_down_reg = ids##_PULL_DOWN_REG, \
- 	.pull_down_mask = ids##_PULL_DOWN_MASK, \
- 	.supply_name = #base, \
- }
- 
--#define REG_SWITCH(ids, base, reg, mask, val) { \
-+#define REG_SWITCH(ids, base, reg, mask) { \
- 	.name = #ids, \
- 	.id = STPMIC1_##ids, \
- 	.n_voltages = 1, \
-@@ -328,8 +318,6 @@ static struct regulator_ops stpmic1_switch_regul_ops = {
- 	.fixed_uV = 5000000, \
- 	.enable_reg = (reg), \
- 	.enable_mask = (mask), \
--	.enable_val = (val), \
--	.disable_val = 0, \
- 	.enable_time = PMIC_ENABLE_TIME_US, \
- 	.supply_name = #base, \
- }
-@@ -412,21 +400,18 @@ struct stpmic1_regulator_cfg stpmic1_regulator_cfgs[] = {
- 	},
- 	[STPMIC1_BOOST] = {
- 		.desc = REG_SWITCH(BOOST, boost, BST_SW_CR,
--				   BOOST_ENABLED,
- 				   BOOST_ENABLED),
- 		.icc_reg = BUCKS_ICCTO_CR,
- 		.icc_mask = BIT(6),
- 	},
- 	[STPMIC1_VBUS_OTG] = {
- 		.desc = REG_SWITCH(VBUS_OTG, pwr_sw1, BST_SW_CR,
--				   USBSW_OTG_SWITCH_ENABLED,
- 				   USBSW_OTG_SWITCH_ENABLED),
- 		.icc_reg = BUCKS_ICCTO_CR,
- 		.icc_mask = BIT(4),
- 	},
- 	[STPMIC1_SW_OUT] = {
- 		.desc = REG_SWITCH(SW_OUT, pwr_sw2, BST_SW_CR,
--				   SWIN_SWOUT_ENABLED,
- 				   SWIN_SWOUT_ENABLED),
- 		.icc_reg = BUCKS_ICCTO_CR,
- 		.icc_mask = BIT(5),
--- 
-2.17.1
-
+Sounds good, thanks, looking forward to it.
