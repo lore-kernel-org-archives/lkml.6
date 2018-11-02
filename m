@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F591C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:53:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE9A9C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:53:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E4C72084A
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:53:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FD5620848
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:53:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GSESv/5N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E4C72084A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZQWg8ToR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FD5620848
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731089AbeKCEBn (ORCPT
+        id S1731133AbeKCEBt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 00:01:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57568 "EHLO mail.kernel.org"
+        Sat, 3 Nov 2018 00:01:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57692 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726051AbeKCEBm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 00:01:42 -0400
+        id S1731095AbeKCEBt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 00:01:49 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 086002082D;
-        Fri,  2 Nov 2018 18:53:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C96A2082D;
+        Fri,  2 Nov 2018 18:53:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184806;
-        bh=IuUrZmmVaMPC+lwocT/LsJk9XeOxOOAJHq9wL8S0E84=;
+        s=default; t=1541184812;
+        bh=FKywddF3f/leeIck9HYzSda2orFvp79lW0uqAofLvbI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GSESv/5Ne1PthCjY8SMimsq8ZwzAUYs5pBzEGVr7JYVcEUo7F0i4X7wM04hXwX7Vu
-         8TUJdoHfleJKBtQvB8UjgyJyK72pVfx/xiO/QVjQvfWfqoc1XozT2Zg/YN/CeIakmf
-         9MYJjqrq5BT05zbqZPsIpuVlz8v0WjuyNyupsHbI=
+        b=ZQWg8ToRasSa58cAwQW7RPbtl8XITjh3l/1dE7xLYC3cG3r6KsTRfsBGrI+UiL5CZ
+         BRd5E6DGLoB6r+nZg6Tq9Y8W5H+SA3+XSCVN8wEcIgoCWKt4s3hdxaxv6cNlDVIhog
+         XEyuGl9B2LnpAEnD5Avk9Kj+NF9Pnhzj1hgq34wY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 099/143] rxrpc: Dont check RXRPC_CALL_TX_LAST after calling rxrpc_rotate_tx_window()
-Date:   Fri,  2 Nov 2018 19:34:44 +0100
-Message-Id: <20181102182905.776106146@linuxfoundation.org>
+Subject: [PATCH 4.14 101/143] rxrpc: Fix connection-level abort handling
+Date:   Fri,  2 Nov 2018 19:34:46 +0100
+Message-Id: <20181102182905.925952147@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -62,123 +62,152 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c479d5f2c2e1ce609da08c075054440d97ddff52 ]
+[ Upstream commit 647530924f47c93db472ee3cf43b7ef1425581b6 ]
 
-We should only call the function to end a call's Tx phase if we rotated the
-marked-last packet out of the transmission buffer.
+Fix connection-level abort handling to cache the abort and error codes
+properly so that a new incoming call can be properly aborted if it races
+with the parent connection being aborted by another CPU.
 
-Make rxrpc_rotate_tx_window() return an indication of whether it just
-rotated the packet marked as the last out of the transmit buffer, carrying
-the information out of the locked section in that function.
+The abort_code and error parameters can then be dropped from
+rxrpc_abort_calls().
 
-We can then check the return value instead of examining RXRPC_CALL_TX_LAST.
-
-Fixes: 70790dbe3f66 ("rxrpc: Pass the last Tx packet marker in the annotation buffer")
+Fixes: f5c17aaeb2ae ("rxrpc: Calls should only have one terminal state")
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/rxrpc/input.c | 35 +++++++++++++++++++----------------
- 1 file changed, 19 insertions(+), 16 deletions(-)
+ net/rxrpc/ar-internal.h |  4 ++--
+ net/rxrpc/call_accept.c |  4 ++--
+ net/rxrpc/conn_event.c  | 26 +++++++++++++++-----------
+ 3 files changed, 19 insertions(+), 15 deletions(-)
 
-diff --git a/net/rxrpc/input.c b/net/rxrpc/input.c
-index 5edb636dbc4d..3a501bf0fc1a 100644
---- a/net/rxrpc/input.c
-+++ b/net/rxrpc/input.c
-@@ -216,10 +216,11 @@ static void rxrpc_send_ping(struct rxrpc_call *call, struct sk_buff *skb,
+diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
+index e6c2c4f56fb1..71c7f1dd4599 100644
+--- a/net/rxrpc/ar-internal.h
++++ b/net/rxrpc/ar-internal.h
+@@ -424,8 +424,7 @@ struct rxrpc_connection {
+ 	spinlock_t		state_lock;	/* state-change lock */
+ 	enum rxrpc_conn_cache_state cache_state;
+ 	enum rxrpc_conn_proto_state state;	/* current state of connection */
+-	u32			local_abort;	/* local abort code */
+-	u32			remote_abort;	/* remote abort code */
++	u32			abort_code;	/* Abort code of connection abort */
+ 	int			debug_id;	/* debug ID for printks */
+ 	atomic_t		serial;		/* packet serial number counter */
+ 	unsigned int		hi_serial;	/* highest serial number received */
+@@ -435,6 +434,7 @@ struct rxrpc_connection {
+ 	u8			security_size;	/* security header size */
+ 	u8			security_ix;	/* security type */
+ 	u8			out_clientflag;	/* RXRPC_CLIENT_INITIATED if we are client */
++	short			error;		/* Local error code */
+ };
+ 
  /*
-  * Apply a hard ACK by advancing the Tx window.
+diff --git a/net/rxrpc/call_accept.c b/net/rxrpc/call_accept.c
+index 62b1581d44a5..2dd13f5c47c8 100644
+--- a/net/rxrpc/call_accept.c
++++ b/net/rxrpc/call_accept.c
+@@ -418,11 +418,11 @@ found_service:
+ 
+ 	case RXRPC_CONN_REMOTELY_ABORTED:
+ 		rxrpc_set_call_completion(call, RXRPC_CALL_REMOTELY_ABORTED,
+-					  conn->remote_abort, -ECONNABORTED);
++					  conn->abort_code, conn->error);
+ 		break;
+ 	case RXRPC_CONN_LOCALLY_ABORTED:
+ 		rxrpc_abort_call("CON", call, sp->hdr.seq,
+-				 conn->local_abort, -ECONNABORTED);
++				 conn->abort_code, conn->error);
+ 		break;
+ 	default:
+ 		BUG();
+diff --git a/net/rxrpc/conn_event.c b/net/rxrpc/conn_event.c
+index 0435c4167a1a..75ec1ad595b7 100644
+--- a/net/rxrpc/conn_event.c
++++ b/net/rxrpc/conn_event.c
+@@ -117,7 +117,7 @@ static void rxrpc_conn_retransmit_call(struct rxrpc_connection *conn,
+ 
+ 	switch (chan->last_type) {
+ 	case RXRPC_PACKET_TYPE_ABORT:
+-		_proto("Tx ABORT %%%u { %d } [re]", serial, conn->local_abort);
++		_proto("Tx ABORT %%%u { %d } [re]", serial, conn->abort_code);
+ 		break;
+ 	case RXRPC_PACKET_TYPE_ACK:
+ 		trace_rxrpc_tx_ack(NULL, serial, chan->last_seq, 0,
+@@ -135,13 +135,12 @@ static void rxrpc_conn_retransmit_call(struct rxrpc_connection *conn,
+  * pass a connection-level abort onto all calls on that connection
   */
--static void rxrpc_rotate_tx_window(struct rxrpc_call *call, rxrpc_seq_t to,
-+static bool rxrpc_rotate_tx_window(struct rxrpc_call *call, rxrpc_seq_t to,
- 				   struct rxrpc_ack_summary *summary)
+ static void rxrpc_abort_calls(struct rxrpc_connection *conn,
+-			      enum rxrpc_call_completion compl,
+-			      u32 abort_code, int error)
++			      enum rxrpc_call_completion compl)
  {
- 	struct sk_buff *skb, *list = NULL;
-+	bool rot_last = false;
- 	int ix;
- 	u8 annotation;
+ 	struct rxrpc_call *call;
+ 	int i;
  
-@@ -243,15 +244,17 @@ static void rxrpc_rotate_tx_window(struct rxrpc_call *call, rxrpc_seq_t to,
- 		skb->next = list;
- 		list = skb;
+-	_enter("{%d},%x", conn->debug_id, abort_code);
++	_enter("{%d},%x", conn->debug_id, conn->abort_code);
  
--		if (annotation & RXRPC_TX_ANNO_LAST)
-+		if (annotation & RXRPC_TX_ANNO_LAST) {
- 			set_bit(RXRPC_CALL_TX_LAST, &call->flags);
-+			rot_last = true;
-+		}
- 		if ((annotation & RXRPC_TX_ANNO_MASK) != RXRPC_TX_ANNO_ACK)
- 			summary->nr_rot_new_acks++;
+ 	spin_lock(&conn->channel_lock);
+ 
+@@ -153,9 +152,11 @@ static void rxrpc_abort_calls(struct rxrpc_connection *conn,
+ 			if (compl == RXRPC_CALL_LOCALLY_ABORTED)
+ 				trace_rxrpc_abort("CON", call->cid,
+ 						  call->call_id, 0,
+-						  abort_code, error);
++						  conn->abort_code,
++						  conn->error);
+ 			if (rxrpc_set_call_completion(call, compl,
+-						      abort_code, error))
++						      conn->abort_code,
++						      conn->error))
+ 				rxrpc_notify_socket(call);
+ 		}
+ 	}
+@@ -188,10 +189,12 @@ static int rxrpc_abort_connection(struct rxrpc_connection *conn,
+ 		return 0;
  	}
  
- 	spin_unlock(&call->lock);
++	conn->error = error;
++	conn->abort_code = abort_code;
+ 	conn->state = RXRPC_CONN_LOCALLY_ABORTED;
+ 	spin_unlock_bh(&conn->state_lock);
  
--	trace_rxrpc_transmit(call, (test_bit(RXRPC_CALL_TX_LAST, &call->flags) ?
-+	trace_rxrpc_transmit(call, (rot_last ?
- 				    rxrpc_transmit_rotate_last :
- 				    rxrpc_transmit_rotate));
- 	wake_up(&call->waitq);
-@@ -262,6 +265,8 @@ static void rxrpc_rotate_tx_window(struct rxrpc_call *call, rxrpc_seq_t to,
- 		skb->next = NULL;
- 		rxrpc_free_skb(skb, rxrpc_skb_tx_freed);
- 	}
-+
-+	return rot_last;
- }
+-	rxrpc_abort_calls(conn, RXRPC_CALL_LOCALLY_ABORTED, abort_code, error);
++	rxrpc_abort_calls(conn, RXRPC_CALL_LOCALLY_ABORTED);
  
- /*
-@@ -332,11 +337,11 @@ static bool rxrpc_receiving_reply(struct rxrpc_call *call)
- 				ktime_get_real());
- 	}
+ 	msg.msg_name	= &conn->params.peer->srx.transport;
+ 	msg.msg_namelen	= conn->params.peer->srx.transport_len;
+@@ -210,7 +213,7 @@ static int rxrpc_abort_connection(struct rxrpc_connection *conn,
+ 	whdr._rsvd	= 0;
+ 	whdr.serviceId	= htons(conn->service_id);
  
--	if (!test_bit(RXRPC_CALL_TX_LAST, &call->flags))
--		rxrpc_rotate_tx_window(call, top, &summary);
- 	if (!test_bit(RXRPC_CALL_TX_LAST, &call->flags)) {
--		rxrpc_proto_abort("TXL", call, top);
--		return false;
-+		if (!rxrpc_rotate_tx_window(call, top, &summary)) {
-+			rxrpc_proto_abort("TXL", call, top);
-+			return false;
-+		}
- 	}
- 	if (!rxrpc_end_tx_phase(call, true, "ETD"))
- 		return false;
-@@ -837,8 +842,12 @@ static void rxrpc_input_ack(struct rxrpc_call *call, struct sk_buff *skb,
- 	if (nr_acks > call->tx_top - hard_ack)
- 		return rxrpc_proto_abort("AKN", call, 0);
+-	word		= htonl(conn->local_abort);
++	word		= htonl(conn->abort_code);
  
--	if (after(hard_ack, call->tx_hard_ack))
--		rxrpc_rotate_tx_window(call, hard_ack, &summary);
-+	if (after(hard_ack, call->tx_hard_ack)) {
-+		if (rxrpc_rotate_tx_window(call, hard_ack, &summary)) {
-+			rxrpc_end_tx_phase(call, false, "ETA");
-+			return;
-+		}
-+	}
+ 	iov[0].iov_base	= &whdr;
+ 	iov[0].iov_len	= sizeof(whdr);
+@@ -221,7 +224,7 @@ static int rxrpc_abort_connection(struct rxrpc_connection *conn,
  
- 	if (nr_acks > 0) {
- 		if (skb_copy_bits(skb, offset, buf.acks, nr_acks) < 0)
-@@ -847,11 +856,6 @@ static void rxrpc_input_ack(struct rxrpc_call *call, struct sk_buff *skb,
- 				      &summary);
- 	}
+ 	serial = atomic_inc_return(&conn->serial);
+ 	whdr.serial = htonl(serial);
+-	_proto("Tx CONN ABORT %%%u { %d }", serial, conn->local_abort);
++	_proto("Tx CONN ABORT %%%u { %d }", serial, conn->abort_code);
  
--	if (test_bit(RXRPC_CALL_TX_LAST, &call->flags)) {
--		rxrpc_end_tx_phase(call, false, "ETA");
--		return;
--	}
--
- 	if (call->rxtx_annotations[call->tx_top & RXRPC_RXTX_BUFF_MASK] &
- 	    RXRPC_TX_ANNO_LAST &&
- 	    summary.nr_acks == call->tx_top - hard_ack &&
-@@ -873,8 +877,7 @@ static void rxrpc_input_ackall(struct rxrpc_call *call, struct sk_buff *skb)
+ 	ret = kernel_sendmsg(conn->params.local->socket, &msg, iov, 2, len);
+ 	if (ret < 0) {
+@@ -289,9 +292,10 @@ static int rxrpc_process_event(struct rxrpc_connection *conn,
+ 		abort_code = ntohl(wtmp);
+ 		_proto("Rx ABORT %%%u { ac=%d }", sp->hdr.serial, abort_code);
  
- 	_proto("Rx ACKALL %%%u", sp->hdr.serial);
++		conn->error = -ECONNABORTED;
++		conn->abort_code = abort_code;
+ 		conn->state = RXRPC_CONN_REMOTELY_ABORTED;
+-		rxrpc_abort_calls(conn, RXRPC_CALL_REMOTELY_ABORTED,
+-				  abort_code, -ECONNABORTED);
++		rxrpc_abort_calls(conn, RXRPC_CALL_REMOTELY_ABORTED);
+ 		return -ECONNABORTED;
  
--	rxrpc_rotate_tx_window(call, call->tx_top, &summary);
--	if (test_bit(RXRPC_CALL_TX_LAST, &call->flags))
-+	if (rxrpc_rotate_tx_window(call, call->tx_top, &summary))
- 		rxrpc_end_tx_phase(call, false, "ETL");
- }
- 
+ 	case RXRPC_PACKET_TYPE_CHALLENGE:
 -- 
 2.17.1
 
