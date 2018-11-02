@@ -2,160 +2,188 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E32BC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:27:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4E05C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:28:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 297592081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:27:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 297592081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 89F822081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:28:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G8/pYXHl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89F822081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728249AbeKCDfW (ORCPT
+        id S1728203AbeKCDgJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:35:22 -0400
-Received: from mga06.intel.com ([134.134.136.31]:8221 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726849AbeKCDfW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:35:22 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 11:27:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,456,1534834800"; 
-   d="scan'208";a="101023981"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.193])
-  by fmsmga002.fm.intel.com with ESMTP; 02 Nov 2018 11:27:12 -0700
-Date:   Fri, 2 Nov 2018 11:27:12 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rich Felker <dalias@libc.org>, Jann Horn <jannh@google.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Carlos O'Donell <carlos@redhat.com>,
-        adhemerval.zanella@linaro.org
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181102182712.GG7393@linux.intel.com>
-References: <CAHk-=wgFo8tuZX5gzCfWGdAwGyn_Ar9JFnnMFNuwr9=vtfDV1g@mail.gmail.com>
- <20181101193107.GE5150@brightrain.aerifal.cx>
- <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
- <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
- <20181102163034.GB7393@linux.intel.com>
- <7050972d-a874-dc08-3214-93e81181da60@intel.com>
- <20181102170627.GD7393@linux.intel.com>
- <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
- <20181102173350.GF7393@linux.intel.com>
- <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com>
+        Fri, 2 Nov 2018 23:36:09 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:46620 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726700AbeKCDgI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:36:08 -0400
+Received: by mail-qk1-f195.google.com with SMTP id q1so4486143qkf.13;
+        Fri, 02 Nov 2018 11:28:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=XStlG1IVOPz03XrBY4kJcyeuULnJcYmDsn2P5pl1Mto=;
+        b=G8/pYXHl+QdLKV5ZhPZKLsio8+PCRl+gGDhftMGAlpxcF7Hwderd044mSvvM9ZpYPH
+         Jd7ijRZueDNH8+VQ9zKAdxa8bVzCEvTL2RFuewPwIXLcNly9nOzrFBCb4Lz0fEXOgKw5
+         1r6Wbd6X60jOKSL78LcgLqjLCS0OFR/MgD6rc8iOev/k3e/JqZ964BNUzjVkZzX0b6sY
+         NNZOwwn1fY+bZBOBxPDueJ/+xnCI5mux7vL865IePbsRYAW8MGrtvMgZRHynCRDsPcym
+         CHTC7tw2YpiLQLHLvaH6FWsK0EgGSGOve/x1Kkd/shUTF4ljQDRPU/GqmUfTq4cah2oN
+         PqTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=XStlG1IVOPz03XrBY4kJcyeuULnJcYmDsn2P5pl1Mto=;
+        b=rbjmsXuKNSAG5dGF9PlFd2z4F14Us2r58ANdFTJH+7/NL/jIZ3gi8hzudl7c4ZT2Q6
+         YeS/u4wJIYVhTQXX29m4DsZeJF4qjCBTBGtS55bA9X2i+XUwJbHhA6qnqYS82ii3yuGu
+         zE0EipBB4ibQadRftylY08UUJ8E46Wf6nVljyytmeFbFHHxFd89iO1nSnB3NVGJFAU7Q
+         DZPxzWApIxwTwpZgxjgxOI42etXaGG6kjwaxwzzJk5Xjcfqm3koTMAeSqyX0Xp6MS0zv
+         kEuYBUMh7j7z7jcW2GNaeeDfXynX5e5B6CtgvCWDzcwnrvCuR3gCcXb7iw7YeJxiOx6u
+         acxw==
+X-Gm-Message-State: AGRZ1gIe0B2XWOwinJYejCn4h0m4O8q6cvcWRqNmzeU3eVB3AVACf5+J
+        nd7Rl0jryNT688P4/eEotrYp8m/CP2xbePOUhjf5ko74auQ=
+X-Google-Smtp-Source: AJdET5crX3ODdsC3s1REnEW9q8oVu30cd0n2FWNilP2EaEIg/krVujWgYtCuBwHj96PGC4gWnrSzn3Uvgkf0uc+gVyQ=
+X-Received: by 2002:a0c:b60a:: with SMTP id f10-v6mr12347411qve.7.1541183278826;
+ Fri, 02 Nov 2018 11:27:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20181102102703.21846-1-rajneesh.bhardwaj@linux.intel.com>
+In-Reply-To: <20181102102703.21846-1-rajneesh.bhardwaj@linux.intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 2 Nov 2018 20:27:47 +0200
+Message-ID: <CAHp75VcJDSM31JMzHnFcb=Rh9wOn+LJ-qKe7x-S8h3P9AQwcdQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] platform/x86: intel_pmc_core: Show Latency
+ Tolerance info
+To:     rajneesh.bhardwaj@linux.intel.com
+Cc:     Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 10:48:38AM -0700, Andy Lutomirski wrote:
-> On Fri, Nov 2, 2018 at 10:33 AM Sean Christopherson
-> <sean.j.christopherson@intel.com> wrote:
-> >
-> > On Fri, Nov 02, 2018 at 10:13:23AM -0700, Dave Hansen wrote:
-> > > On 11/2/18 10:06 AM, Sean Christopherson wrote:
-> > > > On Fri, Nov 02, 2018 at 09:56:44AM -0700, Dave Hansen wrote:
-> > > >> On 11/2/18 9:30 AM, Sean Christopherson wrote:
-> > > >>> What if rather than having userspace register an address for fixup, the
-> > > >>> kernel instead unconditionally does fixup on the ENCLU opcode?
-> > > >>
-> > > >> The problem is knowing what to do for the fixup.  If we have a simple
-> > > >> action to take that's universal, like backing up %RIP, or setting some
-> > > >> other register state, it's not bad.
-> > > >
-> > > > Isn't the EENTER/RESUME behavior universal?  Or am I missing something?
-> > >
-> > > Could someone write down all the ways we get in and out of the enclave?
-> > >
-> > > I think we always get in from userspace calling EENTER or ERESUME.  We
-> > > can't ever enter directly from the kernel, like via an IRET from what I
-> > > understand.
-> >
-> > Correct, the only way to get into the enclave is EENTER or ERESUME.
-> > My understanding is that even SMIs bounce through the AEX target
-> > before transitioning to SMM.
-> >
-> > > We get *out* from exceptions, hardware interrupts, or enclave-explicit
-> > > EEXITs.  Did I miss any?  Remind me where the hardware lands the control
-> > > flow in each of those exit cases.
-> >
-> > And VMExits.  There are basically two cases: EEXIT and everything else.
-> > EEXIT is a glorified indirect jump, e.g. %RBX holds the target %RIP.
-> > Everything else is an Asynchronous Enclave Exit (AEX).  On an AEX, %RIP
-> > is set to a value specified by EENTER/ERESUME, %RBP and %RSP are
-> > restored to pre-enclave values and all other registers are loaded with
-> > synthetic state.  The actual interrupt/exception/VMExit then triggers,
-> > e.g. the %RIP on the stack for an exception is always the AEX target,
-> > not the %RIP inside the enclave that actually faulted.
-> 
-> So what exactly happens when an enclave accesses non-enclave memory
-> and takes a page fault, for example?  The SDM says that the #PF vector
-> and error code are stored in the SSA frame where the kernel can't see
-> them.  Is a real #PF then delivered?
+On Fri, Nov 2, 2018 at 12:29 PM Rajneesh Bhardwaj
+<rajneesh.bhardwaj@linux.intel.com> wrote:
+>
+> This adds support to show the Latency Tolerance Reporting for the IPs on
+> the PCH as reported by the PMC. The format shown here is raw LTR data
+> payload that can further be decoded as per the PCI specification.
+>
+> This also fixes some minor alignment issues in the header file by
+> removing spaces and converting to tabs at some places.
 
-Yes.  From there kernel's perspective a #PF occurred on the %RIP of the
-AEX target.  This holds true for all AEX types, e.g. GUEST_RIP on VMExit
-also points at the AEX target.  On an AEX, %RAX, %RBX and %RCX are set
-to match the ERESUME parameter.  The idea is for userspace to have an
-ENCU at the AEX so that it automatically ERESUMEs the enclave after the
-kernel handles the fault.  And the trampoline approach means the ucode
-flows for exceptions, interrupts, VMExit, VMEnter, IRET, RSM, etc...
-generally don't need to be SGX-aware.  The events themselves just need
-to be redirected to the AEX target and then redo the event.
+Thanks for the update, my comments below.
 
-> I guess that, if the memory in question gets faulted in, then the
-> kernel resumes exection at the AEP address, which does ERESUME, and
-> the enclave resumes.  But if the access is bad, then the kernel
-> delivers a signal (or uses some other new mechanism), and then what
-> happens?  Is the enclave just considered dead?  Is user code supposed
-> to EENTER back into the enclave to tell it that it got an error?
+> Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
 
-Completely depends on the enclave and its runtime.  A simple enclave
-mayy never expect to encounter a bad access or #UD and so its runtime
-would probably just kill it.  A test/development enclave might have
-its runtime call back into the enclave to dump state on a fatal fault.
+> [andy: fixed output to avoid LTR duplication and put space after colon]
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Complex runtimes, e.g. libraries that wrap unmodified applications,
-will call back into the enclave so that libraries in-enclave fault
-handler can decode what went wrong and take action accordingly, e.g.
-request CPUID information if unmodified code tried to do CPUID.
+You incorporated changes I proposed =E2=80=94 good!
+But please, don't do my job with signing stuff, etc. Just mention what
+you did in the changelog.
 
-> This whole mechanism seems very complicated, and it's not clear
-> exactly what behavior user code wants.
 
-No argument there.  That's why I like the approach of dumping the
-exception to userspace without trying to do anything intelligent in
-the kernel.  Userspace can then do whatever it wants AND we don't
-have to worry about mucking with stacks.
+> +static const struct pmc_bit_map spt_ltr_show_map[] =3D {
+> +       {"SOUTHPORT_A",         SPT_PMC_LTR_SPA},
+> +       {"SOUTHPORT_B",         SPT_PMC_LTR_SPB},
+> +       {"SATA",                SPT_PMC_LTR_SATA},
+> +       {"GIGABIT_ETHERNET",    SPT_PMC_LTR_GBE},
+> +       {"XHCI",                SPT_PMC_LTR_XHCI},
 
-One of the hiccups with the VDSO approach is that the enclave may
-want to use the untrusted stack, i.e. the stack that has the VDSO's
-stack frame.  For example, Intel's SDK uses the untrusted stack to
-pass parameters for EEXIT, which means an AEX might occur with what
-is effectively a bad stack from the VDSO's perspective.
+> +       /* IP 5 is reserved */
+Since we dropped explicit numbering, this line and similar sounds redundant=
+.
+
+> +       {"ME",                  SPT_PMC_LTR_ME},
+> +       /* EVA is Enterprise Value Add, doesn't really exist on PCH */
+> +       {"EVA",                 SPT_PMC_LTR_EVA},
+> +       {"SOUTHPORT_C",         SPT_PMC_LTR_SPC},
+> +       {"HD_AUDIO",            SPT_PMC_LTR_AZ},
+> +       /* IP 10 is reserved */
+> +       {"LPSS",                SPT_PMC_LTR_LPSS},
+> +       {"SOUTHPORT_D",         SPT_PMC_LTR_SPD},
+> +       {"SOUTHPORT_E",         SPT_PMC_LTR_SPE},
+> +       {"CAMERA",              SPT_PMC_LTR_CAM},
+> +       {"ESPI",                SPT_PMC_LTR_ESPI},
+> +       {"SCC",                 SPT_PMC_LTR_SCC},
+> +       {"ISH",                 SPT_PMC_LTR_ISH},
+> +       /* Below two cannot be used for LTR_IGNORE */
+> +       {"CURRENT_PLATFORM",    SPT_PMC_LTR_CUR_PLT},
+> +       {"AGGREGATED_SYSTEM",   SPT_PMC_LTR_CUR_ASLT},
+> +       {}
+> +};
+
+>  /* Cannonlake Power Management Controller register offsets */
+> -#define CNP_PMC_SLP_S0_RES_COUNTER_OFFSET      0x193C
+> -#define CNP_PMC_LTR_IGNORE_OFFSET              0x1B0C
+> -#define CNP_PMC_PM_CFG_OFFSET                  0x1818
+> +#define CNP_PMC_SLP_S0_RES_COUNTER_OFFSET      0x193C
+> +#define CNP_PMC_LTR_IGNORE_OFFSET              0x1B0C
+> +#define CNP_PMC_PM_CFG_OFFSET                  0x1818
+>  #define CNP_PMC_SLPS0_DBG_OFFSET               0x10B4
+
+Can we preserve ordering?
+
+>  /* Cannonlake: PGD PFET Enable Ack Status Register(s) start */
+> -#define CNP_PMC_HOST_PPFEAR0A                  0x1D90
+> +#define CNP_PMC_HOST_PPFEAR0A                  0x1D90
+
+What's wrong with this line? Why is it changed?
+
+>
+> -#define CNP_PMC_MMIO_REG_LEN                   0x2000
+> -#define CNP_PPFEAR_NUM_ENTRIES                 8
+> -#define CNP_PMC_READ_DISABLE_BIT               22
+> +#define CNP_PMC_MMIO_REG_LEN                   0x2000
+> +#define CNP_PPFEAR_NUM_ENTRIES                 8
+> +#define CNP_PMC_READ_DISABLE_BIT               22
+
+What happened to these lines?
+
+>  #define CNP_PMC_LATCH_SLPS0_EVENTS             BIT(31)
+
+Perhaps
+ + blank line
+here
+
+> +#define CNP_PMC_LTR_CUR_PLT                    0x1B50
+> +#define CNP_PMC_LTR_CUR_ASLT                   0x1B54
+> +#define CNP_PMC_LTR_SPA                                0x1B60
+> +#define CNP_PMC_LTR_SPB                                0x1B64
+> +#define CNP_PMC_LTR_SATA                       0x1B68
+> +#define CNP_PMC_LTR_GBE                                0x1B6C
+> +#define CNP_PMC_LTR_XHCI                       0x1B70
+> +#define CNP_PMC_LTR_ME                         0x1B78
+> +#define CNP_PMC_LTR_EVA                                0x1B7C
+> +#define CNP_PMC_LTR_SPC                                0x1B80
+> +#define CNP_PMC_LTR_AZ                         0x1B84
+> +#define CNP_PMC_LTR_LPSS                       0x1B8C
+> +#define CNP_PMC_LTR_CAM                                0x1B90
+> +#define CNP_PMC_LTR_SPD                                0x1B94
+> +#define CNP_PMC_LTR_SPE                                0x1B98
+> +#define CNP_PMC_LTR_ESPI                       0x1B9C
+> +#define CNP_PMC_LTR_SCC                                0x1BA0
+> +#define CNP_PMC_LTR_ISH                                0x1BA4
+> +#define CNP_PMC_LTR_CNV                                0x1BF0
+> +#define CNP_PMC_LTR_EMMC                       0x1BF4
+> +#define CNP_PMC_LTR_UFSX2                      0x1BF8
+
+--=20
+With Best Regards,
+Andy Shevchenko
