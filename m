@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 662F2C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:55:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D00FC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:55:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2ABB720854
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:55:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E6892084A
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:55:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nuN1NZI6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ABB720854
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jLB1TE95"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E6892084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731382AbeKCEDf (ORCPT
+        id S1731394AbeKCEDj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 00:03:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59510 "EHLO mail.kernel.org"
+        Sat, 3 Nov 2018 00:03:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59586 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726051AbeKCEDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 00:03:35 -0400
+        id S1730441AbeKCEDi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 00:03:38 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D774620848;
-        Fri,  2 Nov 2018 18:55:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E76D12084A;
+        Fri,  2 Nov 2018 18:55:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184919;
-        bh=MvOxPeCc47LIx+psk+0tnnsXK+CTiONTDNwMT9I+i0g=;
+        s=default; t=1541184922;
+        bh=0swzUl5lIer0b7bgt9qv3YoIGYgHzAd6AmQwe2EeLaw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nuN1NZI6iKM+VZIJyl6PeR9H4dUi5W79CaY4B4JwCmOlocKFsCmPGdS9C0UkAfA/J
-         e/yBnhpbCG0z3+rYVNzJejC5lT5B0758JIFxUmUOo9RSmdNfGGf/2lqnx4KYLuCEdI
-         gvaKLpLMyD3zCeILpmTU/RNF/1zzkP28LZENpy9Y=
+        b=jLB1TE95M2C+B/yawxXXzXGP6CrSlca8j5VT6xpMQIrzQuvsTaQ0BL7rN1O8jZ6Ck
+         S2tdfznXx+MFIQ1nYCuTa5dge/wH/ZUP5bOVAYRW//Anl1YPkzAhGrS9yJB8gBwaqw
+         gIAIWOLWXHvhWm/XGi2khTJ5SrAASPA79NTbzQ9M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
+        stable@vger.kernel.org, Ake Koomsin <ake@igel.co.jp>,
         Jason Wang <jasowang@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 129/143] vhost: Fix Spectre V1 vulnerability
-Date:   Fri,  2 Nov 2018 19:35:14 +0100
-Message-Id: <20181102182908.139640940@linuxfoundation.org>
+Subject: [PATCH 4.14 130/143] virtio_net: avoid using netif_tx_disable() for serializing tx routine
+Date:   Fri,  2 Nov 2018 19:35:15 +0100
+Message-Id: <20181102182908.210323264@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -65,42 +64,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Wang <jasowang@redhat.com>
+From: Ake Koomsin <ake@igel.co.jp>
 
-[ Upstream commit ff002269a4ee9c769dbf9365acef633ebcbd6cbe ]
+[ Upstream commit 05c998b738fdd3e5d6a257bcacc8f34b6284d795 ]
 
-The idx in vhost_vring_ioctl() was controlled by userspace, hence a
-potential exploitation of the Spectre variant 1 vulnerability.
+Commit 713a98d90c5e ("virtio-net: serialize tx routine during reset")
+introduces netif_tx_disable() after netif_device_detach() in order to
+avoid use-after-free of tx queues. However, there are two issues.
 
-Fixing this by sanitizing idx before using it to index d->vqs.
+1) Its operation is redundant with netif_device_detach() in case the
+   interface is running.
+2) In case of the interface is not running before suspending and
+   resuming, the tx does not get resumed by netif_device_attach().
+   This results in losing network connectivity.
 
-Cc: Michael S. Tsirkin <mst@redhat.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Signed-off-by: Jason Wang <jasowang@redhat.com>
+It is better to use netif_tx_lock_bh()/netif_tx_unlock_bh() instead for
+serializing tx routine during reset. This also preserves the symmetry
+of netif_device_detach() and netif_device_attach().
+
+Fixes commit 713a98d90c5e ("virtio-net: serialize tx routine during reset")
+Signed-off-by: Ake Koomsin <ake@igel.co.jp>
+Acked-by: Jason Wang <jasowang@redhat.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/vhost/vhost.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/virtio_net.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -30,6 +30,7 @@
- #include <linux/sched/mm.h>
- #include <linux/sched/signal.h>
- #include <linux/interval_tree_generic.h>
-+#include <linux/nospec.h>
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -1872,8 +1872,9 @@ static void virtnet_freeze_down(struct v
+ 	/* Make sure no work handler is accessing the device */
+ 	flush_work(&vi->config_work);
  
- #include "vhost.h"
++	netif_tx_lock_bh(vi->dev);
+ 	netif_device_detach(vi->dev);
+-	netif_tx_disable(vi->dev);
++	netif_tx_unlock_bh(vi->dev);
+ 	cancel_delayed_work_sync(&vi->refill);
  
-@@ -1366,6 +1367,7 @@ long vhost_vring_ioctl(struct vhost_dev
- 	if (idx >= d->nvqs)
- 		return -ENOBUFS;
+ 	if (netif_running(vi->dev)) {
+@@ -1909,7 +1910,9 @@ static int virtnet_restore_up(struct vir
+ 		}
+ 	}
  
-+	idx = array_index_nospec(idx, d->nvqs);
- 	vq = d->vqs[idx];
++	netif_tx_lock_bh(vi->dev);
+ 	netif_device_attach(vi->dev);
++	netif_tx_unlock_bh(vi->dev);
+ 	return err;
+ }
  
- 	mutex_lock(&vq->mutex);
 
 
