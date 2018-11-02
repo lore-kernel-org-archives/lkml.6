@@ -2,244 +2,141 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63F97C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 09:40:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D1EBC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 09:44:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 236512082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 09:40:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 236512082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id E532920657
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 09:44:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="P/wzKEIn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E532920657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726524AbeKBSr1 (ORCPT
+        id S1726248AbeKBSvO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 14:47:27 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55294 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726041AbeKBSrZ (ORCPT
+        Fri, 2 Nov 2018 14:51:14 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:1044 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbeKBSvO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 14:47:25 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA29cffm117551
-        for <linux-kernel@vger.kernel.org>; Fri, 2 Nov 2018 05:40:51 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ngksx8xau-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 05:40:51 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <chandan@linux.vnet.ibm.com>;
-        Fri, 2 Nov 2018 09:40:48 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 2 Nov 2018 09:40:43 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA29egMk54657266
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 2 Nov 2018 09:40:43 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D0DD34203F;
-        Fri,  2 Nov 2018 09:40:42 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 83F9042041;
-        Fri,  2 Nov 2018 09:40:42 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.72.2])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  2 Nov 2018 09:40:42 +0000 (GMT)
-From:   Chandan Rajendra <chandan@linux.vnet.ibm.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Victor Hsieh <victorhsieh@google.com>
-Subject: Re: [PATCH v2 10/12] ext4: add basic fs-verity support
-Date:   Fri, 02 Nov 2018 15:13:14 +0530
-In-Reply-To: <20181101225230.88058-11-ebiggers@kernel.org>
-References: <20181101225230.88058-1-ebiggers@kernel.org> <20181101225230.88058-11-ebiggers@kernel.org>
+        Fri, 2 Nov 2018 14:51:14 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bdc1c7a0000>; Fri, 02 Nov 2018 02:44:26 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 02 Nov 2018 02:44:39 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 02 Nov 2018 02:44:39 -0700
+Received: from [10.21.132.148] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 2 Nov
+ 2018 09:44:38 +0000
+Subject: Re: [PATCH] kbuild: consolidate single targets
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        <linux-kbuild@vger.kernel.org>
+CC:     Michal Marek <michal.lkml@markovi.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1540873965-31342-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <945484cd-50b4-74df-f091-d796264e5643@nvidia.com>
+Date:   Fri, 2 Nov 2018 09:44:36 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-TM-AS-GCONF: 00
-x-cbid: 18110209-0028-0000-0000-00000311ADE1
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110209-0029-0000-0000-000023CDE735
-Message-Id: <2168901.PE78DCQIza@localhost.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-02_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811020091
+In-Reply-To: <1540873965-31342-1-git-send-email-yamada.masahiro@socionext.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1541151866; bh=u9/6f3O1UwfUUc4aFQ1Fb7Pjm9qRsyNmbUKgFLwhevQ=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=P/wzKEInZqXZrXmyH/DkTa5OZDgapYwu4vx+6qMl3CUnh0FWKva0WwbNWrTY9ppur
+         050gHmDLk059Z6BReaP256vG9fKfnzGzMJ5S1q0q+YFQv7THLnAr+X/0hwXUl4yx2P
+         bgCkX4MjpDLFf1u+zcBo4B76nNL3ghnlxbf5z2YVJPW3c7DTm3fo15eOK6D4yirHjV
+         7qZ6wytCMc2WFHqIdgigPiQ/GcSgHHplAm5JHC1Hgv7CBA4Pskkulw97dc3PedOcnu
+         Cf7qS4YEFWBFvcK7csqNYb7lytAikmPojnJ5uupSsLdDYA48oZ0kLD/daaXa2ZRe3F
+         +7bFZV7d42hZA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, November 2, 2018 4:22:28 AM IST Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
+
+On 30/10/2018 04:32, Masahiro Yamada wrote:
+> Instead of specifying target/source pairs, let's list patterns that we
+> want to handle as single targets. This slightly changes the behavior;
+> the top Makefile previously checked the presence of a source file,
+> now Kbuild will descend into a subdirectory anyway to find out what to
+> do there.
 > 
-> Add basic fs-verity support to ext4.  fs-verity is a filesystem feature
-> that enables transparent integrity protection and authentication of
-> read-only files.  It uses a dm-verity like mechanism at the file level:
-> a Merkle tree is used to verify any block in the file in log(filesize)
-> time.  It is implemented mainly by helper functions in fs/verity/.
-> See Documentation/filesystems/fsverity.rst for details.
-> 
-> This patch adds everything except the data verification hooks that will
-> needed in ->readpages().
-> 
-> On ext4, enabling fs-verity on a file requires that the filesystem has
-> the 'verity' feature, e.g. that it was formatted with
-> 'mkfs.ext4 -O verity' or had 'tune2fs -O verity' run on it.
-> This requires e2fsprogs 1.44.4-2 or later.
-> 
-> In ext4, we choose to retain the fs-verity metadata past the end of the
-> file rather than trying to move it into an external inode xattr, since
-> in practice keeping the metadata in-line actually results in the
-> simplest and most efficient implementation.  One non-obvious advantage
-> of keeping the verity metadata in-line is that when fs-verity is
-> combined with fscrypt, the verity metadata naturally gets encrypted too;
-> this is actually necessary because it contains hashes of the plaintext.
-> 
-> We also choose to keep the on-disk i_size equal to the original file
-> size, in order to make the 'verity' feature a RO_COMPAT feature.  Thus,
-> ext4 has to find the fsverity_footer by looking in the last extent.
-> 
-> Co-developed-by: Theodore Ts'o <tytso@mit.edu>
-> Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 > ---
->  fs/ext4/Kconfig | 20 +++++++++++
->  fs/ext4/ext4.h  | 20 ++++++++++-
->  fs/ext4/file.c  |  6 ++++
->  fs/ext4/inode.c |  8 +++++
->  fs/ext4/ioctl.c | 12 +++++++
->  fs/ext4/super.c | 91 +++++++++++++++++++++++++++++++++++++++++++++++++
->  fs/ext4/sysfs.c |  6 ++++
->  7 files changed, 162 insertions(+), 1 deletion(-)
 > 
-> diff --git a/fs/ext4/Kconfig b/fs/ext4/Kconfig
-> index a453cc87082b5..5a76125ac0f8a 100644
-> --- a/fs/ext4/Kconfig
-> +++ b/fs/ext4/Kconfig
-> @@ -111,6 +111,26 @@ config EXT4_FS_ENCRYPTION
->  	default y
->  	depends on EXT4_ENCRYPTION
+>  Makefile | 16 +---------------
+>  1 file changed, 1 insertion(+), 15 deletions(-)
 > 
-> +config EXT4_FS_VERITY
-> +	bool "Ext4 Verity"
-> +	depends on EXT4_FS
-> +	select FS_VERITY
-> +	help
-> +	  This option enables fs-verity for ext4.  fs-verity is the
-> +	  dm-verity mechanism implemented at the file level.  Userspace
-> +	  can append a Merkle tree (hash tree) to a file, then enable
-> +	  fs-verity on the file.  ext4 will then transparently verify
-> +	  any data read from the file against the Merkle tree.  The file
-> +	  is also made read-only.
-> +
-> +	  This serves as an integrity check, but the availability of the
-> +	  Merkle tree root hash also allows efficiently supporting
-> +	  various use cases where normally the whole file would need to
-> +	  be hashed at once, such as auditing and authenticity
-> +	  verification (appraisal).
-> +
-> +	  If unsure, say N.
-> +
->  config EXT4_DEBUG
->  	bool "EXT4 debugging support"
->  	depends on EXT4_FS
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 12f90d48ba613..e5475a629ed80 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -43,6 +43,9 @@
->  #define __FS_HAS_ENCRYPTION IS_ENABLED(CONFIG_EXT4_FS_ENCRYPTION)
->  #include <linux/fscrypt.h>
-> 
-> +#define __FS_HAS_VERITY IS_ENABLED(CONFIG_EXT4_FS_VERITY)
-> +#include <linux/fsverity.h>
-> +
->  #include <linux/compiler.h>
-> 
->  /* Until this gets included into linux/compiler-gcc.h */
-> @@ -405,6 +408,7 @@ struct flex_groups {
->  #define EXT4_TOPDIR_FL			0x00020000 /* Top of directory hierarchies*/
->  #define EXT4_HUGE_FILE_FL               0x00040000 /* Set to each huge file */
->  #define EXT4_EXTENTS_FL			0x00080000 /* Inode uses extents */
-> +#define EXT4_VERITY_FL			0x00100000 /* Verity protected inode */
->  #define EXT4_EA_INODE_FL	        0x00200000 /* Inode used for large EA */
->  #define EXT4_EOFBLOCKS_FL		0x00400000 /* Blocks allocated beyond EOF */
->  #define EXT4_INLINE_DATA_FL		0x10000000 /* Inode has inline data. */
-> @@ -472,6 +476,7 @@ enum {
->  	EXT4_INODE_TOPDIR	= 17,	/* Top of directory hierarchies*/
->  	EXT4_INODE_HUGE_FILE	= 18,	/* Set to each huge file */
->  	EXT4_INODE_EXTENTS	= 19,	/* Inode uses extents */
-> +	EXT4_INODE_VERITY	= 20,	/* Verity protected inode */
->  	EXT4_INODE_EA_INODE	= 21,	/* Inode used for large EA */
->  	EXT4_INODE_EOFBLOCKS	= 22,	/* Blocks allocated beyond EOF */
->  	EXT4_INODE_INLINE_DATA	= 28,	/* Data in inode. */
-> @@ -517,6 +522,7 @@ static inline void ext4_check_flag_values(void)
->  	CHECK_FLAG_VALUE(TOPDIR);
->  	CHECK_FLAG_VALUE(HUGE_FILE);
->  	CHECK_FLAG_VALUE(EXTENTS);
-> +	CHECK_FLAG_VALUE(VERITY);
->  	CHECK_FLAG_VALUE(EA_INODE);
->  	CHECK_FLAG_VALUE(EOFBLOCKS);
->  	CHECK_FLAG_VALUE(INLINE_DATA);
-> @@ -1654,6 +1660,7 @@ static inline void ext4_clear_state_flags(struct ext4_inode_info *ei)
->  #define EXT4_FEATURE_RO_COMPAT_METADATA_CSUM	0x0400
->  #define EXT4_FEATURE_RO_COMPAT_READONLY		0x1000
->  #define EXT4_FEATURE_RO_COMPAT_PROJECT		0x2000
-> +#define EXT4_FEATURE_RO_COMPAT_VERITY		0x8000
-> 
->  #define EXT4_FEATURE_INCOMPAT_COMPRESSION	0x0001
->  #define EXT4_FEATURE_INCOMPAT_FILETYPE		0x0002
-> @@ -1742,6 +1749,7 @@ EXT4_FEATURE_RO_COMPAT_FUNCS(bigalloc,		BIGALLOC)
->  EXT4_FEATURE_RO_COMPAT_FUNCS(metadata_csum,	METADATA_CSUM)
->  EXT4_FEATURE_RO_COMPAT_FUNCS(readonly,		READONLY)
->  EXT4_FEATURE_RO_COMPAT_FUNCS(project,		PROJECT)
-> +EXT4_FEATURE_RO_COMPAT_FUNCS(verity,		VERITY)
-> 
->  EXT4_FEATURE_INCOMPAT_FUNCS(compression,	COMPRESSION)
->  EXT4_FEATURE_INCOMPAT_FUNCS(filetype,		FILETYPE)
-> @@ -1797,7 +1805,8 @@ EXT4_FEATURE_INCOMPAT_FUNCS(encrypt,		ENCRYPT)
->  					 EXT4_FEATURE_RO_COMPAT_BIGALLOC |\
->  					 EXT4_FEATURE_RO_COMPAT_METADATA_CSUM|\
->  					 EXT4_FEATURE_RO_COMPAT_QUOTA |\
-> -					 EXT4_FEATURE_RO_COMPAT_PROJECT)
-> +					 EXT4_FEATURE_RO_COMPAT_PROJECT |\
-> +					 EXT4_FEATURE_RO_COMPAT_VERITY)
-> 
->  #define EXTN_FEATURE_FUNCS(ver) \
->  static inline bool ext4_has_unknown_ext##ver##_compat_features(struct super_block *sb) \
-> @@ -2293,6 +2302,15 @@ static inline bool ext4_encrypted_inode(struct inode *inode)
->  	return ext4_test_inode_flag(inode, EXT4_INODE_ENCRYPT);
->  }
-> 
-> +static inline bool ext4_verity_inode(struct inode *inode)
-> +{
-> +#ifdef CONFIG_EXT4_FS_VERITY
-> +	return ext4_test_inode_flag(inode, EXT4_INODE_VERITY);
-> +#else
-> +	return false;
-> +#endif
-> +}
-> +
+> diff --git a/Makefile b/Makefile
+> index be76e6e..7d13add 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1713,21 +1713,7 @@ else
+>          target-dir = $(if $(KBUILD_EXTMOD),$(dir $<),$(dir $@))
+>  endif
+>  
+> -%.s: %.c prepare scripts FORCE
+> -	$(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
+> -%.i: %.c prepare scripts FORCE
+> -	$(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
+> -%.o: %.c prepare scripts FORCE
+> -	$(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
+> -%.lst: %.c prepare scripts FORCE
+> -	$(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
+> -%.s: %.S prepare scripts FORCE
+> -	$(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
+> -%.o: %.S prepare scripts FORCE
+> -	$(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
+> -%.symtypes: %.c prepare scripts FORCE
+> -	$(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
+> -%.ll: %.c prepare scripts FORCE
+> +%.i %.ll %.lst %.o %.s %.symtypes: prepare scripts FORCE
+>  	$(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
+>  
+>  # Modules
 
-Hi Eric,
+On one of my build machines (an older ubuntu 14.04 machine), this is
+commit is causing 'make mrproper' or 'make distclean' to fail. Reverting
+this commit fixes the problem.
 
-Can you please explain as to why we check for the presence of
-EXT4_INODE_VERITY flag only when fsverity is enabled during kernel build?
+$ make mrproper
+Error: kernelrelease not valid - run 'make prepare' to update it
+  CC      kernel/bounds.s
+In file included from <command-line>:0:0:
+././include/linux/kconfig.h:5:32: fatal error: generated/autoconf.h: No
+such file or directory
+ #include <generated/autoconf.h>
+                                ^
+compilation terminated.
+make[1]: *** [kernel/bounds.s] Error 1
+make: *** [prepare0] Error 2
+
+FWIW, this machine has ...
+
+$ make --version
+GNU Make 3.81
+
+Cheers
+Jon
 
 -- 
-chandan
-
+nvpublic
