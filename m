@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAC61C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:50:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 888DDC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:50:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CEBC20848
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:50:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5976E20847
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:50:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="D8MG5K6b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CEBC20848
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uCV4UmJ+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5976E20847
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730850AbeKCD6x (ORCPT
+        id S1730859AbeKCD65 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:58:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54674 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:58:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730851AbeKCD6x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:58:53 -0400
+        id S1729339AbeKCD64 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:58:56 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A77102082D;
-        Fri,  2 Nov 2018 18:50:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A44220847;
+        Fri,  2 Nov 2018 18:50:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184638;
-        bh=+ZKNUCFXSuCzkfNrkVUR7mijOe2zT+1K8u7VY+O6pfg=;
+        s=default; t=1541184641;
+        bh=dQEBWczNNGZCvazmZe5nPcklQGMZ9CDJ8BCfZXX0mls=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D8MG5K6bcLnP+KLuozxJucI5LXZFpx9x5SMJ6iyFReMRQlpdVod3meWctLif9QvTB
-         hTgLNEbXzangejNe4FPfo6Ufj4lP4qXbAtmoEuuvORyrvMdQP7A5Y6j5UTtHmGnKTt
-         HlM8YIS4VmWrzEJlpdVD85+QinFcDIeVZzW7yD/8=
+        b=uCV4UmJ+FKUt079tdmOVpfvALNvCfq02OnyT93c9jCO6ri7MN2UmzwTlUGWshjE3B
+         xPXVazsZB+b5nFVXtPJKZ54g1ri0JvenCyORnLMOMWtwEMFMj3cKaPXxMA+1lhZcqE
+         RX3ovGxQ/8NRwRWehc2khhO+1V3BdPQDkvaAirrI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Meelis Roos <mroos@linux.ee>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Alex Vesker <valex@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 056/143] scsi: aacraid: address UBSAN warning regression
-Date:   Fri,  2 Nov 2018 19:34:01 +0100
-Message-Id: <20181102182901.543973107@linuxfoundation.org>
+Subject: [PATCH 4.14 057/143] IB/ipoib: Fix lockdep issue found on ipoib_ib_dev_heavy_flush
+Date:   Fri,  2 Nov 2018 19:34:02 +0100
+Message-Id: <20181102182901.617533756@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -64,67 +64,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d18539754d97876503275efc7d00a1901bb0cfad ]
+[ Upstream commit 1f80bd6a6cc8358b81194e1f5fc16449947396ec ]
 
-As reported by Meelis Roos, my previous patch causes an incorrect
-calculation of the timeout, through an undefined signed integer
-overflow:
+The locking order of vlan_rwsem (LOCK A) and then rtnl (LOCK B),
+contradicts other flows such as ipoib_open possibly causing a deadlock.
+To prevent this deadlock heavy flush is called with RTNL locked and
+only then tries to acquire vlan_rwsem.
+This deadlock is possible only when there are child interfaces.
 
-[   12.228155] UBSAN: Undefined behaviour in drivers/scsi/aacraid/commsup.c:2514:49
-[   12.228229] signed integer overflow:
-[   12.228283] 964297611 * 250 cannot be represented in type 'long int'
+[  140.941758] ======================================================
+[  140.946276] WARNING: possible circular locking dependency detected
+[  140.950950] 4.15.0-rc1+ #9 Tainted: G           O
+[  140.954797] ------------------------------------------------------
+[  140.959424] kworker/u32:1/146 is trying to acquire lock:
+[  140.963450]  (rtnl_mutex){+.+.}, at: [<ffffffffc083516a>] __ipoib_ib_dev_flush+0x2da/0x4e0 [ib_ipoib]
+[  140.970006]
+but task is already holding lock:
+[  140.975141]  (&priv->vlan_rwsem){++++}, at: [<ffffffffc0834ee1>] __ipoib_ib_dev_flush+0x51/0x4e0 [ib_ipoib]
+[  140.982105]
+which lock already depends on the new lock.
+[  140.990023]
+the existing dependency chain (in reverse order) is:
+[  140.998650]
+-> #1 (&priv->vlan_rwsem){++++}:
+[  141.005276]        down_read+0x4d/0xb0
+[  141.009560]        ipoib_open+0xad/0x120 [ib_ipoib]
+[  141.014400]        __dev_open+0xcb/0x140
+[  141.017919]        __dev_change_flags+0x1a4/0x1e0
+[  141.022133]        dev_change_flags+0x23/0x60
+[  141.025695]        devinet_ioctl+0x704/0x7d0
+[  141.029156]        sock_do_ioctl+0x20/0x50
+[  141.032526]        sock_ioctl+0x221/0x300
+[  141.036079]        do_vfs_ioctl+0xa6/0x6d0
+[  141.039656]        SyS_ioctl+0x74/0x80
+[  141.042811]        entry_SYSCALL_64_fastpath+0x1f/0x96
+[  141.046891]
+-> #0 (rtnl_mutex){+.+.}:
+[  141.051701]        lock_acquire+0xd4/0x220
+[  141.055212]        __mutex_lock+0x88/0x970
+[  141.058631]        __ipoib_ib_dev_flush+0x2da/0x4e0 [ib_ipoib]
+[  141.063160]        __ipoib_ib_dev_flush+0x71/0x4e0 [ib_ipoib]
+[  141.067648]        process_one_work+0x1f5/0x610
+[  141.071429]        worker_thread+0x4a/0x3f0
+[  141.074890]        kthread+0x141/0x180
+[  141.078085]        ret_from_fork+0x24/0x30
+[  141.081559]
 
-The problem is that doing a multiplication with HZ first and then
-dividing by USEC_PER_SEC worked correctly for 32-bit microseconds,
-but not for 32-bit nanoseconds, which would require up to 41 bits.
+other info that might help us debug this:
+[  141.088967]  Possible unsafe locking scenario:
+[  141.094280]        CPU0                    CPU1
+[  141.097953]        ----                    ----
+[  141.101640]   lock(&priv->vlan_rwsem);
+[  141.104771]                                lock(rtnl_mutex);
+[  141.109207]                                lock(&priv->vlan_rwsem);
+[  141.114032]   lock(rtnl_mutex);
+[  141.116800]
+ *** DEADLOCK ***
 
-This reworks the calculation to first convert the nanoseconds into
-jiffies, which should give us the same result as before and not overflow.
-
-Unfortunately I did not understand the exact intention of the algorithm,
-in particular the part where we add half a second, so it's possible that
-there is still a preexisting problem in this function. I added a comment
-that this would be handled more nicely using usleep_range(), which
-generally works better for waking up at a particular time than the
-current schedule_timeout() based implementation. I did not feel
-comfortable trying to implement that without being sure what the
-intent is here though.
-
-Fixes: 820f18865912 ("scsi: aacraid: use timespec64 instead of timeval")
-Tested-by: Meelis Roos <mroos@linux.ee>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: b4b678b06f6e ("IB/ipoib: Grab rtnl lock on heavy flush when calling ndo_open/stop")
+Signed-off-by: Alex Vesker <valex@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/aacraid/commsup.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/infiniband/ulp/ipoib/ipoib_ib.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/scsi/aacraid/commsup.c b/drivers/scsi/aacraid/commsup.c
-index 998788a967be..3e38bae6ecde 100644
---- a/drivers/scsi/aacraid/commsup.c
-+++ b/drivers/scsi/aacraid/commsup.c
-@@ -2506,8 +2506,8 @@ int aac_command_thread(void *data)
- 			/* Synchronize our watches */
- 			if (((NSEC_PER_SEC - (NSEC_PER_SEC / HZ)) > now.tv_nsec)
- 			 && (now.tv_nsec > (NSEC_PER_SEC / HZ)))
--				difference = (((NSEC_PER_SEC - now.tv_nsec) * HZ)
--				  + NSEC_PER_SEC / 2) / NSEC_PER_SEC;
-+				difference = HZ + HZ / 2 -
-+					     now.tv_nsec / (NSEC_PER_SEC / HZ);
- 			else {
- 				if (now.tv_nsec > NSEC_PER_SEC / 2)
- 					++now.tv_sec;
-@@ -2531,6 +2531,10 @@ int aac_command_thread(void *data)
- 		if (kthread_should_stop())
- 			break;
+diff --git a/drivers/infiniband/ulp/ipoib/ipoib_ib.c b/drivers/infiniband/ulp/ipoib/ipoib_ib.c
+index c97384c914a4..d77e8e2ae05f 100644
+--- a/drivers/infiniband/ulp/ipoib/ipoib_ib.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_ib.c
+@@ -1203,13 +1203,10 @@ static void __ipoib_ib_dev_flush(struct ipoib_dev_priv *priv,
+ 		ipoib_ib_dev_down(dev);
  
-+		/*
-+		 * we probably want usleep_range() here instead of the
-+		 * jiffies computation
-+		 */
- 		schedule_timeout(difference);
+ 	if (level == IPOIB_FLUSH_HEAVY) {
+-		rtnl_lock();
+ 		if (test_bit(IPOIB_FLAG_INITIALIZED, &priv->flags))
+ 			ipoib_ib_dev_stop(dev);
  
- 		if (kthread_should_stop())
+-		result = ipoib_ib_dev_open(dev);
+-		rtnl_unlock();
+-		if (result)
++		if (ipoib_ib_dev_open(dev))
+ 			return;
+ 
+ 		if (netif_queue_stopped(dev))
+@@ -1249,7 +1246,9 @@ void ipoib_ib_dev_flush_heavy(struct work_struct *work)
+ 	struct ipoib_dev_priv *priv =
+ 		container_of(work, struct ipoib_dev_priv, flush_heavy);
+ 
++	rtnl_lock();
+ 	__ipoib_ib_dev_flush(priv, IPOIB_FLUSH_HEAVY, 0);
++	rtnl_unlock();
+ }
+ 
+ void ipoib_ib_dev_cleanup(struct net_device *dev)
 -- 
 2.17.1
 
