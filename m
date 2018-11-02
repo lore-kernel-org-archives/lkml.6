@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03382C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:48:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B94D6C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:48:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7A9020848
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:48:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87F862082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:48:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q/Bpc0ZY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7A9020848
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zA3GqGRq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87F862082D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730429AbeKCD4R (ORCPT
+        id S1730438AbeKCD4U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:56:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51786 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:56:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727629AbeKCD4Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:56:16 -0400
+        id S1727629AbeKCD4T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:56:19 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 220CD20847;
-        Fri,  2 Nov 2018 18:48:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19E4420843;
+        Fri,  2 Nov 2018 18:48:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184482;
-        bh=UENJvs243YmRA3euezxR42qpv6rv2DcqcY5j4ENoqRk=;
+        s=default; t=1541184485;
+        bh=BNUxFlzULZHtux2juxJWbCHEEDlLTeHy1i8WFKhOOMM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q/Bpc0ZY5XUFKozG3YoRBO8S58LbEmdCC/CQt852yUgo1nPuN/s4LoM3bF+e/3y+C
-         cevv0rQolWqTI0axqWwi/xNuc4eDD/vFhAE+yiNPCsbJJyxYfDuYpkZ0FEojTpXCqz
-         wm5pncWdU0kzoVHM/tnmB8lcHfc70fCaLm/jK3+A=
+        b=zA3GqGRqR/O5tUFYjjjt6iZs9pTL8VtoN7PUocaaPpBrn5dN0r6VLXY6qdjqaLzWC
+         BSzp6V3iDOfYHQuRa3/htPXJCVCFHowBYF0fTAqlfD4IpD8ix5iSMhgmUM96eitGVu
+         WRIN1xf5Xn9yMcqYPw4zyhjEia583RGIdtFYybJ8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Roy Pledge <roy.pledge@nxp.com>, Li Yang <leoyang.li@nxp.com>,
+        Olof Johansson <olof@lixom.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 017/143] net: macb: Clean 64b dma addresses if they are not detected
-Date:   Fri,  2 Nov 2018 19:33:22 +0100
-Message-Id: <20181102182858.452611488@linuxfoundation.org>
+Subject: [PATCH 4.14 018/143] soc: fsl: qbman: qman: avoid allocating from non existing gen_pool
+Date:   Fri,  2 Nov 2018 19:33:23 +0100
+Message-Id: <20181102182858.535831390@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -64,35 +65,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e1e5d8a9fe737d94ccc0ccbaf0c97f69a8f3e000 ]
+[ Upstream commit 64e9e22e68512da8df3c9a7430f07621e48db3c2 ]
 
-Clear ADDR64 dma bit in DMACFG register in case that HW_DMA_CAP_64B is
-not detected on 64bit system.
-The issue was observed when bootloader(u-boot) does not check macb
-feature at DCFG6 register (DAW64_OFFSET) and enabling 64bit dma support
-by default. Then macb driver is reading DMACFG register back and only
-adding 64bit dma configuration but not cleaning it out.
+If the qman driver didn't probe, calling qman_alloc_fqid_range,
+qman_alloc_pool_range or qman_alloc_cgrid_range (as done in dpaa_eth) will
+pass a NULL pointer to gen_pool_alloc, leading to a NULL pointer
+dereference.
 
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Reviewed-by: Roy Pledge <roy.pledge@nxp.com>
+Signed-off-by: Li Yang <leoyang.li@nxp.com>
+(cherry picked from commit f72487a2788aa70c3aee1d0ebd5470de9bac953a)
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/cadence/macb_main.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/soc/fsl/qbman/qman.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-index b4f92de1efbd..d6f8d6c8b0f1 100644
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -2000,6 +2000,7 @@ static void macb_configure_dma(struct macb *bp)
- 		else
- 			dmacfg &= ~GEM_BIT(TXCOEN);
+diff --git a/drivers/soc/fsl/qbman/qman.c b/drivers/soc/fsl/qbman/qman.c
+index 0c6065dba48a..4f27e95efcdd 100644
+--- a/drivers/soc/fsl/qbman/qman.c
++++ b/drivers/soc/fsl/qbman/qman.c
+@@ -2699,6 +2699,9 @@ static int qman_alloc_range(struct gen_pool *p, u32 *result, u32 cnt)
+ {
+ 	unsigned long addr;
  
-+		dmacfg &= ~GEM_BIT(ADDR64);
- #ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
- 		if (bp->hw_dma_cap & HW_DMA_CAP_64B)
- 			dmacfg |= GEM_BIT(ADDR64);
++	if (!p)
++		return -ENODEV;
++
+ 	addr = gen_pool_alloc(p, cnt);
+ 	if (!addr)
+ 		return -ENOMEM;
 -- 
 2.17.1
 
