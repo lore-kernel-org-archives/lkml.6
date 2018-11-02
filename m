@@ -2,378 +2,104 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89EEAC65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 12:35:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A0F7C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 12:35:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A2CF2082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 12:35:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A2CF2082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id 232972081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 12:35:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Zez+yZcy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 232972081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727567AbeKBVmR (ORCPT
+        id S1727610AbeKBVm0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 17:42:17 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:46094 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726265AbeKBVmQ (ORCPT
+        Fri, 2 Nov 2018 17:42:26 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:46886 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726265AbeKBVm0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 17:42:16 -0400
-Received: by mail-lf1-f65.google.com with SMTP id o2-v6so1201654lfl.13;
-        Fri, 02 Nov 2018 05:35:11 -0700 (PDT)
+        Fri, 2 Nov 2018 17:42:26 -0400
+Received: by mail-oi1-f195.google.com with SMTP id k64-v6so1410066oia.13
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 05:35:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YG3VChNFQS0CtyRt5u1f3UsENmETTfaopErDD3Ti+LM=;
+        b=Zez+yZcyjdTsYznjTiD1KQXSConV9IKL9qSvzK7x9KMKAs1kkhXP2DdQ2QZM6oTKko
+         sZrN4EoP0ZZ11ZPvlCQQe+e/4Q1GwOJwb13k4IOlyKArPRTXIZiXKAiWux+0az8hq0mK
+         cTNpGbTIoxHbtplOET2WVEh3y/F2FEE53d0OI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=i+KZ9+62AmBi6LwLI4MDe8trUcZvmkQ3tsEjwOIjYlM=;
-        b=rKrGSDma0YH3HwEjKMllm2mfB4B87NVuqp18TDFF71NrHg2yzWbwzZ6OvytcEAnzJD
-         lvyGxQbQ3ur3NCGUu7ctWcwlOpv48BdxUA2ZrT+HAQTbCtM96SYiHLwiIVI6WiU4LR/Q
-         R67J5YQIDIqxBMmzE377nWzfW0G54u5LiRTkE+T+r0IQ9WTx26kFIJpJBgpkusbI73ae
-         cpBuEY7Te+Ww09ZeVwI8zpTy7idyt+YxforfIcRNcJCibtLWwchVAKzhRO/uzFrh6wiI
-         zXBhKzVKDANtS2SOsvFKrN/1n8YRM1WK5vWv2z9G0SRZCFKNolJYcPnPeuO5Bm07GZaa
-         1YZA==
-X-Gm-Message-State: AGRZ1gJEGjUGdUApq0k0Th974B+WLyHkNEOiMvEzxQZRZCIsKIt+dta1
-        S3GjPl/6QWDYaQPL1oZuM+E=
-X-Google-Smtp-Source: AJdET5ekL+rqBiWy+f43HQiSZGs4Wf/P2izmKoxyjfRRn6q2+4yTzzfzbxxoEWw9VOQunRKqdgPNcg==
-X-Received: by 2002:a19:2906:: with SMTP id p6mr4801931lfp.17.1541162110450;
-        Fri, 02 Nov 2018 05:35:10 -0700 (PDT)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id m64-v6sm403821lfm.89.2018.11.02.05.35.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 02 Nov 2018 05:35:09 -0700 (PDT)
-Date:   Fri, 2 Nov 2018 14:34:55 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh@kernel.org>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Huang Shijie <sjhuang@iluvatar.ai>,
-        Akshu Agrawal <Akshu.Agrawal@amd.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Daniel Kurtz <djkurtz@chromium.org>, mazziesaccount@gmail.com
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        matti.vaittinen@fi.rohmeurope.com
-Subject: [PATCH v3 1/7] clk: clkdev/of_clk - add managed lookup and provider
- registrations
-Message-ID: <1ab16de50fe98a8cdbc0aebc8eced41d7c04f14d.1541161503.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1541161503.git.matti.vaittinen@fi.rohmeurope.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YG3VChNFQS0CtyRt5u1f3UsENmETTfaopErDD3Ti+LM=;
+        b=KvYmHeRUoT1citEKdTnAfuX5piciFZUonWb7k8hnLCNf/AjDU7mVFeJWrrDCoODC7+
+         ruFQBMUGEMlAs3WCRwFZx6l1+jGekRvh+xDnQWGR6oK3dny0lO8HHtVA8o3vmYRpHtQh
+         oCuDxWk/g9KuuAQywAiFSwjfvae2spk1m0zzOdf3OvvZzTCxfOxAF4qFlVWj/J0ee657
+         qxzkaeY4tnu1t58FDkhkU6KhUHjxcw/6zI3YoRN9ck2aImr1iiFvwBB9Nj8MDcperNKx
+         7ymf5TVI//Cq+Be+WUfZmfCG5cC9IN7XAsIMWPMDbTBxol0P9523B6t8trkoAgWbMh5o
+         L8wg==
+X-Gm-Message-State: AGRZ1gLcdbPLf03EggEKkPF3oAX8Q4FdXGmp+pyVwPXvUHhRMcRaktVp
+        Qu9vYp2EDmMszJU5LvsgMv2Et/355xqziC/7PLnN
+X-Google-Smtp-Source: AJdET5cDmlaw2HcOA5mtu3Rix6UT8HJxQ8O9BV8oYmwBNRSoyTxmBCosRR9Axmxa6Sg8p0Gvs+SQ898q7em+RHthgaA=
+X-Received: by 2002:aca:f50b:: with SMTP id t11-v6mr6989387oih.57.1541162122995;
+ Fri, 02 Nov 2018 05:35:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1541161503.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20181031081945.207709-1-vovoy@chromium.org> <20181031142458.GP32673@dhcp22.suse.cz>
+ <cc44aa53-8705-02ea-6c59-f311427d93af@intel.com> <20181031164231.GQ32673@dhcp22.suse.cz>
+ <CAEHM+4pSkv_fD3Yb2KX1xFrOmRHU1e=+wCBrCyLAAMBG3zP75w@mail.gmail.com> <20181101130910.GI23921@dhcp22.suse.cz>
+In-Reply-To: <20181101130910.GI23921@dhcp22.suse.cz>
+From:   Vovo Yang <vovoy@chromium.org>
+Date:   Fri, 2 Nov 2018 20:35:11 +0800
+Message-ID: <CAEHM+4rvBmFWhzPXZrwxXvMEmVdkpsgRg26wVNYSA8HKF_8AwQ@mail.gmail.com>
+Subject: Re: [PATCH v3] mm, drm/i915: mark pinned shmemfs pages as unevictable
+To:     mhocko@kernel.org
+Cc:     Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-mm@kvack.org,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With MFD devices the clk properties may be contained in MFD (parent) DT
-node. Current devm_of_clk_add_hw_provider assumes the clk is bound to MFD
-subdevice not to MFD device (parent). Add
-devm_of_clk_add_hw_provider_parent to tackle this issue.
+On Thu, Nov 1, 2018 at 9:10 PM Michal Hocko <mhocko@kernel.org> wrote:
+> OK, so that explain my question about the test case. Even though you
+> generate a lot of page cache, the amount is still too small to trigger
+> pagecache mostly reclaim and anon LRUs are scanned as well.
+>
+> Now to the difference with the previous version which simply set the
+> UNEVICTABLE flag on mapping. Am I right assuming that pages are already
+> at LRU at the time? Is there any reason the mapping cannot have the flag
+> set before they are added to the LRU?
 
-Also clkdev registration lacks of managed registration functions and it
-seems few drivers do not drop clkdev lookups at exit. Add
-devm_clk_hw_register_clkdev and devm_clk_release_clkdev to ease lookup
-releasing at exit.
+I checked again. When I run gem_syslatency, it sets unevictable flag
+first and then adds pages to LRU, so my explanation to the previous
+test result is wrong. It should not be necessary to explicitly move
+these pages to unevictable list for this test case. The performance
+improvement of this patch on kbl might be due to not calling
+shmem_unlock_mapping.
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- Documentation/driver-model/devres.txt |   3 +
- drivers/clk/clk.c                     |  28 ++++++--
- drivers/clk/clkdev.c                  | 122 ++++++++++++++++++++++++++--------
- include/linux/clk-provider.h          |  11 +++
- include/linux/clkdev.h                |   4 ++
- 5 files changed, 136 insertions(+), 32 deletions(-)
-
-diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver-model/devres.txt
-index 43681ca0837f..fac63760b01c 100644
---- a/Documentation/driver-model/devres.txt
-+++ b/Documentation/driver-model/devres.txt
-@@ -238,6 +238,9 @@ CLOCK
-   devm_clk_put()
-   devm_clk_hw_register()
-   devm_of_clk_add_hw_provider()
-+  devm_of_clk_add_parent_hw_provider()
-+  devm_clk_hw_register_clkdev()
-+  devm_clk_release_clkdev()
- 
- DMA
-   dmaenginem_async_device_register()
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index af011974d4ec..9bb921eb90f6 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3893,12 +3893,12 @@ static void devm_of_clk_release_provider(struct device *dev, void *res)
- 	of_clk_del_provider(*(struct device_node **)res);
- }
- 
--int devm_of_clk_add_hw_provider(struct device *dev,
-+static int __devm_of_clk_add_hw_provider(struct device *dev,
- 			struct clk_hw *(*get)(struct of_phandle_args *clkspec,
- 					      void *data),
--			void *data)
-+			struct device_node *of_node, void *data)
- {
--	struct device_node **ptr, *np;
-+	struct device_node **ptr;
- 	int ret;
- 
- 	ptr = devres_alloc(devm_of_clk_release_provider, sizeof(*ptr),
-@@ -3906,10 +3906,9 @@ int devm_of_clk_add_hw_provider(struct device *dev,
- 	if (!ptr)
- 		return -ENOMEM;
- 
--	np = dev->of_node;
--	ret = of_clk_add_hw_provider(np, get, data);
-+	*ptr = of_node;
-+	ret = of_clk_add_hw_provider(of_node, get, data);
- 	if (!ret) {
--		*ptr = np;
- 		devres_add(dev, ptr);
- 	} else {
- 		devres_free(ptr);
-@@ -3917,8 +3916,25 @@ int devm_of_clk_add_hw_provider(struct device *dev,
- 
- 	return ret;
- }
-+int devm_of_clk_add_hw_provider(struct device *dev,
-+			struct clk_hw *(*get)(struct of_phandle_args *clkspec,
-+					      void *data),
-+			void *data)
-+{
-+	return __devm_of_clk_add_hw_provider(dev, get, dev->of_node, data);
-+}
- EXPORT_SYMBOL_GPL(devm_of_clk_add_hw_provider);
- 
-+int devm_of_clk_add_parent_hw_provider(struct device *dev,
-+			struct clk_hw *(*get)(struct of_phandle_args *clkspec,
-+					      void *data),
-+			void *data)
-+{
-+	return __devm_of_clk_add_hw_provider(dev, get, dev->parent->of_node,
-+					     data);
-+}
-+EXPORT_SYMBOL_GPL(devm_of_clk_add_parent_hw_provider);
-+
- /**
-  * of_clk_del_provider() - Remove a previously registered clock provider
-  * @np: Device node pointer associated with clock provider
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index 9ab3db8b3988..f6100b6e06fd 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -401,6 +401,25 @@ static struct clk_lookup *__clk_register_clkdev(struct clk_hw *hw,
- 	return cl;
- }
- 
-+static int do_clk_register_clkdev(struct clk_hw *hw,
-+	struct clk_lookup **cl, const char *con_id, const char *dev_id)
-+{
-+
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	/*
-+	 * Since dev_id can be NULL, and NULL is handled specially, we must
-+	 * pass it as either a NULL format string, or with "%s".
-+	 */
-+	if (dev_id)
-+		*cl = __clk_register_clkdev(hw, con_id, "%s",
-+					   dev_id);
-+	else
-+		*cl = __clk_register_clkdev(hw, con_id, NULL);
-+
-+	return *cl ? 0 : -ENOMEM;
-+}
-+
- /**
-  * clk_register_clkdev - register one clock lookup for a struct clk
-  * @clk: struct clk to associate with all clk_lookups
-@@ -420,20 +439,10 @@ int clk_register_clkdev(struct clk *clk, const char *con_id,
- {
- 	struct clk_lookup *cl;
- 
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
--
--	/*
--	 * Since dev_id can be NULL, and NULL is handled specially, we must
--	 * pass it as either a NULL format string, or with "%s".
--	 */
--	if (dev_id)
--		cl = __clk_register_clkdev(__clk_get_hw(clk), con_id, "%s",
--					   dev_id);
--	else
--		cl = __clk_register_clkdev(__clk_get_hw(clk), con_id, NULL);
--
--	return cl ? 0 : -ENOMEM;
-+	if (!IS_ERR(clk))
-+		return do_clk_register_clkdev(__clk_get_hw(clk), &cl, con_id,
-+					      dev_id);
-+	return PTR_ERR(clk);
- }
- EXPORT_SYMBOL(clk_register_clkdev);
- 
-@@ -456,18 +465,79 @@ int clk_hw_register_clkdev(struct clk_hw *hw, const char *con_id,
- {
- 	struct clk_lookup *cl;
- 
--	if (IS_ERR(hw))
--		return PTR_ERR(hw);
-+	return do_clk_register_clkdev(hw, &cl, con_id, dev_id);
-+}
-+EXPORT_SYMBOL(clk_hw_register_clkdev);
- 
--	/*
--	 * Since dev_id can be NULL, and NULL is handled specially, we must
--	 * pass it as either a NULL format string, or with "%s".
--	 */
--	if (dev_id)
--		cl = __clk_register_clkdev(hw, con_id, "%s", dev_id);
--	else
--		cl = __clk_register_clkdev(hw, con_id, NULL);
-+static void devm_clkdev_release(struct device *dev, void *res)
-+{
-+	clkdev_drop(*(struct clk_lookup **)res);
-+}
- 
--	return cl ? 0 : -ENOMEM;
-+static int devm_clk_match_clkdev(struct device *dev, void *res, void *data)
-+{
-+	struct clk_lookup **l = res;
-+
-+	if (!l || !*l) {
-+		WARN_ON(!l || !*l);
-+		return 0;
-+	}
-+	return *l == data;
- }
--EXPORT_SYMBOL(clk_hw_register_clkdev);
-+
-+/**
-+ * devm_clk_release_clkdev - Resource managed clkdev lookup release
-+ * @dev: device this lookup is bound
-+ * @con_id: connection ID string on device
-+ * @dev_id: format string describing device name
-+ *
-+ * Drop the clkdev lookup created with devm_clk_hw_register_clkdev.
-+ * Normally this function will not need to be called and the resource
-+ * management code will ensure that the resource is freed.
-+ */
-+void devm_clk_release_clkdev(struct device *dev, const char *con_id,
-+			     const char *dev_id)
-+{
-+	struct clk_lookup *cl;
-+	int rval;
-+
-+	cl = clk_find(dev_id, con_id);
-+	WARN_ON(!cl);
-+	rval = devres_release(dev, devm_clkdev_release,
-+			      &devm_clk_match_clkdev, cl);
-+	WARN_ON(rval);
-+}
-+EXPORT_SYMBOL(devm_clk_release_clkdev);
-+
-+/**
-+ * devm_clk_hw_register_clkdev - managed clk lookup registration for clk_hw
-+ * @dev: device this lookup is bound
-+ * @hw: struct clk_hw to associate with all clk_lookups
-+ * @con_id: connection ID string on device
-+ * @dev_id: format string describing device name
-+ *
-+ * con_id or dev_id may be NULL as a wildcard, just as in the rest of
-+ * clkdev.
-+ *
-+ * To make things easier for mass registration, we detect error clk_hws
-+ * from a previous clk_hw_register_*() call, and return the error code for
-+ * those.  This is to permit this function to be called immediately
-+ * after clk_hw_register_*().
-+ */
-+int devm_clk_hw_register_clkdev(struct device *dev, struct clk_hw *hw,
-+				const char *con_id, const char *dev_id)
-+{
-+	int rval = -ENOMEM;
-+	struct clk_lookup **cl;
-+
-+	cl = devres_alloc(devm_clkdev_release, sizeof(*cl), GFP_KERNEL);
-+	if (cl) {
-+		rval = do_clk_register_clkdev(hw, cl, con_id, dev_id);
-+		if (!rval)
-+			devres_add(dev, cl);
-+		else
-+			devres_free(cl);
-+	}
-+	return rval;
-+}
-+EXPORT_SYMBOL(devm_clk_hw_register_clkdev);
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 60c51871b04b..a6663f084cf1 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -916,6 +916,10 @@ int devm_of_clk_add_hw_provider(struct device *dev,
- 			   struct clk_hw *(*get)(struct of_phandle_args *clkspec,
- 						 void *data),
- 			   void *data);
-+int devm_of_clk_add_parent_hw_provider(struct device *dev,
-+			   struct clk_hw *(*get)(struct of_phandle_args *clkspec,
-+						 void *data),
-+			   void *data);
- void of_clk_del_provider(struct device_node *np);
- void devm_of_clk_del_provider(struct device *dev);
- struct clk *of_clk_src_simple_get(struct of_phandle_args *clkspec,
-@@ -953,6 +957,13 @@ static inline int devm_of_clk_add_hw_provider(struct device *dev,
- {
- 	return 0;
- }
-+static inline int devm_of_clk_add_parent_hw_provider(struct device *dev,
-+			   struct clk_hw *(*get)(struct of_phandle_args *clkspec,
-+						 void *data),
-+			   void *data)
-+{
-+	return 0;
-+}
- static inline void of_clk_del_provider(struct device_node *np) {}
- static inline void devm_of_clk_del_provider(struct device *dev) {}
- static inline struct clk *of_clk_src_simple_get(
-diff --git a/include/linux/clkdev.h b/include/linux/clkdev.h
-index 4890ff033220..ccb32af5848b 100644
---- a/include/linux/clkdev.h
-+++ b/include/linux/clkdev.h
-@@ -52,4 +52,8 @@ int clk_add_alias(const char *, const char *, const char *, struct device *);
- int clk_register_clkdev(struct clk *, const char *, const char *);
- int clk_hw_register_clkdev(struct clk_hw *, const char *, const char *);
- 
-+int devm_clk_hw_register_clkdev(struct device *dev, struct clk_hw *hw,
-+				const char *con_id, const char *dev_id);
-+void devm_clk_release_clkdev(struct device *dev, const char *con_id,
-+			     const char *dev_id);
- #endif
--- 
-2.14.3
-
-
--- 
-Matti Vaittinen
-ROHM Semiconductors
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+The perf result of a shmem lock test shows find_get_entries is the
+most expensive part of shmem_unlock_mapping.
+85.32%--ksys_shmctl
+        shmctl_do_lock
+         --85.29%--shmem_unlock_mapping
+                   |--45.98%--find_get_entries
+                   |           --10.16%--radix_tree_next_chunk
+                   |--16.78%--check_move_unevictable_pages
+                   |--16.07%--__pagevec_release
+                   |           --15.67%--release_pages
+                   |                      --4.82%--free_unref_page_list
+                   |--4.38%--pagevec_remove_exceptionals
+                    --0.59%--_cond_resched
