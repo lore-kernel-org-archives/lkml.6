@@ -2,87 +2,252 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53A93C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 06:43:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 293ECC6786F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 06:47:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 027B22082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 06:43:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 027B22082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jonmasters.org
+	by mail.kernel.org (Postfix) with ESMTP id E9A292082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 06:47:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9A292082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728436AbeKBPtb (ORCPT
+        id S1728363AbeKBPx2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 11:49:31 -0400
-Received: from edison.jonmasters.org ([173.255.233.168]:33148 "EHLO
-        edison.jonmasters.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728128AbeKBPtb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 11:49:31 -0400
-Received: from [12.107.236.253] (helo=tonnant.bos.jonmasters.org)
-        by edison.jonmasters.org with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.71)
-        (envelope-from <jcm@jonmasters.org>)
-        id 1gITAs-0008Qt-A2; Fri, 02 Nov 2018 06:43:18 +0000
-To:     "Moger, Babu" <Babu.Moger@amd.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        "vikas.shivappa@linux.intel.com" <vikas.shivappa@linux.intel.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>
-Cc:     "x86@kernel.org" <x86@kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "bp@suse.de" <bp@suse.de>,
-        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
-        "ak@linux.intel.com" <ak@linux.intel.com>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
-        "colin.king@canonical.com" <colin.king@canonical.com>,
-        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jroedel@suse.de" <jroedel@suse.de>,
-        "jannh@google.com" <jannh@google.com>,
-        "dima@arista.com" <dima@arista.com>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20181005205512.29545-1-babu.moger@amd.com>
-From:   Jon Masters <jcm@jonmasters.org>
-Message-ID: <9e6f6616-5c79-80a3-7d83-a675683c6924@jonmasters.org>
-Date:   Fri, 2 Nov 2018 02:43:16 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 2 Nov 2018 11:53:28 -0400
+Received: from mga04.intel.com ([192.55.52.120]:15479 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727551AbeKBPx2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 11:53:28 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Nov 2018 23:47:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,454,1534834800"; 
+   d="scan'208";a="97077939"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga003.jf.intel.com with ESMTP; 01 Nov 2018 23:47:19 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1gITEl-000Fhp-39; Fri, 02 Nov 2018 14:47:19 +0800
+Date:   Fri, 2 Nov 2018 14:47:14 +0800
+From:   kbuild test robot <fengguang.wu@intel.com>
+To:     Matthew Garrett <mjg59@google.com>
+Cc:     kbuild-all@01.org, John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] apparmor: fix boolreturn.cocci warnings
+Message-ID: <20181102064714.GA4525@lkp-wsm-ep1>
+References: <201811021410.91btpktw%fengguang.wu@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20181005205512.29545-1-babu.moger@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 12.107.236.253
-X-SA-Exim-Mail-From: jcm@jonmasters.org
-Subject: Re: [PATCH v2 00/11] arch/x86: AMD QoS support
-X-SA-Exim-Version: 4.2.1 (built Sun, 08 Nov 2009 07:31:22 +0000)
-X-SA-Exim-Scanned: Yes (on edison.jonmasters.org)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201811021410.91btpktw%fengguang.wu@intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/5/18 4:55 PM, Moger, Babu wrote:
+From: kbuild test robot <fengguang.wu@intel.com>
 
-> The public specification for this feature is available at
-> https://www.amd.com/system/files/TechDocs/56375_Quality_of_Service_Extensions.pdf
+security/apparmor/policy_unpack.c:242:9-10: WARNING: return of 0/1 in function 'unpack_X' with return type bool
+security/apparmor/policy_unpack.c:288:9-10: WARNING: return of 0/1 in function 'unpack_nameX' with return type bool
+security/apparmor/policy_unpack.c:615:8-9: WARNING: return of 0/1 in function 'unpack_rlimits' with return type bool
+security/apparmor/policy_unpack.c:574:8-9: WARNING: return of 0/1 in function 'unpack_secmark' with return type bool
+security/apparmor/policy_unpack.c:508:8-9: WARNING: return of 0/1 in function 'unpack_trans_table' with return type bool
+security/apparmor/policy_unpack.c:312:10-11: WARNING: return of 0/1 in function 'unpack_u32' with return type bool
+security/apparmor/policy_unpack.c:325:10-11: WARNING: return of 0/1 in function 'unpack_u64' with return type bool
+security/apparmor/policy_unpack.c:299:10-11: WARNING: return of 0/1 in function 'unpack_u8' with return type bool
+security/apparmor/policy_unpack.c:538:8-9: WARNING: return of 0/1 in function 'unpack_xattrs' with return type bool
+security/apparmor/policy_unpack.c:969:10-11: WARNING: return of 0/1 in function 'verify_dfa_xindex' with return type bool
+security/apparmor/policy_unpack.c:959:9-10: WARNING: return of 0/1 in function 'verify_xindex' with return type bool
 
-404 error
+ Return statements in functions returning bool should use
+ true/false instead of 1/0.
+Generated by: scripts/coccinelle/misc/boolreturn.cocci
+
+Fixes: 9caafbe2b4cf ("apparmor: Parse secmark policy")
+CC: Matthew Garrett <mjg59@google.com>
+Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
+---
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor.git apparmor-next
+head:   566f52ece7bd1099d20dfe2f6f0801896643cf8f
+commit: 9caafbe2b4cf4c635826a2832e93cf648605de8b [9/16] apparmor: Parse secmark policy
+
+ policy_unpack.c |   54 +++++++++++++++++++++++++++---------------------------
+ 1 file changed, 27 insertions(+), 27 deletions(-)
+
+--- a/security/apparmor/policy_unpack.c
++++ b/security/apparmor/policy_unpack.c
+@@ -239,11 +239,11 @@ static size_t unpack_u16_chunk(struct aa
+ static bool unpack_X(struct aa_ext *e, enum aa_code code)
+ {
+ 	if (!inbounds(e, 1))
+-		return 0;
++		return false;
+ 	if (*(u8 *) e->pos != code)
+-		return 0;
++		return false;
+ 	e->pos++;
+-	return 1;
++	return true;
+ }
+ 
+ /**
+@@ -285,50 +285,50 @@ static bool unpack_nameX(struct aa_ext *
+ 
+ 	/* now check if type code matches */
+ 	if (unpack_X(e, code))
+-		return 1;
++		return true;
+ 
+ fail:
+ 	e->pos = pos;
+-	return 0;
++	return false;
+ }
+ 
+ static bool unpack_u8(struct aa_ext *e, u8 *data, const char *name)
+ {
+ 	if (unpack_nameX(e, AA_U8, name)) {
+ 		if (!inbounds(e, sizeof(u8)))
+-			return 0;
++			return false;
+ 		if (data)
+ 			*data = get_unaligned((u8 *)e->pos);
+ 		e->pos += sizeof(u8);
+-		return 1;
++		return true;
+ 	}
+-	return 0;
++	return false;
+ }
+ 
+ static bool unpack_u32(struct aa_ext *e, u32 *data, const char *name)
+ {
+ 	if (unpack_nameX(e, AA_U32, name)) {
+ 		if (!inbounds(e, sizeof(u32)))
+-			return 0;
++			return false;
+ 		if (data)
+ 			*data = le32_to_cpu(get_unaligned((__le32 *) e->pos));
+ 		e->pos += sizeof(u32);
+-		return 1;
++		return true;
+ 	}
+-	return 0;
++	return false;
+ }
+ 
+ static bool unpack_u64(struct aa_ext *e, u64 *data, const char *name)
+ {
+ 	if (unpack_nameX(e, AA_U64, name)) {
+ 		if (!inbounds(e, sizeof(u64)))
+-			return 0;
++			return false;
+ 		if (data)
+ 			*data = le64_to_cpu(get_unaligned((__le64 *) e->pos));
+ 		e->pos += sizeof(u64);
+-		return 1;
++		return true;
+ 	}
+-	return 0;
++	return false;
+ }
+ 
+ static size_t unpack_array(struct aa_ext *e, const char *name)
+@@ -505,12 +505,12 @@ static bool unpack_trans_table(struct aa
+ 		if (!unpack_nameX(e, AA_STRUCTEND, NULL))
+ 			goto fail;
+ 	}
+-	return 1;
++	return true;
+ 
+ fail:
+ 	aa_free_domain_entries(&profile->file.trans);
+ 	e->pos = saved_pos;
+-	return 0;
++	return false;
+ }
+ 
+ static bool unpack_xattrs(struct aa_ext *e, struct aa_profile *profile)
+@@ -535,11 +535,11 @@ static bool unpack_xattrs(struct aa_ext
+ 			goto fail;
+ 	}
+ 
+-	return 1;
++	return true;
+ 
+ fail:
+ 	e->pos = pos;
+-	return 0;
++	return false;
+ }
+ 
+ static bool unpack_secmark(struct aa_ext *e, struct aa_profile *profile)
+@@ -571,7 +571,7 @@ static bool unpack_secmark(struct aa_ext
+ 			goto fail;
+ 	}
+ 
+-	return 1;
++	return true;
+ 
+ fail:
+ 	if (profile->secmark) {
+@@ -582,7 +582,7 @@ fail:
+ 	}
+ 
+ 	e->pos = pos;
+-	return 0;
++	return false;
+ }
+ 
+ static bool unpack_rlimits(struct aa_ext *e, struct aa_profile *profile)
+@@ -612,11 +612,11 @@ static bool unpack_rlimits(struct aa_ext
+ 		if (!unpack_nameX(e, AA_STRUCTEND, NULL))
+ 			goto fail;
+ 	}
+-	return 1;
++	return true;
+ 
+ fail:
+ 	e->pos = pos;
+-	return 0;
++	return false;
+ }
+ 
+ static u32 strhash(const void *data, u32 len, u32 seed)
+@@ -956,8 +956,8 @@ static bool verify_xindex(int xindex, in
+ 	xtype = xindex & AA_X_TYPE_MASK;
+ 	index = xindex & AA_X_INDEX_MASK;
+ 	if (xtype == AA_X_TABLE && index >= table_size)
+-		return 0;
+-	return 1;
++		return false;
++	return true;
+ }
+ 
+ /* verify dfa xindexes are in range of transition tables */
+@@ -966,11 +966,11 @@ static bool verify_dfa_xindex(struct aa_
+ 	int i;
+ 	for (i = 0; i < dfa->tables[YYTD_ID_ACCEPT]->td_lolen; i++) {
+ 		if (!verify_xindex(dfa_user_xindex(dfa, i), table_size))
+-			return 0;
++			return false;
+ 		if (!verify_xindex(dfa_other_xindex(dfa, i), table_size))
+-			return 0;
++			return false;
+ 	}
+-	return 1;
++	return true;
+ }
+ 
+ /**
