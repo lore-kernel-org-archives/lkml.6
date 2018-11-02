@@ -4,52 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E598C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:53:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F591C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:53:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FC0520854
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:53:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E4C72084A
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:53:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lwJQJpWl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FC0520854
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GSESv/5N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E4C72084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731080AbeKCEBk (ORCPT
+        id S1731089AbeKCEBn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 00:01:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57520 "EHLO mail.kernel.org"
+        Sat, 3 Nov 2018 00:01:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726051AbeKCEBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 00:01:39 -0400
+        id S1726051AbeKCEBm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 00:01:42 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC10820848;
-        Fri,  2 Nov 2018 18:53:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 086002082D;
+        Fri,  2 Nov 2018 18:53:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184803;
-        bh=qxZOXcdxXe9dCS1yKlKVzVArGjVYeAGpVhU3pja0Um0=;
+        s=default; t=1541184806;
+        bh=IuUrZmmVaMPC+lwocT/LsJk9XeOxOOAJHq9wL8S0E84=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lwJQJpWl90L22nP6rwqTcrolX+ZMbCoGJ4aJ7O1zZcxfC+OY2h6fTGbHUkELXaf9+
-         g/E4QDw1f7FqlDTsdq7I6+uxb6nFWvf7u7idqaV/Pk8BGMMKWbU9cS3iXDKlHMQ9ZO
-         sCpikmOlsnUY001n5CvByK/5ZTruJ6RruZKMBBa8=
+        b=GSESv/5Ne1PthCjY8SMimsq8ZwzAUYs5pBzEGVr7JYVcEUo7F0i4X7wM04hXwX7Vu
+         8TUJdoHfleJKBtQvB8UjgyJyK72pVfx/xiO/QVjQvfWfqoc1XozT2Zg/YN/CeIakmf
+         9MYJjqrq5BT05zbqZPsIpuVlz8v0WjuyNyupsHbI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thiago Macieira <thiago.macieira@intel.com>,
-        Wang Nan <wangnan0@huawei.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 098/143] perf python: Use -Wno-redundant-decls to build with PYTHON=python3
-Date:   Fri,  2 Nov 2018 19:34:43 +0100
-Message-Id: <20181102182905.716188554@linuxfoundation.org>
+Subject: [PATCH 4.14 099/143] rxrpc: Dont check RXRPC_CALL_TX_LAST after calling rxrpc_rotate_tx_window()
+Date:   Fri,  2 Nov 2018 19:34:44 +0100
+Message-Id: <20181102182905.776106146@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -67,107 +62,122 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 05a2f54679861deb188750ba2a70187000b2c71f ]
+[ Upstream commit c479d5f2c2e1ce609da08c075054440d97ddff52 ]
 
-When building in ClearLinux using 'make PYTHON=python3' with gcc 8.2.1
-it fails with:
+We should only call the function to end a call's Tx phase if we rotated the
+marked-last packet out of the transmission buffer.
 
-    GEN      /tmp/build/perf/python/perf.so
-  In file included from /usr/include/python3.7m/Python.h:126,
-                   from /git/linux/tools/perf/util/python.c:2:
-  /usr/include/python3.7m/import.h:58:24: error: redundant redeclaration of ‘_PyImport_AddModuleObject’ [-Werror=redundant-decls]
-   PyAPI_FUNC(PyObject *) _PyImport_AddModuleObject(PyObject *, PyObject *);
-                          ^~~~~~~~~~~~~~~~~~~~~~~~~
-  /usr/include/python3.7m/import.h:47:24: note: previous declaration of ‘_PyImport_AddModuleObject’ was here
-   PyAPI_FUNC(PyObject *) _PyImport_AddModuleObject(PyObject *name,
-                          ^~~~~~~~~~~~~~~~~~~~~~~~~
-  cc1: all warnings being treated as errors
-  error: command 'gcc' failed with exit status 1
+Make rxrpc_rotate_tx_window() return an indication of whether it just
+rotated the packet marked as the last out of the transmit buffer, carrying
+the information out of the locked section in that function.
 
-And indeed there is a redundant declaration in that Python.h file, one
-with parameter names and the other without, so just add
--Wno-error=redundant-decls to the python setup instructions.
+We can then check the return value instead of examining RXRPC_CALL_TX_LAST.
 
-Now perf builds with gcc in ClearLinux with the following Dockerfile:
-
-  # docker.io/acmel/linux-perf-tools-build-clearlinux:latest
-  FROM docker.io/clearlinux:latest
-  MAINTAINER Arnaldo Carvalho de Melo <acme@kernel.org>
-  RUN swupd update && \
-      swupd bundle-add sysadmin-basic-dev
-  RUN mkdir -m 777 -p /git /tmp/build/perf /tmp/build/objtool /tmp/build/linux && \
-      groupadd -r perfbuilder && \
-      useradd -m -r -g perfbuilder perfbuilder && \
-      chown -R perfbuilder.perfbuilder /tmp/build/ /git/
-  USER perfbuilder
-  COPY rx_and_build.sh /
-  ENV EXTRA_MAKE_ARGS=PYTHON=python3
-  ENTRYPOINT ["/rx_and_build.sh"]
-
-Now to figure out why the build fails with clang, that is present in the
-above container as detected by the rx_and_build.sh script:
-
-  clang version 6.0.1 (tags/RELEASE_601/final)
-  Target: x86_64-unknown-linux-gnu
-  Thread model: posix
-  InstalledDir: /usr/sbin
-  make: Entering directory '/git/linux/tools/perf'
-    BUILD:   Doing 'make -j4' parallel build
-    HOSTCC   /tmp/build/perf/fixdep.o
-    HOSTLD   /tmp/build/perf/fixdep-in.o
-    LINK     /tmp/build/perf/fixdep
-
-  Auto-detecting system features:
-  ...                         dwarf: [ OFF ]
-  ...            dwarf_getlocations: [ OFF ]
-  ...                         glibc: [ OFF ]
-  ...                          gtk2: [ OFF ]
-  ...                      libaudit: [ OFF ]
-  ...                        libbfd: [ OFF ]
-  ...                        libelf: [ OFF ]
-  ...                       libnuma: [ OFF ]
-  ...        numa_num_possible_cpus: [ OFF ]
-  ...                       libperl: [ OFF ]
-  ...                     libpython: [ OFF ]
-  ...                      libslang: [ OFF ]
-  ...                     libcrypto: [ OFF ]
-  ...                     libunwind: [ OFF ]
-  ...            libdw-dwarf-unwind: [ OFF ]
-  ...                          zlib: [ OFF ]
-  ...                          lzma: [ OFF ]
-  ...                     get_cpuid: [ OFF ]
-  ...                           bpf: [ OFF ]
-
-  Makefile.config:331: *** No gnu/libc-version.h found, please install glibc-dev[el].  Stop.
-  make[1]: *** [Makefile.perf:206: sub-make] Error 2
-  make: *** [Makefile:70: all] Error 2
-  make: Leaving directory '/git/linux/tools/perf'
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Thiago Macieira <thiago.macieira@intel.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-c3khb9ac86s00qxzjrueomme@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 70790dbe3f66 ("rxrpc: Pass the last Tx packet marker in the annotation buffer")
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/setup.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/rxrpc/input.c | 35 +++++++++++++++++++----------------
+ 1 file changed, 19 insertions(+), 16 deletions(-)
 
-diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
-index da4df7fd43a2..23f1bf175179 100644
---- a/tools/perf/util/setup.py
-+++ b/tools/perf/util/setup.py
-@@ -27,7 +27,7 @@ class install_lib(_install_lib):
+diff --git a/net/rxrpc/input.c b/net/rxrpc/input.c
+index 5edb636dbc4d..3a501bf0fc1a 100644
+--- a/net/rxrpc/input.c
++++ b/net/rxrpc/input.c
+@@ -216,10 +216,11 @@ static void rxrpc_send_ping(struct rxrpc_call *call, struct sk_buff *skb,
+ /*
+  * Apply a hard ACK by advancing the Tx window.
+  */
+-static void rxrpc_rotate_tx_window(struct rxrpc_call *call, rxrpc_seq_t to,
++static bool rxrpc_rotate_tx_window(struct rxrpc_call *call, rxrpc_seq_t to,
+ 				   struct rxrpc_ack_summary *summary)
+ {
+ 	struct sk_buff *skb, *list = NULL;
++	bool rot_last = false;
+ 	int ix;
+ 	u8 annotation;
  
- cflags = getenv('CFLAGS', '').split()
- # switch off several checks (need to be at the end of cflags list)
--cflags += ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-parameter' ]
-+cflags += ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-parameter', '-Wno-redundant-decls' ]
- if cc != "clang":
-     cflags += ['-Wno-cast-function-type' ]
+@@ -243,15 +244,17 @@ static void rxrpc_rotate_tx_window(struct rxrpc_call *call, rxrpc_seq_t to,
+ 		skb->next = list;
+ 		list = skb;
+ 
+-		if (annotation & RXRPC_TX_ANNO_LAST)
++		if (annotation & RXRPC_TX_ANNO_LAST) {
+ 			set_bit(RXRPC_CALL_TX_LAST, &call->flags);
++			rot_last = true;
++		}
+ 		if ((annotation & RXRPC_TX_ANNO_MASK) != RXRPC_TX_ANNO_ACK)
+ 			summary->nr_rot_new_acks++;
+ 	}
+ 
+ 	spin_unlock(&call->lock);
+ 
+-	trace_rxrpc_transmit(call, (test_bit(RXRPC_CALL_TX_LAST, &call->flags) ?
++	trace_rxrpc_transmit(call, (rot_last ?
+ 				    rxrpc_transmit_rotate_last :
+ 				    rxrpc_transmit_rotate));
+ 	wake_up(&call->waitq);
+@@ -262,6 +265,8 @@ static void rxrpc_rotate_tx_window(struct rxrpc_call *call, rxrpc_seq_t to,
+ 		skb->next = NULL;
+ 		rxrpc_free_skb(skb, rxrpc_skb_tx_freed);
+ 	}
++
++	return rot_last;
+ }
+ 
+ /*
+@@ -332,11 +337,11 @@ static bool rxrpc_receiving_reply(struct rxrpc_call *call)
+ 				ktime_get_real());
+ 	}
+ 
+-	if (!test_bit(RXRPC_CALL_TX_LAST, &call->flags))
+-		rxrpc_rotate_tx_window(call, top, &summary);
+ 	if (!test_bit(RXRPC_CALL_TX_LAST, &call->flags)) {
+-		rxrpc_proto_abort("TXL", call, top);
+-		return false;
++		if (!rxrpc_rotate_tx_window(call, top, &summary)) {
++			rxrpc_proto_abort("TXL", call, top);
++			return false;
++		}
+ 	}
+ 	if (!rxrpc_end_tx_phase(call, true, "ETD"))
+ 		return false;
+@@ -837,8 +842,12 @@ static void rxrpc_input_ack(struct rxrpc_call *call, struct sk_buff *skb,
+ 	if (nr_acks > call->tx_top - hard_ack)
+ 		return rxrpc_proto_abort("AKN", call, 0);
+ 
+-	if (after(hard_ack, call->tx_hard_ack))
+-		rxrpc_rotate_tx_window(call, hard_ack, &summary);
++	if (after(hard_ack, call->tx_hard_ack)) {
++		if (rxrpc_rotate_tx_window(call, hard_ack, &summary)) {
++			rxrpc_end_tx_phase(call, false, "ETA");
++			return;
++		}
++	}
+ 
+ 	if (nr_acks > 0) {
+ 		if (skb_copy_bits(skb, offset, buf.acks, nr_acks) < 0)
+@@ -847,11 +856,6 @@ static void rxrpc_input_ack(struct rxrpc_call *call, struct sk_buff *skb,
+ 				      &summary);
+ 	}
+ 
+-	if (test_bit(RXRPC_CALL_TX_LAST, &call->flags)) {
+-		rxrpc_end_tx_phase(call, false, "ETA");
+-		return;
+-	}
+-
+ 	if (call->rxtx_annotations[call->tx_top & RXRPC_RXTX_BUFF_MASK] &
+ 	    RXRPC_TX_ANNO_LAST &&
+ 	    summary.nr_acks == call->tx_top - hard_ack &&
+@@ -873,8 +877,7 @@ static void rxrpc_input_ackall(struct rxrpc_call *call, struct sk_buff *skb)
+ 
+ 	_proto("Rx ACKALL %%%u", sp->hdr.serial);
+ 
+-	rxrpc_rotate_tx_window(call, call->tx_top, &summary);
+-	if (test_bit(RXRPC_CALL_TX_LAST, &call->flags))
++	if (rxrpc_rotate_tx_window(call, call->tx_top, &summary))
+ 		rxrpc_end_tx_phase(call, false, "ETL");
+ }
  
 -- 
 2.17.1
