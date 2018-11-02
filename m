@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA30C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2BCDC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:43:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DDC720854
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:43:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 697082084A
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:43:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="L94H/HvM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DDC720854
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WRPS1i73"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 697082084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729913AbeKCDvM (ORCPT
+        id S1729925AbeKCDvP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:51:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46434 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:51:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729437AbeKCDvL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:51:11 -0400
+        id S1729437AbeKCDvP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:51:15 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB1242084A;
-        Fri,  2 Nov 2018 18:42:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B40C02084A;
+        Fri,  2 Nov 2018 18:43:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184179;
-        bh=0mwhO9z9uOzjTgobil2ZWsS9niOX3WuBmvfItPeEHjQ=;
+        s=default; t=1541184182;
+        bh=IpxhYYyf/5Hek6mqfxk6qHbUXxN/cwf+QxMxM+lphnM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L94H/HvMfzFkwm5WDVaS9Z5sfnkH41MT1KtfiuC6wqQvVWsBT46GR+mAabmvZPcZP
-         2fxP+Cv672fpehJrrcbl/mfNUhO2bvLpeYhSbXwQ6EMHKURC2w+Guj/tAojarnuLRL
-         VQHP8Ig59JsCfbJ0gcXDuVY91kXjTgOsDG7+nqqU=
+        b=WRPS1i73ky5EE7KAWWUI6/91czMXd8GUnpmvZrHIAEshAPDpGKdy6OG3Fy9iUZLuM
+         54KJjhp+X0dP5zTHZFVLD5+FVel2A7u+wMtSpi+MOxs9VqJay0xaHmIni7g4NDLf0W
+         da04zPKcrLOdQsqP+SEcNRE4QSOIANdY5uMgDVvQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ying Xu <yinxu@redhat.com>,
-        Hangbin Liu <liuhangbin@gmail.com>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 103/150] bridge: do not add port to router list when receives query with source 0.0.0.0
-Date:   Fri,  2 Nov 2018 19:34:25 +0100
-Message-Id: <20181102182910.500575023@linuxfoundation.org>
+Subject: [PATCH 4.18 104/150] ipv6: mcast: fix a use-after-free in inet6_mc_check
+Date:   Fri,  2 Nov 2018 19:34:26 +0100
+Message-Id: <20181102182910.561302362@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -65,56 +63,173 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 5a2de63fd1a59c30c02526d427bc014b98adf508 ]
+[ Upstream commit dc012f3628eaecfb5ba68404a5c30ef501daf63d ]
 
-Based on RFC 4541, 2.1.1.  IGMP Forwarding Rules
+syzbot found a use-after-free in inet6_mc_check [1]
 
-  The switch supporting IGMP snooping must maintain a list of
-  multicast routers and the ports on which they are attached.  This
-  list can be constructed in any combination of the following ways:
+The problem here is that inet6_mc_check() uses rcu
+and read_lock(&iml->sflock)
 
-  a) This list should be built by the snooping switch sending
-     Multicast Router Solicitation messages as described in IGMP
-     Multicast Router Discovery [MRDISC].  It may also snoop
-     Multicast Router Advertisement messages sent by and to other
-     nodes.
+So the fact that ip6_mc_leave_src() is called under RTNL
+and the socket lock does not help us, we need to acquire
+iml->sflock in write mode.
 
-  b) The arrival port for IGMP Queries (sent by multicast routers)
-     where the source address is not 0.0.0.0.
+In the future, we should convert all this stuff to RCU.
 
-We should not add the port to router list when receives query with source
-0.0.0.0.
+[1]
+BUG: KASAN: use-after-free in ipv6_addr_equal include/net/ipv6.h:521 [inline]
+BUG: KASAN: use-after-free in inet6_mc_check+0xae7/0xb40 net/ipv6/mcast.c:649
+Read of size 8 at addr ffff8801ce7f2510 by task syz-executor0/22432
 
-Reported-by: Ying Xu <yinxu@redhat.com>
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Acked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Acked-by: Roopa Prabhu <roopa@cumulusnetworks.com>
+CPU: 1 PID: 22432 Comm: syz-executor0 Not tainted 4.19.0-rc7+ #280
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
+ print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
+ kasan_report_error mm/kasan/report.c:354 [inline]
+ kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
+ __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+ ipv6_addr_equal include/net/ipv6.h:521 [inline]
+ inet6_mc_check+0xae7/0xb40 net/ipv6/mcast.c:649
+ __raw_v6_lookup+0x320/0x3f0 net/ipv6/raw.c:98
+ ipv6_raw_deliver net/ipv6/raw.c:183 [inline]
+ raw6_local_deliver+0x3d3/0xcb0 net/ipv6/raw.c:240
+ ip6_input_finish+0x467/0x1aa0 net/ipv6/ip6_input.c:345
+ NF_HOOK include/linux/netfilter.h:289 [inline]
+ ip6_input+0xe9/0x600 net/ipv6/ip6_input.c:426
+ ip6_mc_input+0x48a/0xd20 net/ipv6/ip6_input.c:503
+ dst_input include/net/dst.h:450 [inline]
+ ip6_rcv_finish+0x17a/0x330 net/ipv6/ip6_input.c:76
+ NF_HOOK include/linux/netfilter.h:289 [inline]
+ ipv6_rcv+0x120/0x640 net/ipv6/ip6_input.c:271
+ __netif_receive_skb_one_core+0x14d/0x200 net/core/dev.c:4913
+ __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:5023
+ netif_receive_skb_internal+0x12c/0x620 net/core/dev.c:5126
+ napi_frags_finish net/core/dev.c:5664 [inline]
+ napi_gro_frags+0x75a/0xc90 net/core/dev.c:5737
+ tun_get_user+0x3189/0x4250 drivers/net/tun.c:1923
+ tun_chr_write_iter+0xb9/0x154 drivers/net/tun.c:1968
+ call_write_iter include/linux/fs.h:1808 [inline]
+ do_iter_readv_writev+0x8b0/0xa80 fs/read_write.c:680
+ do_iter_write+0x185/0x5f0 fs/read_write.c:959
+ vfs_writev+0x1f1/0x360 fs/read_write.c:1004
+ do_writev+0x11a/0x310 fs/read_write.c:1039
+ __do_sys_writev fs/read_write.c:1112 [inline]
+ __se_sys_writev fs/read_write.c:1109 [inline]
+ __x64_sys_writev+0x75/0xb0 fs/read_write.c:1109
+ do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457421
+Code: 75 14 b8 14 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 34 b5 fb ff c3 48 83 ec 08 e8 1a 2d 00 00 48 89 04 24 b8 14 00 00 00 0f 05 <48> 8b 3c 24 48 89 c2 e8 63 2d 00 00 48 89 d0 48 83 c4 08 48 3d 01
+RSP: 002b:00007f2d30ecaba0 EFLAGS: 00000293 ORIG_RAX: 0000000000000014
+RAX: ffffffffffffffda RBX: 000000000000003e RCX: 0000000000457421
+RDX: 0000000000000001 RSI: 00007f2d30ecabf0 RDI: 00000000000000f0
+RBP: 0000000020000500 R08: 00000000000000f0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000293 R12: 00007f2d30ecb6d4
+R13: 00000000004c4890 R14: 00000000004d7b90 R15: 00000000ffffffff
+
+Allocated by task 22437:
+ save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+ set_track mm/kasan/kasan.c:460 [inline]
+ kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+ __do_kmalloc mm/slab.c:3718 [inline]
+ __kmalloc+0x14e/0x760 mm/slab.c:3727
+ kmalloc include/linux/slab.h:518 [inline]
+ sock_kmalloc+0x15a/0x1f0 net/core/sock.c:1983
+ ip6_mc_source+0x14dd/0x1960 net/ipv6/mcast.c:427
+ do_ipv6_setsockopt.isra.9+0x3afb/0x45d0 net/ipv6/ipv6_sockglue.c:743
+ ipv6_setsockopt+0xbd/0x170 net/ipv6/ipv6_sockglue.c:933
+ rawv6_setsockopt+0x59/0x140 net/ipv6/raw.c:1069
+ sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3038
+ __sys_setsockopt+0x1ba/0x3c0 net/socket.c:1902
+ __do_sys_setsockopt net/socket.c:1913 [inline]
+ __se_sys_setsockopt net/socket.c:1910 [inline]
+ __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1910
+ do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 22430:
+ save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+ set_track mm/kasan/kasan.c:460 [inline]
+ __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+ kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+ __cache_free mm/slab.c:3498 [inline]
+ kfree+0xcf/0x230 mm/slab.c:3813
+ __sock_kfree_s net/core/sock.c:2004 [inline]
+ sock_kfree_s+0x29/0x60 net/core/sock.c:2010
+ ip6_mc_leave_src+0x11a/0x1d0 net/ipv6/mcast.c:2448
+ __ipv6_sock_mc_close+0x20b/0x4e0 net/ipv6/mcast.c:310
+ ipv6_sock_mc_close+0x158/0x1d0 net/ipv6/mcast.c:328
+ inet6_release+0x40/0x70 net/ipv6/af_inet6.c:452
+ __sock_release+0xd7/0x250 net/socket.c:579
+ sock_close+0x19/0x20 net/socket.c:1141
+ __fput+0x385/0xa30 fs/file_table.c:278
+ ____fput+0x15/0x20 fs/file_table.c:309
+ task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+ tracehook_notify_resume include/linux/tracehook.h:193 [inline]
+ exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
+ prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+ syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+ do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8801ce7f2500
+ which belongs to the cache kmalloc-192 of size 192
+The buggy address is located 16 bytes inside of
+ 192-byte region [ffff8801ce7f2500, ffff8801ce7f25c0)
+The buggy address belongs to the page:
+page:ffffea000739fc80 count:1 mapcount:0 mapping:ffff8801da800040 index:0x0
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffffea0006f6e548 ffffea000737b948 ffff8801da800040
+raw: 0000000000000000 ffff8801ce7f2000 0000000100000010 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff8801ce7f2400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8801ce7f2480: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+>ffff8801ce7f2500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                         ^
+ ffff8801ce7f2580: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+ ffff8801ce7f2600: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/bridge/br_multicast.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ net/ipv6/mcast.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
---- a/net/bridge/br_multicast.c
-+++ b/net/bridge/br_multicast.c
-@@ -1420,7 +1420,15 @@ static void br_multicast_query_received(
- 		return;
+--- a/net/ipv6/mcast.c
++++ b/net/ipv6/mcast.c
+@@ -2436,17 +2436,17 @@ static int ip6_mc_leave_src(struct sock
+ {
+ 	int err;
  
- 	br_multicast_update_query_timer(br, query, max_delay);
--	br_multicast_mark_router(br, port);
-+
-+	/* Based on RFC4541, section 2.1.1 IGMP Forwarding Rules,
-+	 * the arrival port for IGMP Queries where the source address
-+	 * is 0.0.0.0 should not be added to router port list.
-+	 */
-+	if ((saddr->proto == htons(ETH_P_IP) && saddr->u.ip4) ||
-+	    (saddr->proto == htons(ETH_P_IPV6) &&
-+	     !ipv6_addr_any(&saddr->u.ip6)))
-+		br_multicast_mark_router(br, port);
+-	/* callers have the socket lock and rtnl lock
+-	 * so no other readers or writers of iml or its sflist
+-	 */
++	write_lock_bh(&iml->sflock);
+ 	if (!iml->sflist) {
+ 		/* any-source empty exclude case */
+-		return ip6_mc_del_src(idev, &iml->addr, iml->sfmode, 0, NULL, 0);
++		err = ip6_mc_del_src(idev, &iml->addr, iml->sfmode, 0, NULL, 0);
++	} else {
++		err = ip6_mc_del_src(idev, &iml->addr, iml->sfmode,
++				iml->sflist->sl_count, iml->sflist->sl_addr, 0);
++		sock_kfree_s(sk, iml->sflist, IP6_SFLSIZE(iml->sflist->sl_max));
++		iml->sflist = NULL;
+ 	}
+-	err = ip6_mc_del_src(idev, &iml->addr, iml->sfmode,
+-		iml->sflist->sl_count, iml->sflist->sl_addr, 0);
+-	sock_kfree_s(sk, iml->sflist, IP6_SFLSIZE(iml->sflist->sl_max));
+-	iml->sflist = NULL;
++	write_unlock_bh(&iml->sflock);
+ 	return err;
  }
  
- static int br_ip4_multicast_query(struct net_bridge *br,
 
 
