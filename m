@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD0BEC65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:45:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E37B9C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:45:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B062920847
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:45:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B56F92084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:45:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yWm5wM4j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B062920847
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vidUwg8A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B56F92084D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730158AbeKCDxX (ORCPT
+        id S1730173AbeKCDx0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:53:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48970 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:53:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728985AbeKCDxX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:53:23 -0400
+        id S1728985AbeKCDxZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:53:25 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 299FA20847;
-        Fri,  2 Nov 2018 18:45:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 566982084A;
+        Fri,  2 Nov 2018 18:45:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184309;
-        bh=rxmfqLqzcDCnvXQkyupKW0jOmxy3ahhFCaLmmRCwm3Y=;
+        s=default; t=1541184312;
+        bh=qguiQZmQO/BOWSpPS27Gg86Ancsl3BS894EzWSjXa3U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yWm5wM4jQj+CKOWdq7Td8vefzXPMtlhWDKLEwxqY9EBEDLBSV4d4g5gsnMa/zWe4j
-         u9d03SjSBWMP5Pj3zowrrrmpTAB4uTruyP56vq7urnIXwWhz9f+plbTYTrYx0n4XCL
-         5+aHqKp43PJpbmM6biI7B+yMwhZDQe8zjHzMM2MA=
+        b=vidUwg8Ac1jTg+8F/Vgmr2Tyow1ISpgYcFhPkwe+XpOuwz8NFC8ScG92tdoTbssk1
+         cj2+yEPLs4jOBRvHBHLktIZK0QvyGKQNbJ8nzd49ApLt/G26CFeRbuB3gwKzj/QQMh
+         QfgdzQYDmJQ3x65HAwfymnLSc0gvs/6FwZkiY/XU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
+        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 131/150] net/ipv6: Allow onlink routes to have a device mismatch if it is the default route
-Date:   Fri,  2 Nov 2018 19:34:53 +0100
-Message-Id: <20181102182911.874013335@linuxfoundation.org>
+Subject: [PATCH 4.18 132/150] sctp: fix the data size calculation in sctp_data_size
+Date:   Fri,  2 Nov 2018 19:34:54 +0100
+Message-Id: <20181102182911.926060233@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -62,81 +63,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Ahern <dsahern@gmail.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit 4ed591c8ab44e711e56b8e021ffaf4f407c045f5 ]
+[ Upstream commit 5660b9d9d6a29c2c3cc12f62ae44bfb56b0a15a9 ]
 
-The intent of ip6_route_check_nh_onlink is to make sure the gateway
-given for an onlink route is not actually on a connected route for
-a different interface (e.g., 2001:db8:1::/64 is on dev eth1 and then
-an onlink route has a via 2001:db8:1::1 dev eth2). If the gateway
-lookup hits the default route then it most likely will be a different
-interface than the onlink route which is ok.
+sctp data size should be calculated by subtracting data chunk header's
+length from chunk_hdr->length, not just data header.
 
-Update ip6_route_check_nh_onlink to disregard the device mismatch
-if the gateway lookup hits the default route. Turns out the existing
-onlink tests are passing because there is no default route or it is
-an unreachable default, so update the onlink tests to have a default
-route other than unreachable.
-
-Fixes: fc1e64e1092f6 ("net/ipv6: Add support for onlink flag")
-Signed-off-by: David Ahern <dsahern@gmail.com>
+Fixes: 668c9beb9020 ("sctp: implement assign_number for sctp_stream_interleave")
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/route.c                                |    2 ++
- tools/testing/selftests/net/fib-onlink-tests.sh |   14 +++++++-------
- 2 files changed, 9 insertions(+), 7 deletions(-)
+ include/net/sctp/sm.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -2792,6 +2792,8 @@ static int ip6_route_check_nh_onlink(str
- 	grt = ip6_nh_lookup_table(net, cfg, gw_addr, tbid, 0);
- 	if (grt) {
- 		if (!grt->dst.error &&
-+		    /* ignore match if it is the default route */
-+		    grt->from && !ipv6_addr_any(&grt->from->fib6_dst.addr) &&
- 		    (grt->rt6i_flags & flags || dev != grt->dst.dev)) {
- 			NL_SET_ERR_MSG(extack,
- 				       "Nexthop has invalid gateway or device mismatch");
---- a/tools/testing/selftests/net/fib-onlink-tests.sh
-+++ b/tools/testing/selftests/net/fib-onlink-tests.sh
-@@ -167,8 +167,8 @@ setup()
- 	# add vrf table
- 	ip li add ${VRF} type vrf table ${VRF_TABLE}
- 	ip li set ${VRF} up
--	ip ro add table ${VRF_TABLE} unreachable default
--	ip -6 ro add table ${VRF_TABLE} unreachable default
-+	ip ro add table ${VRF_TABLE} unreachable default metric 8192
-+	ip -6 ro add table ${VRF_TABLE} unreachable default metric 8192
+--- a/include/net/sctp/sm.h
++++ b/include/net/sctp/sm.h
+@@ -347,7 +347,7 @@ static inline __u16 sctp_data_size(struc
+ 	__u16 size;
  
- 	# create test interfaces
- 	ip li add ${NETIFS[p1]} type veth peer name ${NETIFS[p2]}
-@@ -185,20 +185,20 @@ setup()
- 	for n in 1 3 5 7; do
- 		ip li set ${NETIFS[p${n}]} up
- 		ip addr add ${V4ADDRS[p${n}]}/24 dev ${NETIFS[p${n}]}
--		ip addr add ${V6ADDRS[p${n}]}/64 dev ${NETIFS[p${n}]}
-+		ip addr add ${V6ADDRS[p${n}]}/64 dev ${NETIFS[p${n}]} nodad
- 	done
+ 	size = ntohs(chunk->chunk_hdr->length);
+-	size -= sctp_datahdr_len(&chunk->asoc->stream);
++	size -= sctp_datachk_len(&chunk->asoc->stream);
  
- 	# move peer interfaces to namespace and add addresses
- 	for n in 2 4 6 8; do
- 		ip li set ${NETIFS[p${n}]} netns ${PEER_NS} up
- 		ip -netns ${PEER_NS} addr add ${V4ADDRS[p${n}]}/24 dev ${NETIFS[p${n}]}
--		ip -netns ${PEER_NS} addr add ${V6ADDRS[p${n}]}/64 dev ${NETIFS[p${n}]}
-+		ip -netns ${PEER_NS} addr add ${V6ADDRS[p${n}]}/64 dev ${NETIFS[p${n}]} nodad
- 	done
- 
--	set +e
-+	ip -6 ro add default via ${V6ADDRS[p3]/::[0-9]/::64}
-+	ip -6 ro add table ${VRF_TABLE} default via ${V6ADDRS[p7]/::[0-9]/::64}
- 
--	# let DAD complete - assume default of 1 probe
--	sleep 1
-+	set +e
+ 	return size;
  }
- 
- cleanup()
 
 
