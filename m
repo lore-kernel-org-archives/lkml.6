@@ -2,221 +2,127 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB734C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06CB1C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:05:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77836204FD
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:04:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77836204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BABE7204FD
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:05:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="seR4in71"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BABE7204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727633AbeKBWL1 (ORCPT
+        id S1727666AbeKBWMZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 18:11:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57584 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726125AbeKBWL1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 18:11:27 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8E62658E51;
-        Fri,  2 Nov 2018 13:04:19 +0000 (UTC)
-Received: from redhat.com (ovpn-124-238.rdu2.redhat.com [10.10.124.238])
-        by smtp.corp.redhat.com (Postfix) with SMTP id ECDE51054FCF;
-        Fri,  2 Nov 2018 13:04:11 +0000 (UTC)
-Date:   Fri, 2 Nov 2018 09:04:11 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        bijan.mottahedeh@oracle.com, gedwards@ddn.com, joe@perches.com,
-        lenaic@lhuard.fr, liang.z.li@intel.com, mhocko@kernel.org,
-        mhocko@suse.com, stefanha@redhat.com, wei.w.wang@intel.com
-Subject: Re: [PULL] vhost: cleanups and fixes
-Message-ID: <20181102083018-mutt-send-email-mst@kernel.org>
-References: <20181101171938-mutt-send-email-mst@kernel.org>
- <CAGXu5jJ0HgV2qN=wohEgro6ixqXHOHBTsvS5a9Dcpz8gxVo3bA@mail.gmail.com>
- <CAHk-=wicvws38JqzVF6oNEZ0jGzP6RecR6yAGtyzX3AkoJ321g@mail.gmail.com>
- <20181102114635.hi3q53kzmz4qljsf@lakrids.cambridge.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181102114635.hi3q53kzmz4qljsf@lakrids.cambridge.arm.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 02 Nov 2018 13:04:20 +0000 (UTC)
+        Fri, 2 Nov 2018 18:12:25 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:51314 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbeKBWMY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 18:12:24 -0400
+Received: by mail-wm1-f65.google.com with SMTP id w7-v6so1937203wmc.1
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 06:05:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=cHE3B9mtOR8PbpfiQvYBO+fwkN4qt2SpdjzD+aBqjVk=;
+        b=seR4in71bzLCJMlCTmLaD4vpb4UbZMO/JB2dUD3iuvMA2xdaxx7B2sYahHRA16r+Fr
+         ZYgzaEJWlkYOvQknQ3Myftff4FA9i7gGG7J9J0OOAwTzFtQKU6p9bVNyQlF20CCdjI6z
+         LA3I/qf5TCa/E1wnWjWkdZQTk1N4PD3LGyL4PymBgvBG1lhsCxIRXdsYZTfEgw1wd9U5
+         TvFOYC983J2OWvRG/Y17i/mE7YaUw+YFedT00KOZJHSjvZ03ZVVHoTnxdmGAeCX8KZYW
+         mrDUzfbY6eTYcPSoSPFYJmUmHA24JYDZsG7DEHeo1951ErVKpr5E2c8wLUNGuaH4pJHg
+         tBvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=cHE3B9mtOR8PbpfiQvYBO+fwkN4qt2SpdjzD+aBqjVk=;
+        b=KxbwHDuEP3crMAW9G+n5WE0yZ9HYVlCmPi8LG8b5Wy/so1oQ+yMxXNf/bO0/kezlzb
+         wiKlwmHvfDmsW19O013YjFlKN/4Nfhm0xzUylXK+FsJitRCCyJnvYmhxHWVvs+vLCnnr
+         R7ljp+BmXe1ObeUiQjbMzvhqM3gauyexcmEoR7Sp/HLUjILKNSwYVlWj1ZUYSkGjWbfU
+         4NXccnOplD4wYnwq0plJnSTPBzzLVLibueF1BMh2E7hDN3DPurWmsYNakA7/CUbCDYk6
+         JvZCcex2MOeNK1E3Px1z3tjoUBuncB+z7g6oYfHGDW5cHPuPg/5hAiB1WMK9aEv7oM4n
+         MIrw==
+X-Gm-Message-State: AGRZ1gL8RTUMu5CkWtoOgyppIrynMYkikLVGO8IotQVLmGEkX7Q4QxRG
+        08lDoUhjNdbBQQKkSq4y4N9EQA==
+X-Google-Smtp-Source: AJdET5c6/o4NpfZYrPVYVtaUsQT2B37XB1nxCLqHdOZUZmSdECnqxZtVSjiwL+rPQfoVHlGCyr5Oew==
+X-Received: by 2002:a1c:c4f:: with SMTP id 76-v6mr733307wmm.6.1541163916868;
+        Fri, 02 Nov 2018 06:05:16 -0700 (PDT)
+Received: from boomer.baylibre.com ([90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id b127-v6sm6306838wme.43.2018.11.02.06.05.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 02 Nov 2018 06:05:15 -0700 (PDT)
+Message-ID: <ce0a3e6bf6ef438987f3ad390c2aa1bccc75f5ea.camel@baylibre.com>
+Subject: Re: [PATCH v6 3/3] clk: meson: add sub MMC clock controller driver
+From:   jbrunet@baylibre.com
+To:     Jianxin Pan <jianxin.pan@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Yixun Lan <yixun.lan@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>, linux-clk@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date:   Fri, 02 Nov 2018 14:05:14 +0100
+In-Reply-To: <1541089855-19356-4-git-send-email-jianxin.pan@amlogic.com>
+References: <1541089855-19356-1-git-send-email-jianxin.pan@amlogic.com>
+         <1541089855-19356-4-git-send-email-jianxin.pan@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.1 (3.30.1-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 11:46:36AM +0000, Mark Rutland wrote:
-> On Thu, Nov 01, 2018 at 04:06:19PM -0700, Linus Torvalds wrote:
-> > On Thu, Nov 1, 2018 at 4:00 PM Kees Cook <keescook@chromium.org> wrote:
-> > >
-> > > +       memset(&rsp, 0, sizeof(rsp));
-> > > +       rsp.response = VIRTIO_SCSI_S_FUNCTION_REJECTED;
-> > > +       resp = vq->iov[out].iov_base;
-> > > +       ret = __copy_to_user(resp, &rsp, sizeof(rsp));
-> > >
-> > > Is it actually safe to trust that iov_base has passed an earlier
-> > > access_ok() check here? Why not just use copy_to_user() instead?
-> > 
-> > Good point.
-> > 
-> > We really should have removed those double-underscore things ages ago.
-> 
-> FWIW, on arm64 we always check/sanitize the user address as a result of
-> our sanitization of speculated values. Almost all of our uaccess
-> routines have an explicit access_ok().
-> 
-> All our uaccess routines mask the user pointer based on addr_limit,
-> which prevents speculative or architectural uaccess to kernel addresses
-> when addr_limit it USER_DS:
-> 
->     4d8efc2d5ee4c9cc ("arm64: Use pointer masking to limit uaccess speculation")
-> 
-> We also inhibit speculative stores to addr_limit being forwarded under
-> speculation:
-> 
->     c2f0ad4fc089cff8 ("arm64: uaccess: Prevent speculative use of the current addr_limit")
-> 
-> ... and given all that, we folded explicit access_ok() checks into
-> __{get,put}_user():
-> 
->     84624087dd7e3b48 ("arm64: uaccess: Don't bother eliding access_ok checks in __{get, put}_user")
-> 
-> IMO we could/should do the same for __copy_{to,from}_user().
-> 
-> Thanks,
-> Mark.
+On Fri, 2018-11-02 at 00:30 +0800, Jianxin Pan wrote:
+> +struct meson_sclk_div_data  mmc_clkc_div_data = {
+> +       .div = {
+> +               .reg_off = SD_EMMC_CLOCK,
+> +               .shift   = (0),
+> +               .width   = (6),
+> +       },
+> +       .hi = {
+> +               .reg_off = 0,
+> +               .shift   = 0,
+> +               .width   = 0,
+> +       },
+> +};
 
-I've tried making access_ok mask the parameter it gets.  Works because
-access_ok is a macro. Most users pass in a variable so that will block
-attempts to use speculation to bypass the access_ok checks.
+Jianxin,
 
-Not 100% as someone can copy the value before access_ok, but
-then it's all mitigation anyway.
+When replying to v5: https://patchwork.kernel.org/patch/10646723/#22288117
+I think I have clearly explained that:
+a. sclk needs some change you want to use it for the eMMC (not done )
+b. you can't declare sclk statically like that since there is cached data in
+it and this would forbib multiple instance of the controller which is not
+acceptable for this pariticular controller
 
-Places which call access_ok on a non-lvalue need to be fixed then but
-there are not too many of these.
+This is just not adressed in your series.
 
-The advantage here is that a code like this:
+Also some comments from Martin about useless definition were already given on
+past version.
 
-access_ok
-for(...)
-	__get_user
+Seeing this, I did not review the rest of series.
+Please make sure you have addressed all the comments of past reviews before
+reposting. It is OK to ask questions if things are unclear.
 
-isn't slowed down as the masking is outside the loop.
+Jerome
 
-OTOH macros changing their arguments are kind of ugly.
-What do others think?
 
-Just to show what I mean:
-
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-
-diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
-index aae77eb8491c..c4d12c8f47d7 100644
---- a/arch/x86/include/asm/uaccess.h
-+++ b/arch/x86/include/asm/uaccess.h
-@@ -7,6 +7,7 @@
- #include <linux/compiler.h>
- #include <linux/kasan-checks.h>
- #include <linux/string.h>
-+#include <linux/nospec.h>
- #include <asm/asm.h>
- #include <asm/page.h>
- #include <asm/smap.h>
-@@ -69,6 +70,33 @@ static inline bool __chk_range_not_ok(unsigned long addr, unsigned long size, un
- 	__chk_range_not_ok((unsigned long __force)(addr), size, limit); \
- })
- 
-+/*
-+ * Test whether a block of memory is a valid user space address.
-+ * Returns 0 if the range is valid, address itself otherwise.
-+ */
-+static inline unsigned long __verify_range_nospec(unsigned long addr,
-+						  unsigned long size,
-+						  unsigned long limit)
-+{
-+	/* Be careful about overflow */
-+	limit = array_index_nospec(limit, size);
-+
-+	/*
-+	 * If we have used "sizeof()" for the size,
-+	 * we know it won't overflow the limit (but
-+	 * it might overflow the 'addr', so it's
-+	 * important to subtract the size from the
-+	 * limit, not add it to the address).
-+	 */
-+	if (__builtin_constant_p(size)) {
-+		return array_index_nospec(addr, limit - size + 1);
-+	}
-+
-+	/* Arbitrary sizes? Be careful about overflow */
-+	return array_index_mask_nospec(limit, size) &
-+		array_index_nospec(addr, limit - size + 1);
-+}
-+
- #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
- # define WARN_ON_IN_IRQ()	WARN_ON_ONCE(!in_task())
- #else
-@@ -95,12 +123,46 @@ static inline bool __chk_range_not_ok(unsigned long addr, unsigned long size, un
-  * checks that the pointer is in the user space range - after calling
-  * this function, memory access functions may still return -EFAULT.
-  */
--#define access_ok(type, addr, size)					\
-+#define unsafe_access_ok(type, addr, size)					\
- ({									\
- 	WARN_ON_IN_IRQ();						\
- 	likely(!__range_not_ok(addr, size, user_addr_max()));		\
- })
- 
-+/**
-+ * access_ok_nospec: - Checks if a user space pointer is valid
-+ * @type: Type of access: %VERIFY_READ or %VERIFY_WRITE.  Note that
-+ *        %VERIFY_WRITE is a superset of %VERIFY_READ - if it is safe
-+ *        to write to a block, it is always safe to read from it.
-+ * @addr: User space pointer to start of block to check
-+ * @size: Size of block to check
-+ *
-+ * Context: User context only. This function may sleep if pagefaults are
-+ *          enabled.
-+ *
-+ * Checks if a pointer to a block of memory in user space is valid.
-+ *
-+ * Returns address itself (nonzero) if the memory block may be valid,
-+ * zero if it is definitely invalid.
-+ *
-+ * To prevent speculation, the returned value must then be used
-+ * for accesses.
-+ *
-+ * Note that, depending on architecture, this function probably just
-+ * checks that the pointer is in the user space range - after calling
-+ * this function, memory access functions may still return -EFAULT.
-+ */
-+#define access_ok_nospec(type, addr, size)			\
-+({								\
-+	WARN_ON_IN_IRQ();					\
-+	__chk_user_ptr(addr);					\
-+	addr = (typeof(addr) __force)				\
-+	__verify_range_nospec((unsigned long __force)(addr),	\
-+			       size, user_addr_max());		\
-+})
-+
-+#define access_ok(type, addr, size) access_ok_nospec(type, addr, size)
-+
- /*
-  * These are the main single-value transfer routines.  They automatically
-  * use the right size if we just have the right pointer type.
--- 
-MST
