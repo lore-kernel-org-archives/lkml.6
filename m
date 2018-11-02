@@ -2,108 +2,106 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F4149C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:18:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 978B6C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:19:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE5B82082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:18:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EC9F2081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:19:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Rjn4VI5f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE5B82082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fh/2QPYV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EC9F2081F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728201AbeKCC0Z (ORCPT
+        id S1728205AbeKCC0z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 22:26:25 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43071 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbeKCC0Y (ORCPT
+        Fri, 2 Nov 2018 22:26:55 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:39355 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbeKCC0z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 22:26:24 -0400
-Received: by mail-pl1-f193.google.com with SMTP id g59-v6so1294144plb.10
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 10:18:32 -0700 (PDT)
+        Fri, 2 Nov 2018 22:26:55 -0400
+Received: by mail-lf1-f68.google.com with SMTP id n18so1829186lfh.6
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 10:19:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=vxrhorXX1I4QvppP0esrwgeopQAFC7+da941Yp0F+Tg=;
-        b=Rjn4VI5fPWJytnOMb4Oj6XR7S0nwzDVRNwgoJyMmX2GczojuTlrJgVFu0DIjSu9gO9
-         tmXq2e5KZqBPx2Kq1v9QOAHW79COqMmgHmmWKXithrpZt9vsdCgFfE+oCkOMb/jcgq9y
-         PI2teqlVQ4DnKnSe5BRX2JHvJfNtwZftoE6Z0=
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7mzEsLKarnAPlT52QMIUPR4InFc78QhESCHV+bCouTg=;
+        b=fh/2QPYVJXnUZqhNPSC3Py8rsv4byEbk/Jt70tUhf7aHeKl/7Hwfbz91wJGOE/Hma4
+         SYat+RgNMeD0n/eiNpOGDirTDqUb1gLfVVIcpeRPKhnbsVpnTlhl1x0MxGmWkeKvUzKS
+         EnCYAJO5jBeG+MKFzp9ANvl8WKktMbEFphRew=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=vxrhorXX1I4QvppP0esrwgeopQAFC7+da941Yp0F+Tg=;
-        b=KurJvxCUUBgufjArJLoRcqz4DmFv1N5GzO8fX7p7sg2av0nfEWAMSp+A9+BOs1PVi8
-         dwF8Zi1IGTVfL2ZwUlcu0GhIOrNvFyO7MdX4yTxfQ9yGZ20ShFn2w1IBF+qxBvxTjN4c
-         eawIoJcDAzFEh9LA7joEM7eb5PP9n8D2Bzt11oz1HhuU1NxPpgbPpnxgFoxINqwx+1Ab
-         Upj4yPsE95ZHW4bxgOMbDpL0coa4HuTVObTYDho88nZU0yCARgK0QWT2s+2LClweQZiZ
-         nACqaqIdKMZ34qCd4sM/QIQxBqkotXxUaWQXSgW9z5xkFNmML7ivBVaxr8+gI9vzRj/k
-         NEEQ==
-X-Gm-Message-State: AGRZ1gJZ5EuZcz6lZEO1OMYqbuTUjLvnyAPUtYP3ch4rOFecA9EiZ0hT
-        S+iHVub/mJtiPyWS94N+RNv4Ew==
-X-Google-Smtp-Source: AJdET5f9d82pLUTbT81Ulv+XX3x8SN/YI7w0S26HUFseQXn/kHBNtgvnwusVbdQmwBF+pRqr6lMiKg==
-X-Received: by 2002:a17:902:9b84:: with SMTP id y4-v6mr12645436plp.332.1541179112291;
-        Fri, 02 Nov 2018 10:18:32 -0700 (PDT)
-Received: from smtp.gmail.com ([2620:15c:202:1:299d:6b87:5478:d28a])
-        by smtp.gmail.com with ESMTPSA id d5-v6sm19222675pfo.131.2018.11.02.10.18.30
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7mzEsLKarnAPlT52QMIUPR4InFc78QhESCHV+bCouTg=;
+        b=U4rVIpeRT9HeAenXbwVrtOIrxlhxhsyPPV0CGWxbSoCFPh3z2Qc5F4bpq+lPNg59mw
+         Ms06BSs4ObucRfwdqzSLg+4jfGRzg0VJssBR4d24516v1/S0HGiDlmmrpn6ngMIEDQFM
+         +Fvu94bKBPUVp/G2sJHKDVGyukPxvAV09MX4kvWZf22hnM+9Ir8DPMXrvO1L/gQm8rKd
+         3gc+A3adc1DiC4CjGBAacvbJ6EmpmHiSNOaRTdb5f3NtnLzA4Br5I9qpvmL5BoSm/kY+
+         dyv+Sx2uCUSzCrZmFyNxcDAgiWo9JJbuA7yeiNiBEvly/GIPb6MA2TyQ0N44B2O/CCOI
+         s8hg==
+X-Gm-Message-State: AGRZ1gLM4hjQa7sDpQBxFL/eG+muFBE/k7pjhQeHQ7ewpnyO82DmGnYC
+        EipqFSxFxHUfUDyeyRHNNiN6q7BY1QMfMQ==
+X-Google-Smtp-Source: AJdET5f93zkdzUblkv2QbzxrBI/y4efjB2PDWi/8bbsVhZ8+ynf391QS5UlGqYSrJYUvqZwU9vzJDg==
+X-Received: by 2002:a19:ee08:: with SMTP id g8mr7269001lfb.72.1541179140996;
+        Fri, 02 Nov 2018 10:19:00 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id g72-v6sm5331986lfl.21.2018.11.02.10.19.00
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 02 Nov 2018 10:18:31 -0700 (PDT)
-From:   Brian Norris <briannorris@chromium.org>
-To:     ath10k@lists.infradead.org
-Cc:     linux-wireless@vger.kernel.org,
-        Rakesh Pillai <pillair@qti.qualcomm.com>,
-        Govind Singh <govinds@qti.qualcomm.com>,
-        <linux-kernel@vger.kernel.org>,
-        Brian Norris <briannorris@chromium.org>
-Subject: [PATCH 3/3] ath10k: fix struct init whitespace in SNOC driver
-Date:   Fri,  2 Nov 2018 10:17:49 -0700
-Message-Id: <20181102171749.38680-3-briannorris@chromium.org>
-X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
-In-Reply-To: <20181102171749.38680-1-briannorris@chromium.org>
-References: <20181102171749.38680-1-briannorris@chromium.org>
+        Fri, 02 Nov 2018 10:19:00 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id n18so1829138lfh.6
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 10:19:00 -0700 (PDT)
+X-Received: by 2002:a19:3fcf:: with SMTP id m198mr7130991lfa.106.1541178661753;
+ Fri, 02 Nov 2018 10:11:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181101171938-mutt-send-email-mst@kernel.org>
+ <CAGXu5jJ0HgV2qN=wohEgro6ixqXHOHBTsvS5a9Dcpz8gxVo3bA@mail.gmail.com>
+ <CAHk-=wicvws38JqzVF6oNEZ0jGzP6RecR6yAGtyzX3AkoJ321g@mail.gmail.com>
+ <20181102114635.hi3q53kzmz4qljsf@lakrids.cambridge.arm.com>
+ <20181102083018-mutt-send-email-mst@kernel.org> <CAHk-=wh_bQK5zs+CwQ5eyodq4sQT0eOPp60qzvVL2_EtgETP-g@mail.gmail.com>
+ <20181102122937-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20181102122937-mutt-send-email-mst@kernel.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 2 Nov 2018 10:10:45 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wibzqo7C+mS+BgZxRbgdWe2w5F39EhuFUhZUxvotoGLuA@mail.gmail.com>
+Message-ID: <CAHk-=wibzqo7C+mS+BgZxRbgdWe2w5F39EhuFUhZUxvotoGLuA@mail.gmail.com>
+Subject: Re: [PULL] vhost: cleanups and fixes
+To:     mst@redhat.com
+Cc:     mark.rutland@arm.com, Kees Cook <keescook@chromium.org>,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        bijan.mottahedeh@oracle.com, gedwards@ddn.com, joe@perches.com,
+        lenaic@lhuard.fr, liang.z.li@intel.com, mhocko@kernel.org,
+        mhocko@suse.com, stefanha@redhat.com, wei.w.wang@intel.com,
+        jasowang@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Brian Norris <briannorris@chromium.org>
----
- drivers/net/wireless/ath/ath10k/snoc.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+On Fri, Nov 2, 2018 at 9:59 AM Michael S. Tsirkin <mst@redhat.com> wrote:
+>
+> Just for completeness I'd like to point out for vhost the copies are
+> done from the kernel thread.  So yes we can switch to copy_to/from_user
+> but for e.g. 32-bit userspace running on top of a 64 bit kernel it is
+> IIUC not sufficient - we must *also* do access_ok checks on control path
+> when addresses are passed to the kernel and when current points to the
+> correct task struct.
 
-diff --git a/drivers/net/wireless/ath/ath10k/snoc.c b/drivers/net/wireless/ath/ath10k/snoc.c
-index 8d3d9bca410f..ffdebf9a5ac6 100644
---- a/drivers/net/wireless/ath/ath10k/snoc.c
-+++ b/drivers/net/wireless/ath/ath10k/snoc.c
-@@ -1641,12 +1641,12 @@ static int ath10k_snoc_remove(struct platform_device *pdev)
- }
- 
- static struct platform_driver ath10k_snoc_driver = {
--		.probe  = ath10k_snoc_probe,
--		.remove = ath10k_snoc_remove,
--		.driver = {
--			.name   = "ath10k_snoc",
--			.of_match_table = ath10k_snoc_dt_match,
--		},
-+	.probe  = ath10k_snoc_probe,
-+	.remove = ath10k_snoc_remove,
-+	.driver = {
-+		.name   = "ath10k_snoc",
-+		.of_match_table = ath10k_snoc_dt_match,
-+	},
- };
- module_platform_driver(ath10k_snoc_driver);
- 
--- 
-2.19.1.930.g4563a0d9d0-goog
+Don't you take over the VM with "use_mm()" when you do the copies? So
+yes, it's a kernel thread, but it has a user VM, and though that
+should have the user limits.
 
+No?
+
+          Linus
