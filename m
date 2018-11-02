@@ -7,49 +7,45 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1367C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D226C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8459120854
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 603B02084A
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hs7vo1nx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8459120854
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vWbRKuNM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 603B02084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729614AbeKCDto (ORCPT
+        id S1729624AbeKCDtr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:49:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44454 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:49:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728699AbeKCDtn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:49:43 -0400
+        id S1728699AbeKCDtq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:49:46 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF2762084A;
-        Fri,  2 Nov 2018 18:41:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E69CE20847;
+        Fri,  2 Nov 2018 18:41:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184091;
-        bh=z8VLiXprTnqDZZ4AZ3ID2ghZihHHS86MvQEecjqJneg=;
+        s=default; t=1541184094;
+        bh=T0Cvw3CTx04Sz3I68wvAJL7BE6zDc+t3Oup5IF86UT4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hs7vo1nxj0KQ46boUtf1iUEP50+a556sWt0AzPNCloc3TIsmG80ic2VKo6z002Rf3
-         /Mrg8ol5N41p/u8IiExMrrZpyTsDI/SrqOsa/bNNUW+b49ek2yjHeHe9R2ToC0LfyS
-         0RI25/MbZQeK5c17gqSezJQtomX2/NZfcXGyIibg=
+        b=vWbRKuNMBSYqPR84glI+bj6oS99PoDrMW6FwERzt02GahA+/5ZEAFrnpGBSnmHBRz
+         LYwIoNB8oe+2VAiliHZ6a9wusG6jRZY1nst5+X41HEeoQL+MUJcnLj1YCv0uflI41i
+         r9+5QCoGHoSUv5gcnmGgjY089mx51A/A0qpAZiuU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Milian Wolff <milian.wolff@kdab.com>,
-        Sandipan Das <sandipan@linux.ibm.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Doron Roberts-Kedes <doronrk@fb.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 076/150] perf report: Dont try to map ip to invalid map
-Date:   Fri,  2 Nov 2018 19:33:58 +0100
-Message-Id: <20181102182908.880402846@linuxfoundation.org>
+Subject: [PATCH 4.18 077/150] tls: Fix improper revert in zerocopy_from_iter
+Date:   Fri,  2 Nov 2018 19:33:59 +0100
+Message-Id: <20181102182908.947474377@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -67,57 +63,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ff4ce2885af8f9e8e99864d78dbeb4673f089c76 ]
+[ Upstream commit 2da19ed3e4a87db16c0f69039da9f17a9596c350 ]
 
-Fixes a crash when the report encounters an address that could not be
-associated with an mmaped region:
+The current code is problematic because the iov_iter is reverted and
+never advanced in the non-error case. This patch skips the revert in the
+non-error case. This patch also fixes the amount by which the iov_iter
+is reverted. Currently, iov_iter is reverted by size, which can be
+greater than the amount by which the iter was actually advanced.
+Instead, only revert by the amount that the iter was advanced.
 
-  #0  0x00005555557bdc4a in callchain_srcline (ip=<error reading variable: Cannot access memory at address 0x38>, sym=0x0, map=0x0) at util/machine.c:2329
-  #1  unwind_entry (entry=entry@entry=0x7fffffff9180, arg=arg@entry=0x7ffff5642498) at util/machine.c:2329
-  #2  0x00005555558370af in entry (arg=0x7ffff5642498, cb=0x5555557bdb50 <unwind_entry>, thread=<optimized out>, ip=18446744073709551615) at util/unwind-libunwind-local.c:586
-  #3  get_entries (ui=ui@entry=0x7fffffff9620, cb=0x5555557bdb50 <unwind_entry>, arg=0x7ffff5642498, max_stack=<optimized out>) at util/unwind-libunwind-local.c:703
-  #4  0x0000555555837192 in _unwind__get_entries (cb=<optimized out>, arg=<optimized out>, thread=<optimized out>, data=<optimized out>, max_stack=<optimized out>) at util/unwind-libunwind-local.c:725
-  #5  0x00005555557c310f in thread__resolve_callchain_unwind (max_stack=127, sample=0x7fffffff9830, evsel=0x555555c7b3b0, cursor=0x7ffff5642498, thread=0x555555c7f6f0) at util/machine.c:2351
-  #6  thread__resolve_callchain (thread=0x555555c7f6f0, cursor=0x7ffff5642498, evsel=0x555555c7b3b0, sample=0x7fffffff9830, parent=0x7fffffff97b8, root_al=0x7fffffff9750, max_stack=127) at util/machine.c:2378
-  #7  0x00005555557ba4ee in sample__resolve_callchain (sample=<optimized out>, cursor=<optimized out>, parent=parent@entry=0x7fffffff97b8, evsel=<optimized out>, al=al@entry=0x7fffffff9750,
-      max_stack=<optimized out>) at util/callchain.c:1085
-
-Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
-Tested-by: Sandipan Das <sandipan@linux.ibm.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Fixes: 2a9d5050dc84 ("perf script: Show correct offsets for DWARF-based unwinding")
-Link: http://lkml.kernel.org/r/20180926135207.30263-1-milian.wolff@kdab.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 4718799817c5 ("tls: Fix zerocopy_from_iter iov handling")
+Signed-off-by: Doron Roberts-Kedes <doronrk@fb.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/machine.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ net/tls/tls_sw.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 22dbb6612b41..d49744dc46d7 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -2272,7 +2272,7 @@ static int unwind_entry(struct unwind_entry *entry, void *arg)
+diff --git a/net/tls/tls_sw.c b/net/tls/tls_sw.c
+index 9fab8e5a4a5b..994ddc7ec9b1 100644
+--- a/net/tls/tls_sw.c
++++ b/net/tls/tls_sw.c
+@@ -286,7 +286,7 @@ static int zerocopy_from_iter(struct sock *sk, struct iov_iter *from,
+ 			      int length, int *pages_used,
+ 			      unsigned int *size_used,
+ 			      struct scatterlist *to, int to_max_pages,
+-			      bool charge, bool revert)
++			      bool charge)
  {
- 	struct callchain_cursor *cursor = arg;
- 	const char *srcline = NULL;
--	u64 addr;
-+	u64 addr = entry->ip;
+ 	struct page *pages[MAX_SKB_FRAGS];
  
- 	if (symbol_conf.hide_unresolved && entry->sym == NULL)
- 		return 0;
-@@ -2284,7 +2284,8 @@ static int unwind_entry(struct unwind_entry *entry, void *arg)
- 	 * Convert entry->ip from a virtual address to an offset in
- 	 * its corresponding binary.
- 	 */
--	addr = map__map_ip(entry->map, entry->ip);
-+	if (entry->map)
-+		addr = map__map_ip(entry->map, entry->ip);
+@@ -335,10 +335,10 @@ static int zerocopy_from_iter(struct sock *sk, struct iov_iter *from,
+ 	}
  
- 	srcline = callchain_srcline(entry->map, entry->sym, addr);
- 	return callchain_cursor_append(cursor, entry->ip,
+ out:
++	if (rc)
++		iov_iter_revert(from, size - *size_used);
+ 	*size_used = size;
+ 	*pages_used = num_elem;
+-	if (revert)
+-		iov_iter_revert(from, size);
+ 
+ 	return rc;
+ }
+@@ -440,7 +440,7 @@ alloc_encrypted:
+ 				&ctx->sg_plaintext_size,
+ 				ctx->sg_plaintext_data,
+ 				ARRAY_SIZE(ctx->sg_plaintext_data),
+-				true, false);
++				true);
+ 			if (ret)
+ 				goto fallback_to_reg_send;
+ 
+@@ -453,8 +453,6 @@ alloc_encrypted:
+ 
+ 			copied -= try_to_copy;
+ fallback_to_reg_send:
+-			iov_iter_revert(&msg->msg_iter,
+-					ctx->sg_plaintext_size - orig_size);
+ 			trim_sg(sk, ctx->sg_plaintext_data,
+ 				&ctx->sg_plaintext_num_elem,
+ 				&ctx->sg_plaintext_size,
+@@ -828,7 +826,7 @@ int tls_sw_recvmsg(struct sock *sk,
+ 				err = zerocopy_from_iter(sk, &msg->msg_iter,
+ 							 to_copy, &pages,
+ 							 &chunk, &sgin[1],
+-							 MAX_SKB_FRAGS,	false, true);
++							 MAX_SKB_FRAGS,	false);
+ 				if (err < 0)
+ 					goto fallback_to_reg_recv;
+ 
 -- 
 2.17.1
 
