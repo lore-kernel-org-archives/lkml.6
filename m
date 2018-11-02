@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B3A4C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:38:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52BEEC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:38:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AC7F2082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:38:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 258D720833
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:38:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HMb4nU93"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AC7F2082D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="z4o9HE26"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 258D720833
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728825AbeKCDqb (ORCPT
+        id S1728841AbeKCDqe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:46:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40282 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:46:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727556AbeKCDqa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:46:30 -0400
+        id S1727556AbeKCDqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:46:33 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1543C2082E;
-        Fri,  2 Nov 2018 18:38:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2168E2081B;
+        Fri,  2 Nov 2018 18:38:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541183899;
-        bh=hIqrV87r5iPV8Y5kHBf9wrvKt4vrSQPTRzBP39xV94E=;
+        s=default; t=1541183902;
+        bh=/Obbd6lxG9ZCtQe3FHn8IAknEm06mvJizVfB7TWigPw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HMb4nU93kwHZqeQ5GOD9tFBS7+uG2LlGGPqwxPlyOUiD/X3pqQVEyOjV4ocH6qxGG
-         E45rjuSWXNanktOxTV23kbfp3XpH9nPhQ66puzuK9W3/bW6M5qQyY08WgVUry1CPCN
-         2gXZ7Sg4sm+tfVLn9k6yXjOba8pd1oAE66Hlvq+A=
+        b=z4o9HE26Wl0MT/1R6GXMdGG1aWGS50l+mV63PhYe1sA7Ein/EdYP93WuC7BQOODKN
+         Lt30XVa7bTY/t6lmDZvIlSt0Uo8AKemuqlwacRGNj8Ejw/Bp7Knh2snAy7IRcyeZrB
+         tjQZ3p6Zd4zsjGIXZ4xk6hh3qnb719+YlpV0c/Io=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
         Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 014/150] drm/i2c: tda9950: fix timeout counter check
-Date:   Fri,  2 Nov 2018 19:32:56 +0100
-Message-Id: <20181102182903.738283675@linuxfoundation.org>
+Subject: [PATCH 4.18 015/150] drm/i2c: tda9950: set MAX_RETRIES for errors only
+Date:   Fri,  2 Nov 2018 19:32:57 +0100
+Message-Id: <20181102182903.857860761@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -63,37 +63,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d98627d1360d55e3b28f702caca8b6342c4a4e45 ]
+[ Upstream commit e0dccce1193f87597548d0db6ecc942fb92c04cd ]
 
-Currently the check to see if the timeout has reached zero is incorrect
-and the check is instead checking if the timeout is non-zero and not
-zero, hence it will break out of the loop on the first iteration and
-the msleep is never executed.  Fix this by breaking from the loop when
-timeout is zero.
+The CEC_TX_STATUS_MAX_RETRIES should be set for errors only to
+prevent the CEC framework from retrying the transmit. If the
+transmit was successful, then don't set this flag.
 
-Detected by CoverityScan, CID#1469404 ("Logically Dead Code")
+Found by running 'cec-compliance -A' on a beaglebone box.
 
-Fixes: f0316f93897c ("drm/i2c: tda9950: add CEC driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/i2c/tda9950.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/i2c/tda9950.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/i2c/tda9950.c b/drivers/gpu/drm/i2c/tda9950.c
-index 3f7396caad48..f2186409f0cf 100644
+index f2186409f0cf..ccd355d0c123 100644
 --- a/drivers/gpu/drm/i2c/tda9950.c
 +++ b/drivers/gpu/drm/i2c/tda9950.c
-@@ -307,7 +307,7 @@ static void tda9950_release(struct tda9950_priv *priv)
- 	/* Wait up to .5s for it to signal non-busy */
- 	do {
- 		csr = tda9950_read(client, REG_CSR);
--		if (!(csr & CSR_BUSY) || --timeout)
-+		if (!(csr & CSR_BUSY) || !--timeout)
+@@ -188,7 +188,8 @@ static irqreturn_t tda9950_irq(int irq, void *data)
  			break;
- 		msleep(10);
- 	} while (1);
+ 		}
+ 		/* TDA9950 executes all retries for us */
+-		tx_status |= CEC_TX_STATUS_MAX_RETRIES;
++		if (tx_status != CEC_TX_STATUS_OK)
++			tx_status |= CEC_TX_STATUS_MAX_RETRIES;
+ 		cec_transmit_done(priv->adap, tx_status, arb_lost_cnt,
+ 				  nack_cnt, 0, err_cnt);
+ 		break;
 -- 
 2.17.1
 
