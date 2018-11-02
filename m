@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58455C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17632C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:54:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A9852084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:54:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1BBA2084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:54:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ScB8GfEu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A9852084D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WKEPaA12"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1BBA2084D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731187AbeKCECh (ORCPT
+        id S1731196AbeKCECk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 00:02:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58350 "EHLO mail.kernel.org"
+        Sat, 3 Nov 2018 00:02:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726150AbeKCECg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 00:02:36 -0400
+        id S1726150AbeKCECj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 00:02:39 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F9B420848;
-        Fri,  2 Nov 2018 18:54:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75CAD20848;
+        Fri,  2 Nov 2018 18:54:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184860;
-        bh=EKPNk6esp2RhNk9XH4qbv4Ca6VFNeMy+vTU0fBRRwiY=;
+        s=default; t=1541184864;
+        bh=GT90lk2hdG/w4vfIMBet4FbiqtqbZYJ/Hl2vtdxMCNc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ScB8GfEuaZ5oM5E9FzU38Y88XkWgzjwIyHDPJVyoohxqDpyk4zJQCggk9cwvfwazQ
-         nuC6eC60LpIXCuq/qfvCC2Vetg5qbp67ZNktFj0Nt0badfTNTMOJc2AB3eJ7ZXwXw3
-         g85QlPTY2mYngc89pb3OFmz3k2X2VGFGKXBosMaw=
+        b=WKEPaA12RD56Wy1yCiyTnaVYaqHaWZkGn7teeUpWIBhdAJHc87ZH1BGSlxgV+gEAf
+         qXDdMG8oPlejaIfuxTsTpef2Lf787H8r1D5tegaqaq52p3vv08MlXQzIsWujqg8+r+
+         +/YRu6yEgNDlp/vg4AMgAj8s3BCmWvn3/yGAdtRM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        stable@vger.kernel.org, Ilya Lesokhin <ilyal@mellanox.com>,
+        Noa Osherovich <noaos@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 077/143] tpm: tpm_crb: relinquish locality on error path.
-Date:   Fri,  2 Nov 2018 19:34:22 +0100
-Message-Id: <20181102182903.668798740@linuxfoundation.org>
+Subject: [PATCH 4.14 068/143] IB/mlx5: Avoid passing an invalid QP type to firmware
+Date:   Fri,  2 Nov 2018 19:34:13 +0100
+Message-Id: <20181102182902.678318483@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -63,58 +65,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 1fbad3028664e114d210dc65d768947a3a553eaa ]
+[ Upstream commit e7b169f34403becd3c9fd3b6e46614ab788f2187 ]
 
-In crb_map_io() function, __crb_request_locality() is called prior
-to crb_cmd_ready(), but if one of the consecutive function fails
-the flow bails out instead of trying to relinquish locality.
-This patch adds goto jump to __crb_relinquish_locality() on the error path.
+During QP creation, the mlx5 driver translates the QP type to an
+internal value which is passed on to FW. There was no check to make
+sure that the translated value is valid, and -EINVAL was coerced into
+the mailbox command.
 
-Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after granting locality)
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Current firmware refuses this as an invalid QP type, but future/past
+firmware may do something else.
+
+Fixes: 09a7d9eca1a6c ('{net,IB}/mlx5: QP/XRCD commands via mlx5 ifc')
+Reviewed-by: Ilya Lesokhin <ilyal@mellanox.com>
+Signed-off-by: Noa Osherovich <noaos@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/char/tpm/tpm_crb.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/infiniband/hw/mlx5/qp.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-index 5c7ce5aaaf6f..b4ad169836e9 100644
---- a/drivers/char/tpm/tpm_crb.c
-+++ b/drivers/char/tpm/tpm_crb.c
-@@ -520,8 +520,10 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+diff --git a/drivers/infiniband/hw/mlx5/qp.c b/drivers/infiniband/hw/mlx5/qp.c
+index ef9ee6c328a1..dfc190055167 100644
+--- a/drivers/infiniband/hw/mlx5/qp.c
++++ b/drivers/infiniband/hw/mlx5/qp.c
+@@ -1527,6 +1527,7 @@ static int create_qp_common(struct mlx5_ib_dev *dev, struct ib_pd *pd,
+ 	u32 uidx = MLX5_IB_DEFAULT_UIDX;
+ 	struct mlx5_ib_create_qp ucmd;
+ 	struct mlx5_ib_qp_base *base;
++	int mlx5_st;
+ 	void *qpc;
+ 	u32 *in;
+ 	int err;
+@@ -1535,6 +1536,10 @@ static int create_qp_common(struct mlx5_ib_dev *dev, struct ib_pd *pd,
+ 	spin_lock_init(&qp->sq.lock);
+ 	spin_lock_init(&qp->rq.lock);
  
- 	priv->regs_t = crb_map_res(dev, priv, &io_res, buf->control_address,
- 				   sizeof(struct crb_regs_tail));
--	if (IS_ERR(priv->regs_t))
--		return PTR_ERR(priv->regs_t);
-+	if (IS_ERR(priv->regs_t)) {
-+		ret = PTR_ERR(priv->regs_t);
-+		goto out_relinquish_locality;
-+	}
- 
- 	/*
- 	 * PTT HW bug w/a: wake up the device to access
-@@ -529,7 +531,7 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
- 	 */
- 	ret = __crb_cmd_ready(dev, priv);
- 	if (ret)
--		return ret;
-+		goto out_relinquish_locality;
- 
- 	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
- 	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
-@@ -574,6 +576,8 @@ out:
- 
- 	__crb_go_idle(dev, priv);
- 
-+out_relinquish_locality:
++	mlx5_st = to_mlx5_st(init_attr->qp_type);
++	if (mlx5_st < 0)
++		return -EINVAL;
 +
- 	__crb_relinquish_locality(dev, priv, 0);
+ 	if (init_attr->rwq_ind_tbl) {
+ 		if (!udata)
+ 			return -ENOSYS;
+@@ -1688,7 +1693,7 @@ static int create_qp_common(struct mlx5_ib_dev *dev, struct ib_pd *pd,
  
- 	return ret;
+ 	qpc = MLX5_ADDR_OF(create_qp_in, in, qpc);
+ 
+-	MLX5_SET(qpc, qpc, st, to_mlx5_st(init_attr->qp_type));
++	MLX5_SET(qpc, qpc, st, mlx5_st);
+ 	MLX5_SET(qpc, qpc, pm_state, MLX5_QP_PM_MIGRATED);
+ 
+ 	if (init_attr->qp_type != MLX5_IB_QPT_REG_UMR)
 -- 
 2.17.1
 
