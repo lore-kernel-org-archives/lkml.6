@@ -2,120 +2,127 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_AGENT_NEOMUTT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4796C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:04:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77014C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:05:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 928B02081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:04:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="gNWtJkyB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 928B02081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
+	by mail.kernel.org (Postfix) with ESMTP id 36B342082E
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:05:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36B342082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727825AbeKBXLj (ORCPT
+        id S1727845AbeKBXNA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 19:11:39 -0400
-Received: from alln-iport-4.cisco.com ([173.37.142.91]:32905 "EHLO
-        alln-iport-4.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726026AbeKBXLj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 19:11:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=1940; q=dns/txt; s=iport;
-  t=1541167464; x=1542377064;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=haHA5WqRQcMUNziGi4g3S1tgiGWxz250sy7XFD5RM9E=;
-  b=gNWtJkyBZldZNHbr13zDBlB0J4vrz+4tUnGkCBURY77E8O2Lh0Z81/07
-   evZD447Y0jHERTd2Lq06c+KL2NO4Ue20u7KGTxgpwB0wHFZzeucgL+z+e
-   M9r5z0EPS9HlOCL+kphhXLS9t278CGaM5IG0PMq5Vujp7ZJVm8skSKD/5
-   g=;
-X-IronPort-AV: E=Sophos;i="5.54,456,1534809600"; 
-   d="scan'208";a="195464345"
-Received: from rcdn-core-12.cisco.com ([173.37.93.148])
-  by alln-iport-4.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 14:04:23 +0000
-Received: from zorba ([10.24.90.186])
-        by rcdn-core-12.cisco.com (8.15.2/8.15.2) with ESMTPS id wA2E4Lhe019704
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 2 Nov 2018 14:04:22 GMT
-Date:   Fri, 2 Nov 2018 07:04:20 -0700
-From:   Daniel Walker <danielwa@cisco.com>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Nikunj Kela <nkela@cisco.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        xe-linux-external@cisco.com, Rod Whitby <rod@whitby.id.au>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Make JFFS2 endianness configurable
-Message-ID: <20181102140420.jiuhcsrahoeqe5vk@zorba>
-References: <20181101225603.17806-1-nkela@cisco.com>
- <20181102000236.rqho7txtb7gv543t@zorba>
- <20181102003434.GW32577@ZenIV.linux.org.uk>
+        Fri, 2 Nov 2018 19:13:00 -0400
+Received: from mga07.intel.com ([134.134.136.100]:47450 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726026AbeKBXNA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 19:13:00 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 07:05:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,456,1534834800"; 
+   d="scan'208";a="277806727"
+Received: from pmamidi-mobl.amr.corp.intel.com (HELO [10.251.26.189]) ([10.251.26.189])
+  by fmsmga006.fm.intel.com with ESMTP; 02 Nov 2018 07:05:44 -0700
+Subject: Re: [PATCH v3] mm, drm/i915: mark pinned shmemfs pages as unevictable
+To:     Vovo Yang <vovoy@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mm@kvack.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Michal Hocko <mhocko@suse.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20181031081945.207709-1-vovoy@chromium.org>
+ <039b2768-39ff-6196-9615-1f0302ee3e0e@intel.com>
+ <CAEHM+4q7V3d+EiHR6+TKoJC=6Ga0eCLWik0oJgDRQCpWps=wMA@mail.gmail.com>
+ <80347465-38fd-54d3-facf-bcd6bf38228a@intel.com>
+ <CAEHM+4rsV9G_cahOyyH8njOYyZc5C9b0a6CV4AH_Y7EubXBLAQ@mail.gmail.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <b114017f-edeb-2055-1313-0d7821d633ae@intel.com>
+Date:   Fri, 2 Nov 2018 07:05:44 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181102003434.GW32577@ZenIV.linux.org.uk>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-Outbound-SMTP-Client: 10.24.90.186, [10.24.90.186]
-X-Outbound-Node: rcdn-core-12.cisco.com
+In-Reply-To: <CAEHM+4rsV9G_cahOyyH8njOYyZc5C9b0a6CV4AH_Y7EubXBLAQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 12:34:34AM +0000, Al Viro wrote:
-> On Thu, Nov 01, 2018 at 05:02:36PM -0700, Daniel Walker wrote:
-> > 
-> > 
-> > 
-> > On Thu, Nov 01, 2018 at 03:56:03PM -0700, Nikunj Kela wrote:
-> > > This patch allows the endianness of the JFSS2 filesystem to be
-> > > specified by config options.
-> > > 
-> > > It defaults to native-endian (the previously hard-coded option).
-> > > 
-> > > Some architectures benefit from having a single known endianness
-> > > of JFFS2 filesystem (for data, not executables) independent of the
-> > > endianness of the processor (ARM processors can be switched to either
-> > > endianness at run-time).
-> > > 
-> > 
-> > 
-> > The description is pretty sad .. We have a product which we released that uses
-> > JFFS2, and that product was release with a kernel in one endianness. Then later
-> > on we decided to change the endianness and now we're stuck with a JFFS2
-> > partition that has the wrong endiannes, in a released product. This patch allows
-> > us to set the endianness to something different from the architecture setting.
-> > 
-> > So there a significant use case for the change, at least for Cisco.
+On 11/2/18 6:22 AM, Vovo Yang wrote:
+> On Thu, Nov 1, 2018 at 10:30 PM Dave Hansen <dave.hansen@intel.com> wrote:
+>> On 11/1/18 5:06 AM, Vovo Yang wrote:
+>>>> mlock() and ramfs usage are pretty easy to track down.  /proc/$pid/smaps
+>>>> or /proc/meminfo can show us mlock() and good ol' 'df' and friends can
+>>>> show us ramfs the extent of pinned memory.
+>>>>
+>>>> With these, if we see "Unevictable" in meminfo bump up, we at least have
+>>>> a starting point to find the cause.
+>>>>
+>>>> Do we have an equivalent for i915?
+> Chris helped to answer this question:
+> Though it includes a few non-shmemfs objects, see
+> debugfs/dri/0/i915_gem_objects and the "bound objects".
 > 
-> FWIW, can't we detect it at mount time, as e.g. UFS does?
+> Example i915_gem_object output:
+>   591 objects, 95449088 bytes
+>   55 unbound objects, 1880064 bytes
+>   533 bound objects, 93040640 bytes
 
-We're not JFFS2 (or even filesystems) experts, but we could make an attempt at
-it.
-
-Do you have any thought on how to implement it ? I was think abstracting the
-endian functions in the nodelist.h
-
-static inline jint16_t cpu_to_je16(jint16_t x) {
-	if (check_big_endian()) {
-		return cpu_to_be16(x);
-	} else if (check_little_endian()) {
-		return cpu_to_le16(x);
-	}
-}
-
-but how would you setup the checking ?
-
-This would also work well for when you have a filesystem image on say an
-x86 machine. I found some sites that recommend using jffs2dump to convert the
-endianness before you can mount it. You most likely wouldn't change the kernel
-in that case, or wouldn't want to.
-
-Daniel
+Do those non-shmemfs objects show up on the unevictable list?  How far
+can the amount of memory on the unevictable list and the amount
+displayed in this "bound objects" value diverge?
