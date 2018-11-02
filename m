@@ -2,243 +2,164 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B4BC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:36:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EFEBC65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:37:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5089720833
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:36:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="N8/jEBYO";
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="N8/jEBYO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5089720833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=yandex-team.ru
+	by mail.kernel.org (Postfix) with ESMTP id F06F2204FD
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:37:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F06F2204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727829AbeKBWn6 (ORCPT
+        id S1727842AbeKBWot (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 18:43:58 -0400
-Received: from forwardcorp1o.cmail.yandex.net ([37.9.109.47]:59075 "EHLO
-        forwardcorp1o.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726231AbeKBWn5 (ORCPT
+        Fri, 2 Nov 2018 18:44:49 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43466 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727477AbeKBWot (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 18:43:57 -0400
-Received: from mxbackcorp2j.mail.yandex.net (mxbackcorp2j.mail.yandex.net [IPv6:2a02:6b8:0:1619::119])
-        by forwardcorp1o.cmail.yandex.net (Yandex) with ESMTP id C519020F08;
-        Fri,  2 Nov 2018 16:36:42 +0300 (MSK)
-Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:10])
-        by mxbackcorp2j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id sPGeaGl01L-aglWN8Kj;
-        Fri, 02 Nov 2018 16:36:42 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1541165802; bh=H4Fl87BCH5tRYiSfoYokURpSM/2ogvo+PD6cGdTAu2E=;
-        h=Subject:From:To:Cc:Date:Message-ID;
-        b=N8/jEBYOPmr5vLIzCvT2G5XQYd3qEkDF6MuERBZpdivlZNwXH5wO9BKmwiV3+3g1X
-         m1rkRk4lH2g632av/E6HM9jQTbZsK7urSL0UyCpoMEGjjgOpIQ2OIUQqmY+byVGqyn
-         J28Llejul4TxHVqBy11WDzHAFaR2W7HF08Xr5zv0=
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:2501:1cc0:44e4:e39a])
-        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id l3Q01HYxKJ-agJiQbXU;
-        Fri, 02 Nov 2018 16:36:42 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1541165802; bh=H4Fl87BCH5tRYiSfoYokURpSM/2ogvo+PD6cGdTAu2E=;
-        h=Subject:From:To:Cc:Date:Message-ID;
-        b=N8/jEBYOPmr5vLIzCvT2G5XQYd3qEkDF6MuERBZpdivlZNwXH5wO9BKmwiV3+3g1X
-         m1rkRk4lH2g632av/E6HM9jQTbZsK7urSL0UyCpoMEGjjgOpIQ2OIUQqmY+byVGqyn
-         J28Llejul4TxHVqBy11WDzHAFaR2W7HF08Xr5zv0=
-Authentication-Results: smtpcorp1p.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Subject: [PATCH] macvlan: use per-cpu queues for broadcast and multicast
- packets
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-To:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org
-Cc:     Vadim Fedorenko <junk@yandex-team.ru>
-Date:   Fri, 02 Nov 2018 16:36:40 +0300
-Message-ID: <154116580015.953950.9450253307804393677.stgit@buzz>
-User-Agent: StGit/0.17.1-dirty
+        Fri, 2 Nov 2018 18:44:49 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA2DXruv013115
+        for <linux-kernel@vger.kernel.org>; Fri, 2 Nov 2018 09:37:37 -0400
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ngmj1ftu7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 09:37:37 -0400
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Fri, 2 Nov 2018 13:37:36 -0000
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 2 Nov 2018 13:37:29 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA2DbSIP38338648
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 2 Nov 2018 13:37:28 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 74EE8B205F;
+        Fri,  2 Nov 2018 13:37:28 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3D013B2068;
+        Fri,  2 Nov 2018 13:37:28 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.148.108])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri,  2 Nov 2018 13:37:28 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 64F6A16C36E4; Fri,  2 Nov 2018 06:37:28 -0700 (PDT)
+Date:   Fri, 2 Nov 2018 06:37:28 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ralf@linux-mips.org" <ralf@linux-mips.org>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "bfields@fieldses.org" <bfields@fieldses.org>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
+        "paul.burton@mips.com" <paul.burton@mips.com>,
+        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
+        "jhogan@kernel.org" <jhogan@kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "paulus@samba.org" <paulus@samba.org>,
+        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        "aryabinin@virtuozzo.com" <aryabinin@virtuozzo.com>,
+        "dvyukov@google.com" <dvyukov@google.com>
+Subject: Re: [RFC PATCH] lib: Introduce generic __cmpxchg_u64() and use it
+ where needed
+Reply-To: paulmck@linux.ibm.com
+References: <20181031213240.zhh7dfcm47ucuyfl@pburton-laptop>
+ <20181031220253.GA15505@roeck-us.net>
+ <20181031233235.qbedw3pinxcuk7me@pburton-laptop>
+ <4e2438a23d2edf03368950a72ec058d1d299c32e.camel@hammerspace.com>
+ <20181101131846.biyilr2msonljmij@lakrids.cambridge.arm.com>
+ <20181101145926.GE3178@hirez.programming.kicks-ass.net>
+ <f38e272f7a96e983549e4281aa9fd02833a4277a.camel@hammerspace.com>
+ <20181101163212.GF3159@hirez.programming.kicks-ass.net>
+ <20181101170146.GQ4170@linux.ibm.com>
+ <7d1ecd21c4c249138dfdd42b9aaa1cea@AcuMS.aculab.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7d1ecd21c4c249138dfdd42b9aaa1cea@AcuMS.aculab.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18110213-0072-0000-0000-000003C17830
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009972; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01111590; UDB=6.00576070; IPR=6.00891681;
+ MB=3.00024005; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-02 13:37:35
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110213-0073-0000-0000-000049F921A3
+Message-Id: <20181102133728.GR4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-02_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=240 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811020124
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently macvlan has single per-port queue for broadcast and multicast.
-This disrupts order of packets when flows from different cpus are mixed.
+On Fri, Nov 02, 2018 at 10:56:31AM +0000, David Laight wrote:
+> From: Paul E. McKenney
+> > Sent: 01 November 2018 17:02
+> ...
+> > And there is a push to define C++ signed arithmetic as 2s complement,
+> > but there are still 1s complement systems with C compilers.  Just not
+> > C++ compilers.  Legacy...
+> 
+> Hmmm... I've used C compilers for DSPs where signed integer arithmetic
+> used the 'data registers' and would saturate, unsigned used the 'address
+> registers' and wrapped.
+> That was deliberate because it is much better to clip analogue values.
 
-This patch replaces this queue with single set of per-cpu queues.
-Pointer to macvlan port is passed in skb control block.
+There are no C++ compilers for those DSPs, correct?  (Some of the
+C++ standards commmittee members believe that they have fully checked,
+but they might well have missed something.)
 
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Reported-add-tested-by: Vadim Fedorenko <vfedorenko@yandex-team.ru>
----
- drivers/net/macvlan.c |   65 +++++++++++++++++++++++++++++--------------------
- 1 file changed, 38 insertions(+), 27 deletions(-)
+> Then there was the annoying cobol run time that didn't update the
+> result variable if the result wouldn't fit.
+> Took a while to notice that the sum of a list of values was even wrong!
+> That would be perfectly valid for C - if unexpected.
 
-diff --git a/drivers/net/macvlan.c b/drivers/net/macvlan.c
-index fc8d5f1ee1ad..1e9c37ec43c3 100644
---- a/drivers/net/macvlan.c
-+++ b/drivers/net/macvlan.c
-@@ -46,8 +46,6 @@ struct macvlan_port {
- 	struct net_device	*dev;
- 	struct hlist_head	vlan_hash[MACVLAN_HASH_SIZE];
- 	struct list_head	vlans;
--	struct sk_buff_head	bc_queue;
--	struct work_struct	bc_work;
- 	u32			flags;
- 	int			count;
- 	struct hlist_head	vlan_source_hash[MACVLAN_HASH_SIZE];
-@@ -55,6 +53,11 @@ struct macvlan_port {
- 	unsigned char           perm_addr[ETH_ALEN];
- };
- 
-+struct macvlan_bc_work {
-+	struct sk_buff_head	bc_queue;
-+	struct work_struct	bc_work;
-+};
-+
- struct macvlan_source_entry {
- 	struct hlist_node	hlist;
- 	struct macvlan_dev	*vlan;
-@@ -63,6 +66,7 @@ struct macvlan_source_entry {
- };
- 
- struct macvlan_skb_cb {
-+	const struct macvlan_port *port;
- 	const struct macvlan_dev *src;
- };
- 
-@@ -295,20 +299,23 @@ static void macvlan_broadcast(struct sk_buff *skb,
- 	}
- }
- 
-+static DEFINE_PER_CPU(struct macvlan_bc_work, macvlan_bc_work);
-+
- static void macvlan_process_broadcast(struct work_struct *w)
- {
--	struct macvlan_port *port = container_of(w, struct macvlan_port,
-+	struct macvlan_bc_work *work = container_of(w, struct macvlan_bc_work,
- 						 bc_work);
- 	struct sk_buff *skb;
- 	struct sk_buff_head list;
- 
- 	__skb_queue_head_init(&list);
- 
--	spin_lock_bh(&port->bc_queue.lock);
--	skb_queue_splice_tail_init(&port->bc_queue, &list);
--	spin_unlock_bh(&port->bc_queue.lock);
-+	spin_lock_bh(&work->bc_queue.lock);
-+	skb_queue_splice_tail_init(&work->bc_queue, &list);
-+	spin_unlock_bh(&work->bc_queue.lock);
- 
- 	while ((skb = __skb_dequeue(&list))) {
-+		const struct macvlan_port *port = MACVLAN_SKB_CB(skb)->port;
- 		const struct macvlan_dev *src = MACVLAN_SKB_CB(skb)->src;
- 
- 		rcu_read_lock();
-@@ -345,6 +352,7 @@ static void macvlan_broadcast_enqueue(struct macvlan_port *port,
- 				      const struct macvlan_dev *src,
- 				      struct sk_buff *skb)
- {
-+	struct macvlan_bc_work *work;
- 	struct sk_buff *nskb;
- 	int err = -ENOMEM;
- 
-@@ -352,24 +360,30 @@ static void macvlan_broadcast_enqueue(struct macvlan_port *port,
- 	if (!nskb)
- 		goto err;
- 
-+	MACVLAN_SKB_CB(nskb)->port = port;
- 	MACVLAN_SKB_CB(nskb)->src = src;
- 
--	spin_lock(&port->bc_queue.lock);
--	if (skb_queue_len(&port->bc_queue) < MACVLAN_BC_QUEUE_LEN) {
-+	work = get_cpu_ptr(&macvlan_bc_work);
-+
-+	spin_lock(&work->bc_queue.lock);
-+	if (skb_queue_len(&work->bc_queue) < MACVLAN_BC_QUEUE_LEN) {
- 		if (src)
- 			dev_hold(src->dev);
--		__skb_queue_tail(&port->bc_queue, nskb);
-+		__skb_queue_tail(&work->bc_queue, nskb);
- 		err = 0;
- 	}
--	spin_unlock(&port->bc_queue.lock);
-+	spin_unlock(&work->bc_queue.lock);
- 
- 	if (err)
- 		goto free_nskb;
- 
--	schedule_work(&port->bc_work);
-+	schedule_work_on(smp_processor_id(), &work->bc_work);
-+	put_cpu_ptr(work);
-+
- 	return;
- 
- free_nskb:
-+	put_cpu_ptr(work);
- 	kfree_skb(nskb);
- err:
- 	atomic_long_inc(&skb->dev->rx_dropped);
-@@ -1168,9 +1182,6 @@ static int macvlan_port_create(struct net_device *dev)
- 	for (i = 0; i < MACVLAN_HASH_SIZE; i++)
- 		INIT_HLIST_HEAD(&port->vlan_source_hash[i]);
- 
--	skb_queue_head_init(&port->bc_queue);
--	INIT_WORK(&port->bc_work, macvlan_process_broadcast);
--
- 	err = netdev_rx_handler_register(dev, macvlan_handle_frame, port);
- 	if (err)
- 		kfree(port);
-@@ -1182,24 +1193,16 @@ static int macvlan_port_create(struct net_device *dev)
- static void macvlan_port_destroy(struct net_device *dev)
- {
- 	struct macvlan_port *port = macvlan_port_get_rtnl(dev);
--	struct sk_buff *skb;
-+	int cpu;
- 
- 	dev->priv_flags &= ~IFF_MACVLAN_PORT;
- 	netdev_rx_handler_unregister(dev);
- 
- 	/* After this point, no packet can schedule bc_work anymore,
--	 * but we need to cancel it and purge left skbs if any.
-+	 * but we need to flush work.
- 	 */
--	cancel_work_sync(&port->bc_work);
--
--	while ((skb = __skb_dequeue(&port->bc_queue))) {
--		const struct macvlan_dev *src = MACVLAN_SKB_CB(skb)->src;
--
--		if (src)
--			dev_put(src->dev);
--
--		kfree_skb(skb);
--	}
-+	for_each_possible_cpu(cpu)
-+		flush_work(per_cpu_ptr(&macvlan_bc_work.bc_work, cpu));
- 
- 	/* If the lower device address has been changed by passthru
- 	 * macvlan, put it back.
-@@ -1702,7 +1705,15 @@ static struct notifier_block macvlan_notifier_block __read_mostly = {
- 
- static int __init macvlan_init_module(void)
- {
--	int err;
-+	int err, cpu;
-+
-+	for_each_possible_cpu(cpu) {
-+		struct macvlan_bc_work *work;
-+
-+		work = per_cpu_ptr(&macvlan_bc_work, cpu);
-+		skb_queue_head_init(&work->bc_queue);
-+		INIT_WORK(&work->bc_work, macvlan_process_broadcast);
-+	}
- 
- 	register_netdevice_notifier(&macvlan_notifier_block);
- 
+Heh!  COBOL and FORTRAN also helped fund my first pass through university.
+
+> > > But for us using -fno-strict-overflow which actually defines signed
+> > > overflow
+> 
+> I wonder how much real code 'strict-overflow' gets rid of?
+> IIRC gcc silently turns loops like:
+> 	int i; for (i = 1; i != 0; i *= 2) ...
+> into infinite ones.
+> Which is never what is required.
+
+The usual response is something like this:
+
+	for (i = 1; i < n; i++)
+
+where the compiler has no idea what range of values "n" might take on.
+Can't say that I am convinced by that example, but at least we do have
+-fno-strict-overflow.
+
+							Thanx, Paul
 
