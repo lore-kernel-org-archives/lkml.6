@@ -2,40 +2,71 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD922C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:17:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CCF5C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:18:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8101F2082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:17:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8101F2082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E7AF62081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:18:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gZmyvMQ1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7AF62081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728132AbeKCCYz (ORCPT
+        id S1728097AbeKCC0W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 22:24:55 -0400
-Received: from foss.arm.com ([217.140.101.70]:44238 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726085AbeKCCYy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 22:24:54 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4C9EDA78;
-        Fri,  2 Nov 2018 10:17:03 -0700 (PDT)
-Received: from filthy-habits.cambridge.arm.com (filthy-habits.cambridge.arm.com [10.1.196.62])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 572D23F71E;
-        Fri,  2 Nov 2018 10:17:02 -0700 (PDT)
-From:   Marc Zyngier <marc.zyngier@arm.com>
-To:     David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>
-Subject: [PATCH] iov_iter: Fix 9p virtio breakage
-Date:   Fri,  2 Nov 2018 17:16:51 +0000
-Message-Id: <20181102171651.97671-1-marc.zyngier@arm.com>
-X-Mailer: git-send-email 2.19.1
+        Fri, 2 Nov 2018 22:26:22 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43230 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbeKCC0V (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 22:26:21 -0400
+Received: by mail-pg1-f194.google.com with SMTP id n10-v6so1248851pgv.10
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 10:18:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ffqVuA97Vr+ZfIuptqd/ikvaB11RwRd45xwN+Xck2yw=;
+        b=gZmyvMQ1BgWqzZpMTTGDB033FKeMtSTtMkr2Icmv1yO3Ym56bWu0StqaPMQDxBMvQs
+         I8SQBv/YODZ9coKNXMXnXRtTLl1KVoeIYVownzw8hf9m6Tbfn3X9sv5Q3IJhfswdKbxm
+         ugMNbTwINUyJ/GOwj9sNSVxSdsH+E+tGI/dio=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ffqVuA97Vr+ZfIuptqd/ikvaB11RwRd45xwN+Xck2yw=;
+        b=CfTxzm1Yz13J5olSZy6J3iOh0tWsR2Tf3cPEFEpU1wvowhujn+0JlfX5Ksf6QQuwGN
+         YWIGkSNqcdlalGlcVyBgYJHbTM0p3IlAUU+SveT8ViexbfYfPYj4akydLI6UggC9fEo0
+         umWyXj5ghvhOEkdsRsSlRkspn5Po6ZjMqawSakHsD6saeZ1estnJ53OZnRIdFWy/KHnG
+         VgeyWxqok6cqzPL+gpcMXI17UN8siusQykOtCy6fOUcpTPHZF0RdtYxrJn7J+ZTFqNwP
+         0XIAhXr4ZTy6Z4T9VNzgu8EbxB6V2qqvRHIZuWisuoTdgLsPjcP4ObmLdrdLGvkDKvyx
+         5UeQ==
+X-Gm-Message-State: AGRZ1gKUbWHMRfN/9hJMAFfQjzQi9qOCqty1SFhQt52t6u4HZjTyX9mo
+        +0ak6/QmJYRORXsF/NrtRUP5wQ==
+X-Google-Smtp-Source: AJdET5cstslmQBp4QugmvmduufvZ7LTX3N7fqusSgkKwZ4jpGICEXm+qxXLKmkN/NU4Olp/1uNd0iA==
+X-Received: by 2002:a62:2741:: with SMTP id n62-v6mr12702939pfn.138.1541179108582;
+        Fri, 02 Nov 2018 10:18:28 -0700 (PDT)
+Received: from smtp.gmail.com ([2620:15c:202:1:299d:6b87:5478:d28a])
+        by smtp.gmail.com with ESMTPSA id d5-v6sm19222675pfo.131.2018.11.02.10.18.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 02 Nov 2018 10:18:27 -0700 (PDT)
+From:   Brian Norris <briannorris@chromium.org>
+To:     ath10k@lists.infradead.org
+Cc:     linux-wireless@vger.kernel.org,
+        Rakesh Pillai <pillair@qti.qualcomm.com>,
+        Govind Singh <govinds@qti.qualcomm.com>,
+        <linux-kernel@vger.kernel.org>,
+        Brian Norris <briannorris@chromium.org>
+Subject: [PATCH 1/3] ath10k: assign 'n_cipher_suites' for WCN3990
+Date:   Fri,  2 Nov 2018 10:17:47 -0700
+Message-Id: <20181102171749.38680-1-briannorris@chromium.org>
+X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -43,58 +74,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When switching to the new iovec accessors, a negation got subtly
-dropped, leading to 9p being remarkably broken (here with kvmtool):
+Commit 2ea9f12cefe4 ("ath10k: add new cipher suite support") added a new
+n_cipher_suites HW param with a fallback value and a warning log. Commit
+03a72288c546 ("ath10k: wmi: add hw params entry for wcn3990") later
+added WCN3990 HW entries, but it missed the n_cipher_suites.
 
-[    7.430941] VFS: Mounted root (9p filesystem) on device 0:15.
-[    7.432080] devtmpfs: mounted
-[    7.432717] Freeing unused kernel memory: 1344K
-[    7.433658] Run /virt/init as init process
-  Warning: unable to translate guest address 0x7e00902ff000 to host
-  Warning: unable to translate guest address 0x7e00902fefc0 to host
-  Warning: unable to translate guest address 0x7e00902ff000 to host
-  Warning: unable to translate guest address 0x7e008febef80 to host
-  Warning: unable to translate guest address 0x7e008febf000 to host
-  Warning: unable to translate guest address 0x7e008febef00 to host
-  Warning: unable to translate guest address 0x7e008febf000 to host
-[    7.436376] Kernel panic - not syncing: Requested init /virt/init failed (error -8).
-[    7.437554] CPU: 29 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc8-02267-g00e23707442a #291
-[    7.439006] Hardware name: linux,dummy-virt (DT)
-[    7.439902] Call trace:
-[    7.440387]  dump_backtrace+0x0/0x148
-[    7.441104]  show_stack+0x14/0x20
-[    7.441768]  dump_stack+0x90/0xb4
-[    7.442425]  panic+0x120/0x27c
-[    7.443036]  kernel_init+0xa4/0x100
-[    7.443725]  ret_from_fork+0x10/0x18
-[    7.444444] SMP: stopping secondary CPUs
-[    7.445391] Kernel Offset: disabled
-[    7.446169] CPU features: 0x0,23000438
-[    7.446974] Memory Limit: none
-[    7.447645] ---[ end Kernel panic - not syncing: Requested init /virt/init failed (error -8). ]---
+Rather than seeing this warning every boot
 
-Restoring the missing "!" brings the guest back to life.
+  ath10k_snoc 18800000.wifi: invalid hw_params.n_cipher_suites 0
 
-Fixes: 00e23707442a ("iov_iter: Use accessor function")
-Reported-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+let's provide the appropriate value.
+
+Cc: Rakesh Pillai <pillair@qti.qualcomm.com>
+Cc: Govind Singh <govinds@qti.qualcomm.com>
+Signed-off-by: Brian Norris <briannorris@chromium.org>
 ---
- net/9p/trans_virtio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath10k/core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
-index 91981970f542..b1d39cabf125 100644
---- a/net/9p/trans_virtio.c
-+++ b/net/9p/trans_virtio.c
-@@ -329,7 +329,7 @@ static int p9_get_mapped_pages(struct virtio_chan *chan,
- 	if (!iov_iter_count(data))
- 		return 0;
- 
--	if (iov_iter_is_kvec(data)) {
-+	if (!iov_iter_is_kvec(data)) {
- 		int n;
- 		/*
- 		 * We allow only p9_max_pages pinned. We wait for the
+diff --git a/drivers/net/wireless/ath/ath10k/core.c b/drivers/net/wireless/ath/ath10k/core.c
+index da607febfd82..bdc81f1cdb94 100644
+--- a/drivers/net/wireless/ath/ath10k/core.c
++++ b/drivers/net/wireless/ath/ath10k/core.c
+@@ -561,6 +561,7 @@ static const struct ath10k_hw_params ath10k_hw_params_list[] = {
+ 		.hw_ops = &wcn3990_ops,
+ 		.decap_align_bytes = 1,
+ 		.num_peers = TARGET_HL_10_TLV_NUM_PEERS,
++		.n_cipher_suites = 8,
+ 		.ast_skid_limit = TARGET_HL_10_TLV_AST_SKID_LIMIT,
+ 		.num_wds_entries = TARGET_HL_10_TLV_NUM_WDS_ENTRIES,
+ 		.target_64bit = true,
 -- 
-2.19.1
+2.19.1.930.g4563a0d9d0-goog
 
