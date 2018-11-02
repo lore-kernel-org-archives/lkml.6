@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1BD3C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:54:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58455C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:54:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4EF02084A
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:54:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A9852084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:54:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JjciwfXt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4EF02084A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ScB8GfEu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A9852084D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731180AbeKCECa (ORCPT
+        id S1731187AbeKCECh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 00:02:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58290 "EHLO mail.kernel.org"
+        Sat, 3 Nov 2018 00:02:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729463AbeKCEC3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 00:02:29 -0400
+        id S1726150AbeKCECg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 00:02:36 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33DE72084C;
-        Fri,  2 Nov 2018 18:54:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F9B420848;
+        Fri,  2 Nov 2018 18:54:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184852;
-        bh=15Zw9RL54Jx8FB/2+4D1qmEc+gVjMuOLHGDB3mehgW4=;
+        s=default; t=1541184860;
+        bh=EKPNk6esp2RhNk9XH4qbv4Ca6VFNeMy+vTU0fBRRwiY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JjciwfXt50NdbR25Nrli4/5PhuTpuhZt1h4BoMAuAF/34qWMZTfIAPHpSGzMUpUVV
-         2t5+GSckTPXhuqdHGFfMRMJUvFqSZ+rDmIsNWjOqQwldymrVfO6YuhNFYCqEykc5b5
-         zAnmnGwlbg1+Qfe0lIk782jXV+h+Y/DcZMTXBzCw=
+        b=ScB8GfEuaZ5oM5E9FzU38Y88XkWgzjwIyHDPJVyoohxqDpyk4zJQCggk9cwvfwazQ
+         nuC6eC60LpIXCuq/qfvCC2Vetg5qbp67ZNktFj0Nt0badfTNTMOJc2AB3eJ7ZXwXw3
+         g85QlPTY2mYngc89pb3OFmz3k2X2VGFGKXBosMaw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Fastabend <john.fastabend@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 076/143] bpf: sockmap, map_release does not hold refcnt for pinned maps
-Date:   Fri,  2 Nov 2018 19:34:21 +0100
-Message-Id: <20181102182903.541228511@linuxfoundation.org>
+Subject: [PATCH 4.14 077/143] tpm: tpm_crb: relinquish locality on error path.
+Date:   Fri,  2 Nov 2018 19:34:22 +0100
+Message-Id: <20181102182903.668798740@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -63,106 +63,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ba6b8de423f8d0dee48d6030288ed81c03ddf9f0 ]
+[ Upstream commit 1fbad3028664e114d210dc65d768947a3a553eaa ]
 
-Relying on map_release hook to decrement the reference counts when a
-map is removed only works if the map is not being pinned. In the
-pinned case the ref is decremented immediately and the BPF programs
-released. After this BPF programs may not be in-use which is not
-what the user would expect.
+In crb_map_io() function, __crb_request_locality() is called prior
+to crb_cmd_ready(), but if one of the consecutive function fails
+the flow bails out instead of trying to relinquish locality.
+This patch adds goto jump to __crb_relinquish_locality() on the error path.
 
-This patch moves the release logic into bpf_map_put_uref() and brings
-sockmap in-line with how a similar case is handled in prog array maps.
-
-Fixes: 3d9e952697de ("bpf: sockmap, fix leaking maps with attached but not detached progs")
-Signed-off-by: John Fastabend <john.fastabend@gmail.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after granting locality)
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/bpf.h   | 2 +-
- kernel/bpf/arraymap.c | 3 ++-
- kernel/bpf/sockmap.c  | 4 ++--
- kernel/bpf/syscall.c  | 4 ++--
- 4 files changed, 7 insertions(+), 6 deletions(-)
+ drivers/char/tpm/tpm_crb.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index 5c5be80ce802..c9d2a1a3ef11 100644
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -27,6 +27,7 @@ struct bpf_map_ops {
- 	void (*map_release)(struct bpf_map *map, struct file *map_file);
- 	void (*map_free)(struct bpf_map *map);
- 	int (*map_get_next_key)(struct bpf_map *map, void *key, void *next_key);
-+	void (*map_release_uref)(struct bpf_map *map);
+diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+index 5c7ce5aaaf6f..b4ad169836e9 100644
+--- a/drivers/char/tpm/tpm_crb.c
++++ b/drivers/char/tpm/tpm_crb.c
+@@ -520,8 +520,10 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
  
- 	/* funcs callable from userspace and from eBPF programs */
- 	void *(*map_lookup_elem)(struct bpf_map *map, void *key);
-@@ -300,7 +301,6 @@ int bpf_stackmap_copy(struct bpf_map *map, void *key, void *value);
- int bpf_fd_array_map_update_elem(struct bpf_map *map, struct file *map_file,
- 				 void *key, void *value, u64 map_flags);
- int bpf_fd_array_map_lookup_elem(struct bpf_map *map, void *key, u32 *value);
--void bpf_fd_array_map_clear(struct bpf_map *map);
- int bpf_fd_htab_map_update_elem(struct bpf_map *map, struct file *map_file,
- 				void *key, void *value, u64 map_flags);
- int bpf_fd_htab_map_lookup_elem(struct bpf_map *map, void *key, u32 *value);
-diff --git a/kernel/bpf/arraymap.c b/kernel/bpf/arraymap.c
-index f57d0bdf3c9e..a8f55ea4146b 100644
---- a/kernel/bpf/arraymap.c
-+++ b/kernel/bpf/arraymap.c
-@@ -467,7 +467,7 @@ static u32 prog_fd_array_sys_lookup_elem(void *ptr)
- }
+ 	priv->regs_t = crb_map_res(dev, priv, &io_res, buf->control_address,
+ 				   sizeof(struct crb_regs_tail));
+-	if (IS_ERR(priv->regs_t))
+-		return PTR_ERR(priv->regs_t);
++	if (IS_ERR(priv->regs_t)) {
++		ret = PTR_ERR(priv->regs_t);
++		goto out_relinquish_locality;
++	}
  
- /* decrement refcnt of all bpf_progs that are stored in this map */
--void bpf_fd_array_map_clear(struct bpf_map *map)
-+static void bpf_fd_array_map_clear(struct bpf_map *map)
- {
- 	struct bpf_array *array = container_of(map, struct bpf_array, map);
- 	int i;
-@@ -485,6 +485,7 @@ const struct bpf_map_ops prog_array_map_ops = {
- 	.map_fd_get_ptr = prog_fd_array_get_ptr,
- 	.map_fd_put_ptr = prog_fd_array_put_ptr,
- 	.map_fd_sys_lookup_elem = prog_fd_array_sys_lookup_elem,
-+	.map_release_uref = bpf_fd_array_map_clear,
- };
+ 	/*
+ 	 * PTT HW bug w/a: wake up the device to access
+@@ -529,7 +531,7 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 	 */
+ 	ret = __crb_cmd_ready(dev, priv);
+ 	if (ret)
+-		return ret;
++		goto out_relinquish_locality;
  
- static struct bpf_event_entry *bpf_event_entry_gen(struct file *perf_file,
-diff --git a/kernel/bpf/sockmap.c b/kernel/bpf/sockmap.c
-index 20eaddfa691c..22991e19c01c 100644
---- a/kernel/bpf/sockmap.c
-+++ b/kernel/bpf/sockmap.c
-@@ -875,7 +875,7 @@ static int sock_map_update_elem(struct bpf_map *map,
- 	return err;
- }
+ 	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
+ 	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
+@@ -574,6 +576,8 @@ out:
  
--static void sock_map_release(struct bpf_map *map, struct file *map_file)
-+static void sock_map_release(struct bpf_map *map)
- {
- 	struct bpf_stab *stab = container_of(map, struct bpf_stab, map);
- 	struct bpf_prog *orig;
-@@ -895,7 +895,7 @@ const struct bpf_map_ops sock_map_ops = {
- 	.map_get_next_key = sock_map_get_next_key,
- 	.map_update_elem = sock_map_update_elem,
- 	.map_delete_elem = sock_map_delete_elem,
--	.map_release = sock_map_release,
-+	.map_release_uref = sock_map_release,
- };
+ 	__crb_go_idle(dev, priv);
  
- BPF_CALL_4(bpf_sock_map_update, struct bpf_sock_ops_kern *, bpf_sock,
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 4e933219fec6..ea22d0b6a9f0 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -214,8 +214,8 @@ static void bpf_map_free_deferred(struct work_struct *work)
- static void bpf_map_put_uref(struct bpf_map *map)
- {
- 	if (atomic_dec_and_test(&map->usercnt)) {
--		if (map->map_type == BPF_MAP_TYPE_PROG_ARRAY)
--			bpf_fd_array_map_clear(map);
-+		if (map->ops->map_release_uref)
-+			map->ops->map_release_uref(map);
- 	}
- }
++out_relinquish_locality:
++
+ 	__crb_relinquish_locality(dev, priv, 0);
  
+ 	return ret;
 -- 
 2.17.1
 
