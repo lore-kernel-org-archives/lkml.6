@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EBB3C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:40:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E99A3C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:40:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C5092082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:40:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD6FB20840
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:40:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="p/aJWle6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C5092082E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hAVM+kAg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD6FB20840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728736AbeKCDs1 (ORCPT
+        id S1729335AbeKCDsa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:48:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42738 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:48:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42800 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728250AbeKCDs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:48:26 -0400
+        id S1726707AbeKCDs3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:48:29 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8953B2082E;
-        Fri,  2 Nov 2018 18:40:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 479AC20837;
+        Fri,  2 Nov 2018 18:40:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184015;
-        bh=jOfjNx2iXGVDGBMWF7cIysDLVEi9Luh2wWnX9tS/7Co=;
+        s=default; t=1541184017;
+        bh=VrjJn/SarbwQR/adGZEFUShxB09Jiu6YeTVWgfRWbmA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p/aJWle6O35DMMv7TiFAL6XuYfipAlS5Jm77907fq2LZBca7SWi2FsHsLqz76cH8X
-         opwRBn74TWg6xAopQWxx6pzof5SPdwfmwt1nfZ36EEf/0ESolTT8a8e50ew1snVdaP
-         s8/yKpOYqp0ieSOrq2d00KjwGDPsdDVJ/6/8OkDk=
+        b=hAVM+kAg6Y7WFBUQNRvZOX6cYdQeU04YoIO4RXrVx/ZceionlijnHUXVkpOKzkCjv
+         hbtbSCiMmb/mIZ5AUaLWd0gZbhR9LBcfopHq2BD6Zv/tCLUCSUiA6VSQSajgJsCMSq
+         xMUxZgWwdGyag1f/wdk0ymwEPPsu31xOTLZDMCmU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Willi <martin@strongswan.org>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 024/150] mac80211_hwsim: fix locking when iterating radios during ns exit
-Date:   Fri,  2 Nov 2018 19:33:06 +0100
-Message-Id: <20181102182904.825989145@linuxfoundation.org>
+Subject: [PATCH 4.18 051/150] KVM: x86: Do not use kvm_x86_ops->mpx_supported() directly
+Date:   Fri,  2 Nov 2018 19:33:33 +0100
+Message-Id: <20181102182907.053587529@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -63,62 +65,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 628980e5c8f038f730582c6ee50b7410741cd96e ]
+[ Upstream commit 503234b3fdcaa578395c07e393ea3e5d13958824 ]
 
-The cleanup of radios during namespace exit has recently been reworked
-to directly delete a radio while temporarily releasing the spinlock,
-fixing a race condition between the work-queue execution and namespace
-exits. However, the temporary unlock allows unsafe modifications on the
-iterated list, resulting in a potential crash when continuing the
-iteration of additional radios.
+Commit a87036add092 ("KVM: x86: disable MPX if host did not enable
+MPX XSAVE features") introduced kvm_mpx_supported() to return true
+iff MPX is enabled in the host.
 
-Move radios about to destroy to a temporary list, and clean that up
-after releasing the spinlock once iteration is complete.
+However, that commit seems to have missed replacing some calls to
+kvm_x86_ops->mpx_supported() to kvm_mpx_supported().
 
-Fixes: 8cfd36a0b53a ("mac80211_hwsim: fix use-after-free bug in hwsim_exit_net")
-Signed-off-by: Martin Willi <martin@strongswan.org>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Complete original commit by replacing remaining calls to
+kvm_mpx_supported().
+
+Fixes: a87036add092 ("KVM: x86: disable MPX if host did not enable
+MPX XSAVE features")
+
+Suggested-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Liran Alon <liran.alon@oracle.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/mac80211_hwsim.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ arch/x86/kvm/vmx.c | 2 +-
+ arch/x86/kvm/x86.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/mac80211_hwsim.c b/drivers/net/wireless/mac80211_hwsim.c
-index 80e2c8595c7c..6b90bef58293 100644
---- a/drivers/net/wireless/mac80211_hwsim.c
-+++ b/drivers/net/wireless/mac80211_hwsim.c
-@@ -3523,6 +3523,7 @@ static __net_init int hwsim_init_net(struct net *net)
- static void __net_exit hwsim_exit_net(struct net *net)
- {
- 	struct mac80211_hwsim_data *data, *tmp;
-+	LIST_HEAD(list);
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index ea691ddfc3aa..2e23fce5eb1f 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -11567,7 +11567,7 @@ static void prepare_vmcs02_full(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12)
  
- 	spin_lock_bh(&hwsim_radio_lock);
- 	list_for_each_entry_safe(data, tmp, &hwsim_radios, list) {
-@@ -3533,17 +3534,19 @@ static void __net_exit hwsim_exit_net(struct net *net)
- 		if (data->netgroup == hwsim_net_get_netgroup(&init_net))
- 			continue;
+ 	set_cr4_guest_host_mask(vmx);
  
--		list_del(&data->list);
-+		list_move(&data->list, &list);
- 		rhashtable_remove_fast(&hwsim_radios_rht, &data->rht,
- 				       hwsim_rht_params);
- 		hwsim_radios_generation++;
--		spin_unlock_bh(&hwsim_radio_lock);
-+	}
-+	spin_unlock_bh(&hwsim_radio_lock);
-+
-+	list_for_each_entry_safe(data, tmp, &list, list) {
-+		list_del(&data->list);
- 		mac80211_hwsim_del_radio(data,
- 					 wiphy_name(data->hw->wiphy),
- 					 NULL);
--		spin_lock_bh(&hwsim_radio_lock);
- 	}
--	spin_unlock_bh(&hwsim_radio_lock);
+-	if (vmx_mpx_supported())
++	if (kvm_mpx_supported())
+ 		vmcs_write64(GUEST_BNDCFGS, vmcs12->guest_bndcfgs);
  
- 	ida_simple_remove(&hwsim_netgroup_ida, hwsim_net_get_netgroup(net));
- }
+ 	if (enable_vpid) {
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 97fcac34e007..3cd58a5eb449 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -4625,7 +4625,7 @@ static void kvm_init_msr_list(void)
+ 		 */
+ 		switch (msrs_to_save[i]) {
+ 		case MSR_IA32_BNDCFGS:
+-			if (!kvm_x86_ops->mpx_supported())
++			if (!kvm_mpx_supported())
+ 				continue;
+ 			break;
+ 		case MSR_TSC_AUX:
 -- 
 2.17.1
 
