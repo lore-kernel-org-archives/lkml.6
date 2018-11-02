@@ -2,143 +2,127 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A67C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 22:16:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC802C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 22:16:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FEF92082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 22:16:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FEF92082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id A10F72082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 22:16:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A10F72082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728548AbeKCHZs (ORCPT
+        id S1728563AbeKCHZv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 03:25:48 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40877 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728505AbeKCHZs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 03:25:48 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 586108080A; Fri,  2 Nov 2018 23:16:49 +0100 (CET)
-Date:   Fri, 2 Nov 2018 23:16:51 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH] ARM: mmp/mmp2: use cpu_is_pj4() instead of cpu_is_mmp2()
-Message-ID: <20181102221651.GE5322@amd>
-References: <20180910121314.168636-1-lkundrak@v3.sk>
+        Sat, 3 Nov 2018 03:25:51 -0400
+Received: from mga18.intel.com ([134.134.136.126]:12704 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728505AbeKCHZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 03:25:51 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 15:16:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,457,1534834800"; 
+   d="scan'208";a="104855231"
+Received: from kohsamui.iil.intel.com (HELO [10.236.193.12]) ([10.236.193.12])
+  by fmsmga001.fm.intel.com with ESMTP; 02 Nov 2018 15:16:51 -0700
+Subject: Re: lib/genalloc
+To:     Daniel Mentz <danielmentz@google.com>
+Cc:     Stephen Bates <sbates@raithlin.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.co>,
+        lkml <linux-kernel@vger.kernel.org>, labbott@redhat.com
+References: <a170cf65-6884-3592-1de9-4c235888cc8a@intel.com>
+ <4DECD467-AD45-419D-8F0F-1456863274FD@raithlin.com>
+ <d127f28f-71fe-c175-c0e4-a368ff1d01a1@intel.com>
+ <CAE2F3rBifp4y=WQFC6CTcYtPUFyvLD4ZZMrZSzu4P+Fzot_f0A@mail.gmail.com>
+ <de2e1756-329b-7df2-559e-a603a7edc2ff@intel.com>
+ <CAE2F3rDm1X-UuWHoJf9wAz3HJkC_LQP+UMq81Opu6te7KH704Q@mail.gmail.com>
+From:   Alexey Skidanov <alexey.skidanov@intel.com>
+Message-ID: <7a3eb4d7-2a93-8a39-c696-675053e53c53@intel.com>
+Date:   Sat, 3 Nov 2018 00:18:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="AsxXAMtlQ5JHofzM"
-Content-Disposition: inline
-In-Reply-To: <20180910121314.168636-1-lkundrak@v3.sk>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAE2F3rDm1X-UuWHoJf9wAz3HJkC_LQP+UMq81Opu6te7KH704Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---AsxXAMtlQ5JHofzM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon 2018-09-10 14:13:14, Lubomir Rintel wrote:
-> The MMP2 platform uses the PJ4 CPU. The cpu_is_mmp2() macro is thus
-> actually not useful at all and moreover gives the wrong result on
-> MACH_MMP2_DT.
->=20
-> The actual problem I aim to fix is that on a device-tree enabled system,
-> the timer ends up being initialized incorrectly. In fact, it ticks like
-> at rate that's 1/100 slower or so.
->=20
-> Perhaps the other cpu_is_mmp2() uses are more benign, but still useless.
->=20
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+On 11/2/18 11:16 PM, Daniel Mentz wrote:
+> On Fri, Nov 2, 2018 at 1:55 PM Alexey Skidanov
+> <alexey.skidanov@intel.com> wrote:
+>>
+>>
+>>
+>> On 11/2/18 9:17 PM, Daniel Mentz wrote:
+>>> On Thu, Nov 1, 2018 at 10:07 AM Alexey Skidanov
+>>> <alexey.skidanov@intel.com> wrote:
+>>>> On 11/1/18 18:48, Stephen  Bates wrote:
+>>>>>>    I use gen_pool_first_fit_align() as pool allocation algorithm allocating
+>>>>>>    buffers with requested alignment. But if a chunk base address is not
+>>>>>>    aligned to the requested alignment(from some reason), the returned
+>>>>>>    address is not aligned too.
+>>>>>
+>>>>> Alexey
+>>>>>
+>>>>> Can you try using gen_pool_first_fit_order_align()? Will that give you the alignment you need?
+>>>>>
+>>>>> Stephen
+>>>>>
+>>>>>
+>>>> I think it will not help me. Let's assume that the chunk base address is
+>>>> 0x2F400000 and I want to allocate 16MB aligned buffer. I get back the
+>>>> 0x2F400000. I think it happens because of this string in the
+>>>> gen_pool_alloc_algo():
+>>>>
+>>>> addr = chunk->start_addr + ((unsigned long)start_bit << order);
+>>>>
+>>>> and the gen_pool_first_fit_align() implementation that doesn't take into
+>>>> account the "incorrect" chunk base alignment.
+>>>
+>>> gen_pool_first_fit_align() has no information about the chunk base
+>>> alignment. Hence, it can't take it into account.
+>>>
+>>> How do you request the alignment in your code?
+>>>
+>>> I agree with your analysis that gen_pool_first_fit_align() performs
+>>> alignment only with respect to the start of the chunk not the memory
+>>> address that gen_pool_alloc_algo() returns. I guess a solution would
+>>> be to only add chunks that satisfy all your alignment requirements. In
+>>> your case, you must only add chunks that are 16MB aligned.
+>>> I am unsure whether this is by design, but I believe it's the way that
+>>> the code currently works.
+>>>
+>>
+>> Daniel,
+>>
+>> I think the better solution is to use bitmap_find_next_zero_area_off()
+>> that receives the bit offset (CMA allocator uses it to solve the same
+>> issue). Of course, we need to pass the chunk base address to the
+>> gen_pool_first_fit_align().
+>>
+>> What do you think?
+> 
+> Yeah, I guess you could extend genpool_algo_t to include the
+> information you need i.e. the offset and then provide a modified
+> version of gen_pool_first_fit_align() that does take your offset into
+> account. I wouldn't change gen_pool_first_fit_align(), though, because
+> existing users might depend on the current behavior.
+> 
+I think that the "fixed" version of gen_pool_first_fit_align() is less
+restrictive with respect to chunk base address - it will work correctly
+with arbitrary aligned chunks.
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
-
-> diff --git a/arch/arm/mach-mmp/cputype.h b/arch/arm/mach-mmp/cputype.h
-> index 446edaeb78a7..405dbbbbbcdd 100644
-> --- a/arch/arm/mach-mmp/cputype.h
-> +++ b/arch/arm/mach-mmp/cputype.h
-> @@ -44,13 +44,4 @@ static inline int cpu_is_pxa910(void)
->  #define cpu_is_pxa910()	(0)
->  #endif
-> =20
-> -#ifdef CONFIG_CPU_MMP2
-> -static inline int cpu_is_mmp2(void)
-> -{
-> -	return (((read_cpuid_id() >> 8) & 0xff) =3D=3D 0x58);
-> -}
-> -#else
-> -#define cpu_is_mmp2()	(0)
-> -#endif
-> -
->  #endif /* __ASM_MACH_CPUTYPE_H */
-> diff --git a/arch/arm/mach-mmp/mmp2.c b/arch/arm/mach-mmp/mmp2.c
-> index afba5460cdaf..b670fafedeac 100644
-> --- a/arch/arm/mach-mmp/mmp2.c
-> +++ b/arch/arm/mach-mmp/mmp2.c
-> @@ -104,7 +104,7 @@ void __init mmp2_init_irq(void)
-> =20
->  static int __init mmp2_init(void)
->  {
-> -	if (cpu_is_mmp2()) {
-> +	if (cpu_is_pj4()) {
->  #ifdef CONFIG_CACHE_TAUROS2
->  		tauros2_init(0);
->  #endif
-> diff --git a/arch/arm/mach-mmp/pm-mmp2.c b/arch/arm/mach-mmp/pm-mmp2.c
-> index 17699be3bc3d..bcd5111ffb37 100644
-> --- a/arch/arm/mach-mmp/pm-mmp2.c
-> +++ b/arch/arm/mach-mmp/pm-mmp2.c
-> @@ -220,7 +220,7 @@ static int __init mmp2_pm_init(void)
->  {
->  	uint32_t apcr;
-> =20
-> -	if (!cpu_is_mmp2())
-> +	if (!cpu_is_pj4())
->  		return -EIO;
-> =20
->  	suspend_set_ops(&mmp2_pm_ops);
-> diff --git a/arch/arm/mach-mmp/time.c b/arch/arm/mach-mmp/time.c
-> index 96ad1db0b04b..0f49ac579a17 100644
-> --- a/arch/arm/mach-mmp/time.c
-> +++ b/arch/arm/mach-mmp/time.c
-> @@ -163,7 +163,7 @@ static void __init timer_config(void)
-> =20
->  	__raw_writel(0x0, mmp_timer_base + TMR_CER); /* disable */
-> =20
-> -	ccr &=3D (cpu_is_mmp2()) ? (TMR_CCR_CS_0(0) | TMR_CCR_CS_1(0)) :
-> +	ccr &=3D (cpu_is_pj4()) ? (TMR_CCR_CS_0(0) | TMR_CCR_CS_1(0)) :
->  		(TMR_CCR_CS_0(3) | TMR_CCR_CS_1(3));
->  	__raw_writel(ccr, mmp_timer_base + TMR_CCR);
-> =20
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---AsxXAMtlQ5JHofzM
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlvczNMACgkQMOfwapXb+vK5ugCfVe+pdda0TnaLL5fYCW3yA56f
-ZcoAn1x19d7bzso0Dvw1p7uoTHh9d4X+
-=I9Rk
------END PGP SIGNATURE-----
-
---AsxXAMtlQ5JHofzM--
+Thanks,
+Alexey
