@@ -2,314 +2,178 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6383FC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:34:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFA41C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:35:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E328D2082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:34:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E328D2082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6BB7320831
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:35:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZiJghZ7g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BB7320831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726185AbeKCEmh (ORCPT
+        id S1726846AbeKCEoB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 00:42:37 -0400
-Received: from mga17.intel.com ([192.55.52.151]:61248 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726024AbeKCEmh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 00:42:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 12:30:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,457,1534834800"; 
-   d="scan'208";a="276669253"
-Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.168])
-  by fmsmga005.fm.intel.com with ESMTP; 02 Nov 2018 12:30:08 -0700
-From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
-To:     jeyu@kernel.org, akpm@linux-foundation.org, willy@infradead.org,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        kernel-hardening@lists.openwall.com, daniel@iogearbox.net,
-        jannh@google.com, keescook@chromium.org
-Cc:     kristen@linux.intel.com, dave.hansen@intel.com,
-        arjan@linux.intel.com, Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH v8 1/4] vmalloc: Add __vmalloc_node_try_addr function
-Date:   Fri,  2 Nov 2018 12:25:17 -0700
-Message-Id: <20181102192520.4522-2-rick.p.edgecombe@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181102192520.4522-1-rick.p.edgecombe@intel.com>
-References: <20181102192520.4522-1-rick.p.edgecombe@intel.com>
+        Sat, 3 Nov 2018 00:44:01 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:43872 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726051AbeKCEoB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 00:44:01 -0400
+Received: by mail-qk1-f194.google.com with SMTP id r71so4829918qkr.10;
+        Fri, 02 Nov 2018 12:35:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=9rmbQ7Y+mf50LmmU1LleL7tj5epEkS5t6EQlSZLwzwM=;
+        b=ZiJghZ7gX6BM9z6/IJdSeDnG6Wqb78ouu62oHEwlUKwhL36CvgPxmhYvvS32rrFerx
+         +TRVVCkb0WJ0nBulsxChwGmMVV+0iWfCqdHpuSiGRqocCwVo5LSIFXe3vMXaCEICMjvV
+         UNYxjNxGYwkCqk+LU5uJgoVgTg9CjOIy1cAzO3rhfUJlmPfQzgTZhj9dY3H4PvffoYZi
+         VmVwIsF/QXYCHiW0h3TDsh4wTLzZseEQpVJ2Fqnw5CEtXkcUVg3ef6N5ifeHvOofxX+V
+         zzD+25v+iGZrcbvdZ9xeQk2BCvF0+F6TzBfkbZ/gkNBy05/WOO0S253pm6i/KTIQd2YB
+         I2Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=9rmbQ7Y+mf50LmmU1LleL7tj5epEkS5t6EQlSZLwzwM=;
+        b=CcK6qCN0AxrLzgj5rFl20uoGiNFdDH6VEB33DAT/F7cAfTor603ngbK0kWBJj0DFrv
+         BwtM7O2C8vI0mJbJhkYsM929N9ckxRVqCkPA6Y6vY76Yc4e1hrvIQ2ctfi9bpV26DCTk
+         yQZ4hZp5AHfbWMNrOmyr4+SsTB9866Js816Tajzmxnk3cax4ZCxafaQhRW1647CGMmWw
+         zTCbeXpayrMHI6EPn3swkyiWrdPpki+VJoJ+/mCks8VercFvllwoEB8/xzPzezPqu9Ww
+         VXyrSrx4GMKrATDubE+DBP+Ho24Emn0uX6ls4JTWoPEULkilFC8FPA+GBGEgppWUmeQN
+         hvmw==
+X-Gm-Message-State: AGRZ1gKsfd9uxeZ3V5DvWxHiQIGFlcbNf3ursKZcMUtCVqS81UYprp51
+        OfMhsXj2ChIp+mV1lrWC6d9aU5GeuXptLeXmzZCAZDTq
+X-Google-Smtp-Source: AJdET5f7evMns7gh7RiHl0uz2rZGYugYW85CwTuW+in8O8hkUmI9cO0G+iuN5ZlXC+ueIkZIba/76IGFQRg17nEuYQc=
+X-Received: by 2002:a37:1f44:: with SMTP id f65mr11425141qkf.33.1541187333934;
+ Fri, 02 Nov 2018 12:35:33 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181101002128.28884-1-jprvita@endlessm.com>
+In-Reply-To: <20181101002128.28884-1-jprvita@endlessm.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 2 Nov 2018 21:35:22 +0200
+Message-ID: <CAHp75VdzYf_CXiBzVrOUw+R5ZA8O-+_PGJ-Cv-q7QTXpvG0dVA@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Fix display off hotkey on Asus machines
+To:     =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@gmail.com>
+Cc:     Corentin Chary <corentin.chary@gmail.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Bastien Nocera <hadess@hadess.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input <linux-input@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux@endlessm.com,
+        =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create __vmalloc_node_try_addr function that tries to allocate at a specific
-address without triggering any lazy purging. In order to support this behavior
-a try_addr argument was plugged into several of the static helpers.
+On Thu, Nov 1, 2018 at 2:21 AM Jo=C3=A3o Paulo Rechi Vita <jprvita@gmail.co=
+m> wrote:
+>
+> Asus laptops have a hotkey function on the F7 key to turn the display
+> backlight OFF, labeled with a screen with a X inside, as shown on
+> https://dlcdnimgs.asus.com/websites/global/products/Xep1ZcSY8dyWXK11/imag=
+es/keyboard.png
+>
+> This hotkey worked on very few Asus models, where the EC acts on the
+> backlight and input events are generated only to notify userspace of the
+> backlight status. On these machines the first hotkey press turns the
+> display backlight OFF and notifies the OS with 0x34, which asus-nb-wmi
+> forwards to userspace as KEY_DISPLAY_OFF, and a second press turns it
+> back ON and notifies the OS with 0x33, which asus-nb-wmi forwards to
+> userspace as KEY_DISPLAYTOGGLE. No other keys turn the display backlight
+> back ON, but their input is forwarded normally to the application under
+> focus.
+>
+> But for the majority of models, the EC actually does not act on the
+> backlight and we simply get a 0x33 notification every time the key is
+> pressed, or alternating values of 0x33 / 0x34. We have confirmed this
+> behavior on the following models: E203NAS, GL553VE, X441NC, X441UVK,
+> X541UVK, X555DG, X555UB, X555UQ, X560UD, X570ZD and X705FD, and the DSDT
+> on these machines and the working one (only confirmed on N552VW) is the
+> same for the query involved here.
+>
+> After trying to get information from Asus for quite some time on how
+> this works on Windows, we finally recently got a contact that was able
+> to give us a definitive answer and a specification for this feature.
+> According this contact the 0x33 / 0x34 is an old behavior and all newer
+> machines should only be notifying the OS with 0x35 instead, as newer ECs
+> don't control the backlight anymore. When a 0x35 notification is
+> received the OS should act on the display backlight. From the spec
+> (machine-translated from Chinese):
+>
+>   1.4 Fn+F7
+>   Function introduction
+>
+>   After the user presses Fn + F7, the screen will be closed through the
+>   Windows API. The user will immediately open the screen with the mouse
+>   and keyboard.
+>   The API used can be found in the Sample URL:
+>   https://code.msdn.microsoft.com/windowsdesktop/Coalescable-Timer-Sample=
+-d9da954c
+>   BIOS implementation
+>   Increase Notify code
+>   LCD On: 0x33 (display OSD)
+>   LCD Off: 0x34 (display OSD)
+>   LCD Switch: 0x35 (using API switch)
+>
+> The behavior on Windows with the ATKACPI driver from Asus installed
+> matches what is described above, with the hotkey turning OFF the
+> backlight of all connected displays with a fading effect, and any cursor
+> input or key press turning the backlight back ON. The key press or
+> cursor input is passed through to the application under focus or under
+> the cursor.
+>
+> With this information from the spec, a simple analysis of the DSDT
+> (pasted on the first commit of this series) shows that in order to have
+> the firmware notify the OS with 0x35 and have the OS act on the
+> backlight, we need to call WMNB(ASUS_WMI_DEVID_BACKLIGHT=3D=3D0x00050011,=
+ 2)
+> on the _WDG device. Then we can simply map that scan code to the
+> appropriate key code in the driver.
+>
+> In include/uapi/linux/input-event-codes.h KEY_DISPLAY_OFF is defined as
+> "display device to off state", but it is not actually handled by
+> userspace on a GNOME+Xorg stack. There are also KEY_SCREENSAVER and
+> KEY_SCREENLOCK / KEY_COFFEE. The former seems to be ignored by userspace
+> as well (and its value is higher than 255 so it can't be handled by Xorg
+> IIUC), and the later is mapped to XF86ScreenSaver by Xorg and triggers
+> the lock screen action on GNOME. KEY_SCREENLOCK seems to be what closest
+> matches the behavior described above in a Xorg world. I am not sure if
+> any of this changes with Wayland, so any clarifications in that regard
+> would be greatly appreciated.
+>
 
-This also changes logic in __get_vm_area_node to be faster in cases where
-allocations fail due to no space, which is a lot more common when trying
-specific addresses.
+Pushed to my review and testing queue, thanks!
 
-Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
----
- include/linux/vmalloc.h |   3 +
- mm/vmalloc.c            | 128 +++++++++++++++++++++++++++++-----------
- 2 files changed, 95 insertions(+), 36 deletions(-)
+> Jo=C3=A3o Paulo Rechi Vita (3):
+>   asus-wmi: Tell the EC the OS will handle the display off hotkey
+>   asus-nb-wmi: Map 0x35 to KEY_SCREENLOCK
+>   asus-nb-wmi: Drop mapping of 0x33 and 0x34 scan codes
+>
+>  drivers/platform/x86/asus-nb-wmi.c | 3 +--
+>  drivers/platform/x86/asus-wmi.c    | 3 ++-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+>
+> --
+> 2.19.1
+>
 
-diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-index 398e9c95cd61..6eaa89612372 100644
---- a/include/linux/vmalloc.h
-+++ b/include/linux/vmalloc.h
-@@ -82,6 +82,9 @@ extern void *__vmalloc_node_range(unsigned long size, unsigned long align,
- 			unsigned long start, unsigned long end, gfp_t gfp_mask,
- 			pgprot_t prot, unsigned long vm_flags, int node,
- 			const void *caller);
-+extern void *__vmalloc_node_try_addr(unsigned long addr, unsigned long size,
-+			gfp_t gfp_mask,	pgprot_t prot, unsigned long vm_flags,
-+			int node, const void *caller);
- #ifndef CONFIG_MMU
- extern void *__vmalloc_node_flags(unsigned long size, int node, gfp_t flags);
- static inline void *__vmalloc_node_flags_caller(unsigned long size, int node,
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index a728fc492557..8d01f503e20d 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -326,6 +326,9 @@ EXPORT_SYMBOL(vmalloc_to_pfn);
- #define VM_LAZY_FREE	0x02
- #define VM_VM_AREA	0x04
- 
-+#define VMAP_MAY_PURGE	0x2
-+#define VMAP_NO_PURGE	0x1
-+
- static DEFINE_SPINLOCK(vmap_area_lock);
- /* Export for kexec only */
- LIST_HEAD(vmap_area_list);
-@@ -402,12 +405,12 @@ static BLOCKING_NOTIFIER_HEAD(vmap_notify_list);
- static struct vmap_area *alloc_vmap_area(unsigned long size,
- 				unsigned long align,
- 				unsigned long vstart, unsigned long vend,
--				int node, gfp_t gfp_mask)
-+				int node, gfp_t gfp_mask, int try_purge)
- {
- 	struct vmap_area *va;
- 	struct rb_node *n;
- 	unsigned long addr;
--	int purged = 0;
-+	int purged = try_purge & VMAP_NO_PURGE;
- 	struct vmap_area *first;
- 
- 	BUG_ON(!size);
-@@ -860,7 +863,7 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
- 
- 	va = alloc_vmap_area(VMAP_BLOCK_SIZE, VMAP_BLOCK_SIZE,
- 					VMALLOC_START, VMALLOC_END,
--					node, gfp_mask);
-+					node, gfp_mask, VMAP_MAY_PURGE);
- 	if (IS_ERR(va)) {
- 		kfree(vb);
- 		return ERR_CAST(va);
-@@ -1170,8 +1173,9 @@ void *vm_map_ram(struct page **pages, unsigned int count, int node, pgprot_t pro
- 		addr = (unsigned long)mem;
- 	} else {
- 		struct vmap_area *va;
--		va = alloc_vmap_area(size, PAGE_SIZE,
--				VMALLOC_START, VMALLOC_END, node, GFP_KERNEL);
-+		va = alloc_vmap_area(size, PAGE_SIZE, VMALLOC_START,
-+					VMALLOC_END, node, GFP_KERNEL,
-+					VMAP_MAY_PURGE);
- 		if (IS_ERR(va))
- 			return NULL;
- 
-@@ -1372,7 +1376,8 @@ static void clear_vm_uninitialized_flag(struct vm_struct *vm)
- 
- static struct vm_struct *__get_vm_area_node(unsigned long size,
- 		unsigned long align, unsigned long flags, unsigned long start,
--		unsigned long end, int node, gfp_t gfp_mask, const void *caller)
-+		unsigned long end, int node, gfp_t gfp_mask, int try_purge,
-+		const void *caller)
- {
- 	struct vmap_area *va;
- 	struct vm_struct *area;
-@@ -1386,16 +1391,17 @@ static struct vm_struct *__get_vm_area_node(unsigned long size,
- 		align = 1ul << clamp_t(int, get_count_order_long(size),
- 				       PAGE_SHIFT, IOREMAP_MAX_ORDER);
- 
--	area = kzalloc_node(sizeof(*area), gfp_mask & GFP_RECLAIM_MASK, node);
--	if (unlikely(!area))
--		return NULL;
--
- 	if (!(flags & VM_NO_GUARD))
- 		size += PAGE_SIZE;
- 
--	va = alloc_vmap_area(size, align, start, end, node, gfp_mask);
--	if (IS_ERR(va)) {
--		kfree(area);
-+	va = alloc_vmap_area(size, align, start, end, node, gfp_mask,
-+				try_purge);
-+	if (IS_ERR(va))
-+		return NULL;
-+
-+	area = kzalloc_node(sizeof(*area), gfp_mask & GFP_RECLAIM_MASK, node);
-+	if (unlikely(!area)) {
-+		free_vmap_area(va);
- 		return NULL;
- 	}
- 
-@@ -1408,7 +1414,8 @@ struct vm_struct *__get_vm_area(unsigned long size, unsigned long flags,
- 				unsigned long start, unsigned long end)
- {
- 	return __get_vm_area_node(size, 1, flags, start, end, NUMA_NO_NODE,
--				  GFP_KERNEL, __builtin_return_address(0));
-+				  GFP_KERNEL, VMAP_MAY_PURGE,
-+				  __builtin_return_address(0));
- }
- EXPORT_SYMBOL_GPL(__get_vm_area);
- 
-@@ -1417,7 +1424,7 @@ struct vm_struct *__get_vm_area_caller(unsigned long size, unsigned long flags,
- 				       const void *caller)
- {
- 	return __get_vm_area_node(size, 1, flags, start, end, NUMA_NO_NODE,
--				  GFP_KERNEL, caller);
-+				  GFP_KERNEL, VMAP_MAY_PURGE, caller);
- }
- 
- /**
-@@ -1432,7 +1439,7 @@ struct vm_struct *__get_vm_area_caller(unsigned long size, unsigned long flags,
- struct vm_struct *get_vm_area(unsigned long size, unsigned long flags)
- {
- 	return __get_vm_area_node(size, 1, flags, VMALLOC_START, VMALLOC_END,
--				  NUMA_NO_NODE, GFP_KERNEL,
-+				  NUMA_NO_NODE, GFP_KERNEL, VMAP_MAY_PURGE,
- 				  __builtin_return_address(0));
- }
- 
-@@ -1440,7 +1447,8 @@ struct vm_struct *get_vm_area_caller(unsigned long size, unsigned long flags,
- 				const void *caller)
- {
- 	return __get_vm_area_node(size, 1, flags, VMALLOC_START, VMALLOC_END,
--				  NUMA_NO_NODE, GFP_KERNEL, caller);
-+				  NUMA_NO_NODE, GFP_KERNEL, VMAP_MAY_PURGE,
-+				  caller);
- }
- 
- /**
-@@ -1709,26 +1717,10 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
- 	return NULL;
- }
- 
--/**
-- *	__vmalloc_node_range  -  allocate virtually contiguous memory
-- *	@size:		allocation size
-- *	@align:		desired alignment
-- *	@start:		vm area range start
-- *	@end:		vm area range end
-- *	@gfp_mask:	flags for the page level allocator
-- *	@prot:		protection mask for the allocated pages
-- *	@vm_flags:	additional vm area flags (e.g. %VM_NO_GUARD)
-- *	@node:		node to use for allocation or NUMA_NO_NODE
-- *	@caller:	caller's return address
-- *
-- *	Allocate enough pages to cover @size from the page level
-- *	allocator with @gfp_mask flags.  Map them into contiguous
-- *	kernel virtual space, using a pagetable protection of @prot.
-- */
--void *__vmalloc_node_range(unsigned long size, unsigned long align,
-+static void *__vmalloc_node_range_opts(unsigned long size, unsigned long align,
- 			unsigned long start, unsigned long end, gfp_t gfp_mask,
- 			pgprot_t prot, unsigned long vm_flags, int node,
--			const void *caller)
-+			int try_purge, const void *caller)
- {
- 	struct vm_struct *area;
- 	void *addr;
-@@ -1739,7 +1731,8 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
- 		goto fail;
- 
- 	area = __get_vm_area_node(size, align, VM_ALLOC | VM_UNINITIALIZED |
--				vm_flags, start, end, node, gfp_mask, caller);
-+				vm_flags, start, end, node, gfp_mask,
-+				try_purge, caller);
- 	if (!area)
- 		goto fail;
- 
-@@ -1764,6 +1757,69 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
- 	return NULL;
- }
- 
-+/**
-+ *	__vmalloc_node_range  -  allocate virtually contiguous memory
-+ *	@size:		allocation size
-+ *	@align:		desired alignment
-+ *	@start:		vm area range start
-+ *	@end:		vm area range end
-+ *	@gfp_mask:	flags for the page level allocator
-+ *	@prot:		protection mask for the allocated pages
-+ *	@vm_flags:	additional vm area flags (e.g. %VM_NO_GUARD)
-+ *	@node:		node to use for allocation or NUMA_NO_NODE
-+ *	@caller:	caller's return address
-+ *
-+ *	Allocate enough pages to cover @size from the page level
-+ *	allocator with @gfp_mask flags.  Map them into contiguous
-+ *	kernel virtual space, using a pagetable protection of @prot.
-+ */
-+void *__vmalloc_node_range(unsigned long size, unsigned long align,
-+			unsigned long start, unsigned long end, gfp_t gfp_mask,
-+			pgprot_t prot, unsigned long vm_flags, int node,
-+			const void *caller)
-+{
-+	return __vmalloc_node_range_opts(size, align, start, end, gfp_mask,
-+					prot, vm_flags, node, VMAP_MAY_PURGE,
-+					caller);
-+}
-+
-+/**
-+ *	__vmalloc_try_addr  -  try to alloc at a specific address
-+ *	@addr:		address to try
-+ *	@size:		size to try
-+ *	@gfp_mask:	flags for the page level allocator
-+ *	@prot:		protection mask for the allocated pages
-+ *	@vm_flags:	additional vm area flags (e.g. %VM_NO_GUARD)
-+ *	@node:		node to use for allocation or NUMA_NO_NODE
-+ *	@caller:	caller's return address
-+ *
-+ *	Try to allocate at the specific address. If it succeeds the address is
-+ *	returned. If it fails NULL is returned.  It will not try to purge lazy
-+ *	free vmap areas in order to fit.
-+ */
-+void *__vmalloc_node_try_addr(unsigned long addr, unsigned long size,
-+			gfp_t gfp_mask,	pgprot_t prot, unsigned long vm_flags,
-+			int node, const void *caller)
-+{
-+	unsigned long addr_end;
-+	unsigned long vsize = PAGE_ALIGN(size);
-+
-+	if (!vsize || (vsize >> PAGE_SHIFT) > totalram_pages)
-+		return NULL;
-+
-+	if (!(vm_flags & VM_NO_GUARD))
-+		vsize += PAGE_SIZE;
-+
-+	addr_end = addr + vsize;
-+
-+	if (addr > addr_end)
-+		return NULL;
-+
-+	return __vmalloc_node_range_opts(size, 1, addr, addr_end,
-+				gfp_mask | __GFP_NOWARN, prot, vm_flags, node,
-+				VMAP_NO_PURGE, caller);
-+}
-+
- /**
-  *	__vmalloc_node  -  allocate virtually contiguous memory
-  *	@size:		allocation size
--- 
-2.17.1
 
+--=20
+With Best Regards,
+Andy Shevchenko
