@@ -2,117 +2,76 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61531C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F31C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:21:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 170C82081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:21:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 170C82081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 262272081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:21:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 262272081F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728057AbeKCC3F (ORCPT
+        id S1728121AbeKCC3j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 22:29:05 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35642 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726085AbeKCC3F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 22:29:05 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B47CA3154841;
-        Fri,  2 Nov 2018 17:21:12 +0000 (UTC)
-Received: from redhat.com (ovpn-124-238.rdu2.redhat.com [10.10.124.238])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 007DF5DA62;
-        Fri,  2 Nov 2018 17:21:06 +0000 (UTC)
-Date:   Fri, 2 Nov 2018 13:21:06 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     mark.rutland@arm.com, Kees Cook <keescook@chromium.org>,
-        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        bijan.mottahedeh@oracle.com, gedwards@ddn.com, joe@perches.com,
-        lenaic@lhuard.fr, liang.z.li@intel.com, mhocko@kernel.org,
-        mhocko@suse.com, stefanha@redhat.com, wei.w.wang@intel.com,
-        jasowang@redhat.com
-Subject: Re: [PULL] vhost: cleanups and fixes
-Message-ID: <20181102131334-mutt-send-email-mst@kernel.org>
-References: <20181101171938-mutt-send-email-mst@kernel.org>
- <CAGXu5jJ0HgV2qN=wohEgro6ixqXHOHBTsvS5a9Dcpz8gxVo3bA@mail.gmail.com>
- <CAHk-=wicvws38JqzVF6oNEZ0jGzP6RecR6yAGtyzX3AkoJ321g@mail.gmail.com>
- <20181102114635.hi3q53kzmz4qljsf@lakrids.cambridge.arm.com>
- <20181102083018-mutt-send-email-mst@kernel.org>
- <CAHk-=wh_bQK5zs+CwQ5eyodq4sQT0eOPp60qzvVL2_EtgETP-g@mail.gmail.com>
- <20181102122937-mutt-send-email-mst@kernel.org>
- <CAHk-=wibzqo7C+mS+BgZxRbgdWe2w5F39EhuFUhZUxvotoGLuA@mail.gmail.com>
+        Fri, 2 Nov 2018 22:29:39 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44288 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726828AbeKCC3j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 22:29:39 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD07AA78;
+        Fri,  2 Nov 2018 10:21:46 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0CF7D3F71E;
+        Fri,  2 Nov 2018 10:21:45 -0700 (PDT)
+Date:   Fri, 2 Nov 2018 17:21:41 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Paul Sorensen <paulsorensen5@gmail.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Correct comparison statements in documentation
+Message-ID: <20181102172140.ntuj66zscmoe572w@lakrids.cambridge.arm.com>
+References: <20181102170952.46303-1-paulsorensen5@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wibzqo7C+mS+BgZxRbgdWe2w5F39EhuFUhZUxvotoGLuA@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Fri, 02 Nov 2018 17:21:13 +0000 (UTC)
+In-Reply-To: <20181102170952.46303-1-paulsorensen5@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 10:10:45AM -0700, Linus Torvalds wrote:
-> On Fri, Nov 2, 2018 at 9:59 AM Michael S. Tsirkin <mst@redhat.com> wrote:
-> >
-> > Just for completeness I'd like to point out for vhost the copies are
-> > done from the kernel thread.  So yes we can switch to copy_to/from_user
-> > but for e.g. 32-bit userspace running on top of a 64 bit kernel it is
-> > IIUC not sufficient - we must *also* do access_ok checks on control path
-> > when addresses are passed to the kernel and when current points to the
-> > correct task struct.
+On Fri, Nov 02, 2018 at 10:09:52AM -0700, Paul Sorensen wrote:
+> Instances of "less then" or "greater then" are corrected to "less than" or
+> "greater than", respectively.
 > 
-> Don't you take over the VM with "use_mm()" when you do the copies?
+> Signed-off-by: Paul Sorensen <paulsorensen5@gmail.com>
+> ---
 
-Yes we do.
+[...]
 
-> So
-> yes, it's a kernel thread, but it has a user VM, and though that
-> should have the user limits.
-> 
-> No?
-> 
->           Linus
+> diff --git a/mm/slab_common.c b/mm/slab_common.c
+> index 7eb8dc136c1c..5e5aaee89e10 100644
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@ -270,7 +270,7 @@ static unsigned int calculate_alignment(slab_flags_t flags,
+>  	 * suggestion if the object is sufficiently large.
+>  	 *
+>  	 * The hardware cache alignment cannot override the specified
+> -	 * alignment though. If that is greater then use it.
+> +	 * alignment though. If that is greater than use it.
+>  	 */
 
-Here's what I meant: we have
+The original was correct.
 
-#define access_ok(type, addr, size)                                     \
-({                                                                      \
-        WARN_ON_IN_IRQ();                                               \
-        likely(!__range_not_ok(addr, size, user_addr_max()));           \
-})
+To aid comprehension, perhaps:
 
-and
+	The hardware cache alignment cannot override the specified
+	alignment, so use whichever is greater.
 
-#define user_addr_max() (current->thread.addr_limit.seg)
-
-it seems that it depends on current not on the active mm.
-
-get_user and friends are similar:
-
-ENTRY(__get_user_1)
-        mov PER_CPU_VAR(current_task), %_ASM_DX
-        cmp TASK_addr_limit(%_ASM_DX),%_ASM_AX
-        jae bad_get_user
-        sbb %_ASM_DX, %_ASM_DX          /* array_index_mask_nospec() */
-        and %_ASM_DX, %_ASM_AX
-        ASM_STAC
-1:      movzbl (%_ASM_AX),%edx
-        xor %eax,%eax
-        ASM_CLAC
-        ret
-ENDPROC(__get_user_1)
-EXPORT_SYMBOL(__get_user_1)
-
--- 
-MST
+Thanks,
+Mark.
