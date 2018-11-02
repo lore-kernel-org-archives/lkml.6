@@ -7,45 +7,52 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F5F2C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:51:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51545C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:51:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10FCB2082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:51:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17A1720847
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:51:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="syjCoNUZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10FCB2082D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hwUuVmv0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17A1720847
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730942AbeKCD7l (ORCPT
+        id S1730951AbeKCD7o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:59:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55392 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:59:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728743AbeKCD7l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:59:41 -0400
+        id S1728743AbeKCD7n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:59:43 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A48120847;
-        Fri,  2 Nov 2018 18:51:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A94AE20848;
+        Fri,  2 Nov 2018 18:51:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184686;
-        bh=AIf9Fx/8sMzOaWeUKZ5O1KZUHF336lznlUIMR0KLVtU=;
+        s=default; t=1541184689;
+        bh=ANOuYbqUfzxiNxAHhYAsXFhyeMNJeWmOjTuXwy5dGqs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=syjCoNUZOh96WxNkubwcV1qFFBbnLGhBUZnglK5GRHGhX6lCgRGgOGl4WVwwHKQff
-         XsB5HmImG+9ufu/EUQfhMTKTm6QGrIGBXIhEnZNFEpqUNzNpt5JU0Pxwv3WoaGFUSQ
-         cO04LyKBKxhOgpF0UltnQAr212RrpNrxbQz9zcvQ=
+        b=hwUuVmv0bSFZmLoFaN5Vby/foNfK1lV/iOJQvKd+sXubPmQS5dFid8If0pKFYLutF
+         fMMIJ8OJh85HGJjxumoC4tjMFUz+GJF7N5He1eH82L9/FaUjxETe7rUI4SrhZ57zG0
+         qAB27cLAUlgKvcv+/95yDJaF4WQtt7HPyNF3A7l4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yu Zhao <yuzhao@google.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 037/143] cfg80211: fix use-after-free in reg_process_hint()
-Date:   Fri,  2 Nov 2018 19:33:42 +0100
-Message-Id: <20181102182900.026032800@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 038/143] perf/core: Fix perf_pmu_unregister() locking
+Date:   Fri,  2 Nov 2018 19:33:43 +0100
+Message-Id: <20181102182900.119831565@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -63,105 +70,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 1db58529454742f67ebd96e3588315e880b72837 ]
+[ Upstream commit a9f9772114c8b07ae75bcb3654bd017461248095 ]
 
-reg_process_hint_country_ie() can free regulatory_request and return
-REG_REQ_ALREADY_SET. We shouldn't use regulatory_request after it's
-called. KASAN error was observed when this happens.
+When we unregister a PMU, we fail to serialize the @pmu_idr properly.
+Fix that by doing the entire thing under pmu_lock.
 
-BUG: KASAN: use-after-free in reg_process_hint+0x839/0x8aa [cfg80211]
-Read of size 4 at addr ffff8800c430d434 by task kworker/1:3/89
-<snipped>
-Workqueue: events reg_todo [cfg80211]
-Call Trace:
- dump_stack+0xc1/0x10c
- ? _atomic_dec_and_lock+0x1ad/0x1ad
- ? _raw_spin_lock_irqsave+0xa0/0xd2
- print_address_description+0x86/0x26f
- ? reg_process_hint+0x839/0x8aa [cfg80211]
- kasan_report+0x241/0x29b
- reg_process_hint+0x839/0x8aa [cfg80211]
- reg_todo+0x204/0x5b9 [cfg80211]
- process_one_work+0x55f/0x8d0
- ? worker_detach_from_pool+0x1b5/0x1b5
- ? _raw_spin_unlock_irq+0x65/0xdd
- ? _raw_spin_unlock_irqrestore+0xf3/0xf3
- worker_thread+0x5dd/0x841
- ? kthread_parkme+0x1d/0x1d
- kthread+0x270/0x285
- ? pr_cont_work+0xe3/0xe3
- ? rcu_read_unlock_sched_notrace+0xca/0xca
- ret_from_fork+0x22/0x40
-
-Allocated by task 2718:
- set_track+0x63/0xfa
- __kmalloc+0x119/0x1ac
- regulatory_hint_country_ie+0x38/0x329 [cfg80211]
- __cfg80211_connect_result+0x854/0xadd [cfg80211]
- cfg80211_rx_assoc_resp+0x3bc/0x4f0 [cfg80211]
-smsc95xx v1.0.6
- ieee80211_sta_rx_queued_mgmt+0x1803/0x7ed5 [mac80211]
- ieee80211_iface_work+0x411/0x696 [mac80211]
- process_one_work+0x55f/0x8d0
- worker_thread+0x5dd/0x841
- kthread+0x270/0x285
- ret_from_fork+0x22/0x40
-
-Freed by task 89:
- set_track+0x63/0xfa
- kasan_slab_free+0x6a/0x87
- kfree+0xdc/0x470
- reg_process_hint+0x31e/0x8aa [cfg80211]
- reg_todo+0x204/0x5b9 [cfg80211]
- process_one_work+0x55f/0x8d0
- worker_thread+0x5dd/0x841
- kthread+0x270/0x285
- ret_from_fork+0x22/0x40
-<snipped>
-
-Signed-off-by: Yu Zhao <yuzhao@google.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Fixes: 2e80a82a49c4 ("perf: Dynamic pmu types")
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/wireless/reg.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ kernel/events/core.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/net/wireless/reg.c b/net/wireless/reg.c
-index 6f032c7b8732..bd91de416035 100644
---- a/net/wireless/reg.c
-+++ b/net/wireless/reg.c
-@@ -2170,11 +2170,12 @@ static void reg_process_hint(struct regulatory_request *reg_request)
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 4dbce29a9313..ee1c07c0b833 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -9020,9 +9020,7 @@ static void free_pmu_context(struct pmu *pmu)
+ 	if (pmu->task_ctx_nr > perf_invalid_context)
+ 		return;
+ 
+-	mutex_lock(&pmus_lock);
+ 	free_percpu(pmu->pmu_cpu_context);
+-	mutex_unlock(&pmus_lock);
+ }
+ 
+ /*
+@@ -9278,12 +9276,8 @@ EXPORT_SYMBOL_GPL(perf_pmu_register);
+ 
+ void perf_pmu_unregister(struct pmu *pmu)
  {
- 	struct wiphy *wiphy = NULL;
- 	enum reg_request_treatment treatment;
-+	enum nl80211_reg_initiator initiator = reg_request->initiator;
+-	int remove_device;
+-
+ 	mutex_lock(&pmus_lock);
+-	remove_device = pmu_bus_running;
+ 	list_del_rcu(&pmu->entry);
+-	mutex_unlock(&pmus_lock);
  
- 	if (reg_request->wiphy_idx != WIPHY_IDX_INVALID)
- 		wiphy = wiphy_idx_to_wiphy(reg_request->wiphy_idx);
- 
--	switch (reg_request->initiator) {
-+	switch (initiator) {
- 	case NL80211_REGDOM_SET_BY_CORE:
- 		treatment = reg_process_hint_core(reg_request);
- 		break;
-@@ -2192,7 +2193,7 @@ static void reg_process_hint(struct regulatory_request *reg_request)
- 		treatment = reg_process_hint_country_ie(wiphy, reg_request);
- 		break;
- 	default:
--		WARN(1, "invalid initiator %d\n", reg_request->initiator);
-+		WARN(1, "invalid initiator %d\n", initiator);
- 		goto out_free;
+ 	/*
+ 	 * We dereference the pmu list under both SRCU and regular RCU, so
+@@ -9295,13 +9289,14 @@ void perf_pmu_unregister(struct pmu *pmu)
+ 	free_percpu(pmu->pmu_disable_count);
+ 	if (pmu->type >= PERF_TYPE_MAX)
+ 		idr_remove(&pmu_idr, pmu->type);
+-	if (remove_device) {
++	if (pmu_bus_running) {
+ 		if (pmu->nr_addr_filters)
+ 			device_remove_file(pmu->dev, &dev_attr_nr_addr_filters);
+ 		device_del(pmu->dev);
+ 		put_device(pmu->dev);
  	}
+ 	free_pmu_context(pmu);
++	mutex_unlock(&pmus_lock);
+ }
+ EXPORT_SYMBOL_GPL(perf_pmu_unregister);
  
-@@ -2207,7 +2208,7 @@ static void reg_process_hint(struct regulatory_request *reg_request)
- 	 */
- 	if (treatment == REG_REQ_ALREADY_SET && wiphy &&
- 	    wiphy->regulatory_flags & REGULATORY_STRICT_REG) {
--		wiphy_update_regulatory(wiphy, reg_request->initiator);
-+		wiphy_update_regulatory(wiphy, initiator);
- 		wiphy_all_share_dfs_chan_state(wiphy);
- 		reg_check_channels();
- 	}
 -- 
 2.17.1
 
