@@ -2,104 +2,173 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A0F7C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 12:35:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCABFC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 12:36:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 232972081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 12:35:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Zez+yZcy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 232972081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 99EC22084C
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 12:36:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99EC22084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727610AbeKBVm0 (ORCPT
+        id S1727661AbeKBVnI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 17:42:26 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:46886 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726265AbeKBVm0 (ORCPT
+        Fri, 2 Nov 2018 17:43:08 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:43544 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726026AbeKBVnI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 17:42:26 -0400
-Received: by mail-oi1-f195.google.com with SMTP id k64-v6so1410066oia.13
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 05:35:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YG3VChNFQS0CtyRt5u1f3UsENmETTfaopErDD3Ti+LM=;
-        b=Zez+yZcyjdTsYznjTiD1KQXSConV9IKL9qSvzK7x9KMKAs1kkhXP2DdQ2QZM6oTKko
-         sZrN4EoP0ZZ11ZPvlCQQe+e/4Q1GwOJwb13k4IOlyKArPRTXIZiXKAiWux+0az8hq0mK
-         cTNpGbTIoxHbtplOET2WVEh3y/F2FEE53d0OI=
+        Fri, 2 Nov 2018 17:43:08 -0400
+Received: by mail-lf1-f68.google.com with SMTP id u18so1206337lff.10;
+        Fri, 02 Nov 2018 05:36:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YG3VChNFQS0CtyRt5u1f3UsENmETTfaopErDD3Ti+LM=;
-        b=KvYmHeRUoT1citEKdTnAfuX5piciFZUonWb7k8hnLCNf/AjDU7mVFeJWrrDCoODC7+
-         ruFQBMUGEMlAs3WCRwFZx6l1+jGekRvh+xDnQWGR6oK3dny0lO8HHtVA8o3vmYRpHtQh
-         oCuDxWk/g9KuuAQywAiFSwjfvae2spk1m0zzOdf3OvvZzTCxfOxAF4qFlVWj/J0ee657
-         qxzkaeY4tnu1t58FDkhkU6KhUHjxcw/6zI3YoRN9ck2aImr1iiFvwBB9Nj8MDcperNKx
-         7ymf5TVI//Cq+Be+WUfZmfCG5cC9IN7XAsIMWPMDbTBxol0P9523B6t8trkoAgWbMh5o
-         L8wg==
-X-Gm-Message-State: AGRZ1gLcdbPLf03EggEKkPF3oAX8Q4FdXGmp+pyVwPXvUHhRMcRaktVp
-        Qu9vYp2EDmMszJU5LvsgMv2Et/355xqziC/7PLnN
-X-Google-Smtp-Source: AJdET5cDmlaw2HcOA5mtu3Rix6UT8HJxQ8O9BV8oYmwBNRSoyTxmBCosRR9Axmxa6Sg8p0Gvs+SQ898q7em+RHthgaA=
-X-Received: by 2002:aca:f50b:: with SMTP id t11-v6mr6989387oih.57.1541162122995;
- Fri, 02 Nov 2018 05:35:22 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Y5x+Ok5Ed4t9w7g5J7qXI1OurGBp0O2MAJGG1HebFLU=;
+        b=KGzoUCvm5/2b6dA7Lmnls17L74Q6oNK3aZbWxXuPgMPbPdCgXogibv51WoUiOvdP30
+         NxJN9bOQt8tNHNMwuo40R9CkrRdxondpNgGENWWNfsnnlJ6YkLPgIjW+eeNRbIf7lbDD
+         oiK9RuSWwh1oqsLHbAbbn1heirMVt8NLcz+NcGPclXX9q1hgwInlc8R+LkoKNUvhd8uI
+         hZI6kJmcR1I56pxDTcZMmucSlbEr3vMy38JNRGH7yZSUtqag6SDmhb9CqjO9BdfQEtNd
+         lckhYUdtbfQTpqLt0zX1FwOWgtrlNI9wbIZ2wt/RTDIrb01T16mNGFh9x1rC/oQNekha
+         JsRw==
+X-Gm-Message-State: AGRZ1gLaQhs1eNBGH9WDbFz5BmPuh9N1z1mSQis5VL0eTaoFh+ztCjvh
+        UoIK46AFknMmgb1aHtO5KPc=
+X-Google-Smtp-Source: AJdET5dlM7Gl67fYKCTdLIuaFdbAX7CuFNVR37Z6KObOdFlosdpkknsAqp9MQje21OG0cpsW28nYRQ==
+X-Received: by 2002:a19:48d0:: with SMTP id v199mr6949047lfa.104.1541162163233;
+        Fri, 02 Nov 2018 05:36:03 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id a63-v6sm5537119ljf.54.2018.11.02.05.36.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 02 Nov 2018 05:36:02 -0700 (PDT)
+Date:   Fri, 2 Nov 2018 14:35:49 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh@kernel.org>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Huang Shijie <sjhuang@iluvatar.ai>,
+        Akshu Agrawal <Akshu.Agrawal@amd.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Daniel Kurtz <djkurtz@chromium.org>, mazziesaccount@gmail.com
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        matti.vaittinen@fi.rohmeurope.com
+Subject: [PATCH v3 2/7] clk: clk-max77686: Clean clkdev lookup leak and use
+ devm
+Message-ID: <0be8b4ce5554e8539a458cc6152facc88a3e1804.1541161503.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1541161503.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-References: <20181031081945.207709-1-vovoy@chromium.org> <20181031142458.GP32673@dhcp22.suse.cz>
- <cc44aa53-8705-02ea-6c59-f311427d93af@intel.com> <20181031164231.GQ32673@dhcp22.suse.cz>
- <CAEHM+4pSkv_fD3Yb2KX1xFrOmRHU1e=+wCBrCyLAAMBG3zP75w@mail.gmail.com> <20181101130910.GI23921@dhcp22.suse.cz>
-In-Reply-To: <20181101130910.GI23921@dhcp22.suse.cz>
-From:   Vovo Yang <vovoy@chromium.org>
-Date:   Fri, 2 Nov 2018 20:35:11 +0800
-Message-ID: <CAEHM+4rvBmFWhzPXZrwxXvMEmVdkpsgRg26wVNYSA8HKF_8AwQ@mail.gmail.com>
-Subject: Re: [PATCH v3] mm, drm/i915: mark pinned shmemfs pages as unevictable
-To:     mhocko@kernel.org
-Cc:     Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, linux-mm@kvack.org,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1541161503.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 1, 2018 at 9:10 PM Michal Hocko <mhocko@kernel.org> wrote:
-> OK, so that explain my question about the test case. Even though you
-> generate a lot of page cache, the amount is still too small to trigger
-> pagecache mostly reclaim and anon LRUs are scanned as well.
->
-> Now to the difference with the previous version which simply set the
-> UNEVICTABLE flag on mapping. Am I right assuming that pages are already
-> at LRU at the time? Is there any reason the mapping cannot have the flag
-> set before they are added to the LRU?
+clk-max77686 never clean clkdev lookup at remove. This can cause
+oops if clk-max77686 is removed and inserted again. Fix leak by
+using new devm clkdev lookup registration. Simplify also error
+path by using new devm_of_clk_add_parent_hw_provider.
 
-I checked again. When I run gem_syslatency, it sets unevictable flag
-first and then adds pages to LRU, so my explanation to the previous
-test result is wrong. It should not be necessary to explicitly move
-these pages to unevictable list for this test case. The performance
-improvement of this patch on kbl might be due to not calling
-shmem_unlock_mapping.
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/clk/clk-max77686.c | 29 +++++++----------------------
+ 1 file changed, 7 insertions(+), 22 deletions(-)
 
-The perf result of a shmem lock test shows find_get_entries is the
-most expensive part of shmem_unlock_mapping.
-85.32%--ksys_shmctl
-        shmctl_do_lock
-         --85.29%--shmem_unlock_mapping
-                   |--45.98%--find_get_entries
-                   |           --10.16%--radix_tree_next_chunk
-                   |--16.78%--check_move_unevictable_pages
-                   |--16.07%--__pagevec_release
-                   |           --15.67%--release_pages
-                   |                      --4.82%--free_unref_page_list
-                   |--4.38%--pagevec_remove_exceptionals
-                    --0.59%--_cond_resched
+diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
+index 02551fe4b87c..51a46179f6f8 100644
+--- a/drivers/clk/clk-max77686.c
++++ b/drivers/clk/clk-max77686.c
+@@ -235,8 +235,9 @@ static int max77686_clk_probe(struct platform_device *pdev)
+ 			return ret;
+ 		}
+ 
+-		ret = clk_hw_register_clkdev(&max_clk_data->hw,
+-					     max_clk_data->clk_idata.name, NULL);
++		ret = devm_clk_hw_register_clkdev(dev, &max_clk_data->hw,
++						  max_clk_data->clk_idata.name,
++						  NULL);
+ 		if (ret < 0) {
+ 			dev_err(dev, "Failed to clkdev register: %d\n", ret);
+ 			return ret;
+@@ -244,8 +245,9 @@ static int max77686_clk_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	if (parent->of_node) {
+-		ret = of_clk_add_hw_provider(parent->of_node, of_clk_max77686_get,
+-					     drv_data);
++		ret = devm_of_clk_add_parent_hw_provider(dev,
++							 of_clk_max77686_get,
++							 drv_data);
+ 
+ 		if (ret < 0) {
+ 			dev_err(dev, "Failed to register OF clock provider: %d\n",
+@@ -261,27 +263,11 @@ static int max77686_clk_probe(struct platform_device *pdev)
+ 					 1 << MAX77802_CLOCK_LOW_JITTER_SHIFT);
+ 		if (ret < 0) {
+ 			dev_err(dev, "Failed to config low-jitter: %d\n", ret);
+-			goto remove_of_clk_provider;
++			return ret;
+ 		}
+ 	}
+ 
+ 	return 0;
+-
+-remove_of_clk_provider:
+-	if (parent->of_node)
+-		of_clk_del_provider(parent->of_node);
+-
+-	return ret;
+-}
+-
+-static int max77686_clk_remove(struct platform_device *pdev)
+-{
+-	struct device *parent = pdev->dev.parent;
+-
+-	if (parent->of_node)
+-		of_clk_del_provider(parent->of_node);
+-
+-	return 0;
+ }
+ 
+ static const struct platform_device_id max77686_clk_id[] = {
+@@ -297,7 +283,6 @@ static struct platform_driver max77686_clk_driver = {
+ 		.name  = "max77686-clk",
+ 	},
+ 	.probe = max77686_clk_probe,
+-	.remove = max77686_clk_remove,
+ 	.id_table = max77686_clk_id,
+ };
+ 
+-- 
+2.14.3
+
+
+-- 
+Matti Vaittinen
+ROHM Semiconductors
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
