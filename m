@@ -2,127 +2,88 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC802C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 22:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FB89C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 22:17:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A10F72082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 22:16:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A10F72082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2E1892082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 22:17:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E1892082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728563AbeKCHZv (ORCPT
+        id S1728577AbeKCHZy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 03:25:51 -0400
-Received: from mga18.intel.com ([134.134.136.126]:12704 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728505AbeKCHZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 03:25:51 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 15:16:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,457,1534834800"; 
-   d="scan'208";a="104855231"
-Received: from kohsamui.iil.intel.com (HELO [10.236.193.12]) ([10.236.193.12])
-  by fmsmga001.fm.intel.com with ESMTP; 02 Nov 2018 15:16:51 -0700
-Subject: Re: lib/genalloc
-To:     Daniel Mentz <danielmentz@google.com>
-Cc:     Stephen Bates <sbates@raithlin.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.co>,
-        lkml <linux-kernel@vger.kernel.org>, labbott@redhat.com
-References: <a170cf65-6884-3592-1de9-4c235888cc8a@intel.com>
- <4DECD467-AD45-419D-8F0F-1456863274FD@raithlin.com>
- <d127f28f-71fe-c175-c0e4-a368ff1d01a1@intel.com>
- <CAE2F3rBifp4y=WQFC6CTcYtPUFyvLD4ZZMrZSzu4P+Fzot_f0A@mail.gmail.com>
- <de2e1756-329b-7df2-559e-a603a7edc2ff@intel.com>
- <CAE2F3rDm1X-UuWHoJf9wAz3HJkC_LQP+UMq81Opu6te7KH704Q@mail.gmail.com>
-From:   Alexey Skidanov <alexey.skidanov@intel.com>
-Message-ID: <7a3eb4d7-2a93-8a39-c696-675053e53c53@intel.com>
-Date:   Sat, 3 Nov 2018 00:18:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sat, 3 Nov 2018 03:25:54 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40883 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728564AbeKCHZy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 03:25:54 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 963B280948; Fri,  2 Nov 2018 23:16:55 +0100 (CET)
+Date:   Fri, 2 Nov 2018 23:16:57 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, Eric Miao <eric.y.miao@gmail.com>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2] DT: marvell,mmp2: add MMC controllers
+Message-ID: <20181102221657.GF5322@amd>
+References: <20180917110736.5948-1-lkundrak@v3.sk>
 MIME-Version: 1.0
-In-Reply-To: <CAE2F3rDm1X-UuWHoJf9wAz3HJkC_LQP+UMq81Opu6te7KH704Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="DEueqSqTbz/jWVG1"
+Content-Disposition: inline
+In-Reply-To: <20180917110736.5948-1-lkundrak@v3.sk>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--DEueqSqTbz/jWVG1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 11/2/18 11:16 PM, Daniel Mentz wrote:
-> On Fri, Nov 2, 2018 at 1:55 PM Alexey Skidanov
-> <alexey.skidanov@intel.com> wrote:
->>
->>
->>
->> On 11/2/18 9:17 PM, Daniel Mentz wrote:
->>> On Thu, Nov 1, 2018 at 10:07 AM Alexey Skidanov
->>> <alexey.skidanov@intel.com> wrote:
->>>> On 11/1/18 18:48, Stephen  Bates wrote:
->>>>>>    I use gen_pool_first_fit_align() as pool allocation algorithm allocating
->>>>>>    buffers with requested alignment. But if a chunk base address is not
->>>>>>    aligned to the requested alignment(from some reason), the returned
->>>>>>    address is not aligned too.
->>>>>
->>>>> Alexey
->>>>>
->>>>> Can you try using gen_pool_first_fit_order_align()? Will that give you the alignment you need?
->>>>>
->>>>> Stephen
->>>>>
->>>>>
->>>> I think it will not help me. Let's assume that the chunk base address is
->>>> 0x2F400000 and I want to allocate 16MB aligned buffer. I get back the
->>>> 0x2F400000. I think it happens because of this string in the
->>>> gen_pool_alloc_algo():
->>>>
->>>> addr = chunk->start_addr + ((unsigned long)start_bit << order);
->>>>
->>>> and the gen_pool_first_fit_align() implementation that doesn't take into
->>>> account the "incorrect" chunk base alignment.
->>>
->>> gen_pool_first_fit_align() has no information about the chunk base
->>> alignment. Hence, it can't take it into account.
->>>
->>> How do you request the alignment in your code?
->>>
->>> I agree with your analysis that gen_pool_first_fit_align() performs
->>> alignment only with respect to the start of the chunk not the memory
->>> address that gen_pool_alloc_algo() returns. I guess a solution would
->>> be to only add chunks that satisfy all your alignment requirements. In
->>> your case, you must only add chunks that are 16MB aligned.
->>> I am unsure whether this is by design, but I believe it's the way that
->>> the code currently works.
->>>
->>
->> Daniel,
->>
->> I think the better solution is to use bitmap_find_next_zero_area_off()
->> that receives the bit offset (CMA allocator uses it to solve the same
->> issue). Of course, we need to pass the chunk base address to the
->> gen_pool_first_fit_align().
->>
->> What do you think?
-> 
-> Yeah, I guess you could extend genpool_algo_t to include the
-> information you need i.e. the offset and then provide a modified
-> version of gen_pool_first_fit_align() that does take your offset into
-> account. I wouldn't change gen_pool_first_fit_align(), though, because
-> existing users might depend on the current behavior.
-> 
-I think that the "fixed" version of gen_pool_first_fit_align() is less
-restrictive with respect to chunk base address - it will work correctly
-with arbitrary aligned chunks.
+On Mon 2018-09-17 13:07:36, Lubomir Rintel wrote:
+> There's apparently four of them on a MMP2.
+>=20
+> Changes since v1:
+> - The controllers seem to be on AXI bus, not APB. Move them.
+> - Remove aliases.
+>=20
+> Cc: Eric Miao <eric.y.miao@gmail.com>
+> Cc: Haojian Zhuang <haojian.zhuang@gmail.com>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 
-Thanks,
-Alexey
+Acked-by: Pavel Machek <pavel@ucw.cz>
+
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--DEueqSqTbz/jWVG1
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvczNkACgkQMOfwapXb+vIHuQCfV1LEotta+On3pB2HggQSZNkS
+sv8AoJLBuNlMR2FGU5hcMK1RH5jo22ek
+=VJ0D
+-----END PGP SIGNATURE-----
+
+--DEueqSqTbz/jWVG1--
