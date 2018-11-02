@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5656DC65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:49:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C03C5C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:49:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F20B20847
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:49:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8974620837
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:49:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wewUG2Qc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F20B20847
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mrGkLru4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8974620837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730651AbeKCD50 (ORCPT
+        id S1729756AbeKCD53 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:57:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52972 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:57:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728337AbeKCD5Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:57:24 -0400
+        id S1728280AbeKCD52 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:57:28 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0084620847;
-        Fri,  2 Nov 2018 18:49:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3CBC2082D;
+        Fri,  2 Nov 2018 18:49:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184550;
-        bh=Ht4yQrs/Aad/jQivs4N4pJlF3d0RvSTVD0Ddd+b6yi8=;
+        s=default; t=1541184554;
+        bh=xCbiC9JEDOfHYPpr+cfqSyuYwsqZ66v2vPCeNJW8Rxc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wewUG2QcEDcP2+Z3Rt2OF7ap/VKnzc9Q1f5u7I0KSXWtOcRUB/IcOCCCOA5sR8hao
-         UYeRLy6+al74ogQCaX328bgCUZh95VfzIGYWdnQ5KSCPiZqSHmnLwcN4h/mq1Ivtlg
-         bu5NNWpzKaKO0APhjM9JQYHXjO1pA+Bmzbl9qrj8=
+        b=mrGkLru4wuVG5TPO9XH8dp+Apkf0qgIeWlELDx7pADF73MvH9UUKoTgh7vQURqFuL
+         r2ocn0payIepssKW3LTNOfdhK+7kwHdWqrJa7QbXpHRlppOmZMxYBN7Lv/6KG0a9xU
+         yFQ5e3wvC/A8RQKEO+iIPIO/jr9yBwBSiCH4DNRM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        Woojung Huh <Woojung.Huh@Microchip.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 032/143] lan78xx: Check for supported Wake-on-LAN modes
-Date:   Fri,  2 Nov 2018 19:33:37 +0100
-Message-Id: <20181102182859.632939289@linuxfoundation.org>
+Subject: [PATCH 4.14 009/143] mac80211: TDLS: fix skb queue/priority assignment
+Date:   Fri,  2 Nov 2018 19:33:14 +0100
+Message-Id: <20181102182857.821303427@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -64,48 +62,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit eb9ad088f96653a26b340f7c447c44cf023d5cdc ]
+[ Upstream commit cb59bc14e830028d2244861216df038165d7625d ]
 
-The driver supports a fair amount of Wake-on-LAN modes, but is not
-checking that the user specified one that is supported.
+If the TDLS setup happens over a connection to an AP that
+doesn't have QoS, we nevertheless assign a non-zero TID
+(skb->priority) and queue mapping, which may confuse us or
+drivers later.
 
-Fixes: 55d7de9de6c3 ("Microchip's LAN7800 family USB 2/3 to 10/100/1000 Ethernet device driver")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Reviewed-by: Woojung Huh <Woojung.Huh@Microchip.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fix it by just assigning the special skb->priority and then
+using ieee80211_select_queue() just like other data frames
+would go through.
+
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/lan78xx.c | 17 ++++-------------
- 1 file changed, 4 insertions(+), 13 deletions(-)
+ net/mac80211/tdls.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index 9e3f632e22f1..00ddcaf09014 100644
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -1375,19 +1375,10 @@ static int lan78xx_set_wol(struct net_device *netdev,
- 	if (ret < 0)
- 		return ret;
+diff --git a/net/mac80211/tdls.c b/net/mac80211/tdls.c
+index 91093d4a2f84..6e7aa65cf345 100644
+--- a/net/mac80211/tdls.c
++++ b/net/mac80211/tdls.c
+@@ -16,6 +16,7 @@
+ #include "ieee80211_i.h"
+ #include "driver-ops.h"
+ #include "rate.h"
++#include "wme.h"
  
--	pdata->wol = 0;
--	if (wol->wolopts & WAKE_UCAST)
--		pdata->wol |= WAKE_UCAST;
--	if (wol->wolopts & WAKE_MCAST)
--		pdata->wol |= WAKE_MCAST;
--	if (wol->wolopts & WAKE_BCAST)
--		pdata->wol |= WAKE_BCAST;
--	if (wol->wolopts & WAKE_MAGIC)
--		pdata->wol |= WAKE_MAGIC;
--	if (wol->wolopts & WAKE_PHY)
--		pdata->wol |= WAKE_PHY;
--	if (wol->wolopts & WAKE_ARP)
--		pdata->wol |= WAKE_ARP;
-+	if (wol->wolopts & ~WAKE_ALL)
-+		return -EINVAL;
-+
-+	pdata->wol = wol->wolopts;
+ /* give usermode some time for retries in setting up the TDLS session */
+ #define TDLS_PEER_SETUP_TIMEOUT	(15 * HZ)
+@@ -1006,14 +1007,13 @@ ieee80211_tdls_prep_mgmt_packet(struct wiphy *wiphy, struct net_device *dev,
+ 	switch (action_code) {
+ 	case WLAN_TDLS_SETUP_REQUEST:
+ 	case WLAN_TDLS_SETUP_RESPONSE:
+-		skb_set_queue_mapping(skb, IEEE80211_AC_BK);
+-		skb->priority = 2;
++		skb->priority = 256 + 2;
+ 		break;
+ 	default:
+-		skb_set_queue_mapping(skb, IEEE80211_AC_VI);
+-		skb->priority = 5;
++		skb->priority = 256 + 5;
+ 		break;
+ 	}
++	skb_set_queue_mapping(skb, ieee80211_select_queue(sdata, skb));
  
- 	device_set_wakeup_enable(&dev->udev->dev, (bool)wol->wolopts);
- 
+ 	/*
+ 	 * Set the WLAN_TDLS_TEARDOWN flag to indicate a teardown in progress.
 -- 
 2.17.1
 
