@@ -2,98 +2,120 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_AGENT_NEOMUTT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE746C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:04:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4796C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:04:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DF552081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:04:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 928B02081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:04:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="wgh7N/gC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DF552081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="gNWtJkyB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 928B02081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727762AbeKBXLf (ORCPT
+        id S1727825AbeKBXLj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 19:11:35 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:48344 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726026AbeKBXLf (ORCPT
+        Fri, 2 Nov 2018 19:11:39 -0400
+Received: from alln-iport-4.cisco.com ([173.37.142.91]:32905 "EHLO
+        alln-iport-4.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726026AbeKBXLj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 19:11:35 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA2E4Gn4194258;
-        Fri, 2 Nov 2018 14:04:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2018-07-02;
- bh=rx7d9c1Ho99ZKGyLo4XTWcEaingY1r1FAfUD1FRI/m8=;
- b=wgh7N/gCVOVxYjtaZ6f7ZU3A8T6djDmc9y7UuAGfiYoi5w4rUs7mdnG82e0UqdAwIo94
- SJjSRpQ6qTQrIsf8+rALIoumwjLmEmuRbVXddQk9ZRks3n7DZIVy8ohmufnltrbJ9l9l
- L7tRl0jYoZvLP9lq2AA9fxdqRlAG4bhveOgoNNdEmrS5+Xgvsx1yCKD7MsBwNs45rDE6
- E9Z+slAjxVVrVecButMzffTrhYHo9FvHZLP5NvJK4qOfFSLBc5YUPSKgh/3t6tbD1YsI
- a16v6Kun+pLsfMFuU6dwz7xyIg3USc+YChUMcpgIONfZefFoOpea9/NP6G0kju1w7jPP Ng== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2120.oracle.com with ESMTP id 2ncfyqen7g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 02 Nov 2018 14:04:15 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wA2E4AUk004562
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 2 Nov 2018 14:04:10 GMT
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wA2E4AGQ025024;
-        Fri, 2 Nov 2018 14:04:10 GMT
-Received: from ol7.nl.oracle.com (/10.175.37.135)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 02 Nov 2018 07:04:09 -0700
-From:   Liam Merwick <Liam.Merwick@oracle.com>
-To:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Cc:     jgross@suse.com, boris.ostrovsky@oracle.com,
-        liam.merwick@oracle.com
-Subject: [PATCH] xen/grant-table: Fix incorrect gnttab_dma_free_pages() pr_debug message
-Date:   Fri,  2 Nov 2018 14:04:23 +0000
-Message-Id: <1541167463-32024-1-git-send-email-Liam.Merwick@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9064 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=930
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1811020128
+        Fri, 2 Nov 2018 19:11:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=1940; q=dns/txt; s=iport;
+  t=1541167464; x=1542377064;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=haHA5WqRQcMUNziGi4g3S1tgiGWxz250sy7XFD5RM9E=;
+  b=gNWtJkyBZldZNHbr13zDBlB0J4vrz+4tUnGkCBURY77E8O2Lh0Z81/07
+   evZD447Y0jHERTd2Lq06c+KL2NO4Ue20u7KGTxgpwB0wHFZzeucgL+z+e
+   M9r5z0EPS9HlOCL+kphhXLS9t278CGaM5IG0PMq5Vujp7ZJVm8skSKD/5
+   g=;
+X-IronPort-AV: E=Sophos;i="5.54,456,1534809600"; 
+   d="scan'208";a="195464345"
+Received: from rcdn-core-12.cisco.com ([173.37.93.148])
+  by alln-iport-4.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 14:04:23 +0000
+Received: from zorba ([10.24.90.186])
+        by rcdn-core-12.cisco.com (8.15.2/8.15.2) with ESMTPS id wA2E4Lhe019704
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 2 Nov 2018 14:04:22 GMT
+Date:   Fri, 2 Nov 2018 07:04:20 -0700
+From:   Daniel Walker <danielwa@cisco.com>
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     Nikunj Kela <nkela@cisco.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        xe-linux-external@cisco.com, Rod Whitby <rod@whitby.id.au>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Make JFFS2 endianness configurable
+Message-ID: <20181102140420.jiuhcsrahoeqe5vk@zorba>
+References: <20181101225603.17806-1-nkela@cisco.com>
+ <20181102000236.rqho7txtb7gv543t@zorba>
+ <20181102003434.GW32577@ZenIV.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181102003434.GW32577@ZenIV.linux.org.uk>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Auto-Response-Suppress: DR, OOF, AutoReply
+X-Outbound-SMTP-Client: 10.24.90.186, [10.24.90.186]
+X-Outbound-Node: rcdn-core-12.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a call to xenmem_reservation_increase() in gnttab_dma_free_pages()
-fails it triggers a message "Failed to decrease reservation..." which
-should be "Failed to increase reservation..."
+On Fri, Nov 02, 2018 at 12:34:34AM +0000, Al Viro wrote:
+> On Thu, Nov 01, 2018 at 05:02:36PM -0700, Daniel Walker wrote:
+> > 
+> > 
+> > 
+> > On Thu, Nov 01, 2018 at 03:56:03PM -0700, Nikunj Kela wrote:
+> > > This patch allows the endianness of the JFSS2 filesystem to be
+> > > specified by config options.
+> > > 
+> > > It defaults to native-endian (the previously hard-coded option).
+> > > 
+> > > Some architectures benefit from having a single known endianness
+> > > of JFFS2 filesystem (for data, not executables) independent of the
+> > > endianness of the processor (ARM processors can be switched to either
+> > > endianness at run-time).
+> > > 
+> > 
+> > 
+> > The description is pretty sad .. We have a product which we released that uses
+> > JFFS2, and that product was release with a kernel in one endianness. Then later
+> > on we decided to change the endianness and now we're stuck with a JFFS2
+> > partition that has the wrong endiannes, in a released product. This patch allows
+> > us to set the endianness to something different from the architecture setting.
+> > 
+> > So there a significant use case for the change, at least for Cisco.
+> 
+> FWIW, can't we detect it at mount time, as e.g. UFS does?
 
-Fixes: 9bdc7304f536 ('xen/grant-table: Allow allocating buffers suitable for DMA')
-Reported-by: Ross Philipson <ross.philipson@oracle.com>
-Signed-off-by: Liam Merwick <liam.merwick@oracle.com>
-Reviewed-by: Mark Kanda <mark.kanda@oracle.com>
----
- drivers/xen/grant-table.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+We're not JFFS2 (or even filesystems) experts, but we could make an attempt at
+it.
 
-diff --git a/drivers/xen/grant-table.c b/drivers/xen/grant-table.c
-index 84575baceebc..97341fa75458 100644
---- a/drivers/xen/grant-table.c
-+++ b/drivers/xen/grant-table.c
-@@ -914,7 +914,7 @@ int gnttab_dma_free_pages(struct gnttab_dma_alloc_args *args)
- 
- 	ret = xenmem_reservation_increase(args->nr_pages, args->frames);
- 	if (ret != args->nr_pages) {
--		pr_debug("Failed to decrease reservation for DMA buffer\n");
-+		pr_debug("Failed to increase reservation for DMA buffer\n");
- 		ret = -EFAULT;
- 	} else {
- 		ret = 0;
--- 
-1.8.3.1
+Do you have any thought on how to implement it ? I was think abstracting the
+endian functions in the nodelist.h
 
+static inline jint16_t cpu_to_je16(jint16_t x) {
+	if (check_big_endian()) {
+		return cpu_to_be16(x);
+	} else if (check_little_endian()) {
+		return cpu_to_le16(x);
+	}
+}
+
+but how would you setup the checking ?
+
+This would also work well for when you have a filesystem image on say an
+x86 machine. I found some sites that recommend using jffs2dump to convert the
+endianness before you can mount it. You most likely wouldn't change the kernel
+in that case, or wouldn't want to.
+
+Daniel
