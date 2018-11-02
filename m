@@ -2,105 +2,110 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB423C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:32:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD262C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:33:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61A4920831
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:32:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61A4920831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6D3B42081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:33:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D3B42081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728029AbeKCCj7 (ORCPT
+        id S1728106AbeKCClr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 22:39:59 -0400
-Received: from foss.arm.com ([217.140.101.70]:44416 "EHLO foss.arm.com"
+        Fri, 2 Nov 2018 22:41:47 -0400
+Received: from mga03.intel.com ([134.134.136.65]:38026 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726085AbeKCCj7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 22:39:59 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 984A3A78;
-        Fri,  2 Nov 2018 10:32:03 -0700 (PDT)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.197.53])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0FACB3F71E;
-        Fri,  2 Nov 2018 10:32:01 -0700 (PDT)
-Date:   Fri, 2 Nov 2018 17:31:59 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     will.deacon@arm.com, masami.hiramatsu@linaro.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-kernel@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] arm64: kprobe: make page to RO mode when allocate it
-Message-ID: <20181102173159.GG218059@arrakis.emea.arm.com>
-References: <20181030113850.31150-1-anders.roxell@linaro.org>
+        id S1726707AbeKCClr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 22:41:47 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 10:33:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,456,1534834800"; 
+   d="scan'208";a="104795413"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.193])
+  by fmsmga001.fm.intel.com with ESMTP; 02 Nov 2018 10:33:50 -0700
+Date:   Fri, 2 Nov 2018 10:33:50 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rich Felker <dalias@libc.org>, Jann Horn <jannh@google.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Carlos O'Donell <carlos@redhat.com>,
+        adhemerval.zanella@linaro.org
+Subject: Re: RFC: userspace exception fixups
+Message-ID: <20181102173350.GF7393@linux.intel.com>
+References: <CAG48ez0vBqL0tyfWwmuc_cq+OAUoEi88=r+t6h64a-Fw8z59zA@mail.gmail.com>
+ <20181101185225.GC5150@brightrain.aerifal.cx>
+ <CAHk-=wgFo8tuZX5gzCfWGdAwGyn_Ar9JFnnMFNuwr9=vtfDV1g@mail.gmail.com>
+ <20181101193107.GE5150@brightrain.aerifal.cx>
+ <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
+ <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
+ <20181102163034.GB7393@linux.intel.com>
+ <7050972d-a874-dc08-3214-93e81181da60@intel.com>
+ <20181102170627.GD7393@linux.intel.com>
+ <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181030113850.31150-1-anders.roxell@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 12:38:50PM +0100, Anders Roxell wrote:
-> Commit 1404d6f13e47 ("arm64: dump: Add checking for writable and exectuable pages")
-> has successfully identified code that leaves a page with W+X
-> permissions.
+On Fri, Nov 02, 2018 at 10:13:23AM -0700, Dave Hansen wrote:
+> On 11/2/18 10:06 AM, Sean Christopherson wrote:
+> > On Fri, Nov 02, 2018 at 09:56:44AM -0700, Dave Hansen wrote:
+> >> On 11/2/18 9:30 AM, Sean Christopherson wrote:
+> >>> What if rather than having userspace register an address for fixup, the
+> >>> kernel instead unconditionally does fixup on the ENCLU opcode?
+> >>
+> >> The problem is knowing what to do for the fixup.  If we have a simple
+> >> action to take that's universal, like backing up %RIP, or setting some
+> >> other register state, it's not bad.
+> > 
+> > Isn't the EENTER/RESUME behavior universal?  Or am I missing something?
 > 
-> [    3.245140] arm64/mm: Found insecure W+X mapping at address (____ptrval____)/0xffff000000d90000
-> [    3.245771] WARNING: CPU: 0 PID: 1 at ../arch/arm64/mm/dump.c:232 note_page+0x410/0x420
-> [    3.246141] Modules linked in:
-> [    3.246653] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc5-next-20180928-00001-ge70ae259b853-dirty #62
-> [    3.247008] Hardware name: linux,dummy-virt (DT)
-> [    3.247347] pstate: 80000005 (Nzcv daif -PAN -UAO)
-> [    3.247623] pc : note_page+0x410/0x420
-> [    3.247898] lr : note_page+0x410/0x420
-> [    3.248071] sp : ffff00000804bcd0
-> [    3.248254] x29: ffff00000804bcd0 x28: ffff000009274000
-> [    3.248578] x27: ffff00000921a000 x26: ffff80007dfff000
-> [    3.248845] x25: ffff0000093f5000 x24: ffff000009526f6a
-> [    3.249109] x23: 0000000000000004 x22: ffff000000d91000
-> [    3.249396] x21: ffff000000d90000 x20: 0000000000000000
-> [    3.249661] x19: ffff00000804bde8 x18: 0000000000000400
-> [    3.249924] x17: 0000000000000000 x16: 0000000000000000
-> [    3.250271] x15: ffffffffffffffff x14: 295f5f5f5f6c6176
-> [    3.250594] x13: 7274705f5f5f5f28 x12: 2073736572646461
-> [    3.250941] x11: 20746120676e6970 x10: 70616d20582b5720
-> [    3.251252] x9 : 6572756365736e69 x8 : 3039643030303030
-> [    3.251519] x7 : 306666666678302f x6 : ffff0000095467b2
-> [    3.251802] x5 : 0000000000000000 x4 : 0000000000000000
-> [    3.252060] x3 : 0000000000000000 x2 : ffffffffffffffff
-> [    3.252323] x1 : 4d151327adc50b00 x0 : 0000000000000000
-> [    3.252664] Call trace:
-> [    3.252953]  note_page+0x410/0x420
-> [    3.253186]  walk_pgd+0x12c/0x238
-> [    3.253417]  ptdump_check_wx+0x68/0xf8
-> [    3.253637]  mark_rodata_ro+0x68/0x98
-> [    3.253847]  kernel_init+0x38/0x160
-> [    3.254103]  ret_from_fork+0x10/0x18
+> Could someone write down all the ways we get in and out of the enclave?
 > 
-> kprobes allocates a writable executable page with module_alloc() in
-> order to store executable code.
-> Reworked to that when allocate a page it sets mode RO. Inspired by
-> commit 63fef14fc98a ("kprobes/x86: Make insn buffer always ROX and use text_poke()").
-> 
-> Cc: Laura Abbott <labbott@redhat.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Co-developed-by: Arnd Bergmann <arnd@arndb.de>
-> Co-developed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> I think we always get in from userspace calling EENTER or ERESUME.  We
+> can't ever enter directly from the kernel, like via an IRET from what I
+> understand.
 
-Queued for 4.20 (and removed the signed-off-bys, added acks, removed
-unnecessary casts). Thanks.
+Correct, the only way to get into the enclave is EENTER or ERESUME.
+My understanding is that even SMIs bounce through the AEX target
+before transitioning to SMM.
+ 
+> We get *out* from exceptions, hardware interrupts, or enclave-explicit
+> EEXITs.  Did I miss any?  Remind me where the hardware lands the control
+> flow in each of those exit cases.
 
--- 
-Catalin
+And VMExits.  There are basically two cases: EEXIT and everything else.
+EEXIT is a glorified indirect jump, e.g. %RBX holds the target %RIP.
+Everything else is an Asynchronous Enclave Exit (AEX).  On an AEX, %RIP
+is set to a value specified by EENTER/ERESUME, %RBP and %RSP are
+restored to pre-enclave values and all other registers are loaded with
+synthetic state.  The actual interrupt/exception/VMExit then triggers,
+e.g. the %RIP on the stack for an exception is always the AEX target,
+not the %RIP inside the enclave that actually faulted.
