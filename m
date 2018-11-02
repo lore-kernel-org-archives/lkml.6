@@ -2,179 +2,199 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA81C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 21:11:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC49BC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 21:14:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45E6020831
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 21:11:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F6B72081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 21:14:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RiGKDhiH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45E6020831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="Qkz2RLSJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F6B72081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728033AbeKCGUS (ORCPT
+        id S1728101AbeKCGXP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 02:20:18 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:33200 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726100AbeKCGUS (ORCPT
+        Sat, 3 Nov 2018 02:23:15 -0400
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:31664 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726106AbeKCGXP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 02:20:18 -0400
-Received: by mail-yw1-f65.google.com with SMTP id z72-v6so1325751ywa.0;
-        Fri, 02 Nov 2018 14:11:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=BeJmC4AmAsWdpXlgK55iLlOwRYQpI5sykBJJFBJdXzs=;
-        b=RiGKDhiH1VGlb6l62xZIomzQwUX3sesNq/40uJcF+2fDIr00g5uhOhQuSPi0Qm7hEG
-         6r0D2S1AklloFioOKWEibhrsLD2bfyS2I9mz8UQz4r/4nyABPOBzVtHS2aH5azcDJooB
-         vbQBFaGmvRSuBImLJOUWkEh3kZZCdSkyWEIn8o18y0kVM7phFLIHLIeY0qtr7DJ42EB3
-         1ARJHuL+ZJmC0SrsMUut8HpkpiKfqP0I+Y+QdeK9gYkQX+MB6pgaFQbr2p/DRxfvWBER
-         KZa9jSESMAho+5jRVBBUUQHeK9weAqrGpteBWSnicqgpwt84zYbnkg5Sh5rZAOgUI4dL
-         HM4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=BeJmC4AmAsWdpXlgK55iLlOwRYQpI5sykBJJFBJdXzs=;
-        b=Ed/+D60GNodFp7kdT4eStHdXSi6SiitXObPHDlwuuQHGpv17c1UPNQa4shXa4DNPt6
-         +x3FAjCzpj22NwZrx0rGgqKZsLC5BR0HFUCTz9xdQQolTyYnJ4cS1wgDTN6jLaevZkIF
-         FQogOEBzeO+dpvXMClJD4bqJLntLXcn/w/vTIQuTAQ0azJw69+iu40xpKFjCZmrcZJW+
-         4P6eEBeAv+moXxNGaN+ZWSEsUZmpDPJknPyHpcVbipKTq/Latu15ZWH0qA1kyt1B0Fwr
-         IgQmQkfz7XMwbiHF+4ZNbqclSBwiJvt9Bjsh0vWucSgc4oWETZUrbA56a59QTqgbr9fG
-         9heQ==
-X-Gm-Message-State: AGRZ1gJiZ6OOl2LqlBSB8D9Ufh0QAH5SC2F5PZspJfspu1EzApRdgNKb
-        LYcrnSr6bmMIHqYapgorMUc=
-X-Google-Smtp-Source: AJdET5cHD2a32hUHlmAaHi4IzDmr3FFX/JCOTIjm47cjFORT3BJ69cYnKCqLr0u3iD4HHRdH0R+8Og==
-X-Received: by 2002:a81:a0cd:: with SMTP id x196-v6mr12466127ywg.73.1541193093953;
-        Fri, 02 Nov 2018 14:11:33 -0700 (PDT)
-Received: from [172.20.31.92] ([12.228.154.70])
-        by smtp.gmail.com with ESMTPSA id f68-v6sm9211332ywh.60.2018.11.02.14.11.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 02 Nov 2018 14:11:32 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Re: [PATCH 10/17] prmem: documentation
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <59E8A6FB-9762-499F-89AC-D85E1498BE38@gmail.com>
-Date:   Fri, 2 Nov 2018 16:11:30 -0500
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Igor Stoppa <igor.stoppa@gmail.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <1ECE02D5-2D80-4234-8523-E481B930A66D@gmail.com>
-References: <20181026092609.GB3159@worktop.c.hoisthospitality.com>
- <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
- <20181028183126.GB744@hirez.programming.kicks-ass.net>
- <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
- <20181030152641.GE8177@hirez.programming.kicks-ass.net>
- <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
- <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
- <20181030175814.GB10491@bombadil.infradead.org>
- <28C8CD2A-BDC0-49A5-854E-1E18968528B8@amacapital.net>
- <CAC99157-7A9B-4AC6-BA41-EAA7A99FE53D@gmail.com>
- <20181031090835.GG744@hirez.programming.kicks-ass.net>
- <59E8A6FB-9762-499F-89AC-D85E1498BE38@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@amacapital.net>
-X-Mailer: Apple Mail (2.3445.9.1)
+        Sat, 3 Nov 2018 02:23:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1541193272; x=1572729272;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=4+i51fRxigkTF2mXa0noRy1cmn2afNEARp6SCWUQGdI=;
+  b=Qkz2RLSJvNWUzPHNC+4r99m45+I09wxhGIqOqIolekwOTF4q4tFJNg8l
+   u/iw9F5LdRb6c5DJtiHuhlYGa8f2ioWiQbORj8+gxLOZ6emHMCSmnrPn7
+   KXMyR/XFlmZpj0a0vK5aAjclcnk7pG0DaDzBJCBrCS9DqznfWobgXSp/1
+   DXmmT6OJkccc8WV3vSwFjBDe008uX2Y+6vf4vpJhwYRo2G5rtwilb/yJ1
+   EzClXDI6mFqCmh8Dwc8oknmY+Lcb6lOBXXmPIsvLWX6uSAt89CMpxYg9B
+   qJ51Qq57221XLU88j8kE1+exPzWJsJhKwBE3Wn1qHDUoknJZsGjtPtFwq
+   w==;
+X-IronPort-AV: E=Sophos;i="5.54,457,1534780800"; 
+   d="scan'208";a="93415111"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 03 Nov 2018 05:14:32 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP; 02 Nov 2018 13:58:15 -0700
+Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.111.69.187]) ([10.111.69.187])
+  by uls-op-cesaip02.wdc.com with ESMTP; 02 Nov 2018 14:14:31 -0700
+Subject: Re: [RFC 0/2] Add RISC-V cpu topology
+To:     Nick Kossifidis <mick@ics.forth.gr>
+Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        "alankao@andestech.com" <alankao@andestech.com>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "anup@brainfault.org" <anup@brainfault.org>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "zong@andestech.com" <zong@andestech.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>
+References: <1541113468-22097-1-git-send-email-atish.patra@wdc.com>
+ <866dedbc78ab4fa0e3b040697e112106@mailhost.ics.forth.gr>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <9385b2eb-4729-8247-b0ae-1540793d078b@wdc.com>
+Date:   Fri, 2 Nov 2018 14:14:30 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <866dedbc78ab4fa0e3b040697e112106@mailhost.ics.forth.gr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nadav Amit
-Sent: November 1, 2018 at 4:31:59 PM GMT
-> To: Peter Zijlstra <peterz@infradead.org>
-> Cc: Andy Lutomirski <luto@amacapital.net>, Matthew Wilcox =
-<willy@infradead.org>, Kees Cook <keescook@chromium.org>, Igor Stoppa =
-<igor.stoppa@gmail.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>, Dave =
-Chinner <david@fromorbit.com>, James Morris <jmorris@namei.org>, Michal =
-Hocko <mhocko@kernel.org>, Kernel Hardening =
-<kernel-hardening@lists.openwall.com>, linux-integrity =
-<linux-integrity@vger.kernel.org>, linux-security-module =
-<linux-security-module@vger.kernel.org>, Igor Stoppa =
-<igor.stoppa@huawei.com>, Dave Hansen <dave.hansen@linux.intel.com>, =
-Jonathan Corbet <corbet@lwn.net>, Laura Abbott <labbott@redhat.com>, =
-Randy Dunlap <rdunlap@infradead.org>, Mike Rapoport =
-<rppt@linux.vnet.ibm.com>, open list:DOCUMENTATION =
-<linux-doc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Thomas =
-Gleixner <tglx@linutronix.de>
-> Subject: Re: [PATCH 10/17] prmem: documentation
->=20
->=20
-> From: Peter Zijlstra
-> Sent: October 31, 2018 at 9:08:35 AM GMT
->> To: Nadav Amit <nadav.amit@gmail.com>
->> Cc: Andy Lutomirski <luto@amacapital.net>, Matthew Wilcox =
-<willy@infradead.org>, Kees Cook <keescook@chromium.org>, Igor Stoppa =
-<igor.stoppa@gmail.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>, Dave =
-Chinner <david@fromorbit.com>, James Morris <jmorris@namei.org>, Michal =
-Hocko <mhocko@kernel.org>, Kernel Hardening =
-<kernel-hardening@lists.openwall.com>, linux-integrity =
-<linux-integrity@vger.kernel.org>, linux-security-module =
-<linux-security-module@vger.kernel.org>, Igor Stoppa =
-<igor.stoppa@huawei.com>, Dave Hansen <dave.hansen@linux.intel.com>, =
-Jonathan Corbet <corbet@lwn.net>, Laura Abbott <labbott@redhat.com>, =
-Randy Dunlap <rdunlap@infradead.org>, Mike Rapoport =
-<rppt@linux.vnet.ibm.com>, open list:DOCUMENTATION =
-<linux-doc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Thomas =
-Gleixner <tglx@linutronix.de>
->> Subject: Re: [PATCH 10/17] prmem: documentation
->>=20
->>=20
->> On Tue, Oct 30, 2018 at 04:18:39PM -0700, Nadav Amit wrote:
->>>> Nadav, want to resubmit your series? IIRC the only thing wrong with =
-it was
->>>> that it was a big change and we wanted a simpler fix to backport. =
-But
->>>> that=E2=80=99s all done now, and I, at least, rather liked your =
-code. :)
->>>=20
->>> I guess since it was based on your ideas=E2=80=A6
->>>=20
->>> Anyhow, the only open issue that I have with v2 is Peter=E2=80=99s =
-wish that I would
->>> make kgdb use of poke_text() less disgusting. I still don=E2=80=99t =
-know exactly
->>> how to deal with it.
->>>=20
->>> Perhaps it (fixing kgdb) can be postponed? In that case I can just =
-resend
->>> v2.
->>=20
->> Oh man, I completely forgot about kgdb :/
->>=20
->> Also, would it be possible to entirely remove that kmap fallback =
-path?
->=20
-> Let me see what I can do about it.
+On 11/2/18 11:59 AM, Nick Kossifidis wrote:
+> Hello All,
+> 
+> Στις 2018-11-02 01:04, Atish Patra έγραψε:
+>> This patch series adds the cpu topology for RISC-V. It contains
+>> both the DT binding and actual source code. It has been tested on
+>> QEMU & Unleashed board.
+>>
+>> The idea is based on cpu-map in ARM with changes related to how
+>> we define SMT systems. The reason for adopting a similar approach
+>> to ARM as I feel it provides a very clear way of defining the
+>> topology compared to parsing cache nodes to figure out which cpus
+>> share the same package or core.  I am open to any other idea to
+>> implement cpu-topology as well.
+>>
+> 
+> I was also about to start a discussion about CPU topology on RISC-V
+> after the last swtools group meeting. The goal is to provide the
+> scheduler with hints on how to distribute tasks more efficiently
+> between harts, by populating the scheduling domain topology levels
+> (https://elixir.bootlin.com/linux/v4.19/ident/sched_domain_topology_level).
+> What we want to do is define cpu groups and assign them to
+> scheduling domains with the appropriate SD_ flags
+> (https://github.com/torvalds/linux/blob/master/include/linux/sched/topology.h#L16).
+> 
 
-My patches had several embarrassing bugs. I=E2=80=99m fixing and will =
-resend later,
-hopefully today.
+Scheduler domain topology is already getting all the hints in the 
+following way.
+
+static struct sched_domain_topology_level default_topology[] = {
+#ifdef CONFIG_SCHED_SMT
+         { cpu_smt_mask, cpu_smt_flags, SD_INIT_NAME(SMT) },
+#endif
+#ifdef CONFIG_SCHED_MC
+         { cpu_coregroup_mask, cpu_core_flags, SD_INIT_NAME(MC) },
+#endif
+         { cpu_cpu_mask, SD_INIT_NAME(DIE) },
+         { NULL, },
+};
+
+#ifdef CONFIG_SCHED_SMT
+static inline const struct cpumask *cpu_smt_mask(int cpu)
+{
+         return topology_sibling_cpumask(cpu);
+}
+#endif
+
+const struct cpumask *cpu_coregroup_mask(int cpu)
+{
+         return &cpu_topology[cpu].core_sibling;
+}
+
+
+> So the cores that belong to a scheduling domain may share:
+> CPU capacity (SD_SHARE_CPUCAPACITY / SD_ASYM_CPUCAPACITY)
+> Package resources -e.g. caches, units etc- (SD_SHARE_PKG_RESOURCES)
+> Power domain (SD_SHARE_POWERDOMAIN)
+> 
+> In this context I believe using words like "core", "package",
+> "socket" etc can be misleading. For example the sample topology you
+> use on the documentation says that there are 4 cores that are part
+> of a package, however "package" has a different meaning to the
+> scheduler. Also we don't say anything in case they share a power
+> domain or if they have the same capacity or not. This mapping deals
+> only with cache hierarchy or other shared resources.
+> 
+> How about defining a dt scheme to describe the scheduler domain
+> topology levels instead ? e.g:
+> 
+> 2 sets (or clusters if you prefer) of 2 SMT cores, each set with
+> a different capacity and power domain:
+> 
+> sched_topology {
+>    level0 { // SMT
+>     shared = "power", "capacity", "resources";
+>     group0 {
+>      members = <&hart0>, <&hart1>;
+>     }
+>     group1 {
+>      members = <&hart2>, <&hart3>;
+>     }
+>     group2 {
+>      members = <&hart4>, <&hart5>;
+>     }
+>     group3 {
+>      members = <&hart6>, <&hart7>;
+>     }
+>    }
+>    level1 { // MC
+>     shared = "power", "capacity"
+>     group0 {
+>      members = <&hart0>, <&hart1>, <&hart2>, <&hart3>;
+>     }
+>     group1 {
+>      members = <&hart4>, <&hart5>, <&hart6>, <&hart7>;
+>     }
+>    }
+>    top_level { // A group with all harts in it
+>     shared = "" // There is nothing common for ALL harts, we could have
+> capacity here
+>    }
+> }
+> 
+
+I agree that naming could have been better in the past. But it is what 
+it is now. I don't see any big advantages in this approach compared to 
+the existing approach where DT specifies what hardware looks like and 
+scheduler sets up it's domain based on different cpumasks.
+
+
+Regards,
+Atish
+> Regards,
+> Nick
+> 
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> 
 
