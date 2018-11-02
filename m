@@ -2,143 +2,137 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83286C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEDB3C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:34:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E5682081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:30:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E5682081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 897182081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:34:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 897182081F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727699AbeKCBiR (ORCPT
+        id S1727757AbeKCBmj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 21:38:17 -0400
-Received: from mga01.intel.com ([192.55.52.88]:30202 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726260AbeKCBiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 21:38:17 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 09:30:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,456,1534834800"; 
-   d="scan'208";a="277840635"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.193])
-  by fmsmga006.fm.intel.com with ESMTP; 02 Nov 2018 09:30:35 -0700
-Date:   Fri, 2 Nov 2018 09:30:34 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Rich Felker <dalias@libc.org>, Jann Horn <jannh@google.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Carlos O'Donell <carlos@redhat.com>,
-        adhemerval.zanella@linaro.org
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181102163034.GB7393@linux.intel.com>
-References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
- <CAG48ez0vBqL0tyfWwmuc_cq+OAUoEi88=r+t6h64a-Fw8z59zA@mail.gmail.com>
- <20181101185225.GC5150@brightrain.aerifal.cx>
- <CAHk-=wgFo8tuZX5gzCfWGdAwGyn_Ar9JFnnMFNuwr9=vtfDV1g@mail.gmail.com>
- <20181101193107.GE5150@brightrain.aerifal.cx>
- <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
- <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
+        Fri, 2 Nov 2018 21:42:39 -0400
+Received: from asavdk4.altibox.net ([109.247.116.15]:37398 "EHLO
+        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726794AbeKCBmj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 21:42:39 -0400
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by asavdk4.altibox.net (Postfix) with ESMTPS id D420080312;
+        Fri,  2 Nov 2018 17:34:50 +0100 (CET)
+Date:   Fri, 2 Nov 2018 17:34:49 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Adam Ford <aford173@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, airlied@linux.ie,
+        thierry.reding@gmail.com, adam.ford@logicpd.com,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] drm/panel: simple: Add Ampire am800480b3tmqw
+Message-ID: <20181102163449.GA25035@ravnborg.org>
+References: <20181101125138.27848-1-aford173@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181101125138.27848-1-aford173@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=UpRNyd4B c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=kj9zAlcOel0A:10 a=pGLkceISAAAA:8 a=aDtu_6vVvJ-Pg3724GMA:9
+        a=CjuIK1q_8ugA:10
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 01, 2018 at 04:22:55PM -0700, Andy Lutomirski wrote:
-> On Thu, Nov 1, 2018 at 2:24 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > On Thu, Nov 1, 2018 at 12:31 PM Rich Felker <dalias@libc.org> wrote:
-> > >
-> > > See my other emails in this thread. You would register the *address*
-> > > (in TLS) of a function pointer object pointing to the handler, rather
-> > > than the function address of the handler. Then switching handler is
-> > > just a single store in userspace, no syscalls involved.
-> >
-> > Yes.
-> >
-> > And for just EENTER, maybe that's the right model.
-> >
-> > If we want to generalize it to other thread-synchronous faults, it
-> > needs way more information and a list of handlers, but if we limit the
-> > thing to _only_ EENTER getting an SGX fault, then a single "this is
-> > the fault handler" address is probably the right thing to do.
+Hi Adam
+
+On Thu, Nov 01, 2018 at 07:51:38AM -0500, Adam Ford wrote:
+> This adds support for the Ampire am800480b3tmqw display,
+> a 7" 24-bit RGB panel wtih 800x480 resolution.
 > 
-> It sounds like you're saying that the kernel should know, *before*
-> running any user fixup code, whether the fault in question is one that
-> wants a fixup.  Sounds reasonable.
+> Signed-off-by: Adam Ford <aford173@gmail.com>
 > 
-> I think it would be nice, but not absolutely necessary, if user code
-> didn't need to poke some value into TLS each time it ran a function
-> that had a fixup.  With the poke-into-TLS approach, it looks a lot
-> like rseq, and rseq doesn't nest very nicely.  I think we really want
-> this mechanism to Just Work.  So we could maybe have a syscall that
-> associates a list of fixups with a given range of text addresses.  We
-> might want the kernel to automatically zap the fixups when the text in
-> question is unmapped.
-
-If this is EENTER specific then nesting isn't an issue.  But I don't
-see a simple way to restrict the mechanism to EENTER.
-
-What if rather than having userspace register an address for fixup the
-kernel instead unconditionally does fixup on the ENCLU opcode?  For
-example, skip the instruction and put fault info into some combination
-of RDX/RSI/RDI (they're cleared on asynchronous enclave exits).
-
-The decode logic is straightforward since ENCLU doesn't have operands,
-we'd just have to eat any ignored prefixes.  The intended convention
-for EENTER is to have an ENCLU at the AEX target (to automatically do
-ERESUME after INTR, etc...), so this would work regardless of whether
-the fault happened on EENTER or in the enclave.  EENTER/ERESUME are
-the only ENCLU functions that are allowed outside of an enclave so
-there's no danger of accidentally crushing something else.
-
-This way we wouldn't need a VDSO blob and we'd enforce the kernel's
-ABI, e.g. a library that tried to use signal handling would go off the
-rails when the kernel mucked with the registers.  We could even have
-the SGX EPC fault handler return VM_FAULT_SIGBUS if the faulting
-instruction isn't ENCLU, e.g. to further enforce that the AEX target
-needs to be ENCLU.
+> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+> index 97964f7f2ace..71e878f63c5b 100644
+> --- a/drivers/gpu/drm/panel/panel-simple.c
+> +++ b/drivers/gpu/drm/panel/panel-simple.c
+> @@ -436,6 +436,31 @@ static const struct panel_desc ampire_am800480r3tmqwa1h = {
+>  	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
+>  };
+>  
+> +static const struct drm_display_mode ampire_am800480b3tmqw_mode = {
+> +	.clock = 30000,
+> +	.hdisplay = 800,
+> +	.hsync_start = 800 + 210,
+> +	.hsync_end = 800 + 210 + 46,
+> +	.htotal = 800 + 210 + 46 + 0,
+> +	.vdisplay = 480,
+> +	.vsync_start = 480 + 22,
+> +	.vsync_end = 480 + 22 + 23,
+> +	.vtotal = 480 + 22 + 23 + 0,
+> +	.vrefresh = 60,
+> +	.flags = DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC,
+> +};
++1 to see .flags specified
 
 
-Userspace would look something like this:
+> +
+> +static const struct panel_desc ampire_am800480b3tmqw = {
+> +	.modes = &ampire_am800480b3tmqw_mode,
+> +	.num_modes = 1,
+> +	.bpc = 6,
+> +	.size = {
+> +		.width = 152,
+> +		.height = 91,
+> +	},
+> +	.bus_format = MEDIA_BUS_FMT_RBG888_1X24,
+> +};
+Likewise good to see .bus_format specified.
 
-    mov tcs, %xbx               /* Thread Control Structure address */
-    leaq async_exit(%rip), %rcx /* AEX target for EENTER/RESUME */
-    mov $SGX_EENTER, %rax       /* EENTER leaf */
+But .bus_flags are not specified. 
 
-async_exit:
-    ENCLU
+From the header file:
 
-fault_handler:
-    <handle fault>
+<<<<<<<<<<<<<<<<<<<<
+#define DRM_BUS_FLAG_DE_LOW             (1<<0)
+#define DRM_BUS_FLAG_DE_HIGH            (1<<1)
+/* drive data on pos. edge */
+#define DRM_BUS_FLAG_PIXDATA_POSEDGE    (1<<2)
+/* drive data on neg. edge */
+#define DRM_BUS_FLAG_PIXDATA_NEGEDGE    (1<<3)
+/* data is transmitted MSB to LSB on the bus */
+#define DRM_BUS_FLAG_DATA_MSB_TO_LSB    (1<<4)
+/* data is transmitted LSB to MSB on the bus */
+#define DRM_BUS_FLAG_DATA_LSB_TO_MSB    (1<<5)
+/* drive sync on pos. edge */
+#define DRM_BUS_FLAG_SYNC_POSEDGE       (1<<6)
+/* drive sync on neg. edge */
+#define DRM_BUS_FLAG_SYNC_NEGEDGE       (1<<7)
 
-enclave_exit:                   /* EEXIT target */
-    <handle enclave request>
+        /**
+         * @bus_flags: Additional information (like pixel signal polarity) for
+         * the pixel data on the bus, using DRM_BUS_FLAGS\_ defines.
+         */
+        u32 bus_flags;
+>>>>>>>>>>>>>>>><
+
+Many panels leave out .bus_flags - and I wonder if this is
+because default is OK or because most other panels does so.
+
+I had problems with my display that the text looked blurred
+when bus_flags was no specified (using defaults).
+This was one issue I had when migrating from 4.4 kernel
+to a recent kernel.
+
+So therefore it would good to have .bus_flags specified too
+if for nothing else then for documentation purposes.
+
+	Sam
