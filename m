@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BF3AC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:44:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C54B8C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:45:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19BF420847
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:44:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85D232084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:45:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tlyjIZ/h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19BF420847
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gsnvQGa9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85D232084D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730119AbeKCDxJ (ORCPT
+        id S1730127AbeKCDxO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:53:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48668 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:53:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729136AbeKCDxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:53:08 -0400
+        id S1729632AbeKCDxN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:53:13 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24B4E20847;
-        Fri,  2 Nov 2018 18:44:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC0EF2084A;
+        Fri,  2 Nov 2018 18:44:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184295;
-        bh=qLvrr1TVP6a9IjcTjb+pUqpMJb/4dk8buReP5SwMEro=;
+        s=default; t=1541184300;
+        bh=WWC7YOcl/KHv47808iM/Ek6AkzoIXAsY2IjPaZ6NpTg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tlyjIZ/hk+Ga69JPFoE3xouZ3XwMNRvOMnrgwzByodIPZN9B4kOpKJDZ2srkzsQ7G
-         qyIMsFYWlmHWkUQmxrWRo2B7ETQUvZ1ETq+dsaDi2TVmNAA3WsNZsXBIlb6IkSk2y4
-         4VjjEKR+8LVsKaUOmInC1q6OwerS59b/gAPMKvZU=
+        b=gsnvQGa9bi+03s1Dh+fDRBbZtWPYYrNevLeY+YK+koYxZBwu2rhR7OB6348Q7o1bO
+         bVLkj6tWmrltBIwFg76onDEuClLCrX7k35O8dmCm/QyLmP4dnCQVIpw+h/j5zqighB
+         vyEPKZRjXmnRTitJzpKu76gscxv06CHkry7w9TCs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Huy Nguyen <huyn@mellanox.com>,
-        Eli Cohen <eli@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.18 127/150] net/mlx5: Take only bit 24-26 of wqe.pftype_wq for page fault type
-Date:   Fri,  2 Nov 2018 19:34:49 +0100
-Message-Id: <20181102182911.689678650@linuxfoundation.org>
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.18 128/150] net: bcmgenet: Poll internal PHY for GENETv5
+Date:   Fri,  2 Nov 2018 19:34:50 +0100
+Message-Id: <20181102182911.740371760@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -62,32 +61,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Huy Nguyen <huyn@mellanox.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit a48bc513159d4767f9988f0d857b2b0c38a4d614 ]
+[ Upstream commit 64bd9c8135751b561f27edaaffe93d07093f81af ]
 
-The HW spec defines only bits 24-26 of pftype_wq as the page fault type,
-use the required mask to ensure that.
+On GENETv5, there is a hardware issue which prevents the GENET hardware
+from generating a link UP interrupt when the link is operating at
+10Mbits/sec. Since we do not have any way to configure the link
+detection logic, fallback to polling in that case.
 
-Fixes: d9aaed838765 ("{net,IB}/mlx5: Refactor page fault handling")
-Signed-off-by: Huy Nguyen <huyn@mellanox.com>
-Signed-off-by: Eli Cohen <eli@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Fixes: 421380856d9c ("net: bcmgenet: add support for the GENETv5 hardware")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/eq.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/broadcom/genet/bcmmii.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-@@ -269,7 +269,7 @@ static void eq_pf_process(struct mlx5_eq
- 		case MLX5_PFAULT_SUBTYPE_WQE:
- 			/* WQE based event */
- 			pfault->type =
--				be32_to_cpu(pf_eqe->wqe.pftype_wq) >> 24;
-+				(be32_to_cpu(pf_eqe->wqe.pftype_wq) >> 24) & 0x7;
- 			pfault->token =
- 				be32_to_cpu(pf_eqe->wqe.token);
- 			pfault->wqe.wq_num =
+--- a/drivers/net/ethernet/broadcom/genet/bcmmii.c
++++ b/drivers/net/ethernet/broadcom/genet/bcmmii.c
+@@ -321,9 +321,12 @@ int bcmgenet_mii_probe(struct net_device
+ 	phydev->advertising = phydev->supported;
+ 
+ 	/* The internal PHY has its link interrupts routed to the
+-	 * Ethernet MAC ISRs
++	 * Ethernet MAC ISRs. On GENETv5 there is a hardware issue
++	 * that prevents the signaling of link UP interrupts when
++	 * the link operates at 10Mbps, so fallback to polling for
++	 * those versions of GENET.
+ 	 */
+-	if (priv->internal_phy)
++	if (priv->internal_phy && !GENET_IS_V5(priv))
+ 		dev->phydev->irq = PHY_IGNORE_INTERRUPT;
+ 
+ 	return 0;
 
 
