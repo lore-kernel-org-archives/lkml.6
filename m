@@ -2,240 +2,198 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96565C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 09:19:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F28A7C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 09:24:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44C572081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 09:19:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="LAE/66Uk";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="W+B+Jr6f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44C572081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kroah.com
+	by mail.kernel.org (Postfix) with ESMTP id 9A23420840
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 09:24:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A23420840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726361AbeKBS02 (ORCPT
+        id S1726097AbeKBSbG convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 14:26:28 -0400
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:40585 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726026AbeKBS01 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 14:26:27 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id AE36621FC5;
-        Fri,  2 Nov 2018 05:19:56 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Fri, 02 Nov 2018 05:19:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:content-transfer-encoding:in-reply-to; s=fm2; bh=r
-        RLKi9VKdksWXZyiAgiFjPvcH+UCWgXogOrce+J8M3c=; b=LAE/66Ukxlzi/Lw7E
-        3lia04CyL+T8uJKJiUXyifEoX3jXsLYjMMX2lzVgupgGlYEYD07FH1wDeKLmtJrW
-        1tSvjL+S3feqpYjlB4WlQWs9djDS1Nmu1ivW3ZOcuXoL4Y7IxPN1R79S9BuFngGG
-        kKnTA2Abr26grSjdBj3QfkhIUa0L+EL5YRZxBOFjWyEl3efJP+P23IvSwdTYAQ0/
-        i7jkyAMikhLWo39qHbYW6EbXUi3o/Gbi4APVo2Y0y6rXoEZq0nBUoQA76JNLj9Fa
-        qf1tFXYrN0aZaSvBAINYPxs0jxDr3ueRhx8Ndt54+0ibtNYjk8MxZByHaMGSz5qb
-        e/8Rw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=rRLKi9VKdksWXZyiAgiFjPvcH+UCWgXogOrce+J8M
-        3c=; b=W+B+Jr6fwTKJRWDUHIGVNU368Vej/JAvuvtXubZSEh8MjihbQQAwK3Tsp
-        +vQ5PnvOZuabmguEI80ylcQ5hEFjNv7Jxcvv+COji1CdueY11v5w9ASlCFpEbZeR
-        afGRXVVNwCOi2WoyG0Ucool9rPVWbZ4neMZw4tSopuTf6ldAtivUMWEwCF/gg9SZ
-        T7ARoqTCBTPJfmZ2KlzimJm2XdWghYYA8Y7my14crlD3xhds4lFr/NtKNYl//H5J
-        4MQscpEo6A4FmPtHHGwpWlgMP3ssNvHLOG7frkhu1cvWBHsNZvwhfFyfMjEr5RH3
-        r7EoR2rTDakheDfBj5B7XJqJzOPzA==
-X-ME-Sender: <xms:vBbcWzGnMjEC-5htjWCBIwLdBcehhCvvlQt9vjUsZ2ij7l0HnL2MBQ>
-X-ME-Proxy: <xmx:vBbcWyb_UF5F18-M7IiRyrq--el2gc9TTtiEJ8187rvZucwuSD9Nxw>
-    <xmx:vBbcW1m9CU0My9jSoGNnMmqPm33hblqzTtM3RR40qQeuyHPH5pOm6g>
-    <xmx:vBbcW-zdKXHziH9PntL1gGr2YocXv-o2rM08QDifHSqgrKo1xQM0Zg>
-    <xmx:vBbcWzMDjPOGKg43TgAL3pQPdTbEor9hmg1KbG04kYjpA3lkpt1p0Q>
-    <xmx:vBbcWyQaGUi6Qy2J79ls_MKNZ1dvTMwgqdTmaxPF8dLbYY43i0LEvA>
-    <xmx:vBbcW-MkU2do0uwLYdNHD9agFkfmJ2U_trp7dTuTepqVA6y6f6GzCQ>
-Received: from localhost (5356596b.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id A7CEFE454E;
-        Fri,  2 Nov 2018 05:19:55 -0400 (EDT)
-Date:   Fri, 2 Nov 2018 10:19:54 +0100
-From:   Greg KH <greg@kroah.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jouni Malinen <jouni@codeaurora.org>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: Re: [PATCH AUTOSEL 4.4 05/25] cfg80211: Address some corner cases in
- scan result channel updating
-Message-ID: <20181102091954.GA23989@kroah.com>
-References: <20181016041606.135876-1-sashal@kernel.org>
- <20181016041606.135876-5-sashal@kernel.org>
+        Fri, 2 Nov 2018 14:31:06 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:14167 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725935AbeKBSbG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 14:31:06 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 79C0D7C84496;
+        Fri,  2 Nov 2018 17:24:25 +0800 (CST)
+Received: from localhost (10.202.226.46) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.408.0; Fri, 2 Nov 2018
+ 17:24:23 +0800
+Date:   Fri, 2 Nov 2018 09:24:11 +0000
+From:   Jonathan Cameron <jonathan.cameron@huawei.com>
+To:     Song Qiang <songqiang1304521@gmail.com>
+CC:     Jonathan Cameron <jic23@kernel.org>, <knaack.h@gmx.de>,
+        <lars@metafoo.de>, <pmeerw@pmeerw.net>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <preid@electromag.com.au>,
+        <himanshujha199640@gmail.com>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 3/3] iio: magnetometer: Add driver support for PNI
+ RM3100
+Message-ID: <20181102092411.00003cb5@huawei.com>
+In-Reply-To: <b7078a05-c40b-eba5-73f6-d5e3940d88f2@gmail.com>
+References: <20181002143812.3661-1-songqiang1304521@gmail.com>
+        <20181012073536.20339-1-songqiang1304521@gmail.com>
+        <20181012073536.20339-4-songqiang1304521@gmail.com>
+        <20181013111935.00a2e1af@archlinux>
+        <e1715942-8fd8-152f-49c8-2a9e081d8a2a@gmail.com>
+        <20181021151427.5b3dbb9b@archlinux>
+        <b7078a05-c40b-eba5-73f6-d5e3940d88f2@gmail.com>
+Organization: Huawei
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181016041606.135876-5-sashal@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [10.202.226.46]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sasha,
+On Fri, 2 Nov 2018 15:55:27 +0800
+Song Qiang <songqiang1304521@gmail.com> wrote:
 
-The patch below causes a build warning:
-net/wireless/scan.c: In function ‘cfg80211_get_bss_channel’:
-net/wireless/scan.c:1015:21: warning: comparison between ‘enum ieee80211_band’ and ‘enum nl80211_band’ [-Wenum-compare]
-   if (channel->band == NL80211_BAND_2GHZ) {
-                     ^~
+> On 2018/10/21 下午10:14, Jonathan Cameron wrote:
+> > On Thu, 18 Oct 2018 16:24:15 +0800
+> > Song Qiang <songqiang1304521@gmail.com> wrote:
+> >
+> > ...  
+> >>>> +static irqreturn_t rm3100_trigger_handler(int irq, void *p)
+> >>>> +{
+> >>>> +	struct iio_poll_func *pf = p;
+> >>>> +	struct iio_dev *indio_dev = pf->indio_dev;
+> >>>> +	unsigned long scan_mask = *indio_dev->active_scan_mask;
+> >>>> +	unsigned int mask_len = indio_dev->masklength;
+> >>>> +	struct rm3100_data *data = iio_priv(indio_dev);
+> >>>> +	struct regmap *regmap = data->regmap;
+> >>>> +	int ret, i, bit;
+> >>>> +
+> >>>> +	mutex_lock(&data->lock);
+> >>>> +	switch (scan_mask) {
+> >>>> +	case BIT(0) | BIT(1) | BIT(2):
+> >>>> +		ret = regmap_bulk_read(regmap, RM3100_REG_MX2, data->buffer, 9);
+> >>>> +		mutex_unlock(&data->lock);
+> >>>> +		if (ret < 0)
+> >>>> +			goto done;
+> >>>> +	break;
+> >>>> +	case BIT(0) | BIT(1):
+> >>>> +		ret = regmap_bulk_read(regmap, RM3100_REG_MX2, data->buffer, 6);
+> >>>> +		mutex_unlock(&data->lock);
+> >>>> +		if (ret < 0)
+> >>>> +			goto done;
+> >>>> +	break;
+> >>>> +	case BIT(1) | BIT(2):
+> >>>> +		ret = regmap_bulk_read(regmap, RM3100_REG_MY2, data->buffer, 6);
+> >>>> +		mutex_unlock(&data->lock);
+> >>>> +		if (ret < 0)
+> >>>> +			goto done;
+> >>>> +	break;  
+> >>> What about BIT(0) | BIT(2)?
+> >>>
+> >>> Now you can do it like you have here and on that one corner case let the iio core
+> >>> demux code take care of it, but then you will need to provide available_scan_masks
+> >>> so the core knows it needs to handle this case.
+> >>>     
+> >> This confused me a little. The available_scan_masks I was using is {BIT(0) |
+> >> BIT(1) | BIT(2), 0x0}. Apparently in this version of patch I would like it to
+> >> handle every circumstances like BIT(0), BIT(0) | BIT(2), BIT(1) | BIT(2), etc.
+> >> Since Phil mentioned he would like this to reduce bus usage as much as we can
+> >> and I want it, too, I think these three circumstances can be read consecutively
+> >> while others can be read one axis at a time. So I plan to let  BIT(0) | BIT(2)
+> >> fall into the 'default' section, which reads axis one by one.
+> >>
+> >> My question is, since this handles every possible combination, do I still need
+> >> to list every available scan masks in available_scan_masks?  
+> > Ah. I see, I'd missed that the default was picking up that case as well as the
+> > single axes.   It would be interesting to sanity check if it is quicker on
+> > a 'typical' platform to do the all axis read for the BIT(0) | BIT(2) case
+> > and drop the middle value (which would be done using available scan_masks)
+> > or to just do two independent reads.
+> >
+> > (I would guess it is worth reading the 'dead' axis).
+> >  
+> >>
+> >> All other problems will be fixed in the next patch.
+> >>
+> >> yours,
+> >>
+> >> Song Qiang
+> >>
+> >>
+> >> ...  
+> > Thanks,
+> >
+> > Jonathan  
+> 
+> I tested this two ways of getting data with the following code snippet:
+> 
+> 
+>      u8 buffer[9];
+>      struct timeval timebefore, timeafter;
+> 
+>      do_gettimeofday(&timebefore);
+>      ret = regmap_bulk_read(regmap, RM3100_REG_MX2, buffer, 9);
+>      if (ret < 0)
+>          goto unlock_return;
+>      do_gettimeofday(&timeafter);
+>      printk(KERN_INFO "read with dead axis time: %ld",
+>             timeafter.tv_sec * 1000000 + timeafter.tv_usec -
+>             timebefore.tv_sec * 1000000 - timebefore.tv_usec);
+>      do_gettimeofday(&timebefore);
+> 
+>      ret = regmap_bulk_read(regmap, RM3100_REG_MX2, buffer, 3);
+>      if (ret < 0)
+>          goto unlock_return;
+>      ret = regmap_bulk_read(regmap, RM3100_REG_MZ2, buffer + 6, 3);
+>      if (ret < 0)
+>          goto unlock_return;
+>      do_gettimeofday(&timeafter);
+>      printk(KERN_INFO "read two single axis time: %ld",
+>             timeafter.tv_sec * 1000000 + timeafter.tv_usec -
+>             timebefore.tv_sec * 1000000 - timebefore.tv_usec);
+> 
+> 
+> And get this result:
+> 
+> [  161.264777] read with dead axis time: 883
+> [  161.270621] read two single axis time: 1359
+> [  161.575134] read with dead axis time: 852
+> [  161.580973] read two single axis time: 1356
+> [  161.895704] read with dead axis time: 854
+> [  161.903744] read two single axis time: 3540
+> [  162.223600] read with dead axis time: 853
+> [  162.229451] read two single axis time: 1363
+> [  162.591227] read with dead axis time: 850
+> [  162.597630] read two single axis time: 1555
+> [  162.920102] read with dead axis time: 852
+> [  162.926467] read two single axis time: 1534
+> [  163.303121] read with dead axis time: 881
+> [  163.308997] read two single axis time: 1390
+> [  163.711004] read with dead axis time: 861
+> 
+> 
+> It seems like you're right! Reading consecutively 9 bytes does save a lot time 
+> compared to read 3 bytes twice.
+> 
+I've done this stuff before ;)  We had this on the adis16365 parts back
+in the early days of IIO.  A worse case as it has a lot more channels,
+but otherwise similar from what I recall.
 
-So I'm going to drop it from the tree now.  Feel free to resubmit it if
-you want to fix it up :)
+It would be an interesting exercise to trace those paths and find out the
+balance between real hardware stuff we can't change and potential software
+overheads.
 
-thanks,
+Chances are this is mostly 'real' stuff though but would be great to
+confirm this. It's been on my list of things to do for years (not on
+this driver obviously but in general)...
 
-greg k-h
+Jonathan
 
-
-On Tue, Oct 16, 2018 at 12:15:46AM -0400, Sasha Levin wrote:
-> From: Jouni Malinen <jouni@codeaurora.org>
-> 
-> [ Upstream commit 119f94a6fefcc76d47075b83d2b73d04c895df78 ]
-> 
-> cfg80211_get_bss_channel() is used to update the RX channel based on the
-> available frame payload information (channel number from DSSS Parameter
-> Set element or HT Operation element). This is needed on 2.4 GHz channels
-> where frames may be received on neighboring channels due to overlapping
-> frequency range.
-> 
-> This might of some use on the 5 GHz band in some corner cases, but
-> things are more complex there since there is no n:1 or 1:n mapping
-> between channel numbers and frequencies due to multiple different
-> starting frequencies in different operating classes. This could result
-> in ieee80211_channel_to_frequency() returning incorrect frequency and
-> ieee80211_get_channel() returning incorrect channel information (or
-> indication of no match). In the previous implementation, this could
-> result in some scan results being dropped completely, e.g., for the 4.9
-> GHz channels. That prevented connection to such BSSs.
-> 
-> Fix this by using the driver-provided channel pointer if
-> ieee80211_get_channel() does not find matching channel data for the
-> channel number in the frame payload and if the scan is done with 5 MHz
-> or 10 MHz channel bandwidth. While doing this, also add comments
-> describing what the function is trying to achieve to make it easier to
-> understand what happens here and why.
-> 
-> Signed-off-by: Jouni Malinen <jouni@codeaurora.org>
-> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  net/wireless/scan.c | 58 ++++++++++++++++++++++++++++++++++++++-------
->  1 file changed, 49 insertions(+), 9 deletions(-)
-> 
-> diff --git a/net/wireless/scan.c b/net/wireless/scan.c
-> index 8dde12a11725..00219f386283 100644
-> --- a/net/wireless/scan.c
-> +++ b/net/wireless/scan.c
-> @@ -974,13 +974,23 @@ cfg80211_bss_update(struct cfg80211_registered_device *rdev,
->  	return NULL;
->  }
->  
-> +/*
-> + * Update RX channel information based on the available frame payload
-> + * information. This is mainly for the 2.4 GHz band where frames can be received
-> + * from neighboring channels and the Beacon frames use the DSSS Parameter Set
-> + * element to indicate the current (transmitting) channel, but this might also
-> + * be needed on other bands if RX frequency does not match with the actual
-> + * operating channel of a BSS.
-> + */
->  static struct ieee80211_channel *
->  cfg80211_get_bss_channel(struct wiphy *wiphy, const u8 *ie, size_t ielen,
-> -			 struct ieee80211_channel *channel)
-> +			 struct ieee80211_channel *channel,
-> +			 enum nl80211_bss_scan_width scan_width)
->  {
->  	const u8 *tmp;
->  	u32 freq;
->  	int channel_number = -1;
-> +	struct ieee80211_channel *alt_channel;
->  
->  	tmp = cfg80211_find_ie(WLAN_EID_DS_PARAMS, ie, ielen);
->  	if (tmp && tmp[1] == 1) {
-> @@ -994,16 +1004,45 @@ cfg80211_get_bss_channel(struct wiphy *wiphy, const u8 *ie, size_t ielen,
->  		}
->  	}
->  
-> -	if (channel_number < 0)
-> +	if (channel_number < 0) {
-> +		/* No channel information in frame payload */
->  		return channel;
-> +	}
->  
->  	freq = ieee80211_channel_to_frequency(channel_number, channel->band);
-> -	channel = ieee80211_get_channel(wiphy, freq);
-> -	if (!channel)
-> -		return NULL;
-> -	if (channel->flags & IEEE80211_CHAN_DISABLED)
-> +	alt_channel = ieee80211_get_channel(wiphy, freq);
-> +	if (!alt_channel) {
-> +		if (channel->band == NL80211_BAND_2GHZ) {
-> +			/*
-> +			 * Better not allow unexpected channels when that could
-> +			 * be going beyond the 1-11 range (e.g., discovering
-> +			 * BSS on channel 12 when radio is configured for
-> +			 * channel 11.
-> +			 */
-> +			return NULL;
-> +		}
-> +
-> +		/* No match for the payload channel number - ignore it */
-> +		return channel;
-> +	}
-> +
-> +	if (scan_width == NL80211_BSS_CHAN_WIDTH_10 ||
-> +	    scan_width == NL80211_BSS_CHAN_WIDTH_5) {
-> +		/*
-> +		 * Ignore channel number in 5 and 10 MHz channels where there
-> +		 * may not be an n:1 or 1:n mapping between frequencies and
-> +		 * channel numbers.
-> +		 */
-> +		return channel;
-> +	}
-> +
-> +	/*
-> +	 * Use the channel determined through the payload channel number
-> +	 * instead of the RX channel reported by the driver.
-> +	 */
-> +	if (alt_channel->flags & IEEE80211_CHAN_DISABLED)
->  		return NULL;
-> -	return channel;
-> +	return alt_channel;
->  }
->  
->  /* Returned bss is reference counted and must be cleaned up appropriately. */
-> @@ -1028,7 +1067,8 @@ cfg80211_inform_bss_data(struct wiphy *wiphy,
->  		    (data->signal < 0 || data->signal > 100)))
->  		return NULL;
->  
-> -	channel = cfg80211_get_bss_channel(wiphy, ie, ielen, data->chan);
-> +	channel = cfg80211_get_bss_channel(wiphy, ie, ielen, data->chan,
-> +					   data->scan_width);
->  	if (!channel)
->  		return NULL;
->  
-> @@ -1126,7 +1166,7 @@ cfg80211_inform_bss_frame_data(struct wiphy *wiphy,
->  		return NULL;
->  
->  	channel = cfg80211_get_bss_channel(wiphy, mgmt->u.beacon.variable,
-> -					   ielen, data->chan);
-> +					   ielen, data->chan, data->scan_width);
->  	if (!channel)
->  		return NULL;
->  
-> -- 
-> 2.17.1
-> 
