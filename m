@@ -7,52 +7,57 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE0DCC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:51:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB56C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:51:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AD8620870
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:51:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5230E2084C
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:51:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yn//mBea"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AD8620870
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ShxawkPP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5230E2084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730958AbeKCD7v (ORCPT
+        id S1730969AbeKCD7y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:59:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55566 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:59:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728743AbeKCD7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:59:50 -0400
+        id S1728743AbeKCD7x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:59:53 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D93B20847;
-        Fri,  2 Nov 2018 18:51:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F8A22084A;
+        Fri,  2 Nov 2018 18:51:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184695;
-        bh=cawlcRTAd4YEirdE8XGh6hdYUnuB5t9jUTAoYf0C1DE=;
+        s=default; t=1541184698;
+        bh=R27NrdKU3sHHqesXuymUSLy693dklZpb2f4abCWE9gU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Yn//mBea2Q8tolHhnQpDeWDRpoTG8Q8NpVKljvmQ5xkUvu/PpLXcyUDO/Plad1jAI
-         AZ9lgx11+mkh6fk3ug9WfaFa+XV5D4Cs8FGWq4fBQs1PX1VTh0zm72Cel3n4tldvMd
-         PTxTADYosAi4emujdMI2WkCNAhljNpyh5DV2R/MQ=
+        b=ShxawkPPzHztp6seZbd5vV/803lsJUHU1ZEnzf6Mr111Zw8Z5JkitP/GwDMfu0ozS
+         W1xti807sJ3Snu1d4DXFufe7Jm5zRhoOTIK0903xkTd8npWU0gVyB9YHyzQxCJFe9s
+         zSCYyKPumzL99u+Zxzjz9devGNPqZ+fd5cr7iKkA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kan Liang <kan.liang@linux.intel.com>,
+        stable@vger.kernel.org,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, Jiri Olsa <jolsa@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
+        Namhyung Kim <namhyung@kernel.org>,
         Stephane Eranian <eranian@google.com>,
+        Suravee <Suravee.Suthikulpanit@amd.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Vince Weaver <vincent.weaver@maine.edu>,
         Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 040/143] perf/x86/intel/uncore: Fix PCI BDF address of M3UPI on SKX
-Date:   Fri,  2 Nov 2018 19:33:45 +0100
-Message-Id: <20181102182900.269304002@linuxfoundation.org>
+Subject: [PATCH 4.14 041/143] perf/x86/amd/uncore: Set ThreadMask and SliceMask for L3 Cache perf events
+Date:   Fri,  2 Nov 2018 19:33:46 +0100
+Message-Id: <20181102182900.345913483@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -70,64 +75,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 9d92cfeaf5215158d26d2991be7f7ff865cb98f3 ]
+[ Upstream commit d7cbbe49a9304520181fb8c9272d1327deec8453 ]
 
-The counters on M3UPI Link 0 and Link 3 don't count properly, and writing
-0 to these counters may causes system crash on some machines.
+In Family 17h, some L3 Cache Performance events require the ThreadMask
+and SliceMask to be set. For other events, these fields do not affect
+the count either way.
 
-The PCI BDF addresses of the M3UPI in the current code are incorrect.
+Set ThreadMask and SliceMask to 0xFF and 0xF respectively.
 
-The correct addresses should be:
-
-  D18:F1	0x204D
-  D18:F2	0x204E
-  D18:F5	0x204D
-
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: H . Peter Anvin <hpa@zytor.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Stephane Eranian <eranian@google.com>
+Cc: Suravee <Suravee.Suthikulpanit@amd.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Vince Weaver <vincent.weaver@maine.edu>
-Fixes: cd34cd97b7b4 ("perf/x86/intel/uncore: Add Skylake server uncore support")
-Link: http://lkml.kernel.org/r/1537538826-55489-1-git-send-email-kan.liang@linux.intel.com
+Link: http://lkml.kernel.org/r/Message-ID:
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/events/intel/uncore_snbep.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/x86/events/amd/uncore.c      | 10 ++++++++++
+ arch/x86/include/asm/perf_event.h |  8 ++++++++
+ 2 files changed, 18 insertions(+)
 
-diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
-index 2dae3f585c01..a68aba8a482f 100644
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -3807,16 +3807,16 @@ static const struct pci_device_id skx_uncore_pci_ids[] = {
- 		.driver_data = UNCORE_PCI_DEV_FULL_DATA(21, 5, SKX_PCI_UNCORE_M2PCIE, 3),
- 	},
- 	{ /* M3UPI0 Link 0 */
--		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204C),
--		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 0, SKX_PCI_UNCORE_M3UPI, 0),
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204D),
-+		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 1, SKX_PCI_UNCORE_M3UPI, 0),
- 	},
- 	{ /* M3UPI0 Link 1 */
--		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204D),
--		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 1, SKX_PCI_UNCORE_M3UPI, 1),
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204E),
-+		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 2, SKX_PCI_UNCORE_M3UPI, 1),
- 	},
- 	{ /* M3UPI1 Link 2 */
--		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204C),
--		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 4, SKX_PCI_UNCORE_M3UPI, 2),
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x204D),
-+		.driver_data = UNCORE_PCI_DEV_FULL_DATA(18, 5, SKX_PCI_UNCORE_M3UPI, 2),
- 	},
- 	{ /* end: all zeroes */ }
- };
+diff --git a/arch/x86/events/amd/uncore.c b/arch/x86/events/amd/uncore.c
+index f5cbbba99283..4e1d7483b78c 100644
+--- a/arch/x86/events/amd/uncore.c
++++ b/arch/x86/events/amd/uncore.c
+@@ -35,6 +35,7 @@
+ 
+ static int num_counters_llc;
+ static int num_counters_nb;
++static bool l3_mask;
+ 
+ static HLIST_HEAD(uncore_unused_list);
+ 
+@@ -208,6 +209,13 @@ static int amd_uncore_event_init(struct perf_event *event)
+ 	hwc->config = event->attr.config & AMD64_RAW_EVENT_MASK_NB;
+ 	hwc->idx = -1;
+ 
++	/*
++	 * SliceMask and ThreadMask need to be set for certain L3 events in
++	 * Family 17h. For other events, the two fields do not affect the count.
++	 */
++	if (l3_mask)
++		hwc->config |= (AMD64_L3_SLICE_MASK | AMD64_L3_THREAD_MASK);
++
+ 	if (event->cpu < 0)
+ 		return -EINVAL;
+ 
+@@ -542,6 +550,7 @@ static int __init amd_uncore_init(void)
+ 		amd_llc_pmu.name	  = "amd_l3";
+ 		format_attr_event_df.show = &event_show_df;
+ 		format_attr_event_l3.show = &event_show_l3;
++		l3_mask			  = true;
+ 	} else {
+ 		num_counters_nb		  = NUM_COUNTERS_NB;
+ 		num_counters_llc	  = NUM_COUNTERS_L2;
+@@ -549,6 +558,7 @@ static int __init amd_uncore_init(void)
+ 		amd_llc_pmu.name	  = "amd_l2";
+ 		format_attr_event_df	  = format_attr_event;
+ 		format_attr_event_l3	  = format_attr_event;
++		l3_mask			  = false;
+ 	}
+ 
+ 	amd_nb_pmu.attr_groups	= amd_uncore_attr_groups_df;
+diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
+index 12f54082f4c8..78241b736f2a 100644
+--- a/arch/x86/include/asm/perf_event.h
++++ b/arch/x86/include/asm/perf_event.h
+@@ -46,6 +46,14 @@
+ #define INTEL_ARCH_EVENT_MASK	\
+ 	(ARCH_PERFMON_EVENTSEL_UMASK | ARCH_PERFMON_EVENTSEL_EVENT)
+ 
++#define AMD64_L3_SLICE_SHIFT				48
++#define AMD64_L3_SLICE_MASK				\
++	((0xFULL) << AMD64_L3_SLICE_SHIFT)
++
++#define AMD64_L3_THREAD_SHIFT				56
++#define AMD64_L3_THREAD_MASK				\
++	((0xFFULL) << AMD64_L3_THREAD_SHIFT)
++
+ #define X86_RAW_EVENT_MASK		\
+ 	(ARCH_PERFMON_EVENTSEL_EVENT |	\
+ 	 ARCH_PERFMON_EVENTSEL_UMASK |	\
 -- 
 2.17.1
 
