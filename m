@@ -2,97 +2,135 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE246C6786F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 23:30:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D88BC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 23:31:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A86F2081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 23:30:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A86F2081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 0F4842081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 23:31:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F4842081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728483AbeKCIjM (ORCPT
+        id S1728461AbeKCIky (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 04:39:12 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:50664 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726778AbeKCIjL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 04:39:11 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id pzsfQp6ePQH9; Sat,  3 Nov 2018 00:30:00 +0100 (CET)
-Received: from zn.tnic (p200300EC2BCD3B00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:3b00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E428E1EC0A67;
-        Sat,  3 Nov 2018 00:29:59 +0100 (CET)
-Date:   Sat, 3 Nov 2018 00:29:48 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     "Woods, Brian" <Brian.Woods@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
+        Sat, 3 Nov 2018 04:40:54 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:8611 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726729AbeKCIky (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 04:40:54 -0400
+Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Fri, 2 Nov 2018 16:31:32 -0700
+Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
+        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 94A57B14CC;
+        Fri,  2 Nov 2018 19:31:42 -0400 (EDT)
+From:   Nadav Amit <namit@vmware.com>
+To:     Ingo Molnar <mingo@redhat.com>
+CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
         "H. Peter Anvin" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>, Pu Wen <puwen@hygon.cn>,
-        Jia Zhang <qianyue.zj@alibaba-inc.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH 2/4] x86/amd_nb: add support for newer PCI topologies
-Message-ID: <20181102232948.GC26770@zn.tnic>
-References: <20181102181055.130531-1-brian.woods@amd.com>
- <20181102181055.130531-3-brian.woods@amd.com>
- <20181102195925.GB160487@google.com>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Nadav Amit <namit@vmware.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [PATCH v3 2/7] x86/jump_label: Use text_poke_early() during early_init
+Date:   Fri, 2 Nov 2018 16:29:41 -0700
+Message-ID: <20181102232946.98461-3-namit@vmware.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181102232946.98461-1-namit@vmware.com>
+References: <20181102232946.98461-1-namit@vmware.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181102195925.GB160487@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 02:59:25PM -0500, Bjorn Helgaas wrote:
-> This isn't my code, and I'm not really objecting to these changes, but
-> from where I sit, the fact that you need this sort of vendor-specific
-> topology discovery is a little bit ugly and seems like something of a
-> maintenance issue.  You could argue that this is sort of an "AMD CPU
-> driver", which is entitled to be device-specific, and that does make
-> some sense.
+There is no apparent reason not to use text_poke_early() while we are
+during early-init and we do not patch code that might be on the stack
+(i.e., we'll return to the middle of the patched code).  This appears to
+be the case of jump-labels, so do so.
 
-It is a bunch of glue code which enumerates the PCI devices a CPU
-has and other in-kernel users can use that instead of doing the
-discovery/enumeration themselves.
+This is required for the next patches that would set a temporary mm for
+patching, which is initialized after some static-keys are
+enabled/disabled.
 
-> But device-specific code is typically packaged as a driver that uses
-> driver registration interfaces like acpi_bus_register_driver(),
-> pci_register_driver(), etc.  That gives you a consistent structure
-> and, more importantly, a framework for dealing with hotplug.  It
-> doesn't look like amd_nb.c would deal well with hot-add of CPUs.
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Nadav Amit <namit@vmware.com>
+---
+ arch/x86/kernel/jump_label.c | 8 +++++++-
+ include/linux/kernel.h       | 1 +
+ init/main.c                  | 4 ++++
+ 3 files changed, 12 insertions(+), 1 deletion(-)
 
-If you mean physical hotadd, then that's a non-issue as, AFAIK, AMD
-doesn't support that.
-
-Now, TBH I've never tried soft-offlining the cores of a node and then
-check whether using the PCI devices of that node would work.
-
-Now, I don't mind this getting converted to a proper PCI driver as long
-as it is not a module as it has to be present at all times. Other than
-that, I'm a happy camper.
-
-Thx.
-
+diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
+index aac0c1f7e354..367c1d0c20a3 100644
+--- a/arch/x86/kernel/jump_label.c
++++ b/arch/x86/kernel/jump_label.c
+@@ -52,7 +52,13 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
+ 	jmp.offset = jump_entry_target(entry) -
+ 		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
+ 
+-	if (early_boot_irqs_disabled)
++	/*
++	 * As long as we are in early boot, we can use text_poke_early(), which
++	 * is more efficient: the memory was still not marked as read-only (it
++	 * is only marked after poking_init()). This also prevents us from using
++	 * text_poke() before poking_init() is called.
++	 */
++	if (!early_boot_done)
+ 		poker = text_poke_early;
+ 
+ 	if (type == JUMP_LABEL_JMP) {
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index d6aac75b51ba..3e86ff3c64c4 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -564,6 +564,7 @@ extern unsigned long get_taint(void);
+ extern int root_mountflags;
+ 
+ extern bool early_boot_irqs_disabled;
++extern u8 early_boot_done;
+ 
+ /*
+  * Values used for system_state. Ordering of the states must not be changed
+diff --git a/init/main.c b/init/main.c
+index a664246450d1..b0fa26637496 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -117,6 +117,8 @@ extern void radix_tree_init(void);
+  */
+ bool early_boot_irqs_disabled __read_mostly;
+ 
++u8 early_boot_done __read_mostly;
++
+ enum system_states system_state __read_mostly;
+ EXPORT_SYMBOL(system_state);
+ 
+@@ -735,6 +737,8 @@ asmlinkage __visible void __init start_kernel(void)
+ 		efi_free_boot_services();
+ 	}
+ 
++	early_boot_done = true;
++
+ 	/* Do the rest non-__init'ed, we're now alive */
+ 	rest_init();
+ }
 -- 
-Regards/Gruss,
-    Boris.
+2.17.1
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
