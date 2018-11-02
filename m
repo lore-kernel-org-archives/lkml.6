@@ -2,99 +2,243 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E16E5C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:36:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B4BC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:36:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94AA82081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:36:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5089720833
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:36:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qWUFuOrH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94AA82081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="N8/jEBYO";
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="N8/jEBYO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5089720833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=yandex-team.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727773AbeKBWnz (ORCPT
+        id S1727829AbeKBWn6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 18:43:55 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33798 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726897AbeKBWnz (ORCPT
+        Fri, 2 Nov 2018 18:43:58 -0400
+Received: from forwardcorp1o.cmail.yandex.net ([37.9.109.47]:59075 "EHLO
+        forwardcorp1o.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726231AbeKBWn5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 18:43:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=381qpIJdfNrwhAI5Ppy/E9Kd3jq145yTVK2ml+2Oc4Q=; b=qWUFuOrHWWFo5/kQX0EPt7D8n
-        Pr0YJ8YnzYXbq7TlpNDdVeucZLEo4JoZfjbo3delqG1CaPvfKiB5mmrfXfBW2KbMCtW6qt4rrKtnV
-        CVAP8075vmoj6SpLokSvCFJv1tlT5kU+VGvilUsYdb/+9g2yJ6ggTfe5+PMg1Y9vQG3ngq5TZ8+47
-        JxAZtXB7Z82u7u09AtcoAm/VTGaT5+jXdiAEFgu9nnPKjp0uVrzaXXssiwCspt3n9HV2ej1IEG9gM
-        IhEbjVDBTsnksQvv4UEnDt4roOUlf9W2TPduiovE77oJqg5qY2XmxmXsXpiiPe/ul8kovJWEd2LVd
-        0t/etYdGA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gIZcm-0006Y5-H6; Fri, 02 Nov 2018 13:36:32 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D377E2029F9FF; Fri,  2 Nov 2018 14:36:29 +0100 (CET)
-Date:   Fri, 2 Nov 2018 14:36:29 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Alexander Potapenko <glider@google.com>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH 3/3] lockdep: Use line-buffered printk() for lockdep
- messages.
-Message-ID: <20181102133629.GN3178@hirez.programming.kicks-ass.net>
-References: <1541165517-3557-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <1541165517-3557-3-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+        Fri, 2 Nov 2018 18:43:57 -0400
+Received: from mxbackcorp2j.mail.yandex.net (mxbackcorp2j.mail.yandex.net [IPv6:2a02:6b8:0:1619::119])
+        by forwardcorp1o.cmail.yandex.net (Yandex) with ESMTP id C519020F08;
+        Fri,  2 Nov 2018 16:36:42 +0300 (MSK)
+Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:10])
+        by mxbackcorp2j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id sPGeaGl01L-aglWN8Kj;
+        Fri, 02 Nov 2018 16:36:42 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1541165802; bh=H4Fl87BCH5tRYiSfoYokURpSM/2ogvo+PD6cGdTAu2E=;
+        h=Subject:From:To:Cc:Date:Message-ID;
+        b=N8/jEBYOPmr5vLIzCvT2G5XQYd3qEkDF6MuERBZpdivlZNwXH5wO9BKmwiV3+3g1X
+         m1rkRk4lH2g632av/E6HM9jQTbZsK7urSL0UyCpoMEGjjgOpIQ2OIUQqmY+byVGqyn
+         J28Llejul4TxHVqBy11WDzHAFaR2W7HF08Xr5zv0=
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:2501:1cc0:44e4:e39a])
+        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id l3Q01HYxKJ-agJiQbXU;
+        Fri, 02 Nov 2018 16:36:42 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1541165802; bh=H4Fl87BCH5tRYiSfoYokURpSM/2ogvo+PD6cGdTAu2E=;
+        h=Subject:From:To:Cc:Date:Message-ID;
+        b=N8/jEBYOPmr5vLIzCvT2G5XQYd3qEkDF6MuERBZpdivlZNwXH5wO9BKmwiV3+3g1X
+         m1rkRk4lH2g632av/E6HM9jQTbZsK7urSL0UyCpoMEGjjgOpIQ2OIUQqmY+byVGqyn
+         J28Llejul4TxHVqBy11WDzHAFaR2W7HF08Xr5zv0=
+Authentication-Results: smtpcorp1p.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Subject: [PATCH] macvlan: use per-cpu queues for broadcast and multicast
+ packets
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org
+Cc:     Vadim Fedorenko <junk@yandex-team.ru>
+Date:   Fri, 02 Nov 2018 16:36:40 +0300
+Message-ID: <154116580015.953950.9450253307804393677.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1541165517-3557-3-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 10:31:57PM +0900, Tetsuo Handa wrote:
-> syzbot is sometimes getting mixed output like below due to concurrent
-> printk(). Mitigate such output by using line-buffered printk() API.
-> 
->   RCU used illegally from idle CPU!
->   rcu_scheduler_active = 2, debug_locks = 1
->   RSP: 0018:ffffffff88007bb8 EFLAGS: 00000286
->   RCU used illegally from extended quiescent state!
->    ORIG_RAX: ffffffffffffff13
->   1 lock held by swapper/1/0:
->   RAX: dffffc0000000000 RBX: 1ffffffff1000f7b RCX: 0000000000000000
->    #0: 
->   RDX: 1ffffffff10237b8 RSI: 0000000000000001 RDI: ffffffff8811bdc0
->   000000004b34587c
->   RBP: ffffffff88007bb8 R08: ffffffff88075e00 R09: 0000000000000000
->    (
->   R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
->   rcu_read_lock
->   R13: ffffffff88007c78 R14: 0000000000000000 R15: 0000000000000000
->   ){....}
->    arch_safe_halt arch/x86/include/asm/paravirt.h:94 [inline]
->    default_idle+0xc2/0x410 arch/x86/kernel/process.c:498
->   , at: trace_call_bpf+0xf8/0x640 kernel/trace/bpf_trace.c:46
+Currently macvlan has single per-port queue for broadcast and multicast.
+This disrupts order of packets when flows from different cpus are mixed.
 
-WTH is that buffered aPI, and no, that breaks my earlyprintk stuff.
+This patch replaces this queue with single set of per-cpu queues.
+Pointer to macvlan port is passed in skb control block.
+
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Reported-add-tested-by: Vadim Fedorenko <vfedorenko@yandex-team.ru>
+---
+ drivers/net/macvlan.c |   65 +++++++++++++++++++++++++++++--------------------
+ 1 file changed, 38 insertions(+), 27 deletions(-)
+
+diff --git a/drivers/net/macvlan.c b/drivers/net/macvlan.c
+index fc8d5f1ee1ad..1e9c37ec43c3 100644
+--- a/drivers/net/macvlan.c
++++ b/drivers/net/macvlan.c
+@@ -46,8 +46,6 @@ struct macvlan_port {
+ 	struct net_device	*dev;
+ 	struct hlist_head	vlan_hash[MACVLAN_HASH_SIZE];
+ 	struct list_head	vlans;
+-	struct sk_buff_head	bc_queue;
+-	struct work_struct	bc_work;
+ 	u32			flags;
+ 	int			count;
+ 	struct hlist_head	vlan_source_hash[MACVLAN_HASH_SIZE];
+@@ -55,6 +53,11 @@ struct macvlan_port {
+ 	unsigned char           perm_addr[ETH_ALEN];
+ };
+ 
++struct macvlan_bc_work {
++	struct sk_buff_head	bc_queue;
++	struct work_struct	bc_work;
++};
++
+ struct macvlan_source_entry {
+ 	struct hlist_node	hlist;
+ 	struct macvlan_dev	*vlan;
+@@ -63,6 +66,7 @@ struct macvlan_source_entry {
+ };
+ 
+ struct macvlan_skb_cb {
++	const struct macvlan_port *port;
+ 	const struct macvlan_dev *src;
+ };
+ 
+@@ -295,20 +299,23 @@ static void macvlan_broadcast(struct sk_buff *skb,
+ 	}
+ }
+ 
++static DEFINE_PER_CPU(struct macvlan_bc_work, macvlan_bc_work);
++
+ static void macvlan_process_broadcast(struct work_struct *w)
+ {
+-	struct macvlan_port *port = container_of(w, struct macvlan_port,
++	struct macvlan_bc_work *work = container_of(w, struct macvlan_bc_work,
+ 						 bc_work);
+ 	struct sk_buff *skb;
+ 	struct sk_buff_head list;
+ 
+ 	__skb_queue_head_init(&list);
+ 
+-	spin_lock_bh(&port->bc_queue.lock);
+-	skb_queue_splice_tail_init(&port->bc_queue, &list);
+-	spin_unlock_bh(&port->bc_queue.lock);
++	spin_lock_bh(&work->bc_queue.lock);
++	skb_queue_splice_tail_init(&work->bc_queue, &list);
++	spin_unlock_bh(&work->bc_queue.lock);
+ 
+ 	while ((skb = __skb_dequeue(&list))) {
++		const struct macvlan_port *port = MACVLAN_SKB_CB(skb)->port;
+ 		const struct macvlan_dev *src = MACVLAN_SKB_CB(skb)->src;
+ 
+ 		rcu_read_lock();
+@@ -345,6 +352,7 @@ static void macvlan_broadcast_enqueue(struct macvlan_port *port,
+ 				      const struct macvlan_dev *src,
+ 				      struct sk_buff *skb)
+ {
++	struct macvlan_bc_work *work;
+ 	struct sk_buff *nskb;
+ 	int err = -ENOMEM;
+ 
+@@ -352,24 +360,30 @@ static void macvlan_broadcast_enqueue(struct macvlan_port *port,
+ 	if (!nskb)
+ 		goto err;
+ 
++	MACVLAN_SKB_CB(nskb)->port = port;
+ 	MACVLAN_SKB_CB(nskb)->src = src;
+ 
+-	spin_lock(&port->bc_queue.lock);
+-	if (skb_queue_len(&port->bc_queue) < MACVLAN_BC_QUEUE_LEN) {
++	work = get_cpu_ptr(&macvlan_bc_work);
++
++	spin_lock(&work->bc_queue.lock);
++	if (skb_queue_len(&work->bc_queue) < MACVLAN_BC_QUEUE_LEN) {
+ 		if (src)
+ 			dev_hold(src->dev);
+-		__skb_queue_tail(&port->bc_queue, nskb);
++		__skb_queue_tail(&work->bc_queue, nskb);
+ 		err = 0;
+ 	}
+-	spin_unlock(&port->bc_queue.lock);
++	spin_unlock(&work->bc_queue.lock);
+ 
+ 	if (err)
+ 		goto free_nskb;
+ 
+-	schedule_work(&port->bc_work);
++	schedule_work_on(smp_processor_id(), &work->bc_work);
++	put_cpu_ptr(work);
++
+ 	return;
+ 
+ free_nskb:
++	put_cpu_ptr(work);
+ 	kfree_skb(nskb);
+ err:
+ 	atomic_long_inc(&skb->dev->rx_dropped);
+@@ -1168,9 +1182,6 @@ static int macvlan_port_create(struct net_device *dev)
+ 	for (i = 0; i < MACVLAN_HASH_SIZE; i++)
+ 		INIT_HLIST_HEAD(&port->vlan_source_hash[i]);
+ 
+-	skb_queue_head_init(&port->bc_queue);
+-	INIT_WORK(&port->bc_work, macvlan_process_broadcast);
+-
+ 	err = netdev_rx_handler_register(dev, macvlan_handle_frame, port);
+ 	if (err)
+ 		kfree(port);
+@@ -1182,24 +1193,16 @@ static int macvlan_port_create(struct net_device *dev)
+ static void macvlan_port_destroy(struct net_device *dev)
+ {
+ 	struct macvlan_port *port = macvlan_port_get_rtnl(dev);
+-	struct sk_buff *skb;
++	int cpu;
+ 
+ 	dev->priv_flags &= ~IFF_MACVLAN_PORT;
+ 	netdev_rx_handler_unregister(dev);
+ 
+ 	/* After this point, no packet can schedule bc_work anymore,
+-	 * but we need to cancel it and purge left skbs if any.
++	 * but we need to flush work.
+ 	 */
+-	cancel_work_sync(&port->bc_work);
+-
+-	while ((skb = __skb_dequeue(&port->bc_queue))) {
+-		const struct macvlan_dev *src = MACVLAN_SKB_CB(skb)->src;
+-
+-		if (src)
+-			dev_put(src->dev);
+-
+-		kfree_skb(skb);
+-	}
++	for_each_possible_cpu(cpu)
++		flush_work(per_cpu_ptr(&macvlan_bc_work.bc_work, cpu));
+ 
+ 	/* If the lower device address has been changed by passthru
+ 	 * macvlan, put it back.
+@@ -1702,7 +1705,15 @@ static struct notifier_block macvlan_notifier_block __read_mostly = {
+ 
+ static int __init macvlan_init_module(void)
+ {
+-	int err;
++	int err, cpu;
++
++	for_each_possible_cpu(cpu) {
++		struct macvlan_bc_work *work;
++
++		work = per_cpu_ptr(&macvlan_bc_work, cpu);
++		skb_queue_head_init(&work->bc_queue);
++		INIT_WORK(&work->bc_work, macvlan_process_broadcast);
++	}
+ 
+ 	register_netdevice_notifier(&macvlan_notifier_block);
+ 
+
