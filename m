@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80D5BC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CEAFC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5194E2084A
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7F832084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CsupSOVW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5194E2084A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gEJb0nw3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7F832084D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729635AbeKCDtu (ORCPT
+        id S1729651AbeKCDtx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:49:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44574 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:49:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728699AbeKCDtu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:49:50 -0400
+        id S1728699AbeKCDtx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:49:53 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9E8D20847;
-        Fri,  2 Nov 2018 18:41:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B1EF420847;
+        Fri,  2 Nov 2018 18:41:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184097;
-        bh=4tZNb8Yh2VXVC1+0V3y0XizUGLU12bRbJicDBievKHo=;
+        s=default; t=1541184100;
+        bh=kFYw1W+IppJCjnVtxcVbWLTyjq/VatpOHf6xVBQVnPA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CsupSOVWArk9g7b46BqdCPNjG6nQQ80bM9NpvFQfzIgHcLFtHktVHRpKpNTZ75gQ2
-         rZ3JbyvPQBHkq+7KiQNHhghyyQcRNQsuHpnrg55/B5SJk+hBEnaF8iCDoIH7OjHrjT
-         pBDcfAuHIxmTQSloJnPu10mNDgcKDsFRiAmKAiG0=
+        b=gEJb0nw3UbQEoC2q4tsK20seLvMi0BtJJmA4DRH9WtA3wb6C+XqU6oFZIeI/Z+A6V
+         M+ise/JsP/tWUCHp7DABQUGchYBnBIe6VIfNoeJ7Xn+ulHYpg9qQk8tampgOh0H+3a
+         ClNhQpWF87/BjJdxY9BegaIP3YeA020bJ28mTXCE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 078/150] HID: i2c-hid: Remove RESEND_REPORT_DESCR quirk and its handling
-Date:   Fri,  2 Nov 2018 19:34:00 +0100
-Message-Id: <20181102182909.019218166@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Arnd Bergmann <arnd@arndb.de>, James Hogan <jhogan@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-arch@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, linux-mips@linux-mips.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.18 079/150] compiler.h: Allow arch-specific asm/compiler.h
+Date:   Fri,  2 Nov 2018 19:34:01 +0100
+Message-Id: <20181102182909.067675897@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -65,99 +66,118 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit afbb1169ed5b58cfca017e368b53e019cf285853 ]
+[ Upstream commit 04f264d3a8b0eb25d378127bd78c3c9a0261c828 ]
 
-Commit 52cf93e63ee6 ("HID: i2c-hid: Don't reset device upon system resume")
-removes the need for the RESEND_REPORT_DESCR quirk for Raydium devices, but
-kept it for the SIS device id 10FB touchscreens, as the author of that
-commit could not determine if the quirk is still necessary there.
+We have a need to override the definition of
+barrier_before_unreachable() for MIPS, which means we either need to add
+architecture-specific code into linux/compiler-gcc.h or we need to allow
+the architecture to provide a header that can define the macro before
+the generic definition. The latter seems like the better approach.
 
-I've tested suspend/resume on a Toshiba Click Mini L9W-B which is the
-device for which this quirk was added in the first place and with the
-"Don't reset device upon system resume" fix the quirk is no longer
-necessary, so this commit removes it.
+A straightforward approach to the per-arch header is to make use of
+asm-generic to provide a default empty header & adjust architectures
+which don't need anything specific to make use of that by adding the
+header to generic-y. Unfortunately this doesn't work so well due to
+commit 28128c61e08e ("kconfig.h: Include compiler types to avoid missed
+struct attributes") which caused linux/compiler_types.h to be included
+in the compilation of every C file via the -include linux/kconfig.h flag
+in c_flags.
 
-Note even better I also had some other devices with SIS touchscreens which
-suspend/resume issues, where the RESEND_REPORT_DESCR quirk did not help.
+Because the -include flag is present for all C files we compile, we need
+the architecture-provided header to be present before any C files are
+compiled. If any C files can be compiled prior to the asm-generic header
+wrappers being generated then we hit a build failure due to missing
+header. Such cases do exist - one pointed out by the kbuild test robot
+is the compilation of arch/ia64/kernel/nr-irqs.c, which occurs as part
+of the archprepare target [1].
 
-I've also tested these devices with the "Don't reset device upon system
-resume" fix and I'm happy to report that that fix also fixes touchscreen
-resume on the following devices:
+This leaves us with a few options:
 
-Asus T100HA
-Asus T200TA
-Peaq C1010
+  1) Use generic-y & fix any build failures we find by enforcing
+     ordering such that the asm-generic target occurs before any C
+     compilation, such that linux/compiler_types.h can always include
+     the generated asm-generic wrapper which in turn includes the empty
+     asm-generic header. This would rely on us finding all the
+     problematic cases - I don't know for sure that the ia64 issue is
+     the only one.
 
-Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+  2) Add an actual empty header to each architecture, so that we don't
+     need the generated asm-generic wrapper. This seems messy.
+
+  3) Give up & add #ifdef CONFIG_MIPS or similar to
+     linux/compiler_types.h. This seems messy too.
+
+  4) Include the arch header only when it's actually needed, removing
+     the need for the asm-generic wrapper for all other architectures.
+
+This patch allows us to use approach 4, by including an asm/compiler.h
+header from linux/compiler_types.h after the inclusion of the
+compiler-specific linux/compiler-*.h header(s). We do this
+conditionally, only when CONFIG_HAVE_ARCH_COMPILER_H is selected, in
+order to avoid the need for asm-generic wrappers & the associated build
+ordering issue described above. The asm/compiler.h header is included
+after the generic linux/compiler-*.h header(s) for consistency with the
+way linux/compiler-intel.h & linux/compiler-clang.h are included after
+the linux/compiler-gcc.h header that they override.
+
+[1] https://lists.01.org/pipermail/kbuild-all/2018-August/051175.html
+
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Patchwork: https://patchwork.linux-mips.org/patch/20269/
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-arch@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org
+Cc: linux-mips@linux-mips.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-ids.h         |  1 -
- drivers/hid/i2c-hid/i2c-hid.c | 18 +++---------------
- 2 files changed, 3 insertions(+), 16 deletions(-)
+ arch/Kconfig                   |  8 ++++++++
+ include/linux/compiler_types.h | 12 ++++++++++++
+ 2 files changed, 20 insertions(+)
 
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index eee6b79fb131..ae5b72269e27 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -974,7 +974,6 @@
- #define USB_DEVICE_ID_SIS817_TOUCH	0x0817
- #define USB_DEVICE_ID_SIS_TS		0x1013
- #define USB_DEVICE_ID_SIS1030_TOUCH	0x1030
--#define USB_DEVICE_ID_SIS10FB_TOUCH	0x10fb
+diff --git a/arch/Kconfig b/arch/Kconfig
+index f03b72644902..a18371a36e03 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -977,4 +977,12 @@ config REFCOUNT_FULL
+ 	  against various use-after-free conditions that can be used in
+ 	  security flaw exploits.
  
- #define USB_VENDOR_ID_SKYCABLE			0x1223
- #define	USB_DEVICE_ID_SKYCABLE_WIRELESS_PRESENTER	0x3F07
-diff --git a/drivers/hid/i2c-hid/i2c-hid.c b/drivers/hid/i2c-hid/i2c-hid.c
-index 37013b58098c..d17cf6e323b2 100644
---- a/drivers/hid/i2c-hid/i2c-hid.c
-+++ b/drivers/hid/i2c-hid/i2c-hid.c
-@@ -47,8 +47,7 @@
- /* quirks to control the device */
- #define I2C_HID_QUIRK_SET_PWR_WAKEUP_DEV	BIT(0)
- #define I2C_HID_QUIRK_NO_IRQ_AFTER_RESET	BIT(1)
--#define I2C_HID_QUIRK_RESEND_REPORT_DESCR	BIT(2)
--#define I2C_HID_QUIRK_NO_RUNTIME_PM		BIT(3)
-+#define I2C_HID_QUIRK_NO_RUNTIME_PM		BIT(2)
++config HAVE_ARCH_COMPILER_H
++	bool
++	help
++	  An architecture can select this if it provides an
++	  asm/compiler.h header that should be included after
++	  linux/compiler-*.h in order to override macro definitions that those
++	  headers generally provide.
++
+ source "kernel/gcov/Kconfig"
+diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+index a8ba6b04152c..55e4be8b016b 100644
+--- a/include/linux/compiler_types.h
++++ b/include/linux/compiler_types.h
+@@ -78,6 +78,18 @@ extern void __chk_io_ptr(const volatile void __iomem *);
+ #include <linux/compiler-clang.h>
+ #endif
  
- /* flags */
- #define I2C_HID_STARTED		0
-@@ -172,8 +171,6 @@ static const struct i2c_hid_quirks {
- 	{ I2C_VENDOR_ID_HANTICK, I2C_PRODUCT_ID_HANTICK_5288,
- 		I2C_HID_QUIRK_NO_IRQ_AFTER_RESET |
- 		I2C_HID_QUIRK_NO_RUNTIME_PM },
--	{ USB_VENDOR_ID_SIS_TOUCH, USB_DEVICE_ID_SIS10FB_TOUCH,
--		I2C_HID_QUIRK_RESEND_REPORT_DESCR },
- 	{ 0, 0 }
- };
- 
-@@ -1241,22 +1238,13 @@ static int i2c_hid_resume(struct device *dev)
- 
- 	/* Instead of resetting device, simply powers the device on. This
- 	 * solves "incomplete reports" on Raydium devices 2386:3118 and
--	 * 2386:4B33
-+	 * 2386:4B33 and fixes various SIS touchscreens no longer sending
-+	 * data after a suspend/resume.
- 	 */
- 	ret = i2c_hid_set_power(client, I2C_HID_PWR_ON);
- 	if (ret)
- 		return ret;
- 
--	/* Some devices need to re-send report descr cmd
--	 * after resume, after this it will be back normal.
--	 * otherwise it issues too many incomplete reports.
--	 */
--	if (ihid->quirks & I2C_HID_QUIRK_RESEND_REPORT_DESCR) {
--		ret = i2c_hid_command(client, &hid_report_descr_cmd, NULL, 0);
--		if (ret)
--			return ret;
--	}
--
- 	if (hid->driver && hid->driver->reset_resume) {
- 		ret = hid->driver->reset_resume(hid);
- 		return ret;
++/*
++ * Some architectures need to provide custom definitions of macros provided
++ * by linux/compiler-*.h, and can do so using asm/compiler.h. We include that
++ * conditionally rather than using an asm-generic wrapper in order to avoid
++ * build failures if any C compilation, which will include this file via an
++ * -include argument in c_flags, occurs prior to the asm-generic wrappers being
++ * generated.
++ */
++#ifdef CONFIG_HAVE_ARCH_COMPILER_H
++#include <asm/compiler.h>
++#endif
++
+ /*
+  * Generic compiler-dependent macros required for kernel
+  * build go below this comment. Actual compiler/compiler version
 -- 
 2.17.1
 
