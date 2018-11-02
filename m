@@ -7,50 +7,47 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CEEDC65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:42:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA30C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:43:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D122A2084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:42:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DDC720854
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:43:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HhEx+Q9D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D122A2084D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="L94H/HvM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DDC720854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729901AbeKCDvJ (ORCPT
+        id S1729913AbeKCDvM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:51:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46348 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:51:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729437AbeKCDvI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:51:08 -0400
+        id S1729437AbeKCDvL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:51:11 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9658320847;
-        Fri,  2 Nov 2018 18:42:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB1242084A;
+        Fri,  2 Nov 2018 18:42:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184176;
-        bh=40bV5Q3DV3ZQs6LFbaisspKgum9qv5RGRkTlxMpkMZI=;
+        s=default; t=1541184179;
+        bh=0mwhO9z9uOzjTgobil2ZWsS9niOX3WuBmvfItPeEHjQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HhEx+Q9DMt12onxxyW6YjVDnI7BKffLy//m9yGzygRM2fICyYB1zG9j9Dr37beYsW
-         m/gVQwMcMezA19l5aNR3T/Jspf70EnHtP5Dpz1Pl7TSPVCo4MvLpQ/cHvqR4Yt0VNu
-         S5r/98dbKuVEBDh+WHiIHeZhXyq1Ww3OtRYcMna4=
+        b=L94H/HvMfzFkwm5WDVaS9Z5sfnkH41MT1KtfiuC6wqQvVWsBT46GR+mAabmvZPcZP
+         2fxP+Cv672fpehJrrcbl/mfNUhO2bvLpeYhSbXwQ6EMHKURC2w+Guj/tAojarnuLRL
+         VQHP8Ig59JsCfbJ0gcXDuVY91kXjTgOsDG7+nqqU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 102/150] perf tools: Disable parallelism for make clean
-Date:   Fri,  2 Nov 2018 19:34:24 +0100
-Message-Id: <20181102182910.444553254@linuxfoundation.org>
+        stable@vger.kernel.org, Ying Xu <yinxu@redhat.com>,
+        Hangbin Liu <liuhangbin@gmail.com>,
+        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.18 103/150] bridge: do not add port to router list when receives query with source 0.0.0.0
+Date:   Fri,  2 Nov 2018 19:34:25 +0100
+Message-Id: <20181102182910.500575023@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -68,51 +65,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit da15fc2fa9c07b23db8f5e479bd8a9f0d741ca07 ]
+From: Hangbin Liu <liuhangbin@gmail.com>
 
-The Yocto build system does a 'make clean' when rebuilding due to
-changed dependencies, and that consistently fails for me (causing the
-whole BSP build to fail) with errors such as
+[ Upstream commit 5a2de63fd1a59c30c02526d427bc014b98adf508 ]
 
-| find: '[...]/perf/1.0-r9/perf-1.0/plugin_mac80211.so': No such file or directory
-| find: '[...]/perf/1.0-r9/perf-1.0/plugin_mac80211.so': No such file or directory
-| find: find: '[...]/perf/1.0-r9/perf-1.0/libtraceevent.a''[...]/perf/1.0-r9/perf-1.0/libtraceevent.a': No such file or directory: No such file or directory
-|
-[...]
-| find: cannot delete '/mnt/xfs/devel/pil/yocto/tmp-glibc/work/wandboard-oe-linux-gnueabi/perf/1.0-r9/perf-1.0/util/.pstack.o.cmd': No such file or directory
+Based on RFC 4541, 2.1.1.  IGMP Forwarding Rules
 
-Apparently (despite the comment), 'make clean' ends up launching
-multiple sub-makes that all want to remove the same things - perhaps
-this only happens in combination with a O=... parameter. In any case, we
-don't lose much by explicitly disabling the parallelism for the clean
-target, and it makes automated builds much more reliable.
+  The switch supporting IGMP snooping must maintain a list of
+  multicast routers and the ports on which they are attached.  This
+  list can be constructed in any combination of the following ways:
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180705131527.19749-1-linux@rasmusvillemoes.dk
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+  a) This list should be built by the snooping switch sending
+     Multicast Router Solicitation messages as described in IGMP
+     Multicast Router Discovery [MRDISC].  It may also snoop
+     Multicast Router Advertisement messages sent by and to other
+     nodes.
+
+  b) The arrival port for IGMP Queries (sent by multicast routers)
+     where the source address is not 0.0.0.0.
+
+We should not add the port to router list when receives query with source
+0.0.0.0.
+
+Reported-by: Ying Xu <yinxu@redhat.com>
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Acked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Acked-by: Roopa Prabhu <roopa@cumulusnetworks.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/Makefile |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/bridge/br_multicast.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/tools/perf/Makefile
-+++ b/tools/perf/Makefile
-@@ -84,10 +84,10 @@ endif # has_clean
- endif # MAKECMDGOALS
+--- a/net/bridge/br_multicast.c
++++ b/net/bridge/br_multicast.c
+@@ -1420,7 +1420,15 @@ static void br_multicast_query_received(
+ 		return;
  
- #
--# The clean target is not really parallel, don't print the jobs info:
-+# Explicitly disable parallelism for the clean target.
- #
- clean:
--	$(make)
-+	$(make) -j1
+ 	br_multicast_update_query_timer(br, query, max_delay);
+-	br_multicast_mark_router(br, port);
++
++	/* Based on RFC4541, section 2.1.1 IGMP Forwarding Rules,
++	 * the arrival port for IGMP Queries where the source address
++	 * is 0.0.0.0 should not be added to router port list.
++	 */
++	if ((saddr->proto == htons(ETH_P_IP) && saddr->u.ip4) ||
++	    (saddr->proto == htons(ETH_P_IPV6) &&
++	     !ipv6_addr_any(&saddr->u.ip6)))
++		br_multicast_mark_router(br, port);
+ }
  
- #
- # The build-test target is not really parallel, don't print the jobs info,
+ static int br_ip4_multicast_query(struct net_bridge *br,
 
 
