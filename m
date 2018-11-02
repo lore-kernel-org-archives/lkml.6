@@ -3,176 +3,132 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE4FC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 23:21:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28422C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 23:21:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E0FC20831
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 23:21:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E13BE2081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 23:21:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CTN6obCH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E0FC20831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="1MtewAwP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E13BE2081F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728567AbeKCIaU (ORCPT
+        id S1728575AbeKCIa7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 04:30:20 -0400
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:39286 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726705AbeKCIaT (ORCPT
+        Sat, 3 Nov 2018 04:30:59 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:40439 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726778AbeKCIa6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 04:30:19 -0400
-Received: by mail-vk1-f193.google.com with SMTP id o10-v6so788622vki.6;
-        Fri, 02 Nov 2018 16:21:10 -0700 (PDT)
+        Sat, 3 Nov 2018 04:30:58 -0400
+Received: by mail-wr1-f67.google.com with SMTP id i17-v6so3510579wre.7
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 16:21:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=mfT34+9lft1knftLPFl6Z3SSVqD5RjGTMgBn2JHyRrA=;
-        b=CTN6obCHzSGdeDVtjzF6g3pbZuqv3ubPXPydGQci8m8Fl1m/J+CI5ESmLLjTrfFaVE
-         KrkpejJu5biwloO0aACHMpAErqfmZy8WV1lEDLY+0cFD+b9OWvl5zWQEsJICQMhejgwY
-         fvEo7KRAeWA/akiw3aFDT9ls4/p8yP9mXyAuKQF40YEEW7XoLEAgYGvk11BJtu9abZbw
-         RfpmP30AjPnW9G3nljOHSe/HJwc5kR8pzUgsgNXeH6RyH+fNvdX/5+a47TN7lUJLZ1gT
-         lymdHQ9hz5CFxHIocWRmBepUXh3yL/8rmAxBVzKvukw0LRglZ0Ri44UkGiVpOsGpd4Kj
-         WeSA==
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:to:from:cc;
+        bh=3O1qaATcHIkuuPgSXnv/8XGANB3AKCCJ/lgCD4fLLVw=;
+        b=1MtewAwPuYFduFY0GQVeHBcGjkYJV9ov/cmMOALGxDWn07gqBImDYDr+noddsLbTwB
+         39tkoh/yXmykjRu97naRiacEAf+L8kXBo9neQ1Mpc8sv4ymj4X3neBb3yR9tlASdtFr5
+         mUkHODukxBYrciI2cHnxXRNzwZDfsMzVwh7D6+kkAtAVibG6cJPWEjhW9V/vQZ4y2UYU
+         Jxjzl3qN5bl4qVg4HRPi6/XHqN+kHaE9YLHxXEzGAHcLR/MxgspuEXUZO5mv3NtuJoGc
+         g9su8l3IWPPHI9ZGtEWjWgpRNHCo0wJiugWE88vBTO8B+E3ExgAxLkbmogfhuKhAw84z
+         8hJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=mfT34+9lft1knftLPFl6Z3SSVqD5RjGTMgBn2JHyRrA=;
-        b=aGlhkfWZILffqggbgLJG45Urzn2YOPK4ttc1jBPn6/TuCMXz06VqTBrkjSHATCgNb0
-         pxwLeYmS+PMbXRV0blLSX14yYbpCw00DchPlfPC58vwEkbFg31E8k6gKpvI86no4NNR+
-         8NQ4Zo+G52naXnT+p8OetovSlXe7AEztYNRAEHSbtLF82f8HJ4uVNIg9CnFKemHSGn0+
-         jl5UlS0XNfXb4+HvtVHz7Ymn7FeWppw0y4l73FDzxR0xspiTSD/pv7RX5OXrkoPN/luj
-         50MGD8BDuUxtXhjW/CjMp/4bwdUB7s9/jCKG03YFDqZojc1LD3iwS0qauFDuqb7rXaL8
-         kmMw==
-X-Gm-Message-State: AGRZ1gJmYarJ/1sfhSd6vqGQDzlpJajmx8/mq6QqU4y3YhYboanA8qk5
-        AqF2HiPUuKUA8HCynke6nA==
-X-Google-Smtp-Source: AJdET5eutOiY0zSs7iPpUynirYG1o4Zf0OIwbxazvPWV7LaLcv8eae5ihJYxtJ2RtYLR2kc53zw5UQ==
-X-Received: by 2002:a1f:9352:: with SMTP id v79mr5856368vkd.73.1541200869694;
-        Fri, 02 Nov 2018 16:21:09 -0700 (PDT)
-Received: from 960.ws ([2601:902:c200:6512:a7fd:514d:7aab:c075])
-        by smtp.gmail.com with ESMTPSA id t84-v6sm1505149vkt.35.2018.11.02.16.21.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 02 Nov 2018 16:21:08 -0700 (PDT)
-Message-ID: <33dce911f9544c53a7989430a1ce848444cf4e3b.camel@gmail.com>
-Subject: Re: [PATCH v2 3/3] ALSA: hda: add support for Huawei WMI MicMute LED
-From:   ayman.bagabas@gmail.com
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, kailang@realtek.com,
-        Hui Wang <hui.wang@canonical.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>
-Date:   Fri, 02 Nov 2018 19:21:07 -0400
-In-Reply-To: <CAHp75VcA5M4XNVr94OALo3=AW3LbWU+Pz-KTRgodBtSP_K9-wA@mail.gmail.com>
-References: <20181102041120.7603-1-ayman.bagabas@gmail.com>
-         <20181102041120.7603-4-ayman.bagabas@gmail.com>
-         <CAHp75VcA5M4XNVr94OALo3=AW3LbWU+Pz-KTRgodBtSP_K9-wA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
+        bh=3O1qaATcHIkuuPgSXnv/8XGANB3AKCCJ/lgCD4fLLVw=;
+        b=cVyy7KffPWVVPe23IYXjqHgVV68xS2OW1QZJCuRZOSfBeTmHy1iqcSR3iT1weoESYv
+         0TQSSSL/ARbXSD/DPUf1XVlmLTVuCBS29PUjW+8RNsAgflXpc26QKwwDO/pfI7IfvC6p
+         mAjTyte4TSdL5NbW3ysbUfx7/IWWdDOzCtOYgZdQgFQuiT6ztZwBKfHh2EWIQVwkPNot
+         s/fVKWC1yHc6iN0+GzMYkE0e8QZASZ2LI8AglL++8mLiPATMDcLfTL+pPjuci4JaLKuC
+         9Y88vAPjobup7rh+8ijZeXVowLIVUdKeCUZe9ggQ3koC0V6jKxNbUpV8nuEIWt7Cqp+C
+         xDpw==
+X-Gm-Message-State: AGRZ1gKFdX1dZxP613MgG/jFRJzwhjK7GrzVMZquEJwB3SBqDEPnrxAa
+        CiFxItfP8c+n//8DnyIrwwMvFQ==
+X-Google-Smtp-Source: AJdET5fAQx5WUAiG+WbmMU9OWGQ3kwUo9M9+VXq+G9gEIjm4rIKYnyztBCQJU6Um9DjYkMTIM6FWoQ==
+X-Received: by 2002:adf:fa92:: with SMTP id h18-v6mr11647861wrr.74.1541200908805;
+        Fri, 02 Nov 2018 16:21:48 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id e8-v6sm9602738wrw.75.2018.11.02.16.21.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 02 Nov 2018 16:21:47 -0700 (PDT)
+Message-ID: <5bdcdc0b.1c69fb81.27f78.0e10@mx.google.com>
+Date:   Fri, 02 Nov 2018 16:21:47 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: boot
+X-Kernelci-Kernel: v4.14.78-144-ge862e4c85291
+X-Kernelci-Branch: linux-4.14.y
+X-Kernelci-Tree: stable-rc
+In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
+References: <20181102182857.064326086@linuxfoundation.org>
+Subject: Re: [PATCH 4.14 000/143] 4.14.79-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-11-02 at 20:12 +0200, Andy Shevchenko wrote:
-> On Fri, Nov 2, 2018 at 6:12 AM Ayman Bagabas <ayman.bagabas@gmail.com
-> > wrote:
-> > 
-> > Some of Huawei laptops come with a LED in the mic mute key. This
-> > patch
-> > enables and disable this LED accordingly.
-> > --- a/drivers/platform/x86/huawei_wmi.c
-> > +++ b/drivers/platform/x86/huawei_wmi.c
-> > @@ -26,6 +26,7 @@
-> >  #include <linux/input/sparse-keymap.h>
-> >  #include <linux/acpi.h>
-> >  #include <linux/wmi.h>
-> > +#include <linux/huawei_wmi.h>
-> 
-> Keep it in order and put under
-> include/linux/platform_data/x86/
-> folder.
-> 
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +#ifndef __HUAWEI_WMI_H__
-> > +#define __HUAWEI_WMI_H__
-> > +
-> > +int huawei_wmi_micmute_led_set(bool on);
-> > +
-> > +#endif
-> 
-> This has to cover !HUAWEI_LAPTOP case.
-> 
-> > +/* Helper functions for Huawei WMI Mic Mute LED;
-> > + * to be included from codec driver
-> > + */
-> 
-> Comment style.
+stable-rc/linux-4.14.y boot: 125 boots: 0 failed, 110 passed with 13 offlin=
+e, 2 untried/unknown (v4.14.78-144-ge862e4c85291)
 
-/* Helper functions for Huawei WMI micmute led;
- * to be included from codec driver
- */
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-4.14.y/kernel/v4.14.78-144-ge862e4c85291/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.14.=
+y/kernel/v4.14.78-144-ge862e4c85291/
 
-> 
-> > +#if IS_ENABLED(CONFIG_HUAWEI_LAPTOP)
-> 
-> See above
-> 
-> > +static int (*huawei_wmi_micmute_led_set_func)(bool);
-> 
-> Why is that?
+Tree: stable-rc
+Branch: linux-4.14.y
+Git Describe: v4.14.78-144-ge862e4c85291
+Git Commit: e862e4c85291ce6758f1aa05b05c54b1afce6844
+Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git
+Tested: 63 unique boards, 24 SoC families, 15 builds out of 185
 
-This is used with symbol_request and then in the update function to
-locate the function from the wmi device. But I guess you are right, we
-could use the function defined in the header file directly.
+Offline Platforms:
 
-> 
-> > +       if (action == HDA_FIXUP_ACT_PROBE) {
-> > +               if (!huawei_wmi_micmute_led_set_func)
-> > +                       huawei_wmi_micmute_led_set_func =
-> > symbol_request(huawei_wmi_micmute_led_set);
-> > +               if (!huawei_wmi_micmute_led_set_func) {
-> > +                       codec_warn(codec, "Failed to find
-> > huawei_wmi symbol huawei_wmi_micmute_led_set\n");
-> > +                       return;
-> > +               }
-> > +               removefunc =
-> > (huawei_wmi_micmute_led_set_func(false) < 0)
-> > +                       || (snd_hda_gen_add_micmute_led(codec,
-> > update_huawei_wmi_micmute_led) < 0);
-> > +
-> > +       }
-> > +
-> > +       if (huawei_wmi_micmute_led_set_func && (action ==
-> > HDA_FIXUP_ACT_FREE || removefunc)) {
-> > +               symbol_put(huawei_wmi_micmute_led_set);
-> > +               huawei_wmi_micmute_led_set_func = NULL;
-> > +       }
-> > +}
-> 
-> Takashi, is it a way how the rest sound drivers are written? B/c this
-> symbol_request(s) look to me a bit ugly.
-> 
-> > +/* for alc_fixup_huawei_micmute_led */
-> > +#include "huawei_wmi_helper.c"
-> 
-> Ditto.
-> 
-> Include *.c?! Huh?
+arm:
 
-Is that the wrong way? Should I define the functions directly into
-patch_realtek.c?
+    tegra_defconfig:
+        tegra124-jetson-tk1: 1 offline lab
 
-> 
+    bcm2835_defconfig:
+        bcm2835-rpi-b: 1 offline lab
 
+    sama5_defconfig:
+        at91-sama5d4_xplained: 1 offline lab
+
+    multi_v7_defconfig:
+        alpine-db: 1 offline lab
+        at91-sama5d4_xplained: 1 offline lab
+        socfpga_cyclone5_de0_sockit: 1 offline lab
+        sun5i-r8-chip: 1 offline lab
+        tegra124-jetson-tk1: 1 offline lab
+
+    sunxi_defconfig:
+        sun5i-r8-chip: 1 offline lab
+
+arm64:
+
+    defconfig:
+        apq8016-sbc: 1 offline lab
+        juno-r2: 1 offline lab
+        meson-gxl-s905d-p230: 1 offline lab
+        mt7622-rfb1: 1 offline lab
+
+---
+For more info write to <info@kernelci.org>
