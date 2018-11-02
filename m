@@ -2,94 +2,106 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C382C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:35:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F258C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:35:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C9BB2081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:35:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C9BB2081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 5E6352082E
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:35:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E6352082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727815AbeKCAmm (ORCPT
+        id S1727997AbeKCAnK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 20:42:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46254 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727518AbeKCAml (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 20:42:41 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D1524AEC0;
-        Fri,  2 Nov 2018 15:35:12 +0000 (UTC)
-Subject: Re: [PATCH] xen/grant-table: Fix incorrect gnttab_dma_free_pages()
- pr_debug message
-To:     Liam Merwick <Liam.Merwick@oracle.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Cc:     boris.ostrovsky@oracle.com
-References: <1541167463-32024-1-git-send-email-Liam.Merwick@oracle.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNHkp1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmRlPsLAeQQTAQIAIwUCU4xw6wIbAwcL
- CQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJELDendYovxMvi4UH/Ri+OXlObzqMANruTd4N
- zmVBAZgx1VW6jLc8JZjQuJPSsd/a+bNr3BZeLV6lu4Pf1Yl2Log129EX1KWYiFFvPbIiq5M5
- kOXTO8Eas4CaScCvAZ9jCMQCgK3pFqYgirwTgfwnPtxFxO/F3ZcS8jovza5khkSKL9JGq8Nk
- czDTruQ/oy0WUHdUr9uwEfiD9yPFOGqp4S6cISuzBMvaAiC5YGdUGXuPZKXLpnGSjkZswUzY
- d9BVSitRL5ldsQCg6GhDoEAeIhUC4SQnT9SOWkoDOSFRXZ+7+WIBGLiWMd+yKDdRG5RyP/8f
- 3tgGiB6cyuYfPDRGsELGjUaTUq3H2xZgIPfOwE0EU4xwFgEIAMsx+gDjgzAY4H1hPVXgoLK8
- B93sTQFN9oC6tsb46VpxyLPfJ3T1A6Z6MVkLoCejKTJ3K9MUsBZhxIJ0hIyvzwI6aYJsnOew
- cCiCN7FeKJ/oA1RSUemPGUcIJwQuZlTOiY0OcQ5PFkV5YxMUX1F/aTYXROXgTmSaw0aC1Jpo
- w7Ss1mg4SIP/tR88/d1+HwkJDVW1RSxC1PWzGizwRv8eauImGdpNnseneO2BNWRXTJumAWDD
- pYxpGSsGHXuZXTPZqOOZpsHtInFyi5KRHSFyk2Xigzvh3b9WqhbgHHHE4PUVw0I5sIQt8hJq
- 5nH5dPqz4ITtCL9zjiJsExHuHKN3NZsAEQEAAcLAXwQYAQIACQUCU4xwFgIbDAAKCRCw3p3W
- KL8TL0P4B/9YWver5uD/y/m0KScK2f3Z3mXJhME23vGBbMNlfwbr+meDMrJZ950CuWWnQ+d+
- Ahe0w1X7e3wuLVODzjcReQ/v7b4JD3wwHxe+88tgB9byc0NXzlPJWBaWV01yB2/uefVKryAf
- AHYEd0gCRhx7eESgNBe3+YqWAQawunMlycsqKa09dBDL1PFRosF708ic9346GLHRc6Vj5SRA
- UTHnQqLetIOXZm3a2eQ1gpQK9MmruO86Vo93p39bS1mqnLLspVrL4rhoyhsOyh0Hd28QCzpJ
- wKeHTd0MAWAirmewHXWPco8p1Wg+V+5xfZzuQY0f4tQxvOpXpt4gQ1817GQ5/Ed/wsDtBBgB
- CAAgFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAlrd8NACGwIAgQkQsN6d1ii/Ey92IAQZFggA
- HRYhBFMtsHpB9jjzHji4HoBcYbtP2GO+BQJa3fDQAAoJEIBcYbtP2GO+TYsA/30H/0V6cr/W
- V+J/FCayg6uNtm3MJLo4rE+o4sdpjjsGAQCooqffpgA+luTT13YZNV62hAnCLKXH9n3+ZAgJ
- RtAyDWk1B/0SMDVs1wxufMkKC3Q/1D3BYIvBlrTVKdBYXPxngcRoqV2J77lscEvkLNUGsu/z
- W2pf7+P3mWWlrPMJdlbax00vevyBeqtqNKjHstHatgMZ2W0CFC4hJ3YEetuRBURYPiGzuJXU
- pAd7a7BdsqWC4o+GTm5tnGrCyD+4gfDSpkOT53S/GNO07YkPkm/8J4OBoFfgSaCnQ1izwgJQ
- jIpcG2fPCI2/hxf2oqXPYbKr1v4Z1wthmoyUgGN0LPTIm+B5vdY82wI5qe9uN6UOGyTH2B3p
- hRQUWqCwu2sqkI3LLbTdrnyDZaixT2T0f4tyF5Lfs+Ha8xVMhIyzNb1byDI5FKCb
-Message-ID: <dab89b7a-f13d-39b1-b25e-a2e7325fa003@suse.com>
-Date:   Fri, 2 Nov 2018 16:35:11 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <1541167463-32024-1-git-send-email-Liam.Merwick@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+        Fri, 2 Nov 2018 20:43:10 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:53429 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727503AbeKCAnK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 20:43:10 -0400
+Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
+ (mreue002 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0MVmBj-1g2pUx1peB-00YzfE; Fri, 02 Nov 2018 16:35:32 +0100
+Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
+ (mreue002 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0MVmBj-1g2pUx1peB-00YzfE; Fri, 02 Nov 2018 16:35:32 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Karen Xie <kxie@chelsio.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] cxgb4i: fix thermal configuration dependencies
+Date:   Fri,  2 Nov 2018 16:35:23 +0100
+Message-Id: <20181102153531.1583478-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+X-Provags-ID: V03:K1:qUEQXpVxEVjC3a2WfXlp3ypzaipU73xMJGV+C0oi10E7DdytLbI
+ M6yA7M2Lc7esoFio3Fil/K8UMF3DpqEVmUjSEOLuAcmE+yCp8KnKiZ77PcCWTgR3BUSx2tb
+ uIsV8UmuPV6d+H5ojZA4tgsugSXagJEqgFomzwOafx6zRNgvGArFfoVkHf63imdEtd7+o12
+ d/bsq4k/NxihRatU9XBHA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Zd4gcr18b2Y=:R6K33GvVWo0ZOsvTY1Nwye
+ EUHQtwd3GWPwFRBBSeylWaUrFMQZNUtdCQyjjm3uS3X6C8R/fE3bKJkmw7dak10U0o1JHOV84
+ tcSmkV8I4J4ljzHgL0368MEyYFD+l+sKEykTZhZxpbgOX1yTDZgJoVRqJO5zE408Fwi09PgA1
+ ygpNDbFdwx8HR2VyV6+/DVmvMuDHIY6xIz8SVJHfRcFmVYgHE+0SaU5tk1hsl7gaCVu07sLJU
+ Zep+t1ENOtUxPEn2sBlqVVOZ5HAmIWsiHEHvkkqxwi9PijM30HYvTYP0aIevDOX4G4693zC4T
+ i6a6/qUHXP0eWwVDK+tVA8h2n7jU+sUdWa8L5DUQWT3Em7WlvgdE6nRNZEKtxwBL0I0ASydk+
+ XGPWfLpQ9qaVqxut5pSblekgYyaBgmK+VpwBpJffprTeIk3qszZ35cYh5gJx3JR5gd2y++gIX
+ fweBgqD1tdY19bDhJriahpUEGCDUNs9/gPxm/PelcIUwHU8sqXi5PwOR9Ju8Jb1/aOgQurqS0
+ S819n9EjWObyUqjvyOB92m8x5Xd/IGm1jSOxwI7h0v2ofGlrSQ0oL0T/iS/PUB3LbeOOxoqC9
+ Z+37sk0CEa2NpIRktG9gm3BmK69v2HKmk4xDBDfDTICwgXMl6si7sZZspPB9+0fiBUxpJV9Mf
+ ks751eKcOdw3r5ZI3dCwUwgikY9sA3/0E0i9Xlwpm2PDi1cyvTtJH8FZcSjf+rw748kw=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/11/2018 15:04, Liam Merwick wrote:
-> If a call to xenmem_reservation_increase() in gnttab_dma_free_pages()
-> fails it triggers a message "Failed to decrease reservation..." which
-> should be "Failed to increase reservation..."
-> 
-> Fixes: 9bdc7304f536 ('xen/grant-table: Allow allocating buffers suitable for DMA')
-> Reported-by: Ross Philipson <ross.philipson@oracle.com>
-> Signed-off-by: Liam Merwick <liam.merwick@oracle.com>
-> Reviewed-by: Mark Kanda <mark.kanda@oracle.com>
+I fixed a bug by adding a dependency in the network driver, but that
+fix caused a related bug in the SCSI driver:
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+WARNING: unmet direct dependencies detected for CHELSIO_T4
+  Depends on [m]: NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_CHELSIO [=y] && PCI [=y] && (IPV6 [=y] || IPV6 [=y]=n) && (THERMAL [=m] || !THERMAL [=m])
+  Selected by [y]:
+  - SCSI_CXGB4_ISCSI [=y] && SCSI_LOWLEVEL [=y] && SCSI [=y] && PCI [=y] && INET [=y] && (IPV6 [=y] || IPV6 [=y]=n)
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_thermal.o: In function `cxgb4_thermal_init':
+cxgb4_thermal.c:(.text+0x158): undefined reference to `thermal_zone_device_register'
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_thermal.o: In function `cxgb4_thermal_remove':
+cxgb4_thermal.c:(.text+0x1d8): undefined reference to `thermal_zone_device_unregister'
+/git/arm-soc/Makefile:1042: recipe for target 'vmlinux' failed
 
+The same dependency needs to be propagated here to make it work correctly
+with CONFIG_THERMAL=m and SCSI_CXGB4_ISCSI=y. That change by itself causes
+another problem with a circular dependency, as we use 'select NETDEVICES'.
+This is something we really should not do anyway, as a driver symbol
+should never select another major subsystem, so let's turn that into a
+'depends on'. I don't see any downsides of that, as NETDEVICES is only
+disabled in rather obscure cases that are not relevant to the users of
+cxgb4i.
 
-Juergen
+Fixes: e70a57fa59bb ("cxgb4: fix thermal configuration dependencies")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/scsi/cxgbi/cxgb4i/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/cxgbi/cxgb4i/Kconfig b/drivers/scsi/cxgbi/cxgb4i/Kconfig
+index 594f593c8821..f36b76e8e12c 100644
+--- a/drivers/scsi/cxgbi/cxgb4i/Kconfig
++++ b/drivers/scsi/cxgbi/cxgb4i/Kconfig
+@@ -1,8 +1,8 @@
+ config SCSI_CXGB4_ISCSI
+ 	tristate "Chelsio T4 iSCSI support"
+ 	depends on PCI && INET && (IPV6 || IPV6=n)
+-	select NETDEVICES
+-	select ETHERNET
++	depends on THERMAL || !THERMAL
++	depends on ETHERNET
+ 	select NET_VENDOR_CHELSIO
+ 	select CHELSIO_T4
+ 	select CHELSIO_LIB
+-- 
+2.18.0
+
