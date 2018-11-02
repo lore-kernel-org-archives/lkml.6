@@ -2,134 +2,179 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02473C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 20:41:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FAE3C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 20:43:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA41A2082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 20:41:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA41A2082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CC92420831
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 20:43:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kQNofNIN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC92420831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbeKCFuE (ORCPT
+        id S1726910AbeKCFwQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 01:50:04 -0400
-Received: from mga06.intel.com ([134.134.136.31]:19509 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726106AbeKCFuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 01:50:04 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 13:41:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,457,1534834800"; 
-   d="scan'208";a="93295567"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by FMSMGA003.fm.intel.com with SMTP; 02 Nov 2018 13:41:23 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Fri, 02 Nov 2018 22:41:22 +0200
-Date:   Fri, 2 Nov 2018 22:41:22 +0200
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Lyude Paul <lyude@redhat.com>
-Cc:     intel-gfx@lists.freedesktop.org,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] drm/i915: Fix NULL deref when re-enabling HPD
- IRQs on systems with MST
-Message-ID: <20181102204122.GG9144@intel.com>
-References: <20181026224910.10138-1-lyude@redhat.com>
- <20181026224910.10138-3-lyude@redhat.com>
+        Sat, 3 Nov 2018 01:52:16 -0400
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:33619 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726106AbeKCFwP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 01:52:15 -0400
+Received: by mail-ua1-f67.google.com with SMTP id s26so1124955uao.0
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 13:43:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pEkftHbFMlT6lmaDi20qQGWIgbCeGoyx39pfkLRVDic=;
+        b=kQNofNINxzsiUR2zXc4Y66SY1BvzoRNcMrbIIAgVb43tIz564DTb+OU4+aLhxqWem9
+         ilzW3/F/TXcPta1Pj2ylmJVXcHjusEocrnZmq9hKB/MIFX4rJzoIfUf4tFuP+F4+XEW8
+         3gQ+cXik5TA/nAiKnBya+frfEvWX7XzTz8ylo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pEkftHbFMlT6lmaDi20qQGWIgbCeGoyx39pfkLRVDic=;
+        b=LGH1wmO1DcnHSuoiTpLWc9ztXYX4zsHmGAFpYHWRAsMrJCh+qRMHreAB1GlVrF8Q3F
+         SI30momvQ5B2Q2SOnlXwWkt5MAAx2ddq0MwHaTm5pWTlyY+KFZf0W5L+RTmlit+KwGOa
+         Ge3UOVGR4+EsyagjmJsbwtZHM9Q/QCTYH/u+Ui4CTxXvQU+5KMKweKLc18bB4CuA4HEB
+         vcICuZnEO1IarS7gxRuINa27UAUCzW+yHmjCoQmgAhchHHr4eCr/EwYPvSlq9bTzPZs2
+         hi/ejTe857hVkFyamEXOPa6ON7mXdrs0KWLeJZgaekvZKt8hhZzL9FfpWa+mJUjwWo8b
+         mv3A==
+X-Gm-Message-State: AGRZ1gJHKaFtLxiZh7Fpk29+hCv7OtA/D3XH6v5DUlW+n9s/7yK2BrjX
+        OJG1K3bHbovqz/ikKTjL4H1KiLbULNc=
+X-Google-Smtp-Source: AJdET5f0CYGOSqLjsZSJqU4C9PVv3AobZNRGOI4xACC5jElej/jH5b8K+YMpczPGYWRzF1qeRn1zew==
+X-Received: by 2002:ab0:7544:: with SMTP id k4mr5915707uaq.66.1541191417930;
+        Fri, 02 Nov 2018 13:43:37 -0700 (PDT)
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com. [209.85.221.178])
+        by smtp.gmail.com with ESMTPSA id z10sm7264553uao.10.2018.11.02.13.43.36
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 02 Nov 2018 13:43:37 -0700 (PDT)
+Received: by mail-vk1-f178.google.com with SMTP id b18so723343vke.2
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 13:43:36 -0700 (PDT)
+X-Received: by 2002:a1f:9352:: with SMTP id v79mr5664670vkd.73.1541191416496;
+ Fri, 02 Nov 2018 13:43:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181026224910.10138-3-lyude@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181102183537.72334-1-swboyd@chromium.org>
+In-Reply-To: <20181102183537.72334-1-swboyd@chromium.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Fri, 2 Nov 2018 13:43:25 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=V7JDAP+riAFSt_CUUFvphEN1jTbkJW_+b-2gubUrCoVg@mail.gmail.com>
+Message-ID: <CAD=FV=V7JDAP+riAFSt_CUUFvphEN1jTbkJW_+b-2gubUrCoVg@mail.gmail.com>
+Subject: Re: [PATCH] i2c: i2c-qcom-geni: Fix runtime PM mismatch with child devices
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Wolfram Sang <wsa@the-dreams.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-i2c@vger.kernel.org, alokc@codeaurora.org,
+        Evan Green <evgreen@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 06:49:08PM -0400, Lyude Paul wrote:
-> Turns out that if you trigger an HPD storm on a system that has an MST
-> topology connected to it, you'll end up causing the kernel to eventually
-> hit a NULL deref:
-> 
-> [  332.339041] BUG: unable to handle kernel NULL pointer dereference at 00000000000000ec
-> [  332.340906] PGD 0 P4D 0
-> [  332.342750] Oops: 0000 [#1] SMP PTI
-> [  332.344579] CPU: 2 PID: 25 Comm: kworker/2:0 Kdump: loaded Tainted: G           O      4.18.0-rc3short-hpd-storm+ #2
-> [  332.346453] Hardware name: LENOVO 20BWS1KY00/20BWS1KY00, BIOS JBET71WW (1.35 ) 09/14/2018
-> [  332.348361] Workqueue: events intel_hpd_irq_storm_reenable_work [i915]
-> [  332.350301] RIP: 0010:intel_hpd_irq_storm_reenable_work.cold.3+0x2f/0x86 [i915]
-> [  332.352213] Code: 00 00 ba e8 00 00 00 48 c7 c6 c0 aa 5f a0 48 c7 c7 d0 73 62 a0 4c 89 c1 4c 89 04 24 e8 7f f5 af e0 4c 8b 04 24 44 89 f8 29 e8 <41> 39 80 ec 00 00 00 0f 85 43 13 fc ff 41 0f b6 86 b8 04 00 00 41
-> [  332.354286] RSP: 0018:ffffc90000147e48 EFLAGS: 00010006
-> [  332.356344] RAX: 0000000000000005 RBX: ffff8802c226c9d4 RCX: 0000000000000006
-> [  332.358404] RDX: 0000000000000000 RSI: 0000000000000082 RDI: ffff88032dc95570
-> [  332.360466] RBP: 0000000000000005 R08: 0000000000000000 R09: ffff88031b3dc840
-> [  332.362528] R10: 0000000000000000 R11: 000000031a069602 R12: ffff8802c226ca20
-> [  332.364575] R13: ffff8802c2268000 R14: ffff880310661000 R15: 000000000000000a
-> [  332.366615] FS:  0000000000000000(0000) GS:ffff88032dc80000(0000) knlGS:0000000000000000
-> [  332.368658] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  332.370690] CR2: 00000000000000ec CR3: 000000000200a003 CR4: 00000000003606e0
-> [  332.372724] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> [  332.374773] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> [  332.376798] Call Trace:
-> [  332.378809]  process_one_work+0x1a1/0x350
-> [  332.380806]  worker_thread+0x30/0x380
-> [  332.382777]  ? wq_update_unbound_numa+0x10/0x10
-> [  332.384772]  kthread+0x112/0x130
-> [  332.386740]  ? kthread_create_worker_on_cpu+0x70/0x70
-> [  332.388706]  ret_from_fork+0x35/0x40
-> [  332.390651] Modules linked in: i915(O) vfat fat joydev btusb btrtl btbcm btintel bluetooth ecdh_generic iTCO_wdt wmi_bmof i2c_algo_bit drm_kms_helper intel_rapl syscopyarea sysfillrect x86_pkg_temp_thermal sysimgblt coretemp fb_sys_fops crc32_pclmul drm psmouse pcspkr mei_me mei i2c_i801 lpc_ich mfd_core i2c_core tpm_tis tpm_tis_core thinkpad_acpi wmi tpm rfkill video crc32c_intel serio_raw ehci_pci xhci_pci ehci_hcd xhci_hcd [last unloaded: i915]
-> [  332.394963] CR2: 00000000000000ec
-> 
-> This appears to be due to the fact that with an MST topology, not all
-> intel_connector structs will have ->encoder set. So, fix this by
-> skipping connectors without encoders in
-> intel_hpd_irq_storm_reenable_work().
-> 
-> For those wondering, this bug was found on accident while simulating HPD
-> storms using a Chamelium connected to a ThinkPad T450s (Broadwell).
-> 
-> Changes since v1:
-> - Check intel_connector->mst_port instead of intel_connector->encoder
-> 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Hi,
 
-1 and 2 are
-Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-
+On Fri, Nov 2, 2018 at 11:35 AM Stephen Boyd <swboyd@chromium.org> wrote:
+>
+> We need to enable runtime PM on this i2c controller before populating
+> child devices with i2c_add_adapter(). Otherwise, if a child device uses
+> runtime PM and stays runtime PM enabled we'll get the following warning
+> at boot.
+>
+>  Enabling runtime PM for inactive device (a98000.i2c) with active children
+>  WARNING: CPU: 4 PID: 1 at drivers/base/power/runtime.c:1300 pm_runtime_enable+0xd8/0xf8
+>  Modules linked in:
+>  CPU: 4 PID: 1 Comm: swapper/0 Not tainted 4.19.0 #6
+>  elants_i2c 14-0010: 14-0010 supply vccio not found, using dummy regulator
+>  pstate: 60c00089 (nZCv daIf +PAN +UAO)
+>  pc : pm_runtime_enable+0xd8/0xf8
+>  lr : pm_runtime_enable+0xd8/0xf8
+>  sp : ffffffc0de257a30
+>  x29: ffffffc0de257a30 x28: 0000000000061a80
+>  x27: ffffff9008ea7118
+>  x26: ffffffc0d718b058
+>  x25: ffffff9008ea7000 x24: ffffffc0d718a8dc
+>  x23: ffffffc0d718a8b0 x22: ffffffc0d823dd58
+>  x21: 0000000000000000 x20: ffffffc0d823dbc8
+>  x19: ffffffc0d823da90 x18: 000000007f743d9a
+>  x17: 0000000000000080 x16: 0000000000000003
+>  x15: 000000000000003f x14: 0720072007200720
+>  x13: 0720072007200720 x12: 0720072007200720
+>  x11: 0720072007200720 x10: 0720072007200720
+>  x9 : 0720072007200720 x8 : 0720072007200720
+>  x7 : ffffff900816da30 x6 : 0000000000000000
+>  x5 : 0000000000000080 x4 : 0000000000000003
+>  x3 : ffffff900816f304 x2 : ffffffc0de248050
+>  x1 : 25045a74f48a7400 x0 : 25045a74f48a7400
+>  Call trace:
+>   pm_runtime_enable+0xd8/0xf8
+>   geni_i2c_probe+0x440/0x460
+>   platform_drv_probe+0x74/0xc8
+>   really_probe+0x1ac/0x35c
+>   driver_probe_device+0xd4/0x118
+>   __driver_attach+0xc8/0x118
+>   bus_for_each_dev+0xac/0xe8
+>   driver_attach+0x38/0x44
+>   bus_add_driver+0x15c/0x294
+>   driver_register+0x13c/0x198
+>   __platform_driver_register+0x88/0x94
+>   geni_i2c_driver_init+0x20/0x28
+>   do_one_initcall+0x250/0x4ec
+>   kernel_init_freeable+0x6f0/0x7c4
+>   kernel_init+0x18/0x120
+>   ret_from_fork+0x10/0x18
+>
+> Let's move the runtime PM enabling and setup to before we add the
+> adapter, so that this device can respond to runtime PM requests from
+> children.
+>
+> Cc: Douglas Anderson <dianders@chromium.org>
+> Cc: Alok Chauhan <alokc@codeaurora.org>
+> Fixes: 37692de5d523 ("i2c: i2c-qcom-geni: Add bus driver for the Qualcomm GENI I2C controller")
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 > ---
->  drivers/gpu/drm/i915/intel_hotplug.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/intel_hotplug.c b/drivers/gpu/drm/i915/intel_hotplug.c
-> index 648a13c6043c..8326900a311e 100644
-> --- a/drivers/gpu/drm/i915/intel_hotplug.c
-> +++ b/drivers/gpu/drm/i915/intel_hotplug.c
-> @@ -228,7 +228,9 @@ static void intel_hpd_irq_storm_reenable_work(struct work_struct *work)
->  		drm_for_each_connector_iter(connector, &conn_iter) {
->  			struct intel_connector *intel_connector = to_intel_connector(connector);
->  
-> -			if (intel_connector->encoder->hpd_pin == pin) {
-> +			/* Don't check MST ports, they don't have pins */
-> +			if (!intel_connector->mst_port &&
-> +			    intel_connector->encoder->hpd_pin == pin) {
->  				if (connector->polled != intel_connector->polled)
->  					DRM_DEBUG_DRIVER("Reenabling HPD on connector %s\n",
->  							 connector->name);
-> -- 
-> 2.17.2
+>  drivers/i2c/busses/i2c-qcom-geni.c | 13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
+> index 527f55c8c4c7..145eb98ac8b4 100644
+> --- a/drivers/i2c/busses/i2c-qcom-geni.c
+> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
+> @@ -571,18 +571,19 @@ static int geni_i2c_probe(struct platform_device *pdev)
+>
+>         dev_dbg(&pdev->dev, "i2c fifo/se-dma mode. fifo depth:%d\n", tx_depth);
+>
+> -       ret = i2c_add_adapter(&gi2c->adap);
+> -       if (ret) {
+> -               dev_err(&pdev->dev, "Error adding i2c adapter %d\n", ret);
+> -               return ret;
+> -       }
+> -
+>         gi2c->suspended = 1;
+>         pm_runtime_set_suspended(gi2c->se.dev);
+>         pm_runtime_set_autosuspend_delay(gi2c->se.dev, I2C_AUTO_SUSPEND_DELAY);
+>         pm_runtime_use_autosuspend(gi2c->se.dev);
+>         pm_runtime_enable(gi2c->se.dev);
+>
+> +       ret = i2c_add_adapter(&gi2c->adap);
+> +       if (ret) {
+> +               dev_err(&pdev->dev, "Error adding i2c adapter %d\n", ret);
+> +               pm_runtime_disable(gi2c->se.dev);
+> +               return ret;
+> +       }
+> +
 
--- 
-Ville Syrjälä
-Intel
+Thanks for the fix.  It looks good, but can you also swap the
+pm_runtime_disable() and i2c_del_adapter() calls in geni_i2c_remove()
+to match?
+
+-Doug
