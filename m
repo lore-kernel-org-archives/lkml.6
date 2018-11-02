@@ -2,144 +2,185 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78E0FC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 20:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8184CC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 20:54:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FB6F2082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 20:53:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 367452082E
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 20:54:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="Ve/93AEt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FB6F2082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="dV+kAMJv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 367452082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728110AbeKCGCc (ORCPT
+        id S1728177AbeKCGD1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 02:02:32 -0400
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:26270 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725957AbeKCGCb (ORCPT
+        Sat, 3 Nov 2018 02:03:27 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:39904 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727069AbeKCGD1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 02:02:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1541192033; x=1572728033;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=h21NZ+6tpNhp03nxgXgjSEzvrceBjFMbjb2yIRYXHWg=;
-  b=Ve/93AEtmm9pBUKTPCU+gXgsGjbh3coV4zZV1YbM5mI24ZmMdJYtw2hy
-   F70+GcVhaof6kkFHwcHpc017EhRsNWsM/KYdUbF1FbdKsa+ZkkfPU/kbT
-   kUSaeLqhvRkoYLCK4Jyv2N1/K++4SLbcRhw//xM0K/5s2iMXIu552jNKb
-   IAznrrOOP/p9LpGO1pQFzsedn4eaQxdMlobVhwgayGbRvJAQffIhEPr3q
-   WtmyrqqzrrBHdc/F2dn/EbBFZljDnRTuj1CCbuoghq+5bB5al4NCT6YTr
-   qyqp17cfN+plaOFLrUObhMypXGFZ1i0HNdh2Ur1mcLcA6gheOhRvq0EZ+
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.54,457,1534780800"; 
-   d="scan'208";a="197865208"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 03 Nov 2018 04:53:52 +0800
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP; 02 Nov 2018 13:37:46 -0700
-Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.111.69.187]) ([10.111.69.187])
-  by uls-op-cesaip01.wdc.com with ESMTP; 02 Nov 2018 13:53:53 -0700
-Subject: Re: [RFC 1/2] dt-bindings: topology: Add RISC-V cpu topology.
-To:     Sudeep Holla <sudeep.holla@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Anup Patel <anup@brainfault.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "alankao@andestech.com" <alankao@andestech.com>,
-        Zong Li <zong@andestech.com>
-References: <1541113468-22097-1-git-send-email-atish.patra@wdc.com>
- <1541113468-22097-2-git-send-email-atish.patra@wdc.com>
- <CAL_Jsq+wProNynprMjQnrz1jmbZT9TmmA-_=vPUxCEED_8xONg@mail.gmail.com>
- <20181102133100.GA13130@e107155-lin>
- <CAL_JsqLO+cOcHkr41ebPtONwrzOWGhksH1ypph+tihsuOVDOug@mail.gmail.com>
- <20181102155038.GA21067@e107155-lin>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <0c94f752-cc18-ae0c-36e7-7e0dd6b1d307@wdc.com>
-Date:   Fri, 2 Nov 2018 13:53:51 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Sat, 3 Nov 2018 02:03:27 -0400
+Received: by mail-ed1-f65.google.com with SMTP id e5-v6so2831010eds.6
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 13:54:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WV5nMq0iwkWk9aO5gB+jpbcGedOnlttY/YYkFzipP0g=;
+        b=dV+kAMJvOds2EkbPlLoAM3Rai77omm6yUSVRinxHTOl+ROtt0VA9DLbyKkugCcUeQn
+         MXm7SIS17g9pNJDFwDe+0raTN53S9Pi9nGe7lxHDuWp6HKlgsiZOG6JYWs1fB8U3Q3o4
+         pdouyby1cVK2GRg3AdxY+x61Tr/gWhyZGGzRk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WV5nMq0iwkWk9aO5gB+jpbcGedOnlttY/YYkFzipP0g=;
+        b=nMkFI62145QExSnCx4XBrcZRINu1MdMho+hwy35Vz+bNCZgJYEUoGtltZDRc93S9Ak
+         RBix8yIVcjbjuL3nlmkuKNSdKWJfzwtGE01YnYmtoAOk3MRh2rVvAtsZNoI+71rfaHDx
+         38BrzrQYdU+6BKUjZorv46G1mncFDPr1hoAuUjz35VtESbjAPyUUy4U0k7fiqHQypCRl
+         cvDsmJSFzwdhe8g7zoZZpmQutmFkzDvjxtRZjMMcHOeNLsny9y5d9YKZ+0Yqag/ZuQgg
+         wWGbC+oa6as9e0pHJct6YgBtFEEsWqJpXP6hLw3Ngo+ccIYC+iqsHZ2thswXlEBs2D50
+         tKVg==
+X-Gm-Message-State: AGRZ1gL1qF2UEEOjN4zdO3pPfQnB+KeVlZsYGAlr0QU4jmK5JY4df9Gp
+        kSKhKJUijvHMvjcFKVS6F3oMSntY1zqVcg==
+X-Google-Smtp-Source: AJdET5dji8NmUAkAcw5isHh9TP/N93N21PyMtXKexdcnEWKiiWqnCoSYpVsDaVqn0s8GSlnHB1BtDQ==
+X-Received: by 2002:a17:906:8cb:: with SMTP id o11-v6mr7568128eje.16.1541192085948;
+        Fri, 02 Nov 2018 13:54:45 -0700 (PDT)
+Received: from prevas-ravi.waoo.dk (dhcp-5-186-114-252.cgn.ip.fibianet.dk. [5.186.114.252])
+        by smtp.gmail.com with ESMTPSA id g19-v6sm2697648eds.53.2018.11.02.13.54.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 02 Nov 2018 13:54:45 -0700 (PDT)
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] tracing: eliminate const char[] auto variables
+Date:   Fri,  2 Nov 2018 21:54:42 +0100
+Message-Id: <20181102205442.7758-1-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.19.1.6.gbde171bbf5
 MIME-Version: 1.0
-In-Reply-To: <20181102155038.GA21067@e107155-lin>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/2/18 8:50 AM, Sudeep Holla wrote:
-> On Fri, Nov 02, 2018 at 10:11:38AM -0500, Rob Herring wrote:
->> On Fri, Nov 2, 2018 at 8:31 AM Sudeep Holla <sudeep.holla@arm.com> wrote:
->>>
->>> On Fri, Nov 02, 2018 at 08:09:39AM -0500, Rob Herring wrote:
->>>> On Thu, Nov 1, 2018 at 6:04 PM Atish Patra <atish.patra@wdc.com> wrote:
->>>>>
->>>>> Define a RISC-V cpu topology. This is based on cpu-map in ARM world.
->>>>> But it doesn't need a separate thread node for defining SMT systems.
->>>>> Multiple cpu phandle properties can be parsed to identify the sibling
->>>>> hardware threads. Moreover, we do not have cluster concept in RISC-V.
->>>>> So package is a better word choice than cluster for RISC-V.
->>>>
->>>> There was a proposal to add package info for ARM recently. Not sure
->>>> what happened to that, but we don't need 2 different ways.
->>>>
->>>
->>> We still need that, I can brush it up and post what Lorenzo had previously
->>> proposed[1]. We want to keep both DT and ACPI CPU topology story aligned.
->>
->> Frankly, I don't care what the ACPI story is. I care whether each cpu
-> 
-> Sorry I meant feature parity with ACPI and didn't refer to the mechanics.
-> 
->> arch does its own thing in DT or not. If a package prop works for
->> RISC-V folks and that happens to align with ACPI, then okay. Though I
->> tend to prefer a package represented as a node rather than a property
->> as I think that's more consistent.
->>
-> 
-> Sounds good. One of the reason for making it *optional* property is for
-> backward compatibility. But we should be able to deal with that even with
-> node.
-> 
+Automatic const char[] variables cause unnecessary code
+generation. For example, the this_mod variable leads to
 
-If you are introducing a package node, can we make cluster node 
-optional? I feel it is a redundant node for use cases where one doesn't 
-have a different grouped cpus in a package.
+    3f04:       48 b8 5f 5f 74 68 69 73 5f 6d   movabs $0x6d5f736968745f5f,%rax # __this_m
+    3f0e:       4c 8d 44 24 02                  lea    0x2(%rsp),%r8
+    3f13:       48 8d 7c 24 10                  lea    0x10(%rsp),%rdi
+    3f18:       48 89 44 24 02                  mov    %rax,0x2(%rsp)
+    3f1d:       4c 89 e9                        mov    %r13,%rcx
+    3f20:       b8 65 00 00 00                  mov    $0x65,%eax # e
+    3f25:       48 c7 c2 00 00 00 00            mov    $0x0,%rdx
+                        3f28: R_X86_64_32S      .rodata.str1.1+0x18d
+    3f2c:       be 48 00 00 00                  mov    $0x48,%esi
+    3f31:       c7 44 24 0a 6f 64 75 6c         movl   $0x6c75646f,0xa(%rsp) # odul
+    3f39:       66 89 44 24 0e                  mov    %ax,0xe(%rsp)
 
-We may have some architecture that requires cluster, it can be added to 
-the DT at that time, I believe.
+i.e., the string gets built on the stack at runtime. Similar code can be
+found for the other instances I'm replacing here. Putting the string
+in .rodata reduces the combined .text+.rodata size and saves time and
+stack space at runtime.
 
->> Any comments on the thread aspect (whether it has ever been used)?
->> Though I think thread as a node level is more consistent with each
->> topology level being a node (same with package).
->>
-> Not 100% sure, the only multi threaded core in the market I know is
-> Cavium TX2 which is ACPI.
-> 
+The simplest fix, and what I've done for the this_mod case, is to just
+make the variable static.
 
-Any advantages of keeping thread node if it's not being used. If I am 
-not wrong, we can always use multiple cpuN phandles to represent SMT 
-nodes. It will result in less code and DT documentation as well.
+However, for the "<faulted>" case where the same string is used twice,
+that prevents the linker from merging those two literals, so instead use
+a macro - that's also slightly cleaner, since FAULTED_SIZE otherwise has
+no direct relation to the faulted variable used in
+tracing_mark_raw_write().
 
+Finally, for the two runs of spaces, just use variables initialized with
+string literals; the linker (at least for x86) will reuse the tail of
+the longer for the shorter string.
 
-Regards,
-Atish
-> --
-> Regards,
-> Sudeep
-> 
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+ kernel/trace/ftrace.c |  2 +-
+ kernel/trace/trace.c  | 13 ++++++-------
+ 2 files changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index f536f601bd46..4b79d4ae9635 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -3862,7 +3862,7 @@ static int ftrace_hash_move_and_update_ops(struct ftrace_ops *ops,
+ static bool module_exists(const char *module)
+ {
+ 	/* All modules have the symbol __this_module */
+-	const char this_mod[] = "__this_module";
++	static const char this_mod[] = "__this_module";
+ 	char modname[MAX_PARAM_PREFIX_LEN + sizeof(this_mod) + 2];
+ 	unsigned long val;
+ 	int n;
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index ff1c4b20cd0a..ffcceb33a9b2 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -3381,8 +3381,8 @@ static void print_func_help_header_irq(struct trace_buffer *buf, struct seq_file
+ 				       unsigned int flags)
+ {
+ 	bool tgid = flags & TRACE_ITER_RECORD_TGID;
+-	const char tgid_space[] = "          ";
+-	const char space[] = "  ";
++	const char *tgid_space = "          ";
++	const char *space = "  ";
+ 
+ 	seq_printf(m, "#                          %s  _-----=> irqs-off\n",
+ 		   tgid ? tgid_space : space);
+@@ -6089,13 +6089,13 @@ tracing_mark_write(struct file *filp, const char __user *ubuf,
+ 	struct ring_buffer *buffer;
+ 	struct print_entry *entry;
+ 	unsigned long irq_flags;
+-	const char faulted[] = "<faulted>";
+ 	ssize_t written;
+ 	int size;
+ 	int len;
+ 
+ /* Used in tracing_mark_raw_write() as well */
+-#define FAULTED_SIZE (sizeof(faulted) - 1) /* '\0' is already accounted for */
++#define FAULTED_STR "<faulted>"
++#define FAULTED_SIZE (sizeof(FAULTED_STR) - 1) /* '\0' is already accounted for */
+ 
+ 	if (tracing_disabled)
+ 		return -EINVAL;
+@@ -6127,7 +6127,7 @@ tracing_mark_write(struct file *filp, const char __user *ubuf,
+ 
+ 	len = __copy_from_user_inatomic(&entry->buf, ubuf, cnt);
+ 	if (len) {
+-		memcpy(&entry->buf, faulted, FAULTED_SIZE);
++		memcpy(&entry->buf, FAULTED_STR, FAULTED_SIZE);
+ 		cnt = FAULTED_SIZE;
+ 		written = -EFAULT;
+ 	} else
+@@ -6168,7 +6168,6 @@ tracing_mark_raw_write(struct file *filp, const char __user *ubuf,
+ 	struct ring_buffer_event *event;
+ 	struct ring_buffer *buffer;
+ 	struct raw_data_entry *entry;
+-	const char faulted[] = "<faulted>";
+ 	unsigned long irq_flags;
+ 	ssize_t written;
+ 	int size;
+@@ -6208,7 +6207,7 @@ tracing_mark_raw_write(struct file *filp, const char __user *ubuf,
+ 	len = __copy_from_user_inatomic(&entry->id, ubuf, cnt);
+ 	if (len) {
+ 		entry->id = -1;
+-		memcpy(&entry->buf, faulted, FAULTED_SIZE);
++		memcpy(&entry->buf, FAULTED_STR, FAULTED_SIZE);
+ 		written = -EFAULT;
+ 	} else
+ 		written = cnt;
+-- 
+2.19.1.6.gbde171bbf5
 
