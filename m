@@ -2,127 +2,87 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70FC6C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:02:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53126C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:04:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25DEC2081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:02:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KX4kTb+d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25DEC2081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 02F9B2081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:04:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02F9B2081F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730339AbeKCELK (ORCPT
+        id S1726541AbeKCEMz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 00:11:10 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:33038 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730091AbeKCELI (ORCPT
+        Sat, 3 Nov 2018 00:12:55 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:42802 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725728AbeKCEMy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 00:11:08 -0400
-Received: by mail-ot1-f68.google.com with SMTP id q1so2629923otk.0
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 12:02:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BmgOn/yOoSR5HejHQH+1zKMqDw4ij/eJkqq+C7pQAUA=;
-        b=KX4kTb+d4WBipAeFvz9QabhXCg1pEOGQU9kYdFeIQmGul56l/GXBYRI9uMr2bmA/DI
-         +n06ZyZ+nDd4NwyNbucA+J7jbo4/cfKglRvI+2BQzl12O44cAk4/IOrbdgMjndFPdZBa
-         wCPLiVcZ4Bi79st4O64LtLOZQUT+vHAXmJU1u0GH7j5p+lWQQbP5H2InIHgFb5CCZl4K
-         0KHGVHqTwmBJauZyQaKARJEdFKSX7CEHxZngFjkx66v5CRNiAm+Z4CClKnpSC4+SxAwM
-         w9aHBdLvONeJ4KdR+cyLmxnmI7zIjVXJyLOXKJZKr4iYzapJWbC0wGSYIoho099unyM1
-         Y9RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BmgOn/yOoSR5HejHQH+1zKMqDw4ij/eJkqq+C7pQAUA=;
-        b=H94+ce3i50rk1aKWhYqmBGZ+NHJKxMkqSR0GUFT+CoPgyXsUVeIyy4sxaXZJroftU/
-         T1T0Ss1mDQ5AndqfsetYLgrZTD9Sl4NQCIVTHSi54hPudBLlA/s0JRsmElEkuA6WmpCT
-         35EigjkYeMyjgKweJZK2NfTQVxOdzWmnWICl8MsC7Qmf5pb4dBR8z6SOJFu9h2sanpQS
-         ujXdhEbxmnpAUNUaVloVFCEPNJIJpEqYAkZ599z2cFNJiIkuEcQgXU353zVIxPtYE6z8
-         ajP0j76kcG4ZXExqiwOa5lUQIaH7ty4B7gEsoL9/c86bnwQ6HE4Bfqm7mII4tZB82HxQ
-         GS3g==
-X-Gm-Message-State: AGRZ1gI+fmaJpz4w6RX0jCZSTFBR2rh7XKdYLUY6E1h4njkH52elCh/d
-        32gmnRJW7BDa0/GPefmdCKA2IsIkibDBHKMrEFVtcA==
-X-Google-Smtp-Source: AJdET5ePCZkyU5wM9FAkNbdBLUWLC1SnGDdumYlqRwTFDUAc+dkVTJdeOcH0ahdA5ryqvG5os6BzaKSMzGuWyrFzZfQ=
-X-Received: by 2002:a9d:638f:: with SMTP id w15mr5149669otk.230.1541185369982;
- Fri, 02 Nov 2018 12:02:49 -0700 (PDT)
+        Sat, 3 Nov 2018 00:12:54 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gIekD-0000UD-P1; Fri, 02 Nov 2018 19:04:33 +0000
+Date:   Fri, 2 Nov 2018 19:04:33 +0000
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH] iov_iter: Fix 9p virtio breakage
+Message-ID: <20181102190433.GZ32577@ZenIV.linux.org.uk>
+References: <20181102171651.97671-1-marc.zyngier@arm.com>
 MIME-Version: 1.0
-References: <CAHk-=wgFo8tuZX5gzCfWGdAwGyn_Ar9JFnnMFNuwr9=vtfDV1g@mail.gmail.com>
- <20181101193107.GE5150@brightrain.aerifal.cx> <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
- <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
- <20181102163034.GB7393@linux.intel.com> <7050972d-a874-dc08-3214-93e81181da60@intel.com>
- <20181102170627.GD7393@linux.intel.com> <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
- <20181102173350.GF7393@linux.intel.com> <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com>
- <20181102182712.GG7393@linux.intel.com>
-In-Reply-To: <20181102182712.GG7393@linux.intel.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Fri, 2 Nov 2018 20:02:23 +0100
-Message-ID: <CAG48ez0x7ZPcKvLt01WS-VrLm59WfvYE3nE1xbnyn3Qsp5T2rA@mail.gmail.com>
-Subject: Re: RFC: userspace exception fixups
-To:     sean.j.christopherson@intel.com
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        dalias@libc.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        jethro@fortanix.com, jarkko.sakkinen@linux.intel.com,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        andriy.shevchenko@linux.intel.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        carlos@redhat.com, adhemerval.zanella@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181102171651.97671-1-marc.zyngier@arm.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 2, 2018 at 7:27 PM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
-> On Fri, Nov 02, 2018 at 10:48:38AM -0700, Andy Lutomirski wrote:
-> > This whole mechanism seems very complicated, and it's not clear
-> > exactly what behavior user code wants.
->
-> No argument there.  That's why I like the approach of dumping the
-> exception to userspace without trying to do anything intelligent in
-> the kernel.  Userspace can then do whatever it wants AND we don't
-> have to worry about mucking with stacks.
->
-> One of the hiccups with the VDSO approach is that the enclave may
-> want to use the untrusted stack, i.e. the stack that has the VDSO's
-> stack frame.  For example, Intel's SDK uses the untrusted stack to
-> pass parameters for EEXIT, which means an AEX might occur with what
-> is effectively a bad stack from the VDSO's perspective.
+On Fri, Nov 02, 2018 at 05:16:51PM +0000, Marc Zyngier wrote:
+> When switching to the new iovec accessors, a negation got subtly
+> dropped, leading to 9p being remarkably broken (here with kvmtool):
+> 
+> [    7.430941] VFS: Mounted root (9p filesystem) on device 0:15.
+> [    7.432080] devtmpfs: mounted
+> [    7.432717] Freeing unused kernel memory: 1344K
+> [    7.433658] Run /virt/init as init process
+>   Warning: unable to translate guest address 0x7e00902ff000 to host
+>   Warning: unable to translate guest address 0x7e00902fefc0 to host
+>   Warning: unable to translate guest address 0x7e00902ff000 to host
+>   Warning: unable to translate guest address 0x7e008febef80 to host
+>   Warning: unable to translate guest address 0x7e008febf000 to host
+>   Warning: unable to translate guest address 0x7e008febef00 to host
+>   Warning: unable to translate guest address 0x7e008febf000 to host
+> [    7.436376] Kernel panic - not syncing: Requested init /virt/init failed (error -8).
+> [    7.437554] CPU: 29 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc8-02267-g00e23707442a #291
+> [    7.439006] Hardware name: linux,dummy-virt (DT)
+> [    7.439902] Call trace:
+> [    7.440387]  dump_backtrace+0x0/0x148
+> [    7.441104]  show_stack+0x14/0x20
+> [    7.441768]  dump_stack+0x90/0xb4
+> [    7.442425]  panic+0x120/0x27c
+> [    7.443036]  kernel_init+0xa4/0x100
+> [    7.443725]  ret_from_fork+0x10/0x18
+> [    7.444444] SMP: stopping secondary CPUs
+> [    7.445391] Kernel Offset: disabled
+> [    7.446169] CPU features: 0x0,23000438
+> [    7.446974] Memory Limit: none
+> [    7.447645] ---[ end Kernel panic - not syncing: Requested init /virt/init failed (error -8). ]---
+> 
+> Restoring the missing "!" brings the guest back to life.
+> 
+> Fixes: 00e23707442a ("iov_iter: Use accessor function")
+> Reported-by: Will Deacon <will.deacon@arm.com>
+> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 
-What exactly does "uses the untrusted stack to pass parameters for
-EEXIT" mean? I guess you're saying that the enclave is writing to
-RSP+[0...some_positive_offset], and the written data needs to be
-visible to the code outside the enclave afterwards?
+ACK.  Do you want me to take it via vfs.git?  Or might as well
+send directly to Linus, with
 
-In other words, the vDSO helper would have to not touch the stack
-pointer (only using the 128-byte redzone to store spilled data, at
-least across the enclave entry), and return by decrementing the stack
-pointer by 8 immediately before returning (storing the return pointer
-in the redzone)?
+Acked-by Al Viro <viro@zeniv.linux.org.uk>
 
-So you'd call the vDSO helper with a normal "call
-vdso_helper_address", then the vDSO helper does "add rsp, 8", then the
-vDSO helper does its magic, and then it returns with "sub rsp, 8" and
-"ret"? That way you don't touch anything on the high-address side of
-RSP while still avoiding running into CET problems. (I'm assuming that
-you can use CET in a process that is hosting SGX enclaves?)
+on it.
