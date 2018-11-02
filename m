@@ -2,118 +2,104 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D1DC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:26:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78013C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:26:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADA1C2081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:26:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jKbzqxQ7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADA1C2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4FB2F2082E
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:26:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FB2F2082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728263AbeKCDeI (ORCPT
+        id S1728288AbeKCDeJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:34:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36048 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:34:09 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35339 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728033AbeKCDeH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:34:07 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728033AbeKCDeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:34:08 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3480F2081B;
+        by mx1.redhat.com (Postfix) with ESMTPS id 46FFD3C2CC7;
+        Fri,  2 Nov 2018 18:26:01 +0000 (UTC)
+Received: from redhat.com (ovpn-124-238.rdu2.redhat.com [10.10.124.238])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 86D4B60BF1;
         Fri,  2 Nov 2018 18:26:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541183160;
-        bh=3ngNwzdsDuq7vdh0ZrRK49NjWWQphhL3IY7lhjhVTUs=;
-        h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-        b=jKbzqxQ7sP0ZNknGLeO3aU952fGv8REo9dmu0tNR0MzilwKPdpaic50xtqTS8kgdI
-         0GOTOHXQSOhhiwx/DDEWQJZUD05RtDtmCjzrfe0l0kMd7RQWYrhgz3PmICU6jSOZC7
-         oFx0V+YMhH/6rA24CvdMBt86WhBM6ov3iUYu9p84=
-Date:   Fri, 02 Nov 2018 13:25:58 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Suganath Prabu <suganath-prabu.subramani@broadcom.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sathya.Prakash@broadcom.com, sreekanth.reddy@broadcom.com,
-        Suganath Prabu <suganath-prabu.subramani@broadcom.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Message-ID: <5bdc96b6a91b2_2e7982af9fe8650b0ba@bhelgaas-glaptop.notmuch>
-In-Reply-To: <1540992219-20291-1-git-send-email-suganath-prabu.subramani@broadcom.com>
-References: <1540992219-20291-1-git-send-email-suganath-prabu.subramani@broadcom.com>
-Subject: RE: [PATCH v7 0/8] mpt3sas: some bug fixes patches
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+Date:   Fri, 2 Nov 2018 14:26:00 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Vitaly Mayatskikh <v.mayatskih@gmail.com>
+Cc:     Jason Wang <jasowang@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/1] vhost: add vhost_blk driver
+Message-ID: <20181102142446-mutt-send-email-mst@kernel.org>
+References: <20181102182123.29420-1-v.mayatskih@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181102182123.29420-1-v.mayatskih@gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 02 Nov 2018 18:26:01 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Suganath Prabu wrote:
-> V7 Change Set:
-> Split some patches into multiple small patches
-> as suggested by Bjorn Helgaas
+On Fri, Nov 02, 2018 at 06:21:22PM +0000, Vitaly Mayatskikh wrote:
+> vhost_blk is a host-side kernel mode accelerator for virtio-blk. The
+> driver allows VM to reach a near bare-metal disk performance. See IOPS
+> numbers below (fio --rw=randread --bs=4k).
 > 
-> v6 Change Set:
-> Incorporated changes as suggested by Andy.
-> In Patch 1 converted while loop to do while in
-> function mpt3sas_wait_for_ioc_to_operational().
-> And in patch 3 removed parentheses.
+> This implementation uses kiocb interface. It is slightly slower than
+> going directly through bio, but is simpler and also works with disk
+> images placed on a file system.
 > 
-> V5 Change Set:
-> V5 post has only defect fixes.
-> We are reworking and incorporating the suggestions from Bjorn.
-> And after covering tests, we ll be post Hot-Plug Surprise
->  removal patches.
+> # fio num-jobs
+> # A: bare metal over block
+> # B: bare metal over file
+> # C: virtio-blk over block
+> # D: virtio-blk over file
+> # E: vhost-blk bio over block
+> # F: vhost-blk kiocb over block
+> # G: vhost-blk kiocb over file
+> #
+> #  A     B     C    D    E     F     G
 > 
-> V4 Change Set:
-> Reframe split strings in print statement, to avoid
+> 1  171k  151k  148k 151k 195k  187k  175k
+> 2  328k  302k  249k 241k 349k  334k  296k
+> 3  479k  437k  179k 174k 501k  464k  404k
+> 4  622k  568k  143k 183k 620k  580k  492k
+> 5  755k  697k  136k 128k 737k  693k  579k
+> 6  887k  808k  131k 120k 830k  782k  640k
+> 7  1004k 926k  126k 131k 926k  863k  693k
+> 8  1099k 1015k 117k 115k 1001k 931k  712k
+> 9  1194k 1119k 115k 111k 1055k 991k  711k
+> 10 1278k 1207k 109k 114k 1130k 1046k 695k
+> 11 1345k 1280k 110k 108k 1119k 1091k 663k
+> 12 1411k 1356k 104k 106k 1201k 1142k 629k
+> 13 1466k 1423k 106k 106k 1260k 1170k 607k
+> 14 1517k 1486k 103k 106k 1296k 1179k 589k
+> 15 1552k 1543k 102k 102k 1322k 1191k 571k
+> 16 1480k 1506k 101k 102k 1346k 1202k 566k
 > 
-> V3 Change Set:
-> Simplified function "mpt3sas_base_pci_device_is_available" and
-> made inline
-> 
-> V2 Change Set:
-> Replaced mpt3sas_base_pci_device_is_unplugged with
-> pci_device_is_present.
-> 
-> V1 Chnage Set:
-> In Patch 0001 - unlock mutex, if active reset is in progress.
-> 
-> Suganath Prabu (8):
->   mpt3sas: Added new #define variable IOC_OPERATIONAL_WAIT_COUNT
->   mpt3sas: Separate out mpt3sas_wait_for_ioc
->   mpt3sas: Refactor mpt3sas_wait_for_ioc function
->   mpt3sas: Call sas_remove_host before removing the target devices
->   mpt3sas: Fix Sync cache command failure during driver unload
->   mpt3sas: Don't modify EEDPTagMode field setting on SAS3.5 HBA devices
->   mpt3sas: Fix driver modifying persistent data in Manufacturing page11
->   mpt3sas: Bump driver version to 27.100.00.00.
-> 
->  drivers/scsi/mpt3sas/mpt3sas_base.c      | 73 +++++++++++++------------
->  drivers/scsi/mpt3sas/mpt3sas_base.h      |  8 ++-
->  drivers/scsi/mpt3sas/mpt3sas_config.c    | 27 ++--------
->  drivers/scsi/mpt3sas/mpt3sas_ctl.c       | 21 ++------
->  drivers/scsi/mpt3sas/mpt3sas_scsih.c     | 38 ++++++++++++-
->  drivers/scsi/mpt3sas/mpt3sas_transport.c | 91 ++++++--------------------------
->  6 files changed, 106 insertions(+), 152 deletions(-)
+> Vitaly Mayatskikh (1):
+>   Add vhost_blk driver
+
+
+Thanks!
+Before merging this, I'd like to get some acks from userspace that it's
+actually going to be used - e.g. QEMU block maintainers.
+
+>  drivers/vhost/Kconfig  |  13 ++
+>  drivers/vhost/Makefile |   3 +
+>  drivers/vhost/blk.c    | 510 +++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 526 insertions(+)
+>  create mode 100644 drivers/vhost/blk.c
 > 
 > -- 
-> 1.8.3.1
-
-These all look fine to me.  I'm only looking at the code structure; I
-have no idea how the mpt3sas hardware or the SCSI mid-layer work, so
-you're on your own there :)
-
-Reviewed-by: Bjorn Helgaas <bhelgaas@google.com>
-
-Andy also gave his reviewed-by on the v6 series, so I cc'd him here.
-I think it's good practice to specifically cc anybody who has
-commented on previous versions of your patch set.
+> 2.17.1
