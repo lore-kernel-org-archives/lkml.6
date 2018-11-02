@@ -2,401 +2,142 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 597BFC65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:07:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56335C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:08:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0883D20831
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:07:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KCIzbLKP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0883D20831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 158752081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:08:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 158752081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727999AbeKCBPE (ORCPT
+        id S1727638AbeKCBQ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 21:15:04 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:39108 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726700AbeKCBPD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 21:15:03 -0400
-Received: by mail-qk1-f195.google.com with SMTP id e4so3841970qkh.6;
-        Fri, 02 Nov 2018 09:07:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=btc1f/qurcu3W4gPYtGQ6sQmiB5oZx7ZZIaiugI2e4I=;
-        b=KCIzbLKPRwhW5p66jlIMKq5y+lXKbXaukNI01x3cA3bdvPL4LHeRwDb6ENHDBnCd9D
-         YWFhRPeqFNN0F1isFh+fVbCxumwzW834B/X88LPOfhkzVw966bwjO08evMVaiSgajuq0
-         rrjAqvBbh3fypoMR+QMoNETsGIrqGZXOYfunqWD5xueaQeZ/2FaeFgnfh3BR4A8/1AOz
-         tE7gnUxazE+5Nq+MSUJB4HsZTdxAaWnA8/X/8v4wLSWcTvuD6Vr2t5+iYpB+3IgRA5ab
-         8GyIk4yKeulv8WDDjEGZwyABTd5YU0Nuayt8bLQQgYA5N8oKOGRzijkpvCcgIFQvNMDX
-         74Aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=btc1f/qurcu3W4gPYtGQ6sQmiB5oZx7ZZIaiugI2e4I=;
-        b=R2wyDMZQRVvPbWDH2YeYJAzv1Q1slxYMPzHbeEmzkrN1esgfTw07RPfGSymVCFlicM
-         tsD1BMluBxgfiO53xTDPkvQtLyQ9ObDcLVCOUPriC3s4Lre2tnxk3v9pdVmtJ3BDJ8fq
-         orj+wYDZTrovxp4Bnv5UyCVqo0SIunmEV0S47+iRetItqyz+LVwjkaZLv+cnyhb7CJPk
-         IUoNfNqe0u2uoad0ir5aGQ1a97n0Mjz28Kxu+oHChmPsRJqYowgpeFCSAvpO+O8pFZfg
-         /Ol+hS1wOc8HpZm5CZCgS8WMY8ctx4SR5t/1geBxiQvudsFasEUbj5DpCpi04roAsa/7
-         j+Jg==
-X-Gm-Message-State: AGRZ1gIBtWhkDOvxnKlKqEPbEcQ3AgMqRMcae0L0sqq6x1zRfXsQYDwS
-        2iU97SrtYT9mWY6JObyqFQr+uR1Liwogww==
-X-Google-Smtp-Source: AJdET5fnAAe5sd7VapYpvQVV4g0aWv8mXeOkFk87FptYlFaefnGuaEin7NC2YdMiC9z3GxA9Gdd63A==
-X-Received: by 2002:a37:b304:: with SMTP id c4-v6mr11089059qkf.229.1541174846560;
-        Fri, 02 Nov 2018 09:07:26 -0700 (PDT)
-Received: from u1804-ini.default ([76.224.89.164])
-        by smtp.googlemail.com with ESMTPSA id j51-v6sm15507254qtj.26.2018.11.02.09.07.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 02 Nov 2018 09:07:26 -0700 (PDT)
-From:   Vitaly Mayatskikh <v.mayatskih@gmail.com>
-To:     "Michael S . Tsirkin" <mst@redhat.com>
-Cc:     Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vitaly Mayatskikh <v.mayatskih@gmail.com>
-Subject: [PATCH 1/1] vhost: add per-vq worker thread
-Date:   Fri,  2 Nov 2018 16:07:10 +0000
-Message-Id: <20181102160710.3741-2-v.mayatskih@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181102160710.3741-1-v.mayatskih@gmail.com>
-References: <20181102160710.3741-1-v.mayatskih@gmail.com>
+        Fri, 2 Nov 2018 21:16:29 -0400
+Received: from foss.arm.com ([217.140.101.70]:43524 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726316AbeKCBQ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 21:16:29 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 082151596;
+        Fri,  2 Nov 2018 09:08:53 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1BBA03F718;
+        Fri,  2 Nov 2018 09:08:49 -0700 (PDT)
+Date:   Fri, 2 Nov 2018 16:08:45 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     Richard Henderson <rth@twiddle.net>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        libc-alpha <libc-alpha@sourceware.org>,
+        Carlos O'Donell <carlos@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Joseph Myers <joseph@codesourcery.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ben Maurer <bmaurer@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        linux-api <linux-api@vger.kernel.org>
+Subject: Re: Supporting core-specific instruction sets (e.g. big.LITTLE) with
+ restartable sequences
+Message-ID: <20181102160844.ihge4najccn63cxi@lakrids.cambridge.arm.com>
+References: <313542172.8.1541171544337.JavaMail.zimbra@efficios.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <313542172.8.1541171544337.JavaMail.zimbra@efficios.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This enables a near linear scaling in multiqueue cases.
+Hi Mathieu, Richard,
 
-First virtqueue still gets the worker created unconditionally,
-the rest is postponed until the actual poll starts on the queue.
+On Fri, Nov 02, 2018 at 11:12:24AM -0400, Mathieu Desnoyers wrote:
+> Hi Richard,
+> 
+> I stumbled on these articles:
+> 
+> - https://medium.com/@jadr2ddude/a-big-little-problem-a-tale-of-big-little-gone-wrong-e7778ce744bb
+> - https://www.mono-project.com/news/2016/09/12/arm64-icache/
+> 
+> and discussed them with Will Deacon. He told me you were looking into
+> gcc atomics and it might be worthwhile to discuss the possible use of
+> the new rseq system call that has been added in Linux 4.18 for those
+> use-cases.
+> 
+> Basically, the use-cases targeted are those where some cores on the
+> system support a larger instruction set than others. So for instance,
+> some cores could use a faster atomic add instruction than others,
+> which should rely on a slower fallback. This is also the same story
+> for reading the performance monitoring unit counters from user-space:
+> it depends on the feature-set supported by the CPU on which the
+> instruction is issued. Same applies to cores having different
+> cache-line sizes.
 
-Signed-off-by: Vitaly Mayatskikh <v.mayatskih@gmail.com>
----
- drivers/vhost/vhost.c | 123 +++++++++++++++++++++++++++++++-----------
- drivers/vhost/vhost.h |  11 +++-
- 2 files changed, 100 insertions(+), 34 deletions(-)
+Please note that upstream arm64 Linux does not expose mismatched ISA
+feature to userspace. We go to great pains to expose a uniform set of
+supported features.
 
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 3a5f81a66d34..523dcfac4541 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -185,18 +185,27 @@ void vhost_work_init(struct vhost_work *work, vhost_work_fn_t fn)
- }
- EXPORT_SYMBOL_GPL(vhost_work_init);
- 
--/* Init poll structure */
--void vhost_poll_init(struct vhost_poll *poll, vhost_work_fn_t fn,
--		     __poll_t mask, struct vhost_dev *dev)
-+
-+static void vhost_vq_poll_init(struct vhost_poll *poll, vhost_work_fn_t fn,
-+			       __poll_t mask, struct vhost_virtqueue *vq)
- {
- 	init_waitqueue_func_entry(&poll->wait, vhost_poll_wakeup);
- 	init_poll_funcptr(&poll->table, vhost_poll_func);
- 	poll->mask = mask;
--	poll->dev = dev;
-+	poll->dev = vq->dev;
-+	poll->vq = vq;
- 	poll->wqh = NULL;
- 
- 	vhost_work_init(&poll->work, fn);
- }
-+EXPORT_SYMBOL_GPL(vhost_vq_poll_init);
-+
-+/* Init poll structure */
-+void vhost_poll_init(struct vhost_poll *poll, vhost_work_fn_t fn,
-+		     __poll_t mask, struct vhost_dev *dev)
-+{
-+	vhost_vq_poll_init(poll, fn, mask, dev->vqs[0]);
-+}
- EXPORT_SYMBOL_GPL(vhost_poll_init);
- 
- /* Start polling a file. We add ourselves to file's wait queue. The caller must
-@@ -232,31 +241,74 @@ void vhost_poll_stop(struct vhost_poll *poll)
- }
- EXPORT_SYMBOL_GPL(vhost_poll_stop);
- 
--void vhost_work_flush(struct vhost_dev *dev, struct vhost_work *work)
-+
-+static void vhost_vq_poll_start_work(struct vhost_work *w)
-+{
-+	struct vhost_virtqueue *vq = container_of(w, struct vhost_virtqueue,
-+						  work);
-+
-+	vhost_poll_start(&vq->poll, vq->kick);
-+}
-+
-+static int vhost_vq_worker(void *data);
-+
-+static int vhost_vq_poll_start(struct vhost_virtqueue *vq)
-+{
-+	if (!vq->worker) {
-+		vq->worker = kthread_create(vhost_vq_worker, vq, "vhost-%d/%i",
-+					    vq->dev->pid, vq->index);
-+		if (IS_ERR(vq->worker)) {
-+			int ret = PTR_ERR(vq->worker);
-+
-+			pr_err("%s: can't create vq worker: %d\n", __func__,
-+			       ret);
-+			vq->worker = NULL;
-+			return ret;
-+		}
-+	}
-+	vhost_work_init(&vq->work, vhost_vq_poll_start_work);
-+	vhost_vq_work_queue(vq, &vq->work);
-+	return 0;
-+}
-+
-+static void vhost_vq_work_flush(struct vhost_virtqueue *vq,
-+				struct vhost_work *work)
- {
- 	struct vhost_flush_struct flush;
- 
--	if (dev->worker) {
-+	if (vq->worker) {
- 		init_completion(&flush.wait_event);
- 		vhost_work_init(&flush.work, vhost_flush_work);
- 
--		vhost_work_queue(dev, &flush.work);
-+		vhost_vq_work_queue(vq, &flush.work);
- 		wait_for_completion(&flush.wait_event);
- 	}
- }
-+EXPORT_SYMBOL_GPL(vhost_vq_work_flush);
-+
-+void vhost_work_flush(struct vhost_dev *dev, struct vhost_work *work)
-+{
-+	vhost_vq_work_flush(dev->vqs[0], work);
-+}
- EXPORT_SYMBOL_GPL(vhost_work_flush);
- 
- /* Flush any work that has been scheduled. When calling this, don't hold any
-  * locks that are also used by the callback. */
- void vhost_poll_flush(struct vhost_poll *poll)
- {
--	vhost_work_flush(poll->dev, &poll->work);
-+	vhost_vq_work_flush(poll->vq, &poll->work);
- }
- EXPORT_SYMBOL_GPL(vhost_poll_flush);
- 
- void vhost_work_queue(struct vhost_dev *dev, struct vhost_work *work)
- {
--	if (!dev->worker)
-+	return vhost_vq_work_queue(dev->vqs[0], work);
-+}
-+EXPORT_SYMBOL_GPL(vhost_work_queue);
-+
-+void vhost_vq_work_queue(struct vhost_virtqueue *vq, struct vhost_work *work)
-+{
-+	if (!vq->worker)
- 		return;
- 
- 	if (!test_and_set_bit(VHOST_WORK_QUEUED, &work->flags)) {
-@@ -264,22 +316,22 @@ void vhost_work_queue(struct vhost_dev *dev, struct vhost_work *work)
- 		 * sure it was not in the list.
- 		 * test_and_set_bit() implies a memory barrier.
- 		 */
--		llist_add(&work->node, &dev->work_list);
--		wake_up_process(dev->worker);
-+		llist_add(&work->node, &vq->work_list);
-+		wake_up_process(vq->worker);
- 	}
- }
--EXPORT_SYMBOL_GPL(vhost_work_queue);
-+EXPORT_SYMBOL_GPL(vhost_vq_work_queue);
- 
- /* A lockless hint for busy polling code to exit the loop */
- bool vhost_has_work(struct vhost_dev *dev)
- {
--	return !llist_empty(&dev->work_list);
-+	return !llist_empty(&dev->vqs[0]->work_list);
- }
- EXPORT_SYMBOL_GPL(vhost_has_work);
- 
- void vhost_poll_queue(struct vhost_poll *poll)
- {
--	vhost_work_queue(poll->dev, &poll->work);
-+	vhost_vq_work_queue(poll->vq, &poll->work);
- }
- EXPORT_SYMBOL_GPL(vhost_poll_queue);
- 
-@@ -333,9 +385,10 @@ static void vhost_vq_reset(struct vhost_dev *dev,
- 	__vhost_vq_meta_reset(vq);
- }
- 
--static int vhost_worker(void *data)
-+static int vhost_vq_worker(void *data)
- {
--	struct vhost_dev *dev = data;
-+	struct vhost_virtqueue *vq = data;
-+	struct vhost_dev *dev = vq->dev;
- 	struct vhost_work *work, *work_next;
- 	struct llist_node *node;
- 	mm_segment_t oldfs = get_fs();
-@@ -351,8 +404,7 @@ static int vhost_worker(void *data)
- 			__set_current_state(TASK_RUNNING);
- 			break;
- 		}
--
--		node = llist_del_all(&dev->work_list);
-+		node = llist_del_all(&vq->work_list);
- 		if (!node)
- 			schedule();
- 
-@@ -429,25 +481,26 @@ void vhost_dev_init(struct vhost_dev *dev,
- 	dev->umem = NULL;
- 	dev->iotlb = NULL;
- 	dev->mm = NULL;
--	dev->worker = NULL;
--	init_llist_head(&dev->work_list);
- 	init_waitqueue_head(&dev->wait);
- 	INIT_LIST_HEAD(&dev->read_list);
- 	INIT_LIST_HEAD(&dev->pending_list);
- 	spin_lock_init(&dev->iotlb_lock);
- 
--
- 	for (i = 0; i < dev->nvqs; ++i) {
- 		vq = dev->vqs[i];
-+		vq->index = i;
- 		vq->log = NULL;
- 		vq->indirect = NULL;
- 		vq->heads = NULL;
- 		vq->dev = dev;
-+		vq->worker = NULL;
- 		mutex_init(&vq->mutex);
- 		vhost_vq_reset(dev, vq);
-+		init_llist_head(&vq->work_list);
-+		vq->worker = NULL;
- 		if (vq->handle_kick)
--			vhost_poll_init(&vq->poll, vq->handle_kick,
--					EPOLLIN, dev);
-+			vhost_vq_poll_init(&vq->poll, vq->handle_kick,
-+					   EPOLLIN, vq);
- 	}
- }
- EXPORT_SYMBOL_GPL(vhost_dev_init);
-@@ -506,14 +559,16 @@ long vhost_dev_set_owner(struct vhost_dev *dev)
- 
- 	/* No owner, become one */
- 	dev->mm = get_task_mm(current);
--	worker = kthread_create(vhost_worker, dev, "vhost-%d", current->pid);
-+	dev->pid = current->pid;
-+	worker = kthread_create(vhost_vq_worker, dev->vqs[0], "vhost-%d/0",
-+				current->pid);
- 	if (IS_ERR(worker)) {
- 		err = PTR_ERR(worker);
- 		goto err_worker;
- 	}
- 
--	dev->worker = worker;
--	wake_up_process(worker);	/* avoid contributing to loadavg */
-+	dev->vqs[0]->worker = worker;
-+	wake_up_process(worker);        /* avoid contributing to loadavg */
- 
- 	err = vhost_attach_cgroups(dev);
- 	if (err)
-@@ -526,7 +581,7 @@ long vhost_dev_set_owner(struct vhost_dev *dev)
- 	return 0;
- err_cgroup:
- 	kthread_stop(worker);
--	dev->worker = NULL;
-+	dev->vqs[0]->worker = NULL;
- err_worker:
- 	if (dev->mm)
- 		mmput(dev->mm);
-@@ -638,11 +693,15 @@ void vhost_dev_cleanup(struct vhost_dev *dev)
- 	dev->iotlb = NULL;
- 	vhost_clear_msg(dev);
- 	wake_up_interruptible_poll(&dev->wait, EPOLLIN | EPOLLRDNORM);
--	WARN_ON(!llist_empty(&dev->work_list));
--	if (dev->worker) {
--		kthread_stop(dev->worker);
--		dev->worker = NULL;
-+
-+	for (i = 0; i < dev->nvqs; ++i) {
-+		WARN_ON(!llist_empty(&dev->vqs[i]->work_list));
-+		if (dev->vqs[i]->worker) {
-+			kthread_stop(dev->vqs[i]->worker);
-+			dev->vqs[i]->worker = NULL;
-+		}
- 	}
-+
- 	if (dev->mm)
- 		mmput(dev->mm);
- 	dev->mm = NULL;
-@@ -1564,7 +1623,7 @@ long vhost_vring_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *arg
- 		fput(filep);
- 
- 	if (pollstart && vq->handle_kick)
--		r = vhost_poll_start(&vq->poll, vq->kick);
-+		r = vhost_vq_poll_start(vq);
- 
- 	mutex_unlock(&vq->mutex);
- 
-diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
-index 466ef7542291..c00733fac49f 100644
---- a/drivers/vhost/vhost.h
-+++ b/drivers/vhost/vhost.h
-@@ -32,6 +32,7 @@ struct vhost_poll {
- 	struct vhost_work	  work;
- 	__poll_t		  mask;
- 	struct vhost_dev	 *dev;
-+	struct vhost_virtqueue   *vq;
- };
- 
- void vhost_work_init(struct vhost_work *work, vhost_work_fn_t fn);
-@@ -86,6 +87,7 @@ struct vhost_virtqueue {
- 
- 	/* The actual ring of buffers. */
- 	struct mutex mutex;
-+	unsigned int index;
- 	unsigned int num;
- 	struct vring_desc __user *desc;
- 	struct vring_avail __user *avail;
-@@ -145,6 +147,10 @@ struct vhost_virtqueue {
- 	bool user_be;
- #endif
- 	u32 busyloop_timeout;
-+
-+	struct llist_head work_list;
-+	struct task_struct *worker;
-+	struct vhost_work work;
- };
- 
- struct vhost_msg_node {
-@@ -158,12 +164,11 @@ struct vhost_msg_node {
- 
- struct vhost_dev {
- 	struct mm_struct *mm;
-+	pid_t pid;
- 	struct mutex mutex;
- 	struct vhost_virtqueue **vqs;
- 	int nvqs;
- 	struct eventfd_ctx *log_ctx;
--	struct llist_head work_list;
--	struct task_struct *worker;
- 	struct vhost_umem *umem;
- 	struct vhost_umem *iotlb;
- 	spinlock_t iotlb_lock;
-@@ -185,6 +190,8 @@ long vhost_vring_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *arg
- bool vhost_vq_access_ok(struct vhost_virtqueue *vq);
- bool vhost_log_access_ok(struct vhost_dev *);
- 
-+void vhost_vq_work_queue(struct vhost_virtqueue *vq, struct vhost_work *work);
-+
- int vhost_get_vq_desc(struct vhost_virtqueue *,
- 		      struct iovec iov[], unsigned int iov_count,
- 		      unsigned int *out_num, unsigned int *in_num,
--- 
-2.17.1
+The two issues referenced above are both handled by the kernel, and no
+userspace changes are required to handle them.
 
+We do not intend or expect to expose mismatched features to userspace.
+Correctly-written userspace should not use optional instructions unless
+the kernel has advertised their presence via a hwcap (or via ID register
+emulation).
+
+> The main problem is that the kernel can migrate a thread at any point
+> between user-space reading the current cpu number and issuing the
+> instruction. This is where rseq can help.
+> 
+> The core idea to solve the instruction set issue is to set a mask of
+> cpus supporting the new instruction in a library constructor, and then
+> load cpu_id, use it with the mask, and branch to either the new or old
+> instruction, all with a rseq critical section. If the kernel needs to
+> abort due to preemption or signal delivery, the abort behavior would
+> be to issue the fallback (slow) atomic operation, which guarantees
+> progress even if single-stepping.
+> 
+> As long as the load, test and branch is faster than the performance
+> delta between the old and new atomic instruction, it would be worth
+> it.
+
+Specifically w.r.t. the atomics, the kernel will only expose the
+presence of the ARMv8.1 atomic instructions when supported by all CPUs
+in the system.
+
+> In the case of PMU read from user-space, using rseq to figure out how
+> to issue the PMU read enables a use-case which is not otherwise
+> possible to do on big.LITTLE. On rseq abort, it would fallback to a
+> system call to read the PMU counter. This abort behavior guarantees
+> forward progress.
+
+We do not currently expose any PMU registers to userspace. If we were to
+expose them for big.LITTLE, rseq may be of use, but no-one has done the
+groundwork to investigate this.
+
+> The second article is about cache line size discrepancy between CPUs.
+> Here again, doing the cacheline flushing in a rseq critical section
+> could allow tuning it to characteristics of the actual core it is
+> running on. The fast-path would use a stride fitting the current core
+> characteristics, and if rseq needs to abort, the slow-path would
+> fall-back to a conservative value which would fit all cores (smaller
+> cache line size on the overall system).
+
+This is already handled by the kernel, and the proposed rseq approach is
+not correct -- cache maintenance must *always* use the system-wide
+minimum cacheline size, or stale entries will be left on some CPUs,
+which will result in later failures.
+
+Thanks,
+Mark.
