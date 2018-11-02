@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F9EC65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18868C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AA5B20848
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D221120843
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="D5SwwBk9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AA5B20848
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dtkqepDy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D221120843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729494AbeKCDtK (ORCPT
+        id S1729497AbeKCDtO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:49:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43702 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:49:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728578AbeKCDtK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:49:10 -0400
+        id S1728578AbeKCDtN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:49:13 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8DF6A20843;
-        Fri,  2 Nov 2018 18:40:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F45320843;
+        Fri,  2 Nov 2018 18:41:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184058;
-        bh=fHsf7elt92aKtruKEZhJPyuUs/NG1Zc0SvHni5nRHdY=;
+        s=default; t=1541184061;
+        bh=aYCJ7kYhBvv/G+ktrzEQvzAkD50hl034opcwF3qM+h0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D5SwwBk90BZF0wWchSFT6LRCoOy3E0K2DpowzYfEEqBQZMN3x0OwT58/3QHWr3b4P
-         OVolav6zHL6Dcwao5IUMWHZc98ht/AJtIWUIPKwWiG72RN0aQq5+IBRT9/Iy+ebX5S
-         Jw+7RI3XGeB8IVASB9hir1AObcEHDgTz0WONsO6I=
+        b=dtkqepDyrwJe2sILMA82kVUQNtl8l8q3bi7T6u+8cUz7MeYl9Pd3hnV5PJa1y6tBU
+         8l5z3C0p8UJit7RFxwM3bTJAh8Z6jaK+SmsGiXaRyNIGcRbNMrJUlfk9gdcoD0yJ1X
+         0ZuwNVdIU0x+wNwFQyxT3IP8txsYBXekkb+iQdI0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Pavithra Prakash <pavrampu@in.ibm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 066/150] be2net: dont flip hw_features when VXLANs are added/deleted
-Date:   Fri,  2 Nov 2018 19:33:48 +0100
-Message-Id: <20181102182908.210849213@linuxfoundation.org>
+Subject: [PATCH 4.18 067/150] powerpc/numa: Skip onlining a offline node in kdump path
+Date:   Fri,  2 Nov 2018 19:33:49 +0100
+Message-Id: <20181102182908.278270033@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -63,58 +65,165 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 2d52527e80c2dc0c5f43f50adf183781262ec565 ]
+[ Upstream commit ac1788cc7da4ce54edcfd2e499afdb0a23d5c41d ]
 
-the be2net implementation of .ndo_tunnel_{add,del}() changes the value of
-NETIF_F_GSO_UDP_TUNNEL bit in 'features' and 'hw_features', but it forgets
-to call netdev_features_change(). Moreover, ethtool setting for that bit
-can potentially be reverted after a tunnel is added or removed.
+With commit 2ea626306810 ("powerpc/topology: Get topology for shared
+processors at boot"), kdump kernel on shared LPAR may crash.
 
-GSO already does software segmentation when 'hw_enc_features' is 0, even
-if VXLAN offload is turned on. In addition, commit 096de2f83ebc ("benet:
-stricter vxlan offloading check in be_features_check") avoids hardware
-segmentation of non-VXLAN tunneled packets, or VXLAN packets having wrong
-destination port. So, it's safe to avoid flipping the above feature on
-addition/deletion of VXLAN tunnels.
+The necessary conditions are
+- Shared LPAR with at least 2 nodes having memory and CPUs.
+- Memory requirement for kdump kernel must be met by the first N-1
+  nodes where there are at least N nodes with memory and CPUs.
 
-Fixes: 630f4b70567f ("be2net: Export tunnel offloads only when a VxLAN tunnel is created")
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Example numactl of such a machine.
+  $ numactl -H
+  available: 5 nodes (0,2,5-7)
+  node 0 cpus:
+  node 0 size: 0 MB
+  node 0 free: 0 MB
+  node 2 cpus:
+  node 2 size: 255 MB
+  node 2 free: 189 MB
+  node 5 cpus: 24 25 26 27 28 29 30 31
+  node 5 size: 4095 MB
+  node 5 free: 4024 MB
+  node 6 cpus: 0 1 2 3 4 5 6 7 16 17 18 19 20 21 22 23
+  node 6 size: 6353 MB
+  node 6 free: 5998 MB
+  node 7 cpus: 8 9 10 11 12 13 14 15 32 33 34 35 36 37 38 39
+  node 7 size: 7640 MB
+  node 7 free: 7164 MB
+  node distances:
+  node   0   2   5   6   7
+    0:  10  40  40  40  40
+    2:  40  10  40  40  40
+    5:  40  40  10  40  40
+    6:  40  40  40  10  20
+    7:  40  40  40  20  10
+
+Steps to reproduce.
+1. Load / start kdump service.
+2. Trigger a kdump (for example : echo c > /proc/sysrq-trigger)
+
+When booting a kdump kernel with 2048M:
+
+  kexec: Starting switchover sequence.
+  I'm in purgatory
+  Using 1TB segments
+  hash-mmu: Initializing hash mmu with SLB
+  Linux version 4.19.0-rc5-master+ (srikar@linux-xxu6) (gcc version 4.8.5 (SUSE Linux)) #1 SMP Thu Sep 27 19:45:00 IST 2018
+  Found initrd at 0xc000000009e70000:0xc00000000ae554b4
+  Using pSeries machine description
+  -----------------------------------------------------
+  ppc64_pft_size    = 0x1e
+  phys_mem_size     = 0x88000000
+  dcache_bsize      = 0x80
+  icache_bsize      = 0x80
+  cpu_features      = 0x000000ff8f5d91a7
+    possible        = 0x0000fbffcf5fb1a7
+    always          = 0x0000006f8b5c91a1
+  cpu_user_features = 0xdc0065c2 0xef000000
+  mmu_features      = 0x7c006001
+  firmware_features = 0x00000007c45bfc57
+  htab_hash_mask    = 0x7fffff
+  physical_start    = 0x8000000
+  -----------------------------------------------------
+  numa:   NODE_DATA [mem 0x87d5e300-0x87d67fff]
+  numa:     NODE_DATA(0) on node 6
+  numa:   NODE_DATA [mem 0x87d54600-0x87d5e2ff]
+  Top of RAM: 0x88000000, Total RAM: 0x88000000
+  Memory hole size: 0MB
+  Zone ranges:
+    DMA      [mem 0x0000000000000000-0x0000000087ffffff]
+    DMA32    empty
+    Normal   empty
+  Movable zone start for each node
+  Early memory node ranges
+    node   6: [mem 0x0000000000000000-0x0000000087ffffff]
+  Could not find start_pfn for node 0
+  Initmem setup node 0 [mem 0x0000000000000000-0x0000000000000000]
+  On node 0 totalpages: 0
+  Initmem setup node 6 [mem 0x0000000000000000-0x0000000087ffffff]
+  On node 6 totalpages: 34816
+
+  Unable to handle kernel paging request for data at address 0x00000060
+  Faulting instruction address: 0xc000000008703a54
+  Oops: Kernel access of bad area, sig: 11 [#1]
+  LE SMP NR_CPUS=2048 NUMA pSeries
+  Modules linked in:
+  CPU: 11 PID: 1 Comm: swapper/11 Not tainted 4.19.0-rc5-master+ #1
+  NIP:  c000000008703a54 LR: c000000008703a38 CTR: 0000000000000000
+  REGS: c00000000b673440 TRAP: 0380   Not tainted  (4.19.0-rc5-master+)
+  MSR:  8000000002009033 <SF,VEC,EE,ME,IR,DR,RI,LE>  CR: 24022022  XER: 20000002
+  CFAR: c0000000086fc238 IRQMASK: 0
+  GPR00: c000000008703a38 c00000000b6736c0 c000000009281900 0000000000000000
+  GPR04: 0000000000000000 0000000000000000 fffffffffffff001 c00000000b660080
+  GPR08: 0000000000000000 0000000000000000 0000000000000000 0000000000000220
+  GPR12: 0000000000002200 c000000009e51400 0000000000000000 0000000000000008
+  GPR16: 0000000000000000 c000000008c152e8 c000000008c152a8 0000000000000000
+  GPR20: c000000009422fd8 c000000009412fd8 c000000009426040 0000000000000008
+  GPR24: 0000000000000000 0000000000000000 c000000009168bc8 c000000009168c78
+  GPR28: c00000000b126410 0000000000000000 c00000000916a0b8 c00000000b126400
+  NIP [c000000008703a54] bus_add_device+0x84/0x1e0
+  LR [c000000008703a38] bus_add_device+0x68/0x1e0
+  Call Trace:
+  [c00000000b6736c0] [c000000008703a38] bus_add_device+0x68/0x1e0 (unreliable)
+  [c00000000b673740] [c000000008700194] device_add+0x454/0x7c0
+  [c00000000b673800] [c00000000872e660] __register_one_node+0xb0/0x240
+  [c00000000b673860] [c00000000839a6bc] __try_online_node+0x12c/0x180
+  [c00000000b673900] [c00000000839b978] try_online_node+0x58/0x90
+  [c00000000b673930] [c0000000080846d8] find_and_online_cpu_nid+0x158/0x190
+  [c00000000b673a10] [c0000000080848a0] numa_update_cpu_topology+0x190/0x580
+  [c00000000b673c00] [c000000008d3f2e4] smp_cpus_done+0x94/0x108
+  [c00000000b673c70] [c000000008d5c00c] smp_init+0x174/0x19c
+  [c00000000b673d00] [c000000008d346b8] kernel_init_freeable+0x1e0/0x450
+  [c00000000b673dc0] [c0000000080102e8] kernel_init+0x28/0x160
+  [c00000000b673e30] [c00000000800b65c] ret_from_kernel_thread+0x5c/0x80
+  Instruction dump:
+  60000000 60000000 e89e0020 7fe3fb78 4bff87d5 60000000 7c7d1b79 4082008c
+  e8bf0050 e93e0098 3b9f0010 2fa50000 <e8690060> 38630018 419e0114 7f84e378
+  ---[ end trace 593577668c2daa65 ]---
+
+However a regular kernel with 4096M (2048 gets reserved for crash
+kernel) boots properly.
+
+Unlike regular kernels, which mark all available nodes as online,
+kdump kernel only marks just enough nodes as online and marks the rest
+as offline at boot. However kdump kernel boots with all available
+CPUs. With Commit 2ea626306810 ("powerpc/topology: Get topology for
+shared processors at boot"), all CPUs are onlined on their respective
+nodes at boot time. try_online_node() tries to online the offline
+nodes but fails as all needed subsystems are not yet initialized.
+
+As part of fix, detect and skip early onlining of a offline node.
+
+Fixes: 2ea626306810 ("powerpc/topology: Get topology for shared processors at boot")
+Reported-by: Pavithra Prakash <pavrampu@in.ibm.com>
+Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Tested-by: Hari Bathini <hbathini@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/emulex/benet/be_main.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ arch/powerpc/mm/numa.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/emulex/benet/be_main.c b/drivers/net/ethernet/emulex/benet/be_main.c
-index 8f755009ff38..c8445a4135a9 100644
---- a/drivers/net/ethernet/emulex/benet/be_main.c
-+++ b/drivers/net/ethernet/emulex/benet/be_main.c
-@@ -3915,8 +3915,6 @@ static int be_enable_vxlan_offloads(struct be_adapter *adapter)
- 	netdev->hw_enc_features |= NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM |
- 				   NETIF_F_TSO | NETIF_F_TSO6 |
- 				   NETIF_F_GSO_UDP_TUNNEL;
--	netdev->hw_features |= NETIF_F_GSO_UDP_TUNNEL;
--	netdev->features |= NETIF_F_GSO_UDP_TUNNEL;
- 
- 	dev_info(dev, "Enabled VxLAN offloads for UDP port %d\n",
- 		 be16_to_cpu(port));
-@@ -3938,8 +3936,6 @@ static void be_disable_vxlan_offloads(struct be_adapter *adapter)
- 	adapter->vxlan_port = 0;
- 
- 	netdev->hw_enc_features = 0;
--	netdev->hw_features &= ~(NETIF_F_GSO_UDP_TUNNEL);
--	netdev->features &= ~(NETIF_F_GSO_UDP_TUNNEL);
- }
- 
- static void be_calculate_vf_res(struct be_adapter *adapter, u16 num_vfs,
-@@ -5232,6 +5228,7 @@ static void be_netdev_init(struct net_device *netdev)
- 	struct be_adapter *adapter = netdev_priv(netdev);
- 
- 	netdev->hw_features |= NETIF_F_SG | NETIF_F_TSO | NETIF_F_TSO6 |
-+		NETIF_F_GSO_UDP_TUNNEL |
- 		NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM | NETIF_F_RXCSUM |
- 		NETIF_F_HW_VLAN_CTAG_TX;
- 	if ((be_if_cap_flags(adapter) & BE_IF_FLAGS_RSS))
+diff --git a/arch/powerpc/mm/numa.c b/arch/powerpc/mm/numa.c
+index 59d07bd5374a..055b211b7126 100644
+--- a/arch/powerpc/mm/numa.c
++++ b/arch/powerpc/mm/numa.c
+@@ -1217,9 +1217,10 @@ int find_and_online_cpu_nid(int cpu)
+ 		 * Need to ensure that NODE_DATA is initialized for a node from
+ 		 * available memory (see memblock_alloc_try_nid). If unable to
+ 		 * init the node, then default to nearest node that has memory
+-		 * installed.
++		 * installed. Skip onlining a node if the subsystems are not
++		 * yet initialized.
+ 		 */
+-		if (try_online_node(new_nid))
++		if (!topology_inited || try_online_node(new_nid))
+ 			new_nid = first_online_node;
+ #else
+ 		/*
 -- 
 2.17.1
 
