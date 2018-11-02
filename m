@@ -2,154 +2,132 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIMWL_WL_MED,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DFBFC65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:59:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23CEDC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:01:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15A5620831
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:59:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF35E2081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:01:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=usp-br.20150623.gappssmtp.com header.i=@usp-br.20150623.gappssmtp.com header.b="wExw2RfW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15A5620831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=usp.br
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="QF4VzsQ/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF35E2081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=icloud.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727840AbeKBXG2 (ORCPT
+        id S1727604AbeKBXIl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 19:06:28 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:45342 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726557AbeKBXG1 (ORCPT
+        Fri, 2 Nov 2018 19:08:41 -0400
+Received: from st11p02im-asmtp002.me.com ([17.172.220.114]:28684 "EHLO
+        st11p02im-asmtp002.me.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726557AbeKBXIl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 19:06:27 -0400
-Received: by mail-qk1-f195.google.com with SMTP id d135so3078534qkc.12
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 06:59:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=usp-br.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=Bu+1Q9WrSOolr2QdaaXsuJYRQhCHIei9+2ATMxVv2wM=;
-        b=wExw2RfWLLR2QkB+OTes1WlzhhZZDAr8HYRym8Sck7FOBvIyrcCLfS2b/6L93ONq0W
-         AODXtVl5HDiC4Urh81/BsJJ0x58KDgRodVW4jMl3S84QBWnw76CWuAsNzJ8Gyw2GHDHT
-         iKpl+YkVxA3FYPRnLLRQF1MBxJnlcHlorDOi+a2i3TaxP+h8JTJ5H0WdW8KEu6ScjvPL
-         YxSGk2olirqTqp24VOxExVaO8+iXJ319L7oJS3+8aslUHy8qCsL3NmrxD2/jFLqSydrZ
-         uKiZoeRVTjE0LjXlv/RzMs1dvHjrUkpM9+RyIs6vYRWX9r+QtliCfAu8vxQIhbgiIxGN
-         RCfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=Bu+1Q9WrSOolr2QdaaXsuJYRQhCHIei9+2ATMxVv2wM=;
-        b=f36lZw3usAoI/AOSmxQaN7J+1qBfZjgIxFnj+AyBh669UNx5p9w5EH14MTKCl0M6SV
-         hQz+qHwKwuDF8kjTDEMDRWIKuwqOz6S7D6Ny714LYFy/USdYWw874ucUHYzWRyeGRdag
-         z3ndLTERqnj27nUd9gnDxaz7eAKCLEjgCb9BR2zAFPi7j01yZgSNQ7PL4uvGHfIp1Q6F
-         vXlcIgdCOD/z33LaEarLmZSiah8bj65MNh1wsj9cCVQpBy/A9OD/XyUJ2Bhk7kaZwXto
-         Gu1iou+qp9CX++Nz8t1KWrGR3HduEZGXQT/PhPJBmOVhe7N6o8PQ1DrTcRBVZ8Y94Tg3
-         FvGw==
-X-Gm-Message-State: AGRZ1gLDXV1Q6CaH09bq89C+lxgZApdnAzbcEoAHSkZT42dN//+oPOWP
-        j2ltYFmtn1A6lSwlCNeOTCz+Ww==
-X-Google-Smtp-Source: AJdET5eCrei49gjbX/OXAy51rCTAwXkOyfUjj7mxWcn6e1kQi2TOaE1EE3skGUM2rnYfX2PV6jTqPw==
-X-Received: by 2002:a37:404d:: with SMTP id n74-v6mr10936333qka.312.1541167152558;
-        Fri, 02 Nov 2018 06:59:12 -0700 (PDT)
-Received: from ?IPv6:2804:14c:81:942d::1? ([2804:14c:81:942d::1])
-        by smtp.gmail.com with ESMTPSA id 35-v6sm24226632qtu.69.2018.11.02.06.59.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 02 Nov 2018 06:59:11 -0700 (PDT)
-Subject: Re: [PATCH v2 2/6] staging:iio:ad2s90: Make probe handle spi_setup
- failure
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
-References: <20181027020005.3140-1-matheus.bernardino@usp.br>
- <20181027020005.3140-3-matheus.bernardino@usp.br>
- <20181028164329.57162e06@archlinux>
-From:   Matheus Tavares <matheus.bernardino@usp.br>
-Message-ID: <7e9048ff-186f-0ed3-35fc-4e8ffa595c70@usp.br>
-Date:   Fri, 2 Nov 2018 10:59:06 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <20181028164329.57162e06@archlinux>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Fri, 2 Nov 2018 19:08:41 -0400
+X-Greylist: delayed 3608 seconds by postgrey-1.27 at vger.kernel.org; Fri, 02 Nov 2018 19:08:40 EDT
+Received: from process-dkim-sign-daemon.st11p02im-asmtp002.me.com by
+ st11p02im-asmtp002.me.com
+ (Oracle Communications Messaging Server 8.0.2.2.20180531 64bit (built May 31
+ 2018)) id <0PHK00200GXLZ400@st11p02im-asmtp002.me.com> for
+ linux-kernel@vger.kernel.org; Fri, 02 Nov 2018 13:01:10 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;     s=04042017;
+ t=1541163669;  bh=4sGrZ1GuUQTJ/1hTrW0LxGTqaKkRQVwIuXwSMWCa75Y=;
+        h=Date:From:To:Subject:Message-id:MIME-version:Content-type;
+        b=QF4VzsQ/sKIEsMsqRF4EXw+9nW9XyO6GyKBqzIJUGXxktiXOMHchpDV4RHvbDjGac
+ 6DH2zrEbVYOTWCc53WIMzRNtxeuma+MOx9qLs9Ol7hAdhNN2M/baBplVEoVJuZbs1Y
+ RNyysvIiS+ZrnFT8PfFctRCdNiI8E3q8rF8J+LZoHxQYkafmpCUOTCkwPIzH5uopRr
+ ORtuM/uPEZUPYMltFAi+rzBFFNhO5Adg1R4CDSTB3G9cCCG2ejkywTkLk9whasD0F4
+ HZU0xOmm9PLPTawvBjpuuhWiVSZHXHT0Dc+MJLETY5mybzqJzYRHSCdInG0UVI8qYY
+ UZiYCTuHHMMjw==
+Received: from icloud.com ([127.0.0.1]) by st11p02im-asmtp002.me.com
+ (Oracle Communications Messaging Server 8.0.2.2.20180531 64bit (built May 31
+ 2018)) with ESMTPSA id <0PHK01A8AHHS5540@st11p02im-asmtp002.me.com>; Fri,
+ 02 Nov 2018 13:01:09 +0000 (GMT)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
+ malwarescore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011 mlxscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1811020120
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,,
+ definitions=2018-11-02_07:,, signatures=0
+Date:   Fri, 02 Nov 2018 14:01:04 +0100
+From:   Damian Tometzki <linux_dti@icloud.com>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
+        linux-kernel@vger.kernel.org, tipbuild@zytor.com,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [tip:locking/core 5/6] /bin/bash: scripts/atomic/check-atomics.sh:
+ No such file or directory
+Message-id: <20181102130103.GA2064@Ubuntu-DTI>
+Mail-followup-to: Mark Rutland <mark.rutland@arm.com>,
+ kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
+ linux-kernel@vger.kernel.org, tipbuild@zytor.com,
+ Peter Zijlstra <peterz@infradead.org>
+References: <201811011821.G9DTgwnD%fengguang.wu@intel.com>
+ <20181101112943.4zwlwsmkeebg7p5k@lakrids.cambridge.arm.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
+Content-disposition: inline
+In-reply-to: <20181101112943.4zwlwsmkeebg7p5k@lakrids.cambridge.arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello Mark,
 
-On 10/28/18 1:43 PM, Jonathan Cameron wrote:
-> On Fri, 26 Oct 2018 23:00:01 -0300
-> Matheus Tavares <matheus.bernardino@usp.br> wrote:
->
->> Previously, ad2s90_probe ignored the return code from spi_setup, not
->> handling its possible failure. This patch makes ad2s90_probe check if
->> the code is an error code and, if so, do the following:
->>
->> - Call dev_err with an appropriate error message.
->> - Return the spi_setup's error code, aborting the execution of the
->> rest of the function.
->>
->> Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
->> ---
->>   drivers/staging/iio/resolver/ad2s90.c | 7 ++++++-
->>   1 file changed, 6 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/staging/iio/resolver/ad2s90.c
->> index 11fac9f90148..d6a42e3f1bd8 100644
->> --- a/drivers/staging/iio/resolver/ad2s90.c
->> +++ b/drivers/staging/iio/resolver/ad2s90.c
->> @@ -88,7 +88,12 @@ static int ad2s90_probe(struct spi_device *spi)
->>   	/* need 600ns between CS and the first falling edge of SCLK */
->>   	spi->max_speed_hz = 830000;
->>   	spi->mode = SPI_MODE_3;
->> -	spi_setup(spi);
->> +	ret = spi_setup(spi);
->> +
->> +	if (ret < 0) {
->> +		dev_err(&spi->dev, "spi_setup failed!\n");
->> +		return ret;
->> +	}
-> I would have reordered this first to be before the iio_device_register call.
-> The reason being that it would avoid this comment.
->
-> Drop the return ret out of the block above and return ret unconditionally.
->
-> I don't mind too much as I know this is moving later, but I only know that
-> because of the earlier discussion ;)  Few reviewers read the whole patch
-> set before responding to the early patches - it's just too much like hard
-> work.  So if you can do things in an order that minimizes standard responses
-> then that's great.
->
-> Patch is fine though - could be solved by a comment in the intro that
-> says the code in question will move in patch X.
+i got now the error:
+/bin/bash: scripts/atomic/check-atomics.sh: No such file or directory
+make[2]: *** [/home/damian/kernel/linux/./Kbuild:86: old-atomics] Fehler 127
+make[1]: *** [/home/damian/kernel/linux/Makefile:1112: prepare0] Fehler 2
+
+Best regards
+Damian
 
 
-Ok! As a newcomer I'm not sure about the right way to add this comment. 
-Should I add it to the patch message or after the --- ? Also, how do I 
-reference patch X? Just giving the number of the patch in this series?
-
-An alternative to adding the comment would be to drop the return ret, 
-and reinsert it in the next patch. Dosen't seem so good, to me, but 
-would avoid the problem you presented. What would be better?
 
 
-Matheus.
-
-
->
-> Jonathan
->>   
->>   	return 0;
->>   }
+On Do, 01. Nov 11:29, Mark Rutland wrote:
+> On Thu, Nov 01, 2018 at 06:16:22PM +0800, kbuild test robot wrote:
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/core
+> > head:   30bc7baa9de81efc0584b9290ce8040a1130f156
+> > commit: 85f8507192fbfb4ad2ac01de879cb50045f4247f [5/6] locking/atomics: Check generated headers are up-to-date
+> > config: i386-tinyconfig (attached as .config)
+> > compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+> > reproduce:
+> >         git checkout 85f8507192fbfb4ad2ac01de879cb50045f4247f
+> >         # save the attached .config to linux build tree
+> >         make ARCH=i386 
+> > 
+> > All errors (new ones prefixed by >>):
+> > 
+> > >> /bin/bash: scripts/atomic/check-atomics.sh: No such file or directory
+> >    make[2]: *** [old-atomics] Error 127
+> >    make[2]: Target '__build' not remade because of errors.
+> >    make[1]: *** [prepare0] Error 2
+> >    make[1]: Target 'prepare' not remade because of errors.
+> >    make: *** [sub-make] Error 2
+> 
+> It looks like we accidentally dropped execute permissions from the
+> scripts when picking them from the list. Locally I get a slightly
+> different failure:
+> 
+>   ALL    scripts/atomic/check-atomics.sh
+>   scripts/atomic/check-atomics.sh: line 16: 
+>   scripts/atomic/gen-atomic-instrumented.sh: Permission denied
+>   warning: include/asm-generic/atomic-instrumented.h is out-of-date.
+>   scripts/atomic/check-atomics.sh: line 16: 
+>   scripts/atomic/gen-atomic-long.sh: Permission denied
+>   warning: include/asm-generic/atomic-long.h is out-of-date.
+>   scripts/atomic/check-atomics.sh: line 16: 
+>   scripts/atomic/gen-atomic-fallback.sh: Permission denied
+>   warning: include/linux/atomic-fallback.h is out-of-date.
+> 
+> I've sent a patch [1] to fix this.
+> 
+> Thanks,
+> Mark.
+> 
+> [1] https://lkml.kernel.org/r/20181101112654.55898-1-mark.rutland@arm.com
