@@ -7,50 +7,48 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D75FC65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:42:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE74C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:42:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70F4B20854
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:42:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2B802084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:42:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="T9e/T0C8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70F4B20854
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PDCL/oR/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2B802084D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729766AbeKCDuY (ORCPT
+        id S1729338AbeKCDuc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:50:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45428 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:50:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728835AbeKCDuX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:50:23 -0400
+        id S1728033AbeKCDuc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:50:32 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AAF372084A;
-        Fri,  2 Nov 2018 18:42:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFFD120847;
+        Fri,  2 Nov 2018 18:42:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184131;
-        bh=BwNyHN4xoBSIxu3iWcLvn1UyotRuMpRFiNKV9l0oon4=;
+        s=default; t=1541184139;
+        bh=useNEBlnSyPDuFcxlgutFp/7Sqs9+3TG8NHPs8EfRl4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T9e/T0C87ZS2YsVqDglJ60KwbJad5+H1C0nvUN7JdPJ/nf1wy4pxbm3J1ZN8p3b4Q
-         aXmF4BK3WbeIMGyRaB0YZeP5jHxG4Qqo0mg06LJ6rhUbqrw/Z4fipKknKbaMywLui7
-         PIvxdbzwvrLzNX4kvJbwJylqkvHKiCXqQJvP2/RQ=
+        b=PDCL/oR/myVKTf8sfeUXF5AuyWCt0KCCSbNzEUL13xThSqi6qRRGDBawI97ldv3rZ
+         B2joWhN1HLKmEJ7tYMaI7HCW1FVwD2FHW2cddiXr0reLj1X7+3zbEc6Ah5Z5JrF1Yw
+         u2YMJhC9KDHu1/Ow+mNO7rGms/M2Ei4XwLSng500=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Milian Wolff <milian.wolff@kdab.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Sandipan Das <sandipan@linux.ibm.com>,
+        stable@vger.kernel.org, Evan Green <evgreen@chromium.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 082/150] perf record: Use unmapped IP for inline callchain cursors
-Date:   Fri,  2 Nov 2018 19:34:04 +0100
-Message-Id: <20181102182909.253117047@linuxfoundation.org>
+Subject: [PATCH 4.18 091/150] gpio: Assign gpio_irq_chip::parents to non-stack pointer
+Date:   Fri,  2 Nov 2018 19:34:13 +0100
+Message-Id: <20181102182909.816176244@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -68,48 +66,123 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 7a8a8fcf7b860e4b2d4edc787c844d41cad9dfcf ]
+[ Upstream commit 3e779a2e7f909015f21428b66834127496110b6d ]
 
-Only use the mapped IP to find inline frames, but keep using the
-unmapped IP for the callchain cursor. This ensures we properly show the
-unmapped IP when displaying a frame we received via the
-dso__parse_addr_inlines API for a module which does not contain
-sufficient debug symbols to show the srcline.
+gpiochip_set_cascaded_irqchip() is passed 'parent_irq' as an argument
+and then the address of that argument is assigned to the gpio chips
+gpio_irq_chip 'parents' pointer shortly thereafter. This can't ever
+work, because we've just assigned some stack address to a pointer that
+we plan to dereference later in gpiochip_irq_map(). I ran into this
+issue with the KASAN report below when gpiochip_irq_map() tried to setup
+the parent irq with a total junk pointer for the 'parents' array.
 
-This is another follow-up to commit 19610184693c ("perf script: Show
-virtual addresses instead of offsets").
+BUG: KASAN: stack-out-of-bounds in gpiochip_irq_map+0x228/0x248
+Read of size 4 at addr ffffffc0dde472e0 by task swapper/0/1
 
-Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Sandipan Das <sandipan@linux.ibm.com>
-Fixes: 19610184693c ("perf script: Show virtual addresses instead of offsets")
-Link: http://lkml.kernel.org/r/20180926135207.30263-2-milian.wolff@kdab.com
-Link: http://lkml.kernel.org/r/20181002073949.3297-1-milian.wolff@kdab.com
-[ Squashed a fix from Milian for a problem reported by Ravi, fixed up space damage ]
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+CPU: 7 PID: 1 Comm: swapper/0 Not tainted 4.14.72 #34
+Call trace:
+[<ffffff9008093638>] dump_backtrace+0x0/0x718
+[<ffffff9008093da4>] show_stack+0x20/0x2c
+[<ffffff90096b9224>] __dump_stack+0x20/0x28
+[<ffffff90096b91c8>] dump_stack+0x80/0xbc
+[<ffffff900845a350>] print_address_description+0x70/0x238
+[<ffffff900845a8e4>] kasan_report+0x1cc/0x260
+[<ffffff900845aa14>] __asan_report_load4_noabort+0x2c/0x38
+[<ffffff900897e098>] gpiochip_irq_map+0x228/0x248
+[<ffffff900820cc08>] irq_domain_associate+0x114/0x2ec
+[<ffffff900820d13c>] irq_create_mapping+0x120/0x234
+[<ffffff900820da78>] irq_create_fwspec_mapping+0x4c8/0x88c
+[<ffffff900820e2d8>] irq_create_of_mapping+0x180/0x210
+[<ffffff900917114c>] of_irq_get+0x138/0x198
+[<ffffff9008dc70ac>] spi_drv_probe+0x94/0x178
+[<ffffff9008ca5168>] driver_probe_device+0x51c/0x824
+[<ffffff9008ca6538>] __device_attach_driver+0x148/0x20c
+[<ffffff9008ca14cc>] bus_for_each_drv+0x120/0x188
+[<ffffff9008ca570c>] __device_attach+0x19c/0x2dc
+[<ffffff9008ca586c>] device_initial_probe+0x20/0x2c
+[<ffffff9008ca18bc>] bus_probe_device+0x80/0x154
+[<ffffff9008c9b9b4>] device_add+0x9b8/0xbdc
+[<ffffff9008dc7640>] spi_add_device+0x1b8/0x380
+[<ffffff9008dcbaf0>] spi_register_controller+0x111c/0x1378
+[<ffffff9008dd6b10>] spi_geni_probe+0x4dc/0x6f8
+[<ffffff9008cab058>] platform_drv_probe+0xdc/0x130
+[<ffffff9008ca5168>] driver_probe_device+0x51c/0x824
+[<ffffff9008ca59cc>] __driver_attach+0x100/0x194
+[<ffffff9008ca0ea8>] bus_for_each_dev+0x104/0x16c
+[<ffffff9008ca58c0>] driver_attach+0x48/0x54
+[<ffffff9008ca1edc>] bus_add_driver+0x274/0x498
+[<ffffff9008ca8448>] driver_register+0x1ac/0x230
+[<ffffff9008caaf6c>] __platform_driver_register+0xcc/0xdc
+[<ffffff9009c4b33c>] spi_geni_driver_init+0x1c/0x24
+[<ffffff9008084cb8>] do_one_initcall+0x240/0x3dc
+[<ffffff9009c017d0>] kernel_init_freeable+0x378/0x468
+[<ffffff90096e8240>] kernel_init+0x14/0x110
+[<ffffff9008086fcc>] ret_from_fork+0x10/0x18
+
+The buggy address belongs to the page:
+page:ffffffbf037791c0 count:0 mapcount:0 mapping:          (null) index:0x0
+flags: 0x4000000000000000()
+raw: 4000000000000000 0000000000000000 0000000000000000 00000000ffffffff
+raw: ffffffbf037791e0 ffffffbf037791e0 0000000000000000 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffffffc0dde47180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffffffc0dde47200: f1 f1 f1 f1 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f2 f2
+>ffffffc0dde47280: f2 f2 00 00 00 00 00 00 00 00 00 00 f3 f3 f3 f3
+                                                       ^
+ ffffffc0dde47300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffffffc0dde47380: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+Let's leave around one unsigned int in the gpio_irq_chip struct for the
+single parent irq case and repoint the 'parents' array at it. This way
+code is left mostly intact to setup parents and we waste an extra few
+bytes per structure of which there should be only a handful in a system.
+
+Cc: Evan Green <evgreen@chromium.org>
+Cc: Thierry Reding <treding@nvidia.com>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+Fixes: e0d897289813 ("gpio: Implement tighter IRQ chip integration")
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/machine.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpio/gpiolib.c      | 3 ++-
+ include/linux/gpio/driver.h | 7 +++++++
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index d49744dc46d7..b70cce40ca97 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -2246,7 +2246,8 @@ static int append_inlines(struct callchain_cursor *cursor,
- 	if (!symbol_conf.inline_name || !map || !sym)
- 		return ret;
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 06dce16e22bb..70f0dedca59f 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1675,7 +1675,8 @@ static void gpiochip_set_cascaded_irqchip(struct gpio_chip *gpiochip,
+ 		irq_set_chained_handler_and_data(parent_irq, parent_handler,
+ 						 gpiochip);
  
--	addr = map__rip_2objdump(map, ip);
-+	addr = map__map_ip(map, ip);
-+	addr = map__rip_2objdump(map, addr);
+-		gpiochip->irq.parents = &parent_irq;
++		gpiochip->irq.parent_irq = parent_irq;
++		gpiochip->irq.parents = &gpiochip->irq.parent_irq;
+ 		gpiochip->irq.num_parents = 1;
+ 	}
  
- 	inline_node = inlines__tree_find(&map->dso->inlined_nodes, addr);
- 	if (!inline_node) {
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 5382b5183b7e..82a953ec5ef0 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -94,6 +94,13 @@ struct gpio_irq_chip {
+ 	 */
+ 	unsigned int num_parents;
+ 
++	/**
++	 * @parent_irq:
++	 *
++	 * For use by gpiochip_set_cascaded_irqchip()
++	 */
++	unsigned int parent_irq;
++
+ 	/**
+ 	 * @parents:
+ 	 *
 -- 
 2.17.1
 
