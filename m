@@ -2,81 +2,176 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78FE4C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:35:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF057C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:37:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0448204FD
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:35:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0448204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id 8DAF02081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:37:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DAF02081F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727532AbeKBUmk (ORCPT
+        id S1726798AbeKBUo1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 16:42:40 -0400
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:57728 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726016AbeKBUmk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 16:42:40 -0400
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.23/8.16.0.23) with SMTP id wA2BTScV011454;
-        Fri, 2 Nov 2018 06:35:05 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail3.cirrus.com ([87.246.76.56])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2ncmepf09c-1;
-        Fri, 02 Nov 2018 06:35:04 -0500
-Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
-        by mail3.cirrus.com (Postfix) with ESMTP id 2BC4F611C8B5;
-        Fri,  2 Nov 2018 06:37:34 -0500 (CDT)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Fri, 2 Nov 2018
- 11:35:03 +0000
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wA2BZ2aq029728; Fri,
- 2 Nov 2018 11:35:02 GMT
-Date:   Fri, 2 Nov 2018 11:35:02 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     sh liu <liush.damon@gmail.com>
-CC:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <patches@opensource.wolfsonmicro.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: wm8996: fix small typo
-Message-ID: <20181102113502.GO16508@imbe.wolfsonmicro.main>
-References: <CADnCVLz__D9n+UpFLChVcZkjmFZxKZacCCgufRx8y0_03OGgSg@mail.gmail.com>
+        Fri, 2 Nov 2018 16:44:27 -0400
+Received: from ozlabs.org ([203.11.71.1]:55431 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726016AbeKBUo0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 16:44:26 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42mg6K27dwz9sjC;
+        Fri,  2 Nov 2018 22:37:29 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     aravinda@linux.vnet.ibm.com, camelia.groza@nxp.com,
+        christophe.leroy@c-s.fr, felipe.rechia@datacom.com.br,
+        joel@jms.id.au, leitao@debian.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, naveen.n.rao@linux.vnet.ibm.com,
+        oss@buserror.net, paulus@ozlabs.org, segher@kernel.crashing.org,
+        tyreld@linux.vnet.ibm.com
+Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-4.20-2 tag
+Date:   Fri, 02 Nov 2018 22:37:26 +1100
+Message-ID: <874lczemmh.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CADnCVLz__D9n+UpFLChVcZkjmFZxKZacCCgufRx8y0_03OGgSg@mail.gmail.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=835 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
- definitions=main-1811020108
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 09:30:06AM +0800, sh liu wrote:
-> >From e9b923690675ca8fa883fd25dcead5b457856735 Mon Sep 17 00:00:00 2001
-> From: liush <liush@allwinnertech.com>
-> Date: Fri, 2 Nov 2018 08:57:00 +0800
-> Subject: [PATCH] ASoC: wm8996: fix small typo
-> 
-> atleast -> at least
-> 
-> Change-Id: Icc970b438166daef13518b7d1a62b13eb8752f5f
-> Signed-off-by: liush <liush@allwinnertech.com>
-> ---
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Hi Linus,
 
-Thanks,
-Charles
+Please pull a few more powerpc updates for 4.20:
+
+The following changes since commit 58cfbac25b1fd2b76f94566aed28a3662b0ff8c6:
+
+  Revert "selftests/powerpc: Fix out-of-tree build errors" (2018-10-26 21:58:58 +1100)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-4.20-2
+
+for you to fetch changes up to 1936f094e164cc13ebf17aba1d6b34e033e64188:
+
+  selftests/powerpc: Fix compilation issue due to asm label (2018-11-01 10:06:03 +1100)
+
+- ------------------------------------------------------------------
+powerpc fixes for 4.20 #2
+
+Some things that I missed due to travel, or that came in late.
+
+Two fixes also going to stable:
+
+ - A revert of a buggy change to the 8xx TLB miss handlers.
+
+ - Our flushing of SPE (Signal Processing Engine) registers on fork was broken.
+
+Other changes:
+
+ - A change to the KVM decrementer emulation to use proper APIs.
+
+ - Some cleanups to the way we do code patching in the 8xx code.
+
+ - Expose the maximum possible memory for the system in /proc/powerpc/lparcfg.
+
+ - Merge some updates from Scott: "a couple device tree updates, and a fix for a
+   missing prototype warning."
+
+A few other minor fixes and a handful of fixes for our selftests.
+
+Thanks to:
+  Aravinda Prasad, Breno Leitao, Camelia Groza, Christophe Leroy, Felipe Rechia,
+  Joel Stanley, Naveen N. Rao, Paul Mackerras, Scott Wood, Tyrel Datwyler.
+
+- ------------------------------------------------------------------
+Aravinda Prasad (1):
+      powerpc/pseries: Export maximum memory value
+
+Breno Leitao (1):
+      selftests/powerpc: Fix ptrace tm failure
+
+Camelia Groza (1):
+      powerpc/dts/fsl: t2080rdb: reorder the Cortina PHY XFI lanes
+
+Christophe Leroy (6):
+      powerpc/8xx: Add DT node for using the SEC engine of the MPC885
+      powerpc/8xx: add missing header in 8xx_mmu.c
+      Revert "powerpc/8xx: Use L1 entry APG to handle _PAGE_ACCESSED for CONFIG_SWAP"
+      powerpc/code-patching: Add a helper to get the address of a patch_site
+      powerpc/8xx: Use patch_site for memory setup patching
+      powerpc/8xx: Use patch_site for perf counters setup
+
+Felipe Rechia (1):
+      powerpc/process: Fix flush_all_to_thread for SPE
+
+Joel Stanley (5):
+      selftests: powerpc: Fix warning for security subdir
+      powerpc/xmon: Relax frame size for clang
+      selftests/powerpc/ptrace: Fix out-of-tree build
+      selftests/powerpc/signal: Fix out-of-tree build
+      selftests/powerpc/pmu: Link ebb tests with -no-pie
+
+Michael Ellerman (3):
+      Merge branch 'next' of https://git.kernel.org/.../scottwood/linux into next
+      selftests/powerpc/switch_endian: Fix out-of-tree build
+      selftests/powerpc/cache_shape: Fix out-of-tree build
+
+Naveen N. Rao (2):
+      selftests/powerpc: Relax L1d miss targets for rfi_flush test
+      selftests/powerpc: Fix compilation issue due to asm label
+
+Paul Mackerras (1):
+      KVM: PPC: Use exported tb_to_ns() function in decrementer emulation
+
+Tyrel Datwyler (1):
+      powerpc/pseries: add missing cpumask.h include file
+
+
+ arch/powerpc/boot/dts/fsl/t2080rdb.dts             |  4 +-
+ arch/powerpc/boot/dts/mpc885ads.dts                | 13 ++-
+ arch/powerpc/include/asm/code-patching.h           |  5 ++
+ arch/powerpc/include/asm/mmu-8xx.h                 | 43 ++++------
+ arch/powerpc/include/asm/rtas.h                    |  1 +
+ arch/powerpc/kernel/head_8xx.S                     | 97 +++++++++++++---------
+ arch/powerpc/kernel/process.c                      |  3 +-
+ arch/powerpc/kvm/book3s_hv.c                       |  3 +-
+ arch/powerpc/kvm/emulate.c                         |  7 +-
+ arch/powerpc/mm/8xx_mmu.c                          | 26 ++----
+ arch/powerpc/perf/8xx-pmu.c                        | 27 +++---
+ arch/powerpc/platforms/pseries/lparcfg.c           | 13 +++
+ arch/powerpc/xmon/Makefile                         |  6 ++
+ .../testing/selftests/powerpc/cache_shape/Makefile |  9 +-
+ tools/testing/selftests/powerpc/pmu/ebb/Makefile   |  3 +
+ tools/testing/selftests/powerpc/ptrace/Makefile    | 13 +--
+ .../selftests/powerpc/ptrace/ptrace-tm-spd-gpr.c   |  4 +-
+ tools/testing/selftests/powerpc/security/Makefile  |  1 +
+ .../testing/selftests/powerpc/security/rfi_flush.c | 18 ++--
+ tools/testing/selftests/powerpc/signal/Makefile    | 11 +--
+ .../selftests/powerpc/switch_endian/Makefile       |  1 +
+ tools/testing/selftests/powerpc/utils.c            |  6 +-
+ 22 files changed, 169 insertions(+), 145 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJb3DXnAAoJEFHr6jzI4aWAYKYP/i/a94GU2Otsq92OBhi0vi0F
+z465qeQYjxtLfB0+a1Pm8RE6PbiecTHdeNl11VH4Us1m0tn8RwikbfsAuM+C7R/k
+LNXfIrzz77RFXQgNs5kBMeTvQG1yznSpdDfZ2xtx72Oqdcw4JHFfjCf2Dzf8i8Dl
+Dn3NSaO0uppg/P4Eoi7eMZ+CgI9CpPzPQKj0wcIszHatoswKJg1AMglnAHeiERMh
+ne7XkKq/h0nVydTR/+OYXSAj7CBvqSXJ1PQPVzkknvgTuPiHsmzFlffm5NVobIHN
+KYI66HdJ0M0a8tpES+LovrebVGH3HPe4xtjxtxKzpUipbtsGBobroIz9EzRE+XKj
+UMgnEtQziXnUU3aI1E8ctoR+e5NeLT37Q9OH6fDZgOhVo3CaVGCYf2cJP0yfsJHu
+ovksMHfuQuJtZQtdflmYezVsWi1uQo60oMfTKYqvM3FYEqrZZdvjlj8S3LtTUOh6
+Q8EJKSTLGUF2h8rl5CYK1LHpSbv736qc3kodjvQmFAsh+U3y0ooShfoa+O8ORylE
+Q/gf4TvLPHcA/PvowUD0UQIW//SDem+CX3axORICKITjSywgIZoZj+3CSt29SFVd
+Vublxd2s3zflRGseZXURvGd9Ra4U+Al4AO/rvfPYWgp6eiieRbk4fljps0gaVbaF
+OAAyPTb2VPyGG6UCGrP2
+=gwAL
+-----END PGP SIGNATURE-----
