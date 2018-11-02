@@ -2,118 +2,105 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D00FC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:55:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A219C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:55:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E6892084A
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:55:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A5D22084A
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:55:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jLB1TE95"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E6892084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X7qyfqoq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A5D22084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731394AbeKCEDj (ORCPT
+        id S1731407AbeKCEDk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 3 Nov 2018 00:03:40 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46721 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726051AbeKCEDj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 3 Nov 2018 00:03:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59586 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730441AbeKCEDi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 00:03:38 -0400
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E76D12084A;
-        Fri,  2 Nov 2018 18:55:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184922;
-        bh=0swzUl5lIer0b7bgt9qv3YoIGYgHzAd6AmQwe2EeLaw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jLB1TE95M2C+B/yawxXXzXGP6CrSlca8j5VT6xpMQIrzQuvsTaQ0BL7rN1O8jZ6Ck
-         S2tdfznXx+MFIQ1nYCuTa5dge/wH/ZUP5bOVAYRW//Anl1YPkzAhGrS9yJB8gBwaqw
-         gIAIWOLWXHvhWm/XGi2khTJ5SrAASPA79NTbzQ9M=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ake Koomsin <ake@igel.co.jp>,
-        Jason Wang <jasowang@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 130/143] virtio_net: avoid using netif_tx_disable() for serializing tx routine
-Date:   Fri,  2 Nov 2018 19:35:15 +0100
-Message-Id: <20181102182908.210323264@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
-References: <20181102182857.064326086@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+Received: by mail-lf1-f68.google.com with SMTP id o2-v6so1994286lfl.13;
+        Fri, 02 Nov 2018 11:55:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=LyxylQsEOAKO9YnrpN6j8Cv17Xvxh0WHRz+EZRQzaJA=;
+        b=X7qyfqoqkp+N7mxKcSrgRg9XsAAOyEXsx/+dUdRFnIcRu8D4/jClPFxe3eDrt3L9/M
+         VTsknkbeAzuLsVLMhNhh8Lei6M8UQEV58CLPlOOuTQpHLPyDtIPBwFAOPMaw5RqqunoJ
+         nTbij41a5EEvZcuUziWtP2Dk7u/2mh00w24W3J/km13RykEGSQKqE+fsImQ3efyIb11e
+         zyMn+EO6vOM2nzTgp3SRRBddUE3yrUUB88njAAnXoFowZT/Ozu5CLAyLiOwZ40Vg4T4F
+         PZkXJ5A53YlBSTZT3T5UIyqAlS2jm2sC/0jsW2Pa38ekphLBYkSU5lL5U9EvSNZRChSA
+         17EQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=LyxylQsEOAKO9YnrpN6j8Cv17Xvxh0WHRz+EZRQzaJA=;
+        b=Lt4EaOXbFV5NRQu41WcaUy+QP7PSKYpzytPs75PS9ssZjf+dmoIYjiQn/KPDHshZcP
+         hM7n0jpja/R/k5KcTh0FxNYGuw/ostLSik94yEjynaR8qmNPMacaoM6vRfFMuc+k1hfW
+         n251CfpbxzCC5bHCPv0tlKXYoiW3x2BC8BUXL1gu90S6hUPQ3pWwiQ7X/lMOaNgQQ/1L
+         OGKMq8oM2pnKn87VkVBwjk1Rg+DTm/3uxpAGb4Je4mA5tljD/ppx7NH94aPU7CwcBFLX
+         kEscw/QVCndVFxlSoLgCIlv0r8SDHHf9yqJxvlBrMcFq7oc8fiDYuZdS55RyDAwjy+qJ
+         l9yQ==
+X-Gm-Message-State: AGRZ1gIZW0NJ81tGUn/9OPJvfrkEz42DkVOTchxl0uNHVdR/JPJjBBPT
+        yiyFhxmNmWodr4klCXA8kicB7+YYSStmOAYyJcM=
+X-Google-Smtp-Source: AJdET5caotc+edgf84QFUPb3V9PtOhceBB9FIPO/iMRbCUbGRsD63A8vgbZqy4x6RVfYITazkeczKMN85EIyQtbB+BA=
+X-Received: by 2002:a19:24c6:: with SMTP id k189mr7810182lfk.77.1541184921233;
+ Fri, 02 Nov 2018 11:55:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20181102152637.GA3105@hp-pavilion-15-notebook-pc-brajeswar> <20181102182905.3klrdw4dxapeoiib@tower>
+In-Reply-To: <20181102182905.3klrdw4dxapeoiib@tower>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Sat, 3 Nov 2018 00:28:41 +0530
+Message-ID: <CAFqt6zYmBFQ7gDJJkYAhPzPYyLGsDqOdr8ctXmYbd7e9sv75xg@mail.gmail.com>
+Subject: Re: [PATCH] include/asm/cmpxchg.h: Remove duplicate header
+To:     mcree@orcon.net.nz, Brajeswar Ghosh <brajeswar.linux@gmail.com>,
+        rth@twiddle.net, ink@jurassic.park.msu.ru,
+        Matt Turner <mattst88@gmail.com>, parri.andrea@gmail.com,
+        mingo@kernel.org, paulmck@linux.vnet.ibm.com,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+Hi Michael,
 
-------------------
+On Fri, Nov 2, 2018 at 11:59 PM Michael Cree <mcree@orcon.net.nz> wrote:
+>
+> On Fri, Nov 02, 2018 at 08:56:37PM +0530, Brajeswar Ghosh wrote:
+> > Remove asm/xchg.h which is included more than once
+> >
+> > Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
+> > ---
+> >  arch/alpha/include/asm/cmpxchg.h | 1 -
+> >  1 file changed, 1 deletion(-)
+> >
+> > diff --git a/arch/alpha/include/asm/cmpxchg.h b/arch/alpha/include/asm/cmpxchg.h
+> > index 6c7c39452471..bcbdac0744f9 100644
+> > --- a/arch/alpha/include/asm/cmpxchg.h
+> > +++ b/arch/alpha/include/asm/cmpxchg.h
+> > @@ -36,7 +36,6 @@
+> >  #undef ____cmpxchg
+> >  #define ____xchg(type, args...)              __xchg ##type(args)
+> >  #define ____cmpxchg(type, args...)   __cmpxchg ##type(args)
+> > -#include <asm/xchg.h>
+>
+> It's amazing the number of times we get a patch to remove that.
+>
+> Instead of just automatically removing a second include of a
+> header file, why don't you take a closer look to see what it
+> actually does?
 
-From: Ake Koomsin <ake@igel.co.jp>
-
-[ Upstream commit 05c998b738fdd3e5d6a257bcacc8f34b6284d795 ]
-
-Commit 713a98d90c5e ("virtio-net: serialize tx routine during reset")
-introduces netif_tx_disable() after netif_device_detach() in order to
-avoid use-after-free of tx queues. However, there are two issues.
-
-1) Its operation is redundant with netif_device_detach() in case the
-   interface is running.
-2) In case of the interface is not running before suspending and
-   resuming, the tx does not get resumed by netif_device_attach().
-   This results in losing network connectivity.
-
-It is better to use netif_tx_lock_bh()/netif_tx_unlock_bh() instead for
-serializing tx routine during reset. This also preserves the symmetry
-of netif_device_detach() and netif_device_attach().
-
-Fixes commit 713a98d90c5e ("virtio-net: serialize tx routine during reset")
-Signed-off-by: Ake Koomsin <ake@igel.co.jp>
-Acked-by: Jason Wang <jasowang@redhat.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/virtio_net.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -1872,8 +1872,9 @@ static void virtnet_freeze_down(struct v
- 	/* Make sure no work handler is accessing the device */
- 	flush_work(&vi->config_work);
- 
-+	netif_tx_lock_bh(vi->dev);
- 	netif_device_detach(vi->dev);
--	netif_tx_disable(vi->dev);
-+	netif_tx_unlock_bh(vi->dev);
- 	cancel_delayed_work_sync(&vi->refill);
- 
- 	if (netif_running(vi->dev)) {
-@@ -1909,7 +1910,9 @@ static int virtnet_restore_up(struct vir
- 		}
- 	}
- 
-+	netif_tx_lock_bh(vi->dev);
- 	netif_device_attach(vi->dev);
-+	netif_tx_unlock_bh(vi->dev);
- 	return err;
- }
- 
-
-
+We run the static analyser "make includecheck" which list out files where
+duplicate headers can be removed and based on that we thought to remove
+from this file. Didn't understood about the existence of second include ??
