@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F17FDC65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:40:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F9EC65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3EB120848
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:40:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AA5B20848
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0FbKFOoX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3EB120848
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="D5SwwBk9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AA5B20848
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729478AbeKCDtH (ORCPT
+        id S1729494AbeKCDtK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:49:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43638 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:49:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43702 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728578AbeKCDtG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:49:06 -0400
+        id S1728578AbeKCDtK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:49:10 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63ED520843;
-        Fri,  2 Nov 2018 18:40:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DF6A20843;
+        Fri,  2 Nov 2018 18:40:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184055;
-        bh=HucU8TTkCTFp1Nj5PYY4PWHiW1L6nQRUxkBQ2g6uEbY=;
+        s=default; t=1541184058;
+        bh=fHsf7elt92aKtruKEZhJPyuUs/NG1Zc0SvHni5nRHdY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0FbKFOoX3InOhO27LpUoIEYc7bs90d85gMTelX7Dbo/fQRzvZUFpuOnFLq7uQ/Ohc
-         ajt7RdEqH8dK6CjiZfnBUVi0i31aEbwDX5KVjMxmSCCe8tLhew5WQO8PyZyVhYHEMQ
-         UKbgKjp/1TNPhYhlmHr6ixRclNEb/0vKXN12RlC8=
+        b=D5SwwBk90BZF0wWchSFT6LRCoOy3E0K2DpowzYfEEqBQZMN3x0OwT58/3QHWr3b4P
+         OVolav6zHL6Dcwao5IUMWHZc98ht/AJtIWUIPKwWiG72RN0aQq5+IBRT9/Iy+ebX5S
+         Jw+7RI3XGeB8IVASB9hir1AObcEHDgTz0WONsO6I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shirish S <shirish.s@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 065/150] drm/amd/display: Signal hw_done() after waiting for flip_done()
-Date:   Fri,  2 Nov 2018 19:33:47 +0100
-Message-Id: <20181102182908.159266171@linuxfoundation.org>
+Subject: [PATCH 4.18 066/150] be2net: dont flip hw_features when VXLANs are added/deleted
+Date:   Fri,  2 Nov 2018 19:33:48 +0100
+Message-Id: <20181102182908.210849213@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -65,118 +63,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 987bf116445db5d63a5c2ed94c4479687d9c9973 ]
+[ Upstream commit 2d52527e80c2dc0c5f43f50adf183781262ec565 ]
 
-In amdgpu_dm_commit_tail(), wait until flip_done() is signaled before
-we signal hw_done().
+the be2net implementation of .ndo_tunnel_{add,del}() changes the value of
+NETIF_F_GSO_UDP_TUNNEL bit in 'features' and 'hw_features', but it forgets
+to call netdev_features_change(). Moreover, ethtool setting for that bit
+can potentially be reverted after a tunnel is added or removed.
 
-[Why]
+GSO already does software segmentation when 'hw_enc_features' is 0, even
+if VXLAN offload is turned on. In addition, commit 096de2f83ebc ("benet:
+stricter vxlan offloading check in be_features_check") avoids hardware
+segmentation of non-VXLAN tunneled packets, or VXLAN packets having wrong
+destination port. So, it's safe to avoid flipping the above feature on
+addition/deletion of VXLAN tunnels.
 
-This is to temporarily address a paging error that occurs when a
-nonblocking commit contends with another commit, particularly in a
-mirrored display configuration where at least 2 CRTCs are updated.
-The error occurs in drm_atomic_helper_wait_for_flip_done(), when we
-attempt to access the contents of new_crtc_state->commit.
-
-Here's the sequence for a mirrored 2 display setup (irrelevant steps
-left out for clarity):
-
-**THREAD 1**                        | **THREAD 2**
-                                    |
-Initialize atomic state for flip    |
-                                    |
-Queue worker                        |
-                                   ...
-
-                                    | Do work for flip
-                                    |
-                                    | Signal hw_done() on CRTC 1
-                                    | Signal hw_done() on CRTC 2
-                                    |
-                                    | Wait for flip_done() on CRTC 1
-
-                                <---- **PREEMPTED BY THREAD 1**
-
-Initialize atomic state for cursor  |
-update (1)                          |
-                                    |
-Do cursor update work on both CRTCs |
-                                    |
-Clear atomic state (2)              |
-**DONE**                            |
-                                   ...
-                                    |
-                                    | Wait for flip_done() on CRTC 2
-                                    | *ERROR*
-                                    |
-
-The issue starts with (1). When the atomic state is initialized, the
-current CRTC states are duplicated to be the new_crtc_states, and
-referenced to be the old_crtc_states. (The new_crtc_states are to be
-filled with update data.)
-
-Some things to note:
-
-* Due to the mirrored configuration, the cursor updates on both CRTCs.
-
-* At this point, the pflip IRQ has already been handled, and flip_done
-  signaled on all CRTCs. The cursor commit can therefore continue.
-
-* The old_crtc_states used by the cursor update are the **same states**
-  as the new_crtc_states used by the flip worker.
-
-At (2), the old_crtc_state is freed (*), and the cursor commit
-completes. We then context switch back to the flip worker, where we
-attempt to access the new_crtc_state->commit object. This is
-problematic, as this state has already been freed.
-
-(*) Technically, 'state->crtcs[i].state' is freed, which was made to
-    reference old_crtc_state in drm_atomic_helper_swap_state()
-
-[How]
-
-By moving hw_done() after wait_for_flip_done(), we're guaranteed that
-the new_crtc_state (from the flip worker's perspective) still exists.
-This is because any other commit will be blocked, waiting for the
-hw_done() signal.
-
-Note that both the i915 and imx drivers have this sequence flipped
-already, masking this problem.
-
-Signed-off-by: Shirish S <shirish.s@amd.com>
-Signed-off-by: Leo Li <sunpeng.li@amd.com>
-Reviewed-by: Harry Wentland <harry.wentland@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Fixes: 630f4b70567f ("be2net: Export tunnel offloads only when a VxLAN tunnel is created")
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/emulex/benet/be_main.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index e484d0a94bdc..5b9cc3aeaa55 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -4494,12 +4494,18 @@ static void amdgpu_dm_atomic_commit_tail(struct drm_atomic_state *state)
- 	}
- 	spin_unlock_irqrestore(&adev->ddev->event_lock, flags);
+diff --git a/drivers/net/ethernet/emulex/benet/be_main.c b/drivers/net/ethernet/emulex/benet/be_main.c
+index 8f755009ff38..c8445a4135a9 100644
+--- a/drivers/net/ethernet/emulex/benet/be_main.c
++++ b/drivers/net/ethernet/emulex/benet/be_main.c
+@@ -3915,8 +3915,6 @@ static int be_enable_vxlan_offloads(struct be_adapter *adapter)
+ 	netdev->hw_enc_features |= NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM |
+ 				   NETIF_F_TSO | NETIF_F_TSO6 |
+ 				   NETIF_F_GSO_UDP_TUNNEL;
+-	netdev->hw_features |= NETIF_F_GSO_UDP_TUNNEL;
+-	netdev->features |= NETIF_F_GSO_UDP_TUNNEL;
  
--	/* Signal HW programming completion */
--	drm_atomic_helper_commit_hw_done(state);
+ 	dev_info(dev, "Enabled VxLAN offloads for UDP port %d\n",
+ 		 be16_to_cpu(port));
+@@ -3938,8 +3936,6 @@ static void be_disable_vxlan_offloads(struct be_adapter *adapter)
+ 	adapter->vxlan_port = 0;
  
- 	if (wait_for_vblank)
- 		drm_atomic_helper_wait_for_flip_done(dev, state);
+ 	netdev->hw_enc_features = 0;
+-	netdev->hw_features &= ~(NETIF_F_GSO_UDP_TUNNEL);
+-	netdev->features &= ~(NETIF_F_GSO_UDP_TUNNEL);
+ }
  
-+	/*
-+	 * FIXME:
-+	 * Delay hw_done() until flip_done() is signaled. This is to block
-+	 * another commit from freeing the CRTC state while we're still
-+	 * waiting on flip_done.
-+	 */
-+	drm_atomic_helper_commit_hw_done(state);
-+
- 	drm_atomic_helper_cleanup_planes(dev, state);
+ static void be_calculate_vf_res(struct be_adapter *adapter, u16 num_vfs,
+@@ -5232,6 +5228,7 @@ static void be_netdev_init(struct net_device *netdev)
+ 	struct be_adapter *adapter = netdev_priv(netdev);
  
- 	/* Finally, drop a runtime PM reference for each newly disabled CRTC,
+ 	netdev->hw_features |= NETIF_F_SG | NETIF_F_TSO | NETIF_F_TSO6 |
++		NETIF_F_GSO_UDP_TUNNEL |
+ 		NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM | NETIF_F_RXCSUM |
+ 		NETIF_F_HW_VLAN_CTAG_TX;
+ 	if ((be_if_cap_flags(adapter) & BE_IF_FLAGS_RSS))
 -- 
 2.17.1
 
