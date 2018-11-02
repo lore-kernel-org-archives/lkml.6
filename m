@@ -2,84 +2,143 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 789B1C6786F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83286C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:30:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B1E32081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:26:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B1E32081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 3E5682081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:30:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E5682081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727576AbeKCBeP (ORCPT
+        id S1727699AbeKCBiR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 21:34:15 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:60742 "EHLO mail.skyhub.de"
+        Fri, 2 Nov 2018 21:38:17 -0400
+Received: from mga01.intel.com ([192.55.52.88]:30202 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726318AbeKCBeP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 21:34:15 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id mMnH1nvg94mC; Fri,  2 Nov 2018 17:26:34 +0100 (CET)
-Received: from zn.tnic (p200300EC2BCD3B00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:3b00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id F0E191EC0380;
-        Fri,  2 Nov 2018 17:26:33 +0100 (CET)
-Date:   Fri, 2 Nov 2018 17:26:23 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Keith Busch <keith.busch@intel.com>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        Jon Derrick <jonathan.derrick@intel.com>,
-        linux-pci@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, Tony Luck <tony.luck@intel.com>,
-        Tyler Baicar <tbaicar@codeaurora.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] PCI/AER: Option to leave System Error Interrupts
- as-is
-Message-ID: <20181102162623.GH14602@zn.tnic>
-References: <1540585146-31876-1-git-send-email-jonathan.derrick@intel.com>
- <20181029210651.GB13681@bhelgaas-glaptop.roam.corp.google.com>
- <20181102095300.GB14602@zn.tnic>
- <20181102161730.GA26392@localhost.localdomain>
+        id S1726260AbeKCBiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 21:38:17 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 09:30:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,456,1534834800"; 
+   d="scan'208";a="277840635"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.193])
+  by fmsmga006.fm.intel.com with ESMTP; 02 Nov 2018 09:30:35 -0700
+Date:   Fri, 2 Nov 2018 09:30:34 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Rich Felker <dalias@libc.org>, Jann Horn <jannh@google.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Carlos O'Donell <carlos@redhat.com>,
+        adhemerval.zanella@linaro.org
+Subject: Re: RFC: userspace exception fixups
+Message-ID: <20181102163034.GB7393@linux.intel.com>
+References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
+ <CAG48ez0vBqL0tyfWwmuc_cq+OAUoEi88=r+t6h64a-Fw8z59zA@mail.gmail.com>
+ <20181101185225.GC5150@brightrain.aerifal.cx>
+ <CAHk-=wgFo8tuZX5gzCfWGdAwGyn_Ar9JFnnMFNuwr9=vtfDV1g@mail.gmail.com>
+ <20181101193107.GE5150@brightrain.aerifal.cx>
+ <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
+ <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181102161730.GA26392@localhost.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 10:17:30AM -0600, Keith Busch wrote:
-> VMD acts a bit like a host-bus adapter. The firmware knows about the
-> adapter, but not about anything on the bus that it attaches to.
+On Thu, Nov 01, 2018 at 04:22:55PM -0700, Andy Lutomirski wrote:
+> On Thu, Nov 1, 2018 at 2:24 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > On Thu, Nov 1, 2018 at 12:31 PM Rich Felker <dalias@libc.org> wrote:
+> > >
+> > > See my other emails in this thread. You would register the *address*
+> > > (in TLS) of a function pointer object pointing to the handler, rather
+> > > than the function address of the handler. Then switching handler is
+> > > just a single store in userspace, no syscalls involved.
+> >
+> > Yes.
+> >
+> > And for just EENTER, maybe that's the right model.
+> >
+> > If we want to generalize it to other thread-synchronous faults, it
+> > needs way more information and a list of handlers, but if we limit the
+> > thing to _only_ EENTER getting an SGX fault, then a single "this is
+> > the fault handler" address is probably the right thing to do.
 > 
-> This "hybrid" approach is basically saying that the firmware knows about
-> the HBA, and it wants a chance to be notified of errors on the bus it
-> attaches to, but the firmware can't do anything about such errors.
+> It sounds like you're saying that the kernel should know, *before*
+> running any user fixup code, whether the fault in question is one that
+> wants a fixup.  Sounds reasonable.
 > 
-> The bus in this case is PCIe, where we have capable error handling in the
-> kernel driver, so we ultimately want the AER driver handling the errors.
+> I think it would be nice, but not absolutely necessary, if user code
+> didn't need to poke some value into TLS each time it ran a function
+> that had a fixup.  With the poke-into-TLS approach, it looks a lot
+> like rseq, and rseq doesn't nest very nicely.  I think we really want
+> this mechanism to Just Work.  So we could maybe have a syscall that
+> associates a list of fixups with a given range of text addresses.  We
+> might want the kernel to automatically zap the fixups when the text in
+> question is unmapped.
 
-Not a problem - GHES already knows about AER and calls into it for
-CPER_SEC_PCIE errors:
+If this is EENTER specific then nesting isn't an issue.  But I don't
+see a simple way to restrict the mechanism to EENTER.
 
-ghes_do_proc
--> ghes_handle_aer
-  |-> aer_recover_queue
+What if rather than having userspace register an address for fixup the
+kernel instead unconditionally does fixup on the ENCLU opcode?  For
+example, skip the instruction and put fault info into some combination
+of RDX/RSI/RDI (they're cleared on asynchronous enclave exits).
 
--- 
-Regards/Gruss,
-    Boris.
+The decode logic is straightforward since ENCLU doesn't have operands,
+we'd just have to eat any ignored prefixes.  The intended convention
+for EENTER is to have an ENCLU at the AEX target (to automatically do
+ERESUME after INTR, etc...), so this would work regardless of whether
+the fault happened on EENTER or in the enclave.  EENTER/ERESUME are
+the only ENCLU functions that are allowed outside of an enclave so
+there's no danger of accidentally crushing something else.
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+This way we wouldn't need a VDSO blob and we'd enforce the kernel's
+ABI, e.g. a library that tried to use signal handling would go off the
+rails when the kernel mucked with the registers.  We could even have
+the SGX EPC fault handler return VM_FAULT_SIGBUS if the faulting
+instruction isn't ENCLU, e.g. to further enforce that the AEX target
+needs to be ENCLU.
+
+
+Userspace would look something like this:
+
+    mov tcs, %xbx               /* Thread Control Structure address */
+    leaq async_exit(%rip), %rcx /* AEX target for EENTER/RESUME */
+    mov $SGX_EENTER, %rax       /* EENTER leaf */
+
+async_exit:
+    ENCLU
+
+fault_handler:
+    <handle fault>
+
+enclave_exit:                   /* EEXIT target */
+    <handle enclave request>
