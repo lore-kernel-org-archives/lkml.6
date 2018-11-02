@@ -2,69 +2,112 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F6E4C6786F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 04:07:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60248C6786F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 04:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 296ED2081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 04:07:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 296ED2081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id EBD4E2081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 04:11:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jC7ZDBUu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBD4E2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbeKBNMv (ORCPT
+        id S1727546AbeKBNRN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 09:12:51 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:60824 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726339AbeKBNMv (ORCPT
+        Fri, 2 Nov 2018 09:17:13 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:38689 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726925AbeKBNRN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 09:12:51 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gIQjd-0000rH-CS; Fri, 02 Nov 2018 04:07:01 +0000
-Date:   Fri, 2 Nov 2018 04:07:01 +0000
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Gao Xiang <gaoxiang25@huawei.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        swhiteho@redhat.com, john.johansen@canonical.com,
-        alan.christopher.jenkins@gmail.com, ebiederm@redhat.com,
-        linux-fsdevel@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [git pull] mount API series
-Message-ID: <20181102040701.GX32577@ZenIV.linux.org.uk>
-References: <CAHk-=whysoVxJU8+TBw=D3xN00HOOqg-9Chc=i0Pt+Ozm3Z0Tg@mail.gmail.com>
- <20181031053355.GQ32577@ZenIV.linux.org.uk>
- <CAHk-=whAE6gVi18=u4sSWe1m2RWPh19YCkKQmW4Kx+NQX1mg8w@mail.gmail.com>
- <af28fc2c-d207-875e-8070-f64ead878b5a@redhat.com>
- <CAHk-=wjjVRQVZL+QMnb=CyCOY8yzEZ=S1DBCE7=FiiWsQfV_5Q@mail.gmail.com>
- <28156.1541092687@warthog.procyon.org.uk>
- <3549.1541116763@warthog.procyon.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3549.1541116763@warthog.procyon.org.uk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        Fri, 2 Nov 2018 09:17:13 -0400
+Received: by mail-ua1-f66.google.com with SMTP id g10so229667uak.5;
+        Thu, 01 Nov 2018 21:11:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id;
+        bh=4sSQdQIoVH+2AUkkaPtQvAzGhPEhS4T5xBJSRLJuQRE=;
+        b=jC7ZDBUuIt8p3lyZ0w8LtWQ0b2U9RUYZpdkVIwrIv86Sgm61avPPSI3GFLqeSQWih+
+         6dH6tSgdJW2bHcvM/Iqh5WgxZdHWxkkCNGk4TU7PS8/q1Nz2bx2yOivV4Ilf51hADzTH
+         znoUlNQ7n1Xsz2Y/ygfWdReeBSHSlihXpbVj6OQ6s7cCV+pGh7Y2EwEPsqqHnlmtEOJK
+         YvxH6dt3YUwnX0Pz7wiLdiVseVHPCcAugdaAU0oM536zFVJI0C1+CZdDEsCsovdPvF+d
+         Jvw9jW3k5/2+qnUqME3Ir3CsHEOajemvO/e1QJyeNmEPZIm7KuZLsziZPAoCSLjBGOWC
+         s6Eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=4sSQdQIoVH+2AUkkaPtQvAzGhPEhS4T5xBJSRLJuQRE=;
+        b=uMesEl8sruV+sNn+6w85/J8L9YfkIa1NtnlriMp9y3u45uAaIzyyGaKQk7ksNh9rTx
+         D9/DlcHAzqMc3O+M6Ty2sJyW2k7GSw4ohokg3xZq0sFJRMGOBPNsTiOK6PinCX5ZIXLq
+         Qa7yA3xwueSo+ZeGeHU5ZSD/USkn0Nu7bDCu34Z+wJrMT+0wHG7nRSQcXogSC+F71Mdd
+         Tdei+/wfYZ12gSkBZ7UFjBol3y4316hpwqznwBwX6p6dKSNp9JeSaNVD96A08V6F1bTK
+         gS6TbBZtnRiB22a1mJMqDDP84RFagHlAHE8t1N8ZmU9rNppW7Pl0iV/JOfaAEX3w5XXd
+         dZsg==
+X-Gm-Message-State: AGRZ1gJEtUz0oilLSGaC2XIm+Fe7uZX4UJbWWKgekfgXnhGlla728Xot
+        U7RGT0qUEBc2mQ9Xsh7ibQ==
+X-Google-Smtp-Source: AJdET5el5fT+q41payVo+TvF0GgViWWouKx1Yu8TbkbG1fC1BzVrrqkiE5WsWvU+2Vn0fbCYTizWLA==
+X-Received: by 2002:ab0:14e1:: with SMTP id f30mr4531953uae.81.1541131889322;
+        Thu, 01 Nov 2018 21:11:29 -0700 (PDT)
+Received: from localhost.localdomain ([2601:902:c200:6512:a50b:fc5d:3604:d966])
+        by smtp.gmail.com with ESMTPSA id a2sm1661150uaa.15.2018.11.01.21.11.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 01 Nov 2018 21:11:28 -0700 (PDT)
+From:   Ayman Bagabas <ayman.bagabas@gmail.com>
+To:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Ayman Bagabas <ayman.bagabas@gmail.com>,
+        Kailang Yang <kailang@realtek.com>,
+        Hui Wang <hui.wang@canonical.com>,
+        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: [PATCH v2 0/3] Huawei laptops WMI & sound fixes
+Date:   Fri,  2 Nov 2018 00:11:12 -0400
+Message-Id: <20181102041120.7603-1-ayman.bagabas@gmail.com>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 01, 2018 at 11:59:23PM +0000, David Howells wrote:
+This patch set fixes some of the issues with Huawei laptops. 
 
->  (*) mount-api-core.  These are the internal-only patches that add the
->      fs_context, the legacy wrapper and the security hooks and make certain
->      filesystems make use of it.
+[PATCH v2 1/3] 
+The first patch adds support for missing hotkeys on some models. Some hotkeys,
+like brightness keys, work out of the box on these models.
 
-FWIW, while rereading that series I'd spotted something very odd in erofs.
-It's orthogonal to everything else, but just to make sure it doesn't get
-lost:
-	* sbi->dev_name thing in erofs is used only for debugging printks,
-basically.  Just use sb->s_id[] and be done with that.
-	* dump struct erofs_mount_private - you don't need dev_name in
-your erofs_fill_super().  Just use mount_bdev() in usual fashion.
-	* what the hell are you doing with ->s_root???  Why would you
-possibly want it hashed and what kind of dcache lookup could find it?
-That d_rehash() looks deeply confused; what are you trying to do there?
+[PATCH v2 2/3]
+This one enables the front speakers on the Huawei Matebook X Pro (MBXP). This
+solves bug 200501 https://bugzilla.kernel.org/show_bug.cgi?id=200501
+It simply uses the pins configurations generated by hdajackretast using the
+settings posted on the bug page https://imgur.com/a/N1xsCVZ
+
+[PATCH v2 3/3]
+This enables the micmute LED on Huawei laptops. It calls an WMI method, using
+PATCH #1, to turn the micmute LED on/off.
+
+Ayman Bagabas (3):
+  x86: add support for Huawei WMI hotkeys.
+  ALSA: hda: fix front speakers on Huawei MBXP.
+  ALSA: hda: add support for Huawei WMI MicMute LED
+
+ drivers/platform/x86/Kconfig      |  13 ++
+ drivers/platform/x86/Makefile     |   1 +
+ drivers/platform/x86/huawei_wmi.c | 224 ++++++++++++++++++++++++++++++
+ include/linux/huawei_wmi.h        |   7 +
+ sound/pci/hda/huawei_wmi_helper.c |  48 +++++++
+ sound/pci/hda/patch_realtek.c     |  28 ++++
+ 6 files changed, 321 insertions(+)
+ create mode 100644 drivers/platform/x86/huawei_wmi.c
+ create mode 100644 include/linux/huawei_wmi.h
+ create mode 100644 sound/pci/hda/huawei_wmi_helper.c
+
+-- 
+2.17.2
+
