@@ -2,185 +2,232 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E150C6786F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 06:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ACE1C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 06:23:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C75B52081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 06:22:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C75B52081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 18F402081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 06:23:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18F402081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728340AbeKBP2k (ORCPT
+        id S1728395AbeKBP3v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 11:28:40 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38436 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728216AbeKBP2j (ORCPT
+        Fri, 2 Nov 2018 11:29:51 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:48641 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728216AbeKBP3v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 11:28:39 -0400
-Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1gISqp-00019K-3b; Fri, 02 Nov 2018 06:22:35 +0000
-From:   John Johansen <john.johansen@canonical.com>
-Subject: [GIT PULL] apparmor updates for v4.20
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKLM <linux-kernel@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <db97d76a-fad0-2a26-297a-06dbf8f8380b@canonical.com>
-Date:   Thu, 1 Nov 2018 23:22:32 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+        Fri, 2 Nov 2018 11:29:51 -0400
+X-UUID: fc0a81c35ad34fb0b350d9b5f9fe4757-20181102
+X-UUID: fc0a81c35ad34fb0b350d9b5f9fe4757-20181102
+Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        (envelope-from <yong.wu@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1177744751; Fri, 02 Nov 2018 14:23:33 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31DR.mediatek.inc
+ (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 2 Nov
+ 2018 14:23:32 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 2 Nov 2018 14:23:31 +0800
+Message-ID: <1541139811.22369.11.camel@mhfsdcap03>
+Subject: Re: [PATCH v2 04/14] iommu/io-pgtable-arm-v7s: Add paddr_to_iopte
+ and iopte_to_paddr helpers
+From:   Yong Wu <yong.wu@mediatek.com>
+To:     Robin Murphy <Robin.Murphy@arm.com>
+CC:     Joerg Roedel <joro@8bytes.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "youlin.pei@mediatek.com" <youlin.pei@mediatek.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "srv_heupstream@mediatek.com" <srv_heupstream@mediatek.com>,
+        Will Deacon <Will.Deacon@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Tomasz Figa <tfiga@google.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        Daniel Kurtz <djkurtz@google.com>,
+        "yingjoe.chen@mediatek.com" <yingjoe.chen@mediatek.com>,
+        nd <nd@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Date:   Fri, 2 Nov 2018 14:23:31 +0800
+In-Reply-To: <d24bd2a4-1030-e255-b339-d02eadc93f28@arm.com>
+References: <1537779534-23575-1-git-send-email-yong.wu@mediatek.com>
+         <1537779534-23575-5-git-send-email-yong.wu@mediatek.com>
+         <d24bd2a4-1030-e255-b339-d02eadc93f28@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Robin,
+
+Thanks very much for your review.
+
+On Thu, 2018-11-01 at 16:34 +0000, Robin Murphy wrote:
+> [ apologies if anyone gets this twice, looks like our email's eaten 
+> itself again... ]
+> 
+> On 24/09/2018 09:58, Yong Wu wrote:
+> > Add two helper functions: paddr_to_iopte and iopte_to_paddr.
+> 
+> Nice and tidy! (although it will need rebasing now, but I think that's 
+> just context conflicts)
+> 
+> > Signed-off-by: Yong Wu <yong.wu@mediatek.com>
+> > ---
+> >   drivers/iommu/io-pgtable-arm-v7s.c | 45 ++++++++++++++++++++++++++++----------
+> >   1 file changed, 33 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/drivers/iommu/io-pgtable-arm-v7s.c b/drivers/iommu/io-pgtable-arm-v7s.c
+> > index b5948ba..fa3b9ec 100644
+> > --- a/drivers/iommu/io-pgtable-arm-v7s.c
+> > +++ b/drivers/iommu/io-pgtable-arm-v7s.c
+> > @@ -173,18 +173,38 @@ struct arm_v7s_io_pgtable {
+> >   	spinlock_t		split_lock;
+> >   };
+> >   
+> > +static bool arm_v7s_pte_is_cont(arm_v7s_iopte pte, int lvl);
+> > +
+> >   static dma_addr_t __arm_v7s_dma_addr(void *pages)
+> >   {
+> >   	return (dma_addr_t)virt_to_phys(pages);
+> >   }
+> >   
+> > -static arm_v7s_iopte *iopte_deref(arm_v7s_iopte pte, int lvl)
+> > +static arm_v7s_iopte paddr_to_iopte(phys_addr_t paddr, int lvl,
+> > +				    struct arm_v7s_io_pgtable *data)
+> 
+> Nit: it seems to work out a little cleaner if we pass the io_pgtable_cfg 
+> to these helpers directly, rather than re-deriving it from data each time.
+
+I will use "io_pgtable_cfg" instead of "arm_v7s_io_pgtable" in the next
+version. This is a minor change and I will keep your R-b.
+
+> 
+> Otherwise, though,
+> 
+> Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+> 
+> >   {
+> > +	return paddr & ARM_V7S_LVL_MASK(lvl);
+> > +}
+> > +
+> > +static phys_addr_t iopte_to_paddr(arm_v7s_iopte pte, int lvl,
+> > +				  struct arm_v7s_io_pgtable *data)
+> > +{
+> > +	arm_v7s_iopte mask;
+> > +
+> >   	if (ARM_V7S_PTE_IS_TABLE(pte, lvl))
+> > -		pte &= ARM_V7S_TABLE_MASK;
+> > +		mask = ARM_V7S_TABLE_MASK;
+> > +	else if (arm_v7s_pte_is_cont(pte, lvl))
+> > +		mask = ARM_V7S_LVL_MASK(lvl) * ARM_V7S_CONT_PAGES;
+> >   	else
+> > -		pte &= ARM_V7S_LVL_MASK(lvl);
+> > -	return phys_to_virt(pte);
+> > +		mask = ARM_V7S_LVL_MASK(lvl);
+> > +
+> > +	return pte & mask;
+> > +}
+> > +
+> > +static arm_v7s_iopte *iopte_deref(arm_v7s_iopte pte, int lvl,
+> > +				  struct arm_v7s_io_pgtable *data)
+> > +{
+> > +	return phys_to_virt(iopte_to_paddr(pte, lvl, data));
+> >   }
+> >   
+> >   static void *__arm_v7s_alloc_table(int lvl, gfp_t gfp,
+> > @@ -396,7 +416,7 @@ static int arm_v7s_init_pte(struct arm_v7s_io_pgtable *data,
+> >   	if (num_entries > 1)
+> >   		pte = arm_v7s_pte_to_cont(pte, lvl);
+> >   
+> > -	pte |= paddr & ARM_V7S_LVL_MASK(lvl);
+> > +	pte |= paddr_to_iopte(paddr, lvl, data);
+> >   
+> >   	__arm_v7s_set_pte(ptep, pte, num_entries, cfg);
+> >   	return 0;
+> > @@ -462,7 +482,7 @@ static int __arm_v7s_map(struct arm_v7s_io_pgtable *data, unsigned long iova,
+> >   	}
+> >   
+> >   	if (ARM_V7S_PTE_IS_TABLE(pte, lvl)) {
+> > -		cptep = iopte_deref(pte, lvl);
+> > +		cptep = iopte_deref(pte, lvl, data);
+> >   	} else if (pte) {
+> >   		/* We require an unmap first */
+> >   		WARN_ON(!selftest_running);
+> > @@ -512,7 +532,8 @@ static void arm_v7s_free_pgtable(struct io_pgtable *iop)
+> >   		arm_v7s_iopte pte = data->pgd[i];
+> >   
+> >   		if (ARM_V7S_PTE_IS_TABLE(pte, 1))
+> > -			__arm_v7s_free_table(iopte_deref(pte, 1), 2, data);
+> > +			__arm_v7s_free_table(iopte_deref(pte, 1, data),
+> > +					     2, data);
+> >   	}
+> >   	__arm_v7s_free_table(data->pgd, 1, data);
+> >   	kmem_cache_destroy(data->l2_tables);
+> > @@ -582,7 +603,7 @@ static size_t arm_v7s_split_blk_unmap(struct arm_v7s_io_pgtable *data,
+> >   		if (!ARM_V7S_PTE_IS_TABLE(pte, 1))
+> >   			return 0;
+> >   
+> > -		tablep = iopte_deref(pte, 1);
+> > +		tablep = iopte_deref(pte, 1, data);
+> >   		return __arm_v7s_unmap(data, iova, size, 2, tablep);
+> >   	}
+> >   
+> > @@ -640,7 +661,7 @@ static size_t __arm_v7s_unmap(struct arm_v7s_io_pgtable *data,
+> >   				io_pgtable_tlb_add_flush(iop, iova, blk_size,
+> >   					ARM_V7S_BLOCK_SIZE(lvl + 1), false);
+> >   				io_pgtable_tlb_sync(iop);
+> > -				ptep = iopte_deref(pte[i], lvl);
+> > +				ptep = iopte_deref(pte[i], lvl, data);
+> >   				__arm_v7s_free_table(ptep, lvl + 1, data);
+> >   			} else {
+> >   				io_pgtable_tlb_add_flush(iop, iova, blk_size,
+> > @@ -658,7 +679,7 @@ static size_t __arm_v7s_unmap(struct arm_v7s_io_pgtable *data,
+> >   	}
+> >   
+> >   	/* Keep on walkin' */
+> > -	ptep = iopte_deref(pte[0], lvl);
+> > +	ptep = iopte_deref(pte[0], lvl, data);
+> >   	return __arm_v7s_unmap(data, iova, size, lvl + 1, ptep);
+> >   }
+> >   
+> > @@ -684,7 +705,7 @@ static phys_addr_t arm_v7s_iova_to_phys(struct io_pgtable_ops *ops,
+> >   	do {
+> >   		ptep += ARM_V7S_LVL_IDX(iova, ++lvl);
+> >   		pte = READ_ONCE(*ptep);
+> > -		ptep = iopte_deref(pte, lvl);
+> > +		ptep = iopte_deref(pte, lvl, data);
+> >   	} while (ARM_V7S_PTE_IS_TABLE(pte, lvl));
+> >   
+> >   	if (!ARM_V7S_PTE_IS_VALID(pte))
+> > @@ -693,7 +714,7 @@ static phys_addr_t arm_v7s_iova_to_phys(struct io_pgtable_ops *ops,
+> >   	mask = ARM_V7S_LVL_MASK(lvl);
+> >   	if (arm_v7s_pte_is_cont(pte, lvl))
+> >   		mask *= ARM_V7S_CONT_PAGES;
+> > -	return (pte & mask) | (iova & ~mask);
+> > +	return iopte_to_paddr(pte, lvl, data) | (iova & ~mask);
+> >   }
+> >   
+> >   static struct io_pgtable *arm_v7s_alloc_pgtable(struct io_pgtable_cfg *cfg,
+> > 
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
 
 
-Please pull these apparmor changes for v4.20. 
-Thanks!
-
-- John
-
-The following changes since commit fb7d1bcf1602b46f37ada72178516c01a250e434:
-
-  Merge tag 'pci-v4.18-fixes-3' of git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci (2018-07-19 11:54:04 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2018-11-01
-
-for you to fetch changes up to 566f52ece7bd1099d20dfe2f6f0801896643cf8f:
-
-  apparmor: clean an indentation issue, remove extraneous space (2018-11-01 22:34:25 -0700)
-
-----------------------------------------------------------------
-+ Features/Improvements
-  - replace spin_is_locked() with lockdep
-  - add base support for secmark labeling and matching
-
-+ Cleanups
-  - clean an indentation issue, remove extraneous space
-  - remove no-op permission check in policy_unpack
-  - fix checkpatch missing spaces error in Parse secmark policy
-  - fix network performance issue in aa_label_sk_perm
-
-+ Bug fixes
-  - add #ifdef checks for secmark filtering
-  - fix an error code in __aa_create_ns()
-  - don't try to replace stale label in ptrace checks
-  - fix failure to audit context info in build_change_hat
-  - check buffer bounds when mapping permissions mask
-  - fully initialize aa_perms struct when answering userspace query
-  - fix uninitialized value in aa_split_fqname
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      apparmor: add #ifdef checks for secmark filtering
-
-Colin Ian King (1):
-      apparmor: clean an indentation issue, remove extraneous space
-
-Dan Carpenter (1):
-      apparmor: fix an error code in __aa_create_ns()
-
-Jann Horn (2):
-      apparmor: don't try to replace stale label in ptrace access check
-      apparmor: don't try to replace stale label in ptraceme check
-
-John Johansen (3):
-      apparmor: Fix failure to audit context info in build_change_hat
-      apparmor: remove no-op permission check in policy_unpack
-      apparmor: fix checkpatch error in Parse secmark policy
-
-Lance Roy (1):
-      apparmor: Replace spin_is_locked() with lockdep
-
-Matthew Garrett (3):
-      apparmor: Add a wildcard secid
-      apparmor: Parse secmark policy
-      apparmor: Allow filtering based on secmark policy
-
-Tony Jones (1):
-      apparmor: Fix network performance issue in aa_label_sk_perm
-
-Tyler Hicks (2):
-      apparmor: Check buffer bounds when mapping permissions mask
-      apparmor: Fully initialize aa_perms struct when answering userspace query
-
-Zubin Mithra (1):
-      apparmor: Fix uninitialized value in aa_split_fqname
-
- security/apparmor/apparmorfs.c     |   7 +-
- security/apparmor/domain.c         |   2 +-
- security/apparmor/file.c           |   5 +-
- security/apparmor/include/cred.h   |   2 +
- security/apparmor/include/net.h    |  10 +++
- security/apparmor/include/perms.h  |   3 +-
- security/apparmor/include/policy.h |   3 +
- security/apparmor/include/secid.h  |   3 +
- security/apparmor/lib.c            |  23 +++++--
- security/apparmor/lsm.c            | 130 +++++++++++++++++++++++++++++++++++--
- security/apparmor/net.c            |  83 +++++++++++++++++++++--
- security/apparmor/policy.c         |   3 +
- security/apparmor/policy_ns.c      |   2 +-
- security/apparmor/policy_unpack.c  |  93 +++++++++++++++++---------
- security/apparmor/secid.c          |   3 +-
- 15 files changed, 311 insertions(+), 61 deletions(-)
