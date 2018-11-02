@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45C6EC65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:46:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD02C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:46:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17DA420847
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:46:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 263E62084A
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:46:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2OX/aNFG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17DA420847
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WwrEwX4N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 263E62084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730355AbeKCDya (ORCPT
+        id S1730367AbeKCDyc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:54:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50402 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:54:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729136AbeKCDy3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:54:29 -0400
+        id S1729136AbeKCDyc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:54:32 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A4D020837;
-        Fri,  2 Nov 2018 18:46:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DE5E20837;
+        Fri,  2 Nov 2018 18:46:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184376;
-        bh=3gQUE4GedYVbMOH4HqQ4ExhtCew3xFxG4zF9Zkf9DE8=;
+        s=default; t=1541184378;
+        bh=GN9oKgQZ5LCixaZJZcjporTxQQPVS7A5bFzxilqf3Es=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2OX/aNFGVMIZ2p3EmXpWwT5s0Jjw7xuugcJHmgartG1oCYr78N9KlfMZ+huSokqWV
-         csByFT0mqiJKFL7f1y732INeGZjVun8Uk3QSoRv5GluqR91vlRiJBmtrVBZkAyVInG
-         SHowEeTMSSriCAyh9jIreKjXEHwmW9MYHSHBCQMI=
+        b=WwrEwX4NMdDLxdlIkxQ57g1+GnCnDHuelzAhmUAyt88pgt67yMBlFF4OQ5VlLGu+8
+         aIsPd6fID5RrEt2hcnhhUUonabDKLg1BeEs8CD9AoBTHj0ENQAd+ThhhtXBfukLBqi
+         1r7+fgAGqI34FNc2PhJy82QfUKvqEp0HFln4h5DA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 148/150] sparc: Fix syscall fallback bugs in VDSO.
-Date:   Fri,  2 Nov 2018 19:35:10 +0100
-Message-Id: <20181102182912.678968396@linuxfoundation.org>
+Subject: [PATCH 4.18 149/150] sparc: Throttle perf events properly.
+Date:   Fri,  2 Nov 2018 19:35:11 +0100
+Message-Id: <20181102182912.730367931@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -63,41 +63,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "David S. Miller" <davem@davemloft.net>
 
-[ Upstream commit 776ca1543b5fe673aaf1beb244fcc2429d378083 ]
+[ Upstream commit 455adb3174d2c8518cef1a61140c211f6ac224d2 ]
 
-First, the trap number for 32-bit syscalls is 0x10.
-
-Also, only negate the return value when syscall error is indicated by
-the carry bit being set.
+Like x86 and arm, call perf_sample_event_took() in perf event
+NMI interrupt handler.
 
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/sparc/vdso/vclock_gettime.c |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ arch/sparc/kernel/perf_event.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/arch/sparc/vdso/vclock_gettime.c
-+++ b/arch/sparc/vdso/vclock_gettime.c
-@@ -33,9 +33,19 @@
- #define	TICK_PRIV_BIT	(1ULL << 63)
- #endif
+--- a/arch/sparc/kernel/perf_event.c
++++ b/arch/sparc/kernel/perf_event.c
+@@ -24,6 +24,7 @@
+ #include <asm/cpudata.h>
+ #include <linux/uaccess.h>
+ #include <linux/atomic.h>
++#include <linux/sched/clock.h>
+ #include <asm/nmi.h>
+ #include <asm/pcr.h>
+ #include <asm/cacheflush.h>
+@@ -1612,6 +1613,8 @@ static int __kprobes perf_event_nmi_hand
+ 	struct perf_sample_data data;
+ 	struct cpu_hw_events *cpuc;
+ 	struct pt_regs *regs;
++	u64 finish_clock;
++	u64 start_clock;
+ 	int i;
  
-+#ifdef	CONFIG_SPARC64
- #define SYSCALL_STRING							\
- 	"ta	0x6d;"							\
--	"sub	%%g0, %%o0, %%o0;"					\
-+	"bcs,a	1f;"							\
-+	" sub	%%g0, %%o0, %%o0;"					\
-+	"1:"
-+#else
-+#define SYSCALL_STRING							\
-+	"ta	0x10;"							\
-+	"bcs,a	1f;"							\
-+	" sub	%%g0, %%o0, %%o0;"					\
-+	"1:"
-+#endif
+ 	if (!atomic_read(&active_events))
+@@ -1625,6 +1628,8 @@ static int __kprobes perf_event_nmi_hand
+ 		return NOTIFY_DONE;
+ 	}
  
- #define SYSCALL_CLOBBERS						\
- 	"f0", "f1", "f2", "f3", "f4", "f5", "f6", "f7",			\
++	start_clock = sched_clock();
++
+ 	regs = args->regs;
+ 
+ 	cpuc = this_cpu_ptr(&cpu_hw_events);
+@@ -1663,6 +1668,10 @@ static int __kprobes perf_event_nmi_hand
+ 			sparc_pmu_stop(event, 0);
+ 	}
+ 
++	finish_clock = sched_clock();
++
++	perf_sample_event_took(finish_clock - start_clock);
++
+ 	return NOTIFY_STOP;
+ }
+ 
 
 
