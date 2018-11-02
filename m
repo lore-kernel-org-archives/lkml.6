@@ -6,98 +6,93 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D85AC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 10:26:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F24C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 10:26:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECA7220657
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 10:26:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECA7220657
+	by mail.kernel.org (Postfix) with ESMTP id A653A20657
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 10:26:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A653A20657
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726363AbeKBTc5 (ORCPT
+        id S1726585AbeKBTc7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 15:32:57 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51966 "EHLO mx1.redhat.com"
+        Fri, 2 Nov 2018 15:32:59 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33360 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725990AbeKBTc5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 15:32:57 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        id S1725990AbeKBTc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 15:32:59 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8D2AB31256B4;
+        by mx1.redhat.com (Postfix) with ESMTPS id 8CF54369D3;
+        Fri,  2 Nov 2018 10:26:19 +0000 (UTC)
+Received: from krava (unknown [10.40.205.35])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 8F24518B96;
         Fri,  2 Nov 2018 10:26:17 +0000 (UTC)
-Received: from localhost (holly.tpb.lab.eng.brq.redhat.com [10.43.134.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 801A0600CD;
-        Fri,  2 Nov 2018 10:26:15 +0000 (UTC)
-Date:   Fri, 2 Nov 2018 11:26:13 +0100
-From:   Miroslav Lichvar <mlichvar@redhat.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     John Stultz <john.stultz@linaro.org>,
-        Christopher Hall <christopher.s.hall@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        jesus.sanchez-palencia@intel.com,
-        Gavin Hindman <gavin.hindman@intel.com>,
-        liam.r.girdwood@intel.com, Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: TSC to Mono-raw Drift
-Message-ID: <20181102102613.GL19434@localhost>
-References: <alpine.DEB.2.21.1810191720590.6075@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1810191955250.1651@nanos.tec.linutronix.de>
- <CALAqxLWHdZn9RCcYbYicKXeu3QiCuVna27mWBQPbFvaj9gm-fw@mail.gmail.com>
- <alpine.DEB.2.21.1810192050250.1651@nanos.tec.linutronix.de>
- <CALAqxLVrPH-SFacys6pWBvL79OBwiAMUOL55oy3S7C+7pNffHA@mail.gmail.com>
- <alpine.DEB.2.21.1810192244150.1651@nanos.tec.linutronix.de>
- <CALAqxLUpKU73kzBh6mxgoCX4nEueuE42REcXw6F6DYYk4Hry6Q@mail.gmail.com>
- <CALAqxLUKOYYm=bzn4owZC_UgWTqrVPiz2TSnLFm1RNak3tm8-g@mail.gmail.com>
- <20181024145113.GF12019@localhost>
- <alpine.DEB.2.21.1811011813470.1642@nanos.tec.linutronix.de>
+Date:   Fri, 2 Nov 2018 11:26:16 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Xin Long <lucien.xin@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-perf-users@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: perf script doesn't dump a normal call trace
+Message-ID: <20181102102616.GC5458@krava>
+References: <CADvbK_dNN34=5V3qtk3_vBzKNts55ACR4c-erPafgNuAQ-eRuw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1811011813470.1642@nanos.tec.linutronix.de>
+In-Reply-To: <CADvbK_dNN34=5V3qtk3_vBzKNts55ACR4c-erPafgNuAQ-eRuw@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Fri, 02 Nov 2018 10:26:17 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 02 Nov 2018 10:26:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 01, 2018 at 06:41:00PM +0100, Thomas Gleixner wrote:
-> On Wed, 24 Oct 2018, Miroslav Lichvar wrote:
-> > The error is too large to be corrected by stepping on clock updates.
-> > For a typical TSC frequency we have multiplier in the range of few
-> > millions, so that's a frequency error of up to few hundred ppb. In the
-> > old days when the clock was updated 1000 times per second that would
-> > be hidden in the resolution of the clock, but now with tickless
-> > kernels those steps would be very noticeable.
+On Fri, Nov 02, 2018 at 03:36:13PM +0900, Xin Long wrote:
+> On upstream kernel(4.19) or RHEL-8 kernel(4.18.0):
+> 
+> # perf record -e 'skb:consume_skb' -ag
+> ^C[ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.612 MB perf.data (634 samples) ]
+> 
+> # perf script
+> swapper     0 [009] 274370.117711: skb:consume_skb: skbaddr=0xffff962c591d5b00
+>         ffffffffa4abe534 consume_skb+0x64 ([kernel.kallsyms])
+> 
+> kworker/9:1-eve   926 [009] 274370.117729: skb:consume_skb:
+> skbaddr=0xffff962c591d5b00
+>         ffffffffa4abe534 consume_skb+0x64 ([kernel.kallsyms])
+> 
+> kworker/9:1-eve   926 [009] 274370.117732: skb:consume_skb:
+> skbaddr=0xffff962c591d4900
+>         ffffffffa4abe534 consume_skb+0x64 ([kernel.kallsyms])
+> 
+> swapper     0 [009] 274370.145528: skb:consume_skb: skbaddr=0xffff962c591d4900
+>         ffffffffa4abe534 consume_skb+0x64 ([kernel.kallsyms])
+> 
+> kworker/9:1-eve   926 [009] 274370.145545: skb:consume_skb:
+> skbaddr=0xffff962c591d4900
+>         ffffffffa4abe534 consume_skb+0x64 ([kernel.kallsyms])
+> 
+> kworker/9:1-eve   926 [009] 274370.145547: skb:consume_skb:
+> skbaddr=0xffff962c591d5b00
+>         ffffffffa4abe534 consume_skb+0x64 ([kernel.kallsyms])
+> 
+> swapper     0 [009] 274370.173443: skb:consume_skb: skbaddr=0xffff962c591d5b00
+>         ffffffffa4abe534 consume_skb+0x64 ([kernel.kallsyms])
 
-> That only happens when the system was completely idle for a second and in
-> that case it's a non issue because the clock is updated before it's
-> used. So nothing will be able to observe the time jumping forward by a few
-> or even a few hundreds of nanoseconds.
+I can see that on upstream as well, probably something within
+tracepoint entry code, because I have it working nicely when
+from kprobe, like:
 
-That's great news (to me). I think we should do the same with the
-mono/real clock. A periodic 4ns step would be better than a slew
-correcting tens or hundreds of nanoseconds. This would be a
-significant improvement in accuracy on idle systems, in theory
-identical to running with nohz=off.
+[root@ibm-x3650m4-02 perf]# ./perf probe 'consume_skb'
+[root@ibm-x3650m4-02 perf]# ./perf record -g -e probe:consume_skb* -aR ^C
 
-Maybe I am missing some important detail, but I think we can just drop
-the +1 mult adjustment and step on each update by the (truncated)
-amount that has accumulated in the NTP error register. With the
-changes that have been made earlier this year the clock should never
-be ahead, so the step would always be forward.
-
-> For the regular case, where CPUs are
-> busy and the update happens 100/250/1000 times per second the jump forward
-> will not be noticable at all.
-
-I think a 4ns jump at 100 Hz might be noticeable with a good reference
-clock and large number of measurements, but so would be the current +1
-mult adjustment.
-
--- 
-Miroslav Lichvar
+jirka
