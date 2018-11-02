@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 225D6C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:38:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE9B1C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:38:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E95D62082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:38:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90B9A2082E
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:38:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0bzS+a9j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E95D62082E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BjfzZMmz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90B9A2082E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728875AbeKCDqk (ORCPT
+        id S1728891AbeKCDqn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:46:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40494 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:46:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728140AbeKCDqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:46:39 -0400
+        id S1728140AbeKCDqm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:46:42 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE3A92081B;
-        Fri,  2 Nov 2018 18:38:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 882DF2082D;
+        Fri,  2 Nov 2018 18:38:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541183908;
-        bh=WIqTJZlZJ1MhuQrEmxhs6s+VlNxI88Csb+at8SXRwBM=;
+        s=default; t=1541183911;
+        bh=fkBp0lERrmqoXhzPGz/ztUrlCOLS9tFVs+pFegg96co=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0bzS+a9j5fWd+pJcTG3FvFHLcJkWDLAo7P4ulbyzX8J9LyQoNW8F5g148OI+H10tq
-         uYFQid7UxRYWHbPP6dnkoDCVmjmgF1a3jApXPUxKpqpcJPRYMen99Wth/cwQy6Jz5/
-         muI2C/hAkcCnNrh9v7IBJwF23AErCY6rJTRU/7ls=
+        b=BjfzZMmzd5ZoaCcB0hb8D7vj2MudIqcUnz8cLU1SQO8i0L6O7s856uQDSpxEuy3vm
+         ACA0PVpbazl6MBW/4yrdV12YtacAYkRPlj7sZMFOMJdoCzmBXQICpnAVklutRuZ/Q7
+         k2xmX1Zgma2vkEPYUU2Ed6B1BNyiESGcqRsNvWvs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, zhong jiang <zhongjiang@huawei.com>,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Steve Capper <steve.capper@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 017/150] netfilter: conntrack: get rid of double sizeof
-Date:   Fri,  2 Nov 2018 19:32:59 +0100
-Message-Id: <20181102182904.063832148@linuxfoundation.org>
+Subject: [PATCH 4.18 018/150] arm64: hugetlb: Fix handling of young ptes
+Date:   Fri,  2 Nov 2018 19:33:00 +0100
+Message-Id: <20181102182904.160098767@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -64,37 +63,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 346fa83d10934cf206e2fd0f514bf8ce186f08fe ]
+[ Upstream commit 469ed9d823b7d240d6b9574f061ded7c3834c167 ]
 
-sizeof(sizeof()) is quite strange and does not seem to be what
-is wanted here.
+In the contiguous bit hugetlb break-before-make code we assume that all
+hugetlb pages are young.
 
-The issue is detected with the help of Coccinelle.
+In fact, remove_migration_pte is able to place an old hugetlb pte so
+this assumption is not valid.
 
-Fixes: 39215846740a ("netfilter: conntrack: remove nlattr_size pointer from l4proto trackers")
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-Acked-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+This patch fixes the contiguous hugetlb scanning code to preserve young
+ptes.
+
+Fixes: d8bdcff28764 ("arm64: hugetlb: Add break-before-make logic for contiguous entries")
+Signed-off-by: Steve Capper <steve.capper@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nf_conntrack_proto_tcp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/mm/hugetlbpage.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/net/netfilter/nf_conntrack_proto_tcp.c b/net/netfilter/nf_conntrack_proto_tcp.c
-index 8e67910185a0..1004fb5930de 100644
---- a/net/netfilter/nf_conntrack_proto_tcp.c
-+++ b/net/netfilter/nf_conntrack_proto_tcp.c
-@@ -1239,8 +1239,8 @@ static const struct nla_policy tcp_nla_policy[CTA_PROTOINFO_TCP_MAX+1] = {
- #define TCP_NLATTR_SIZE	( \
- 	NLA_ALIGN(NLA_HDRLEN + 1) + \
- 	NLA_ALIGN(NLA_HDRLEN + 1) + \
--	NLA_ALIGN(NLA_HDRLEN + sizeof(sizeof(struct nf_ct_tcp_flags))) + \
--	NLA_ALIGN(NLA_HDRLEN + sizeof(sizeof(struct nf_ct_tcp_flags))))
-+	NLA_ALIGN(NLA_HDRLEN + sizeof(struct nf_ct_tcp_flags)) + \
-+	NLA_ALIGN(NLA_HDRLEN + sizeof(struct nf_ct_tcp_flags)))
+diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
+index 192b3ba07075..f85be2f8b140 100644
+--- a/arch/arm64/mm/hugetlbpage.c
++++ b/arch/arm64/mm/hugetlbpage.c
+@@ -117,11 +117,14 @@ static pte_t get_clear_flush(struct mm_struct *mm,
  
- static int nlattr_to_tcp(struct nlattr *cda[], struct nf_conn *ct)
- {
+ 		/*
+ 		 * If HW_AFDBM is enabled, then the HW could turn on
+-		 * the dirty bit for any page in the set, so check
+-		 * them all.  All hugetlb entries are already young.
++		 * the dirty or accessed bit for any page in the set,
++		 * so check them all.
+ 		 */
+ 		if (pte_dirty(pte))
+ 			orig_pte = pte_mkdirty(orig_pte);
++
++		if (pte_young(pte))
++			orig_pte = pte_mkyoung(orig_pte);
+ 	}
+ 
+ 	if (valid) {
+@@ -340,10 +343,13 @@ int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+ 	if (!pte_same(orig_pte, pte))
+ 		changed = 1;
+ 
+-	/* Make sure we don't lose the dirty state */
++	/* Make sure we don't lose the dirty or young state */
+ 	if (pte_dirty(orig_pte))
+ 		pte = pte_mkdirty(pte);
+ 
++	if (pte_young(orig_pte))
++		pte = pte_mkyoung(pte);
++
+ 	hugeprot = pte_pgprot(pte);
+ 	for (i = 0; i < ncontig; i++, ptep++, addr += pgsize, pfn += dpfn)
+ 		set_pte_at(vma->vm_mm, addr, ptep, pfn_pte(pfn, hugeprot));
 -- 
 2.17.1
 
