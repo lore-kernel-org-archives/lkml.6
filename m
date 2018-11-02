@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 925EEC6786F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:36:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E89BC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:36:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60D402082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:36:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 714812082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:36:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2DKgAxm9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60D402082E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zdbsfcCm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 714812082D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728419AbeKCDpB (ORCPT
+        id S1728440AbeKCDpD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:45:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38716 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:45:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38794 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728116AbeKCDo7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:44:59 -0400
+        id S1727629AbeKCDpC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:45:02 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6BA4C2082E;
-        Fri,  2 Nov 2018 18:36:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59F7A20831;
+        Fri,  2 Nov 2018 18:36:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541183808;
-        bh=VhYsgwbCIBfMRUuIskgQmiRMNxfsbKyIV+xuSahuEGo=;
+        s=default; t=1541183811;
+        bh=Ti1vE9+zT2Wv5PPgUeGAtdTTliVRLXek5+gGSQ6dK7g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2DKgAxm9Cj3XC/i+vjdDoGHfhcNh0WSKovej4BtiAeikLKnBk2ReRBwNvCt0o2Ilw
-         9wZV+A0uYsuWpXaLf48/8jICxlcpXJsFkfhpdKFUnM/qj8UA97e0+ulepiiVOwyg62
-         zpf9xQ8+8wfzTWUtU674ax0gKSRaEzicwRjoO0t8=
+        b=zdbsfcCmC/oSlOzNv+0QjsIZgPZIodnNddS4PwuhaawSirzfqgUlutL0hnlo/VJH3
+         vzuK5cVYqveWPcUvU54p771Acks7p7CkFlvj7ynuMDkZxzrvMwc6dPAmSUQd9i9Y8a
+         zzUa37gpXVvuH6vA9L81TELeQxY0tbN+Sl/ClPBk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Petr Machata <petrm@mellanox.com>,
+        stable@vger.kernel.org, Shalom Toledo <shalomt@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
         Ido Schimmel <idosch@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 14/24] mlxsw: spectrum_switchdev: Dont ignore deletions of learned MACs
-Date:   Fri,  2 Nov 2018 19:34:47 +0100
-Message-Id: <20181102182841.951273205@linuxfoundation.org>
+Subject: [PATCH 4.19 15/24] mlxsw: core: Fix devlink unregister flow
+Date:   Fri,  2 Nov 2018 19:34:48 +0100
+Message-Id: <20181102182842.146919357@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182839.725385066@linuxfoundation.org>
 References: <20181102182839.725385066@linuxfoundation.org>
@@ -63,34 +64,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Petr Machata <petrm@mellanox.com>
+From: Shalom Toledo <shalomt@mellanox.com>
 
-[ Upstream commit ad0b9d94182be8356978d220c82f9837cffeb7a9 ]
+[ Upstream commit a22712a962912faf257e857ab6857f56a93cfb34 ]
 
-Demands to remove FDB entries should be honored even if the FDB entry in
-question was originally learned, and not added by the user. Therefore
-ignore the added_by_user datum for SWITCHDEV_FDB_DEL_TO_DEVICE.
+After a failed reload, the driver is still registered to devlink, its
+devlink instance is still allocated and the 'reload_fail' flag is set.
+Then, in the next reload try, the driver's allocated devlink instance will
+be freed without unregistering from devlink and its components (e.g,
+resources). This scenario can cause a use-after-free if the user tries to
+execute command via devlink user-space tool.
 
-Fixes: 816a3bed9549 ("switchdev: Add fdb.added_by_user to switchdev notifications")
-Signed-off-by: Petr Machata <petrm@mellanox.com>
-Suggested-by: Ido Schimmel <idosch@mellanox.com>
+Fix by not freeing the devlink instance during reload (failed or not).
+
+Fixes: 24cc68ad6c46 ("mlxsw: core: Add support for reload")
+Signed-off-by: Shalom Toledo <shalomt@mellanox.com>
+Reviewed-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: Ido Schimmel <idosch@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c |    2 --
- 1 file changed, 2 deletions(-)
+ drivers/net/ethernet/mellanox/mlxsw/core.c |   24 +++++++++++++++++-------
+ 1 file changed, 17 insertions(+), 7 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-@@ -2317,8 +2317,6 @@ static void mlxsw_sp_switchdev_event_wor
- 		break;
- 	case SWITCHDEV_FDB_DEL_TO_DEVICE:
- 		fdb_info = &switchdev_work->fdb_info;
--		if (!fdb_info->added_by_user)
--			break;
- 		mlxsw_sp_port_fdb_set(mlxsw_sp_port, fdb_info, false);
- 		break;
- 	case SWITCHDEV_FDB_ADD_TO_BRIDGE: /* fall through */
+--- a/drivers/net/ethernet/mellanox/mlxsw/core.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/core.c
+@@ -943,8 +943,8 @@ static int mlxsw_devlink_core_bus_device
+ 					     mlxsw_core->bus,
+ 					     mlxsw_core->bus_priv, true,
+ 					     devlink);
+-	if (err)
+-		mlxsw_core->reload_fail = true;
++	mlxsw_core->reload_fail = !!err;
++
+ 	return err;
+ }
+ 
+@@ -1083,8 +1083,15 @@ void mlxsw_core_bus_device_unregister(st
+ {
+ 	struct devlink *devlink = priv_to_devlink(mlxsw_core);
+ 
+-	if (mlxsw_core->reload_fail)
+-		goto reload_fail;
++	if (mlxsw_core->reload_fail) {
++		if (!reload)
++			/* Only the parts that were not de-initialized in the
++			 * failed reload attempt need to be de-initialized.
++			 */
++			goto reload_fail_deinit;
++		else
++			return;
++	}
+ 
+ 	if (mlxsw_core->driver->fini)
+ 		mlxsw_core->driver->fini(mlxsw_core);
+@@ -1098,9 +1105,12 @@ void mlxsw_core_bus_device_unregister(st
+ 	if (!reload)
+ 		devlink_resources_unregister(devlink, NULL);
+ 	mlxsw_core->bus->fini(mlxsw_core->bus_priv);
+-	if (reload)
+-		return;
+-reload_fail:
++
++	return;
++
++reload_fail_deinit:
++	devlink_unregister(devlink);
++	devlink_resources_unregister(devlink, NULL);
+ 	devlink_free(devlink);
+ }
+ EXPORT_SYMBOL(mlxsw_core_bus_device_unregister);
 
 
