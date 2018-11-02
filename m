@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED9A8C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F2FCC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:49:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C10BA20837
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:49:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4406B20837
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:49:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DATldi0L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C10BA20837
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FFgUzxMY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4406B20837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730664AbeKCD5e (ORCPT
+        id S1730673AbeKCD5g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:57:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53204 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:57:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728280AbeKCD5d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:57:33 -0400
+        id S1728280AbeKCD5f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:57:35 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7267F2082D;
-        Fri,  2 Nov 2018 18:49:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 63EC52082D;
+        Fri,  2 Nov 2018 18:49:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184558;
-        bh=ujgi1ECldlnmrwLDeBOxPxqTKqxD8Q5CfI4m40osHrY=;
+        s=default; t=1541184560;
+        bh=/+60JpL0M1ayNVyYrlxFu/KDS2UEspr/92/O9KZtNQo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DATldi0LvVt/7dG2uteiysTJNIHTU84SDoHct4TmnBIKWiTyuw+KxW67Uaw5GXdf6
-         /Y/1d9PEJsY3m1JlVrSXPIMpRmUO6aU6I7n+SZkrW36pzTv9apFq5lFGL02vtWY+Jq
-         VqOVQz6D/nizxZ8XFil7gZIAKoqOCr+p8SMkxXV8=
+        b=FFgUzxMY1Cl8dpt5M304Xv6ImCEyWguk6wDTPU+UTvioE/TTwAjCTtbD54muFgaP/
+         oHVMKrNAAPQ8wqfufv/ndUPgBdLGJmsyKcG1e77om2UhdDKS37UAs6KCJSoeDM5USQ
+         EhHgc8cAkKAwyaUW53/LzvB315duK8RD/v5OBtp4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yuan-Chi Pang <fu3mo6goo@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Tobias Hommel <netdev-list@genoetigt.de>,
+        Kristian Evensen <kristian.evensen@gmail.com>,
+        Wolfgang Walter <linux@stwm.de>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 010/143] mac80211: fix TX status reporting for ieee80211s
-Date:   Fri,  2 Nov 2018 19:33:15 +0100
-Message-Id: <20181102182857.901460452@linuxfoundation.org>
+Subject: [PATCH 4.14 011/143] xfrm: Fix NULL pointer dereference when skb_dst_force clears the dst_entry.
+Date:   Fri,  2 Nov 2018 19:33:16 +0100
+Message-Id: <20181102182857.989136702@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -63,89 +65,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c42055105785580563535e6d3143cad95c7ac7ee ]
+[ Upstream commit 9e1437937807b0122e8da1ca8765be2adca9aee6 ]
 
-TX status reporting to ieee80211s is through ieee80211s_update_metric.
-There are two problems about ieee80211s_update_metric:
+Since commit 222d7dbd258d ("net: prevent dst uses after free")
+skb_dst_force() might clear the dst_entry attached to the skb.
+The xfrm code don't expect this to happen, so we crash with
+a NULL pointer dereference in this case. Fix it by checking
+skb_dst(skb) for NULL after skb_dst_force() and drop the packet
+in cast the dst_entry was cleared.
 
-1. The purpose is to estimate the fail probability
-to a specific link. No need to restrict to data frame.
-
-2. Current implementation does not work if wireless driver does not
-pass tx_status with skb.
-
-Fix this by removing ieee80211_is_data condition, passing
-ieee80211_tx_status directly to ieee80211s_update_metric, and
-putting it in both __ieee80211_tx_status and ieee80211_tx_status_ext.
-
-Signed-off-by: Yuan-Chi Pang <fu3mo6goo@gmail.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Fixes: 222d7dbd258d ("net: prevent dst uses after free")
+Reported-by: Tobias Hommel <netdev-list@genoetigt.de>
+Reported-by: Kristian Evensen <kristian.evensen@gmail.com>
+Reported-by: Wolfgang Walter <linux@stwm.de>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/mesh.h      | 3 ++-
- net/mac80211/mesh_hwmp.c | 9 +++------
- net/mac80211/status.c    | 4 +++-
- 3 files changed, 8 insertions(+), 8 deletions(-)
+ net/xfrm/xfrm_output.c | 4 ++++
+ net/xfrm/xfrm_policy.c | 4 ++++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/net/mac80211/mesh.h b/net/mac80211/mesh.h
-index 7e5f271e3c30..4f1c61637ce3 100644
---- a/net/mac80211/mesh.h
-+++ b/net/mac80211/mesh.h
-@@ -217,7 +217,8 @@ void mesh_rmc_free(struct ieee80211_sub_if_data *sdata);
- int mesh_rmc_init(struct ieee80211_sub_if_data *sdata);
- void ieee80211s_init(void);
- void ieee80211s_update_metric(struct ieee80211_local *local,
--			      struct sta_info *sta, struct sk_buff *skb);
-+			      struct sta_info *sta,
-+			      struct ieee80211_tx_status *st);
- void ieee80211_mesh_init_sdata(struct ieee80211_sub_if_data *sdata);
- void ieee80211_mesh_teardown_sdata(struct ieee80211_sub_if_data *sdata);
- int ieee80211_start_mesh(struct ieee80211_sub_if_data *sdata);
-diff --git a/net/mac80211/mesh_hwmp.c b/net/mac80211/mesh_hwmp.c
-index 055ea36ff27b..fab0764c315f 100644
---- a/net/mac80211/mesh_hwmp.c
-+++ b/net/mac80211/mesh_hwmp.c
-@@ -295,15 +295,12 @@ int mesh_path_error_tx(struct ieee80211_sub_if_data *sdata,
- }
+diff --git a/net/xfrm/xfrm_output.c b/net/xfrm/xfrm_output.c
+index 35610cc881a9..c47660fba498 100644
+--- a/net/xfrm/xfrm_output.c
++++ b/net/xfrm/xfrm_output.c
+@@ -101,6 +101,10 @@ static int xfrm_output_one(struct sk_buff *skb, int err)
+ 		spin_unlock_bh(&x->lock);
  
- void ieee80211s_update_metric(struct ieee80211_local *local,
--		struct sta_info *sta, struct sk_buff *skb)
-+			      struct sta_info *sta,
-+			      struct ieee80211_tx_status *st)
- {
--	struct ieee80211_tx_info *txinfo = IEEE80211_SKB_CB(skb);
--	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *) skb->data;
-+	struct ieee80211_tx_info *txinfo = st->info;
- 	int failed;
+ 		skb_dst_force(skb);
++		if (!skb_dst(skb)) {
++			XFRM_INC_STATS(net, LINUX_MIB_XFRMOUTERROR);
++			goto error_nolock;
++		}
  
--	if (!ieee80211_is_data(hdr->frame_control))
--		return;
--
- 	failed = !(txinfo->flags & IEEE80211_TX_STAT_ACK);
- 
- 	/* moving average, scaled to 100.
-diff --git a/net/mac80211/status.c b/net/mac80211/status.c
-index ccac205e5853..bdf131ed5ce8 100644
---- a/net/mac80211/status.c
-+++ b/net/mac80211/status.c
-@@ -797,7 +797,7 @@ static void __ieee80211_tx_status(struct ieee80211_hw *hw,
- 
- 		rate_control_tx_status(local, sband, status);
- 		if (ieee80211_vif_is_mesh(&sta->sdata->vif))
--			ieee80211s_update_metric(local, sta, skb);
-+			ieee80211s_update_metric(local, sta, status);
- 
- 		if (!(info->flags & IEEE80211_TX_CTL_INJECTED) && acked)
- 			ieee80211_frame_acked(sta, skb);
-@@ -958,6 +958,8 @@ void ieee80211_tx_status_ext(struct ieee80211_hw *hw,
- 		}
- 
- 		rate_control_tx_status(local, sband, status);
-+		if (ieee80211_vif_is_mesh(&sta->sdata->vif))
-+			ieee80211s_update_metric(local, sta, status);
+ 		if (xfrm_offload(skb)) {
+ 			x->type_offload->encap(x, skb);
+diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
+index 2fb7a78308e1..37c32e73aaef 100644
+--- a/net/xfrm/xfrm_policy.c
++++ b/net/xfrm/xfrm_policy.c
+@@ -2550,6 +2550,10 @@ int __xfrm_route_forward(struct sk_buff *skb, unsigned short family)
  	}
  
- 	if (acked || noack_success) {
+ 	skb_dst_force(skb);
++	if (!skb_dst(skb)) {
++		XFRM_INC_STATS(net, LINUX_MIB_XFRMFWDHDRERROR);
++		return 0;
++	}
+ 
+ 	dst = xfrm_lookup(net, skb_dst(skb), &fl, NULL, XFRM_LOOKUP_QUEUE);
+ 	if (IS_ERR(dst)) {
 -- 
 2.17.1
 
