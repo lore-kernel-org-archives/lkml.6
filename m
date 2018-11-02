@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AD5CC65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:52:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96252C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:53:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EA972084A
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:52:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D0232084C
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:53:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LjUoGqSt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EA972084A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="e9SZmpik"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D0232084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731038AbeKCEBK (ORCPT
+        id S1730963AbeKCEBN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 00:01:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57064 "EHLO mail.kernel.org"
+        Sat, 3 Nov 2018 00:01:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726081AbeKCEBJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 00:01:09 -0400
+        id S1726081AbeKCEBM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 00:01:12 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8583220848;
-        Fri,  2 Nov 2018 18:52:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE45720848;
+        Fri,  2 Nov 2018 18:52:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184774;
-        bh=Drq+2IODeZNFXBZwmAYmUpT/3yif3DDDVSOw/lLtYzw=;
+        s=default; t=1541184777;
+        bh=dHqnZbBQBSQyU6Y6L47eCyNrArKuh1gk3R7IUFxbfWA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LjUoGqStptvx+z082srCZTXggC4mvrzvhGtoLn7IhnlzkV+rcwGMzrHaAAigW3et0
-         +rS/u8ZsAtrpqyGUgnAJ/b00Lua2Ch43+E2n2lyxPISvGGbxY0rIsLs4390LmMRNwP
-         yNsipvRI+U+xAuJur5+AbH9nm7a7kXCTYFCDAq/8=
+        b=e9SZmpikcXW2gqKd/wBB8neYf3j0ZDLQ2yxK5T6L4z5n/W+h+1fo+KMz1HvB9RRGc
+         /Omu3FTX7YfEOgmLfP4VAHFy2V5/Rx4RTEWTGZ7IfMotP8FbItkA/ZDyosLjCSf/oP
+         SnRHHh4+gQ2GpaHXXgwaAWvOuSOm3EI0/mjgsuB8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        stable@vger.kernel.org, Daniel Mack <daniel@zonque.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 093/143] kconfig: fix the rule of mainmenu_stmt symbol
-Date:   Fri,  2 Nov 2018 19:34:38 +0100
-Message-Id: <20181102182905.343948618@linuxfoundation.org>
+Subject: [PATCH 4.14 094/143] libertas: call into generic suspend code before turning off power
+Date:   Fri,  2 Nov 2018 19:34:39 +0100
+Message-Id: <20181102182905.418262734@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -63,44 +64,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 56869d45e364244a721de34ce9c5dc9ed022779e ]
+[ Upstream commit 4f666675cdff0b986195413215eb062b7da6586f ]
 
-The rule of mainmenu_stmt does not have debug print of zconf_lineno(),
-but if it had, it would print a wrong line number for the same reason
-as commit b2d00d7c61c8 ("kconfig: fix line numbers for if-entries in
-menu tree").
+When powering down a SDIO connected card during suspend, make sure to call
+into the generic lbs_suspend() function before pulling the plug. This will
+make sure the card is successfully deregistered from the system to avoid
+communication to the card starving out.
 
-The mainmenu_stmt does not need to eat following empty lines because
-they are reduced to common_stmt.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Fixes: 7444a8092906 ("libertas: fix suspend and resume for SDIO connected cards")
+Signed-off-by: Daniel Mack <daniel@zonque.org>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Acked-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/kconfig/zconf.y | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/marvell/libertas/if_sdio.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/scripts/kconfig/zconf.y b/scripts/kconfig/zconf.y
-index 126e3f2e1ed7..2b0adeb5fc42 100644
---- a/scripts/kconfig/zconf.y
-+++ b/scripts/kconfig/zconf.y
-@@ -31,7 +31,7 @@ struct symbol *symbol_hash[SYMBOL_HASHSIZE];
- static struct menu *current_menu, *current_entry;
- 
- %}
--%expect 31
-+%expect 30
- 
- %union
- {
-@@ -112,7 +112,7 @@ start: mainmenu_stmt stmt_list | no_mainmenu_stmt stmt_list;
- 
- /* mainmenu entry */
- 
--mainmenu_stmt: T_MAINMENU prompt nl
-+mainmenu_stmt: T_MAINMENU prompt T_EOL
- {
- 	menu_add_prompt(P_MENU, $2, NULL);
- };
+diff --git a/drivers/net/wireless/marvell/libertas/if_sdio.c b/drivers/net/wireless/marvell/libertas/if_sdio.c
+index 43743c26c071..39bf85d0ade0 100644
+--- a/drivers/net/wireless/marvell/libertas/if_sdio.c
++++ b/drivers/net/wireless/marvell/libertas/if_sdio.c
+@@ -1317,6 +1317,10 @@ static int if_sdio_suspend(struct device *dev)
+ 	if (priv->wol_criteria == EHS_REMOVE_WAKEUP) {
+ 		dev_info(dev, "Suspend without wake params -- powering down card\n");
+ 		if (priv->fw_ready) {
++			ret = lbs_suspend(priv);
++			if (ret)
++				return ret;
++
+ 			priv->power_up_on_resume = true;
+ 			if_sdio_power_off(card);
+ 		}
 -- 
 2.17.1
 
