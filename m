@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 933B7C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:40:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D398C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:40:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62A4920843
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:40:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2C1120840
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:40:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ySfVvpLO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62A4920843
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fqf3WVFx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2C1120840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729354AbeKCDsg (ORCPT
+        id S1729371AbeKCDsj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:48:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42962 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:48:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726707AbeKCDsg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:48:36 -0400
+        id S1726707AbeKCDsj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:48:39 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8599C20840;
-        Fri,  2 Nov 2018 18:40:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 883BF2082E;
+        Fri,  2 Nov 2018 18:40:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184024;
-        bh=nqQSOFykV9COU0FT7aoPYzwAl9+ef9XKLbRcvDW1CLI=;
+        s=default; t=1541184027;
+        bh=+sWDmkzZlludEB8v+ye/DmBKmNWAXSC2Qwrg+LZxezs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ySfVvpLOS/X92VvuBOZTcW8FQNDM0YHOCGM3XjMF8i7ehRFB/wf8o2CbiDrKRPX5v
-         GSi4+m0upL7E7uJsjwjamPQgQoF/kC5jHaO0tUD/J5FmKtxz/LSKSyNWR8ourUmbU6
-         To5HK+8f4jWOFeTMI+o/JFw8Lq/sMEBygr19uqS8=
+        b=Fqf3WVFxFqzjl8rwGGuUUnBS8hhTfvAnXvQTqgBQFLzKavNICIoOaQFk6p7N+Ls3r
+         +D9mnnnH2jpaNQdrjKM3T3eu6rtiHQYPWPDAcpZSNKF2Deou+8f/pcfsLxtx0jQkcA
+         ID9LvrBTnY/6MXfvWLHU4AXNSXtvpUU7pTk+3lu8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Martin Willi <martin@strongswan.org>,
         Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 025/150] mac80211_hwsim: fix race in radio destruction from netlink notifier
-Date:   Fri,  2 Nov 2018 19:33:07 +0100
-Message-Id: <20181102182904.918284312@linuxfoundation.org>
+Subject: [PATCH 4.18 026/150] mac80211_hwsim: do not omit multicast announce of first added radio
+Date:   Fri,  2 Nov 2018 19:33:08 +0100
+Message-Id: <20181102182905.023876338@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -63,76 +63,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f1c47eb61d52379de5747d02bb36be20d7a2d0d3 ]
+[ Upstream commit 28ef8b49a338dc1844e86b7954cfffc7dfa2660a ]
 
-The asynchronous destruction from a work-queue of radios tagged with
-destroy-on-close may race with the owning namespace about to exit,
-resulting in potential use-after-free of that namespace.
+The allocation of hwsim radio identifiers uses a post-increment from 0,
+so the first radio has idx 0. This idx is explicitly excluded from
+multicast announcements ever since, but it is unclear why.
 
-Instead of using a work-queue, move radios about to destroy to a
-temporary list, which can be worked on synchronously after releasing
-the lock. This should be safe to do from the netlink socket notifier,
-as the namespace is guaranteed to not get released.
+Drop that idx check and announce the first radio as well. This makes
+userspace happy if it relies on these events.
 
 Signed-off-by: Martin Willi <martin@strongswan.org>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/mac80211_hwsim.c | 22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
+ drivers/net/wireless/mac80211_hwsim.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/net/wireless/mac80211_hwsim.c b/drivers/net/wireless/mac80211_hwsim.c
-index 6b90bef58293..cfd0c58aa02a 100644
+index cfd0c58aa02a..58dd217811c8 100644
 --- a/drivers/net/wireless/mac80211_hwsim.c
 +++ b/drivers/net/wireless/mac80211_hwsim.c
-@@ -519,7 +519,6 @@ struct mac80211_hwsim_data {
- 	int channels, idx;
- 	bool use_chanctx;
- 	bool destroy_on_close;
--	struct work_struct destroy_work;
- 	u32 portid;
- 	char alpha2[2];
- 	const struct ieee80211_regdomain *regd;
-@@ -3442,30 +3441,27 @@ static struct genl_family hwsim_genl_family __ro_after_init = {
- 	.n_mcgrps = ARRAY_SIZE(hwsim_mcgrps),
- };
- 
--static void destroy_radio(struct work_struct *work)
--{
--	struct mac80211_hwsim_data *data =
--		container_of(work, struct mac80211_hwsim_data, destroy_work);
--
--	hwsim_radios_generation++;
--	mac80211_hwsim_del_radio(data, wiphy_name(data->hw->wiphy), NULL);
--}
--
- static void remove_user_radios(u32 portid)
- {
- 	struct mac80211_hwsim_data *entry, *tmp;
-+	LIST_HEAD(list);
- 
- 	spin_lock_bh(&hwsim_radio_lock);
- 	list_for_each_entry_safe(entry, tmp, &hwsim_radios, list) {
- 		if (entry->destroy_on_close && entry->portid == portid) {
--			list_del(&entry->list);
-+			list_move(&entry->list, &list);
- 			rhashtable_remove_fast(&hwsim_radios_rht, &entry->rht,
- 					       hwsim_rht_params);
--			INIT_WORK(&entry->destroy_work, destroy_radio);
--			queue_work(hwsim_wq, &entry->destroy_work);
-+			hwsim_radios_generation++;
- 		}
- 	}
+@@ -2811,8 +2811,7 @@ static int mac80211_hwsim_new_radio(struct genl_info *info,
+ 	hwsim_radios_generation++;
  	spin_unlock_bh(&hwsim_radio_lock);
-+
-+	list_for_each_entry_safe(entry, tmp, &list, list) {
-+		list_del(&entry->list);
-+		mac80211_hwsim_del_radio(entry, wiphy_name(entry->hw->wiphy),
-+					 NULL);
-+	}
- }
  
- static int mac80211_hwsim_netlink_notify(struct notifier_block *nb,
+-	if (idx > 0)
+-		hwsim_mcast_new_radio(idx, info, param);
++	hwsim_mcast_new_radio(idx, info, param);
+ 
+ 	return idx;
+ 
 -- 
 2.17.1
 
