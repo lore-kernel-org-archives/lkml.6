@@ -2,222 +2,224 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D33D1C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 12:44:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77554C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 12:44:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C1D52081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 12:44:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C1D52081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 218722082E
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 12:44:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="AYbENIea"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 218722082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727244AbeKBVvL (ORCPT
+        id S1727308AbeKBVvz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 17:51:11 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:44416 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726104AbeKBVvL (ORCPT
+        Fri, 2 Nov 2018 17:51:55 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:41400 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726094AbeKBVvz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 17:51:11 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <seth.forshee@canonical.com>)
-        id 1gIYo0-0007Fp-D4
-        for linux-kernel@vger.kernel.org; Fri, 02 Nov 2018 12:44:04 +0000
-Received: by mail-io1-f72.google.com with SMTP id o7-v6so1786422ioh.22
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 05:44:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LiTGJy/yASg4Kf9qswzmezhHG46xu34E64ej2cVtOOo=;
-        b=Ll52BzLw4FfeHgw/KCj4EcCbBkubKKYP+FUUo//0R7rBZ7y9NEA7QJ+FQ2x165HnmA
-         ckLCnM87ETYHn7JxpeSDXJSuCZ4La/dogxEOBsL1tS3bl3OhpQkaccbMWqyoxBKsln46
-         j5vs6p+3dVkR9T11JRvLk0r7RhuhGKbWp2ffjMDUuUYqoDMMqZJzyRP989I5SrgkrtpC
-         qLzXOQOC/esXBOvvMqq91Bq7yH71LUHEih6EW/O0Qfg1gxhnvvC7rTtW+Z8sIG5Iy/CV
-         sSQz1rNOi9Hc/MH86/u3W5TqspJQDRzOrrcdBykkOWf4U6L4PaynpBoilktPP6ZKvHBe
-         XBPg==
-X-Gm-Message-State: AGRZ1gLfB+butPTkF6ZPkPLIxOhv2ONnT/aAtJV6We52hMWoP03OMR3E
-        yZz3EpfIdsvSb/ZLqOdyhidonuZHaPa9yAcqhys+0hWWZIXX6aWQ40pD+3l4eXftHIbXudXWt2Z
-        W9bUtB50vdMztl6ZXuJgcpLs7T3SDDd215XnatHeWPg==
-X-Received: by 2002:a6b:5f13:: with SMTP id t19-v6mr9382106iob.268.1541162643196;
-        Fri, 02 Nov 2018 05:44:03 -0700 (PDT)
-X-Google-Smtp-Source: AJdET5e1uSk85/rp2XA5KJPT09n497bELW0OGom2wHfsGNQTQegNIxF2g7B1H2doJUMh7Krju/ZE2A==
-X-Received: by 2002:a6b:5f13:: with SMTP id t19-v6mr9382076iob.268.1541162642629;
-        Fri, 02 Nov 2018 05:44:02 -0700 (PDT)
-Received: from localhost ([2605:a601:ac7:2a20:7c8b:4047:a2ef:69cd])
-        by smtp.gmail.com with ESMTPSA id v134-v6sm13546918ita.23.2018.11.02.05.44.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 02 Nov 2018 05:44:01 -0700 (PDT)
-Date:   Fri, 2 Nov 2018 07:44:00 -0500
-From:   Seth Forshee <seth.forshee@canonical.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>
-Subject: Re: [RFC PATCH 6/6] shiftfs: support nested shiftfs mounts
-Message-ID: <20181102124400.GB29262@ubuntu-xps13>
-References: <20181101214856.4563-1-seth.forshee@canonical.com>
- <20181101214856.4563-7-seth.forshee@canonical.com>
- <CAOQ4uxhkH+0tchHkrgvBZGYzeLD2fGGgtkKstt3JmhPDaGW_dg@mail.gmail.com>
+        Fri, 2 Nov 2018 17:51:55 -0400
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7E0E21263;
+        Fri,  2 Nov 2018 13:44:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1541162689;
+        bh=ioT0gc0zgmXjaCLgmsvz2MdRFpVVTX4Uk7SaK+uIXAg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=AYbENIeaIMWtbZJyZIUMrGv9uGwF3ynZPF3ASW+DiCE/UGcdVRC1+ZVQt0IKwn45I
+         meHEfx7Mpew0GQrPZImZ+fJWi58H81Wlz97pGSA3NddpDcBwqgilsZI3utyxq8wmWc
+         kbQqVbcl8ikRgaJhuTmQDt3iq1MKE5El/t6OnXn8=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Paul Elder <paul.elder@ideasonboard.com>
+Cc:     Alan Stern <stern@rowland.harvard.edu>, Bin Liu <b-liu@ti.com>,
+        kieran.bingham@ideasonboard.com, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        balbi@kernel.org, rogerq@ti.com
+Subject: Re: [PATCH 4/6] usb: gadget: add functions to signal udc driver to delay status stage
+Date:   Fri, 02 Nov 2018 14:44:55 +0200
+Message-ID: <2683135.rrYvd4LdR5@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20181101234059.GA28068@garnet.amanokami.net>
+References: <3055233.Lvy0NcWSZ5@avalon> <Pine.LNX.4.44L0.1810180956590.1521-100000@iolanthe.rowland.org> <20181101234059.GA28068@garnet.amanokami.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhkH+0tchHkrgvBZGYzeLD2fGGgtkKstt3JmhPDaGW_dg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 12:02:45PM +0200, Amir Goldstein wrote:
-> On Thu, Nov 1, 2018 at 11:49 PM Seth Forshee <seth.forshee@canonical.com> wrote:
-> >
-> > shiftfs mounts cannot be nested for two reasons -- global
-> > CAP_SYS_ADMIN is required to set up a mark mount, and a single
-> > functional shiftfs mount meets the filesystem stacking depth
-> > limit.
-> >
-> > The CAP_SYS_ADMIN requirement can be relaxed. All of the kernel
-> > ids in a mount must be within that mount's s_user_ns, so all that
-> > is needed is CAP_SYS_ADMIN within that s_user_ns.
-> >
-> > The stack depth issue can be worked around with a couple of
-> > adjustments. First, a mark mount doesn't really need to count
-> > against the stacking depth as it doesn't contribute to the call
-> > stack depth during filesystem operations. Therefore the mount
-> > over the mark mount only needs to count as one more than the
-> > lower filesystems stack depth.
+Hello,
+
+On Friday, 2 November 2018 01:40:59 EET Paul Elder wrote:
+> On Thu, Oct 18, 2018 at 10:07:36AM -0400, Alan Stern wrote:
+> > On Thu, 18 Oct 2018, Laurent Pinchart wrote:
+> >> On Thursday, 11 October 2018 19:10:21 EEST Bin Liu wrote:
+> >>> On Tue, Oct 09, 2018 at 10:49:01PM -0400, Paul Elder wrote:
+> >>>> A usb gadget function driver may or may not want to delay the status
+> >>>> stage of a control OUT request. An instance it might want to is to
+> >>>> asynchronously validate the data of a class-specific request.
+> >>>> 
+> >>>> Add a function usb_ep_delay_status to allow function drivers to
+> >>>> choose to delay the status stage in the request completion handler.
+> >>>> The UDC should then check the usb_ep->delayed_status flag and act
+> >>>> accordingly to delay the status stage.
+> >>>> 
+> >>>> Also add a function usb_ep_send_response as a wrapper for
+> >>>> usb_ep->ops->send_response, whose prototype is added as well. This
+> >>>> function should be called by function drivers to tell the UDC what
+> >>>> to reply in the status stage that it has requested to be delayed.
+> >>>> 
+> >>>> Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
+> >>>> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> >>>> ---
+> >>>> 
+> >>>>  drivers/usb/gadget/udc/core.c | 35 ++++++++++++++++++++++++++++++++
+> >>>>  include/linux/usb/gadget.h    | 11 +++++++++++
+> >>>>  2 files changed, 46 insertions(+)
+> >>>> 
+> >>>> diff --git a/drivers/usb/gadget/udc/core.c
+> >>>> b/drivers/usb/gadget/udc/core.c
+> >>>> index af88b48c1cea..1ec5ce6b43cd 100644
+> >>>> --- a/drivers/usb/gadget/udc/core.c
+> >>>> +++ b/drivers/usb/gadget/udc/core.c
+> >>>> @@ -443,6 +443,41 @@ void usb_ep_fifo_flush(struct usb_ep *ep)
+> >>>> 
+> >>>>  }
+> >>>>  EXPORT_SYMBOL_GPL(usb_ep_fifo_flush);
+> >>>> 
+> >>>> +/**
+> >>>> + * usb_ep_ep_delay_status - set delay_status flag
+> >>>> + * @ep: the endpoint whose delay_status flag is being set
+> >>>> + *
+> >>>> + * This function instructs the UDC to delay the status stage of a
+> >>>> control
+> >>>> + * request. It can only be called from the request completion
+> >>>> handler of a
+> >>>> + * control request.
+> >>>> + */
+> >>>> +void usb_ep_delay_status(struct usb_ep *ep)
+> >>>> +{
+> >>>> +	ep->delayed_status = true;
+> >>>> +}
+> >>>> +EXPORT_SYMBOL_GPL(usb_ep_delay_status);
+> >>> 
+> >>> Is usb_ep_set_delay_status() better? I thought it implies get/return
+> >>> action if a verb is missing in the function name.
+> >> 
+> >> For what it's worth, I understand the function name as "delay the status
+> >> stage", with "delay" being a verb. Maybe the short description could be
+> >> updated accordingly.
+> > 
+> > Is there a reason for adding a new function for this?  This is exactly
+> > what the USB_GADGET_DELAYED_STATUS return value from the setup callback
+> > is meant for (and it is already used by some gadget drivers).
 > 
-> That's true, but it also highlights the point that the "mark" sb is
-> completely unneeded and it really is just a nice little hack.
-> All the information it really stores is a lower mount reference,
-> a lower root dentry and a declarative statement "I am shiftable!".
-
-Seems I should have saved some of the things I said in my previous
-response for this one. As you no doubt gleaned from that email, I agree
-with this.
-
-> Come to think about it, "container shiftable" really isn't that different from
-> NFS export with "no_root_squash" and auto mounted USB drive.
-> I mean the shifting itself is different of course, but the
-> declaration, not so much.
-> If I am allowing sudoers on another machine to mess with root owned
-> files visible
-> on my machine, I am pretty much have the same issues as container admins
-> accessing root owned files on my init_user_ns filesystem. In all those cases,
-> I'd better not be executing suid binaries from the untrusted "external" source.
+> In theory, we might be able to use USB_GADGET_DELAYED_STATUS for this.
+> However, there are a few ambiguities that prevent us from doing so.
 > 
-> Instead of mounting a dummy filesystem to make the declaration, you could
-> get the same thing with:
->    mount(path, path, "none", MS_BIND | MS_EXTERN | MS_NOEXEC)
-> and all you need to do is add MS_EXTERN (MS_SHIFTABLE MS_UNTRUSTED
-> or whatnot)  constant to uapi and manage to come up good man page description.
+> First of all, we want to delay only the status stage for control OUT
+> requests; according to composite.h, USB_GADGET_DELAYED_STATUS is for
+> delaying the "data/status stages". Does this mean that it delays the
+> status stage only or does it delay both stages? If the slash means
+> "and", then we cannot use USB_GADGET_DELAYED_STATUS.
 > 
-> Then users could actually mount a filesystem in init_user_ns MS_EXTERN and
-> avoid the extra bind mount step (for a full filesystem tree export).
-> Declaring a mounted image MS_EXTERN has merits on its own even without
-> containers and shitfs, for example with pluggable storage. Other LSMs could make
-> good use of that declaration.
-
-I'm missing how we figure out the target user ns in this scheme. We need
-a context with privileges towards the source path's s_user_ns to say
-it's okay to shift ids for the files under the source path, and then we
-need a target user ns for the id shifts. Currently the target is
-current_user_ns when the final shiftfs mount is created.
-
-So, how do we determine the target s_user_ns in your scheme?
-
+> Furthermore, we have found that USB_GADGET_DELAYED_STATUS is racey,
+> which has already been observed in the UVC gadget driver previously [0].
+> The raceiness stems from the fact that things can happen in between
+> returning USB_GADGET_DELAYED_STATUS and the composite layer reacting to
+> it - especially if usb_composite_setup_continue is called within that
+> window it causes a WARN. In any case, the fact that the mechanism itself
+> is racey suggests that it needs improvement, and using it wouldn't be a
+> good solution in this case.
 > 
-> >
-> > Second, when the lower mount is shiftfs we can just skip down to
-> > that mount's lower filesystem and shift ids relative to that.
-> > There is no reason to shift ids twice, and the lower path has
-> > already been marked safe for id shifting by a user privileged
-> > towards all ids in that mount's user ns.
-> >
-> > Signed-off-by: Seth Forshee <seth.forshee@canonical.com>
-> > ---
-> >  fs/shiftfs.c | 68 +++++++++++++++++++++++++++++++++++-----------------
-> >  1 file changed, 46 insertions(+), 22 deletions(-)
-> >
-> > diff --git a/fs/shiftfs.c b/fs/shiftfs.c
-> > index b19af7b2fe75..008ace2842b9 100644
-> > --- a/fs/shiftfs.c
-> > +++ b/fs/shiftfs.c
-> > @@ -930,7 +930,7 @@ static int shiftfs_fill_super(struct super_block *sb, void *raw_data,
-> >         struct shiftfs_data *data = raw_data;
-> >         char *name = kstrdup(data->path, GFP_KERNEL);
-> >         int err = -ENOMEM;
-> > -       struct shiftfs_super_info *ssi = NULL;
-> > +       struct shiftfs_super_info *ssi = NULL, *mp_ssi;
-> >         struct path path;
-> >         struct dentry *dentry;
-> >
-> > @@ -946,11 +946,7 @@ static int shiftfs_fill_super(struct super_block *sb, void *raw_data,
-> >         if (err)
-> >                 goto out;
-> >
-> > -       /* to mark a mount point, must be real root */
-> > -       if (ssi->mark && !capable(CAP_SYS_ADMIN))
-> > -               goto out;
-> > -
-> > -       /* else to mount a mark, must be userns admin */
-> > +       /* to mount a mark, must be userns admin */
-> >         if (!ssi->mark && !ns_capable(current_user_ns(), CAP_SYS_ADMIN))
-> >                 goto out;
+> > Is it a question of when the gadget driver learns that it will need to
+> > delay the status stage?  If that's the case,
 > 
-> Isn't this check performed by vfs anyway? i.e. in mount_nodev() -> sget()
-
-Yeah, I noticed that too. I left it in for the moment to emphasize the
-change I was making, but it can be removed.
-
+> Not really.
 > 
-> >
-> > @@ -962,41 +958,66 @@ static int shiftfs_fill_super(struct super_block *sb, void *raw_data,
-> >
-> >         if (!S_ISDIR(path.dentry->d_inode->i_mode)) {
-> >                 err = -ENOTDIR;
-> > -               goto out_put;
-> > -       }
-> > -
-> > -       sb->s_stack_depth = path.dentry->d_sb->s_stack_depth + 1;
-> > -       if (sb->s_stack_depth > FILESYSTEM_MAX_STACK_DEPTH) {
-> > -               printk(KERN_ERR "shiftfs: maximum stacking depth exceeded\n");
-> > -               err = -EINVAL;
-> > -               goto out_put;
-> > +               goto out_put_path;
-> >         }
-> >
-> >         if (ssi->mark) {
-> > +               struct super_block *lower_sb = path.mnt->mnt_sb;
-> > +
-> > +               /* to mark a mount point, must root wrt lower s_user_ns */
-> > +               if (!ns_capable(lower_sb->s_user_ns, CAP_SYS_ADMIN))
-> > +                       goto out_put_path;
-> > +
-> > +
-> >                 /*
-> >                  * this part is visible unshifted, so make sure no
-> >                  * executables that could be used to give suid
-> >                  * privileges
-> >                  */
-> >                 sb->s_iflags = SB_I_NOEXEC;
+> > why not always return
+> > USB_GADGET_DELAYED_STATUS from the setup callback?  Then instead of
+> > calling usb_ep_delay_status() when a delay is needed, you could queue
+> > the status request when a delay isn't needed.
 > 
-> As commented on cover letter, why allow access to any files besides root at all?
-> In fact, the only justification for a dummy sb (instead of bind mount with
-> MS_EXTERN flag) would be in order to override inode operations with noop ops
-> to prevent access to unshifted files from within container.
+> Theoretically this might work, but see the problems mentioned above.
+> 
+> > As a more general solution, Felipe has said that a UDC driver should
+> > _never_ carry out the status stage transaction until the gadget driver
+> > has told it to do so.  Then there would be no need for any sort of
+> > delay indicator.
+> 
+> Yeah, but,
+> 
+> > (But implementing this would require significant
+> > changes to a bunch of different drivers...)
+> 
+> exactly :/
+> 
+> [0] https://www.spinics.net/lists/linux-usb/msg169208.html
 
-Summarizing my response to the other message, if the mark mount is kept
-(and I would prefer that it isn't kept) that seems reasonable to me.
+Alan, Felipe, how do we move forward with this ? There are several issues with 
+the existing control request handling mechanism in the USB gadget stack, and 
+while Paul could work on improving the mechanism, we need to provide clear 
+guidance regarding the direction we want to take.
 
-Thanks,
-Seth
+For reference, the issues I know about for the USB_GADGET_DELAYED_STATUS 
+mechanism are
+
+- The mechanism is inherently racy. It relies on signaling the delay at the 
+very end of the processing in the setup handler, which by definition occurs 
+after the work to process the control request is queued (in the generic sense, 
+regardless of whether this involves a kernel workqueue or passing the work to 
+userspace). There is thus a race window after queuing the work and before 
+signaling the delay during which the work handler could signal completion.
+
+- The mechanism is poorly documented. As Paul mentioned, comments in the code 
+state that USB_GADGET_DELAYED_STATUS delay the "data/status stages". This is 
+very unclear, and the only three UDCs that implement the mechanism seem to do 
+so in different ways:
+
+  - The mtu driver states in a comment that it will "handle the delay STATUS 
+phase till receive ep_queue on ep0".
+
+  - The bdc driver states in a comment that "The ep0 state will remain 
+WAIT_FOR_DATA_START till we received ep_queue on ep0".
+
+  - The dwc3 driver seems to handle USB_GADGET_DELAYED_STATUS for the 
+SET_CONFIG request only.
+
+- The mechanism relies on queueing a request to the UDC to signal that it 
+should continue with the status stage. That request can be queued either by 
+the USB gadget function driver directly, or by the composite layer in 
+usb_composite_setup_continue() (the latter is restricted to requests that 
+carry no data as it sets the request length to 0). This is problematic if we 
+want to delay the status phase after completing the data phase, in order to 
+validate the setup phase data and the data phase data (for a control OUT 
+request) together.
+
+
+For those reasons I think a new mechanism is needed. It should either signal 
+the status phase delay through an explicit function call instead of a return 
+value (to solve the race mentioned above), or by requiring all requests to be 
+explicitly completed (but that will require changing all USB function 
+drivers). Furthermore, the mechanism need to support delaying the status phase 
+after queuing the request for the data phase, so we need an explicit way to 
+signal that the UDC should proceed with the status phase, other than queueing 
+the request.
+
+Thoughts ? Preferences ?
+
+-- 
+Regards,
+
+Laurent Pinchart
+
+
+
