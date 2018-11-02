@@ -2,136 +2,148 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AD0DC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:31:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C29CAC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:32:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAC3D2081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:31:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 839F02081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:32:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tg8SnKN2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAC3D2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="jEy7l80g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 839F02081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728214AbeKCDjn (ORCPT
+        id S1728199AbeKCDkR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:39:43 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:35590 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726849AbeKCDjn (ORCPT
+        Fri, 2 Nov 2018 23:40:17 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36676 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727747AbeKCDkR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:39:43 -0400
-Received: by mail-qk1-f195.google.com with SMTP id v68-v6so4597936qka.2;
-        Fri, 02 Nov 2018 11:31:34 -0700 (PDT)
+        Fri, 2 Nov 2018 23:40:17 -0400
+Received: by mail-pf1-f196.google.com with SMTP id j22-v6so1408165pfh.3
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 11:32:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Wqzgs+F0hY7K8xAcw83hHNnWx01TKifagw51GGPrFSM=;
-        b=Tg8SnKN2mAmHPjAFLVibAuepFvy9Y8cZJ8natvhMD70Wf85NXlbpfUT59geH74D/lY
-         jdSjBS2A7IKITR1dqgZlxkAEg04IkgLKQTxSfydSxXdS5/an1e0G5SiMtfkoQ+YXzurA
-         qx/Sxvok/o0woQ4trKxHEbvpIqGnRCSxaI+Xk3VlKgRZeK19U8z/C12AgFnrCtwdb9ES
-         L+D3ZRXCPQbl+C9de8rULOAasimeZMbtqsMd00MIupNKtvf+tsaNspafqNnfRkheqea3
-         jACyEjoHT/9AVwvoRb9pCgYNeX1NinPIZ3LkfH0ZirjeUZwMuzjSpEEwfuHF/zm/2w59
-         xIAg==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lGr1/GPhODRNl1DjrK/xhjMVkRLtOcHFU4zI5hPAmoY=;
+        b=jEy7l80gAkC6w6FsjraAuOg0wmNPMoUroVQPMjlpHIAJi/2OL8NlIQhyqPJIDh1RJM
+         gzjzyWAyPhK3JYy4IxuCpoDr5esPDff+ptGtgtDPtmfeWF9mnDdBH1EOe2jWHO6IZ5Rq
+         7Xl0m5zX/zNUAHzpiXyAXH0Xv18wf2PBprL04=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Wqzgs+F0hY7K8xAcw83hHNnWx01TKifagw51GGPrFSM=;
-        b=pkeVfxR51thPhDh6DMTp5M3jGhALkTnsmDvdKhvevflSqMzikcg/L1VfFf9NUlOxWN
-         dlyq5mPiV+I9Omz3SI1K6DH1oheTMwlKQ1aqbcJCVkNpF8zZaIJcdJLeRT+SH5M1KIR1
-         nMDUioGpil1VoJw61x/VkBk9K6ugtCWApW8aBBJoCaiLwHskAwg+rcdMnze0tVlQ3jzZ
-         9Uh60qn0tuDnLzokTSvJ+B66P2NHtqBENiCl7fQhw0RTVy/iA7KyWJpspELYVKpOAsbV
-         ad4Rj0mZArJ3z4xelpUfukUv/6ygxY+PnArXHU3j55Qy97x0tAthvzF1L5zNnj8C4EOo
-         LQTQ==
-X-Gm-Message-State: AGRZ1gI0XJk86RrT6RkkWf3whanpqhLVq6fsaLijPsJ0qkrk5tXJMOhj
-        VhuO+aVPVRJGGCsm1EXtvgM53SfPS/IqUvM+j0A=
-X-Google-Smtp-Source: AJdET5dsRwf3WWzDSsk0ju5Y8NinDATsHApuV2GgCO69GghanlNAj06SeFBStuyspAlmSShP3L0SmSdnjm7t3IcsF1Y=
-X-Received: by 2002:a0c:a802:: with SMTP id w2mr9274696qva.198.1541183493707;
- Fri, 02 Nov 2018 11:31:33 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lGr1/GPhODRNl1DjrK/xhjMVkRLtOcHFU4zI5hPAmoY=;
+        b=L7iqzWWVig40M1QVE+1nlaf6zkP/KWBfRNr6UHVUVrmYw6WxQHEaWiMlsbJfSwADlf
+         bx/rj71UfyXAGFI4ZnMPTncheSIXofWJd78s8As+yTDRPFfgDRgEIHau1NGY9t+j0lqT
+         wHcyhEBL1SRNiTN2iDafuWtFO//nK8JQ/esjYut5dafB23ZmJ7M0Dn7STwUcGWJ/M93Z
+         WUVUiOxrK4VQZVCZCGdHEGxLAwzlKKeAA7hhEWesYWD7fcG9EO7tu9pWWMuW4nW307N/
+         WBwn4u+4enXKnw3zc6g9n1XKHI4eNU4ZCHEussN4FjJv5X2NUoOD6xJsB6JCWj1Cv++2
+         MGXA==
+X-Gm-Message-State: AGRZ1gLsHvDT1ltBVfoQZmW0KVhg8yKhW9gyyF+oqUO3Vu7fDSVQEaCA
+        UrLIDWX2XC/Icy7zyrIo5GXi1Hz83Qs=
+X-Google-Smtp-Source: AJdET5cvrfCX08lgln3JWyDZzmQNALEIeTnyRBqlBGpmmtYubp+2JruPI1wso6s6oIobWwYtNYSTXA==
+X-Received: by 2002:a65:4244:: with SMTP id d4-v6mr11868515pgq.289.1541183527247;
+        Fri, 02 Nov 2018 11:32:07 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id t4-v6sm39487571pfb.44.2018.11.02.11.32.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 02 Nov 2018 11:32:05 -0700 (PDT)
+Date:   Fri, 2 Nov 2018 11:32:04 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>
+Subject: Re: [PATCH 7/8] pstore: Remove needless lock during console writes
+Message-ID: <20181102183204.GC14942@google.com>
+References: <20181101235200.28584-1-keescook@chromium.org>
+ <20181101235200.28584-8-keescook@chromium.org>
 MIME-Version: 1.0
-References: <20181102182123.29420-1-v.mayatskih@gmail.com> <20181102142446-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20181102142446-mutt-send-email-mst@kernel.org>
-From:   Vitaly Mayatskih <v.mayatskih@gmail.com>
-Date:   Fri, 2 Nov 2018 14:31:21 -0400
-Message-ID: <CAGF4SLgVoktAqWHKBbcwJ9+efaGnLpmUEohGi4YOKyGrwpY97Q@mail.gmail.com>
-Subject: Re: [PATCH 0/1] vhost: add vhost_blk driver
-To:     "Michael S . Tsirkin" <mst@redhat.com>
-Cc:     Jason Wang <jasowang@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181101235200.28584-8-keescook@chromium.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sure! It needs a new QEMU driver (vhost-blk-pci), I'm preparing it to
-be sent out.
-On Fri, Nov 2, 2018 at 2:26 PM Michael S. Tsirkin <mst@redhat.com> wrote:
->
-> On Fri, Nov 02, 2018 at 06:21:22PM +0000, Vitaly Mayatskikh wrote:
-> > vhost_blk is a host-side kernel mode accelerator for virtio-blk. The
-> > driver allows VM to reach a near bare-metal disk performance. See IOPS
-> > numbers below (fio --rw=randread --bs=4k).
-> >
-> > This implementation uses kiocb interface. It is slightly slower than
-> > going directly through bio, but is simpler and also works with disk
-> > images placed on a file system.
-> >
-> > # fio num-jobs
-> > # A: bare metal over block
-> > # B: bare metal over file
-> > # C: virtio-blk over block
-> > # D: virtio-blk over file
-> > # E: vhost-blk bio over block
-> > # F: vhost-blk kiocb over block
-> > # G: vhost-blk kiocb over file
-> > #
-> > #  A     B     C    D    E     F     G
-> >
-> > 1  171k  151k  148k 151k 195k  187k  175k
-> > 2  328k  302k  249k 241k 349k  334k  296k
-> > 3  479k  437k  179k 174k 501k  464k  404k
-> > 4  622k  568k  143k 183k 620k  580k  492k
-> > 5  755k  697k  136k 128k 737k  693k  579k
-> > 6  887k  808k  131k 120k 830k  782k  640k
-> > 7  1004k 926k  126k 131k 926k  863k  693k
-> > 8  1099k 1015k 117k 115k 1001k 931k  712k
-> > 9  1194k 1119k 115k 111k 1055k 991k  711k
-> > 10 1278k 1207k 109k 114k 1130k 1046k 695k
-> > 11 1345k 1280k 110k 108k 1119k 1091k 663k
-> > 12 1411k 1356k 104k 106k 1201k 1142k 629k
-> > 13 1466k 1423k 106k 106k 1260k 1170k 607k
-> > 14 1517k 1486k 103k 106k 1296k 1179k 589k
-> > 15 1552k 1543k 102k 102k 1322k 1191k 571k
-> > 16 1480k 1506k 101k 102k 1346k 1202k 566k
-> >
-> > Vitaly Mayatskikh (1):
-> >   Add vhost_blk driver
->
->
-> Thanks!
-> Before merging this, I'd like to get some acks from userspace that it's
-> actually going to be used - e.g. QEMU block maintainers.
->
-> >  drivers/vhost/Kconfig  |  13 ++
-> >  drivers/vhost/Makefile |   3 +
-> >  drivers/vhost/blk.c    | 510 +++++++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 526 insertions(+)
-> >  create mode 100644 drivers/vhost/blk.c
-> >
-> > --
-> > 2.17.1
+On Thu, Nov 01, 2018 at 04:51:59PM -0700, Kees Cook wrote:
+> Since commit 70ad35db3321 ("pstore: Convert console write to use
+> ->write_buf"), the console writer does not use the preallocated crash
+> dump buffer any more, so there is no reason to perform locking around it.
 
+Out of curiosity, what was the reason for having this preallocated crash
+buffer in the first place? I thought the 'console' type only did regular
+kernel console logging, not crash dumps.
 
+I looked at all the patches and had some minor nits, with the nits addressed
+(if you agree with them), feel free to add my Reviewed-by on future respins:
 
--- 
-wbr, Vitaly
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+
+Also I wonder if Namhyung is still poking around that virtio pstore driver he
+mentioned in the commit mentioned above. :)
+
+thanks,
+
+- Joel
+
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  fs/pstore/platform.c | 29 ++++++-----------------------
+>  1 file changed, 6 insertions(+), 23 deletions(-)
+> 
+> diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
+> index a956c7bc3f67..32340e7dd6a5 100644
+> --- a/fs/pstore/platform.c
+> +++ b/fs/pstore/platform.c
+> @@ -461,31 +461,14 @@ static void pstore_unregister_kmsg(void)
+>  #ifdef CONFIG_PSTORE_CONSOLE
+>  static void pstore_console_write(struct console *con, const char *s, unsigned c)
+>  {
+> -	const char *e = s + c;
+> +	struct pstore_record record;
+>  
+> -	while (s < e) {
+> -		struct pstore_record record;
+> -		unsigned long flags;
+> -
+> -		pstore_record_init(&record, psinfo);
+> -		record.type = PSTORE_TYPE_CONSOLE;
+> -
+> -		if (c > psinfo->bufsize)
+> -			c = psinfo->bufsize;
+> +	pstore_record_init(&record, psinfo);
+> +	record.type = PSTORE_TYPE_CONSOLE;
+>  
+> -		if (oops_in_progress) {
+> -			if (!spin_trylock_irqsave(&psinfo->buf_lock, flags))
+> -				break;
+> -		} else {
+> -			spin_lock_irqsave(&psinfo->buf_lock, flags);
+> -		}
+> -		record.buf = (char *)s;
+> -		record.size = c;
+> -		psinfo->write(&record);
+> -		spin_unlock_irqrestore(&psinfo->buf_lock, flags);
+> -		s += c;
+> -		c = e - s;
+> -	}
+> +	record.buf = (char *)s;
+> +	record.size = c;
+> +	psinfo->write(&record);
+>  }
+>  
+>  static struct console pstore_console = {
+> -- 
+> 2.17.1
+> 
