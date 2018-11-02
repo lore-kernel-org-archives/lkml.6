@@ -2,210 +2,102 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97980C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:52:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA6DC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:54:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43A2720657
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:52:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE52520657
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:54:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="I+7bP+rH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43A2720657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kMeQWfmI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE52520657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727734AbeKCA7d (ORCPT
+        id S1727818AbeKCBB7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 20:59:33 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:44254 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726713AbeKCA7d (ORCPT
+        Fri, 2 Nov 2018 21:01:59 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:45038 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726985AbeKCBB7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 20:59:33 -0400
-Received: by mail-yw1-f67.google.com with SMTP id k6-v6so930491ywa.11
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 08:52:00 -0700 (PDT)
+        Fri, 2 Nov 2018 21:01:59 -0400
+Received: by mail-qk1-f196.google.com with SMTP id n12so3727803qkh.11;
+        Fri, 02 Nov 2018 08:54:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Qv7IoKjig1gc3J/CUecwIgnlYcDydbRPK8/Q8reJzlI=;
-        b=I+7bP+rHeE85DBmu6lxQ5yKDx+DptEnK9WuAdHJufCtjt77t0qTemmKCba9kll7Srj
-         UqZz2Dy4V6WpjNZVN2hV5FfGiUmBC/+BZA7RVp22aCBnW9zQWR2eMsMH4kNOv7EVmnwI
-         QC2Ba3fKhu7AHRKZdL77+iGgt2t3Au1IitAqM=
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=AJsFJG6pVgdD7TFuZL47wJEnsgE1IRl/yFv0YTPAzHo=;
+        b=kMeQWfmITBXoSFiFhkGGvIr4EIhmIaeqLpV1DNS0jmY3I9SpSkckPmQaZG03nxhVni
+         tGzZ8GZiEFdnjAudjtZmhPhzddqYH0IbSNnsbeFb5c3AEeD2CKWQvhGCYLkixuMz0heA
+         I8QzbvFprtjT033WAbni8XT2bIcN6qwIPir1fntTXqV2iPfeMxqdAmbhEB09AM62pNY8
+         u2EhY0C5ccj433ZsRJ73xgdLM3ghfJIyBRk3pcqDYag5ZDHs8dfqRvEpJd+il1qf9IAE
+         OSWECSGEEhTcWPDm84xy/T+Ec5c9SAk7T79O3bk0Tk3XQoQchlKrBnB/NaUJgqd5JirU
+         wIjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Qv7IoKjig1gc3J/CUecwIgnlYcDydbRPK8/Q8reJzlI=;
-        b=OfJVwmbTYy5eoBkko05QnjJ9unLHarixCedl2HY8/XJKOcbHC8khABtFI6f6QwToln
-         9mBBSBmfsseVIXzE2GB9DuzE3o5957g5VUzTga9S0YbFzkALYojHWaC1zcwdQWK/b2aX
-         ypg35quBNOJiacmFiP8VV8quX7VBvU0NfybbwR5OtIxCGEQX1vw5YfGyG0REvs4ReiJW
-         C3RBwIvFACdUSTC3ze+dIyUD6sYXVccnZO5SlTuY1HKdRyjlHTHKRGz5wX+7aOAkJZ2U
-         GNRj0/MkL1+t+JEwyOfSZQdbFxbtQTgir+ixhG5vLsX+JEmzuGum1jNgSHeytOAa5wDb
-         DT8A==
-X-Gm-Message-State: AGRZ1gLKmGc5BUwl7r9X6pWQBpAKOAzeR99aGQ5BcWXLYHfnACdvaO58
-        Bd7l7fzOtM/g7MTiJOHDZmelx15iYnE=
-X-Google-Smtp-Source: AJdET5c/9zv6SUmixweqiLcXBOJLLVPysScfSjZ2u6cMilt088rTAlYFXBeIK2yv7fgOaNLDeW4+1w==
-X-Received: by 2002:a81:22c3:: with SMTP id i186-v6mr11262014ywi.43.1541173919337;
-        Fri, 02 Nov 2018 08:51:59 -0700 (PDT)
-Received: from mail-yw1-f46.google.com (mail-yw1-f46.google.com. [209.85.161.46])
-        by smtp.gmail.com with ESMTPSA id r18-v6sm17350199ywa.16.2018.11.02.08.51.57
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 02 Nov 2018 08:51:57 -0700 (PDT)
-Received: by mail-yw1-f46.google.com with SMTP id j75-v6so934101ywj.10
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 08:51:57 -0700 (PDT)
-X-Received: by 2002:a0d:e984:: with SMTP id s126-v6mr10100710ywe.47.1541173916399;
- Fri, 02 Nov 2018 08:51:56 -0700 (PDT)
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=AJsFJG6pVgdD7TFuZL47wJEnsgE1IRl/yFv0YTPAzHo=;
+        b=fv4NV3w0u42DAZPo2F3LpPJ+mkRffjqRAPFJ6JQec7EQ7pFuUcf2g/CW55VgbxQ/37
+         Knjh9ilJZ8VPJ2px2eX6TZvI3fkDz0TdtxbDo9bIpSuJGin4x7mItmzrOYFKNVc2hmrZ
+         cmiOdhbuf+tAzQk6vvLd262o90yGueeM3iVB66oqzmlfEMMyHhXAjIL2fuHsm4iv6VkY
+         vQoPsV8zq0jZIOWTcK1nvAUPK/0cVD0iZxRkJgMvuk/9047THAL/Lzhgh61WzrwNaeg4
+         v3fMfWpxW9zI4cZjDgPeHmOrGWw86jSiaepvBQV54FW2Od/OZ7MiywnTdxgq0wh9NUyK
+         HoBg==
+X-Gm-Message-State: AGRZ1gJbb071V5JSzWakhyJz8/7G8VKr9FoACTNS8d+Czz8NRmFAnueV
+        JUi8T7zQv74biwvnUrZMHPz6UzBcSm4bI7ojdYk=
+X-Google-Smtp-Source: AJdET5dKFUaWXbxX0Q15kYXn64+xuQAXCosZwsUZjfnq63PheWwp/IJG8ADpae17roXFF+Hz43so91s4sd4JjMOxxA4=
+X-Received: by 2002:a0c:e202:: with SMTP id q2mr11056294qvl.180.1541174065689;
+ Fri, 02 Nov 2018 08:54:25 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Fri, 2 Nov 2018 08:51:55 -0700 (PDT)
-In-Reply-To: <CAEn-LTr6eTgy4HsxT2y_LhXXtQczJNZmQJdY-em-maDOcFL9fA@mail.gmail.com>
-References: <CAEn-LTonSqSG8GtgVmwt7ToJ2NZKsGEaWndmA0Q7Lzm316CFbA@mail.gmail.com>
- <mhng-71c7a4db-432a-4f97-86cd-1fe16091a6c8@palmer-si-x1c4> <CAEn-LTr6eTgy4HsxT2y_LhXXtQczJNZmQJdY-em-maDOcFL9fA@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Fri, 2 Nov 2018 08:51:55 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jLhDxRHYe2kZ3wDJThsbkDMsZHt3ufM7YG_L0y0fU+brw@mail.gmail.com>
-Message-ID: <CAGXu5jLhDxRHYe2kZ3wDJThsbkDMsZHt3ufM7YG_L0y0fU+brw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] RISC-V: Add support for SECCOMP
-To:     David Abdurachmanov <david.abdurachmanov@gmail.com>
-Cc:     Palmer Dabbelt <palmer@sifive.com>,
-        Paul Moore <paul@paul-moore.com>,
-        linux-riscv@lists.infradead.org, Albert Ou <aou@eecs.berkeley.edu>,
-        Eric Paris <eparis@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>,
-        Wesley Terpstra <wesley@sifive.com>,
-        David Howells <dhowells@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Audit <linux-audit@redhat.com>
+Received: by 2002:a0c:9881:0:0:0:0:0 with HTTP; Fri, 2 Nov 2018 08:54:25 -0700 (PDT)
+In-Reply-To: <CAK7LNAQbBG=KV5Q8o5-JiNCswuse94jECoqT+T+UEY7bLCRPNw@mail.gmail.com>
+References: <20181031145907.1ee2e866@canb.auug.org.au> <661e44c7-396a-6d58-efa7-ed292f2677c6@infradead.org>
+ <CAK8P3a3aygFrD3PyZ8P==JzeYamE-x--MWCL54xzXDE_8u_R6Q@mail.gmail.com>
+ <CAK7LNATirQwke8tqk5XukhkwKra6mWEXZ3AHcywNcwGFD2-voA@mail.gmail.com>
+ <20181101142946.u5luuctqav6fec6k@mail.google.com> <CAK7LNAQbBG=KV5Q8o5-JiNCswuse94jECoqT+T+UEY7bLCRPNw@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 2 Nov 2018 16:54:25 +0100
+X-Google-Sender-Auth: i2Ha_WwgYgNAriqGy2nvqxiKseY
+Message-ID: <CAK8P3a1w8p8OC-9_0mtMUxEojvyVfXvF8Ka4J7TnoyZ=gr2Fow@mail.gmail.com>
+Subject: Re: linux-next: Tree for Oct 31 (vboxguest)
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Changbin Du <changbin.du@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 2, 2018 at 6:32 AM, David Abdurachmanov
-<david.abdurachmanov@gmail.com> wrote:
-> On Mon, Oct 29, 2018 at 9:27 PM Palmer Dabbelt <palmer@sifive.com> wrote:
->>
->> On Sun, 28 Oct 2018 04:07:55 PDT (-0700), david.abdurachmanov@gmail.com wrote:
->> > On Thu, Oct 25, 2018 at 10:36 PM Paul Moore <paul@paul-moore.com> wrote:
->> >>
->> >> On Thu, Oct 25, 2018 at 2:31 PM David Abdurachmanov
->> >> <david.abdurachmanov@gmail.com> wrote:
->> >> > On Wed, Oct 24, 2018 at 10:40 PM Palmer Dabbelt <palmer@sifive.com> wrote:
->> >> > > From: "Wesley W. Terpstra" <wesley@sifive.com>
->> >>
->> >> ...
->> >>
->> >> > Palmer,
->> >> >
->> >> > Half of the patch seems to touch audit parts. I started working on audit
->> >> > support this morning, and I can boot Fedora with audit traces.
->> >> >
->> >> > [root@fedora-riscv ~]# dmesg | grep audit
->> >> > [    0.312000] audit: initializing netlink subsys (disabled)
->> >> > [    0.316000] audit: type=2000 audit(0.316:1): state=initialized
->> >> > audit_enabled=0 res=1
->> >> > [    7.288000] audit: type=1130 audit(1529665913.772:2): pid=1 uid=0
->> >> > auid=4294967295 ses=4294967295 msg='unit=systemd-remount-fs
->> >> > comm="systemd" exe="/usr/lib/systemd/systemd" hostname=? addr=?
->> >> > terminal=? res=success'
->> >> > [    7.684000] audit: type=1130 audit(1529665914.176:3): pid=1 uid=0
->> >> > auid=4294967295 ses=4294967295 msg='unit=systemd-sysctl comm="systemd"
->> >> > exe="/usr/lib/systemd/systemd" hostname=? addr=? terminal=?
->> >> > res=success'
->> >> > [..]
->> >> >
->> >> > I am still working on audit user-space support for better testing.
->> >> >
->> >> > I suggest we first implement audit and then seccomp.
->> >>
->> >> FYI, while small and far from comprehensive, we do have a test suite
->> >> we use for basic validation of the audit kernel bits which may be
->> >> helpful while you're working on the audit enablement:
->> >>
->> >> * https://github.com/linux-audit/audit-testsuite
->> >
->> > Currently I checked the following to work:
->> > - /proc/self/loginuid (required by DNF [package manager])
->> > - auditctl (checked several different example rules from internet)
->> > - aulast
->> > - aulastlog
->> > - ausearch
->> > - ausyscall
->> > - aureport
->> > - autrace (compared some syscalls to strace: order and
->> >   return value/input arguments seems to be correct)
->> >
->> > I checked audit-testsuite yesterday and it seems to be only for
->> > x86-64 / x86-32. After adjusting it (MODE, syscalls) I am at:
->> >
->> > Failed 4/14 test programs. 19/88 subtests failed.
->> >
->> > I don't plan to look further in the failure, e.g.:
->> > - syscall_socketcall: that's an old stuff and not relevant to
->> >   new arches
->> > - syscall_module: Fedora kernel currently is not compiled
->> >   with kernel loadable module support
->> > - filter_exclude: two tests fail because id -Z doesn't print
->> >   any categories, but "semanage login -l" output is identical
->> >   between x86_64 and riscv64
->> > - netfilter_pkt: don't have CONFIG_IP_NF_MANGLE enabled
->> >
->> > Fedora kernel currently has minimal CONFIG_* options
->> > and is built without loadable module support.
->> >
->> > I will send the patches for review soon.
->>
->> Thanks!
+On 11/2/18, Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+> On Thu, Nov 1, 2018 at 11:32 PM Changbin Du <changbin.du@gmail.com> wrote:
+>> On Thu, Nov 01, 2018 at 12:32:48PM +0900, Masahiro Yamada wrote:
 >
-> I fixed the last issue I see with SECCOMP this morning.
-
-Can you CC me on the series? I'd love to take a look.
-
-> I also have patch on top of libseccomp-2.3.3.
-
-Nice! If you toss it up on github I can review that too. :)
-
--Kees
-
+> How about clang?
 >
-> Testsuite results for SIM:
+> For clang, -Og might be equivalent to -O1 at this moment, but I am not
+> sure.
 >
-> Regression Test Summary
->  tests run: 4434
->  tests skipped: 88
->  tests passed: 4434
->  tests failed: 0
->  tests errored: 0
+> In my understanding, Clang does not inline functions marked with 'static
+> inline'
+> for -Og (or -O1) optimization level.
 >
-> Testsuite results for LIVE:
->
-> Regression Test Summary
->  tests run: 6
->  tests skipped: 0
->  tests passed: 6
->  tests failed: 0
->  tests errored: 0
->
-> Then tested a couple examples manually w/ and w/o BPF and it
-> performed the same as on x86_64 (also checked exit codes &
-> strace output).
->
-> Upstream libseccomp has now more tests. Once I rebase & re-test
-> with master of libseccomp, I will send both.
->
-> david
+> Theoretically, 'inline' keyword is a just hint for the compiler, after all.
 
+I think this means that we cannot build the kernel in that configuration,
+at least with CONFIG_OPTIMIZE_INLINING=y. Without that option,
+every 'inline' becomes 'always_inline'.
 
-
--- 
-Kees Cook
+       Arnd
