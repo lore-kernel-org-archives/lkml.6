@@ -2,108 +2,93 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 521D6C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 20:18:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E02EAC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 20:20:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D63B2082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 20:18:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A1A72082E
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 20:20:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="uGN7WWU5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D63B2082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cR6yww0+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A1A72082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728116AbeKCF1N (ORCPT
+        id S1727229AbeKCF2q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 01:27:13 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38519 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727007AbeKCF1M (ORCPT
+        Sat, 3 Nov 2018 01:28:46 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:34109 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725889AbeKCF2q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 01:27:12 -0400
-Received: by mail-pl1-f196.google.com with SMTP id p7-v6so1495804plk.5
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 13:18:38 -0700 (PDT)
+        Sat, 3 Nov 2018 01:28:46 -0400
+Received: by mail-oi1-f194.google.com with SMTP id f21-v6so2626060oig.1;
+        Fri, 02 Nov 2018 13:20:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=fmXmL1drLK2jBMrqIWQlv81ucFSfJxj9YZfzsbzZC/Q=;
-        b=uGN7WWU5EXXelnqbKeZfxOm9szf3DuzWeuaEawriIOk7oH3SfMxr9Dz/V7+I2W2gfw
-         /bFfz3UwvJ57hN1XLpoXlgEiAP4FnyJaAibwdJ0Zf1qOoYF/cwq9aaGSlxuk6wqGdwbU
-         mbrhCCqGpAhmcq+jgEsnvZh6RLUlVQJwDrZrXrnU/RuPBkzoU5l9D9ED/hkiSwcgdLq0
-         6fo1Jz8jWSRHDN7+fpXMgyu/f7I4bW+5AjtMdSHVkvFhh1xJL8EXbNofxbOGT5onVYiZ
-         dL/rqZ4dOLAmLOEeWKWBPTK9T63QeYgXJxE/gDUI7qhBFctl8dBkjgPaCWKSFcPccjM6
-         VSIw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rQV72AaQlDOU/+IelFQFot6Wn7joXYVUm6oQSWMCjAQ=;
+        b=cR6yww0+0ML19DF/N8hjoTU2V/XgbVe7TBsKCeP0k50bM8sXDdfiq18XyXy1TskL9i
+         Szntnjf1ompx1W7YRu/1X3p40aE9Zbhr0dSAevQkeayZYigFi7dt3LvLi4Yhd/GmBTaj
+         ClfGHU6fK2ronlWee+iWA106i73p98Gin4Dbl5IBoQJKAm+WIZVcDunEEVDZ3tG3+IWL
+         Eqh3d4koeP9DnQZuGdLJMkijZ9bWCEOcn5pOaYppeUycVx9chofN1UW4aBI4Ri6FYjnj
+         BirW0fTbOVYG5uvrOw3nC/oemCk3tbTF+ngKma2wLYhred/9oHVDleQuPm4Wn5w60CUY
+         CHaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=fmXmL1drLK2jBMrqIWQlv81ucFSfJxj9YZfzsbzZC/Q=;
-        b=XSFZjOXYFWYaxkhbvrhwUURsAjFZl2FUqaL6ilxGjpdnqzrUK69qlQUDFdpw77bxaq
-         BiYjuVtTcm6XEziiIqMVrmapgBVCcLfEaI4X1DlINQRRiB36TcvoLLvjBx3HeQXVH2ZX
-         ZcVu/o1KKvBx38UzOkUqSq5sDg9qN/DZ/b8XXIbkVHK5MEsOsiyADF3QL8dFBSw4XnAm
-         Mp4GAWbptGZPD5uABVTv/BPECPUTActfV4DDbEwst+abvfP9MV9bmgjBmI/mgWMOLOCi
-         bUynwyn0NngZNABPzNvtIQ3LQm3Df+PFPjJCb1v8Gpd6GqXAfM2bP8VVjjXVvSe2ibyR
-         YPBw==
-X-Gm-Message-State: AGRZ1gIi7Po7W4ijd4DKbWbVHRJDcR52oLNiQgMe0XzqniiEGZu8UG2u
-        aTA5hAo+n797ioUbzstWVuVbfQ==
-X-Google-Smtp-Source: AJdET5dYVR94n1U9uTV/NbX8cOb0zt+D0C3O9FlKFZYp2AnPhw+TO/T9wXK317tCJs15VjfhCzIZEA==
-X-Received: by 2002:a17:902:7408:: with SMTP id g8-v6mr12658380pll.168.1541189917614;
-        Fri, 02 Nov 2018 13:18:37 -0700 (PDT)
-Received: from localhost.localdomain ([128.107.241.162])
-        by smtp.gmail.com with ESMTPSA id h62-v6sm26641676pfg.27.2018.11.02.13.18.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 02 Nov 2018 13:18:36 -0700 (PDT)
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Christine Caulfield <ccaulfie@redhat.com>,
-        David Teigland <teigland@redhat.com>
-Cc:     cluster-devel@redhat.com, linux-kernel@vger.kernel.org,
-        Tycho Andersen <tycho@tycho.ws>
-Subject: [PATCH 3/3] dlm: don't leak kernel pointer to userspace
-Date:   Fri,  2 Nov 2018 14:18:22 -0600
-Message-Id: <20181102201822.12518-4-tycho@tycho.ws>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181102201822.12518-1-tycho@tycho.ws>
-References: <20181102201822.12518-1-tycho@tycho.ws>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rQV72AaQlDOU/+IelFQFot6Wn7joXYVUm6oQSWMCjAQ=;
+        b=GW3XVSQNBMeFXVnv6nu9zu795iW6DHh8Gjb0+LNQ80ZNCaLFbUqsSgz6ABHfHm9EBz
+         j0+mdhpukfFIOpoPytXHUDNF+YbtooZxWCb4gzyg7r59cdS4F3/lfNuuhiD2YtSZlskU
+         6euuVk5aGKWRpVmbICjqE3RuUQbV4PeEdfh7ZujWC75q4s2AXwyvgzz6ww+jL5YEmkZo
+         IM4WPczE4KlL7neNb3yEOPgbMughwAeuSsew1EuQZmIDf+cpuQk0cL/QTBMleWILMIGy
+         62eayYo31M76GCjbfXJnE7UfORQw+oDKYrLLk3EaRDrhZhE65eEN4JyB2bBpNKYu6C0U
+         VOjQ==
+X-Gm-Message-State: AGRZ1gI5QbyS7Az3qUDZj53JCdhyma5eJyG7z1z5ccAOxos+arvnn+j5
+        233GoZMaxHXeNgxyZhmoq8IBMlrJqLH/wxuhL4g=
+X-Google-Smtp-Source: AJdET5eurYhCYD3nEGiWTRwVD8PFK9aun5T0FABkfT8f7REQN2bLafxB2F6vT896o2J9ITavIqpZfMyibUGG9rSvz70=
+X-Received: by 2002:a54:4406:: with SMTP id k6-v6mr7962222oiw.300.1541190011831;
+ Fri, 02 Nov 2018 13:20:11 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181102182857.064326086@linuxfoundation.org> <20181102182901.303280657@linuxfoundation.org>
+In-Reply-To: <20181102182901.303280657@linuxfoundation.org>
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Date:   Fri, 2 Nov 2018 20:19:36 +0000
+Message-ID: <CADVatmNE4VcpjoEKdXTf_d0_M27shgB+x6FiXo1-JzRf+0sw9w@mail.gmail.com>
+Subject: Re: [PATCH 4.14 053/143] x86/power: Fix some ordering bugs in __restore_processor_context()
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, a.p.zijlstra@chello.nl,
+        Borislav Petkov <bp@alien8.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>, sashal@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In copy_result_to_user(), we first create a struct dlm_lock_result, which
-contains a struct dlm_lksb, the last member of which is a pointer to the
-lvb. Unfortunately, we copy the entire struct dlm_lksb to the result
-struct, which is then copied to userspace at the end of the function,
-leaking the contents of sb_lvbptr, which is a valid kernel pointer in some
-cases (indeed, later in the same function the data it points to is copied
-to userspace).
+Hi Greg,
 
-It is an error to leak kernel pointers to userspace, as it undermines KASLR
-protections (see e.g. 65eea8edc31 ("floppy: Do not copy a kernel pointer to
-user memory in FDGETPRM ioctl") for another example of this).
+On Fri, Nov 2, 2018 at 6:51 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> 4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Tycho Andersen <tycho@tycho.ws>
----
- fs/dlm/user.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This has been fixed by another upstream commit:
+7ee18d677989 ("x86/power: Make restore_processor_context() sane")
 
-diff --git a/fs/dlm/user.c b/fs/dlm/user.c
-index 2a669390cd7f..13f29409600b 100644
---- a/fs/dlm/user.c
-+++ b/fs/dlm/user.c
-@@ -702,7 +702,7 @@ static int copy_result_to_user(struct dlm_user_args *ua, int compat,
- 	result.version[0] = DLM_DEVICE_VERSION_MAJOR;
- 	result.version[1] = DLM_DEVICE_VERSION_MINOR;
- 	result.version[2] = DLM_DEVICE_VERSION_PATCH;
--	memcpy(&result.lksb, &ua->lksb, sizeof(struct dlm_lksb));
-+	memcpy(&result.lksb, &ua->lksb, offsetof(struct dlm_lksb, sb_lvbptr));
- 	result.user_lksb = ua->user_lksb;
- 
- 	/* FIXME: dlm1 provides for the user's bastparam/addr to not be updated
+You can not directly apply it, will need backporting.
+
 -- 
-2.17.1
-
+Regards
+Sudip
