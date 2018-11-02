@@ -2,167 +2,179 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C70DC6786F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 05:15:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F392C6786F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 05:22:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C64FA20833
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 05:15:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C64FA20833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	by mail.kernel.org (Postfix) with ESMTP id DD4152081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 05:22:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD4152081F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbeKBOVC (ORCPT
+        id S1727982AbeKBO23 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 10:21:02 -0400
-Received: from ipmail07.adl2.internode.on.net ([150.101.137.131]:33602 "EHLO
-        ipmail07.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727736AbeKBOVC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 10:21:02 -0400
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail07.adl2.internode.on.net with ESMTP; 02 Nov 2018 15:45:00 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1gIRnP-0001FE-Hl; Fri, 02 Nov 2018 16:14:59 +1100
-Date:   Fri, 2 Nov 2018 16:14:59 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     torvalds@linux-foundation.org
-Cc:     djwong@kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, sandeen@sandeen.net, david@fromorbit.com
-Subject: [GIT PULL] vfs: fix many problems in vfs clone/dedupe implementation
-Message-ID: <20181102051459.GS6311@dastard>
+        Fri, 2 Nov 2018 10:28:29 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36860 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727350AbeKBO23 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 10:28:29 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8A2F6A78;
+        Thu,  1 Nov 2018 22:22:35 -0700 (PDT)
+Received: from [10.163.1.105] (unknown [10.163.1.105])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 01D823F71D;
+        Thu,  1 Nov 2018 22:22:30 -0700 (PDT)
+Subject: Re: [PATCH] mm/thp: Correctly differentiate between mapped THP and
+ PMD migration entry
+To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "mhocko@suse.com" <mhocko@suse.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>
+References: <1539057538-27446-1-git-send-email-anshuman.khandual@arm.com>
+ <7E8E6B14-D5C4-4A30-840D-A7AB046517FB@cs.rutgers.edu>
+ <84509db4-13ce-fd53-e924-cc4288d493f7@arm.com>
+ <1968F276-5D96-426B-823F-38F6A51FB465@cs.rutgers.edu>
+ <5e0e772c-7eef-e75c-2921-e80d4fbe8324@arm.com>
+ <2398C491-E1DA-4B3C-B60A-377A09A02F1A@cs.rutgers.edu>
+ <796cb545-7376-16a2-db3e-bc9a6ca9894d@arm.com>
+ <5A0A88EF-4B86-4173-A506-DE19BDB786B8@cs.rutgers.edu>
+ <20181018021741.GA3603@hori1.linux.bs1.fc.nec.co.jp>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <ec71f76a-a8a6-ce33-c1bd-aef474fcfcbf@arm.com>
+Date:   Fri, 2 Nov 2018 10:52:25 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20181018021741.GA3603@hori1.linux.bs1.fc.nec.co.jp>
+Content-Type: text/plain; charset=iso-2022-jp
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+ 
 
-Can you please pull update containing a rework of the VFS clone and
-dedupe file range infrastructure from the tag listed below?
+On 10/18/2018 07:47 AM, Naoya Horiguchi wrote:
+> On Tue, Oct 16, 2018 at 10:31:50AM -0400, Zi Yan wrote:
+>> On 15 Oct 2018, at 0:06, Anshuman Khandual wrote:
+>>
+>>> On 10/15/2018 06:23 AM, Zi Yan wrote:
+>>>> On 12 Oct 2018, at 4:00, Anshuman Khandual wrote:
+>>>>
+>>>>> On 10/10/2018 06:13 PM, Zi Yan wrote:
+>>>>>> On 10 Oct 2018, at 0:05, Anshuman Khandual wrote:
+>>>>>>
+>>>>>>> On 10/09/2018 07:28 PM, Zi Yan wrote:
+>>>>>>>> cc: Naoya Horiguchi (who proposed to use !_PAGE_PRESENT && !_PAGE_PSE for x86
+>>>>>>>> PMD migration entry check)
+>>>>>>>>
+>>>>>>>> On 8 Oct 2018, at 23:58, Anshuman Khandual wrote:
+>>>>>>>>
+>>>>>>>>> A normal mapped THP page at PMD level should be correctly differentiated
+>>>>>>>>> from a PMD migration entry while walking the page table. A mapped THP would
+>>>>>>>>> additionally check positive for pmd_present() along with pmd_trans_huge()
+>>>>>>>>> as compared to a PMD migration entry. This just adds a new conditional test
+>>>>>>>>> differentiating the two while walking the page table.
+>>>>>>>>>
+>>>>>>>>> Fixes: 616b8371539a6 ("mm: thp: enable thp migration in generic path")
+>>>>>>>>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>>>>>>>>> ---
+>>>>>>>>> On X86, pmd_trans_huge() and is_pmd_migration_entry() are always mutually
+>>>>>>>>> exclusive which makes the current conditional block work for both mapped
+>>>>>>>>> and migration entries. This is not same with arm64 where pmd_trans_huge()
+>>>>>>>>
+>>>>>>>> !pmd_present() && pmd_trans_huge() is used to represent THPs under splitting,
+>>>>>>>
+>>>>>>> Not really if we just look at code in the conditional blocks.
+>>>>>>
+>>>>>> Yeah, I explained it wrong above. Sorry about that.
+>>>>>>
+>>>>>> In x86, pmd_present() checks (_PAGE_PRESENT | _PAGE_PROTNONE | _PAGE_PSE),
+>>>>>> thus, it returns true even if the present bit is cleared but PSE bit is set.
+>>>>>
+>>>>> Okay.
+>>>>>
+>>>>>> This is done so, because THPs under splitting are regarded as present in the kernel
+>>>>>> but not present when a hardware page table walker checks it.
+>>>>>
+>>>>> Okay.
+>>>>>
+>>>>>>
+>>>>>> For PMD migration entry, which should be regarded as not present, if PSE bit
+>>>>>> is set, which makes pmd_trans_huge() returns true, like ARM64 does, all
+>>>>>> PMD migration entries will be regarded as present
+>>>>>
+>>>>> Okay to make pmd_present() return false pmd_trans_huge() has to return false
+>>>>> as well. Is there anything which can be done to get around this problem on
+>>>>> X86 ? pmd_trans_huge() returning true for a migration entry sounds logical.
+>>>>> Otherwise we would revert the condition block order to accommodate both the
+>>>>> implementation for pmd_trans_huge() as suggested by Kirill before or just
+>>>>> consider this patch forward.
+>>>>>
+>>>>> Because I am not really sure yet about the idea of getting pmd_present()
+>>>>> check into pmd_trans_huge() on arm64 just to make it fit into this semantics
+>>>>> as suggested by Will. If a PMD is trans huge page or not should not depend on
+>>>>> whether it is present or not.
+>>>>
+>>>> In terms of THPs, we have three cases: a present THP, a THP under splitting,
+>>>> and a THP under migration. pmd_present() and pmd_trans_huge() both return true
+>>>> for a present THP and a THP under splitting, because they discover _PAGE_PSE bit
+>>>
+>>> Then how do we differentiate between a mapped THP and a splitting THP.
+>>
+>> AFAIK, in x86, there is no distinction between a mapped THP and a splitting THP
+>> using helper functions.
+>>
+>> A mapped THP has _PAGE_PRESENT bit and _PAGE_PSE bit set, whereas a splitting THP
+>> has only _PAGE_PSE bit set. But both pmd_present() and pmd_trans_huge() return
+>> true as long as _PAGE_PSE bit is set.
+>>
+>>>
+>>>> is set for both cases, whereas they both return false for a THP under migration.
+>>>> You want to change them to make pmd_trans_huge() returns true for a THP under migration
+>>>> instead of false to help ARM64’s support for THP migration.
+>>> I am just trying to understand the rationale behind this semantics and see where
+>>> it should be fixed.
+>>>
+>>> I think the fundamental problem here is that THP under split has been difficult
+>>> to be re-presented through the available helper functions and in turn PTE bits.
+>>>
+>>> The following checks
+>>>
+>>> 1) pmd_present()
+>>> 2) pmd_trans_huge()
+>>>
+>>> Represent three THP states
+>>>
+>>> 1) Mapped THP		(pmd_present && pmd_trans_huge)
+>>> 2) Splitting THP	(pmd_present && pmd_trans_huge)
+>>> 3) Migrating THP	(!pmd_present && !pmd_trans_huge)
+>>>
+>>> The problem is if we make pmd_trans_huge() return true for all the three states
+>>> which sounds logical because they are all still trans huge PMD, then pmd_present()
+>>> can only represent two states not three as required.
+>>
+>> We are on the same page about representing three THP states in x86.
+>> I also agree with you that it is logical to use three distinct representations
+>> for these three states, i.e. splitting THP could be changed to (!pmd_present && pmd_trans_huge).
+> 
+> I think that the behavior of pmd_trans_huge() for non-present pmd is
+> undefined by its nature. IOW, it's no use determining whether it's thp or
+> not for non-existing pages because it does not exist :)> 
+> So I think that the right direction is to make sure that pmd_trans_huge() is
+> never checked for non-present pmd, just like Kirill's suggestion.  And maybe
+> we have some room for engineering to ensure it (rather than just commenting it).
 
-We discovered many issues with these interfaces late in the 4.19
-cycle - the worst of them (data corruption, setuid stripping) were
-fixed for XFS in 4.19-rc8, but a larger rework of the infrastructure
-fixing all the problems was needed. That rework is the contents of
-this pull request.
-
-The base tree is 4.19 because there was an unrelated
-vfs_clone_file_range API cleanup merged in v4.19-rc7, and combined
-with the mods in 4.19-rc8 it was simpler for everyone to base this
-work on a tree with all those changes already in it.
-
-There is a simple conflict with your current tree in
-Documentation/filesystems/porting. However, if you pull Al's pending
-VFS tree before this there will also be a more significant conflict
-fs/read_write.c in the vfs_dedupe_file_range_one() function rework.
-The details of the conflict  and the resolution that the linux-next
-tree is carrying can be found here:
-
-https://lore.kernel.org/lkml/20181031115247.6adcb659@canb.auug.org.au/
-
-If you need any more info or a tree with the conflicts already
-resolved, please let me know.
-
-Thanks,
-
-Dave.
-
-PS. Darrick is back up to speed so the next XFS pull request for
-fixes later in the -rc cycle will probably come from him again.
-
-The following changes since commit 84df9525b0c27f3ebc2ebb1864fa62a97fdedb7d:
-
-  Linux 4.19 (2018-10-22 07:37:37 +0100)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux tags/xfs-4.20-merge-2
-
-for you to fetch changes up to bf4a1fcf0bc18d52cf0fce6571d6f327ab5eaf22:
-
-  xfs: remove [cm]time update from reflink calls (2018-10-30 10:47:48 +1100)
-
-----------------------------------------------------------------
-vfs: rework data cloning infrastructure
-
-Rework the vfs_clone_file_range and vfs_dedupe_file_range infrastructure to use
-a common .remap_file_range method and supply generic bounds and sanity checking
-functions that are shared with the data write path. The current VFS
-infrastructure has problems with rlimit, LFS file sizes, file time stamps,
-maximum filesystem file sizes, stripping setuid bits, etc and so they are
-addressed in these commits.
-
-We also introduce the ability for the ->remap_file_range methods to return short
-clones so that clones for vfs_copy_file_range() don't get rejected if the entire
-range can't be cloned. It also allows filesystems to sliently skip deduplication
-of partial EOF blocks if they are not capable of doing so without requiring
-errors to be thrown to userspace.
-
-All existing filesystems are converted to user the new .remap_file_range method,
-and both XFS and ocfs2 are modified to make use of the new generic checking
-infrastructure.
-
-----------------------------------------------------------------
-Darrick J. Wong (28):
-      vfs: vfs_clone_file_prep_inodes should return EINVAL for a clone from beyond EOF
-      vfs: check file ranges before cloning files
-      vfs: exit early from zero length remap operations
-      vfs: strengthen checking of file range inputs to generic_remap_checks
-      vfs: avoid problematic remapping requests into partial EOF block
-      vfs: skip zero-length dedupe requests
-      vfs: rename vfs_clone_file_prep to be more descriptive
-      vfs: rename clone_verify_area to remap_verify_area
-      vfs: combine the clone and dedupe into a single remap_file_range
-      vfs: pass remap flags to generic_remap_file_range_prep
-      vfs: pass remap flags to generic_remap_checks
-      vfs: remap helper should update destination inode metadata
-      vfs: make remap_file_range functions take and return bytes completed
-      vfs: plumb remap flags through the vfs clone functions
-      vfs: plumb remap flags through the vfs dedupe functions
-      vfs: enable remap callers that can handle short operations
-      vfs: hide file range comparison function
-      vfs: clean up generic_remap_file_range_prep return value
-      ocfs2: truncate page cache for clone destination file before remapping
-      ocfs2: fix pagecache truncation prior to reflink
-      ocfs2: support partial clone range and dedupe range
-      ocfs2: remove ocfs2_reflink_remap_range
-      xfs: fix pagecache truncation prior to reflink
-      xfs: clean up xfs_reflink_remap_blocks call site
-      xfs: support returning partial reflink results
-      xfs: remove redundant remap partial EOF block checks
-      xfs: remove xfs_reflink_remap_range
-      xfs: remove [cm]time update from reflink calls
-
- Documentation/filesystems/porting |   5 +
- Documentation/filesystems/vfs.txt |  22 ++-
- fs/btrfs/ctree.h                  |   8 +-
- fs/btrfs/file.c                   |   3 +-
- fs/btrfs/ioctl.c                  |  50 ++---
- fs/cifs/cifsfs.c                  |  24 ++-
- fs/ioctl.c                        |  10 +-
- fs/nfs/nfs4file.c                 |  12 +-
- fs/nfsd/vfs.c                     |   8 +-
- fs/ocfs2/file.c                   |  93 +++++++--
- fs/ocfs2/refcounttree.c           | 148 ++++----------
- fs/ocfs2/refcounttree.h           |  24 ++-
- fs/overlayfs/copy_up.c            |   6 +-
- fs/overlayfs/file.c               |  43 ++--
- fs/read_write.c                   | 403 +++++++++++++++++++++-----------------
- fs/xfs/xfs_file.c                 |  82 +++++---
- fs/xfs/xfs_reflink.c              | 173 ++++------------
- fs/xfs/xfs_reflink.h              |  15 +-
- include/linux/fs.h                |  55 ++++--
- mm/filemap.c                      | 146 +++++++++++---
- 20 files changed, 734 insertions(+), 596 deletions(-)
--- 
-Dave Chinner
-david@fromorbit.com
+Agreed, pmd_trans_huge() does not make sense for a migration or a swap entry
+and should not be checked on them.
