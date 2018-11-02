@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D0AC65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:37:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AB24C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:37:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 330E62082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:37:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B28F2082E
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:37:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JEvLdL7u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 330E62082D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2rSO2e1u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B28F2082E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728631AbeKCDpu (ORCPT
+        id S1728651AbeKCDpx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:45:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39472 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:45:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727556AbeKCDpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:45:50 -0400
+        id S1727556AbeKCDpx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:45:53 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0FFF2081B;
-        Fri,  2 Nov 2018 18:37:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD5F52081B;
+        Fri,  2 Nov 2018 18:37:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541183859;
-        bh=wSFPyrk7T+BCyIjrTUcj08ZAYQt9jDvuyWMk+nFbmlM=;
+        s=default; t=1541183862;
+        bh=aioBmV3gd3Ky3gFkzBPwB7CyPS19jILqYkIhJdbaZno=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JEvLdL7uDwpH1XVQOcyKQ0fVbn6vbqIoY1WSzgmyep2eXoHxX49pNVaCbpsQtuR7u
-         aDdwtKGQSe9XRwMoHmM3yeZPD3CFlNfl3eU5Yb+QLQ0fzq5olL2OxffCPl7xSkxAke
-         WUziq+y27Mjhhgd2SbZVvlE6JWvtxtt5FvfZ4CWU=
+        b=2rSO2e1uLh4CgMEcpeKC+oSfyNLIoKieJBHYr/Sm83CHXiWw3UsTJ6iHajLp2RMnY
+         m2GOvDYg/lAvSpyQL4CjR8KyLyPjfDIKrfMC2xsPRPDVlCGGrDRxTEpxnBLYjMIdeI
+         wX4UaGR9xWQvKJi/fKMMcQms7/VN88lfsyLms0PU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Jaime=20Caama=C3=B1o=20Ruiz?= <jcaamano@suse.com>,
-        Greg Rose <gvrose8192@gmail.com>,
+        stable@vger.kernel.org, Stefano Brivio <sbrivio@redhat.com>,
+        Sabrina Dubroca <sd@queasysnail.net>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 11/24] openvswitch: Fix push/pop ethernet validation
-Date:   Fri,  2 Nov 2018 19:34:44 +0100
-Message-Id: <20181102182841.472413721@linuxfoundation.org>
+Subject: [PATCH 4.19 02/24] ipv6/ndisc: Preserve IPv6 control buffer if protocol error handlers are called
+Date:   Fri,  2 Nov 2018 19:34:35 +0100
+Message-Id: <20181102182840.089362316@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182839.725385066@linuxfoundation.org>
 References: <20181102182839.725385066@linuxfoundation.org>
@@ -64,46 +63,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Jaime Caamaño Ruiz" <jcaamano@suse.com>
+From: Stefano Brivio <sbrivio@redhat.com>
 
-[ Upstream commit 46ebe2834ba5b541f28ee72e556a3fed42c47570 ]
+[ Upstream commit ee1abcf689353f36d9322231b4320926096bdee0 ]
 
-When there are both pop and push ethernet header actions among the
-actions to be applied to a packet, an unexpected EINVAL (Invalid
-argument) error is obtained. This is due to mac_proto not being reset
-correctly when those actions are validated.
+Commit a61bbcf28a8c ("[NET]: Store skb->timestamp as offset to a base
+timestamp") introduces a neighbour control buffer and zeroes it out in
+ndisc_rcv(), as ndisc_recv_ns() uses it.
 
-Reported-at:
-https://mail.openvswitch.org/pipermail/ovs-discuss/2018-October/047554.html
-Fixes: 91820da6ae85 ("openvswitch: add Ethernet push and pop actions")
-Signed-off-by: Jaime CaamaÃ±o Ruiz <jcaamano@suse.com>
-Tested-by: Greg Rose <gvrose8192@gmail.com>
-Reviewed-by: Greg Rose <gvrose8192@gmail.com>
+Commit f2776ff04722 ("[IPV6]: Fix address/interface handling in UDP and
+DCCP, according to the scoping architecture.") introduces the usage of the
+IPv6 control buffer in protocol error handlers (e.g. inet6_iif() in
+present-day __udp6_lib_err()).
+
+Now, with commit b94f1c0904da ("ipv6: Use icmpv6_notify() to propagate
+redirect, instead of rt6_redirect()."), we call protocol error handlers
+from ndisc_redirect_rcv(), after the control buffer is already stolen and
+some parts are already zeroed out. This implies that inet6_iif() on this
+path will always return zero.
+
+This gives unexpected results on UDP socket lookup in __udp6_lib_err(), as
+we might actually need to match sockets for a given interface.
+
+Instead of always claiming the control buffer in ndisc_rcv(), do that only
+when needed.
+
+Fixes: b94f1c0904da ("ipv6: Use icmpv6_notify() to propagate redirect, instead of rt6_redirect().")
+Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
+Reviewed-by: Sabrina Dubroca <sd@queasysnail.net>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/openvswitch/flow_netlink.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/ipv6/ndisc.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/net/openvswitch/flow_netlink.c
-+++ b/net/openvswitch/flow_netlink.c
-@@ -3030,7 +3030,7 @@ static int __ovs_nla_copy_actions(struct
- 			 * is already present */
- 			if (mac_proto != MAC_PROTO_NONE)
- 				return -EINVAL;
--			mac_proto = MAC_PROTO_NONE;
-+			mac_proto = MAC_PROTO_ETHERNET;
- 			break;
+--- a/net/ipv6/ndisc.c
++++ b/net/ipv6/ndisc.c
+@@ -1732,10 +1732,9 @@ int ndisc_rcv(struct sk_buff *skb)
+ 		return 0;
+ 	}
  
- 		case OVS_ACTION_ATTR_POP_ETH:
-@@ -3038,7 +3038,7 @@ static int __ovs_nla_copy_actions(struct
- 				return -EINVAL;
- 			if (vlan_tci & htons(VLAN_TAG_PRESENT))
- 				return -EINVAL;
--			mac_proto = MAC_PROTO_ETHERNET;
-+			mac_proto = MAC_PROTO_NONE;
- 			break;
+-	memset(NEIGH_CB(skb), 0, sizeof(struct neighbour_cb));
+-
+ 	switch (msg->icmph.icmp6_type) {
+ 	case NDISC_NEIGHBOUR_SOLICITATION:
++		memset(NEIGH_CB(skb), 0, sizeof(struct neighbour_cb));
+ 		ndisc_recv_ns(skb);
+ 		break;
  
- 		case OVS_ACTION_ATTR_PUSH_NSH:
 
 
