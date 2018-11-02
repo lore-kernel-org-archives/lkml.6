@@ -2,143 +2,109 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44546C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:04:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74AF8C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:04:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 122A22081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:04:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 122A22081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id 39B182081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:04:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="Cn0e+4wA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39B182081F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbeKBULh (ORCPT
+        id S1726893AbeKBULj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 16:11:37 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:40051 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726104AbeKBULg (ORCPT
+        Fri, 2 Nov 2018 16:11:39 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:39148 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726104AbeKBULi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 16:11:36 -0400
-Received: by mail-lf1-f68.google.com with SMTP id n3-v6so1039074lfe.7;
-        Fri, 02 Nov 2018 04:04:49 -0700 (PDT)
+        Fri, 2 Nov 2018 16:11:38 -0400
+Received: by mail-lf1-f66.google.com with SMTP id n18so1041511lfh.6
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 04:04:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=lhSjwNHBReTxgjhb9toe+yAvJ/7Ca7xGfbc0fBL21HQ=;
+        b=Cn0e+4wAZmdOwpCqlSLwBO75MnZqnfMzHH/Sqbeqf/qghFZHOGzONJ04dNHUmL0l8+
+         z74MEPpG3q0LizFFJ7UHc/tB12l6Wkh4EeiHXU1PIjjdKyJDEw+wGHmc+Glfpon5yLhk
+         D0G8sHu8VB8cm2YKZawlRIwiS3+8ZuEoulBcI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RJLBWPTobejOHjhshGYxLBc/kfbkjwTRvM5ai8I8Bw0=;
-        b=n3vHO9KXoqSoo8xSv14zyN9BkoFwwpO8aZIKRsf9EkugHASeYfM5nlTICBglSjJMWO
-         pJUQDOnYzqOdSs2n2bHFL+tSiNL2wYfAjYOBzd5REmvTr1KHI0xAUFdtHoa4caj8jRSI
-         hKUKlkGRXTFXK7cIgfPXQVkrBXa86QghNXFYOYHk51YNea4Q5ex6DixRnEgbCFGwYOEQ
-         tV0S0MX5oDWzSL0Tua6gbbIN70N77y/1nvMki9VeYh1U1K+W29Gkch/qE6hXMdIGzlwx
-         N76pkF1ow63ySupoBLZ/EjaDYVX1DCEUI6w8tx6fx0JzAdYNvK8Tug5AnrTSNwOhhDFT
-         aX+g==
-X-Gm-Message-State: AGRZ1gJXvlUvR2sLqIjeTKX1bsK/rN3b+h1G4W5HhOC/0uFYEiobbJFM
-        EFTbvBno4AzJVwJqWYrfybw=
-X-Google-Smtp-Source: AJdET5e35/vKv7iA3Xh9gFr8i8h2SbcXQIHhDKKLWUasPAu8tofQ+Tnr5qS+7G3vwILJclyQrH0z4Q==
-X-Received: by 2002:a19:2106:: with SMTP id h6mr6505915lfh.29.1541156688851;
-        Fri, 02 Nov 2018 04:04:48 -0700 (PDT)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id v19-v6sm5283112lji.10.2018.11.02.04.04.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 02 Nov 2018 04:04:48 -0700 (PDT)
-Date:   Fri, 2 Nov 2018 13:04:45 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     corbet@lwn.net, mturquette@baylibre.com, sboyd@kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= 
-        <b.zolnierkie@samsung.com>, linux@armlinux.org.uk,
-        andy.gross@linaro.org, david.brown@linaro.org, kgene@kernel.org,
-        s.nawrocki@samsung.com, Tomasz Figa <tomasz.figa@gmail.com>,
-        andrew.smirnov@gmail.com, sre@kernel.org, linux@roeck-us.net,
-        robh@kernel.org, sjhuang@iluvatar.ai, Akshu.Agrawal@amd.com,
-        rafael.j.wysocki@intel.com, djkurtz@chromium.org,
-        mazziesaccount@gmail.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>
-Subject: Re: [PATCH v2 2/8] clk: clk-max77686: Clean clkdev lookup leak and
- use devm
-Message-ID: <20181102110445.GC29664@localhost.localdomain>
-References: <cover.1541054985.git.matti.vaittinen@fi.rohmeurope.com>
- <83e985f2f60a68f89fac777aa29c55b1edb8769f.1541054985.git.matti.vaittinen@fi.rohmeurope.com>
- <CAJKOXPd=E+S3j3XnpCVRs3JdStY2z+pHe0bh_HNzQTmJW_dH=Q@mail.gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=lhSjwNHBReTxgjhb9toe+yAvJ/7Ca7xGfbc0fBL21HQ=;
+        b=Axr6t/bLbrSaWUY/HmhGYkX8y7wXYZQNZykIB9uLC+n1p4UVGobAxgWXtPTzQbtKsW
+         WksfwIs/hXJAF+dzuCMovZn9vwTW9LDNKdH5//K+e3qe/BP39b5cpyrX4JHr0Po8Fp+L
+         4KGJY26SdLYTdS83pQdP/ec7D5c7yRMOTFlSWfjVDP3kxQFTzaveroBp61hHsg66fWEC
+         95t6j2nHMSyoG4ZsWgxFPCvwLCYwobT8b8R6zWLdJxW9hBq7tlhTDJFNssmiZImH1SQ/
+         YXzisqNbvBuT98CaaQuOaDRkS1pn3euI5flXInD5kAPAImpJ4O8mx9OY3UA8+s66ooQe
+         E96w==
+X-Gm-Message-State: AGRZ1gK1mpgpUYUvyMZb6IZM7ucu3UD7xDkQsCYmhAIFWb26eOkR8PlV
+        IFYNDlAOgM8XEbpItG7lFciAtI/IwxsFzQ==
+X-Google-Smtp-Source: AJdET5fsiO4vkNlb59KQCh5Ipun3rVM/Pfpoi8X2Unh0eejxxIC5sHxKvAIhoH0qpfweeQyRttcQ5Q==
+X-Received: by 2002:a19:ca51:: with SMTP id h17mr6269614lfj.126.1541156691769;
+        Fri, 02 Nov 2018 04:04:51 -0700 (PDT)
+Received: from prevas-ravi.prevas.se ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id r22-v6sm1952896ljg.82.2018.11.02.04.04.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 02 Nov 2018 04:04:51 -0700 (PDT)
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To:     "Theodore Ts'o" <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/3] drivers/char/random.c: remove unused stuct poolinfo::poolbits
+Date:   Fri,  2 Nov 2018 12:04:46 +0100
+Message-Id: <20181102110447.23121-2-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.19.1.6.gbde171bbf5
+In-Reply-To: <20181102110447.23121-1-linux@rasmusvillemoes.dk>
+References: <20181102110447.23121-1-linux@rasmusvillemoes.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPd=E+S3j3XnpCVRs3JdStY2z+pHe0bh_HNzQTmJW_dH=Q@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for taking the time and reviewing this!
+This field is never used, might as well remove it.
 
-On Fri, Nov 02, 2018 at 09:15:17AM +0100, Krzysztof Kozlowski wrote:
-> On Thu, 1 Nov 2018 at 08:19, Matti Vaittinen
-> <matti.vaittinen@fi.rohmeurope.com> wrote:
-> >
-> > clk-max77686 never clean clkdev lookup at remove. This can cause
-> > oops if clk-max77686 is removed and inserted again. Fix leak by
-> > using new devm clkdev lookup registration. Simplify also error
-> > path by using new devm_of_clk_add_parent_hw_provider.
-> >
-> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > ---
-> >  drivers/clk/clk-max77686.c | 25 ++++---------------------
-> >  1 file changed, 4 insertions(+), 21 deletions(-)
-> >
-> > diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
-> > index 02551fe4b87c..b1920c1d9b76 100644
-> > --- a/drivers/clk/clk-max77686.c
-> > +++ b/drivers/clk/clk-max77686.c
-> > @@ -235,7 +235,7 @@ static int max77686_clk_probe(struct platform_device *pdev)
-> >                         return ret;
-> >                 }
-> >
-> > -               ret = clk_hw_register_clkdev(&max_clk_data->hw,
-> > +               ret = devm_clk_hw_register_clkdev(dev, &max_clk_data->hw,
-> >                                              max_clk_data->clk_idata.name, NULL);
-> 
-> You need to re-align the next line.
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+ drivers/char/random.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-I'll change this to
-		ret = devm_clk_hw_register_clkdev(dev, &max_clk_data->hw,
-						  max_clk_data->clk_idata.name,
-						  NULL);
-> >                 if (ret < 0) {
-> >                         dev_err(dev, "Failed to clkdev register: %d\n", ret);
-> > @@ -244,8 +244,8 @@ static int max77686_clk_probe(struct platform_device *pdev)
-> >         }
-> >
-> >         if (parent->of_node) {
-> > -               ret = of_clk_add_hw_provider(parent->of_node, of_clk_max77686_get,
-> > -                                            drv_data);
-> > +               ret = devm_of_clk_add_parent_hw_provider(dev,
-> > +                                               of_clk_max77686_get, drv_data);
-> 
-> The same, please.
-
-I will change this to 
-		ret = devm_of_clk_add_parent_hw_provider(dev,
-							 of_clk_max77686_get,
-							 drv_data);
-> 
-> Rest looks good, so with these changes:
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> Best regards,
-> Krzysztof
-
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index 320108df04c1..1b2e1580b4b5 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -295,7 +295,7 @@
+  * To allow fractional bits to be tracked, the entropy_count field is
+  * denominated in units of 1/8th bits.
+  *
+- * 2*(ENTROPY_SHIFT + log2(poolbits)) must <= 31, or the multiply in
++ * 2*(ENTROPY_SHIFT + poolbitshift) must <= 31, or the multiply in
+  * credit_entropy_bits() needs to be 64 bits wide.
+  */
+ #define ENTROPY_SHIFT 3
+@@ -360,8 +360,8 @@ static int random_write_wakeup_bits = 28 * OUTPUT_POOL_WORDS;
+  * irreducible, which we have made here.
+  */
+ static const struct poolinfo {
+-	int poolbitshift, poolwords, poolbytes, poolbits, poolfracbits;
+-#define S(x) ilog2(x)+5, (x), (x)*4, (x)*32, (x) << (ENTROPY_SHIFT+5)
++	int poolbitshift, poolwords, poolbytes, poolfracbits;
++#define S(x) ilog2(x)+5, (x), (x)*4, (x) << (ENTROPY_SHIFT+5)
+ 	int tap1, tap2, tap3, tap4, tap5;
+ } poolinfo_table[] = {
+ 	/* was: x^128 + x^103 + x^76 + x^51 +x^25 + x + 1 */
 -- 
-Matti Vaittinen
-ROHM Semiconductors
+2.19.1.6.gbde171bbf5
 
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
