@@ -2,119 +2,102 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB9A7C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 10:18:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D85AC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 10:26:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A48832081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 10:18:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A48832081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id ECA7220657
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 10:26:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECA7220657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726225AbeKBTZ3 (ORCPT
+        id S1726363AbeKBTc5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 15:25:29 -0400
-Received: from ozlabs.org ([203.11.71.1]:33231 "EHLO ozlabs.org"
+        Fri, 2 Nov 2018 15:32:57 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51966 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725990AbeKBTZ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 15:25:29 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725990AbeKBTc5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 15:32:57 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42mdMX5smPzB4VP;
-        Fri,  2 Nov 2018 21:18:48 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Christoph Hellwig <hch@lst.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Cc:     James Bottomley <jejb@linux.vnet.ibm.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] powerpc/powernv: remove dead npu-dma code
-In-Reply-To: <2c87f9d2-3beb-6c7e-71a4-db8a905f57b1@ozlabs.ru>
-References: <20181030133122.GA31102@lst.de> <2c87f9d2-3beb-6c7e-71a4-db8a905f57b1@ozlabs.ru>
-Date:   Fri, 02 Nov 2018 21:18:48 +1100
-Message-ID: <877ehveq9j.fsf@concordia.ellerman.id.au>
+        by mx1.redhat.com (Postfix) with ESMTPS id 8D2AB31256B4;
+        Fri,  2 Nov 2018 10:26:17 +0000 (UTC)
+Received: from localhost (holly.tpb.lab.eng.brq.redhat.com [10.43.134.11])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 801A0600CD;
+        Fri,  2 Nov 2018 10:26:15 +0000 (UTC)
+Date:   Fri, 2 Nov 2018 11:26:13 +0100
+From:   Miroslav Lichvar <mlichvar@redhat.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     John Stultz <john.stultz@linaro.org>,
+        Christopher Hall <christopher.s.hall@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        jesus.sanchez-palencia@intel.com,
+        Gavin Hindman <gavin.hindman@intel.com>,
+        liam.r.girdwood@intel.com, Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: TSC to Mono-raw Drift
+Message-ID: <20181102102613.GL19434@localhost>
+References: <alpine.DEB.2.21.1810191720590.6075@nanos.tec.linutronix.de>
+ <alpine.DEB.2.21.1810191955250.1651@nanos.tec.linutronix.de>
+ <CALAqxLWHdZn9RCcYbYicKXeu3QiCuVna27mWBQPbFvaj9gm-fw@mail.gmail.com>
+ <alpine.DEB.2.21.1810192050250.1651@nanos.tec.linutronix.de>
+ <CALAqxLVrPH-SFacys6pWBvL79OBwiAMUOL55oy3S7C+7pNffHA@mail.gmail.com>
+ <alpine.DEB.2.21.1810192244150.1651@nanos.tec.linutronix.de>
+ <CALAqxLUpKU73kzBh6mxgoCX4nEueuE42REcXw6F6DYYk4Hry6Q@mail.gmail.com>
+ <CALAqxLUKOYYm=bzn4owZC_UgWTqrVPiz2TSnLFm1RNak3tm8-g@mail.gmail.com>
+ <20181024145113.GF12019@localhost>
+ <alpine.DEB.2.21.1811011813470.1642@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1811011813470.1642@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Fri, 02 Nov 2018 10:26:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Alexey Kardashevskiy <aik@ozlabs.ru> writes:
-> On 31/10/2018 00:31, Christoph Hellwig wrote:
->> This code has never been unused in the kernel since it was merged, and
->> there has been no attempt that I could find to even submit users for
->> it.  Besides the general policy of not keep 1000+ lines of dead
->> code, it helps cleaning up the DMA code and making powerpc user common
->> infrastructure.
->> 
->> This effectively reverts commit 5d2aa710 ("powerpc/powernv: Add support
->> for Nvlink NPUs").
->> 
->> Signed-off-by: Christoph Hellwig <hch@lst.de>
->> ---
-...
->> diff --git a/arch/powerpc/platforms/powernv/npu-dma.c b/arch/powerpc/platforms/powernv/npu-dma.c
->> deleted file mode 100644
->> index 6f60e0931922..000000000000
->> --- a/arch/powerpc/platforms/powernv/npu-dma.c
->> +++ /dev/null
->> @@ -1,989 +0,0 @@
-...
->> -int pnv_npu2_init(struct pnv_phb *phb)
->> -{
->> -	unsigned int i;
->> -	u64 mmio_atsd;
->> -	struct device_node *dn;
->> -	struct pci_dev *gpdev;
->> -	static int npu_index;
->> -	uint64_t rc = 0;
->> -
->> -	phb->npu.nmmu_flush =
->> -		of_property_read_bool(phb->hose->dn, "ibm,nmmu-flush");
->> -	for_each_child_of_node(phb->hose->dn, dn) {
->> -		gpdev = pnv_pci_get_gpu_dev(get_pci_dev(dn));
->> -		if (gpdev) {
->> -			rc = opal_npu_map_lpar(phb->opal_id,
->> -				PCI_DEVID(gpdev->bus->number, gpdev->devfn),
->> -				0, 0);
->
-> I heavily hacked on these (draft):
-> https://patchwork.ozlabs.org/project/kvm-ppc/list/?series=70791
->
-> and the result is going to be used for VFIO purposes (draft too):
-> https://patchwork.ozlabs.org/project/kvm-ppc/list/?series=70793
->
-> Other bits can go away from npu-dma but I still need some to make
-> KVM+VFIO work for GPUs, this is without any vendor driver on the host
-> side whatsoever.
+On Thu, Nov 01, 2018 at 06:41:00PM +0100, Thomas Gleixner wrote:
+> On Wed, 24 Oct 2018, Miroslav Lichvar wrote:
+> > The error is too large to be corrected by stepping on clock updates.
+> > For a typical TSC frequency we have multiplier in the range of few
+> > millions, so that's a frequency error of up to few hundred ppb. In the
+> > old days when the clock was updated 1000 times per second that would
+> > be hidden in the resolution of the clock, but now with tickless
+> > kernels those steps would be very noticeable.
 
-OK, so to be clear we will need at least some of this code so that a KVM
-host can pass through a GPU to a guest, and that requires no binary
-driver on the host.
+> That only happens when the system was completely idle for a second and in
+> that case it's a non issue because the clock is updated before it's
+> used. So nothing will be able to observe the time jumping forward by a few
+> or even a few hundreds of nanoseconds.
 
-I don't think anyone's arguing that we should prevent passing through
-devices that might need a binary driver in a guest?
+That's great news (to me). I think we should do the same with the
+mono/real clock. A periodic 4ns step would be better than a slew
+correcting tens or hundreds of nanoseconds. This would be a
+significant improvement in accuracy on idle systems, in theory
+identical to running with nohz=off.
 
-Christoph I think that establishes that this is not all dead code, and
-so I'm nacking this patch in its current form. If you have other
-objections to this code please raise them specifically.
+Maybe I am missing some important detail, but I think we can just drop
+the +1 mult adjustment and step on each update by the (truncated)
+amount that has accumulated in the NTP error register. With the
+changes that have been made earlier this year the clock should never
+be ahead, so the step would always be forward.
 
-I'll merge Alistair's patch to remove the NPU dma_ops, because they're
-not really necessary and might legitimately be getting in the way of
-dma_ops cleanups.
+> For the regular case, where CPUs are
+> busy and the update happens 100/250/1000 times per second the jump forward
+> will not be noticable at all.
 
-  https://patchwork.ozlabs.org/patch/990721/
+I think a 4ns jump at 100 Hz might be noticeable with a good reference
+clock and large number of measurements, but so would be the current +1
+mult adjustment.
 
-
-cheers
+-- 
+Miroslav Lichvar
