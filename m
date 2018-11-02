@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02E4FC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:40:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCE6DC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:40:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA45A2082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:40:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0D6020843
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:40:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kyfBq2rL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA45A2082E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tSNPxTw2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0D6020843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729396AbeKCDsq (ORCPT
+        id S1729406AbeKCDst (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:48:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43130 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:48:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43184 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728836AbeKCDsp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:48:45 -0400
+        id S1728836AbeKCDss (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:48:48 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9481C2082E;
-        Fri,  2 Nov 2018 18:40:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A231920843;
+        Fri,  2 Nov 2018 18:40:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184033;
-        bh=zETBrNXrQV5u3UlgzK2ONHknvOhyX/H7akGQONezoyk=;
+        s=default; t=1541184036;
+        bh=9/thJ46j3FhHy+c6jePD6f+EjsEYO+sLVEH7N5MySto=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kyfBq2rLm+3duCiWewKVwQuntWi/Gb//9iebVgz+MsnKbC5BXaFK+MlLj0NKsNgAK
-         xyExpxTFDGq9F4kz3VzZwQOAEt9b3a0fb3Ef6I2GMBt8KIdC5kzHeahVNuO+T8M8K0
-         aiPbiUTOZyUStmnRTugwpQ1PrTM94XFg+e0gTx0Y=
+        b=tSNPxTw2Gi10iMmmoGwsZyUn3l0ThvkAg+HwjaHGhST3eOv/B2j8gxBYI6zP2crJE
+         +JqyUrM6veW0dImVoOfQD9yfYEqHp5/fIWDN51fSyoK/R2wOqjzgWPpimB/84uIZzV
+         GWECQei+xvL8eT2pIArZqbejhpQuugTJdTNRvviw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 028/150] pxa168fb: prepare the clock
-Date:   Fri,  2 Nov 2018 19:33:10 +0100
-Message-Id: <20181102182905.234740556@linuxfoundation.org>
+Subject: [PATCH 4.18 029/150] qed: Avoid implicit enum conversion in qed_set_tunn_cls_info
+Date:   Fri,  2 Nov 2018 19:33:11 +0100
+Message-Id: <20181102182905.335211128@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -63,78 +64,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d85536cde91fcfed6fb8d983783bd2b92c843939 ]
+[ Upstream commit a898fba32229efd5e6b6154f83fa86a7145156b9 ]
 
-Add missing prepare/unprepare operations for fbi->clk,
-this fixes following kernel warning:
+Clang warns when one enumerated type is implicitly converted to another.
 
-  ------------[ cut here ]------------
-  WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:874 clk_core_enable+0x2c/0x1b0
-  Enabling unprepared disp0_clk
-  Modules linked in:
-  CPU: 0 PID: 1 Comm: swapper Not tainted 4.18.0-rc8-00032-g02b43ddd4f21-dirty #25
-  Hardware name: Marvell MMP2 (Device Tree Support)
-  [<c010f7cc>] (unwind_backtrace) from [<c010cc6c>] (show_stack+0x10/0x14)
-  [<c010cc6c>] (show_stack) from [<c011dab4>] (__warn+0xd8/0xf0)
-  [<c011dab4>] (__warn) from [<c011db10>] (warn_slowpath_fmt+0x44/0x6c)
-  [<c011db10>] (warn_slowpath_fmt) from [<c043898c>] (clk_core_enable+0x2c/0x1b0)
-  [<c043898c>] (clk_core_enable) from [<c0439ec8>] (clk_core_enable_lock+0x18/0x2c)
-  [<c0439ec8>] (clk_core_enable_lock) from [<c0436698>] (pxa168fb_probe+0x464/0x6ac)
-  [<c0436698>] (pxa168fb_probe) from [<c04779a0>] (platform_drv_probe+0x48/0x94)
-  [<c04779a0>] (platform_drv_probe) from [<c0475bec>] (driver_probe_device+0x328/0x470)
-  [<c0475bec>] (driver_probe_device) from [<c0475de4>] (__driver_attach+0xb0/0x124)
-  [<c0475de4>] (__driver_attach) from [<c0473c38>] (bus_for_each_dev+0x64/0xa0)
-  [<c0473c38>] (bus_for_each_dev) from [<c0474ee0>] (bus_add_driver+0x1b8/0x230)
-  [<c0474ee0>] (bus_add_driver) from [<c0476a20>] (driver_register+0xac/0xf0)
-  [<c0476a20>] (driver_register) from [<c0102dd4>] (do_one_initcall+0xb8/0x1f0)
-  [<c0102dd4>] (do_one_initcall) from [<c0b010a0>] (kernel_init_freeable+0x294/0x2e0)
-  [<c0b010a0>] (kernel_init_freeable) from [<c07e9eb8>] (kernel_init+0x8/0x10c)
-  [<c07e9eb8>] (kernel_init) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
-  Exception stack(0xd008bfb0 to 0xd008bff8)
-  bfa0:                                     00000000 00000000 00000000 00000000
-  bfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-  bfe0: 00000000 00000000 00000000 00000000 00000013 00000000
-  ---[ end trace c0af40f9e2ed7cb4 ]---
+drivers/net/ethernet/qlogic/qed/qed_sp_commands.c:163:25: warning:
+implicit conversion from enumeration type 'enum tunnel_clss' to
+different enumeration type 'enum qed_tunn_clss' [-Wenum-conversion]
+        p_tun->vxlan.tun_cls = type;
+                             ~ ^~~~
+drivers/net/ethernet/qlogic/qed/qed_sp_commands.c:165:26: warning:
+implicit conversion from enumeration type 'enum tunnel_clss' to
+different enumeration type 'enum qed_tunn_clss' [-Wenum-conversion]
+        p_tun->l2_gre.tun_cls = type;
+                              ~ ^~~~
+drivers/net/ethernet/qlogic/qed/qed_sp_commands.c:167:26: warning:
+implicit conversion from enumeration type 'enum tunnel_clss' to
+different enumeration type 'enum qed_tunn_clss' [-Wenum-conversion]
+        p_tun->ip_gre.tun_cls = type;
+                              ~ ^~~~
+drivers/net/ethernet/qlogic/qed/qed_sp_commands.c:169:29: warning:
+implicit conversion from enumeration type 'enum tunnel_clss' to
+different enumeration type 'enum qed_tunn_clss' [-Wenum-conversion]
+        p_tun->l2_geneve.tun_cls = type;
+                                 ~ ^~~~
+drivers/net/ethernet/qlogic/qed/qed_sp_commands.c:171:29: warning:
+implicit conversion from enumeration type 'enum tunnel_clss' to
+different enumeration type 'enum qed_tunn_clss' [-Wenum-conversion]
+        p_tun->ip_geneve.tun_cls = type;
+                                 ~ ^~~~
+5 warnings generated.
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-[b.zolnierkie: enhance patch description a bit]
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Avoid this by changing type to an int.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/125
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/video/fbdev/pxa168fb.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed_sp_commands.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/video/fbdev/pxa168fb.c b/drivers/video/fbdev/pxa168fb.c
-index def3a501acd6..d059d04c63ac 100644
---- a/drivers/video/fbdev/pxa168fb.c
-+++ b/drivers/video/fbdev/pxa168fb.c
-@@ -712,7 +712,7 @@ static int pxa168fb_probe(struct platform_device *pdev)
- 	/*
- 	 * enable controller clock
- 	 */
--	clk_enable(fbi->clk);
-+	clk_prepare_enable(fbi->clk);
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c b/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
+index 8de644b4721e..77b6248ad3b9 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
+@@ -154,7 +154,7 @@ qed_set_pf_update_tunn_mode(struct qed_tunnel_info *p_tun,
+ static void qed_set_tunn_cls_info(struct qed_tunnel_info *p_tun,
+ 				  struct qed_tunnel_info *p_src)
+ {
+-	enum tunnel_clss type;
++	int type;
  
- 	pxa168fb_set_par(info);
- 
-@@ -767,7 +767,7 @@ static int pxa168fb_probe(struct platform_device *pdev)
- failed_free_cmap:
- 	fb_dealloc_cmap(&info->cmap);
- failed_free_clk:
--	clk_disable(fbi->clk);
-+	clk_disable_unprepare(fbi->clk);
- failed_free_fbmem:
- 	dma_free_coherent(fbi->dev, info->fix.smem_len,
- 			info->screen_base, fbi->fb_start_dma);
-@@ -807,7 +807,7 @@ static int pxa168fb_remove(struct platform_device *pdev)
- 	dma_free_wc(fbi->dev, PAGE_ALIGN(info->fix.smem_len),
- 		    info->screen_base, info->fix.smem_start);
- 
--	clk_disable(fbi->clk);
-+	clk_disable_unprepare(fbi->clk);
- 
- 	framebuffer_release(info);
- 
+ 	p_tun->b_update_rx_cls = p_src->b_update_rx_cls;
+ 	p_tun->b_update_tx_cls = p_src->b_update_tx_cls;
 -- 
 2.17.1
 
