@@ -2,137 +2,160 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEDB3C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:34:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D52F5C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:35:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 897182081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:34:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 897182081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org
+	by mail.kernel.org (Postfix) with ESMTP id 9C79C2081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:35:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XwmXaJDu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C79C2081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727757AbeKCBmj (ORCPT
+        id S1727870AbeKCBmx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 21:42:39 -0400
-Received: from asavdk4.altibox.net ([109.247.116.15]:37398 "EHLO
-        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726794AbeKCBmj (ORCPT
+        Fri, 2 Nov 2018 21:42:53 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:35779 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726550AbeKCBmx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 21:42:39 -0400
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by asavdk4.altibox.net (Postfix) with ESMTPS id D420080312;
-        Fri,  2 Nov 2018 17:34:50 +0100 (CET)
-Date:   Fri, 2 Nov 2018 17:34:49 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Adam Ford <aford173@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, airlied@linux.ie,
-        thierry.reding@gmail.com, adam.ford@logicpd.com,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm/panel: simple: Add Ampire am800480b3tmqw
-Message-ID: <20181102163449.GA25035@ravnborg.org>
-References: <20181101125138.27848-1-aford173@gmail.com>
+        Fri, 2 Nov 2018 21:42:53 -0400
+Received: by mail-ed1-f65.google.com with SMTP id d6-v6so2329362edi.2
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 09:35:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZWPYcbOdNZuRP97q2FW3KBWcbG4yz3Ty50qTBDV9y7I=;
+        b=XwmXaJDuDO6TKZGAoXWAJwSOGEoeAuWt2WOVJcsEB/mXqu6shP+O1faxRdJ8c1VRFX
+         7sssVQLmsWff4El4jW2uOBIpa4Y6YzRVC3O/FafftNrpGgfthBeEx5JmhrSZk+m4OChW
+         uqzYFfGpSdiz74I7z1CQRddWLEUa37T6oZflw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZWPYcbOdNZuRP97q2FW3KBWcbG4yz3Ty50qTBDV9y7I=;
+        b=Rqu8sGhBGfuGmY5iylay/vlHx0ih3k1ZqWa/Gx2Wp20N43dEEod0mywKQkO4ujgXZm
+         UCT9S35axUCpgEp7bgWIZJz+lXiQ+GHfxdE9bo/QA+248qdHWHopsbpcB74REy8g2gFL
+         T+Z37+iwJ0Lmny1OX/II5qf3ZA142K6Gh52lYFqq+x78Bb5wq1+3ecKcNr9WHYdEN1Gc
+         Z/7fUe+OEbleWdUL73iSDKJn9KkHpvRvwQtlzMJMK2opLPgLp6S950ZaOqZNy1w46Wot
+         7iEi+XF1F/XEFLrJGYKDK9L1Ws9+nlQq/D/GIL3KX9mHmQk737siM7SGon7EVEj0ARC+
+         GbjA==
+X-Gm-Message-State: AGRZ1gJzaFMiVJkGF/0kc9ot+VvPytxIhVx96HIMgfpy6M8ieRsg4qff
+        g/hGw6KMFEjD1L+1xEZrQfFnkyjHupk=
+X-Google-Smtp-Source: AJdET5fMJ5tq/WbC5e+xeB8fvKDNonrASctlEtGvVuXIfCjM//fSa8fZpd0DKGlYWCdvVbZengFmgQ==
+X-Received: by 2002:a50:e00e:: with SMTP id e14-v6mr9560318edl.152.1541176509412;
+        Fri, 02 Nov 2018 09:35:09 -0700 (PDT)
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
+        by smtp.gmail.com with ESMTPSA id d23-v6sm1221937ejk.21.2018.11.02.09.35.05
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 02 Nov 2018 09:35:07 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id y20-v6so2294093eds.10
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 09:35:05 -0700 (PDT)
+X-Received: by 2002:a50:ad0d:: with SMTP id y13-v6mr9469698edc.121.1541176505371;
+ Fri, 02 Nov 2018 09:35:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181101125138.27848-1-aford173@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=UpRNyd4B c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=kj9zAlcOel0A:10 a=pGLkceISAAAA:8 a=aDtu_6vVvJ-Pg3724GMA:9
-        a=CjuIK1q_8ugA:10
+References: <20181102161833.2956376-1-arnd@arndb.de>
+In-Reply-To: <20181102161833.2956376-1-arnd@arndb.de>
+From:   Brian Norris <briannorris@chromium.org>
+Date:   Fri, 2 Nov 2018 09:34:53 -0700
+X-Gmail-Original-Message-ID: <CA+ASDXPVJMge_B-AUXj1sKc4dB+3FcXew8T5FYEXVsncKYotiw@mail.gmail.com>
+Message-ID: <CA+ASDXPVJMge_B-AUXj1sKc4dB+3FcXew8T5FYEXVsncKYotiw@mail.gmail.com>
+Subject: Re: [PATCH] ath10k: avoid -Wmaybe-uninitialized warning
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Kalle Valo <kvalo@codeaurora.org>, davem@davemloft.net,
+        pillair@codeaurora.org, akolli@codeaurora.org,
+        bpothuno@codeaurora.org, yintang@qti.qualcomm.com,
+        srirrama@codeaurora.org, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Adam
+Hi,
 
-On Thu, Nov 01, 2018 at 07:51:38AM -0500, Adam Ford wrote:
-> This adds support for the Ampire am800480b3tmqw display,
-> a 7" 24-bit RGB panel wtih 800x480 resolution.
-> 
-> Signed-off-by: Adam Ford <aford173@gmail.com>
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-> index 97964f7f2ace..71e878f63c5b 100644
-> --- a/drivers/gpu/drm/panel/panel-simple.c
-> +++ b/drivers/gpu/drm/panel/panel-simple.c
-> @@ -436,6 +436,31 @@ static const struct panel_desc ampire_am800480r3tmqwa1h = {
->  	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
->  };
->  
-> +static const struct drm_display_mode ampire_am800480b3tmqw_mode = {
-> +	.clock = 30000,
-> +	.hdisplay = 800,
-> +	.hsync_start = 800 + 210,
-> +	.hsync_end = 800 + 210 + 46,
-> +	.htotal = 800 + 210 + 46 + 0,
-> +	.vdisplay = 480,
-> +	.vsync_start = 480 + 22,
-> +	.vsync_end = 480 + 22 + 23,
-> +	.vtotal = 480 + 22 + 23 + 0,
-> +	.vrefresh = 60,
-> +	.flags = DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC,
-> +};
-+1 to see .flags specified
-
-
+On Fri, Nov 2, 2018 at 9:19 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> In some configurations the inlining in gcc is suboptimal, causing
+> a false-positive warning:
+>
+> drivers/net/wireless/ath/ath10k/mac.c: In function 'ath10k_mac_init_rd':
+> drivers/net/wireless/ath/ath10k/mac.c:8374:39: error: 'rd' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+>   ar->ath_common.regulatory.current_rd = rd;
+>
+> If we initialize the output of ath10k_mac_get_wrdd_regulatory()
+> before returning, this problem goes away.
+>
+> Fixes: 209b2a68de76 ("ath10k: add platform regulatory domain support")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/net/wireless/ath/ath10k/mac.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
+> index a1c2801ded10..0d5fde28ee44 100644
+> --- a/drivers/net/wireless/ath/ath10k/mac.c
+> +++ b/drivers/net/wireless/ath/ath10k/mac.c
+> @@ -8321,6 +8321,8 @@ static int ath10k_mac_get_wrdd_regulatory(struct ath10k *ar, u16 *rd)
+>         u32 alpha2_code;
+>         char alpha2[3];
+>
+> +       *rd = ar->hw_eeprom_rd;
 > +
-> +static const struct panel_desc ampire_am800480b3tmqw = {
-> +	.modes = &ampire_am800480b3tmqw_mode,
-> +	.num_modes = 1,
-> +	.bpc = 6,
-> +	.size = {
-> +		.width = 152,
-> +		.height = 91,
-> +	},
-> +	.bus_format = MEDIA_BUS_FMT_RBG888_1X24,
-> +};
-Likewise good to see .bus_format specified.
 
-But .bus_flags are not specified. 
+Maybe it's just me, but it seems kinda weird for this function to
+assign a (valid) value to its "output" and still potentially return an
+error.
 
-From the header file:
+If you really need to work around this compiler bug, maybe just put
+the eeprom assignment back in ath10k_mac_init_rd()? I'll leave it up
+to Kalle as to whether he wants to work around the compiler at all :)
 
-<<<<<<<<<<<<<<<<<<<<
-#define DRM_BUS_FLAG_DE_LOW             (1<<0)
-#define DRM_BUS_FLAG_DE_HIGH            (1<<1)
-/* drive data on pos. edge */
-#define DRM_BUS_FLAG_PIXDATA_POSEDGE    (1<<2)
-/* drive data on neg. edge */
-#define DRM_BUS_FLAG_PIXDATA_NEGEDGE    (1<<3)
-/* data is transmitted MSB to LSB on the bus */
-#define DRM_BUS_FLAG_DATA_MSB_TO_LSB    (1<<4)
-/* data is transmitted LSB to MSB on the bus */
-#define DRM_BUS_FLAG_DATA_LSB_TO_MSB    (1<<5)
-/* drive sync on pos. edge */
-#define DRM_BUS_FLAG_SYNC_POSEDGE       (1<<6)
-/* drive sync on neg. edge */
-#define DRM_BUS_FLAG_SYNC_NEGEDGE       (1<<7)
+Oh wait, one more thing: this is actually an invalid refactoring. See
+how this function assigns '*rd' later in error cases. Today, we still
+treat those as errors and clobber those with the eeprom value, but
+now, you're making the fallback case continue to use the erroneous
+value (0xffff). You need to make that use a local variable and avoid
+clobbering *rd, if you want this to be correct.
 
-        /**
-         * @bus_flags: Additional information (like pixel signal polarity) for
-         * the pixel data on the bus, using DRM_BUS_FLAGS\_ defines.
-         */
-        u32 bus_flags;
->>>>>>>>>>>>>>>><
+>         root_handle = ACPI_HANDLE(&pdev->dev);
 
-Many panels leave out .bus_flags - and I wonder if this is
-because default is OK or because most other panels does so.
+Side note: your patch made me notice -- this code is *not* only used
+on PCI devices, yet it utilizes the 'pci_dev' structure. Fortunately,
+it only does this to needless convert it right back to a bare
+'device', and then the ACPI code safely handles non-ACPI devices
+(should result in -EOPNOTSUPP below), but this is awfully strange
+code.
 
-I had problems with my display that the text looked blurred
-when bus_flags was no specified (using defaults).
-This was one issue I had when migrating from 4.4 kernel
-to a recent kernel.
+Anyway, I'm just thinking out loud. I'll probably patch the pci_dev out myself.
 
-So therefore it would good to have .bus_flags specified too
-if for nothing else then for documentation purposes.
+Brian
 
-	Sam
+>         if (!root_handle)
+>                 return -EOPNOTSUPP;
+> @@ -8365,11 +8367,9 @@ static int ath10k_mac_init_rd(struct ath10k *ar)
+>         u16 rd;
+>
+>         ret = ath10k_mac_get_wrdd_regulatory(ar, &rd);
+> -       if (ret) {
+> +       if (ret)
+>                 ath10k_dbg(ar, ATH10K_DBG_BOOT,
+>                            "fallback to eeprom programmed regulatory settings\n");
+> -               rd = ar->hw_eeprom_rd;
+> -       }
+>
+>         ar->ath_common.regulatory.current_rd = rd;
+>         return 0;
+> --
+> 2.18.0
+>
