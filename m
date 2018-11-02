@@ -2,142 +2,108 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56335C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:08:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2E8FC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:09:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 158752081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:08:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 158752081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9B7022081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:09:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="SbsZxntr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B7022081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727638AbeKCBQ3 (ORCPT
+        id S1728059AbeKCBQh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 21:16:29 -0400
-Received: from foss.arm.com ([217.140.101.70]:43524 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726316AbeKCBQ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 21:16:29 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 082151596;
-        Fri,  2 Nov 2018 09:08:53 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1BBA03F718;
-        Fri,  2 Nov 2018 09:08:49 -0700 (PDT)
-Date:   Fri, 2 Nov 2018 16:08:45 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Richard Henderson <rth@twiddle.net>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Carlos O'Donell <carlos@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        linux-api <linux-api@vger.kernel.org>
-Subject: Re: Supporting core-specific instruction sets (e.g. big.LITTLE) with
- restartable sequences
-Message-ID: <20181102160844.ihge4najccn63cxi@lakrids.cambridge.arm.com>
-References: <313542172.8.1541171544337.JavaMail.zimbra@efficios.com>
+        Fri, 2 Nov 2018 21:16:37 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:43776 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726316AbeKCBQh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 21:16:37 -0400
+Received: by mail-pl1-f193.google.com with SMTP id g59-v6so1212748plb.10
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 09:09:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=toZ6GdabPKpTESOWXZ385LSkM52vFCYnsUVWju8J4s4=;
+        b=SbsZxntrdWE2mWGUWeIpye7JnqUzKXrPt0C5+eCoLcdclGSkG/+pZqHiIWv3Y2wQiq
+         Yt/zmzL2u4GRWykWyl8tBSQr2OoFbU2pOihqVG+W/csZeloC65zSI6MD/n7GfN0xUkG6
+         cc+2kkhQeHfJSBWdIBZEXbNkPkcJN3RYzi6xpPQiYA+nA0Tr0b26YBEEMkYJMlxERuAm
+         2dTZHRdrQpL0osNiZcIgT3wNBCg7LVDLKnr8lKREEkwesWLTwKDPEjURyJTEnyBepdtw
+         5NzDF57dFCZD1hNScvw274/G3Xndm/38NU+RSvTRcSijq2KhjRa0VcpeHovJyBuBMqNp
+         buEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=toZ6GdabPKpTESOWXZ385LSkM52vFCYnsUVWju8J4s4=;
+        b=oguwUoNpbDuMGMe93ySFbUdRUOX35EZFG9rzWd9Q6dm3aXdnwyyKvXo+DUK8Z12NVv
+         jfsEsbfb4FRMQ/XdVoH0C5K3xgc0QsPD0GbqI3q1vRQmfngedZxp3cdQ/naFgX2MxPG/
+         K4vDca10MVROVZEKoHUWRFS48/6w7Vhtuyei6JVG6QmtMLY0cDfcR5/iQVLX6DJeq1aA
+         XUaxqGK45cbk2WL8yfnoIb6xDWFv3svzq5SyzyqdL4FXKGbfFc2nxUgBSQJ82/Zrbd8g
+         VhEI5exUYrc/Hk4yDG4nlJ3A7LG/u76T/lbwonsTduwKFVUnCZGlJOBzngwmNF4hFwK4
+         7Eqg==
+X-Gm-Message-State: AGRZ1gKdJWqzXiP7V6Ea0GdwguieExnFXntT1zlQ6nGCN+exJiJ7HRhm
+        +yGFo048Pnw178e2pWIMLxMhzIOhBYU=
+X-Google-Smtp-Source: AJdET5cwpiDM9qEQSc13UaEs4yOG6aNiBAmM0zECVdOZk17h1nMgaq2mxgy+S6RKjX4+Ji5DNvcaJw==
+X-Received: by 2002:a17:902:187:: with SMTP id b7-v6mr12344982plb.150.1541174940925;
+        Fri, 02 Nov 2018 09:09:00 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id y18-v6sm4667638pfa.136.2018.11.02.09.08.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 02 Nov 2018 09:08:59 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1gIc0I-00055w-MW; Fri, 02 Nov 2018 10:08:58 -0600
+Date:   Fri, 2 Nov 2018 10:08:58 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Saeed Mahameed <saeedm@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Eran Ben Elisha <eranbe@mellanox.com>,
+        Boris Pismenny <borisp@mellanox.com>,
+        Ilya Lesokhin <ilyal@mellanox.com>,
+        Moshe Shemesh <moshe@mellanox.com>,
+        Kamal Heib <kamalh@mellanox.com>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net/mlx5e: fix high stack usage
+Message-ID: <20181102160858.GA17096@ziepe.ca>
+References: <20181102153316.1492515-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <313542172.8.1541171544337.JavaMail.zimbra@efficios.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181102153316.1492515-1-arnd@arndb.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mathieu, Richard,
-
-On Fri, Nov 02, 2018 at 11:12:24AM -0400, Mathieu Desnoyers wrote:
-> Hi Richard,
+On Fri, Nov 02, 2018 at 04:33:03PM +0100, Arnd Bergmann wrote:
+> A patch that looks harmless causes the stack usage of the mlx5e_grp_sw_update_stats()
+> function to drastically increase with x86 gcc-4.9 and higher (tested up to 8.1):
 > 
-> I stumbled on these articles:
-> 
-> - https://medium.com/@jadr2ddude/a-big-little-problem-a-tale-of-big-little-gone-wrong-e7778ce744bb
-> - https://www.mono-project.com/news/2016/09/12/arm64-icache/
-> 
-> and discussed them with Will Deacon. He told me you were looking into
-> gcc atomics and it might be worthwhile to discuss the possible use of
-> the new rseq system call that has been added in Linux 4.18 for those
-> use-cases.
-> 
-> Basically, the use-cases targeted are those where some cores on the
-> system support a larger instruction set than others. So for instance,
-> some cores could use a faster atomic add instruction than others,
-> which should rely on a slower fallback. This is also the same story
-> for reading the performance monitoring unit counters from user-space:
-> it depends on the feature-set supported by the CPU on which the
-> instruction is issued. Same applies to cores having different
-> cache-line sizes.
+> drivers/net/ethernet/mellanox/mlx5/core/en_stats.c: In function ‘mlx5e_grp_sw_update_stats’:
+> drivers/net/ethernet/mellanox/mlx5/core/en_stats.c:216:1: warning: the frame size of 1276 bytes is larger than 500 bytes [-Wframe-larger-than=]
 
-Please note that upstream arm64 Linux does not expose mismatched ISA
-feature to userspace. We go to great pains to expose a uniform set of
-supported features.
+Why is the stack size so big here? The mlx5e_sw_stats is < 500 bytes
+and all the other on-stack stuff looks pretty small?
 
-The two issues referenced above are both handled by the kernel, and no
-userspace changes are required to handle them.
+> By splitting out the loop body into a non-inlined function, the stack size goes
+> back down to under 500 bytes.
 
-We do not intend or expect to expose mismatched features to userspace.
-Correctly-written userspace should not use optional instructions unless
-the kernel has advertised their presence via a hwcap (or via ID register
-emulation).
+Does this actually reduce the stack consumed or does this just suppress
+the warning?
 
-> The main problem is that the kernel can migrate a thread at any point
-> between user-space reading the current cpu number and issuing the
-> instruction. This is where rseq can help.
-> 
-> The core idea to solve the instruction set issue is to set a mask of
-> cpus supporting the new instruction in a library constructor, and then
-> load cpu_id, use it with the mask, and branch to either the new or old
-> instruction, all with a rseq critical section. If the kernel needs to
-> abort due to preemption or signal delivery, the abort behavior would
-> be to issue the fallback (slow) atomic operation, which guarantees
-> progress even if single-stepping.
-> 
-> As long as the load, test and branch is faster than the performance
-> delta between the old and new atomic instruction, it would be worth
-> it.
-
-Specifically w.r.t. the atomics, the kernel will only expose the
-presence of the ARMv8.1 atomic instructions when supported by all CPUs
-in the system.
-
-> In the case of PMU read from user-space, using rseq to figure out how
-> to issue the PMU read enables a use-case which is not otherwise
-> possible to do on big.LITTLE. On rseq abort, it would fallback to a
-> system call to read the PMU counter. This abort behavior guarantees
-> forward progress.
-
-We do not currently expose any PMU registers to userspace. If we were to
-expose them for big.LITTLE, rseq may be of use, but no-one has done the
-groundwork to investigate this.
-
-> The second article is about cache line size discrepancy between CPUs.
-> Here again, doing the cacheline flushing in a rseq critical section
-> could allow tuning it to characteristics of the actual core it is
-> running on. The fast-path would use a stride fitting the current core
-> characteristics, and if rseq needs to abort, the slow-path would
-> fall-back to a conservative value which would fit all cores (smaller
-> cache line size on the overall system).
-
-This is already handled by the kernel, and the proposed rseq approach is
-not correct -- cache maintenance must *always* use the system-wide
-minimum cacheline size, or stale entries will be left on some CPUs,
-which will result in later failures.
-
-Thanks,
-Mark.
+Jason
