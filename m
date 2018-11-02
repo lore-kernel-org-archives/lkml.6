@@ -2,121 +2,157 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 363D9C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:22:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7DE5C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:23:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D12B42082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:22:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9861420831
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:23:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="e3U5l5GS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D12B42082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VTH0K0og"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9861420831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728311AbeKCDaP (ORCPT
+        id S1728135AbeKCDcD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:30:15 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:43686 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727838AbeKCDaO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:30:14 -0400
-Received: by mail-lf1-f66.google.com with SMTP id u18so1942524lff.10
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 11:22:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=EA2qLqIsmx6YLRKG8F4YGbxODLHhQ5/M4zED+i0s4Dg=;
-        b=e3U5l5GSKQyr1C6IBRF52JYfplMMHwvWXRPzw/zFbnuMeh9OH6eLhKuGD0QKOj8P84
-         IW11l84m3n+dKdsFwC31PHrykaH5gHHA5BX16d/tUuWEN2p5sHXj8ZVg9JQn8ngo17V7
-         d8xXrSW4e/xJmI+aYEXuiRTrnKYz+U7Feaauw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=EA2qLqIsmx6YLRKG8F4YGbxODLHhQ5/M4zED+i0s4Dg=;
-        b=uj2JWeiGMhDu3lXkRSa/PTQYdEhFqQFuL5cZ0nVZuAtfUVAlccrQMvTkKLkTjosQMw
-         Q0gisx0Bc0VhaRhdbWdr+zSe04glw4nBc5ahWiT7/H+FhgtnYkakQh9JJnUzzBPb9eEe
-         gQ2tbkUsDTMV+Fh81a5Mz/ZNbnKO3nEJHe08t/nN7FLGQ5fMZRflzjKsYEQIBOkMpSSE
-         uxmCUqGOM2XG+hSa6+CoERNLI4+MW96HK63ZDwg3MyjtFg+tcmN03mC+bjkl2oiPbnT6
-         rzt5X2aP06Zjw7anyad+vTNPIXRSDRd/T2+sm+Pwr9BhK2jsosoC04AZ0IKNHlcH/8sa
-         wVbw==
-X-Gm-Message-State: AGRZ1gK/ICTxwMiKU+AUIweltKop77FYLrx9q5GhCj+6pYZZ2lD33Qpp
-        tNoN3v0g/vKZNrbGFrx2xcCuIQ==
-X-Google-Smtp-Source: AJdET5d80QLN/xB4dVCk/Vz/2n4pUCI5f8fVE0TvdnkGZUDQPJHFKhUmadp4GUmotnmN09TRuSiv0w==
-X-Received: by 2002:a19:5a84:: with SMTP id y4mr7739269lfk.156.1541182926657;
-        Fri, 02 Nov 2018 11:22:06 -0700 (PDT)
-Received: from [10.0.0.171] ([94.72.11.11])
-        by smtp.gmail.com with ESMTPSA id z8-v6sm3586380lfh.52.2018.11.02.11.22.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 02 Nov 2018 11:22:05 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
-Subject: Re: [PATCH RFC] block, bfq: set default slice_idle to zero for
- non-rotational devices
-From:   Paolo Valente <paolo.valente@linaro.org>
-In-Reply-To: <317076f7-f84f-c08f-5fb5-b227094cabfd@applied-asynchrony.com>
-Date:   Fri, 2 Nov 2018 21:18:26 +0300
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        linux-block <linux-block@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <E50DB19F-D744-4E6B-ADDC-A2546484ADF0@linaro.org>
-References: <154109421062.925711.4117729151502021084.stgit@buzz>
- <317076f7-f84f-c08f-5fb5-b227094cabfd@applied-asynchrony.com>
-To:     =?utf-8?Q?Holger_Hoffst=C3=A4tte?= <holger@applied-asynchrony.com>
-X-Mailer: Apple Mail (2.3445.100.39)
+        Fri, 2 Nov 2018 23:32:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35310 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727465AbeKCDcC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:32:02 -0400
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53F472081B;
+        Fri,  2 Nov 2018 18:23:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541183035;
+        bh=A6EfwCqb4e8cL/U/q7qfAMrrc8sgrfO7xhHGVS8+6Ww=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=VTH0K0ogHb/fFUd1zw8FYfU+vv4ot2Ljclq9oiH0/mDS+8pb00SXUPdLYRriMLvAi
+         3HMp42FjEg4KZR0abY40jWaCCiIKqzTJvpgTGTdksMZhY0MWxMLsFRPtlXodju3XcF
+         XhXqyfeGezEvN5Or8ycnratDoVGD8nXLFVXxjCaY=
+Subject: Re: [RFC v2 00/14] kunit: introduce KUnit, the Linux kernel unit
+ testing framework
+To:     Brendan Higgins <brendanhiggins@google.com>,
+        gregkh@linuxfoundation.org, keescook@google.com, mcgrof@kernel.org
+Cc:     joel@jms.id.au, mpe@ellerman.id.au, joe@perches.com, brakmo@fb.com,
+        rostedt@goodmis.org, Tim.Bird@sony.com, khilman@baylibre.com,
+        julia.lawall@lip6.fr, linux-kselftest@vger.kernel.org,
+        kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
+        daniel@ffwll.ch, dri-devel@lists.freedesktop.org, robh@kernel.org,
+        dan.j.williams@intel.com, linux-nvdimm@lists.01.org,
+        kieran.bingham@ideasonboard.com, Shuah Khan <shuah@kernel.org>
+References: <20181023235750.103146-1-brendanhiggins@google.com>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <f3682d48-6f27-5eef-8274-02f90dd65188@kernel.org>
+Date:   Fri, 2 Nov 2018 12:23:53 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181023235750.103146-1-brendanhiggins@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Brendan,
 
 
-> Il giorno 1 nov 2018, alle ore 22:06, Holger Hoffst=C3=A4tte =
-<holger@applied-asynchrony.com> ha scritto:
->=20
-> On 11/01/18 18:43, Konstantin Khlebnikov wrote:
->> With default 8ms idle slice BFQ is up to 10 times slower than CFQ
->> for massive random read workloads for common SATA SSD.
->> For now zero idle slice gives better out of box experience.
->> CFQ employs this since commit 41c0126b3f22 ("block: Make CFQ default
->> to IOPS mode on SSDs")
->=20
-> Well, that's interesting because 3 years ago I made the same =
-suggestion
-> and was told that BFQ's heuristics automagically make it not idle when
-> rotational=3D0.
+On 10/23/2018 05:57 PM, Brendan Higgins wrote:
+> This patch set proposes KUnit, a lightweight unit testing and mocking
+> framework for the Linux kernel.
+> 
+> Unlike Autotest and kselftest, KUnit is a true unit testing framework;
+> it does not require installing the kernel on a test machine or in a VM
+> and does not require tests to be written in userspace running on a host
+> kernel. Additionally, KUnit is fast: From invocation to completion KUnit
+> can run several dozen tests in under a second. Currently, the entire
+> KUnit test suite for KUnit runs in under a second from the initial
+> invocation (build time excluded).
+> 
+> KUnit is heavily inspired by JUnit, Python's unittest.mock, and
+> Googletest/Googlemock for C++. KUnit provides facilities for defining
+> unit test cases, grouping related test cases into test suites, providing
+> common infrastructure for running tests, mocking, spying, and much more.
+> 
+> ## What's so special about unit testing?
+> 
+> A unit test is supposed to test a single unit of code in isolation,
+> hence the name. There should be no dependencies outside the control of
+> the test; this means no external dependencies, which makes tests orders
+> of magnitudes faster. Likewise, since there are no external dependencies,
+> there are no hoops to jump through to run the tests. Additionally, this
+> makes unit tests deterministic: a failing unit test always indicates a
+> problem. Finally, because unit tests necessarily have finer granularity,
+> they are able to test all code paths easily solving the classic problem
+> of difficulty in exercising error handling code.
+> 
+> ## Is KUnit trying to replace other testing frameworks for the kernel?
+> 
+> No. Most existing tests for the Linux kernel are end-to-end tests, which
+> have their place. A well tested system has lots of unit tests, a
+> reasonable number of integration tests, and some end-to-end tests. KUnit
+> is just trying to address the unit test space which is currently not
+> being addressed.
+> 
+> ## More information on KUnit
+> 
+> There is a bunch of documentation near the end of this patch set that
+> describes how to use KUnit and best practices for writing unit tests.
+> For convenience I am hosting the compiled docs here:
+> https://google.github.io/kunit-docs/third_party/kernel/docs/
+> 
+> ## Changes Since Last Version
+> 
+>  - Updated patchset to apply cleanly on 4.19.
+>  - Stripped down patchset to focus on just the core features (I dropped
+>    mocking, spying, and the MMIO stuff for now; you can find these
+>    patches here: https://kunit-review.googlesource.com/c/linux/+/1132),
+>    as suggested by Rob.
+>  - Cleaned up some of the commit messages and tweaked commit order a
+>    bit based on suggestions.
+>
 
-Yep, that automagic is probably 50% of the good of BFQ.
+Framework looks good. I think it would be helpful to include a real test
+in the patch series to get a feel for how effective it is.
 
-If one just sets slice_idle=3D0, then throughput is always maximum with
-random I/O; but there is no control on I/O any longer.
+On one hand, KUnit stands on its own as its own and maybe it should be placed in
+under tools/testing/KUnit, however I am wondering would it be beneficial for the
+framework to under selftests.
 
-At any rate, Konstantin, if you have some use case where BFQ fails,
-I'll be very glad to analyze it, and hopefully improve BFQ.  Just one
-request: use at least a 4.19.
+I am a bit concerned about the number of test framework we have at the moment and
+are we running the risk of fragmenting the landscape. I am concerned if this would
+lead to developer confusion as to where to add tests.
 
-Thanks,
-Paolo
+That being said, I don't have a strong opinion one way or the other.
 
-> Did you actually benchmark this? I just tried and don't
-> get a noticeable performance difference with slice_idle=3D0 compared =
-to
-> deadline.
->=20
-> Discussion link:
-> =
-https://groups.google.com/forum/#!msg/bfq-iosched/iRMw2n3kYLY/6l9cIm3TBgAJ=
+btw I started playing with kunit following the instructions and ran into problems:
 
->=20
-> curious..
->=20
-> Holger
+./tools/testing/kunit/kunit.py 
+usage: kunit.py [-h] {run,new} ...
 
+Helps writing and running KUnit tests.
+
+positional arguments:
+  {run,new}
+    run       Runs KUnit tests.
+    new       Prints out boilerplate for writing new tests.
+
+optional arguments:
+  -h, --help  show this help message and exit
+
+./tools/testing/kunit/kunit.py run
+Regenerating .config ...
+ERROR:root:Provided Kconfig is not contained in validated .config!
+
+thanks,
+-- Shuah
