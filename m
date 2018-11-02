@@ -2,134 +2,114 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E03EC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:09:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06F2BC65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:09:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 703E820833
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:09:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C743E20833
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:09:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RGdtU/gD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 703E820833
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gFnXYr3z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C743E20833
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728540AbeKCERg (ORCPT
+        id S1728629AbeKCERi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 00:17:36 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:33710 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726051AbeKCERf (ORCPT
+        Sat, 3 Nov 2018 00:17:38 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:37789 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726051AbeKCERh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 00:17:35 -0400
-Received: by mail-wm1-f65.google.com with SMTP id f19-v6so1837283wmb.0
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 12:09:14 -0700 (PDT)
+        Sat, 3 Nov 2018 00:17:37 -0400
+Received: by mail-qk1-f196.google.com with SMTP id 131so4761736qkd.4
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 12:09:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Cs/HdsgXrRlb81nkVaefoI3h8zuKKKj/56RKUVVtQxY=;
-        b=RGdtU/gDTXeH0/chT7ehctiXFFGrPalMWu1QBCdTU0yCFeBGarEi9G6CC3koHGZCdb
-         lDZwpPgYmXvoWeAi0PzVtjMlxmEFQRCEtBUrTmMDXXor0gUqWMFV8aL2qVP1XvEn9P9N
-         EG/ocwbCPVNQVyrXftndTAesZZkK/Hr9amPyU=
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=9ROH/ITGDSHqjQQPyvecu6ZEjxW5e/H4RNvsI77RxHI=;
+        b=gFnXYr3zqGTGXGPBEEOR4pcVPc3k1Ep5tHrGlDfKoxgXeEMs/eb3yMBVj1dISqL6db
+         TOyQ5JAGnoKc+PkTrbE1MiwHq1FF0y5s+bP204/2ZqVYTwxemJTJd1aNLlOeEgylQUiy
+         BmcW3N91K8EXq+mel/VkNsy3wI84VptySIPSw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Cs/HdsgXrRlb81nkVaefoI3h8zuKKKj/56RKUVVtQxY=;
-        b=Dirij63xR1hAkbBZ5MQG4y+uw9qts9HcdDPWNtb8DJUp73asYsOObwV/ZI+9mwMphu
-         O7p6Kh5+Xf2NISy7I63RLqTQS7yNMRWwYoRtHIg6gkoyuKGQTYyCeTs1T4YAj3PyrnZe
-         lU14gzvHBIHzFwnMn3PyMAtgYw2mFnQXWy/ErK3S7XGV4r+SVM2RT7geqj/m3gLC4kL4
-         4KoG51uSzI0v+Yyxo5dqD5CHw6hi30EZIHGu9pOYw4W+Ddvs4CmLMitD5ykJaVwm+4tu
-         K6Al+/KPzEQxOiAe48/f1k5tUMzGteTL9B7NDj+o9Cgg1jXcpRnAHTstdco7ZI+Il/QI
-         A26Q==
-X-Gm-Message-State: AGRZ1gKE39dkEgUwoSeuBipB1gQqCkEJ00j2mpfReiJkBvXrbByEy3gL
-        DIUJTYHeIVcBBoY7U10lLgii3q5ok6o=
-X-Google-Smtp-Source: AJdET5eNf8QcYrTayLAECMhJ58gzrsgkIw471k7k3vfRk1nt5pdm6T9WXkj14KYO2jw9dAPccHFvwA==
-X-Received: by 2002:a1c:f60f:: with SMTP id w15-v6mr162627wmc.101.1541185752982;
-        Fri, 02 Nov 2018 12:09:12 -0700 (PDT)
-Received: from localhost.localdomain ([80.125.186.228])
-        by smtp.gmail.com with ESMTPSA id s195-v6sm3899337wmd.39.2018.11.02.12.09.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 02 Nov 2018 12:09:11 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org, arnd@arndb.de, ren_guo@c-sky.com
-Subject: [PATCH 4/4] dt-bindings: timer: gx6605s SOC timer
-Date:   Fri,  2 Nov 2018 20:08:58 +0100
-Message-Id: <1541185738-8208-4-git-send-email-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1541185738-8208-1-git-send-email-daniel.lezcano@linaro.org>
-References: <d99ed466-b11a-b931-fc7a-a555cae80a53@linaro.org>
- <1541185738-8208-1-git-send-email-daniel.lezcano@linaro.org>
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=9ROH/ITGDSHqjQQPyvecu6ZEjxW5e/H4RNvsI77RxHI=;
+        b=J4Jh1W0GbPg/e2Y5tnJZz95QnqQ9wvJiLuJFj//MFy5DY9/nf3m+s2wUVAVe1FefVj
+         sZ1fBvWQCluLQYWLi9sk/kH2YLKlIlY0ZCokbIaXHOb8Kv2D0BpYfGWPOb4BcY2VbqTs
+         hTjq5cxsu5EloO+IApjj//EbCWPri9suskjgzbMWmR5U1s4E83HHZXftuURxrH2xREPN
+         aZLdbv3nWiWufHJmGpcnTI83iVQvve+1N2dGh07wtZYDq8Nvn4QtvBLLid/BsafBYwI7
+         EE9I0H3MXt7NjFD6i2ainR9AWf31fzVQAQO+oeCVCD3tM4XuGq/fXXSdhFXlmo2DAaUU
+         tt9A==
+X-Gm-Message-State: AGRZ1gLJmw9ZKZlDJ0QXdFk1Pj17S3gKUzWbrDVTuwCkv5V8r+wYGizu
+        FO5WQr3SD8/pW3eI7n9oDaYdRg==
+X-Google-Smtp-Source: AJdET5dmWagBZDokJWlicaSPRqlZ04/IwFVEgxQ9akN3IoCxWFaG0t4HJehBzT50A0JOaAmeXwEnkg==
+X-Received: by 2002:a37:18e5:: with SMTP id 98mr12055006qky.333.1541185756492;
+        Fri, 02 Nov 2018 12:09:16 -0700 (PDT)
+Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
+        by smtp.gmail.com with ESMTPSA id j89sm15430503qkh.34.2018.11.02.12.09.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 02 Nov 2018 12:09:15 -0700 (PDT)
+Date:   Fri, 2 Nov 2018 15:09:14 -0400 (EDT)
+From:   Nicolas Pitre <nicolas.pitre@linaro.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mikulas Patocka <mpatocka@redhat.com>
+cc:     Dave Mielke <Dave@mielke.cc>, Adam Borowski <kilobyte@angband.pl>,
+        Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vt: fix broken display when running aptitude
+In-Reply-To: <nycvar.YSQ.7.76.1810231139460.1498@knanqh.ubzr>
+Message-ID: <nycvar.YSQ.7.76.1811021447200.1498@knanqh.ubzr>
+References: <alpine.LRH.2.02.1810231126100.20699@file01.intranet.prod.int.rdu2.redhat.com> <nycvar.YSQ.7.76.1810231139460.1498@knanqh.ubzr>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guo Ren <ren_guo@c-sky.com>
+Greg, are you picking up this patch?
 
-Dt-bindings doc for gx6605s SOC's system timer.
+Would be nice to have in v4.19.1.
 
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- .../bindings/timer/csky,gx6605s-timer.txt          | 42 ++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/timer/csky,gx6605s-timer.txt
+On Tue, 23 Oct 2018, Nicolas Pitre wrote:
 
-diff --git a/Documentation/devicetree/bindings/timer/csky,gx6605s-timer.txt b/Documentation/devicetree/bindings/timer/csky,gx6605s-timer.txt
-new file mode 100644
-index 0000000..6b04344
---- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/csky,gx6605s-timer.txt
-@@ -0,0 +1,42 @@
-+=================
-+gx6605s SOC Timer
-+=================
-+
-+The timer is used in gx6605s soc as system timer and the driver
-+contain clk event and clk source.
-+
-+==============================
-+timer node bindings definition
-+==============================
-+
-+	Description: Describes gx6605s SOC timer
-+
-+	PROPERTIES
-+
-+	- compatible
-+		Usage: required
-+		Value type: <string>
-+		Definition: must be "csky,gx6605s-timer"
-+	- reg
-+		Usage: required
-+		Value type: <u32 u32>
-+		Definition: <phyaddr size> in soc from cpu view
-+	- clocks
-+		Usage: required
-+		Value type: phandle + clock specifier cells
-+		Definition: must be input clk node
-+	- interrupt
-+		Usage: required
-+		Value type: <u32>
-+		Definition: must be timer irq num defined by soc
-+
-+Examples:
-+---------
-+
-+	timer0: timer@20a000 {
-+		compatible = "csky,gx6605s-timer";
-+		reg = <0x0020a000 0x400>;
-+		clocks = <&dummy_apb_clk>;
-+		interrupts = <10>;
-+		interrupt-parent = <&intc>;
-+	};
--- 
-2.7.4
-
+> On Tue, 23 Oct 2018, Mikulas Patocka wrote:
+> 
+> > If you run aptitude on framebuffer console, the display is corrupted. The 
+> > corruption is caused by the commit d8ae7242. The patch adds "offset" to 
+> > "start" when calling scr_memsetw, but it forgets to do the same addition 
+> > on a subsequent call to do_update_region.
+> > 
+> > Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+> > Fixes: d8ae72427187 ("vt: preserve unicode values corresponding to screen characters")
+> > Cc: stable@vger.kernel.org	# 4.19
+> 
+> Good catch.
+> 
+> Reviewed-by: Nicolas Pitre <nico@linaro.org>
+> 
+> > ---
+> >  drivers/tty/vt/vt.c |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > Index: linux-2.6/drivers/tty/vt/vt.c
+> > ===================================================================
+> > --- linux-2.6.orig/drivers/tty/vt/vt.c	2018-10-23 16:15:08.000000000 +0200
+> > +++ linux-2.6/drivers/tty/vt/vt.c	2018-10-23 16:29:20.000000000 +0200
+> > @@ -1551,7 +1551,7 @@ static void csi_K(struct vc_data *vc, in
+> >  	scr_memsetw(start + offset, vc->vc_video_erase_char, 2 * count);
+> >  	vc->vc_need_wrap = 0;
+> >  	if (con_should_update(vc))
+> > -		do_update_region(vc, (unsigned long) start, count);
+> > +		do_update_region(vc, (unsigned long)(start + offset), count);
+> >  }
+> >  
+> >  static void csi_X(struct vc_data *vc, int vpar) /* erase the following vpar positions */
+> > 
+> 
