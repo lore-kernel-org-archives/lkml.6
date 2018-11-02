@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF95AC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:39:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3037C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:39:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9435B20833
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:39:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7169620837
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:39:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yUOhECQr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9435B20833
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="m2Bm/IFC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7169620837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729140AbeKCDrj (ORCPT
+        id S1729155AbeKCDrm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:47:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41734 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:47:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728102AbeKCDri (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:47:38 -0400
+        id S1728102AbeKCDrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:47:41 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B80532082E;
-        Fri,  2 Nov 2018 18:39:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87E862082E;
+        Fri,  2 Nov 2018 18:39:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541183966;
-        bh=C7yI2r5455g1t1fGj3qeJBwXqtqCru/k7q52luDH1ss=;
+        s=default; t=1541183969;
+        bh=PKRUdq8gpYOPtSMRn9BUjF42MHDYFRiQKlQRh2ERDBk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yUOhECQr2MDgP8/lIg76wbV5aYNBC8RJOzFT9e1epGr46s8DpdTsn9JFM+mEyBy2j
-         L7NbTKMycpYllRIya/JTX29noE68fVorVj/I5xRI/sFRwvD7qdR0ICPhnH/Mfridv2
-         yflq84HWuzvsxJlgGswYQNNbm/G8MzTm929KMbgQ=
+        b=m2Bm/IFCfK2tG5bx/uUFkj06t4n0KmLPDr8VzKTqtXoYL1bPiu8+5zYylVys5CJBD
+         vaxz7iwWtuqoXwqMg4GPCwrFIESoe2is+594cx1UjnfAVUaxXApRMGaCWEF4pC1jKl
+         bbkHIZrvRplKAIjBPkRoreueZaciz4saxZcdk7a4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 037/150] rxrpc: Fix RTT gathering
-Date:   Fri,  2 Nov 2018 19:33:19 +0100
-Message-Id: <20181102182905.903056585@linuxfoundation.org>
+Subject: [PATCH 4.18 038/150] rxrpc: Fix transport sockopts to get IPv4 errors on an IPv6 socket
+Date:   Fri,  2 Nov 2018 19:33:20 +0100
+Message-Id: <20181102182905.990300511@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -62,181 +62,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b604dd9883f783a94020d772e4fe03160f455372 ]
+[ Upstream commit 37a675e768d7606fe8a53e0c459c9b53e121ac20 ]
 
-Fix RTT information gathering in AF_RXRPC by the following means:
+It seems that enabling IPV6_RECVERR on an IPv6 socket doesn't also turn on
+IP_RECVERR, so neither local errors nor ICMP-transported remote errors from
+IPv4 peer addresses are returned to the AF_RXRPC protocol.
 
- (1) Enable Rx timestamping on the transport socket with SO_TIMESTAMPNS.
+Make the sockopt setting code in rxrpc_open_socket() fall through from the
+AF_INET6 case to the AF_INET case to turn on all the AF_INET options too in
+the AF_INET6 case.
 
- (2) If the sk_buff doesn't have a timestamp set when rxrpc_data_ready()
-     collects it, set it at that point.
-
- (3) Allow ACKs to be requested on the last packet of a client call, but
-     not a service call.  We need to be careful lest we undo:
-
-	bf7d620abf22c321208a4da4f435e7af52551a21
-	Author: David Howells <dhowells@redhat.com>
-	Date:   Thu Oct 6 08:11:51 2016 +0100
-	rxrpc: Don't request an ACK on the last DATA packet of a call's Tx phase
-
-     but that only really applies to service calls that we're handling,
-     since the client side gets to send the final ACK (or not).
-
- (4) When about to transmit an ACK or DATA packet, record the Tx timestamp
-     before only; don't update the timestamp afterwards.
-
- (5) Switch the ordering between recording the serial and recording the
-     timestamp to always set the serial number first.  The serial number
-     shouldn't be seen referenced by an ACK packet until we've transmitted
-     the packet bearing it - so in the Rx path, we don't need the timestamp
-     until we've checked the serial number.
-
-Fixes: cf1a6474f807 ("rxrpc: Add per-peer RTT tracker")
+Fixes: f2aeed3a591f ("rxrpc: Fix error reception on AF_INET6 sockets")
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/rxrpc/input.c        |  8 ++++++--
- net/rxrpc/local_object.c |  9 +++++++++
- net/rxrpc/output.c       | 31 ++++++++++++++++++-------------
- 3 files changed, 33 insertions(+), 15 deletions(-)
+ net/rxrpc/local_object.c | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
 
-diff --git a/net/rxrpc/input.c b/net/rxrpc/input.c
-index 338fbbf216a9..f6027c875876 100644
---- a/net/rxrpc/input.c
-+++ b/net/rxrpc/input.c
-@@ -616,13 +616,14 @@ static void rxrpc_input_requested_ack(struct rxrpc_call *call,
- 		if (!skb)
- 			continue;
- 
-+		sent_at = skb->tstamp;
-+		smp_rmb(); /* Read timestamp before serial. */
- 		sp = rxrpc_skb(skb);
- 		if (sp->hdr.serial != orig_serial)
- 			continue;
--		smp_rmb();
--		sent_at = skb->tstamp;
- 		goto found;
- 	}
-+
- 	return;
- 
- found:
-@@ -1137,6 +1138,9 @@ void rxrpc_data_ready(struct sock *udp_sk)
- 		return;
- 	}
- 
-+	if (skb->tstamp == 0)
-+		skb->tstamp = ktime_get_real();
-+
- 	rxrpc_new_skb(skb, rxrpc_skb_rx_received);
- 
- 	_net("recv skb %p", skb);
 diff --git a/net/rxrpc/local_object.c b/net/rxrpc/local_object.c
-index b493e6b62740..5d89ea5c1976 100644
+index 5d89ea5c1976..386dc1f20c73 100644
 --- a/net/rxrpc/local_object.c
 +++ b/net/rxrpc/local_object.c
-@@ -173,6 +173,15 @@ static int rxrpc_open_socket(struct rxrpc_local *local, struct net *net)
+@@ -135,10 +135,10 @@ static int rxrpc_open_socket(struct rxrpc_local *local, struct net *net)
+ 	}
+ 
+ 	switch (local->srx.transport.family) {
+-	case AF_INET:
+-		/* we want to receive ICMP errors */
++	case AF_INET6:
++		/* we want to receive ICMPv6 errors */
+ 		opt = 1;
+-		ret = kernel_setsockopt(local->socket, SOL_IP, IP_RECVERR,
++		ret = kernel_setsockopt(local->socket, SOL_IPV6, IPV6_RECVERR,
+ 					(char *) &opt, sizeof(opt));
+ 		if (ret < 0) {
+ 			_debug("setsockopt failed");
+@@ -146,19 +146,22 @@ static int rxrpc_open_socket(struct rxrpc_local *local, struct net *net)
+ 		}
+ 
+ 		/* we want to set the don't fragment bit */
+-		opt = IP_PMTUDISC_DO;
+-		ret = kernel_setsockopt(local->socket, SOL_IP, IP_MTU_DISCOVER,
++		opt = IPV6_PMTUDISC_DO;
++		ret = kernel_setsockopt(local->socket, SOL_IPV6, IPV6_MTU_DISCOVER,
+ 					(char *) &opt, sizeof(opt));
+ 		if (ret < 0) {
  			_debug("setsockopt failed");
  			goto error;
  		}
+-		break;
+ 
+-	case AF_INET6:
++		/* Fall through and set IPv4 options too otherwise we don't get
++		 * errors from IPv4 packets sent through the IPv6 socket.
++		 */
 +
-+		/* We want receive timestamps. */
-+		opt = 1;
-+		ret = kernel_setsockopt(local->socket, SOL_SOCKET, SO_TIMESTAMPNS,
-+					(char *)&opt, sizeof(opt));
-+		if (ret < 0) {
-+			_debug("setsockopt failed");
-+			goto error;
-+		}
- 		break;
++	case AF_INET:
+ 		/* we want to receive ICMP errors */
+ 		opt = 1;
+-		ret = kernel_setsockopt(local->socket, SOL_IPV6, IPV6_RECVERR,
++		ret = kernel_setsockopt(local->socket, SOL_IP, IP_RECVERR,
+ 					(char *) &opt, sizeof(opt));
+ 		if (ret < 0) {
+ 			_debug("setsockopt failed");
+@@ -166,8 +169,8 @@ static int rxrpc_open_socket(struct rxrpc_local *local, struct net *net)
+ 		}
  
- 	default:
-diff --git a/net/rxrpc/output.c b/net/rxrpc/output.c
-index 4774c8f5634d..6ac21bb2071d 100644
---- a/net/rxrpc/output.c
-+++ b/net/rxrpc/output.c
-@@ -124,7 +124,6 @@ int rxrpc_send_ack_packet(struct rxrpc_call *call, bool ping,
- 	struct kvec iov[2];
- 	rxrpc_serial_t serial;
- 	rxrpc_seq_t hard_ack, top;
--	ktime_t now;
- 	size_t len, n;
- 	int ret;
- 	u8 reason;
-@@ -196,9 +195,7 @@ int rxrpc_send_ack_packet(struct rxrpc_call *call, bool ping,
- 		/* We need to stick a time in before we send the packet in case
- 		 * the reply gets back before kernel_sendmsg() completes - but
- 		 * asking UDP to send the packet can take a relatively long
--		 * time, so we update the time after, on the assumption that
--		 * the packet transmission is more likely to happen towards the
--		 * end of the kernel_sendmsg() call.
-+		 * time.
- 		 */
- 		call->ping_time = ktime_get_real();
- 		set_bit(RXRPC_CALL_PINGING, &call->flags);
-@@ -206,9 +203,6 @@ int rxrpc_send_ack_packet(struct rxrpc_call *call, bool ping,
- 	}
- 
- 	ret = kernel_sendmsg(conn->params.local->socket, &msg, iov, 2, len);
--	now = ktime_get_real();
--	if (ping)
--		call->ping_time = now;
- 	conn->params.peer->last_tx_at = ktime_get_seconds();
- 	if (ret < 0)
- 		trace_rxrpc_tx_fail(call->debug_id, serial, ret,
-@@ -357,8 +351,14 @@ int rxrpc_send_data_packet(struct rxrpc_call *call, struct sk_buff *skb,
- 
- 	/* If our RTT cache needs working on, request an ACK.  Also request
- 	 * ACKs if a DATA packet appears to have been lost.
-+	 *
-+	 * However, we mustn't request an ACK on the last reply packet of a
-+	 * service call, lest OpenAFS incorrectly send us an ACK with some
-+	 * soft-ACKs in it and then never follow up with a proper hard ACK.
- 	 */
--	if (!(sp->hdr.flags & RXRPC_LAST_PACKET) &&
-+	if ((!(sp->hdr.flags & RXRPC_LAST_PACKET) ||
-+	     rxrpc_to_server(sp)
-+	     ) &&
- 	    (test_and_clear_bit(RXRPC_CALL_EV_ACK_LOST, &call->events) ||
- 	     retrans ||
- 	     call->cong_mode == RXRPC_CALL_SLOW_START ||
-@@ -384,6 +384,11 @@ int rxrpc_send_data_packet(struct rxrpc_call *call, struct sk_buff *skb,
- 		goto send_fragmentable;
- 
- 	down_read(&conn->params.local->defrag_sem);
-+
-+	sp->hdr.serial = serial;
-+	smp_wmb(); /* Set serial before timestamp */
-+	skb->tstamp = ktime_get_real();
-+
- 	/* send the packet by UDP
- 	 * - returns -EMSGSIZE if UDP would have to fragment the packet
- 	 *   to go out of the interface
-@@ -404,12 +409,8 @@ done:
- 	trace_rxrpc_tx_data(call, sp->hdr.seq, serial, whdr.flags,
- 			    retrans, lost);
- 	if (ret >= 0) {
--		ktime_t now = ktime_get_real();
--		skb->tstamp = now;
--		smp_wmb();
--		sp->hdr.serial = serial;
- 		if (whdr.flags & RXRPC_REQUEST_ACK) {
--			call->peer->rtt_last_req = now;
-+			call->peer->rtt_last_req = skb->tstamp;
- 			trace_rxrpc_rtt_tx(call, rxrpc_rtt_tx_data, serial);
- 			if (call->peer->rtt_usage > 1) {
- 				unsigned long nowj = jiffies, ack_lost_at;
-@@ -448,6 +449,10 @@ send_fragmentable:
- 
- 	down_write(&conn->params.local->defrag_sem);
- 
-+	sp->hdr.serial = serial;
-+	smp_wmb(); /* Set serial before timestamp */
-+	skb->tstamp = ktime_get_real();
-+
- 	switch (conn->params.local->srx.transport.family) {
- 	case AF_INET:
- 		opt = IP_PMTUDISC_DONT;
+ 		/* we want to set the don't fragment bit */
+-		opt = IPV6_PMTUDISC_DO;
+-		ret = kernel_setsockopt(local->socket, SOL_IPV6, IPV6_MTU_DISCOVER,
++		opt = IP_PMTUDISC_DO;
++		ret = kernel_setsockopt(local->socket, SOL_IP, IP_MTU_DISCOVER,
+ 					(char *) &opt, sizeof(opt));
+ 		if (ret < 0) {
+ 			_debug("setsockopt failed");
 -- 
 2.17.1
 
