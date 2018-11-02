@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79D66C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:45:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE8A3C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:45:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B0B820847
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:45:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90D3A20847
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:45:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mhQ72hOt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B0B820847
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ckbvkQZ0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90D3A20847
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730208AbeKCDxg (ORCPT
+        id S1730220AbeKCDxi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:53:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49272 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:53:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49332 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729726AbeKCDxf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:53:35 -0400
+        id S1729726AbeKCDxh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:53:37 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 760C92084A;
-        Fri,  2 Nov 2018 18:45:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BA6920837;
+        Fri,  2 Nov 2018 18:45:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184322;
-        bh=f3PcTHy5gs5rHBpWEzIGHGAfeR/JrnW6Mr6rp8Tk7Xw=;
+        s=default; t=1541184324;
+        bh=PDWU4iSPjipFqfjOLajLEzvMzTFeAcLOvEzpFT2sPKI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mhQ72hOtolw7zKViVJ37xVewovsxGIj1NPN17utVOmtP9R1eIu1x9lACZ5oTmSWIR
-         wr3WKIGZAZZXZs0X87KeECgzNDKpe9hRcsEiyrGh4vVRppqlUHPBmx4yUOQUA2geOq
-         dk7tAGIdfAsafYsuBsBEuxmsl3DmVHnNGWGngh98=
+        b=ckbvkQZ0qwM6PmQTLChnzxjrJpfCv5WB4r0/fLJxjSsGQKMKEVKR5EyDiY7sw4Gzz
+         LR5PDzxsZJmXEOUbt4M0m4BE3hUF890hL6Lhc8zF05+EKWtg4d6h5aI+gRkt3TPFv5
+         UOrrsZbhC03OBHC1w2bPcqtPZWBFzB+XidNXWOH8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Karsten Graul <kgraul@linux.ibm.com>,
-        Ursula Braun <ubraun@linux.ibm.com>,
+        stable@vger.kernel.org, Petr Machata <petrm@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 135/150] net/smc: fix smc_buf_unuse to use the lgr pointer
-Date:   Fri,  2 Nov 2018 19:34:57 +0100
-Message-Id: <20181102182912.056921139@linuxfoundation.org>
+Subject: [PATCH 4.18 136/150] mlxsw: spectrum_switchdev: Dont ignore deletions of learned MACs
+Date:   Fri,  2 Nov 2018 19:34:58 +0100
+Message-Id: <20181102182912.103581336@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -63,89 +63,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Karsten Graul <kgraul@linux.ibm.com>
+From: Petr Machata <petrm@mellanox.com>
 
-[ Upstream commit fb692ec4117f6fd25044cfb5720d6b79d400dc65 ]
+[ Upstream commit ad0b9d94182be8356978d220c82f9837cffeb7a9 ]
 
-The pointer to the link group is unset in the smc connection structure
-right before the call to smc_buf_unuse. Provide the lgr pointer to
-smc_buf_unuse explicitly.
-And move the call to smc_lgr_schedule_free_work to the end of
-smc_conn_free.
+Demands to remove FDB entries should be honored even if the FDB entry in
+question was originally learned, and not added by the user. Therefore
+ignore the added_by_user datum for SWITCHDEV_FDB_DEL_TO_DEVICE.
 
-Fixes: a6920d1d130c ("net/smc: handle unregistered buffers")
-Signed-off-by: Karsten Graul <kgraul@linux.ibm.com>
-Signed-off-by: Ursula Braun <ubraun@linux.ibm.com>
+Fixes: 816a3bed9549 ("switchdev: Add fdb.added_by_user to switchdev notifications")
+Signed-off-by: Petr Machata <petrm@mellanox.com>
+Suggested-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/smc/smc_core.c |   23 +++++++++++------------
- 1 file changed, 11 insertions(+), 12 deletions(-)
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/net/smc/smc_core.c
-+++ b/net/smc/smc_core.c
-@@ -114,22 +114,17 @@ static void __smc_lgr_unregister_conn(st
- 	sock_put(&smc->sk); /* sock_hold in smc_lgr_register_conn() */
- }
- 
--/* Unregister connection and trigger lgr freeing if applicable
-+/* Unregister connection from lgr
-  */
- static void smc_lgr_unregister_conn(struct smc_connection *conn)
- {
- 	struct smc_link_group *lgr = conn->lgr;
--	int reduced = 0;
- 
- 	write_lock_bh(&lgr->conns_lock);
- 	if (conn->alert_token_local) {
--		reduced = 1;
- 		__smc_lgr_unregister_conn(conn);
- 	}
- 	write_unlock_bh(&lgr->conns_lock);
--	if (!reduced || lgr->conns_num)
--		return;
--	smc_lgr_schedule_free_work(lgr);
- }
- 
- static void smc_lgr_free_work(struct work_struct *work)
-@@ -238,7 +233,8 @@ out:
- 	return rc;
- }
- 
--static void smc_buf_unuse(struct smc_connection *conn)
-+static void smc_buf_unuse(struct smc_connection *conn,
-+			  struct smc_link_group *lgr)
- {
- 	if (conn->sndbuf_desc)
- 		conn->sndbuf_desc->used = 0;
-@@ -248,8 +244,6 @@ static void smc_buf_unuse(struct smc_con
- 			conn->rmb_desc->used = 0;
- 		} else {
- 			/* buf registration failed, reuse not possible */
--			struct smc_link_group *lgr = conn->lgr;
--
- 			write_lock_bh(&lgr->rmbs_lock);
- 			list_del(&conn->rmb_desc->list);
- 			write_unlock_bh(&lgr->rmbs_lock);
-@@ -262,11 +256,16 @@ static void smc_buf_unuse(struct smc_con
- /* remove a finished connection from its link group */
- void smc_conn_free(struct smc_connection *conn)
- {
--	if (!conn->lgr)
-+	struct smc_link_group *lgr = conn->lgr;
-+
-+	if (!lgr)
- 		return;
- 	smc_cdc_tx_dismiss_slots(conn);
--	smc_lgr_unregister_conn(conn);
--	smc_buf_unuse(conn);
-+	smc_lgr_unregister_conn(conn);		/* unsets conn->lgr */
-+	smc_buf_unuse(conn, lgr);		/* allow buffer reuse */
-+
-+	if (!lgr->conns_num)
-+		smc_lgr_schedule_free_work(lgr);
- }
- 
- static void smc_link_clear(struct smc_link *lnk)
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+@@ -2307,8 +2307,6 @@ static void mlxsw_sp_switchdev_event_wor
+ 		break;
+ 	case SWITCHDEV_FDB_DEL_TO_DEVICE:
+ 		fdb_info = &switchdev_work->fdb_info;
+-		if (!fdb_info->added_by_user)
+-			break;
+ 		mlxsw_sp_port_fdb_set(mlxsw_sp_port, fdb_info, false);
+ 		break;
+ 	case SWITCHDEV_FDB_ADD_TO_BRIDGE: /* fall through */
 
 
