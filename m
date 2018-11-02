@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A6BC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:32:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48186C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:32:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 404572081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:32:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 404572081B
+	by mail.kernel.org (Postfix) with ESMTP id F16782081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:32:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F16782081B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727790AbeKBWjV (ORCPT
+        id S1727819AbeKBWjY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 18:39:21 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:55388 "EHLO
+        Fri, 2 Nov 2018 18:39:24 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:52108 "EHLO
         www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726026AbeKBWjV (ORCPT
+        with ESMTP id S1726147AbeKBWjX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 18:39:21 -0400
-Received: from fsav105.sakura.ne.jp (fsav105.sakura.ne.jp [27.133.134.232])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wA2DWAYE084888;
+        Fri, 2 Nov 2018 18:39:23 -0400
+Received: from fsav302.sakura.ne.jp (fsav302.sakura.ne.jp [153.120.85.133])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wA2DW90f084884;
         Fri, 2 Nov 2018 22:32:10 +0900 (JST)
         (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
 Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav105.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp);
- Fri, 02 Nov 2018 22:32:10 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp)
+ by fsav302.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp);
+ Fri, 02 Nov 2018 22:32:09 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp)
 Received: from ccsecurity.localdomain (softbank060157065137.bbtec.net [60.157.65.137])
         (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wA2DW4kM084867
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wA2DW4kL084867
         (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
         Fri, 2 Nov 2018 22:32:09 +0900 (JST)
         (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
@@ -53,154 +53,410 @@ Cc:     Alexander Potapenko <glider@google.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Will Deacon <will.deacon@arm.com>,
         Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [PATCH 2/3] mm: Use line-buffered printk() for show_free_areas().
-Date:   Fri,  2 Nov 2018 22:31:56 +0900
-Message-Id: <1541165517-3557-2-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [PATCH v6 1/3] printk: Add line-buffered printk() API.
+Date:   Fri,  2 Nov 2018 22:31:55 +0900
+Message-Id: <1541165517-3557-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
 X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1541165517-3557-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-References: <1541165517-3557-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot is sometimes getting mixed output like below due to concurrent
-printk(). Mitigate such output by using line-buffered printk() API.
+Sometimes we want to print a whole line without being disturbed by
+concurrent printk() from interrupts and/or other threads, for printk()
+which does not end with '\n' can be disturbed.
 
-  Node 0 DMA: 1*4kB (U) 0*8kB 0*16kB 1*32kB 
-  syz-executor0: page allocation failure: order:0, mode:0x484020(GFP_ATOMIC|__GFP_COMP), nodemask=(null)
-  (U) 
-  syz-executor0 cpuset=
-  2*64kB 
-  syz0
-  (U) 
-   mems_allowed=0
-  1*128kB 
-  CPU: 0 PID: 7592 Comm: syz-executor0 Not tainted 4.19.0-rc6+ #118
-  (U) 
-  Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-  1*256kB (U) 
-  Call Trace:
-  0*512kB 
-   <IRQ>
-  1*1024kB 
-   __dump_stack lib/dump_stack.c:77 [inline]
-   dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
-  (U) 
-  1*2048kB 
-   warn_alloc.cold.119+0xb7/0x1bd mm/page_alloc.c:3426
-  (M) 
+Since mixed printk() output makes it hard to interpret, this patch
+introduces API for line-buffered printk() output (so that we can make
+sure that printk() ends with '\n').
+
+Since functions introduced by this patch are merely wrapping
+printk()/vprintk() calls in order to minimize possibility of using
+"struct cont", it is safe to replace printk()/vprintk() with this API.
+Since we want to remove "struct cont" eventually, we will try to remove
+both "implicit printk() users who are expecting KERN_CONT behavior" and
+"explicit pr_cont()/printk(KERN_CONT) users". Therefore, converting to
+this API is recommended.
+
+Details:
+
+  A structure named "struct printk_buffer" is introduced for buffering
+  up to LOG_LINE_MAX bytes of printk() output which did not end with '\n'.
+
+  get_printk_buffer() tries to assign a "struct printk_buffer" from
+  statically preallocated array. get_printk_buffer() returns NULL if
+  all "struct printk_buffer" are in use, but the caller does not need to
+  check for NULL.
+
+  put_printk_buffer() flushes and releases the "struct printk_buffer".
+  put_printk_buffer() must match corresponding get_printk_buffer() as with
+  rcu_read_unlock() must match corresponding rcu_read_lock().
+
+  Three functions vprintk_buffered(), printk_buffered() and
+  flush_printk_buffer() are provided for using "struct printk_buffer".
+  These are like vfprintf(), fprintf(), fflush() except that these receive
+  "struct printk_buffer *" for the first argument.
+
+  vprintk_buffered() and printk_buffered() fall back to vprintk() and
+  printk() respectively if "struct printk_buffer *" argument is NULL.
+  flush_printk_buffer() and put_printk_buffer() become no-op if
+  "struct printk_buffer *" argument is NULL. Therefore, the caller of
+  get_printk_buffer() does not need to check for NULL.
+
+How to use this API:
+
+  (1) Call get_printk_buffer() and acquire "struct printk_buffer *".
+
+  (2) Rewrite printk() calls in the following way. The "ptr" is
+      "struct printk_buffer *" obtained in step (1).
+
+      printk(fmt, ...)     => printk_buffered(ptr, fmt, ...)
+      vprintk(fmt, args)   => vprintk_buffered(ptr, fmt, args)
+      pr_emerg(fmt, ...)   => bpr_emerg(ptr, fmt, ...)
+      pr_alert(fmt, ...)   => bpr_alert(ptr, fmt, ...)
+      pr_crit(fmt, ...)    => bpr_crit(ptr, fmt, ...)
+      pr_err(fmt, ...)     => bpr_err(ptr, fmt, ...)
+      pr_warning(fmt, ...) => bpr_warning(ptr, fmt, ...)
+      pr_warn(fmt, ...)    => bpr_warn(ptr, fmt, ...)
+      pr_notice(fmt, ...)  => bpr_notice(ptr, fmt, ...)
+      pr_info(fmt, ...)    => bpr_info(ptr, fmt, ...)
+      pr_cont(fmt, ...)    => bpr_cont(ptr, fmt, ...)
+
+  (3) Release "struct printk_buffer" by calling put_printk_buffer().
+
+Note that since "struct printk_buffer" buffers only up to one line, there
+is no need to rewrite if it is known that the "struct printk_buffer" is
+empty and printk() ends with '\n'.
+
+  Good example:
+
+    printk("Hello ");    =>  buf = get_printk_buffer();
+    pr_cont("world.\n");     printk_buffered(buf, "Hello ");
+                             printk_buffered(buf, "world.\n");
+                             put_printk_buffer(buf);
+
+  Pointless example:
+
+    printk("Hello\n");   =>  buf = get_printk_buffer();
+    printk("World.\n");      printk_buffered(buf, "Hello\n");
+                             printk_buffered(buf, "World.\n");
+                             put_printk_buffer(buf);
+
+Note that bpr_devel() and bpr_debug() are not defined. This is
+because pr_devel()/pr_debug() should not be followed by pr_cont()
+because pr_devel()/pr_debug() are conditionally enabled; output from
+pr_devel()/pr_debug() should always end with '\n'.
+
+Previous version was proposed at
+https://lkml.kernel.org/r/1540375870-6235-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp .
 
 Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Andrew Morton <akpm@linux-foundation.org>
 ---
- mm/page_alloc.c | 32 +++++++++++++++++---------------
- 1 file changed, 17 insertions(+), 15 deletions(-)
+ include/linux/printk.h          |  43 ++++++++++
+ kernel/printk/Makefile          |   2 +-
+ kernel/printk/internal.h        |   3 +
+ kernel/printk/printk.c          |   3 -
+ kernel/printk/printk_buffered.c | 179 ++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 226 insertions(+), 4 deletions(-)
+ create mode 100644 kernel/printk/printk_buffered.c
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index a919ba5..4411d5a 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -4694,10 +4694,10 @@ unsigned long nr_free_pagecache_pages(void)
- 	return nr_free_zone_pages(gfp_zone(GFP_HIGHUSER_MOVABLE));
- }
+diff --git a/include/linux/printk.h b/include/linux/printk.h
+index cf3eccf..92af345 100644
+--- a/include/linux/printk.h
++++ b/include/linux/printk.h
+@@ -157,6 +157,7 @@ static inline void printk_nmi_direct_enter(void) { }
+ static inline void printk_nmi_direct_exit(void) { }
+ #endif /* PRINTK_NMI */
  
--static inline void show_node(struct zone *zone)
-+static inline void show_node(struct zone *zone, struct printk_buffer *buf)
- {
- 	if (IS_ENABLED(CONFIG_NUMA))
--		printk("Node %d ", zone_to_nid(zone));
-+		printk_buffered(buf, "Node %d ", zone_to_nid(zone));
- }
++struct printk_buffer;
+ #ifdef CONFIG_PRINTK
+ asmlinkage __printf(5, 0)
+ int vprintk_emit(int facility, int level,
+@@ -173,6 +174,20 @@ int printk_emit(int facility, int level,
  
- long si_mem_available(void)
-@@ -4814,7 +4814,7 @@ static bool show_mem_node_skip(unsigned int flags, int nid, nodemask_t *nodemask
- 
- #define K(x) ((x) << (PAGE_SHIFT-10))
- 
--static void show_migration_types(unsigned char type)
-+static void show_migration_types(unsigned char type, struct printk_buffer *buf)
- {
- 	static const char types[MIGRATE_TYPES] = {
- 		[MIGRATE_UNMOVABLE]	= 'U',
-@@ -4838,7 +4838,7 @@ static void show_migration_types(unsigned char type)
- 	}
- 
- 	*p = '\0';
--	printk(KERN_CONT "(%s) ", tmp);
-+	printk_buffered(buf, "(%s) ", tmp);
- }
+ asmlinkage __printf(1, 2) __cold
+ int printk(const char *fmt, ...);
++struct printk_buffer *get_printk_buffer(void);
++bool flush_printk_buffer(struct printk_buffer *ptr);
++__printf(2, 3)
++int printk_buffered(struct printk_buffer *ptr, const char *fmt, ...);
++__printf(2, 0)
++int vprintk_buffered(struct printk_buffer *ptr, const char *fmt, va_list args);
++/*
++ * In order to avoid accidentally reusing "ptr" after put_printk_buffer("ptr"),
++ * put_printk_buffer() is defined as a macro which explicitly resets "ptr" to
++ * NULL.
++ */
++void __put_printk_buffer(struct printk_buffer *ptr);
++#define put_printk_buffer(ptr)					\
++	do { __put_printk_buffer(ptr); ptr = NULL; } while (0)
  
  /*
-@@ -4852,6 +4852,7 @@ static void show_migration_types(unsigned char type)
-  */
- void show_free_areas(unsigned int filter, nodemask_t *nodemask)
+  * Special printk facility for scheduler/timekeeping use only, _DO_NOT_USE_ !
+@@ -220,6 +235,17 @@ int printk(const char *s, ...)
  {
-+	struct printk_buffer *buf = get_printk_buffer();
- 	unsigned long free_pcp = 0;
- 	int cpu;
- 	struct zone *zone;
-@@ -4950,8 +4951,8 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
- 		for_each_online_cpu(cpu)
- 			free_pcp += per_cpu_ptr(zone->pageset, cpu)->pcp.count;
- 
--		show_node(zone);
--		printk(KERN_CONT
-+		show_node(zone, buf);
-+		printk_buffered(buf,
- 			"%s"
- 			" free:%lukB"
- 			" min:%lukB"
-@@ -4993,10 +4994,10 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
- 			K(free_pcp),
- 			K(this_cpu_read(zone->pageset->pcp.count)),
- 			K(zone_page_state(zone, NR_FREE_CMA_PAGES)));
--		printk("lowmem_reserve[]:");
-+		printk_buffered(buf, "lowmem_reserve[]:");
- 		for (i = 0; i < MAX_NR_ZONES; i++)
--			printk(KERN_CONT " %ld", zone->lowmem_reserve[i]);
--		printk(KERN_CONT "\n");
-+			printk_buffered(buf, " %ld", zone->lowmem_reserve[i]);
-+		printk_buffered(buf, "\n");
- 	}
- 
- 	for_each_populated_zone(zone) {
-@@ -5006,8 +5007,8 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
- 
- 		if (show_mem_node_skip(filter, zone_to_nid(zone), nodemask))
- 			continue;
--		show_node(zone);
--		printk(KERN_CONT "%s: ", zone->name);
-+		show_node(zone, buf);
-+		printk_buffered(buf, "%s: ", zone->name);
- 
- 		spin_lock_irqsave(&zone->lock, flags);
- 		for (order = 0; order < MAX_ORDER; order++) {
-@@ -5025,12 +5026,12 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
- 		}
- 		spin_unlock_irqrestore(&zone->lock, flags);
- 		for (order = 0; order < MAX_ORDER; order++) {
--			printk(KERN_CONT "%lu*%lukB ",
--			       nr[order], K(1UL) << order);
-+			printk_buffered(buf, "%lu*%lukB ",
-+					nr[order], K(1UL) << order);
- 			if (nr[order])
--				show_migration_types(types[order]);
-+				show_migration_types(types[order], buf);
- 		}
--		printk(KERN_CONT "= %lukB\n", K(total));
-+		printk_buffered(buf, "= %lukB\n", K(total));
- 	}
- 
- 	hugetlb_show_meminfo();
-@@ -5038,6 +5039,7 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
- 	printk("%ld total pagecache pages\n", global_node_page_state(NR_FILE_PAGES));
- 
- 	show_swap_cache_info();
-+	put_printk_buffer(buf);
+ 	return 0;
  }
++static inline struct printk_buffer *get_printk_buffer(void)
++{
++	return NULL;
++}
++static inline bool flush_printk_buffer(struct printk_buffer *ptr)
++{
++	return false;
++}
++#define printk_buffered(ptr, fmt, ...) printk(fmt, ##__VA_ARGS__)
++#define vprintk_buffered(ptr, fmt, args) vprintk(fmt, args)
++#define put_printk_buffer(ptr) do { ptr = NULL; } while (0)
+ static inline __printf(1, 2) __cold
+ int printk_deferred(const char *s, ...)
+ {
+@@ -330,6 +356,23 @@ static inline void printk_safe_flush_on_panic(void)
+ 	no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
+ #endif
  
- static void zoneref_set_zone(struct zone *zone, struct zoneref *zoneref)
++#define bpr_emerg(ptr, fmt, ...) \
++	printk_buffered(ptr, KERN_EMERG pr_fmt(fmt), ##__VA_ARGS__)
++#define bpr_alert(ptr, fmt, ...) \
++	printk_buffered(ptr, KERN_ALERT pr_fmt(fmt), ##__VA_ARGS__)
++#define bpr_crit(ptr, fmt, ...) \
++	printk_buffered(ptr, KERN_CRIT pr_fmt(fmt), ##__VA_ARGS__)
++#define bpr_err(ptr, fmt, ...) \
++	printk_buffered(ptr, KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
++#define bpr_warning(ptr, fmt, ...) \
++	printk_buffered(ptr, KERN_WARNING pr_fmt(fmt), ##__VA_ARGS__)
++#define bpr_warn bpr_warning
++#define bpr_notice(ptr, fmt, ...) \
++	printk_buffered(ptr, KERN_NOTICE pr_fmt(fmt), ##__VA_ARGS__)
++#define bpr_info(ptr, fmt, ...) \
++	printk_buffered(ptr, KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
++#define bpr_cont(ptr, fmt, ...) \
++	printk_buffered(ptr, KERN_CONT fmt, ##__VA_ARGS__)
+ 
+ /* If you are writing a driver, please use dev_dbg instead */
+ #if defined(CONFIG_DYNAMIC_DEBUG)
+diff --git a/kernel/printk/Makefile b/kernel/printk/Makefile
+index 4a2ffc3..23b1547 100644
+--- a/kernel/printk/Makefile
++++ b/kernel/printk/Makefile
+@@ -1,3 +1,3 @@
+ obj-y	= printk.o
+-obj-$(CONFIG_PRINTK)	+= printk_safe.o
++obj-$(CONFIG_PRINTK)	+= printk_safe.o printk_buffered.o
+ obj-$(CONFIG_A11Y_BRAILLE_CONSOLE)	+= braille.o
+diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
+index 0f18988..5e8c048 100644
+--- a/kernel/printk/internal.h
++++ b/kernel/printk/internal.h
+@@ -22,6 +22,9 @@
+ #define PRINTK_NMI_DIRECT_CONTEXT_MASK	 0x40000000
+ #define PRINTK_NMI_CONTEXT_MASK		 0x80000000
+ 
++#define PREFIX_MAX		32
++#define LOG_LINE_MAX		(1024 - PREFIX_MAX)
++
+ extern raw_spinlock_t logbuf_lock;
+ 
+ __printf(5, 0)
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 1b2a029..0b06211 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -421,9 +421,6 @@ __packed __aligned(4)
+ static u64 clear_seq;
+ static u32 clear_idx;
+ 
+-#define PREFIX_MAX		32
+-#define LOG_LINE_MAX		(1024 - PREFIX_MAX)
+-
+ #define LOG_LEVEL(v)		((v) & 0x07)
+ #define LOG_FACILITY(v)		((v) >> 3 & 0xff)
+ 
+diff --git a/kernel/printk/printk_buffered.c b/kernel/printk/printk_buffered.c
+new file mode 100644
+index 0000000..d181d31
+--- /dev/null
++++ b/kernel/printk/printk_buffered.c
+@@ -0,0 +1,179 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++
++#include <linux/types.h> /* DECLARE_BITMAP() */
++#include <linux/printk.h>
++#include "internal.h"
++
++/* A structure for line-buffered printk() output. */
++struct printk_buffer {
++	unsigned short int len; /* Valid bytes in buf[]. */
++	char buf[LOG_LINE_MAX];
++} __aligned(1024);
++
++/*
++ * Number of statically preallocated buffers.
++ *
++ * We can introduce a kernel config option if someone wants to tune this value.
++ * But since "struct printk_buffer" makes difference only when there are
++ * multiple threads concurrently calling printk() which does not end with '\n',
++ * and this API will fallback to normal printk() when all buffers are in use,
++ * it is possible that nobody needs to tune this value.
++ */
++#define NUM_LINE_BUFFERS 16
++
++static struct printk_buffer printk_buffers[NUM_LINE_BUFFERS];
++static DECLARE_BITMAP(printk_buffers_in_use, NUM_LINE_BUFFERS);
++
++/**
++ * get_printk_buffer - Try to get printk_buffer.
++ *
++ * Returns pointer to "struct printk_buffer" on success, NULL otherwise.
++ *
++ * If this function returned "struct printk_buffer", the caller is responsible
++ * for passing it to put_printk_buffer() so that "struct printk_buffer" can be
++ * reused in the future.
++ *
++ * Even if this function returned NULL, the caller does not need to check for
++ * NULL, for passing NULL to printk_buffered() simply acts like normal printk()
++ * and passing NULL to flush_printk_buffer()/put_printk_buffer() is a no-op.
++ */
++struct printk_buffer *get_printk_buffer(void)
++{
++	long i;
++
++	for (i = 0; i < NUM_LINE_BUFFERS; i++) {
++		if (test_and_set_bit_lock(i, printk_buffers_in_use))
++			continue;
++		printk_buffers[i].len = 0;
++		return &printk_buffers[i];
++	}
++	return NULL;
++}
++EXPORT_SYMBOL(get_printk_buffer);
++
++/**
++ * vprintk_buffered - Try to vprintk() in line buffered mode.
++ *
++ * @ptr:  Pointer to "struct printk_buffer". It can be NULL.
++ * @fmt:  printk() format string.
++ * @args: va_list structure.
++ *
++ * Returns the return value of vprintk().
++ *
++ * Try to store to @ptr first. If it fails, flush @ptr and then try to store to
++ * @ptr again. If it still fails, use unbuffered printing.
++ */
++int vprintk_buffered(struct printk_buffer *ptr, const char *fmt, va_list args)
++{
++	va_list tmp_args;
++	int r;
++	int pos;
++
++	if (!ptr)
++		return vprintk(fmt, args);
++	/*
++	 * Skip KERN_CONT here based on an assumption that KERN_CONT will be
++	 * given via "fmt" argument when KERN_CONT is given.
++	 */
++	pos = (printk_get_level(fmt) == 'c') ? 2 : 0;
++	while (true) {
++		va_copy(tmp_args, args);
++		r = vsnprintf(ptr->buf + ptr->len, sizeof(ptr->buf) - ptr->len,
++			      fmt + pos, tmp_args);
++		va_end(tmp_args);
++		if (likely(r + ptr->len < sizeof(ptr->buf)))
++			break;
++		if (!flush_printk_buffer(ptr))
++			return vprintk(fmt, args);
++	}
++	ptr->len += r;
++	/* Flush already completed lines if any. */
++	for (pos = ptr->len - 1; pos >= 0; pos--) {
++		if (ptr->buf[pos] != '\n')
++			continue;
++		ptr->buf[pos++] = '\0';
++		printk("%s\n", ptr->buf);
++		ptr->len -= pos;
++		memmove(ptr->buf, ptr->buf + pos, ptr->len);
++		/* This '\0' will be overwritten by next vsnprintf() above. */
++		ptr->buf[ptr->len] = '\0';
++		break;
++	}
++	return r;
++}
++
++/**
++ * printk_buffered - Try to printk() in line buffered mode.
++ *
++ * @ptr: Pointer to "struct printk_buffer". It can be NULL.
++ * @fmt: printk() format string, followed by arguments.
++ *
++ * Returns the return value of printk().
++ *
++ * Try to store to @ptr first. If it fails, flush @ptr and then try to store to
++ * @ptr again. If it still fails, use unbuffered printing.
++ */
++int printk_buffered(struct printk_buffer *ptr, const char *fmt, ...)
++{
++	va_list args;
++	int r;
++
++	va_start(args, fmt);
++	r = vprintk_buffered(ptr, fmt, args);
++	va_end(args);
++	return r;
++}
++EXPORT_SYMBOL(printk_buffered);
++
++/**
++ * flush_printk_buffer - Flush incomplete line in printk_buffer.
++ *
++ * @ptr: Pointer to "struct printk_buffer". It can be NULL.
++ *
++ * Returns true if flushed something, false otherwise.
++ *
++ * Flush if @ptr contains partial data. But usually there is no need to call
++ * this function because @ptr is flushed by put_printk_buffer().
++ */
++bool flush_printk_buffer(struct printk_buffer *ptr)
++{
++	if (!ptr || !ptr->len)
++		return false;
++	/*
++	 * vprintk_buffered() keeps 0 <= ptr->len < sizeof(ptr->buf) true.
++	 * But ptr->buf[ptr->len] != '\0' if this function is called due to
++	 * vsnprintf() + ptr->len >= sizeof(ptr->buf).
++	 */
++	ptr->buf[ptr->len] = '\0';
++	printk("%s", ptr->buf);
++	ptr->len = 0;
++	return true;
++}
++EXPORT_SYMBOL(flush_printk_buffer);
++
++/**
++ * __put_printk_buffer - Release printk_buffer.
++ *
++ * @ptr: Pointer to "struct printk_buffer". It can be NULL.
++ *
++ * Returns nothing.
++ *
++ * Flush and release @ptr.
++ * Please use put_printk_buffer() in order to catch use-after-free bugs.
++ */
++void __put_printk_buffer(struct printk_buffer *ptr)
++{
++	long i = (unsigned long) ptr - (unsigned long) printk_buffers;
++
++	if (!ptr)
++		return;
++	if (WARN_ON_ONCE(i % sizeof(struct printk_buffer)))
++		return;
++	i /= sizeof(struct printk_buffer);
++	if (WARN_ON_ONCE(i < 0 || i >= NUM_LINE_BUFFERS))
++		return;
++	if (ptr->len)
++		flush_printk_buffer(ptr);
++	clear_bit_unlock(i, printk_buffers_in_use);
++}
++EXPORT_SYMBOL(__put_printk_buffer);
 -- 
 1.8.3.1
 
