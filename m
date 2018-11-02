@@ -2,98 +2,95 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFA65C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:02:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8380C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:05:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78CF320657
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:02:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78CF320657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id 70D9B20657
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:05:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KTCJt03L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70D9B20657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727872AbeKCBKO (ORCPT
+        id S1727520AbeKCBNI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 21:10:14 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:51420 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726260AbeKCBKO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 21:10:14 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.23/8.16.0.23) with SMTP id wA2FwhTr012021;
-        Fri, 2 Nov 2018 11:01:42 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2ncne2yp33-1;
-        Fri, 02 Nov 2018 11:01:42 -0500
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id 9C796611E128;
-        Fri,  2 Nov 2018 11:01:41 -0500 (CDT)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Fri, 2 Nov 2018
- 16:01:40 +0000
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wA2G1dqv029031; Fri,
- 2 Nov 2018 16:01:39 GMT
-Date:   Fri, 2 Nov 2018 16:01:39 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-CC:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "Robert Jarzmik" <robert.jarzmik@free.fr>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-Subject: Re: [PATCH] [v2] ASoC: wm97xx: fix uninitialized regmap pointer
- problem
-Message-ID: <20181102160139.GQ16508@imbe.wolfsonmicro.main>
-References: <20181102151922.889131-1-arnd@arndb.de>
+        Fri, 2 Nov 2018 21:13:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58196 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726085AbeKCBNH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 21:13:07 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15B6320657;
+        Fri,  2 Nov 2018 16:05:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541174732;
+        bh=Xzo2ah8+MOWC5eFrU2QkwjlZM1tsEzvBnGDVebFj1tM=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=KTCJt03L8wHXFUKn53H1R4PdWG6wjDuMAjodw6hNlKIl4Q79+WBde2DwAo6X8X4u8
+         qoQKWJ7Gd9WQfAeu+K3h4AUrHWobzgOA9PmxxWH0kqpcrQsTiEURjzQabEZCX72tpT
+         quU/iZl2Qwa4egpaQlGUwCSYe8hPYJzlkmBYrIx8=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181102151922.889131-1-arnd@arndb.de>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=813 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
- definitions=main-1811020143
+Content-Transfer-Encoding: quoted-printable
+To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <CAPybu_3AGAYx2YKSuRvaNVBFSVkRVoOEa7oPaOAwuTDWK6drjQ@mail.gmail.com>
+Cc:     Alan Tull <atull@kernel.org>, linux-clk@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20181101144044.11495-1-ricardo.ribalda@gmail.com>
+ <154111534593.88331.1129843003477644482@swboyd.mtv.corp.google.com>
+ <CAPybu_3AGAYx2YKSuRvaNVBFSVkRVoOEa7oPaOAwuTDWK6drjQ@mail.gmail.com>
+Message-ID: <154117473137.88331.9628947623071045450@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 0/5] Implement devm_of_clk_add_provider
+Date:   Fri, 02 Nov 2018 09:05:31 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 04:18:21PM +0100, Arnd Bergmann wrote:
-> gcc notices that without either the ac97 bus or the pdata, we never
-> initialize the regmap pointer, which leads to an uninitialized variable
-> access:
-> 
-> sound/soc/codecs/wm9712.c: In function 'wm9712_soc_probe':
-> sound/soc/codecs/wm9712.c:666:2: error: 'regmap' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-> 
-> Since that configuration is invalid, it's better to return an error
-> here. I tried to avoid adding complexity to the conditions, and turned
-> the #ifdef into a regular if(IS_ENABLED()) check for readability.
-> This in turn requires moving some header file declarations out of
-> an #ifdef.
-> 
-> The same code is used in three drivers, all of which I'm changing
-> the same way.
-> 
-> Fixes: 2ed1a8e0ce8d ("ASoC: wm9712: add ac97 new bus support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
+Quoting Ricardo Ribalda Delgado (2018-11-01 23:54:50)
+> Hi Stephen
+> On Fri, Nov 2, 2018 at 12:35 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > Quoting Ricardo Ribalda Delgado (2018-11-01 07:40:39)
+> > > All Tull reported that there might be a great ammount of drivers with
+> > > imbalance on clk_add_provider. This is an issue for Device tree overl=
+ays
+> > > (and also a bug) https://lkml.org/lkml/2018/10/18/1103
+> > >
+> > > This patchset implement a devm_ function of of_clk_add_provider, and
+> > > fixes 3 drivers.
+> > >
+> > > Drivers like clk-gpio will be easily fixed with coccinelle if this set
+> > > is accepted. (I volunteer, I want to learn how to use it, just seen t=
+he
+> > > great presentations from Julia).
+> >
+> > We already have devm_of_clk_add_hw_provider(), so any instances of
+> > of_clk_add_provider() should be replaced with that, instead of
+> > propagating the usage of of_clk_add_provider() any further. I'll gladly
+> > apply patches to convert drivers from struct clk based APIs to struct
+> > clk_hw based APIs so that we can clearly split clk providers from clk
+> > consumers. So if you're interested in working on some coccinelle script
+> > for that it would be great!
+> >
+> =
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> Will look into that.
+> Can you take a look to 1/5 of this patchset? I believe that it is
+> valid even if we do not take 2-5.
 
-Thanks,
-Charles
+Sure. Again, that patch is combining code that we eventually want to
+delete, so while it is a nice 9 line reduction, it again goes in the
+wrong direction by merging two functions together that we'll want to
+unmerge later when one of the functions is removed. I'd rather see
+effort put into converting all drivers than merging deprecated code.
+
