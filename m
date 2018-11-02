@@ -7,58 +7,60 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7E0DC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 08:46:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E40F6C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 08:46:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D4252081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 08:46:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97E8C2081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 08:46:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hWkmEbZf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D4252081B
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="jRzlrnUq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97E8C2081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726515AbeKBRwp (ORCPT
+        id S1726641AbeKBRxO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 13:52:45 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:33878 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725990AbeKBRwo (ORCPT
+        Fri, 2 Nov 2018 13:53:14 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:34736 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726560AbeKBRxN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 13:52:44 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA28jMLS133787;
-        Fri, 2 Nov 2018 08:45:43 GMT
+        Fri, 2 Nov 2018 13:53:13 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA28jCeS086703;
+        Fri, 2 Nov 2018 08:45:45 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
  message-id : date : from : to : cc : subject : content-type :
  content-transfer-encoding; s=corp-2018-07-02;
- bh=G7Ysa3cM3JSt/Fyo2Pa7i0crLwbSmXhLMPSBp3Lxcz8=;
- b=hWkmEbZfB0FvUYgNy9SZ3LSbjH5ULBoivZcT2FHit7BYc0XhjdJ8EMjQUY0miSJspPlv
- y+gT+i9hCsSIQuIiB+Er9Ple+ii8NQTkYPkFc94+m2qpTdPMSf4Q/1a/OrVOyh1enZFH
- Jp7l3J8w40NUxAY/wutWVEXLmhTIAZX+Xt1/qtQwyrQB7mL3UAgVI+T89+iiPPFTVW9A
- EhRBG63CbDzZkaI5au43kzSGHQMjktjXgyBhtr3D3HP6bKfKb1s1mW8c42y0zBkkqkzb
- SlpL5GTaL46lHrd1foH31VSwu0RFpPpsACRKPjuN69FYsE38ILWn/aW9A+qsXdFuOL0C 6A== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2120.oracle.com with ESMTP id 2ncfyqd8tb-1
+ bh=XMKLSXAuBWSIOY4aaxmHV31Wj5DCB2dsOz3hgRdMtM4=;
+ b=jRzlrnUqJ9zp2Ok1X2WmodWoNG2TqucMqsphT42ZjGLfrmWc78WcFph1dNeNpGSG2MPg
+ kH+EApApYXQNxzjWgXH0yAUUFR/EhwPWn4M/tzGXyKRSq6vW38yesmb3wou1x2gFQ1jl
+ vcoXVgJMg3i10/SGCld7TGirCtVLQz/OPJlGqel3I95+KlcOWzs6/BjXXMxukHqfsgsI
+ jeOTmt6BigDjad7vs/ZM2x1w+2l48CXMLBKqfPviH0LWVvIu6QWOsioyTTWwNeyiqauG
+ pU+v7S7tHZ0CL/99T5JHA7M8l0IuNGOQwnbvEN4fJuJyukjMRSHljJVmSbpurNKfATgN cw== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2ncgnrd9bn-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 02 Nov 2018 08:45:43 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wA28jg5n022247
+        Fri, 02 Nov 2018 08:45:44 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wA28jhjv011044
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 2 Nov 2018 08:45:42 GMT
+        Fri, 2 Nov 2018 08:45:43 GMT
 Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wA28jg8F022765;
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wA28jgtp004355;
         Fri, 2 Nov 2018 08:45:42 GMT
 MIME-Version: 1.0
-Message-ID: <f06f0a89-5587-45db-8ed2-0a9d6638d5c0@default>
+Message-ID: <cca0cb20-f9e2-4094-840b-fb0f8810cd34@default>
 Date:   Fri, 2 Nov 2018 01:45:41 -0700 (PDT)
 From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
 To:     <linux-kernel@vger.kernel.org>
-Cc:     <mingo@redhat.com>, <konrad.wilk@oracle.com>, <dwmw@amazon.co.uk>,
-        <tglx@linutronix.de>, <srinivas.eeda@oracle.com>, <bp@suse.de>,
+Cc:     <mingo@redhat.com>, <luto@kernel.org>, <konrad.wilk@oracle.com>,
+        <dwmw@amazon.co.uk>, <tglx@linutronix.de>,
+        <srinivas.eeda@oracle.com>, <bp@suse.de>, <daniel@iogearbox.net>,
+        <yamada.masahiro@socionext.com>, <michal.lkml@markovi.net>,
         <peterz@infradead.org>, <hpa@zytor.com>
-Subject: [PATCH v3 2/2] retpolines: Remove the minimal stuff of retpoline
- support
+Subject: [PATCH v3 1/2] retpolines: Enable retpoline support only when
+ compiler support it
 X-Mailer: Zimbra on Oracle Beehive
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -73,86 +75,139 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that CONFIG_RETPOLINE hard depends on compiler support, there is no
-reason for minimal stuff to still exist.
+Since retpoline capable compilers are widely available, make
+CONFIG_RETPOLINE hard depend on it. This is achieved by breaking
+the build early and showing an error like below:
+
+"arch/x86/Makefile:226: *** You are building kernel with non-retpoline
+compiler, please update your compiler..  Stop."
 
 [peterz@infradead.org: initial suggestion]
-Link: Link: https://lore.kernel.org/lkml/caeb3213f13e57191e362ca04f2892cfa2=
-ccda65.camel@infradead.org
+Link: https://lore.kernel.org/lkml/caeb3213f13e57191e362ca04f2892cfa2ccda65=
+.camel@infradead.org
+[dwmw@amazon.co.uk: fail the build with non-retpoline compiler]
+Link: https://lore.kernel.org/lkml/alpine.DEB.2.21.1811011317400.1642@nanos=
+.tec.linutronix.de
 Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
 Suggested-by: Peter Zijlstra <peterz@infradead.org>
 Cc: David Woodhouse <dwmw@amazon.co.uk>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Borislav Petkov <bp@suse.de>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
 Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Michal Marek <michal.lkml@markovi.net>
 ---
- arch/x86/include/asm/nospec-branch.h |  2 --
- arch/x86/kernel/cpu/bugs.c           | 13 ++-----------
- 2 files changed, 2 insertions(+), 13 deletions(-)
+ arch/x86/Kconfig                     |  4 ----
+ arch/x86/Makefile                    |  5 +++--
+ arch/x86/include/asm/nospec-branch.h | 10 ++++++----
+ arch/x86/kernel/cpu/bugs.c           |  2 +-
+ scripts/Makefile.build               |  2 --
+ 5 files changed, 10 insertions(+), 13 deletions(-)
 
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index c51c989..fcb7f37 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -443,10 +443,6 @@ config RETPOLINE
+ =09  branches. Requires a compiler with -mindirect-branch=3Dthunk-extern
+ =09  support for full protection. The kernel may run slower.
+=20
+-=09  Without compiler support, at least indirect branches in assembler
+-=09  code are eliminated. Since this includes the syscall entry path,
+-=09  it is not entirely pointless.
+-
+ config INTEL_RDT
+ =09bool "Intel Resource Director Technology support"
+ =09depends on X86 && CPU_SUP_INTEL
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index 5b562e4..6d94fe8 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -222,9 +222,10 @@ KBUILD_CFLAGS +=3D -fno-asynchronous-unwind-tables
+=20
+ # Avoid indirect branches in kernel to deal with Spectre
+ ifdef CONFIG_RETPOLINE
+-ifneq ($(RETPOLINE_CFLAGS),)
+-  KBUILD_CFLAGS +=3D $(RETPOLINE_CFLAGS) -DRETPOLINE
++ifeq ($(RETPOLINE_CFLAGS),)
++  $(error You are building kernel with non-retpoline compiler, please upda=
+te your compiler.)
+ endif
++  KBUILD_CFLAGS +=3D $(RETPOLINE_CFLAGS)
+ endif
+=20
+ archscripts: scripts_basic
 diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/no=
 spec-branch.h
-index 8b09cbb..c202a64 100644
+index 80dc144..8b09cbb 100644
 --- a/arch/x86/include/asm/nospec-branch.h
 +++ b/arch/x86/include/asm/nospec-branch.h
-@@ -221,8 +221,6 @@
- /* The Spectre V2 mitigation variants */
- enum spectre_v2_mitigation {
- =09SPECTRE_V2_NONE,
--=09SPECTRE_V2_RETPOLINE_MINIMAL,
--=09SPECTRE_V2_RETPOLINE_MINIMAL_AMD,
- =09SPECTRE_V2_RETPOLINE_GENERIC,
- =09SPECTRE_V2_RETPOLINE_AMD,
- =09SPECTRE_V2_IBRS_ENHANCED,
+@@ -162,11 +162,12 @@
+ =09_ASM_PTR " 999b\n\t"=09=09=09=09=09\
+ =09".popsection\n\t"
+=20
+-#if defined(CONFIG_X86_64) && defined(RETPOLINE)
++#ifdef CONFIG_RETPOLINE
++#ifdef CONFIG_X86_64
+=20
+ /*
+- * Since the inline asm uses the %V modifier which is only in newer GCC,
+- * the 64-bit one is dependent on RETPOLINE not CONFIG_RETPOLINE.
++ * Inline asm uses the %V modifier which is only in newer GCC
++ * which is ensured when CONFIG_RETPOLINE is defined.
+  */
+ # define CALL_NOSPEC=09=09=09=09=09=09\
+ =09ANNOTATE_NOSPEC_ALTERNATIVE=09=09=09=09\
+@@ -181,7 +182,7 @@
+ =09X86_FEATURE_RETPOLINE_AMD)
+ # define THUNK_TARGET(addr) [thunk_target] "r" (addr)
+=20
+-#elif defined(CONFIG_X86_32) && defined(CONFIG_RETPOLINE)
++#else /* CONFIG_X86_32 */
+ /*
+  * For i386 we use the original ret-equivalent retpoline, because
+  * otherwise we'll run out of registers. We don't care about CET
+@@ -211,6 +212,7 @@
+ =09X86_FEATURE_RETPOLINE_AMD)
+=20
+ # define THUNK_TARGET(addr) [thunk_target] "rm" (addr)
++#endif
+ #else /* No retpoline for C / inline asm */
+ # define CALL_NOSPEC "call *%[thunk_target]\n"
+ # define THUNK_TARGET(addr) [thunk_target] "rm" (addr)
 diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index d0108fb..7f6d815 100644
+index c37e66e..d0108fb 100644
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -135,8 +135,6 @@ enum spectre_v2_mitigation_cmd {
+@@ -252,7 +252,7 @@ static void __init spec2_print_if_secure(const char *re=
+ason)
 =20
- static const char *spectre_v2_strings[] =3D {
- =09[SPECTRE_V2_NONE]=09=09=09=3D "Vulnerable",
--=09[SPECTRE_V2_RETPOLINE_MINIMAL]=09=09=3D "Vulnerable: Minimal generic AS=
-M retpoline",
--=09[SPECTRE_V2_RETPOLINE_MINIMAL_AMD]=09=3D "Vulnerable: Minimal AMD ASM r=
-etpoline",
- =09[SPECTRE_V2_RETPOLINE_GENERIC]=09=09=3D "Mitigation: Full generic retpo=
-line",
- =09[SPECTRE_V2_RETPOLINE_AMD]=09=09=3D "Mitigation: Full AMD retpoline",
- =09[SPECTRE_V2_IBRS_ENHANCED]=09=09=3D "Mitigation: Enhanced IBRS",
-@@ -250,11 +248,6 @@ static void __init spec2_print_if_secure(const char *r=
-eason)
- =09=09pr_info("%s selected on command line.\n", reason);
+ static inline bool retp_compiler(void)
+ {
+-=09return __is_defined(RETPOLINE);
++=09return __is_defined(CONFIG_RETPOLINE);
  }
 =20
--static inline bool retp_compiler(void)
--{
--=09return __is_defined(CONFIG_RETPOLINE);
--}
--
  static inline bool match_option(const char *arg, int arglen, const char *o=
 pt)
- {
- =09int len =3D strlen(opt);
-@@ -417,14 +410,12 @@ static void __init spectre_v2_select_mitigation(void)
- =09=09=09pr_err("Spectre mitigation: LFENCE not serializing, switching to =
-generic retpoline\n");
- =09=09=09goto retpoline_generic;
- =09=09}
--=09=09mode =3D retp_compiler() ? SPECTRE_V2_RETPOLINE_AMD :
--=09=09=09=09=09 SPECTRE_V2_RETPOLINE_MINIMAL_AMD;
-+=09=09mode =3D SPECTRE_V2_RETPOLINE_AMD;
- =09=09setup_force_cpu_cap(X86_FEATURE_RETPOLINE_AMD);
- =09=09setup_force_cpu_cap(X86_FEATURE_RETPOLINE);
- =09} else {
- =09retpoline_generic:
--=09=09mode =3D retp_compiler() ? SPECTRE_V2_RETPOLINE_GENERIC :
--=09=09=09=09=09 SPECTRE_V2_RETPOLINE_MINIMAL;
-+=09=09mode =3D SPECTRE_V2_RETPOLINE_GENERIC;
- =09=09setup_force_cpu_cap(X86_FEATURE_RETPOLINE);
- =09}
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index a8e7ba9..6a6be9f 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -236,10 +236,8 @@ ifdef CONFIG_GCOV_KERNEL
+ objtool_args +=3D --no-unreachable
+ endif
+ ifdef CONFIG_RETPOLINE
+-ifneq ($(RETPOLINE_CFLAGS),)
+   objtool_args +=3D --retpoline
+ endif
+-endif
 =20
+=20
+ ifdef CONFIG_MODVERSIONS
 --=20
 1.8.3.1
