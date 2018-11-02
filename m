@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1FC0C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:51:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 610FBC65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:51:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8191E2082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:51:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8191E2082D
+	by mail.kernel.org (Postfix) with ESMTP id 2D9512082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:51:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D9512082D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728032AbeKCB72 (ORCPT
+        id S1728095AbeKCB7d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 21:59:28 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:40599 "EHLO
+        Fri, 2 Nov 2018 21:59:33 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:57748 "EHLO
         smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726318AbeKCB71 (ORCPT
+        by vger.kernel.org with ESMTP id S1727946AbeKCB7c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 21:59:27 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1392245|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03309;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=7;RT=7;SR=0;TI=SMTPD_---.DCM8vUH_1541177498;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.DCM8vUH_1541177498)
-          by smtp.aliyun-inc.com(10.147.43.230);
-          Sat, 03 Nov 2018 00:51:38 +0800
+        Fri, 2 Nov 2018 21:59:32 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1225657|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03289;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=7;RT=7;SR=0;TI=SMTPD_---.DCM7nBW_1541177501;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.DCM7nBW_1541177501)
+          by smtp.aliyun-inc.com(10.147.40.44);
+          Sat, 03 Nov 2018 00:51:41 +0800
 From:   Guo Ren <ren_guo@c-sky.com>
 To:     daniel.lezcano@linaro.org, tglx@linutronix.de
 Cc:     arnd@arndb.de, linux-arch@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH V13 resend 2/4] dt-bindings: timer: C-SKY Multi-processor timer
-Date:   Sat,  3 Nov 2018 00:51:29 +0800
+Subject: [PATCH V13 resend 4/4] dt-bindings: timer: gx6605s SOC timer
+Date:   Sat,  3 Nov 2018 00:51:31 +0800
 Message-Id:
- <0f7cbde6462150c6ddb058d89d59ce35c3d6da9f.1539579760.git.ren_guo@c-sky.com>
+ <ad5c91023ae9bbb07aa0392882667a5a2b133fc5.1539579760.git.ren_guo@c-sky.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <7becd836e1477d7ac2d3f8538a6d7f5b9651c389.1539579760.git.ren_guo@c-sky.com>
 References: <7becd836e1477d7ac2d3f8538a6d7f5b9651c389.1539579760.git.ren_guo@c-sky.com>
@@ -45,56 +45,51 @@ Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Message-ID: <20181102165129.azRsacV-ncL-tZtejHbbM5q1pdlSvzRgagTEFt3Yv1s@z>
+Message-ID: <20181102165131.f0mYzQtW5qEzBuFT6K_VwLSJvqOy7AEHitFaf-XyS3c@z>
 
-Dt-bingdings doc for C-SKY SMP system setting.
+Dt-bindings doc for gx6605s SOC's system timer.
 
 Signed-off-by: Guo Ren <ren_guo@c-sky.com>
 Reviewed-by: Rob Herring <robh@kernel.org>
 ---
-Changelog:
- - Drop the interrupt-parent.
----
----
- .../devicetree/bindings/timer/csky,mptimer.txt     | 42 ++++++++++++++++++++++
+ .../bindings/timer/csky,gx6605s-timer.txt          | 42 ++++++++++++++++++++++
  1 file changed, 42 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/timer/csky,mptimer.txt
+ create mode 100644 Documentation/devicetree/bindings/timer/csky,gx6605s-timer.txt
 
-diff --git a/Documentation/devicetree/bindings/timer/csky,mptimer.txt b/Documentation/devicetree/bindings/timer/csky,mptimer.txt
+diff --git a/Documentation/devicetree/bindings/timer/csky,gx6605s-timer.txt b/Documentation/devicetree/bindings/timer/csky,gx6605s-timer.txt
 new file mode 100644
-index 0000000..15cfec0
+index 0000000..6b04344
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/csky,mptimer.txt
++++ b/Documentation/devicetree/bindings/timer/csky,gx6605s-timer.txt
 @@ -0,0 +1,42 @@
-+============================
-+C-SKY Multi-processors Timer
-+============================
++=================
++gx6605s SOC Timer
++=================
 +
-+C-SKY multi-processors timer is designed for C-SKY SMP system and the
-+regs is accessed by cpu co-processor 4 registers with mtcr/mfcr.
-+
-+ - PTIM_CTLR "cr<0, 14>" Control reg to start reset timer.
-+ - PTIM_TSR  "cr<1, 14>" Interrupt cleanup status reg.
-+ - PTIM_CCVR "cr<3, 14>" Current counter value reg.
-+ - PTIM_LVR  "cr<6, 14>" Window value reg to triger next event.
++The timer is used in gx6605s soc as system timer and the driver
++contain clk event and clk source.
 +
 +==============================
 +timer node bindings definition
 +==============================
 +
-+	Description: Describes SMP timer
++	Description: Describes gx6605s SOC timer
 +
 +	PROPERTIES
 +
 +	- compatible
 +		Usage: required
 +		Value type: <string>
-+		Definition: must be "csky,mptimer"
++		Definition: must be "csky,gx6605s-timer"
++	- reg
++		Usage: required
++		Value type: <u32 u32>
++		Definition: <phyaddr size> in soc from cpu view
 +	- clocks
 +		Usage: required
-+		Value type: <node>
++		Value type: phandle + clock specifier cells
 +		Definition: must be input clk node
-+	- interrupts
++	- interrupt
 +		Usage: required
 +		Value type: <u32>
 +		Definition: must be timer irq num defined by soc
@@ -102,10 +97,11 @@ index 0000000..15cfec0
 +Examples:
 +---------
 +
-+	timer: timer {
-+		compatible = "csky,mptimer";
++	timer0: timer@20a000 {
++		compatible = "csky,gx6605s-timer";
++		reg = <0x0020a000 0x400>;
 +		clocks = <&dummy_apb_clk>;
-+		interrupts = <16>;
++		interrupts = <10>;
 +		interrupt-parent = <&intc>;
 +	};
 -- 
