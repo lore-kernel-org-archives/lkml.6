@@ -2,76 +2,116 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADD66C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:13:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB0DFC65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:16:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7728F2082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:13:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7728F2082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6FC2D20833
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:16:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="clNZEu/n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FC2D20833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728144AbeKCCVd (ORCPT
+        id S1728112AbeKCCYJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 22:21:33 -0400
-Received: from foss.arm.com ([217.140.101.70]:44184 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726849AbeKCCVd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 22:21:33 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4343DA78;
-        Fri,  2 Nov 2018 10:13:42 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 11BAF3F71E;
-        Fri,  2 Nov 2018 10:13:42 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 9B0AF1AE0DD2; Fri,  2 Nov 2018 17:13:50 +0000 (GMT)
-Date:   Fri, 2 Nov 2018 17:13:50 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Punit Agrawal <punit.agrawal@arm.com>
-Cc:     torvalds@linux-foundation.org, catalin.marinas@arm.com,
-        punitagrawal@gmail.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mailmap: Update email for Punit Agrawal
-Message-ID: <20181102171350.GA31184@arm.com>
-References: <20181102165751.17948-1-punit.agrawal@arm.com>
+        Fri, 2 Nov 2018 22:24:09 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:40339 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727769AbeKCCYI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 22:24:08 -0400
+Received: by mail-lj1-f194.google.com with SMTP id t22-v6so2382215lji.7
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 10:16:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/EPNbrnaHwJ4uFJWUC2whqZKjg08R55iZ2JtbT1y1Xc=;
+        b=clNZEu/n3BV3Obn+3KyzimQQveaWTgiSeUFAX5HKy0lv3fGG4FraZUObAl+q4q+VAb
+         M2COavm4PWDDr6SHBVRMfQ3xYEiPq+579pCn/l9xlFZz9FeVwdfh6JLBTyZWOeODZcXm
+         Tgu22GH69EhLxzYG820tS48KlS30+XhFmcVKM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/EPNbrnaHwJ4uFJWUC2whqZKjg08R55iZ2JtbT1y1Xc=;
+        b=ET5JKPYsPM3ajqpJm5Y9g6dF7mVudc/YAWiTAicGzSHWKCi02xoSyYvTkTvsZirwsf
+         P3iMW5OssESg5y/AolJCELhjeFB3ODq9XCwQKwBZyFNa4SFYbdTYO0U0v84LPeVdNI7z
+         1vV9sSzCvAAJTzt0undnrolj02ss/e92LOySCfbG2KvLlLcWg3RfdnVFb9MiEoS3qgep
+         SHpXwa1Ak+15gcRKAdouXbW2tP6Vyc5NWiYvuGA6/AN3EiyMpDO4LVvG1ZLsr9mbbhSc
+         5G3mWdygrP24vcebv0sq/kizs2W+TH7MEWVUVRK15wUyHlwQAPO7iOjI5aCDD0dafJp6
+         ZQRg==
+X-Gm-Message-State: AGRZ1gK3cp54OgGbljUredLfq23Ymjo+4IMuKWHJ07wIez1W/q2kh7Nj
+        k+lkKQntl4zCYqH8nXMKuiMGlfF0TfZCnQ==
+X-Google-Smtp-Source: AJdET5cmopGbqnpe9992bPtqIv25HVfUx7g04kfn7U4cYxmIRW/7IwmYayiuVrxF4HqCMTox9r7U1A==
+X-Received: by 2002:a2e:568b:: with SMTP id k11-v6mr8371133lje.105.1541178974569;
+        Fri, 02 Nov 2018 10:16:14 -0700 (PDT)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id v10-v6sm2435621ljh.72.2018.11.02.10.16.13
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 02 Nov 2018 10:16:13 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id x3-v6so2360502lji.13
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 10:16:13 -0700 (PDT)
+X-Received: by 2002:a2e:874e:: with SMTP id q14-v6mr5568003ljj.120.1541178972739;
+ Fri, 02 Nov 2018 10:16:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181102165751.17948-1-punit.agrawal@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20181101171938-mutt-send-email-mst@kernel.org>
+ <CAGXu5jJ0HgV2qN=wohEgro6ixqXHOHBTsvS5a9Dcpz8gxVo3bA@mail.gmail.com>
+ <CAHk-=wicvws38JqzVF6oNEZ0jGzP6RecR6yAGtyzX3AkoJ321g@mail.gmail.com>
+ <20181102114635.hi3q53kzmz4qljsf@lakrids.cambridge.arm.com>
+ <20181102083018-mutt-send-email-mst@kernel.org> <CAHk-=wh_bQK5zs+CwQ5eyodq4sQT0eOPp60qzvVL2_EtgETP-g@mail.gmail.com>
+ <20181102122937-mutt-send-email-mst@kernel.org> <CAHk-=wibzqo7C+mS+BgZxRbgdWe2w5F39EhuFUhZUxvotoGLuA@mail.gmail.com>
+In-Reply-To: <CAHk-=wibzqo7C+mS+BgZxRbgdWe2w5F39EhuFUhZUxvotoGLuA@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 2 Nov 2018 10:15:56 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj5ZnqmpDuXBCcND8nMNitNyRf_4KQSzSUfQvX2-wOYsg@mail.gmail.com>
+Message-ID: <CAHk-=wj5ZnqmpDuXBCcND8nMNitNyRf_4KQSzSUfQvX2-wOYsg@mail.gmail.com>
+Subject: Re: [PULL] vhost: cleanups and fixes
+To:     mst@redhat.com, Al Viro <viro@zeniv.linux.org.uk>
+Cc:     mark.rutland@arm.com, Kees Cook <keescook@chromium.org>,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        bijan.mottahedeh@oracle.com, gedwards@ddn.com, joe@perches.com,
+        lenaic@lhuard.fr, liang.z.li@intel.com, mhocko@kernel.org,
+        mhocko@suse.com, stefanha@redhat.com, wei.w.wang@intel.com,
+        jasowang@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 04:57:52PM +0000, Punit Agrawal wrote:
-> As I'll no longer be working with Arm, add a mailmap entry so any mail
-> directed towards me reaches the appropriate mailbox.
-> 
-> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-> ---
->  .mailmap | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/.mailmap b/.mailmap
-> index a76be45fef6c..28fecafa6506 100644
-> --- a/.mailmap
-> +++ b/.mailmap
-> @@ -159,6 +159,7 @@ Peter Oruba <peter@oruba.de>
->  Peter Oruba <peter.oruba@amd.com>
->  Pratyush Anand <pratyush.anand@gmail.com> <pratyush.anand@st.com>
->  Praveen BP <praveenbp@ti.com>
-> +Punit Agrawal <punitagrawal@gmail.com> <punit.agrawal@arm.com>
->  Qais Yousef <qsyousef@gmail.com> <qais.yousef@imgtec.com>
->  Oleksij Rempel <linux@rempel-privat.de> <bug-track@fisher-privat.net>
->  Oleksij Rempel <linux@rempel-privat.de> <external.Oleksij.Rempel@de.bosch.com>
+On Fri, Nov 2, 2018 at 10:10 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Don't you take over the VM with "use_mm()" when you do the copies? So
+> yes, it's a kernel thread, but it has a user VM, and though that
+> should have the user limits.
 
-Acked-by: Will Deacon <will.deacon@arm.com>
+Oooh. *Just* as I sent this, I realized that "use_mm()" doesn't update
+the thread addr_limit.
 
-Thanks for volunteering to stay involved, Punit!
+That actually looks like a bug to me - although one that you've
+apparently been aware of and worked around.
 
-Will
+Wouldn't it be nicer to just make "use_mm()" do
+
+        set_fs(USER_DS);
+
+instead? And undo it on unuse_mm()?
+
+And, in fact, maybe we should default kernel threads to have a zero
+address limit, so that they can't do any user accesses at all without
+doing this?
+
+Adding Al to the cc, because I think he's been looking at set_fs() in general.
+
+                  Linus
