@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5905CC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:46:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE141C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:47:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28E6020837
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:46:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78CC720837
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:47:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uu81lJQ2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28E6020837
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eF8QYGyx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78CC720837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730422AbeKCDy7 (ORCPT
+        id S1729179AbeKCDzb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:54:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50920 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:55:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729000AbeKCDy6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:54:58 -0400
+        id S1727629AbeKCDzb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:55:31 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 205E220847;
-        Fri,  2 Nov 2018 18:46:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6050B20837;
+        Fri,  2 Nov 2018 18:47:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184404;
-        bh=hjn5++CyWpKUb0g0ROlA4JV1jlRBxcTCBcIB+dhzGCg=;
+        s=default; t=1541184438;
+        bh=5JiKkvDKLZhSDMXqlG4FR+hbjEKlurwoeqdOEvb4pnw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uu81lJQ2JlE+kcgTsJAIs82O6vWl11j19YyRXnI8NOHat6ykbAeu+BsZP41zk2fKO
-         qagIXidRo4Jgwx/QuoPPkF3e8vUdsFiJBm6iuypFMoyG7BomuuozKMY1aCiNxfyBzy
-         UPXTm8idi41TiQ86u/3/XbeZaxJj0XTy7Hz5BzCY=
+        b=eF8QYGyxlfP+HWFW3K5X9FJp5jdkSk1BSPO+3gv+Q0nfm6o5c279UVZ5yv7V5Md7L
+         fZLgFWMIGK3z9yPm1qRZ0rQV/wev4x5NJP3noYf4p5iRz3bq7gBscYWR/DZRS6CsQl
+         kukHzYRrgfxKwiZSeFdnU13JaJr92v7k2AdP5hK8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Jaime=20Caama=C3=B1o=20Ruiz?= <jcaamano@suse.com>,
-        Greg Rose <gvrose8192@gmail.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 125/150] openvswitch: Fix push/pop ethernet validation
-Date:   Fri,  2 Nov 2018 19:34:47 +0100
-Message-Id: <20181102182911.599206188@linuxfoundation.org>
+Subject: [PATCH 4.18 126/150] net: ipmr: fix unresolved entry dumps
+Date:   Fri,  2 Nov 2018 19:34:48 +0100
+Message-Id: <20181102182911.647092459@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -64,46 +63,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Jaime Caamaño Ruiz" <jcaamano@suse.com>
+From: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
 
-[ Upstream commit 46ebe2834ba5b541f28ee72e556a3fed42c47570 ]
+[ Upstream commit eddf016b910486d2123675a6b5fd7d64f77cdca8 ]
 
-When there are both pop and push ethernet header actions among the
-actions to be applied to a packet, an unexpected EINVAL (Invalid
-argument) error is obtained. This is due to mac_proto not being reset
-correctly when those actions are validated.
+If the skb space ends in an unresolved entry while dumping we'll miss
+some unresolved entries. The reason is due to zeroing the entry counter
+between dumping resolved and unresolved mfc entries. We should just
+keep counting until the whole table is dumped and zero when we move to
+the next as we have a separate table counter.
 
-Reported-at:
-https://mail.openvswitch.org/pipermail/ovs-discuss/2018-October/047554.html
-Fixes: 91820da6ae85 ("openvswitch: add Ethernet push and pop actions")
-Signed-off-by: Jaime CaamaÃ±o Ruiz <jcaamano@suse.com>
-Tested-by: Greg Rose <gvrose8192@gmail.com>
-Reviewed-by: Greg Rose <gvrose8192@gmail.com>
+Reported-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 8fb472c09b9d ("ipmr: improve hash scalability")
+Signed-off-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/openvswitch/flow_netlink.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/ipv4/ipmr_base.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/net/openvswitch/flow_netlink.c
-+++ b/net/openvswitch/flow_netlink.c
-@@ -2990,7 +2990,7 @@ static int __ovs_nla_copy_actions(struct
- 			 * is already present */
- 			if (mac_proto != MAC_PROTO_NONE)
- 				return -EINVAL;
--			mac_proto = MAC_PROTO_NONE;
-+			mac_proto = MAC_PROTO_ETHERNET;
- 			break;
+--- a/net/ipv4/ipmr_base.c
++++ b/net/ipv4/ipmr_base.c
+@@ -295,8 +295,6 @@ int mr_rtm_dumproute(struct sk_buff *skb
+ next_entry:
+ 			e++;
+ 		}
+-		e = 0;
+-		s_e = 0;
  
- 		case OVS_ACTION_ATTR_POP_ETH:
-@@ -2998,7 +2998,7 @@ static int __ovs_nla_copy_actions(struct
- 				return -EINVAL;
- 			if (vlan_tci & htons(VLAN_TAG_PRESENT))
- 				return -EINVAL;
--			mac_proto = MAC_PROTO_ETHERNET;
-+			mac_proto = MAC_PROTO_NONE;
- 			break;
- 
- 		case OVS_ACTION_ATTR_PUSH_NSH:
+ 		spin_lock_bh(lock);
+ 		list_for_each_entry(mfc, &mrt->mfc_unres_queue, list) {
 
 
