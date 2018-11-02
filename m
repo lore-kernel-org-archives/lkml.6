@@ -4,47 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3912BC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:39:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 506ABC65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:39:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAD3C20837
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:39:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1813620837
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:39:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q/pyYZyW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAD3C20837
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKocP/BX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1813620837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729169AbeKCDrq (ORCPT
+        id S1729180AbeKCDrs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:47:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41866 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:47:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728102AbeKCDro (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:47:44 -0400
+        id S1729170AbeKCDrr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:47:47 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC4CA2082E;
-        Fri,  2 Nov 2018 18:39:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D55832082E;
+        Fri,  2 Nov 2018 18:39:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541183972;
-        bh=kUnaE07lw4F6HHQV6ByQWxDLdBZX5giBKX0fBhC9ECU=;
+        s=default; t=1541183975;
+        bh=Z+DNE3EnvAao6ovS4A54CIXdnpJSxxt04nA4TemhQoc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q/pyYZyW1RhJjhIBNFsBi6ZH9JH9jwFMThqPmENbIkj5Sj6wPL5CIba9B/3PM+MoN
-         7/6OwLB9EeY2I4dj8drscnvxZBt5Ik7G+ozvGL3I9t1sxnKM8d82/1VtJu2F6VvBHh
-         DhlqdDxVtXXEaZjH/v0q1qW9JaFTBZA9dzekaYok=
+        b=DKocP/BX8NzuZVbDTftyvUbdR3dktfhcggG3J/GSZXWFy04h1eJ9MnoCjJldClY1W
+         Rgosa/QkKhD4Im1mQ/IvsOPb3bUlGNYHQ1gXYkjeoHBXivGB5BwTHcvC7mp3Zy9CjH
+         Q9XZhLfXX/ih0yfwewNHcb8aEkbk2YbNetin0TG0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 039/150] rxrpc: Fix error distribution
-Date:   Fri,  2 Nov 2018 19:33:21 +0100
-Message-Id: <20181102182906.065771667@linuxfoundation.org>
+Subject: [PATCH 4.18 040/150] netfilter: nft_set_rbtree: add missing rb_erase() in GC routine
+Date:   Fri,  2 Nov 2018 19:33:22 +0100
+Message-Id: <20181102182906.147627094@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -62,266 +63,160 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f334430316e7fd37c4821ebec627e27714bb5d76 ]
+[ Upstream commit a13f814a67b12a2f29d1decf4b4f4e700658a517 ]
 
-Fix error distribution by immediately delivering the errors to all the
-affected calls rather than deferring them to a worker thread.  The problem
-with the latter is that retries and things can happen in the meantime when we
-want to stop that sooner.
+The nft_set_gc_batch_check() checks whether gc buffer is full.
+If gc buffer is full, gc buffer is released by
+the nft_set_gc_batch_complete() internally.
+In case of rbtree, the rb_erase() should be called before calling the
+nft_set_gc_batch_complete(). therefore the rb_erase() should
+be called before calling the nft_set_gc_batch_check() too.
 
-To this end:
+test commands:
+   table ip filter {
+	   set set1 {
+		   type ipv4_addr; flags interval, timeout;
+		   gc-interval 10s;
+		   timeout 1s;
+		   elements = {
+			   1-2,
+			   3-4,
+			   5-6,
+			   ...
+			   10000-10001,
+		   }
+	   }
+   }
+   %nft -f test.nft
 
- (1) Stop the error distributor from removing calls from the error_targets
-     list so that peer->lock isn't needed to synchronise against other adds
-     and removals.
+splat looks like:
+[  430.273885] kasan: GPF could be caused by NULL-ptr deref or user memory access
+[  430.282158] general protection fault: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN PTI
+[  430.283116] CPU: 1 PID: 190 Comm: kworker/1:2 Tainted: G    B             4.18.0+ #7
+[  430.283116] Workqueue: events_power_efficient nft_rbtree_gc [nf_tables_set]
+[  430.313559] RIP: 0010:rb_next+0x81/0x130
+[  430.313559] Code: 08 49 bd 00 00 00 00 00 fc ff df 48 bb 00 00 00 00 00 fc ff df 48 85 c0 75 05 eb 58 48 89 d4
+[  430.313559] RSP: 0018:ffff88010cdb7680 EFLAGS: 00010207
+[  430.313559] RAX: 0000000000b84854 RBX: dffffc0000000000 RCX: ffffffff83f01973
+[  430.313559] RDX: 000000000017090c RSI: 0000000000000008 RDI: 0000000000b84864
+[  430.313559] RBP: ffff8801060d4588 R08: fffffbfff09bc349 R09: fffffbfff09bc349
+[  430.313559] R10: 0000000000000001 R11: fffffbfff09bc348 R12: ffff880100f081a8
+[  430.313559] R13: dffffc0000000000 R14: ffff880100ff8688 R15: dffffc0000000000
+[  430.313559] FS:  0000000000000000(0000) GS:ffff88011b400000(0000) knlGS:0000000000000000
+[  430.313559] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  430.313559] CR2: 0000000001551008 CR3: 000000005dc16000 CR4: 00000000001006e0
+[  430.313559] Call Trace:
+[  430.313559]  nft_rbtree_gc+0x112/0x5c0 [nf_tables_set]
+[  430.313559]  process_one_work+0xc13/0x1ec0
+[  430.313559]  ? _raw_spin_unlock_irq+0x29/0x40
+[  430.313559]  ? pwq_dec_nr_in_flight+0x3c0/0x3c0
+[  430.313559]  ? set_load_weight+0x270/0x270
+[  430.313559]  ? __switch_to_asm+0x34/0x70
+[  430.313559]  ? __switch_to_asm+0x40/0x70
+[  430.313559]  ? __switch_to_asm+0x34/0x70
+[  430.313559]  ? __switch_to_asm+0x34/0x70
+[  430.313559]  ? __switch_to_asm+0x40/0x70
+[  430.313559]  ? __switch_to_asm+0x34/0x70
+[  430.313559]  ? __switch_to_asm+0x40/0x70
+[  430.313559]  ? __switch_to_asm+0x34/0x70
+[  430.313559]  ? __switch_to_asm+0x34/0x70
+[  430.313559]  ? __switch_to_asm+0x40/0x70
+[  430.313559]  ? __switch_to_asm+0x34/0x70
+[  430.313559]  ? __schedule+0x6d3/0x1f50
+[  430.313559]  ? find_held_lock+0x39/0x1c0
+[  430.313559]  ? __sched_text_start+0x8/0x8
+[  430.313559]  ? cyc2ns_read_end+0x10/0x10
+[  430.313559]  ? save_trace+0x300/0x300
+[  430.313559]  ? sched_clock_local+0xd4/0x140
+[  430.313559]  ? find_held_lock+0x39/0x1c0
+[  430.313559]  ? worker_thread+0x353/0x1120
+[  430.313559]  ? worker_thread+0x353/0x1120
+[  430.313559]  ? lock_contended+0xe70/0xe70
+[  430.313559]  ? __lock_acquire+0x4500/0x4500
+[  430.535635]  ? do_raw_spin_unlock+0xa5/0x330
+[  430.535635]  ? do_raw_spin_trylock+0x101/0x1a0
+[  430.535635]  ? do_raw_spin_lock+0x1f0/0x1f0
+[  430.535635]  ? _raw_spin_lock_irq+0x10/0x70
+[  430.535635]  worker_thread+0x15d/0x1120
+[ ... ]
 
- (2) Require the peer's error_targets list to be accessed with RCU, thereby
-     avoiding the need to take peer->lock over distribution.
-
- (3) Don't attempt to affect a call's state if it is already marked complete.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
+Fixes: 8d8540c4f5e0 ("netfilter: nft_set_rbtree: add timeout support")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/trace/events/rxrpc.h |  4 +---
- net/rxrpc/ar-internal.h      |  5 ----
- net/rxrpc/call_object.c      |  2 +-
- net/rxrpc/conn_client.c      |  4 ++--
- net/rxrpc/conn_object.c      |  2 +-
- net/rxrpc/peer_event.c       | 46 +++++++++---------------------------
- net/rxrpc/peer_object.c      | 17 -------------
- 7 files changed, 16 insertions(+), 64 deletions(-)
+ net/netfilter/nft_set_rbtree.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/include/trace/events/rxrpc.h b/include/trace/events/rxrpc.h
-index 4fff00e9da8a..0a774b64fc29 100644
---- a/include/trace/events/rxrpc.h
-+++ b/include/trace/events/rxrpc.h
-@@ -56,7 +56,6 @@ enum rxrpc_peer_trace {
- 	rxrpc_peer_new,
- 	rxrpc_peer_processing,
- 	rxrpc_peer_put,
--	rxrpc_peer_queued_error,
- };
+diff --git a/net/netfilter/nft_set_rbtree.c b/net/netfilter/nft_set_rbtree.c
+index 9873d734b494..8ad78b82c8e2 100644
+--- a/net/netfilter/nft_set_rbtree.c
++++ b/net/netfilter/nft_set_rbtree.c
+@@ -355,12 +355,11 @@ cont:
  
- enum rxrpc_conn_trace {
-@@ -257,8 +256,7 @@ enum rxrpc_tx_fail_trace {
- 	EM(rxrpc_peer_got,			"GOT") \
- 	EM(rxrpc_peer_new,			"NEW") \
- 	EM(rxrpc_peer_processing,		"PRO") \
--	EM(rxrpc_peer_put,			"PUT") \
--	E_(rxrpc_peer_queued_error,		"QER")
-+	E_(rxrpc_peer_put,			"PUT")
- 
- #define rxrpc_conn_traces \
- 	EM(rxrpc_conn_got,			"GOT") \
-diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
-index 5069193d2cc1..4718d08c0af1 100644
---- a/net/rxrpc/ar-internal.h
-+++ b/net/rxrpc/ar-internal.h
-@@ -293,7 +293,6 @@ struct rxrpc_peer {
- 	struct hlist_node	hash_link;
- 	struct rxrpc_local	*local;
- 	struct hlist_head	error_targets;	/* targets for net error distribution */
--	struct work_struct	error_distributor;
- 	struct rb_root		service_conns;	/* Service connections */
- 	struct list_head	keepalive_link;	/* Link in net->peer_keepalive[] */
- 	time64_t		last_tx_at;	/* Last time packet sent here */
-@@ -304,8 +303,6 @@ struct rxrpc_peer {
- 	unsigned int		maxdata;	/* data size (MTU - hdrsize) */
- 	unsigned short		hdrsize;	/* header size (IP + UDP + RxRPC) */
- 	int			debug_id;	/* debug ID for printks */
--	int			error_report;	/* Net (+0) or local (+1000000) to distribute */
--#define RXRPC_LOCAL_ERROR_OFFSET 1000000
- 	struct sockaddr_rxrpc	srx;		/* remote address */
- 
- 	/* calculated RTT cache */
-@@ -1039,7 +1036,6 @@ void rxrpc_send_keepalive(struct rxrpc_peer *);
-  * peer_event.c
-  */
- void rxrpc_error_report(struct sock *);
--void rxrpc_peer_error_distributor(struct work_struct *);
- void rxrpc_peer_add_rtt(struct rxrpc_call *, enum rxrpc_rtt_rx_trace,
- 			rxrpc_serial_t, rxrpc_serial_t, ktime_t, ktime_t);
- void rxrpc_peer_keepalive_worker(struct work_struct *);
-@@ -1058,7 +1054,6 @@ void rxrpc_destroy_all_peers(struct rxrpc_net *);
- struct rxrpc_peer *rxrpc_get_peer(struct rxrpc_peer *);
- struct rxrpc_peer *rxrpc_get_peer_maybe(struct rxrpc_peer *);
- void rxrpc_put_peer(struct rxrpc_peer *);
--void __rxrpc_queue_peer_error(struct rxrpc_peer *);
- 
- /*
-  * proc.c
-diff --git a/net/rxrpc/call_object.c b/net/rxrpc/call_object.c
-index f6734d8cb01a..ed69257203c2 100644
---- a/net/rxrpc/call_object.c
-+++ b/net/rxrpc/call_object.c
-@@ -400,7 +400,7 @@ void rxrpc_incoming_call(struct rxrpc_sock *rx,
- 	rcu_assign_pointer(conn->channels[chan].call, call);
- 
- 	spin_lock(&conn->params.peer->lock);
--	hlist_add_head(&call->error_link, &conn->params.peer->error_targets);
-+	hlist_add_head_rcu(&call->error_link, &conn->params.peer->error_targets);
- 	spin_unlock(&conn->params.peer->lock);
- 
- 	_net("CALL incoming %d on CONN %d", call->debug_id, call->conn->debug_id);
-diff --git a/net/rxrpc/conn_client.c b/net/rxrpc/conn_client.c
-index 5736f643c516..0be19132202b 100644
---- a/net/rxrpc/conn_client.c
-+++ b/net/rxrpc/conn_client.c
-@@ -709,8 +709,8 @@ int rxrpc_connect_call(struct rxrpc_call *call,
- 	}
- 
- 	spin_lock_bh(&call->conn->params.peer->lock);
--	hlist_add_head(&call->error_link,
--		       &call->conn->params.peer->error_targets);
-+	hlist_add_head_rcu(&call->error_link,
-+			   &call->conn->params.peer->error_targets);
- 	spin_unlock_bh(&call->conn->params.peer->lock);
- 
- out:
-diff --git a/net/rxrpc/conn_object.c b/net/rxrpc/conn_object.c
-index c37bf8e282b9..e0d6d0fb7426 100644
---- a/net/rxrpc/conn_object.c
-+++ b/net/rxrpc/conn_object.c
-@@ -214,7 +214,7 @@ void rxrpc_disconnect_call(struct rxrpc_call *call)
- 	call->peer->cong_cwnd = call->cong_cwnd;
- 
- 	spin_lock_bh(&conn->params.peer->lock);
--	hlist_del_init(&call->error_link);
-+	hlist_del_rcu(&call->error_link);
- 	spin_unlock_bh(&conn->params.peer->lock);
- 
- 	if (rxrpc_is_client_call(call))
-diff --git a/net/rxrpc/peer_event.c b/net/rxrpc/peer_event.c
-index 4f9da2f51c69..f3e6fc670da2 100644
---- a/net/rxrpc/peer_event.c
-+++ b/net/rxrpc/peer_event.c
-@@ -23,6 +23,8 @@
- #include "ar-internal.h"
- 
- static void rxrpc_store_error(struct rxrpc_peer *, struct sock_exterr_skb *);
-+static void rxrpc_distribute_error(struct rxrpc_peer *, int,
-+				   enum rxrpc_call_completion);
- 
- /*
-  * Find the peer associated with an ICMP packet.
-@@ -194,8 +196,6 @@ void rxrpc_error_report(struct sock *sk)
- 	rcu_read_unlock();
- 	rxrpc_free_skb(skb, rxrpc_skb_rx_freed);
- 
--	/* The ref we obtained is passed off to the work item */
--	__rxrpc_queue_peer_error(peer);
- 	_leave("");
- }
- 
-@@ -205,6 +205,7 @@ void rxrpc_error_report(struct sock *sk)
- static void rxrpc_store_error(struct rxrpc_peer *peer,
- 			      struct sock_exterr_skb *serr)
+ static void nft_rbtree_gc(struct work_struct *work)
  {
-+	enum rxrpc_call_completion compl = RXRPC_CALL_NETWORK_ERROR;
- 	struct sock_extended_err *ee;
- 	int err;
++	struct nft_rbtree_elem *rbe, *rbe_end = NULL, *rbe_prev = NULL;
+ 	struct nft_set_gc_batch *gcb = NULL;
+-	struct rb_node *node, *prev = NULL;
+-	struct nft_rbtree_elem *rbe;
+ 	struct nft_rbtree *priv;
++	struct rb_node *node;
+ 	struct nft_set *set;
+-	int i;
  
-@@ -255,7 +256,7 @@ static void rxrpc_store_error(struct rxrpc_peer *peer,
- 	case SO_EE_ORIGIN_NONE:
- 	case SO_EE_ORIGIN_LOCAL:
- 		_proto("Rx Received local error { error=%d }", err);
--		err += RXRPC_LOCAL_ERROR_OFFSET;
-+		compl = RXRPC_CALL_LOCAL_ERROR;
- 		break;
+ 	priv = container_of(work, struct nft_rbtree, gc_work.work);
+ 	set  = nft_set_container_of(priv);
+@@ -371,7 +370,7 @@ static void nft_rbtree_gc(struct work_struct *work)
+ 		rbe = rb_entry(node, struct nft_rbtree_elem, node);
  
- 	case SO_EE_ORIGIN_ICMP6:
-@@ -264,48 +265,23 @@ static void rxrpc_store_error(struct rxrpc_peer *peer,
- 		break;
+ 		if (nft_rbtree_interval_end(rbe)) {
+-			prev = node;
++			rbe_end = rbe;
+ 			continue;
+ 		}
+ 		if (!nft_set_elem_expired(&rbe->ext))
+@@ -379,29 +378,30 @@ static void nft_rbtree_gc(struct work_struct *work)
+ 		if (nft_set_elem_mark_busy(&rbe->ext))
+ 			continue;
+ 
++		if (rbe_prev) {
++			rb_erase(&rbe_prev->node, &priv->root);
++			rbe_prev = NULL;
++		}
+ 		gcb = nft_set_gc_batch_check(set, gcb, GFP_ATOMIC);
+ 		if (!gcb)
+ 			break;
+ 
+ 		atomic_dec(&set->nelems);
+ 		nft_set_gc_batch_add(gcb, rbe);
++		rbe_prev = rbe;
+ 
+-		if (prev) {
+-			rbe = rb_entry(prev, struct nft_rbtree_elem, node);
++		if (rbe_end) {
+ 			atomic_dec(&set->nelems);
+-			nft_set_gc_batch_add(gcb, rbe);
+-			prev = NULL;
++			nft_set_gc_batch_add(gcb, rbe_end);
++			rb_erase(&rbe_end->node, &priv->root);
++			rbe_end = NULL;
+ 		}
+ 		node = rb_next(node);
+ 		if (!node)
+ 			break;
  	}
- 
--	peer->error_report = err;
-+	rxrpc_distribute_error(peer, err, compl);
- }
- 
- /*
-- * Distribute an error that occurred on a peer
-+ * Distribute an error that occurred on a peer.
-  */
--void rxrpc_peer_error_distributor(struct work_struct *work)
-+static void rxrpc_distribute_error(struct rxrpc_peer *peer, int error,
-+				   enum rxrpc_call_completion compl)
- {
--	struct rxrpc_peer *peer =
--		container_of(work, struct rxrpc_peer, error_distributor);
- 	struct rxrpc_call *call;
--	enum rxrpc_call_completion compl;
--	int error;
--
--	_enter("");
--
--	error = READ_ONCE(peer->error_report);
--	if (error < RXRPC_LOCAL_ERROR_OFFSET) {
--		compl = RXRPC_CALL_NETWORK_ERROR;
--	} else {
--		compl = RXRPC_CALL_LOCAL_ERROR;
--		error -= RXRPC_LOCAL_ERROR_OFFSET;
+-	if (gcb) {
+-		for (i = 0; i < gcb->head.cnt; i++) {
+-			rbe = gcb->elems[i];
+-			rb_erase(&rbe->node, &priv->root);
+-		}
 -	}
++	if (rbe_prev)
++		rb_erase(&rbe_prev->node, &priv->root);
+ 	write_seqcount_end(&priv->count);
+ 	write_unlock_bh(&priv->lock);
  
--	_debug("ISSUE ERROR %s %d", rxrpc_call_completions[compl], error);
--
--	spin_lock_bh(&peer->lock);
--
--	while (!hlist_empty(&peer->error_targets)) {
--		call = hlist_entry(peer->error_targets.first,
--				   struct rxrpc_call, error_link);
--		hlist_del_init(&call->error_link);
-+	hlist_for_each_entry_rcu(call, &peer->error_targets, error_link) {
- 		rxrpc_see_call(call);
--
--		if (rxrpc_set_call_completion(call, compl, 0, -error))
-+		if (call->state < RXRPC_CALL_COMPLETE &&
-+		    rxrpc_set_call_completion(call, compl, 0, -error))
- 			rxrpc_notify_socket(call);
- 	}
--
--	spin_unlock_bh(&peer->lock);
--
--	rxrpc_put_peer(peer);
--	_leave("");
- }
- 
- /*
-diff --git a/net/rxrpc/peer_object.c b/net/rxrpc/peer_object.c
-index 24ec7cdcf332..ef4c2e8a35cc 100644
---- a/net/rxrpc/peer_object.c
-+++ b/net/rxrpc/peer_object.c
-@@ -222,8 +222,6 @@ struct rxrpc_peer *rxrpc_alloc_peer(struct rxrpc_local *local, gfp_t gfp)
- 		atomic_set(&peer->usage, 1);
- 		peer->local = local;
- 		INIT_HLIST_HEAD(&peer->error_targets);
--		INIT_WORK(&peer->error_distributor,
--			  &rxrpc_peer_error_distributor);
- 		peer->service_conns = RB_ROOT;
- 		seqlock_init(&peer->service_conn_lock);
- 		spin_lock_init(&peer->lock);
-@@ -415,21 +413,6 @@ struct rxrpc_peer *rxrpc_get_peer_maybe(struct rxrpc_peer *peer)
- 	return peer;
- }
- 
--/*
-- * Queue a peer record.  This passes the caller's ref to the workqueue.
-- */
--void __rxrpc_queue_peer_error(struct rxrpc_peer *peer)
--{
--	const void *here = __builtin_return_address(0);
--	int n;
--
--	n = atomic_read(&peer->usage);
--	if (rxrpc_queue_work(&peer->error_distributor))
--		trace_rxrpc_peer(peer, rxrpc_peer_queued_error, n, here);
--	else
--		rxrpc_put_peer(peer);
--}
--
- /*
-  * Discard a peer record.
-  */
 -- 
 2.17.1
 
