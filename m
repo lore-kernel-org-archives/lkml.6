@@ -3,126 +3,146 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06CB1C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:05:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCFB2C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:08:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BABE7204FD
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:05:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AB662082E
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:08:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="seR4in71"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BABE7204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VPA2I1n+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AB662082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727666AbeKBWMZ (ORCPT
+        id S1727462AbeKBWQA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 18:12:25 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:51314 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726125AbeKBWMY (ORCPT
+        Fri, 2 Nov 2018 18:16:00 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:40335 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726129AbeKBWQA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 18:12:24 -0400
-Received: by mail-wm1-f65.google.com with SMTP id w7-v6so1937203wmc.1
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 06:05:17 -0700 (PDT)
+        Fri, 2 Nov 2018 18:16:00 -0400
+Received: by mail-qk1-f196.google.com with SMTP id y16so1664127qki.7
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 06:08:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=cHE3B9mtOR8PbpfiQvYBO+fwkN4qt2SpdjzD+aBqjVk=;
-        b=seR4in71bzLCJMlCTmLaD4vpb4UbZMO/JB2dUD3iuvMA2xdaxx7B2sYahHRA16r+Fr
-         ZYgzaEJWlkYOvQknQ3Myftff4FA9i7gGG7J9J0OOAwTzFtQKU6p9bVNyQlF20CCdjI6z
-         LA3I/qf5TCa/E1wnWjWkdZQTk1N4PD3LGyL4PymBgvBG1lhsCxIRXdsYZTfEgw1wd9U5
-         TvFOYC983J2OWvRG/Y17i/mE7YaUw+YFedT00KOZJHSjvZ03ZVVHoTnxdmGAeCX8KZYW
-         mrDUzfbY6eTYcPSoSPFYJmUmHA24JYDZsG7DEHeo1951ErVKpr5E2c8wLUNGuaH4pJHg
-         tBvw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TZAaRUPd1V/5t0YkULGIhL288695RzKyzbNkZZ6i1ho=;
+        b=VPA2I1n+z7EphC+IOUzxgKlg+DChzsPY4Svv7HcE0pEnC4TQgl1BzezA+FYuMeJ1KE
+         aEDAc3AaLNDqC5uugSNNXEDJUMvC2IqroDUxYem45l/2MTkHsTAD1NXv/+e989rNfm1J
+         QBLHJ4cvR5exkhYrIA+Vg5x8+TaYeuw6ik3iY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=cHE3B9mtOR8PbpfiQvYBO+fwkN4qt2SpdjzD+aBqjVk=;
-        b=KxbwHDuEP3crMAW9G+n5WE0yZ9HYVlCmPi8LG8b5Wy/so1oQ+yMxXNf/bO0/kezlzb
-         wiKlwmHvfDmsW19O013YjFlKN/4Nfhm0xzUylXK+FsJitRCCyJnvYmhxHWVvs+vLCnnr
-         R7ljp+BmXe1ObeUiQjbMzvhqM3gauyexcmEoR7Sp/HLUjILKNSwYVlWj1ZUYSkGjWbfU
-         4NXccnOplD4wYnwq0plJnSTPBzzLVLibueF1BMh2E7hDN3DPurWmsYNakA7/CUbCDYk6
-         JvZCcex2MOeNK1E3Px1z3tjoUBuncB+z7g6oYfHGDW5cHPuPg/5hAiB1WMK9aEv7oM4n
-         MIrw==
-X-Gm-Message-State: AGRZ1gL8RTUMu5CkWtoOgyppIrynMYkikLVGO8IotQVLmGEkX7Q4QxRG
-        08lDoUhjNdbBQQKkSq4y4N9EQA==
-X-Google-Smtp-Source: AJdET5c6/o4NpfZYrPVYVtaUsQT2B37XB1nxCLqHdOZUZmSdECnqxZtVSjiwL+rPQfoVHlGCyr5Oew==
-X-Received: by 2002:a1c:c4f:: with SMTP id 76-v6mr733307wmm.6.1541163916868;
-        Fri, 02 Nov 2018 06:05:16 -0700 (PDT)
-Received: from boomer.baylibre.com ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id b127-v6sm6306838wme.43.2018.11.02.06.05.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 02 Nov 2018 06:05:15 -0700 (PDT)
-Message-ID: <ce0a3e6bf6ef438987f3ad390c2aa1bccc75f5ea.camel@baylibre.com>
-Subject: Re: [PATCH v6 3/3] clk: meson: add sub MMC clock controller driver
-From:   jbrunet@baylibre.com
-To:     Jianxin Pan <jianxin.pan@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Yixun Lan <yixun.lan@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Fri, 02 Nov 2018 14:05:14 +0100
-In-Reply-To: <1541089855-19356-4-git-send-email-jianxin.pan@amlogic.com>
-References: <1541089855-19356-1-git-send-email-jianxin.pan@amlogic.com>
-         <1541089855-19356-4-git-send-email-jianxin.pan@amlogic.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TZAaRUPd1V/5t0YkULGIhL288695RzKyzbNkZZ6i1ho=;
+        b=Qn0CWmhdaezxmmvVqAck48L92qqPmQ46x8+dRHKvTMgeaf/bG2qFlccEpFqB2DHVC3
+         QSSp1tj3jC/BZrx/0RduI3UIEHRLePIAB+bxYGnuHncHhnkz/4ZvgwaIc5wT6Yxwz71w
+         1Akb2QHF69TgmbkxnidqVijGnIMsq3kFyGP/dyf+4gwCamYUhS9pfCSgzqWU83WBupth
+         egElXARjxeskuCFXb+MVhx0NBa3n7iI53GfbEW/nzqkwVexjpLUycaF+4vuK1iLFUIEJ
+         1iMIoNbK0eNAml1SfP83E9BH1X9oQ2lbz/qqSUo3UQ1yKk7ZKZEljAGPO9WuHmTYSXQ5
+         gL9A==
+X-Gm-Message-State: AGRZ1gJycPb6+/zuSrZKZbx4JyM+VmefkzEMKxeorN1aGizGsGaNbdzV
+        LMmuy58JX50JdRHoQjxKi6z1DimzLa9XEXHwH3ICAA==
+X-Google-Smtp-Source: AJdET5cZgXc7ha8wbSuwKE11Z83MTk+z3vTqP46BEg6wQ1lWRiSsJHOpUgSIyiLpKWKB8uEMYeEFrAuBM0JLs+oU/ZY=
+X-Received: by 2002:a37:744:: with SMTP id 65mr10450341qkh.260.1541164132509;
+ Fri, 02 Nov 2018 06:08:52 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181102025516.GA25374@leoy-ThinkPad-X240s>
+In-Reply-To: <20181102025516.GA25374@leoy-ThinkPad-X240s>
+From:   Mike Leach <mike.leach@linaro.org>
+Date:   Fri, 2 Nov 2018 13:08:40 +0000
+Message-ID: <CAJ9a7ViZGSAXsw7TBKaRqzYSqBuJiizdkCoMFzwkPMrstL+eJA@mail.gmail.com>
+Subject: Re: Question: perf dso support for /proc/kallsyms
+To:     Leo Yan <leo.yan@linaro.org>
+Cc:     acme@redhat.com, jolsa@kernel.org,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        coresight@lists.linaro.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.1 (3.30.1-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-11-02 at 00:30 +0800, Jianxin Pan wrote:
-> +struct meson_sclk_div_data  mmc_clkc_div_data = {
-> +       .div = {
-> +               .reg_off = SD_EMMC_CLOCK,
-> +               .shift   = (0),
-> +               .width   = (6),
-> +       },
-> +       .hi = {
-> +               .reg_off = 0,
-> +               .shift   = 0,
-> +               .width   = 0,
-> +       },
-> +};
+Hi Leo,
 
-Jianxin,
+My understanding is that when we decode CoreSight trace - be it on the
+system that generated it, or off target device on a separate host
+system, we are using the dso files in .debug/ as these represent the
+memory layout at the time trace was recorded.
 
-When replying to v5: https://patchwork.kernel.org/patch/10646723/#22288117
-I think I have clearly explained that:
-a. sclk needs some change you want to use it for the eMMC (not done )
-b. you can't declare sclk statically like that since there is cached data in
-it and this would forbib multiple instance of the controller which is not
-acceptable for this pariticular controller
+If I look into a recent session copied up to my linux box from DB410,
+is see ~/.debug/\[kernel.kallsyms\]/ee80c1f3a434469f6174e1cf4bb5583d83a013dc/kallsyms
+- which seems to me to be the relevant symbol file to use rather than
+the live one generated by /proc/kallsyms. I don't really want to use
+the local /proc/kallsyms on my x86 linux box when decoding an ARM
+trace captured elsewhere.
 
-This is just not adressed in your series.
+So perhaps the problem to be solved is not how to use /proc/kallsyms
+if no vmlinux is supplied to the script, but ensure that the
+[kernel.kallsyms] is used?
 
-Also some comments from Martin about useless definition were already given on
-past version.
+Regards
 
-Seeing this, I did not review the rest of series.
-Please make sure you have addressed all the comments of past reviews before
-reposting. It is OK to ask questions if things are unclear.
+Mike
+On Fri, 2 Nov 2018 at 02:55, <leo.yan@linaro.org> wrote:
+>
+> Hi all,
+>
+> Now I found that if use the command 'perf script' for Arm CoreSight trace
+> data, it fails to parse kernel symbols if we don't specify kernel vmlinux
+> file.   So when we don't specify kernel symbol files then perf tool will
+> roll back to use /proc/kallsyms for kernel symbols parsing, as result it will
+> run into below flow:
+>
+>   thread__find_addr_map(thread, cpumode, MAP__FUNCTION, address, &al);
+>   map__load(al.map);
+>   dso__data_read_offset(al.map->dso, machine, offset, buffer, size);
+>     `-> data_read_offset()
+>
+> I can observe the function data_read_offset() returns failure, this is caused
+> by checking the offset sanity "if (offset > dso->data.file_size)"  (I pasted
+> the whole function code at below in case you want to get more context for it),
+> but if perf use "/proc/kallsyms" to load kernel symbols, the variable
+> 'dso->data.file_size' will be set to zero thus the sanity checking always
+> thinks the offset is out of the file size bound.
+>
+> Now I still don't understand how the dso/map support "/proc/kallsyms" and
+> have no idea to fix this issue, though I spent some time to look into it.
+>
+> Could you give some suggestion for this?  Or even better if you have fixing
+> for this, I am glad to test at my side.
+>
+> static ssize_t data_read_offset(struct dso *dso, struct machine *machine,
+>                                 u64 offset, u8 *data, ssize_t size)
+> {
+>         if (data_file_size(dso, machine))
+>                 return -1;
+>
+>         /* Check the offset sanity. */
+>         if (offset > dso->data.file_size)
+>                 return -1;
+>
+>         if (offset + size < offset)
+>                 return -1;
+>
+>         return cached_read(dso, machine, offset, data, size);
+> }
+>
+> Thanks,
+> Leo Yan
+> _______________________________________________
+> CoreSight mailing list
+> CoreSight@lists.linaro.org
+> https://lists.linaro.org/mailman/listinfo/coresight
 
-Jerome
 
 
+-- 
+Mike Leach
+Principal Engineer, ARM Ltd.
+Manchester Design Centre. UK
