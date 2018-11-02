@@ -2,103 +2,123 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B242C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:04:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D0BC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:05:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 072322082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:04:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 072322082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxonhyperv.com
+	by mail.kernel.org (Postfix) with ESMTP id 2FA172082E
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:05:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tuYtgCvi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FA172082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728179AbeKCDMD (ORCPT
+        id S1728188AbeKCDNt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:12:03 -0400
-Received: from a2nlsmtp01-05.prod.iad2.secureserver.net ([198.71.225.49]:43018
-        "EHLO a2nlsmtp01-05.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727776AbeKCDMC (ORCPT
+        Fri, 2 Nov 2018 23:13:49 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:44048 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727952AbeKCDNs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:12:02 -0400
-Received: from linuxonhyperv2.linuxonhyperv.com ([107.180.71.197])
-        by : HOSTING RELAY : with ESMTP
-        id IdmdgSwxvbOGjIdmdgK57U; Fri, 02 Nov 2018 11:02:59 -0700
-x-originating-ip: 107.180.71.197
-Received: from longli by linuxonhyperv2.linuxonhyperv.com with local (Exim 4.91)
-        (envelope-from <longli@linuxonhyperv2.linuxonhyperv.com>)
-        id 1gIdmd-0003Xl-JB; Fri, 02 Nov 2018 11:02:59 -0700
-From:   Long Li <longli@linuxonhyperv.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Michael Kelley <mikelley@microsoft.com>,
-        linux-kernel@vger.kernel.org
-Cc:     Long Li <longli@microsoft.com>
-Subject: [Patch v2] genirq/affinity: Spread IRQs to all available NUMA nodes
-Date:   Fri,  2 Nov 2018 18:02:48 +0000
-Message-Id: <20181102180248.13583-1-longli@linuxonhyperv.com>
-X-Mailer: git-send-email 2.18.0
-Reply-To: longli@microsoft.com
-X-CMAE-Envelope: MS4wfG6ipy/pc/oczIg+AUAy4IYSbrop7CZoa0o+suZop5DlTyq9QqXyMvrFVnfuOQ8MKkIvXWmSAyEKuBKT2DpiIIE8LtDhJwBL6uZljfrlVRKAwRwhGLtM
- QqomZmm96HbBIGo5K/r89jb7zmcV0s1DHPEcveHEaHiDBUuhcnLdzxVu3S33YuoqlYg6gBf4FUiXiSjl/EQ9SewkRIREK/X38fn2jX0xZ4QjF7q7Y92cZi1h
- e1DRVyc/xjBgZyQhWKCxOmdSerpbN1kvyyoz05j1trwiBwmb5uooKKuKTQrL8M2CrEwswPkGePTXCJQ60fk02/4ZikMtSmrL7g0ubQnivzQ=
+        Fri, 2 Nov 2018 23:13:48 -0400
+Received: by mail-qk1-f195.google.com with SMTP id n12so4393444qkh.11;
+        Fri, 02 Nov 2018 11:05:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sL12OitAikGu+FaUigrM6+uRGskxDdxxbxXk2LtoJrs=;
+        b=tuYtgCvi+ZmMK5Dxnxg4OsI4yPfXwe1wac7JfH0fsnXYThntBB2Wlus3kiil5NdJ5F
+         GKCU2wU+3tA4PoMh6Q/4ekiuzG25aNT9140J0dhJn5kUvCuDFVyP1VWUdLnWfBOIT/u4
+         kj04ASRb5hdoVDSKBkfWM72XPJi1XtKjzQOz1HsDRzhpLVq5BR01x282NZplwD0Vwy5h
+         OQzYbATieDtCQAVgZ4hMwmTK0Ywa9lI7x15fouvR8MLTSchoLWJeW1uQ4LVfKvvXgSBW
+         TbZAjhSj2JOuTDiKPCjzxhZh3P97/4kP6ijKwIrdd47rStUT8+unIv0S9S28LQU/JsGz
+         b/lQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sL12OitAikGu+FaUigrM6+uRGskxDdxxbxXk2LtoJrs=;
+        b=CZwk0GXB7RKuKgj0BTnBCPYUTJ1Vr/pOjJw5lrAG/o9XwKcYJUEWOdLm6KRHeRW7nX
+         CpjSvR7x1vuJeNNYP16e+Ow1emcAhDrqof8i4HluMvD2sPmApef6xJkLVOmQlKCpKP0z
+         s+N0CYfTsPg+GibbInRMFvOTySSclm9syaVDsi/yHejwd7z30E0kQV07lS0nFqjPyTCT
+         09RkrZXSVZI15YhcHspFLMh0ldfDsPRbVg4CaOloG4LzKAbdKvJ+Uzqi4FgQpqMY8KLt
+         J+LKe+gBk4IjzRc2G34LsyshZqmpgxI1kXYo16xZQGja5gJrcgpxpa0cbX9GVemmbtZR
+         KbZw==
+X-Gm-Message-State: AGRZ1gJZn7ABLik1JfdpjvCm3DaNgH0h/tk4vg7I0f5FPg4mJC4HIw5g
+        ybL0AO63rHM99Xko84WMsK4IwkFw8O2Q0LP8nkM=
+X-Google-Smtp-Source: AJdET5cmpY5fIeoiJ88off9hpXLQC1kZ2xvzAPpRoaTG9zr/6bWAlTntqX9KxG7Jqq64JCCxIhN8OgVX2A6i4wbZe4M=
+X-Received: by 2002:a37:c3c3:: with SMTP id r64mr11532155qkl.70.1541181945303;
+ Fri, 02 Nov 2018 11:05:45 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181102041120.7603-1-ayman.bagabas@gmail.com>
+In-Reply-To: <20181102041120.7603-1-ayman.bagabas@gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 2 Nov 2018 20:05:33 +0200
+Message-ID: <CAHp75Vfj7pzuZmheqppjzo-GhSH9dAFuKjzZH8G0wkJKao2fyg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] Huawei laptops WMI & sound fixes
+To:     Ayman Bagabas <ayman.bagabas@gmail.com>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, kailang@realtek.com,
+        Hui Wang <hui.wang@canonical.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Long Li <longli@microsoft.com>
+On Fri, Nov 2, 2018 at 6:11 AM Ayman Bagabas <ayman.bagabas@gmail.com> wrote:
+>
+> This patch set fixes some of the issues with Huawei laptops.
+>
 
-On systems with large number of NUMA nodes, there may be more NUMA nodes than
-the number of MSI/MSI-X interrupts that device requests for. The current code
-always picks up the NUMA nodes starting from the node 0, up to the number of
-interrupts requested. This may left some later NUMA nodes unused.
+Thanks for the series, I'll review it later on.
 
-For example, if the system has 16 NUMA nodes, and the device reqeusts for 8
-interrupts, NUMA node 0 to 7 are assigned for those interrupts, NUMA 8 to 15
-are unused.
+> [PATCH v2 1/3]
+> The first patch adds support for missing hotkeys on some models. Some hotkeys,
+> like brightness keys, work out of the box on these models.
+>
+> [PATCH v2 2/3]
+> This one enables the front speakers on the Huawei Matebook X Pro (MBXP). This
+> solves bug 200501 https://bugzilla.kernel.org/show_bug.cgi?id=200501
+> It simply uses the pins configurations generated by hdajackretast using the
+> settings posted on the bug page https://imgur.com/a/N1xsCVZ
+>
+> [PATCH v2 3/3]
+> This enables the micmute LED on Huawei laptops. It calls an WMI method, using
+> PATCH #1, to turn the micmute LED on/off.
+>
+> Ayman Bagabas (3):
+>   x86: add support for Huawei WMI hotkeys.
+>   ALSA: hda: fix front speakers on Huawei MBXP.
+>   ALSA: hda: add support for Huawei WMI MicMute LED
+>
+>  drivers/platform/x86/Kconfig      |  13 ++
+>  drivers/platform/x86/Makefile     |   1 +
+>  drivers/platform/x86/huawei_wmi.c | 224 ++++++++++++++++++++++++++++++
+>  include/linux/huawei_wmi.h        |   7 +
+>  sound/pci/hda/huawei_wmi_helper.c |  48 +++++++
+>  sound/pci/hda/patch_realtek.c     |  28 ++++
+>  6 files changed, 321 insertions(+)
+>  create mode 100644 drivers/platform/x86/huawei_wmi.c
+>  create mode 100644 include/linux/huawei_wmi.h
+>  create mode 100644 sound/pci/hda/huawei_wmi_helper.c
+>
+> --
+> 2.17.2
+>
 
-There are several problems with this approach:
-1. Later, when those managed IRQs are allocated, they can not be assigned to
-NUMA 8 to 15, this may create an IRQ concentration on NUMA 0 to 7.
-2. Some upper layers assume affinity mask has a complete coverage over NUMA nodes.
-For example, block layer use the affinity mask to decide how to map CPU queues to
-hardware queues, missing NUMA nodes in the masks may result in an uneven mapping
-of queues. For the above example of 16 NUMA nodes, CPU queues on NUMA node 0 to 7
-are assigned to the hardware queues 0 to 7, respectively. But CPU queues on NUMA
-node 8 to 15 are all assigned to the hardware queue 0.
 
-Fix this problem by going over all NUMA nodes and assign them round-robin to
-all IRQs.
-
-Change in v2: Removed extra code for calculating "done". (Michael Kelley
-<mikelley@microsoft.com>)
-
-Signed-off-by: Long Li <longli@microsoft.com>
----
- kernel/irq/affinity.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
-index f4f29b9d90ee..e12cdf637c71 100644
---- a/kernel/irq/affinity.c
-+++ b/kernel/irq/affinity.c
-@@ -117,12 +117,11 @@ static int irq_build_affinity_masks(const struct irq_affinity *affd,
- 	 */
- 	if (numvecs <= nodes) {
- 		for_each_node_mask(n, nodemsk) {
--			cpumask_copy(masks + curvec, node_to_cpumask[n]);
--			if (++done == numvecs)
--				break;
-+			cpumask_or(masks + curvec, masks + curvec, node_to_cpumask[n]);
- 			if (++curvec == last_affv)
- 				curvec = affd->pre_vectors;
- 		}
-+		done = numvecs;
- 		goto out;
- 	}
- 
 -- 
-2.14.1
-
+With Best Regards,
+Andy Shevchenko
