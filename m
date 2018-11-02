@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 933F7C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:39:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC435C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:39:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 651C820833
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:39:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DC4B20840
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:39:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iwS0dCfp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 651C820833
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CY6E15AG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DC4B20840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729082AbeKCDr1 (ORCPT
+        id S1729102AbeKCDr3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:47:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41470 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:47:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728102AbeKCDr0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:47:26 -0400
+        id S1728102AbeKCDr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:47:29 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6EF352082E;
-        Fri,  2 Nov 2018 18:39:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 277C12082E;
+        Fri,  2 Nov 2018 18:39:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541183955;
-        bh=RPEpBJ0qIElvSRdMgREDFVkNqnku9DQH+L7SYAfnGRY=;
+        s=default; t=1541183957;
+        bh=+5K6Jfh+Ocw4X/939WNa5ib60FJq5qrYGYKJsk3hJRQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iwS0dCfplEI0eZ92sppyrOiIiEd89EmWdluIDKdVIuqzpdDTEm2EZEaArR6etjp1b
-         y5y0d18PSKFjo8fx0y2kX/NOhtJQ7iyQ+VJhSewg8tlu4Gig/RaOVuv9SCY3dbNys6
-         BGipTd69TLnS7ZyFWkuVHgRtYFy8eS6aM5bSDF4I=
+        b=CY6E15AG7jafrCOcULMNy4l8jP6+ze6Uh78r78U5YGWHAOfb4VXOptePVNaox+IH6
+         N9FMhsksZbzi+DnKU1NuB1sRMkymoz5zKFrFENfwmbUsktKpCiYQMlg0zTU5ORvGs2
+         Q7pOCUVfnx8Ui42XWOdUExcsANT/Bgh+fPMI8qNI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Masashi Honma <masashi.honma@gmail.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 033/150] qed: Avoid implicit enum conversion in qed_iwarp_parse_rx_pkt
-Date:   Fri,  2 Nov 2018 19:33:15 +0100
-Message-Id: <20181102182905.639291405@linuxfoundation.org>
+Subject: [PATCH 4.18 034/150] nl80211: Fix possible Spectre-v1 for CQM RSSI thresholds
+Date:   Fri,  2 Nov 2018 19:33:16 +0100
+Message-Id: <20181102182905.700962418@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -64,57 +63,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 77f2d753819b7d50c16abfb778caf1fe075faed0 ]
+[ Upstream commit 1222a16014888ed9733c11e221730d4a8196222b ]
 
-Clang warns when one enumerated type is implicitly converted to another.
+Use array_index_nospec() to sanitize i with respect to speculation.
 
-drivers/net/ethernet/qlogic/qed/qed_iwarp.c:1713:25: warning: implicit
-conversion from enumeration type 'enum tcp_ip_version' to different
-enumeration type 'enum qed_tcp_ip_version' [-Wenum-conversion]
-                cm_info->ip_version = TCP_IPV4;
-                                    ~ ^~~~~~~~
-drivers/net/ethernet/qlogic/qed/qed_iwarp.c:1733:25: warning: implicit
-conversion from enumeration type 'enum tcp_ip_version' to different
-enumeration type 'enum qed_tcp_ip_version' [-Wenum-conversion]
-                cm_info->ip_version = TCP_IPV6;
-                                    ~ ^~~~~~~~
-2 warnings generated.
+Note that the user doesn't control i directly, but can make it out
+of bounds by not finding a threshold in the array.
 
-Use the appropriate values from the expected type, qed_tcp_ip_version:
-
-TCP_IPV4 = QED_TCP_IPV4 = 0
-TCP_IPV6 = QED_TCP_IPV6 = 1
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/125
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Masashi Honma <masashi.honma@gmail.com>
+[add note about user control, as explained by Masashi]
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_iwarp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/wireless/nl80211.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_iwarp.c b/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
-index 90a2b53096e2..51bbb0e5b514 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
-@@ -1710,7 +1710,7 @@ qed_iwarp_parse_rx_pkt(struct qed_hwfn *p_hwfn,
+diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+index 3b80cf012438..214f9ef79a64 100644
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -10125,7 +10125,7 @@ static int cfg80211_cqm_rssi_update(struct cfg80211_registered_device *rdev,
+ 	struct wireless_dev *wdev = dev->ieee80211_ptr;
+ 	s32 last, low, high;
+ 	u32 hyst;
+-	int i, n;
++	int i, n, low_index;
+ 	int err;
  
- 		cm_info->local_ip[0] = ntohl(iph->daddr);
- 		cm_info->remote_ip[0] = ntohl(iph->saddr);
--		cm_info->ip_version = TCP_IPV4;
-+		cm_info->ip_version = QED_TCP_IPV4;
+ 	/* RSSI reporting disabled? */
+@@ -10162,10 +10162,19 @@ static int cfg80211_cqm_rssi_update(struct cfg80211_registered_device *rdev,
+ 		if (last < wdev->cqm_config->rssi_thresholds[i])
+ 			break;
  
- 		ip_hlen = (iph->ihl) * sizeof(u32);
- 		*payload_len = ntohs(iph->tot_len) - ip_hlen;
-@@ -1730,7 +1730,7 @@ qed_iwarp_parse_rx_pkt(struct qed_hwfn *p_hwfn,
- 			cm_info->remote_ip[i] =
- 			    ntohl(ip6h->saddr.in6_u.u6_addr32[i]);
- 		}
--		cm_info->ip_version = TCP_IPV6;
-+		cm_info->ip_version = QED_TCP_IPV6;
+-	low = i > 0 ?
+-		(wdev->cqm_config->rssi_thresholds[i - 1] - hyst) : S32_MIN;
+-	high = i < n ?
+-		(wdev->cqm_config->rssi_thresholds[i] + hyst - 1) : S32_MAX;
++	low_index = i - 1;
++	if (low_index >= 0) {
++		low_index = array_index_nospec(low_index, n);
++		low = wdev->cqm_config->rssi_thresholds[low_index] - hyst;
++	} else {
++		low = S32_MIN;
++	}
++	if (i < n) {
++		i = array_index_nospec(i, n);
++		high = wdev->cqm_config->rssi_thresholds[i] + hyst - 1;
++	} else {
++		high = S32_MAX;
++	}
  
- 		ip_hlen = sizeof(*ip6h);
- 		*payload_len = ntohs(ip6h->payload_len);
+ 	return rdev_set_cqm_rssi_range_config(rdev, dev, low, high);
+ }
 -- 
 2.17.1
 
