@@ -2,98 +2,137 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 108F0C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:48:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA6CBC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:48:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C26052081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:48:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C26052081B
+	by mail.kernel.org (Postfix) with ESMTP id 7A5FA2082E
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:48:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G1feXU/x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A5FA2082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728060AbeKCC4Y (ORCPT
+        id S1728137AbeKCC44 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 22:56:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38510 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726700AbeKCC4Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 22:56:24 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0669AAF77;
-        Fri,  2 Nov 2018 17:48:23 +0000 (UTC)
-Date:   Fri, 2 Nov 2018 18:48:23 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Dexuan Cui <decui@microsoft.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>, Rik van Riel <riel@surriel.com>,
-        Konstantin Khlebnikov <koct9i@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Stable@vger.kernel.org" <Stable@vger.kernel.org>
-Subject: Re: Will the recent memory leak fixes be backported to longterm
- kernels?
-Message-ID: <20181102174823.GI28039@dhcp22.suse.cz>
-References: <PU1P153MB0169CB6382E0F047579D111DBFCF0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <20181102005816.GA10297@tower.DHCP.thefacebook.com>
- <PU1P153MB0169FE681EF81BCE81B005A1BFCF0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <20181102073009.GP23921@dhcp22.suse.cz>
- <20181102154844.GA17619@tower.DHCP.thefacebook.com>
- <20181102161314.GF28039@dhcp22.suse.cz>
- <20181102162237.GB17619@tower.DHCP.thefacebook.com>
- <20181102165147.GG28039@dhcp22.suse.cz>
- <20181102172547.GA19042@tower.DHCP.thefacebook.com>
+        Fri, 2 Nov 2018 22:56:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49838 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726700AbeKCC44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 22:56:56 -0400
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2B6820843
+        for <linux-kernel@vger.kernel.org>; Fri,  2 Nov 2018 17:48:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541180936;
+        bh=Y8GIf69pP+m9DmfderzUT/vxmSKPqCH2CKDT3DPFHI4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=G1feXU/x8bYG3sPyl7o3s0fGdQD/+jtb2/WVbZFJOxYaIvJp92HE4C2XiFlkYE+jm
+         XxMby6W9p7hYnkMBuYoIIlDM4vpGDFNmoffDylrzXA+jWu6G03ngRUFUvvmFRI3S8w
+         h7EanP/o/A9HhZBrRYGSGpnsSQW8EKBZKoOskaUU=
+Received: by mail-wm1-f47.google.com with SMTP id s10-v6so2703439wmc.5
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 10:48:55 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gJdF5UIrevl4x+ZHraO2314VG89wSyd99kXRpKkSX+Q2pN+1Qgf
+        xSBEhR/Z5HmDz82cdd2pSuc5hyVMXhQ8jFs5bl32cw==
+X-Google-Smtp-Source: AJdET5ffUcZqAJb9vBc3zWV3Mc+URA6oKsdH0OYNxrH9qhxk+pLL5aUIRFoG4p0Efyha5GR3JrAsSbCb892rUFl7hOk=
+X-Received: by 2002:a1c:4b1a:: with SMTP id y26-v6mr5393wma.82.1541180934370;
+ Fri, 02 Nov 2018 10:48:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181102172547.GA19042@tower.DHCP.thefacebook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CAG48ez0vBqL0tyfWwmuc_cq+OAUoEi88=r+t6h64a-Fw8z59zA@mail.gmail.com>
+ <20181101185225.GC5150@brightrain.aerifal.cx> <CAHk-=wgFo8tuZX5gzCfWGdAwGyn_Ar9JFnnMFNuwr9=vtfDV1g@mail.gmail.com>
+ <20181101193107.GE5150@brightrain.aerifal.cx> <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
+ <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
+ <20181102163034.GB7393@linux.intel.com> <7050972d-a874-dc08-3214-93e81181da60@intel.com>
+ <20181102170627.GD7393@linux.intel.com> <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
+ <20181102173350.GF7393@linux.intel.com>
+In-Reply-To: <20181102173350.GF7393@linux.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 2 Nov 2018 10:48:38 -0700
+X-Gmail-Original-Message-ID: <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com>
+Message-ID: <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com>
+Subject: Re: RFC: userspace exception fixups
+To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rich Felker <dalias@libc.org>, Jann Horn <jannh@google.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "Carlos O'Donell" <carlos@redhat.com>,
+        adhemerval.zanella@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 02-11-18 17:25:58, Roman Gushchin wrote:
-> On Fri, Nov 02, 2018 at 05:51:47PM +0100, Michal Hocko wrote:
-> > On Fri 02-11-18 16:22:41, Roman Gushchin wrote:
-[...]
-> > > 2) We do forget to scan the last page in the LRU list. So if we ended up with
-> > > 1-page long LRU, it can stay there basically forever.
-> > 
-> > Why 
-> > 		/*
-> > 		 * If the cgroup's already been deleted, make sure to
-> > 		 * scrape out the remaining cache.
-> > 		 */
-> > 		if (!scan && !mem_cgroup_online(memcg))
-> > 			scan = min(size, SWAP_CLUSTER_MAX);
-> > 
-> > in get_scan_count doesn't work for that case?
-> 
-> No, it doesn't. Let's look at the whole picture:
-> 
-> 		size = lruvec_lru_size(lruvec, lru, sc->reclaim_idx);
-> 		scan = size >> sc->priority;
-> 		/*
-> 		 * If the cgroup's already been deleted, make sure to
-> 		 * scrape out the remaining cache.
-> 		 */
-> 		if (!scan && !mem_cgroup_online(memcg))
-> 			scan = min(size, SWAP_CLUSTER_MAX);
-> 
-> If size == 1, scan == 0 => scan = min(1, 32) == 1.
-> And after proportional adjustment we'll have 0.
+On Fri, Nov 2, 2018 at 10:33 AM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
+>
+> On Fri, Nov 02, 2018 at 10:13:23AM -0700, Dave Hansen wrote:
+> > On 11/2/18 10:06 AM, Sean Christopherson wrote:
+> > > On Fri, Nov 02, 2018 at 09:56:44AM -0700, Dave Hansen wrote:
+> > >> On 11/2/18 9:30 AM, Sean Christopherson wrote:
+> > >>> What if rather than having userspace register an address for fixup, the
+> > >>> kernel instead unconditionally does fixup on the ENCLU opcode?
+> > >>
+> > >> The problem is knowing what to do for the fixup.  If we have a simple
+> > >> action to take that's universal, like backing up %RIP, or setting some
+> > >> other register state, it's not bad.
+> > >
+> > > Isn't the EENTER/RESUME behavior universal?  Or am I missing something?
+> >
+> > Could someone write down all the ways we get in and out of the enclave?
+> >
+> > I think we always get in from userspace calling EENTER or ERESUME.  We
+> > can't ever enter directly from the kernel, like via an IRET from what I
+> > understand.
+>
+> Correct, the only way to get into the enclave is EENTER or ERESUME.
+> My understanding is that even SMIs bounce through the AEX target
+> before transitioning to SMM.
+>
+> > We get *out* from exceptions, hardware interrupts, or enclave-explicit
+> > EEXITs.  Did I miss any?  Remind me where the hardware lands the control
+> > flow in each of those exit cases.
+>
+> And VMExits.  There are basically two cases: EEXIT and everything else.
+> EEXIT is a glorified indirect jump, e.g. %RBX holds the target %RIP.
+> Everything else is an Asynchronous Enclave Exit (AEX).  On an AEX, %RIP
+> is set to a value specified by EENTER/ERESUME, %RBP and %RSP are
+> restored to pre-enclave values and all other registers are loaded with
+> synthetic state.  The actual interrupt/exception/VMExit then triggers,
+> e.g. the %RIP on the stack for an exception is always the AEX target,
+> not the %RIP inside the enclave that actually faulted.
 
-My friday brain hurst when looking at this but if it doesn't work as
-advertized then it should be fixed. I do not see any of your patches to
-touch this logic so how come it would work after them applied?
--- 
-Michal Hocko
-SUSE Labs
+So what exactly happens when an enclave accesses non-enclave memory
+and takes a page fault, for example?  The SDM says that the #PF vector
+and error code are stored in the SSA frame where the kernel can't see
+them.  Is a real #PF then delivered?
+
+I guess that, if the memory in question gets faulted in, then the
+kernel resumes exection at the AEP address, which does ERESUME, and
+the enclave resumes.  But if the access is bad, then the kernel
+delivers a signal (or uses some other new mechanism), and then what
+happens?  Is the enclave just considered dead?  Is user code supposed
+to EENTER back into the enclave to tell it that it got an error?
+
+This whole mechanism seems very complicated, and it's not clear
+exactly what behavior user code wants.
