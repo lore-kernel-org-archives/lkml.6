@@ -2,94 +2,158 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 563BBC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA6EC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:29:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25AC7204FD
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:27:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25AC7204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id CCEBD204FD
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:29:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCEBD204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727724AbeKBUeZ (ORCPT
+        id S1727597AbeKBUgB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 16:34:25 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:49754 "EHLO mail.skyhub.de"
+        Fri, 2 Nov 2018 16:36:01 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48006 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726469AbeKBUeZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 16:34:25 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id cGmVktbqz_wv; Fri,  2 Nov 2018 12:27:33 +0100 (CET)
-Received: from zn.tnic (p200300EC2BCD3B00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:3b00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726026AbeKBUgA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 16:36:00 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1551C1EC01CF;
-        Fri,  2 Nov 2018 12:27:33 +0100 (CET)
-Date:   Fri, 2 Nov 2018 12:27:29 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        X86 ML <x86@kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH v3 1/4] x86/mm: declare check_la57_support() as inline
-Message-ID: <20181102112728.GC14602@zn.tnic>
-References: <20181028130945.23581-1-changbin.du@gmail.com>
- <20181028130945.23581-2-changbin.du@gmail.com>
- <20181028140911.21d49629@vmware.local.home>
- <CAK7LNATixykqHqdu5W3NpfXqBXMNsP0OLKjNdsFc_EzJ_diOxA@mail.gmail.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 124BE3001E4E;
+        Fri,  2 Nov 2018 11:29:09 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.31])
+        by smtp.corp.redhat.com (Postfix) with SMTP id F38991C921;
+        Fri,  2 Nov 2018 11:29:05 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Fri,  2 Nov 2018 12:29:07 +0100 (CET)
+Date:   Fri, 2 Nov 2018 12:29:03 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian@brauner.io>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Aleksa Sarai <asarai@suse.de>, linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v8 1/2] seccomp: add a return code to trap to userspace
+Message-ID: <20181102112903.GB12360@redhat.com>
+References: <20181029224031.29809-1-tycho@tycho.ws>
+ <20181029224031.29809-2-tycho@tycho.ws>
+ <20181030143235.GA3385@redhat.com>
+ <20181030153231.GB7343@cisco>
+ <20181101144804.GD23232@redhat.com>
+ <20181101203328.GI2180@cisco>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK7LNATixykqHqdu5W3NpfXqBXMNsP0OLKjNdsFc_EzJ_diOxA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181101203328.GI2180@cisco>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 02 Nov 2018 11:29:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 10:04:46PM +0900, Masahiro Yamada wrote:
-> On Mon, Oct 29, 2018 at 3:09 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+On 11/01, Tycho Andersen wrote:
+>
+> On Thu, Nov 01, 2018 at 03:48:05PM +0100, Oleg Nesterov wrote:
 > >
-> > On Sun, 28 Oct 2018 13:09:42 +0000
-> > Changbin Du <changbin.du@gmail.com> wrote:
-> >
-> > > The level4_kernel_pgt is only defined when X86_5LEVEL is enabled.
-> > > So declare check_la57_support() as inline to make sure the code
-> > > referring to level4_kernel_pgt is optimized out. This is a preparation
-> > > for CONFIG_CC_OPTIMIZE_FOR_DEBUGGING.
+> > > > But my main concern is that either way wait_for_completion_killable() allows
+> > > > to trivially create a process which doesn't react to SIGSTOP, not good...
+> > > >
+> > > > Note also that this can happen if, say, both the tracer and tracee run in the
+> > > > same process group and SIGSTOP is sent to their pgid, if the tracer gets the
+> > > > signal first the tracee won't stop.
+> > > >
+> > > > Of freezer. try_to_freeze_tasks() can fail if it freezes the tracer before
+> > > > it does SECCOMP_IOCTL_NOTIF_SEND.
 > > >
-> > > Signed-off-by: Changbin Du <changbin.du@gmail.com>
+> > > I think in general the way this is intended to be used these things
+> > > wouldn't happen.
 > >
-> > Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > Why?
+>
+> The intent is to run the tracer on the host and have it trace
+> containers, which would live in a different freezer cgroup, process
+> group, etc.
+
+I didn't mean the freezer cgroup, suspend can fail, it does the "global" freeze.
+Nevermind.
+
+> > Yes I think it would be nice to avoid wait_for_completion_killable().
 > >
-> > -- Steve
+> > So please help me to understand the problem. Once again, why can not
+> > seccomp_do_user_notification() use wait_for_completion_interruptible() only?
 > >
-> 
-> Applied to linux-kbuild.
+> > This is called before the task actually starts the syscall, so
+> > -ERESTARTNOINTR if signal_pending() can't hurt.
+>
+> The idea was that when the tracee gets a signal, it notifies the
+> tracer exactly once, and then waits for the tracer to decide what to
+> do. So if we use another wait_for_completion_interruptible(), doesn't
+> it just get re-woken immediately because the signal is still pending?
 
-Next time, before you route a patch through your tree, please get an x86
-maintainer's ACK first.
+Hmm. I meant that we should use a single wait_for_completion_interruptible().
 
-Thx.
+> > Now lets suppose seccomp_do_user_notification() simply does
+> >
+> > 	err = wait_for_completion_interruptible(&n.ready);
+> >
+> > 	if (err < 0 && state != SECCOMP_NOTIFY_REPLIED) {
+> > 		syscall_set_return_value(ERESTARTNOINTR);
+> > 		list_del(&n.list);
+> > 		return -1;
+> > 	}
+> >
+> > (I am ignoring the locking/etc). Now the obvious problem is that the listener
+> > doing SECCOMP_IOCTL_NOTIF_SEND can't distinguish -ENOENT from the case when the
+> > tracee was killed, yes?
+> >
+> > Is it that important?
+>
+> The answer to this question depends on how we want the listener to be
+> able to react. For example, if the listener is in the middle of doing
+> a mount() on behalf of the task and it gets a signal and we return
+> immediately, the listener will complete the mount(), try to respond
+> with success and get -ENOENT.
 
--- 
-Regards/Gruss,
-    Boris.
+Yes. Should we undo the mount if the tracee is killed?
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+> If the task handles the signal and
+> restarts the mount(), it'll happen twice unless the listener undoes
+> it when it sees the -ENOENT.
+
+Yes. But note that we know that if the same tracee sends another notification
+it must be the same syscall.
+
+So. If the listener needs to undo mount when the tracee is killed, it should
+undo it if it was interrupted too.
+
+If no, the listener can simply "ignore" the next notification and do
+SECCOMP_IOCTL_NOTIF_SEND(val = 0, error = 0).
+
+I see no real difference...
+
+> If we send another notification with the
+> SIGNALED flag, the listener has a better picture of what's going on,
+> which might be nice.
+
+Yes, but this returns us to my my question: Is it that important?
+
+What exactly the listener can do if it gets SECCOMP_NOTIF_FLAG_SIGNALED?
+
+Undo the mount? No. This doesn't differ from the case when the tracee gets
+the non-fatal signal right after SECCOMP_NOTIFY_REPLIED.
+
+Oleg.
+
