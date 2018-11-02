@@ -2,87 +2,136 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53126C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:04:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1195EC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:06:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02F9B2081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:04:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02F9B2081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id B923720831
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:06:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rxz9Lhfq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B923720831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726541AbeKCEMz (ORCPT
+        id S1726892AbeKCEPH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 00:12:55 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:42802 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725728AbeKCEMy (ORCPT
+        Sat, 3 Nov 2018 00:15:07 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53089 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725917AbeKCEPG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 00:12:54 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gIekD-0000UD-P1; Fri, 02 Nov 2018 19:04:33 +0000
-Date:   Fri, 2 Nov 2018 19:04:33 +0000
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH] iov_iter: Fix 9p virtio breakage
-Message-ID: <20181102190433.GZ32577@ZenIV.linux.org.uk>
-References: <20181102171651.97671-1-marc.zyngier@arm.com>
+        Sat, 3 Nov 2018 00:15:06 -0400
+Received: by mail-wm1-f68.google.com with SMTP id q19-v6so2881585wmc.2
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 12:06:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=nn2wLBYTBDD9+IgEPu+AVpb4kk/jq35eY6xL5G9mg2k=;
+        b=Rxz9LhfqeLh+D/JRs5pQ6zOJR8oVVPNvga+nwNKt7DjZFElKVxR2TPkMZR2DuMNW+C
+         eWLTEe47mtR2wUqAEmTWkU2b7/0c4foOY/Iyei7PkzinYS5bdSlotF9/VgkFxc3iyQ66
+         MUwKsFh/i39FhQ+boJt2OD2R8pNmwpgA0Fr2o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=nn2wLBYTBDD9+IgEPu+AVpb4kk/jq35eY6xL5G9mg2k=;
+        b=MFbwrTZF7DOZavRNhzb/ej2dVmTfQ6R4bgpS+RrSWUgFZ2lIIn5r97lZKdZ8EBsH1n
+         cEkl3l+EU+udeV8lcJFDi6eUlP6efAb6Cxqt6xbPv6nXBIcPoBOaVA6+xCCncfgTxAP+
+         7cu2g2o/xr0R3iKLNIP2HK2cfr8By93xyBAHotVya35gZIkzhQ20ICE9vVOFWH+ZXquG
+         aGSZi3SBd4vtzBKKM7xOuf07Im5qgzPnjMgXUxwhWARBAMK3/iHtzIxcW07FLuzYWA5G
+         YBEFsFaM5UJTryvTvH3lFAfJ4d38VbZWICyRf3hSXYjlx0iEZbQ+E5W3zC3glMLlqTSU
+         QAdA==
+X-Gm-Message-State: AGRZ1gJQwQ68XYPIhKm2atj0BQkeHXAdimz86LuquukU/jn21bbPswbz
+        2GPgITRb9ROR3Y+oycHn3x5KtQnYOo8=
+X-Google-Smtp-Source: AJdET5cXiwg6VHib/6rpeXIfB/dV+hNICd6HfyzcGnsXlsLOkkJNXoPuMRsGt52XP0le1D+VIRNkqw==
+X-Received: by 2002:a1c:8a11:: with SMTP id m17-v6mr59127wmd.15.1541185604693;
+        Fri, 02 Nov 2018 12:06:44 -0700 (PDT)
+Received: from [192.168.0.40] ([80.125.186.228])
+        by smtp.googlemail.com with ESMTPSA id q185-v6sm30150561wmg.45.2018.11.02.12.06.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 02 Nov 2018 12:06:43 -0700 (PDT)
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Guo Ren <ren_guo@c-sky.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [GIT PULL] timer for tip/urgent
+Message-ID: <d99ed466-b11a-b931-fc7a-a555cae80a53@linaro.org>
+Date:   Fri, 2 Nov 2018 20:06:42 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181102171651.97671-1-marc.zyngier@arm.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 05:16:51PM +0000, Marc Zyngier wrote:
-> When switching to the new iovec accessors, a negation got subtly
-> dropped, leading to 9p being remarkably broken (here with kvmtool):
-> 
-> [    7.430941] VFS: Mounted root (9p filesystem) on device 0:15.
-> [    7.432080] devtmpfs: mounted
-> [    7.432717] Freeing unused kernel memory: 1344K
-> [    7.433658] Run /virt/init as init process
->   Warning: unable to translate guest address 0x7e00902ff000 to host
->   Warning: unable to translate guest address 0x7e00902fefc0 to host
->   Warning: unable to translate guest address 0x7e00902ff000 to host
->   Warning: unable to translate guest address 0x7e008febef80 to host
->   Warning: unable to translate guest address 0x7e008febf000 to host
->   Warning: unable to translate guest address 0x7e008febef00 to host
->   Warning: unable to translate guest address 0x7e008febf000 to host
-> [    7.436376] Kernel panic - not syncing: Requested init /virt/init failed (error -8).
-> [    7.437554] CPU: 29 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc8-02267-g00e23707442a #291
-> [    7.439006] Hardware name: linux,dummy-virt (DT)
-> [    7.439902] Call trace:
-> [    7.440387]  dump_backtrace+0x0/0x148
-> [    7.441104]  show_stack+0x14/0x20
-> [    7.441768]  dump_stack+0x90/0xb4
-> [    7.442425]  panic+0x120/0x27c
-> [    7.443036]  kernel_init+0xa4/0x100
-> [    7.443725]  ret_from_fork+0x10/0x18
-> [    7.444444] SMP: stopping secondary CPUs
-> [    7.445391] Kernel Offset: disabled
-> [    7.446169] CPU features: 0x0,23000438
-> [    7.446974] Memory Limit: none
-> [    7.447645] ---[ end Kernel panic - not syncing: Requested init /virt/init failed (error -8). ]---
-> 
-> Restoring the missing "!" brings the guest back to life.
-> 
-> Fixes: 00e23707442a ("iov_iter: Use accessor function")
-> Reported-by: Will Deacon <will.deacon@arm.com>
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 
-ACK.  Do you want me to take it via vfs.git?  Or might as well
-send directly to Linus, with
+Hi Thomas,
 
-Acked-by Al Viro <viro@zeniv.linux.org.uk>
+this is a late pull request for the c-sky clocksource and clockevent.
+These are new drivers, they passed the review process several times for
+the c-sky architecture.
 
-on it.
+ - Add the per cpu timer for the c-sky architecture (Guo Ren)
+
+ - Add the global timer for the c-sky architecture (Guo Ren)
+
+Thanks!
+
+  -- Daniel
+
+The following changes since commit 291d0e5d81e101392379217b06251fe8c27f1f80:
+
+  Merge tag 'for-linus-20180929' of git://git.kernel.dk/linux-block
+(2018-09-29 14:52:14 -0700)
+
+are available in the git repository at:
+
+  https://git.linaro.org/people/daniel.lezcano/linux.git
+clockevents/4.20-rc1
+
+for you to fetch changes up to ab1e77c3f590536b2659c097980efe6e8f713921:
+
+  dt-bindings: timer: gx6605s SOC timer (2018-11-02 19:41:50 +0100)
+
+----------------------------------------------------------------
+Guo Ren (4):
+      clocksource/drivers/c-sky: Add C-SKY SMP timer
+      dt-bindings: timer: C-SKY Multi-processor timer
+      clocksource/drivers/c-sky: Add gx6605s SOC system timer
+      dt-bindings: timer: gx6605s SOC timer
+
+ Documentation/devicetree/bindings/timer/csky,gx6605s-timer.txt |  42
+++++++++++++++++++++++++++++++++++++++++++
+ Documentation/devicetree/bindings/timer/csky,mptimer.txt       |  42
+++++++++++++++++++++++++++++++++++++++++++
+ drivers/clocksource/Kconfig                                    |  18
+++++++++++++++++++
+ drivers/clocksource/Makefile                                   |   2 ++
+ drivers/clocksource/timer-gx6605s.c                            | 154
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clocksource/timer-mp-csky.c                            | 173
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/cpuhotplug.h                                     |   1 +
+ 7 files changed, 432 insertions(+)
+ create mode 100644
+Documentation/devicetree/bindings/timer/csky,gx6605s-timer.txt
+ create mode 100644 Documentation/devicetree/bindings/timer/csky,mptimer.txt
+ create mode 100644 drivers/clocksource/timer-gx6605s.c
+ create mode 100644 drivers/clocksource/timer-mp-csky.c
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
