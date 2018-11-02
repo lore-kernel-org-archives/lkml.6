@@ -2,219 +2,129 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB86C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 23:27:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFFF9C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 23:28:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57BC720831
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 23:27:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B269D20833
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 23:28:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="SwjW+bHR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57BC720831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E2/ctDfy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B269D20833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728424AbeKCIgc (ORCPT
+        id S1728489AbeKCIhM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 04:36:32 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:10193 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726877AbeKCIgc (ORCPT
+        Sat, 3 Nov 2018 04:37:12 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:39805 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728434AbeKCIhM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 04:36:32 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bdcdd470000>; Fri, 02 Nov 2018 16:27:03 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 02 Nov 2018 16:27:20 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 02 Nov 2018 16:27:20 -0700
-Received: from [10.110.48.28] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 2 Nov
- 2018 23:27:20 +0000
-Subject: Re: [PATCH 4/6] mm: introduce page->dma_pinned_flags, _count
-To:     Balbir Singh <bsingharora@gmail.com>
-CC:     Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-References: <20181012060014.10242-1-jhubbard@nvidia.com>
- <20181012060014.10242-5-jhubbard@nvidia.com> <20181012105612.GK8537@350D>
- <b115b2ce-8fe8-db03-da9c-452511c8ed27@nvidia.com>
- <20181024110031.GM8537@350D>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <8a9d3a4e-a5d6-3d2d-008f-dc2d6cfd94ed@nvidia.com>
-Date:   Fri, 2 Nov 2018 16:27:19 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sat, 3 Nov 2018 04:37:12 -0400
+Received: by mail-oi1-f196.google.com with SMTP id 192-v6so2170944oii.6
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 16:28:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=x1/cnYGOjjvtrAiM/pd5pG9QuDs8Ifd6xBYEVFwVp+4=;
+        b=E2/ctDfyqAyKZZZGELrn70KQcFwECp/f1uGuNusSxj4SrZXLmKVF/PuTTnfZdI6/y9
+         de1M1Vt0fJ3X8B5Z0P4F98t9W5bobjGdtBJax8uvTIasm82pFhSmMSUr9eUNiTcz9xIp
+         eJHnRrxypNCSY5uaD8McZ5peSB5dbEIxU6fiKXXNDOYO8gYQbiIAPyNffTV/Uq3vx3aj
+         6E/WvUq/gAe/nHwSShpi0JR/H43ecgiKz08JTVwd6mNQZcSt3Gn+egQ2xV2NItf3dQUQ
+         GM8KCAbCg+qWk06wEpVxpPzVIqrZMcruK0jWclL8n5/TeIRE0uPWFwr+8RFBFrEWAHH4
+         Tqlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=x1/cnYGOjjvtrAiM/pd5pG9QuDs8Ifd6xBYEVFwVp+4=;
+        b=jZnXbAm19mwjDGoCoS9SyvpUA6A4zfxPYZabXqbQwQ+tFmFyNnkfefrz98axjUgT88
+         g2eSHPiBAQR+MqtYe9mzcwilC1Gyd3ioU2BHaNGr13k1Dw0x3iX8YRIsdZBmtzc1bwpD
+         rrK+49yUpK6dP2QEWteHbGqfRW0qL9H2BBhtlMUgPTR6gf1mTgPqsvVkLlpnpTdD2LGM
+         ZLArI+lBTftaYdksmSlQwRjO0B0mTOrc5I2Bw0Eq60lNpVVzcl2vRDZ04tdt8HuDYZJ4
+         Jq4lheIY1ZTA+XQaahwwHpa+le/05aCIMzWx0SO7tcFQG/Tf/lXd2k4W5aRXKO6e02yl
+         PL0Q==
+X-Gm-Message-State: AGRZ1gJKRHXlCJe4qQ/WrMq+6+6LKoXzH10gJLNxYP7mnp/dNEZ7Njhm
+        oipMhNYrGeB1AU8Il9J+AsMfDIHJYlldVWQ2gFMz9A==
+X-Google-Smtp-Source: AJdET5fQXFTquN54m+uMNddKxVTSYxAebF4MXPFf0niceX7H1LDBnaIAm8KFMDQWEkGXWXAf9F5vacP76fhc3FhyNuc=
+X-Received: by 2002:aca:c4cf:: with SMTP id u198-v6mr7438789oif.209.1541201280962;
+ Fri, 02 Nov 2018 16:28:00 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181024110031.GM8537@350D>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US-large
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1541201223; bh=4i68NLIfVF2ZbzVgqHeSapAV7vpo5bofF5B3IPsitYc=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=SwjW+bHRhAWTCfjUJ3LSmtqz2OUvtyP4P/RHowA8EUG2z9I3q9ZLPJAkZBg3pwtFl
-         QMg++MvzbgX7P4jZQ8xS+R1mS6ujEGeY0bjnzlBjfjPOlZ2GEfmGUaRKbB7xAM77A3
-         kEp6Ez0nn6QMraHv1fklFFgWamVRMt2R4nJR7Kcmsro8SLLONNAAkFwsClIyDZB0/d
-         Q1buomZ9JUhMaAx6dz9+NXvspvssXvGxdUCXYf7fN9ttu2ROWAjjxBbDRFltV55vNt
-         2ObzldupdyzN+53p7myyR8taqkok3B2n8M7KJEolk/ofgGgibV5JunNcy3dzpLE8Bd
-         H9NnqlYp5r3hQ==
+References: <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
+ <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
+ <20181102163034.GB7393@linux.intel.com> <7050972d-a874-dc08-3214-93e81181da60@intel.com>
+ <20181102170627.GD7393@linux.intel.com> <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
+ <20181102173350.GF7393@linux.intel.com> <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com>
+ <20181102182712.GG7393@linux.intel.com> <CAG48ez0x7ZPcKvLt01WS-VrLm59WfvYE3nE1xbnyn3Qsp5T2rA@mail.gmail.com>
+ <20181102220437.GI7393@linux.intel.com>
+In-Reply-To: <20181102220437.GI7393@linux.intel.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Sat, 3 Nov 2018 00:27:34 +0100
+Message-ID: <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
+Subject: Re: RFC: userspace exception fixups
+To:     sean.j.christopherson@intel.com
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        dalias@libc.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        jethro@fortanix.com, jarkko.sakkinen@linux.intel.com,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        andriy.shevchenko@linux.intel.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        carlos@redhat.com, adhemerval.zanella@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/24/18 4:00 AM, Balbir Singh wrote:
-> On Fri, Oct 12, 2018 at 05:15:51PM -0700, John Hubbard wrote:
->> On 10/12/18 3:56 AM, Balbir Singh wrote:
->>> On Thu, Oct 11, 2018 at 11:00:12PM -0700, john.hubbard@gmail.com wrote:
->>>> From: John Hubbard <jhubbard@nvidia.com>
->> [...]
->>>> + * Because page->dma_pinned_flags is unioned with page->lru, any page that
->>>> + * uses these flags must NOT be on an LRU. That's partly enforced by
->>>> + * ClearPageDmaPinned, which gives the page back to LRU.
->>>> + *
->>>> + * PageDmaPinned also corresponds to PageTail (the 0th bit in the first union
->>>> + * of struct page), and this flag is checked without knowing whether it is a
->>>> + * tail page or a PageDmaPinned page. Therefore, start the flags at bit 1 (0x2),
->>>> + * rather than bit 0.
->>>> + */
->>>> +#define PAGE_DMA_PINNED		0x2
->>>> +#define PAGE_DMA_PINNED_FLAGS	(PAGE_DMA_PINNED)
->>>> +
->>>
->>> This is really subtle, additional changes to compound_head will need to coordinate
->>> with these flags? Also doesn't this bit need to be unique across all structs in
->>> the union? I guess that is guaranteed by the fact that page == compound_head(page)
->>> as per your assertion, but I've forgotten why that is true. Could you please
->>> add some commentary on that
->>>
->>
->> Yes, agreed. I've rewritten and augmented that comment block, plus removed the 
->> PAGE_DMA_PINNED_FLAGS (there are no more bits available, so it's just misleading 
->> to even have it). So now it looks like this:
->>
->> /*
->>  * Because page->dma_pinned_flags is unioned with page->lru, any page that
->>  * uses these flags must NOT be on an LRU. That's partly enforced by
->>  * ClearPageDmaPinned, which gives the page back to LRU.
->>  *
->>  * PageDmaPinned is checked without knowing whether it is a tail page or a
->>  * PageDmaPinned page. For that reason, PageDmaPinned avoids PageTail (the 0th
->>  * bit in the first union of struct page), and instead uses bit 1 (0x2),
->>  * rather than bit 0.
->>  *
->>  * PageDmaPinned can only be used if no other systems are using the same bit
->>  * across the first struct page union. In this regard, it is similar to
->>  * PageTail, and in fact, because of PageTail's constraint that bit 0 be left
->>  * alone, bit 1 is also left alone so far: other union elements (ignoring tail
->>  * pages) put pointers there, and pointer alignment leaves the lower two bits
->>  * available.
->>  *
->>  * So, constraints include:
->>  *
->>  *     -- Only use PageDmaPinned on non-tail pages.
->>  *     -- Remove the page from any LRU list first.
->>  */
->> #define PAGE_DMA_PINNED		0x2
->>
->> /*
->>  * Because these flags are read outside of a lock, ensure visibility between
->>  * different threads, by using READ|WRITE_ONCE.
->>  */
->> static __always_inline int PageDmaPinned(struct page *page)
->> {
->> 	VM_BUG_ON(page != compound_head(page));
->> 	return (READ_ONCE(page->dma_pinned_flags) & PAGE_DMA_PINNED) != 0;
->> }
->>
->> [...]
->>>> +static __always_inline void SetPageDmaPinned(struct page *page)
->>>> +{
->>>> +	VM_BUG_ON(page != compound_head(page));
->>>
->>> VM_BUG_ON(!list_empty(&page->lru))
->>
->>
->> There is only one place where we set this flag, and that is when (in patch 6/6)
->> transitioning from a page that might (or might not) have been
->> on an LRU. In that case, the calling code has already corrupted page->lru, by
->> writing to page->dma_pinned_count, which is unions with page->lru:
->>
->> 		atomic_set(&page->dma_pinned_count, 1);
->> 		SetPageDmaPinned(page);
->>
->> ...so it would be inappropriate to call a list function, such as 
->> list_empty(), on that field.  Let's just leave it as-is.
->>
->>
->>>
->>>> +	WRITE_ONCE(page->dma_pinned_flags, PAGE_DMA_PINNED);
->>>> +}
->>>> +
->>>> +static __always_inline void ClearPageDmaPinned(struct page *page)
->>>> +{
->>>> +	VM_BUG_ON(page != compound_head(page));
->>>> +	VM_BUG_ON_PAGE(!PageDmaPinnedFlags(page), page);
->>>> +
->>>> +	/* This does a WRITE_ONCE to the lru.next, which is also the
->>>> +	 * page->dma_pinned_flags field. So in addition to restoring page->lru,
->>>> +	 * this provides visibility to other threads.
->>>> +	 */
->>>> +	INIT_LIST_HEAD(&page->lru);
->>>
->>> This assumes certain things about list_head, why not use the correct
->>> initialization bits.
->>>
->>
->> Yes, OK, changed to:
->>
->> static __always_inline void ClearPageDmaPinned(struct page *page)
->> {
->> 	VM_BUG_ON(page != compound_head(page));
->> 	VM_BUG_ON_PAGE(!PageDmaPinned(page), page);
->>
->> 	/* Provide visibility to other threads: */
->> 	WRITE_ONCE(page->dma_pinned_flags, 0);
->>
->> 	/*
->> 	 * Safety precaution: restore the list head, before possibly returning
->> 	 * the page to other subsystems.
->> 	 */
->> 	INIT_LIST_HEAD(&page->lru);
->> }
->>
->>
-> 
-> Sorry, I've been distracted with other things
-> 
-> This looks better, do we still need the INIT_LIST_HEAD?
-> 
+On Fri, Nov 2, 2018 at 11:04 PM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
+> On Fri, Nov 02, 2018 at 08:02:23PM +0100, Jann Horn wrote:
+> > On Fri, Nov 2, 2018 at 7:27 PM Sean Christopherson
+> > <sean.j.christopherson@intel.com> wrote:
+> > > On Fri, Nov 02, 2018 at 10:48:38AM -0700, Andy Lutomirski wrote:
+> > > > This whole mechanism seems very complicated, and it's not clear
+> > > > exactly what behavior user code wants.
+> > >
+> > > No argument there.  That's why I like the approach of dumping the
+> > > exception to userspace without trying to do anything intelligent in
+> > > the kernel.  Userspace can then do whatever it wants AND we don't
+> > > have to worry about mucking with stacks.
+> > >
+> > > One of the hiccups with the VDSO approach is that the enclave may
+> > > want to use the untrusted stack, i.e. the stack that has the VDSO's
+> > > stack frame.  For example, Intel's SDK uses the untrusted stack to
+> > > pass parameters for EEXIT, which means an AEX might occur with what
+> > > is effectively a bad stack from the VDSO's perspective.
+> >
+> > What exactly does "uses the untrusted stack to pass parameters for
+> > EEXIT" mean? I guess you're saying that the enclave is writing to
+> > RSP+[0...some_positive_offset], and the written data needs to be
+> > visible to the code outside the enclave afterwards?
+>
+> As is, they actually do it the other way around, i.e. negative offsets
+> relative to the untrusted %RSP.  Going into the enclave there is no
+> reserved space on the stack.  The SDK uses EEXIT like a function call,
+> i.e. pushing parameters on the stack and making an call outside of the
+> enclave, hence the name out-call.  This allows the SDK to handle any
+> reasonable out-call without a priori knowledge of the application's
+> maximum out-call "size".
 
-Good point. I guess not. I was getting a little too fancy, and it's better 
-for ClearPageDmaPinned to be true to its name, and just only do that.
-
-(Sorry for the delayed response.)
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+But presumably this is bounded to be at most 128 bytes (the red zone
+size), right? Otherwise this would be incompatible with
+non-sigaltstack signal delivery.
