@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7DAFC65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:49:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF249C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:49:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F49820843
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:49:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 883C920837
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:49:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TKBrdVsG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F49820843
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TeHoAkBi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 883C920837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730683AbeKCD5j (ORCPT
+        id S1730692AbeKCD5l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:57:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53320 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:57:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728280AbeKCD5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:57:38 -0400
+        id S1728280AbeKCD5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:57:40 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 256DC20843;
-        Fri,  2 Nov 2018 18:49:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC3B120837;
+        Fri,  2 Nov 2018 18:49:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184563;
-        bh=qKrW1IP2O/l9XXxfotgOw8AmHXXnpE20DK5jkQ0MCKc=;
+        s=default; t=1541184566;
+        bh=pZgyc8CBzQQ6XHh40dkayL4hQo1LDW9igqYppYHGNZM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TKBrdVsGochcWARpp9tXun7l18QTOispN5LU6C3HNc5z1vxcs4Q3ej9cA1KlWYKGm
-         sZP5haepMQsiqbE+suCGGoUn9aQ/dTSZxRdR8u5W3N4Div+588OTQRmaQ1drv9cMTS
-         aMEip3vfZUoYXPdpDGPt/L0dim1xO48fzEJah2QI=
+        b=TeHoAkBian1ksqnE2iyoY2Xvw9BOuiAS1DUAH0X7fUBbWZPMPT+lWOyorC9A4RtRw
+         PvRHwPxHQtPantkD+n0HftKubjSbCuN3+p2p/tgYlJ7PADCLd4z65T77Ec5uXjjMti
+         hIgvLUGa2qc9a6JNDUna1qoRoLIIHDmj2m4qQhu0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nicolas Pitre <nico@linaro.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org, Sean Tranchetti <stranche@codeaurora.org>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 012/143] ARM: 8799/1: mm: fix pci_ioremap_io() offset check
-Date:   Fri,  2 Nov 2018 19:33:17 +0100
-Message-Id: <20181102182858.054475392@linuxfoundation.org>
+Subject: [PATCH 4.14 013/143] xfrm: validate template mode
+Date:   Fri,  2 Nov 2018 19:33:18 +0100
+Message-Id: <20181102182858.153718066@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -65,43 +63,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 3a58ac65e2d7969bcdf1b6acb70fa4d12a88e53e ]
+[ Upstream commit 32bf94fb5c2ec4ec842152d0e5937cd4bb6738fa ]
 
-IO_SPACE_LIMIT is the ending address of the PCI IO space, i.e
-something like 0xfffff (and not 0x100000).
+XFRM mode parameters passed as part of the user templates
+in the IP_XFRM_POLICY are never properly validated. Passing
+values other than valid XFRM modes can cause stack-out-of-bounds
+reads to occur later in the XFRM processing:
 
-Therefore, when offset = 0xf0000 is passed as argument, this function
-fails even though the offset + SZ_64K fits below the
-IO_SPACE_LIMIT. This makes the last chunk of 64 KB of the I/O space
-not usable as it cannot be mapped.
+[  140.535608] ================================================================
+[  140.543058] BUG: KASAN: stack-out-of-bounds in xfrm_state_find+0x17e4/0x1cc4
+[  140.550306] Read of size 4 at addr ffffffc0238a7a58 by task repro/5148
+[  140.557369]
+[  140.558927] Call trace:
+[  140.558936] dump_backtrace+0x0/0x388
+[  140.558940] show_stack+0x24/0x30
+[  140.558946] __dump_stack+0x24/0x2c
+[  140.558949] dump_stack+0x8c/0xd0
+[  140.558956] print_address_description+0x74/0x234
+[  140.558960] kasan_report+0x240/0x264
+[  140.558963] __asan_report_load4_noabort+0x2c/0x38
+[  140.558967] xfrm_state_find+0x17e4/0x1cc4
+[  140.558971] xfrm_resolve_and_create_bundle+0x40c/0x1fb8
+[  140.558975] xfrm_lookup+0x238/0x1444
+[  140.558977] xfrm_lookup_route+0x48/0x11c
+[  140.558984] ip_route_output_flow+0x88/0xc4
+[  140.558991] raw_sendmsg+0xa74/0x266c
+[  140.558996] inet_sendmsg+0x258/0x3b0
+[  140.559002] sock_sendmsg+0xbc/0xec
+[  140.559005] SyS_sendto+0x3a8/0x5a8
+[  140.559008] el0_svc_naked+0x34/0x38
+[  140.559009]
+[  140.592245] page dumped because: kasan: bad access detected
+[  140.597981] page_owner info is not active (free page?)
+[  140.603267]
+[  140.653503] ================================================================
 
-This patch fixes that by substracing 1 to offset + SZ_64K, so that we
-compare the addrss of the last byte of the I/O space against
-IO_SPACE_LIMIT instead of the address of the first byte of what is
-after the I/O space.
-
-Fixes: c2794437091a4 ("ARM: Add fixed PCI i/o mapping")
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Acked-by: Nicolas Pitre <nico@linaro.org>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Sean Tranchetti <stranche@codeaurora.org>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mm/ioremap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/xfrm/xfrm_user.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/mm/ioremap.c b/arch/arm/mm/ioremap.c
-index fc91205ff46c..5bf9443cfbaa 100644
---- a/arch/arm/mm/ioremap.c
-+++ b/arch/arm/mm/ioremap.c
-@@ -473,7 +473,7 @@ void pci_ioremap_set_mem_type(int mem_type)
+diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
+index 4292347bf45e..4e8319766f2b 100644
+--- a/net/xfrm/xfrm_user.c
++++ b/net/xfrm/xfrm_user.c
+@@ -1449,6 +1449,9 @@ static int validate_tmpl(int nr, struct xfrm_user_tmpl *ut, u16 family)
+ 		    (ut[i].family != prev_family))
+ 			return -EINVAL;
  
- int pci_ioremap_io(unsigned int offset, phys_addr_t phys_addr)
- {
--	BUG_ON(offset + SZ_64K > IO_SPACE_LIMIT);
-+	BUG_ON(offset + SZ_64K - 1 > IO_SPACE_LIMIT);
++		if (ut[i].mode >= XFRM_MODE_MAX)
++			return -EINVAL;
++
+ 		prev_family = ut[i].family;
  
- 	return ioremap_page_range(PCI_IO_VIRT_BASE + offset,
- 				  PCI_IO_VIRT_BASE + offset + SZ_64K,
+ 		switch (ut[i].family) {
 -- 
 2.17.1
 
