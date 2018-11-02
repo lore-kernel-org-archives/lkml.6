@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7481C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:37:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C295C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:37:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A795A2082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:37:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F07B12082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:37:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DmyivbeF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A795A2082E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ygVv6Ol+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F07B12082D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728523AbeKCDpS (ORCPT
+        id S1728541AbeKCDpV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:45:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39062 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:45:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727556AbeKCDpR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:45:17 -0400
+        id S1727556AbeKCDpU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:45:20 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A5D72081B;
-        Fri,  2 Nov 2018 18:37:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 50F8E2081B;
+        Fri,  2 Nov 2018 18:37:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541183826;
-        bh=2JMUBq+6H/W075kyRk+kpBuDmuI1+eimNugrvLUhf0s=;
+        s=default; t=1541183829;
+        bh=gnS0+UhUOOGhEKtHoOdGhEahidJQST9x3mp3YbJzZHI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DmyivbeFulQ1YtgUjzVdVO1o0FSbm6XwnYAvF1Bh3rNczFA+WJcrZTSDZqM/CtyVC
-         LlrDVeTSZv8Pg9YQovjNWf66dFdQcytBrAgrrcrH0csWoWliWVtkDCjvl3Sd4YD/Dw
-         YYvHmNdQTtCImVwt+oiB0/nsBLUtdewSpCPESLYk=
+        b=ygVv6Ol++ZQVf0D8lKAPvt+okQapdO8t2/kAiCMPyudjIYcx/BDI5kH9UTD87O/v3
+         5tpzL8gqFR6YHR5w8YSLWfS/qIGZQZw8ZzpiGnB5PXXZnLQVuhZN6ZJQMol9LYLhID
+         yNXjrbs6HJLqFdKxV+EISlCT7o8H0jkhp3h5iv0w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 04/24] net: sched: gred: pass the right attribute to gred_change_table_def()
-Date:   Fri,  2 Nov 2018 19:34:37 +0100
-Message-Id: <20181102182840.441220856@linuxfoundation.org>
+Subject: [PATCH 4.19 05/24] net: stmmac: Fix stmmac_mdio_reset() when building stmmac as modules
+Date:   Fri,  2 Nov 2018 19:34:38 +0100
+Message-Id: <20181102182840.569386700@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182839.725385066@linuxfoundation.org>
 References: <20181102182839.725385066@linuxfoundation.org>
@@ -63,54 +62,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
+From: Niklas Cassel <niklas.cassel@linaro.org>
 
-[ Upstream commit 38b4f18d56372e1e21771ab7b0357b853330186c ]
+[ Upstream commit 30549aab146ccb1275230c3b4b4bc6b4181fd54e ]
 
-gred_change_table_def() takes a pointer to TCA_GRED_DPS attribute,
-and expects it will be able to interpret its contents as
-struct tc_gred_sopt.  Pass the correct gred attribute, instead of
-TCA_OPTIONS.
+When building stmmac, it is only possible to select CONFIG_DWMAC_GENERIC,
+or any of the glue drivers, when CONFIG_STMMAC_PLATFORM is set.
+The only exception is CONFIG_STMMAC_PCI.
 
-This bug meant the table definition could never be changed after
-Qdisc was initialized (unless whatever TCA_OPTIONS contained both
-passed netlink validation and was a valid struct tc_gred_sopt...).
+When calling of_mdiobus_register(), it will call our ->reset()
+callback, which is set to stmmac_mdio_reset().
 
-Old behaviour:
-$ ip link add type dummy
-$ tc qdisc replace dev dummy0 parent root handle 7: \
-     gred setup vqs 4 default 0
-$ tc qdisc replace dev dummy0 parent root handle 7: \
-     gred setup vqs 4 default 0
-RTNETLINK answers: Invalid argument
+Most of the code in stmmac_mdio_reset() is protected by a
+"#if defined(CONFIG_STMMAC_PLATFORM)", which will evaluate
+to false when CONFIG_STMMAC_PLATFORM=m.
 
-Now:
-$ ip link add type dummy
-$ tc qdisc replace dev dummy0 parent root handle 7: \
-     gred setup vqs 4 default 0
-$ tc qdisc replace dev dummy0 parent root handle 7: \
-     gred setup vqs 4 default 0
-$ tc qdisc replace dev dummy0 parent root handle 7: \
-     gred setup vqs 4 default 0
+Because of this, the phy reset gpio will only be pulled when
+stmmac is built as built-in, but not when built as modules.
 
-Fixes: f62d6b936df5 ("[PKT_SCHED]: GRED: Use central VQ change procedure")
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Fix this by using "#if IS_ENABLED()" instead of "#if defined()".
+
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/sch_gred.c |    2 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/sched/sch_gred.c
-+++ b/net/sched/sch_gred.c
-@@ -413,7 +413,7 @@ static int gred_change(struct Qdisc *sch
- 	if (tb[TCA_GRED_PARMS] == NULL && tb[TCA_GRED_STAB] == NULL) {
- 		if (tb[TCA_GRED_LIMIT] != NULL)
- 			sch->limit = nla_get_u32(tb[TCA_GRED_LIMIT]);
--		return gred_change_table_def(sch, opt);
-+		return gred_change_table_def(sch, tb[TCA_GRED_DPS]);
- 	}
- 
- 	if (tb[TCA_GRED_PARMS] == NULL ||
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+@@ -243,7 +243,7 @@ static int stmmac_mdio_write(struct mii_
+  */
+ int stmmac_mdio_reset(struct mii_bus *bus)
+ {
+-#if defined(CONFIG_STMMAC_PLATFORM)
++#if IS_ENABLED(CONFIG_STMMAC_PLATFORM)
+ 	struct net_device *ndev = bus->priv;
+ 	struct stmmac_priv *priv = netdev_priv(ndev);
+ 	unsigned int mii_address = priv->hw->mii.addr;
 
 
