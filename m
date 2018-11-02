@@ -2,87 +2,114 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C751BC65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:42:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D99AC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:43:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BB922081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:42:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BB922081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 039FA2081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:43:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 039FA2081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727992AbeKCEvM (ORCPT
+        id S1728154AbeKCEvg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 00:51:12 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:43208 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726051AbeKCEvM (ORCPT
+        Sat, 3 Nov 2018 00:51:36 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40056 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726083AbeKCEvg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 00:51:12 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gIfL1-0001JK-IW; Fri, 02 Nov 2018 19:42:35 +0000
-Date:   Fri, 2 Nov 2018 19:42:35 +0000
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Gao Xiang <gaoxiang25@huawei.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        swhiteho@redhat.com, john.johansen@canonical.com,
-        alan.christopher.jenkins@gmail.com, ebiederm@redhat.com,
-        linux-fsdevel@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [git pull] mount API series
-Message-ID: <20181102194235.GA32577@ZenIV.linux.org.uk>
-References: <CAHk-=whysoVxJU8+TBw=D3xN00HOOqg-9Chc=i0Pt+Ozm3Z0Tg@mail.gmail.com>
- <20181031053355.GQ32577@ZenIV.linux.org.uk>
- <CAHk-=whAE6gVi18=u4sSWe1m2RWPh19YCkKQmW4Kx+NQX1mg8w@mail.gmail.com>
- <af28fc2c-d207-875e-8070-f64ead878b5a@redhat.com>
- <CAHk-=wjjVRQVZL+QMnb=CyCOY8yzEZ=S1DBCE7=FiiWsQfV_5Q@mail.gmail.com>
- <28156.1541092687@warthog.procyon.org.uk>
- <3549.1541116763@warthog.procyon.org.uk>
- <20181102040701.GX32577@ZenIV.linux.org.uk>
+        Sat, 3 Nov 2018 00:51:36 -0400
+Received: by mail-ed1-f67.google.com with SMTP id z12-v6so2700361edp.7
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 12:43:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ut/jOW4uhtY9MvBWsMxrATOHKM0BQWVtcqpClVVjSFg=;
+        b=PcSLt5OkpXzfmhoUma4b5U53oEGDU35X4stxl6gzmgYpJvlxnAOArTGlOZQ5V64L5U
+         Blh4Va2Cil2xFUO+kn5FW1gZRxg+c+toB5X9wHIMvJhqMVuFh+ez7KfAeRLfFCgzS3AZ
+         YAl3hJ4/2Nyb2C4nwy/jWq2XApgky1h9GAwIyQQxNGBHMavwK08X7iQfDvIyiFk9uJcn
+         hy4iuRflomQz+5EnyruaJ9/0MnH+dd65356FsCQF9sFCkgx1h6ZluCymmFtT2iK4KO3N
+         FmZDYKdiOs5UVs8LBM0oxrlUF/jhkwlCJ3+BJpDhqpFZidWHp7HLv08UDDhmyKOHs+9P
+         3xWw==
+X-Gm-Message-State: AGRZ1gKgr10A3uyYrUUf4cuvhlXzQeCPIMqMkUwwOFuALrGUCjZAh/Jc
+        YwJruPiYgTif/FWqpUcSEfI4JNhvVk8=
+X-Google-Smtp-Source: AJdET5cqGyFMv8o5hrb+tWVnWXvIkWhkyCWRTJTQpRClVnHeVMUqo9a7o7bZQhmFZ9Pyhv9Yj+yxDA==
+X-Received: by 2002:a17:906:31db:: with SMTP id f27-v6mr7355288ejf.186.1541187786778;
+        Fri, 02 Nov 2018 12:43:06 -0700 (PDT)
+Received: from dhcp-44-202.space.revspace.nl ([2a01:4f8:1c0c:6c86:46e0:a7ad:5246:f04d])
+        by smtp.gmail.com with ESMTPSA id a4-v6sm3076399edk.15.2018.11.02.12.43.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 02 Nov 2018 12:43:06 -0700 (PDT)
+Subject: Re: [PATCH] vbox: fix link error with 'gcc -Og'
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org
+References: <20181102153905.1732199-1-arnd@arndb.de>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <143892a9-1382-4f49-95e2-4da3316dfe9f@redhat.com>
+Date:   Fri, 2 Nov 2018 20:43:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181102040701.GX32577@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20181102153905.1732199-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 04:07:01AM +0000, Al Viro wrote:
-> On Thu, Nov 01, 2018 at 11:59:23PM +0000, David Howells wrote:
+Hi,
+
+On 11/2/18 4:38 PM, Arnd Bergmann wrote:
+> With the new CONFIG_CC_OPTIMIZE_FOR_DEBUGGING option, we get a link
+> error in the vboxguest driver, when that fails to optimize out the
+> call to the compat handler:
 > 
-> >  (*) mount-api-core.  These are the internal-only patches that add the
-> >      fs_context, the legacy wrapper and the security hooks and make certain
-> >      filesystems make use of it.
+> drivers/virt/vboxguest/vboxguest_core.o: In function `vbg_ioctl_hgcm_call':
+> vboxguest_core.c:(.text+0x1f6e): undefined reference to `vbg_hgcm_call32'
 > 
-> FWIW, while rereading that series I'd spotted something very odd in erofs.
-> It's orthogonal to everything else, but just to make sure it doesn't get
-> lost:
-> 	* sbi->dev_name thing in erofs is used only for debugging printks,
-> basically.  Just use sb->s_id[] and be done with that.
-> 	* dump struct erofs_mount_private - you don't need dev_name in
-> your erofs_fill_super().  Just use mount_bdev() in usual fashion.
-> 	* what the hell are you doing with ->s_root???  Why would you
-> possibly want it hashed and what kind of dcache lookup could find it?
-> That d_rehash() looks deeply confused; what are you trying to do there?
+> Another compile-time check documents better what we want and avoids
+> the error.
+> 
+> Acked-by: Randy Dunlap<rdunlap@infradead.org>
+> Tested-by: Randy Dunlap<rdunlap@infradead.org>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-... and while we are at it, what happens to
-                unsigned int nameoff = le16_to_cpu(de[mid].nameoff);
-                unsigned int matched = min(startprfx, endprfx);
+Thank you, looks good to me:
 
-                struct qstr dname = QSTR_INIT(data + nameoff,
-                        unlikely(mid >= ndirents - 1) ?
-                                maxsize - nameoff :
-                                le16_to_cpu(de[mid + 1].nameoff) - nameoff);
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-                /* string comparison without already matched prefix */
-                int ret = dirnamecmp(name, &dname, &matched);
-if le16_to_cpu(de[...].nameoff) is not monotonically increasing?  I.e.
-what's to prevent e.g. (unsigned)-1 ending up in dname.len?
+Regards,
 
-Corrupted fs image shouldn't oops the kernel...
+Hans
+
+
+
+> ---
+>   drivers/virt/vboxguest/vboxguest_core.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/virt/vboxguest/vboxguest_core.c b/drivers/virt/vboxguest/vboxguest_core.c
+> index 3093655c7b92..1475ed5ffcde 100644
+> --- a/drivers/virt/vboxguest/vboxguest_core.c
+> +++ b/drivers/virt/vboxguest/vboxguest_core.c
+> @@ -1312,7 +1312,7 @@ static int vbg_ioctl_hgcm_call(struct vbg_dev *gdev,
+>   		return -EINVAL;
+>   	}
+>   
+> -	if (f32bit)
+> +	if (IS_ENABLED(CONFIG_COMPAT) && f32bit)
+>   		ret = vbg_hgcm_call32(gdev, client_id,
+>   				      call->function, call->timeout_ms,
+>   				      VBG_IOCTL_HGCM_CALL_PARMS32(call),
+> 
