@@ -2,137 +2,217 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7800C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:12:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95237C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:14:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AE9E20831
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:12:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="fnlv2DVV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AE9E20831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	by mail.kernel.org (Postfix) with ESMTP id 415A320831
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:14:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 415A320831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728016AbeKCATu (ORCPT
+        id S1727655AbeKCAWU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 20:19:50 -0400
-Received: from mail.efficios.com ([167.114.142.138]:40580 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726316AbeKCATu (ORCPT
+        Fri, 2 Nov 2018 20:22:20 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56026 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726265AbeKCAWT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 20:19:50 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 355A823837B;
-        Fri,  2 Nov 2018 11:12:25 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id LsGapA0_mxDm; Fri,  2 Nov 2018 11:12:24 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id A6586238372;
-        Fri,  2 Nov 2018 11:12:24 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com A6586238372
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1541171544;
-        bh=FMT4afYSIxiNq8Boha7u49U6AnJvCmo/YgDzIreHAV8=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=fnlv2DVVJJ78M7v1oCpHbrxNbR1Zoe7ZiQSo1FVcqCW7v0IzUfvouF54/T9+EsglP
-         YOTTDr8/L4sWA7f3mFJPbR2O8dgKu4z5LTA6Ja0/73sVG6mylrk6KvzbKA/tnpZkF1
-         rbi4uhC39H87VVIeRucwAcZre+6iCchMBvXsUAZip9samX/Qevfbf7nMwYvcFhuTNg
-         edy1hIVU4Y+befBzpklIrDvv7e2Ec8G41Yr28wnf+DoQEmpCm7yqhT4iZZvu2FB8SA
-         78f+lUdo9iAfo5ILs542grc8rP3s4otKx13mZynDJbWcqP4xAzrfrlQMZ1HvOei6JF
-         i2CBuBnftowyQ==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id 0KqKnruDxgTJ; Fri,  2 Nov 2018 11:12:24 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 85100238369;
-        Fri,  2 Nov 2018 11:12:24 -0400 (EDT)
-Date:   Fri, 2 Nov 2018 11:12:24 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Richard Henderson <rth@twiddle.net>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Carlos O'Donell <carlos@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>, Ben Maurer <bmaurer@fb.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        linux-api <linux-api@vger.kernel.org>
-Message-ID: <313542172.8.1541171544337.JavaMail.zimbra@efficios.com>
-Subject: Supporting core-specific instruction sets (e.g. big.LITTLE) with
- restartable sequences
+        Fri, 2 Nov 2018 20:22:19 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA2FEh93026399
+        for <linux-kernel@vger.kernel.org>; Fri, 2 Nov 2018 11:14:54 -0400
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ngrxc8axg-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 11:14:54 -0400
+Received: from localhost
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Fri, 2 Nov 2018 15:14:53 -0000
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 2 Nov 2018 15:14:49 -0000
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA2FEj4Y19005516
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 2 Nov 2018 15:14:45 GMT
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 098416A051;
+        Fri,  2 Nov 2018 15:14:45 +0000 (GMT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 510506A047;
+        Fri,  2 Nov 2018 15:14:43 +0000 (GMT)
+Received: from [9.80.230.50] (unknown [9.80.230.50])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Fri,  2 Nov 2018 15:14:43 +0000 (GMT)
+Subject: Re: [PATCH v1 3/7] vfio: ap: AP Queue Interrupt structures
+ definitions
+To:     Pierre Morel <pmorel@linux.ibm.com>, borntraeger@de.ibm.com
+Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, pasic@linux.ibm.com,
+        david@redhat.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
+References: <1541009577-29656-1-git-send-email-pmorel@linux.ibm.com>
+ <1541009577-29656-4-git-send-email-pmorel@linux.ibm.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Fri, 2 Nov 2018 11:14:42 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1541009577-29656-4-git-send-email-pmorel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.10_GA_3047 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3041)
-Thread-Index: xWnqFvmB9UO5++Ah0yHPR4XP7DDblw==
-Thread-Topic: Supporting core-specific instruction sets (e.g. big.LITTLE) with restartable sequences
+X-TM-AS-GCONF: 00
+x-cbid: 18110215-8235-0000-0000-00000E208BF1
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009972; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01111622; UDB=6.00576090; IPR=6.00891713;
+ MB=3.00024005; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-02 15:14:51
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110215-8236-0000-0000-0000433848E7
+Message-Id: <c440a74d-bea6-1416-4b54-0894e21c4a6c@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-02_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811020137
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Richard,
+On 10/31/18 2:12 PM, Pierre Morel wrote:
+> We define all the structures we need to let GISA handle
+> the AP Queues Interrupt.
+> 
+> This patch defines the inline assembler for AP Queue Interrupt
+> Control instruction with GISA, some utilities to manipulate
+> the data in the registers used by this instruction.
+> 
+> We also define new ap_matrix components to handle interruptions
+> and adapter mapping.
+> 
+> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+> ---
+>   drivers/s390/crypto/vfio_ap_private.h | 77 +++++++++++++++++++++++++++
+>   1 file changed, 77 insertions(+)
+> 
+> diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
+> index 5675492233c7..45103865bd7f 100644
+> --- a/drivers/s390/crypto/vfio_ap_private.h
+> +++ b/drivers/s390/crypto/vfio_ap_private.h
+> @@ -74,15 +74,92 @@ struct ap_matrix {
+>    * @group_notifier: notifier block used for specifying callback function for
+>    *		    handling the VFIO_GROUP_NOTIFY_SET_KVM event
+>    * @kvm:	the struct holding guest's state
+> + * @map:	the adapter information for QEMU mapping
+> + * @gisc:	the Guest ISC
+>    */
+>   struct ap_matrix_mdev {
+>   	struct list_head node;
+>   	struct ap_matrix matrix;
+>   	struct notifier_block group_notifier;
+>   	struct kvm *kvm;
+> +	struct s390_map_info *map;
+> +	unsigned char gisc;
+>   };
+>   
+>   extern int vfio_ap_mdev_register(void);
+>   extern void vfio_ap_mdev_unregister(void);
+>   
+> +/* AP Queue Interrupt Control associated structures and functions */
+> +struct aqic_gisa {
+> +	uint8_t  rzone;
+> +	uint8_t  izone;
+> +	unsigned	ir:1;
+> +	unsigned	reserved1:4;
+> +	unsigned	gisc:3;
+> +	unsigned	reserved2:6;
+> +	unsigned	f:2;
+> +	unsigned	reserved3:1;
+> +	unsigned	gisao:27;
+> +	unsigned	t:1;
+> +	unsigned	isc:3;
+> +}  __packed __aligned(8);
 
-I stumbled on these articles:
+This struct is redundant with the 'struct ap_qirq_ctrl'
+defined in arch/s390/include/asm/ap.h. That file also includes
+the asm for the ap_aqic function.
 
-- https://medium.com/@jadr2ddude/a-big-little-problem-a-tale-of-big-little-gone-wrong-e7778ce744bb
-- https://www.mono-project.com/news/2016/09/12/arm64-icache/
+> +
+> +struct ap_status {
+> +	unsigned	e:1;
+> +	unsigned	r:1;
+> +	unsigned	f:1;
+> +	unsigned	reserved:4;
+> +	unsigned	i:1;
+> +	unsigned	rc:8;
+> +	unsigned	pad:16;
+> +}  __packed __aligned(4);
+> +
+> +static inline uint32_t status2reg(struct ap_status a)
+> +{
+> +	return *(uint32_t *)(&a);
+> +}
+> +
+> +static inline struct ap_status reg2status(uint32_t r)
+> +{
+> +	return *(struct ap_status *)(&r);
+> +}
+> +
+> +static inline struct aqic_gisa reg2aqic(uint64_t r)
+> +{
+> +	return *((struct aqic_gisa *)&r);
+> +}
+> +
+> +static inline uint64_t aqic2reg(struct aqic_gisa a)
+> +{
+> +	return *((uint64_t *)&a);
+> +}
+> +
+> +/**
+> + * ap_host_aqic - Issue the host AQIC instruction.
+> + * @apqn is the AP queue number
+> + * @gr1  the caller must have setup the register
+> + *       with GISA address and format, with interrupt
+> + *       request, ISC and guest ISC
+> + * @gr2  the caller must have setup the register
+> + *       to the guest NIB physical address
+> + *
+> + * issue the AQIC PQAP instruction and return the AP status
+> + * word
+> + */
+> +static inline uint32_t ap_host_aqic(uint64_t apqn, uint64_t gr1,
+> +				    uint64_t gr2)
+> +
 
-and discussed them with Will Deacon. He told me you were looking into gcc atomics and it might be
-worthwhile to discuss the possible use of the new rseq system call that has been added in Linux 4.18
-for those use-cases.
+> +	register unsigned long reg0 asm ("0") = apqn | (3UL << 24);
+> +	register unsigned long reg1_in asm ("1") = gr1;
+> +	register uint32_t reg1_out asm ("1");
+> +	register unsigned long reg2 asm ("2") = gr2;
+> +
+> +	asm volatile(
+> +		".long 0xb2af0000"	  /* PQAP(AQIC) */
+> +		: "+d" (reg0), "+d" (reg1_in), "=d" (reg1_out), "+d" (reg2)
+> +		:
+> +		: "cc");
+> +	return reg1_out;
+> +}
 
-Basically, the use-cases targeted are those where some cores on the system support a larger instruction
-set than others. So for instance, some cores could use a faster atomic add instruction than others, which
-should rely on a slower fallback. This is also the same story for reading the performance monitoring
-unit counters from user-space: it depends on the feature-set supported by the CPU on which the instruction
-is issued. Same applies to cores having different cache-line sizes.
+This function is redundant to the ap_aqic function in
+arch/s390/include/asm/ap.h
 
-The main problem is that the kernel can migrate a thread at any point between user-space reading the
-current cpu number and issuing the instruction. This is where rseq can help.
+> +
+>   #endif /* _VFIO_AP_PRIVATE_H_ */
+> 
 
-The core idea to solve the instruction set issue is to set a mask of cpus supporting the new instruction
-in a library constructor, and then load cpu_id, use it with the mask, and branch to either the new or
-old instruction, all with a rseq critical section. If the kernel needs to abort due to preemption or
-signal delivery, the abort behavior would be to issue the fallback (slow) atomic operation, which
-guarantees progress even if single-stepping.
-
-As long as the load, test and branch is faster than the performance delta between the old and new atomic
-instruction, it would be worth it.
-
-In the case of PMU read from user-space, using rseq to figure out how to issue the PMU read enables a
-use-case which is not otherwise possible to do on big.LITTLE. On rseq abort, it would fallback to a
-system call to read the PMU counter. This abort behavior guarantees forward progress.
-
-The second article is about cache line size discrepancy between CPUs. Here again, doing the cacheline
-flushing in a rseq critical section could allow tuning it to characteristics of the actual core it is
-running on. The fast-path would use a stride fitting the current core characteristics, and if rseq
-needs to abort, the slow-path would fall-back to a conservative value which would fit all cores (smaller
-cache line size on the overall system). Once again, this abort behavior guarantees forward progress.
-This would only work, of course, if cacheline invalidation done on a big core end up being propagated
-to other cores in a way that clears all the cache lines corresponding to the one targeted on the big
-core.
-
-Thoughts ?
-
-Thanks,
-
-Mathieu
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
