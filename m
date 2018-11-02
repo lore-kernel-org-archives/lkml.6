@@ -2,154 +2,167 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC042C6786F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 05:05:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C70DC6786F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 05:15:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 712C32081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 05:05:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 712C32081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
+	by mail.kernel.org (Postfix) with ESMTP id C64FA20833
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 05:15:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C64FA20833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727658AbeKBOLZ (ORCPT
+        id S1727804AbeKBOVC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 10:11:25 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:8428 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727462AbeKBOLZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 10:11:25 -0400
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id 03941A1107;
-        Fri,  2 Nov 2018 06:05:28 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by gerste.heinlein-support.de (gerste.heinlein-support.de [91.198.250.173]) (amavisd-new, port 10030)
-        with ESMTP id 5888h3bBCDBv; Fri,  2 Nov 2018 06:05:24 +0100 (CET)
-Date:   Fri, 2 Nov 2018 16:05:09 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Christian Brauner <christian@brauner.io>,
-        Aleksa Sarai <asarai@suse.de>, netdev@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [PATCH v3 1/2] kretprobe: produce sane stack traces
-Message-ID: <20181102050509.tw3dhvj5urudvtjl@yavin>
-References: <20181101083551.3805-1-cyphar@cyphar.com>
- <20181101083551.3805-2-cyphar@cyphar.com>
- <20181101204720.6ed3fe37@vmware.local.home>
+        Fri, 2 Nov 2018 10:21:02 -0400
+Received: from ipmail07.adl2.internode.on.net ([150.101.137.131]:33602 "EHLO
+        ipmail07.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727736AbeKBOVC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 10:21:02 -0400
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail07.adl2.internode.on.net with ESMTP; 02 Nov 2018 15:45:00 +1030
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1gIRnP-0001FE-Hl; Fri, 02 Nov 2018 16:14:59 +1100
+Date:   Fri, 2 Nov 2018 16:14:59 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     torvalds@linux-foundation.org
+Cc:     djwong@kernel.org, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, sandeen@sandeen.net, david@fromorbit.com
+Subject: [GIT PULL] vfs: fix many problems in vfs clone/dedupe implementation
+Message-ID: <20181102051459.GS6311@dastard>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6gjrsgidzixwxeap"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181101204720.6ed3fe37@vmware.local.home>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Linus,
 
---6gjrsgidzixwxeap
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Can you please pull update containing a rework of the VFS clone and
+dedupe file range infrastructure from the tag listed below?
 
-On 2018-11-01, Steven Rostedt <rostedt@goodmis.org> wrote:
-> On Thu,  1 Nov 2018 19:35:50 +1100
-> Aleksa Sarai <cyphar@cyphar.com> wrote:
-> > @@ -1834,6 +1853,11 @@ static int pre_handler_kretprobe(struct kprobe *=
-p, struct pt_regs *regs)
-> >  		ri->rp =3D rp;
-> >  		ri->task =3D current;
-> > =20
-> > +		trace.entries =3D &ri->entry.entries[0];
-> > +		trace.max_entries =3D KRETPROBE_TRACE_SIZE;
-> > +		save_stack_trace_regs(regs, &trace);
-> > +		ri->entry.nr_entries =3D trace.nr_entries;
-> > +
->=20
-> So basically your saving a copy of the stack trace for each probe, for
-> something that may not ever be used?
->=20
-> This adds quite a lot of overhead for something not used often.
->=20
-> I think the real answer is to fix kretprobes (and I just checked, the
-> return call of function graph tracer stack trace doesn't go past the
-> return_to_handler function either. It's just that a stack trace was
-> never done on the return side).
->=20
-> The more I look at this patch, the less I like it.
+We discovered many issues with these interfaces late in the 4.19
+cycle - the worst of them (data corruption, setuid stripping) were
+fixed for XFS in 4.19-rc8, but a larger rework of the infrastructure
+fixing all the problems was needed. That rework is the contents of
+this pull request.
 
-That's more than fair.
+The base tree is 4.19 because there was an unrelated
+vfs_clone_file_range API cleanup merged in v4.19-rc7, and combined
+with the mods in 4.19-rc8 it was simpler for everyone to base this
+work on a tree with all those changes already in it.
 
-There's also an issue that Masami noted -- nested kretprobes don't give
-you the full stack trace with this solution since the stack was already
-overwritten. I think that the only real option is to fix the unwinder to
-work in a kretprobe context -- which is what I'm looking at now.
+There is a simple conflict with your current tree in
+Documentation/filesystems/porting. However, if you pull Al's pending
+VFS tree before this there will also be a more significant conflict
+fs/read_write.c in the vfs_dedupe_file_range_one() function rework.
+The details of the conflict  and the resolution that the linux-next
+tree is carrying can be found here:
 
-Unfortunately, I'm having a lot of trouble understanding how the current
-ftrace hooking works -- ORC has a couple of ftrace hooks that seem
-reasonable on the surface but I don't understand (for instance) how
-HAVE_FUNCTION_GRAPH_RET_ADDR_PTR *actually* works. Though your comment
-appears to indicate that it doesn't work for stack traces?
+https://lore.kernel.org/lkml/20181031115247.6adcb659@canb.auug.org.au/
 
-For kretprobes I think it would be fairly easy to reconstruct what
-landed you into a kretprobe_trampoline by walking the set of
-kretprobe_instances (since all new ones are added to the head, you can
-get the real return address in-order).
+If you need any more info or a tree with the conflicts already
+resolved, please let me know.
 
-But I still have to figure out what is actually stopping the
-save_stack_trace() unwinder that isn't stopping the show_stacks()
-unwinder (though the show_stacks() code is more ... liberal with the
-degree of certainty it has about the unwind).
+Thanks,
 
-Am I barking up the wrong tree?
+Dave.
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+PS. Darrick is back up to speed so the next XFS pull request for
+fixes later in the -rc cycle will probably come from him again.
 
---6gjrsgidzixwxeap
-Content-Type: application/pgp-signature; name="signature.asc"
+The following changes since commit 84df9525b0c27f3ebc2ebb1864fa62a97fdedb7d:
 
------BEGIN PGP SIGNATURE-----
+  Linux 4.19 (2018-10-22 07:37:37 +0100)
 
-iQIzBAABCAAdFiEEb6Gz4/mhjNy+aiz1Snvnv3Dem58FAlvb2wIACgkQSnvnv3De
-m5+l3A/9G/bIFwCfq09RMkpdTMo9ODJiwOqb+JS0KFwOpNNoapaT9gDPymIMbJzu
-F7kjiIfbtzWlodDjIBqU2hMLMvFrSrKK38kEyOFXYpVd5hvqX+U7CEV7LM3a+Gt8
-eRxUqbWQDochrJVOVyNGJYdB0yGlHFlJYisYejQKKlr18p1h5xM7zWgbhxzbM3I4
-LewMrs1i5PuVgAfux5xscHJ9kkFP2bhQsC9LDeFNVTGaCmL4+ebSEBdAz2y678eh
-rO+Pv/URk/wqL6jbSNb5LJguYP892mK7Ezsmhw4k+6IfwrWavlLvok8WRr5GKLqU
-jF3C4H/1VJsBwSx/sCgw9WCWNvKrwGjyAQDmlGJmbLpK9PyO4mh4VtYFpDQAYbVi
-YfxgtP6IFTguzDY1gLD2ruzfHcKkhqVnR2VitqtsUZY4amRIdJbNnj7+tS/87Opk
-cO4x8cLgh+fbNKN/CVEa18+2HC+710lKlApjKmOs+s8LH/kZJ3VtuheT9b14RXPE
-0P/BjM4T5kixY2VaxTUdmxgQmcq02O9fMrWIAuJPLjVpT7smGVcOmWbseGWf4kmU
-mz+qcvlWIJFA91O5xfK2kNOUwtMha8+Z8WsjYWfk4P6vHuGwn/zyXyIhFJ7kpOXJ
-7VK0+zZnfqszf9Mf4RwZDCt8PcQPJ1m9r4tbVavf8wKFSdGceAk=
-=ipcF
------END PGP SIGNATURE-----
+are available in the git repository at:
 
---6gjrsgidzixwxeap--
+  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux tags/xfs-4.20-merge-2
+
+for you to fetch changes up to bf4a1fcf0bc18d52cf0fce6571d6f327ab5eaf22:
+
+  xfs: remove [cm]time update from reflink calls (2018-10-30 10:47:48 +1100)
+
+----------------------------------------------------------------
+vfs: rework data cloning infrastructure
+
+Rework the vfs_clone_file_range and vfs_dedupe_file_range infrastructure to use
+a common .remap_file_range method and supply generic bounds and sanity checking
+functions that are shared with the data write path. The current VFS
+infrastructure has problems with rlimit, LFS file sizes, file time stamps,
+maximum filesystem file sizes, stripping setuid bits, etc and so they are
+addressed in these commits.
+
+We also introduce the ability for the ->remap_file_range methods to return short
+clones so that clones for vfs_copy_file_range() don't get rejected if the entire
+range can't be cloned. It also allows filesystems to sliently skip deduplication
+of partial EOF blocks if they are not capable of doing so without requiring
+errors to be thrown to userspace.
+
+All existing filesystems are converted to user the new .remap_file_range method,
+and both XFS and ocfs2 are modified to make use of the new generic checking
+infrastructure.
+
+----------------------------------------------------------------
+Darrick J. Wong (28):
+      vfs: vfs_clone_file_prep_inodes should return EINVAL for a clone from beyond EOF
+      vfs: check file ranges before cloning files
+      vfs: exit early from zero length remap operations
+      vfs: strengthen checking of file range inputs to generic_remap_checks
+      vfs: avoid problematic remapping requests into partial EOF block
+      vfs: skip zero-length dedupe requests
+      vfs: rename vfs_clone_file_prep to be more descriptive
+      vfs: rename clone_verify_area to remap_verify_area
+      vfs: combine the clone and dedupe into a single remap_file_range
+      vfs: pass remap flags to generic_remap_file_range_prep
+      vfs: pass remap flags to generic_remap_checks
+      vfs: remap helper should update destination inode metadata
+      vfs: make remap_file_range functions take and return bytes completed
+      vfs: plumb remap flags through the vfs clone functions
+      vfs: plumb remap flags through the vfs dedupe functions
+      vfs: enable remap callers that can handle short operations
+      vfs: hide file range comparison function
+      vfs: clean up generic_remap_file_range_prep return value
+      ocfs2: truncate page cache for clone destination file before remapping
+      ocfs2: fix pagecache truncation prior to reflink
+      ocfs2: support partial clone range and dedupe range
+      ocfs2: remove ocfs2_reflink_remap_range
+      xfs: fix pagecache truncation prior to reflink
+      xfs: clean up xfs_reflink_remap_blocks call site
+      xfs: support returning partial reflink results
+      xfs: remove redundant remap partial EOF block checks
+      xfs: remove xfs_reflink_remap_range
+      xfs: remove [cm]time update from reflink calls
+
+ Documentation/filesystems/porting |   5 +
+ Documentation/filesystems/vfs.txt |  22 ++-
+ fs/btrfs/ctree.h                  |   8 +-
+ fs/btrfs/file.c                   |   3 +-
+ fs/btrfs/ioctl.c                  |  50 ++---
+ fs/cifs/cifsfs.c                  |  24 ++-
+ fs/ioctl.c                        |  10 +-
+ fs/nfs/nfs4file.c                 |  12 +-
+ fs/nfsd/vfs.c                     |   8 +-
+ fs/ocfs2/file.c                   |  93 +++++++--
+ fs/ocfs2/refcounttree.c           | 148 ++++----------
+ fs/ocfs2/refcounttree.h           |  24 ++-
+ fs/overlayfs/copy_up.c            |   6 +-
+ fs/overlayfs/file.c               |  43 ++--
+ fs/read_write.c                   | 403 +++++++++++++++++++++-----------------
+ fs/xfs/xfs_file.c                 |  82 +++++---
+ fs/xfs/xfs_reflink.c              | 173 ++++------------
+ fs/xfs/xfs_reflink.h              |  15 +-
+ include/linux/fs.h                |  55 ++++--
+ mm/filemap.c                      | 146 +++++++++++---
+ 20 files changed, 734 insertions(+), 596 deletions(-)
+-- 
+Dave Chinner
+david@fromorbit.com
