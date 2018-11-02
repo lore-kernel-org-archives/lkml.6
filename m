@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4DFFC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36CCCC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:46:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 742B220847
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:46:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09CD020847
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:46:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dtLpOsjc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 742B220847
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZaX0lAvh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09CD020847
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730319AbeKCDyR (ORCPT
+        id S1730331AbeKCDyU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:54:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50172 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:54:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729136AbeKCDyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:54:17 -0400
+        id S1729136AbeKCDyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:54:20 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3CA1420847;
-        Fri,  2 Nov 2018 18:46:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E92420837;
+        Fri,  2 Nov 2018 18:46:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184363;
-        bh=1qADsAp/w3konQaCVsj/kZdiS0tewDiQsek94bVz/WI=;
+        s=default; t=1541184366;
+        bh=mshMeT7XF1+LNKRiBz7fGKfrMskz0GX3CZV6OViAXvU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dtLpOsjcizgRwGXuz+FCvfVQqtWANde47lvgH7t+FLMZj0mSEqyXe9MpNCZ/j0gRT
-         WDeEuk6qut1vAiK0IdtVU0PUriMZ4Qu2M3v0MhQsUDp7+jCe9YAMNAjm0/lvgud1FP
-         ejM2wNHsFbtQFdqh14lWG6nlxcJBpHU/O7CQ3bAU=
+        b=ZaX0lAvhDGIzyMf4xoDLATrfB6AFnp28MWVA/km3oavs5Z27yE01m2M5jTM1PT1h3
+         i0rFRa2qkA/+cwsMMF9aqEyzOxDnkGEHX5ySLVFiGvfTsNMlFoAlVdDJpUHxzpxxPC
+         CJ+BXAuuwon/dWnHITg+SxHYF2yPHzYrBl/btrvE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 145/150] sparc64: Set %l4 properly on trap return after handling signals.
-Date:   Fri,  2 Nov 2018 19:35:07 +0100
-Message-Id: <20181102182912.529395378@linuxfoundation.org>
+        stable@vger.kernel.org, Joseph Myers <joseph@codesourcery.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.18 146/150] sparc64: Wire up compat getpeername and getsockname.
+Date:   Fri,  2 Nov 2018 19:35:08 +0100
+Message-Id: <20181102182912.577017115@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -63,38 +64,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "David S. Miller" <davem@davemloft.net>
 
-[ Upstream commit d1f1f98c6d1708a90436e1a3b2aff5e93946731b ]
+[ Upstream commit 1f2b5b8e2df4591fbca430aff9c5a072dcc0f408 ]
 
-If we did some signal processing, we have to reload the pt_regs
-tstate register because it's value may have changed.
-
-In doing so we also have to extract the %pil value contained in there
-anre load that into %l4.
-
-This value is at bit 20 and thus needs to be shifted down before we
-later write it into the %pil register.
-
-Most of the time this is harmless as we are returning to userspace
-and the %pil is zero for that case.
-
+Fixes: 8b30ca73b7cc ("sparc: Add all necessary direct socket system calls.")
+Reported-by: Joseph Myers  <joseph@codesourcery.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/sparc/kernel/rtrap_64.S |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/sparc/kernel/systbls_64.S |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/sparc/kernel/rtrap_64.S
-+++ b/arch/sparc/kernel/rtrap_64.S
-@@ -85,8 +85,9 @@ __handle_signal:
- 		ldx			[%sp + PTREGS_OFF + PT_V9_TSTATE], %l1
- 		sethi			%hi(0xf << 20), %l4
- 		and			%l1, %l4, %l4
-+		andn			%l1, %l4, %l1
- 		ba,pt			%xcc, __handle_preemption_continue
--		 andn			%l1, %l4, %l1
-+		 srl			%l4, 20, %l4
- 
- 		/* When returning from a NMI (%pil==15) interrupt we want to
- 		 * avoid running softirqs, doing IRQ tracing, preempting, etc.
+--- a/arch/sparc/kernel/systbls_64.S
++++ b/arch/sparc/kernel/systbls_64.S
+@@ -47,9 +47,9 @@ sys_call_table32:
+ 	.word sys_recvfrom, sys_setreuid16, sys_setregid16, sys_rename, compat_sys_truncate
+ /*130*/	.word compat_sys_ftruncate, sys_flock, compat_sys_lstat64, sys_sendto, sys_shutdown
+ 	.word sys_socketpair, sys_mkdir, sys_rmdir, compat_sys_utimes, compat_sys_stat64
+-/*140*/	.word sys_sendfile64, sys_nis_syscall, compat_sys_futex, sys_gettid, compat_sys_getrlimit
++/*140*/	.word sys_sendfile64, sys_getpeername, compat_sys_futex, sys_gettid, compat_sys_getrlimit
+ 	.word compat_sys_setrlimit, sys_pivot_root, sys_prctl, sys_pciconfig_read, sys_pciconfig_write
+-/*150*/	.word sys_nis_syscall, sys_inotify_init, sys_inotify_add_watch, sys_poll, sys_getdents64
++/*150*/	.word sys_getsockname, sys_inotify_init, sys_inotify_add_watch, sys_poll, sys_getdents64
+ 	.word compat_sys_fcntl64, sys_inotify_rm_watch, compat_sys_statfs, compat_sys_fstatfs, sys_oldumount
+ /*160*/	.word compat_sys_sched_setaffinity, compat_sys_sched_getaffinity, sys_getdomainname, sys_setdomainname, sys_nis_syscall
+ 	.word sys_quotactl, sys_set_tid_address, compat_sys_mount, compat_sys_ustat, sys_setxattr
 
 
