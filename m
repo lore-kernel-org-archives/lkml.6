@@ -2,122 +2,179 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7534DC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 825F2C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:59:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DD2A2082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:57:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DD2A2082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B551920657
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:59:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=jordan-borgner.de header.i=@jordan-borgner.de header.b="F790KzKP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B551920657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jordan-borgner.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728023AbeKCAEQ (ORCPT
+        id S1727954AbeKCAG6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 20:04:16 -0400
-Received: from mga06.intel.com ([134.134.136.31]:55981 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727744AbeKCAEQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 20:04:16 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 07:56:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,456,1534834800"; 
-   d="scan'208";a="246506517"
-Received: from ltvarghe-mobl1.amr.corp.intel.com (HELO [10.254.11.218]) ([10.254.11.218])
-  by orsmga004.jf.intel.com with ESMTP; 02 Nov 2018 07:56:52 -0700
-Subject: Re: [PATCH] ASoC: skl: always select SND_SOC_HDAC_HDA
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Sriram Periyasamy <sriramx.periyasamy@intel.com>,
-        Rakesh Ughreja <rakesh.a.ughreja@intel.com>,
-        Guneshwor Singh <guneshwor.o.singh@intel.com>,
-        Naveen Manohar <naveen.m@intel.com>,
-        Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-References: <20181102112456.780127-1-arnd@arndb.de>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <943d10e2-299c-4393-f2f5-4ac8bbe400c3@linux.intel.com>
-Date:   Fri, 2 Nov 2018 09:56:52 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 2 Nov 2018 20:06:58 -0400
+Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.22]:35254 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726265AbeKCAG6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 20:06:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1541170773;
+        s=strato-dkim-0002; d=jordan-borgner.de;
+        h=Message-ID:Subject:Cc:To:From:Date:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=57lJ8pm2k5wsvbvbwNyeY2mHXaQseQbXxOJz9Y2jjMw=;
+        b=F790KzKP2MiAc2kcMDsV+F6wyd1l9m8WlgZp9uk3wG9q1EP+jeWLlcZ2cmRwTkbHWF
+        p02WZItn9whHql6N74e/bN6kHE4qfI6mvrqawHcttWUrejb6qIc9lag2K3YwZ6TL2ZSg
+        IdheO3p4rY+kSq9onqbEZfipoeDakJFcQ+f+L3Lq7j1Q0R40kkVll7AQO1rT3esTSfr4
+        vvPVANv0AU6iykmsPiUst2uxmlHjOP5b1J+WAL6bneSZpkvIyCYtq7SOrRoviFI/dO89
+        gNBNLdz8UZYcgPzZ3GKzsTKkDGTMz4WBKxSlVUmGD+BGWkZDx0940ICWI7bTJMk8CGEO
+        u5hA==
+X-RZG-AUTH: ":IW0NeWCidO14P1liib3FUweRdVVCz7ay1c0SPzCKsLZUvHozh80V6gGoQeGJaantMcUcRJe5mIbtCrgHkxiccBaMa+VKYZNxzaaeoDv7K+jgyw=="
+X-RZG-CLASS-ID: mo00
+Received: from JordanDesktop
+        by smtp.strato.de (RZmta 44.3 AUTH)
+        with ESMTPSA id z07cbcuA2EuNHiX
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Fri, 2 Nov 2018 15:56:23 +0100 (CET)
+Date:   Fri, 2 Nov 2018 14:56:22 +0000
+From:   Jordan Borgner <mail@jordan-borgner.de>
+To:     tglx@linutronix.de, mingo@redhat.com, x86@kernel.org
+Cc:     hpa@zytor.com, linux-kernel@vger.kernel.org
+Subject: [PATCH] x86: boot: Simplified memory.c
+Message-ID: <20181102145622.zjx2t3mdu3rv6sgy@JordanDesktop>
 MIME-Version: 1.0
-In-Reply-To: <20181102112456.780127-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment; filename="0002-x86-boot-Simplified-memory.c.patch"
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+memory.c contains functions that retrieve the memory-map of the
+available RAM.
 
-On 11/2/18 6:24 AM, Arnd Bergmann wrote:
-> The skylake sound support is written to work both with or without
-> CONFIG_SND_SOC_HDAC_HDA, and uses an #ifdef to decide whether it should
-> link against that. However, this fails with SND_SOC_ALL_CODECS=m or
-> SND_SOC_INTEL_SKL_HDA_DSP_GENERIC_MACH=m when the Skylake support itself
-> is built-in, with this link error:
->
-> sound/soc/intel/skylake/skl.o: In function `skl_probe':
-> skl.c:(.text+0x56c): undefined reference to `snd_soc_hdac_hda_get_ops'
->
-> Using an explicit 'select' here simplifies the logic and prevents
-> it from happening, at the cost of always including the compile
-> time dependency.
+They are all called inside of "detect_memory()" which is 
+called in x86/boot/main.c. The return value of "detect_memory()" is 
+not checked so none of all the return values have any effect 
+on the program flow.
 
-Thanks Arnd for the report. I don't quite agree with the proposal, this 
-should be similar to HDAC_HDMI which is not selected by default, and 
-there's no reason to force the support for HDAudio when the vast 
-majority of Skylake+ devices which enable this driver don't have any 
-HDaudio codec.
+Define them as void-functions to save overhead.
 
-Also the code is skl.c is already conditional, so this function should 
-not be required.
+Done by motivation of Ingo Molnar.
 
-Do you have a config that fails, I'd like to look at this further.
+Signed-off-by: Jordan Borgner <mail@jordan-borgner.de>
+---
+ arch/x86/boot/boot.h   |  2 +-
+ arch/x86/boot/memory.c | 31 ++++++++++---------------------
+ 2 files changed, 11 insertions(+), 22 deletions(-)
 
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->   sound/soc/intel/Kconfig       | 1 +
->   sound/soc/intel/skylake/skl.c | 2 --
->   2 files changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
-> index 0caa1f4eb94d..c21ce7624af1 100644
-> --- a/sound/soc/intel/Kconfig
-> +++ b/sound/soc/intel/Kconfig
-> @@ -109,6 +109,7 @@ config SND_SOC_INTEL_SKYLAKE
->   	depends on PCI && ACPI
->   	select SND_HDA_EXT_CORE
->   	select SND_HDA_DSP_LOADER
-> +	select SND_SOC_HDAC_HDA
->   	select SND_SOC_TOPOLOGY
->   	select SND_SOC_INTEL_SST
->   	select SND_SOC_ACPI_INTEL_MATCH
-> diff --git a/sound/soc/intel/skylake/skl.c b/sound/soc/intel/skylake/skl.c
-> index 29225623b4b4..1069ee265ce5 100644
-> --- a/sound/soc/intel/skylake/skl.c
-> +++ b/sound/soc/intel/skylake/skl.c
-> @@ -870,9 +870,7 @@ static int skl_create(struct pci_dev *pci,
->   	hbus = skl_to_hbus(skl);
->   	bus = skl_to_bus(skl);
->   
-> -#if IS_ENABLED(CONFIG_SND_SOC_HDAC_HDA)
->   	ext_ops = snd_soc_hdac_hda_get_ops();
-> -#endif
->   	snd_hdac_ext_bus_init(bus, &pci->dev, &bus_core_ops, io_ops, ext_ops);
->   	bus->use_posbuf = 1;
->   	skl->pci = pci;
+diff --git a/arch/x86/boot/boot.h b/arch/x86/boot/boot.h
+index ef5a9cc..32a09eb 100644
+--- a/arch/x86/boot/boot.h
++++ b/arch/x86/boot/boot.h
+@@ -309,7 +309,7 @@ void query_edd(void);
+ void __attribute__((noreturn)) die(void);
+
+ /* memory.c */
+-int detect_memory(void);
++void detect_memory(void);
+
+ /* pm.c */
+ void __attribute__((noreturn)) go_to_protected_mode(void);
+diff --git a/arch/x86/boot/memory.c b/arch/x86/boot/memory.c
+index 7df2b28..f06c147 100644
+--- a/arch/x86/boot/memory.c
++++ b/arch/x86/boot/memory.c
+@@ -17,7 +17,7 @@
+ 
+ #define SMAP	0x534d4150	/* ASCII "SMAP" */
+ 
+-static int detect_memory_e820(void)
++static void detect_memory_e820(void)
+ {
+ 	int count = 0;
+ 	struct biosregs ireg, oreg;
+@@ -68,10 +68,10 @@ static int detect_memory_e820(void)
+ 		count++;
+ 	} while (ireg.ebx && count < ARRAY_SIZE(boot_params.e820_table));
+ 
+-	return boot_params.e820_entries = count;
++	boot_params.e820_entries = count;
+ }
+ 
+-static int detect_memory_e801(void)
++static void detect_memory_e801(void)
+ {
+ 	struct biosregs ireg, oreg;
+ 
+@@ -80,7 +80,7 @@ static int detect_memory_e801(void)
+ 	intcall(0x15, &ireg, &oreg);
+ 
+ 	if (oreg.eflags & X86_EFLAGS_CF)
+-		return -1;
++		return;
+ 
+ 	/* Do we really need to do this? */
+ 	if (oreg.cx || oreg.dx) {
+@@ -89,7 +89,7 @@ static int detect_memory_e801(void)
+ 	}
+ 
+ 	if (oreg.ax > 15*1024) {
+-		return -1;	/* Bogus! */
++		return;	/* Bogus! */
+ 	} else if (oreg.ax == 15*1024) {
+ 		boot_params.alt_mem_k = (oreg.bx << 6) + oreg.ax;
+ 	} else {
+@@ -102,11 +102,9 @@ static int detect_memory_e801(void)
+ 		 */
+ 		boot_params.alt_mem_k = oreg.ax;
+ 	}
+-
+-	return 0;
+ }
+ 
+-static int detect_memory_88(void)
++static void detect_memory_88(void)
+ {
+ 	struct biosregs ireg, oreg;
+ 
+@@ -115,22 +113,13 @@ static int detect_memory_88(void)
+ 	intcall(0x15, &ireg, &oreg);
+ 
+ 	boot_params.screen_info.ext_mem_k = oreg.ax;
+-
+-	return -(oreg.eflags & X86_EFLAGS_CF); /* 0 or -1 */
+ }
+ 
+-int detect_memory(void)
++void detect_memory(void)
+ {
+-	int err = -1;
+-
+-	if (detect_memory_e820() > 0)
+-		err = 0;
+-
+-	if (!detect_memory_e801())
+-		err = 0;
++	detect_memory_e820();
+ 
+-	if (!detect_memory_88())
+-		err = 0;
++	detect_memory_e801();
+ 
+-	return err;
++	detect_memory_88();
+ }
+-- 
+2.11.0
+
