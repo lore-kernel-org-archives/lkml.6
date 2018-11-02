@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3739C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:47:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09CAAC65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:47:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B604220840
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:47:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBB5120843
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:47:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k9uVat5v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B604220840
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aRyZ4r5m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBB5120843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730093AbeKCD4B (ORCPT
+        id S1730138AbeKCD4F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:56:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51512 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:56:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51574 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727629AbeKCD4A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:56:00 -0400
+        id S1727629AbeKCD4E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:56:04 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81D7E2082D;
-        Fri,  2 Nov 2018 18:47:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B601C2082D;
+        Fri,  2 Nov 2018 18:47:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184467;
-        bh=msCWdqE7ZYR/w6KjTuEPKGivu2WllCr+jTh+JUUWZi4=;
+        s=default; t=1541184470;
+        bh=a+qr0icuf80oCTU56hS7hcymc0OmI+iCSVRJg3rhr5M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k9uVat5v2OgMaOBNVGOxqc8ZQwX8TSWgqaPz2EUyIoApdvnJSxxfg0vo4d12qBgq5
-         RsGpbQcO3fCFpjxWLKZD18TcANgTkHoOU7ohgFymUAZPxPDxMA7FCo4it7EW2hXCF3
-         U7UVUQ5L3kAl1Vm6rT8+CzhOIgCuKQbGcBJQSNOo=
+        b=aRyZ4r5mDCixRwE8+mLRxKqx4hTJnoM+8liLX2hRTsgBI1DNGn/h4qh5BQe34FXxl
+         dB69vfgTvpWlXlWfmkrS7MsW0OPj7T9Uf2vMleCkniHWNqXkbzhuDgoE6/nN6MqTyX
+         CHlldO0fpgeWoeUWW3sWryAI9enELkQPPVufrLNA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sowmini Varadhan <sowmini.varadhan@oracle.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
+        Andrei Otcheretianski <andrei.otcheretianski@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 004/143] xfrm: reset crypto_done when iterating over multiple input xfrms
-Date:   Fri,  2 Nov 2018 19:33:09 +0100
-Message-Id: <20181102182857.439558411@linuxfoundation.org>
+Subject: [PATCH 4.14 005/143] mac80211: Always report TX status
+Date:   Fri,  2 Nov 2018 19:33:10 +0100
+Message-Id: <20181102182857.526009889@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -64,34 +65,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 782710e333a526780d65918d669cb96646983ba2 ]
+[ Upstream commit 8682250b3c1b75a45feb7452bc413d004cfe3778 ]
 
-We only support one offloaded xfrm (we do not have devices that
-can handle more than one offload), so reset crypto_done in
-xfrm_input() when iterating over multiple transforms in xfrm_input,
-so that we can invoke the appropriate x->type->input for the
-non-offloaded transforms
+If a frame is dropped for any reason, mac80211 wouldn't report the TX
+status back to user space.
 
-Fixes: d77e38e612a0 ("xfrm: Add an IPsec hardware offloading API")
-Signed-off-by: Sowmini Varadhan <sowmini.varadhan@oracle.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+As the user space may rely on the TX_STATUS to kick its state
+machines, resends etc, it's better to just report this frame as not
+acked instead.
+
+Signed-off-by: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/xfrm/xfrm_input.c | 1 +
- 1 file changed, 1 insertion(+)
+ net/mac80211/status.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/net/xfrm/xfrm_input.c b/net/xfrm/xfrm_input.c
-index 9f492dc417d5..8e75319dd9c0 100644
---- a/net/xfrm/xfrm_input.c
-+++ b/net/xfrm/xfrm_input.c
-@@ -453,6 +453,7 @@ resume:
- 			XFRM_INC_STATS(net, LINUX_MIB_XFRMINHDRERROR);
- 			goto drop;
- 		}
-+		crypto_done = false;
- 	} while (!err);
+diff --git a/net/mac80211/status.c b/net/mac80211/status.c
+index da7427a41529..ccac205e5853 100644
+--- a/net/mac80211/status.c
++++ b/net/mac80211/status.c
+@@ -470,11 +470,6 @@ static void ieee80211_report_ack_skb(struct ieee80211_local *local,
+ 	if (!skb)
+ 		return;
  
- 	err = xfrm_rcv_cb(skb, family, x->type->proto, 0);
+-	if (dropped) {
+-		dev_kfree_skb_any(skb);
+-		return;
+-	}
+-
+ 	if (info->flags & IEEE80211_TX_INTFL_NL80211_FRAME_TX) {
+ 		u64 cookie = IEEE80211_SKB_CB(skb)->ack.cookie;
+ 		struct ieee80211_sub_if_data *sdata;
+@@ -495,6 +490,8 @@ static void ieee80211_report_ack_skb(struct ieee80211_local *local,
+ 		}
+ 		rcu_read_unlock();
+ 
++		dev_kfree_skb_any(skb);
++	} else if (dropped) {
+ 		dev_kfree_skb_any(skb);
+ 	} else {
+ 		/* consumes skb */
 -- 
 2.17.1
 
