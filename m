@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDF66C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 12:37:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64074C6786F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 12:37:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B06D92082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 12:37:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B06D92082E
+	by mail.kernel.org (Postfix) with ESMTP id 3352F20831
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 12:37:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3352F20831
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727712AbeKBVoB (ORCPT
+        id S1727598AbeKBVof (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 17:44:01 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40690 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726026AbeKBVoA (ORCPT
+        Fri, 2 Nov 2018 17:44:35 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33678 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726026AbeKBVoe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 17:44:00 -0400
-Received: by mail-lj1-f196.google.com with SMTP id t22-v6so1599323lji.7;
-        Fri, 02 Nov 2018 05:36:56 -0700 (PDT)
+        Fri, 2 Nov 2018 17:44:34 -0400
+Received: by mail-lf1-f67.google.com with SMTP id i26so1244231lfc.0;
+        Fri, 02 Nov 2018 05:37:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GkHc1XDfS2zAEG1O6tNrzFVGgOycf/0Y3wU3cQalzu0=;
-        b=uEVtIclc9yPI9UN+2HdS/esRZuomnYUtKhs1beNz8zp6WKt/f1JmK7UDEkleIQnfe0
-         dM+Wa68DPL6AelGh8/FOUOJD6InDLQoTeAEdFgT8JB/aFOMV+gqPDn3rgJdEtLu+0pGc
-         70cSe+fYpn+X60o9jiHzultwAKsQJFDGYq9z3k4i22xGdVyu2+lIe1aI4SqmADmnyoJ3
-         Xz6h6bnDTs2UgEWHHOu3qSzU0o3Pth/Wmg7jdV0N+xs36bxPruwPIGQN4gIKtNVSpfyH
-         NC8Q27mzZ8McEM4hH+kvG6EnPFjBk7GwwePOPwv5EWXj7QSiSPVPjUBltTnlI8JJQcET
-         QFEg==
-X-Gm-Message-State: AGRZ1gLo4c/jBD89v7GN4C94AfF/LGRgundZjwb1tlWTUMguTBngfWmP
-        uAGJFpIK5vgku5A/6RsncaI=
-X-Google-Smtp-Source: AJdET5dhkQJ4jFduLKkaHHDNMMXHLuYY6WY03oYUynBUpLEg/UFwtz/6PJeLj3M6DtVoCDXnQnipaQ==
-X-Received: by 2002:a2e:9ad0:: with SMTP id p16-v6mr8148863ljj.102.1541162215626;
-        Fri, 02 Nov 2018 05:36:55 -0700 (PDT)
+        bh=4b7mWWvbRMSl/BrY6BXSv/3823MeAc6TDJ2DxbTG2QU=;
+        b=i+zOQDDPmlt5kN6ndbcAEF8pJnukwAVMcTg6ZHjjPGh9DU8LRWdsZat7I+E2RFIuCF
+         jJTJQf+EKp27Ws2S3dM7ly6YJOoW4d9EzmGEN+MQRI9lgg88blaJI6g6JpqLyfb13TM2
+         s9aWSLp0U7p2PYTCYdVrWeRhDPufymYxj9i1umXx05celJGJanle/lmUQKR7CUeM/eu0
+         N126uyuttxI0pa7Y7ife21yrSPSgpjSuNTteXV+7cGAiD1PBJPdeBA6ru2C2CPj3i4OY
+         9N4dxG5VVXMhMOqMymxbj4oqJMIOhd0CFsJ9C86atUO8E3qXZd51VqjwI7R6hQqbSrF+
+         aQbw==
+X-Gm-Message-State: AGRZ1gLe7pxQ+4tEr5TpCsCavl4w1YD4b1q9UXjSKWIWyp1k3UgmrO9f
+        kxLhxivkel0IsvNuQym2fGY=
+X-Google-Smtp-Source: AJdET5ey2hQGFTMu+Rc2Rtu+S/newd6zf17RtA9SMIAuBBhpOQg4DfiVCl26dLZMvX6mlbt7D/wc7w==
+X-Received: by 2002:a19:c396:: with SMTP id t144mr6633017lff.110.1541162248798;
+        Fri, 02 Nov 2018 05:37:28 -0700 (PDT)
 Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id j66-v6sm5641477ljb.45.2018.11.02.05.36.53
+        by smtp.gmail.com with ESMTPSA id a9sm2639656lfi.57.2018.11.02.05.37.26
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 02 Nov 2018 05:36:55 -0700 (PDT)
-Date:   Fri, 2 Nov 2018 14:36:42 +0200
+        Fri, 02 Nov 2018 05:37:28 -0700 (PDT)
+Date:   Fri, 2 Nov 2018 14:37:14 +0200
 From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 To:     Jonathan Corbet <corbet@lwn.net>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -73,8 +73,9 @@ Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org,
         matti.vaittinen@fi.rohmeurope.com
-Subject: [PATCH v3 4/7] clk: clk-hi655x: Free of_provider at remove
-Message-ID: <0f66b67315e67192ada302304e2d133fff4989f9.1541161503.git.matti.vaittinen@fi.rohmeurope.com>
+Subject: [PATCH v3 5/7] clk: rk808: use managed version of of_provider
+ registration
+Message-ID: <f7f805d407febeb2c07cd021cf142ab152bf96f6.1541161503.git.matti.vaittinen@fi.rohmeurope.com>
 References: <cover.1541161503.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -86,29 +87,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-use devm variant for of_provider registration so provider is freed
-at exit.
+Simplify clean-up for rk808 by using managed version of of_provider
+registration.
 
 Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
- drivers/clk/clk-hi655x.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/clk-rk808.c | 15 ++-------------
+ 1 file changed, 2 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/clk/clk-hi655x.c b/drivers/clk/clk-hi655x.c
-index 403a0188634a..394d0109104d 100644
---- a/drivers/clk/clk-hi655x.c
-+++ b/drivers/clk/clk-hi655x.c
-@@ -107,8 +107,8 @@ static int hi655x_clk_probe(struct platform_device *pdev)
+diff --git a/drivers/clk/clk-rk808.c b/drivers/clk/clk-rk808.c
+index 6461f2820a5b..177340edaae5 100644
+--- a/drivers/clk/clk-rk808.c
++++ b/drivers/clk/clk-rk808.c
+@@ -138,23 +138,12 @@ static int rk808_clkout_probe(struct platform_device *pdev)
  	if (ret)
  		return ret;
  
--	return of_clk_add_hw_provider(parent->of_node, of_clk_hw_simple_get,
--				     &hi655x_clk->clk_hw);
+-	return of_clk_add_hw_provider(node, of_clk_rk808_get, rk808_clkout);
+-}
+-
+-static int rk808_clkout_remove(struct platform_device *pdev)
+-{
+-	struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
+-	struct i2c_client *client = rk808->i2c;
+-	struct device_node *node = client->dev.of_node;
+-
+-	of_clk_del_provider(node);
+-
+-	return 0;
 +	return devm_of_clk_add_parent_hw_provider(&pdev->dev,
-+				of_clk_hw_simple_get, &hi655x_clk->clk_hw);
++					of_clk_rk808_get, rk808_clkout);
  }
  
- static struct platform_driver hi655x_clk_driver = {
+ static struct platform_driver rk808_clkout_driver = {
+ 	.probe = rk808_clkout_probe,
+-	.remove = rk808_clkout_remove,
+ 	.driver		= {
+ 		.name	= "rk808-clkout",
+ 	},
 -- 
 2.14.3
 
