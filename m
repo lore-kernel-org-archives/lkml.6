@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6948FC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:52:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 350E9C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:52:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D22820848
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:52:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F219E20848
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:52:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ow7nwM9d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D22820848
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l3Bj5gBS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F219E20848
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730809AbeKCEAd (ORCPT
+        id S1730861AbeKCEAg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 00:00:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56358 "EHLO mail.kernel.org"
+        Sat, 3 Nov 2018 00:00:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726081AbeKCEAc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 00:00:32 -0400
+        id S1726081AbeKCEAf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 00:00:35 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 531012084A;
-        Fri,  2 Nov 2018 18:52:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B4AD2082D;
+        Fri,  2 Nov 2018 18:52:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184737;
-        bh=Zk8VdP6Z8UoLaD9eCfSnB/AN992Amv8su2BXWEU/aEI=;
+        s=default; t=1541184740;
+        bh=TelbgK7CwAM9wN4hE85sfVfzb0Nslj0kT1IfXG/Qi54=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ow7nwM9dhwleLNPzd4xwI8hEJBLcWasqdZv50m+k2KVk2uIoiPZ6X+qViBkio2ux8
-         fjeVN1+ASJdJxvleEDl4ynJ2DIBik4qVoe7NILq7OPgdcrqzHRnfhlIpLQCk3kTTRX
-         B6ue6SdPn72u4CLWIumtlkqBEURolvajNuwoQATw=
+        b=l3Bj5gBSYtlfNrPoTHDqqdp1VAMq3LNnlGWi2FCNKvo0Zt3Tst17JfRLlIBOoUtz9
+         cf1ZUBs0G6eerG0YIJgMcm/cNS+PXoJmQjRTszuhLhSpFr/qPow6HkeUnivrNKbC6D
+         ANR0r5Ppu/QrlOyi0sGer6wWoKIL4txB0v/slOg0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Govindarajulu Varadarajan <gvaradar@cisco.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Phil Reid <preid@electromag.com.au>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 084/143] enic: do not overwrite error code
-Date:   Fri,  2 Nov 2018 19:34:29 +0100
-Message-Id: <20181102182904.393997109@linuxfoundation.org>
+Subject: [PATCH 4.14 085/143] iio: buffer: fix the function signature to match implementation
+Date:   Fri,  2 Nov 2018 19:34:30 +0100
+Message-Id: <20181102182904.510071117@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -65,47 +63,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 56f772279a762984f6e9ebbf24a7c829faba5712 ]
+[ Upstream commit 92397a6c38d139d50fabbe9e2dc09b61d53b2377 ]
 
-In failure path, we overwrite err to what vnic_rq_disable() returns. In
-case it returns 0, enic_open() returns success in case of error.
+linux/iio/buffer-dma.h was not updated to when length was changed to
+unsigned int.
 
-Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Fixes: e8588e268509 ("enic: enable rq before updating rq descriptors")
-Signed-off-by: Govindarajulu Varadarajan <gvaradar@cisco.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: c043ec1ca5ba ("iio:buffer: make length types match kfifo types")
+Signed-off-by: Phil Reid <preid@electromag.com.au>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/cisco/enic/enic_main.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ include/linux/iio/buffer-dma.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/cisco/enic/enic_main.c b/drivers/net/ethernet/cisco/enic/enic_main.c
-index 2bfaf3e118b1..03f4fee1bbc9 100644
---- a/drivers/net/ethernet/cisco/enic/enic_main.c
-+++ b/drivers/net/ethernet/cisco/enic/enic_main.c
-@@ -1879,7 +1879,7 @@ static int enic_open(struct net_device *netdev)
- {
- 	struct enic *enic = netdev_priv(netdev);
- 	unsigned int i;
--	int err;
-+	int err, ret;
+diff --git a/include/linux/iio/buffer-dma.h b/include/linux/iio/buffer-dma.h
+index 767467d886de..67c75372b691 100644
+--- a/include/linux/iio/buffer-dma.h
++++ b/include/linux/iio/buffer-dma.h
+@@ -141,7 +141,7 @@ int iio_dma_buffer_read(struct iio_buffer *buffer, size_t n,
+ 	char __user *user_buffer);
+ size_t iio_dma_buffer_data_available(struct iio_buffer *buffer);
+ int iio_dma_buffer_set_bytes_per_datum(struct iio_buffer *buffer, size_t bpd);
+-int iio_dma_buffer_set_length(struct iio_buffer *buffer, int length);
++int iio_dma_buffer_set_length(struct iio_buffer *buffer, unsigned int length);
+ int iio_dma_buffer_request_update(struct iio_buffer *buffer);
  
- 	err = enic_request_intr(enic);
- 	if (err) {
-@@ -1936,10 +1936,9 @@ static int enic_open(struct net_device *netdev)
- 
- err_out_free_rq:
- 	for (i = 0; i < enic->rq_count; i++) {
--		err = vnic_rq_disable(&enic->rq[i]);
--		if (err)
--			return err;
--		vnic_rq_clean(&enic->rq[i], enic_free_rq_buf);
-+		ret = vnic_rq_disable(&enic->rq[i]);
-+		if (!ret)
-+			vnic_rq_clean(&enic->rq[i], enic_free_rq_buf);
- 	}
- 	enic_dev_notify_unset(enic);
- err_out_free_intr:
+ int iio_dma_buffer_init(struct iio_dma_buffer_queue *queue,
 -- 
 2.17.1
 
