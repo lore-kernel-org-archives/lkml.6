@@ -7,47 +7,49 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A207C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:54:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A923FC65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:54:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F9FB2084C
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:54:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 792722084C
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:54:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SR8LZfLq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F9FB2084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JbkoYnLa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 792722084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731150AbeKCECO (ORCPT
+        id S1731160AbeKCECS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 00:02:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58012 "EHLO mail.kernel.org"
+        Sat, 3 Nov 2018 00:02:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729463AbeKCECN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 00:02:13 -0400
+        id S1729463AbeKCECR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 00:02:17 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5982C2082D;
-        Fri,  2 Nov 2018 18:53:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 529CA20848;
+        Fri,  2 Nov 2018 18:54:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184838;
-        bh=xope5YjRmQg7SzEpfjTOMrXxr+mq+pTjjXDPFmF4l1Y=;
+        s=default; t=1541184841;
+        bh=vdn5bnvk5thnDb1uPwHMa+J1garG58BDDztWNPObfQQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SR8LZfLq2nafXLEPq0uEJkU8NzEjRYbuIG9P5YEgf0EdvR+L4t02vUhEQfCGquog1
-         foh05MljuqRMdyoFUXgDiI7vlpimv18TkAMIrsRIzwCAYocMwDFTVEjrdgaBtILhfS
-         xBR2RcNjQ06sUsw0oT7seHrsGGE8xdN9b+Fja/lg=
+        b=JbkoYnLa6fmTwJjugLAYwSwe4Jc3zdU6yA1R25hSi4eFqkKVZI79m/FQdrccG6oIh
+         dAJZbyg1vnnU8vBk0VuI0KLapxU552tKhlep1t8pb7xsLb1iH5zSugt34ZE3dxVsLw
+         DCgnV8q+v7cGqFksGnjf4sO9YQu/ZxpapOMYkZGM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Thadeu Lima de Souza Cascardo <cascardo@canonical.com>,
-        Yonghong Song <yhs@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        kvm@vger.kernel.org, KarimAllah Ahmed <karahmed@amazon.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 072/143] test_bpf: Fix testing with CONFIG_BPF_JIT_ALWAYS_ON=y on other arches
-Date:   Fri,  2 Nov 2018 19:34:17 +0100
-Message-Id: <20181102182903.134205822@linuxfoundation.org>
+Subject: [PATCH 4.14 073/143] KVM: x86: Update the exit_qualification access bits while walking an address
+Date:   Fri,  2 Nov 2018 19:34:18 +0100
+Message-Id: <20181102182903.219294429@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -65,41 +67,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 52fda36d63bfc8c8e8ae5eda8eb5ac6f52cd67ed ]
+[ Upstream commit ddd6f0e94d3153951580d5b88b9d97c7e26a0e00 ]
 
-Function bpf_fill_maxinsns11 is designed to not be able to be JITed on
-x86_64. So, it fails when CONFIG_BPF_JIT_ALWAYS_ON=y, and
-commit 09584b406742 ("bpf: fix selftests/bpf test_kmod.sh failure when
-CONFIG_BPF_JIT_ALWAYS_ON=y") makes sure that failure is detected on that
-case.
+... to avoid having a stale value when handling an EPT misconfig for MMIO
+regions.
 
-However, it does not fail on other architectures, which have a different
-JIT compiler design. So, test_bpf has started to fail to load on those.
+MMIO regions that are not passed-through to the guest are handled through
+EPT misconfigs. The first time a certain MMIO page is touched it causes an
+EPT violation, then KVM marks the EPT entry to cause an EPT misconfig
+instead. Any subsequent accesses to the entry will generate an EPT
+misconfig.
 
-After this fix, test_bpf loads fine on both x86_64 and ppc64el.
+Things gets slightly complicated with nested guest handling for MMIO
+regions that are not passed through from L0 (i.e. emulated by L0
+user-space).
 
-Fixes: 09584b406742 ("bpf: fix selftests/bpf test_kmod.sh failure when CONFIG_BPF_JIT_ALWAYS_ON=y")
-Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
-Reviewed-by: Yonghong Song <yhs@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+An EPT violation for one of these MMIO regions from L2, exits to L0
+hypervisor. L0 would then look at the EPT12 mapping for L1 hypervisor and
+realize it is not present (or not sufficient to serve the request). Then L0
+injects an EPT violation to L1. L1 would then update its EPT mappings. The
+EXIT_QUALIFICATION value for L1 would come from exit_qualification variable
+in "struct vcpu". The problem is that this variable is only updated on EPT
+violation and not on EPT misconfig. So if an EPT violation because of a
+read happened first, then an EPT misconfig because of a write happened
+afterwards. The L0 hypervisor will still contain exit_qualification value
+from the previous read instead of the write and end up injecting an EPT
+violation to the L1 hypervisor with an out of date EXIT_QUALIFICATION.
+
+The EPT violation that is injected from L0 to L1 needs to have the correct
+EXIT_QUALIFICATION specially for the access bits because the individual
+access bits for MMIO EPTs are updated only on actual access of this
+specific type. So for the example above, the L1 hypervisor will keep
+updating only the read bit in the EPT then resume the L2 guest. The L2
+guest would end up causing another exit where the L0 *again* will inject
+another EPT violation to L1 hypervisor with *again* an out of date
+exit_qualification which indicates a read and not a write. Then this
+ping-pong just keeps happening without making any forward progress.
+
+The behavior of mapping MMIO regions changed in:
+
+   commit a340b3e229b24 ("kvm: Map PFN-type memory regions as writable (if possible)")
+
+... where an EPT violation for a read would also fixup the write bits to
+avoid another EPT violation which by acciddent would fix the bug mentioned
+above.
+
+This commit fixes this situation and ensures that the access bits for the
+exit_qualifcation is up to date. That ensures that even L1 hypervisor
+running with a KVM version before the commit mentioned above would still
+work.
+
+( The description above assumes EPT to be available and used by L1
+  hypervisor + the L1 hypervisor is passing through the MMIO region to the L2
+  guest while this MMIO region is emulated by the L0 user-space ).
+
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/test_bpf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kvm/paging_tmpl.h | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/lib/test_bpf.c b/lib/test_bpf.c
-index 64701b4c9900..75ebf2bbc2ee 100644
---- a/lib/test_bpf.c
-+++ b/lib/test_bpf.c
-@@ -5427,7 +5427,7 @@ static struct bpf_test tests[] = {
- 	{
- 		"BPF_MAXINSNS: Jump, gap, jump, ...",
- 		{ },
--#ifdef CONFIG_BPF_JIT_ALWAYS_ON
-+#if defined(CONFIG_BPF_JIT_ALWAYS_ON) && defined(CONFIG_X86)
- 		CLASSIC | FLAG_NO_DATA | FLAG_EXPECTED_FAIL,
- #else
- 		CLASSIC | FLAG_NO_DATA,
+diff --git a/arch/x86/kvm/paging_tmpl.h b/arch/x86/kvm/paging_tmpl.h
+index 5abae72266b7..6288e9d7068e 100644
+--- a/arch/x86/kvm/paging_tmpl.h
++++ b/arch/x86/kvm/paging_tmpl.h
+@@ -452,14 +452,21 @@ error:
+ 	 * done by is_rsvd_bits_set() above.
+ 	 *
+ 	 * We set up the value of exit_qualification to inject:
+-	 * [2:0] - Derive from [2:0] of real exit_qualification at EPT violation
++	 * [2:0] - Derive from the access bits. The exit_qualification might be
++	 *         out of date if it is serving an EPT misconfiguration.
+ 	 * [5:3] - Calculated by the page walk of the guest EPT page tables
+ 	 * [7:8] - Derived from [7:8] of real exit_qualification
+ 	 *
+ 	 * The other bits are set to 0.
+ 	 */
+ 	if (!(errcode & PFERR_RSVD_MASK)) {
+-		vcpu->arch.exit_qualification &= 0x187;
++		vcpu->arch.exit_qualification &= 0x180;
++		if (write_fault)
++			vcpu->arch.exit_qualification |= EPT_VIOLATION_ACC_WRITE;
++		if (user_fault)
++			vcpu->arch.exit_qualification |= EPT_VIOLATION_ACC_READ;
++		if (fetch_fault)
++			vcpu->arch.exit_qualification |= EPT_VIOLATION_ACC_INSTR;
+ 		vcpu->arch.exit_qualification |= (pte_access & 0x7) << 3;
+ 	}
+ #endif
 -- 
 2.17.1
 
