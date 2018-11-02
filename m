@@ -2,181 +2,196 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIMWL_WL_MED,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DEDAC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:50:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC911C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:50:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19E4A204FD
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:50:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67F0B204FD
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:50:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=usp-br.20150623.gappssmtp.com header.i=@usp-br.20150623.gappssmtp.com header.b="io7Dv7w8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19E4A204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=usp.br
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="Dg2gw/SC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67F0B204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727530AbeKBW5W (ORCPT
+        id S1727752AbeKBW52 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 18:57:22 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:33469 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726026AbeKBW5W (ORCPT
+        Fri, 2 Nov 2018 18:57:28 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:50359 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726147AbeKBW52 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 18:57:22 -0400
-Received: by mail-qk1-f193.google.com with SMTP id o89so3149851qko.0
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 06:50:05 -0700 (PDT)
+        Fri, 2 Nov 2018 18:57:28 -0400
+Received: by mail-it1-f194.google.com with SMTP id k206-v6so3223114ite.0
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 06:50:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=usp-br.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=5IrRo836/EZuNtecTHHEBsqnp85MzPlSS4Bg+Ua1VEc=;
-        b=io7Dv7w8ZcC4qKlPesPZ505vBn42poyeBa52VNxI3QRRtUiuR+Bms+Vlf97RNGPdbl
-         K8t/kCzZdlBWVpULVEe1V14StyBz+UXsUl+t4eUMYEAggwggXLJl6k4bxB4IuGdlva4/
-         qAdRS8Fpmyzm29zidjSZlnJcej13HNCEadK+q/njeiE5C479Z/FULxIpMeELzxwcbv5l
-         2sw+SHKbH2ac+mNNAT/P2EJV6OgahIIrJSboTOEkCWcJPA7U0zNII7rW9Ekm90IiFwPA
-         L1qL+l/ZeVecjIExikZs2/vGZ4uvZHCEez6oksnbbh5cM7yyqrrOe3+hdQk3q8MmC+JT
-         SEDg==
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PnptN6cZ1jWu6MmjASLMC8vLTTjDJgkcp9FaLvSTpG8=;
+        b=Dg2gw/SCM1zUT7xayesds6Wo8Ob3Y59P43lacx0ndHPD9vN9bDHYXG2ga5QraIFsq+
+         dRtYz4lAfC4Ge4QPzaVf5HgMNGV1IMa4xite9zWcFVHHYv9nxNCQz5IcYX7kxGPoFWAA
+         4Ne3QRkgKRBb73hDDQei5xqi7yl5QSwVYR+kvLGmgMwPLWAnzpWT73lQzCN7aT+nBpdu
+         DOd9ysp+GZj+zkDpNj9cASAcXhlQ+xammgKlIXF2k9gqJWW8fMacwH0FQbtglzO8IVFl
+         aJnbFbvrPMSTE4Cs20U3UkA++hAgB6U0fDZEJwhvgEZvPjxiJ+hSaBMQvion3ZWGCgyB
+         7U0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=5IrRo836/EZuNtecTHHEBsqnp85MzPlSS4Bg+Ua1VEc=;
-        b=jnMaCwRckVC030Z8jQdVXwix33hscr2XZE+7YqweT2IIjAA3oYLYjIbtmIOj1VSeD8
-         vBc+vAvNNiFIIH78Age8wTArP5End2CkBK3KcvhEic16kvd2U6PJfWHoItepwZm95ev+
-         wIifYM2WKht/EdLjeBNPschgszxVfj3wloeWS/v0EIV07FKnnVIJc1Vyy+ZQTtrY38oE
-         4fAbDPahQHbPz6e0iC69bTESUztGXgIUdMN8/Z15YNvo5dr1U7ZVsuZrWu0CNM9WZNKL
-         /7vZ+8QEX/S6wn7yZTrVw/yIhKC0zBnCSTeqcbUEXHlgE5FWUObQkM3Cu6ClqXu1uKRX
-         7TFQ==
-X-Gm-Message-State: AGRZ1gKG8/zPBbE3ACL3+/T69jbsKg1A9MbxgGkDNBSyGTnhKv26zWXT
-        jBkmQuhl9w17JstTiNjjib8tzQ==
-X-Google-Smtp-Source: AJdET5c5gQdh3X9Aq88qX0Z1pPeegk8tHM0YiQeN9slGkyZSwQZDcHIkxJQJQhDCQKJF3T1xf9QpTg==
-X-Received: by 2002:a0c:bb82:: with SMTP id i2mr1500246qvg.159.1541166604366;
-        Fri, 02 Nov 2018 06:50:04 -0700 (PDT)
-Received: from ?IPv6:2804:14c:81:942d::1? ([2804:14c:81:942d::1])
-        by smtp.gmail.com with ESMTPSA id 38sm13245612qkw.56.2018.11.02.06.50.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 02 Nov 2018 06:50:03 -0700 (PDT)
-Subject: Re: [PATCH v2 1/6] staging:iio:ad2s90: Make read_raw return
- spi_read's error code
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
-References: <20181027020005.3140-1-matheus.bernardino@usp.br>
- <20181027020005.3140-2-matheus.bernardino@usp.br>
- <20181028164038.0c920358@archlinux>
-From:   Matheus Tavares <matheus.bernardino@usp.br>
-Message-ID: <707d385e-7c08-91a3-2925-0cadf5bc2ac4@usp.br>
-Date:   Fri, 2 Nov 2018 10:49:59 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PnptN6cZ1jWu6MmjASLMC8vLTTjDJgkcp9FaLvSTpG8=;
+        b=uOQuxLMP3zxBYp/jVC0H1vaRwpVP5pjknqCVDutROlAOLP6aAs6GuRTyjXyRGBW5QE
+         M5njp13qFhKQaK40upeYXoRgZ41xtkN84nYab7kZrIUcXhUVnYGBaeoog3jdZZdQrAH0
+         tcCxBbSM4fEkSx+bNhja19Dqz0mYdbBIjJ+gFrUus1bD0WexHYqwtdboi3TboLObAxhU
+         IT/RVQ/mAldCUDWYsMsRpwTVd7jKglOickqrLGV3OTCSS+7eyB9bY4WLmR25RuNgJjin
+         SUj7IydTeLN6lb5ArBHaZ5X5tLEbMbG1MK8/7/BGE9GKlYPNt7yeysNY3PYFH6JS8kjl
+         HY8g==
+X-Gm-Message-State: AGRZ1gJS4Z0e65p24ZLCC7ESbNNrB8g5Z80HF4Pc3CFh/g7/HX17gi9i
+        0UsjwdFqcIe0f6diGA6YfZF6CBul5i0=
+X-Google-Smtp-Source: AJdET5e5hVnVl9KEcVJj2XcZV4okhh+P5KDOx5O041gifWH/KMk4KUlPNwfAW9NLNZnoAhEviC+rtw==
+X-Received: by 2002:a24:d983:: with SMTP id p125-v6mr28733itg.97.1541166614449;
+        Fri, 02 Nov 2018 06:50:14 -0700 (PDT)
+Received: from cisco (75-166-162-63.hlrn.qwest.net. [75.166.162.63])
+        by smtp.gmail.com with ESMTPSA id 142-v6sm3530107itw.40.2018.11.02.06.50.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 02 Nov 2018 06:50:13 -0700 (PDT)
+Date:   Fri, 2 Nov 2018 07:50:11 -0600
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian@brauner.io>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Aleksa Sarai <asarai@suse.de>, linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v8 1/2] seccomp: add a return code to trap to userspace
+Message-ID: <20181102135011.GK2180@cisco>
+References: <20181029224031.29809-1-tycho@tycho.ws>
+ <20181029224031.29809-2-tycho@tycho.ws>
+ <20181030143235.GA3385@redhat.com>
+ <20181030153231.GB7343@cisco>
+ <20181101144804.GD23232@redhat.com>
+ <20181101203328.GI2180@cisco>
+ <20181102112903.GB12360@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20181028164038.0c920358@archlinux>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181102112903.GB12360@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Nov 02, 2018 at 12:29:03PM +0100, Oleg Nesterov wrote:
+> On 11/01, Tycho Andersen wrote:
+> >
+> > On Thu, Nov 01, 2018 at 03:48:05PM +0100, Oleg Nesterov wrote:
+> > >
+> > > > > But my main concern is that either way wait_for_completion_killable() allows
+> > > > > to trivially create a process which doesn't react to SIGSTOP, not good...
+> > > > >
+> > > > > Note also that this can happen if, say, both the tracer and tracee run in the
+> > > > > same process group and SIGSTOP is sent to their pgid, if the tracer gets the
+> > > > > signal first the tracee won't stop.
+> > > > >
+> > > > > Of freezer. try_to_freeze_tasks() can fail if it freezes the tracer before
+> > > > > it does SECCOMP_IOCTL_NOTIF_SEND.
+> > > >
+> > > > I think in general the way this is intended to be used these things
+> > > > wouldn't happen.
+> > >
+> > > Why?
+> >
+> > The intent is to run the tracer on the host and have it trace
+> > containers, which would live in a different freezer cgroup, process
+> > group, etc.
+> 
+> I didn't mean the freezer cgroup, suspend can fail, it does the "global" freeze.
+> Nevermind.
+> 
+> > > Yes I think it would be nice to avoid wait_for_completion_killable().
+> > >
+> > > So please help me to understand the problem. Once again, why can not
+> > > seccomp_do_user_notification() use wait_for_completion_interruptible() only?
+> > >
+> > > This is called before the task actually starts the syscall, so
+> > > -ERESTARTNOINTR if signal_pending() can't hurt.
+> >
+> > The idea was that when the tracee gets a signal, it notifies the
+> > tracer exactly once, and then waits for the tracer to decide what to
+> > do. So if we use another wait_for_completion_interruptible(), doesn't
+> > it just get re-woken immediately because the signal is still pending?
+> 
+> Hmm. I meant that we should use a single wait_for_completion_interruptible().
 
-On 10/28/18 1:40 PM, Jonathan Cameron wrote:
-> On Fri, 26 Oct 2018 23:00:00 -0300
-> Matheus Tavares <matheus.bernardino@usp.br> wrote:
->
->> Previously, when spi_read returned an error code inside ad2s90_read_raw,
->> the code was ignored and IIO_VAL_INT was returned. This patch makes the
->> function return the error code returned by spi_read when it fails.
->>
->> Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
-> Hi Matheus,
->
-> One quick process note is that it takes people a while to get around to reviewing
-> a series, so whilst it's tempting to very quickly send out a fix the moment
-> someone points out something that needs fixing, it is perhaps better to wait
-> at least a few days to see if you can pick up a few more reviews before you
-> do a V2.
->
-> A few comments on this one inline.  I think it can be done 'slightly'
-> (and I mean only slightly) nicer than the version you have.  Result is the
-> same though.
->
-> Thanks,
->
-> Jonathan
->
->> ---
->>   drivers/staging/iio/resolver/ad2s90.c | 9 ++++++---
->>   1 file changed, 6 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/staging/iio/resolver/ad2s90.c
->> index 59586947a936..11fac9f90148 100644
->> --- a/drivers/staging/iio/resolver/ad2s90.c
->> +++ b/drivers/staging/iio/resolver/ad2s90.c
->> @@ -35,12 +35,15 @@ static int ad2s90_read_raw(struct iio_dev *indio_dev,
->>   	struct ad2s90_state *st = iio_priv(indio_dev);
->>   
->>   	mutex_lock(&st->lock);
->> +
-> Unconnected change.  I'm not against the change in principle but please
-> group white space tidying up in it's own patch.
->
->>   	ret = spi_read(st->sdev, st->rx, 2);
->> -	if (ret)
->> -		goto error_ret;
->> +	if (ret < 0) {
->> +		mutex_unlock(&st->lock);
->> +		return ret;
-> I'd actually prefer to keep the return path the same as before as then
-> it is easy (if the function gets more complex in future) to be sure
-> that all paths unlock the mutex.
+Yes, but if we can use a second _interruptible(), then we can avoid
+the SIGSTOP issue and still perhaps preserve the SIGNALED bit if we
+decide it's worth it at the conclusion of this thread.
 
+> > > Now lets suppose seccomp_do_user_notification() simply does
+> > >
+> > > 	err = wait_for_completion_interruptible(&n.ready);
+> > >
+> > > 	if (err < 0 && state != SECCOMP_NOTIFY_REPLIED) {
+> > > 		syscall_set_return_value(ERESTARTNOINTR);
+> > > 		list_del(&n.list);
+> > > 		return -1;
+> > > 	}
+> > >
+> > > (I am ignoring the locking/etc). Now the obvious problem is that the listener
+> > > doing SECCOMP_IOCTL_NOTIF_SEND can't distinguish -ENOENT from the case when the
+> > > tracee was killed, yes?
+> > >
+> > > Is it that important?
+> >
+> > The answer to this question depends on how we want the listener to be
+> > able to react. For example, if the listener is in the middle of doing
+> > a mount() on behalf of the task and it gets a signal and we return
+> > immediately, the listener will complete the mount(), try to respond
+> > with success and get -ENOENT.
+> 
+> Yes. Should we undo the mount if the tracee is killed?
+> 
+> > If the task handles the signal and
+> > restarts the mount(), it'll happen twice unless the listener undoes
+> > it when it sees the -ENOENT.
+> 
+> Yes. But note that we know that if the same tracee sends another notification
+> it must be the same syscall.
+> 
+> So. If the listener needs to undo mount when the tracee is killed, it should
+> undo it if it was interrupted too.
+> 
+> If no, the listener can simply "ignore" the next notification and do
+> SECCOMP_IOCTL_NOTIF_SEND(val = 0, error = 0).
+> 
+> I see no real difference...
 
-Ok, got it! But then, in patch 5, when we add the switch for 
-IIO_CHAN_INFO_SCALE and IIO_CHAN_INFO_RAW, should I keep the goto and 
-label inside the switch case? I mean, should it be something like this:
+Well, doesn't it seem like a hack? What if the tracee really makes the
+same syscall twice? How do we tell the difference between one that was
+restarted and a real second call?
 
+> > If we send another notification with the
+> > SIGNALED flag, the listener has a better picture of what's going on,
+> > which might be nice.
+> 
+> Yes, but this returns us to my my question: Is it that important?
+> 
+> What exactly the listener can do if it gets SECCOMP_NOTIF_FLAG_SIGNALED?
+> 
+> Undo the mount? No. This doesn't differ from the case when the tracee gets
+> the non-fatal signal right after SECCOMP_NOTIFY_REPLIED.
 
-     switch (m) {
-     case IIO_CHAN_INFO_SCALE:
-         ... // Does not use mutex
-     case IIO_CHAN_INFO_RAW:
-         mutex_lock(&st->lock);
-         ret = spi_read(st->sdev, st->rx, 2);
-         if (ret)
-             goto error_ret;
-         *val = (((u16)(st->rx[0])) << 4) | ((st->rx[1] & 0xF0) >> 4);
+I guess that in do_user_notification(), even if we get -EINTER from
+the wait, we should check to see that the state is REPLIED. If it is,
+we can use the err and val from it, and complete the syscall as
+normal, since it did.
 
-error_ret:
-         mutex_unlock(&st->lock);
-
-         return ret ? ret : IIO_VAL_INT;
-     default:
-         break;
-     }
-
-
-Matheus
-
-
->> +	}
->> +
->>   	*val = (((u16)(st->rx[0])) << 4) | ((st->rx[1] & 0xF0) >> 4);
->>   
->> -error_ret:
->>   	mutex_unlock(&st->lock);
->>   
->>   	return IIO_VAL_INT;
-> The 'standard' if slightly nasty way of doing this is:
->
-> 	return ret ? ret : IIO_VAL_INT;
->
+Tycho
