@@ -2,216 +2,316 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 545E7C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 23:07:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9711EC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 23:10:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E147320657
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 23:06:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E88920657
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 23:10:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="LN8HPBN7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E147320657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JxV3tWRP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E88920657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728352AbeKCIQB (ORCPT
+        id S1728427AbeKCIT3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 04:16:01 -0400
-Received: from mail-ed1-f48.google.com ([209.85.208.48]:43613 "EHLO
-        mail-ed1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726083AbeKCIQB (ORCPT
+        Sat, 3 Nov 2018 04:19:29 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:46598 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727007AbeKCIT3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 04:16:01 -0400
-Received: by mail-ed1-f48.google.com with SMTP id y20-v6so3008520eds.10
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 16:06:54 -0700 (PDT)
+        Sat, 3 Nov 2018 04:19:29 -0400
+Received: by mail-ua1-f68.google.com with SMTP id v24so1209520uap.13;
+        Fri, 02 Nov 2018 16:10:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YJ0BIPVEpryHQkQVM2OacWkNvxa+zD/XAXxU9dtY9gI=;
-        b=LN8HPBN7HHXpT/SjPg2xfWLH8Dclk8LsZI9oip8/hVVuxvycM/pKY8J7HbfnOdMxPM
-         2/5NaR7feUG3kagqttp4Mqb/jRTsU8g9SaKgCQwGJRQ8rUjKo5wpY0n8+cMs1iAHfO+/
-         naWuFpmH9qaIAC/2ELID1Sj6wkvmKwBUhKP4o=
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Ivvk7HbnmoOtibtEd/Mtxll5LMwQi2lxoLLQIOkfYhA=;
+        b=JxV3tWRPDAsHOukJeynkCm9s3OSrmmu2m6CH1s0TXXGaBIYziGI+op6VTB9Vy3zWOK
+         ZIvySVyZiMkmTGte0c/9lrw0hKZCoqyHaBvBolefBjfgFwfBGN6iWXH+N81n4pKIUy/w
+         Logce0khUcG5LD+PtLyX7+jlbqeQYvF8kQH1hgQ4jLhr0gwpgFIW48oWIjB0ozDV34ad
+         a34zMCSyYT2YlSzMhDrdp5UB6WfVl2ATk5FD/4a7O5yTeh4VM4ZskjtsZp/L2esG1d57
+         fBMVJrGaM6eLGFjYiJ+cu1rEeM9k5nnlIegJzXGle/1SK0cg/V2ikfJhkwwVxzKBicTW
+         I2tQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YJ0BIPVEpryHQkQVM2OacWkNvxa+zD/XAXxU9dtY9gI=;
-        b=IDiUYPHKkYzNV4FQ9vpwL512wihqcoTi3BDamKtTJInD3so83qtY6epIGbC2pqq+Qy
-         vDEnkr45EZn63UAPxQ9sduUC/G9yXnQfEOTKzmQRHCaDzavMtcZ3TC8WUD66e6kf80oV
-         Ty8P1qDOoM/d54ICshdsQTMuvoXAcMu10uKleZSduLN6Fs2T0tdqRum5GT3EjL/VExEk
-         3H7XZCHXK4JaMHzFw1l7eaRs3SjbKPNVtniK/K2kRBY67QbR0nWYTA2oR0aG5drXwuC3
-         zQBhuYYhLtF5CdLXHDL+1nOh/XuhRyKruT4qwqX76qtoWaUtlnJpVas44edjqL5KW6sy
-         xZUA==
-X-Gm-Message-State: AGRZ1gJ0y5/KjpWw0hZjgTnz0qNrKpyNGr80tOW1iNUt60Yw1Px1hCAL
-        YI0/gLtJf6C0fAyyx7dFEDnixQ==
-X-Google-Smtp-Source: AJdET5dyussK5jE5EUPprA041jvkQKUmN/5r0z+s5FJfO2WkiXHWfKW7ucd9RpYcZtVnLejrGh+aUA==
-X-Received: by 2002:a17:906:f95:: with SMTP id q21-v6mr6063542ejj.52.1541200014083;
-        Fri, 02 Nov 2018 16:06:54 -0700 (PDT)
-Received: from prevas-ravi.waoo.dk (dhcp-5-186-114-252.cgn.ip.fibianet.dk. [5.186.114.252])
-        by smtp.gmail.com with ESMTPSA id d6-v6sm103540edl.61.2018.11.02.16.06.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 02 Nov 2018 16:06:53 -0700 (PDT)
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] perf: replace automatic const char[] variables by statics
-Date:   Sat,  3 Nov 2018 00:06:23 +0100
-Message-Id: <20181102230624.20064-1-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.19.1.6.gbde171bbf5
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Ivvk7HbnmoOtibtEd/Mtxll5LMwQi2lxoLLQIOkfYhA=;
+        b=KsdqcMu2XsUKWxgx4cy3ccxoWDIe0zGqdftdLiZDNRtSx8FTZiBFSNbp8nLbI4eDdk
+         rKS3sosw02E4O6u78tHDNnGvIMGaeYUHHfY635SS08TD8t7Z2eBqK23QX0pI4IUhN0Vh
+         /7HH3EpAlDpn0i0GTVwIWDFSI6QUX3TiQ+NuzWZIG/1HN0oX9WGtyc3FZaV907N22klr
+         O3JrNsHEXYC4KESCTGFe45Z+8h263+eLmkqTZ/BmNKor3Vs8Mw862wSEjOvfqbpayJpf
+         dTKsDzlbiXp+hfFiMZErT1p2yM6k4DryxSdhyE2e/mzGYack9nCPXuiLnoqG+S1a0z0+
+         NBpw==
+X-Gm-Message-State: AGRZ1gLXXo2HrKY/qMo1jLKfsJUiYJ0bcqpzOWUVmHR77t2JVYAT5PW+
+        /j/urfBqsEn5NLeL/2TjDw==
+X-Google-Smtp-Source: AJdET5cB4kZV3ELmUs3eGAWniWoDfa9oi3wTqx1VfCT1wf+r04kRKof547pv3t5lCQaCKlG/5tXKJg==
+X-Received: by 2002:ab0:5741:: with SMTP id t1mr6418852uac.87.1541200220788;
+        Fri, 02 Nov 2018 16:10:20 -0700 (PDT)
+Received: from 960.ws ([2601:902:c200:6512:a7fd:514d:7aab:c075])
+        by smtp.gmail.com with ESMTPSA id 17-v6sm3280104vkx.49.2018.11.02.16.10.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 02 Nov 2018 16:10:19 -0700 (PDT)
+Message-ID: <3074f3045a43984fc9df4d4bb66d15e3f5293e90.camel@gmail.com>
+Subject: Re: [PATCH v2 1/3] x86: add support for Huawei WMI hotkeys.
+From:   ayman.bagabas@gmail.com
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, kailang@realtek.com,
+        Hui Wang <hui.wang@canonical.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>
+Date:   Fri, 02 Nov 2018 19:10:18 -0400
+In-Reply-To: <CAHp75Vds_RucAxD7ZHkRs8C32Y=UG3YQngGhZ28vvagVESTC_g@mail.gmail.com>
+References: <20181102041120.7603-1-ayman.bagabas@gmail.com>
+         <20181102041120.7603-2-ayman.bagabas@gmail.com>
+         <CAHp75Vds_RucAxD7ZHkRs8C32Y=UG3YQngGhZ28vvagVESTC_g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-An automatic const char[] variable gets initialized at runtime, just
-like any other automatic variable. For long strings, that uses a lot of
-stack and wastes time building the string; e.g. for the "No %s
-allocation events..." case one has
+On Fri, 2018-11-02 at 20:20 +0200, Andy Shevchenko wrote:
+> On Fri, Nov 2, 2018 at 6:11 AM Ayman Bagabas <ayman.bagabas@gmail.com
+> > wrote:
+> > 
+> > This driver adds support for missing hotkeys on some Huawei
+> > laptops.
+> > Currently, only Huawei Matebook X Pro is supported. The driver
+> > recognizes the following keys: brightness keys, micmute, wlan, and
+> > Huawei special key. The brightness keys are ignored since they work
+> > out
+> > of the box.
+> > +config HUAWEI_LAPTOP
+> > +       tristate "Huawei WMI hotkeys driver"
+> > +       depends on ACPI
+> > +       depends on ACPI_WMI
+> 
+> 
+> > +       depends on INPUT
+> > +       select INPUT_SPARSEKMAP
+> > +       help
+> > +         This driver provides support for Huawei WMI hotkeys.
+> > +         It enables the missing keys and adds support to micmute
+> > +         led found on these laptops.q
+> > +         Supported devices are:
+> > +         - Matebook X Pro
+> 
+> 
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + *  Huawei WMI Hotkeys Driver
+> > + *
+> > + *  Copyright (C) 2018           Ayman Bagabas <
+> > ayman.bagabas@gmail.com>
+> > + *
+> > + *  This program is free software: you can redistribute it and/or
+> > modify
+> > + *  it under the terms of the GNU General Public License as
+> > published by
+> > + *  the Free Software Foundation, either version 2 of the License,
+> > or
+> > + *  (at your option) any later version.
+> > + *
+> > + *  This program is distributed in the hope that it will be
+> > useful,
+> > + *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+> > + *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> > + *  GNU General Public License for more details.
+> > + *
+> > + *  You should have received a copy of the GNU General Public
+> > License
+> > + *  along with this program.  If not, see <
+> > https://www.gnu.org/licenses/>.
+> > + *
+> > + */
+> > +MODULE_LICENSE("GPL");
+> 
+> 
+> Here you have the following issues:
+> - inconsistency between IDs for license (fix accordingly)
+> - SDPX _and_ License header (remove latter)
+> 
+> 
+> > +#include <linux/kernel.h>
+> > +#include <linux/module.h>
+> > +#include <linux/init.h>
+> 
+> Choose one of them.
+> 
+> > +#include <linux/input.h>
+> > +#include <linux/input/sparse-keymap.h>
+> > +#include <linux/acpi.h>
+> > +#include <linux/wmi.h>
+> 
+> Please, keep in order.
 
-  444516:       48 b8 4e 6f 20 25 73 20 61 6c   movabs $0x6c61207325206f4e,%rax # "No %s al"
-  ...
-  444674:       48 89 45 80                     mov    %rax,-0x80(%rbp)
-  444678:       48 b8 6c 6f 63 61 74 69 6f 6e   movabs $0x6e6f697461636f6c,%rax # "location"
-  444682:       48 89 45 88                     mov    %rax,-0x78(%rbp)
-  444686:       48 b8 20 65 76 65 6e 74 73 20   movabs $0x2073746e65766520,%rax # " events "
-  444690:       66 44 89 55 c4                  mov    %r10w,-0x3c(%rbp)
-  444695:       48 89 45 90                     mov    %rax,-0x70(%rbp)
-  444699:       48 b8 66 6f 75 6e 64 2e 20 20   movabs $0x20202e646e756f66,%rax
+What order do I have to follow? Does this look right?
+module.h
+init.h
+apci.h
+wmi.h
+input.h
+sparse-keymap.h
 
-Make them all static so that the compiler just references objects in .rodata.
+> 
+> > +static const struct key_entry huawei_wmi_keymap[] __initconst = {
+> > +               { KE_IGNORE, 0x281, { KEY_BRIGHTNESSDOWN } },
+> > +               { KE_IGNORE, 0x282, { KEY_BRIGHTNESSUP } },
+> > +               { KE_KEY,       0x287, { KEY_MICMUTE } },
+> > +               { KE_KEY,       0x289, { KEY_WLAN } },
+> > +               // Huawei |M| button
+> > +               { KE_KEY,       0x28a, { KEY_PROG1 } },
+> > +               { KE_END,       0 }
+> > +};
+> > +
+> > +struct huawei_wmi_device {
+> > +       struct input_dev *inputdev;
+> > +};
+> 
+> Apparently no need to have this, you may use struct input_dev
+> directly, isn't it?
+> 
+> > +static struct huawei_wmi_device *wmi_device;
+> 
+> No global variables, please.
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
- tools/perf/builtin-c2c.c        | 4 ++--
- tools/perf/builtin-kmem.c       | 4 ++--
- tools/perf/builtin-report.c     | 6 +++---
- tools/perf/builtin-sched.c      | 2 +-
- tools/perf/ui/browsers/header.c | 2 +-
- tools/perf/ui/browsers/hists.c  | 4 ++--
- 6 files changed, 11 insertions(+), 11 deletions(-)
+What about input_dev as a global variable? How would
+input_unregister_device access input_dev on exit if it wasn't global?
 
-diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-index f3aa9d02a5ab..ab6a89e5393c 100644
---- a/tools/perf/builtin-c2c.c
-+++ b/tools/perf/builtin-c2c.c
-@@ -2343,7 +2343,7 @@ static int perf_c2c__browse_cacheline(struct hist_entry *he)
- 	struct c2c_cacheline_browser *cl_browser;
- 	struct hist_browser *browser;
- 	int key = -1;
--	const char help[] =
-+	static const char help[] =
- 	" ENTER         Toggle callchains (if present) \n"
- 	" n             Toggle Node details info \n"
- 	" s             Toggle full length of symbol and source line columns \n"
-@@ -2424,7 +2424,7 @@ static int perf_c2c__hists_browse(struct hists *hists)
- {
- 	struct hist_browser *browser;
- 	int key = -1;
--	const char help[] =
-+	static const char help[] =
- 	" d             Display cacheline details \n"
- 	" ENTER         Toggle callchains (if present) \n"
- 	" q             Quit \n";
-diff --git a/tools/perf/builtin-kmem.c b/tools/perf/builtin-kmem.c
-index b63bca4b0c2a..088705c167bf 100644
---- a/tools/perf/builtin-kmem.c
-+++ b/tools/perf/builtin-kmem.c
-@@ -334,7 +334,7 @@ static int build_alloc_func_list(void)
- 	struct alloc_func *func;
- 	struct machine *machine = &kmem_session->machines.host;
- 	regex_t alloc_func_regex;
--	const char pattern[] = "^_?_?(alloc|get_free|get_zeroed)_pages?";
-+	static const char pattern[] = "^_?_?(alloc|get_free|get_zeroed)_pages?";
- 
- 	ret = regcomp(&alloc_func_regex, pattern, REG_EXTENDED);
- 	if (ret) {
-@@ -1924,7 +1924,7 @@ int cmd_kmem(int argc, const char **argv)
- 		NULL
- 	};
- 	struct perf_session *session;
--	const char errmsg[] = "No %s allocation events found.  Have you run 'perf kmem record --%s'?\n";
-+	static const char errmsg[] = "No %s allocation events found.  Have you run 'perf kmem record --%s'?\n";
- 	int ret = perf_config(kmem_config, NULL);
- 
- 	if (ret)
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index 257c9c18cb7e..ff615c624784 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -955,9 +955,9 @@ int cmd_report(int argc, const char **argv)
- 	int branch_mode = -1;
- 	bool branch_call_mode = false;
- #define CALLCHAIN_DEFAULT_OPT  "graph,0.5,caller,function,percent"
--	const char report_callchain_help[] = "Display call graph (stack chain/backtrace):\n\n"
--					     CALLCHAIN_REPORT_HELP
--					     "\n\t\t\t\tDefault: " CALLCHAIN_DEFAULT_OPT;
-+	static const char report_callchain_help[] = "Display call graph (stack chain/backtrace):\n\n"
-+						    CALLCHAIN_REPORT_HELP
-+						    "\n\t\t\t\tDefault: " CALLCHAIN_DEFAULT_OPT;
- 	char callchain_default_opt[] = CALLCHAIN_DEFAULT_OPT;
- 	const char * const report_usage[] = {
- 		"perf report [<options>]",
-diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-index cbf39dab19c1..2e0f0c65964a 100644
---- a/tools/perf/builtin-sched.c
-+++ b/tools/perf/builtin-sched.c
-@@ -3336,7 +3336,7 @@ static int __cmd_record(int argc, const char **argv)
- 
- int cmd_sched(int argc, const char **argv)
- {
--	const char default_sort_order[] = "avg, max, switch, runtime";
-+	static const char default_sort_order[] = "avg, max, switch, runtime";
- 	struct perf_sched sched = {
- 		.tool = {
- 			.sample		 = perf_sched__process_tracepoint_sample,
-diff --git a/tools/perf/ui/browsers/header.c b/tools/perf/ui/browsers/header.c
-index d75492189acb..5aeb663dd184 100644
---- a/tools/perf/ui/browsers/header.c
-+++ b/tools/perf/ui/browsers/header.c
-@@ -35,7 +35,7 @@ static int list_menu__run(struct ui_browser *menu)
- {
- 	int key;
- 	unsigned long offset;
--	const char help[] =
-+	static const char help[] =
- 	"h/?/F1        Show this window\n"
- 	"UP/DOWN/PGUP\n"
- 	"PGDN/SPACE\n"
-diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
-index a96f62ca984a..eab9dc025b3a 100644
---- a/tools/perf/ui/browsers/hists.c
-+++ b/tools/perf/ui/browsers/hists.c
-@@ -2737,7 +2737,7 @@ static int perf_evsel__hists_browse(struct perf_evsel *evsel, int nr_events,
- 	"S             Zoom into current Processor Socket\n"		\
- 
- 	/* help messages are sorted by lexical order of the hotkey */
--	const char report_help[] = HIST_BROWSER_HELP_COMMON
-+	static const char report_help[] = HIST_BROWSER_HELP_COMMON
- 	"i             Show header information\n"
- 	"P             Print histograms to perf.hist.N\n"
- 	"r             Run available scripts\n"
-@@ -2745,7 +2745,7 @@ static int perf_evsel__hists_browse(struct perf_evsel *evsel, int nr_events,
- 	"t             Zoom into current Thread\n"
- 	"V             Verbose (DSO names in callchains, etc)\n"
- 	"/             Filter symbol by name";
--	const char top_help[] = HIST_BROWSER_HELP_COMMON
-+	static const char top_help[] = HIST_BROWSER_HELP_COMMON
- 	"P             Print histograms to perf.hist.N\n"
- 	"t             Zoom into current Thread\n"
- 	"V             Verbose (DSO names in callchains, etc)\n"
--- 
-2.19.1.6.gbde171bbf5
+> 
+> > +int huawei_wmi_micmute_led_set(bool on)
+> > +{
+> > +       u32 args = (on) ? MICMUTE_LED_ON : MICMUTE_LED_OFF;
+> 
+> Redundant parens.
+> 
+> > +       struct acpi_buffer input = { (acpi_size)sizeof(args), &args
+> > };
+> > +       acpi_status status;
+> > +
+> > +       status = wmi_evaluate_method(AMW0_GUID, 0, 1, &input,
+> > NULL);
+> > +       if (ACPI_FAILURE(status))
+> > +               return status;
+> > +
+> > +       return 0;
+> > +}
+> > +static void huawei_wmi_process_key(struct input_dev *input_dev,
+> > int code)
+> > +{
+> > +       const struct key_entry *key;
+> > +
+> > +       key = sparse_keymap_entry_from_scancode(input_dev, code);
+> > +
+> 
+> This blank line is redundant.
+> 
+> > +       if (!key) {
+> > +               pr_info("%s: Unknown key pressed, code: 0x%04x\n",
+> > +                                       MODULE_NAME, code);
+> 
+> dev_info(); no MODULE_NAME, please.
+> 
+> > +               return;
+> > +       }
+> > +
+> > +       sparse_keymap_report_entry(input_dev, key, 1, true);
+> > +}
+> > +static void huawei_wmi_notify(u32 value, void *context)
+> > +{
+> > +       struct acpi_buffer response = { ACPI_ALLOCATE_BUFFER, NULL
+> > };
+> > +       union acpi_object *obj;
+> > +       acpi_status status;
+> > +
+> > +       status = wmi_get_event_data(value, &response);
+> > +       if (ACPI_FAILURE(status)) {
+> > +               pr_err("%s: Bad event status 0x%x\n",
+> > +                                       MODULE_NAME, status);
+> 
+> No MODULE_NAME, please.
+> If needed, use pr_fmt() macro.
+> 
+> But I'm pretty sure you may pass pointer to input device and use
+> dev_err().
+> 
+> > +               return;
+> > +       }
+> > +
+> > +       obj = (union acpi_object *)response.pointer;
+> > +
+> 
+> No redundant blank lines, please.
+> 
+> > +       if (!obj)
+> > +               return;
+> > +
+> > +       if (obj->type == ACPI_TYPE_INTEGER)
+> > +               huawei_wmi_process_key(wmi_device->inputdev,
+> > +                                                       obj-
+> > >integer.value);
+> > +       else
+> > +               pr_info("%s: Unknown response received %d\n",
+> > +                                       MODULE_NAME, obj->type);
+> 
+> Ditto about module name.
+> 
+> > +
+> > +       kfree(response.pointer);
+> > +}
+> > +
+> > +static int huawei_input_init(void)
+> > +{
+> > +       acpi_status status;
+> > +       int err;
+> > +       status = wmi_install_notify_handler(EVENT_GUID,
+> > +                       huawei_wmi_notify,
+> > +                       NULL);
+> 
+> Pointer to the input device instead of NULL.
+> 
+> > +
+> 
+> No redundant blank lines, please.
+> 
+> > +       if (ACPI_FAILURE(status)) {
+> > +               err = -EIO;
+> > +               goto err_free_dev;
+> > +       }
+> > +}
+> 
+> 
+> > +       wmi_device = kmalloc(sizeof(struct huawei_wmi_device),
+> > GFP_KERNEL);
+> 
+> sizeof(*wmi_device)
+> 
+> > +       if (!wmi_device)
+> > +               return -ENOMEM;
+> > +}
+> 
+> 
+> > +       pr_debug("%s: Driver unloaded successfully\n",
+> > MODULE_NAME);
+> 
+> Noise.
+> 
+> --
+> With Best Regards,
+> Andy Shevchenko
 
