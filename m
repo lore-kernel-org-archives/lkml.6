@@ -7,47 +7,44 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5018FC65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF993C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:37:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 213342082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:37:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A22D32081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:37:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LpVr2smK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 213342082D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gfO1P7TB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A22D32081B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728600AbeKCDpo (ORCPT
+        id S1728616AbeKCDpr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:45:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39358 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:45:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727556AbeKCDpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:45:44 -0400
+        id S1727556AbeKCDpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:45:46 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F34292082E;
-        Fri,  2 Nov 2018 18:37:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BFA4D2081B;
+        Fri,  2 Nov 2018 18:37:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541183853;
-        bh=fmYxKUxfCMTeXrWvqyiEsDrd7UsGii8yp4TJ+fj/114=;
+        s=default; t=1541183856;
+        bh=WOW1Jjv0hwMja7AzFdLpZLujL1CGUW5XLWoVWA6CZuI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LpVr2smKE1g6tMZ8CkbekLH/4yR7XVsE8Xefns+Y93MLc24zsWtHfZLD8E+OYpRnn
-         ustlkli3CvDvJkZyDdM6kt5qP3fprkkeVDnzO611HDhFH4HoyEg1w1lAcrJFdiX+mS
-         8v68ti0GNtjiGlalkVCo1zuHFCj8jlktA0TQmnEk=
+        b=gfO1P7TBymhedKM5WBnJaHEmZyaikorFm7dP4ATkA5ny7Zh2MWJ+8KCZxHyVo1SjP
+         EPzhHAg6jceg/Z7JlUf1lks/NZBcWjMlfnb5zbI50FcRKlETl4DL7PEgP6aBqJIgC0
+         MrcgFFO7nau5otRobMB041DssSCjAvf8m10LxuEo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
+        stable@vger.kernel.org, Tobias Jungel <tobias.jungel@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 09/24] vhost: Fix Spectre V1 vulnerability
-Date:   Fri,  2 Nov 2018 19:34:42 +0100
-Message-Id: <20181102182841.150614489@linuxfoundation.org>
+Subject: [PATCH 4.19 10/24] bonding: fix length of actor system
+Date:   Fri,  2 Nov 2018 19:34:43 +0100
+Message-Id: <20181102182841.279151567@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182839.725385066@linuxfoundation.org>
 References: <20181102182839.725385066@linuxfoundation.org>
@@ -65,42 +62,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Wang <jasowang@redhat.com>
+From: Tobias Jungel <tobias.jungel@gmail.com>
 
-[ Upstream commit ff002269a4ee9c769dbf9365acef633ebcbd6cbe ]
+[ Upstream commit 414dd6fb9a1a1b59983aea7bf0f79f0085ecc5b8 ]
 
-The idx in vhost_vring_ioctl() was controlled by userspace, hence a
-potential exploitation of the Spectre variant 1 vulnerability.
+The attribute IFLA_BOND_AD_ACTOR_SYSTEM is sent to user space having the
+length of sizeof(bond->params.ad_actor_system) which is 8 byte. This
+patch aligns the length to ETH_ALEN to have the same MAC address exposed
+as using sysfs.
 
-Fixing this by sanitizing idx before using it to index d->vqs.
-
-Cc: Michael S. Tsirkin <mst@redhat.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Signed-off-by: Jason Wang <jasowang@redhat.com>
+Fixes: f87fda00b6ed2 ("bonding: prevent out of bound accesses")
+Signed-off-by: Tobias Jungel <tobias.jungel@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/vhost/vhost.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/bonding/bond_netlink.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -30,6 +30,7 @@
- #include <linux/sched/mm.h>
- #include <linux/sched/signal.h>
- #include <linux/interval_tree_generic.h>
-+#include <linux/nospec.h>
+--- a/drivers/net/bonding/bond_netlink.c
++++ b/drivers/net/bonding/bond_netlink.c
+@@ -638,8 +638,7 @@ static int bond_fill_info(struct sk_buff
+ 				goto nla_put_failure;
  
- #include "vhost.h"
- 
-@@ -1397,6 +1398,7 @@ long vhost_vring_ioctl(struct vhost_dev
- 	if (idx >= d->nvqs)
- 		return -ENOBUFS;
- 
-+	idx = array_index_nospec(idx, d->nvqs);
- 	vq = d->vqs[idx];
- 
- 	mutex_lock(&vq->mutex);
+ 			if (nla_put(skb, IFLA_BOND_AD_ACTOR_SYSTEM,
+-				    sizeof(bond->params.ad_actor_system),
+-				    &bond->params.ad_actor_system))
++				    ETH_ALEN, &bond->params.ad_actor_system))
+ 				goto nla_put_failure;
+ 		}
+ 		if (!bond_3ad_get_active_agg_info(bond, &info)) {
 
 
