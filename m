@@ -2,151 +2,109 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62126C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:17:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A52BDC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:22:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1855D2082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:17:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1855D2082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 2E20D20831
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:22:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="cWEfOFMP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E20D20831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727735AbeKBWYL (ORCPT
+        id S1727372AbeKBW3c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 18:24:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46576 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 18:29:32 -0400
+Received: from ozlabs.org ([203.11.71.1]:39219 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726104AbeKBWYL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 18:24:11 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        id S1726026AbeKBW3b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 18:29:31 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 905642081F;
-        Fri,  2 Nov 2018 13:17:00 +0000 (UTC)
-Date:   Fri, 2 Nov 2018 09:16:58 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Christian Brauner <christian@brauner.io>,
-        Aleksa Sarai <asarai@suse.de>, netdev@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [PATCH v3 1/2] kretprobe: produce sane stack traces
-Message-ID: <20181102091658.1bc979a4@gandalf.local.home>
-In-Reply-To: <20181102065932.bdt4pubbrkvql4mp@yavin>
-References: <20181101083551.3805-1-cyphar@cyphar.com>
-        <20181101083551.3805-2-cyphar@cyphar.com>
-        <20181101204720.6ed3fe37@vmware.local.home>
-        <20181102050509.tw3dhvj5urudvtjl@yavin>
-        <20181102065932.bdt4pubbrkvql4mp@yavin>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by ozlabs.org (Postfix) with ESMTPSA id 42mjRJ3vMdz9sTJ;
+        Sat,  3 Nov 2018 00:22:20 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1541164940;
+        bh=Zw4PHYZEGuLpXTO43fA6RRfJSTphsVYK/rkHiJYM4x0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=cWEfOFMPeVaZd1QWEKL8BsCZ9CIyLoK9BfaHZFWTaqOEo92Alw7XNZbFW7YiVfIBI
+         Ne6gzHp2petSO2XSYHzx9F4iBpX7Ekw3ERiHd/1p+ktN6knzsUxDcA/t8vh/0bgZOJ
+         HGfQsUXZtN7zqIOUQcRq1Fcb1rM3kD9ji2oNvm0QEcqs+6IaRHkTjRPrRPLTXDCJ97
+         qAVk6yrkTaFqrNVIvU6LEW05VZzVPKOsZ1ZcapYtaqJsfNdUQVNfeRW2ptCKuWd5td
+         L97v4mwcnZVWZinfGygESZ60YIg4zJTZgstvla+QuNZQe0tfvmFa2VtAifItCxqG+v
+         1loAWP0HAD4GQ==
+Date:   Sat, 3 Nov 2018 00:22:18 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Tree for Nov 2
+Message-ID: <20181103002218.3bd015b3@canb.auug.org.au>
+In-Reply-To: <CANiq72m65bQZefAoFF5dTUB-rPzm4vofZFnDn0nYBG3MsGrjZg@mail.gmail.com>
+References: <20181102143018.09feb051@canb.auug.org.au>
+        <CANiq72m65bQZefAoFF5dTUB-rPzm4vofZFnDn0nYBG3MsGrjZg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/KVQ2XWkcfW3Bxgio75KWddp"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2 Nov 2018 17:59:32 +1100
-Aleksa Sarai <cyphar@cyphar.com> wrote:
+--Sig_/KVQ2XWkcfW3Bxgio75KWddp
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> As an aside, I just tested with the frame unwinder and it isn't thrown
-> off-course by kretprobe_trampoline (though obviously the stack is still
-> wrong). So I think we just need to hook into the ORC unwinder to get it
-> to continue skipping up the stack, as well as add the rewriting code for
-> the stack traces (for all unwinders I guess -- though ideally we should
+Hi Miguel,
 
-I agree that this is the right solution.
+On Fri, 2 Nov 2018 11:44:07 +0100 Miguel Ojeda <miguel.ojeda.sandonis@gmail=
+.com> wrote:
+>
+> On Fri, Nov 2, 2018 at 4:33 AM Stephen Rothwell <sfr@canb.auug.org.au> wr=
+ote:
+> >
+> > Please do not add any v4.21/v5.1 code to your linux-next included trees
+> > until after the merge window closes. =20
+>=20
+> Is it OK to move forward the branch up to the point where it landed in
+> mainline, no? What about changes for this release that will be sent
+> for -rc2, -rc3... etc.?
 
-> do this without having to add the same code to every architecture).
+Its always OK (and actually useful) to move your branch head up to
+where Linus merged it (this is usually a fast forward anyway) since
+that doesn't add any new code to linux-next to conflict with code that
+is still pending to be merged by Linus.
 
-True, and there's an art to consolidating the code between
-architectures.
+Also, adding bug fixes is always fine.
 
-I'm currently looking at function graph and seeing if I can consolidate
-it too. And I'm also trying to get multiple uses to hook into its
-infrastructure. I think I finally figured out a way to do so.
+I just want to avoid getting conflicts in linux-next between code
+that Linus will merge during this merge window and new code destined
+for the next merge window.
+--=20
+Cheers,
+Stephen Rothwell
 
-The reason it is difficult, is that you need to maintain state between
-the entry of a function and the exit for each task and callback that is
-registered. Hence, it's a 3x tuple (function stack, task, callbacks).
-And this must be maintained with preemption. A task may sleep for
-minutes, and the state needs to be retained.
+--Sig_/KVQ2XWkcfW3Bxgio75KWddp
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-The only state that must be retained is the function stack with the
-task, because if that gets out of sync, the system crashes. But the
-callback state can be removed.
+-----BEGIN PGP SIGNATURE-----
 
-Here's what is there now:
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvcT4oACgkQAVBC80lX
+0GwE/Qf/daFJ5clgwmnwyYGxELmK/o0SXf4y4lrmjbmt7XI32EUZyCa/py4cAbLE
+cq0rhecb2HbmBk+QQLGNC3R0UBkO/g9yRrJ7e8zDNSoMJCFNBZt3BMR4gGLSWS79
+DlOcVGP8abcdxtO1n3SB2FZKu6ekqIGizFzqxqJo4tCEb655YHnsWoZqtjY94ell
+BjRGbNfvwqKOh8+ZLn/3fcPpwUTrIK4fD8Cea/ZdjGHpj6+GkFHc8tNgKOg+n8kL
+bu5xEZxOCcjkiD0Q1SsDFRwD88WO3oSKGRKczi0PLiNgGkNuCHEostdWHUuRCBGt
+TJrxAFEYjaRjCMQ3BIAuBq+o18pKzQ==
+=sSum
+-----END PGP SIGNATURE-----
 
- When something is registered with the function graph tracer, every
- task gets a shadowed stack. A hook is added to fork to add shadow
- stacks to new tasks. Once a shadow stack is added to a task, that
- shadow stack is never removed until the task exits.
-
- When the function is entered, the real return code is stored in the
- shadow stack and the trampoline address is put in its place.
-
- On return, the trampoline is called, and it will pop off the return
- code from the shadow stack and return to that.
-
-The issue with multiple users, is that different users may want to
-trace different functions. On entry, the user could say it doesn't want
-to trace the current function, and the return part must not be called
-on exit. Keeping track of which user needs the return called is the
-tricky part.
-
-Here's what I plan on implementing:
-
- Along with a shadow stack, I was going to add a 4096 byte (one page)
- array that holds 64 8 byte masks to every task as well. This will allow
- 64 simultaneous users (which is rather extreme). If we need to support
- more, we could allocate another page for all tasks. The 8 byte mask
- will represent each depth (allowing to do this for 64 function call
- stack depth, which should also be enough).
-
- Each user will be assigned one of the masks. Each bit in the mask
- represents the depth of the shadow stack. When a function is called,
- each user registered with the function graph tracer will get called
- (if they asked to be called for this function, via the ftrace_ops
- hashes) and if they want to trace the function, then the bit is set in
- the mask for that stack depth.
-
- When the function exits the function and we pop off the return code
- from the shadow stack, we then look at all the bits set for the
- corresponding users, and call their return callbacks, and ignore
- anything that is not set.
-
-
-When a user is unregistered, it the corresponding bits that represent
-it are cleared, and it the return callback will not be called. But the
-tasks being traced will still have their shadow stack to allow it to
-get back to normal.
-
-I'll hopefully have a prototype ready by plumbers.
-
-And this too will require each architecture to probably change. As a
-side project to this, I'm going to try to consolidate the function
-graph code among all the architectures as well. Not an easy task.
-
--- Steve
+--Sig_/KVQ2XWkcfW3Bxgio75KWddp--
