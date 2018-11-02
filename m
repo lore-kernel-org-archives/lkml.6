@@ -2,102 +2,90 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12570C0044C
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 02:57:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E77C0044C
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 03:02:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3E2220657
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 02:57:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE95620820
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 03:02:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="Ut6ZwrPd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3E2220657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cBbhlOzk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE95620820
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726632AbeKBMDI (ORCPT
+        id S1726688AbeKBMHh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 08:03:08 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:40377 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726202AbeKBMDI (ORCPT
+        Fri, 2 Nov 2018 08:07:37 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:44063 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726252AbeKBMHg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 08:03:08 -0400
-Received: by mail-pl1-f195.google.com with SMTP id b9-v6so293873pls.7
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 19:57:36 -0700 (PDT)
+        Fri, 2 Nov 2018 08:07:36 -0400
+Received: by mail-lj1-f196.google.com with SMTP id k19-v6so440819lji.11
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 20:02:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=dUMTS37gBEZypK54YuiT13KTFjnvL6JSY0p+eJPnHVg=;
-        b=Ut6ZwrPdDXdP+3GMloWtQeyr3mTneivdFdsA7Xn4cLv//LB3JxBbBJaxBCHVfJ9czD
-         /8Hmar800mQc1jE+KQgcfs6Fu+12z7z3Vmkiebxqhat7mlHxftd4ptzdT7qTfuoANrIl
-         X63fH/fqCaHIrN0fCylUYxu+R56G31Y8QHVKhW8KDP2LE684PvYnKlNg8cZvzTL3V3SN
-         ml9i6arT4KJj1bM9QLjWs8VrbA1QfaFfpf146zoOkGbaVqkniAkrApRnFhTJ736cq8WA
-         nDvTZlX6phNcnJ0O3RsFc8JiFugSLK2bjsV1Uy98rkQSPGVkcpVbYuna1udSbYsjpAjL
-         3ZTQ==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4p469V3gYi22U9kPRjpAyE78DmgvlzhyEKlRjryJmLU=;
+        b=cBbhlOzkJXqPuL/OetfErN50Qs4JRlMk4w+oEhO7sPU4H4m/CNryvitSbiti97ndlx
+         ujHc65cgItyNU5GXyMBKNKMa6AmmUten3X+OYToCeM/DolkWLBz8IhDTHIYqltCm0Q0F
+         2KYNtghhPPtCNw3mFsGaK1uYUBPNwUbggKUUg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=dUMTS37gBEZypK54YuiT13KTFjnvL6JSY0p+eJPnHVg=;
-        b=g5O0oU5QreMyAe1GtglC/aoOHnCFLqX36DUpJKSpBHRUO+n+Nh6CT/KTitNkDQq5L8
-         RF2McOUDvWOjisyqVc/uEEkzGK+Cehg8vXocO8tXQ+6299F/itUVXH3HOpbiQVm7Ao0Q
-         9hvyKXqlhESl13dm5kO2kobazWacMSN/uBFpDujw3teLzUAweFoCKSR1KBaNDFk6zXEm
-         yOFNQmwjCJQvyfjRUTq48pIt+yCQgF9FnIuJTU+6NmU8cgtHnbFy/nfwc0TA8cAx3cXe
-         6xvScTFh+Y+zG5fzvh6th2v/TcfJ0dhySSGpHD5G9ySM+PJZ8ksgnmo99nl2I0a7VkqX
-         H+Sg==
-X-Gm-Message-State: AGRZ1gKS0m8Y0/ZPTlXX36etEZBcs7cjIiCFYejbF5WULurWpGGXcB8H
-        bdmypoQqZ2xIqU6RVSmqoVxavA==
-X-Google-Smtp-Source: AJdET5f3+mQFAT9Ze4cnlZynh3AXjyk4mwENq+Q7BGEQkPx/pE81kezGJvKLOZduQRVG27oYb3m+0w==
-X-Received: by 2002:a17:902:29e3:: with SMTP id h90-v6mr10138964plb.158.1541127456370;
-        Thu, 01 Nov 2018 19:57:36 -0700 (PDT)
-Received: from localhost.localdomain (99-152-116-91.lightspeed.sntcca.sbcglobal.net. [99.152.116.91])
-        by smtp.gmail.com with ESMTPSA id t77-v6sm15099944pfj.79.2018.11.01.19.57.33
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4p469V3gYi22U9kPRjpAyE78DmgvlzhyEKlRjryJmLU=;
+        b=E6I3SpUH1x8qGNzBSLKlh9VIIwnOnn2wznbGzW90UbeNhUDYp13cBu0dq/WwavaqRU
+         6TTO7PVeixjWbkiDhryacLlRsRlKiLaF4sARr4wwGrlZXOWO5zCWopXl45Mk1ecbge0H
+         4RwuSlThTm/OhNjbN+X+t4LPcemkYVfZKAz34SQaSAX8gRQdSr4gRrW7wPeAcfRdYxAs
+         6YHgVxVe3o3/FchTsnk5GMQGqrZ1L1kGkcVvs0+bqsSTYEv4+d++v69k4kG0/6AzW2qV
+         RJnPkK0zaf9S7hAkOdJ4Hl9yVh33Nd3XmUJfbIpYNuqBKGwgLaelrLLTlPr665Hz7Boh
+         n90Q==
+X-Gm-Message-State: AGRZ1gJF0xfLyQJ+TgRuK90nvXZD3P582mH4LD/acyI7sdq1ClqNr3qe
+        SSaDctviDPOTO/9azS6ba3FoVo39aU/sXw==
+X-Google-Smtp-Source: AJdET5eeUREbk/784KJjNp/yRC4DzFtwimwhrZuKG32bIjyMHHG8w26rfAj34Y31D07MmMyngPlQ1A==
+X-Received: by 2002:a2e:12c1:: with SMTP id 62-v6mr7065942ljs.74.1541127722673;
+        Thu, 01 Nov 2018 20:02:02 -0700 (PDT)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id o5-v6sm3719382ljh.34.2018.11.01.20.02.01
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Nov 2018 19:57:34 -0700 (PDT)
-From:   Olof Johansson <olof@lixom.net>
-To:     Sean Wang <sean.wang@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Olof Johansson <olof@lixom.net>
-Subject: [PATCH] pinctrl: mediatek: Fix dependencies for EINT_MTK
-Date:   Thu,  1 Nov 2018 19:57:28 -0700
-Message-Id: <20181102025728.963-1-olof@lixom.net>
-X-Mailer: git-send-email 2.11.0
+        Thu, 01 Nov 2018 20:02:01 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id k19-v6so440753lji.11
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 20:02:01 -0700 (PDT)
+X-Received: by 2002:a2e:9983:: with SMTP id w3-v6mr6937085lji.133.1541127720851;
+ Thu, 01 Nov 2018 20:02:00 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181101234608.GU32577@ZenIV.linux.org.uk>
+In-Reply-To: <20181101234608.GU32577@ZenIV.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 1 Nov 2018 20:01:45 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgxGGwJFkJ+zgcWig+hXbAy70A-zAwfyAYzkjVFtJj-7g@mail.gmail.com>
+Message-ID: <CAHk-=wgxGGwJFkJ+zgcWig+hXbAy70A-zAwfyAYzkjVFtJj-7g@mail.gmail.com>
+Subject: Re: [git pull] work.afs
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, dhowells@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes the following config-time warning:
+On Thu, Nov 1, 2018 at 4:46 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+>         AFS series, with some iov_iter bits included.
 
-WARNING: unmet direct dependencies detected for EINT_MTK
-  Depends on [n]: PINCTRL [=y] && (ARCH_MEDIATEK [=y] || COMPILE_TEST [=n]) && (PINCTRL_MTK [=n] || PINCTRL_MTK_MOORE [=n] || COMPILE_TEST [=n])
-  Selected by [y]:
-  - PINCTRL_MTK_PARIS [=y] && PINCTRL [=y] && OF [=y] && (ARCH_MEDIATEK [=y] || COMPILE_TEST [=n])
+Grr. Bad summary explanation of what actually is happening.
 
-Fixes: 805250982bb5 ("pinctrl: mediatek: add pinctrl-paris that implements the vendor dt-bindings")
-Signed-off-by: Olof Johansson <olof@lixom.net>
----
- drivers/pinctrl/mediatek/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Also, this is very late in the merge window for no discernible reason for this.
 
-diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
-index 9d142e1da567..50efc9cc8ee7 100644
---- a/drivers/pinctrl/mediatek/Kconfig
-+++ b/drivers/pinctrl/mediatek/Kconfig
-@@ -3,7 +3,7 @@ menu "MediaTek pinctrl drivers"
- 
- config EINT_MTK
- 	bool "MediaTek External Interrupt Support"
--	depends on PINCTRL_MTK || PINCTRL_MTK_MOORE || COMPILE_TEST
-+	depends on PINCTRL_MTK || PINCTRL_MTK_MOORE || PINCTRL_MTK_PARIS || COMPILE_TEST
- 	select GPIOLIB
- 	select IRQ_DOMAIN
- 
--- 
-2.11.0
+I'm not happy. I'm taking it, but I'm no longer pulling random stuff
+that I get after this.
 
+                   Linus
