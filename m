@@ -6,111 +6,88 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A77CC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 22:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22EE0C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 22:39:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 281B82081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 22:38:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 281B82081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D2E5020831
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 22:39:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2E5020831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728452AbeKCHrK (ORCPT
+        id S1728460AbeKCHs0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 03:47:10 -0400
-Received: from mga01.intel.com ([192.55.52.88]:61363 "EHLO mga01.intel.com"
+        Sat, 3 Nov 2018 03:48:26 -0400
+Received: from nautica.notk.org ([91.121.71.147]:32895 "EHLO nautica.notk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726778AbeKCHrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 03:47:10 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 15:38:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,457,1534834800"; 
-   d="scan'208";a="103006930"
-Received: from btyborox-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.138])
-  by fmsmga004.fm.intel.com with ESMTP; 02 Nov 2018 15:37:59 -0700
-Date:   Sat, 3 Nov 2018 00:37:57 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Rich Felker <dalias@libc.org>, Jann Horn <jannh@google.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Carlos O'Donell <carlos@redhat.com>,
-        adhemerval.zanella@linaro.org
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181102223757.GB24373@linux.intel.com>
-References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
- <CAG48ez0vBqL0tyfWwmuc_cq+OAUoEi88=r+t6h64a-Fw8z59zA@mail.gmail.com>
- <20181101185225.GC5150@brightrain.aerifal.cx>
- <CAHk-=wgFo8tuZX5gzCfWGdAwGyn_Ar9JFnnMFNuwr9=vtfDV1g@mail.gmail.com>
- <20181101193107.GE5150@brightrain.aerifal.cx>
- <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
- <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
+        id S1726729AbeKCHs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 03:48:26 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id F41ECC009; Fri,  2 Nov 2018 23:39:23 +0100 (CET)
+Date:   Fri, 2 Nov 2018 23:39:08 +0100
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     syzbot <syzbot+0c1d61e4db7db94102ca@syzkaller.appspotmail.com>
+Cc:     davem@davemloft.net, ericvh@gmail.com,
+        linux-kernel@vger.kernel.org, lucho@ionkov.net,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        v9fs-developer@lists.sourceforge.net
+Subject: Re: WARNING in kmem_cache_create_usercopy
+Message-ID: <20181102223908.GA9565@nautica>
+References: <0000000000009d4c780579b04ee4@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <0000000000009d4c780579b04ee4@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 01, 2018 at 04:22:55PM -0700, Andy Lutomirski wrote:
-> On Thu, Nov 1, 2018 at 2:24 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > On Thu, Nov 1, 2018 at 12:31 PM Rich Felker <dalias@libc.org> wrote:
-> > >
-> > > See my other emails in this thread. You would register the *address*
-> > > (in TLS) of a function pointer object pointing to the handler, rather
-> > > than the function address of the handler. Then switching handler is
-> > > just a single store in userspace, no syscalls involved.
-> >
-> > Yes.
-> >
-> > And for just EENTER, maybe that's the right model.
-> >
-> > If we want to generalize it to other thread-synchronous faults, it
-> > needs way more information and a list of handlers, but if we limit the
-> > thing to _only_ EENTER getting an SGX fault, then a single "this is
-> > the fault handler" address is probably the right thing to do.
-> 
-> It sounds like you're saying that the kernel should know, *before*
-> running any user fixup code, whether the fault in question is one that
-> wants a fixup.  Sounds reasonable.
-> 
-> I think it would be nice, but not absolutely necessary, if user code
-> didn't need to poke some value into TLS each time it ran a function
-> that had a fixup.  With the poke-into-TLS approach, it looks a lot
-> like rseq, and rseq doesn't nest very nicely.  I think we really want
-> this mechanism to Just Work.  So we could maybe have a syscall that
-> associates a list of fixups with a given range of text addresses.  We
-> might want the kernel to automatically zap the fixups when the text in
-> question is unmapped.
+syzbot wrote on Fri, Nov 02, 2018:
+> RIP: 0010:kmem_cache_create_usercopy+0xad/0x240 mm/slab_common.c:473
+> Code: 44 89 f0 25 00 60 de 04 45 85 ed 89 45 cc 75 0b 8b 45 d0 85 c0
+> 0f 85 8e 01 00 00 44 39 eb 72 0a 89 d8 44 29 e8 3b 45 d0 73 7e <0f>
+> 0b c7 45 d0 00 00 00 00 4c 8b 45 10 44 89 fa 89 de 4c 89 e7 8b
+> RSP: 0018:ffff8801bc23f5d0 EFLAGS: 00010213
+> RAX: 0000000000000000 RBX: 0000000000000008 RCX: 0000000000000006
+> RDX: 0000000000000000 RSI: 0000000000000020 RDI: ffffffff88b04b20
+> RBP: ffff8801bc23f608 R08: fffffbfff1283a2d R09: fffffbfff1283a2c
+> R10: ffff8801bc23f5c0 R11: ffffffff8941d167 R12: ffffffff88b04b20
+> R13: 00000000fffffffd R14: 0000000000000000 R15: 0000000000000000
+>  p9_client_create+0xa58/0x1769 net/9p/client.c:1054
 
-If we would have a syscall to specify a list fixups that would do the
-job. Now essentially the only reason we require a vDSO is to implement
-a single fixup for EENTER.
+No lower bound on msize, the reproducer gives a reply from the
+pseudo-server with msize=8 and we happily take it, underflowing the
+msize - 11 (hdr+4) argument to kmem_cache_create_usercopy...
+This probably never worked anyway, but we now get a warning :)
 
-If this fixup stuff makes sense for other parts of the kernel,
-introducing a vDSO for EENTER means essentially adding ABI to the kernel
-that might possibly become legacy fast.
 
-/Jarkko
+We need to add a sane lower bound to msize as well as the current upper
+bound set in the transport.
+We have some header sizes in 9p.h for IO header overhead (P9_IOHDRSZ to
+24 for example) but I think that's too low in practice; stuff like
+readdir will require more than this to get a single entry... We can
+request the server to ask for at least 4k?
+9p would probably work with less (e.g. 1k; I'd rather not have to
+figgure the minimum length we need to get each messages to work in its
+minimal form) but honestly even with 4k the perforamnces will be
+terrible, so tempted to go with that...
+
+I'll send a patch imposing 4k next week unless someone else does first,
+or replies indicate different preferences.
+
+
+@Dmitry: semi-related, the C reproducer (
+https://syzkaller.appspot.com/x/repro.c?x=1701f831400000 ) has a lot of
+"readable" letters spelled out as "\x63..." or chars as 0x3d - it's fine
+for generated code and that might be easier for the intermediate
+representation syzkaller works with, but do you know something handy
+that would help convert these to readable strings?
+e.g. "\x63\x61\x63\x68\x65\x3d\xc0\x6d\x61\x70" could be written
+"cache=\xc0map", and 0x3d as '=' (hm I guess the later would not always
+make sense to convert so probably best left as is, but it gets annoying
+pretty fast with longer strings)
+
+-- 
+Dominique
