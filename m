@@ -2,111 +2,99 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6774EC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 07:13:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D01F4C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 07:15:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F4072081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 07:13:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F4072081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 7E8212081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 07:15:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EPLwG/om"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E8212081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728495AbeKBQTV (ORCPT
+        id S1728475AbeKBQVM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 12:19:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55722 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728223AbeKBQTV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 12:19:21 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2D29BAE24;
-        Fri,  2 Nov 2018 07:13:09 +0000 (UTC)
-Subject: Re: [PATCH v2] x86/build: Build VSMP support only if CONFIG_PCI is
- selected
-To:     Eial Czerwacki <eial@scalemp.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Shai Fultheim (Shai@ScaleMP.com)" <Shai@ScaleMP.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "mhocko@suse.cz" <mhocko@suse.cz>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "mm-commits@vger.kernel.org" <mm-commits@vger.kernel.org>,
-        X86 ML <x86@kernel.org>, Oren Twaig <oren@scalemp.com>
-References: <2130cd90-2c8f-2fc4-0ac8-81a5aea153b2@scalemp.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <2073effd-4f02-c784-ca71-69ba49f51b88@suse.com>
-Date:   Fri, 2 Nov 2018 08:13:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <2130cd90-2c8f-2fc4-0ac8-81a5aea153b2@scalemp.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Fri, 2 Nov 2018 12:21:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33840 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727551AbeKBQVL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 12:21:11 -0400
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 103452081B;
+        Fri,  2 Nov 2018 07:15:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541142901;
+        bh=+uvA0j+/s13IzeiplFZwsyZytoTU0uCf9AsT3aO17k0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=EPLwG/om+c7gDGizlN/E0UpiowO7P+rr8kdAZlGRQQg5+R8SHSwyj29hc8MMyeUDV
+         rSNkyeLDJaBoVWxysobb4wozrc1YY6R4loXmHEYqEuGqn69WqQld2Fhf6ePbuTjJur
+         QCNQjWemu/6YI4NvEx22bZzV1OS5uTzi8b3s/s9M=
+Date:   Fri, 2 Nov 2018 16:14:59 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [BUGFIX PATCH] tracing/kprobes: Fix strpbrk() argument order
+Message-Id: <20181102161459.86f0622bd01518a2eb06e1d5@kernel.org>
+In-Reply-To: <20181101151014.2feccd51@gandalf.local.home>
+References: <154108256792.2604.1816052586385217811.stgit@devbox>
+        <20181101151014.2feccd51@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/11/2018 19:27, Eial Czerwacki wrote:
-> vsmp dependency on pv_irq_ops removed some years ago, so now let's clean
-> it up from vsmp_64.c.
+On Thu, 1 Nov 2018 15:10:14 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> On Thu,  1 Nov 2018 23:29:28 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
 > 
-> In short, "cap & ctl & (1 << 4)" was always returning 0, as such we can
-> remove all the PARAVIRT/PARAVIRT_XXL code handling that.
+> > Fix strpbrk()'s argument order, it must pass acceptable string
+> > in 2nd argument. Note that this can cause a kernel panic where
+> > it recovers backup character to code->data.
+> > 
+> > Fixes: a6682814f371 ("tracing/kprobes: Allow kprobe-events to record module symbol")
+> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 > 
-> However, the rest of the code depends on CONFIG_PCI, so fix it accordingly.
-> in addition, rename set_vsmp_pv_ops to set_vsmp_ctl.
+> Thanks Masami,
 > 
-> Signed-off-by: Eial Czerwacki <eial@scalemp.com>
-> Acked-by: Shai Fultheim <shai@scalemp.com>
+> I'm pulling this and starting to test it.
 
-While I'm still thinking selection of HYPERVISOR_GUEST and PARAVIRT
-is a little bit strange, you can add:
+Thank you! I still couldn't believe how this bug passed through the tests...
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+> 
+> -- Steve
+> 
+> > ---
+> >  kernel/trace/trace_probe.c |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
+> > index 3ef15a6683c0..bd30e9398d2a 100644
+> > --- a/kernel/trace/trace_probe.c
+> > +++ b/kernel/trace/trace_probe.c
+> > @@ -535,7 +535,7 @@ int traceprobe_update_arg(struct probe_arg *arg)
+> >  			if (code[1].op != FETCH_OP_IMM)
+> >  				return -EINVAL;
+> >  
+> > -			tmp = strpbrk("+-", code->data);
+> > +			tmp = strpbrk(code->data, "+-");
+> >  			if (tmp)
+> >  				c = *tmp;
+> >  			ret = traceprobe_split_symbol_offset(code->data,
+> 
 
 
-Juergen
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
