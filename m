@@ -2,140 +2,153 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55071C0044C
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 01:52:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFAFAC0044C
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 02:00:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC8112081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 01:52:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC8112081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9609D2081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 02:00:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="kbEl8Ad6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9609D2081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbeKBK5W (ORCPT
+        id S1726377AbeKBLFo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 06:57:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52498 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725987AbeKBK5V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 06:57:21 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 78E792D7E9;
-        Fri,  2 Nov 2018 01:51:58 +0000 (UTC)
-Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 53D7263145;
-        Fri,  2 Nov 2018 01:51:53 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     Jerry Zuo <Jerry.Zuo@amd.com>, amd-gfx@lists.freedesktop.org
-Cc:     harry.wentland@amd.com, Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>, Roman Li <Roman.Li@amd.com>,
-        Tony Cheng <Tony.Cheng@amd.com>, Shirish S <shirish.s@amd.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/amd/amdgpu/dm: Fix dm_dp_create_fake_mst_encoder()
-Date:   Thu,  1 Nov 2018 21:51:49 -0400
-Message-Id: <20181102015151.29397-1-lyude@redhat.com>
-In-Reply-To: <20181030220940.25052-2-Jerry.Zuo@amd.com>
-References: <20181030220940.25052-2-Jerry.Zuo@amd.com>
+        Fri, 2 Nov 2018 07:05:44 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44219 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725987AbeKBLFo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 07:05:44 -0400
+Received: by mail-pf1-f195.google.com with SMTP id j13-v6so232947pff.11
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 19:00:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6ckdBY9QdiiV4QgcZZwzAy2V1WxPeL7xdb+J5A2C1HA=;
+        b=kbEl8Ad69GQVITfWsVfjWwCqBCiZ2viJUUpOpEtTUgybnGiOB5s3Li37zOzX0onnHT
+         CC3s7jycsdOMXrn2iK+0OoPV/N07oT1Aa9a35A95bR09RXcYqhCUObROWYdy/gmGZLak
+         5ecC+XU3DP2imWXANGql8sjg3DWzFLI7pzUKys4SyRM/dYQf67c37WpGCbLEaJK8dGnP
+         7y0cHTZe83+41788xGLO19lIVic8VKzBCFB2zzyLivAjiYBiGsrLAWwxNn9XNGkpLudy
+         x6U6ot8PLEPFNUbG9ZOm64VDjnxXtl/Cy8wp0B6NlCenoxCuKF60/hodlPDOetzoci+n
+         v84Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6ckdBY9QdiiV4QgcZZwzAy2V1WxPeL7xdb+J5A2C1HA=;
+        b=dCITMYf3MM+0jN27HtqSOwhbEytA2gekTzY5wqiyoUWKfGnb7uvXTCd/prvXQKskFa
+         bSd3ZCRlvwlVx6CWZBbdZ1LJInlpnbJneQ5RpPTPB1HLp3enTv45r4qseWdd2Rjo3KYM
+         lZ0jhSTlX6iPFAIwG63kAdONDepy0npiN3OoVZJbdYU6qajWrbUBfTLczWZkOAqc1ZFg
+         h4BgU5cPiKSrGDeZAlii4GtPVH5IHapv+tPzSNWRZm+bK1l2xaid5y/sR88xrYQsS2cy
+         W+zeUntGRELvAV9sDnwAi3qeGNXqWPYWPi53j9SvoBJFZweDi7C4BG23A8ogKFYIISGf
+         TtRw==
+X-Gm-Message-State: AGRZ1gLdakIy58/hfV9iids0mGv+8JYMPZVWZT0fVCvH27JgLWY0JURq
+        T55m+IGQarJzGhMj4NJDQ/iC0A==
+X-Google-Smtp-Source: AJdET5cOWHehd37epdqC5LIU4QjsB7Feb93IBW8kaH74xByGCIEO4yfIWZeVGZEaoQHNXSGCxfCjSg==
+X-Received: by 2002:a62:198c:: with SMTP id 134-v6mr2964855pfz.33.1541124019944;
+        Thu, 01 Nov 2018 19:00:19 -0700 (PDT)
+Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
+        by smtp.gmail.com with ESMTPSA id c70-v6sm12395085pfg.97.2018.11.01.19.00.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Nov 2018 19:00:18 -0700 (PDT)
+Subject: Re: [LKP] a518560778 [ 16.132179] BUG: KASAN: null-ptr-deref in
+ brd_alloc
+To:     Ming Lei <ming.lei@redhat.com>,
+        kernel test robot <rong.a.chen@intel.com>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        LKP <lkp@01.org>
+References: <20181102001957.GE24195@shao2-debian>
+ <20181102005344.GD24769@ming.t460p>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <de15243e-1ee4-f17b-34f5-5901ce11b5da@kernel.dk>
+Date:   Thu, 1 Nov 2018 20:00:17 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 02 Nov 2018 01:51:58 +0000 (UTC)
+In-Reply-To: <20181102005344.GD24769@ming.t460p>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[why]
-Removing connector reusage from DM to match the rest of the tree ended
-up revealing an issue that was surprisingly subtle. The original amdgpu
-code for DC that was submitted appears to have left a chunk in
-dm_dp_create_fake_mst_encoder() that tries to find a "master encoder",
-the likes of which isn't actually used or stored anywhere. It does so at
-the wrong time as well by trying to access parts of the drm_connector
-from the encoder init before it's actually been initialized. This
-results in a NULL pointer deref on MST hotplugs:
+On 11/1/18 6:53 PM, Ming Lei wrote:
+> On Fri, Nov 02, 2018 at 08:19:57AM +0800, kernel test robot wrote:
+>> Greetings,
+>>
+>> 0day kernel testing robot got the below dmesg and the first bad commit is
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-linus
+>>
+>> commit a5185607787e030fcb0009194d3b12f8bcca59d6
+>> Author:     Ming Lei <ming.lei@redhat.com>
+>> AuthorDate: Wed Oct 31 16:40:50 2018 +0800
+>> Commit:     Jens Axboe <axboe@kernel.dk>
+>> CommitDate: Wed Oct 31 08:43:09 2018 -0600
+>>
+>>     block: brd: associate with queue until adding disk
+>>     
+>>     brd_free() may be called in failure path on one brd instance without
+>>     the disk being added yet, so release handler of gendisk may free the
+>>     associated request_queue early and cause the following use-after-free[1].
+>>     
+>>     This patch fixes this issue by associating gendisk with request_queue
+>>     just before adding disk.
+>>     
+>>     [1] KASAN: use-after-free Read in del_timer_syncNon-volatile memory driver v1.3
+>>     Linux agpgart interface v0.103
+>>     [drm] Initialized vgem 1.0.0 20120112 for virtual device on minor 0
+>>     usbcore: registered new interface driver udl
+>>     ==================================================================
+>>     BUG: KASAN: use-after-free in __lock_acquire+0x36d9/0x4c20
+>>     kernel/locking/lockdep.c:3218
+>>     Read of size 8 at addr ffff8801d1b6b540 by task swapper/0/1
+>>     
+>>     CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0+ #88
+>>     Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+>>     Google 01/01/2011
+>>     Call Trace:
+>>       __dump_stack lib/dump_stack.c:77 [inline]
+>>       dump_stack+0x244/0x39d lib/dump_stack.c:113
+>>       print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
+>>       kasan_report_error mm/kasan/report.c:354 [inline]
+>>       kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
+>>       __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+>>       __lock_acquire+0x36d9/0x4c20 kernel/locking/lockdep.c:3218
+>>       lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
+>>       del_timer_sync+0xb7/0x270 kernel/time/timer.c:1283
+>>       blk_cleanup_queue+0x413/0x710 block/blk-core.c:809
+>>       brd_free+0x5d/0x71 drivers/block/brd.c:422
+>>       brd_init+0x2eb/0x393 drivers/block/brd.c:518
+>>       do_one_initcall+0x145/0x957 init/main.c:890
+>>       do_initcall_level init/main.c:958 [inline]
+>>       do_initcalls init/main.c:966 [inline]
+>>       do_basic_setup init/main.c:984 [inline]
+>>       kernel_init_freeable+0x5c6/0x6b9 init/main.c:1148
+>>       kernel_init+0x11/0x1ae init/main.c:1068
+>>       ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:350
+>>     
+>>     Reported-by: syzbot+3701447012fe951dabb2@syzkaller.appspotmail.com
+>>     Signed-off-by: Ming Lei <ming.lei@redhat.com>
+>>     Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> 
+> Sorry, my fault.
+> 
+> Jens, I just sent you V2 which fixes this issue, could you drop V1 from
+> your for-linus and apply V2 against it?
 
-[  160.696613] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-[  160.697234] PGD 0 P4D 0
-[  160.697814] Oops: 0010 [#1] SMP PTI
-[  160.698430] CPU: 2 PID: 64 Comm: kworker/2:1 Kdump: loaded Tainted: G           O      4.19.0Lyude-Test+ #2
-[  160.699020] Hardware name: HP HP ZBook 15 G4/8275, BIOS P70 Ver. 01.22 05/17/2018
-[  160.699672] Workqueue: events_long drm_dp_mst_link_probe_work [drm_kms_helper]
-[  160.700322] RIP: 0010:          (null)
-[  160.700920] Code: Bad RIP value.
-[  160.701541] RSP: 0018:ffffc9000029fc78 EFLAGS: 00010206
-[  160.702183] RAX: 0000000000000000 RBX: ffff8804440ed468 RCX: ffff8804440e9158
-[  160.702778] RDX: 0000000000000000 RSI: ffff8804556c5700 RDI: ffff8804440ed000
-[  160.703408] RBP: ffff880458e21800 R08: 0000000000000002 R09: 000000005fca0a25
-[  160.704002] R10: ffff88045a077a3d R11: ffff88045a077a3c R12: ffff8804440ed000
-[  160.704614] R13: ffff880458e21800 R14: ffff8804440e9000 R15: ffff8804440e9000
-[  160.705260] FS:  0000000000000000(0000) GS:ffff88045f280000(0000) knlGS:0000000000000000
-[  160.705854] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  160.706478] CR2: ffffffffffffffd6 CR3: 000000000200a001 CR4: 00000000003606e0
-[  160.707124] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  160.707724] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  160.708372] Call Trace:
-[  160.708998]  ? dm_dp_add_mst_connector+0xed/0x1d0 [amdgpu]
-[  160.709625]  ? drm_dp_add_port+0x2fa/0x470 [drm_kms_helper]
-[  160.710284]  ? wake_up_q+0x54/0x70
-[  160.710877]  ? __mutex_unlock_slowpath.isra.18+0xb3/0x110
-[  160.711512]  ? drm_dp_dpcd_access+0xe7/0x110 [drm_kms_helper]
-[  160.712161]  ? drm_dp_send_link_address+0x155/0x1e0 [drm_kms_helper]
-[  160.712762]  ? drm_dp_check_and_send_link_address+0xa3/0xd0 [drm_kms_helper]
-[  160.713408]  ? drm_dp_mst_link_probe_work+0x4b/0x80 [drm_kms_helper]
-[  160.714013]  ? process_one_work+0x1a1/0x3a0
-[  160.714667]  ? worker_thread+0x30/0x380
-[  160.715326]  ? wq_update_unbound_numa+0x10/0x10
-[  160.715939]  ? kthread+0x112/0x130
-[  160.716591]  ? kthread_create_worker_on_cpu+0x70/0x70
-[  160.717262]  ? ret_from_fork+0x35/0x40
-[  160.717886] Modules linked in: amdgpu(O) vfat fat snd_hda_codec_generic joydev i915 chash gpu_sched ttm i2c_algo_bit drm_kms_helper snd_hda_codec_hdmi hp_wmi syscopyarea iTCO_wdt sysfillrect sparse_keymap sysimgblt fb_sys_fops snd_hda_intel usbhid wmi_bmof drm snd_hda_codec btusb snd_hda_core intel_rapl btrtl x86_pkg_temp_thermal btbcm btintel coretemp snd_pcm crc32_pclmul bluetooth psmouse snd_timer snd pcspkr i2c_i801 mei_me i2c_core soundcore mei tpm_tis wmi tpm_tis_core hp_accel ecdh_generic lis3lv02d tpm video rfkill acpi_pad input_polldev hp_wireless pcc_cpufreq crc32c_intel serio_raw tg3 xhci_pci xhci_hcd [last unloaded: amdgpu]
-[  160.720141] CR2: 0000000000000000
+Just did, dropped v1 and added v2 instead.
 
-Somehow the connector reusage DM was using for MST connectors managed to
-paper over this issue entirely; hence why this was never caught until
-now.
-
-[how]
-Since this code isn't used anywhere and seems useless anyway, we can
-just drop it entirely. This appears to fix the issue on my HP ZBook with
-an AMD WX4150.
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
----
-Hey! This is the patch that I was talking about, feel free to review
-it-we should make sure this goes in with the rest of the patches you've
-got so far.
-
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-index 6aa7359d61a3..5432a1862b41 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-@@ -285,12 +285,7 @@ dm_dp_create_fake_mst_encoder(struct amdgpu_dm_connector *connector)
- 	struct amdgpu_device *adev = dev->dev_private;
- 	struct amdgpu_encoder *amdgpu_encoder;
- 	struct drm_encoder *encoder;
--	const struct drm_connector_helper_funcs *connector_funcs =
--		connector->base.helper_private;
--	struct drm_encoder *enc_master =
--		connector_funcs->best_encoder(&connector->base);
- 
--	DRM_DEBUG_KMS("enc master is %p\n", enc_master);
- 	amdgpu_encoder = kzalloc(sizeof(*amdgpu_encoder), GFP_KERNEL);
- 	if (!amdgpu_encoder)
- 		return NULL;
 -- 
-2.19.1
+Jens Axboe
 
