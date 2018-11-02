@@ -2,114 +2,267 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF2DC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:51:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A45C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:51:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E60D02082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:51:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E60D02082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id DF4212082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:51:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF4212082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728114AbeKCB7g (ORCPT
+        id S1728134AbeKCB7i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 21:59:36 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59038 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727946AbeKCB7g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 21:59:36 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C4EB5AE11;
-        Fri,  2 Nov 2018 16:51:48 +0000 (UTC)
-Date:   Fri, 2 Nov 2018 17:51:47 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Dexuan Cui <decui@microsoft.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>, Rik van Riel <riel@surriel.com>,
-        Konstantin Khlebnikov <koct9i@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Stable@vger.kernel.org" <Stable@vger.kernel.org>
-Subject: Re: Will the recent memory leak fixes be backported to longterm
- kernels?
-Message-ID: <20181102165147.GG28039@dhcp22.suse.cz>
-References: <PU1P153MB0169CB6382E0F047579D111DBFCF0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <20181102005816.GA10297@tower.DHCP.thefacebook.com>
- <PU1P153MB0169FE681EF81BCE81B005A1BFCF0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <20181102073009.GP23921@dhcp22.suse.cz>
- <20181102154844.GA17619@tower.DHCP.thefacebook.com>
- <20181102161314.GF28039@dhcp22.suse.cz>
- <20181102162237.GB17619@tower.DHCP.thefacebook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181102162237.GB17619@tower.DHCP.thefacebook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 2 Nov 2018 21:59:38 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:35675 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726318AbeKCB7h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 21:59:37 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437341|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03294;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=7;RT=7;SR=0;TI=SMTPD_---.DCM70ns_1541177500;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.DCM70ns_1541177500)
+          by smtp.aliyun-inc.com(10.147.41.187);
+          Sat, 03 Nov 2018 00:51:40 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     daniel.lezcano@linaro.org, tglx@linutronix.de
+Cc:     arnd@arndb.de, linux-arch@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Guo Ren <ren_guo@c-sky.com>
+Subject: [PATCH V13 resend 3/4] clocksource: add gx6605s SOC system timer
+Date:   Sat,  3 Nov 2018 00:51:30 +0800
+Message-Id:
+ <6a090f24194b7cfff807ecad7f7c2f1cf3b737c0.1539579760.git.ren_guo@c-sky.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <7becd836e1477d7ac2d3f8538a6d7f5b9651c389.1539579760.git.ren_guo@c-sky.com>
+References: <7becd836e1477d7ac2d3f8538a6d7f5b9651c389.1539579760.git.ren_guo@c-sky.com>
+In-Reply-To: <7becd836e1477d7ac2d3f8538a6d7f5b9651c389.1539579760.git.ren_guo@c-sky.com>
+References: <7becd836e1477d7ac2d3f8538a6d7f5b9651c389.1539579760.git.ren_guo@c-sky.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Message-ID: <20181102165130.Pre0QKln-49VE8nT5a2I6uZl_QPcuKdVr1HFTp9rz5k@z>
 
-On Fri 02-11-18 16:22:41, Roman Gushchin wrote:
-> On Fri, Nov 02, 2018 at 05:13:14PM +0100, Michal Hocko wrote:
-> > On Fri 02-11-18 15:48:57, Roman Gushchin wrote:
-> > > On Fri, Nov 02, 2018 at 09:03:55AM +0100, Michal Hocko wrote:
-> > > > On Fri 02-11-18 02:45:42, Dexuan Cui wrote:
-> > > > [...]
-> > > > > I totally agree. I'm now just wondering if there is any temporary workaround,
-> > > > > even if that means we have to run the kernel with some features disabled or
-> > > > > with a suboptimal performance?
-> > > > 
-> > > > One way would be to disable kmem accounting (cgroup.memory=nokmem kernel
-> > > > option). That would reduce the memory isolation because quite a lot of
-> > > > memory will not be accounted for but the primary source of in-flight and
-> > > > hard to reclaim memory will be gone.
-> > > 
-> > > In my experience disabling the kmem accounting doesn't really solve the issue
-> > > (without patches), but can lower the rate of the leak.
-> > 
-> > This is unexpected. 90cbc2508827e was introduced to address offline
-> > memcgs to be reclaim even when they are small. But maybe you mean that
-> > we still leak in an absence of the memory pressure. Or what does prevent
-> > memcg from going down?
-> 
-> There are 3 independent issues which are contributing to this leak:
-> 1) Kernel stack accounting weirdness: processes can reuse stack accounted to
-> different cgroups. So basically any running process can take a reference to any
-> cgroup.
+The driver is for gx6605s SOC system timer and there are two
+same timers in gx6605s. We use one for clkevt and another one for
+clksrc.
 
-yes, but kmem accounting should rule that out, right? If not then this
-is a clear bug and easy to backport because that would mean to add a
-missing memcg_kmem_enabled check.
+The timer is mmio map to access, so we need give mmio address in dts.
 
-> 2) We do forget to scan the last page in the LRU list. So if we ended up with
-> 1-page long LRU, it can stay there basically forever.
+The counter at 0x0  offset is clock event.
+The counter at 0x40 offset is clock source.
 
-Why 
-		/*
-		 * If the cgroup's already been deleted, make sure to
-		 * scrape out the remaining cache.
-		 */
-		if (!scan && !mem_cgroup_online(memcg))
-			scan = min(size, SWAP_CLUSTER_MAX);
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+---
+Changelog:
+ - pass checkpatch.pl
+ - Add COMIPLE_TEST in Kconfig
+ - no cast is needed for "struct clock_event_device *ce = dev"
+ - remove: extra space after (u64)
+ - Add License and Copyright
+ - Use timer-of framework
+ - Change name with upstream feedback
+ - Use clksource_mmio framework
+---
+---
+ drivers/clocksource/Kconfig         |   8 ++
+ drivers/clocksource/Makefile        |   1 +
+ drivers/clocksource/timer-gx6605s.c | 154 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 163 insertions(+)
+ create mode 100644 drivers/clocksource/timer-gx6605s.c
 
-in get_scan_count doesn't work for that case?
-
-> 3) We don't apply enough pressure on slab objects.
-
-again kmem accounting disabled should make this moot
-
-> Because one reference is enough to keep the entire memcg structure in place,
-> we really have to close all three to eliminate the leak. Disabling kmem
-> accounting mitigates only the last one.
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index 591c9a8..55c77e4 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -630,4 +630,12 @@ config CSKY_MP_TIMER
+ 	  csky,mptimer is not only used in SMP system, it also could be used
+ 	  single core system. It's not a mmio reg and it use mtcr/mfcr instruction.
+ 
++config GX6605S_TIMER
++	bool "Gx6605s SOC system timer driver" if COMPILE_TEST
++	depends on CSKY
++	select CLKSRC_MMIO
++	select TIMER_OF
++	help
++	  This option enables support for gx6605s SOC's timer.
++
+ endmenu
+diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+index 5ce82d3..9196331 100644
+--- a/drivers/clocksource/Makefile
++++ b/drivers/clocksource/Makefile
+@@ -80,3 +80,4 @@ obj-$(CONFIG_X86_NUMACHIP)		+= numachip.o
+ obj-$(CONFIG_ATCPIT100_TIMER)		+= timer-atcpit100.o
+ obj-$(CONFIG_RISCV_TIMER)		+= riscv_timer.o
+ obj-$(CONFIG_CSKY_MP_TIMER)		+= timer-mp-csky.o
++obj-$(CONFIG_GX6605S_TIMER)		+= timer-gx6605s.o
+diff --git a/drivers/clocksource/timer-gx6605s.c b/drivers/clocksource/timer-gx6605s.c
+new file mode 100644
+index 0000000..80d0939
+--- /dev/null
++++ b/drivers/clocksource/timer-gx6605s.c
+@@ -0,0 +1,154 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++
++#include <linux/init.h>
++#include <linux/interrupt.h>
++#include <linux/sched_clock.h>
++
++#include "timer-of.h"
++
++#define CLKSRC_OFFSET	0x40
++
++#define TIMER_STATUS	0x00
++#define TIMER_VALUE	0x04
++#define TIMER_CONTRL	0x10
++#define TIMER_CONFIG	0x20
++#define TIMER_DIV	0x24
++#define TIMER_INI	0x28
++
++#define GX6605S_STATUS_CLR	BIT(0)
++#define GX6605S_CONTRL_RST	BIT(0)
++#define GX6605S_CONTRL_START	BIT(1)
++#define GX6605S_CONFIG_EN	BIT(0)
++#define GX6605S_CONFIG_IRQ_EN	BIT(1)
++
++static irqreturn_t gx6605s_timer_interrupt(int irq, void *dev)
++{
++	struct clock_event_device *ce = dev;
++	void __iomem *base = timer_of_base(to_timer_of(ce));
++
++	writel_relaxed(GX6605S_STATUS_CLR, base + TIMER_STATUS);
++
++	ce->event_handler(ce);
++
++	return IRQ_HANDLED;
++}
++
++static int gx6605s_timer_set_oneshot(struct clock_event_device *ce)
++{
++	void __iomem *base = timer_of_base(to_timer_of(ce));
++
++	/* reset and stop counter */
++	writel_relaxed(GX6605S_CONTRL_RST, base + TIMER_CONTRL);
++
++	/* enable with irq and start */
++	writel_relaxed(GX6605S_CONFIG_EN | GX6605S_CONFIG_IRQ_EN,
++		       base + TIMER_CONFIG);
++
++	return 0;
++}
++
++static int gx6605s_timer_set_next_event(unsigned long delta,
++					struct clock_event_device *ce)
++{
++	void __iomem *base = timer_of_base(to_timer_of(ce));
++
++	/* use reset to pause timer */
++	writel_relaxed(GX6605S_CONTRL_RST, base + TIMER_CONTRL);
++
++	/* config next timeout value */
++	writel_relaxed(ULONG_MAX - delta, base + TIMER_INI);
++	writel_relaxed(GX6605S_CONTRL_START, base + TIMER_CONTRL);
++
++	return 0;
++}
++
++static int gx6605s_timer_shutdown(struct clock_event_device *ce)
++{
++	void __iomem *base = timer_of_base(to_timer_of(ce));
++
++	writel_relaxed(0, base + TIMER_CONTRL);
++	writel_relaxed(0, base + TIMER_CONFIG);
++
++	return 0;
++}
++
++static struct timer_of to = {
++	.flags = TIMER_OF_IRQ | TIMER_OF_BASE | TIMER_OF_CLOCK,
++	.clkevt = {
++		.rating			= 300,
++		.features		= CLOCK_EVT_FEAT_DYNIRQ |
++					  CLOCK_EVT_FEAT_ONESHOT,
++		.set_state_shutdown	= gx6605s_timer_shutdown,
++		.set_state_oneshot	= gx6605s_timer_set_oneshot,
++		.set_next_event		= gx6605s_timer_set_next_event,
++		.cpumask		= cpu_possible_mask,
++	},
++	.of_irq = {
++		.handler		= gx6605s_timer_interrupt,
++		.flags			= IRQF_TIMER | IRQF_IRQPOLL,
++	},
++};
++
++static u64 notrace gx6605s_sched_clock_read(void)
++{
++	void __iomem *base;
++
++	base = timer_of_base(&to) + CLKSRC_OFFSET;
++
++	return (u64)readl_relaxed(base + TIMER_VALUE);
++}
++
++static void gx6605s_clkevt_init(void __iomem *base)
++{
++	writel_relaxed(0, base + TIMER_DIV);
++	writel_relaxed(0, base + TIMER_CONFIG);
++
++	clockevents_config_and_register(&to.clkevt, timer_of_rate(&to), 2,
++					ULONG_MAX);
++}
++
++static int gx6605s_clksrc_init(void __iomem *base)
++{
++	writel_relaxed(0, base + TIMER_DIV);
++	writel_relaxed(0, base + TIMER_INI);
++
++	writel_relaxed(GX6605S_CONTRL_RST, base + TIMER_CONTRL);
++
++	writel_relaxed(GX6605S_CONFIG_EN, base + TIMER_CONFIG);
++
++	writel_relaxed(GX6605S_CONTRL_START, base + TIMER_CONTRL);
++
++	sched_clock_register(gx6605s_sched_clock_read, 32, timer_of_rate(&to));
++
++	return clocksource_mmio_init(base + TIMER_VALUE, "gx6605s",
++			timer_of_rate(&to), 200, 32, clocksource_mmio_readl_up);
++}
++
++static int __init gx6605s_timer_init(struct device_node *np)
++{
++	int ret;
++
++	/*
++	 * The timer driver is for nationalchip gx6605s SOC and there are two
++	 * same timer in gx6605s. We use one for clkevt and another for clksrc.
++	 *
++	 * The timer is mmio map to access, so we need give mmio address in dts.
++	 *
++	 * It provides a 32bit countup timer and interrupt will be caused by
++	 * count-overflow.
++	 * So we need set-next-event by ULONG_MAX - delta in TIMER_INI reg.
++	 *
++	 * The counter at 0x0  offset is clock event.
++	 * The counter at 0x40 offset is clock source.
++	 * They are the same in hardware, just different used by driver.
++	 */
++	ret = timer_of_init(np, &to);
++	if (ret)
++		return ret;
++
++	gx6605s_clkevt_init(timer_of_base(&to));
++
++	return gx6605s_clksrc_init(timer_of_base(&to) + CLKSRC_OFFSET);
++}
++TIMER_OF_DECLARE(csky_gx6605s_timer, "csky,gx6605s-timer", gx6605s_timer_init);
 -- 
-Michal Hocko
-SUSE Labs
+2.7.4
+
