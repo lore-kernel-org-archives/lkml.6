@@ -2,72 +2,88 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8848C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:50:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6686EC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:57:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85D5B2081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:50:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85D5B2081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 192652081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:57:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OdfNrMr1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 192652081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727145AbeKCE6n (ORCPT
+        id S1726760AbeKCFGE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 00:58:43 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44134 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726051AbeKCE6m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 00:58:42 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 92248300127F;
-        Fri,  2 Nov 2018 19:50:13 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4A061600CD;
-        Fri,  2 Nov 2018 19:50:12 +0000 (UTC)
-Subject: Re: [RFC PATCH] x86/mm/fault: Allow stack access below %rsp
-To:     Dave Hansen <dave.hansen@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
-Cc:     "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1541187610-5322-1-git-send-email-longman@redhat.com>
- <a3584dd1-c030-cebe-3f3d-eadc0744580a@intel.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <fb715262-df9e-3e77-6964-80ec4a1c7a24@redhat.com>
-Date:   Fri, 2 Nov 2018 15:50:11 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Sat, 3 Nov 2018 01:06:04 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:41487 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725889AbeKCFGE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 01:06:04 -0400
+Received: by mail-oi1-f194.google.com with SMTP id y192-v6so2541545oie.8;
+        Fri, 02 Nov 2018 12:57:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=q/oiJDzjc73HE5m/eO6pRn11+u6W5M9OljoGnOiaDZY=;
+        b=OdfNrMr1K0aybrLY83j6yFvDHRr1P8i4RXkzfLwJwC01V2g1/RoPXm6dUj75twjnGc
+         BVFaEQcvhoje+XcPR947DRtd09WWeamgjRG22OA+K3NcJ9HQHOd1xqUN5hhFYSZ0+6EY
+         I7au8cfTwaVT3Rjjd4ZY2azGV1QucHy8AJFFUEURpYpLsNycTmKVqmbNwN5/1dTGeOph
+         1s1YLzFJUESBVzpn43BE9XSo5grDeDXNU9IVk770LG2dpEhKp1VH394eWHyDiE1IYtBi
+         oCb3y/tFjo63ZQzB7fbu9sZFQsU7WOSY98JatqljctI82ZuVNkH+Ak4tQMlaP2LbyqO0
+         GHtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=q/oiJDzjc73HE5m/eO6pRn11+u6W5M9OljoGnOiaDZY=;
+        b=OjjvvCNJYASXFlvorVozMEbxNQux/aGbPBD8yJIlFoSFHobSs2Es1l7uxihMwvUsaK
+         g9jK6Rvtf9JftPthu4WxE+EtIo3Y8qnMFu6xk+I/xJ+jNytGpsZNlTw2VFy7up/FEtLP
+         GlLnWGAzXAlEZOxkbApOfBOehbuPTqxa3hIsZMXjS9Tbay01z4/yv0xNKktwOB262PEx
+         BI7tnNAN0HN3fsTqkRW6OgyNZzva/Epuh/nLZjTjDGHGTTDbCPKnJtMKtP4gunwj9rIc
+         x9soifvd57r1xVQ7Iv9+TKhixlf5v/HgR0DCkLrBHETdkk3HWxSAEWpGGPocHXWOvxq7
+         DsoA==
+X-Gm-Message-State: AGRZ1gK0vRHtGZoPYZzPD2p2xpkFVMPyrlEN0MZ174uqbW4X8Q//pHKY
+        oeEp1WjM+kiVEA4mJ+OYuRKE7eqrUrLMyIXc8wM=
+X-Google-Smtp-Source: AJdET5cz6vCtFDYr+MLNG9UW27/OKBwX6KZ6NhwcApEo06FUNUOWtmBeRrDTL0EgcWR9G1pKaA7kTDfgKyNj4XeGT8s=
+X-Received: by 2002:aca:a655:: with SMTP id p82-v6mr7788038oie.282.1541188653336;
+ Fri, 02 Nov 2018 12:57:33 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <a3584dd1-c030-cebe-3f3d-eadc0744580a@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Fri, 02 Nov 2018 19:50:13 +0000 (UTC)
+References: <20181102182857.064326086@linuxfoundation.org> <20181102182902.797148907@linuxfoundation.org>
+In-Reply-To: <20181102182902.797148907@linuxfoundation.org>
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Date:   Fri, 2 Nov 2018 19:56:57 +0000
+Message-ID: <CADVatmOX9FfVGZhFgAZ1sVvnigucFD9DuUu+K8444mTN=Qr+6w@mail.gmail.com>
+Subject: Re: [PATCH 4.14 069/143] ARM: tegra: Fix ULPI regression on Tegra20
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>, marcel.ziswiler@toradex.com,
+        digetx@gmail.com, Rob Herring <robh@kernel.org>,
+        Thierry Reding <treding@nvidia.com>, sashal@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/02/2018 03:44 PM, Dave Hansen wrote:
-> On 11/2/18 12:40 PM, Waiman Long wrote:
->> The 64k+ limit check is kind of arbitrary. So the check is now removed
->> to just let expand_stack() decide if a segmentation fault should happen.
-> With the 64k check removed, what's the next limit that we bump into?  Is
-> it just the stack_guard_gap space above the next-lowest VMA?
+Hi Greg,
 
-I think it is both the stack_guard_gap space above the next lowest VMA
-and the rlimit(RLIMIT_STACK).
+On Fri, Nov 2, 2018 at 6:53 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> 4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Cheers,
-Longman
+It seems this has already been reverted upstream:
+9bf4e370048d ("ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"")
 
+
+-- 
+Regards
+Sudip
