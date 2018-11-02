@@ -7,45 +7,51 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90FF4C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:55:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83490C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:55:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 563C52084C
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:55:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 554572084C
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:55:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="S1k3NdGZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 563C52084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xBZYoVfB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 554572084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731524AbeKCEEI (ORCPT
+        id S1731532AbeKCEEM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 00:04:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60172 "EHLO mail.kernel.org"
+        Sat, 3 Nov 2018 00:04:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726051AbeKCEEH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 00:04:07 -0400
+        id S1726051AbeKCEEL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 00:04:11 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2000C20848;
-        Fri,  2 Nov 2018 18:55:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5CD2B2084D;
+        Fri,  2 Nov 2018 18:55:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184951;
-        bh=6vFBngH1gqCzEZecaKEruQNFHBZ/Lok5hkQOI4KPUeE=;
+        s=default; t=1541184954;
+        bh=XAmiSXpO+pjfXfYlK5fit4q4my7lFuz7Thl1PkscpiQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S1k3NdGZFxySRTKtry2oezhlPlTCUqg//VbUnW/Ac8Mza3MIMH7YzmCneSekHnMH/
-         G2ZlkLqw0Gs67qdhlAa2H/ogPo8hFW3fKVFU0hs+EhtV0a9eHtZ8d3c/CnE5C1umbp
-         mTv+SZcP3DyHri3ACgbmMaJaZQdKiB0Rl1uPQgJI=
+        b=xBZYoVfBJVNMUSh8TDETIioHLXXJnQ93b6jzE3DcgGsiNAFLmO6PYmA2LE99b6jzI
+         4pFIb/1pNGFpFZ4U0xjrQ/TGTi7YAibE/s6Sj97ApFTVvLz5cbXxVi6ksZ5QNCrwsF
+         fqPMv4FNX1r2fKb8tTFvoPCjQw9byxbzQ0W+Q0XA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dimitris Michailidis <dmichail@google.com>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Pawe=C5=82=20Staszewski?= <pstaszewski@itcare.pl>,
         Eric Dumazet <edumazet@google.com>,
+        Eran Ben Elisha <eranbe@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Dimitris Michailidis <dmichail@google.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Maria Pasechnik <mariap@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 138/143] net: fix pskb_trim_rcsum_slow() with odd trim offset
-Date:   Fri,  2 Nov 2018 19:35:23 +0100
-Message-Id: <20181102182908.759651111@linuxfoundation.org>
+Subject: [PATCH 4.14 139/143] net/mlx5e: fix csum adjustments caused by RXFCS
+Date:   Fri,  2 Nov 2018 19:35:24 +0100
+Message-Id: <20181102182908.816507452@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -63,47 +69,108 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dimitris Michailidis <dmichail@google.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit d55bef5059dd057bd077155375c581b49d25be7e ]
+[ Upstream commit d48051c5b8376038c2b287c3b1bd55b8d391d567 ]
 
-We've been getting checksum errors involving small UDP packets, usually
-59B packets with 1 extra non-zero padding byte. netdev_rx_csum_fault()
-has been complaining that HW is providing bad checksums. Turns out the
-problem is in pskb_trim_rcsum_slow(), introduced in commit 88078d98d1bb
-("net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are friends").
+As shown by Dmitris, we need to use csum_block_add() instead of csum_add()
+when adding the FCS contribution to skb csum.
 
-The source of the problem is that when the bytes we are trimming start
-at an odd address, as in the case of the 1 padding byte above,
-skb_checksum() returns a byte-swapped value. We cannot just combine this
-with skb->csum using csum_sub(). We need to use csum_block_sub() here
-that takes into account the parity of the start address and handles the
-swapping.
+Before 4.18 (more exactly commit 88078d98d1bb "net: pskb_trim_rcsum()
+and CHECKSUM_COMPLETE are friends"), the whole skb csum was thrown away,
+so RXFCS changes were ignored.
 
-Matches existing code in __skb_postpull_rcsum() and esp_remove_trailer().
+Then before commit d55bef5059dd ("net: fix pskb_trim_rcsum_slow() with
+odd trim offset") both mlx5 and pskb_trim_rcsum_slow() bugs were canceling
+each other.
 
-Fixes: 88078d98d1bb ("net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are friends")
-Signed-off-by: Dimitris Michailidis <dmichail@google.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+Now we fixed pskb_trim_rcsum_slow() we need to fix mlx5.
+
+Note that this patch also rewrites mlx5e_get_fcs() to :
+
+- Use skb_header_pointer() instead of reinventing it.
+- Use __get_unaligned_cpu32() to avoid possible non aligned accesses
+  as Dmitris pointed out.
+
+Fixes: 902a545904c7 ("net/mlx5e: When RXFCS is set, add FCS data into checksum calculation")
+Reported-by: Paweł Staszewski <pstaszewski@itcare.pl>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Eran Ben Elisha <eranbe@mellanox.com>
+Cc: Saeed Mahameed <saeedm@mellanox.com>
+Cc: Dimitris Michailidis <dmichail@google.com>
+Cc: Cong Wang <xiyou.wangcong@gmail.com>
+Cc: Paweł Staszewski <pstaszewski@itcare.pl>
+Reviewed-by: Eran Ben Elisha <eranbe@mellanox.com>
+Tested-By: Maria Pasechnik <mariap@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/skbuff.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_rx.c |   45 ++++--------------------
+ 1 file changed, 9 insertions(+), 36 deletions(-)
 
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -1843,8 +1843,9 @@ int pskb_trim_rcsum_slow(struct sk_buff
- 	if (skb->ip_summed == CHECKSUM_COMPLETE) {
- 		int delta = skb->len - len;
- 
--		skb->csum = csum_sub(skb->csum,
--				     skb_checksum(skb, len, delta, 0));
-+		skb->csum = csum_block_sub(skb->csum,
-+					   skb_checksum(skb, len, delta, 0),
-+					   len);
- 	}
- 	return __pskb_trim(skb, len);
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
+@@ -635,43 +635,15 @@ static inline bool is_first_ethertype_ip
+ 	return (ethertype == htons(ETH_P_IP) || ethertype == htons(ETH_P_IPV6));
  }
+ 
+-static __be32 mlx5e_get_fcs(struct sk_buff *skb)
++static u32 mlx5e_get_fcs(const struct sk_buff *skb)
+ {
+-	int last_frag_sz, bytes_in_prev, nr_frags;
+-	u8 *fcs_p1, *fcs_p2;
+-	skb_frag_t *last_frag;
+-	__be32 fcs_bytes;
+-
+-	if (!skb_is_nonlinear(skb))
+-		return *(__be32 *)(skb->data + skb->len - ETH_FCS_LEN);
+-
+-	nr_frags = skb_shinfo(skb)->nr_frags;
+-	last_frag = &skb_shinfo(skb)->frags[nr_frags - 1];
+-	last_frag_sz = skb_frag_size(last_frag);
+-
+-	/* If all FCS data is in last frag */
+-	if (last_frag_sz >= ETH_FCS_LEN)
+-		return *(__be32 *)(skb_frag_address(last_frag) +
+-				   last_frag_sz - ETH_FCS_LEN);
+-
+-	fcs_p2 = (u8 *)skb_frag_address(last_frag);
+-	bytes_in_prev = ETH_FCS_LEN - last_frag_sz;
+-
+-	/* Find where the other part of the FCS is - Linear or another frag */
+-	if (nr_frags == 1) {
+-		fcs_p1 = skb_tail_pointer(skb);
+-	} else {
+-		skb_frag_t *prev_frag = &skb_shinfo(skb)->frags[nr_frags - 2];
++	const void *fcs_bytes;
++	u32 _fcs_bytes;
+ 
+-		fcs_p1 = skb_frag_address(prev_frag) +
+-			    skb_frag_size(prev_frag);
+-	}
+-	fcs_p1 -= bytes_in_prev;
+-
+-	memcpy(&fcs_bytes, fcs_p1, bytes_in_prev);
+-	memcpy(((u8 *)&fcs_bytes) + bytes_in_prev, fcs_p2, last_frag_sz);
++	fcs_bytes = skb_header_pointer(skb, skb->len - ETH_FCS_LEN,
++				       ETH_FCS_LEN, &_fcs_bytes);
+ 
+-	return fcs_bytes;
++	return __get_unaligned_cpu32(fcs_bytes);
+ }
+ 
+ static inline void mlx5e_handle_csum(struct net_device *netdev,
+@@ -693,8 +665,9 @@ static inline void mlx5e_handle_csum(str
+ 		skb->ip_summed = CHECKSUM_COMPLETE;
+ 		skb->csum = csum_unfold((__force __sum16)cqe->check_sum);
+ 		if (unlikely(netdev->features & NETIF_F_RXFCS))
+-			skb->csum = csum_add(skb->csum,
+-					     (__force __wsum)mlx5e_get_fcs(skb));
++			skb->csum = csum_block_add(skb->csum,
++						   (__force __wsum)mlx5e_get_fcs(skb),
++						   skb->len - ETH_FCS_LEN);
+ 		rq->stats.csum_complete++;
+ 		return;
+ 	}
 
 
