@@ -4,47 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D0AEC6786F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:38:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34E03C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:39:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B5C12082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:38:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0348D20833
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:39:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MV8PZZrw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B5C12082E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wrz4GhEP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0348D20833
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728990AbeKCDrG (ORCPT
+        id S1729002AbeKCDrJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:47:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41034 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:47:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728028AbeKCDrF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:47:05 -0400
+        id S1728028AbeKCDrJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:47:09 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A61352082D;
-        Fri,  2 Nov 2018 18:38:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A52542082D;
+        Fri,  2 Nov 2018 18:38:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541183934;
-        bh=q1s7ptYz9Vq+8X5W1PygjbsLnXBiqx/TeyTuVLFm5+Y=;
+        s=default; t=1541183937;
+        bh=eeNCZV0aFJLgJYVGZejGuf2z76fjxzDrFwdp/ndZHPU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MV8PZZrwaNzAuaFSbB+mX7Bcq4enlYT/TF+ChJj8Xp4kYvEgUDCcJGarDEPZqB5/z
-         Fqa8TH9kOu0UIHvRCmBYM6UHGmIBqy1NqAATy8MGT6XmIPujv/KRpjsI+hAotZ5r5i
-         p2+NsXBAVM8wECf9qjlW/kCxl3MPNoh0/hGgSgaQ=
+        b=wrz4GhEPcRKesDKfLUb2tW2Tz3A8tIQy7AjKBrTymmHrTZDdazqKuS9G+f8PVKGd1
+         mgU8Afg3e7IXPmG7biiv6SpLlLIYaRg2O6A+Il+QBDNvxUXJiYRcmurmSMqKqUuzn7
+         4CQz1Xr8GB4EJWeAr4SjU/30IQUgV+G8ysKGaEsI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Yuan-Chi Pang <fu3mo6goo@gmail.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 009/150] mac80211: TDLS: fix skb queue/priority assignment
-Date:   Fri,  2 Nov 2018 19:32:51 +0100
-Message-Id: <20181102182903.209165985@linuxfoundation.org>
+Subject: [PATCH 4.18 010/150] mac80211: fix TX status reporting for ieee80211s
+Date:   Fri,  2 Nov 2018 19:32:52 +0100
+Message-Id: <20181102182903.310807683@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -62,53 +63,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit cb59bc14e830028d2244861216df038165d7625d ]
+[ Upstream commit c42055105785580563535e6d3143cad95c7ac7ee ]
 
-If the TDLS setup happens over a connection to an AP that
-doesn't have QoS, we nevertheless assign a non-zero TID
-(skb->priority) and queue mapping, which may confuse us or
-drivers later.
+TX status reporting to ieee80211s is through ieee80211s_update_metric.
+There are two problems about ieee80211s_update_metric:
 
-Fix it by just assigning the special skb->priority and then
-using ieee80211_select_queue() just like other data frames
-would go through.
+1. The purpose is to estimate the fail probability
+to a specific link. No need to restrict to data frame.
 
+2. Current implementation does not work if wireless driver does not
+pass tx_status with skb.
+
+Fix this by removing ieee80211_is_data condition, passing
+ieee80211_tx_status directly to ieee80211s_update_metric, and
+putting it in both __ieee80211_tx_status and ieee80211_tx_status_ext.
+
+Signed-off-by: Yuan-Chi Pang <fu3mo6goo@gmail.com>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/tdls.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ net/mac80211/mesh.h      | 3 ++-
+ net/mac80211/mesh_hwmp.c | 9 +++------
+ net/mac80211/status.c    | 4 +++-
+ 3 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/net/mac80211/tdls.c b/net/mac80211/tdls.c
-index 5cd5e6e5834e..6c647f425e05 100644
---- a/net/mac80211/tdls.c
-+++ b/net/mac80211/tdls.c
-@@ -16,6 +16,7 @@
- #include "ieee80211_i.h"
- #include "driver-ops.h"
- #include "rate.h"
-+#include "wme.h"
+diff --git a/net/mac80211/mesh.h b/net/mac80211/mesh.h
+index ee56f18cad3f..21526630bf65 100644
+--- a/net/mac80211/mesh.h
++++ b/net/mac80211/mesh.h
+@@ -217,7 +217,8 @@ void mesh_rmc_free(struct ieee80211_sub_if_data *sdata);
+ int mesh_rmc_init(struct ieee80211_sub_if_data *sdata);
+ void ieee80211s_init(void);
+ void ieee80211s_update_metric(struct ieee80211_local *local,
+-			      struct sta_info *sta, struct sk_buff *skb);
++			      struct sta_info *sta,
++			      struct ieee80211_tx_status *st);
+ void ieee80211_mesh_init_sdata(struct ieee80211_sub_if_data *sdata);
+ void ieee80211_mesh_teardown_sdata(struct ieee80211_sub_if_data *sdata);
+ int ieee80211_start_mesh(struct ieee80211_sub_if_data *sdata);
+diff --git a/net/mac80211/mesh_hwmp.c b/net/mac80211/mesh_hwmp.c
+index daf9db3c8f24..6950cd0bf594 100644
+--- a/net/mac80211/mesh_hwmp.c
++++ b/net/mac80211/mesh_hwmp.c
+@@ -295,15 +295,12 @@ int mesh_path_error_tx(struct ieee80211_sub_if_data *sdata,
+ }
  
- /* give usermode some time for retries in setting up the TDLS session */
- #define TDLS_PEER_SETUP_TIMEOUT	(15 * HZ)
-@@ -1010,14 +1011,13 @@ ieee80211_tdls_prep_mgmt_packet(struct wiphy *wiphy, struct net_device *dev,
- 	switch (action_code) {
- 	case WLAN_TDLS_SETUP_REQUEST:
- 	case WLAN_TDLS_SETUP_RESPONSE:
--		skb_set_queue_mapping(skb, IEEE80211_AC_BK);
--		skb->priority = 2;
-+		skb->priority = 256 + 2;
- 		break;
- 	default:
--		skb_set_queue_mapping(skb, IEEE80211_AC_VI);
--		skb->priority = 5;
-+		skb->priority = 256 + 5;
- 		break;
+ void ieee80211s_update_metric(struct ieee80211_local *local,
+-		struct sta_info *sta, struct sk_buff *skb)
++			      struct sta_info *sta,
++			      struct ieee80211_tx_status *st)
+ {
+-	struct ieee80211_tx_info *txinfo = IEEE80211_SKB_CB(skb);
+-	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *) skb->data;
++	struct ieee80211_tx_info *txinfo = st->info;
+ 	int failed;
+ 
+-	if (!ieee80211_is_data(hdr->frame_control))
+-		return;
+-
+ 	failed = !(txinfo->flags & IEEE80211_TX_STAT_ACK);
+ 
+ 	/* moving average, scaled to 100.
+diff --git a/net/mac80211/status.c b/net/mac80211/status.c
+index 001a869c059c..91d7c0cd1882 100644
+--- a/net/mac80211/status.c
++++ b/net/mac80211/status.c
+@@ -808,7 +808,7 @@ static void __ieee80211_tx_status(struct ieee80211_hw *hw,
+ 
+ 		rate_control_tx_status(local, sband, status);
+ 		if (ieee80211_vif_is_mesh(&sta->sdata->vif))
+-			ieee80211s_update_metric(local, sta, skb);
++			ieee80211s_update_metric(local, sta, status);
+ 
+ 		if (!(info->flags & IEEE80211_TX_CTL_INJECTED) && acked)
+ 			ieee80211_frame_acked(sta, skb);
+@@ -969,6 +969,8 @@ void ieee80211_tx_status_ext(struct ieee80211_hw *hw,
+ 		}
+ 
+ 		rate_control_tx_status(local, sband, status);
++		if (ieee80211_vif_is_mesh(&sta->sdata->vif))
++			ieee80211s_update_metric(local, sta, status);
  	}
-+	skb_set_queue_mapping(skb, ieee80211_select_queue(sdata, skb));
  
- 	/*
- 	 * Set the WLAN_TDLS_TEARDOWN flag to indicate a teardown in progress.
+ 	if (acked || noack_success) {
 -- 
 2.17.1
 
