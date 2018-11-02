@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 331B4C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:09:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E03EC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:09:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAB6C20833
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:09:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 703E820833
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 19:09:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JdZeDslg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAB6C20833
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RGdtU/gD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 703E820833
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728390AbeKCERf (ORCPT
+        id S1728540AbeKCERg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 00:17:35 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37142 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726926AbeKCERd (ORCPT
+        Sat, 3 Nov 2018 00:17:36 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:33710 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726051AbeKCERf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 00:17:33 -0400
-Received: by mail-wr1-f66.google.com with SMTP id z3-v6so3032521wru.4
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 12:09:12 -0700 (PDT)
+        Sat, 3 Nov 2018 00:17:35 -0400
+Received: by mail-wm1-f65.google.com with SMTP id f19-v6so1837283wmb.0
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 12:09:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=DTGYor+aDoY+YYD6WunsmjKGozWWt6wj8+L/EBCu/QY=;
-        b=JdZeDslg1NcvtvSbCV5f/2STVqO82V6hl3mZLUxfXdZPyuT7kkpoW/WD2xtsyAk5Pz
-         f1w6kcWdYaUdyURUlZupD/Y0JA7D7SGXdh4HDLdCoTY8zcciRELOxdjlHGwPNscy3k1a
-         eCgbrcyg0F1WhthAEYpWajLNXijaBgtwH5aKs=
+        bh=Cs/HdsgXrRlb81nkVaefoI3h8zuKKKj/56RKUVVtQxY=;
+        b=RGdtU/gDTXeH0/chT7ehctiXFFGrPalMWu1QBCdTU0yCFeBGarEi9G6CC3koHGZCdb
+         lDZwpPgYmXvoWeAi0PzVtjMlxmEFQRCEtBUrTmMDXXor0gUqWMFV8aL2qVP1XvEn9P9N
+         EG/ocwbCPVNQVyrXftndTAesZZkK/Hr9amPyU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=DTGYor+aDoY+YYD6WunsmjKGozWWt6wj8+L/EBCu/QY=;
-        b=Nl5YMvIX/0x6qzv+g+dOzhkexO7FPlH51vt/IzLbLxnTvK9s18j6o7ruwn1z1ky7Ih
-         IUxXJrgIWj7XJZeAec2IMDCQ67CQ6156V7qEywSSMMOpVyMDbW3ueSd36FMrSiZf3msc
-         zsGeAJtBLtzLbLuUYg8+w4BoU6lDeRSMJIGpfJS5L+woI/PqTUNeuCX1IYouAkNOQJiJ
-         5kqXsYRIt1dtu0gAutvlK+0TEb3ywJ36UALTVzFkDA/tHs/fL22fYM7FicAMssfUSNTd
-         OnEd3CIt/P4ieh74bw0jDxWQGmHORif4or4SierlB+dsPYPHFf3SjlVnj67xrK+xoyo2
-         Nj7A==
-X-Gm-Message-State: AGRZ1gJAjduDM5Zx7UCaWe+OOatQpp55TwU0zXDycbNdbcP3LfqTe/UR
-        ymphYLSmWLnieTNjFSA4ewwaO+JFDr4=
-X-Google-Smtp-Source: AJdET5cF1PR+jbvwnAaZ3Uw44VsHbzqn0HQPliVMjU31ipFrs/40RA/R1VqY+Vp/70SOIpv8q1KaEw==
-X-Received: by 2002:adf:ecc5:: with SMTP id s5-v6mr1726370wro.208.1541185751317;
-        Fri, 02 Nov 2018 12:09:11 -0700 (PDT)
+        bh=Cs/HdsgXrRlb81nkVaefoI3h8zuKKKj/56RKUVVtQxY=;
+        b=Dirij63xR1hAkbBZ5MQG4y+uw9qts9HcdDPWNtb8DJUp73asYsOObwV/ZI+9mwMphu
+         O7p6Kh5+Xf2NISy7I63RLqTQS7yNMRWwYoRtHIg6gkoyuKGQTYyCeTs1T4YAj3PyrnZe
+         lU14gzvHBIHzFwnMn3PyMAtgYw2mFnQXWy/ErK3S7XGV4r+SVM2RT7geqj/m3gLC4kL4
+         4KoG51uSzI0v+Yyxo5dqD5CHw6hi30EZIHGu9pOYw4W+Ddvs4CmLMitD5ykJaVwm+4tu
+         K6Al+/KPzEQxOiAe48/f1k5tUMzGteTL9B7NDj+o9Cgg1jXcpRnAHTstdco7ZI+Il/QI
+         A26Q==
+X-Gm-Message-State: AGRZ1gKE39dkEgUwoSeuBipB1gQqCkEJ00j2mpfReiJkBvXrbByEy3gL
+        DIUJTYHeIVcBBoY7U10lLgii3q5ok6o=
+X-Google-Smtp-Source: AJdET5eNf8QcYrTayLAECMhJ58gzrsgkIw471k7k3vfRk1nt5pdm6T9WXkj14KYO2jw9dAPccHFvwA==
+X-Received: by 2002:a1c:f60f:: with SMTP id w15-v6mr162627wmc.101.1541185752982;
+        Fri, 02 Nov 2018 12:09:12 -0700 (PDT)
 Received: from localhost.localdomain ([80.125.186.228])
-        by smtp.gmail.com with ESMTPSA id s195-v6sm3899337wmd.39.2018.11.02.12.09.09
+        by smtp.gmail.com with ESMTPSA id s195-v6sm3899337wmd.39.2018.11.02.12.09.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 02 Nov 2018 12:09:10 -0700 (PDT)
+        Fri, 02 Nov 2018 12:09:11 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
 Cc:     linux-kernel@vger.kernel.org, arnd@arndb.de, ren_guo@c-sky.com
-Subject: [PATCH 3/4] clocksource/drivers/c-sky: Add gx6605s SOC system timer
-Date:   Fri,  2 Nov 2018 20:08:57 +0100
-Message-Id: <1541185738-8208-3-git-send-email-daniel.lezcano@linaro.org>
+Subject: [PATCH 4/4] dt-bindings: timer: gx6605s SOC timer
+Date:   Fri,  2 Nov 2018 20:08:58 +0100
+Message-Id: <1541185738-8208-4-git-send-email-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1541185738-8208-1-git-send-email-daniel.lezcano@linaro.org>
 References: <d99ed466-b11a-b931-fc7a-a555cae80a53@linaro.org>
@@ -72,212 +72,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Guo Ren <ren_guo@c-sky.com>
 
-The driver is for gx6605s SOC system timer and there are two
-same timers in gx6605s. We use one for clkevt and another one for
-clksrc.
-
-The timer is mmio map to access, so we need give mmio address in dts.
-
-The counter at 0x0  offset is clock event.
-The counter at 0x40 offset is clock source.
+Dt-bindings doc for gx6605s SOC's system timer.
 
 Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/clocksource/Kconfig         |   8 ++
- drivers/clocksource/Makefile        |   1 +
- drivers/clocksource/timer-gx6605s.c | 154 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 163 insertions(+)
- create mode 100644 drivers/clocksource/timer-gx6605s.c
+ .../bindings/timer/csky,gx6605s-timer.txt          | 42 ++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/timer/csky,gx6605s-timer.txt
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index 591c9a8..55c77e4 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -630,4 +630,12 @@ config CSKY_MP_TIMER
- 	  csky,mptimer is not only used in SMP system, it also could be used
- 	  single core system. It's not a mmio reg and it use mtcr/mfcr instruction.
- 
-+config GX6605S_TIMER
-+	bool "Gx6605s SOC system timer driver" if COMPILE_TEST
-+	depends on CSKY
-+	select CLKSRC_MMIO
-+	select TIMER_OF
-+	help
-+	  This option enables support for gx6605s SOC's timer.
-+
- endmenu
-diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
-index 5ce82d3..9196331 100644
---- a/drivers/clocksource/Makefile
-+++ b/drivers/clocksource/Makefile
-@@ -80,3 +80,4 @@ obj-$(CONFIG_X86_NUMACHIP)		+= numachip.o
- obj-$(CONFIG_ATCPIT100_TIMER)		+= timer-atcpit100.o
- obj-$(CONFIG_RISCV_TIMER)		+= riscv_timer.o
- obj-$(CONFIG_CSKY_MP_TIMER)		+= timer-mp-csky.o
-+obj-$(CONFIG_GX6605S_TIMER)		+= timer-gx6605s.o
-diff --git a/drivers/clocksource/timer-gx6605s.c b/drivers/clocksource/timer-gx6605s.c
+diff --git a/Documentation/devicetree/bindings/timer/csky,gx6605s-timer.txt b/Documentation/devicetree/bindings/timer/csky,gx6605s-timer.txt
 new file mode 100644
-index 0000000..80d0939
+index 0000000..6b04344
 --- /dev/null
-+++ b/drivers/clocksource/timer-gx6605s.c
-@@ -0,0 +1,154 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++++ b/Documentation/devicetree/bindings/timer/csky,gx6605s-timer.txt
+@@ -0,0 +1,42 @@
++=================
++gx6605s SOC Timer
++=================
 +
-+#include <linux/init.h>
-+#include <linux/interrupt.h>
-+#include <linux/sched_clock.h>
++The timer is used in gx6605s soc as system timer and the driver
++contain clk event and clk source.
 +
-+#include "timer-of.h"
++==============================
++timer node bindings definition
++==============================
 +
-+#define CLKSRC_OFFSET	0x40
++	Description: Describes gx6605s SOC timer
 +
-+#define TIMER_STATUS	0x00
-+#define TIMER_VALUE	0x04
-+#define TIMER_CONTRL	0x10
-+#define TIMER_CONFIG	0x20
-+#define TIMER_DIV	0x24
-+#define TIMER_INI	0x28
++	PROPERTIES
 +
-+#define GX6605S_STATUS_CLR	BIT(0)
-+#define GX6605S_CONTRL_RST	BIT(0)
-+#define GX6605S_CONTRL_START	BIT(1)
-+#define GX6605S_CONFIG_EN	BIT(0)
-+#define GX6605S_CONFIG_IRQ_EN	BIT(1)
++	- compatible
++		Usage: required
++		Value type: <string>
++		Definition: must be "csky,gx6605s-timer"
++	- reg
++		Usage: required
++		Value type: <u32 u32>
++		Definition: <phyaddr size> in soc from cpu view
++	- clocks
++		Usage: required
++		Value type: phandle + clock specifier cells
++		Definition: must be input clk node
++	- interrupt
++		Usage: required
++		Value type: <u32>
++		Definition: must be timer irq num defined by soc
 +
-+static irqreturn_t gx6605s_timer_interrupt(int irq, void *dev)
-+{
-+	struct clock_event_device *ce = dev;
-+	void __iomem *base = timer_of_base(to_timer_of(ce));
++Examples:
++---------
 +
-+	writel_relaxed(GX6605S_STATUS_CLR, base + TIMER_STATUS);
-+
-+	ce->event_handler(ce);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int gx6605s_timer_set_oneshot(struct clock_event_device *ce)
-+{
-+	void __iomem *base = timer_of_base(to_timer_of(ce));
-+
-+	/* reset and stop counter */
-+	writel_relaxed(GX6605S_CONTRL_RST, base + TIMER_CONTRL);
-+
-+	/* enable with irq and start */
-+	writel_relaxed(GX6605S_CONFIG_EN | GX6605S_CONFIG_IRQ_EN,
-+		       base + TIMER_CONFIG);
-+
-+	return 0;
-+}
-+
-+static int gx6605s_timer_set_next_event(unsigned long delta,
-+					struct clock_event_device *ce)
-+{
-+	void __iomem *base = timer_of_base(to_timer_of(ce));
-+
-+	/* use reset to pause timer */
-+	writel_relaxed(GX6605S_CONTRL_RST, base + TIMER_CONTRL);
-+
-+	/* config next timeout value */
-+	writel_relaxed(ULONG_MAX - delta, base + TIMER_INI);
-+	writel_relaxed(GX6605S_CONTRL_START, base + TIMER_CONTRL);
-+
-+	return 0;
-+}
-+
-+static int gx6605s_timer_shutdown(struct clock_event_device *ce)
-+{
-+	void __iomem *base = timer_of_base(to_timer_of(ce));
-+
-+	writel_relaxed(0, base + TIMER_CONTRL);
-+	writel_relaxed(0, base + TIMER_CONFIG);
-+
-+	return 0;
-+}
-+
-+static struct timer_of to = {
-+	.flags = TIMER_OF_IRQ | TIMER_OF_BASE | TIMER_OF_CLOCK,
-+	.clkevt = {
-+		.rating			= 300,
-+		.features		= CLOCK_EVT_FEAT_DYNIRQ |
-+					  CLOCK_EVT_FEAT_ONESHOT,
-+		.set_state_shutdown	= gx6605s_timer_shutdown,
-+		.set_state_oneshot	= gx6605s_timer_set_oneshot,
-+		.set_next_event		= gx6605s_timer_set_next_event,
-+		.cpumask		= cpu_possible_mask,
-+	},
-+	.of_irq = {
-+		.handler		= gx6605s_timer_interrupt,
-+		.flags			= IRQF_TIMER | IRQF_IRQPOLL,
-+	},
-+};
-+
-+static u64 notrace gx6605s_sched_clock_read(void)
-+{
-+	void __iomem *base;
-+
-+	base = timer_of_base(&to) + CLKSRC_OFFSET;
-+
-+	return (u64)readl_relaxed(base + TIMER_VALUE);
-+}
-+
-+static void gx6605s_clkevt_init(void __iomem *base)
-+{
-+	writel_relaxed(0, base + TIMER_DIV);
-+	writel_relaxed(0, base + TIMER_CONFIG);
-+
-+	clockevents_config_and_register(&to.clkevt, timer_of_rate(&to), 2,
-+					ULONG_MAX);
-+}
-+
-+static int gx6605s_clksrc_init(void __iomem *base)
-+{
-+	writel_relaxed(0, base + TIMER_DIV);
-+	writel_relaxed(0, base + TIMER_INI);
-+
-+	writel_relaxed(GX6605S_CONTRL_RST, base + TIMER_CONTRL);
-+
-+	writel_relaxed(GX6605S_CONFIG_EN, base + TIMER_CONFIG);
-+
-+	writel_relaxed(GX6605S_CONTRL_START, base + TIMER_CONTRL);
-+
-+	sched_clock_register(gx6605s_sched_clock_read, 32, timer_of_rate(&to));
-+
-+	return clocksource_mmio_init(base + TIMER_VALUE, "gx6605s",
-+			timer_of_rate(&to), 200, 32, clocksource_mmio_readl_up);
-+}
-+
-+static int __init gx6605s_timer_init(struct device_node *np)
-+{
-+	int ret;
-+
-+	/*
-+	 * The timer driver is for nationalchip gx6605s SOC and there are two
-+	 * same timer in gx6605s. We use one for clkevt and another for clksrc.
-+	 *
-+	 * The timer is mmio map to access, so we need give mmio address in dts.
-+	 *
-+	 * It provides a 32bit countup timer and interrupt will be caused by
-+	 * count-overflow.
-+	 * So we need set-next-event by ULONG_MAX - delta in TIMER_INI reg.
-+	 *
-+	 * The counter at 0x0  offset is clock event.
-+	 * The counter at 0x40 offset is clock source.
-+	 * They are the same in hardware, just different used by driver.
-+	 */
-+	ret = timer_of_init(np, &to);
-+	if (ret)
-+		return ret;
-+
-+	gx6605s_clkevt_init(timer_of_base(&to));
-+
-+	return gx6605s_clksrc_init(timer_of_base(&to) + CLKSRC_OFFSET);
-+}
-+TIMER_OF_DECLARE(csky_gx6605s_timer, "csky,gx6605s-timer", gx6605s_timer_init);
++	timer0: timer@20a000 {
++		compatible = "csky,gx6605s-timer";
++		reg = <0x0020a000 0x400>;
++		clocks = <&dummy_apb_clk>;
++		interrupts = <10>;
++		interrupt-parent = <&intc>;
++	};
 -- 
 2.7.4
 
