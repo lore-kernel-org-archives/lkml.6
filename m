@@ -2,110 +2,95 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20EDCC65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0435AC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:15:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3BBB20657
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:15:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3BBB20657
+	by mail.kernel.org (Postfix) with ESMTP id BB1242085A
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:15:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lYei1ZQW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB1242085A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728019AbeKCAWY (ORCPT
+        id S1728022AbeKCAXP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 20:22:24 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:35513 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727704AbeKCAWY (ORCPT
+        Fri, 2 Nov 2018 20:23:15 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:41122 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727387AbeKCAXP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 20:22:24 -0400
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1Mgvj1-1fc7o01if7-00hKi9; Fri, 02 Nov 2018 16:14:45 +0100
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1Mgvj1-1fc7o01if7-00hKi9; Fri, 02 Nov 2018 16:14:45 +0100
+        Fri, 2 Nov 2018 20:23:15 -0400
+Received: by mail-qk1-f195.google.com with SMTP id 189so3543079qkj.8
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 08:15:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=EvNTaNiSav0a9d3Jmf5cZ6t42xssfwWNmINzcM45CIM=;
+        b=lYei1ZQWUgkSfXqDocfa68cGxGY3YyZ0zyE77zxOZOpF4mlFb6m+xK17CDFKOjYyDF
+         DJMsdG4AyoL8BvQB7ncP39Prr75jjvAm51vKvKakYcXUL/W/uHHDWVLHu8IihZBTZCWA
+         WWmqEhzOwqSeH5BTXnpPei3vE1WaTPD/xpmPrX53ecuhM3m5wyDkaNtPy5+hASsjJ3ho
+         t2Kfq/dalnaeTRYmck7TiDXQ9s+U3WEngh1lko4uosto5FSsYGV2uY7dvt/yAzcDnB+g
+         GYCr4a2LmUPLL/U5ApWcvDZgbxmiH5SQLb/WPauzG8mDwOYHBjWtYKLzIu0uT1Z83ha5
+         2hpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=EvNTaNiSav0a9d3Jmf5cZ6t42xssfwWNmINzcM45CIM=;
+        b=p+3r6+3e47h5Z3NxvFsvOIyH4GwWQSB3mwlFVneWt1ZCa655ltYOyrvpwliWL4HOIr
+         C4dt/cxnGdOinv3kKhKfBNc4JOorVFn7przSRneMRPTrDGFKeoq+5K7EPnhJOn3HB9r7
+         49BSYNf4nZrCNwnFHlgb6paqQuyTTnkYi183ykYMGNWVXQEzToKiyvS1V02BxebtGSHn
+         u932VCUzg5z6CkMYwMkCI+gKgr+r5eIjFMJrbZ7LOTeWGhhj+026zfEXMF45wxXnYyUH
+         ZFI7+Bc2KCmbVeSb0F+uGI3OtMhm1iYKpGzbMD1WZ4lKZdLYMHzwx9HBt6sQADQNfcmB
+         U7aw==
+X-Gm-Message-State: AGRZ1gIU5pgk/j7FnLIlzB8YAfJWkfm3WkcFGyFTqowZgZmdIk3GfvL7
+        yD+4A4USwy0WiiGoXZligVQ789LkUVdH5WpdILk=
+X-Google-Smtp-Source: AJdET5fwh8UNBD5lofGinNxhurk/CH4XQsAb2Ry9FkpBKoKsSs6JlZ31KEltt1G93Vl0WG7vspnxa9HES41kJlzkT5M=
+X-Received: by 2002:a0c:e202:: with SMTP id q2mr10921615qvl.180.1541171749897;
+ Fri, 02 Nov 2018 08:15:49 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a0c:9881:0:0:0:0:0 with HTTP; Fri, 2 Nov 2018 08:15:48 -0700 (PDT)
+In-Reply-To: <20181102143817.GP16508@imbe.wolfsonmicro.main>
+References: <20181102112341.753642-1-arnd@arndb.de> <20181102143817.GP16508@imbe.wolfsonmicro.main>
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Peter Hutterer <peter.hutterer@who-t.net>,
-        Mustafa Kuscu <mustafakuscu@gmail.com>,
-        Daniel Drake <drake@endlessm.com>, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] HID: asus: fix build warning wiht CONFIG_ASUS_WMI disabled
-Date:   Fri,  2 Nov 2018 16:14:32 +0100
-Message-Id: <20181102151443.758229-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:j95rsxkGv3TlKksXbH+UOcInQSsWSTiVPTyZX23/q7gBCHouhmd
- cF7Um1sxYxynMGddz0zQly9jgCzio5VDSuYfv263SoJklFAr7sj0eiZJy08OzIkfUR0HK/u
- TjtTDvWjPf4KVcxrcocMg2wA4OSMbhdEaKaWiXn1kxiBnAsJmXkOUG7H7C7+XNYSkVsorPy
- VBRj6rfMCQYSqh9oVxubA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:qjWYcfgqvn8=:1+/wXhZM8OAUBulgihJ5Ur
- 8UcWpbSZGXEbXbUJ2sQTATM96Kd7XCzTkBK23Oxo/twhCK295PCoikBhtb6qbPFpeSIXL57Yl
- VxYr/nC62ne4in0SdpfgBC/FO7lyfxXl5+/NwzO1l/rX5X1BBtVGsXGxsD2oneHi/JgNxwPZ1
- NeehLYOifrnRBSYA8+0AcX/7ODxvmxB29xOS6gdQ17eJ6uc7L/BVKnjMPbFtG2Ynx32+gzhsE
- +uLKuJibOFHwB0J10vDefN6XMqJUOIlM3nSI5iuxNOuehx/yGE5OmrBrRbXaTWw5Ht8IGWmLV
- QRfHeFtuIGb6X55If9yCGkByg+umNnLfXwbJNCmdAoMi501sAfpqQvDW/DV0RPMBEHXf86j9U
- ZJ9SaQPrBklEG7Ix2KpH4tpPuqxNRpVSO7IT0v20eeiOay6sdjufBEnGMJWvLpvbV1uaxXSsL
- ZSgUuEp+eQ4mN3J+S7lp5WfN0KxtVluwhq452tB5pLfSHZruZJqc3xy+mxw/Um6tBy8Thkll5
- o59MTRAdwLHVH/T6uSKGG49hgW2/goNn+PMkeZTi2jsSYpgNqF+BgrRaS95ow//fadQZyKwG2
- HRsqVLVHeLfJPoICwHcqfvnPnytTYGHAxrUqdxs+qwidvviO7k/QpcAkaNeWzUgcY/+KxH0YQ
- tXIXn5jcxy6pKILI7c8LuqXmHi0kfSHPAq5W5n4Vx3Q9HeY+XuEcCblsV6WFGhoPlSOGqK6uQ
- N7x3Wc/JiJylfLEQ8HlcggV3gXz4huiPK6xfKdXbvs44cuI8zele/WvcFkkBDXfqwjZHIBLOp
- TECxQ/b
+Date:   Fri, 2 Nov 2018 16:15:48 +0100
+X-Google-Sender-Auth: QGY0p8kJzZxYfavL9Kh4MVcu4fI
+Message-ID: <CAK8P3a0Mb3k8FAVdRWyiEwjCV4re1-LEvxG-NQXLfhEHts1ZDA@mail.gmail.com>
+Subject: Re: [PATCH] ASoC: wm97xx: fix uninitialized regmap pointer problem
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        patches@opensource.cirrus.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-asus_wmi_evaluate_method() is an empty dummy function when CONFIG_ASUS_WMI
-is disabled, or not reachable from a built-in device driver. This leads to
-a theoretical evaluation of an uninitialized variable that the compiler
-complains about, failing to check that the hardcoded return value makes
-this an unreachable code path:
+On 11/2/18, Charles Keepax <ckeepax@opensource.cirrus.com> wrote:
+> On Fri, Nov 02, 2018 at 12:23:08PM +0100, Arnd Bergmann wrote:
 
-In file included from include/linux/printk.h:336,
-                 from include/linux/kernel.h:14,
-                 from include/linux/list.h:9,
-                 from include/linux/dmi.h:5,
-                 from drivers/hid/hid-asus.c:29:
-drivers/hid/hid-asus.c: In function 'asus_input_configured':
-include/linux/dynamic_debug.h:135:3: error: 'value' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-   __dynamic_dev_dbg(&descriptor, dev, fmt, \
-   ^~~~~~~~~~~~~~~~~
-drivers/hid/hid-asus.c:359:6: note: 'value' was declared here
-  u32 value;
-      ^~~~~
+>>  static void wm9713_soc_remove(struct snd_soc_component *component)
+>>  {
+>> -#ifdef CONFIG_SND_SOC_AC97_BUS
+>>  	struct wm9713_priv *wm9713 = snd_soc_component_get_drvdata(component);
+>>
+>> -	if (!wm9713->mfd_pdata) {
+>> +	if (IS_ENABLED(CONFIG_SND_SOC_AC97_BUS)) {
+>
+> Should this one not also have an && !wm9713->mfd_pdata?
 
-With an extra IS_ENABLED() check, the warning goes away.
+Right, good catch!. I'll send a fixed version in a bit.
 
-Fixes: 3b692c55e58d ("HID: asus: only support backlight when it's not driven by WMI")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/hid/hid-asus.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-index dc6d6477e961..a1fa2fc8c9b5 100644
---- a/drivers/hid/hid-asus.c
-+++ b/drivers/hid/hid-asus.c
-@@ -359,6 +359,9 @@ static bool asus_kbd_wmi_led_control_present(struct hid_device *hdev)
- 	u32 value;
- 	int ret;
- 
-+	if (!IS_ENABLED(CONFIG_ASUS_WMI))
-+		return false;
-+
- 	ret = asus_wmi_evaluate_method(ASUS_WMI_METHODID_DSTS2,
- 				       ASUS_WMI_DEVID_KBD_BACKLIGHT, 0, &value);
- 	hid_dbg(hdev, "WMI backlight check: rc %d value %x", ret, value);
--- 
-2.18.0
-
+       Arnd
