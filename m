@@ -2,165 +2,97 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EEF5C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:19:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B6FEC65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:19:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E8DE2081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:19:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E8DE2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	by mail.kernel.org (Postfix) with ESMTP id 452E72081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:19:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 452E72081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728048AbeKCB0s (ORCPT
+        id S1728088AbeKCB10 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 21:26:48 -0400
-Received: from relay.sw.ru ([185.231.240.75]:46780 "EHLO relay.sw.ru"
+        Fri, 2 Nov 2018 21:27:26 -0400
+Received: from mga06.intel.com ([134.134.136.31]:62347 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726098AbeKCB0r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 21:26:47 -0400
-Received: from [172.16.25.12]
-        by relay.sw.ru with esmtp (Exim 4.90_1)
-        (envelope-from <aryabinin@virtuozzo.com>)
-        id 1gIc9V-0006r7-Q8; Fri, 02 Nov 2018 19:18:30 +0300
-Subject: Re: [RFC PATCH] lib: Introduce generic __cmpxchg_u64() and use it
- where needed
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Trond Myklebust <trondmy@hammerspace.com>
-Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ralf@linux-mips.org" <ralf@linux-mips.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
-        "paul.burton@mips.com" <paul.burton@mips.com>,
-        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        "jhogan@kernel.org" <jhogan@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>, dvyukov@google.com
-References: <1541015538-11382-1-git-send-email-linux@roeck-us.net>
- <20181031213240.zhh7dfcm47ucuyfl@pburton-laptop>
- <20181031220253.GA15505@roeck-us.net>
- <20181031233235.qbedw3pinxcuk7me@pburton-laptop>
- <4e2438a23d2edf03368950a72ec058d1d299c32e.camel@hammerspace.com>
- <20181101131846.biyilr2msonljmij@lakrids.cambridge.arm.com>
- <20181101145926.GE3178@hirez.programming.kicks-ass.net>
- <f38e272f7a96e983549e4281aa9fd02833a4277a.camel@hammerspace.com>
- <20181101163212.GF3159@hirez.programming.kicks-ass.net>
-From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
-Message-ID: <5a846924-e642-d9d1-4e0e-810bd4d01c26@virtuozzo.com>
-Date:   Fri, 2 Nov 2018 19:19:15 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726098AbeKCB10 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 21:27:26 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 09:19:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,456,1534834800"; 
+   d="scan'208";a="93244637"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by FMSMGA003.fm.intel.com with ESMTP; 02 Nov 2018 09:19:46 -0700
+Date:   Fri, 2 Nov 2018 10:17:30 -0600
+From:   Keith Busch <keith.busch@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>,
+        Jon Derrick <jonathan.derrick@intel.com>,
+        linux-pci@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, Tony Luck <tony.luck@intel.com>,
+        Tyler Baicar <tbaicar@codeaurora.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] PCI/AER: Option to leave System Error Interrupts
+ as-is
+Message-ID: <20181102161730.GA26392@localhost.localdomain>
+References: <1540585146-31876-1-git-send-email-jonathan.derrick@intel.com>
+ <20181029210651.GB13681@bhelgaas-glaptop.roam.corp.google.com>
+ <20181102095300.GB14602@zn.tnic>
 MIME-Version: 1.0
-In-Reply-To: <20181101163212.GF3159@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181102095300.GB14602@zn.tnic>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 11/01/2018 07:32 PM, Peter Zijlstra wrote:
-> On Thu, Nov 01, 2018 at 03:22:15PM +0000, Trond Myklebust wrote:
->> On Thu, 2018-11-01 at 15:59 +0100, Peter Zijlstra wrote:
->>> On Thu, Nov 01, 2018 at 01:18:46PM +0000, Mark Rutland wrote:
+On Fri, Nov 02, 2018 at 10:53:00AM +0100, Borislav Petkov wrote:
+> On Mon, Oct 29, 2018 at 04:06:51PM -0500, Bjorn Helgaas wrote:
+> > If I squint hard enough this sort of makes sense, but it also makes me
+> > confused about the normal APEI firmware-first model works.
+> > 
+> > In the NON-firmare-first case, firmware isn't involved in handling AER
+> > errors.  The Linux AER driver fields an interrupt from a Root Port,
+> > reads AER log registers, etc.
+> > 
+> > In the normal APEI firmware-first case, when the hardware reports an
+> > AER event, I think firmware gets control first, and *it* reads the AER
+> > log registers, packages them up, and generates an interrupt to the OS,
+> > which reads the packaged error state from the firmware via the HEST.
+> > 
+> > If I understand this special Intel VMD firmware-first case correctly,
+> > firmware gets control first, reads the AER log registers, and
+> > synthesizes what looks to the OS like a normal AER interrupt.  The
 > 
->>>>> My one question (and the reason why I went with cmpxchg() in the
->>>>> first place) would be about the overflow behaviour for
->>>>> atomic_fetch_inc() and friends. I believe those functions should
->>>>> be OK on x86, so that when we overflow the counter, it behaves
->>>>> like an unsigned value and wraps back around.  Is that the case
->>>>> for all architectures?
->>>>>
->>>>> i.e. are atomic_t/atomic64_t always guaranteed to behave like
->>>>> u32/u64 on increment?
->>>>>
->>>>> I could not find any documentation that explicitly stated that
->>>>> they should.
->>>>
->>>> Peter, Will, I understand that the atomic_t/atomic64_t ops are
->>>> required to wrap per 2's-complement. IIUC the refcount code relies
->>>> on this.
->>>>
->>>> Can you confirm?
->>>
->>> There is quite a bit of core code that hard assumes 2s-complement.
->>> Not only for atomics but for any signed integer type. Also see the
->>> kernel using -fno-strict-overflow which implies -fwrapv, which
->>> defines signed overflow to behave like 2s-complement (and rids us of
->>> that particular UB).
->>
->> Fair enough, but there have also been bugfixes to explicitly fix unsafe
->> C standards assumptions for signed integers. See, for instance commit
->> 5a581b367b5d "jiffies: Avoid undefined behavior from signed overflow"
->> from Paul McKenney.
+> Why?
 > 
-> Yes, I feel Paul has been to too many C/C++ committee meetings and got
-> properly paranoid. Which isn't always a bad thing :-)
+> Why the faking?
 > 
-> But for us using -fno-strict-overflow which actually defines signed
-> overflow, I myself am really not worried. I'm also not sure if KASAN has
-> been taught about this, or if it will still (incorrectly) warn about UB
-> for signed types.
+> If firmware needs to get control, why doesn't it then *retain* control
+> and report the error through HEST, like others do?
 > 
+> AFAIUC, fw wants to do something underneath. What's wrong with making it
+> a normal firmware-first case?
 
-UBSAN warns about signed overflows despite -fno-strict-overflow if gcc version is < 8.
-I have learned recently that UBSAN in GCC 8 ignores signed overflows if -fno-strict-overflow of fwrapv is used.
+VMD acts a bit like a host-bus adapter. The firmware knows about the
+adapter, but not about anything on the bus that it attaches to.
 
-$ cat signed_overflow.c 
-#include <stdio.h>
+This "hybrid" approach is basically saying that the firmware knows about
+the HBA, and it wants a chance to be notified of errors on the bus it
+attaches to, but the firmware can't do anything about such errors.
 
-__attribute__((noinline))
-int foo(int a, int b)
-{
-        return a+b;
-}
-
-int main(void)
-{
-        int a = 0x7fffffff;
-        int b = 2;
-        printf("%d\n", foo(a,b));
-        return 0;
-}
-
-$ gcc-8.2.0 -fsanitize=signed-integer-overflow signed_overflow.c && ./a.out 
-signed_overflow.c:6:10: runtime error: signed integer overflow: 2147483647 + 2 cannot be represented in type 'int'
--2147483647
-$ gcc-8.2.0 -fno-strict-overflow -fsanitize=signed-integer-overflow signed_overflow.c && ./a.out 
--2147483647
-$ gcc-7.3.0 -fsanitize=signed-integer-overflow signed_overflow.c && ./a.out
-signed_overflow.c:6:10: runtime error: signed integer overflow: 2147483647 + 2 cannot be represented in type 'int'
--2147483647
-$ gcc-7.3.0 -fno-strict-overflow -fsanitize=signed-integer-overflow signed_overflow.c && ./a.out
-signed_overflow.c:6:10: runtime error: signed integer overflow: 2147483647 + 2 cannot be represented in type 'int'
--2147483647
-
-
-clang behaves the same way as GCC 8:
-$ clang -fsanitize=signed-integer-overflow signed_overflow.c && ./a.out 
-signed_overflow.c:6:10: runtime error: signed integer overflow: 2147483647 + 2 cannot be represented in type 'int'
--2147483647
-$ clang -fno-strict-overflow -fsanitize=signed-integer-overflow signed_overflow.c && ./a.out 
--2147483647
-
-
-We can always just drop -fsanitize=signed-integer-overflow if it considered too noisy.
-Although it did catch some real bugs.
+The bus in this case is PCIe, where we have capable error handling in the
+kernel driver, so we ultimately want the AER driver handling the errors.
