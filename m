@@ -2,135 +2,116 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A68E3C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26B97C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:45:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BB352084A
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:45:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BB352084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E216120847
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:45:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kj4If907"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E216120847
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730249AbeKCDxt (ORCPT
+        id S1730252AbeKCDxz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:53:49 -0400
-Received: from foss.arm.com ([217.140.101.70]:45396 "EHLO foss.arm.com"
+        Fri, 2 Nov 2018 23:53:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728986AbeKCDxs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:53:48 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D66E5A78;
-        Fri,  2 Nov 2018 11:45:35 -0700 (PDT)
-Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.144.41])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3DD2E3F71E;
-        Fri,  2 Nov 2018 11:45:35 -0700 (PDT)
-Date:   Fri, 2 Nov 2018 19:45:33 +0100
-From:   Christoffer Dall <christoffer.dall@arm.com>
-To:     Lance Roy <ldr709@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 16/16] KVM: arm/arm64: vgic: Replace spin_is_locked()
- with lockdep
-Message-ID: <20181102184533.GA12057@e113682-lin.lund.arm.com>
-References: <20181003053902.6910-1-ldr709@gmail.com>
- <20181003053902.6910-17-ldr709@gmail.com>
+        id S1729310AbeKCDxt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:53:49 -0400
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C658720837;
+        Fri,  2 Nov 2018 18:45:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541184336;
+        bh=e2zXX02PZtjIwxaOY4RuQaHPUcqy9AKMZ2iTGz3LpPc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Kj4If907aum9ag0z18OnnyUUblS4LrV5VI01Ah6bcs1qQ9fgFJIG4zOC4PMMZv7m+
+         dlLCFAS43J4WXZVto98UP316IMFnGo2bbRNarDfWQee+HoXwxYymnQFPBonSydgCXP
+         zAYu6UWNnS/fqVE2YfaeJLtIHhJ+TKkIPjWt4LZw=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.18 138/150] net: drop skb on failure in ip_check_defrag()
+Date:   Fri,  2 Nov 2018 19:35:00 +0100
+Message-Id: <20181102182912.195954573@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
+References: <20181102182902.250560510@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181003053902.6910-17-ldr709@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 02, 2018 at 10:39:02PM -0700, Lance Roy wrote:
-> lockdep_assert_held() is better suited to checking locking requirements,
-> since it won't get confused when someone else holds the lock. This is
-> also a step towards possibly removing spin_is_locked().
-> 
-> Signed-off-by: Lance Roy <ldr709@gmail.com>
-> Cc: Christoffer Dall <christoffer.dall@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Eric Auger <eric.auger@redhat.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: <kvmarm@lists.cs.columbia.edu>
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
-Acked-by: Christoffer Dall <christoffer.dall@arm.com>
+------------------
 
-> ---
->  virt/kvm/arm/vgic/vgic.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/virt/kvm/arm/vgic/vgic.c b/virt/kvm/arm/vgic/vgic.c
-> index 7cfdfbc910e0..50e25438fb3c 100644
-> --- a/virt/kvm/arm/vgic/vgic.c
-> +++ b/virt/kvm/arm/vgic/vgic.c
-> @@ -196,7 +196,7 @@ void vgic_irq_set_phys_active(struct vgic_irq *irq, bool active)
->   */
->  static struct kvm_vcpu *vgic_target_oracle(struct vgic_irq *irq)
->  {
-> -	DEBUG_SPINLOCK_BUG_ON(!spin_is_locked(&irq->irq_lock));
-> +	lockdep_assert_held(&irq->irq_lock);
->  
->  	/* If the interrupt is active, it must stay on the current vcpu */
->  	if (irq->active)
-> @@ -273,7 +273,7 @@ static void vgic_sort_ap_list(struct kvm_vcpu *vcpu)
->  {
->  	struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
->  
-> -	DEBUG_SPINLOCK_BUG_ON(!spin_is_locked(&vgic_cpu->ap_list_lock));
-> +	lockdep_assert_held(&vgic_cpu->ap_list_lock);
->  
->  	list_sort(NULL, &vgic_cpu->ap_list_head, vgic_irq_cmp);
->  }
-> @@ -311,7 +311,7 @@ bool vgic_queue_irq_unlock(struct kvm *kvm, struct vgic_irq *irq,
->  {
->  	struct kvm_vcpu *vcpu;
->  
-> -	DEBUG_SPINLOCK_BUG_ON(!spin_is_locked(&irq->irq_lock));
-> +	lockdep_assert_held(&irq->irq_lock);
->  
->  retry:
->  	vcpu = vgic_target_oracle(irq);
-> @@ -702,7 +702,7 @@ static inline void vgic_fold_lr_state(struct kvm_vcpu *vcpu)
->  static inline void vgic_populate_lr(struct kvm_vcpu *vcpu,
->  				    struct vgic_irq *irq, int lr)
->  {
-> -	DEBUG_SPINLOCK_BUG_ON(!spin_is_locked(&irq->irq_lock));
-> +	lockdep_assert_held(&irq->irq_lock);
->  
->  	if (kvm_vgic_global_state.type == VGIC_V2)
->  		vgic_v2_populate_lr(vcpu, irq, lr);
-> @@ -736,7 +736,7 @@ static int compute_ap_list_depth(struct kvm_vcpu *vcpu,
->  
->  	*multi_sgi = false;
->  
-> -	DEBUG_SPINLOCK_BUG_ON(!spin_is_locked(&vgic_cpu->ap_list_lock));
-> +	lockdep_assert_held(&vgic_cpu->ap_list_lock);
->  
->  	list_for_each_entry(irq, &vgic_cpu->ap_list_head, ap_list) {
->  		int w;
-> @@ -761,7 +761,7 @@ static void vgic_flush_lr_state(struct kvm_vcpu *vcpu)
->  	bool multi_sgi;
->  	u8 prio = 0xff;
->  
-> -	DEBUG_SPINLOCK_BUG_ON(!spin_is_locked(&vgic_cpu->ap_list_lock));
-> +	lockdep_assert_held(&vgic_cpu->ap_list_lock);
->  
->  	count = compute_ap_list_depth(vcpu, &multi_sgi);
->  	if (count > kvm_vgic_global_state.nr_lr || multi_sgi)
-> -- 
-> 2.19.0
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+From: Cong Wang <xiyou.wangcong@gmail.com>
+
+[ Upstream commit 7de414a9dd91426318df7b63da024b2b07e53df5 ]
+
+Most callers of pskb_trim_rcsum() simply drop the skb when
+it fails, however, ip_check_defrag() still continues to pass
+the skb up to stack. This is suspicious.
+
+In ip_check_defrag(), after we learn the skb is an IP fragment,
+passing the skb to callers makes no sense, because callers expect
+fragments are defrag'ed on success. So, dropping the skb when we
+can't defrag it is reasonable.
+
+Note, prior to commit 88078d98d1bb, this is not a big problem as
+checksum will be fixed up anyway. After it, the checksum is not
+correct on failure.
+
+Found this during code review.
+
+Fixes: 88078d98d1bb ("net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are friends")
+Cc: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/ipv4/ip_fragment.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+--- a/net/ipv4/ip_fragment.c
++++ b/net/ipv4/ip_fragment.c
+@@ -657,10 +657,14 @@ struct sk_buff *ip_check_defrag(struct n
+ 	if (ip_is_fragment(&iph)) {
+ 		skb = skb_share_check(skb, GFP_ATOMIC);
+ 		if (skb) {
+-			if (!pskb_may_pull(skb, netoff + iph.ihl * 4))
+-				return skb;
+-			if (pskb_trim_rcsum(skb, netoff + len))
+-				return skb;
++			if (!pskb_may_pull(skb, netoff + iph.ihl * 4)) {
++				kfree_skb(skb);
++				return NULL;
++			}
++			if (pskb_trim_rcsum(skb, netoff + len)) {
++				kfree_skb(skb);
++				return NULL;
++			}
+ 			memset(IPCB(skb), 0, sizeof(struct inet_skb_parm));
+ 			if (ip_defrag(net, skb, user))
+ 				return NULL;
+
+
