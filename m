@@ -2,147 +2,145 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCFB2C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:08:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8643FC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:09:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AB662082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:08:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E5582081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 13:09:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VPA2I1n+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AB662082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YNfbpLCs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E5582081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727462AbeKBWQA (ORCPT
+        id S1727613AbeKBWQ7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 18:16:00 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:40335 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726129AbeKBWQA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 18:16:00 -0400
-Received: by mail-qk1-f196.google.com with SMTP id y16so1664127qki.7
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 06:08:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TZAaRUPd1V/5t0YkULGIhL288695RzKyzbNkZZ6i1ho=;
-        b=VPA2I1n+z7EphC+IOUzxgKlg+DChzsPY4Svv7HcE0pEnC4TQgl1BzezA+FYuMeJ1KE
-         aEDAc3AaLNDqC5uugSNNXEDJUMvC2IqroDUxYem45l/2MTkHsTAD1NXv/+e989rNfm1J
-         QBLHJ4cvR5exkhYrIA+Vg5x8+TaYeuw6ik3iY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TZAaRUPd1V/5t0YkULGIhL288695RzKyzbNkZZ6i1ho=;
-        b=Qn0CWmhdaezxmmvVqAck48L92qqPmQ46x8+dRHKvTMgeaf/bG2qFlccEpFqB2DHVC3
-         QSSp1tj3jC/BZrx/0RduI3UIEHRLePIAB+bxYGnuHncHhnkz/4ZvgwaIc5wT6Yxwz71w
-         1Akb2QHF69TgmbkxnidqVijGnIMsq3kFyGP/dyf+4gwCamYUhS9pfCSgzqWU83WBupth
-         egElXARjxeskuCFXb+MVhx0NBa3n7iI53GfbEW/nzqkwVexjpLUycaF+4vuK1iLFUIEJ
-         1iMIoNbK0eNAml1SfP83E9BH1X9oQ2lbz/qqSUo3UQ1yKk7ZKZEljAGPO9WuHmTYSXQ5
-         gL9A==
-X-Gm-Message-State: AGRZ1gJycPb6+/zuSrZKZbx4JyM+VmefkzEMKxeorN1aGizGsGaNbdzV
-        LMmuy58JX50JdRHoQjxKi6z1DimzLa9XEXHwH3ICAA==
-X-Google-Smtp-Source: AJdET5cZgXc7ha8wbSuwKE11Z83MTk+z3vTqP46BEg6wQ1lWRiSsJHOpUgSIyiLpKWKB8uEMYeEFrAuBM0JLs+oU/ZY=
-X-Received: by 2002:a37:744:: with SMTP id 65mr10450341qkh.260.1541164132509;
- Fri, 02 Nov 2018 06:08:52 -0700 (PDT)
+        Fri, 2 Nov 2018 18:16:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44554 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726129AbeKBWQ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 18:16:59 -0400
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B81E020847;
+        Fri,  2 Nov 2018 13:09:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541164191;
+        bh=qMZ9pyvPPpltF8qgL0zVw3Rg77DcLSobc/0euP13IuA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=YNfbpLCsCdgkYETVweEENx2a5g4v6uDlZI0ZuR5jKt1z6kq91OotgOiOfYRCOtwb1
+         J035zvN6THkJOvhI36eG8c3LZag2Xw2fY0SMyu8Pq2QuiLv5jlKl/ddlqYlofPqk+t
+         +Eh6xJR0U5sdMqrgTltaxid+bSJ24QNRt0TCcWXI=
+Received: by mail-qk1-f174.google.com with SMTP id o125so2901695qkf.3;
+        Fri, 02 Nov 2018 06:09:51 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gIds90/v2BkbqFTNr8VY2moMjAz662JQRF8OkKm5hbHiXWoMmND
+        5dofMmsO6OZ4OZPKB5IOEsD2BKNABuN40WqHKg==
+X-Google-Smtp-Source: AJdET5fPJYXS2sBya7lPKKnVQ5AnzKv0C8Klbp4k5H63CRRYLQnLTZmy2NOavro+b86ZqPrV/CPOAROUkwRKGIu7oAM=
+X-Received: by 2002:a0c:9e05:: with SMTP id p5mr10685349qve.246.1541164190826;
+ Fri, 02 Nov 2018 06:09:50 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181102025516.GA25374@leoy-ThinkPad-X240s>
-In-Reply-To: <20181102025516.GA25374@leoy-ThinkPad-X240s>
-From:   Mike Leach <mike.leach@linaro.org>
-Date:   Fri, 2 Nov 2018 13:08:40 +0000
-Message-ID: <CAJ9a7ViZGSAXsw7TBKaRqzYSqBuJiizdkCoMFzwkPMrstL+eJA@mail.gmail.com>
-Subject: Re: Question: perf dso support for /proc/kallsyms
-To:     Leo Yan <leo.yan@linaro.org>
-Cc:     acme@redhat.com, jolsa@kernel.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        coresight@lists.linaro.org, linux-kernel@vger.kernel.org
+References: <1541113468-22097-1-git-send-email-atish.patra@wdc.com> <1541113468-22097-2-git-send-email-atish.patra@wdc.com>
+In-Reply-To: <1541113468-22097-2-git-send-email-atish.patra@wdc.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 2 Nov 2018 08:09:39 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+wProNynprMjQnrz1jmbZT9TmmA-_=vPUxCEED_8xONg@mail.gmail.com>
+Message-ID: <CAL_Jsq+wProNynprMjQnrz1jmbZT9TmmA-_=vPUxCEED_8xONg@mail.gmail.com>
+Subject: Re: [RFC 1/2] dt-bindings: topology: Add RISC-V cpu topology.
+To:     Atish Patra <atish.patra@wdc.com>
+Cc:     linux-riscv@lists.infradead.org,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Anup Patel <anup@brainfault.org>,
+        Christoph Hellwig <hch@infradead.org>, Damien.LeMoal@wdc.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, alankao@andestech.com,
+        Zong Li <zong@andestech.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Leo,
+On Thu, Nov 1, 2018 at 6:04 PM Atish Patra <atish.patra@wdc.com> wrote:
+>
+> Define a RISC-V cpu topology. This is based on cpu-map in ARM world.
+> But it doesn't need a separate thread node for defining SMT systems.
+> Multiple cpu phandle properties can be parsed to identify the sibling
+> hardware threads. Moreover, we do not have cluster concept in RISC-V.
+> So package is a better word choice than cluster for RISC-V.
 
-My understanding is that when we decode CoreSight trace - be it on the
-system that generated it, or off target device on a separate host
-system, we are using the dso files in .debug/ as these represent the
-memory layout at the time trace was recorded.
+There was a proposal to add package info for ARM recently. Not sure
+what happened to that, but we don't need 2 different ways.
 
-If I look into a recent session copied up to my linux box from DB410,
-is see ~/.debug/\[kernel.kallsyms\]/ee80c1f3a434469f6174e1cf4bb5583d83a013dc/kallsyms
-- which seems to me to be the relevant symbol file to use rather than
-the live one generated by /proc/kallsyms. I don't really want to use
-the local /proc/kallsyms on my x86 linux box when decoding an ARM
-trace captured elsewhere.
+There's never going to be clusters for RISC-V? What prevents that?
+Seems shortsighted to me.
 
-So perhaps the problem to be solved is not how to use /proc/kallsyms
-if no vmlinux is supplied to the script, but ensure that the
-[kernel.kallsyms] is used?
+>
+> Signed-off-by: Atish Patra <atish.patra@wdc.com>
+> ---
+>  .../devicetree/bindings/riscv/topology.txt         | 154 +++++++++++++++++++++
+>  1 file changed, 154 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/riscv/topology.txt
+>
+> diff --git a/Documentation/devicetree/bindings/riscv/topology.txt b/Documentation/devicetree/bindings/riscv/topology.txt
+> new file mode 100644
+> index 00000000..96039ed3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/riscv/topology.txt
+> @@ -0,0 +1,154 @@
+> +===========================================
+> +RISC-V cpu topology binding description
+> +===========================================
+> +
+> +===========================================
+> +1 - Introduction
+> +===========================================
+> +
+> +In a RISC-V system, the hierarchy of CPUs can be defined through following nodes that
+> +are used to describe the layout of physical CPUs in the system:
+> +
+> +- packages
+> +- core
+> +
+> +The cpu nodes (bindings defined in [1]) represent the devices that
+> +correspond to physical CPUs and are to be mapped to the hierarchy levels.
+> +Simultaneous multi-threading (SMT) systems can also represent their topology
+> +by defining multiple cpu phandles inside core node. The details are explained
+> +in paragraph 3.
 
-Regards
+I don't see a reason to do this differently than ARM. That said, I
+don't think the thread part is in use on ARM, so it could possibly be
+changed.
 
-Mike
-On Fri, 2 Nov 2018 at 02:55, <leo.yan@linaro.org> wrote:
->
-> Hi all,
->
-> Now I found that if use the command 'perf script' for Arm CoreSight trace
-> data, it fails to parse kernel symbols if we don't specify kernel vmlinux
-> file.   So when we don't specify kernel symbol files then perf tool will
-> roll back to use /proc/kallsyms for kernel symbols parsing, as result it will
-> run into below flow:
->
->   thread__find_addr_map(thread, cpumode, MAP__FUNCTION, address, &al);
->   map__load(al.map);
->   dso__data_read_offset(al.map->dso, machine, offset, buffer, size);
->     `-> data_read_offset()
->
-> I can observe the function data_read_offset() returns failure, this is caused
-> by checking the offset sanity "if (offset > dso->data.file_size)"  (I pasted
-> the whole function code at below in case you want to get more context for it),
-> but if perf use "/proc/kallsyms" to load kernel symbols, the variable
-> 'dso->data.file_size' will be set to zero thus the sanity checking always
-> thinks the offset is out of the file size bound.
->
-> Now I still don't understand how the dso/map support "/proc/kallsyms" and
-> have no idea to fix this issue, though I spent some time to look into it.
->
-> Could you give some suggestion for this?  Or even better if you have fixing
-> for this, I am glad to test at my side.
->
-> static ssize_t data_read_offset(struct dso *dso, struct machine *machine,
->                                 u64 offset, u8 *data, ssize_t size)
-> {
->         if (data_file_size(dso, machine))
->                 return -1;
->
->         /* Check the offset sanity. */
->         if (offset > dso->data.file_size)
->                 return -1;
->
->         if (offset + size < offset)
->                 return -1;
->
->         return cached_read(dso, machine, offset, data, size);
-> }
->
-> Thanks,
-> Leo Yan
-> _______________________________________________
-> CoreSight mailing list
-> CoreSight@lists.linaro.org
-> https://lists.linaro.org/mailman/listinfo/coresight
+> +
+> +The remainder of this document provides the topology bindings for ARM, based
 
+for ARM?
 
+> +on the Devicetree Specification, available from:
+> +
+> +https://www.devicetree.org/specifications/
+> +
+> +If not stated otherwise, whenever a reference to a cpu node phandle is made its
+> +value must point to a cpu node compliant with the cpu node bindings as
+> +documented in [1].
+> +A topology description containing phandles to cpu nodes that are not compliant
+> +with bindings standardized in [1] is therefore considered invalid.
+> +
+> +This cpu topology binding description is mostly based on the topology defined
+> +in ARM [2].
+> +===========================================
+> +2 - cpu-topology node
 
--- 
-Mike Leach
-Principal Engineer, ARM Ltd.
-Manchester Design Centre. UK
+cpu-map. Why change this?
+
+What I would like to see is the ARM topology binding reworked to be
+common or some good reasons why it doesn't work for RISC-V as-is.
+
+Rob
