@@ -2,85 +2,98 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7090AC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:45:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 108F0C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:48:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22D622081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:45:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22D622081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id C26052081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 17:48:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C26052081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728039AbeKCCxV (ORCPT
+        id S1728060AbeKCC4Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 22:53:21 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:44439 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726700AbeKCCxU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 22:53:20 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B97D9207CF; Fri,  2 Nov 2018 18:45:20 +0100 (CET)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 6DF8420736;
-        Fri,  2 Nov 2018 18:45:20 +0100 (CET)
-Date:   Fri, 2 Nov 2018 18:45:18 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, wsa@the-dreams.de,
-        Vitor.Soares@synopsys.com, pgaj@cadence.com, rafalc@cadence.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] Addition of the I3C subsystem in 4.20 (5.0)?
-Message-ID: <20181102184518.60531378@bbrezillon>
-In-Reply-To: <CAHk-=wg3r8QmJGKep9PK-8o3HM1-4aJJqQKsGaZJAk93Ad1pNw@mail.gmail.com>
-References: <20181101063523.26bdbe28@bbrezillon>
-        <CAHk-=wg3r8QmJGKep9PK-8o3HM1-4aJJqQKsGaZJAk93Ad1pNw@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Fri, 2 Nov 2018 22:56:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38510 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726700AbeKCC4Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 22:56:24 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0669AAF77;
+        Fri,  2 Nov 2018 17:48:23 +0000 (UTC)
+Date:   Fri, 2 Nov 2018 18:48:23 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Dexuan Cui <decui@microsoft.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>, Rik van Riel <riel@surriel.com>,
+        Konstantin Khlebnikov <koct9i@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Stable@vger.kernel.org" <Stable@vger.kernel.org>
+Subject: Re: Will the recent memory leak fixes be backported to longterm
+ kernels?
+Message-ID: <20181102174823.GI28039@dhcp22.suse.cz>
+References: <PU1P153MB0169CB6382E0F047579D111DBFCF0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+ <20181102005816.GA10297@tower.DHCP.thefacebook.com>
+ <PU1P153MB0169FE681EF81BCE81B005A1BFCF0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+ <20181102073009.GP23921@dhcp22.suse.cz>
+ <20181102154844.GA17619@tower.DHCP.thefacebook.com>
+ <20181102161314.GF28039@dhcp22.suse.cz>
+ <20181102162237.GB17619@tower.DHCP.thefacebook.com>
+ <20181102165147.GG28039@dhcp22.suse.cz>
+ <20181102172547.GA19042@tower.DHCP.thefacebook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181102172547.GA19042@tower.DHCP.thefacebook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Linus,
-
-On Thu, 1 Nov 2018 09:27:20 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
-
-> On Wed, Oct 31, 2018 at 10:35 PM Boris Brezillon
-> <boris.brezillon@bootlin.com> wrote:
-> >
-> > Greg, I didn't get your feedback on v10 of the i3c patchset [1] where I
-> > was asking if you'd agree to have this framework merged in 4.20 (I know
-> > you were busy with the 4.19 release and after that the Kernel Summit, so
-> > that's not a surprise), so I'm sending this PR. It's really not an attempt
-> > to bypass you, more like a ping that, if positively acknowledged, might
-> > lead to inclusion of the I3C framework in 4.20 (5.0?) :-).
+On Fri 02-11-18 17:25:58, Roman Gushchin wrote:
+> On Fri, Nov 02, 2018 at 05:51:47PM +0100, Michal Hocko wrote:
+> > On Fri 02-11-18 16:22:41, Roman Gushchin wrote:
+[...]
+> > > 2) We do forget to scan the last page in the LRU list. So if we ended up with
+> > > 1-page long LRU, it can stay there basically forever.
+> > 
+> > Why 
+> > 		/*
+> > 		 * If the cgroup's already been deleted, make sure to
+> > 		 * scrape out the remaining cache.
+> > 		 */
+> > 		if (!scan && !mem_cgroup_online(memcg))
+> > 			scan = min(size, SWAP_CLUSTER_MAX);
+> > 
+> > in get_scan_count doesn't work for that case?
 > 
-> Regardless of any other issues, this is now too late in the merge
-> window for me to accept.
+> No, it doesn't. Let's look at the whole picture:
 > 
-> Yes, the merge window is two weeks, but that's not because people
-> should send me pull requests for two weeks. A large part of it is that
-> it takes time to merge stuff, and I want to have time in the later
-> part of the merge window for things I have to look at and ponder.
-
-Ok, I didn't know that.
-
+> 		size = lruvec_lru_size(lruvec, lru, sc->reclaim_idx);
+> 		scan = size >> sc->priority;
+> 		/*
+> 		 * If the cgroup's already been deleted, make sure to
+> 		 * scrape out the remaining cache.
+> 		 */
+> 		if (!scan && !mem_cgroup_online(memcg))
+> 			scan = min(size, SWAP_CLUSTER_MAX);
 > 
-> So that's why I want new stuff to be ready *before* the merge window,
-> and I want to see the actual pull requests early. The two weeks is not
-> for development and to let people delay things a bit, it's to make it
-> possible to synchronize and to work out issues.
+> If size == 1, scan == 0 => scan = min(1, 32) == 1.
+> And after proportional adjustment we'll have 0.
 
-Noted, and sorry for the inconvenience.
-
-Regards,
-
-Boris
+My friday brain hurst when looking at this but if it doesn't work as
+advertized then it should be fixed. I do not see any of your patches to
+touch this logic so how come it would work after them applied?
+-- 
+Michal Hocko
+SUSE Labs
