@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C93C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18EE6C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:48:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FA4620848
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:48:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF93E20843
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:48:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PMkqNOCp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FA4620848
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QJtZJZJm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF93E20843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730542AbeKCD4r (ORCPT
+        id S1730557AbeKCD4v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:56:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52402 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:56:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729928AbeKCD4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:56:47 -0400
+        id S1729915AbeKCD4u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:56:50 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 56C7A20847;
-        Fri,  2 Nov 2018 18:48:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C92FA20843;
+        Fri,  2 Nov 2018 18:48:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184512;
-        bh=B3aATOzuK4A7GvgOwgvsV4prxzqtQy/N8BWKkIcklqI=;
+        s=default; t=1541184516;
+        bh=TmjvhyDvTQL1UV0RUTgS/OYL5bv9YF99S+yK0oR8f8Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PMkqNOCpXZXSBNbMU6SEjWZsDbqcbdysuSLyxrnAl+allkYvd3rLKERGPb/keZYfF
-         9va2AAQQIeYjPk3XiC0uOj84rQv+ED20yoSGW/Pxq12LGvood7hRPHTlDue3Xf4+24
-         rq7iw/LCkFOifEEqq8bD5QzAjjnm/tQVbivxloys=
+        b=QJtZJZJmkoPtslct6GHkBq7xdVAmG/zSuuoifXfvN6yWWNhAHP79L0s8BKo8UeV+x
+         JTRlS89Uf7rDqv3gfaLxOvBHW7/YIArywY+XlZi0yKD0rbJ0CeDtqaEN0g6T8LCf1o
+         c/JUn/1ogXXau2oYPydx9M8aqrB5fhDwbfJwReFs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jouni Malinen <jouni@codeaurora.org>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 008/143] cfg80211: Address some corner cases in scan result channel updating
-Date:   Fri,  2 Nov 2018 19:33:13 +0100
-Message-Id: <20181102182857.742498182@linuxfoundation.org>
+Subject: [PATCH 4.14 026/143] qed: Avoid implicit enum conversion in qed_roce_mode_to_flavor
+Date:   Fri,  2 Nov 2018 19:33:31 +0100
+Message-Id: <20181102182859.173342957@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -63,138 +64,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 119f94a6fefcc76d47075b83d2b73d04c895df78 ]
+[ Upstream commit d3a315795b4ce8b105a64a90699103121bde04a8 ]
 
-cfg80211_get_bss_channel() is used to update the RX channel based on the
-available frame payload information (channel number from DSSS Parameter
-Set element or HT Operation element). This is needed on 2.4 GHz channels
-where frames may be received on neighboring channels due to overlapping
-frequency range.
+Clang warns when one enumerated type is implicitly converted to another.
 
-This might of some use on the 5 GHz band in some corner cases, but
-things are more complex there since there is no n:1 or 1:n mapping
-between channel numbers and frequencies due to multiple different
-starting frequencies in different operating classes. This could result
-in ieee80211_channel_to_frequency() returning incorrect frequency and
-ieee80211_get_channel() returning incorrect channel information (or
-indication of no match). In the previous implementation, this could
-result in some scan results being dropped completely, e.g., for the 4.9
-GHz channels. That prevented connection to such BSSs.
+drivers/net/ethernet/qlogic/qed/qed_roce.c:153:12: warning: implicit
+conversion from enumeration type 'enum roce_mode' to different
+enumeration type 'enum roce_flavor' [-Wenum-conversion]
+                flavor = ROCE_V2_IPV6;
+                       ~ ^~~~~~~~~~~~
+drivers/net/ethernet/qlogic/qed/qed_roce.c:156:12: warning: implicit
+conversion from enumeration type 'enum roce_mode' to different
+enumeration type 'enum roce_flavor' [-Wenum-conversion]
+                flavor = MAX_ROCE_MODE;
+                       ~ ^~~~~~~~~~~~~
+2 warnings generated.
 
-Fix this by using the driver-provided channel pointer if
-ieee80211_get_channel() does not find matching channel data for the
-channel number in the frame payload and if the scan is done with 5 MHz
-or 10 MHz channel bandwidth. While doing this, also add comments
-describing what the function is trying to achieve to make it easier to
-understand what happens here and why.
+Use the appropriate values from the expected type, roce_flavor:
 
-Signed-off-by: Jouni Malinen <jouni@codeaurora.org>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+ROCE_V2_IPV6 = RROCE_IPV6 = 2
+MAX_ROCE_MODE = MAX_ROCE_FLAVOR = 3
+
+While we're add it, ditch the local variable flavor, we can just return
+the value directly from the switch statement.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/125
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/wireless/scan.c | 58 ++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 49 insertions(+), 9 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed_roce.c | 15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
 
-diff --git a/net/wireless/scan.c b/net/wireless/scan.c
-index f6c5fe482506..5ed0ed0559dc 100644
---- a/net/wireless/scan.c
-+++ b/net/wireless/scan.c
-@@ -1055,13 +1055,23 @@ cfg80211_bss_update(struct cfg80211_registered_device *rdev,
- 	return NULL;
- }
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_roce.c b/drivers/net/ethernet/qlogic/qed/qed_roce.c
+index fb7c2d1562ae..bedbf840fd7d 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_roce.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_roce.c
+@@ -129,23 +129,16 @@ static void qed_rdma_copy_gids(struct qed_rdma_qp *qp, __le32 *src_gid,
  
-+/*
-+ * Update RX channel information based on the available frame payload
-+ * information. This is mainly for the 2.4 GHz band where frames can be received
-+ * from neighboring channels and the Beacon frames use the DSSS Parameter Set
-+ * element to indicate the current (transmitting) channel, but this might also
-+ * be needed on other bands if RX frequency does not match with the actual
-+ * operating channel of a BSS.
-+ */
- static struct ieee80211_channel *
- cfg80211_get_bss_channel(struct wiphy *wiphy, const u8 *ie, size_t ielen,
--			 struct ieee80211_channel *channel)
-+			 struct ieee80211_channel *channel,
-+			 enum nl80211_bss_scan_width scan_width)
+ static enum roce_flavor qed_roce_mode_to_flavor(enum roce_mode roce_mode)
  {
- 	const u8 *tmp;
- 	u32 freq;
- 	int channel_number = -1;
-+	struct ieee80211_channel *alt_channel;
- 
- 	tmp = cfg80211_find_ie(WLAN_EID_DS_PARAMS, ie, ielen);
- 	if (tmp && tmp[1] == 1) {
-@@ -1075,16 +1085,45 @@ cfg80211_get_bss_channel(struct wiphy *wiphy, const u8 *ie, size_t ielen,
- 		}
+-	enum roce_flavor flavor;
+-
+ 	switch (roce_mode) {
+ 	case ROCE_V1:
+-		flavor = PLAIN_ROCE;
+-		break;
++		return PLAIN_ROCE;
+ 	case ROCE_V2_IPV4:
+-		flavor = RROCE_IPV4;
+-		break;
++		return RROCE_IPV4;
+ 	case ROCE_V2_IPV6:
+-		flavor = ROCE_V2_IPV6;
+-		break;
++		return RROCE_IPV6;
+ 	default:
+-		flavor = MAX_ROCE_MODE;
+-		break;
++		return MAX_ROCE_FLAVOR;
  	}
- 
--	if (channel_number < 0)
-+	if (channel_number < 0) {
-+		/* No channel information in frame payload */
- 		return channel;
-+	}
- 
- 	freq = ieee80211_channel_to_frequency(channel_number, channel->band);
--	channel = ieee80211_get_channel(wiphy, freq);
--	if (!channel)
--		return NULL;
--	if (channel->flags & IEEE80211_CHAN_DISABLED)
-+	alt_channel = ieee80211_get_channel(wiphy, freq);
-+	if (!alt_channel) {
-+		if (channel->band == NL80211_BAND_2GHZ) {
-+			/*
-+			 * Better not allow unexpected channels when that could
-+			 * be going beyond the 1-11 range (e.g., discovering
-+			 * BSS on channel 12 when radio is configured for
-+			 * channel 11.
-+			 */
-+			return NULL;
-+		}
-+
-+		/* No match for the payload channel number - ignore it */
-+		return channel;
-+	}
-+
-+	if (scan_width == NL80211_BSS_CHAN_WIDTH_10 ||
-+	    scan_width == NL80211_BSS_CHAN_WIDTH_5) {
-+		/*
-+		 * Ignore channel number in 5 and 10 MHz channels where there
-+		 * may not be an n:1 or 1:n mapping between frequencies and
-+		 * channel numbers.
-+		 */
-+		return channel;
-+	}
-+
-+	/*
-+	 * Use the channel determined through the payload channel number
-+	 * instead of the RX channel reported by the driver.
-+	 */
-+	if (alt_channel->flags & IEEE80211_CHAN_DISABLED)
- 		return NULL;
--	return channel;
-+	return alt_channel;
+-	return flavor;
  }
  
- /* Returned bss is reference counted and must be cleaned up appropriately. */
-@@ -1109,7 +1148,8 @@ cfg80211_inform_bss_data(struct wiphy *wiphy,
- 		    (data->signal < 0 || data->signal > 100)))
- 		return NULL;
- 
--	channel = cfg80211_get_bss_channel(wiphy, ie, ielen, data->chan);
-+	channel = cfg80211_get_bss_channel(wiphy, ie, ielen, data->chan,
-+					   data->scan_width);
- 	if (!channel)
- 		return NULL;
- 
-@@ -1207,7 +1247,7 @@ cfg80211_inform_bss_frame_data(struct wiphy *wiphy,
- 		return NULL;
- 
- 	channel = cfg80211_get_bss_channel(wiphy, mgmt->u.beacon.variable,
--					   ielen, data->chan);
-+					   ielen, data->chan, data->scan_width);
- 	if (!channel)
- 		return NULL;
- 
+ void qed_roce_free_cid_pair(struct qed_hwfn *p_hwfn, u16 cid)
 -- 
 2.17.1
 
