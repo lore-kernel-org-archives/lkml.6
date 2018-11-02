@@ -2,107 +2,144 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB883C6786F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 03:34:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4B78C6786F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 03:46:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F6632081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 03:34:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EZphzzcG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F6632081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 98A0D2082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 03:46:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98A0D2082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727502AbeKBMjm (ORCPT
+        id S1727350AbeKBMvh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 08:39:42 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:34830 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726920AbeKBMjm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 08:39:42 -0400
-Received: by mail-vs1-f67.google.com with SMTP id d62so351893vsd.2
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Nov 2018 20:34:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=e24YLQth++gDxulNFB9pkEQ2Gw5zX6UqlSG87FZPec4=;
-        b=EZphzzcG5+7CuPeuxQKRHUDJa89gQi3geVFwCQS8RUTlPplfZwSRk2ENNphpVIWfm1
-         4CuF8jh1oRGK2FHhCsDODYanLyct4CmaRMC28POjnUgDjatJUgKp4jLlBzL2fs49J+uP
-         UYzPIrXMYRD+SR9KYrqdpnLL1SdwrpDk44NGw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=e24YLQth++gDxulNFB9pkEQ2Gw5zX6UqlSG87FZPec4=;
-        b=FLN4QQHdbyAiqLC9a6PFRcuU8q6lmPPcX8Bf0R1D27RvOWZUyn+D6pyseyPOMrQE96
-         jQnHhxZvopefb6rhEmnGoCl5iplTLPzzGmuEuqv3+taJEtOe3pVxEeReHtUSYretDRyd
-         OD4/4Yk9f04N+aGH2gEHCIcsKZFj2WsG6W2C7IUe8+PPKL0Ls6DKNj7ONIf7/L9uEGq5
-         SCeL4vTPI1ROeZg1VQt8T1IgAVRIV+3Es9NibRSimF0ploDK2oq1qg7G1Q6/6rFitFq5
-         UiKxOkLBYEWly0KeiTD03Z8lCZJgZ1DuLUWore60iJJyDSK05zQMSz7lx4Ag8L2qQcrJ
-         X+NA==
-X-Gm-Message-State: AGRZ1gJEFEJrqpzEnJN7/+DBBALEph9AE39eyQP3Uxu0ZmAYaGG3ZK1L
-        N+6DDfgFmRj2g6fvP5XMeYB8aQRHUUQwWTdq4ICBaL9L
-X-Google-Smtp-Source: AJdET5ffIgx+h5wqdaLPfrNUG2RG1K4daKpTXIvavlOBedQLei+BEwOP7smRasvUUXhwkWRbS1poPdo72BrscCGqdV8=
-X-Received: by 2002:a67:a205:: with SMTP id l5mr4132897vse.9.1541129644475;
- Thu, 01 Nov 2018 20:34:04 -0700 (PDT)
+        Fri, 2 Nov 2018 08:51:37 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:14166 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726339AbeKBMvh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 08:51:37 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 3CDA064EA03CF;
+        Fri,  2 Nov 2018 11:45:55 +0800 (CST)
+Received: from huawei.com (10.175.104.208) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.408.0; Fri, 2 Nov 2018
+ 11:45:48 +0800
+From:   liujian <liujian56@huawei.com>
+To:     <dmitry.torokhov@gmail.com>, <linux-input@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <liujian56@huawei.com>
+Subject: [PATCH] driver: input: fix UBSAN warning in input_defuzz_abs_event
+Date:   Fri, 2 Nov 2018 21:48:51 +0800
+Message-ID: <1541166531-248528-1-git-send-email-liujian56@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <20181101124007.243258-1-cychiang@chromium.org>
-In-Reply-To: <20181101124007.243258-1-cychiang@chromium.org>
-From:   Cheng-yi Chiang <cychiang@chromium.org>
-Date:   Fri, 2 Nov 2018 11:33:37 +0800
-Message-ID: <CAFv8NwJuTkth_xvPpWok_O9v9TXdGEj9ow+NCvnMiJqRJTrLvA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] CHROMIUM: ASoC: rt5663: Add documentation for power
- supply support
-To:     linux-kernel@vger.kernel.org
-Cc:     Mark Brown <broonie@kernel.org>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        alsa-devel@alsa-project.org, Dylan Reid <dgreid@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.175.104.208]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry! I made a mistake in the title.
-I will fix them and re-post.
-On Thu, Nov 1, 2018 at 8:40 PM Cheng-Yi Chiang <cychiang@chromium.org> wrote:
->
-> rt5663 codec driver will support setting CPVDD and AVDD power supply
-> from device tree.
->
-> Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
-> ---
->  Documentation/devicetree/bindings/sound/rt5663.txt | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/sound/rt5663.txt b/Documentation/devicetree/bindings/sound/rt5663.txt
-> index 23386446c63d6..d4058dfde0392 100644
-> --- a/Documentation/devicetree/bindings/sound/rt5663.txt
-> +++ b/Documentation/devicetree/bindings/sound/rt5663.txt
-> @@ -36,6 +36,9 @@ Optional properties:
->    "realtek,impedance_sensing_num" is 2. It means that there are 2 ranges of
->    impedance in the impedance sensing function.
->
-> +- avdd-supply: Power supply for AVDD, providing 1.8V.
-> +- cpvdd-supply: Power supply for CPVDD, providing 3.5V.
-> +
->  Pins on the device (for linking into audio routes) for RT5663:
->
->    * IN1P
-> @@ -51,4 +54,6 @@ rt5663: codec@12 {
->         compatible = "realtek,rt5663";
->         reg = <0x12>;
->         interrupts = <7 IRQ_TYPE_EDGE_FALLING>;
-> +       avdd-supply = <&pp1800_a_alc5662>;
-> +       cpvdd-supply = <&pp3500_a_alc5662>;
->  };
-> --
-> 2.19.1.568.g152ad8e336-goog
->
+syzkaller triggered a UBCAN warning:
+
+[  196.188950] UBSAN: Undefined behaviour in drivers/input/input.c:62:23
+[  196.188958] signed integer overflow:
+[  196.188964] -2147483647 - 104 cannot be represented in type 'int [2]'
+[  196.188973] CPU: 7 PID: 4763 Comm: syz-executor Not tainted
+4.19.0-514.55.6.9.x86_64+ #7
+[  196.188977] Hardware name: Bochs Bochs, BIOS Bochs 01/01/2011
+[  196.188979] Call Trace:
+[  196.189001]  dump_stack+0x91/0xeb
+[  196.189014]  ubsan_epilogue+0x9/0x7c
+[  196.189020]  handle_overflow+0x1d7/0x22c
+[  196.189028]  ? __ubsan_handle_negate_overflow+0x18f/0x18f
+[  196.189038]  ? __mutex_lock+0x213/0x13f0
+[  196.189053]  ? drop_futex_key_refs+0xa0/0xa0
+[  196.189070]  ? __might_fault+0xef/0x1b0
+[  196.189096]  input_handle_event+0xe1b/0x1290
+[  196.189108]  input_inject_event+0x1d7/0x27e
+[  196.189119]  evdev_write+0x2cf/0x3f0
+[  196.189129]  ? evdev_pass_values+0xd40/0xd40
+[  196.189157]  ? mark_held_locks+0x160/0x160
+[  196.189171]  ? __vfs_write+0xe0/0x6c0
+[  196.189175]  ? evdev_pass_values+0xd40/0xd40
+[  196.189179]  __vfs_write+0xe0/0x6c0
+[  196.189186]  ? kernel_read+0x130/0x130
+[  196.189204]  ? _cond_resched+0x15/0x30
+[  196.189214]  ? __inode_security_revalidate+0xb8/0xe0
+[  196.189222]  ? selinux_file_permission+0x354/0x430
+[  196.189233]  vfs_write+0x160/0x440
+[  196.189242]  ksys_write+0xc1/0x190
+[  196.189248]  ? __ia32_sys_read+0xb0/0xb0
+[  196.189259]  ? trace_hardirqs_on_thunk+0x1a/0x1c
+[  196.189267]  ? do_syscall_64+0x22/0x4a0
+[  196.189276]  do_syscall_64+0xa5/0x4a0
+[  196.189287]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[  196.189293] RIP: 0033:0x44e7c9
+[  196.189299] Code: fc ff 48 81 c4 80 00 00 00 e9 f1 fe ff ff 0f 1f 00
+
+the syzkaller reproduce script(but can't reproduce it every time):
+
+r0 = syz_open_dev$evdev(&(0x7f0000000100)='/dev/input/event#\x00', 0x2,
+0x1)
+write$binfmt_elf64(r0, &(0x7f0000000240)={{0x7f, 0x45, 0x4c, 0x46, 0x40,
+0x2, 0x2, 0xffffffff, 0xffffffffffff374c, 0x3, 0x0, 0x80000001, 0x103,
+0x40, 0x22e, 0x26, 0x1, 0x38, 0x2, 0xa23, 0x1, 0x2}, [{0x6474e557, 0x5,
+0x6, 0x2, 0x9, 0x9, 0x6c3, 0x1ff}], "", [[], [], [], []]}, 0x478)
+ioctl$EVIOCGSW(0xffffffffffffffff, 0x8040451b, &(0x7f0000000040)=""/7)
+syz_open_dev$evdev(&(0x7f0000000100)='/dev/input/event#\x00', 0x2, 0x1)
+r1 = syz_open_dev$evdev(&(0x7f0000000100)='/dev/input/event#\x00', 0x2,
+0x1)
+openat$smack_task_current(0xffffffffffffff9c,
+&(0x7f0000000040)='/proc/self/attr/current\x00', 0x2, 0x0)
+ioctl$EVIOCSABS0(r1, 0x401845c0, &(0x7f0000000000)={0x4, 0x10000, 0x4,
+0xd1, 0x81, 0x3})
+eventfd(0x1ff)
+syz_open_dev$evdev(&(0x7f0000000100)='/dev/input/event#\x00', 0x2,
+0x200)
+syz_open_dev$evdev(&(0x7f0000000100)='/dev/input/event#\x00', 0x2, 0x1)
+syz_open_dev$evdev(&(0x7f0000000100)='/dev/input/event#\x00', 0x2, 0x1)
+syz_open_dev$evdev(&(0x7f0000000100)='/dev/input/event#\x00', 0x2, 0x1)
+syz_open_dev$evdev(&(0x7f0000000100)='/dev/input/event#\x00', 0x2, 0x1)
+
+Typecast int to long to fix the issue.
+
+Signed-off-by: liujian <liujian56@huawei.com>
+---
+ drivers/input/input.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/input/input.c b/drivers/input/input.c
+index 3304aaa..24615ef 100644
+--- a/drivers/input/input.c
++++ b/drivers/input/input.c
+@@ -59,14 +59,17 @@ static inline int is_event_supported(unsigned int code,
+ static int input_defuzz_abs_event(int value, int old_val, int fuzz)
+ {
+ 	if (fuzz) {
+-		if (value > old_val - fuzz / 2 && value < old_val + fuzz / 2)
++		if (value > (long)old_val - fuzz / 2 &&
++				value < (long)old_val + fuzz / 2)
+ 			return old_val;
+ 
+-		if (value > old_val - fuzz && value < old_val + fuzz)
+-			return (old_val * 3 + value) / 4;
++		if (value > (long)old_val - fuzz &&
++				value < (long)old_val + fuzz)
++			return ((long)old_val * 3 + value) / 4;
+ 
+-		if (value > old_val - fuzz * 2 && value < old_val + fuzz * 2)
+-			return (old_val + value) / 2;
++		if (value > (long)old_val - fuzz * 2 &&
++				value < (long)old_val + fuzz * 2)
++			return ((long)old_val + value) / 2;
+ 	}
+ 
+ 	return value;
+-- 
+2.7.4
+
