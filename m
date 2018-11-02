@@ -2,132 +2,117 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39AEDC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:07:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A781EC65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:07:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E36BC20831
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:07:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F2C420831
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:07:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3P7f9/F4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E36BC20831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IdxZEOCD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F2C420831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727758AbeKCBOn (ORCPT
+        id S1727942AbeKCBO6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 21:14:43 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:35654 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbeKCBOn (ORCPT
+        Fri, 2 Nov 2018 21:14:58 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:45291 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbeKCBO5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 21:14:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=/JDQWY/JBE9q38EEhQm/IWSJk9R3yclbl+qjGS2RsGI=; b=3P7f9/F4bOFgzgs537TP+Cy701
-        VKSVnK1L9hVfsZIKR9EkzMBeOCCO5U/hG5qMYDmwGNzx2IG5PFzRHTXLGr0KmSpAQDoE6QOLAQ8y+
-        3eCYZQybvZk5NZL/Dvaw7VM77F8WAtkOZsLkKjLRp1gG2NCNedBYEIl2cL8GnYj0u9eq6fApRXoAX
-        6O73pz+NOG9Rkhv1qKP99sVc57q6yVYMJ+ZXQBAgmKT0on2VGoUC8dGkBKJWLbyS73ZHuASp/84zr
-        OWFbAMzKmFMZJf/7jsNGG+1updHN0T1TasYBQJbt7HDpKsuyzVuW9E1VgGXEy0E/FqvVnVGhIy4YC
-        ycmVPM4Q==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gIbyQ-0003i7-L5; Fri, 02 Nov 2018 16:07:02 +0000
-Subject: Re: [PATCH resend] arch/sh: mach-kfr2r09: fix struct mtd_oob_ops
- build warning
-To:     jacopo mondi <jacopo@jmondi.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-mtd@lists.infradead.org, linux-sh@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <702f0a25-c63e-6912-4640-6ab0f00afbc7@infradead.org>
- <20181102075245.GR15991@w540>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <bcd90d69-7487-a927-d5c1-d77c422665a8@infradead.org>
-Date:   Fri, 2 Nov 2018 09:07:01 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181102075245.GR15991@w540>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 2 Nov 2018 21:14:57 -0400
+Received: by mail-qk1-f194.google.com with SMTP id d135so3787359qkc.12;
+        Fri, 02 Nov 2018 09:07:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=ZWTqfDdY/i3uglUqiNPkhJL7ZpYMnD30gkQpqwOUGk8=;
+        b=IdxZEOCDbbX5eAu4et0jBaQtRLPJQoMrXnhl7LH0P/HHdvvSJbnpK7JGIs+ltYVi+l
+         08TA9SAhhdK+B+cPyo112b39fBUWPl78JKP415enz2rL96uLQKNSg2yNJbqo1Eq+E/fD
+         2AD84uuQZS227mu1BYyxe0qW5YhO2NTPNSee2kKcyR8ljP60TpxmmvWKCS9zKLkT29sk
+         Rs7rCLoDRyo7VAvbRU0zdPVAOJB13wKs5cgjj7WGiaqWXhHP2wJLRb6WAftd0kll08yJ
+         xBxF63fdinNglxHrK1uT8l+mETcyh4c6mofj5G/rJ9mVsnhLS0OVOSTeXFFwLfsM621J
+         zCGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ZWTqfDdY/i3uglUqiNPkhJL7ZpYMnD30gkQpqwOUGk8=;
+        b=XW6X3uAHE8GRL5GHnBUGOwOpvBdj2N6VEUsQ2c5bPgGYgnbpgOcKPP7Y0Lv7WI9137
+         Y6Z9bu7wP3Z/RHkSosn8j9a3yE9rvYGiZlabPkHqYXGRoLlelOz+ssyhRl4FnXC+wcrK
+         8Y+QMcpWZW15XvGhlMqYyOb4SiWO2SKpUHGpkNZPsZKi6g4lmga9O2eECQYf9lx+yv7Y
+         X9p8B99L8n7AMGWAzXLmzA9LncC3nDArd6wjJmc8wybsBibomPqLRzB+SLYQ7+fiobLx
+         ntnQG75797VQgmCrJbTN9J3lHyeMUdpM7jKh83WjiDZYUMWZnKxQiOLTYFWEGXhoLMdO
+         hc4w==
+X-Gm-Message-State: AGRZ1gJksQqgtfR0KZ+OT+IITEvvesiqhB26u4g7+y5UyxVb+c3KIp64
+        XgVh6pUcweLWet8NwrakoN4=
+X-Google-Smtp-Source: AJdET5c6MiAZ0MvRhUTqdkEqtlOEV0W9RVpRNTk1+qrqg6Z51zC/hDvh/3H/qLboQk7OEw7nS+x0yw==
+X-Received: by 2002:aed:3024:: with SMTP id 33-v6mr11562409qte.29.1541174841134;
+        Fri, 02 Nov 2018 09:07:21 -0700 (PDT)
+Received: from u1804-ini.default ([76.224.89.164])
+        by smtp.googlemail.com with ESMTPSA id j51-v6sm15507254qtj.26.2018.11.02.09.07.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 02 Nov 2018 09:07:20 -0700 (PDT)
+From:   Vitaly Mayatskikh <v.mayatskih@gmail.com>
+To:     "Michael S . Tsirkin" <mst@redhat.com>
+Cc:     Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Vitaly Mayatskikh <v.mayatskih@gmail.com>
+Subject: [PATCH 0/1] vhost: parallel virtqueue handling
+Date:   Fri,  2 Nov 2018 16:07:09 +0000
+Message-Id: <20181102160710.3741-1-v.mayatskih@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/2/18 12:52 AM, jacopo mondi wrote:
-> Hi Randy,
->    thanks for the patch.
-> 
-> On Thu, Nov 01, 2018 at 04:38:30PM -0700, Randy Dunlap wrote:
->> From: Randy Dunlap <rdunlap@infradead.org>
->>
->> arch/sh/boards/mach-kfr2r09/setup.c does not need to #include
->> <mtd/onenand.h>, and doing so causes a build warning, so drop
->> that header file.
->>
->> In file included from ../arch/sh/boards/mach-kfr2r09/setup.c:28:
->> ../include/linux/mtd/onenand.h:225:12: warning: 'struct mtd_oob_ops' declared inside parameter list will not be visible outside of this definition or declaration
->>      struct mtd_oob_ops *ops);
->>
->> Fixes: f3590dc32974 ("media: arch: sh: kfr2r09: Use new renesas-ceu camera driver")
-> 
-> Not sure if this is worth pointing out, but this commit only resorts
-> headers. The one introducing the warning is actually 33893d7aa.
-> 
-> I felt like reporting this, as introducing a "Fixes" line for that
-> commit too would help backporting maybe?
+Hi,
 
-Oops, thanks, I'll fix that and send a v2 with your Ack.
+I stumbled across poor performance of virtio-blk while working on a
+high-performance network storage protocol. Moving virtio-blk's host
+side to kernel did increase single queue IOPS, but multiqueue disk
+still was not scaling well. It turned out that vhost handles events
+from all virtio queues in one helper thread, and that's pretty much a
+big serialization point.
 
-> In any case:
-> Acked-by: Jacopo Mondi <jacopo@jmondi.org>
-> 
-> Thanks
->    j
-> 
->>
->> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
->> Suggested-by: Miquel Raynal <miquel.raynal@bootlin.com>
->> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
->> Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
->> Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
->> Cc: Rich Felker <dalias@libc.org>
->> Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>
->> Cc: Magnus Damm <magnus.damm@gmail.com>
->> Cc: linux-mtd@lists.infradead.org
->> Cc: linux-sh@vger.kernel.org
->> ---
->>  arch/sh/boards/mach-kfr2r09/setup.c |    1 -
->>  1 file changed, 1 deletion(-)
->>
->> --- linux-next-20181101.orig/arch/sh/boards/mach-kfr2r09/setup.c
->> +++ linux-next-20181101/arch/sh/boards/mach-kfr2r09/setup.c
->> @@ -25,7 +25,6 @@
->>  #include <linux/memblock.h>
->>  #include <linux/mfd/tmio.h>
->>  #include <linux/mmc/host.h>
->> -#include <linux/mtd/onenand.h>
->>  #include <linux/mtd/physmap.h>
->>  #include <linux/platform_data/lv5207lp.h>
->>  #include <linux/platform_device.h>
->>
->>
+The following patch enables events handling in per-queue thread and
+increases IO concurrency, see IOPS numbers:
 
+# num-queues
+# bare metal
+# virtio-blk
+# vhost-blk
+
+1  171k  148k 195k 
+2  328k  249k 349k 
+3  479k  179k 501k 
+4  622k  143k 620k 
+5  755k  136k 737k 
+6  887k  131k 830k 
+7  1004k 126k 926k 
+8  1099k 117k 1001k
+9  1194k 115k 1055k
+10 1278k 109k 1130k
+11 1345k 110k 1119k
+12 1411k 104k 1201k
+13 1466k 106k 1260k
+14 1517k 103k 1296k
+15 1552k 102k 1322k
+16 1480k 101k 1346k
+
+Vitaly Mayatskikh (1):
+  vhost: add per-vq worker thread
+
+ drivers/vhost/vhost.c | 123 +++++++++++++++++++++++++++++++-----------
+ drivers/vhost/vhost.h |  11 +++-
+ 2 files changed, 100 insertions(+), 34 deletions(-)
 
 -- 
-~Randy
+2.17.1
+
