@@ -2,102 +2,210 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF3AC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:50:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97980C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:52:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F1732081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:50:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F1732081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 43A2720657
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:52:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="I+7bP+rH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43A2720657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727961AbeKCA6T (ORCPT
+        id S1727734AbeKCA7d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 20:58:19 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43306 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726098AbeKCA6T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 20:58:19 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E40131596;
-        Fri,  2 Nov 2018 08:50:46 -0700 (PDT)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 72CDA3F718;
-        Fri,  2 Nov 2018 08:50:44 -0700 (PDT)
-Date:   Fri, 2 Nov 2018 15:50:38 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Atish Patra <atish.patra@wdc.com>, linux-riscv@lists.infradead.org,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Anup Patel <anup@brainfault.org>,
-        Christoph Hellwig <hch@infradead.org>, Damien.LeMoal@wdc.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, alankao@andestech.com,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Zong Li <zong@andestech.com>
-Subject: Re: [RFC 1/2] dt-bindings: topology: Add RISC-V cpu topology.
-Message-ID: <20181102155038.GA21067@e107155-lin>
-References: <1541113468-22097-1-git-send-email-atish.patra@wdc.com>
- <1541113468-22097-2-git-send-email-atish.patra@wdc.com>
- <CAL_Jsq+wProNynprMjQnrz1jmbZT9TmmA-_=vPUxCEED_8xONg@mail.gmail.com>
- <20181102133100.GA13130@e107155-lin>
- <CAL_JsqLO+cOcHkr41ebPtONwrzOWGhksH1ypph+tihsuOVDOug@mail.gmail.com>
+        Fri, 2 Nov 2018 20:59:33 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:44254 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726713AbeKCA7d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 20:59:33 -0400
+Received: by mail-yw1-f67.google.com with SMTP id k6-v6so930491ywa.11
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 08:52:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Qv7IoKjig1gc3J/CUecwIgnlYcDydbRPK8/Q8reJzlI=;
+        b=I+7bP+rHeE85DBmu6lxQ5yKDx+DptEnK9WuAdHJufCtjt77t0qTemmKCba9kll7Srj
+         UqZz2Dy4V6WpjNZVN2hV5FfGiUmBC/+BZA7RVp22aCBnW9zQWR2eMsMH4kNOv7EVmnwI
+         QC2Ba3fKhu7AHRKZdL77+iGgt2t3Au1IitAqM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Qv7IoKjig1gc3J/CUecwIgnlYcDydbRPK8/Q8reJzlI=;
+        b=OfJVwmbTYy5eoBkko05QnjJ9unLHarixCedl2HY8/XJKOcbHC8khABtFI6f6QwToln
+         9mBBSBmfsseVIXzE2GB9DuzE3o5957g5VUzTga9S0YbFzkALYojHWaC1zcwdQWK/b2aX
+         ypg35quBNOJiacmFiP8VV8quX7VBvU0NfybbwR5OtIxCGEQX1vw5YfGyG0REvs4ReiJW
+         C3RBwIvFACdUSTC3ze+dIyUD6sYXVccnZO5SlTuY1HKdRyjlHTHKRGz5wX+7aOAkJZ2U
+         GNRj0/MkL1+t+JEwyOfSZQdbFxbtQTgir+ixhG5vLsX+JEmzuGum1jNgSHeytOAa5wDb
+         DT8A==
+X-Gm-Message-State: AGRZ1gLKmGc5BUwl7r9X6pWQBpAKOAzeR99aGQ5BcWXLYHfnACdvaO58
+        Bd7l7fzOtM/g7MTiJOHDZmelx15iYnE=
+X-Google-Smtp-Source: AJdET5c/9zv6SUmixweqiLcXBOJLLVPysScfSjZ2u6cMilt088rTAlYFXBeIK2yv7fgOaNLDeW4+1w==
+X-Received: by 2002:a81:22c3:: with SMTP id i186-v6mr11262014ywi.43.1541173919337;
+        Fri, 02 Nov 2018 08:51:59 -0700 (PDT)
+Received: from mail-yw1-f46.google.com (mail-yw1-f46.google.com. [209.85.161.46])
+        by smtp.gmail.com with ESMTPSA id r18-v6sm17350199ywa.16.2018.11.02.08.51.57
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 02 Nov 2018 08:51:57 -0700 (PDT)
+Received: by mail-yw1-f46.google.com with SMTP id j75-v6so934101ywj.10
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 08:51:57 -0700 (PDT)
+X-Received: by 2002:a0d:e984:: with SMTP id s126-v6mr10100710ywe.47.1541173916399;
+ Fri, 02 Nov 2018 08:51:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqLO+cOcHkr41ebPtONwrzOWGhksH1ypph+tihsuOVDOug@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Fri, 2 Nov 2018 08:51:55 -0700 (PDT)
+In-Reply-To: <CAEn-LTr6eTgy4HsxT2y_LhXXtQczJNZmQJdY-em-maDOcFL9fA@mail.gmail.com>
+References: <CAEn-LTonSqSG8GtgVmwt7ToJ2NZKsGEaWndmA0Q7Lzm316CFbA@mail.gmail.com>
+ <mhng-71c7a4db-432a-4f97-86cd-1fe16091a6c8@palmer-si-x1c4> <CAEn-LTr6eTgy4HsxT2y_LhXXtQczJNZmQJdY-em-maDOcFL9fA@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Fri, 2 Nov 2018 08:51:55 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jLhDxRHYe2kZ3wDJThsbkDMsZHt3ufM7YG_L0y0fU+brw@mail.gmail.com>
+Message-ID: <CAGXu5jLhDxRHYe2kZ3wDJThsbkDMsZHt3ufM7YG_L0y0fU+brw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] RISC-V: Add support for SECCOMP
+To:     David Abdurachmanov <david.abdurachmanov@gmail.com>
+Cc:     Palmer Dabbelt <palmer@sifive.com>,
+        Paul Moore <paul@paul-moore.com>,
+        linux-riscv@lists.infradead.org, Albert Ou <aou@eecs.berkeley.edu>,
+        Eric Paris <eparis@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>,
+        Wesley Terpstra <wesley@sifive.com>,
+        David Howells <dhowells@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Audit <linux-audit@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 10:11:38AM -0500, Rob Herring wrote:
-> On Fri, Nov 2, 2018 at 8:31 AM Sudeep Holla <sudeep.holla@arm.com> wrote:
-> >
-> > On Fri, Nov 02, 2018 at 08:09:39AM -0500, Rob Herring wrote:
-> > > On Thu, Nov 1, 2018 at 6:04 PM Atish Patra <atish.patra@wdc.com> wrote:
-> > > >
-> > > > Define a RISC-V cpu topology. This is based on cpu-map in ARM world.
-> > > > But it doesn't need a separate thread node for defining SMT systems.
-> > > > Multiple cpu phandle properties can be parsed to identify the sibling
-> > > > hardware threads. Moreover, we do not have cluster concept in RISC-V.
-> > > > So package is a better word choice than cluster for RISC-V.
-> > >
-> > > There was a proposal to add package info for ARM recently. Not sure
-> > > what happened to that, but we don't need 2 different ways.
-> > >
-> >
-> > We still need that, I can brush it up and post what Lorenzo had previously
-> > proposed[1]. We want to keep both DT and ACPI CPU topology story aligned.
+On Fri, Nov 2, 2018 at 6:32 AM, David Abdurachmanov
+<david.abdurachmanov@gmail.com> wrote:
+> On Mon, Oct 29, 2018 at 9:27 PM Palmer Dabbelt <palmer@sifive.com> wrote:
+>>
+>> On Sun, 28 Oct 2018 04:07:55 PDT (-0700), david.abdurachmanov@gmail.com wrote:
+>> > On Thu, Oct 25, 2018 at 10:36 PM Paul Moore <paul@paul-moore.com> wrote:
+>> >>
+>> >> On Thu, Oct 25, 2018 at 2:31 PM David Abdurachmanov
+>> >> <david.abdurachmanov@gmail.com> wrote:
+>> >> > On Wed, Oct 24, 2018 at 10:40 PM Palmer Dabbelt <palmer@sifive.com> wrote:
+>> >> > > From: "Wesley W. Terpstra" <wesley@sifive.com>
+>> >>
+>> >> ...
+>> >>
+>> >> > Palmer,
+>> >> >
+>> >> > Half of the patch seems to touch audit parts. I started working on audit
+>> >> > support this morning, and I can boot Fedora with audit traces.
+>> >> >
+>> >> > [root@fedora-riscv ~]# dmesg | grep audit
+>> >> > [    0.312000] audit: initializing netlink subsys (disabled)
+>> >> > [    0.316000] audit: type=2000 audit(0.316:1): state=initialized
+>> >> > audit_enabled=0 res=1
+>> >> > [    7.288000] audit: type=1130 audit(1529665913.772:2): pid=1 uid=0
+>> >> > auid=4294967295 ses=4294967295 msg='unit=systemd-remount-fs
+>> >> > comm="systemd" exe="/usr/lib/systemd/systemd" hostname=? addr=?
+>> >> > terminal=? res=success'
+>> >> > [    7.684000] audit: type=1130 audit(1529665914.176:3): pid=1 uid=0
+>> >> > auid=4294967295 ses=4294967295 msg='unit=systemd-sysctl comm="systemd"
+>> >> > exe="/usr/lib/systemd/systemd" hostname=? addr=? terminal=?
+>> >> > res=success'
+>> >> > [..]
+>> >> >
+>> >> > I am still working on audit user-space support for better testing.
+>> >> >
+>> >> > I suggest we first implement audit and then seccomp.
+>> >>
+>> >> FYI, while small and far from comprehensive, we do have a test suite
+>> >> we use for basic validation of the audit kernel bits which may be
+>> >> helpful while you're working on the audit enablement:
+>> >>
+>> >> * https://github.com/linux-audit/audit-testsuite
+>> >
+>> > Currently I checked the following to work:
+>> > - /proc/self/loginuid (required by DNF [package manager])
+>> > - auditctl (checked several different example rules from internet)
+>> > - aulast
+>> > - aulastlog
+>> > - ausearch
+>> > - ausyscall
+>> > - aureport
+>> > - autrace (compared some syscalls to strace: order and
+>> >   return value/input arguments seems to be correct)
+>> >
+>> > I checked audit-testsuite yesterday and it seems to be only for
+>> > x86-64 / x86-32. After adjusting it (MODE, syscalls) I am at:
+>> >
+>> > Failed 4/14 test programs. 19/88 subtests failed.
+>> >
+>> > I don't plan to look further in the failure, e.g.:
+>> > - syscall_socketcall: that's an old stuff and not relevant to
+>> >   new arches
+>> > - syscall_module: Fedora kernel currently is not compiled
+>> >   with kernel loadable module support
+>> > - filter_exclude: two tests fail because id -Z doesn't print
+>> >   any categories, but "semanage login -l" output is identical
+>> >   between x86_64 and riscv64
+>> > - netfilter_pkt: don't have CONFIG_IP_NF_MANGLE enabled
+>> >
+>> > Fedora kernel currently has minimal CONFIG_* options
+>> > and is built without loadable module support.
+>> >
+>> > I will send the patches for review soon.
+>>
+>> Thanks!
 >
-> Frankly, I don't care what the ACPI story is. I care whether each cpu
+> I fixed the last issue I see with SECCOMP this morning.
 
-Sorry I meant feature parity with ACPI and didn't refer to the mechanics.
+Can you CC me on the series? I'd love to take a look.
 
-> arch does its own thing in DT or not. If a package prop works for
-> RISC-V folks and that happens to align with ACPI, then okay. Though I
-> tend to prefer a package represented as a node rather than a property
-> as I think that's more consistent.
+> I also have patch on top of libseccomp-2.3.3.
+
+Nice! If you toss it up on github I can review that too. :)
+
+-Kees
+
 >
-
-Sounds good. One of the reason for making it *optional* property is for
-backward compatibility. But we should be able to deal with that even with
-node.
-
-> Any comments on the thread aspect (whether it has ever been used)?
-> Though I think thread as a node level is more consistent with each
-> topology level being a node (same with package).
+> Testsuite results for SIM:
 >
-Not 100% sure, the only multi threaded core in the market I know is
-Cavium TX2 which is ACPI.
+> Regression Test Summary
+>  tests run: 4434
+>  tests skipped: 88
+>  tests passed: 4434
+>  tests failed: 0
+>  tests errored: 0
+>
+> Testsuite results for LIVE:
+>
+> Regression Test Summary
+>  tests run: 6
+>  tests skipped: 0
+>  tests passed: 6
+>  tests failed: 0
+>  tests errored: 0
+>
+> Then tested a couple examples manually w/ and w/o BPF and it
+> performed the same as on x86_64 (also checked exit codes &
+> strace output).
+>
+> Upstream libseccomp has now more tests. Once I rebase & re-test
+> with master of libseccomp, I will send both.
+>
+> david
 
---
-Regards,
-Sudeep
+
+
+-- 
+Kees Cook
