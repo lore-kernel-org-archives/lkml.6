@@ -2,145 +2,251 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8DDCC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 22:13:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43925C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 22:14:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A4422082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 22:13:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5BEC20831
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 22:14:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b="KCVSFnmV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A4422082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=digitalocean.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="KyYIqhRT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5BEC20831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728250AbeKCHWe (ORCPT
+        id S1728350AbeKCHX2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 03:22:34 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41286 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726083AbeKCHWe (ORCPT
+        Sat, 3 Nov 2018 03:23:28 -0400
+Received: from mail-pg1-f182.google.com ([209.85.215.182]:41732 "EHLO
+        mail-pg1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726083AbeKCHX2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 03:22:34 -0400
-Received: by mail-pg1-f196.google.com with SMTP id k13so1541165pga.8
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 15:13:39 -0700 (PDT)
+        Sat, 3 Nov 2018 03:23:28 -0400
+Received: by mail-pg1-f182.google.com with SMTP id k13so1541900pga.8
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 15:14:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digitalocean.com; s=google;
+        d=joelfernandes.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=xdBL0DlA3KNettyWK3BHrvK++SJ5OVVpJi6/gu9FZpw=;
-        b=KCVSFnmVg0hT65Pfzd0i9KZpFdgPHxmexub+VQRzuuE/4ImXowNJ0YsmglOW5X5gZC
-         WDZ29mqBoWgJcWnP29esc4mpZO3CYGvd6cBgdev85qIQQbBsMDHH9NXy6oQl8XDF9guP
-         yyt9w1VFRNYUFHWL/jzq2WT+6nzAPp4xEMkAE=
+         :content-disposition:in-reply-to:user-agent;
+        bh=gbPc+WDYcHmcG0BS2O1Hg5yDqoE6lYVMfinsv+wlGuo=;
+        b=KyYIqhRTpDlJOxquIgJaJ3ZZ+UBP5hy25HyNo0qZ1oLa/Hhpp1m0qsuCyDOghfBFVJ
+         MlT/aEt4wec5Ko+wYfJdVhNswqFglMi7h6j7moaQ4/2EgOPHw9OXF5EinDWNSNLpzm9J
+         m5bqHV7PpCC6uV/k70V6NzQ/Cjz65Ga4GdIaw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=xdBL0DlA3KNettyWK3BHrvK++SJ5OVVpJi6/gu9FZpw=;
-        b=H6rhB9wuf+OJH0AziMHqQvw78JjvwTJ0m16fg+VaFy3XHU8cjCirnmTSaisGDQu6AO
-         8yGUCESC1HEK68ZQI6RNdPny5pSkSLkKGjVGB+B3QoVMcl/wwMH/TQne0SpZ+ZHWP8ft
-         1Xn/BQtZhReXVaroa29jd9/40xu93NeSeBH624InSYHjEhJATlHPe3gzd0qNcHY9JKWK
-         2HhwZaTSauD5bA52Yw7EXrzHGWE6BOmUTn8bqLm3SmH2hoeGiAWMh6UoVcO3g3FoZNP8
-         7j/AGcHMjOcaTgmRuhxQGM/BlEUuzEegzzZl+XJ0KIxQlOJsm7NVGj9hv+nQpsYvC0X9
-         zAVg==
-X-Gm-Message-State: AGRZ1gI6lWo6SWB6ywK96g7+PvEJXCtUixJz6vRXW+TowGCPxMv3cDoK
-        6JfvNhkxz1GOtlawfi+KBmMNIDDjmpY=
-X-Google-Smtp-Source: AJdET5ciGU5tzRYDvwnJ32Vw9tschbG7m1SOte/771cdPmgUGo4e3Tk1onu83xd9RUnPbfO9rMzowA==
-X-Received: by 2002:a62:4251:: with SMTP id p78-v6mr1148087pfa.72.1541196818926;
-        Fri, 02 Nov 2018 15:13:38 -0700 (PDT)
-Received: from breakout.internal.digitalocean.com (97-120-168-235.ptld.qwest.net. [97.120.168.235])
-        by smtp.gmail.com with ESMTPSA id d24-v6sm18601636pfe.40.2018.11.02.15.13.38
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=gbPc+WDYcHmcG0BS2O1Hg5yDqoE6lYVMfinsv+wlGuo=;
+        b=c4ZFep3WZA0/ZRASt8UEulavJuySl3iTeT/dFbp7GA9L1AU1x2LL1kfOFr8gExwv9+
+         hWQ7zxwlUNqcBd2EPnOHlhju0j+gUAaXvgPgxhJ4WGjRetGiI1e4w0MOO267Xap2+MLA
+         2Xw0iKv6NkEp80iMpbla+Jh+6OaPXjfmg4x3nDv4q5f7TmUM96TfeAbGNYP3mLdRe54O
+         6q8PTAFe2okoRd42/MPneXKwEcj2d8QbYe4O4cfCTZ9BVfLFprrPCS9KIuY815sNICIy
+         aLGeHbA1AsIoibaEeox5t/4lsipybfh1P+Cgpl94cVwnxyahWWtFYjRmw0Q/Nd+5n/NA
+         zzgg==
+X-Gm-Message-State: AGRZ1gKhQhxTiCkQHtxXgSVgmryYEgh5I9J1XU4785zUA+6jVzzyXH+n
+        l0Q3ydYW0kFKxeFa+BkEvKmDgudqkKA=
+X-Google-Smtp-Source: AJdET5dJSukifff12wwOU3lXS6BOK0P3Um7n/3Tics9gTk7OuOK/8fJ0ydtsMiUrdEqj/Cf6i/7iJA==
+X-Received: by 2002:a65:64d5:: with SMTP id t21-v6mr12706474pgv.428.1541196872451;
+        Fri, 02 Nov 2018 15:14:32 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id j187-v6sm45910992pfc.39.2018.11.02.15.14.30
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 02 Nov 2018 15:13:38 -0700 (PDT)
-Received: by breakout.internal.digitalocean.com (Postfix, from userid 1000)
-        id 2DC1B8A2A45; Fri,  2 Nov 2018 15:13:37 -0700 (PDT)
-Date:   Fri, 2 Nov 2018 15:13:37 -0700
-From:   Nishanth Aravamudan <naravamudan@digitalocean.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Jan =?iso-8859-1?Q?H=2E_Sch=F6nherr?= <jschoenh@amazon.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        Paul Turner <pjt@google.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-Subject: Re: [RFC 00/60] Coscheduling for Linux
-Message-ID: <20181102221337.GA22399@breakout>
-References: <20180907214047.26914-1-jschoenh@amazon.de>
- <20180914111251.GC24106@hirez.programming.kicks-ass.net>
- <1d86f497-9fef-0b19-50d6-d46ef1c0bffa@amazon.de>
- <20180917113315.GS24124@hirez.programming.kicks-ass.net>
+        Fri, 02 Nov 2018 15:14:31 -0700 (PDT)
+Date:   Fri, 2 Nov 2018 15:14:29 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [RFC] doc: rcu: remove note on smp_mb during synchronize_rcu
+Message-ID: <20181102221429.GB99294@google.com>
+References: <20181028043046.198403-1-joel@joelfernandes.org>
+ <20181030222649.GA105735@joelaf.mtv.corp.google.com>
+ <20181030234336.GW4170@linux.ibm.com>
+ <20181031011119.GF224709@google.com>
+ <20181031181748.GG4170@linux.ibm.com>
+ <20181101050019.GA45865@google.com>
+ <20181101161307.GO4170@linux.ibm.com>
+ <20181102061518.GA22191@google.com>
+ <20181102200000.GC4170@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180917113315.GS24124@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181102200000.GC4170@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17.09.2018 [13:33:15 +0200], Peter Zijlstra wrote:
-> On Fri, Sep 14, 2018 at 06:25:44PM +0200, Jan H. Schönherr wrote:
-> > On 09/14/2018 01:12 PM, Peter Zijlstra wrote:
-> > > On Fri, Sep 07, 2018 at 11:39:47PM +0200, Jan H. Schönherr wrote:
+On Fri, Nov 02, 2018 at 01:00:00PM -0700, Paul E. McKenney wrote:
+[..] 
+> > I think it would make sense also to combine it with other memory-ordering
+> > topics like the memory model and rseq/cpu-opv things that Mathieu was doing
+> > (if it makes sense to combine). But yes, I am definitely interested in an
+> > RCU-implementation BoF session.
 > 
-> > >> B) Why would I want this?
+> There is an LKMM kernel summit track presentation.  I believe that
+> Mathieu's rseq/cpu-opv would be a good one as well, but Mathieu needs
+> to lead this up and it should be a separate BoF.  Please do feel free
+> to reach out to him.  I am sure that he would be particularly interested
+> in potential uses of rseq and especially cpu-opv.
+
+Cool! Looking forward to LKMM talk and I'll keep in mind to reach out to
+Mathieu about rseq usecases.
+
+> > > > > > Also about GP memory ordering and RCU-tree-locking, I think you mentioned to
+> > > > > > me that the RCU reader-sections are virtually extended both forward and
+> > > > > > backward and whereever it ends, those paths do heavy-weight synchronization
+> > > > > > that should be sufficient to prevent memory ordering issues (such as those
+> > > > > > you mentioned in the Requierments document). That is exactly why we don't
+> > > > > > need explicit barriers during rcu_read_unlock. If I recall I asked you why
+> > > > > > those are not needed. So that answer made sense, but then now on going
+> > > > > > through the 'Memory Ordering' document, I see that you mentioned there is
+> > > > > > reliance on the locking. Is that reliance on locking necessary to maintain
+> > > > > > ordering then?
+> > > > > 
+> > > > > There is a "network" of locking augmented by smp_mb__after_unlock_lock()
+> > > > > that implements the all-to-all memory ordering mentioned above.  But it
+> > > > > also needs to handle all the possible complete()/wait_for_completion()
+> > > > > races, even those assisted by hypervisor vCPU preemption.
+> > > > 
+> > > > I see, so it sounds like the lock network is just a partial solution. For
+> > > > some reason I thought before that complete() was even called on the CPU
+> > > > executing the callback, all the CPUs would have acquired and released a lock
+> > > > in the "lock network" atleast once thus ensuring the ordering (due to the
+> > > > fact that the quiescent state reporting has to travel up the tree starting
+> > > > from the leaves), but I think that's not necessarily true so I see your point
+> > > > now.
 > > > 
-> > >>    In the L1TF context, it prevents other applications from
-> > >>    loading additional data into the L1 cache, while one
-> > >>    application tries to leak data.
+> > > There is indeed a lock that is unconditionally acquired and released by
+> > > wait_for_completion(), but it lacks the smp_mb__after_unlock_lock() that
+> > > is required to get full-up any-to-any ordering.  And unfortunate timing
+> > > (as well as spurious wakeups) allow the interaction to have only normal
+> > > lock-release/acquire ordering, which does not suffice in all cases.
 > > > 
-> > > That is the whole and only reason you did this;
-> > It really isn't. But as your mind seems made up, I'm not going to
-> > bother to argue.
-> 
-> > >> D) What can I *not* do with this?
-> > >> ---------------------------------
-> > >>
-> > >> Besides the missing load-balancing within coscheduled
-> > >> task-groups, this implementation has the following properties,
-> > >> which might be considered short-comings.
-> > >>
-> > >> This particular implementation focuses on SCHED_OTHER tasks
-> > >> managed by CFS and allows coscheduling them. Interrupts as well
-> > >> as tasks in higher scheduling classes are currently out-of-scope:
-> > >> they are assumed to be negligible interruptions as far as
-> > >> coscheduling is concerned and they do *not* cause a preemption of
-> > >> a whole group. This implementation could be extended to cover
-> > >> higher scheduling classes. Interrupts, however, are an orthogonal
-> > >> issue.
-> > >>
-> > >> The collective context switch from one coscheduled set of tasks
-> > >> to another -- while fast -- is not atomic. If a use-case needs
-> > >> the absolute guarantee that all tasks of the previous set have
-> > >> stopped executing before any task of the next set starts
-> > >> executing, an additional hand-shake/barrier needs to be added.
+> > > SRCU and expedited RCU grace periods handle this correctly.  Only the
+> > > normal grace periods are missing the needed barrier.  The probability of
+> > > failure is extremely low in the common case, which involves all sorts
+> > > of synchronization on the wakeup path.  It would be quite strange (but
+> > > not impossible) for the wait_for_completion() exit path to -not- to do
+> > > a full wakeup.  Plus the bug requires a reader before the grace period
+> > > to do a store to some location that post-grace-period code loads from.
+> > > Which is a very rare use case.
 > > > 
-> > > IOW it's completely friggin useless for L1TF.
+> > > But it still should be fixed.  ;-)
+> > > 
+> > > > Did you feel this will violate condition 1. or condition 2. in "Memory-Barrier
+> > > > Guarantees"? Or both?
+> > > > https://www.kernel.org/doc/Documentation/RCU/Design/Requirements/Requirements.html#Memory-Barrier%20Guarantees
+> > > 
+> > > Condition 1.  There might be some strange combination of events that
+> > > could also cause it to also violate condition 2, but I am not immediately
+> > > seeing it.
 > > 
-> > Do you believe me now, that L1TF is not "the whole and only reason"
-> > I did this? :D
+> > In the previous paragraph, you mentioned the bug "requires a reader before
+> > the GP to do a store". However, condition 1 is really different - it is a
+> > reader holding a reference to a pointer that is used *after* the
+> > synchronize_rcu returns. So that reader's load of the pointer should have
+> > completed by the time GP ends, otherwise the reader can look at kfree'd data.
+> > That's different right?
 > 
-> You did mention this work first to me in the context of L1TF, so I might
-> have jumped to conclusions here.
-> 
-> Also, I have, of course, been looking at (SMT) co-scheduling,
-> specifically in the context of L1TF, myself. I came up with a vastly
-> different approach. Tim - where are we on getting some of that posted?
-> 
-> Note; that even though I wrote much of that code, I don't particularly
-> like it either :-)
+> More specifically, the fix prevents a prior reader's -store- within its
+> critical section to be seen as happening after a load that follows the
+> end of the grace period.  So I stand by Condition 1.  ;-)
+> And again, a store within an RCU read-side critical section is a bit
+> on the strange side, but this sort of thing is perfectly legal and
+> is used, albeit rather rarely.
 
-Did your approach get posted to LKML? I never saw it I don't think, and
-I don't see it on lore. Could it be posted as an RFC, even if not
-suitable for upstreaming yet, just for comparison?
+Cool :) I never thought about condition 1 this way but good to know that's
+possible :)
 
-Thanks!
--Nish
+> > For condition 2, I analyzed it below, let me know what you think:
+> > 
+> > > 							Thanx, Paul
+> > > 
+> > > ------------------------------------------------------------------------
+> > > 
+> > > commit bf3c11b7b9789283f993d9beb80caaabc4403916
+> > > Author: Paul E. McKenney <paulmck@linux.ibm.com>
+> > > Date:   Thu Nov 1 09:05:02 2018 -0700
+> > > 
+> > >     rcu: Add full memory barrier in __wait_rcu_gp()
+> > >     
+> > >     RCU grace periods have extremely strong any-to-any ordering
+> > >     requirements that are met by placing full barriers in various places
+> > >     in the grace-period computation.  However, normal grace period requests
+> > >     might be subjected to a "fly-by" wakeup in which the requesting process
+> > >     doesn't actually sleep and in which the corresponding CPU is not yet
+> > >     aware that the grace period has ended.  In this case, loads in the code
+> > >     immediately following the synchronize_rcu() call might potentially see
+> > >     values before stores preceding the grace period on other CPUs.
+> > >     
+> > >     This is an unusual use case, because RCU readers normally read.  However,
+> > >     they can do writes, and if they do, we need post-grace-period reads to
+> > >     see those writes.
+> > >     
+> > >     This commit therefore adds an smp_mb() to the end of __wait_rcu_gp().
+> > >     
+> > >     Many thanks to Joel Fernandes for the series of questions leading to me
+> > >     realizing that this bug exists!
+> > >     
+> > >     Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+> > > 
+> > > diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+> > > index 1971869c4072..74020b558216 100644
+> > > --- a/kernel/rcu/update.c
+> > > +++ b/kernel/rcu/update.c
+> > > @@ -360,6 +360,7 @@ void __wait_rcu_gp(bool checktiny, int n, call_rcu_func_t *crcu_array,
+> > >  			wait_for_completion(&rs_array[i].completion);
+> > >  		destroy_rcu_head_on_stack(&rs_array[i].head);
+> > >  	}
+> > > +	smp_mb(); /* Provide ordering in case of fly-by wakeup. */
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(__wait_rcu_gp);
+> > >  
+https://cs.corp.google.com/piper///depot/google3/base/percpu.cc?type=cs&q=%22rseq%22+restart&sq=package:piper+file://depot/google3+-file:google3/experimental&g=0&l=247> > 
+> > The fix looks fine to me. Thanks.
+> > 
+> > If I understand correctly the wait_for_completion() is an ACQUIRE operation,
+> > and the complete() is a RELEASE operation aka the "MP pattern". The
+> > ACQUIRE/RELEASE semantics allow any writes that happened before the ACQUIRE
+> > to get ordered after it. So that would actually imply it is not strong enough
+> > for ordering purposes during a "fly-by" wake up scenario and would be a
+> > violation of CONDITION 2, I think (not only condition 1 as you said).  This
+> > is because future readers may accidentally see the writes that happened
+> > *before* the synchronize_rcu which is CONDITION 2 in the requirements:
+> > https://goo.gl/8mrDHN  (I had to shortlink it ;))
+> 
+> I do appreciate the shorter link.  ;-)
+> 
+> A write happening before the grace period is ordered by the grace period's
+> network of strong barriers, so the fix does not matter in that case.
+
+I was talking about the acquire/release pairs in the calls to spin_lock and
+spin_unlock in wait_for_completion, not in the grace period network of rnp locks.
+Does that make sense?
+
+I thought that during a "fly-by" wake up, that network of strong barriers
+doesn't really trigger and that that's the problematic scenario. Did I miss
+something?  I was talking about the acquire/release pair in
+wait_for_completion during that fly-by scenario.
+
+> Also, the exact end of the grace period is irrelevant for Condition 2,
+> it is instead the beginning of the grace period compared to the beginning
+> of later RCU read-side critical sections.
+> 
+> Not saying that Condition 2 cannot somehow happen without the memory
+> barrier, just saying that it will take quite a bit more creativity to
+> find a relevant scenario.
+> 
+> Please see below for the updated patch, containing only the typo fix.
+> Please let me know if I messed anything up.
+
+Looks good to me, thanks!
+
+ - Joel
+
+
