@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA322C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E5FC65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:51:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A899520848
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:51:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E1A62082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:51:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OIpENkDv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A899520848
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1fenLvwD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E1A62082D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726068AbeKCEAC (ORCPT
+        id S1726335AbeKCEAF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 00:00:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55754 "EHLO mail.kernel.org"
+        Sat, 3 Nov 2018 00:00:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55802 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728743AbeKCEAB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 00:00:01 -0400
+        id S1726081AbeKCEAE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 00:00:04 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F16922082D;
-        Fri,  2 Nov 2018 18:51:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E7582082D;
+        Fri,  2 Nov 2018 18:51:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184706;
-        bh=1SUWcgSiEt3E+yyfUkvxYd4wsja8B8yDPSoD9Mtxho4=;
+        s=default; t=1541184709;
+        bh=Vl+mjhf+EUHD5Ch2yIuRTo/SiwiSVs9OVgr9QMDlw8Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OIpENkDvkaDP1whRfzZ8si0O738BXO7fRGkxQIo7vJm7CurSC8oech6RoqIlyNaEA
-         kitWlUURab7s+As7YXar+t/VDOv5ZCuxNqOV6hrtqEtji3lW2pbI2EM50UHFaMD/rr
-         bIHbUry7LaZg7eVlVFBM9d0mQJ3/1/deu0HKaOTg=
+        b=1fenLvwD7za+aiAM1sCug1LycfjC+51DWc4PHVlVY7CtOYKJ2RSMpxksFUuhuKVhZ
+         EnbZBgtgcfr92lCJZgo+YZWCVH3cXXtwI//D+RZtnXMbob2ivaVAVWvjAEya4qhzUo
+         99g9ZZwllOmY2wQoCTaIHS5QHOMtlNZ3CGvw6nIU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rickard x Andersson <rickaran@axis.com>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 042/143] net: fec: fix rare tx timeout
-Date:   Fri,  2 Nov 2018 19:33:47 +0100
-Message-Id: <20181102182900.420372023@linuxfoundation.org>
+Subject: [PATCH 4.14 033/143] sr9800: Check for supported Wake-on-LAN modes
+Date:   Fri,  2 Nov 2018 19:33:38 +0100
+Message-Id: <20181102182859.716410332@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -63,64 +63,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 657ade07df72847f591ccdb36bd9b91ed0edbac3 ]
+[ Upstream commit c5cb93e994ffb43b7b3b1ff10b9f928f54574a36 ]
 
-During certain heavy network loads TX could time out
-with TX ring dump.
-TX is sometimes never restarted after reaching
-"tx_stop_threshold" because function "fec_enet_tx_queue"
-only tests the first queue.
+The driver currently silently accepts unsupported Wake-on-LAN modes
+(other than WAKE_PHY or WAKE_MAGIC) without reporting that to the user,
+which is confusing.
 
-In addition the TX timeout callback function failed to
-recover because it also operated only on the first queue.
-
-Signed-off-by: Rickard x Andersson <rickaran@axis.com>
+Fixes: 19a38d8e0aa3 ("USB2NET : SR9800 : One chip USB2.0 USB2NET SR9800 Device Driver Support")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/freescale/fec_main.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/usb/sr9800.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
-index eb2ea231c7ca..8bfa6ef826a9 100644
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -1155,7 +1155,7 @@ static void fec_enet_timeout_work(struct work_struct *work)
- 		napi_disable(&fep->napi);
- 		netif_tx_lock_bh(ndev);
- 		fec_restart(ndev);
--		netif_wake_queue(ndev);
-+		netif_tx_wake_all_queues(ndev);
- 		netif_tx_unlock_bh(ndev);
- 		napi_enable(&fep->napi);
- 	}
-@@ -1270,7 +1270,7 @@ skb_done:
+diff --git a/drivers/net/usb/sr9800.c b/drivers/net/usb/sr9800.c
+index 9277a0f228df..35f39f23d881 100644
+--- a/drivers/net/usb/sr9800.c
++++ b/drivers/net/usb/sr9800.c
+@@ -421,6 +421,9 @@ sr_set_wol(struct net_device *net, struct ethtool_wolinfo *wolinfo)
+ 	struct usbnet *dev = netdev_priv(net);
+ 	u8 opt = 0;
  
- 		/* Since we have freed up a buffer, the ring is no longer full
- 		 */
--		if (netif_queue_stopped(ndev)) {
-+		if (netif_tx_queue_stopped(nq)) {
- 			entries_free = fec_enet_get_free_txdesc_num(txq);
- 			if (entries_free >= txq->tx_wake_threshold)
- 				netif_tx_wake_queue(nq);
-@@ -1747,7 +1747,7 @@ static void fec_enet_adjust_link(struct net_device *ndev)
- 			napi_disable(&fep->napi);
- 			netif_tx_lock_bh(ndev);
- 			fec_restart(ndev);
--			netif_wake_queue(ndev);
-+			netif_tx_wake_all_queues(ndev);
- 			netif_tx_unlock_bh(ndev);
- 			napi_enable(&fep->napi);
- 		}
-@@ -2249,7 +2249,7 @@ static int fec_enet_set_pauseparam(struct net_device *ndev,
- 		napi_disable(&fep->napi);
- 		netif_tx_lock_bh(ndev);
- 		fec_restart(ndev);
--		netif_wake_queue(ndev);
-+		netif_tx_wake_all_queues(ndev);
- 		netif_tx_unlock_bh(ndev);
- 		napi_enable(&fep->napi);
- 	}
++	if (wolinfo->wolopts & ~(WAKE_PHY | WAKE_MAGIC))
++		return -EINVAL;
++
+ 	if (wolinfo->wolopts & WAKE_PHY)
+ 		opt |= SR_MONITOR_LINK;
+ 	if (wolinfo->wolopts & WAKE_MAGIC)
 -- 
 2.17.1
 
