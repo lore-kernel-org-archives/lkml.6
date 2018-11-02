@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17AB5C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:46:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2295C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:46:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF04D20843
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:46:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80C6320837
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:46:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="j7wJ1C3i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF04D20843
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XykpD358"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80C6320837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730404AbeKCDyn (ORCPT
+        id S1730415AbeKCDyp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:54:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50668 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:54:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729136AbeKCDym (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:54:42 -0400
+        id S1729136AbeKCDyp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:54:45 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D924C20837;
-        Fri,  2 Nov 2018 18:46:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA90720837;
+        Fri,  2 Nov 2018 18:46:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184388;
-        bh=0Dk52O5XdnEzfKIO8JEer6a0RbZ1yo8FwJ1bJ7rQWtI=;
+        s=default; t=1541184392;
+        bh=vNmT2UDOKK1YHVGFiz805K1fXcx3cygQalMXrombgbw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j7wJ1C3iati1TVojG/9Y8U9Wp13yiwNsHVNWcjSB1zILhQF0c63oVnyY+oPLlSbwl
-         Ay5Q3+jrHLlj61ZUdWlR6jA2sQ9B295ZOABRQLqUkd7pJiUnX1Ys5bB8UAytup4MSd
-         +8b9bsX/6Zty9g3EkAEFgFwYrC9Mxa1VEbltITjE=
+        b=XykpD358P5VlRLCDa9x+NXwyB76WxzUkUL0bqK8qgT+hGsyzq7TY/eKKkuDrcvva3
+         9jRZV1pW+kbSDlkpGE/P6Xax7Cn16db/pYW/2UO03stHNvtBzt5L4QG83uSHJEfwxp
+         VMu/Y5JhSfo5zdtnw5qeKqausW/tLQvumhpoV1Ro=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
-        Michal Kubecek <mkubecek@suse.cz>,
+        stable@vger.kernel.org, Tobias Jungel <tobias.jungel@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 122/150] ethtool: fix a privilege escalation bug
-Date:   Fri,  2 Nov 2018 19:34:44 +0100
-Message-Id: <20181102182911.454589845@linuxfoundation.org>
+Subject: [PATCH 4.18 123/150] bonding: fix length of actor system
+Date:   Fri,  2 Nov 2018 19:34:45 +0100
+Message-Id: <20181102182911.505943980@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -63,73 +62,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wenwen Wang <wang6495@umn.edu>
+From: Tobias Jungel <tobias.jungel@gmail.com>
 
-[ Upstream commit 58f5bbe331c566f49c9559568f982202a278aa78 ]
+[ Upstream commit 414dd6fb9a1a1b59983aea7bf0f79f0085ecc5b8 ]
 
-In dev_ethtool(), the eth command 'ethcmd' is firstly copied from the
-use-space buffer 'useraddr' and checked to see whether it is
-ETHTOOL_PERQUEUE. If yes, the sub-command 'sub_cmd' is further copied from
-the user space. Otherwise, 'sub_cmd' is the same as 'ethcmd'. Next,
-according to 'sub_cmd', a permission check is enforced through the function
-ns_capable(). For example, the permission check is required if 'sub_cmd' is
-ETHTOOL_SCOALESCE, but it is not necessary if 'sub_cmd' is
-ETHTOOL_GCOALESCE, as suggested in the comment "Allow some commands to be
-done by anyone". The following execution invokes different handlers
-according to 'ethcmd'. Specifically, if 'ethcmd' is ETHTOOL_PERQUEUE,
-ethtool_set_per_queue() is called. In ethtool_set_per_queue(), the kernel
-object 'per_queue_opt' is copied again from the user-space buffer
-'useraddr' and 'per_queue_opt.sub_command' is used to determine which
-operation should be performed. Given that the buffer 'useraddr' is in the
-user space, a malicious user can race to change the sub-command between the
-two copies. In particular, the attacker can supply ETHTOOL_PERQUEUE and
-ETHTOOL_GCOALESCE to bypass the permission check in dev_ethtool(). Then
-before ethtool_set_per_queue() is called, the attacker changes
-ETHTOOL_GCOALESCE to ETHTOOL_SCOALESCE. In this way, the attacker can
-bypass the permission check and execute ETHTOOL_SCOALESCE.
+The attribute IFLA_BOND_AD_ACTOR_SYSTEM is sent to user space having the
+length of sizeof(bond->params.ad_actor_system) which is 8 byte. This
+patch aligns the length to ETH_ALEN to have the same MAC address exposed
+as using sysfs.
 
-This patch enforces a check in ethtool_set_per_queue() after the second
-copy from 'useraddr'. If the sub-command is different from the one obtained
-in the first copy in dev_ethtool(), an error code EINVAL will be returned.
-
-Fixes: f38d138a7da6 ("net/ethtool: support set coalesce per queue")
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-Reviewed-by: Michal Kubecek <mkubecek@suse.cz>
+Fixes: f87fda00b6ed2 ("bonding: prevent out of bound accesses")
+Signed-off-by: Tobias Jungel <tobias.jungel@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/ethtool.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/net/bonding/bond_netlink.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/net/core/ethtool.c
-+++ b/net/core/ethtool.c
-@@ -2461,13 +2461,17 @@ roll_back:
- 	return ret;
- }
+--- a/drivers/net/bonding/bond_netlink.c
++++ b/drivers/net/bonding/bond_netlink.c
+@@ -638,8 +638,7 @@ static int bond_fill_info(struct sk_buff
+ 				goto nla_put_failure;
  
--static int ethtool_set_per_queue(struct net_device *dev, void __user *useraddr)
-+static int ethtool_set_per_queue(struct net_device *dev,
-+				 void __user *useraddr, u32 sub_cmd)
- {
- 	struct ethtool_per_queue_op per_queue_opt;
- 
- 	if (copy_from_user(&per_queue_opt, useraddr, sizeof(per_queue_opt)))
- 		return -EFAULT;
- 
-+	if (per_queue_opt.sub_command != sub_cmd)
-+		return -EINVAL;
-+
- 	switch (per_queue_opt.sub_command) {
- 	case ETHTOOL_GCOALESCE:
- 		return ethtool_get_per_queue_coalesce(dev, useraddr, &per_queue_opt);
-@@ -2838,7 +2842,7 @@ int dev_ethtool(struct net *net, struct
- 		rc = ethtool_get_phy_stats(dev, useraddr);
- 		break;
- 	case ETHTOOL_PERQUEUE:
--		rc = ethtool_set_per_queue(dev, useraddr);
-+		rc = ethtool_set_per_queue(dev, useraddr, sub_cmd);
- 		break;
- 	case ETHTOOL_GLINKSETTINGS:
- 		rc = ethtool_get_link_ksettings(dev, useraddr);
+ 			if (nla_put(skb, IFLA_BOND_AD_ACTOR_SYSTEM,
+-				    sizeof(bond->params.ad_actor_system),
+-				    &bond->params.ad_actor_system))
++				    ETH_ALEN, &bond->params.ad_actor_system))
+ 				goto nla_put_failure;
+ 		}
+ 		if (!bond_3ad_get_active_agg_info(bond, &info)) {
 
 
