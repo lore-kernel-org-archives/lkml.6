@@ -7,48 +7,45 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CEAFC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED68AC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7F832084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC05C2085A
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:41:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gEJb0nw3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7F832084D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="E7kYxxmH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC05C2085A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729651AbeKCDtx (ORCPT
+        id S1729664AbeKCDt4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:49:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44634 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:49:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44696 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728699AbeKCDtx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:49:53 -0400
+        id S1728674AbeKCDtz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:49:55 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1EF420847;
-        Fri,  2 Nov 2018 18:41:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD4532084A;
+        Fri,  2 Nov 2018 18:41:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184100;
-        bh=kFYw1W+IppJCjnVtxcVbWLTyjq/VatpOHf6xVBQVnPA=;
+        s=default; t=1541184103;
+        bh=Dt5WP7xY1BZqTTxq0J1xb7AtnGhxqWb1fRTweHgDuok=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gEJb0nw3UbQEoC2q4tsK20seLvMi0BtJJmA4DRH9WtA3wb6C+XqU6oFZIeI/Z+A6V
-         M+ise/JsP/tWUCHp7DABQUGchYBnBIe6VIfNoeJ7Xn+ulHYpg9qQk8tampgOh0H+3a
-         ClNhQpWF87/BjJdxY9BegaIP3YeA020bJ28mTXCE=
+        b=E7kYxxmHUSHGSg5R9qa8NoR2lxwNCrPaooxBb9QcFNa/UUkpjMl8woFdNu/swo8na
+         DsJUPUp4Qlv+Sp6gaCxVhB9Dm3o4ztCNXsS+FyqOpX4vX12XcrBEpB3uv+B8QpZ3nx
+         ukdW2YuU49zKkcaqc4gwy4v0wIxBb36BRuzRrvzY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Arnd Bergmann <arnd@arndb.de>, James Hogan <jhogan@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-arch@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-mips@linux-mips.org,
+        stable@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 079/150] compiler.h: Allow arch-specific asm/compiler.h
-Date:   Fri,  2 Nov 2018 19:34:01 +0100
-Message-Id: <20181102182909.067675897@linuxfoundation.org>
+Subject: [PATCH 4.18 080/150] ARM: dts: imx53-qsb: disable 1.2GHz OPP
+Date:   Fri,  2 Nov 2018 19:34:02 +0100
+Message-Id: <20181102182909.133127733@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -66,118 +63,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 04f264d3a8b0eb25d378127bd78c3c9a0261c828 ]
+[ Upstream commit eea96566c189c77e5272585984eb2729881a2f1d ]
 
-We have a need to override the definition of
-barrier_before_unreachable() for MIPS, which means we either need to add
-architecture-specific code into linux/compiler-gcc.h or we need to allow
-the architecture to provide a header that can define the macro before
-the generic definition. The latter seems like the better approach.
+The maximum CPU frequency for the i.MX53 QSB is 1GHz, so disable the
+1.2GHz OPP. This makes the board work again with configs that have
+cpufreq enabled like imx_v6_v7_defconfig on which the board stopped
+working with the addition of cpufreq-dt support.
 
-A straightforward approach to the per-arch header is to make use of
-asm-generic to provide a default empty header & adjust architectures
-which don't need anything specific to make use of that by adding the
-header to generic-y. Unfortunately this doesn't work so well due to
-commit 28128c61e08e ("kconfig.h: Include compiler types to avoid missed
-struct attributes") which caused linux/compiler_types.h to be included
-in the compilation of every C file via the -include linux/kconfig.h flag
-in c_flags.
+Fixes: 791f416608 ("ARM: dts: imx53: add cpufreq-dt support")
 
-Because the -include flag is present for all C files we compile, we need
-the architecture-provided header to be present before any C files are
-compiled. If any C files can be compiled prior to the asm-generic header
-wrappers being generated then we hit a build failure due to missing
-header. Such cases do exist - one pointed out by the kbuild test robot
-is the compilation of arch/ia64/kernel/nr-irqs.c, which occurs as part
-of the archprepare target [1].
-
-This leaves us with a few options:
-
-  1) Use generic-y & fix any build failures we find by enforcing
-     ordering such that the asm-generic target occurs before any C
-     compilation, such that linux/compiler_types.h can always include
-     the generated asm-generic wrapper which in turn includes the empty
-     asm-generic header. This would rely on us finding all the
-     problematic cases - I don't know for sure that the ia64 issue is
-     the only one.
-
-  2) Add an actual empty header to each architecture, so that we don't
-     need the generated asm-generic wrapper. This seems messy.
-
-  3) Give up & add #ifdef CONFIG_MIPS or similar to
-     linux/compiler_types.h. This seems messy too.
-
-  4) Include the arch header only when it's actually needed, removing
-     the need for the asm-generic wrapper for all other architectures.
-
-This patch allows us to use approach 4, by including an asm/compiler.h
-header from linux/compiler_types.h after the inclusion of the
-compiler-specific linux/compiler-*.h header(s). We do this
-conditionally, only when CONFIG_HAVE_ARCH_COMPILER_H is selected, in
-order to avoid the need for asm-generic wrappers & the associated build
-ordering issue described above. The asm/compiler.h header is included
-after the generic linux/compiler-*.h header(s) for consistency with the
-way linux/compiler-intel.h & linux/compiler-clang.h are included after
-the linux/compiler-gcc.h header that they override.
-
-[1] https://lists.01.org/pipermail/kbuild-all/2018-August/051175.html
-
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Patchwork: https://patchwork.linux-mips.org/patch/20269/
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-arch@vger.kernel.org
-Cc: linux-kbuild@vger.kernel.org
-Cc: linux-mips@linux-mips.org
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/Kconfig                   |  8 ++++++++
- include/linux/compiler_types.h | 12 ++++++++++++
- 2 files changed, 20 insertions(+)
+ arch/arm/boot/dts/imx53-qsb-common.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index f03b72644902..a18371a36e03 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -977,4 +977,12 @@ config REFCOUNT_FULL
- 	  against various use-after-free conditions that can be used in
- 	  security flaw exploits.
+diff --git a/arch/arm/boot/dts/imx53-qsb-common.dtsi b/arch/arm/boot/dts/imx53-qsb-common.dtsi
+index ef7658a78836..c1548adee789 100644
+--- a/arch/arm/boot/dts/imx53-qsb-common.dtsi
++++ b/arch/arm/boot/dts/imx53-qsb-common.dtsi
+@@ -123,6 +123,17 @@
+ 	};
+ };
  
-+config HAVE_ARCH_COMPILER_H
-+	bool
-+	help
-+	  An architecture can select this if it provides an
-+	  asm/compiler.h header that should be included after
-+	  linux/compiler-*.h in order to override macro definitions that those
-+	  headers generally provide.
++&cpu0 {
++	/* CPU rated to 1GHz, not 1.2GHz as per the default settings */
++	operating-points = <
++		/* kHz   uV */
++		166666  850000
++		400000  900000
++		800000  1050000
++		1000000 1200000
++	>;
++};
 +
- source "kernel/gcov/Kconfig"
-diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index a8ba6b04152c..55e4be8b016b 100644
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -78,6 +78,18 @@ extern void __chk_io_ptr(const volatile void __iomem *);
- #include <linux/compiler-clang.h>
- #endif
- 
-+/*
-+ * Some architectures need to provide custom definitions of macros provided
-+ * by linux/compiler-*.h, and can do so using asm/compiler.h. We include that
-+ * conditionally rather than using an asm-generic wrapper in order to avoid
-+ * build failures if any C compilation, which will include this file via an
-+ * -include argument in c_flags, occurs prior to the asm-generic wrappers being
-+ * generated.
-+ */
-+#ifdef CONFIG_HAVE_ARCH_COMPILER_H
-+#include <asm/compiler.h>
-+#endif
-+
- /*
-  * Generic compiler-dependent macros required for kernel
-  * build go below this comment. Actual compiler/compiler version
+ &esdhc1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_esdhc1>;
 -- 
 2.17.1
 
