@@ -4,49 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8963EC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:48:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20A67C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:48:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D3A520847
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:48:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E58112084A
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:48:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="H4G5A5wE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D3A520847
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NgJbCKrJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E58112084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730246AbeKCD4M (ORCPT
+        id S1730306AbeKCD4O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:56:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51670 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:56:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727629AbeKCD4K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:56:10 -0400
+        id S1727629AbeKCD4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:56:13 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1380D20840;
-        Fri,  2 Nov 2018 18:47:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5360920843;
+        Fri,  2 Nov 2018 18:47:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184476;
-        bh=UA/P6RLelT/N+3thXW9NDKUmR8Fcp9fXe4S0vKU0kh8=;
+        s=default; t=1541184479;
+        bh=VSvSM9oREKn3p2Uren1fw99OLRvMQ7fPOnAxMDAg9zI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H4G5A5wERMyyw4n6xbKtneJw51YGnLoCMkJl19BaQ0iiLIJ6FL9zzf8b1G9Kg+PZF
-         7TiADR/0Uk2VpvTVLkCgd/ly4jMATyjT7O+ftmMMZTG9wirfW6cjmIyZUXbbw/1Hq6
-         m8Q3tNHFEvq6q4Ev2lPS2kqKpgbSv1o48nGaehYw=
+        b=NgJbCKrJJrdNxr0HebiFyffoJ3PiHNa+wQ+IeiAQXXE5NTpPRFd+Jzfe8WO6J62Wz
+         ceicvFDNxvbpYngKIMAYzCGs274+WadYeqO7LC4KYgF/ktJwlUFdg1H4SmWQyciPtk
+         qSI858Q6kwfPuy/8aEOX+TAw/p5Vi48nXfYCuwKY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bob Copeland <bobcopeland@fb.com>,
-        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 007/143] mac80211: fix pending queue hang due to TX_DROP
-Date:   Fri,  2 Nov 2018 19:33:12 +0100
-Message-Id: <20181102182857.661743599@linuxfoundation.org>
+Subject: [PATCH 4.14 016/143] ARM: dts: BCM63xx: Fix incorrect interrupt specifiers
+Date:   Fri,  2 Nov 2018 19:33:21 +0100
+Message-Id: <20181102182858.375066090@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -64,49 +62,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6eae4a6c2be387fec41b0d2782c4fffb57159498 ]
+[ Upstream commit 3ab97942d0213b6583a5408630a8cbbfbf54730f ]
 
-In our environment running lots of mesh nodes, we are seeing the
-pending queue hang periodically, with the debugfs queues file showing
-lines such as:
+A number of our interrupts were incorrectly specified, fix both the PPI
+and SPI interrupts to be correct.
 
-    00: 0x00000000/348
-
-i.e. there are a large number of frames but no stop reason set.
-
-One way this could happen is if queue processing from the pending
-tasklet exited early without processing all frames, and without having
-some future event (incoming frame, stop reason flag, ...) to reschedule
-it.
-
-Exactly this can occur today if ieee80211_tx() returns false due to
-packet drops or power-save buffering in the tx handlers.  In the
-past, this function would return true in such cases, and the change
-to false doesn't seem to be intentional.  Fix this case by reverting
-to the previous behavior.
-
-Fixes: bb42f2d13ffc ("mac80211: Move reorder-sensitive TX handlers to after TXQ dequeue")
-Signed-off-by: Bob Copeland <bobcopeland@fb.com>
-Acked-by: Toke Høiland-Jørgensen <toke@toke.dk>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Fixes: b5762cacc411 ("ARM: bcm63138: add NAND DT support")
+Fixes: 46d4bca0445a ("ARM: BCM63XX: add BCM63138 minimal Device Tree")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/tx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/bcm63138.dtsi | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/net/mac80211/tx.c b/net/mac80211/tx.c
-index d8fddd88bf46..a17a56032a21 100644
---- a/net/mac80211/tx.c
-+++ b/net/mac80211/tx.c
-@@ -1837,7 +1837,7 @@ static bool ieee80211_tx(struct ieee80211_sub_if_data *sdata,
- 			sdata->vif.hw_queue[skb_get_queue_mapping(skb)];
+diff --git a/arch/arm/boot/dts/bcm63138.dtsi b/arch/arm/boot/dts/bcm63138.dtsi
+index 43ee992ccdcf..6df61518776f 100644
+--- a/arch/arm/boot/dts/bcm63138.dtsi
++++ b/arch/arm/boot/dts/bcm63138.dtsi
+@@ -106,21 +106,23 @@
+ 		global_timer: timer@1e200 {
+ 			compatible = "arm,cortex-a9-global-timer";
+ 			reg = <0x1e200 0x20>;
+-			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_PPI 11 IRQ_TYPE_EDGE_RISING>;
+ 			clocks = <&axi_clk>;
+ 		};
  
- 	if (invoke_tx_handlers_early(&tx))
--		return false;
-+		return true;
+ 		local_timer: local-timer@1e600 {
+ 			compatible = "arm,cortex-a9-twd-timer";
+ 			reg = <0x1e600 0x20>;
+-			interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
++						  IRQ_TYPE_EDGE_RISING)>;
+ 			clocks = <&axi_clk>;
+ 		};
  
- 	if (ieee80211_queue_skb(local, sdata, tx.sta, tx.skb))
- 		return true;
+ 		twd_watchdog: watchdog@1e620 {
+ 			compatible = "arm,cortex-a9-twd-wdt";
+ 			reg = <0x1e620 0x20>;
+-			interrupts = <GIC_PPI 14 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) |
++						  IRQ_TYPE_LEVEL_HIGH)>;
+ 		};
+ 
+ 		armpll: armpll {
+@@ -158,7 +160,7 @@
+ 		serial0: serial@600 {
+ 			compatible = "brcm,bcm6345-uart";
+ 			reg = <0x600 0x1b>;
+-			interrupts = <GIC_SPI 32 0>;
++			interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&periph_clk>;
+ 			clock-names = "periph";
+ 			status = "disabled";
+@@ -167,7 +169,7 @@
+ 		serial1: serial@620 {
+ 			compatible = "brcm,bcm6345-uart";
+ 			reg = <0x620 0x1b>;
+-			interrupts = <GIC_SPI 33 0>;
++			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&periph_clk>;
+ 			clock-names = "periph";
+ 			status = "disabled";
+@@ -180,7 +182,7 @@
+ 			reg = <0x2000 0x600>, <0xf0 0x10>;
+ 			reg-names = "nand", "nand-int-base";
+ 			status = "disabled";
+-			interrupts = <GIC_SPI 38 0>;
++			interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "nand";
+ 		};
+ 
 -- 
 2.17.1
 
