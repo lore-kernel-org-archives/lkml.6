@@ -2,88 +2,114 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27651C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:48:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EBAFC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:48:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E79B72081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:48:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E79B72081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 03F0520831
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:48:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="TT4N49T7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03F0520831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728099AbeKCAzb (ORCPT
+        id S1727826AbeKCAzC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 20:55:31 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:50379 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727820AbeKCAza (ORCPT
+        Fri, 2 Nov 2018 20:55:02 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:47862 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726098AbeKCAzB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 20:55:30 -0400
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MadC8-1fhuGy2p3K-00c5tQ; Fri, 02 Nov 2018 16:47:42 +0100
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MadC8-1fhuGy2p3K-00c5tQ; Fri, 02 Nov 2018 16:47:42 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Hannes Reinecke <hare@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: myrs: only build on little-endian platforms
-Date:   Fri,  2 Nov 2018 16:47:23 +0100
-Message-Id: <20181102154740.2011289-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:tTw5B+h8d5z8bsOIPBCyLc1qb7hir+Hl5vrgsRcq3BpkzZ7+/7/
- ZnaexOMFNTYdsYFbQ82rJFYutOaiTJUh7kST6kb4zfSARS1qpApwXNGqtDUnPqVqdjMpJ9L
- ajiXeC5hLJ8yFQ/kLniSeaou2HRZqo4posoGchgGBr2A3nMuFtKWtV6G7b3tJ5gDDkP8N8q
- sgbwasf3KIb9S5NfpohqA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:Imq3BK1NRDM=:Lkn4PUzLwyKBan3HXmGSAF
- Z0IcGWQl6xqNbEMG11l+r2cennw98ZVWGSHdLQS0qNF41rDHmrXp7nkRdDaPio8+QASbaWsts
- ntiL/2b9fBRPqf2StQqCJQoTDJvaiv/uaAFQFxU2m2nGNA1j0m33stulwBISVKOzOMSjEqetw
- jVnNh9PCAhBtxbhAtv1NZPChlPe/aCD4TapsUbw39NZL4UUImTFfciHqWVPyWtvGVJlw3ABlF
- HhbY1eZvOQYcyLPJaxcN9P0PQAfH6EbpV6Ytm1QK9oTvJes4SlzHPx/2eMzX3ug1aaKq8Ieiz
- Iws4T4osjQb9hOgfeBz4FGBYIqcG1V1/Z7113tiNcX0OStFjq3HJEQpuUaxlpBiY5jwWgRTdf
- MMmJLtIC8D3y4lGp/Jyvr5Udde1JhPbE7QYXceexXtasvxgtQAunKPDmjQPfaxcZ4TCyMclu0
- b47t8JFW5b5K76G4nwkGUJdoiJWRou682jBBRi5Pdy3YcaxPLLl7uRVHH6vx40bfmKJD17TQr
- pA0wNTBy2vFs/m0i4W1Vk5HUNN2UC/jcOZSM8YOd3KaWAB+ESX3hNC8+yKBM61eU+yJNjZraN
- TFTPsF2e+Dy0oK2scl+nbcgQireCEpfpaUmCTzIHTbnzmbwjqFRPgwrbkIngTFl6LUubZLQSi
- YREprGrjpw8XNe4RdVE8pf7ouf+/h6nqNh4FKT48O2Rjud2Dx7pfFIDpKBCAUJkYirh4=
+        Fri, 2 Nov 2018 20:55:01 -0400
+Received: from localhost.localdomain (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id F22101263;
+        Fri,  2 Nov 2018 16:47:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1541173648;
+        bh=Ms4hjbvTv+PKmxqfSMMcssF//6lL6ZGceG49gfjDyZ4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=TT4N49T7IorZxhS/RhRbT6ylhfvuJGpYSxuLRWZlZthuDLMyAHCfnrQk/bwYYYy+V
+         gktOFAcQwczk6wgKh/Obc2P13tgtxsLgtJEppSsVB/DtJBwgLqnW2oKc1NzceXSFrx
+         AfwHfICCWyQ09zWbVafMf3SbjcflVfJm3+FKR8g4=
+From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
+To:     linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, sakari.ailus@iki.fi
+Cc:     =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        linux-kernel@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH v4 0/4] MAX9286 GMSL Support
+Date:   Fri,  2 Nov 2018 15:47:19 +0000
+Message-Id: <20181102154723.23662-1-kieran.bingham@ideasonboard.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reading throught the new driver, I noticed that this cannot work on
-big-endian CPUs, and the old DAC960 had exactly the same behavior.
+This series provides a pair of drivers for GMSL cameras on the R-Car
+ADAS platforms.
 
-To document this for the future, add a Kconfig dependency that prevents it
-from being included in big-endian kernels.  Since the hardware is really
-old and we never had a working driver on it for big-endian platforms,
-it's unlikely to make a difference to users.
+These drivers originate from Cogent Embedded, and have been refactored
+to split the MAX9286 away from the RDACM20 drivers which were once very
+tightly coupled.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/scsi/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+This posting is the culmination of ~100 changesets spread across Jacopo,
+Niklas, Laurent and myself - thus they contain all of our SoB tags.
 
-diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-index f07444d30b21..640cd1b31a18 100644
---- a/drivers/scsi/Kconfig
-+++ b/drivers/scsi/Kconfig
-@@ -578,6 +578,7 @@ config SCSI_MYRB
- config SCSI_MYRS
- 	tristate "Mylex DAC960/DAC1100 PCI RAID Controller (SCSI Interface)"
- 	depends on PCI
-+	depends on !CPU_BIG_ENDIAN || COMPILE_TEST
- 	select RAID_ATTRS
- 	help
- 	  This driver adds support for the Mylex DAC960, AcceleRAID, and
+This series makes use of Sakari's VC developments and is based upon the
+most recent rebase of this series by Niklas at:
+  git://git.ragnatech.se/linux/ v4l2/mux
+
+Thanks to the VC developments, this driver is capable of streaming from
+all 4 input ports simultaneously through the RCar-VIN capture system.
+
+This driver along with the associated platform support for the Renesas
+R-Car Salvator-X, and the Eagle-V3M can be found at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git gmsl/v4
+
+
+Further anticipated work in this area includes supporting the RDACM21
+camera, at which point the RDACM20 will be adapted to separate out the
+MAX9271 and the OV10635 sensor components.
+
+
+Jacopo Mondi (1):
+  dt-bindings: media: i2c: Add bindings for IMI RDACM20
+
+Kieran Bingham (2):
+  media: i2c: Add MAX9286 driver
+  media: i2c: Add RDACM20 driver
+
+Laurent Pinchart (1):
+  dt-bindings: media: i2c: Add bindings for Maxim Integrated MAX9286
+
+ .../bindings/media/i2c/imi,rdacm20.txt        |   65 +
+ .../bindings/media/i2c/maxim,max9286.txt      |  182 +++
+ .../devicetree/bindings/vendor-prefixes.txt   |    1 +
+ MAINTAINERS                                   |   20 +
+ drivers/media/i2c/Kconfig                     |   22 +
+ drivers/media/i2c/Makefile                    |    2 +
+ drivers/media/i2c/max9286.c                   | 1189 +++++++++++++++++
+ drivers/media/i2c/rdacm20-ov10635.h           |  953 +++++++++++++
+ drivers/media/i2c/rdacm20.c                   |  635 +++++++++
+ 9 files changed, 3069 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt
+ create mode 100644 drivers/media/i2c/max9286.c
+ create mode 100644 drivers/media/i2c/rdacm20-ov10635.h
+ create mode 100644 drivers/media/i2c/rdacm20.c
+
 -- 
-2.18.0
+2.17.1
 
