@@ -2,209 +2,244 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4745BC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 09:39:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63F97C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 09:40:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 035042082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 09:39:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fnxHJHRy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 035042082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 236512082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 09:40:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 236512082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726411AbeKBSpu (ORCPT
+        id S1726524AbeKBSr1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 14:45:50 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:44029 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725986AbeKBSpt (ORCPT
+        Fri, 2 Nov 2018 14:47:27 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55294 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726041AbeKBSrZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 14:45:49 -0400
-Received: by mail-qk1-f194.google.com with SMTP id r71so2006685qkr.10;
-        Fri, 02 Nov 2018 02:39:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TdrzAsYOblILXnc0WReZ2X/iIk4eTAjTltRqBA9jMWs=;
-        b=fnxHJHRyDLfB6zmQpdg7gK/mN2glCsfwo96wCVC9M4sO6+Zzg9sbu+85JCukTR70vL
-         LvUAb7mGBzAd2awvgfYjJf7X/0CXkGpRJKlouHZGexhkoQnLqQ68+yGha9XOPmGgXdaO
-         9yRq+v7g8Bh72Kq7SgOuJeGBGKHgM9ydRw5inflWteOtxB/ZNIWS1ARLr2brIqzmnrHR
-         cNXdsSfFTMDxyYfiB8iIfk3T53v0yAf9uAoIGmTYJnB2uCeRcWFQvRUQCNc8ttzVybxH
-         zfui2Qb6Wpzr8VvHa2B6GsdQ4VnkkTF/yfpml+HiO3d4b7oJIoPrzwnb7a3kskZC/M9H
-         w6Gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TdrzAsYOblILXnc0WReZ2X/iIk4eTAjTltRqBA9jMWs=;
-        b=HA4RqMMlqk9Qu2EvaUjAu4KFxsBTVWwQNVbc8CgtMiRdYCy/5FQgmPfChAULQnrZSo
-         rFk9/T1iEMxF5q1+RqLRnU7i9JXC/ZDA2lfsD7ZzdRfCMjhFo1fklY6TXksXrL0JOOkD
-         t//8ZGDZd7K1zUMYUPs9ZD6+hTlC7jSwegKnTgijpjgvQUncra6giJa/cQGYvqSksVFO
-         tej9xMW1nnR4K/9hO0ovkEodSmduQjDgwSFSkODz2XhjptGCxOeK18VvjNx33T2rjOJw
-         oNqEpZIl9ngGkABSEvRn3hK6E7qICu7L9owB82qNVl5PyafLYRdA7IxDcnlT1zLdRGiP
-         cPRA==
-X-Gm-Message-State: AGRZ1gLAryGJ/BmNQQrCRA7O8FLsgmYjeRzx121WSqDoVwyeD4A8TOeQ
-        zzkWThLHXpXvOWu0tJsB+GBnNvIuQwVJGM60WoA=
-X-Google-Smtp-Source: AJdET5ef4EahZh3iOj9Zz3V0z0zqQL8CKq9DNDl9KVELUHCuSjPfP/uOm4otvaJDQtTjZX3g0tDg3Go/xt00hPbxxvA=
-X-Received: by 2002:a0c:f74c:: with SMTP id e12mr10139443qvo.26.1541151555576;
- Fri, 02 Nov 2018 02:39:15 -0700 (PDT)
+        Fri, 2 Nov 2018 14:47:25 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA29cffm117551
+        for <linux-kernel@vger.kernel.org>; Fri, 2 Nov 2018 05:40:51 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ngksx8xau-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 05:40:51 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <chandan@linux.vnet.ibm.com>;
+        Fri, 2 Nov 2018 09:40:48 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 2 Nov 2018 09:40:43 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA29egMk54657266
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 2 Nov 2018 09:40:43 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D0DD34203F;
+        Fri,  2 Nov 2018 09:40:42 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 83F9042041;
+        Fri,  2 Nov 2018 09:40:42 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.72.2])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  2 Nov 2018 09:40:42 +0000 (GMT)
+From:   Chandan Rajendra <chandan@linux.vnet.ibm.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Victor Hsieh <victorhsieh@google.com>
+Subject: Re: [PATCH v2 10/12] ext4: add basic fs-verity support
+Date:   Fri, 02 Nov 2018 15:13:14 +0530
+In-Reply-To: <20181101225230.88058-11-ebiggers@kernel.org>
+References: <20181101225230.88058-1-ebiggers@kernel.org> <20181101225230.88058-11-ebiggers@kernel.org>
 MIME-Version: 1.0
-References: <1541163378-54047-1-git-send-email-peng.hao2@zte.com.cn> <1541163378-54047-5-git-send-email-peng.hao2@zte.com.cn>
-In-Reply-To: <1541163378-54047-5-git-send-email-peng.hao2@zte.com.cn>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 2 Nov 2018 11:39:04 +0200
-Message-ID: <CAHp75VegH6fZi5cpoRERga+Z-rv=ahfTpvy-Fbu_bwX99gsZVw@mail.gmail.com>
-Subject: Re: [PATCH V6 5/8] misc/pvpanic: add support to get pvpanic device
- info by FDT
-To:     peng.hao2@zte.com.cn
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        hutao@cn.fujitsu.com,
-        Linux Documentation List <linux-doc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-TM-AS-GCONF: 00
+x-cbid: 18110209-0028-0000-0000-00000311ADE1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110209-0029-0000-0000-000023CDE735
+Message-Id: <2168901.PE78DCQIza@localhost.localdomain>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-02_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811020091
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 2, 2018 at 6:46 AM Peng Hao <peng.hao2@zte.com.cn> wrote:
->
-> By default, when ACPI tables and FDT coexist for ARM64,
-> current kernel takes precedence over FDT to get device information.
-> Virt machine in qemu provides both FDT and ACPI table. Increases the
-> way to get information through FDT.
->
-
-so OF dependency in Kconfig is a matter of this patch.
-Since 0day bot complain you might need to add
-
-#include <linux/mod_devicetable.h>
-
-as well.
-
-> Acked-by: Mark Rutland <mark.rutland@arm.com>
-> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+On Friday, November 2, 2018 4:22:28 AM IST Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> Add basic fs-verity support to ext4.  fs-verity is a filesystem feature
+> that enables transparent integrity protection and authentication of
+> read-only files.  It uses a dm-verity like mechanism at the file level:
+> a Merkle tree is used to verify any block in the file in log(filesize)
+> time.  It is implemented mainly by helper functions in fs/verity/.
+> See Documentation/filesystems/fsverity.rst for details.
+> 
+> This patch adds everything except the data verification hooks that will
+> needed in ->readpages().
+> 
+> On ext4, enabling fs-verity on a file requires that the filesystem has
+> the 'verity' feature, e.g. that it was formatted with
+> 'mkfs.ext4 -O verity' or had 'tune2fs -O verity' run on it.
+> This requires e2fsprogs 1.44.4-2 or later.
+> 
+> In ext4, we choose to retain the fs-verity metadata past the end of the
+> file rather than trying to move it into an external inode xattr, since
+> in practice keeping the metadata in-line actually results in the
+> simplest and most efficient implementation.  One non-obvious advantage
+> of keeping the verity metadata in-line is that when fs-verity is
+> combined with fscrypt, the verity metadata naturally gets encrypted too;
+> this is actually necessary because it contains hashes of the plaintext.
+> 
+> We also choose to keep the on-disk i_size equal to the original file
+> size, in order to make the 'verity' feature a RO_COMPAT feature.  Thus,
+> ext4 has to find the fsverity_footer by looking in the last extent.
+> 
+> Co-developed-by: Theodore Ts'o <tytso@mit.edu>
+> Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 > ---
->  drivers/misc/pvpanic.c | 67 +++++++++++++++++++++++++++++++++++++++++++++++---
->  1 file changed, 64 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/misc/pvpanic.c b/drivers/misc/pvpanic.c
-> index 22fb487..5378d5f 100644
-> --- a/drivers/misc/pvpanic.c
-> +++ b/drivers/misc/pvpanic.c
-> @@ -2,6 +2,7 @@
->   *  pvpanic.c - pvpanic Device Support
->   *
->   *  Copyright (C) 2013 Fujitsu.
-> + *  Copyright (C) 2018 ZTE.
->   *
->   *  This program is free software; you can redistribute it and/or modify
->   *  it under the terms of the GNU General Public License as published by
-> @@ -20,11 +21,14 @@
->
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
->
-> +#include <linux/acpi.h>
-> +#include <linux/init.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
-> -#include <linux/init.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/platform_device.h>
->  #include <linux/types.h>
-> -#include <linux/acpi.h>
->
->  MODULE_AUTHOR("Hu Tao <hutao@cn.fujitsu.com>");
->  MODULE_DESCRIPTION("pvpanic device driver");
-> @@ -73,6 +77,32 @@
->         .priority = 1, /* let this called before broken drm_fb_helper */
->  };
->
-> +static int pvpanic_mmio_probe(struct platform_device *pdev)
-> +{
-> +       struct resource *mem;
+>  fs/ext4/Kconfig | 20 +++++++++++
+>  fs/ext4/ext4.h  | 20 ++++++++++-
+>  fs/ext4/file.c  |  6 ++++
+>  fs/ext4/inode.c |  8 +++++
+>  fs/ext4/ioctl.c | 12 +++++++
+>  fs/ext4/super.c | 91 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  fs/ext4/sysfs.c |  6 ++++
+>  7 files changed, 162 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/ext4/Kconfig b/fs/ext4/Kconfig
+> index a453cc87082b5..5a76125ac0f8a 100644
+> --- a/fs/ext4/Kconfig
+> +++ b/fs/ext4/Kconfig
+> @@ -111,6 +111,26 @@ config EXT4_FS_ENCRYPTION
+>  	default y
+>  	depends on EXT4_ENCRYPTION
+> 
+> +config EXT4_FS_VERITY
+> +	bool "Ext4 Verity"
+> +	depends on EXT4_FS
+> +	select FS_VERITY
+> +	help
+> +	  This option enables fs-verity for ext4.  fs-verity is the
+> +	  dm-verity mechanism implemented at the file level.  Userspace
+> +	  can append a Merkle tree (hash tree) to a file, then enable
+> +	  fs-verity on the file.  ext4 will then transparently verify
+> +	  any data read from the file against the Merkle tree.  The file
+> +	  is also made read-only.
 > +
-> +       mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       if (!mem)
-> +               return -EINVAL;
+> +	  This serves as an integrity check, but the availability of the
+> +	  Merkle tree root hash also allows efficiently supporting
+> +	  various use cases where normally the whole file would need to
+> +	  be hashed at once, such as auditing and authenticity
+> +	  verification (appraisal).
 > +
-> +       base = devm_ioremap_resource(&pdev->dev, mem);
-> +       if (base == NULL)
-> +               return -EFAULT;
+> +	  If unsure, say N.
 > +
-> +       atomic_notifier_chain_register(&panic_notifier_list,
-> +                                      &pvpanic_panic_nb);
+>  config EXT4_DEBUG
+>  	bool "EXT4 debugging support"
+>  	depends on EXT4_FS
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 12f90d48ba613..e5475a629ed80 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -43,6 +43,9 @@
+>  #define __FS_HAS_ENCRYPTION IS_ENABLED(CONFIG_EXT4_FS_ENCRYPTION)
+>  #include <linux/fscrypt.h>
+> 
+> +#define __FS_HAS_VERITY IS_ENABLED(CONFIG_EXT4_FS_VERITY)
+> +#include <linux/fsverity.h>
 > +
-> +       return 0;
-> +}
-> +
-> +static int pvpanic_mmio_remove(struct platform_device *pdev)
-> +{
-> +
-> +       atomic_notifier_chain_unregister(&panic_notifier_list,
-> +                                        &pvpanic_panic_nb);
-> +
-> +       return 0;
-> +}
->
->  static acpi_status
->  pvpanic_walk_resources(struct acpi_resource *res, void *context)
-> @@ -124,4 +154,35 @@ static int pvpanic_remove(struct acpi_device *device)
->         return 0;
+>  #include <linux/compiler.h>
+> 
+>  /* Until this gets included into linux/compiler-gcc.h */
+> @@ -405,6 +408,7 @@ struct flex_groups {
+>  #define EXT4_TOPDIR_FL			0x00020000 /* Top of directory hierarchies*/
+>  #define EXT4_HUGE_FILE_FL               0x00040000 /* Set to each huge file */
+>  #define EXT4_EXTENTS_FL			0x00080000 /* Inode uses extents */
+> +#define EXT4_VERITY_FL			0x00100000 /* Verity protected inode */
+>  #define EXT4_EA_INODE_FL	        0x00200000 /* Inode used for large EA */
+>  #define EXT4_EOFBLOCKS_FL		0x00400000 /* Blocks allocated beyond EOF */
+>  #define EXT4_INLINE_DATA_FL		0x10000000 /* Inode has inline data. */
+> @@ -472,6 +476,7 @@ enum {
+>  	EXT4_INODE_TOPDIR	= 17,	/* Top of directory hierarchies*/
+>  	EXT4_INODE_HUGE_FILE	= 18,	/* Set to each huge file */
+>  	EXT4_INODE_EXTENTS	= 19,	/* Inode uses extents */
+> +	EXT4_INODE_VERITY	= 20,	/* Verity protected inode */
+>  	EXT4_INODE_EA_INODE	= 21,	/* Inode used for large EA */
+>  	EXT4_INODE_EOFBLOCKS	= 22,	/* Blocks allocated beyond EOF */
+>  	EXT4_INODE_INLINE_DATA	= 28,	/* Data in inode. */
+> @@ -517,6 +522,7 @@ static inline void ext4_check_flag_values(void)
+>  	CHECK_FLAG_VALUE(TOPDIR);
+>  	CHECK_FLAG_VALUE(HUGE_FILE);
+>  	CHECK_FLAG_VALUE(EXTENTS);
+> +	CHECK_FLAG_VALUE(VERITY);
+>  	CHECK_FLAG_VALUE(EA_INODE);
+>  	CHECK_FLAG_VALUE(EOFBLOCKS);
+>  	CHECK_FLAG_VALUE(INLINE_DATA);
+> @@ -1654,6 +1660,7 @@ static inline void ext4_clear_state_flags(struct ext4_inode_info *ei)
+>  #define EXT4_FEATURE_RO_COMPAT_METADATA_CSUM	0x0400
+>  #define EXT4_FEATURE_RO_COMPAT_READONLY		0x1000
+>  #define EXT4_FEATURE_RO_COMPAT_PROJECT		0x2000
+> +#define EXT4_FEATURE_RO_COMPAT_VERITY		0x8000
+> 
+>  #define EXT4_FEATURE_INCOMPAT_COMPRESSION	0x0001
+>  #define EXT4_FEATURE_INCOMPAT_FILETYPE		0x0002
+> @@ -1742,6 +1749,7 @@ EXT4_FEATURE_RO_COMPAT_FUNCS(bigalloc,		BIGALLOC)
+>  EXT4_FEATURE_RO_COMPAT_FUNCS(metadata_csum,	METADATA_CSUM)
+>  EXT4_FEATURE_RO_COMPAT_FUNCS(readonly,		READONLY)
+>  EXT4_FEATURE_RO_COMPAT_FUNCS(project,		PROJECT)
+> +EXT4_FEATURE_RO_COMPAT_FUNCS(verity,		VERITY)
+> 
+>  EXT4_FEATURE_INCOMPAT_FUNCS(compression,	COMPRESSION)
+>  EXT4_FEATURE_INCOMPAT_FUNCS(filetype,		FILETYPE)
+> @@ -1797,7 +1805,8 @@ EXT4_FEATURE_INCOMPAT_FUNCS(encrypt,		ENCRYPT)
+>  					 EXT4_FEATURE_RO_COMPAT_BIGALLOC |\
+>  					 EXT4_FEATURE_RO_COMPAT_METADATA_CSUM|\
+>  					 EXT4_FEATURE_RO_COMPAT_QUOTA |\
+> -					 EXT4_FEATURE_RO_COMPAT_PROJECT)
+> +					 EXT4_FEATURE_RO_COMPAT_PROJECT |\
+> +					 EXT4_FEATURE_RO_COMPAT_VERITY)
+> 
+>  #define EXTN_FEATURE_FUNCS(ver) \
+>  static inline bool ext4_has_unknown_ext##ver##_compat_features(struct super_block *sb) \
+> @@ -2293,6 +2302,15 @@ static inline bool ext4_encrypted_inode(struct inode *inode)
+>  	return ext4_test_inode_flag(inode, EXT4_INODE_ENCRYPT);
 >  }
->
-> -module_acpi_driver(pvpanic_driver);
-> +static const struct of_device_id pvpanic_mmio_match[] = {
-> +       { .compatible = "qemu,pvpanic-mmio", },
-> +       {}
-> +};
-> +
-> +static struct platform_driver pvpanic_mmio_driver = {
-> +       .driver = {
-> +               .name = "pvpanic-mmio",
-> +               .of_match_table = pvpanic_mmio_match,
-> +       },
-> +       .probe = pvpanic_mmio_probe,
-> +       .remove = pvpanic_mmio_remove,
-> +};
-> +
-> +static int __init pvpanic_mmio_init(void)
+> 
+> +static inline bool ext4_verity_inode(struct inode *inode)
 > +{
-> +       if (acpi_disabled)
-> +               return platform_driver_register(&pvpanic_mmio_driver);
-> +       else
-> +               return acpi_bus_register_driver(&pvpanic_driver);
+> +#ifdef CONFIG_EXT4_FS_VERITY
+> +	return ext4_test_inode_flag(inode, EXT4_INODE_VERITY);
+> +#else
+> +	return false;
+> +#endif
 > +}
 > +
-> +static void __exit pvpanic_mmio_exit(void)
-> +{
-> +       if (acpi_disabled)
-> +               platform_driver_unregister(&pvpanic_mmio_driver);
-> +       else
-> +               acpi_bus_unregister_driver(&pvpanic_driver);
-> +}
-> +
-> +module_init(pvpanic_mmio_init);
-> +module_exit(pvpanic_mmio_exit);
-> --
-> 1.8.3.1
->
 
+Hi Eric,
+
+Can you please explain as to why we check for the presence of
+EXT4_INODE_VERITY flag only when fsverity is enabled during kernel build?
 
 -- 
-With Best Regards,
-Andy Shevchenko
+chandan
+
