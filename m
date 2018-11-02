@@ -2,164 +2,199 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4350C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:24:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3423C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:25:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B8702081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:24:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75E272081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:25:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CpUNNnxl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B8702081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="Go3S+ftW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75E272081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728236AbeKCDcy (ORCPT
+        id S1728260AbeKCDdF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:32:54 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:34485 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727465AbeKCDcx (ORCPT
+        Fri, 2 Nov 2018 23:33:05 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43891 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727465AbeKCDdE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:32:53 -0400
-Received: by mail-pl1-f196.google.com with SMTP id f12-v6so195886plo.1;
-        Fri, 02 Nov 2018 11:24:46 -0700 (PDT)
+        Fri, 2 Nov 2018 23:33:04 -0400
+Received: by mail-pg1-f194.google.com with SMTP id n10-v6so1319125pgv.10
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 11:24:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=vxkGvo12EDQHbqrXUWJQihJg/oN/UCaVvHWYSUK+NuA=;
-        b=CpUNNnxl0LVPOAdxGmUAieaELUcw7tQmej5thUEQIygBiWnBI1zPDnpNXZVRTtRSJt
-         s1eGW/+hGsSFyYhO9NrcvDEw5IeWB5m639crxBoxiO0zaMyH34ISVBYMh9SFJVMZJqBs
-         vtUxo9BfyPE/62gGl7tG/gfw+emNrYxHT0isxHP75hrlNt5dHbDhaZGQNPiDUZqQZe8q
-         hNgq3g2flAt8VQHuxk3ZO0sGt4S2oJz0Eb7YpJeFKKh7IBH5JE8ZpoycuTTBT4D4Qz2L
-         losdX/+K9lQhrOVAV25PIA0WjvOIPDLjXCVJJ1+DcjnQc8tgGTw74w5SD/qiAtu8vaNe
-         Bx/w==
+        bh=C/8mSVbPQ47lvLevvaWkk5GqZkYMInYFZylQMtpWups=;
+        b=Go3S+ftW7k/GcMXZq9SL2inhhXL11XzN1hGEItaNDsaaitf3PSWPOVExg/+do/GQad
+         4Mw1R0L7AuY1XnX/uQMXpyXkoxw0crrbW/5a9Fs99K9EHD+kh7P1WBmWXi5Ds1Ypgmli
+         D33C5Mqq2lGDfb0QBh2qEfKIK7IoX3S7Y7/1k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vxkGvo12EDQHbqrXUWJQihJg/oN/UCaVvHWYSUK+NuA=;
-        b=P9Yes3Mc8EMba4r12Ubu6uE8ZEvMHO3NtDYuT8e70O0ygda0PpN4HmQ2XB05m/yzt8
-         wtcc5sDThWu68O10gQVy47lpvfiX735xpdVaX580NuvDNPkUskWDwhrbjwKqYOWySqUv
-         nT1/avWraTAmW3mFd2CEPL7uW2Rjyx94lnjDi6tXXoD0kRZkdfxBVxIWNB8IdqzBMK94
-         GmLB/vq1zrfFMTG8LoJn+UGRfdIxpW69iEdYcWwHc9QdvCnemBQwHCen0yriz/OmWR/3
-         XJzyWtCPpl+ENz6ymPT8GKK8+22cvUFVj7oZHsspJX6GLpBh/x7oH43uyeSdAqZvqDWz
-         rMxw==
-X-Gm-Message-State: AGRZ1gKEmNGni6Myy90Wr6lEbIeE76F/C+NvTlQLoKg2QuKuY9PxaN5j
-        kmEFvqmoGFIqRT9HbGOoVzE=
-X-Google-Smtp-Source: AJdET5dmACAu1D+WRAnAwgxXitg9XgmA3JrI+pjZNLxnIdSXA/6/jHkZYiDHfizPbQ571gmr0u47iw==
-X-Received: by 2002:a17:902:b718:: with SMTP id d24-v6mr11240496pls.338.1541183086421;
-        Fri, 02 Nov 2018 11:24:46 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id p87-v6sm32637704pfk.186.2018.11.02.11.24.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 02 Nov 2018 11:24:45 -0700 (PDT)
-Date:   Fri, 2 Nov 2018 11:24:44 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     "Woods, Brian" <Brian.Woods@amd.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Jean Delvare <jdelvare@suse.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Pu Wen <puwen@hygon.cn>,
-        Jia Zhang <qianyue.zj@alibaba-inc.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH 1/4] k10temp: x86/amd_nb: consolidate shared device IDs
-Message-ID: <20181102182444.GA5782@roeck-us.net>
-References: <20181102181055.130531-1-brian.woods@amd.com>
- <20181102181055.130531-2-brian.woods@amd.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=C/8mSVbPQ47lvLevvaWkk5GqZkYMInYFZylQMtpWups=;
+        b=agJMwFcqrg4rFPFU9nUFrAkkXG/tm5Kvz0r3oe3f+uGM4M8vbuQEG9lY5Lydj+MPj6
+         EM1zwz0JuGwaD2FcxM4XByaxWIvSqloU63eqqgvy6ySgXhIduAcRBzbEPRfW8DJ+4q7F
+         sqCm1mTwcEXCs3yK8y9Tycyxj9fKA+58YEDCNQ8kwoB8ape2imAfMgWLky07mn5h/dtQ
+         GipnqAI/oIv3MlKQU6zic4Wsxk7FiHLmNajB6ud6DS/YCWxrhl2sIVn1pNqssJIeghop
+         sSJSjVr81kOehwl2ZpE0rM9Qt/YJg/c2MDLVXPq+x2US9BQ+YPX9zCZOOuiRcBr1iao8
+         Sn+w==
+X-Gm-Message-State: AGRZ1gLNiin/mvXAlSWFmUWX2jgF09pK2KNUxOqt2sQtYuv85dLIA/3O
+        HSoAkipMDpAv2D3t2+ZNAwgnReFo81g=
+X-Google-Smtp-Source: AJdET5eicLswCmbK1x5B4KeWupeByqlVdEqOU5igolTbFd+VtY2nlNrXk4A6EHOgOuMKmjx9oTHXKQ==
+X-Received: by 2002:a63:27c1:: with SMTP id n184-v6mr11860857pgn.334.1541183096947;
+        Fri, 02 Nov 2018 11:24:56 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id c128-v6sm32302331pfb.147.2018.11.02.11.24.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 02 Nov 2018 11:24:55 -0700 (PDT)
+Date:   Fri, 2 Nov 2018 11:24:54 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>
+Subject: Re: [PATCH 2/8] pstore: Do not use crash buffer for decompression
+Message-ID: <20181102182454.GB14942@google.com>
+References: <20181101235200.28584-1-keescook@chromium.org>
+ <20181101235200.28584-3-keescook@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181102181055.130531-2-brian.woods@amd.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181101235200.28584-3-keescook@chromium.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 06:11:04PM +0000, Woods, Brian wrote:
-> Consolidate shared PCI_DEVICE_IDs that were scattered through k10temp
-> and amd_nb, and move them into pci_ids.
+On Thu, Nov 01, 2018 at 04:51:54PM -0700, Kees Cook wrote:
+> The pre-allocated compression buffer used for crash dumping was also
+> being used for decompression. This isn't technically safe, since it's
+> possible the kernel may attempt a crashdump while pstore is populating the
+> pstore filesystem (and performing decompression). Instead, just allocate
+
+Yeah, that would be bad if it happened ;)
+
+> a separate buffer for decompression. Correctness is preferred over
+> performance here.
 > 
-> Signed-off-by: Brian Woods <brian.woods@amd.com>
-
-Acked-by: Guenter Roeck <linux@roeck-us.net>
-
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 > ---
->  arch/x86/kernel/amd_nb.c | 3 +--
->  drivers/hwmon/k10temp.c  | 9 +--------
->  include/linux/pci_ids.h  | 2 ++
->  3 files changed, 4 insertions(+), 10 deletions(-)
+>  fs/pstore/platform.c | 56 ++++++++++++++++++++------------------------
+>  1 file changed, 25 insertions(+), 31 deletions(-)
 > 
-> diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
-> index a6eca647bc76..19d489ee2b1e 100644
-> --- a/arch/x86/kernel/amd_nb.c
-> +++ b/arch/x86/kernel/amd_nb.c
-> @@ -11,13 +11,12 @@
->  #include <linux/errno.h>
->  #include <linux/export.h>
->  #include <linux/spinlock.h>
-> +#include <linux/pci_ids.h>
->  #include <asm/amd_nb.h>
+> diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
+> index b821054ca3ed..8b6028948cf3 100644
+> --- a/fs/pstore/platform.c
+> +++ b/fs/pstore/platform.c
+> @@ -258,20 +258,6 @@ static int pstore_compress(const void *in, void *out,
+>  	return outlen;
+>  }
 >  
->  #define PCI_DEVICE_ID_AMD_17H_ROOT	0x1450
->  #define PCI_DEVICE_ID_AMD_17H_M10H_ROOT	0x15d0
-> -#define PCI_DEVICE_ID_AMD_17H_DF_F3	0x1463
->  #define PCI_DEVICE_ID_AMD_17H_DF_F4	0x1464
-> -#define PCI_DEVICE_ID_AMD_17H_M10H_DF_F3 0x15eb
->  #define PCI_DEVICE_ID_AMD_17H_M10H_DF_F4 0x15ec
->  
->  /* Protect the PCI config register pairs used for SMN and DF indirect access. */
-> diff --git a/drivers/hwmon/k10temp.c b/drivers/hwmon/k10temp.c
-> index 2cef0c37ff6f..bc6871c8dd4e 100644
-> --- a/drivers/hwmon/k10temp.c
-> +++ b/drivers/hwmon/k10temp.c
-> @@ -23,6 +23,7 @@
->  #include <linux/init.h>
->  #include <linux/module.h>
->  #include <linux/pci.h>
-> +#include <linux/pci_ids.h>
->  #include <asm/amd_nb.h>
->  #include <asm/processor.h>
->  
-> @@ -41,14 +42,6 @@ static DEFINE_MUTEX(nb_smu_ind_mutex);
->  #define PCI_DEVICE_ID_AMD_15H_M70H_NB_F3	0x15b3
->  #endif
->  
-> -#ifndef PCI_DEVICE_ID_AMD_17H_DF_F3
-> -#define PCI_DEVICE_ID_AMD_17H_DF_F3	0x1463
-> -#endif
+> -static int pstore_decompress(void *in, void *out,
+> -			     unsigned int inlen, unsigned int outlen)
+> -{
+> -	int ret;
 > -
-> -#ifndef PCI_DEVICE_ID_AMD_17H_M10H_DF_F3
-> -#define PCI_DEVICE_ID_AMD_17H_M10H_DF_F3	0x15eb
-> -#endif
+> -	ret = crypto_comp_decompress(tfm, in, inlen, out, &outlen);
+> -	if (ret) {
+> -		pr_err("crypto_comp_decompress failed, ret = %d!\n", ret);
+> -		return ret;
+> -	}
 > -
->  /* CPUID function 0x80000001, ebx */
->  #define CPUID_PKGTYPE_MASK	0xf0000000
->  #define CPUID_PKGTYPE_F		0x00000000
-> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-> index 69f0abe1ba1a..78d5cd29778a 100644
-> --- a/include/linux/pci_ids.h
-> +++ b/include/linux/pci_ids.h
-> @@ -545,6 +545,8 @@
->  #define PCI_DEVICE_ID_AMD_16H_NB_F4	0x1534
->  #define PCI_DEVICE_ID_AMD_16H_M30H_NB_F3 0x1583
->  #define PCI_DEVICE_ID_AMD_16H_M30H_NB_F4 0x1584
-> +#define PCI_DEVICE_ID_AMD_17H_DF_F3	0x1463
-> +#define PCI_DEVICE_ID_AMD_17H_M10H_DF_F3 0x15eb
->  #define PCI_DEVICE_ID_AMD_CNB17H_F3	0x1703
->  #define PCI_DEVICE_ID_AMD_LANCE		0x2000
->  #define PCI_DEVICE_ID_AMD_LANCE_HOME	0x2001
-> -- 
-> 2.11.0
-> 
+> -	return outlen;
+> -}
+> -
+>  static void allocate_buf_for_compression(void)
+>  {
+>  	struct crypto_comp *ctx;
+> @@ -656,8 +642,9 @@ EXPORT_SYMBOL_GPL(pstore_unregister);
+>  
+>  static void decompress_record(struct pstore_record *record)
+>  {
+> +	int ret;
+>  	int unzipped_len;
+
+nit: We could get rid of the unzipped_len variable now I think.
+
+> -	char *decompressed;
+> +	char *unzipped, *workspace;
+>  
+>  	if (!record->compressed)
+>  		return;
+> @@ -668,35 +655,42 @@ static void decompress_record(struct pstore_record *record)
+>  		return;
+>  	}
+>  
+> -	/* No compression method has created the common buffer. */
+> +	/* Missing compression buffer means compression was not initialized. */
+>  	if (!big_oops_buf) {
+> -		pr_warn("no decompression buffer allocated\n");
+> +		pr_warn("no decompression method initialized!\n");
+>  		return;
+>  	}
+>  
+> -	unzipped_len = pstore_decompress(record->buf, big_oops_buf,
+> -					 record->size, big_oops_buf_sz);
+> -	if (unzipped_len <= 0) {
+> -		pr_err("decompression failed: %d\n", unzipped_len);
+> +	/* Allocate enough space to hold max decompression and ECC. */
+> +	unzipped_len = big_oops_buf_sz;
+> +	workspace = kmalloc(unzipped_len + record->ecc_notice_size,
+
+Should tihs be unzipped_len + record->ecc_notice_size + 1. The extra byte
+being for the NULL character of the ecc notice?
+
+This occurred to me when I saw the + 1 in ram.c. It could be better to just
+abstract the size as a macro.
+
+> +			    GFP_KERNEL);
+> +	if (!workspace)
+>  		return;
+> -	}
+>  
+> -	/* Build new buffer for decompressed contents. */
+> -	decompressed = kmalloc(unzipped_len + record->ecc_notice_size,
+> -			       GFP_KERNEL);
+> -	if (!decompressed) {
+> -		pr_err("decompression ran out of memory\n");
+> +	/* After decompression "unzipped_len" is almost certainly smaller. */
+> +	ret = crypto_comp_decompress(tfm, record->buf, record->size,
+> +					  workspace, &unzipped_len);
+> +	if (ret) {
+> +		pr_err("crypto_comp_decompress failed, ret = %d!\n", ret);
+> +		kfree(workspace);
+>  		return;
+>  	}
+> -	memcpy(decompressed, big_oops_buf, unzipped_len);
+>  
+>  	/* Append ECC notice to decompressed buffer. */
+> -	memcpy(decompressed + unzipped_len, record->buf + record->size,
+> +	memcpy(workspace + unzipped_len, record->buf + record->size,
+>  	       record->ecc_notice_size);
+>  
+> -	/* Swap out compresed contents with decompressed contents. */
+> +	/* Copy decompressed contents into an minimum-sized allocation. */
+> +	unzipped = kmemdup(workspace, unzipped_len + record->ecc_notice_size,
+> +			   GFP_KERNEL);
+> +	kfree(workspace);
+> +	if (!unzipped)
+> +		return;
+> +
+> +	/* Swap out compressed contents with decompressed contents. */
+>  	kfree(record->buf);
+> -	record->buf = decompressed;
+> +	record->buf = unzipped;
+
+Rest of it LGTM, thanks!
+
+ - Joel
