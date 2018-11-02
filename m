@@ -2,68 +2,137 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 345BEC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 23:36:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D45EC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 23:37:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 004192081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 23:36:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 004192081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	by mail.kernel.org (Postfix) with ESMTP id 212AD2082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 23:37:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wD37VH3a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 212AD2082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728493AbeKCIqI (ORCPT
+        id S1728554AbeKCIqR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 04:46:08 -0400
-Received: from ipmail03.adl2.internode.on.net ([150.101.137.141]:49985 "EHLO
-        ipmail03.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726083AbeKCIqH (ORCPT
+        Sat, 3 Nov 2018 04:46:17 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:44394 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728504AbeKCIqR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 04:46:07 -0400
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail03.adl2.internode.on.net with ESMTP; 03 Nov 2018 10:06:53 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1gIizj-0002K7-Sj; Sat, 03 Nov 2018 10:36:51 +1100
-Date:   Sat, 3 Nov 2018 10:36:51 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     djwong@kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs@vger.kernel.org, Eric Sandeen <sandeen@sandeen.net>
-Subject: Re: [GIT PULL] vfs: fix many problems in vfs clone/dedupe
- implementation
-Message-ID: <20181102233651.GH19305@dastard>
-References: <20181102051459.GS6311@dastard>
- <CAHk-=whrpyMSWM4wxYE+E4fSbpkD3yBATjLnzvvAKBfhGwUaAw@mail.gmail.com>
+        Sat, 3 Nov 2018 04:46:17 -0400
+Received: by mail-oi1-f193.google.com with SMTP id k19-v6so2916036oic.11
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 16:37:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/jfYvcq+Fk861HVzgrZI/Rl6MCadmc/WXcbYl1AODkY=;
+        b=wD37VH3aZ1yqxWfmHtL2lxtgMfTbh/SVuukLl7ppDBpwVGPugJSO2A07VVghuijE4Q
+         zo6Fr6NSUqGrkAuxhEWMNSn7+dvSnzjiP/A5l9aDdUEDAZSafCLZmZewZLO0ThfuIrFT
+         MaV6nC+c50TQh+oJmGwOpRsootk2GPngD9wUq/hkw6vvvRAznQ4VZCoyGHKI2Nd21kEa
+         Av1CmfMjXaNYoAZm0xnT1c5BGjn+EVJU0TO/4te2GuKcaHwoDgm3JBGfqwx43+RfTxFh
+         mPQw4u7icrLDC7jkj4Rf3r0xRA+M5zQBEuwUdE8VBPeuL849aptz0+BPgKoCOKHnwwvS
+         /Xrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/jfYvcq+Fk861HVzgrZI/Rl6MCadmc/WXcbYl1AODkY=;
+        b=HAOHm8LUviipicfbnG57I0ELAlffnj8iUYCz2ITehYDTGM0Y0VP82lvB/wHJBJn1FV
+         ebnk5x2uOmzK0sS2rB9Va9BRq6z/vUqwRKt4YozGwGl501/FmRWWreQOtafqfC0+TVIy
+         XbdueyYg4aS7ECt2/mq6tFoeD/ppwo77mnN6IbTckeL1OEJbJSGn0lFxNeRMU5xCQSOj
+         mYO6WT/KpWeOZ+vHKLgJDRhBZ4X81E1wMi1opnWSIm7/VhRRZzqAJAe7l4OCDtBjY1f0
+         9R/SaDaDz8975G/aXzcms7IyxHypD9yvbnJHCH6mJMOkQcolRUmMLIOLvIVNzS9EZTLc
+         8xSQ==
+X-Gm-Message-State: AGRZ1gLw4cSAofSlvbfVmmPCkZfHSjroRct1Agqwh7AJt1oL8e6UCewF
+        hqdgpehl8oVr3uNi901eWPkQDiiJcKGIxjGuHeYVDQ==
+X-Google-Smtp-Source: AJdET5er+s6zSIGVaVrke+9ZR1pnUbItdXG6XAO6H8RVyp1T7GnsnKinwrzu66Ws9dZpjVG/7QeoF6zkIOaQuD47yJM=
+X-Received: by 2002:aca:efd6:: with SMTP id n205-v6mr7538990oih.3.1541201822909;
+ Fri, 02 Nov 2018 16:37:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whrpyMSWM4wxYE+E4fSbpkD3yBATjLnzvvAKBfhGwUaAw@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
+ <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
+ <20181102163034.GB7393@linux.intel.com> <7050972d-a874-dc08-3214-93e81181da60@intel.com>
+ <20181102170627.GD7393@linux.intel.com> <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
+ <20181102173350.GF7393@linux.intel.com> <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com>
+ <20181102182712.GG7393@linux.intel.com> <CAG48ez0x7ZPcKvLt01WS-VrLm59WfvYE3nE1xbnyn3Qsp5T2rA@mail.gmail.com>
+ <20181102220437.GI7393@linux.intel.com> <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
+ <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
+In-Reply-To: <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Sat, 3 Nov 2018 00:36:36 +0100
+Message-ID: <CAG48ez2J9wRNDs0vhNVvVG4swjF8cA5n4T0vQnKixdPCaXVpHQ@mail.gmail.com>
+Subject: Re: RFC: userspace exception fixups
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     sean.j.christopherson@intel.com,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        dalias@libc.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        jethro@fortanix.com, jarkko.sakkinen@linux.intel.com,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        andriy.shevchenko@linux.intel.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        carlos@redhat.com, adhemerval.zanella@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 09:35:23AM -0700, Linus Torvalds wrote:
-> On Thu, Nov 1, 2018 at 10:15 PM Dave Chinner <david@fromorbit.com> wrote:
+On Sat, Nov 3, 2018 at 12:32 AM Andy Lutomirski <luto@kernel.org> wrote:
+> On Fri, Nov 2, 2018 at 4:28 PM Jann Horn <jannh@google.com> wrote:
+> > On Fri, Nov 2, 2018 at 11:04 PM Sean Christopherson
+> > <sean.j.christopherson@intel.com> wrote:
+> > > On Fri, Nov 02, 2018 at 08:02:23PM +0100, Jann Horn wrote:
+> > > > On Fri, Nov 2, 2018 at 7:27 PM Sean Christopherson
+> > > > <sean.j.christopherson@intel.com> wrote:
+> > > > > On Fri, Nov 02, 2018 at 10:48:38AM -0700, Andy Lutomirski wrote:
+> > > > > > This whole mechanism seems very complicated, and it's not clear
+> > > > > > exactly what behavior user code wants.
+> > > > >
+> > > > > No argument there.  That's why I like the approach of dumping the
+> > > > > exception to userspace without trying to do anything intelligent in
+> > > > > the kernel.  Userspace can then do whatever it wants AND we don't
+> > > > > have to worry about mucking with stacks.
+> > > > >
+> > > > > One of the hiccups with the VDSO approach is that the enclave may
+> > > > > want to use the untrusted stack, i.e. the stack that has the VDSO's
+> > > > > stack frame.  For example, Intel's SDK uses the untrusted stack to
+> > > > > pass parameters for EEXIT, which means an AEX might occur with what
+> > > > > is effectively a bad stack from the VDSO's perspective.
+> > > >
+> > > > What exactly does "uses the untrusted stack to pass parameters for
+> > > > EEXIT" mean? I guess you're saying that the enclave is writing to
+> > > > RSP+[0...some_positive_offset], and the written data needs to be
+> > > > visible to the code outside the enclave afterwards?
+> > >
+> > > As is, they actually do it the other way around, i.e. negative offsets
+> > > relative to the untrusted %RSP.  Going into the enclave there is no
+> > > reserved space on the stack.  The SDK uses EEXIT like a function call,
+> > > i.e. pushing parameters on the stack and making an call outside of the
+> > > enclave, hence the name out-call.  This allows the SDK to handle any
+> > > reasonable out-call without a priori knowledge of the application's
+> > > maximum out-call "size".
 > >
-> > Can you please pull update containing a rework of the VFS clone and
-> > dedupe file range infrastructure from the tag listed below?
-> 
-> I don't love the timing of this at the end of the merge window, but pulled,
+> > But presumably this is bounded to be at most 128 bytes (the red zone
+> > size), right? Otherwise this would be incompatible with
+> > non-sigaltstack signal delivery.
+>
+>
+> I think Sean is saying that the enclave also updates RSP.
 
-When would have been a better time? It's too big for a late -rc, and
-it contains stuff that needs fixing pretty urgently. So if the merge
-window is not appropriate, what should we have done here?
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Ah, bleh, of course.
