@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A78BDC6786F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:38:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD198C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:38:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74E152082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:38:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D80120840
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:38:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKYKGam3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74E152082E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2LvLWIwm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D80120840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728778AbeKCDqX (ORCPT
+        id S1728793AbeKCDqZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:46:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40066 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:46:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727556AbeKCDqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:46:21 -0400
+        id S1727556AbeKCDqY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:46:24 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6EEE2082E;
-        Fri,  2 Nov 2018 18:38:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4A0C2081B;
+        Fri,  2 Nov 2018 18:38:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541183890;
-        bh=CBSrLHLrzUwE096Q+dLnUxbxm3dOJD4FCnFKIPbe4XA=;
+        s=default; t=1541183893;
+        bh=J74Ylb0oPOAjYd3nOtYu5ppgtIqpE8z4hnA9oeMHKjU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DKYKGam3GULfnJOVfc2UaDIRtWF3E9V9ZZo51ajf1+RZO7ed5P0R6VCOja7EM6Yxz
-         esB9OB79zJqMChUgB78XVxulrBVYuyrbMPfMuAcyJ4ZMg0p4E7HU8+Fkqg55aYHmyL
-         ScnwSpWwS0hdd7xxfIAFAV/n13QlSdKiw6uWUb6M=
+        b=2LvLWIwmZbCRxKYHZVf9mEeUgnuRtaZe0AQyOIsdnf98oQf2A5euACXQGNlaLaheI
+         Y5xx0JIMuXhBFA2JFNizqZtFq+St8sAbAFy8rOymixiW1kpkRV503k4UZb8RzXGLnH
+         F7nxRU6FjBZG4t05+8y6hux9FiuXz/ktJZ2YoHQY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Sowmini Varadhan <sowmini.varadhan@oracle.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nicolas Pitre <nico@linaro.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 003/150] xfrm: reset transport header back to network header after all input transforms ahave been applied
-Date:   Fri,  2 Nov 2018 19:32:45 +0100
-Message-Id: <20181102182902.587937047@linuxfoundation.org>
+Subject: [PATCH 4.18 012/150] ARM: 8799/1: mm: fix pci_ioremap_io() offset check
+Date:   Fri,  2 Nov 2018 19:32:54 +0100
+Message-Id: <20181102182903.524825010@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -64,97 +65,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit bfc0698bebcb16d19ecfc89574ad4d696955e5d3 ]
+[ Upstream commit 3a58ac65e2d7969bcdf1b6acb70fa4d12a88e53e ]
 
-A policy may have been set up with multiple transforms (e.g., ESP
-and ipcomp). In this situation, the ingress IPsec processing
-iterates in xfrm_input() and applies each transform in turn,
-processing the nexthdr to find any additional xfrm that may apply.
+IO_SPACE_LIMIT is the ending address of the PCI IO space, i.e
+something like 0xfffff (and not 0x100000).
 
-This patch resets the transport header back to network header
-only after the last transformation so that subsequent xfrms
-can find the correct transport header.
+Therefore, when offset = 0xf0000 is passed as argument, this function
+fails even though the offset + SZ_64K fits below the
+IO_SPACE_LIMIT. This makes the last chunk of 64 KB of the I/O space
+not usable as it cannot be mapped.
 
-Fixes: 7785bba299a8 ("esp: Add a software GRO codepath")
-Suggested-by: Steffen Klassert <steffen.klassert@secunet.com>
-Signed-off-by: Sowmini Varadhan <sowmini.varadhan@oracle.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+This patch fixes that by substracing 1 to offset + SZ_64K, so that we
+compare the addrss of the last byte of the I/O space against
+IO_SPACE_LIMIT instead of the address of the first byte of what is
+after the I/O space.
+
+Fixes: c2794437091a4 ("ARM: Add fixed PCI i/o mapping")
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Acked-by: Nicolas Pitre <nico@linaro.org>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/xfrm4_input.c          | 1 +
- net/ipv4/xfrm4_mode_transport.c | 4 +---
- net/ipv6/xfrm6_input.c          | 1 +
- net/ipv6/xfrm6_mode_transport.c | 4 +---
- 4 files changed, 4 insertions(+), 6 deletions(-)
+ arch/arm/mm/ioremap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/ipv4/xfrm4_input.c b/net/ipv4/xfrm4_input.c
-index bcfc00e88756..f8de2482a529 100644
---- a/net/ipv4/xfrm4_input.c
-+++ b/net/ipv4/xfrm4_input.c
-@@ -67,6 +67,7 @@ int xfrm4_transport_finish(struct sk_buff *skb, int async)
+diff --git a/arch/arm/mm/ioremap.c b/arch/arm/mm/ioremap.c
+index fc91205ff46c..5bf9443cfbaa 100644
+--- a/arch/arm/mm/ioremap.c
++++ b/arch/arm/mm/ioremap.c
+@@ -473,7 +473,7 @@ void pci_ioremap_set_mem_type(int mem_type)
  
- 	if (xo && (xo->flags & XFRM_GRO)) {
- 		skb_mac_header_rebuild(skb);
-+		skb_reset_transport_header(skb);
- 		return 0;
- 	}
- 
-diff --git a/net/ipv4/xfrm4_mode_transport.c b/net/ipv4/xfrm4_mode_transport.c
-index 3d36644890bb..1ad2c2c4e250 100644
---- a/net/ipv4/xfrm4_mode_transport.c
-+++ b/net/ipv4/xfrm4_mode_transport.c
-@@ -46,7 +46,6 @@ static int xfrm4_transport_output(struct xfrm_state *x, struct sk_buff *skb)
- static int xfrm4_transport_input(struct xfrm_state *x, struct sk_buff *skb)
+ int pci_ioremap_io(unsigned int offset, phys_addr_t phys_addr)
  {
- 	int ihl = skb->data - skb_transport_header(skb);
--	struct xfrm_offload *xo = xfrm_offload(skb);
+-	BUG_ON(offset + SZ_64K > IO_SPACE_LIMIT);
++	BUG_ON(offset + SZ_64K - 1 > IO_SPACE_LIMIT);
  
- 	if (skb->transport_header != skb->network_header) {
- 		memmove(skb_transport_header(skb),
-@@ -54,8 +53,7 @@ static int xfrm4_transport_input(struct xfrm_state *x, struct sk_buff *skb)
- 		skb->network_header = skb->transport_header;
- 	}
- 	ip_hdr(skb)->tot_len = htons(skb->len + ihl);
--	if (!xo || !(xo->flags & XFRM_GRO))
--		skb_reset_transport_header(skb);
-+	skb_reset_transport_header(skb);
- 	return 0;
- }
- 
-diff --git a/net/ipv6/xfrm6_input.c b/net/ipv6/xfrm6_input.c
-index 841f4a07438e..9ef490dddcea 100644
---- a/net/ipv6/xfrm6_input.c
-+++ b/net/ipv6/xfrm6_input.c
-@@ -59,6 +59,7 @@ int xfrm6_transport_finish(struct sk_buff *skb, int async)
- 
- 	if (xo && (xo->flags & XFRM_GRO)) {
- 		skb_mac_header_rebuild(skb);
-+		skb_reset_transport_header(skb);
- 		return -1;
- 	}
- 
-diff --git a/net/ipv6/xfrm6_mode_transport.c b/net/ipv6/xfrm6_mode_transport.c
-index 9ad07a91708e..3c29da5defe6 100644
---- a/net/ipv6/xfrm6_mode_transport.c
-+++ b/net/ipv6/xfrm6_mode_transport.c
-@@ -51,7 +51,6 @@ static int xfrm6_transport_output(struct xfrm_state *x, struct sk_buff *skb)
- static int xfrm6_transport_input(struct xfrm_state *x, struct sk_buff *skb)
- {
- 	int ihl = skb->data - skb_transport_header(skb);
--	struct xfrm_offload *xo = xfrm_offload(skb);
- 
- 	if (skb->transport_header != skb->network_header) {
- 		memmove(skb_transport_header(skb),
-@@ -60,8 +59,7 @@ static int xfrm6_transport_input(struct xfrm_state *x, struct sk_buff *skb)
- 	}
- 	ipv6_hdr(skb)->payload_len = htons(skb->len + ihl -
- 					   sizeof(struct ipv6hdr));
--	if (!xo || !(xo->flags & XFRM_GRO))
--		skb_reset_transport_header(skb);
-+	skb_reset_transport_header(skb);
- 	return 0;
- }
- 
+ 	return ioremap_page_range(PCI_IO_VIRT_BASE + offset,
+ 				  PCI_IO_VIRT_BASE + offset + SZ_64K,
 -- 
 2.17.1
 
