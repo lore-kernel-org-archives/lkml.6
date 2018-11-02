@@ -2,115 +2,84 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 301ACC65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:23:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 789B1C6786F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:26:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6C5B2082E
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:23:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kkEzTq16"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6C5B2082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 4B1E32081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:26:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B1E32081F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727835AbeKCBbI (ORCPT
+        id S1727576AbeKCBeP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 21:31:08 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:43027 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbeKCBbI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 21:31:08 -0400
-Received: by mail-qk1-f196.google.com with SMTP id r71so3897236qkr.10;
-        Fri, 02 Nov 2018 09:23:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=BAvjcK8A5XuTrgmtpTYvTmpPAYLWoklzSs822kSSOW0=;
-        b=kkEzTq16xWnTnI1yXOADqUBzZPtEtsoeiTt3+7PE0N+Al843Ox+5DUX5XFy+EhLdV7
-         zGqdFNmm5oyZtku4NqocHvO4edSf2VBhgOAZ1Tw7VvGi0QoWrvrW+/cZ5ZCZ/UvAr02w
-         LJ2IUNR7bQFxIHSRxtZJU/tJBOhuAxY/I/O5zbYV0WTaHccVBJa/XZ6ADCLMKCo12xlU
-         uqp3HsNMpJN+iP9Lk3cByYEcaVODkDuh/+szZs/aZM8SZz/7nQD7vWgWjsvNuiUtmZI9
-         5H+qYnHjxcrnnA3m8V1LTgZPZXCIipwXwvJhaaO+lyOrfno8V7JnIn2RQKJBBBK1Sv9/
-         iBPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=BAvjcK8A5XuTrgmtpTYvTmpPAYLWoklzSs822kSSOW0=;
-        b=OFq7px2uvahkjA/Ra1G6XuLzwyKw0I5tvhy7qMYG5MXArrlb5R9NZyaf419xktuALL
-         SqV69c/Da6wXgyFSUbHvfMi6I2XVgcHoIuaY7rCsWj3BIXCucvFrnL2i28tUhAJRSh5O
-         mKPrM1xzbFRaBq7mvCASf3VFfPD9QY1oK09am/C7v8MC7eDoquGl0hB/vcTsWa7wuI2U
-         meN9SfXpBujJ2Z81AHP6f4zxwec/mXDPCtz7KYqWgP7+3crizWJ/jwHag2RxDQIR+Y9V
-         eUrH4+pVNzweJy+dMW5qMqMsMtVbRu5HtxBVAutw/4ASD3OOq/PEFZvP3kuEOUQIo6zz
-         aAxg==
-X-Gm-Message-State: AGRZ1gJapg7avn9RrqoYW59YhUedUnvP+fgoJlvKQRbKm/vqTzgfiEde
-        uWZgp2gLEpF/do1UWsnybFs+08FZZRSzG4mIwFiuqQ==
-X-Google-Smtp-Source: AJdET5c1tGOa/LmH/D8P2tiqI8fTPuaKeRLswkqJUiXvBCz8dvZvDf77cGnogpaGwftPfdzIFFELsmOv4leSQfDC2N8=
-X-Received: by 2002:ac8:410a:: with SMTP id q10-v6mr10992695qtl.96.1541175807431;
- Fri, 02 Nov 2018 09:23:27 -0700 (PDT)
+        Fri, 2 Nov 2018 21:34:15 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:60742 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726318AbeKCBeP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 21:34:15 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id mMnH1nvg94mC; Fri,  2 Nov 2018 17:26:34 +0100 (CET)
+Received: from zn.tnic (p200300EC2BCD3B00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:3b00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id F0E191EC0380;
+        Fri,  2 Nov 2018 17:26:33 +0100 (CET)
+Date:   Fri, 2 Nov 2018 17:26:23 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>,
+        Jon Derrick <jonathan.derrick@intel.com>,
+        linux-pci@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, Tony Luck <tony.luck@intel.com>,
+        Tyler Baicar <tbaicar@codeaurora.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] PCI/AER: Option to leave System Error Interrupts
+ as-is
+Message-ID: <20181102162623.GH14602@zn.tnic>
+References: <1540585146-31876-1-git-send-email-jonathan.derrick@intel.com>
+ <20181029210651.GB13681@bhelgaas-glaptop.roam.corp.google.com>
+ <20181102095300.GB14602@zn.tnic>
+ <20181102161730.GA26392@localhost.localdomain>
 MIME-Version: 1.0
-Received: by 2002:a0c:9881:0:0:0:0:0 with HTTP; Fri, 2 Nov 2018 09:23:26 -0700 (PDT)
-In-Reply-To: <20181102160858.GA17096@ziepe.ca>
-References: <20181102153316.1492515-1-arnd@arndb.de> <20181102160858.GA17096@ziepe.ca>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 2 Nov 2018 17:23:26 +0100
-X-Google-Sender-Auth: cJ85zqjFsXGez0pdSuxH1K8yRR8
-Message-ID: <CAK8P3a2pvkfR1A6dHAMm8ETd13E1LSxXrEsQHSOFYWbr-7R2Sw@mail.gmail.com>
-Subject: Re: [PATCH] net/mlx5e: fix high stack usage
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Saeed Mahameed <saeedm@mellanox.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Eran Ben Elisha <eranbe@mellanox.com>,
-        Boris Pismenny <borisp@mellanox.com>,
-        Ilya Lesokhin <ilyal@mellanox.com>,
-        Moshe Shemesh <moshe@mellanox.com>,
-        Kamal Heib <kamalh@mellanox.com>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181102161730.GA26392@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/2/18, Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> On Fri, Nov 02, 2018 at 04:33:03PM +0100, Arnd Bergmann wrote:
->> A patch that looks harmless causes the stack usage of the
->> mlx5e_grp_sw_update_stats()
->> function to drastically increase with x86 gcc-4.9 and higher (tested up =
-to
->> 8.1):
->>
->> drivers/net/ethernet/mellanox/mlx5/core/en_stats.c: In function
->> =E2=80=98mlx5e_grp_sw_update_stats=E2=80=99:
->> drivers/net/ethernet/mellanox/mlx5/core/en_stats.c:216:1: warning: the
->> frame size of 1276 bytes is larger than 500 bytes [-Wframe-larger-than=
-=3D]
->
-> Why is the stack size so big here? The mlx5e_sw_stats is < 500 bytes
-> and all the other on-stack stuff looks pretty small?
+On Fri, Nov 02, 2018 at 10:17:30AM -0600, Keith Busch wrote:
+> VMD acts a bit like a host-bus adapter. The firmware knows about the
+> adapter, but not about anything on the bus that it attaches to.
+> 
+> This "hybrid" approach is basically saying that the firmware knows about
+> the HBA, and it wants a chance to be notified of errors on the bus it
+> attaches to, but the firmware can't do anything about such errors.
+> 
+> The bus in this case is PCIe, where we have capable error handling in the
+> kernel driver, so we ultimately want the AER driver handling the errors.
 
-I am not entirely sure, but my analysis indicates that gcc tries loop unrol=
-ling
-or some other optimization that leads to two copies on the stack.
+Not a problem - GHES already knows about AER and calls into it for
+CPER_SEC_PCIE errors:
 
->> By splitting out the loop body into a non-inlined function, the stack si=
-ze
->> goes
->> back down to under 500 bytes.
->
-> Does this actually reduce the stack consumed or does this just suppress
-> the warning?
+ghes_do_proc
+-> ghes_handle_aer
+  |-> aer_recover_queue
 
-It definitely reduces the total stack usage, the separate functions just
-had the expected stack usage that was a few hundred bytes combined.
+-- 
+Regards/Gruss,
+    Boris.
 
-       Arnd
+Good mailing practices for 400: avoid top-posting and trim the reply.
