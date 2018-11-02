@@ -2,112 +2,101 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2588CC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:34:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45BD5C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:34:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C828C2081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:34:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C828C2081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+	by mail.kernel.org (Postfix) with ESMTP id 1620C2081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 14:34:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1620C2081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727861AbeKBXlj (ORCPT
+        id S1727955AbeKBXlq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 19:41:39 -0400
-Received: from mail.hallyn.com ([178.63.66.53]:55046 "EHLO mail.hallyn.com"
+        Fri, 2 Nov 2018 19:41:46 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47880 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727668AbeKBXlj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 19:41:39 -0400
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id D291B5D3; Fri,  2 Nov 2018 14:34:17 +0000 (UTC)
-Date:   Fri, 2 Nov 2018 14:34:17 +0000
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     Christian Brauner <christian.brauner@canonical.com>
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Daniel Colascione <dancol@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        Suren Baghdasaryan <surenb@google.com>, ebiederm@xmission.com,
-        luto@amacapital.net, serge@hallyn.com
-Subject: Re: [RFC PATCH] Implement /proc/pid/kill
-Message-ID: <20181102143417.GA19304@mail.hallyn.com>
-References: <20181030204501.jnbe7dyqui47hd2x@yavin>
- <20181030214243.GB32621@google.com>
- <20181030222339.ud4wfp75tidowuo4@yavin>
- <20181030223343.GB105735@joelaf.mtv.corp.google.com>
- <CAKOZueuBdY_b=CVk29pzn0NAt9sJtzr6yqx9Y00WCppCm1JFWQ@mail.gmail.com>
- <CAPP7u0VQqDvFr=-52+Tmv_K=vT730wG7w9VQqJggsXTPFvaUBQ@mail.gmail.com>
- <20181031025655.yz7lfhswk7igb3ty@yavin>
- <CAEXW_YQxWcQGZHrwhwsyu7GCk+WSap=tb0-asTsG8sTFmjE--g@mail.gmail.com>
- <20181101204059.GA102756@google.com>
- <20181102094602.z5otkwrqtchpuhfm@gmail.com>
+        id S1727668AbeKBXlq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 19:41:46 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0E75C7BDA0;
+        Fri,  2 Nov 2018 14:34:27 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5C6795D6A6;
+        Fri,  2 Nov 2018 14:34:22 +0000 (UTC)
+Subject: Re: [PATCH v14 12/12] cpuset: Show descriptive text when reading
+ cpuset.sched.partition
+Cc:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
+        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Tom Hromatka <tom.hromatka@oracle.com>
+References: <1539635377-22335-1-git-send-email-longman@redhat.com>
+ <1539635377-22335-13-git-send-email-longman@redhat.com>
+ <20181017150836.GS270328@devbig004.ftw2.facebook.com>
+ <b797288a-6088-f7b0-c881-81633c071754@redhat.com>
+ <20181019192444.GV270328@devbig004.ftw2.facebook.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <bd198f0c-e5b9-13f1-ffe2-05414d0b392f@redhat.com>
+Date:   Fri, 2 Nov 2018 10:34:21 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181102094602.z5otkwrqtchpuhfm@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181019192444.GV270328@devbig004.ftw2.facebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Fri, 02 Nov 2018 14:34:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Christian Brauner (christian.brauner@canonical.com):
-> On Thu, Nov 01, 2018 at 01:40:59PM -0700, Joel Fernandes wrote:
-> > On Tue, Oct 30, 2018 at 09:24:00PM -0700, Joel Fernandes wrote:
-> > > On Tue, Oct 30, 2018 at 7:56 PM, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> > > > On 2018-10-31, Christian Brauner <christian.brauner@canonical.com> wrote:
-> > > >> > I think Aleksa's larger point is that it's useful to treat processes
-> > > >> > as other file-descriptor-named, poll-able, wait-able resources.
-> > > >> > Consistency is important. A process is just another system resource,
-> > > >> > and like any other system resource, you should be open to hold a file
-> > > >> > descriptor to it and do things to that process via that file
-> > > >> > descriptor. The precise form of this process-handle FD is up for
-> > > >> > debate. The existing /proc/$PID directory FD is a good candidate for a
-> > > >> > process handle FD, since it does almost all of what's needed. But
-> > > >> > regardless of what form a process handle FD takes, we need it. I don't
-> > > >> > see a case for continuing to treat processes in a non-unixy,
-> > > >> > non-file-descriptor-based manner.
-> > > >>
-> > > >> That's what I'm proposing in the API for which I'm gathering feedback.
-> > > >> I have presented parts of this in various discussions at LSS Europe last week
-> > > >> and will be at LPC.
-> > > >> We don't want to rush an API like this though. It was tried before in
-> > > >> other forms
-> > > >> and these proposals didn't make it.
-> > > >
-> > > > :+1: on a well thought-out and generic proposal. As we've discussed
-> > > > elsewhere, this is an issue that really would be great to (finally)
-> > > > solve.
-> > > 
-> > > Excited to see this and please count me in for discussions around this. thanks.
-> > > 
-> > 
-> > Just a quick question, is there a track planned at LPC for discussing this
-> > new proposal or topics around/related to the proposal?
-> > 
-> > If not, should that be planned?
-> 
-> There isn't currently one planned but I'm happy to have a hallway track
-> session around this.
-> 
-> But note, I think not all relevant people are going to be there (e.g.
-> Andy). File descriptors for processes seems interesting to a lot of
-> people so I'm going to send out a pitch of the idea I have and see how
-> much I'm going to get yelled at latest on Tuesday. Even if it just
-> triggers a design discussion.
-> I have been urged by people I pitched this to to send it to lkml
-> already. Sorry for the delay and the initial non-transparency. The only
-> reason I didn't do it right away was to ensure that this idea is not
-> completely crazy. :) (Eric probably still thinks I am though. :))
-> It's just that I'm at a conference and I want to have a nicer writeup of
-> this. Given the speed with which this is all coming I have given up on
-> preparing a first set of patches. :)
-> 
-> Christian
+On 10/19/2018 03:24 PM, Tejun Heo wrote:
+> On Fri, Oct 19, 2018 at 02:56:13PM -0400, Waiman Long wrote:
+>> On 10/17/2018 11:08 AM, Tejun Heo wrote:
+>>> On Mon, Oct 15, 2018 at 04:29:37PM -0400, Waiman Long wrote:
+>>>> Currently, cpuset.sched.partition returns the values, 0, 1 or -1 on
+>>>> read. A person who is not familiar with the partition code may not
+>>>> understand what they mean.
+>>>>
+>>>> In order to make cpuset.sched.partition more user-friendly, it will
+>>>> now display the following descriptive text on read:
+>>>>
+>>>>   "normal" - A normal cpuset, not a partition root
+>>>>   "partition" - A partition root
+>>>>   "partition invalid" - An invalid partition root
+>>>>
+>>>> Suggested-by: Tejun Heo <tj@kernel.org>
+>>>> Signed-off-by: Waiman Long <longman@redhat.com>
+>>> Can you also make this consistent when writing to the file?
+>>>
+>>> Thanks.
+>>>
+>> How about the attached patch instead?
+> Looks good to me.  Once Peter is okay with it, I'll roll it into
+> cgroup devel branch.  As v4.19 is almost done, I think it makes more
+> sense to target the next merge window (v4.21).
+>
+> Thanks.
+>
+Peter, are you OK with the current cpuset v2 patch which does allow
+hierarchical partitions as you have requested?
 
-Sounds good, thanks, looking forward to it.
+Cheers,
+Longman
+
