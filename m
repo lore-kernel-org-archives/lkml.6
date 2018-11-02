@@ -2,108 +2,114 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 610FBC65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF2DC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:51:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D9512082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:51:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D9512082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id E60D02082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:51:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E60D02082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728095AbeKCB7d (ORCPT
+        id S1728114AbeKCB7g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 21:59:33 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:57748 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727946AbeKCB7c (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 21:59:32 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1225657|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03289;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=7;RT=7;SR=0;TI=SMTPD_---.DCM7nBW_1541177501;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.DCM7nBW_1541177501)
-          by smtp.aliyun-inc.com(10.147.40.44);
-          Sat, 03 Nov 2018 00:51:41 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     daniel.lezcano@linaro.org, tglx@linutronix.de
-Cc:     arnd@arndb.de, linux-arch@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH V13 resend 4/4] dt-bindings: timer: gx6605s SOC timer
-Date:   Sat,  3 Nov 2018 00:51:31 +0800
-Message-Id:
- <ad5c91023ae9bbb07aa0392882667a5a2b133fc5.1539579760.git.ren_guo@c-sky.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <7becd836e1477d7ac2d3f8538a6d7f5b9651c389.1539579760.git.ren_guo@c-sky.com>
-References: <7becd836e1477d7ac2d3f8538a6d7f5b9651c389.1539579760.git.ren_guo@c-sky.com>
-In-Reply-To: <7becd836e1477d7ac2d3f8538a6d7f5b9651c389.1539579760.git.ren_guo@c-sky.com>
-References: <7becd836e1477d7ac2d3f8538a6d7f5b9651c389.1539579760.git.ren_guo@c-sky.com>
+        Fri, 2 Nov 2018 21:59:36 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59038 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727946AbeKCB7g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 21:59:36 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C4EB5AE11;
+        Fri,  2 Nov 2018 16:51:48 +0000 (UTC)
+Date:   Fri, 2 Nov 2018 17:51:47 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Dexuan Cui <decui@microsoft.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>, Rik van Riel <riel@surriel.com>,
+        Konstantin Khlebnikov <koct9i@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Stable@vger.kernel.org" <Stable@vger.kernel.org>
+Subject: Re: Will the recent memory leak fixes be backported to longterm
+ kernels?
+Message-ID: <20181102165147.GG28039@dhcp22.suse.cz>
+References: <PU1P153MB0169CB6382E0F047579D111DBFCF0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+ <20181102005816.GA10297@tower.DHCP.thefacebook.com>
+ <PU1P153MB0169FE681EF81BCE81B005A1BFCF0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+ <20181102073009.GP23921@dhcp22.suse.cz>
+ <20181102154844.GA17619@tower.DHCP.thefacebook.com>
+ <20181102161314.GF28039@dhcp22.suse.cz>
+ <20181102162237.GB17619@tower.DHCP.thefacebook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181102162237.GB17619@tower.DHCP.thefacebook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Message-ID: <20181102165131.f0mYzQtW5qEzBuFT6K_VwLSJvqOy7AEHitFaf-XyS3c@z>
 
-Dt-bindings doc for gx6605s SOC's system timer.
+On Fri 02-11-18 16:22:41, Roman Gushchin wrote:
+> On Fri, Nov 02, 2018 at 05:13:14PM +0100, Michal Hocko wrote:
+> > On Fri 02-11-18 15:48:57, Roman Gushchin wrote:
+> > > On Fri, Nov 02, 2018 at 09:03:55AM +0100, Michal Hocko wrote:
+> > > > On Fri 02-11-18 02:45:42, Dexuan Cui wrote:
+> > > > [...]
+> > > > > I totally agree. I'm now just wondering if there is any temporary workaround,
+> > > > > even if that means we have to run the kernel with some features disabled or
+> > > > > with a suboptimal performance?
+> > > > 
+> > > > One way would be to disable kmem accounting (cgroup.memory=nokmem kernel
+> > > > option). That would reduce the memory isolation because quite a lot of
+> > > > memory will not be accounted for but the primary source of in-flight and
+> > > > hard to reclaim memory will be gone.
+> > > 
+> > > In my experience disabling the kmem accounting doesn't really solve the issue
+> > > (without patches), but can lower the rate of the leak.
+> > 
+> > This is unexpected. 90cbc2508827e was introduced to address offline
+> > memcgs to be reclaim even when they are small. But maybe you mean that
+> > we still leak in an absence of the memory pressure. Or what does prevent
+> > memcg from going down?
+> 
+> There are 3 independent issues which are contributing to this leak:
+> 1) Kernel stack accounting weirdness: processes can reuse stack accounted to
+> different cgroups. So basically any running process can take a reference to any
+> cgroup.
 
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../bindings/timer/csky,gx6605s-timer.txt          | 42 ++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/timer/csky,gx6605s-timer.txt
+yes, but kmem accounting should rule that out, right? If not then this
+is a clear bug and easy to backport because that would mean to add a
+missing memcg_kmem_enabled check.
 
-diff --git a/Documentation/devicetree/bindings/timer/csky,gx6605s-timer.txt b/Documentation/devicetree/bindings/timer/csky,gx6605s-timer.txt
-new file mode 100644
-index 0000000..6b04344
---- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/csky,gx6605s-timer.txt
-@@ -0,0 +1,42 @@
-+=================
-+gx6605s SOC Timer
-+=================
-+
-+The timer is used in gx6605s soc as system timer and the driver
-+contain clk event and clk source.
-+
-+==============================
-+timer node bindings definition
-+==============================
-+
-+	Description: Describes gx6605s SOC timer
-+
-+	PROPERTIES
-+
-+	- compatible
-+		Usage: required
-+		Value type: <string>
-+		Definition: must be "csky,gx6605s-timer"
-+	- reg
-+		Usage: required
-+		Value type: <u32 u32>
-+		Definition: <phyaddr size> in soc from cpu view
-+	- clocks
-+		Usage: required
-+		Value type: phandle + clock specifier cells
-+		Definition: must be input clk node
-+	- interrupt
-+		Usage: required
-+		Value type: <u32>
-+		Definition: must be timer irq num defined by soc
-+
-+Examples:
-+---------
-+
-+	timer0: timer@20a000 {
-+		compatible = "csky,gx6605s-timer";
-+		reg = <0x0020a000 0x400>;
-+		clocks = <&dummy_apb_clk>;
-+		interrupts = <10>;
-+		interrupt-parent = <&intc>;
-+	};
+> 2) We do forget to scan the last page in the LRU list. So if we ended up with
+> 1-page long LRU, it can stay there basically forever.
+
+Why 
+		/*
+		 * If the cgroup's already been deleted, make sure to
+		 * scrape out the remaining cache.
+		 */
+		if (!scan && !mem_cgroup_online(memcg))
+			scan = min(size, SWAP_CLUSTER_MAX);
+
+in get_scan_count doesn't work for that case?
+
+> 3) We don't apply enough pressure on slab objects.
+
+again kmem accounting disabled should make this moot
+
+> Because one reference is enough to keep the entire memcg structure in place,
+> we really have to close all three to eliminate the leak. Disabling kmem
+> accounting mitigates only the last one.
 -- 
-2.7.4
-
+Michal Hocko
+SUSE Labs
