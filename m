@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 797D7C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:56:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0296DC65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:56:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AC6020848
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:56:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C75B820848
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:56:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VfdAcM8d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AC6020848
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zKKl3gKA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C75B820848
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731622AbeKCEEj (ORCPT
+        id S1731631AbeKCEEs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 00:04:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60764 "EHLO mail.kernel.org"
+        Sat, 3 Nov 2018 00:04:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726051AbeKCEEi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 00:04:38 -0400
+        id S1726051AbeKCEEr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 00:04:47 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9DE32084C;
-        Fri,  2 Nov 2018 18:56:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E7A1A2082D;
+        Fri,  2 Nov 2018 18:56:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184982;
-        bh=vRDNrA00saLFpRfxKnp3zDrzWiSxrd9QpfDM8WLeY5Y=;
+        s=default; t=1541184990;
+        bh=+cXBUs+VUOr/Z/abfWc35BaUWSjGUpShTP7X4hzyjkI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VfdAcM8dgKbgF0yOgg6RucpuEVF2YY1bIZ9q3UvAPggOALuoaRZKPzSGPIRMpvSTT
-         YeendD5AVGuyBj8D4LMzah2rRhC540h2BbmflcdGko+XsH6Nrx0beyTFFbX8vmtcb/
-         mLvJcjrHGT8ojg5Rk2mCaXXSou+kAaGMKR81zGoE=
+        b=zKKl3gKAtew265KGTRnh7rZj6o31UB97Db5pUsZOCps6nVbeTOjFq/tmTBN2WGrab
+         jePkQ+j9mjjiwpJ33aVJHxGtp/ABWcvjHBdj7uyeij/dRMeGSDKoc7rx/oKZZzAWTe
+         k4ZX6so3OuVyJfI1UupauJh8GgokeF3hmQSv/R+s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 142/143] net: bcmgenet: Poll internal PHY for GENETv5
-Date:   Fri,  2 Nov 2018 19:35:27 +0100
-Message-Id: <20181102182909.008307686@linuxfoundation.org>
+Subject: [PATCH 4.14 143/143] net/sched: cls_api: add missing validation of netlink attributes
+Date:   Fri,  2 Nov 2018 19:35:28 +0100
+Message-Id: <20181102182909.092603972@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -62,40 +62,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Davide Caratti <dcaratti@redhat.com>
 
-[ Upstream commit 64bd9c8135751b561f27edaaffe93d07093f81af ]
+[ Upstream commit e331473fee3d500bb0d2582a1fe598df3326d8cd ]
 
-On GENETv5, there is a hardware issue which prevents the GENET hardware
-from generating a link UP interrupt when the link is operating at
-10Mbits/sec. Since we do not have any way to configure the link
-detection logic, fallback to polling in that case.
+Similarly to what has been done in 8b4c3cdd9dd8 ("net: sched: Add policy
+validation for tc attributes"), fix classifier code to add validation of
+TCA_CHAIN and TCA_KIND netlink attributes.
 
-Fixes: 421380856d9c ("net: bcmgenet: add support for the GENETv5 hardware")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+tested with:
+ # ./tdc.py -c filter
+
+v2: Let sch_api and cls_api share nla_policy they have in common, thanks
+    to David Ahern.
+v3: Avoid EXPORT_SYMBOL(), as validation of those attributes is not done
+    by TC modules, thanks to Cong Wang.
+    While at it, restore the 'Delete / get qdisc' comment to its orginal
+    position, just above tc_get_qdisc() function prototype.
+
+Fixes: 5bc1701881e39 ("net: sched: introduce multichain support for filters")
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/genet/bcmmii.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ net/sched/cls_api.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/genet/bcmmii.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmmii.c
-@@ -339,9 +339,12 @@ int bcmgenet_mii_probe(struct net_device
- 	phydev->advertising = phydev->supported;
+--- a/net/sched/cls_api.c
++++ b/net/sched/cls_api.c
+@@ -31,6 +31,8 @@
+ #include <net/pkt_sched.h>
+ #include <net/pkt_cls.h>
  
- 	/* The internal PHY has its link interrupts routed to the
--	 * Ethernet MAC ISRs
--	 */
--	if (priv->internal_phy)
-+	 * Ethernet MAC ISRs. On GENETv5 there is a hardware issue
-+	 * that prevents the signaling of link UP interrupts when
-+	 * the link operates at 10Mbps, so fallback to polling for
-+	 * those versions of GENET.
-+ 	 */
-+	if (priv->internal_phy && !GENET_IS_V5(priv))
- 		priv->phydev->irq = PHY_IGNORE_INTERRUPT;
++extern const struct nla_policy rtm_tca_policy[TCA_MAX + 1];
++
+ /* The list of all installed classifier types */
+ static LIST_HEAD(tcf_proto_base);
  
- 	return 0;
+@@ -559,7 +561,7 @@ static int tc_ctl_tfilter(struct sk_buff
+ replay:
+ 	tp_created = 0;
+ 
+-	err = nlmsg_parse(n, sizeof(*t), tca, TCA_MAX, NULL, extack);
++	err = nlmsg_parse(n, sizeof(*t), tca, TCA_MAX, rtm_tca_policy, extack);
+ 	if (err < 0)
+ 		return err;
+ 
+@@ -836,7 +838,8 @@ static int tc_dump_tfilter(struct sk_buf
+ 	if (nlmsg_len(cb->nlh) < sizeof(*tcm))
+ 		return skb->len;
+ 
+-	err = nlmsg_parse(cb->nlh, sizeof(*tcm), tca, TCA_MAX, NULL, NULL);
++	err = nlmsg_parse(cb->nlh, sizeof(*tcm), tca, TCA_MAX, rtm_tca_policy,
++			  NULL);
+ 	if (err)
+ 		return err;
+ 
 
 
