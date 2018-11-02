@@ -2,127 +2,123 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B7EAC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 07:06:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4AEC32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 07:10:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0103F2081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 07:06:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0103F2081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D02ED2081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 07:10:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="q8EXrCJv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D02ED2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728448AbeKBQMJ (ORCPT
+        id S1728468AbeKBQQ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 12:12:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54856 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728079AbeKBQMI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 12:12:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 25EC3AE24;
-        Fri,  2 Nov 2018 07:05:58 +0000 (UTC)
-Date:   Fri, 2 Nov 2018 08:05:57 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Balbir Singh <bsingharora@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@gmail.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] memory_hotplug: cond_resched in __remove_pages
-Message-ID: <20181102070557.GO23921@dhcp22.suse.cz>
-References: <20181031125840.23982-1-mhocko@kernel.org>
- <20181102035205.GG16399@350D>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181102035205.GG16399@350D>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 2 Nov 2018 12:16:27 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:34338 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728258AbeKBQQ0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 12:16:26 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA278sgO007487;
+        Fri, 2 Nov 2018 07:10:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=3IDPr7f7YTKgrAbn0CjW4ax7Hw9G0BPjH/FYfNHQAe4=;
+ b=q8EXrCJvrkPEkzlL2L3BTbg0zsPSQIdD0wCCk7kVghW8LB4wtsMyqkmWNwoU661gv7y6
+ DTbbcVgLUBaTF8BgTofMVMCR99fdws5SoReJDSYrhJ92q69v/XbDbLojH3R/Zml0t0Gk
+ Pe19v+yC4QBHFERhDsofcdMq7aczWJIltF6nrO50z0RnE/apk2QuNdWuGeePVa6WxF+L
+ k1H6/lbaSxrpMOCaYNWUvNPmAzaC03dzTPG2quBaQh80U1OvN7RKC0JcCPpptb2lnfX8
+ I2+GMRUqoieZdZKlCv2ZlFTqvrM8HOPzjmCb2s7PGgKj3yo62NOhQEBoS5dhlY352w0W 7Q== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2ncgnrcuhk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 02 Nov 2018 07:10:12 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wA27ABuV030942
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 2 Nov 2018 07:10:12 GMT
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wA27ABYh005676;
+        Fri, 2 Nov 2018 07:10:11 GMT
+Received: from will-ThinkCentre-M93p.cn.oracle.com (/10.182.70.234)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 02 Nov 2018 00:10:10 -0700
+From:   Jianchao Wang <jianchao.w.wang@oracle.com>
+To:     axboe@kernel.dk
+Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH V4 0/5] blk-mq: refactor and fix on issue request directly
+Date:   Fri,  2 Nov 2018 15:08:51 +0800
+Message-Id: <1541142536-1431-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9064 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1811020067
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 02-11-18 14:52:05, Balbir Singh wrote:
-> On Wed, Oct 31, 2018 at 01:58:40PM +0100, Michal Hocko wrote:
-> > From: Michal Hocko <mhocko@suse.com>
-> > 
-> > We have received a bug report that unbinding a large pmem (>1TB)
-> > can result in a soft lockup:
-> > [  380.339203] NMI watchdog: BUG: soft lockup - CPU#9 stuck for 23s! [ndctl:4365]
-> > [...]
-> > [  380.339316] Supported: Yes
-> > [  380.339318] CPU: 9 PID: 4365 Comm: ndctl Not tainted 4.12.14-94.40-default #1 SLE12-SP4
-> > [  380.339318] Hardware name: Intel Corporation S2600WFD/S2600WFD, BIOS SE5C620.86B.01.00.0833.051120182255 05/11/2018
-> > [  380.339319] task: ffff9cce7d4410c0 task.stack: ffffbe9eb1bc4000
-> > [  380.339325] RIP: 0010:__put_page+0x62/0x80
-> > [  380.339326] RSP: 0018:ffffbe9eb1bc7d30 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff10
-> > [  380.339327] RAX: 000040540081c0d3 RBX: ffffeb8f03557200 RCX: 000063af40000000
-> > [  380.339328] RDX: 0000000000000002 RSI: ffff9cce75bff498 RDI: ffff9e4a76072ff8
-> > [  380.339329] RBP: 0000000a43557200 R08: 0000000000000000 R09: ffffbe9eb1bc7bb0
-> > [  380.339329] R10: ffffbe9eb1bc7d08 R11: 0000000000000000 R12: ffff9e194a22a0e0
-> > [  380.339330] R13: ffff9cce7062fc10 R14: ffff9e194a22a0a0 R15: ffff9cce6559c0e0
-> > [  380.339331] FS:  00007fd132368880(0000) GS:ffff9cce7ea40000(0000) knlGS:0000000000000000
-> > [  380.339332] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [  380.339332] CR2: 00000000020820a0 CR3: 000000017ef7a003 CR4: 00000000007606e0
-> > [  380.339333] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > [  380.339334] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > [  380.339334] PKRU: 55555554
-> > [  380.339334] Call Trace:
-> > [  380.339338]  devm_memremap_pages_release+0x152/0x260
-> > [  380.339342]  release_nodes+0x18d/0x1d0
-> > [  380.339347]  device_release_driver_internal+0x160/0x210
-> > [  380.339350]  unbind_store+0xb3/0xe0
-> > [  380.339355]  kernfs_fop_write+0x102/0x180
-> > [  380.339358]  __vfs_write+0x26/0x150
-> > [  380.339363]  ? security_file_permission+0x3c/0xc0
-> > [  380.339364]  vfs_write+0xad/0x1a0
-> > [  380.339366]  SyS_write+0x42/0x90
-> > [  380.339370]  do_syscall_64+0x74/0x150
-> > [  380.339375]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-> > [  380.339377] RIP: 0033:0x7fd13166b3d0
-> > 
-> > It has been reported on an older (4.12) kernel but the current upstream
-> > code doesn't cond_resched in the hot remove code at all and the given
-> > range to remove might be really large. Fix the issue by calling cond_resched
-> > once per memory section.
-> > 
-> > Signed-off-by: Michal Hocko <mhocko@suse.com>
-> > ---
-> >  mm/memory_hotplug.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> > index 7e6509a53d79..1d87724fa558 100644
-> > --- a/mm/memory_hotplug.c
-> > +++ b/mm/memory_hotplug.c
-> > @@ -587,6 +587,7 @@ int __remove_pages(struct zone *zone, unsigned long phys_start_pfn,
-> >  	for (i = 0; i < sections_to_remove; i++) {
-> >  		unsigned long pfn = phys_start_pfn + i*PAGES_PER_SECTION;
-> >  
-> > +		cond_resched();
-> >  		ret = __remove_section(zone, __pfn_to_section(pfn), map_offset,
-> >  				altmap);
-> >  		map_offset = 0;
-> 
-> Quick math tells me we're doing less than 44GiB's per second of offlining then?
-> 
-> Here is a quick untested patch that might help with the speed as well
-> 
-> In hot remove, we try to clear poisoned pages, but
-> a small optimization to check if num_poisoned_pages
-> is 0 helps remove the iteration through nr_pages.
-> 
-> NOTE: We can make num_poisoned_pages counter per
-> section and speed this up even more in case we
-> do have some poisoned pages
+Hi Jens
 
-yes this makes sense. Could you post a proper patch so that this doesn't
-get lost in this thread?
--- 
-Michal Hocko
-SUSE Labs
+These patch set refactors the code of issueing request driectly and
+fix some defects.
+
+The 1st patch make __blk_mq_issue_directly be able to accept NULL cookie
+pointer.
+
+The 2nd patch refactors the code of issue request directly.
+It merges the blk_mq_try_issue_directly and __blk_mq_try_issue_directly
+and make it handle the return value of .queue_rq itself.
+
+The 3rd patch let the requests be inserted into hctx->dispatch when
+the queue is stopped or quiesced if bypass is true.
+
+The 4th patch make blk_mq_sched_insert_requests issue requests directly
+with 'bypass' false, then it needn't to handle the non-issued requests
+any more.
+
+The 5th patch ensures the hctx to be ran on its mapped cpu in issue directly
+path.
+
+V4:
+ - split the original patch 1 into two patches, 1st and 2nd patch currently
+ - rename the mq_decision to mq_issue_decision
+ - comment changes
+
+V3:
+ - Correct the code about the case bypass_insert is true and io scheduler
+   attached. The request still need to be issued in case above. (1/4)
+ - Refactor the code to make code clearer. blk_mq_make_request is introduced
+   to decide insert, end or just return based on the return value of .queue_rq
+   and bypass_insert (1/4) 
+ - Add the 2nd patch. It introduce a new decision result which indicates to
+   insert request with blk_mq_request_bypass_insert.
+ - Modify the code to adapt the new patch 1.
+
+V2:
+ - Add 1st and 2nd patch
+
+Jianchao Wang (5)
+blk-mq: make __blk_mq_issue_directly be able to accept
+blk-mq: refactor the code of issue request directly
+blk-mq: fix issue directly case when q is stopped or
+blk-mq: issue directly with bypass 'false' in
+blk-mq: ensure hctx to be ran on mapped cpu when issue
+
+ block/blk-mq-sched.c |   8 ++-
+ block/blk-mq.c       | 149 ++++++++++++++++++++++++++++++---------------------
+ 2 files changed, 92 insertions(+), 65 deletions(-)
+
+Thanks
+Jianchao
