@@ -2,101 +2,103 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 537F2C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 22:42:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58BC4C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 22:44:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07AA42081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 22:42:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07AA42081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id ECCBD2081F
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 22:44:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vbODep+/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECCBD2081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728422AbeKCHvR (ORCPT
+        id S1728369AbeKCHx6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 03:51:17 -0400
-Received: from mga05.intel.com ([192.55.52.43]:50503 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726083AbeKCHvR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 03:51:17 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 15:42:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,457,1534834800"; 
-   d="scan'208";a="93317178"
-Received: from btyborox-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.138])
-  by FMSMGA003.fm.intel.com with ESMTP; 02 Nov 2018 15:42:06 -0700
-Date:   Sat, 3 Nov 2018 00:42:04 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Jethro Beekman <jethro@fortanix.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rich Felker <dalias@libc.org>, Jann Horn <jannh@google.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Carlos O'Donell <carlos@redhat.com>,
-        "adhemerval.zanella@linaro.org" <adhemerval.zanella@linaro.org>
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181102224204.GC24373@linux.intel.com>
-References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
- <CAG48ez0vBqL0tyfWwmuc_cq+OAUoEi88=r+t6h64a-Fw8z59zA@mail.gmail.com>
- <20181101185225.GC5150@brightrain.aerifal.cx>
- <CAHk-=wgFo8tuZX5gzCfWGdAwGyn_Ar9JFnnMFNuwr9=vtfDV1g@mail.gmail.com>
- <20181101193107.GE5150@brightrain.aerifal.cx>
- <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
- <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
- <20181102163034.GB7393@linux.intel.com>
- <7e14ee0e-ce15-1e88-7ae9-4d0f40cb3d84@fortanix.com>
- <20181102165204.GC7393@linux.intel.com>
+        Sat, 3 Nov 2018 03:53:58 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:42387 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726083AbeKCHx6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 03:53:58 -0400
+Received: by mail-pl1-f194.google.com with SMTP id t6-v6so1620706plo.9;
+        Fri, 02 Nov 2018 15:44:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=vmZuz33/dyuoV2bzCRh84zxgo/juP4z2WL4+JG+2dSk=;
+        b=vbODep+/t8GRK4psKZrpEjWL/zrUY/nlfsT/TXRtbOyW4xuCPDiQgA+ZEXGY9bSnR4
+         ES4oV2sHRQ7Vw/OLPb57gSEhNneu6eMIFFYdx7AjxrYGZ2IfI03HhbSc877/qdwqqXlr
+         UTGTL1/vsDdDLCsnuWkwtII3O7bQzMBeV1oy/6i76/VYQmGGeJQMV3aQTnxRpUOsO6Iv
+         ISjHw5W1BT/kQ3WEyVQHiSd0UJJp2EO4vW+iR1zWfAfhu5YDFl+3dx9t5gLFJRREo3Tx
+         WqcFDy3JSXUkZ75MEws8F54fsq5LKZTRzYjQX/pN99Y+XwSU7lAsrtqFNwm0J0MOwvwF
+         oQUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vmZuz33/dyuoV2bzCRh84zxgo/juP4z2WL4+JG+2dSk=;
+        b=cPYU6JnYdHJJS6/7Do35Wb1ltr7JPeIgE4ktCbUkmvvVDsU0NXVRGnIivBKkBUS4Lk
+         MdJmoRDdojJMTmewgJbIivNWC01KSBtiybQ/uymJwnqkB0/nLdRUUXbTx/j1+k3J62yS
+         0tIyX5BBTsm6ZVRu1kkPJ7dSo4WrVZ63+ap52pyPn18vgjb3UfJBYMADOZQwuAakEa82
+         hQiDHzcjTIv3y6pM4LLk1Wif2jivNIpUJxpbTlPzEFpCnPO80AG5JrimiTiP+2v/53m0
+         uy20NpqRTFpikcU4iui38rpYazZe4ZMyr/Kw9mgdg9Q4hFyVwGv5iUCHbVU3f5BLeeEd
+         yQIQ==
+X-Gm-Message-State: AGRZ1gIjW5nq47sILiSq1VeZhsIfALC9KlgImdbkDLePFpEvnUnLf+0A
+        M2b3SfV+aZAPtCfkX2sCL5l7/GjD
+X-Google-Smtp-Source: AJdET5fFGJHGwR33AcGr59JX1yblijjQiPi1spoCyIa3oJ25BozvNiy5Vu8IgBwgPBgwO1b+sfGpBA==
+X-Received: by 2002:a17:902:4623:: with SMTP id o32-v6mr13281186pld.187.1541198697164;
+        Fri, 02 Nov 2018 15:44:57 -0700 (PDT)
+Received: from dell5510 ([62.201.25.198])
+        by smtp.gmail.com with ESMTPSA id k72-v6sm76470585pfj.63.2018.11.02.15.44.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 02 Nov 2018 15:44:56 -0700 (PDT)
+Date:   Fri, 2 Nov 2018 23:44:51 +0100
+From:   Petr Vorel <petr.vorel@gmail.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-kbuild@vger.kernel.org, Nasser <afshin.nasser@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kconfig: merge_config: avoid false positive matches from
+ comment lines
+Message-ID: <20181102224450.GA11633@dell5510>
+Reply-To: Petr Vorel <petr.vorel@gmail.com>
+References: <1541145151-7319-1-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181102165204.GC7393@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <1541145151-7319-1-git-send-email-yamada.masahiro@socionext.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 09:52:04AM -0700, Sean Christopherson wrote:
-> On Fri, Nov 02, 2018 at 04:37:10PM +0000, Jethro Beekman wrote:
-> > On 2018-11-02 09:30, Sean Christopherson wrote:
-> > >... The intended convention for EENTER is to have an ENCLU at the AEX target ...
-> > >
-> > >... to further enforce that the AEX target needs to be ENCLU.
-> > 
-> > Some SGX runtimes may want to use a different AEX target.
-> 
-> To what end?  Userspace gets no indication as to why the AEX occurred.
-> And if exceptions are getting transfered to userspace the trampoline
-> would effectively be handling only INTR, NMI, #MC and EPC #PF.
+Hi Masahiro,
 
-I've understood that in some cases run-time implementation requires to
-run a handler implemented inside the enclave i.e the sequence would be
+> The current SED_CONFIG_EXP could match to comment lines in config
+> fragment files, especially when CONFIG_PREFIX_ is empty. For example,
+> Buildroot uses empty prefixing; starting symbols with BR2_ is just
+> convention.
 
-1. #AEX
-2. EENTER(in-enclave handler)
-3. EEXIT(%rcx)
-4. ERESUME
+> Make the sed expression more robust against false positives from
+> comment lines. The new sed expression matches to config options
+> followed by '=' or ' is not set'.
 
-/Jarkko
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+Reviewed-by: Petr Vorel <petr.vorel@gmail.com>
+
+> -SED_CONFIG_EXP="s/^\(# \)\{0,1\}\(${CONFIG_PREFIX}[a-zA-Z0-9_]*\)[= ].*/\2/p"
+> +SED_CONFIG_EXP="s/^\(# \)\{0,1\}\(${CONFIG_PREFIX}[a-zA-Z0-9_]*\)\(=.*\| is not set$\)/\2/p"
+
+Good idea, thanks!
+
+
+Kind regards,
+Petr
