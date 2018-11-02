@@ -7,101 +7,91 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84674C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FA65C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:49:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 563182082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:48:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41A992082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:49:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="XWuO3FSl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 563182082D
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="dte/4yGY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41A992082D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730585AbeKCD5K (ORCPT
+        id S1730596AbeKCD5N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:57:10 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:43543 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728954AbeKCD5J (ORCPT
+        Fri, 2 Nov 2018 23:57:13 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:36920 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728954AbeKCD5M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:57:09 -0400
-Received: by mail-lj1-f193.google.com with SMTP id g26-v6so2595433lja.10
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 11:48:55 -0700 (PDT)
+        Fri, 2 Nov 2018 23:57:12 -0400
+Received: by mail-lf1-f67.google.com with SMTP id p17so2015002lfh.4
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 11:48:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lixom-net.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=wgmDEcB4bBXP9I2JTJTsuRvccXfrezR7WJsNsO3M4Rw=;
-        b=XWuO3FSlEF1qKkG8VVjxPx95jD2c8KlNTTYjaULR8549alHbkalVcGrgM/KK9mo35f
-         r2Ejl/tthNv1/1F7M2KCOCEeyXqUIjroYskkKagXIu6p3eor+kW+MYAzcD1MtXtU9XwW
-         X4IR2MrJIZ7+MGHEdWlfp03DcLSXAo1vT5bOOSjiFwnZ5EqvPZAAUI5f7o/jpDyohlSY
-         rIMlcD8EfhMWwr2tm9Nk2SX5VHKuevZxdTyz9fIjcKFt5NRkUYMqDU4woE/Hq6Jqvp9J
-         TQfXQ+Inp2gqyIup1OXrgGX41JDkfGAEBNptU4PfrrEj3mJ5jfpjCBl/WWeZdx5C5c2u
-         1VWg==
+        bh=3Y8ZhdAFu44/oSMNmaWfQ4wVylL+PvM8CAbjqPIj+zQ=;
+        b=dte/4yGYSIwAgcyaZKiFb389k/fZ2vN+tvl4JEpMWKcSp28/2C6QYq9hSrZToZ5z9m
+         OHuyyGfId3dqAZX9jct/1Hwqso8I6gEgZSpxSqmwr9hsVcjEhSkensEoB/fNFIldvINz
+         TS25qXqB4c6/mQGOJ8zGu+AoOHF8vRz5z8rygq+uBKPbcmZAdZCgLhQsnOzVLPMTBP05
+         jCUzopMIJtdeSPTT8CbnLLmmFF2TVKBXpfOhjP3pDGLWoA3ohQeaX+Cyjedmz3u8R5iU
+         6boax3pb1Sw3dxE4X9o9meE3DOv0Dde7WOmdO9WsqKSp/eD038KQQDZsgKdQ4rGDYNl+
+         pzsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wgmDEcB4bBXP9I2JTJTsuRvccXfrezR7WJsNsO3M4Rw=;
-        b=etBsYQBIXk/hBDVkzgyvtFbnJbU8eRD5Df+r2MnQlJCy0nKBLCL/ljZLYk4BiMUCwA
-         VgmiWJWCiUwpVWK74J3KivFbiX5ZwNZgYBcU5D9rLfq6IPC+79K1XCG7EeXKPbwh2qjq
-         tNhiZab9HzWzu0JdWpyzihOuBe+t//9EkaGd1mgyI6KV4TRHK6kWdG5MZWRC7LYQDfL/
-         9W8lrSjkIQE2SyVgROO/5D2W4EArmDVLshUtNQYF06HaaHv+xOfWDabtRJlHN+AKVZx0
-         Zauxb3ZruzYG4haKiwYJjkMLn76N+2fW9B7vPnkoHL6PctdzZCpKfAsF79q6zxHjXyiP
-         V8sQ==
-X-Gm-Message-State: AGRZ1gIVLwmlb3VsCfVjUoem9odynSlnFVnkUKPRgoYBHZqpYW9sPps6
-        w3NANHeWDqZFhg14PrICHv7iUA==
-X-Google-Smtp-Source: AJdET5e4HNr9FLQ9hrQIXQnPThiOpmAnUICmxOlZsMlZ144UOk9c1lTWFDXSQMj5AsDz1A6qSpa2Yw==
-X-Received: by 2002:a2e:2416:: with SMTP id k22-v6mr2692510ljk.80.1541184534294;
-        Fri, 02 Nov 2018 11:48:54 -0700 (PDT)
+        bh=3Y8ZhdAFu44/oSMNmaWfQ4wVylL+PvM8CAbjqPIj+zQ=;
+        b=Y7D5/k0zRgCNQCu7cZeSPWhRvTtbsNjxkbcObKBrqXIhEjI3UlR7+fOZgAAHp6JEkD
+         AxcAerlKgW8GWy9XtLQT3qo1/y99FtBoJSLH1ptySrDddsG3JaWqrpFofUD38+PevQ0X
+         K6gCnYSilC5hJwrmMA6iAFWp0aYaEjT69KcYiVILY6t58Gcct9ok4WTeJUkfjxLFRUj6
+         SmjXA/qBYYAVkMg3+1LrnmUB9G+LcGipKH4w5G6CP21Xlp8LtrwKO2K2+cnOLoQtCjA1
+         lireZthKy1xIynE/y16DwblanUDg0D+M/f73YObjYwwCqO3KeDJB8cv3DgOMx5S28luP
+         CLSg==
+X-Gm-Message-State: AGRZ1gJMumAgycXThfzIFuCjJ+TLXBMVFAJGmlMOeosSuDPkL1+drlpw
+        25eIOl+F/PPc0nJUh1yuDnG38g==
+X-Google-Smtp-Source: AJdET5cbjjO8OqFMV06f+1TbrY6Y4+dLMeljFYVXbBvMuNnwKROV8pNKZAbINmN+nG2cEWzi0iJYUA==
+X-Received: by 2002:a19:5059:: with SMTP id z25mr7438647lfj.120.1541184536816;
+        Fri, 02 Nov 2018 11:48:56 -0700 (PDT)
 Received: from localhost ([85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id m4-v6sm899364ljb.58.2018.11.02.11.48.52
+        by smtp.gmail.com with ESMTPSA id d15-v6sm2134389lja.38.2018.11.02.11.48.54
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 02 Nov 2018 11:48:52 -0700 (PDT)
-Date:   Fri, 2 Nov 2018 11:22:31 -0700
+        Fri, 02 Nov 2018 11:48:55 -0700 (PDT)
+Date:   Fri, 2 Nov 2018 11:24:35 -0700
 From:   Olof Johansson <olof@lixom.net>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Santosh Shilimkar <ssantosh@kernel.org>, arm@kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] soc: ti: QMSS: Fix usage of irq_set_affinity_hint
-Message-ID: <20181102182231.jlyruwut3dtsfhp6@localhost>
-References: <20181031084134.96289-1-marc.zyngier@arm.com>
+To:     John Garry <john.garry@huawei.com>
+Cc:     xuwei5@hisilicon.com, linuxarm@huawei.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        arm@kernel.org
+Subject: Re: [PATCH] arm64: defconfig: Enable some IPMI configs
+Message-ID: <20181102182435.x46hvfgegxprksxq@localhost>
+References: <1539879427-11816-1-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181031084134.96289-1-marc.zyngier@arm.com>
+In-Reply-To: <1539879427-11816-1-git-send-email-john.garry@huawei.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 08:41:34AM +0000, Marc Zyngier wrote:
-> The Keystone QMSS driver is pretty damaged, in the sense that it
-> does things like this:
-> 
-> 	irq_set_affinity_hint(irq, to_cpumask(&cpu_map));
-> 
-> where cpu_map is a local variable. As we leave the function, this
-> will point to nowhere-land, and things will end-up badly.
-> 
-> Instead, let's use a proper cpumask that gets allocated, giving
-> the driver a chance to actually work with things like irqbalance
-> as well as have a hypothetical 64bit future.
-> 
-> Cc: stable@vger.kernel.org
-> Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-> ---
-> * From v1:
->   - Added Santosh's Ack
->   - Cc stable
->   - Directly sent to arm-soc for immediate pick-up
->     (https://lore.kernel.org/lkml/0a20aaf3-65ce-a7ae-8a0e-877313483969@oracle.com/)
+Hi John,
 
-Applied to fixes, thanks. (We could have added the cc too, but thanks for doing
-it!)
+On Fri, Oct 19, 2018 at 12:17:07AM +0800, John Garry wrote:
+> The arm64 port now runs on servers which use IPMI. This patch enables
+> relevant core configs to save manually enabling them when testing
+> mainline.
+> 
+> Signed-off-by: John Garry <john.garry@huawei.com>
 
+I don't think these are required for booting to rootfs, so I'm applying
+the patch but switching them over to modules (=m) instead. Hope that's
+sufficient for your testing, let me know if it isn't.
+
+
+Thanks,
 
 -Olof
