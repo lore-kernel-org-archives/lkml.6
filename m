@@ -2,116 +2,104 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 161F9C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74201C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:47:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C258A20657
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:38:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F0712082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 16:47:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="R698LYao"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C258A20657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O4b9wt+/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F0712082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728090AbeKCBqQ (ORCPT
+        id S1727772AbeKCByy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 21:46:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45310 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726318AbeKCBqP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 21:46:15 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 51E0120657;
-        Fri,  2 Nov 2018 16:38:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541176712;
-        bh=kFJ71++l0DbRvUy3AN798kgs/TEkIPl3KpDh+nLQNcw=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=R698LYaobz+0K3OJGwZ5yn89NIxC35YIQkNFR8UEjviTHomFKyyyB3YRkrI4bvSmL
-         gDJgP0sir/DctIGnVSMu8NTDiYUo007pnYBKRJexfwYsIXNYhCY/1xV6kHyK4JRJAD
-         SVU8RQW/YubK78phkhd/FNs+pa3KZU0SxhxsIJuU=
+        Fri, 2 Nov 2018 21:54:54 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:43711 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726098AbeKCByy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 21:54:54 -0400
+Received: by mail-pl1-f194.google.com with SMTP id g59-v6so1258117plb.10
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 09:47:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=or/q+9t+WoX1Lf8dWsqQtqFIB0Rcpp0FFwKyl2ZiCKY=;
+        b=O4b9wt+/9P60cOJ+2VnlOOQaiDBI/SkHIvE1OMx1i3Gh6c60VY0BLvR0k1sVH6sbl/
+         7fC1ZdYkrUeJJd1rpyPXUO5uDY3O0Cn9UGymA/ji9nMz8zjc53XZRJSMh1ZnN9K+xfE8
+         bzak1F51qQqv/NlYSEKouXu4xKa/GcopsRTA0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=or/q+9t+WoX1Lf8dWsqQtqFIB0Rcpp0FFwKyl2ZiCKY=;
+        b=aB31XL/XYhnAN7X5L/Ja0iSUmHEFXvivmjRySHMQHWOxo+l/efF9w3GLd5uFatzWoF
+         WmLxyUpL95dm/wWKp8RDsyT5vyBbAfXvfuTiLzVjnjsaM5tNqpo5e0hyhoGcBEhO0ihv
+         BtnMUAG9/bKqRO6Ag4Dmh/nZ4/nS0POve3wJs9/WY7tZxxfi1gwMeGNwEdiHg4iWS6VU
+         jJMB+gnufryDXED3vlhDXA8cy8VWQc8R/2AOndujtvDXRPQXpA3y76IUdj0AtmmHue60
+         uhNd+SppK3hQxtyd2cufEyWZ6l6bLmuHfJ9otHhSASPdIIbdd59dZKPk43RMEHHQh1ZZ
+         I+Fw==
+X-Gm-Message-State: AGRZ1gKy/n54iGXsTGLrYS9ZkTxpkRxlJbL6VH+UDEgkFoQ+9bgI/jcV
+        xH5kc2z162PqscoCU3yCz+zE/Q==
+X-Google-Smtp-Source: AJdET5egY5D34e0819onobyCBLzM/fu5HbJcihvFQ3LFVbeW6B5HbWJtyL6i02+jRahUUFQmeT48nA==
+X-Received: by 2002:a17:902:6801:: with SMTP id h1-v6mr12293879plk.177.1541177229569;
+        Fri, 02 Nov 2018 09:47:09 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:fed3:9637:a13a:6c15])
+        by smtp.gmail.com with ESMTPSA id h62-v6sm26079741pfg.27.2018.11.02.09.47.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 02 Nov 2018 09:47:08 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1540712140-26913-2-git-send-email-tdas@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-References: <1540712140-26913-1-git-send-email-tdas@codeaurora.org>
- <1540712140-26913-2-git-send-email-tdas@codeaurora.org>
-Message-ID: <154117671164.88331.752297297364277275@swboyd.mtv.corp.google.com>
+To:     Daniel Thompson <daniel.thompson@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Jason Wessel <jason.wessel@windriver.com>,
+        gregkh@linuxfoundation.org, mingo@kernel.org, tglx@linutronix.de
+From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <20181029180707.207546-2-dianders@chromium.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        kgdb-bugreport@lists.sourceforge.net,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        jslaby@suse.com
+References: <20181029180707.207546-1-dianders@chromium.org>
+ <20181029180707.207546-2-dianders@chromium.org>
+Message-ID: <154117722795.88331.829582703808332252@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v8] clk: qcom: Add lpass clock controller driver for SDM845
-Date:   Fri, 02 Nov 2018 09:38:31 -0700
+Subject: Re: [PATCH 1/7] serial: qcom_geni_serial: Finish supporting sysrq
+Date:   Fri, 02 Nov 2018 09:47:07 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Taniya Das (2018-10-28 00:35:40)
-> Add support for the lpass clock controller found on SDM845 based devices.
-> This would allow lpass peripheral loader drivers to control the clocks to
-> bring the subsystem out of reset.
-> LPASS clocks present on the global clock controller would be registered
-> with the clock framework based on the device tree flag. Also do not gate
-> these clocks if they are left unused, as the lpass clocks require the
-> global clock controller lpass clocks to be enabled before they are
-> accessed. Mark the GCC lpass clocks as CRITICAL, for the LPASS clock
-> access.
-
-Thanks for the useful commit text!
-
+Quoting Douglas Anderson (2018-10-29 11:07:01)
+> The geni serial driver already had some sysrq code in it, but since
+> SUPPORT_SYSRQ wasn't defined the code didn't do anything useful.
+> Let's make it useful by adding that define using the same formula
+> found in other serial drivers.
 > =
 
-> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-> index 08d593e..9d60474 100644
-> --- a/drivers/clk/qcom/gcc-sdm845.c
-> +++ b/drivers/clk/qcom/gcc-sdm845.c
-> @@ -3583,6 +3613,13 @@ static int gcc_sdm845_probe(struct platform_device=
- *pdev)
->         if (ret)
->                 return ret;
+> In order to prevent deadlock, we'll take a page from the
+> 'msm_serial.c' where the spinlock is released around
+> uart_handle_sysrq_char().  This seemed better than copying from
+> '8250_port.c' where we skip locking in the console_write function
+> since the '8250_port.c' method can cause lockdep warnings when
+> dropping into kgdb.
 > =
 
-> +       if (!of_property_read_bool(pdev->dev.of_node, "qcom,lpass-protect=
-ed")) {
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 
-Bjorn told me over IRC that the QSPI clks are also protected on MTP and
-can't be read. So we're now causing MTP to fail on linus' tree. I think
-we need to add a generic property to the GCC node to indicate what clks
-are protected and shouldn't be touched by the OS. The function would go
-and knock out any protected clks by replacing their pointers with NULL.
-The property would be:
+Given that it's the same as msm_serial.c, and I wrote the msm_serial.c
+"hack" then:
 
-   protected-clocks =3D <clock-specifier-list>;
-
-So for this node it would look like:
-
-   gcc: clock-controller@f000 {
-        reg =3D <0xf00 0xbaf>;
-
-        protected-clocks =3D <&gcc GCC_LPASS_Q6_AXI_CLK>,
-                           <&gcc GCC_LPASS_SWAY_CLK>,
-                           <&gcc GCC_QSPI_CORE_CLK_SRC>,
-                           etc.
-   };
-
-Sorry for derailing this patch series so late in the process. This patch
-will need to be updated to work with that new DT property instead of
-having a custom qcom property. Otherwise the patch looks good and I
-think we're ready to merge it when the merge window closes and I can
-rewind clk-next.
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
