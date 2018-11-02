@@ -2,167 +2,137 @@ Return-Path: <SRS0=zRJA=NN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B6A0C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:12:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7800C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:12:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BFC92081F
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:12:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BFC92081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7AE9E20831
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 15:12:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="fnlv2DVV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AE9E20831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727965AbeKCATf (ORCPT
+        id S1728016AbeKCATu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 20:19:35 -0400
-Received: from mga01.intel.com ([192.55.52.88]:23935 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726316AbeKCATf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 20:19:35 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 08:12:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,456,1534834800"; 
-   d="scan'208";a="276608912"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by fmsmga005.fm.intel.com with ESMTP; 02 Nov 2018 08:12:10 -0700
-Date:   Fri, 2 Nov 2018 09:09:50 -0600
-From:   Keith Busch <keith.busch@intel.com>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 13/16] irq: add support for allocating (and affinitizing)
- sets of IRQs
-Message-ID: <20181102150949.GA26292@localhost.localdomain>
-References: <20181030183252.17857-1-axboe@kernel.dk>
- <20181030183252.17857-14-axboe@kernel.dk>
- <20181102143707.GA31121@ming.t460p>
+        Fri, 2 Nov 2018 20:19:50 -0400
+Received: from mail.efficios.com ([167.114.142.138]:40580 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726316AbeKCATu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 20:19:50 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 355A823837B;
+        Fri,  2 Nov 2018 11:12:25 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id LsGapA0_mxDm; Fri,  2 Nov 2018 11:12:24 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id A6586238372;
+        Fri,  2 Nov 2018 11:12:24 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com A6586238372
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1541171544;
+        bh=FMT4afYSIxiNq8Boha7u49U6AnJvCmo/YgDzIreHAV8=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=fnlv2DVVJJ78M7v1oCpHbrxNbR1Zoe7ZiQSo1FVcqCW7v0IzUfvouF54/T9+EsglP
+         YOTTDr8/L4sWA7f3mFJPbR2O8dgKu4z5LTA6Ja0/73sVG6mylrk6KvzbKA/tnpZkF1
+         rbi4uhC39H87VVIeRucwAcZre+6iCchMBvXsUAZip9samX/Qevfbf7nMwYvcFhuTNg
+         edy1hIVU4Y+befBzpklIrDvv7e2Ec8G41Yr28wnf+DoQEmpCm7yqhT4iZZvu2FB8SA
+         78f+lUdo9iAfo5ILs542grc8rP3s4otKx13mZynDJbWcqP4xAzrfrlQMZ1HvOei6JF
+         i2CBuBnftowyQ==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id 0KqKnruDxgTJ; Fri,  2 Nov 2018 11:12:24 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 85100238369;
+        Fri,  2 Nov 2018 11:12:24 -0400 (EDT)
+Date:   Fri, 2 Nov 2018 11:12:24 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Richard Henderson <rth@twiddle.net>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        libc-alpha <libc-alpha@sourceware.org>,
+        Carlos O'Donell <carlos@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Joseph Myers <joseph@codesourcery.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ben Maurer <bmaurer@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>, Ben Maurer <bmaurer@fb.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        linux-api <linux-api@vger.kernel.org>
+Message-ID: <313542172.8.1541171544337.JavaMail.zimbra@efficios.com>
+Subject: Supporting core-specific instruction sets (e.g. big.LITTLE) with
+ restartable sequences
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181102143707.GA31121@ming.t460p>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.10_GA_3047 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3041)
+Thread-Index: xWnqFvmB9UO5++Ah0yHPR4XP7DDblw==
+Thread-Topic: Supporting core-specific instruction sets (e.g. big.LITTLE) with restartable sequences
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 10:37:07PM +0800, Ming Lei wrote:
-> On Tue, Oct 30, 2018 at 12:32:49PM -0600, Jens Axboe wrote:
-> > A driver may have a need to allocate multiple sets of MSI/MSI-X
-> > interrupts, and have them appropriately affinitized. Add support for
-> > defining a number of sets in the irq_affinity structure, of varying
-> > sizes, and get each set affinitized correctly across the machine.
-> > 
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: linux-kernel@vger.kernel.org
-> > Reviewed-by: Hannes Reinecke <hare@suse.com>
-> > Reviewed-by: Ming Lei <ming.lei@redhat.com>
-> > Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> > ---
-> >  drivers/pci/msi.c         | 14 ++++++++++++++
-> >  include/linux/interrupt.h |  4 ++++
-> >  kernel/irq/affinity.c     | 40 ++++++++++++++++++++++++++++++---------
-> >  3 files changed, 49 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
-> > index af24ed50a245..e6c6e10b9ceb 100644
-> > --- a/drivers/pci/msi.c
-> > +++ b/drivers/pci/msi.c
-> > @@ -1036,6 +1036,13 @@ static int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
-> >  	if (maxvec < minvec)
-> >  		return -ERANGE;
-> >  
-> > +	/*
-> > +	 * If the caller is passing in sets, we can't support a range of
-> > +	 * vectors. The caller needs to handle that.
-> > +	 */
-> > +	if (affd->nr_sets && minvec != maxvec)
-> > +		return -EINVAL;
-> > +
-> >  	if (WARN_ON_ONCE(dev->msi_enabled))
-> >  		return -EINVAL;
-> >  
-> > @@ -1087,6 +1094,13 @@ static int __pci_enable_msix_range(struct pci_dev *dev,
-> >  	if (maxvec < minvec)
-> >  		return -ERANGE;
-> >  
-> > +	/*
-> > +	 * If the caller is passing in sets, we can't support a range of
-> > +	 * supported vectors. The caller needs to handle that.
-> > +	 */
-> > +	if (affd->nr_sets && minvec != maxvec)
-> > +		return -EINVAL;
-> > +
-> >  	if (WARN_ON_ONCE(dev->msix_enabled))
-> >  		return -EINVAL;
-> >  
-> > diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-> > index 1d6711c28271..ca397ff40836 100644
-> > --- a/include/linux/interrupt.h
-> > +++ b/include/linux/interrupt.h
-> > @@ -247,10 +247,14 @@ struct irq_affinity_notify {
-> >   *			the MSI(-X) vector space
-> >   * @post_vectors:	Don't apply affinity to @post_vectors at end of
-> >   *			the MSI(-X) vector space
-> > + * @nr_sets:		Length of passed in *sets array
-> > + * @sets:		Number of affinitized sets
-> >   */
-> >  struct irq_affinity {
-> >  	int	pre_vectors;
-> >  	int	post_vectors;
-> > +	int	nr_sets;
-> > +	int	*sets;
-> >  };
-> >  
-> >  #if defined(CONFIG_SMP)
-> > diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
-> > index f4f29b9d90ee..2046a0f0f0f1 100644
-> > --- a/kernel/irq/affinity.c
-> > +++ b/kernel/irq/affinity.c
-> > @@ -180,6 +180,7 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
-> >  	int curvec, usedvecs;
-> >  	cpumask_var_t nmsk, npresmsk, *node_to_cpumask;
-> >  	struct cpumask *masks = NULL;
-> > +	int i, nr_sets;
-> >  
-> >  	/*
-> >  	 * If there aren't any vectors left after applying the pre/post
-> > @@ -210,10 +211,23 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
-> >  	get_online_cpus();
-> >  	build_node_to_cpumask(node_to_cpumask);
-> >  
-> > -	/* Spread on present CPUs starting from affd->pre_vectors */
-> > -	usedvecs = irq_build_affinity_masks(affd, curvec, affvecs,
-> > -					    node_to_cpumask, cpu_present_mask,
-> > -					    nmsk, masks);
-> > +	/*
-> > +	 * Spread on present CPUs starting from affd->pre_vectors. If we
-> > +	 * have multiple sets, build each sets affinity mask separately.
-> > +	 */
-> > +	nr_sets = affd->nr_sets;
-> > +	if (!nr_sets)
-> > +		nr_sets = 1;
-> > +
-> > +	for (i = 0, usedvecs = 0; i < nr_sets; i++) {
-> > +		int this_vecs = affd->sets ? affd->sets[i] : affvecs;
-> > +		int nr;
-> > +
-> > +		nr = irq_build_affinity_masks(affd, curvec, this_vecs,
-> > +					      node_to_cpumask, cpu_present_mask,
-> > +					      nmsk, masks + usedvecs);
-> 
-> The last parameter of the above function should have been 'masks',
-> because irq_build_affinity_masks() always treats 'masks' as the base
-> address of the array.
+Hi Richard,
 
-We have multiple "bases" when using sets, so we have to update which
-base to use by adding accordingly. If you just use 'masks', then you're
-going to overwrite your masks from the previous set.
+I stumbled on these articles:
+
+- https://medium.com/@jadr2ddude/a-big-little-problem-a-tale-of-big-little-gone-wrong-e7778ce744bb
+- https://www.mono-project.com/news/2016/09/12/arm64-icache/
+
+and discussed them with Will Deacon. He told me you were looking into gcc atomics and it might be
+worthwhile to discuss the possible use of the new rseq system call that has been added in Linux 4.18
+for those use-cases.
+
+Basically, the use-cases targeted are those where some cores on the system support a larger instruction
+set than others. So for instance, some cores could use a faster atomic add instruction than others, which
+should rely on a slower fallback. This is also the same story for reading the performance monitoring
+unit counters from user-space: it depends on the feature-set supported by the CPU on which the instruction
+is issued. Same applies to cores having different cache-line sizes.
+
+The main problem is that the kernel can migrate a thread at any point between user-space reading the
+current cpu number and issuing the instruction. This is where rseq can help.
+
+The core idea to solve the instruction set issue is to set a mask of cpus supporting the new instruction
+in a library constructor, and then load cpu_id, use it with the mask, and branch to either the new or
+old instruction, all with a rseq critical section. If the kernel needs to abort due to preemption or
+signal delivery, the abort behavior would be to issue the fallback (slow) atomic operation, which
+guarantees progress even if single-stepping.
+
+As long as the load, test and branch is faster than the performance delta between the old and new atomic
+instruction, it would be worth it.
+
+In the case of PMU read from user-space, using rseq to figure out how to issue the PMU read enables a
+use-case which is not otherwise possible to do on big.LITTLE. On rseq abort, it would fallback to a
+system call to read the PMU counter. This abort behavior guarantees forward progress.
+
+The second article is about cache line size discrepancy between CPUs. Here again, doing the cacheline
+flushing in a rseq critical section could allow tuning it to characteristics of the actual core it is
+running on. The fast-path would use a stride fitting the current core characteristics, and if rseq
+needs to abort, the slow-path would fall-back to a conservative value which would fit all cores (smaller
+cache line size on the overall system). Once again, this abort behavior guarantees forward progress.
+This would only work, of course, if cacheline invalidation done on a big core end up being propagated
+to other cores in a way that clears all the cache lines corresponding to the one targeted on the big
+core.
+
+Thoughts ?
+
+Thanks,
+
+Mathieu
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
