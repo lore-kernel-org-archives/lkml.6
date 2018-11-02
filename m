@@ -6,135 +6,86 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0845BC32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:10:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD7A3C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCA3F20657
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:09:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCA3F20657
+	by mail.kernel.org (Postfix) with ESMTP id 88C9D20657
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 11:12:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88C9D20657
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727521AbeKBUQo (ORCPT
+        id S1726241AbeKBUSu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 16:16:44 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:58613 "EHLO
+        Fri, 2 Nov 2018 16:18:50 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:56897 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726241AbeKBUQo (ORCPT
+        with ESMTP id S1725935AbeKBUSu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 16:16:44 -0400
+        Fri, 2 Nov 2018 16:18:50 -0400
 Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MiIhU-1feW571P9C-00fP0i; Fri, 02 Nov 2018 12:09:47 +0100
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1M7JnA-1gApjS1SVo-007maI; Fri, 02 Nov 2018 12:11:30 +0100
 Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MiIhU-1feW571P9C-00fP0i; Fri, 02 Nov 2018 12:09:47 +0100
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1M7JnA-1gApjS1SVo-007maI; Fri, 02 Nov 2018 12:11:30 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: v4l: fix uapi mpeg slice params definition
-Date:   Fri,  2 Nov 2018 12:09:07 +0100
-Message-Id: <20181102110945.191868-1-arnd@arndb.de>
+To:     Richard Weinberger <richard@nod.at>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Stefan Agner <stefan@agner.ch>, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ubifs: auth: add CONFIG_KEYS dependency
+Date:   Fri,  2 Nov 2018 12:11:22 +0100
+Message-Id: <20181102111129.276496-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:35aLqRlZn9pNYPaRE+C1Bsdex63Cbxu7XrzdJ0e63v1RH2Bgonl
- j63cVvtXrzUBT7IoQkyJYgJjbxxvyVhh3zqtX6L/RRjteXm2MD0gQfhyy3sTYs34jxSdbn6
- vQmD2rO81Wf16xeVdveJRUxwTfZgqyA/B4DfDrbODsFxxIwz0qbOCz1FDRkug8gCi8mRlQr
- L+E1T322+1EwQ2dr/a7ew==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:RuO3MS9HQxc=:97Ho3vEZaO2RgTysvCdlQ4
- uLF1NjkkwT/4v/BBvS2VdJESRxbrRGBA6DSCD5wz1rDDk1K++I2FP1eWe30N/zwCJmgaIprFW
- MDOqKwJJgNiOZFgOAVuq+r7ixf/zvT2n+TSSnQ4FbyJF+jr0FT3RYsmZNLDebDdqbuQ4W5QKw
- t7/PMoEWW+tL6kpqEmF+LOJ3GelxrhfSr9zxfikS6g1v1YJU13xfbntgn5RfabA7Gpge3ck4y
- +wdSeXBkCw3xQyF0mUKaBvvNML8iZbZbboYZ43Fyw7FKkgeA6sdYFuK2LatQbOHVvoH8P2wTA
- Wn2/CgtytaCA9FfuLX5IdmtFF39MoU0oo8DMjr8OQxCtO2ZWgvSD78UNvshHBuzVWGa1yWfQo
- ilzYQJhh8vTG2FQTrFHBb/INl12BfNvOHYR7UmNF/Hwou3jFBrIkd8jZMuDsDI/qPzkHA2Dqm
- GXe7nblxMsYrbw+m8+F3AWRXCV8SPL+eLsI+RigeM5tRoYGCSXhIoLzJ7jBmIGZXhWaodLFYT
- JSDRgUds4HuJhOHUcsIkcpw1SP7vRDzMVOJLF6jPEiBfQU1BG7V4g4J9rfG3k3STvgiQ2+elf
- /1IZvB/8Venlj9zrYDyDTBD9op7BmmF8S4QaUF+BxJq7ImfLy0o3ewM4nT9EjyUNf1IzGOaYf
- XjxsTf0Ssxa/zWBpTM8pbKkUusHUQbV0MAxz898SWRwWqWi67YVCtzXCpsmVp5u+lN4o=
+X-Provags-ID: V03:K1:CEEAGe1CdgavwNnrg0ejytqy3AyGSfj9TyB8ISxljeckjjICYTz
+ vhxk7GABJZ0YXzIvpP2JROBy+23obH648Mwa9oApo3OCTjEJRVRN3ncPsm+ojI53orEhRaV
+ 33nQ+BB3Hz26RGi02VSLKWe0/Hfl2HZLrGfNHYEGTgpiEmYAL6RcE8lckmNlKHYVI6BfoGo
+ gwp9nEWsQZ9NwWq9GmAWQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:wxpjIpwPxUY=:FUCBYv2K0rgYr2De3DbKMG
+ EWYWIbTE4XBUuUBkKCa2oaFnhIc/GJ3V9tKp6JNG6SM/oXv9UXhg4okNfmW/pVqn3/1bk6tTl
+ vFeSbsmDb4SHoGXnc3EdGQk4wgCsbSCx2TAXV9cE56+F7NBBVS8dTrBoLRwLiP2qLrxQqBPFM
+ xV7LiCKBNdVNbc0kwgZWAOUBJJQmW+QTFv57bsI84elE463R96vuhD0UVBf0V8avh4V6R9nMy
+ HKFiFOyooo9L3iN5aw46zZrt8gX3N7yeBUZGfhMiIrd5f1wmEeeXBqVJ4at68Q0FuWBGOdlNU
+ RviOD15PNMLuckIx5ar1J9GYOpygRP6U7QsDZxbzYnqeFOwMpXr2PjVyrGiHtpArUJNqFGcMS
+ dKXSOqE/v3tSZyRC+lGTPOSdp40CWitRpgQvFkEiEZCOCHjFRrI0UC3ga0ANKh1urtDon2JM3
+ ILht4/bdtTuICilh2zMnyUXh3T/WP5AYksfmOyAkT2tvWP4US9xv0sLtKAq//S5KGt+Ff8n73
+ R7r/RHJTa94ib/vWnqNdCRX4CYK/AHQAJvUAT0+pUHXUjk0CZK4j1u3/wJPyZrrMgnuk4mGd1
+ z4HB9p8tfc41GM/z8jf70wfgooLgZxD7shRg+4tfHtYsFwj95flQJKFu0xDa4oy1iOQCJTkqg
+ y6tblQ8VInYoiINC00/WMVuqmHz4rT4cmRSy04zJyWDkxOe8NkMq9yW601NUhZOMqQ4c=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We get a headers_check warning about the newly defined ioctl command
-structures:
+The new authentication support causes a build failure
+when CONFIG_KEYS is disabled, so add a dependency.
 
-./usr/include/linux/v4l2-controls.h:1105: found __[us]{8,16,32,64} type without #include <linux/types.h>
+fs/ubifs/auth.c: In function 'ubifs_init_authentication':
+fs/ubifs/auth.c:249:16: error: implicit declaration of function 'request_key'; did you mean 'request_irq'? [-Werror=implicit-function-declaration]
+  keyring_key = request_key(&key_type_logon, c->auth_key_name, NULL);
 
-This is resolved by including linux/types.h, as suggested by the
-warning, but there is another problem: Three of the four structures
-have an odd number of __u8 headers, but are aligned to 32 bit in the
-v4l2_ctrl_mpeg2_slice_params, so we get an implicit padding byte
-for each one. To solve that, let's add explicit padding that can
-be set to zero and verified in the kernel.
-
-Fixes: c27bb30e7b6d ("media: v4l: Add definitions for MPEG-2 slice format and metadata")
+Fixes: d8a22773a12c ("ubifs: Enable authentication support")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/media/v4l2-core/v4l2-ctrls.c | 5 +++++
- include/uapi/linux/v4l2-controls.h   | 5 +++++
- 2 files changed, 10 insertions(+)
+ fs/ubifs/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-index 6e37950292cd..5f2b033a7a42 100644
---- a/drivers/media/v4l2-core/v4l2-ctrls.c
-+++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-@@ -1664,6 +1664,11 @@ static int std_validate(const struct v4l2_ctrl *ctrl, u32 idx,
- 		    p_mpeg2_slice_params->forward_ref_index >= VIDEO_MAX_FRAME)
- 			return -EINVAL;
+diff --git a/fs/ubifs/Kconfig b/fs/ubifs/Kconfig
+index 529856fbccd0..406c88dc039e 100644
+--- a/fs/ubifs/Kconfig
++++ b/fs/ubifs/Kconfig
+@@ -89,6 +89,7 @@ config UBIFS_FS_SECURITY
  
-+		if (p_mpeg2_slice_params->pad ||
-+		    p_mpeg2_slice_params->picture.pad ||
-+		    p_mpeg2_slice_params->sequence.pad)
-+			return -EINVAL;
-+
- 		return 0;
- 
- 	case V4L2_CTRL_TYPE_MPEG2_QUANTIZATION:
-diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-index 51b095898f4b..998983a6e6b7 100644
---- a/include/uapi/linux/v4l2-controls.h
-+++ b/include/uapi/linux/v4l2-controls.h
-@@ -50,6 +50,8 @@
- #ifndef __LINUX_V4L2_CONTROLS_H
- #define __LINUX_V4L2_CONTROLS_H
- 
-+#include <linux/types.h>
-+
- /* Control classes */
- #define V4L2_CTRL_CLASS_USER		0x00980000	/* Old-style 'user' controls */
- #define V4L2_CTRL_CLASS_MPEG		0x00990000	/* MPEG-compression controls */
-@@ -1110,6 +1112,7 @@ struct v4l2_mpeg2_sequence {
- 	__u8	profile_and_level_indication;
- 	__u8	progressive_sequence;
- 	__u8	chroma_format;
-+	__u8	pad;
- };
- 
- struct v4l2_mpeg2_picture {
-@@ -1128,6 +1131,7 @@ struct v4l2_mpeg2_picture {
- 	__u8	alternate_scan;
- 	__u8	repeat_first_field;
- 	__u8	progressive_frame;
-+	__u8	pad;
- };
- 
- struct v4l2_ctrl_mpeg2_slice_params {
-@@ -1142,6 +1146,7 @@ struct v4l2_ctrl_mpeg2_slice_params {
- 
- 	__u8	backward_ref_index;
- 	__u8	forward_ref_index;
-+	__u8	pad;
- };
- 
- struct v4l2_ctrl_mpeg2_quantization {
+ config UBIFS_FS_AUTHENTICATION
+ 	bool "UBIFS authentication support"
++	depends on KEYS
+ 	select CRYPTO_HMAC
+ 	help
+ 	  Enable authentication support for UBIFS. This feature offers protection
 -- 
 2.18.0
 
