@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A77D5C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14EC2C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:46:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78CE820847
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:46:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C93BE20843
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:46:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LfakxAlU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78CE820847
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zainsS3H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C93BE20843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730378AbeKCDyg (ORCPT
+        id S1730392AbeKCDyj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:54:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50564 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:54:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729136AbeKCDyf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:54:35 -0400
+        id S1729136AbeKCDyj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:54:39 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A16720837;
-        Fri,  2 Nov 2018 18:46:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D356F20837;
+        Fri,  2 Nov 2018 18:46:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184382;
-        bh=sdDH0iOihs1E7t16M1FajuNFq9k0F3Px3JMv9jsr3hU=;
+        s=default; t=1541184385;
+        bh=yz689L0jE42DIUvEchb1Az4F9bCCKOpUhbibQoGCE/4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LfakxAlUx9CPTqXKoQWYz1WyQWY4BxTsICyAsuf5E0/yYLQDoxOYQN1WHtnPjSPTk
-         0M8S1m+vALAW4QeuxeKlRif0zbzDKAweZNG8RWbFwXv9OQQyj1Vv6ld4Rc5UEsHesI
-         azVb91q8xqv4NWdpEDbux+buxSyXn6bDSaCRTWfI=
+        b=zainsS3Hf32oiLttWS+ffN1Jw7RiR56kcxgBRK9ZKtsjfP5oXAGsJ1K9xlI6WZ3db
+         Sdc/5WcSiW9kjay1vUJzLRG/mhIMjfzvju9Zqsk1k+E39VcAdkMyhrfz0Jnbepn8Uz
+         H7sCUPLKufilTqrAJyere1yAvZU4JdZgZ8lgexJk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Hangbin Liu <liuhangbin@gmail.com>
-Subject: [PATCH 4.18 150/150] net: bridge: remove ipv6 zero address check in mcast queries
-Date:   Fri,  2 Nov 2018 19:35:12 +0100
-Message-Id: <20181102182912.786826018@linuxfoundation.org>
+        stable@vger.kernel.org, Ake Koomsin <ake@igel.co.jp>,
+        Jason Wang <jasowang@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.18 121/150] virtio_net: avoid using netif_tx_disable() for serializing tx routine
+Date:   Fri,  2 Nov 2018 19:34:43 +0100
+Message-Id: <20181102182911.402342725@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -64,46 +64,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+From: Ake Koomsin <ake@igel.co.jp>
 
-commit 0fe5119e267f3e3d8ac206895f5922195ec55a8a upstream.
+[ Upstream commit 05c998b738fdd3e5d6a257bcacc8f34b6284d795 ]
 
-Recently a check was added which prevents marking of routers with zero
-source address, but for IPv6 that cannot happen as the relevant RFCs
-actually forbid such packets:
-RFC 2710 (MLDv1):
-"To be valid, the Query message MUST
- come from a link-local IPv6 Source Address, be at least 24 octets
- long, and have a correct MLD checksum."
+Commit 713a98d90c5e ("virtio-net: serialize tx routine during reset")
+introduces netif_tx_disable() after netif_device_detach() in order to
+avoid use-after-free of tx queues. However, there are two issues.
 
-Same goes for RFC 3810.
+1) Its operation is redundant with netif_device_detach() in case the
+   interface is running.
+2) In case of the interface is not running before suspending and
+   resuming, the tx does not get resumed by netif_device_attach().
+   This results in losing network connectivity.
 
-And also it can be seen as a requirement in ipv6_mc_check_mld_query()
-which is used by the bridge to validate the message before processing
-it. Thus any queries with :: source address won't be processed anyway.
-So just remove the check for zero IPv6 source address from the query
-processing function.
+It is better to use netif_tx_lock_bh()/netif_tx_unlock_bh() instead for
+serializing tx routine during reset. This also preserves the symmetry
+of netif_device_detach() and netif_device_attach().
 
-Fixes: 5a2de63fd1a5 ("bridge: do not add port to router list when receives query with source 0.0.0.0")
-Signed-off-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Fixes commit 713a98d90c5e ("virtio-net: serialize tx routine during reset")
+Signed-off-by: Ake Koomsin <ake@igel.co.jp>
+Acked-by: Jason Wang <jasowang@redhat.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Cc: Hangbin Liu <liuhangbin@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- net/bridge/br_multicast.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/virtio_net.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/net/bridge/br_multicast.c
-+++ b/net/bridge/br_multicast.c
-@@ -1426,8 +1426,7 @@ static void br_multicast_query_received(
- 	 * is 0.0.0.0 should not be added to router port list.
- 	 */
- 	if ((saddr->proto == htons(ETH_P_IP) && saddr->u.ip4) ||
--	    (saddr->proto == htons(ETH_P_IPV6) &&
--	     !ipv6_addr_any(&saddr->u.ip6)))
-+	    saddr->proto == htons(ETH_P_IPV6))
- 		br_multicast_mark_router(br, port);
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -2162,8 +2162,9 @@ static void virtnet_freeze_down(struct v
+ 	/* Make sure no work handler is accessing the device */
+ 	flush_work(&vi->config_work);
+ 
++	netif_tx_lock_bh(vi->dev);
+ 	netif_device_detach(vi->dev);
+-	netif_tx_disable(vi->dev);
++	netif_tx_unlock_bh(vi->dev);
+ 	cancel_delayed_work_sync(&vi->refill);
+ 
+ 	if (netif_running(vi->dev)) {
+@@ -2199,7 +2200,9 @@ static int virtnet_restore_up(struct vir
+ 		}
+ 	}
+ 
++	netif_tx_lock_bh(vi->dev);
+ 	netif_device_attach(vi->dev);
++	netif_tx_unlock_bh(vi->dev);
+ 	return err;
  }
  
 
