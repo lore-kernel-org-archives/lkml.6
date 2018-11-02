@@ -4,55 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B04C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97A09C32789
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:53:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6BEA2084A
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:53:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69B8F2084C
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:53:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qBRmym91"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6BEA2084A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vF2RtogE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69B8F2084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731058AbeKCEBQ (ORCPT
+        id S1730839AbeKCEBY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 00:01:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57178 "EHLO mail.kernel.org"
+        Sat, 3 Nov 2018 00:01:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726081AbeKCEBQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 00:01:16 -0400
+        id S1726081AbeKCEBY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 00:01:24 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 743FD2084A;
-        Fri,  2 Nov 2018 18:52:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8EB9520848;
+        Fri,  2 Nov 2018 18:53:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184780;
-        bh=/CQwX9J7SmNqr07KY1ODgXPvi5oX5UDufa02epeGmzA=;
+        s=default; t=1541184788;
+        bh=UnStb8iSjgMhmvGho6Kd013wBhCng5A2W8hpvXIHyIg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qBRmym91aH9d1M0CFo7JF3+i+WB7oTp2t4Jn+a8/solg+711yjO2v16CRNlYcfJJ+
-         VWmdH/VfYQS7xt+95OvH8Va/VhWjuwNa8QKzt6oGIBPBryelPumqyRktwasAvYHE8K
-         Q2knfxNe+T8pv9d7VcQhGnvomPxJQwCARhN6S79Y=
+        b=vF2RtogERt7pST935hlR9O9Zmjlhb688Ak5QVmkN137DOKPUDWbAMrQ482btYnqNR
+         RDEKIja+OcZSMCtlZ21ZKKx399l1gEKbQyx2LGy6zpQV56CbxB51kpRyfQ2t1wx+xO
+         o4FYlmJD58xs+H4GadXTSnGmV6QnIlcWCzIVWkPo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sandipan Das <sandipan@linux.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Thomas Richter <tmricht@linux.ibm.com>,
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Arnd Bergmann <arnd@arndb.de>, James Hogan <jhogan@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-arch@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, linux-mips@linux-mips.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 095/143] perf tests: Fix indexing when invoking subtests
-Date:   Fri,  2 Nov 2018 19:34:40 +0100
-Message-Id: <20181102182905.501056788@linuxfoundation.org>
+Subject: [PATCH 4.14 096/143] compiler.h: Allow arch-specific asm/compiler.h
+Date:   Fri,  2 Nov 2018 19:34:41 +0100
+Message-Id: <20181102182905.564377295@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -70,105 +66,118 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit aa90f9f9554616d5738f7bedb4a8f0e5e14d1bc6 ]
+[ Upstream commit 04f264d3a8b0eb25d378127bd78c3c9a0261c828 ]
 
-Recently, the subtest numbering was changed to start from 1.  While it
-is fine for displaying results, this should not be the case when the
-subtests are actually invoked.
+We have a need to override the definition of
+barrier_before_unreachable() for MIPS, which means we either need to add
+architecture-specific code into linux/compiler-gcc.h or we need to allow
+the architecture to provide a header that can define the macro before
+the generic definition. The latter seems like the better approach.
 
-Typically, the subtests are stored in zero-indexed arrays and invoked
-based on the index passed to the main test function.  Since the index
-now starts from 1, the second subtest in the array (index 1) gets
-invoked instead of the first (index 0).  This applies to all of the
-following subtests but for the last one, the subtest always fails
-because it does not meet the boundary condition of the subtest index
-being lesser than the number of subtests.
+A straightforward approach to the per-arch header is to make use of
+asm-generic to provide a default empty header & adjust architectures
+which don't need anything specific to make use of that by adding the
+header to generic-y. Unfortunately this doesn't work so well due to
+commit 28128c61e08e ("kconfig.h: Include compiler types to avoid missed
+struct attributes") which caused linux/compiler_types.h to be included
+in the compilation of every C file via the -include linux/kconfig.h flag
+in c_flags.
 
-This can be observed on powerpc64 and x86_64 systems running Fedora 28
-as shown below.
+Because the -include flag is present for all C files we compile, we need
+the architecture-provided header to be present before any C files are
+compiled. If any C files can be compiled prior to the asm-generic header
+wrappers being generated then we hit a build failure due to missing
+header. Such cases do exist - one pointed out by the kbuild test robot
+is the compilation of arch/ia64/kernel/nr-irqs.c, which occurs as part
+of the archprepare target [1].
 
-Before:
+This leaves us with a few options:
 
-  # perf test "builtin clang support"
-  55: builtin clang support                                 :
-  55.1: builtin clang compile C source to IR                : Ok
-  55.2: builtin clang compile C source to ELF object        : FAILED!
+  1) Use generic-y & fix any build failures we find by enforcing
+     ordering such that the asm-generic target occurs before any C
+     compilation, such that linux/compiler_types.h can always include
+     the generated asm-generic wrapper which in turn includes the empty
+     asm-generic header. This would rely on us finding all the
+     problematic cases - I don't know for sure that the ia64 issue is
+     the only one.
 
-  # perf test "LLVM search and compile"
-  38: LLVM search and compile                               :
-  38.1: Basic BPF llvm compile                              : Ok
-  38.2: kbuild searching                                    : Ok
-  38.3: Compile source for BPF prologue generation          : Ok
-  38.4: Compile source for BPF relocation                   : FAILED!
+  2) Add an actual empty header to each architecture, so that we don't
+     need the generated asm-generic wrapper. This seems messy.
 
-  # perf test "BPF filter"
-  40: BPF filter                                            :
-  40.1: Basic BPF filtering                                 : Ok
-  40.2: BPF pinning                                         : Ok
-  40.3: BPF prologue generation                             : Ok
-  40.4: BPF relocation checker                              : FAILED!
+  3) Give up & add #ifdef CONFIG_MIPS or similar to
+     linux/compiler_types.h. This seems messy too.
 
-After:
+  4) Include the arch header only when it's actually needed, removing
+     the need for the asm-generic wrapper for all other architectures.
 
-  # perf test "builtin clang support"
-  55: builtin clang support                                 :
-  55.1: builtin clang compile C source to IR                : Ok
-  55.2: builtin clang compile C source to ELF object        : Ok
+This patch allows us to use approach 4, by including an asm/compiler.h
+header from linux/compiler_types.h after the inclusion of the
+compiler-specific linux/compiler-*.h header(s). We do this
+conditionally, only when CONFIG_HAVE_ARCH_COMPILER_H is selected, in
+order to avoid the need for asm-generic wrappers & the associated build
+ordering issue described above. The asm/compiler.h header is included
+after the generic linux/compiler-*.h header(s) for consistency with the
+way linux/compiler-intel.h & linux/compiler-clang.h are included after
+the linux/compiler-gcc.h header that they override.
 
-  # perf test "LLVM search and compile"
-  38: LLVM search and compile                               :
-  38.1: Basic BPF llvm compile                              : Ok
-  38.2: kbuild searching                                    : Ok
-  38.3: Compile source for BPF prologue generation          : Ok
-  38.4: Compile source for BPF relocation                   : Ok
+[1] https://lists.01.org/pipermail/kbuild-all/2018-August/051175.html
 
-  # perf test "BPF filter"
-  40: BPF filter                                            :
-  40.1: Basic BPF filtering                                 : Ok
-  40.2: BPF pinning                                         : Ok
-  40.3: BPF prologue generation                             : Ok
-  40.4: BPF relocation checker                              : Ok
-
-Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
-Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Hendrik Brueckner <brueckner@linux.ibm.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc: Thomas Richter <tmricht@linux.ibm.com>
-Fixes: 9ef0112442bd ("perf test: Fix subtest number when showing results")
-Link: http://lkml.kernel.org/r/20180726171733.33208-1-sandipan@linux.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Patchwork: https://patchwork.linux-mips.org/patch/20269/
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-arch@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org
+Cc: linux-mips@linux-mips.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/tests/builtin-test.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/Kconfig                   |  8 ++++++++
+ include/linux/compiler_types.h | 12 ++++++++++++
+ 2 files changed, 20 insertions(+)
 
-diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
-index 5966f1f9b160..1c9bc3516f8b 100644
---- a/tools/perf/tests/builtin-test.c
-+++ b/tools/perf/tests/builtin-test.c
-@@ -375,7 +375,7 @@ static int test_and_print(struct test *t, bool force_skip, int subtest)
- 	if (!t->subtest.get_nr)
- 		pr_debug("%s:", t->desc);
- 	else
--		pr_debug("%s subtest %d:", t->desc, subtest);
-+		pr_debug("%s subtest %d:", t->desc, subtest + 1);
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 40dc31fea90c..77b3e21c4844 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -965,4 +965,12 @@ config REFCOUNT_FULL
+ 	  against various use-after-free conditions that can be used in
+ 	  security flaw exploits.
  
- 	switch (err) {
- 	case TEST_OK:
-@@ -589,7 +589,7 @@ static int __cmd_test(int argc, const char *argv[], struct intlist *skiplist)
- 			for (subi = 0; subi < subn; subi++) {
- 				pr_info("%2d.%1d: %-*s:", i, subi + 1, subw,
- 					t->subtest.get_desc(subi));
--				err = test_and_print(t, skip, subi + 1);
-+				err = test_and_print(t, skip, subi);
- 				if (err != TEST_OK && t->subtest.skip_if_fail)
- 					skip = true;
- 			}
++config HAVE_ARCH_COMPILER_H
++	bool
++	help
++	  An architecture can select this if it provides an
++	  asm/compiler.h header that should be included after
++	  linux/compiler-*.h in order to override macro definitions that those
++	  headers generally provide.
++
+ source "kernel/gcov/Kconfig"
+diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+index 6b79a9bba9a7..4be464a07612 100644
+--- a/include/linux/compiler_types.h
++++ b/include/linux/compiler_types.h
+@@ -78,6 +78,18 @@ extern void __chk_io_ptr(const volatile void __iomem *);
+ #include <linux/compiler-clang.h>
+ #endif
+ 
++/*
++ * Some architectures need to provide custom definitions of macros provided
++ * by linux/compiler-*.h, and can do so using asm/compiler.h. We include that
++ * conditionally rather than using an asm-generic wrapper in order to avoid
++ * build failures if any C compilation, which will include this file via an
++ * -include argument in c_flags, occurs prior to the asm-generic wrappers being
++ * generated.
++ */
++#ifdef CONFIG_HAVE_ARCH_COMPILER_H
++#include <asm/compiler.h>
++#endif
++
+ /*
+  * Generic compiler-dependent macros required for kernel
+  * build go below this comment. Actual compiler/compiler version
 -- 
 2.17.1
 
