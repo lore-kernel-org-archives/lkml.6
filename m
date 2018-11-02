@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5591C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:49:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D314FC65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:49:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94D4620847
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:49:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A59F320837
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:49:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RhlOEs/8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94D4620847
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q7LesYKT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A59F320837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730699AbeKCD5o (ORCPT
+        id S1730704AbeKCD5r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:57:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53430 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:57:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728280AbeKCD5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:57:43 -0400
+        id S1728280AbeKCD5r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:57:47 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D44C520843;
-        Fri,  2 Nov 2018 18:49:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0CDD220837;
+        Fri,  2 Nov 2018 18:49:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184569;
-        bh=wCLDDUOsp+seXdqO+Yd34FEBQBv7nhoj6tuEJgNwEg8=;
+        s=default; t=1541184572;
+        bh=wLN85fRG4904OqZ3inN731Ro1yyR9MbM3y17KaDlIUw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RhlOEs/8qxixTaFax4ojtTDn758fHy1URGGsuPXkFkHoHxfIl7n59t9INjxffJY0R
-         X7eFxmNu27SUUZXi1u/LleQ6y7vb5sLwoESb1a16QBC0psSR6jUWBFkDcey3YRTQ7s
-         3uw7+Ng72X4Tn9t7tZQRj9rgX1cdFp7PdSlmQhvo=
+        b=Q7LesYKTgx+V3+gDocN/maIEC418y+TN3T9t/K1wFWjSuwxl1QMXEHy8Ye961LCMY
+         C2j33CJ0Rv5cJX03beYuG6DfOgMNKBqUqv9/CMKrz/J3DISwJT+7giCeE+K2xn2bKq
+         mc8sa2es8/T6cBHzQqP6UcBXjd/ffjc6i4Ellm+E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "DSouza, Nelson" <ndsouza@ciena.com>,
-        David Ahern <dsahern@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Steve Capper <steve.capper@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 014/143] netfilter: bridge: Dont sabotage nf_hook calls from an l3mdev
-Date:   Fri,  2 Nov 2018 19:33:19 +0100
-Message-Id: <20181102182858.222936726@linuxfoundation.org>
+Subject: [PATCH 4.14 015/143] arm64: hugetlb: Fix handling of young ptes
+Date:   Fri,  2 Nov 2018 19:33:20 +0100
+Message-Id: <20181102182858.309982426@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
 References: <20181102182857.064326086@linuxfoundation.org>
@@ -64,53 +63,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a173f066c7cfc031acb8f541708041e009fc9812 ]
+[ Upstream commit 469ed9d823b7d240d6b9574f061ded7c3834c167 ]
 
-For starters, the bridge netfilter code registers operations that
-are invoked any time nh_hook is called. Specifically, ip_sabotage_in
-watches for nested calls for NF_INET_PRE_ROUTING when a bridge is in
-the stack.
+In the contiguous bit hugetlb break-before-make code we assume that all
+hugetlb pages are young.
 
-Packet wise, the bridge netfilter hook runs first. br_nf_pre_routing
-allocates nf_bridge, sets in_prerouting to 1 and calls NF_HOOK for
-NF_INET_PRE_ROUTING. It's finish function, br_nf_pre_routing_finish,
-then resets in_prerouting flag to 0 and the packet continues up the
-stack. The packet eventually makes it to the VRF driver and it invokes
-nf_hook for NF_INET_PRE_ROUTING in case any rules have been added against
-the vrf device.
+In fact, remove_migration_pte is able to place an old hugetlb pte so
+this assumption is not valid.
 
-Because of the registered operations the call to nf_hook causes
-ip_sabotage_in to be invoked. That function sees the nf_bridge on the
-skb and that in_prerouting is not set. Thinking it is an invalid nested
-call it steals (drops) the packet.
+This patch fixes the contiguous hugetlb scanning code to preserve young
+ptes.
 
-Update ip_sabotage_in to recognize that the bridge or one of its upper
-devices (e.g., vlan) can be enslaved to a VRF (L3 master device) and
-allow the packet to go through the nf_hook a second time.
-
-Fixes: 73e20b761acf ("net: vrf: Add support for PREROUTING rules on vrf device")
-Reported-by: D'Souza, Nelson <ndsouza@ciena.com>
-Signed-off-by: David Ahern <dsahern@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: d8bdcff28764 ("arm64: hugetlb: Add break-before-make logic for contiguous entries")
+Signed-off-by: Steve Capper <steve.capper@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/bridge/br_netfilter_hooks.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm64/mm/hugetlbpage.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/net/bridge/br_netfilter_hooks.c b/net/bridge/br_netfilter_hooks.c
-index c2eea1b8737a..7582f28ab306 100644
---- a/net/bridge/br_netfilter_hooks.c
-+++ b/net/bridge/br_netfilter_hooks.c
-@@ -832,7 +832,8 @@ static unsigned int ip_sabotage_in(void *priv,
- 				   struct sk_buff *skb,
- 				   const struct nf_hook_state *state)
- {
--	if (skb->nf_bridge && !skb->nf_bridge->in_prerouting) {
-+	if (skb->nf_bridge && !skb->nf_bridge->in_prerouting &&
-+	    !netif_is_l3_master(skb->dev)) {
- 		state->okfn(state->net, state->sk, skb);
- 		return NF_STOLEN;
+diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
+index 6cb0fa92a651..9f6ae9686dac 100644
+--- a/arch/arm64/mm/hugetlbpage.c
++++ b/arch/arm64/mm/hugetlbpage.c
+@@ -118,11 +118,14 @@ static pte_t get_clear_flush(struct mm_struct *mm,
+ 
+ 		/*
+ 		 * If HW_AFDBM is enabled, then the HW could turn on
+-		 * the dirty bit for any page in the set, so check
+-		 * them all.  All hugetlb entries are already young.
++		 * the dirty or accessed bit for any page in the set,
++		 * so check them all.
+ 		 */
+ 		if (pte_dirty(pte))
+ 			orig_pte = pte_mkdirty(orig_pte);
++
++		if (pte_young(pte))
++			orig_pte = pte_mkyoung(orig_pte);
  	}
+ 
+ 	if (valid)
+@@ -347,10 +350,13 @@ int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+ 	if (!pte_same(orig_pte, pte))
+ 		changed = 1;
+ 
+-	/* Make sure we don't lose the dirty state */
++	/* Make sure we don't lose the dirty or young state */
+ 	if (pte_dirty(orig_pte))
+ 		pte = pte_mkdirty(pte);
+ 
++	if (pte_young(orig_pte))
++		pte = pte_mkyoung(pte);
++
+ 	hugeprot = pte_pgprot(pte);
+ 	for (i = 0; i < ncontig; i++, ptep++, addr += pgsize, pfn += dpfn)
+ 		set_pte_at(vma->vm_mm, addr, ptep, pfn_pte(pfn, hugeprot));
 -- 
 2.17.1
 
