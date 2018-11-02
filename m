@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D96C65C22
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:40:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63163C65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:40:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63A0E20843
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:40:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CFE520843
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:40:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jDnW6g2r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63A0E20843
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OeJizFMP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CFE520843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729419AbeKCDsv (ORCPT
+        id S1729433AbeKCDsz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:48:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43254 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:48:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728578AbeKCDsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:48:51 -0400
+        id S1728578AbeKCDsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:48:54 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEB5320840;
-        Fri,  2 Nov 2018 18:40:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09C1D2082E;
+        Fri,  2 Nov 2018 18:40:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184039;
-        bh=HZCQ/2+GextAS7M6Bb1kLZbirzYs/D9qIQwzNq/LTe4=;
+        s=default; t=1541184042;
+        bh=F/9RQ7uxniS0vABGBN2ScMoqRnBFFFmh455iSD7Rbdc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jDnW6g2rYa8c9JPtD0fWVSAoj2b0eoUYlxVigC9KWpbqmdJslZeRJbymAbbsxy2iz
-         nI0kzKlSJaaBvN+78b4cRkZ+/D3as6aDsJ1ORslllmyEJtuqPG3etsTe3JXmAKWs3b
-         icKTKOQ+LPA96P5f+3xbktxrXNCk0sm6aG1jWAOQ=
+        b=OeJizFMPqvBOgHW1swdZekYfzZC0F5Pa8O5egYTAywk1ZVsj/68gtNsKhdKo1yMtj
+         c+wNBc3unP90hjlYQW9Ush9kB3ewn2yxZoIvjNjzMHJmQULlwtg9tbVlxcKExRVBf0
+         vtnTdcJSol8WPnhC1JRQoehN6PR0bQPBNYAkQvpM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Roy Pledge <roy.pledge@nxp.com>, Li Yang <leoyang.li@nxp.com>,
+        Olof Johansson <olof@lixom.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 030/150] qed: Fix mask parameter in qed_vf_prep_tunn_req_tlv
-Date:   Fri,  2 Nov 2018 19:33:12 +0100
-Message-Id: <20181102182905.440405340@linuxfoundation.org>
+Subject: [PATCH 4.18 021/150] soc: fsl: qbman: qman: avoid allocating from non existing gen_pool
+Date:   Fri,  2 Nov 2018 19:33:03 +0100
+Message-Id: <20181102182904.502472305@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -64,50 +65,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit db803f36e56f23b5a2266807e190d1dc11554d54 ]
+[ Upstream commit 64e9e22e68512da8df3c9a7430f07621e48db3c2 ]
 
-Clang complains when one enumerated type is implicitly converted to
-another.
+If the qman driver didn't probe, calling qman_alloc_fqid_range,
+qman_alloc_pool_range or qman_alloc_cgrid_range (as done in dpaa_eth) will
+pass a NULL pointer to gen_pool_alloc, leading to a NULL pointer
+dereference.
 
-drivers/net/ethernet/qlogic/qed/qed_vf.c:686:6: warning: implicit
-conversion from enumeration type 'enum qed_tunn_mode' to different
-enumeration type 'enum qed_tunn_clss' [-Wenum-conversion]
-                                 QED_MODE_L2GENEVE_TUNN,
-                                 ^~~~~~~~~~~~~~~~~~~~~~
-
-Update mask's parameter to expect qed_tunn_mode, which is what was
-intended.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/125
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Reviewed-by: Roy Pledge <roy.pledge@nxp.com>
+Signed-off-by: Li Yang <leoyang.li@nxp.com>
+(cherry picked from commit f72487a2788aa70c3aee1d0ebd5470de9bac953a)
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_vf.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/soc/fsl/qbman/qman.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_vf.c b/drivers/net/ethernet/qlogic/qed/qed_vf.c
-index be6ddde1a104..ac3f54bbe9b9 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_vf.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_vf.c
-@@ -572,7 +572,7 @@ free_p_iov:
- static void
- __qed_vf_prep_tunn_req_tlv(struct vfpf_update_tunn_param_tlv *p_req,
- 			   struct qed_tunn_update_type *p_src,
--			   enum qed_tunn_clss mask, u8 *p_cls)
-+			   enum qed_tunn_mode mask, u8 *p_cls)
+diff --git a/drivers/soc/fsl/qbman/qman.c b/drivers/soc/fsl/qbman/qman.c
+index ecb22749df0b..8cc015183043 100644
+--- a/drivers/soc/fsl/qbman/qman.c
++++ b/drivers/soc/fsl/qbman/qman.c
+@@ -2729,6 +2729,9 @@ static int qman_alloc_range(struct gen_pool *p, u32 *result, u32 cnt)
  {
- 	if (p_src->b_update_mode) {
- 		p_req->tun_mode_update_mask |= BIT(mask);
-@@ -587,7 +587,7 @@ __qed_vf_prep_tunn_req_tlv(struct vfpf_update_tunn_param_tlv *p_req,
- static void
- qed_vf_prep_tunn_req_tlv(struct vfpf_update_tunn_param_tlv *p_req,
- 			 struct qed_tunn_update_type *p_src,
--			 enum qed_tunn_clss mask,
-+			 enum qed_tunn_mode mask,
- 			 u8 *p_cls, struct qed_tunn_update_udp_port *p_port,
- 			 u8 *p_update_port, u16 *p_udp_port)
- {
+ 	unsigned long addr;
+ 
++	if (!p)
++		return -ENODEV;
++
+ 	addr = gen_pool_alloc(p, cnt);
+ 	if (!addr)
+ 		return -ENOMEM;
 -- 
 2.17.1
 
