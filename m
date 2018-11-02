@@ -7,52 +7,50 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A780C32789
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:42:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D75FC65C22
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:42:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28EAA2085A
-	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:42:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70F4B20854
+	for <linux-kernel@archiver.kernel.org>; Fri,  2 Nov 2018 18:42:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="x6hlUqhO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28EAA2085A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="T9e/T0C8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70F4B20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729755AbeKCDuV (ORCPT
+        id S1729766AbeKCDuY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 2 Nov 2018 23:50:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45340 "EHLO mail.kernel.org"
+        Fri, 2 Nov 2018 23:50:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45428 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728835AbeKCDuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Nov 2018 23:50:20 -0400
+        id S1728835AbeKCDuX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Nov 2018 23:50:23 -0400
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F7352084D;
-        Fri,  2 Nov 2018 18:42:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AAF372084A;
+        Fri,  2 Nov 2018 18:42:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541184128;
-        bh=3HMSJrgDuMBsxUugyZ2QBn7P7qidDA5OH69WhBI6iW0=;
+        s=default; t=1541184131;
+        bh=BwNyHN4xoBSIxu3iWcLvn1UyotRuMpRFiNKV9l0oon4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x6hlUqhOFEfgbI4K3IaGEW8Z721gV+K75Az9XBj5nRqOj4NxhuuczDvSyyB4AYws5
-         3Uh9y4euhBSlno8hp/6haautTH22yKEXeExsxGv42D9U8qXxhArthwX0rsm0t7ooO/
-         wMvQWZ0yxnjx4sM2uIhWqFiN6zPKx+QY2JWBXbHA=
+        b=T9e/T0C87ZS2YsVqDglJ60KwbJad5+H1C0nvUN7JdPJ/nf1wy4pxbm3J1ZN8p3b4Q
+         aXmF4BK3WbeIMGyRaB0YZeP5jHxG4Qqo0mg06LJ6rhUbqrw/Z4fipKknKbaMywLui7
+         PIvxdbzwvrLzNX4kvJbwJylqkvHKiCXqQJvP2/RQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        stable@vger.kernel.org, Milian Wolff <milian.wolff@kdab.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 053/150] perf/core: Fix perf_pmu_unregister() locking
-Date:   Fri,  2 Nov 2018 19:33:35 +0100
-Message-Id: <20181102182907.207786004@linuxfoundation.org>
+        Jin Yao <yao.jin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Sandipan Das <sandipan@linux.ibm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.18 082/150] perf record: Use unmapped IP for inline callchain cursors
+Date:   Fri,  2 Nov 2018 19:34:04 +0100
+Message-Id: <20181102182909.253117047@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
 References: <20181102182902.250560510@linuxfoundation.org>
@@ -70,70 +68,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a9f9772114c8b07ae75bcb3654bd017461248095 ]
+[ Upstream commit 7a8a8fcf7b860e4b2d4edc787c844d41cad9dfcf ]
 
-When we unregister a PMU, we fail to serialize the @pmu_idr properly.
-Fix that by doing the entire thing under pmu_lock.
+Only use the mapped IP to find inline frames, but keep using the
+unmapped IP for the callchain cursor. This ensures we properly show the
+unmapped IP when displaying a frame we received via the
+dso__parse_addr_inlines API for a module which does not contain
+sufficient debug symbols to show the srcline.
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Fixes: 2e80a82a49c4 ("perf: Dynamic pmu types")
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+This is another follow-up to commit 19610184693c ("perf script: Show
+virtual addresses instead of offsets").
+
+Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Sandipan Das <sandipan@linux.ibm.com>
+Fixes: 19610184693c ("perf script: Show virtual addresses instead of offsets")
+Link: http://lkml.kernel.org/r/20180926135207.30263-2-milian.wolff@kdab.com
+Link: http://lkml.kernel.org/r/20181002073949.3297-1-milian.wolff@kdab.com
+[ Squashed a fix from Milian for a problem reported by Ravi, fixed up space damage ]
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/events/core.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ tools/perf/util/machine.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index ae22d93701db..b1ed5e99d9c6 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -9436,9 +9436,7 @@ static void free_pmu_context(struct pmu *pmu)
- 	if (pmu->task_ctx_nr > perf_invalid_context)
- 		return;
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index d49744dc46d7..b70cce40ca97 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -2246,7 +2246,8 @@ static int append_inlines(struct callchain_cursor *cursor,
+ 	if (!symbol_conf.inline_name || !map || !sym)
+ 		return ret;
  
--	mutex_lock(&pmus_lock);
- 	free_percpu(pmu->pmu_cpu_context);
--	mutex_unlock(&pmus_lock);
- }
+-	addr = map__rip_2objdump(map, ip);
++	addr = map__map_ip(map, ip);
++	addr = map__rip_2objdump(map, addr);
  
- /*
-@@ -9694,12 +9692,8 @@ EXPORT_SYMBOL_GPL(perf_pmu_register);
- 
- void perf_pmu_unregister(struct pmu *pmu)
- {
--	int remove_device;
--
- 	mutex_lock(&pmus_lock);
--	remove_device = pmu_bus_running;
- 	list_del_rcu(&pmu->entry);
--	mutex_unlock(&pmus_lock);
- 
- 	/*
- 	 * We dereference the pmu list under both SRCU and regular RCU, so
-@@ -9711,13 +9705,14 @@ void perf_pmu_unregister(struct pmu *pmu)
- 	free_percpu(pmu->pmu_disable_count);
- 	if (pmu->type >= PERF_TYPE_MAX)
- 		idr_remove(&pmu_idr, pmu->type);
--	if (remove_device) {
-+	if (pmu_bus_running) {
- 		if (pmu->nr_addr_filters)
- 			device_remove_file(pmu->dev, &dev_attr_nr_addr_filters);
- 		device_del(pmu->dev);
- 		put_device(pmu->dev);
- 	}
- 	free_pmu_context(pmu);
-+	mutex_unlock(&pmus_lock);
- }
- EXPORT_SYMBOL_GPL(perf_pmu_unregister);
- 
+ 	inline_node = inlines__tree_find(&map->dso->inlined_nodes, addr);
+ 	if (!inline_node) {
 -- 
 2.17.1
 
