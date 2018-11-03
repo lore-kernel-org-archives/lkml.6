@@ -2,146 +2,70 @@ Return-Path: <SRS0=1exb=NO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFF91C0044C
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 16:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ED74C0044C
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 16:03:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74DAA2081D
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 16:01:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74DAA2081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D0E2A20833
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 16:03:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0E2A20833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728611AbeKDBMr (ORCPT
+        id S1728578AbeKDBPC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 21:12:47 -0400
-Received: from mail-it1-f197.google.com ([209.85.166.197]:41528 "EHLO
-        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727339AbeKDBMq (ORCPT
+        Sat, 3 Nov 2018 21:15:02 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:37802 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727339AbeKDBPC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 21:12:46 -0400
-Received: by mail-it1-f197.google.com with SMTP id a80-v6so6297759itd.6
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Nov 2018 09:01:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=g9ulN5+iTHSn/3u1lJwq4EVb8NRlW2otPY2dodNcQb4=;
-        b=AWKZHv8/R0eAiFsyMJgZdcvK7szjpTSJ/96jJQHWxeh2GK9DK+brJUrjy/axsO0S++
-         0cGJd/k+Yn8/0MBFDZqWXGAIQ0GklqE1uAHSTHRg6uIkQMb5gH58xioYnQc8ChE3k+pK
-         SRJaatx9yzjyNvWCM4SVNu0n7flD6bH6jp9J04d+nu8s4HzhfWBmztLy7lYVGQtkKPzy
-         Y9elCU+/JQi1MsIEIS42xSleg3GxL8TrZ/3oRdJ1SYxuWUI+kq+zwJykQ+bCh947kvc0
-         YNsML8H+s8cUoEygpTNoSPy2lXn84/dRFaw3ikIbg450GQ32LwPVio2YlZ3BaV8SA0a9
-         BPnw==
-X-Gm-Message-State: AGRZ1gLvR4jS1r2go7qE09esMN2AxYmrVKIR5GDFmQgLD7YSqloWwqHP
-        ZSqVy0/3NfQZjMwqxTKhNF4NtJv3WKyw+gahFYBZoyPkfuHK
-X-Google-Smtp-Source: AJdET5e99THbPZwV1Wl8dRHJXI+mEXH7SDGKm89fdcqQ2OHLTgHhXQqTTmtStYadKy69aYsQPCXDltxJVBbbRrXYcQOPfhJugd+p
+        Sat, 3 Nov 2018 21:15:02 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gIyOF-0005DF-Og; Sat, 03 Nov 2018 16:03:11 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
+        codalist@coda.cs.cmu.edu
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] fs/coda: clean up indentation, replace spaces with tab
+Date:   Sat,  3 Nov 2018 16:03:11 +0000
+Message-Id: <20181103160311.3289-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-X-Received: by 2002:a24:6cc:: with SMTP id 195-v6mr978793itv.27.1541260863656;
- Sat, 03 Nov 2018 09:01:03 -0700 (PDT)
-Date:   Sat, 03 Nov 2018 09:01:03 -0700
-In-Reply-To: <000000000000fd734c05799d3c90@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004928fe0579c4c240@google.com>
-Subject: Re: BUG: pagefault on kernel address ADDR in non-whitelisted uaccess
-From:   syzbot <syzbot+0cc8e3cc63ca373722c6@syzkaller.appspotmail.com>
-To:     hverkuil@xs4all.nl, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, mchehab@kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+From: Colin Ian King <colin.king@canonical.com>
 
-HEAD commit:    5f21585384a4 Merge tag 'for-linus-20181102' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=103c9825400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9384ecb1c973baed
-dashboard link: https://syzkaller.appspot.com/bug?extid=0cc8e3cc63ca373722c6
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=112736eb400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14e2d82b400000
+Trivial fix to clean up indentation, replace spaces with tab
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+0cc8e3cc63ca373722c6@syzkaller.appspotmail.com
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/coda/psdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-sshd (5636) used greatest stack depth: 15744 bytes left
-BUG: pagefault on kernel address 0xffffc90002569000 in non-whitelisted  
-uaccess
-BUG: unable to handle kernel paging request at ffffc90002569000
-PGD 1da948067 P4D 1da948067 PUD 1da949067 PMD 1c0211067 PTE 0
-Oops: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 5650 Comm: syz-executor571 Not tainted 4.19.0+ #317
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:copy_user_enhanced_fast_string+0xe/0x20  
-arch/x86/lib/copy_user_64.S:180
-Code: 89 d1 c1 e9 03 83 e2 07 f3 48 a5 89 d1 f3 a4 31 c0 0f 1f 00 c3 0f 1f  
-80 00 00 00 00 0f 1f 00 83 fa 40 0f 82 70 ff ff ff 89 d1 <f3> a4 31 c0 0f  
-1f 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 83
-RSP: 0018:ffff8801d8fcf680 EFLAGS: 00010202
-RAX: 0000000000000000 RBX: 000000000000ca80 RCX: 0000000000004a80
-RDX: 000000000000ca80 RSI: ffffc90002569000 RDI: 00000000200080c0
-RBP: ffff8801d8fcf6b8 R08: 0000000000000000 R09: 000000000000032a
-R10: fffff520004adb4f R11: ffffc9000256da7f R12: 000000002000cb40
-R13: 00000000200000c0 R14: ffffc90002561000 R15: 00007ffffffff000
-FS:  00000000017ca880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffc90002569000 CR3: 00000001ba5d7000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  copy_to_user include/linux/uaccess.h:155 [inline]
-  vidioc_g_fmt_vid_overlay+0x392/0x550  
-drivers/media/platform/vivid/vivid-vid-cap.c:1084
-  v4l_g_fmt+0x2ad/0x640 drivers/media/v4l2-core/v4l2-ioctl.c:1489
-  __video_do_ioctl+0x8b1/0x1050 drivers/media/v4l2-core/v4l2-ioctl.c:2853
-  video_usercopy+0x5c1/0x1760 drivers/media/v4l2-core/v4l2-ioctl.c:3035
-  video_ioctl2+0x2c/0x33 drivers/media/v4l2-core/v4l2-ioctl.c:3079
-  v4l2_ioctl+0x154/0x1b0 drivers/media/v4l2-core/v4l2-dev.c:364
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:509 [inline]
-  do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
-  __do_sys_ioctl fs/ioctl.c:720 [inline]
-  __se_sys_ioctl fs/ioctl.c:718 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x443f49
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 7b d8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fffbe4a44c8 EFLAGS: 00000217 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00000000004002e0 RCX: 0000000000443f49
-RDX: 00000000200000c0 RSI: 00000000c0d05604 RDI: 0000000000000004
-RBP: 00000000006ce018 R08: 00000000004002e0 R09: 00000000004002e0
-R10: 00000000004002e0 R11: 0000000000000217 R12: 0000000000401c50
-R13: 0000000000401ce0 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
-CR2: ffffc90002569000
----[ end trace e294d16803c6d199 ]---
-RIP: 0010:copy_user_enhanced_fast_string+0xe/0x20  
-arch/x86/lib/copy_user_64.S:180
-Code: 89 d1 c1 e9 03 83 e2 07 f3 48 a5 89 d1 f3 a4 31 c0 0f 1f 00 c3 0f 1f  
-80 00 00 00 00 0f 1f 00 83 fa 40 0f 82 70 ff ff ff 89 d1 <f3> a4 31 c0 0f  
-1f 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 83
-RSP: 0018:ffff8801d8fcf680 EFLAGS: 00010202
-RAX: 0000000000000000 RBX: 000000000000ca80 RCX: 0000000000004a80
-RDX: 000000000000ca80 RSI: ffffc90002569000 RDI: 00000000200080c0
-RBP: ffff8801d8fcf6b8 R08: 0000000000000000 R09: 000000000000032a
-R10: fffff520004adb4f R11: ffffc9000256da7f R12: 000000002000cb40
-R13: 00000000200000c0 R14: ffffc90002561000 R15: 00007ffffffff000
-FS:  00000000017ca880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffc90002569000 CR3: 00000001ba5d7000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+diff --git a/fs/coda/psdev.c b/fs/coda/psdev.c
+index c5234c21b539..1bc78463c346 100644
+--- a/fs/coda/psdev.c
++++ b/fs/coda/psdev.c
+@@ -358,7 +358,7 @@ static int init_coda_psdev(void)
+ 	if (register_chrdev(CODA_PSDEV_MAJOR, "coda", &coda_psdev_fops)) {
+ 		pr_err("%s: unable to get major %d\n",
+ 		       __func__, CODA_PSDEV_MAJOR);
+-              return -EIO;
++		return -EIO;
+ 	}
+ 	coda_psdev_class = class_create(THIS_MODULE, "coda");
+ 	if (IS_ERR(coda_psdev_class)) {
+-- 
+2.19.1
 
