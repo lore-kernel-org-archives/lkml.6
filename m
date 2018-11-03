@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F819ECDE44
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63403C0044C
 	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 09:59:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB75320833
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 09:59:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EFF22081F
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 09:59:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="X3+VT7mE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB75320833
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="oZC+dmiE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EFF22081F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=plaes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728043AbeKCTKj (ORCPT
+        id S1728282AbeKCTKj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sat, 3 Nov 2018 15:10:39 -0400
-Received: from plaes.org ([188.166.43.21]:34634 "EHLO plaes.org"
+Received: from plaes.org ([188.166.43.21]:34642 "EHLO plaes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726711AbeKCTKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 15:10:38 -0400
+        id S1726828AbeKCTKj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 15:10:39 -0400
 Received: from localhost (85.253.196.132.cable.starman.ee [85.253.196.132])
-        by plaes.org (Postfix) with ESMTPSA id 14A6D40DE5;
-        Sat,  3 Nov 2018 09:59:50 +0000 (UTC)
+        by plaes.org (Postfix) with ESMTPSA id 3219840AC7;
+        Sat,  3 Nov 2018 09:59:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
-        t=1541239190; bh=UieHoKBSWdElS/GElBDqUdWosll32Wo4YEzqLiNJCjg=;
+        t=1541239191; bh=TNZdPduifoKpgQFmEWBSRhv4J/v31pmijm9ryIdcaR0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X3+VT7mEwOrn3MDuY2VgczuRn7NhF73M6JqkqhB98xMDDlhCAifvJVumqaBd+TSYU
-         ROkQswvsGYy1ggODC5+0fFZyWO75NFFez3nVNQuE71NX7OvV5gtHVtQcV7MFMmnrVr
-         zQ0WtbpFEoYPkUyP5e6h0arq2XgvaCZ/BcyMr3bpbyxy92YLF6+Nfq5RfbHXVgE586
-         sgX9NPlwm7qfizB+YH4xV1wxJyeyy1AxQcT+IQyY19KnFzH7uS4Gw7wHjzwXRj1TOX
-         HEVJGXzsdH9vvM+ztz8Rqo9yrQR8Q/GZujvWgayyyzXMiwClhl7ObdGq/Cp2MweeaJ
-         mr+OEZH8DtQ5A==
+        b=oZC+dmiEz3qL6/gwvAXAlzJGkNLijfs8ZXAfMqaiHrtj5qzCohn4dFIGrNAQ53+xE
+         3RJuElm3oywwmbVRwgaQ2kZOLfJyAuZJ3lrPTnTCGRS/qf4NE154NQR2CLAMLymzzl
+         zt5tIddqrTa/OlKCuHwgFra1VU5PfixRwwro3HNd/sjQjX1QKGzSg/uH+28V/vdiNT
+         ewWGQo/XpI6kqW6K5emWnywJs4Hsg1CZ8w1zrzcK3nOcBjpAr2RvCwcMkoliLszAQk
+         xsnDvfVbHnvNNdiNwbpg5cHl5c4P63uH1608Iq7pG6vgm3jAfjvtcTatQ/9VaX9hLZ
+         +zcrPPqxtA3NQ==
 From:   Priit Laes <plaes@plaes.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Arend van Spriel <arend.vanspriel@broadcom.com>,
@@ -49,9 +49,9 @@ Cc:     Arend van Spriel <arend.vanspriel@broadcom.com>,
         linux-wireless@vger.kernel.org,
         brcm80211-dev-list.pdl@broadcom.com,
         brcm80211-dev-list@cypress.com, netdev@vger.kernel.org
-Subject: [PATCH 2/5] brcmfmac: Use common CORDIC_FLOAT macro from lib
-Date:   Sat,  3 Nov 2018 11:59:41 +0200
-Message-Id: <4bd6e7758bc0d88b33cdb09448633bb5b97aba7c.1541238842.git-series.plaes@plaes.org>
+Subject: [PATCH 3/5] brcmfmac: Drop unused cordic defines and macros
+Date:   Sat,  3 Nov 2018 11:59:42 +0200
+Message-Id: <7f3dbe604102f7d765149fffef8a4e6b9fa15552.1541238842.git-series.plaes@plaes.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <cover.f21c8e62e188620d586edb3f77514e6237122c4c.1541238842.git-series.plaes@plaes.org>
 References: <cover.f21c8e62e188620d586edb3f77514e6237122c4c.1541238842.git-series.plaes@plaes.org>
@@ -62,43 +62,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that cordic library has the CORDIC_FLOAT macro, use that
+Now that we use library macros, we can drop internal copies
 
 Signed-off-by: Priit Laes <plaes@plaes.org>
 ---
- drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_lcn.c | 4 ++--
- drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c   | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_int.h | 7 +-------
+ 1 file changed, 7 deletions(-)
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_lcn.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_lcn.c
-index 9fb0d9f..e78a93a 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_lcn.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_lcn.c
-@@ -3447,8 +3447,8 @@ wlc_lcnphy_start_tx_tone(struct brcms_phy *pi, s32 f_kHz, u16 max_val,
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_int.h b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_int.h
+index 4960f7d..e9e8337 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_int.h
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_int.h
+@@ -220,13 +220,6 @@ enum phy_cal_mode {
+ #define BB_MULT_MASK		0x0000ffff
+ #define BB_MULT_VALID_MASK	0x80000000
  
- 		theta += rot;
+-#define CORDIC_AG	39797
+-#define	CORDIC_NI	18
+-#define	FIXED(X)	((s32)((X) << 16))
+-
+-#define	FLOAT(X) \
+-	(((X) >= 0) ? ((((X) >> 15) + 1) >> 1) : -((((-(X)) >> 15) + 1) >> 1))
+-
+ #define PHY_CHAIN_TX_DISABLE_TEMP	115
+ #define PHY_HYSTERESIS_DELTATEMP	5
  
--		i_samp = (u16) (FLOAT(tone_samp.i * max_val) & 0x3ff);
--		q_samp = (u16) (FLOAT(tone_samp.q * max_val) & 0x3ff);
-+		i_samp = (u16)(CORDIC_FLOAT(tone_samp.i * max_val) & 0x3ff);
-+		q_samp = (u16)(CORDIC_FLOAT(tone_samp.q * max_val) & 0x3ff);
- 		data_buf[t] = (i_samp << 10) | q_samp;
- 	}
- 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c
-index a57f271..f4f5e90 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c
-@@ -23089,8 +23089,8 @@ wlc_phy_gen_load_samples_nphy(struct brcms_phy *pi, u32 f_kHz, u16 max_val,
- 
- 		theta += rot;
- 
--		tone_buf[t].q = (s32) FLOAT(tone_buf[t].q * max_val);
--		tone_buf[t].i = (s32) FLOAT(tone_buf[t].i * max_val);
-+		tone_buf[t].q = (s32)CORDIC_FLOAT(tone_buf[t].q * max_val);
-+		tone_buf[t].i = (s32)CORDIC_FLOAT(tone_buf[t].i * max_val);
- 	}
- 
- 	wlc_phy_loadsampletable_nphy(pi, tone_buf, num_samps);
 -- 
 git-series 0.9.1
