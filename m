@@ -2,106 +2,143 @@ Return-Path: <SRS0=1exb=NO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA660C6786F
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 22:50:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8670C6786F
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 22:52:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1EF020685
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 22:50:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AE8E20843
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 22:52:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=usp-br.20150623.gappssmtp.com header.i=@usp-br.20150623.gappssmtp.com header.b="1CtKVcdx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1EF020685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=usp.br
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bGE2/mgA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AE8E20843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728855AbeKDIDH (ORCPT
+        id S1728536AbeKDIFS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 03:03:07 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:41425 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726990AbeKDIDG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 03:03:06 -0500
-Received: by mail-qk1-f195.google.com with SMTP id 189so8946275qkj.8
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Nov 2018 15:50:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=usp-br.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=uRaFpWiqq0590LAIWCKDCZV7Qjo+FL/9V7eRidlfT3s=;
-        b=1CtKVcdxkcaI283xQLfB0FmveXFcTjA/J4RM6cOTw0TWTWyYJxs1hfN4KODCcC4rs4
-         PdacCMMokO7XCZmntj9zaKaRwMHeTKdUb75OZ+DR6cLWhnvxiK85DN2A1b31MEVefbgu
-         X3MhEvXnjvs0IODEaQ8wOx2wPIe50dn+iJY3G7+T49qRBFrcJYJjiQQOG7CM7zrq8jMC
-         20DpfgzBZhpwwx/Pxdv4D4CNz3FcYgZ0D5jLK6qEq4cDs7+4eQnNg84gUI067LCdP2CL
-         OfZsA447baszPcwSqb2UbHrxngRNGF+sXEjoTcONlbi6TKC4DJvyOWuXWEPYWPwmRXf9
-         ZmVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=uRaFpWiqq0590LAIWCKDCZV7Qjo+FL/9V7eRidlfT3s=;
-        b=ihlrzYlSE4Qh+yu4Oas4CVtoEE5d2A3JahUr9IK5bf87XUeUTj07L0y8TX0DXcS+Xq
-         jy/if6Ib+5aPHnHKtMPjO3hQ+mta3fgVbl9iZE0gEkLX9LwMRTyaDpBxOFBEbq/J1+5P
-         mBmuRv3cXZbFi9yTXctJ72Q9Ks1/QJRC6ogGunAKcVRMsOwplhPvvqCeCowV2Dhc1pL2
-         +/i3jhp6t+ueLNoH+8AVtWdxIuIKsCRHcx0w9KJ8TeJSLnxYpAmVUNLbHlVfQSvxAIEk
-         bvF/Z1ElDagFHmukPhVlJa9gGPIvHBabLj7lmd5q0cEto0A4JXVTXlywpsi42uLDsOTH
-         bTIA==
-X-Gm-Message-State: AGRZ1gJfb84NoDIv5R1hySSBsD7LqIKajSfPYahzAAH4cw2nmGDIOFZn
-        Z7OM9WTwsdJHwUznNYk4r2ujlg==
-X-Google-Smtp-Source: AJdET5eBeXKxiHKO8ookz4GGM6+/EUtIbCMcPq4mgVcRBDAoKdwpzrgYl/IHkNdR6ZkZ8j1mPy1+6g==
-X-Received: by 2002:a0c:d107:: with SMTP id a7mr16112704qvh.104.1541285425687;
-        Sat, 03 Nov 2018 15:50:25 -0700 (PDT)
-Received: from mango.spo.virtua.com.br ([2804:14c:81:942d::1])
-        by smtp.gmail.com with ESMTPSA id 35-v6sm27550924qtu.69.2018.11.03.15.50.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 03 Nov 2018 15:50:25 -0700 (PDT)
-From:   Matheus Tavares <matheus.bernardino@usp.br>
-To:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
-Subject: [PATCH v3 6/6] staging:iio:ad2s90: Check channel type at read_raw
-Date:   Sat,  3 Nov 2018 19:49:48 -0300
-Message-Id: <20181103224948.31014-7-matheus.bernardino@usp.br>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20181103224948.31014-1-matheus.bernardino@usp.br>
-References: <20181103224948.31014-1-matheus.bernardino@usp.br>
+        Sun, 4 Nov 2018 03:05:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56890 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726727AbeKDIFS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 03:05:18 -0500
+Received: from sol.localdomain (c-67-185-97-198.hsd1.wa.comcast.net [67.185.97.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C69622081F;
+        Sat,  3 Nov 2018 22:52:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541285556;
+        bh=MtE0eqAmwtZ0PllBYVlIge75laabJ6C5nZl96vxpRaE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bGE2/mgAX/+I4avS4cFwuUboNZmvcZscpG+dl9X4AxBaCv9q2I2K6LBtUYWiPNgJ0
+         G49edVakUfPFcbW5GDGYTEfnU/7fD9Wt5hTZ8tue0B1fpohF2QOFCI1P7pAHtFnNT7
+         M8jgVs73Qq0EtfOPmCwCTWi8Udmd96VL4cLwsxJQ=
+Date:   Sat, 3 Nov 2018 15:52:35 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Corentin Labbe <clabbe@baylibre.com>
+Cc:     davem@davemloft.net, herbert@gondor.apana.org.au,
+        nhorman@tuxdriver.com, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] crypto: Implement a generic crypto statistics
+Message-ID: <20181103225234.GD808@sol.localdomain>
+References: <1537351855-16618-1-git-send-email-clabbe@baylibre.com>
+ <1537351855-16618-2-git-send-email-clabbe@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1537351855-16618-2-git-send-email-clabbe@baylibre.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a channel type check at the beginning of the
-ad2s90_read_raw function. Since ad2s90 has only one channel, it just
-checks if the given channel is the expected one and if not, return
--EINVAL.
+On Wed, Sep 19, 2018 at 10:10:54AM +0000, Corentin Labbe wrote:
+> diff --git a/include/uapi/linux/cryptouser.h b/include/uapi/linux/cryptouser.h
+> index 19bf0ca6d635..6dafbc3e4414 100644
+> --- a/include/uapi/linux/cryptouser.h
+> +++ b/include/uapi/linux/cryptouser.h
+> @@ -29,6 +29,7 @@ enum {
+>  	CRYPTO_MSG_UPDATEALG,
+>  	CRYPTO_MSG_GETALG,
+>  	CRYPTO_MSG_DELRNG,
+> +	CRYPTO_MSG_GETSTAT,
+>  	__CRYPTO_MSG_MAX
+>  };
+>  #define CRYPTO_MSG_MAX (__CRYPTO_MSG_MAX - 1)
+> @@ -50,6 +51,16 @@ enum crypto_attr_type_t {
+>  	CRYPTOCFGA_REPORT_AKCIPHER,	/* struct crypto_report_akcipher */
+>  	CRYPTOCFGA_REPORT_KPP,		/* struct crypto_report_kpp */
+>  	CRYPTOCFGA_REPORT_ACOMP,	/* struct crypto_report_acomp */
+> +	CRYPTOCFGA_STAT_LARVAL,		/* struct crypto_stat */
+> +	CRYPTOCFGA_STAT_HASH,		/* struct crypto_stat */
+> +	CRYPTOCFGA_STAT_BLKCIPHER,	/* struct crypto_stat */
+> +	CRYPTOCFGA_STAT_AEAD,		/* struct crypto_stat */
+> +	CRYPTOCFGA_STAT_COMPRESS,	/* struct crypto_stat */
+> +	CRYPTOCFGA_STAT_RNG,		/* struct crypto_stat */
+> +	CRYPTOCFGA_STAT_CIPHER,		/* struct crypto_stat */
+> +	CRYPTOCFGA_STAT_AKCIPHER,	/* struct crypto_stat */
+> +	CRYPTOCFGA_STAT_KPP,		/* struct crypto_stat */
+> +	CRYPTOCFGA_STAT_ACOMP,		/* struct crypto_stat */
+>  	__CRYPTOCFGA_MAX
+>  
+>  #define CRYPTOCFGA_MAX (__CRYPTOCFGA_MAX - 1)
+> @@ -65,6 +76,47 @@ struct crypto_user_alg {
+>  	__u32 cru_flags;
+>  };
+>  
+> +struct crypto_stat {
+> +	char type[CRYPTO_MAX_NAME];
+> +	union {
+> +		__u32 stat_encrypt_cnt;
+> +		__u32 stat_compress_cnt;
+> +		__u32 stat_generate_cnt;
+> +		__u32 stat_hash_cnt;
+> +		__u32 stat_setsecret_cnt;
+> +	};
+> +	union {
+> +		__u64 stat_encrypt_tlen;
+> +		__u64 stat_compress_tlen;
+> +		__u64 stat_generate_tlen;
+> +		__u64 stat_hash_tlen;
+> +	};
+> +	union {
+> +		__u32 stat_akcipher_err_cnt;
+> +		__u32 stat_cipher_err_cnt;
+> +		__u32 stat_compress_err_cnt;
+> +		__u32 stat_aead_err_cnt;
+> +		__u32 stat_hash_err_cnt;
+> +		__u32 stat_rng_err_cnt;
+> +		__u32 stat_kpp_err_cnt;
+> +	};
+> +	union {
+> +		__u32 stat_decrypt_cnt;
+> +		__u32 stat_decompress_cnt;
+> +		__u32 stat_seed_cnt;
+> +		__u32 stat_generate_public_key_cnt;
+> +	};
+> +	union {
+> +		__u64 stat_decrypt_tlen;
+> +		__u64 stat_decompress_tlen;
+> +	};
+> +	union {
+> +		__u32 stat_verify_cnt;
+> +		__u32 stat_compute_shared_secret_cnt;
+> +	};
+> +	__u32 stat_sign_cnt;
+> +};
+> +
 
-Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
----
- drivers/staging/iio/resolver/ad2s90.c | 3 +++
- 1 file changed, 3 insertions(+)
+All the 32-bit fields need to be 64-bit.  In some cases, UINT32_MAX crypto
+operations can be done in seconds.
 
-diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/staging/iio/resolver/ad2s90.c
-index 9c168b7410d0..3e257ac46f7a 100644
---- a/drivers/staging/iio/resolver/ad2s90.c
-+++ b/drivers/staging/iio/resolver/ad2s90.c
-@@ -34,6 +34,9 @@ static int ad2s90_read_raw(struct iio_dev *indio_dev,
- 	int ret;
- 	struct ad2s90_state *st = iio_priv(indio_dev);
- 
-+	if (chan->type != IIO_ANGL)
-+		return -EINVAL;
-+
- 	switch (m) {
- 	case IIO_CHAN_INFO_SCALE:
- 		/* 2 * Pi / 2^12 */
--- 
-2.18.0
+It's also weird that everything shares the same crypto_stat structure.  I think
+there should be a different struct for each algorithm type, like there is for
+the existing crypto_user algorithm reporting.  In fact you are kind of already
+doing that since the struct is loaded full of unions.  But it would be much
+cleaner to use actually different structures.
 
+- Eric
