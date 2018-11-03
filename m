@@ -2,124 +2,135 @@ Return-Path: <SRS0=1exb=NO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 810D0C0044C
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 19:13:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33874C0044C
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 19:14:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B46D20833
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 19:13:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B46D20833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id ED5EA20833
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 19:14:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED5EA20833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726936AbeKDEZ6 (ORCPT
+        id S1727013AbeKDE0v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 00:25:58 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:42920 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725938AbeKDEZ6 (ORCPT
+        Sun, 4 Nov 2018 00:26:51 -0400
+Received: from smtprelay0153.hostedemail.com ([216.40.44.153]:50643 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725938AbeKDE0v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 00:25:58 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id BDD6080938; Sat,  3 Nov 2018 20:13:44 +0100 (CET)
-Date:   Sat, 3 Nov 2018 20:13:46 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] spi: pxa2xx: Remove the shutdown callback
-Message-ID: <20181103191346.GF31179@amd>
-References: <20180917121124.21305-1-lkundrak@v3.sk>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="R6sEYoIZpp9JErk7"
-Content-Disposition: inline
-In-Reply-To: <20180917121124.21305-1-lkundrak@v3.sk>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Sun, 4 Nov 2018 00:26:51 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id CCF1583777EE;
+        Sat,  3 Nov 2018 19:14:40 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: owl03_45bb5c548e842
+X-Filterd-Recvd-Size: 3649
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf16.hostedemail.com (Postfix) with ESMTPA;
+        Sat,  3 Nov 2018 19:14:39 +0000 (UTC)
+Message-ID: <63f0e18c8335b6431f0f7dcf0895c73d85b11fa4.camel@perches.com>
+Subject: Re: [RFC PATCH v1 13/14] usb:cdns3: Adds debugging function.
+From:   Joe Perches <joe@perches.com>
+To:     Pawel Laszczak <pawell@cadence.com>, gregkh@linuxfoundation.org
+Cc:     linux-usb@vger.kernel.org, rogerq@ti.com,
+        linux-kernel@vger.kernel.org, adouglas@cadence.com,
+        jbergsagel@ti.com, peter.chen@nxp.com, pjez@cadence.com,
+        kurahul@cadence.com
+Date:   Sat, 03 Nov 2018 12:14:37 -0700
+In-Reply-To: <1541267487-3664-14-git-send-email-pawell@cadence.com>
+References: <1541267487-3664-1-git-send-email-pawell@cadence.com>
+         <1541267487-3664-14-git-send-email-pawell@cadence.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, 2018-11-03 at 17:51 +0000, Pawel Laszczak wrote:
+> Patch implements some function used for debugging driver.
+[]
+> +static inline char *cdns3_decode_ep_irq(u32 ep_sts, const char *ep_name)
+> +{
+> +	static char str[256];
+> +	int ret;
+> +
+> +	ret = sprintf(str, "IRQ for %s: %08x ", ep_name, ep_sts);
+> +
+> +	if (ep_sts & EP_STS_SETUP)
+> +		ret += sprintf(str + ret, "SETUP ");
+> +	if (ep_sts & EP_STS_IOC)
+> +		ret += sprintf(str + ret, "IOC ");
+> +	if (ep_sts & EP_STS_ISP)
+> +		ret += sprintf(str + ret, "ISP ");
+> +	if (ep_sts & EP_STS_DESCMIS)
+> +		ret += sprintf(str + ret, "DESCMIS ");
+> +	if (ep_sts & EP_STS_STREAMR)
+> +		ret += sprintf(str + ret, "STREAMR ");
+> +	if (ep_sts & EP_STS_MD_EXIT)
+> +		ret += sprintf(str + ret, "MD_EXIT ");
+> +	if (ep_sts & EP_STS_TRBERR)
+> +		ret += sprintf(str + ret, "TRBERR ");
+> +	if (ep_sts & EP_STS_NRDY)
+> +		ret += sprintf(str + ret, "NRDY ");
+> +	if (ep_sts & EP_STS_PRIME)
+> +		ret += sprintf(str + ret, "PRIME ");
+> +	if (ep_sts & EP_STS_SIDERR)
+> +		ret += sprintf(str + ret, "SIDERRT ");
+> +	if (ep_sts & EP_STS_OUTSMM)
+> +		ret += sprintf(str + ret, "OUTSMM ");
+> +	if (ep_sts & EP_STS_ISOERR)
+> +		ret += sprintf(str + ret, "ISOERR ");
+> +	if (ep_sts & EP_STS_IOT)
+> +		ret += sprintf(str + ret, "IOT ");
+> +
+> +	return str;
+> +}
 
---R6sEYoIZpp9JErk7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This bit is pretty unsightly.
+Especially the static in each inline
 
-On Mon 2018-09-17 14:11:24, Lubomir Rintel wrote:
-> It makes no sense to remove the device on shutdown. And it break things
-> when the hardware crucial for shutdown (such as the embedded controller)
-> is attached to the SPI bus.
+> +
+> +char *cdns3_decode_epx_irq(struct cdns3_endpoint *priv_ep)
+> +{
+> +	struct cdns3_device *priv_dev = priv_ep->cdns3_dev;
+> +
+> +	return cdns3_decode_ep_irq(readl(&priv_dev->regs->ep_sts),
+> +				   priv_ep->name);
+> +}
+> +
+> +char *cdns3_decode_ep0_irq(struct cdns3_device *priv_dev, int dir)
+> +{
+> +	if (dir)
+> +		return cdns3_decode_ep_irq(readl(&priv_dev->regs->ep_sts),
+> +					   "ep0IN");
+> +	else
+> +		return cdns3_decode_ep_irq(readl(&priv_dev->regs->ep_sts),
+> +					   "ep0OUT");
+> +}
+> +
+[]
+> diff --git a/drivers/usb/cdns3/ep0.c b/drivers/usb/cdns3/ep0.c
+[]
+> @@ -604,12 +604,15 @@ void cdns3_check_ep0_interrupt_proceed(struct cdns3_device *priv_dev, int dir)
+>  	cdns3_select_ep(priv_dev, 0 | (dir ? USB_DIR_IN : USB_DIR_OUT));
+>  	ep_sts_reg = readl(&regs->ep_sts);
+>  
+> +	dev_dbg(&priv_dev->dev, "%s\n", cdns3_decode_ep0_irq(priv_dev, dir));
+[]
+> diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
+[]
+> @@ -537,6 +547,8 @@ static int cdns3_check_ep_interrupt_proceed(struct cdns3_endpoint *priv_ep)
+>  	cdns3_select_ep(priv_dev, priv_ep->endpoint.address);
+>  	ep_sts_reg = readl(&regs->ep_sts);
+>  
+> +	dev_dbg(&priv_dev->dev, "%s\n", cdns3_decode_epx_irq(priv_ep));
+> 
 
-Again, are you sure?
-
-On some hardware (sharp zaurus, phones) it is good idea to shut down
-hardware before poweroff, as they don't have embedded controller that
-would cut the power.
-
-Will this increase power consumption while "off" on such platforms?
-									Pavel
-
-> Cc: Daniel Mack <daniel@zonque.org>
-> Cc: Haojian Zhuang <haojian.zhuang@gmail.com>
-> Cc: Robert Jarzmik <robert.jarzmik@free.fr>
-> Cc: Mark Brown <broonie@kernel.org>
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> ---
->  drivers/spi/spi-pxa2xx.c | 9 ---------
->  1 file changed, 9 deletions(-)
->=20
-> diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
-> index 14f4ea59caff..b06f37fb29f6 100644
-> --- a/drivers/spi/spi-pxa2xx.c
-> +++ b/drivers/spi/spi-pxa2xx.c
-> @@ -1764,14 +1764,6 @@ static int pxa2xx_spi_remove(struct platform_devic=
-e *pdev)
->  	return 0;
->  }
-> =20
-> -static void pxa2xx_spi_shutdown(struct platform_device *pdev)
-> -{
-> -	int status =3D 0;
-> -
-> -	if ((status =3D pxa2xx_spi_remove(pdev)) !=3D 0)
-> -		dev_err(&pdev->dev, "shutdown failed with %d\n", status);
-> -}
-> -
->  #ifdef CONFIG_PM_SLEEP
->  static int pxa2xx_spi_suspend(struct device *dev)
->  {
-> @@ -1851,7 +1843,6 @@ static struct platform_driver driver =3D {
->  	},
->  	.probe =3D pxa2xx_spi_probe,
->  	.remove =3D pxa2xx_spi_remove,
-> -	.shutdown =3D pxa2xx_spi_shutdown,
->  };
-> =20
->  static int __init pxa2xx_spi_init(void)
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---R6sEYoIZpp9JErk7
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlvd82oACgkQMOfwapXb+vLaUwCfenRFkDxK+3sEu/J9yVsj+7QM
-0pYAoKXD1uEnyLqJmfXI360WRKKZGlmk
-=UbcJ
------END PGP SIGNATURE-----
-
---R6sEYoIZpp9JErk7--
