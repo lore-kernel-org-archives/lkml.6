@@ -2,122 +2,193 @@ Return-Path: <SRS0=1exb=NO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 406F4C6786F
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 13:22:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6AE5C6786F
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 13:23:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03AD820862
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 13:22:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 849CB20833
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 13:23:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jxi/Qk2v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03AD820862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AZqi2RVK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 849CB20833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728645AbeKCWeH (ORCPT
+        id S1728737AbeKCWe4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 18:34:07 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:32914 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727658AbeKCWeH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 18:34:07 -0400
-Received: by mail-qk1-f194.google.com with SMTP id o89so7606022qko.0;
-        Sat, 03 Nov 2018 06:22:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JzSMpRov2s5eQW704mg4yHFih2u2ihs5fs+BX5Ru0dE=;
-        b=Jxi/Qk2vy3iBWqxV0m6A+4uiPQNnUPmH0EY2cPkzYsG+AbQ5upjSkwBssnjg7+2QeD
-         043ZTLFfbkMlgR4wNkia5dmCH0wignz5IzM8VOYE/VYKPw5ozinfo+cKWwcwzHjzkrCN
-         gVDOKmeklZNTRVD/tQGw+nSnJPXPGvyDgIHKKFpbX97x5cydwxPDyRMiHdUNN8XPdggM
-         DAsU25zrNnxVURQcxE1mLnW0nyvkZKvibyCg8h4D9Vzko30JdyAB3UTNypxcPyWjZ4qz
-         Lk/hVW73iGozLQ/uOjF1+VaitFjgdmaKP3x+Y+uaRKtb/k4bsI9pYmrIqS1g3VHE+79j
-         aPew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JzSMpRov2s5eQW704mg4yHFih2u2ihs5fs+BX5Ru0dE=;
-        b=Q1s17Ek05mAqjAF3/pXko64DyT8asElOk4f3GehKBuHb6jZgPXQkIeNbWRP2mjMWYW
-         9pqKJrNM5BpEoOMHbMcywd5q9leIIoa7Fn76YheM1UCxNiM3Ih0lw6Oy1Gf3L1DPhgyt
-         U/HTkl3GQ51ZJRki9flsS8i+xZIFYWAEbnSgE2DfOJjjdgLtVH8VJWSU0q3btWk2/ZuS
-         upNHcqKiLzybh70rYi0q96+10nXjtY5DmSwYp5s8N0eJxP99NXQ8zgJgvitl4Wl8AAVp
-         RzzR6+KRlPRxZa9EyJwg/tBhWQNOSRDdu+c09Q1Kgdl7+QfmQ8MEOsG+D43AkDPta+H8
-         bYrg==
-X-Gm-Message-State: AGRZ1gJWmJ+UZW51a9R6qHtVmxN6B5kLXqIjAixJ6EkQo7TLqqsa153J
-        jZzAAdPHQuzfm5u5q+jfU0Mv8lyKeUXzXAA3ivk=
-X-Google-Smtp-Source: AJdET5deiJQFen6djqRUcB5XN4tJCGV0DcpSzyzy4jFjvWeQAFI5Ne+mKdGzQa2ya5uz+xKJstUR9AJZVYHy+6DkINE=
-X-Received: by 2002:a0c:d268:: with SMTP id o37mr14686970qvh.136.1541251366132;
- Sat, 03 Nov 2018 06:22:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com> <20181102231320.29164-17-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20181102231320.29164-17-jarkko.sakkinen@linux.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sat, 3 Nov 2018 15:22:34 +0200
-Message-ID: <CAHp75Vcq_L5RYSEDcBSd-q09onp6O6_JU1_2MrZ3sAmyX7XgLQ@mail.gmail.com>
-Subject: Re: [PATCH v15 16/23] x86/sgx: Enumerate and track EPC sections
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        mark.shanahan@intel.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        suresh.b.siddha@intel.com, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 3 Nov 2018 18:34:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51846 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728425AbeKCWe4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 18:34:56 -0400
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6ECD82082D;
+        Sat,  3 Nov 2018 13:23:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541251414;
+        bh=IRJuIrTyRLHkUXVWkpzjpBqgAvg2f3aaSK3GrWimAV4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=AZqi2RVK+snXR2GlHGnQmFluIGWuvtvEXppkPtNHNUIJMA9Hxd0i818HvoPuDYieX
+         Xxtd71hFYjXXNt40iyWz3K9KDGmzwS81e+3ltIkxcJGGNRIjT1JHeztGVJjgndbL9H
+         xcPnishGSjH8v+aYcJqgPT0++bzPFpdSMrRyXBak=
+Date:   Sat, 3 Nov 2018 22:23:29 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Christian Brauner <christian@brauner.io>,
+        Aleksa Sarai <asarai@suse.de>, netdev@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: Re: [PATCH v3 1/2] kretprobe: produce sane stack traces
+Message-Id: <20181103222329.4e2a4188d297724cbb4c9883@kernel.org>
+In-Reply-To: <20181102091658.1bc979a4@gandalf.local.home>
+References: <20181101083551.3805-1-cyphar@cyphar.com>
+        <20181101083551.3805-2-cyphar@cyphar.com>
+        <20181101204720.6ed3fe37@vmware.local.home>
+        <20181102050509.tw3dhvj5urudvtjl@yavin>
+        <20181102065932.bdt4pubbrkvql4mp@yavin>
+        <20181102091658.1bc979a4@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 3, 2018 at 1:17 AM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
->
-> Enumerate Enclave Page Cache (EPC) sections via CPUID and add the data
-> structures necessary to track EPC pages so that they can be allocated,
-> freed and managed.  As a system may have multiple EPC sections, invoke
-> CPUID on SGX sub-leafs until an invalid leaf is encountered.
->
-> On NUMA systems, a node can have at most one bank. A bank can be at
-> most part of two nodes.  SGX supports both nodes with a single memory
-> controller and also sub-cluster nodes with severals memory controllers
-> on a single die.
->
-> For simplicity, support a maximum of eight EPC sections.  Current
-> client hardware supports only a single section, while upcoming server
-> hardware will support at most eight sections.  Bounding the number of
-> sections also allows the section ID to be embedded along with a page's
-> offset in a single unsigned long, enabling easy retrieval of both the
-> VA and PA for a given page.
+On Fri, 2 Nov 2018 09:16:58 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> +       iounmap(section->va);
+> On Fri, 2 Nov 2018 17:59:32 +1100
+> Aleksa Sarai <cyphar@cyphar.com> wrote:
+> 
+> > As an aside, I just tested with the frame unwinder and it isn't thrown
+> > off-course by kretprobe_trampoline (though obviously the stack is still
+> > wrong). So I think we just need to hook into the ORC unwinder to get it
+> > to continue skipping up the stack, as well as add the rewriting code for
+> > the stack traces (for all unwinders I guess -- though ideally we should
+> 
+> I agree that this is the right solution.
+> 
+> > do this without having to add the same code to every architecture).
+> 
+> True, and there's an art to consolidating the code between
+> architectures.
+> 
+> I'm currently looking at function graph and seeing if I can consolidate
+> it too. And I'm also trying to get multiple uses to hook into its
+> infrastructure. I think I finally figured out a way to do so.
 
-> +       section->va = ioremap_cache(addr, size);
-> +       if (!section->va)
-> +               return -ENOMEM;
+For supporting multiple users without any memory allocation, I think
+each user should consume the shadow stack and store on it.
+My old generic retstack implementation did that.
 
-I forgot if it's a place in code on which we discussed ioremap() vs.
-memremap() call.
-And I forgot why the conclusion is to leave ioremap().
+https://github.com/mhiramat/linux/commit/8804f76580cd863d555854b41b9c6df719f8087e
 
-Sorry, if I'm mistaken.
+I hope this may give you any insites.
+My idea is to generalize shadow stack, not func graph tracer, since
+I don't like making kretprobe depends on func graph tracer, but only
+the shadow stack.
+
+> 
+> The reason it is difficult, is that you need to maintain state between
+> the entry of a function and the exit for each task and callback that is
+> registered. Hence, it's a 3x tuple (function stack, task, callbacks).
+> And this must be maintained with preemption. A task may sleep for
+> minutes, and the state needs to be retained.
+
+Would you mean preeempt_disable()? Anyway, we just need to increment index
+atomically, don't we?
+
+> The only state that must be retained is the function stack with the
+> task, because if that gets out of sync, the system crashes. But the
+> callback state can be removed.
+> 
+> Here's what is there now:
+> 
+>  When something is registered with the function graph tracer, every
+>  task gets a shadowed stack. A hook is added to fork to add shadow
+>  stacks to new tasks. Once a shadow stack is added to a task, that
+>  shadow stack is never removed until the task exits.
+> 
+>  When the function is entered, the real return code is stored in the
+>  shadow stack and the trampoline address is put in its place.
+> 
+>  On return, the trampoline is called, and it will pop off the return
+>  code from the shadow stack and return to that.
+> 
+> The issue with multiple users, is that different users may want to
+> trace different functions. On entry, the user could say it doesn't want
+> to trace the current function, and the return part must not be called
+> on exit. Keeping track of which user needs the return called is the
+> tricky part.
+
+So that I think only the "shadow stack" part should be generalized.
+
+> 
+> Here's what I plan on implementing:
+> 
+>  Along with a shadow stack, I was going to add a 4096 byte (one page)
+>  array that holds 64 8 byte masks to every task as well. This will allow
+>  64 simultaneous users (which is rather extreme). If we need to support
+>  more, we could allocate another page for all tasks. The 8 byte mask
+>  will represent each depth (allowing to do this for 64 function call
+>  stack depth, which should also be enough).
+> 
+>  Each user will be assigned one of the masks. Each bit in the mask
+>  represents the depth of the shadow stack. When a function is called,
+>  each user registered with the function graph tracer will get called
+>  (if they asked to be called for this function, via the ftrace_ops
+>  hashes) and if they want to trace the function, then the bit is set in
+>  the mask for that stack depth.
+> 
+>  When the function exits the function and we pop off the return code
+>  from the shadow stack, we then look at all the bits set for the
+>  corresponding users, and call their return callbacks, and ignore
+>  anything that is not set.
+> 
+
+It sounds too complicated... why we don't just open the shadow stack for
+each user? Of course it may requires a bit "repeat" unwind on the shadow
+stack, but it is simple.
+
+Thank you,
+
+> When a user is unregistered, it the corresponding bits that represent
+> it are cleared, and it the return callback will not be called. But the
+> tasks being traced will still have their shadow stack to allow it to
+> get back to normal.
+> 
+> I'll hopefully have a prototype ready by plumbers.
+> 
+> And this too will require each architecture to probably change. As a
+> side project to this, I'm going to try to consolidate the function
+> graph code among all the architectures as well. Not an easy task.
+> 
+> -- Steve
+
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Masami Hiramatsu <mhiramat@kernel.org>
