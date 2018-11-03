@@ -5,103 +5,91 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44863C0044C
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 06:15:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04AAFC0044C
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 06:30:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1CC12081F
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 06:15:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1CC12081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id B16082081B
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 06:30:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B16082081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726883AbeKCPZT (ORCPT
+        id S1727596AbeKCPkV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 11:25:19 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:45320 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726165AbeKCPZT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 11:25:19 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 2D7C9D0E7AF78;
-        Sat,  3 Nov 2018 14:15:02 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.408.0; Sat, 3 Nov 2018
- 14:15:01 +0800
-Subject: Re: [git pull] mount API series
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-CC:     Linus Torvalds <torvalds@linux-foundation.org>,
-        <swhiteho@redhat.com>, <john.johansen@canonical.com>,
-        <alan.christopher.jenkins@gmail.com>, <ebiederm@redhat.com>,
-        <linux-fsdevel@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
-References: <CAHk-=whysoVxJU8+TBw=D3xN00HOOqg-9Chc=i0Pt+Ozm3Z0Tg@mail.gmail.com>
- <20181031053355.GQ32577@ZenIV.linux.org.uk>
- <CAHk-=whAE6gVi18=u4sSWe1m2RWPh19YCkKQmW4Kx+NQX1mg8w@mail.gmail.com>
- <af28fc2c-d207-875e-8070-f64ead878b5a@redhat.com>
- <CAHk-=wjjVRQVZL+QMnb=CyCOY8yzEZ=S1DBCE7=FiiWsQfV_5Q@mail.gmail.com>
- <28156.1541092687@warthog.procyon.org.uk>
- <3549.1541116763@warthog.procyon.org.uk>
- <20181102040701.GX32577@ZenIV.linux.org.uk>
- <20181102194235.GA32577@ZenIV.linux.org.uk>
-From:   Gao Xiang <gaoxiang25@huawei.com>
-Message-ID: <84b73e19-0a85-2408-7974-79300820270d@huawei.com>
-Date:   Sat, 3 Nov 2018 14:14:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <20181102194235.GA32577@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset="utf-8"
+        Sat, 3 Nov 2018 11:40:21 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:46094 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726129AbeKCPkU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 11:40:20 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7882F14525CCC;
+        Fri,  2 Nov 2018 23:30:06 -0700 (PDT)
+Date:   Fri, 02 Nov 2018 23:30:03 -0700 (PDT)
+Message-Id: <20181102.233003.1814045087128749000.davem@davemloft.net>
+To:     jolsa@redhat.com
+Cc:     acme@kernel.org, linux-kernel@vger.kernel.org, namhyung@kernel.org,
+        jolsa@kernel.org
+Subject: Re: [PATCH RFC] hist lookups
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181031.090816.2117345408719881030.davem@davemloft.net>
+References: <20181031124306.GA10660@kernel.org>
+        <20181031153907.GA29893@krava>
+        <20181031.090816.2117345408719881030.davem@davemloft.net>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 02 Nov 2018 23:30:06 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Al,
+From: David Miller <davem@davemloft.net>
+Date: Wed, 31 Oct 2018 09:08:16 -0700 (PDT)
 
-On 2018/11/3 3:42, Al Viro wrote:
-> On Fri, Nov 02, 2018 at 04:07:01AM +0000, Al Viro wrote:
->> On Thu, Nov 01, 2018 at 11:59:23PM +0000, David Howells wrote:
->>
->>>  (*) mount-api-core.  These are the internal-only patches that add the
->>>      fs_context, the legacy wrapper and the security hooks and make certain
->>>      filesystems make use of it.
->>
->> FWIW, while rereading that series I'd spotted something very odd in erofs.
->> It's orthogonal to everything else, but just to make sure it doesn't get
->> lost:
->> 	* sbi->dev_name thing in erofs is used only for debugging printks,
->> basically.  Just use sb->s_id[] and be done with that.
->> 	* dump struct erofs_mount_private - you don't need dev_name in
->> your erofs_fill_super().  Just use mount_bdev() in usual fashion.
->> 	* what the hell are you doing with ->s_root???  Why would you
->> possibly want it hashed and what kind of dcache lookup could find it?
->> That d_rehash() looks deeply confused; what are you trying to do there?
+> From: Jiri Olsa <jolsa@redhat.com>
+> Date: Wed, 31 Oct 2018 16:39:07 +0100
 > 
-> ... and while we are at it, what happens to
->                 unsigned int nameoff = le16_to_cpu(de[mid].nameoff);
->                 unsigned int matched = min(startprfx, endprfx);
+>> it'd be great to make hist processing faster, but is your main target here
+>> to get the load out of the reader thread, so we dont lose events during the
+>> hist processing?
+>> 
+>> we could queue events directly from reader thread into another thread and
+>> keep it (the reader thread) free of processing, focusing only on event
+>> reading/passing 
 > 
->                 struct qstr dname = QSTR_INIT(data + nameoff,
->                         unlikely(mid >= ndirents - 1) ?
->                                 maxsize - nameoff :
->                                 le16_to_cpu(de[mid + 1].nameoff) - nameoff);
-> 
->                 /* string comparison without already matched prefix */
->                 int ret = dirnamecmp(name, &dname, &matched);
-> if le16_to_cpu(de[...].nameoff) is not monotonically increasing?  I.e.
-> what's to prevent e.g. (unsigned)-1 ending up in dname.len?
-> 
-> Corrupted fs image shouldn't oops the kernel...
+> Indeed, we could create threads that take samples from the thread processing
+> the ring buffers, and insert them into the histogram.
 
-Yes, thanks for pointing out. :)
-I will add more boundary check later before moving into fs/ directory...
-erofs now is under dm-verity for our HUAWEI mobile phone, so it doesn't be corruptted.
+So I played around with some ideas like this and ran into some dead ends.
 
-I will add more checks and meta checksum later after EROFS productization successfully... :)
+I ran each mmap ring's processing in a separate thread.
 
-Thanks,
-Gao Xiang
-> 
+This doesn't help at all, the problem is that all the threads serialize
+at the pthread lock for the histogram part of the work.
+
+And the histogram part dominates the cost of processing each sample.
+
+Nevertheless I started work on formally threading all of the code that
+the mmap threads operate on, such as symbol processing etc. and while
+doing so I came to the conclusion that pushing the histogram processing
+only to a separate thread poses it's own set of big challenges.
+
+To make this work we would have to make a piece of transient on-stack
+state (the processed event) into allocated persistent state.
+
+These persistent event structures get queued up to the histogram
+thread(s).
+
+Therefore, if the histogram thread(s) can't keep up (and as per my
+experiment above, it is easy to enter this state because the histogram
+code itself is going to run linearly with the histgram lock held),
+this persistent event memory will just get larger and larger.
+
+We would have to find some way to parallelize the histgram code to
+make any kind of threading worthwhile.
