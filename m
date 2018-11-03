@@ -2,114 +2,178 @@ Return-Path: <SRS0=1exb=NO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE80C0044C
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 17:26:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C34C6786F
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 17:26:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C9DA20848
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 17:26:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF7D520847
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 17:26:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mp5yd+CI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C9DA20848
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ybK8yqLK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF7D520847
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728484AbeKDCiC (ORCPT
+        id S1728668AbeKDCiG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 22:38:02 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38338 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726849AbeKDCiB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 22:38:01 -0400
-Received: by mail-pg1-f196.google.com with SMTP id f8-v6so2348950pgq.5
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Nov 2018 10:26:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=0YWwAMMqiDjM5JRkwFheW4FIHuMEuipJ8KG+gR9CPjo=;
-        b=mp5yd+CImxtbA1QdgSl6hY4y2yKExif0OnWx+S1EGPqGjwRWgFYeOtItHj4ZXl9jDA
-         dPOn534yck/Nw+yH3qbNmBYyFmTdPXCqjZtqnV2j1PPHX7YWJqprogQxvJLOM0UF04BH
-         qjf/wFecvvtF0EzGkhGX5VbHLnLumfnugN8rQqKWz+CxE+iHJGRmONDUYyoCKi6NcXfo
-         LCJspSiALMQcdytHJIZVBR6x59biavfgS2vXNijuSXtDLHloeZ2o1EqjZyGENiQDdZGD
-         wW9AoF5d9ATWUMcZ9AyPCTl5e6E0FxJj+qe/mKG7eVt5gSrSoyshMP0xRGPiGYbksJHB
-         Bh7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=0YWwAMMqiDjM5JRkwFheW4FIHuMEuipJ8KG+gR9CPjo=;
-        b=uEudWBzuvf37e6wKj+D5Fa1prowXtdWz1e+rfRvdZjFifWednX8Zg667Id9wSQto+u
-         MAqjG/yE/t+CXlRJ9PsucATah4bncYYtkO2yypc2I9peas0tWOcDqHEt2U8yimv7A8/K
-         EntCLZQpFuV/E97KiVZoH/GsFqvsBVwirVHyXgpMVlndEOLv5zkyBtnKu03Bfnl/JtJK
-         LwU9JAMHmZHpy+DnZOcbQ+LrqrGcKeMySDjTr+doVLd5XIbtRhW8uIw0oaNVvUS6B6P1
-         67CZEV6iOS7sTr2KaM3LnYv3oDgpP6GZr4tD2c3seCR3EtySVFagSl0l6+KuHZdkCi1o
-         tY3A==
-X-Gm-Message-State: AGRZ1gLkUyrqt++cqwH2Gk9fsivlxnLn9jhLnKMnyfzmxJIGnudU103/
-        ehex4eUuLtKLDRdTf5rjOUi8GoVPVqE=
-X-Google-Smtp-Source: AJdET5fRKoT9rVVClfG7tDKno/RKRttMxH/LOqgXcgyoHG5uxNMvbJGvFLoemhWgH7RnO0dTXBjwiw==
-X-Received: by 2002:a63:df50:: with SMTP id h16mr14838854pgj.421.1541265968661;
-        Sat, 03 Nov 2018 10:26:08 -0700 (PDT)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id 74-v6sm55704761pfx.182.2018.11.03.10.26.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 03 Nov 2018 10:26:07 -0700 (PDT)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     mingo@redhat.com, peterz@infradead.org
-Cc:     linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] sched/core: remove unnecessary unlikely() in push_xx_task
-Date:   Sat,  3 Nov 2018 13:26:02 -0400
-Message-Id: <20181103172602.1917-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Sat, 3 Nov 2018 22:38:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36672 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726849AbeKDCiF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 22:38:05 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4ED0A204FD;
+        Sat,  3 Nov 2018 17:26:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541265971;
+        bh=kuc9C/0qV+PN3bkwh9XQAJgZvMzmN2Dg4arNG8URwL8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ybK8yqLKFMaXhTUqRusLO/LN8Sto4f1IQrWFAGBJEECHxb1fH5XtMQ8xBJ3GlR2dE
+         i00YeEMyS1Oows1QPKFP7RJzw0RAn0z9V/iQYXs6Ovh3u/sI9VTAmZAc5eXi37L0zH
+         A4wb3Qk9ELDS4jR6D12nquuD2+kWJhDJ2Cqg0iwY=
+Date:   Sat, 3 Nov 2018 17:26:06 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Matheus Tavares Bernardino <matheus.bernardino@usp.br>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com,
+        Victor Colombo <victorcolombo@gmail.com>
+Subject: Re: [PATCH v2 5/6] staging:iio:ad2s90: Add IIO_CHAN_INFO_SCALE to
+ channel spec and read_raw
+Message-ID: <20181103172606.364fc1b0@archlinux>
+In-Reply-To: <CAHd-oW4wki7am70DHFWb0GjOCtptRYRfAO2BG=32=YBBeAyASg@mail.gmail.com>
+References: <20181027020005.3140-1-matheus.bernardino@usp.br>
+        <20181027020005.3140-6-matheus.bernardino@usp.br>
+        <20181028165040.27c69fc5@archlinux>
+        <CAHd-oW4wki7am70DHFWb0GjOCtptRYRfAO2BG=32=YBBeAyASg@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-WARN_ON() already contains an unlikely(), so it's not necessary to
-use WARN_ON(1).
+On Sat, 3 Nov 2018 13:04:04 -0300
+Matheus Tavares Bernardino <matheus.bernardino@usp.br> wrote:
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- kernel/sched/deadline.c | 4 +---
- kernel/sched/rt.c       | 4 +---
- 2 files changed, 2 insertions(+), 6 deletions(-)
+> On Sun, Oct 28, 2018 at 1:50 PM Jonathan Cameron <jic23@kernel.org> wrote:
+> >
+> > On Fri, 26 Oct 2018 23:00:04 -0300
+> > Matheus Tavares <matheus.bernardino@usp.br> wrote:
+> >  
+> > > This patch adds the IIO_CHAN_INFO_SCALE mask to ad2s90_chan and
+> > > implements the relative read behavior at ad2s90_read_raw.
+> > >
+> > > Signed-off-by: Victor Colombo <victorcolombo@gmail.com>
+> > > Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>  
+> >
+> > Hi,
+> >
+> > A suggestion inline.  This is a common case that we have infrastructure
+> > to simplify.  + I think your scale factor is very slightly wrong.
+> >
+> > Jonathan
+> >  
+> > > ---
+> > >  drivers/staging/iio/resolver/ad2s90.c | 32 ++++++++++++++++++---------
+> > >  1 file changed, 22 insertions(+), 10 deletions(-)
+> > >
+> > > diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/staging/iio/resolver/ad2s90.c
+> > > index b4a6a89c11b0..52b656875ed1 100644
+> > > --- a/drivers/staging/iio/resolver/ad2s90.c
+> > > +++ b/drivers/staging/iio/resolver/ad2s90.c
+> > > @@ -34,19 +34,31 @@ static int ad2s90_read_raw(struct iio_dev *indio_dev,
+> > >       int ret;
+> > >       struct ad2s90_state *st = iio_priv(indio_dev);
+> > >
+> > > -     mutex_lock(&st->lock);
+> > > +     switch (m) {
+> > > +     case IIO_CHAN_INFO_SCALE:
+> > > +             /* 2 * Pi / (2^12 - 1) ~= 0.001534355 */
+> > > +             *val = 0;
+> > > +             *val2 = 1534355;  
+> > Definitely 2^12 - 1?  That's a bit unusual if true as it would imply
+> > that 2^12 - 1 and 0 were the same value.
+> >
+> > Imagine a smaller version with on 2^2 bits so 0, 1, 2, 3
+> > Values of each are
+> >
+> > 0, M_PI/2, M_PI, 3*M_PI/2
+> >
+> > So the multiplier is 2*M_PI/(2^2) not 2*M_PI/(2^2 - 1)
+> > 1/2 vs 2/3 * M_PI  
+> 
+> Oh, that makes a lot of sense! We used 2^12 - 1 here based on driver
+> drivers/iio/resolver/ad2s1200.c, whose resolution is also 12 bits, as
+> the ad2s90.c. Do you think this section is, perhaps, wrong on
+> ad2s1200.c too, or maybe there is some difference between these two
+> drivers that I didn't catch regarding the resolution?
+Certainly seems likely to be wrong.  Difference is tiny so no one
+probably ever noticed :(
 
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 91e4202b0634..8b5d964d59c5 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -2041,10 +2041,8 @@ static int push_dl_task(struct rq *rq)
- 		return 0;
- 
- retry:
--	if (unlikely(next_task == rq->curr)) {
--		WARN_ON(1);
-+	if (WARN_ON(next_task == rq->curr))
- 		return 0;
--	}
- 
- 	/*
- 	 * If next_task preempts rq->curr, and rq->curr
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 2e2955a8cf8f..0efd58563c80 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -1810,10 +1810,8 @@ static int push_rt_task(struct rq *rq)
- 		return 0;
- 
- retry:
--	if (unlikely(next_task == rq->curr)) {
--		WARN_ON(1);
-+	if (WARN_ON(next_task == rq->curr))
- 		return 0;
--	}
- 
- 	/*
- 	 * It's possible that the next_task slipped in of
--- 
-2.17.0
+Feel free to post a patch fixing that one as well!
+
+Thanks,
+
+Jonathan
+
+> 
+> Matheus.
+> 
+> > Now this is a very common case so we have the return type
+> > IIO_VAL_FRACTIONAL_LOG2 to give a more obvious and potentially
+> > more accurate representation.
+> >  
+> > > +             return IIO_VAL_INT_PLUS_NANO;
+> > > +     case IIO_CHAN_INFO_RAW:
+> > > +             mutex_lock(&st->lock);
+> > > +
+> > > +             ret = spi_read(st->sdev, st->rx, 2);
+> > > +             if (ret < 0) {
+> > > +                     mutex_unlock(&st->lock);
+> > > +                     return ret;
+> > > +             }
+> > > +
+> > > +             *val = (((u16)(st->rx[0])) << 4) | ((st->rx[1] & 0xF0) >> 4);
+> > >
+> > > -     ret = spi_read(st->sdev, st->rx, 2);
+> > > -     if (ret < 0) {
+> > >               mutex_unlock(&st->lock);
+> > > -             return ret;
+> > > -     }
+> > >
+> > > -     *val = (((u16)(st->rx[0])) << 4) | ((st->rx[1] & 0xF0) >> 4);
+> > > -
+> > > -     mutex_unlock(&st->lock);
+> > > +             return IIO_VAL_INT;
+> > > +     default:
+> > > +             break;
+> > > +     }
+> > >
+> > > -     return IIO_VAL_INT;
+> > > +     return -EINVAL;
+> > >  }
+> > >
+> > >  static const struct iio_info ad2s90_info = {
+> > > @@ -57,7 +69,7 @@ static const struct iio_chan_spec ad2s90_chan = {
+> > >       .type = IIO_ANGL,
+> > >       .indexed = 1,
+> > >       .channel = 0,
+> > > -     .info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> > > +     .info_mask_separate = BIT(IIO_CHAN_INFO_RAW) | BIT(IIO_CHAN_INFO_SCALE),
+> > >  };
+> > >
+> > >  static int ad2s90_probe(struct spi_device *spi)  
+> >  
 
