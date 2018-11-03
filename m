@@ -2,105 +2,108 @@ Return-Path: <SRS0=1exb=NO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E35DC0044C
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 21:21:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB4EDC6786F
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 21:22:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C731120843
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 21:21:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="Eh+Xte2X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C731120843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 97E7E2081F
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 21:22:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97E7E2081F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727164AbeKDGdt (ORCPT
+        id S1727281AbeKDGfD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 01:33:49 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38079 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbeKDGdt (ORCPT
+        Sun, 4 Nov 2018 01:35:03 -0500
+Received: from mout.kundenserver.de ([212.227.17.10]:52977 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbeKDGfC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 01:33:49 -0500
-Received: by mail-pl1-f196.google.com with SMTP id p4-v6so187782plo.5
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Nov 2018 14:21:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=CzPngopffJOD3tB4KK8NZH5GIHivE9K5b8Fb9M0G200=;
-        b=Eh+Xte2Xbnydte3x5bWf5fkvFv7Sy0t8lcu6GCDeDB3TsbjciFnkVFN6N4pdTBMS7C
-         /WNnYs3wwG2O4+UGiWWcu4PO5FBasVYBRHVhl23Ple/kltSVp3W+gJiqbYjb+vgoyki7
-         TGXMI5BDvobCl7MUOuCLh0KiL2aIT99eGX6RCP/ot5zch09Yt5g87HRPKS68dNXGEXYv
-         miD0herBKYgBksVYnMVZn1tdFTyHp/Iakz7JiCnMH7pEB+xXEtAjNPK3kkBo8893TL61
-         vlYJ056wLNtbKGc9a991s2EZTPG7OOgWLB0kXIhUFE5aMzU3K4Bh0DCRbUBl+ZWZ+IXX
-         E/Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=CzPngopffJOD3tB4KK8NZH5GIHivE9K5b8Fb9M0G200=;
-        b=fJGekFZDIlmTNkj4wRmh8maQeERs8ZblSfVdL83vEb+ov9pWhTHQ9mHQv2vCdzqQDt
-         G0BlDGOEI2XlRZ6JqB1848X4H8li4kWGJm9Hj5nwk5DcE35yLljZsG0r7cSQ/5KlJ0bk
-         LAPXHHwlbT1r5e/2fwti5dQwGUOVXWDXpNNbpj2aiQVLb3ljy9HbiPTwpm5St3BWUau+
-         zdb0D5/vn+nBxtkbJuS/xlohh6ytkPZXcaOxm+sa4FpMnmziYCdsbzdgVA8f1DbdAtIS
-         Z8l1ZSXo3qjovUx06Ny6zBOTOwwI/5AMoXbS4ubXsASC6XJpNMUcUZB+GeNx2CaHe3LM
-         60OQ==
-X-Gm-Message-State: AGRZ1gKFQ/jdpT1DKSaoh+j0YzA6y7UGRLRm0DQ1G1cz0LtHOxWGRbJ6
-        VRxJkxAAoj2U43yRPnowD+i6Jg==
-X-Google-Smtp-Source: AJdET5fYcLGGCED1ozXYhdGjqgoM2+kcgpRHSX+VtSq1rjC8on6Ne2f3kmiGhQEv1lwbh5yUR11V2Q==
-X-Received: by 2002:a17:902:bcc4:: with SMTP id o4-v6mr12076531pls.13.1541280080614;
-        Sat, 03 Nov 2018 14:21:20 -0700 (PDT)
-Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
-        by smtp.gmail.com with ESMTPSA id v19-v6sm42113720pgl.80.2018.11.03.14.21.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 03 Nov 2018 14:21:19 -0700 (PDT)
-Subject: Re: [PATCH 0/4] irq: fix support for allocating sets of IRQs
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     linux-block@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>
-References: <20181102145951.31979-1-ming.lei@redhat.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <955edd2f-ad2f-ae8b-b8c2-98a01918c112@kernel.dk>
-Date:   Sat, 3 Nov 2018 15:21:17 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181102145951.31979-1-ming.lei@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sun, 4 Nov 2018 01:35:02 -0500
+Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1Mk178-1fqdUU31mS-00kNkD; Sat, 03 Nov 2018 22:21:42 +0100
+Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1Mk178-1fqdUU31mS-00kNkD; Sat, 03 Nov 2018 22:21:42 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: Intel: mrfld: fix uninitialized variable access
+Date:   Sat,  3 Nov 2018 22:21:22 +0100
+Message-Id: <20181103212140.890081-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+X-Provags-ID: V03:K1:Pk5aNWkpTapeDiotbwA0EVAWE9C4BExUYHaanHRQV7J5dt0G5Aa
+ Uw0JKQi3PTBOqT/Y1D11E215GmanctkBSd3RluS7TwXhk0TwPV1TUJt3a5H6F6SELnL83jo
+ zmUNtVk/yrK8zy0aL1G7715b06b7aVJN5bS274UzUDR7NOQxuBxnqhepVbNWGMyBmf2OvYl
+ jp2T52TyFaNy/xNqxyDzA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:d2nEmYLaZpQ=:Gj38oqf5TV7f/AI5yFS5gy
+ DDfQp7BTi8eRzG4gVQPfbRoD7lte0MYOYsLVyFb5NtwNGHFLfUPhrSRUpoG5SxA52TMrksZ30
+ f42F0wedgo+PApFzIrcqU5eWxj3QOkMLI2JihlTd+mxbbjiBAo4JIT7FN7ZUadrthQHX7ukND
+ ZqNyCjxxfmGfeJfxTueVqU+X+RT0fRzjKjuec4UTeVadgj/lEBYnV/GcgzN4q2GigvABONu0E
+ a6mfrRay1JKgxW4Wx2+FVOZbVQD7XLUzO0OJBSmvLhItz1ODKEpS44VBvWn7XWDfmIgX4N8c0
+ dQxCmJCktZJ57z1y8o9/oDLABbqIfuC1w/vyfdy8CcUPbUnjUQIneiw2RbA3I+7B5horbFrLp
+ jg88t7ZD8hdMyYPeOUwqf8TRKZcNmz6GCdFuk8Tfas5FqclEipGzEnZPF6jLVJHmjVlOLXunl
+ XLFOv8drNFlah2t4JD5znRQcPl5WhqXeT+UGeD2JJgw8cqdbpezWOG2iUlCHu8KpLcbXpB3Pf
+ 3qURKDtR6Og0ZxHxL1uwlwXow3qOFF+gIvXzUAnDipvIkaau0krVM0PcqkEPxjBojttxn2YJO
+ V/lYlpf6RXN3Qyb3SQaAMUp9AdbbWohExjGNIylJn/xKwIEw38bjQo1VtM28RGij4m80m/Q/V
+ Z+zJAtnhsSeAUIn4GV/LJF48ezXxQe7iMuhBpDqI0bQcuLLriM15YErYUqS1EFnOg6R8ZY0CI
+ 3nEW2vzzvXFkjxWxAKglpzkR3P3EPC9kGTORMy+6EXtlynZgDTQZMT9HC5E35hp5bYwyiSXHm
+ UCVgtPp
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/2/18 8:59 AM, Ming Lei wrote:
-> Hi Jens,
-> 
-> As I mentioned, there are at least two issues in the patch of '
-> irq: add support for allocating (and affinitizing) sets of IRQs':
-> 
-> 1) it is wrong to pass 'mask + usedvec' to irq_build_affinity_masks()
-> 
-> 2) we should spread all possible CPUs in 2-stage way on each set of IRQs
-> 
-> The fix isn't trivial, and I introduce two extra patches as preparation,
-> then the implementation can be more clean.
-> 
-> The patchset is against mq-maps branch of block tree, feel free to
-> integrate into the whole patchset of multiple queue maps.
+Randconfig testing revealed a very old bug, with gcc-8:
 
-Thanks Ming, I ran this through my testing, and I end up with the
-same maps and affinities for all the cases I cared about. I'm going
-to drop my initial version, and add the three.
+sound/soc/intel/atom/sst/sst_loader.c: In function 'sst_load_fw':
+sound/soc/intel/atom/sst/sst_loader.c:357:5: error: 'fw' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  if (fw == NULL) {
+     ^
+sound/soc/intel/atom/sst/sst_loader.c:354:25: note: 'fw' was declared here
+  const struct firmware *fw;
 
+We must check the return code of request_firmware() before we look at the
+pointer result that may be uninitialized when the function fails.
+
+Fixes: 9012c9544eea ("ASoC: Intel: mrfld - Add DSP load and management")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ sound/soc/intel/atom/sst/sst_loader.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/sound/soc/intel/atom/sst/sst_loader.c b/sound/soc/intel/atom/sst/sst_loader.c
+index 27413ebae956..b8c456753f01 100644
+--- a/sound/soc/intel/atom/sst/sst_loader.c
++++ b/sound/soc/intel/atom/sst/sst_loader.c
+@@ -354,14 +354,14 @@ static int sst_request_fw(struct intel_sst_drv *sst)
+ 	const struct firmware *fw;
+ 
+ 	retval = request_firmware(&fw, sst->firmware_name, sst->dev);
+-	if (fw == NULL) {
+-		dev_err(sst->dev, "fw is returning as null\n");
+-		return -EINVAL;
+-	}
+ 	if (retval) {
+ 		dev_err(sst->dev, "request fw failed %d\n", retval);
+ 		return retval;
+ 	}
++	if (fw == NULL) {
++		dev_err(sst->dev, "fw is returning as null\n");
++		return -EINVAL;
++	}
+ 	mutex_lock(&sst->sst_lock);
+ 	retval = sst_cache_and_parse_fw(sst, fw);
+ 	mutex_unlock(&sst->sst_lock);
 -- 
-Jens Axboe
+2.18.0
 
