@@ -2,118 +2,120 @@ Return-Path: <SRS0=1exb=NO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB2BBC0044C
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 15:40:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B162C0044C
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 15:46:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64A422082E
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 15:40:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64A422082E
+	by mail.kernel.org (Postfix) with ESMTP id F347A20833
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 15:46:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jn7mr5np"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F347A20833
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728425AbeKDAwW (ORCPT
+        id S1728445AbeKDA5x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 20:52:22 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:44343 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726387AbeKDAwW (ORCPT
+        Sat, 3 Nov 2018 20:57:53 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:44396 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726828AbeKDA5x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 20:52:22 -0400
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MhFpq-1ffnn81P50-00ePyg; Sat, 03 Nov 2018 16:39:44 +0100
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MhFpq-1ffnn81P50-00ePyg; Sat, 03 Nov 2018 16:39:44 +0100
+        Sat, 3 Nov 2018 20:57:53 -0400
+Received: by mail-qk1-f194.google.com with SMTP id n12so7908417qkh.11
+        for <linux-kernel@vger.kernel.org>; Sat, 03 Nov 2018 08:46:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=ctP2kVziwErnRs1fJFH4r1u1c1scRAxuGV5TwHB8MrY=;
+        b=Jn7mr5nph0qoJrsTSZdywFCunT7slNv6jmZYcj8RWOaIs8ukB/+os7GhiqO8ASsNwQ
+         tKSq5CuWKOThZ2cyuoeMqxrGnFNPVkDl+d9COjxMxGBSOh9mpwNi5JQ60//dK4M4a+yK
+         LUY7Ae36pBBhPLGn3Xo0nNi8avOb7l4r6N9Hbw/iKjgVS3HoAH7v4XxKLAXV3gNIsFdu
+         zaOrtY3f54HibmDwAMJXIvqPuvN7hrBmK1rBxux7cxkJE/DSVhbYtm5MaIMxPQBdIP2h
+         KXSFR01oFttNhv/QztyUUId6Rx4GWhIu5d6quyJ8hLG3x2OwJol1eh4aZH5kV9xmnehs
+         8DRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=ctP2kVziwErnRs1fJFH4r1u1c1scRAxuGV5TwHB8MrY=;
+        b=Ns2Kw2Jqa9PKbuFdAHO01JALcDGoJpBse/dgEfJ6liuqCti3RaTkO3aYPm1PTvOjek
+         O1FlZt3XqaGdX3BXyhsfd8N1+buaMKX+2xeQ7LZ+0gflRY/nutmOHU8wVfKSOUZLci4R
+         DgSfRDpFjPa/bGUVr1caSG4HJS76WzdnK6KI5blfpES9O1Ue0107aIcs03D0A8KB5pea
+         u66Abb1kWcCOd3uuO3pOQoa/H0jpKSWHHqDI5SYNEg2GnotmfMMX32gxzLbbHNE+6ud9
+         snjzkoFg1MEVwCnQ8d6Jx6Mn+OwJtqjP6FwTiwx6Zu9ht9PFTBmWIjyh75PxI9NP4Bkq
+         ZLEA==
+X-Gm-Message-State: AGRZ1gLbwYwr1Gu4mq2rroPs7D2knJZ39q1BEkis2gHh6WsjQuSs5dbD
+        +Ls1xvy++P0WW1eQ57gvF5iR50sYGHXD8LIm/mU=
+X-Google-Smtp-Source: AJdET5cuVCMLf4T1GOxmPRkycRebYGmetznvFzHIdoGfZPgZYFFJt946YJGg/RRYymP5tc60S1LP5FWdwYxmSYNZaUg=
+X-Received: by 2002:a37:324a:: with SMTP id y71mr804666qky.291.1541259972676;
+ Sat, 03 Nov 2018 08:46:12 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a0c:9881:0:0:0:0:0 with HTTP; Sat, 3 Nov 2018 08:46:12 -0700 (PDT)
+In-Reply-To: <20181103000357.delj5z56zxrkcpeg@mail.google.com>
+References: <20181102155710.2299475-1-arnd@arndb.de> <20181103000357.delj5z56zxrkcpeg@mail.google.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Changbin Du <changbin.du@gmail.com>,
-        Anand Jain <anand.jain@oracle.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Misono Tomohiro <misono.tomohiro@jp.fujitsu.com>,
-        Qu Wenruo <wqu@suse.com>, Gu Jinxiang <gujx@cn.fujitsu.com>,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] btrfs: avoid link error with CONFIG_NO_AUTO_INLINE
-Date:   Sat,  3 Nov 2018 16:39:28 +0100
-Message-Id: <20181103153941.1881966-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:o0s43alg2CmSZfnHbceckR/8/LE9rv/C42zZLrgYHG1pe/hSYLS
- l7DsR63kDoDr8oejtdztazlLiftwKcou/yKTcE8ghJxPCEgm95spinPfGNYQ4QsrDOhRaPF
- ZFe6UZgU0IEoyMCW+qwANns0ONbznDXpDSan1JopqXEPbHy3ZuEl7K9H35H6IdsVCmhnPkE
- aqYyDq1lJYEEMYfv3gf7A==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:CfvA1z32yn0=:lgyLCsLsPtMfoX+ESveCQo
- WMNZlcHP+8dfgneCVsdgIQgDoO4Wd52RtSFkaYle/yqqLRltXA0lwYmKXtn+x9S3Y+paqt6k3
- ZGO89Thaytv3a7iX+CCISIsMN+CQOpXz6yZwPBoB+JmFmkTmb3NrJJojYL4HN5h9s7/31Wz1l
- K7Zg3R6x/tZNQXRws0V6S1rW3Vc7SGsBi5pZNTQMTlt/blKu7+g7Ncx0KklIh14cISmd/CRQ2
- iC3nWF2JLx/Kli1A6Ph5U+hYCgp8fBII0CKiCZSFr+qfk88qlmcUQHDnObymn2NXfz7MGc3p8
- xGdWaBI+y6tVvvk/TyFMmvLUOiNHnjpZM9LhSVVTiMxptbwaY5s1CBA27Lpg/CP9Rd0RGpsHF
- NsiugMS6tAbhS/ohr6QEGZ3CoiTY+JStiQtjLWgTegwxzVCjmyI0YS3YwfshnAJCBYoIm6Df4
- 4NdquzF2YCt50+0h5iooD9Hl6Bq4ka1/Ep8klq3M5iUiS3fACxjjU04wM63OfykW71riuajhR
- uixFSuzPdTcpMUMgEzLbkkktNcBn1iAchlnZPey8PNMK1pwXg2qMKQwuT3zI+ZxZFP8qvgt2K
- dj9Mme1iYUKaUycZ0YgFVkhaRxVol/pFy+OuJ6SZ+1zwerTMjxyZTk74yiOgUICd3PlvEgfES
- JGBr/Rx68k+ePY+bxJaebKugYso/4yUpvc+8bqTGGwQxWt3WMErYu5k5jRnzZ6Jy6VHg=
+Date:   Sat, 3 Nov 2018 16:46:12 +0100
+X-Google-Sender-Auth: gJ0nDmmpZIdW6AFWgy1t_pUv4J8
+Message-ID: <CAK8P3a2L4DsaSU5H7ZPQxSNUc1=Nw5yAfVjDYe1y86T0s0kK4w@mail.gmail.com>
+Subject: Re: [PATCH] copy_{to,from}_user(): fix compile-time sanity checks
+ with gcc -Og
+To:     Changbin Du <changbin.du@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        =?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 32-bit ARM with gcc-8, I see a link error with the addition of the
-CONFIG_NO_AUTO_INLINE option:
+On 11/3/18, Changbin Du <changbin.du@gmail.com> wrote:
+> On Fri, Nov 02, 2018 at 04:56:58PM +0100, Arnd Bergmann wrote:
+>> When CONFIG_CC_OPTIMIZE_FOR_DEBUGGING is set, we get countless warnings
+>> like
+>>
+>> In function 'check_copy_size',
+>>     inlined from 'copy_from_user' at include/linux/uaccess.h:146:6,
+>>     inlined from '__copy_siginfo_from_user' at kernel/signal.c:3032:6:
+>> include/linux/thread_info.h:147:4: error: call to '__bad_copy_to' declared
+>> with attribute error: copy destination size is too small
+>>
+>> It seems that constant propagation doesn't work well enough to make
+>> this code reliable, so turn it off for that configuration.
+>>
+> This is caused by __compiletime_warning() and fixed by below change
+> already. Could you try the latest kbuild tree?
+>
+> --- a/include/linux/compiler-gcc.h
+> +++ b/include/linux/compiler-gcc.h
+> @@ -86,8 +86,10 @@
+>  #define __compiletime_object_size(obj) __builtin_object_size(obj, 0)
+>
+>  #ifndef __CHECKER__
+> +#ifndef CONFIG_CC_OPTIMIZE_FOR_DEBUGGING
+>  #define __compiletime_warning(message) __attribute__((warning(message)))
+>  #define __compiletime_error(message) __attribute__((error(message)))
+> +#endif
 
-fs/btrfs/super.o: In function `btrfs_statfs':
-super.c:(.text+0x67b8): undefined reference to `__aeabi_uldivmod'
-super.c:(.text+0x67fc): undefined reference to `__aeabi_uldivmod'
-super.c:(.text+0x6858): undefined reference to `__aeabi_uldivmod'
-super.c:(.text+0x6920): undefined reference to `__aeabi_uldivmod'
-super.c:(.text+0x693c): undefined reference to `__aeabi_uldivmod'
-fs/btrfs/super.o:super.c:(.text+0x6958): more undefined references to `__aeabi_uldivmod' follow
+Right, that works as well, but my version is a bit less invasive as it
+only disables the __compiletime_error in the one file that introduced
+the regression, and not all of them. I have built hundreds of randconfig
+builds and found no other problem with __compiletime_error(), though
+I did find a bunch of (correct) section mismatch warnings and
+false-positive -Wformat-overflow= warnings with
+CONFIG_CC_OPTIMIZE_FOR_DEBUGGING (patches pending).
 
-So far this is the only file that shows the behavior, so I'd propose
-to just work around it by marking the functions as 'static inline'
-that normally get inlined here.
+I also got some link errors for which I already posted patches.
 
-The reference to __aeabi_uldivmod comes from a div_u64() which has an
-optimization for a constant division that uses a straight '/' operator
-when the result should be known to the compiler. My interpretation is
-that as we turn off inlining, gcc still expects the result to be constant
-but fails to use that constant value.
-
-Cc: Changbin Du <changbin.du@gmail.com>
-Fixes: 943b8435c3bd ("kernel hacking: add a config option to disable compiler auto-inlining")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/btrfs/super.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index c3c1e7bee49d..b7af0b8936ad 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -1922,7 +1922,7 @@ static int btrfs_remount(struct super_block *sb, int *flags,
- }
- 
- /* Used to sort the devices by max_avail(descending sort) */
--static int btrfs_cmp_device_free_bytes(const void *dev_info1,
-+static inline int btrfs_cmp_device_free_bytes(const void *dev_info1,
- 				       const void *dev_info2)
- {
- 	if (((struct btrfs_device_info *)dev_info1)->max_avail >
-@@ -1951,8 +1951,8 @@ static inline void btrfs_descending_sort_devices(
-  * The helper to calc the free space on the devices that can be used to store
-  * file data.
-  */
--static int btrfs_calc_avail_data_space(struct btrfs_fs_info *fs_info,
--				       u64 *free_bytes)
-+static inline int btrfs_calc_avail_data_space(struct btrfs_fs_info *fs_info,
-+					      u64 *free_bytes)
- {
- 	struct btrfs_device_info *devices_info;
- 	struct btrfs_fs_devices *fs_devices = fs_info->fs_devices;
--- 
-2.18.0
-
+       Arnd
