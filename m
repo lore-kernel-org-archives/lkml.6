@@ -2,297 +2,416 @@ Return-Path: <SRS0=1exb=NO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EF70C0044C
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 21:00:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A785C0044C
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 21:06:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEF692081F
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 21:00:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEF692081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
+	by mail.kernel.org (Postfix) with ESMTP id 6DA4D204FD
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 21:06:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DA4D204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727098AbeKDGNK (ORCPT
+        id S1727123AbeKDGTW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 01:13:10 -0500
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:49537 "EHLO
-        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbeKDGNK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 01:13:10 -0500
-Received: from [88.147.30.68] (port=45068 helo=[192.168.77.57])
-        by srv-hp10.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1gJ322-003e8j-Tm; Sat, 03 Nov 2018 22:00:35 +0100
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Subject: Re: [PATCH 2/7] dt-bindings: mfd: ds90ux9xx: add description of TI
- DS90Ux9xx I2C bridge
-To:     Vladimir Zapolskiy <vz@mleia.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-References: <20181008211205.2900-1-vz@mleia.com>
- <20181008211205.2900-3-vz@mleia.com>
- <b9a617da-1712-2d28-d25c-e3c413a4e9f0@lucaceresoli.net>
- <2c90affe-0972-751d-8312-3d15d130c3fb@mleia.com>
-Message-ID: <4b235b04-e2ec-3dc4-892a-2ea6c87ff288@lucaceresoli.net>
-Date:   Sat, 3 Nov 2018 22:00:36 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sun, 4 Nov 2018 01:19:22 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56214 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726622AbeKDGTW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 01:19:22 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E1871ACBD;
+        Sat,  3 Nov 2018 21:06:52 +0000 (UTC)
+From:   NeilBrown <neil@brown.name>
+To:     paulmck@linux.ibm.com
+Date:   Sun, 04 Nov 2018 08:06:41 +1100
+Cc:     Josh Triplett <josh@joshtriplett.org>,
+        Mishi Choudhary <mishi@linux.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        ksummit-discuss@lists.linuxfoundation.org
+Subject: Re: [Ksummit-discuss] Call to Action Re: [PATCH 0/7] Code of Conduct: Fix some wording, and add an interpretation document
+In-Reply-To: <20181103173756.GG4170@linux.ibm.com>
+References: <87y3ar80ac.fsf@notabene.neil.brown.name> <20181021222608.GA24845@localhost> <875zxt919d.fsf@notabene.neil.brown.name> <20181024121622.GA10942@localhost> <87ftwt6850.fsf@notabene.neil.brown.name> <20181027011010.GA29769@localhost> <20181101164544.GA31540@linux.ibm.com> <8736sk31t8.fsf@notabene.neil.brown.name> <20181102133309.GQ4170@linux.ibm.com> <87lg6a1rss.fsf@notabene.neil.brown.name> <20181103173756.GG4170@linux.ibm.com>
+Message-ID: <87d0rl27mm.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-In-Reply-To: <2c90affe-0972-751d-8312-3d15d130c3fb@mleia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vladimir,
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-On 31/10/18 21:12, Vladimir Zapolskiy wrote:
-> Hi Luca,
-> 
-> thank you for review.
-> 
-> On 10/30/2018 06:43 PM, Luca Ceresoli wrote:
->> Hi Vladimir,
->>
->> On 08/10/18 23:12, Vladimir Zapolskiy wrote:
->>> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
->>>
->>> TI DS90Ux9xx de-/serializers are capable to route I2C messages to
->>> I2C slave devices connected to a remote de-/serializer in a pair,
->>> the change adds description of device tree bindings of the subcontroller
->>> to configure and enable this functionality.
->>>
->>> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
->>> ---
->>>  .../bindings/mfd/ti,ds90ux9xx-i2c-bridge.txt  | 61 +++++++++++++++++++
->>>  1 file changed, 61 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/mfd/ti,ds90ux9xx-i2c-bridge.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx-i2c-bridge.txt b/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx-i2c-bridge.txt
->>> new file mode 100644
->>> index 000000000000..4169e382073a
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx-i2c-bridge.txt
->>> @@ -0,0 +1,61 @@
->>> +TI DS90Ux9xx de-/serializer I2C bridge subcontroller
->>> +
->>> +Required properties:
->>> +- compatible: Must contain a generic "ti,ds90ux9xx-i2c-bridge" value and
->>> +	may contain one more specific value from the list:
->>> +	"ti,ds90ux925-i2c-bridge",
->>> +	"ti,ds90ux926-i2c-bridge",
->>> +	"ti,ds90ux927-i2c-bridge",
->>> +	"ti,ds90ux928-i2c-bridge",
->>> +	"ti,ds90ux940-i2c-bridge".
->>> +
->>> +Required properties of a de-/serializer device connected to a local I2C bus:
->>> +- ti,i2c-bridges: List of phandles to remote de-/serializer devices with
->>> +	two arguments: id of a local de-/serializer FPD link and an assigned
->>> +	I2C address of a remote de-/serializer to be accessed on a local
->>> +	I2C bus.
->>> +
->>> +Optional properties of a de-/serializer device connected to a local I2C bus:
->>> +- ti,i2c-bridge-maps: List of 3-cell values:
->>> +	- the first argument is id of a local de-/serializer FPD link,
->>> +	- the second argument is an I2C address of a device connected to
->>> +	  a remote de-/serializer IC,
->>> +	- the third argument is an I2C address of the remote I2C device
->>> +	  for access on a local I2C bus.
->>
->> BTW I usually use names "remove slave" address and "alias" for bullets 2
->> and 3. These are the names from the datasheets, and are clearer IMO.
->>
-> 
-> Definitely you are correct, I find that verbose descriptions might be
-> more appropriate and self-explanatory for anyone, who is not closely familiar
-> with the IC series. I'll consider to add the names from the datasheets
-> as well.
-> 
->> Now to the big stuff.
->>
->> I find a static map in the "local" chip DT node is a limit. You might
->> have to support multiple models of remote device, where you'll know the
->> model only when after it gets connected. Think Beaglebone capes, but
->> over FPD-Link 3. This scenario opens several issues, but specifically
->> for I2C address mapping I addressed it by adding in the "local" chip's
->> DT node a pool of I2C aliases it can use. The DT author is responsible
->> to pick addresses that are not used on the same I2C bus, which cannot be
->> done at runtime reliably.
-> 
-> Here I see several important topics raised.
-> 
-> 1) A static map in the "local" chip DT node is not a limit in sense that
->    it is optional, so it would be a working model just to omit the property,
->    however it may (or may not) require another handlers to bridge remote
->    I2C devices, for instance 'ti,i2c-bridge-pass-all' property, or new
->    UAPI.
+On Sat, Nov 03 2018, Paul E. McKenney wrote:
 
-Do you mean when the "pass-all" method and the "static map in the local
-node" method are insufficient, then the solution is to implement a third
-method that is powerful enough? If that's what you mean, then I think we
-should rather [try to] implement from the beginning a method that is
-powerful enough to handle all the cases we can foresee.
+> On Sat, Nov 03, 2018 at 07:36:19PM +1100, NeilBrown wrote:
+>> On Fri, Nov 02 2018, Paul E. McKenney wrote:
+>>=20
+>> > On Fri, Nov 02, 2018 at 08:50:11AM +1100, NeilBrown wrote:
+>> >> On Thu, Nov 01 2018, Paul E. McKenney wrote:
+>> >>=20
+>> >> > On Sat, Oct 27, 2018 at 02:10:10AM +0100, Josh Triplett wrote:
+>> >> >> On Fri, Oct 26, 2018 at 08:14:51AM +1100, NeilBrown wrote:
+>> >> >> > On Wed, Oct 24 2018, Josh Triplett wrote:
+>> >> >> >=20
+>> >> >> > > On Tue, Oct 23, 2018 at 07:26:06AM +1100, NeilBrown wrote:
+>> >> >> > >> On Sun, Oct 21 2018, Josh Triplett wrote:
+>> >> >> > >>=20
+>> >> >> > >> > On Mon, Oct 22, 2018 at 08:20:11AM +1100, NeilBrown wrote:
+>> >> >> > >> >> I call on you, Greg:
+>> >> >> > >> >>  - to abandon this divisive attempt to impose a "Code of C=
+onduct"
+>> >> >> > >> >>  - to revert 8a104f8b5867c68
+>> >> >> > >> >>  - to return to your core competence of building a great t=
+eam around
+>> >> >> > >> >>    a great kernel
+>> >> >> > >> >>=20
+>> >> >> > >> >>  #Isupportreversion
+>> >> >> > >> >>=20
+>> >> >> > >> >> I call on the community to consider what *does* need to be=
+ said, about
+>> >> >> > >> >> conduct, to people outside the community and who have rece=
+ntly joined.
+>> >> >> > >> >> What is the document that you would have liked to have rea=
+d as you were
+>> >> >> > >> >> starting out?  It is all too long ago for me to remember c=
+learly, and so
+>> >> >> > >> >> much has changed.
+>> >> >> > >> >
+>> >> >> > >> > The document I would have liked to have read when starting =
+out is
+>> >> >> > >> > currently checked into the source tree in
+>> >> >> > >> > Documentation/process/code-of-conduct.rst .
+>> >> >> > >>=20
+>> >> >> > >> I'm curious - what would you have gained by reading that docu=
+ment?
+>> >> >> > >
+>> >> >> > > I would have then had rather less of a pervasive feeling of "i=
+f I make
+>> >> >> > > even a single mistake I get made an example of in ways that wi=
+ll feed
+>> >> >> > > people's quotes files for years to come".
+>> >> >> >=20
+>> >> >> > Thanks for your reply.  Certainly feeling safe is important, and=
+ having
+>> >> >> > clear statements that the community values and promotes psycholo=
+gical
+>> >> >> > safety is valuable.
+>> >> >> >=20
+>> >> >> > The old "code of conflict" said
+>> >> >> >    If however, anyone feels personally abused, threatened, or ot=
+herwise
+>> >> >> >    uncomfortable due to this process, that is not acceptable.=20
+>> >> >> >=20
+>> >> >> > would you have not found this a strong enough statement to ward =
+off that
+>> >> >> > pervasive feeling?
+>> >> >>=20
+>> >> >> Not when that document started out effectively saying, in an elabo=
+rate
+>> >> >> way, "code > people".
+>> >> >
+>> >> > Interesting.
+>> >> >
+>> >> > I am curious what leads you to your "code > people" statement.  Of =
+course,
+>> >> > one could argue that this does not really matter given that the cod=
+e of
+>> >> > conflict is no longer.  However, I would like to understand for fut=
+ure
+>> >> > reference, if for no other reason.
+>> >> >
+>> >> > One possibility is that you are restricting the "people" to only th=
+ose
+>> >> > people directly contributing in one way or another.  But those usin=
+g the
+>> >> > kernel (both directly and indirectly) are important as well, and it=
+ is
+>> >> > exactly this group that is served by "the most robust operating sys=
+tem
+>> >> > kernel ever", the chest-beating sentiment notwithstanding.  Which i=
+s in
+>> >> > fact why I must reject (or rework or whatever) any patch that might=
+ result
+>> >> > in too-short RCU grace periods:  The needs of the patch's submitter=
+ are
+>> >> > quite emphatically outweighed by the needs of the kernel's many use=
+rs,
+>> >> > and many of the various technical requirements and restrictions are=
+ in
+>> >> > fact proxies for the needs of these users.
+>> >> >
+>> >> > But you knew that already.
+>> >> >
+>> >> > Similarly for the Linux kernel's various code-style strictures, whi=
+ch
+>> >> > serve the surprisingly large group of people reading the kernel's c=
+ode.
+>> >> > Including the stricture that I most love to hate, which is the one
+>> >> > stating that single-line do/for/if/while statements must not be enc=
+losed
+>> >> > in braces, which sometimes causes me trouble when inserting debug c=
+ode,
+>> >> > but which also makes more code fit into a window of a given size.  =
+;-)
+>> >> >
+>> >> > But you knew that already, too.
+>> >> >
+>> >> > The maintainability requirements can be argued to mostly serve the
+>> >> > maintainers, but if the code becomes unmaintainable, future users
+>> >> > will be inconvenienced, to say the least.  So even the maintainabil=
+ity
+>> >> > requirements serve the kernel's many users.
+>> >> >
+>> >> > But you also knew that already.
+>> >> >
+>> >> > So what am I missing here?
+>> >> >
+>> >>=20
+>> >> Hi Paul,
+>> >>  thanks for contributing your thoughts.  It is nice to have a new voi=
+ce
+>> >>  in the conversation, it helps me to maintain my illusion that this
+>> >>  issue is relevant to the whole community.
+>> >
+>> > I am not sure whether I should feel Australia-style chastened,
+>> > American-style encouraged, or what, but either way, good show on that
+>> > paragraph.  ;-)
+>> >
+>> >>  I cannot, of course, speak to why Josh wrote what he did, but I can
+>> >>  give some insight into why I had no disagreement with that part of h=
+is
+>> >>  statement.
+>> >>  A key insight, worth your time to consider and unpack I think, is
+>> >>=20
+>> >>       People won't care what you know, until they know that you care.
+>> >>=20
+>> >>  I won't dwell on that here, but will make some more obviously releva=
+nt
+>> >>  observations.
+>> >>=20
+>> >>  Firstly, you gave an analytical response to what was, in my view, an
+>> >>  emotional observation.  While I agree with your analysis, it is larg=
+ely
+>> >>  irrelevant.  It is not how people *feel* about kernel development.
+>> >>=20
+>> >>  You say that the code of conflict is gone, but in fact much of it is
+>> >>  preserved in the code-of-conduct-interpretation.  If you reflect on =
+the
+>> >>  focus of the second para of that document (which I think was directly
+>> >>  lifted from the code-of-conflict) you will see that value is placed
+>> >>  squarely on the code (kernel code, not code of conduct).  The code is
+>> >>  put forward as the thing of primary importance.  People (you, me) are
+>> >>  only mentioned in the context of being the authors of code that will=
+ be
+>> >>  criticised  - because (it almost says this) we care about the code, =
+but
+>> >>  not about you.
+>> >>=20
+>> >>  So I think it is beyond argument that the value system presented by
+>> >>  this paragraph is
+>> >>       code > people
+>> >>=20
+>> >>  I think this is particularly unfortunate as it is not really how the
+>> >>  community works, and not really how Linus works, except in those
+>> >>  occasional outbursts that are publicised so much.
+>> >>=20
+>> >>  I recall two specific events (there were probably others) from early=
+ in
+>> >>  my Linux experience where Linus said/did things which said to me that
+>> >>  he valued me, not just the code that I wrote.  I think he did that a
+>> >>  lot (and probably still does).  As I knew that he "cared", I was much
+>> >>  more interested in what he knew/thought.
+>> >>=20
+>> >>  I think that the fact that Linus is now acknowledging every "pull"
+>> >>  request is brilliant.  It doesn't really help the process much (we a=
+ll
+>> >>  have plenty of visibility into what Linus has pulled) and doesn't he=
+lp
+>> >>  the code (directly) at all.  But it tells people that Linus can see
+>> >>  them, and has seen them.  It also allows people to see that they have
+>> >>  an email from Linus without expecting it to be a criticism.  Certain=
+ly
+>> >>  he still criticises and is right to do so, and he doesn't say "Pulle=
+d,
+>> >>  thanks", which would be my preference, but the fact that he responds=
+ at
+>> >>  least says "me responding to you matters" and by implication "you
+>> >>  matter".
+>> >>=20
+>> >>  (The code-of-conflict only acknowledged that you matter once you feel
+>> >>  personally abused).
+>> >
+>> > I agree that Linus's acknowledging pull requests is a good thing.  I h=
+ave
+>> > long appreciated my upstream maintainer doing the same, and I do try to
+>> > acknowledge patch submissions myself.  And yes, motivating people is an
+>> > underappreciated art, and an art made more difficult by the wide varie=
+ty
+>> > of mindsets, even within a relatively like-minded community such as the
+>> > Linux kernel community.  So I agree that improvements are welcome, and
+>> > further believe that there always will be room for improvement.
+>> >
+>> > But I am still not seeing "code > people" in the interpretation docume=
+nt.
+>> > For me, it is all about people.
+>> >
+>> > Back to "People won't care what you know, until they know that you car=
+e."
+>> >
+>> > Fortunately for me, it is not necessary for all that many people to ca=
+re
+>> > what I know, given that I have the usual human limitations on the numb=
+er
+>> > of individuals that I can directly relate to, and this number is way
+>> > less than the billions that have some relationship to the Linux kernel,
+>> > unwitting though that relationship is in the common case.
+>> >
+>> > In contrast, back in the late 70s, my software had two users, and I
+>> > frequently chatted with both of them.  This is clearly not possible in
+>> > the case of the Linux kernel.  Nor would it be all that helpful, given
+>> > that all they really need from me is to keep RCU working properly.
+>> > So I instead create an abstraction of those users' needs in the form
+>> > of requirements.  These requirements might seem dull and uninspiring,
+>> > but they are in fact a proxy for the needs of the users.
+>> >
+>> > In short, instead of "code > people", I am seeing "our users need us".
+>>=20
+>> Ok, maybe we need to introduce a distinction here.
+>> - our users are affected by our product
+>> - our developers are affected by our process
+>>=20
+>> The para in question talks a lot about meeting the needs of our users,
+>> and says almost nothing about meeting the needs of our developers.  In
+>> fact, our developers need to submit their needs to the needs for the
+>> users.  So maybe the inequality is "users > developers".
+>>=20
+>> Now you and I and most of the community know that this isn't true, the
+>> developers are actually valued: patches are reviewed, bug reports are
+>> attended to, questions are answered.
+>
+> I completely and emphatically agree that the reality is quite a bit more
+> complicated and nuanced than can be captured by sound bites, whether
+> inequalities or otherwise.  For example, one sense in which "users >
+> developers" might be said to be true is that things usually don't go
+> at all well for developers when users vote with their feet, abandoning
+> the project.  And one sense in which "developers > users" might be said
+> to be true is in terms of direct influence over the project itself.
+>
+> I am quite confident that you could easily come up with a very large
+> number of additional examples supporting any number of inequalities
+> between any number of pairs of subgroups within the greater Linux-kernel
+> community.  ;-)
+>
+>> On re-reading the text in question, I see that it says:
+>>=20
+>>    Your contributions and ideas behind them will be
+>>    carefully reviewed, ...
+>>=20
+>> and while that is a good thing, it really doesn't come across as
+>> welcoming to me. ( .... will be *welcomed* and carefully reviewed....)
+>
+> Heh!  Like many people in my country, there is a mat labeled "Welcome" in
+> front of my door.  And, again like many people in my country, that door
+> is almost always locked, which is admittedly strange and ironic enough.
+> But given where the code of conduct is located, it would be more like a
+> "Welcome" mat hidden in the shrubbery behind my house, now wouldn't it?
+> Which would be even more strange, though perhaps no more ironic.
+>
+> Yet putting the code of conduct (say) in all caps in the Linux kernel's
+> home directory might not be sending all that positive a message, so
+> it makes no sense to move it from its current location.  We therefore
+> cannot really rely on the code of conduct to serve as the Linux kernel's
+> "Welcome" mat.  Nor should that be its purpose.
+>
+>> And I guess this highlights the wisdom of your response to Josh:
+>>    Communication is inherently difficult.
+>
+> Thank you, much though I wish I was wrong on this point.
+>
+>> This is, in part, why I suggest that we shouldn't have a code of conduct
+>> at all.  Whatever we write, different people will understand it
+>> differently.  And history suggests that some of us will treat it like a
+>> legal document and try to be lawyers, but without all the training real
+>> lawyers have.
+>>=20
+>> Instead of a code of conduct, we just need good conduct, and to
+>> encourage that conduct when we see it.
+>> This builds on our core competencies as a community:  our usual mode of
+>> working is to each work independently on our own areas, and to combine
+>> our skills intermittently as need and opportunity arises.  The "Linux
+>> kernel" emerges organically from the work of multiple developers, and
+>> likewise, the only meaningful statement of the conduct of the community =
+is
+>> that conduct with emerges organically from the conduct of the members.
+>
+> If the was a perfect world, we might well not need a code of conduct.
+> On the other hand, in a perfect world we also just might not need locks
+> (with or without the ironic "Welcome" mat), passwords, urgent security
+> patches, fences topped with concertina wire, weapons, and much more
+> besides.
+>
+> So rather than randomly mutate the code of conduct further, let alone
+> remove it completely, let's instead leave it alone for a few years.
+> We then might have enough experience with it to make any needed
+> adjustments.
 
-> 2) About supporting multiple models of remote PCBs in the same dts file,
->    it might be an excessive complication to predict a proper description
->    of an unknown in advance complex device, so, a better solution should
->    be to apply DT overlays in runtime, but at any time the hardware
->    description and the mapping shall be precisely defined.
+Hi Paul,
+ thanks for your thoughts, and particularly for the door-mat analogy.
+ It is a thing of beauty.
 
-I agree runtime DT overlays is the correct way of handling multiple
-remote boards, but not if they contain a ti,i2c-bridge-maps
-(physical-to-alias I2C address map).
+ I agree that the window of opportunity appears to be closed.  Indeed,
+ it appears now that it was closed before I wrote my "Call to action"
+ despite the apparent offer of an open discussion.  Maybe I was the only
+ one too blind to see that for what it was.
 
-Consider the case where we have N different main board (with SoC and
-"local" [de]serializer) and M peripheral boards (display+deserializer or
-sensor+serializer). Then we'd need up to N*M DT overlays, each with the
-alias map for a specific <main_board, peripheral_board> pair. This is
-because the map maps a physical address that exists on the remote side
-(peripheral board) to an alias that exists on the local side (main board).
+>
+> Of course, the optimal outcome would be zero experience with it at all
+> ever due to overwhelming best behavior on the part of all concerned,
+> but again, this world is sometimes less than perfect.
 
-To realistically model the hardware, the DT overlay should contain the
-removable components, including the physical address on the remote side
-(e.g. touchscreen slave address), but not including the alias on the
-local side (a slave address that is not used on the SoC i2c bus).
+I have two concerns (fears??) going forward.
+One is that the CoC might be weaponized as has already happened to the
+GNU Kind Communication Guidelines - see the thread leading to the recent
+LWN QoTD by RMS.  In essence, it is being used to attack rather than to
+protect (you could argue in this case it is also being used to defend
+in a different sense, but the attack is, I think, not healthy).
+Maybe I can now say "I told you so" - while that is cold comfort, it is
+still better than no comfort.
 
-> 3) About a pool of vacant I2C addresses, I dislike the idea that there
->    will be no definite or constant I2C address in runtime for a particular
->    remote slave device.
+The second is that people might perceive behavioural improvements in the
+community from this time, see the CoC added at this time, and
+incorrectly assume causality - the most likely actual cause is
+improvement in leadership.  I hope that I have made enough noise that
+such people will think twice about copying our mistakes.
 
-Indeed that's a little annoyance. But you'll face it only during kernel
-development and debugging, not at the userspace interface. See below the
-discussion about i2c_adapter.
+Thanks,
+NeilBrown
 
-[...]
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
->> Here's my current draft on a dual/quad port deserializer:
->>
->> &i2c0 {
->>     serializer@3d {
->>         reg = <0x3d>;
->>         ...
->>
->>         /* Guaranteed not physically present on i2c0 */
->>         i2c-alias-pool = /bits/ 8 <0x20 0x21 0x22 0x23 0x24 0x25>;
->>
->>         rxports {
->>             #address-cells = <1>;
->>             #size-cells = <0>;
->>
->>             rxport@0 {
->>                 reg = <0>;
->>                 remote-i2c-bus { /* The proxied I2C bus on rxport 0 */
->>                     #address-cells = <1>;
->>                     #size-cells = <0>;
->>
->>                     eeprom@51 {
->>                         reg = <0x51>;
->>                         compatible = "at,24c02";
->>                     };
->>                 };
->>
->>             rxport@1 {
->>                 reg = <1>;
->>                 remote-i2c-bus { /* The proxied I2C bus on rxport 1 */
->>                     #address-cells = <1>;
->>                     #size-cells = <0>;
->>
->>                     eeprom@51 {
->>                         reg = <0x51>;
->>                         compatible = "at,24c02";
->>                     };
->>                 };
->>             };
->>         };
->>     };
->> };
->>
->> At probe time the serializer driver instantiates one new i2c_adapter for
->> each rxport. Any remote device is added (removed) to that adapter, then
->> the driver finds an available alias and maps (unmaps) it. The
-> 
-> I avoid using i2c_adapter object, because then you get a confusing access
-> to right the same device on two logical I2C buses. This is not the way
-> how I2C muxes operate or are expected to operate, commonly I2C muxes contain
-> a protocol to access muxed devices, which are "invisible" on a host bus,
-> and here a local IC behaves like an I2C device with multiple addresses.
+-----BEGIN PGP SIGNATURE-----
 
-Sorry, this whole paragraph is not quite clear to me.
-
-Well, except "I avoid using i2c_adapter object", which is very clear and
-opposite to my approach. :) I'm instantiating an i2c_adapter for each rx
-port because it's the best model of the real world that I could devise.
-See the picture:
-
-                .----------------.
-                |                |   i2c-5    ,-- touch@50
-----.   i2c-0   |        adap0----------------+-- eeprom@51
-SoC |-----------| atr@3d         |
-----'           |        adap1----------------+-- eeprom@51
-                |                |   i2c-6    `-- touch@50
-                `----------------'
-
-I called the central object ATR (address translator), which is the i2c
-remotizer feature in the DS90Ux chipset. Topologically it is somewhat
-similar to a mux, but:
-
- * it also translates addresses (hence the name)
- * electrically it never attaches the upstream and downstream busses,
-   they are driven independently, with message buffering etc.
-
-The touch and eeprom in the example are instantiated on the physical
-busses where they are wired (i2c-5 or i2c-6) with their physical
-addresses on those busses.
-
-> Note, that following an advice from Wolfram I'm going to send the i2c-bridge
-> cell driver into inclusion under drivers/i2c/muxes/ , even if the device
-> driver does not register a mux.
-> 
->> transactions are handled in a way similar to i2c-mux, i.e. the ds90*
->> i2c_adapter has a master_xfer callback that changes the remote slave
->> address to the corresponding alias, then calls parent->algo->master_xfer().
->>
->> Note how both eeproms in the example have the same physical address.
->> They will be given two different aliases.
-> 
-> The question is how to determine which runtime assigned address represents
-> which eeprom of two. The remote/alias scheme I propose makes it transparent.
-
-You generally don't care about the assigned alias. To access e.g. each
-of the eeproms the path is always reliable and represents the physical
-world:
-
- - i2c-0 -> 00-003d -> rxport0 -> ??-0051
- - i2c-0 -> 00-003d -> rxport1 -> ??-0051
-
-The alias matters only when debugging the driver or inspecting the
-physical bus with a protocol analyzer or oscilloscope.
-
-Bye,
--- 
-Luca
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlveDeIACgkQOeye3VZi
+gbnBExAApRRxBYH+hHUIEAdDj4mzm283OP5Aa9ODM3Bo0ORs5IsAytq5sbpML/fD
+SoJ5ylgeFzVzGc0KJk3d5jFsE+JwMLvUl83vLidFjYlHtljTXeWFUpdkFeDkQxpe
+68ig2zVeZCrLkI4Cwlj6TabONYeL6y0MoD1w8/XbmUEHhmGpVz2qbjxO+AAM6Tm8
+RrwcTwTX9+T2tHrBJST9ThSeeTGO+hZudc+B6QVYeMHaWL32WilEfPVOp8Z1cvfr
+gnl/Zc/TDjwQ1Lw7VnSJ6MNjsDdXbSgwvKQc21NQw6GFdWve+nS3yLcUAdv7PW+q
+UcIj/s9fKDirgE2Z0H0ubSxurIIJf2s3o/bJGYzQ7jUYRBcSsgBN7790+HhoiNC6
+VYNSbZGcpfCJupm2phJankmFyJt0+0nqzvpN9xSr0XAVJ1HULZR6zQXpDDUILSkP
+OT8yhRRvk3ZfAuTzCa0nui/abCucz2i2EKQiM8ad3+t5vgxfp0mTZ7NKvCph03Nr
+nJUoyUf6wVqwCVvBRvbGqABiee073TBXnrFbtBiNGx7IjWPrjlFnxX89RefOQc2X
+wGaXV/UZ2nMmkZ2a07zbj1x/PlsWbcOFHPA75runXpssfyBsZXswaHHxrZvo+fFX
+kMcOTlufWUGXDwEX0ld2x3mHzKocu0IblOodEbTiiaqubJ8WgLg=
+=Z7dd
+-----END PGP SIGNATURE-----
+--=-=-=--
