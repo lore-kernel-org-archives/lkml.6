@@ -2,77 +2,106 @@ Return-Path: <SRS0=1exb=NO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC4CC0044C
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 06:00:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44863C0044C
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 06:15:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10F182082E
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 06:00:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10F182082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id F1CC12081F
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 06:15:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1CC12081F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727552AbeKCPKo (ORCPT
+        id S1726883AbeKCPZT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 11:10:44 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:45782 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726165AbeKCPKn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 11:10:43 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 5A4E81000648E;
-        Fri,  2 Nov 2018 23:00:33 -0700 (PDT)
-Date:   Fri, 02 Nov 2018 23:00:30 -0700 (PDT)
-Message-Id: <20181102.230030.1309927033490402457.davem@davemloft.net>
-To:     acme@kernel.org
-CC:     linux-kernel@vger.kernel.org
-Subject: [PATCH] perf: Remove strchr() in map__process_kallsyms_symbol().
-From:   David Miller <davem@davemloft.net>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Sat, 3 Nov 2018 11:25:19 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:45320 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726165AbeKCPZT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 11:25:19 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 2D7C9D0E7AF78;
+        Sat,  3 Nov 2018 14:15:02 +0800 (CST)
+Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.408.0; Sat, 3 Nov 2018
+ 14:15:01 +0800
+Subject: Re: [git pull] mount API series
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+CC:     Linus Torvalds <torvalds@linux-foundation.org>,
+        <swhiteho@redhat.com>, <john.johansen@canonical.com>,
+        <alan.christopher.jenkins@gmail.com>, <ebiederm@redhat.com>,
+        <linux-fsdevel@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
+References: <CAHk-=whysoVxJU8+TBw=D3xN00HOOqg-9Chc=i0Pt+Ozm3Z0Tg@mail.gmail.com>
+ <20181031053355.GQ32577@ZenIV.linux.org.uk>
+ <CAHk-=whAE6gVi18=u4sSWe1m2RWPh19YCkKQmW4Kx+NQX1mg8w@mail.gmail.com>
+ <af28fc2c-d207-875e-8070-f64ead878b5a@redhat.com>
+ <CAHk-=wjjVRQVZL+QMnb=CyCOY8yzEZ=S1DBCE7=FiiWsQfV_5Q@mail.gmail.com>
+ <28156.1541092687@warthog.procyon.org.uk>
+ <3549.1541116763@warthog.procyon.org.uk>
+ <20181102040701.GX32577@ZenIV.linux.org.uk>
+ <20181102194235.GA32577@ZenIV.linux.org.uk>
+From:   Gao Xiang <gaoxiang25@huawei.com>
+Message-ID: <84b73e19-0a85-2408-7974-79300820270d@huawei.com>
+Date:   Sat, 3 Nov 2018 14:14:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
+MIME-Version: 1.0
+In-Reply-To: <20181102194235.GA32577@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 02 Nov 2018 23:00:33 -0700 (PDT)
+X-Originating-IP: [10.151.23.176]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Al,
 
-This is looking for '[vdso]', '[vsyscall]' or similar to
-force the "kernel" boolean arg to __symbols__insert() to
-false.
+On 2018/11/3 3:42, Al Viro wrote:
+> On Fri, Nov 02, 2018 at 04:07:01AM +0000, Al Viro wrote:
+>> On Thu, Nov 01, 2018 at 11:59:23PM +0000, David Howells wrote:
+>>
+>>>  (*) mount-api-core.  These are the internal-only patches that add the
+>>>      fs_context, the legacy wrapper and the security hooks and make certain
+>>>      filesystems make use of it.
+>>
+>> FWIW, while rereading that series I'd spotted something very odd in erofs.
+>> It's orthogonal to everything else, but just to make sure it doesn't get
+>> lost:
+>> 	* sbi->dev_name thing in erofs is used only for debugging printks,
+>> basically.  Just use sb->s_id[] and be done with that.
+>> 	* dump struct erofs_mount_private - you don't need dev_name in
+>> your erofs_fill_super().  Just use mount_bdev() in usual fashion.
+>> 	* what the hell are you doing with ->s_root???  Why would you
+>> possibly want it hashed and what kind of dcache lookup could find it?
+>> That d_rehash() looks deeply confused; what are you trying to do there?
+> 
+> ... and while we are at it, what happens to
+>                 unsigned int nameoff = le16_to_cpu(de[mid].nameoff);
+>                 unsigned int matched = min(startprfx, endprfx);
+> 
+>                 struct qstr dname = QSTR_INIT(data + nameoff,
+>                         unlikely(mid >= ndirents - 1) ?
+>                                 maxsize - nameoff :
+>                                 le16_to_cpu(de[mid + 1].nameoff) - nameoff);
+> 
+>                 /* string comparison without already matched prefix */
+>                 int ret = dirnamecmp(name, &dname, &matched);
+> if le16_to_cpu(de[...].nameoff) is not monotonically increasing?  I.e.
+> what's to prevent e.g. (unsigned)-1 ending up in dname.len?
+> 
+> Corrupted fs image shouldn't oops the kernel...
 
-But such things never show up in kallsyms.
+Yes, thanks for pointing out. :)
+I will add more boundary check later before moving into fs/ directory...
+erofs now is under dm-verity for our HUAWEI mobile phone, so it doesn't be corruptted.
 
-This check was added by commit 608c34de0b3d ("perf symbols: Mark if a
-symbol is idle in the library")
+I will add more checks and meta checksum later after EROFS productization successfully... :)
 
-Signed-off-by: David S. Miller <davem@davemloft.net>
----
- tools/perf/util/symbol.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-index d188b7588152..345d66d745d1 100644
---- a/tools/perf/util/symbol.c
-+++ b/tools/perf/util/symbol.c
-@@ -660,7 +660,7 @@ static int map__process_kallsym_symbol(void *arg, const char *name,
- 	 * We will pass the symbols to the filter later, in
- 	 * map__split_kallsyms, when we have split the maps per module
- 	 */
--	__symbols__insert(root, sym, !strchr(name, '['));
-+	__symbols__insert(root, sym, true);
- 
- 	return 0;
- }
--- 
-2.19.1
-
+Thanks,
+Gao Xiang
+> 
