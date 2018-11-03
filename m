@@ -2,80 +2,103 @@ Return-Path: <SRS0=1exb=NO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40176C0044C
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 08:42:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 885C6C0044C
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 08:46:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04F7020833
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 08:42:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KcQN2Qf1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04F7020833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 3E8582082D
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 08:46:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E8582082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727780AbeKCRwu (ORCPT
+        id S1726914AbeKCR52 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 13:52:50 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43778 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726316AbeKCRwu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 13:52:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=3P5MWp17wLDBbsl2bkw3dqaM4NfCx0eVWxyho1YUC6A=; b=KcQN2Qf1ojQE8bY8YLsi5QBUW6
-        tw2zlcycTcmBS7nKTuKqO/qMte7FuUaWeyHtZ5um7SgrdfiXdSVS6+n6R4OST3+d4GIgZSf6UWDd9
-        D4lpgVW0RpQ0iYyIAlDxl7s6+7yHFd0UVj9xpRHXbTK38o+oH7lWoHwlcMh96qDv2QeGCgf4Yqv4z
-        SBG53uRXNHiZZeBby2NUWfBCtzUQLsufhfHjJi3PsCW08AF+f3Wel69z0OjIosp5qv+87fIkdeqvi
-        iTLNaPRo5nT1bNq9aDBZPDaWTzZEj5Z3ZxJ6VOHpcEGfxwNiiCwp+3yDGCNu/wDWM22ehQd8rLd3o
-        8jnJFIEQ==;
-Received: from 213-225-37-95.nat.highway.a1.net ([213.225.37.95] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gIrVU-0000Kw-78; Sat, 03 Nov 2018 08:42:12 +0000
-Date:   Sat, 3 Nov 2018 09:42:10 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] dma-mapping fix for 4.20
-Message-ID: <20181103084210.GA1429@infradead.org>
+        Sat, 3 Nov 2018 13:57:28 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42098 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726316AbeKCR52 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 13:57:28 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8384BAE14;
+        Sat,  3 Nov 2018 08:46:51 +0000 (UTC)
+Subject: Re: [PATCH] scsi: myrb: fix sprintf buffer overflow warning
+To:     Arnd Bergmann <arnd@arndb.de>, Hannes Reinecke <hare@kernel.org>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181102153458.1567593-1-arnd@arndb.de>
+From:   Hannes Reinecke <hare@suse.de>
+Message-ID: <6a012c05-67a5-e899-f636-db01b79dfbf2@suse.de>
+Date:   Sat, 3 Nov 2018 09:46:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20181102153458.1567593-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 8adcc59974b8a65b7eac7d503364837c297139bc:
+On 11/2/18 4:34 PM, Arnd Bergmann wrote:
+> gcc warns that the 12 byte fw_version field might not be long enough to
+> contain the generated firmware name string:
+> 
+> drivers/scsi/myrb.c: In function 'myrb_get_hba_config':
+> drivers/scsi/myrb.c:1052:38: error: '%02d' directive writing between 2 and 3 bytes into a region of size between 2 and 5 [-Werror=format-overflow=]
+>    sprintf(cb->fw_version, "%d.%02d-%c-%02d",
+>                                        ^~~~
+> drivers/scsi/myrb.c:1052:26: note: directive argument in the range [0, 255]
+>    sprintf(cb->fw_version, "%d.%02d-%c-%02d",
+>                            ^~~~~~~~~~~~~~~~~
+> drivers/scsi/myrb.c:1052:2: note: 'sprintf' output between 10 and 14 bytes into a destination of size 12
+>    sprintf(cb->fw_version, "%d.%02d-%c-%02d",
+>    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>     enquiry2->fw.major_version,
+>     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>     enquiry2->fw.minor_version,
+>     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>     enquiry2->fw.firmware_type,
+>     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>     enquiry2->fw.turn_id);
+>     ~~~~~~~~~~~~~~~~~~~~~
+> 
+> I have not checked whether there are appropriate range checks before the
+> sprintf, but there is a range check after it that will bail out in case
+> of out of range version numbers. This means we can simply use snprintf()
+> instead of sprintf() to limit the output buffer size, and it will work
+> correctly.
+> 
+> Fixes: 081ff398c56c ("scsi: myrb: Add Mylex RAID controller (block interface)")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>   drivers/scsi/myrb.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/scsi/myrb.c b/drivers/scsi/myrb.c
+> index aeb282f617c5..0642f2d0a3bb 100644
+> --- a/drivers/scsi/myrb.c
+> +++ b/drivers/scsi/myrb.c
+> @@ -1049,7 +1049,8 @@ static int myrb_get_hba_config(struct myrb_hba *cb)
+>   		enquiry2->fw.firmware_type = '0';
+>   		enquiry2->fw.turn_id = 0;
+>   	}
+> -	sprintf(cb->fw_version, "%d.%02d-%c-%02d",
+> +	snprintf(cb->fw_version, sizeof(cb->fw_version),
+> +		"%d.%02d-%c-%02d",
+>   		enquiry2->fw.major_version,
+>   		enquiry2->fw.minor_version,
+>   		enquiry2->fw.firmware_type,
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.com>
 
-  Merge branch 'work.misc' of git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs (2018-11-01 20:19:49 -0700)
+Cheers,
 
-are available in the Git repository at:
-
-  git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-4.20-2
-
-for you to fetch changes up to f62717551b2b7d72fc2a3975539117d350bad84d:
-
-  arm64: fix warnings without CONFIG_IOMMU_DMA (2018-11-02 19:27:22 +0100)
-
-----------------------------------------------------------------
-Avoid compile warnings on non-default arm64 configs
-
-----------------------------------------------------------------
-Christoph Hellwig (1):
-      arm64: fix warnings without CONFIG_IOMMU_DMA
-
- arch/arm64/mm/dma-mapping.c | 2 ++
- 1 file changed, 2 insertions(+)
+Hannes
