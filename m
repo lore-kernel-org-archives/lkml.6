@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C487DC0044C
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 12:33:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B9A6C0044C
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 12:33:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3786B20833
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 12:33:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3786B20833
+	by mail.kernel.org (Postfix) with ESMTP id 6B65A2082E
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 12:33:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B65A2082E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728513AbeKCVoU (ORCPT
+        id S1728590AbeKCVoh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 17:44:20 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:58360 "EHLO hermes.aosc.io"
+        Sat, 3 Nov 2018 17:44:37 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:58380 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727256AbeKCVoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 17:44:20 -0400
+        id S1727256AbeKCVoh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 17:44:37 -0400
 Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 647F62160D1;
-        Sat,  3 Nov 2018 12:33:02 +0000 (UTC)
+        by hermes.aosc.io (Postfix) with ESMTPSA id DB3E42160D1;
+        Sat,  3 Nov 2018 12:33:17 +0000 (UTC)
 From:   Icenowy Zheng <icenowy@aosc.io>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>,
@@ -34,9 +34,9 @@ To:     Maxime Ripard <maxime.ripard@bootlin.com>,
 Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 1/3] dt-binding: dwmac-sun8i: add H6 compatible string (w/ A64 fallback)
-Date:   Sat,  3 Nov 2018 20:32:36 +0800
-Message-Id: <20181103123238.4665-2-icenowy@aosc.io>
+Subject: [PATCH v2 2/3] arm64: allwinner: h6: add EMAC device nodes
+Date:   Sat,  3 Nov 2018 20:32:37 +0800
+Message-Id: <20181103123238.4665-3-icenowy@aosc.io>
 In-Reply-To: <20181103123238.4665-1-icenowy@aosc.io>
 References: <20181103123238.4665-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -44,39 +44,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Allwinner H6 SoC features a Ethernet MAC that is similar to the one
-in A64.
+Allwinner H6 SoC has an EMAC like the one in A64.
 
-Add a compatible string for it with A64 fallback compatible string, in
-this case the A64 driver can be used.
-
-The "internal" PHY is not internal from the perspective of the H6 main
-die, instead it's on the co-packaged AC200 chip, and connected to the
-main die with RMII at the in-package Port A PIO bank. So from the SoC
-driver side it needs no special treatment.
+Add device tree nodes for the H6 DTSI file.
 
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 ---
 Changes in v2:
-- Added ACK tag by Rob and Review tag by Chen-Yu.
+- Dropped unneeded cells property.
 
- Documentation/devicetree/bindings/net/dwmac-sun8i.txt | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 28 ++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/net/dwmac-sun8i.txt b/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
-index 5bb3a18cc38d..54c66d0611cb 100644
---- a/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
-+++ b/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
-@@ -10,6 +10,7 @@ Required properties:
- 		"allwinner,sun8i-r40-gmac"
- 		"allwinner,sun8i-v3s-emac"
- 		"allwinner,sun50i-a64-emac"
-+		"allwinner,sun50i-h6-emac", "allwinner-sun50i-a64-emac"
- - reg: address and length of the register for the device.
- - interrupts: interrupt for the device
- - interrupt-names: must be "macirq"
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+index 040828d2e2c0..11f7ce7d1876 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+@@ -149,6 +149,14 @@
+ 			interrupt-controller;
+ 			#interrupt-cells = <3>;
+ 
++			ext_rgmii_pins: rgmii_pins {
++				pins = "PD0", "PD1", "PD2", "PD3", "PD4",
++				       "PD5", "PD7", "PD8", "PD9", "PD10",
++				       "PD11", "PD12", "PD13", "PD19", "PD20";
++				function = "emac";
++				drive-strength = <40>;
++			};
++
+ 			mmc0_pins: mmc0-pins {
+ 				pins = "PF0", "PF1", "PF2", "PF3",
+ 				       "PF4", "PF5";
+@@ -258,6 +266,26 @@
+ 			status = "disabled";
+ 		};
+ 
++		emac: ethernet@5020000 {
++			compatible = "allwinner,sun50i-a64-emac",
++				     "allwinner,sun50i-h6-emac";
++			syscon = <&syscon>;
++			reg = <0x05020000 0x10000>;
++			interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "macirq";
++			resets = <&ccu RST_BUS_EMAC>;
++			reset-names = "stmmaceth";
++			clocks = <&ccu CLK_BUS_EMAC>;
++			clock-names = "stmmaceth";
++			status = "disabled";
++
++			mdio: mdio {
++				compatible = "snps,dwmac-mdio";
++				#address-cells = <1>;
++				#size-cells = <0>;
++			};
++		};
++
+ 		r_ccu: clock@7010000 {
+ 			compatible = "allwinner,sun50i-h6-r-ccu";
+ 			reg = <0x07010000 0x400>;
 -- 
 2.18.1
 
