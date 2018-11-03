@@ -2,252 +2,202 @@ Return-Path: <SRS0=1exb=NO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73573C0044C
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 05:07:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 881B3C0044C
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 05:12:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12E212082E
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 05:07:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F4DC20833
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 05:12:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bz47VT+i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12E212082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="QXHelVX6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F4DC20833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727527AbeKCORw (ORCPT
+        id S1726799AbeKCOWd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 10:17:52 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:40290 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726200AbeKCORw (ORCPT
+        Sat, 3 Nov 2018 10:22:33 -0400
+Received: from mail-pf1-f172.google.com ([209.85.210.172]:43960 "EHLO
+        mail-pf1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726165AbeKCOWc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 10:17:52 -0400
-Received: by mail-lj1-f193.google.com with SMTP id t22-v6so3457568lji.7
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 22:07:49 -0700 (PDT)
+        Sat, 3 Nov 2018 10:22:32 -0400
+Received: by mail-pf1-f172.google.com with SMTP id h4-v6so1925406pfi.10
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 22:12:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VD0UnSsWS0dBNV+98x1w3zMM5tOaUiQHdaTp6J1Qr+c=;
-        b=Bz47VT+inkZJCc86LDFJRWRdQKGE02P5rnffnh7W+QKAgOIrUY3Ulzh9PqZJxzjEUq
-         +A1hEjhZqUeyxi5xGzBtzblrXMpJeYxNYKkRIo8oLxtoWD2beMsx80SyafEq+3Hzs+4v
-         ikWQcsu25UPbpzXgkBANJLNaybVqWga43rSnV3iXVFLMweYWegSaTjWZVv/aj7CeCFbh
-         9za0pEiGxqfhEr216hYcsRHugfUTSQtbnuvHL0Af+53t54PEpgXs7dZi8TAO0tKJqAjA
-         snXs14v4CRPnhWiipr157b90RpqZdE5F9JB4FN9c6IpCigZR6k5jnTLlWCZVaNi9AcXz
-         ExgQ==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=onf0XnrqAWKM4+UsBUPio8TtEZj/vv/axxvutwFrADY=;
+        b=QXHelVX6DoWOA5nEVzpN8csGt277UQJgE5Of9a3eFrc23/AL2Ydjfz1PvCyCLCoKs2
+         BurBJVZ+1eow4+BYWKOBTmLwY/cV0Bf5TlTv24iprXqFCsyeVNZtA/WOnnvkLEMDo25S
+         2FHCd5Ue57orsUyvhXV9kR00EzUk+34APQj30=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VD0UnSsWS0dBNV+98x1w3zMM5tOaUiQHdaTp6J1Qr+c=;
-        b=hDk814cBK36tUlC2preZr51xl3c+eoEuc9pUeACW4HSNlNGgfh1dZFs7LzgjpeXLkk
-         FC91QWJyW5+Vg4iL3k+Lf+OCFdVTAKDtDpIcktJaKUUcBuYFxXmIQwAihXgmqJYngedQ
-         N5Q3hOQ+m98MKSVFl/MaDWiNLs4u7OHVuuEnCNPnSGZjd7NshC8FZu2ZMlThqxAJiRXy
-         J0+3w1nQ0ORG+OSsqFxMSyQwIEAZ4bc/fWfuQT7dxiw/7RmRaCUjmRkE1cE8bfMS1NHA
-         b1NSSwzxpMKZSon5iyFOB3X4WfXR8Rl/1CUANVpkqtts0PoBhaQqze9A6KOhX35JavRs
-         DSag==
-X-Gm-Message-State: AGRZ1gKsuxq9BiL74+DZ+pMVYSLnZMzQ7m8juCtjI4XWu+ehovATEKr6
-        jKT+tRCAVRxiTk8/sPGsbqetMQ8O4ciJrByYF9Y=
-X-Google-Smtp-Source: AJdET5enczdA5EgSs4Cur/E4txRl6up6KDMvnaF6/TyX/TBduVqCf/ErS9BflNUyGtXhvM31ny56YrREGremVVSGF2M=
-X-Received: by 2002:a2e:3012:: with SMTP id w18-v6mr8940863ljw.75.1541221668547;
- Fri, 02 Nov 2018 22:07:48 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=onf0XnrqAWKM4+UsBUPio8TtEZj/vv/axxvutwFrADY=;
+        b=jXQj6BR3j2Nb+nLLchxlJQ/QodgRspVL3ZguvIOikjhpbT/zBBwfTe0BRIg+3s+gmn
+         S2d7ky51GmkgpC9vP7WOfB5onSW6Ge4m6215fPngnO3J/olRf4O6ciTN7N2muVOxWUg7
+         iHfRWIXgog9BI6lojoB7lReABQonR1J8W0yZFbTW6T59pIdNXlTYLseA0f64CN9ThBdk
+         iMDfXUujlHG81sX1GYfNNGL+WvU+wUDep1VUt7/H9aNohHSu5sbyLROxL02FQgDK1hiu
+         Thg9NWyVQyXEjfFOW5c6momaOsySxJ2a94e/fFye2+Az6kY/CqIuZ61+iVagEJ6jGt4u
+         /eWg==
+X-Gm-Message-State: AGRZ1gIsXHCPTnZdoTiR4s6zK93RXLusZBaCfQR9wPup+YcDGFrOM96G
+        4KZtWKPgYmNMCgyGi2VJ5na52oDMWTU=
+X-Google-Smtp-Source: AJdET5fwMaaBWZb09usvs4dI7w05y337hXFVYVPkZErTKoI/lupaCjvdXDdGdM/cCCJV3cDiepggFQ==
+X-Received: by 2002:a63:f34b:: with SMTP id t11mr13205590pgj.341.1541221949174;
+        Fri, 02 Nov 2018 22:12:29 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id f22-v6sm43927311pff.29.2018.11.02.22.12.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 02 Nov 2018 22:12:27 -0700 (PDT)
+Date:   Fri, 2 Nov 2018 22:12:26 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [RFC] doc: rcu: remove note on smp_mb during synchronize_rcu
+Message-ID: <20181103051226.GA18718@google.com>
+References: <20181028043046.198403-1-joel@joelfernandes.org>
+ <20181030222649.GA105735@joelaf.mtv.corp.google.com>
+ <20181030234336.GW4170@linux.ibm.com>
+ <20181031011119.GF224709@google.com>
+ <20181031181748.GG4170@linux.ibm.com>
+ <20181101050019.GA45865@google.com>
+ <20181101161307.GO4170@linux.ibm.com>
 MIME-Version: 1.0
-References: <20181103050504.GA3049@jordon-HP-15-Notebook-PC>
-In-Reply-To: <20181103050504.GA3049@jordon-HP-15-Notebook-PC>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Sat, 3 Nov 2018 10:41:09 +0530
-Message-ID: <CAFqt6zZ80XLJJ_FDPNz4JL1cu_FkhZARyY-x_JRgOYEG_OUNqQ@mail.gmail.com>
-Subject: Re: [PATCH] mm: Create the new vm_fault_t type
-To:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        pasha.tatashin@oracle.com, vbabka@suse.cz, riel@redhat.com
-Cc:     Linux-MM <linux-mm@kvack.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181101161307.GO4170@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 3, 2018 at 10:31 AM Souptick Joarder <jrdr.linux@gmail.com> wrote:
->
-> Page fault handlers are supposed to return VM_FAULT codes,
-> but some drivers/file systems mistakenly return error
-> numbers. Now that all drivers/file systems have been converted
-> to use the vm_fault_t return type, change the type definition
-> to no longer be compatible with 'int'. By making it an unsigned
-> int, the function prototype becomes incompatible with a function
-> which returns int. Sparse will detect any attempts to return a
-> value which is not a VM_FAULT code.
->
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> ---
->  include/linux/mm.h       | 46 -----------------------------
->  include/linux/mm_types.h | 75 +++++++++++++++++++++++++++++++++++++++++++++++-
->  2 files changed, 74 insertions(+), 47 deletions(-)
->
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index fcf9cc9..511a3ce 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1267,52 +1267,6 @@ static inline void clear_page_pfmemalloc(struct page *page)
->  }
->
->  /*
-> - * Different kinds of faults, as returned by handle_mm_fault().
-> - * Used to decide whether a process gets delivered SIGBUS or
-> - * just gets major/minor fault counters bumped up.
-> - */
-> -
-> -#define VM_FAULT_OOM   0x0001
-> -#define VM_FAULT_SIGBUS        0x0002
-> -#define VM_FAULT_MAJOR 0x0004
-> -#define VM_FAULT_WRITE 0x0008  /* Special case for get_user_pages */
-> -#define VM_FAULT_HWPOISON 0x0010       /* Hit poisoned small page */
-> -#define VM_FAULT_HWPOISON_LARGE 0x0020  /* Hit poisoned large page. Index encoded in upper bits */
-> -#define VM_FAULT_SIGSEGV 0x0040
-> -
-> -#define VM_FAULT_NOPAGE        0x0100  /* ->fault installed the pte, not return page */
-> -#define VM_FAULT_LOCKED        0x0200  /* ->fault locked the returned page */
-> -#define VM_FAULT_RETRY 0x0400  /* ->fault blocked, must retry */
-> -#define VM_FAULT_FALLBACK 0x0800       /* huge page fault failed, fall back to small */
-> -#define VM_FAULT_DONE_COW   0x1000     /* ->fault has fully handled COW */
-> -#define VM_FAULT_NEEDDSYNC  0x2000     /* ->fault did not modify page tables
-> -                                        * and needs fsync() to complete (for
-> -                                        * synchronous page faults in DAX) */
-> -
-> -#define VM_FAULT_ERROR (VM_FAULT_OOM | VM_FAULT_SIGBUS | VM_FAULT_SIGSEGV | \
-> -                        VM_FAULT_HWPOISON | VM_FAULT_HWPOISON_LARGE | \
-> -                        VM_FAULT_FALLBACK)
-> -
-> -#define VM_FAULT_RESULT_TRACE \
-> -       { VM_FAULT_OOM,                 "OOM" }, \
-> -       { VM_FAULT_SIGBUS,              "SIGBUS" }, \
-> -       { VM_FAULT_MAJOR,               "MAJOR" }, \
-> -       { VM_FAULT_WRITE,               "WRITE" }, \
-> -       { VM_FAULT_HWPOISON,            "HWPOISON" }, \
-> -       { VM_FAULT_HWPOISON_LARGE,      "HWPOISON_LARGE" }, \
-> -       { VM_FAULT_SIGSEGV,             "SIGSEGV" }, \
-> -       { VM_FAULT_NOPAGE,              "NOPAGE" }, \
-> -       { VM_FAULT_LOCKED,              "LOCKED" }, \
-> -       { VM_FAULT_RETRY,               "RETRY" }, \
-> -       { VM_FAULT_FALLBACK,            "FALLBACK" }, \
-> -       { VM_FAULT_DONE_COW,            "DONE_COW" }, \
-> -       { VM_FAULT_NEEDDSYNC,           "NEEDDSYNC" }
-> -
-> -/* Encode hstate index for a hwpoisoned large page */
-> -#define VM_FAULT_SET_HINDEX(x) ((x) << 12)
-> -#define VM_FAULT_GET_HINDEX(x) (((x) >> 12) & 0xf)
-> -
-> -/*
->   * Can be called by the pagefault handler when it gets a VM_FAULT_OOM.
->   */
->  extern void pagefault_out_of_memory(void);
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 5ed8f62..48c2108 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -22,7 +22,6 @@
->  #endif
->  #define AT_VECTOR_SIZE (2*(AT_VECTOR_SIZE_ARCH + AT_VECTOR_SIZE_BASE + 1))
->
-> -typedef int vm_fault_t;
->
->  struct address_space;
->  struct mem_cgroup;
-> @@ -609,6 +608,80 @@ static inline bool mm_tlb_flush_nested(struct mm_struct *mm)
->
->  struct vm_fault;
->
-> +/**
-> + * typedef vm_fault_t -  __bitwise unsigned int
-> + *
-> + * vm_fault_t is the new unsigned int type to return VM_FAULT
-> + * code by page fault handlers of drivers/file systems. Now if
-> + * any page fault handlers returns non VM_FAULT code instead
-> + * of VM_FAULT code, it will be a mismatch with function
-> + * prototype and sparse will detect it.
-> + */
-> +typedef __bitwise unsigned int vm_fault_t;
-> +
-> +/**
-> + * enum - VM_FAULT code
-> + *
-> + * This enum is used to track the VM_FAULT code return by page
-> + * fault handlers.
-> + *
-> + * @VM_FAULT_OOM:              Out Of Memory
-> + * @VM_FAULT_SIGBUS:           Bad access
-> + * @VM_FAULT_MAJOR:            Page read from storage
-> + * @VM_FAULT_WRITE:            Special case for get_user_pages
-> + * @VM_FAULT_HWPOISON:         Hit poisoned small page
-> + * @VM_FAULT_HWPOISON_LARGE:   Hit poisoned large page. Index encoded
-> + *                             in upper bits
-> + * @VM_FAULT_SIGSEGV:          segmentation fault
-> + * @VM_FAULT_NOPAGE:           ->fault installed the pte, not return page
-> + * @VM_FAULT_LOCKED:           ->fault locked the returned page
-> + * @VM_FAULT_RETRY:            ->fault blocked, must retry
-> + * @VM_FAULT_FALLBACK:         huge page fault failed, fall back to small
-> + * @VM_FAULT_DONE_COW:         ->fault has fully handled COW
-> + * @VM_FAULT_NEEDDSYNC:                ->fault did not modify page tables and needs
-> + *                             fsync() to complete (for synchronous page faults
-> + *                             in DAX)
-> + */
-> +enum {
-> +       VM_FAULT_OOM            = (__force vm_fault_t)0x000001,
-> +       VM_FAULT_SIGBUS         = (__force vm_fault_t)0x000002,
-> +       VM_FAULT_MAJOR          = (__force vm_fault_t)0x000004,
-> +       VM_FAULT_WRITE          = (__force vm_fault_t)0x000008,
-> +       VM_FAULT_HWPOISON       = (__force vm_fault_t)0x000010,
-> +       VM_FAULT_HWPOISON_LARGE = (__force vm_fault_t)0x000020,
-> +       VM_FAULT_SIGSEGV        = (__force vm_fault_t)0x000040,
-> +       VM_FAULT_NOPAGE         = (__force vm_fault_t)0x000100,
-> +       VM_FAULT_LOCKED         = (__force vm_fault_t)0x000200,
-> +       VM_FAULT_RETRY          = (__force vm_fault_t)0x000400,
-> +       VM_FAULT_FALLBACK       = (__force vm_fault_t)0x000800,
-> +       VM_FAULT_DONE_COW       = (__force vm_fault_t)0x001000,
-> +       VM_FAULT_NEEDDSYNC      = (__force vm_fault_t)0x002000,
-> +       VM_FAULT_HINDEX_MASK    = (__force vm_fault_t)0x0f0000,
-> +};
-> +
-> +/* Encode hstate index for a hwpoisoned large page */
-> +#define VM_FAULT_SET_HINDEX(x) ((__force vm_fault_t)((x) << 16))
-> +#define VM_FAULT_GET_HINDEX(x) (((x) >> 16) & 0xf)
-> +
-> +#define VM_FAULT_ERROR (VM_FAULT_OOM | VM_FAULT_SIGBUS |       \
-> +                       VM_FAULT_SIGSEGV | VM_FAULT_HWPOISON |  \
-> +                       VM_FAULT_HWPOISON_LARGE | VM_FAULT_FALLBACK)
-> +
-> +#define VM_FAULT_RESULT_TRACE \
-> +       { VM_FAULT_OOM,                 "OOM" },        \
-> +       { VM_FAULT_SIGBUS,              "SIGBUS" },     \
-> +       { VM_FAULT_MAJOR,               "MAJOR" },      \
-> +       { VM_FAULT_WRITE,               "WRITE" },      \
-> +       { VM_FAULT_HWPOISON,            "HWPOISON" },   \
-> +       { VM_FAULT_HWPOISON_LARGE,      "HWPOISON_LARGE" },     \
-> +       { VM_FAULT_SIGSEGV,             "SIGSEGV" },    \
-> +       { VM_FAULT_NOPAGE,              "NOPAGE" },     \
-> +       { VM_FAULT_LOCKED,              "LOCKED" },     \
-> +       { VM_FAULT_RETRY,               "RETRY" },      \
-> +       { VM_FAULT_FALLBACK,            "FALLBACK" },   \
-> +       { VM_FAULT_DONE_COW,            "DONE_COW" },   \
-> +       { VM_FAULT_NEEDDSYNC,           "NEEDDSYNC" }
-> +
+On Thu, Nov 01, 2018 at 09:13:07AM -0700, Paul E. McKenney wrote:
+> On Wed, Oct 31, 2018 at 10:00:19PM -0700, Joel Fernandes wrote:
+> > On Wed, Oct 31, 2018 at 11:17:48AM -0700, Paul E. McKenney wrote:
+> > > On Tue, Oct 30, 2018 at 06:11:19PM -0700, Joel Fernandes wrote:
+> > > > Hi Paul,
+> > > > 
+> > > > On Tue, Oct 30, 2018 at 04:43:36PM -0700, Paul E. McKenney wrote:
+> > > > > On Tue, Oct 30, 2018 at 03:26:49PM -0700, Joel Fernandes wrote:
+> > > > > > Hi Paul,
+> > > > > > 
+> > > > > > On Sat, Oct 27, 2018 at 09:30:46PM -0700, Joel Fernandes (Google) wrote:
+> > > > > > > As per this thread [1], it seems this smp_mb isn't needed anymore:
+> > > > > > > "So the smp_mb() that I was trying to add doesn't need to be there."
+> > > > > > > 
+> > > > > > > So let us remove this part from the memory ordering documentation.
+> > > > > > > 
+> > > > > > > [1] https://lkml.org/lkml/2017/10/6/707
+> > > > > > > 
+> > > > > > > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> > > > > > 
+> > > > > > I was just checking about this patch. Do you feel it is correct to remove
+> > > > > > this part from the docs? Are you satisified that a barrier isn't needed there
+> > > > > > now? Or did I miss something?
+> > > > > 
+> > > > > Apologies, it got lost in the shuffle.  I have now applied it with a
+> > > > > bit of rework to the commit log, thank you!
+> > > > 
+> > > > No worries, thanks for taking it!
+> > > > 
+> > > > Just wanted to update you on my progress reading/correcting the docs. The
+> > > > 'Memory Ordering' is taking a bit of time so I paused that and I'm focusing
+> > > > on finishing all the other low hanging fruit. This activity is mostly during
+> > > > night hours after the baby is asleep but some times I also manage to sneak it
+> > > > into the day job ;-)
+> > > 
+> > > If there is anything I can do to make this a more sustainable task for
+> > > you, please do not keep it a secret!!!
+> > 
+> > Thanks a lot, that means a lot to me! Will do!
+> > 
+> > > > BTW I do want to discuss about this smp_mb patch above with you at LPC if you
+> > > > had time, even though we are removing it from the documentation. I thought
+> > > > about it a few times, and I was not able to fully appreciate the need for the
+> > > > barrier (that is even assuming that complete() etc did not do the right
+> > > > thing).  Specifically I was wondering same thing Peter said in the above
+> > > > thread I think that - if that rcu_read_unlock() triggered all the spin
+> > > > locking up the tree of nodes, then why is that locking not sufficient to
+> > > > prevent reads from the read-side section from bleeding out? That would
+> > > > prevent the reader that just unlocked from seeing anything that happens
+> > > > _after_ the synchronize_rcu.
+> > > 
+> > > Actually, I recall an smp_mb() being added, but am not seeing it anywhere
+> > > relevant to wait_for_completion().  So I might need to add the smp_mb()
+> > > to synchronize_rcu() and remove the patch (retaining the typo fix).  :-/
+> > 
+> > No problem, I'm glad atleast the patch resurfaced the topic of the potential
+> > issue :-)
+> 
+> And an smp_mb() is needed in Tree RCU's __wait_rcu_gp().  This is
+> because wait_for_completion() might get a "fly-by" wakeup, which would
+> mean no ordering for code naively thinking that it was ordered after a
+> grace period.
+> 
+> > > The short form answer is that anything before a grace period on any CPU
+> > > must be seen by any CPU as being before anything on any CPU after that
+> > > same grace period.  This guarantee requires a rather big hammer.
+> > > 
+> > > But yes, let's talk at LPC!
+> > 
+> > Sounds great, looking forward to discussing this.
+> 
+> Would it make sense to have an RCU-implementation BoF?
+> 
+> > > > Also about GP memory ordering and RCU-tree-locking, I think you mentioned to
+> > > > me that the RCU reader-sections are virtually extended both forward and
+> > > > backward and whereever it ends, those paths do heavy-weight synchronization
+> > > > that should be sufficient to prevent memory ordering issues (such as those
+> > > > you mentioned in the Requierments document). That is exactly why we don't
+> > > > need explicit barriers during rcu_read_unlock. If I recall I asked you why
+> > > > those are not needed. So that answer made sense, but then now on going
+> > > > through the 'Memory Ordering' document, I see that you mentioned there is
+> > > > reliance on the locking. Is that reliance on locking necessary to maintain
+> > > > ordering then?
+> > > 
+> > > There is a "network" of locking augmented by smp_mb__after_unlock_lock()
+> > > that implements the all-to-all memory ordering mentioned above.  But it
+> > > also needs to handle all the possible complete()/wait_for_completion()
+> > > races, even those assisted by hypervisor vCPU preemption.
+> > 
+> > I see, so it sounds like the lock network is just a partial solution. For
+> > some reason I thought before that complete() was even called on the CPU
+> > executing the callback, all the CPUs would have acquired and released a lock
+> > in the "lock network" atleast once thus ensuring the ordering (due to the
+> > fact that the quiescent state reporting has to travel up the tree starting
+> > from the leaves), but I think that's not necessarily true so I see your point
+> > now.
+> 
+> There is indeed a lock that is unconditionally acquired and released by
+> wait_for_completion(), but it lacks the smp_mb__after_unlock_lock() that
+> is required to get full-up any-to-any ordering.  And unfortunate timing
+> (as well as spurious wakeups) allow the interaction to have only normal
+> lock-release/acquire ordering, which does not suffice in all cases.
 
-checkpatch.pl is throwing an error "ERROR: Macros with complex values
-should be enclosed in parentheses". But if I put it under macro it leads to
-compile error for * make allyesconfig * ( x86_64 arch).
-That the reason I have ignored the error in checkpatch.pl.
+Sorry to be so persistent, but I did spend some time on this and I still
+don't get why every CPU would _not_ have executed smp_mb__after_unlock_lock at least
+once before the wait_for_completion() returns, because every CPU should have
+atleast called rcu_report_qs_rdp() -> rcu_report_qs_rnp() atleast once to
+report its QS up the tree right?. Before that procedure, the complete()
+cannot happen because the complete() itself is in an RCU callback which is
+executed only once all the QS(s) have been reported.
 
->  struct vm_special_mapping {
->         const char *name;       /* The name, e.g. "[vdso]". */
->
-> --
-> 1.9.1
->
+So I still couldn't see how the synchronize_rcu can return without the
+rcu_report_qs_rnp called atleast once on the CPU reporting its QS during a
+grace period.
+
+Would it be possible to provide a small example showing this in least number
+of steps? I appreciate your time and it would be really helpful. If you feel
+its too complicated, then feel free to keep this for LPC discussion :)
+
+Thanks,
+
+-Joel
+
