@@ -4,46 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8170CC6786F
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 21:57:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A757BC0044C
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 21:57:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A59C204FD
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 21:57:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FE7B20848
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 21:57:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TDrx0Imx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A59C204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zRR0srys"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FE7B20848
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728723AbeKDHJ6 (ORCPT
+        id S1728494AbeKDHJ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 02:09:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48312 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 02:09:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727879AbeKDHJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 02:09:57 -0500
+        id S1727820AbeKDHJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 02:09:56 -0500
 Received: from sol.hsd1.wa.comcast.net (c-67-185-97-198.hsd1.wa.comcast.net [67.185.97.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C820D2084A;
+        by mail.kernel.org (Postfix) with ESMTPSA id 6454820847;
         Sat,  3 Nov 2018 21:57:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541282243;
-        bh=/JVpoBg4doSdj6qJ4UZhmx33JFlE31W6uehAPUA9Dt8=;
+        bh=zf8UElsAJpAqEIkJfSUprYWwvwwGW2YxzJo1avyyVI8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TDrx0ImxhOqsM6n6wgDERn+mz3aSR62G03/UKEp+xNAomhLrbOFMpApYwe271Kt/0
-         YqTWzdnF6FG3XTou5W/iK+xk/ZZfyToGy57G+MwrBBMjhix7NDrP9kDNfS+g1GSGP8
-         e1L9vdemIvpWlUGUlBmp0zzsMnw2znvLdpcsFRhw=
+        b=zRR0srysZvvv/1lfQEoKIxvLPZ54ftO2s7zR/doQ7Bk1Cq/uF3qJnKP9GjrGOM9Dm
+         3F4nrGvbkNHDG0JN/I8349tGeC9fGXguroIvYq1k8Nafi/2EMtYMgQ5ZjIP8XA6Iuz
+         wYny0Y3YQwNduNlcAyZF6HJht9WVhPy4W60F2DSs=
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-crypto@vger.kernel.org,
         Herbert Xu <herbert@gondor.apana.org.au>
 Cc:     Corentin Labbe <clabbe@baylibre.com>,
         Stafford Horne <shorne@gmail.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] crypto: crypto_user - clean up report structure copying
-Date:   Sat,  3 Nov 2018 14:56:03 -0700
-Message-Id: <20181103215603.16250-5-ebiggers@kernel.org>
+Subject: [PATCH 2/4] crypto: crypto_user_stat - Zeroize whole structure given to user space
+Date:   Sat,  3 Nov 2018 14:56:01 -0700
+Message-Id: <20181103215603.16250-3-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181103215603.16250-1-ebiggers@kernel.org>
 References: <20181103215603.16250-1-ebiggers@kernel.org>
@@ -54,709 +55,124 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Corentin Labbe <clabbe@baylibre.com>
 
-There have been a pretty ridiculous number of issues with initializing
-the report structures that are copied to userspace by NETLINK_CRYPTO.
-Commit 4473710df1f8 ("crypto: user - Prepare for CRYPTO_MAX_ALG_NAME
-expansion") replaced some strncpy()s with strlcpy()s, thereby
-introducing information leaks.  Later two other people tried to replace
-other strncpy()s with strlcpy() too, which would have introduced even
-more information leaks:
+For preventing uninitialized data to be given to user-space (and so leak
+potential useful data), the crypto_stat structure must be correctly
+initialized.
 
-    - https://lore.kernel.org/patchwork/patch/954991/
-    - https://patchwork.kernel.org/patch/10434351/
-
-Commit cac5818c25d0 ("crypto: user - Implement a generic crypto
-statistics") also uses the buggy strlcpy() approach and therefore leaks
-uninitialized memory to userspace.  A fix was proposed, but it was
-originally incomplete.
-
-Seeing as how apparently no one can get this right with the current
-approach, change all the reporting functions to:
-
-- Start by memsetting the report structure to 0.  This guarantees it's
-  always initialized, regardless of what happens later.
-- Initialize all strings using strscpy().  This is safe after the
-  memset, ensures null termination of long strings, avoids unnecessary
-  work, and avoids the -Wstringop-truncation warnings from gcc.
-- Use sizeof(var) instead of sizeof(type).  This is more robust against
-  copy+paste errors.
-
-For simplicity, also reuse the -EMSGSIZE return value from nla_put().
-
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: cac5818c25d0 ("crypto: user - Implement a generic crypto statistics")
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+[EB: also fix it in crypto_reportstat_one()]
+[EB: use sizeof(var) rather than sizeof(type)]
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- crypto/ablkcipher.c       |  32 +++++-------
- crypto/acompress.c        |  10 ++--
- crypto/aead.c             |  14 ++----
- crypto/ahash.c            |  12 ++---
- crypto/akcipher.c         |  11 ++--
- crypto/blkcipher.c        |  16 +++---
- crypto/crypto_user_base.c |  38 +++++++-------
- crypto/crypto_user_stat.c | 102 +++++++++-----------------------------
- crypto/kpp.c              |  10 ++--
- crypto/rng.c              |  12 ++---
- crypto/scompress.c        |  11 ++--
- crypto/shash.c            |  12 ++---
- crypto/skcipher.c         |  15 +++---
- 13 files changed, 96 insertions(+), 199 deletions(-)
+ crypto/crypto_user_stat.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/crypto/ablkcipher.c b/crypto/ablkcipher.c
-index 8882e90e868ea..b5e9ce19d324e 100644
---- a/crypto/ablkcipher.c
-+++ b/crypto/ablkcipher.c
-@@ -365,23 +365,19 @@ static int crypto_ablkcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
- {
- 	struct crypto_report_blkcipher rblkcipher;
- 
--	strncpy(rblkcipher.type, "ablkcipher", sizeof(rblkcipher.type));
--	strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
-+	memset(&rblkcipher, 0, sizeof(rblkcipher));
-+
-+	strscpy(rblkcipher.type, "ablkcipher", sizeof(rblkcipher.type));
-+	strscpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
- 		sizeof(rblkcipher.geniv));
--	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
- 
- 	rblkcipher.blocksize = alg->cra_blocksize;
- 	rblkcipher.min_keysize = alg->cra_ablkcipher.min_keysize;
- 	rblkcipher.max_keysize = alg->cra_ablkcipher.max_keysize;
- 	rblkcipher.ivsize = alg->cra_ablkcipher.ivsize;
- 
--	if (nla_put(skb, CRYPTOCFGA_REPORT_BLKCIPHER,
--		    sizeof(struct crypto_report_blkcipher), &rblkcipher))
--		goto nla_put_failure;
--	return 0;
--
--nla_put_failure:
--	return -EMSGSIZE;
-+	return nla_put(skb, CRYPTOCFGA_REPORT_BLKCIPHER,
-+		       sizeof(rblkcipher), &rblkcipher);
- }
- #else
- static int crypto_ablkcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
-@@ -440,23 +436,19 @@ static int crypto_givcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
- {
- 	struct crypto_report_blkcipher rblkcipher;
- 
--	strncpy(rblkcipher.type, "givcipher", sizeof(rblkcipher.type));
--	strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<built-in>",
-+	memset(&rblkcipher, 0, sizeof(rblkcipher));
-+
-+	strscpy(rblkcipher.type, "givcipher", sizeof(rblkcipher.type));
-+	strscpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<built-in>",
- 		sizeof(rblkcipher.geniv));
--	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
- 
- 	rblkcipher.blocksize = alg->cra_blocksize;
- 	rblkcipher.min_keysize = alg->cra_ablkcipher.min_keysize;
- 	rblkcipher.max_keysize = alg->cra_ablkcipher.max_keysize;
- 	rblkcipher.ivsize = alg->cra_ablkcipher.ivsize;
- 
--	if (nla_put(skb, CRYPTOCFGA_REPORT_BLKCIPHER,
--		    sizeof(struct crypto_report_blkcipher), &rblkcipher))
--		goto nla_put_failure;
--	return 0;
--
--nla_put_failure:
--	return -EMSGSIZE;
-+	return nla_put(skb, CRYPTOCFGA_REPORT_BLKCIPHER,
-+		       sizeof(rblkcipher), &rblkcipher);
- }
- #else
- static int crypto_givcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
-diff --git a/crypto/acompress.c b/crypto/acompress.c
-index 1544b7c057fb5..0c5bedd06e705 100644
---- a/crypto/acompress.c
-+++ b/crypto/acompress.c
-@@ -33,15 +33,11 @@ static int crypto_acomp_report(struct sk_buff *skb, struct crypto_alg *alg)
- {
- 	struct crypto_report_acomp racomp;
- 
--	strncpy(racomp.type, "acomp", sizeof(racomp.type));
-+	memset(&racomp, 0, sizeof(racomp));
- 
--	if (nla_put(skb, CRYPTOCFGA_REPORT_ACOMP,
--		    sizeof(struct crypto_report_acomp), &racomp))
--		goto nla_put_failure;
--	return 0;
-+	strscpy(racomp.type, "acomp", sizeof(racomp.type));
- 
--nla_put_failure:
--	return -EMSGSIZE;
-+	return nla_put(skb, CRYPTOCFGA_REPORT_ACOMP, sizeof(racomp), &racomp);
- }
- #else
- static int crypto_acomp_report(struct sk_buff *skb, struct crypto_alg *alg)
-diff --git a/crypto/aead.c b/crypto/aead.c
-index 60b3bbe973e75..189c52d1f63ab 100644
---- a/crypto/aead.c
-+++ b/crypto/aead.c
-@@ -119,20 +119,16 @@ static int crypto_aead_report(struct sk_buff *skb, struct crypto_alg *alg)
- 	struct crypto_report_aead raead;
- 	struct aead_alg *aead = container_of(alg, struct aead_alg, base);
- 
--	strncpy(raead.type, "aead", sizeof(raead.type));
--	strncpy(raead.geniv, "<none>", sizeof(raead.geniv));
-+	memset(&raead, 0, sizeof(raead));
-+
-+	strscpy(raead.type, "aead", sizeof(raead.type));
-+	strscpy(raead.geniv, "<none>", sizeof(raead.geniv));
- 
- 	raead.blocksize = alg->cra_blocksize;
- 	raead.maxauthsize = aead->maxauthsize;
- 	raead.ivsize = aead->ivsize;
- 
--	if (nla_put(skb, CRYPTOCFGA_REPORT_AEAD,
--		    sizeof(struct crypto_report_aead), &raead))
--		goto nla_put_failure;
--	return 0;
--
--nla_put_failure:
--	return -EMSGSIZE;
-+	return nla_put(skb, CRYPTOCFGA_REPORT_AEAD, sizeof(raead), &raead);
- }
- #else
- static int crypto_aead_report(struct sk_buff *skb, struct crypto_alg *alg)
-diff --git a/crypto/ahash.c b/crypto/ahash.c
-index e21667b4e10ac..3a348fbcf8f91 100644
---- a/crypto/ahash.c
-+++ b/crypto/ahash.c
-@@ -498,18 +498,14 @@ static int crypto_ahash_report(struct sk_buff *skb, struct crypto_alg *alg)
- {
- 	struct crypto_report_hash rhash;
- 
--	strncpy(rhash.type, "ahash", sizeof(rhash.type));
-+	memset(&rhash, 0, sizeof(rhash));
-+
-+	strscpy(rhash.type, "ahash", sizeof(rhash.type));
- 
- 	rhash.blocksize = alg->cra_blocksize;
- 	rhash.digestsize = __crypto_hash_alg_common(alg)->digestsize;
- 
--	if (nla_put(skb, CRYPTOCFGA_REPORT_HASH,
--		    sizeof(struct crypto_report_hash), &rhash))
--		goto nla_put_failure;
--	return 0;
--
--nla_put_failure:
--	return -EMSGSIZE;
-+	return nla_put(skb, CRYPTOCFGA_REPORT_HASH, sizeof(rhash), &rhash);
- }
- #else
- static int crypto_ahash_report(struct sk_buff *skb, struct crypto_alg *alg)
-diff --git a/crypto/akcipher.c b/crypto/akcipher.c
-index cfbdb06d8ca86..0cbeae137e0ae 100644
---- a/crypto/akcipher.c
-+++ b/crypto/akcipher.c
-@@ -30,15 +30,12 @@ static int crypto_akcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
- {
- 	struct crypto_report_akcipher rakcipher;
- 
--	strncpy(rakcipher.type, "akcipher", sizeof(rakcipher.type));
-+	memset(&rakcipher, 0, sizeof(rakcipher));
- 
--	if (nla_put(skb, CRYPTOCFGA_REPORT_AKCIPHER,
--		    sizeof(struct crypto_report_akcipher), &rakcipher))
--		goto nla_put_failure;
--	return 0;
-+	strscpy(rakcipher.type, "akcipher", sizeof(rakcipher.type));
- 
--nla_put_failure:
--	return -EMSGSIZE;
-+	return nla_put(skb, CRYPTOCFGA_REPORT_AKCIPHER,
-+		       sizeof(rakcipher), &rakcipher);
- }
- #else
- static int crypto_akcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
-diff --git a/crypto/blkcipher.c b/crypto/blkcipher.c
-index f93abf13b5d42..193237514e902 100644
---- a/crypto/blkcipher.c
-+++ b/crypto/blkcipher.c
-@@ -507,23 +507,19 @@ static int crypto_blkcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
- {
- 	struct crypto_report_blkcipher rblkcipher;
- 
--	strncpy(rblkcipher.type, "blkcipher", sizeof(rblkcipher.type));
--	strncpy(rblkcipher.geniv, alg->cra_blkcipher.geniv ?: "<default>",
-+	memset(&rblkcipher, 0, sizeof(rblkcipher));
-+
-+	strscpy(rblkcipher.type, "blkcipher", sizeof(rblkcipher.type));
-+	strscpy(rblkcipher.geniv, alg->cra_blkcipher.geniv ?: "<default>",
- 		sizeof(rblkcipher.geniv));
--	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
- 
- 	rblkcipher.blocksize = alg->cra_blocksize;
- 	rblkcipher.min_keysize = alg->cra_blkcipher.min_keysize;
- 	rblkcipher.max_keysize = alg->cra_blkcipher.max_keysize;
- 	rblkcipher.ivsize = alg->cra_blkcipher.ivsize;
- 
--	if (nla_put(skb, CRYPTOCFGA_REPORT_BLKCIPHER,
--		    sizeof(struct crypto_report_blkcipher), &rblkcipher))
--		goto nla_put_failure;
--	return 0;
--
--nla_put_failure:
--	return -EMSGSIZE;
-+	return nla_put(skb, CRYPTOCFGA_REPORT_BLKCIPHER,
-+		       sizeof(rblkcipher), &rblkcipher);
- }
- #else
- static int crypto_blkcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
-diff --git a/crypto/crypto_user_base.c b/crypto/crypto_user_base.c
-index 1ecd9b08e38f4..7021efbb35a1e 100644
---- a/crypto/crypto_user_base.c
-+++ b/crypto/crypto_user_base.c
-@@ -84,42 +84,38 @@ static int crypto_report_cipher(struct sk_buff *skb, struct crypto_alg *alg)
- {
- 	struct crypto_report_cipher rcipher;
- 
--	strncpy(rcipher.type, "cipher", sizeof(rcipher.type));
-+	memset(&rcipher, 0, sizeof(rcipher));
-+
-+	strscpy(rcipher.type, "cipher", sizeof(rcipher.type));
- 
- 	rcipher.blocksize = alg->cra_blocksize;
- 	rcipher.min_keysize = alg->cra_cipher.cia_min_keysize;
- 	rcipher.max_keysize = alg->cra_cipher.cia_max_keysize;
- 
--	if (nla_put(skb, CRYPTOCFGA_REPORT_CIPHER,
--		    sizeof(struct crypto_report_cipher), &rcipher))
--		goto nla_put_failure;
--	return 0;
--
--nla_put_failure:
--	return -EMSGSIZE;
-+	return nla_put(skb, CRYPTOCFGA_REPORT_CIPHER,
-+		       sizeof(rcipher), &rcipher);
- }
- 
- static int crypto_report_comp(struct sk_buff *skb, struct crypto_alg *alg)
- {
- 	struct crypto_report_comp rcomp;
- 
--	strncpy(rcomp.type, "compression", sizeof(rcomp.type));
--	if (nla_put(skb, CRYPTOCFGA_REPORT_COMPRESS,
--		    sizeof(struct crypto_report_comp), &rcomp))
--		goto nla_put_failure;
--	return 0;
-+	memset(&rcomp, 0, sizeof(rcomp));
- 
--nla_put_failure:
--	return -EMSGSIZE;
-+	strscpy(rcomp.type, "compression", sizeof(rcomp.type));
-+
-+	return nla_put(skb, CRYPTOCFGA_REPORT_COMPRESS, sizeof(rcomp), &rcomp);
- }
- 
- static int crypto_report_one(struct crypto_alg *alg,
- 			     struct crypto_user_alg *ualg, struct sk_buff *skb)
- {
--	strncpy(ualg->cru_name, alg->cra_name, sizeof(ualg->cru_name));
--	strncpy(ualg->cru_driver_name, alg->cra_driver_name,
-+	memset(ualg, 0, sizeof(*ualg));
-+
-+	strscpy(ualg->cru_name, alg->cra_name, sizeof(ualg->cru_name));
-+	strscpy(ualg->cru_driver_name, alg->cra_driver_name,
- 		sizeof(ualg->cru_driver_name));
--	strncpy(ualg->cru_module_name, module_name(alg->cra_module),
-+	strscpy(ualg->cru_module_name, module_name(alg->cra_module),
- 		sizeof(ualg->cru_module_name));
- 
- 	ualg->cru_type = 0;
-@@ -132,9 +128,9 @@ static int crypto_report_one(struct crypto_alg *alg,
- 	if (alg->cra_flags & CRYPTO_ALG_LARVAL) {
- 		struct crypto_report_larval rl;
- 
--		strncpy(rl.type, "larval", sizeof(rl.type));
--		if (nla_put(skb, CRYPTOCFGA_REPORT_LARVAL,
--			    sizeof(struct crypto_report_larval), &rl))
-+		memset(&rl, 0, sizeof(rl));
-+		strscpy(rl.type, "larval", sizeof(rl.type));
-+		if (nla_put(skb, CRYPTOCFGA_REPORT_LARVAL, sizeof(rl), &rl))
- 			goto nla_put_failure;
- 		goto out;
- 	}
 diff --git a/crypto/crypto_user_stat.c b/crypto/crypto_user_stat.c
-index 1dfaa0ccd555b..a6fb2e6f618df 100644
+index 021ad06bbb628..1dfaa0ccd555b 100644
 --- a/crypto/crypto_user_stat.c
 +++ b/crypto/crypto_user_stat.c
-@@ -39,7 +39,7 @@ static int crypto_report_aead(struct sk_buff *skb, struct crypto_alg *alg)
+@@ -37,6 +37,8 @@ static int crypto_report_aead(struct sk_buff *skb, struct crypto_alg *alg)
+ 	u64 v64;
+ 	u32 v32;
  
- 	memset(&raead, 0, sizeof(raead));
- 
--	strncpy(raead.type, "aead", sizeof(raead.type));
-+	strscpy(raead.type, "aead", sizeof(raead.type));
- 
- 	v32 = atomic_read(&alg->encrypt_cnt);
- 	raead.stat_encrypt_cnt = v32;
-@@ -52,13 +52,7 @@ static int crypto_report_aead(struct sk_buff *skb, struct crypto_alg *alg)
- 	v32 = atomic_read(&alg->aead_err_cnt);
- 	raead.stat_aead_err_cnt = v32;
- 
--	if (nla_put(skb, CRYPTOCFGA_STAT_AEAD,
--		    sizeof(struct crypto_stat), &raead))
--		goto nla_put_failure;
--	return 0;
--
--nla_put_failure:
--	return -EMSGSIZE;
-+	return nla_put(skb, CRYPTOCFGA_STAT_AEAD, sizeof(raead), &raead);
- }
- 
- static int crypto_report_cipher(struct sk_buff *skb, struct crypto_alg *alg)
-@@ -69,7 +63,7 @@ static int crypto_report_cipher(struct sk_buff *skb, struct crypto_alg *alg)
- 
- 	memset(&rcipher, 0, sizeof(rcipher));
- 
--	strlcpy(rcipher.type, "cipher", sizeof(rcipher.type));
-+	strscpy(rcipher.type, "cipher", sizeof(rcipher.type));
++	memset(&raead, 0, sizeof(raead));
++
+ 	strncpy(raead.type, "aead", sizeof(raead.type));
  
  	v32 = atomic_read(&alg->encrypt_cnt);
- 	rcipher.stat_encrypt_cnt = v32;
-@@ -82,13 +76,7 @@ static int crypto_report_cipher(struct sk_buff *skb, struct crypto_alg *alg)
- 	v32 = atomic_read(&alg->cipher_err_cnt);
- 	rcipher.stat_cipher_err_cnt = v32;
+@@ -65,6 +67,8 @@ static int crypto_report_cipher(struct sk_buff *skb, struct crypto_alg *alg)
+ 	u64 v64;
+ 	u32 v32;
  
--	if (nla_put(skb, CRYPTOCFGA_STAT_CIPHER,
--		    sizeof(struct crypto_stat), &rcipher))
--		goto nla_put_failure;
--	return 0;
--
--nla_put_failure:
--	return -EMSGSIZE;
-+	return nla_put(skb, CRYPTOCFGA_STAT_CIPHER, sizeof(rcipher), &rcipher);
- }
++	memset(&rcipher, 0, sizeof(rcipher));
++
+ 	strlcpy(rcipher.type, "cipher", sizeof(rcipher.type));
  
- static int crypto_report_comp(struct sk_buff *skb, struct crypto_alg *alg)
-@@ -99,7 +87,7 @@ static int crypto_report_comp(struct sk_buff *skb, struct crypto_alg *alg)
+ 	v32 = atomic_read(&alg->encrypt_cnt);
+@@ -93,6 +97,8 @@ static int crypto_report_comp(struct sk_buff *skb, struct crypto_alg *alg)
+ 	u64 v64;
+ 	u32 v32;
  
- 	memset(&rcomp, 0, sizeof(rcomp));
- 
--	strlcpy(rcomp.type, "compression", sizeof(rcomp.type));
-+	strscpy(rcomp.type, "compression", sizeof(rcomp.type));
++	memset(&rcomp, 0, sizeof(rcomp));
++
+ 	strlcpy(rcomp.type, "compression", sizeof(rcomp.type));
  	v32 = atomic_read(&alg->compress_cnt);
  	rcomp.stat_compress_cnt = v32;
- 	v64 = atomic64_read(&alg->compress_tlen);
-@@ -111,13 +99,7 @@ static int crypto_report_comp(struct sk_buff *skb, struct crypto_alg *alg)
- 	v32 = atomic_read(&alg->cipher_err_cnt);
- 	rcomp.stat_compress_err_cnt = v32;
+@@ -120,6 +126,8 @@ static int crypto_report_acomp(struct sk_buff *skb, struct crypto_alg *alg)
+ 	u64 v64;
+ 	u32 v32;
  
--	if (nla_put(skb, CRYPTOCFGA_STAT_COMPRESS,
--		    sizeof(struct crypto_stat), &rcomp))
--		goto nla_put_failure;
--	return 0;
--
--nla_put_failure:
--	return -EMSGSIZE;
-+	return nla_put(skb, CRYPTOCFGA_STAT_COMPRESS, sizeof(rcomp), &rcomp);
- }
- 
- static int crypto_report_acomp(struct sk_buff *skb, struct crypto_alg *alg)
-@@ -128,7 +110,7 @@ static int crypto_report_acomp(struct sk_buff *skb, struct crypto_alg *alg)
- 
- 	memset(&racomp, 0, sizeof(racomp));
- 
--	strlcpy(racomp.type, "acomp", sizeof(racomp.type));
-+	strscpy(racomp.type, "acomp", sizeof(racomp.type));
++	memset(&racomp, 0, sizeof(racomp));
++
+ 	strlcpy(racomp.type, "acomp", sizeof(racomp.type));
  	v32 = atomic_read(&alg->compress_cnt);
  	racomp.stat_compress_cnt = v32;
- 	v64 = atomic64_read(&alg->compress_tlen);
-@@ -140,13 +122,7 @@ static int crypto_report_acomp(struct sk_buff *skb, struct crypto_alg *alg)
- 	v32 = atomic_read(&alg->cipher_err_cnt);
- 	racomp.stat_compress_err_cnt = v32;
+@@ -147,6 +155,8 @@ static int crypto_report_akcipher(struct sk_buff *skb, struct crypto_alg *alg)
+ 	u64 v64;
+ 	u32 v32;
  
--	if (nla_put(skb, CRYPTOCFGA_STAT_ACOMP,
--		    sizeof(struct crypto_stat), &racomp))
--		goto nla_put_failure;
--	return 0;
--
--nla_put_failure:
--	return -EMSGSIZE;
-+	return nla_put(skb, CRYPTOCFGA_STAT_ACOMP, sizeof(racomp), &racomp);
- }
- 
- static int crypto_report_akcipher(struct sk_buff *skb, struct crypto_alg *alg)
-@@ -157,7 +133,7 @@ static int crypto_report_akcipher(struct sk_buff *skb, struct crypto_alg *alg)
- 
- 	memset(&rakcipher, 0, sizeof(rakcipher));
- 
--	strncpy(rakcipher.type, "akcipher", sizeof(rakcipher.type));
-+	strscpy(rakcipher.type, "akcipher", sizeof(rakcipher.type));
++	memset(&rakcipher, 0, sizeof(rakcipher));
++
+ 	strncpy(rakcipher.type, "akcipher", sizeof(rakcipher.type));
  	v32 = atomic_read(&alg->encrypt_cnt);
  	rakcipher.stat_encrypt_cnt = v32;
- 	v64 = atomic64_read(&alg->encrypt_tlen);
-@@ -173,13 +149,8 @@ static int crypto_report_akcipher(struct sk_buff *skb, struct crypto_alg *alg)
- 	v32 = atomic_read(&alg->akcipher_err_cnt);
- 	rakcipher.stat_akcipher_err_cnt = v32;
+@@ -177,6 +187,8 @@ static int crypto_report_kpp(struct sk_buff *skb, struct crypto_alg *alg)
+ 	struct crypto_stat rkpp;
+ 	u32 v;
  
--	if (nla_put(skb, CRYPTOCFGA_STAT_AKCIPHER,
--		    sizeof(struct crypto_stat), &rakcipher))
--		goto nla_put_failure;
--	return 0;
--
--nla_put_failure:
--	return -EMSGSIZE;
-+	return nla_put(skb, CRYPTOCFGA_STAT_AKCIPHER,
-+		       sizeof(rakcipher), &rakcipher);
- }
- 
- static int crypto_report_kpp(struct sk_buff *skb, struct crypto_alg *alg)
-@@ -189,7 +160,7 @@ static int crypto_report_kpp(struct sk_buff *skb, struct crypto_alg *alg)
- 
- 	memset(&rkpp, 0, sizeof(rkpp));
- 
--	strlcpy(rkpp.type, "kpp", sizeof(rkpp.type));
-+	strscpy(rkpp.type, "kpp", sizeof(rkpp.type));
++	memset(&rkpp, 0, sizeof(rkpp));
++
+ 	strlcpy(rkpp.type, "kpp", sizeof(rkpp.type));
  
  	v = atomic_read(&alg->setsecret_cnt);
- 	rkpp.stat_setsecret_cnt = v;
-@@ -200,13 +171,7 @@ static int crypto_report_kpp(struct sk_buff *skb, struct crypto_alg *alg)
- 	v = atomic_read(&alg->kpp_err_cnt);
- 	rkpp.stat_kpp_err_cnt = v;
+@@ -203,6 +215,8 @@ static int crypto_report_ahash(struct sk_buff *skb, struct crypto_alg *alg)
+ 	u64 v64;
+ 	u32 v32;
  
--	if (nla_put(skb, CRYPTOCFGA_STAT_KPP,
--		    sizeof(struct crypto_stat), &rkpp))
--		goto nla_put_failure;
--	return 0;
--
--nla_put_failure:
--	return -EMSGSIZE;
-+	return nla_put(skb, CRYPTOCFGA_STAT_KPP, sizeof(rkpp), &rkpp);
- }
- 
- static int crypto_report_ahash(struct sk_buff *skb, struct crypto_alg *alg)
-@@ -217,7 +182,7 @@ static int crypto_report_ahash(struct sk_buff *skb, struct crypto_alg *alg)
- 
- 	memset(&rhash, 0, sizeof(rhash));
- 
--	strncpy(rhash.type, "ahash", sizeof(rhash.type));
-+	strscpy(rhash.type, "ahash", sizeof(rhash.type));
- 
- 	v32 = atomic_read(&alg->hash_cnt);
- 	rhash.stat_hash_cnt = v32;
-@@ -226,13 +191,7 @@ static int crypto_report_ahash(struct sk_buff *skb, struct crypto_alg *alg)
- 	v32 = atomic_read(&alg->hash_err_cnt);
- 	rhash.stat_hash_err_cnt = v32;
- 
--	if (nla_put(skb, CRYPTOCFGA_STAT_HASH,
--		    sizeof(struct crypto_stat), &rhash))
--		goto nla_put_failure;
--	return 0;
--
--nla_put_failure:
--	return -EMSGSIZE;
-+	return nla_put(skb, CRYPTOCFGA_STAT_HASH, sizeof(rhash), &rhash);
- }
- 
- static int crypto_report_shash(struct sk_buff *skb, struct crypto_alg *alg)
-@@ -243,7 +202,7 @@ static int crypto_report_shash(struct sk_buff *skb, struct crypto_alg *alg)
- 
- 	memset(&rhash, 0, sizeof(rhash));
- 
--	strncpy(rhash.type, "shash", sizeof(rhash.type));
-+	strscpy(rhash.type, "shash", sizeof(rhash.type));
- 
- 	v32 = atomic_read(&alg->hash_cnt);
- 	rhash.stat_hash_cnt = v32;
-@@ -252,13 +211,7 @@ static int crypto_report_shash(struct sk_buff *skb, struct crypto_alg *alg)
- 	v32 = atomic_read(&alg->hash_err_cnt);
- 	rhash.stat_hash_err_cnt = v32;
- 
--	if (nla_put(skb, CRYPTOCFGA_STAT_HASH,
--		    sizeof(struct crypto_stat), &rhash))
--		goto nla_put_failure;
--	return 0;
--
--nla_put_failure:
--	return -EMSGSIZE;
-+	return nla_put(skb, CRYPTOCFGA_STAT_HASH, sizeof(rhash), &rhash);
- }
- 
- static int crypto_report_rng(struct sk_buff *skb, struct crypto_alg *alg)
-@@ -269,7 +222,7 @@ static int crypto_report_rng(struct sk_buff *skb, struct crypto_alg *alg)
- 
- 	memset(&rrng, 0, sizeof(rrng));
- 
--	strncpy(rrng.type, "rng", sizeof(rrng.type));
-+	strscpy(rrng.type, "rng", sizeof(rrng.type));
- 
- 	v32 = atomic_read(&alg->generate_cnt);
- 	rrng.stat_generate_cnt = v32;
-@@ -280,13 +233,7 @@ static int crypto_report_rng(struct sk_buff *skb, struct crypto_alg *alg)
- 	v32 = atomic_read(&alg->hash_err_cnt);
- 	rrng.stat_rng_err_cnt = v32;
- 
--	if (nla_put(skb, CRYPTOCFGA_STAT_RNG,
--		    sizeof(struct crypto_stat), &rrng))
--		goto nla_put_failure;
--	return 0;
--
--nla_put_failure:
--	return -EMSGSIZE;
-+	return nla_put(skb, CRYPTOCFGA_STAT_RNG, sizeof(rrng), &rrng);
- }
- 
- static int crypto_reportstat_one(struct crypto_alg *alg,
-@@ -295,10 +242,10 @@ static int crypto_reportstat_one(struct crypto_alg *alg,
- {
- 	memset(ualg, 0, sizeof(*ualg));
- 
--	strlcpy(ualg->cru_name, alg->cra_name, sizeof(ualg->cru_name));
--	strlcpy(ualg->cru_driver_name, alg->cra_driver_name,
-+	strscpy(ualg->cru_name, alg->cra_name, sizeof(ualg->cru_name));
-+	strscpy(ualg->cru_driver_name, alg->cra_driver_name,
- 		sizeof(ualg->cru_driver_name));
--	strlcpy(ualg->cru_module_name, module_name(alg->cra_module),
-+	strscpy(ualg->cru_module_name, module_name(alg->cra_module),
- 		sizeof(ualg->cru_module_name));
- 
- 	ualg->cru_type = 0;
-@@ -312,9 +259,8 @@ static int crypto_reportstat_one(struct crypto_alg *alg,
- 		struct crypto_stat rl;
- 
- 		memset(&rl, 0, sizeof(rl));
--		strlcpy(rl.type, "larval", sizeof(rl.type));
--		if (nla_put(skb, CRYPTOCFGA_STAT_LARVAL,
--			    sizeof(struct crypto_stat), &rl))
-+		strscpy(rl.type, "larval", sizeof(rl.type));
-+		if (nla_put(skb, CRYPTOCFGA_STAT_LARVAL, sizeof(rl), &rl))
- 			goto nla_put_failure;
- 		goto out;
- 	}
-diff --git a/crypto/kpp.c b/crypto/kpp.c
-index a90edc27af77e..bc2f1006a2f77 100644
---- a/crypto/kpp.c
-+++ b/crypto/kpp.c
-@@ -30,15 +30,11 @@ static int crypto_kpp_report(struct sk_buff *skb, struct crypto_alg *alg)
- {
- 	struct crypto_report_kpp rkpp;
- 
--	strncpy(rkpp.type, "kpp", sizeof(rkpp.type));
-+	memset(&rkpp, 0, sizeof(rkpp));
- 
--	if (nla_put(skb, CRYPTOCFGA_REPORT_KPP,
--		    sizeof(struct crypto_report_kpp), &rkpp))
--		goto nla_put_failure;
--	return 0;
-+	strscpy(rkpp.type, "kpp", sizeof(rkpp.type));
- 
--nla_put_failure:
--	return -EMSGSIZE;
-+	return nla_put(skb, CRYPTOCFGA_REPORT_KPP, sizeof(rkpp), &rkpp);
- }
- #else
- static int crypto_kpp_report(struct sk_buff *skb, struct crypto_alg *alg)
-diff --git a/crypto/rng.c b/crypto/rng.c
-index 547f16ecbfb03..2406501b90b70 100644
---- a/crypto/rng.c
-+++ b/crypto/rng.c
-@@ -74,17 +74,13 @@ static int crypto_rng_report(struct sk_buff *skb, struct crypto_alg *alg)
- {
- 	struct crypto_report_rng rrng;
- 
--	strncpy(rrng.type, "rng", sizeof(rrng.type));
-+	memset(&rrng, 0, sizeof(rrng));
- 
--	rrng.seedsize = seedsize(alg);
-+	strscpy(rrng.type, "rng", sizeof(rrng.type));
- 
--	if (nla_put(skb, CRYPTOCFGA_REPORT_RNG,
--		    sizeof(struct crypto_report_rng), &rrng))
--		goto nla_put_failure;
--	return 0;
-+	rrng.seedsize = seedsize(alg);
- 
--nla_put_failure:
--	return -EMSGSIZE;
-+	return nla_put(skb, CRYPTOCFGA_REPORT_RNG, sizeof(rrng), &rrng);
- }
- #else
- static int crypto_rng_report(struct sk_buff *skb, struct crypto_alg *alg)
-diff --git a/crypto/scompress.c b/crypto/scompress.c
-index 968bbcf65c941..6f8305f8c3004 100644
---- a/crypto/scompress.c
-+++ b/crypto/scompress.c
-@@ -40,15 +40,12 @@ static int crypto_scomp_report(struct sk_buff *skb, struct crypto_alg *alg)
- {
- 	struct crypto_report_comp rscomp;
- 
--	strncpy(rscomp.type, "scomp", sizeof(rscomp.type));
-+	memset(&rscomp, 0, sizeof(rscomp));
- 
--	if (nla_put(skb, CRYPTOCFGA_REPORT_COMPRESS,
--		    sizeof(struct crypto_report_comp), &rscomp))
--		goto nla_put_failure;
--	return 0;
-+	strscpy(rscomp.type, "scomp", sizeof(rscomp.type));
- 
--nla_put_failure:
--	return -EMSGSIZE;
-+	return nla_put(skb, CRYPTOCFGA_REPORT_COMPRESS,
-+		       sizeof(rscomp), &rscomp);
- }
- #else
- static int crypto_scomp_report(struct sk_buff *skb, struct crypto_alg *alg)
-diff --git a/crypto/shash.c b/crypto/shash.c
-index d21f04d70dce4..44d297b82a8fb 100644
---- a/crypto/shash.c
-+++ b/crypto/shash.c
-@@ -408,18 +408,14 @@ static int crypto_shash_report(struct sk_buff *skb, struct crypto_alg *alg)
- 	struct crypto_report_hash rhash;
- 	struct shash_alg *salg = __crypto_shash_alg(alg);
- 
--	strncpy(rhash.type, "shash", sizeof(rhash.type));
 +	memset(&rhash, 0, sizeof(rhash));
 +
-+	strscpy(rhash.type, "shash", sizeof(rhash.type));
+ 	strncpy(rhash.type, "ahash", sizeof(rhash.type));
  
- 	rhash.blocksize = alg->cra_blocksize;
- 	rhash.digestsize = salg->digestsize;
+ 	v32 = atomic_read(&alg->hash_cnt);
+@@ -227,6 +241,8 @@ static int crypto_report_shash(struct sk_buff *skb, struct crypto_alg *alg)
+ 	u64 v64;
+ 	u32 v32;
  
--	if (nla_put(skb, CRYPTOCFGA_REPORT_HASH,
--		    sizeof(struct crypto_report_hash), &rhash))
--		goto nla_put_failure;
--	return 0;
--
--nla_put_failure:
--	return -EMSGSIZE;
-+	return nla_put(skb, CRYPTOCFGA_REPORT_HASH, sizeof(rhash), &rhash);
- }
- #else
- static int crypto_shash_report(struct sk_buff *skb, struct crypto_alg *alg)
-diff --git a/crypto/skcipher.c b/crypto/skcipher.c
-index 4caab81d2d02b..17be8d9c714eb 100644
---- a/crypto/skcipher.c
-+++ b/crypto/skcipher.c
-@@ -897,21 +897,18 @@ static int crypto_skcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
- 	struct skcipher_alg *skcipher = container_of(alg, struct skcipher_alg,
- 						     base);
- 
--	strncpy(rblkcipher.type, "skcipher", sizeof(rblkcipher.type));
--	strncpy(rblkcipher.geniv, "<none>", sizeof(rblkcipher.geniv));
-+	memset(&rblkcipher, 0, sizeof(rblkcipher));
++	memset(&rhash, 0, sizeof(rhash));
 +
-+	strscpy(rblkcipher.type, "skcipher", sizeof(rblkcipher.type));
-+	strscpy(rblkcipher.geniv, "<none>", sizeof(rblkcipher.geniv));
+ 	strncpy(rhash.type, "shash", sizeof(rhash.type));
  
- 	rblkcipher.blocksize = alg->cra_blocksize;
- 	rblkcipher.min_keysize = skcipher->min_keysize;
- 	rblkcipher.max_keysize = skcipher->max_keysize;
- 	rblkcipher.ivsize = skcipher->ivsize;
+ 	v32 = atomic_read(&alg->hash_cnt);
+@@ -251,6 +267,8 @@ static int crypto_report_rng(struct sk_buff *skb, struct crypto_alg *alg)
+ 	u64 v64;
+ 	u32 v32;
  
--	if (nla_put(skb, CRYPTOCFGA_REPORT_BLKCIPHER,
--		    sizeof(struct crypto_report_blkcipher), &rblkcipher))
--		goto nla_put_failure;
--	return 0;
--
--nla_put_failure:
--	return -EMSGSIZE;
-+	return nla_put(skb, CRYPTOCFGA_REPORT_BLKCIPHER,
-+		       sizeof(rblkcipher), &rblkcipher);
- }
- #else
- static int crypto_skcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
++	memset(&rrng, 0, sizeof(rrng));
++
+ 	strncpy(rrng.type, "rng", sizeof(rrng.type));
+ 
+ 	v32 = atomic_read(&alg->generate_cnt);
+@@ -275,6 +293,8 @@ static int crypto_reportstat_one(struct crypto_alg *alg,
+ 				 struct crypto_user_alg *ualg,
+ 				 struct sk_buff *skb)
+ {
++	memset(ualg, 0, sizeof(*ualg));
++
+ 	strlcpy(ualg->cru_name, alg->cra_name, sizeof(ualg->cru_name));
+ 	strlcpy(ualg->cru_driver_name, alg->cra_driver_name,
+ 		sizeof(ualg->cru_driver_name));
+@@ -291,6 +311,7 @@ static int crypto_reportstat_one(struct crypto_alg *alg,
+ 	if (alg->cra_flags & CRYPTO_ALG_LARVAL) {
+ 		struct crypto_stat rl;
+ 
++		memset(&rl, 0, sizeof(rl));
+ 		strlcpy(rl.type, "larval", sizeof(rl.type));
+ 		if (nla_put(skb, CRYPTOCFGA_STAT_LARVAL,
+ 			    sizeof(struct crypto_stat), &rl))
 -- 
 2.19.1
 
