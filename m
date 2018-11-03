@@ -2,180 +2,111 @@ Return-Path: <SRS0=1exb=NO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D312C0044C
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 16:04:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E9A8C0044C
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 16:06:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15E262081F
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 16:04:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A39E2081F
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 16:06:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=usp-br.20150623.gappssmtp.com header.i=@usp-br.20150623.gappssmtp.com header.b="EA8rg6WY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15E262081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=usp.br
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tCRNm/WY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A39E2081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728654AbeKDBP7 (ORCPT
+        id S1728560AbeKDBSI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 21:15:59 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:52667 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728334AbeKDBP6 (ORCPT
+        Sat, 3 Nov 2018 21:18:08 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:42503 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726387AbeKDBSI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 21:15:58 -0400
-Received: by mail-it1-f196.google.com with SMTP id t190-v6so1478492itb.2
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Nov 2018 09:04:16 -0700 (PDT)
+        Sat, 3 Nov 2018 21:18:08 -0400
+Received: by mail-qk1-f193.google.com with SMTP id u68so7982194qkg.9;
+        Sat, 03 Nov 2018 09:06:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=usp-br.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=51G9oFDcHMm10eDoLdhzF0sRCk3eyUQ9x1B4Tndyvnc=;
-        b=EA8rg6WYuRgGY7GqGEx3MEcALoicLoHvjH6LX27WaxkhwW+wnqFjblWzviHX5yNCZR
-         c8wLvCVjvUEdio0D7aPSl0FmXst/bLcmWoTj57Tr/aTwbLXKUhdhlZiIPLaLCyZSmdXU
-         SPSETRUoJ0YtiRVFlXHngqPfnrjmNREIWw2KKBg3vsxQWdPz3582j5LU0Ee3G9kYhwHF
-         H+bx0jD5sp9+07hFPqLk7ousZYkll3iwcjgSIH6r6Lzociu1ELiaGTCuqsyABxdStrx3
-         u0DF07ZdFseoJTWzx5XvdXafge9S4nCm1/wU+hwTaKjCKETbgfsePkhKugbA+/wqXHWa
-         j3gw==
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GeKwfLs38klEKXjhoDuszkgAjwsJgbnD3io++Ugyuv4=;
+        b=tCRNm/WYv7iYW44isNbADjn33rr2QtMjFDD6NJFVZtMAiTAvbs9+3oZ0BzMbTdOYP2
+         iTfjYE78G4ylRmwogFYGDt8cAbFp+tIwkcySOwO6CQ5X6Fz/jL4UhYrP+rUdVcOSNCNa
+         HBkSjRrNsjGyaPGVNXWS1ChvBF8LRLNRTSrtfxslGNGrlz9/WO4aAnwqc1Lsf6rPbcBk
+         6yU8PxxrJokcaC0EiZ+DD1hDl8WdtEpHS0wqIvxYsvyuxkdEgurYIFMv8h0DsTY7/azD
+         /PDE0vBjQ3R6cUoYY1Yrhj4S+QNgdPw6yicok/2Kms2OETMH2Q1xcei79AC+P7E8gHpw
+         AUEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=51G9oFDcHMm10eDoLdhzF0sRCk3eyUQ9x1B4Tndyvnc=;
-        b=uYIStAwRwECEfY/0tGiaWAlj+3SKTA+udGFIf9/xlfL0VqkUMnzNfhgdpuz144ToZu
-         Wi6xF4ewtRUHtTQF0lq2uJQxrHkUjFfJ5e1BPntDcQMRWoYZ06bUtfHtNu11xYJimRnv
-         CLAsDuhraILyk+zBCIcQbwrGAR6bEX8UtYtCifBpY41uyELSwVtWjyrozBFoCgaX7Yxk
-         S7HlS+gIOMeFCZlxR1MJ/EUg8I9sPefH4to+OC0YIbCRyLAZf5QdYTm+VXdP64mWJIgo
-         qI/Ef1GNCP8wto+6IR1JukU386zkt77hlGPsfCN9F/EbIMVpGhtK02C7vy0kH0P/Kdqy
-         9dXg==
-X-Gm-Message-State: AGRZ1gL26bEdOXAH8IeBPHSoeeI48gi2gLgIX6jnUblOEiYL21GgtJwD
-        PME4O+BKr0TfUe+RIIUs6G7WalKGSO6vJBFcIE/1SQ==
-X-Google-Smtp-Source: AJdET5dx3yy0uprMA6uNPWpX/ILDQk/UOSv34xvA1uEZRR3YYs58UPbHBbO56tm95/S9dnmdcIs1hiGJpjocvptYv68=
-X-Received: by 2002:a24:338e:: with SMTP id k136-v6mr1198223itk.86.1541261055867;
- Sat, 03 Nov 2018 09:04:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181027020005.3140-1-matheus.bernardino@usp.br>
- <20181027020005.3140-6-matheus.bernardino@usp.br> <20181028165040.27c69fc5@archlinux>
-In-Reply-To: <20181028165040.27c69fc5@archlinux>
-From:   Matheus Tavares Bernardino <matheus.bernardino@usp.br>
-Date:   Sat, 3 Nov 2018 13:04:04 -0300
-Message-ID: <CAHd-oW4wki7am70DHFWb0GjOCtptRYRfAO2BG=32=YBBeAyASg@mail.gmail.com>
-Subject: Re: [PATCH v2 5/6] staging:iio:ad2s90: Add IIO_CHAN_INFO_SCALE to
- channel spec and read_raw
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GeKwfLs38klEKXjhoDuszkgAjwsJgbnD3io++Ugyuv4=;
+        b=XkU5oDlt9RwXqw72vf5SjOvir3sEuJDdBbeOEHBrrc2Pxd02jqb+7++/KUHeRFoRKM
+         JTf+tXCX/bHLxSFdQgkMQudtGT1yVUZAgqeuhnhCUimNjcoYEXkQxfMQ99nbKNHLqNYz
+         svbHsKK1TTOsziQLkbHn+pM+x5bS6a3Bo5gw75Gd2Gb4n8QungCLS+hgdZBUw1nMSA0i
+         AI1ms5avEUqCt8nmGY6PPJVj09GUHbvy+37xjxGA6fnpcRfJqj9u5DLBmt0QsjTtTjrJ
+         K9OfNkQ+P36RrXT0tmRuM3KCHtGXux1lUEwT61fHZ9Ar1jv6fPlGC5zSK2vW6GtOMJNw
+         2rcw==
+X-Gm-Message-State: AGRZ1gKRBTXMuug9PRKGmoNps1HN6Klo8FAxYx0hPOsK8ZvCrAQ9b3iw
+        JTGaV8U87fZMDzASPltNnYU=
+X-Google-Smtp-Source: AJdET5dplJxJKePEJAWs8tzD8rgM3fxuM/OIElo6qTSOG/XRi9nEFa/nkEznqImUp6uw6b2sfNa0bA==
+X-Received: by 2002:ac8:6b8a:: with SMTP id z10mr4963094qts.248.1541261184874;
+        Sat, 03 Nov 2018 09:06:24 -0700 (PDT)
+Received: from renatolg ([186.220.24.65])
+        by smtp.gmail.com with ESMTPSA id a68sm33106016qkj.63.2018.11.03.09.06.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 03 Nov 2018 09:06:24 -0700 (PDT)
+From:   Renato Lui Geh <renatogeh@gmail.com>
+X-Google-Original-From: Renato Lui Geh <renatogeh@renatolg>
+Date:   Sat, 3 Nov 2018 13:06:19 -0300
 To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com,
-        Victor Colombo <victorcolombo@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>,
+        "lars@metafoo.de" <lars@metafoo.de>,
+        "knaack.h@gmx.de" <knaack.h@gmx.de>,
+        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+        "renatogeh@gmail.com" <renatogeh@gmail.com>,
+        "giuliano.belinassi@usp.br" <giuliano.belinassi@usp.br>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "kernel-usp@googlegroups.com" <kernel-usp@googlegroups.com>
+Subject: Re: [PATCH v3 2/3] staging: iio: ad7780: update voltage on read
+Message-ID: <20181103160618.wioq7jbdh4z5yqdw@renatolg>
+References: <cover.1541082656.git.renatogeh@gmail.com>
+ <1bc4bdf6342d4bc0c2fea17fb3bcd79fabf0e1d1.1541082656.git.renatogeh@gmail.com>
+ <b0c6d0356b83259e1adad3bf74cca3a56ae33847.camel@analog.com>
+ <20181103131002.7956a08b@archlinux>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20181103131002.7956a08b@archlinux>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 28, 2018 at 1:50 PM Jonathan Cameron <jic23@kernel.org> wrote:
+On Thu, 1 Nov 2018 15:20:55 +0000
+"Ardelean, Alexandru" <alexandru.Ardelean@analog.com> wrote:
 >
-> On Fri, 26 Oct 2018 23:00:04 -0300
-> Matheus Tavares <matheus.bernardino@usp.br> wrote:
+> This looks wrong.
+> I admit this was done in the same way in the probe function, but that looks
+> a bit wrong as well.
 >
-> > This patch adds the IIO_CHAN_INFO_SCALE mask to ad2s90_chan and
-> > implements the relative read behavior at ad2s90_read_raw.
-> >
-> > Signed-off-by: Victor Colombo <victorcolombo@gmail.com>
-> > Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
+> Typically, the return value of `regulator_get_voltage()` would get checked
+> with:
 >
-> Hi,
+> ret = regulator_get_voltage(st->reg);
+> if (ret < 0)
+>    return ret;
+> *val = ret / 1000;
 >
-> A suggestion inline.  This is a common case that we have infrastructure
-> to simplify.  + I think your scale factor is very slightly wrong.
->
-> Jonathan
->
-> > ---
-> >  drivers/staging/iio/resolver/ad2s90.c | 32 ++++++++++++++++++---------
-> >  1 file changed, 22 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/staging/iio/resolver/ad2s90.c
-> > index b4a6a89c11b0..52b656875ed1 100644
-> > --- a/drivers/staging/iio/resolver/ad2s90.c
-> > +++ b/drivers/staging/iio/resolver/ad2s90.c
-> > @@ -34,19 +34,31 @@ static int ad2s90_read_raw(struct iio_dev *indio_dev,
-> >       int ret;
-> >       struct ad2s90_state *st = iio_priv(indio_dev);
-> >
-> > -     mutex_lock(&st->lock);
-> > +     switch (m) {
-> > +     case IIO_CHAN_INFO_SCALE:
-> > +             /* 2 * Pi / (2^12 - 1) ~= 0.001534355 */
-> > +             *val = 0;
-> > +             *val2 = 1534355;
-> Definitely 2^12 - 1?  That's a bit unusual if true as it would imply
-> that 2^12 - 1 and 0 were the same value.
->
-> Imagine a smaller version with on 2^2 bits so 0, 1, 2, 3
-> Values of each are
->
-> 0, M_PI/2, M_PI, 3*M_PI/2
->
-> So the multiplier is 2*M_PI/(2^2) not 2*M_PI/(2^2 - 1)
-> 1/2 vs 2/3 * M_PI
+> So, negative values are errors and zero & positive values are valid voltage
+> values.
 
-Oh, that makes a lot of sense! We used 2^12 - 1 here based on driver
-drivers/iio/resolver/ad2s1200.c, whose resolution is also 12 bits, as
-the ad2s90.c. Do you think this section is, perhaps, wrong on
-ad2s1200.c too, or maybe there is some difference between these two
-drivers that I didn't catch regarding the resolution?
-
-Matheus.
-
-> Now this is a very common case so we have the return type
-> IIO_VAL_FRACTIONAL_LOG2 to give a more obvious and potentially
-> more accurate representation.
->
-> > +             return IIO_VAL_INT_PLUS_NANO;
-> > +     case IIO_CHAN_INFO_RAW:
-> > +             mutex_lock(&st->lock);
-> > +
-> > +             ret = spi_read(st->sdev, st->rx, 2);
-> > +             if (ret < 0) {
-> > +                     mutex_unlock(&st->lock);
-> > +                     return ret;
-> > +             }
-> > +
-> > +             *val = (((u16)(st->rx[0])) << 4) | ((st->rx[1] & 0xF0) >> 4);
-> >
-> > -     ret = spi_read(st->sdev, st->rx, 2);
-> > -     if (ret < 0) {
-> >               mutex_unlock(&st->lock);
-> > -             return ret;
-> > -     }
-> >
-> > -     *val = (((u16)(st->rx[0])) << 4) | ((st->rx[1] & 0xF0) >> 4);
-> > -
-> > -     mutex_unlock(&st->lock);
-> > +             return IIO_VAL_INT;
-> > +     default:
-> > +             break;
-> > +     }
-> >
-> > -     return IIO_VAL_INT;
-> > +     return -EINVAL;
-> >  }
-> >
-> >  static const struct iio_info ad2s90_info = {
-> > @@ -57,7 +69,7 @@ static const struct iio_chan_spec ad2s90_chan = {
-> >       .type = IIO_ANGL,
-> >       .indexed = 1,
-> >       .channel = 0,
-> > -     .info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-> > +     .info_mask_separate = BIT(IIO_CHAN_INFO_RAW) | BIT(IIO_CHAN_INFO_SCALE),
-> >  };
-> >
-> >  static int ad2s90_probe(struct spi_device *spi)
->
+I see. So -EINVAL is only used when sent the wrong info type?
