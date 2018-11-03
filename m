@@ -2,108 +2,116 @@ Return-Path: <SRS0=1exb=NO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB4EDC6786F
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 21:22:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10041C0044C
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 21:25:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97E7E2081F
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 21:22:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97E7E2081F
+	by mail.kernel.org (Postfix) with ESMTP id C6BBB2081F
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 21:25:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RlNGohA+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6BBB2081F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727281AbeKDGfD (ORCPT
+        id S1727603AbeKDGhp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 01:35:03 -0500
-Received: from mout.kundenserver.de ([212.227.17.10]:52977 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbeKDGfC (ORCPT
+        Sun, 4 Nov 2018 01:37:45 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:35650 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726768AbeKDGhp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 01:35:02 -0500
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1Mk178-1fqdUU31mS-00kNkD; Sat, 03 Nov 2018 22:21:42 +0100
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1Mk178-1fqdUU31mS-00kNkD; Sat, 03 Nov 2018 22:21:42 +0100
+        Sun, 4 Nov 2018 01:37:45 -0500
+Received: by mail-qk1-f195.google.com with SMTP id v68-v6so8831332qka.2;
+        Sat, 03 Nov 2018 14:25:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc:content-transfer-encoding;
+        bh=/4QSxRfWA4eUmLWjxNBtXcxsBRsNWL9AR5jtvVrGzgA=;
+        b=RlNGohA+DjjthJztExxEu36L3Dn3VQC/3Koz90euBfgoCRGJM6U8D4wutbSizs9boz
+         vTNrZ6al/ICEjSMFbOoENzkCFlRSE41Tyq1S+yHOI/qdUzDX+HUaOw7tLpCBV3iPCztJ
+         CnDdorhZwhWQKvY56Btx6P9M3TGlqwriCNrKe0dvlc8ErLixGTW14fVj2Z3/H8q/8OQx
+         TUmZu5nqe9hdHLTCcQ1IPdQ8EyiASy1kaJFn/OKvVS1slI1VzP8Z0x8d7RThPjfQc1AH
+         XWS7vSWiMe05poS58IS1Sb1n/h+vUasiAy4HPI3XEhkYayKEtk9s82HQWWGky2269l9b
+         QpUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=/4QSxRfWA4eUmLWjxNBtXcxsBRsNWL9AR5jtvVrGzgA=;
+        b=Y6yAYmY6OhK26rTQlgLRfcxQBGjapx7eRsmRDalQETRut3xH7k8hvsw+Ylp+5b5Hsu
+         VDGseWkeqdVunQNVlCFHbtun3Ooplksy+VvtbdwMJ5VbYRVt2XZOR0iahdtRx7WGu+Ip
+         CXnXjOhcLaMl6fmCYLAIK+PYkLJLTJ4m96LUJxATwOwUcYSJo/ZntDMEKr+1JjUmEnqy
+         CX7g9oNw/N+IcLbd9Q7/VQex/p+Bwu+MWY2uV+IWmdLbq6fcpSJAZYhzl+TTcDvjFvFS
+         wDhk1ydggAn+cqvMvXQ4HZ1Ltg4VWMlGBccpRNL3GAMzaZS1NbRFD98O8YfxhIruFXHd
+         3JqA==
+X-Gm-Message-State: AGRZ1gIYSgl9ZfeLS9yNldXyAgC5bqEWQBasIhtWzoww5Pl/aUu9xEBB
+        o8DTV0fMCYR1NilXBkYIPUEAtoWBF9IvFJg9oDg=
+X-Google-Smtp-Source: AJdET5dLPukNDR5tHnMMW9dn1z+z9sQiMGVfb6jIUWS0fcMc4pFx/rpaIBF00AVqXpWdSkeH3N//NF3EpyeIYZrceCY=
+X-Received: by 2002:ae9:e102:: with SMTP id g2mr14482787qkm.343.1541280315523;
+ Sat, 03 Nov 2018 14:25:15 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a0c:9881:0:0:0:0:0 with HTTP; Sat, 3 Nov 2018 14:25:14 -0700 (PDT)
+In-Reply-To: <8e3a668d-79d2-6fc0-6291-b3d19b793d6f@suse.com>
+References: <20181103153941.1881966-1-arnd@arndb.de> <8e3a668d-79d2-6fc0-6291-b3d19b793d6f@suse.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: Intel: mrfld: fix uninitialized variable access
-Date:   Sat,  3 Nov 2018 22:21:22 +0100
-Message-Id: <20181103212140.890081-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:Pk5aNWkpTapeDiotbwA0EVAWE9C4BExUYHaanHRQV7J5dt0G5Aa
- Uw0JKQi3PTBOqT/Y1D11E215GmanctkBSd3RluS7TwXhk0TwPV1TUJt3a5H6F6SELnL83jo
- zmUNtVk/yrK8zy0aL1G7715b06b7aVJN5bS274UzUDR7NOQxuBxnqhepVbNWGMyBmf2OvYl
- jp2T52TyFaNy/xNqxyDzA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:d2nEmYLaZpQ=:Gj38oqf5TV7f/AI5yFS5gy
- DDfQp7BTi8eRzG4gVQPfbRoD7lte0MYOYsLVyFb5NtwNGHFLfUPhrSRUpoG5SxA52TMrksZ30
- f42F0wedgo+PApFzIrcqU5eWxj3QOkMLI2JihlTd+mxbbjiBAo4JIT7FN7ZUadrthQHX7ukND
- ZqNyCjxxfmGfeJfxTueVqU+X+RT0fRzjKjuec4UTeVadgj/lEBYnV/GcgzN4q2GigvABONu0E
- a6mfrRay1JKgxW4Wx2+FVOZbVQD7XLUzO0OJBSmvLhItz1ODKEpS44VBvWn7XWDfmIgX4N8c0
- dQxCmJCktZJ57z1y8o9/oDLABbqIfuC1w/vyfdy8CcUPbUnjUQIneiw2RbA3I+7B5horbFrLp
- jg88t7ZD8hdMyYPeOUwqf8TRKZcNmz6GCdFuk8Tfas5FqclEipGzEnZPF6jLVJHmjVlOLXunl
- XLFOv8drNFlah2t4JD5znRQcPl5WhqXeT+UGeD2JJgw8cqdbpezWOG2iUlCHu8KpLcbXpB3Pf
- 3qURKDtR6Og0ZxHxL1uwlwXow3qOFF+gIvXzUAnDipvIkaau0krVM0PcqkEPxjBojttxn2YJO
- V/lYlpf6RXN3Qyb3SQaAMUp9AdbbWohExjGNIylJn/xKwIEw38bjQo1VtM28RGij4m80m/Q/V
- Z+zJAtnhsSeAUIn4GV/LJF48ezXxQe7iMuhBpDqI0bQcuLLriM15YErYUqS1EFnOg6R8ZY0CI
- 3nEW2vzzvXFkjxWxAKglpzkR3P3EPC9kGTORMy+6EXtlynZgDTQZMT9HC5E35hp5bYwyiSXHm
- UCVgtPp
+Date:   Sat, 3 Nov 2018 22:25:14 +0100
+X-Google-Sender-Auth: ve6jy82uvd1kCmlkfSJA5D84mEs
+Message-ID: <CAK8P3a0FnpZ4pOyvXiQbhw5F116SqjwiYMY5Ry1k4J+Cvh=_nw@mail.gmail.com>
+Subject: Re: [PATCH] btrfs: avoid link error with CONFIG_NO_AUTO_INLINE
+To:     Nikolay Borisov <nborisov@suse.com>
+Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Changbin Du <changbin.du@gmail.com>,
+        Anand Jain <anand.jain@oracle.com>,
+        Misono Tomohiro <misono.tomohiro@jp.fujitsu.com>,
+        Qu Wenruo <wqu@suse.com>, Gu Jinxiang <gujx@cn.fujitsu.com>,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Randconfig testing revealed a very old bug, with gcc-8:
+On 11/3/18, Nikolay Borisov <nborisov@suse.com> wrote:
+> On 3.11.18 =D0=B3. 17:39 =D1=87., Arnd Bergmann wrote:
+>> On 32-bit ARM with gcc-8, I see a link error with the addition of the
+>> CONFIG_NO_AUTO_INLINE option:
+>>
+>> fs/btrfs/super.o: In function `btrfs_statfs':
+>> super.c:(.text+0x67b8): undefined reference to `__aeabi_uldivmod'
+>> super.c:(.text+0x67fc): undefined reference to `__aeabi_uldivmod'
+>> super.c:(.text+0x6858): undefined reference to `__aeabi_uldivmod'
+>> super.c:(.text+0x6920): undefined reference to `__aeabi_uldivmod'
+>> super.c:(.text+0x693c): undefined reference to `__aeabi_uldivmod'
+>> fs/btrfs/super.o:super.c:(.text+0x6958): more undefined references to
+>> `__aeabi_uldivmod' follow
+>>
+>> So far this is the only file that shows the behavior, so I'd propose
+>> to just work around it by marking the functions as 'static inline'
+>> that normally get inlined here.
+>>
+>> The reference to __aeabi_uldivmod comes from a div_u64() which has an
+>> optimization for a constant division that uses a straight '/' operator
+>> when the result should be known to the compiler. My interpretation is
+>> that as we turn off inlining, gcc still expects the result to be constan=
+t
+>> but fails to use that constant value.
+>
+> I read this as "this is a compiler bug", no ? So you are providing a
+> hack around a compiler bug?
 
-sound/soc/intel/atom/sst/sst_loader.c: In function 'sst_load_fw':
-sound/soc/intel/atom/sst/sst_loader.c:357:5: error: 'fw' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-  if (fw == NULL) {
-     ^
-sound/soc/intel/atom/sst/sst_loader.c:354:25: note: 'fw' was declared here
-  const struct firmware *fw;
+Mostly, yes. The do_div() macro is really pushing the boundaries
+of what we can expect the compiler to do in terms of optimizations,
+and we've had problems with it in the past.
 
-We must check the return code of request_firmware() before we look at the
-pointer result that may be uninitialized when the function fails.
+IIRC the gcc developers would not classify this as a bug because
+the result of __builtin_constant_p() is not guaranteed to work the
+way we expect, it just does so most of the time.
 
-Fixes: 9012c9544eea ("ASoC: Intel: mrfld - Add DSP load and management")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- sound/soc/intel/atom/sst/sst_loader.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/sound/soc/intel/atom/sst/sst_loader.c b/sound/soc/intel/atom/sst/sst_loader.c
-index 27413ebae956..b8c456753f01 100644
---- a/sound/soc/intel/atom/sst/sst_loader.c
-+++ b/sound/soc/intel/atom/sst/sst_loader.c
-@@ -354,14 +354,14 @@ static int sst_request_fw(struct intel_sst_drv *sst)
- 	const struct firmware *fw;
- 
- 	retval = request_firmware(&fw, sst->firmware_name, sst->dev);
--	if (fw == NULL) {
--		dev_err(sst->dev, "fw is returning as null\n");
--		return -EINVAL;
--	}
- 	if (retval) {
- 		dev_err(sst->dev, "request fw failed %d\n", retval);
- 		return retval;
- 	}
-+	if (fw == NULL) {
-+		dev_err(sst->dev, "fw is returning as null\n");
-+		return -EINVAL;
-+	}
- 	mutex_lock(&sst->sst_lock);
- 	retval = sst_cache_and_parse_fw(sst, fw);
- 	mutex_unlock(&sst->sst_lock);
--- 
-2.18.0
-
+        Arnd
