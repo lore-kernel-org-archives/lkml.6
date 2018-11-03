@@ -2,156 +2,93 @@ Return-Path: <SRS0=1exb=NO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93727C0044C
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 20:15:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D84CDC0044C
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 20:20:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BDF12082E
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 20:15:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75E8820843
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 20:20:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EHNcsXva"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BDF12082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="xXBM+BcC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75E8820843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727018AbeKDF1o (ORCPT
+        id S1727051AbeKDFc3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 01:27:44 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42521 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726697AbeKDF1n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 01:27:43 -0400
-Received: by mail-wr1-f68.google.com with SMTP id y15-v6so5293210wru.9
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Nov 2018 13:15:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NREQVr5KgJehgLF/BScZ5U0wiAbtn6VndNn8zDfpXog=;
-        b=EHNcsXvarxApF/5r3qevYe7HGJY4ACyzxRuSuNtJwjBHJurrlm1V27gyM0alIB77IJ
-         peZom8p9YE+w2n5A5duX6EQxSKkL/NBmA8Um4DcD3WNjLn8pN92qMRKJQdAIQsvgzyVa
-         1ektA5djHqChM9JXYDlggrriWJPvjVZ+W6/7Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NREQVr5KgJehgLF/BScZ5U0wiAbtn6VndNn8zDfpXog=;
-        b=iiIt/JRt9bM25I4LPsHCswjcw/iyw/VN0Ti8OPzWDMDCgh5y//zvI9AL2q7CWNivkR
-         9KqFLY8tIJEFJRAksryTEwN0T/BjlHvX9rNQTH6hFAqGEcNMKvdDXFs2kS+GEGwYsZ7+
-         HSUeoI8ghuZId7RXIRT+dCA9K6T/VrVPaGEh8NAw6INSG2YucH1LcrwNlcjm6vJcjBPv
-         LjiqWg0cRV4eXlYZu/HPzh2C8bLvn9XqiRw+npe4T0GaX3jciVNenXKDoYznhiwx8WSy
-         zxFjYoyH7+zrvMGx8YRMBhi1xlvZEbYmzU0BVycOhp/nwqYmc9ark6CHwZuWdbXkswTq
-         P7Vg==
-X-Gm-Message-State: AGRZ1gKeuekgWZeT4Cl3Xx0PRVCOxV8hTKd2XSq9wj/hAydkhS9s8fmD
-        HbcqObIaN0CsWkjJ8ZJU5bNrAsl+nIU=
-X-Google-Smtp-Source: AJdET5cFI7fqWq70TydsEIBykZajTF//re/fwRPIwl4mUpQTRJ92NtSGwUiY2e49CXQtUjeN0O1Rhw==
-X-Received: by 2002:adf:a386:: with SMTP id l6-v6mr13037936wrb.110.1541276122781;
-        Sat, 03 Nov 2018 13:15:22 -0700 (PDT)
-Received: from harold.home ([2a01:cb1d:112:6f00:9584:c078:6527:8480])
-        by smtp.gmail.com with ESMTPSA id o126-v6sm24910616wmo.3.2018.11.03.13.15.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 03 Nov 2018 13:15:21 -0700 (PDT)
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To:     linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-Cc:     michal.lkml@markovi.net, yamada.masahiro@socionext.com,
-        riku.voipio@linaro.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH] Revert "kbuild: add --include-dir flag only for out-of-tree build"
-Date:   Sat,  3 Nov 2018 21:15:04 +0100
-Message-Id: <20181103201504.29413-1-ard.biesheuvel@linaro.org>
-X-Mailer: git-send-email 2.19.1
+        Sun, 4 Nov 2018 01:32:29 -0400
+Received: from imap.thunk.org ([74.207.234.97]:33594 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726691AbeKDFc3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 01:32:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=04otD9+1wMF2MBh2/HAu5rZZcBxbR3P6w0Rx5h2Fcsw=; b=xXBM+BcCCXPbBaNFeBPe2VURrP
+        I4EOCQHwIVVojAuIXiJuyBnmhwrR38X1zvXn+LteKQeyd9QiNOoNqiS1slZvuB/BO5HbNNtmrlBUz
+        lTaCJYtcLvbdv1BbcojDVgDqUElO945s6LX2q0p/hFCX5uKcheDegYShEWM6bXeh8WqA=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1gJ2Op-00086V-Mx; Sat, 03 Nov 2018 20:20:03 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 8189D7A7A7E; Sat,  3 Nov 2018 16:20:02 -0400 (EDT)
+Date:   Sat, 3 Nov 2018 16:20:02 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Vasily Averin <vvs@virtuozzo.com>
+Cc:     linux-ext4@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-kernel@vger.kernel.org,
+        Yongqiang Yang <xiaoqiangnk@gmail.com>,
+        Yongqiang Yang <yangyongqiang01@baidu.com>
+Subject: Re: [PATCH v2 01/11] ext4 resise: extra brelse in
+ setup_new_flex_group_blocks()
+Message-ID: <20181103202002.GE28850@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Vasily Averin <vvs@virtuozzo.com>, linux-ext4@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-kernel@vger.kernel.org,
+        Yongqiang Yang <xiaoqiangnk@gmail.com>,
+        Yongqiang Yang <yangyongqiang01@baidu.com>
+References: <cover.1540935522.git.vvs@virtuozzo.com>
+ <37de5906-2d76-461a-ff92-b6fcc775b408@virtuozzo.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <37de5906-2d76-461a-ff92-b6fcc775b408@virtuozzo.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 80463f1b7bf9f822fd3495139bcf3ef254fdca10, because
-it breaks the bindeb-pkg build target in the following way:
+On Wed, Oct 31, 2018 at 12:57:37AM +0300, Vasily Averin wrote:
+> currently bh is set to NULL only during first iteration of for cycle,
+> then this pointer is not cleared after end of using.
+> Therefore rollback after errors can lead to extra brelse(bh) call,
+> decrements bh counter and later trigger an unexpected warning in __brelse()
+> 
+> Patch moves brelse() calls in body of cycle to exclude requirement of
+> brelse() call in rollback.
+> 
+> Fixes 33afdcc5402d ("ext4: add a function which sets up group blocks ...") # 3.3+
+> 
+> Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
 
-  ...
-    LD [M]  sound/soc/rockchip/snd-soc-rk3399-gru-sound.ko
-    LD [M]  sound/soc/rockchip/snd-soc-rockchip-pcm.ko
-    LD [M]  sound/soc/rockchip/snd-soc-rockchip-rt5645.ko
-    LD [M]  sound/soc/rockchip/snd-soc-rockchip-spdif.ko
-    LD [M]  sound/soc/sh/rcar/snd-soc-rcar.ko
-   fakeroot -u debian/rules binary
-  make KERNELRELEASE=4.19.0-12677-g19beffaf7a99-dirty ARCH=arm64 KBUILD_SRC= intdeb-pkg
-  /bin/bash /home/ard/linux/scripts/package/builddeb
-  Makefile:600: include/config/auto.conf: No such file or directory
-  ***
-  *** Configuration file ".config" not found!
-  ***
-  *** Please run some configurator (e.g. "make oldconfig" or
-  *** "make menuconfig" or "make xconfig").
-  ***
-  make[12]: *** [syncconfig] Error 1
-  make[11]: *** [syncconfig] Error 2
-  make[10]: *** [include/config/auto.conf] Error 2
-  make[9]: *** [__sub-make] Error 2
-  cp: cannot stat '/home/ard/linux/scripts/kconfig/Makefile:69: recipe for target '\''syncconfig'\'' failed'$'\n''/home/ard/linux/Makefile:544: recipe for target '\''syncconfig'\'' failed'$'\n''Makefile:640: recipe for target '\''include/config/auto.conf'\'' failed'$'\n''Makefile:15: recipe for target '\''__sub-make'\'' failed': No such file or directory
-  /home/ard/linux/scripts/package/Makefile:83: recipe for target 'intdeb-pkg' failed
-  make[8]: *** [intdeb-pkg] Error 1
-  /home/ard/linux/Makefile:1399: recipe for target 'intdeb-pkg' failed
-  make[7]: *** [intdeb-pkg] Error 2
-  Makefile:152: recipe for target 'sub-make' failed
-  make[6]: *** [sub-make] Error 2
-  Makefile:15: recipe for target '__sub-make' failed
-  make[5]: *** [__sub-make] Error 2
-  debian/rules:7: recipe for target 'binary-arch' failed
-  make[4]: *** [binary-arch] Error 2
-  dpkg-buildpackage: error: fakeroot -u debian/rules binary gave error exit status 2
-  /home/ard/linux/scripts/package/Makefile:79: recipe for target 'bindeb-pkg' failed
-  make[3]: *** [bindeb-pkg] Error 2
-  /home/ard/linux/Makefile:1399: recipe for target 'bindeb-pkg' failed
-  make[2]: *** [bindeb-pkg] Error 2
-  Makefile:152: recipe for target 'sub-make' failed
-  make[1]: *** [sub-make] Error 2
-  Makefile:15: recipe for target '__sub-make' failed
-  make: *** [__sub-make] Error 2
+Thanks, applied.  I addjusted the patch summary to read:
 
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- Makefile | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+    ext4: avoid potential extra brelse in setup_new_flex_group_blocks()
 
-diff --git a/Makefile b/Makefile
-index 9aa352b38815..f9d7af9e5146 100644
---- a/Makefile
-+++ b/Makefile
-@@ -15,9 +15,10 @@ NAME = "People's Front"
- PHONY := _all
- _all:
- 
--# Do not use make's built-in rules and variables
--# (this increases performance and avoids hard-to-debug behaviour)
--MAKEFLAGS += -rR
-+# o Do not use make's built-in rules and variables
-+#   (this increases performance and avoids hard-to-debug behaviour);
-+# o Look for make include files relative to root of kernel src
-+MAKEFLAGS += -rR --include-dir=$(CURDIR)
- 
- # Avoid funny character set dependencies
- unexport LC_ALL
-@@ -135,13 +136,6 @@ KBUILD_OUTPUT := $(shell mkdir -p $(KBUILD_OUTPUT) && cd $(KBUILD_OUTPUT) \
- $(if $(KBUILD_OUTPUT),, \
-      $(error failed to create output directory "$(saved-output)"))
- 
--# Look for make include files relative to root of kernel src
--#
--# This does not become effective immediately because MAKEFLAGS is re-parsed
--# once after the Makefile is read.  It is OK since we are going to invoke
--# 'sub-make' below.
--MAKEFLAGS += --include-dir=$(CURDIR)
--
- PHONY += $(MAKECMDGOALS) sub-make
- 
- $(filter-out _all sub-make $(CURDIR)/Makefile, $(MAKECMDGOALS)) _all: sub-make
--- 
-2.19.1
+(Note that resise should have been spelled as "resize", by the way.)
 
+
+						- Ted
