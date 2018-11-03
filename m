@@ -2,200 +2,180 @@ Return-Path: <SRS0=1exb=NO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73A9BC6786F
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 16:04:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D312C0044C
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 16:04:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30BFE20833
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 16:04:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15E262081F
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 16:04:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mADoE8KH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30BFE20833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=usp-br.20150623.gappssmtp.com header.i=@usp-br.20150623.gappssmtp.com header.b="EA8rg6WY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15E262081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=usp.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728614AbeKDBPk (ORCPT
+        id S1728654AbeKDBP7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 21:15:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44248 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728334AbeKDBPk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 21:15:40 -0400
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C36EF2081F;
-        Sat,  3 Nov 2018 16:03:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541261037;
-        bh=aD6IZun8bbTzEqBVoREVoJxkE5xOrxPrEYEw++c+ikg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=mADoE8KHyJ7B4p9eGBEz3MeNj4eq8SIJ280gKiPMbyuxEySHrpoNC+l5Lei89K0a2
-         WlQ6AmZs982xK9wyjkS5jtkYFOQ46nbnlpMcKQRyn05KBaAircqoiknsxKqwCIxvh0
-         2ceeMvdcRcIgYmGhgW+LXOb5TBG8aIWLpyc2f+ME=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] tracing/kprobes: Avoid parsing symbol+offset when updating arguments
-Date:   Sun,  4 Nov 2018 01:03:34 +0900
-Message-Id: <154126101356.14912.1379688281618914741.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20181103205448.15b667077e0b72fcd6147239@kernel.org>
-References: <20181103205448.15b667077e0b72fcd6147239@kernel.org>
-In-Reply-To: <20181103205448.15b667077e0b72fcd6147239@kernel.org>
-References: <20181103205448.15b667077e0b72fcd6147239@kernel.org>
-User-Agent: StGit/0.17.1-dirty
+        Sat, 3 Nov 2018 21:15:59 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:52667 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728334AbeKDBP6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 21:15:58 -0400
+Received: by mail-it1-f196.google.com with SMTP id t190-v6so1478492itb.2
+        for <linux-kernel@vger.kernel.org>; Sat, 03 Nov 2018 09:04:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=usp-br.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=51G9oFDcHMm10eDoLdhzF0sRCk3eyUQ9x1B4Tndyvnc=;
+        b=EA8rg6WYuRgGY7GqGEx3MEcALoicLoHvjH6LX27WaxkhwW+wnqFjblWzviHX5yNCZR
+         c8wLvCVjvUEdio0D7aPSl0FmXst/bLcmWoTj57Tr/aTwbLXKUhdhlZiIPLaLCyZSmdXU
+         SPSETRUoJ0YtiRVFlXHngqPfnrjmNREIWw2KKBg3vsxQWdPz3582j5LU0Ee3G9kYhwHF
+         H+bx0jD5sp9+07hFPqLk7ousZYkll3iwcjgSIH6r6Lzociu1ELiaGTCuqsyABxdStrx3
+         u0DF07ZdFseoJTWzx5XvdXafge9S4nCm1/wU+hwTaKjCKETbgfsePkhKugbA+/wqXHWa
+         j3gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=51G9oFDcHMm10eDoLdhzF0sRCk3eyUQ9x1B4Tndyvnc=;
+        b=uYIStAwRwECEfY/0tGiaWAlj+3SKTA+udGFIf9/xlfL0VqkUMnzNfhgdpuz144ToZu
+         Wi6xF4ewtRUHtTQF0lq2uJQxrHkUjFfJ5e1BPntDcQMRWoYZ06bUtfHtNu11xYJimRnv
+         CLAsDuhraILyk+zBCIcQbwrGAR6bEX8UtYtCifBpY41uyELSwVtWjyrozBFoCgaX7Yxk
+         S7HlS+gIOMeFCZlxR1MJ/EUg8I9sPefH4to+OC0YIbCRyLAZf5QdYTm+VXdP64mWJIgo
+         qI/Ef1GNCP8wto+6IR1JukU386zkt77hlGPsfCN9F/EbIMVpGhtK02C7vy0kH0P/Kdqy
+         9dXg==
+X-Gm-Message-State: AGRZ1gL26bEdOXAH8IeBPHSoeeI48gi2gLgIX6jnUblOEiYL21GgtJwD
+        PME4O+BKr0TfUe+RIIUs6G7WalKGSO6vJBFcIE/1SQ==
+X-Google-Smtp-Source: AJdET5dx3yy0uprMA6uNPWpX/ILDQk/UOSv34xvA1uEZRR3YYs58UPbHBbO56tm95/S9dnmdcIs1hiGJpjocvptYv68=
+X-Received: by 2002:a24:338e:: with SMTP id k136-v6mr1198223itk.86.1541261055867;
+ Sat, 03 Nov 2018 09:04:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20181027020005.3140-1-matheus.bernardino@usp.br>
+ <20181027020005.3140-6-matheus.bernardino@usp.br> <20181028165040.27c69fc5@archlinux>
+In-Reply-To: <20181028165040.27c69fc5@archlinux>
+From:   Matheus Tavares Bernardino <matheus.bernardino@usp.br>
+Date:   Sat, 3 Nov 2018 13:04:04 -0300
+Message-ID: <CAHd-oW4wki7am70DHFWb0GjOCtptRYRfAO2BG=32=YBBeAyASg@mail.gmail.com>
+Subject: Re: [PATCH v2 5/6] staging:iio:ad2s90: Add IIO_CHAN_INFO_SCALE to
+ channel spec and read_raw
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com,
+        Victor Colombo <victorcolombo@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce symbol_offset data structure for avoiding symbol+offset
-parsing when updating arguments.
+On Sun, Oct 28, 2018 at 1:50 PM Jonathan Cameron <jic23@kernel.org> wrote:
+>
+> On Fri, 26 Oct 2018 23:00:04 -0300
+> Matheus Tavares <matheus.bernardino@usp.br> wrote:
+>
+> > This patch adds the IIO_CHAN_INFO_SCALE mask to ad2s90_chan and
+> > implements the relative read behavior at ad2s90_read_raw.
+> >
+> > Signed-off-by: Victor Colombo <victorcolombo@gmail.com>
+> > Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
+>
+> Hi,
+>
+> A suggestion inline.  This is a common case that we have infrastructure
+> to simplify.  + I think your scale factor is very slightly wrong.
+>
+> Jonathan
+>
+> > ---
+> >  drivers/staging/iio/resolver/ad2s90.c | 32 ++++++++++++++++++---------
+> >  1 file changed, 22 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/staging/iio/resolver/ad2s90.c
+> > index b4a6a89c11b0..52b656875ed1 100644
+> > --- a/drivers/staging/iio/resolver/ad2s90.c
+> > +++ b/drivers/staging/iio/resolver/ad2s90.c
+> > @@ -34,19 +34,31 @@ static int ad2s90_read_raw(struct iio_dev *indio_dev,
+> >       int ret;
+> >       struct ad2s90_state *st = iio_priv(indio_dev);
+> >
+> > -     mutex_lock(&st->lock);
+> > +     switch (m) {
+> > +     case IIO_CHAN_INFO_SCALE:
+> > +             /* 2 * Pi / (2^12 - 1) ~= 0.001534355 */
+> > +             *val = 0;
+> > +             *val2 = 1534355;
+> Definitely 2^12 - 1?  That's a bit unusual if true as it would imply
+> that 2^12 - 1 and 0 were the same value.
+>
+> Imagine a smaller version with on 2^2 bits so 0, 1, 2, 3
+> Values of each are
+>
+> 0, M_PI/2, M_PI, 3*M_PI/2
+>
+> So the multiplier is 2*M_PI/(2^2) not 2*M_PI/(2^2 - 1)
+> 1/2 vs 2/3 * M_PI
 
-For kprobe events, "@symbol+offset" is supported, that requires
-to be updated when new module is loaded because @symbol address
-can be solved at that point. Currently kprobe events saves
-the "symbol+offset" string and parse it repeatedly, but that
-is inefficient.
-This introduces symbol_offset data structure which can save the
-offset and symbol separated, so that we don't need to parse it
-anymore.
+Oh, that makes a lot of sense! We used 2^12 - 1 here based on driver
+drivers/iio/resolver/ad2s1200.c, whose resolution is also 12 bits, as
+the ad2s90.c. Do you think this section is, perhaps, wrong on
+ad2s1200.c too, or maybe there is some difference between these two
+drivers that I didn't catch regarding the resolution?
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- kernel/trace/trace_probe.c |   49 +++++++++++++++++++++++++-------------------
- kernel/trace/trace_probe.h |    7 +++++-
- 2 files changed, 34 insertions(+), 22 deletions(-)
+Matheus.
 
-diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
-index bd30e9398d2a..0a3af7d6e133 100644
---- a/kernel/trace/trace_probe.c
-+++ b/kernel/trace/trace_probe.c
-@@ -201,6 +201,26 @@ static int parse_probe_vars(char *arg, const struct fetch_type *t,
- 	return ret;
- }
- 
-+static struct symbol_offset *allocate_symbol_offset(char *sym_offs_str)
-+{
-+	int ret;
-+	long offset = 0;
-+	struct symbol_offset *sof;
-+
-+	ret = traceprobe_split_symbol_offset(sym_offs_str, &offset);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	sof = kzalloc(sizeof(struct symbol_offset) + strlen(sym_offs_str) + 1,
-+			GFP_KERNEL);
-+	if (!sof)
-+		return ERR_PTR(-ENOMEM);
-+
-+	sof->offset = offset;
-+	strcpy(sof->symbol, sym_offs_str);
-+	return sof;
-+}
-+
- /* Recursive argument parser */
- static int
- parse_probe_arg(char *arg, const struct fetch_type *type,
-@@ -253,9 +273,9 @@ parse_probe_arg(char *arg, const struct fetch_type *type,
- 
- 			/* Preserve symbol for updating */
- 			code->op = FETCH_NOP_SYMBOL;
--			code->data = kstrdup(arg + 1, GFP_KERNEL);
--			if (!code->data)
--				return -ENOMEM;
-+			code->symoffs = allocate_symbol_offset(arg + 1);
-+			if (IS_ERR(code->symoffs))
-+				return PTR_ERR(code->symoffs);
- 			if (++code == end)
- 				return -E2BIG;
- 
-@@ -483,7 +503,7 @@ int traceprobe_parse_probe_arg(char *arg, ssize_t *size,
- 	if (ret) {
- 		for (code = tmp; code < tmp + FETCH_INSN_MAX; code++)
- 			if (code->op == FETCH_NOP_SYMBOL)
--				kfree(code->data);
-+				kfree(code->symoffs);
- 	}
- 	kfree(tmp);
- 
-@@ -513,7 +533,7 @@ void traceprobe_free_probe_arg(struct probe_arg *arg)
- 
- 	while (code && code->op != FETCH_OP_END) {
- 		if (code->op == FETCH_NOP_SYMBOL)
--			kfree(code->data);
-+			kfree(code->symoffs);
- 		code++;
- 	}
- 	kfree(arg->code);
-@@ -525,31 +545,18 @@ void traceprobe_free_probe_arg(struct probe_arg *arg)
- int traceprobe_update_arg(struct probe_arg *arg)
- {
- 	struct fetch_insn *code = arg->code;
--	long offset;
--	char *tmp;
--	char c;
--	int ret = 0;
- 
- 	while (code && code->op != FETCH_OP_END) {
- 		if (code->op == FETCH_NOP_SYMBOL) {
- 			if (code[1].op != FETCH_OP_IMM)
- 				return -EINVAL;
- 
--			tmp = strpbrk(code->data, "+-");
--			if (tmp)
--				c = *tmp;
--			ret = traceprobe_split_symbol_offset(code->data,
--							     &offset);
--			if (ret)
--				return ret;
--
- 			code[1].immediate =
--				(unsigned long)kallsyms_lookup_name(code->data);
--			if (tmp)
--				*tmp = c;
-+				(unsigned long)kallsyms_lookup_name(
-+						code->symoffs->symbol);
- 			if (!code[1].immediate)
- 				return -ENOENT;
--			code[1].immediate += offset;
-+			code[1].immediate += code->symoffs->offset;
- 		}
- 		code++;
- 	}
-diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
-index 974afc1a3e73..942424d05427 100644
---- a/kernel/trace/trace_probe.h
-+++ b/kernel/trace/trace_probe.h
-@@ -103,6 +103,11 @@ enum fetch_op {
- 	FETCH_NOP_SYMBOL,	/* Unresolved Symbol holder */
- };
- 
-+struct symbol_offset {
-+	long offset;
-+	char symbol[];
-+};
-+
- struct fetch_insn {
- 	enum fetch_op op;
- 	union {
-@@ -117,7 +122,7 @@ struct fetch_insn {
- 			unsigned char rshift;
- 		};
- 		unsigned long immediate;
--		void *data;
-+		struct symbol_offset *symoffs;
- 	};
- };
- 
-
+> Now this is a very common case so we have the return type
+> IIO_VAL_FRACTIONAL_LOG2 to give a more obvious and potentially
+> more accurate representation.
+>
+> > +             return IIO_VAL_INT_PLUS_NANO;
+> > +     case IIO_CHAN_INFO_RAW:
+> > +             mutex_lock(&st->lock);
+> > +
+> > +             ret = spi_read(st->sdev, st->rx, 2);
+> > +             if (ret < 0) {
+> > +                     mutex_unlock(&st->lock);
+> > +                     return ret;
+> > +             }
+> > +
+> > +             *val = (((u16)(st->rx[0])) << 4) | ((st->rx[1] & 0xF0) >> 4);
+> >
+> > -     ret = spi_read(st->sdev, st->rx, 2);
+> > -     if (ret < 0) {
+> >               mutex_unlock(&st->lock);
+> > -             return ret;
+> > -     }
+> >
+> > -     *val = (((u16)(st->rx[0])) << 4) | ((st->rx[1] & 0xF0) >> 4);
+> > -
+> > -     mutex_unlock(&st->lock);
+> > +             return IIO_VAL_INT;
+> > +     default:
+> > +             break;
+> > +     }
+> >
+> > -     return IIO_VAL_INT;
+> > +     return -EINVAL;
+> >  }
+> >
+> >  static const struct iio_info ad2s90_info = {
+> > @@ -57,7 +69,7 @@ static const struct iio_chan_spec ad2s90_chan = {
+> >       .type = IIO_ANGL,
+> >       .indexed = 1,
+> >       .channel = 0,
+> > -     .info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> > +     .info_mask_separate = BIT(IIO_CHAN_INFO_RAW) | BIT(IIO_CHAN_INFO_SCALE),
+> >  };
+> >
+> >  static int ad2s90_probe(struct spi_device *spi)
+>
