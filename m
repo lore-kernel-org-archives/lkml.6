@@ -2,145 +2,156 @@ Return-Path: <SRS0=1exb=NO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F0B0C6786F
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 10:45:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 665DCC6786F
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 10:45:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 328792084C
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 10:45:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MHB0y0Ya"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 328792084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id B8A0C2081D
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 10:45:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8A0C2081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=grandegger.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728480AbeKCT4L (ORCPT
+        id S1728550AbeKCT4r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 15:56:11 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:35040 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727007AbeKCT4K (ORCPT
+        Sat, 3 Nov 2018 15:56:47 -0400
+Received: from mailproxy06.manitu.net ([217.11.48.70]:56786 "EHLO
+        mailproxy06.manitu.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727644AbeKCT4q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 15:56:10 -0400
-Received: by mail-wm1-f65.google.com with SMTP id q12-v6so3844777wmq.0
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Nov 2018 03:45:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YmQq90FRkqBQp0/v6HvhwKCbNPsiefsFk4oklN2EcKs=;
-        b=MHB0y0YaXByvjwLMoonMq5QIjx9CsU+rAU+j5poaVTafUlBxWYiuUEF8m8kd6fUby4
-         QmIDj233bXRVK/YHOYnKiwKvCqqeDu+b+pcNNyGTzoUDVA4Y5GFMOGiovxZt7wz4jmyt
-         xJjWXL3cZPHkutGq/DuKCnwo4rBDuc8nFlcaE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YmQq90FRkqBQp0/v6HvhwKCbNPsiefsFk4oklN2EcKs=;
-        b=swtXKW26EaT/AsaStrUW2UZMu3sWl8iO4Wd9aSnRselvIEluZmVoHw2S/FO86rRf7g
-         Bs/kBglGz5B0HWaKiLk9RrMTkUAj5xGPKjzHHFtk1STDpKWHMNLLPYKMqvaQiGIIEB+n
-         bFBSHzZdEORD+IGNxxt8NrQZpmdeSrgr2ZHh3ALOqVxhqwmytXx7Xwpao42g7fL0Hju7
-         /3DCtWKQWbuhpb82dZtPWZ+33rY3H2CeNa+R+xEtNDpZLGXua67pNsIt8EuZypqKGtFQ
-         0O723bq44iaCuiDFcQoygzTh7OS/C0TWhoRcMi1j7zZKCzbk6NxaMSvVg/J/6bptXLpl
-         6HYw==
-X-Gm-Message-State: AGRZ1gI5va3c8h4jZOfJx7dYF9S9pPu0Ya9rkpftUZo4G+CEi/fRTX88
-        dC/ise5uhITPxE82v3FGa6WzJQ==
-X-Google-Smtp-Source: AJdET5ffk8gt8qQ1YuVWXJvRkvWY6hwLLFRlaE0/rLpCJJIwLmN6I0KvCp4FDHXIC/Svzn3L0Yykkg==
-X-Received: by 2002:a1c:2283:: with SMTP id i125-v6mr601230wmi.42.1541241914508;
-        Sat, 03 Nov 2018 03:45:14 -0700 (PDT)
-Received: from holly.lan (82-132-212-57.dab.02.net. [82.132.212.57])
-        by smtp.gmail.com with ESMTPSA id o9-v6sm44092322wra.42.2018.11.03.03.45.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 03 Nov 2018 03:45:13 -0700 (PDT)
-Date:   Sat, 3 Nov 2018 10:45:03 +0000
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Jason Wessel <jason.wessel@windriver.com>,
-        kgdb-bugreport@lists.sourceforge.net,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-mips@linux-mips.org, linux-sh@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>, jhogan@kernel.org,
-        linux-hexagon@vger.kernel.org, Vineet Gupta <vgupta@synopsys.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>, dalias@libc.org,
-        Ralf Baechle <ralf@linux-mips.org>,
-        linux-snps-arc@lists.infradead.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Will Deacon <will.deacon@arm.com>, paulus@samba.org,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        christophe.leroy@c-s.fr, mpe@ellerman.id.au, paul.burton@mips.com,
-        LKML <linux-kernel@vger.kernel.org>, rkuo@codeaurora.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH v2 2/2] kgdb: Fix kgdb_roundup_cpus() for arches who used
- smp_call_function()
-Message-ID: <20181103104503.eftn5btx7otgufro@holly.lan>
-References: <20181030221843.121254-1-dianders@chromium.org>
- <20181030221843.121254-3-dianders@chromium.org>
- <20181031184050.sd5opni3mznaapkv@holly.lan>
- <CAD=FV=V1eHo7Wz31DTMMNi394qwEaESTxJCYVE60Q7hpDEqRmQ@mail.gmail.com>
+        Sat, 3 Nov 2018 15:56:46 -0400
+Received: from [10.0.30.7] (dslb-188-104-003-195.188.104.pools.vodafone-ip.de [188.104.3.195])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: wg@grandegger.com)
+        by mailproxy06.manitu.net (Postfix) with ESMTPSA id 08EAB58279D;
+        Sat,  3 Nov 2018 11:45:50 +0100 (CET)
+Subject: Re: [RFC PATCH 1/3] can: m_can: Create m_can core to leverage common
+ code
+To:     Dan Murphy <dmurphy@ti.com>, mkl@pengutronix.de,
+        davem@davemloft.net
+Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20181010142055.25271-1-dmurphy@ti.com>
+ <20181010142055.25271-2-dmurphy@ti.com>
+ <52811b27-00c0-f5e2-2b18-608ccf846723@grandegger.com>
+ <349ef8be-f4c7-25cc-2c33-7ce1fd0b0f40@ti.com>
+From:   Wolfgang Grandegger <wg@grandegger.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=wg@grandegger.com; prefer-encrypt=mutual; keydata=
+ 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
+ 8QEfHnPzgykCs2DOOQ==
+Message-ID: <9003a544-83cf-7dce-7f14-4abd292d470e@grandegger.com>
+Date:   Sat, 3 Nov 2018 11:45:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=V1eHo7Wz31DTMMNi394qwEaESTxJCYVE60Q7hpDEqRmQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <349ef8be-f4c7-25cc-2c33-7ce1fd0b0f40@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 02:41:14PM -0700, Doug Anderson wrote:
-> > As mentioned in another part of the thread we can also add robustness
-> > by skipping a cpu where csd->flags != 0 (and adding an appropriately
-> > large comment regarding why). Doing the check directly is abusing
-> > internal knowledge that smp.c normally keeps to itself so an accessor
-> > of some kind would be needed.
-> 
-> Sure.  I could add smp_async_func_finished() that just looked like:
-> 
-> int smp_async_func_finished(call_single_data_t *csd)
-> {
->   return !(csd->flags & CSD_FLAG_LOCK);
-> }
-> 
-> My understanding of all the mutual exclusion / memory barrier concepts
-> employed by smp.c is pretty weak, though.  I'm hoping that it's safe
-> to just access the structure and check the bit directly.
-> 
-> ...but do you think adding a generic accessor like this is better than
-> just keeping track of this in kgdb directly?  I could avoid the
-> accessor by adding a "rounding_up" member to "struct
-> debuggerinfo_struct" and doing something like this in roundup:
-> 
->   /* If it didn't round up last time, don't try again */
->   if (kgdb_info[cpu].rounding_up)
->     continue
-> 
->   kgdb_info[cpu].rounding_up = true
->   smp_call_function_single_async(cpu, csd);
-> 
-> ...and then in kgdb_nmicallback() I could just add:
-> 
->   kgdb_info[cpu].rounding_up = false
-> 
-> In that case we're not adding a generic accessor to smp.c that most
-> people should never use.
+Hello Dan,
 
-Whilst it is very tempting to make a sarcastic reply here ("Of course! What
-kgdb really needs is yet another set of condition variables") I can't
-because I actually agree with the proposal. I don't really want kgdb to
-be too "special" especially when it doesn't need to be.
+Am 31.10.2018 um 21:15 schrieb Dan Murphy:
+> Wolfgang
+> 
+> Thanks for the review
+> 
+> On 10/27/2018 09:19 AM, Wolfgang Grandegger wrote:
+>> Hello Dan,
+>>
+>> for the RFC, could you please just do the necessary changes to the
+>> existing code. We can discuss about better names, etc. later. For
+>> the review if the common code I quickly did:
+>>
+>>   mv m_can.c m_can_platform.c
+>>   mv m_can_core.c m_can.c
+>>
+>> The file names are similar to what we have for the C_CAN driver.
+>>
+>>   s/classdev/priv/
+>>   variable name s/m_can_dev/priv/
+>>
+>> Then your patch 1/3 looks as shown below. I'm going to comment on that
+>> one. The comments start with "***"....
+>>
+> 
+> So you would like me to align the names with the c_can driver?
 
-Only thing to note is that rounding_up will not be manipulated within a
-common spin lock so you might have to invest a bit of thought to make
-sure any races between the master and slave as the slave CPU clears the
-flag are benign.
+That would be the obvious choice.
+> <snip>
+>>
+>> *** I didn't review the rest of the patch for now.
+>>
+> 
+> snipped the code to reply to the comment.
+> 
+>> Looking to the generic code, you didn't really change the way
+>> the driver is accessing the registers. Also the interrupt handling
+>> and rx polling is as it was before. Does that work properly using
+>> the SPI interface of the TCAN4x5x?
+> 
+> I don't want to change any of that yet.  Maybe my cover letter was not clear
+> or did not go through.
+> 
+> But the intention was just to break out the functionality to create a MCAN framework
+> that can be used by devices that contain the Bosch MCAN core and provider their own protocal to access
+> the registers in the device.
+> 
+> I don't want to do any functional changes at this time on the IP code itself until we have a framework.
+> There should be no regression in the io mapped code.
+> 
+> I did comment on the interrupt handling and asked if a threaded work queue would affect CAN timing.
+> For the original TCAN driver this was the way it was implemented.
 
+Do threaded interrupts with RX polling make sense? I think we need a
+common interface allowing to select hard-irqs+napi or threaded-irqs.
 
-Daniel.
+Wolfgang.
