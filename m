@@ -3,103 +3,128 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C107C0044C
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 08:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AB3FC0044C
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 09:01:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4AF72082D
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 08:47:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4AF72082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 0B9832082E
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 09:01:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B9832082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727556AbeKCR6M (ORCPT
+        id S1727148AbeKCSL4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 13:58:12 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42214 "EHLO mx1.suse.de"
+        Sat, 3 Nov 2018 14:11:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43176 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726316AbeKCR6M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 13:58:12 -0400
+        id S1726539AbeKCSL4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 14:11:56 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 97523AE80;
-        Sat,  3 Nov 2018 08:47:35 +0000 (UTC)
-Subject: Re: [PATCH] scsi: myrs: avoid stack overflow warning
-To:     Arnd Bergmann <arnd@arndb.de>, Hannes Reinecke <hare@kernel.org>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181102154426.1951776-1-arnd@arndb.de>
-From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <c4e5b45e-85a5-d279-0265-a4974f41fa85@suse.de>
-Date:   Sat, 3 Nov 2018 09:47:34 +0100
+        by mx1.suse.de (Postfix) with ESMTP id 8FEAFB049;
+        Sat,  3 Nov 2018 09:01:16 +0000 (UTC)
+Subject: Re: [PATCH] Change the total_dirty from SZ_256M to SZ_64M.
+To:     hmsjwzb <weizhefix@gmail.com>
+Cc:     clm@fb.com, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Omar Sandoval <osandov@fb.com>,
+        Filipe Manana <fdmanana@suse.com>, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20181103083654.655-1-weizhefix@gmail.com>
+From:   Nikolay Borisov <nborisov@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <8965ea1d-c29f-7bdf-44cb-874511899567@suse.com>
+Date:   Sat, 3 Nov 2018 11:01:14 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181102154426.1951776-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20181103083654.655-1-weizhefix@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/2/18 4:44 PM, Arnd Bergmann wrote:
-> Putting a 1024 byte data structure on the stack is generally a bad idea.
-> On 32-bit systems, it also triggers a compile-time warning when building
-> with -Og:
+
+
+On 3.11.18 г. 10:36 ч., hmsjwzb wrote:
+> The SZ_256M will cause trouble in platform with less than 256M memory.
+> For example, a qemu virtual machine.
 > 
-> drivers/scsi/myrs.c: In function 'myrs_get_ctlr_info':
-> drivers/scsi/myrs.c:212:1: error: the frame size of 1028 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
-> 
-> We only really need three members of the structure, so just read them
-> manually here instead of copying the entire structure.
-> 
-> Fixes: 77266186397c ("scsi: myrs: Add Mylex RAID controller (SCSI interface)")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: hmsjwzb <weizhefix@gmail.com>
+
+If you have actually taken the care to understand the code in
+test_find_delalloc you would have seen that total_dirty and max_bytes
+are actually inter-dependent so you cannot really change total_bytes
+without adjusting max_bytes as well. Otherwise tests will start breaking.
+
+NACK on this (and likely any future postings of this) since the tests
+are sized in a such a way so as to test design limits (such as the max
+extent size which is 128MB)
+
+
 > ---
->   drivers/scsi/myrs.c | 13 ++++++++-----
->   1 file changed, 8 insertions(+), 5 deletions(-)
+>  fs/btrfs/tests/extent-io-tests.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/scsi/myrs.c b/drivers/scsi/myrs.c
-> index 0264a2e2bc19..b8d54ef8cf6d 100644
-> --- a/drivers/scsi/myrs.c
-> +++ b/drivers/scsi/myrs.c
-> @@ -163,9 +163,12 @@ static unsigned char myrs_get_ctlr_info(struct myrs_hba *cs)
->   	dma_addr_t ctlr_info_addr;
->   	union myrs_sgl *sgl;
->   	unsigned char status;
-> -	struct myrs_ctlr_info old;
-> +	unsigned short ldev_present, ldev_critical, ldev_offline;
-> +
-> +	ldev_present = cs->ctlr_info->ldev_present;
-> +	ldev_critical = cs->ctlr_info->ldev_critical;
-> +	ldev_offline = cs->ctlr_info->ldev_offline;
->   
-> -	memcpy(&old, cs->ctlr_info, sizeof(struct myrs_ctlr_info));
->   	ctlr_info_addr = dma_map_single(&cs->pdev->dev, cs->ctlr_info,
->   					sizeof(struct myrs_ctlr_info),
->   					DMA_FROM_DEVICE);
-> @@ -198,9 +201,9 @@ static unsigned char myrs_get_ctlr_info(struct myrs_hba *cs)
->   		    cs->ctlr_info->rbld_active +
->   		    cs->ctlr_info->exp_active != 0)
->   			cs->needs_update = true;
-> -		if (cs->ctlr_info->ldev_present != old.ldev_present ||
-> -		    cs->ctlr_info->ldev_critical != old.ldev_critical ||
-> -		    cs->ctlr_info->ldev_offline != old.ldev_offline)
-> +		if (cs->ctlr_info->ldev_present != ldev_present ||
-> +		    cs->ctlr_info->ldev_critical != ldev_critical ||
-> +		    cs->ctlr_info->ldev_offline != ldev_offline)
->   			shost_printk(KERN_INFO, cs->host,
->   				     "Logical drive count changes (%d/%d/%d)\n",
->   				     cs->ctlr_info->ldev_critical,
+> diff --git a/fs/btrfs/tests/extent-io-tests.c b/fs/btrfs/tests/extent-io-tests.c
+> index 9e0f4a01be14..cb23dce96a2d 100644
+> --- a/fs/btrfs/tests/extent-io-tests.c
+> +++ b/fs/btrfs/tests/extent-io-tests.c
+> @@ -62,7 +62,7 @@ static int test_find_delalloc(u32 sectorsize)
+>  	struct page *page;
+>  	struct page *locked_page = NULL;
+>  	unsigned long index = 0;
+> -	u64 total_dirty = SZ_256M;
+> +	u64 total_dirty = SZ_64M;
+>  	u64 max_bytes = SZ_128M;
+>  	u64 start, end, test_start;
+>  	u64 found;
 > 
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-
-Cheers,
-
-Hannes
