@@ -2,88 +2,201 @@ Return-Path: <SRS0=1exb=NO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B66E4C0044C
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 17:38:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60584C0044C
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 17:43:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D6762081B
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 17:38:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FifNW8sw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D6762081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id D8BE120843
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 17:43:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8BE120843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728808AbeKDCu2 (ORCPT
+        id S1728704AbeKDCzP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 22:50:28 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35263 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727615AbeKDCu2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 22:50:28 -0400
-Received: by mail-lj1-f193.google.com with SMTP id x85-v6so4461476ljb.2
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Nov 2018 10:38:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+/+g4luQm6RfZa0/eBbUTefC1Dt0e0naEh+hHQg5zZ0=;
-        b=FifNW8swyHjXrENNA/GchZSGhv6yFoyecQlOXU1k++vyHK3tidEWRSt0M5N4WV+E9U
-         lsc+tMmIVDaLvgD7ib3r8CaClg12CX4GGkzBo6CpL64XTYVDHRSNqZns2w383p/G0Wix
-         H+eJODU1AAkVtsCA/Ybf1KmBPB/BuQKVF83/s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+/+g4luQm6RfZa0/eBbUTefC1Dt0e0naEh+hHQg5zZ0=;
-        b=InudK2niuIUr7vxq7uBhcLi/i4M4d45z8B0p6o8LW6wt0YlJ41QCEWqnLG8AcLmPAY
-         02ZH+5vtL9nzOoutZBlMSQVoKC3jgMX2cnkgbqlT0czgkJ32CUtKUZZLVI3NLBPrAk0Y
-         HI9wqe9KlBQ9i/4c7bxcuULSCDHXDH+3yjK+7nEr/CIfSh3OIS7IkOa4SeE/5RyEW5A4
-         0fCH4nItPOFlaavV8F1O2Qat3JpkHIT5kJkxohQ6uaJSuFswgEFduSM2LX0fsFsnPfDK
-         dSX+l3sk0Ki32eY5eYacVGL259roRmBGNsbGeANwTf9JSbasOfNMFJdnZch1B5d+njVK
-         xkXg==
-X-Gm-Message-State: AGRZ1gK4woYPUZbnILuSgBwKehXlf0cHYwrJyR/OcB671av1uwazCSDl
-        Kt39mujeCFnzIQSnHMgBMwuZrRPuRnDSPg==
-X-Google-Smtp-Source: AJdET5fww9HSXEkLQtGU2NbmVp+WDi7l6DxsbPFtyPVlYeQo6YXXuAjSUsPCa/Bl5IaOqZacjfxRzg==
-X-Received: by 2002:a2e:2d01:: with SMTP id t1-v6mr9113489ljt.99.1541266711808;
-        Sat, 03 Nov 2018 10:38:31 -0700 (PDT)
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
-        by smtp.gmail.com with ESMTPSA id m14-v6sm2555332lji.29.2018.11.03.10.38.30
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 03 Nov 2018 10:38:31 -0700 (PDT)
-Received: by mail-lf1-f47.google.com with SMTP id d7-v6so3412404lfi.2
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Nov 2018 10:38:30 -0700 (PDT)
-X-Received: by 2002:a19:3fcf:: with SMTP id m198mr9003743lfa.106.1541266710229;
- Sat, 03 Nov 2018 10:38:30 -0700 (PDT)
+        Sat, 3 Nov 2018 22:55:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39302 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727508AbeKDCzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 22:55:15 -0400
+Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C2E3620685;
+        Sat,  3 Nov 2018 17:43:18 +0000 (UTC)
+Date:   Sat, 3 Nov 2018 13:43:16 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] tracing/kprobes: Avoid parsing symbol+offset when
+ updating arguments
+Message-ID: <20181103134317.68873bd8@vmware.local.home>
+In-Reply-To: <154126101356.14912.1379688281618914741.stgit@devbox>
+References: <20181103205448.15b667077e0b72fcd6147239@kernel.org>
+        <154126101356.14912.1379688281618914741.stgit@devbox>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <1541194863.2824.2.camel@HansenPartnership.com>
-In-Reply-To: <1541194863.2824.2.camel@HansenPartnership.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 3 Nov 2018 10:38:14 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiCAvnC3vfoieXCqtXZuO5-sVgx+xovHHbHyJ-5EPinGA@mail.gmail.com>
-Message-ID: <CAHk-=wiCAvnC3vfoieXCqtXZuO5-sVgx+xovHHbHyJ-5EPinGA@mail.gmail.com>
-Subject: Re: [GIT PULL] final round of SCSI updates for the 4.19+ merge window
-To:     James.Bottomley@hansenpartnership.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-scsi@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 2, 2018 at 2:41 PM James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
->
-> This is a set of minor small (and safe changes) that didn't make the
-> initial pull request plus some bug fixes.
+On Sun,  4 Nov 2018 01:03:34 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-Pulled,
+> Introduce symbol_offset data structure for avoiding symbol+offset
+> parsing when updating arguments.
+> 
+> For kprobe events, "@symbol+offset" is supported, that requires
+> to be updated when new module is loaded because @symbol address
+> can be solved at that point. Currently kprobe events saves
+> the "symbol+offset" string and parse it repeatedly, but that
+> is inefficient.
 
-                 Linus
+Do we care if it's inefficient? It's only done on module load and at
+the beginning. That's far from a fast path.
+
+If anything, the original solution saves memory, which is a bigger
+concern than speed in this case.
+
+-- Steve
+
+
+> This introduces symbol_offset data structure which can save the
+> offset and symbol separated, so that we don't need to parse it
+> anymore.
+> 
+> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> ---
+>  kernel/trace/trace_probe.c |   49 +++++++++++++++++++++++++-------------------
+>  kernel/trace/trace_probe.h |    7 +++++-
+>  2 files changed, 34 insertions(+), 22 deletions(-)
+> 
+> diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
+> index bd30e9398d2a..0a3af7d6e133 100644
+> --- a/kernel/trace/trace_probe.c
+> +++ b/kernel/trace/trace_probe.c
+> @@ -201,6 +201,26 @@ static int parse_probe_vars(char *arg, const struct fetch_type *t,
+>  	return ret;
+>  }
+>  
+> +static struct symbol_offset *allocate_symbol_offset(char *sym_offs_str)
+> +{
+> +	int ret;
+> +	long offset = 0;
+> +	struct symbol_offset *sof;
+> +
+> +	ret = traceprobe_split_symbol_offset(sym_offs_str, &offset);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	sof = kzalloc(sizeof(struct symbol_offset) + strlen(sym_offs_str) + 1,
+> +			GFP_KERNEL);
+> +	if (!sof)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	sof->offset = offset;
+> +	strcpy(sof->symbol, sym_offs_str);
+> +	return sof;
+> +}
+> +
+>  /* Recursive argument parser */
+>  static int
+>  parse_probe_arg(char *arg, const struct fetch_type *type,
+> @@ -253,9 +273,9 @@ parse_probe_arg(char *arg, const struct fetch_type *type,
+>  
+>  			/* Preserve symbol for updating */
+>  			code->op = FETCH_NOP_SYMBOL;
+> -			code->data = kstrdup(arg + 1, GFP_KERNEL);
+> -			if (!code->data)
+> -				return -ENOMEM;
+> +			code->symoffs = allocate_symbol_offset(arg + 1);
+> +			if (IS_ERR(code->symoffs))
+> +				return PTR_ERR(code->symoffs);
+>  			if (++code == end)
+>  				return -E2BIG;
+>  
+> @@ -483,7 +503,7 @@ int traceprobe_parse_probe_arg(char *arg, ssize_t *size,
+>  	if (ret) {
+>  		for (code = tmp; code < tmp + FETCH_INSN_MAX; code++)
+>  			if (code->op == FETCH_NOP_SYMBOL)
+> -				kfree(code->data);
+> +				kfree(code->symoffs);
+>  	}
+>  	kfree(tmp);
+>  
+> @@ -513,7 +533,7 @@ void traceprobe_free_probe_arg(struct probe_arg *arg)
+>  
+>  	while (code && code->op != FETCH_OP_END) {
+>  		if (code->op == FETCH_NOP_SYMBOL)
+> -			kfree(code->data);
+> +			kfree(code->symoffs);
+>  		code++;
+>  	}
+>  	kfree(arg->code);
+> @@ -525,31 +545,18 @@ void traceprobe_free_probe_arg(struct probe_arg *arg)
+>  int traceprobe_update_arg(struct probe_arg *arg)
+>  {
+>  	struct fetch_insn *code = arg->code;
+> -	long offset;
+> -	char *tmp;
+> -	char c;
+> -	int ret = 0;
+>  
+>  	while (code && code->op != FETCH_OP_END) {
+>  		if (code->op == FETCH_NOP_SYMBOL) {
+>  			if (code[1].op != FETCH_OP_IMM)
+>  				return -EINVAL;
+>  
+> -			tmp = strpbrk(code->data, "+-");
+> -			if (tmp)
+> -				c = *tmp;
+> -			ret = traceprobe_split_symbol_offset(code->data,
+> -							     &offset);
+> -			if (ret)
+> -				return ret;
+> -
+>  			code[1].immediate =
+> -				(unsigned long)kallsyms_lookup_name(code->data);
+> -			if (tmp)
+> -				*tmp = c;
+> +				(unsigned long)kallsyms_lookup_name(
+> +						code->symoffs->symbol);
+>  			if (!code[1].immediate)
+>  				return -ENOENT;
+> -			code[1].immediate += offset;
+> +			code[1].immediate += code->symoffs->offset;
+>  		}
+>  		code++;
+>  	}
+> diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
+> index 974afc1a3e73..942424d05427 100644
+> --- a/kernel/trace/trace_probe.h
+> +++ b/kernel/trace/trace_probe.h
+> @@ -103,6 +103,11 @@ enum fetch_op {
+>  	FETCH_NOP_SYMBOL,	/* Unresolved Symbol holder */
+>  };
+>  
+> +struct symbol_offset {
+> +	long offset;
+> +	char symbol[];
+> +};
+> +
+>  struct fetch_insn {
+>  	enum fetch_op op;
+>  	union {
+> @@ -117,7 +122,7 @@ struct fetch_insn {
+>  			unsigned char rshift;
+>  		};
+>  		unsigned long immediate;
+> -		void *data;
+> +		struct symbol_offset *symoffs;
+>  	};
+>  };
+>  
+
