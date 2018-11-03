@@ -2,99 +2,163 @@ Return-Path: <SRS0=1exb=NO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 328E3C0044C
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 03:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B8EC65C22
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 03:54:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7E362081D
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 03:53:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LJi+QpkK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7E362081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E87852081D
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 03:54:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E87852081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727277AbeKCNDe (ORCPT
+        id S1727524AbeKCNEB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 09:03:34 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34663 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726016AbeKCNDe (ORCPT
+        Sat, 3 Nov 2018 09:04:01 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:37918 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726016AbeKCNEB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 09:03:34 -0400
-Received: by mail-pf1-f196.google.com with SMTP id f78-v6so1891139pfe.1
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 20:53:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=/FtJpVoKv5A+l0Ca4++G5CdkOOjxDITxQciRPEIwt5Q=;
-        b=LJi+QpkK6730jsZ2POMYs0br06gsBjvHNVv5hZidOoyACucVsxee7PbBjp4Rq3mfVy
-         mPprS92jKufDRpsEwoneb8tfY1yqw5HurlfSjsNCeOHk+nQVzqKS65R+b7p4Cqj8kXpb
-         hiy4DyFX8xcM9rFY4WZt5Jgz2IhW96wXq7+P92+T+wud3/8G5MtsnuTOBgNFRomuuYY5
-         Efb5ttUMlRUU5u+RhLqo7zRSdbWN+hrjb9bPHfp5rYkVLtjBI/VRSrKpa5oDu8j7rspf
-         kSDuHmA87WnmSu/Ek+sie5Uqxu6ZBEvYuKvpZUweIyFEeTtDSXHa0GHHL3pAsOIEuVBW
-         WjQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/FtJpVoKv5A+l0Ca4++G5CdkOOjxDITxQciRPEIwt5Q=;
-        b=t5Uus+uGLN1L5igzrsmxDcXSffZ+UIfvIm/ncsGCLTOJEa4hN3cNIQ+X/YIcPB42oZ
-         sWO1sgNeoLjIg8irBNCmrR+mbXZ2PqcCC8kWO//k5QeUtloJ8X1HLJ1R5tL+lDx+ONd1
-         T6zUjSWgb1UEkUH+gHgqQY57pjR9493R3hO0CO9bpvE8YHWNnI79DromWr61iwjajMn+
-         cCiJlJ/lE5fjZ4cmksUns729CxCcqxUFPal0y9rGgrh2UMdjGS/LhesTLHGRfabQV4n2
-         DpLKxNUWMQ7vySP4JB9F6fEqEH6OZ5sYW9ixT3+vkkmuyOyfnwVFVc5EE5LwQzN29Z9G
-         J0zA==
-X-Gm-Message-State: AGRZ1gIv09iKFUVqWR6uGHs9pDdM61vzc/gVwk63hAQ6v8+jKz7sKLe4
-        Uh/jNVmJFvQ5W99G+J1FwqoiXfAA
-X-Google-Smtp-Source: AJdET5ftZqR6Ztr9F54fKrJMqfXRwJhYzPhmCf54pd+vItp0y3/4L2xNpOHl7ACtt2Qke5X4j1ZxnQ==
-X-Received: by 2002:a62:4681:: with SMTP id o1-v6mr14122577pfi.108.1541217222256;
-        Fri, 02 Nov 2018 20:53:42 -0700 (PDT)
-Received: from ?IPv6:2601:282:800:fd80:49bd:4cd1:c202:8fdd? ([2601:282:800:fd80:49bd:4cd1:c202:8fdd])
-        by smtp.googlemail.com with ESMTPSA id 124-v6sm47947660pfb.132.2018.11.02.20.53.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 02 Nov 2018 20:53:40 -0700 (PDT)
-Subject: Re: [LKP] [net/ipv6] 4ed591c8ab:
- kernel_selftests.net.fib-onlink-tests.sh.fail
-To:     kernel test robot <rong.a.chen@intel.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>, lkp@01.org
-References: <20181102021145.GI24195@shao2-debian>
-From:   David Ahern <dsahern@gmail.com>
-Message-ID: <57c4c8ec-4a81-bbee-c153-54524b26da11@gmail.com>
-Date:   Fri, 2 Nov 2018 21:53:38 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Sat, 3 Nov 2018 09:04:01 -0400
+Received: from localhost.localdomain (unknown [IPv6:2804:431:9718:2bff:decf:69f2:c4e6:79a6])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: koike)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 9A8F627E838;
+        Sat,  3 Nov 2018 03:53:54 +0000 (GMT)
+From:   Helen Koike <helen.koike@collabora.com>
+To:     dm-devel@redhat.com
+Cc:     agk@redhat.com, snitzer@redhat.com, linux-kernel@vger.kernel.org,
+        enric.balletbo@collabora.com, wad@chromium.org,
+        linux-doc@vger.kernel.org, linux-lvm@redhat.com,
+        kernel@collabora.com, richard.weinberger@gmail.com,
+        keescook@chromium.org
+Subject: [PATCH v10 0/2] dm: boot a mapped device without an initramfs
+Date:   Sat,  3 Nov 2018 00:53:39 -0300
+Message-Id: <20181103035341.16893-1-helen.koike@collabora.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <20181102021145.GI24195@shao2-debian>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/1/18 8:11 PM, kernel test robot wrote:
-> FYI, we noticed the following commit (built with gcc-7):
-> 
-> commit: 4ed591c8ab44e711e56b8e021ffaf4f407c045f5 ("net/ipv6: Allow onlink routes to have a device mismatch if it is the default route")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+As mentioned in the discussion from the previous version of this patch, Android
+and Chrome OS do not use initramfs mostly due to boot time and size liability.
+A practical example as mentioned by Kees is that Chrome OS has a limited amount
+of storage available for the boot image as it is covered by the static root of
+trust signature.
 
-our mileage varies.
+So instead of bringing up userspace to perform the required configuration for
+mapped devices, this patchset allows them to be configured in the kernel command
+line parameter for use early in the boot process, allowing booting from a mapped
+device without an initramfs.
 
-When I run fib-onlink-tests.sh I get:
-Tests passed:  38
-Tests failed:   0
+The syntax used in the boot param is based on the concise format from the dmsetup
+tool as described in its man page http://man7.org/linux/man-pages/man8/dmsetup.8.html#CONCISE_FORMAT
 
-The said patch does fix a bug with onlink routes and the test cases were
-updated in the same patch. I this case you can not mix and match tests
-and kernels -- ie., running new tests on older kernel will generate a
-failure. I am guessing that is the case here.
+Which is:
+	dm=<name>,<uuid>,<minor>,<flags>,<table>[,<table>+][;<name>,<uuid>,<minor>,<flags>,<table>[,<table>+]+]
+
+Where,
+	<name>		::= The device name.
+	<uuid>		::= xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx | ""
+	<minor>		::= The device minor number | ""
+	<flags>		::= "ro" | "rw"
+	<table>		::= <start_sector> <num_sectors> <target_type> <target_args>
+	<target_type>	::= "verity" | "linear" | ...
+
+Example, the following could be added in the boot parameters.
+dm="lroot,,,rw, 0 4096 linear 98:16 0, 4096 4096 linear 98:32 0" root=/dev/dm-0
+
+Please check patch 2/2 with the documentation on the format.
+
+The idea to make it compatible with the dmsetup concise format is to make it
+easier for users, allowing just copy & paste from the output of the command:
+
+	sudo dmsetup table --concise /dev/mapper/lroot
+
+The implementation consists basically in parsing the command line argument and
+performing the ioctls that would be performed by userspace otherwise,
+i.e. DM_DEV_CREATE, followed by DM_TABLE_LOAD then DM_DEV_SUSPEND.
+
+Instead of performing the ioctls, we could by-pass it, calling the corresponding
+functions directly, but the ioctls calls perform some checks and also the
+implementation stays less invasive. Please let me know if you would prefer a
+directly call instead of going thought the ioctls.
+
+Changes since v9:
+ - https://www.redhat.com/archives/linux-lvm/2018-September/msg00016.html
+ - new file: drivers/md/dm-boot.c
+ - most of the parsing code was moved from init/do_mounts_dm.c to drivers/md/dm-boot.c
+ - parsing code was in essence replaced by the concise parser from dmsetup
+ _create_concise function:
+https://sourceware.org/git/?p=lvm2.git;a=blob;f=libdm/dm-tools/dmsetup.c;h=835fdcdc75e8f0f0f7c4ed46cc9788a6616f58b8;hb=7498f8383397a93db95655ca227257836cbcac82#l1265
+ the main reason is that this code is already being used/tested by dmsetup, so
+ we can have some level of confidence that it works as expected. Besides this,
+ it also looks more efficient.
+ - Not all targets are allowed to be used by dm=, as pointed previously, there
+ are some risks in creating a mapped device without some validation from
+ userspace (see documentation from the patch listing which targets are allowed).
+ - Instead of using a simple singly linked list (for devices and tables), use
+ the struct list_head. This occupies unnecessary space in the code, but it makes
+ the code cleaner and easier to read and less prone to silly errors.
+ - Documentation and comments were reviewed and refactored, e.g.:
+	* "is to possible" was removed
+	* s/specified as a simple string/specified as a string/
+ - Added docs above __align function, make it clear that the second parameter @a
+ must be a power of two.
+ - Clean ups: removal of unnecessary includes, macros, variables, some redundant
+ checks and warnings.
+ - when calling ioctls, the code was allocating and freeing the same structure
+ a couple of times. So instead of executing kzalloc/kfree 3 times, execute
+ kmalloc once and reuse the structure after a memset, then finally kfree it once.
+ - update commit message
+
+Changes since v8:
+ - https://www.redhat.com/archives/linux-lvm/2017-May/msg00055.html
+ - Add minor number to make it compatible with dmsetup concise format
+
+Changes since v7:
+ - http://lkml.iu.edu/hypermail/linux/kernel/1705.2/02657.html
+ - Fix build error due commit
+    e516db4f67 (dm ioctl: add a new DM_DEV_ARM_POLL ioctl)
+
+Changes since v6:
+ - https://www.redhat.com/archives/dm-devel/2017-April/msg00316.html
+ - Add a new function to issue the equivalent of a DM ioctl programatically.
+ - Use the new ioctl interface to create the devices.
+ - Use a comma-delimited and semi-colon delimited dmsetup-like commands.
+
+Changes since v5:
+ - https://www.redhat.com/archives/dm-devel/2016-February/msg00112.html
+
+Enric Balletbo i Serra (1):
+  dm ioctl: add a device mapper ioctl function.
+
+Will Drewry (1):
+  init: add support to directly boot to a mapped device
+
+ .../admin-guide/kernel-parameters.rst         |   1 +
+ .../admin-guide/kernel-parameters.txt         |   3 +
+ Documentation/device-mapper/dm-boot.txt       |  87 ++++
+ drivers/md/Makefile                           |   2 +-
+ drivers/md/dm-boot.c                          | 433 ++++++++++++++++++
+ drivers/md/dm-ioctl.c                         |  49 ++
+ include/linux/device-mapper.h                 |  12 +
+ init/Makefile                                 |   1 +
+ init/do_mounts.c                              |   1 +
+ init/do_mounts.h                              |  10 +
+ init/do_mounts_dm.c                           |  46 ++
+ 11 files changed, 644 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/device-mapper/dm-boot.txt
+ create mode 100644 drivers/md/dm-boot.c
+ create mode 100644 init/do_mounts_dm.c
+
+-- 
+2.19.1
+
