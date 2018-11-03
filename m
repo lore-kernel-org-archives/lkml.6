@@ -2,81 +2,118 @@ Return-Path: <SRS0=1exb=NO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 497BBC0044C
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 13:16:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 673FCC6786F
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 13:17:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1414F20833
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 13:16:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1414F20833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+	by mail.kernel.org (Postfix) with ESMTP id 22B1D2082E
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 13:17:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oamehlBo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22B1D2082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728722AbeKCW1o (ORCPT
+        id S1728726AbeKCW3G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 18:27:44 -0400
-Received: from mail.us.es ([193.147.175.20]:50480 "EHLO mail.us.es"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728025AbeKCW1o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 18:27:44 -0400
-Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
-        by mail.us.es (Postfix) with ESMTP id E4532A7F36
-        for <linux-kernel@vger.kernel.org>; Sat,  3 Nov 2018 14:16:22 +0100 (CET)
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id D499ADA7A2
-        for <linux-kernel@vger.kernel.org>; Sat,  3 Nov 2018 14:16:22 +0100 (CET)
-Received: by antivirus1-rhel7.int (Postfix, from userid 99)
-        id C988FDA79C; Sat,  3 Nov 2018 14:16:22 +0100 (CET)
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id 00939DA73F;
-        Sat,  3 Nov 2018 14:16:21 +0100 (CET)
-Received: from 192.168.1.97 (192.168.1.97)
- by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
- Sat, 03 Nov 2018 14:16:20 +0100 (CET)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
-Received: from us.es (sys.soleta.eu [212.170.55.40])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: 1984lsi)
-        by entrada.int (Postfix) with ESMTPSA id C2CE84265A30;
-        Sat,  3 Nov 2018 14:16:20 +0100 (CET)
-Date:   Sat, 3 Nov 2018 14:16:20 +0100
-X-SMTPAUTHUS: auth mail.us.es
-From:   Pablo Neira Ayuso <pablo@netfilter.org>
-To:     Vasily Khoruzhick <vasilykh@arista.com>
-Cc:     Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dmitry Safonov <dima@arista.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v2] netfilter: conntrack: fix calculation of next bucket
- number in early_drop
-Message-ID: <20181103131620.alepdriguhu2rxc3@salvia>
-References: <20181025191543.15061-1-vasilykh@arista.com>
+        Sat, 3 Nov 2018 18:29:06 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:46350 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728425AbeKCW3G (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 18:29:06 -0400
+Received: by mail-qk1-f196.google.com with SMTP id q1so7466523qkf.13;
+        Sat, 03 Nov 2018 06:17:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VDmxNKwMic+2kVqQsqB83TKH0HDMXiz95Fgq48fOd2Y=;
+        b=oamehlBogbsVdDrDRuay0XGUI3c/fkk6vfyvd9yS8h0C9L79f1pBBTIrHOGNYB+vZR
+         a4M8NGy9soEkXH+sWWJT09bUVkW3XmvweE+mQjhg3cY97uPGY/Qdm/q1s2KHGqdHaaXB
+         GlHFR3B+18F82rwdzCENMGQF5X7Yq45nSGbppQbjj49zIsq/jj5CX/uf4/HQV7R7boo1
+         zuJVaUCEZQ4Odo/oqfP/bjEqn4IMLEKsM9ecBB6tol3iTp3d5RjodbLROF2soFoZ9KcC
+         bXkBd4Mpka9xiZSCnPELNr4DPw13z5dtOJ0/GxvHh8V5QSo5zuKHrVRZPM6mckbMuXVw
+         eP9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VDmxNKwMic+2kVqQsqB83TKH0HDMXiz95Fgq48fOd2Y=;
+        b=dRHlGW7pLw3/LhEE88/9pt9eKOUyINEIQSLoA/QWX+qTIEaQ7kN2xAwYuFetDVLvD1
+         8Yw/ywZAxK7JN1HtZr5tpmv0LVP/dDT2c+S03mmOIaug/xceRk0c+vNdEebzryjeFxMg
+         RExKXaZawF1PJLOp4t3aVnaOjjSmuCPJ8zpXMrxDbeKfCc+HN8LCsJjXgDJD7aecpxZ4
+         mo2u+6HY55iJgx5TtrXujyJL8zeGbw6TQi2Mxydf+b5Pmw3Qu3TwFPO3PmExbqihUFEm
+         tKwiYwwTZNlEwUuTF788QjaaDUmpukUSRsjeYdrJUZ1kKJ1M5RYq/E+DgCYUVweFPcu7
+         NaKA==
+X-Gm-Message-State: AGRZ1gJd14oZ8ZBww6n45aYRpDEb/+qf+TARAUCpKPl1b3Jr09KfHRf/
+        N3bKeEsdJ4V7i9I2jXrjoBU4zBBJTer5felXNOE=
+X-Google-Smtp-Source: AJdET5ffnw8aG2hRuEy7WoX8Llq8aYJtSpuW68JDZH3mX6sNu9egsWv89ycxrRVLZVSFSZHQ5P+ARxKlEx9rEc6km9U=
+X-Received: by 2002:a0c:e202:: with SMTP id q2mr14091297qvl.180.1541251066244;
+ Sat, 03 Nov 2018 06:17:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181025191543.15061-1-vasilykh@arista.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Virus-Scanned: ClamAV using ClamSMTP
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com> <20181102231320.29164-16-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181102231320.29164-16-jarkko.sakkinen@linux.intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Sat, 3 Nov 2018 15:17:35 +0200
+Message-ID: <CAHp75VdhSwy8zzf64PZnHhZVikJEzasu-=a+UOz4cLAxEJW-YA@mail.gmail.com>
+Subject: Re: [PATCH v15 15/23] x86/sgx: Add wrappers for ENCLS leaf functions
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        mark.shanahan@intel.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, suresh.b.siddha@intel.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 12:15:43PM -0700, Vasily Khoruzhick wrote:
-> If there's no entry to drop in bucket that corresponds to the hash,
-> early_drop() should look for it in other buckets. But since it increments
-> hash instead of bucket number, it actually looks in the same bucket 8
-> times: hsize is 16k by default (14 bits) and hash is 32-bit value, so
-> reciprocal_scale(hash, hsize) returns the same value for hash..hash+7 in
-> most cases.
-> 
-> Fix it by increasing bucket number instead of hash and rename _hash
-> to bucket to avoid future confusion.
+On Sat, Nov 3, 2018 at 1:18 AM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> ENCLS is an umbrella instruction for a variety of cpl0 SGX functions.
+> The ENCLS function that is executed is specified in EAX, with each
+> function potentially having more leaf-specific operands beyond EAX.
+> ENCLS introduces its own (positive value) error codes that (some)
+> leafs use to return failure information in EAX.  Leafs that return
+> an error code also modify RFLAGS.  And finally, ENCLS generates
+> ENCLS-specific non-fatal #GPs and #PFs, i.e. a bug-free kernel may
+> encounter faults on ENCLS that must be handled gracefully.
+>
+> Because of the complexity involved in encoding ENCLS and handling its
+> assortment of failure paths, executing any given leaf is not a simple
+> matter of emitting ENCLS.
+>
+> To enable adding support for ENCLS leafs with minimal fuss, add a
+> two-layer macro system along with an encoding scheme to allow wrappers
+> to return trap numbers along ENCLS-specific error codes.  The bottom
+> layer of the macro system splits between the leafs that return an
+> error code and those that do not.  The second layer generates the
+> correct input/output annotations based on the number of operands for
+> each leaf function.
 
-Applied, thanks.
+> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
+
+> +/**
+
+I dunno if kernel-doc script still complains about this.
+
+> + * Copyright(c) 2016-18 Intel Corporation.
+> + */
+
+-- 
+With Best Regards,
+Andy Shevchenko
