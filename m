@@ -2,146 +2,145 @@ Return-Path: <SRS0=1exb=NO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0682DC0044C
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 10:45:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F0B0C6786F
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 10:45:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE4CF20833
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 10:45:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 328792084C
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 10:45:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fshX1JsL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE4CF20833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MHB0y0Ya"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 328792084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728364AbeKCT4K (ORCPT
+        id S1728480AbeKCT4L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 3 Nov 2018 15:56:11 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:35040 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727007AbeKCT4K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 3 Nov 2018 15:56:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55884 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727952AbeKCT4K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 15:56:10 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BCA312081D;
-        Sat,  3 Nov 2018 10:45:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541241915;
-        bh=ICPJuaustjcgPaNXsiCg8rAABPBDIDRRtVEheBzpQhY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fshX1JsLeh8fPTYageaK50ALlG1upb5rNH0kDdQ5E1sWriObGCyiIQ6KmuPX14Vhk
-         tZ4apwp/mxlcmMjPIhT4JFRNNJu81p66MknOCSZtLGnAwlLy7VD2mZIkGpHmTLWd0E
-         HRNAhdX3m7pYkyLZvNAztsdSKUX7QdoOylGRiOCI=
-Date:   Sat, 3 Nov 2018 10:45:11 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Matheus Tavares <matheus.bernardino@usp.br>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+Received: by mail-wm1-f65.google.com with SMTP id q12-v6so3844777wmq.0
+        for <linux-kernel@vger.kernel.org>; Sat, 03 Nov 2018 03:45:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YmQq90FRkqBQp0/v6HvhwKCbNPsiefsFk4oklN2EcKs=;
+        b=MHB0y0YaXByvjwLMoonMq5QIjx9CsU+rAU+j5poaVTafUlBxWYiuUEF8m8kd6fUby4
+         QmIDj233bXRVK/YHOYnKiwKvCqqeDu+b+pcNNyGTzoUDVA4Y5GFMOGiovxZt7wz4jmyt
+         xJjWXL3cZPHkutGq/DuKCnwo4rBDuc8nFlcaE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YmQq90FRkqBQp0/v6HvhwKCbNPsiefsFk4oklN2EcKs=;
+        b=swtXKW26EaT/AsaStrUW2UZMu3sWl8iO4Wd9aSnRselvIEluZmVoHw2S/FO86rRf7g
+         Bs/kBglGz5B0HWaKiLk9RrMTkUAj5xGPKjzHHFtk1STDpKWHMNLLPYKMqvaQiGIIEB+n
+         bFBSHzZdEORD+IGNxxt8NrQZpmdeSrgr2ZHh3ALOqVxhqwmytXx7Xwpao42g7fL0Hju7
+         /3DCtWKQWbuhpb82dZtPWZ+33rY3H2CeNa+R+xEtNDpZLGXua67pNsIt8EuZypqKGtFQ
+         0O723bq44iaCuiDFcQoygzTh7OS/C0TWhoRcMi1j7zZKCzbk6NxaMSvVg/J/6bptXLpl
+         6HYw==
+X-Gm-Message-State: AGRZ1gI5va3c8h4jZOfJx7dYF9S9pPu0Ya9rkpftUZo4G+CEi/fRTX88
+        dC/ise5uhITPxE82v3FGa6WzJQ==
+X-Google-Smtp-Source: AJdET5ffk8gt8qQ1YuVWXJvRkvWY6hwLLFRlaE0/rLpCJJIwLmN6I0KvCp4FDHXIC/Svzn3L0Yykkg==
+X-Received: by 2002:a1c:2283:: with SMTP id i125-v6mr601230wmi.42.1541241914508;
+        Sat, 03 Nov 2018 03:45:14 -0700 (PDT)
+Received: from holly.lan (82-132-212-57.dab.02.net. [82.132.212.57])
+        by smtp.gmail.com with ESMTPSA id o9-v6sm44092322wra.42.2018.11.03.03.45.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 03 Nov 2018 03:45:13 -0700 (PDT)
+Date:   Sat, 3 Nov 2018 10:45:03 +0000
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Jason Wessel <jason.wessel@windriver.com>,
+        kgdb-bugreport@lists.sourceforge.net,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-mips@linux-mips.org, linux-sh@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
-Subject: Re: [PATCH v2 2/6] staging:iio:ad2s90: Make probe handle spi_setup
- failure
-Message-ID: <20181103104511.42d96448@archlinux>
-In-Reply-To: <7e9048ff-186f-0ed3-35fc-4e8ffa595c70@usp.br>
-References: <20181027020005.3140-1-matheus.bernardino@usp.br>
-        <20181027020005.3140-3-matheus.bernardino@usp.br>
-        <20181028164329.57162e06@archlinux>
-        <7e9048ff-186f-0ed3-35fc-4e8ffa595c70@usp.br>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Catalin Marinas <catalin.marinas@arm.com>, jhogan@kernel.org,
+        linux-hexagon@vger.kernel.org, Vineet Gupta <vgupta@synopsys.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>, dalias@libc.org,
+        Ralf Baechle <ralf@linux-mips.org>,
+        linux-snps-arc@lists.infradead.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Will Deacon <will.deacon@arm.com>, paulus@samba.org,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        christophe.leroy@c-s.fr, mpe@ellerman.id.au, paul.burton@mips.com,
+        LKML <linux-kernel@vger.kernel.org>, rkuo@codeaurora.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH v2 2/2] kgdb: Fix kgdb_roundup_cpus() for arches who used
+ smp_call_function()
+Message-ID: <20181103104503.eftn5btx7otgufro@holly.lan>
+References: <20181030221843.121254-1-dianders@chromium.org>
+ <20181030221843.121254-3-dianders@chromium.org>
+ <20181031184050.sd5opni3mznaapkv@holly.lan>
+ <CAD=FV=V1eHo7Wz31DTMMNi394qwEaESTxJCYVE60Q7hpDEqRmQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=V1eHo7Wz31DTMMNi394qwEaESTxJCYVE60Q7hpDEqRmQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2 Nov 2018 10:59:06 -0300
-Matheus Tavares <matheus.bernardino@usp.br> wrote:
-
-> On 10/28/18 1:43 PM, Jonathan Cameron wrote:
-> > On Fri, 26 Oct 2018 23:00:01 -0300
-> > Matheus Tavares <matheus.bernardino@usp.br> wrote:
-> >  
-> >> Previously, ad2s90_probe ignored the return code from spi_setup, not
-> >> handling its possible failure. This patch makes ad2s90_probe check if
-> >> the code is an error code and, if so, do the following:
-> >>
-> >> - Call dev_err with an appropriate error message.
-> >> - Return the spi_setup's error code, aborting the execution of the
-> >> rest of the function.
-> >>
-> >> Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
-> >> ---
-> >>   drivers/staging/iio/resolver/ad2s90.c | 7 ++++++-
-> >>   1 file changed, 6 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/staging/iio/resolver/ad2s90.c
-> >> index 11fac9f90148..d6a42e3f1bd8 100644
-> >> --- a/drivers/staging/iio/resolver/ad2s90.c
-> >> +++ b/drivers/staging/iio/resolver/ad2s90.c
-> >> @@ -88,7 +88,12 @@ static int ad2s90_probe(struct spi_device *spi)
-> >>   	/* need 600ns between CS and the first falling edge of SCLK */
-> >>   	spi->max_speed_hz = 830000;
-> >>   	spi->mode = SPI_MODE_3;
-> >> -	spi_setup(spi);
-> >> +	ret = spi_setup(spi);
-> >> +
-> >> +	if (ret < 0) {
-> >> +		dev_err(&spi->dev, "spi_setup failed!\n");
-> >> +		return ret;
-> >> +	}  
-> > I would have reordered this first to be before the iio_device_register call.
-> > The reason being that it would avoid this comment.
-> >
-> > Drop the return ret out of the block above and return ret unconditionally.
-> >
-> > I don't mind too much as I know this is moving later, but I only know that
-> > because of the earlier discussion ;)  Few reviewers read the whole patch
-> > set before responding to the early patches - it's just too much like hard
-> > work.  So if you can do things in an order that minimizes standard responses
-> > then that's great.
-> >
-> > Patch is fine though - could be solved by a comment in the intro that
-> > says the code in question will move in patch X.  
+On Wed, Oct 31, 2018 at 02:41:14PM -0700, Doug Anderson wrote:
+> > As mentioned in another part of the thread we can also add robustness
+> > by skipping a cpu where csd->flags != 0 (and adding an appropriately
+> > large comment regarding why). Doing the check directly is abusing
+> > internal knowledge that smp.c normally keeps to itself so an accessor
+> > of some kind would be needed.
 > 
+> Sure.  I could add smp_async_func_finished() that just looked like:
 > 
-> Ok! As a newcomer I'm not sure about the right way to add this comment. 
-> Should I add it to the patch message or after the --- ? Also, how do I 
-> reference patch X? Just giving the number of the patch in this series?
-For this sort of comment I would put it in the main description. It wants
-to go in the git log for anyone who is looking at this patch in isolation
-sometime in the future.
-
-The stuff below the --- is usually version change things and other stuff
-we don't want in the log.
-
+> int smp_async_func_finished(call_single_data_t *csd)
+> {
+>   return !(csd->flags & CSD_FLAG_LOCK);
+> }
 > 
-> An alternative to adding the comment would be to drop the return ret, 
-> and reinsert it in the next patch. Dosen't seem so good, to me, but 
-> would avoid the problem you presented. What would be better?
-
-Comment would be nicer for this one I think rather than the noise in the
-actual code. Both would be acceptable though so which ever you
-prefer.
-
-Jonathan
-
+> My understanding of all the mutual exclusion / memory barrier concepts
+> employed by smp.c is pretty weak, though.  I'm hoping that it's safe
+> to just access the structure and check the bit directly.
 > 
+> ...but do you think adding a generic accessor like this is better than
+> just keeping track of this in kgdb directly?  I could avoid the
+> accessor by adding a "rounding_up" member to "struct
+> debuggerinfo_struct" and doing something like this in roundup:
 > 
-> Matheus.
+>   /* If it didn't round up last time, don't try again */
+>   if (kgdb_info[cpu].rounding_up)
+>     continue
 > 
+>   kgdb_info[cpu].rounding_up = true
+>   smp_call_function_single_async(cpu, csd);
 > 
-> >
-> > Jonathan  
-> >>   
-> >>   	return 0;
-> >>   }  
+> ...and then in kgdb_nmicallback() I could just add:
+> 
+>   kgdb_info[cpu].rounding_up = false
+> 
+> In that case we're not adding a generic accessor to smp.c that most
+> people should never use.
 
+Whilst it is very tempting to make a sarcastic reply here ("Of course! What
+kgdb really needs is yet another set of condition variables") I can't
+because I actually agree with the proposal. I don't really want kgdb to
+be too "special" especially when it doesn't need to be.
+
+Only thing to note is that rounding_up will not be manipulated within a
+common spin lock so you might have to invest a bit of thought to make
+sure any races between the master and slave as the slave CPU clears the
+flag are benign.
+
+
+Daniel.
