@@ -2,124 +2,170 @@ Return-Path: <SRS0=1exb=NO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C7A2C0044C
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 13:04:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 495AEC6786F
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 13:05:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BD192081D
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 13:04:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BD192081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jic23.retrosnub.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 0E01B2081D
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 13:05:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nhR9GdnF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E01B2081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728565AbeKCWPb (ORCPT
+        id S1728612AbeKCWRI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 18:15:31 -0400
-Received: from saturn.retrosnub.co.uk ([46.235.226.198]:56264 "EHLO
-        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727957AbeKCWPb (ORCPT
+        Sat, 3 Nov 2018 18:17:08 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:43366 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728441AbeKCWRI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 18:15:31 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        by saturn.retrosnub.co.uk (Postfix; Retrosnub mail submission) with ESMTPSA id 8A8EB9E7499;
-        Sat,  3 Nov 2018 13:04:12 +0000 (GMT)
-Date:   Sat, 3 Nov 2018 13:04:10 +0000
-From:   Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
-To:     Himanshu Jha <himanshujha199640@gmail.com>
-Cc:     Nishad Kamdar <nishadkamdar@gmail.com>,
-        Slawomir Stepien <sst@poczta.fm>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 3/3] staging: iio: ad2s1210: Add device tree table.
-Message-ID: <20181103130410.28b54311@archlinux>
-In-Reply-To: <20181103123927.339611b1@archlinux>
-References: <cover.1541000375.git.nishadkamdar@gmail.com>
-        <ee142522b129dd6fd8d71b5567d9c6711e89efbe.1541000375.git.nishadkamdar@gmail.com>
-        <20181101153508.GA5176@himanshu-Vostro-3559>
-        <20181103123927.339611b1@archlinux>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sat, 3 Nov 2018 18:17:08 -0400
+Received: by mail-qk1-f196.google.com with SMTP id r71so7468122qkr.10;
+        Sat, 03 Nov 2018 06:05:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aB4G3w4rpmdu6ojkMiW7GyduUFi8xbFWz6k4BN3jvjQ=;
+        b=nhR9GdnF/UdVgznjZyCToBxldtIL8n7A9Y6o0KZ9KKiS6eVqbfSnTUUGpVE3wHar94
+         u/fwrxNPl6nTk/0FpADSp8LcYtvfD/hrp2jra85Uh19hiYsJNZk7A7emhT6OHb93IV9I
+         vpDf7iuFwPUUFj2aWjcLQsTAidZfvi34StCkIpzQ+QqR2LlLG2KBM0ZWcya4MRIjXR0t
+         CfovdKj9isD3FYYxzc9F3AsY4x1Z1VdpYToiuUCA/BTCP6WwYPixvNfpGYEiMkstGTq2
+         oCUsKyrTP/FggPDlsAh1Hj9S57TkQ2yr4lFgioQY/SE7QizMvNPyGDakxXYEHHU7VYHr
+         GJfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aB4G3w4rpmdu6ojkMiW7GyduUFi8xbFWz6k4BN3jvjQ=;
+        b=rfSmnsi9eQ7It4DikKGR756vf6PjZ1/Qjdre4ZFHRVE6VvJX/INo2btnLgVSEVNQB4
+         d5eEKuv+o6jltXG13BW+9HonMycEr85+4ZukDCKFfXZQfviU9rIZnh1R6aeoDMEM9WVq
+         Du3MPK07Cj/Pa763DHMf4L2I+oW1N9+OBWGP0HJY1OtmYbqYuQqo74JERPnIM0/lYMFr
+         6x52eglhuHJT+OCHYJN121UWsfVQUkglKHfgt9ZEAlVrHADU+MYge+uZCelh3kT18+q0
+         vJhSjkeg72vPDrnFYz252RXr1O4zaA5gOaO0HmzblDTrdV1dZuHvJiiJQIKiLSLGBPgO
+         yqTw==
+X-Gm-Message-State: AGRZ1gKwfXBP8ASFgs/iPwWSX4SKluhvH6CiSJBX1ePthkmkqcRO8lwq
+        vBtXOVQPH5nRG+uHqh0OZNE8HVTu0tt/kb6Tp08=
+X-Google-Smtp-Source: AJdET5dOYpTNYGNSVJwS6wRs2D30dtOolmSmPXwn7W2amfMSv2dodxm6VjGm/CyZ5LvsM8Paj8kx7F+ZUFI/lI+0H2k=
+X-Received: by 2002:a37:7983:: with SMTP id u125-v6mr13236258qkc.219.1541250350399;
+ Sat, 03 Nov 2018 06:05:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com> <20181102231320.29164-6-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181102231320.29164-6-jarkko.sakkinen@linux.intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Sat, 3 Nov 2018 15:05:39 +0200
+Message-ID: <CAHp75VcG4FtiS9bDM_pP216kxobFxkChDu6uxvuTsMHQ=YJ3Zg@mail.gmail.com>
+Subject: Re: [PATCH v15 05/23] x86/cpu/intel: Detect SGX support and update
+ caps appropriately
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        mark.shanahan@intel.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        David Woodhouse <dwmw@amazon.co.uk>, davidwang@zhaoxin.com,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
+        qianyue.zj@alibaba-inc.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 3 Nov 2018 12:39:27 +0000
-Jonathan Cameron <jic23@kernel.org> wrote:
+On Sat, Nov 3, 2018 at 1:16 AM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
+>
+> Similar to other large Intel features such as VMX and TXT, SGX must be
+> explicitly enabled in IA32_FEATURE_CONTROL MSR to be truly usable.
+> Clear all SGX related capabilities if SGX is not fully enabled in
+> IA32_FEATURE_CONTROL or if the SGX1 instruction set isn't supported
+> (impossible on bare metal, theoretically possible in a VM if the VMM
+> is doing something weird).
+>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>  arch/x86/kernel/cpu/intel.c | 27 +++++++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+>
+> diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+> index fc3c07fe7df5..9bf8fe2c04ac 100644
+> --- a/arch/x86/kernel/cpu/intel.c
+> +++ b/arch/x86/kernel/cpu/intel.c
+> @@ -596,6 +596,30 @@ static void detect_tme(struct cpuinfo_x86 *c)
+>         c->x86_phys_bits -= keyid_bits;
+>  }
+>
+> +static void detect_sgx(struct cpuinfo_x86 *c)
+> +{
+> +       bool unsupported = false;
+> +       unsigned long long fc;
+> +
+> +       rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
+> +       if (!(fc & FEATURE_CONTROL_LOCKED)) {
+> +               pr_err_once("sgx: IA32_FEATURE_CONTROL MSR is not locked\n");
+> +               unsupported = true;
+> +       } else if (!(fc & FEATURE_CONTROL_SGX_ENABLE)) {
+> +               pr_err_once("sgx: not enabled in IA32_FEATURE_CONTROL MSR\n");
+> +               unsupported = true;
+> +       } else if (!cpu_has(c, X86_FEATURE_SGX1)) {
+> +               pr_err_once("sgx: SGX1 instruction set not supported\n");
+> +               unsupported = true;
+> +       }
 
-> On Thu, 1 Nov 2018 21:05:09 +0530
-> Himanshu Jha <himanshujha199640@gmail.com> wrote:
-> 
-> > On Wed, Oct 31, 2018 at 09:30:36PM +0530, Nishad Kamdar wrote:  
-> > > Add device tree table for matching vendor ID.
-> > > 
-> > > Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
-> > > ---
-> > >  drivers/staging/iio/resolver/ad2s1210.c | 7 +++++++
-> > >  1 file changed, 7 insertions(+)
-> > > 
-> > > diff --git a/drivers/staging/iio/resolver/ad2s1210.c b/drivers/staging/iio/resolver/ad2s1210.c
-> > > index d3e7d5aad2c8..7c50def91a2b 100644
-> > > --- a/drivers/staging/iio/resolver/ad2s1210.c
-> > > +++ b/drivers/staging/iio/resolver/ad2s1210.c
-> > > @@ -701,6 +701,12 @@ static int ad2s1210_remove(struct spi_device *spi)
-> > >  	return 0;
-> > >  }
-> > >  
-> > > +static const struct of_device_id ad2s1210_of_match[] = {
-> > > +	{ .compatible = "adi,ad2s1210", },
-> > > +	{ }
-> > > +};
-> > > +MODULE_DEVICE_TABLE(of, ad2s1210_of_match);    
-> > 
-> > I believe this needs to be documented at:
-> > 
-> > Documentation/devicetree/bindings/iio/resolver/ad2s1210.txt
-> > 
-> > Cc'ed to devictree list + Rob(DT Maintainer).
-> > 
-> > Just wondering why didn't it came up till now from the IIO reviewers ? v7!!  
-> 
-> Because in staging drivers graduations we often hold off doing the
-> dt-bindings document until we have full visibility of where we are going.
-> 
-> A lot of them have dodgy DT bindings (and that might even be the reason
-> they are in staging).  What we don't want is to have a doc for a silly
-> binding in the 'official' list as we'll have to support it for ever.
-> 
-> It needs documenting before moving out staging, but not necessarily now.
-> Particularly as this device is complex and has a 'lot' of other stuff
-> that isn't currently supported and quite possibly never will be.
-> Some of that would have non obvious dt bindings if we did support it.
-> For example we 'might' route the encoder outputs round to the inputs
-> of a counter driver and end up with a complex entity representing
-> the facilities that both fo them provide.
-> 
-> Agreed, the DT binding doc needs to come soon and before the move out
-> staging, but I am quite happy with it being in the next series.
-> 
-> A line in the description to that effect would have been useful of
-> course!
-> 
-Applied, with a line on the intent to document once driver is cleaned
-up added.
+If you do
 
-Thanks,
+} else {
+ /* Supported */
+ return;
+}
 
-Jonathan
-> Jonathan
-> 
-> > 
-> >   
-> 
+here, you may get rid of temporary variable.
 
+(Up to you)
+
+> +
+> +       if (unsupported) {
+> +               setup_clear_cpu_cap(X86_FEATURE_SGX);
+> +               setup_clear_cpu_cap(X86_FEATURE_SGX1);
+> +               setup_clear_cpu_cap(X86_FEATURE_SGX2);
+> +       }
+> +}
+> +
+>  static void init_intel_energy_perf(struct cpuinfo_x86 *c)
+>  {
+>         u64 epb;
+> @@ -763,6 +787,9 @@ static void init_intel(struct cpuinfo_x86 *c)
+>         if (cpu_has(c, X86_FEATURE_TME))
+>                 detect_tme(c);
+>
+> +       if (cpu_has(c, X86_FEATURE_SGX))
+> +               detect_sgx(c);
+> +
+>         init_intel_energy_perf(c);
+>
+>         init_intel_misc_features(c);
+> --
+> 2.19.1
+>
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
