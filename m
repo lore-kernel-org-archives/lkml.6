@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C2FC0044C
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 10:09:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9152AC0044C
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 10:09:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDF432082E
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 10:09:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E88E2082E
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 10:09:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="IuayEq9M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDF432082E
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="m8OxtSqN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E88E2082E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728467AbeKCTUZ (ORCPT
+        id S1728534AbeKCTUd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 15:20:25 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33134 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728393AbeKCTUY (ORCPT
+        Sat, 3 Nov 2018 15:20:33 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:45792 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727281AbeKCTUd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 15:20:24 -0400
-Received: by mail-pl1-f196.google.com with SMTP id x6-v6so2148428pln.0
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Nov 2018 03:09:37 -0700 (PDT)
+        Sat, 3 Nov 2018 15:20:33 -0400
+Received: by mail-pl1-f193.google.com with SMTP id o19-v6so2120543pll.12
+        for <linux-kernel@vger.kernel.org>; Sat, 03 Nov 2018 03:09:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=YhcdTaqekiJ1IH3Njt5SqmOCHXO4U7AWqNWukgHaAi8=;
-        b=IuayEq9Mi2zYv8/dp6myAo9m7HW6XJn0ek+T5xJ6m0nkYrh346GYdNIWNFp2wlsoW+
-         nG7ilT87uzYUe003AtMPfKOhq56hL4iHBdRB8RXExUenLrWwfc6QqjmXv7t7rBgS3dw8
-         XD2qsilVWkCmBRDz5lTRUtcThl+Ye3jaVioGs=
+        bh=tQh0tuZ2hAQEjHoUC9QKXmQksrNiyamIN0Q5qO8zC0c=;
+        b=m8OxtSqNuV73V8tWjYgHpyjiVE/7WW0euNVgtiafVS+UL/gBRFpJztSulsHUqMH6s/
+         +ir8x8ne92OvGOo78xkxTOgwsqTGjrcz6ueC43QKmkhly2SMHHjXn+nNzKmweQVkug1C
+         aG36zcpFkWEsuzbkk84l0ExrwSXtzvo76wSTk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=YhcdTaqekiJ1IH3Njt5SqmOCHXO4U7AWqNWukgHaAi8=;
-        b=bzjEukjBs8mYZg225BOvNfF5y841PO27Tjas59bypXpD18/OKXldOfpKz9f0Dom3P4
-         Pq8ss3rjhVZeVuoi9qVWM/i/H5i+1k9uILI9g+MfXd/ys4xdMuTTv2Fmg2wRiFQhbUux
-         bDMDdKn99od+8euC7PQBKeby+kEc8vbQLa80VJb/JSFVcU82ygkunQ36rupLh7UgP1O7
-         OpjrZXpLuvDWJEEggXrBE36HzpOzfdhxBHmj96e5XoU6e5EZ5b8yVw/UsCr0eF0oIN4L
-         er9/tklnu1kzizsUTArmWo7CYXE/UXCFT+ONY/A7DNZWgAk2SJW5B4cJz6c5s8JP0UrB
-         p8rQ==
-X-Gm-Message-State: AGRZ1gKbrdEiH2X8I64jtxoNxTEsbaA2CchGXzG1M9clvJYDWXBCMQHE
-        8zKaDAS0Eu8AlDIzljceUolAmQ==
-X-Google-Smtp-Source: AJdET5fUxfrFit8SCslEnOy9JQ2bunA85HTt2862WrZQENW8wd5fo1Lk7lp2wBJKv5WizrufHateGA==
-X-Received: by 2002:a17:902:a9c5:: with SMTP id b5-v6mr14826077plr.340.1541239776608;
-        Sat, 03 Nov 2018 03:09:36 -0700 (PDT)
+        bh=tQh0tuZ2hAQEjHoUC9QKXmQksrNiyamIN0Q5qO8zC0c=;
+        b=fE1Ugo70ZcgRF0zYKfDBgFV3JYcJj04qE2gMvfVfZ54JpDr+SrhQ0/ALp0+gYg9XvR
+         HbD+nhw9OUzcoOgxiv0LtJkce8dTJ7knmESvaqxMgv4hApzCoLAVUX8jXAV3jgBv0BYZ
+         hRGeRrHXuCwm9lkvVzDVwW9Sc9QdDLtzVD1pCUIxIm7LLT9X9QS19WnO7mMl8fAl/hH9
+         HmgXg/moarjMojsRDXjfDhipOuYQe/OH1nMh9FgllWtflnsNnsEW0wDkTqJHR0TnAysr
+         1k84ql5KxPkrV99C+izNbgLdGKJBO8vGdiiH0ywYSo25+Od58n6Q3utIH0paR8P7faed
+         o/tg==
+X-Gm-Message-State: AGRZ1gIrOczY/7mgfp9LtGIPUx9JMJ1J5t2i/9/ktyHGmUJtJY3meTlI
+        RLS0pH/pONdS5pjiDcyYrtvcDg==
+X-Google-Smtp-Source: AJdET5co6HBSmkyR3+nJstdmG+aMIQ/YeXFBJ5+1R0rTOwg3wKCJwtBITHmn30omsMCoAShKnmAHzg==
+X-Received: by 2002:a17:902:a5cc:: with SMTP id t12-v6mr6717272plq.298.1541239784745;
+        Sat, 03 Nov 2018 03:09:44 -0700 (PDT)
 Received: from localhost.localdomain ([2405:204:6094:3f7a:ed0a:fb74:1220:defe])
-        by smtp.gmail.com with ESMTPSA id z79-v6sm28466823pfl.33.2018.11.03.03.09.30
+        by smtp.gmail.com with ESMTPSA id z79-v6sm28466823pfl.33.2018.11.03.03.09.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 03 Nov 2018 03:09:36 -0700 (PDT)
+        Sat, 03 Nov 2018 03:09:44 -0700 (PDT)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
@@ -71,9 +71,9 @@ To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Michael Trimarchi <michael@amarulasolutions.com>,
         TL Lim <tllim@pine64.org>, linux-sunxi@googlegroups.com
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 02/10] drm/sun4i: sun6i_mipi_dsi: Support instruction loop selection
-Date:   Sat,  3 Nov 2018 15:38:52 +0530
-Message-Id: <20181103100900.30313-3-jagan@amarulasolutions.com>
+Subject: [PATCH 03/10] drm/sun4i: sun6i_mipi_dsi: Setup burst mode timings
+Date:   Sat,  3 Nov 2018 15:38:53 +0530
+Message-Id: <20181103100900.30313-4-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20181103100900.30313-1-jagan@amarulasolutions.com>
 References: <20181103100900.30313-1-jagan@amarulasolutions.com>
@@ -84,35 +84,147 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instruction loop selection would require before writing
-loop number registers, so enable idle, LP11 bits on
-loop selection register.
+Burst mode display timings are different from convectional
+video mode so update the horizontal and vertical timings.
 
-Reference code available in BSP
+Reference code taken from BSP
 (in drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
-(dsi_dev[sel]->dsi_inst_loop_sel.dwval = 2<<(4*DSI_INST_ID_LP11) |
-	3<<(4*DSI_INST_ID_DLY);
+dsi_hsa  = 0;
+dsi_hbp  = 0;
+dsi_hact = x*dsi_pixel_bits[format]/8;
+dsi_hblk = dsi_hact;
+dsi_hfp  = 0;
+dsi_vblk = 0;
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 108 ++++++++++++++-----------
+ 1 file changed, 60 insertions(+), 48 deletions(-)
 
 diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index da152c21ec62..077b57ec964c 100644
+index 077b57ec964c..4965b2c71e4c 100644
 --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
 +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -397,6 +397,10 @@ static void sun6i_dsi_setup_inst_loop(struct sun6i_dsi *dsi,
- 	struct mipi_dsi_device *device = dsi->device;
- 	u16 delay;
+@@ -479,59 +479,71 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
  
-+	regmap_write(dsi->regs, SUN6I_DSI_INST_LOOP_SEL_REG,
-+		     DSI_INST_ID_HSC  << (4 * DSI_INST_ID_LP11) |
-+		     DSI_INST_ID_HSD  << (4 * DSI_INST_ID_DLY));
+ 	/* Do all timing calculations up front to allocate buffer space */
+ 
+-	/*
+-	 * A sync period is composed of a blanking packet (4 bytes +
+-	 * payload + 2 bytes) and a sync event packet (4 bytes). Its
+-	 * minimal size is therefore 10 bytes
+-	 */
++	if (device->mode_flags == MIPI_DSI_MODE_VIDEO_BURST) {
++		hsa = 0;
++		hbp = 0;
++		hblk = mode->hdisplay * Bpp;
++		hfp = 0;
++		vblk = 0;
++	} else {
++		/*
++		 * A sync period is composed of a blanking packet (4 bytes +
++		 * payload + 2 bytes) and a sync event packet (4 bytes). Its
++		 * minimal size is therefore 10 bytes
++		 */
+ #define HSA_PACKET_OVERHEAD	10
+-	hsa = max((unsigned int)HSA_PACKET_OVERHEAD,
+-		  (mode->hsync_end - mode->hsync_start) * Bpp - HSA_PACKET_OVERHEAD);
+-
+-	/*
+-	 * The backporch is set using a blanking packet (4 bytes +
+-	 * payload + 2 bytes). Its minimal size is therefore 6 bytes
+-	 */
++		hsa = max((unsigned int)HSA_PACKET_OVERHEAD,
++			  (mode->hsync_end - mode->hsync_start) * Bpp -
++			  HSA_PACKET_OVERHEAD);
 +
- 	if (device->mode_flags == MIPI_DSI_MODE_VIDEO_BURST)
- 		delay = (((mode->htotal - mode->hdisplay) * 150) /
- 			((mode->clock / 1000) * 8)) - 50;
++		/*
++		 * The backporch is set using a blanking packet (4 bytes +
++		 * payload + 2 bytes). Its minimal size is therefore 6 bytes
++		 */
+ #define HBP_PACKET_OVERHEAD	6
+-	hbp = max((unsigned int)HBP_PACKET_OVERHEAD,
+-		  (mode->htotal - mode->hsync_end) * Bpp - HBP_PACKET_OVERHEAD);
+-
+-	/*
+-	 * hblk seems to be the line + porches length.
+-	 * The blank is set using a blanking packet (4 bytes + 4 bytes +
+-	 * payload + 2 bytes). So minimal size is 10 bytes
+-	 */
++		hbp = max((unsigned int)HBP_PACKET_OVERHEAD,
++			  (mode->htotal - mode->hsync_end) * Bpp -
++			  HBP_PACKET_OVERHEAD);
++
++		/*
++		 * hblk seems to be the line + porches length.
++		 * The blank is set using a blanking packet (4 bytes + 4 bytes
++		 * + payload + 2 bytes). So minimal size is 10 bytes
++		 */
+ #define HBLK_PACKET_OVERHEAD	10
+-	hblk_max = (mode->htotal - (mode->hsync_end - mode->hsync_start)) * Bpp;
+-	hblk_max -= HBLK_PACKET_OVERHEAD;
+-	hblk = max_t(unsigned int, HBLK_PACKET_OVERHEAD, hblk_max);
+-
+-	/*
+-	 * The frontporch is set using a blanking packet (4 bytes +
+-	 * payload + 2 bytes). Its minimal size is therefore 6 bytes
+-	 *
+-	 * According to BSP code, extra 10 bytes(which is hblk packet overhead)
+-	 * is adding for hfp packet overhead since hfp depends on hblk.
+-	 */
++		hblk_max = (mode->htotal -
++			   (mode->hsync_end - mode->hsync_start)) * Bpp;
++		hblk_max -= HBLK_PACKET_OVERHEAD;
++		hblk = max_t(unsigned int, HBLK_PACKET_OVERHEAD, hblk_max);
++
++		/*
++		 * The frontporch is set using a blanking packet (4 bytes +
++		 * payload + 2 bytes). Its minimal size is therefore 6 bytes
++		 *
++		 * According to BSP code, extra 10 bytes(which is hblk packet
++		 * overhead) is adding for hfp packet overhead since hfp
++		 * depends on hblk.
++		 */
+ #define HFP_PACKET_OVERHEAD	6
+-	hfp_pkt_overhead = (HFP_PACKET_OVERHEAD + HBLK_PACKET_OVERHEAD);
+-	hfp = max((unsigned int)hfp_pkt_overhead,
+-		  (mode->hsync_start - mode->hdisplay) * Bpp -
+-		  hfp_pkt_overhead);
+-
+-	/*
+-	 * The vertical blank is set using a blanking packet (4 bytes +
+-	 * payload + 2 bytes). Its minimal size is therefore 6 bytes
+-	 */
++		hfp_pkt_overhead = (HFP_PACKET_OVERHEAD + HBLK_PACKET_OVERHEAD);
++		hfp = max((unsigned int)hfp_pkt_overhead,
++			  (mode->hsync_start - mode->hdisplay) * Bpp -
++			  hfp_pkt_overhead);
++
++		/*
++		 * The vertical blank is set using a blanking packet (4 bytes +
++		 * payload + 2 bytes). Its minimal size is therefore 6 bytes
++		 */
+ #define VBLK_PACKET_OVERHEAD	6
+-	if (device->lanes == 4) {
+-		int tmp;
+-
+-		tmp = (mode->htotal * Bpp) * mode->vtotal -
+-		      (hblk + VBLK_PACKET_OVERHEAD);
+-		vblk = (device->lanes - tmp % device->lanes);
+-	} else {
+-		vblk = 0;
++		if (device->lanes == 4) {
++			int tmp;
++
++			tmp = (mode->htotal * Bpp) * mode->vtotal -
++			      (hblk + VBLK_PACKET_OVERHEAD);
++			vblk = (device->lanes - tmp % device->lanes);
++		} else {
++			vblk = 0;
++		}
+ 	}
+ 
+ 	/* How many bytes do we need to send all payloads? */
 -- 
 2.18.0.321.gffc6fa0e3
 
