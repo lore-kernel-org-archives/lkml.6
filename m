@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC381C6786F
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 09:59:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B352ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 09:59:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 735992081F
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 09:59:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDB6320880
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 09:59:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="lCuUYnH1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 735992081F
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="iJZRyFC/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDB6320880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=plaes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728362AbeKCTKm (ORCPT
+        id S1728417AbeKCTKn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 15:10:42 -0400
-Received: from plaes.org ([188.166.43.21]:34634 "EHLO plaes.org"
+        Sat, 3 Nov 2018 15:10:43 -0400
+Received: from plaes.org ([188.166.43.21]:34642 "EHLO plaes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726711AbeKCTKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 15:10:41 -0400
+        id S1726828AbeKCTKm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 15:10:42 -0400
 Received: from localhost (85.253.196.132.cable.starman.ee [85.253.196.132])
-        by plaes.org (Postfix) with ESMTPSA id ADE964181D;
-        Sat,  3 Nov 2018 09:59:52 +0000 (UTC)
+        by plaes.org (Postfix) with ESMTPSA id 0011C41B91;
+        Sat,  3 Nov 2018 09:59:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
-        t=1541239192; bh=qaERkaGaX9K3eMgbFk+T005QS8FY727yLXnAPNLEV/s=;
+        t=1541239194; bh=+BQq0FqfhoZHlcMg9+0R+bvL/z4OcJyjNExzpCJasys=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lCuUYnH1dbZJNYbjHjf+soq8iOy2g2NzDqhbRwZ6rrVJPJrQvKiphEZyn2Mv827LN
-         QKxZdpGA10+GzaoOotB22ys471QvokbZL50zY5PAKKdqNnZ1YNIGYRXcKNloVXGNWu
-         qTMRirWfxIsczODmQ5s1AF6OS7vKryF1GpGMle0H19A1mygSehx2E/qfdKZzRzPskq
-         KgGIcSpzTHmMzW8TSk87yfXGrGSy052VmW2TLFkFD+uu7pN/fFFiUWMuzh1SXu7N6P
-         nav5BGjXxKsC20GrZWdfid1nbogIF86iBViwkHnJMTimEg0QAnKkLZDzu2gzNw1EYc
-         0OkIxM7+rZ4mA==
+        b=iJZRyFC/R2DmT88pgajAixdHuEYZg6wWie1uMztYHE39vlUMSGtD7WDmll4Hj9cE1
+         vJNNfHzkG7qgS/f67k2yVHgRVDUs1fHopfx/Zcp/BSnT2cFNkTrtsjbwgi09lTICf1
+         9UsMy3OHf78mfZdqunbWo+Zr7tgZB2JCfAVWATo7CP/PMDCh07X2CUGeeg5prhv361
+         LCqvqPXm8KzsbIk0Q2tH5ArAo7DjbrXGaIbh0HOa5rUxCqWbmVeynIVvwSzwueUIKE
+         B8w92X/H1Iasm7MGV0gEgZE+VXGOSPV50p7k2UvO29a5M1cpOYvaGjHwIaXZjt0cmY
+         A19DOsohEw5CA==
 From:   Priit Laes <plaes@plaes.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Kalle Valo <kvalo@codeaurora.org>,
         "David S. Miller" <davem@davemloft.net>,
         linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
         netdev@vger.kernel.org
-Subject: [PATCH 4/5] b43: Use common cordic algorithm from kernel lib
-Date:   Sat,  3 Nov 2018 11:59:43 +0200
-Message-Id: <c208360e5cc314ac1ad81f907f4538cf2dcbd196.1541238842.git-series.plaes@plaes.org>
+Subject: [PATCH 5/5] b43: Drop internal cordic algorithm implementation
+Date:   Sat,  3 Nov 2018 11:59:44 +0200
+Message-Id: <51f98dbd0efe48c315d8e7876074aeaa22fde580.1541238842.git-series.plaes@plaes.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <cover.f21c8e62e188620d586edb3f77514e6237122c4c.1541238842.git-series.plaes@plaes.org>
 References: <cover.f21c8e62e188620d586edb3f77514e6237122c4c.1541238842.git-series.plaes@plaes.org>
@@ -58,114 +58,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Priit Laes <plaes@plaes.org>
 ---
- drivers/net/wireless/broadcom/b43/Kconfig  |  1 +
- drivers/net/wireless/broadcom/b43/phy_lp.c | 13 +++++++------
- drivers/net/wireless/broadcom/b43/phy_n.c  | 13 +++++++------
- 3 files changed, 15 insertions(+), 12 deletions(-)
+ drivers/net/wireless/broadcom/b43/phy_common.c | 47 +-------------------
+ drivers/net/wireless/broadcom/b43/phy_common.h |  9 +----
+ 2 files changed, 56 deletions(-)
 
-diff --git a/drivers/net/wireless/broadcom/b43/Kconfig b/drivers/net/wireless/broadcom/b43/Kconfig
-index fba8560..3e41457 100644
---- a/drivers/net/wireless/broadcom/b43/Kconfig
-+++ b/drivers/net/wireless/broadcom/b43/Kconfig
-@@ -4,6 +4,7 @@ config B43
- 	select BCMA if B43_BCMA
- 	select SSB if B43_SSB
- 	select FW_LOADER
-+	select CORDIC
- 	---help---
- 	  b43 is a driver for the Broadcom 43xx series wireless devices.
- 
-diff --git a/drivers/net/wireless/broadcom/b43/phy_lp.c b/drivers/net/wireless/broadcom/b43/phy_lp.c
-index 6922cbb..1718e3b 100644
---- a/drivers/net/wireless/broadcom/b43/phy_lp.c
-+++ b/drivers/net/wireless/broadcom/b43/phy_lp.c
-@@ -23,6 +23,7 @@
- 
- */
- 
-+#include <linux/cordic.h>
- #include <linux/slab.h>
- 
- #include "b43.h"
-@@ -1780,9 +1781,9 @@ static void lpphy_start_tx_tone(struct b43_wldev *dev, s32 freq, u16 max)
- {
- 	struct b43_phy_lp *lpphy = dev->phy.lp;
- 	u16 buf[64];
--	int i, samples = 0, angle = 0;
-+	int i, samples = 0, theta = 0;
- 	int rotation = (((36 * freq) / 20) << 16) / 100;
--	struct b43_c32 sample;
-+	struct cordic_iq sample;
- 
- 	lpphy->tx_tone_freq = freq;
- 
-@@ -1798,10 +1799,10 @@ static void lpphy_start_tx_tone(struct b43_wldev *dev, s32 freq, u16 max)
+diff --git a/drivers/net/wireless/broadcom/b43/phy_common.c b/drivers/net/wireless/broadcom/b43/phy_common.c
+index 85f2ca9..98c4fa5 100644
+--- a/drivers/net/wireless/broadcom/b43/phy_common.c
++++ b/drivers/net/wireless/broadcom/b43/phy_common.c
+@@ -604,50 +604,3 @@ void b43_phy_force_clock(struct b43_wldev *dev, bool force)
+ #endif
  	}
+ }
+-
+-/* http://bcm-v4.sipsolutions.net/802.11/PHY/Cordic */
+-struct b43_c32 b43_cordic(int theta)
+-{
+-	static const u32 arctg[] = {
+-		2949120, 1740967, 919879, 466945, 234379, 117304,
+-		  58666,   29335,  14668,   7334,   3667,   1833,
+-		    917,     458,    229,    115,     57,     29,
+-	};
+-	u8 i;
+-	s32 tmp;
+-	s8 signx = 1;
+-	u32 angle = 0;
+-	struct b43_c32 ret = { .i = 39797, .q = 0, };
+-
+-	while (theta > (180 << 16))
+-		theta -= (360 << 16);
+-	while (theta < -(180 << 16))
+-		theta += (360 << 16);
+-
+-	if (theta > (90 << 16)) {
+-		theta -= (180 << 16);
+-		signx = -1;
+-	} else if (theta < -(90 << 16)) {
+-		theta += (180 << 16);
+-		signx = -1;
+-	}
+-
+-	for (i = 0; i <= 17; i++) {
+-		if (theta > angle) {
+-			tmp = ret.i - (ret.q >> i);
+-			ret.q += ret.i >> i;
+-			ret.i = tmp;
+-			angle += arctg[i];
+-		} else {
+-			tmp = ret.i + (ret.q >> i);
+-			ret.q -= ret.i >> i;
+-			ret.i = tmp;
+-			angle -= arctg[i];
+-		}
+-	}
+-
+-	ret.i *= signx;
+-	ret.q *= signx;
+-
+-	return ret;
+-}
+diff --git a/drivers/net/wireless/broadcom/b43/phy_common.h b/drivers/net/wireless/broadcom/b43/phy_common.h
+index 57a1ad8..4213cac 100644
+--- a/drivers/net/wireless/broadcom/b43/phy_common.h
++++ b/drivers/net/wireless/broadcom/b43/phy_common.h
+@@ -7,13 +7,6 @@
  
- 	for (i = 0; i < samples; i++) {
--		sample = b43_cordic(angle);
--		angle += rotation;
--		buf[i] = CORDIC_CONVERT((sample.i * max) & 0xFF) << 8;
--		buf[i] |= CORDIC_CONVERT((sample.q * max) & 0xFF);
-+		sample = cordic_calc_iq(theta);
-+		theta += rotation;
-+		buf[i] = CORDIC_FLOAT((sample.i * max) & 0xFF) << 8;
-+		buf[i] |= CORDIC_FLOAT((sample.q * max) & 0xFF);
- 	}
+ struct b43_wldev;
  
- 	b43_lptab_write_bulk(dev, B43_LPTAB16(5, 0), samples, buf);
-diff --git a/drivers/net/wireless/broadcom/b43/phy_n.c b/drivers/net/wireless/broadcom/b43/phy_n.c
-index 44ab080..1f9378a 100644
---- a/drivers/net/wireless/broadcom/b43/phy_n.c
-+++ b/drivers/net/wireless/broadcom/b43/phy_n.c
-@@ -23,6 +23,7 @@
+-/* Complex number using 2 32-bit signed integers */
+-struct b43_c32 { s32 i, q; };
+-
+-#define CORDIC_CONVERT(value)	(((value) >= 0) ? \
+-				 ((((value) >> 15) + 1) >> 1) : \
+-				 -((((-(value)) >> 15) + 1) >> 1))
+-
+ /* PHY register routing bits */
+ #define B43_PHYROUTE			0x0C00 /* PHY register routing bits mask */
+ #define  B43_PHYROUTE_BASE		0x0000 /* Base registers */
+@@ -450,6 +443,4 @@ bool b43_is_40mhz(struct b43_wldev *dev);
  
- */
+ void b43_phy_force_clock(struct b43_wldev *dev, bool force);
  
-+#include <linux/cordic.h>
- #include <linux/delay.h>
- #include <linux/slab.h>
- #include <linux/types.h>
-@@ -1513,7 +1514,7 @@ static void b43_radio_init2055(struct b43_wldev *dev)
- 
- /* http://bcm-v4.sipsolutions.net/802.11/PHY/N/LoadSampleTable */
- static int b43_nphy_load_samples(struct b43_wldev *dev,
--					struct b43_c32 *samples, u16 len) {
-+					struct cordic_iq *samples, u16 len) {
- 	struct b43_phy_n *nphy = dev->phy.n;
- 	u16 i;
- 	u32 *data;
-@@ -1544,7 +1545,7 @@ static u16 b43_nphy_gen_load_samples(struct b43_wldev *dev, u32 freq, u16 max,
- {
- 	int i;
- 	u16 bw, len, rot, angle;
--	struct b43_c32 *samples;
-+	struct cordic_iq *samples;
- 
- 	bw = b43_is_40mhz(dev) ? 40 : 20;
- 	len = bw << 3;
-@@ -1561,7 +1562,7 @@ static u16 b43_nphy_gen_load_samples(struct b43_wldev *dev, u32 freq, u16 max,
- 		len = bw << 1;
- 	}
- 
--	samples = kcalloc(len, sizeof(struct b43_c32), GFP_KERNEL);
-+	samples = kcalloc(len, sizeof(struct cordic_iq), GFP_KERNEL);
- 	if (!samples) {
- 		b43err(dev->wl, "allocation for samples generation failed\n");
- 		return 0;
-@@ -1570,10 +1571,10 @@ static u16 b43_nphy_gen_load_samples(struct b43_wldev *dev, u32 freq, u16 max,
- 	angle = 0;
- 
- 	for (i = 0; i < len; i++) {
--		samples[i] = b43_cordic(angle);
-+		samples[i] = cordic_calc_iq(angle);
- 		angle += rot;
--		samples[i].q = CORDIC_CONVERT(samples[i].q * max);
--		samples[i].i = CORDIC_CONVERT(samples[i].i * max);
-+		samples[i].q = CORDIC_FLOAT(samples[i].q * max);
-+		samples[i].i = CORDIC_FLOAT(samples[i].i * max);
- 	}
- 
- 	i = b43_nphy_load_samples(dev, samples, len);
+-struct b43_c32 b43_cordic(int theta);
+-
+ #endif /* LINUX_B43_PHY_COMMON_H_ */
 -- 
 git-series 0.9.1
