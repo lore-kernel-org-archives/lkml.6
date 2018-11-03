@@ -2,193 +2,113 @@ Return-Path: <SRS0=1exb=NO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	URIBL_SBL,URIBL_SBL_A autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6AE5C6786F
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 13:23:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97FEDC0044C
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 14:31:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 849CB20833
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 13:23:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41CE72082E
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 14:31:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AZqi2RVK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 849CB20833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oj3Ul7qn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41CE72082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728737AbeKCWe4 (ORCPT
+        id S1728521AbeKCXnR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 18:34:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51846 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728425AbeKCWe4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 18:34:56 -0400
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6ECD82082D;
-        Sat,  3 Nov 2018 13:23:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541251414;
-        bh=IRJuIrTyRLHkUXVWkpzjpBqgAvg2f3aaSK3GrWimAV4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=AZqi2RVK+snXR2GlHGnQmFluIGWuvtvEXppkPtNHNUIJMA9Hxd0i818HvoPuDYieX
-         Xxtd71hFYjXXNt40iyWz3K9KDGmzwS81e+3ltIkxcJGGNRIjT1JHeztGVJjgndbL9H
-         xcPnishGSjH8v+aYcJqgPT0++bzPFpdSMrRyXBak=
-Date:   Sat, 3 Nov 2018 22:23:29 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Christian Brauner <christian@brauner.io>,
-        Aleksa Sarai <asarai@suse.de>, netdev@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [PATCH v3 1/2] kretprobe: produce sane stack traces
-Message-Id: <20181103222329.4e2a4188d297724cbb4c9883@kernel.org>
-In-Reply-To: <20181102091658.1bc979a4@gandalf.local.home>
-References: <20181101083551.3805-1-cyphar@cyphar.com>
-        <20181101083551.3805-2-cyphar@cyphar.com>
-        <20181101204720.6ed3fe37@vmware.local.home>
-        <20181102050509.tw3dhvj5urudvtjl@yavin>
-        <20181102065932.bdt4pubbrkvql4mp@yavin>
-        <20181102091658.1bc979a4@gandalf.local.home>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Sat, 3 Nov 2018 19:43:17 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39196 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726387AbeKCXnQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Nov 2018 19:43:16 -0400
+Received: by mail-pg1-f194.google.com with SMTP id r9-v6so2232563pgv.6;
+        Sat, 03 Nov 2018 07:31:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=3W/kXpXDGV/6D9RzAzhWDhjFSJgv1UDOTCi8wok30VI=;
+        b=Oj3Ul7qnE/qUDHJMPZQA2hNr0s6/oL/sg9tQ7foB1xfc+JyjoTt8wLjIAjg2ub/LK4
+         U/DfmumuaPU7mH5UNovxosoZADbdik2lxI/gU06OhHlqbJfmbD2LpMDTjG1PGhNRZkZC
+         qLYapObOJ1yikNleAGl5I1FXfyC/Z0E+/PkrrDEit1yU6C7ziJBF6RQPu5Kqe5LxYF6Y
+         pnTLkNqX1j5UvLs9F4T9utHTOLm3x48ykFePnQfaPgUaWZ//3CUtqWf+88JLoCkq5a26
+         vhcqWBSeOQG7ViuEjgJbcagkFDI+URqBeyn8d08xtmR1XqNOQ4gfaGUSDx3bd/tSY6O5
+         b6hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=3W/kXpXDGV/6D9RzAzhWDhjFSJgv1UDOTCi8wok30VI=;
+        b=G+n9nNwtZZeh+iPzUyHLg+UaXodYk9YwzgpUow6bmsCHeQnoQ+K6Vq5flOi6LDtWmo
+         XFtYpb/9ljdJgCyRVayi5xz6TPLmV8J7LG+vMJWOcut/sIc6TLWbgXDXBGCZAVc+C1Zv
+         F88GOZ+d4YKfrniB6TnDagERgjf4RcTCe4XfEPZ6r3MnHy9+6G0XuTfNdGBR42phNPYx
+         KWfrf2XoMDwNWY5MTXUnke0JRsIrptMdk3IGOPVcfcg2MmCzVjzawsIWjGZdImbQMd2j
+         slU2hfm2v+pg3vY9dtnSdgrPXqGWpY2YRxQv8FIgcbEmySE0+zHwibq/k6Nd9TipOnQX
+         kv0Q==
+X-Gm-Message-State: AGRZ1gJWtltfmoKjQMlzbqdM+edxstwGpAJV6UvIrno6sPINSlRibDIW
+        FYgU9ZB+fr+cWZnID2Q02Azz71Af
+X-Google-Smtp-Source: AJdET5cmNBzt5XApZMVwh1ZgGBpFlYcBa/XDE265hnHEHjEgb/S4CQfUfTrqvfStQ1uGjgmk912QmQ==
+X-Received: by 2002:a62:8a0d:: with SMTP id y13-v6mr15684318pfd.142.1541255505822;
+        Sat, 03 Nov 2018 07:31:45 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id t4-v6sm39252148pfh.45.2018.11.03.07.31.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 03 Nov 2018 07:31:44 -0700 (PDT)
+Subject: Re: [PATCH 4.14 000/143] 4.14.79-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+References: <20181102182857.064326086@linuxfoundation.org>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <34e8a999-20e1-5e7d-863b-b0585a24e83b@roeck-us.net>
+Date:   Sat, 3 Nov 2018 07:31:42 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181102182857.064326086@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2 Nov 2018 09:16:58 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> On Fri, 2 Nov 2018 17:59:32 +1100
-> Aleksa Sarai <cyphar@cyphar.com> wrote:
+On 11/2/18 11:33 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.79 release.
+> There are 143 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> > As an aside, I just tested with the frame unwinder and it isn't thrown
-> > off-course by kretprobe_trampoline (though obviously the stack is still
-> > wrong). So I think we just need to hook into the ORC unwinder to get it
-> > to continue skipping up the stack, as well as add the rewriting code for
-> > the stack traces (for all unwinders I guess -- though ideally we should
-> 
-> I agree that this is the right solution.
-> 
-> > do this without having to add the same code to every architecture).
-> 
-> True, and there's an art to consolidating the code between
-> architectures.
-> 
-> I'm currently looking at function graph and seeing if I can consolidate
-> it too. And I'm also trying to get multiple uses to hook into its
-> infrastructure. I think I finally figured out a way to do so.
-
-For supporting multiple users without any memory allocation, I think
-each user should consume the shadow stack and store on it.
-My old generic retstack implementation did that.
-
-https://github.com/mhiramat/linux/commit/8804f76580cd863d555854b41b9c6df719f8087e
-
-I hope this may give you any insites.
-My idea is to generalize shadow stack, not func graph tracer, since
-I don't like making kretprobe depends on func graph tracer, but only
-the shadow stack.
-
-> 
-> The reason it is difficult, is that you need to maintain state between
-> the entry of a function and the exit for each task and callback that is
-> registered. Hence, it's a 3x tuple (function stack, task, callbacks).
-> And this must be maintained with preemption. A task may sleep for
-> minutes, and the state needs to be retained.
-
-Would you mean preeempt_disable()? Anyway, we just need to increment index
-atomically, don't we?
-
-> The only state that must be retained is the function stack with the
-> task, because if that gets out of sync, the system crashes. But the
-> callback state can be removed.
-> 
-> Here's what is there now:
-> 
->  When something is registered with the function graph tracer, every
->  task gets a shadowed stack. A hook is added to fork to add shadow
->  stacks to new tasks. Once a shadow stack is added to a task, that
->  shadow stack is never removed until the task exits.
-> 
->  When the function is entered, the real return code is stored in the
->  shadow stack and the trampoline address is put in its place.
-> 
->  On return, the trampoline is called, and it will pop off the return
->  code from the shadow stack and return to that.
-> 
-> The issue with multiple users, is that different users may want to
-> trace different functions. On entry, the user could say it doesn't want
-> to trace the current function, and the return part must not be called
-> on exit. Keeping track of which user needs the return called is the
-> tricky part.
-
-So that I think only the "shadow stack" part should be generalized.
-
-> 
-> Here's what I plan on implementing:
-> 
->  Along with a shadow stack, I was going to add a 4096 byte (one page)
->  array that holds 64 8 byte masks to every task as well. This will allow
->  64 simultaneous users (which is rather extreme). If we need to support
->  more, we could allocate another page for all tasks. The 8 byte mask
->  will represent each depth (allowing to do this for 64 function call
->  stack depth, which should also be enough).
-> 
->  Each user will be assigned one of the masks. Each bit in the mask
->  represents the depth of the shadow stack. When a function is called,
->  each user registered with the function graph tracer will get called
->  (if they asked to be called for this function, via the ftrace_ops
->  hashes) and if they want to trace the function, then the bit is set in
->  the mask for that stack depth.
-> 
->  When the function exits the function and we pop off the return code
->  from the shadow stack, we then look at all the bits set for the
->  corresponding users, and call their return callbacks, and ignore
->  anything that is not set.
+> Responses should be made by Sun Nov  4 18:27:59 UTC 2018.
+> Anything received after that time might be too late.
 > 
 
-It sounds too complicated... why we don't just open the shadow stack for
-each user? Of course it may requires a bit "repeat" unwind on the shadow
-stack, but it is simple.
+Build results:
+	total: 150 pass: 149 fail: 1
+Failed builds:
+	xtensa:allmodconfig
+Qemu test results:
+	total: 318 pass: 318 fail: 0\
 
-Thank you,
+Build failure:
 
-> When a user is unregistered, it the corresponding bits that represent
-> it are cleared, and it the return callback will not be called. But the
-> tasks being traced will still have their shadow stack to allow it to
-> get back to normal.
-> 
-> I'll hopefully have a prototype ready by plumbers.
-> 
-> And this too will require each architecture to probably change. As a
-> side project to this, I'm going to try to consolidate the function
-> graph code among all the architectures as well. Not an easy task.
-> 
-> -- Steve
+In file included from include/linux/mlx5/port.h:36:0,
+                  from include/linux/mlx5/driver.h: In function ‘mlx5_get_vector_affinity_hint’:
+include/linux/mlx5/driver.h:1208:13: error:
+	‘struct irq_desc’ has no member named ‘affinity_hint’
 
+Caused by commit 19b743c448db ("net/mlx5: Fix mlx5_get_vector_affinity function").
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Details are available at https://kerneltests.org/builders/.
+
+Guenter
+
