@@ -2,231 +2,245 @@ Return-Path: <SRS0=1exb=NO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 997C7C0044C
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 04:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDC7EC0044C
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 05:01:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43B532081B
-	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 04:54:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99F602081B
+	for <linux-kernel@archiver.kernel.org>; Sat,  3 Nov 2018 05:01:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NLtxaRPS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43B532081B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V2/j/FON"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99F602081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727250AbeKCOEn (ORCPT
+        id S1727386AbeKCOLh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 3 Nov 2018 10:04:43 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:42252 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726145AbeKCOEm (ORCPT
+        Sat, 3 Nov 2018 10:11:37 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:33179 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726200AbeKCOLh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Nov 2018 10:04:42 -0400
-Received: by mail-pf1-f195.google.com with SMTP id f26-v6so1911971pfn.9;
-        Fri, 02 Nov 2018 21:54:43 -0700 (PDT)
+        Sat, 3 Nov 2018 10:11:37 -0400
+Received: by mail-pl1-f196.google.com with SMTP id x6-v6so1913330pln.0
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Nov 2018 22:01:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=l7n3S044w+PwqYAQc1M+hJLY/g+X7NdWQaTg6bNSpz4=;
-        b=NLtxaRPSnE8e6a2/VIVV1s4dpdUe0zyXZCjWFkad0gVIGj8C+whKoDHlk4iSkfbido
-         IyoJJjhdlCWpMWcs1oWZyDL3SQW7hS1anT3iiv2CEnD3ZiDg/+vX0tNaR/SMigZSCeTb
-         lzeBLfFaZniYTTf4CE57NDHDP0eCcOpOCdJ1W1JXKnI93dB3p8ojXptK9dMAI/WDOcPd
-         RxOHmoM8pZOXdaNaNi8NwWscpPW5nXMmQxoC3CVQKMkER0QKUcawR8SSHbgzgLqz5JFV
-         WSgv+yMh1MbpcwdmjK4424HRAVpm3Wgw+LeQPyN7TovwYq+x48jBTA3316nhpyjjpJP2
-         miEw==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=H6vjzSYHdXeMDhN+Rwiu5OZOuRwTYFnzFfoeMp5ZVu0=;
+        b=V2/j/FON7g7g8rwYTp+rxe4af/2+w41SZkQC82sI2r36WlNafvqB3plQB/qYVFUSfp
+         i9Ql0NfnTNYeuSACEeo90UrLyue4/osRorK6rphqt81QRNb69vxPiW5IcTELB1Z9Yseb
+         7XBvBtPxmKUx3CTLJmUI5evLM1aoSInXpS6qpBPgoFp4j6724UsTQRVZC14vVKYpw3L2
+         88GRXsuuY/9cv8DD4VLa4QUe+Y8+016R/YbDaflv21PeJ5RZ3TAFGPIQUcg8T5Lfdnbc
+         K8UiXRUT2Y+4cKVU5L+FiICJjyymCLzeBLp55RMFd/s4ZuMaW5ttYCn0rGB218IF6FrA
+         rD7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=l7n3S044w+PwqYAQc1M+hJLY/g+X7NdWQaTg6bNSpz4=;
-        b=rSvOGApSkkiiBQqs7FshOnER9BbbX+qmcc3TbD1k+Xo75iXyvGZaFDIJQokSoMfnBQ
-         0CHxACG02Rq6zHKBhUQx9shULO5+/A6CWvKGONS67cYimHfwmBUelHVCRD8Uqa2hvTx/
-         2fZrBXm8UiClUh8TscQAqTmkvB5vwAK30BD5I03NrTx7+8Om8TSPdth/ja2NibLsWxWn
-         cNO5X9xDgS2qryoCclJ7ITJpz3tlqwYUz0hCRY2qC5Q1QeLarv+H3uuLP/c3bmtZ94Ua
-         vNiN9x9dA75LknZhUxbsJkrHf84AG9eh2r5C++Q5/u010Yhpq92dCLURYEn6B3U+iXY2
-         KI5A==
-X-Gm-Message-State: AGRZ1gKq7tQ9SN4KeEH9L36kCyjxTAkCxSalNHt1MuXzMTN06foXH47c
-        S0UnZgUOim+gAHHuIwlYmOU=
-X-Google-Smtp-Source: AJdET5cGqQNTEmQvDMPCoz+duNoZ3dZWxKD/24WtfsfFVN3P0F1oEwB0wC8X2l0yt5EY/Dm1ww7dmw==
-X-Received: by 2002:a63:36c8:: with SMTP id d191-v6mr12991921pga.404.1541220882571;
-        Fri, 02 Nov 2018 21:54:42 -0700 (PDT)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id g3-v6sm15515686pgr.40.2018.11.02.21.54.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 02 Nov 2018 21:54:41 -0700 (PDT)
-Subject: Re: [PATCH v3] of: overlay: user space synchronization
-From:   Frank Rowand <frowand.list@gmail.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Pantelis Antoniou <panto@antoniou-consulting.com>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Alan Tull <atull@kernel.org>
-References: <1539736466-28638-1-git-send-email-frowand.list@gmail.com>
- <20181018193216.GA9971@bogus>
- <2f99d700-6276-cfa4-8878-4eb161126330@gmail.com>
- <CAL_Jsq+=OiXTSSEr4QuiyqCzyrKdH0M8HhmOjVha3SWM5Y62Gw@mail.gmail.com>
- <399b1ed0-ac64-d962-5eea-23a99011aada@gmail.com>
-Message-ID: <918df992-d21f-b237-1ff3-f0b410b32112@gmail.com>
-Date:   Fri, 2 Nov 2018 21:54:40 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=H6vjzSYHdXeMDhN+Rwiu5OZOuRwTYFnzFfoeMp5ZVu0=;
+        b=kXlwASLDvnJLd4qeygDdaMWOjlcoRYfuNEBx8znGsEgB7lxh58xwBAUQdwJgfA5of4
+         oPDdd/7bo/MstYZJPtgV8WH/3tgvguTznwYRb7os5TRNS/N4128o0ICQ0MFTpAViwZES
+         7o+NLtLMDfFOhTCTjodQoNwFdTIYCZ1X1OrSh+//sGVZ7VQhkGzzZsW1EymFRiWRQiGA
+         FAiPv4E0+CX9AxYik7ibSZQLx4YZRLYgNCCsLgH8PmQ4Qt7r444DblHjiePcWQIQMkRm
+         fc3gU5DkJiEnvprDxwTckfk6ZjgqrrlPdQXBrNB1WRTf/IzruXPgGZa2DfSfCyI+907P
+         RM3Q==
+X-Gm-Message-State: AGRZ1gLxwGD/R452gtMzR1IrglcYqky5LVFhtPmJETZbD1U/Pzd3LEK4
+        Y0OvwVxkMgnGWolM1FIRm58Fh2TD
+X-Google-Smtp-Source: AJdET5cJSg7DnsEpjwNIX3BfHj19NlARK9ChbngQfoPpsUkhBgmYyK8ra0XxE6saAT/Iv2G1mjyTug==
+X-Received: by 2002:a17:902:2bc3:: with SMTP id l61-v6mr9232881plb.5.1541221295493;
+        Fri, 02 Nov 2018 22:01:35 -0700 (PDT)
+Received: from jordon-HP-15-Notebook-PC ([103.227.99.32])
+        by smtp.gmail.com with ESMTPSA id b75-v6sm1423851pfb.96.2018.11.02.22.01.33
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 02 Nov 2018 22:01:33 -0700 (PDT)
+Date:   Sat, 3 Nov 2018 10:35:04 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     willy@infradead.org, akpm@linux-foundation.org, mhocko@suse.com,
+        dan.j.williams@intel.com, kirill.shutemov@linux.intel.com,
+        pasha.tatashin@oracle.com, vbabka@suse.cz, riel@redhat.com
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] mm: Create the new vm_fault_t type
+Message-ID: <20181103050504.GA3049@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-In-Reply-To: <399b1ed0-ac64-d962-5eea-23a99011aada@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+Page fault handlers are supposed to return VM_FAULT codes,
+but some drivers/file systems mistakenly return error
+numbers. Now that all drivers/file systems have been converted
+to use the vm_fault_t return type, change the type definition
+to no longer be compatible with 'int'. By making it an unsigned
+int, the function prototype becomes incompatible with a function
+which returns int. Sparse will detect any attempts to return a
+value which is not a VM_FAULT code.
 
-First, the point of this patch was to provide a way for userspace (program,
-command line interface, whatever -- that is orthogonal) to ensure that its
-view of the devicetree via /proc/device-tree/ is consistent since an overlay
-apply or remove can alter the devicetree.
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+---
+ include/linux/mm.h       | 46 -----------------------------
+ include/linux/mm_types.h | 75 +++++++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 74 insertions(+), 47 deletions(-)
 
-For in-kernel use, typically some sort of lock or rcu would be used to
-provide this type of functionality.
-
-
-On 10/22/18 12:30 AM, Frank Rowand wrote:
-> On 10/19/18 9:06 AM, Rob Herring wrote:
->> On Thu, Oct 18, 2018 at 7:06 PM Frank Rowand <frowand.list@gmail.com> wrote:
->>>
->>> On 10/18/18 12:32, Rob Herring wrote:
->>>> On Tue, Oct 16, 2018 at 05:34:26PM -0700, frowand.list@gmail.com wrote:
->>>>> From: Frank Rowand <frank.rowand@sony.com>
->>>>>
->>>>> When an overlay is applied or removed, the live devicetree visible in
->>>>> /proc/device-tree/, aka /sys/firmware/devicetree/base/, reflects the
->>>>> changes.  There is no method for user space to determine whether the
->>>>> live devicetree was modified by overlay actions.
->>>>
->>>> Because userspace has no way to modify the DT and the ways the kernel
->>>> can do modifications is limited.
->>>>
->>>> Do you have an actually need for this outside of testing/development?
->>>
->>> I do not know if anyone uses /proc/device-tree for anything outside of
->>> testing/development.  If we believe that there is no other use of
->>> /proc/device-tree we can simply document that there is no expectation
->>> that accessors will see a consistent, unchanging /proc/device-tree.
->>
->> I didn't mean whether /proc/device-tree is used outside of testing. It
->> is. The question is whether any users care if there are changes
->> happening. If so what is the use case?
-> 
-> What is the point of looking at a devicetree if you don't know if it
-> is in a consistent state or part way through a change?
-> 
->  
->> kexec used to be one of the main users, but I think it has switched
->> over to the exported FDT which matches what the kernel was originally
->> passed.
-> 
-> Yes, last I checked kexec was using FDT from /sys/firmware/fdt.
-> 
-> 
->>>
->>> That would be a much smaller patch.
->>>
->>>
->>>>> Provide a sysfs file, /sys/firmware/devicetree/tree_version,  to allow
->>>>> user space to determine if the live devicetree has remained unchanged
->>>>> while a series of one or more accesses of /proc/device-tree/ occur.
->>>>>
->>>>> The use of both (1) dynamic devicetree modifications and (2) overlay
->>>>> apply and removal are not supported during the same boot cycle.  Thus
->>>>> non-overlay dynamic modifications are not reflected in the value of
->>>>> tree_version.
->>>>
->>>> I'd prefer to see some sort of information on overlays exported and user
->>>> space can check if that changed. IIRC, Pantelis had a series to do that
->>>> along with a kill switch to prevent further modifications. At least some
->>>> of that series only had minor issues to fix.
->>>
->>> The kill switch addresses a different concern, which was from the security
->>> community.  The kill switch is on my todo list.
->>
->> Yes, but there could be other uses. It's not a big step from wanting
->> to know if the DT has changed to wanting to control it changing or
->> not.
->>
->> Perhaps the kill switch needs 2 levels: a temporary freeze and a
->> permanent freeze. In any case, they don't seem completely unrelated
->> and I don't really want to see userspace ABI added bit by bit.
-> 
-> I can add a kill switch patch.
-
-The point behind the kill switch is to allow a way to disable modification
-of the devicetree from userspace via an overlay manager.  Since there is
-no userspace overlay manager, there is no need for a kill switch.  The
-kill switch (or equivalent functionality) should be added as part of
-adding the overlay manager, when that occurs.
-
-Addressing adding userspace ABI bit by bit, any discussion of what the userspace
-overlay manager interface will look like is purely conjecture.  I do not want
-to wait till the overlay manager to be added before the current problem of
-user space synchronization is addressed.
-
-
->>> I don't remember exactly what info the overlay information export patch
->>> provided.  I'll have to go find it and re-read it.
->>>
->>>
->>>> Also, shouldn't we get uevents if the tree changes? Maybe that's not
->>>
->>> Yes (off the top of my head).  But a shell script accessing /proc/device-tree
->>> is not going to get uevents.
->>
->> No, but userspace can get them. Accessible from a shell script is not
->> a requirement of kernel interfaces.
-> 
-> OK for now.  I haven't thought that concept through, but it is not key to
-> whether this feature is useful.  The same functionality is also needed
-> by programs.
-> 
-> I'll have to dig into the uevent implementation and architecture to see
-> whether uevents are a possible solution.  This patch can wait for me to
-> finish this.
-
-Getting a uevent does not provide the information needed to ensure that
-the devicetree is in a consistent state over a set of accesses to
-/proc/device-tree (that is, a "critical section").
-
-
-> 
-> If the current patch ends up being the best method, I still need to
-> re-work to add memory barriers (or somehow convince myself that they
-> are not needed).
-
-In the current version of the patch, I was reluctant to provide the
-synchronization via a lock in the sysfs show function because I did
-not find any documentation or discussion that assured me that a lock
-was legal in that context.  I have since asked Greg KH if using a
-lock for synchronization in the show function is ok and he assured
-me that it is.  Based on that, I have a new version of the patch that
-is conceptually cleaner, easier to understand, and easier to use.
-
--Frank
-
-> 
-> -Frank
-> 
-> 
->>
->> Rob
->>
-> 
-> 
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index fcf9cc9..511a3ce 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1267,52 +1267,6 @@ static inline void clear_page_pfmemalloc(struct page *page)
+ }
+ 
+ /*
+- * Different kinds of faults, as returned by handle_mm_fault().
+- * Used to decide whether a process gets delivered SIGBUS or
+- * just gets major/minor fault counters bumped up.
+- */
+-
+-#define VM_FAULT_OOM	0x0001
+-#define VM_FAULT_SIGBUS	0x0002
+-#define VM_FAULT_MAJOR	0x0004
+-#define VM_FAULT_WRITE	0x0008	/* Special case for get_user_pages */
+-#define VM_FAULT_HWPOISON 0x0010	/* Hit poisoned small page */
+-#define VM_FAULT_HWPOISON_LARGE 0x0020  /* Hit poisoned large page. Index encoded in upper bits */
+-#define VM_FAULT_SIGSEGV 0x0040
+-
+-#define VM_FAULT_NOPAGE	0x0100	/* ->fault installed the pte, not return page */
+-#define VM_FAULT_LOCKED	0x0200	/* ->fault locked the returned page */
+-#define VM_FAULT_RETRY	0x0400	/* ->fault blocked, must retry */
+-#define VM_FAULT_FALLBACK 0x0800	/* huge page fault failed, fall back to small */
+-#define VM_FAULT_DONE_COW   0x1000	/* ->fault has fully handled COW */
+-#define VM_FAULT_NEEDDSYNC  0x2000	/* ->fault did not modify page tables
+-					 * and needs fsync() to complete (for
+-					 * synchronous page faults in DAX) */
+-
+-#define VM_FAULT_ERROR	(VM_FAULT_OOM | VM_FAULT_SIGBUS | VM_FAULT_SIGSEGV | \
+-			 VM_FAULT_HWPOISON | VM_FAULT_HWPOISON_LARGE | \
+-			 VM_FAULT_FALLBACK)
+-
+-#define VM_FAULT_RESULT_TRACE \
+-	{ VM_FAULT_OOM,			"OOM" }, \
+-	{ VM_FAULT_SIGBUS,		"SIGBUS" }, \
+-	{ VM_FAULT_MAJOR,		"MAJOR" }, \
+-	{ VM_FAULT_WRITE,		"WRITE" }, \
+-	{ VM_FAULT_HWPOISON,		"HWPOISON" }, \
+-	{ VM_FAULT_HWPOISON_LARGE,	"HWPOISON_LARGE" }, \
+-	{ VM_FAULT_SIGSEGV,		"SIGSEGV" }, \
+-	{ VM_FAULT_NOPAGE,		"NOPAGE" }, \
+-	{ VM_FAULT_LOCKED,		"LOCKED" }, \
+-	{ VM_FAULT_RETRY,		"RETRY" }, \
+-	{ VM_FAULT_FALLBACK,		"FALLBACK" }, \
+-	{ VM_FAULT_DONE_COW,		"DONE_COW" }, \
+-	{ VM_FAULT_NEEDDSYNC,		"NEEDDSYNC" }
+-
+-/* Encode hstate index for a hwpoisoned large page */
+-#define VM_FAULT_SET_HINDEX(x) ((x) << 12)
+-#define VM_FAULT_GET_HINDEX(x) (((x) >> 12) & 0xf)
+-
+-/*
+  * Can be called by the pagefault handler when it gets a VM_FAULT_OOM.
+  */
+ extern void pagefault_out_of_memory(void);
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 5ed8f62..48c2108 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -22,7 +22,6 @@
+ #endif
+ #define AT_VECTOR_SIZE (2*(AT_VECTOR_SIZE_ARCH + AT_VECTOR_SIZE_BASE + 1))
+ 
+-typedef int vm_fault_t;
+ 
+ struct address_space;
+ struct mem_cgroup;
+@@ -609,6 +608,80 @@ static inline bool mm_tlb_flush_nested(struct mm_struct *mm)
+ 
+ struct vm_fault;
+ 
++/**
++ * typedef vm_fault_t -  __bitwise unsigned int
++ *
++ * vm_fault_t is the new unsigned int type to return VM_FAULT
++ * code by page fault handlers of drivers/file systems. Now if
++ * any page fault handlers returns non VM_FAULT code instead
++ * of VM_FAULT code, it will be a mismatch with function
++ * prototype and sparse will detect it.
++ */
++typedef __bitwise unsigned int vm_fault_t;
++
++/**
++ * enum - VM_FAULT code
++ *
++ * This enum is used to track the VM_FAULT code return by page
++ * fault handlers.
++ *
++ * @VM_FAULT_OOM:		Out Of Memory
++ * @VM_FAULT_SIGBUS:		Bad access
++ * @VM_FAULT_MAJOR:		Page read from storage
++ * @VM_FAULT_WRITE:		Special case for get_user_pages
++ * @VM_FAULT_HWPOISON:		Hit poisoned small page
++ * @VM_FAULT_HWPOISON_LARGE:	Hit poisoned large page. Index encoded
++ *				in upper bits
++ * @VM_FAULT_SIGSEGV:		segmentation fault
++ * @VM_FAULT_NOPAGE:		->fault installed the pte, not return page
++ * @VM_FAULT_LOCKED:		->fault locked the returned page
++ * @VM_FAULT_RETRY:		->fault blocked, must retry
++ * @VM_FAULT_FALLBACK:		huge page fault failed, fall back to small
++ * @VM_FAULT_DONE_COW:		->fault has fully handled COW
++ * @VM_FAULT_NEEDDSYNC:		->fault did not modify page tables and needs
++ *				fsync() to complete (for synchronous page faults
++ *				in DAX)
++ */
++enum {
++	VM_FAULT_OOM            = (__force vm_fault_t)0x000001,
++	VM_FAULT_SIGBUS         = (__force vm_fault_t)0x000002,
++	VM_FAULT_MAJOR          = (__force vm_fault_t)0x000004,
++	VM_FAULT_WRITE          = (__force vm_fault_t)0x000008,
++	VM_FAULT_HWPOISON       = (__force vm_fault_t)0x000010,
++	VM_FAULT_HWPOISON_LARGE = (__force vm_fault_t)0x000020,
++	VM_FAULT_SIGSEGV        = (__force vm_fault_t)0x000040,
++	VM_FAULT_NOPAGE         = (__force vm_fault_t)0x000100,
++	VM_FAULT_LOCKED         = (__force vm_fault_t)0x000200,
++	VM_FAULT_RETRY          = (__force vm_fault_t)0x000400,
++	VM_FAULT_FALLBACK       = (__force vm_fault_t)0x000800,
++	VM_FAULT_DONE_COW       = (__force vm_fault_t)0x001000,
++	VM_FAULT_NEEDDSYNC      = (__force vm_fault_t)0x002000,
++	VM_FAULT_HINDEX_MASK    = (__force vm_fault_t)0x0f0000,
++};
++
++/* Encode hstate index for a hwpoisoned large page */
++#define VM_FAULT_SET_HINDEX(x) ((__force vm_fault_t)((x) << 16))
++#define VM_FAULT_GET_HINDEX(x) (((x) >> 16) & 0xf)
++
++#define VM_FAULT_ERROR (VM_FAULT_OOM | VM_FAULT_SIGBUS |	\
++			VM_FAULT_SIGSEGV | VM_FAULT_HWPOISON |	\
++			VM_FAULT_HWPOISON_LARGE | VM_FAULT_FALLBACK)
++
++#define VM_FAULT_RESULT_TRACE \
++	{ VM_FAULT_OOM,                 "OOM" },	\
++	{ VM_FAULT_SIGBUS,              "SIGBUS" },	\
++	{ VM_FAULT_MAJOR,               "MAJOR" },	\
++	{ VM_FAULT_WRITE,               "WRITE" },	\
++	{ VM_FAULT_HWPOISON,            "HWPOISON" },	\
++	{ VM_FAULT_HWPOISON_LARGE,      "HWPOISON_LARGE" },	\
++	{ VM_FAULT_SIGSEGV,             "SIGSEGV" },	\
++	{ VM_FAULT_NOPAGE,              "NOPAGE" },	\
++	{ VM_FAULT_LOCKED,              "LOCKED" },	\
++	{ VM_FAULT_RETRY,               "RETRY" },	\
++	{ VM_FAULT_FALLBACK,            "FALLBACK" },	\
++	{ VM_FAULT_DONE_COW,            "DONE_COW" },	\
++	{ VM_FAULT_NEEDDSYNC,           "NEEDDSYNC" }
++
+ struct vm_special_mapping {
+ 	const char *name;	/* The name, e.g. "[vdso]". */
+ 
+-- 
+1.9.1
 
