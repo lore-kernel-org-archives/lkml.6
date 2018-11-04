@@ -2,50 +2,50 @@ Return-Path: <SRS0=jXQK=NP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 549F4ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:00:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8A21ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:00:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B4D32082E
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:00:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F6F2204FD
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:00:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BlSz8jwV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B4D32082E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wifkn+Hs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F6F2204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731278AbeKDXIp (ORCPT
+        id S1731511AbeKDXPU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:08:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47746 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:15:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47810 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731258AbeKDXIo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:08:44 -0500
+        id S1731261AbeKDXIp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:08:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1C8020869;
-        Sun,  4 Nov 2018 13:53:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 892472085B;
+        Sun,  4 Nov 2018 13:53:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339619;
-        bh=d7d+/b8KEYKbeSobYIn85OkLPF9eczPbkR8HZZApMcY=;
+        s=default; t=1541339621;
+        bh=R9YQQqNSSxR9aBEn6JjomhRuwPg3QZLx0isk7O2vMYo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BlSz8jwVt8Ji2NGbMFv79DRPE5OqYDxySzWO8PfjCcqAgFazpY06oEfcGDSeB+p/6
-         3bB8Nxz4MZMpJw6YT6mF2TZzkT+uxJKp3ZHK8TSEuoMSTmTWLfHXqHDmh8tipO/G5L
-         IRLT5xtiujEMVMeZkFIpxdcFdFCONn2/GKCDAjps=
+        b=wifkn+Hs8KGf208Uci7oZOhwpq9TfsMYZuMHfNszI7BsI9ctBERSmLA+7VU4Ex0f2
+         OsvxFx4ZhFPqlog96mL94ZMnLEQsWHKMTxLKFAyTVBuiZ7YlSTLiUHMlrYnlMuYNWf
+         XMsowD9dBwiZy9mRMIMKsimjmBd9muKQGQIa/77M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Hauke Mehrtens <hauke@hauke-m.de>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
+Cc:     Eugen Hristev <eugen.hristev@microchip.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 13/30] watchdog: lantiq: update register names to better match spec
-Date:   Sun,  4 Nov 2018 08:53:08 -0500
-Message-Id: <20181104135325.88524-13-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 15/30] iio: adc: at91: fix wrong channel number in triggered buffer mode
+Date:   Sun,  4 Nov 2018 08:53:10 -0500
+Message-Id: <20181104135325.88524-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135325.88524-1-sashal@kernel.org>
 References: <20181104135325.88524-1-sashal@kernel.org>
@@ -54,110 +54,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hauke Mehrtens <hauke@hauke-m.de>
+From: Eugen Hristev <eugen.hristev@microchip.com>
 
-[ Upstream commit 1f59f8aff98f200af7a6882184add7b85f5da741 ]
+[ Upstream commit aea835f2dc8a682942b859179c49ad1841a6c8b9 ]
 
-Some of the names of the bits were confusing to me.
-Now the bits share the same prefix as the register they are set on.
+When channels are registered, the hardware channel number is not the
+actual iio channel number.
+This is because the driver is probed with a certain number of accessible
+channels. Some pins are routed and some not, depending on the description of
+the board in the DT.
+Because of that, channels 0,1,2,3 can correspond to hardware channels
+2,3,4,5 for example.
+In the buffered triggered case, we need to do the translation accordingly.
+Fixed the channel number to stop reading the wrong channel.
 
-The LTQ_WDT_CR_PWL register (bits 26:25) is the pre warning limit and it
-does not turn anything on. It has 4 possible divers 1/2, 1/4, 1/8 and
-1/16, this drivers only uses 1/16.
-The LTQ_WDT_CR_CLKDIV register bits(25:24) is only configuring a clock
-divers and do not turn any thing on too, all possible values are valid
-dividers.
-Using the LTQ_WDT_SR prefix is also wrong these bits are used in the
-LTQ_WDT_CR registers, SR is the status register which is read only.
-
-This uses GENMASK where it is a mask and it uses shifts when a value is
-written to some bits.
-
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Fixes: 0e589d5fb ("ARM: AT91: IIO: Add AT91 ADC driver.")
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/watchdog/lantiq_wdt.c | 36 ++++++++++++++++++-----------------
- 1 file changed, 19 insertions(+), 17 deletions(-)
+ drivers/iio/adc/at91_adc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/watchdog/lantiq_wdt.c b/drivers/watchdog/lantiq_wdt.c
-index 7f43cefa0eae..a086005fbaac 100644
---- a/drivers/watchdog/lantiq_wdt.c
-+++ b/drivers/watchdog/lantiq_wdt.c
-@@ -13,6 +13,7 @@
- #include <linux/module.h>
- #include <linux/fs.h>
- #include <linux/miscdevice.h>
-+#include <linux/bitops.h>
- #include <linux/watchdog.h>
- #include <linux/of_platform.h>
- #include <linux/uaccess.h>
-@@ -40,18 +41,19 @@
-  * essentially the following two magic passwords need to be written to allow
-  * IO access to the WDT core
-  */
--#define LTQ_WDT_PW1		0x00BE0000
--#define LTQ_WDT_PW2		0x00DC0000
-+#define LTQ_WDT_CR_PW1		0x00BE0000
-+#define LTQ_WDT_CR_PW2		0x00DC0000
-+
-+#define LTQ_WDT_CR		0x0		/* watchdog control register */
-+#define  LTQ_WDT_CR_GEN		BIT(31)		/* enable bit */
-+/* Pre-warning limit set to 1/16 of max WDT period */
-+#define  LTQ_WDT_CR_PWL		(0x3 << 26)
-+/* set clock divider to 0x40000 */
-+#define  LTQ_WDT_CR_CLKDIV	(0x3 << 24)
-+#define  LTQ_WDT_CR_PW_MASK	GENMASK(23, 16)	/* Password field */
-+#define  LTQ_WDT_CR_MAX_TIMEOUT	((1 << 16) - 1)	/* The reload field is 16 bit */
+diff --git a/drivers/iio/adc/at91_adc.c b/drivers/iio/adc/at91_adc.c
+index 15109728cae7..3f6fef0bb067 100644
+--- a/drivers/iio/adc/at91_adc.c
++++ b/drivers/iio/adc/at91_adc.c
+@@ -248,12 +248,14 @@ static irqreturn_t at91_adc_trigger_handler(int irq, void *p)
+ 	struct iio_poll_func *pf = p;
+ 	struct iio_dev *idev = pf->indio_dev;
+ 	struct at91_adc_state *st = iio_priv(idev);
++	struct iio_chan_spec const *chan;
+ 	int i, j = 0;
  
--#define LTQ_WDT_CR		0x0	/* watchdog control register */
--#define LTQ_WDT_SR		0x8	/* watchdog status register */
--
--#define LTQ_WDT_SR_EN		(0x1 << 31)	/* enable bit */
--#define LTQ_WDT_SR_PWD		(0x3 << 26)	/* turn on power */
--#define LTQ_WDT_SR_CLKDIV	(0x3 << 24)	/* turn on clock and set */
--						/* divider to 0x40000 */
- #define LTQ_WDT_DIVIDER		0x40000
--#define LTQ_MAX_TIMEOUT		((1 << 16) - 1)	/* the reload field is 16 bit */
+ 	for (i = 0; i < idev->masklength; i++) {
+ 		if (!test_bit(i, idev->active_scan_mask))
+ 			continue;
+-		st->buffer[j] = at91_adc_readl(st, AT91_ADC_CHAN(st, i));
++		chan = idev->channels + i;
++		st->buffer[j] = at91_adc_readl(st, AT91_ADC_CHAN(st, chan->channel));
+ 		j++;
+ 	}
  
- static bool nowayout = WATCHDOG_NOWAYOUT;
- 
-@@ -68,26 +70,26 @@ ltq_wdt_enable(void)
- {
- 	unsigned long int timeout = ltq_wdt_timeout *
- 			(ltq_io_region_clk_rate / LTQ_WDT_DIVIDER) + 0x1000;
--	if (timeout > LTQ_MAX_TIMEOUT)
--		timeout = LTQ_MAX_TIMEOUT;
-+	if (timeout > LTQ_WDT_CR_MAX_TIMEOUT)
-+		timeout = LTQ_WDT_CR_MAX_TIMEOUT;
- 
- 	/* write the first password magic */
--	ltq_w32(LTQ_WDT_PW1, ltq_wdt_membase + LTQ_WDT_CR);
-+	ltq_w32(LTQ_WDT_CR_PW1, ltq_wdt_membase + LTQ_WDT_CR);
- 	/* write the second magic plus the configuration and new timeout */
--	ltq_w32(LTQ_WDT_SR_EN | LTQ_WDT_SR_PWD | LTQ_WDT_SR_CLKDIV |
--		LTQ_WDT_PW2 | timeout, ltq_wdt_membase + LTQ_WDT_CR);
-+	ltq_w32(LTQ_WDT_CR_GEN | LTQ_WDT_CR_PWL | LTQ_WDT_CR_CLKDIV |
-+		LTQ_WDT_CR_PW2 | timeout, ltq_wdt_membase + LTQ_WDT_CR);
- }
- 
- static void
- ltq_wdt_disable(void)
- {
- 	/* write the first password magic */
--	ltq_w32(LTQ_WDT_PW1, ltq_wdt_membase + LTQ_WDT_CR);
-+	ltq_w32(LTQ_WDT_CR_PW1, ltq_wdt_membase + LTQ_WDT_CR);
- 	/*
- 	 * write the second password magic with no config
- 	 * this turns the watchdog off
- 	 */
--	ltq_w32(LTQ_WDT_PW2, ltq_wdt_membase + LTQ_WDT_CR);
-+	ltq_w32(LTQ_WDT_CR_PW2, ltq_wdt_membase + LTQ_WDT_CR);
- }
- 
- static ssize_t
 -- 
 2.17.1
 
