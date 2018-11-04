@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC60C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A54ECDE46
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A2B92085B
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7274204FD
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nVn1n04W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A2B92085B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XaOrkKVS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7274204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731308AbeKDXIs (ORCPT
+        id S1731323AbeKDXIt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:08:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47838 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:08:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731227AbeKDXIq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:08:46 -0500
+        id S1731298AbeKDXIs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:08:48 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8DB37204FD;
-        Sun,  4 Nov 2018 13:53:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7076A20866;
+        Sun,  4 Nov 2018 13:53:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339622;
-        bh=S27SFL//+105Erfzxsyb0PhmYYoK3E3ZmtOj1BDvYzE=;
+        s=default; t=1541339624;
+        bh=omP8rgVRu6+n4g4OBhgNDlgrp0ssFhH+WT5qRxbbD30=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nVn1n04WhLn6smLe10oCWquQJXW4Lu2qkfxk2oZx866CSj/XHe4/OzUDHr5Cz5jRw
-         AfdKaJq/IqvnVIaR639B4/5S17Ehc2ahlzBYcCn9rmTz2zuKYQHulAiTQDlJACOso/
-         qB+ge0+ocK36EONkRIeCUKK1geLRU7TnfYJHfKPw=
+        b=XaOrkKVS0bGSo+tlycLWQ+Nuj8U2i/MmowZBA0vkdCZ1+ocVoScuHIPdJePKfMpQ4
+         OXV4auRgJ9dKhlwzhGmTTlxdyIRtm83hYsJccBW6DvjbBB6atqtBj675eFJgIYN+xw
+         JHzJexPh+UuCykEH/6HyQR/OzwQXukJ0JxToj6jM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Eugen Hristev <eugen.hristev@microchip.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 16/30] iio: adc: at91: fix acking DRDY irq on simple conversions
-Date:   Sun,  4 Nov 2018 08:53:11 -0500
-Message-Id: <20181104135325.88524-16-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 18/30] media: pci: cx23885: handle adding to list failure
+Date:   Sun,  4 Nov 2018 08:53:13 -0500
+Message-Id: <20181104135325.88524-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135325.88524-1-sashal@kernel.org>
 References: <20181104135325.88524-1-sashal@kernel.org>
@@ -55,41 +54,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugen Hristev <eugen.hristev@microchip.com>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-[ Upstream commit bc1b45326223e7e890053cf6266357adfa61942d ]
+[ Upstream commit c5d59528e24ad22500347b199d52b9368e686a42 ]
 
-When doing simple conversions, the driver did not acknowledge the DRDY irq.
-If this irq status is not acked, it will be left pending, and as soon as a
-trigger is enabled, the irq handler will be called, it doesn't know why
-this status has occurred because no channel is pending, and then it will go
-int a irq loop and board will hang.
-To avoid this situation, read the LCDR after a raw conversion is done.
+altera_hw_filt_init() which calls append_internal() assumes
+that the node was successfully linked in while in fact it can
+silently fail. So the call-site needs to set return to -ENOMEM
+on append_internal() returning NULL and exit through the err path.
 
-Fixes: 0e589d5fb ("ARM: AT91: IIO: Add AT91 ADC driver.")
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Fixes: 349bcf02e361 ("[media] Altera FPGA based CI driver module")
+
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/adc/at91_adc.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/pci/cx23885/altera-ci.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/iio/adc/at91_adc.c b/drivers/iio/adc/at91_adc.c
-index 3f6fef0bb067..cd686179aa92 100644
---- a/drivers/iio/adc/at91_adc.c
-+++ b/drivers/iio/adc/at91_adc.c
-@@ -281,6 +281,8 @@ static void handle_adc_eoc_trigger(int irq, struct iio_dev *idev)
- 		iio_trigger_poll(idev->trig);
- 	} else {
- 		st->last_value = at91_adc_readl(st, AT91_ADC_CHAN(st, st->chnb));
-+		/* Needed to ACK the DRDY interruption */
-+		at91_adc_readl(st, AT91_ADC_LCDR);
- 		st->done = true;
- 		wake_up_interruptible(&st->wq_data_avail);
- 	}
+diff --git a/drivers/media/pci/cx23885/altera-ci.c b/drivers/media/pci/cx23885/altera-ci.c
+index 5c94e312cba3..f77254cc16bf 100644
+--- a/drivers/media/pci/cx23885/altera-ci.c
++++ b/drivers/media/pci/cx23885/altera-ci.c
+@@ -665,6 +665,10 @@ static int altera_hw_filt_init(struct altera_ci_config *config, int hw_filt_nr)
+ 		}
+ 
+ 		temp_int = append_internal(inter);
++		if (!temp_int) {
++			ret = -ENOMEM;
++			goto err;
++		}
+ 		inter->filts_used = 1;
+ 		inter->dev = config->dev;
+ 		inter->fpga_rw = config->fpga_rw;
+@@ -699,6 +703,7 @@ static int altera_hw_filt_init(struct altera_ci_config *config, int hw_filt_nr)
+ 		     __func__, ret);
+ 
+ 	kfree(pid_filt);
++	kfree(inter);
+ 
+ 	return ret;
+ }
+@@ -733,6 +738,10 @@ int altera_ci_init(struct altera_ci_config *config, int ci_nr)
+ 		}
+ 
+ 		temp_int = append_internal(inter);
++		if (!temp_int) {
++			ret = -ENOMEM;
++			goto err;
++		}
+ 		inter->cis_used = 1;
+ 		inter->dev = config->dev;
+ 		inter->fpga_rw = config->fpga_rw;
+@@ -801,6 +810,7 @@ int altera_ci_init(struct altera_ci_config *config, int ci_nr)
+ 	ci_dbg_print("%s: Cannot initialize CI: Error %d.\n", __func__, ret);
+ 
+ 	kfree(state);
++	kfree(inter);
+ 
+ 	return ret;
+ }
 -- 
 2.17.1
 
