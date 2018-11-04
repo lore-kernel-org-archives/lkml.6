@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E786ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7133C32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 653A32085B
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 966602085B
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uOqXIuE1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 653A32085B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="L8XVgbXv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 966602085B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731595AbeKDXJO (ORCPT
+        id S1731609AbeKDXJQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:09:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48794 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:09:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731580AbeKDXJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:09:13 -0500
+        id S1731580AbeKDXJP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:09:15 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 289692087A;
-        Sun,  4 Nov 2018 13:54:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1DE0C208A3;
+        Sun,  4 Nov 2018 13:54:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339649;
-        bh=I+9mpVB2hiqVIS9/V1kkHxylATbjP0qUHJjvL2B/H9g=;
+        s=default; t=1541339651;
+        bh=frfMtGGHcd4dx2QO0VOoda6ZFe+tTZ3la49NJQWJwDM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uOqXIuE14/m24qgP6fsarae0mr3J2ZeKoEATHXWOHwZvbn0i+DMFA/ch4fko2T5X+
-         O2bUmUzXViyfodhmBgGvIXLAG+V2E8rfuIft+7MKDkpcPx/yYcK+B4ULTxAFnqupSG
-         5gl8MQiZeigVtLnk+qJ+iLOTng5n7CGKz4q51C44=
+        b=L8XVgbXvbU9XurzpZheergLlo1Z4fkHpP6BAi2RO7o1TBZo96sV36gpf2feEZmt+x
+         VG0IsXGVMoG8Vwjet/WBR5eBmyOmKhS2Yud98MPLtmXGRsnv/uF1uiBsE/PdLb+9Oy
+         vPrIjHsP0yvDaUlgUp9ZmiN0ipmK6ucdIiGc4niI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>, Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 13/21] iio: adc: imx25-gcq: Fix leak of device_node in mx25_gcq_setup_cfgs()
-Date:   Sun,  4 Nov 2018 08:53:47 -0500
-Message-Id: <20181104135355.88602-13-sashal@kernel.org>
+Cc:     Dengcheng Zhu <dzhu@wavecomp.com>,
+        Paul Burton <paul.burton@mips.com>, pburton@wavecomp.com,
+        ralf@linux-mips.org, linux-mips@linux-mips.org,
+        rachel.mozes@intel.com, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 14/21] MIPS: kexec: Mark CPU offline before disabling local IRQ
+Date:   Sun,  4 Nov 2018 08:53:48 -0500
+Message-Id: <20181104135355.88602-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135355.88602-1-sashal@kernel.org>
 References: <20181104135355.88602-1-sashal@kernel.org>
@@ -53,75 +54,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+From: Dengcheng Zhu <dzhu@wavecomp.com>
 
-[ Upstream commit d3fa21c73c391975488818b085b894c2980ea052 ]
+[ Upstream commit dc57aaf95a516f70e2d527d8287a0332c481a226 ]
 
-Leaving for_each_child_of_node loop we should release child device node,
-if it is not stored for future use.
+After changing CPU online status, it will not be sent any IPIs such as in
+__flush_cache_all() on software coherency systems. Do this before disabling
+local IRQ.
 
-Found by Linux Driver Verification project (linuxtesting.org).
-
-JC: I'm not sending this as a quick fix as it's been wrong for years,
-but good to pick up for stable after the merge window.
-
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Fixes: 6df2e98c3ea56 ("iio: adc: Add imx25-gcq ADC driver")
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Dengcheng Zhu <dzhu@wavecomp.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/20571/
+Cc: pburton@wavecomp.com
+Cc: ralf@linux-mips.org
+Cc: linux-mips@linux-mips.org
+Cc: rachel.mozes@intel.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/adc/fsl-imx25-gcq.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/mips/kernel/crash.c         | 3 +++
+ arch/mips/kernel/machine_kexec.c | 3 +++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/drivers/iio/adc/fsl-imx25-gcq.c b/drivers/iio/adc/fsl-imx25-gcq.c
-index ea264fa9e567..929c617db364 100644
---- a/drivers/iio/adc/fsl-imx25-gcq.c
-+++ b/drivers/iio/adc/fsl-imx25-gcq.c
-@@ -209,12 +209,14 @@ static int mx25_gcq_setup_cfgs(struct platform_device *pdev,
- 		ret = of_property_read_u32(child, "reg", &reg);
- 		if (ret) {
- 			dev_err(dev, "Failed to get reg property\n");
-+			of_node_put(child);
- 			return ret;
- 		}
+diff --git a/arch/mips/kernel/crash.c b/arch/mips/kernel/crash.c
+index 1723b1762297..e757f36cea6f 100644
+--- a/arch/mips/kernel/crash.c
++++ b/arch/mips/kernel/crash.c
+@@ -34,6 +34,9 @@ static void crash_shutdown_secondary(void *passed_regs)
+ 	if (!cpu_online(cpu))
+ 		return;
  
- 		if (reg >= MX25_NUM_CFGS) {
- 			dev_err(dev,
- 				"reg value is greater than the number of available configuration registers\n");
-+			of_node_put(child);
- 			return -EINVAL;
- 		}
++	/* We won't be sent IPIs any more. */
++	set_cpu_online(cpu, false);
++
+ 	local_irq_disable();
+ 	if (!cpumask_test_cpu(cpu, &cpus_in_crash))
+ 		crash_save_cpu(regs, cpu);
+diff --git a/arch/mips/kernel/machine_kexec.c b/arch/mips/kernel/machine_kexec.c
+index 59725204105c..32b567e88b02 100644
+--- a/arch/mips/kernel/machine_kexec.c
++++ b/arch/mips/kernel/machine_kexec.c
+@@ -96,6 +96,9 @@ machine_kexec(struct kimage *image)
+ 			*ptr = (unsigned long) phys_to_virt(*ptr);
+ 	}
  
-@@ -228,6 +230,7 @@ static int mx25_gcq_setup_cfgs(struct platform_device *pdev,
- 			if (IS_ERR(priv->vref[refp])) {
- 				dev_err(dev, "Error, trying to use external voltage reference without a vref-%s regulator.",
- 					mx25_gcq_refp_names[refp]);
-+				of_node_put(child);
- 				return PTR_ERR(priv->vref[refp]);
- 			}
- 			priv->channel_vref_mv[reg] =
-@@ -240,6 +243,7 @@ static int mx25_gcq_setup_cfgs(struct platform_device *pdev,
- 			break;
- 		default:
- 			dev_err(dev, "Invalid positive reference %d\n", refp);
-+			of_node_put(child);
- 			return -EINVAL;
- 		}
- 
-@@ -254,10 +258,12 @@ static int mx25_gcq_setup_cfgs(struct platform_device *pdev,
- 
- 		if ((refp & MX25_ADCQ_CFG_REFP_MASK) != refp) {
- 			dev_err(dev, "Invalid fsl,adc-refp property value\n");
-+			of_node_put(child);
- 			return -EINVAL;
- 		}
- 		if ((refn & MX25_ADCQ_CFG_REFN_MASK) != refn) {
- 			dev_err(dev, "Invalid fsl,adc-refn property value\n");
-+			of_node_put(child);
- 			return -EINVAL;
- 		}
- 
++	/* Mark offline BEFORE disabling local irq. */
++	set_cpu_online(smp_processor_id(), false);
++
+ 	/*
+ 	 * we do not want to be bothered.
+ 	 */
 -- 
 2.17.1
 
