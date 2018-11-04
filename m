@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06D5BECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3162BECDE46
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2DB4204FD
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED474208E3
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ch90Ae+F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2DB4204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oe4hzU+o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED474208E3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730142AbeKDXHM (ORCPT
+        id S1730159AbeKDXHN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:07:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44604 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:07:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730094AbeKDXHL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:07:11 -0500
+        id S1730131AbeKDXHM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:07:12 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C23E82086C;
-        Sun,  4 Nov 2018 13:52:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D82520868;
+        Sun,  4 Nov 2018 13:52:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339527;
-        bh=YaoUgCpi/wc4IKFUwxJq8trqVhzsCK5rQEkdIeluVWQ=;
+        s=default; t=1541339529;
+        bh=6IB2eTAmIlezL5UTqYpLjuLosMCKWAZOSpfVBkB8+ww=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ch90Ae+FgK/AwyrvKkZWrvmMhcnTqyjre2ZL+ODR4o+Z/eE7WX/y6kcC+38SZKPhz
-         wMYFUAgJcNsTfiAE97g5XenhHJVxxuiTSBIOkqEMblvp6VO7SWKU+owo7Gkb4K2QZR
-         n1BppJ6WZaIOeyMXIH9oKS/aeKjaGMXDFUvJQz3g=
+        b=oe4hzU+oqUNxGXw6wYAhajBNuubGAFfYmHT6CdMIQWIidf8/h0zEbuXYKqnczPqi1
+         sK2BT7ZPmM8rTJiiBJ82r0rlwDNOhb6EwjNFYVzWwVk6rZfPzMilrDnI5tGP/P3STj
+         m/TlGs6mSj1AsfK0RLpn9aCtaJuNdHL3C7ZIeLOk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+Cc:     Daniel Axtens <dja@axtens.net>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 21/57] drm/amdgpu/powerplay: fix missing break in switch statements
-Date:   Sun,  4 Nov 2018 08:51:08 -0500
-Message-Id: <20181104135144.88324-21-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 23/57] powerpc/nohash: fix undefined behaviour when testing page size support
+Date:   Sun,  4 Nov 2018 08:51:10 -0500
+Message-Id: <20181104135144.88324-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135144.88324-1-sashal@kernel.org>
 References: <20181104135144.88324-1-sashal@kernel.org>
@@ -52,124 +52,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Daniel Axtens <dja@axtens.net>
 
-[ Upstream commit 14b284832e7dea6f54f0adfd7bed105548b94e57 ]
+[ Upstream commit f5e284803a7206d43e26f9ffcae5de9626d95e37 ]
 
-There are several switch statements that are missing break statements.
-Add missing breaks to handle any fall-throughs corner cases.
+When enumerating page size definitions to check hardware support,
+we construct a constant which is (1U << (def->shift - 10)).
 
-Detected by CoverityScan, CID#1457175 ("Missing break in switch")
+However, the array of page size definitions is only initalised for
+various MMU_PAGE_* constants, so it contains a number of 0-initialised
+elements with def->shift == 0. This means we end up shifting by a
+very large number, which gives the following UBSan splat:
 
-Fixes: 18aafc59b106 ("drm/amd/powerplay: implement fw related smu interface for iceland.")
-Acked-by: Huang Rui <ray.huang@amd.com>
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+================================================================================
+UBSAN: Undefined behaviour in /home/dja/dev/linux/linux/arch/powerpc/mm/tlb_nohash.c:506:21
+shift exponent 4294967286 is too large for 32-bit type 'unsigned int'
+CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc3-00045-ga604f927b012-dirty #6
+Call Trace:
+[c00000000101bc20] [c000000000a13d54] .dump_stack+0xa8/0xec (unreliable)
+[c00000000101bcb0] [c0000000004f20a8] .ubsan_epilogue+0x18/0x64
+[c00000000101bd30] [c0000000004f2b10] .__ubsan_handle_shift_out_of_bounds+0x110/0x1a4
+[c00000000101be20] [c000000000d21760] .early_init_mmu+0x1b4/0x5a0
+[c00000000101bf10] [c000000000d1ba28] .early_setup+0x100/0x130
+[c00000000101bf90] [c000000000000528] start_here_multiplatform+0x68/0x80
+================================================================================
+
+Fix this by first checking if the element exists (shift != 0) before
+constructing the constant.
+
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c      | 2 ++
- drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c    | 2 ++
- drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c | 2 ++
- drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c   | 2 ++
- drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c   | 2 ++
- 5 files changed, 10 insertions(+)
+ arch/powerpc/mm/tlb_nohash.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
-index fbe3ef4ee45c..924788772b07 100644
---- a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
-@@ -2268,11 +2268,13 @@ static uint32_t ci_get_offsetof(uint32_t type, uint32_t member)
- 		case DRAM_LOG_BUFF_SIZE:
- 			return offsetof(SMU7_SoftRegisters, DRAM_LOG_BUFF_SIZE);
- 		}
-+		break;
- 	case SMU_Discrete_DpmTable:
- 		switch (member) {
- 		case LowSclkInterruptThreshold:
- 			return offsetof(SMU7_Discrete_DpmTable, LowSclkInterruptT);
- 		}
-+		break;
- 	}
- 	pr_debug("can't get the offset of type %x member %x\n", type, member);
- 	return 0;
-diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
-index 18048f8e2f13..40df5c2706cc 100644
---- a/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
-@@ -2330,6 +2330,7 @@ static uint32_t fiji_get_offsetof(uint32_t type, uint32_t member)
- 		case DRAM_LOG_BUFF_SIZE:
- 			return offsetof(SMU73_SoftRegisters, DRAM_LOG_BUFF_SIZE);
- 		}
-+		break;
- 	case SMU_Discrete_DpmTable:
- 		switch (member) {
- 		case UvdBootLevel:
-@@ -2339,6 +2340,7 @@ static uint32_t fiji_get_offsetof(uint32_t type, uint32_t member)
- 		case LowSclkInterruptThreshold:
- 			return offsetof(SMU73_Discrete_DpmTable, LowSclkInterruptThreshold);
- 		}
-+		break;
- 	}
- 	pr_warn("can't get the offset of type %x member %x\n", type, member);
- 	return 0;
-diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
-index 9299b93aa09a..302ca7745723 100644
---- a/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
-@@ -2236,11 +2236,13 @@ static uint32_t iceland_get_offsetof(uint32_t type, uint32_t member)
- 		case DRAM_LOG_BUFF_SIZE:
- 			return offsetof(SMU71_SoftRegisters, DRAM_LOG_BUFF_SIZE);
- 		}
-+		break;
- 	case SMU_Discrete_DpmTable:
- 		switch (member) {
- 		case LowSclkInterruptThreshold:
- 			return offsetof(SMU71_Discrete_DpmTable, LowSclkInterruptThreshold);
- 		}
-+		break;
- 	}
- 	pr_warn("can't get the offset of type %x member %x\n", type, member);
- 	return 0;
-diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
-index 7dabc6c456e1..697c8d92bd53 100644
---- a/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
-@@ -2618,6 +2618,7 @@ static uint32_t tonga_get_offsetof(uint32_t type, uint32_t member)
- 		case DRAM_LOG_BUFF_SIZE:
- 			return offsetof(SMU72_SoftRegisters, DRAM_LOG_BUFF_SIZE);
- 		}
-+		break;
- 	case SMU_Discrete_DpmTable:
- 		switch (member) {
- 		case UvdBootLevel:
-@@ -2627,6 +2628,7 @@ static uint32_t tonga_get_offsetof(uint32_t type, uint32_t member)
- 		case LowSclkInterruptThreshold:
- 			return offsetof(SMU72_Discrete_DpmTable, LowSclkInterruptThreshold);
- 		}
-+		break;
- 	}
- 	pr_warn("can't get the offset of type %x member %x\n", type, member);
- 	return 0;
-diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
-index 57420d7caa4e..59113fdd1c1c 100644
---- a/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
-@@ -2184,6 +2184,7 @@ static uint32_t vegam_get_offsetof(uint32_t type, uint32_t member)
- 		case DRAM_LOG_BUFF_SIZE:
- 			return offsetof(SMU75_SoftRegisters, DRAM_LOG_BUFF_SIZE);
- 		}
-+		break;
- 	case SMU_Discrete_DpmTable:
- 		switch (member) {
- 		case UvdBootLevel:
-@@ -2193,6 +2194,7 @@ static uint32_t vegam_get_offsetof(uint32_t type, uint32_t member)
- 		case LowSclkInterruptThreshold:
- 			return offsetof(SMU75_Discrete_DpmTable, LowSclkInterruptThreshold);
- 		}
-+		break;
- 	}
- 	pr_warn("can't get the offset of type %x member %x\n", type, member);
- 	return 0;
+diff --git a/arch/powerpc/mm/tlb_nohash.c b/arch/powerpc/mm/tlb_nohash.c
+index 15fe5f0c8665..ae5d568e267f 100644
+--- a/arch/powerpc/mm/tlb_nohash.c
++++ b/arch/powerpc/mm/tlb_nohash.c
+@@ -503,6 +503,9 @@ static void setup_page_sizes(void)
+ 		for (psize = 0; psize < MMU_PAGE_COUNT; ++psize) {
+ 			struct mmu_psize_def *def = &mmu_psize_defs[psize];
+ 
++			if (!def->shift)
++				continue;
++
+ 			if (tlb1ps & (1U << (def->shift - 10))) {
+ 				def->flags |= MMU_PAGE_SIZE_DIRECT;
+ 
 -- 
 2.17.1
 
