@@ -2,112 +2,191 @@ Return-Path: <SRS0=jXQK=NP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D758ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:56:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2204C32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:57:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE9442085B
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:56:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69B7F2085A
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:57:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b="VrImo/OE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE9442085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=hammerspace.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kqqBsTg/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69B7F2085A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731630AbeKDXLt (ORCPT
+        id S1729846AbeKDXMF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:11:49 -0500
-Received: from mail-sn1nam02on0119.outbound.protection.outlook.com ([104.47.36.119]:32558
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729771AbeKDXLs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:11:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+Mre4mUB9NqoE0LMBJEsqhahr8OoAtumP758t3QpcKU=;
- b=VrImo/OE1+NJnuOzDX6j9YkKPToQ6gQKD1mqYunF3BcM0rTDfHN8SqXX++1JH5idaL9612D4ZM8h759fPIgDPFb3bHAvkeGAEGyOEDkH6d8XkjXWdKA/bcSrV6T1dwvMefxwS0sqoNGoCz0oRfDFnIYnVFH9HUwOmrtArD2p2Mw=
-Received: from SN6PR13MB2494.namprd13.prod.outlook.com (52.135.95.148) by
- SN6PR13MB2256.namprd13.prod.outlook.com (52.135.93.157) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.9; Sun, 4 Nov 2018 13:56:41 +0000
-Received: from SN6PR13MB2494.namprd13.prod.outlook.com
- ([fe80::205a:69c2:1cf5:b475]) by SN6PR13MB2494.namprd13.prod.outlook.com
- ([fe80::205a:69c2:1cf5:b475%3]) with mapi id 15.20.1294.028; Sun, 4 Nov 2018
- 13:56:40 +0000
-From:   Trond Myklebust <trondmy@hammerspace.com>
-To:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
-Subject: [GIT PULL] Please pull NFS client bugfix for 4.20
-Thread-Topic: [GIT PULL] Please pull NFS client bugfix for 4.20
-Thread-Index: AQHUdEY2obJr6QuzUEenmczogDfiGg==
-Date:   Sun, 4 Nov 2018 13:56:40 +0000
-Message-ID: <9d585276a55d788b98ba425910cd4a05a9e5cf99.camel@hammerspace.com>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [68.40.195.73]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN6PR13MB2256;6:vLnZEbaH0cxtXa3nQoR80V6lgWR4iROQIuIl6DamIUS3m0OgtiVoAwO+5OLFe3LdbWD+T0KL4bv9p1UsbG6q96612uwjrOVrix1I3LmVrddTru8DGCvfMpZfvJCxMKSzvhZ/OYaFxDSjCwBQOx6jknuPMolIZ6RgykqdILDEbeBXd9RTbNGECa6x6ciJmjX0LTxJ38vSSwEMFcJdGK4TWf/tfzPGh4+nZ7jJf1C+FWzUwi8wJY8uFmaBPVGwZtUHrlfJ97gXuHbmfxkNe64pkwhUYHrJNxl82wyLlMRZAE7V5nzVgAemkqKwhi9L17hsAt/lKaBZhsjKuWYqui7pMZ1HSCuuk65+6zAldkdJa/5e0ddp12vrfYhzOtY72ZkmXyAq1jGCXcXHeHshwDW7FpE8+3VXlweB9afeefSmDrgcI/NdHX5ySVP42G+8asAFvfuFb/y6MPNwMYEmQvXkzg==;5:1orrWEfq0su0fqVyZTIDo+9iEZPur2jELxYWY4IJmclKbTl6Bf+2eZw9+q/IGh7wZJukVbi4Fe/oh4W+bOG9hT7qKTHhB52DDxj1QWh7ssN9k5xjyN/T86WdGCdrKGFpJJDrWP/Z5lKQICaz7UBI35XFLpTddapwOERy3TOdvHY=;7:QUk0zJ1ZGzPV/hblTZML9f82X42DOwVbMVh4QdBRagf0P0dH3A416/9ZpW0J6AbbjgWQL88tmm5UB8dyaaH1kQ7B2dj5yDDQBQdx/O1BjPOxXP9Y1vQLOVaa+Fdji5fyz785H+UHhfN3SN4dQCvUvA==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: f7e6399b-843b-49a5-5210-08d6425d58d3
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:SN6PR13MB2256;
-x-ms-traffictypediagnostic: SN6PR13MB2256:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=trondmy@hammerspace.com; 
-x-microsoft-antispam-prvs: <SN6PR13MB22561FA34DDC7F2050D1E3C8B8C90@SN6PR13MB2256.namprd13.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(5213294742642);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231382)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(148016)(149066)(150057)(6041310)(201703131423095)(20161123555045)(201703061421075)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:SN6PR13MB2256;BCL:0;PCL:0;RULEID:;SRVR:SN6PR13MB2256;
-x-forefront-prvs: 084674B2CF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(366004)(136003)(199004)(189003)(8936002)(7736002)(105586002)(102836004)(305945005)(6506007)(106356001)(68736007)(86362001)(5660300001)(6916009)(54906003)(71190400001)(71200400001)(66066001)(118296001)(99286004)(81156014)(81166006)(1730700003)(8676002)(53936002)(4326008)(25786009)(14454004)(6512007)(97736004)(5640700003)(2501003)(4001150100001)(256004)(6486002)(6436002)(486006)(2616005)(6116002)(2906002)(2351001)(508600001)(26005)(36756003)(2900100001)(186003)(3846002)(476003);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR13MB2256;H:SN6PR13MB2494.namprd13.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: hammerspace.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: YPqjgZlD0kOabM23GpGgy8OwH15u9jJCBSvC8R+XEFV678Zb/ElrjkV2xxIbyH+hEp9nImUJDU95dbozwo52hyDebkrjYwzIh2lkMEJF47IB7D4/YQgkgynykXMkv/lQGzXZGZe8+YsZUnI6fEp8coEV4vsZaXM7X+2QElmVEvV67z7wULb8caXwZoL2kVsHvwgBW35kGmF5bteFh+iDpsp8T7HG+ydMKsPp/AN2ujVHiF/blhhv9yKVCJchKkiVggkewNDfXVCXh3u4mNJA6ZZcqz987n3SKb+gO5gkmPsIdCcuAqWJWR4RTt30L3ewpTD5s35kbzpRqjPnkoBqeUvNUX+I+AzLSOg3W+v/2V8=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C7CF5FFCDFC6394C9DEEC4BC0213D0CF@namprd13.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: hammerspace.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f7e6399b-843b-49a5-5210-08d6425d58d3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Nov 2018 13:56:40.7208
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR13MB2256
+        Sun, 4 Nov 2018 18:12:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49210 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731650AbeKDXJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:09:26 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BEB902087A;
+        Sun,  4 Nov 2018 13:54:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541339662;
+        bh=QXm9uNDFvdc30LC3J0E5XG9TtydCp/9iH9m0yyTLSfk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=kqqBsTg/sflD68f82HmFIlUj1W54syudLjvrAC5RxmN07BHMQvCXFPR756Ujk9/CA
+         BKOadasFN4LL+wvI6SUSgwPtpPhJeNbNtWfAO7av7nHZFqgGLC3u0F6SKZVoeLsVcK
+         p/SziU1Gy+KeBopith5dH2A/DWeCYkNvNFsfrnP0=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Miles Chen <miles.chen@mediatek.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 03/15] tty: check name length in tty_find_polling_driver()
+Date:   Sun,  4 Nov 2018 08:54:05 -0500
+Message-Id: <20181104135417.88671-3-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181104135417.88671-1-sashal@kernel.org>
+References: <20181104135417.88671-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgTGludXMsDQoNClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgODZiYmQ3NDIy
-YWU2YTMzNzM1ZGY2ODQ2ZmQ2ODVlNDY2ODZkYTcxNDoNCg0KICBORlM6IGNoYW5nZSBzaWduIG9m
-IG5mc19maCBsZW5ndGggKDIwMTgtMTAtMjMgMTI6MjI6MjEgLTA0MDApDQoNCmFyZSBhdmFpbGFi
-bGUgaW4gdGhlIEdpdCByZXBvc2l0b3J5IGF0Og0KDQogIGdpdDovL2dpdC5saW51eC1uZnMub3Jn
-L3Byb2plY3RzL3Ryb25kbXkvbGludXgtbmZzLmdpdCB0YWdzL25mcy1mb3ItNC4yMC0yDQoNCmZv
-ciB5b3UgdG8gZmV0Y2ggY2hhbmdlcyB1cCB0byBkMzc4N2FmMjg5Yzg1MzgxY2MwNDhjYjhjNTZi
-NjcyNjBkYmJjNDM2Og0KDQogIE5GUzogZml4IHNwZWxsaW5nIG1pc3Rha2UsIEVBQ0NFU1MgLT4g
-RUFDQ0VTICgyMDE4LTExLTAxIDE0OjA3OjA2IC0wNDAwKQ0KDQpUaGFua3MsDQogIFRyb25kDQoN
-Ci0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0NCk5GUyBjbGllbnQgYnVnZml4ZXMgZm9yIExpbnV4IDQuMjANCg0KSGlnaGxpZ2h0
-cyBpbmNsdWRlOg0KDQpCdWdmaXhlczoNCi0gRml4IGJ1aWxkIGlzc3VlcyBvbiBhcmNoaXRlY3R1
-cmVzIHRoYXQgZG9uJ3QgcHJvdmlkZSA2NC1iaXQgY21weGNoZw0KDQpDbGVhbnVwczoNCi0gRml4
-IGEgc3BlbGxpbmcgbWlzdGFrZQ0KDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQpDb2xpbiBJYW4gS2luZyAoMSk6DQogICAg
-ICBORlM6IGZpeCBzcGVsbGluZyBtaXN0YWtlLCBFQUNDRVNTIC0+IEVBQ0NFUw0KDQpQYXVsIEJ1
-cnRvbiAoMSk6DQogICAgICBTVU5SUEM6IFVzZSBhdG9taWMoNjQpX3QgZm9yIHNlcV9zZW5kKDY0
-KQ0KDQogZnMvbmZzL25mczRwcm9jLmMgICAgICAgICAgICAgICAgICAgfCAgMiArLQ0KIGluY2x1
-ZGUvbGludXgvc3VucnBjL2dzc19rcmI1LmggICAgIHwgIDcgKystLS0tLQ0KIG5ldC9zdW5ycGMv
-YXV0aF9nc3MvZ3NzX2tyYjVfbWVjaC5jIHwgMTYgKysrKysrKysrKy0tLS0tLQ0KIG5ldC9zdW5y
-cGMvYXV0aF9nc3MvZ3NzX2tyYjVfc2VhbC5jIHwgMjggKystLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLQ0KIG5ldC9zdW5ycGMvYXV0aF9nc3MvZ3NzX2tyYjVfd3JhcC5jIHwgIDQgKystLQ0KIDUg
-ZmlsZXMgY2hhbmdlZCwgMTcgaW5zZXJ0aW9ucygrKSwgNDAgZGVsZXRpb25zKC0pDQotLSANClRy
-b25kIE15a2xlYnVzdA0KTGludXggTkZTIGNsaWVudCBtYWludGFpbmVyLCBIYW1tZXJzcGFjZQ0K
-dHJvbmQubXlrbGVidXN0QGhhbW1lcnNwYWNlLmNvbQ0KDQoNCg==
+From: Miles Chen <miles.chen@mediatek.com>
+
+[ Upstream commit 33a1a7be198657c8ca26ad406c4d2a89b7162bcc ]
+
+The issue is found by a fuzzing test.
+If tty_find_polling_driver() recevies an incorrect input such as
+',,' or '0b', the len becomes 0 and strncmp() always return 0.
+In this case, a null p->ops->poll_init() is called and it causes a kernel
+panic.
+
+Fix this by checking name length against zero in tty_find_polling_driver().
+
+$echo ,, > /sys/module/kgdboc/parameters/kgdboc
+[   20.804451] WARNING: CPU: 1 PID: 104 at drivers/tty/serial/serial_core.c:457
+uart_get_baud_rate+0xe8/0x190
+[   20.804917] Modules linked in:
+[   20.805317] CPU: 1 PID: 104 Comm: sh Not tainted 4.19.0-rc7ajb #8
+[   20.805469] Hardware name: linux,dummy-virt (DT)
+[   20.805732] pstate: 20000005 (nzCv daif -PAN -UAO)
+[   20.805895] pc : uart_get_baud_rate+0xe8/0x190
+[   20.806042] lr : uart_get_baud_rate+0xc0/0x190
+[   20.806476] sp : ffffffc06acff940
+[   20.806676] x29: ffffffc06acff940 x28: 0000000000002580
+[   20.806977] x27: 0000000000009600 x26: 0000000000009600
+[   20.807231] x25: ffffffc06acffad0 x24: 00000000ffffeff0
+[   20.807576] x23: 0000000000000001 x22: 0000000000000000
+[   20.807807] x21: 0000000000000001 x20: 0000000000000000
+[   20.808049] x19: ffffffc06acffac8 x18: 0000000000000000
+[   20.808277] x17: 0000000000000000 x16: 0000000000000000
+[   20.808520] x15: ffffffffffffffff x14: ffffffff00000000
+[   20.808757] x13: ffffffffffffffff x12: 0000000000000001
+[   20.809011] x11: 0101010101010101 x10: ffffff880d59ff5f
+[   20.809292] x9 : ffffff880d59ff5e x8 : ffffffc06acffaf3
+[   20.809549] x7 : 0000000000000000 x6 : ffffff880d59ff5f
+[   20.809803] x5 : 0000000080008001 x4 : 0000000000000003
+[   20.810056] x3 : ffffff900853e6b4 x2 : dfffff9000000000
+[   20.810693] x1 : ffffffc06acffad0 x0 : 0000000000000cb0
+[   20.811005] Call trace:
+[   20.811214]  uart_get_baud_rate+0xe8/0x190
+[   20.811479]  serial8250_do_set_termios+0xe0/0x6f4
+[   20.811719]  serial8250_set_termios+0x48/0x54
+[   20.811928]  uart_set_options+0x138/0x1bc
+[   20.812129]  uart_poll_init+0x114/0x16c
+[   20.812330]  tty_find_polling_driver+0x158/0x200
+[   20.812545]  configure_kgdboc+0xbc/0x1bc
+[   20.812745]  param_set_kgdboc_var+0xb8/0x150
+[   20.812960]  param_attr_store+0xbc/0x150
+[   20.813160]  module_attr_store+0x40/0x58
+[   20.813364]  sysfs_kf_write+0x8c/0xa8
+[   20.813563]  kernfs_fop_write+0x154/0x290
+[   20.813764]  vfs_write+0xf0/0x278
+[   20.813951]  __arm64_sys_write+0x84/0xf4
+[   20.814400]  el0_svc_common+0xf4/0x1dc
+[   20.814616]  el0_svc_handler+0x98/0xbc
+[   20.814804]  el0_svc+0x8/0xc
+[   20.822005] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+[   20.826913] Mem abort info:
+[   20.827103]   ESR = 0x84000006
+[   20.827352]   Exception class = IABT (current EL), IL = 16 bits
+[   20.827655]   SET = 0, FnV = 0
+[   20.827855]   EA = 0, S1PTW = 0
+[   20.828135] user pgtable: 4k pages, 39-bit VAs, pgdp = (____ptrval____)
+[   20.828484] [0000000000000000] pgd=00000000aadee003, pud=00000000aadee003, pmd=0000000000000000
+[   20.829195] Internal error: Oops: 84000006 [#1] SMP
+[   20.829564] Modules linked in:
+[   20.829890] CPU: 1 PID: 104 Comm: sh Tainted: G        W         4.19.0-rc7ajb #8
+[   20.830545] Hardware name: linux,dummy-virt (DT)
+[   20.830829] pstate: 60000085 (nZCv daIf -PAN -UAO)
+[   20.831174] pc :           (null)
+[   20.831457] lr : serial8250_do_set_termios+0x358/0x6f4
+[   20.831727] sp : ffffffc06acff9b0
+[   20.831936] x29: ffffffc06acff9b0 x28: ffffff9008d7c000
+[   20.832267] x27: ffffff900969e16f x26: 0000000000000000
+[   20.832589] x25: ffffff900969dfb0 x24: 0000000000000000
+[   20.832906] x23: ffffffc06acffad0 x22: ffffff900969e160
+[   20.833232] x21: 0000000000000000 x20: ffffffc06acffac8
+[   20.833559] x19: ffffff900969df90 x18: 0000000000000000
+[   20.833878] x17: 0000000000000000 x16: 0000000000000000
+[   20.834491] x15: ffffffffffffffff x14: ffffffff00000000
+[   20.834821] x13: ffffffffffffffff x12: 0000000000000001
+[   20.835143] x11: 0101010101010101 x10: ffffff880d59ff5f
+[   20.835467] x9 : ffffff880d59ff5e x8 : ffffffc06acffaf3
+[   20.835790] x7 : 0000000000000000 x6 : ffffff880d59ff5f
+[   20.836111] x5 : c06419717c314100 x4 : 0000000000000007
+[   20.836419] x3 : 0000000000000000 x2 : 0000000000000000
+[   20.836732] x1 : 0000000000000001 x0 : ffffff900969df90
+[   20.837100] Process sh (pid: 104, stack limit = 0x(____ptrval____))
+[   20.837396] Call trace:
+[   20.837566]            (null)
+[   20.837816]  serial8250_set_termios+0x48/0x54
+[   20.838089]  uart_set_options+0x138/0x1bc
+[   20.838570]  uart_poll_init+0x114/0x16c
+[   20.838834]  tty_find_polling_driver+0x158/0x200
+[   20.839119]  configure_kgdboc+0xbc/0x1bc
+[   20.839380]  param_set_kgdboc_var+0xb8/0x150
+[   20.839658]  param_attr_store+0xbc/0x150
+[   20.839920]  module_attr_store+0x40/0x58
+[   20.840183]  sysfs_kf_write+0x8c/0xa8
+[   20.840183]  sysfs_kf_write+0x8c/0xa8
+[   20.840440]  kernfs_fop_write+0x154/0x290
+[   20.840702]  vfs_write+0xf0/0x278
+[   20.840942]  __arm64_sys_write+0x84/0xf4
+[   20.841209]  el0_svc_common+0xf4/0x1dc
+[   20.841471]  el0_svc_handler+0x98/0xbc
+[   20.841713]  el0_svc+0x8/0xc
+[   20.842057] Code: bad PC value
+[   20.842764] ---[ end trace a8835d7de79aaadf ]---
+[   20.843134] Kernel panic - not syncing: Fatal exception
+[   20.843515] SMP: stopping secondary CPUs
+[   20.844289] Kernel Offset: disabled
+[   20.844634] CPU features: 0x0,21806002
+[   20.844857] Memory Limit: none
+[   20.845172] ---[ end Kernel panic - not syncing: Fatal exception ]---
+
+Signed-off-by: Miles Chen <miles.chen@mediatek.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/tty/tty_io.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index 198451fa9e5d..c1cff2b455ae 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -357,7 +357,7 @@ struct tty_driver *tty_find_polling_driver(char *name, int *line)
+ 	mutex_lock(&tty_mutex);
+ 	/* Search through the tty devices to look for a match */
+ 	list_for_each_entry(p, &tty_drivers, tty_drivers) {
+-		if (strncmp(name, p->name, len) != 0)
++		if (!len || strncmp(name, p->name, len) != 0)
+ 			continue;
+ 		stp = str;
+ 		if (*stp == ',')
+-- 
+2.17.1
+
