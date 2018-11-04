@@ -6,45 +6,48 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ECA5C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:51:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C74C4ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A984204FD
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:51:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D608204FD
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LAX140gO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A984204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DG3VWgoy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D608204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729930AbeKDXG6 (ORCPT
+        id S1729968AbeKDXHB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:06:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44118 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:07:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729902AbeKDXG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:06:58 -0500
+        id S1729902AbeKDXHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:07:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10FDF2086B;
-        Sun,  4 Nov 2018 13:51:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 869482086C;
+        Sun,  4 Nov 2018 13:51:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339513;
-        bh=OtzCVW2lIBu8DpZMVoqTqFGbqGnAbsinhy4kB3LIBQs=;
+        s=default; t=1541339516;
+        bh=2/QX0btORBDgnTEIH7KoPpLIqiZPGQBd0g8YV15QEcc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LAX140gOOfgENy8MUs5lN5Nd+8BA2H81MAgsFYq5DGDEEjM6ansqD472O+7FfvkER
-         JUSC9LoYuAfQEBozcRswZjUVHfIA3K5b14l0aAl9EOOx50USuSlSnNj1q87Zzf5r+k
-         mbJ4U4hof7gMx66TKijlk5vVyHJo0Kt7MNBIQ3Jo=
+        b=DG3VWgoywo2BQOYyqtNIMS2YqshCj2OwcAD/BFwFYZWGT3RdDuFXOxGCcmNmcISLj
+         lf6iOtXfhIbvwa2XnuPnvKz+xSrtXZkAnSp54hiOgDnPHEoVtFu3gsR003hnKKerNz
+         vxCy4Kgt5UspWMNebEnw6F9k5Lg2dDVNrMg0apIg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 06/57] userfaultfd: allow get_mempolicy(MPOL_F_NODE|MPOL_F_ADDR) to trigger userfaults
-Date:   Sun,  4 Nov 2018 08:50:53 -0500
-Message-Id: <20181104135144.88324-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 08/57] mm: don't warn about large allocations for slab
+Date:   Sun,  4 Nov 2018 08:50:55 -0500
+Message-Id: <20181104135144.88324-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135144.88324-1-sashal@kernel.org>
 References: <20181104135144.88324-1-sashal@kernel.org>
@@ -53,168 +56,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrea Arcangeli <aarcange@redhat.com>
+From: Dmitry Vyukov <dvyukov@google.com>
 
-[ Upstream commit 3b9aadf7278d16d7bed4d5d808501065f70898d8 ]
+[ Upstream commit 61448479a9f2c954cde0cfe778cb6bec5d0a748d ]
 
-get_mempolicy(MPOL_F_NODE|MPOL_F_ADDR) called a get_user_pages that would
-not be waiting for userfaults before failing and it would hit on a SIGBUS
-instead.  Using get_user_pages_locked/unlocked instead will allow
-get_mempolicy to allow userfaults to resolve the fault and fill the hole,
-before grabbing the node id of the page.
+Slub does not call kmalloc_slab() for sizes > KMALLOC_MAX_CACHE_SIZE,
+instead it falls back to kmalloc_large().
 
-If the user calls get_mempolicy() with MPOL_F_ADDR | MPOL_F_NODE for an
-address inside an area managed by uffd and there is no page at that
-address, the page allocation from within get_mempolicy() will fail
-because get_user_pages() does not allow for page fault retry required
-for uffd; the user will get SIGBUS.
+For slab KMALLOC_MAX_CACHE_SIZE == KMALLOC_MAX_SIZE and it calls
+kmalloc_slab() for all allocations relying on NULL return value for
+over-sized allocations.
 
-With this patch, the page fault will be resolved by the uffd and the
-get_mempolicy() will continue normally.
+This inconsistency leads to unwanted warnings from kmalloc_slab() for
+over-sized allocations for slab.  Returning NULL for failed allocations is
+the expected behavior.
 
-Background:
+Make slub and slab code consistent by checking size >
+KMALLOC_MAX_CACHE_SIZE in slab before calling kmalloc_slab().
 
-Via code review, previously the syscall would have returned -EFAULT
-(vm_fault_to_errno), now it will block and wait for an userfault (if
-it's waken before the fault is resolved it'll still -EFAULT).
+While we are here also fix the check in kmalloc_slab().  We should check
+against KMALLOC_MAX_CACHE_SIZE rather than KMALLOC_MAX_SIZE.  It all kinda
+worked because for slab the constants are the same, and slub always checks
+the size against KMALLOC_MAX_CACHE_SIZE before kmalloc_slab().  But if we
+get there with size > KMALLOC_MAX_CACHE_SIZE anyhow bad things will
+happen.  For example, in case of a newly introduced bug in slub code.
 
-This way get_mempolicy will give a chance to an "unaware" app to be
-compliant with userfaults.
+Also move the check in kmalloc_slab() from function entry to the size >
+192 case.  This partially compensates for the additional check in slab
+code and makes slub code a bit faster (at least theoretically).
 
-The reason this visible change is that becoming "userfault compliant"
-cannot regress anything: all other syscalls including read(2)/write(2)
-had to become "userfault compliant" long time ago (that's one of the
-things userfaultfd can do that PROT_NONE and trapping segfaults can't).
+Also drop __GFP_NOWARN in the warning check.  This warning means a bug in
+slab code itself, user-passed flags have nothing to do with it.
 
-So this is just one more syscall that become "userfault compliant" like
-all other major ones already were.
+Nothing of this affects slob.
 
-This has been happening on virtio-bridge dpdk process which just called
-get_mempolicy on the guest space post live migration, but before the
-memory had a chance to be migrated to destination.
-
-I didn't run an strace to be able to show the -EFAULT going away, but
-I've the confirmation of the below debug aid information (only visible
-with CONFIG_DEBUG_VM=y) going away with the patch:
-
-    [20116.371461] FAULT_FLAG_ALLOW_RETRY missing 0
-    [20116.371464] CPU: 1 PID: 13381 Comm: vhost-events Not tainted 4.17.12-200.fc28.x86_64 #1
-    [20116.371465] Hardware name: LENOVO 20FAS2BN0A/20FAS2BN0A, BIOS N1CET54W (1.22 ) 02/10/2017
-    [20116.371466] Call Trace:
-    [20116.371473]  dump_stack+0x5c/0x80
-    [20116.371476]  handle_userfault.cold.37+0x1b/0x22
-    [20116.371479]  ? remove_wait_queue+0x20/0x60
-    [20116.371481]  ? poll_freewait+0x45/0xa0
-    [20116.371483]  ? do_sys_poll+0x31c/0x520
-    [20116.371485]  ? radix_tree_lookup_slot+0x1e/0x50
-    [20116.371488]  shmem_getpage_gfp+0xce7/0xe50
-    [20116.371491]  ? page_add_file_rmap+0x1a/0x2c0
-    [20116.371493]  shmem_fault+0x78/0x1e0
-    [20116.371495]  ? filemap_map_pages+0x3a1/0x450
-    [20116.371498]  __do_fault+0x1f/0xc0
-    [20116.371500]  __handle_mm_fault+0xe2e/0x12f0
-    [20116.371502]  handle_mm_fault+0xda/0x200
-    [20116.371504]  __get_user_pages+0x238/0x790
-    [20116.371506]  get_user_pages+0x3e/0x50
-    [20116.371510]  kernel_get_mempolicy+0x40b/0x700
-    [20116.371512]  ? vfs_write+0x170/0x1a0
-    [20116.371515]  __x64_sys_get_mempolicy+0x21/0x30
-    [20116.371517]  do_syscall_64+0x5b/0x160
-    [20116.371520]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-The above harmless debug message (not a kernel crash, just a
-dump_stack()) is shown with CONFIG_DEBUG_VM=y to more quickly identify
-and improve kernel spots that may have to become "userfaultfd
-compliant" like this one (without having to run an strace and search
-for syscall misbehavior).  Spots like the above are more closer to a
-kernel bug for the non-cooperative usages that Mike focuses on, than
-for for dpdk qemu-cooperative usages that reproduced it, but it's still
-nicer to get this fixed for dpdk too.
-
-The part of the patch that caused me to think is only the
-implementation issue of mpol_get, but it looks like it should work safe
-no matter the kind of mempolicy structure that is (the default static
-policy also starts at 1 so it'll go to 2 and back to 1 without crashing
-everything at 0).
-
-[rppt@linux.vnet.ibm.com: changelog addition]
-  http://lkml.kernel.org/r/20180904073718.GA26916@rapoport-lnx
-Link: http://lkml.kernel.org/r/20180831214848.23676-1-aarcange@redhat.com
-Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-Reported-by: Maxime Coquelin <maxime.coquelin@redhat.com>
-Tested-by: Dr. David Alan Gilbert <dgilbert@redhat.com>
-Reviewed-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Link: http://lkml.kernel.org/r/20180927171502.226522-1-dvyukov@gmail.com
+Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+Reported-by: syzbot+87829a10073277282ad1@syzkaller.appspotmail.com
+Reported-by: syzbot+ef4e8fc3a06e9019bb40@syzkaller.appspotmail.com
+Reported-by: syzbot+6e438f4036df52cbb863@syzkaller.appspotmail.com
+Reported-by: syzbot+8574471d8734457d98aa@syzkaller.appspotmail.com
+Reported-by: syzbot+af1504df0807a083dbd9@syzkaller.appspotmail.com
+Acked-by: Christoph Lameter <cl@linux.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/mempolicy.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+ mm/slab.c        |  4 ++++
+ mm/slab_common.c | 12 ++++++------
+ 2 files changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index da858f794eb6..2e76a8f65e94 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -797,16 +797,19 @@ static void get_policy_nodemask(struct mempolicy *p, nodemask_t *nodes)
- 	}
- }
+diff --git a/mm/slab.c b/mm/slab.c
+index aa76a70e087e..d73c7a4820a4 100644
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -3675,6 +3675,8 @@ __do_kmalloc_node(size_t size, gfp_t flags, int node, unsigned long caller)
+ 	struct kmem_cache *cachep;
+ 	void *ret;
  
--static int lookup_node(unsigned long addr)
-+static int lookup_node(struct mm_struct *mm, unsigned long addr)
++	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE))
++		return NULL;
+ 	cachep = kmalloc_slab(size, flags);
+ 	if (unlikely(ZERO_OR_NULL_PTR(cachep)))
+ 		return cachep;
+@@ -3710,6 +3712,8 @@ static __always_inline void *__do_kmalloc(size_t size, gfp_t flags,
+ 	struct kmem_cache *cachep;
+ 	void *ret;
+ 
++	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE))
++		return NULL;
+ 	cachep = kmalloc_slab(size, flags);
+ 	if (unlikely(ZERO_OR_NULL_PTR(cachep)))
+ 		return cachep;
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index fea3376f9816..3a7ac4f15194 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -1027,18 +1027,18 @@ struct kmem_cache *kmalloc_slab(size_t size, gfp_t flags)
  {
- 	struct page *p;
- 	int err;
+ 	unsigned int index;
  
--	err = get_user_pages(addr & PAGE_MASK, 1, 0, &p, NULL);
-+	int locked = 1;
-+	err = get_user_pages_locked(addr & PAGE_MASK, 1, 0, &p, &locked);
- 	if (err >= 0) {
- 		err = page_to_nid(p);
- 		put_page(p);
- 	}
-+	if (locked)
-+		up_read(&mm->mmap_sem);
- 	return err;
- }
+-	if (unlikely(size > KMALLOC_MAX_SIZE)) {
+-		WARN_ON_ONCE(!(flags & __GFP_NOWARN));
+-		return NULL;
+-	}
+-
+ 	if (size <= 192) {
+ 		if (!size)
+ 			return ZERO_SIZE_PTR;
  
-@@ -817,7 +820,7 @@ static long do_get_mempolicy(int *policy, nodemask_t *nmask,
- 	int err;
- 	struct mm_struct *mm = current->mm;
- 	struct vm_area_struct *vma = NULL;
--	struct mempolicy *pol = current->mempolicy;
-+	struct mempolicy *pol = current->mempolicy, *pol_refcount = NULL;
+ 		index = size_index[size_index_elem(size)];
+-	} else
++	} else {
++		if (unlikely(size > KMALLOC_MAX_CACHE_SIZE)) {
++			WARN_ON(1);
++			return NULL;
++		}
+ 		index = fls(size - 1);
++	}
  
- 	if (flags &
- 		~(unsigned long)(MPOL_F_NODE|MPOL_F_ADDR|MPOL_F_MEMS_ALLOWED))
-@@ -857,7 +860,16 @@ static long do_get_mempolicy(int *policy, nodemask_t *nmask,
- 
- 	if (flags & MPOL_F_NODE) {
- 		if (flags & MPOL_F_ADDR) {
--			err = lookup_node(addr);
-+			/*
-+			 * Take a refcount on the mpol, lookup_node()
-+			 * wil drop the mmap_sem, so after calling
-+			 * lookup_node() only "pol" remains valid, "vma"
-+			 * is stale.
-+			 */
-+			pol_refcount = pol;
-+			vma = NULL;
-+			mpol_get(pol);
-+			err = lookup_node(mm, addr);
- 			if (err < 0)
- 				goto out;
- 			*policy = err;
-@@ -892,7 +904,9 @@ static long do_get_mempolicy(int *policy, nodemask_t *nmask,
-  out:
- 	mpol_cond_put(pol);
- 	if (vma)
--		up_read(&current->mm->mmap_sem);
-+		up_read(&mm->mmap_sem);
-+	if (pol_refcount)
-+		mpol_put(pol_refcount);
- 	return err;
- }
- 
+ #ifdef CONFIG_ZONE_DMA
+ 	if (unlikely((flags & GFP_DMA)))
 -- 
 2.17.1
 
