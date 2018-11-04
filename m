@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7431C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 12:02:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8EF1C32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 12:03:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8D0320685
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 12:02:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8D0320685
+	by mail.kernel.org (Postfix) with ESMTP id 61FB220685
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 12:03:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61FB220685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729543AbeKDVRh (ORCPT
+        id S1729560AbeKDVS3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 16:17:37 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:39875 "EHLO
+        Sun, 4 Nov 2018 16:18:29 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:39898 "EHLO
         atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729326AbeKDVRh (ORCPT
+        with ESMTP id S1729326AbeKDVS3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 16:17:37 -0500
+        Sun, 4 Nov 2018 16:18:29 -0500
 Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 3EBF380986; Sun,  4 Nov 2018 13:02:48 +0100 (CET)
-Date:   Sun, 4 Nov 2018 13:02:26 +0100
+        id 4934C80830; Sun,  4 Nov 2018 13:03:40 +0100 (CET)
+Date:   Sun, 4 Nov 2018 13:03:41 +0100
 From:   Pavel Machek <pavel@ucw.cz>
 To:     Lubomir Rintel <lkundrak@v3.sk>
 Cc:     Mark Brown <broonie@kernel.org>,
@@ -39,15 +39,15 @@ Cc:     Mark Brown <broonie@kernel.org>,
         Robert Jarzmik <robert.jarzmik@free.fr>,
         linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 02/11] PCI: Provide pci_match_id() with CONFIG_PCI=n
-Message-ID: <20181104120225.GN23864@amd>
+Subject: Re: [PATCH 03/11] spi: pxa2xx: Use an enum for type
+Message-ID: <20181104120341.GO23864@amd>
 References: <20181010170936.316862-1-lkundrak@v3.sk>
- <20181010170936.316862-3-lkundrak@v3.sk>
+ <20181010170936.316862-4-lkundrak@v3.sk>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="0kRkyLZR5zsR9u2P"
+        protocol="application/pgp-signature"; boundary="c2gYorpyS4gG0T74"
 Content-Disposition: inline
-In-Reply-To: <20181010170936.316862-3-lkundrak@v3.sk>
+In-Reply-To: <20181010170936.316862-4-lkundrak@v3.sk>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -55,38 +55,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---0kRkyLZR5zsR9u2P
+--c2gYorpyS4gG0T74
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed 2018-10-10 19:09:27, Lubomir Rintel wrote:
-> This spares drivers from #ifdef-ing on CONFIG_PCI if the driver can be
-> optionally built on machines without PCI bus.
+On Wed 2018-10-10 19:09:28, Lubomir Rintel wrote:
+> That seems to be the correct type.
 >=20
-> Consistent with acpi_driver_match_device() and similar.
->=20
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 
 Acked-by: Pavel Machek <pavel@ucw.cz>
-									Pavel
 
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---0kRkyLZR5zsR9u2P
+--c2gYorpyS4gG0T74
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlve39EACgkQMOfwapXb+vLo7wCfVr9Ov7i84YWFMz6uKkOTmCsG
-BwcAmwaOQxx+O5fZHqEi+JsNzH3eYXbS
-=oR86
+iEYEARECAAYFAlve4B0ACgkQMOfwapXb+vKTMACgnFgreb+vpmsLhWZdtoiCnfw1
+qBAAoKxMheTObkGP9vcJEPZno7Zug0fX
+=GqV+
 -----END PGP SIGNATURE-----
 
---0kRkyLZR5zsR9u2P--
+--c2gYorpyS4gG0T74--
