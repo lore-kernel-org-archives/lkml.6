@@ -7,44 +7,49 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10483C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 712C8ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA09F2085A
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B1A320862
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IW/3C4vE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA09F2085A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fK1QP3RU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B1A320862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731370AbeKDXIy (ORCPT
+        id S1731386AbeKDXIz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:08:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48062 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:08:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728896AbeKDXIx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:08:53 -0500
+        id S1731356AbeKDXIy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:08:54 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 559922086C;
-        Sun,  4 Nov 2018 13:53:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33C2F204FD;
+        Sun,  4 Nov 2018 13:53:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339628;
-        bh=HRjebZnFl/1mu/usq+S9LejsFOEkF3ldew4bNCocFVI=;
+        s=default; t=1541339630;
+        bh=SlkbV0Md24tgHFNfUexA5bqHdRx1okt5NMybIXrtqms=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IW/3C4vE2Rx+MVUAKV5Nj+LdxLG+6a1np9CfXRjXn0ROpAZzz/uHh/RRqdU5nJN5t
-         Wv0taKQzlvepSNZynBKB8ldF+6SE4CG2iLkp7/JNjkNSaCrYegxc/UDVeBF/KjZ77H
-         Mq5vPem82c8/70eK4e6R0LdbjGFA8ia6SRxLgouo=
+        b=fK1QP3RUpgC70GcBx3z9CvTWRj7KOWPmoRYYjrCZgngnvkv6RDuRCqWazrN2xVstt
+         gBpu4d1J86z5SPEkP6nX+4+f+m4jHUGYehaGlgtTugASyb+Jiwc3Cy8Z0eYr9kwTzc
+         GUIE4Ypkn8r3tAJdfv4lKtgNd6K3rGu6HedZZ28w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Rashmica Gupta <rashmica.g@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+Cc:     Huacai Chen <chenhc@lemote.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
+        Fuxin Zhang <zhangfx@lemote.com>,
+        Zhangjin Wu <wuzhangjin@gmail.com>,
+        Huacai Chen <chenhuacai@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 23/30] powerpc/memtrace: Remove memory in chunks
-Date:   Sun,  4 Nov 2018 08:53:18 -0500
-Message-Id: <20181104135325.88524-23-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 24/30] MIPS/PCI: Call pcie_bus_configure_settings() to set MPS/MRRS
+Date:   Sun,  4 Nov 2018 08:53:19 -0500
+Message-Id: <20181104135325.88524-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135325.88524-1-sashal@kernel.org>
 References: <20181104135325.88524-1-sashal@kernel.org>
@@ -53,89 +58,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rashmica Gupta <rashmica.g@gmail.com>
+From: Huacai Chen <chenhc@lemote.com>
 
-[ Upstream commit 3f7daf3d7582dc6628ac40a9045dd1bbd80c5f35 ]
+[ Upstream commit 2794f688b2c336e0da85e9f91fed33febbd9f54a ]
 
-When hot-removing memory release_mem_region_adjustable() splits iomem
-resources if they are not the exact size of the memory being
-hot-deleted. Adding this memory back to the kernel adds a new resource.
+Call pcie_bus_configure_settings() on MIPS, like for other platforms.
+The function pcie_bus_configure_settings() makes sure the MPS (Max
+Payload Size) across the bus is uniform and provides the ability to
+tune the MRSS (Max Read Request Size) and MPS (Max Payload Size) to
+higher performance values. Some devices will not operate properly if
+these aren't set correctly because the firmware doesn't always do it.
 
-Eg a node has memory 0x0 - 0xfffffffff. Hot-removing 1GB from
-0xf40000000 results in the single resource 0x0-0xfffffffff being split
-into two resources: 0x0-0xf3fffffff and 0xf80000000-0xfffffffff.
-
-When we hot-add the memory back we now have three resources:
-0x0-0xf3fffffff, 0xf40000000-0xf7fffffff, and 0xf80000000-0xfffffffff.
-
-This is an issue if we try to remove some memory that overlaps
-resources. Eg when trying to remove 2GB at address 0xf40000000,
-release_mem_region_adjustable() fails as it expects the chunk of memory
-to be within the boundaries of a single resource. We then get the
-warning: "Unable to release resource" and attempting to use memtrace
-again gives us this error: "bash: echo: write error: Resource
-temporarily unavailable"
-
-This patch makes memtrace remove memory in chunks that are always the
-same size from an address that is always equal to end_of_memory -
-n*size, for some n. So hotremoving and hotadding memory of different
-sizes will now not attempt to remove memory that spans multiple
-resources.
-
-Signed-off-by: Rashmica Gupta <rashmica.g@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/20649/
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@linux-mips.org
+Cc: Fuxin Zhang <zhangfx@lemote.com>
+Cc: Zhangjin Wu <wuzhangjin@gmail.com>
+Cc: Huacai Chen <chenhuacai@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/platforms/powernv/memtrace.c | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+ arch/mips/pci/pci-legacy.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/powerpc/platforms/powernv/memtrace.c b/arch/powerpc/platforms/powernv/memtrace.c
-index fc222a0c2ac4..c9a6d4f3403c 100644
---- a/arch/powerpc/platforms/powernv/memtrace.c
-+++ b/arch/powerpc/platforms/powernv/memtrace.c
-@@ -119,17 +119,15 @@ static bool memtrace_offline_pages(u32 nid, u64 start_pfn, u64 nr_pages)
- 	walk_memory_range(start_pfn, end_pfn, (void *)MEM_OFFLINE,
- 			  change_memblock_state);
- 
--	lock_device_hotplug();
--	remove_memory(nid, start_pfn << PAGE_SHIFT, nr_pages << PAGE_SHIFT);
--	unlock_device_hotplug();
- 
- 	return true;
- }
- 
- static u64 memtrace_alloc_node(u32 nid, u64 size)
- {
--	u64 start_pfn, end_pfn, nr_pages;
-+	u64 start_pfn, end_pfn, nr_pages, pfn;
- 	u64 base_pfn;
-+	u64 bytes = memory_block_size_bytes();
- 
- 	if (!NODE_DATA(nid) || !node_spanned_pages(nid))
- 		return 0;
-@@ -142,8 +140,21 @@ static u64 memtrace_alloc_node(u32 nid, u64 size)
- 	end_pfn = round_down(end_pfn - nr_pages, nr_pages);
- 
- 	for (base_pfn = end_pfn; base_pfn > start_pfn; base_pfn -= nr_pages) {
--		if (memtrace_offline_pages(nid, base_pfn, nr_pages) == true)
-+		if (memtrace_offline_pages(nid, base_pfn, nr_pages) == true) {
-+			/*
-+			 * Remove memory in memory block size chunks so that
-+			 * iomem resources are always split to the same size and
-+			 * we never try to remove memory that spans two iomem
-+			 * resources.
-+			 */
-+			lock_device_hotplug();
-+			end_pfn = base_pfn + nr_pages;
-+			for (pfn = base_pfn; pfn < end_pfn; pfn += bytes>> PAGE_SHIFT) {
-+				remove_memory(nid, pfn << PAGE_SHIFT, bytes);
-+			}
-+			unlock_device_hotplug();
- 			return base_pfn << PAGE_SHIFT;
-+		}
+diff --git a/arch/mips/pci/pci-legacy.c b/arch/mips/pci/pci-legacy.c
+index 0c65c38e05d6..1ae6bc414e2b 100644
+--- a/arch/mips/pci/pci-legacy.c
++++ b/arch/mips/pci/pci-legacy.c
+@@ -127,8 +127,12 @@ static void pcibios_scanbus(struct pci_controller *hose)
+ 	if (pci_has_flag(PCI_PROBE_ONLY)) {
+ 		pci_bus_claim_resources(bus);
+ 	} else {
++		struct pci_bus *child;
++
+ 		pci_bus_size_bridges(bus);
+ 		pci_bus_assign_resources(bus);
++		list_for_each_entry(child, &bus->children, node)
++			pcie_bus_configure_settings(child);
  	}
- 
- 	return 0;
+ 	pci_bus_add_devices(bus);
+ }
 -- 
 2.17.1
 
