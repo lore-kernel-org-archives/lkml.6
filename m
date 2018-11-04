@@ -2,49 +2,50 @@ Return-Path: <SRS0=jXQK=NP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71494C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:03:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B06EECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:03:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CAD2204FD
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:03:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C64D3204FD
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:03:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="x9n3Q5NX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CAD2204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dEYqR3bV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C64D3204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730842AbeKDXII (ORCPT
+        id S1731621AbeKDXSJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:08:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46470 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:18:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46574 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730808AbeKDXIG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:08:06 -0500
+        id S1729532AbeKDXII (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:08:08 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9555720866;
-        Sun,  4 Nov 2018 13:53:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C5092086B;
+        Sun,  4 Nov 2018 13:53:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339582;
-        bh=6IB2eTAmIlezL5UTqYpLjuLosMCKWAZOSpfVBkB8+ww=;
+        s=default; t=1541339584;
+        bh=d7d+/b8KEYKbeSobYIn85OkLPF9eczPbkR8HZZApMcY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x9n3Q5NXd9aSMWYjzSohI2bjKd+TPBOrh6LwGbQIhVd3JJrf7g74hT1H6cOEGxzxZ
-         Oc2AQ79d19ZPJcTU30DqmXmZmC1j86GMhWVZ8HBa5L3Yol3KOOtW1D5B19368MCSxP
-         Rqhncq9JddBfztwMxQ3Q/WtdS5RvJCR8RX+VRCf8=
+        b=dEYqR3bVZOMDTu6Y+91jby+9Jkal5Clq9fUpY7tmt8psNqfdgFiiSEjQ4X5pFPgDQ
+         iM87mSALLQyUvqxwDlSYadBpB9OZyfc2qMBCgOyHjm+2TbvMljgJOVHJDXnilO6jlO
+         7tOL6Pt09m7Ppp93Tqj/38Rpjh9WtoFAZFMu1mj4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Daniel Axtens <dja@axtens.net>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+Cc:     Hauke Mehrtens <hauke@hauke-m.de>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 20/45] powerpc/nohash: fix undefined behaviour when testing page size support
-Date:   Sun,  4 Nov 2018 08:52:15 -0500
-Message-Id: <20181104135240.88431-20-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 22/45] watchdog: lantiq: update register names to better match spec
+Date:   Sun,  4 Nov 2018 08:52:17 -0500
+Message-Id: <20181104135240.88431-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135240.88431-1-sashal@kernel.org>
 References: <20181104135240.88431-1-sashal@kernel.org>
@@ -53,55 +54,110 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Axtens <dja@axtens.net>
+From: Hauke Mehrtens <hauke@hauke-m.de>
 
-[ Upstream commit f5e284803a7206d43e26f9ffcae5de9626d95e37 ]
+[ Upstream commit 1f59f8aff98f200af7a6882184add7b85f5da741 ]
 
-When enumerating page size definitions to check hardware support,
-we construct a constant which is (1U << (def->shift - 10)).
+Some of the names of the bits were confusing to me.
+Now the bits share the same prefix as the register they are set on.
 
-However, the array of page size definitions is only initalised for
-various MMU_PAGE_* constants, so it contains a number of 0-initialised
-elements with def->shift == 0. This means we end up shifting by a
-very large number, which gives the following UBSan splat:
+The LTQ_WDT_CR_PWL register (bits 26:25) is the pre warning limit and it
+does not turn anything on. It has 4 possible divers 1/2, 1/4, 1/8 and
+1/16, this drivers only uses 1/16.
+The LTQ_WDT_CR_CLKDIV register bits(25:24) is only configuring a clock
+divers and do not turn any thing on too, all possible values are valid
+dividers.
+Using the LTQ_WDT_SR prefix is also wrong these bits are used in the
+LTQ_WDT_CR registers, SR is the status register which is read only.
 
-================================================================================
-UBSAN: Undefined behaviour in /home/dja/dev/linux/linux/arch/powerpc/mm/tlb_nohash.c:506:21
-shift exponent 4294967286 is too large for 32-bit type 'unsigned int'
-CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc3-00045-ga604f927b012-dirty #6
-Call Trace:
-[c00000000101bc20] [c000000000a13d54] .dump_stack+0xa8/0xec (unreliable)
-[c00000000101bcb0] [c0000000004f20a8] .ubsan_epilogue+0x18/0x64
-[c00000000101bd30] [c0000000004f2b10] .__ubsan_handle_shift_out_of_bounds+0x110/0x1a4
-[c00000000101be20] [c000000000d21760] .early_init_mmu+0x1b4/0x5a0
-[c00000000101bf10] [c000000000d1ba28] .early_setup+0x100/0x130
-[c00000000101bf90] [c000000000000528] start_here_multiplatform+0x68/0x80
-================================================================================
+This uses GENMASK where it is a mask and it uses shifts when a value is
+written to some bits.
 
-Fix this by first checking if the element exists (shift != 0) before
-constructing the constant.
-
-Signed-off-by: Daniel Axtens <dja@axtens.net>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/mm/tlb_nohash.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/watchdog/lantiq_wdt.c | 36 ++++++++++++++++++-----------------
+ 1 file changed, 19 insertions(+), 17 deletions(-)
 
-diff --git a/arch/powerpc/mm/tlb_nohash.c b/arch/powerpc/mm/tlb_nohash.c
-index 15fe5f0c8665..ae5d568e267f 100644
---- a/arch/powerpc/mm/tlb_nohash.c
-+++ b/arch/powerpc/mm/tlb_nohash.c
-@@ -503,6 +503,9 @@ static void setup_page_sizes(void)
- 		for (psize = 0; psize < MMU_PAGE_COUNT; ++psize) {
- 			struct mmu_psize_def *def = &mmu_psize_defs[psize];
- 
-+			if (!def->shift)
-+				continue;
+diff --git a/drivers/watchdog/lantiq_wdt.c b/drivers/watchdog/lantiq_wdt.c
+index 7f43cefa0eae..a086005fbaac 100644
+--- a/drivers/watchdog/lantiq_wdt.c
++++ b/drivers/watchdog/lantiq_wdt.c
+@@ -13,6 +13,7 @@
+ #include <linux/module.h>
+ #include <linux/fs.h>
+ #include <linux/miscdevice.h>
++#include <linux/bitops.h>
+ #include <linux/watchdog.h>
+ #include <linux/of_platform.h>
+ #include <linux/uaccess.h>
+@@ -40,18 +41,19 @@
+  * essentially the following two magic passwords need to be written to allow
+  * IO access to the WDT core
+  */
+-#define LTQ_WDT_PW1		0x00BE0000
+-#define LTQ_WDT_PW2		0x00DC0000
++#define LTQ_WDT_CR_PW1		0x00BE0000
++#define LTQ_WDT_CR_PW2		0x00DC0000
 +
- 			if (tlb1ps & (1U << (def->shift - 10))) {
- 				def->flags |= MMU_PAGE_SIZE_DIRECT;
++#define LTQ_WDT_CR		0x0		/* watchdog control register */
++#define  LTQ_WDT_CR_GEN		BIT(31)		/* enable bit */
++/* Pre-warning limit set to 1/16 of max WDT period */
++#define  LTQ_WDT_CR_PWL		(0x3 << 26)
++/* set clock divider to 0x40000 */
++#define  LTQ_WDT_CR_CLKDIV	(0x3 << 24)
++#define  LTQ_WDT_CR_PW_MASK	GENMASK(23, 16)	/* Password field */
++#define  LTQ_WDT_CR_MAX_TIMEOUT	((1 << 16) - 1)	/* The reload field is 16 bit */
  
+-#define LTQ_WDT_CR		0x0	/* watchdog control register */
+-#define LTQ_WDT_SR		0x8	/* watchdog status register */
+-
+-#define LTQ_WDT_SR_EN		(0x1 << 31)	/* enable bit */
+-#define LTQ_WDT_SR_PWD		(0x3 << 26)	/* turn on power */
+-#define LTQ_WDT_SR_CLKDIV	(0x3 << 24)	/* turn on clock and set */
+-						/* divider to 0x40000 */
+ #define LTQ_WDT_DIVIDER		0x40000
+-#define LTQ_MAX_TIMEOUT		((1 << 16) - 1)	/* the reload field is 16 bit */
+ 
+ static bool nowayout = WATCHDOG_NOWAYOUT;
+ 
+@@ -68,26 +70,26 @@ ltq_wdt_enable(void)
+ {
+ 	unsigned long int timeout = ltq_wdt_timeout *
+ 			(ltq_io_region_clk_rate / LTQ_WDT_DIVIDER) + 0x1000;
+-	if (timeout > LTQ_MAX_TIMEOUT)
+-		timeout = LTQ_MAX_TIMEOUT;
++	if (timeout > LTQ_WDT_CR_MAX_TIMEOUT)
++		timeout = LTQ_WDT_CR_MAX_TIMEOUT;
+ 
+ 	/* write the first password magic */
+-	ltq_w32(LTQ_WDT_PW1, ltq_wdt_membase + LTQ_WDT_CR);
++	ltq_w32(LTQ_WDT_CR_PW1, ltq_wdt_membase + LTQ_WDT_CR);
+ 	/* write the second magic plus the configuration and new timeout */
+-	ltq_w32(LTQ_WDT_SR_EN | LTQ_WDT_SR_PWD | LTQ_WDT_SR_CLKDIV |
+-		LTQ_WDT_PW2 | timeout, ltq_wdt_membase + LTQ_WDT_CR);
++	ltq_w32(LTQ_WDT_CR_GEN | LTQ_WDT_CR_PWL | LTQ_WDT_CR_CLKDIV |
++		LTQ_WDT_CR_PW2 | timeout, ltq_wdt_membase + LTQ_WDT_CR);
+ }
+ 
+ static void
+ ltq_wdt_disable(void)
+ {
+ 	/* write the first password magic */
+-	ltq_w32(LTQ_WDT_PW1, ltq_wdt_membase + LTQ_WDT_CR);
++	ltq_w32(LTQ_WDT_CR_PW1, ltq_wdt_membase + LTQ_WDT_CR);
+ 	/*
+ 	 * write the second password magic with no config
+ 	 * this turns the watchdog off
+ 	 */
+-	ltq_w32(LTQ_WDT_PW2, ltq_wdt_membase + LTQ_WDT_CR);
++	ltq_w32(LTQ_WDT_CR_PW2, ltq_wdt_membase + LTQ_WDT_CR);
+ }
+ 
+ static ssize_t
 -- 
 2.17.1
 
