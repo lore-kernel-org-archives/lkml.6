@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B53A0ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:03:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59227ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:03:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 799D5204FD
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:03:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2453E204FD
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:03:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NTrVJegT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 799D5204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TlRLVS0K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2453E204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731181AbeKDXSh (ORCPT
+        id S1730779AbeKDXIE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:18:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46460 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730749AbeKDXIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 4 Nov 2018 18:08:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46400 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730746AbeKDXIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:08:01 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D74D20862;
-        Sun,  4 Nov 2018 13:52:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 543EB20866;
+        Sun,  4 Nov 2018 13:52:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339579;
-        bh=viSMOu3sGlMvcPIJ1RRO9Ynvx0QjtW2dsHblmkoIlys=;
+        s=default; t=1541339577;
+        bh=vJVNv5XVU8iyPRE4r2i0NHPNNTS6gL4PSvt7foO0Ynk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NTrVJegTDLQm1+VDuicsdHmzR6tOuaxF7Hn4e1OzPrkb8Ri0q3nGet/EUvEAxR6G8
-         qsXzFe/sEM8DA7txgC/ektBNCcPxKGHqKLXT8qxRIABJjqBGGdcySjVzqwzDYfuKK7
-         iOS1/2ujk3NIzp7uHpJPEcK9MEh08gxXiApVVn34=
+        b=TlRLVS0KHpdSE9VByStUERaXNoZY8lTB9Rp61x0XVkyTdKkTpV3hFDCEA2icR1BWt
+         bH5b0PeIbfbT7wn9MDsbLW38cuoHF5NdXgblKR3qjmxKZaOcIy3g0GJsTT8kjKfKJ8
+         4O9epWO2VnE8quOZtOIMbJzhxJpu+KNVbfm1iKnQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
+Cc:     Sam Bobroff <sbobroff@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 17/45] tracing/kprobes: Check the probe on unloaded module correctly
-Date:   Sun,  4 Nov 2018 08:52:12 -0500
-Message-Id: <20181104135240.88431-17-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 15/45] powerpc/eeh: Fix possible null deref in eeh_dump_dev_log()
+Date:   Sun,  4 Nov 2018 08:52:10 -0500
+Message-Id: <20181104135240.88431-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135240.88431-1-sashal@kernel.org>
 References: <20181104135240.88431-1-sashal@kernel.org>
@@ -53,99 +53,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Sam Bobroff <sbobroff@linux.ibm.com>
 
-[ Upstream commit 59158ec4aef7d44be51a6f3e7e17fc64c32604eb ]
+[ Upstream commit f9bc28aedfb5bbd572d2d365f3095c1becd7209b ]
 
-Current kprobe event doesn't checks correctly whether the
-given event is on unloaded module or not. It just checks
-the event has ":" in the name.
+If an error occurs during an unplug operation, it's possible for
+eeh_dump_dev_log() to be called when edev->pdn is null, which
+currently leads to dereferencing a null pointer.
 
-That is not enough because if we define a probe on non-exist
-symbol on loaded module, it allows to define that (with
-warning message)
+Handle this by skipping the error log for those devices.
 
-To ensure it correctly, this searches the module name on
-loaded module list and only if there is not, it allows to
-define it. (this event will be available when the target
-module is loaded)
-
-Link: http://lkml.kernel.org/r/153547309528.26502.8300278470528281328.stgit@devbox
-
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Sam Bobroff <sbobroff@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/trace/trace_kprobe.c | 39 ++++++++++++++++++++++++-------------
- 1 file changed, 26 insertions(+), 13 deletions(-)
+ arch/powerpc/kernel/eeh.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index 6b71860f3998..4a8f3780aae5 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -71,9 +71,23 @@ static nokprobe_inline bool trace_kprobe_within_module(struct trace_kprobe *tk,
- 	return strncmp(mod->name, name, len) == 0 && name[len] == ':';
- }
+diff --git a/arch/powerpc/kernel/eeh.c b/arch/powerpc/kernel/eeh.c
+index 5746809cfaad..bf0a02038cad 100644
+--- a/arch/powerpc/kernel/eeh.c
++++ b/arch/powerpc/kernel/eeh.c
+@@ -169,6 +169,11 @@ static size_t eeh_dump_dev_log(struct eeh_dev *edev, char *buf, size_t len)
+ 	int n = 0, l = 0;
+ 	char buffer[128];
  
--static nokprobe_inline bool trace_kprobe_is_on_module(struct trace_kprobe *tk)
-+static nokprobe_inline bool trace_kprobe_module_exist(struct trace_kprobe *tk)
- {
--	return !!strchr(trace_kprobe_symbol(tk), ':');
-+	char *p;
-+	bool ret;
-+
-+	if (!tk->symbol)
-+		return false;
-+	p = strchr(tk->symbol, ':');
-+	if (!p)
-+		return true;
-+	*p = '\0';
-+	mutex_lock(&module_mutex);
-+	ret = !!find_module(tk->symbol);
-+	mutex_unlock(&module_mutex);
-+	*p = ':';
-+
-+	return ret;
- }
- 
- static nokprobe_inline unsigned long trace_kprobe_nhit(struct trace_kprobe *tk)
-@@ -520,19 +534,13 @@ static int __register_trace_kprobe(struct trace_kprobe *tk)
- 	else
- 		ret = register_kprobe(&tk->rp.kp);
- 
--	if (ret == 0)
-+	if (ret == 0) {
- 		tk->tp.flags |= TP_FLAG_REGISTERED;
--	else {
--		if (ret == -ENOENT && trace_kprobe_is_on_module(tk)) {
--			pr_warn("This probe might be able to register after target module is loaded. Continue.\n");
--			ret = 0;
--		} else if (ret == -EILSEQ) {
--			pr_warn("Probing address(0x%p) is not an instruction boundary.\n",
--				tk->rp.kp.addr);
--			ret = -EINVAL;
--		}
-+	} else if (ret == -EILSEQ) {
-+		pr_warn("Probing address(0x%p) is not an instruction boundary.\n",
-+			tk->rp.kp.addr);
-+		ret = -EINVAL;
- 	}
--
- 	return ret;
- }
- 
-@@ -595,6 +603,11 @@ static int register_trace_kprobe(struct trace_kprobe *tk)
- 
- 	/* Register k*probe */
- 	ret = __register_trace_kprobe(tk);
-+	if (ret == -ENOENT && !trace_kprobe_module_exist(tk)) {
-+		pr_warn("This probe might be able to register after target module is loaded. Continue.\n");
-+		ret = 0;
++	if (!pdn) {
++		pr_warn("EEH: Note: No error log for absent device.\n");
++		return 0;
 +	}
 +
- 	if (ret < 0)
- 		unregister_kprobe_event(tk);
- 	else
+ 	n += scnprintf(buf+n, len-n, "%04x:%02x:%02x.%01x\n",
+ 		       pdn->phb->global_number, pdn->busno,
+ 		       PCI_SLOT(pdn->devfn), PCI_FUNC(pdn->devfn));
 -- 
 2.17.1
 
