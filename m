@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27091C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6FB2ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D003A20866
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95F982086D
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zy1a2mJx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D003A20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NRBTK5R8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95F982086D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731480AbeKDXJF (ORCPT
+        id S1731504AbeKDXJH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:09:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48432 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:09:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48508 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731435AbeKDXJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:09:04 -0500
+        id S1731464AbeKDXJF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:09:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEC8C20869;
-        Sun,  4 Nov 2018 13:53:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF7A02085A;
+        Sun,  4 Nov 2018 13:54:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339639;
-        bh=P/0AuPw3ZpCOOANV96befJtEvWk9R1zto4pWPIT1cfg=;
+        s=default; t=1541339641;
+        bh=U0YRj7iJcZleKgA+EkxkNz+RZxGXXZBDiuy//4LrJa4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zy1a2mJxbjIPbt7gHNPyqwYrZArqIf4ZUs/b84Sut3MMdWwf6pWulVJ3JoDmrnDgi
-         eDyxknXeuA/hpmv537hYRy9PxUrH0MTo+CH2leY1LkvC46PN93K3jqLaxmToKkSVWl
-         z59LHb0gMA1y1yAIkpwzRSLuUfj/k/rcKpuooqPQ=
+        b=NRBTK5R89lMAe5N8RQCIHqr+0SxQYBTPn048S7JYaoKJxPCHITJ6i+O5hadGN5nnN
+         b8MbmyMYRt5Qk6xb2ioGXhzCSBpqf0G70JRW8eiOcfKrzCrdFJSSvJo7ex13Mzf0FT
+         yH9jidwTDt6lg8gvEbnGWJTH7ot6JiNnP/2QcxWM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+Cc:     Sam Bobroff <sbobroff@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 02/21] userfaultfd: allow get_mempolicy(MPOL_F_NODE|MPOL_F_ADDR) to trigger userfaults
-Date:   Sun,  4 Nov 2018 08:53:36 -0500
-Message-Id: <20181104135355.88602-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 04/21] powerpc/eeh: Fix possible null deref in eeh_dump_dev_log()
+Date:   Sun,  4 Nov 2018 08:53:38 -0500
+Message-Id: <20181104135355.88602-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135355.88602-1-sashal@kernel.org>
 References: <20181104135355.88602-1-sashal@kernel.org>
@@ -54,168 +53,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrea Arcangeli <aarcange@redhat.com>
+From: Sam Bobroff <sbobroff@linux.ibm.com>
 
-[ Upstream commit 3b9aadf7278d16d7bed4d5d808501065f70898d8 ]
+[ Upstream commit f9bc28aedfb5bbd572d2d365f3095c1becd7209b ]
 
-get_mempolicy(MPOL_F_NODE|MPOL_F_ADDR) called a get_user_pages that would
-not be waiting for userfaults before failing and it would hit on a SIGBUS
-instead.  Using get_user_pages_locked/unlocked instead will allow
-get_mempolicy to allow userfaults to resolve the fault and fill the hole,
-before grabbing the node id of the page.
+If an error occurs during an unplug operation, it's possible for
+eeh_dump_dev_log() to be called when edev->pdn is null, which
+currently leads to dereferencing a null pointer.
 
-If the user calls get_mempolicy() with MPOL_F_ADDR | MPOL_F_NODE for an
-address inside an area managed by uffd and there is no page at that
-address, the page allocation from within get_mempolicy() will fail
-because get_user_pages() does not allow for page fault retry required
-for uffd; the user will get SIGBUS.
+Handle this by skipping the error log for those devices.
 
-With this patch, the page fault will be resolved by the uffd and the
-get_mempolicy() will continue normally.
-
-Background:
-
-Via code review, previously the syscall would have returned -EFAULT
-(vm_fault_to_errno), now it will block and wait for an userfault (if
-it's waken before the fault is resolved it'll still -EFAULT).
-
-This way get_mempolicy will give a chance to an "unaware" app to be
-compliant with userfaults.
-
-The reason this visible change is that becoming "userfault compliant"
-cannot regress anything: all other syscalls including read(2)/write(2)
-had to become "userfault compliant" long time ago (that's one of the
-things userfaultfd can do that PROT_NONE and trapping segfaults can't).
-
-So this is just one more syscall that become "userfault compliant" like
-all other major ones already were.
-
-This has been happening on virtio-bridge dpdk process which just called
-get_mempolicy on the guest space post live migration, but before the
-memory had a chance to be migrated to destination.
-
-I didn't run an strace to be able to show the -EFAULT going away, but
-I've the confirmation of the below debug aid information (only visible
-with CONFIG_DEBUG_VM=y) going away with the patch:
-
-    [20116.371461] FAULT_FLAG_ALLOW_RETRY missing 0
-    [20116.371464] CPU: 1 PID: 13381 Comm: vhost-events Not tainted 4.17.12-200.fc28.x86_64 #1
-    [20116.371465] Hardware name: LENOVO 20FAS2BN0A/20FAS2BN0A, BIOS N1CET54W (1.22 ) 02/10/2017
-    [20116.371466] Call Trace:
-    [20116.371473]  dump_stack+0x5c/0x80
-    [20116.371476]  handle_userfault.cold.37+0x1b/0x22
-    [20116.371479]  ? remove_wait_queue+0x20/0x60
-    [20116.371481]  ? poll_freewait+0x45/0xa0
-    [20116.371483]  ? do_sys_poll+0x31c/0x520
-    [20116.371485]  ? radix_tree_lookup_slot+0x1e/0x50
-    [20116.371488]  shmem_getpage_gfp+0xce7/0xe50
-    [20116.371491]  ? page_add_file_rmap+0x1a/0x2c0
-    [20116.371493]  shmem_fault+0x78/0x1e0
-    [20116.371495]  ? filemap_map_pages+0x3a1/0x450
-    [20116.371498]  __do_fault+0x1f/0xc0
-    [20116.371500]  __handle_mm_fault+0xe2e/0x12f0
-    [20116.371502]  handle_mm_fault+0xda/0x200
-    [20116.371504]  __get_user_pages+0x238/0x790
-    [20116.371506]  get_user_pages+0x3e/0x50
-    [20116.371510]  kernel_get_mempolicy+0x40b/0x700
-    [20116.371512]  ? vfs_write+0x170/0x1a0
-    [20116.371515]  __x64_sys_get_mempolicy+0x21/0x30
-    [20116.371517]  do_syscall_64+0x5b/0x160
-    [20116.371520]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-The above harmless debug message (not a kernel crash, just a
-dump_stack()) is shown with CONFIG_DEBUG_VM=y to more quickly identify
-and improve kernel spots that may have to become "userfaultfd
-compliant" like this one (without having to run an strace and search
-for syscall misbehavior).  Spots like the above are more closer to a
-kernel bug for the non-cooperative usages that Mike focuses on, than
-for for dpdk qemu-cooperative usages that reproduced it, but it's still
-nicer to get this fixed for dpdk too.
-
-The part of the patch that caused me to think is only the
-implementation issue of mpol_get, but it looks like it should work safe
-no matter the kind of mempolicy structure that is (the default static
-policy also starts at 1 so it'll go to 2 and back to 1 without crashing
-everything at 0).
-
-[rppt@linux.vnet.ibm.com: changelog addition]
-  http://lkml.kernel.org/r/20180904073718.GA26916@rapoport-lnx
-Link: http://lkml.kernel.org/r/20180831214848.23676-1-aarcange@redhat.com
-Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-Reported-by: Maxime Coquelin <maxime.coquelin@redhat.com>
-Tested-by: Dr. David Alan Gilbert <dgilbert@redhat.com>
-Reviewed-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sam Bobroff <sbobroff@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/mempolicy.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+ arch/powerpc/kernel/eeh.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index 69c4a0c92ebb..625122adefe0 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -845,16 +845,19 @@ static void get_policy_nodemask(struct mempolicy *p, nodemask_t *nodes)
- 	}
- }
+diff --git a/arch/powerpc/kernel/eeh.c b/arch/powerpc/kernel/eeh.c
+index e5bfbf62827a..8336b9016ca9 100644
+--- a/arch/powerpc/kernel/eeh.c
++++ b/arch/powerpc/kernel/eeh.c
+@@ -169,6 +169,11 @@ static size_t eeh_dump_dev_log(struct eeh_dev *edev, char *buf, size_t len)
+ 	int n = 0, l = 0;
+ 	char buffer[128];
  
--static int lookup_node(unsigned long addr)
-+static int lookup_node(struct mm_struct *mm, unsigned long addr)
- {
- 	struct page *p;
- 	int err;
- 
--	err = get_user_pages(addr & PAGE_MASK, 1, 0, &p, NULL);
-+	int locked = 1;
-+	err = get_user_pages_locked(addr & PAGE_MASK, 1, 0, &p, &locked);
- 	if (err >= 0) {
- 		err = page_to_nid(p);
- 		put_page(p);
- 	}
-+	if (locked)
-+		up_read(&mm->mmap_sem);
- 	return err;
- }
- 
-@@ -865,7 +868,7 @@ static long do_get_mempolicy(int *policy, nodemask_t *nmask,
- 	int err;
- 	struct mm_struct *mm = current->mm;
- 	struct vm_area_struct *vma = NULL;
--	struct mempolicy *pol = current->mempolicy;
-+	struct mempolicy *pol = current->mempolicy, *pol_refcount = NULL;
- 
- 	if (flags &
- 		~(unsigned long)(MPOL_F_NODE|MPOL_F_ADDR|MPOL_F_MEMS_ALLOWED))
-@@ -905,7 +908,16 @@ static long do_get_mempolicy(int *policy, nodemask_t *nmask,
- 
- 	if (flags & MPOL_F_NODE) {
- 		if (flags & MPOL_F_ADDR) {
--			err = lookup_node(addr);
-+			/*
-+			 * Take a refcount on the mpol, lookup_node()
-+			 * wil drop the mmap_sem, so after calling
-+			 * lookup_node() only "pol" remains valid, "vma"
-+			 * is stale.
-+			 */
-+			pol_refcount = pol;
-+			vma = NULL;
-+			mpol_get(pol);
-+			err = lookup_node(mm, addr);
- 			if (err < 0)
- 				goto out;
- 			*policy = err;
-@@ -940,7 +952,9 @@ static long do_get_mempolicy(int *policy, nodemask_t *nmask,
-  out:
- 	mpol_cond_put(pol);
- 	if (vma)
--		up_read(&current->mm->mmap_sem);
-+		up_read(&mm->mmap_sem);
-+	if (pol_refcount)
-+		mpol_put(pol_refcount);
- 	return err;
- }
- 
++	if (!pdn) {
++		pr_warn("EEH: Note: No error log for absent device.\n");
++		return 0;
++	}
++
+ 	n += scnprintf(buf+n, len-n, "%04x:%02x:%02x.%01x\n",
+ 		       edev->phb->global_number, pdn->busno,
+ 		       PCI_SLOT(pdn->devfn), PCI_FUNC(pdn->devfn));
 -- 
 2.17.1
 
