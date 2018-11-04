@@ -7,174 +7,220 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63959C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBB60ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D38B2085A
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8FD020866
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEcZWG2c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D38B2085A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cKa6Mirl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8FD020866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730580AbeKDXHr (ORCPT
+        id S1730611AbeKDXHu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:07:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45938 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:07:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45994 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730543AbeKDXHr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:07:47 -0500
+        id S1730564AbeKDXHu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:07:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1785204FD;
-        Sun,  4 Nov 2018 13:52:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B87122086C;
+        Sun,  4 Nov 2018 13:52:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339562;
-        bh=mXgs/07SejvkLDLKdGN21645PLvzxwl43NWK+W/hYJw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=UEcZWG2cYfUSJTGvuUn0MLATSDMvypwxJ+6yXOKGrB18nZhZnf0UDZ20YrUujfOTM
-         taZ+4CKYB6bmr7pMLwWSeFpgGIVwBEhUE/P6XpxhdIujIilMj5t39dQFNTc9XIXDGZ
-         V0tVZRILgBId8Ew9jlDBtZByu+7mEPzmh5q7yePA=
+        s=default; t=1541339566;
+        bh=01UZQO41vzNh4Savahf7vssInXlOxgP+KXnpuRHFvB4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=cKa6MirlQnG+p9u1UE8P14mRnKuk09iU9Rzwa7YRa5Lzl3+mo2w0KeGCC614GNJVA
+         U7TqvOYahKUlLmdz8Wik6Q+FJxYxo+gAZ06nUlMgDf3SaOQ5cuDIGsEFZwNxxq32eI
+         UKWuV/2NtHtY5xWDXW8a0X3UX1WEu/B17sWqEuUM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Andrea Arcangeli <aarcange@redhat.com>,
-        Jerome Glisse <jglisse@redhat.com>,
+Cc:     Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Abdul Haleem <abdhalee@linux.vnet.ibm.com>,
+        Baoquan He <bhe@redhat.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>, Jan Kara <jack@suse.cz>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Pasha Tatashin <Pavel.Tatashin@microsoft.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 01/45] mm: thp: fix MADV_DONTNEED vs migrate_misplaced_transhuge_page race condition
-Date:   Sun,  4 Nov 2018 08:51:56 -0500
-Message-Id: <20181104135240.88431-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 03/45] mm: calculate deferred pages after skipping mirrored memory
+Date:   Sun,  4 Nov 2018 08:51:58 -0500
+Message-Id: <20181104135240.88431-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181104135240.88431-1-sashal@kernel.org>
+References: <20181104135240.88431-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrea Arcangeli <aarcange@redhat.com>
+From: Pavel Tatashin <pasha.tatashin@oracle.com>
 
-[ Upstream commit d7c3393413fe7e7dc54498ea200ea94742d61e18 ]
+[ Upstream commit d3035be4ce2345d98633a45f93a74e526e94b802 ]
 
-Patch series "migrate_misplaced_transhuge_page race conditions".
+update_defer_init() should be called only when struct page is about to be
+initialized. Because it counts number of initialized struct pages, but
+there we may skip struct pages if there is some mirrored memory.
 
-Aaron found a new instance of the THP MADV_DONTNEED race against
-pmdp_clear_flush* variants, that was apparently left unfixed.
+So move, update_defer_init() after checking for mirrored memory.
 
-While looking into the race found by Aaron, I may have found two more
-issues in migrate_misplaced_transhuge_page.
+Also, rename update_defer_init() to defer_init() and reverse the return
+boolean to emphasize that this is a boolean function, that tells that the
+reset of memmap initialization should be deferred.
 
-These race conditions would not cause kernel instability, but they'd
-corrupt userland data or leave data non zero after MADV_DONTNEED.
+Make this function self-contained: do not pass number of already
+initialized pages in this zone by using static counters.
 
-I did only minor testing, and I don't expect to be able to reproduce this
-(especially the lack of ->invalidate_range before migrate_page_copy,
-requires the latest iommu hardware or infiniband to reproduce).  The last
-patch is noop for x86 and it needs further review from maintainers of
-archs that implement flush_cache_range() (not in CC yet).
+I found this bug by reading the code.  The effect is that fewer than
+expected struct pages are initialized early in boot, and it is possible
+that in some corner cases we may fail to boot when mirrored pages are
+used.  The deferred on demand code should somewhat mitigate this.  But
+this still brings some inconsistencies compared to when booting without
+mirrored pages, so it is better to fix.
 
-To avoid confusion, it's not the first patch that introduces the bug fixed
-in the second patch, even before removing the
-pmdp_huge_clear_flush_notify, that _notify suffix was called after
-migrate_page_copy already run.
-
-This patch (of 3):
-
-This is a corollary of ced108037c2aa ("thp: fix MADV_DONTNEED vs.  numa
-balancing race"), 58ceeb6bec8 ("thp: fix MADV_DONTNEED vs.  MADV_FREE
-race") and 5b7abeae3af8c ("thp: fix MADV_DONTNEED vs clear soft dirty
-race).
-
-When the above three fixes where posted Dave asked
-https://lkml.kernel.org/r/929b3844-aec2-0111-fef7-8002f9d4e2b9@intel.com
-but apparently this was missed.
-
-The pmdp_clear_flush* in migrate_misplaced_transhuge_page() was introduced
-in a54a407fbf7 ("mm: Close races between THP migration and PMD numa
-clearing").
-
-The important part of such commit is only the part where the page lock is
-not released until the first do_huge_pmd_numa_page() finished disarming
-the pagenuma/protnone.
-
-The addition of pmdp_clear_flush() wasn't beneficial to such commit and
-there's no commentary about such an addition either.
-
-I guess the pmdp_clear_flush() in such commit was added just in case for
-safety, but it ended up introducing the MADV_DONTNEED race condition found
-by Aaron.
-
-At that point in time nobody thought of such kind of MADV_DONTNEED race
-conditions yet (they were fixed later) so the code may have looked more
-robust by adding the pmdp_clear_flush().
-
-This specific race condition won't destabilize the kernel, but it can
-confuse userland because after MADV_DONTNEED the memory won't be zeroed
-out.
-
-This also optimizes the code and removes a superfluous TLB flush.
-
-[akpm@linux-foundation.org: reflow comment to 80 cols, fix grammar and typo (beacuse)]
-Link: http://lkml.kernel.org/r/20181013002430.698-2-aarcange@redhat.com
-Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-Reported-by: Aaron Tomlin <atomlin@redhat.com>
-Acked-by: Mel Gorman <mgorman@suse.de>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Jerome Glisse <jglisse@redhat.com>
+[pasha.tatashin@oracle.com: add comment about defer_init's lack of locking]
+  Link: http://lkml.kernel.org/r/20180726193509.3326-3-pasha.tatashin@oracle.com
+[akpm@linux-foundation.org: make defer_init non-inline, __meminit]
+Link: http://lkml.kernel.org/r/20180724235520.10200-3-pasha.tatashin@oracle.com
+Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Cc: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Cc: Baoquan He <bhe@redhat.com>
+Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Jérôme Glisse <jglisse@redhat.com>
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Souptick Joarder <jrdr.linux@gmail.com>
+Cc: Steven Sistare <steven.sistare@oracle.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Wei Yang <richard.weiyang@gmail.com>
+Cc: Pasha Tatashin <Pavel.Tatashin@microsoft.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/migrate.c | 25 ++++++++++++++++++-------
- 1 file changed, 18 insertions(+), 7 deletions(-)
+ mm/page_alloc.c | 45 +++++++++++++++++++++++++--------------------
+ 1 file changed, 25 insertions(+), 20 deletions(-)
 
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 2a55289ee9f1..1990d1ccee29 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -2086,15 +2086,26 @@ int migrate_misplaced_transhuge_page(struct mm_struct *mm,
- 	entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 65f2e6481c99..eb3b250c7c9a 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -306,24 +306,33 @@ static inline bool __meminit early_page_uninitialised(unsigned long pfn)
+ }
  
- 	/*
--	 * Clear the old entry under pagetable lock and establish the new PTE.
--	 * Any parallel GUP will either observe the old page blocking on the
--	 * page lock, block on the page table lock or observe the new page.
--	 * The SetPageUptodate on the new page and page_add_new_anon_rmap
--	 * guarantee the copy is visible before the pagetable update.
-+	 * Overwrite the old entry under pagetable lock and establish
-+	 * the new PTE. Any parallel GUP will either observe the old
-+	 * page blocking on the page lock, block on the page table
-+	 * lock or observe the new page. The SetPageUptodate on the
-+	 * new page and page_add_new_anon_rmap guarantee the copy is
-+	 * visible before the pagetable update.
- 	 */
- 	flush_cache_range(vma, mmun_start, mmun_end);
- 	page_add_anon_rmap(new_page, vma, mmun_start, true);
--	pmdp_huge_clear_flush_notify(vma, mmun_start, pmd);
+ /*
+- * Returns false when the remaining initialisation should be deferred until
++ * Returns true when the remaining initialisation should be deferred until
+  * later in the boot cycle when it can be parallelised.
+  */
+-static inline bool update_defer_init(pg_data_t *pgdat,
+-				unsigned long pfn, unsigned long zone_end,
+-				unsigned long *nr_initialised)
++static bool __meminit
++defer_init(int nid, unsigned long pfn, unsigned long end_pfn)
+ {
++	static unsigned long prev_end_pfn, nr_initialised;
++
 +	/*
-+	 * At this point the pmd is numa/protnone (i.e. non present) and the TLB
-+	 * has already been flushed globally.  So no TLB can be currently
-+	 * caching this non present pmd mapping.  There's no need to clear the
-+	 * pmd before doing set_pmd_at(), nor to flush the TLB after
-+	 * set_pmd_at().  Clearing the pmd here would introduce a race
-+	 * condition against MADV_DONTNEED, because MADV_DONTNEED only holds the
-+	 * mmap_sem for reading.  If the pmd is set to NULL at any given time,
-+	 * MADV_DONTNEED won't wait on the pmd lock and it'll skip clearing this
-+	 * pmd.
++	 * prev_end_pfn static that contains the end of previous zone
++	 * No need to protect because called very early in boot before smp_init.
 +	 */
- 	set_pmd_at(mm, mmun_start, pmd, entry);
- 	update_mmu_cache_pmd(vma, address, &entry);
++	if (prev_end_pfn != end_pfn) {
++		prev_end_pfn = end_pfn;
++		nr_initialised = 0;
++	}
++
+ 	/* Always populate low zones for address-constrained allocations */
+-	if (zone_end < pgdat_end_pfn(pgdat))
+-		return true;
+-	(*nr_initialised)++;
+-	if ((*nr_initialised > pgdat->static_init_pgcnt) &&
+-	    (pfn & (PAGES_PER_SECTION - 1)) == 0) {
+-		pgdat->first_deferred_pfn = pfn;
++	if (end_pfn < pgdat_end_pfn(NODE_DATA(nid)))
+ 		return false;
++	nr_initialised++;
++	if ((nr_initialised > NODE_DATA(nid)->static_init_pgcnt) &&
++	    (pfn & (PAGES_PER_SECTION - 1)) == 0) {
++		NODE_DATA(nid)->first_deferred_pfn = pfn;
++		return true;
+ 	}
+-
+-	return true;
++	return false;
+ }
+ #else
+ static inline bool early_page_uninitialised(unsigned long pfn)
+@@ -331,11 +340,9 @@ static inline bool early_page_uninitialised(unsigned long pfn)
+ 	return false;
+ }
  
-@@ -2108,7 +2119,7 @@ int migrate_misplaced_transhuge_page(struct mm_struct *mm,
- 	 * No need to double call mmu_notifier->invalidate_range() callback as
- 	 * the above pmdp_huge_clear_flush_notify() did already call it.
- 	 */
--	mmu_notifier_invalidate_range_only_end(mm, mmun_start, mmun_end);
-+	mmu_notifier_invalidate_range_end(mm, mmun_start, mmun_end);
+-static inline bool update_defer_init(pg_data_t *pgdat,
+-				unsigned long pfn, unsigned long zone_end,
+-				unsigned long *nr_initialised)
++static inline bool defer_init(int nid, unsigned long pfn, unsigned long end_pfn)
+ {
+-	return true;
++	return false;
+ }
+ #endif
  
- 	/* Take an "isolate" reference and put new page on the LRU. */
- 	get_page(new_page);
+@@ -5462,9 +5469,7 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+ 		struct vmem_altmap *altmap)
+ {
+ 	unsigned long end_pfn = start_pfn + size;
+-	pg_data_t *pgdat = NODE_DATA(nid);
+ 	unsigned long pfn;
+-	unsigned long nr_initialised = 0;
+ 	struct page *page;
+ #ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+ 	struct memblock_region *r = NULL, *tmp;
+@@ -5492,8 +5497,6 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+ 			continue;
+ 		if (!early_pfn_in_nid(pfn, nid))
+ 			continue;
+-		if (!update_defer_init(pgdat, pfn, end_pfn, &nr_initialised))
+-			break;
+ 
+ #ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+ 		/*
+@@ -5516,6 +5519,8 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+ 			}
+ 		}
+ #endif
++		if (defer_init(nid, pfn, end_pfn))
++			break;
+ 
+ not_early:
+ 		page = pfn_to_page(pfn);
 -- 
 2.17.1
 
