@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D24EDC32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 12:13:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B45C0C32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 12:16:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2A4C20854
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 12:13:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2A4C20854
+	by mail.kernel.org (Postfix) with ESMTP id 52F8A2082D
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 12:16:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52F8A2082D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729643AbeKDV2E (ORCPT
+        id S1729666AbeKDVbL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 16:28:04 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40140 "EHLO
+        Sun, 4 Nov 2018 16:31:11 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40221 "EHLO
         atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726919AbeKDV2D (ORCPT
+        with ESMTP id S1726919AbeKDVbL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 16:28:03 -0500
+        Sun, 4 Nov 2018 16:31:11 -0500
 Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 8C15B80986; Sun,  4 Nov 2018 13:13:12 +0100 (CET)
-Date:   Sun, 4 Nov 2018 13:13:14 +0100
+        id 1FE248097D; Sun,  4 Nov 2018 13:16:19 +0100 (CET)
+Date:   Sun, 4 Nov 2018 13:16:20 +0100
 From:   Pavel Machek <pavel@ucw.cz>
 To:     Lubomir Rintel <lkundrak@v3.sk>
 Cc:     Mark Brown <broonie@kernel.org>,
@@ -39,15 +39,15 @@ Cc:     Mark Brown <broonie@kernel.org>,
         Robert Jarzmik <robert.jarzmik@free.fr>,
         linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 09/11] dt-bindings: spi/spi-pxa2xx: Add ready GPIO signal
-Message-ID: <20181104121314.GU23864@amd>
+Subject: Re: [PATCH 10/11] spi: pxa2xx: Add ready signal
+Message-ID: <20181104121620.GV23864@amd>
 References: <20181010170936.316862-1-lkundrak@v3.sk>
- <20181010170936.316862-10-lkundrak@v3.sk>
+ <20181010170936.316862-11-lkundrak@v3.sk>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="kbZGpL0ScFxCd8mt"
+        protocol="application/pgp-signature"; boundary="Q/AGl/UrDvkbRExF"
 Content-Disposition: inline
-In-Reply-To: <20181010170936.316862-10-lkundrak@v3.sk>
+In-Reply-To: <20181010170936.316862-11-lkundrak@v3.sk>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -55,57 +55,87 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---kbZGpL0ScFxCd8mt
+--Q/AGl/UrDvkbRExF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed 2018-10-10 19:09:34, Lubomir Rintel wrote:
-> This this is used to let the SPI master know that our FIFO is filled and
-> we're ready to service a transfer. Only useful in slave mode.
->=20
-> A signal like this is used by an embedded controller on a OLPC XO 1.75
-> machine, that happens to be a SPI master.
+On Wed 2018-10-10 19:09:35, Lubomir Rintel wrote:
+> Strobe a GPIO line when the slave TX FIFO is filled. This is how the
+> Embedded Controller on an OLPC XO-1.75 machine, that happens to be a SPI
+> master, learns that it can initiate a transaction.
 >=20
 > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 
 Acked-by: Pavel Machek <pavel@ucw.cz>
 
 > ---
->  Documentation/devicetree/bindings/spi/spi-pxa2xx.txt | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/spi/spi-pxa2xx.c | 12 ++++++++++++
+>  drivers/spi/spi-pxa2xx.h |  3 +++
+>  2 files changed, 15 insertions(+)
 >=20
-> diff --git a/Documentation/devicetree/bindings/spi/spi-pxa2xx.txt b/Docum=
-entation/devicetree/bindings/spi/spi-pxa2xx.txt
-> index 89b2832283e3..681a82b40e6f 100644
-> --- a/Documentation/devicetree/bindings/spi/spi-pxa2xx.txt
-> +++ b/Documentation/devicetree/bindings/spi/spi-pxa2xx.txt
-> @@ -12,6 +12,8 @@ Optional properties:
->  - cs-gpios: list of GPIO chip selects. See the SPI bus bindings,
->    Documentation/devicetree/bindings/spi/spi-bus.txt
->  - spi-slave: Empty property indicating the SPI controller is used in sla=
-ve mode.
-> +- ready-gpio: GPIO used to signal a SPI master that the FIFO is filled
-> +  and we're ready to service a transfer. Only useful in slave mode.
+> diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
+> index 3848842d68fd..a3b4b12c1077 100644
+> --- a/drivers/spi/spi-pxa2xx.c
+> +++ b/drivers/spi/spi-pxa2xx.c
+> @@ -1079,6 +1079,9 @@ static int pxa2xx_spi_transfer_one(struct spi_contr=
+oller *master,
+>  	if (spi_controller_is_slave(master)) {
+>  		while (drv_data->write(drv_data))
+>  			;
+> +		gpiod_set_value(drv_data->gpiod_ready, 1);
+> +		udelay(1);
+> +		gpiod_set_value(drv_data->gpiod_ready, 0);
+>  	}
 > =20
->  Child nodes represent devices on the SPI bus
->    See ../spi/spi-bus.txt
+>  	/*
+> @@ -1784,6 +1787,15 @@ static int pxa2xx_spi_probe(struct platform_device=
+ *pdev)
+>  		}
+>  	}
+> =20
+> +	if (platform_info->is_slave) {
+> +		drv_data->gpiod_ready =3D devm_gpiod_get_optional(dev,
+> +						"ready", GPIOD_OUT_LOW);
+> +		if (IS_ERR(drv_data->gpiod_ready)) {
+> +			status =3D (int)PTR_ERR(drv_data->gpiod_ready);
+> +			goto out_error_clock_enabled;
+> +		}
+> +	}
+> +
+>  	pm_runtime_set_autosuspend_delay(&pdev->dev, 50);
+>  	pm_runtime_use_autosuspend(&pdev->dev);
+>  	pm_runtime_set_active(&pdev->dev);
+> diff --git a/drivers/spi/spi-pxa2xx.h b/drivers/spi/spi-pxa2xx.h
+> index 513c53aaeab2..4e324da66ef7 100644
+> --- a/drivers/spi/spi-pxa2xx.h
+> +++ b/drivers/spi/spi-pxa2xx.h
+> @@ -64,6 +64,9 @@ struct driver_data {
+> =20
+>  	/* GPIOs for chip selects */
+>  	struct gpio_desc **cs_gpiods;
+> +
+> +	/* Optional slave FIFO ready signal */
+> +	struct gpio_desc *gpiod_ready;
+>  };
+> =20
+>  struct chip_data {
 
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---kbZGpL0ScFxCd8mt
+--Q/AGl/UrDvkbRExF
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlve4loACgkQMOfwapXb+vJAEACeLnzOenWyJ9mVWkVKlX/SZ0BI
-BgQAn1ykaXNIbZT3Pw/0VFrLn8Nqqw8D
-=Wloq
+iEYEARECAAYFAlve4xQACgkQMOfwapXb+vIivgCgwIYjjAqLZS9vC0a7OEInLqWE
+PVYAn28gAZ+IeMUn8H69Egfaqanrdkk5
+=F2l8
 -----END PGP SIGNATURE-----
 
---kbZGpL0ScFxCd8mt--
+--Q/AGl/UrDvkbRExF--
