@@ -2,90 +2,84 @@ Return-Path: <SRS0=jXQK=NP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC446C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 22:10:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1EFEECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 22:11:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70D5C2081D
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 22:10:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="1ayBe5bp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70D5C2081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 84E982081D
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 22:11:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84E982081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730062AbeKEH0r (ORCPT
+        id S1730128AbeKEH1c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 02:26:47 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:54896 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729223AbeKEH0r (ORCPT
+        Mon, 5 Nov 2018 02:27:32 -0500
+Received: from ipmail06.adl6.internode.on.net ([150.101.137.145]:64366 "EHLO
+        ipmail06.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729223AbeKEH1c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 02:26:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=hZBCe82pYheJ07uv/7+lk4B5U/edwL7ptg6f06dTYJo=; b=1ayBe5bp11gNqTorhoBTymakzi
-        moKbPIzVuGo/lRgO/j/OC568dY+SdG9387DSBp1dhfsuoSEtEnddFV8K8kUohyTTxAKJquZxeucMp
-        /7uiTLG92XK7LXYhHwE0bDG/8KoUPUG3vVx1NbrJuTm1KBz75Eyxw6E/Hst5OW8KZQEBPPcDa6Kix
-        1kRy9jPtM925f9eoxncvMIsN9ntu+chAiLquagOWXYeONW/1+oFer7Zid9/16LT0v/ogqH3ol5tn8
-        d6n1I4jJ5T4h96d0zs46u3Q2mtKpu9EQMoNWeWAE0u2U2EqoujODItT+6MEpZ42oLdwYXIHZCMV6Q
-        fhlXCCCA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gJQb1-0007kn-EV; Sun, 04 Nov 2018 22:10:15 +0000
-To:     LKML <linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>, Will Korteland <will@korte.land>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH 2/2 resend] Documentation/admin-guide: fix grammar in
- dynamic-debug-howto.rst
-Message-ID: <24f41b66-a45e-92c9-e34f-2e24ee157bd2@infradead.org>
-Date:   Sun, 4 Nov 2018 14:10:14 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 5 Nov 2018 02:27:32 -0500
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail06.adl6.internode.on.net with ESMTP; 05 Nov 2018 08:41:02 +1030
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1gJQbk-0004qB-Lf; Mon, 05 Nov 2018 09:11:00 +1100
+Date:   Mon, 5 Nov 2018 09:11:00 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     djwong@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xfs@vger.kernel.org, Eric Sandeen <sandeen@sandeen.net>
+Subject: Re: [GIT PULL] vfs: fix many problems in vfs clone/dedupe
+ implementation
+Message-ID: <20181104221100.GI19305@dastard>
+References: <20181102051459.GS6311@dastard>
+ <CAHk-=whrpyMSWM4wxYE+E4fSbpkD3yBATjLnzvvAKBfhGwUaAw@mail.gmail.com>
+ <20181102233651.GH19305@dastard>
+ <CAHk-=wiJdzKEq2RsQCe5R1X2W0AEiOYOt8womcyTfkD=mgQAug@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiJdzKEq2RsQCe5R1X2W0AEiOYOt8womcyTfkD=mgQAug@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Sat, Nov 03, 2018 at 10:13:37AM -0700, Linus Torvalds wrote:
+> On Fri, Nov 2, 2018 at 4:36 PM Dave Chinner <david@fromorbit.com> wrote:
+> >
+> > On Fri, Nov 02, 2018 at 09:35:23AM -0700, Linus Torvalds wrote:
+> > >
+> > > I don't love the timing of this at the end of the merge window, but pulled,
+> >
+> > When would have been a better time? It's too big for a late -rc, and
+> > it contains stuff that needs fixing pretty urgently. So if the merge
+> > window is not appropriate, what should we have done here?
+> 
+> No, I think that with the timing of the problem finding, it was
+> probably the only thing to do, but generally I like these kinds of
+> somewhat scary and disruptive patches (just because it touches
+> multiple filesystems) _early_ in the merge window if at all possible,
+> and showing that the development was done before and not some rushed
+> thing..
 
-Fix grammar about wildcards and insert a space between sentences.
+Fair enough. That was partly my fault - I forgot to add sob's to the
+commits when I pulled the final version in for testing in the middle
+of the first week of the merge window. I didn't realise that until
+after I'd soak and stress tested it and was getting ready to push it
+out to linux-next a week later. So I had to rewrite all the commits
+and so they would have looked an awful lot more recent than they
+really were. I should have mentioned this in the pull request...
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Jason Baron <jbaron@akamai.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org
-Cc: Will Korteland <will@korte.land>
----
-v2: s/A another/Another/ # from Will
+Cheers,
 
- Documentation/admin-guide/dynamic-debug-howto.rst |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---- linux-next-20181101.orig/Documentation/admin-guide/dynamic-debug-howto.rst
-+++ linux-next-20181101/Documentation/admin-guide/dynamic-debug-howto.rst
-@@ -110,8 +110,8 @@ If your query set is big, you can batch
- 
-   ~# cat query-batch-file > <debugfs>/dynamic_debug/control
- 
--A another way is to use wildcard. The match rule support ``*`` (matches
--zero or more characters) and ``?`` (matches exactly one character).For
-+Another way is to use wildcards. The match rule supports ``*`` (matches
-+zero or more characters) and ``?`` (matches exactly one character). For
- example, you can match all usb drivers::
- 
-   ~# echo "file drivers/usb/* +p" > <debugfs>/dynamic_debug/control
-
-
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
