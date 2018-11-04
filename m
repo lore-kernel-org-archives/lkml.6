@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B18CECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 973DDECDE46
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 353D92085B
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 498B62085B
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y2ufjeVK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 353D92085B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YplsYivT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 498B62085B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730408AbeKDXHd (ORCPT
+        id S1730424AbeKDXHe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:07:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45402 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:07:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730390AbeKDXHb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:07:31 -0500
+        id S1730399AbeKDXHd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:07:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 879062085B;
-        Sun,  4 Nov 2018 13:52:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 385E720870;
+        Sun,  4 Nov 2018 13:52:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339548;
-        bh=A5jCYSplBYoOFQ8zRetf6AmvXC5z+rSE1tCGxdnEW/I=;
+        s=default; t=1541339549;
+        bh=++KTkuNkWkt1GhZIJmFt56ms293rxsJ6PA4ehLK5m4s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y2ufjeVKYsxoG3vwdc5rzHegI1OqXsAQajPc59YR2IJuRgoezKOhLpbU29kqPlD6t
-         cWJpTaol5vH7tXlWHAUkmRMDWfk6golCr+r9A55yPGHLTl56BIs0zwCe3QNCPgwnwx
-         IvQ2YxqEXCnNIZ8gYAPsArDlrlsVEadvPlk4NE/Y=
+        b=YplsYivTSjo5BwK5IATeuXYvu2gAKx5FLrLHvxYwRLZD8b442n0FuLpUZyfeNmNxR
+         uLbDpSjyXzUqhWI+mdLTuKGOA/am0HEP68lhZoTVjU658hpOw+N5ba+Eo75qqWLqqi
+         lhcHNB3T3yGil53RjtfdlAImvIioJzVtd2lem974=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     John Garry <john.garry@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     Marco Felsch <m.felsch@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 43/57] serial: 8250_of: Fix for lack of interrupt support
-Date:   Sun,  4 Nov 2018 08:51:30 -0500
-Message-Id: <20181104135144.88324-43-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 45/57] media: tvp5150: fix width alignment during set_selection()
+Date:   Sun,  4 Nov 2018 08:51:32 -0500
+Message-Id: <20181104135144.88324-45-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135144.88324-1-sashal@kernel.org>
 References: <20181104135144.88324-1-sashal@kernel.org>
@@ -53,91 +53,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Garry <john.garry@huawei.com>
+From: Marco Felsch <m.felsch@pengutronix.de>
 
-[ Upstream commit a27d938251ef40c43db81af16fc26b2cec181d4d ]
+[ Upstream commit bd24db04101f45a9c1d874fe21b0c7eab7bcadec ]
 
-In commit c58caaab3bf8 ("serial: 8250: of: Defer probe on missing IRQ"), a
-check was added for the UART driver being probed prior to the parent IRQ
-controller.
+The driver ignored the width alignment which exists due to the UYVY
+colorspace format. Fix the width alignment and make use of the the
+provided v4l2 helper function to set the width, height and all
+alignments in one.
 
-Unfortunately this breaks certain boards which have no interrupt support,
-like Huawei D03.
+Fixes: 963ddc63e20d ("[media] media: tvp5150: Add cropping support")
 
-Indeed, the 8250 DT bindings state that interrupts should be supported -
-not must.
-
-To fix, switch from irq_of_parse_and_map() to of_irq_get(), which
-does relay whether the IRQ host controller domain is not ready, i.e.
-defer probe, instead of assuming it.
-
-Fixes: c58caaab3bf8 ("serial: 8250: of: Defer probe on missing IRQ")
-Signed-off-by: John Garry <john.garry@huawei.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
-Tested-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/8250/8250_of.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+ drivers/media/i2c/tvp5150.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/tty/serial/8250/8250_of.c b/drivers/tty/serial/8250/8250_of.c
-index af8beefe9b5c..877fd7f8a8ed 100644
---- a/drivers/tty/serial/8250/8250_of.c
-+++ b/drivers/tty/serial/8250/8250_of.c
-@@ -58,7 +58,7 @@ static int of_platform_serial_setup(struct platform_device *ofdev,
- 	struct resource resource;
- 	struct device_node *np = ofdev->dev.of_node;
- 	u32 clk, spd, prop;
--	int ret;
-+	int ret, irq;
+diff --git a/drivers/media/i2c/tvp5150.c b/drivers/media/i2c/tvp5150.c
+index 76e6bed5a1da..da7ad455d4a8 100644
+--- a/drivers/media/i2c/tvp5150.c
++++ b/drivers/media/i2c/tvp5150.c
+@@ -901,9 +901,6 @@ static int tvp5150_set_selection(struct v4l2_subdev *sd,
  
- 	memset(port, 0, sizeof *port);
+ 	/* tvp5150 has some special limits */
+ 	rect.left = clamp(rect.left, 0, TVP5150_MAX_CROP_LEFT);
+-	rect.width = clamp_t(unsigned int, rect.width,
+-			     TVP5150_H_MAX - TVP5150_MAX_CROP_LEFT - rect.left,
+-			     TVP5150_H_MAX - rect.left);
+ 	rect.top = clamp(rect.top, 0, TVP5150_MAX_CROP_TOP);
  
-@@ -143,21 +143,27 @@ static int of_platform_serial_setup(struct platform_device *ofdev,
- 	if (ret >= 0)
- 		port->line = ret;
+ 	/* Calculate height based on current standard */
+@@ -917,9 +914,16 @@ static int tvp5150_set_selection(struct v4l2_subdev *sd,
+ 	else
+ 		hmax = TVP5150_V_MAX_OTHERS;
  
--	port->irq = irq_of_parse_and_map(np, 0);
--	if (!port->irq) {
--		ret = -EPROBE_DEFER;
--		goto err_unprepare;
-+	irq = of_irq_get(np, 0);
-+	if (irq < 0) {
-+		if (irq == -EPROBE_DEFER) {
-+			ret = -EPROBE_DEFER;
-+			goto err_unprepare;
-+		}
-+		/* IRQ support not mandatory */
-+		irq = 0;
- 	}
+-	rect.height = clamp_t(unsigned int, rect.height,
++	/*
++	 * alignments:
++	 *  - width = 2 due to UYVY colorspace
++	 *  - height, image = no special alignment
++	 */
++	v4l_bound_align_image(&rect.width,
++			      TVP5150_H_MAX - TVP5150_MAX_CROP_LEFT - rect.left,
++			      TVP5150_H_MAX - rect.left, 1, &rect.height,
+ 			      hmax - TVP5150_MAX_CROP_TOP - rect.top,
+-			      hmax - rect.top);
++			      hmax - rect.top, 0, 0);
  
-+	port->irq = irq;
-+
- 	info->rst = devm_reset_control_get_optional_shared(&ofdev->dev, NULL);
- 	if (IS_ERR(info->rst)) {
- 		ret = PTR_ERR(info->rst);
--		goto err_dispose;
-+		goto err_unprepare;
- 	}
- 
- 	ret = reset_control_deassert(info->rst);
- 	if (ret)
--		goto err_dispose;
-+		goto err_unprepare;
- 
- 	port->type = type;
- 	port->uartclk = clk;
-@@ -184,8 +190,6 @@ static int of_platform_serial_setup(struct platform_device *ofdev,
- 		port->handle_irq = fsl8250_handle_irq;
- 
- 	return 0;
--err_dispose:
--	irq_dispose_mapping(port->irq);
- err_unprepare:
- 	clk_disable_unprepare(info->clk);
- err_pmruntime:
+ 	tvp5150_write(sd, TVP5150_VERT_BLANKING_START, rect.top);
+ 	tvp5150_write(sd, TVP5150_VERT_BLANKING_STOP,
 -- 
 2.17.1
 
