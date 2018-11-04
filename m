@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E944ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D7BBECDE46
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CB902082E
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5873420868
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GMM/Ode4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CB902082E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y0Kag5ty"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5873420868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730345AbeKDXH2 (ORCPT
+        id S1730361AbeKDXH3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:07:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45236 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:07:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730312AbeKDXH1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:07:27 -0500
+        id S1730312AbeKDXH3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:07:29 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A42F20866;
-        Sun,  4 Nov 2018 13:52:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F2DC2086C;
+        Sun,  4 Nov 2018 13:52:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339543;
-        bh=/BNA8wX7ezLJDRNO318yDehwFgvKzP2/YSC1SLXa0ug=;
+        s=default; t=1541339545;
+        bh=f9Fwt7wArCsQhl23jOfutLii1mm7ZDNb+2+6udC2SQU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GMM/Ode4B8ym5bxpHINVTpOaARBN1H3PeHhA9zO1FIYmcSrQLdbpWn31Ro2ZEzqlD
-         PCozg49NJy0NNUoFAQF7fts18r8FCWwB+JFCe6wD64wBcbdc+AuLJ6V/ybj1Hd4/FU
-         cTOYZkkip07EftpCziwfl5Hjp+rtB7dJxlFQf8Eo=
+        b=Y0Kag5tynrJBgS7FR4rNDtcJVT1Vat4N69xA/u8lV45lUhQAPouMxKqGo+FHPr4yk
+         duzEVISu7NOxJyKVwYTwh2wAT6PsfEtVnKeV0du4rX37NFwevJkKHnbs3Sy5lQjYJd
+         QlnMiaUj2ITJUqH2rEc1ZbxmLZ3MX8ci7T2E93Kw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dengcheng Zhu <dzhu@wavecomp.com>,
-        Paul Burton <paul.burton@mips.com>, pburton@wavecomp.com,
-        ralf@linux-mips.org, linux-mips@linux-mips.org,
-        rachel.mozes@intel.com, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 38/57] MIPS: kexec: Mark CPU offline before disabling local IRQ
-Date:   Sun,  4 Nov 2018 08:51:25 -0500
-Message-Id: <20181104135144.88324-38-sashal@kernel.org>
+Cc:     Rashmica Gupta <rashmica.g@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 40/57] powerpc/memtrace: Remove memory in chunks
+Date:   Sun,  4 Nov 2018 08:51:27 -0500
+Message-Id: <20181104135144.88324-40-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135144.88324-1-sashal@kernel.org>
 References: <20181104135144.88324-1-sashal@kernel.org>
@@ -53,55 +52,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dengcheng Zhu <dzhu@wavecomp.com>
+From: Rashmica Gupta <rashmica.g@gmail.com>
 
-[ Upstream commit dc57aaf95a516f70e2d527d8287a0332c481a226 ]
+[ Upstream commit 3f7daf3d7582dc6628ac40a9045dd1bbd80c5f35 ]
 
-After changing CPU online status, it will not be sent any IPIs such as in
-__flush_cache_all() on software coherency systems. Do this before disabling
-local IRQ.
+When hot-removing memory release_mem_region_adjustable() splits iomem
+resources if they are not the exact size of the memory being
+hot-deleted. Adding this memory back to the kernel adds a new resource.
 
-Signed-off-by: Dengcheng Zhu <dzhu@wavecomp.com>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/20571/
-Cc: pburton@wavecomp.com
-Cc: ralf@linux-mips.org
-Cc: linux-mips@linux-mips.org
-Cc: rachel.mozes@intel.com
+Eg a node has memory 0x0 - 0xfffffffff. Hot-removing 1GB from
+0xf40000000 results in the single resource 0x0-0xfffffffff being split
+into two resources: 0x0-0xf3fffffff and 0xf80000000-0xfffffffff.
+
+When we hot-add the memory back we now have three resources:
+0x0-0xf3fffffff, 0xf40000000-0xf7fffffff, and 0xf80000000-0xfffffffff.
+
+This is an issue if we try to remove some memory that overlaps
+resources. Eg when trying to remove 2GB at address 0xf40000000,
+release_mem_region_adjustable() fails as it expects the chunk of memory
+to be within the boundaries of a single resource. We then get the
+warning: "Unable to release resource" and attempting to use memtrace
+again gives us this error: "bash: echo: write error: Resource
+temporarily unavailable"
+
+This patch makes memtrace remove memory in chunks that are always the
+same size from an address that is always equal to end_of_memory -
+n*size, for some n. So hotremoving and hotadding memory of different
+sizes will now not attempt to remove memory that spans multiple
+resources.
+
+Signed-off-by: Rashmica Gupta <rashmica.g@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/kernel/crash.c         | 3 +++
- arch/mips/kernel/machine_kexec.c | 3 +++
- 2 files changed, 6 insertions(+)
+ arch/powerpc/platforms/powernv/memtrace.c | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
 
-diff --git a/arch/mips/kernel/crash.c b/arch/mips/kernel/crash.c
-index d455363d51c3..4c07a43a3242 100644
---- a/arch/mips/kernel/crash.c
-+++ b/arch/mips/kernel/crash.c
-@@ -36,6 +36,9 @@ static void crash_shutdown_secondary(void *passed_regs)
- 	if (!cpu_online(cpu))
- 		return;
+diff --git a/arch/powerpc/platforms/powernv/memtrace.c b/arch/powerpc/platforms/powernv/memtrace.c
+index 51dc398ae3f7..a29fdf8a2e56 100644
+--- a/arch/powerpc/platforms/powernv/memtrace.c
++++ b/arch/powerpc/platforms/powernv/memtrace.c
+@@ -90,17 +90,15 @@ static bool memtrace_offline_pages(u32 nid, u64 start_pfn, u64 nr_pages)
+ 	walk_memory_range(start_pfn, end_pfn, (void *)MEM_OFFLINE,
+ 			  change_memblock_state);
  
-+	/* We won't be sent IPIs any more. */
-+	set_cpu_online(cpu, false);
-+
- 	local_irq_disable();
- 	if (!cpumask_test_cpu(cpu, &cpus_in_crash))
- 		crash_save_cpu(regs, cpu);
-diff --git a/arch/mips/kernel/machine_kexec.c b/arch/mips/kernel/machine_kexec.c
-index 8b574bcd39ba..4b3726e4fe3a 100644
---- a/arch/mips/kernel/machine_kexec.c
-+++ b/arch/mips/kernel/machine_kexec.c
-@@ -118,6 +118,9 @@ machine_kexec(struct kimage *image)
- 			*ptr = (unsigned long) phys_to_virt(*ptr);
+-	lock_device_hotplug();
+-	remove_memory(nid, start_pfn << PAGE_SHIFT, nr_pages << PAGE_SHIFT);
+-	unlock_device_hotplug();
+ 
+ 	return true;
+ }
+ 
+ static u64 memtrace_alloc_node(u32 nid, u64 size)
+ {
+-	u64 start_pfn, end_pfn, nr_pages;
++	u64 start_pfn, end_pfn, nr_pages, pfn;
+ 	u64 base_pfn;
++	u64 bytes = memory_block_size_bytes();
+ 
+ 	if (!node_spanned_pages(nid))
+ 		return 0;
+@@ -113,8 +111,21 @@ static u64 memtrace_alloc_node(u32 nid, u64 size)
+ 	end_pfn = round_down(end_pfn - nr_pages, nr_pages);
+ 
+ 	for (base_pfn = end_pfn; base_pfn > start_pfn; base_pfn -= nr_pages) {
+-		if (memtrace_offline_pages(nid, base_pfn, nr_pages) == true)
++		if (memtrace_offline_pages(nid, base_pfn, nr_pages) == true) {
++			/*
++			 * Remove memory in memory block size chunks so that
++			 * iomem resources are always split to the same size and
++			 * we never try to remove memory that spans two iomem
++			 * resources.
++			 */
++			lock_device_hotplug();
++			end_pfn = base_pfn + nr_pages;
++			for (pfn = base_pfn; pfn < end_pfn; pfn += bytes>> PAGE_SHIFT) {
++				remove_memory(nid, pfn << PAGE_SHIFT, bytes);
++			}
++			unlock_device_hotplug();
+ 			return base_pfn << PAGE_SHIFT;
++		}
  	}
  
-+	/* Mark offline BEFORE disabling local irq. */
-+	set_cpu_online(smp_processor_id(), false);
-+
- 	/*
- 	 * we do not want to be bothered.
- 	 */
+ 	return 0;
 -- 
 2.17.1
 
