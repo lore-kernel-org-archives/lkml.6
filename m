@@ -6,105 +6,123 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 346DFC32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:05:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CC5AC32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:05:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3289204FD
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:05:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1226E204FD
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:05:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k3UnW30I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3289204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TDjXry4J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1226E204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731023AbeKDXUe (ORCPT
+        id S1731054AbeKDXUs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:20:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45592 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:20:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729579AbeKDXHg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:07:36 -0500
+        id S1730390AbeKDXHe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:07:34 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89C3E2085A;
-        Sun,  4 Nov 2018 13:52:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FC632089F;
+        Sun,  4 Nov 2018 13:52:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339553;
-        bh=BWXeHip9G7PVX/2JvT6jA4f4vxb0MPwO+Er7pZkdPp4=;
+        s=default; t=1541339550;
+        bh=6wcQqKmpTN/0KAslgC8sMtn+EH0X3bqFgwJSJ4Ikd5o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k3UnW30IqhJej8KouM78wTz9fPPVBCw4JfVeD+DprvjOOSwx3aekNJHnzVjMKsdZ9
-         yVXWrBd7KSBS4SZTXwThR66JwC0hvYI1s3Szo60o9TwU6SNly+XvHAya12jy9MMy/c
-         Q3EXiVtu8miQf3MY7CFnK+7dI93j78RwZuZsRmGU=
+        b=TDjXry4JmKyojv7j3j1ek93dX78e/B4yxg3Ogjnp55hMdPOC0ojhRgpq1JhyJLdBZ
+         eFaQIjtSJHvn0oMBkMNmUaotMzKaTI9GLLxeS0PKkTWG/jwy0g+Q2+EKXZpt9jRXuF
+         zNKH+7pPRff2QB4sTN3Ra/6WhkPy9Ew45YUJU4aI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+Cc:     Breno Leitao <leitao@debian.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 49/57] drm/amdgpu: Fix SDMA TO after GPU reset v3
-Date:   Sun,  4 Nov 2018 08:51:36 -0500
-Message-Id: <20181104135144.88324-49-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 46/57] powerpc/selftests: Wait all threads to join
+Date:   Sun,  4 Nov 2018 08:51:33 -0500
+Message-Id: <20181104135144.88324-46-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135144.88324-1-sashal@kernel.org>
 References: <20181104135144.88324-1-sashal@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
+From: Breno Leitao <leitao@debian.org>
 
-[ Upstream commit d8de8260a45aae8f74af77eae9a162bdc0ed48d2 ]
+[ Upstream commit 693b31b2fc1636f0aa7af53136d3b49f6ad9ff39 ]
 
-After GPU reset amdgpu_vm_clear_bo triggers VM flush
-but job->vm_pd_addr is not set causing SDMA TO.
+Test tm-tmspr might exit before all threads stop executing, because it just
+waits for the very last thread to join before proceeding/exiting.
 
-v2:
-Per advise by Christian König avoid flushing VM for jobs where
-job->vm_pd_addr wasn't explicitly set.
+This patch makes sure that all threads that were created will join before
+proceeding/exiting.
 
-v3:
-Shortcut vm_flush_needed early.
+This patch also guarantees that the amount of threads being created is equal
+to thread_num.
 
-Fixes cbd5285 drm/amdgpu: move setting the GART addr into TTM.
-Signed-off-by: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_job.c | 1 +
- drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c  | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ tools/testing/selftests/powerpc/tm/tm-tmspr.c | 27 ++++++++++++-------
+ 1 file changed, 17 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-index 391e2f7c03aa..f823d4baf044 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-@@ -66,6 +66,7 @@ int amdgpu_job_alloc(struct amdgpu_device *adev, unsigned num_ibs,
- 	amdgpu_sync_create(&(*job)->sync);
- 	amdgpu_sync_create(&(*job)->sched_sync);
- 	(*job)->vram_lost_counter = atomic_read(&adev->vram_lost_counter);
-+	(*job)->vm_pd_addr = AMDGPU_BO_INVALID_OFFSET;
+diff --git a/tools/testing/selftests/powerpc/tm/tm-tmspr.c b/tools/testing/selftests/powerpc/tm/tm-tmspr.c
+index 2bda81c7bf23..df1d7d4b1c89 100644
+--- a/tools/testing/selftests/powerpc/tm/tm-tmspr.c
++++ b/tools/testing/selftests/powerpc/tm/tm-tmspr.c
+@@ -98,7 +98,7 @@ void texasr(void *in)
  
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-index b17771dd5ce7..6a84526e20e0 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-@@ -714,7 +714,8 @@ int amdgpu_vm_flush(struct amdgpu_ring *ring, struct amdgpu_job *job, bool need_
+ int test_tmspr()
+ {
+-	pthread_t 	thread;
++	pthread_t	*thread;
+ 	int	   	thread_num;
+ 	unsigned long	i;
+ 
+@@ -107,21 +107,28 @@ int test_tmspr()
+ 	/* To cause some context switching */
+ 	thread_num = 10 * sysconf(_SC_NPROCESSORS_ONLN);
+ 
++	thread = malloc(thread_num * sizeof(pthread_t));
++	if (thread == NULL)
++		return EXIT_FAILURE;
++
+ 	/* Test TFIAR and TFHAR */
+-	for (i = 0 ; i < thread_num ; i += 2){
+-		if (pthread_create(&thread, NULL, (void*)tfiar_tfhar, (void *)i))
++	for (i = 0; i < thread_num; i += 2) {
++		if (pthread_create(&thread[i], NULL, (void *)tfiar_tfhar,
++				   (void *)i))
+ 			return EXIT_FAILURE;
  	}
+-	if (pthread_join(thread, NULL) != 0)
+-		return EXIT_FAILURE;
+-
+ 	/* Test TEXASR */
+-	for (i = 0 ; i < thread_num ; i++){
+-		if (pthread_create(&thread, NULL, (void*)texasr, (void *)i))
++	for (i = 1; i < thread_num; i += 2) {
++		if (pthread_create(&thread[i], NULL, (void *)texasr, (void *)i))
+ 			return EXIT_FAILURE;
+ 	}
+-	if (pthread_join(thread, NULL) != 0)
+-		return EXIT_FAILURE;
++
++	for (i = 0; i < thread_num; i++) {
++		if (pthread_join(thread[i], NULL) != 0)
++			return EXIT_FAILURE;
++	}
++
++	free(thread);
  
- 	gds_switch_needed &= !!ring->funcs->emit_gds_switch;
--	vm_flush_needed &= !!ring->funcs->emit_vm_flush;
-+	vm_flush_needed &= !!ring->funcs->emit_vm_flush  &&
-+			job->vm_pd_addr != AMDGPU_BO_INVALID_OFFSET;
- 	pasid_mapping_needed &= adev->gmc.gmc_funcs->emit_pasid_mapping &&
- 		ring->funcs->emit_wreg;
- 
+ 	if (passed)
+ 		return 0;
 -- 
 2.17.1
 
