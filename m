@@ -2,177 +2,97 @@ Return-Path: <SRS0=jXQK=NP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 197A7C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 19:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF888C32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 20:00:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D50522081B
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 19:51:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WM1DMh+i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D50522081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 791C02082D
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 20:00:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 791C02082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbeKEFHW (ORCPT
+        id S1727258AbeKEFQZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 00:07:22 -0500
-Received: from mail-lf1-f46.google.com ([209.85.167.46]:41977 "EHLO
-        mail-lf1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725798AbeKEFHW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 00:07:22 -0500
-Received: by mail-lf1-f46.google.com with SMTP id c16so4626214lfj.8;
-        Sun, 04 Nov 2018 11:51:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mail-followup-to:mime-version
-         :content-disposition:user-agent;
-        bh=u99WQmpi84bDl0q3PHKuJ1xqPyAtqdp4Ojn1tCPeIRE=;
-        b=WM1DMh+iF7Nhp9HIhh/sNnr2o87guhBKwpzVDGTJFdkoJ3qXjt4rANO/WanjgvvbTH
-         DOIgW/YZOfJMzywJsQWAXDKkGs4RQr2l7QPLiAfY5AeRO7o/7to2xdsF/5D8D37PyfAU
-         v5PcucBTqfN98oiGCaD3yr2lZzuh0tvz5ye6d/xJz9vcTQD+tQOPZMO+5kiA+1Uxc+K2
-         xyAkDBAWhUGw2MZp9di6KUbtLKDFrbZOH2XmMzBGUbAPQD4k35fkaYb96BB6rWpY245G
-         iTG3OqfkaU/15YzCEGT0LMTh1ZeiRlMqhVtXpV60xcZLTYc5ssepiRc93+LCFwJ2XMLV
-         TtPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mail-followup-to
-         :mime-version:content-disposition:user-agent;
-        bh=u99WQmpi84bDl0q3PHKuJ1xqPyAtqdp4Ojn1tCPeIRE=;
-        b=skNdel0H7OtLYjQ3d61YnSYfdGHDG2KzdXyjR0SeqatA0i5MVOqpKijCxdZrUA5yp4
-         el/nlTCk8wSs9QAd9Ct/25yK3GeA8rrRxeAI0U+a3Ij6+LTYpckuAfcsqmZ1wUPla+Ul
-         V2w+DLKR6VXNfiiK2/0b4vrDjGonb8yGCDvw0lDZFolb2nN5POnKwnLohk0druqRhg2/
-         Fr3HwYwAwm7GkmwQ7wVgk/HSFOpFqj+OP/uZ0Hr7iBIYSNamPffnhpyM7TPRiApFshrK
-         ADZ4JGHBxEovVvsF6wFLojJYgZs4DI6xrQwIrvdzC7zE/0GiIolEE7Gv+ZPMfaMkfqkA
-         aFXQ==
-X-Gm-Message-State: AGRZ1gLDEoK6MC07XgG90mhmorBTcU80iuUbYiUjhY4VC8yKBfbimH4u
-        pqxc0ad2KcP7SIsZjc6RUGY=
-X-Google-Smtp-Source: AJdET5c5QbvwY2EY0pjpiBZAyhOUoCMFFLnVhg78ltmlQu27GekHQ71JW9qdwVUsRQ8Gbc460Y5Wxw==
-X-Received: by 2002:a19:5d42:: with SMTP id p2mr11545335lfj.83.1541361070702;
-        Sun, 04 Nov 2018 11:51:10 -0800 (PST)
-Received: from dnote ([5.35.110.163])
-        by smtp.gmail.com with ESMTPSA id a19-v6sm6381044ljj.91.2018.11.04.11.51.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 04 Nov 2018 11:51:10 -0800 (PST)
-Date:   Sun, 4 Nov 2018 22:51:10 +0300
-From:   Eugene Korenevsky <ekorenevsky@gmail.com>
-To:     Davidlohr Bueso <dave@stgolabs.net>, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH v5 2/2] efi: take size of partition entry from GPT header
-Message-ID: <20181104195110.GA15437@dnote>
-Mail-Followup-To: Eugene Korenevsky <ekorenevsky@gmail.com>,
-        Davidlohr Bueso <dave@stgolabs.net>, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 5 Nov 2018 00:16:25 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42450 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725745AbeKEFQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 00:16:24 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9CEEA30820C6;
+        Sun,  4 Nov 2018 20:00:13 +0000 (UTC)
+Received: from hp-dl360pgen8-07.khw.lab.eng.bos.redhat.com (hp-dl360pgen8-07.khw.lab.eng.bos.redhat.com [10.16.184.47])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D683B1057063;
+        Sun,  4 Nov 2018 20:00:02 +0000 (UTC)
+From:   Jarod Wilson <jarod@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Jarod Wilson <jarod@redhat.com>,
+        Mahesh Bandewar <maheshb@google.com>,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: [PATCH net v2] bonding/802.3ad: fix link_failure_count tracking
+Date:   Sun,  4 Nov 2018 14:59:46 -0500
+Message-Id: <20181104195946.33861-1-jarod@redhat.com>
+In-Reply-To: <20181101212240.26768-1-jarod@redhat.com>
+References: <20181101212240.26768-1-jarod@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Sun, 04 Nov 2018 20:00:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use gpt_header.sizeof_partition_entry instead of sizeof(gpt_entry)
-for GPT entry size.
-According to UEFI 2.7 spec 5.3.1 "GPT overview":, the size of a GUID Partition
-Entry element is defined in the Size Of Partition Entry field of GPT header.
-The GPT with entries sized more than sizeof(gpt_entry) is not illegal.
-OVMF firmware from EDK2 perfectly works with it, see edk2-tianocore source
-code.
+Commit 4d2c0cda07448ea6980f00102dc3964eb25e241c set slave->link to
+BOND_LINK_DOWN for 802.3ad bonds whenever invalid speed/duplex values
+were read, to fix a problem with slaves getting into weird states, but
+in the process, broke tracking of link failures, as going straight to
+BOND_LINK_DOWN when a link is indeed down (cable pulled, switch rebooted)
+means we broke out of bond_miimon_inspect()'s BOND_LINK_DOWN case because
+!link_state was already true, we never incremented commit, and never got
+a chance to call bond_miimon_commit(), where slave->link_failure_count
+would be incremented. I believe the simple fix here is to mark the slave
+as BOND_LINK_FAIL, and let bond_miimon_inspect() transition the link from
+_FAIL to either _UP or _DOWN, and in the latter case, we now get proper
+incrementing of link_failure_count again.
 
-Changes since v1: refactoring (extract get_gpt_entry function),
-                  fix (&ptes[i] -> pte)
-Changes since v2: use le32_to_cpu, fix typo, sanity check for
-                  sizeof_partition_entry
-Changes since v3: style fixes
-Changes since v4: sanity checks for GPT entries; split into
-patchset
-
-Signed-off-by: Eugene Korenevsky <ekorenevsky@gmail.com>
+Fixes: 4d2c0cda0744 ("bonding: speed/duplex update at NETDEV_UP event")
+CC: Mahesh Bandewar <maheshb@google.com>
+CC: David S. Miller <davem@davemloft.net>
+CC: netdev@vger.kernel.org
+CC: stable@vger.kernel.org
+Signed-off-by: Jarod Wilson <jarod@redhat.com>
 ---
- block/partitions/efi.c | 31 ++++++++++++++++++++-----------
- 1 file changed, 20 insertions(+), 11 deletions(-)
+v2: fix Fixes line
 
-diff --git a/block/partitions/efi.c b/block/partitions/efi.c
-index 722117b32585..3858c042d3ac 100644
---- a/block/partitions/efi.c
-+++ b/block/partitions/efi.c
-@@ -447,8 +447,8 @@ static int is_gpt_valid(struct parsed_partitions *state, u64 lba,
- 		goto fail;
- 	}
- 	/* Check that sizeof_partition_entry has the correct value */
--	if (le32_to_cpu((*gpt)->sizeof_partition_entry) != sizeof(gpt_entry)) {
--		pr_debug("GUID Partition Entry Size check failed.\n");
-+	if (le32_to_cpu((*gpt)->sizeof_partition_entry) < sizeof(gpt_entry)) {
-+		pr_debug("GUID Partition Entry Size is too small.\n");
- 		goto fail;
- 	}
+ drivers/net/bonding/bond_main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+index ffa37adb7681..333387f1f1fe 100644
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -3112,13 +3112,13 @@ static int bond_slave_netdev_event(unsigned long event,
+ 	case NETDEV_CHANGE:
+ 		/* For 802.3ad mode only:
+ 		 * Getting invalid Speed/Duplex values here will put slave
+-		 * in weird state. So mark it as link-down for the time
++		 * in weird state. So mark it as link-fail for the time
+ 		 * being and let link-monitoring (miimon) set it right when
+ 		 * correct speeds/duplex are available.
+ 		 */
+ 		if (bond_update_speed_duplex(slave) &&
+ 		    BOND_MODE(bond) == BOND_MODE_8023AD)
+-			slave->link = BOND_LINK_DOWN;
++			slave->link = BOND_LINK_FAIL;
  
-@@ -711,6 +711,12 @@ static int find_valid_gpt(struct parsed_partitions *state, gpt_header **gpt,
-         return 0;
- }
- 
-+static gpt_entry *get_gpt_entry(gpt_header *gpt, gpt_entry *ptes, u32 index)
-+{
-+	return (gpt_entry *)((u8 *)ptes +
-+	       le32_to_cpu(gpt->sizeof_partition_entry) * index);
-+}
-+
- /**
-  * efi_partition(struct parsed_partitions *state)
-  * @state: disk parsed partitions
-@@ -745,32 +751,35 @@ int efi_partition(struct parsed_partitions *state)
- 
- 	pr_debug("GUID Partition Table is valid!  Yea!\n");
- 
--	for (i = 0; i < le32_to_cpu(gpt->num_partition_entries) && i < state->limit-1; i++) {
-+	for (i = 0; i < le32_to_cpu(gpt->num_partition_entries) &&
-+		    i < state->limit-1; i++) {
-+		gpt_entry *pte = get_gpt_entry(gpt, ptes, i);
- 		struct partition_meta_info *info;
- 		unsigned label_count = 0;
- 		unsigned label_max;
--		u64 start = le64_to_cpu(ptes[i].starting_lba);
--		u64 size = le64_to_cpu(ptes[i].ending_lba) -
--			   le64_to_cpu(ptes[i].starting_lba) + 1ULL;
-+		u64 start = le64_to_cpu(pte->starting_lba);
-+		u64 size = le64_to_cpu(pte->ending_lba) -
-+			   le64_to_cpu(pte->starting_lba) + 1ULL;
- 
--		if (!is_pte_valid(&ptes[i], last_lba(state->bdev)))
-+		if (!is_pte_valid(pte, last_lba(state->bdev)))
- 			continue;
- 
- 		put_partition(state, i+1, start * ssz, size * ssz);
- 
- 		/* If this is a RAID volume, tell md */
--		if (!efi_guidcmp(ptes[i].partition_type_guid, PARTITION_LINUX_RAID_GUID))
-+		if (!efi_guidcmp(pte->partition_type_guid,
-+				 PARTITION_LINUX_RAID_GUID))
- 			state->parts[i + 1].flags = ADDPART_FLAG_RAID;
- 
- 		info = &state->parts[i + 1].info;
--		efi_guid_to_str(&ptes[i].unique_partition_guid, info->uuid);
-+		efi_guid_to_str(&pte->unique_partition_guid, info->uuid);
- 
- 		/* Naively convert UTF16-LE to 7 bits. */
- 		label_max = min(ARRAY_SIZE(info->volname) - 1,
--				ARRAY_SIZE(ptes[i].partition_name));
-+				ARRAY_SIZE(pte->partition_name));
- 		info->volname[label_max] = 0;
- 		while (label_count < label_max) {
--			u8 c = ptes[i].partition_name[label_count] & 0xff;
-+			u8 c = pte->partition_name[label_count] & 0xff;
- 			if (c && !isprint(c))
- 				c = '!';
- 			info->volname[label_count] = c;
+ 		if (BOND_MODE(bond) == BOND_MODE_8023AD)
+ 			bond_3ad_adapter_speed_duplex_changed(slave);
 -- 
-2.19.1
+2.16.1
 
