@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F918C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:04:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 657C9ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:04:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07A03204FD
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:04:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F379204FD
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:04:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kMkUdLKu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07A03204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ev1F7Edo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F379204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730695AbeKDXH6 (ORCPT
+        id S1731018AbeKDXTU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:07:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46260 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:19:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730564AbeKDXH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730659AbeKDXH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 4 Nov 2018 18:07:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FD6120862;
-        Sun,  4 Nov 2018 13:52:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68CA920880;
+        Sun,  4 Nov 2018 13:52:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541339573;
-        bh=8yWIuV+anyDbC5DMrP80T9BmoF4mLDCsnyK2RmmbR+I=;
+        bh=GYrcv1H0rCWOqbRXNUnea7pfBWsIAaFTv7LhpHD73Xc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kMkUdLKusHAZCcp9Ell66sy+q+AcCXCfKig0rnKvjD3ROZPFpeoRCM45nE8ZL9hlN
-         exOQMYHfo0hkysqLeX3VqUD1jh44draUEE9foqLawbqio/W3tCU6AfpxQyG5+FXDcX
-         0rkChHDC01iLXY+LAPQeklZ/NVxArd/csNf9cWgU=
+        b=ev1F7EdolDP0N3/Pcm8HYE1nnNIyX4Sw9cQS3a9DnasNP6cj2PEGjr93RPLsbmJqj
+         gesP6HSvqE04wNWYjCCMEApjjnNDtssJxjQbjQtJBDTTh/jlJ4PA/yX8pWDg1JkRxX
+         730T1Z+gllWiQCSCDGR+bPZmpvRD5Tep57fLNyl4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+Cc:     Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 10/45] powerpc/mm: Fix page table dump to work on Radix
-Date:   Sun,  4 Nov 2018 08:52:05 -0500
-Message-Id: <20181104135240.88431-10-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 09/45] powerpc/64/module: REL32 relocation range check
+Date:   Sun,  4 Nov 2018 08:52:04 -0500
+Message-Id: <20181104135240.88431-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135240.88431-1-sashal@kernel.org>
 References: <20181104135240.88431-1-sashal@kernel.org>
@@ -52,58 +53,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-[ Upstream commit 0d923962ab69c27cca664a2d535e90ef655110ca ]
+[ Upstream commit b851ba02a6f3075f0f99c60c4bc30a4af80cf428 ]
 
-When we're running on Book3S with the Radix MMU enabled the page table
-dump currently prints the wrong addresses because it uses the wrong
-start address.
+The recent module relocation overflow crash demonstrated that we
+have no range checking on REL32 relative relocations. This patch
+implements a basic check, the same kernel that previously oopsed
+and rebooted now continues with some of these errors when loading
+the module:
 
-Fix it to use PAGE_OFFSET rather than KERN_VIRT_START.
+  module_64: x_tables: REL32 527703503449812 out of range!
 
+Possibly other relocations (ADDR32, REL16, TOC16, etc.) should also have
+overflow checks.
+
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/mm/dump_linuxpagetables.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ arch/powerpc/kernel/module_64.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/mm/dump_linuxpagetables.c b/arch/powerpc/mm/dump_linuxpagetables.c
-index 876e2a3c79f2..bdf33b989f98 100644
---- a/arch/powerpc/mm/dump_linuxpagetables.c
-+++ b/arch/powerpc/mm/dump_linuxpagetables.c
-@@ -418,12 +418,13 @@ static void walk_pagetables(struct pg_state *st)
- 	unsigned int i;
- 	unsigned long addr;
+diff --git a/arch/powerpc/kernel/module_64.c b/arch/powerpc/kernel/module_64.c
+index b8d61e019d06..f7b1203bdaee 100644
+--- a/arch/powerpc/kernel/module_64.c
++++ b/arch/powerpc/kernel/module_64.c
+@@ -685,7 +685,14 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
  
-+	addr = st->start_address;
-+
- 	/*
- 	 * Traverse the linux pagetable structure and dump pages that are in
- 	 * the hash pagetable.
- 	 */
--	for (i = 0; i < PTRS_PER_PGD; i++, pgd++) {
--		addr = KERN_VIRT_START + i * PGDIR_SIZE;
-+	for (i = 0; i < PTRS_PER_PGD; i++, pgd++, addr += PGDIR_SIZE) {
- 		if (!pgd_none(*pgd) && !pgd_huge(*pgd))
- 			/* pgd exists */
- 			walk_pud(st, pgd, addr);
-@@ -472,9 +473,14 @@ static int ptdump_show(struct seq_file *m, void *v)
- {
- 	struct pg_state st = {
- 		.seq = m,
--		.start_address = KERN_VIRT_START,
- 		.marker = address_markers,
- 	};
-+
-+	if (radix_enabled())
-+		st.start_address = PAGE_OFFSET;
-+	else
-+		st.start_address = KERN_VIRT_START;
-+
- 	/* Traverse kernel page tables */
- 	walk_pagetables(&st);
- 	note_page(&st, 0, 0, 0);
+ 		case R_PPC64_REL32:
+ 			/* 32 bits relative (used by relative exception tables) */
+-			*(u32 *)location = value - (unsigned long)location;
++			/* Convert value to relative */
++			value -= (unsigned long)location;
++			if (value + 0x80000000 > 0xffffffff) {
++				pr_err("%s: REL32 %li out of range!\n",
++				       me->name, (long int)value);
++				return -ENOEXEC;
++			}
++			*(u32 *)location = value;
+ 			break;
+ 
+ 		case R_PPC64_TOCSAVE:
 -- 
 2.17.1
 
