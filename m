@@ -2,89 +2,133 @@ Return-Path: <SRS0=jXQK=NP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5777EC0044C
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 01:15:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDE69C0044C
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 01:27:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E74292081D
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 01:15:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83B2D2082E
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 01:27:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="HZ1S0+KU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E74292081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WSABywpd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83B2D2082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728851AbeKDK2n (ORCPT
+        id S1728871AbeKDKke (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 05:28:43 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:41088 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727047AbeKDK2n (ORCPT
+        Sun, 4 Nov 2018 05:40:34 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:34020 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727157AbeKDKke (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 05:28:43 -0500
-Received: by mail-lf1-f65.google.com with SMTP id c16so3728674lfj.8
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Nov 2018 18:15:40 -0700 (PDT)
+        Sun, 4 Nov 2018 05:40:34 -0500
+Received: by mail-it1-f193.google.com with SMTP id t189-v6so4605908itf.1;
+        Sat, 03 Nov 2018 18:27:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=6uPrrmVUOVf5JvFN+qREv8kPxySiEZiBEfJQwqwybis=;
-        b=HZ1S0+KUf1b4yJBQh0n8Njxv3xnZl9cvhsC17Tci13dRSRaLi59XdoiuMS7+XkT9MC
-         /3yY+VokQayUyd5MoT8iCFoFs9h4L3YCaAg9nw4qJNNAT/qKJdtRtVo5ObfRO7YRgF0V
-         7rQ7Tl+8L0/y5AapLRKd+IVI+jC+QTJOJxf+8=
+        bh=/b9er5w18faP4SozhpT6Ew/XsBbKbOrZoklPzsCSmno=;
+        b=WSABywpdMAPfZ5osJmLJ6U34J6ByOA+W0y1mTm7Pp9+Y9I+jVktgfcld/BoyB2zPzV
+         RyxhxeRkcScolDA2zpITyr544zZ5kxpS7A6/rIHBrp1abmwqqG/PqaK9Gnclo+3mYjKg
+         fzj8Q7jQL6bmnG/QxZ0Gzfew3ADN1R5Xw3z3RnYmtgWVOQk4aJ3bZIDVax39XLiCoUBZ
+         9nUxHQwqHNCi4b016bK7jh9n0SYIvb5ZMCx9wi9Ja4aWO9XqdacjW6vlSz5mrGyZZcZu
+         73wYB5BGDMuDciavPB7nKdaZN61UoJjOLLe+vURt5lHI4u0qmYk83CkT3jsmfZ8Dzw3m
+         V04g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=6uPrrmVUOVf5JvFN+qREv8kPxySiEZiBEfJQwqwybis=;
-        b=iBJxr+1MFSzIaXCLZO/oBZa3i19gSkOs0PCZxRO7UjL8BXuC8jYTZ5DR9CT4RtXLY2
-         4Tz8XA1mx/Bw07xZupGR5S21ImFGozcBNx9ThAOBXJXqXOOBlzsoluVd+DimM11xWocn
-         eY+wa+3mhI1N1WkHUnG5/vFwn+EhArY3moSZNXB/tLxYW8PXoyZXc1Y4Gt5zcQO7VM/O
-         kfSSlxNhsNwsonFr6srntFoWXcoTVboOlHe7vjIr8m05uIqqQLASbDA4nigmS1UEbL0a
-         dLvOiWEFoQ3VRF0h6nX/JUloKt5j6tIOTQN5Gj0QbaRdkgHAZZZwBU4BSHlG5VJ8sRVa
-         rqag==
-X-Gm-Message-State: AGRZ1gIeKLXNEufKPTPRs6wRFi6qMaggMyNfEe/1hmGzFOBm1ycRv+XM
-        PX/ghj/B+EFWdRbewHZzYnkVbpi7VTs=
-X-Google-Smtp-Source: AJdET5e51uEaQAXBVnbGHXR89JgekM/vSSoKUdjwKVZu6mNbmOVAFCB58SBjzbzu0d2Yg6jyOL294w==
-X-Received: by 2002:a19:4e9a:: with SMTP id u26-v6mr9401469lfk.91.1541294138706;
-        Sat, 03 Nov 2018 18:15:38 -0700 (PDT)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id v17-v6sm134581ljg.32.2018.11.03.18.15.37
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 03 Nov 2018 18:15:37 -0700 (PDT)
-Received: by mail-lj1-f179.google.com with SMTP id w10-v6so2268971ljh.0
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Nov 2018 18:15:37 -0700 (PDT)
-X-Received: by 2002:a2e:3e06:: with SMTP id l6-v6mr7584344lja.148.1541294136906;
- Sat, 03 Nov 2018 18:15:36 -0700 (PDT)
+        bh=/b9er5w18faP4SozhpT6Ew/XsBbKbOrZoklPzsCSmno=;
+        b=bewq4NYIokM5tqnBlm1mA/rTk/kRTZi01FQ9wcY70iPFrJLdvHVecS/J7WNK6P6obM
+         e6pwaZeOwDmlIfe2hyFkW2FAn3mqllZaGq8QeYedaue3fhTSRSVBjDjTMvrzuaIugSSr
+         zxSliG+61afrJCPkTLdXuoC1pkI/whrsCYLJHRxJFJctkqDo/HVg95MIGG32YSr0LCUM
+         rk2TfpBpHdDwi7ZOqdq/4+xwkVZ3Ke4Lq4g7Kdr4OlszCM1YdGRH9qG40JsznP+od0hn
+         oprJWae1oQtFJl+xOqhIhSjE6kIJ6Lwtey4tlGayQgL6IuhV6Fkmsyz8us4yxcdFNU1N
+         PITg==
+X-Gm-Message-State: AGRZ1gIxl0pbb3lOWsIv1UEadk1KQzBhJzDFYRGVqAi1PH133dH5tq+E
+        xacShrFeCSZxF92afLUAxuQfZoX8DUSEsbiGPJU=
+X-Google-Smtp-Source: AJdET5eH9sR1xiirRZVH8IJ9m0X8+FTD1L1NYucuZ6RjP3Fh6Cw8Q2q1IqoCGHmZFSJN0mnD1zRfA42yqXUuLnQKJaE=
+X-Received: by 2002:a24:140b:: with SMTP id 11-v6mr2390385itg.59.1541294849377;
+ Sat, 03 Nov 2018 18:27:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181103230322.GA62400@gmail.com>
-In-Reply-To: <20181103230322.GA62400@gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 3 Nov 2018 18:15:21 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiC_4gixZiquvZGpDu6rhCE0dWyk4O440jZ3jt7dffGuQ@mail.gmail.com>
-Message-ID: <CAHk-=wiC_4gixZiquvZGpDu6rhCE0dWyk4O440jZ3jt7dffGuQ@mail.gmail.com>
-Subject: Re: [GIT PULL] perf updates/fixes
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        acme@infradead.org, Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        tglx@linutronix.de
+References: <1541264071-9905-1-git-send-email-laoar.shao@gmail.com> <5f585304-b6f5-5f49-adcf-eaed471c0d76@gmail.com>
+In-Reply-To: <5f585304-b6f5-5f49-adcf-eaed471c0d76@gmail.com>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Sun, 4 Nov 2018 09:26:53 +0800
+Message-ID: <CALOAHbBN6KSwK8sHcz04GC2NdsmyNKxWzYKazVt4ZfGvJQDecg@mail.gmail.com>
+Subject: Re: [PATCH] tcp: do not update snd_una if it is same with ack_seq
+To:     Eric Dumazet <eric.dumazet@gmail.com>
+Cc:     David Miller <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 3, 2018 at 4:03 PM Ingo Molnar <mingo@kernel.org> wrote:
+On Sun, Nov 4, 2018 at 8:40 AM Eric Dumazet <eric.dumazet@gmail.com> wrote:
 >
-> These are almost all tooling updates: 'perf top', 'perf trace' and 'perf
-> script' fixes and updates, an UAPI header sync with the merge window
-> versions, license marker updates, much improved Sparc support from David
-> Miller, and a number of fixes.
+>
+>
+> On 11/03/2018 09:54 AM, Yafang Shao wrote:
+> > In the slow path, TCP_SKB_SB(skb)->ack_seq may be same with tp->snd_una,
+> > and under this condition we don't need to update the snd_una.
+> >
+> > Furthermore, tcp_ack_update_window() is only called in slow path,
+> > so introducing this check won't affect the fast path processing.
+> >
+> > By the way, '&' is a little faster than '-', so I replaced after() with
+> > "flag & FLAG_SND_UNA_ADVANCED".
+> >
+> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > ---
+> >  net/ipv4/tcp_input.c | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+> > index 2868ef2..db5a6b7 100644
+> > --- a/net/ipv4/tcp_input.c
+> > +++ b/net/ipv4/tcp_input.c
+> > @@ -3376,7 +3376,8 @@ static int tcp_ack_update_window(struct sock *sk, const struct sk_buff *skb, u32
+> >               }
+> >       }
+> >
+> > -     tcp_snd_una_update(tp, ack);
+> > +     if (after(ack, tp->snd_una))
+> > +             tcp_snd_una_update(tp, ack);
+> >
+>
+> Adding this after() here is confusing, how ack could be before snd_una ?
+> That would be a serious bug.
+>
 
-Pulled,
+ack can't be before snd_una, but it can be equal with snd_una.
+Seems bellow change would be more specific,
+    if (ack != tp->snd_una)
+       tcp_snd_una_update(tp, ack);
 
-                       Linus
+> I do not see why another conditional has any gain here.
+>
+> You are trying to avoid very cheap operations :
+>
+>     u32 delta = ack - tp->snd_una;
+>
+>     tp->bytes_acked += delta;
+>     tp->snd_una = ack;
+>
+> Maybe the real reason for this patch is not explained in the changelog ?
+
+No additional reason. I just want to avoid these uneccessary operations.
+Because I find that this uncessary operations always happen,
+especially when head prediction fails and then the packet can't go to
+fast path processing.
+
+Thanks
+Yafang
