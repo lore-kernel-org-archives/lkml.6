@@ -2,51 +2,49 @@ Return-Path: <SRS0=jXQK=NP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF83FECDE46
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:51:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ECA5C32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 991B12086D
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:51:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A984204FD
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:51:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="djFy+vxq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 991B12086D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LAX140gO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A984204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729900AbeKDXG4 (ORCPT
+        id S1729930AbeKDXG6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:06:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44078 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:06:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44118 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729867AbeKDXGz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:06:55 -0500
+        id S1729902AbeKDXG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:06:58 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9204920854;
-        Sun,  4 Nov 2018 13:51:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 10FDF2086B;
+        Sun,  4 Nov 2018 13:51:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339511;
-        bh=yJj7yxwCd9gAJEYNBBa6SsMFc1+V44MjmokWsyOmifw=;
+        s=default; t=1541339513;
+        bh=OtzCVW2lIBu8DpZMVoqTqFGbqGnAbsinhy4kB3LIBQs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=djFy+vxqhrPBPKsk5h4K7NWCNADLe7Azrdu+sx8HcSyrwhDBwOgPwEftzJryTxbPD
-         cGZbrHzJCGFN4CMGwDawP1WdnIWoXpdgFAHCTHYVUL/VXgjnrF2cKfPkTOI9I/652g
-         O/nok4rYkHuJKPHDHdMlCmykZlatsxSZeIM8Nxfk=
+        b=LAX140gOOfgENy8MUs5lN5Nd+8BA2H81MAgsFYq5DGDEEjM6ansqD472O+7FfvkER
+         JUSC9LoYuAfQEBozcRswZjUVHfIA3K5b14l0aAl9EOOx50USuSlSnNj1q87Zzf5r+k
+         mbJ4U4hof7gMx66TKijlk5vVyHJo0Kt7MNBIQ3Jo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Roman Gushchin <guro@fb.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 04/57] mm: don't raise MEMCG_OOM event due to failed high-order allocation
-Date:   Sun,  4 Nov 2018 08:50:51 -0500
-Message-Id: <20181104135144.88324-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 06/57] userfaultfd: allow get_mempolicy(MPOL_F_NODE|MPOL_F_ADDR) to trigger userfaults
+Date:   Sun,  4 Nov 2018 08:50:53 -0500
+Message-Id: <20181104135144.88324-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135144.88324-1-sashal@kernel.org>
 References: <20181104135144.88324-1-sashal@kernel.org>
@@ -55,102 +53,168 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roman Gushchin <guro@fb.com>
+From: Andrea Arcangeli <aarcange@redhat.com>
 
-[ Upstream commit 7a1adfddaf0d11a39fdcaf6e82a88e9c0586e08b ]
+[ Upstream commit 3b9aadf7278d16d7bed4d5d808501065f70898d8 ]
 
-It was reported that on some of our machines containers were restarted
-with OOM symptoms without an obvious reason.  Despite there were almost no
-memory pressure and plenty of page cache, MEMCG_OOM event was raised
-occasionally, causing the container management software to think, that OOM
-has happened.  However, no tasks have been killed.
+get_mempolicy(MPOL_F_NODE|MPOL_F_ADDR) called a get_user_pages that would
+not be waiting for userfaults before failing and it would hit on a SIGBUS
+instead.  Using get_user_pages_locked/unlocked instead will allow
+get_mempolicy to allow userfaults to resolve the fault and fill the hole,
+before grabbing the node id of the page.
 
-The following investigation showed that the problem is caused by a failing
-attempt to charge a high-order page.  In such case, the OOM killer is
-never invoked.  As shown below, it can happen under conditions, which are
-very far from a real OOM: e.g.  there is plenty of clean page cache and no
-memory pressure.
+If the user calls get_mempolicy() with MPOL_F_ADDR | MPOL_F_NODE for an
+address inside an area managed by uffd and there is no page at that
+address, the page allocation from within get_mempolicy() will fail
+because get_user_pages() does not allow for page fault retry required
+for uffd; the user will get SIGBUS.
 
-There is no sense in raising an OOM event in this case, as it might
-confuse a user and lead to wrong and excessive actions (e.g.  restart the
-workload, as in my case).
+With this patch, the page fault will be resolved by the uffd and the
+get_mempolicy() will continue normally.
 
-Let's look at the charging path in try_charge().  If the memory usage is
-about memory.max, which is absolutely natural for most memory cgroups, we
-try to reclaim some pages.  Even if we were able to reclaim enough memory
-for the allocation, the following check can fail due to a race with
-another concurrent allocation:
+Background:
 
-    if (mem_cgroup_margin(mem_over_limit) >= nr_pages)
-        goto retry;
+Via code review, previously the syscall would have returned -EFAULT
+(vm_fault_to_errno), now it will block and wait for an userfault (if
+it's waken before the fault is resolved it'll still -EFAULT).
 
-For regular pages the following condition will save us from triggering
-the OOM:
+This way get_mempolicy will give a chance to an "unaware" app to be
+compliant with userfaults.
 
-   if (nr_reclaimed && nr_pages <= (1 << PAGE_ALLOC_COSTLY_ORDER))
-       goto retry;
+The reason this visible change is that becoming "userfault compliant"
+cannot regress anything: all other syscalls including read(2)/write(2)
+had to become "userfault compliant" long time ago (that's one of the
+things userfaultfd can do that PROT_NONE and trapping segfaults can't).
 
-But for high-order allocation this condition will intentionally fail.  The
-reason behind is that we'll likely fall to regular pages anyway, so it's
-ok and even preferred to return ENOMEM.
+So this is just one more syscall that become "userfault compliant" like
+all other major ones already were.
 
-In this case the idea of raising MEMCG_OOM looks dubious.
+This has been happening on virtio-bridge dpdk process which just called
+get_mempolicy on the guest space post live migration, but before the
+memory had a chance to be migrated to destination.
 
-Fix this by moving MEMCG_OOM raising to mem_cgroup_oom() after allocation
-order check, so that the event won't be raised for high order allocations.
-This change doesn't affect regular pages allocation and charging.
+I didn't run an strace to be able to show the -EFAULT going away, but
+I've the confirmation of the below debug aid information (only visible
+with CONFIG_DEBUG_VM=y) going away with the patch:
 
-Link: http://lkml.kernel.org/r/20181004214050.7417-1-guro@fb.com
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Acked-by: David Rientjes <rientjes@google.com>
-Acked-by: Michal Hocko <mhocko@kernel.org>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+    [20116.371461] FAULT_FLAG_ALLOW_RETRY missing 0
+    [20116.371464] CPU: 1 PID: 13381 Comm: vhost-events Not tainted 4.17.12-200.fc28.x86_64 #1
+    [20116.371465] Hardware name: LENOVO 20FAS2BN0A/20FAS2BN0A, BIOS N1CET54W (1.22 ) 02/10/2017
+    [20116.371466] Call Trace:
+    [20116.371473]  dump_stack+0x5c/0x80
+    [20116.371476]  handle_userfault.cold.37+0x1b/0x22
+    [20116.371479]  ? remove_wait_queue+0x20/0x60
+    [20116.371481]  ? poll_freewait+0x45/0xa0
+    [20116.371483]  ? do_sys_poll+0x31c/0x520
+    [20116.371485]  ? radix_tree_lookup_slot+0x1e/0x50
+    [20116.371488]  shmem_getpage_gfp+0xce7/0xe50
+    [20116.371491]  ? page_add_file_rmap+0x1a/0x2c0
+    [20116.371493]  shmem_fault+0x78/0x1e0
+    [20116.371495]  ? filemap_map_pages+0x3a1/0x450
+    [20116.371498]  __do_fault+0x1f/0xc0
+    [20116.371500]  __handle_mm_fault+0xe2e/0x12f0
+    [20116.371502]  handle_mm_fault+0xda/0x200
+    [20116.371504]  __get_user_pages+0x238/0x790
+    [20116.371506]  get_user_pages+0x3e/0x50
+    [20116.371510]  kernel_get_mempolicy+0x40b/0x700
+    [20116.371512]  ? vfs_write+0x170/0x1a0
+    [20116.371515]  __x64_sys_get_mempolicy+0x21/0x30
+    [20116.371517]  do_syscall_64+0x5b/0x160
+    [20116.371520]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+The above harmless debug message (not a kernel crash, just a
+dump_stack()) is shown with CONFIG_DEBUG_VM=y to more quickly identify
+and improve kernel spots that may have to become "userfaultfd
+compliant" like this one (without having to run an strace and search
+for syscall misbehavior).  Spots like the above are more closer to a
+kernel bug for the non-cooperative usages that Mike focuses on, than
+for for dpdk qemu-cooperative usages that reproduced it, but it's still
+nicer to get this fixed for dpdk too.
+
+The part of the patch that caused me to think is only the
+implementation issue of mpol_get, but it looks like it should work safe
+no matter the kind of mempolicy structure that is (the default static
+policy also starts at 1 so it'll go to 2 and back to 1 without crashing
+everything at 0).
+
+[rppt@linux.vnet.ibm.com: changelog addition]
+  http://lkml.kernel.org/r/20180904073718.GA26916@rapoport-lnx
+Link: http://lkml.kernel.org/r/20180831214848.23676-1-aarcange@redhat.com
+Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+Reported-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+Tested-by: Dr. David Alan Gilbert <dgilbert@redhat.com>
+Reviewed-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/admin-guide/cgroup-v2.rst | 4 ++++
- mm/memcontrol.c                         | 4 ++--
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ mm/mempolicy.c | 24 +++++++++++++++++++-----
+ 1 file changed, 19 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 184193bcb262..5d9939388a78 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -1127,6 +1127,10 @@ PAGE_SIZE multiple when read back.
- 		disk readahead.  For now OOM in memory cgroup kills
- 		tasks iff shortage has happened inside page fault.
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index da858f794eb6..2e76a8f65e94 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -797,16 +797,19 @@ static void get_policy_nodemask(struct mempolicy *p, nodemask_t *nodes)
+ 	}
+ }
  
-+		This event is not raised if the OOM killer is not
-+		considered as an option, e.g. for failed high-order
-+		allocations.
-+
- 	  oom_kill
- 		The number of processes belonging to this cgroup
- 		killed by any kind of OOM killer.
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index e79cb59552d9..07c7af6f5e59 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -1669,6 +1669,8 @@ static enum oom_status mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int
- 	if (order > PAGE_ALLOC_COSTLY_ORDER)
- 		return OOM_SKIPPED;
+-static int lookup_node(unsigned long addr)
++static int lookup_node(struct mm_struct *mm, unsigned long addr)
+ {
+ 	struct page *p;
+ 	int err;
  
-+	memcg_memory_event(memcg, MEMCG_OOM);
-+
- 	/*
- 	 * We are in the middle of the charge context here, so we
- 	 * don't want to block when potentially sitting on a callstack
-@@ -2250,8 +2252,6 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 	if (fatal_signal_pending(current))
- 		goto force;
+-	err = get_user_pages(addr & PAGE_MASK, 1, 0, &p, NULL);
++	int locked = 1;
++	err = get_user_pages_locked(addr & PAGE_MASK, 1, 0, &p, &locked);
+ 	if (err >= 0) {
+ 		err = page_to_nid(p);
+ 		put_page(p);
+ 	}
++	if (locked)
++		up_read(&mm->mmap_sem);
+ 	return err;
+ }
  
--	memcg_memory_event(mem_over_limit, MEMCG_OOM);
--
- 	/*
- 	 * keep retrying as long as the memcg oom killer is able to make
- 	 * a forward progress or bypass the charge if the oom killer
+@@ -817,7 +820,7 @@ static long do_get_mempolicy(int *policy, nodemask_t *nmask,
+ 	int err;
+ 	struct mm_struct *mm = current->mm;
+ 	struct vm_area_struct *vma = NULL;
+-	struct mempolicy *pol = current->mempolicy;
++	struct mempolicy *pol = current->mempolicy, *pol_refcount = NULL;
+ 
+ 	if (flags &
+ 		~(unsigned long)(MPOL_F_NODE|MPOL_F_ADDR|MPOL_F_MEMS_ALLOWED))
+@@ -857,7 +860,16 @@ static long do_get_mempolicy(int *policy, nodemask_t *nmask,
+ 
+ 	if (flags & MPOL_F_NODE) {
+ 		if (flags & MPOL_F_ADDR) {
+-			err = lookup_node(addr);
++			/*
++			 * Take a refcount on the mpol, lookup_node()
++			 * wil drop the mmap_sem, so after calling
++			 * lookup_node() only "pol" remains valid, "vma"
++			 * is stale.
++			 */
++			pol_refcount = pol;
++			vma = NULL;
++			mpol_get(pol);
++			err = lookup_node(mm, addr);
+ 			if (err < 0)
+ 				goto out;
+ 			*policy = err;
+@@ -892,7 +904,9 @@ static long do_get_mempolicy(int *policy, nodemask_t *nmask,
+  out:
+ 	mpol_cond_put(pol);
+ 	if (vma)
+-		up_read(&current->mm->mmap_sem);
++		up_read(&mm->mmap_sem);
++	if (pol_refcount)
++		mpol_put(pol_refcount);
+ 	return err;
+ }
+ 
 -- 
 2.17.1
 
