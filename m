@@ -2,110 +2,179 @@ Return-Path: <SRS0=jXQK=NP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 966E3ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:34:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37B26C32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:51:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AFE020854
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:34:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AFE020854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id D3D872082E
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:51:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yqp9HAJm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3D872082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729503AbeKDWtg (ORCPT
+        id S1729567AbeKDXGv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 17:49:36 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:44590 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728897AbeKDWtg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 17:49:36 -0500
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 28A6572CC68;
-        Sun,  4 Nov 2018 16:34:32 +0300 (MSK)
-Received: from beacon.altlinux.org (unknown [185.6.174.98])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 0227D4A4A29;
-        Sun,  4 Nov 2018 16:34:31 +0300 (MSK)
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Vitaly Chikunov <vt@altlinux.org>
-Subject: [PATCH] crypto: ecc - regularize scalar for scalar multiplication
-Date:   Sun,  4 Nov 2018 16:34:20 +0300
-Message-Id: <20181104133420.15783-1-vt@altlinux.org>
-X-Mailer: git-send-email 2.11.0
+        Sun, 4 Nov 2018 18:06:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43958 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729479AbeKDXGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:06:51 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EEE472082E;
+        Sun,  4 Nov 2018 13:51:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541339506;
+        bh=6mLMxvWq1b5Wgb1O0XaUhDi1D4EP82leXGTlxVcdTvQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=yqp9HAJm6OPDwtb9mhjNPdfmVTryiej+i8wt0bXzppy8ozSK45Ig/SMJ6X3h/M8Pm
+         D/MDeTXeqtfkyBm6owi+Zh03HewzTwN8udCO3z7jgNkUnLelj/8rYKLzWJ4Hy8Rq3N
+         JGFD88gW2/uUw1LWjrg4YCgW5xBJAIU148tcUm8E=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 01/57] mm: thp: fix MADV_DONTNEED vs migrate_misplaced_transhuge_page race condition
+Date:   Sun,  4 Nov 2018 08:50:48 -0500
+Message-Id: <20181104135144.88324-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ecc_point_mult is supposed to be used with a regularized scalar,
-otherwise, it's possible to deduce the position of the top bit of the
-scalar with timing attack.
+From: Andrea Arcangeli <aarcange@redhat.com>
 
-ecc_point_mult is already using a regular algorithm (i.e. having an
-operation flow independent of the input scalar) but regularization step
-is forgotten.
+[ Upstream commit d7c3393413fe7e7dc54498ea200ea94742d61e18 ]
 
-Regularization step is based on micro-ecc by Kenneth MacKay.
+Patch series "migrate_misplaced_transhuge_page race conditions".
 
-Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+Aaron found a new instance of the THP MADV_DONTNEED race against
+pmdp_clear_flush* variants, that was apparently left unfixed.
+
+While looking into the race found by Aaron, I may have found two more
+issues in migrate_misplaced_transhuge_page.
+
+These race conditions would not cause kernel instability, but they'd
+corrupt userland data or leave data non zero after MADV_DONTNEED.
+
+I did only minor testing, and I don't expect to be able to reproduce this
+(especially the lack of ->invalidate_range before migrate_page_copy,
+requires the latest iommu hardware or infiniband to reproduce).  The last
+patch is noop for x86 and it needs further review from maintainers of
+archs that implement flush_cache_range() (not in CC yet).
+
+To avoid confusion, it's not the first patch that introduces the bug fixed
+in the second patch, even before removing the
+pmdp_huge_clear_flush_notify, that _notify suffix was called after
+migrate_page_copy already run.
+
+This patch (of 3):
+
+This is a corollary of ced108037c2aa ("thp: fix MADV_DONTNEED vs.  numa
+balancing race"), 58ceeb6bec8 ("thp: fix MADV_DONTNEED vs.  MADV_FREE
+race") and 5b7abeae3af8c ("thp: fix MADV_DONTNEED vs clear soft dirty
+race).
+
+When the above three fixes where posted Dave asked
+https://lkml.kernel.org/r/929b3844-aec2-0111-fef7-8002f9d4e2b9@intel.com
+but apparently this was missed.
+
+The pmdp_clear_flush* in migrate_misplaced_transhuge_page() was introduced
+in a54a407fbf7 ("mm: Close races between THP migration and PMD numa
+clearing").
+
+The important part of such commit is only the part where the page lock is
+not released until the first do_huge_pmd_numa_page() finished disarming
+the pagenuma/protnone.
+
+The addition of pmdp_clear_flush() wasn't beneficial to such commit and
+there's no commentary about such an addition either.
+
+I guess the pmdp_clear_flush() in such commit was added just in case for
+safety, but it ended up introducing the MADV_DONTNEED race condition found
+by Aaron.
+
+At that point in time nobody thought of such kind of MADV_DONTNEED race
+conditions yet (they were fixed later) so the code may have looked more
+robust by adding the pmdp_clear_flush().
+
+This specific race condition won't destabilize the kernel, but it can
+confuse userland because after MADV_DONTNEED the memory won't be zeroed
+out.
+
+This also optimizes the code and removes a superfluous TLB flush.
+
+[akpm@linux-foundation.org: reflow comment to 80 cols, fix grammar and typo (beacuse)]
+Link: http://lkml.kernel.org/r/20181013002430.698-2-aarcange@redhat.com
+Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+Reported-by: Aaron Tomlin <atomlin@redhat.com>
+Acked-by: Mel Gorman <mgorman@suse.de>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Jerome Glisse <jglisse@redhat.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/ecc.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ mm/migrate.c | 25 ++++++++++++++++++-------
+ 1 file changed, 18 insertions(+), 7 deletions(-)
 
-diff --git a/crypto/ecc.c b/crypto/ecc.c
-index 8facafd67802..adcce310f646 100644
---- a/crypto/ecc.c
-+++ b/crypto/ecc.c
-@@ -842,15 +842,23 @@ static void xycz_add_c(u64 *x1, u64 *y1, u64 *x2, u64 *y2, u64 *curve_prime,
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 84381b55b2bd..1f634b1563b6 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -2029,15 +2029,26 @@ int migrate_misplaced_transhuge_page(struct mm_struct *mm,
+ 	entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
  
- static void ecc_point_mult(struct ecc_point *result,
- 			   const struct ecc_point *point, const u64 *scalar,
--			   u64 *initial_z, u64 *curve_prime,
-+			   u64 *initial_z, const struct ecc_curve *curve,
- 			   unsigned int ndigits)
- {
- 	/* R0 and R1 */
- 	u64 rx[2][ECC_MAX_DIGITS];
- 	u64 ry[2][ECC_MAX_DIGITS];
- 	u64 z[ECC_MAX_DIGITS];
-+	u64 sk[2][ECC_MAX_DIGITS];
-+	u64 *curve_prime = curve->p;
- 	int i, nb;
--	int num_bits = vli_num_bits(scalar, ndigits);
-+	int num_bits;
-+	int carry;
-+
-+	carry = vli_add(sk[0], scalar, curve->n, ndigits);
-+	vli_add(sk[1], sk[0], curve->n, ndigits);
-+	scalar = sk[!carry];
-+	num_bits = sizeof(u64) * ndigits * 8 + 1;
+ 	/*
+-	 * Clear the old entry under pagetable lock and establish the new PTE.
+-	 * Any parallel GUP will either observe the old page blocking on the
+-	 * page lock, block on the page table lock or observe the new page.
+-	 * The SetPageUptodate on the new page and page_add_new_anon_rmap
+-	 * guarantee the copy is visible before the pagetable update.
++	 * Overwrite the old entry under pagetable lock and establish
++	 * the new PTE. Any parallel GUP will either observe the old
++	 * page blocking on the page lock, block on the page table
++	 * lock or observe the new page. The SetPageUptodate on the
++	 * new page and page_add_new_anon_rmap guarantee the copy is
++	 * visible before the pagetable update.
+ 	 */
+ 	flush_cache_range(vma, mmun_start, mmun_end);
+ 	page_add_anon_rmap(new_page, vma, mmun_start, true);
+-	pmdp_huge_clear_flush_notify(vma, mmun_start, pmd);
++	/*
++	 * At this point the pmd is numa/protnone (i.e. non present) and the TLB
++	 * has already been flushed globally.  So no TLB can be currently
++	 * caching this non present pmd mapping.  There's no need to clear the
++	 * pmd before doing set_pmd_at(), nor to flush the TLB after
++	 * set_pmd_at().  Clearing the pmd here would introduce a race
++	 * condition against MADV_DONTNEED, because MADV_DONTNEED only holds the
++	 * mmap_sem for reading.  If the pmd is set to NULL at any given time,
++	 * MADV_DONTNEED won't wait on the pmd lock and it'll skip clearing this
++	 * pmd.
++	 */
+ 	set_pmd_at(mm, mmun_start, pmd, entry);
+ 	update_mmu_cache_pmd(vma, address, &entry);
  
- 	vli_set(rx[1], point->x, ndigits);
- 	vli_set(ry[1], point->y, ndigits);
-@@ -1004,7 +1012,7 @@ int ecc_make_pub_key(unsigned int curve_id, unsigned int ndigits,
- 		goto out;
- 	}
+@@ -2051,7 +2062,7 @@ int migrate_misplaced_transhuge_page(struct mm_struct *mm,
+ 	 * No need to double call mmu_notifier->invalidate_range() callback as
+ 	 * the above pmdp_huge_clear_flush_notify() did already call it.
+ 	 */
+-	mmu_notifier_invalidate_range_only_end(mm, mmun_start, mmun_end);
++	mmu_notifier_invalidate_range_end(mm, mmun_start, mmun_end);
  
--	ecc_point_mult(pk, &curve->g, priv, NULL, curve->p, ndigits);
-+	ecc_point_mult(pk, &curve->g, priv, NULL, curve, ndigits);
- 	if (ecc_point_is_zero(pk)) {
- 		ret = -EAGAIN;
- 		goto err_free_point;
-@@ -1090,7 +1098,7 @@ int crypto_ecdh_shared_secret(unsigned int curve_id, unsigned int ndigits,
- 		goto err_alloc_product;
- 	}
- 
--	ecc_point_mult(product, pk, priv, rand_z, curve->p, ndigits);
-+	ecc_point_mult(product, pk, priv, rand_z, curve, ndigits);
- 
- 	ecc_swap_digits(product->x, secret, ndigits);
- 
+ 	/* Take an "isolate" reference and put new page on the LRU. */
+ 	get_page(new_page);
 -- 
-2.11.0
+2.17.1
 
