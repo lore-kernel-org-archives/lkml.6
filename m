@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5681AECDE46
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E786ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14FF72086C
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 653A32085B
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZE2aYLdy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14FF72086C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uOqXIuE1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 653A32085B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731579AbeKDXJN (ORCPT
+        id S1731595AbeKDXJO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:09:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48712 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:09:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48794 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731519AbeKDXJM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:09:12 -0500
+        id S1731580AbeKDXJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:09:13 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C24820866;
-        Sun,  4 Nov 2018 13:54:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 289692087A;
+        Sun,  4 Nov 2018 13:54:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339647;
-        bh=Pa28+Q6y+C1zStN5e2/3OXjPfCNvcJENN1jpu4U9uTw=;
+        s=default; t=1541339649;
+        bh=I+9mpVB2hiqVIS9/V1kkHxylATbjP0qUHJjvL2B/H9g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZE2aYLdyPM/shliQSD0msaXVTcdA8tHwjI4hI3CsBwzJipTqdWuS5DpL63lIHnUy4
-         tneHkcE5a5U4fayZR4zPFmm2YjZW7hdAOy+0muYAOupFhWzrqtkBg34Bh71FDrdXUh
-         zeoBzTUeNvTdKgRAObZXfqY7/UrQoQVj/F+iA6BA=
+        b=uOqXIuE14/m24qgP6fsarae0mr3J2ZeKoEATHXWOHwZvbn0i+DMFA/ch4fko2T5X+
+         O2bUmUzXViyfodhmBgGvIXLAG+V2E8rfuIft+7MKDkpcPx/yYcK+B4ULTxAFnqupSG
+         5gl8MQiZeigVtLnk+qJ+iLOTng5n7CGKz4q51C44=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Eugen Hristev <eugen.hristev@microchip.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Stable@vger.kernel.org,
+Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>, Stable@vger.kernel.org,
         Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 11/21] iio: adc: at91: fix acking DRDY irq on simple conversions
-Date:   Sun,  4 Nov 2018 08:53:45 -0500
-Message-Id: <20181104135355.88602-11-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 13/21] iio: adc: imx25-gcq: Fix leak of device_node in mx25_gcq_setup_cfgs()
+Date:   Sun,  4 Nov 2018 08:53:47 -0500
+Message-Id: <20181104135355.88602-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135355.88602-1-sashal@kernel.org>
 References: <20181104135355.88602-1-sashal@kernel.org>
@@ -55,41 +53,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugen Hristev <eugen.hristev@microchip.com>
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
 
-[ Upstream commit bc1b45326223e7e890053cf6266357adfa61942d ]
+[ Upstream commit d3fa21c73c391975488818b085b894c2980ea052 ]
 
-When doing simple conversions, the driver did not acknowledge the DRDY irq.
-If this irq status is not acked, it will be left pending, and as soon as a
-trigger is enabled, the irq handler will be called, it doesn't know why
-this status has occurred because no channel is pending, and then it will go
-int a irq loop and board will hang.
-To avoid this situation, read the LCDR after a raw conversion is done.
+Leaving for_each_child_of_node loop we should release child device node,
+if it is not stored for future use.
 
-Fixes: 0e589d5fb ("ARM: AT91: IIO: Add AT91 ADC driver.")
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Found by Linux Driver Verification project (linuxtesting.org).
+
+JC: I'm not sending this as a quick fix as it's been wrong for years,
+but good to pick up for stable after the merge window.
+
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Fixes: 6df2e98c3ea56 ("iio: adc: Add imx25-gcq ADC driver")
 Cc: <Stable@vger.kernel.org>
 Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/adc/at91_adc.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/iio/adc/fsl-imx25-gcq.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/iio/adc/at91_adc.c b/drivers/iio/adc/at91_adc.c
-index 1ba69bbc3142..e3e2155b0386 100644
---- a/drivers/iio/adc/at91_adc.c
-+++ b/drivers/iio/adc/at91_adc.c
-@@ -280,6 +280,8 @@ static void handle_adc_eoc_trigger(int irq, struct iio_dev *idev)
- 		iio_trigger_poll(idev->trig);
- 	} else {
- 		st->last_value = at91_adc_readl(st, AT91_ADC_CHAN(st, st->chnb));
-+		/* Needed to ACK the DRDY interruption */
-+		at91_adc_readl(st, AT91_ADC_LCDR);
- 		st->done = true;
- 		wake_up_interruptible(&st->wq_data_avail);
- 	}
+diff --git a/drivers/iio/adc/fsl-imx25-gcq.c b/drivers/iio/adc/fsl-imx25-gcq.c
+index ea264fa9e567..929c617db364 100644
+--- a/drivers/iio/adc/fsl-imx25-gcq.c
++++ b/drivers/iio/adc/fsl-imx25-gcq.c
+@@ -209,12 +209,14 @@ static int mx25_gcq_setup_cfgs(struct platform_device *pdev,
+ 		ret = of_property_read_u32(child, "reg", &reg);
+ 		if (ret) {
+ 			dev_err(dev, "Failed to get reg property\n");
++			of_node_put(child);
+ 			return ret;
+ 		}
+ 
+ 		if (reg >= MX25_NUM_CFGS) {
+ 			dev_err(dev,
+ 				"reg value is greater than the number of available configuration registers\n");
++			of_node_put(child);
+ 			return -EINVAL;
+ 		}
+ 
+@@ -228,6 +230,7 @@ static int mx25_gcq_setup_cfgs(struct platform_device *pdev,
+ 			if (IS_ERR(priv->vref[refp])) {
+ 				dev_err(dev, "Error, trying to use external voltage reference without a vref-%s regulator.",
+ 					mx25_gcq_refp_names[refp]);
++				of_node_put(child);
+ 				return PTR_ERR(priv->vref[refp]);
+ 			}
+ 			priv->channel_vref_mv[reg] =
+@@ -240,6 +243,7 @@ static int mx25_gcq_setup_cfgs(struct platform_device *pdev,
+ 			break;
+ 		default:
+ 			dev_err(dev, "Invalid positive reference %d\n", refp);
++			of_node_put(child);
+ 			return -EINVAL;
+ 		}
+ 
+@@ -254,10 +258,12 @@ static int mx25_gcq_setup_cfgs(struct platform_device *pdev,
+ 
+ 		if ((refp & MX25_ADCQ_CFG_REFP_MASK) != refp) {
+ 			dev_err(dev, "Invalid fsl,adc-refp property value\n");
++			of_node_put(child);
+ 			return -EINVAL;
+ 		}
+ 		if ((refn & MX25_ADCQ_CFG_REFN_MASK) != refn) {
+ 			dev_err(dev, "Invalid fsl,adc-refn property value\n");
++			of_node_put(child);
+ 			return -EINVAL;
+ 		}
+ 
 -- 
 2.17.1
 
