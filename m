@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6053CC32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 18:28:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70517ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 18:28:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 237B62081D
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 18:28:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 237B62081D
+	by mail.kernel.org (Postfix) with ESMTP id 388912085A
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 18:28:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 388912085A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387676AbeKEDoY (ORCPT
+        id S2387691AbeKEDo2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 22:44:24 -0500
-Received: from mailoutvs52.siol.net ([185.57.226.243]:47654 "EHLO
+        Sun, 4 Nov 2018 22:44:28 -0500
+Received: from mailoutvs47.siol.net ([185.57.226.238]:47684 "EHLO
         mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2387652AbeKEDoY (ORCPT
+        with ESMTP id S2387652AbeKEDo2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 22:44:24 -0500
+        Sun, 4 Nov 2018 22:44:28 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 3844E521270;
-        Sun,  4 Nov 2018 19:28:29 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTP id A67B35212A6;
+        Sun,  4 Nov 2018 19:28:31 +0100 (CET)
 X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
 Received: from mail.siol.net ([127.0.0.1])
         by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id djkLuTLNZFoX; Sun,  4 Nov 2018 19:28:28 +0100 (CET)
+        with ESMTP id viC8X3ONyPiJ; Sun,  4 Nov 2018 19:28:31 +0100 (CET)
 Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id C1B5D521233;
-        Sun,  4 Nov 2018 19:28:28 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTPS id 3B630521292;
+        Sun,  4 Nov 2018 19:28:31 +0100 (CET)
 Received: from localhost.localdomain (cpe1-8-82.cable.triera.net [213.161.8.82])
         (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id 5DD90521270;
-        Sun,  4 Nov 2018 19:28:26 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTPSA id C8B895212A6;
+        Sun,  4 Nov 2018 19:28:28 +0100 (CET)
 From:   Jernej Skrabec <jernej.skrabec@siol.net>
 To:     maxime.ripard@bootlin.com, wens@csie.org
 Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
@@ -45,9 +45,9 @@ Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-sunxi@googlegroups.com, jernej.skrabec@siol.net
-Subject: [PATCH v3 21/28] drm/sun4i: Add support for Synopsys HDMI PHY
-Date:   Sun,  4 Nov 2018 19:26:58 +0100
-Message-Id: <20181104182705.18047-22-jernej.skrabec@siol.net>
+Subject: [PATCH v3 22/28] drm/sun4i: Add support for H6 HDMI PHY
+Date:   Sun,  4 Nov 2018 19:26:59 +0100
+Message-Id: <20181104182705.18047-23-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181104182705.18047-1-jernej.skrabec@siol.net>
 References: <20181104182705.18047-1-jernej.skrabec@siol.net>
@@ -58,132 +58,196 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently sun8i-hdmi-phy driver supports only custom PHYs connected to
-DW HDMI controller. Since newest Allwinner SoCs have unmodified Synopsys
-PHY, driver has to be reorganized to support them.
+H6 has Synopsys DWC HDMI 2.0 TX PHY.
 
-Variant structure is expanded to allow differentiation between custom
-and Sysnopsys PHYs and to hold Synopsys PHY settings.
+There is no freely available documentation for it, only code found in
+BSP kernel. However, judging by the code, PHY is very similar to older
+Synopsys HDMI PHY described in i.MX6 documentation. Most registers seem
+to be the same.
 
-Since DW HDMI bridge platform data has different fields for custom and
-Sysnopsys PHY, function sun8i_hdmi_phy_get_ops() is replaced with
-sun8i_hdmi_phy_set_ops().
+According to i.MX6 documentation, mpll settings are based on pixel clock
+and are not specific to each SoC. Because of that, mpll table in this
+commit is based on that documentation and not on BSP code. Other PHY
+settings were derived from BSP PHY driver code.
 
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c  |  4 +---
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h  |  7 ++++++-
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 19 +++++++++++++++++--
- 3 files changed, 24 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 137 +++++++++++++++++++++++++
+ 1 file changed, 137 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c b/drivers/gpu/drm/sun4=
-i/sun8i_dw_hdmi.c
-index 445cca8d9a26..dc47720c99ba 100644
---- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-@@ -184,9 +184,7 @@ static int sun8i_dw_hdmi_bind(struct device *dev, str=
-uct device *master,
- 	sun8i_hdmi_phy_init(hdmi->phy);
-=20
- 	plat_data->mode_valid =3D hdmi->quirks->mode_valid;
--	plat_data->phy_ops =3D sun8i_hdmi_phy_get_ops();
--	plat_data->phy_name =3D "sun8i_dw_hdmi_phy";
--	plat_data->phy_data =3D hdmi->phy;
-+	sun8i_hdmi_phy_set_ops(hdmi->phy, plat_data);
-=20
- 	platform_set_drvdata(pdev, hdmi);
-=20
-diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4=
-i/sun8i_dw_hdmi.h
-index 49c9e80c46ea..720c5aa8adc1 100644
---- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-+++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-@@ -150,6 +150,10 @@ struct sun8i_hdmi_phy;
- struct sun8i_hdmi_phy_variant {
- 	bool has_phy_clk;
- 	bool has_second_pll;
-+	unsigned int is_custom_phy : 1;
-+	const struct dw_hdmi_curr_ctrl *cur_ctr;
-+	const struct dw_hdmi_mpll_config *mpll_cfg;
-+	const struct dw_hdmi_phy_config *phy_cfg;
- 	void (*phy_init)(struct sun8i_hdmi_phy *phy);
- 	void (*phy_disable)(struct dw_hdmi *hdmi,
- 			    struct sun8i_hdmi_phy *phy);
-@@ -198,7 +202,8 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, =
-struct device_node *node);
- void sun8i_hdmi_phy_remove(struct sun8i_dw_hdmi *hdmi);
-=20
- void sun8i_hdmi_phy_init(struct sun8i_hdmi_phy *phy);
--const struct dw_hdmi_phy_ops *sun8i_hdmi_phy_get_ops(void);
-+void sun8i_hdmi_phy_set_ops(struct sun8i_hdmi_phy *phy,
-+			    struct dw_hdmi_plat_data *plat_data);
-=20
- int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev,
- 			 bool second_parent);
 diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun=
 4i/sun8i_hdmi_phy.c
-index adc3ba7df7e3..635825b55648 100644
+index 635825b55648..66ea3a902e36 100644
 --- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
 +++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-@@ -390,9 +390,20 @@ void sun8i_hdmi_phy_init(struct sun8i_hdmi_phy *phy)
- 	phy->variant->phy_init(phy);
- }
+@@ -14,6 +14,122 @@
+  */
+ #define I2C_ADDR	0x69
 =20
--const struct dw_hdmi_phy_ops *sun8i_hdmi_phy_get_ops(void)
-+void sun8i_hdmi_phy_set_ops(struct sun8i_hdmi_phy *phy,
-+			    struct dw_hdmi_plat_data *plat_data)
- {
--	return &sun8i_hdmi_phy_ops;
-+	struct sun8i_hdmi_phy_variant *variant =3D phy->variant;
-+
-+	if (variant->is_custom_phy) {
-+		plat_data->phy_ops =3D &sun8i_hdmi_phy_ops;
-+		plat_data->phy_name =3D "sun8i_dw_hdmi_phy";
-+		plat_data->phy_data =3D phy;
-+	} else {
-+		plat_data->mpll_cfg =3D variant->mpll_cfg;
-+		plat_data->cur_ctr =3D variant->cur_ctr;
-+		plat_data->phy_config =3D variant->phy_cfg;
++static const struct dw_hdmi_mpll_config sun50i_h6_mpll_cfg[] =3D {
++	{
++		30666000, {
++			{ 0x00b3, 0x0000 },
++			{ 0x2153, 0x0000 },
++			{ 0x40f3, 0x0000 },
++		},
++	},  {
++		36800000, {
++			{ 0x00b3, 0x0000 },
++			{ 0x2153, 0x0000 },
++			{ 0x40a2, 0x0001 },
++		},
++	},  {
++		46000000, {
++			{ 0x00b3, 0x0000 },
++			{ 0x2142, 0x0001 },
++			{ 0x40a2, 0x0001 },
++		},
++	},  {
++		61333000, {
++			{ 0x0072, 0x0001 },
++			{ 0x2142, 0x0001 },
++			{ 0x40a2, 0x0001 },
++		},
++	},  {
++		73600000, {
++			{ 0x0072, 0x0001 },
++			{ 0x2142, 0x0001 },
++			{ 0x4061, 0x0002 },
++		},
++	},  {
++		92000000, {
++			{ 0x0072, 0x0001 },
++			{ 0x2145, 0x0002 },
++			{ 0x4061, 0x0002 },
++		},
++	},  {
++		122666000, {
++			{ 0x0051, 0x0002 },
++			{ 0x2145, 0x0002 },
++			{ 0x4061, 0x0002 },
++		},
++	},  {
++		147200000, {
++			{ 0x0051, 0x0002 },
++			{ 0x2145, 0x0002 },
++			{ 0x4064, 0x0003 },
++		},
++	},  {
++		184000000, {
++			{ 0x0051, 0x0002 },
++			{ 0x214c, 0x0003 },
++			{ 0x4064, 0x0003 },
++		},
++	},  {
++		226666000, {
++			{ 0x0040, 0x0003 },
++			{ 0x214c, 0x0003 },
++			{ 0x4064, 0x0003 },
++		},
++	},  {
++		272000000, {
++			{ 0x0040, 0x0003 },
++			{ 0x214c, 0x0003 },
++			{ 0x5a64, 0x0003 },
++		},
++	},  {
++		340000000, {
++			{ 0x0040, 0x0003 },
++			{ 0x3b4c, 0x0003 },
++			{ 0x5a64, 0x0003 },
++		},
++	},  {
++		594000000, {
++			{ 0x1a40, 0x0003 },
++			{ 0x3b4c, 0x0003 },
++			{ 0x5a64, 0x0003 },
++		},
++	}, {
++		~0UL, {
++			{ 0x0000, 0x0000 },
++			{ 0x0000, 0x0000 },
++			{ 0x0000, 0x0000 },
++		},
 +	}
++};
++
++static const struct dw_hdmi_curr_ctrl sun50i_h6_cur_ctr[] =3D {
++	/* pixelclk    bpp8    bpp10   bpp12 */
++	{ 25175000,  { 0x0000, 0x0000, 0x0000 }, },
++	{ 27000000,  { 0x0012, 0x0000, 0x0000 }, },
++	{ 59400000,  { 0x0008, 0x0008, 0x0008 }, },
++	{ 72000000,  { 0x0008, 0x0008, 0x001b }, },
++	{ 74250000,  { 0x0013, 0x0013, 0x0013 }, },
++	{ 90000000,  { 0x0008, 0x001a, 0x001b }, },
++	{ 118800000, { 0x001b, 0x001a, 0x001b }, },
++	{ 144000000, { 0x001b, 0x001a, 0x0034 }, },
++	{ 180000000, { 0x001b, 0x0033, 0x0034 }, },
++	{ 216000000, { 0x0036, 0x0033, 0x0034 }, },
++	{ 237600000, { 0x0036, 0x0033, 0x001b }, },
++	{ 288000000, { 0x0036, 0x001b, 0x001b }, },
++	{ 297000000, { 0x0019, 0x001b, 0x0019 }, },
++	{ 330000000, { 0x0036, 0x001b, 0x001b }, },
++	{ 594000000, { 0x003f, 0x001b, 0x001b }, },
++	{ ~0UL,      { 0x0000, 0x0000, 0x0000 }, }
++};
++
++static const struct dw_hdmi_phy_config sun50i_h6_phy_config[] =3D {
++	/*pixelclk   symbol   term   vlev*/
++	{ 74250000,  0x8009, 0x0004, 0x0232},
++	{ 148500000, 0x8029, 0x0004, 0x0273},
++	{ 594000000, 0x8039, 0x0004, 0x014a},
++	{ ~0UL,	     0x0000, 0x0000, 0x0000}
++};
++
+ static int sun8i_hdmi_phy_config_a83t(struct dw_hdmi *hdmi,
+ 				      struct sun8i_hdmi_phy *phy,
+ 				      unsigned int clk_rate)
+@@ -290,6 +406,16 @@ static void sun8i_hdmi_phy_unlock(struct sun8i_hdmi_=
+phy *phy)
+ 		     SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC);
  }
 =20
- static struct regmap_config sun8i_hdmi_phy_regmap_config =3D {
-@@ -404,6 +415,7 @@ static struct regmap_config sun8i_hdmi_phy_regmap_con=
-fig =3D {
++static void sun50i_hdmi_phy_init_h6(struct sun8i_hdmi_phy *phy)
++{
++	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_REXT_CTRL_REG,
++			   SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN,
++			   SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN);
++
++	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_REXT_CTRL_REG,
++			   0xffff0000, 0x80c00000);
++}
++
+ static void sun8i_hdmi_phy_init_a83t(struct sun8i_hdmi_phy *phy)
+ {
+ 	sun8i_hdmi_phy_unlock(phy);
+@@ -446,6 +572,13 @@ static const struct sun8i_hdmi_phy_variant sun50i_a6=
+4_hdmi_phy =3D {
+ 	.phy_config =3D &sun8i_hdmi_phy_config_h3,
  };
 =20
- static const struct sun8i_hdmi_phy_variant sun8i_a83t_hdmi_phy =3D {
-+	.is_custom_phy =3D true,
- 	.phy_init =3D &sun8i_hdmi_phy_init_a83t,
- 	.phy_disable =3D &sun8i_hdmi_phy_disable_a83t,
- 	.phy_config =3D &sun8i_hdmi_phy_config_a83t,
-@@ -411,6 +423,7 @@ static const struct sun8i_hdmi_phy_variant sun8i_a83t=
-_hdmi_phy =3D {
++static const struct sun8i_hdmi_phy_variant sun50i_h6_hdmi_phy =3D {
++	.cur_ctr  =3D sun50i_h6_cur_ctr,
++	.mpll_cfg =3D sun50i_h6_mpll_cfg,
++	.phy_cfg  =3D sun50i_h6_phy_config,
++	.phy_init =3D &sun50i_hdmi_phy_init_h6,
++};
++
+ static const struct of_device_id sun8i_hdmi_phy_of_table[] =3D {
+ 	{
+ 		.compatible =3D "allwinner,sun8i-a83t-hdmi-phy",
+@@ -463,6 +596,10 @@ static const struct of_device_id sun8i_hdmi_phy_of_t=
+able[] =3D {
+ 		.compatible =3D "allwinner,sun50i-a64-hdmi-phy",
+ 		.data =3D &sun50i_a64_hdmi_phy,
+ 	},
++	{
++		.compatible =3D "allwinner,sun50i-h6-hdmi-phy",
++		.data =3D &sun50i_h6_hdmi_phy,
++	},
+ 	{ /* sentinel */ }
+ };
 =20
- static const struct sun8i_hdmi_phy_variant sun8i_h3_hdmi_phy =3D {
- 	.has_phy_clk =3D true,
-+	.is_custom_phy =3D true,
- 	.phy_init =3D &sun8i_hdmi_phy_init_h3,
- 	.phy_disable =3D &sun8i_hdmi_phy_disable_h3,
- 	.phy_config =3D &sun8i_hdmi_phy_config_h3,
-@@ -419,6 +432,7 @@ static const struct sun8i_hdmi_phy_variant sun8i_h3_h=
-dmi_phy =3D {
- static const struct sun8i_hdmi_phy_variant sun8i_r40_hdmi_phy =3D {
- 	.has_phy_clk =3D true,
- 	.has_second_pll =3D true,
-+	.is_custom_phy =3D true,
- 	.phy_init =3D &sun8i_hdmi_phy_init_h3,
- 	.phy_disable =3D &sun8i_hdmi_phy_disable_h3,
- 	.phy_config =3D &sun8i_hdmi_phy_config_h3,
-@@ -426,6 +440,7 @@ static const struct sun8i_hdmi_phy_variant sun8i_r40_=
-hdmi_phy =3D {
-=20
- static const struct sun8i_hdmi_phy_variant sun50i_a64_hdmi_phy =3D {
- 	.has_phy_clk =3D true,
-+	.is_custom_phy =3D true,
- 	.phy_init =3D &sun8i_hdmi_phy_init_h3,
- 	.phy_disable =3D &sun8i_hdmi_phy_disable_h3,
- 	.phy_config =3D &sun8i_hdmi_phy_config_h3,
 --=20
 2.19.1
 
