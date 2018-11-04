@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD0A9ECDE46
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB223ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 795072085A
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7642220862
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wcTisWk5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 795072085A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZPZ4CIQU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7642220862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731801AbeKDXJg (ORCPT
+        id S1731812AbeKDXJh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:09:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49488 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:09:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731718AbeKDXJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:09:35 -0500
+        id S1731780AbeKDXJg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:09:36 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5AAD920866;
-        Sun,  4 Nov 2018 13:54:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30D3F2085A;
+        Sun,  4 Nov 2018 13:54:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339670;
-        bh=z5Kr/qTguG8b1re4v8AdmuX476ERBM0URmsnuPC/YGY=;
+        s=default; t=1541339671;
+        bh=KdhrVzEMmNZRPn5Bm1Cbb6UP4zcXXB2vP/vBJ40Zlvk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wcTisWk5kvzE15oGScU0vu5EPzA/YRZ8ZVDQf2j3dQyKbQclURnAdPEMHr48Xn0DL
-         VRLpy/x7iT1vp4NnGtzHUQZ0Lem2UyhlALrMW8refvCHXC/oYH7voDZK2blmXtVsM+
-         ZMmC64/b9mCsMGeTXDuegq0sSBs/JTLlXzj0dqbY=
+        b=ZPZ4CIQUQGe/IoVhq2CPA932uJDECkQlaGLjdxTvjMSOsCkfpfOFEJQekW0xldK6x
+         gbSXkjHQShBS/yk5Ms7OgYaEe2XMo5xpKSW2LzKxvnQLczmdokBmnlJ//OGbDYVgPT
+         NpdLCewWCWkbFp3vFTcdfar4V9x9bnKpPpD9V0J0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Phil Elwell <phil@raspberrypi.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     Marco Felsch <m.felsch@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 12/15] sc16is7xx: Fix for multi-channel stall
-Date:   Sun,  4 Nov 2018 08:54:14 -0500
-Message-Id: <20181104135417.88671-12-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 13/15] media: tvp5150: fix width alignment during set_selection()
+Date:   Sun,  4 Nov 2018 08:54:15 -0500
+Message-Id: <20181104135417.88671-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135417.88671-1-sashal@kernel.org>
 References: <20181104135417.88671-1-sashal@kernel.org>
@@ -53,118 +53,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Phil Elwell <phil@raspberrypi.org>
+From: Marco Felsch <m.felsch@pengutronix.de>
 
-[ Upstream commit 8344498721059754e09d30fe255a12dab8fb03ef ]
+[ Upstream commit bd24db04101f45a9c1d874fe21b0c7eab7bcadec ]
 
-The SC16IS752 is a dual-channel device. The two channels are largely
-independent, but the IRQ signals are wired together as an open-drain,
-active low signal which will be driven low while either of the
-channels requires attention, which can be for significant periods of
-time until operations complete and the interrupt can be acknowledged.
-In that respect it is should be treated as a true level-sensitive IRQ.
+The driver ignored the width alignment which exists due to the UYVY
+colorspace format. Fix the width alignment and make use of the the
+provided v4l2 helper function to set the width, height and all
+alignments in one.
 
-The kernel, however, needs to be able to exit interrupt context in
-order to use I2C or SPI to access the device registers (which may
-involve sleeping).  Therefore the interrupt needs to be masked out or
-paused in some way.
+Fixes: 963ddc63e20d ("[media] media: tvp5150: Add cropping support")
 
-The usual way to manage sleeping from within an interrupt handler
-is to use a threaded interrupt handler - a regular interrupt routine
-does the minimum amount of work needed to triage the interrupt before
-waking the interrupt service thread. If the threaded IRQ is marked as
-IRQF_ONESHOT the kernel will automatically mask out the interrupt
-until the thread runs to completion. The sc16is7xx driver used to
-use a threaded IRQ, but a patch switched to using a kthread_worker
-in order to set realtime priorities on the handler thread and for
-other optimisations. The end result is non-threaded IRQ that
-schedules some work then returns IRQ_HANDLED, making the kernel
-think that all IRQ processing has completed.
-
-The work-around to prevent a constant stream of interrupts is to
-mark the interrupt as edge-sensitive rather than level-sensitive,
-but interpreting an active-low source as a falling-edge source
-requires care to prevent a total cessation of interrupts. Whereas
-an edge-triggering source will generate a new edge for every interrupt
-condition a level-triggering source will keep the signal at the
-interrupting level until it no longer requires attention; in other
-words, the host won't see another edge until all interrupt conditions
-are cleared. It is therefore vital that the interrupt handler does not
-exit with an outstanding interrupt condition, otherwise the kernel
-will not receive another interrupt unless some other operation causes
-the interrupt state on the device to be cleared.
-
-The existing sc16is7xx driver has a very simple interrupt "thread"
-(kthread_work job) that processes interrupts on each channel in turn
-until there are no more. If both channels are active and the first
-channel starts interrupting while the handler for the second channel
-is running then it will not be detected and an IRQ stall ensues. This
-could be handled easily if there was a shared IRQ status register, or
-a convenient way to determine if the IRQ had been deasserted for any
-length of time, but both appear to be lacking.
-
-Avoid this problem (or at least make it much less likely to happen)
-by reducing the granularity of per-channel interrupt processing
-to one condition per iteration, only exiting the overall loop when
-both channels are no longer interrupting.
-
-Signed-off-by: Phil Elwell <phil@raspberrypi.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/sc16is7xx.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ drivers/media/i2c/tvp5150.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
-index 7d5ee8a13ac6..17a22073d226 100644
---- a/drivers/tty/serial/sc16is7xx.c
-+++ b/drivers/tty/serial/sc16is7xx.c
-@@ -648,7 +648,7 @@ static void sc16is7xx_handle_tx(struct uart_port *port)
- 		uart_write_wakeup(port);
- }
+diff --git a/drivers/media/i2c/tvp5150.c b/drivers/media/i2c/tvp5150.c
+index 3c5fb2509c47..118277d57c30 100644
+--- a/drivers/media/i2c/tvp5150.c
++++ b/drivers/media/i2c/tvp5150.c
+@@ -870,9 +870,6 @@ static int tvp5150_s_crop(struct v4l2_subdev *sd, const struct v4l2_crop *a)
  
--static void sc16is7xx_port_irq(struct sc16is7xx_port *s, int portno)
-+static bool sc16is7xx_port_irq(struct sc16is7xx_port *s, int portno)
- {
- 	struct uart_port *port = &s->p[portno].port;
+ 	/* tvp5150 has some special limits */
+ 	rect.left = clamp(rect.left, 0, TVP5150_MAX_CROP_LEFT);
+-	rect.width = clamp_t(unsigned int, rect.width,
+-			     TVP5150_H_MAX - TVP5150_MAX_CROP_LEFT - rect.left,
+-			     TVP5150_H_MAX - rect.left);
+ 	rect.top = clamp(rect.top, 0, TVP5150_MAX_CROP_TOP);
  
-@@ -657,7 +657,7 @@ static void sc16is7xx_port_irq(struct sc16is7xx_port *s, int portno)
+ 	/* Calculate height based on current standard */
+@@ -886,9 +883,16 @@ static int tvp5150_s_crop(struct v4l2_subdev *sd, const struct v4l2_crop *a)
+ 	else
+ 		hmax = TVP5150_V_MAX_OTHERS;
  
- 		iir = sc16is7xx_port_read(port, SC16IS7XX_IIR_REG);
- 		if (iir & SC16IS7XX_IIR_NO_INT_BIT)
--			break;
-+			return false;
+-	rect.height = clamp_t(unsigned int, rect.height,
++	/*
++	 * alignments:
++	 *  - width = 2 due to UYVY colorspace
++	 *  - height, image = no special alignment
++	 */
++	v4l_bound_align_image(&rect.width,
++			      TVP5150_H_MAX - TVP5150_MAX_CROP_LEFT - rect.left,
++			      TVP5150_H_MAX - rect.left, 1, &rect.height,
+ 			      hmax - TVP5150_MAX_CROP_TOP - rect.top,
+-			      hmax - rect.top);
++			      hmax - rect.top, 0, 0);
  
- 		iir &= SC16IS7XX_IIR_ID_MASK;
- 
-@@ -685,16 +685,23 @@ static void sc16is7xx_port_irq(struct sc16is7xx_port *s, int portno)
- 					    port->line, iir);
- 			break;
- 		}
--	} while (1);
-+	} while (0);
-+	return true;
- }
- 
- static void sc16is7xx_ist(struct kthread_work *ws)
- {
- 	struct sc16is7xx_port *s = to_sc16is7xx_port(ws, irq_work);
--	int i;
- 
--	for (i = 0; i < s->devtype->nr_uart; ++i)
--		sc16is7xx_port_irq(s, i);
-+	while (1) {
-+		bool keep_polling = false;
-+		int i;
-+
-+		for (i = 0; i < s->devtype->nr_uart; ++i)
-+			keep_polling |= sc16is7xx_port_irq(s, i);
-+		if (!keep_polling)
-+			break;
-+	}
- }
- 
- static irqreturn_t sc16is7xx_irq(int irq, void *dev_id)
+ 	tvp5150_write(sd, TVP5150_VERT_BLANKING_START, rect.top);
+ 	tvp5150_write(sd, TVP5150_VERT_BLANKING_STOP,
 -- 
 2.17.1
 
