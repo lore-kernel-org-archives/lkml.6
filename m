@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B92ECDE46
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B18CECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FB632086D
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 353D92085B
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CAIM/GE8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FB632086D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y2ufjeVK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 353D92085B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730391AbeKDXHb (ORCPT
+        id S1730408AbeKDXHd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:07:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45372 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:07:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45402 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730371AbeKDXHb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730390AbeKDXHb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 4 Nov 2018 18:07:31 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD3CA20866;
-        Sun,  4 Nov 2018 13:52:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 879062085B;
+        Sun,  4 Nov 2018 13:52:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339547;
-        bh=ERrdJIY3Hv/YplvsUGg5dBzgxEgd/4BGGiF4IAuFQ5s=;
+        s=default; t=1541339548;
+        bh=A5jCYSplBYoOFQ8zRetf6AmvXC5z+rSE1tCGxdnEW/I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CAIM/GE8h0GfLany7vK1ZoCA4mbtJ8eGpRQIyQv7WYXYsV4ShXFrZMO6BYvv+eCtM
-         NB8Et9qOVSADT4v1jZ/Nop73bFk2qg/fTLK9Q+qQVq+UUi+qzmoHbTbNOFZSuPERZL
-         4Qt94DI6LIvLCI2msrlX9OKaemybcCHlS/ytpNls=
+        b=y2ufjeVKYsxoG3vwdc5rzHegI1OqXsAQajPc59YR2IJuRgoezKOhLpbU29kqPlD6t
+         cWJpTaol5vH7tXlWHAUkmRMDWfk6golCr+r9A55yPGHLTl56BIs0zwCe3QNCPgwnwx
+         IvQ2YxqEXCnNIZ8gYAPsArDlrlsVEadvPlk4NE/Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Gao Xiang <gaoxiang25@huawei.com>,
+Cc:     John Garry <john.garry@huawei.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 42/57] staging: erofs: fix a missing endian conversion
-Date:   Sun,  4 Nov 2018 08:51:29 -0500
-Message-Id: <20181104135144.88324-42-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 43/57] serial: 8250_of: Fix for lack of interrupt support
+Date:   Sun,  4 Nov 2018 08:51:30 -0500
+Message-Id: <20181104135144.88324-43-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135144.88324-1-sashal@kernel.org>
 References: <20181104135144.88324-1-sashal@kernel.org>
@@ -53,50 +53,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gao Xiang <gaoxiang25@huawei.com>
+From: John Garry <john.garry@huawei.com>
 
-[ Upstream commit 37ec35a6cc2b99eb7fd6b85b7d7b75dff46bc353 ]
+[ Upstream commit a27d938251ef40c43db81af16fc26b2cec181d4d ]
 
-This patch fixes a missing endian conversion in
-vle_get_logical_extent_head.
+In commit c58caaab3bf8 ("serial: 8250: of: Defer probe on missing IRQ"), a
+check was added for the UART driver being probed prior to the parent IRQ
+controller.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+Unfortunately this breaks certain boards which have no interrupt support,
+like Huawei D03.
+
+Indeed, the 8250 DT bindings state that interrupts should be supported -
+not must.
+
+To fix, switch from irq_of_parse_and_map() to of_irq_get(), which
+does relay whether the IRQ host controller domain is not ready, i.e.
+defer probe, instead of assuming it.
+
+Fixes: c58caaab3bf8 ("serial: 8250: of: Defer probe on missing IRQ")
+Signed-off-by: John Garry <john.garry@huawei.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Tested-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/erofs/unzip_vle.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/tty/serial/8250/8250_of.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
-index 8721f0a41d15..14da8cc2246a 100644
---- a/drivers/staging/erofs/unzip_vle.c
-+++ b/drivers/staging/erofs/unzip_vle.c
-@@ -1490,6 +1490,7 @@ static erofs_off_t vle_get_logical_extent_head(
- 	unsigned long long ofs;
- 	const unsigned int clusterbits = EROFS_SB(inode->i_sb)->clusterbits;
- 	const unsigned int clustersize = 1 << clusterbits;
-+	unsigned int delta0;
+diff --git a/drivers/tty/serial/8250/8250_of.c b/drivers/tty/serial/8250/8250_of.c
+index af8beefe9b5c..877fd7f8a8ed 100644
+--- a/drivers/tty/serial/8250/8250_of.c
++++ b/drivers/tty/serial/8250/8250_of.c
+@@ -58,7 +58,7 @@ static int of_platform_serial_setup(struct platform_device *ofdev,
+ 	struct resource resource;
+ 	struct device_node *np = ofdev->dev.of_node;
+ 	u32 clk, spd, prop;
+-	int ret;
++	int ret, irq;
  
- 	if (page->index != blkaddr) {
- 		kunmap_atomic(*kaddr_iter);
-@@ -1504,12 +1505,13 @@ static erofs_off_t vle_get_logical_extent_head(
- 	di = *kaddr_iter + vle_extent_blkoff(inode, lcn);
- 	switch (vle_cluster_type(di)) {
- 	case Z_EROFS_VLE_CLUSTER_TYPE_NONHEAD:
--		BUG_ON(!di->di_u.delta[0]);
--		BUG_ON(lcn < di->di_u.delta[0]);
-+		delta0 = le16_to_cpu(di->di_u.delta[0]);
-+		DBG_BUGON(!delta0);
-+		DBG_BUGON(lcn < delta0);
+ 	memset(port, 0, sizeof *port);
  
- 		ofs = vle_get_logical_extent_head(inode,
- 			page_iter, kaddr_iter,
--			lcn - di->di_u.delta[0], pcn, flags);
-+			lcn - delta0, pcn, flags);
- 		break;
- 	case Z_EROFS_VLE_CLUSTER_TYPE_PLAIN:
- 		*flags ^= EROFS_MAP_ZIPPED;
+@@ -143,21 +143,27 @@ static int of_platform_serial_setup(struct platform_device *ofdev,
+ 	if (ret >= 0)
+ 		port->line = ret;
+ 
+-	port->irq = irq_of_parse_and_map(np, 0);
+-	if (!port->irq) {
+-		ret = -EPROBE_DEFER;
+-		goto err_unprepare;
++	irq = of_irq_get(np, 0);
++	if (irq < 0) {
++		if (irq == -EPROBE_DEFER) {
++			ret = -EPROBE_DEFER;
++			goto err_unprepare;
++		}
++		/* IRQ support not mandatory */
++		irq = 0;
+ 	}
+ 
++	port->irq = irq;
++
+ 	info->rst = devm_reset_control_get_optional_shared(&ofdev->dev, NULL);
+ 	if (IS_ERR(info->rst)) {
+ 		ret = PTR_ERR(info->rst);
+-		goto err_dispose;
++		goto err_unprepare;
+ 	}
+ 
+ 	ret = reset_control_deassert(info->rst);
+ 	if (ret)
+-		goto err_dispose;
++		goto err_unprepare;
+ 
+ 	port->type = type;
+ 	port->uartclk = clk;
+@@ -184,8 +190,6 @@ static int of_platform_serial_setup(struct platform_device *ofdev,
+ 		port->handle_irq = fsl8250_handle_irq;
+ 
+ 	return 0;
+-err_dispose:
+-	irq_dispose_mapping(port->irq);
+ err_unprepare:
+ 	clk_disable_unprepare(info->clk);
+ err_pmruntime:
 -- 
 2.17.1
 
