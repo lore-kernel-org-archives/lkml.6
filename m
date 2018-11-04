@@ -7,44 +7,42 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B666ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B922ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03E802085A
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02FE320862
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fsOGwCC8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03E802085A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DupkUm6i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02FE320862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731088AbeKDXI0 (ORCPT
+        id S1731130AbeKDXIa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:08:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47116 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:08:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730973AbeKDXI0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:08:26 -0500
+        id S1729652AbeKDXI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:08:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 517F42085A;
-        Sun,  4 Nov 2018 13:53:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E181C20866;
+        Sun,  4 Nov 2018 13:53:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339601;
-        bh=1CN6w0LMiAAka87nLPGdlFyExAMWTmiCUZntxeeBbHA=;
+        s=default; t=1541339603;
+        bh=L+Q/hif1+fwgXvi783ZdS2AVzzG5SXcOQmdXIOCXU1I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fsOGwCC8wAFS7/bPDKrj0DeGxOw93gy/5rSUJp8aOWRjgl492B9mHVLEtpLu2vqIX
-         ofbmlp5spclF82jurwjhu/ElgCA1d1jsqnLEZR5s1OoLjIWS3uYgt36EQcnYyAsK/x
-         dafVqm4ZJ1uJ924nKhDScsLsxOil8fb7gFtiPchw=
+        b=DupkUm6iqIm2E+6pj+li9UcBPBDDKYyMzleeVHYTspoawbv5KAlcsh8d3Yww9j25s
+         2AnWe8Wg67hmRyBnv5mmGlb7IVPukN5geu8cs1JPw4bdJXUa0ChaUcmuBalE90H0pJ
+         8QavtrAgR/MsVnn6QDYyekCqkICkCUgedBAALgpg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 41/45] staging: most: video: fix registration of an empty comp core_component
-Date:   Sun,  4 Nov 2018 08:52:36 -0500
-Message-Id: <20181104135240.88431-41-sashal@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 43/45] udf: Prevent write-unsupported filesystem to be remounted read-write
+Date:   Sun,  4 Nov 2018 08:52:38 -0500
+Message-Id: <20181104135240.88431-43-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135240.88431-1-sashal@kernel.org>
 References: <20181104135240.88431-1-sashal@kernel.org>
@@ -53,60 +51,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Jan Kara <jack@suse.cz>
 
-[ Upstream commit 1f447e51c0b9e8beeec0917ea5f51930f55e17c9 ]
+[ Upstream commit a9ad01bc759df79b0012f43ee52164391e31cd96 ]
 
-Currently we have structrues comp (which is empty) and comp_info being
-used to register and deregister the component.  This mismatch in naming
-occurred from a previous commit that renamed aim_info to comp. Fix this
-to use consistent component naming in line with most/net, most/sound etc.
+There are certain filesystem features which we support for reading but
+not for writing. We properly refuse to mount such filesystems read-write
+however for some features (such as read-only partitions), we don't check
+for these features when remounting the filesystem from read-only to
+read-write. Thus such filesystems could be remounted read-write leading
+to strange behavior (most likely crashes).
 
-This fixes the message two issues, one with a null empty name when
-loading the module:
+Fix the problem by marking in superblock whether the filesystem has some
+features that are supported in read-only mode and check this flag during
+remount.
 
-[ 1485.269515] most_core: registered new core component (null)
-
-and an Oops when removing the module:
-
-[ 1485.277971] BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
-[ 1485.278648] PGD 0 P4D 0
-[ 1485.279253] Oops: 0002 [#2] SMP PTI
-[ 1485.279847] CPU: 1 PID: 32629 Comm: modprobe Tainted: P      D WC OE     4.18.0-8-generic #9
-[ 1485.280442] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06/2015
-[ 1485.281040] RIP: 0010:most_deregister_component+0x3c/0x70 [most_core]
-.. etc
-
-Fixes: 1b10a0316e2d ("staging: most: video: remove aim designators")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/most/video/video.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/udf/super.c  | 30 ++++++++++++++++--------------
+ fs/udf/udf_sb.h |  2 ++
+ 2 files changed, 18 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/staging/most/video/video.c b/drivers/staging/most/video/video.c
-index cf342eb58e10..ad7e28ab9a4f 100644
---- a/drivers/staging/most/video/video.c
-+++ b/drivers/staging/most/video/video.c
-@@ -530,7 +530,7 @@ static int comp_disconnect_channel(struct most_interface *iface,
- 	return 0;
- }
+diff --git a/fs/udf/super.c b/fs/udf/super.c
+index 74b13347cd94..e557d1317d0e 100644
+--- a/fs/udf/super.c
++++ b/fs/udf/super.c
+@@ -613,14 +613,11 @@ static int udf_remount_fs(struct super_block *sb, int *flags, char *options)
+ 	struct udf_options uopt;
+ 	struct udf_sb_info *sbi = UDF_SB(sb);
+ 	int error = 0;
+-	struct logicalVolIntegrityDescImpUse *lvidiu = udf_sb_lvidiu(sb);
++
++	if (!(*flags & SB_RDONLY) && UDF_QUERY_FLAG(sb, UDF_FLAG_RW_INCOMPAT))
++		return -EACCES;
  
--static struct core_component comp_info = {
-+static struct core_component comp = {
- 	.name = "video",
- 	.probe_channel = comp_probe_channel,
- 	.disconnect_channel = comp_disconnect_channel,
-@@ -565,7 +565,7 @@ static void __exit comp_exit(void)
+ 	sync_filesystem(sb);
+-	if (lvidiu) {
+-		int write_rev = le16_to_cpu(lvidiu->minUDFWriteRev);
+-		if (write_rev > UDF_MAX_WRITE_VERSION && !(*flags & SB_RDONLY))
+-			return -EACCES;
+-	}
+ 
+ 	uopt.flags = sbi->s_flags;
+ 	uopt.uid   = sbi->s_uid;
+@@ -1317,6 +1314,7 @@ static int udf_load_partdesc(struct super_block *sb, sector_t block)
+ 			ret = -EACCES;
+ 			goto out_bh;
+ 		}
++		UDF_SET_FLAG(sb, UDF_FLAG_RW_INCOMPAT);
+ 		ret = udf_load_vat(sb, i, type1_idx);
+ 		if (ret < 0)
+ 			goto out_bh;
+@@ -2215,10 +2213,12 @@ static int udf_fill_super(struct super_block *sb, void *options, int silent)
+ 				UDF_MAX_READ_VERSION);
+ 			ret = -EINVAL;
+ 			goto error_out;
+-		} else if (minUDFWriteRev > UDF_MAX_WRITE_VERSION &&
+-			   !sb_rdonly(sb)) {
+-			ret = -EACCES;
+-			goto error_out;
++		} else if (minUDFWriteRev > UDF_MAX_WRITE_VERSION) {
++			if (!sb_rdonly(sb)) {
++				ret = -EACCES;
++				goto error_out;
++			}
++			UDF_SET_FLAG(sb, UDF_FLAG_RW_INCOMPAT);
+ 		}
+ 
+ 		sbi->s_udfrev = minUDFWriteRev;
+@@ -2236,10 +2236,12 @@ static int udf_fill_super(struct super_block *sb, void *options, int silent)
  	}
- 	spin_unlock_irq(&list_lock);
  
--	most_deregister_component(&comp_info);
-+	most_deregister_component(&comp);
- 	BUG_ON(!list_empty(&video_devices));
- }
+ 	if (sbi->s_partmaps[sbi->s_partition].s_partition_flags &
+-			UDF_PART_FLAG_READ_ONLY &&
+-	    !sb_rdonly(sb)) {
+-		ret = -EACCES;
+-		goto error_out;
++			UDF_PART_FLAG_READ_ONLY) {
++		if (!sb_rdonly(sb)) {
++			ret = -EACCES;
++			goto error_out;
++		}
++		UDF_SET_FLAG(sb, UDF_FLAG_RW_INCOMPAT);
+ 	}
  
+ 	if (udf_find_fileset(sb, &fileset, &rootdir)) {
+diff --git a/fs/udf/udf_sb.h b/fs/udf/udf_sb.h
+index 9dd3e1b9619e..f8e0d200271d 100644
+--- a/fs/udf/udf_sb.h
++++ b/fs/udf/udf_sb.h
+@@ -30,6 +30,8 @@
+ #define UDF_FLAG_LASTBLOCK_SET	16
+ #define UDF_FLAG_BLOCKSIZE_SET	17
+ #define UDF_FLAG_INCONSISTENT	18
++#define UDF_FLAG_RW_INCOMPAT	19	/* Set when we find RW incompatible
++					 * feature */
+ 
+ #define UDF_PART_FLAG_UNALLOC_BITMAP	0x0001
+ #define UDF_PART_FLAG_UNALLOC_TABLE	0x0002
 -- 
 2.17.1
 
