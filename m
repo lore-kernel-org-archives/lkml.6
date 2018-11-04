@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB26BECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26AA7ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9079620868
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDD3220868
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hoQN+RKn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9079620868
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="b87Db0zJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDD3220868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730978AbeKDXIS (ORCPT
+        id S1730993AbeKDXIU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:08:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46774 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:08:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730928AbeKDXIP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:08:15 -0500
+        id S1730973AbeKDXIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:08:19 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC1B720880;
-        Sun,  4 Nov 2018 13:53:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE87E2146E;
+        Sun,  4 Nov 2018 13:53:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339591;
-        bh=I+9mpVB2hiqVIS9/V1kkHxylATbjP0qUHJjvL2B/H9g=;
+        s=default; t=1541339594;
+        bh=ZpZFvSTOP03p7OGKYGokGcs7ktLfIfFV3SW81Two35s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hoQN+RKnI0hWJUIXBBq96DP55oCckX0RQLQBPpR6cnVsE6YMR5OZ+MIEd8aXs2pZB
-         KsTnxpHIDhaAVOib2qQEmUsV1ikck+bVC08fuR7KWKl9PbnRffqmBVtUvDkdJPrwJW
-         AnvoYdQazVZeYwpCDlTmqaa+2eUIV3CUOdQH9HQU=
+        b=b87Db0zJ5Q1dRyxLGcjgIGAvyrj4HLza/oqDxiwq7+vBQ0kxTwI7JMpV7pmyatW0f
+         IFecq4jDkAIAZ4bc5s5HPZUjONNLyKzxdU9NjD4RuzvNTxVFlA5PlthgurqBeJFEjQ
+         NYXwETOf3OJwnaqNgEMPz+WKzZdtV1TYzXov9G9s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>, Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+Cc:     Rashmica Gupta <rashmica.g@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 30/45] iio: adc: imx25-gcq: Fix leak of device_node in mx25_gcq_setup_cfgs()
-Date:   Sun,  4 Nov 2018 08:52:25 -0500
-Message-Id: <20181104135240.88431-30-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 33/45] powerpc/memtrace: Remove memory in chunks
+Date:   Sun,  4 Nov 2018 08:52:28 -0500
+Message-Id: <20181104135240.88431-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135240.88431-1-sashal@kernel.org>
 References: <20181104135240.88431-1-sashal@kernel.org>
@@ -53,75 +53,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+From: Rashmica Gupta <rashmica.g@gmail.com>
 
-[ Upstream commit d3fa21c73c391975488818b085b894c2980ea052 ]
+[ Upstream commit 3f7daf3d7582dc6628ac40a9045dd1bbd80c5f35 ]
 
-Leaving for_each_child_of_node loop we should release child device node,
-if it is not stored for future use.
+When hot-removing memory release_mem_region_adjustable() splits iomem
+resources if they are not the exact size of the memory being
+hot-deleted. Adding this memory back to the kernel adds a new resource.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+Eg a node has memory 0x0 - 0xfffffffff. Hot-removing 1GB from
+0xf40000000 results in the single resource 0x0-0xfffffffff being split
+into two resources: 0x0-0xf3fffffff and 0xf80000000-0xfffffffff.
 
-JC: I'm not sending this as a quick fix as it's been wrong for years,
-but good to pick up for stable after the merge window.
+When we hot-add the memory back we now have three resources:
+0x0-0xf3fffffff, 0xf40000000-0xf7fffffff, and 0xf80000000-0xfffffffff.
 
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Fixes: 6df2e98c3ea56 ("iio: adc: Add imx25-gcq ADC driver")
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+This is an issue if we try to remove some memory that overlaps
+resources. Eg when trying to remove 2GB at address 0xf40000000,
+release_mem_region_adjustable() fails as it expects the chunk of memory
+to be within the boundaries of a single resource. We then get the
+warning: "Unable to release resource" and attempting to use memtrace
+again gives us this error: "bash: echo: write error: Resource
+temporarily unavailable"
+
+This patch makes memtrace remove memory in chunks that are always the
+same size from an address that is always equal to end_of_memory -
+n*size, for some n. So hotremoving and hotadding memory of different
+sizes will now not attempt to remove memory that spans multiple
+resources.
+
+Signed-off-by: Rashmica Gupta <rashmica.g@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/adc/fsl-imx25-gcq.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/powerpc/platforms/powernv/memtrace.c | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/iio/adc/fsl-imx25-gcq.c b/drivers/iio/adc/fsl-imx25-gcq.c
-index ea264fa9e567..929c617db364 100644
---- a/drivers/iio/adc/fsl-imx25-gcq.c
-+++ b/drivers/iio/adc/fsl-imx25-gcq.c
-@@ -209,12 +209,14 @@ static int mx25_gcq_setup_cfgs(struct platform_device *pdev,
- 		ret = of_property_read_u32(child, "reg", &reg);
- 		if (ret) {
- 			dev_err(dev, "Failed to get reg property\n");
-+			of_node_put(child);
- 			return ret;
- 		}
+diff --git a/arch/powerpc/platforms/powernv/memtrace.c b/arch/powerpc/platforms/powernv/memtrace.c
+index b99283df8584..265669002da0 100644
+--- a/arch/powerpc/platforms/powernv/memtrace.c
++++ b/arch/powerpc/platforms/powernv/memtrace.c
+@@ -119,17 +119,15 @@ static bool memtrace_offline_pages(u32 nid, u64 start_pfn, u64 nr_pages)
+ 	walk_memory_range(start_pfn, end_pfn, (void *)MEM_OFFLINE,
+ 			  change_memblock_state);
  
- 		if (reg >= MX25_NUM_CFGS) {
- 			dev_err(dev,
- 				"reg value is greater than the number of available configuration registers\n");
-+			of_node_put(child);
- 			return -EINVAL;
- 		}
+-	lock_device_hotplug();
+-	remove_memory(nid, start_pfn << PAGE_SHIFT, nr_pages << PAGE_SHIFT);
+-	unlock_device_hotplug();
  
-@@ -228,6 +230,7 @@ static int mx25_gcq_setup_cfgs(struct platform_device *pdev,
- 			if (IS_ERR(priv->vref[refp])) {
- 				dev_err(dev, "Error, trying to use external voltage reference without a vref-%s regulator.",
- 					mx25_gcq_refp_names[refp]);
-+				of_node_put(child);
- 				return PTR_ERR(priv->vref[refp]);
- 			}
- 			priv->channel_vref_mv[reg] =
-@@ -240,6 +243,7 @@ static int mx25_gcq_setup_cfgs(struct platform_device *pdev,
- 			break;
- 		default:
- 			dev_err(dev, "Invalid positive reference %d\n", refp);
-+			of_node_put(child);
- 			return -EINVAL;
- 		}
+ 	return true;
+ }
  
-@@ -254,10 +258,12 @@ static int mx25_gcq_setup_cfgs(struct platform_device *pdev,
+ static u64 memtrace_alloc_node(u32 nid, u64 size)
+ {
+-	u64 start_pfn, end_pfn, nr_pages;
++	u64 start_pfn, end_pfn, nr_pages, pfn;
+ 	u64 base_pfn;
++	u64 bytes = memory_block_size_bytes();
  
- 		if ((refp & MX25_ADCQ_CFG_REFP_MASK) != refp) {
- 			dev_err(dev, "Invalid fsl,adc-refp property value\n");
-+			of_node_put(child);
- 			return -EINVAL;
- 		}
- 		if ((refn & MX25_ADCQ_CFG_REFN_MASK) != refn) {
- 			dev_err(dev, "Invalid fsl,adc-refn property value\n");
-+			of_node_put(child);
- 			return -EINVAL;
- 		}
+ 	if (!node_spanned_pages(nid))
+ 		return 0;
+@@ -142,8 +140,21 @@ static u64 memtrace_alloc_node(u32 nid, u64 size)
+ 	end_pfn = round_down(end_pfn - nr_pages, nr_pages);
  
+ 	for (base_pfn = end_pfn; base_pfn > start_pfn; base_pfn -= nr_pages) {
+-		if (memtrace_offline_pages(nid, base_pfn, nr_pages) == true)
++		if (memtrace_offline_pages(nid, base_pfn, nr_pages) == true) {
++			/*
++			 * Remove memory in memory block size chunks so that
++			 * iomem resources are always split to the same size and
++			 * we never try to remove memory that spans two iomem
++			 * resources.
++			 */
++			lock_device_hotplug();
++			end_pfn = base_pfn + nr_pages;
++			for (pfn = base_pfn; pfn < end_pfn; pfn += bytes>> PAGE_SHIFT) {
++				remove_memory(nid, pfn << PAGE_SHIFT, bytes);
++			}
++			unlock_device_hotplug();
+ 			return base_pfn << PAGE_SHIFT;
++		}
+ 	}
+ 
+ 	return 0;
 -- 
 2.17.1
 
