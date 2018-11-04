@@ -7,90 +7,96 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 973EEC32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80970C32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51DB420866
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2904C20870
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="r/tlRkdz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51DB420866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZCfDSHSw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2904C20870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731681AbeKDXJW (ORCPT
+        id S1731694AbeKDXJZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:09:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49044 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:09:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731650AbeKDXJV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:09:21 -0500
+        id S1731650AbeKDXJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:09:24 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E20FD20862;
-        Sun,  4 Nov 2018 13:54:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12C1E204FD;
+        Sun,  4 Nov 2018 13:54:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339657;
-        bh=19rO2ZqSjUi4fJrjkZD+uCPM2kVw7gPNAKNwtFAom3k=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r/tlRkdzB+aptAdNx9fi16yyLYs0ET+2cbcZLbUNa4huLVYWP4s9F2KqA7Zx8/52B
-         mVEGDVlQZocwk9pz6fDLNKL3OFdcyF/H2kOObUsX7yAKDdS3Pxos+uWk6B9+75rb56
-         CORC2oPR2tQxQVYh441GjZ4HrABsY/XFMRuU/fJE=
+        s=default; t=1541339660;
+        bh=Ny8zzV0yk8eMNO5DqbjgBZY3F+sPJt2FCVYCP8c6wys=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ZCfDSHSwmsLkwIDdGKx5m5x3piaew5zJkfe74MF/8EPC+qxGHNsBRp2MLLq548hW+
+         F4L73w2FgNoW+it1Kgs3rzajhuVA9v2DJvqbcWhZ7GF2+IDJB5KAHLyKZIceRTFvMG
+         c1mCJzlCM7ishMngAlOMChYAVfJDAakMAiepAmDk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dominique Martinet <dominique.martinet@cea.fr>,
+Cc:     Jann Horn <jannh@google.com>, Davidlohr Bueso <dave@stgolabs.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Christoph Lameter <clameter@sgi.com>,
+        Kemi Wang <kemi.wang@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 21/21] 9p: clear dangling pointers in p9stat_free
-Date:   Sun,  4 Nov 2018 08:53:55 -0500
-Message-Id: <20181104135355.88602-21-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 01/15] mm/vmstat.c: assert that vmstat_text is in sync with stat_items_size
+Date:   Sun,  4 Nov 2018 08:54:03 -0500
+Message-Id: <20181104135417.88671-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181104135355.88602-1-sashal@kernel.org>
-References: <20181104135355.88602-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dominique Martinet <dominique.martinet@cea.fr>
+From: Jann Horn <jannh@google.com>
 
-[ Upstream commit 62e3941776fea8678bb8120607039410b1b61a65 ]
+[ Upstream commit f0ecf25a093fc0589f0a6bc4c1ea068bbb67d220 ]
 
-p9stat_free is more of a cleanup function than a 'free' function as it
-only frees the content of the struct; there are chances of use-after-free
-if it is improperly used (e.g. p9stat_free called twice as it used to be
-possible to)
+Having two gigantic arrays that must manually be kept in sync, including
+ifdefs, isn't exactly robust.  To make it easier to catch such issues in
+the future, add a BUILD_BUG_ON().
 
-Clearing dangling pointers makes the function idempotent and safer to use.
-
-Link: http://lkml.kernel.org/r/1535410108-20650-2-git-send-email-asmadeus@codewreck.org
-Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
-Reported-by: syzbot+d4252148d198410b864f@syzkaller.appspotmail.com
+Link: http://lkml.kernel.org/r/20181001143138.95119-3-jannh@google.com
+Signed-off-by: Jann Horn <jannh@google.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Acked-by: Roman Gushchin <guro@fb.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Christoph Lameter <clameter@sgi.com>
+Cc: Kemi Wang <kemi.wang@intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/9p/protocol.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ mm/vmstat.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/net/9p/protocol.c b/net/9p/protocol.c
-index 16d287565987..145f80518064 100644
---- a/net/9p/protocol.c
-+++ b/net/9p/protocol.c
-@@ -46,10 +46,15 @@ p9pdu_writef(struct p9_fcall *pdu, int proto_version, const char *fmt, ...);
- void p9stat_free(struct p9_wstat *stbuf)
- {
- 	kfree(stbuf->name);
-+	stbuf->name = NULL;
- 	kfree(stbuf->uid);
-+	stbuf->uid = NULL;
- 	kfree(stbuf->gid);
-+	stbuf->gid = NULL;
- 	kfree(stbuf->muid);
-+	stbuf->muid = NULL;
- 	kfree(stbuf->extension);
-+	stbuf->extension = NULL;
- }
- EXPORT_SYMBOL(p9stat_free);
+diff --git a/mm/vmstat.c b/mm/vmstat.c
+index a2d70ef74db7..a32a92c0f218 100644
+--- a/mm/vmstat.c
++++ b/mm/vmstat.c
+@@ -1320,6 +1320,8 @@ static void *vmstat_start(struct seq_file *m, loff_t *pos)
+ 	stat_items_size += sizeof(struct vm_event_state);
+ #endif
  
++	BUILD_BUG_ON(stat_items_size !=
++		     ARRAY_SIZE(vmstat_text) * sizeof(unsigned long));
+ 	v = kmalloc(stat_items_size, GFP_KERNEL);
+ 	m->private = v;
+ 	if (!v)
 -- 
 2.17.1
 
