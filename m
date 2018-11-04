@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CF63ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EAFFECDE46
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 624DF204FD
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6784C20866
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iv4MlE10"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 624DF204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PixJLrXJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6784C20866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731655AbeKDXJU (ORCPT
+        id S1731668AbeKDXJV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:09:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48962 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:09:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731580AbeKDXJS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:09:18 -0500
+        id S1731650AbeKDXJU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:09:20 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8EA5120862;
-        Sun,  4 Nov 2018 13:54:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A09D2085B;
+        Sun,  4 Nov 2018 13:54:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339654;
-        bh=88UtAskHv5hxHFrcqWf8YCJBLWPxoWchFVfpy6vKht4=;
+        s=default; t=1541339656;
+        bh=WssHQKdZ/1ywz1s1DNgDjAqQXSI9VrM5S23FWw4qW3Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Iv4MlE10RGvpkMoH2LFF05U4ASIeHgFt/ZXD1uKAzOx86Jef+ruKDFxNrhHTL38pq
-         hpNM4oArBr/q8uQ/tDUNpROB4vyDpAcvQy0vrqoYSlN+uaX8HBiMlbkmiYni7InwEL
-         DejziIyAZUCPsOOqwqMH8lc1ckYtlMOkpRxhXcDg=
+        b=PixJLrXJarGa3yH3X5qXXOrbsjoU2Rpd/qbKfBBXubeMxkr5t02JexWb20g3dy0gU
+         bmbKsrzNwqpCoRvxxDaI24PN23RXKevxfBVJ8jXbsA3CnbhFlC6rz/bHtwD+BBY2nk
+         T0KlsCIDrGZPdiO6l8GmLwk8For85xTs8WLEDKJs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Phil Elwell <phil@raspberrypi.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     Dominique Martinet <dominique.martinet@cea.fr>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 17/21] sc16is7xx: Fix for multi-channel stall
-Date:   Sun,  4 Nov 2018 08:53:51 -0500
-Message-Id: <20181104135355.88602-17-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 20/21] 9p locks: fix glock.client_id leak in do_lock
+Date:   Sun,  4 Nov 2018 08:53:54 -0500
+Message-Id: <20181104135355.88602-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135355.88602-1-sashal@kernel.org>
 References: <20181104135355.88602-1-sashal@kernel.org>
@@ -53,118 +52,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Phil Elwell <phil@raspberrypi.org>
+From: Dominique Martinet <dominique.martinet@cea.fr>
 
-[ Upstream commit 8344498721059754e09d30fe255a12dab8fb03ef ]
+[ Upstream commit b4dc44b3cac9e8327e0655f530ed0c46f2e6214c ]
 
-The SC16IS752 is a dual-channel device. The two channels are largely
-independent, but the IRQ signals are wired together as an open-drain,
-active low signal which will be driven low while either of the
-channels requires attention, which can be for significant periods of
-time until operations complete and the interrupt can be acknowledged.
-In that respect it is should be treated as a true level-sensitive IRQ.
+the 9p client code overwrites our glock.client_id pointing to a static
+buffer by an allocated string holding the network provided value which
+we do not care about; free and reset the value as appropriate.
 
-The kernel, however, needs to be able to exit interrupt context in
-order to use I2C or SPI to access the device registers (which may
-involve sleeping).  Therefore the interrupt needs to be masked out or
-paused in some way.
+This is almost identical to the leak in v9fs_file_getlock() fixed by
+Al Viro in commit ce85dd58ad5a6 ("9p: we are leaking glock.client_id
+in v9fs_file_getlock()"), which was returned as an error by a coverity
+false positive -- while we are here attempt to make the code slightly
+more robust to future change of the net/9p/client code and hopefully
+more clear to coverity that there is no problem.
 
-The usual way to manage sleeping from within an interrupt handler
-is to use a threaded interrupt handler - a regular interrupt routine
-does the minimum amount of work needed to triage the interrupt before
-waking the interrupt service thread. If the threaded IRQ is marked as
-IRQF_ONESHOT the kernel will automatically mask out the interrupt
-until the thread runs to completion. The sc16is7xx driver used to
-use a threaded IRQ, but a patch switched to using a kthread_worker
-in order to set realtime priorities on the handler thread and for
-other optimisations. The end result is non-threaded IRQ that
-schedules some work then returns IRQ_HANDLED, making the kernel
-think that all IRQ processing has completed.
-
-The work-around to prevent a constant stream of interrupts is to
-mark the interrupt as edge-sensitive rather than level-sensitive,
-but interpreting an active-low source as a falling-edge source
-requires care to prevent a total cessation of interrupts. Whereas
-an edge-triggering source will generate a new edge for every interrupt
-condition a level-triggering source will keep the signal at the
-interrupting level until it no longer requires attention; in other
-words, the host won't see another edge until all interrupt conditions
-are cleared. It is therefore vital that the interrupt handler does not
-exit with an outstanding interrupt condition, otherwise the kernel
-will not receive another interrupt unless some other operation causes
-the interrupt state on the device to be cleared.
-
-The existing sc16is7xx driver has a very simple interrupt "thread"
-(kthread_work job) that processes interrupts on each channel in turn
-until there are no more. If both channels are active and the first
-channel starts interrupting while the handler for the second channel
-is running then it will not be detected and an IRQ stall ensues. This
-could be handled easily if there was a shared IRQ status register, or
-a convenient way to determine if the IRQ had been deasserted for any
-length of time, but both appear to be lacking.
-
-Avoid this problem (or at least make it much less likely to happen)
-by reducing the granularity of per-channel interrupt processing
-to one condition per iteration, only exiting the overall loop when
-both channels are no longer interrupting.
-
-Signed-off-by: Phil Elwell <phil@raspberrypi.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Link: http://lkml.kernel.org/r/1536339057-21974-5-git-send-email-asmadeus@codewreck.org
+Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/sc16is7xx.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ fs/9p/vfs_file.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
-index 793395451982..ea6b62cece88 100644
---- a/drivers/tty/serial/sc16is7xx.c
-+++ b/drivers/tty/serial/sc16is7xx.c
-@@ -661,7 +661,7 @@ static void sc16is7xx_handle_tx(struct uart_port *port)
- 		uart_write_wakeup(port);
- }
- 
--static void sc16is7xx_port_irq(struct sc16is7xx_port *s, int portno)
-+static bool sc16is7xx_port_irq(struct sc16is7xx_port *s, int portno)
- {
- 	struct uart_port *port = &s->p[portno].port;
- 
-@@ -670,7 +670,7 @@ static void sc16is7xx_port_irq(struct sc16is7xx_port *s, int portno)
- 
- 		iir = sc16is7xx_port_read(port, SC16IS7XX_IIR_REG);
- 		if (iir & SC16IS7XX_IIR_NO_INT_BIT)
--			break;
-+			return false;
- 
- 		iir &= SC16IS7XX_IIR_ID_MASK;
- 
-@@ -692,16 +692,23 @@ static void sc16is7xx_port_irq(struct sc16is7xx_port *s, int portno)
- 					    port->line, iir);
+diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
+index d7b78d531e63..398a3eddb2df 100644
+--- a/fs/9p/vfs_file.c
++++ b/fs/9p/vfs_file.c
+@@ -204,6 +204,14 @@ static int v9fs_file_do_lock(struct file *filp, int cmd, struct file_lock *fl)
  			break;
- 		}
--	} while (1);
-+	} while (0);
-+	return true;
+ 		if (schedule_timeout_interruptible(P9_LOCK_TIMEOUT) != 0)
+ 			break;
++		/*
++		 * p9_client_lock_dotl overwrites flock.client_id with the
++		 * server message, free and reuse the client name
++		 */
++		if (flock.client_id != fid->clnt->name) {
++			kfree(flock.client_id);
++			flock.client_id = fid->clnt->name;
++		}
+ 	}
+ 
+ 	/* map 9p status to VFS status */
+@@ -235,6 +243,8 @@ static int v9fs_file_do_lock(struct file *filp, int cmd, struct file_lock *fl)
+ 		locks_lock_file_wait(filp, fl);
+ 		fl->fl_type = fl_type;
+ 	}
++	if (flock.client_id != fid->clnt->name)
++		kfree(flock.client_id);
+ out:
+ 	return res;
+ }
+@@ -269,7 +279,7 @@ static int v9fs_file_getlock(struct file *filp, struct file_lock *fl)
+ 
+ 	res = p9_client_getlock_dotl(fid, &glock);
+ 	if (res < 0)
+-		return res;
++		goto out;
+ 	/* map 9p lock type to os lock type */
+ 	switch (glock.type) {
+ 	case P9_LOCK_TYPE_RDLCK:
+@@ -290,7 +300,9 @@ static int v9fs_file_getlock(struct file *filp, struct file_lock *fl)
+ 			fl->fl_end = glock.start + glock.length - 1;
+ 		fl->fl_pid = glock.proc_id;
+ 	}
+-	kfree(glock.client_id);
++out:
++	if (glock.client_id != fid->clnt->name)
++		kfree(glock.client_id);
+ 	return res;
  }
  
- static void sc16is7xx_ist(struct kthread_work *ws)
- {
- 	struct sc16is7xx_port *s = to_sc16is7xx_port(ws, irq_work);
--	int i;
- 
--	for (i = 0; i < s->devtype->nr_uart; ++i)
--		sc16is7xx_port_irq(s, i);
-+	while (1) {
-+		bool keep_polling = false;
-+		int i;
-+
-+		for (i = 0; i < s->devtype->nr_uart; ++i)
-+			keep_polling |= sc16is7xx_port_irq(s, i);
-+		if (!keep_polling)
-+			break;
-+	}
- }
- 
- static irqreturn_t sc16is7xx_irq(int irq, void *dev_id)
 -- 
 2.17.1
 
