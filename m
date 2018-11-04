@@ -2,35 +2,35 @@ Return-Path: <SRS0=jXQK=NP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 591B7C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 20:11:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA793ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 20:12:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08A8120866
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 20:11:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08A8120866
+	by mail.kernel.org (Postfix) with ESMTP id AA5CF2082E
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 20:12:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA5CF2082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727307AbeKEF2J (ORCPT
+        id S1727376AbeKEF2V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 00:28:09 -0500
-Received: from mga04.intel.com ([192.55.52.120]:16985 "EHLO mga04.intel.com"
+        Mon, 5 Nov 2018 00:28:21 -0500
+Received: from mga06.intel.com ([134.134.136.31]:8972 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725745AbeKEF2J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 00:28:09 -0500
+        id S1727316AbeKEF2V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 00:28:21 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2018 12:11:56 -0800
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2018 12:12:07 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,465,1534834800"; 
-   d="scan'208";a="97569934"
+   d="scan'208";a="97569968"
 Received: from sai-dev-mach.sc.intel.com ([143.183.140.153])
-  by orsmga003.jf.intel.com with ESMTP; 04 Nov 2018 12:11:55 -0800
+  by orsmga003.jf.intel.com with ESMTP; 04 Nov 2018 12:12:07 -0800
 From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
 To:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
         x86@kernel.org
@@ -42,10 +42,12 @@ Cc:     Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Peter Zijlstra <peterz@infradead.org>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH V3 0/3] Unmap EFI boot services code/data regions after boot.
-Date:   Sun,  4 Nov 2018 12:10:16 -0800
-Message-Id: <20181104201019.26142-1-sai.praneeth.prakhya@intel.com>
+Subject: [PATCH V3 3/3] x86/efi: Move efi_<reserve/free>_boot_services() to arch/x86
+Date:   Sun,  4 Nov 2018 12:10:19 -0800
+Message-Id: <20181104201019.26142-4-sai.praneeth.prakhya@intel.com>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181104201019.26142-1-sai.praneeth.prakhya@intel.com>
+References: <20181104201019.26142-1-sai.praneeth.prakhya@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -53,82 +55,13 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CC'ing x86 folks because this patch set touches x86/mm which I am no expert of.
-
-Ideally, after kernel assumes control of the platform, firmware shouldn't access
-EFI boot services code/data regions. But, it's noticed that this is not so true
-in many x86 platforms. Hence, during boot, kernel reserves EFI boot services
-code/data regions [1] and maps [2] them to efi_pgd so that call to
-set_virtual_address_map() doesn't fail. After returning from
-set_virtual_address_map(), kernel frees the reserved regions [3] but they still
-remain mapped.
-
-This means that any code that's running in efi_pgd address space (e.g: any EFI
-runtime service) would still be able to access EFI boot services code/data
-regions but the contents of these regions would have long been over written by
-someone else as they are freed by efi_free_boot_services(). So, it's important
-to unmap these regions. After unmapping EFI boot services code/data regions, any
-illegal access by buggy firmware to these regions would result in page fault
-which will be handled by efi specific fault handler.
-
-Unmapping EFI boot services code/data regions will result in clearing
-PAGE_PRESENT bit and it shouldn't bother L1TF cases because it's already handled
-by protnone_mask() at arch/x86/include/asm/pgtable-invert.h.
-
-[1] Please see efi_reserve_boot_services()
-[2] Please see efi_map_region() -> __map_region() -> kernel_map_pages_in_pgd()
-[3] Please see efi_free_boot_services()
-
-Testing the patch set:
-----------------------
-1. Download buggy firmware (which accesses boot regions even after kernel has
-booted) from here [1].
-2. Without the patch set, you shouldn't see any kernel warning/error messages
-(i.e. kernel allows accesses to EFI boot services code/data regions even after
-call to set_virtual_address_map()).
-3. With the patch set, you should see a kernel warning about buggy firmware,
-efi_rts_wq beeing freezed and disabling runtime services forever.
-
-Please note that this patch will change kernel's existing behavior for some EFI
-runtime services but I think it's OK because kernel should have never allowed
-those accesses in the first place.
-
-Also please note that this patch set needs lot of real time trashing as I just
-tested it out with OVMF.
-
-Note:
------
-Patch set based on "next" branch in efi tree.
-
-Changes from V2 -> V3:
-----------------------
-1. Expliclty set pfn to 0 in kernel_unmap_pages_in_pgd().
-2. Add __init modifier to kernel_<map/unmap>_pages_in_pgd().
-3. Warn if kernel_<map/unmap>_pages_in_pgd() are called after smp_init().
-4. Split efi_unmap_pages() into a separate patch.
-
-Changes from V1 -> V2:
-----------------------
-1. Rewrite the cpa initializer in a more readable fashion.
-2. Don't use cpa->pfn while unmapping, as it's not useful.
-3. Unmap regions before freeing them up.
-4. Fix spelling nits.
-
-Sai Praneeth (3):
-  x86/mm/pageattr: Introduce helper function to unmap EFI boot services
-  x86/efi: Unmap EFI boot services code/data regions from efi_pgd
-  x86/efi: Move efi_<reserve/free>_boot_services() to arch/x86
-
- arch/x86/include/asm/efi.h           |  2 ++
- arch/x86/include/asm/pgtable_types.h |  8 ++++++--
- arch/x86/mm/pageattr.c               | 40 ++++++++++++++++++++++++++++++++++--
- arch/x86/platform/efi/efi.c          |  2 ++
- arch/x86/platform/efi/quirks.c       | 25 ++++++++++++++++++++++
- include/linux/efi.h                  |  3 ---
- init/main.c                          |  4 ----
- 7 files changed, 73 insertions(+), 11 deletions(-)
+efi_<reserve/free>_boot_services() are x86 specific quirks and as such
+should be in asm/efi.h, so move them from linux/efi.h. Also, call
+efi_free_boot_services() from __efi_enter_virtual_mode() as it is x86
+specific call and ideally shouldn't be part of init/main.c
 
 Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: Ingo Molnar <mingo@kernel.org>
 Cc: Andy Lutomirski <luto@kernel.org>
@@ -137,7 +70,80 @@ Cc: Bhupesh Sharma <bhsharma@redhat.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+---
+ arch/x86/include/asm/efi.h  | 2 ++
+ arch/x86/platform/efi/efi.c | 2 ++
+ include/linux/efi.h         | 3 ---
+ init/main.c                 | 4 ----
+ 4 files changed, 4 insertions(+), 7 deletions(-)
 
+diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
+index eea40d52ca78..d1e64ac80b9c 100644
+--- a/arch/x86/include/asm/efi.h
++++ b/arch/x86/include/asm/efi.h
+@@ -141,6 +141,8 @@ extern int __init efi_reuse_config(u64 tables, int nr_tables);
+ extern void efi_delete_dummy_variable(void);
+ extern void efi_switch_mm(struct mm_struct *mm);
+ extern void efi_recover_from_page_fault(unsigned long phys_addr);
++extern void efi_free_boot_services(void);
++extern void efi_reserve_boot_services(void);
+ 
+ struct efi_setup_data {
+ 	u64 fw_vendor;
+diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
+index 9061babfbc83..93924a353e3b 100644
+--- a/arch/x86/platform/efi/efi.c
++++ b/arch/x86/platform/efi/efi.c
+@@ -994,6 +994,8 @@ static void __init __efi_enter_virtual_mode(void)
+ 		panic("EFI call to SetVirtualAddressMap() failed!");
+ 	}
+ 
++	efi_free_boot_services();
++
+ 	/*
+ 	 * Now that EFI is in virtual mode, update the function
+ 	 * pointers in the runtime service table to the new virtual addresses.
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index 845174e113ce..ed2058073385 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -1000,13 +1000,11 @@ extern void efi_memmap_walk (efi_freemem_callback_t callback, void *arg);
+ extern void efi_gettimeofday (struct timespec64 *ts);
+ extern void efi_enter_virtual_mode (void);	/* switch EFI to virtual mode, if possible */
+ #ifdef CONFIG_X86
+-extern void efi_free_boot_services(void);
+ extern efi_status_t efi_query_variable_store(u32 attributes,
+ 					     unsigned long size,
+ 					     bool nonblocking);
+ extern void efi_find_mirror(void);
+ #else
+-static inline void efi_free_boot_services(void) {}
+ 
+ static inline efi_status_t efi_query_variable_store(u32 attributes,
+ 						    unsigned long size,
+@@ -1046,7 +1044,6 @@ extern void efi_mem_reserve(phys_addr_t addr, u64 size);
+ extern int efi_mem_reserve_persistent(phys_addr_t addr, u64 size);
+ extern void efi_initialize_iomem_resources(struct resource *code_resource,
+ 		struct resource *data_resource, struct resource *bss_resource);
+-extern void efi_reserve_boot_services(void);
+ extern int efi_get_fdt_params(struct efi_fdt_params *params);
+ extern struct kobject *efi_kobj;
+ 
+diff --git a/init/main.c b/init/main.c
+index 18f8f0140fa0..174fb14196cc 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -731,10 +731,6 @@ asmlinkage __visible void __init start_kernel(void)
+ 	arch_post_acpi_subsys_init();
+ 	sfi_init_late();
+ 
+-	if (efi_enabled(EFI_RUNTIME_SERVICES)) {
+-		efi_free_boot_services();
+-	}
+-
+ 	/* Do the rest non-__init'ed, we're now alive */
+ 	rest_init();
+ }
 -- 
 2.7.4
 
