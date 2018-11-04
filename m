@@ -7,43 +7,45 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 745A7C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EADD6C32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:55:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2632E204FD
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB234204FD
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:55:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ygd45vEA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2632E204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EnkqJvje"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB234204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731954AbeKDXJ7 (ORCPT
+        id S1731904AbeKDXJu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:09:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50050 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:09:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731901AbeKDXJw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:09:52 -0500
+        id S1729483AbeKDXJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:09:48 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5AF0E2086D;
-        Sun,  4 Nov 2018 13:54:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 463B220869;
+        Sun,  4 Nov 2018 13:54:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339687;
-        bh=wBduRsfu1jsZcLPPEa8/YlSf4rt+3SiZ0PTgZARmq1E=;
+        s=default; t=1541339684;
+        bh=vzMpZ58hi0eZsjcsIQun9i4lrMP3vtyZOfmz+wd6uV8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ygd45vEAqdr9scs4RTgwlZwrhMd5T8n4XcFXxbTLL2Olhm/rgXzGmSalYgSKWoiTt
-         LAb9LykbyDzc5U/MRGZVqvB+qqW+fG+S/6lOO/E1jYpA4D+k/NuUIrFycpcs7jy9Iu
-         UAfuDbNsk2O7G3jVyTGGRSC/7FdR1NY8isMkL9JM=
+        b=EnkqJvje6LJI1fdTUBnXus5QRderl6tJSOw5VFQNlWXnxzs9gtF6uiblKASZ36nih
+         ggVL9rgIE7ZWK/LHalGQBH4JhKfGwvmWQg8ZNyAXqC7sPt/fQQLRfoNVzBycJz75IK
+         judH7guGMFTTl88bvPJhuJumiLqOZIvz2zyzgF6g=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dominique Martinet <dominique.martinet@cea.fr>,
+Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 13/13] 9p: clear dangling pointers in p9stat_free
-Date:   Sun,  4 Nov 2018 08:54:33 -0500
-Message-Id: <20181104135433.88734-13-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 09/13] media: pci: cx23885: handle adding to list failure
+Date:   Sun,  4 Nov 2018 08:54:29 -0500
+Message-Id: <20181104135433.88734-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135433.88734-1-sashal@kernel.org>
 References: <20181104135433.88734-1-sashal@kernel.org>
@@ -52,45 +54,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dominique Martinet <dominique.martinet@cea.fr>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-[ Upstream commit 62e3941776fea8678bb8120607039410b1b61a65 ]
+[ Upstream commit c5d59528e24ad22500347b199d52b9368e686a42 ]
 
-p9stat_free is more of a cleanup function than a 'free' function as it
-only frees the content of the struct; there are chances of use-after-free
-if it is improperly used (e.g. p9stat_free called twice as it used to be
-possible to)
+altera_hw_filt_init() which calls append_internal() assumes
+that the node was successfully linked in while in fact it can
+silently fail. So the call-site needs to set return to -ENOMEM
+on append_internal() returning NULL and exit through the err path.
 
-Clearing dangling pointers makes the function idempotent and safer to use.
+Fixes: 349bcf02e361 ("[media] Altera FPGA based CI driver module")
 
-Link: http://lkml.kernel.org/r/1535410108-20650-2-git-send-email-asmadeus@codewreck.org
-Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
-Reported-by: syzbot+d4252148d198410b864f@syzkaller.appspotmail.com
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/9p/protocol.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/media/pci/cx23885/altera-ci.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/net/9p/protocol.c b/net/9p/protocol.c
-index ab9127ec5b7a..bceb6999614f 100644
---- a/net/9p/protocol.c
-+++ b/net/9p/protocol.c
-@@ -45,10 +45,15 @@ p9pdu_writef(struct p9_fcall *pdu, int proto_version, const char *fmt, ...);
- void p9stat_free(struct p9_wstat *stbuf)
- {
- 	kfree(stbuf->name);
-+	stbuf->name = NULL;
- 	kfree(stbuf->uid);
-+	stbuf->uid = NULL;
- 	kfree(stbuf->gid);
-+	stbuf->gid = NULL;
- 	kfree(stbuf->muid);
-+	stbuf->muid = NULL;
- 	kfree(stbuf->extension);
-+	stbuf->extension = NULL;
- }
- EXPORT_SYMBOL(p9stat_free);
+diff --git a/drivers/media/pci/cx23885/altera-ci.c b/drivers/media/pci/cx23885/altera-ci.c
+index 2bbbf545b042..a7681719de76 100644
+--- a/drivers/media/pci/cx23885/altera-ci.c
++++ b/drivers/media/pci/cx23885/altera-ci.c
+@@ -662,6 +662,10 @@ static int altera_hw_filt_init(struct altera_ci_config *config, int hw_filt_nr)
+ 		}
  
+ 		temp_int = append_internal(inter);
++		if (!temp_int) {
++			ret = -ENOMEM;
++			goto err;
++		}
+ 		inter->filts_used = 1;
+ 		inter->dev = config->dev;
+ 		inter->fpga_rw = config->fpga_rw;
+@@ -696,6 +700,7 @@ static int altera_hw_filt_init(struct altera_ci_config *config, int hw_filt_nr)
+ 		     __func__, ret);
+ 
+ 	kfree(pid_filt);
++	kfree(inter);
+ 
+ 	return ret;
+ }
+@@ -731,6 +736,10 @@ int altera_ci_init(struct altera_ci_config *config, int ci_nr)
+ 		}
+ 
+ 		temp_int = append_internal(inter);
++		if (!temp_int) {
++			ret = -ENOMEM;
++			goto err;
++		}
+ 		inter->cis_used = 1;
+ 		inter->dev = config->dev;
+ 		inter->fpga_rw = config->fpga_rw;
+@@ -799,6 +808,7 @@ int altera_ci_init(struct altera_ci_config *config, int ci_nr)
+ 	ci_dbg_print("%s: Cannot initialize CI: Error %d.\n", __func__, ret);
+ 
+ 	kfree(state);
++	kfree(inter);
+ 
+ 	return ret;
+ }
 -- 
 2.17.1
 
