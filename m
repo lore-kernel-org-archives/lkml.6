@@ -6,47 +6,44 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E68E5ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F5CEC32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD7E320866
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56C3820862
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="otuUBy14"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD7E320866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="N08Eu5hf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56C3820862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730191AbeKDXHQ (ORCPT
+        id S1730226AbeKDXHS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:07:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44746 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:07:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44832 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730164AbeKDXHO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:07:14 -0500
+        id S1730164AbeKDXHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:07:16 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30B6A20862;
-        Sun,  4 Nov 2018 13:52:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A22320862;
+        Sun,  4 Nov 2018 13:52:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339531;
-        bh=XHdzMikRKN9IDMhCVtzTplocA4T81y7G+d0OG/ow0zs=;
+        s=default; t=1541339533;
+        bh=I9mqUG3c5wQhAoy2APweC3mft1peGKDwGooMeor2rKQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=otuUBy14iuO+wvo7MDHnSV2DCdYLg3IHVw3AZF3k0pQgJs7Bkt6roCj+D9xLlH3TF
-         fKU1wBYoFyUUWHEI34bkp1LG7+8EgkuqPyxCVbhCMVGgBs5HRlO22ZRQhxgGC7QBB8
-         iUKLZMbKoHKtnX8Jc1DzysdBefjiaSivhLxDwvbo=
+        b=N08Eu5hfFsQ3c1L2aOokOd7+IgaP1tRw8CIalmZwUFGQJCrwnBLvoLhTb6Z283qqt
+         F4UNol7FDxVJCvLdEtHx6pdFfvnOZaX+mrn63Tj4i55sLShRa1C+uS2E142Uo9Smgp
+         6jkHiPKboGVXfDIFuE+CF7o1lgV51t+5LCazamMg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Rob Clark <robdclark@gmail.com>,
+Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 25/57] drm/msm/disp/dpu: Use proper define for drm_encoder_init() 'encoder_type'
-Date:   Sun,  4 Nov 2018 08:51:12 -0500
-Message-Id: <20181104135144.88324-25-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 27/57] powerpc/mm: Don't report hugepage tables as memory leaks when using kmemleak
+Date:   Sun,  4 Nov 2018 08:51:14 -0500
+Message-Id: <20181104135144.88324-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135144.88324-1-sashal@kernel.org>
 References: <20181104135144.88324-1-sashal@kernel.org>
@@ -55,109 +52,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Boyd <swboyd@chromium.org>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-[ Upstream commit 2c043eeffea4813b8f569e84b46035a08de5eb47 ]
+[ Upstream commit 803d690e68f0c5230183f1a42c7d50a41d16e380 ]
 
-We got a bug report that this function oopses when trying to do a kasprintf().
+When a process allocates a hugepage, the following leak is
+reported by kmemleak. This is a false positive which is
+due to the pointer to the table being stored in the PGD
+as physical memory address and not virtual memory pointer.
 
-PC is at string+0x2c/0x60
-LR is at vsnprintf+0x28c/0x4ec
-pc : [<ffffff80088d35d8>] lr : [<ffffff80088d5fc4>] pstate: a0c00049
-sp : ffffff80095fb540
-x29: ffffff80095fb540 x28: ffffff8008ad42bc
-x27: 00000000ffffffd8 x26: 0000000000000000
-x25: ffffff8008c216c8 x24: 0000000000000000
-x23: 0000000000000000 x22: ffffff80095fb720
-x21: 0000000000000000 x20: ffffff80095fb720
-x19: ffffff80095fb6f0 x18: 000000000000000a
-x17: 00000000b42ba473 x16: ffffff800805bbe8
-x15: 00000000000a157d x14: 000000000000000c
-x13: 0000000000000000 x12: 0000ffff0000000f
-x11: 0000000000000003 x10: 0000000000000001
-x9 : 0000000000000040 x8 : 000000000000001c
-x7 : ffffffffffffffff x6 : 0000000000000000
-x5 : 0000000000000228 x4 : 0000000000000000
-x3 : ffff0a00ffffff04 x2 : 0000000000007961
-x1 : 0000000000000000 x0 : 0000000000000000
-Process kworker/3:1 (pid: 61, stack limit = 0xffffff80095f8000)
-Call trace:
-Exception stack(0xffffff80095fb400 to 0xffffff80095fb540)
-b400: 0000000000000000 0000000000000000 0000000000007961 ffff0a00ffffff04
-b420: 0000000000000000 0000000000000228 0000000000000000 ffffffffffffffff
-b440: 000000000000001c 0000000000000040 0000000000000001 0000000000000003
-b460: 0000ffff0000000f 0000000000000000 000000000000000c 00000000000a157d
-b480: ffffff800805bbe8 00000000b42ba473 000000000000000a ffffff80095fb6f0
-b4a0: ffffff80095fb720 0000000000000000 ffffff80095fb720 0000000000000000
-b4c0: 0000000000000000 ffffff8008c216c8 0000000000000000 00000000ffffffd8
-b4e0: ffffff8008ad42bc ffffff80095fb540 ffffff80088d5fc4 ffffff80095fb540
-b500: ffffff80088d35d8 00000000a0c00049 ffffff80095fb550 ffffff80080d06a4
-b520: ffffffffffffffff ffffff80088d5e0c ffffff80095fb540 ffffff80088d35d8
-[<ffffff80088d35d8>] string+0x2c/0x60
-[<ffffff80088d5fc4>] vsnprintf+0x28c/0x4ec
-[<ffffff80083973b8>] kvasprintf+0x68/0x100
-[<ffffff800839755c>] kasprintf+0x60/0x80
-[<ffffff800849cc24>] drm_encoder_init+0x134/0x164
-[<ffffff80084d9a7c>] dpu_encoder_init+0x60/0x94
-[<ffffff80084eced0>] _dpu_kms_drm_obj_init+0xa0/0x424
-[<ffffff80084ed870>] dpu_kms_hw_init+0x61c/0x6bc
-[<ffffff80084f7614>] msm_drm_bind+0x380/0x67c
-[<ffffff80085114e4>] try_to_bring_up_master+0x228/0x264
-[<ffffff80085116e8>] component_master_add_with_match+0x90/0xc0
-[<ffffff80084f722c>] msm_pdev_probe+0x260/0x2c8
-[<ffffff800851a910>] platform_drv_probe+0x58/0xa8
-[<ffffff80085185c8>] driver_probe_device+0x2d8/0x40c
-[<ffffff8008518928>] __device_attach_driver+0xd4/0x10c
-[<ffffff800851644c>] bus_for_each_drv+0xb4/0xd0
-[<ffffff8008518230>] __device_attach+0xd0/0x160
-[<ffffff8008518984>] device_initial_probe+0x24/0x30
-[<ffffff800851744c>] bus_probe_device+0x38/0x98
-[<ffffff8008517aac>] deferred_probe_work_func+0x144/0x148
-[<ffffff80080c8654>] process_one_work+0x218/0x3bc
-[<ffffff80080c883c>] process_scheduled_works+0x44/0x48
-[<ffffff80080c95bc>] worker_thread+0x288/0x32c
-[<ffffff80080cea30>] kthread+0x134/0x13c
-[<ffffff8008084750>] ret_from_fork+0x10/0x18
-Code: 910003fd 2a0403e6 eb0400ff 54000060 (38646845)
+unreferenced object 0xc30f8200 (size 512):
+  comm "mmap", pid 374, jiffies 4872494 (age 627.630s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<e32b68da>] huge_pte_alloc+0xdc/0x1f8
+    [<9e0df1e1>] hugetlb_fault+0x560/0x8f8
+    [<7938ec6c>] follow_hugetlb_page+0x14c/0x44c
+    [<afbdb405>] __get_user_pages+0x1c4/0x3dc
+    [<b8fd7cd9>] __mm_populate+0xac/0x140
+    [<3215421e>] vm_mmap_pgoff+0xb4/0xb8
+    [<c148db69>] ksys_mmap_pgoff+0xcc/0x1fc
+    [<4fcd760f>] ret_from_syscall+0x0/0x38
 
-Looking at the code I see that drm_encoder_init() is called from the DPU
-code with 'DRM_MODE_CONNECTOR_DSI' passed in as the 'encoder_type'
-argument (follow from _dpu_kms_initialize_dsi()). That corresponds to
-the integer 16. That is then indexed into drm_encoder_enum_list in
-drm_encoder_init() to look up the name of the encoder. If you're still
-following along, that's an encoder not a connector! We really want to
-use DRM_MODE_ENCODER_DSI (integer 6) instead of DRM_MODE_CONNECTOR_DSI
-here, or we'll go out of bounds of the encoder array. Pass the right
-thing and everything is fine.
+See commit a984506c542e2 ("powerpc/mm: Don't report PUDs as
+memory leaks when using kmemleak") for detailed explanation.
 
-Cc: Jeykumar Sankaran <jsanka@codeaurora.org>
-Cc: Jordan Crouse <jcrouse@codeaurora.org>
-Cc: Sean Paul <seanpaul@chromium.org>
-Fixes: 25fdd5933e4c (drm/msm: Add SDM845 DPU support)
-Tested-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Reviewed-by: Jeykumar Sankaran <jsanka@codeaurora.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
+To fix that, this patch tells kmemleak to ignore the allocated
+hugepage table.
 
-Signed-off-by: Rob Clark <robdclark@gmail.com>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/mm/hugetlbpage.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-index 7dd6bd2d6d37..74cc204b07e8 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-@@ -450,7 +450,7 @@ static void _dpu_kms_initialize_dsi(struct drm_device *dev,
- 	int i, rc;
- 
- 	/*TODO: Support two independent DSI connectors */
--	encoder = dpu_encoder_init(dev, DRM_MODE_CONNECTOR_DSI);
-+	encoder = dpu_encoder_init(dev, DRM_MODE_ENCODER_DSI);
- 	if (IS_ERR_OR_NULL(encoder)) {
- 		DPU_ERROR("encoder init failed for dsi display\n");
- 		return;
+diff --git a/arch/powerpc/mm/hugetlbpage.c b/arch/powerpc/mm/hugetlbpage.c
+index e87f9ef9115b..7296a42eb62e 100644
+--- a/arch/powerpc/mm/hugetlbpage.c
++++ b/arch/powerpc/mm/hugetlbpage.c
+@@ -19,6 +19,7 @@
+ #include <linux/moduleparam.h>
+ #include <linux/swap.h>
+ #include <linux/swapops.h>
++#include <linux/kmemleak.h>
+ #include <asm/pgtable.h>
+ #include <asm/pgalloc.h>
+ #include <asm/tlb.h>
+@@ -112,6 +113,8 @@ static int __hugepte_alloc(struct mm_struct *mm, hugepd_t *hpdp,
+ 		for (i = i - 1 ; i >= 0; i--, hpdp--)
+ 			*hpdp = __hugepd(0);
+ 		kmem_cache_free(cachep, new);
++	} else {
++		kmemleak_ignore(new);
+ 	}
+ 	spin_unlock(ptl);
+ 	return 0;
 -- 
 2.17.1
 
