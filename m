@@ -7,49 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A884CECDE46
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1BDEECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 722902086D
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5ED932086C
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QKSYJkn9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 722902086D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2FGiXKmS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5ED932086C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731182AbeKDXIg (ORCPT
+        id S1731231AbeKDXIj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:08:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47374 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:08:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729652AbeKDXIe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:08:34 -0500
+        id S1731192AbeKDXIh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:08:37 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4731020868;
-        Sun,  4 Nov 2018 13:53:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C9FD020869;
+        Sun,  4 Nov 2018 13:53:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339610;
-        bh=9dH0lsyD10h8yVXMzJ7Xjtl0we3Me20hRIgdPeiXvpM=;
+        s=default; t=1541339613;
+        bh=9u+KewjeAQMDyqLOeMJLYOrE6sY7eecZ21LFTOBiRm0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QKSYJkn9ij8C1j8jBi7h3bk803tftIwwqZWlH0et4vBxjrXWHI5j7ZqyoRZ5nwK5b
-         XmHrzPrhskhVeEUfDNADwwqU6tvcwwp6zpWpfxHCC0IPXLu2fe/dK1qcuxpIByc2CZ
-         petNtoh3nRzBPZkHMbUBuyxi+eh+FCNiZbmaj2bw=
+        b=2FGiXKmSD2OxrdfsN95TmC4Zb9OYyu32tXEWAsi+fmKL2R3jtbuhB1rVldI3k4p5X
+         SbYA2mqze1TKjh3ad1Th0FOYJBR9NWqO81TuNxJmE8iwX0/9/m6wPeEzqQ6CKfCz9D
+         VUZUl3v++jk5GZb1OryJRi4E2Y6+DHiYB7YGLjD4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Roman Gushchin <guro@fb.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        Konstantin Khlebnikov <koct9i@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+Cc:     Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 03/30] mm: don't miss the last page because of round-off error
-Date:   Sun,  4 Nov 2018 08:52:58 -0500
-Message-Id: <20181104135325.88524-3-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 06/30] powerpc/64/module: REL32 relocation range check
+Date:   Sun,  4 Nov 2018 08:53:01 -0500
+Message-Id: <20181104135325.88524-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135325.88524-1-sashal@kernel.org>
 References: <20181104135325.88524-1-sashal@kernel.org>
@@ -58,83 +53,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roman Gushchin <guro@fb.com>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-[ Upstream commit 68600f623d69da428c6163275f97ca126e1a8ec5 ]
+[ Upstream commit b851ba02a6f3075f0f99c60c4bc30a4af80cf428 ]
 
-I've noticed, that dying memory cgroups are often pinned in memory by a
-single pagecache page.  Even under moderate memory pressure they sometimes
-stayed in such state for a long time.  That looked strange.
+The recent module relocation overflow crash demonstrated that we
+have no range checking on REL32 relative relocations. This patch
+implements a basic check, the same kernel that previously oopsed
+and rebooted now continues with some of these errors when loading
+the module:
 
-My investigation showed that the problem is caused by applying the LRU
-pressure balancing math:
+  module_64: x_tables: REL32 527703503449812 out of range!
 
-  scan = div64_u64(scan * fraction[lru], denominator),
+Possibly other relocations (ADDR32, REL16, TOC16, etc.) should also have
+overflow checks.
 
-where
-
-  denominator = fraction[anon] + fraction[file] + 1.
-
-Because fraction[lru] is always less than denominator, if the initial scan
-size is 1, the result is always 0.
-
-This means the last page is not scanned and has
-no chances to be reclaimed.
-
-Fix this by rounding up the result of the division.
-
-In practice this change significantly improves the speed of dying cgroups
-reclaim.
-
-[guro@fb.com: prevent double calculation of DIV64_U64_ROUND_UP() arguments]
-  Link: http://lkml.kernel.org/r/20180829213311.GA13501@castle
-Link: http://lkml.kernel.org/r/20180827162621.30187-3-guro@fb.com
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Konstantin Khlebnikov <koct9i@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/math64.h | 3 +++
- mm/vmscan.c            | 6 ++++--
- 2 files changed, 7 insertions(+), 2 deletions(-)
+ arch/powerpc/kernel/module_64.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/math64.h b/include/linux/math64.h
-index 082de345b73c..3a7a14062668 100644
---- a/include/linux/math64.h
-+++ b/include/linux/math64.h
-@@ -254,4 +254,7 @@ static inline u64 mul_u64_u32_div(u64 a, u32 mul, u32 divisor)
- }
- #endif /* mul_u64_u32_div */
+diff --git a/arch/powerpc/kernel/module_64.c b/arch/powerpc/kernel/module_64.c
+index 2a1b1273a312..4d8f6291b766 100644
+--- a/arch/powerpc/kernel/module_64.c
++++ b/arch/powerpc/kernel/module_64.c
+@@ -656,7 +656,14 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
  
-+#define DIV64_U64_ROUND_UP(ll, d)	\
-+	({ u64 _tmp = (d); div64_u64((ll) + _tmp - 1, _tmp); })
-+
- #endif /* _LINUX_MATH64_H */
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index be56e2e1931e..9734e62654fa 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2367,9 +2367,11 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
- 			/*
- 			 * Scan types proportional to swappiness and
- 			 * their relative recent reclaim efficiency.
-+			 * Make sure we don't miss the last page
-+			 * because of a round-off error.
- 			 */
--			scan = div64_u64(scan * fraction[file],
--					 denominator);
-+			scan = DIV64_U64_ROUND_UP(scan * fraction[file],
-+						  denominator);
+ 		case R_PPC64_REL32:
+ 			/* 32 bits relative (used by relative exception tables) */
+-			*(u32 *)location = value - (unsigned long)location;
++			/* Convert value to relative */
++			value -= (unsigned long)location;
++			if (value + 0x80000000 > 0xffffffff) {
++				pr_err("%s: REL32 %li out of range!\n",
++				       me->name, (long int)value);
++				return -ENOEXEC;
++			}
++			*(u32 *)location = value;
  			break;
- 		case SCAN_FILE:
- 		case SCAN_ANON:
+ 
+ 		case R_PPC64_TOCSAVE:
 -- 
 2.17.1
 
