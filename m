@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36A74ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 15:14:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0975ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 15:14:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0959F2082A
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 15:14:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0959F2082A
+	by mail.kernel.org (Postfix) with ESMTP id AB2D620854
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 15:14:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB2D620854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730427AbeKEA3y (ORCPT
+        id S1730469AbeKEA36 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 19:29:54 -0500
-Received: from mga14.intel.com ([192.55.52.115]:64597 "EHLO mga14.intel.com"
+        Sun, 4 Nov 2018 19:29:58 -0500
+Received: from mga14.intel.com ([192.55.52.115]:64593 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730369AbeKEA3y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 19:29:54 -0500
+        id S1729446AbeKEA35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 19:29:57 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2018 07:14:34 -0800
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2018 07:14:30 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,464,1534834800"; 
-   d="scan'208";a="105303536"
+   d="scan'208";a="105303520"
 Received: from ahunter-desktop.fi.intel.com ([10.237.72.130])
-  by orsmga001.jf.intel.com with ESMTP; 04 Nov 2018 07:14:32 -0800
+  by orsmga001.jf.intel.com with ESMTP; 04 Nov 2018 07:14:28 -0800
 From:   Adrian Hunter <adrian.hunter@intel.com>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V2 4/4] perf scripts python: exported-sql-viewer.py: Fix table find when table re-ordered
-Date:   Sun,  4 Nov 2018 17:12:38 +0200
-Message-Id: <20181104151238.15947-5-adrian.hunter@intel.com>
+Subject: [PATCH V2 2/4] perf scripts python: exported-sql-viewer.py: Add Selected branches report
+Date:   Sun,  4 Nov 2018 17:12:36 +0200
+Message-Id: <20181104151238.15947-3-adrian.hunter@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104151238.15947-1-adrian.hunter@intel.com>
 References: <20181104151238.15947-1-adrian.hunter@intel.com>
@@ -47,36 +47,373 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Table rows can be re-ordered by selecting a column to sort by. After
-re-ordering, the "find" operation was highlighting the wrong row, fix it.
+Fetching data from the database can be slow. Add a report that provides the
+ability to select a subset of branches.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- tools/perf/scripts/python/exported-sql-viewer.py | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ .../scripts/python/exported-sql-viewer.py     | 327 ++++++++++++++++++
+ 1 file changed, 327 insertions(+)
 
 diff --git a/tools/perf/scripts/python/exported-sql-viewer.py b/tools/perf/scripts/python/exported-sql-viewer.py
-index c2fcf6c5237a..f278ce5ebab7 100755
+index 20cc8e7879b9..a9d2b3170141 100755
 --- a/tools/perf/scripts/python/exported-sql-viewer.py
 +++ b/tools/perf/scripts/python/exported-sql-viewer.py
-@@ -1975,7 +1975,7 @@ class TableWindow(QMdiSubWindow, ResizeColumnsToContentsBase):
- 	def FindDone(self, row):
- 		self.find_bar.Idle()
- 		if row >= 0:
--			self.view.setCurrentIndex(self.model.index(row, 0, QModelIndex()))
-+			self.view.setCurrentIndex(self.model.mapFromSource(self.data_model.index(row, 0, QModelIndex())))
+@@ -119,6 +119,14 @@ def dsoname(name):
+ 		return "[kernel]"
+ 	return name
+ 
++def findnth(s, sub, n, offs=0):
++	pos = s.find(sub)
++	if pos < 0:
++		return pos
++	if n <= 1:
++		return offs + pos
++	return findnth(s[pos + 1:], sub, n - 1, offs + pos + 1)
++
+ # Percent to one decimal place
+ 
+ def PercentToOneDP(n, d):
+@@ -1464,6 +1472,317 @@ class BranchWindow(QMdiSubWindow):
  		else:
  			self.find_bar.NotFound()
  
-@@ -2188,6 +2188,8 @@ For PostgreSQL databases, information_schema.tables/views/columns are included.
- Ctrl-F displays a Find bar which finds substrings by either an exact match or a regular expression match.
- Refer to Python documentation for the regular expression syntax.
- All columns are searched, but only currently fetched rows are searched.
-+<p>N.B. Results are found in id order, so if the table is re-ordered, find-next and find-previous
-+will go to the next/previous result in id order, instead of display order.
- """
++# Dialog data item converted and validated using a SQL table
++
++class SQLTableDialogDataItem():
++
++	def __init__(self, glb, label, placeholder_text, table_name, match_column, column_name1, column_name2, parent):
++		self.glb = glb
++		self.label = label
++		self.placeholder_text = placeholder_text
++		self.table_name = table_name
++		self.match_column = match_column
++		self.column_name1 = column_name1
++		self.column_name2 = column_name2
++		self.parent = parent
++
++		self.value = ""
++
++		self.widget = QLineEdit()
++		self.widget.editingFinished.connect(self.Validate)
++		self.widget.textChanged.connect(self.Invalidate)
++		self.red = False
++		self.error = ""
++		self.validated = True
++
++		self.last_id = 0
++		self.first_time = 0
++		self.last_time = 2 ** 64
++		if self.table_name == "<timeranges>":
++			query = QSqlQuery(self.glb.db)
++			QueryExec(query, "SELECT id, time FROM samples ORDER BY id DESC LIMIT 1")
++			if query.next():
++				self.last_id = int(query.value(0))
++				self.last_time = int(query.value(1))
++			QueryExec(query, "SELECT time FROM samples WHERE time != 0 ORDER BY id LIMIT 1")
++			if query.next():
++				self.first_time = int(query.value(0))
++			if placeholder_text:
++				placeholder_text += ", between " + str(self.first_time) + " and " + str(self.last_time)
++
++		if placeholder_text:
++			self.widget.setPlaceholderText(placeholder_text)
++
++	def ValueToIds(self, value):
++		ids = []
++		query = QSqlQuery(self.glb.db)
++		stmt = "SELECT id FROM " + self.table_name + " WHERE " + self.match_column + " = '" + value + "'"
++		ret = query.exec_(stmt)
++		if ret:
++			while query.next():
++				ids.append(str(query.value(0)))
++		return ids
++
++	def IdBetween(self, query, lower_id, higher_id, order):
++		QueryExec(query, "SELECT id FROM samples WHERE id > " + str(lower_id) + " AND id < " + str(higher_id) + " ORDER BY id " + order + " LIMIT 1")
++		if query.next():
++			return True, int(query.value(0))
++		else:
++			return False, 0
++
++	def BinarySearchTime(self, lower_id, higher_id, target_time, get_floor):
++		query = QSqlQuery(self.glb.db)
++		while True:
++			next_id = int((lower_id + higher_id) / 2)
++			QueryExec(query, "SELECT time FROM samples WHERE id = " + str(next_id))
++			if not query.next():
++				ok, dbid = self.IdBetween(query, lower_id, next_id, "DESC")
++				if not ok:
++					ok, dbid = self.IdBetween(query, next_id, higher_id, "")
++					if not ok:
++						return str(higher_id)
++				next_id = dbid
++				QueryExec(query, "SELECT time FROM samples WHERE id = " + str(next_id))
++			next_time = int(query.value(0))
++			if get_floor:
++				if target_time > next_time:
++					lower_id = next_id
++				else:
++					higher_id = next_id
++				if higher_id <= lower_id + 1:
++					return str(higher_id)
++			else:
++				if target_time >= next_time:
++					lower_id = next_id
++				else:
++					higher_id = next_id
++				if higher_id <= lower_id + 1:
++					return str(lower_id)
++
++	def ConvertRelativeTime(self, val):
++		print "val ", val
++		mult = 1
++		suffix = val[-2:]
++		if suffix == "ms":
++			mult = 1000000
++		elif suffix == "us":
++			mult = 1000
++		elif suffix == "ns":
++			mult = 1
++		else:
++			return val
++		val = val[:-2].strip()
++		if not self.IsNumber(val):
++			return val
++		val = int(val) * mult
++		if val >= 0:
++			val += self.first_time
++		else:
++			val += self.last_time
++		return str(val)
++
++	def ConvertTimeRange(self, vrange):
++		print "vrange ", vrange
++		if vrange[0] == "":
++			vrange[0] = str(self.first_time)
++		if vrange[1] == "":
++			vrange[1] = str(self.last_time)
++		vrange[0] = self.ConvertRelativeTime(vrange[0])
++		vrange[1] = self.ConvertRelativeTime(vrange[1])
++		print "vrange2 ", vrange
++		if not self.IsNumber(vrange[0]) or not self.IsNumber(vrange[1]):
++			return False
++		print "ok1"
++		beg_range = max(int(vrange[0]), self.first_time)
++		end_range = min(int(vrange[1]), self.last_time)
++		if beg_range > self.last_time or end_range < self.first_time:
++			return False
++		print "ok2"
++		vrange[0] = self.BinarySearchTime(0, self.last_id, beg_range, True)
++		vrange[1] = self.BinarySearchTime(1, self.last_id + 1, end_range, False)
++		print "vrange3 ", vrange
++		return True
++
++	def AddTimeRange(self, value, ranges):
++		print "value ", value
++		n = value.count("-")
++		if n == 1:
++			pass
++		elif n == 2:
++			if value.split("-")[1].strip() == "":
++				n = 1
++		elif n == 3:
++			n = 2
++		else:
++			return False
++		pos = findnth(value, "-", n)
++		vrange = [value[:pos].strip() ,value[pos+1:].strip()]
++		if self.ConvertTimeRange(vrange):
++			ranges.append(vrange)
++			return True
++		return False
++
++	def InvalidValue(self, value):
++		self.value = ""
++		palette = QPalette()
++		palette.setColor(QPalette.Text,Qt.red)
++		self.widget.setPalette(palette)
++		self.red = True
++		self.error = self.label + " invalid value '" + value + "'"
++		self.parent.ShowMessage(self.error)
++
++	def IsNumber(self, value):
++		try:
++			x = int(value)
++		except:
++			x = 0
++		return str(x) == value
++
++	def Invalidate(self):
++		self.validated = False
++
++	def Validate(self):
++		input_string = self.widget.text()
++		self.validated = True
++		if self.red:
++			palette = QPalette()
++			self.widget.setPalette(palette)
++			self.red = False
++		if not len(input_string.strip()):
++			self.error = ""
++			self.value = ""
++			return
++		if self.table_name == "<timeranges>":
++			ranges = []
++			for value in [x.strip() for x in input_string.split(",")]:
++				if not self.AddTimeRange(value, ranges):
++					return self.InvalidValue(value)
++			ranges = [("(" + self.column_name1 + " >= " + r[0] + " AND " + self.column_name1 + " <= " + r[1] + ")") for r in ranges]
++			self.value = " OR ".join(ranges)
++		elif self.table_name == "<ranges>":
++			singles = []
++			ranges = []
++			for value in [x.strip() for x in input_string.split(",")]:
++				if "-" in value:
++					vrange = value.split("-")
++					if len(vrange) != 2 or not self.IsNumber(vrange[0]) or not self.IsNumber(vrange[1]):
++						return self.InvalidValue(value)
++					ranges.append(vrange)
++				else:
++					if not self.IsNumber(value):
++						return self.InvalidValue(value)
++					singles.append(value)
++			ranges = [("(" + self.column_name1 + " >= " + r[0] + " AND " + self.column_name1 + " <= " + r[1] + ")") for r in ranges]
++			if len(singles):
++				ranges.append(self.column_name1 + " IN (" + ",".join(singles) + ")")
++			self.value = " OR ".join(ranges)
++		elif self.table_name:
++			all_ids = []
++			for value in [x.strip() for x in input_string.split(",")]:
++				ids = self.ValueToIds(value)
++				if len(ids):
++					all_ids.extend(ids)
++				else:
++					return self.InvalidValue(value)
++			self.value = self.column_name1 + " IN (" + ",".join(all_ids) + ")"
++			if self.column_name2:
++				self.value = "( " + self.value + " OR " + self.column_name2 + " IN (" + ",".join(all_ids) + ") )"
++		else:
++			self.value = input_string.strip()
++		self.error = ""
++		self.parent.ClearMessage()
++
++	def IsValid(self):
++		if not self.validated:
++			self.Validate()
++		if len(self.error):
++			self.parent.ShowMessage(self.error)
++			return False
++		return True
++
++# Selected branch report creation dialog
++
++class SelectedBranchDialog(QDialog):
++
++	def __init__(self, glb, parent=None):
++		super(SelectedBranchDialog, self).__init__(parent)
++
++		self.glb = glb
++
++		self.name = ""
++		self.where_clause = ""
++
++		self.setWindowTitle("Selected Branches")
++		self.setMinimumWidth(600)
++
++		items = (
++			("Report name:", "Enter a name to appear in the window title bar", "", "", "", ""),
++			("Time ranges:", "Enter time ranges", "<timeranges>", "", "samples.id", ""),
++			("CPUs:", "Enter CPUs or ranges e.g. 0,5-6", "<ranges>", "", "cpu", ""),
++			("Commands:", "Only branches with these commands will be included", "comms", "comm", "comm_id", ""),
++			("PIDs:", "Only branches with these process IDs will be included", "threads", "pid", "thread_id", ""),
++			("TIDs:", "Only branches with these thread IDs will be included", "threads", "tid", "thread_id", ""),
++			("DSOs:", "Only branches with these DSOs will be included", "dsos", "short_name", "samples.dso_id", "to_dso_id"),
++			("Symbols:", "Only branches with these symbols will be included", "symbols", "name", "symbol_id", "to_symbol_id"),
++			("Raw SQL clause: ", "Enter a raw SQL WHERE clause", "", "", "", ""),
++			)
++		self.data_items = [SQLTableDialogDataItem(glb, *x, parent=self) for x in items]
++
++		self.grid = QGridLayout()
++
++		for row in xrange(len(self.data_items)):
++			self.grid.addWidget(QLabel(self.data_items[row].label), row, 0)
++			self.grid.addWidget(self.data_items[row].widget, row, 1)
++
++		self.status = QLabel()
++
++		self.ok_button = QPushButton("Ok", self)
++		self.ok_button.setDefault(True)
++		self.ok_button.released.connect(self.Ok)
++		self.ok_button.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
++
++		self.cancel_button = QPushButton("Cancel", self)
++		self.cancel_button.released.connect(self.reject)
++		self.cancel_button.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
++
++		self.hbox = QHBoxLayout()
++		#self.hbox.addStretch()
++		self.hbox.addWidget(self.status)
++		self.hbox.addWidget(self.ok_button)
++		self.hbox.addWidget(self.cancel_button)
++
++		self.vbox = QVBoxLayout()
++		self.vbox.addLayout(self.grid)
++		self.vbox.addLayout(self.hbox)
++
++		self.setLayout(self.vbox);
++
++	def Ok(self):
++		self.name = self.data_items[0].value
++		if not self.name:
++			self.ShowMessage("Report name is required")
++			return
++		for d in self.data_items:
++			if not d.IsValid():
++				return
++		for d in self.data_items[1:]:
++			if len(d.value):
++				if len(self.where_clause):
++					self.where_clause += " AND "
++				self.where_clause += d.value
++		if len(self.where_clause):
++			self.where_clause = " AND ( " + self.where_clause + " ) "
++		else:
++			self.ShowMessage("No selection")
++			return
++		self.accept()
++
++	def ShowMessage(self, msg):
++		self.status.setText("<font color=#FF0000>" + msg)
++
++	def ClearMessage(self):
++		self.status.setText("")
++
+ # Event list
  
- # Help window
+ def GetEventList(db):
+@@ -1888,6 +2207,8 @@ class MainWindow(QMainWindow):
+ 			if event == "branches":
+ 				label = "All branches" if branches_events == 1 else "All branches " + "(id=" + dbid + ")"
+ 				reports_menu.addAction(CreateAction(label, "Create a new window displaying branch events", lambda x=dbid: self.NewBranchView(x), self))
++				label = "Selected branches" if branches_events == 1 else "Selected branches " + "(id=" + dbid + ")"
++				reports_menu.addAction(CreateAction(label, "Create a new window displaying branch events", lambda x=dbid: self.NewSelectedBranchView(x), self))
+ 
+ 	def TableMenu(self, tables, menu):
+ 		table_menu = menu.addMenu("&Tables")
+@@ -1900,6 +2221,12 @@ class MainWindow(QMainWindow):
+ 	def NewBranchView(self, event_id):
+ 		BranchWindow(self.glb, event_id, "", "", self)
+ 
++	def NewSelectedBranchView(self, event_id):
++		dialog = SelectedBranchDialog(self.glb, self)
++		ret = dialog.exec_()
++		if ret:
++			BranchWindow(self.glb, event_id, dialog.name, dialog.where_clause, self)
++
+ 	def NewTableView(self, table_name):
+ 		TableWindow(self.glb, table_name, self)
+ 
 -- 
 2.17.1
 
