@@ -2,76 +2,79 @@ Return-Path: <SRS0=jXQK=NP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AEBAC0044C
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 00:38:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 476D0C0044C
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 00:40:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE7252081F
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 00:38:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE7252081F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id E9CC12081F
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 00:40:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fROur40x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9CC12081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728802AbeKDJvb (ORCPT
+        id S1728867AbeKDJxj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 04:51:31 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44974 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728545AbeKDJva (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 04:51:30 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 822CCAF71;
-        Sun,  4 Nov 2018 00:38:31 +0000 (UTC)
-Subject: Re: [PATCH] btrfs: avoid link error with CONFIG_NO_AUTO_INLINE
-To:     Arnd Bergmann <arnd@arndb.de>, Chris Mason <clm@fb.com>,
-        David Sterba <DSterba@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>
-Cc:     Gu Jinxiang <gujx@cn.fujitsu.com>,
-        Changbin Du <changbin.du@gmail.com>,
-        Misono Tomohiro <misono.tomohiro@jp.fujitsu.com>,
-        Anand Jain <anand.jain@oracle.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181103153941.1881966-1-arnd@arndb.de>
-From:   Qu Wenruo <wqu@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=wqu@suse.de; prefer-encrypt=mutual; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCWdWCnQUJCWYC
- bgAKCRDCPZHzoSX+qAR8B/94VAsSNygx1C6dhb1u1Wp1Jr/lfO7QIOK/nf1PF0VpYjTQ2au8
- ihf/RApTna31sVjBx3jzlmpy+lDoPdXwbI3Czx1PwDbdhAAjdRbvBmwM6cUWyqD+zjVm4RTG
- rFTPi3E7828YJ71Vpda2qghOYdnC45xCcjmHh8FwReLzsV2A6FtXsvd87bq6Iw2axOHVUax2
- FGSbardMsHrya1dC2jF2R6n0uxaIc1bWGweYsq0LXvLcvjWH+zDgzYCUB0cfb+6Ib/ipSCYp
- 3i8BevMsTs62MOBmKz7til6Zdz0kkqDdSNOq8LgWGLOwUTqBh71+lqN2XBpTDu1eLZaNbxSI
- ilaVzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCWdWBrwIbDAUJA8JnAAAK
- CRDCPZHzoSX+qA3xB/4zS8zYh3Cbm3FllKz7+RKBw/ETBibFSKedQkbJzRlZhBc+XRwF61mi
- f0SXSdqKMbM1a98fEg8H5kV6GTo62BzvynVrf/FyT+zWbIVEuuZttMk2gWLIvbmWNyrQnzPl
- mnjK4AEvZGIt1pk+3+N/CMEfAZH5Aqnp0PaoytRZ/1vtMXNgMxlfNnb96giC3KMR6U0E+siA
- 4V7biIoyNoaN33t8m5FwEwd2FQDG9dAXWhG13zcm9gnk63BN3wyCQR+X5+jsfBaS4dvNzvQv
- h8Uq/YGjCoV1ofKYh3WKMY8avjq25nlrhzD/Nto9jHp8niwr21K//pXVA81R2qaXqGbql+zo
-Message-ID: <87d4e8ce-2142-9d6e-498a-c7e5b83964eb@suse.de>
-Date:   Sun, 4 Nov 2018 08:38:24 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sun, 4 Nov 2018 04:53:39 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45140 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727157AbeKDJxj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 04:53:39 -0500
+Received: by mail-pf1-f194.google.com with SMTP id p17-v6so2322862pfj.12;
+        Sat, 03 Nov 2018 17:40:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=5wzR6fJgE1m2Lw4LkHFP27xBQ7EYJ6Vj89edQ5HTBs4=;
+        b=fROur40xL9WcHj7Vf0fjQeGSbXSmkvNamwCqGea8NDm3QoZ9FMwO0az1Wp1rACqJC0
+         zNKAW1GQQuYQgTJu2xGNoqhNivbNDW42hZKxUV7MaNcTKfk6lHBYYOkhcfC+pi6JSpik
+         WNe1ZinkNjFNJcct3fBuoZaTlzlI02oba0A5il1kHOtPFZ+nho0oF2dNF+2E3Y20WvrZ
+         +ZUUUyiItbhVlWa775/TgV48E7ZYAGA+x7Iwi5SAdsfDL1UmK86Sx6vYhxfc+2jxNvXF
+         FNhzF5P0mBHnNVk1LvT3kxnAtqw3bdFcTZ07KQa0mIr8NlEvLhiq2bt2c8d9I8FRGZkM
+         ttCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5wzR6fJgE1m2Lw4LkHFP27xBQ7EYJ6Vj89edQ5HTBs4=;
+        b=jl2lCQplnrzDkpf5jE+GR0UBrWb5fra4QSWmswPkRKVrEj/ezli7Ujf44ZInZAZUJS
+         wow+cd4Dyz3IELQVzb+XKXCwmvFgTElvj3uFVNDHHDgt4CguUNp5NvmrewEntgQIKjwa
+         V14q0HZ+hX1HOnHrjYRLk9ZcwwrLV8aWqciuMYV05UDNHsbhXtbiHW3fJcrNsc2F2O+y
+         L/Oy7AfcY4GsqxOR1xeKPmfs/LLQXb/faEia4Q8TZnXYkf4XI24ncikhVLbi8iIXu3mW
+         6CGmFKaDcfHR2Xpeiis4ahMM0GJVvwcU+7+T/B66hhi2S20Ic81ly8MIaUNC8R6ApJqh
+         pnHw==
+X-Gm-Message-State: AGRZ1gLsmLq5YGBcKDeGZwQcmKC9UAwcLJ2nOWBH0XywVhsop7HuZGfV
+        0NKGTdC0mbiOz1o/JHmOaX4M9wVV
+X-Google-Smtp-Source: AJdET5corXERC42A91E9mD/P+UgHWIe8zwmROY4/bvrV7QcAjIkZcEZb6mwZAuYQxO6QSDjsVYZfuA==
+X-Received: by 2002:a62:6981:: with SMTP id e123-v6mr1881546pfc.104.1541292041226;
+        Sat, 03 Nov 2018 17:40:41 -0700 (PDT)
+Received: from [192.168.86.235] (c-67-180-167-114.hsd1.ca.comcast.net. [67.180.167.114])
+        by smtp.gmail.com with ESMTPSA id q11-v6sm15809789pgp.62.2018.11.03.17.40.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 03 Nov 2018 17:40:40 -0700 (PDT)
+Subject: Re: [PATCH] tcp: do not update snd_una if it is same with ack_seq
+To:     Yafang Shao <laoar.shao@gmail.com>, davem@davemloft.net,
+        edumazet@google.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1541264071-9905-1-git-send-email-laoar.shao@gmail.com>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <5f585304-b6f5-5f49-adcf-eaed471c0d76@gmail.com>
+Date:   Sat, 3 Nov 2018 17:40:39 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181103153941.1881966-1-arnd@arndb.de>
+In-Reply-To: <1541264071-9905-1-git-send-email-laoar.shao@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -79,72 +82,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 2018/11/3 下午11:39, Arnd Bergmann wrote:
-> On 32-bit ARM with gcc-8, I see a link error with the addition of the
-> CONFIG_NO_AUTO_INLINE option:
+On 11/03/2018 09:54 AM, Yafang Shao wrote:
+> In the slow path, TCP_SKB_SB(skb)->ack_seq may be same with tp->snd_una,
+> and under this condition we don't need to update the snd_una.
 > 
-> fs/btrfs/super.o: In function `btrfs_statfs':
-> super.c:(.text+0x67b8): undefined reference to `__aeabi_uldivmod'
-> super.c:(.text+0x67fc): undefined reference to `__aeabi_uldivmod'
-> super.c:(.text+0x6858): undefined reference to `__aeabi_uldivmod'
-> super.c:(.text+0x6920): undefined reference to `__aeabi_uldivmod'
-> super.c:(.text+0x693c): undefined reference to `__aeabi_uldivmod'
-> fs/btrfs/super.o:super.c:(.text+0x6958): more undefined references to `__aeabi_uldivmod' follow
+> Furthermore, tcp_ack_update_window() is only called in slow path,
+> so introducing this check won't affect the fast path processing.
 > 
-> So far this is the only file that shows the behavior, so I'd propose
-> to just work around it by marking the functions as 'static inline'
-> that normally get inlined here.
-
-As a workaround it looks OK, but it's definitely not the root cause.
-
+> By the way, '&' is a little faster than '-', so I replaced after() with
+> "flag & FLAG_SND_UNA_ADVANCED".
 > 
-> The reference to __aeabi_uldivmod comes from a div_u64() which has an
-> optimization for a constant division that uses a straight '/' operator
-> when the result should be known to the compiler. My interpretation is
-> that as we turn off inlining, gcc still expects the result to be constant
-> but fails to use that constant value.
-
-It looks more like a bug in div_u64() optimization.
-
-Despite this file in btrfs, did you hit the same problem for any other file?
-
-> 
-> Cc: Changbin Du <changbin.du@gmail.com>
-> Fixes: 943b8435c3bd ("kernel hacking: add a config option to disable compiler auto-inlining")
-
-I can't find it in the mainline kernel, is the commit hash correct?
-If not merged, we should still has a chance to further polish that patch.
-
-Thanks,
-Qu
-
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
 > ---
->  fs/btrfs/super.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  net/ipv4/tcp_input.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-> index c3c1e7bee49d..b7af0b8936ad 100644
-> --- a/fs/btrfs/super.c
-> +++ b/fs/btrfs/super.c
-> @@ -1922,7 +1922,7 @@ static int btrfs_remount(struct super_block *sb, int *flags,
->  }
+> diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+> index 2868ef2..db5a6b7 100644
+> --- a/net/ipv4/tcp_input.c
+> +++ b/net/ipv4/tcp_input.c
+> @@ -3376,7 +3376,8 @@ static int tcp_ack_update_window(struct sock *sk, const struct sk_buff *skb, u32
+>  		}
+>  	}
 >  
->  /* Used to sort the devices by max_avail(descending sort) */
-> -static int btrfs_cmp_device_free_bytes(const void *dev_info1,
-> +static inline int btrfs_cmp_device_free_bytes(const void *dev_info1,
->  				       const void *dev_info2)
->  {
->  	if (((struct btrfs_device_info *)dev_info1)->max_avail >
-> @@ -1951,8 +1951,8 @@ static inline void btrfs_descending_sort_devices(
->   * The helper to calc the free space on the devices that can be used to store
->   * file data.
->   */
-> -static int btrfs_calc_avail_data_space(struct btrfs_fs_info *fs_info,
-> -				       u64 *free_bytes)
-> +static inline int btrfs_calc_avail_data_space(struct btrfs_fs_info *fs_info,
-> +					      u64 *free_bytes)
->  {
->  	struct btrfs_device_info *devices_info;
->  	struct btrfs_fs_devices *fs_devices = fs_info->fs_devices;
-> 
+> -	tcp_snd_una_update(tp, ack);
+> +	if (after(ack, tp->snd_una))
+> +		tcp_snd_una_update(tp, ack);
+>  
+
+Adding this after() here is confusing, how ack could be before snd_una ?
+That would be a serious bug.
+
+I do not see why another conditional has any gain here.
+
+You are trying to avoid very cheap operations :
+
+    u32 delta = ack - tp->snd_una;
+
+    tp->bytes_acked += delta;
+    tp->snd_una = ack;
+
+Maybe the real reason for this patch is not explained in the changelog ?
