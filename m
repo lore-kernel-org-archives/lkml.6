@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 063D7ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:01:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C993CECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:01:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3401204FD
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:01:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D3452082E
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:01:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="H/xmwIsv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3401204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CNy8B30A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D3452082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731430AbeKDXQi (ORCPT
+        id S1731028AbeKDXIX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:16:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47156 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:08:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731001AbeKDXI0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:08:26 -0500
+        id S1730973AbeKDXIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:08:22 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A4EF20868;
-        Sun,  4 Nov 2018 13:53:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBD2020870;
+        Sun,  4 Nov 2018 13:53:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339602;
-        bh=RHR/rrTGnjeredcwlypg0Jv1kNxfWC8/wwJy8L1F6EU=;
+        s=default; t=1541339598;
+        bh=6wcQqKmpTN/0KAslgC8sMtn+EH0X3bqFgwJSJ4Ikd5o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H/xmwIsvTqVAa11IZv1KW2NCRa4sxaYdj7Jt2hDqNr804rnV6uqjwqR6SA1xoblhj
-         FVN8HMZAMoqw3BfrA5zgk/Zg1McjSc+enrZXaxGviCdznm2jfSvBIpMfHhjvYz0sCB
-         +LEklRyW1VI128AVS2oz3dfgjlNkTjaRc9eb1JqQ=
+        b=CNy8B30AHgLbkQzQHJPyv89I+r/G4keOaQ8aP65Ek7oVudNWAOoYKQIZwChwuNkDs
+         tHisGFvl//gmLa2deA+rbFWrF0fAU0stIRDm/aedmtMkG59pvI/FyTZ1uFR2fDwdra
+         ANFLssoVeJTmcgh2dUnWarvFI0jhLOv5fWnNjTKM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dominique Martinet <dominique.martinet@cea.fr>,
+Cc:     Breno Leitao <leitao@debian.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 42/45] 9p locks: fix glock.client_id leak in do_lock
-Date:   Sun,  4 Nov 2018 08:52:37 -0500
-Message-Id: <20181104135240.88431-42-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 37/45] powerpc/selftests: Wait all threads to join
+Date:   Sun,  4 Nov 2018 08:52:32 -0500
+Message-Id: <20181104135240.88431-37-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135240.88431-1-sashal@kernel.org>
 References: <20181104135240.88431-1-sashal@kernel.org>
@@ -52,76 +53,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dominique Martinet <dominique.martinet@cea.fr>
+From: Breno Leitao <leitao@debian.org>
 
-[ Upstream commit b4dc44b3cac9e8327e0655f530ed0c46f2e6214c ]
+[ Upstream commit 693b31b2fc1636f0aa7af53136d3b49f6ad9ff39 ]
 
-the 9p client code overwrites our glock.client_id pointing to a static
-buffer by an allocated string holding the network provided value which
-we do not care about; free and reset the value as appropriate.
+Test tm-tmspr might exit before all threads stop executing, because it just
+waits for the very last thread to join before proceeding/exiting.
 
-This is almost identical to the leak in v9fs_file_getlock() fixed by
-Al Viro in commit ce85dd58ad5a6 ("9p: we are leaking glock.client_id
-in v9fs_file_getlock()"), which was returned as an error by a coverity
-false positive -- while we are here attempt to make the code slightly
-more robust to future change of the net/9p/client code and hopefully
-more clear to coverity that there is no problem.
+This patch makes sure that all threads that were created will join before
+proceeding/exiting.
 
-Link: http://lkml.kernel.org/r/1536339057-21974-5-git-send-email-asmadeus@codewreck.org
-Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
+This patch also guarantees that the amount of threads being created is equal
+to thread_num.
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/9p/vfs_file.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ tools/testing/selftests/powerpc/tm/tm-tmspr.c | 27 ++++++++++++-------
+ 1 file changed, 17 insertions(+), 10 deletions(-)
 
-diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
-index 03c9e325bfbc..3a2f37ad1f89 100644
---- a/fs/9p/vfs_file.c
-+++ b/fs/9p/vfs_file.c
-@@ -204,6 +204,14 @@ static int v9fs_file_do_lock(struct file *filp, int cmd, struct file_lock *fl)
- 			break;
- 		if (schedule_timeout_interruptible(P9_LOCK_TIMEOUT) != 0)
- 			break;
-+		/*
-+		 * p9_client_lock_dotl overwrites flock.client_id with the
-+		 * server message, free and reuse the client name
-+		 */
-+		if (flock.client_id != fid->clnt->name) {
-+			kfree(flock.client_id);
-+			flock.client_id = fid->clnt->name;
-+		}
- 	}
+diff --git a/tools/testing/selftests/powerpc/tm/tm-tmspr.c b/tools/testing/selftests/powerpc/tm/tm-tmspr.c
+index 2bda81c7bf23..df1d7d4b1c89 100644
+--- a/tools/testing/selftests/powerpc/tm/tm-tmspr.c
++++ b/tools/testing/selftests/powerpc/tm/tm-tmspr.c
+@@ -98,7 +98,7 @@ void texasr(void *in)
  
- 	/* map 9p status to VFS status */
-@@ -235,6 +243,8 @@ static int v9fs_file_do_lock(struct file *filp, int cmd, struct file_lock *fl)
- 		locks_lock_file_wait(filp, fl);
- 		fl->fl_type = fl_type;
- 	}
-+	if (flock.client_id != fid->clnt->name)
-+		kfree(flock.client_id);
- out:
- 	return res;
- }
-@@ -269,7 +279,7 @@ static int v9fs_file_getlock(struct file *filp, struct file_lock *fl)
+ int test_tmspr()
+ {
+-	pthread_t 	thread;
++	pthread_t	*thread;
+ 	int	   	thread_num;
+ 	unsigned long	i;
  
- 	res = p9_client_getlock_dotl(fid, &glock);
- 	if (res < 0)
--		return res;
-+		goto out;
- 	/* map 9p lock type to os lock type */
- 	switch (glock.type) {
- 	case P9_LOCK_TYPE_RDLCK:
-@@ -290,7 +300,9 @@ static int v9fs_file_getlock(struct file *filp, struct file_lock *fl)
- 			fl->fl_end = glock.start + glock.length - 1;
- 		fl->fl_pid = -glock.proc_id;
- 	}
--	kfree(glock.client_id);
-+out:
-+	if (glock.client_id != fid->clnt->name)
-+		kfree(glock.client_id);
- 	return res;
- }
+@@ -107,21 +107,28 @@ int test_tmspr()
+ 	/* To cause some context switching */
+ 	thread_num = 10 * sysconf(_SC_NPROCESSORS_ONLN);
  
++	thread = malloc(thread_num * sizeof(pthread_t));
++	if (thread == NULL)
++		return EXIT_FAILURE;
++
+ 	/* Test TFIAR and TFHAR */
+-	for (i = 0 ; i < thread_num ; i += 2){
+-		if (pthread_create(&thread, NULL, (void*)tfiar_tfhar, (void *)i))
++	for (i = 0; i < thread_num; i += 2) {
++		if (pthread_create(&thread[i], NULL, (void *)tfiar_tfhar,
++				   (void *)i))
+ 			return EXIT_FAILURE;
+ 	}
+-	if (pthread_join(thread, NULL) != 0)
+-		return EXIT_FAILURE;
+-
+ 	/* Test TEXASR */
+-	for (i = 0 ; i < thread_num ; i++){
+-		if (pthread_create(&thread, NULL, (void*)texasr, (void *)i))
++	for (i = 1; i < thread_num; i += 2) {
++		if (pthread_create(&thread[i], NULL, (void *)texasr, (void *)i))
+ 			return EXIT_FAILURE;
+ 	}
+-	if (pthread_join(thread, NULL) != 0)
+-		return EXIT_FAILURE;
++
++	for (i = 0; i < thread_num; i++) {
++		if (pthread_join(thread[i], NULL) != 0)
++			return EXIT_FAILURE;
++	}
++
++	free(thread);
+ 
+ 	if (passed)
+ 		return 0;
 -- 
 2.17.1
 
