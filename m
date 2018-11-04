@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD75ECDE46
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3025AECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1859C20880
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E54142085B
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="I1B3S0z6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1859C20880
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wbsCFri1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E54142085B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731564AbeKDXJL (ORCPT
+        id S1731534AbeKDXJJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:09:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48684 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:09:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731519AbeKDXJL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:09:11 -0500
+        id S1729578AbeKDXJH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:09:07 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2215A2086C;
-        Sun,  4 Nov 2018 13:54:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B70902086D;
+        Sun,  4 Nov 2018 13:54:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339646;
-        bh=Sc1e1JbgPz6oHD/juV+LNcV109OdYgGpq1PjwwODMvs=;
+        s=default; t=1541339642;
+        bh=mFpQBVEXwrVfO/FnSbCHSTTF0qKNKI+iuy5ITP0vT5c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I1B3S0z6R+xctPdtsIubKK/9igpot9cFho136JOFfysOPVVCThbN+uSZiGu7GKtaD
-         +evlBTxtW4RcUZMYllRsuVD9+0hIcf9cUni/OeSlQHp9mA8iiQKQuQMSZ+hFufLATV
-         ins4o1rxZnvLL1F2gnYZZ9YkPLPuokNtZVwX/h3k=
+        b=wbsCFri1FsC0qWHcxEBBHJpmy4vkQUryVpdBZSM51TBEL+TCV/dEuGn9TpEbSEbkx
+         YTiUOl+K8IXb61aw++mQztFvkDINMmBv7q1nE9FE4VEI1o5+yAs+n+YdpMp36JjRDQ
+         yQpt33IyXkHJ5w5FIVIyYp8PxXB/a9WN9KCzpDMo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Eugen Hristev <eugen.hristev@microchip.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+Cc:     Miles Chen <miles.chen@mediatek.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 10/21] iio: adc: at91: fix wrong channel number in triggered buffer mode
-Date:   Sun,  4 Nov 2018 08:53:44 -0500
-Message-Id: <20181104135355.88602-10-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 05/21] tty: check name length in tty_find_polling_driver()
+Date:   Sun,  4 Nov 2018 08:53:39 -0500
+Message-Id: <20181104135355.88602-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135355.88602-1-sashal@kernel.org>
 References: <20181104135355.88602-1-sashal@kernel.org>
@@ -55,51 +53,140 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugen Hristev <eugen.hristev@microchip.com>
+From: Miles Chen <miles.chen@mediatek.com>
 
-[ Upstream commit aea835f2dc8a682942b859179c49ad1841a6c8b9 ]
+[ Upstream commit 33a1a7be198657c8ca26ad406c4d2a89b7162bcc ]
 
-When channels are registered, the hardware channel number is not the
-actual iio channel number.
-This is because the driver is probed with a certain number of accessible
-channels. Some pins are routed and some not, depending on the description of
-the board in the DT.
-Because of that, channels 0,1,2,3 can correspond to hardware channels
-2,3,4,5 for example.
-In the buffered triggered case, we need to do the translation accordingly.
-Fixed the channel number to stop reading the wrong channel.
+The issue is found by a fuzzing test.
+If tty_find_polling_driver() recevies an incorrect input such as
+',,' or '0b', the len becomes 0 and strncmp() always return 0.
+In this case, a null p->ops->poll_init() is called and it causes a kernel
+panic.
 
-Fixes: 0e589d5fb ("ARM: AT91: IIO: Add AT91 ADC driver.")
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Fix this by checking name length against zero in tty_find_polling_driver().
+
+$echo ,, > /sys/module/kgdboc/parameters/kgdboc
+[   20.804451] WARNING: CPU: 1 PID: 104 at drivers/tty/serial/serial_core.c:457
+uart_get_baud_rate+0xe8/0x190
+[   20.804917] Modules linked in:
+[   20.805317] CPU: 1 PID: 104 Comm: sh Not tainted 4.19.0-rc7ajb #8
+[   20.805469] Hardware name: linux,dummy-virt (DT)
+[   20.805732] pstate: 20000005 (nzCv daif -PAN -UAO)
+[   20.805895] pc : uart_get_baud_rate+0xe8/0x190
+[   20.806042] lr : uart_get_baud_rate+0xc0/0x190
+[   20.806476] sp : ffffffc06acff940
+[   20.806676] x29: ffffffc06acff940 x28: 0000000000002580
+[   20.806977] x27: 0000000000009600 x26: 0000000000009600
+[   20.807231] x25: ffffffc06acffad0 x24: 00000000ffffeff0
+[   20.807576] x23: 0000000000000001 x22: 0000000000000000
+[   20.807807] x21: 0000000000000001 x20: 0000000000000000
+[   20.808049] x19: ffffffc06acffac8 x18: 0000000000000000
+[   20.808277] x17: 0000000000000000 x16: 0000000000000000
+[   20.808520] x15: ffffffffffffffff x14: ffffffff00000000
+[   20.808757] x13: ffffffffffffffff x12: 0000000000000001
+[   20.809011] x11: 0101010101010101 x10: ffffff880d59ff5f
+[   20.809292] x9 : ffffff880d59ff5e x8 : ffffffc06acffaf3
+[   20.809549] x7 : 0000000000000000 x6 : ffffff880d59ff5f
+[   20.809803] x5 : 0000000080008001 x4 : 0000000000000003
+[   20.810056] x3 : ffffff900853e6b4 x2 : dfffff9000000000
+[   20.810693] x1 : ffffffc06acffad0 x0 : 0000000000000cb0
+[   20.811005] Call trace:
+[   20.811214]  uart_get_baud_rate+0xe8/0x190
+[   20.811479]  serial8250_do_set_termios+0xe0/0x6f4
+[   20.811719]  serial8250_set_termios+0x48/0x54
+[   20.811928]  uart_set_options+0x138/0x1bc
+[   20.812129]  uart_poll_init+0x114/0x16c
+[   20.812330]  tty_find_polling_driver+0x158/0x200
+[   20.812545]  configure_kgdboc+0xbc/0x1bc
+[   20.812745]  param_set_kgdboc_var+0xb8/0x150
+[   20.812960]  param_attr_store+0xbc/0x150
+[   20.813160]  module_attr_store+0x40/0x58
+[   20.813364]  sysfs_kf_write+0x8c/0xa8
+[   20.813563]  kernfs_fop_write+0x154/0x290
+[   20.813764]  vfs_write+0xf0/0x278
+[   20.813951]  __arm64_sys_write+0x84/0xf4
+[   20.814400]  el0_svc_common+0xf4/0x1dc
+[   20.814616]  el0_svc_handler+0x98/0xbc
+[   20.814804]  el0_svc+0x8/0xc
+[   20.822005] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+[   20.826913] Mem abort info:
+[   20.827103]   ESR = 0x84000006
+[   20.827352]   Exception class = IABT (current EL), IL = 16 bits
+[   20.827655]   SET = 0, FnV = 0
+[   20.827855]   EA = 0, S1PTW = 0
+[   20.828135] user pgtable: 4k pages, 39-bit VAs, pgdp = (____ptrval____)
+[   20.828484] [0000000000000000] pgd=00000000aadee003, pud=00000000aadee003, pmd=0000000000000000
+[   20.829195] Internal error: Oops: 84000006 [#1] SMP
+[   20.829564] Modules linked in:
+[   20.829890] CPU: 1 PID: 104 Comm: sh Tainted: G        W         4.19.0-rc7ajb #8
+[   20.830545] Hardware name: linux,dummy-virt (DT)
+[   20.830829] pstate: 60000085 (nZCv daIf -PAN -UAO)
+[   20.831174] pc :           (null)
+[   20.831457] lr : serial8250_do_set_termios+0x358/0x6f4
+[   20.831727] sp : ffffffc06acff9b0
+[   20.831936] x29: ffffffc06acff9b0 x28: ffffff9008d7c000
+[   20.832267] x27: ffffff900969e16f x26: 0000000000000000
+[   20.832589] x25: ffffff900969dfb0 x24: 0000000000000000
+[   20.832906] x23: ffffffc06acffad0 x22: ffffff900969e160
+[   20.833232] x21: 0000000000000000 x20: ffffffc06acffac8
+[   20.833559] x19: ffffff900969df90 x18: 0000000000000000
+[   20.833878] x17: 0000000000000000 x16: 0000000000000000
+[   20.834491] x15: ffffffffffffffff x14: ffffffff00000000
+[   20.834821] x13: ffffffffffffffff x12: 0000000000000001
+[   20.835143] x11: 0101010101010101 x10: ffffff880d59ff5f
+[   20.835467] x9 : ffffff880d59ff5e x8 : ffffffc06acffaf3
+[   20.835790] x7 : 0000000000000000 x6 : ffffff880d59ff5f
+[   20.836111] x5 : c06419717c314100 x4 : 0000000000000007
+[   20.836419] x3 : 0000000000000000 x2 : 0000000000000000
+[   20.836732] x1 : 0000000000000001 x0 : ffffff900969df90
+[   20.837100] Process sh (pid: 104, stack limit = 0x(____ptrval____))
+[   20.837396] Call trace:
+[   20.837566]            (null)
+[   20.837816]  serial8250_set_termios+0x48/0x54
+[   20.838089]  uart_set_options+0x138/0x1bc
+[   20.838570]  uart_poll_init+0x114/0x16c
+[   20.838834]  tty_find_polling_driver+0x158/0x200
+[   20.839119]  configure_kgdboc+0xbc/0x1bc
+[   20.839380]  param_set_kgdboc_var+0xb8/0x150
+[   20.839658]  param_attr_store+0xbc/0x150
+[   20.839920]  module_attr_store+0x40/0x58
+[   20.840183]  sysfs_kf_write+0x8c/0xa8
+[   20.840183]  sysfs_kf_write+0x8c/0xa8
+[   20.840440]  kernfs_fop_write+0x154/0x290
+[   20.840702]  vfs_write+0xf0/0x278
+[   20.840942]  __arm64_sys_write+0x84/0xf4
+[   20.841209]  el0_svc_common+0xf4/0x1dc
+[   20.841471]  el0_svc_handler+0x98/0xbc
+[   20.841713]  el0_svc+0x8/0xc
+[   20.842057] Code: bad PC value
+[   20.842764] ---[ end trace a8835d7de79aaadf ]---
+[   20.843134] Kernel panic - not syncing: Fatal exception
+[   20.843515] SMP: stopping secondary CPUs
+[   20.844289] Kernel Offset: disabled
+[   20.844634] CPU features: 0x0,21806002
+[   20.844857] Memory Limit: none
+[   20.845172] ---[ end Kernel panic - not syncing: Fatal exception ]---
+
+Signed-off-by: Miles Chen <miles.chen@mediatek.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/adc/at91_adc.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/tty/tty_io.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/adc/at91_adc.c b/drivers/iio/adc/at91_adc.c
-index bbdac07f4aaa..1ba69bbc3142 100644
---- a/drivers/iio/adc/at91_adc.c
-+++ b/drivers/iio/adc/at91_adc.c
-@@ -247,12 +247,14 @@ static irqreturn_t at91_adc_trigger_handler(int irq, void *p)
- 	struct iio_poll_func *pf = p;
- 	struct iio_dev *idev = pf->indio_dev;
- 	struct at91_adc_state *st = iio_priv(idev);
-+	struct iio_chan_spec const *chan;
- 	int i, j = 0;
- 
- 	for (i = 0; i < idev->masklength; i++) {
- 		if (!test_bit(i, idev->active_scan_mask))
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index e6429d419b80..e6c4321d695c 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -354,7 +354,7 @@ struct tty_driver *tty_find_polling_driver(char *name, int *line)
+ 	mutex_lock(&tty_mutex);
+ 	/* Search through the tty devices to look for a match */
+ 	list_for_each_entry(p, &tty_drivers, tty_drivers) {
+-		if (strncmp(name, p->name, len) != 0)
++		if (!len || strncmp(name, p->name, len) != 0)
  			continue;
--		st->buffer[j] = at91_adc_readl(st, AT91_ADC_CHAN(st, i));
-+		chan = idev->channels + i;
-+		st->buffer[j] = at91_adc_readl(st, AT91_ADC_CHAN(st, chan->channel));
- 		j++;
- 	}
- 
+ 		stp = str;
+ 		if (*stp == ',')
 -- 
 2.17.1
 
