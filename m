@@ -7,99 +7,101 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 043B7ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:58:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93665ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:58:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD2BE2085B
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:58:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EB87204FD
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:58:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wVCPWzNo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD2BE2085B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rMud3p8O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EB87204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731520AbeKDXJI (ORCPT
+        id S1731881AbeKDXN1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:09:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48568 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:13:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731464AbeKDXJH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:09:07 -0500
+        id S1729645AbeKDXJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:09:08 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95F212086C;
-        Sun,  4 Nov 2018 13:54:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 759F620869;
+        Sun,  4 Nov 2018 13:54:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339643;
-        bh=6AApVXRnvnCpSeb5pwoPSmBbt1kdBm6Agkd1FphtE+M=;
+        s=default; t=1541339644;
+        bh=EaTGQB/2GxrCx9jf7PH+643M0Yt+j3VukWx/1xD2pVA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wVCPWzNoH5YBUftVmpBN/KJMzZehqeEkn48ub3GyEfqdBXE/bTGKsbQnhpCCaKiO5
-         GjexLAsKo3/eUbAMOKIAC7976EJQ89vcxAegUEyAQYBa39M5WhaeNoCcWdi2hci9sL
-         DSBHPg1qTjB498F7NZCVejJfbBIjMw2lQiFQLbwI=
+        b=rMud3p8OAqfAubXoZntKl8DMRqvneOVGMVfo4uXT3kST+HBzdqQAeRa8y3vFtqASS
+         fpKDmSULwthlXZkp5b2hPQRFXaaKNnc8PrAuIEuyaX+UMzvkx5U0cNcEsOZUdOe15t
+         fzmeuTGRzf1HsFpas4pRCMunGU8nkSfEwVYcYfZ8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Fabio Estevam <fabio.estevam@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
+Cc:     Daniel Axtens <dja@axtens.net>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 06/21] ARM: imx_v6_v7_defconfig: Select CONFIG_TMPFS_POSIX_ACL
-Date:   Sun,  4 Nov 2018 08:53:40 -0500
-Message-Id: <20181104135355.88602-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 07/21] powerpc/nohash: fix undefined behaviour when testing page size support
+Date:   Sun,  4 Nov 2018 08:53:41 -0500
+Message-Id: <20181104135355.88602-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135355.88602-1-sashal@kernel.org>
 References: <20181104135355.88602-1-sashal@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fabio Estevam <fabio.estevam@nxp.com>
+From: Daniel Axtens <dja@axtens.net>
 
-[ Upstream commit 35d3cbe84544da74e39e1cec01374092467e3119 ]
+[ Upstream commit f5e284803a7206d43e26f9ffcae5de9626d95e37 ]
 
-Andreas Müller reports:
+When enumerating page size definitions to check hardware support,
+we construct a constant which is (1U << (def->shift - 10)).
 
-"Fixes:
+However, the array of page size definitions is only initalised for
+various MMU_PAGE_* constants, so it contains a number of 0-initialised
+elements with def->shift == 0. This means we end up shifting by a
+very large number, which gives the following UBSan splat:
 
-| Sep 04 09:05:10 imx6qdl-variscite-som systemd-udevd[220]: Failed to apply ACL on /dev/v4l-subdev0: Operation not supported
-| Sep 04 09:05:10 imx6qdl-variscite-som systemd-udevd[224]: Failed to apply ACL on /dev/v4l-subdev1: Operation not supported
-| Sep 04 09:05:10 imx6qdl-variscite-som systemd-udevd[215]: Failed to apply ACL on /dev/v4l-subdev10: Operation not supported
-| Sep 04 09:05:10 imx6qdl-variscite-som systemd-udevd[228]: Failed to apply ACL on /dev/v4l-subdev2: Operation not supported
-| Sep 04 09:05:10 imx6qdl-variscite-som systemd-udevd[232]: Failed to apply ACL on /dev/v4l-subdev5: Operation not supported
-| Sep 04 09:05:10 imx6qdl-variscite-som systemd-udevd[217]: Failed to apply ACL on /dev/v4l-subdev11: Operation not supported
-| Sep 04 09:05:10 imx6qdl-variscite-som systemd-udevd[214]: Failed to apply ACL on /dev/dri/card1: Operation not supported
-| Sep 04 09:05:10 imx6qdl-variscite-som systemd-udevd[216]: Failed to apply ACL on /dev/v4l-subdev8: Operation not supported
-| Sep 04 09:05:10 imx6qdl-variscite-som systemd-udevd[226]: Failed to apply ACL on /dev/v4l-subdev9: Operation not supported
+================================================================================
+UBSAN: Undefined behaviour in /home/dja/dev/linux/linux/arch/powerpc/mm/tlb_nohash.c:506:21
+shift exponent 4294967286 is too large for 32-bit type 'unsigned int'
+CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc3-00045-ga604f927b012-dirty #6
+Call Trace:
+[c00000000101bc20] [c000000000a13d54] .dump_stack+0xa8/0xec (unreliable)
+[c00000000101bcb0] [c0000000004f20a8] .ubsan_epilogue+0x18/0x64
+[c00000000101bd30] [c0000000004f2b10] .__ubsan_handle_shift_out_of_bounds+0x110/0x1a4
+[c00000000101be20] [c000000000d21760] .early_init_mmu+0x1b4/0x5a0
+[c00000000101bf10] [c000000000d1ba28] .early_setup+0x100/0x130
+[c00000000101bf90] [c000000000000528] start_here_multiplatform+0x68/0x80
+================================================================================
 
-and nasty follow-ups: Starting weston from sddm as unpriviledged user fails
-with some hints on missing access rights."
+Fix this by first checking if the element exists (shift != 0) before
+constructing the constant.
 
-Select the CONFIG_TMPFS_POSIX_ACL option to fix these issues.
-
-Reported-by: Andreas Müller <schnitzeltony@gmail.com>
-Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
-Acked-by: Otavio Salvador <otavio@ossystems.com.br>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/configs/imx_v6_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/powerpc/mm/tlb_nohash.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/configs/imx_v6_v7_defconfig b/arch/arm/configs/imx_v6_v7_defconfig
-index 8ec4dbbb50b0..47c3fb8d4313 100644
---- a/arch/arm/configs/imx_v6_v7_defconfig
-+++ b/arch/arm/configs/imx_v6_v7_defconfig
-@@ -361,6 +361,7 @@ CONFIG_ZISOFS=y
- CONFIG_UDF_FS=m
- CONFIG_MSDOS_FS=m
- CONFIG_VFAT_FS=y
-+CONFIG_TMPFS_POSIX_ACL=y
- CONFIG_JFFS2_FS=y
- CONFIG_UBIFS_FS=y
- CONFIG_NFS_FS=y
+diff --git a/arch/powerpc/mm/tlb_nohash.c b/arch/powerpc/mm/tlb_nohash.c
+index 0b50019505a5..79cf21be8f6e 100644
+--- a/arch/powerpc/mm/tlb_nohash.c
++++ b/arch/powerpc/mm/tlb_nohash.c
+@@ -481,6 +481,9 @@ static void setup_page_sizes(void)
+ 		for (psize = 0; psize < MMU_PAGE_COUNT; ++psize) {
+ 			struct mmu_psize_def *def = &mmu_psize_defs[psize];
+ 
++			if (!def->shift)
++				continue;
++
+ 			if (tlb1ps & (1U << (def->shift - 10))) {
+ 				def->flags |= MMU_PAGE_SIZE_DIRECT;
+ 
 -- 
 2.17.1
 
