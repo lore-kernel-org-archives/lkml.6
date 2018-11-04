@@ -4,47 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37081C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:59:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CC36C32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:59:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB5EA204FD
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:59:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22067204FD
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:59:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VxtL1i57"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB5EA204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y22nETE9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22067204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731405AbeKDXI6 (ORCPT
+        id S1731676AbeKDXOX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:08:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48272 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:14:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731388AbeKDXI6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:08:58 -0500
+        id S1728896AbeKDXIz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:08:55 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33C1720868;
-        Sun,  4 Nov 2018 13:53:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A020C20862;
+        Sun,  4 Nov 2018 13:53:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339633;
-        bh=z9RdV1w04O7Z2fepbUXdvVXEkhhZpkmI9LUgBIi0FwI=;
+        s=default; t=1541339631;
+        bh=Of6047mrZR+hnRVx0LcWe8U/odsQRrVLTwYTTyYrRek=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VxtL1i57545sztAD+BNpoLIS/z8TU8lDPiryai+L98lpITKAZX1EtG06P+VxjQROV
-         8lgT6NM9Y2BtRjU88EKgVSMhXITCCpiAfz7jb5/yCpznFyazz+nLXsWeuNZpFkaaqO
-         pja/fY0IaDnFnO6iSir0m+Sj9m6fBSZB77fYbKL8=
+        b=Y22nETE9jM6QpsBX0fmSrvK1FKb0YKcuuJIq0qaDgrAMEOtrLo1vu4FZOFeWKu/uP
+         A+bR8k8BqDzLVSNWaPMJ4hrsYUZLb1AWZS0yKJDboinDne3/XwWbZKdaxLxaNoSUea
+         oXJCTCWpmNPYi3/CGoT29MN2Nb96nQsTXm6NEnX8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+Cc:     Phil Elwell <phil@raspberrypi.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 28/30] staging:iio:ad7606: fix voltage scales
-Date:   Sun,  4 Nov 2018 08:53:23 -0500
-Message-Id: <20181104135325.88524-28-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 25/30] sc16is7xx: Fix for multi-channel stall
+Date:   Sun,  4 Nov 2018 08:53:20 -0500
+Message-Id: <20181104135325.88524-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135325.88524-1-sashal@kernel.org>
 References: <20181104135325.88524-1-sashal@kernel.org>
@@ -53,47 +52,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandru Ardelean <alexandru.ardelean@analog.com>
+From: Phil Elwell <phil@raspberrypi.org>
 
-[ Upstream commit 4ee033301c898dd0835d035d0e0eb768a3d35da1 ]
+[ Upstream commit 8344498721059754e09d30fe255a12dab8fb03ef ]
 
-Fixes commit 17be2a2905a6ec9aa27cd59521495e2f490d2af0 ("staging: iio:
-ad7606: replace range/range_available with corresponding scale").
+The SC16IS752 is a dual-channel device. The two channels are largely
+independent, but the IRQ signals are wired together as an open-drain,
+active low signal which will be driven low while either of the
+channels requires attention, which can be for significant periods of
+time until operations complete and the interrupt can be acknowledged.
+In that respect it is should be treated as a true level-sensitive IRQ.
 
-The AD7606 devices don't have a 2.5V voltage range, they have 5V & 10V
-voltage range, which is selectable via the `gpio_range` descriptor.
+The kernel, however, needs to be able to exit interrupt context in
+order to use I2C or SPI to access the device registers (which may
+involve sleeping).  Therefore the interrupt needs to be masked out or
+paused in some way.
 
-The scales also seem to have been miscomputed, because when they were
-applied to the raw values, the results differ from the expected values.
-After checking the ADC transfer function in the datasheet, these were
-re-computed.
+The usual way to manage sleeping from within an interrupt handler
+is to use a threaded interrupt handler - a regular interrupt routine
+does the minimum amount of work needed to triage the interrupt before
+waking the interrupt service thread. If the threaded IRQ is marked as
+IRQF_ONESHOT the kernel will automatically mask out the interrupt
+until the thread runs to completion. The sc16is7xx driver used to
+use a threaded IRQ, but a patch switched to using a kthread_worker
+in order to set realtime priorities on the handler thread and for
+other optimisations. The end result is non-threaded IRQ that
+schedules some work then returns IRQ_HANDLED, making the kernel
+think that all IRQ processing has completed.
 
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+The work-around to prevent a constant stream of interrupts is to
+mark the interrupt as edge-sensitive rather than level-sensitive,
+but interpreting an active-low source as a falling-edge source
+requires care to prevent a total cessation of interrupts. Whereas
+an edge-triggering source will generate a new edge for every interrupt
+condition a level-triggering source will keep the signal at the
+interrupting level until it no longer requires attention; in other
+words, the host won't see another edge until all interrupt conditions
+are cleared. It is therefore vital that the interrupt handler does not
+exit with an outstanding interrupt condition, otherwise the kernel
+will not receive another interrupt unless some other operation causes
+the interrupt state on the device to be cleared.
+
+The existing sc16is7xx driver has a very simple interrupt "thread"
+(kthread_work job) that processes interrupts on each channel in turn
+until there are no more. If both channels are active and the first
+channel starts interrupting while the handler for the second channel
+is running then it will not be detected and an IRQ stall ensues. This
+could be handled easily if there was a shared IRQ status register, or
+a convenient way to determine if the IRQ had been deasserted for any
+length of time, but both appear to be lacking.
+
+Avoid this problem (or at least make it much less likely to happen)
+by reducing the granularity of per-channel interrupt processing
+to one condition per iteration, only exiting the overall loop when
+both channels are no longer interrupting.
+
+Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/iio/adc/ad7606.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/tty/serial/sc16is7xx.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/iio/adc/ad7606.c b/drivers/staging/iio/adc/ad7606.c
-index 18f5f139117e..0ff458fbee5e 100644
---- a/drivers/staging/iio/adc/ad7606.c
-+++ b/drivers/staging/iio/adc/ad7606.c
-@@ -26,9 +26,12 @@
+diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
+index ca54ce074a5f..a79f18edf2bd 100644
+--- a/drivers/tty/serial/sc16is7xx.c
++++ b/drivers/tty/serial/sc16is7xx.c
+@@ -662,7 +662,7 @@ static void sc16is7xx_handle_tx(struct uart_port *port)
+ 		uart_write_wakeup(port);
+ }
  
- #include "ad7606.h"
+-static void sc16is7xx_port_irq(struct sc16is7xx_port *s, int portno)
++static bool sc16is7xx_port_irq(struct sc16is7xx_port *s, int portno)
+ {
+ 	struct uart_port *port = &s->p[portno].port;
  
--/* Scales are computed as 2.5/2**16 and 5/2**16 respectively */
-+/*
-+ * Scales are computed as 5000/32768 and 10000/32768 respectively,
-+ * so that when applied to the raw values they provide mV values
-+ */
- static const unsigned int scale_avail[2][2] = {
--	{0, 38147}, {0, 76294}
-+	{0, 152588}, {0, 305176}
- };
+@@ -671,7 +671,7 @@ static void sc16is7xx_port_irq(struct sc16is7xx_port *s, int portno)
  
- static int ad7606_reset(struct ad7606_state *st)
+ 		iir = sc16is7xx_port_read(port, SC16IS7XX_IIR_REG);
+ 		if (iir & SC16IS7XX_IIR_NO_INT_BIT)
+-			break;
++			return false;
+ 
+ 		iir &= SC16IS7XX_IIR_ID_MASK;
+ 
+@@ -693,16 +693,23 @@ static void sc16is7xx_port_irq(struct sc16is7xx_port *s, int portno)
+ 					    port->line, iir);
+ 			break;
+ 		}
+-	} while (1);
++	} while (0);
++	return true;
+ }
+ 
+ static void sc16is7xx_ist(struct kthread_work *ws)
+ {
+ 	struct sc16is7xx_port *s = to_sc16is7xx_port(ws, irq_work);
+-	int i;
+ 
+-	for (i = 0; i < s->devtype->nr_uart; ++i)
+-		sc16is7xx_port_irq(s, i);
++	while (1) {
++		bool keep_polling = false;
++		int i;
++
++		for (i = 0; i < s->devtype->nr_uart; ++i)
++			keep_polling |= sc16is7xx_port_irq(s, i);
++		if (!keep_polling)
++			break;
++	}
+ }
+ 
+ static irqreturn_t sc16is7xx_irq(int irq, void *dev_id)
 -- 
 2.17.1
 
