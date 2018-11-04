@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E13EFC32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 19:51:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 197A7C32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 19:51:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D5A82081B
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 19:51:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D50522081B
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 19:51:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M8+mQWbQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D5A82081B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WM1DMh+i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D50522081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbeKEFHI (ORCPT
+        id S1727028AbeKEFHW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 00:07:08 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:38882 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725798AbeKEFHI (ORCPT
+        Mon, 5 Nov 2018 00:07:22 -0500
+Received: from mail-lf1-f46.google.com ([209.85.167.46]:41977 "EHLO
+        mail-lf1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725798AbeKEFHW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 00:07:08 -0500
-Received: by mail-lf1-f68.google.com with SMTP id p86so4646921lfg.5;
-        Sun, 04 Nov 2018 11:50:56 -0800 (PST)
+        Mon, 5 Nov 2018 00:07:22 -0500
+Received: by mail-lf1-f46.google.com with SMTP id c16so4626214lfj.8;
+        Sun, 04 Nov 2018 11:51:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:subject:message-id:mail-followup-to:mime-version
          :content-disposition:user-agent;
-        bh=BJH7TByfzPsX6krZ6CDbMD0Hb9sViuTig98Bh11Iu00=;
-        b=M8+mQWbQ8ZiY/3wVpwD4JbVRa3H3HXaYW/3TIn5A3+Xc35MHEdgUffu7NtS3TwENWl
-         GVOMMQc+a7JOfBDe4b1letgyN7G02zqDgVob6p4irNo2L0+HvAI7Q2Rm53eFkZA8ZyFo
-         I6RwKbIENTmnMJoSWl1LirGSAoL6n6QutkTyBdxV7czOKRln00WcCF1haXTQgPUjr9xk
-         3xhowZREXsM5YzdOpgn4hsTGK6+mBYJtznccVBTUBaWjbkYzxw6a6GM/1FxSzbfybxSu
-         CEJXwTudKjSxWIe5+oBq1urFCIPSU+gLKxlsx1VAMVqkIFurEwk6v8ZvYQZwchosMi7P
-         Su0g==
+        bh=u99WQmpi84bDl0q3PHKuJ1xqPyAtqdp4Ojn1tCPeIRE=;
+        b=WM1DMh+iF7Nhp9HIhh/sNnr2o87guhBKwpzVDGTJFdkoJ3qXjt4rANO/WanjgvvbTH
+         DOIgW/YZOfJMzywJsQWAXDKkGs4RQr2l7QPLiAfY5AeRO7o/7to2xdsF/5D8D37PyfAU
+         v5PcucBTqfN98oiGCaD3yr2lZzuh0tvz5ye6d/xJz9vcTQD+tQOPZMO+5kiA+1Uxc+K2
+         xyAkDBAWhUGw2MZp9di6KUbtLKDFrbZOH2XmMzBGUbAPQD4k35fkaYb96BB6rWpY245G
+         iTG3OqfkaU/15YzCEGT0LMTh1ZeiRlMqhVtXpV60xcZLTYc5ssepiRc93+LCFwJ2XMLV
+         TtPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:subject:message-id:mail-followup-to
          :mime-version:content-disposition:user-agent;
-        bh=BJH7TByfzPsX6krZ6CDbMD0Hb9sViuTig98Bh11Iu00=;
-        b=ohy5PyoME1lKSFaW+ATFOjd6bU6jEuM0AylgEy1isrnDtknZUydN4wTGY7Bn8H/925
-         tUKNRvv+RZKp+t6P6YC5eDqmetgfqO7KFLiqm1WshA/KnB0ZUwcGWAFt4ebNr/ClTlSz
-         D37IvhoYAggP7KwcPCQEAHN03lqSL/Io3dUgKzAvSJMwWfGcsXxN2QS1HiCEggFBika6
-         F/K3nkIMI5mNSZqJvYFhkWrzm/ereo2+LkABov0qqk2Vywam4cSM6o5a5NOX8endtrVF
-         RfL98f98jDHLd+7iMGhRBKLoSopWuqnx07d2acnHRz1PMSi2Br5M4vIXSqteNRq7YtwC
-         s8ww==
-X-Gm-Message-State: AGRZ1gIYO+PYHMdwj04Q24ZG0Mr5E7jRMGjHFCVqaICKtfjMw+2TkoB1
-        WyGQOwxCb1awwPqD0l3rwrs=
-X-Google-Smtp-Source: AJdET5cyiGOyfMhSxOrEa9cqsdYmToiHv1WStwt8z2vihzItgY/UkWsrm6oneFDVDcgMAMu85i943g==
-X-Received: by 2002:a19:9c92:: with SMTP id f140mr5497206lfe.41.1541361055798;
-        Sun, 04 Nov 2018 11:50:55 -0800 (PST)
+        bh=u99WQmpi84bDl0q3PHKuJ1xqPyAtqdp4Ojn1tCPeIRE=;
+        b=skNdel0H7OtLYjQ3d61YnSYfdGHDG2KzdXyjR0SeqatA0i5MVOqpKijCxdZrUA5yp4
+         el/nlTCk8wSs9QAd9Ct/25yK3GeA8rrRxeAI0U+a3Ij6+LTYpckuAfcsqmZ1wUPla+Ul
+         V2w+DLKR6VXNfiiK2/0b4vrDjGonb8yGCDvw0lDZFolb2nN5POnKwnLohk0druqRhg2/
+         Fr3HwYwAwm7GkmwQ7wVgk/HSFOpFqj+OP/uZ0Hr7iBIYSNamPffnhpyM7TPRiApFshrK
+         ADZ4JGHBxEovVvsF6wFLojJYgZs4DI6xrQwIrvdzC7zE/0GiIolEE7Gv+ZPMfaMkfqkA
+         aFXQ==
+X-Gm-Message-State: AGRZ1gLDEoK6MC07XgG90mhmorBTcU80iuUbYiUjhY4VC8yKBfbimH4u
+        pqxc0ad2KcP7SIsZjc6RUGY=
+X-Google-Smtp-Source: AJdET5c5QbvwY2EY0pjpiBZAyhOUoCMFFLnVhg78ltmlQu27GekHQ71JW9qdwVUsRQ8Gbc460Y5Wxw==
+X-Received: by 2002:a19:5d42:: with SMTP id p2mr11545335lfj.83.1541361070702;
+        Sun, 04 Nov 2018 11:51:10 -0800 (PST)
 Received: from dnote ([5.35.110.163])
-        by smtp.gmail.com with ESMTPSA id z8-v6sm2862689lji.51.2018.11.04.11.50.54
+        by smtp.gmail.com with ESMTPSA id a19-v6sm6381044ljj.91.2018.11.04.11.51.09
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 04 Nov 2018 11:50:55 -0800 (PST)
-Date:   Sun, 4 Nov 2018 22:50:55 +0300
+        Sun, 04 Nov 2018 11:51:10 -0800 (PST)
+Date:   Sun, 4 Nov 2018 22:51:10 +0300
 From:   Eugene Korenevsky <ekorenevsky@gmail.com>
 To:     Davidlohr Bueso <dave@stgolabs.net>, linux-efi@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH v5 1/2] efi: add sanity checks for GPT entries
-Message-ID: <20181104195055.GA15428@dnote>
+Subject: [PATCH v5 2/2] efi: take size of partition entry from GPT header
+Message-ID: <20181104195110.GA15437@dnote>
 Mail-Followup-To: Eugene Korenevsky <ekorenevsky@gmail.com>,
         Davidlohr Bueso <dave@stgolabs.net>, linux-efi@vger.kernel.org,
         linux-kernel@vger.kernel.org,
@@ -79,125 +79,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Obvious sanity checks have been added for GPT entries.
-GPT entries should not:
-- collide with GPT header
-- collide with GPT partitions
-- override the disk size 
-These checks also ensure GPT entries are not too large.
+Use gpt_header.sizeof_partition_entry instead of sizeof(gpt_entry)
+for GPT entry size.
+According to UEFI 2.7 spec 5.3.1 "GPT overview":, the size of a GUID Partition
+Entry element is defined in the Size Of Partition Entry field of GPT header.
+The GPT with entries sized more than sizeof(gpt_entry) is not illegal.
+OVMF firmware from EDK2 perfectly works with it, see edk2-tianocore source
+code.
+
+Changes since v1: refactoring (extract get_gpt_entry function),
+                  fix (&ptes[i] -> pte)
+Changes since v2: use le32_to_cpu, fix typo, sanity check for
+                  sizeof_partition_entry
+Changes since v3: style fixes
+Changes since v4: sanity checks for GPT entries; split into
+patchset
 
 Signed-off-by: Eugene Korenevsky <ekorenevsky@gmail.com>
 ---
- block/partitions/efi.c | 61 +++++++++++++++++++++++++++++++++++-------
- 1 file changed, 51 insertions(+), 10 deletions(-)
+ block/partitions/efi.c | 31 ++++++++++++++++++++-----------
+ 1 file changed, 20 insertions(+), 11 deletions(-)
 
 diff --git a/block/partitions/efi.c b/block/partitions/efi.c
-index 39f70d968754..722117b32585 100644
+index 722117b32585..3858c042d3ac 100644
 --- a/block/partitions/efi.c
 +++ b/block/partitions/efi.c
-@@ -338,6 +338,24 @@ static gpt_header *alloc_read_gpt_header(struct parsed_partitions *state,
- 	return gpt;
+@@ -447,8 +447,8 @@ static int is_gpt_valid(struct parsed_partitions *state, u64 lba,
+ 		goto fail;
+ 	}
+ 	/* Check that sizeof_partition_entry has the correct value */
+-	if (le32_to_cpu((*gpt)->sizeof_partition_entry) != sizeof(gpt_entry)) {
+-		pr_debug("GUID Partition Entry Size check failed.\n");
++	if (le32_to_cpu((*gpt)->sizeof_partition_entry) < sizeof(gpt_entry)) {
++		pr_debug("GUID Partition Entry Size is too small.\n");
+ 		goto fail;
+ 	}
+ 
+@@ -711,6 +711,12 @@ static int find_valid_gpt(struct parsed_partitions *state, gpt_header **gpt,
+         return 0;
  }
  
-+/**
-+ * disk_regions_collide() - tests if two disk regions intersect or one region
-+ *			    contains other
-+ * @firstlba1: first LBA of the first region
-+ * @lastlba1: last LBA of the first region
-+ * @firstlba2: first LBA of the second region
-+ * @lastlba2: last LBA of the second region
-+ */
-+static bool disk_regions_collide(u64 firstlba1, u64 lastlba1,
-+				 u64 firstlba2, u64 lastlba2)
++static gpt_entry *get_gpt_entry(gpt_header *gpt, gpt_entry *ptes, u32 index)
 +{
-+	if (lastlba1 < firstlba2)
-+		return false;
-+	if (lastlba2 < firstlba1)
-+		return false;
-+	return true;
++	return (gpt_entry *)((u8 *)ptes +
++	       le32_to_cpu(gpt->sizeof_partition_entry) * index);
 +}
 +
  /**
-  * is_gpt_valid() - tests one GPT header and PTEs for validity
+  * efi_partition(struct parsed_partitions *state)
   * @state: disk parsed partitions
-@@ -352,7 +370,8 @@ static int is_gpt_valid(struct parsed_partitions *state, u64 lba,
- 			gpt_header **gpt, gpt_entry **ptes)
- {
- 	u32 crc, origcrc;
--	u64 lastlba, pt_size;
-+	unsigned short ssz;
-+	u64 pt_firstlba, pt_lastlba, disk_lastlba, pt_size;
+@@ -745,32 +751,35 @@ int efi_partition(struct parsed_partitions *state)
  
- 	if (!ptes)
- 		return 0;
-@@ -369,11 +388,10 @@ static int is_gpt_valid(struct parsed_partitions *state, u64 lba,
- 	}
+ 	pr_debug("GUID Partition Table is valid!  Yea!\n");
  
- 	/* Check the GUID Partition Table header size is too big */
--	if (le32_to_cpu((*gpt)->header_size) >
--			bdev_logical_block_size(state->bdev)) {
-+	ssz = bdev_logical_block_size(state->bdev);
-+	if (le32_to_cpu((*gpt)->header_size) > ssz) {
- 		pr_debug("GUID Partition Table Header size is too large: %u > %u\n",
--			le32_to_cpu((*gpt)->header_size),
--			bdev_logical_block_size(state->bdev));
-+			le32_to_cpu((*gpt)->header_size), ssz);
- 		goto fail;
- 	}
+-	for (i = 0; i < le32_to_cpu(gpt->num_partition_entries) && i < state->limit-1; i++) {
++	for (i = 0; i < le32_to_cpu(gpt->num_partition_entries) &&
++		    i < state->limit-1; i++) {
++		gpt_entry *pte = get_gpt_entry(gpt, ptes, i);
+ 		struct partition_meta_info *info;
+ 		unsigned label_count = 0;
+ 		unsigned label_max;
+-		u64 start = le64_to_cpu(ptes[i].starting_lba);
+-		u64 size = le64_to_cpu(ptes[i].ending_lba) -
+-			   le64_to_cpu(ptes[i].starting_lba) + 1ULL;
++		u64 start = le64_to_cpu(pte->starting_lba);
++		u64 size = le64_to_cpu(pte->ending_lba) -
++			   le64_to_cpu(pte->starting_lba) + 1ULL;
  
-@@ -409,17 +427,17 @@ static int is_gpt_valid(struct parsed_partitions *state, u64 lba,
- 	/* Check the first_usable_lba and last_usable_lba are
- 	 * within the disk.
- 	 */
--	lastlba = last_lba(state->bdev);
--	if (le64_to_cpu((*gpt)->first_usable_lba) > lastlba) {
-+	disk_lastlba = last_lba(state->bdev);
-+	if (le64_to_cpu((*gpt)->first_usable_lba) > disk_lastlba) {
- 		pr_debug("GPT: first_usable_lba incorrect: %lld > %lld\n",
- 			 (unsigned long long)le64_to_cpu((*gpt)->first_usable_lba),
--			 (unsigned long long)lastlba);
-+			 (unsigned long long)disk_lastlba);
- 		goto fail;
- 	}
--	if (le64_to_cpu((*gpt)->last_usable_lba) > lastlba) {
-+	if (le64_to_cpu((*gpt)->last_usable_lba) > disk_lastlba) {
- 		pr_debug("GPT: last_usable_lba incorrect: %lld > %lld\n",
- 			 (unsigned long long)le64_to_cpu((*gpt)->last_usable_lba),
--			 (unsigned long long)lastlba);
-+			 (unsigned long long)disk_lastlba);
- 		goto fail;
- 	}
- 	if (le64_to_cpu((*gpt)->last_usable_lba) < le64_to_cpu((*gpt)->first_usable_lba)) {
-@@ -443,6 +461,29 @@ static int is_gpt_valid(struct parsed_partitions *state, u64 lba,
- 		goto fail;
- 	}
+-		if (!is_pte_valid(&ptes[i], last_lba(state->bdev)))
++		if (!is_pte_valid(pte, last_lba(state->bdev)))
+ 			continue;
  
-+	pt_firstlba = le64_to_cpu((*gpt)->partition_entry_lba);
-+	pt_lastlba = pt_firstlba + (pt_size + ssz - 1) / ssz - 1;
-+
-+	/* Check GPT entries do not overwrite partitions */
-+	if (disk_regions_collide(pt_firstlba, pt_lastlba,
-+				 le64_to_cpu((*gpt)->first_usable_lba),
-+				 le64_to_cpu((*gpt)->last_usable_lba))) {
-+		pr_debug("Primary GPT entries overwrite partitions\n");
-+		goto fail;
-+	}
-+	/* Check GPT entries do not overwrite GPT header. Note: GPT header must
-+	 * reside in the single disk sector according to UEFI spec
-+	 */
-+	if (disk_regions_collide(pt_firstlba, pt_lastlba, lba, lba)) {
-+		pr_debug("Primary GPT entries overwrite GPT header\n");
-+		goto fail;
-+	}
-+	/* Check GPT entries are not beyond the end of the disk */
-+	if (pt_lastlba > disk_lastlba) {
-+		pr_debug("GPT entries are beyond the end of the disk\n");
-+		goto fail;
-+	}
-+
- 	if (!(*ptes = alloc_read_gpt_entries(state, *gpt)))
- 		goto fail;
+ 		put_partition(state, i+1, start * ssz, size * ssz);
  
+ 		/* If this is a RAID volume, tell md */
+-		if (!efi_guidcmp(ptes[i].partition_type_guid, PARTITION_LINUX_RAID_GUID))
++		if (!efi_guidcmp(pte->partition_type_guid,
++				 PARTITION_LINUX_RAID_GUID))
+ 			state->parts[i + 1].flags = ADDPART_FLAG_RAID;
+ 
+ 		info = &state->parts[i + 1].info;
+-		efi_guid_to_str(&ptes[i].unique_partition_guid, info->uuid);
++		efi_guid_to_str(&pte->unique_partition_guid, info->uuid);
+ 
+ 		/* Naively convert UTF16-LE to 7 bits. */
+ 		label_max = min(ARRAY_SIZE(info->volname) - 1,
+-				ARRAY_SIZE(ptes[i].partition_name));
++				ARRAY_SIZE(pte->partition_name));
+ 		info->volname[label_max] = 0;
+ 		while (label_count < label_max) {
+-			u8 c = ptes[i].partition_name[label_count] & 0xff;
++			u8 c = pte->partition_name[label_count] & 0xff;
+ 			if (c && !isprint(c))
+ 				c = '!';
+ 			info->volname[label_count] = c;
 -- 
 2.19.1
 
