@@ -2,202 +2,135 @@ Return-Path: <SRS0=jXQK=NP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C61C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:27:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7200C32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:32:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FE7220854
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:27:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E0F52082E
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:32:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZPSfGhVF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FE7220854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ve/3FBK6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E0F52082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729682AbeKDXm0 (ORCPT
+        id S1729818AbeKDXrz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:42:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38540 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727834AbeKDXm0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:42:26 -0500
-Received: from tiger (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7C222082E;
-        Sun,  4 Nov 2018 14:27:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541341633;
-        bh=3O6kSj3K11OgWR0DUchTyygA/EfFIfHSdBJCdFYtROw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZPSfGhVFW18cPu9fm1DNOS1NIYzupLtF4ZvMoLs6JIMzE7flzuPG7XXW/T+BjrPeR
-         pzLd7y+OlzIPbKyQsq0fjLVWP21xCTqkkBgDzCZOPHawk1yAYcrEhKVkXicT7+21Do
-         F6EmzyldCcGUGH1xyIudJOW/pucJ7yLtxGlqTHHQ=
-Date:   Sun, 4 Nov 2018 22:26:51 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Joakim Zhang <qiangqing.zhang@nxp.com>
-Cc:     "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: Re: [PATCH V2 3/3] ARM: dts: sabreauto: Add flexcan support
-Message-ID: <20181104142647.GH26016@tiger>
-References: <20181030083954.26440-1-qiangqing.zhang@nxp.com>
- <20181030083954.26440-4-qiangqing.zhang@nxp.com>
+        Sun, 4 Nov 2018 18:47:55 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:34298 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727834AbeKDXrz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:47:55 -0500
+Received: by mail-it1-f194.google.com with SMTP id t189-v6so5496200itf.1
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Nov 2018 06:32:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mTqncDFkWSPxrkfWfS+PVBK3VTvu8+moWor7mB98kcI=;
+        b=Ve/3FBK6Ng6Bbx5p7qIhb/4gr4mLD8nSy4mk5U1020SQiyXTAx9/Gv0H0Pg84/8Kfn
+         Wfy1pg7DnkJ1fhwiXLD58+NgI8eADdd6YuEvD+kU6sAFOzSTdA3X+9y682kZGUaRTRfM
+         7n1/KhIRUspPVx1QW6Hh9q6IvizAukkkrdqAnkIppERmK3aFEdVqrvPLVp9qME6VtmG9
+         OCAmEOLHsipbnbu3i19OlZpT8TZZkfICNqom3Sz4N3qG9HXNEq7tAa/VHuq+sBeCKyIq
+         WmSIS9NMfbPzIv2ww4c+wgXu/s47NnEIXqtv2F9xj66v3hysgrm46IqudB3RcnSXiw25
+         IP/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mTqncDFkWSPxrkfWfS+PVBK3VTvu8+moWor7mB98kcI=;
+        b=QQZ10w+eYo6qjzsqDvu8gYJfqXikJcBynzPKB2PJqNYtpp1YV/QtUgYszj8SAAQSJm
+         rT3sVO6v8toWzC0scLeJO1GMoVsD6ELAQzMdn7scPSb3nk1FHWyLPcIEmrFiwrcyNfSw
+         yEHkM8k3FSKUDxV1v9Q4n3aGWqRLGtJZ7df5VhRNWRjvzB11Ct9tzfALDv/u+AdMXkMG
+         FLv80FMXzGndc6VmbFijHEM/s/oXOWgIj4yZhR5CpB4EL2C+eSAt+KQO331x4z9WLpms
+         BQ0it7QvHD30thyCppO9QUKof0kGuIsrMExQXlPrT6ePwvgb2kZqLm7r6EKNdc6Yr21C
+         HbrQ==
+X-Gm-Message-State: AGRZ1gLzfd3VX4hj2Hn0MeZIAte41g6b1n989mksV8v3+3X063aDGBeY
+        iY/Wshgs9/30W4hWU8/nXs/Z9nw4MHg3VipMyiF+LJoAE9uM/g==
+X-Google-Smtp-Source: AJdET5e0UQClkd/dfVlpPfnhN4FdUVfva7ORlWcQJXfLhdAMXSZzi2PCOh1yXiCSjyZzoBYhg3hRL+t7rXujSLgjd7A=
+X-Received: by 2002:a02:9b46:: with SMTP id g6-v6mr17208708jal.60.1541341961778;
+ Sun, 04 Nov 2018 06:32:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181030083954.26440-4-qiangqing.zhang@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20181104023537.2626-1-tiny.windzz@gmail.com> <20181104090649.7c206915@vmware.local.home>
+In-Reply-To: <20181104090649.7c206915@vmware.local.home>
+From:   Frank Lee <tiny.windzz@gmail.com>
+Date:   Sun, 4 Nov 2018 22:32:27 +0800
+Message-ID: <CAEExFWuGZnz3hKCUNzr+Y2-uA0QCZLtTHM5bcLB1StLkMgxkRA@mail.gmail.com>
+Subject: Re: [PATCH] tracing/fgraph: remove unnecessary unlikely()
+To:     rostedt@goodmis.org
+Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 08:42:47AM +0000, Joakim Zhang wrote:
-> From: Dong Aisheng <aisheng.dong@nxp.com>
-> 
-> The flexcan1 is pin conflict with fec. So we add a new dts file with
-> flexcan1 enabled with fec disabled for user to use.
-> 
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> Signed-off-by: Joakim Zhang <qiangqing.zhang@nxp.com>
+Sorry for this place, I should consider this situation.
+-- Yangtao
 
-We do not want to maintain a pile of DTS files for a single development
-board with pin sharing among different devices.
-
-Shawn
-
-> ---
->  .../boot/dts/imx6dl-sabreauto-flexcan1.dts    | 14 ++++++
->  .../arm/boot/dts/imx6q-sabreauto-flexcan1.dts | 14 ++++++
->  arch/arm/boot/dts/imx6qdl-sabreauto.dtsi      | 47 +++++++++++++++++++
->  3 files changed, 75 insertions(+)
->  create mode 100644 arch/arm/boot/dts/imx6dl-sabreauto-flexcan1.dts
->  create mode 100644 arch/arm/boot/dts/imx6q-sabreauto-flexcan1.dts
-> 
-> diff --git a/arch/arm/boot/dts/imx6dl-sabreauto-flexcan1.dts b/arch/arm/boot/dts/imx6dl-sabreauto-flexcan1.dts
-> new file mode 100644
-> index 000000000000..4ebcc283f549
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/imx6dl-sabreauto-flexcan1.dts
-> @@ -0,0 +1,14 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +//
-> +// Copyright (C) 2013 Freescale Semiconductor, Inc.
-> +
-> +#include "imx6dl-sabreauto.dts"
-> +
-> +&can1{
-> +	status = "okay";
-> +};
-> +
-> +&fec {
-> +	/* pin conflict with flexcan1 */
-> +	status = "disabled";
-> +};
-> diff --git a/arch/arm/boot/dts/imx6q-sabreauto-flexcan1.dts b/arch/arm/boot/dts/imx6q-sabreauto-flexcan1.dts
-> new file mode 100644
-> index 000000000000..e7e684656f09
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/imx6q-sabreauto-flexcan1.dts
-> @@ -0,0 +1,14 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +//
-> +// Copyright (C) 2013 Freescale Semiconductor, Inc.
-> +
-> +#include "imx6q-sabreauto.dts"
-> +
-> +&can1{
-> +	status = "okay";
-> +};
-> +
-> +&fec {
-> +	/* pin conflict with flexcan1 */
-> +	status = "disabled";
-> +};
-> diff --git a/arch/arm/boot/dts/imx6qdl-sabreauto.dtsi b/arch/arm/boot/dts/imx6qdl-sabreauto.dtsi
-> index a10f0ad0bfb1..c1111b972b46 100644
-> --- a/arch/arm/boot/dts/imx6qdl-sabreauto.dtsi
-> +++ b/arch/arm/boot/dts/imx6qdl-sabreauto.dtsi
-> @@ -101,6 +101,25 @@
->  		enable-active-high;
->  	};
->  
-> +	reg_can_en: regulator-can-en {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "can-en";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		gpio = <&max7310_b 6 GPIO_ACTIVE_HIGH>;
-> +		enable-active-high;
-> +	};
-> +
-> +	reg_can_stby: regulator-can-stby {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "can-stby";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		gpio = <&max7310_b 5 GPIO_ACTIVE_HIGH>;
-> +		enable-active-high;
-> +		vin-supply = <&reg_can_en>;
-> +	};
-> +
->  	sound-cs42888 {
->  		compatible = "fsl,imx6-sabreauto-cs42888",
->  			"fsl,imx-audio-cs42888";
-> @@ -279,6 +298,20 @@
->  	status = "okay";
->  };
->  
-> +&can1 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_flexcan1>;
-> +	xceiver-supply = <&reg_can_stby>;
-> +	status = "disabled"; /* pin conflict with fec */
-> +};
-> +
-> +&can2 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_flexcan2>;
-> +	xceiver-supply = <&reg_can_stby>;
-> +	status = "okay";
-> +};
-> +
->  &gpmi {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&pinctrl_gpmi_nand>;
-> @@ -494,6 +527,20 @@
->  			>;
->  		};
->  
-> +		pinctrl_flexcan1: flexcan1grp {
-> +			fsl,pins = <
-> +				MX6QDL_PAD_KEY_ROW2__FLEXCAN1_RX        0x17059
-> +				MX6QDL_PAD_KEY_COL2__FLEXCAN1_TX	0x17059
-> +			>;
-> +		};
-> +
-> +		pinctrl_flexcan2: flexcan2grp {
-> +			fsl,pins = <
-> +				MX6QDL_PAD_KEY_COL4__FLEXCAN2_TX	0x17059
-> +				MX6QDL_PAD_KEY_ROW4__FLEXCAN2_RX	0x17059
-> +			>;
-> +		};
-> +
->  		pinctrl_gpio_keys: gpiokeysgrp {
->  			fsl,pins = <
->  				MX6QDL_PAD_SD2_CMD__GPIO1_IO11		0x1b0b0
-> -- 
-> 2.17.1
-> 
+On Sun, Nov 4, 2018 at 10:06 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> On Sat,  3 Nov 2018 22:35:37 -0400
+> Yangtao Li <tiny.windzz@gmail.com> wrote:
+>
+> > WARN_ON() already contains an unlikely(), so it's not necessary to use
+> > unlikely.
+>
+> NACK... see below.
+>
+> >
+> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> > ---
+> >  kernel/trace/trace_functions_graph.c | 6 ++----
+> >  1 file changed, 2 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
+> > index 169b3c44ee97..f8c2a08e4985 100644
+> > --- a/kernel/trace/trace_functions_graph.c
+> > +++ b/kernel/trace/trace_functions_graph.c
+> > @@ -201,9 +201,8 @@ ftrace_pop_return_trace(struct ftrace_graph_ret *trace, unsigned long *ret,
+> >       if (index < 0)
+> >               index += FTRACE_NOTRACE_DEPTH;
+> >
+> > -     if (unlikely(index < 0 || index >= FTRACE_RETFUNC_DEPTH)) {
+> > +     if (WARN_ON(index < 0 || index >= FTRACE_RETFUNC_DEPTH)) {
+>
+> When function graph is enabled, the printk from the warn on will likely
+> be traced as well and trigger the same WARN_ON, which will again cause
+> a recursion loop and crash and reboot the box with no output at all.
+>
+> >               ftrace_graph_stop();
+>
+> Notice that I call ftrace_graph_stop() *before* the WARN_ON(). This
+> disables the ftrace graph tracer and prevents the recursion loop from
+> happening.
+>
+> There's a reason that the WARN_ON() is placed where it is.
+>
+> But thanks for the report, it shows that I need to add a comment here
+> so that someone else doesn't send a similar patch in the future.
+>
+> -- Steve
+>
+>
+> > -             WARN_ON(1);
+> >               /* Might as well panic, otherwise we have no where to go */
+> >               *ret = (unsigned long)panic;
+> >               return;
+> > @@ -274,9 +273,8 @@ unsigned long ftrace_return_to_handler(unsigned long frame_pointer)
+> >        */
+> >       ftrace_graph_return(&trace);
+> >
+> > -     if (unlikely(!ret)) {
+> > +     if (WARN_ON(!ret)) {
+> >               ftrace_graph_stop();
+> > -             WARN_ON(1);
+> >               /* Might as well panic. What else to do? */
+> >               ret = (unsigned long)panic;
+> >       }
+>
