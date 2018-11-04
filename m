@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 592E5C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:59:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37081C32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:59:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 208A2204FD
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:59:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB5EA204FD
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:59:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xg+EHsa7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 208A2204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VxtL1i57"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB5EA204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731675AbeKDXOH (ORCPT
+        id S1731405AbeKDXI6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:14:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48192 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:08:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731389AbeKDXI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:08:59 -0500
+        id S1731388AbeKDXI6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:08:58 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D48A2087A;
-        Sun,  4 Nov 2018 13:53:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33C1720868;
+        Sun,  4 Nov 2018 13:53:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339634;
-        bh=RHR/rrTGnjeredcwlypg0Jv1kNxfWC8/wwJy8L1F6EU=;
+        s=default; t=1541339633;
+        bh=z9RdV1w04O7Z2fepbUXdvVXEkhhZpkmI9LUgBIi0FwI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xg+EHsa7vAJoHStc5hxwZPuuXon2nZrHEMkZSq9oFmV48/LYtTreHrVrtugBxphtu
-         zT/d436Lk7wd7m7/WMHWyrSqRm4/3QuMx/nUVJOe8Iudow6QEiPEPSEqDYTEnoeBKz
-         zd8PTrmwTCKGfQfSNXLmGQdScQgLUBFkL+AAyj4k=
+        b=VxtL1i57545sztAD+BNpoLIS/z8TU8lDPiryai+L98lpITKAZX1EtG06P+VxjQROV
+         8lgT6NM9Y2BtRjU88EKgVSMhXITCCpiAfz7jb5/yCpznFyazz+nLXsWeuNZpFkaaqO
+         pja/fY0IaDnFnO6iSir0m+Sj9m6fBSZB77fYbKL8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dominique Martinet <dominique.martinet@cea.fr>,
+Cc:     Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 29/30] 9p locks: fix glock.client_id leak in do_lock
-Date:   Sun,  4 Nov 2018 08:53:24 -0500
-Message-Id: <20181104135325.88524-29-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 28/30] staging:iio:ad7606: fix voltage scales
+Date:   Sun,  4 Nov 2018 08:53:23 -0500
+Message-Id: <20181104135325.88524-28-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135325.88524-1-sashal@kernel.org>
 References: <20181104135325.88524-1-sashal@kernel.org>
@@ -52,76 +53,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dominique Martinet <dominique.martinet@cea.fr>
+From: Alexandru Ardelean <alexandru.ardelean@analog.com>
 
-[ Upstream commit b4dc44b3cac9e8327e0655f530ed0c46f2e6214c ]
+[ Upstream commit 4ee033301c898dd0835d035d0e0eb768a3d35da1 ]
 
-the 9p client code overwrites our glock.client_id pointing to a static
-buffer by an allocated string holding the network provided value which
-we do not care about; free and reset the value as appropriate.
+Fixes commit 17be2a2905a6ec9aa27cd59521495e2f490d2af0 ("staging: iio:
+ad7606: replace range/range_available with corresponding scale").
 
-This is almost identical to the leak in v9fs_file_getlock() fixed by
-Al Viro in commit ce85dd58ad5a6 ("9p: we are leaking glock.client_id
-in v9fs_file_getlock()"), which was returned as an error by a coverity
-false positive -- while we are here attempt to make the code slightly
-more robust to future change of the net/9p/client code and hopefully
-more clear to coverity that there is no problem.
+The AD7606 devices don't have a 2.5V voltage range, they have 5V & 10V
+voltage range, which is selectable via the `gpio_range` descriptor.
 
-Link: http://lkml.kernel.org/r/1536339057-21974-5-git-send-email-asmadeus@codewreck.org
-Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
+The scales also seem to have been miscomputed, because when they were
+applied to the raw values, the results differ from the expected values.
+After checking the ADC transfer function in the datasheet, these were
+re-computed.
+
+Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/9p/vfs_file.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ drivers/staging/iio/adc/ad7606.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
-index 03c9e325bfbc..3a2f37ad1f89 100644
---- a/fs/9p/vfs_file.c
-+++ b/fs/9p/vfs_file.c
-@@ -204,6 +204,14 @@ static int v9fs_file_do_lock(struct file *filp, int cmd, struct file_lock *fl)
- 			break;
- 		if (schedule_timeout_interruptible(P9_LOCK_TIMEOUT) != 0)
- 			break;
-+		/*
-+		 * p9_client_lock_dotl overwrites flock.client_id with the
-+		 * server message, free and reuse the client name
-+		 */
-+		if (flock.client_id != fid->clnt->name) {
-+			kfree(flock.client_id);
-+			flock.client_id = fid->clnt->name;
-+		}
- 	}
+diff --git a/drivers/staging/iio/adc/ad7606.c b/drivers/staging/iio/adc/ad7606.c
+index 18f5f139117e..0ff458fbee5e 100644
+--- a/drivers/staging/iio/adc/ad7606.c
++++ b/drivers/staging/iio/adc/ad7606.c
+@@ -26,9 +26,12 @@
  
- 	/* map 9p status to VFS status */
-@@ -235,6 +243,8 @@ static int v9fs_file_do_lock(struct file *filp, int cmd, struct file_lock *fl)
- 		locks_lock_file_wait(filp, fl);
- 		fl->fl_type = fl_type;
- 	}
-+	if (flock.client_id != fid->clnt->name)
-+		kfree(flock.client_id);
- out:
- 	return res;
- }
-@@ -269,7 +279,7 @@ static int v9fs_file_getlock(struct file *filp, struct file_lock *fl)
+ #include "ad7606.h"
  
- 	res = p9_client_getlock_dotl(fid, &glock);
- 	if (res < 0)
--		return res;
-+		goto out;
- 	/* map 9p lock type to os lock type */
- 	switch (glock.type) {
- 	case P9_LOCK_TYPE_RDLCK:
-@@ -290,7 +300,9 @@ static int v9fs_file_getlock(struct file *filp, struct file_lock *fl)
- 			fl->fl_end = glock.start + glock.length - 1;
- 		fl->fl_pid = -glock.proc_id;
- 	}
--	kfree(glock.client_id);
-+out:
-+	if (glock.client_id != fid->clnt->name)
-+		kfree(glock.client_id);
- 	return res;
- }
+-/* Scales are computed as 2.5/2**16 and 5/2**16 respectively */
++/*
++ * Scales are computed as 5000/32768 and 10000/32768 respectively,
++ * so that when applied to the raw values they provide mV values
++ */
+ static const unsigned int scale_avail[2][2] = {
+-	{0, 38147}, {0, 76294}
++	{0, 152588}, {0, 305176}
+ };
  
+ static int ad7606_reset(struct ad7606_state *st)
 -- 
 2.17.1
 
