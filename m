@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C64AC32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:57:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3975DECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:57:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47BAE2085B
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:57:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEAB8204FD
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:57:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rlnM8BgZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47BAE2085B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yhox9GUF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEAB8204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731641AbeKDXJU (ORCPT
+        id S1730738AbeKDXM3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:09:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48992 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:12:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729485AbeKDXJT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:09:19 -0500
+        id S1731628AbeKDXJU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:09:20 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F14620866;
-        Sun,  4 Nov 2018 13:54:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5166020868;
+        Sun,  4 Nov 2018 13:54:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541339655;
-        bh=y+bPiY9dJfmbwpomhdtxmPdw5YtOwo9ZkD/Usm0aSD8=;
+        bh=6wcQqKmpTN/0KAslgC8sMtn+EH0X3bqFgwJSJ4Ikd5o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rlnM8BgZjkmMyqIyjZ9GoXxo3IP5KJnAyNUE5sbQbUUujYZ11CT593yhbrIhcOtuh
-         +sPIL16UQD98MKh/Si/gL8TpevUuMArFXhLrUcMz0DqUdkVIy893AqjpEFtNR+fRCB
-         EqX+G4ewDjJ4XkwH6MWfZDVzZ8FE1NFK6ydTejdI=
+        b=yhox9GUFMGag7UC4SJYfdo3WxsuriFIHcKrS5xD95JTuZd3tLvgnz1owX3tS0otOp
+         gXiYWQn8P9Ik3Nsp65ivoRHqKnYI+wuBYEPJZ5nKgd991SBObUDVb3vyanRsKyZw5P
+         IbYjVWwr5AFctbDWX26viRM6WLu2JFXhMQCNkQcw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Marco Felsch <m.felsch@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+Cc:     Breno Leitao <leitao@debian.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 18/21] media: tvp5150: fix width alignment during set_selection()
-Date:   Sun,  4 Nov 2018 08:53:52 -0500
-Message-Id: <20181104135355.88602-18-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 19/21] powerpc/selftests: Wait all threads to join
+Date:   Sun,  4 Nov 2018 08:53:53 -0500
+Message-Id: <20181104135355.88602-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135355.88602-1-sashal@kernel.org>
 References: <20181104135355.88602-1-sashal@kernel.org>
@@ -53,57 +53,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marco Felsch <m.felsch@pengutronix.de>
+From: Breno Leitao <leitao@debian.org>
 
-[ Upstream commit bd24db04101f45a9c1d874fe21b0c7eab7bcadec ]
+[ Upstream commit 693b31b2fc1636f0aa7af53136d3b49f6ad9ff39 ]
 
-The driver ignored the width alignment which exists due to the UYVY
-colorspace format. Fix the width alignment and make use of the the
-provided v4l2 helper function to set the width, height and all
-alignments in one.
+Test tm-tmspr might exit before all threads stop executing, because it just
+waits for the very last thread to join before proceeding/exiting.
 
-Fixes: 963ddc63e20d ("[media] media: tvp5150: Add cropping support")
+This patch makes sure that all threads that were created will join before
+proceeding/exiting.
 
-Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+This patch also guarantees that the amount of threads being created is equal
+to thread_num.
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/tvp5150.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ tools/testing/selftests/powerpc/tm/tm-tmspr.c | 27 ++++++++++++-------
+ 1 file changed, 17 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/media/i2c/tvp5150.c b/drivers/media/i2c/tvp5150.c
-index 59aa4dafb60b..172198178343 100644
---- a/drivers/media/i2c/tvp5150.c
-+++ b/drivers/media/i2c/tvp5150.c
-@@ -897,9 +897,6 @@ static int tvp5150_set_selection(struct v4l2_subdev *sd,
+diff --git a/tools/testing/selftests/powerpc/tm/tm-tmspr.c b/tools/testing/selftests/powerpc/tm/tm-tmspr.c
+index 2bda81c7bf23..df1d7d4b1c89 100644
+--- a/tools/testing/selftests/powerpc/tm/tm-tmspr.c
++++ b/tools/testing/selftests/powerpc/tm/tm-tmspr.c
+@@ -98,7 +98,7 @@ void texasr(void *in)
  
- 	/* tvp5150 has some special limits */
- 	rect.left = clamp(rect.left, 0, TVP5150_MAX_CROP_LEFT);
--	rect.width = clamp_t(unsigned int, rect.width,
--			     TVP5150_H_MAX - TVP5150_MAX_CROP_LEFT - rect.left,
--			     TVP5150_H_MAX - rect.left);
- 	rect.top = clamp(rect.top, 0, TVP5150_MAX_CROP_TOP);
+ int test_tmspr()
+ {
+-	pthread_t 	thread;
++	pthread_t	*thread;
+ 	int	   	thread_num;
+ 	unsigned long	i;
  
- 	/* Calculate height based on current standard */
-@@ -913,9 +910,16 @@ static int tvp5150_set_selection(struct v4l2_subdev *sd,
- 	else
- 		hmax = TVP5150_V_MAX_OTHERS;
+@@ -107,21 +107,28 @@ int test_tmspr()
+ 	/* To cause some context switching */
+ 	thread_num = 10 * sysconf(_SC_NPROCESSORS_ONLN);
  
--	rect.height = clamp_t(unsigned int, rect.height,
-+	/*
-+	 * alignments:
-+	 *  - width = 2 due to UYVY colorspace
-+	 *  - height, image = no special alignment
-+	 */
-+	v4l_bound_align_image(&rect.width,
-+			      TVP5150_H_MAX - TVP5150_MAX_CROP_LEFT - rect.left,
-+			      TVP5150_H_MAX - rect.left, 1, &rect.height,
- 			      hmax - TVP5150_MAX_CROP_TOP - rect.top,
--			      hmax - rect.top);
-+			      hmax - rect.top, 0, 0);
++	thread = malloc(thread_num * sizeof(pthread_t));
++	if (thread == NULL)
++		return EXIT_FAILURE;
++
+ 	/* Test TFIAR and TFHAR */
+-	for (i = 0 ; i < thread_num ; i += 2){
+-		if (pthread_create(&thread, NULL, (void*)tfiar_tfhar, (void *)i))
++	for (i = 0; i < thread_num; i += 2) {
++		if (pthread_create(&thread[i], NULL, (void *)tfiar_tfhar,
++				   (void *)i))
+ 			return EXIT_FAILURE;
+ 	}
+-	if (pthread_join(thread, NULL) != 0)
+-		return EXIT_FAILURE;
+-
+ 	/* Test TEXASR */
+-	for (i = 0 ; i < thread_num ; i++){
+-		if (pthread_create(&thread, NULL, (void*)texasr, (void *)i))
++	for (i = 1; i < thread_num; i += 2) {
++		if (pthread_create(&thread[i], NULL, (void *)texasr, (void *)i))
+ 			return EXIT_FAILURE;
+ 	}
+-	if (pthread_join(thread, NULL) != 0)
+-		return EXIT_FAILURE;
++
++	for (i = 0; i < thread_num; i++) {
++		if (pthread_join(thread[i], NULL) != 0)
++			return EXIT_FAILURE;
++	}
++
++	free(thread);
  
- 	tvp5150_write(sd, TVP5150_VERT_BLANKING_START, rect.top);
- 	tvp5150_write(sd, TVP5150_VERT_BLANKING_STOP,
+ 	if (passed)
+ 		return 0;
 -- 
 2.17.1
 
