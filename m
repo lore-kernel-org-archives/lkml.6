@@ -7,49 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 712C8ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F13C32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B1A320862
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3305D2085A
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fK1QP3RU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B1A320862
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KXKmxSQz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3305D2085A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731386AbeKDXIz (ORCPT
+        id S1731434AbeKDXI7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:08:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48130 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:08:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731356AbeKDXIy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:08:54 -0500
+        id S1731356AbeKDXI4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:08:56 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33C2F204FD;
-        Sun,  4 Nov 2018 13:53:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7CE7C20866;
+        Sun,  4 Nov 2018 13:53:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339630;
-        bh=SlkbV0Md24tgHFNfUexA5bqHdRx1okt5NMybIXrtqms=;
+        s=default; t=1541339632;
+        bh=U3mw5PiduQLSFbywe6ibS2t5xSUmJBdomGwYIn1Wg2I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fK1QP3RUpgC70GcBx3z9CvTWRj7KOWPmoRYYjrCZgngnvkv6RDuRCqWazrN2xVstt
-         gBpu4d1J86z5SPEkP6nX+4+f+m4jHUGYehaGlgtTugASyb+Jiwc3Cy8Z0eYr9kwTzc
-         GUIE4Ypkn8r3tAJdfv4lKtgNd6K3rGu6HedZZ28w=
+        b=KXKmxSQzxs0vOHiExUNS/sI2ivZNv+YVH7KzDbb+Nf2nJupDAdPaH02c3yu7mLrZG
+         0+vvxO1cN4wWxeWne/fG4832pXKMf0B9FsXUwLjNcZUmAJqGZjMe6qaMjT2sOZnPOq
+         XW5CGyqpTPdu/pzMyev3iAYTbGUPnn5cCBJVxQbI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Huacai Chen <chenhc@lemote.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
-        Fuxin Zhang <zhangfx@lemote.com>,
-        Zhangjin Wu <wuzhangjin@gmail.com>,
-        Huacai Chen <chenhuacai@gmail.com>,
+Cc:     Marco Felsch <m.felsch@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 24/30] MIPS/PCI: Call pcie_bus_configure_settings() to set MPS/MRRS
-Date:   Sun,  4 Nov 2018 08:53:19 -0500
-Message-Id: <20181104135325.88524-24-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 26/30] media: tvp5150: fix width alignment during set_selection()
+Date:   Sun,  4 Nov 2018 08:53:21 -0500
+Message-Id: <20181104135325.88524-26-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135325.88524-1-sashal@kernel.org>
 References: <20181104135325.88524-1-sashal@kernel.org>
@@ -58,48 +53,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huacai Chen <chenhc@lemote.com>
+From: Marco Felsch <m.felsch@pengutronix.de>
 
-[ Upstream commit 2794f688b2c336e0da85e9f91fed33febbd9f54a ]
+[ Upstream commit bd24db04101f45a9c1d874fe21b0c7eab7bcadec ]
 
-Call pcie_bus_configure_settings() on MIPS, like for other platforms.
-The function pcie_bus_configure_settings() makes sure the MPS (Max
-Payload Size) across the bus is uniform and provides the ability to
-tune the MRSS (Max Read Request Size) and MPS (Max Payload Size) to
-higher performance values. Some devices will not operate properly if
-these aren't set correctly because the firmware doesn't always do it.
+The driver ignored the width alignment which exists due to the UYVY
+colorspace format. Fix the width alignment and make use of the the
+provided v4l2 helper function to set the width, height and all
+alignments in one.
 
-Signed-off-by: Huacai Chen <chenhc@lemote.com>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/20649/
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@linux-mips.org
-Cc: Fuxin Zhang <zhangfx@lemote.com>
-Cc: Zhangjin Wu <wuzhangjin@gmail.com>
-Cc: Huacai Chen <chenhuacai@gmail.com>
+Fixes: 963ddc63e20d ("[media] media: tvp5150: Add cropping support")
+
+Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/pci/pci-legacy.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/media/i2c/tvp5150.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/arch/mips/pci/pci-legacy.c b/arch/mips/pci/pci-legacy.c
-index 0c65c38e05d6..1ae6bc414e2b 100644
---- a/arch/mips/pci/pci-legacy.c
-+++ b/arch/mips/pci/pci-legacy.c
-@@ -127,8 +127,12 @@ static void pcibios_scanbus(struct pci_controller *hose)
- 	if (pci_has_flag(PCI_PROBE_ONLY)) {
- 		pci_bus_claim_resources(bus);
- 	} else {
-+		struct pci_bus *child;
-+
- 		pci_bus_size_bridges(bus);
- 		pci_bus_assign_resources(bus);
-+		list_for_each_entry(child, &bus->children, node)
-+			pcie_bus_configure_settings(child);
- 	}
- 	pci_bus_add_devices(bus);
- }
+diff --git a/drivers/media/i2c/tvp5150.c b/drivers/media/i2c/tvp5150.c
+index 59b0c1fce9be..a0e461e99ecb 100644
+--- a/drivers/media/i2c/tvp5150.c
++++ b/drivers/media/i2c/tvp5150.c
+@@ -900,9 +900,6 @@ static int tvp5150_set_selection(struct v4l2_subdev *sd,
+ 
+ 	/* tvp5150 has some special limits */
+ 	rect.left = clamp(rect.left, 0, TVP5150_MAX_CROP_LEFT);
+-	rect.width = clamp_t(unsigned int, rect.width,
+-			     TVP5150_H_MAX - TVP5150_MAX_CROP_LEFT - rect.left,
+-			     TVP5150_H_MAX - rect.left);
+ 	rect.top = clamp(rect.top, 0, TVP5150_MAX_CROP_TOP);
+ 
+ 	/* Calculate height based on current standard */
+@@ -916,9 +913,16 @@ static int tvp5150_set_selection(struct v4l2_subdev *sd,
+ 	else
+ 		hmax = TVP5150_V_MAX_OTHERS;
+ 
+-	rect.height = clamp_t(unsigned int, rect.height,
++	/*
++	 * alignments:
++	 *  - width = 2 due to UYVY colorspace
++	 *  - height, image = no special alignment
++	 */
++	v4l_bound_align_image(&rect.width,
++			      TVP5150_H_MAX - TVP5150_MAX_CROP_LEFT - rect.left,
++			      TVP5150_H_MAX - rect.left, 1, &rect.height,
+ 			      hmax - TVP5150_MAX_CROP_TOP - rect.top,
+-			      hmax - rect.top);
++			      hmax - rect.top, 0, 0);
+ 
+ 	tvp5150_write(sd, TVP5150_VERT_BLANKING_START, rect.top);
+ 	tvp5150_write(sd, TVP5150_VERT_BLANKING_STOP,
 -- 
 2.17.1
 
