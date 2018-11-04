@@ -6,44 +6,43 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BEE9ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E61ECDE46
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE1CA2089F
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA80D204FD
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1pzrL34e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE1CA2089F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IcX8OkXN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA80D204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730001AbeKDXHD (ORCPT
+        id S1730038AbeKDXHG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:07:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44206 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:07:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729965AbeKDXHC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:07:02 -0500
+        id S1729989AbeKDXHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:07:03 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CC562085A;
-        Sun,  4 Nov 2018 13:51:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 443112086D;
+        Sun,  4 Nov 2018 13:51:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339518;
-        bh=Yfq0vw2VjiH5iAGuk4pSujiYKGjkZ1qDos4TdwiD1Hg=;
+        s=default; t=1541339519;
+        bh=8yWIuV+anyDbC5DMrP80T9BmoF4mLDCsnyK2RmmbR+I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1pzrL34e4UZecOcc5EZyTFSr9DzQRWziNMtwoFDuPx6qX93J5/Y/cP4B1FLfdwI4F
-         mbIdUbRJU1ypR39OvnwGk4VGUmEDliWORikD/jmW33pH2VlaEnB3PSBk0cQzKLDQ8A
-         EXB6IiO99VoqOSVcA5N8L1+0/XqB3ZyhNyNUFVAA=
+        b=IcX8OkXN1/kM2xgPxooJngC1HSheLaYd7riTO7e9AG2jc3EOM4G+4HVU6nfrbZvdK
+         d+P1RtibWQEA2T7gsB9SmADs2zmh3A5eJ8TF4m6BOTH77zU1UIF1Dqb/hSukc2IhpQ
+         5O7l1k0lTUAk7n0LaT7Tfs/9T903DNclSMiUChPA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 10/57] powerpc/traps: restore recoverability of machine_check interrupts
-Date:   Sun,  4 Nov 2018 08:50:57 -0500
-Message-Id: <20181104135144.88324-10-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 12/57] powerpc/mm: Fix page table dump to work on Radix
+Date:   Sun,  4 Nov 2018 08:50:59 -0500
+Message-Id: <20181104135144.88324-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135144.88324-1-sashal@kernel.org>
 References: <20181104135144.88324-1-sashal@kernel.org>
@@ -52,53 +51,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-[ Upstream commit daf00ae71dad8aa05965713c62558aeebf2df48e ]
+[ Upstream commit 0d923962ab69c27cca664a2d535e90ef655110ca ]
 
-commit b96672dd840f ("powerpc: Machine check interrupt is a non-
-maskable interrupt") added a call to nmi_enter() at the beginning of
-machine check restart exception handler. Due to that, in_interrupt()
-always returns true regardless of the state before entering the
-exception, and die() panics even when the system was not already in
-interrupt.
+When we're running on Book3S with the Radix MMU enabled the page table
+dump currently prints the wrong addresses because it uses the wrong
+start address.
 
-This patch calls nmi_exit() before calling die() in order to restore
-the interrupt state we had before calling nmi_enter()
+Fix it to use PAGE_OFFSET rather than KERN_VIRT_START.
 
-Fixes: b96672dd840f ("powerpc: Machine check interrupt is a non-maskable interrupt")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/traps.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ arch/powerpc/mm/dump_linuxpagetables.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
-index c85adb858271..8689a02b7df8 100644
---- a/arch/powerpc/kernel/traps.c
-+++ b/arch/powerpc/kernel/traps.c
-@@ -767,12 +767,17 @@ void machine_check_exception(struct pt_regs *regs)
- 	if (check_io_access(regs))
- 		goto bail;
+diff --git a/arch/powerpc/mm/dump_linuxpagetables.c b/arch/powerpc/mm/dump_linuxpagetables.c
+index 876e2a3c79f2..bdf33b989f98 100644
+--- a/arch/powerpc/mm/dump_linuxpagetables.c
++++ b/arch/powerpc/mm/dump_linuxpagetables.c
+@@ -418,12 +418,13 @@ static void walk_pagetables(struct pg_state *st)
+ 	unsigned int i;
+ 	unsigned long addr;
  
--	die("Machine check", regs, SIGBUS);
--
- 	/* Must die if the interrupt is not recoverable */
- 	if (!(regs->msr & MSR_RI))
- 		nmi_panic(regs, "Unrecoverable Machine check");
- 
-+	if (!nested)
-+		nmi_exit();
++	addr = st->start_address;
 +
-+	die("Machine check", regs, SIGBUS);
+ 	/*
+ 	 * Traverse the linux pagetable structure and dump pages that are in
+ 	 * the hash pagetable.
+ 	 */
+-	for (i = 0; i < PTRS_PER_PGD; i++, pgd++) {
+-		addr = KERN_VIRT_START + i * PGDIR_SIZE;
++	for (i = 0; i < PTRS_PER_PGD; i++, pgd++, addr += PGDIR_SIZE) {
+ 		if (!pgd_none(*pgd) && !pgd_huge(*pgd))
+ 			/* pgd exists */
+ 			walk_pud(st, pgd, addr);
+@@ -472,9 +473,14 @@ static int ptdump_show(struct seq_file *m, void *v)
+ {
+ 	struct pg_state st = {
+ 		.seq = m,
+-		.start_address = KERN_VIRT_START,
+ 		.marker = address_markers,
+ 	};
 +
-+	return;
++	if (radix_enabled())
++		st.start_address = PAGE_OFFSET;
++	else
++		st.start_address = KERN_VIRT_START;
 +
- bail:
- 	if (!nested)
- 		nmi_exit();
+ 	/* Traverse kernel page tables */
+ 	walk_pagetables(&st);
+ 	note_page(&st, 0, 0, 0);
 -- 
 2.17.1
 
