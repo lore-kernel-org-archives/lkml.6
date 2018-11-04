@@ -7,50 +7,46 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 295BDECDE47
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF83FECDE46
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:51:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAF242085A
+	by mail.kernel.org (Postfix) with ESMTP id 991B12086D
 	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:51:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gbnHAmrt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAF242085A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="djFy+vxq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 991B12086D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729916AbeKDXG5 (ORCPT
+        id S1729900AbeKDXG4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:06:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44088 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729898AbeKDXG4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 4 Nov 2018 18:06:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44078 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729867AbeKDXGz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:06:55 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93B5B20862;
-        Sun,  4 Nov 2018 13:51:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9204920854;
+        Sun,  4 Nov 2018 13:51:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339512;
-        bh=EZSKRIU6MFcjpKmoMayFTIflHESg+IBP15cK+xtexns=;
+        s=default; t=1541339511;
+        bh=yJj7yxwCd9gAJEYNBBa6SsMFc1+V44MjmokWsyOmifw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gbnHAmrtkVONo4iVtxeciNgxMLARzY9L2RL4AI2DNY26MzBPPKBuiRV3w5s4lub9Y
-         VIDIyq7pRy0FwNgA2nYaQK+rZB/OgUW1GZxmvbixuHoPKXG6MszpaAeOLys2E4HFD1
-         LaVmLd/v3VRs+sY3fd51jqsn1R0b6e9w7bDHMtVE=
+        b=djFy+vxqhrPBPKsk5h4K7NWCNADLe7Azrdu+sx8HcSyrwhDBwOgPwEftzJryTxbPD
+         cGZbrHzJCGFN4CMGwDawP1WdnIWoXpdgFAHCTHYVUL/VXgjnrF2cKfPkTOI9I/652g
+         O/nok4rYkHuJKPHDHdMlCmykZlatsxSZeIM8Nxfk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jann Horn <jannh@google.com>, Davidlohr Bueso <dave@stgolabs.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Christoph Lameter <clameter@sgi.com>,
-        Kemi Wang <kemi.wang@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
+Cc:     Roman Gushchin <guro@fb.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 05/57] mm/vmstat.c: assert that vmstat_text is in sync with stat_items_size
-Date:   Sun,  4 Nov 2018 08:50:52 -0500
-Message-Id: <20181104135144.88324-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 04/57] mm: don't raise MEMCG_OOM event due to failed high-order allocation
+Date:   Sun,  4 Nov 2018 08:50:51 -0500
+Message-Id: <20181104135144.88324-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135144.88324-1-sashal@kernel.org>
 References: <20181104135144.88324-1-sashal@kernel.org>
@@ -59,46 +55,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jann Horn <jannh@google.com>
+From: Roman Gushchin <guro@fb.com>
 
-[ Upstream commit f0ecf25a093fc0589f0a6bc4c1ea068bbb67d220 ]
+[ Upstream commit 7a1adfddaf0d11a39fdcaf6e82a88e9c0586e08b ]
 
-Having two gigantic arrays that must manually be kept in sync, including
-ifdefs, isn't exactly robust.  To make it easier to catch such issues in
-the future, add a BUILD_BUG_ON().
+It was reported that on some of our machines containers were restarted
+with OOM symptoms without an obvious reason.  Despite there were almost no
+memory pressure and plenty of page cache, MEMCG_OOM event was raised
+occasionally, causing the container management software to think, that OOM
+has happened.  However, no tasks have been killed.
 
-Link: http://lkml.kernel.org/r/20181001143138.95119-3-jannh@google.com
-Signed-off-by: Jann Horn <jannh@google.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Acked-by: Roman Gushchin <guro@fb.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Christoph Lameter <clameter@sgi.com>
-Cc: Kemi Wang <kemi.wang@intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>
+The following investigation showed that the problem is caused by a failing
+attempt to charge a high-order page.  In such case, the OOM killer is
+never invoked.  As shown below, it can happen under conditions, which are
+very far from a real OOM: e.g.  there is plenty of clean page cache and no
+memory pressure.
+
+There is no sense in raising an OOM event in this case, as it might
+confuse a user and lead to wrong and excessive actions (e.g.  restart the
+workload, as in my case).
+
+Let's look at the charging path in try_charge().  If the memory usage is
+about memory.max, which is absolutely natural for most memory cgroups, we
+try to reclaim some pages.  Even if we were able to reclaim enough memory
+for the allocation, the following check can fail due to a race with
+another concurrent allocation:
+
+    if (mem_cgroup_margin(mem_over_limit) >= nr_pages)
+        goto retry;
+
+For regular pages the following condition will save us from triggering
+the OOM:
+
+   if (nr_reclaimed && nr_pages <= (1 << PAGE_ALLOC_COSTLY_ORDER))
+       goto retry;
+
+But for high-order allocation this condition will intentionally fail.  The
+reason behind is that we'll likely fall to regular pages anyway, so it's
+ok and even preferred to return ENOMEM.
+
+In this case the idea of raising MEMCG_OOM looks dubious.
+
+Fix this by moving MEMCG_OOM raising to mem_cgroup_oom() after allocation
+order check, so that the event won't be raised for high order allocations.
+This change doesn't affect regular pages allocation and charging.
+
+Link: http://lkml.kernel.org/r/20181004214050.7417-1-guro@fb.com
+Signed-off-by: Roman Gushchin <guro@fb.com>
+Acked-by: David Rientjes <rientjes@google.com>
+Acked-by: Michal Hocko <mhocko@kernel.org>
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/vmstat.c | 2 ++
- 1 file changed, 2 insertions(+)
+ Documentation/admin-guide/cgroup-v2.rst | 4 ++++
+ mm/memcontrol.c                         | 4 ++--
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 7878da76abf2..b678c607e490 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1663,6 +1663,8 @@ static void *vmstat_start(struct seq_file *m, loff_t *pos)
- 	stat_items_size += sizeof(struct vm_event_state);
- #endif
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index 184193bcb262..5d9939388a78 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -1127,6 +1127,10 @@ PAGE_SIZE multiple when read back.
+ 		disk readahead.  For now OOM in memory cgroup kills
+ 		tasks iff shortage has happened inside page fault.
  
-+	BUILD_BUG_ON(stat_items_size !=
-+		     ARRAY_SIZE(vmstat_text) * sizeof(unsigned long));
- 	v = kmalloc(stat_items_size, GFP_KERNEL);
- 	m->private = v;
- 	if (!v)
++		This event is not raised if the OOM killer is not
++		considered as an option, e.g. for failed high-order
++		allocations.
++
+ 	  oom_kill
+ 		The number of processes belonging to this cgroup
+ 		killed by any kind of OOM killer.
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index e79cb59552d9..07c7af6f5e59 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -1669,6 +1669,8 @@ static enum oom_status mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int
+ 	if (order > PAGE_ALLOC_COSTLY_ORDER)
+ 		return OOM_SKIPPED;
+ 
++	memcg_memory_event(memcg, MEMCG_OOM);
++
+ 	/*
+ 	 * We are in the middle of the charge context here, so we
+ 	 * don't want to block when potentially sitting on a callstack
+@@ -2250,8 +2252,6 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+ 	if (fatal_signal_pending(current))
+ 		goto force;
+ 
+-	memcg_memory_event(mem_over_limit, MEMCG_OOM);
+-
+ 	/*
+ 	 * keep retrying as long as the memcg oom killer is able to make
+ 	 * a forward progress or bypass the charge if the oom killer
 -- 
 2.17.1
 
