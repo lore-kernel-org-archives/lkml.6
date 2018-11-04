@@ -2,95 +2,337 @@ Return-Path: <SRS0=jXQK=NP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90478C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 07:53:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FCC7C32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 08:15:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E76772082E
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 07:53:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E76772082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id D67262085A
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 08:15:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D67262085A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729099AbeKDRHd (ORCPT
+        id S1729183AbeKDR3c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 12:07:33 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:37784 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726280AbeKDRHd (ORCPT
+        Sun, 4 Nov 2018 12:29:32 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44730 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729120AbeKDR3c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 12:07:33 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gJDCk-00072s-J8; Sun, 04 Nov 2018 07:52:25 +0000
-Date:   Sun, 4 Nov 2018 07:52:18 +0000
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-Cc:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
-        ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org
-Subject: Re: OCFS2: [ocfs2_rename:1688 ERROR: status = -39] with four
- syscalls on fresh FS image
-Message-ID: <20181104075204.GD32577@ZenIV.linux.org.uk>
-References: <CAE5jQCeFs0_NS9AZwfw+U60jKU5RRPD56THEhCq_jLJkiFy0=A@mail.gmail.com>
+        Sun, 4 Nov 2018 12:29:32 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA489Tt8004930
+        for <linux-kernel@vger.kernel.org>; Sun, 4 Nov 2018 03:15:24 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2nhs4e6mj3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Nov 2018 03:15:24 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Sun, 4 Nov 2018 08:15:22 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 4 Nov 2018 08:15:17 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA48FGqa7537082
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 4 Nov 2018 08:15:16 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 83350AE04D;
+        Sun,  4 Nov 2018 08:15:16 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 15DEAAE051;
+        Sun,  4 Nov 2018 08:15:15 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.72])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Sun,  4 Nov 2018 08:15:14 +0000 (GMT)
+Date:   Sun, 4 Nov 2018 10:15:13 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-sgx@vger.kernel.org, dave.hansen@intel.com,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        mark.shanahan@intel.com, andriy.shevchenko@linux.intel.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v15 23/23] x86/sgx: Driver documentation
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+ <20181102231320.29164-24-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAE5jQCeFs0_NS9AZwfw+U60jKU5RRPD56THEhCq_jLJkiFy0=A@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181102231320.29164-24-jarkko.sakkinen@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18110408-0008-0000-0000-0000028AF78D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110408-0009-0000-0000-000021F5276E
+Message-Id: <20181104081512.GA7829@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-04_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811040079
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 04, 2018 at 10:37:34AM +0300, Anatoly Trosinenko wrote:
-> Hello,
+On Sat, Nov 03, 2018 at 01:11:22AM +0200, Jarkko Sakkinen wrote:
+> Documentation of the features of the Software Guard eXtensions used
+> by the Linux kernel and basic design choices for the core and driver
+> and functionality.
 > 
-> When fuzzing OCFS2, I got an ERROR message in dmesg output with
-> several syscalls on completely fresh, uncrafted FS image. From this
-> https://oss.oracle.com/pipermail/ocfs2-devel/2012-August/008683.html
-> it looks like ERROR messages are indicating some unexpected conditions
-> in the driver code, is it right? If so, here it how to reproduce it
-> with kvm-xfstests:
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  Documentation/index.rst         |   1 +
+>  Documentation/x86/intel_sgx.rst | 185 ++++++++++++++++++++++++++++++++
+>  2 files changed, 186 insertions(+)
+>  create mode 100644 Documentation/x86/intel_sgx.rst
 > 
-> 1) Checkout latest torvalds/master (tested with commit 71e56028), copy
-> x86_64-config-4.14 from fstests to .config, `make olddefconfig`,
-> enable CONFIG_FS then OCFS2 and compile
-> 2) Create fresh OCFS2 image:
-> $ fallocate -l 256M ocfs2
-> $ mkfs.ocfs2 -L test --fs-features=local ./ocfs2
-> $ mv ocfs2 /tmp/kvm-xfstests-$USER/ # mkfs.ocfs2 seems to not operate
-> on tmpfs that can be mounted on /tmp
-> 3) gcc --static ocfs2.c -o /tmp/kvm-xfstests-$USER/repro
-> 4) Inside the ./kvm-xfstests shell
-> root@kvm-xfstests:~# mount /vtmp
-> root@kvm-xfstests:~# mount /vtmp/ocfs2 /mnt
-> [   17.168634] JBD2: Ignoring recovery information on journal
-> [   17.173903] ocfs2: Mounting device (7,0) on (node local, slot 0)
-> with ordered data mode.
-> root@kvm-xfstests:~# /vtmp/repro
-> [   20.597145] (repro,368,1):ocfs2_rename:1688 ERROR: status = -39
-
-That would be -ENOTEMPTY...
-
-> root@kvm-xfstests:~#
+> diff --git a/Documentation/index.rst b/Documentation/index.rst
+> index 5db7e87c7cb1..1cdc139adb40 100644
+> --- a/Documentation/index.rst
+> +++ b/Documentation/index.rst
+> @@ -104,6 +104,7 @@ implementation.
+>     :maxdepth: 2
 > 
-> Best regards
-> Anatoly
+>     sh/index
+> +   x86/index
 
-> #include <sys/stat.h>
-> #include <sys/types.h>
-> #include <unistd.h>
-> #include <stdio.h>
+It seems there is no Documentation/x86/index.rst, probably you'd want to
+create one and link intel_sgx.rst there
+
 > 
-> int main()
-> {
->   mkdir("/mnt/xyz", 0x700);
->   mkdir("/mnt/abc", 0x700);
->   symlink("/mnt", "/mnt/xyz/1");
->   rename("/mnt/abc", "/mnt/xyz");
+>  Filesystem Documentation
+>  ------------------------
+> diff --git a/Documentation/x86/intel_sgx.rst b/Documentation/x86/intel_sgx.rst
+> new file mode 100644
+> index 000000000000..f6b7979c41f2
+> --- /dev/null
+> +++ b/Documentation/x86/intel_sgx.rst
+> @@ -0,0 +1,185 @@
+> +===================
+> +Intel(R) SGX driver
+> +===================
+> +
+> +Introduction
+> +============
+> +
+> +Intel(R) SGX is a set of CPU instructions that can be used by applications to
+> +set aside private regions of code and data. The code outside the enclave is
+> +disallowed to access the memory inside the enclave by the CPU access control.
+> +In a way you can think that SGX provides inverted sandbox. It protects the
+> +application from a malicious host.
+> +
+> +You can tell if your CPU supports SGX by looking into ``/proc/cpuinfo``:
+> +
+> +	``cat /proc/cpuinfo  | grep sgx``
+> +
+> +Overview of SGX
+> +===============
+> +
+> +SGX has a set of data structures to maintain information about the enclaves and
+> +their security properties. BIOS reserves a fixed size region of physical memory
+> +for these structures by setting Processor Reserved Memory Range Registers
+> +(PRMRR).
+> +
+> +This memory range is protected from outside access by the CPU and all the data
+> +coming in and out of the CPU package is encrypted by a key that is generated for
+> +each boot cycle.
+> +
+> +Enclaves execute in ring-3 in a special enclave submode using pages from the
+> +reserved memory range. A fixed logical address range for the enclave is reserved
+> +by ENCLS(ECREATE), a leaf instruction used to create enclaves. It is referred in
+> +the documentation commonly as the ELRANGE.
+> +
+> +Every memory access to the ELRANGE is asserted by the CPU. If the CPU is not
+> +executing in the enclave mode inside the enclave, #GP is raised. On the other
+> +hand enclave code can make memory accesses both inside and outside of the
 
-... and this would certainly warrant that - the victim is not empty, indeed.
-AFAICS, ocfs2_rename() yells on _any_ error it's about to return.  Including
--EMLINK, etc.
+comma  ^
+
+> +ELRANGE.
+> +
+> +Enclave can only execute code inside the ELRANGE. Instructions that may cause
+> +VMEXIT, IO instructions and instructions that require a privilege change are
+> +prohibited inside the enclave. Interrupts and exceptions always cause enclave
+> +to exit and jump to an address outside the enclave given when the enclave is
+> +entered by using the leaf instruction ENCLS(EENTER).
+> +
+> +Data types
+> +----------
+> +
+> +The protected memory range contains the following data:
+> +
+> +* **Enclave Page Cache (EPC):** protected pages
+> +* **Enclave Page Cache Map (EPCM):** a database that describes the state of the
+> +  pages and link them to an enclave.
+
+I think it's better to use "definition list" here
+
+http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#definition-lists
+
+> +EPC has a number of different types of pages:
+> +
+> +* **SGX Enclave Control Structure (SECS)**: describes the global
+> +  properties of an enclave.
+> +* **Regular (REG):** code and data pages in the ELRANGE.
+> +* **Thread Control Structure (TCS):** pages that define entry points inside an
+> +  enclave. The enclave can only be entered through these entry points and each
+> +  can host a single hardware thread at a time.
+> +* **Version Array (VA)**: 64-bit version numbers for pages that have been
+> +  swapped outside the enclave. Each page contains 512 version numbers.
+
+ditto
+
+> +Launch control
+> +--------------
+> +
+> +To launch an enclave, two structures must be provided for ENCLS(EINIT):
+> +
+> +1. **SIGSTRUCT:** signed measurement of the enclave binary.
+> +2. **EINITTOKEN:** a cryptographic token CMAC-signed with a AES256-key called
+> +   *launch key*, which is re-generated for each boot cycle.
+
+ditto
+
+> +The CPU holds a SHA256 hash of a 3072-bit RSA public key inside
+> +IA32_SGXLEPUBKEYHASHn MSRs. Enclaves with a SIGSTRUCT that is signed with this
+> +key do not require a valid EINITTOKEN and can be authorized with special
+> +privileges. One of those privileges is ability to acquire the launch key with
+> +ENCLS(EGETKEY).
+> +
+> +**IA32_FEATURE_CONTROL[17]** is used by the BIOS configure whether
+> +IA32_SGXLEPUBKEYHASH MSRs are read-only or read-write before locking the
+> +feature control register and handing over control to the operating system.
+> +
+> +Enclave construction
+> +--------------------
+> +
+> +The construction is started by filling out the SECS that contains enclave
+> +address range, privileged attributes and measurement of TCS and REG pages (pages
+> +that will be mapped to the address range) among the other things. This structure
+> +is passed out to the ENCLS(ECREATE) together with a physical address of a page
+> +in EPC that will hold the SECS.
+> +
+> +The pages are added with ENCLS(EADD) and measured with ENCLS(EEXTEND) i.e.
+> +SHA256 hash MRENCLAVE residing in the SECS is extended with the page data.
+> +
+> +After all of the pages have been added, the enclave is initialized with
+> +ENCLS(EINIT). ENCLS(INIT) checks that the SIGSTRUCT is signed with the contained
+
+                       EINIT?
+
+> +public key. If the given EINITTOKEN has the valid bit set, the CPU checks that
+> +the token is valid (CMAC'd with the launch key). If the token is not valid,
+> +the CPU will check whether the enclave is signed with a key matching to the
+> +IA32_SGXLEPUBKEYHASHn MSRs.
+> +
+> +Swapping pages
+> +--------------
+> +
+> +Enclave pages can be swapped out with ENCLS(EWB) to the unprotected memory. In
+> +addition to the EPC page, ENCLS(EWB) takes in a VA page and address for PCMD
+> +structure (Page Crypto MetaData) as input. The VA page will seal a version
+> +number for the page. PCMD is 128 byte structure that contains tracking
+> +information for the page, most importantly its MAC. With these structures the
+> +enclave is sealed and rollback protected while it resides in the unprotected
+> +memory.
+> +
+> +Before the page can be swapped out it must not have any active TLB references.
+> +ENCLS(EBLOCK) instruction moves a page to the *blocked* state, which means
+> +that no new TLB entries can be created to it by the hardware threads.
+> +
+> +After this a shootdown sequence is started with ENCLS(ETRACK), which sets an
+> +increased counter value to the entering hardware threads. ENCLS(EWB) will
+> +return SGX_NOT_TRACKED error while there are still threads with the earlier
+> +couner value because that means that there might be hardware thread inside
+> +the enclave with TLB entries to pages that are to be swapped.
+> +
+> +Kernel internals
+> +================
+> +
+> +Requirements
+> +------------
+> +
+> +Because SGX has an ever evolving and expanding feature set, it's possible for
+> +a BIOS or VMM to configure a system in such a way that not all CPUs are equal,
+> +e.g. where Launch Control is only enabled on a subset of CPUs.  Linux does
+> +*not* support such a heterogeneous system configuration, nor does it even
+> +attempt to play nice in the face of a misconfigured system.  With the exception
+> +of Launch Control's hash MSRs, which can vary per CPU, Linux assumes that all
+> +CPUs have a configuration that is identical to the boot CPU.
+> +
+> +
+> +Roles and responsibilities
+> +--------------------------
+> +
+> +SGX introduces system resources, e.g. EPC memory, that must be accessible to
+> +multiple entities, e.g. the native kernel driver (to expose SGX to userspace)
+> +and KVM (to expose SGX to VMs), ideally without introducing any dependencies
+> +between each SGX entity.  To that end, the kernel owns and manages the shared
+> +system resources, i.e. the EPC and Launch Control MSRs, and defines functions
+> +that provide appropriate access to the shared resources.  SGX support for
+> +user space and VMs is left to the SGX platform driver and KVM respectively.
+> +
+> +Launching enclaves
+> +------------------
+> +
+> +The current kernel implementation supports only unlocked MSRs i.e.
+> +FEATURE_CONTROL_SGX_LE_WR must be set. The launch is performed by setting the
+> +MSRs to the hash of the public key modulus of the enclave signer, which is one
+> +f the fields in the SIGSTRUCT.
+
+  of
+
+> +
+> +EPC management
+> +--------------
+> +
+> +Due to the unique requirements for swapping EPC pages, and because EPC pages
+> +(currently) do not have associated page structures, management of the EPC is
+> +not handled by the standard Linux swapper.  SGX directly handles swapping
+> +of EPC pages, including a kthread to initiate reclaim and a rudimentary LRU
+> +mechanism. The consumers of EPC pages, e.g. the SGX driver, are required to
+> +implement function callbacks that can be invoked by the kernel to age,
+> +swap, and/or forcefully reclaim a target EPC page.  In effect, the kernel
+> +controls what happens and when, while the consumers (driver, KVM, etc..) do
+> +the actual work.
+> +
+> +SGX uapi
+> +========
+> +
+> +.. kernel-doc:: drivers/platform/x86/intel_sgx/sgx_ioctl.c
+> +   :functions: sgx_ioc_enclave_create
+> +               sgx_ioc_enclave_add_page
+> +               sgx_ioc_enclave_init
+> +
+> +.. kernel-doc:: arch/x86/include/uapi/asm/sgx.h
+> +
+> +References
+> +==========
+> +
+> +* System Programming Manual: 39.1.4 Intel® SGX Launch Control Configuration
+> -- 
+> 2.19.1
+> 
+
+-- 
+Sincerely yours,
+Mike.
+
