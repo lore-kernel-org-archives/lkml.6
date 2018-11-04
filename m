@@ -2,115 +2,178 @@ Return-Path: <SRS0=jXQK=NP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F40C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 04:17:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EFEAC32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 04:20:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5ED082085A
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 04:17:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03B8B20685
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 04:20:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OcUwOwu9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5ED082085A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="g6EAFVVY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03B8B20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729106AbeKDNan (ORCPT
+        id S1729116AbeKDNeG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 08:30:43 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:42613 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728653AbeKDNan (ORCPT
+        Sun, 4 Nov 2018 08:34:06 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:43084 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728984AbeKDNeG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 08:30:43 -0500
-Received: by mail-lf1-f68.google.com with SMTP id q6-v6so3839846lfh.9
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Nov 2018 21:17:12 -0700 (PDT)
+        Sun, 4 Nov 2018 08:34:06 -0500
+Received: by mail-pf1-f193.google.com with SMTP id g7-v6so552522pfo.10
+        for <linux-kernel@vger.kernel.org>; Sat, 03 Nov 2018 21:20:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=PcB7Voz2rYa+HYI3t0O8ACvgPKPvaZGmcSNwwe1Y3Ww=;
-        b=OcUwOwu94F9JiL1Ta6Gqr/XkcoMmJ7qh5KgGRL4SB6stFlWf4Sh1Nm/XJgzZY4Wb0H
-         8rGjQFySa+azEaPEWXHYpludII4pXtdKXdfArWNZT0Ec4EN2DMDfBDwm5QPaQjJb0C8S
-         YMCDabrBh1FdIYY99AUek3n2O8Vkq2mDePe2E=
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=9j5uePIhij3R4NH/YyHoDCsOyA6g+d1LRJIUn2dNC+A=;
+        b=g6EAFVVYtLgsxypVfZUmz/v4rGp49vpLLhaGGfsjoYWKJxNHr0UvffnVPgflH8tCh3
+         7DJcWtW0ziFHb5NlG+y5hTLqGz1xoAX9FaVwGHdFdofuIZYNpI7KOrGlUlrf91xVqOV5
+         QLTEt0Np51DuJVG1OcNrAwrzzjvD3csLI2TcM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=PcB7Voz2rYa+HYI3t0O8ACvgPKPvaZGmcSNwwe1Y3Ww=;
-        b=C0hHsHc0cnyAjGOleDYoHoT+cdegZ5u3aQXI2HpYXSQEZ6xaJrqRMosZIN/oXnT5Tw
-         iCBmal9Ntae/naQ8rbMgOz1H8RIj5AugSVCcN9b1bOAa77+43+QX5qq2E8wurOYhHo/2
-         THi3pgYv6yMHzPrKKm+HFnqNFYmpMD/lHLft6gMQBmAisy1c2toz5/Njrpl4DD3gWkWm
-         QeL21Mk6AvV7ZoWOHHDtJkx3XNH1DAZNOvFHEROq6E8IIs0eRufRXXe0mTjlePhbqbs2
-         /mzWe2dOi6VQ4hH3oKH2SIKXrh6MSaEpXb8dJ1a0tMAyD5Cgh7mbaSjwA1PfeWh9gZts
-         AzhA==
-X-Gm-Message-State: AGRZ1gI7VDS6GyEOo1qX/DTznGF/N1UdTqXWXTJPp9CjoXqGE5hajz2q
-        Wzy5xCRz2bp/q8aCuY0iY05IuKENMrlBxi7Z10AIFA==
-X-Google-Smtp-Source: AJdET5cAWiB1xVLNUNkrwC+/WjuD33JR1h7UdtTj4ZtCNP2H6jnoosCjqokpoSEGiIXHhPOpHssGizbzJCZbl7l3e8Y=
-X-Received: by 2002:a19:9a8c:: with SMTP id c134mr9422095lfe.152.1541305031353;
- Sat, 03 Nov 2018 21:17:11 -0700 (PDT)
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=9j5uePIhij3R4NH/YyHoDCsOyA6g+d1LRJIUn2dNC+A=;
+        b=LBhO3TmaFLn+npCjk1Ocv/rFUsTvpUrx8x6OX/70nirbtTQJhqnW1JGwbhj7VVWAWS
+         4VHBImuT3QXb4ym+YVYDuI7PmM4THLeyEqgnQlD2VFul9xNfkhrk2y/OqBJAZpgVKcFU
+         eQh/8qM55j40GYcIMN99coU4PBqkAW4R+PczsNKW0Iv3Sd9bHLZrAZAOQv0RlL7KTREa
+         pnpq2wT986wIFtA4KSwBm4GnmP4To4U7JQ6tmwDqrvBR5PQ0Ks9eH4O5UpDuAOkO3cbY
+         btwv38IQdctuD1/9CWQiViZ5AihGuk9Aq2cuF9x+GC4hTpsj8IYhbVlP2xWscp0hQCGt
+         H9QA==
+X-Gm-Message-State: AGRZ1gK+lvXdkTvc9Sn9Efk5u7OKORHg/6/evAd7bm4tCh7Y0aoHxcjn
+        nlcwPtXQLM8AfGjkMNQbiYMKrp51o8I=
+X-Google-Smtp-Source: AJdET5cp0u/pSRoTFnr8+mFpfq/wco+IgOhtNReu5LKv12kR+PuDMdrRnvRwRP1ArB2++kiS4awQ1A==
+X-Received: by 2002:aa7:858b:: with SMTP id w11-v6mr17907604pfn.77.1541305234547;
+        Sat, 03 Nov 2018 21:20:34 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:fed3:9637:a13a:6c15])
+        by smtp.gmail.com with ESMTPSA id r124-v6sm55846210pfr.151.2018.11.03.21.20.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 03 Nov 2018 21:20:33 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20181102182902.250560510@linuxfoundation.org>
-In-Reply-To: <20181102182902.250560510@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Sun, 4 Nov 2018 09:46:59 +0530
-Message-ID: <CA+G9fYttX_abh6WZf-muCkWzJkdVYU2mDa2eJLGOFRE9kUNmwA@mail.gmail.com>
-Subject: Re: [PATCH 4.18 000/150] 4.18.17-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Taniya Das <tdas@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <0c51a12e-38d3-2df5-4f5f-6a687727e9bf@codeaurora.org>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, skannan@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
+        evgreen@google.com
+References: <1539257761-23023-1-git-send-email-tdas@codeaurora.org>
+ <1539257761-23023-3-git-send-email-tdas@codeaurora.org>
+ <153981915373.5275.15971019914218464179@swboyd.mtv.corp.google.com>
+ <0c51a12e-38d3-2df5-4f5f-6a687727e9bf@codeaurora.org>
+Message-ID: <154130523254.88331.12609105382114756048@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW driver
+Date:   Sat, 03 Nov 2018 21:20:32 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 3 Nov 2018 at 00:08, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.18.17 release.
-> There are 150 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun Nov  4 18:28:05 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.18.17-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.18.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Quoting Taniya Das (2018-11-02 20:06:00)
+> Hello Stephen,
+> =
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64 and i386.
+> On 10/18/2018 5:02 AM, Stephen Boyd wrote:
+> > Quoting Taniya Das (2018-10-11 04:36:01)
+> >> --- a/drivers/cpufreq/Kconfig.arm
+> >> +++ b/drivers/cpufreq/Kconfig.arm
+> >> @@ -121,6 +121,17 @@ config ARM_QCOM_CPUFREQ_KRYO
+> >>
+> >>            If in doubt, say N.
+> >>
+> >> +config ARM_QCOM_CPUFREQ_HW
+> >> +       bool "QCOM CPUFreq HW driver"
+> > =
 
-Summary
-------------------------------------------------------------------------
+> > Is there any reason this can't be a module?
+> > =
 
-kernel: 4.18.17-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.18.y
-git commit: 79190d1d2b752a03eced074e98b3aa2a03563370
-git describe: v4.18.16-151-g79190d1d2b75
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.18-oe/bu=
-ild/v4.18.16-151-g79190d1d2b75
+> =
 
+> We do not have any use cases where we need to support it as module.
 
-No regressions (compared to build v4.18.16-151-g8a21f68d3977)
+Ok, so it could easily be tristate then? Why not allow it?
+
+> =
+
+> >> diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-=
+cpufreq-hw.c
+> >> new file mode 100644
+> >> index 0000000..fe1c264
+> >> --- /dev/null
+> >> +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
+> >> @@ -0,0 +1,354 @@
+> >> +// SPDX-License-Identifier: GPL-2.0
+> >> +/*
+> >> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> >> + */
+[...]
+> >> +
+> >> +static const u16 cpufreq_qcom_std_offsets[REG_ARRAY_SIZE] =3D {
+> > =
+
+> > Is this going to change in the future?
+> > =
+
+> =
+
+> Yes, they could change and that was the reason to introduce the offsets. =
+
+> This was discussed earlier too with Sudeep and was to add them.
+> =
+
+> >> +       [REG_ENABLE]            =3D 0x0,
+
+This is only used once? Maybe it could be removed.
+
+> >> +       [REG_LUT_TABLE]         =3D 0x110,
+
+And this is only used during probe to figure out the supported
+frequencies. So we definitely don't need to store around the registers
+after probe in an array of iomem pointers. The only one that we need
+after probe is the one below.
+
+> >> +       [REG_PERF_STATE]        =3D 0x920,
+> >> +};
+> >> +
+> >> +static struct cpufreq_qcom *qcom_freq_domain_map[NR_CPUS];
+> >> +
+> >> +static int
+> >> +qcom_cpufreq_hw_target_index(struct cpufreq_policy *policy,
+> >> +                            unsigned int index)
+> >> +{
+> >> +       struct cpufreq_qcom *c =3D policy->driver_data;
+> >> +
+> >> +       writel_relaxed(index, c->reg_bases[REG_PERF_STATE]);
+> > =
+
+> > Why can't we avoid the indirection here and store the perf_state pointer
+> > in probe? Then we don't have to indirect through a table to perform the
+> > register write.
+> > =
+
+> =
+
+> As the offsets could change and that was the reason to add this.
+
+With fast switching we can avoid incurring any extra instructions, so
+please make another iomem pointer in the cpufreq_qcom struct just for
+writing the index or if possible, just pass the iomem pointer that
+points to the REG_PERF_STATE as the policy->driver_data variable here.
+Then we have the address in hand without any extra load. If my
+understanding is correct, we don't need to keep around anything besides
+this register address anyway so we should be able to just load it and
+write it immediately.
+
