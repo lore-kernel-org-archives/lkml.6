@@ -4,47 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F004AC0044C
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 03:39:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26551C32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 03:49:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 806302082E
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 03:39:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B38382081D
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 03:49:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="NkdbFhdY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 806302082E
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="AKDSqlrO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B38382081D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729008AbeKDMxD (ORCPT
+        id S1729023AbeKDNCT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 07:53:03 -0500
-Received: from mail-eopbgr740104.outbound.protection.outlook.com ([40.107.74.104]:27904
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        Sun, 4 Nov 2018 08:02:19 -0500
+Received: from mail-dm3nam03on0115.outbound.protection.outlook.com ([104.47.41.115]:25528
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728718AbeKDMxD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 07:53:03 -0500
+        id S1728653AbeKDNCT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 08:02:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ybdbD9Gm1PzcLyLaeDpxXAuUtYazli/sTcwo7s3lUsw=;
- b=NkdbFhdYFbFIfWP4J1KlLg+MzH1uOcJxG33+BuCmqakHQcE4JngZLOKLa2pL+x/Y7L2N4tB5RwChHwZj4HdGzkgiCv0KAJ0lqsi0+hZxhcJrSmKjjgHTCZOxrOw6hKAYGOJxBGLzlQSq+qh0U77TQmFp5ar/m8zjoWoXni3tvII=
-Received: from CY4PR21MB0773.namprd21.prod.outlook.com (10.173.192.19) by
- CY4PR21MB0119.namprd21.prod.outlook.com (10.173.189.13) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.3; Sun, 4 Nov 2018 03:39:36 +0000
-Received: from CY4PR21MB0773.namprd21.prod.outlook.com
- ([fe80::6d0b:b90f:7a73:99fb]) by CY4PR21MB0773.namprd21.prod.outlook.com
- ([fe80::8168:9429:a646:f916%20]) with mapi id 15.20.1294.014; Sun, 4 Nov 2018
- 03:39:36 +0000
+ bh=i09BVb2hZSl+ReGYr3LTvRtGRnszgLdY6LAHFW20pk8=;
+ b=AKDSqlrOpM768Uu6sjT1GG+WTb69lBr4tbpKLOIRa13X4kUmIxiDhnjz7dQgC/lQI5QrWyo1R+nvm/KgQrISt0YgpzGQXG5jzlwj92Ni9IGLWr0sUR4J6Dn2dWegYCkC4ETtiJPDu/O4WQIBrlrX35j2o70fPNHAkBHaiV0uTy4=
+Received: from MWHPR21MB0766.namprd21.prod.outlook.com (10.173.51.20) by
+ MWHPR21MB0864.namprd21.prod.outlook.com (10.173.51.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1294.3; Sun, 4 Nov 2018 03:48:51 +0000
+Received: from MWHPR21MB0766.namprd21.prod.outlook.com
+ ([fe80::1982:5e59:2489:88e6]) by MWHPR21MB0766.namprd21.prod.outlook.com
+ ([fe80::1982:5e59:2489:88e6%14]) with mapi id 15.20.1339.000; Sun, 4 Nov 2018
+ 03:48:51 +0000
 From:   Michael Kelley <mikelley@microsoft.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Juergen Gross <jgross@suse.com>
-CC:     "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
+To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
         "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "jgross@suse.com" <jgross@suse.com>,
         "akataria@vmware.com" <akataria@vmware.com>,
         "olaf@aepfle.de" <olaf@aepfle.de>,
         "apw@canonical.com" <apw@canonical.com>,
@@ -52,88 +54,82 @@ CC:     "virtualization@lists.linux-foundation.org"
         "jasowang@redhat.com" <jasowang@redhat.com>,
         "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>,
         KY Srinivasan <kys@microsoft.com>
-Subject: RE: [PATCH 0/2] i8253: Fix PIT shutdown quirk on Hyper-V
-Thread-Topic: [PATCH 0/2] i8253: Fix PIT shutdown quirk on Hyper-V
-Thread-Index: AQHUcgifYe6LR7d4Q0+wCx1mDqTim6U8GngAgAI08oCAAKvHoA==
-Date:   Sun, 4 Nov 2018 03:39:36 +0000
-Message-ID: <CY4PR21MB0773628CB5DEE1A1F11461C4D7C90@CY4PR21MB0773.namprd21.prod.outlook.com>
-References: <1541093374-10496-1-git-send-email-mikelley@microsoft.com>
- <11f82d95-539c-b680-183b-b6c5c60468a8@suse.com>
- <alpine.DEB.2.21.1811031817570.3160@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1811031817570.3160@nanos.tec.linutronix.de>
+CC:     Michael Kelley <mikelley@microsoft.com>
+Subject: [PATCH v2 0/2] i8253: Fix PIT shutdown quirk on Hyper-V
+Thread-Topic: [PATCH v2 0/2] i8253: Fix PIT shutdown quirk on Hyper-V
+Thread-Index: AQHUc/FMFzp1UloJrUSoATd3OzmphQ==
+Date:   Sun, 4 Nov 2018 03:48:50 +0000
+Message-ID: <1541303219-11142-1-git-send-email-mikelley@microsoft.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-11-04T03:39:33.6857397Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
- Sensitivity=General
-x-originating-ip: [24.22.167.197]
+x-clientproxiedby: MWHPR21CA0041.namprd21.prod.outlook.com
+ (2603:10b6:300:129::27) To MWHPR21MB0766.namprd21.prod.outlook.com
+ (2603:10b6:300:76::20)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [131.107.159.136]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0119;6:meMTxnRv73N5bfW05/ZCmBUWBQ2vsda3R06Zw+zib2TkPjlFTFEqd0D0mlRkuSp40lMH4dkPrROZLlKdDJHvMkB7zy1irMqaGeHMsieRViBYRVxiAfPQFy1pgwkHUnSc0t86glCMbBBKUI7+3MqeQK9B+2oFAdgjIW1+UVH85fCJfep6BtNU4xrVLehwZsHOvV//I8DDXEXQJQaznQRk5IqoBI8novCP4dVLc4H8A/IsEu0Itl9r5K2DMxkJhsgSOhxe69tr0gurpnBrOISfZILg/8ZPzjhAYw9WAvxS2XqR9xt9UibzbugXBhbkA5KDv8cILk+eoTV0LlXFTftoHdVv7CtZGV1X+OBBEIBSq3uXInWdTMEpdTUoSUo2K2u5FXdzNYgzAh4ixxhFRdm6qodWm75Ssti5uVNS8dcSEqyUZIPa0bLtUPkeL9ElQtkdickiuDU1kyXe8bdOE++OKw==;5:9OppEnxYSkBd1+vRHv4/ZfVBt09uaNJWxv4xPB9YsWjSahW8GCTneKItNHRsRfrqXPdBId2JIknlFhD30zsrWNI97a5s23ogh/PUGD0NeqWToU8MHCpKYOF+65RCtv3JFVR4PdnIXWFxJGJQOTTfLNQnOsmhzh9nc99nrZSb62Q=;7:J+tMstCABHlMCoANvcvYrFC4jTredigCn+6Gfh+z2/7mZm/zTEf6e7/uFc/UyoTjKJR4xpB0rm7qAyCkq2XGwtDhBB/WAtYUD58DPc6qfBxTQA9lyQcVc6FrkntI/JTCb14ahLyWG+iR/4ZHXYR8yQ==
-x-ms-office365-filtering-correlation-id: c2415a7b-0d12-4be7-d33c-08d64207249b
+x-microsoft-exchange-diagnostics: 1;MWHPR21MB0864;6:APwEdYbfrb3JVtIEftdJv3BH+uEGTEvKnNGXSfMz6APayhLf8FXcu7bbN+YCzS5ikzR0PlNtH9rONbBetxW413mXnFNclrcciImSxh7Xq/2EOHrn2hCRJ5hdCB6x69+RTsUkM1BKeC93lpuOSlPWjJkkgU9k5qLFfcJpSYV21kRvG8MDhFAxXcpnDpazkWs2J2XFzxsyGe31I7lJnNR8Ql/jadjATAMg/SaRSAN9zctsWy5PrPeZg21smwjICN8WSKhNhImj5MN03mqsNzEUZSagzvCZigmVgXLPh496ZFgTd5Fzl1ZTkTJz5cg7fnlGHUAnrGIyCYqpq93CqN9xDGCmBsLT35uys4iY44EmefsAxR1Jnt483BuLZO1BfUT/hYXWytX5m3UCb8/syKM5rKdUsTKLnMDxM+LINGcr5ZiVy9MfRiyxm+RIMNrNCmAs6JR/OAiKztfHTxJEgyGlQQ==;5:gSSeZMy2Dn/1UDh9bqxxkBsYp9Hq5Oc0jOPp8aOc9JN1joIlJ0Dv2mcUTa9uTzxh5+G0mwmsbGOYVF905RNIpD4GDvLlTA06H19nBwkZ9attZYaBz4WNkSiYzzUvOy83bly29muoDfTQpuB1GZsOT9/9NvdMIXLKNlL22nYnGyc=;7:mywKYQ0JcVILd3qwkrRQjX6LIgfV/PtfIjLF+o82Ikwk28IZpeBh9ue+iuF+ET+8zikRzO7yBINVDOzQN2vwsmO47hVgEDU3c3tGCXbi1KlTzM9YRYyqO9NQjPCuEgqSU/Rca7w9BVpP+qTCwGvPEQ==
+x-ms-office365-filtering-correlation-id: a963c1bd-529d-4d7b-9739-08d642086ed7
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:CY4PR21MB0119;
-x-ms-traffictypediagnostic: CY4PR21MB0119:
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:MWHPR21MB0864;
+x-ms-traffictypediagnostic: MWHPR21MB0864:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=mikelley@microsoft.com; 
 x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-x-microsoft-antispam-prvs: <CY4PR21MB0119839C0038AECDA90E86A2D7C90@CY4PR21MB0119.namprd21.prod.outlook.com>
+x-o365ent-eop-header: Message processed by -  O365_ENT: Allow from ranges
+ (Engineering ONLY)
+x-microsoft-antispam-prvs: <MWHPR21MB086438AB3E48EF546026DC49D7C90@MWHPR21MB0864.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:;
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(8220035)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231382)(944501410)(52105095)(2018427008)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:CY4PR21MB0119;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0119;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(8220035)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(10201501046)(3231382)(944501410)(52105095)(2018427008)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:MWHPR21MB0864;BCL:0;PCL:0;RULEID:;SRVR:MWHPR21MB0864;
 x-forefront-prvs: 084674B2CF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(396003)(346002)(376002)(366004)(39860400002)(189003)(199004)(102836004)(66066001)(7736002)(74316002)(54906003)(6246003)(8936002)(110136005)(305945005)(10090500001)(229853002)(478600001)(71200400001)(71190400001)(446003)(10290500003)(2900100001)(5660300001)(22452003)(11346002)(486006)(476003)(99286004)(2906002)(7416002)(33656002)(316002)(76176011)(53936002)(9686003)(8676002)(186003)(3846002)(6506007)(25786009)(26005)(4326008)(6116002)(68736007)(97736004)(81166006)(86612001)(86362001)(81156014)(106356001)(256004)(105586002)(107886003)(7696005)(8990500004)(14454004)(55016002)(6436002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0119;H:CY4PR21MB0773.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(136003)(39860400002)(366004)(396003)(189003)(199004)(6512007)(107886003)(66066001)(4326008)(53936002)(86612001)(25786009)(2906002)(5660300001)(7416002)(14444005)(1511001)(14454004)(6116002)(7736002)(110136005)(36756003)(305945005)(3846002)(105586002)(2501003)(106356001)(71190400001)(71200400001)(2900100001)(102836004)(486006)(476003)(2616005)(6506007)(26005)(22452003)(10090500001)(386003)(81166006)(81156014)(8676002)(8936002)(99286004)(256004)(6486002)(478600001)(86362001)(6436002)(97736004)(10290500003)(316002)(6636002)(52116002)(68736007)(186003)(2201001)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR21MB0864;H:MWHPR21MB0766.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: 0cZ6sfYA73ba+FBU2cleWha+goZnbGXBUKsCAn/HMX0XsFItGpIPxji3uEc8g4juUrZRtsjaA98amk0cpf3yPWUkUZBwPAuxFDarUUxnUrRmaZMaS6OYrp+RpSQl/WN3jPckT3y0LNEZDgc1wMxZQp0tb8FcC3+LysOIEWzEfBM+RE/B4/SH+Lex6XZhqrKhy0Ptwo5qrEPEgT5CJkxaygj6RICFUhbGJaNLZmS4zgtpj7/nj4y9hW6NAbaCBZfFOak2zpvQC2EGuyu38GYCW3zbawOp+QE+EFISvRkKy02Q8184Kl9e3YzhjXv7wlRD0pB35TOiV+e7oZzHlAsiioeas6UlJV2TRgIqCITT42A=
+x-microsoft-antispam-message-info: oFVd8iEF58SZ0r1MsPURaBOI5k37DixwJNhkEolW4OX/fzsERh9fOsC/6etzM/Zub4dPkrbB3atHzu6a/OWCsBFgfGBIzfxMUpdrYYsw3XykMiSqULG3iR371XO2llDPJwziYZ90mavxrTs+6Eg5gdO4Yl0FIle9jsW3jEHZdGdWxGm1R5U6BfUiG28dyMIrY1P4+0YPHMh0q36EmTgkg7vFgqqa9qdAcySXcj4Ig3N1HlrL6goNUeHpEwU5vviYhQ3QrTzkGVY3Qh7uMWn9vlawvYENGBbeq2aILkD82l9AjduBYVzWrFVZCoFqkrH88rxIGe+d9APFKl5lFqfYUHpoyWt3nqZ6kOamndbPoWE=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c2415a7b-0d12-4be7-d33c-08d64207249b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Nov 2018 03:39:36.4699
+X-MS-Exchange-CrossTenant-Network-Message-Id: a963c1bd-529d-4d7b-9739-08d642086ed7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Nov 2018 03:48:50.9423
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0119
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR21MB0864
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>  Sent: Saturday, November 3, 201=
-8 10:22 AM
->
-> > Did you consider using a static_key instead? You could set it in
-> > ms_hyperv_init_platform(). This would enable you to support future
-> > Hyper-V versions which don't require avoiding to set the count to zero.
->=20
-> Duh. Now that you say it it's more than obvious. Instead of checking for
-> running on hyperv have a quirk check in that function and set it from
-> hyperv. Not necessarily a static key required as this is not a fast path,
-> so a simple ro_after_init marked variable is good enough
->=20
-> Michael, sorry for guiding you down the wrong road. Juergens idea is much
-> better.
+pit_shutdown() doesn't work on Hyper-V because of a quirk in the
+PIT emulation. This problem exists in all versions of Hyper-V and
+had not been noticed previously. When the counter register is set
+to zero, the emulated PIT continues to interrupt @18.2 HZ.
 
-Thanks.  Will send a new patch set shortly.
+Account for this quirk by adding a global variable in the i8253
+code that controls whether the counter register is zero'ed. Then
+in Hyper-V initialization code, override the default setting so
+the counter register is not zero'ed.
 
->=20
-> If you redo that, could you please make sure, that your mail series is
-> properly threaded? i.e. the 1..n/n mails contain a
->=20
-> 	 Reference: <message_id_of_0/n>
->=20
-Argh.  Caused by a one-time foul up.  I'll make sure not to do that again.
+Changes in v2:
+* Instead of a function call to check if running on Hyper-V,
+use a global variable to control whether the counter register
+is zero'ed. [Juergen Gross & Thomas Gleixner]
 
-Michael
+Michael Kelley (2):
+  i8253: Add support for PIT shutdown quirk
+  x86/hyper-v: Enable PIT shutdown quirk
+
+ arch/x86/kernel/cpu/mshyperv.c | 11 +++++++++++
+ drivers/clocksource/i8253.c    | 14 ++++++++++++--
+ include/linux/i8253.h          |  1 +
+ 3 files changed, 24 insertions(+), 2 deletions(-)
+
+--=20
+1.8.3.1
 
