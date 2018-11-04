@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 001C2ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:59:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88FE5C32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:59:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7CAA204FD
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:59:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5112F204FD
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:59:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lgKQXVCT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7CAA204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rqRZ1IJD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5112F204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731722AbeKDXOg (ORCPT
+        id S1731826AbeKDXOn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:14:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48046 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:14:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731341AbeKDXIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:08:52 -0500
+        id S1731227AbeKDXIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:08:51 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B9102085B;
-        Sun,  4 Nov 2018 13:53:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A4CB20868;
+        Sun,  4 Nov 2018 13:53:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339628;
-        bh=M+nlvSSWJ6LODF+My80H6Ek0nsvcQgbQobsSHZ3QULs=;
+        s=default; t=1541339627;
+        bh=/BNA8wX7ezLJDRNO318yDehwFgvKzP2/YSC1SLXa0ug=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lgKQXVCTjMeBx2Lw1T/9/PSYwSYOV1mH8nSJPSw2XMx4HOHPcJAMJjsy6MCKdADrn
-         huEhMYY8R7wVxzZ8I+wJ0z/LFF1L4hzqctciXCZ8YgKJsvVOmKFFQO1nl+PHpNiLKw
-         nqDtwUPjyKusavh1TKNHqOtnRJVKM1WqdWNBOt7o=
+        b=rqRZ1IJD1Q7F+30P3AcpNx+N5snCaFTwCxdPoLu7aPMJvT8t8BPX+xwDrTGI5p8co
+         CVc7nOnsbKIZO5RCbra4nQzFtTclRyJoxj8Agr01kz0T//wS4HWZjXypJQK2eKt+jO
+         sff2R5WRVukxh/dRvN9yF2TbvaHmjeOQJsBGWkrw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Joel Stanley <joel@jms.id.au>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 22/30] powerpc/boot: Ensure _zimage_start is a weak symbol
-Date:   Sun,  4 Nov 2018 08:53:17 -0500
-Message-Id: <20181104135325.88524-22-sashal@kernel.org>
+Cc:     Dengcheng Zhu <dzhu@wavecomp.com>,
+        Paul Burton <paul.burton@mips.com>, pburton@wavecomp.com,
+        ralf@linux-mips.org, linux-mips@linux-mips.org,
+        rachel.mozes@intel.com, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 21/30] MIPS: kexec: Mark CPU offline before disabling local IRQ
+Date:   Sun,  4 Nov 2018 08:53:16 -0500
+Message-Id: <20181104135325.88524-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135325.88524-1-sashal@kernel.org>
 References: <20181104135325.88524-1-sashal@kernel.org>
@@ -52,64 +53,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joel Stanley <joel@jms.id.au>
+From: Dengcheng Zhu <dzhu@wavecomp.com>
 
-[ Upstream commit ee9d21b3b3583712029a0db65a4b7c081d08d3b3 ]
+[ Upstream commit dc57aaf95a516f70e2d527d8287a0332c481a226 ]
 
-When building with clang crt0's _zimage_start is not marked weak, which
-breaks the build when linking the kernel image:
+After changing CPU online status, it will not be sent any IPIs such as in
+__flush_cache_all() on software coherency systems. Do this before disabling
+local IRQ.
 
- $ objdump -t arch/powerpc/boot/crt0.o |grep _zimage_start$
- 0000000000000058 g       .text  0000000000000000 _zimage_start
-
- ld: arch/powerpc/boot/wrapper.a(crt0.o): in function '_zimage_start':
- (.text+0x58): multiple definition of '_zimage_start';
- arch/powerpc/boot/pseries-head.o:(.text+0x0): first defined here
-
-Clang requires the .weak directive to appear after the symbol is
-declared. The binutils manual says:
-
- This directive sets the weak attribute on the comma separated list of
- symbol names. If the symbols do not already exist, they will be
- created.
-
-So it appears this is different with clang. The only reference I could
-see for this was an OpenBSD mailing list post[1].
-
-Changing it to be after the declaration fixes building with Clang, and
-still works with GCC.
-
- $ objdump -t arch/powerpc/boot/crt0.o |grep _zimage_start$
- 0000000000000058  w      .text	0000000000000000 _zimage_start
-
-Reported to clang as https://bugs.llvm.org/show_bug.cgi?id=38921
-
-[1] https://groups.google.com/forum/#!topic/fa.openbsd.tech/PAgKKen2YCY
-
-Signed-off-by: Joel Stanley <joel@jms.id.au>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Dengcheng Zhu <dzhu@wavecomp.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/20571/
+Cc: pburton@wavecomp.com
+Cc: ralf@linux-mips.org
+Cc: linux-mips@linux-mips.org
+Cc: rachel.mozes@intel.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/boot/crt0.S | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/mips/kernel/crash.c         | 3 +++
+ arch/mips/kernel/machine_kexec.c | 3 +++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/arch/powerpc/boot/crt0.S b/arch/powerpc/boot/crt0.S
-index dcf2f15e6797..32dfe6d083f3 100644
---- a/arch/powerpc/boot/crt0.S
-+++ b/arch/powerpc/boot/crt0.S
-@@ -47,8 +47,10 @@ p_end:		.long	_end
- p_pstack:	.long	_platform_stack_top
- #endif
+diff --git a/arch/mips/kernel/crash.c b/arch/mips/kernel/crash.c
+index d455363d51c3..4c07a43a3242 100644
+--- a/arch/mips/kernel/crash.c
++++ b/arch/mips/kernel/crash.c
+@@ -36,6 +36,9 @@ static void crash_shutdown_secondary(void *passed_regs)
+ 	if (!cpu_online(cpu))
+ 		return;
  
--	.weak	_zimage_start
- 	.globl	_zimage_start
-+	/* Clang appears to require the .weak directive to be after the symbol
-+	 * is defined. See https://bugs.llvm.org/show_bug.cgi?id=38921  */
-+	.weak	_zimage_start
- _zimage_start:
- 	.globl	_zimage_start_lib
- _zimage_start_lib:
++	/* We won't be sent IPIs any more. */
++	set_cpu_online(cpu, false);
++
+ 	local_irq_disable();
+ 	if (!cpumask_test_cpu(cpu, &cpus_in_crash))
+ 		crash_save_cpu(regs, cpu);
+diff --git a/arch/mips/kernel/machine_kexec.c b/arch/mips/kernel/machine_kexec.c
+index 8b574bcd39ba..4b3726e4fe3a 100644
+--- a/arch/mips/kernel/machine_kexec.c
++++ b/arch/mips/kernel/machine_kexec.c
+@@ -118,6 +118,9 @@ machine_kexec(struct kimage *image)
+ 			*ptr = (unsigned long) phys_to_virt(*ptr);
+ 	}
+ 
++	/* Mark offline BEFORE disabling local irq. */
++	set_cpu_online(smp_processor_id(), false);
++
+ 	/*
+ 	 * we do not want to be bothered.
+ 	 */
 -- 
 2.17.1
 
