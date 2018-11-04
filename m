@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ED0AECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF78AC32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 196D320862
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7CDC20869
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nuPl8KgN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 196D320862
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zKm4LyHq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7CDC20869
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730795AbeKDXIE (ORCPT
+        id S1730812AbeKDXIF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:08:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46360 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:08:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730678AbeKDXIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:08:01 -0500
+        id S1730780AbeKDXIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:08:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F3332085A;
-        Sun,  4 Nov 2018 13:52:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE5E7208A3;
+        Sun,  4 Nov 2018 13:52:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339577;
-        bh=tEJtpAqTMjlEQ/L67FZ9RIUlP5Om9vqXkw2axuGYhyY=;
+        s=default; t=1541339580;
+        bh=4BIOBQbfyO1AfqlM46AQIYIPAhABs0auS3qxAof0+5M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nuPl8KgNhG3siUxuZzX7a2khqAQNxkQJ7uAZCOZ/jHLtGlCz663zfTKQcNLGtrAx3
-         9nQHpgZ6nKEdH+hxLTphaPz+9+S17C2zpH9O0K/9hE0cQ4xXllTzvtEvT+wOYcUQv4
-         Y9dEiCqg98kD7jMH49FLAKYxSMeo5uFNyIVI+/18=
+        b=zKm4LyHq+oT8uy1CgnhIhYbvb4SatKWMYz3wGHwYBMQwtPyZWl33zAJ5zhZYqCWXs
+         cA217WI2f2kGBf5QheMZ3u1QZ7dWmNhx2MGnwYJ7zKsyObHiRAOHijtabS0E5B0I2u
+         ao7IHe+FosGiVl/+e/B26V0dxspGBJAtpk4UN0O8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Joel Stanley <joel@jms.id.au>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 14/45] powerpc/Makefile: Fix PPC_BOOK3S_64 ASFLAGS
-Date:   Sun,  4 Nov 2018 08:52:09 -0500
-Message-Id: <20181104135240.88431-14-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 18/45] drm/amdgpu/powerplay: fix missing break in switch statements
+Date:   Sun,  4 Nov 2018 08:52:13 -0500
+Message-Id: <20181104135240.88431-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135240.88431-1-sashal@kernel.org>
 References: <20181104135240.88431-1-sashal@kernel.org>
@@ -53,83 +53,124 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joel Stanley <joel@jms.id.au>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 960e30029863db95ec79a71009272d4661db5991 ]
+[ Upstream commit 14b284832e7dea6f54f0adfd7bed105548b94e57 ]
 
-Ever since commit 15a3204d24a3 ("powerpc/64s: Set assembler machine type
-to POWER4") we force -mpower4 to be passed to the assembler
-irrespective of the CFLAGS used (for Book3s 64).
+There are several switch statements that are missing break statements.
+Add missing breaks to handle any fall-throughs corner cases.
 
-When building a powerpc64 kernel with clang, clang will not add -many
-to the assembler flags, so any instructions that the compiler has
-generated that are not available on power4 will cause an error:
+Detected by CoverityScan, CID#1457175 ("Missing break in switch")
 
-  /usr/bin/as -a64 -mppc64 -mlittle-endian -mpower8 \
-   -I ./arch/powerpc/include -I ./arch/powerpc/include/generated \
-   -I ./include -I ./arch/powerpc/include/uapi \
-   -I ./arch/powerpc/include/generated/uapi -I ./include/uapi \
-   -I ./include/generated/uapi -I arch/powerpc -I arch/powerpc \
-   -maltivec -mpower4 -o init/do_mounts.o /tmp/do_mounts-3b0a3d.s
-  /tmp/do_mounts-51ce54.s:748: Error: unrecognized opcode: `isel'
-
-GCC does include -many, so the GCC driven gas call will succeed:
-
-  as -v -I ./arch/powerpc/include -I ./arch/powerpc/include/generated -I
-  ./include -I ./arch/powerpc/include/uapi
-  -I ./arch/powerpc/include/generated/uapi -I ./include/uapi
-  -I ./include/generated/uapi -I arch/powerpc -I arch/powerpc
-   -a64 -mpower8 -many -mlittle -maltivec -mpower4 -o init/do_mounts.o
-
-Note that isel is power7 and above for IBM CPUs. GCC only generates it
-for Power9 and above, but the above test was run against the clang
-generated assembly.
-
-Peter Bergner explains:
-
-  When using -many -mpower4, gas will first try and find a matching
-  power4 mnemonic and failing that, it will then allow any valid
-  mnemonic that gas knows about. GCC's use of -many predates me
-  though.
-
-  IIRC, Alan looked at trying to remove it, but I forget why he
-  didn't. Could be either a gcc or gas issue at the time. I'm not sure
-  whether issue still exists or not. He and I have modified how gas
-  works internally a fair amount since he tried removing gcc use of
-  -many.
-
-  I will also note that when using -many, gas will choose the first
-  mnemonic that matches in the mnemonic table and we have (mostly)
-  sorted the table so that server mnemonics show up earlier in the
-  table than other mnemonics, so they'll be seen/chosen first.
-
-By explicitly setting -many we can build with Clang and GCC while
-retaining the -mpower4 option.
-
-Signed-off-by: Joel Stanley <joel@jms.id.au>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: 18aafc59b106 ("drm/amd/powerplay: implement fw related smu interface for iceland.")
+Acked-by: Huang Rui <ray.huang@amd.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/Makefile | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c      | 2 ++
+ drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c    | 2 ++
+ drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c | 2 ++
+ drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c   | 2 ++
+ drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c   | 2 ++
+ 5 files changed, 10 insertions(+)
 
-diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
-index fb96206de317..2510ff9381d0 100644
---- a/arch/powerpc/Makefile
-+++ b/arch/powerpc/Makefile
-@@ -244,7 +244,11 @@ cpu-as-$(CONFIG_4xx)		+= -Wa,-m405
- cpu-as-$(CONFIG_ALTIVEC)	+= $(call as-option,-Wa$(comma)-maltivec)
- cpu-as-$(CONFIG_E200)		+= -Wa,-me200
- cpu-as-$(CONFIG_E500)		+= -Wa,-me500
--cpu-as-$(CONFIG_PPC_BOOK3S_64)	+= -Wa,-mpower4
-+
-+# When using '-many -mpower4' gas will first try and find a matching power4
-+# mnemonic and failing that it will allow any valid mnemonic that GAS knows
-+# about. GCC will pass -many to GAS when assembling, clang does not.
-+cpu-as-$(CONFIG_PPC_BOOK3S_64)	+= -Wa,-mpower4 -Wa,-many
- cpu-as-$(CONFIG_PPC_E500MC)	+= $(call as-option,-Wa$(comma)-me500mc)
- 
- KBUILD_AFLAGS += $(cpu-as-y)
+diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
+index 2d4ec8ac3a08..0b3ea7e9b805 100644
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
+@@ -2303,11 +2303,13 @@ static uint32_t ci_get_offsetof(uint32_t type, uint32_t member)
+ 		case DRAM_LOG_BUFF_SIZE:
+ 			return offsetof(SMU7_SoftRegisters, DRAM_LOG_BUFF_SIZE);
+ 		}
++		break;
+ 	case SMU_Discrete_DpmTable:
+ 		switch (member) {
+ 		case LowSclkInterruptThreshold:
+ 			return offsetof(SMU7_Discrete_DpmTable, LowSclkInterruptT);
+ 		}
++		break;
+ 	}
+ 	pr_debug("can't get the offset of type %x member %x\n", type, member);
+ 	return 0;
+diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
+index 53df9405f43a..bb616a530d3c 100644
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
+@@ -2372,6 +2372,7 @@ static uint32_t fiji_get_offsetof(uint32_t type, uint32_t member)
+ 		case DRAM_LOG_BUFF_SIZE:
+ 			return offsetof(SMU73_SoftRegisters, DRAM_LOG_BUFF_SIZE);
+ 		}
++		break;
+ 	case SMU_Discrete_DpmTable:
+ 		switch (member) {
+ 		case UvdBootLevel:
+@@ -2383,6 +2384,7 @@ static uint32_t fiji_get_offsetof(uint32_t type, uint32_t member)
+ 		case LowSclkInterruptThreshold:
+ 			return offsetof(SMU73_Discrete_DpmTable, LowSclkInterruptThreshold);
+ 		}
++		break;
+ 	}
+ 	pr_warn("can't get the offset of type %x member %x\n", type, member);
+ 	return 0;
+diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
+index 415f691c3fa9..c15e15e657b8 100644
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
+@@ -2246,11 +2246,13 @@ static uint32_t iceland_get_offsetof(uint32_t type, uint32_t member)
+ 		case DRAM_LOG_BUFF_SIZE:
+ 			return offsetof(SMU71_SoftRegisters, DRAM_LOG_BUFF_SIZE);
+ 		}
++		break;
+ 	case SMU_Discrete_DpmTable:
+ 		switch (member) {
+ 		case LowSclkInterruptThreshold:
+ 			return offsetof(SMU71_Discrete_DpmTable, LowSclkInterruptThreshold);
+ 		}
++		break;
+ 	}
+ 	pr_warn("can't get the offset of type %x member %x\n", type, member);
+ 	return 0;
+diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
+index 782b19fc2e70..a5b7a4484700 100644
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
+@@ -2667,6 +2667,7 @@ static uint32_t tonga_get_offsetof(uint32_t type, uint32_t member)
+ 		case DRAM_LOG_BUFF_SIZE:
+ 			return offsetof(SMU72_SoftRegisters, DRAM_LOG_BUFF_SIZE);
+ 		}
++		break;
+ 	case SMU_Discrete_DpmTable:
+ 		switch (member) {
+ 		case UvdBootLevel:
+@@ -2678,6 +2679,7 @@ static uint32_t tonga_get_offsetof(uint32_t type, uint32_t member)
+ 		case LowSclkInterruptThreshold:
+ 			return offsetof(SMU72_Discrete_DpmTable, LowSclkInterruptThreshold);
+ 		}
++		break;
+ 	}
+ 	pr_warn("can't get the offset of type %x member %x\n", type, member);
+ 	return 0;
+diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
+index 2de48959ac93..52834334bd53 100644
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
+@@ -2267,6 +2267,7 @@ static uint32_t vegam_get_offsetof(uint32_t type, uint32_t member)
+ 		case DRAM_LOG_BUFF_SIZE:
+ 			return offsetof(SMU75_SoftRegisters, DRAM_LOG_BUFF_SIZE);
+ 		}
++		break;
+ 	case SMU_Discrete_DpmTable:
+ 		switch (member) {
+ 		case UvdBootLevel:
+@@ -2278,6 +2279,7 @@ static uint32_t vegam_get_offsetof(uint32_t type, uint32_t member)
+ 		case LowSclkInterruptThreshold:
+ 			return offsetof(SMU75_Discrete_DpmTable, LowSclkInterruptThreshold);
+ 		}
++		break;
+ 	}
+ 	pr_warn("can't get the offset of type %x member %x\n", type, member);
+ 	return 0;
 -- 
 2.17.1
 
