@@ -7,48 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC62C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E1A0ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 472C720868
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAEB92086B
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DNT99H9u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 472C720868
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="P5Lf1m6z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAEB92086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731863AbeKDXJn (ORCPT
+        id S1731878AbeKDXJp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:09:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49708 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:09:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729583AbeKDXJm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:09:42 -0500
+        id S1729782AbeKDXJn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:09:43 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7484020862;
-        Sun,  4 Nov 2018 13:54:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 816DF2086B;
+        Sun,  4 Nov 2018 13:54:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339677;
-        bh=KOhqBvlnJ4r2HHtNKM4xp1EZPdIZoiatRSG29taCjCc=;
+        s=default; t=1541339679;
+        bh=Y30+OiQT7YtAYsKXLK5QUjWUMPV1lRYXpokumWf/Ljo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DNT99H9uEkN0AWI5FgwDzDUqdCFaBi4VjVLj/52+I/+lVjoESIzkTl+bNTw+rlP6T
-         aG3ozLJ52G5nBQE83yTxujsjMo2bAXPMUmGRAqRpQizWEolO6ZLQcbqb0Tz7LtUPfd
-         zIKFi3I4OnwjD9jsSLhd7Gje54YGI/JE6/vBRAQU=
+        b=P5Lf1m6zXRNhEFH1JDHGKkkHoW5CbzKLEm2tnH5GQ70d8L7y+Xnl45o3MusMoSnIK
+         Ep4qGQgNG7GmXH2K1SafoQCBx8nG5+9Y15NwCy/k0QCsaVnwA29uqK/3Ce+7D7uRFh
+         Rg/ghpIJlO428l1BDlC3Z8uvzmpy2OY2l5BfMCqA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+Cc:     Daniel Axtens <dja@axtens.net>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 02/13] mm: don't warn about large allocations for slab
-Date:   Sun,  4 Nov 2018 08:54:22 -0500
-Message-Id: <20181104135433.88734-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 04/13] powerpc/nohash: fix undefined behaviour when testing page size support
+Date:   Sun,  4 Nov 2018 08:54:24 -0500
+Message-Id: <20181104135433.88734-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135433.88734-1-sashal@kernel.org>
 References: <20181104135433.88734-1-sashal@kernel.org>
@@ -57,111 +53,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Vyukov <dvyukov@google.com>
+From: Daniel Axtens <dja@axtens.net>
 
-[ Upstream commit 61448479a9f2c954cde0cfe778cb6bec5d0a748d ]
+[ Upstream commit f5e284803a7206d43e26f9ffcae5de9626d95e37 ]
 
-Slub does not call kmalloc_slab() for sizes > KMALLOC_MAX_CACHE_SIZE,
-instead it falls back to kmalloc_large().
+When enumerating page size definitions to check hardware support,
+we construct a constant which is (1U << (def->shift - 10)).
 
-For slab KMALLOC_MAX_CACHE_SIZE == KMALLOC_MAX_SIZE and it calls
-kmalloc_slab() for all allocations relying on NULL return value for
-over-sized allocations.
+However, the array of page size definitions is only initalised for
+various MMU_PAGE_* constants, so it contains a number of 0-initialised
+elements with def->shift == 0. This means we end up shifting by a
+very large number, which gives the following UBSan splat:
 
-This inconsistency leads to unwanted warnings from kmalloc_slab() for
-over-sized allocations for slab.  Returning NULL for failed allocations is
-the expected behavior.
+================================================================================
+UBSAN: Undefined behaviour in /home/dja/dev/linux/linux/arch/powerpc/mm/tlb_nohash.c:506:21
+shift exponent 4294967286 is too large for 32-bit type 'unsigned int'
+CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc3-00045-ga604f927b012-dirty #6
+Call Trace:
+[c00000000101bc20] [c000000000a13d54] .dump_stack+0xa8/0xec (unreliable)
+[c00000000101bcb0] [c0000000004f20a8] .ubsan_epilogue+0x18/0x64
+[c00000000101bd30] [c0000000004f2b10] .__ubsan_handle_shift_out_of_bounds+0x110/0x1a4
+[c00000000101be20] [c000000000d21760] .early_init_mmu+0x1b4/0x5a0
+[c00000000101bf10] [c000000000d1ba28] .early_setup+0x100/0x130
+[c00000000101bf90] [c000000000000528] start_here_multiplatform+0x68/0x80
+================================================================================
 
-Make slub and slab code consistent by checking size >
-KMALLOC_MAX_CACHE_SIZE in slab before calling kmalloc_slab().
+Fix this by first checking if the element exists (shift != 0) before
+constructing the constant.
 
-While we are here also fix the check in kmalloc_slab().  We should check
-against KMALLOC_MAX_CACHE_SIZE rather than KMALLOC_MAX_SIZE.  It all kinda
-worked because for slab the constants are the same, and slub always checks
-the size against KMALLOC_MAX_CACHE_SIZE before kmalloc_slab().  But if we
-get there with size > KMALLOC_MAX_CACHE_SIZE anyhow bad things will
-happen.  For example, in case of a newly introduced bug in slub code.
-
-Also move the check in kmalloc_slab() from function entry to the size >
-192 case.  This partially compensates for the additional check in slab
-code and makes slub code a bit faster (at least theoretically).
-
-Also drop __GFP_NOWARN in the warning check.  This warning means a bug in
-slab code itself, user-passed flags have nothing to do with it.
-
-Nothing of this affects slob.
-
-Link: http://lkml.kernel.org/r/20180927171502.226522-1-dvyukov@gmail.com
-Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-Reported-by: syzbot+87829a10073277282ad1@syzkaller.appspotmail.com
-Reported-by: syzbot+ef4e8fc3a06e9019bb40@syzkaller.appspotmail.com
-Reported-by: syzbot+6e438f4036df52cbb863@syzkaller.appspotmail.com
-Reported-by: syzbot+8574471d8734457d98aa@syzkaller.appspotmail.com
-Reported-by: syzbot+af1504df0807a083dbd9@syzkaller.appspotmail.com
-Acked-by: Christoph Lameter <cl@linux.com>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Cc: Pekka Enberg <penberg@kernel.org>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/slab.c        |  4 ++++
- mm/slab_common.c | 12 ++++++------
- 2 files changed, 10 insertions(+), 6 deletions(-)
+ arch/powerpc/mm/tlb_nohash.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/mm/slab.c b/mm/slab.c
-index b7f9f6456a61..0b8ff2152f60 100644
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -3465,6 +3465,8 @@ __do_kmalloc_node(size_t size, gfp_t flags, int node, unsigned long caller)
- {
- 	struct kmem_cache *cachep;
+diff --git a/arch/powerpc/mm/tlb_nohash.c b/arch/powerpc/mm/tlb_nohash.c
+index f38ea4df6a85..4014b6dc8c09 100644
+--- a/arch/powerpc/mm/tlb_nohash.c
++++ b/arch/powerpc/mm/tlb_nohash.c
+@@ -479,6 +479,9 @@ static void setup_page_sizes(void)
+ 		for (psize = 0; psize < MMU_PAGE_COUNT; ++psize) {
+ 			struct mmu_psize_def *def = &mmu_psize_defs[psize];
  
-+	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE))
-+		return NULL;
- 	cachep = kmalloc_slab(size, flags);
- 	if (unlikely(ZERO_OR_NULL_PTR(cachep)))
- 		return cachep;
-@@ -3497,6 +3499,8 @@ static __always_inline void *__do_kmalloc(size_t size, gfp_t flags,
- 	struct kmem_cache *cachep;
- 	void *ret;
++			if (!def->shift)
++				continue;
++
+ 			if (tlb1ps & (1U << (def->shift - 10))) {
+ 				def->flags |= MMU_PAGE_SIZE_DIRECT;
  
-+	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE))
-+		return NULL;
- 	cachep = kmalloc_slab(size, flags);
- 	if (unlikely(ZERO_OR_NULL_PTR(cachep)))
- 		return cachep;
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index dcdab81bd240..d8489833d423 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -653,18 +653,18 @@ struct kmem_cache *kmalloc_slab(size_t size, gfp_t flags)
- {
- 	int index;
- 
--	if (unlikely(size > KMALLOC_MAX_SIZE)) {
--		WARN_ON_ONCE(!(flags & __GFP_NOWARN));
--		return NULL;
--	}
--
- 	if (size <= 192) {
- 		if (!size)
- 			return ZERO_SIZE_PTR;
- 
- 		index = size_index[size_index_elem(size)];
--	} else
-+	} else {
-+		if (unlikely(size > KMALLOC_MAX_CACHE_SIZE)) {
-+			WARN_ON(1);
-+			return NULL;
-+		}
- 		index = fls(size - 1);
-+	}
- 
- #ifdef CONFIG_ZONE_DMA
- 	if (unlikely((flags & GFP_DMA)))
 -- 
 2.17.1
 
