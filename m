@@ -2,165 +2,133 @@ Return-Path: <SRS0=jXQK=NP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A22C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 16:45:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF4C3C32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 16:45:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8291C2082D
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 16:45:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8291C2082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 76E182082D
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 16:45:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="gtXjNw+y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76E182082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728847AbeKECAy (ORCPT
+        id S1728898AbeKECBA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 21:00:54 -0500
-Received: from mga17.intel.com ([192.55.52.151]:25378 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727047AbeKECAy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 21:00:54 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2018 08:45:20 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,464,1534834800"; 
-   d="scan'208";a="271288880"
-Received: from kbyon-mobl.amr.corp.intel.com (HELO [10.251.138.109]) ([10.251.138.109])
-  by orsmga005.jf.intel.com with ESMTP; 04 Nov 2018 08:45:18 -0800
-Subject: Re: [alsa-devel] [PATCH] ASoC: skl: always select SND_SOC_HDAC_HDA
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     alsa-devel@alsa-project.org,
-        Guneshwor Singh <guneshwor.o.singh@intel.com>,
-        Sriram Periyasamy <sriramx.periyasamy@intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Rakesh Ughreja <rakesh.a.ughreja@intel.com>,
-        Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>,
-        Naveen Manohar <naveen.m@intel.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-References: <20181102112456.780127-1-arnd@arndb.de>
- <943d10e2-299c-4393-f2f5-4ac8bbe400c3@linux.intel.com>
- <CAK8P3a1FCVTuB+ydE6syMHYPWnUW0WTCFDuyMmm35VNnpTTGBw@mail.gmail.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <adc83eaa-b7c0-2c76-a434-f1d5872337f6@linux.intel.com>
-Date:   Sun, 4 Nov 2018 10:45:17 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sun, 4 Nov 2018 21:01:00 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:36940 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728858AbeKECA7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 21:00:59 -0500
+Received: by mail-io1-f66.google.com with SMTP id k17-v6so4795340ioc.4
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Nov 2018 08:45:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MZ1WKKOvOXrRKKi2w6xb8PaQgnGLMyfQWjlVAcGOCgk=;
+        b=gtXjNw+ySqXnWvNqateD2Jojpe7cOXcukO/ZsalC/vTdHiq3dZHN1mGNbNzdBAPp+7
+         95BezmkPM1uCGWGf3VktgnRb76bKFTgHB6a/i7EEnsjb7dgxMDgClYjX7JcMRRogZ7eb
+         jQ/rigA9kudClxn5giqyB5sRpEx0DC72t0GQA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MZ1WKKOvOXrRKKi2w6xb8PaQgnGLMyfQWjlVAcGOCgk=;
+        b=I8u6F58n3Cgzm+L6oAvVK6hFiPvAfxLHlp0nGilfV0bUhosykUHufIvR/WhIjmYWqk
+         LF/inBA06QvF4MRNOJlIwCZOqqkkOK2Af+CnBbARBimCPKoCv0sXPS7YDQRbTm4zFOC0
+         /nA7QFBRHw7Ka4WsQ94ibJGsU8BE+9cWUBDYpgewwPgMR8x60ESHTYtJXS3pq4Qt76xJ
+         VgNtyL6yCLuyfkF22q/RdD5fB4jwiRp+vu/oRU3YyGISOuBcCPFDUN6Hda+r+YfUM2nt
+         qEDAQnbX4dTQLAZAeSrLtyN7m6pgacl3d7PAhOFtiJPyzQHvTO7r6X0rOOBax5zLgNct
+         VpkQ==
+X-Gm-Message-State: AGRZ1gJ/CRDRxyyHEMB8lmL/AQSNmBqeh0BCG+rUxaz5CLafNF/clv+u
+        ljB9ZXpc/9kzdUDlzFAN9XHMXyE5luv0UewSmTCgFw==
+X-Google-Smtp-Source: AJdET5e9a5SboyATLdPwWpDHWyk2u9PvCMGDRYT27rDx5FTOeRrOHLdMDyLf1CqH5TBG5qoKPu2l8BlmK9qqhWIy/PQ=
+X-Received: by 2002:a6b:3e57:: with SMTP id l84-v6mr15712261ioa.252.1541349924833;
+ Sun, 04 Nov 2018 08:45:24 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a1FCVTuB+ydE6syMHYPWnUW0WTCFDuyMmm35VNnpTTGBw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <20181103100900.30313-1-jagan@amarulasolutions.com>
+ <20181103100900.30313-2-jagan@amarulasolutions.com> <8365df14-3397-b395-48eb-3070da3b65fc@orpaltech.com>
+In-Reply-To: <8365df14-3397-b395-48eb-3070da3b65fc@orpaltech.com>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Sun, 4 Nov 2018 22:15:12 +0530
+Message-ID: <CAMty3ZBGR9bgoN2cidcFMhCTinOcGP11332CgCvi_UhvQBOQjw@mail.gmail.com>
+Subject: Re: [PATCH 01/10] drm/sun4i: sun6i_mipi_dsi: Compute burst mode loop
+ N1 instruction delay
+To:     Sergey Suloev <ssuloev@orpaltech.com>
+Cc:     Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        TL Lim <tllim@pine64.org>, linux-sunxi@googlegroups.com,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Nov 3, 2018 at 8:53 PM Sergey Suloev <ssuloev@orpaltech.com> wrote:
+>
+> Hi, Jagan,
+>
+> On 11/3/18 1:08 PM, Jagan Teki wrote:
+> > Loop N1 instruction delay for burst mode lcd panel are
+> > computed as per BSP code.
+> >
+> > Reference code is available in BSP
+> > (in drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
+> > dsi_dev[sel]->dsi_inst_loop_num.bits.loop_n1=
+> > (panel->lcd_ht-panel->lcd_x)*(150)/(panel->lcd_dclk_freq*8) - 50;
+> > => (((mode->htotal - mode->hdisplay) * 150) / ((mode->clock / 1000) * 8)) - 50;
+> >
+> > So use the similar computation for loop N1 delay.
+> >
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > ---
+> >   drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 9 ++++++++-
+> >   1 file changed, 8 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > index 86430efd9054..da152c21ec62 100644
+> > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > @@ -394,7 +394,14 @@ static void sun6i_dsi_setup_burst(struct sun6i_dsi *dsi,
+> >   static void sun6i_dsi_setup_inst_loop(struct sun6i_dsi *dsi,
+> >                                     struct drm_display_mode *mode)
+> >   {
+> > -     u16 delay = 50 - 1;
+> > +     struct mipi_dsi_device *device = dsi->device;
+> > +     u16 delay;
+> > +
+> > +     if (device->mode_flags == MIPI_DSI_MODE_VIDEO_BURST)
+> > +             delay = (((mode->htotal - mode->hdisplay) * 150) /
+> > +                     ((mode->clock / 1000) * 8)) - 50;
+> > +     else
+> > +             delay = 50 - 1;
+> >
+> >       regmap_write(dsi->regs, SUN6I_DSI_INST_LOOP_NUM_REG(0),
+> >                    SUN6I_DSI_INST_LOOP_NUM_N0(50 - 1) |
+>
+>
+> is this patch series comes in addition to the previous MIPI DSI series
+> or in its stead?
 
-On 11/2/18 5:03 PM, Arnd Bergmann wrote:
-> On 11/2/18, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com> wrote:
->> On 11/2/18 6:24 AM, Arnd Bergmann wrote:
->>> The skylake sound support is written to work both with or without
->>> CONFIG_SND_SOC_HDAC_HDA, and uses an #ifdef to decide whether it should
->>> link against that. However, this fails with SND_SOC_ALL_CODECS=m or
->>> SND_SOC_INTEL_SKL_HDA_DSP_GENERIC_MACH=m when the Skylake support itself
->>> is built-in, with this link error:
->>>
->>> sound/soc/intel/skylake/skl.o: In function `skl_probe':
->>> skl.c:(.text+0x56c): undefined reference to `snd_soc_hdac_hda_get_ops'
->>>
->>> Using an explicit 'select' here simplifies the logic and prevents
->>> it from happening, at the cost of always including the compile
->>> time dependency.
->> Thanks Arnd for the report. I don't quite agree with the proposal, this
->> should be similar to HDAC_HDMI which is not selected by default, and
->> there's no reason to force the support for HDAudio when the vast
->> majority of Skylake+ devices which enable this driver don't have any
->> HDaudio codec.
-> Sure, feel free to treat this patch as a bug report and come up with
-> a better fix.
-
-I have to rewind my statement. Arnd is correct, the config cannot be the 
-same as hdac_hdmi since there is a code dependency I completely missed.
-
-So yes indeed we have to add a select HDAC_HDA statement under the 
-SKYLAKE config - i just don't know of any other means to say "don't 
-build HDAC_HDA as a module when SKYLAKE is buit-in"
-
-That said, we can add a condition that will only select HDAC_HDA if 
-required by the machine drivers selected. The patch below doesn't seem 
-to have circular dependencies and compiles fine with Arnd's config. I 
-thought of it while multitasking with "Home IT" work and haven't done 
-any testing beyond compilation.  Arnd, can you give it a spin to see if 
-this solves the issues?
-
-diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-index 9cc4f1848c9b..91000924eb7c 100644
---- a/sound/soc/codecs/Kconfig
-+++ b/sound/soc/codecs/Kconfig
-@@ -627,6 +627,14 @@ config SND_SOC_HDAC_HDA
-         tristate
-         select SND_HDA
-
-+config SND_SOC_HDAC_HDA_CODEC
-+       bool
-+       help
-+        This config is set by machine drivers who need SND_SOC_HDAC_HDA,
-+        which is selected by the platform drivers (Skylake or SOF) based
-+        on the value of this boolean. This indirection is required to deal
-+        with a code dependency between platform driver and codec driver.
-+
-  config SND_SOC_ICS43432
-         tristate
-
-diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
-index 0caa1f4eb94d..25f3bca5e56d 100644
---- a/sound/soc/intel/Kconfig
-+++ b/sound/soc/intel/Kconfig
-@@ -107,6 +107,7 @@ config SND_SOC_INTEL_SKYLAKE_SSP_CLK
-  config SND_SOC_INTEL_SKYLAKE
-         tristate "SKL/BXT/KBL/GLK/CNL... Platforms"
-         depends on PCI && ACPI
-+       select SND_SOC_HDAC_HDA if SND_SOC_HDAC_HDA_CODEC
-         select SND_HDA_EXT_CORE
-         select SND_HDA_DSP_LOADER
-         select SND_SOC_TOPOLOGY
-diff --git a/sound/soc/intel/boards/Kconfig b/sound/soc/intel/boards/Kconfig
-index 73ca1350aa31..5e7d3f4aa3ff 100644
---- a/sound/soc/intel/boards/Kconfig
-+++ b/sound/soc/intel/boards/Kconfig
-@@ -296,7 +296,7 @@ config SND_SOC_INTEL_KBL_DA7219_MAX98927_MACH
-  config SND_SOC_INTEL_SKL_HDA_DSP_GENERIC_MACH
-         tristate "SKL/KBL/BXT/APL with HDA Codecs"
-         select SND_SOC_HDAC_HDMI
--       select SND_SOC_HDAC_HDA
-+       select SND_SOC_HDAC_HDA_CODEC
-         help
-           This adds support for ASoC machine driver for Intel platforms
-           SKL/KBL/BXT/APL with iDisp, HDA audio codecs.
-diff --git a/sound/soc/intel/skylake/skl.c b/sound/soc/intel/skylake/skl.c
-index 29225623b4b4..e0dda3fd689b 100644
---- a/sound/soc/intel/skylake/skl.c
-+++ b/sound/soc/intel/skylake/skl.c
-@@ -870,7 +870,7 @@ static int skl_create(struct pci_dev *pci,
-         hbus = skl_to_hbus(skl);
-         bus = skl_to_bus(skl);
-
--#if IS_ENABLED(CONFIG_SND_SOC_HDAC_HDA)
-+#if IS_ENABLED(CONFIG_SND_SOC_HDAC_HDA_CODEC)
-         ext_ops = snd_soc_hdac_hda_get_ops();
-  #endif
-         snd_hdac_ext_bus_init(bus, &pci->dev, &bus_core_ops, io_ops, 
-ext_ops);
-
-
-
-
+Yes, all changes were added on top of previous MIPI DSI series(ie what
+I mentioned in cover-letter) since it require clock patches from
+previous version.
