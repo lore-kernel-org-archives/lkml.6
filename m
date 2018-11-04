@@ -2,196 +2,203 @@ Return-Path: <SRS0=jXQK=NP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34F52C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 19:24:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20280C32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 19:26:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9ED92082E
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 19:24:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9ED92082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CBBF82082E
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 19:26:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBBF82082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729385AbeKEEkK (ORCPT
+        id S1729417AbeKEEmY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 23:40:10 -0500
-Received: from mail-it1-f198.google.com ([209.85.166.198]:59590 "EHLO
-        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729197AbeKEEkJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 23:40:09 -0500
-Received: by mail-it1-f198.google.com with SMTP id 66-v6so2276799itz.9
-        for <linux-kernel@vger.kernel.org>; Sun, 04 Nov 2018 11:24:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=mxj0HLzjEDU1vOOL9gPQUShqucsnHthTNhSe7Uerp6E=;
-        b=FOa35gWUVNxihMxxOb9F4WZXP64VOwgyp/pzxKaQ1oIkdnQuCopzGFntVUJYarC471
-         uKWHNY6OpI142f/11X6CcYazFc0/v2466Ty8hwKRj9GjN0GaiRa9wuJnJ/i96S2TrEMN
-         BYw6YvSpn+ZsrtErz8lQ6Thg9j9b7ejbyanBpKcoPInzWlu9r7on5zL0w0vCTP5+slYD
-         Qs1lU3HCQjfMin3WDk7WeHBPN543EzdagwQVjvDvcV5ldjl99eYoOSAQ1B7agY6Y+953
-         pYCfHjIiNl9Pgxr5+UFtOUOQwc+uF+7MOsd7GhJapf2SQBjgalnpyfoXcGYeZax6tBI0
-         ADjg==
-X-Gm-Message-State: AGRZ1gLQkns3oQrstGh5R/aSJYfcmD214bSTeB92F3ejxRAobCXHHMZ7
-        KHnTb53wT/hOQZYDLX8L3BwYAfi6xYzKm9J3GVf6SK97huXR
-X-Google-Smtp-Source: AJdET5cqNHwegbJyqDYR68xezqbzZ5ulXQYeEBYyjutpfAkElBWBny4EC07rylEpMWAxl3/EpLy8MryEGty2nxHs8P3gQtAfFLM2
+        Sun, 4 Nov 2018 23:42:24 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41720 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728970AbeKEEmY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 23:42:24 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8EA5D308421A;
+        Sun,  4 Nov 2018 19:26:19 +0000 (UTC)
+Received: from krava (ovpn-204-66.brq.redhat.com [10.40.204.66])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 0838719749;
+        Sun,  4 Nov 2018 19:26:16 +0000 (UTC)
+Date:   Sun, 4 Nov 2018 20:26:15 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf: replace automatic const char[] variables by statics
+Message-ID: <20181104192615.GC18517@krava>
+References: <20181102230624.20064-1-linux@rasmusvillemoes.dk>
 MIME-Version: 1.0
-X-Received: by 2002:a24:d255:: with SMTP id z82-v6mr2992537itf.31.1541359444375;
- Sun, 04 Nov 2018 11:24:04 -0800 (PST)
-Date:   Sun, 04 Nov 2018 11:24:04 -0800
-In-Reply-To: <00000000000000d55405799d3d58@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000274ed80579dbb6bf@google.com>
-Subject: Re: KASAN: use-after-free Read in delayed_uprobe_remove
-From:   syzbot <syzbot+cb1fb754b771caca0a88@syzkaller.appspotmail.com>
-To:     acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, linux-kernel@vger.kernel.org, mingo@redhat.com,
-        namhyung@kernel.org, peterz@infradead.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181102230624.20064-1-linux@rasmusvillemoes.dk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Sun, 04 Nov 2018 19:26:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+On Sat, Nov 03, 2018 at 12:06:23AM +0100, Rasmus Villemoes wrote:
+> An automatic const char[] variable gets initialized at runtime, just
+> like any other automatic variable. For long strings, that uses a lot of
+> stack and wastes time building the string; e.g. for the "No %s
+> allocation events..." case one has
+> 
+>   444516:       48 b8 4e 6f 20 25 73 20 61 6c   movabs $0x6c61207325206f4e,%rax # "No %s al"
+>   ...
+>   444674:       48 89 45 80                     mov    %rax,-0x80(%rbp)
+>   444678:       48 b8 6c 6f 63 61 74 69 6f 6e   movabs $0x6e6f697461636f6c,%rax # "location"
+>   444682:       48 89 45 88                     mov    %rax,-0x78(%rbp)
+>   444686:       48 b8 20 65 76 65 6e 74 73 20   movabs $0x2073746e65766520,%rax # " events "
+>   444690:       66 44 89 55 c4                  mov    %r10w,-0x3c(%rbp)
+>   444695:       48 89 45 90                     mov    %rax,-0x70(%rbp)
+>   444699:       48 b8 66 6f 75 6e 64 2e 20 20   movabs $0x20202e646e756f66,%rax
+> 
+> Make them all static so that the compiler just references objects in .rodata.
+> 
+> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
-HEAD commit:    71e56028173b Merge branch 'sched-urgent-for-linus' of git:..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14c5cfe5400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9384ecb1c973baed
-dashboard link: https://syzkaller.appspot.com/bug?extid=cb1fb754b771caca0a88
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15b32583400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10bb34b9400000
+sounds good
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+cb1fb754b771caca0a88@syzkaller.appspotmail.com
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-==================================================================
-BUG: KASAN: use-after-free in delayed_uprobe_remove+0x113/0x140  
-kernel/events/uprobes.c:339
-Read of size 8 at addr ffff8801bf108180 by task syz-executor179/15677
+thanks,
+jirka
 
-CPU: 1 PID: 15677 Comm: syz-executor179 Not tainted 4.19.0+ #98
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  delayed_uprobe_remove+0x113/0x140 kernel/events/uprobes.c:339
-  put_uprobe+0x4d/0x60 kernel/events/uprobes.c:575
-  uprobe_unregister+0x56/0x70 kernel/events/uprobes.c:1088
-  probe_event_disable.part.16+0x16a/0x2c0 kernel/trace/trace_uprobe.c:990
-  probe_event_disable kernel/trace/trace_uprobe.c:1224 [inline]
-  trace_uprobe_register+0x52c/0xcf0 kernel/trace/trace_uprobe.c:1223
-  perf_trace_event_unreg.isra.3+0xbb/0x220  
-kernel/trace/trace_event_perf.c:157
-  perf_uprobe_destroy+0xc3/0x130 kernel/trace/trace_event_perf.c:342
-  _free_event+0x414/0x1660 kernel/events/core.c:4446
-  put_event+0x48/0x60 kernel/events/core.c:4532
-  perf_event_release_kernel+0x8d0/0x10e0 kernel/events/core.c:4638
-  perf_release+0x37/0x50 kernel/events/core.c:4648
-  __fput+0x385/0xa30 fs/file_table.c:278
-  ____fput+0x15/0x20 fs/file_table.c:309
-  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
-  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x406b71
-Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 b4 17 00 00 c3 48  
-83 ec 08 e8 6a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48  
-89 c2 e8 b3 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
-RSP: 002b:00007ffd64de3e30 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
-RAX: 0000000000000000 RBX: 0000000000000004 RCX: 0000000000406b71
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
-RBP: 0000000000000002 R08: 0000000000000000 R09: 0000000000000000
-R10: 00007ffd64de3e50 R11: 0000000000000293 R12: 00000000006e4a0c
-R13: 00000000000003e8 R14: 000000000000002d R15: 0000000000000006
-
-Allocated by task 15676:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
-  kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
-  kmalloc include/linux/slab.h:546 [inline]
-  kzalloc include/linux/slab.h:741 [inline]
-  delayed_uprobe_add kernel/events/uprobes.c:313 [inline]
-  update_ref_ctr+0x36f/0x590 kernel/events/uprobes.c:447
-  uprobe_write_opcode+0x948/0xc50 kernel/events/uprobes.c:496
-  set_swbp+0x2a/0x40
-  install_breakpoint.isra.24+0x161/0x840 kernel/events/uprobes.c:883
-  register_for_each_vma+0xa38/0xee0 kernel/events/uprobes.c:1039
-  uprobe_apply+0xee/0x140 kernel/events/uprobes.c:1190
-  uprobe_perf_open kernel/trace/trace_uprobe.c:1087 [inline]
-  trace_uprobe_register+0x771/0xcf0 kernel/trace/trace_uprobe.c:1227
-  perf_trace_event_open kernel/trace/trace_event_perf.c:181 [inline]
-  perf_trace_event_init+0x1a5/0x990 kernel/trace/trace_event_perf.c:203
-  perf_uprobe_init+0x1f1/0x280 kernel/trace/trace_event_perf.c:329
-  perf_uprobe_event_init+0x106/0x1a0 kernel/events/core.c:8503
-  perf_try_init_event+0x137/0x2f0 kernel/events/core.c:9770
-  perf_init_event kernel/events/core.c:9801 [inline]
-  perf_event_alloc.part.94+0x1d54/0x3740 kernel/events/core.c:10074
-  perf_event_alloc kernel/events/core.c:10430 [inline]
-  __do_sys_perf_event_open+0xada/0x3020 kernel/events/core.c:10531
-  __se_sys_perf_event_open kernel/events/core.c:10420 [inline]
-  __x64_sys_perf_event_open+0xbe/0x150 kernel/events/core.c:10420
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 15679:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xcf/0x230 mm/slab.c:3817
-  delayed_uprobe_delete+0x1b0/0x2b0 kernel/events/uprobes.c:328
-  delayed_uprobe_remove+0xe8/0x140 kernel/events/uprobes.c:347
-  uprobe_clear_state+0xbe/0x390 kernel/events/uprobes.c:1510
-  __mmput kernel/fork.c:1041 [inline]
-  mmput+0x1bc/0x610 kernel/fork.c:1066
-  exit_mm kernel/exit.c:545 [inline]
-  do_exit+0xe74/0x26d0 kernel/exit.c:854
-  do_group_exit+0x177/0x440 kernel/exit.c:970
-  get_signal+0x8b0/0x1980 kernel/signal.c:2517
-  do_signal+0x9c/0x21c0 arch/x86/kernel/signal.c:816
-  exit_to_usermode_loop+0x2e5/0x380 arch/x86/entry/common.c:162
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8801bf108180
-  which belongs to the cache kmalloc-32 of size 32
-The buggy address is located 0 bytes inside of
-  32-byte region [ffff8801bf108180, ffff8801bf1081a0)
-The buggy address belongs to the page:
-page:ffffea0006fc4200 count:1 mapcount:0 mapping:ffff8801da8001c0  
-index:0xffff8801bf108fc1
-flags: 0x2fffc0000000200(slab)
-raw: 02fffc0000000200 ffffea00070997c8 ffffea00074da788 ffff8801da8001c0
-raw: ffff8801bf108fc1 ffff8801bf108000 000000010000003f 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801bf108080: 00 00 00 07 fc fc fc fc fb fb fb fb fc fc fc fc
-  ffff8801bf108100: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-> ffff8801bf108180: fb fb fb fb fc fc fc fc 00 00 00 01 fc fc fc fc
-                    ^
-  ffff8801bf108200: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-  ffff8801bf108280: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-==================================================================
-
+> ---
+>  tools/perf/builtin-c2c.c        | 4 ++--
+>  tools/perf/builtin-kmem.c       | 4 ++--
+>  tools/perf/builtin-report.c     | 6 +++---
+>  tools/perf/builtin-sched.c      | 2 +-
+>  tools/perf/ui/browsers/header.c | 2 +-
+>  tools/perf/ui/browsers/hists.c  | 4 ++--
+>  6 files changed, 11 insertions(+), 11 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
+> index f3aa9d02a5ab..ab6a89e5393c 100644
+> --- a/tools/perf/builtin-c2c.c
+> +++ b/tools/perf/builtin-c2c.c
+> @@ -2343,7 +2343,7 @@ static int perf_c2c__browse_cacheline(struct hist_entry *he)
+>  	struct c2c_cacheline_browser *cl_browser;
+>  	struct hist_browser *browser;
+>  	int key = -1;
+> -	const char help[] =
+> +	static const char help[] =
+>  	" ENTER         Toggle callchains (if present) \n"
+>  	" n             Toggle Node details info \n"
+>  	" s             Toggle full length of symbol and source line columns \n"
+> @@ -2424,7 +2424,7 @@ static int perf_c2c__hists_browse(struct hists *hists)
+>  {
+>  	struct hist_browser *browser;
+>  	int key = -1;
+> -	const char help[] =
+> +	static const char help[] =
+>  	" d             Display cacheline details \n"
+>  	" ENTER         Toggle callchains (if present) \n"
+>  	" q             Quit \n";
+> diff --git a/tools/perf/builtin-kmem.c b/tools/perf/builtin-kmem.c
+> index b63bca4b0c2a..088705c167bf 100644
+> --- a/tools/perf/builtin-kmem.c
+> +++ b/tools/perf/builtin-kmem.c
+> @@ -334,7 +334,7 @@ static int build_alloc_func_list(void)
+>  	struct alloc_func *func;
+>  	struct machine *machine = &kmem_session->machines.host;
+>  	regex_t alloc_func_regex;
+> -	const char pattern[] = "^_?_?(alloc|get_free|get_zeroed)_pages?";
+> +	static const char pattern[] = "^_?_?(alloc|get_free|get_zeroed)_pages?";
+>  
+>  	ret = regcomp(&alloc_func_regex, pattern, REG_EXTENDED);
+>  	if (ret) {
+> @@ -1924,7 +1924,7 @@ int cmd_kmem(int argc, const char **argv)
+>  		NULL
+>  	};
+>  	struct perf_session *session;
+> -	const char errmsg[] = "No %s allocation events found.  Have you run 'perf kmem record --%s'?\n";
+> +	static const char errmsg[] = "No %s allocation events found.  Have you run 'perf kmem record --%s'?\n";
+>  	int ret = perf_config(kmem_config, NULL);
+>  
+>  	if (ret)
+> diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+> index 257c9c18cb7e..ff615c624784 100644
+> --- a/tools/perf/builtin-report.c
+> +++ b/tools/perf/builtin-report.c
+> @@ -955,9 +955,9 @@ int cmd_report(int argc, const char **argv)
+>  	int branch_mode = -1;
+>  	bool branch_call_mode = false;
+>  #define CALLCHAIN_DEFAULT_OPT  "graph,0.5,caller,function,percent"
+> -	const char report_callchain_help[] = "Display call graph (stack chain/backtrace):\n\n"
+> -					     CALLCHAIN_REPORT_HELP
+> -					     "\n\t\t\t\tDefault: " CALLCHAIN_DEFAULT_OPT;
+> +	static const char report_callchain_help[] = "Display call graph (stack chain/backtrace):\n\n"
+> +						    CALLCHAIN_REPORT_HELP
+> +						    "\n\t\t\t\tDefault: " CALLCHAIN_DEFAULT_OPT;
+>  	char callchain_default_opt[] = CALLCHAIN_DEFAULT_OPT;
+>  	const char * const report_usage[] = {
+>  		"perf report [<options>]",
+> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+> index cbf39dab19c1..2e0f0c65964a 100644
+> --- a/tools/perf/builtin-sched.c
+> +++ b/tools/perf/builtin-sched.c
+> @@ -3336,7 +3336,7 @@ static int __cmd_record(int argc, const char **argv)
+>  
+>  int cmd_sched(int argc, const char **argv)
+>  {
+> -	const char default_sort_order[] = "avg, max, switch, runtime";
+> +	static const char default_sort_order[] = "avg, max, switch, runtime";
+>  	struct perf_sched sched = {
+>  		.tool = {
+>  			.sample		 = perf_sched__process_tracepoint_sample,
+> diff --git a/tools/perf/ui/browsers/header.c b/tools/perf/ui/browsers/header.c
+> index d75492189acb..5aeb663dd184 100644
+> --- a/tools/perf/ui/browsers/header.c
+> +++ b/tools/perf/ui/browsers/header.c
+> @@ -35,7 +35,7 @@ static int list_menu__run(struct ui_browser *menu)
+>  {
+>  	int key;
+>  	unsigned long offset;
+> -	const char help[] =
+> +	static const char help[] =
+>  	"h/?/F1        Show this window\n"
+>  	"UP/DOWN/PGUP\n"
+>  	"PGDN/SPACE\n"
+> diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
+> index a96f62ca984a..eab9dc025b3a 100644
+> --- a/tools/perf/ui/browsers/hists.c
+> +++ b/tools/perf/ui/browsers/hists.c
+> @@ -2737,7 +2737,7 @@ static int perf_evsel__hists_browse(struct perf_evsel *evsel, int nr_events,
+>  	"S             Zoom into current Processor Socket\n"		\
+>  
+>  	/* help messages are sorted by lexical order of the hotkey */
+> -	const char report_help[] = HIST_BROWSER_HELP_COMMON
+> +	static const char report_help[] = HIST_BROWSER_HELP_COMMON
+>  	"i             Show header information\n"
+>  	"P             Print histograms to perf.hist.N\n"
+>  	"r             Run available scripts\n"
+> @@ -2745,7 +2745,7 @@ static int perf_evsel__hists_browse(struct perf_evsel *evsel, int nr_events,
+>  	"t             Zoom into current Thread\n"
+>  	"V             Verbose (DSO names in callchains, etc)\n"
+>  	"/             Filter symbol by name";
+> -	const char top_help[] = HIST_BROWSER_HELP_COMMON
+> +	static const char top_help[] = HIST_BROWSER_HELP_COMMON
+>  	"P             Print histograms to perf.hist.N\n"
+>  	"t             Zoom into current Thread\n"
+>  	"V             Verbose (DSO names in callchains, etc)\n"
+> -- 
+> 2.19.1.6.gbde171bbf5
+> 
