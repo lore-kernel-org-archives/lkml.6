@@ -2,129 +2,97 @@ Return-Path: <SRS0=jXQK=NP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89AD4ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 18:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 310A9C32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 18:40:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37FEC20854
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 18:29:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37FEC20854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
+	by mail.kernel.org (Postfix) with ESMTP id E96712081B
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 18:40:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E96712081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387795AbeKEDpb (ORCPT
+        id S1729709AbeKED4D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 22:45:31 -0500
-Received: from mailoutvs54.siol.net ([185.57.226.245]:47494 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2387509AbeKEDoM (ORCPT
+        Sun, 4 Nov 2018 22:56:03 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:33133 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727834AbeKED4D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 22:44:12 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 25844521292;
-        Sun,  4 Nov 2018 19:28:17 +0100 (CET)
-X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id EXPs8T1TRFIb; Sun,  4 Nov 2018 19:28:16 +0100 (CET)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 5E8D4521257;
-        Sun,  4 Nov 2018 19:28:13 +0100 (CET)
-Received: from localhost.localdomain (cpe1-8-82.cable.triera.net [213.161.8.82])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id CE49A521270;
-        Sun,  4 Nov 2018 19:28:10 +0100 (CET)
-From:   Jernej Skrabec <jernej.skrabec@siol.net>
-To:     maxime.ripard@bootlin.com, wens@csie.org
-Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        airlied@linux.ie, architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-sunxi@googlegroups.com, jernej.skrabec@siol.net
-Subject: [PATCH v3 15/28] drm/sun4i: Not all DW HDMI controllers has scrambled addresses
-Date:   Sun,  4 Nov 2018 19:26:52 +0100
-Message-Id: <20181104182705.18047-16-jernej.skrabec@siol.net>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181104182705.18047-1-jernej.skrabec@siol.net>
-References: <20181104182705.18047-1-jernej.skrabec@siol.net>
+        Sun, 4 Nov 2018 22:56:03 -0500
+Received: from p5492fe24.dip0.t-ipconnect.de ([84.146.254.36] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gJNJY-0001Ps-CG; Sun, 04 Nov 2018 19:40:00 +0100
+Date:   Sun, 4 Nov 2018 19:39:59 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Jens Axboe <axboe@kernel.dk>
+cc:     Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Long Li <longli@microsoft.com>
+Subject: Re: [PATCH 0/4] irq: fix support for allocating sets of IRQs
+In-Reply-To: <5787f309-fa34-36df-83be-934a64989583@kernel.dk>
+Message-ID: <alpine.DEB.2.21.1811041938340.10744@nanos.tec.linutronix.de>
+References: <20181102145951.31979-1-ming.lei@redhat.com> <955edd2f-ad2f-ae8b-b8c2-98a01918c112@kernel.dk> <alpine.DEB.2.21.1811041259350.3160@nanos.tec.linutronix.de> <5787f309-fa34-36df-83be-934a64989583@kernel.dk>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently supported Allwinner SoCs with DW HDMI controller have
-scrambled addresses and read lock. However, that is not true in general.
-For example, A80 and H6 have normal addresses and normal read access.
+On Sun, 4 Nov 2018, Jens Axboe wrote:
 
-Move code for unscrambling addresses and unlocking read access to it's
-own function and call it from init function.
+Cc'ing Long with a hopefully working E-Mail address. The previous one
+bounced because I stupidly copied the wrong one...
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun=
-4i/sun8i_hdmi_phy.c
-index 471993097ced..365cb5a9fb77 100644
---- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-@@ -279,8 +279,21 @@ static const struct dw_hdmi_phy_ops sun8i_hdmi_phy_o=
-ps =3D {
- 	.setup_hpd =3D &dw_hdmi_phy_setup_hpd,
- };
-=20
-+static void sun8i_hdmi_phy_unlock(struct sun8i_hdmi_phy *phy)
-+{
-+	/* enable read access to HDMI controller */
-+	regmap_write(phy->regs, SUN8I_HDMI_PHY_READ_EN_REG,
-+		     SUN8I_HDMI_PHY_READ_EN_MAGIC);
-+
-+	/* unscramble register offsets */
-+	regmap_write(phy->regs, SUN8I_HDMI_PHY_UNSCRAMBLE_REG,
-+		     SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC);
-+}
-+
- static void sun8i_hdmi_phy_init_a83t(struct sun8i_hdmi_phy *phy)
- {
-+	sun8i_hdmi_phy_unlock(phy);
-+
- 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_DBG_CTRL_REG,
- 			   SUN8I_HDMI_PHY_DBG_CTRL_PX_LOCK,
- 			   SUN8I_HDMI_PHY_DBG_CTRL_PX_LOCK);
-@@ -298,6 +311,8 @@ static void sun8i_hdmi_phy_init_h3(struct sun8i_hdmi_=
-phy *phy)
- {
- 	unsigned int val;
-=20
-+	sun8i_hdmi_phy_unlock(phy);
-+
- 	regmap_write(phy->regs, SUN8I_HDMI_PHY_ANA_CFG1_REG, 0);
- 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_ANA_CFG1_REG,
- 			   SUN8I_HDMI_PHY_ANA_CFG1_ENBI,
-@@ -372,14 +387,6 @@ static void sun8i_hdmi_phy_init_h3(struct sun8i_hdmi=
-_phy *phy)
-=20
- void sun8i_hdmi_phy_init(struct sun8i_hdmi_phy *phy)
- {
--	/* enable read access to HDMI controller */
--	regmap_write(phy->regs, SUN8I_HDMI_PHY_READ_EN_REG,
--		     SUN8I_HDMI_PHY_READ_EN_MAGIC);
--
--	/* unscramble register offsets */
--	regmap_write(phy->regs, SUN8I_HDMI_PHY_UNSCRAMBLE_REG,
--		     SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC);
--
- 	phy->variant->phy_init(phy);
- }
-=20
---=20
-2.19.1
-
+> On 11/4/18 5:02 AM, Thomas Gleixner wrote:
+> > Jens,
+> > 
+> > On Sat, 3 Nov 2018, Jens Axboe wrote:
+> > 
+> >> On 11/2/18 8:59 AM, Ming Lei wrote:
+> >>> Hi Jens,
+> >>>
+> >>> As I mentioned, there are at least two issues in the patch of '
+> >>> irq: add support for allocating (and affinitizing) sets of IRQs':
+> >>>
+> >>> 1) it is wrong to pass 'mask + usedvec' to irq_build_affinity_masks()
+> >>>
+> >>> 2) we should spread all possible CPUs in 2-stage way on each set of IRQs
+> >>>
+> >>> The fix isn't trivial, and I introduce two extra patches as preparation,
+> >>> then the implementation can be more clean.
+> >>>
+> >>> The patchset is against mq-maps branch of block tree, feel free to
+> >>> integrate into the whole patchset of multiple queue maps.
+> >>
+> >> Thanks Ming, I ran this through my testing, and I end up with the
+> >> same maps and affinities for all the cases I cared about. I'm going
+> >> to drop my initial version, and add the three.
+> > 
+> > So I assume, that I can pick up Mings series instead.
+> 
+> Yes, let's do that.
+> 
+> > There is another patch pending affecting the irq affinity spreading. Can
+> > you folks please have a look at it?
+> > 
+> > https://lkml.kernel.org/r/20181102180248.13583-1-longli@linuxonhyperv.com
+> 
+> I'll give that a look and test. Thanks for the heads-up.
+> 
+> -- 
+> Jens Axboe
+> 
+> 
