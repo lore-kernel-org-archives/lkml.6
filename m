@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C993CECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:01:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECA47ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:01:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D3452082E
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:01:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5C3B204FD
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:01:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CNy8B30A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D3452082E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SUFksidy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5C3B204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731028AbeKDXIX (ORCPT
+        id S1731443AbeKDXRD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:08:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47008 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:17:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730973AbeKDXIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:08:22 -0500
+        id S1731011AbeKDXIX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:08:23 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBD2020870;
-        Sun,  4 Nov 2018 13:53:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C2C852087A;
+        Sun,  4 Nov 2018 13:53:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339598;
-        bh=6wcQqKmpTN/0KAslgC8sMtn+EH0X3bqFgwJSJ4Ikd5o=;
+        s=default; t=1541339599;
+        bh=SHl783TBq4tAYy5T+nh1+3DQfbKJ4E2UVL2LGQdwyiM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CNy8B30AHgLbkQzQHJPyv89I+r/G4keOaQ8aP65Ek7oVudNWAOoYKQIZwChwuNkDs
-         tHisGFvl//gmLa2deA+rbFWrF0fAU0stIRDm/aedmtMkG59pvI/FyTZ1uFR2fDwdra
-         ANFLssoVeJTmcgh2dUnWarvFI0jhLOv5fWnNjTKM=
+        b=SUFksidydT2PxH32xzL4uLJYVGbA+PKGt9vHCJIeDqXTph+ojMujlNukRzkwqp10V
+         2sPp50wVy+4umxDUYiQ3nh05yuOzPYOcdJl+UvBz6VTRBDGpNSUGmIc0YZbEtsIOQI
+         ESP2VUtvu7cPaVLG6/SwNy5kIJ/FOfvv+zxoqiLI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Breno Leitao <leitao@debian.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+Cc:     Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 37/45] powerpc/selftests: Wait all threads to join
-Date:   Sun,  4 Nov 2018 08:52:32 -0500
-Message-Id: <20181104135240.88431-37-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 38/45] staging:iio:ad7606: fix voltage scales
+Date:   Sun,  4 Nov 2018 08:52:33 -0500
+Message-Id: <20181104135240.88431-38-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135240.88431-1-sashal@kernel.org>
 References: <20181104135240.88431-1-sashal@kernel.org>
@@ -53,77 +53,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Breno Leitao <leitao@debian.org>
+From: Alexandru Ardelean <alexandru.ardelean@analog.com>
 
-[ Upstream commit 693b31b2fc1636f0aa7af53136d3b49f6ad9ff39 ]
+[ Upstream commit 4ee033301c898dd0835d035d0e0eb768a3d35da1 ]
 
-Test tm-tmspr might exit before all threads stop executing, because it just
-waits for the very last thread to join before proceeding/exiting.
+Fixes commit 17be2a2905a6ec9aa27cd59521495e2f490d2af0 ("staging: iio:
+ad7606: replace range/range_available with corresponding scale").
 
-This patch makes sure that all threads that were created will join before
-proceeding/exiting.
+The AD7606 devices don't have a 2.5V voltage range, they have 5V & 10V
+voltage range, which is selectable via the `gpio_range` descriptor.
 
-This patch also guarantees that the amount of threads being created is equal
-to thread_num.
+The scales also seem to have been miscomputed, because when they were
+applied to the raw values, the results differ from the expected values.
+After checking the ADC transfer function in the datasheet, these were
+re-computed.
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/powerpc/tm/tm-tmspr.c | 27 ++++++++++++-------
- 1 file changed, 17 insertions(+), 10 deletions(-)
+ drivers/staging/iio/adc/ad7606.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/powerpc/tm/tm-tmspr.c b/tools/testing/selftests/powerpc/tm/tm-tmspr.c
-index 2bda81c7bf23..df1d7d4b1c89 100644
---- a/tools/testing/selftests/powerpc/tm/tm-tmspr.c
-+++ b/tools/testing/selftests/powerpc/tm/tm-tmspr.c
-@@ -98,7 +98,7 @@ void texasr(void *in)
+diff --git a/drivers/staging/iio/adc/ad7606.c b/drivers/staging/iio/adc/ad7606.c
+index 25b9fcd5e3a4..ce3351832fb1 100644
+--- a/drivers/staging/iio/adc/ad7606.c
++++ b/drivers/staging/iio/adc/ad7606.c
+@@ -26,9 +26,12 @@
  
- int test_tmspr()
- {
--	pthread_t 	thread;
-+	pthread_t	*thread;
- 	int	   	thread_num;
- 	unsigned long	i;
+ #include "ad7606.h"
  
-@@ -107,21 +107,28 @@ int test_tmspr()
- 	/* To cause some context switching */
- 	thread_num = 10 * sysconf(_SC_NPROCESSORS_ONLN);
+-/* Scales are computed as 2.5/2**16 and 5/2**16 respectively */
++/*
++ * Scales are computed as 5000/32768 and 10000/32768 respectively,
++ * so that when applied to the raw values they provide mV values
++ */
+ static const unsigned int scale_avail[2][2] = {
+-	{0, 38147}, {0, 76294}
++	{0, 152588}, {0, 305176}
+ };
  
-+	thread = malloc(thread_num * sizeof(pthread_t));
-+	if (thread == NULL)
-+		return EXIT_FAILURE;
-+
- 	/* Test TFIAR and TFHAR */
--	for (i = 0 ; i < thread_num ; i += 2){
--		if (pthread_create(&thread, NULL, (void*)tfiar_tfhar, (void *)i))
-+	for (i = 0; i < thread_num; i += 2) {
-+		if (pthread_create(&thread[i], NULL, (void *)tfiar_tfhar,
-+				   (void *)i))
- 			return EXIT_FAILURE;
- 	}
--	if (pthread_join(thread, NULL) != 0)
--		return EXIT_FAILURE;
--
- 	/* Test TEXASR */
--	for (i = 0 ; i < thread_num ; i++){
--		if (pthread_create(&thread, NULL, (void*)texasr, (void *)i))
-+	for (i = 1; i < thread_num; i += 2) {
-+		if (pthread_create(&thread[i], NULL, (void *)texasr, (void *)i))
- 			return EXIT_FAILURE;
- 	}
--	if (pthread_join(thread, NULL) != 0)
--		return EXIT_FAILURE;
-+
-+	for (i = 0; i < thread_num; i++) {
-+		if (pthread_join(thread[i], NULL) != 0)
-+			return EXIT_FAILURE;
-+	}
-+
-+	free(thread);
- 
- 	if (passed)
- 		return 0;
+ static int ad7606_reset(struct ad7606_state *st)
 -- 
 2.17.1
 
