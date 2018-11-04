@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D76ECDE46
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06D5BECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E149A2085A
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2DB4204FD
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fc0vsn8N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E149A2085A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ch90Ae+F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2DB4204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730125AbeKDXHL (ORCPT
+        id S1730142AbeKDXHM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:07:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44560 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:07:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730073AbeKDXHJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:07:09 -0500
+        id S1730094AbeKDXHL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:07:11 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E616204FD;
-        Sun,  4 Nov 2018 13:52:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C23E82086C;
+        Sun,  4 Nov 2018 13:52:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339525;
-        bh=D7MEvnKmYygvDR6ngqCQunnaJSTv0vQPyO+z41kwuJY=;
+        s=default; t=1541339527;
+        bh=YaoUgCpi/wc4IKFUwxJq8trqVhzsCK5rQEkdIeluVWQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fc0vsn8N0v+K/v5EL64g7bY9WYuJaIE3tR7Gdb30pd2fiQVy8tF4aZZmiA81O7Fus
-         1RADBaOUkzV3ZRR1BDp/A3Y4aTy6tV7SEKQxoqG9Tkqmecw0Mb51o9h+q1MJPpnUtR
-         rc6cCK9LczlbDP/SNGEBNsuWene1k6pcdtgeg9xo=
+        b=Ch90Ae+FgK/AwyrvKkZWrvmMhcnTqyjre2ZL+ODR4o+Z/eE7WX/y6kcC+38SZKPhz
+         wMYFUAgJcNsTfiAE97g5XenhHJVxxuiTSBIOkqEMblvp6VO7SWKU+owo7Gkb4K2QZR
+         n1BppJ6WZaIOeyMXIH9oKS/aeKjaGMXDFUvJQz3g=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 19/57] tracing/kprobes: Check the probe on unloaded module correctly
-Date:   Sun,  4 Nov 2018 08:51:06 -0500
-Message-Id: <20181104135144.88324-19-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 21/57] drm/amdgpu/powerplay: fix missing break in switch statements
+Date:   Sun,  4 Nov 2018 08:51:08 -0500
+Message-Id: <20181104135144.88324-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135144.88324-1-sashal@kernel.org>
 References: <20181104135144.88324-1-sashal@kernel.org>
@@ -52,99 +52,124 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 59158ec4aef7d44be51a6f3e7e17fc64c32604eb ]
+[ Upstream commit 14b284832e7dea6f54f0adfd7bed105548b94e57 ]
 
-Current kprobe event doesn't checks correctly whether the
-given event is on unloaded module or not. It just checks
-the event has ":" in the name.
+There are several switch statements that are missing break statements.
+Add missing breaks to handle any fall-throughs corner cases.
 
-That is not enough because if we define a probe on non-exist
-symbol on loaded module, it allows to define that (with
-warning message)
+Detected by CoverityScan, CID#1457175 ("Missing break in switch")
 
-To ensure it correctly, this searches the module name on
-loaded module list and only if there is not, it allows to
-define it. (this event will be available when the target
-module is loaded)
-
-Link: http://lkml.kernel.org/r/153547309528.26502.8300278470528281328.stgit@devbox
-
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Fixes: 18aafc59b106 ("drm/amd/powerplay: implement fw related smu interface for iceland.")
+Acked-by: Huang Rui <ray.huang@amd.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/trace/trace_kprobe.c | 39 ++++++++++++++++++++++++-------------
- 1 file changed, 26 insertions(+), 13 deletions(-)
+ drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c      | 2 ++
+ drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c    | 2 ++
+ drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c | 2 ++
+ drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c   | 2 ++
+ drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c   | 2 ++
+ 5 files changed, 10 insertions(+)
 
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index c30032367aab..f9a0cd094b81 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -61,9 +61,23 @@ static nokprobe_inline bool trace_kprobe_within_module(struct trace_kprobe *tk,
- 	return strncmp(mod->name, name, len) == 0 && name[len] == ':';
- }
- 
--static nokprobe_inline bool trace_kprobe_is_on_module(struct trace_kprobe *tk)
-+static nokprobe_inline bool trace_kprobe_module_exist(struct trace_kprobe *tk)
- {
--	return !!strchr(trace_kprobe_symbol(tk), ':');
-+	char *p;
-+	bool ret;
-+
-+	if (!tk->symbol)
-+		return false;
-+	p = strchr(tk->symbol, ':');
-+	if (!p)
-+		return true;
-+	*p = '\0';
-+	mutex_lock(&module_mutex);
-+	ret = !!find_module(tk->symbol);
-+	mutex_unlock(&module_mutex);
-+	*p = ':';
-+
-+	return ret;
- }
- 
- static nokprobe_inline unsigned long trace_kprobe_nhit(struct trace_kprobe *tk)
-@@ -554,19 +568,13 @@ static int __register_trace_kprobe(struct trace_kprobe *tk)
- 	else
- 		ret = register_kprobe(&tk->rp.kp);
- 
--	if (ret == 0)
-+	if (ret == 0) {
- 		tk->tp.flags |= TP_FLAG_REGISTERED;
--	else {
--		if (ret == -ENOENT && trace_kprobe_is_on_module(tk)) {
--			pr_warn("This probe might be able to register after target module is loaded. Continue.\n");
--			ret = 0;
--		} else if (ret == -EILSEQ) {
--			pr_warn("Probing address(0x%p) is not an instruction boundary.\n",
--				tk->rp.kp.addr);
--			ret = -EINVAL;
--		}
-+	} else if (ret == -EILSEQ) {
-+		pr_warn("Probing address(0x%p) is not an instruction boundary.\n",
-+			tk->rp.kp.addr);
-+		ret = -EINVAL;
+diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
+index fbe3ef4ee45c..924788772b07 100644
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
+@@ -2268,11 +2268,13 @@ static uint32_t ci_get_offsetof(uint32_t type, uint32_t member)
+ 		case DRAM_LOG_BUFF_SIZE:
+ 			return offsetof(SMU7_SoftRegisters, DRAM_LOG_BUFF_SIZE);
+ 		}
++		break;
+ 	case SMU_Discrete_DpmTable:
+ 		switch (member) {
+ 		case LowSclkInterruptThreshold:
+ 			return offsetof(SMU7_Discrete_DpmTable, LowSclkInterruptT);
+ 		}
++		break;
  	}
--
- 	return ret;
- }
- 
-@@ -629,6 +637,11 @@ static int register_trace_kprobe(struct trace_kprobe *tk)
- 
- 	/* Register k*probe */
- 	ret = __register_trace_kprobe(tk);
-+	if (ret == -ENOENT && !trace_kprobe_module_exist(tk)) {
-+		pr_warn("This probe might be able to register after target module is loaded. Continue.\n");
-+		ret = 0;
-+	}
-+
- 	if (ret < 0)
- 		unregister_kprobe_event(tk);
- 	else
+ 	pr_debug("can't get the offset of type %x member %x\n", type, member);
+ 	return 0;
+diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
+index 18048f8e2f13..40df5c2706cc 100644
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
+@@ -2330,6 +2330,7 @@ static uint32_t fiji_get_offsetof(uint32_t type, uint32_t member)
+ 		case DRAM_LOG_BUFF_SIZE:
+ 			return offsetof(SMU73_SoftRegisters, DRAM_LOG_BUFF_SIZE);
+ 		}
++		break;
+ 	case SMU_Discrete_DpmTable:
+ 		switch (member) {
+ 		case UvdBootLevel:
+@@ -2339,6 +2340,7 @@ static uint32_t fiji_get_offsetof(uint32_t type, uint32_t member)
+ 		case LowSclkInterruptThreshold:
+ 			return offsetof(SMU73_Discrete_DpmTable, LowSclkInterruptThreshold);
+ 		}
++		break;
+ 	}
+ 	pr_warn("can't get the offset of type %x member %x\n", type, member);
+ 	return 0;
+diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
+index 9299b93aa09a..302ca7745723 100644
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
+@@ -2236,11 +2236,13 @@ static uint32_t iceland_get_offsetof(uint32_t type, uint32_t member)
+ 		case DRAM_LOG_BUFF_SIZE:
+ 			return offsetof(SMU71_SoftRegisters, DRAM_LOG_BUFF_SIZE);
+ 		}
++		break;
+ 	case SMU_Discrete_DpmTable:
+ 		switch (member) {
+ 		case LowSclkInterruptThreshold:
+ 			return offsetof(SMU71_Discrete_DpmTable, LowSclkInterruptThreshold);
+ 		}
++		break;
+ 	}
+ 	pr_warn("can't get the offset of type %x member %x\n", type, member);
+ 	return 0;
+diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
+index 7dabc6c456e1..697c8d92bd53 100644
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
+@@ -2618,6 +2618,7 @@ static uint32_t tonga_get_offsetof(uint32_t type, uint32_t member)
+ 		case DRAM_LOG_BUFF_SIZE:
+ 			return offsetof(SMU72_SoftRegisters, DRAM_LOG_BUFF_SIZE);
+ 		}
++		break;
+ 	case SMU_Discrete_DpmTable:
+ 		switch (member) {
+ 		case UvdBootLevel:
+@@ -2627,6 +2628,7 @@ static uint32_t tonga_get_offsetof(uint32_t type, uint32_t member)
+ 		case LowSclkInterruptThreshold:
+ 			return offsetof(SMU72_Discrete_DpmTable, LowSclkInterruptThreshold);
+ 		}
++		break;
+ 	}
+ 	pr_warn("can't get the offset of type %x member %x\n", type, member);
+ 	return 0;
+diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
+index 57420d7caa4e..59113fdd1c1c 100644
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
+@@ -2184,6 +2184,7 @@ static uint32_t vegam_get_offsetof(uint32_t type, uint32_t member)
+ 		case DRAM_LOG_BUFF_SIZE:
+ 			return offsetof(SMU75_SoftRegisters, DRAM_LOG_BUFF_SIZE);
+ 		}
++		break;
+ 	case SMU_Discrete_DpmTable:
+ 		switch (member) {
+ 		case UvdBootLevel:
+@@ -2193,6 +2194,7 @@ static uint32_t vegam_get_offsetof(uint32_t type, uint32_t member)
+ 		case LowSclkInterruptThreshold:
+ 			return offsetof(SMU75_Discrete_DpmTable, LowSclkInterruptThreshold);
+ 		}
++		break;
+ 	}
+ 	pr_warn("can't get the offset of type %x member %x\n", type, member);
+ 	return 0;
 -- 
 2.17.1
 
