@@ -7,65 +7,64 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 953BCC32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 12:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB45C32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:14:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 383D72082D
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 12:55:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36569204FD
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:14:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uOplY7hr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 383D72082D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fRHx9SqU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36569204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729830AbeKDWK2 (ORCPT
+        id S1729856AbeKDW3q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 17:10:28 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:35533 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729388AbeKDWK2 (ORCPT
+        Sun, 4 Nov 2018 17:29:46 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34005 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729012AbeKDW3p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 17:10:28 -0500
-Received: by mail-pl1-f195.google.com with SMTP id n4-v6so3123047plp.2
-        for <linux-kernel@vger.kernel.org>; Sun, 04 Nov 2018 04:55:34 -0800 (PST)
+        Sun, 4 Nov 2018 17:29:45 -0500
+Received: by mail-pg1-f196.google.com with SMTP id k1-v6so2990279pgq.1
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Nov 2018 05:14:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=WXAewJDXDzYaN5Foswz70U2PjKMjY8rdpZEmG1i03ho=;
-        b=uOplY7hrncZcHQ7zJyc46rz3mruQyjQZkSKBNrX/vFARmFsEUMRIEISceMLxUcs/OY
-         IV9cgkzEfHdAzTxO3NuH9zvGIzQLJ7zEcHY6JY3ilzlBx1InTssMWz4X9tWK9Cpf1y/L
-         wXFrSRgKwuVDbyrUc5hqFFURtXRoq+8bfIQwiw107+yU2hwqAqfJXcyxdcm65n6Pe/Fw
-         PAA9xfGOL3/plGtG6Pg4h2gWI7lhk+kc83GsHgmXgMA8525rUF8HTf3mIiU/dGKSTfFI
-         oQ22Ce8PLqspkHdkdutZMtVuBRixF24flgGIjdi6Y4PKFKDNZdKUEPiu6cfQgPHdHGCW
-         T3zw==
+        bh=1MrB5yf3k6Vh4n7BS2cHNATRztz8yFqbsqSu4L931yY=;
+        b=fRHx9SqUObvZrhqmZAIfuMDJMj8oHkpl+uxQ8rT/bixo5hNLib0yk89UAc3FtGWa2M
+         5c2hiB4Lt4GJ7J5XI7dmzQtcbDpSyr+CXprg5ISE7kIWcVBRhuQsReoiH/Y6XTEamOQj
+         jNb63mcZTcz5OsI3x5GX2o6E/yrK4Yo2NusSMfW2gTAgfwpctaDwes0cfca9lamrDGf+
+         imNBmH65LMg4UKAOwuIZ0YkWsdPui13we4SNhVjVagkweIIMkDhe+AeW9+LFPKx0qQnN
+         3CmeJQlfVKVbq1G/RVCCThKN/EATF4QsFiIGG673eBRvuv1tySvY57GJxFcExPQbUbJF
+         jDHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=WXAewJDXDzYaN5Foswz70U2PjKMjY8rdpZEmG1i03ho=;
-        b=TtFiZmuwtKoy8sx2zrheFoGlJiCt2h0PSmT44VZaO1aBEIgKgqdbn3de4E1Q7NvgFF
-         JfpNJVTdqfhdQTQopsrWJUWCMwSjnxTTeNJ/HF6fbo+Nl3CPG2qXQcMeOmMxBshqfZ8h
-         uYisFmNjfqr3/FYHSyNzl1IIGy8IQ8Uh+K148haJ8PjhisHuS4iWnByiLMg92ZuQr4mi
-         v7cD4A7+RU+kuamfXfHWXaX3FupAl9cpdPZ0dMWuNe6wYzvUdLMOFQVQh+QmgWDkYnEJ
-         In/qh8autlOUURRa/KviJqab+aaU9YtjN6htjok0wn28emrgijy5MOoz66kh+leGLd5s
-         Z81w==
-X-Gm-Message-State: AGRZ1gKYfwxF5gPsTSPEvfFSvE1CsYkXxKhmlHsk5QY5Rf3EgY9mjNRM
-        DlqNxSnKDW3BXUVoOGdRSFo=
-X-Google-Smtp-Source: AJdET5ffck4Wz9T2BHoHJA8Rg0klAJJPYzT9ikPyZ2NHricE2H5zERXQRgbVBMqBbtK1Xn6E+OhPjQ==
-X-Received: by 2002:a17:902:8bc6:: with SMTP id r6-v6mr4264995plo.194.1541336134057;
-        Sun, 04 Nov 2018 04:55:34 -0800 (PST)
+        bh=1MrB5yf3k6Vh4n7BS2cHNATRztz8yFqbsqSu4L931yY=;
+        b=KWD+WzR7TDTkTIPyVr7oe0LT7Pa+9aCUiqy4jv5Bry/XvBYarQNIqdUlEKUffRHMHE
+         U8b5dY/cYu7Puou2aM6w4ozqSv3F8lLCEkw0hEMKD9Hvrgsb3OH6vmUUvsoD0WD2mgy6
+         QgXMHYT2Tt6/Hnm1VUHjiuq8ejXU3gMvnXDUbfB4rO1iMzaqiO1paGpVN0Wt0xJXOHhu
+         YIXN1K0kjwZ/yH4k+TT68SzJzGZkupxKxDsXpbXDZOMm+tRMSYO1HfgefVKWKLjSC2tM
+         G+nBrMdU9A44T29HfkrOMCp3EiVowniWuKlQOF1iI3Rquw0DhzZf/vlCk0HHJknhsb6l
+         e6gA==
+X-Gm-Message-State: AGRZ1gJE5FKqLT60ihqYO57pMlHVAs9dn1f1Rfu/AMVjUFWdAWUvlxKd
+        y9OPtR8v08RjSoMSWBW3ta8=
+X-Google-Smtp-Source: AJdET5cSsdQcL8zoiYX3CbYQYeREOVAOxe0awLVln9/pmYGsYznIYeOXf/TJuxO/i7AGZ4E2sBiSLQ==
+X-Received: by 2002:a62:e0dd:: with SMTP id d90-v6mr18244963pfm.214.1541337288052;
+        Sun, 04 Nov 2018 05:14:48 -0800 (PST)
 Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id p62-v6sm58614084pfp.111.2018.11.04.04.55.32
+        by smtp.gmail.com with ESMTPSA id z7-v6sm32609550pgi.42.2018.11.04.05.14.46
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 04 Nov 2018 04:55:33 -0800 (PST)
+        Sun, 04 Nov 2018 05:14:47 -0800 (PST)
 From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
-        tiwai@suse.com, KCHSU0@nuvoton.com, gustavo@embeddedor.com,
-        abhijeet.kumar@intel.com, kuninori.morimoto.gx@renesas.com
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] SoC: nau8825: remove unnecessary unlikely()
-Date:   Sun,  4 Nov 2018 07:55:29 -0500
-Message-Id: <20181104125529.3681-1-tiny.windzz@gmail.com>
+To:     davem@davemloft.net, edumazet@google.com, willemb@google.com,
+        dja@axtens.net, ast@kernel.org, sbrivio@redhat.com,
+        pabeni@redhat.com
+Cc:     linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] net: skbuff.h: remove unnecessary unlikely()
+Date:   Sun,  4 Nov 2018 08:14:44 -0500
+Message-Id: <20181104131444.4049-1-tiny.windzz@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -77,25 +76,25 @@ unlikely.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- sound/soc/codecs/nau8825.c | 4 +---
+ include/linux/skbuff.h | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/codecs/nau8825.c b/sound/soc/codecs/nau8825.c
-index b9fed99d8b5e..7bbcbf5f05c8 100644
---- a/sound/soc/codecs/nau8825.c
-+++ b/sound/soc/codecs/nau8825.c
-@@ -424,10 +424,8 @@ static u32 nau8825_xtalk_sidetone(u32 sig_org, u32 sig_cros)
+diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+index 0ba687454267..7dcfb5591dc3 100644
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -2508,10 +2508,8 @@ int ___pskb_trim(struct sk_buff *skb, unsigned int len);
+ 
+ static inline void __skb_set_length(struct sk_buff *skb, unsigned int len)
  {
- 	u32 gain, sidetone;
- 
--	if (unlikely(sig_org == 0) || unlikely(sig_cros == 0)) {
+-	if (unlikely(skb_is_nonlinear(skb))) {
 -		WARN_ON(1);
-+	if (WARN_ON(sig_org == 0 || sig_cros == 0))
- 		return 0;
++	if (WARN_ON(skb_is_nonlinear(skb)))
+ 		return;
 -	}
- 
- 	sig_org = nau8825_intlog10_dec3(sig_org);
- 	sig_cros = nau8825_intlog10_dec3(sig_cros);
+ 	skb->len = len;
+ 	skb_set_tail_pointer(skb, len);
+ }
 -- 
 2.17.0
 
