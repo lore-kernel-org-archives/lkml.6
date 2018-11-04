@@ -2,109 +2,72 @@ Return-Path: <SRS0=jXQK=NP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C9EECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 15:40:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F1EC32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 15:50:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 760C62082A
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 15:40:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 760C62082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 01D5C2082A
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 15:50:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KWH8faT1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01D5C2082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730604AbeKEAzW (ORCPT
+        id S1730709AbeKEBFa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 19:55:22 -0500
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:16198 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730531AbeKEAzW (ORCPT
+        Sun, 4 Nov 2018 20:05:30 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57620 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730620AbeKEBFa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 19:55:22 -0500
-Received: from [192.168.0.111] (223.167.21.242) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Sun, 4 Nov 2018
- 23:39:51 +0800
-Subject: Re: [PATCH v5 2/3] clk: meson: add DT documentation for emmc clock
- controller
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Yixun Lan <dlan@gentoo.org>
-CC:     Neil Armstrong <narmstrong@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        <linux-kernel@vger.kernel.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Carlo Caione <carlo@caione.org>,
-        <linux-amlogic@lists.infradead.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>
-References: <1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com>
- <1539839245-13793-3-git-send-email-jianxin.pan@amlogic.com>
- <ca95948abd58876a23b2eb3e52b96124e9eed793.camel@baylibre.com>
- <20181024145513.GA6647@ofant>
- <154130064120.88331.5081431734592584205@swboyd.mtv.corp.google.com>
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-Message-ID: <fe4b3d70-12ae-84ae-0451-f5d67aa99fcd@amlogic.com>
-Date:   Sun, 4 Nov 2018 23:39:44 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Sun, 4 Nov 2018 20:05:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=SbFisei11HLU0ftdItwXWCeiFJkdGV+gMhKAmFLfw34=; b=KWH8faT1iqZrC6YKpgphKQq0i
+        ukzJPvJmMX77qRtVU3/vne//f72/gFe0kh4qg8CpO2GZlSPpcqRFlJt+yE/aJ6uUThpgQK8Jhg6NW
+        eEo7DG6PssL2EqStkHEsh+Jw1fISsdB34UzJiGEtozYyNrdHqq1m+QowWXFNODH+ax8oyOida9ykX
+        SveJbLcsk7uFwibwteNC072MC2MuLA17OjKXCOhfcki9gq50J6xHRpRuth/C0UJIc4vpETWwgehSX
+        tmbRzdk+uBkVLp8WTZMSjNk28pguNMh4b78Vuj5AZx4LloxykKR+DP4uv+RWOdUYvaSITEfQvmnQ7
+        j4ZYdy+VQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gJKf4-0006pE-6E; Sun, 04 Nov 2018 15:50:02 +0000
+Date:   Sun, 4 Nov 2018 07:50:01 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+Cc:     joro@8bytes.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iommu/dma: Zero pages manually in a length of scatterlist
+Message-ID: <20181104155001.GA25794@infradead.org>
+References: <20181101213500.21800-1-nicoleotsuka@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <154130064120.88331.5081431734592584205@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [223.167.21.242]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181101213500.21800-1-nicoleotsuka@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Hi Stephen,
-
-Thank you for the review.
-
-On 2018/11/4 11:04, Stephen Boyd wrote:
-> Quoting Yixun Lan (2018-10-25 00:29:15)
->> yes, I think the documentation need to be fixed
->>
->> for the final solution, we decide to make 'mmc-clkc' an independent node
->> instead of being a sub-node of 'mmc', so both of them may exist in parallel..
->>
->> the DT part may like this:
->>
->>                         sd_emmc_c_clkc: clock-controller@7000 {
->>                                 compatible = "amlogic,axg-mmc-clkc", "syscon";
->>                                 reg = <0x0 0x7000 0x0 0x4>;
->>                                 ...
->>                         };
->>
->>                         sd_emmc_c: mmc@7000 {
->>                                 compatible = "amlogic,axg-mmc";
->>                                 reg = <0x0 0x7000 0x0 0x800>;
->>                                 ...
->>                         };
+On Thu, Nov 01, 2018 at 02:35:00PM -0700, Nicolin Chen wrote:
+> The __GFP_ZERO will be passed down to the generic page allocation
+> routine which zeros everything page by page. This is safe to be a
+> generic way but not efficient for iommu allocation that organizes
+> contiguous pages using scatterlist.
 > 
-> That's improper usage of DT. We don't want two devices at the same
-> register offset.
-sd_emmc_c_clkc is shared by nand and sd_emmc_c controller, and this clock is part of the MMC controller's register space.
- 
-The idea of adding the clock-controller@7000is introduced during the discussion in the NAND driver mainline effort:
-https://lkml.kernel.org/r/20180628090034.0637a062@xps13
+> So this changes drops __GFP_ZERO from the flag, and adds a manual
+> memset after page/sg allocations, using the length of scatterlist.
 > 
-> .
-> 
+> My test result of a 2.5MB size allocation shows iommu_dma_alloc()
+> takes 46% less time, reduced from averagely 925 usec to 500 usec.
 
+And in what case does dma_alloc_* performance even matter?
