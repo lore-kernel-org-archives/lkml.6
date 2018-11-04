@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83BEAECDE46
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ED0AECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AFA920862
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 196D320862
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="b1Pmg9SA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AFA920862
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nuPl8KgN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 196D320862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730745AbeKDXIA (ORCPT
+        id S1730795AbeKDXIE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:08:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46198 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:08:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730678AbeKDXH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:07:59 -0500
+        id S1730678AbeKDXIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:08:01 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03A232087A;
-        Sun,  4 Nov 2018 13:52:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F3332085A;
+        Sun,  4 Nov 2018 13:52:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339574;
-        bh=Ch4u0sCo4XgDglmGF7f6oaOnSVEzY2cZHrpcvKZLtKY=;
+        s=default; t=1541339577;
+        bh=tEJtpAqTMjlEQ/L67FZ9RIUlP5Om9vqXkw2axuGYhyY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b1Pmg9SAH7Lpx5B/e6WHpkow4tJhpe17P9fKAGia0a50+ECYb0vet1jm4F56OjwAq
-         fYW5VCdP1/s/I2lAoNKGv7jaf2zZa/jB3Pt1cOL5fHnYMXOtAi8HK/E6BzZTzT/c9u
-         VirdaqcJ0b34x6eK330FwhI3yemxDTLF/xW8BxIw=
+        b=nuPl8KgNhG3siUxuZzX7a2khqAQNxkQJ7uAZCOZ/jHLtGlCz663zfTKQcNLGtrAx3
+         9nQHpgZ6nKEdH+hxLTphaPz+9+S17C2zpH9O0K/9hE0cQ4xXllTzvtEvT+wOYcUQv4
+         Y9dEiCqg98kD7jMH49FLAKYxSMeo5uFNyIVI+/18=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
+Cc:     Joel Stanley <joel@jms.id.au>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 11/45] powerpc/mm: fix always true/false warning in slice.c
-Date:   Sun,  4 Nov 2018 08:52:06 -0500
-Message-Id: <20181104135240.88431-11-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 14/45] powerpc/Makefile: Fix PPC_BOOK3S_64 ASFLAGS
+Date:   Sun,  4 Nov 2018 08:52:09 -0500
+Message-Id: <20181104135240.88431-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135240.88431-1-sashal@kernel.org>
 References: <20181104135240.88431-1-sashal@kernel.org>
@@ -53,127 +53,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Joel Stanley <joel@jms.id.au>
 
-[ Upstream commit 37e9c674e7e6f445e12cb1151017bd4bacdd1e2d ]
+[ Upstream commit 960e30029863db95ec79a71009272d4661db5991 ]
 
-This patch fixes the following warnings (obtained with make W=1).
+Ever since commit 15a3204d24a3 ("powerpc/64s: Set assembler machine type
+to POWER4") we force -mpower4 to be passed to the assembler
+irrespective of the CFLAGS used (for Book3s 64).
 
-arch/powerpc/mm/slice.c: In function 'slice_range_to_mask':
-arch/powerpc/mm/slice.c:73:12: error: comparison is always true due to limited range of data type [-Werror=type-limits]
-  if (start < SLICE_LOW_TOP) {
-            ^
-arch/powerpc/mm/slice.c:81:20: error: comparison is always false due to limited range of data type [-Werror=type-limits]
-  if ((start + len) > SLICE_LOW_TOP) {
-                    ^
-arch/powerpc/mm/slice.c: In function 'slice_mask_for_free':
-arch/powerpc/mm/slice.c:136:17: error: comparison is always true due to limited range of data type [-Werror=type-limits]
-  if (high_limit <= SLICE_LOW_TOP)
-                 ^
-arch/powerpc/mm/slice.c: In function 'slice_check_range_fits':
-arch/powerpc/mm/slice.c:185:12: error: comparison is always true due to limited range of data type [-Werror=type-limits]
-  if (start < SLICE_LOW_TOP) {
-            ^
-arch/powerpc/mm/slice.c:195:39: error: comparison is always false due to limited range of data type [-Werror=type-limits]
-  if (SLICE_NUM_HIGH && ((start + len) > SLICE_LOW_TOP)) {
-                                       ^
-arch/powerpc/mm/slice.c: In function 'slice_scan_available':
-arch/powerpc/mm/slice.c:306:11: error: comparison is always true due to limited range of data type [-Werror=type-limits]
-  if (addr < SLICE_LOW_TOP) {
-           ^
-arch/powerpc/mm/slice.c: In function 'get_slice_psize':
-arch/powerpc/mm/slice.c:709:11: error: comparison is always true due to limited range of data type [-Werror=type-limits]
-  if (addr < SLICE_LOW_TOP) {
-           ^
+When building a powerpc64 kernel with clang, clang will not add -many
+to the assembler flags, so any instructions that the compiler has
+generated that are not available on power4 will cause an error:
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+  /usr/bin/as -a64 -mppc64 -mlittle-endian -mpower8 \
+   -I ./arch/powerpc/include -I ./arch/powerpc/include/generated \
+   -I ./include -I ./arch/powerpc/include/uapi \
+   -I ./arch/powerpc/include/generated/uapi -I ./include/uapi \
+   -I ./include/generated/uapi -I arch/powerpc -I arch/powerpc \
+   -maltivec -mpower4 -o init/do_mounts.o /tmp/do_mounts-3b0a3d.s
+  /tmp/do_mounts-51ce54.s:748: Error: unrecognized opcode: `isel'
+
+GCC does include -many, so the GCC driven gas call will succeed:
+
+  as -v -I ./arch/powerpc/include -I ./arch/powerpc/include/generated -I
+  ./include -I ./arch/powerpc/include/uapi
+  -I ./arch/powerpc/include/generated/uapi -I ./include/uapi
+  -I ./include/generated/uapi -I arch/powerpc -I arch/powerpc
+   -a64 -mpower8 -many -mlittle -maltivec -mpower4 -o init/do_mounts.o
+
+Note that isel is power7 and above for IBM CPUs. GCC only generates it
+for Power9 and above, but the above test was run against the clang
+generated assembly.
+
+Peter Bergner explains:
+
+  When using -many -mpower4, gas will first try and find a matching
+  power4 mnemonic and failing that, it will then allow any valid
+  mnemonic that gas knows about. GCC's use of -many predates me
+  though.
+
+  IIRC, Alan looked at trying to remove it, but I forget why he
+  didn't. Could be either a gcc or gas issue at the time. I'm not sure
+  whether issue still exists or not. He and I have modified how gas
+  works internally a fair amount since he tried removing gcc use of
+  -many.
+
+  I will also note that when using -many, gas will choose the first
+  mnemonic that matches in the mnemonic table and we have (mostly)
+  sorted the table so that server mnemonics show up earlier in the
+  table than other mnemonics, so they'll be seen/chosen first.
+
+By explicitly setting -many we can build with Clang and GCC while
+retaining the -mpower4 option.
+
+Signed-off-by: Joel Stanley <joel@jms.id.au>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/mm/slice.c | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+ arch/powerpc/Makefile | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/mm/slice.c b/arch/powerpc/mm/slice.c
-index 205fe557ca10..4f213ba33491 100644
---- a/arch/powerpc/mm/slice.c
-+++ b/arch/powerpc/mm/slice.c
-@@ -61,6 +61,13 @@ static void slice_print_mask(const char *label, const struct slice_mask *mask) {
- 
- #endif
- 
-+static inline bool slice_addr_is_low(unsigned long addr)
-+{
-+	u64 tmp = (u64)addr;
+diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
+index fb96206de317..2510ff9381d0 100644
+--- a/arch/powerpc/Makefile
++++ b/arch/powerpc/Makefile
+@@ -244,7 +244,11 @@ cpu-as-$(CONFIG_4xx)		+= -Wa,-m405
+ cpu-as-$(CONFIG_ALTIVEC)	+= $(call as-option,-Wa$(comma)-maltivec)
+ cpu-as-$(CONFIG_E200)		+= -Wa,-me200
+ cpu-as-$(CONFIG_E500)		+= -Wa,-me500
+-cpu-as-$(CONFIG_PPC_BOOK3S_64)	+= -Wa,-mpower4
 +
-+	return tmp < SLICE_LOW_TOP;
-+}
-+
- static void slice_range_to_mask(unsigned long start, unsigned long len,
- 				struct slice_mask *ret)
- {
-@@ -70,7 +77,7 @@ static void slice_range_to_mask(unsigned long start, unsigned long len,
- 	if (SLICE_NUM_HIGH)
- 		bitmap_zero(ret->high_slices, SLICE_NUM_HIGH);
++# When using '-many -mpower4' gas will first try and find a matching power4
++# mnemonic and failing that it will allow any valid mnemonic that GAS knows
++# about. GCC will pass -many to GAS when assembling, clang does not.
++cpu-as-$(CONFIG_PPC_BOOK3S_64)	+= -Wa,-mpower4 -Wa,-many
+ cpu-as-$(CONFIG_PPC_E500MC)	+= $(call as-option,-Wa$(comma)-me500mc)
  
--	if (start < SLICE_LOW_TOP) {
-+	if (slice_addr_is_low(start)) {
- 		unsigned long mend = min(end,
- 					 (unsigned long)(SLICE_LOW_TOP - 1));
- 
-@@ -78,7 +85,7 @@ static void slice_range_to_mask(unsigned long start, unsigned long len,
- 			- (1u << GET_LOW_SLICE_INDEX(start));
- 	}
- 
--	if ((start + len) > SLICE_LOW_TOP) {
-+	if (SLICE_NUM_HIGH && !slice_addr_is_low(end)) {
- 		unsigned long start_index = GET_HIGH_SLICE_INDEX(start);
- 		unsigned long align_end = ALIGN(end, (1UL << SLICE_HIGH_SHIFT));
- 		unsigned long count = GET_HIGH_SLICE_INDEX(align_end) - start_index;
-@@ -133,7 +140,7 @@ static void slice_mask_for_free(struct mm_struct *mm, struct slice_mask *ret,
- 		if (!slice_low_has_vma(mm, i))
- 			ret->low_slices |= 1u << i;
- 
--	if (high_limit <= SLICE_LOW_TOP)
-+	if (slice_addr_is_low(high_limit - 1))
- 		return;
- 
- 	for (i = 0; i < GET_HIGH_SLICE_INDEX(high_limit); i++)
-@@ -182,7 +189,7 @@ static bool slice_check_range_fits(struct mm_struct *mm,
- 	unsigned long end = start + len - 1;
- 	u64 low_slices = 0;
- 
--	if (start < SLICE_LOW_TOP) {
-+	if (slice_addr_is_low(start)) {
- 		unsigned long mend = min(end,
- 					 (unsigned long)(SLICE_LOW_TOP - 1));
- 
-@@ -192,7 +199,7 @@ static bool slice_check_range_fits(struct mm_struct *mm,
- 	if ((low_slices & available->low_slices) != low_slices)
- 		return false;
- 
--	if (SLICE_NUM_HIGH && ((start + len) > SLICE_LOW_TOP)) {
-+	if (SLICE_NUM_HIGH && !slice_addr_is_low(end)) {
- 		unsigned long start_index = GET_HIGH_SLICE_INDEX(start);
- 		unsigned long align_end = ALIGN(end, (1UL << SLICE_HIGH_SHIFT));
- 		unsigned long count = GET_HIGH_SLICE_INDEX(align_end) - start_index;
-@@ -303,7 +310,7 @@ static bool slice_scan_available(unsigned long addr,
- 				 int end, unsigned long *boundary_addr)
- {
- 	unsigned long slice;
--	if (addr < SLICE_LOW_TOP) {
-+	if (slice_addr_is_low(addr)) {
- 		slice = GET_LOW_SLICE_INDEX(addr);
- 		*boundary_addr = (slice + end) << SLICE_LOW_SHIFT;
- 		return !!(available->low_slices & (1u << slice));
-@@ -706,7 +713,7 @@ unsigned int get_slice_psize(struct mm_struct *mm, unsigned long addr)
- 
- 	VM_BUG_ON(radix_enabled());
- 
--	if (addr < SLICE_LOW_TOP) {
-+	if (slice_addr_is_low(addr)) {
- 		psizes = mm->context.low_slices_psize;
- 		index = GET_LOW_SLICE_INDEX(addr);
- 	} else {
+ KBUILD_AFLAGS += $(cpu-as-y)
 -- 
 2.17.1
 
