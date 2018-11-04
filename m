@@ -7,98 +7,105 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88414C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B901BECDE46
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43E99204FD
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81D3A2086D
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WMg3m0QN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43E99204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oGUtOmH7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81D3A2086D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731057AbeKDXIZ (ORCPT
+        id S1731074AbeKDXIZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sun, 4 Nov 2018 18:08:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47082 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:47106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730973AbeKDXIY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:08:24 -0500
+        id S1731001AbeKDXIZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:08:25 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FFC520868;
-        Sun,  4 Nov 2018 13:53:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78F8F20869;
+        Sun,  4 Nov 2018 13:53:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339600;
-        bh=PKkRk3ULEBgefi4YjSyvK5Xj21eglYPOVYQns1E+BF8=;
+        s=default; t=1541339601;
+        bh=VTLKEHbTEzNs5G7g/TaWpc/z9d4NdhxXQFO3qb2xWKo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WMg3m0QNq+RZi7f9cThjnGyeTvlGtUkSOuL1pVhHBcxbVH2TZ9XRAiyGJSTXVAIn9
-         ONtm1rKoA7D0/CZzgoDQ+Hiqfy6MvpmxXE34i1BbLjx7wO52PncsehCXp8w5ZtK33X
-         5g21cMBerbqQm8tu6TSZvdpeDoAVS5wJfsrRuOYc=
+        b=oGUtOmH7SNPpTrcmMC39XaOGIGZL+B9ayVb0PQKe3PDZYvrwvNZ/8pIRjk7VvOKVP
+         V6N93HaKxiTyZbDBusJfH7/ZXgjIPo3XInI4WZ16H8BtmydeFbeh4UPjEnT1Db/o5Z
+         4ENYZnqvLxehC64hsARY1QVbCZ1rz+wnjAa+NrwY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+Cc:     Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 39/45] drm: rcar-du: Update Gen3 output limitations
-Date:   Sun,  4 Nov 2018 08:52:34 -0500
-Message-Id: <20181104135240.88431-39-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 40/45] drm/amdgpu: Fix SDMA TO after GPU reset v3
+Date:   Sun,  4 Nov 2018 08:52:35 -0500
+Message-Id: <20181104135240.88431-40-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135240.88431-1-sashal@kernel.org>
 References: <20181104135240.88431-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+From: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
 
-[ Upstream commit 2a3181d9cfd6d5aa48f8527708d0c32072072cef ]
+[ Upstream commit d8de8260a45aae8f74af77eae9a162bdc0ed48d2 ]
 
-The R-Car Gen3 DU utilises the VSP1 hardware for memory access. The
-limits on the RPF and WPF in this pipeline are 8190x8190.
+After GPU reset amdgpu_vm_clear_bo triggers VM flush
+but job->vm_pd_addr is not set causing SDMA TO.
 
-Update the supported maximum sizes accordingly.
+v2:
+Per advise by Christian König avoid flushing VM for jobs where
+job->vm_pd_addr wasn't explicitly set.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+v3:
+Shortcut vm_flush_needed early.
+
+Fixes cbd5285 drm/amdgpu: move setting the GART addr into TTM.
+Signed-off-by: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_kms.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_job.c | 1 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c  | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index f0bc7cc0e913..fb46df56f0c4 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -516,12 +516,22 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
+index 2bd56760c744..b1cd8e9649b9 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
+@@ -62,6 +62,7 @@ int amdgpu_job_alloc(struct amdgpu_device *adev, unsigned num_ibs,
+ 	amdgpu_sync_create(&(*job)->sync);
+ 	amdgpu_sync_create(&(*job)->sched_sync);
+ 	(*job)->vram_lost_counter = atomic_read(&adev->vram_lost_counter);
++	(*job)->vm_pd_addr = AMDGPU_BO_INVALID_OFFSET;
  
- 	dev->mode_config.min_width = 0;
- 	dev->mode_config.min_height = 0;
--	dev->mode_config.max_width = 4095;
--	dev->mode_config.max_height = 2047;
- 	dev->mode_config.normalize_zpos = true;
- 	dev->mode_config.funcs = &rcar_du_mode_config_funcs;
- 	dev->mode_config.helper_private = &rcar_du_mode_config_helper;
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+index c31fff32a321..eb0ae9726cf7 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+@@ -631,7 +631,8 @@ int amdgpu_vm_flush(struct amdgpu_ring *ring, struct amdgpu_job *job, bool need_
+ 	}
  
-+	if (rcdu->info->gen < 3) {
-+		dev->mode_config.max_width = 4095;
-+		dev->mode_config.max_height = 2047;
-+	} else {
-+		/*
-+		 * The Gen3 DU uses the VSP1 for memory access, and is limited
-+		 * to frame sizes of 8190x8190.
-+		 */
-+		dev->mode_config.max_width = 8190;
-+		dev->mode_config.max_height = 8190;
-+	}
-+
- 	rcdu->num_crtcs = hweight8(rcdu->info->channels_mask);
+ 	gds_switch_needed &= !!ring->funcs->emit_gds_switch;
+-	vm_flush_needed &= !!ring->funcs->emit_vm_flush;
++	vm_flush_needed &= !!ring->funcs->emit_vm_flush  &&
++			job->vm_pd_addr != AMDGPU_BO_INVALID_OFFSET;
+ 	pasid_mapping_needed &= adev->gmc.gmc_funcs->emit_pasid_mapping &&
+ 		ring->funcs->emit_wreg;
  
- 	ret = rcar_du_properties_init(rcdu);
 -- 
 2.17.1
 
