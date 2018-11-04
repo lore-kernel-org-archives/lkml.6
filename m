@@ -7,44 +7,49 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3975DECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:57:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB17AC32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:57:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEAB8204FD
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:57:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AC6C204FD
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:57:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yhox9GUF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEAB8204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SRJZZUJF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AC6C204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730738AbeKDXM3 (ORCPT
+        id S1731625AbeKDXJS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:12:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49018 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:09:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731628AbeKDXJU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:09:20 -0500
+        id S1729485AbeKDXJR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:09:17 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5166020868;
-        Sun,  4 Nov 2018 13:54:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 329A22086D;
+        Sun,  4 Nov 2018 13:54:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339655;
-        bh=6wcQqKmpTN/0KAslgC8sMtn+EH0X3bqFgwJSJ4Ikd5o=;
+        s=default; t=1541339653;
+        bh=F7cF5diOr471gj/+ujfHcwjlMSALIYO+9TdpshtL+D4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yhox9GUFMGag7UC4SJYfdo3WxsuriFIHcKrS5xD95JTuZd3tLvgnz1owX3tS0otOp
-         gXiYWQn8P9Ik3Nsp65ivoRHqKnYI+wuBYEPJZ5nKgd991SBObUDVb3vyanRsKyZw5P
-         IbYjVWwr5AFctbDWX26viRM6WLu2JFXhMQCNkQcw=
+        b=SRJZZUJF20d5vEqiY9qjfTiyJQuvaTW/qbIjL7nZduYSiKzvwv65kCxkQtct9wUTN
+         7mGDMZee/stUPIudlOEVfcmblLWoj5qNt6ABnl7qtXrqYule1CvMcQJbNI6h4JKPlF
+         Lvb2BYPG4JU2M7RDV9XYXuwMFWDDW1hsZQAfpOVA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Breno Leitao <leitao@debian.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+Cc:     Huacai Chen <chenhc@lemote.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
+        Fuxin Zhang <zhangfx@lemote.com>,
+        Zhangjin Wu <wuzhangjin@gmail.com>,
+        Huacai Chen <chenhuacai@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 19/21] powerpc/selftests: Wait all threads to join
-Date:   Sun,  4 Nov 2018 08:53:53 -0500
-Message-Id: <20181104135355.88602-19-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 16/21] MIPS/PCI: Call pcie_bus_configure_settings() to set MPS/MRRS
+Date:   Sun,  4 Nov 2018 08:53:50 -0500
+Message-Id: <20181104135355.88602-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135355.88602-1-sashal@kernel.org>
 References: <20181104135355.88602-1-sashal@kernel.org>
@@ -53,77 +58,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Breno Leitao <leitao@debian.org>
+From: Huacai Chen <chenhc@lemote.com>
 
-[ Upstream commit 693b31b2fc1636f0aa7af53136d3b49f6ad9ff39 ]
+[ Upstream commit 2794f688b2c336e0da85e9f91fed33febbd9f54a ]
 
-Test tm-tmspr might exit before all threads stop executing, because it just
-waits for the very last thread to join before proceeding/exiting.
+Call pcie_bus_configure_settings() on MIPS, like for other platforms.
+The function pcie_bus_configure_settings() makes sure the MPS (Max
+Payload Size) across the bus is uniform and provides the ability to
+tune the MRSS (Max Read Request Size) and MPS (Max Payload Size) to
+higher performance values. Some devices will not operate properly if
+these aren't set correctly because the firmware doesn't always do it.
 
-This patch makes sure that all threads that were created will join before
-proceeding/exiting.
-
-This patch also guarantees that the amount of threads being created is equal
-to thread_num.
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/20649/
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@linux-mips.org
+Cc: Fuxin Zhang <zhangfx@lemote.com>
+Cc: Zhangjin Wu <wuzhangjin@gmail.com>
+Cc: Huacai Chen <chenhuacai@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/powerpc/tm/tm-tmspr.c | 27 ++++++++++++-------
- 1 file changed, 17 insertions(+), 10 deletions(-)
+ arch/mips/pci/pci-legacy.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/tools/testing/selftests/powerpc/tm/tm-tmspr.c b/tools/testing/selftests/powerpc/tm/tm-tmspr.c
-index 2bda81c7bf23..df1d7d4b1c89 100644
---- a/tools/testing/selftests/powerpc/tm/tm-tmspr.c
-+++ b/tools/testing/selftests/powerpc/tm/tm-tmspr.c
-@@ -98,7 +98,7 @@ void texasr(void *in)
- 
- int test_tmspr()
- {
--	pthread_t 	thread;
-+	pthread_t	*thread;
- 	int	   	thread_num;
- 	unsigned long	i;
- 
-@@ -107,21 +107,28 @@ int test_tmspr()
- 	/* To cause some context switching */
- 	thread_num = 10 * sysconf(_SC_NPROCESSORS_ONLN);
- 
-+	thread = malloc(thread_num * sizeof(pthread_t));
-+	if (thread == NULL)
-+		return EXIT_FAILURE;
+diff --git a/arch/mips/pci/pci-legacy.c b/arch/mips/pci/pci-legacy.c
+index 014649be158d..2d6886f09ba3 100644
+--- a/arch/mips/pci/pci-legacy.c
++++ b/arch/mips/pci/pci-legacy.c
+@@ -116,8 +116,12 @@ static void pcibios_scanbus(struct pci_controller *hose)
+ 	if (pci_has_flag(PCI_PROBE_ONLY)) {
+ 		pci_bus_claim_resources(bus);
+ 	} else {
++		struct pci_bus *child;
 +
- 	/* Test TFIAR and TFHAR */
--	for (i = 0 ; i < thread_num ; i += 2){
--		if (pthread_create(&thread, NULL, (void*)tfiar_tfhar, (void *)i))
-+	for (i = 0; i < thread_num; i += 2) {
-+		if (pthread_create(&thread[i], NULL, (void *)tfiar_tfhar,
-+				   (void *)i))
- 			return EXIT_FAILURE;
+ 		pci_bus_size_bridges(bus);
+ 		pci_bus_assign_resources(bus);
++		list_for_each_entry(child, &bus->children, node)
++			pcie_bus_configure_settings(child);
  	}
--	if (pthread_join(thread, NULL) != 0)
--		return EXIT_FAILURE;
--
- 	/* Test TEXASR */
--	for (i = 0 ; i < thread_num ; i++){
--		if (pthread_create(&thread, NULL, (void*)texasr, (void *)i))
-+	for (i = 1; i < thread_num; i += 2) {
-+		if (pthread_create(&thread[i], NULL, (void *)texasr, (void *)i))
- 			return EXIT_FAILURE;
- 	}
--	if (pthread_join(thread, NULL) != 0)
--		return EXIT_FAILURE;
-+
-+	for (i = 0; i < thread_num; i++) {
-+		if (pthread_join(thread[i], NULL) != 0)
-+			return EXIT_FAILURE;
-+	}
-+
-+	free(thread);
- 
- 	if (passed)
- 		return 0;
+ 	pci_bus_add_devices(bus);
+ }
 -- 
 2.17.1
 
