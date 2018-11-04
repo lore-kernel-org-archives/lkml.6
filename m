@@ -4,46 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 769B3ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:00:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38340C32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:00:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 406A4204FD
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:00:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2E3B204FD
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:00:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="n2iklZpU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 406A4204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vUp1bST3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2E3B204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731217AbeKDXIj (ORCPT
+        id S1731868AbeKDXPx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:08:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47502 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:15:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731131AbeKDXIi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731201AbeKDXIi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 4 Nov 2018 18:08:38 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A184D20862;
-        Sun,  4 Nov 2018 13:53:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 661C72086C;
+        Sun,  4 Nov 2018 13:53:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339614;
-        bh=s0LTwRFPFgBQvWBtl/RCYQO+tfX5PoSzy6Mt1v2LUM4=;
+        s=default; t=1541339615;
+        bh=AFIg6yxLQbQgSaaVf87pcDanS5zbx0vvaPySuBvwugk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n2iklZpUhuM21iSV/g1EdDkWTlRihl4NhoLhUSGZ7PckQdvUUr5Dnih7XUmlmXZLP
-         mx8iFTepZ3L7k3QiHL3uw4Ir3N/0Mn2hlkrMXiBNG/8bZ4IUGy41Ab2N4ZBF0+zszn
-         Am1cWyFQAi62rgfuG7QtWyzA5gBbT/rQkgtDDl0c=
+        b=vUp1bST30Ow+RJ+gZJvIwPNtUztHJQN/6lwqXVFKmF21Oocb3ogve3mZALAxpF8Ov
+         O+AIVbIfae4CMczMg+49oGEI+uJx32vryihO+RCKr66TbWj1ilH0RuBsOGPHqlFj7i
+         hskMMFcHH1+Iu66klbDQ2SlEsgDzM1muSaVQegr8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+Cc:     Sam Bobroff <sbobroff@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 07/30] powerpc/mm: Fix page table dump to work on Radix
-Date:   Sun,  4 Nov 2018 08:53:02 -0500
-Message-Id: <20181104135325.88524-7-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 08/30] powerpc/eeh: Fix possible null deref in eeh_dump_dev_log()
+Date:   Sun,  4 Nov 2018 08:53:03 -0500
+Message-Id: <20181104135325.88524-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135325.88524-1-sashal@kernel.org>
 References: <20181104135325.88524-1-sashal@kernel.org>
@@ -52,58 +52,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Sam Bobroff <sbobroff@linux.ibm.com>
 
-[ Upstream commit 0d923962ab69c27cca664a2d535e90ef655110ca ]
+[ Upstream commit f9bc28aedfb5bbd572d2d365f3095c1becd7209b ]
 
-When we're running on Book3S with the Radix MMU enabled the page table
-dump currently prints the wrong addresses because it uses the wrong
-start address.
+If an error occurs during an unplug operation, it's possible for
+eeh_dump_dev_log() to be called when edev->pdn is null, which
+currently leads to dereferencing a null pointer.
 
-Fix it to use PAGE_OFFSET rather than KERN_VIRT_START.
+Handle this by skipping the error log for those devices.
 
+Signed-off-by: Sam Bobroff <sbobroff@linux.ibm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/mm/dump_linuxpagetables.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ arch/powerpc/kernel/eeh.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/powerpc/mm/dump_linuxpagetables.c b/arch/powerpc/mm/dump_linuxpagetables.c
-index c9282d27b203..31c1c61afaa4 100644
---- a/arch/powerpc/mm/dump_linuxpagetables.c
-+++ b/arch/powerpc/mm/dump_linuxpagetables.c
-@@ -422,12 +422,13 @@ static void walk_pagetables(struct pg_state *st)
- 	unsigned int i;
- 	unsigned long addr;
+diff --git a/arch/powerpc/kernel/eeh.c b/arch/powerpc/kernel/eeh.c
+index 116000b45531..45322b37669a 100644
+--- a/arch/powerpc/kernel/eeh.c
++++ b/arch/powerpc/kernel/eeh.c
+@@ -169,6 +169,11 @@ static size_t eeh_dump_dev_log(struct eeh_dev *edev, char *buf, size_t len)
+ 	int n = 0, l = 0;
+ 	char buffer[128];
  
-+	addr = st->start_address;
++	if (!pdn) {
++		pr_warn("EEH: Note: No error log for absent device.\n");
++		return 0;
++	}
 +
- 	/*
- 	 * Traverse the linux pagetable structure and dump pages that are in
- 	 * the hash pagetable.
- 	 */
--	for (i = 0; i < PTRS_PER_PGD; i++, pgd++) {
--		addr = KERN_VIRT_START + i * PGDIR_SIZE;
-+	for (i = 0; i < PTRS_PER_PGD; i++, pgd++, addr += PGDIR_SIZE) {
- 		if (!pgd_none(*pgd) && !pgd_huge(*pgd))
- 			/* pgd exists */
- 			walk_pud(st, pgd, addr);
-@@ -476,9 +477,14 @@ static int ptdump_show(struct seq_file *m, void *v)
- {
- 	struct pg_state st = {
- 		.seq = m,
--		.start_address = KERN_VIRT_START,
- 		.marker = address_markers,
- 	};
-+
-+	if (radix_enabled())
-+		st.start_address = PAGE_OFFSET;
-+	else
-+		st.start_address = KERN_VIRT_START;
-+
- 	/* Traverse kernel page tables */
- 	walk_pagetables(&st);
- 	note_page(&st, 0, 0, 0);
+ 	n += scnprintf(buf+n, len-n, "%04x:%02x:%02x.%01x\n",
+ 		       pdn->phb->global_number, pdn->busno,
+ 		       PCI_SLOT(pdn->devfn), PCI_FUNC(pdn->devfn));
 -- 
 2.17.1
 
