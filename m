@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9B84C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA716ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8519A2085A
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA9F320866
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nsu06Eh8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8519A2085A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="upiL+8at"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA9F320866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731336AbeKDXIu (ORCPT
+        id S1731354AbeKDXIw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:08:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47924 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:08:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731227AbeKDXIt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:08:49 -0500
+        id S1728896AbeKDXIu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:08:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6092120989;
-        Sun,  4 Nov 2018 13:53:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 506EC20870;
+        Sun,  4 Nov 2018 13:53:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339625;
-        bh=8D3rTrk6fgYBT4ek2LS7azP6GbwNVyLMFQSOOEEz0C4=;
+        s=default; t=1541339626;
+        bh=I+9mpVB2hiqVIS9/V1kkHxylATbjP0qUHJjvL2B/H9g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nsu06Eh81nam+aO0/2TgelDUR8qnL0DacrtFQaVEHlRFOpchb5gEJ0ymfS8zwKfC5
-         9V9Pu5JFcQo5SnAt6czBhngB4pmLkyXnF1oPnsR+HHe1JTxWWv2PPNJwWyohzTg+0g
-         D2nW6ay5irR5pPBTAPEN7hgLC6tgqNuUf2ipI/a0=
+        b=upiL+8at9Js83KmrHezDcaiQqeYB+movBxGzoqFx7kvAGe5LRCZQX6D4eqkHIUfZL
+         +damQs8e7WU5PKqImEJO2lZ+Ejyz6RNN7oeH3/GCDJ+e6XIjbfBqCrMe3QQcNJ6dsH
+         6PPcg6VfHp5g1iYY3VbxbLTvIctUrVNDdFvM8SPk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Lucas Stach <l.stach@pengutronix.de>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>, Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 19/30] media: coda: don't overwrite h.264 profile_idc on decoder instance
-Date:   Sun,  4 Nov 2018 08:53:14 -0500
-Message-Id: <20181104135325.88524-19-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 20/30] iio: adc: imx25-gcq: Fix leak of device_node in mx25_gcq_setup_cfgs()
+Date:   Sun,  4 Nov 2018 08:53:15 -0500
+Message-Id: <20181104135325.88524-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135325.88524-1-sashal@kernel.org>
 References: <20181104135325.88524-1-sashal@kernel.org>
@@ -54,46 +53,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lucas Stach <l.stach@pengutronix.de>
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
 
-[ Upstream commit 1f32061e843205f6fe8404d5100d5adcec334e75 ]
+[ Upstream commit d3fa21c73c391975488818b085b894c2980ea052 ]
 
-On a decoder instance, after the profile has been parsed from the stream
-__v4l2_ctrl_s_ctrl() is called to notify userspace about changes in the
-read-only profile control. This ends up calling back into the CODA driver
-where a missing check on the s_ctrl caused the profile information that has
-just been parsed from the stream to be overwritten with the default
-baseline profile.
+Leaving for_each_child_of_node loop we should release child device node,
+if it is not stored for future use.
 
-Later on the driver fails to enable frame reordering, based on the wrong
-profile information.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Fixes: 347de126d1da (media: coda: add read-only h.264 decoder
-                     profile/level controls)
+JC: I'm not sending this as a quick fix as it's been wrong for years,
+but good to pick up for stable after the merge window.
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Fixes: 6df2e98c3ea56 ("iio: adc: Add imx25-gcq ADC driver")
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/coda/coda-common.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/iio/adc/fsl-imx25-gcq.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/media/platform/coda/coda-common.c b/drivers/media/platform/coda/coda-common.c
-index 15eb5dc4dff9..99d138d3f87f 100644
---- a/drivers/media/platform/coda/coda-common.c
-+++ b/drivers/media/platform/coda/coda-common.c
-@@ -1686,7 +1686,8 @@ static int coda_s_ctrl(struct v4l2_ctrl *ctrl)
- 		break;
- 	case V4L2_CID_MPEG_VIDEO_H264_PROFILE:
- 		/* TODO: switch between baseline and constrained baseline */
--		ctx->params.h264_profile_idc = 66;
-+		if (ctx->inst_type == CODA_INST_ENCODER)
-+			ctx->params.h264_profile_idc = 66;
- 		break;
- 	case V4L2_CID_MPEG_VIDEO_H264_LEVEL:
- 		/* nothing to do, this is set by the encoder */
+diff --git a/drivers/iio/adc/fsl-imx25-gcq.c b/drivers/iio/adc/fsl-imx25-gcq.c
+index ea264fa9e567..929c617db364 100644
+--- a/drivers/iio/adc/fsl-imx25-gcq.c
++++ b/drivers/iio/adc/fsl-imx25-gcq.c
+@@ -209,12 +209,14 @@ static int mx25_gcq_setup_cfgs(struct platform_device *pdev,
+ 		ret = of_property_read_u32(child, "reg", &reg);
+ 		if (ret) {
+ 			dev_err(dev, "Failed to get reg property\n");
++			of_node_put(child);
+ 			return ret;
+ 		}
+ 
+ 		if (reg >= MX25_NUM_CFGS) {
+ 			dev_err(dev,
+ 				"reg value is greater than the number of available configuration registers\n");
++			of_node_put(child);
+ 			return -EINVAL;
+ 		}
+ 
+@@ -228,6 +230,7 @@ static int mx25_gcq_setup_cfgs(struct platform_device *pdev,
+ 			if (IS_ERR(priv->vref[refp])) {
+ 				dev_err(dev, "Error, trying to use external voltage reference without a vref-%s regulator.",
+ 					mx25_gcq_refp_names[refp]);
++				of_node_put(child);
+ 				return PTR_ERR(priv->vref[refp]);
+ 			}
+ 			priv->channel_vref_mv[reg] =
+@@ -240,6 +243,7 @@ static int mx25_gcq_setup_cfgs(struct platform_device *pdev,
+ 			break;
+ 		default:
+ 			dev_err(dev, "Invalid positive reference %d\n", refp);
++			of_node_put(child);
+ 			return -EINVAL;
+ 		}
+ 
+@@ -254,10 +258,12 @@ static int mx25_gcq_setup_cfgs(struct platform_device *pdev,
+ 
+ 		if ((refp & MX25_ADCQ_CFG_REFP_MASK) != refp) {
+ 			dev_err(dev, "Invalid fsl,adc-refp property value\n");
++			of_node_put(child);
+ 			return -EINVAL;
+ 		}
+ 		if ((refn & MX25_ADCQ_CFG_REFN_MASK) != refn) {
+ 			dev_err(dev, "Invalid fsl,adc-refn property value\n");
++			of_node_put(child);
+ 			return -EINVAL;
+ 		}
+ 
 -- 
 2.17.1
 
