@@ -2,87 +2,105 @@ Return-Path: <SRS0=jXQK=NP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 504F7C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 21:06:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E91C32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 21:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F328120854
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 21:06:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F328120854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 4616E2082A
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 21:28:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RfDEvO8Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4616E2082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728628AbeKEGWf (ORCPT
+        id S1729457AbeKEGod (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 01:22:35 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:33447 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727294AbeKEGWf (ORCPT
+        Mon, 5 Nov 2018 01:44:33 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:36921 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729162AbeKEGod (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 01:22:35 -0500
-Received: from p5492fe24.dip0.t-ipconnect.de ([84.146.254.36] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gJPan-0002RU-FK; Sun, 04 Nov 2018 22:05:57 +0100
-Date:   Sun, 4 Nov 2018 22:05:56 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Eial Czerwacki <eial@scalemp.com>
-cc:     LKML <linux-kernel@vger.kernel.org>,
-        Juergen Gross <jgross@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Shai Fultheim (Shai@ScaleMP.com)" <Shai@ScaleMP.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "mhocko@suse.cz" <mhocko@suse.cz>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "mm-commits@vger.kernel.org" <mm-commits@vger.kernel.org>,
-        X86 ML <x86@kernel.org>, Oren Twaig <oren@scalemp.com>
-Subject: Re: [PATCH v2] x86/build: Build VSMP support only if CONFIG_PCI is
- selected
-In-Reply-To: <2130cd90-2c8f-2fc4-0ac8-81a5aea153b2@scalemp.com>
-Message-ID: <alpine.DEB.2.21.1811042202530.10744@nanos.tec.linutronix.de>
-References: <2130cd90-2c8f-2fc4-0ac8-81a5aea153b2@scalemp.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Mon, 5 Nov 2018 01:44:33 -0500
+Received: by mail-pl1-f196.google.com with SMTP id p6-v6so3414436pll.4;
+        Sun, 04 Nov 2018 13:28:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=rHvza5VKJTWWZ+uoSrApwD6oMnYK7DMRclyH9B4ZXv8=;
+        b=RfDEvO8Q8aGltrD54DxFb4Z38OHjG1Ikh/vT55ran2p9uDqVf36hszo3+4ywUi+blA
+         ZuTqcCV+ExZFgqXLDmPwS7JKYh4vwI4m6PxJ2od8U2wbCCebmeHj86H+4IJYvoXgKZL0
+         B8a6YKq4TAY8oVmD9Z/RRCgp31/UQQgV3Xd1MLb0YFWbMeDXNu7iMzNiUSco8xGvIWOH
+         5k7tQ7lfRsXlyVGMaSL+NUmYZ7N0OHynPCLRpKJbQvQtHZwg0ZLL3Kr3v//rx4kBf6IF
+         h25ueNeToQMBNkpuQZkn+mg6SUqAghTTCJCivIhlUZRGgSdh2qNqifV32G2z/3G655go
+         RQ4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=rHvza5VKJTWWZ+uoSrApwD6oMnYK7DMRclyH9B4ZXv8=;
+        b=lsGKCifECx94hgy4PcvTK7AWB9IikkE1VyRev9/lqc0WPJ9jBat6RQe+N5LZXa3i/K
+         GZHIWJaGB82ijk+MDJ68fU2RuoKTLvqacttVkSZZJiv/FVB7O4o0w0L0GuxC62UpJtx3
+         ad4uLKumx60YnxkBrvzQpBzvNHCXtDgGZWGaq6qus8FNhBaW7NdMqGQs3cjy121JgY7B
+         dqUYPR4kMw5J0Q7j6qORImcZwIKiVjf/AOEhfi7Lt9EcD9p/RcUf7mlp7QUT6Nxi6Z4i
+         POUg+6GEd6H/scfFhL10cz3DCBNAFZQYESG4UJnhQ8h5Cd0YsUZiEx+q054bSc63ncF7
+         uSMQ==
+X-Gm-Message-State: AGRZ1gK6kpSHf4ClNl6zGO5G6nlIqku6vFTVhtOk3mwLJL2bfilU+hOY
+        U42qkA6a7TXYTyxl6Jdjzx0=
+X-Google-Smtp-Source: AJdET5fI2ue2bXO51r3eLY2fJxhWWv+IQq5uXhvp5M/qccCAWucdHmc+Bbr2ZUYqiUWInxpuHXJsyQ==
+X-Received: by 2002:a17:902:d708:: with SMTP id w8-v6mr11866531ply.72.1541366889838;
+        Sun, 04 Nov 2018 13:28:09 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id e8-v6sm11801720pfi.61.2018.11.04.13.28.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 04 Nov 2018 13:28:08 -0800 (PST)
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc:     Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Guenter Roeck <linux@roeck-us.net>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH] s390: numa: Export __node_distance
+Date:   Sun,  4 Nov 2018 13:28:06 -0800
+Message-Id: <1541366886-32127-1-git-send-email-linux@roeck-us.net>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Eial,
+__node_distance is used by nvme, resulting in:
 
-On Thu, 1 Nov 2018, Eial Czerwacki wrote:
+ERROR: "__node_distance" [drivers/nvme/host/nvme-core.ko] undefined!
 
-> Subject: x86/build: Build VSMP support only if CONFIG_PCI is selected
+when trying to build nvme as module.
 
-That's not what the patch does, right?
+Fixes: f333444708f8 ("nvme: take node locality into account when selecting a path")
+Cc: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+I thought I had seen that patch already, but I don't find it anywhere.
+Maybe that was for another architecture. My apologies for the noise if it
+is already queued.
 
-> vsmp dependency on pv_irq_ops removed some years ago, so now let's clean
-> it up from vsmp_64.c.
-> 
-> In short, "cap & ctl & (1 << 4)" was always returning 0, as such we can
-> remove all the PARAVIRT/PARAVIRT_XXL code handling that.
-> 
-> However, the rest of the code depends on CONFIG_PCI, so fix it accordingly.
-> in addition, rename set_vsmp_pv_ops to set_vsmp_ctl.
-> 
-> Signed-off-by: Eial Czerwacki <eial@scalemp.com>
-> Acked-by: Shai Fultheim <shai@scalemp.com>
+ arch/s390/numa/numa.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Unfortunately that patch does not apply. It's white space damaged, i.e. all
-tabs are converted to spaces.
+diff --git a/arch/s390/numa/numa.c b/arch/s390/numa/numa.c
+index ae0d9e889534..d31bde0870d8 100644
+--- a/arch/s390/numa/numa.c
++++ b/arch/s390/numa/numa.c
+@@ -53,6 +53,7 @@ int __node_distance(int a, int b)
+ {
+ 	return mode->distance ? mode->distance(a, b) : 0;
+ }
++EXPORT_SYMBOL(__node_distance);
+ 
+ int numa_debug_enabled;
+ 
+-- 
+2.7.4
 
-Thanks,
-
-	tglx
