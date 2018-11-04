@@ -2,77 +2,52 @@ Return-Path: <SRS0=jXQK=NP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30900C0044C
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 03:15:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5671C0044C
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 03:24:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DED9420843
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 03:15:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="un6nW28t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DED9420843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5AAAC2081F
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 03:24:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AAAC2081F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729053AbeKDM2j (ORCPT
+        id S1728992AbeKDMh4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 07:28:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40464 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728441AbeKDM2j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 07:28:39 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C0EB82082A;
-        Sun,  4 Nov 2018 03:15:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541301319;
-        bh=QZSg6m8HUbGQ1Q1nS7vbtJn3vV2tBb/JKGf04U4cLU8=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=un6nW28tlCkX3Sh6iDsBCWAp6+0Qy0WG8jxn2E5Xd0cyfkhFs0dEvM8T9mMBA0nMT
-         xcs+v/79bUEfaLlI9plfbStbjR9fIcjYTDwwqlZyryjkci4DZO0vRqOhNZEAl5R2/K
-         micNBj3fmZbzfWOKAhhnauwXLL2K2igqB7sqrAKM=
-Content-Type: text/plain; charset="utf-8"
+        Sun, 4 Nov 2018 07:37:56 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:35156 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727163AbeKDMh4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 07:37:56 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gJ91a-0002bU-WF; Sun, 04 Nov 2018 03:24:31 +0000
+Date:   Sun, 4 Nov 2018 03:24:30 +0000
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fs@vger.kernel.org,
+        David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH] net/9p: Fix iov_iter usage
+Message-ID: <20181104032419.GC32577@ZenIV.linux.org.uk>
+References: <f1705194dfd581fb83ec26b32626dc4ddf6039f2.1541300643.git.luto@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Andy Gross <andy.gross@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181102214532.17661-1-bjorn.andersson@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-References: <20181102214532.17661-1-bjorn.andersson@linaro.org>
-Message-ID: <154130131919.88331.12558287167971033698@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] arm64: dts: sdm845-mtp: Reserve reserved gpios
-Date:   Sat, 03 Nov 2018 20:15:19 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f1705194dfd581fb83ec26b32626dc4ddf6039f2.1541300643.git.luto@kernel.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Bjorn Andersson (2018-11-02 14:45:32)
-> With the introduction of commit 3edfb7bd76bd ("gpiolib: Show correct
-> direction from the beginning") the gpiolib will attempt to read the
-> direction of all pins, which triggers a read from protected register
-> regions.
-> =
+On Sat, Nov 03, 2018 at 08:04:28PM -0700, Andy Lutomirski wrote:
+> Trying to use 9pfs causes QEMU to complain:
 
-> The pins 0 through 3 and 81 through 84 are protected, so mark these as
-> reserved.
-> =
+commit 2cbfdf4df58330f6cb493500387427dae1c5551d
+Author: Marc Zyngier <marc.zyngier@arm.com>
+Date:   Fri Nov 2 17:16:51 2018 +0000
 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
-
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-
+    iov_iter: Fix 9p virtio breakage
