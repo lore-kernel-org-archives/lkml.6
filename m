@@ -2,121 +2,124 @@ Return-Path: <SRS0=jXQK=NP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E4FC0044C
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 02:37:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC1DAC0044C
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 02:40:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FFBB2081D
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 02:37:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 867532081D
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 02:40:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FzVxiRPv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FFBB2081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GMC6Lg5t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 867532081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729088AbeKDLuj (ORCPT
+        id S1728812AbeKDLxd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 06:50:39 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:42274 "EHLO
+        Sun, 4 Nov 2018 06:53:33 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44840 "EHLO
         mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726994AbeKDLuj (ORCPT
+        with ESMTP id S1726994AbeKDLxd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 06:50:39 -0500
-Received: by mail-pl1-f194.google.com with SMTP id t6-v6so2761272plo.9
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Nov 2018 19:37:26 -0700 (PDT)
+        Sun, 4 Nov 2018 06:53:33 -0500
+Received: by mail-pl1-f194.google.com with SMTP id s5-v6so2752900plq.11
+        for <linux-kernel@vger.kernel.org>; Sat, 03 Nov 2018 19:40:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=1m8OIwyzt2+9gVvsqamsb6tKmgHyQuFV5GCG7ids4Zc=;
-        b=FzVxiRPvGn1ZGXjcxsGQoinPtWssKUfbNB1wOtbMPlbmCQBdcNMuyVv5h0V/uY1J9D
-         6X/pqCWUIkmbuhbaP/iBq8iwK5JBHQTcIZFcrP8qpVRY9crKO7yH3xmQ7OdQ8u/+10Wo
-         mwbXyULruuUXlWJRhK4AneQLPROX55APuSwYEEd+Z7LbbOUpTbECRKaQ2YRzewGW+w4i
-         7hfKc1Xs7tY7DBvV3/+bMhFwkAPOeVzOnNC/jOVleCCScCh0r8thwrS/8pvYolR0GXTG
-         2t72sW96vvAWC2T6n4d826nvy6C/edVyBzeSSYT3I0HpBGDbyZdAI3f+cWLnIS9ZFwD1
-         2LNQ==
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=1BRg6uqAH1R7GorNJrsvqS5VAN/pTjBPIRnpfvGZDzM=;
+        b=GMC6Lg5ttRRrbhIMSYO2Z0ikTJgmXfS5crQ14PCFN27A8hqHmx/+pM0QngMF+boWJk
+         pBYrakfhtlZ2mxyRdQQYz50mg33KXqerXMI9RxkV/3yPfEpWxECdtPczaNSphthWZ6hx
+         v4nBEOQXrgrWab9NJcLnrphI/Vi/rIkje3oc8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=1m8OIwyzt2+9gVvsqamsb6tKmgHyQuFV5GCG7ids4Zc=;
-        b=cBEVe2npL3rg3lsrXg//dPym/84VRBR/vCSWH5SeXzmJ84JIkT69IcTfzg5hIHP6Nv
-         ihe+rpY0oNSpwMXwmz1Uv7TqU2oMT+1kgx+HaVodDCFGbBYaTFR3/6rx6B0QOtruylww
-         AePHOBLAJ/dCGeYk1jRDxfmzt6GsVm47ApP2MCRFBOR6X6NiHuHIzQdLbPDeKc3h31bM
-         EhXOqrDnEYG2lyfLuHIyNdtsU/DIq7Hlw8Y+50Xq364pxzTvTl/X2bwfU6iaN8TgCFHt
-         CiUvP5aa0t8c3DPgdHHm28t8ZJ94FniS1LbQoWv/hVDsZE3mim8ksc2Cxqs/kUr98pun
-         Ifrw==
-X-Gm-Message-State: AGRZ1gL5lz27o761ZuCAVXkXejyK4biIC9ru4eGdgxYB9pPxTZH3g4q5
-        b11lTLIBUTwsdl1i7+z2C8U=
-X-Google-Smtp-Source: AJdET5chRbjNnHx80Jr4ST848mWTsTndpkPIl5rrhDmg4Tl+hbtbGcOKp1IsyG4Wahccy/qaacBxOQ==
-X-Received: by 2002:a17:902:6b0a:: with SMTP id o10-v6mr17247324plk.208.1541298668737;
-        Sat, 03 Nov 2018 19:31:08 -0700 (PDT)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id 124-v6sm51831189pfb.132.2018.11.03.19.31.07
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=1BRg6uqAH1R7GorNJrsvqS5VAN/pTjBPIRnpfvGZDzM=;
+        b=tpzesKSMyaxRuXiQdt8AYCdH+wGg0AGeHGBrjVSO8Xw8j+LdWINs/TJg3ETbCxK3cm
+         A49Gh+YeGAPpJWn4WKbG00XNZ/m5D7Ms4wVZifgEMIVV66K2KF2XRLdLV2Ij7VFWLSF8
+         Qc06zri4N6M8J49+Z14UNPZvNTlANUjLKJgue+uSJx9HT/z+DEABJeQ5jP3qMPbDNeGb
+         LtqVZ7nUE3M9awf5nf8Ws7MTbz+j8FCeJLwk5rbdG5eTPZMQEAVH0l3GJcHgass6JjYd
+         K9FXebZd5eD5brhCnUp/vbWZdfGNprEgF1AXTam+0B7/1u/ac4FtCgyD87ANuxZxC5nq
+         xdDQ==
+X-Gm-Message-State: AGRZ1gKUdPT4V1K5HKvxWxRxg4YftHfHFtr5UBtPoOHYTibccgLIF4No
+        2YxOmwD1n9V4C7oHV1MGFTU0ig==
+X-Google-Smtp-Source: AJdET5f2Z5YHgpQNSzpPEH7IAycti8ZDkEHe0Wv9XU/AEgo+pIx99m+0WFmsxFUvpjK4dhrpS6DW3A==
+X-Received: by 2002:a17:902:5c4:: with SMTP id f62-v6mr17434270plf.18.1541299220103;
+        Sat, 03 Nov 2018 19:40:20 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:fed3:9637:a13a:6c15])
+        by smtp.gmail.com with ESMTPSA id b185sm4606049pga.85.2018.11.03.19.40.19
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 03 Nov 2018 19:31:08 -0700 (PDT)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] clockevents: remove unnecessary unlikely()
-Date:   Sat,  3 Nov 2018 22:31:04 -0400
-Message-Id: <20181104023104.2572-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Sat, 03 Nov 2018 19:40:19 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     Andy Gross <andy.gross@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh@kernel.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <20181026173544.136037-2-evgreen@chromium.org>
+Cc:     Douglas Anderson <dianders@chromium.org>,
+        Evan Green <evgreen@chromium.org>, devicetree@vger.kernel.org,
+        Can Guo <cang@codeaurora.org>, linux-kernel@vger.kernel.org,
+        Manu Gautam <mgautam@codeaurora.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>
+References: <20181026173544.136037-1-evgreen@chromium.org>
+ <20181026173544.136037-2-evgreen@chromium.org>
+Message-ID: <154129921872.88331.15831802252403117971@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v5 1/5] dt-bindings: phy-qcom-qmp: Fix register underspecification
+Date:   Sat, 03 Nov 2018 19:40:18 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-WARN_ON() and WARN_ON_ONCE() already contains an unlikely(), so it's not
-necessary to use unlikely.
+Quoting Evan Green (2018-10-26 10:35:40)
+>                         (or)
+> @@ -150,3 +153,54 @@ Example:
+>                 ...
+>                 ...
+>         };
+> +
+> +       phy@88eb000 {
+> +               compatible =3D "qcom,sdm845-qmp-usb3-uni-phy";
+> +               reg =3D <0x88eb000 0x18c>;
+> +               #clock-cells =3D <1>;
+> +               #address-cells =3D <1>;
+> +               #size-cells =3D <1>;
+> +               ranges;
+> +
+> +               clocks =3D <&gcc GCC_USB3_SEC_PHY_AUX_CLK>,
+> +                        <&gcc GCC_USB_PHY_CFG_AHB2PHY_CLK>,
+> +                        <&gcc GCC_USB3_SEC_CLKREF_CLK>,
+> +                        <&gcc GCC_USB3_SEC_PHY_COM_AUX_CLK>;
+> +               clock-names =3D "aux", "cfg_ahb", "ref", "com_aux";
+> +
+> +               resets =3D <&gcc GCC_USB3PHY_PHY_SEC_BCR>,
+> +                        <&gcc GCC_USB3_PHY_SEC_BCR>;
+> +               reset-names =3D "phy", "common";
+> +
+> +               lane@88eb200 {
+> +                       reg =3D <0x88eb200 0x128>,
+> +                             <0x88eb400 0x1fc>,
+> +                             <0x88eb800 0x218>,
+> +                             <0x88eb600 0x70>;
+> +                       #phy-cells =3D <0>;
+> +                       clocks =3D <&gcc GCC_USB3_SEC_PHY_PIPE_CLK>;
+> +                       clock-names =3D "pipe0";
+> +                       clock-output-names =3D "usb3_uni_phy_pipe_clk_src=
+";
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- kernel/time/clockevents.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+If this has clock-output-names then I would expect to see a #clock-cells
+property, but that isn't here in this node. Are we relying on the same
+property in the parent node?
 
-diff --git a/kernel/time/clockevents.c b/kernel/time/clockevents.c
-index 8c0e4092f661..af58898d9ebf 100644
---- a/kernel/time/clockevents.c
-+++ b/kernel/time/clockevents.c
-@@ -39,10 +39,8 @@ static u64 cev_delta2ns(unsigned long latch, struct clock_event_device *evt,
- 	u64 clc = (u64) latch << evt->shift;
- 	u64 rnd;
- 
--	if (unlikely(!evt->mult)) {
-+	if (WARN_ON(!evt->mult))
- 		evt->mult = 1;
--		WARN_ON(1);
--	}
- 	rnd = (u64) evt->mult - 1;
- 
- 	/*
-@@ -164,10 +162,8 @@ void clockevents_switch_state(struct clock_event_device *dev,
- 		 * on it, so fix it up and emit a warning:
- 		 */
- 		if (clockevent_state_oneshot(dev)) {
--			if (unlikely(!dev->mult)) {
-+			if (WARN_ON(!dev->mult))
- 				dev->mult = 1;
--				WARN_ON(1);
--			}
- 		}
- 	}
- }
-@@ -315,10 +311,8 @@ int clockevents_program_event(struct clock_event_device *dev, ktime_t expires,
- 	int64_t delta;
- 	int rc;
- 
--	if (unlikely(expires < 0)) {
--		WARN_ON_ONCE(1);
-+	if (WARN_ON_ONCE(expires < 0))
- 		return -ETIME;
--	}
- 
- 	dev->next_event = expires;
- 
--- 
-2.17.0
-
+> +               };
+> +       };
