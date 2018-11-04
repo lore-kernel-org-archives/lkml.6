@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF495C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:57:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B0D5ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:57:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88AC5204FD
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:57:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0905D2082E
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:57:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="I0HTopOD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88AC5204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QZfrCRfd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0905D2082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731706AbeKDXMo (ORCPT
+        id S1731819AbeKDXM7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:12:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48862 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:12:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731603AbeKDXJQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:09:16 -0500
+        id S1729747AbeKDXJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:09:13 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5131620866;
-        Sun,  4 Nov 2018 13:54:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 36EAE21104;
+        Sun,  4 Nov 2018 13:54:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339651;
-        bh=TnRIjMVaCIulJyvLRBVq8CVZFdBXdgeLzJn3J/NidgI=;
+        s=default; t=1541339648;
+        bh=cuJp/kSefluQLDZhUcBqmLRdgEEsqjUNREywZCU3qog=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I0HTopOD1Mq/VdLAAAbBv4EKyoNgJ6HgiY1Zw92oI9dt8OA0n8y+3NckP9uXy42pk
-         ETdnAIV6YjRfi7xBmYfu+Tpj2HYDfAypun0fLjCSnkMXmoN8QhEsmjI4ZgkgRrerwY
-         3QmE/3XI7bCnz3IIFctqe3ydjG4u45mYcHxf5OLI=
+        b=QZfrCRfdfpk0GIIpyr5KrCGz3xn+5uG1Pqilb+51KfiA/c6IE/AZ7wNukBOjHXRhg
+         3XnFpt3k8NopkumsRtTy0T9P0MOxYLoUH6hiGLWCSiIfmT/vlHVDh/DTAsNyz6q9zz
+         AjjZq24FRiIOhAfbz/913suoBd1KUErx4WTERpDw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Joel Stanley <joel@jms.id.au>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 15/21] powerpc/boot: Ensure _zimage_start is a weak symbol
-Date:   Sun,  4 Nov 2018 08:53:49 -0500
-Message-Id: <20181104135355.88602-15-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 12/21] media: pci: cx23885: handle adding to list failure
+Date:   Sun,  4 Nov 2018 08:53:46 -0500
+Message-Id: <20181104135355.88602-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135355.88602-1-sashal@kernel.org>
 References: <20181104135355.88602-1-sashal@kernel.org>
@@ -53,64 +54,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joel Stanley <joel@jms.id.au>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-[ Upstream commit ee9d21b3b3583712029a0db65a4b7c081d08d3b3 ]
+[ Upstream commit c5d59528e24ad22500347b199d52b9368e686a42 ]
 
-When building with clang crt0's _zimage_start is not marked weak, which
-breaks the build when linking the kernel image:
+altera_hw_filt_init() which calls append_internal() assumes
+that the node was successfully linked in while in fact it can
+silently fail. So the call-site needs to set return to -ENOMEM
+on append_internal() returning NULL and exit through the err path.
 
- $ objdump -t arch/powerpc/boot/crt0.o |grep _zimage_start$
- 0000000000000058 g       .text  0000000000000000 _zimage_start
+Fixes: 349bcf02e361 ("[media] Altera FPGA based CI driver module")
 
- ld: arch/powerpc/boot/wrapper.a(crt0.o): in function '_zimage_start':
- (.text+0x58): multiple definition of '_zimage_start';
- arch/powerpc/boot/pseries-head.o:(.text+0x0): first defined here
-
-Clang requires the .weak directive to appear after the symbol is
-declared. The binutils manual says:
-
- This directive sets the weak attribute on the comma separated list of
- symbol names. If the symbols do not already exist, they will be
- created.
-
-So it appears this is different with clang. The only reference I could
-see for this was an OpenBSD mailing list post[1].
-
-Changing it to be after the declaration fixes building with Clang, and
-still works with GCC.
-
- $ objdump -t arch/powerpc/boot/crt0.o |grep _zimage_start$
- 0000000000000058  w      .text	0000000000000000 _zimage_start
-
-Reported to clang as https://bugs.llvm.org/show_bug.cgi?id=38921
-
-[1] https://groups.google.com/forum/#!topic/fa.openbsd.tech/PAgKKen2YCY
-
-Signed-off-by: Joel Stanley <joel@jms.id.au>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/boot/crt0.S | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/media/pci/cx23885/altera-ci.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/powerpc/boot/crt0.S b/arch/powerpc/boot/crt0.S
-index 12866ccb5694..5c2199857aa8 100644
---- a/arch/powerpc/boot/crt0.S
-+++ b/arch/powerpc/boot/crt0.S
-@@ -47,8 +47,10 @@ p_end:		.long	_end
- p_pstack:	.long	_platform_stack_top
- #endif
+diff --git a/drivers/media/pci/cx23885/altera-ci.c b/drivers/media/pci/cx23885/altera-ci.c
+index aaf4e46ff3e9..a0c1ff97f905 100644
+--- a/drivers/media/pci/cx23885/altera-ci.c
++++ b/drivers/media/pci/cx23885/altera-ci.c
+@@ -660,6 +660,10 @@ static int altera_hw_filt_init(struct altera_ci_config *config, int hw_filt_nr)
+ 		}
  
--	.weak	_zimage_start
- 	.globl	_zimage_start
-+	/* Clang appears to require the .weak directive to be after the symbol
-+	 * is defined. See https://bugs.llvm.org/show_bug.cgi?id=38921  */
-+	.weak	_zimage_start
- _zimage_start:
- 	.globl	_zimage_start_lib
- _zimage_start_lib:
+ 		temp_int = append_internal(inter);
++		if (!temp_int) {
++			ret = -ENOMEM;
++			goto err;
++		}
+ 		inter->filts_used = 1;
+ 		inter->dev = config->dev;
+ 		inter->fpga_rw = config->fpga_rw;
+@@ -694,6 +698,7 @@ static int altera_hw_filt_init(struct altera_ci_config *config, int hw_filt_nr)
+ 		     __func__, ret);
+ 
+ 	kfree(pid_filt);
++	kfree(inter);
+ 
+ 	return ret;
+ }
+@@ -728,6 +733,10 @@ int altera_ci_init(struct altera_ci_config *config, int ci_nr)
+ 		}
+ 
+ 		temp_int = append_internal(inter);
++		if (!temp_int) {
++			ret = -ENOMEM;
++			goto err;
++		}
+ 		inter->cis_used = 1;
+ 		inter->dev = config->dev;
+ 		inter->fpga_rw = config->fpga_rw;
+@@ -796,6 +805,7 @@ int altera_ci_init(struct altera_ci_config *config, int ci_nr)
+ 	ci_dbg_print("%s: Cannot initialize CI: Error %d.\n", __func__, ret);
+ 
+ 	kfree(state);
++	kfree(inter);
+ 
+ 	return ret;
+ }
 -- 
 2.17.1
 
