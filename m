@@ -2,132 +2,155 @@ Return-Path: <SRS0=jXQK=NP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14AADC0044C
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 00:17:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 195D7C0044C
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 00:18:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B61B02082A
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 00:17:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q0Iawrr6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B61B02082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DAB322082A
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 00:18:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAB322082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=breakpoint.cc
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728733AbeKDJal (ORCPT
+        id S1728845AbeKDJbO convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 04:30:41 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:34856 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726727AbeKDJal (ORCPT
+        Sun, 4 Nov 2018 04:31:14 -0500
+Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:58286 "EHLO
+        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728757AbeKDJbO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 04:30:41 -0500
-Received: by mail-pl1-f195.google.com with SMTP id n4-v6so2692777plp.2;
-        Sat, 03 Nov 2018 17:17:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=lyTd4RClOG1ERM4t9WNz5RF4niw9++b2uh1j47Xf6xQ=;
-        b=Q0Iawrr6uBFldI8Jw0jUBA5OKzqOlbBPcLvH5bYEUKCGThs5CKwN+bQAwYaZxdDQkl
-         Qf1vmyFNJg2YI5PMPb0yuJIg6M5ZRFubAICyfSGWgSIc90EqTS7O3v6Ksa6zmN6Hanr6
-         zt74qKo61RzP+ElUiLhX7HhDloc0e7963vRRcG1U0HWSM+vcEAOvu4+YqnObQW2jjesm
-         o73UYrF987roZPlSm41Qt3K94noVChunm1B7msp3aluBKC4Zd0vbSkFD8gxR+GPhJKDY
-         fh5lddcTRA5rOXzvid9/k4R9r2+bUtM5asg6F1ckyKKigSxH0kx3zfKlwcyU65Toc8Vr
-         JbmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=lyTd4RClOG1ERM4t9WNz5RF4niw9++b2uh1j47Xf6xQ=;
-        b=P24mCyo1CrBoalK/u3+ma8ig+QXqOGzEbju/3sQN211PjneKKpiF/30pa9fzTxG5I4
-         lWrCQu6Oc+iKCY7ESoRo9J905NivLKtoaIR8h4d1MHUqmklwAXBcpv6qu+sEsj+F5N2Y
-         8Bm72JhOX9IfF1SXp7oZFFZXHYu5N3RZzuFc8oe1Mmh9XdeRucA4wW5Wivy3mR7tF8dc
-         9RcB410i7bow6bklbwInYA4khOytcXvGCMgIr0vHL4E+nn6jJnrZ+1gFjHZ+Acj7VlJk
-         jG6gpBNgeQhDGolWAMfkM/4x+6vvso+C0qSD9JqaVLgV06yhE4+jT4n5UrDreNVMGw9B
-         mEZQ==
-X-Gm-Message-State: AGRZ1gKM69DPrbgtF2HWQkPS8p/zSJ9M5JJguqItZJ3xQ9qLefW3MRQS
-        sqWubJxWJB1rzBcHkt1XfLxX4Af8EC8=
-X-Google-Smtp-Source: AJdET5fZlDtPTDWJ6OnTAIE8SETuOuntwuThcTEr0UPhb3CNMrHsWaivTFG5/GuoR3J4qzgdOPCR7w==
-X-Received: by 2002:a17:902:4827:: with SMTP id s36-v6mr6989910pld.226.1541290665763;
-        Sat, 03 Nov 2018 17:17:45 -0700 (PDT)
-Received: from emca-Inspiron-3558 ([2603:3004:c:2200:79c7:ed8e:b2dc:2f5d])
-        by smtp.gmail.com with ESMTPSA id m10-v6sm79716933pfg.180.2018.11.03.17.17.45
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 03 Nov 2018 17:17:45 -0700 (PDT)
-From:   Robert Eshleman <bobbyeshleman@gmail.com>
-Cc:     Robert Eshleman <bobbyeshleman@gmail.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] e1000e: Change watchdog task to be delayed work
-Date:   Sat,  3 Nov 2018 17:17:19 -0700
-Message-Id: <1541290645-25033-1-git-send-email-bobbyeshleman@gmail.com>
-X-Mailer: git-send-email 2.7.4
-To:     unlisted-recipients:; (no To-header on input)
+        Sun, 4 Nov 2018 04:31:14 -0500
+Received: from bigeasy by Chamillionaire.breakpoint.cc with local (Exim 4.89)
+        (envelope-from <sebastian@breakpoint.cc>)
+        id 1gJ67H-0003Ke-Cg; Sun, 04 Nov 2018 01:18:11 +0100
+Date:   Sun, 4 Nov 2018 01:18:11 +0100
+From:   Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>, Kurt Roeckx <kurt@roeckx.be>,
+        912087@bugs.debian.org,
+        "Package Development List for OpenSSL packages." 
+        <pkg-openssl-devel@alioth-lists.debian.net>,
+        linux-kernel@vger.kernel.org,
+        Bernhard =?utf-8?Q?=C3=9Cbelacker?= <bernhardu@mailbox.org>,
+        pkg-systemd-maintainers@lists.alioth.debian.org,
+        debian-ssh@lists.debian.org, 912087-submitter@bugs.debian.org
+Subject: Re: Bug#912087: openssh-server: Slow startup after the upgrade to
+ 7.9p1
+Message-ID: <20181104001810.q42mbemjqydnrb42@breakpoint.cc>
+References: <20181029223334.GH10011@roeckx.be>
+ <20181030001807.7wailpm37mlinsli@breakpoint.cc>
+ <20181030141544.GE15839@thunk.org>
+ <20181030183723.GI10011@roeckx.be>
+ <20181030205136.GB6236@thunk.org>
+ <6BBD7CF1-696B-4B5E-ABD8-A30C2F15E5C5@breakpoint.cc>
+ <20181031224106.GD6236@thunk.org>
+ <20181101221813.qfglqvmzk47m53yx@breakpoint.cc>
+ <20181101235035.GC25621@thunk.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20181101235035.GC25621@thunk.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This completes a pending TODO to use queue_delayed_work() instead of
-schedule_work().
+On 2018-11-01 19:50:35 [-0400], Theodore Y. Ts'o wrote:
+> On Thu, Nov 01, 2018 at 11:18:14PM +0100, Sebastian Andrzej Siewior wrote:
+> > Okay. So you wrote what can be done for a system with HW-RNG/kvm. On
+> > bare metal with nothing fancy I have:
+> > [    3.544985] systemd[1]: systemd 239 running in system mode. (+PAM…
+> > [   10.363377] r8169 0000:05:00.0 eth0: link up
+> > [   41.966375] random: crng init done
+> > 
+> > which means I have to wait about half a minute until I can ssh into. And
+> > there is no way to speed it up?
+> 
+> So that surprises me.  Can you tell me more about the hardware?  Is it
+> something like a Rasberry Pi?  Or is it an x86 server or desktop?  In
+> my experience for most x86 platforms this isn't an issue.
 
-Signed-off-by: Robert Eshleman <bobbyeshleman@gmail.com>
----
- drivers/net/ethernet/intel/e1000e/netdev.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+another boot on the same box:
+|  dmesg |grep -i random
+| [    0.000000] random: get_random_bytes called from start_kernel+0x94/0x52e with crng_init=0
+| [    1.774332] random: fast init done
+| [    7.318640] random: systemd: uninitialized urandom read (16 bytes read)
+| [    7.318925] random: systemd: uninitialized urandom read (16 bytes read)
+| [    7.338074] random: systemd: uninitialized urandom read (16 bytes read)
+| [   68.791389] random: crng init done
+| [   68.791397] random: 7 urandom warning(s) missed due to ratelimiting
 
-diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
-index 16a73bd..a387b21 100644
---- a/drivers/net/ethernet/intel/e1000e/netdev.c
-+++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-@@ -39,6 +39,8 @@ static int debug = -1;
- module_param(debug, int, 0);
- MODULE_PARM_DESC(debug, "Debug level (0=none,...,16=all)");
- 
-+struct workqueue_struct *e1000e_workqueue;
-+
- static const struct e1000_info *e1000_info_tbl[] = {
- 	[board_82571]		= &e1000_82571_info,
- 	[board_82572]		= &e1000_82572_info,
-@@ -5137,9 +5139,9 @@ static void e1000_watchdog(struct timer_list *t)
- 	struct e1000_adapter *adapter = from_timer(adapter, t, watchdog_timer);
- 
- 	/* Do the rest outside of interrupt context */
--	schedule_work(&adapter->watchdog_task);
-+	struct delayed_work *dwork = to_delayed_work(&adapter->watchdog_task);
- 
--	/* TODO: make this use queue_delayed_work() */
-+	queue_delayed_work(e1000e_workqueue, dwork, 1);
- }
- 
- static void e1000_watchdog_task(struct work_struct *work)
-@@ -7572,6 +7574,13 @@ static int __init e1000_init_module(void)
- 		e1000e_driver_version);
- 	pr_info("Copyright(c) 1999 - 2015 Intel Corporation.\n");
- 
-+	e1000e_workqueue = alloc_workqueue("%s", WQ_MEM_RECLAIM, 0,
-+					   e1000e_driver_name);
-+	if (!e1000e_workqueue) {
-+		pr_err("%s: Failed to create workqueue\n", e1000e_driver_name);
-+		return -ENOMEM;
-+	}
-+
- 	return pci_register_driver(&e1000_driver);
- }
- module_init(e1000_init_module);
-@@ -7585,6 +7594,7 @@ module_init(e1000_init_module);
- static void __exit e1000_exit_module(void)
- {
- 	pci_unregister_driver(&e1000_driver);
-+	destroy_workqueue(e1000e_workqueue);
- }
- module_exit(e1000_exit_module);
- 
--- 
-2.7.4
+This is a headless i7-Sandy Bridge. A small rootfs partition and there
+are hardly any daemons comming up. It waits for a remote login. Running
+Debian unstable (incl. kernel).
 
+> The main reason why I've talked about VM system is because this is
+> where it where most of the problems that people ahve reported to me.
+Yes. Thanks for that. I have another box which I use as a desktop
+machine (basically a terminal). It is older than the i7 but I unlock the
+crypted root disk as part of the boot process and I assume that due to
+this it initializes in less than 10secs. Same goes for my notebook.  But
+the i7 has just two cables…
+
+> So if I make a blanket recommendation, and it causes Debian to ship
+> some kind of default that causes Debian users to be insecure, I'm
+> going to be feel really bad.  This is why I'm very cautious about what
+> I say.  If you want to do whatever you want on your own system, hey
+> consulting adults can do whatever they want.  :-)
+
+I have a few other headless boxes but those are newer and support
+RDRAND. I assume that this makes a difference because otherwise I don't
+see a difference (and they don't take long to init).
+
+> > You did not oppose RNDADDTOENTCNT/RNDADDENTROPY but you wanted to make
+> > it configureable and not default, correct?
+> 
+> I'd want to see a full design doc, or a git repository, or set of
+> changes before I give it an unqualified endorsement, but there *are*
+> configurations where such a thing would be sane.
+> 
+> That's the problem with security recommendations.  It's much like a
+> lawyer giving legal advice.  They're very careful about doing that in
+> an unstructured circumstances.  If it gets taken in the wrong way,
+> they could be legally liable and people might blame/sue them.
+> 
+> And then on top of that, there are the political considerations.
+> Suppose I told you, "just use RDRAND and be happy".  Some people who
+> sure that RDRAND has been backdoored would claim that I'm in the
+> pocket of the NSA and/or Intel.  That's why all I'm going to say is,
+> "I'm comfortable turning RDRAND on my own systems; you can do what you
+> want."
+
+Okay, okay. Let sum that up:
+- openssh uses openssl's random number generator which now uses
+  getrandom().
+- getrandom() blocks until the random pool is initializes. Can be
+  checked in dmesg:
+  [  TIME.STAMP] random: crng init done
+  This wasn't the case earlier where /dev/urandom was used.
+- random entropy like interrupts or HW random support (<ad> chaos
+  key</ad>) will speed the initalisation process up.
+- emulated hardware / KVM can take long to init but it helps if a hw-rnd
+  device is added as part of qemu setup.
+- it is possible to manually increase the entropy count and/or tell the
+  random pool to init asap but it shouldn't be done because it will
+  probably lead to weak random pool and probably used in wrong setups.
+
+> Cheers,
+> 
+> 						- Ted
+> 
+> P.S…
+> I
+> certainly would recommend that you spend the $40 USD to get a Chaos
+> Key and just be *done* with it.
+
+I do own a Nitrokey which can create random. That is not the problem. I
+just have one devel box which requires me to wait a minute before I can
+login and I have to figure out how to deal with it.
+
+Sebastian
