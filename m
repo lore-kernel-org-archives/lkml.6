@@ -2,107 +2,104 @@ Return-Path: <SRS0=jXQK=NP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79FE7C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:46:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B693EC32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 15:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 279C120854
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 14:46:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WIZTntuv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 279C120854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6E6242082A
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 15:10:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E6242082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730136AbeKEABy (ORCPT
+        id S1730255AbeKEAZd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 19:01:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47786 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 19:25:33 -0500
+Received: from mga06.intel.com ([134.134.136.31]:60658 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728931AbeKEABy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 19:01:54 -0500
-Received: from tiger (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CE58204FD;
-        Sun,  4 Nov 2018 14:46:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541342798;
-        bh=9A7jdIR0C1u00rzExYboZ1ejvMSGVulcJheI7g2VeBw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WIZTntuvxQz5g2sxIA3pm3057e0yeS4YVg93d38NewbmjNpvo/d6L6gosNetWYQkc
-         9IkdQZt8V1+2z4CpAAqCwksNyd4M+CdIsLwEJhKtN8pbBDLaNAIeJWg0qPEIVwcD2J
-         yuJU1D5wf3eScxZB+96wCedBUDn7QZ/c4U1WnFds=
-Date:   Sun, 4 Nov 2018 22:46:16 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Martin Kaiser <martin@kaiser.cx>
-Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM: dts: i.MX25: add the clocks for the EPIT blocks
-Message-ID: <20181104144614.GJ26016@tiger>
-References: <1541093567-29205-1-git-send-email-martin@kaiser.cx>
+        id S1730148AbeKEAZc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 19:25:32 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2018 07:10:14 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,464,1534834800"; 
+   d="scan'208";a="83905861"
+Received: from kbyon-mobl.amr.corp.intel.com (HELO [10.251.138.109]) ([10.251.138.109])
+  by fmsmga008.fm.intel.com with ESMTP; 04 Nov 2018 07:10:13 -0800
+Subject: Re: [alsa-devel] [PATCH] ASoC: Intel: mrfld: fix uninitialized
+ variable access
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+References: <20181103212140.890081-1-arnd@arndb.de>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <f14b9bda-47d9-cb3a-b881-0a8058a0f59c@linux.intel.com>
+Date:   Sun, 4 Nov 2018 09:10:13 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1541093567-29205-1-git-send-email-martin@kaiser.cx>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20181103212140.890081-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 01, 2018 at 06:32:47PM +0100, Martin Kaiser wrote:
-> The i.MX25 contains two EPIT (Enhanced Periodic Interrupt Timer)
-> function blocks. Add their ipg and per clocks to the device tree.
-> 
-> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
 
-Are these EPIT devices actually used in upstream kernel, or just
-somewhere else?
+On 11/3/18 4:21 PM, Arnd Bergmann wrote:
+> Randconfig testing revealed a very old bug, with gcc-8:
+>
+> sound/soc/intel/atom/sst/sst_loader.c: In function 'sst_load_fw':
+> sound/soc/intel/atom/sst/sst_loader.c:357:5: error: 'fw' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+>    if (fw == NULL) {
+>       ^
+> sound/soc/intel/atom/sst/sst_loader.c:354:25: note: 'fw' was declared here
+>    const struct firmware *fw;
+>
+> We must check the return code of request_firmware() before we look at the
+> pointer result that may be uninitialized when the function fails.
 
-Shawn
+yes indeed, good catch.
 
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+
+>
+> Fixes: 9012c9544eea ("ASoC: Intel: mrfld - Add DSP load and management")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
-> 
-> I tried to make this similar to gpt1 and gpt2.
-> 
->  arch/arm/boot/dts/imx25.dtsi | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/imx25.dtsi b/arch/arm/boot/dts/imx25.dtsi
-> index b25309d26ea5..e80101847aff 100644
-> --- a/arch/arm/boot/dts/imx25.dtsi
-> +++ b/arch/arm/boot/dts/imx25.dtsi
-> @@ -388,12 +388,16 @@
->  			epit1: timer@53f94000 {
->  				compatible = "fsl,imx25-epit";
->  				reg = <0x53f94000 0x4000>;
-> +				clocks = <&clks 83>, <&clks 43>;
-> +				clock-names = "ipg", "per";
->  				interrupts = <28>;
->  			};
->  
->  			epit2: timer@53f98000 {
->  				compatible = "fsl,imx25-epit";
->  				reg = <0x53f98000 0x4000>;
-> +				clocks = <&clks 84>, <&clks 43>;
-> +				clock-names = "ipg", "per";
->  				interrupts = <27>;
->  			};
->  
-> -- 
-> 2.1.4
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>   sound/soc/intel/atom/sst/sst_loader.c | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/sound/soc/intel/atom/sst/sst_loader.c b/sound/soc/intel/atom/sst/sst_loader.c
+> index 27413ebae956..b8c456753f01 100644
+> --- a/sound/soc/intel/atom/sst/sst_loader.c
+> +++ b/sound/soc/intel/atom/sst/sst_loader.c
+> @@ -354,14 +354,14 @@ static int sst_request_fw(struct intel_sst_drv *sst)
+>   	const struct firmware *fw;
+>   
+>   	retval = request_firmware(&fw, sst->firmware_name, sst->dev);
+> -	if (fw == NULL) {
+> -		dev_err(sst->dev, "fw is returning as null\n");
+> -		return -EINVAL;
+> -	}
+>   	if (retval) {
+>   		dev_err(sst->dev, "request fw failed %d\n", retval);
+>   		return retval;
+>   	}
+> +	if (fw == NULL) {
+> +		dev_err(sst->dev, "fw is returning as null\n");
+> +		return -EINVAL;
+> +	}
+>   	mutex_lock(&sst->sst_lock);
+>   	retval = sst_cache_and_parse_fw(sst, fw);
+>   	mutex_unlock(&sst->sst_lock);
