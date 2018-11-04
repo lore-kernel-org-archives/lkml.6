@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7229CC32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 831C9ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 334F12085A
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42029204FD
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BvShc2wD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 334F12085A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SJoym29g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42029204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730925AbeKDXIO (ORCPT
+        id S1730940AbeKDXIQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:08:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46718 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:08:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730857AbeKDXIN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:08:13 -0500
+        id S1730918AbeKDXIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:08:14 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01B222086D;
-        Sun,  4 Nov 2018 13:53:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F26E020868;
+        Sun,  4 Nov 2018 13:53:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339589;
-        bh=inHV4XuMqoJkx8LVR3pAbycXL0djle2FPxeVQcXiZac=;
+        s=default; t=1541339590;
+        bh=cBrKTKUmMLQjPsb8qnriDGW80a4rwqoiIAuZI/pr20E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BvShc2wDnBSXOTZQbHvelFyOfUBncLtINu1olZLP8X4FlgJPjuUw0AT/5EUVN/ptj
-         TL6LVTFc73xzyTbtaUcOl1hvFyYEafQMm8q1ez8HktLaV2l97gGTe50CmvQ6vSNL/t
-         AmTa2q2DvQV1Lqgk6z+xYjmqKtpCvGJRHzQpB440=
+        b=SJoym29gdy3sPKFFhdiMPJ0+kMr2ljvoXftKURihQPLnkUaUtE/dAO4QMTXiwd5jz
+         QzWw2YJZRp01V1eMAIlfhFBAlwX4B7RGo5+cBJyA57FpWO3WNspxtO45501SvJZAsi
+         XsOGsX39k0XAF585P8BFe+Ryf15/IXove5tYKqxw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
+Cc:     Lucas Stach <l.stach@pengutronix.de>,
         Hans Verkuil <hans.verkuil@cisco.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 28/45] media: pci: cx23885: handle adding to list failure
-Date:   Sun,  4 Nov 2018 08:52:23 -0500
-Message-Id: <20181104135240.88431-28-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 29/45] media: coda: don't overwrite h.264 profile_idc on decoder instance
+Date:   Sun,  4 Nov 2018 08:52:24 -0500
+Message-Id: <20181104135240.88431-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135240.88431-1-sashal@kernel.org>
 References: <20181104135240.88431-1-sashal@kernel.org>
@@ -54,67 +54,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+From: Lucas Stach <l.stach@pengutronix.de>
 
-[ Upstream commit c5d59528e24ad22500347b199d52b9368e686a42 ]
+[ Upstream commit 1f32061e843205f6fe8404d5100d5adcec334e75 ]
 
-altera_hw_filt_init() which calls append_internal() assumes
-that the node was successfully linked in while in fact it can
-silently fail. So the call-site needs to set return to -ENOMEM
-on append_internal() returning NULL and exit through the err path.
+On a decoder instance, after the profile has been parsed from the stream
+__v4l2_ctrl_s_ctrl() is called to notify userspace about changes in the
+read-only profile control. This ends up calling back into the CODA driver
+where a missing check on the s_ctrl caused the profile information that has
+just been parsed from the stream to be overwritten with the default
+baseline profile.
 
-Fixes: 349bcf02e361 ("[media] Altera FPGA based CI driver module")
+Later on the driver fails to enable frame reordering, based on the wrong
+profile information.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Fixes: 347de126d1da (media: coda: add read-only h.264 decoder
+                     profile/level controls)
+
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/pci/cx23885/altera-ci.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/media/platform/coda/coda-common.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/pci/cx23885/altera-ci.c b/drivers/media/pci/cx23885/altera-ci.c
-index 70aec9bb7e95..07bf20c6c6fc 100644
---- a/drivers/media/pci/cx23885/altera-ci.c
-+++ b/drivers/media/pci/cx23885/altera-ci.c
-@@ -665,6 +665,10 @@ static int altera_hw_filt_init(struct altera_ci_config *config, int hw_filt_nr)
- 		}
- 
- 		temp_int = append_internal(inter);
-+		if (!temp_int) {
-+			ret = -ENOMEM;
-+			goto err;
-+		}
- 		inter->filts_used = 1;
- 		inter->dev = config->dev;
- 		inter->fpga_rw = config->fpga_rw;
-@@ -699,6 +703,7 @@ static int altera_hw_filt_init(struct altera_ci_config *config, int hw_filt_nr)
- 		     __func__, ret);
- 
- 	kfree(pid_filt);
-+	kfree(inter);
- 
- 	return ret;
- }
-@@ -733,6 +738,10 @@ int altera_ci_init(struct altera_ci_config *config, int ci_nr)
- 		}
- 
- 		temp_int = append_internal(inter);
-+		if (!temp_int) {
-+			ret = -ENOMEM;
-+			goto err;
-+		}
- 		inter->cis_used = 1;
- 		inter->dev = config->dev;
- 		inter->fpga_rw = config->fpga_rw;
-@@ -801,6 +810,7 @@ int altera_ci_init(struct altera_ci_config *config, int ci_nr)
- 	ci_dbg_print("%s: Cannot initialize CI: Error %d.\n", __func__, ret);
- 
- 	kfree(state);
-+	kfree(inter);
- 
- 	return ret;
- }
+diff --git a/drivers/media/platform/coda/coda-common.c b/drivers/media/platform/coda/coda-common.c
+index c7631e117dd3..1ae15d4ec5ed 100644
+--- a/drivers/media/platform/coda/coda-common.c
++++ b/drivers/media/platform/coda/coda-common.c
+@@ -1719,7 +1719,8 @@ static int coda_s_ctrl(struct v4l2_ctrl *ctrl)
+ 		break;
+ 	case V4L2_CID_MPEG_VIDEO_H264_PROFILE:
+ 		/* TODO: switch between baseline and constrained baseline */
+-		ctx->params.h264_profile_idc = 66;
++		if (ctx->inst_type == CODA_INST_ENCODER)
++			ctx->params.h264_profile_idc = 66;
+ 		break;
+ 	case V4L2_CID_MPEG_VIDEO_H264_LEVEL:
+ 		/* nothing to do, this is set by the encoder */
 -- 
 2.17.1
 
