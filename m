@@ -7,44 +7,48 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E9D9ECDE47
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7946ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C0F220862
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FB8120870
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:52:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HOfyKhby"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C0F220862
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OrmMahkv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FB8120870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730677AbeKDXH5 (ORCPT
+        id S1730711AbeKDXH6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:07:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46198 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:07:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730564AbeKDXH4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:07:56 -0500
+        id S1730660AbeKDXH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:07:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8ECAF20870;
-        Sun,  4 Nov 2018 13:52:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E2A920866;
+        Sun,  4 Nov 2018 13:52:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339572;
-        bh=p4OmevdiQqEbL/2wWemV6iFyL8/u5E5TpXjPNB6XXPM=;
+        s=default; t=1541339571;
+        bh=Lpm7SHpu7WLq7xIwdN24+tKRdX4Rqfv+5SIwBwozd4g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HOfyKhbykgV0+l1QIm4Bu4qwz6gJiPaR+o706OPJmFB18HuEKks8UBMZZHDYBXQ3E
-         QxqCKI/uu5fJuwi6BlH+52tV5t1XafJ8fOG3pCmWck03F8cI1izg+1Q09M8aU5REaC
-         INBK9Lg/YpeZTOqWzvpFKMs82XTEm5oBIV6fYL0k=
+        b=OrmMahkvQZXm4ynkTrGuJ8nqPSKtvI2DDFaAtRd1KoSc8Kce33I/aZeUQu9PfU+aX
+         M2xtoZMv01MJr2GieZ+7ZTB//cl7louvGsEsHzG7PEC8got7krKLrsxigRZoqSro7i
+         OKEMgL9tTiqmWw8PyxmyZ2+ASDq7HT7c26gdJL74=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 08/45] powerpc/traps: restore recoverability of machine_check interrupts
-Date:   Sun,  4 Nov 2018 08:52:03 -0500
-Message-Id: <20181104135240.88431-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 07/45] mm: don't warn about large allocations for slab
+Date:   Sun,  4 Nov 2018 08:52:02 -0500
+Message-Id: <20181104135240.88431-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135240.88431-1-sashal@kernel.org>
 References: <20181104135240.88431-1-sashal@kernel.org>
@@ -53,53 +57,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Dmitry Vyukov <dvyukov@google.com>
 
-[ Upstream commit daf00ae71dad8aa05965713c62558aeebf2df48e ]
+[ Upstream commit 61448479a9f2c954cde0cfe778cb6bec5d0a748d ]
 
-commit b96672dd840f ("powerpc: Machine check interrupt is a non-
-maskable interrupt") added a call to nmi_enter() at the beginning of
-machine check restart exception handler. Due to that, in_interrupt()
-always returns true regardless of the state before entering the
-exception, and die() panics even when the system was not already in
-interrupt.
+Slub does not call kmalloc_slab() for sizes > KMALLOC_MAX_CACHE_SIZE,
+instead it falls back to kmalloc_large().
 
-This patch calls nmi_exit() before calling die() in order to restore
-the interrupt state we had before calling nmi_enter()
+For slab KMALLOC_MAX_CACHE_SIZE == KMALLOC_MAX_SIZE and it calls
+kmalloc_slab() for all allocations relying on NULL return value for
+over-sized allocations.
 
-Fixes: b96672dd840f ("powerpc: Machine check interrupt is a non-maskable interrupt")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+This inconsistency leads to unwanted warnings from kmalloc_slab() for
+over-sized allocations for slab.  Returning NULL for failed allocations is
+the expected behavior.
+
+Make slub and slab code consistent by checking size >
+KMALLOC_MAX_CACHE_SIZE in slab before calling kmalloc_slab().
+
+While we are here also fix the check in kmalloc_slab().  We should check
+against KMALLOC_MAX_CACHE_SIZE rather than KMALLOC_MAX_SIZE.  It all kinda
+worked because for slab the constants are the same, and slub always checks
+the size against KMALLOC_MAX_CACHE_SIZE before kmalloc_slab().  But if we
+get there with size > KMALLOC_MAX_CACHE_SIZE anyhow bad things will
+happen.  For example, in case of a newly introduced bug in slub code.
+
+Also move the check in kmalloc_slab() from function entry to the size >
+192 case.  This partially compensates for the additional check in slab
+code and makes slub code a bit faster (at least theoretically).
+
+Also drop __GFP_NOWARN in the warning check.  This warning means a bug in
+slab code itself, user-passed flags have nothing to do with it.
+
+Nothing of this affects slob.
+
+Link: http://lkml.kernel.org/r/20180927171502.226522-1-dvyukov@gmail.com
+Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+Reported-by: syzbot+87829a10073277282ad1@syzkaller.appspotmail.com
+Reported-by: syzbot+ef4e8fc3a06e9019bb40@syzkaller.appspotmail.com
+Reported-by: syzbot+6e438f4036df52cbb863@syzkaller.appspotmail.com
+Reported-by: syzbot+8574471d8734457d98aa@syzkaller.appspotmail.com
+Reported-by: syzbot+af1504df0807a083dbd9@syzkaller.appspotmail.com
+Acked-by: Christoph Lameter <cl@linux.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/traps.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ mm/slab.c        |  4 ++++
+ mm/slab_common.c | 12 ++++++------
+ 2 files changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
-index 0e17dcb48720..6bfcb5a506af 100644
---- a/arch/powerpc/kernel/traps.c
-+++ b/arch/powerpc/kernel/traps.c
-@@ -736,12 +736,17 @@ void machine_check_exception(struct pt_regs *regs)
- 	if (check_io_access(regs))
- 		goto bail;
+diff --git a/mm/slab.c b/mm/slab.c
+index aa76a70e087e..d73c7a4820a4 100644
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -3675,6 +3675,8 @@ __do_kmalloc_node(size_t size, gfp_t flags, int node, unsigned long caller)
+ 	struct kmem_cache *cachep;
+ 	void *ret;
  
--	die("Machine check", regs, SIGBUS);
++	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE))
++		return NULL;
+ 	cachep = kmalloc_slab(size, flags);
+ 	if (unlikely(ZERO_OR_NULL_PTR(cachep)))
+ 		return cachep;
+@@ -3710,6 +3712,8 @@ static __always_inline void *__do_kmalloc(size_t size, gfp_t flags,
+ 	struct kmem_cache *cachep;
+ 	void *ret;
+ 
++	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE))
++		return NULL;
+ 	cachep = kmalloc_slab(size, flags);
+ 	if (unlikely(ZERO_OR_NULL_PTR(cachep)))
+ 		return cachep;
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index 2296caf87bfb..8a0fba22c910 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -1027,18 +1027,18 @@ struct kmem_cache *kmalloc_slab(size_t size, gfp_t flags)
+ {
+ 	unsigned int index;
+ 
+-	if (unlikely(size > KMALLOC_MAX_SIZE)) {
+-		WARN_ON_ONCE(!(flags & __GFP_NOWARN));
+-		return NULL;
+-	}
 -
- 	/* Must die if the interrupt is not recoverable */
- 	if (!(regs->msr & MSR_RI))
- 		nmi_panic(regs, "Unrecoverable Machine check");
+ 	if (size <= 192) {
+ 		if (!size)
+ 			return ZERO_SIZE_PTR;
  
-+	if (!nested)
-+		nmi_exit();
-+
-+	die("Machine check", regs, SIGBUS);
-+
-+	return;
-+
- bail:
- 	if (!nested)
- 		nmi_exit();
+ 		index = size_index[size_index_elem(size)];
+-	} else
++	} else {
++		if (unlikely(size > KMALLOC_MAX_CACHE_SIZE)) {
++			WARN_ON(1);
++			return NULL;
++		}
+ 		index = fls(size - 1);
++	}
+ 
+ #ifdef CONFIG_ZONE_DMA
+ 	if (unlikely((flags & GFP_DMA)))
 -- 
 2.17.1
 
