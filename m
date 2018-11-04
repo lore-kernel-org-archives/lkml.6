@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94780C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A13C32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5420B2085B
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2F2A204FD
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:54:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UznGhPC3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5420B2085B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wEUKEFo3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2F2A204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731916AbeKDXJu (ORCPT
+        id S1731929AbeKDXJv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:09:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49888 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:09:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731865AbeKDXJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 18:09:47 -0500
+        id S1731901AbeKDXJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 18:09:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 438402085B;
-        Sun,  4 Nov 2018 13:54:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D03D2086B;
+        Sun,  4 Nov 2018 13:54:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339683;
-        bh=6gYR4gGK9rsu1OC9TK1WBf4LnxVhVTmnFQ/de0i/EFA=;
+        s=default; t=1541339686;
+        bh=rwJq4xp8YwFBF2JvgmrEsP9bdlvVq//nsxvjjf0nFF8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UznGhPC35REw19UF2AxTyp+CBQfKnIb8uCC4VriYmokayqrT1qSXWPiwMjh3PnH1a
-         iNPQHZcfw/+zrWOWVVzoYItv14IEBXrH9IcUB5MbWcgdHzOIf6Gy+0NAO01dKeSg0X
-         Ztk0lYBfUPA9wEaYeQYJRli1kjRR+n+3TyJt3kj4=
+        b=wEUKEFo3NWrTzX3Sqzp3+55ZOh6yq8OSfWo7qnRuEyjZF7fYidP6POn4t35TB5Fed
+         c4Zyn6rbc6ZWsofu8snuZyTYqMwynuG+ybV3GVIQBUQBFRO9pTyOXfK/W9D3iB/FHy
+         CPLeOR0gfpi1n0dIDjcJsJ31wvCBRKAx+XE3aKv0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Eugen Hristev <eugen.hristev@microchip.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+Cc:     Joel Stanley <joel@jms.id.au>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 08/13] iio: adc: at91: fix acking DRDY irq on simple conversions
-Date:   Sun,  4 Nov 2018 08:54:28 -0500
-Message-Id: <20181104135433.88734-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 11/13] powerpc/boot: Ensure _zimage_start is a weak symbol
+Date:   Sun,  4 Nov 2018 08:54:31 -0500
+Message-Id: <20181104135433.88734-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135433.88734-1-sashal@kernel.org>
 References: <20181104135433.88734-1-sashal@kernel.org>
@@ -55,41 +53,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugen Hristev <eugen.hristev@microchip.com>
+From: Joel Stanley <joel@jms.id.au>
 
-[ Upstream commit bc1b45326223e7e890053cf6266357adfa61942d ]
+[ Upstream commit ee9d21b3b3583712029a0db65a4b7c081d08d3b3 ]
 
-When doing simple conversions, the driver did not acknowledge the DRDY irq.
-If this irq status is not acked, it will be left pending, and as soon as a
-trigger is enabled, the irq handler will be called, it doesn't know why
-this status has occurred because no channel is pending, and then it will go
-int a irq loop and board will hang.
-To avoid this situation, read the LCDR after a raw conversion is done.
+When building with clang crt0's _zimage_start is not marked weak, which
+breaks the build when linking the kernel image:
 
-Fixes: 0e589d5fb ("ARM: AT91: IIO: Add AT91 ADC driver.")
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+ $ objdump -t arch/powerpc/boot/crt0.o |grep _zimage_start$
+ 0000000000000058 g       .text  0000000000000000 _zimage_start
+
+ ld: arch/powerpc/boot/wrapper.a(crt0.o): in function '_zimage_start':
+ (.text+0x58): multiple definition of '_zimage_start';
+ arch/powerpc/boot/pseries-head.o:(.text+0x0): first defined here
+
+Clang requires the .weak directive to appear after the symbol is
+declared. The binutils manual says:
+
+ This directive sets the weak attribute on the comma separated list of
+ symbol names. If the symbols do not already exist, they will be
+ created.
+
+So it appears this is different with clang. The only reference I could
+see for this was an OpenBSD mailing list post[1].
+
+Changing it to be after the declaration fixes building with Clang, and
+still works with GCC.
+
+ $ objdump -t arch/powerpc/boot/crt0.o |grep _zimage_start$
+ 0000000000000058  w      .text	0000000000000000 _zimage_start
+
+Reported to clang as https://bugs.llvm.org/show_bug.cgi?id=38921
+
+[1] https://groups.google.com/forum/#!topic/fa.openbsd.tech/PAgKKen2YCY
+
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/adc/at91_adc.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/powerpc/boot/crt0.S | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iio/adc/at91_adc.c b/drivers/iio/adc/at91_adc.c
-index 8dc9f442c796..dc438141b75b 100644
---- a/drivers/iio/adc/at91_adc.c
-+++ b/drivers/iio/adc/at91_adc.c
-@@ -278,6 +278,8 @@ static void handle_adc_eoc_trigger(int irq, struct iio_dev *idev)
- 		iio_trigger_poll(idev->trig);
- 	} else {
- 		st->last_value = at91_adc_readl(st, AT91_ADC_CHAN(st, st->chnb));
-+		/* Needed to ACK the DRDY interruption */
-+		at91_adc_readl(st, AT91_ADC_LCDR);
- 		st->done = true;
- 		wake_up_interruptible(&st->wq_data_avail);
- 	}
+diff --git a/arch/powerpc/boot/crt0.S b/arch/powerpc/boot/crt0.S
+index 14de4f8778a7..8539ac93b0de 100644
+--- a/arch/powerpc/boot/crt0.S
++++ b/arch/powerpc/boot/crt0.S
+@@ -47,8 +47,10 @@ p_end:		.long	_end
+ p_pstack:	.long	_platform_stack_top
+ #endif
+ 
+-	.weak	_zimage_start
+ 	.globl	_zimage_start
++	/* Clang appears to require the .weak directive to be after the symbol
++	 * is defined. See https://bugs.llvm.org/show_bug.cgi?id=38921  */
++	.weak	_zimage_start
+ _zimage_start:
+ 	.globl	_zimage_start_lib
+ _zimage_start_lib:
 -- 
 2.17.1
 
