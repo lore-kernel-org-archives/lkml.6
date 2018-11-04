@@ -7,170 +7,99 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF78AC32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C7FECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7CDC20869
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8231D20862
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 13:53:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zKm4LyHq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7CDC20869
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PXeygycA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8231D20862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730812AbeKDXIF (ORCPT
+        id S1730856AbeKDXII (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 18:08:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46470 "EHLO mail.kernel.org"
+        Sun, 4 Nov 2018 18:08:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730780AbeKDXIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729603AbeKDXIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 4 Nov 2018 18:08:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE5E7208A3;
-        Sun,  4 Nov 2018 13:52:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7DAF2085A;
+        Sun,  4 Nov 2018 13:53:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541339580;
-        bh=4BIOBQbfyO1AfqlM46AQIYIPAhABs0auS3qxAof0+5M=;
+        s=default; t=1541339581;
+        bh=ozH58N7mCPv7BT7GGNGHBOhv2G3ic/pVUjrl4oaRszA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zKm4LyHq+oT8uy1CgnhIhYbvb4SatKWMYz3wGHwYBMQwtPyZWl33zAJ5zhZYqCWXs
-         cA217WI2f2kGBf5QheMZ3u1QZ7dWmNhx2MGnwYJ7zKsyObHiRAOHijtabS0E5B0I2u
-         ao7IHe+FosGiVl/+e/B26V0dxspGBJAtpk4UN0O8=
+        b=PXeygycAYWh4a+CN+UGmLma4pOsY9cHd5R11TMYrmdzn7CTU9kYFwKu8kugFWPcK0
+         3SrWvoEfzNeNwVjiqRMS8nkeTUN9ZgVB8ekqoMokL5/r1188mamN+APv5y69TqcpLc
+         CT/H67C5fjCeUadvFhISLLIRzgnhk04k18hWGu8M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+Cc:     Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 18/45] drm/amdgpu/powerplay: fix missing break in switch statements
-Date:   Sun,  4 Nov 2018 08:52:13 -0500
-Message-Id: <20181104135240.88431-18-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 19/45] ARM: imx_v6_v7_defconfig: Select CONFIG_TMPFS_POSIX_ACL
+Date:   Sun,  4 Nov 2018 08:52:14 -0500
+Message-Id: <20181104135240.88431-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181104135240.88431-1-sashal@kernel.org>
 References: <20181104135240.88431-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Fabio Estevam <fabio.estevam@nxp.com>
 
-[ Upstream commit 14b284832e7dea6f54f0adfd7bed105548b94e57 ]
+[ Upstream commit 35d3cbe84544da74e39e1cec01374092467e3119 ]
 
-There are several switch statements that are missing break statements.
-Add missing breaks to handle any fall-throughs corner cases.
+Andreas Müller reports:
 
-Detected by CoverityScan, CID#1457175 ("Missing break in switch")
+"Fixes:
 
-Fixes: 18aafc59b106 ("drm/amd/powerplay: implement fw related smu interface for iceland.")
-Acked-by: Huang Rui <ray.huang@amd.com>
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+| Sep 04 09:05:10 imx6qdl-variscite-som systemd-udevd[220]: Failed to apply ACL on /dev/v4l-subdev0: Operation not supported
+| Sep 04 09:05:10 imx6qdl-variscite-som systemd-udevd[224]: Failed to apply ACL on /dev/v4l-subdev1: Operation not supported
+| Sep 04 09:05:10 imx6qdl-variscite-som systemd-udevd[215]: Failed to apply ACL on /dev/v4l-subdev10: Operation not supported
+| Sep 04 09:05:10 imx6qdl-variscite-som systemd-udevd[228]: Failed to apply ACL on /dev/v4l-subdev2: Operation not supported
+| Sep 04 09:05:10 imx6qdl-variscite-som systemd-udevd[232]: Failed to apply ACL on /dev/v4l-subdev5: Operation not supported
+| Sep 04 09:05:10 imx6qdl-variscite-som systemd-udevd[217]: Failed to apply ACL on /dev/v4l-subdev11: Operation not supported
+| Sep 04 09:05:10 imx6qdl-variscite-som systemd-udevd[214]: Failed to apply ACL on /dev/dri/card1: Operation not supported
+| Sep 04 09:05:10 imx6qdl-variscite-som systemd-udevd[216]: Failed to apply ACL on /dev/v4l-subdev8: Operation not supported
+| Sep 04 09:05:10 imx6qdl-variscite-som systemd-udevd[226]: Failed to apply ACL on /dev/v4l-subdev9: Operation not supported
+
+and nasty follow-ups: Starting weston from sddm as unpriviledged user fails
+with some hints on missing access rights."
+
+Select the CONFIG_TMPFS_POSIX_ACL option to fix these issues.
+
+Reported-by: Andreas Müller <schnitzeltony@gmail.com>
+Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+Acked-by: Otavio Salvador <otavio@ossystems.com.br>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c      | 2 ++
- drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c    | 2 ++
- drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c | 2 ++
- drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c   | 2 ++
- drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c   | 2 ++
- 5 files changed, 10 insertions(+)
+ arch/arm/configs/imx_v6_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
-index 2d4ec8ac3a08..0b3ea7e9b805 100644
---- a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
-@@ -2303,11 +2303,13 @@ static uint32_t ci_get_offsetof(uint32_t type, uint32_t member)
- 		case DRAM_LOG_BUFF_SIZE:
- 			return offsetof(SMU7_SoftRegisters, DRAM_LOG_BUFF_SIZE);
- 		}
-+		break;
- 	case SMU_Discrete_DpmTable:
- 		switch (member) {
- 		case LowSclkInterruptThreshold:
- 			return offsetof(SMU7_Discrete_DpmTable, LowSclkInterruptT);
- 		}
-+		break;
- 	}
- 	pr_debug("can't get the offset of type %x member %x\n", type, member);
- 	return 0;
-diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
-index 53df9405f43a..bb616a530d3c 100644
---- a/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/smumgr/fiji_smumgr.c
-@@ -2372,6 +2372,7 @@ static uint32_t fiji_get_offsetof(uint32_t type, uint32_t member)
- 		case DRAM_LOG_BUFF_SIZE:
- 			return offsetof(SMU73_SoftRegisters, DRAM_LOG_BUFF_SIZE);
- 		}
-+		break;
- 	case SMU_Discrete_DpmTable:
- 		switch (member) {
- 		case UvdBootLevel:
-@@ -2383,6 +2384,7 @@ static uint32_t fiji_get_offsetof(uint32_t type, uint32_t member)
- 		case LowSclkInterruptThreshold:
- 			return offsetof(SMU73_Discrete_DpmTable, LowSclkInterruptThreshold);
- 		}
-+		break;
- 	}
- 	pr_warn("can't get the offset of type %x member %x\n", type, member);
- 	return 0;
-diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
-index 415f691c3fa9..c15e15e657b8 100644
---- a/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/smumgr/iceland_smumgr.c
-@@ -2246,11 +2246,13 @@ static uint32_t iceland_get_offsetof(uint32_t type, uint32_t member)
- 		case DRAM_LOG_BUFF_SIZE:
- 			return offsetof(SMU71_SoftRegisters, DRAM_LOG_BUFF_SIZE);
- 		}
-+		break;
- 	case SMU_Discrete_DpmTable:
- 		switch (member) {
- 		case LowSclkInterruptThreshold:
- 			return offsetof(SMU71_Discrete_DpmTable, LowSclkInterruptThreshold);
- 		}
-+		break;
- 	}
- 	pr_warn("can't get the offset of type %x member %x\n", type, member);
- 	return 0;
-diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
-index 782b19fc2e70..a5b7a4484700 100644
---- a/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/smumgr/tonga_smumgr.c
-@@ -2667,6 +2667,7 @@ static uint32_t tonga_get_offsetof(uint32_t type, uint32_t member)
- 		case DRAM_LOG_BUFF_SIZE:
- 			return offsetof(SMU72_SoftRegisters, DRAM_LOG_BUFF_SIZE);
- 		}
-+		break;
- 	case SMU_Discrete_DpmTable:
- 		switch (member) {
- 		case UvdBootLevel:
-@@ -2678,6 +2679,7 @@ static uint32_t tonga_get_offsetof(uint32_t type, uint32_t member)
- 		case LowSclkInterruptThreshold:
- 			return offsetof(SMU72_Discrete_DpmTable, LowSclkInterruptThreshold);
- 		}
-+		break;
- 	}
- 	pr_warn("can't get the offset of type %x member %x\n", type, member);
- 	return 0;
-diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
-index 2de48959ac93..52834334bd53 100644
---- a/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
-@@ -2267,6 +2267,7 @@ static uint32_t vegam_get_offsetof(uint32_t type, uint32_t member)
- 		case DRAM_LOG_BUFF_SIZE:
- 			return offsetof(SMU75_SoftRegisters, DRAM_LOG_BUFF_SIZE);
- 		}
-+		break;
- 	case SMU_Discrete_DpmTable:
- 		switch (member) {
- 		case UvdBootLevel:
-@@ -2278,6 +2279,7 @@ static uint32_t vegam_get_offsetof(uint32_t type, uint32_t member)
- 		case LowSclkInterruptThreshold:
- 			return offsetof(SMU75_Discrete_DpmTable, LowSclkInterruptThreshold);
- 		}
-+		break;
- 	}
- 	pr_warn("can't get the offset of type %x member %x\n", type, member);
- 	return 0;
+diff --git a/arch/arm/configs/imx_v6_v7_defconfig b/arch/arm/configs/imx_v6_v7_defconfig
+index 200ebda47e0c..254dcad97e67 100644
+--- a/arch/arm/configs/imx_v6_v7_defconfig
++++ b/arch/arm/configs/imx_v6_v7_defconfig
+@@ -406,6 +406,7 @@ CONFIG_ZISOFS=y
+ CONFIG_UDF_FS=m
+ CONFIG_MSDOS_FS=m
+ CONFIG_VFAT_FS=y
++CONFIG_TMPFS_POSIX_ACL=y
+ CONFIG_JFFS2_FS=y
+ CONFIG_UBIFS_FS=y
+ CONFIG_NFS_FS=y
 -- 
 2.17.1
 
