@@ -2,120 +2,202 @@ Return-Path: <SRS0=jXQK=NP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 108D1C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 19:49:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E13EFC32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 19:51:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C264020854
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 19:49:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C264020854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 9D5A82081B
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 19:51:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M8+mQWbQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D5A82081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726323AbeKEFFx (ORCPT
+        id S1726722AbeKEFHI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 00:05:53 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:33335 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725798AbeKEFFx (ORCPT
+        Mon, 5 Nov 2018 00:07:08 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:38882 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725798AbeKEFHI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 00:05:53 -0500
-Received: from p5492fe24.dip0.t-ipconnect.de ([84.146.254.36] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gJOOf-0001qS-DW; Sun, 04 Nov 2018 20:49:21 +0100
-Date:   Sun, 4 Nov 2018 20:49:20 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Tim Chen <tim.c.chen@linux.intel.com>
-cc:     Jiri Kosina <jikos@kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [Patch v4 17/18] x86/speculation: Update SPEC_CTRL MSRs of remote
- CPUs
-In-Reply-To: <a14236d8b56dafe6988ce1b266a6e929be5296a8.1540923609.git.tim.c.chen@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.1811042042060.10744@nanos.tec.linutronix.de>
-References: <cover.1540923609.git.tim.c.chen@linux.intel.com> <a14236d8b56dafe6988ce1b266a6e929be5296a8.1540923609.git.tim.c.chen@linux.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 5 Nov 2018 00:07:08 -0500
+Received: by mail-lf1-f68.google.com with SMTP id p86so4646921lfg.5;
+        Sun, 04 Nov 2018 11:50:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mail-followup-to:mime-version
+         :content-disposition:user-agent;
+        bh=BJH7TByfzPsX6krZ6CDbMD0Hb9sViuTig98Bh11Iu00=;
+        b=M8+mQWbQ8ZiY/3wVpwD4JbVRa3H3HXaYW/3TIn5A3+Xc35MHEdgUffu7NtS3TwENWl
+         GVOMMQc+a7JOfBDe4b1letgyN7G02zqDgVob6p4irNo2L0+HvAI7Q2Rm53eFkZA8ZyFo
+         I6RwKbIENTmnMJoSWl1LirGSAoL6n6QutkTyBdxV7czOKRln00WcCF1haXTQgPUjr9xk
+         3xhowZREXsM5YzdOpgn4hsTGK6+mBYJtznccVBTUBaWjbkYzxw6a6GM/1FxSzbfybxSu
+         CEJXwTudKjSxWIe5+oBq1urFCIPSU+gLKxlsx1VAMVqkIFurEwk6v8ZvYQZwchosMi7P
+         Su0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mail-followup-to
+         :mime-version:content-disposition:user-agent;
+        bh=BJH7TByfzPsX6krZ6CDbMD0Hb9sViuTig98Bh11Iu00=;
+        b=ohy5PyoME1lKSFaW+ATFOjd6bU6jEuM0AylgEy1isrnDtknZUydN4wTGY7Bn8H/925
+         tUKNRvv+RZKp+t6P6YC5eDqmetgfqO7KFLiqm1WshA/KnB0ZUwcGWAFt4ebNr/ClTlSz
+         D37IvhoYAggP7KwcPCQEAHN03lqSL/Io3dUgKzAvSJMwWfGcsXxN2QS1HiCEggFBika6
+         F/K3nkIMI5mNSZqJvYFhkWrzm/ereo2+LkABov0qqk2Vywam4cSM6o5a5NOX8endtrVF
+         RfL98f98jDHLd+7iMGhRBKLoSopWuqnx07d2acnHRz1PMSi2Br5M4vIXSqteNRq7YtwC
+         s8ww==
+X-Gm-Message-State: AGRZ1gIYO+PYHMdwj04Q24ZG0Mr5E7jRMGjHFCVqaICKtfjMw+2TkoB1
+        WyGQOwxCb1awwPqD0l3rwrs=
+X-Google-Smtp-Source: AJdET5cyiGOyfMhSxOrEa9cqsdYmToiHv1WStwt8z2vihzItgY/UkWsrm6oneFDVDcgMAMu85i943g==
+X-Received: by 2002:a19:9c92:: with SMTP id f140mr5497206lfe.41.1541361055798;
+        Sun, 04 Nov 2018 11:50:55 -0800 (PST)
+Received: from dnote ([5.35.110.163])
+        by smtp.gmail.com with ESMTPSA id z8-v6sm2862689lji.51.2018.11.04.11.50.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 04 Nov 2018 11:50:55 -0800 (PST)
+Date:   Sun, 4 Nov 2018 22:50:55 +0300
+From:   Eugene Korenevsky <ekorenevsky@gmail.com>
+To:     Davidlohr Bueso <dave@stgolabs.net>, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH v5 1/2] efi: add sanity checks for GPT entries
+Message-ID: <20181104195055.GA15428@dnote>
+Mail-Followup-To: Eugene Korenevsky <ekorenevsky@gmail.com>,
+        Davidlohr Bueso <dave@stgolabs.net>, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tim,
+Obvious sanity checks have been added for GPT entries.
+GPT entries should not:
+- collide with GPT header
+- collide with GPT partitions
+- override the disk size 
+These checks also ensure GPT entries are not too large.
 
-On Tue, 30 Oct 2018, Tim Chen wrote:
->  void arch_set_security(struct task_struct *tsk, unsigned int value)
-> diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-> index 943e90d..048b7f4b 100644
-> --- a/arch/x86/kernel/process.c
-> +++ b/arch/x86/kernel/process.c
-> @@ -426,7 +426,19 @@ static __always_inline void spec_ctrl_update_msr(unsigned long tifn)
->  static __always_inline void __speculation_ctrl_update(unsigned long tifp,
->  						      unsigned long tifn)
->  {
-> -	bool updmsr = !!((tifp ^ tifn) & _TIF_STIBP);
-> +	/*
-> +	 * If TIF_UPDATE_SPEC_CTRL bit is set in tifp, speculation related
-> +	 * TIF flags have changed when previous task was running, but
-> +	 * SPEC_CTRL MSR has not been synchronized with TIF flag changes.
-> +	 * SPEC_CTRL MSR value can be out of date.
-> +	 *
-> +	 * Need to force update SPEC_CTRL MSR if TIF_UPDATE_SPEC_CTRL
-> +	 * bit in tifp is set.
-> +	 *
-> +	 * The TIF_UPDATE_SPEC_CTRL bit in tifn was cleared before calling
-> +	 * this function.
-> +	 */
-> +	bool updmsr = !!((tifp ^ tifn) & (_TIF_STIBP|_TIF_UPDATE_SPEC_CTRL));
->  
->  	/* If TIF_SSBD is different, select the proper mitigation method */
->  	if ((tifp ^ tifn) & _TIF_SSBD) {
-> @@ -482,6 +494,14 @@ void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p,
->  	if ((tifp ^ tifn) & _TIF_NOCPUID)
->  		set_cpuid_faulting(!!(tifn & _TIF_NOCPUID));
->  
-> +	if (tifp & _TIF_UPDATE_SPEC_CTRL)
-> +		clear_tsk_thread_flag(prev_p, TIF_UPDATE_SPEC_CTRL);
-> +
-> +	if (tifn & _TIF_UPDATE_SPEC_CTRL) {
-> +		clear_tsk_thread_flag(next_p, TIF_UPDATE_SPEC_CTRL);
-> +		tifn &= ~_TIF_UPDATE_SPEC_CTRL;
-> +	}
+Signed-off-by: Eugene Korenevsky <ekorenevsky@gmail.com>
+---
+ block/partitions/efi.c | 61 +++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 51 insertions(+), 10 deletions(-)
 
-I'm really unhappy about adding yet more conditionals into this code
-path. We really need to find some better solution for that.
+diff --git a/block/partitions/efi.c b/block/partitions/efi.c
+index 39f70d968754..722117b32585 100644
+--- a/block/partitions/efi.c
++++ b/block/partitions/efi.c
+@@ -338,6 +338,24 @@ static gpt_header *alloc_read_gpt_header(struct parsed_partitions *state,
+ 	return gpt;
+ }
+ 
++/**
++ * disk_regions_collide() - tests if two disk regions intersect or one region
++ *			    contains other
++ * @firstlba1: first LBA of the first region
++ * @lastlba1: last LBA of the first region
++ * @firstlba2: first LBA of the second region
++ * @lastlba2: last LBA of the second region
++ */
++static bool disk_regions_collide(u64 firstlba1, u64 lastlba1,
++				 u64 firstlba2, u64 lastlba2)
++{
++	if (lastlba1 < firstlba2)
++		return false;
++	if (lastlba2 < firstlba1)
++		return false;
++	return true;
++}
++
+ /**
+  * is_gpt_valid() - tests one GPT header and PTEs for validity
+  * @state: disk parsed partitions
+@@ -352,7 +370,8 @@ static int is_gpt_valid(struct parsed_partitions *state, u64 lba,
+ 			gpt_header **gpt, gpt_entry **ptes)
+ {
+ 	u32 crc, origcrc;
+-	u64 lastlba, pt_size;
++	unsigned short ssz;
++	u64 pt_firstlba, pt_lastlba, disk_lastlba, pt_size;
+ 
+ 	if (!ptes)
+ 		return 0;
+@@ -369,11 +388,10 @@ static int is_gpt_valid(struct parsed_partitions *state, u64 lba,
+ 	}
+ 
+ 	/* Check the GUID Partition Table header size is too big */
+-	if (le32_to_cpu((*gpt)->header_size) >
+-			bdev_logical_block_size(state->bdev)) {
++	ssz = bdev_logical_block_size(state->bdev);
++	if (le32_to_cpu((*gpt)->header_size) > ssz) {
+ 		pr_debug("GUID Partition Table Header size is too large: %u > %u\n",
+-			le32_to_cpu((*gpt)->header_size),
+-			bdev_logical_block_size(state->bdev));
++			le32_to_cpu((*gpt)->header_size), ssz);
+ 		goto fail;
+ 	}
+ 
+@@ -409,17 +427,17 @@ static int is_gpt_valid(struct parsed_partitions *state, u64 lba,
+ 	/* Check the first_usable_lba and last_usable_lba are
+ 	 * within the disk.
+ 	 */
+-	lastlba = last_lba(state->bdev);
+-	if (le64_to_cpu((*gpt)->first_usable_lba) > lastlba) {
++	disk_lastlba = last_lba(state->bdev);
++	if (le64_to_cpu((*gpt)->first_usable_lba) > disk_lastlba) {
+ 		pr_debug("GPT: first_usable_lba incorrect: %lld > %lld\n",
+ 			 (unsigned long long)le64_to_cpu((*gpt)->first_usable_lba),
+-			 (unsigned long long)lastlba);
++			 (unsigned long long)disk_lastlba);
+ 		goto fail;
+ 	}
+-	if (le64_to_cpu((*gpt)->last_usable_lba) > lastlba) {
++	if (le64_to_cpu((*gpt)->last_usable_lba) > disk_lastlba) {
+ 		pr_debug("GPT: last_usable_lba incorrect: %lld > %lld\n",
+ 			 (unsigned long long)le64_to_cpu((*gpt)->last_usable_lba),
+-			 (unsigned long long)lastlba);
++			 (unsigned long long)disk_lastlba);
+ 		goto fail;
+ 	}
+ 	if (le64_to_cpu((*gpt)->last_usable_lba) < le64_to_cpu((*gpt)->first_usable_lba)) {
+@@ -443,6 +461,29 @@ static int is_gpt_valid(struct parsed_partitions *state, u64 lba,
+ 		goto fail;
+ 	}
+ 
++	pt_firstlba = le64_to_cpu((*gpt)->partition_entry_lba);
++	pt_lastlba = pt_firstlba + (pt_size + ssz - 1) / ssz - 1;
++
++	/* Check GPT entries do not overwrite partitions */
++	if (disk_regions_collide(pt_firstlba, pt_lastlba,
++				 le64_to_cpu((*gpt)->first_usable_lba),
++				 le64_to_cpu((*gpt)->last_usable_lba))) {
++		pr_debug("Primary GPT entries overwrite partitions\n");
++		goto fail;
++	}
++	/* Check GPT entries do not overwrite GPT header. Note: GPT header must
++	 * reside in the single disk sector according to UEFI spec
++	 */
++	if (disk_regions_collide(pt_firstlba, pt_lastlba, lba, lba)) {
++		pr_debug("Primary GPT entries overwrite GPT header\n");
++		goto fail;
++	}
++	/* Check GPT entries are not beyond the end of the disk */
++	if (pt_lastlba > disk_lastlba) {
++		pr_debug("GPT entries are beyond the end of the disk\n");
++		goto fail;
++	}
++
+ 	if (!(*ptes = alloc_read_gpt_entries(state, *gpt)))
+ 		goto fail;
+ 
+-- 
+2.19.1
 
-There are basically two options:
-
- 1) Restrict the PRCTL control so it is only possible to modify it at the
-    point where the application is still single threaded.
-
- 2) Add _TIF_UPDATE_SPEC_CTRL to the SYSCALL_EXIT_WORK_FLAGS and handle it
-    in the slow work path.
-
-    The KVM side can be handled in x86_virt_spec_ctrl().
-
-Thanks,
-
-	tglx
