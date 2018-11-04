@@ -2,107 +2,68 @@ Return-Path: <SRS0=jXQK=NP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3ED1C6786F
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 02:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 348D3C0044C
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 02:36:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB7C420847
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 02:36:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LC+uFlq6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB7C420847
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0558A20848
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 02:36:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0558A20848
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728982AbeKDLtg (ORCPT
+        id S1729005AbeKDLto (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 06:49:36 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40245 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726994AbeKDLtg (ORCPT
+        Sun, 4 Nov 2018 06:49:44 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:59960 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728984AbeKDLto (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 06:49:36 -0500
-Received: by mail-pg1-f195.google.com with SMTP id z10so765171pgp.7
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Nov 2018 19:36:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=x31v5uKr9QRbBGNFxtyZYHHAbZoh0qckSje/ecEoVv0=;
-        b=LC+uFlq6pV8CnJHhEfw9V6YnptJ/GhLPjysBduyrBwxSJWa0EQAYHtg7pcBMGEute4
-         tApZLebPk+reoh9WUc5UsBr2+2LzwcHjWqC+E8wfDW34lSzmed8KaxS3IdyckLJNgRkA
-         LZm++gFPtzuYlakO4BKhSs+XKzAcWGUwE4NvrRGLSMtCo6gqT1fp18QbprEkZB5olE2e
-         g1Zf8IFbo1n+7+9OgyAE4nnTkTR1rT+fz5M+DloDF1xYOOKmtdA4uMi9B/l72MyqUh5q
-         KCTZkdfwpxRxd818NXo3KVAa9nTbkt3Bd/Ry+35Ftvaw/58xHRp52F0LZeeAJQYgcK1Y
-         Jh/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=x31v5uKr9QRbBGNFxtyZYHHAbZoh0qckSje/ecEoVv0=;
-        b=PfE0sP/+f+BeaQx3ZriPuZykSJfYej8jGWqtojvf1mmU3W/+WkX9YI/ccqXs3d0Pzw
-         c0gtNm3uzd6s2bOQ2sIBzFxuIcpEXMyM9oI9AeDUUOVy5HTbczhbWJkP8gyLqVg5OHDb
-         UB/MAjB/pfoLEwi8YbVbGYYYBt7meRZjEiA4iZObBACHzrLGe+OdQEL84/BbGQa3G/4E
-         SJfCz0lcdZJjrr1mKMCrycvpol9GgC4WwNTwawOqgoXvUHQ5RdplFQ0BB/aRIpayhs2r
-         1/v/5ouvwhkA0jvW25O4AztdnRdHlF18iwzrFoeuxO81tSY/CISqZ1wtOGPZET20RG2F
-         91dQ==
-X-Gm-Message-State: AGRZ1gL4ksMySWPqghTbCt/dfD1lixxgJGLKTbV679fLFDLwKWjIN30n
-        2zH0bAwa1c496p2x+mlGHMs=
-X-Google-Smtp-Source: AJdET5dlAtKOmdQwRhhSjp/yw07ARxBhoJ+l3oKH1zDR7D+cYU0jS6MjPZVAK4fBgBkuUpcUo3j0bQ==
-X-Received: by 2002:a65:44c6:: with SMTP id g6-v6mr15413847pgs.350.1541298983336;
-        Sat, 03 Nov 2018 19:36:23 -0700 (PDT)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id a4sm8203732pgv.70.2018.11.03.19.36.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 03 Nov 2018 19:36:22 -0700 (PDT)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     rostedt@goodmis.org, mingo@kernel.org
-Cc:     linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] tracing/fgraph: remove unnecessary unlikely()
-Date:   Sat,  3 Nov 2018 22:35:37 -0400
-Message-Id: <20181104023537.2626-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Sun, 4 Nov 2018 06:49:44 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 252AB1438FFCC;
+        Sat,  3 Nov 2018 19:27:57 -0700 (PDT)
+Date:   Sat, 03 Nov 2018 19:27:53 -0700 (PDT)
+Message-Id: <20181103.192753.1631072685342336213.davem@davemloft.net>
+To:     arnd@arndb.de
+Cc:     Ariel.Elior@cavium.com, everest-linux-l2@cavium.com,
+        sudarsana.kalluru@cavium.com, Tomer.Tayar@cavium.com,
+        denis.bolotin@cavium.com, Rahul.Verma@cavium.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] qed: fix link config error handling
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181102153632.1646632-1-arnd@arndb.de>
+References: <20181102153632.1646632-1-arnd@arndb.de>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 03 Nov 2018 19:27:57 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-WARN_ON() already contains an unlikely(), so it's not necessary to use
-unlikely.
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri,  2 Nov 2018 16:36:24 +0100
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- kernel/trace/trace_functions_graph.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+> gcc-8 notices that qed_mcp_get_transceiver_data() may fail to
+> return a result to the caller:
+> 
+> drivers/net/ethernet/qlogic/qed/qed_mcp.c: In function 'qed_mcp_trans_speed_mask':
+> drivers/net/ethernet/qlogic/qed/qed_mcp.c:1955:2: error: 'transceiver_type' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+> 
+> When an error is returned by qed_mcp_get_transceiver_data(), we
+> should propagate that to the caller of qed_mcp_trans_speed_mask()
+> rather than continuing with uninitialized data.
+> 
+> Fixes: c56a8be7e7aa ("qed: Add supported link and advertise link to display in ethtool.")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
-index 169b3c44ee97..f8c2a08e4985 100644
---- a/kernel/trace/trace_functions_graph.c
-+++ b/kernel/trace/trace_functions_graph.c
-@@ -201,9 +201,8 @@ ftrace_pop_return_trace(struct ftrace_graph_ret *trace, unsigned long *ret,
- 	if (index < 0)
- 		index += FTRACE_NOTRACE_DEPTH;
- 
--	if (unlikely(index < 0 || index >= FTRACE_RETFUNC_DEPTH)) {
-+	if (WARN_ON(index < 0 || index >= FTRACE_RETFUNC_DEPTH)) {
- 		ftrace_graph_stop();
--		WARN_ON(1);
- 		/* Might as well panic, otherwise we have no where to go */
- 		*ret = (unsigned long)panic;
- 		return;
-@@ -274,9 +273,8 @@ unsigned long ftrace_return_to_handler(unsigned long frame_pointer)
- 	 */
- 	ftrace_graph_return(&trace);
- 
--	if (unlikely(!ret)) {
-+	if (WARN_ON(!ret)) {
- 		ftrace_graph_stop();
--		WARN_ON(1);
- 		/* Might as well panic. What else to do? */
- 		ret = (unsigned long)panic;
- 	}
--- 
-2.17.0
-
+Applied, thanks.
