@@ -2,101 +2,162 @@ Return-Path: <SRS0=jXQK=NP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2F4AC32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 16:51:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE06DC32789
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 17:12:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32C4920854
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 16:51:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 877FF2085A
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 17:12:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nVN6erYM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32C4920854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c/bDr0P/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 877FF2085A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728969AbeKECGy (ORCPT
+        id S1729128AbeKEC1x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 21:06:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43544 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728899AbeKECGx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 21:06:53 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F35322082D;
-        Sun,  4 Nov 2018 16:51:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541350277;
-        bh=X25ePno31afuYSmXkz75eWxXJ/J+vNLD5g5flXWmLj8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=nVN6erYMYkOo+jhzMittbr/xks1laUOX28YstzXUUfY4B6H4pLe88KNOweuKbXJm6
-         ew03c8D8tL2bymU2QRmETBRwsn0VglLc3+S3o/OnzPwgGE02DtHbeez7TdQcdVjoe+
-         85cOGfhvy88uz8MEFOMiS8Dt2nqSbhbsGhDjj9iA=
-Date:   Sun, 4 Nov 2018 16:51:13 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Matheus Tavares <matheus.bernardino@usp.br>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
-Subject: Re: [PATCH v3 6/6] staging:iio:ad2s90: Check channel type at
- read_raw
-Message-ID: <20181104165113.3549cd4d@archlinux>
-In-Reply-To: <20181103224948.31014-7-matheus.bernardino@usp.br>
-References: <20181103224948.31014-1-matheus.bernardino@usp.br>
-        <20181103224948.31014-7-matheus.bernardino@usp.br>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Sun, 4 Nov 2018 21:27:53 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53800 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728688AbeKEC1x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 21:27:53 -0500
+Received: by mail-wm1-f66.google.com with SMTP id v24-v6so6051307wmh.3;
+        Sun, 04 Nov 2018 09:12:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id;
+        bh=DeS07TTmXkJZQ8k98odPH96R+5MTvypdpg+3pUY5Uig=;
+        b=c/bDr0P/317rEypuPrUjXfzxSKkdxlsfemJSewyr0ZqULqaKztTywGwUu7ZR571rXM
+         cVTE/pS3tCTazZPFDcJX0EokjMk+sfKkmxXhaDKiDjCoUFcec64DCugtWlfmfe2zz/jE
+         gVrJgyIsZhmZvro8S/BkQjAqqG4z+F8uguhOI6qMNYuGy8aTVl2RFkgY5xT4lnIVB+e5
+         Gqv5E1NUXSanYl8cWWCoq6foFZjSXPRQRM7MFaQUSBmThLmAUvsA/g7RsOnqxgu292/h
+         3Tww1FG73Og0D8ZjcNIHSfapL7/bilTUu9zfaj6l7otnPbNMql4ekonmHljuoaqIxrw+
+         +GGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=DeS07TTmXkJZQ8k98odPH96R+5MTvypdpg+3pUY5Uig=;
+        b=YxuMjfpXILp6F3I68hqUzv5/ztmjCZYI/2kzjiWVMp4DiP59CzQWMLlLOQYn7YQ1E0
+         PCX88KKEqBRGwTwlYnEXGD9FiT0MhPK1rPqB9oL1NFWOHJYxuGe22Fm95Ozqts43gMa7
+         r40LhHt4/fMRlUIkdJl3SAlIuSAvHAXqzmGk6++R8nNfuE2We0nnS5k++YFsd1QWH4QI
+         pjyW79Wqe8Dyv+0Xs+OwnIeMoLfoTx8QtJCxpKdkEL0UkLxqn6EtPM63Jg89jppiBPt8
+         U5m6jbyUtuz6jaoC1hXoMX1dMCSLzMRhEkB8g5AAozg+e5ZWDWeEyRQfWSgUhtcrnGOZ
+         g+YA==
+X-Gm-Message-State: AGRZ1gI2IDK/x8kvUVYGOITHU7OMjMK7FgrwNkb2W6MJAq4vU48FbIT6
+        S7bQTR1CDc798pLDufwawz0=
+X-Google-Smtp-Source: AJdET5eOHDFGS8O+9g+rCxWM6XYEWP62Q3YlcJB0jiZgdkAtHMftHHQl3y+MeBNhglYos0igAWaENg==
+X-Received: by 2002:a1c:1dcf:: with SMTP id d198-v6mr3929169wmd.46.1541351531806;
+        Sun, 04 Nov 2018 09:12:11 -0800 (PST)
+Received: from localhost.localdomain ([41.35.162.9])
+        by smtp.gmail.com with ESMTPSA id r2-v6sm23707749wrq.1.2018.11.04.09.12.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 04 Nov 2018 09:12:10 -0800 (PST)
+From:   Ahmed Abd El Mawgood <ahmedsoliman0x666@gmail.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ahmedsoliman0x666@gmail.com, ovich00@gmail.com,
+        kernel-hardening@lists.openwall.com, nigel.edwards@hpe.com,
+        Boris Lukashev <blukashev@sempervictus.com>,
+        Hossam Hassan <7ossam9063@gmail.com>,
+        "Ahmed Lotfy igor . stoppa @ gmail . com" <A7med.lotfey@gmail.com>
+Subject: [PATCH V6 0/8] KVM: X86: Introducing ROE Protection Kernel Hardening
+Date:   Sun,  4 Nov 2018 19:11:16 +0200
+Message-Id: <20181104171124.5717-1-ahmedsoliman0x666@gmail.com>
+X-Mailer: git-send-email 2.18.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat,  3 Nov 2018 19:49:48 -0300
-Matheus Tavares <matheus.bernardino@usp.br> wrote:
+-- Summary --
 
-> This patch adds a channel type check at the beginning of the
-> ad2s90_read_raw function. Since ad2s90 has only one channel, it just
-> checks if the given channel is the expected one and if not, return
-> -EINVAL.
-> 
-> Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
+ROE is a hypercall that enables host operating system to restrict guest's access
+to its own memory. This will provide a hardening mechanism that can be used to
+stop rootkits from manipulating kernel static data structures and code. Once a
+memory region is protected the guest kernel can't even request undoing the
+protection.
 
-Given you can't actually get here with another channel type by any
-valid means, this is more a form of code as documentation than anything
-else.  Still it does no harm and arguably does make it easier to read.
+Memory protected by ROE should be non-swapable because even if the ROE protected
+page got swapped out, It won't be possible to write anything in its place.
 
-Applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders to play with it.
+ROE hypercall should be capable of either protecting a whole memory frame or
+parts of it. With these two, it should be possible for guest kernel to protect
+its memory and all the page table entries for that memory inside the page table.
+I am still not sure whether this should be part of ROE job or the guest's job.
 
-A nice little clean up series.  Thanks!
 
-Jonathan
-> ---
->  drivers/staging/iio/resolver/ad2s90.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/staging/iio/resolver/ad2s90.c
-> index 9c168b7410d0..3e257ac46f7a 100644
-> --- a/drivers/staging/iio/resolver/ad2s90.c
-> +++ b/drivers/staging/iio/resolver/ad2s90.c
-> @@ -34,6 +34,9 @@ static int ad2s90_read_raw(struct iio_dev *indio_dev,
->  	int ret;
->  	struct ad2s90_state *st = iio_priv(indio_dev);
->  
-> +	if (chan->type != IIO_ANGL)
-> +		return -EINVAL;
-> +
->  	switch (m) {
->  	case IIO_CHAN_INFO_SCALE:
->  		/* 2 * Pi / 2^12 */
+The reason why it would be better to implement this from inside kvm: instead of
+(host) user space is the need to access SPTEs to modify the permissions, while
+mprotect() from user space can work in theory. It will become a big performance
+hit to vmexit and switch to user space mode on each fault, on the other hand,
+having the permission handled by EPT should make some remarkable performance
+gain.
 
+Our model assumes that an attacker got full root access to a running guest and
+his goal is to manipulate kernel code/data (hook syscalls, overwrite IDT ..etc).
+
+There is future work in progress to also put some sort of protection on the page
+table register CR3 and other critical registers that can be intercepted by KVM.
+This way it won't be possible for an attacker to manipulate any part of the
+guests page table.
+
+
+
+
+-- Change log V5 -> V6 --
+
+- Make CONFIG_KVM_ROE=y the default so it can reach distros faster.
+- Remove Obsolete description for Memory ROE documentation patch.
+- Reorder the patches in more sensible manner (first are the helper patches,
+  then the documentation, finally the real implementation).
+- Add patch to log ROE via system log.
+- Use affirmative mode in commits title.
+- Get rid of the many #ifdefs.
+- Factor most of the code out of arch/x86/kvm and place it into virt/kvm.
+
+The previous version (V5) of the patch set can be found at [1]
+
+-- links --
+
+[1] https://lkml.org/lkml/2018/10/26/604
+
+-- List of patches --
+
+ [PATCH V6 1/8] KVM: State whether memory should be freed in
+ [PATCH V6 2/8] KVM: X86: Add arbitrary data pointer in kvm memslot
+ [PATCH V6 3/8] KVM: Document Memory ROE
+ [PATCH V6 4/8] KVM: Create architecture independent ROE skeleton
+ [PATCH V6 5/8] KVM: X86: Enable ROE for x86
+ [PATCH V6 6/8] KVM: Add support for byte granular memory ROE
+ [PATCH V6 7/8] KVM: X86: Port ROE_MPROTECT_CHUNK to x86
+ [PATCH V6 8/8] KVM: Log ROE violations in system log
+
+-- Difstat --
+ Documentation/virtual/kvm/hypercalls.txt   |  40 ++++
+ arch/x86/include/asm/kvm_host.h            |   2 +-
+ arch/x86/kvm/Kconfig                       |   8 +
+ arch/x86/kvm/Makefile                      |   4 +-
+ arch/x86/kvm/mmu.c                         | 106 +++++----
+ arch/x86/kvm/mmu.h                         |  40 +++-
+ arch/x86/kvm/roe.c                         | 109 +++++++++
+ arch/x86/kvm/roe_arch.h                    |  50 +++++
+ arch/x86/kvm/x86.c                         |  11 +-
+ include/kvm/roe.h                          |  23 ++
+ include/linux/kvm_host.h                   |  29 +++
+ include/uapi/linux/kvm_para.h              |   5 +
+ net/sunrpc/xprtrdma/svc_rdma_backchannel.c |   4 +-
+ virt/kvm/kvm_main.c                        |  55 ++++-
+ virt/kvm/roe.c                             | 342 +++++++++++++++++++++++++++++
+ virt/kvm/roe_generic.h                     |  46 ++++
+ 16 files changed, 797 insertions(+), 77 deletions(-)
+
+Signed-off-by: Ahmed Abd El Mawgood <ahmedsoliman0x666@gmail.com>
