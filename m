@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BEF1C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 18:28:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A100CECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 18:28:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3043B2081D
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 18:28:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3043B2081D
+	by mail.kernel.org (Postfix) with ESMTP id 76C262081D
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 18:28:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76C262081D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731815AbeKEDoU (ORCPT
+        id S2387662AbeKEDoW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 22:44:20 -0500
-Received: from mailoutvs7.siol.net ([185.57.226.198]:47598 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731652AbeKEDoT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 22:44:19 -0500
+        Sun, 4 Nov 2018 22:44:22 -0500
+Received: from mailoutvs16.siol.net ([185.57.226.207]:47632 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1731728AbeKEDoV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 22:44:21 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 351E8521293;
-        Sun,  4 Nov 2018 19:28:24 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTP id A4987521294;
+        Sun,  4 Nov 2018 19:28:26 +0100 (CET)
 X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
 Received: from mail.siol.net ([127.0.0.1])
         by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id i5h9__RSLgrs; Sun,  4 Nov 2018 19:28:23 +0100 (CET)
+        with ESMTP id MAK7tY_kv6Nd; Sun,  4 Nov 2018 19:28:26 +0100 (CET)
 Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id CC86B521270;
-        Sun,  4 Nov 2018 19:28:23 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTPS id 5751A521233;
+        Sun,  4 Nov 2018 19:28:26 +0100 (CET)
 Received: from localhost.localdomain (cpe1-8-82.cable.triera.net [213.161.8.82])
         (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id 20D72521294;
-        Sun,  4 Nov 2018 19:28:21 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTPSA id D4E695212AE;
+        Sun,  4 Nov 2018 19:28:23 +0100 (CET)
 From:   Jernej Skrabec <jernej.skrabec@siol.net>
 To:     maxime.ripard@bootlin.com, wens@csie.org
 Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
@@ -44,9 +45,9 @@ Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-sunxi@googlegroups.com, jernej.skrabec@siol.net
-Subject: [PATCH v3 19/28] drm/sun4i: Add support for H6 DW HDMI controller
-Date:   Sun,  4 Nov 2018 19:26:56 +0100
-Message-Id: <20181104182705.18047-20-jernej.skrabec@siol.net>
+Subject: [PATCH v3 20/28] drm/sun4i: dw-hdmi-phy: Reorder quirks by family
+Date:   Sun,  4 Nov 2018 19:26:57 +0100
+Message-Id: <20181104182705.18047-21-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181104182705.18047-1-jernej.skrabec@siol.net>
 References: <20181104182705.18047-1-jernej.skrabec@siol.net>
@@ -57,61 +58,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-H6 has DW HDMI 2.0b controller v2.12a.
+Currently, quirks and compatibles are sorted alphabetically. However,
+they should be sorted by family release date and then alphabetically.
 
-It supports 4K at 60 Hz and HDCP 2.2.
+Fix that by moving A64 quirks and compatible to bottom. No functional
+change is made.
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c b/drivers/gpu/drm/sun4=
-i/sun8i_dw_hdmi.c
-index 99b878e380e1..445cca8d9a26 100644
---- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-@@ -44,6 +44,17 @@ sun8i_dw_hdmi_mode_valid_a83t(struct drm_connector *co=
-nnector,
- 	return MODE_OK;
- }
-=20
-+static enum drm_mode_status
-+sun8i_dw_hdmi_mode_valid_h6(struct drm_connector *connector,
-+			    const struct drm_display_mode *mode)
-+{
-+	/* This is max for HDMI 2.0b (4K@60Hz) */
-+	if (mode->clock > 594000)
-+		return MODE_CLOCK_HIGH;
-+
-+	return MODE_OK;
-+}
-+
- static bool sun8i_dw_hdmi_node_is_tcon_top(struct device_node *node)
- {
- 	return IS_ENABLED(CONFIG_DRM_SUN8I_TCON_TOP) &&
-@@ -239,11 +250,19 @@ static const struct sun8i_dw_hdmi_quirks sun8i_a83t=
-_quirks =3D {
- 	.set_rate =3D true,
+diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun=
+4i/sun8i_hdmi_phy.c
+index 365cb5a9fb77..adc3ba7df7e3 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
++++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+@@ -403,13 +403,6 @@ static struct regmap_config sun8i_hdmi_phy_regmap_co=
+nfig =3D {
+ 	.name		=3D "phy"
  };
 =20
-+static const struct sun8i_dw_hdmi_quirks sun50i_h6_quirks =3D {
-+	.mode_valid =3D sun8i_dw_hdmi_mode_valid_h6,
+-static const struct sun8i_hdmi_phy_variant sun50i_a64_hdmi_phy =3D {
+-	.has_phy_clk =3D true,
+-	.phy_init =3D &sun8i_hdmi_phy_init_h3,
+-	.phy_disable =3D &sun8i_hdmi_phy_disable_h3,
+-	.phy_config =3D &sun8i_hdmi_phy_config_h3,
+-};
+-
+ static const struct sun8i_hdmi_phy_variant sun8i_a83t_hdmi_phy =3D {
+ 	.phy_init =3D &sun8i_hdmi_phy_init_a83t,
+ 	.phy_disable =3D &sun8i_hdmi_phy_disable_a83t,
+@@ -431,11 +424,14 @@ static const struct sun8i_hdmi_phy_variant sun8i_r4=
+0_hdmi_phy =3D {
+ 	.phy_config =3D &sun8i_hdmi_phy_config_h3,
+ };
+=20
++static const struct sun8i_hdmi_phy_variant sun50i_a64_hdmi_phy =3D {
++	.has_phy_clk =3D true,
++	.phy_init =3D &sun8i_hdmi_phy_init_h3,
++	.phy_disable =3D &sun8i_hdmi_phy_disable_h3,
++	.phy_config =3D &sun8i_hdmi_phy_config_h3,
 +};
 +
- static const struct of_device_id sun8i_dw_hdmi_dt_ids[] =3D {
+ static const struct of_device_id sun8i_hdmi_phy_of_table[] =3D {
+-	{
+-		.compatible =3D "allwinner,sun50i-a64-hdmi-phy",
+-		.data =3D &sun50i_a64_hdmi_phy,
+-	},
  	{
- 		.compatible =3D "allwinner,sun8i-a83t-dw-hdmi",
- 		.data =3D &sun8i_a83t_quirks,
+ 		.compatible =3D "allwinner,sun8i-a83t-hdmi-phy",
+ 		.data =3D &sun8i_a83t_hdmi_phy,
+@@ -448,6 +444,10 @@ static const struct of_device_id sun8i_hdmi_phy_of_t=
+able[] =3D {
+ 		.compatible =3D "allwinner,sun8i-r40-hdmi-phy",
+ 		.data =3D &sun8i_r40_hdmi_phy,
  	},
 +	{
-+		.compatible =3D "allwinner,sun50i-h6-dw-hdmi",
-+		.data =3D &sun50i_h6_quirks,
++		.compatible =3D "allwinner,sun50i-a64-hdmi-phy",
++		.data =3D &sun50i_a64_hdmi_phy,
 +	},
- 	{ /* sentinel */ },
+ 	{ /* sentinel */ }
  };
- MODULE_DEVICE_TABLE(of, sun8i_dw_hdmi_dt_ids);
+=20
 --=20
 2.19.1
 
