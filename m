@@ -2,97 +2,112 @@ Return-Path: <SRS0=jXQK=NP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 310A9C32789
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 18:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8EFEECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 19:18:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E96712081B
-	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 18:40:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E96712081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 6CA572081D
+	for <linux-kernel@archiver.kernel.org>; Sun,  4 Nov 2018 19:18:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CA572081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729709AbeKED4D (ORCPT
+        id S1729178AbeKEEeC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 4 Nov 2018 22:56:03 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:33133 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727834AbeKED4D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Nov 2018 22:56:03 -0500
-Received: from p5492fe24.dip0.t-ipconnect.de ([84.146.254.36] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gJNJY-0001Ps-CG; Sun, 04 Nov 2018 19:40:00 +0100
-Date:   Sun, 4 Nov 2018 19:39:59 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Jens Axboe <axboe@kernel.dk>
-cc:     Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Hannes Reinecke <hare@suse.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Long Li <longli@microsoft.com>
-Subject: Re: [PATCH 0/4] irq: fix support for allocating sets of IRQs
-In-Reply-To: <5787f309-fa34-36df-83be-934a64989583@kernel.dk>
-Message-ID: <alpine.DEB.2.21.1811041938340.10744@nanos.tec.linutronix.de>
-References: <20181102145951.31979-1-ming.lei@redhat.com> <955edd2f-ad2f-ae8b-b8c2-98a01918c112@kernel.dk> <alpine.DEB.2.21.1811041259350.3160@nanos.tec.linutronix.de> <5787f309-fa34-36df-83be-934a64989583@kernel.dk>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 4 Nov 2018 23:34:02 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38474 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728962AbeKEEeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Nov 2018 23:34:02 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8FF8630001E0;
+        Sun,  4 Nov 2018 19:17:59 +0000 (UTC)
+Received: from krava (ovpn-204-66.brq.redhat.com [10.40.204.66])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 26E3219749;
+        Sun,  4 Nov 2018 19:17:55 +0000 (UTC)
+Date:   Sun, 4 Nov 2018 20:17:54 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Xin Long <lucien.xin@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-perf-users@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: perf script doesn't dump a normal call trace
+Message-ID: <20181104191754.GB18517@krava>
+References: <CADvbK_dNN34=5V3qtk3_vBzKNts55ACR4c-erPafgNuAQ-eRuw@mail.gmail.com>
+ <20181102102616.GC5458@krava>
+ <CADvbK_cr_vhtyaid=xbECdNs+xCr4Oi8pJJc83jZa+XJOWAjJw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADvbK_cr_vhtyaid=xbECdNs+xCr4Oi8pJJc83jZa+XJOWAjJw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Sun, 04 Nov 2018 19:17:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 4 Nov 2018, Jens Axboe wrote:
+On Sat, Nov 03, 2018 at 06:36:21PM +0900, Xin Long wrote:
+> On Fri, Nov 2, 2018 at 7:26 PM Jiri Olsa <jolsa@redhat.com> wrote:
+> >
+> > On Fri, Nov 02, 2018 at 03:36:13PM +0900, Xin Long wrote:
+> > > On upstream kernel(4.19) or RHEL-8 kernel(4.18.0):
+> > >
+> > > # perf record -e 'skb:consume_skb' -ag
+> > > ^C[ perf record: Woken up 1 times to write data ]
+> > > [ perf record: Captured and wrote 0.612 MB perf.data (634 samples) ]
+> > >
+> > > # perf script
+> > > swapper     0 [009] 274370.117711: skb:consume_skb: skbaddr=0xffff962c591d5b00
+> > >         ffffffffa4abe534 consume_skb+0x64 ([kernel.kallsyms])
+> > >
+> > > kworker/9:1-eve   926 [009] 274370.117729: skb:consume_skb:
+> > > skbaddr=0xffff962c591d5b00
+> > >         ffffffffa4abe534 consume_skb+0x64 ([kernel.kallsyms])
+> > >
+> > > kworker/9:1-eve   926 [009] 274370.117732: skb:consume_skb:
+> > > skbaddr=0xffff962c591d4900
+> > >         ffffffffa4abe534 consume_skb+0x64 ([kernel.kallsyms])
+> > >
+> > > swapper     0 [009] 274370.145528: skb:consume_skb: skbaddr=0xffff962c591d4900
+> > >         ffffffffa4abe534 consume_skb+0x64 ([kernel.kallsyms])
+> > >
+> > > kworker/9:1-eve   926 [009] 274370.145545: skb:consume_skb:
+> > > skbaddr=0xffff962c591d4900
+> > >         ffffffffa4abe534 consume_skb+0x64 ([kernel.kallsyms])
+> > >
+> > > kworker/9:1-eve   926 [009] 274370.145547: skb:consume_skb:
+> > > skbaddr=0xffff962c591d5b00
+> > >         ffffffffa4abe534 consume_skb+0x64 ([kernel.kallsyms])
+> > >
+> > > swapper     0 [009] 274370.173443: skb:consume_skb: skbaddr=0xffff962c591d5b00
+> > >         ffffffffa4abe534 consume_skb+0x64 ([kernel.kallsyms])
+> >
+> > I can see that on upstream as well, probably something within
+> > tracepoint entry code, because I have it working nicely when
+> > from kprobe, like:
+> >
+> > [root@ibm-x3650m4-02 perf]# ./perf probe 'consume_skb'
+> > [root@ibm-x3650m4-02 perf]# ./perf record -g -e probe:consume_skb* -aR ^C
+> >
+> Thanks Jiri,
+> 
+> My debugging script is using tracepoint with some filters which I
+> don't think probe can support.
+> Any one have fixes for this tracepoint issue?
 
-Cc'ing Long with a hopefully working E-Mail address. The previous one
-bounced because I stupidly copied the wrong one...
+trying to bisect that.. looks like orc code issue,
+it works for me when you switch to fp unwind:
+  CONFIG_UNWINDER_FRAME_POINTER
 
-> On 11/4/18 5:02 AM, Thomas Gleixner wrote:
-> > Jens,
-> > 
-> > On Sat, 3 Nov 2018, Jens Axboe wrote:
-> > 
-> >> On 11/2/18 8:59 AM, Ming Lei wrote:
-> >>> Hi Jens,
-> >>>
-> >>> As I mentioned, there are at least two issues in the patch of '
-> >>> irq: add support for allocating (and affinitizing) sets of IRQs':
-> >>>
-> >>> 1) it is wrong to pass 'mask + usedvec' to irq_build_affinity_masks()
-> >>>
-> >>> 2) we should spread all possible CPUs in 2-stage way on each set of IRQs
-> >>>
-> >>> The fix isn't trivial, and I introduce two extra patches as preparation,
-> >>> then the implementation can be more clean.
-> >>>
-> >>> The patchset is against mq-maps branch of block tree, feel free to
-> >>> integrate into the whole patchset of multiple queue maps.
-> >>
-> >> Thanks Ming, I ran this through my testing, and I end up with the
-> >> same maps and affinities for all the cases I cared about. I'm going
-> >> to drop my initial version, and add the three.
-> > 
-> > So I assume, that I can pick up Mings series instead.
-> 
-> Yes, let's do that.
-> 
-> > There is another patch pending affecting the irq affinity spreading. Can
-> > you folks please have a look at it?
-> > 
-> > https://lkml.kernel.org/r/20181102180248.13583-1-longli@linuxonhyperv.com
-> 
-> I'll give that a look and test. Thanks for the heads-up.
-> 
-> -- 
-> Jens Axboe
-> 
-> 
+jirka
