@@ -2,121 +2,147 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 938A9C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 22:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD41C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 22:49:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D9562081C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 22:49:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A38MavTA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D9562081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 28E592081C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 22:49:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28E592081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388249AbeKFILK (ORCPT
+        id S2388274AbeKFIL0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 03:11:10 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34947 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387965AbeKFILJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 03:11:09 -0500
-Received: by mail-pf1-f195.google.com with SMTP id v9-v6so2828389pff.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 14:49:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=yBiEuib7sogivvLsa2U/l+lw9r7xdDHBtTHlME9ikow=;
-        b=A38MavTAPXQtIUoTnZecI5coX0ekFG/3ZDTdhuVaPy6WlnGd6Byu3+eeiNJB00tMp/
-         +dNBDcGOzZP/0YJA9ZZhiAoQ4Sy0tFcoTTJuEEtSzgOFmmRvpda54HswGYRKIkLSf2g/
-         jurj6n6PPPDHIZqRGOT8egg1eaeaCoHbdQj/e+a34rjzEXFsr7DOmqUlBlbv7iz13IFC
-         DAq46TCiC1Z6w9crj8E4fczvLa5czfeJBiA2+mcB0t4LKnVvUVFuRTUHfywlBJukgpMy
-         gGga7TIA7ctAfiVjtSW8PJJ0ZYGBzyFps4/JgM46RBWH+ZCuDhZXplUmRVewhji2Krns
-         Z9qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yBiEuib7sogivvLsa2U/l+lw9r7xdDHBtTHlME9ikow=;
-        b=H2ZxjtUKl5SaOewN+FkUD9cx63oVjShFWKHKDHKXsB3KSronqVejJ8c/ttVDilccH9
-         TMM50XXk2Zo+ZlLZoViBDa2xLbEQLAq8KXv/GRuUti13y1epMuP3t3fkk4aJ+dfPB0Ju
-         Ct+b2XsHOVETxicFTaYURmkmPbxNCaLBF8eHIoROFvRpyoR2zUjQGOeJPQpCPUrK1geS
-         IrWTBu6oNc7rqZjyyFlAx2iTEs5kEHdeIU6AIgNuN3rOsZ+INBeY5GWhOWRv88h4cY/P
-         cEF2IcJHbeaBZegu/UK5fOS26FzF/3yZJ2si+jqtwtiR8rsd1noRdeyDFZOu4Y6kybqW
-         w9Pg==
-X-Gm-Message-State: AGRZ1gKU2Yyk9PP041rxvL9EWA18ydv7eDLd4ug4ggB0+LrwTK4EcQIB
-        tYqQnqMQF7r9bKCoKGN+XtE=
-X-Google-Smtp-Source: AJdET5fW8yMom71WKsSAp0en/+h1r4Q0euEWlt4cSJemilYouVFr1+GKUXKgwooEGwXX7MM/izQqtA==
-X-Received: by 2002:a62:1095:: with SMTP id 21-v6mr23464999pfq.227.1541457656159;
-        Mon, 05 Nov 2018 14:40:56 -0800 (PST)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id 64-v6sm53777865pgb.74.2018.11.05.14.40.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 05 Nov 2018 14:40:55 -0800 (PST)
-Date:   Mon, 5 Nov 2018 14:40:51 -0800
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Robin Murphy <robin.murphy@arm.com>, m.szyprowski@samsung.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        vdumpa@nvidia.com
-Subject: Re: [PATCH RFC] dma-direct: do not allocate a single page from CMA
- area
-Message-ID: <20181105224050.GA10411@Asurada-Nvidia.nvidia.com>
-References: <20181031200355.19945-1-nicoleotsuka@gmail.com>
- <13d60076-33ad-b542-4d17-4d717d5aa4d3@arm.com>
- <20181102063542.GA17073@lst.de>
+        Tue, 6 Nov 2018 03:11:26 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52180 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387965AbeKFIL0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 03:11:26 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E242CA78;
+        Mon,  5 Nov 2018 14:49:25 -0800 (PST)
+Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8A9643F718;
+        Mon,  5 Nov 2018 14:49:25 -0800 (PST)
+Date:   Mon, 5 Nov 2018 22:49:21 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Gao Xiang <gaoxiang25@huawei.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, Miao Xie <miaoxie@huawei.com>,
+        Chao Yu <chao@kernel.org>, peterz@infradead.org
+Subject: Re: [PATCH v2] bit_spinlock: introduce smp_cond_load_relaxed
+Message-ID: <20181105224654.GA25864@brain-police>
+References: <1539413249-4402-1-git-send-email-hsiangkao@aol.com>
+ <20181030060441.16107-1-gaoxiang25@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181102063542.GA17073@lst.de>
+In-Reply-To: <20181030060441.16107-1-gaoxiang25@huawei.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 07:35:42AM +0100, Christoph Hellwig wrote:
-> On Thu, Nov 01, 2018 at 02:07:55PM +0000, Robin Murphy wrote:
-> > On 31/10/2018 20:03, Nicolin Chen wrote:
-> >> The addresses within a single page are always contiguous, so it's
-> >> not so necessary to allocate one single page from CMA area. Since
-> >> the CMA area has a limited predefined size of space, it might run
-> >> out of space in some heavy use case, where there might be quite a
-> >> lot CMA pages being allocated for single pages.
-> >>
-> >> This patch tries to skip CMA allocations of single pages and lets
-> >> them go through normal page allocations. This would save resource
-> >> in the CMA area for further more CMA allocations.
-> >
-> > In general, this seems to make sense to me. It does represent a theoretical 
-> > change in behaviour for devices which have their own CMA area somewhere 
-> > other than kernel memory, and only ever make non-atomic allocations, but 
-> > I'm not sure whether that's a realistic or common enough case to really 
-> > worry about.
+[+PeterZ -- please include him on stuff like this]
+
+Hi Gao,
+
+On Tue, Oct 30, 2018 at 02:04:41PM +0800, Gao Xiang wrote:
+> It is better to use wrapped smp_cond_load_relaxed
+> instead of open-coded busy waiting for bit_spinlock.
 > 
-> Yes, I think we should make the decision in dma_alloc_from_contiguous
-> based on having a per-dev CMA area or not.  There is a lot of cruft in
+> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+> ---
+> 
+> change log v2:
+>  - fix the incorrect expression !(VAL >> (bitnum & (BITS_PER_LONG-1)))
+>  - the test result is described in the following reply.
 
-It seems that cma_alloc() already has a CMA area check? Would it
-be duplicated to have a similar one in dma_alloc_from_contiguous?
+Please include the results in the commit message, so that this change is
+justified.
 
-> this area that should be cleaned up while we're at it, like always
-> falling back to the normal page allocator if there is no CMA area or
-> nothing suitable found in dma_alloc_from_contiguous instead of
-> having to duplicate all that in the caller.
+> diff --git a/include/linux/bit_spinlock.h b/include/linux/bit_spinlock.h
+> index bbc4730a6505..d5f922b5ffd9 100644
+> --- a/include/linux/bit_spinlock.h
+> +++ b/include/linux/bit_spinlock.h
+> @@ -15,22 +15,19 @@
+>   */
+>  static inline void bit_spin_lock(int bitnum, unsigned long *addr)
+>  {
+> -	/*
+> -	 * Assuming the lock is uncontended, this never enters
+> -	 * the body of the outer loop. If it is contended, then
+> -	 * within the inner loop a non-atomic test is used to
+> -	 * busywait with less bus contention for a good time to
+> -	 * attempt to acquire the lock bit.
+> -	 */
+> -	preempt_disable();
+>  #if defined(CONFIG_SMP) || defined(CONFIG_DEBUG_SPINLOCK)
+> -	while (unlikely(test_and_set_bit_lock(bitnum, addr))) {
+> -		preempt_enable();
+> -		do {
+> -			cpu_relax();
+> -		} while (test_bit(bitnum, addr));
+> +	const unsigned int bitshift = bitnum & (BITS_PER_LONG - 1);
+> +
+> +	while (1) {
+> +		smp_cond_load_relaxed(&addr[BIT_WORD(bitnum)],
+> +				      !((VAL >> bitshift) & 1));
+>  		preempt_disable();
+> +		if (!test_and_set_bit_lock(bitnum, addr))
+> +			break;
+> +		preempt_enable();
+>  	}
+> +#else
+> +	preempt_disable();
 
-Am I supposed to clean up things that's mentioned above by moving
-the fallback allocator into dma_alloc_from_contiguous, or to just
-move my change (the count check) into dma_alloc_from_contiguous?
+This appears to introduce a bunch of overhead for the uncontended fastpath.
+How about the much-simpler-but-completely-untested (tm) patch below?
 
-I understand that'd be great to have a cleanup, yet feel it could
-be done separately as this patch isn't really a cleanup change.
+Will
 
-Thanks
-Nicolin
+--->8
+
+diff --git a/include/asm-generic/bitops/lock.h b/include/asm-generic/bitops/lock.h
+index 3ae021368f48..9de8d3544630 100644
+--- a/include/asm-generic/bitops/lock.h
++++ b/include/asm-generic/bitops/lock.h
+@@ -6,6 +6,15 @@
+ #include <linux/compiler.h>
+ #include <asm/barrier.h>
+ 
++static inline void spin_until_bit_unlock(unsigned int nr,
++					 volatile unsigned long *p)
++{
++	unsigned long mask = BIT_MASK(bitnum);
++
++	p += BIT_WORD(nr);
++	smp_cond_load_relaxed(p, VAL & mask);
++}
++
+ /**
+  * test_and_set_bit_lock - Set a bit and return its old value, for lock
+  * @nr: Bit to set
+diff --git a/include/linux/bit_spinlock.h b/include/linux/bit_spinlock.h
+index bbc4730a6505..d711c62e718c 100644
+--- a/include/linux/bit_spinlock.h
++++ b/include/linux/bit_spinlock.h
+@@ -26,9 +26,7 @@ static inline void bit_spin_lock(int bitnum, unsigned long *addr)
+ #if defined(CONFIG_SMP) || defined(CONFIG_DEBUG_SPINLOCK)
+ 	while (unlikely(test_and_set_bit_lock(bitnum, addr))) {
+ 		preempt_enable();
+-		do {
+-			cpu_relax();
+-		} while (test_bit(bitnum, addr));
++		spin_until_bit_unlock(bitnum, addr);
+ 		preempt_disable();
+ 	}
+ #endif
