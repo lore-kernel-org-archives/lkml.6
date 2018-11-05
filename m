@@ -2,244 +2,190 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82CD4C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:43:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF3BC46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:44:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35D342085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:43:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35D342085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A59D82085B
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:44:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DoqOaX+H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A59D82085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729932AbeKFBEB (ORCPT
+        id S2387470AbeKFBEb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 20:04:01 -0500
-Received: from mga12.intel.com ([192.55.52.136]:53307 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729691AbeKFBEB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 20:04:01 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 07:43:43 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
-   d="scan'208";a="271517232"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga005.jf.intel.com with ESMTP; 05 Nov 2018 07:43:43 -0800
-Received: from [10.251.16.220] (kliang2-mobl1.ccr.corp.intel.com [10.251.16.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id B9E2C580213;
-        Mon,  5 Nov 2018 07:43:42 -0800 (PST)
-Subject: Re: [PATCH 1/2] perf: Add munmap callback
-To:     Stephane Eranian <eranian@google.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>, Andi Kleen <ak@linux.intel.com>
-References: <20181024151116.30935-1-kan.liang@linux.intel.com>
- <CABPqkBQEp9SLQuAonW7-c9HzH4bSgUyJGJ5ZZNXHy-0phHvvZQ@mail.gmail.com>
- <c7356e5d-71e2-1562-1a0b-2ca0d985d4cb@linux.intel.com>
- <CABPqkBRT678TYMbPMwsUjmazQij_qFDgu2nS7dm619ukni5EGQ@mail.gmail.com>
-From:   "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <abe1cbab-d010-0899-acb1-32b1f9bf17df@linux.intel.com>
-Date:   Mon, 5 Nov 2018 10:43:41 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 5 Nov 2018 20:04:31 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:40179 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729019AbeKFBEa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 20:04:30 -0500
+Received: by mail-io1-f68.google.com with SMTP id a23-v6so6815190iod.7;
+        Mon, 05 Nov 2018 07:44:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=fVgf0VLg5n+oXeZPA5C84Zm/xhalUPDz4PT7AkjiX14=;
+        b=DoqOaX+HrtcdLBmXNcHrZzhSgXgIACDGaqA9j9QaGH6n48DbEmIT96zCB4iuZI2BZ6
+         cz3/6D1MJIaS4dG3lS/71WAjOA2rWXxzTBILTrAk8edHrcySXjzzLx2APkHZAZ7lGPUs
+         msC+xb0ZJIqT/7EWkWWI9EFpZbeMCWC2j8o4GCCx3Egc2lmgAbSkadD8dl8kHdxqQiqN
+         SvWYV0vweIz4GRket+/Ku51WTn7WFS1pBhn2OnDROKJll/qoasrs2vaS1Fsi0TmK2iin
+         MRjNna1YRoJ6AkMqb+tOUSVBdHIzc1Zdm6K3tRP0zvoJDevvY1FbRaN8QUHAqsPG6oKs
+         aFNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=fVgf0VLg5n+oXeZPA5C84Zm/xhalUPDz4PT7AkjiX14=;
+        b=OSn0ixV03jb3t9IY6mG+qxDvlcZPDlU0YRgIgAu/6H+Rg7FvgqrPmX8qFWTBXJIlzb
+         csRmXzIqhGnvPoo/mfeBq3T691RgIjp1YUONgCjR6NSKzxQ98kakWE4jQvHig38SuixY
+         dg3xhob/wzg4gV4xGxEMCNEiw5p5FWSZvSMC/gf80rRg+UID4VLTmBQgw/U6DntEPwJu
+         DrYypxR/9psnqtXKPzuYvDmq7v9LzvEVk/ffV90Tf5I+t/5rOFO5QyTHmrUcjgfeCoKZ
+         ITHeaDAjuNDB2K7QGMH51tob/fMLYqQhuwct7JzNOoFDjEUU5Ucu0qF9lmhRFORsvkOu
+         e8aQ==
+X-Gm-Message-State: AGRZ1gKqFHzTL9+djMUCaINoa12cEDN+QG7lHwN5FjvO+vPrinUz3oqp
+        gtpjuZtcqmCoHUruRaNIjB6k0Ti1sEuvmzQkDMA=
+X-Google-Smtp-Source: AJdET5czMNaUfozTHJjFprh2ReNUKqh2Wmi0fpiUOrPRrfiXTlmCXc4FdjuoyI0jqo3W/uhCKAWbPfChicJ4QEi/W7s=
+X-Received: by 2002:a6b:e90f:: with SMTP id u15-v6mr17283835iof.200.1541432652149;
+ Mon, 05 Nov 2018 07:44:12 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CABPqkBRT678TYMbPMwsUjmazQij_qFDgu2nS7dm619ukni5EGQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181105085820.6341-1-aaron.lu@intel.com>
+In-Reply-To: <20181105085820.6341-1-aaron.lu@intel.com>
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+Date:   Mon, 5 Nov 2018 07:44:00 -0800
+Message-ID: <CAKgT0UdvYVTA8OjgLhXo9tRUOGikrCi3zJXSrqM0ZmeHb5P2mA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm/page_alloc: free order-0 pages through PCP in page_frag_free()
+To:     aaron.lu@intel.com
+Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?Q?Pawe=C5=82_Staszewski?= <pstaszewski@itcare.pl>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        ilias.apalodimas@linaro.org, yoel@kviknet.dk,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>, dave.hansen@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Nov 5, 2018 at 12:58 AM Aaron Lu <aaron.lu@intel.com> wrote:
+>
+> page_frag_free() calls __free_pages_ok() to free the page back to
+> Buddy. This is OK for high order page, but for order-0 pages, it
+> misses the optimization opportunity of using Per-Cpu-Pages and can
+> cause zone lock contention when called frequently.
+>
+> Pawe=C5=82 Staszewski recently shared his result of 'how Linux kernel
+> handles normal traffic'[1] and from perf data, Jesper Dangaard Brouer
+> found the lock contention comes from page allocator:
+>
+>   mlx5e_poll_tx_cq
+>   |
+>    --16.34%--napi_consume_skb
+>              |
+>              |--12.65%--__free_pages_ok
+>              |          |
+>              |           --11.86%--free_one_page
+>              |                     |
+>              |                     |--10.10%--queued_spin_lock_slowpath
+>              |                     |
+>              |                      --0.65%--_raw_spin_lock
+>              |
+>              |--1.55%--page_frag_free
+>              |
+>               --1.44%--skb_release_data
+>
+> Jesper explained how it happened: mlx5 driver RX-page recycle
+> mechanism is not effective in this workload and pages have to go
+> through the page allocator. The lock contention happens during
+> mlx5 DMA TX completion cycle. And the page allocator cannot keep
+> up at these speeds.[2]
+>
+> I thought that __free_pages_ok() are mostly freeing high order
+> pages and thought this is an lock contention for high order pages
+> but Jesper explained in detail that __free_pages_ok() here are
+> actually freeing order-0 pages because mlx5 is using order-0 pages
+> to satisfy its page pool allocation request.[3]
+>
+> The free path as pointed out by Jesper is:
+> skb_free_head()
+>   -> skb_free_frag()
+>     -> skb_free_frag()
+>       -> page_frag_free()
+> And the pages being freed on this path are order-0 pages.
+>
+> Fix this by doing similar things as in __page_frag_cache_drain() -
+> send the being freed page to PCP if it's an order-0 page, or
+> directly to Buddy if it is a high order page.
+>
+> With this change, Pawe=C5=82 hasn't noticed lock contention yet in
+> his workload and Jesper has noticed a 7% performance improvement
+> using a micro benchmark and lock contention is gone.
+>
+> [1]: https://www.spinics.net/lists/netdev/msg531362.html
+> [2]: https://www.spinics.net/lists/netdev/msg531421.html
+> [3]: https://www.spinics.net/lists/netdev/msg531556.html
+> Reported-by: Pawe=C5=82 Staszewski <pstaszewski@itcare.pl>
+> Analysed-by: Jesper Dangaard Brouer <brouer@redhat.com>
+> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+> ---
+>  mm/page_alloc.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+>
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index ae31839874b8..91a9a6af41a2 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -4555,8 +4555,14 @@ void page_frag_free(void *addr)
+>  {
+>         struct page *page =3D virt_to_head_page(addr);
+>
+> -       if (unlikely(put_page_testzero(page)))
+> -               __free_pages_ok(page, compound_order(page));
+> +       if (unlikely(put_page_testzero(page))) {
+> +               unsigned int order =3D compound_order(page);
+> +
+> +               if (order =3D=3D 0)
+> +                       free_unref_page(page);
+> +               else
+> +                       __free_pages_ok(page, order);
+> +       }
+>  }
+>  EXPORT_SYMBOL(page_frag_free);
+>
 
+One thing I would suggest for Pawel to try would be to reduce the Tx
+qdisc size on his transmitting interfaces, Reduce the Tx ring size,
+and possibly increase the Tx interrupt rate. Ideally we shouldn't have
+too many packets in-flight and I suspect that is the issue that Pawel
+is seeing that is leading to the page pool allocator freeing up the
+memory. I know we like to try to batch things but the issue is
+processing too many Tx buffers in one batch leads to us eating up too
+much memory and causing evictions from the cache. Ideally the Rx and
+Tx rings and queues should be sized as small as possible while still
+allowing us to process up to our NAPI budget. Usually I run things
+with a 128 Rx / 128 Tx setup and then reduce the Tx queue length so we
+don't have more buffers stored there than we can place in the Tx ring.
+Then we can avoid the extra thrash of having to pull/push memory into
+and out of the freelists. Essentially the issue here ends up being
+another form of buffer bloat.
 
-On 11/5/2018 5:59 AM, Stephane Eranian wrote:
-> Hi Kan,
-> 
-> I built a small test case for you to demonstrate the issue for code and data.
-> Compile the test program and then do:
-> For text:
-> $ perf record  ./mmap
-> $ perf report -D | fgrep MMAP2
-> 
-> The test program mmaps 2 pages, unmaps the second, and remap 1 page
-> over the freed space.
-> If you look at the MMAP2 record, you will not be able to reconstruct
-> what happened and perf will
-> get confused should it try to symbolize from the address range
-> 
-> With Text:
-> PERF_RECORD_MMAP2 5937/5937: [0x400000(0x1000) @ 0 08:01 400938
-> 824817672]: r-xp /home/eranian/mmap
-> PERF_RECORD_MMAP2 5937/5937: [0x7f7c01019000(0x2000) @ 0x7f7c01019000
-> 00:00 0 0]: rwxp //anon
-> PERF_RECORD_MMAP2 5937/5937: [0x7f7c01019000(0x2000) @ 0x7f7c01019000
-> 00:00 0 0]: rwxp //anon
-> 
-> ^^^^^^^^^^^^^^^^^^^^^^^^ captures the whole VMA but not the mapping
-> change in user space
-> 
-> For data:
-> $ perf record -d  ./mmap
-> $ perf report -D | fgrep MMAP2
-> With data:
-> PERF_RECORD_MMAP2 6430/6430: [0x400000(0x1000) @ 0 08:01 400938
-> 3278843184]: r-xp /home/eranian/mmap
-> PERF_RECORD_MMAP2 6430/6430: [0x7f4aa704b000(0x2000) @ 0x7f4aa704b000
-> 00:00 0 0]: rw-p //anon
-> PERF_RECORD_MMAP2 6430/6430: [0x7f4aa704b000(0x2000) @ 0x7f4aa704b000
-> 00:00 0 0]: rw-p //anon
-> 
-> Same test case with data.
-> Perf will think the entire 2 pages have been replaced when in fact
-> only the second has.
-> I believe the problem is likely to impact data and jitted code cache
-> 
-> #include <sys/types.h>
-> #include <stdio.h>
-> #include <unistd.h>
-> #include <sys/mman.h>
-> #include <err.h>
-> #include <getopt.h>
-> 
-> int main(int argc, char **argv)
-> {
-> void *addr1, *addr2;
-> size_t pgsz = sysconf(_SC_PAGESIZE);
-> int n = 2;
-> int ret;
-> int c, mode = 0;
-> 
-> while ((c = getopt(argc, argv, "hd")) != -1) {
-> switch (c) {
-> case 'h':
-> printf("[-h]\tget this help\n");
-> printf("[-d]\tuse data mmaps (no PROT_EXEC)\n");
-> return 0;
-> case 'd':
-> mode = PROT_EXEC;
-> break;
-> default:
-> errx(1, "unknown option");
-> }
-> }
-> /* default to data */
-> if (mode == 0)
-> mode = PROT_WRITE;
-> 
-> /*
-> * mmap 2 contiugous pages
-> */
-> addr1 = mmap(NULL, n * pgsz, PROT_READ| mode, MAP_ANONYMOUS|MAP_PRIVATE, -1, 0);
-> if (addr1 == (void *)MAP_FAILED)
-> err(1, "mmap 1 failed");
-> 
-> printf("addr1=[%p : %p]\n", addr1, addr1 + n * pgsz);
-> 
-> /*
-> * unmap only the second page
-> */
-> ret = munmap(addr1 + pgsz, pgsz);
-> if (ret == -1)
-> err(1, "munmp failed");
-> 
-> /*
-> * mmap 1 page at the location of the unmap page (should reuse virtual space)
-> * This creates a continuous region built from two mmaps and
-> potentially two different sources
-> * especially with jitted runtimes
-> */
+With that said this change should be mostly harmless and does address
+the fact that we can have both regular order 0 pages and page frags
+used for skb->head.
 
-The two mmaps are both anon. As my understanding, we cannot symbolize 
-from the anonymous address, can we?
-If we cannot, why we have to distinguish with them? I think we do not 
-need to know their sources for symbolization.
-
-As my understanding, only --jit can inject MMAP event, which tag an 
-anon. Perf can symbolize the address after that. Then the unmap is needed.
-
-Thanks,
-Kan
-> addr2 = mmap(addr1 + pgsz, 1 * pgsz, PROT_READ|PROT_WRITE | mode,
-> MAP_ANONYMOUS|MAP_PRIVATE, -1, 0);
-> 
-> printf("addr2=%p\n", addr2);
-> 
-> if (addr2 == (void *)MAP_FAILED)
-> err(1, "mmap 2 failed");
-> if (addr2 != (addr1 + pgsz))
-> errx(1, "wrong mmap2 address");
-> 
-> sleep(1);
-> 
-> return 0;
-> }
-> 
-> On Thu, Nov 1, 2018 at 7:10 AM Liang, Kan <kan.liang@linux.intel.com> wrote:
->>
->>
->>
->> On 10/24/2018 3:30 PM, Stephane Eranian wrote:
->>> The need for this new record type extends beyond physical address conversions
->>> and PEBS. A long while ago, someone reported issues with symbolization related
->>> to perf lacking munmap tracking. It had to do with vma merging. I think the
->>> sequence of mmaps was as follows in the problematic case:
->>> 1.   addr1 = mmap(8192);
->>> 2.   munmap(addr1 + 4096, 4096)
->>> 3.   addr2 = mmap(addr1+4096, 4096)
->>>
->>> If successful, that yields addr2 = addr1 + 4096 (could also get the
->>> same without forcing the address).
->>>
->>> In that case, if I recall correctly, the vma for 1st mapping (now at
->>> 4k) and that of the 2nd mapping (4k)
->>> get merged into a single 8k vma and this is what perf_events will
->>> record for PERF_RECORD_MMAP.
->>> On the perf tool side, it is assumed that if two timestamped mappings
->>> overlap then, the latter overrides
->>> the former. In this case, perf would loose the mapping of the first
->>> 4kb and assume all symbols comes from
->>> 2nd mapping. Hopefully I got the scenario right. If so, then you'd
->>> need PERF_RECORD_UNMAP to
->>> disambiguate assuming the perf tool is modified accordingly.
->>>
->>
->> Hi Stephane and Peter,
->>
->> I went through the link(https://lkml.org/lkml/2017/1/27/452). I'm trying
->> to understand the problematic case.
->>
->> It looks like the issue can only be triggered by perf inject --jit.
->> Because it can inject extra MMAP events.
->> As my understanding,  Linux kernel only try to merge VMAs if they are
->> both from anon or they are both from the same file. --jit breaks the
->> rule, and makes the merged VMA partly from anon, partly from file.
->> Now, there is a new MMAP event which range covers the modified VMA.
->> Without the help of MUNMAP event, perf tool have no idea if the new one
->> is a newly merged VMA (modified VMA + a new VMA) or a brand new VMA.
->> Current code just simply overwrite the modified VMAs. The VMA
->> information which --jit injected may be lost. The symbolization may be
->> lost as well.
->>
->> Except --jit, the VMAs information should be consistent between kernel
->> and perf tools. We shouldn't observe the problem. MUNMAP event is not
->> needed.
->>
->> Is my understanding correct?
->>
->> Do you have a test case for the problem?
->>
->> Thanks,
->> Kan
+Acked-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
