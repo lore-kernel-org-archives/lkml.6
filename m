@@ -2,35 +2,36 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FCE2C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:37:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C5DC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:37:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 264BE204FD
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:37:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 264BE204FD
+	by mail.kernel.org (Postfix) with ESMTP id C7E7620827
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:37:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7E7620827
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729481AbeKEQzR (ORCPT
+        id S1729575AbeKEQzV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 11:55:17 -0500
+        Mon, 5 Nov 2018 11:55:21 -0500
 Received: from mga05.intel.com ([192.55.52.43]:47529 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729358AbeKEQzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 11:55:15 -0500
+        id S1729293AbeKEQzU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 11:55:20 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2018 23:36:54 -0800
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2018 23:37:01 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,467,1534834800"; 
-   d="scan'208";a="88618103"
+   d="scan'208";a="88618116"
 Received: from allen-box.sh.intel.com ([10.239.161.122])
-  by orsmga006.jf.intel.com with ESMTP; 04 Nov 2018 23:36:50 -0800
+  by orsmga006.jf.intel.com with ESMTP; 04 Nov 2018 23:36:57 -0800
 From:   Lu Baolu <baolu.lu@linux.intel.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         David Woodhouse <dwmw2@infradead.org>,
@@ -44,9 +45,9 @@ Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
         iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v4 1/8] iommu: Add APIs for multiple domains per device
-Date:   Mon,  5 Nov 2018 15:34:01 +0800
-Message-Id: <20181105073408.21815-2-baolu.lu@linux.intel.com>
+Subject: [PATCH v4 3/8] iommu/vt-d: Enable/disable multiple domains per device
+Date:   Mon,  5 Nov 2018 15:34:03 +0800
+Message-Id: <20181105073408.21815-4-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181105073408.21815-1-baolu.lu@linux.intel.com>
 References: <20181105073408.21815-1-baolu.lu@linux.intel.com>
@@ -55,247 +56,127 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sharing a physical PCI device in a finer-granularity way
-is becoming a consensus in the industry. IOMMU vendors
-are also engaging efforts to support such sharing as well
-as possible. Among the efforts, the capability of support
-finer-granularity DMA isolation is a common requirement
-due to the security consideration. With finer-granularity
-DMA isolation, all DMA requests out of or to a subset of
-a physical PCI device can be protected by the IOMMU. As a
-result, there is a request in software to attach multiple
-domains to a physical PCI device. One example of such use
-model is the Intel Scalable IOV [1] [2]. The Intel vt-d
-3.0 spec [3] introduces the scalable mode which enables
-PASID granularity DMA isolation.
-
-This adds the APIs to support multiple domains per device.
-In order to ease the discussions, we call it 'a domain in
-auxiliary mode' or simply 'auxiliary domain' when multiple
-domains are attached to a physical device.
-
-The APIs includes:
-
-* iommu_get_dev_attr(dev, IOMMU_DEV_ATTR_AUXD_CAPABILITY)
-  - Represents the ability of supporting multiple domains
-    per device.
-
-* iommu_get_dev_attr(dev, IOMMU_DEV_ATTR_AUXD_ENABLED)
-  - Checks whether the device identified by @dev is working
-    in auxiliary mode.
-
-* iommu_set_dev_attr(dev, IOMMU_DEV_ATTR_AUXD_ENABLE)
-  - Enables the multiple domains capability for the device
-    referenced by @dev.
-
-* iommu_set_dev_attr(dev, IOMMU_DEV_ATTR_AUXD_DISABLE)
-  - Disables the multiple domains capability for the device
-    referenced by @dev.
-
-* iommu_attach_device_aux(domain, dev)
-  - Attaches @domain to @dev in the auxiliary mode. Multiple
-    domains could be attached to a single device in the
-    auxiliary mode with each domain representing an isolated
-    address space for an assignable subset of the device.
-
-* iommu_detach_device_aux(domain, dev)
-  - Detach @domain which has been attached to @dev in the
-    auxiliary mode.
-
-* iommu_domain_get_attr(domain, DOMAIN_ATTR_AUXD_ID)
-  - Return ID used for finer-granularity DMA translation.
-    For the Intel Scalable IOV usage model, this will be
-    a PASID. The device which supports Scalalbe IOV needs
-    to writes this ID to the device register so that DMA
-    requests could be tagged with a right PASID prefix.
-
-Many people involved in discussions of this design.
-
-Kevin Tian <kevin.tian@intel.com>
-Liu Yi L <yi.l.liu@intel.com>
-Ashok Raj <ashok.raj@intel.com>
-Sanjay Kumar <sanjay.k.kumar@intel.com>
-Jacob Pan <jacob.jun.pan@linux.intel.com>
-Alex Williamson <alex.williamson@redhat.com>
-Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-
-and some discussions can be found here [4].
-
-[1] https://software.intel.com/en-us/download/intel-scalable-io-virtualization-technical-specification
-[2] https://schd.ws/hosted_files/lc32018/00/LC3-SIOV-final.pdf
-[3] https://software.intel.com/en-us/download/intel-virtualization-technology-for-directed-io-architecture-specification
-[4] https://lkml.org/lkml/2018/7/26/4
+Add iommu ops for enabling and disabling multiple domains per
+device.
 
 Cc: Ashok Raj <ashok.raj@intel.com>
 Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
 Cc: Kevin Tian <kevin.tian@intel.com>
-Cc: Liu Yi L <yi.l.liu@intel.com>
-Suggested-by: Kevin Tian <kevin.tian@intel.com>
-Suggested-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
 Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
 ---
- drivers/iommu/iommu.c | 52 +++++++++++++++++++++++++++++++++++++++++++
- include/linux/iommu.h | 52 +++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 104 insertions(+)
+ drivers/iommu/intel-iommu.c | 65 ++++++++++++++++++++++++++++++++++++-
+ include/linux/intel-iommu.h |  1 +
+ 2 files changed, 65 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index edbdf5d6962c..0b7c96d1425e 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -2030,3 +2030,55 @@ int iommu_fwspec_add_ids(struct device *dev, u32 *ids, int num_ids)
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(iommu_fwspec_add_ids);
-+
-+/*
-+ * Generic interfaces to get or set per device IOMMU attributions.
-+ */
-+int iommu_get_dev_attr(struct device *dev, enum iommu_dev_attr attr, void *data)
-+{
-+	const struct iommu_ops *ops = dev->bus->iommu_ops;
-+
-+	if (ops && ops->get_dev_attr)
-+		return ops->get_dev_attr(dev, attr, data);
-+
-+	return -EINVAL;
-+}
-+EXPORT_SYMBOL_GPL(iommu_get_dev_attr);
-+
-+int iommu_set_dev_attr(struct device *dev, enum iommu_dev_attr attr, void *data)
-+{
-+	const struct iommu_ops *ops = dev->bus->iommu_ops;
-+
-+	if (ops && ops->set_dev_attr)
-+		return ops->set_dev_attr(dev, attr, data);
-+
-+	return -EINVAL;
-+}
-+EXPORT_SYMBOL_GPL(iommu_set_dev_attr);
-+
-+/*
-+ * APIs to attach/detach a domain to/from a device in the
-+ * auxiliary mode.
-+ */
-+int iommu_attach_device_aux(struct iommu_domain *domain, struct device *dev)
-+{
-+	int ret = -ENODEV;
-+
-+	if (domain->ops->attach_dev_aux)
-+		ret = domain->ops->attach_dev_aux(domain, dev);
-+
-+	if (!ret)
-+		trace_attach_device_to_domain(dev);
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index 298f7a3fafe8..2c86ac71c774 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -2476,6 +2476,7 @@ static struct dmar_domain *dmar_insert_one_dev_info(struct intel_iommu *iommu,
+ 	info->domain = domain;
+ 	info->iommu = iommu;
+ 	info->pasid_table = NULL;
++	info->auxd_enabled = 0;
+ 
+ 	if (dev && dev_is_pci(dev)) {
+ 		struct pci_dev *pdev = to_pci_dev(info->dev);
+@@ -5353,13 +5354,74 @@ static int intel_iommu_get_dev_attr(struct device *dev,
+ 				    enum iommu_dev_attr attr, void *data)
+ {
+ 	int ret = 0;
+-	bool *auxd_capable;
++	struct device_domain_info *info;
++	bool *auxd_capable, *auxd_enabled;
+ 
+ 	switch (attr) {
+ 	case IOMMU_DEV_ATTR_AUXD_CAPABILITY:
+ 		auxd_capable = data;
+ 		*auxd_capable = scalable_mode_support();
+ 		break;
++	case IOMMU_DEV_ATTR_AUXD_ENABLED:
++		auxd_enabled = data;
++		info = dev->archdata.iommu;
++		*auxd_enabled = info && info->auxd_enabled;
++		break;
++	default:
++		ret = -EINVAL;
++		break;
++	}
 +
 +	return ret;
 +}
-+EXPORT_SYMBOL_GPL(iommu_attach_device_aux);
 +
-+void iommu_detach_device_aux(struct iommu_domain *domain, struct device *dev)
++static int intel_iommu_enable_auxd(struct device *dev)
 +{
-+	if (domain->ops->detach_dev_aux) {
-+		domain->ops->detach_dev_aux(domain, dev);
-+		trace_detach_device_from_domain(dev);
-+	}
++	struct device_domain_info *info;
++	struct dmar_domain *domain;
++	unsigned long flags;
++
++	if (!scalable_mode_support())
++		return -ENODEV;
++
++	domain = get_valid_domain_for_dev(dev);
++	if (!domain)
++		return -ENODEV;
++
++	spin_lock_irqsave(&device_domain_lock, flags);
++	info = dev->archdata.iommu;
++	info->auxd_enabled = 1;
++	spin_unlock_irqrestore(&device_domain_lock, flags);
++
++	return 0;
 +}
-+EXPORT_SYMBOL_GPL(iommu_detach_device_aux);
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index a1d28f42cb77..9bf1b3f2457a 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -126,6 +126,7 @@ enum iommu_attr {
- 	DOMAIN_ATTR_NESTING,	/* two stages of translation */
- 	DOMAIN_ATTR_DMA_USE_FLUSH_QUEUE,
- 	DOMAIN_ATTR_MAX,
-+	DOMAIN_ATTR_AUXD_ID,
++
++static int intel_iommu_disable_auxd(struct device *dev)
++{
++	struct device_domain_info *info;
++	unsigned long flags;
++
++	spin_lock_irqsave(&device_domain_lock, flags);
++	info = dev->archdata.iommu;
++	if (!WARN_ON(!info))
++		info->auxd_enabled = 0;
++	spin_unlock_irqrestore(&device_domain_lock, flags);
++
++	return 0;
++}
++
++static int intel_iommu_set_dev_attr(struct device *dev,
++				    enum iommu_dev_attr attr, void *data)
++{
++	int ret = 0;
++
++	switch (attr) {
++	case IOMMU_DEV_ATTR_AUXD_ENABLE:
++		ret = intel_iommu_enable_auxd(dev);
++		break;
++	case IOMMU_DEV_ATTR_AUXD_DISABLE:
++		ret = intel_iommu_disable_auxd(dev);
++		break;
+ 	default:
+ 		ret = -EINVAL;
+ 		break;
+@@ -5383,6 +5445,7 @@ const struct iommu_ops intel_iommu_ops = {
+ 	.put_resv_regions	= intel_iommu_put_resv_regions,
+ 	.device_group		= pci_device_group,
+ 	.get_dev_attr		= intel_iommu_get_dev_attr,
++	.set_dev_attr		= intel_iommu_set_dev_attr,
+ 	.pgsize_bitmap		= INTEL_IOMMU_PGSIZES,
  };
  
- /* These are the possible reserved region types */
-@@ -156,6 +157,14 @@ struct iommu_resv_region {
- 	enum iommu_resv_type	type;
- };
- 
-+/* Per device IOMMU attributions */
-+enum iommu_dev_attr {
-+	IOMMU_DEV_ATTR_AUXD_CAPABILITY,
-+	IOMMU_DEV_ATTR_AUXD_ENABLED,
-+	IOMMU_DEV_ATTR_AUXD_ENABLE,
-+	IOMMU_DEV_ATTR_AUXD_DISABLE,
-+};
-+
- #ifdef CONFIG_IOMMU_API
- 
- /**
-@@ -183,6 +192,8 @@ struct iommu_resv_region {
-  * @domain_window_enable: Configure and enable a particular window for a domain
-  * @domain_window_disable: Disable a particular window for a domain
-  * @of_xlate: add OF master IDs to iommu grouping
-+ * @get_dev_attr: get per device IOMMU attributions
-+ * @set_dev_attr: set per device IOMMU attributions
-  * @pgsize_bitmap: bitmap of all possible supported page sizes
-  */
- struct iommu_ops {
-@@ -226,6 +237,15 @@ struct iommu_ops {
- 	int (*of_xlate)(struct device *dev, struct of_phandle_args *args);
- 	bool (*is_attach_deferred)(struct iommu_domain *domain, struct device *dev);
- 
-+	/* Get/set per device IOMMU attributions */
-+	int (*get_dev_attr)(struct device *dev,
-+			    enum iommu_dev_attr attr, void *data);
-+	int (*set_dev_attr)(struct device *dev,
-+			    enum iommu_dev_attr attr, void *data);
-+	/* Attach/detach aux domain */
-+	int (*attach_dev_aux)(struct iommu_domain *domain, struct device *dev);
-+	void (*detach_dev_aux)(struct iommu_domain *domain, struct device *dev);
-+
- 	unsigned long pgsize_bitmap;
- };
- 
-@@ -398,6 +418,16 @@ void iommu_fwspec_free(struct device *dev);
- int iommu_fwspec_add_ids(struct device *dev, u32 *ids, int num_ids);
- const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode);
- 
-+int iommu_get_dev_attr(struct device *dev,
-+		       enum iommu_dev_attr attr, void *data);
-+int iommu_set_dev_attr(struct device *dev,
-+		       enum iommu_dev_attr attr, void *data);
-+
-+extern int iommu_attach_device_aux(struct iommu_domain *domain,
-+				   struct device *dev);
-+extern void iommu_detach_device_aux(struct iommu_domain *domain,
-+				    struct device *dev);
-+
- #else /* CONFIG_IOMMU_API */
- 
- struct iommu_ops {};
-@@ -682,6 +712,28 @@ const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
- 	return NULL;
- }
- 
-+static inline int
-+iommu_get_dev_attr(struct device *dev, enum iommu_dev_attr attr, void *data)
-+{
-+	return -EINVAL;
-+}
-+
-+static inline int
-+iommu_set_dev_attr(struct device *dev, enum iommu_dev_attr attr, void *data)
-+{
-+	return -EINVAL;
-+}
-+
-+static inline int
-+iommu_attach_device_aux(struct iommu_domain *domain, struct device *dev)
-+{
-+	return -ENODEV;
-+}
-+
-+static inline void
-+iommu_detach_device_aux(struct iommu_domain *domain, struct device *dev)
-+{
-+}
- #endif /* CONFIG_IOMMU_API */
- 
- #ifdef CONFIG_IOMMU_DEBUGFS
+diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
+index d174724e131f..6b198e13e75e 100644
+--- a/include/linux/intel-iommu.h
++++ b/include/linux/intel-iommu.h
+@@ -552,6 +552,7 @@ struct device_domain_info {
+ 	u8 pri_enabled:1;
+ 	u8 ats_supported:1;
+ 	u8 ats_enabled:1;
++	u8 auxd_enabled:1;	/* Multiple domains per device */
+ 	u8 ats_qdep;
+ 	struct device *dev; /* it's NULL for PCIe-to-PCI bridge */
+ 	struct intel_iommu *iommu; /* IOMMU used by this device */
 -- 
 2.17.1
 
