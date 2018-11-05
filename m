@@ -8,57 +8,57 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D81C9C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:27:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CCF4C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:27:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9787B2081D
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:27:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1DA52086A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:27:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gTlZt5u6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9787B2081D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mMytgoQ+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1DA52086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730230AbeKFArK (ORCPT
+        id S1730253AbeKFArM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 19:47:10 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35908 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729760AbeKFArJ (ORCPT
+        Mon, 5 Nov 2018 19:47:12 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33245 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729691AbeKFArK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 19:47:09 -0500
-Received: by mail-pg1-f194.google.com with SMTP id z17-v6so4384747pgv.3;
-        Mon, 05 Nov 2018 07:26:56 -0800 (PST)
+        Mon, 5 Nov 2018 19:47:10 -0500
+Received: by mail-pf1-f195.google.com with SMTP id v68-v6so1000765pfk.0;
+        Mon, 05 Nov 2018 07:26:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Eps1KFA7lEghL7/4dmQbZz3ImKypsw61x2xaOWgNqDg=;
-        b=gTlZt5u6/vzKqoG3PjCr8lAQ26z5MBBKNrCnWqffkqsJlD5p6kXawKm6ffNfxxIQT/
-         RzUgUTxlCAv1sCjEsZNkIFACMb7xfs8Lf08QdG9wJHa9LQgYJuu3MhcIUwkA5OltE/nn
-         KWUp8nAdz8iaay9kFo10eXDaWTkjTFtB9ikhiraNL16qwmBh2ntT1/XRkyuKfP1lGGiQ
-         FI7II6KnWwG3hbiErSQXPqBbldUtlsEk5MczQ+hae+aNNE1xoWN+Py81rHXDX2ncKwQm
-         OLV8oNcGGdu5RmZKELszJbV6l5rOvAQ/qkcOUVX+/hxVZ2grPzjtWPRd0gsu5USArgFB
-         kANw==
+        bh=Xmf2+4FWEijlIl5vfn4kRuEeTCFhKbTHKq/ZS3i4VVc=;
+        b=mMytgoQ+feOD4pXKV7Q0BG2xGIob9XjLF69CozYMPGeEVDYR21ZYZL/AF/SHhA18lV
+         lg6J1Sl/mLwgPwuPQ3//6M2VqZ84zYiLYKDtyQQmgUpMDNEYvpGn4/xxPreY1IeF/UMp
+         PWDQ+wI5LNYon8VZttDpd8+jNFihUJuAFbQ9LYojXBxpprH9PoMt+znhsIiyHHssqLpV
+         0sRF5Z/fTA7MnV7MT+pF2yI1KacsbyCVnyWyVn+rPIXOa1PeJ9yYALWkeMtVYeL5htAS
+         sonArD5Jrlv8wALrCbzCT7Z9KLa9q20oB4hOQgR5vuDszDIPGNdVh/ECdwepvycdbzkx
+         gtcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Eps1KFA7lEghL7/4dmQbZz3ImKypsw61x2xaOWgNqDg=;
-        b=kwmTIDK6t9f0FWAzCt0qNF+K/CLNVx+0yT5l7hBbIlLUAY6UGLpXETlZnWspdcw9qa
-         5Q7BGVV8GsYy0g/itW2VTIzGXZtYaJe+OcHE0mSSqUEOBTYQjGQijAv6jmE2oQxeP2r9
-         UvcNBG8EEYfpfPOHSgr9c92J1pUXV+6fU6F7BgT0Iw33UGMysFID1pupR9FfL2g1VraV
-         cpmy+YfMimWbasrxeikcbK9n0OHqNznuNGF/psvz4YMtyzcLCVlTjFv3pcB6ZDSFpWcx
-         4jIVaSJWOG96KdtWvw53582c0eLUDmAPqBjI1yzYhRv0CM9CGPHK2OGW1xoCcJ9AedF0
-         YLiw==
-X-Gm-Message-State: AGRZ1gJKOGhuQ3YpZ2H7UXhc3RZvvT9hIZPTuM+Lj9SRLjYCrH90vEc5
-        qOYg+XZfNpF1pHC7WtyvFXj+0yQh
-X-Google-Smtp-Source: AJdET5el0E2+PBwqJW9dh4BMEuo83mkeQc3jYFOppW0RBR0EZIN6ZXgfPkxK0Uag69Vo4Ew5+zGS5A==
-X-Received: by 2002:a63:3c44:: with SMTP id i4mr20326569pgn.286.1541431616477;
-        Mon, 05 Nov 2018 07:26:56 -0800 (PST)
+        bh=Xmf2+4FWEijlIl5vfn4kRuEeTCFhKbTHKq/ZS3i4VVc=;
+        b=Q0VpQeEsRDUiYEkR7XKa4d6xjRcV8BLfneUeVCNHYGg2G5DWGmmDRiCGWOLz/r39sV
+         b02lFyTkk58GL8VQ+LjHAdwrBndUTDNthdD71ipdqGp7CWTvLCgYf6pKegqCp4WxzKty
+         bsPS6BdtXti+VjY0VCqJKQR6DBaLg7Ewn/a8cgUcwWr3Y1tJmQQ13obM0K8wN0kEk9MB
+         w0OIM7jdPc00UeiG2arW/QYTjSlwazmabJd/65ZbQypI0FeXtvomY+MQcU0c8iwoGawo
+         vetrDmqH8HWI+9eRMIaz6ocyXGhvMgaZIyKWQMxch8pW+J5k7+rRfG/jCHlpBp2NDJg2
+         vy2A==
+X-Gm-Message-State: AGRZ1gKHt4ZGNDgmqhaDeseZ34rHfdKew8qye1/AiBzXJNhwRkJLTa0K
+        F493eRQxCkrCWUzajFSnCs4=
+X-Google-Smtp-Source: AJdET5esmi2VWzhsDDLO+BkRwznlxVGW+PVMUFk7YPTwOMh9KjI2XzSAo1JOI3PK2rcMeX0a3YnHkg==
+X-Received: by 2002:a62:3501:: with SMTP id c1-v6mr7008011pfa.173.1541431617720;
+        Mon, 05 Nov 2018 07:26:57 -0800 (PST)
 Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id u76-v6sm37260578pfa.176.2018.11.05.07.26.54
+        by smtp.gmail.com with ESMTPSA id u76-v6sm37260578pfa.176.2018.11.05.07.26.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 05 Nov 2018 07:26:55 -0800 (PST)
+        Mon, 05 Nov 2018 07:26:57 -0800 (PST)
 From:   frowand.list@gmail.com
 To:     Rob Herring <robh+dt@kernel.org>,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
@@ -68,9 +68,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
-Subject: [PATCH v6 03/18] of: overlay: add missing of_node_get() in __of_attach_node_sysfs
-Date:   Mon,  5 Nov 2018 07:25:00 -0800
-Message-Id: <1541431515-25197-4-git-send-email-frowand.list@gmail.com>
+Subject: [PATCH v6 04/18] powerpc/pseries: add of_node_put() in dlpar_detach_node()
+Date:   Mon,  5 Nov 2018 07:25:01 -0800
+Message-Id: <1541431515-25197-5-git-send-email-frowand.list@gmail.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1541431515-25197-1-git-send-email-frowand.list@gmail.com>
 References: <1541431515-25197-1-git-send-email-frowand.list@gmail.com>
@@ -81,64 +81,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Frank Rowand <frank.rowand@sony.com>
 
-There is a matching of_node_put() in __of_detach_node_sysfs()
+"of: overlay: add missing of_node_get() in __of_attach_node_sysfs"
+added a missing of_node_get() to __of_attach_node_sysfs().  This
+results in a refcount imbalance for nodes attached with
+dlpar_attach_node().  The calling sequence from dlpar_attach_node()
+to __of_attach_node_sysfs() is:
 
-Remove misleading comment from function header comment for
-of_detach_node().
-
-This patch may result in memory leaks from code that directly calls
-the dynamic node add and delete functions directly instead of
-using changesets.
+   dlpar_attach_node()
+      of_attach_node()
+         __of_attach_node_sysfs()
 
 Tested-by: Alan Tull <atull@kernel.org>
 Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 ---
 
-This patch should result in powerpc systems that dynamically
-allocate a node, then later deallocate the node to have a
-memory leak when the node is deallocated.
+***** UNTESTED.  I need people with the affected PowerPC systems
+*****            (systems that dynamically allocate and deallocate
+*****            devicetree nodes) to test this patch.
 
-The next patch in the series will fix the leak.
+ arch/powerpc/platforms/pseries/dlpar.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- drivers/of/dynamic.c | 3 ---
- drivers/of/kobj.c    | 4 +++-
- 2 files changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
-index 12c3f9a15e94..146681540487 100644
---- a/drivers/of/dynamic.c
-+++ b/drivers/of/dynamic.c
-@@ -272,9 +272,6 @@ void __of_detach_node(struct device_node *np)
- 
- /**
-  * of_detach_node() - "Unplug" a node from the device tree.
-- *
-- * The caller must hold a reference to the node.  The memory associated with
-- * the node is not freed until its refcount goes to zero.
-  */
- int of_detach_node(struct device_node *np)
- {
-diff --git a/drivers/of/kobj.c b/drivers/of/kobj.c
-index 7a0a18980b98..c72eef988041 100644
---- a/drivers/of/kobj.c
-+++ b/drivers/of/kobj.c
-@@ -133,6 +133,9 @@ int __of_attach_node_sysfs(struct device_node *np)
- 	}
- 	if (!name)
- 		return -ENOMEM;
-+
-+	of_node_get(np);
-+
- 	rc = kobject_add(&np->kobj, parent, "%s", name);
- 	kfree(name);
+diff --git a/arch/powerpc/platforms/pseries/dlpar.c b/arch/powerpc/platforms/pseries/dlpar.c
+index 7625546caefd..17958043e7f7 100644
+--- a/arch/powerpc/platforms/pseries/dlpar.c
++++ b/arch/powerpc/platforms/pseries/dlpar.c
+@@ -270,6 +270,8 @@ int dlpar_detach_node(struct device_node *dn)
  	if (rc)
-@@ -159,6 +162,5 @@ void __of_detach_node_sysfs(struct device_node *np)
- 		kobject_del(&np->kobj);
- 	}
+ 		return rc;
  
--	/* finally remove the kobj_init ref */
- 	of_node_put(np);
++	of_node_put(dn);
++
+ 	return 0;
  }
+ 
 -- 
 Frank Rowand <frank.rowand@sony.com>
 
