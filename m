@@ -2,128 +2,96 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5F69C46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:03:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A594AC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:04:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BD6520819
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:03:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BD6520819
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 6BB872081D
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:04:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jgGb5QqM";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ODWpg/8h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BB872081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729931AbeKEWWu (ORCPT
+        id S1729680AbeKEWXn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 17:22:50 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42852 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729016AbeKEWWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 17:22:50 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3F7B9AFDE;
-        Mon,  5 Nov 2018 13:03:09 +0000 (UTC)
-Subject: Re: [PATCH 2] mm/kvmalloc: do not call kmalloc for size >
- KMALLOC_MAX_SIZE
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, linux-kernel@vger.kernel.org
-References: <154106356066.887821.4649178319705436373.stgit@buzz>
- <154106695670.898059.5301435081426064314.stgit@buzz>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <80074d2a-2f8d-a9db-892b-105c0ad7cd47@suse.cz>
-Date:   Mon, 5 Nov 2018 14:03:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 5 Nov 2018 17:23:43 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:56086 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728947AbeKEWXn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 17:23:43 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id B2BEB60A9B; Mon,  5 Nov 2018 13:04:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541423043;
+        bh=QGWrXapZwbXXg2Kid/RGYWzhZ0Ud3t3dvZtwLIfpFWc=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=jgGb5QqMSY9yKW6OUGoQO/wKBeUwULewkz+8O6fXbptoWAHE8Q4sp+/go/q4lw1kK
+         mQuYWp+uWc3oSFj0uz2T2Ky77wBUSX6LAISpOp5BhtiH5o6+r4Ue0VY2JU1Pqib5Lb
+         3o9/i5ZUwISLK0EvzaNUrh95YyuaDluoknVxM1hM=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5A4EB60316;
+        Mon,  5 Nov 2018 13:04:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541423043;
+        bh=QGWrXapZwbXXg2Kid/RGYWzhZ0Ud3t3dvZtwLIfpFWc=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=ODWpg/8haxwsRvn/nqPXphXn5CFRWEWoFEGwjGZ/AIpmLXbSCBLNZSa6yJD8OdF8H
+         p7z9O6rpOp6xQw1dP6rpWSH/TY0Ijf0OK0EstSX6UiNiVz9cyZmhTsStS3EMTcelLN
+         jhZ2a0l2rOOWWM1k5FP2ZaCZb77lkVVEUndKMsoE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5A4EB60316
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <154106695670.898059.5301435081426064314.stgit@buzz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 1/4] ath10k: snoc: remove 'wcn3990' from generic resource
+ handling
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20181013005504.46399-1-briannorris@chromium.org>
+References: <20181013005504.46399-1-briannorris@chromium.org>
+To:     Brian Norris <briannorris@chromium.org>
+Cc:     Kalle Valo <kvalo@qca.qualcomm.com>, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org,
+        Govind Singh <govinds@codeaurora.org>,
+        Doug Anderson <dianders@chromium.org>,
+        <linux-kernel@vger.kernel.org>,
+        Brian Norris <briannorris@chromium.org>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20181105130403.B2BEB60A9B@smtp.codeaurora.org>
+Date:   Mon,  5 Nov 2018 13:04:03 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/1/18 11:09 AM, Konstantin Khlebnikov wrote:
-> Allocations over KMALLOC_MAX_SIZE could be served only by vmalloc.
+Brian Norris <briannorris@chromium.org> wrote:
+
+> ath10k_wcn3990_clk_info and ath10k_wcn3990_vreg_info are not
+> WCN3990-specific structures. They hold generic data. So don't name them
+> with wcn3990 specifics.
 > 
-> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Makes sense regardless of warnings stuff.
+This patchset (I think it was with the first patch, but not sure) had some
+conflicts but 3-way merge was able to automatically solve them. Please check
+the end result anyway:
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git/commit/?h=pending&id=77adda81e264e0c93af9570ac4ada82a5d0f5d99
 
-But it must be moved below the GFP_KERNEL check!
+-- 
+https://patchwork.kernel.org/patch/10639795/
 
-> ---
->  mm/util.c |    4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/mm/util.c b/mm/util.c
-> index 8bf08b5b5760..f5f04fa22814 100644
-> --- a/mm/util.c
-> +++ b/mm/util.c
-> @@ -392,6 +392,9 @@ void *kvmalloc_node(size_t size, gfp_t flags, int node)
->  	gfp_t kmalloc_flags = flags;
->  	void *ret;
->  
-> +	if (size > KMALLOC_MAX_SIZE)
-> +		goto fallback;
-> +
->  	/*
->  	 * vmalloc uses GFP_KERNEL for some internal allocations (e.g page tables)
->  	 * so the given set of flags has to be compatible.
-> @@ -422,6 +425,7 @@ void *kvmalloc_node(size_t size, gfp_t flags, int node)
->  	if (ret || size <= PAGE_SIZE)
->  		return ret;
->  
-> +fallback:
->  	return __vmalloc_node_flags_caller(size, node, flags,
->  			__builtin_return_address(0));
->  }
-> 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
