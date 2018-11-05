@@ -2,172 +2,94 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3DE8ECDE44
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:11:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 211DAC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:11:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 695DC20854
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:11:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 695DC20854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id D380120854
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:11:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="BwDJ6BHt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D380120854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbeKESaW (ORCPT
+        id S1728562AbeKESa2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 13:30:22 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:45913 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726958AbeKESaW (ORCPT
+        Mon, 5 Nov 2018 13:30:28 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44925 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726958AbeKESa1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 13:30:22 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 1F6A0807E4; Mon,  5 Nov 2018 10:11:34 +0100 (CET)
-Date:   Mon, 5 Nov 2018 10:11:35 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-media@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        James Cameron <quozl@laptop.org>
-Subject: Re: [PATCH 06/11] [media] marvell-ccic: drop ctlr_reset()
-Message-ID: <20181105091135.GB3004@amd>
-References: <20181105073054.24407-1-lkundrak@v3.sk>
- <20181105073054.24407-7-lkundrak@v3.sk>
+        Mon, 5 Nov 2018 13:30:27 -0500
+Received: by mail-wr1-f67.google.com with SMTP id j17-v6so3449739wrq.11
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 01:11:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:references:cc:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding;
+        bh=ZaoArPrTwYU4hI21Rt0EWf2M/5RvCoKRpba4MYaagb4=;
+        b=BwDJ6BHthF7TMNlQsPCz6bgbiKLuNmzOMK2n0Ui7qvtP/tYJOcD49BX8zNT6nLlZ+1
+         kGNOJ8ObUA5StkfGgnSfnFA/jMO55epnNPclj0LT7aAvCN2e6iUgteBSyD6LrSNEbfiF
+         /3WQzzWdqPa3OwAUf6/k4hLEGwBQAnxqFUbwY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=ZaoArPrTwYU4hI21Rt0EWf2M/5RvCoKRpba4MYaagb4=;
+        b=pVeSePANKf3tOD/K1RwmBqcGrzJhXILD6dvQ3eOZb1rbKo3jfz2PYJoEk055nMiXOh
+         qOFRzDwBeEmy3w69rKeQl5ePXeb5NL9zknY7mOjXkmyVSbCjQDG7fZRFOJmDLmJyV/uN
+         FWCaciF+BaljVq9NWvJaGL2hOazukQxk0D7GqS7MVgaR1gnsLUD/ejlSozb4dnDSTCxS
+         4zQgxmDGV4Z3P/9472RWz8LPfQ2ePpyXr7FAGJTE/u0C5teirk+602arNTog+NEmgFoN
+         W/792awkrRe0frMrCUPmlEnTXHIAxnVDPv0scd6SDxqw1Aw4xOJnicS7Pl2jJOwokOqg
+         hf5Q==
+X-Gm-Message-State: AGRZ1gItzHz2euVznByuaKnl+csxu+jpGHbdUGUYkB5bXZnhSjcH2apk
+        x+yMnjasNIBkfP/SbX+uO8Eg7okLGJLfoQ==
+X-Google-Smtp-Source: AJdET5fiqP7FzSHEWO/x9nnBWrz/2BcOoBq50gBNzJ9RuCd7M4BGIycXWjXshw0PKhcSsgDsbbhvmQ==
+X-Received: by 2002:adf:fb4b:: with SMTP id c11-v6mr18093152wrs.117.1541409103326;
+        Mon, 05 Nov 2018 01:11:43 -0800 (PST)
+Received: from [10.176.68.125] ([192.19.248.250])
+        by smtp.gmail.com with ESMTPSA id i7-v6sm66453201wrb.30.2018.11.05.01.11.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Nov 2018 01:11:42 -0800 (PST)
+Subject: Re: [PATCH 5/5] b43: Drop internal cordic algorithm implementation
+To:     Kalle Valo <kvalo@codeaurora.org>, Priit Laes <plaes@plaes.org>
+References: <cover.f21c8e62e188620d586edb3f77514e6237122c4c.1541238842.git-series.plaes@plaes.org>
+ <51f98dbd0efe48c315d8e7876074aeaa22fde580.1541238842.git-series.plaes@plaes.org>
+ <87y3a7gaag.fsf@codeaurora.org>
+Cc:     linux-kernel@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
+        netdev@vger.kernel.org
+From:   Arend van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <dff744c6-8256-cd52-dc69-37ea51106950@broadcom.com>
+Date:   Mon, 5 Nov 2018 10:11:41 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="LpQ9ahxlCli8rRTG"
-Content-Disposition: inline
-In-Reply-To: <20181105073054.24407-7-lkundrak@v3.sk>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <87y3a7gaag.fsf@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 11/5/2018 10:09 AM, Kalle Valo wrote:
+> Priit Laes <plaes@plaes.org> writes:
+>
+>> Signed-off-by: Priit Laes <plaes@plaes.org>
+>
+> No empty commit logs, please.
+>
+> And IMHO you could fold patch 5 into patch 4.
 
---LpQ9ahxlCli8rRTG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Similarly 2 and 3.
 
-On Mon 2018-11-05 08:30:49, Lubomir Rintel wrote:
-> This accesses the clock registers directly and thus is not too
-> devicetree friendly. If it's actually needed it needs to be done
-> differently.
+Regards,
+Arend
 
-Device-tree unfriendly is bad, but you still don't want to cause
-regression to people needing this.
-
-(Perhaps noone uses this, but...)
-
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-
-Git blame says: 7c269f454 . Perhaps its authors should be Cced here,
-too?
-								Pavel
-
-> ---
->  .../media/platform/marvell-ccic/mcam-core.c   |  6 -----
->  .../media/platform/marvell-ccic/mcam-core.h   |  1 -
->  .../media/platform/marvell-ccic/mmp-driver.c  | 23 -------------------
->  3 files changed, 30 deletions(-)
->=20
-> diff --git a/drivers/media/platform/marvell-ccic/mcam-core.c b/drivers/me=
-dia/platform/marvell-ccic/mcam-core.c
-> index d24e5b7a3bc5..1b879035948c 100644
-> --- a/drivers/media/platform/marvell-ccic/mcam-core.c
-> +++ b/drivers/media/platform/marvell-ccic/mcam-core.c
-> @@ -1154,12 +1154,6 @@ static void mcam_vb_stop_streaming(struct vb2_queu=
-e *vq)
->  	if (cam->state !=3D S_STREAMING)
->  		return;
->  	mcam_ctlr_stop_dma(cam);
-> -	/*
-> -	 * Reset the CCIC PHY after stopping streaming,
-> -	 * otherwise, the CCIC may be unstable.
-> -	 */
-> -	if (cam->ctlr_reset)
-> -		cam->ctlr_reset(cam);
->  	/*
->  	 * VB2 reclaims the buffers, so we need to forget
->  	 * about them.
-> diff --git a/drivers/media/platform/marvell-ccic/mcam-core.h b/drivers/me=
-dia/platform/marvell-ccic/mcam-core.h
-> index ad8955f9f0a1..f93f23faf364 100644
-> --- a/drivers/media/platform/marvell-ccic/mcam-core.h
-> +++ b/drivers/media/platform/marvell-ccic/mcam-core.h
-> @@ -137,7 +137,6 @@ struct mcam_camera {
->  	int (*plat_power_up) (struct mcam_camera *cam);
->  	void (*plat_power_down) (struct mcam_camera *cam);
->  	void (*calc_dphy) (struct mcam_camera *cam);
-> -	void (*ctlr_reset) (struct mcam_camera *cam);
-> =20
->  	/*
->  	 * Everything below here is private to the mcam core and
-> diff --git a/drivers/media/platform/marvell-ccic/mmp-driver.c b/drivers/m=
-edia/platform/marvell-ccic/mmp-driver.c
-> index 70a2833db0d1..92a79ad8a12c 100644
-> --- a/drivers/media/platform/marvell-ccic/mmp-driver.c
-> +++ b/drivers/media/platform/marvell-ccic/mmp-driver.c
-> @@ -183,28 +183,6 @@ static void mmpcam_power_down(struct mcam_camera *mc=
-am)
->  	mcam_clk_disable(mcam);
->  }
-> =20
-> -static void mcam_ctlr_reset(struct mcam_camera *mcam)
-> -{
-> -	unsigned long val;
-> -	struct mmp_camera *cam =3D mcam_to_cam(mcam);
-> -
-> -	if (mcam->ccic_id) {
-> -		/*
-> -		 * Using CCIC2
-> -		 */
-> -		val =3D ioread32(cam->power_regs + REG_CCIC2_CRCR);
-> -		iowrite32(val & ~0x2, cam->power_regs + REG_CCIC2_CRCR);
-> -		iowrite32(val | 0x2, cam->power_regs + REG_CCIC2_CRCR);
-> -	} else {
-> -		/*
-> -		 * Using CCIC1
-> -		 */
-> -		val =3D ioread32(cam->power_regs + REG_CCIC_CRCR);
-> -		iowrite32(val & ~0x2, cam->power_regs + REG_CCIC_CRCR);
-> -		iowrite32(val | 0x2, cam->power_regs + REG_CCIC_CRCR);
-> -	}
-> -}
-> -
->  /*
->   * calc the dphy register values
->   * There are three dphy registers being used.
-> @@ -352,7 +330,6 @@ static int mmpcam_probe(struct platform_device *pdev)
->  	mcam =3D &cam->mcam;
->  	mcam->plat_power_up =3D mmpcam_power_up;
->  	mcam->plat_power_down =3D mmpcam_power_down;
-> -	mcam->ctlr_reset =3D mcam_ctlr_reset;
->  	mcam->calc_dphy =3D mmpcam_calc_dphy;
->  	mcam->dev =3D &pdev->dev;
->  	mcam->use_smbus =3D 0;
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---LpQ9ahxlCli8rRTG
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlvgCUcACgkQMOfwapXb+vL/EQCfTvq7om7dzfYtQC4RLAqHwqtQ
-8fsAn3V2YfVKotiBeGNyzlUwTMaD++aK
-=fPCW
------END PGP SIGNATURE-----
-
---LpQ9ahxlCli8rRTG--
