@@ -2,123 +2,95 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ADB6C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:55:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53A50C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:55:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15A4E20825
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:55:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15A4E20825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 175CC20854
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:55:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 175CC20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728827AbeKEVOw (ORCPT
+        id S1729037AbeKEVPF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 16:14:52 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:59584 "EHLO mx1.redhat.com"
+        Mon, 5 Nov 2018 16:15:05 -0500
+Received: from foss.arm.com ([217.140.101.70]:41764 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726358AbeKEVOw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 16:14:52 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3A9A7308212A;
-        Mon,  5 Nov 2018 11:55:30 +0000 (UTC)
-Received: from dhcp-4-67.tlv.redhat.com (dhcp-4-67.tlv.redhat.com [10.35.4.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4BAF8672C2;
-        Mon,  5 Nov 2018 11:55:26 +0000 (UTC)
-Message-ID: <71ed924dfecf358f6e13a0d1897f94e148058b4a.camel@redhat.com>
-Subject: Re: [PATCH 0/1] vhost: add vhost_blk driver
-From:   Maxim Levitsky <mlevitsk@redhat.com>
-To:     Vitaly Mayatskih <v.mayatskih@gmail.com>
-Cc:     "Michael S . Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 05 Nov 2018 13:55:24 +0200
-In-Reply-To: <CAGF4SLhxvC5WN8W_ApoqMTe1i1r8FwX92Bb9UewpNwkKCZepnQ@mail.gmail.com>
-References: <20181102182123.29420-1-v.mayatskih@gmail.com>
-         <bf92bdb6dcb0e94014b3e1ffc8acce260a3df61e.camel@redhat.com>
-         <CAGF4SLhxvC5WN8W_ApoqMTe1i1r8FwX92Bb9UewpNwkKCZepnQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Mon, 05 Nov 2018 11:55:30 +0000 (UTC)
+        id S1728850AbeKEVPE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 16:15:04 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A38A480D;
+        Mon,  5 Nov 2018 03:55:42 -0800 (PST)
+Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4E7413F5BD;
+        Mon,  5 Nov 2018 03:55:41 -0800 (PST)
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, vladimir.murzin@arm.com,
+        will.deacon@arm.com, catalin.marinas@arm.com, mark.rutland@arm.com,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH 0/7] arm64: capabilities: Optimize checking and enabling
+Date:   Mon,  5 Nov 2018 11:55:10 +0000
+Message-Id: <1541418917-14219-1-git-send-email-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-11-04 at 11:40 -0500, Vitaly Mayatskih wrote:
-> On Sun, Nov 4, 2018 at 6:57 AM Maxim Levitsky <mlevitsk@redhat.com> wrote:
-> 
-> > Hi!
-> > I am also working in this area, and so I am very intersted in this driver.
-> > 
-> > > 1  171k  151k  148k 151k 195k  187k  175k
-> > 
-> > If I understand correctly this is fio --numjobs=1?
-> > It looks like you are getting better that native performance over bare metal
-> > in
-> > E,F,G (vhost-blk cases in fact). Is this correct?
-> 
-> Yes. At such speeds it is a matter of how the workers are scheduled,
-> i.e. how good is batching. There are other factors why vhost-blk is on
-> par or slightly higher than fio running in userspace on bare metal,
-> but from my observation the right batching all through the stack is
-> more important.
+We maintain two separate tables (i.e, arm64_features and arm64_errata) of
+struct arm64_cpu_capabilities which decide the capabilities of the system.
+We iterate over the two tables for detecting/verifying/enabling the capabilities.
+e.g, this_cpu_has_cap() needs to iterate over the two tables one by one to
+find the "capability" structure corresponding to the cap number and then
+check it on the CPU.
 
-I completely agree with you on that.
-I currently learning profiling/tracing to understand the batching (or lack of)
-in the tests I run
+Also, we enable all the non-boot scoped capabilities after all the SMP cpus
+are brought up by the kernel, using stop_machine() for each available
+capability. We could batch all the "enabling" activity to a single
+stop_machine() callback. But that implies you need a way to map
+a given capability number to the corresponding capability entry
+to finish the operation quickly.
 
-My focus currently is mostly on spdk + native nvme
-While for multiple threads, the performance is very close to bare metal, on
-single thread I see significant overhead which probably relate to batching as
-well.
+So we need a quicker way to access the entry for a given capability.
+We have two choices :
 
-> 
-> > Could you share the full fio command line you have used?
-> 
-> sysctl -w vm.nr_hugepages=8300; numactl -p 1 -N 1 ./qemu-system-x86_64
-> -enable-kvm -cpu host -smp 16 -mem-prealloc -mem-path
-> /dev/hugepages/foo -m 8G -nographic -drive
-> if=none,id=drive0,format=raw,file=/dev/mapper/mirror-hello,cache=none
-> -device virtio-blk-pci,id=blk0,drive=drive0,num-queues=16 -drive
-> if=none,id=drive1,format=raw,file=/dev/mapper/mirror-volume,cache=none
-> -device vhost-blk-pci,id=blk1,drive=drive1,num-queues=16
-Thanks!
+ 1) Unify both the tables to a static/dynamic sorted entry based on
+    the capability number. This has the following drawbacks :
+     a) The entries must be unique. i.e, no duplicate entries for a
+        capability.
+     b) Looses the separation of "features" vs. "errata" classification
+     c) Statically sorting the list is error prone. Runtime sorting the
+        array means more time for booting.
 
-> 
-> for i in `seq 1 16`; do echo -n "$i "; ./fio --direct=1 --rw=randread
-> --ioengine=libaio --bs=4k --iodepth=128 --numjobs=$i --name=foo
-> --time_based --runtime=15 --group_reporting --filename=/dev/vda
-> --size=10g | grep -Po 'IOPS=[0-9\.]*k'; done
-> 
-> > Which IO device did you use for the test? NVME?
-> 
-> That was LVM mirror over 2 network disks. On the target side it was
-> LVM stripe over few NVMe's.
-Have you tried to test this over directly connected NVME device to?
-The networking might naturally improve batching I think.
+ 2) Keep an array of pointers to the capability sorted at boot time
+    based on the capability.
+     a) As for (1), the entries must be unique for a capability.
 
-> 
-> > Which system (cpu model/number of cores/etc) did you test on?
-> 
-> Dual socket: "model name    : Intel(R) Xeon(R) Gold 6142 CPU @
-> 2.60GHz" with HT enabled, so 64 logical cores in total. The network
-> was something from Intel with 53 Gbps PHY and served by fm10k driver.
+This series implements (2) and uses the new list for optimizing the
+operations on the entries. As a prepatory step, we remove the
+duplicate entries for the same capabilities (Patch 1-3).
 
 
-All right, thanks!
-I'll test your driver on my system where I tested most of the current solutions.
+Suzuki K Poulose (7):
+  arm64: capabilities: Merge entries for ARM64_WORKAROUND_CLEAN_CACHE
+  arm64: capabilities: Merge duplicate Cavium erratum entries
+  arm64: capabilities: Merge duplicate entries for Qualcomm erratum 1003
+  arm64: capabilities: Speed up capability lookup
+  arm64: capabilities: Optimize this_cpu_has_cap
+  arm64: capabilities: Use linear array for detection and verification
+  arm64: capabilities: Batch cpu_enable callbacks
 
-Best regards,
-	Maxim Levitsky
+ arch/arm64/include/asm/cpufeature.h |   3 +
+ arch/arm64/include/asm/cputype.h    |   2 +
+ arch/arm64/kernel/cpu_errata.c      |  94 ++++++++++----------
+ arch/arm64/kernel/cpufeature.c      | 165 ++++++++++++++++++++----------------
+ 4 files changed, 145 insertions(+), 119 deletions(-)
 
-
+-- 
+2.7.4
 
