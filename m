@@ -2,115 +2,181 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA31C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:27:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 193DFC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:28:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AD022081C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:27:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C81562081C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:28:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F5deEllX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AD022081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b="Ng1/C3vf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C81562081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=telus.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387790AbeKFGso (ORCPT
+        id S2387888AbeKFGuH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 01:48:44 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:35852 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387441AbeKFGso (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 01:48:44 -0500
-Received: by mail-qt1-f194.google.com with SMTP id u34-v6so332631qth.3;
-        Mon, 05 Nov 2018 13:27:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to;
-        bh=DcC0pFPJZUeRip5hRD3kg2PTYmCGhavKEeGXEMus5o4=;
-        b=F5deEllXvSPfhYZiDN3+CbB3Y8uCng/SkYw1W6qt5LMNSMOLaA/xxUAO2Z5GpPf3jg
-         VEWO6ulpbcCxkfcFyTF19OoDgqOXtTzMveU1U0zI0QJvwTGS4NNemYOg9ven6NaCc5KX
-         JTv2fOh7VEVLlLZZyWNUdnjI37oZlgehfGI9asvqjG7la0l45jTa4HYfZdlGWszUKcQo
-         5fwp+ltVVqNIYGRoiGi0mMn09v8AoFUhL9ZJeNP3WsZHTn41CGMDIRZr2zo+D+iY2RPC
-         7wjpTy0/IO/isd8oIEUZOZkFpeXMcLd2KgEmngtQmy22RS6d9e4I667WS6BnZYkrvBnw
-         eZxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to;
-        bh=DcC0pFPJZUeRip5hRD3kg2PTYmCGhavKEeGXEMus5o4=;
-        b=cc/YJllda5EUXRgeTOKCYRuNzgCo8L3lH8UO9f20cHu6n15Pailt5BFeCT5iseaSGK
-         2yVzwYWWr+Ujd7auZSGwLxcx1kqlqSFrinJ0LiPO+BhkqXBChp6AK4uJP1IJFkFUlykP
-         A1CLdGzkzvHRwKkDmpQJFWpY7IpndAav9UgRC5jvL+RJpoxb8OnThOQyswOeFMjBv6M+
-         GW9rSv+FYwz/BLSoq7SXVTw76AYGsIJ5n1XOea9gMQz8nZbdKDxGIsX0c5DJ5UE7uvCw
-         teStXMQ5L0B1I63F00Vhn0GreWs46VCf0PxGQ0/5r8Y58N4Rr8im9KkoomU4CIuDD3gk
-         DBsQ==
-X-Gm-Message-State: AGRZ1gKV9SX86Zi4NKe4YpZhKEvrxaI4byKNDZgPvMOALZ1wZ0DXetUP
-        4Zie8Ne7rzxZ8oKF3YnvsaZUpBIke5xig1ZN6IU=
-X-Google-Smtp-Source: AJdET5evkQbUdcsJFfbYhrNf+M8HKFWaG2DQHY6mouCutNPbRl56iie29hv2Xr44hnUtm1C7o9XoE4lF5Fw6bCtusko=
-X-Received: by 2002:ac8:2c34:: with SMTP id d49mr9137840qta.152.1541453223591;
- Mon, 05 Nov 2018 13:27:03 -0800 (PST)
+        Tue, 6 Nov 2018 01:50:07 -0500
+Received: from cmta16.telus.net ([209.171.16.89]:51561 "EHLO cmta16.telus.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387801AbeKFGuG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 01:50:06 -0500
+Received: from dougxps ([173.180.45.4])
+        by cmsmtp with SMTP
+        id JmPvgfWvuPTKIJmPwgap2r; Mon, 05 Nov 2018 14:28:25 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=telus.net; s=neo;
+        t=1541453305; bh=oYNL9osApAPAoaN8k/QetaoY1pq9k8vOsEFfV5nRujU=;
+        h=From:To:Cc:References:In-Reply-To:Subject:Date;
+        b=Ng1/C3vfmOq2vt2xuFO9lBb5/iW2K2nDkNuCTSQXXbIl4e/6U2gfqUOF6YMqxZMzl
+         jdb/gD2lqBsXqB8B5qHvX5IhBbCFqU5dZEkaZV24h+2JAYjpNPJN8YTZtDqopbMFrB
+         lCSuNpkdy4N2AiNK4p8trvDmBov1fYGsITWlKTAuyefvw2A9R2eFxG1yLDxjPvHf8x
+         xx5KoTbf5WYXLBYOZZsVCc05CKLq/EcLuoydBe9wxVEp5EmlnhKpqP7X3LwYmAhrxY
+         hBFU43Yd+skEotcKMtoHXeMeDbO7mgftyYbfnuvJLDHu5yA8NwCGYU2FYz9J2d7Zs0
+         9kNQrlIQ23xDQ==
+X-Authority-Analysis: v=2.3 cv=ScEmicZu c=1 sm=1 tr=0
+ a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
+ a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=IkcTkHD0fZMA:10 a=VwQbUJbxAAAA:8
+ a=FGbulvE0AAAA:8 a=ohqgoZAwcsimnXMY4MMA:9 a=m9g-MMOMIdsqmLM-:21
+ a=tfqLoGOtXsziUFT6:21 a=QEXdDO2ut3YA:10 a=CJuBXZXvIbAA:10
+ a=AjGcO6oz07-iQ99wixmX:22 a=svzTaB3SJmTkU8mK-ULk:22
+From:   "Doug Smythies" <dsmythies@telus.net>
+To:     "'Giovanni Gherdovich'" <ggherdovich@suse.cz>
+Cc:     "'Srinivas Pandruvada'" <srinivas.pandruvada@linux.intel.com>,
+        "'Peter Zijlstra'" <peterz@infradead.org>,
+        "'LKML'" <linux-kernel@vger.kernel.org>,
+        "'Frederic Weisbecker'" <frederic@kernel.org>,
+        "'Mel Gorman'" <mgorman@suse.de>,
+        "'Daniel Lezcano'" <daniel.lezcano@linaro.org>,
+        "'Linux PM'" <linux-pm@vger.kernel.org>,
+        "'Rafael J. Wysocki'" <rjw@rjwysocki.net>,
+        "Doug Smythies" <dsmythies@telus.net>
+References: FyDag8LEB6DhgFyDfglTus <000301d472c2$49f28740$ddd795c0$@net> JkE8gcQXkD1yAJkEEggRQ6
+In-Reply-To: JkE8gcQXkD1yAJkEEggRQ6
+Subject: RE: [RFC/RFT][PATCH v2] cpuidle: New timer events oriented governor for tickless systems
+Date:   Mon, 5 Nov 2018 13:28:14 -0800
+Message-ID: <001f01d4754e$7c353e30$749fba90$@net>
 MIME-Version: 1.0
-Received: by 2002:a0c:9881:0:0:0:0:0 with HTTP; Mon, 5 Nov 2018 13:27:03 -0800 (PST)
-In-Reply-To: <20181105165137.GD9136@twin.jikos.cz>
-References: <20181103153941.1881966-1-arnd@arndb.de> <87d4e8ce-2142-9d6e-498a-c7e5b83964eb@suse.de>
- <CAK8P3a27sNTiKV--smXd1wUzkGY70uUhS1rif6tgUobE+YYcbw@mail.gmail.com> <20181105165137.GD9136@twin.jikos.cz>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 5 Nov 2018 22:27:03 +0100
-X-Google-Sender-Auth: FnefEmTeg2DUO85lXz-xw4VUaIc
-Message-ID: <CAK8P3a3QQY3EqcdpogDR0TzPg61=y24aCYRpWWZGLe15GGPvdA@mail.gmail.com>
-Subject: Re: [PATCH] btrfs: avoid link error with CONFIG_NO_AUTO_INLINE
-To:     dsterba@suse.cz, Arnd Bergmann <arnd@arndb.de>,
-        Qu Wenruo <wqu@suse.de>, Chris Mason <clm@fb.com>,
-        David Sterba <DSterba@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Gu Jinxiang <gujx@cn.fujitsu.com>,
-        Changbin Du <changbin.du@gmail.com>,
-        Misono Tomohiro <misono.tomohiro@jp.fujitsu.com>,
-        Anand Jain <anand.jain@oracle.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Office Outlook 12.0
+Content-Language: en-ca
+Thread-Index: AdR1OuMl0vG5zIwBRKmeevDjWLxzCAAEPotg
+X-CMAE-Envelope: MS4wfD5cZb+Uut2Hs6IFJI+eK9SgYjE0ty2+gryg+8qKZGRNsJjBnKtj9R4mXgvQ5h1hrVdBI9hILsMWBDDZVnT13qK1OuBHWsyvEOwMsuklNSt8u3EpyTuS
+ +iYlS0Y8F49hiZIPapxuLXaYLxOdrDNMC6Ytu+PQVNzSdz1fJhppf7H7Ip1klqz985uMVrvXmsoy1uSlbHopG9NIRcZMzI4e717bod7h0OAmh45e2Gxutc7T
+ BB+qOLIWLvdG7YdW1FedWMr8LJxiHLXxcLJg5oSsazoHt+H/aba+umFQpVXdX/pyZbpdEEHl3ZJTdwQUGiAA/bGAG2NTJXq8VA5I3Uu4mD+OMcXa3RczJp/M
+ +TvzlQ7AfFKuPXHFkuVyu8AO+AaiNcVt+Kiz8tGzHkFTJIghv13UzkfBgmr1KbjkgCHS1KhqK2bZ6ozNhOEgTyZf6V1ClqkZKsqNVyvJKR+96wVR8ZKdkvIt
+ aZv7XI8BBhvNJbbO
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/5/18, David Sterba <dsterba@suse.cz> wrote:
-> On Sun, Nov 04, 2018 at 11:32:03PM +0100, Arnd Bergmann wrote:
->> >> Cc: Changbin Du <changbin.du@gmail.com>
->> >> Fixes: 943b8435c3bd ("kernel hacking: add a config option to disable
->> >> compiler auto-inlining")
->> >
->> > I can't find it in the mainline kernel, is the commit hash correct?
->> > If not merged, we should still has a chance to further polish that
->> > patch.
->>
->> It's in linux-next.
+On 2018.11.05 11:12 Giovanni Gherdovich wrote:
+> On Fri, 2018-11-02 at 08:39 -0700, Doug Smythies wrote:
+> ...[snip]...
+>> 
+>> After reading Giovanni's reply the other day, I tried the
+>> Phoronix dbench test: 12 clients resulted in similar performance,
+>> But TEOv2 used a little less processor package power; 256 clients
+>> had about -7% performance using TEOv2, but (my numbers are not
+>> exact) also used less processor package power.
 >
-> I can't find it in current linux-next either, the final reference in
-> Fixes: must refer to a commit in Linus' tree.
+> Uhm, I see. The results I've got vary between machines; that could
+> depend on the CPU type.
 
-Ah, right, it got rebased. The commit ID in today's linux-next
-is 917fad29febd. Most trees in linux-next don't rebase so this
-would not be an issue, but you are right that this one clearly
-did, so the line is wrong here.
+Agreed.
 
-The commit is now delayed until 4.21 I assume.
+> What is your machine processor model, 
+> and how many logical cores does it have?
 
-> You can take this fix with the patch that introduces the config option
-> (ack for that) in case merging through the btrfs tree would be too late
-> for it (ie. no common base for the git trees containg the new code and
-> fix).
+Sorry, I had meant to include that in my original e-mail.
+My test server has an older i7-2600K processor.
+It has 4 cores, and 8 CPUs.
+
+> For the record, in my previous email I wrote that my script runs dbench with
+> up to NUMCPUS*8 clients, but that's misleading; indeed for the 48-cores
+> machines I had runs with 1, 2, 4, 8, 16, 32 and 64 clients.
+> https://lore.kernel.org/lkml/1541010981.3423.2.camel@suse.cz/
 >
-> Or I can take it through btrfs tree in 4.20-rc cycle. In both cases the
-> Fixes: does not need to be there.
+> The sequence is generated with
+>
+>    CLIENT=1
+>    DBENCH_MAX_CLIENTS=$((NUMCPUS*8))
+>
+>    while [ $CLIENT -le $DBENCH_MAX_CLIENTS ]; do
+>
+>            ./bin/dbench [...] $CLIENT
+>
+>            if [ $CLIENT -lt $NUMCPUS ]; then
+>                    CLIENT=$((CLIENT*2))
+>            else
+>                    CLIENT=$((CLIENT*8))
+>            fi
+>    done
+>
+> In practice the max number of clients I get is slightly below NUMCPUS*2 to
+> reach saturation. I write this as I read you ran it with 256 clients but I
+> never went that high.
 
-Please take it through the btrfs tree. Let me know if you need me
-to extend the changelog to explain that situation better.
+I agree that my system is extremely overloaded and unresponsive while
+running the Phoronix dbench test with 256 clients. However, I did it
+because it gives a rather high number of idle state 0 entries/exits
+per unit time.
 
-      Arnd
+>> 
+>> On 2018.10.31 11:36 Giovanni Gherdovich wrote:
+>> 
+>>> Something I'd like to do now is verify that "teo"'s predictions
+>>> are better than "menu"'s; I'll probably use systemtap to make
+>>> some histograms of idle times versus what idle state was chosen
+>>> -- that'd be enough to compare the two.
+>> 
+>> I don't know what a "systemtap" is, but I have (crude) tools to
+>> post process trace data into histograms data. I did 5 minute
+>> traces during the 12 client Phoronix dbench test and plotted
+>> the results, [1]. Sometimes, to the right of the autoscaled
+>> graph is another with fixed scaling. Better grouping of idle
+>> durations with TEOv2 are clearly visible.
+>> 
+>> ... Doug
+>> 
+>> [1] http://fast.smythies.com/linux-pm/k419p/histo_compare.htm
+>
+> Oh, that's interesting, thanks. Can you post the break-even residency times and
+> exit latencies for your CPUs? On my Skylake test machine I get this from sysfs:
+>
+> $ cd /sys/devices/system/cpu/cpu0/cpuidle
+> $ for state in * ; do
+> echo -e \
+> "STATE: $state\t\
+> DESC: $(cat $state/desc)\t\
+> NAME: $(cat $state/name)\t\
+> LATENCY: $(cat $state/latency)\t\
+> RESIDENCY: $(cat $state/residency)"
+> done
+>
+> STATE: state0   DESC: CPUIDLE CORE POLL IDLE    NAME: POLL      LATENCY: 0      RESIDENCY: 0
+> STATE: state1   DESC: MWAIT 0x00        NAME: C1        LATENCY: 2      RESIDENCY: 2
+> STATE: state2   DESC: MWAIT 0x01        NAME: C1E       LATENCY: 10     RESIDENCY: 20
+> STATE: state3   DESC: MWAIT 0x10        NAME: C3        LATENCY: 70     RESIDENCY: 100
+> STATE: state4   DESC: MWAIT 0x20        NAME: C6        LATENCY: 85     RESIDENCY: 200
+> STATE: state5   DESC: MWAIT 0x33        NAME: C7s       LATENCY: 124    RESIDENCY: 800
+> STATE: state6   DESC: MWAIT 0x40        NAME: C8        LATENCY: 200    RESIDENCY: 800
+
+Sorry again, I had meant to include that in my original e-mail also.
+And also that it was a 1000 Hz kernel (which should be evident from looking
+at the graphs). Anyway using your above command on my system:
+
+STATE: state0   DESC: CPUIDLE CORE POLL IDLE    NAME: POLL      LATENCY: 0      RESIDENCY: 0
+STATE: state1   DESC: MWAIT 0x00        NAME: C1        LATENCY: 2      RESIDENCY: 2
+STATE: state2   DESC: MWAIT 0x01        NAME: C1E       LATENCY: 10     RESIDENCY: 20
+STATE: state3   DESC: MWAIT 0x10        NAME: C3        LATENCY: 80     RESIDENCY: 211
+STATE: state4   DESC: MWAIT 0x20        NAME: C6        LATENCY: 104    RESIDENCY: 345
+
+... Doug
+
+
