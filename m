@@ -2,117 +2,138 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72103ECDE44
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:18:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46006C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:19:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 368D720862
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:18:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=benyossef-com.20150623.gappssmtp.com header.i=@benyossef-com.20150623.gappssmtp.com header.b="k+NqPamH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 368D720862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=benyossef.com
+	by mail.kernel.org (Postfix) with ESMTP id 0F65420862
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:19:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F65420862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729132AbeKESg5 (ORCPT
+        id S1728906AbeKEShz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 13:36:57 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:42196 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726173AbeKESg4 (ORCPT
+        Mon, 5 Nov 2018 13:37:55 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:46087 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726086AbeKEShz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 13:36:56 -0500
-Received: by mail-ua1-f67.google.com with SMTP id d21so2897324uap.9
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 01:18:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=benyossef-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=133c4zJ21diu451h842v49iTXh/EfnsZJH98AgJ8ieY=;
-        b=k+NqPamHHxY/ENDUAP0Hej3AghG9EFLv57p6CEDe1HwZx7G33HcOIa8LAxoOKTTT+O
-         y9Jnrl9n1ld2qTOTXFdL7WXDuiZXxUOjym3rB4fnfmkua+GmtnRrInU5Y2RdErCAQTue
-         UE0uY5hkTAkWgdXxA/dFHW8fcGiVlTDM41zRLApaFyR6LWUhw4FWwhTMhvuibcP725EI
-         WGvB5svlgWvEGQit7g2r0ZQ3Cl/m6upMSkfXm+ODuDD30b7x5SyXysnXAw/3vslciw68
-         5YQkyuYivprYQBraUg7wZEo27CDqdKuPhu24oJigrVE6sLlStlrOgcK2m4S/hDAIPchQ
-         r/fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=133c4zJ21diu451h842v49iTXh/EfnsZJH98AgJ8ieY=;
-        b=ATDj+L6Zv3mu+9HyS98iVO1lUrKoroXJWRtHhf8ip0TM+2JXc7TqHZKC4bzidy20EL
-         6f/mUtBStBi3SnTATxi0fYwSsoNRIPBr/jcYL6cOR/w4vXJrD9TVVFmif7hiF5Z0K9oQ
-         9FF9ElmdSsLR9xPX+NSjjyTFKJ7BEyVwQsKdDnQteUMGMWWERbwMF+FV8/60AHVC8NWX
-         V0X0RSIc2ky7zr69S9mWky3XtYTq6SQ8S+yAtmltfdX5+VW1HF6dmaZEa89eMVWS7UIc
-         CFWqN0609dYNV5ErRieF6IXwDrfHJo8EpHK4Y95Ude32MGMEXln9pP+VEjpnsBmHIOix
-         hIXA==
-X-Gm-Message-State: AGRZ1gL4PlxXfqC2nRgiRaUu3kFiEHXqkLQxjME43dhqKJ3iRPmwp3pT
-        7jVDlI/l9sVE+uVQ2IKanRLhb5pQARLzgYH6pQjOddCOC9w=
-X-Google-Smtp-Source: AJdET5e/T28uiWlPWBC64B5SWE1ppm535DACX4EsfASCm6oQPmhASv03J9n00NWE37BuzX71fzrx7IQADfcH2GqHhuM=
-X-Received: by 2002:ab0:7488:: with SMTP id n8mr9860013uap.115.1541409491311;
- Mon, 05 Nov 2018 01:18:11 -0800 (PST)
+        Mon, 5 Nov 2018 13:37:55 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id B6F6A807E4; Mon,  5 Nov 2018 10:19:05 +0100 (CET)
+Date:   Mon, 5 Nov 2018 10:19:07 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] libertas: don't set URB_ZERO_PACKET on IN USB transfer
+Message-ID: <20181105091907.GC4439@amd>
+References: <20181006201232.2789936-1-lkundrak@v3.sk>
 MIME-Version: 1.0
-References: <1541325924-14777-1-git-send-email-gilad@benyossef.com> <2578248.XAorIH2ink@tauon.chronox.de>
-In-Reply-To: <2578248.XAorIH2ink@tauon.chronox.de>
-From:   Gilad Ben-Yossef <gilad@benyossef.com>
-Date:   Mon, 5 Nov 2018 11:18:00 +0200
-Message-ID: <CAOtvUMeRth4zrTZbEy6Co=+CR4==5oSDbaf760Yh4fj8UAf8bQ@mail.gmail.com>
-Subject: Re: [PATCH] crypto: mark cts(cbc(aes)) as FIPS allowed
-To:     =?UTF-8?Q?Stephan_M=C3=BCller?= <smueller@chronox.de>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>,
-        Ofir Drang <Ofir.Drang@arm.com>,
-        Yael Chemla <Yael.Chemla@arm.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="gr/z0/N6AeWAPJVB"
+Content-Disposition: inline
+In-Reply-To: <20181006201232.2789936-1-lkundrak@v3.sk>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephan,
 
-On Mon, Nov 5, 2018 at 10:50 AM Stephan Mueller <smueller@chronox.de> wrote=
-:
->
-> Am Sonntag, 4. November 2018, 11:05:24 CET schrieb Gilad Ben-Yossef:
->
-> Hi Gilad,
->
-> > As per Sp800-38A addendum from Oct 2010[1], cts(cbc(aes)) is
-> > allowed as a FIPS mode algorithm. Mark it as such.
-> >
-> > [1] https://csrc.nist.gov/publications/detail/sp/800-38a/addendum/final
->
-> There are several types of CTS approaches. Only three of those are listed=
- in
-> the SP800-38A addendum. The source code only refers to some RFCs.
->
-> Did you check whether the CTS implementation matches one or more of the t=
-ypes
-> listed in the addendum? If yes, may I suggest to add a small statement in=
- the
-> code noting this fact?
+--gr/z0/N6AeWAPJVB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, AFAIK the software implements CBC-CS3 as described in the document.
-You have a very good point about this not document anywhere. I will
-send a patch.
+On Sat 2018-10-06 22:12:32, Lubomir Rintel wrote:
+> The USB core gets rightfully upset:
+>=20
+>   usb 1-1: BOGUS urb flags, 240 --> 200
+>   WARNING: CPU: 0 PID: 60 at drivers/usb/core/urb.c:503 usb_submit_urb+0x=
+2f8/0x3ed
+>   Modules linked in:
+>   CPU: 0 PID: 60 Comm: kworker/0:3 Not tainted 4.19.0-rc6-00319-g5206d00a=
+45c7 #39
+>   Hardware name: OLPC XO/XO, BIOS OLPC Ver 1.00.01 06/11/2014
+>   Workqueue: events request_firmware_work_func
+>   EIP: usb_submit_urb+0x2f8/0x3ed
+>   Code: 75 06 8b 8f 80 00 00 00 8d 47 78 89 4d e4 89 55 e8 e8 35 1c f6 ff=
+ 8b 55 e8 56 52 8b 4d e4 51 50 68 e3 ce c7 c0 e8 ed 18 c6 ff <0f> 0b 83 c4 =
+14 80 7d ef 01 74 0a 80 7d ef 03 0f 85 b8 00 00 00 8b
+>   EAX: 00000025 EBX: ce7d4980 ECX: 00000000 EDX: 00000001
+>   ESI: 00000200 EDI: ce7d8800 EBP: ce7f5ea8 ESP: ce7f5e70
+>   DS: 007b ES: 007b FS: 0000 GS: 00e0 SS: 0068 EFLAGS: 00210292
+>   CR0: 80050033 CR2: 00000000 CR3: 00e80000 CR4: 00000090
+>   Call Trace:
+>    ? if_usb_fw_timeo+0x64/0x64
+>    __if_usb_submit_rx_urb+0x85/0xe6
+>    ? if_usb_fw_timeo+0x64/0x64
+>    if_usb_submit_rx_urb_fwload+0xd/0xf
+>    if_usb_prog_firmware+0xc0/0x3db
+>    ? _request_firmware+0x54/0x47b
+>    ? _request_firmware+0x89/0x47b
+>    ? if_usb_probe+0x412/0x412
+>    lbs_fw_loaded+0x55/0xa6
+>    ? debug_smp_processor_id+0x12/0x14
+>    helper_firmware_cb+0x3c/0x3f
+>    request_firmware_work_func+0x37/0x6f
+>    process_one_work+0x164/0x25a
+>    worker_thread+0x1c4/0x284
+>    kthread+0xec/0xf1
+>    ? cancel_delayed_work_sync+0xf/0xf
+>    ? kthread_create_on_node+0x1a/0x1a
+>    ret_from_fork+0x2e/0x38
+>   ---[ end trace 3ef1e3b2dd53852f ]---
+>=20
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 
-While we're at it, does someone find it useful if I implemented the
-other two modes?
-They are part of the standard as well, although I am not sure that in
-itself is sufficient cause.
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
+> ---
+>  drivers/net/wireless/marvell/libertas/if_usb.c | 2 --
+>  1 file changed, 2 deletions(-)
+>=20
+> diff --git a/drivers/net/wireless/marvell/libertas/if_usb.c b/drivers/net=
+/wireless/marvell/libertas/if_usb.c
+> index 5fee555a3d60..220dcdee8d2b 100644
+> --- a/drivers/net/wireless/marvell/libertas/if_usb.c
+> +++ b/drivers/net/wireless/marvell/libertas/if_usb.c
+> @@ -459,8 +459,6 @@ static int __if_usb_submit_rx_urb(struct if_usb_card =
+*cardp,
+>  			  MRVDRV_ETH_RX_PACKET_BUFFER_SIZE, callbackfn,
+>  			  cardp);
+> =20
+> -	cardp->rx_urb->transfer_flags |=3D URB_ZERO_PACKET;
+> -
+>  	lbs_deb_usb2(&cardp->udev->dev, "Pointer for rx_urb %p\n", cardp->rx_ur=
+b);
+>  	if ((ret =3D usb_submit_urb(cardp->rx_urb, GFP_ATOMIC))) {
+>  		lbs_deb_usbd(&cardp->udev->dev, "Submit Rx URB failed: %d\n", ret);
 
-Gilad
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
---
-Gilad Ben-Yossef
-Chief Coffee Drinker
+--gr/z0/N6AeWAPJVB
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-values of =CE=B2 will give rise to dom!
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvgCwsACgkQMOfwapXb+vL21QCgilEZgq1eVkymkhwXl3HQzKFG
+tosAoL9s4UFoDpJrImORnVfqMk4nAbJV
+=PgN1
+-----END PGP SIGNATURE-----
+
+--gr/z0/N6AeWAPJVB--
