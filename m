@@ -2,89 +2,146 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_LOCAL_NOVOWEL,
+	HEADER_FROM_DIFFERENT_DOMAINS,HK_RANDOM_FROM,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 802B9C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:44:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A6A8C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:44:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 434A420825
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:44:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 434A420825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id DDC6120825
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:44:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xco74WU8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDC6120825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388006AbeKFHFq (ORCPT
+        id S2387986AbeKFHGg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 02:05:46 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40780 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387580AbeKFHFq (ORCPT
+        Tue, 6 Nov 2018 02:06:36 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:34475 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387580AbeKFHGg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 02:05:46 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3E063830;
-        Mon,  5 Nov 2018 21:44:01 +0000 (UTC)
-Date:   Mon, 5 Nov 2018 13:44:00 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Arun KS <arunks@codeaurora.org>
-Cc:     Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
-        kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
-        boris.ostrovsky@oracle.com, jgross@suse.com,
-        dan.j.williams@intel.com, iamjoonsoo.kim@lge.com,
-        gregkh@linuxfoundation.org, osalvador@suse.de, malat@debian.org,
-        kirill.shutemov@linux.intel.com, jrdr.linux@gmail.com,
-        yasu.isimatu@gmail.com, mgorman@techsingularity.net,
-        aaron.lu@intel.com, devel@linuxdriverproject.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        xen-devel@lists.xenproject.org, vatsa@codeaurora.org,
-        vinmenon@codeaurora.org, getarunks@gmail.com
-Subject: Re: [PATCH v5 1/2] memory_hotplug: Free pages as higher order
-Message-Id: <20181105134400.f6f52f4db0f8d6a21446476e@linux-foundation.org>
-In-Reply-To: <beaa1acf7423da7ee0f9bbc4cee2d14a@codeaurora.org>
-References: <1538727006-5727-1-git-send-email-arunks@codeaurora.org>
-        <72215e75-6c7e-0aef-c06e-e3aba47cf806@suse.cz>
-        <efb65160af41d0e18cb2dcb30c2fb86a@codeaurora.org>
-        <20181010173334.GL5873@dhcp22.suse.cz>
-        <a2d576a5fc82cdf54fc89409686e58f5@codeaurora.org>
-        <20181011075503.GQ5873@dhcp22.suse.cz>
-        <20181018191825.fcad6e28f32a3686f201acdf@linux-foundation.org>
-        <20181019080755.GK18839@dhcp22.suse.cz>
-        <c6289fada694462ed708174f9a1f3b6c@codeaurora.org>
-        <beaa1acf7423da7ee0f9bbc4cee2d14a@codeaurora.org>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 6 Nov 2018 02:06:36 -0500
+Received: by mail-yw1-f67.google.com with SMTP id v199-v6so4324806ywg.1;
+        Mon, 05 Nov 2018 13:44:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Dg3CM5nHGrKAtCE4EJBmrcn+B3XQaQmBjEl2eL55lEI=;
+        b=Xco74WU8IKx0ww44HGAdZiHsSHuSKM9kNlkRnB2NiyRwl+aNS77lnpaCCXZyz7m75L
+         PEftyY86NR+XS8uvKNtr+dzBD5i/WdFK4iGe9HFne8/2a41FBWh6zQn6RbNiFjsef6kq
+         7RJdKFISxUBebefC4rzuK2bqBHIhlj73FjUgFuOYKL7uwHK6MRQPqRnrFoJu7unK0x+5
+         cYsZP9RKrqF8boWbuk/qWzUO48ATam3imCBXcpgEpjdbtADSsjpyc+ySHiopnsky7qkN
+         ZLW/sxS8iHIjJ9aA6IBnl4MUVewE2i8AF9TIw7T+nXOLGQus68FkwQCxWiZwmXWasisa
+         UHSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Dg3CM5nHGrKAtCE4EJBmrcn+B3XQaQmBjEl2eL55lEI=;
+        b=kL2bPg8yRp3PMGVpiwra+H+tm1zvqJ7Hcn3jiV3c2byDFm9UE4FMF0GhbUGn+IEQ4s
+         vFySvNcf945ICyFc2ixg6jzx/+SXJ7IhhfMhmpSmzNvSu0UeRatXOjg2byqL5Ranplqx
+         ve7tyUKLxhBVs/3NBIDSOQrpiBTZdHgsXoH2EWPH2hR5aWLtG8KLFy/W6zL4AQMhs0Ya
+         2T9pfAgDWE4ap+ZjJojlgnIxEx3uEe6vuha9lWTdSuBD7x5VpjTBxYGbp0OPOmmFTp7W
+         yPBysPp1z0PxdfO+mm8XpARWIVpLMakbwHCBfAVAKIvI7n98L+DzdJiZgP5AlPcU4s6T
+         n7+Q==
+X-Gm-Message-State: AGRZ1gJ29sgZdTdb6JfCM5KxbGED17NC3pLk9qV7yBowhBa7cqMesBJ0
+        TZj5pyY1p+SaZswd6JAiqK11UAWzooFO+y3W8dg=
+X-Google-Smtp-Source: AJdET5foNUteCB3ZFcB9SB/Mo+O1oID5TGYPB2e8m8CNUay03PhtgTqEpq+POj/2Im3mM5CR7zkFZSglAUtO6g6G8mo=
+X-Received: by 2002:a81:5ec6:: with SMTP id s189-v6mr3818178ywb.126.1541454290853;
+ Mon, 05 Nov 2018 13:44:50 -0800 (PST)
+MIME-Version: 1.0
+References: <1541080581-4072-1-git-send-email-firoz.khan@linaro.org> <1541080581-4072-5-git-send-email-firoz.khan@linaro.org>
+In-Reply-To: <1541080581-4072-5-git-send-email-firoz.khan@linaro.org>
+From:   Max Filippov <jcmvbkbc@gmail.com>
+Date:   Mon, 5 Nov 2018 13:44:39 -0800
+Message-ID: <CAMo8BfKaSUTMT0h2jRg2ysRnc2yvVT-3=-gq6pH-XpKm1iydQQ@mail.gmail.com>
+Subject: Re: [PATCH v1 4/4] xtensa: generate uapi header and syscall table
+ header files
+To:     firoz.khan@linaro.org
+Cc:     Chris Zankel <chris@zankel.net>, linux-xtensa@linux-xtensa.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038@lists.linaro.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, deepa.kernel@gmail.com,
+        marcin.juszkiewicz@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 05 Nov 2018 15:12:27 +0530 Arun KS <arunks@codeaurora.org> wrote:
+On Thu, Nov 1, 2018 at 6:57 AM Firoz Khan <firoz.khan@linaro.org> wrote:
+>
+> System call table generation script must be run to gener-
+> ate unistd_32.h and syscall_table.h files. This patch will
+> have changes which will invokes the script.
+>
+> This patch will generate unistd_32.h and syscall_table.h
+> files by the syscall table generation script invoked by
+> xtensa/Makefile and the generated files against the removed
+> files must be identical.
+>
+> The generated uapi header file will be included in uapi/-
+> asm/unistd.h and generated system call table header file
+> will be included by kernel/syscall.c file.
+>
+> Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
+> ---
+>  arch/xtensa/Makefile                  |   3 +
+>  arch/xtensa/include/asm/Kbuild        |   1 +
+>  arch/xtensa/include/uapi/asm/Kbuild   |   1 +
+>  arch/xtensa/include/uapi/asm/unistd.h | 782 +---------------------------------
+>  arch/xtensa/kernel/syscall.c          |   5 +-
+>  5 files changed, 10 insertions(+), 782 deletions(-)
+>
+> diff --git a/arch/xtensa/Makefile b/arch/xtensa/Makefile
+> index d67e30fa..1e7b179 100644
+> --- a/arch/xtensa/Makefile
+> +++ b/arch/xtensa/Makefile
+> @@ -99,6 +99,9 @@ all Image zImage uImage: vmlinux
+>  dtbs: scripts
+>         $(Q)$(MAKE) $(build)=$(boot)/dts
+>
+> +archheaders:
+> +       $(Q)$(MAKE) $(build)=arch/xtensa/kernel/syscalls all
+> +
+>  define archhelp
+>    @echo '* Image       - Kernel ELF image with reset vector'
+>    @echo '* zImage      - Compressed kernel image (arch/xtensa/boot/images/zImage.*)'
+> diff --git a/arch/xtensa/include/asm/Kbuild b/arch/xtensa/include/asm/Kbuild
+> index 82c75643..b35d2e6 100644
+> --- a/arch/xtensa/include/asm/Kbuild
+> +++ b/arch/xtensa/include/asm/Kbuild
+> @@ -28,3 +28,4 @@ generic-y += topology.h
+>  generic-y += trace_clock.h
+>  generic-y += word-at-a-time.h
+>  generic-y += xor.h
+> +generic-y += syscall_table.h
 
-> On 2018-10-22 16:03, Arun KS wrote:
-> > On 2018-10-19 13:37, Michal Hocko wrote:
-> >> On Thu 18-10-18 19:18:25, Andrew Morton wrote:
-> >> [...]
-> >>> So this patch needs more work, yes?
-> >> 
-> >> Yes, I've talked to Arun (he is offline until next week) offlist and 
-> >> he
-> >> will play with this some more.
-> > 
-> > Converted totalhigh_pages, totalram_pages and zone->managed_page to
-> > atomic and tested hot add. Latency is not effected with this change.
-> > Will send out a separate patch on top of this one.
-> Hello Andrew/Michal,
-> 
-> Will this be going in subsequent -rcs?
+This doesn't look right: syscall_table.h is not asm-generic header.
 
-I thought were awaiting a new version?  "Will send out a separate patch
-on top of this one"?
+> diff --git a/arch/xtensa/include/uapi/asm/Kbuild b/arch/xtensa/include/uapi/asm/Kbuild
+> index 837d4dd..f826d52 100644
+> --- a/arch/xtensa/include/uapi/asm/Kbuild
+> +++ b/arch/xtensa/include/uapi/asm/Kbuild
+> @@ -11,3 +11,4 @@ generic-y += resource.h
+>  generic-y += siginfo.h
+>  generic-y += statfs.h
+>  generic-y += termios.h
+> +generic-y += unistd_32.h
 
-I do think a resend would be useful, please.  Ensure the changelog is
-updated to capture the above info and any other worthy issues which
-arose during review.
+Ditto: unistd32_.h is not asm-generic header.
 
+-- 
+Thanks.
+-- Max
