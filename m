@@ -2,135 +2,122 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E42C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:37:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D14D5C46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:37:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52C4820869
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:37:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52C4820869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alphalink.fr
+	by mail.kernel.org (Postfix) with ESMTP id A167B20866
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:37:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A167B20866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387608AbeKFB6L (ORCPT
+        id S2387634AbeKFB61 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 20:58:11 -0500
-Received: from zimbra.alphalink.fr ([217.15.80.77]:45371 "EHLO
-        zimbra.alphalink.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387420AbeKFB6K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 20:58:10 -0500
-X-Greylist: delayed 378 seconds by postgrey-1.27 at vger.kernel.org; Mon, 05 Nov 2018 20:58:08 EST
-Received: from localhost (localhost [127.0.0.1])
-        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id 68DEB2B52090;
-        Mon,  5 Nov 2018 17:31:21 +0100 (CET)
-Received: from zimbra.alphalink.fr ([127.0.0.1])
-        by localhost (mail-2-cbv2.admin.alphalink.fr [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 41Etwg_CLTk3; Mon,  5 Nov 2018 17:31:19 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id 6DFBF2B52091;
-        Mon,  5 Nov 2018 17:31:19 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mail-2-cbv2.admin.alphalink.fr
-Received: from zimbra.alphalink.fr ([127.0.0.1])
-        by localhost (mail-2-cbv2.admin.alphalink.fr [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id L0N5hF5ixdnp; Mon,  5 Nov 2018 17:31:19 +0100 (CET)
-Received: from c-dev-0.admin.alphalink.fr (94-84-15-217.reverse.alphalink.fr [217.15.84.94])
-        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id 38F892B52090;
-        Mon,  5 Nov 2018 17:31:19 +0100 (CET)
-Received: by c-dev-0.admin.alphalink.fr (Postfix, from userid 1000)
-        id 0CAA2601CB; Mon,  5 Nov 2018 17:31:18 +0100 (CET)
-Date:   Mon, 5 Nov 2018 17:31:18 +0100
-From:   Guillaume Nault <g.nault@alphalink.fr>
-To:     Kyungtae Kim <kt0755@gmail.com>
-Cc:     paulus@samba.org, davem@davemloft.net,
-        Byoungyoung Lee <lifeasageek@gmail.com>,
-        DaeRyong Jeong <threeearcat@gmail.com>,
-        syzkaller@googlegroups.com, netdev@vger.kernel.org,
-        linux-ppp@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: UBSAN: Undefined behaviour in drivers/net/ppp/ppp_generic.c
-Message-ID: <20181105163118.GA1476@alphalink.fr>
-References: <CAEAjamurFhLE7QOq596Kue8oy-MXeju_68bwn7_Byqi6r2yoUA@mail.gmail.com>
+        Mon, 5 Nov 2018 20:58:27 -0500
+Received: from mga17.intel.com ([192.55.52.151]:56531 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387420AbeKFB61 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 20:58:27 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 08:37:57 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
+   d="scan'208";a="105569880"
+Received: from ray.jf.intel.com (HELO [10.7.201.17]) ([10.7.201.17])
+  by orsmga001.jf.intel.com with ESMTP; 05 Nov 2018 08:37:57 -0800
+Subject: Re: [PATCH 1/2] mm/page_alloc: free order-0 pages through PCP in
+ page_frag_free()
+To:     Aaron Lu <aaron.lu@intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?Q?Pawe=c5=82_Staszewski?= <pstaszewski@itcare.pl>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Yoel Caspersen <yoel@kviknet.dk>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+References: <20181105085820.6341-1-aaron.lu@intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <f2d00eca-e40b-c0e9-5aae-a9a8105169b1@intel.com>
+Date:   Mon, 5 Nov 2018 08:37:57 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEAjamurFhLE7QOq596Kue8oy-MXeju_68bwn7_Byqi6r2yoUA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181105085820.6341-1-aaron.lu@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 06:46:16AM -0400, Kyungtae Kim wrote:
-> We report a crash in v4.19-rc2 (and the latest kernel as well):
-> 
-> kernel config: https://kt0755.github.io/etc/config_v2-4.19
-> repro: https://kt0755.github.io/etc/repro.1e3e9.c
-> 
-> unit_set() lacks the bounds checking for an integer variable n,
-> which causes integer overflow when it is equal to INT_MAX.
-> 
-idr_alloc() does revert the overflowed n+1 to INT_MAX, so everything
-works as expected in practive. But sure, the code, as it is, looks
-wrong.
-
-> =======================================================
-> UBSAN: Undefined behaviour in drivers/net/ppp/ppp_generic.c:3246:9
-> signed integer overflow:
-> 2147483647 + 1 cannot be represented in type 'int'
-> CPU: 0 PID: 7676 Comm: syz-executor4 Not tainted 4.19.0-rc2 #1
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0xd2/0x148 lib/dump_stack.c:113
->  ubsan_epilogue+0x12/0x94 lib/ubsan.c:159
->  handle_overflow+0x1cf/0x21a lib/ubsan.c:190
->  __ubsan_handle_add_overflow+0x2a/0x31 lib/ubsan.c:198
->  unit_set drivers/net/ppp/ppp_generic.c:3246 [inline]
->  ppp_unit_register drivers/net/ppp/ppp_generic.c:979 [inline]
->  ppp_dev_configure+0xbd8/0xd50 drivers/net/ppp/ppp_generic.c:1049
->  ppp_create_interface drivers/net/ppp/ppp_generic.c:3013 [inline]
->  ppp_unattached_ioctl drivers/net/ppp/ppp_generic.c:848 [inline]
->  ppp_ioctl+0x1652/0x27f0 drivers/net/ppp/ppp_generic.c:601
->  vfs_ioctl fs/ioctl.c:46 [inline]
->  do_vfs_ioctl+0x1c0/0x1150 fs/ioctl.c:687
->  ksys_ioctl+0x9e/0xb0 fs/ioctl.c:702
->  __do_sys_ioctl fs/ioctl.c:709 [inline]
->  __se_sys_ioctl fs/ioctl.c:707 [inline]
->  __x64_sys_ioctl+0x7e/0xc0 fs/ioctl.c:707
->  do_syscall_64+0xc4/0x510 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x4497b9
-> Code: e8 8c 9f 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48
-> 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
-> 01 f0 ff ff 0f 83 9b 6b fc ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007f67b6f92c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> RAX: ffffffffffffffda RBX: 00007f67b6f936cc RCX: 00000000004497b9
-> RDX: 0000000020000080 RSI: 00000000c004743e RDI: 0000000000000013
-> RBP: 000000000071bea0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-> R13: 0000000000005598 R14: 00000000006ed638 R15: 00007f67b6f93700
-> ======================================================
-> 
-> A simple patch below is provided.
-> Note that in this control flow, negative n is already
-> filtered out (drivers/net/ppp/ppp_generic.c:965).
-> 
-> --- a/drivers/net/ppp/ppp_generic.c
-> +++ b/drivers/net/ppp/ppp_generic.c
-> @@ -3243,6 +3243,9 @@ static int unit_set(struct idr *p, void *ptr, int n)
->  {
->         int unit;
-> 
-> +  if (n == INT_MAX)
-> +               return -EINVAL;
+On 11/5/18 12:58 AM, Aaron Lu wrote:
+> -	if (unlikely(put_page_testzero(page)))
+> -		__free_pages_ok(page, compound_order(page));
+> +	if (unlikely(put_page_testzero(page))) {
+> +		unsigned int order = compound_order(page);
 > +
->         unit = idr_alloc(p, ptr, n, n + 1, GFP_KERNEL);
->         if (unit == -ENOSPC)
->                 unit = -EINVAL;
-> 
-What about using idr_alloc_u32() instead? This way we could safely
-continue to accept INT_MAX, without relying on idr_alloc() internal
-safeguards.
+> +		if (order == 0)
+> +			free_unref_page(page);
+> +		else
+> +			__free_pages_ok(page, order);
+> +	}
+>  }
+
+This little hunk seems repeated in __free_pages() and
+__page_frag_cache_drain().  Do we need a common helper?
