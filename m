@@ -2,247 +2,145 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC5D4C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:06:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29253C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:09:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F02D20685
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:06:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDBA320685
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:08:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="Se9ZWs84"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F02D20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fr/SvRbt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDBA320685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730151AbeKFF1c (ORCPT
+        id S1726664AbeKFFaR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 00:27:32 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51097 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727464AbeKFF1a (ORCPT
+        Tue, 6 Nov 2018 00:30:17 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:54732 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725139AbeKFFaR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 00:27:30 -0500
-Received: by mail-wm1-f66.google.com with SMTP id 124-v6so4705126wmw.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 12:06:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=4R/Wwwjs8rY8MEqGZo56oET3PhbZnLa492nRzAUtCjc=;
-        b=Se9ZWs84hanYqydF/uOCEcUbclxGLdqBp3sQeVBeDyQqq7dhOKOUoW8SNZCMt1By5o
-         gCDfNpyqjf8Q+DWxBHDw0znQITfo5Ffz1r02Xe5+N3XkoqNlrgsoeBWvyowiBhT+PiUU
-         xCBXUhYNgMzwj/86QlWnyg+PD91LBIfBi+awtD/+AlVppHJAuOzdE5HghYYSKsVgkrep
-         M6N09Mimb/9exa6tjBx3BpofUvT1PDuD6OUCxv3drAIpASeHg7V8L0f0p8pu30xxIBeX
-         3qb0MP2ZPIa32565zskU3KqnOPhYzKQ5G6nsbhRc8kR3Kwj2CLL/Gj0uIiVlHZ5r+D0a
-         PGZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=4R/Wwwjs8rY8MEqGZo56oET3PhbZnLa492nRzAUtCjc=;
-        b=JJMz/8iLpWDrQf732PgCKvgqEfEOoliPR/2jtp0tAO7NHQ/INT8+/NxMZJPdVHa81X
-         Kl4mOfXEMzOvYS7yJ/ZVT4tPpgz9OJY1gYLKzGecTvS/qz6W+zZRrNiKrAqKXHvTeGEw
-         WDL0RhYfh8tms1Loq/CIiWZjWTBFscG1ZfPJSX9rXgKBGHfZAzjnFUWWKxi+3jhyQOVT
-         /eV23UNEFF3tVvLNj//e00CtAGXe/s3UDmpKzelCQmQufvowRcSFqrQegchX6mgoImI2
-         ay4kyW0AGdRbciM62v4mFgH2MsW/uYbnDx+lwK6Cw4RkASd62N4jrd/fU9aGCxyiEIT3
-         A3Ow==
-X-Gm-Message-State: AGRZ1gKcNhp6FHbSYlIjS81NB1v2pjPz4blU4Obx7ICberudb7gXgOS2
-        qDuIgr4IaFsyV+gKqQEuNK0q5dhCVoQyawYulzMtwdr/
-X-Google-Smtp-Source: AJdET5f+JFp8gUNqV/+FMqfyA9Z0P4+QPT2kwMAlPhepPkJl+RrPw7MoLfvQf53eBqw6tC3EiA+RPgDAtexnB6MrHf8=
-X-Received: by 2002:a1c:954b:: with SMTP id x72-v6mr1342790wmd.14.1541448369296;
- Mon, 05 Nov 2018 12:06:09 -0800 (PST)
+        Tue, 6 Nov 2018 00:30:17 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA5K63kh081462;
+        Mon, 5 Nov 2018 20:08:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=5vMyW/Jps6w9tpZOvnsTAHZKb9apR9/voHFFyWKajM0=;
+ b=fr/SvRbtV0ZG86bWOWr0ldIJtkLi1ayblvA0uZ+w5VleSrEVBsmvxjlFZ+iT/mADe3kJ
+ fdxVNwiCAgfkH9Z5YQVyM5sPtomUn20JclJr7U6CSPN11UsGH4bTxWB4+10WfxZ2km0L
+ l3sUWtygZrDRQnpAUhO1FM5NXoTUAaqDd5eT3DBJw8yaNvRtwsJ2LqsgbgnYuJPd47cm
+ 0j3d5zD0CUwWP4H5xnL89VlgTZ0zeWyZrrxDi8KRbJ+kmqRjX3o3keFBtYoMIevFXrCc
+ 5W/8w807evySxw79kTpNmgg8yYGZgHbJmgZ78hTC6FN+zQyyFWwMIhCEwxeMOoIoJl5o ig== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2120.oracle.com with ESMTP id 2nh3mph8um-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 05 Nov 2018 20:08:25 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wA5K8JrN016131
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 5 Nov 2018 20:08:19 GMT
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wA5K8HxW020692;
+        Mon, 5 Nov 2018 20:08:18 GMT
+Received: from [10.152.33.198] (/10.152.33.198)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 05 Nov 2018 12:08:17 -0800
+Subject: Re: [PATCH 00/10] steal tasks to improve CPU utilization
+To:     Subhra Mazumdar <subhra.mazumdar@oracle.com>, mingo@redhat.com,
+        peterz@infradead.org
+Cc:     dhaval.giani@oracle.com, daniel.m.jordan@oracle.com,
+        pavel.tatashin@microsoft.com, matt@codeblueprint.co.uk,
+        umgwanakikbuti@gmail.com, riel@redhat.com, jbacik@fb.com,
+        juri.lelli@redhat.com, linux-kernel@vger.kernel.org,
+        valentin.schneider@arm.com, vincent.guittot@linaro.org,
+        quentin.perret@arm.com
+References: <1540220381-424433-1-git-send-email-steven.sistare@oracle.com>
+ <aaa9cfea-d5f9-06a3-242f-05a1f3f9e7c8@oracle.com>
+From:   Steven Sistare <steven.sistare@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <0ac6a3ec-84af-1868-936c-1ccc0d401af8@oracle.com>
+Date:   Mon, 5 Nov 2018 15:08:16 -0500
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20181102232946.98461-1-namit@vmware.com> <20181102232946.98461-3-namit@vmware.com>
- <20181105140925.GD22467@hirez.programming.kicks-ass.net> <BB6FC627-C152-4C4C-A6D4-FA7F42F2610D@amacapital.net>
- <4D260352-A9FF-47F2-B3B2-0A87DF16CB70@vmware.com> <D67F7C19-DF59-4405-A5A3-B56C0E491B41@amacapital.net>
- <8DF7BED8-F1B2-4102-9452-46437D3E4FC6@vmware.com>
-In-Reply-To: <8DF7BED8-F1B2-4102-9452-46437D3E4FC6@vmware.com>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Mon, 5 Nov 2018 12:05:57 -0800
-Message-ID: <CALCETrXwci8L=53UTq8=LEs+5yPgdHnidFf6iz3wZ0SkZwd1Eg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/7] x86/jump_label: Use text_poke_early() during early_init
-To:     Nadav Amit <namit@vmware.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aaa9cfea-d5f9-06a3-242f-05a1f3f9e7c8@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9068 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=865
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1811050179
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 5, 2018 at 11:25 AM Nadav Amit <namit@vmware.com> wrote:
->
-> From: Andy Lutomirski
-> Sent: November 5, 2018 at 7:03:49 PM GMT
-> > To: Nadav Amit <namit@vmware.com>
-> > Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.co=
-m>, LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>, H. Peter =
-Anvin <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petko=
-v <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirsk=
-i <luto@kernel.org>, Kees Cook <keescook@chromium.org>, Dave Hansen <dave.h=
-ansen@intel.com>, Masami Hiramatsu <mhiramat@kernel.org>
-> > Subject: Re: [PATCH v3 2/7] x86/jump_label: Use text_poke_early() durin=
-g early_init
-> >
-> >
-> >
-> >
-> >> On Nov 5, 2018, at 9:49 AM, Nadav Amit <namit@vmware.com> wrote:
-> >>
-> >> From: Andy Lutomirski
-> >> Sent: November 5, 2018 at 5:22:32 PM GMT
-> >>> To: Peter Zijlstra <peterz@infradead.org>
-> >>> Cc: Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>, li=
-nux-kernel@vger.kernel.org, x86@kernel.org, H. Peter Anvin <hpa@zytor.com>,=
- Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Dave=
- Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, K=
-ees Cook <keescook@chromium.org>, Dave Hansen <dave.hansen@intel.com>, Masa=
-mi Hiramatsu <mhiramat@kernel.org>
-> >>> Subject: Re: [PATCH v3 2/7] x86/jump_label: Use text_poke_early() dur=
-ing early_init
-> >>>
-> >>>
-> >>>
-> >>>>> On Nov 5, 2018, at 6:09 AM, Peter Zijlstra <peterz@infradead.org> w=
-rote:
-> >>>>>
-> >>>>> On Fri, Nov 02, 2018 at 04:29:41PM -0700, Nadav Amit wrote:
-> >>>>> diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_la=
-bel.c
-> >>>>> index aac0c1f7e354..367c1d0c20a3 100644
-> >>>>> --- a/arch/x86/kernel/jump_label.c
-> >>>>> +++ b/arch/x86/kernel/jump_label.c
-> >>>>> @@ -52,7 +52,13 @@ static void __ref __jump_label_transform(struct =
-jump_entry *entry,
-> >>>>> jmp.offset =3D jump_entry_target(entry) -
-> >>>>>          (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
-> >>>>>
-> >>>>> -    if (early_boot_irqs_disabled)
-> >>>>> +    /*
-> >>>>> +     * As long as we are in early boot, we can use text_poke_early=
-(), which
-> >>>>> +     * is more efficient: the memory was still not marked as read-=
-only (it
-> >>>>> +     * is only marked after poking_init()). This also prevents us =
-from using
-> >>>>> +     * text_poke() before poking_init() is called.
-> >>>>> +     */
-> >>>>> +    if (!early_boot_done)
-> >>>>>     poker =3D text_poke_early;
-> >>>>>
-> >>>>> if (type =3D=3D JUMP_LABEL_JMP) {
-> >>>>
-> >>>> It took me a while to untangle init/maze^H^Hin.c... but I think this
-> >>>> is all we need:
-> >>>>
-> >>>> diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_lab=
-el.c
-> >>>> index aac0c1f7e354..ed5fe274a7d8 100644
-> >>>> --- a/arch/x86/kernel/jump_label.c
-> >>>> +++ b/arch/x86/kernel/jump_label.c
-> >>>> @@ -52,7 +52,12 @@ static void __ref __jump_label_transform(struct j=
-ump_entry *entry,
-> >>>> jmp.offset =3D jump_entry_target(entry) -
-> >>>>          (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
-> >>>>
-> >>>> -    if (early_boot_irqs_disabled)
-> >>>> +    /*
-> >>>> +     * As long as we're UP and not yet marked RO, we can use
-> >>>> +     * text_poke_early; SYSTEM_BOOTING guarantees both, as we switc=
-h to
-> >>>> +     * SYSTEM_SCHEDULING before going either.
-> >>>> +     */
-> >>>> +    if (system_state =3D=3D SYSTEM_BOOTING)
-> >>>>     poker =3D text_poke_early;
-> >>>>
-> >>>> if (type =3D=3D JUMP_LABEL_JMP) {
-> >>>
-> >>> Can we move this logic into text_poke() and get rid of text_poke_earl=
-y()?
-> >>
-> >> This will negatively affect poking of modules doing module loading, e.=
-g.,
-> >> apply_paravirt(). This can be resolved by keeping track when the modul=
-e is
-> >> write-protected and giving a module parameter to text_poke(). Does it =
-worth
-> >> the complexity?
-> >
-> > Probably not.
-> >
-> > OTOH, why does alternative patching need text_poke() at all? Can=E2=80=
-=99t it just
-> > write to the text?
->
-> Good question. According to my understanding, these games of
-> text_poke_early() are not needed, at least for modules (on Intel).
->
-> Intel SDM 11.6 "SELF-MODIFYING CODE=E2=80=9D says:
->
-> "A write to a memory location in a code segment that is currently cached =
-in
-> the processor causes the associated cache line (or lines) to be invalidat=
-ed.
-> This check is based on the physical address of the instruction.=E2=80=9D
->
-> Then the manual talks about prefetched instructions, but the modules code=
- is
-> presumably not be =E2=80=9Cprefetchable=E2=80=9D at this point. So I thin=
-k it should be
-> safe, but I guess that you reviewed Intel/AMD manuals better when you wro=
-te
-> sync_core().
+On 11/2/2018 7:39 PM, Subhra Mazumdar wrote:
+> On 10/22/18 7:59 AM, Steve Sistare wrote:
+>> When a CPU has no more CFS tasks to run, and idle_balance() fails to
+>> find a task, then attempt to steal a task from an overloaded CPU in the
+>> same LLC. Maintain and use a bitmap of overloaded CPUs to efficiently
+>> identify candidates.  To minimize search time, steal the first migratable
+>> task that is found when the bitmap is traversed.  For fairness, search
+>> for migratable tasks on an overloaded CPU in order of next to run.
+>>
+>> This simple stealing yields a higher CPU utilization than idle_balance()
+>> alone, because the search is cheap, so it may be called every time the CPU
+>> is about to go idle.  idle_balance() does more work because it searches
+>> widely for the busiest queue, so to limit its CPU consumption, it declines
+>> to search if the system is too busy.  Simple stealing does not offload the
+>> globally busiest queue, but it is much better than running nothing at all.
+>>
+>> The bitmap of overloaded CPUs is a new type of sparse bitmap, designed to
+>> reduce cache contention vs the usual bitmap when many threads concurrently
+>> set, clear, and visit elements.
+>>
+> Is the bitmask saving much? I tried a simple stealing that just starts
+> searching the domain from the current cpu and steals a thread from the
+> first cpu that has more than one runnable thread. It seems to perform
+> similar to your patch.
+> 
+> hackbench on X6-2: 2 sockets * 22 cores * 2 hyperthreads = 88 CPUs
+>                 baseline        %stdev  patch %stdev
+> 1(40 tasks)     0.5524          2.36    0.5522 (0.045%) 3.82
+> 2(80 tasks)     0.6482          11.4    0.7241 (-11.7%) 20.34
+> 4(160 tasks)    0.9756          0.95    0.8276 (15.1%) 5.8
+> 8(320 tasks)    1.7699          1.62    1.6655 (5.9%) 1.57
+> 16(640 tasks)   3.1018          0.77    2.9858 (3.74%) 1.4
+> 32(1280 tasks)  5.565           0.62    5.3388 (4.1%) 0.72
+> 
+> X6-2: 2 sockets * 22 cores * 2 hyperthreads = 88 CPUs
+> Oracle database OLTP, logging _enabled_
+> 
+> Users %speedup
+> 20 1.2
+> 40 -0.41
+> 60 0.83
+> 80 2.37
+> 100 1.54
+> 120 3.0
+> 140 2.24
+> 160 1.82
+> 180 1.94
+> 200 2.23
+> 220 1.49
+Hi Subhra,
+  The bitset is a few percent faster than iterating over CPUs in the
+tests I ran on the X6-2 with 44 CPUs per node.  If we extend stealing to 
+RT, folks care even more about a few percent. The difference should be 
+greater on systems with more CPUs per socket, and greater if we extend 
+stealing to steal across NUMA nodes, and greater if Valentin adds another
+bitset for misfits. Lastly, there is no measurable downside in maintaining 
+the overloaded CPUs bitset.  I ran experiments where I set and cleared the 
+bits in overload_set and overload_clear, but disabled stealing itself, and 
+saw no significant difference versus the baseline.
 
-Beats the heck out of me.
-
-Linus, hpa, or Dave, a question for you: suppose I map some page
-writably, write to it, then upgrade permissions to allow execute.
-Must I force all CPUs that might execute from it without first
-serializing to serialize?  I suspect this doesn't really affect user
-code, but it may affect the module loader.
-
-To be safe, shouldn't the module loader broadcast an IPI to
-sync_core() everywhere after loading a module and before making it
-runnable, regardless of alternative patching?
-
-IOW, the right sequence of events probably ought to me:
-
-1. Allocate the memory and map it.
-2. Copy in the text.
-3. Patch alternatives, etc.  This is logically just like (2) from an
-architectural perspective -- we're just writing to memory that won't
-be executed.
-4. Serialize everything.
-5. Run it!
-
->
-> Anyhow, there should be a function that wraps the memcpy() to keep track
-> when someone changes the text (for potential future use).
->
-> Does it make sense? Do you want me to give it a spin?
-
-Sure, I guess.  Linus, what do you think?
-
->
-> Thanks,
-> Nadav
-
-
-
---=20
-Andy Lutomirski
-AMA Capital Management, LLC
+- Steve
