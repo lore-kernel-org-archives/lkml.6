@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFB4DECDE44
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:32:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B92F6C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:32:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D7C320854
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:32:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D7C320854
+	by mail.kernel.org (Postfix) with ESMTP id 619AD2081D
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:32:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 619AD2081D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729673AbeKEQua (ORCPT
+        id S1729690AbeKEQun (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 11:50:30 -0500
-Received: from shell.v3.sk ([90.176.6.54]:49564 "EHLO shell.v3.sk"
+        Mon, 5 Nov 2018 11:50:43 -0500
+Received: from shell.v3.sk ([90.176.6.54]:49536 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728817AbeKEQtv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 11:49:51 -0500
+        id S1728671AbeKEQtn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 11:49:43 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 9644DC559B;
-        Mon,  5 Nov 2018 08:31:32 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id 640A2C558E;
+        Mon,  5 Nov 2018 08:31:22 +0100 (CET)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id tUpluB76LGLa; Mon,  5 Nov 2018 08:31:18 +0100 (CET)
+        with ESMTP id sK924krKXayi; Mon,  5 Nov 2018 08:31:11 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 20CB5C5584;
-        Mon,  5 Nov 2018 08:31:10 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id 4EA0CC5595;
+        Mon,  5 Nov 2018 08:31:07 +0100 (CET)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id tDqHeUUF60Fq; Mon,  5 Nov 2018 08:31:06 +0100 (CET)
+        with ESMTP id C-Z0y7qmNhRY; Mon,  5 Nov 2018 08:31:04 +0100 (CET)
 Received: from odvarok.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 5C0EBC5582;
-        Mon,  5 Nov 2018 08:31:05 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 711AEC5585;
+        Mon,  5 Nov 2018 08:31:03 +0100 (CET)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Jonathan Corbet <corbet@lwn.net>, linux-media@vger.kernel.org
@@ -46,9 +46,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lubomir Rintel <lkundrak@v3.sk>,
         James Cameron <quozl@laptop.org>, Pavel Machek <pavel@ucw.cz>
-Subject: [PATCH 08/11] [media] marvell-ccic/mmp: enable clock before accessing registers
-Date:   Mon,  5 Nov 2018 08:30:51 +0100
-Message-Id: <20181105073054.24407-9-lkundrak@v3.sk>
+Subject: [PATCH 03/11] media: dt-bindings: marvell,mmp2-ccic: Add Marvell MMP2 camera
+Date:   Mon,  5 Nov 2018 08:30:46 +0100
+Message-Id: <20181105073054.24407-4-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181105073054.24407-1-lkundrak@v3.sk>
 References: <20181105073054.24407-1-lkundrak@v3.sk>
@@ -59,36 +59,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The access to REG_CLKCTRL or REG_CTRL1 without the clock enabled hangs
-the machine. Enable the clock first.
+Add Marvell MMP2 camera host interface.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- drivers/media/platform/marvell-ccic/mmp-driver.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ .../bindings/media/marvell,mmp2-ccic.txt      | 30 +++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/marvell,mmp2-=
+ccic.txt
 
-diff --git a/drivers/media/platform/marvell-ccic/mmp-driver.c b/drivers/m=
-edia/platform/marvell-ccic/mmp-driver.c
-index 9e988e527b0d..9c0238f72c40 100644
---- a/drivers/media/platform/marvell-ccic/mmp-driver.c
-+++ b/drivers/media/platform/marvell-ccic/mmp-driver.c
-@@ -145,6 +145,7 @@ static int mmpcam_power_up(struct mcam_camera *mcam)
-  * Turn on power and clocks to the controller.
-  */
- 	mmpcam_power_up_ctlr(cam);
-+	mcam_clk_enable(mcam);
- /*
-  * Provide power to the sensor.
-  */
-@@ -158,8 +159,6 @@ static int mmpcam_power_up(struct mcam_camera *mcam)
- 	gpio_set_value(pdata->sensor_reset_gpio, 1); /* reset is active low */
- 	mdelay(5);
-=20
--	mcam_clk_enable(mcam);
--
- 	return 0;
- }
-=20
+diff --git a/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.tx=
+t b/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt
+new file mode 100644
+index 000000000000..a9c536e58dda
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt
+@@ -0,0 +1,30 @@
++Marvell MMP2 camera host interface
++
++Required properties:
++ - compatible: Should be "marvell,mmp2-ccic"
++ - reg: register base and size
++ - interrupts: the interrupt number
++ - any required generic properties defined in video-interfaces.txt
++
++Optional properties:
++ - clocks: input clock (see clock-bindings.txt)
++ - clock-output-names: should contain the name of the clock driving the
++                       sensor master clock MCLK
++
++Example:
++
++	camera0: camera@d420a000 {
++		compatible =3D "marvell,mmp2-ccic";
++		reg =3D <0xd420a000 0x800>;
++		interrupts =3D <42>;
++		clocks =3D <&soc_clocks MMP2_CLK_CCIC0>;
++		clock-names =3D "CCICAXICLK";
++		#clock-cells =3D <0>;
++		clock-output-names =3D "mclk";
++
++		port {
++			camera0_0: endpoint {
++				remote-endpoint =3D <&ov7670_0>;
++			};
++		};
++	};
 --=20
 2.19.1
 
