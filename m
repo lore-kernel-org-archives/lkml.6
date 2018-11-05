@@ -2,113 +2,89 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 725B5C46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:20:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B4AFC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:23:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38DA220825
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:20:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KJptL+Xj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38DA220825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 15DE12086A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:23:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15DE12086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728928AbeKETj3 (ORCPT
+        id S1727468AbeKETmL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 14:39:29 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:53832 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726086AbeKETj2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 14:39:28 -0500
-Received: by mail-it1-f195.google.com with SMTP id r12-v6so9107232ita.3
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 02:20:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=VhdvL1uLGtlLDhJabG/pQgJeee3A3ZGaGzNYTsDl2cM=;
-        b=KJptL+XjWSYq2VyQ5VSBPJbYELstFfzzcNH1PN0wN0+4Htju18DiCreXlTg+RfXJ/0
-         k0EvS31NWZO9qX+w2y/VGE/Ib1LvIQ6X4TuvkgotpG6H7TjcmmDnNbQiFRQUVgDt0VLj
-         BCl3ehT87z4DF3paIKe7DQnDkveaWU7OJZb10=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=VhdvL1uLGtlLDhJabG/pQgJeee3A3ZGaGzNYTsDl2cM=;
-        b=VNkxywa9y5zc6WFQqGgcsAk57y+rHVAhBnkX3zlm6eRMgVwsiH6CPVKRn9HocAoCVy
-         iqhNRQYjm/PjXEvURZKC+ean+ECD4KiqjyX2CZQbWeq6EzXziZi1BgRgXkys1Xs29qFQ
-         J5h421AVHSlg+fBs84N9kOYpjg9hnUHhQ5MNA3lMAwzLdsPO8V8H2RT8NZozVY1CFpQl
-         qs522F2VWXg6D4Zq8wS2qcVb+JfpJb/Kx26z/XwnvMUc911Q/nYuxmOI1MTMB3i7iIPX
-         4EsDRy/Jz5HtiO1++Rc3GHcTqsh8cqT3SHg3DITDpLndRfw9ezbWJKF0RxUKrNso0Nye
-         y9Fw==
-X-Gm-Message-State: AGRZ1gKtLNQENCLfupAdY70eeXVisgMChqP18VKIwCmZcEOFhllafBT3
-        /gwJXpOEcUN13yQxqH4thJH99+075zeNf7NF1JuGaA==
-X-Google-Smtp-Source: AJdET5dmfRinnApLdMyfoDOXhe3vPmm2qAbVebEfDu/sdrxQyplaybCZ1YwVAW8Z+PLkMJJbcOFBb5LJHcYr2adGmdE=
-X-Received: by 2002:a02:9f85:: with SMTP id a5-v6mr19822545jam.2.1541413228819;
- Mon, 05 Nov 2018 02:20:28 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:a6b:4f16:0:0:0:0:0 with HTTP; Mon, 5 Nov 2018 02:20:28 -0800 (PST)
-In-Reply-To: <CAOtvUMeRth4zrTZbEy6Co=+CR4==5oSDbaf760Yh4fj8UAf8bQ@mail.gmail.com>
-References: <1541325924-14777-1-git-send-email-gilad@benyossef.com>
- <2578248.XAorIH2ink@tauon.chronox.de> <CAOtvUMeRth4zrTZbEy6Co=+CR4==5oSDbaf760Yh4fj8UAf8bQ@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 5 Nov 2018 11:20:28 +0100
-Message-ID: <CAKv+Gu8x1LRKq4xJTrWfu7vQDPSzxYwEYGXG_o3Xv+Zsch9S-g@mail.gmail.com>
-Subject: Re: [PATCH] crypto: mark cts(cbc(aes)) as FIPS allowed
-To:     Gilad Ben-Yossef <gilad@benyossef.com>
-Cc:     =?UTF-8?Q?Stephan_M=C3=BCller?= <smueller@chronox.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>,
-        Ofir Drang <Ofir.Drang@arm.com>,
-        Yael Chemla <Yael.Chemla@arm.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 5 Nov 2018 14:42:11 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37456 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726125AbeKETmL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 14:42:11 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C1BB3AF4D;
+        Mon,  5 Nov 2018 10:23:10 +0000 (UTC)
+From:   Johannes Thumshirn <jthumshirn@suse.de>
+To:     Jens Axboe <axboe@fb.com>
+Cc:     Linux Block Layer Mailinglist <linux-block@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.de>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Jan Kara <jack@suse.cz>, Sagi Grimberg <sagi@grimberg.me>
+Subject: [PATCH] block: respect virtual boundary mask in bvecs
+Date:   Mon,  5 Nov 2018 11:23:01 +0100
+Message-Id: <20181105102301.9752-1-jthumshirn@suse.de>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5 November 2018 at 10:18, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
-> Hi Stephan,
->
-> On Mon, Nov 5, 2018 at 10:50 AM Stephan Mueller <smueller@chronox.de> wrote:
->>
->> Am Sonntag, 4. November 2018, 11:05:24 CET schrieb Gilad Ben-Yossef:
->>
->> Hi Gilad,
->>
->> > As per Sp800-38A addendum from Oct 2010[1], cts(cbc(aes)) is
->> > allowed as a FIPS mode algorithm. Mark it as such.
->> >
->> > [1] https://csrc.nist.gov/publications/detail/sp/800-38a/addendum/final
->>
->> There are several types of CTS approaches. Only three of those are listed in
->> the SP800-38A addendum. The source code only refers to some RFCs.
->>
->> Did you check whether the CTS implementation matches one or more of the types
->> listed in the addendum? If yes, may I suggest to add a small statement in the
->> code noting this fact?
->
-> Yes, AFAIK the software implements CBC-CS3 as described in the document.
-> You have a very good point about this not document anywhere. I will
-> send a patch.
->
+With drivers like iSer we are seeing a lot of bio splitting and smaller I/Os
+being submitted to the driver.
 
-I agree that it makes sense to document this.
+The root cause of this issue that the virtual boundary mask code does not take
+into consideration that some of the memory segments in the SG list may have
+come from a huge memory page that is being managed in the SG list as 4K
+blocks.  This means that many of the segments in the SG list will have an
+offset into the page that is not 0 but will be a multiple of 4K.
 
-> While we're at it, does someone find it useful if I implemented the
-> other two modes?
-> They are part of the standard as well, although I am not sure that in
-> itself is sufficient cause.
->
+Cc: Jan Kara <jack@suse.cz>
+Cc: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+---
+ block/blk-merge.c | 2 +-
+ block/blk.h       | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Nope. The linux crypto API is not a general purpose cryptography
-toolkit, it should only offer what we actually use in the kernel, or
-we'll either end up with bitrot or with a disproportionate maintenance
-burden for stuff nobody actually uses.
+diff --git a/block/blk-merge.c b/block/blk-merge.c
+index 6b5ad275ed56..208658a901c6 100644
+--- a/block/blk-merge.c
++++ b/block/blk-merge.c
+@@ -46,7 +46,7 @@ static inline bool bio_will_gap(struct request_queue *q,
+ 		bio_get_first_bvec(prev_rq->bio, &pb);
+ 	else
+ 		bio_get_first_bvec(prev, &pb);
+-	if (pb.bv_offset)
++	if (pb.bv_offset & queue_virt_boundary(q))
+ 		return true;
+ 
+ 	/*
+diff --git a/block/blk.h b/block/blk.h
+index a1841b8ff129..c85e53f21cdd 100644
+--- a/block/blk.h
++++ b/block/blk.h
+@@ -169,7 +169,7 @@ static inline bool biovec_phys_mergeable(struct request_queue *q,
+ static inline bool __bvec_gap_to_prev(struct request_queue *q,
+ 		struct bio_vec *bprv, unsigned int offset)
+ {
+-	return offset ||
++	return (offset & queue_virt_boundary(q)) ||
+ 		((bprv->bv_offset + bprv->bv_len) & queue_virt_boundary(q));
+ }
+ 
+-- 
+2.16.4
+
