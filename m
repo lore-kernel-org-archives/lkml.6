@@ -2,265 +2,94 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C2C4C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:25:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1C3FC46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:25:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AC292086A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:25:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AC292086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 709CF2086A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:25:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 709CF2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728634AbeKEToZ (ORCPT
+        id S1728972AbeKETom (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 14:44:25 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46544 "EHLO mx1.redhat.com"
+        Mon, 5 Nov 2018 14:44:42 -0500
+Received: from ozlabs.org ([203.11.71.1]:47385 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726186AbeKEToY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 14:44:24 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726186AbeKETom (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 14:44:42 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D7B42420B5;
-        Mon,  5 Nov 2018 10:25:24 +0000 (UTC)
-Received: from localhost (ovpn-8-18.pek2.redhat.com [10.72.8.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3CA2D1876F;
-        Mon,  5 Nov 2018 10:25:22 +0000 (UTC)
-Date:   Mon, 5 Nov 2018 18:25:20 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stable tree <stable@vger.kernel.org>
-Subject: Re: [PATCH] mm, memory_hotplug: teach has_unmovable_pages about of
- LRU migrateable pages
-Message-ID: <20181105102520.GB22011@MiWiFi-R3L-srv>
-References: <20181101091055.GA15166@MiWiFi-R3L-srv>
- <20181102155528.20358-1-mhocko@kernel.org>
- <20181105002009.GF27491@MiWiFi-R3L-srv>
- <20181105091407.GB4361@dhcp22.suse.cz>
- <20181105092851.GD4361@dhcp22.suse.cz>
+        by ozlabs.org (Postfix) with ESMTPSA id 42pTN23jfvz9sCm;
+        Mon,  5 Nov 2018 21:25:38 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     snitzer@redhat.com, axboe@kernel.dk, linuxppc-dev@lists.ozlabs.org,
+        satheera@in.ibm.com
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: System not booting since dm changes? (was Linux 4.20-rc1)
+In-Reply-To: <CAHk-=whDiwASMgw8Q7TNA2MJhf3s=ouK4+_3ioqmobs-yagnkQ@mail.gmail.com>
+References: <CAHk-=whDiwASMgw8Q7TNA2MJhf3s=ouK4+_3ioqmobs-yagnkQ@mail.gmail.com>
+Date:   Mon, 05 Nov 2018 21:25:35 +1100
+Message-ID: <87tvkvddnk.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181105092851.GD4361@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 05 Nov 2018 10:25:24 +0000 (UTC)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michal,
+Linus Torvalds <torvalds@linux-foundation.org> writes:
+...
+> Mike Snitzer (1):
+>     device mapper updates
 
-On 11/05/18 at 10:28am, Michal Hocko wrote:
-> 
-> Or something like this. Ugly as hell, no question about that. I also
-> have to think about this some more to convince myself this will not
-> result in an endless loop under some situations.
+Hi Mike,
 
-It failed. Paste the log and patch diff here, please help check if I made
-any mistake on manual code change. The log is at bottom.
+Replying here because I can't find the device-mapper pull or the patch
+in question on LKML. I guess I should be subscribed to dm-devel.
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index a919ba5cb3c8..cdcd923ec337 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -7779,14 +7779,22 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
- 	pfn = page_to_pfn(page);
- 	for (found = 0, iter = 0; iter < pageblock_nr_pages; iter++) {
- 		unsigned long check = pfn + iter;
-+		unsigned long saved_flags;
- 
- 		if (!pfn_valid_within(check))
- 			continue;
- 
- 		page = pfn_to_page(check);
- 
--		if (PageReserved(page))
-+retry:
-+		saved_flags = READ_ONCE(page->flags);
-+
-+
-+		if (PageReserved(page)) {
-+			pr_info("has_unmovable_pages 000: pfn:0x%x\n", pfn+iter);
-+			__dump_page(page, "hotplug");
- 			goto unmovable;
-+		}
- 
- 		/*
- 		 * Hugepages are not in LRU lists, but they're movable.
-@@ -7795,8 +7803,11 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
- 		 */
- 		if (PageHuge(page)) {
- 
--			if (!hugepage_migration_supported(page_hstate(page)))
-+			if (!hugepage_migration_supported(page_hstate(page))) {
-+				pr_info("has_unmovable_pages 111: pfn:0x%x\n", pfn+iter);
-+				__dump_page(page, "hotplug");
- 				goto unmovable;
-+			}
- 
- 			iter = round_up(iter + 1, 1<<compound_order(page)) - 1;
- 			continue;
-@@ -7824,8 +7835,29 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
- 		if (__PageMovable(page))
- 			continue;
- 
--		if (!PageLRU(page))
-+#if 0
-+		if (!PageLRU(page) && (get_pageblock_migratetype(page)!=MIGRATE_MOVABLE) )
- 			found++;
-+#endif
-+               if (PageLRU(page))
-+                       continue;
-+
-+               if (PageSwapBacked(page))
-+                       continue;
-+
-+
-+               if (page->mapping && !page->mapping->a_ops)
-+		       pr_info("page->mapping:%ps \n", page->mapping);
-+
-+               if (page->mapping && page->mapping->a_ops && page->mapping->a_ops->migratepage)
-+                       continue;
-+
-+		/*
-+		 * We might race with the allocation of the page so retry
-+		 * if flags have changed.
-+		 */
-+		if (saved_flags != READ_ONCE(page->flags))
-+			goto retry;
- 		/*
- 		 * If there are RECLAIMABLE pages, we need to check
- 		 * it.  But now, memory offline itself doesn't call
-@@ -7839,8 +7871,11 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
- 		 * is set to both of a memory hole page and a _used_ kernel
- 		 * page at boot.
- 		 */
--		if (found > count)
-+		if (++found > count) {
-+			pr_info("has_unmovable_pages: pfn:0x%x, found:0x%x, count:0x%x \n", pfn+iter, found, count);
-+			__dump_page(page, "hotplug");
- 			goto unmovable;
-+		}
- 	}
- 	return false;
- unmovable:
+We have a box that doesn't boot any more, bisect points at one of:
+
+  cef6f55a9fb4 Mike Snitzer       dm table: require that request-based DM be layered on blk-mq devices 
+  953923c09fe8 Mike Snitzer       dm: rename DM_TYPE_MQ_REQUEST_BASED to DM_TYPE_REQUEST_BASED 
+  6a23e05c2fe3 Jens Axboe         dm: remove legacy request-based IO path 
 
 
-***********console log*******************
-[  458.584711] Offlined Pages 524288
-[  458.943655] Offlined Pages 524288
-[  459.390757] Offlined Pages 524288
-[  460.086409] Offlined Pages 524288
-[  460.931868] Offlined Pages 524288
-[  461.741327] Offlined Pages 524288
-[  462.576653] Offlined Pages 524288
-[  463.291947] Offlined Pages 524288
-[  464.121980] Offlined Pages 524288
-[  464.869983] Offlined Pages 524288
-[  465.550254] Offlined Pages 524288
-[  466.337934] Offlined Pages 524288
-[  467.143416] Offlined Pages 524288
-[  467.925108] Offlined Pages 524288
-[  468.665318] Offlined Pages 524288
-[  469.473999] Offlined Pages 524288
-[  470.390116] Offlined Pages 524288
-[  471.069104] Offlined Pages 524288
-[  471.704154] Offlined Pages 524288
-[  472.322466] Offlined Pages 524288
-[  472.964513] Offlined Pages 524288
-[  473.629328] Offlined Pages 524288
-[  474.265908] Offlined Pages 524288
-[  474.883829] Offlined Pages 524288
-[  475.538700] Offlined Pages 524288
-[  476.247451] Offlined Pages 524288
-[  476.575516] has_unmovable_pages: pfn:0x10dfec00, found:0x1, count:0x0 
-[  476.582103] page:ffffea0437fb0000 count:1 mapcount:1 mapping:ffff880e05239841 index:0x7f26e5000 compound_mapcount: 1
-[  476.592645] flags: 0x5fffffc0090034(uptodate|lru|active|head|swapbacked)
-[  476.599386] raw: 005fffffc0090034 ffffea043bd58008 ffffea0437fb8008 ffff880e05239841
-[  476.607154] raw: 00000007f26e5000 0000000000000000 00000001ffffffff ffff880e74f5c000
-[  476.616725] page dumped because: hotplug
-[  476.620682] page->mem_cgroup:ffff880e74f5c000
-[  476.625190] WARNING: CPU: 245 PID: 8 at mm/page_alloc.c:7882 has_unmovable_pages.cold.123+0x44/0xb6
-[  476.634230] Modules linked in: vfat fat intel_rapl sb_edac x86_pkg_temp_thermal coretemp kvm_intel kvm irqbypass crct10dif_pclmul iTCO_wdt crc32_pclmul iTCO_vendor_support ghash_clmulni_intel intel_cstate joydev ses ipmi_si enclosure ipmi_devintf scsi_transport_sas intel_uncore ipmi_msghandler pcspkr intel_rapl_perf sg mei_me i2c_i801 mei lpc_ich wmi xfs libcrc32c sd_mod ahci igb crc32c_intel libahci i2c_algo_bit dca libata megaraid_sas dm_mirror dm_region_hash dm_log dm_mod
-[  476.678239] CPU: 245 PID: 8 Comm: kworker/u576:0 Not tainted 4.19.0+ #9
-[  476.684871] Hardware name:  9008/IT91SMUB, BIOS BLXSV512 03/22/2018
-[  476.691199] Workqueue: kacpi_hotplug acpi_hotplug_work_fn
-[  476.696678] RIP: 0010:has_unmovable_pages.cold.123+0x44/0xb6
-[  476.702369] Code: fe 0f 0e 82 4c 89 ff e8 0f a0 02 00 48 8b 44 24 10 48 2b 40 50 48 89 c2 b8 01 00 00 00 48 81 fa 40 11 00 00 0f 85 ec eb ff ff <0f> 0b e9 e5 eb ff ff 48 89 de 48 c7 c7 08 4d 0a 82 e8 79 1e f0 ff
-[  476.721100] RSP: 0018:ffffc900000e3c70 EFLAGS: 00010046
-[  476.726361] RAX: 0000000000000001 RBX: 0000000010dfec00 RCX: 0000000000000006
-[  476.733543] RDX: 0000000000001140 RSI: 0000000000000096 RDI: ffff880e7cb55ad0
-[  476.742768] RBP: 005fffffc0010000 R08: 0000000000000bbf R09: 0000000000000007
-[  476.749926] R10: 0000000000000000 R11: ffffffff829f162d R12: 0000000010dfec00
-[  476.757082] R13: 0000000000000001 R14: 0000000000000000 R15: ffffea0437fb0000
-[  476.764241] FS:  0000000000000000(0000) GS:ffff880e7cb40000(0000) knlGS:0000000000000000
-[  476.772338] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  476.778102] CR2: 00007fc3670f3000 CR3: 0000000e716c8003 CR4: 00000000003606e0
-[  476.785249] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  476.792405] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  476.799562] Call Trace:
-[  476.804039]  start_isolate_page_range+0x258/0x2f0
-[  476.808823]  __offline_pages+0xcc/0x8e0
-[  476.812753]  ? klist_next+0xf2/0x100
-[  476.816402]  ? device_is_dependent+0x90/0x90
-[  476.820759]  memory_subsys_offline+0x40/0x60
-[  476.825127]  device_offline+0x81/0xb0
-[  476.828920]  acpi_bus_offline+0xdb/0x140
-[  476.832937]  acpi_device_hotplug+0x21c/0x460
-[  476.837281]  acpi_hotplug_work_fn+0x1a/0x30
-[  476.841562]  process_one_work+0x1a1/0x3a0
-[  476.845647]  worker_thread+0x30/0x380
-[  476.849381]  ? drain_workqueue+0x120/0x120
-[  476.853549]  kthread+0x112/0x130
-[  476.856866]  ? kthread_park+0x80/0x80
-[  476.860588]  ret_from_fork+0x35/0x40
-[  476.864204] ---[ end trace 08fb4fe25cf760b3 ]---
-[  476.955547] has_unmovable_pages: pfn:0x10e07a00, found:0x1, count:0x0 
-[  476.962126] page:ffffea04381e8000 count:1 mapcount:1 mapping:ffff880e0913d899 index:0x7f26ec600 compound_mapcount: 1
-[  476.972673] flags: 0x5fffffc0090034(uptodate|lru|active|head|swapbacked)
-[  476.979413] raw: 005fffffc0090034 ffffea043c338008 ffffea043f5b0008 ffff880e0913d899
-[  476.987192] raw: 00000007f26ec600 0000000000000000 00000001ffffffff ffff880e74f5c000
-[  476.996921] page dumped because: hotplug
-[  477.000880] page->mem_cgroup:ffff880e74f5c000
-[  477.110154] has_unmovable_pages: pfn:0x10e9ee00, found:0x1, count:0x0 
-[  477.118626] page:ffffea043a7b8000 count:1 mapcount:1 mapping:ffff880e0c89c2c1 index:0x7f26e5000 compound_mapcount: 1
-[  477.129176] flags: 0x5fffffc0090034(uptodate|lru|active|head|swapbacked)
-[  477.135911] raw: 005fffffc0090034 ffffea043b0e0008 ffffea04383e8008 ffff880e0c89c2c1
-[  477.143690] raw: 00000007f26e5000 0000000000000000 00000001ffffffff ffff880e74f5c000
-[  477.151448] page dumped because: hotplug
-[  477.155404] page->mem_cgroup:ffff880e74f5c000
-[  477.224784] has_unmovable_pages: pfn:0x10f13600, found:0x1, count:0x0 
-[  477.231368] page:ffffea043c4d8000 count:1 mapcount:1 mapping:ffff880e57b7adc1 index:0x7f26e8600 compound_mapcount: 1
-[  477.241922] flags: 0x5fffffc0090034(uptodate|lru|active|head|swapbacked)
-[  477.250324] raw: 005fffffc0090034 ffffea043af88008 ffffea043cf20508 ffff880e57b7adc1
-[  477.258089] raw: 00000007f26e8600 0000000000000000 00000001ffffffff ffff880e74f5c000
-[  477.265857] page dumped because: hotplug
-[  477.269811] page->mem_cgroup:ffff880e74f5c000
-[  477.307236] has_unmovable_pages: pfn:0x10f8da00, found:0x1, count:0x0 
-[  477.313807] page:ffffea043e368000 count:1 mapcount:1 mapping:ffff880e75132529 index:0x7f26e1600 compound_mapcount: 1
-[  477.324361] flags: 0x5fffffc0090034(uptodate|lru|active|head|swapbacked)
-[  477.331096] raw: 005fffffc0090034 ffffea043d2c0008 ffffea043ba40008 ffff880e75132529
-[  477.338875] raw: 00000007f26e1600 0000000000000000 00000001ffffffff ffff880e74f5c000
-[  477.346635] page dumped because: hotplug
-[  477.350590] page->mem_cgroup:ffff880e74f5c000
-[  477.380478] has_unmovable_pages: pfn:0x10d87200, found:0x1, count:0x0 
-[  477.387060] page:ffffea04361c8000 count:1 mapcount:1 mapping:ffff880e0913d899 index:0x7f26e2400 compound_mapcount: 1
-[  477.397610] flags: 0x5fffffc0090034(uptodate|lru|active|head|swapbacked)
-[  477.404340] raw: 005fffffc0090034 ffffea0437fb8008 ffffea043cd20008 ffff880e0913d899
-[  477.412113] raw: 00000007f26e2400 0000000000000000 00000001ffffffff ffff880e74f5c000
-[  477.419870] page dumped because: hotplug
-[  477.423842] page->mem_cgroup:ffff880e74f5c000
-[  477.435557] memory memory539: Offline failed.
-[  489.171077] perf: interrupt took too long (2745 > 2500), lowering kernel.perf_event_max_sample_rate to 72000
-[  501.332276] INFO: NMI handler (ghes_notify_nmi) took too long to run: 2.179 msecs
-[  511.073564] perf: interrupt took too long (3593 > 3431), lowering kernel.perf_event_max_sample_rate to 55000
-[  521.050208] INFO: NMI handler (perf_event_nmi_handler) took too long to run: 1.836 msecs
-[  521.058339] perf: interrupt took too long (16324 > 4491), lowering kernel.perf_event_max_sample_rate to 12000
+It's a Power8 system running Rawhide, it does have multipath, but I'm
+told it was setup by the Fedora installer, ie. nothing fancy.
+
+The symptom is the system can't find its root filesystem and drops into
+the initramfs shell. The dmesg includes a bunch of errors like below:
+
+  [   43.263460] localhost multipathd[1344]: sdb: fail to get serial
+  [   43.268762] localhost multipathd[1344]: mpatha: failed in domap for addition of new path sdb
+  [   43.268762] localhost multipathd[1344]: uevent trigger error
+  [   43.282065] localhost kernel: device-mapper: table: table load rejected: not all devices are blk-mq request-stackable
+  [   43.282096] localhost kernel: device-mapper: table: unable to determine table type
+  [   43.275898] localhost multipathd[1344]: sdd: fail to get serial
+  [   43.282597] localhost multipathd[1344]: mpatha: failed in domap for addition of new path sdd
+  [   43.282642] localhost multipathd[1344]: uevent trigger error
+  [   43.286540] localhost multipathd[1344]: sdc: fail to get serial
+  [   43.296366] localhost kernel: device-mapper: table: table load rejected: not all devices are blk-mq request-stackable
+  [   43.296392] localhost kernel: device-mapper: table: unable to determine table type
+  [   43.292218] localhost multipathd[1344]: mpathb: failed in domap for addition of new path sdc
+  [   43.292218] localhost multipathd[1344]: uevent trigger error
+  [   43.306193] localhost kernel: device-mapper: table: table load rejected: not all devices are blk-mq request-stackable
+  [   43.306212] localhost kernel: device-mapper: table: unable to determine table type
+  [  150.523303] localhost dracut-initqueue[1325]: Warning: dracut-initqueue timeout - starting timeout scripts
+
+
+There's more info here if you want it:
+  https://github.com/linuxppc/linux/issues/203
+
+
+Any ideas what's going wrong here?
+
+cheers
