@@ -2,74 +2,71 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 839D6C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:13:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94406C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:15:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BA922084F
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:13:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BA922084F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 461102085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:15:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HGzKgCYl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 461102085A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387997AbeKFGen (ORCPT
+        id S2387702AbeKFGgf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 01:34:43 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39402 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387441AbeKFGem (ORCPT
+        Tue, 6 Nov 2018 01:36:35 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:52696 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387441AbeKFGgf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 01:34:42 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C284C5A8;
-        Mon,  5 Nov 2018 21:13:06 +0000 (UTC)
-Date:   Mon, 5 Nov 2018 13:13:05 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Christoph Lameter <cl@linux.com>, Roman Gushchin <guro@fb.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>, linux-mm@kvack.org
-Subject: Re: [PATCH] slab.h: Avoid using & for logical and of booleans
-Message-Id: <20181105131305.574d85469f08a4b76592feb6@linux-foundation.org>
-In-Reply-To: <20181105204000.129023-1-bvanassche@acm.org>
-References: <20181105204000.129023-1-bvanassche@acm.org>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 6 Nov 2018 01:36:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=wga7tJT24r08yP8QvZtP8mE7GPuKoMcZJvCYZjiA738=; b=HGzKgCYl9MNG3DHHoSm/Xkh6+
+        FfThE+8HyBxKlM1xrQEluBPyToqkKpC0UFYNdDX2xBrhqiwDjCl/u2psLlREN+WTpaiOk/NnJtv0H
+        i057iEL3tEbtRA1ep3a6g8y3vdwVgjxEsPSeNk5rhNLFnm7tp6sZ8u6WsygptspoVPtegwQufxFPT
+        PZhhf4KxiwIygOQzE+TFJlANJnHnx653vmtozvRFSjvkRsEh4YMXH+I8MfZaZ+yUO2Qh/j00iSWuQ
+        4ZvVZWzNrTeFBg6ryeH0hBxBH5g6u6OXGWQFouUWlcvKGVRLawo1pLH2Mq2YlYr4xSZJiLsUbHqd7
+        pGwdNlMnw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gJmD1-0002mf-Py; Mon, 05 Nov 2018 21:14:56 +0000
+Date:   Mon, 5 Nov 2018 13:14:55 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Oded Gabbay <oded.gabbay@amd.com>
+Subject: Re: [PATCH] mm/mmu_notifier: rename mmu_notifier_synchronize() to
+ <...>_barrier()
+Message-ID: <20181105211455.GB3074@bombadil.infradead.org>
+References: <20181105192955.26305-1-sean.j.christopherson@intel.com>
+ <20181105121833.200d5b53300a7ef4df7d349d@linux-foundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181105121833.200d5b53300a7ef4df7d349d@linux-foundation.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  5 Nov 2018 12:40:00 -0800 Bart Van Assche <bvanassche@acm.org> wrote:
-
-> This patch suppresses the following sparse warning:
+On Mon, Nov 05, 2018 at 12:18:33PM -0800, Andrew Morton wrote:
+> > +++ b/mm/mmu_notifier.c
 > 
-> ./include/linux/slab.h:332:43: warning: dubious: x & !y
-> 
-> ...
->
-> --- a/include/linux/slab.h
-> +++ b/include/linux/slab.h
-> @@ -329,7 +329,7 @@ static __always_inline enum kmalloc_cache_type kmalloc_type(gfp_t flags)
->  	 * If an allocation is both __GFP_DMA and __GFP_RECLAIMABLE, return
->  	 * KMALLOC_DMA and effectively ignore __GFP_RECLAIMABLE
->  	 */
-> -	return type_dma + (is_reclaimable & !is_dma) * KMALLOC_RECLAIM;
-> +	return type_dma + is_reclaimable * !is_dma * KMALLOC_RECLAIM;
->  }
->  
->  /*
+> But as it has no callers, why retain it?
 
-I suppose so.
-
-That function seems too clever for its own good :(.  I wonder if these
-branch-avoiding tricks are really worthwhile.
-
+... and this patch missed the declaration of mmu_notifier_synchronize
+in include/linux/mmu_notifier.h (whether we delete it or rename it,
+that mention of it needs to be fixed)
