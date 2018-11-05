@@ -2,161 +2,139 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C23C46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:57:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7914C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:57:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB5CD20819
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:57:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87B5E20866
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:57:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=g.ncu.edu.tw header.i=@g.ncu.edu.tw header.b="UY6F5BDM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB5CD20819
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=g.ncu.edu.tw
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Y9k8z1lI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87B5E20866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387753AbeKFCRh (ORCPT
+        id S2387770AbeKFCRp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 21:17:37 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41947 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387677AbeKFCRg (ORCPT
+        Mon, 5 Nov 2018 21:17:45 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:40780 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387677AbeKFCRo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 21:17:36 -0500
-Received: by mail-pg1-f194.google.com with SMTP id k13so4485904pga.8
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 08:57:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=g.ncu.edu.tw; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=5zrWXe3aeo+B0EAWT+gxm5OSW82SxwQuqY501axr2ww=;
-        b=UY6F5BDM447rCCXUwAdO2UGqy96PxsKxP5vwbrr1u6Xx6514Xh7k5KKdYULbI8sLmp
-         6fdEQ7JDATAUh2/G9mqtnN55A2ZN93KTEEPxbXvqqjx/6PWtuswWUQ7AFZk0bQz0T8Lm
-         MYJ7cZtf7b7SnVVyEVjYUzMRfkNAvOm6XS7EY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5zrWXe3aeo+B0EAWT+gxm5OSW82SxwQuqY501axr2ww=;
-        b=aYoit49uQoNtlVOCJyyGyqoSYXihC2MbvgG7Ehtal3Ncp/fqo5Qp7yM3ogCrbj26Wn
-         5DvFGZ11N+HKyKZeFpPnhsu+jazv8PxTAWX86IvPTA0JQ29aX0b6PRBu2Hfr9LRQSCf7
-         PIcQZwtIoq0lDiiowT4EqWUDzoyEhc1gX0wgSq5HO/+jnaKQSaJmJjHJ/n/4W2NzFSUt
-         3brsWWZniPdVqOBvVkK1A7S886lwq/8UNZ1LF7QhhwcXk/fqXMCuzLLWYWLcRQ2l93nk
-         hkRC8XeCCAEBprjY1LwQ2poeW+dfEAHrvBLA+jO0iyMdN8fKm/kvUSDlwmDLF2PIFgOr
-         iulA==
-X-Gm-Message-State: AGRZ1gKaYndvEakuAtByurXGJoV6KUkuAITHewL+poHWMQcU2jVqIFug
-        2klxoan4WiqRbs84TYscCfX9MA==
-X-Google-Smtp-Source: AJdET5dlx0zVk1TqmyfmoWwrIXIJPHcik9s3kOkBQ2Eu8sus1sIw5ywWLapOBentAz049sNz/tgdyQ==
-X-Received: by 2002:a63:8e43:: with SMTP id k64mr20611497pge.346.1541437020349;
-        Mon, 05 Nov 2018 08:57:00 -0800 (PST)
-Received: from starnight.local ([150.116.248.145])
-        by smtp.gmail.com with ESMTPSA id l16-v6sm58445129pfj.179.2018.11.05.08.56.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Nov 2018 08:56:59 -0800 (PST)
-From:   Jian-Hong Pan <starnight@g.ncu.edu.tw>
-To:     =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-Cc:     netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Marcel Holtmann <marcel@holtmann.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Dollar Chen <dollar.chen@wtmec.com>,
-        Ken Yu <ken.yu@rakwireless.com>, linux-wpan@vger.kernel.org,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
-        Jian-Hong Pan <starnight@g.ncu.edu.tw>
-Subject: [PATCH V2 0/7] net: lorawan: Add LoRaWAN soft MAC module
-Date:   Tue,  6 Nov 2018 00:55:38 +0800
-Message-Id: <20181105165544.5215-1-starnight@g.ncu.edu.tw>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <fc737f3940bbe91341fb15d85ac11931eb56d1fc.1535039998.git.starnight@g.ncu.edu.tw>
-References: <fc737f3940bbe91341fb15d85ac11931eb56d1fc.1535039998.git.starnight@g.ncu.edu.tw>
+        Mon, 5 Nov 2018 21:17:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=DsieLOHZoqgA0lWjDjlIjN6sVrCoUNxKlEy7y1BKdvE=; b=Y9k8z1lIWS+a98u3nzGZykufu
+        9FCbnKZcsXjL0WH8jSXVJToeLpBWEIaavbmZ61M1owIVefwcnGaps/qme1D47Fstt7z7fZYlW/VzZ
+        MJJHsMXbPla8FNg68FX1Z9deZUG+c0rK4iDzQBbBzycwSe9YnTqePOX5jLIm0qyeZxNrb4UnTOiFO
+        sw8z2qKLLr3N6dQEZcD5cbupT1ADyE+i/wCb4fHytlzSGvO2xVqcJs/yVyuceujZxVQfVKBLt+WJ8
+        AiVap3wTFiwF+t1Knc+hB0bGIfUFka1HBBfavi+DpIf5822MaPdanOygr7hi7bVp5PJbyTJV5ROfH
+        c+VJVYaqA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gJiBQ-0007b8-Kw; Mon, 05 Nov 2018 16:57:00 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E81982029F9FF; Mon,  5 Nov 2018 17:56:57 +0100 (CET)
+Date:   Mon, 5 Nov 2018 17:56:57 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Wang, Wei W" <wei.w.wang@intel.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "Xu, Like" <like.xu@intel.com>
+Subject: Re: [PATCH v1 1/8] perf/x86: add support to mask counters from host
+Message-ID: <20181105165657.GD22431@hirez.programming.kicks-ass.net>
+References: <1541066648-40690-1-git-send-email-wei.w.wang@intel.com>
+ <1541066648-40690-2-git-send-email-wei.w.wang@intel.com>
+ <20181101145257.GD3178@hirez.programming.kicks-ass.net>
+ <5BDC140F.6060303@intel.com>
+ <20181105093413.GO3178@hirez.programming.kicks-ass.net>
+ <5BE02725.3010707@intel.com>
+ <20181105121413.GC22431@hirez.programming.kicks-ass.net>
+ <286AC319A985734F985F78AFA26841F73DE3AC8B@shsmsx102.ccr.corp.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <286AC319A985734F985F78AFA26841F73DE3AC8B@shsmsx102.ccr.corp.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-LoRaWAN(TM) is the MAC layer defined by LoRa Alliance(TM) over LoRa
-devices.  LoRa is one of Low-Power Wide-Area Network (LPWAN) technology.
 
-LoRaWAN networks typically are laid out in a star-of-stars topology in
-which gateways relay messages between end-devices and a central network
-server at the backend.  Gateways are connected to the network server via
-standard IP connections while end-devices use single hop LoRa(TM) or FSK
-communication to one or many gateways.
+Please; don't send malformed emails like this. Lines wrap at 78 chars.
 
-A LoRa network distinguishes between a basic LoRaWAN (named Class A) and
-optional features (Class B, Class C ...):
-* Bi-directional end-devices (Class A)
-* Bi-directional end-devices with scheduled receive slots (Class B)
-* Bi-directional end-devices with maximal receive slots (Class C)
+On Mon, Nov 05, 2018 at 03:37:24PM +0000, Wang, Wei W wrote:
+> On Monday, November 5, 2018 8:14 PM, Peter Zijlstra wrote:
 
-This patch set add LoRaWAN class module implementing the stack,
-especially the soft MAC, between socket APIs and LoRa device drivers.
 
-socket APIs:
-send and receive the data
-------------------------------------------------------------------------
-LoRaWAN class module implements soft MAC:
-append the header/footer, encryption/decryption, timing slot and MAC
-commands
-------------------------------------------------------------------------
-LoRa device drivers:
-send and receive the messages for MAC layer
-------------------------------------------------------------------------
-LoRa devices
+> > That can only work if the host counter has perf_event_attr::exclude_guest=1,
+> > any counter without that must also count when the guest is running.
+> > 
+> > (and, IIRC, normal perf tool events do not have that set by default)
+> 
+> Probably no. Please see Line 81 at
+> https://github.com/torvalds/linux/blob/master/tools/perf/util/util.c
+> perf_guest by default is false, which makes "attr->exclude_guest = 1"
 
-This module starts from simple and implements partial Class A
-end-devices features defined in LoRaWAN(TM) Specification Ver. 1.0.2.
-More features and complexity, for example regional parameters, confirmed
-data messages, join request/accept messages for Over-The-Air Activation,
-MAC commands ... will be added in the future.
+Then you're in luck. But if the host creates an even that has
+exclude_guest=0 set, it should still work.
 
-Jian-Hong Pan (7):
-  net: lorawan: Add macro and definition for LoRaWAN
-  net: lorawan: Add LoRaWAN socket module
-  net: lorawan: Add LoRaWAN API declaration for LoRa devices
-  net: maclorawan: Add maclorawan module declaration
-  net: maclorawan: Implement the crypto of maclorawan module
-  net: maclorawan: Implement maclorawan class module
-  net: lorawan: List LORAWAN in menuconfig
+> > The thing is; you cannot do blind pass-through of the PMU, some of its
+> > features simply do not work in a guest. Also, the host perf driver expects
+> > certain functionality that must be respected.
+> 
+> Actually we are not blindly assigning the perf counters. Guest works
+> with its own complete perf stack (like the one on the host) which also
+> has its own constraints. 
 
- include/linux/lora/lorawan.h        | 137 ++++++
- include/linux/lora/lorawan_netdev.h |  52 +++
- include/linux/socket.h              |   5 +-
- include/uapi/linux/if_arp.h         |   1 +
- include/uapi/linux/if_ether.h       |   1 +
- net/Kconfig                         |   2 +
- net/Makefile                        |   2 +
- net/core/dev.c                      |   4 +-
- net/lorawan/Kconfig                 |  10 +
- net/lorawan/Makefile                |   2 +
- net/lorawan/socket.c                | 681 ++++++++++++++++++++++++++++
- net/maclorawan/Kconfig              |  14 +
- net/maclorawan/Makefile             |   2 +
- net/maclorawan/crypto.c             | 209 +++++++++
- net/maclorawan/crypto.h             |  27 ++
- net/maclorawan/mac.c                | 522 +++++++++++++++++++++
- net/maclorawan/maclorawan.h         | 199 ++++++++
- net/maclorawan/main.c               | 600 ++++++++++++++++++++++++
- security/selinux/hooks.c            |   4 +-
- security/selinux/include/classmap.h |   4 +-
- 20 files changed, 2473 insertions(+), 5 deletions(-)
- create mode 100644 include/linux/lora/lorawan.h
- create mode 100644 include/linux/lora/lorawan_netdev.h
- create mode 100644 net/lorawan/Kconfig
- create mode 100644 net/lorawan/Makefile
- create mode 100644 net/lorawan/socket.c
- create mode 100644 net/maclorawan/Kconfig
- create mode 100644 net/maclorawan/Makefile
- create mode 100644 net/maclorawan/crypto.c
- create mode 100644 net/maclorawan/crypto.h
- create mode 100644 net/maclorawan/mac.c
- create mode 100644 net/maclorawan/maclorawan.h
- create mode 100644 net/maclorawan/main.c
+But it knows nothing of the host state.
 
--- 
-2.19.1
+> The counter is also not passed through to the guest, guest accesses to
+> the assigned counter will still exit to the hypervisor, and the
+> hypervisor helps update the counter. 
 
+Yes, you have to; because the PMU doesn't properly virtualize, also
+because the HV -- linux in our case -- already claimed the PMU.
+
+So the network passthrough case you mentioned simply doesn't apply at
+all. Don't bother looking at it for inspiration.
+
+> > Those are the constraints you have to work with.
+> > 
+> > Back when we all started down this virt rathole, I proposed people do
+> > paravirt perf, where events would be handed to the host kernel and let the
+> > host kernel do its normal thing. But people wanted to do the MSR based
+> > thing because of !linux guests.
+> 
+> IMHO, it is worthwhile to care more about the real use case. When a
+> user gets a virtual machine from a vendor, all he can do is to run
+> perf inside the guest. The above contention concerns would not happen,
+> because the user wouldn't be able to come to the host to run perf on
+> the virtualization software (e.g. ./perf qemu..) and in the meantime
+> running perf in the guest to cause the contention.
+
+That's your job. Mine is to make sure that whatever you propose fits in
+the existing model and doesn't make a giant mess of things.
+
+And for Linux guests on Linux hosts, paravirt perf still makes the most
+sense to me; then you get the host scheduling all the events and
+providing the guest with the proper counts/runtimes/state.
+
+> On the other hand, when we improve the user experience of running perf
+> inside the guest by reducing the virtualization overhead, that would
+> bring real benefits to the real use case.
+
+You can start to improve things by doing a less stupid implementation of
+the existing code.
