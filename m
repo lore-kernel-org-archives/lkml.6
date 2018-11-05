@@ -2,83 +2,225 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14DC0C46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:31:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07170C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:32:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA6BF204FD
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:31:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA6BF204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B709C204FD
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:32:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=scalemp.com header.i=@scalemp.com header.b="Fgd+ZjQM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B709C204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=scalemp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387603AbeKFCwi (ORCPT
+        id S2387669AbeKFCwn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 21:52:38 -0500
-Received: from mga02.intel.com ([134.134.136.20]:17322 "EHLO mga02.intel.com"
+        Mon, 5 Nov 2018 21:52:43 -0500
+Received: from www.scalemp.com ([169.44.78.149]:38987 "EHLO scalemp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729800AbeKFCwi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 21:52:38 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 09:31:56 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
-   d="scan'208";a="271542995"
-Received: from wenjiewa-mobl2.ccr.corp.intel.com (HELO localhost) ([10.249.254.60])
-  by orsmga005.jf.intel.com with ESMTP; 05 Nov 2018 09:31:45 -0800
-Date:   Mon, 5 Nov 2018 19:31:44 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Jethro Beekman <jethro@fortanix.com>
-Cc:     "x86@kernel.org" <x86@kernel.org>,
-        "platform-driver-x86@vger.kernel.org" 
-        <platform-driver-x86@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "dave.hansen@intel.com" <dave.hansen@intel.com>,
-        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "serge.ayoun@intel.com" <serge.ayoun@intel.com>,
-        "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
-        "haitao.huang@intel.com" <haitao.huang@intel.com>,
-        "mark.shanahan@intel.com" <mark.shanahan@intel.com>,
-        "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
+        id S2387618AbeKFCwn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 21:52:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=scalemp.com
+        ; s=default; h=Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=ulkLpbL0g6K9+i7jCu+g3nGUJIKfWMghJ9zhkK+Ui4o=; b=Fgd+ZjQMMeukrfYHyQNf76uyhb
+        rE4SxVcVTl49yeNo0745Z4A2fRmCgD4zjtOJc+eJMMjV6EaZnTOahY2EDyMGnoVnZrSot+jCkAe+Y
+        u1slASrtFrRyp7UCz+s75dQ6zHHcnKWqU6xbmADmvoIyjk3wx4kd9t1UjKJjy4cW+JGo=;
+Received: from bzq-80-45-146.static.bezeqint.net ([82.80.45.146]:21367 helo=eial.scalemp)
+        by hosting.virtualsmp.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <eial@scalemp.com>)
+        id 1gJijI-000vzK-9Y; Mon, 05 Nov 2018 12:32:00 -0500
+From:   Eial Czerwacki <eial@scalemp.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Eial Czerwacki <eial@scalemp.com>, Juergen Gross <jgross@suse.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v15 16/23] x86/sgx: Enumerate and track EPC sections
-Message-ID: <20181105173144.GE4502@linux.intel.com>
-References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
- <20181102231320.29164-17-jarkko.sakkinen@linux.intel.com>
- <79867568-c21f-8a09-d06e-360b1b925dd5@fortanix.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <79867568-c21f-8a09-d06e-360b1b925dd5@fortanix.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH v3] x86/vsmp_64.c: Remove dependency on pv_irq_ops
+Date:   Mon,  5 Nov 2018 19:31:54 +0200
+Message-Id: <1541439114-28297-1-git-send-email-eial@scalemp.com>
+X-Mailer: git-send-email 2.7.4
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hosting.virtualsmp.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - scalemp.com
+X-Get-Message-Sender-Via: hosting.virtualsmp.com: authenticated_id: eial@scalemp.com
+X-Authenticated-Sender: hosting.virtualsmp.com: eial@scalemp.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 03, 2018 at 01:07:27AM +0000, Jethro Beekman wrote:
-> > +	for (i = 0; i < SGX_MAX_EPC_SECTIONS; i++) {
-> 
-> Perhaps print a warning if there are more than SGX_MAX_EPC_SECTIONS sections
-> reported by CPUID.
+vSMP dependency on pv_irq_ops has been removed some years ago, but the code
+still deals with pv_irq_ops.
 
-Makes sense. I'll add it.
+In short, "cap & ctl & (1 << 4)" is always returning 0, so all
+PARAVIRT/PARAVIRT_XXL code related to that can be removed.
 
-/Jarkko
+However, the rest of the code depends on CONFIG_PCI, so fix it accordingly.
+
+Rename set_vsmp_pv_ops to set_vsmp_ctl as the original name does not make
+sense anymore.
+
+Signed-off-by: Eial Czerwacki <eial@scalemp.com>
+Acked-by: Shai Fultheim <shai@scalemp.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/Kconfig          |  1 -
+ arch/x86/kernel/vsmp_64.c | 84 ++++-------------------------------------------
+ 2 files changed, 7 insertions(+), 78 deletions(-)
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index ba7e346..9d734f3 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -525,7 +525,6 @@ config X86_VSMP
+ 	bool "ScaleMP vSMP"
+ 	select HYPERVISOR_GUEST
+ 	select PARAVIRT
+-	select PARAVIRT_XXL
+ 	depends on X86_64 && PCI
+ 	depends on X86_EXTENDED_PLATFORM
+ 	depends on SMP
+diff --git a/arch/x86/kernel/vsmp_64.c b/arch/x86/kernel/vsmp_64.c
+index 1eae5af..3099aaf 100644
+--- a/arch/x86/kernel/vsmp_64.c
++++ b/arch/x86/kernel/vsmp_64.c
+@@ -26,65 +26,8 @@
+ 
+ #define TOPOLOGY_REGISTER_OFFSET 0x10
+ 
+-#if defined CONFIG_PCI && defined CONFIG_PARAVIRT_XXL
+-/*
+- * Interrupt control on vSMPowered systems:
+- * ~AC is a shadow of IF.  If IF is 'on' AC should be 'off'
+- * and vice versa.
+- */
+-
+-asmlinkage __visible unsigned long vsmp_save_fl(void)
+-{
+-	unsigned long flags = native_save_fl();
+-
+-	if (!(flags & X86_EFLAGS_IF) || (flags & X86_EFLAGS_AC))
+-		flags &= ~X86_EFLAGS_IF;
+-	return flags;
+-}
+-PV_CALLEE_SAVE_REGS_THUNK(vsmp_save_fl);
+-
+-__visible void vsmp_restore_fl(unsigned long flags)
+-{
+-	if (flags & X86_EFLAGS_IF)
+-		flags &= ~X86_EFLAGS_AC;
+-	else
+-		flags |= X86_EFLAGS_AC;
+-	native_restore_fl(flags);
+-}
+-PV_CALLEE_SAVE_REGS_THUNK(vsmp_restore_fl);
+-
+-asmlinkage __visible void vsmp_irq_disable(void)
+-{
+-	unsigned long flags = native_save_fl();
+-
+-	native_restore_fl((flags & ~X86_EFLAGS_IF) | X86_EFLAGS_AC);
+-}
+-PV_CALLEE_SAVE_REGS_THUNK(vsmp_irq_disable);
+-
+-asmlinkage __visible void vsmp_irq_enable(void)
+-{
+-	unsigned long flags = native_save_fl();
+-
+-	native_restore_fl((flags | X86_EFLAGS_IF) & (~X86_EFLAGS_AC));
+-}
+-PV_CALLEE_SAVE_REGS_THUNK(vsmp_irq_enable);
+-
+-static unsigned __init vsmp_patch(u8 type, void *ibuf,
+-				  unsigned long addr, unsigned len)
+-{
+-	switch (type) {
+-	case PARAVIRT_PATCH(irq.irq_enable):
+-	case PARAVIRT_PATCH(irq.irq_disable):
+-	case PARAVIRT_PATCH(irq.save_fl):
+-	case PARAVIRT_PATCH(irq.restore_fl):
+-		return paravirt_patch_default(type, ibuf, addr, len);
+-	default:
+-		return native_patch(type, ibuf, addr, len);
+-	}
+-
+-}
+-
+-static void __init set_vsmp_pv_ops(void)
++#if defined(CONFIG_PCI)
++static void __init set_vsmp_ctl(void)
+ {
+ 	void __iomem *address;
+ 	unsigned int cap, ctl, cfg;
+@@ -109,28 +52,12 @@ static void __init set_vsmp_pv_ops(void)
+ 	}
+ #endif
+ 
+-	if (cap & ctl & (1 << 4)) {
+-		/* Setup irq ops and turn on vSMP  IRQ fastpath handling */
+-		pv_ops.irq.irq_disable = PV_CALLEE_SAVE(vsmp_irq_disable);
+-		pv_ops.irq.irq_enable = PV_CALLEE_SAVE(vsmp_irq_enable);
+-		pv_ops.irq.save_fl = PV_CALLEE_SAVE(vsmp_save_fl);
+-		pv_ops.irq.restore_fl = PV_CALLEE_SAVE(vsmp_restore_fl);
+-		pv_ops.init.patch = vsmp_patch;
+-		ctl &= ~(1 << 4);
+-	}
+ 	writel(ctl, address + 4);
+ 	ctl = readl(address + 4);
+ 	pr_info("vSMP CTL: control set to:0x%08x\n", ctl);
+ 
+ 	early_iounmap(address, 8);
+ }
+-#else
+-static void __init set_vsmp_pv_ops(void)
+-{
+-}
+-#endif
+-
+-#ifdef CONFIG_PCI
+ static int is_vsmp = -1;
+ 
+ static void __init detect_vsmp_box(void)
+@@ -164,11 +91,14 @@ static int is_vsmp_box(void)
+ {
+ 	return 0;
+ }
++static void __init set_vsmp_ctl(void)
++{
++}
+ #endif
+ 
+ static void __init vsmp_cap_cpus(void)
+ {
+-#if !defined(CONFIG_X86_VSMP) && defined(CONFIG_SMP)
++#if !defined(CONFIG_X86_VSMP) && defined(CONFIG_SMP) && defined(CONFIG_PCI)
+ 	void __iomem *address;
+ 	unsigned int cfg, topology, node_shift, maxcpus;
+ 
+@@ -221,6 +151,6 @@ void __init vsmp_init(void)
+ 
+ 	vsmp_cap_cpus();
+ 
+-	set_vsmp_pv_ops();
++	set_vsmp_ctl();
+ 	return;
+ }
+-- 
+2.7.4
+
