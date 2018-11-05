@@ -2,463 +2,106 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B6A6C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:59:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C64C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:01:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2660D2085A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:59:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2660D2085A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8CF842085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:01:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KJidsjYe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CF842085A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730199AbeKFATy (ORCPT
+        id S1729957AbeKFAVc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 19:19:54 -0500
-Received: from mga12.intel.com ([192.55.52.136]:50023 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726255AbeKFATx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 19:19:53 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 06:59:47 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
-   d="scan'208";a="105410071"
-Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 05 Nov 2018 06:59:44 -0800
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: [PATCH 6/6] device property: Remove struct property_set
-Date:   Mon,  5 Nov 2018 17:59:28 +0300
-Message-Id: <20181105145928.46819-7-heikki.krogerus@linux.intel.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181105145928.46819-1-heikki.krogerus@linux.intel.com>
-References: <20181105145928.46819-1-heikki.krogerus@linux.intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 5 Nov 2018 19:21:32 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34386 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729473AbeKFAVc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 19:21:32 -0500
+Received: by mail-pf1-f193.google.com with SMTP id y18-v6so2162622pfn.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 07:01:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=3gYZRtrbX5ghD33CiTpEkdHxJdZHVlkk1o9milWK0P8=;
+        b=KJidsjYesKTgUnD+WRPbdFJRD29hlmroinWgPNnzT5eAqQdcs+HPBcV5OcZGh9pSPo
+         LlQvA6eqg4S/wmgpK5W9aNMpFFFXRXBElTsSd5l0ktygpFApR2neMCoBdRgX8VM8sqqN
+         iQ65iV54BISJkZfd/vJ9bT5UfE5Q+O2zQUVUGkE/EvaHw3IThjtbqkDuNrBHv56lLM6T
+         qfVu7wtDX50eZxK0pXJQfC8oPwrlWo94aeVFyEjfyKeFrKjUZgHiodbmKixvKBTPsDU4
+         7eNkOrxslhEIqlIykf7SPo5cO9UwMl4Mozus3X8+YyoYhvouHOCUxadhwIn4oFBBSP75
+         9zpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=3gYZRtrbX5ghD33CiTpEkdHxJdZHVlkk1o9milWK0P8=;
+        b=ezB3PgTA5s3Gr2EH9ejGyub+09WTgSZVTCSGvUehpf6EiLh1tTTA/yhxrAfYujzSfc
+         Xle2LNdCifDP/gwBLWm0bz7IZIc2E3b9vDFexcxJXx7ON/vUNOUeJ0vD6qx1nakDDcus
+         VlMpwy0GoVLgMsQLnSNpupUHVkptsFzGLiMm8pfLY3tUdqtQXsyiP85hlgjbu8CGzqf9
+         bdzkxiAYXXDxxe/FHNK6++juvFEJSNGx8Nox85tWsW10EE7D/2vAxn5KUiFIn7Z0/RKP
+         otjqK+6tueh8xiXYL3LLGuIbjspSyBJLoRrUAZ5B+QToG7cep+hiLM27qP9435YJSa2a
+         KAag==
+X-Gm-Message-State: AGRZ1gK7iKU/Wk0Kf7qCQVHcSztrfQJmkRFAFATYfm0+CGIRl4+GvArm
+        3GQtVC8gVLuTq+ZQCmth9Vk=
+X-Google-Smtp-Source: AJdET5cWmP6/esTv8Nh5ylAho4fdMs6Ow0hq+m/befBtj4M+euxQPeXHTf4WU53eyCeIPPLFQ5ftBA==
+X-Received: by 2002:a65:4049:: with SMTP id h9mr20159224pgp.304.1541430085070;
+        Mon, 05 Nov 2018 07:01:25 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id n87-v6sm55558608pfb.62.2018.11.05.07.01.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 05 Nov 2018 07:01:24 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        hbathini@linux.ibm.com, mahesh@linux.vnet.ibm.com,
+        david@gibson.dropbear.id.au, msuchanek@suse.de
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] powerpc/fadump: Change to use DEFINE_SHOW_ATTRIBUTE macro
+Date:   Mon,  5 Nov 2018 10:01:19 -0500
+Message-Id: <20181105150119.6452-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replacing struct property_set with the software nodes that
-were just introduced.
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
-The API and functionality for adding properties to devices
-remains the same, however, the goal is to convert the
-drivers to use the API for software nodes when the device
-has no real firmware node, and use the old API only when
-"extra" build-in properties are needed.
-
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/base/property.c | 346 +++-------------------------------------
- 1 file changed, 24 insertions(+), 322 deletions(-)
+ arch/powerpc/kernel/fadump.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/drivers/base/property.c b/drivers/base/property.c
-index e20642759c67..1f6b8a21bcfe 100644
---- a/drivers/base/property.c
-+++ b/drivers/base/property.c
-@@ -18,198 +18,6 @@
- #include <linux/etherdevice.h>
- #include <linux/phy.h>
+diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.c
+index a711d22339ea..2df5e04b5afc 100644
+--- a/arch/powerpc/kernel/fadump.c
++++ b/arch/powerpc/kernel/fadump.c
+@@ -1531,17 +1531,7 @@ static struct kobj_attribute fadump_register_attr = __ATTR(fadump_registered,
+ 						0644, fadump_register_show,
+ 						fadump_register_store);
  
--struct property_set {
--	struct device *dev;
--	struct fwnode_handle fwnode;
--	const struct property_entry *properties;
+-static int fadump_region_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, fadump_region_show, inode->i_private);
+-}
+-
+-static const struct file_operations fadump_region_fops = {
+-	.open    = fadump_region_open,
+-	.read    = seq_read,
+-	.llseek  = seq_lseek,
+-	.release = single_release,
 -};
--
--static const struct fwnode_operations pset_fwnode_ops;
--
--static inline bool is_pset_node(const struct fwnode_handle *fwnode)
--{
--	return !IS_ERR_OR_NULL(fwnode) && fwnode->ops == &pset_fwnode_ops;
--}
--
--#define to_pset_node(__fwnode)						\
--	({								\
--		typeof(__fwnode) __to_pset_node_fwnode = __fwnode;	\
--									\
--		is_pset_node(__to_pset_node_fwnode) ?			\
--			container_of(__to_pset_node_fwnode,		\
--				     struct property_set, fwnode) :	\
--			NULL;						\
--	})
--
--static const struct property_entry *
--pset_prop_get(const struct property_set *pset, const char *name)
--{
--	const struct property_entry *prop;
--
--	if (!pset || !pset->properties)
--		return NULL;
--
--	for (prop = pset->properties; prop->name; prop++)
--		if (!strcmp(name, prop->name))
--			return prop;
--
--	return NULL;
--}
--
--static const void *property_get_pointer(const struct property_entry *prop)
--{
--	switch (prop->type) {
--	case DEV_PROP_U8:
--		if (prop->is_array)
--			return prop->pointer.u8_data;
--		return &prop->value.u8_data;
--	case DEV_PROP_U16:
--		if (prop->is_array)
--			return prop->pointer.u16_data;
--		return &prop->value.u16_data;
--	case DEV_PROP_U32:
--		if (prop->is_array)
--			return prop->pointer.u32_data;
--		return &prop->value.u32_data;
--	case DEV_PROP_U64:
--		if (prop->is_array)
--			return prop->pointer.u64_data;
--		return &prop->value.u64_data;
--	case DEV_PROP_STRING:
--		if (prop->is_array)
--			return prop->pointer.str;
--		return &prop->value.str;
--	default:
--		return NULL;
--	}
--}
--
--static const void *pset_prop_find(const struct property_set *pset,
--				  const char *propname, size_t length)
--{
--	const struct property_entry *prop;
--	const void *pointer;
--
--	prop = pset_prop_get(pset, propname);
--	if (!prop)
--		return ERR_PTR(-EINVAL);
--	pointer = property_get_pointer(prop);
--	if (!pointer)
--		return ERR_PTR(-ENODATA);
--	if (length > prop->length)
--		return ERR_PTR(-EOVERFLOW);
--	return pointer;
--}
--
--static int pset_prop_read_u8_array(const struct property_set *pset,
--				   const char *propname,
--				   u8 *values, size_t nval)
--{
--	const void *pointer;
--	size_t length = nval * sizeof(*values);
--
--	pointer = pset_prop_find(pset, propname, length);
--	if (IS_ERR(pointer))
--		return PTR_ERR(pointer);
--
--	memcpy(values, pointer, length);
--	return 0;
--}
--
--static int pset_prop_read_u16_array(const struct property_set *pset,
--				    const char *propname,
--				    u16 *values, size_t nval)
--{
--	const void *pointer;
--	size_t length = nval * sizeof(*values);
--
--	pointer = pset_prop_find(pset, propname, length);
--	if (IS_ERR(pointer))
--		return PTR_ERR(pointer);
--
--	memcpy(values, pointer, length);
--	return 0;
--}
--
--static int pset_prop_read_u32_array(const struct property_set *pset,
--				    const char *propname,
--				    u32 *values, size_t nval)
--{
--	const void *pointer;
--	size_t length = nval * sizeof(*values);
--
--	pointer = pset_prop_find(pset, propname, length);
--	if (IS_ERR(pointer))
--		return PTR_ERR(pointer);
--
--	memcpy(values, pointer, length);
--	return 0;
--}
--
--static int pset_prop_read_u64_array(const struct property_set *pset,
--				    const char *propname,
--				    u64 *values, size_t nval)
--{
--	const void *pointer;
--	size_t length = nval * sizeof(*values);
--
--	pointer = pset_prop_find(pset, propname, length);
--	if (IS_ERR(pointer))
--		return PTR_ERR(pointer);
--
--	memcpy(values, pointer, length);
--	return 0;
--}
--
--static int pset_prop_count_elems_of_size(const struct property_set *pset,
--					 const char *propname, size_t length)
--{
--	const struct property_entry *prop;
--
--	prop = pset_prop_get(pset, propname);
--	if (!prop)
--		return -EINVAL;
--
--	return prop->length / length;
--}
--
--static int pset_prop_read_string_array(const struct property_set *pset,
--				       const char *propname,
--				       const char **strings, size_t nval)
--{
--	const struct property_entry *prop;
--	const void *pointer;
--	size_t array_len, length;
--
--	/* Find out the array length. */
--	prop = pset_prop_get(pset, propname);
--	if (!prop)
--		return -EINVAL;
--
--	if (!prop->is_array)
--		/* The array length for a non-array string property is 1. */
--		array_len = 1;
--	else
--		/* Find the length of an array. */
--		array_len = pset_prop_count_elems_of_size(pset, propname,
--							  sizeof(const char *));
--
--	/* Return how many there are if strings is NULL. */
--	if (!strings)
--		return array_len;
--
--	array_len = min(nval, array_len);
--	length = array_len * sizeof(*strings);
--
--	pointer = pset_prop_find(pset, propname, length);
--	if (IS_ERR(pointer))
--		return PTR_ERR(pointer);
--
--	memcpy(strings, pointer, length);
--
--	return array_len;
--}
--
- struct fwnode_handle *dev_fwnode(struct device *dev)
++DEFINE_SHOW_ATTRIBUTE(fadump_region);
+ 
+ static void fadump_init_files(void)
  {
- 	return IS_ENABLED(CONFIG_OF) && dev->of_node ?
-@@ -217,51 +25,6 @@ struct fwnode_handle *dev_fwnode(struct device *dev)
- }
- EXPORT_SYMBOL_GPL(dev_fwnode);
- 
--static bool pset_fwnode_property_present(const struct fwnode_handle *fwnode,
--					 const char *propname)
--{
--	return !!pset_prop_get(to_pset_node(fwnode), propname);
--}
--
--static int pset_fwnode_read_int_array(const struct fwnode_handle *fwnode,
--				      const char *propname,
--				      unsigned int elem_size, void *val,
--				      size_t nval)
--{
--	const struct property_set *node = to_pset_node(fwnode);
--
--	if (!val)
--		return pset_prop_count_elems_of_size(node, propname, elem_size);
--
--	switch (elem_size) {
--	case sizeof(u8):
--		return pset_prop_read_u8_array(node, propname, val, nval);
--	case sizeof(u16):
--		return pset_prop_read_u16_array(node, propname, val, nval);
--	case sizeof(u32):
--		return pset_prop_read_u32_array(node, propname, val, nval);
--	case sizeof(u64):
--		return pset_prop_read_u64_array(node, propname, val, nval);
--	}
--
--	return -ENXIO;
--}
--
--static int
--pset_fwnode_property_read_string_array(const struct fwnode_handle *fwnode,
--				       const char *propname,
--				       const char **val, size_t nval)
--{
--	return pset_prop_read_string_array(to_pset_node(fwnode), propname,
--					   val, nval);
--}
--
--static const struct fwnode_operations pset_fwnode_ops = {
--	.property_present = pset_fwnode_property_present,
--	.property_read_int_array = pset_fwnode_read_int_array,
--	.property_read_string_array = pset_fwnode_property_read_string_array,
--};
--
- /**
-  * device_property_present - check if a property of a device is present
-  * @dev: Device whose property is being checked
-@@ -722,114 +485,53 @@ int fwnode_property_get_reference_args(const struct fwnode_handle *fwnode,
- EXPORT_SYMBOL_GPL(fwnode_property_get_reference_args);
- 
- /**
-- * pset_free_set - releases memory allocated for copied property set
-- * @pset: Property set to release
-- *
-- * Function takes previously copied property set and releases all the
-- * memory allocated to it.
-- */
--static void pset_free_set(struct property_set *pset)
--{
--	if (!pset)
--		return;
--
--	property_entries_free(pset->properties);
--	kfree(pset);
--}
--
--/**
-- * pset_copy_set - copies property set
-- * @pset: Property set to copy
-+ * device_add_properties - Add a collection of properties to a device object.
-+ * @dev: Device to add properties to.
-+ * @properties: Collection of properties to add.
-  *
-- * This function takes a deep copy of the given property set and returns
-- * pointer to the copy. Call device_free_property_set() to free resources
-- * allocated in this function.
-+ * Associate a collection of device properties represented by @properties with
-+ * @dev. The function takes a copy of @properties.
-  *
-- * Return: Pointer to the new property set or error pointer.
-+ * WARNING: The callers should not use this function if it is known that there
-+ * is no real firmware node associated with @dev! In that case the callers
-+ * should create a software node and assign it to @dev directly.
-  */
--static struct property_set *pset_copy_set(const struct property_set *pset)
-+int device_add_properties(struct device *dev,
-+			  const struct property_entry *properties)
- {
--	struct property_entry *properties;
--	struct property_set *p;
-+	struct fwnode_handle *fwnode;
- 
--	p = kzalloc(sizeof(*p), GFP_KERNEL);
--	if (!p)
--		return ERR_PTR(-ENOMEM);
-+	fwnode = fwnode_create_software_node(properties, NULL);
-+	if (IS_ERR(fwnode))
-+		return PTR_ERR(fwnode);
- 
--	properties = property_entries_dup(pset->properties);
--	if (IS_ERR(properties)) {
--		kfree(p);
--		return ERR_CAST(properties);
--	}
--
--	p->properties = properties;
--	return p;
-+	set_secondary_fwnode(dev, fwnode);
-+	return 0;
- }
-+EXPORT_SYMBOL_GPL(device_add_properties);
- 
- /**
-  * device_remove_properties - Remove properties from a device object.
-  * @dev: Device whose properties to remove.
-  *
-  * The function removes properties previously associated to the device
-- * secondary firmware node with device_add_properties(). Memory allocated
-- * to the properties will also be released.
-+ * firmware node with device_add_properties(). Memory allocated to the
-+ * properties will also be released.
-  */
- void device_remove_properties(struct device *dev)
- {
--	struct fwnode_handle *fwnode;
--	struct property_set *pset;
-+	struct fwnode_handle *fwnode = dev_fwnode(dev);
- 
--	fwnode = dev_fwnode(dev);
- 	if (!fwnode)
- 		return;
--	/*
--	 * Pick either primary or secondary node depending which one holds
--	 * the pset. If there is no real firmware node (ACPI/DT) primary
--	 * will hold the pset.
--	 */
--	pset = to_pset_node(fwnode);
--	if (pset) {
--		set_primary_fwnode(dev, NULL);
--	} else {
--		pset = to_pset_node(fwnode->secondary);
--		if (pset && dev == pset->dev)
--			set_secondary_fwnode(dev, NULL);
-+
-+	if (is_software_node(fwnode->secondary)) {
-+		fwnode_remove_software_node(fwnode->secondary);
-+		set_secondary_fwnode(dev, NULL);
- 	}
--	if (pset && dev == pset->dev)
--		pset_free_set(pset);
- }
- EXPORT_SYMBOL_GPL(device_remove_properties);
- 
--/**
-- * device_add_properties - Add a collection of properties to a device object.
-- * @dev: Device to add properties to.
-- * @properties: Collection of properties to add.
-- *
-- * Associate a collection of device properties represented by @properties with
-- * @dev as its secondary firmware node. The function takes a copy of
-- * @properties.
-- */
--int device_add_properties(struct device *dev,
--			  const struct property_entry *properties)
--{
--	struct property_set *p, pset;
--
--	if (!properties)
--		return -EINVAL;
--
--	pset.properties = properties;
--
--	p = pset_copy_set(&pset);
--	if (IS_ERR(p))
--		return PTR_ERR(p);
--
--	p->fwnode.ops = &pset_fwnode_ops;
--	set_secondary_fwnode(dev, &p->fwnode);
--	p->dev = dev;
--	return 0;
--}
--EXPORT_SYMBOL_GPL(device_add_properties);
--
- /**
-  * fwnode_get_next_parent - Iterate to the node's parent
-  * @fwnode: Firmware whose parent is retrieved
 -- 
-2.19.1
+2.17.0
 
