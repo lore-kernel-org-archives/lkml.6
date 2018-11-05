@@ -2,131 +2,310 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 847B2C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 22:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23430C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 22:11:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4735D20827
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 22:10:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE1542085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 22:11:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b="XG7ZcQDS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4735D20827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=telus.net
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aLrBRQ2S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE1542085A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388168AbeKFHbt (ORCPT
+        id S2388161AbeKFHdM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 02:31:49 -0500
-Received: from cmta18.telus.net ([209.171.16.91]:51134 "EHLO cmta18.telus.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388059AbeKFHbt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 02:31:49 -0500
-Received: from dougxps ([173.180.45.4])
-        by cmsmtp with SMTP
-        id Jn4Fgnr6GiBO5Jn4GgBwLF; Mon, 05 Nov 2018 15:09:58 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=telus.net; s=neo;
-        t=1541455798; bh=7FJdCBfzpieDAI6AXFj7hrpXN/S9yqhwbIaH8//4oNA=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date;
-        b=XG7ZcQDSOZyxI4yVBSrkhxOL1rKbgCMQ73CgHkEOhd46+F4PgrT/I1KixzbgG1xvR
-         QsWSMGxIGJwAcYT1/COb6xG9O+KlOs5xkdqfUkyirJeWDdQwIKYKhl1smCl8Sl5PoB
-         lrtbQAk60zjW3o2b6zPVMN/HhBz11fE0C2xOuykuMkgqORTbMAwsg/XRR5bfVXsOMB
-         dj04z/S6uelDHClI7G+Jib0apfbi84zQXxIWxLjnNpoAZfLzrKzsiE4lXWbOFhfWOI
-         2zJ/ZR5mHJN1i4vRJCR3R6iFKZ3Z35rNg+WriraE/niZQw4RxXu/wTxMZX7pue1uSH
-         Fy6s0rlO7pS0A==
-X-Authority-Analysis: v=2.3 cv=d5AkNirE c=1 sm=1 tr=0
- a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
- a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=IkcTkHD0fZMA:10 a=gu6fZOg2AAAA:8
- a=mzxy_aZs6R2gog5EZfMA:9 a=QEXdDO2ut3YA:10 a=-FEs8UIgK8oA:10
- a=NWVoK91CQyQA:10 a=2RSlZUUhi9gRBrsHwhhZ:22
-From:   "Doug Smythies" <dsmythies@telus.net>
-To:     "'Giovanni Gherdovich'" <ggherdovich@suse.cz>
-Cc:     "'Linux PM'" <linux-pm@vger.kernel.org>,
-        "'Srinivas Pandruvada'" <srinivas.pandruvada@linux.intel.com>,
-        "'Peter Zijlstra'" <peterz@infradead.org>,
-        "'LKML'" <linux-kernel@vger.kernel.org>,
-        "'Frederic Weisbecker'" <frederic@kernel.org>,
-        "'Mel Gorman'" <mgorman@suse.de>,
-        "'Daniel Lezcano'" <daniel.lezcano@linaro.org>,
-        "'Rafael J. Wysocki'" <rjw@rjwysocki.net>,
-        "Doug Smythies" <dsmythies@telus.net>
-References: <1899281.leNo2RexrE@aspire.rjw.lan>  <1541010981.3423.2.camel@suse.cz> <4168371.zz0pVZtGOY@aspire.rjw.lan> JkGTgcRwED1yAJkGYggSqP
-In-Reply-To: JkGTgcRwED1yAJkGYggSqP
-Subject: RE: [RFC/RFT][PATCH v2] cpuidle: New timer events oriented governor for tickless systems
-Date:   Mon, 5 Nov 2018 14:09:54 -0800
-Message-ID: <002601d47554$4a150060$de3f0120$@net>
-MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Office Outlook 12.0
-Content-Language: en-ca
-Thread-Index: AdR1OzhhJxr/TCKWQY2PUjvg4U2ZWQAE07EQ
-X-CMAE-Envelope: MS4wfEMdxQlthZwyBDxYiyvPv+nfbhRlfTV49OtNM86vQBQ0tO/PA3yXjq6Wz/BjKEU2hCNcdWpbHbH9psFAIuWMwGrYvnZLvr7BupYM3RKnJCYAsXBmsUt8
- B1/z13cVNvbQHAETTFRF3ONEXO3PrSW7o7vDeu6qwi8g/RDiC8HhGmi0Qc1QV0o6cO8T1Ds4eTpVPNHgyfKdRbM2qs6Len9lZleE6oH7bAkxcAmW0anajPEr
- 4ewgG98ZIjDxNX3IIcxijZzTVqBiUMge20T3qj6K2tusX9MLYR0Ua9LWlsTSoig5lAa7owehE3EkWcDJAKtAAYOgS7XrlmYVQG7TZc0JU0PAnvX1nlkKmEE3
- uwihFfSHLnh0EfwN2PHOZ1gw31NnastKPFaQ4i4Mp2/y+loP+sxL4eE8oAAJYEn0qVb46EjuKaxBhAHMAF2AxlZK/thGeX3r1H9k0QROczkjS1w7R1kFkoyg
- aLkNt90kNY37Bfsq
+        Tue, 6 Nov 2018 02:33:12 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:53592 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387768AbeKFHdM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 02:33:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Message-Id:Date:Subject:Cc:To:From:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=SeRzingOFXeZOwwC0D35GfUZzAaTsr9AihvjeXksgo4=; b=aLrBRQ2S365qjvJPEIvPDrGXn
+        5vj9BcZC3iAyw8va0b4BqIBK7XQcZ8GXth9Nvme7kiM24JtBbbjpemF4nr7KQUWdEJMP7KmJlC18K
+        1alN0vEPgr2tG5wKMNDMWAlMkpxMfiV5MjJr6ngX+kGfzo/n3xLLBGwr4Hv07TGhEbtQGe/CHPf2e
+        r/3g5QvYH11dNFp1xkuir0Y2iiN8rBkBwmRnZg1eXsdNfoRScQa2ZEaM9//BafvGp/GKgvn++2HqO
+        Nnwmg7HSKK3bokIOouQwxhPguaaebLzIKpFIKEM+Xs6toUGmqxdmNuMdiv3LoO7/8zJ/MtvTYT+t6
+        10seqJw0A==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gJn5d-0008Il-Iy; Mon, 05 Nov 2018 22:11:21 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-arch@vger.kernel.org
+Cc:     Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH] fls: Change parameter to unsigned int
+Date:   Mon,  5 Nov 2018 14:11:17 -0800
+Message-Id: <20181105221117.31828-1-willy@infradead.org>
+X-Mailer: git-send-email 2.14.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018.11.05 11:14 Giovanni Gherdovich wrote:
-> On Sun, 2018-11-04 at 11:06 +0100, Rafael J. Wysocki wrote:
->>
->> You can use the cpu_idle trace point to correlate the selected state =
-index
->> with the observed idle duration (that's what Doug did IIUC).
->
-> True, that works; although I ended up slapping a tracepoint right at =
-the
-> beginning of the teo_update() and capturing the variables
-> cpu_data->last_state, dev->last_residency and dev->cpu.
->
-> I should have some plots to share soon. I really wanted to do =
-in-kernel
-> histograms with systemtap as opposed to collecting data with ftrace =
-and doing
-> post-processing, because I noticed that the latter approach generates =
-lots of
-> events and wakeups from idle on the cpu that handles the ftrace data. =
-It's
-> kind of a workload in itself and spoils the results.
+When testing in userspace, UBSAN pointed out that shifting into the sign
+bit is undefined behaviour.  It doesn't really make sense to ask for the
+highest set bit of a negative value, so just turn the argument type into
+an unsigned int.
 
-I agree that we need to be careful not to influence the system we
-are trying to acquire diagnostic data on via the act of acquiring
-that data.
+Some architectures (eg ppc) already had it declared as an unsigned int,
+so I don't expect too many problems.
 
-I did not find much, if any, effect of acquiring trace data during the
-dbench with 12 clients test. Regardless I do the exact same test the =
-exact
-same way for the baseline reference kernel and the test kernel. To be
-clear, I mean no effect while actually acquiring the trace samples.
-Obviously there is a significant effect while the samples are eventually
-written out to disk, after being acquired. But at that point, I =
-don=E2=80=99t care.
+Signed-off-by: Matthew Wilcox <willy@infradead.org>
+---
+ arch/alpha/include/asm/bitops.h          | 4 ++--
+ arch/arc/include/asm/bitops.h            | 4 ++--
+ arch/c6x/include/asm/bitops.h            | 2 +-
+ arch/csky/include/asm/bitops.h           | 2 +-
+ arch/hexagon/include/asm/bitops.h        | 2 +-
+ arch/ia64/include/asm/bitops.h           | 3 +--
+ arch/m68k/include/asm/bitops.h           | 2 +-
+ arch/mips/include/asm/bitops.h           | 2 +-
+ arch/openrisc/include/asm/bitops/fls.h   | 2 +-
+ arch/parisc/include/asm/bitops.h         | 2 +-
+ arch/s390/include/asm/bitops.h           | 4 ++--
+ arch/unicore32/include/asm/bitops.h      | 2 +-
+ arch/x86/include/asm/bitops.h            | 2 +-
+ include/asm-generic/bitops/builtin-fls.h | 2 +-
+ include/asm-generic/bitops/fls.h         | 2 +-
+ tools/include/asm-generic/bitops/fls.h   | 2 +-
+ 16 files changed, 19 insertions(+), 20 deletions(-)
 
-For tests where I am also acquiring long term idle statistics, over many
-hours, I never run a trace at the same time, and only sample the system =
-once
-per minute. For those test scenarios, when a trace is required, i.e. for
-greater detail, it is done as an independent step. But yes, for my very =
-high
-idle state 0 entry/exit per unit time type tests, enabling trace has a =
-very
-significant effect on the system under test. I haven't figured out a way =
-around that.
-For example the test where ~6 gigabytes of trace data was collected in
-2 minutes, at a cost of ~25% performance drop
-(https://marc.info/?l=3Dlinux-pm&m=3D153897853630373&w=3D2)
-For comparison, the 12 client Phoronix dbench test trace on kernel =
-4.20-rc1
-(baseline reference for TEO V3 tests) was only 199 Megabytes in 10 =
-minutes.
-
-... Doug
-
+diff --git a/arch/alpha/include/asm/bitops.h b/arch/alpha/include/asm/bitops.h
+index ca43f4d0b937..5adca78830b5 100644
+--- a/arch/alpha/include/asm/bitops.h
++++ b/arch/alpha/include/asm/bitops.h
+@@ -391,9 +391,9 @@ static inline unsigned long __fls(unsigned long x)
+ 	return fls64(x) - 1;
+ }
+ 
+-static inline int fls(int x)
++static inline int fls(unsigned int x)
+ {
+-	return fls64((unsigned int) x);
++	return fls64(x);
+ }
+ 
+ /*
+diff --git a/arch/arc/include/asm/bitops.h b/arch/arc/include/asm/bitops.h
+index 8da87feec59a..ee9246184033 100644
+--- a/arch/arc/include/asm/bitops.h
++++ b/arch/arc/include/asm/bitops.h
+@@ -278,7 +278,7 @@ static inline __attribute__ ((const)) int clz(unsigned int x)
+ 	return res;
+ }
+ 
+-static inline int constant_fls(int x)
++static inline int constant_fls(unsigned int x)
+ {
+ 	int r = 32;
+ 
+@@ -312,7 +312,7 @@ static inline int constant_fls(int x)
+  * @result: [1-32]
+  * fls(1) = 1, fls(0x80000000) = 32, fls(0) = 0
+  */
+-static inline __attribute__ ((const)) int fls(unsigned long x)
++static inline __attribute__ ((const)) int fls(unsigned int x)
+ {
+ 	if (__builtin_constant_p(x))
+ 	       return constant_fls(x);
+diff --git a/arch/c6x/include/asm/bitops.h b/arch/c6x/include/asm/bitops.h
+index f0ab012401b6..8b68234ace18 100644
+--- a/arch/c6x/include/asm/bitops.h
++++ b/arch/c6x/include/asm/bitops.h
+@@ -54,7 +54,7 @@ static inline unsigned long __ffs(unsigned long x)
+  * This is defined the same way as ffs.
+  * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
+  */
+-static inline int fls(int x)
++static inline int fls(unsigned int x)
+ {
+ 	if (!x)
+ 		return 0;
+diff --git a/arch/csky/include/asm/bitops.h b/arch/csky/include/asm/bitops.h
+index 335f2883fb1e..43b9838bff63 100644
+--- a/arch/csky/include/asm/bitops.h
++++ b/arch/csky/include/asm/bitops.h
+@@ -40,7 +40,7 @@ static __always_inline unsigned long __ffs(unsigned long x)
+ /*
+  * asm-generic/bitops/fls.h
+  */
+-static __always_inline int fls(int x)
++static __always_inline int fls(unsigned int x)
+ {
+ 	asm volatile(
+ 		"ff1 %0\n"
+diff --git a/arch/hexagon/include/asm/bitops.h b/arch/hexagon/include/asm/bitops.h
+index 2691a1857d20..bee974262387 100644
+--- a/arch/hexagon/include/asm/bitops.h
++++ b/arch/hexagon/include/asm/bitops.h
+@@ -211,7 +211,7 @@ static inline long ffz(int x)
+  * This is defined the same way as ffs.
+  * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
+  */
+-static inline int fls(int x)
++static inline int fls(unsigned int x)
+ {
+ 	int r;
+ 
+diff --git a/arch/ia64/include/asm/bitops.h b/arch/ia64/include/asm/bitops.h
+index 56a774bf13fa..2f24ee6459d2 100644
+--- a/arch/ia64/include/asm/bitops.h
++++ b/arch/ia64/include/asm/bitops.h
+@@ -388,8 +388,7 @@ ia64_fls (unsigned long x)
+  * Find the last (most significant) bit set.  Returns 0 for x==0 and
+  * bits are numbered from 1..32 (e.g., fls(9) == 4).
+  */
+-static inline int
+-fls (int t)
++static inline int fls(unsigned int t)
+ {
+ 	unsigned long x = t & 0xffffffffu;
+ 
+diff --git a/arch/m68k/include/asm/bitops.h b/arch/m68k/include/asm/bitops.h
+index d979f38af751..10133a968c8e 100644
+--- a/arch/m68k/include/asm/bitops.h
++++ b/arch/m68k/include/asm/bitops.h
+@@ -502,7 +502,7 @@ static inline unsigned long __ffs(unsigned long x)
+ /*
+  *	fls: find last bit set.
+  */
+-static inline int fls(int x)
++static inline int fls(unsigned int x)
+ {
+ 	int cnt;
+ 
+diff --git a/arch/mips/include/asm/bitops.h b/arch/mips/include/asm/bitops.h
+index da1b8718861e..997263921a26 100644
+--- a/arch/mips/include/asm/bitops.h
++++ b/arch/mips/include/asm/bitops.h
+@@ -541,7 +541,7 @@ static inline unsigned long __ffs(unsigned long word)
+  * This is defined the same way as ffs.
+  * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
+  */
+-static inline int fls(int x)
++static inline int fls(unsigned int x)
+ {
+ 	int r;
+ 
+diff --git a/arch/openrisc/include/asm/bitops/fls.h b/arch/openrisc/include/asm/bitops/fls.h
+index 9efbf9ad86c4..57de5a1115bf 100644
+--- a/arch/openrisc/include/asm/bitops/fls.h
++++ b/arch/openrisc/include/asm/bitops/fls.h
+@@ -15,7 +15,7 @@
+ 
+ #ifdef CONFIG_OPENRISC_HAVE_INST_FL1
+ 
+-static inline int fls(int x)
++static inline int fls(unsigned int x)
+ {
+ 	int ret;
+ 
+diff --git a/arch/parisc/include/asm/bitops.h b/arch/parisc/include/asm/bitops.h
+index 53252d4f9a57..a09eaebfdfd0 100644
+--- a/arch/parisc/include/asm/bitops.h
++++ b/arch/parisc/include/asm/bitops.h
+@@ -188,7 +188,7 @@ static __inline__ int ffs(int x)
+  * fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
+  */
+ 
+-static __inline__ int fls(int x)
++static __inline__ int fls(unsigned int x)
+ {
+ 	int ret;
+ 	if (!x)
+diff --git a/arch/s390/include/asm/bitops.h b/arch/s390/include/asm/bitops.h
+index 86e5b2fdee3c..d1f8a4d94cca 100644
+--- a/arch/s390/include/asm/bitops.h
++++ b/arch/s390/include/asm/bitops.h
+@@ -397,9 +397,9 @@ static inline int fls64(unsigned long word)
+  * This is defined the same way as ffs.
+  * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
+  */
+-static inline int fls(int word)
++static inline int fls(unsigned int word)
+ {
+-	return fls64((unsigned int)word);
++	return fls64(word);
+ }
+ 
+ #else /* CONFIG_HAVE_MARCH_Z9_109_FEATURES */
+diff --git a/arch/unicore32/include/asm/bitops.h b/arch/unicore32/include/asm/bitops.h
+index c0cbdbe17168..de5853761c22 100644
+--- a/arch/unicore32/include/asm/bitops.h
++++ b/arch/unicore32/include/asm/bitops.h
+@@ -22,7 +22,7 @@
+  * the cntlz instruction for much better code efficiency.
+  */
+ 
+-static inline int fls(int x)
++static inline int fls(unsigned int x)
+ {
+ 	int ret;
+ 
+diff --git a/arch/x86/include/asm/bitops.h b/arch/x86/include/asm/bitops.h
+index 124f9195eb3e..ad7b210aa3f6 100644
+--- a/arch/x86/include/asm/bitops.h
++++ b/arch/x86/include/asm/bitops.h
+@@ -448,7 +448,7 @@ static __always_inline int ffs(int x)
+  * set bit if value is nonzero. The last (most significant) bit is
+  * at position 32.
+  */
+-static __always_inline int fls(int x)
++static __always_inline int fls(unsigned int x)
+ {
+ 	int r;
+ 
+diff --git a/include/asm-generic/bitops/builtin-fls.h b/include/asm-generic/bitops/builtin-fls.h
+index 62daf940989d..c8455cc28841 100644
+--- a/include/asm-generic/bitops/builtin-fls.h
++++ b/include/asm-generic/bitops/builtin-fls.h
+@@ -9,7 +9,7 @@
+  * This is defined the same way as ffs.
+  * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
+  */
+-static __always_inline int fls(int x)
++static __always_inline int fls(unsigned int x)
+ {
+ 	return x ? sizeof(x) * 8 - __builtin_clz(x) : 0;
+ }
+diff --git a/include/asm-generic/bitops/fls.h b/include/asm-generic/bitops/fls.h
+index 753aecaab641..b168bb10e1be 100644
+--- a/include/asm-generic/bitops/fls.h
++++ b/include/asm-generic/bitops/fls.h
+@@ -10,7 +10,7 @@
+  * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
+  */
+ 
+-static __always_inline int fls(int x)
++static __always_inline int fls(unsigned int x)
+ {
+ 	int r = 32;
+ 
+diff --git a/tools/include/asm-generic/bitops/fls.h b/tools/include/asm-generic/bitops/fls.h
+index 753aecaab641..b168bb10e1be 100644
+--- a/tools/include/asm-generic/bitops/fls.h
++++ b/tools/include/asm-generic/bitops/fls.h
+@@ -10,7 +10,7 @@
+  * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
+  */
+ 
+-static __always_inline int fls(int x)
++static __always_inline int fls(unsigned int x)
+ {
+ 	int r = 32;
+ 
+-- 
+2.19.1
 
