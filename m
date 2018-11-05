@@ -2,219 +2,129 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31A16C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:10:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6BA8C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:12:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D440120827
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:10:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="FVA8CWQy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D440120827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 62FD720827
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:12:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62FD720827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729533AbeKEQ23 (ORCPT
+        id S1729565AbeKEQaL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 11:28:29 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:6154 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729379AbeKEQ22 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 11:28:28 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bdfecd50001>; Sun, 04 Nov 2018 23:10:13 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Sun, 04 Nov 2018 23:10:13 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Sun, 04 Nov 2018 23:10:13 -0800
-Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 5 Nov
- 2018 07:10:13 +0000
-Received: from [10.110.48.28] (172.20.13.39) by HQMAIL102.nvidia.com
- (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 5 Nov
- 2018 07:10:13 +0000
-Subject: Re: [PATCH 4/6] mm: introduce page->dma_pinned_flags, _count
-To:     Christoph Hellwig <hch@infradead.org>
-CC:     Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Jason Gunthorpe" <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-References: <20181012060014.10242-1-jhubbard@nvidia.com>
- <20181012060014.10242-5-jhubbard@nvidia.com> <20181013035516.GA18822@dastard>
- <7c2e3b54-0b1d-6726-a508-804ef8620cfd@nvidia.com>
- <20181013164740.GA6593@infradead.org>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <84811b54-60bf-2bc3-a58d-6a7925c24aad@nvidia.com>
-Date:   Sun, 4 Nov 2018 23:10:12 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <20181013164740.GA6593@infradead.org>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
- HQMAIL102.nvidia.com (172.18.146.10)
+        Mon, 5 Nov 2018 11:30:11 -0500
+Received: from mga01.intel.com ([192.55.52.88]:25501 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729000AbeKEQaL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 11:30:11 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2018 23:08:55 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,467,1534834800"; 
+   d="scan'208";a="93709141"
+Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
+  by FMSMGA003.fm.intel.com with ESMTP; 04 Nov 2018 23:08:55 -0800
+Received: from fmsmsx118.amr.corp.intel.com (10.18.116.18) by
+ FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Sun, 4 Nov 2018 23:08:55 -0800
+Received: from shsmsx103.ccr.corp.intel.com (10.239.4.69) by
+ fmsmsx118.amr.corp.intel.com (10.18.116.18) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Sun, 4 Nov 2018 23:08:54 -0800
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.117]) by
+ SHSMSX103.ccr.corp.intel.com ([169.254.4.161]) with mapi id 14.03.0415.000;
+ Mon, 5 Nov 2018 15:08:53 +0800
+From:   "Liu, Yi L" <yi.l.liu@intel.com>
+To:     Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        "David Woodhouse" <dwmw2@infradead.org>
+CC:     "Raj, Ashok" <ashok.raj@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "Pan, Jacob jun" <jacob.jun.pan@intel.com>
+Subject: RE: [PATCH 1/1] iommu/vtd: Fix NULL pointer dereference in
+ prq_event_thread()
+Thread-Topic: [PATCH 1/1] iommu/vtd: Fix NULL pointer dereference in
+ prq_event_thread()
+Thread-Index: AQHUdMsI/M/bjFj9FEyLk+v3JlicsqVAwhRA
+Date:   Mon, 5 Nov 2018 07:08:52 +0000
+Message-ID: <A2975661238FB949B60364EF0F2C257439D5E057@SHSMSX104.ccr.corp.intel.com>
+References: <20181105021858.16958-1-baolu.lu@linux.intel.com>
+ <A2975661238FB949B60364EF0F2C257439D5DF53@SHSMSX104.ccr.corp.intel.com>
+ <f35802b2-124f-ff54-5be3-a1fb99b2b2c6@linux.intel.com>
+In-Reply-To: <f35802b2-124f-ff54-5be3-a1fb99b2b2c6@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNDdhY2YzNjQtZGM0Ny00YjQxLWE3ZWQtODIxZTZhYjA4OWE3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiXC9RQVA2Q0p3UzZzb3BDQlQxNWVybGZPb25FXC9Rd293MFNRTWs3a3czbDBLbnJlMkJUcERjOWg4QVEydHNleFBpIn0=
+x-originating-ip: [10.239.127.40]
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US-large
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1541401813; bh=u6bicF4trrH0tqctkfnEaz7WgA7zptQ56KaalQFYvXY=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=FVA8CWQy9KlKt0rPeCQOxkoHo2bVIa1WqetYsRoePGLyeT5pp2cqxiY4qBJW2nVWs
-         97Xgpamd6VttsgDXDWo1Y+pNKkgglZvFQ0YtUo5rsjj+QOaT/umy7WWhFpluOBT78K
-         /E0hX+9nFrFT22y53cm8ZZGGMS5vwUu4tq0WlT1SGENXHIHrgIS4hBOlsvejLRV689
-         uglYq/6wNk4QF9TlUucMeXVD51ZqLTpmFGv7dgiBlx1adutMkJCpc3GtcDsbMAN+9N
-         COlZQa3W5j6yiZQcro3W9y3wNyYBWnZ5KyuSF0O02h29KmBi8+tOgX2vVtf89Forqv
-         VpDYRh3CP09Og==
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/13/18 9:47 AM, Christoph Hellwig wrote:
-> On Sat, Oct 13, 2018 at 12:34:12AM -0700, John Hubbard wrote:
->> In patch 6/6, pin_page_for_dma(), which is called at the end of get_user_pages(),
->> unceremoniously rips the pages out of the LRU, as a prerequisite to using
->> either of the page->dma_pinned_* fields. 
->>
->> The idea is that LRU is not especially useful for this situation anyway,
->> so we'll just make it one or the other: either a page is dma-pinned, and
->> just hanging out doing RDMA most likely (and LRU is less meaningful during that
->> time), or it's possibly on an LRU list.
-> 
-> Have you done any benchmarking what this does to direct I/O performance,
-> especially for small I/O directly to a (fast) block device?
-> 
-
-Hi Christoph,
-
-I'm seeing about 20% slower in one case: lots of reads and writes of size 8192 B,
-on a fast NVMe device. My put_page() --> put_user_page() conversions are incomplete 
-and buggy yet, but I've got enough of them done to briefly run the test.
-
-One thing that occurs to me is that jumping on and off the LRU takes time, and
-if we limited this to 64-bit platforms, maybe we could use a real page flag? I 
-know that leaves 32-bit out in the cold, but...maybe use this slower approach
-for 32-bit, and the pure page flag for 64-bit? uggh, we shouldn't slow down anything
-by 20%. 
-
-Test program is below. I hope I didn't overlook something obvious, but it's 
-definitely possible, given my lack of experience with direct IO. 
-
-I'm preparing to send an updated RFC this week, that contains the feedback to date,
-and also many converted call sites as well, so that everyone can see what the whole
-(proposed) story would look like in its latest incarnation.
-
-#define _GNU_SOURCE
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <string.h>
-
-const static unsigned BUF_SIZE       = 4096;
-static const unsigned FULL_DATA_SIZE = 2 * BUF_SIZE;
-
-void read_from_file(int fd, size_t how_much, char * buf)
-{
-	size_t bytes_read;
-
-	for (size_t index = 0; index < how_much; index += BUF_SIZE) {
-		bytes_read = read(fd, buf, BUF_SIZE);
-		if (bytes_read != BUF_SIZE) {
-			printf("reading file failed: %m\n");
-			exit(3);
-		}
-	}
-}
-
-void seek_to_start(int fd, char *caller)
-{
-	off_t result = lseek(fd, 0, SEEK_SET);
-	if (result == -1) {
-		printf("%s: lseek failed: %m\n", caller);
-		exit(4);
-	}
-}
-
-void write_to_file(int fd, size_t how_much, char * buf)
-{
-	int result;
-	for (size_t index = 0; index < how_much; index += BUF_SIZE) {
-		result = write(fd, buf, BUF_SIZE);
-		if (result < 0) {
-			printf("writing file failed: %m\n");
-			exit(3);
-		}
-	}
-}
-
-void read_and_write(int fd, size_t how_much, char * buf)
-{
-	seek_to_start(fd, "About to read");
-	read_from_file(fd, how_much, buf);
-
-	memset(buf, 'a', BUF_SIZE);
-
-	seek_to_start(fd, "About to write");
-	write_to_file(fd, how_much, buf);
-}
-
-int main(int argc, char *argv[])
-{
-	void *buf;
-	/*
-	 * O_DIRECT requires at least 512 B alighnment, but runs faster
-	 * (2.8 sec, vs. 3.5 sec) with 4096 B alignment.
-	 */
-	unsigned align = 4096;
-	posix_memalign(&buf, align, BUF_SIZE );
-
-	if (argc < 3) {
-		printf("Usage: %s <filename> <iterations>\n", argv[0]);
-		return 1;
-	}
-	char *filename = argv[1];
-	unsigned iterations = strtoul(argv[2], 0, 0);
-
-	/* Not using O_SYNC for now, anyway. */
-	int fd = open(filename, O_DIRECT | O_RDWR);
-	if (fd < 0) {
-		printf("Failed to open %s: %m\n", filename);
-		return 2;
-	}
-
-	printf("File: %s, data size: %u, interations: %u\n",
-		       filename, FULL_DATA_SIZE, iterations);
-
-	for (int count = 0; count < iterations; count++) {
-		read_and_write(fd, FULL_DATA_SIZE, buf);
-	}
-
-	close(fd);
-	return 0;
-}
-
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+PiBGcm9tOiBMdSBCYW9sdSBbbWFpbHRvOmJhb2x1Lmx1QGxpbnV4LmludGVsLmNvbV0NCj4gU2Vu
+dDogTW9uZGF5LCBOb3ZlbWJlciA1LCAyMDE4IDE6NDUgUE0NCj4gVG86IExpdSwgWWkgTCA8eWku
+bC5saXVAaW50ZWwuY29tPjsgSm9lcmcgUm9lZGVsIDxqb3JvQDhieXRlcy5vcmc+OyBEYXZpZA0K
+PiBXb29kaG91c2UgPGR3bXcyQGluZnJhZGVhZC5vcmc+DQo+IENjOiBiYW9sdS5sdUBsaW51eC5p
+bnRlbC5jb207IFJhaiwgQXNob2sgPGFzaG9rLnJhakBpbnRlbC5jb20+OyBsaW51eC0NCj4ga2Vy
+bmVsQHZnZXIua2VybmVsLm9yZzsgaW9tbXVAbGlzdHMubGludXgtZm91bmRhdGlvbi5vcmcNCj4g
+U3ViamVjdDogUmU6IFtQQVRDSCAxLzFdIGlvbW11L3Z0ZDogRml4IE5VTEwgcG9pbnRlciBkZXJl
+ZmVyZW5jZSBpbg0KPiBwcnFfZXZlbnRfdGhyZWFkKCkNCj4gDQo+IEhpIFlpLA0KPiANCj4gT24g
+MTEvNS8xOCAxOjIxIFBNLCBMaXUsIFlpIEwgd3JvdGU6DQo+ID4gSGkgQmFvbHUsDQo+ID4NCj4g
+Pj4gRnJvbTogaW9tbXUtYm91bmNlc0BsaXN0cy5saW51eC1mb3VuZGF0aW9uLm9yZyBbbWFpbHRv
+OmlvbW11LQ0KPiA+PiBib3VuY2VzQGxpc3RzLmxpbnV4LWZvdW5kYXRpb24ub3JnXSBPbiBCZWhh
+bGYgT2YgTHUgQmFvbHUNCj4gPj4gU2VudDogTW9uZGF5LCBOb3ZlbWJlciA1LCAyMDE4IDEwOjE5
+IEFNDQo+ID4+IFRvOiBKb2VyZyBSb2VkZWwgPGpvcm9AOGJ5dGVzLm9yZz47IERhdmlkIFdvb2Ro
+b3VzZQ0KPiA+PiA8ZHdtdzJAaW5mcmFkZWFkLm9yZz4NCj4gPj4gQ2M6IFJhaiwgQXNob2sgPGFz
+aG9rLnJhakBpbnRlbC5jb20+OyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KPiA+PiBp
+b21tdUBsaXN0cy5saW51eC1mb3VuZGF0aW9uLm9yZw0KPiA+PiBTdWJqZWN0OiBbUEFUQ0ggMS8x
+XSBpb21tdS92dGQ6IEZpeCBOVUxMIHBvaW50ZXIgZGVyZWZlcmVuY2UgaW4NCj4gPj4gcHJxX2V2
+ZW50X3RocmVhZCgpDQo+ID4+DQo+ID4+IFdoZW4gaGFuZGxpbmcgcGFnZSByZXF1ZXN0IHdpdGhv
+dXQgcGFzaWQgZXZlbnQsIGdvIHRvICJub19wYXNpZCINCj4gPj4gYnJhbmNoIGluc3RlYWQgb2Yg
+ImJhZF9yZXEiLiBPdGhlcndpc2UsIGEgTlVMTCBwb2ludGVyIGRlZmVyZW5jZSB3aWxsIGhhcHBl
+bg0KPiB0aGVyZS4NCj4gPj4NCj4gPj4gQ2M6IEFzaG9rIFJhaiA8YXNob2sucmFqQGludGVsLmNv
+bT4NCj4gPj4gQ2M6IEphY29iIFBhbiA8amFjb2IuanVuLnBhbkBsaW51eC5pbnRlbC5jb20+DQo+
+ID4+IENjOiBTb2hpbCBNZWh0YSA8c29oaWwubWVodGFAaW50ZWwuY29tPg0KPiA+PiBTaWduZWQt
+b2ZmLWJ5OiBMdSBCYW9sdSA8YmFvbHUubHVAbGludXguaW50ZWwuY29tPg0KPiA+PiAtLS0NCj4g
+Pj4gICBkcml2ZXJzL2lvbW11L2ludGVsLXN2bS5jIHwgMiArLQ0KPiA+PiAgIDEgZmlsZSBjaGFu
+Z2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiA+Pg0KPiA+PiBkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9pb21tdS9pbnRlbC1zdm0uYyBiL2RyaXZlcnMvaW9tbXUvaW50ZWwtc3ZtLmMN
+Cj4gPj4gaW5kZXgNCj4gPj4gZGIzMDFlZmUxMjZkLi44ODcxNTA5MDc1MjYgMTAwNjQ0DQo+ID4+
+IC0tLSBhL2RyaXZlcnMvaW9tbXUvaW50ZWwtc3ZtLmMNCj4gPj4gKysrIGIvZHJpdmVycy9pb21t
+dS9pbnRlbC1zdm0uYw0KPiA+PiBAQCAtNTk1LDcgKzU5NSw3IEBAIHN0YXRpYyBpcnFyZXR1cm5f
+dCBwcnFfZXZlbnRfdGhyZWFkKGludCBpcnEsIHZvaWQgKmQpDQo+ID4+ICAgCQkJcHJfZXJyKCIl
+czogUGFnZSByZXF1ZXN0IHdpdGhvdXQgUEFTSUQ6ICUwOGxseCAlMDhsbHhcbiIsDQo+ID4+ICAg
+CQkJICAgICAgIGlvbW11LT5uYW1lLCAoKHVuc2lnbmVkIGxvbmcgbG9uZyAqKXJlcSlbMF0sDQo+
+ID4+ICAgCQkJICAgICAgICgodW5zaWduZWQgbG9uZyBsb25nICopcmVxKVsxXSk7DQo+ID4+IC0J
+CQlnb3RvIGJhZF9yZXE7DQo+ID4+ICsJCQlnb3RvIG5vX3Bhc2lkOw0KPiA+PiAgIAkJfQ0KPiA+
+Pg0KPiA+PiAgIAkJaWYgKCFzdm0gfHwgc3ZtLT5wYXNpZCAhPSByZXEtPnBhc2lkKSB7DQo+ID4+
+IC0tDQo+ID4NCj4gPiBJJ20gYWZyYWlkIGl0IGlzIHN0aWxsIG5lY2Vzc2FyeSB0byBnb3RvICJi
+YWRfcmVxIi4gVGhlIGZvbGxvd2luZyBjb2RlDQo+ID4gYmVoaW5kICJiYWRfcmVxIiB3aWxsIHRy
+aWdnZXIgZmF1bHRfY2IgcmVnaXN0ZXJlZCBieSBpbi1rZXJuZWwNCj4gPiBkcml2ZXJzLiBJdCBp
+cyByZWFzb25hYmxlIHRoYXQgUFJRIHdpdGhvdXQgUEFTSUQgY2FuIGJlIGhhbmRsZWQgYnkNCj4g
+PiBzdWNoIGNhbGxiYWNrcy4gU28gSSB3b3VsZCBzdWdnZXN0IHRvIGtlZXAgdGhlIGV4aXN0aW5n
+IGxvZ2ljLg0KPiANCj4gQSBwYWdlIGZhdWx0IHdpdGhvdXQgYSBwYXNpZCBpcyB0cmlnZ2VyZWQg
+YnkgYSBETUEgdHJhbnNmZXIgd2l0aG91dCBQQVNJRC4gSXQgZG9lc24ndA0KPiByZWxhdGUgdG8g
+dGhlIFNWTSBmdW5jdGlvbmFsaXR5IGhlbmNlIHRoZXJlJ3Mgbm8gQHN2bSBvciBAc2RldiByZWxh
+dGVkIHRvIGl0LiBJdCdzDQo+IHVubmVjZXNzYXJ5IHRvIHJlcG9ydCBpdCB0byB0aGUgZHJpdmVy
+cyBhcyBmYXIgYXMgSSBjYW4gc2VlLg0KIA0KWWVhaCwgYSBQUlEgd2l0aG91dCBQQVNJRCBoYXMg
+bm8gY29ycmVzcG9uZGluZyBzdm0gb3Igc2RldiBzdHJ1Y3R1cmUuIFJlZ2FyZHMgdG8gdGhpcw0K
+ZmFjdCwgaXQncyBhY2NlcHRhYmxlIGZvciB0aGlzIGZpeC4gSW4gbG9uZyB0ZXJtLCBpdCBtaWdo
+dCBiZSBoZWxwZnVsIHRvIHJlZmluZSB0aGUgUFJRIGV2ZW50DQpoYW5kbGVyIHRvIGNvdmVyIFBS
+USB3aXRob3V0IFBBU0lELiBJIGd1ZXNzIEphY29iJ3MgZmF1bHQgcmVwb3J0IGZyYW1ld29yayBt
+YXkgaGVscC4NCg0KK0phY29iDQoNClJlZ2FyZHMsDQpZaSBMaXUNCg==
