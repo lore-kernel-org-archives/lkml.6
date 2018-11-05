@@ -2,92 +2,190 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_LOCAL_NOVOWEL,
-	HEADER_FROM_DIFFERENT_DOMAINS,HK_RANDOM_FROM,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE680C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:29:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B994C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:30:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF6792081C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:29:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qzx2IgOX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF6792081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 349C42081C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:30:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 349C42081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387912AbeKFGul (ORCPT
+        id S2387947AbeKFGvn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 01:50:41 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:35313 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387638AbeKFGuk (ORCPT
+        Tue, 6 Nov 2018 01:51:43 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:45817 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387441AbeKFGvn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 01:50:40 -0500
-Received: by mail-yw1-f65.google.com with SMTP id w135-v6so4300984ywd.2;
-        Mon, 05 Nov 2018 13:29:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pnI5pcb+BbrHsS9gn9C2g+XW+pKYH19p7+SXP4C3YLk=;
-        b=Qzx2IgOXPKyys6Cj3INjhPcOFuXldPg0JIzWkLtvVFjtdDurLYZqpmH8+LGLpMGToo
-         FpJfCDQZ3AZzwJgc+C2MUX3fReS1uMq77NfPrG6kdW0XVkUA1RpC8Q13Iaf9hMAK94HI
-         /NxrLo4Bz5qDxNON0kEhVwTGscwx8oYCqzE84VP6DPQ21hJTPAyMFdgN37ML4aE5eVbN
-         6katwKVqlTpDQG3lcsXXjZZFZZAf/ZyS8U6PKVGK+ovRow1KoLWg1ET2nQyxbJyfK5DC
-         3KfJfRNiMdUGpg2xY48eauCatb9ymaubvRo11Bj5i6awfmkG5XFJ0/imxSv331wdJhFP
-         ei/Q==
+        Tue, 6 Nov 2018 01:51:43 -0500
+Received: by mail-ot1-f67.google.com with SMTP id g10so9456882otl.12;
+        Mon, 05 Nov 2018 13:30:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pnI5pcb+BbrHsS9gn9C2g+XW+pKYH19p7+SXP4C3YLk=;
-        b=qyv03fR88McIJcodJERAfTyekucy5GDxEQTH5s9tn/rpq6DIfW9uZvPojJzo0UK0fU
-         kRukf7mhOWqoeX+4B8cuinLh+Nlkk/CJAOnF3XEQMRYNOt3Bofj8c9/NUeY5LxOCm4IA
-         Z10HAMf9l4yeIO++l/U7KSGRa4Y57eFQOuT4JIzef3C+OlnbbPDZJhD+L9kdY2E9T40J
-         844j5TbqJxxpbA5x/kV+ivgxnj0vKXGhoxVelH8ZXg2/uRTAKSj/Hn61lwy2cmmwRb+E
-         wlPMY5ZGRQE94X3FTHXVvJwlI5xFNVhCGRNRpzKb1x2gJR237zexjZunrZAFK/mlF9Mp
-         7kqQ==
-X-Gm-Message-State: AGRZ1gITIYgbYKIgWKDzX58uGZNeWjXAt3CMbWoul8cyz/yHNffahcxN
-        oj/G84mSeNOefKmI0yzDJ4eWVqfAbvqTbPxS1Q8=
-X-Google-Smtp-Source: AJdET5cMMLqKMBPvzqLz21O/Clm33Brw9Lm0P9CE93W97K3wmvxfbm6qvaj/eED4RC4b8bt0ap7PEIBr3FW+flOyStI=
-X-Received: by 2002:a81:6f57:: with SMTP id k84-v6mr23585853ywc.348.1541453340439;
- Mon, 05 Nov 2018 13:29:00 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xPvPcPFawgp5xQZ9ti8l+bNNaaP73L23IOJrkGBIAJE=;
+        b=SI02AG+zj1p6d7/70qqGd71ijrCrQFW48VvrJk3jqrgREyknUuZTQ6VtbXi+UH+ES5
+         hnNDvj/V7TLQBWRs1Yt4e+CizsoLik7S/yI69O8NlYBpbHrrtSl2k5cDQbD7lNkvndP7
+         NHT/qRNfd79tqKT2hvzk5lJRD/crKE1ZU1T7Un/SZrpHV1hlI/O6WY8w5xs6LvuzXrEu
+         jUjwjnNhS6kOmahuAzFssjq5V5a+5ZIubJEJE4Aa37MjyraRwfJ6WcIm0KLjme+G+DJn
+         rwCNCT24v5jkJ33bPxru1Jwe5q1YNfsGk7NVxBxefxwl2dBmrVZvqC2WvvgHWDZzvnvR
+         zN5A==
+X-Gm-Message-State: AGRZ1gKbobEySAjSjbfxR/wBdftNiYbyo9JOSpK8wjKrUajE9NCRxNcg
+        OXJ9r6Um8K1pkf72VTsgXA==
+X-Google-Smtp-Source: AJdET5dq00a42wBonDlMY++qDBB5olhtABGZkS212eg2wbDirG4BDbkJvStwfpGiTBYxpp0iH5TT4g==
+X-Received: by 2002:a9d:754f:: with SMTP id b15mr13823675otl.231.1541453402285;
+        Mon, 05 Nov 2018 13:30:02 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id l18sm16591436otb.68.2018.11.05.13.30.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 05 Nov 2018 13:30:01 -0800 (PST)
+Date:   Mon, 5 Nov 2018 15:30:00 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 03/17] dt-bindings: cpufreq: Add binding for
+ NVIDIA Tegra20/30
+Message-ID: <20181105213000.GA13425@bogus>
+References: <20181021205501.23943-1-digetx@gmail.com>
+ <20181021205501.23943-4-digetx@gmail.com>
 MIME-Version: 1.0
-References: <1541080581-4072-1-git-send-email-firoz.khan@linaro.org> <1541080581-4072-2-git-send-email-firoz.khan@linaro.org>
-In-Reply-To: <1541080581-4072-2-git-send-email-firoz.khan@linaro.org>
-From:   Max Filippov <jcmvbkbc@gmail.com>
-Date:   Mon, 5 Nov 2018 13:28:48 -0800
-Message-ID: <CAMo8BfK1AYn7LyF0ssAyFRGBJmCJEH6jP4+05RXR0n6+-udtDw@mail.gmail.com>
-Subject: Re: [PATCH v1 1/4] xtensa: move SYS_XTENSA_* macros to non uapi header
-To:     firoz.khan@linaro.org
-Cc:     Chris Zankel <chris@zankel.net>, linux-xtensa@linux-xtensa.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038@lists.linaro.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, deepa.kernel@gmail.com,
-        marcin.juszkiewicz@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181021205501.23943-4-digetx@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 1, 2018 at 6:56 AM Firoz Khan <firoz.khan@linaro.org> wrote:
-> All the SYS_XTENSA_* macros used by sysxtensa syscall
-> handlers are resides in the uapi header file move to
-> non uapi header asm/unistd.h as it is not used by any
-> user space applications.
+On Sun, Oct 21, 2018 at 11:54:47PM +0300, Dmitry Osipenko wrote:
+> Add device-tree binding that describes CPU frequency-scaling hardware
+> found on NVIDIA Tegra20/30 SoC's.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  .../cpufreq/nvidia,tegra20-cpufreq.txt        | 96 +++++++++++++++++++
+>  1 file changed, 96 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+> new file mode 100644
+> index 000000000000..a8023ea7a99f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+> @@ -0,0 +1,96 @@
+> +Binding for NVIDIA Tegra20 CPUFreq
+> +==================================
+> +
+> +Required properties:
+> +- clocks: Must contain an entry for each entry in clock-names.
+> +  See ../clocks/clock-bindings.txt for details.
+> +- clock-names: Must include the following entries:
+> +  - pll_x: main-parent for CPU clock, must be the first entry
+> +  - intermediate: intermediate-parent for CPU clock
+> +  - cclk: the CPU clock
+> +- operating-points-v2: See ../bindings/opp/opp.txt for details.
+> +- #cooling-cells: Should be 2. See ../thermal/thermal.txt for details.
+> +
+> +For each opp entry in 'operating-points-v2' table:
+> +- opp-supported-hw: Two bitfields indicating:
+> +	On Tegra20:
+> +	1. CPU process ID mask
+> +	2. SoC speedo ID mask
+> +
+> +	On Tegra30:
+> +	1. CPU process ID mask
+> +	2. CPU speedo ID mask
+> +
+> +	A bitwise AND is performed against these values and if any bit
+> +	matches, the OPP gets enabled.
+> +
+> +- opp-microvolt: CPU voltage triplet.
+> +
+> +Optional properties:
+> +- cpu-supply: Phandle to the CPU power supply.
+> +- core-supply: Phandle to the CORE power supply.
+> +- rtc-supply: Phandle to the RTC power supply, required only for Tegra20.
+> +
+> +Voltage supply requirements:
+> +- Tegra20:
+> +	CORE and RTC regulators must be coupled using the regulator-coupled-with
+> +	property and regulator-coupled-max-spread property must be set to no
+> +	more than 170mV.
+> +
+> +	See ../regulator/regulator.txt for more detail about the properties.
+> +
+> +- Tegra30:
+> +	CORE and CPU regulators must be coupled using the regulator-coupled-with
+> +	property and regulator-coupled-max-spread property must be set to no
+> +	more than 300mV. Each of CORE and CPU regulators must set
+> +	regulator-max-step-microvolt property to no more than 100mV.
+> +
+> +	See ../regulator/regulator.txt for more detail about the properties.
+> +
+> +
+> +Example:
+> +	regulators {
+> +		cpu_reg: regulator0 {
+> +			regulator-name = "vdd_cpu";
+> +		};
+> +
+> +		core_reg: regulator1 {
+> +			regulator-name = "vdd_core";
+> +			regulator-coupled-with = <&rtc_reg>;
+> +			regulator-coupled-max-spread = <170000>;
+> +		};
+> +
+> +		rtc_reg: regulator2 {
+> +			regulator-name = "vdd_rtc";
+> +			regulator-coupled-with = <&core_reg>;
+> +			regulator-coupled-max-spread = <170000>;
+> +		};
+> +	};
+> +
+> +	cpu0_opp_table: opp_table0 {
+> +		compatible = "operating-points-v2";
+> +
+> +		opp@456000000 {
+> +			clock-latency-ns = <125000>;
+> +			opp-microvolt = <825000 825000 1125000>;
+> +			opp-supported-hw = <0x03 0x0001>;
+> +			opp-hz = /bits/ 64 <456000000>;
+> +		};
+> +
+> +		...
+> +	};
+> +
+> +	cpus {
+> +		cpu@0 {
+> +			compatible = "arm,cortex-a9";
+> +			clocks = <&tegra_car TEGRA20_CLK_PLL_X>,
+> +				 <&tegra_car TEGRA20_CLK_PLL_P>,
+> +				 <&tegra_car TEGRA20_CLK_CCLK>;
+> +			clock-names = "pll_x", "intermediate", "cclk";
 
-These definitions are meant to be used by the userspace to
-perform atomic operations in the absence of atomic access
-instructions in the xtensa CPU variant.
+I still object to having clocks (and supplies) which don't reflect the 
+h/w and are documented in the CA9 TRM.
 
--- 
-Thanks.
--- Max
+> +			operating-points-v2 = <&cpu0_opp_table>;
+> +			cpu-supply = <&cpu_reg>;
+> +			core-supply = <&core_reg>;
+> +			rtc-supply = <&rtc_reg>;
+
+Supplies are suspect too, but perhaps supplies and power domains are 
+beyond the scope of the TRM and part of the physical design.
+
+Rob
