@@ -2,225 +2,165 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBB42C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 23:40:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F0AC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 23:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 843F02081C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 23:40:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="HibBJ6y0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 843F02081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 9224C20700
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 23:59:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9224C20700
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbeKFJDK (ORCPT
+        id S1726902AbeKFJV5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 04:03:10 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:49664 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725760AbeKFJDK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 04:03:10 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA5NOPCI184925;
-        Mon, 5 Nov 2018 23:40:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=+7PKQ2DOMGZZOir9IDRdhpK6fHCI1IdkkRrN+FYv54U=;
- b=HibBJ6y0hmiGvPJ1kQM0DibuPWGe3STp9z+H5JGGfSX8z7NQLTa717F6XKTpA7hoojEE
- dbdGehFnXqW32bNgIDMT1oIVRJDrNUhXkF/WnO4ks4taFl0+KK8nVTF9RhboJE2gLzLk
- ctb4Pb8WdsmE0iAne6tqD5OYkz8SYqwwq0tg/bQ4c/Aw+0RNRSSbLb0LUXSti47bfAbs
- xAY/pAEnRMo/UPGx7epnEchcaZo+RxKODlzi48hZkhqgj+gWdOTZyzeK/uYyDX4MkA56
- 6A5uOob7ggnvcH25sWyBO9DIctZpFf5HecfKSFBi0c5C6Qld9hTp2ksW66mGn+lNCGRt MA== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2nh4aqj232-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 05 Nov 2018 23:40:26 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wA5NeL2N014355
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 5 Nov 2018 23:40:21 GMT
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wA5NeKGh009460;
-        Mon, 5 Nov 2018 23:40:20 GMT
-Received: from [10.132.91.175] (/10.132.91.175)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 05 Nov 2018 15:40:20 -0800
-Subject: Re: [RFC PATCH v2 1/1] pipe: busy wait for pipe
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
-        tglx@linutronix.de, dhaval.giani@oracle.com,
-        steven.sistare@oracle.com, Alexander Viro <viro@zeniv.linux.org.uk>
-References: <20180925233240.24451-1-subhra.mazumdar@oracle.com>
- <20180925233240.24451-2-subhra.mazumdar@oracle.com>
- <20181105100841.GG23537@techsingularity.net>
-From:   Subhra Mazumdar <subhra.mazumdar@oracle.com>
-Message-ID: <e750e230-a49b-de61-86f1-25dc47170d18@oracle.com>
-Date:   Mon, 5 Nov 2018 15:40:40 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 6 Nov 2018 04:21:57 -0500
+Received: from mga18.intel.com ([134.134.136.126]:37481 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725839AbeKFJV5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 04:21:57 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 15:59:39 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,469,1534834800"; 
+   d="scan'208";a="106167251"
+Received: from schen9-desk.jf.intel.com (HELO [10.54.74.144]) ([10.54.74.144])
+  by orsmga002.jf.intel.com with ESMTP; 05 Nov 2018 15:59:37 -0800
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Kees Cook <keescook@chromium.org>
+References: <cover.1540923609.git.tim.c.chen@linux.intel.com>
+ <a14236d8b56dafe6988ce1b266a6e929be5296a8.1540923609.git.tim.c.chen@linux.intel.com>
+ <alpine.DEB.2.21.1811042042060.10744@nanos.tec.linutronix.de>
+ <ea646842-bd32-3615-bf38-27b568a2d81e@linux.intel.com>
+ <alpine.DEB.2.21.1811052326040.1659@nanos.tec.linutronix.de>
+From:   Tim Chen <tim.c.chen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
+ xsFNBE6ONugBEAC1c8laQ2QrezbYFetwrzD0v8rOqanj5X1jkySQr3hm/rqVcDJudcfdSMv0
+ BNCCjt2dofFxVfRL0G8eQR4qoSgzDGDzoFva3NjTJ/34TlK9MMouLY7X5x3sXdZtrV4zhKGv
+ 3Rt2osfARdH3QDoTUHujhQxlcPk7cwjTXe4o3aHIFbcIBUmxhqPaz3AMfdCqbhd7uWe9MAZX
+ 7M9vk6PboyO4PgZRAs5lWRoD4ZfROtSViX49KEkO7BDClacVsODITpiaWtZVDxkYUX/D9OxG
+ AkxmqrCxZxxZHDQos1SnS08aKD0QITm/LWQtwx1y0P4GGMXRlIAQE4rK69BDvzSaLB45ppOw
+ AO7kw8aR3eu/sW8p016dx34bUFFTwbILJFvazpvRImdjmZGcTcvRd8QgmhNV5INyGwtfA8sn
+ L4V13aZNZA9eWd+iuB8qZfoFiyAeHNWzLX/Moi8hB7LxFuEGnvbxYByRS83jsxjH2Bd49bTi
+ XOsAY/YyGj6gl8KkjSbKOkj0IRy28nLisFdGBvgeQrvaLaA06VexptmrLjp1Qtyesw6zIJeP
+ oHUImJltjPjFvyfkuIPfVIB87kukpB78bhSRA5mC365LsLRl+nrX7SauEo8b7MX0qbW9pg0f
+ wsiyCCK0ioTTm4IWL2wiDB7PeiJSsViBORNKoxA093B42BWFJQARAQABzTRUaW0gQ2hlbiAo
+ d29yayByZWxhdGVkKSA8dGltLmMuY2hlbkBsaW51eC5pbnRlbC5jb20+wsF+BBMBAgAoAhsD
+ BgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCWfPBPgUJDyfxUQAKCRCiZ7WKota4SReFEACa
+ 5ruzJM/hXJguHJY8i95rxHfLOgE7QoDgsR2aK2C1BSu84StTcT9BMikndQ0em28mpd1zROCs
+ FvJ8Dzpp923699FU7s70+bFG9zIWtAOLWt2QyIMYImILzKkzkyLZo2RTcLNdUWS5fkAtjspQ
+ QPg29W+kcbX1NhB6WDdbvk2HNeZoDh4A5ucOzKjEPqbSFIbw2Wt3RUmXxezjH1NzZG3fMkEN
+ cT7JezYhUxvi2PrJlD+mo26q2/PQmFgF49tneRJXmYyie5o2+ClfFVO9I6Rd1k7hS9uXQLg3
+ udpnDKobNYZ7/+O5+ucp0Y/MwzTfBYmtJ5fBjUTi2L1RMDJee8WqCNY1VU6cQ8MD4KstxUp2
+ bxlSRAYaDtNa1Omr61E7BA1Cc2E3cIt/O1mMfudWUjCND8qrAtEnugqKjk5tJJZzmzIKSHPY
+ dCiJtOBQaVAYYchXF2hwOKhpFS43V4FdWLlM1CnFXsmbk48hGbiA8XHU85JBCXmG0i4qUlKn
+ x2ilChvq4A102ahnlGbEmFaSwxuqR/5lhai6lOkwHXDFUT6jblaSs24L3MTn/vXtvwaLEEKh
+ SPzNaj7yFvEhrJoLiZmDm0SZuPbQ+wrmPWUbzyf5te2Oq0JyrHTQJoQqn+CwGqwF/JaUq60f
+ VuUD3T0icgsfljsOA4apyH7kyfxXGP0hOM7BTQROjjboARAAx+LxKhznLH0RFvuBEGTcntrC
+ 3S0tpYmVsuWbdWr2ZL9VqZmXh6UWb0K7w7OpPNW1FiaWtVLnG1nuMmBJhE5jpYsi+yU8sbMA
+ 5BEiQn2hUo0k5eww5/oiyNI9H7vql9h628JhYd9T1CcDMghTNOKfCPNGzQ8Js33cFnszqL4I
+ N9jh+qdg5FnMHs/+oBNtlvNjD1dQdM6gm8WLhFttXNPn7nRUPuLQxTqbuoPgoTmxUxR3/M5A
+ KDjntKEdYZziBYfQJkvfLJdnRZnuHvXhO2EU1/7bAhdz7nULZktw9j1Sp9zRYfKRnQdIvXXa
+ jHkOn3N41n0zjoKV1J1KpAH3UcVfOmnTj+u6iVMW5dkxLo07CddJDaayXtCBSmmd90OG0Odx
+ cq9VaIu/DOQJ8OZU3JORiuuq40jlFsF1fy7nZSvQFsJlSmHkb+cDMZDc1yk0ko65girmNjMF
+ hsAdVYfVsqS1TJrnengBgbPgesYO5eY0Tm3+0pa07EkONsxnzyWJDn4fh/eA6IEUo2JrOrex
+ O6cRBNv9dwrUfJbMgzFeKdoyq/Zwe9QmdStkFpoh9036iWsj6Nt58NhXP8WDHOfBg9o86z9O
+ VMZMC2Q0r6pGm7L0yHmPiixrxWdW0dGKvTHu/DH/ORUrjBYYeMsCc4jWoUt4Xq49LX98KDGN
+ dhkZDGwKnAUAEQEAAcLBZQQYAQIADwIbDAUCVEAL2AUJC1VvawAKCRCiZ7WKota4SWWrD/9L
+ 4H3kHUR9qPTfSpwFBV0+PspkpMQmRQ9cQauIRXL+qIqCYfx48Jz/WZkq47COhY4d1tAvX4qv
+ lviIoCwShAHhVkxD2rWFpa6Yang7cyPDjS6sNChsZ9aTAP0zX4LLHN8ub5LwCcU9JA4Avwdy
+ NDSeeSeqNq9QOvVd2bDmyHxgVv4zRgLTNPH28hXAnDODy0wCJWg53PWvlp35XfWdIsC0ZAPK
+ vgA1Bh+FYYKfT8Uzj8J/SYH+chmeYMt+8Y+FZa+NybivWJg6+UaJ2fCTuKCc7TgqLneBudox
+ izWQMnBso0tHOT6+ju+L+ewPWc0OrJdKJeadrE2T1E949vMup5jG0lJLeSpBNmELODNL0xz6
+ Erjs/pwX7cYGKUbJfBaQcC9frPfpWfSqnK5X+12HFDxAxquXKC4ejBJOhbo3xx0sziiPTC3m
+ 4LvLkEa9evQNtMvRcnWY5qIC4YdT5waC0stYNpyCiBXpYArKYCmlra3xpgAe0MRL94PHU4UW
+ yxxdxRubFYna9LeNcWL7C0w2ngg1jd0tjRjLnimrOL8rSVUzwjNSQOV37tWTueTr40M/SfjU
+ B6bifflZQpeSY8IpqzKqB0vvxo2xD0rU7JqUh7rW8U6rg2JEzVgYiHS4cf/vJMHuauHAjH7a
+ ys7DYlLhlOVo3o0jOor4xuZPrWbSp4w51sLBZQQYAQIADwIbDAUCWfPBJQUJDyfxOAAKCRCi
+ Z7WKota4SZKQD/wLu3j8kgATic+wF3ekngjwPcW3JhbQJeHxUZwsb9OgVMHumlrZHGoltKQu
+ FfAhG/sOfuAh5f7QMzzA1M+2JD1Q6lr74vUHNBu+xBFMgZstE6hpkKmn0pNZ5JS3iZRVRLBx
+ dWw63DYr0GM80vmbHjAhwxoF2PsO2/PkWTc68+pFyl3Dy0heZSJii81hkzh8FnF8CaMH0VXu
+ MJoWyuYgnC058hHj0QqXvlNx9LzMtmrsskTmPvwqXTgG/dTEfTkQ4RfX3enrBy55cg9tMc88
+ BEQ/0/JV1bCDwyWXKRpz6FsHbICGQ4G9TTD4pS5QJ+oRQccMjfiDM3rFTcG1RYP2lHXjSm9c
+ 0VnimpQBz3LarrdHJilmTHbAWf5KLmtWfYXHrlncnhnCtw2nfwBBdy8cQW4tUyniSVRLOwGm
+ eJziyuPJ5SVVZcil2oN5/o7js7BYAeAV/WVF2Sk/blnXaaObIYIVqnDhV4N0oUz1KXq1Leem
+ Uvjo5rljmmhOBdgl6D0scXCWICbuuWN9eW2fZl38hBSI3M0MX0jnV2e+0FY+76iNmKadpTDw
+ gY3OaQAZ/UlJVI+pRV4JtRrajtpo9Vb38SBPXwp9moWmwVQyIdFUXjCTQARvxjRsUoPVu9oA
+ SCd9W74oOgrqC1hadvVU867d07PlWksfYwCeYP4bs+4GSLzI1w==
+Subject: Re: [Patch v4 17/18] x86/speculation: Update SPEC_CTRL MSRs of remote
+ CPUs
+Message-ID: <81398b26-e1c3-aac3-b44a-2a0982ae74e0@linux.intel.com>
+Date:   Mon, 5 Nov 2018 15:59:37 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.0
 MIME-Version: 1.0
-In-Reply-To: <20181105100841.GG23537@techsingularity.net>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <alpine.DEB.2.21.1811052326040.1659@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9068 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1811050206
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Thomas,
 
-On 11/5/18 2:08 AM, Mel Gorman wrote:
-> Adding Al Viro as per get_maintainers.pl.
->
-> On Tue, Sep 25, 2018 at 04:32:40PM -0700, subhra mazumdar wrote:
->> Introduce pipe_ll_usec field for pipes that indicates the amount of micro
->> seconds a thread should spin if pipe is empty or full before sleeping. This
->> is similar to network sockets.
-> Can you point to what pattern from network sockets you are duplicated
-> exactly? One would assume it's busy_loop_current_time and busy_loop_timeout
-> but it should be in the changelog because there are differences in polling
-> depending on where you are in the network subsystem (which I'm not very
-> familiar with).
-I was referring to the sk_busy_loop_timeout() that uses sk_ll_usec. By
-similar I meant having a similar mechanism for pipes to busy wait
->
->> Workloads like hackbench in pipe mode
->> benefits significantly from this by avoiding the sleep and wakeup overhead.
->> Other similar usecases can benefit. A tunable pipe_busy_poll is introduced
->> to enable or disable busy waiting via /proc. The value of it specifies the
->> amount of spin in microseconds. Default value is 0 indicating no spin.
->>
-> Your lead mail indicates the spin was set to a "suitable spin time". How
-> should an administrator select this spin time? What works for hackbench
-> might not be suitable for another workload. What if the spin time
-> selected happens to be just slightly longer than the time it takes the
-> reader to respond? In such a case, the result would be "all spin, no
-> gain". While networking potentially suffers the same problem, it appears
-> to be opt-in per socket so it's up to the application not to shoot
-> itself in the foot.
-Even for network, sk_ll_usec is assigned the value of the tunable
-sysctl_net_busy_read in sock_init_data() for all sockets initialized by
-default. There is way for per socket setting using sock_setsockopt(), for
-pipes that can be added later if needed in case of different apps running
-in one system. But there are cases where only one app runs (e.g big DBs)
-and one tunable will suffice. It can be set to a value that is tested to be
-beneficial under the operating conditions.
->
->> Signed-off-by: subhra mazumdar <subhra.mazumdar@oracle.com>
->> ---
->>   fs/pipe.c                 | 12 ++++++++++++
->>   include/linux/pipe_fs_i.h |  2 ++
->>   kernel/sysctl.c           |  7 +++++++
->>   3 files changed, 21 insertions(+)
->>
->> diff --git a/fs/pipe.c b/fs/pipe.c
->> index bdc5d3c..35d805b 100644
->> --- a/fs/pipe.c
->> +++ b/fs/pipe.c
->> @@ -26,6 +26,7 @@
->>   
->>   #include <linux/uaccess.h>
->>   #include <asm/ioctls.h>
->> +#include <linux/sched/clock.h>
->>   
->>   #include "internal.h"
->>   
->> @@ -40,6 +41,7 @@ unsigned int pipe_max_size = 1048576;
->>    */
->>   unsigned long pipe_user_pages_hard;
->>   unsigned long pipe_user_pages_soft = PIPE_DEF_BUFFERS * INR_OPEN_CUR;
->> +unsigned int pipe_busy_poll;
->>   
->>   /*
->>    * We use a start+len construction, which provides full use of the
->> @@ -106,6 +108,7 @@ void pipe_double_lock(struct pipe_inode_info *pipe1,
->>   void pipe_wait(struct pipe_inode_info *pipe)
->>   {
->>   	DEFINE_WAIT(wait);
->> +	u64 start;
->>   
->>   	/*
->>   	 * Pipes are system-local resources, so sleeping on them
->> @@ -113,6 +116,10 @@ void pipe_wait(struct pipe_inode_info *pipe)
->>   	 */
->>   	prepare_to_wait(&pipe->wait, &wait, TASK_INTERRUPTIBLE);
->>   	pipe_unlock(pipe);
->> +	start = local_clock();
->> +	while (current->state != TASK_RUNNING &&
->> +	       ((local_clock() - start) >> 10) < pipe->pipe_ll_usec)
->> +		cpu_relax();
->>   	schedule();
->>   	finish_wait(&pipe->wait, &wait);
->>   	pipe_lock(pipe);
-> Networking breaks this out better in terms of options instead of
-> hard-coding. This does not handle need_resched or signal delivery
-> properly where as networking does for example.
-I don't disable preemption, so don't think checking need_resched is needed.
-Can you point to what you mean by handling signal delivery in case of
-networking? Not sure what I am missing. My initial version broke it out
-like networking but after Peter's suggestion I clubbed it. I don't feel
-strongly either way.
->
->> @@ -825,6 +832,7 @@ static int do_pipe2(int __user *fildes, int flags)
->>   	struct file *files[2];
->>   	int fd[2];
->>   	int error;
->> +	struct pipe_inode_info *pipe;
->>   
->>   	error = __do_pipe_flags(fd, files, flags);
->>   	if (!error) {
->> @@ -838,6 +846,10 @@ static int do_pipe2(int __user *fildes, int flags)
->>   			fd_install(fd[0], files[0]);
->>   			fd_install(fd[1], files[1]);
->>   		}
->> +		pipe = files[0]->private_data;
->> +		pipe->pipe_ll_usec = pipe_busy_poll;
->> +		pipe = files[1]->private_data;
->> +		pipe->pipe_ll_usec = pipe_busy_poll;
->>   	}
->>   	return error;
->>   }
-> You add a pipe field but the value in always based on the sysctl
-> so the information is redundantu (barring a race condition on one
-> pipe write per sysctl update which is an irrelevant corner case). In
-> comparison, the network subsystem appears to be explicitly opt-in via
-> setsockopt(SO_BUSY_POLL) from a glance and the value appears to be tunable
-> on a per-socket basis (I didn't check for sure, this is based on a glance
-> at what networking does). It's not clear what a sensible way of replicating
-> that for pipe file descriptors would be but it's possible that the only
-> way would be to define the system-wide tunable as a max spin time and try
-> detect the optimal spin time on a per-fd basis (not entirely dissimilar
-> to how cpuidle menu guesses how long it'll be in an idle state for).
-As I said above even networking assigns the global tunable value to each
-socket during initialization. Trying to detect an optimal spin time will
-be extremely difficult, I had tried a lot of heuristics but doesn't quite
-work under all workloads/utilization level. This change also doesn't
-preclude such work in future. In mean time some workloads can benefit from
-straight forward constant tunable setting.
->
-> It's not really my area but I feel that this patch is a benchmark-specific
-> hack and that tuning it on a system-wide basis will be a game of "win
-> some, lose some" that is never used in practice. Worse, it might end up
-> in a tuning guide as "always set this sysctl" without considering the
-> capabilities of the machine or the workload and falls victim to cargo
-> cult tuning.
->
-It is 0 by default so no spin. Workloads that do set this should know what
-they are doing and if it's beneficial. I will try DB OLTP workload to see
-any benefits.
+> 
+> 
+> Aside of the condition being pointless in that case, that issues an IPI
+> whether the task is running or not. So this allows a task to issue tons of
+> async IPIs disturbing others by toggling the control.
 
-Thanks,
-Subhra
+I'm not crazy about sending IPIs too.  Hence the original implementation
+using TIF_UPDATE_SPEC_CTRL flag.
+
+I've thought a bit about the options you suggested and was unclear
+on a few things.
+
+> 1) Restrict the PRCTL control so it is only possible to modify it at the
+>    point where the application is still single threaded.
+>
+
+My understanding is PRCTL applied on the task only. Should it be extended
+to other task threads?  In that case, it seems like we didn't do that for SSBD?
+
+> 2) Add _TIF_UPDATE_SPEC_CTRL to the SYSCALL_EXIT_WORK_FLAGS and handle it
+>    in the slow work path.
+
+There can be tasks that don't do any syscalls, and it seems like we can have MSRs getting
+out of sync?
+
+> 
+> I'm less and less convinced that piggybacking this on dumpable is a good
+> idea. 
+
+There are daemons like sshd that are non-dumpable.  So I think protecting
+them is desired.  Otherwise all those daemons will need to be updated to
+use PRCTL.  In the original implementation, IBPB is issued for
+non-dumpable task.  It will be nice to retain that.
+
+Thanks.
+
+Tim
+
 
