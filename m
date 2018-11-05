@@ -2,163 +2,130 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B81C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:39:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7FD3C46464
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:40:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71B8D2081C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:39:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9869D2085B
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:40:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BPYM4jWY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71B8D2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CHZgKJLV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9869D2085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730318AbeKFGBO (ORCPT
+        id S1730338AbeKFGB2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 01:01:14 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:34599 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726648AbeKFGBO (ORCPT
+        Tue, 6 Nov 2018 01:01:28 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:43831 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbeKFGB2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 01:01:14 -0500
-Received: by mail-io1-f66.google.com with SMTP id d80-v6so7587939iof.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 12:39:45 -0800 (PST)
+        Tue, 6 Nov 2018 01:01:28 -0500
+Received: by mail-qt1-f195.google.com with SMTP id i7so175361qtj.10;
+        Mon, 05 Nov 2018 12:39:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=7/QHLazXFzCb6Lx1A0MxlXNX6Vz/toQbqlcDVBn5Wlw=;
-        b=BPYM4jWY5H8490sRjURexpwuozLhD23quawP+gfZMfL7bjxKg4aQvyHdcTJWLildab
-         t42DF0DVAMRWoEd9cNIViIxq4rUp7ZpzdjAMskPDUGwZiAodq6s7sSrqwrGoONmObsvK
-         e/OThkhNWBgbVuuxyZegOJGQ9lw77GQ53GLto=
+        bh=ILE+k7pWV9cIqAzEgJwaEkmdZ3c+veByDIIVUcB7Py0=;
+        b=CHZgKJLVodPnnKVd8EPAbYvi+4i7CBRgvR7N9YrdQ0c9m8yVM8DPHG25R45oZxUQ8g
+         ZDMl8JUlf3FcN1BSGJRN2FZhTi0LPKKUrVzMl6fRMgco1cD/zQnJ2Cqs2VL70DABSZZl
+         UkQ032C/UvDfzp6tukY1Edv9lc3UZRtSTL9MTzNvfcO9GaMYHQ8Q9UINfDJQ+h0211PW
+         sYewIDqyhPvLY8fHZhmsKE0TDD1691Eq2j1vdkpS1bIwXXkRgqfx9f4pd5Ui2Ex+QXn8
+         tgVbTzJQQPAlIiTf56EnRc+cRmERNjvSucqVvtDqyqy7hDyNXwAXKsWdeotP+Ffop9cg
+         a58Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=7/QHLazXFzCb6Lx1A0MxlXNX6Vz/toQbqlcDVBn5Wlw=;
-        b=QiCRuKGz8SKIyg7Qk5bGo2phZnwe0NHd85BC8m6t86UBdAsLsrZ1qX60s3bV2rEfgA
-         YEOJcqrUF5UYkKLqbsPq955/sF9U+UycrxKNgXoH8vXR1SZP3VrmdcJ2ziMCdeoZ5VE8
-         Uf4cKyfqs/fbuz1vkn0/3raY8Nl4ZDyXvOu++vM2d+XXcWJLRVydlMhLeanM7Wm2m886
-         N5XEQyM3SVuW7fXKqCj/8PtP+Y49PemNebawRBTv9bCiO/H84/oz3aIDSpFUqF56bJIv
-         HXqI5dYUxl2BMHVp992YklnsYCZ7TRSlwCG8iC7g/oYXxbzlzJmBf7sUieeFU9oKSO6L
-         dl2w==
-X-Gm-Message-State: AGRZ1gKZibJJBuhVPeku7vPzUsv0CjlDdqFoNSl3fvbDRbviexveak8K
-        9KGCzF0NvCC4zNMHV2FJD+k8hXhbF99KaLUSFuzqFg==
-X-Google-Smtp-Source: AJdET5fBOIWzGSAqSb1bEAMsUAdzMIu5Li5tpogiqpCD6qWV1dyFpzppx7Ry3IneaWlbEO8riFvCEEIAb0JW1ner9ao=
-X-Received: by 2002:a6b:37c2:: with SMTP id e185-v6mr19321890ioa.173.1541450385271;
- Mon, 05 Nov 2018 12:39:45 -0800 (PST)
+        bh=ILE+k7pWV9cIqAzEgJwaEkmdZ3c+veByDIIVUcB7Py0=;
+        b=X2f67vqMXbkdL3M+3tcTZBHpr47Yt5rYyA7RDfH7IHpg9xF+FzMNAr9VkbfK8E2VJm
+         cb3Tt0l6iU8+B/Smbo5DgzFSeBL4zNk45EHmLDmrX8WqyjRTqSufbX/6bNuK/7DgWgUd
+         GTg3buAiedbP5+oy8qgKgr1hY+jTlpsRcLaufntN3VR44gUBd0wZEzYcrEP9GhYrCNyT
+         tSVifFRSolar60IMzhwG1+hoVp7NLVOLOoVd/RGjYzZ4w9llfArELXmK5nd5WYe+oIYQ
+         4K/RokiY3zXazsAgpVm7xPTY4bmMzzvtmLPJaeYqgjDfBhNDMSJilTG8FFuE2oDU8OLR
+         cDsQ==
+X-Gm-Message-State: AGRZ1gLvFA9xfWSNlyWdm11Xx04aR+mnQU4bdohrx1BfgvEItLcpjEcY
+        mYPE3hcuAQ0NnUGyOTQURFk7yMR689SSe4B/TuP/DW3T
+X-Google-Smtp-Source: AJdET5dgSoTZ7cPNFPDCBymGSyqyylQq/gygeb6V4Ffjt/a24Cfa+n1c9dn+GqBxU+34Q25baEslhLXnh2AX7uUEzyA=
+X-Received: by 2002:aed:2d24:: with SMTP id h33mr15845979qtd.373.1541450397787;
+ Mon, 05 Nov 2018 12:39:57 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a6b:4f16:0:0:0:0:0 with HTTP; Mon, 5 Nov 2018 12:39:44 -0800 (PST)
-In-Reply-To: <20181031192843.13230-5-f.fainelli@gmail.com>
-References: <20181031192843.13230-1-f.fainelli@gmail.com> <20181031192843.13230-5-f.fainelli@gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 5 Nov 2018 21:39:44 +0100
-Message-ID: <CAKv+Gu85kRVos-z+1WuV5J8bTHpLDDdUu0hVD2NmZ-w-ry5f4g@mail.gmail.com>
-Subject: Re: [PATCH v3 4/6] arm64: Utilize phys_initrd_start/phys_initrd_size
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Greg Hackmann <ghackmann@android.com>,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        CHANDAN VN <chandan.vn@samsung.com>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE" 
-        <devicetree@vger.kernel.org>, rppt@linux.ibm.com,
-        Russell King <linux@armlinux.org.uk>, green.hu@gmail.com,
-        deanbo422@gmail.com, gxt@pku.edu.cn,
-        linux-snps-arc@lists.infradead.org, vgupta@synopsys.com
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+ <20181102231320.29164-16-jarkko.sakkinen@linux.intel.com> <CAHp75VdhSwy8zzf64PZnHhZVikJEzasu-=a+UOz4cLAxEJW-YA@mail.gmail.com>
+ <20181105173038.GD4502@linux.intel.com>
+In-Reply-To: <20181105173038.GD4502@linux.intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 5 Nov 2018 22:39:46 +0200
+Message-ID: <CAHp75Vfa2jvjOtvERB_Td1zCrfKyJp24Prd+foYz02kUCjNr-g@mail.gmail.com>
+Subject: Re: [PATCH v15 15/23] x86/sgx: Add wrappers for ENCLS leaf functions
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        mark.shanahan@intel.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, suresh.b.siddha@intel.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Florian,
+On Mon, Nov 5, 2018 at 7:30 PM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> On Sat, Nov 03, 2018 at 03:17:35PM +0200, Andy Shevchenko wrote:
+> > On Sat, Nov 3, 2018 at 1:18 AM Jarkko Sakkinen
+> > <jarkko.sakkinen@linux.intel.com> wrote:
+> > >
+> > > ENCLS is an umbrella instruction for a variety of cpl0 SGX functions.
+> > > The ENCLS function that is executed is specified in EAX, with each
+> > > function potentially having more leaf-specific operands beyond EAX.
+> > > ENCLS introduces its own (positive value) error codes that (some)
+> > > leafs use to return failure information in EAX.  Leafs that return
+> > > an error code also modify RFLAGS.  And finally, ENCLS generates
+> > > ENCLS-specific non-fatal #GPs and #PFs, i.e. a bug-free kernel may
+> > > encounter faults on ENCLS that must be handled gracefully.
+> > >
+> > > Because of the complexity involved in encoding ENCLS and handling its
+> > > assortment of failure paths, executing any given leaf is not a simple
+> > > matter of emitting ENCLS.
+> > >
+> > > To enable adding support for ENCLS leafs with minimal fuss, add a
+> > > two-layer macro system along with an encoding scheme to allow wrappers
+> > > to return trap numbers along ENCLS-specific error codes.  The bottom
+> > > layer of the macro system splits between the leafs that return an
+> > > error code and those that do not.  The second layer generates the
+> > > correct input/output annotations based on the number of operands for
+> > > each leaf function.
+> >
+> > > +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
+> >
+> > > +/**
+> >
+> > I dunno if kernel-doc script still complains about this.
+>
+> Is there a way to ask for make htmldocs to do only a subset of docs?
+> Still kind of trying to figure out what would be  a good flow for
+> working with Sphinx.
 
-On 31 October 2018 at 20:28, Florian Fainelli <f.fainelli@gmail.com> wrote:
-> ARM64 is the only architecture that re-defines
-> __early_init_dt_declare_initrd() in order for that function to populate
-> initrd_start/initrd_end with physical addresses instead of virtual
-> addresses. Instead of having an override we can leverage
-> drivers/of/fdt.c populating phys_initrd_start/phys_initrd_size to
-> populate those variables for us.
->
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
->  arch/arm64/mm/init.c | 19 +++++++++----------
->  1 file changed, 9 insertions(+), 10 deletions(-)
->
-> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-> index 3cf87341859f..00ef2166bb73 100644
-> --- a/arch/arm64/mm/init.c
-> +++ b/arch/arm64/mm/init.c
-> @@ -72,8 +72,8 @@ static int __init early_initrd(char *p)
->         if (*endp == ',') {
->                 size = memparse(endp + 1, NULL);
->
-> -               initrd_start = start;
-> -               initrd_end = start + size;
-> +               phys_initrd_start = start;
-> +               phys_initrd_size = size;
->         }
->         return 0;
->  }
-> @@ -408,14 +408,14 @@ void __init arm64_memblock_init(void)
->                 memblock_add(__pa_symbol(_text), (u64)(_end - _text));
->         }
->
-> -       if (IS_ENABLED(CONFIG_BLK_DEV_INITRD) && initrd_start) {
-> +       if (IS_ENABLED(CONFIG_BLK_DEV_INITRD) && phys_initrd_size) {
->                 /*
->                  * Add back the memory we just removed if it results in the
->                  * initrd to become inaccessible via the linear mapping.
->                  * Otherwise, this is a no-op
->                  */
-> -               u64 base = initrd_start & PAGE_MASK;
-> -               u64 size = PAGE_ALIGN(initrd_end) - base;
-> +               u64 base = phys_initrd_start & PAGE_MASK;
-> +               u64 size = PAGE_ALIGN(phys_initrd_size);
->
->                 /*
->                  * We can only add back the initrd memory if we don't end up
-> @@ -460,12 +460,11 @@ void __init arm64_memblock_init(void)
->          */
->         memblock_reserve(__pa_symbol(_text), _end - _text);
->  #ifdef CONFIG_BLK_DEV_INITRD
-> -       if (initrd_start) {
-> -               memblock_reserve(initrd_start, initrd_end - initrd_start);
-> -
-> +       if (phys_initrd_size) {
->                 /* the generic initrd code expects virtual addresses */
-> -               initrd_start = __phys_to_virt(initrd_start);
-> -               initrd_end = __phys_to_virt(initrd_end);
-> +               initrd_start = __phys_to_virt(phys_initrd_start);
-> +               initrd_end = initrd_start + phys_initrd_size;
-> +               initrd_below_start_ok = 0;
+What I'm telling here is about Copyright notice, which in my
+understanding is not a part of kernel-doc formatting. Though I might
+be mistaken.
+I remember some USB code has that and I saw a warning.
 
-Where is this assignment coming from?
-
->         }
->  #endif
->
-> --
-> 2.17.1
->
+-- 
+With Best Regards,
+Andy Shevchenko
