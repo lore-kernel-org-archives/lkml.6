@@ -2,186 +2,141 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-14.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25621C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F09D0C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:11:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB9B32085A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:11:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB9B32085A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 869CA2084F
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:11:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MsyuiUe/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 869CA2084F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730214AbeKFGdU (ORCPT
+        id S2387718AbeKFGdY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 6 Nov 2018 01:33:24 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:38195 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726945AbeKFGdU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 6 Nov 2018 01:33:20 -0500
-Received: from mga07.intel.com ([134.134.136.100]:33856 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729887AbeKFGdU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 01:33:20 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 13:11:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,469,1534834800"; 
-   d="scan'208";a="86891792"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga007.jf.intel.com with ESMTP; 05 Nov 2018 13:11:44 -0800
-Subject: [driver-core PATCH v5 1/9] workqueue: Provide queue_work_node to
- queue work near a given NUMA node
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
-Cc:     linux-nvdimm@lists.01.org, tj@kernel.org,
-        akpm@linux-foundation.org, linux-pm@vger.kernel.org,
-        jiangshanlai@gmail.com, rafael@kernel.org, len.brown@intel.com,
-        pavel@ucw.cz, zwisler@kernel.org, dan.j.williams@intel.com,
-        dave.jiang@intel.com, bvanassche@acm.org,
-        alexander.h.duyck@linux.intel.com
-Date:   Mon, 05 Nov 2018 13:11:44 -0800
-Message-ID: <154145230445.29224.14651284855380723028.stgit@ahduyck-desk1.jf.intel.com>
-In-Reply-To: <154145223352.29224.8912797012647157172.stgit@ahduyck-desk1.jf.intel.com>
-References: <154145223352.29224.8912797012647157172.stgit@ahduyck-desk1.jf.intel.com>
-User-Agent: StGit/unknown-version
+Received: by mail-ua1-f68.google.com with SMTP id g10so3746051uak.5
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 13:11:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bq9rklDlPyykU9VuuBXq87FoiCOx1DH+DDQO0viI5E4=;
+        b=MsyuiUe/4P8x1Vi5xYtymi2UZG305A+iodClMZIY95lyo/Pow7pEXmaBt21Uj1k1Uh
+         5jburPDpff5I+jgaQIbBwWxdVIfkBxHVBze2qnHp4pf4oOHz4cEToChvt4Ns5zu9pkww
+         6xajs4CDmF0nnfhXog+QZG1/zU0Yzibm3b60cOCHrDOAGAzNVREVDYDQ8acTKQpSefwb
+         VfW8ADd6dwk5G7zHzMTQDXdhB/5FaBx6nzLnIf7ZsVI/e6l8ABlZg63z6T+VEEYyGV/g
+         e0dL0xtCxdGn8wXYjcU/jOpDrva38DrycTFKL8x/8mktos8pBrMUBolDItEpD9kPjoXR
+         2RMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bq9rklDlPyykU9VuuBXq87FoiCOx1DH+DDQO0viI5E4=;
+        b=omFI0WhT7ReyuzkWdgV/whivoFHTay8lv9lVkDY6hRa8tKxMzE9Yh5UnyLXijxfqAG
+         d/lRDOTa1iweLphX56A5rJFxjaK+gp+V4efybRO+ip7iYaZwMLNtUi4/oUhITdsILiCd
+         kKk+T37I0s1rmIDaaGEia+jxYnM4J5FZje4SWf2GSiyumsTT61zEVC5t7uVl4TG3x4Vm
+         v/cVzdL+KgxA7hm5rrEeAg2hy0uuM0mR1NW9/bcSyMRUESbIknj8O3liQVkxwO0/esWU
+         nG2RB3ZS3fF6vs/p6PhQGfyTliI78+bTzu3wbSG4LJyulIqN24ClZHZxWnIsujHfKQzb
+         ZAEQ==
+X-Gm-Message-State: AGRZ1gJg6iitRXzA3CHuYVnXug8EszAk27+AH+Rd8N1tmgv8+wAVZZ5n
+        m+9BsYGKwy5XPawkfeQe5/UaVNejWcqEav7PnISltA==
+X-Google-Smtp-Source: AJdET5cF5G1rE36zSDDsVA7EokA5rFoj7sNiT+sQ5Io8UtjOHQxwyJvlavZaMEVMCWQ6lVFciDqtjQJcnC3ppc4/25s=
+X-Received: by 2002:a9f:3743:: with SMTP id a3mr394764uae.86.1541452303305;
+ Mon, 05 Nov 2018 13:11:43 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <1541073999-11752-1-git-send-email-vbadigan@codeaurora.org>
+ <1541073999-11752-2-git-send-email-vbadigan@codeaurora.org>
+ <CAD=FV=V9AdCgOSonb0tu==DgKRKeZxto+aGwxmdbHAqrmfMrDQ@mail.gmail.com> <20181105203657.GA32282@bogus>
+In-Reply-To: <20181105203657.GA32282@bogus>
+From:   Doug Anderson <dianders@google.com>
+Date:   Mon, 5 Nov 2018 13:11:31 -0800
+Message-ID: <CAD=FV=VitZ4dyYGxinQ=nsrfM+U7duGbxeN3bdbRxfx-2AWxyQ@mail.gmail.com>
+Subject: Re: [PATCH V3 1/2] dt-bindings: mmc: sdhci-msm: Add new compatible
+ string for SDM845 SOC
+To:     Rob Herring <robh@kernel.org>
+Cc:     vbadigan@codeaurora.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Asutosh Das <asutoshd@codeaurora.org>, riteshh@codeaurora.org,
+        stummala@codeaurora.org, sayalil@codeaurora.org,
+        Mark Rutland <mark.rutland@arm.com>, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch provides a new function queue_work_node which is meant to
-schedule work on a "random" CPU of the requested NUMA node. The main
-motivation for this is to help assist asynchronous init to better improve
-boot times for devices that are local to a specific node.
+Hi,
 
-For now we just default to the first CPU that is in the intersection of the
-cpumask of the node and the online cpumask. The only exception is if the
-CPU is local to the node we will just use the current CPU. This should work
-for our purposes as we are currently only using this for unbound work so
-the CPU will be translated to a node anyway instead of being directly used.
+On Mon, Nov 5, 2018 at 12:37 PM Rob Herring <robh@kernel.org> wrote:
+>
+> On Thu, Nov 01, 2018 at 01:29:54PM -0700, Doug Anderson wrote:
+> > Hi,
+> >
+> > On Thu, Nov 1, 2018 at 5:07 AM Veerabhadrarao Badiganti
+> > <vbadigan@codeaurora.org> wrote:
+> > >
+> > > For SDM845 SOC, new compatible string  "qcom,sdm845-sdhci" is added.
+> > >
+> > > Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+> > > ---
+> > >  Documentation/devicetree/bindings/mmc/sdhci-msm.txt | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+> > > index 502b3b8..f2ffbeb 100644
+> > > --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+> > > +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+> > > @@ -7,6 +7,7 @@ Required properties:
+> > >  - compatible: Should contain:
+> > >                 "qcom,sdhci-msm-v4" for sdcc versions less than 5.0
+> > >                 "qcom,sdhci-msm-v5" for sdcc versions >= 5.0
+> > > +               "qcom,sdm845-sdhci" for sdm845 SOC
+> >
+> > It's up to Rob of course, but IMO it seems a nicer way forward to
+> > include both the SoC-specific string and the "version" string in all
+> > cases.  I'd write this for the full text:
+>
+> Fine by me if you update all the dts files.
 
-As we are only using the first CPU to represent the NUMA node for now I am
-limiting the scope of the function so that it can only be used with unbound
-workqueues.
+Done and done.
 
-Acked-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
----
- include/linux/workqueue.h |    2 +
- kernel/workqueue.c        |   84 +++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 86 insertions(+)
+https://lkml.kernel.org/r/20181105210921.253707-1-dianders@chromium.org
+https://lkml.kernel.org/r/20181105210921.253707-2-dianders@chromium.org
 
-diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
-index 60d673e15632..1f50c1e586e7 100644
---- a/include/linux/workqueue.h
-+++ b/include/linux/workqueue.h
-@@ -463,6 +463,8 @@ int workqueue_set_unbound_cpumask(cpumask_var_t cpumask);
- 
- extern bool queue_work_on(int cpu, struct workqueue_struct *wq,
- 			struct work_struct *work);
-+extern bool queue_work_node(int node, struct workqueue_struct *wq,
-+			    struct work_struct *work);
- extern bool queue_delayed_work_on(int cpu, struct workqueue_struct *wq,
- 			struct delayed_work *work, unsigned long delay);
- extern bool mod_delayed_work_on(int cpu, struct workqueue_struct *wq,
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index 0280deac392e..6ed7c2eb84b0 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -1492,6 +1492,90 @@ bool queue_work_on(int cpu, struct workqueue_struct *wq,
- }
- EXPORT_SYMBOL(queue_work_on);
- 
-+/**
-+ * workqueue_select_cpu_near - Select a CPU based on NUMA node
-+ * @node: NUMA node ID that we want to bind a CPU from
-+ *
-+ * This function will attempt to find a "random" cpu available on a given
-+ * node. If there are no CPUs available on the given node it will return
-+ * WORK_CPU_UNBOUND indicating that we should just schedule to any
-+ * available CPU if we need to schedule this work.
-+ */
-+static int workqueue_select_cpu_near(int node)
-+{
-+	int cpu;
-+
-+	/* No point in doing this if NUMA isn't enabled for workqueues */
-+	if (!wq_numa_enabled)
-+		return WORK_CPU_UNBOUND;
-+
-+	/* Delay binding to CPU if node is not valid or online */
-+	if (node < 0 || node >= MAX_NUMNODES || !node_online(node))
-+		return WORK_CPU_UNBOUND;
-+
-+	/* Use local node/cpu if we are already there */
-+	cpu = raw_smp_processor_id();
-+	if (node == cpu_to_node(cpu))
-+		return cpu;
-+
-+	/* Use "random" otherwise know as "first" online CPU of node */
-+	cpu = cpumask_any_and(cpumask_of_node(node), cpu_online_mask);
-+
-+	/* If CPU is valid return that, otherwise just defer */
-+	return (cpu < nr_cpu_ids) ? cpu : WORK_CPU_UNBOUND;
-+}
-+
-+/**
-+ * queue_work_node - queue work on a "random" cpu for a given NUMA node
-+ * @node: NUMA node that we are targeting the work for
-+ * @wq: workqueue to use
-+ * @work: work to queue
-+ *
-+ * We queue the work to a "random" CPU within a given NUMA node. The basic
-+ * idea here is to provide a way to somehow associate work with a given
-+ * NUMA node.
-+ *
-+ * This function will only make a best effort attempt at getting this onto
-+ * the right NUMA node. If no node is requested or the requested node is
-+ * offline then we just fall back to standard queue_work behavior.
-+ *
-+ * Currently the "random" CPU ends up being the first available CPU in the
-+ * intersection of cpu_online_mask and the cpumask of the node, unless we
-+ * are running on the node. In that case we just use the current CPU.
-+ *
-+ * Return: %false if @work was already on a queue, %true otherwise.
-+ */
-+bool queue_work_node(int node, struct workqueue_struct *wq,
-+		     struct work_struct *work)
-+{
-+	unsigned long flags;
-+	bool ret = false;
-+
-+	/*
-+	 * This current implementation is specific to unbound workqueues.
-+	 * Specifically we only return the first available CPU for a given
-+	 * node instead of cycling through individual CPUs within the node.
-+	 *
-+	 * If this is used with a per-cpu workqueue then the logic in
-+	 * workqueue_select_cpu_near would need to be updated to allow for
-+	 * some round robin type logic.
-+	 */
-+	WARN_ON_ONCE(!(wq->flags & WQ_UNBOUND));
-+
-+	local_irq_save(flags);
-+
-+	if (!test_and_set_bit(WORK_STRUCT_PENDING_BIT, work_data_bits(work))) {
-+		int cpu = workqueue_select_cpu_near(node);
-+
-+		__queue_work(cpu, wq, work);
-+		ret = true;
-+	}
-+
-+	local_irq_restore(flags);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(queue_work_node);
-+
- void delayed_work_timer_fn(struct timer_list *t)
- {
- 	struct delayed_work *dwork = from_timer(dwork, t, timer);
 
+> >  - compatible: Should contain a SoC-specific string and a IP version string:
+> >       version strings:
+> >            "qcom,sdhci-msm-v4" for sdcc versions less than 5.0
+> >            "qcom,sdhci-msm-v5" for sdcc version 5.0
+> >       full compatible strings with SoC and version:
+> >            "qcom,apq8084", "qcom,sdhci-msm-v4"
+> >            "qcom,msm8974", "qcom,sdhci-msm-v4"
+> >            "qcom,msm8916", "qcom,sdhci-msm-v4"
+> >            "qcom,msm8992", "qcom,sdhci-msm-v4"
+> >            "qcom,msm8996", "qcom,sdhci-msm-v4"
+>
+> I assume you meant to append '-sdhci' here?
+
+Oops, yes!
+
+           "qcom,apq8084-sdhci", "qcom,sdhci-msm-v4"
+           "qcom,msm8974-sdhci", "qcom,sdhci-msm-v4"
+           "qcom,msm8916-sdhci", "qcom,sdhci-msm-v4"
+           "qcom,msm8992-sdhci", "qcom,sdhci-msm-v4"
+           "qcom,msm8996-sdhci", "qcom,sdhci-msm-v4"
+
+-Doug
