@@ -2,124 +2,115 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FA37C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:34:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD46C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:38:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 502C820827
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:34:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 502C820827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 728DA20854
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:38:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YHn4KMKg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 728DA20854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729529AbeKEVxY (ORCPT
+        id S1729584AbeKEV5c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 16:53:24 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:14594 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729047AbeKEVxY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 16:53:24 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 5539AD677B1D2;
-        Mon,  5 Nov 2018 20:33:48 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.75) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.408.0; Mon, 5 Nov 2018 20:33:43 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>
-CC:     <Jonathan.Cameron@huawei.com>, <linux-crypto@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH 2/2] crypto: hisilicon -  Fix reference after free of memories on error path
-Date:   Mon, 5 Nov 2018 20:35:15 +0800
-Message-ID: <1541421315-25623-3-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
-In-Reply-To: <1541421315-25623-1-git-send-email-john.garry@huawei.com>
-References: <1541421315-25623-1-git-send-email-john.garry@huawei.com>
+        Mon, 5 Nov 2018 16:57:32 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:38478 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729015AbeKEV5c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 16:57:32 -0500
+Received: by mail-io1-f66.google.com with SMTP id q18-v6so6345092iod.5
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 04:37:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=QtkOgGWJRoC6+4JmBFDQkBEuIb/ac1OOr2Z0SmDq+Z4=;
+        b=YHn4KMKgoVaAiLS8yj3A6Onivza/w2sKNUojnHIUZWHXkNpLmd9BZymvAkZ3vBNouD
+         yKfAb+t90LesfaIUF67mhR68VOIbl9QirZz4yozUGwZlApwBfCukxH198yhqMtqBO6fA
+         fOMJufJn47DSV0bBFjErmVxQhqclixx8aJwJc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=QtkOgGWJRoC6+4JmBFDQkBEuIb/ac1OOr2Z0SmDq+Z4=;
+        b=k80FBazHBUo1QRFPo86Jv3jeIF+OuqDznioSprLBBoNRG5aB01QsYmxzLJRB1JOVH2
+         sZpHM3Cbx0BSbmZo11URhzSuh5mApRy5wog6g1yPGqcUSIC4SKg4tXLrWQ7NyOFMjOs8
+         FEjCRbTcruC4dsyzZDZ4ykpf1OK82gi+sBf8HWrjhBnOA+ozljepfP1vPh4ywnZhjZZR
+         tMYYbL3MaQkTPkVGWTCt8jKr5Ieo8Mco9JESckcUgUjWR1OOPL8js1kwZE/fsaB57Qg1
+         Tkw1dc9DTM0y/cLlzH95mr9I+RGeNgXeZ9nRzbW1VQ4MQui4hZingjJI5UZif3uMCoZu
+         Qvwg==
+X-Gm-Message-State: AGRZ1gIkRLJNsrzUwEtUktiek0jmiOM5gwe6fmq7u4gpU+S/opW5Dm9Q
+        A4xE+gCgIQbR88jNuVbFTZ1OyuMx5BFF8SVJcMbC2g==
+X-Google-Smtp-Source: AJdET5fpdp5Or8TO69hAQqLyMNq1QsOVwvjOo3bnZScuN6iDU7FT72bWpNctTFEgu3bGM1eUEC8MWYW7+Y3NvHnoCKA=
+X-Received: by 2002:a6b:5d18:: with SMTP id r24-v6mr17045168iob.170.1541421478762;
+ Mon, 05 Nov 2018 04:37:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Received: by 2002:a6b:4f16:0:0:0:0:0 with HTTP; Mon, 5 Nov 2018 04:37:58 -0800 (PST)
+In-Reply-To: <1540808142-33208-2-git-send-email-julien.thierry@arm.com>
+References: <1540808142-33208-1-git-send-email-julien.thierry@arm.com> <1540808142-33208-2-git-send-email-julien.thierry@arm.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 5 Nov 2018 13:37:58 +0100
+Message-ID: <CAKv+Gu-LogTWHsjPcJDt1PLp0E1kspQoOrkregknp9NXY9nfdg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] efi/fdt: Indentation fix
+To:     Julien Thierry <julien.thierry@arm.com>
+Cc:     linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Joe Perches <joe@perches.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-coccicheck currently warns of the following issues in the driver:
-drivers/crypto/hisilicon/sec/sec_algs.c:864:51-66: ERROR: reference preceded by free on line 812
-drivers/crypto/hisilicon/sec/sec_algs.c:864:40-49: ERROR: reference preceded by free on line 813
-drivers/crypto/hisilicon/sec/sec_algs.c:861:8-24: ERROR: reference preceded by free on line 814
-drivers/crypto/hisilicon/sec/sec_algs.c:860:41-51: ERROR: reference preceded by free on line 815
-drivers/crypto/hisilicon/sec/sec_algs.c:867:7-18: ERROR: reference preceded by free on line 816
+On 29 October 2018 at 11:15, Julien Thierry <julien.thierry@arm.com> wrote:
+> Closing bracket seems to end a for statement when it is actually ending
+> the contained if. Add some brackets to have clear delimitation of each
+> scope.
+>
+> No functional change/fix, just fix the indentation.
+>
+> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> ---
+>  drivers/firmware/efi/libstub/fdt.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/firmware/efi/libstub/fdt.c b/drivers/firmware/efi/libstub/fdt.c
+> index 8830fa6..8b6696e 100644
+> --- a/drivers/firmware/efi/libstub/fdt.c
+> +++ b/drivers/firmware/efi/libstub/fdt.c
+> @@ -372,7 +372,7 @@ void *get_fdt(efi_system_table_t *sys_table, unsigned long *fdt_size)
+>         tables = (efi_config_table_t *) sys_table->tables;
+>         fdt = NULL;
+>
+> -       for (i = 0; i < sys_table->nr_tables; i++)
+> +       for (i = 0; i < sys_table->nr_tables; i++) {
+>                 if (efi_guidcmp(tables[i].guid, fdt_guid) == 0) {
+>                         fdt = (void *) tables[i].table;
+>                         if (fdt_check_header(fdt) != 0) {
+> @@ -381,7 +381,8 @@ void *get_fdt(efi_system_table_t *sys_table, unsigned long *fdt_size)
+>                         }
+>                         *fdt_size = fdt_totalsize(fdt);
+>                         break;
+> -        }
+> +               }
+> +       }
+>
+>         return fdt;
+>  }
+> --
+> 1.9.1
+>
 
-It would appear than on certain error paths that we may attempt reference-
-after-free some memories.
 
-This patch fixes those issues. The solution doesn't look perfect, but
-having same memories free'd possibly from separate functions makes it
-tricky.
+Queued in efi/next
 
-Fixes: 915e4e8413da ("crypto: hisilicon - SEC security accelerator driver")
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- drivers/crypto/hisilicon/sec/sec_algs.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/crypto/hisilicon/sec/sec_algs.c b/drivers/crypto/hisilicon/sec/sec_algs.c
-index 32c6c02..cdc4f9a 100644
---- a/drivers/crypto/hisilicon/sec/sec_algs.c
-+++ b/drivers/crypto/hisilicon/sec/sec_algs.c
-@@ -808,13 +808,6 @@ static int sec_alg_skcipher_crypto(struct skcipher_request *skreq,
- 	 * more refined but this is unlikely to happen so no need.
- 	 */
- 
--	/* Cleanup - all elements in pointer arrays have been coppied */
--	kfree(splits_in_nents);
--	kfree(splits_in);
--	kfree(splits_out_nents);
--	kfree(splits_out);
--	kfree(split_sizes);
--
- 	/* Grab a big lock for a long time to avoid concurrency issues */
- 	mutex_lock(&queue->queuelock);
- 
-@@ -829,13 +822,13 @@ static int sec_alg_skcipher_crypto(struct skcipher_request *skreq,
- 	     (!queue->havesoftqueue ||
- 	      kfifo_avail(&queue->softqueue) > steps)) ||
- 	    !list_empty(&ctx->backlog)) {
-+		ret = -EBUSY;
- 		if ((skreq->base.flags & CRYPTO_TFM_REQ_MAY_BACKLOG)) {
- 			list_add_tail(&sec_req->backlog_head, &ctx->backlog);
- 			mutex_unlock(&queue->queuelock);
--			return -EBUSY;
-+			goto out;
- 		}
- 
--		ret = -EBUSY;
- 		mutex_unlock(&queue->queuelock);
- 		goto err_free_elements;
- 	}
-@@ -844,7 +837,15 @@ static int sec_alg_skcipher_crypto(struct skcipher_request *skreq,
- 	if (ret)
- 		goto err_free_elements;
- 
--	return -EINPROGRESS;
-+	ret = -EINPROGRESS;
-+out:
-+	/* Cleanup - all elements in pointer arrays have been copied */
-+	kfree(splits_in_nents);
-+	kfree(splits_in);
-+	kfree(splits_out_nents);
-+	kfree(splits_out);
-+	kfree(split_sizes);
-+	return ret;
- 
- err_free_elements:
- 	list_for_each_entry_safe(el, temp, &sec_req->elements, head) {
--- 
-1.9.1
-
+Thanks.
