@@ -2,143 +2,177 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D0C7C46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:54:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15460C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:56:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 013FD2085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:54:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 013FD2085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id BB09B2085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:56:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GpWCC7ZI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB09B2085A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387463AbeKFAOf (ORCPT
+        id S1729705AbeKFAQb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 19:14:35 -0500
-Received: from foss.arm.com ([217.140.101.70]:45334 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387428AbeKFAOf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 19:14:35 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7AE6615BF;
-        Mon,  5 Nov 2018 06:54:29 -0800 (PST)
-Received: from e110439-lin.cambridge.arm.com (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 465683F5CF;
-        Mon,  5 Nov 2018 06:54:27 -0800 (PST)
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH v2 3/3] sched/fair: add lsub_positive and use it consistently
-Date:   Mon,  5 Nov 2018 14:54:00 +0000
-Message-Id: <20181105145400.935-4-patrick.bellasi@arm.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20181105145400.935-1-patrick.bellasi@arm.com>
-References: <20181105145400.935-1-patrick.bellasi@arm.com>
+        Mon, 5 Nov 2018 19:16:31 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:46685 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726255AbeKFAQb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 19:16:31 -0500
+Received: by mail-pl1-f193.google.com with SMTP id c13-v6so4564330plz.13;
+        Mon, 05 Nov 2018 06:56:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=uStxr/h4+fXYF/rBbung/nYBRU8DWM813TTshXUzqsw=;
+        b=GpWCC7ZIe3FbGs93qoF7C1GFRSDz3wWhYWm/nOSW8V0N5wKWFq+4g6m+uiArDFxNBi
+         QPd3hSJNeV++eOL3mE3NlAavcvKLbyYzoc+cmbCd8L/4606KOx9rRp+bN/pDvMQJbUW1
+         F0HCWcZIhJCoZnSnDiEMTiBVTx0ekeVqI66m21C9I0TfF/R3pjs5VjuIbs1qxpF1NnAs
+         6nFk0YP93vK3G1MS6Ym5KsMsAs/MuL1gX9yI/SCNPQwOusxUC8OyIywPFzNaxCS3AFaW
+         Y3XHBgll0zvmsbs6H3osPfP1UPwqhB0bHWQrz7GySlDkQiE5s+CElOyq+12GlmdHqAgj
+         NycQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=uStxr/h4+fXYF/rBbung/nYBRU8DWM813TTshXUzqsw=;
+        b=hWR/nzcETKCk2cc1ai6tgK+YgYfxRuHej8jHgy/0keo6t28MTk67xfZi7FwGRSv5S7
+         5VyWAJBeF2Sxpz6UuQ8QI1WpH2m/klgCO7GOy9B/3E+nOcHB8cn9RPravy0fhHZUNL96
+         gnwq9elb7xyigiYZaErAS2RyLmhxsxKvCLX5sTBU8bZeuUXM92Ft+fMAWfEJOB6Vwz2r
+         FuEKN4M0iX2c+A7TVZoAWt72paHnsnCg7UoWdXSWI61Prf62csIKHuPu4WTcpAKCsg3H
+         tXs70tZC1yI3BB4NvwS1FP91yz/SytALBNL9NKy6Fu3F/JQ8Mq5pd2ZJa8z0um26yte2
+         +m6w==
+X-Gm-Message-State: AGRZ1gLrDc034iSIRm/nE4p8ftYpQK7FMXL3TNfEajrYsuQRwMliWee6
+        1cJTXvs8J3HMfSkJujDPw4ZyJ8g6zOc=
+X-Google-Smtp-Source: AJdET5c2ggoVYS/rWyNTyk1Y6Um5XjrsO8LUMfh8HsUbknurApRxl2lDhYw08sObBppNK3tQ3vhhsA==
+X-Received: by 2002:a17:902:2909:: with SMTP id g9-v6mr22003586plb.223.1541429785465;
+        Mon, 05 Nov 2018 06:56:25 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id z9-v6sm19320469pfg.174.2018.11.05.06.56.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 05 Nov 2018 06:56:24 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com, davem@davemloft.net,
+        keescook@chromium.org, gustavo@embeddedor.com, dvlasenk@redhat.com
+Cc:     linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] net/bluetooth: Change to use DEFINE_SHOW_ATTRIBUTE macro
+Date:   Mon,  5 Nov 2018 09:56:19 -0500
+Message-Id: <20181105145619.6395-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following pattern:
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
-   var -= min_t(typeof(var), var, val);
-
-is used multiple times in fair.c.
-
-The existing sub_positive() already capture that pattern but it adds
-also explicit load-sotre to properly support lockless observations.
-In other cases, the patter above is used to update local, and/or not
-concurrently accessed, variables.
-
-Let's add a simpler version of sub_positive, targeted to local variables
-updates, which gives the same readability benefits at calling sites
-without enforcing {READ,WRITE}_ONCE barriers.
-
-Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
-Link: https://lore.kernel.org/lkml/20181031184527.GA3178@hirez.programming.kicks-ass.net
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- kernel/sched/fair.c | 24 +++++++++++++++++-------
- 1 file changed, 17 insertions(+), 7 deletions(-)
+ net/bluetooth/l2cap_core.c  | 12 +-----------
+ net/bluetooth/rfcomm/core.c | 12 +-----------
+ net/bluetooth/rfcomm/sock.c | 12 +-----------
+ net/bluetooth/sco.c         | 12 +-----------
+ 4 files changed, 4 insertions(+), 44 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index aeb37fe4dbb1..d50c739127d6 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -2734,6 +2734,17 @@ account_entity_dequeue(struct cfs_rq *cfs_rq, struct sched_entity *se)
- 	WRITE_ONCE(*ptr, res);					\
- } while (0)
- 
-+/*
-+ * Remove and clamp on negative, from a local variable.
-+ *
-+ * A variant of sub_positive which do not use explicit load-store
-+ * and thus optimized for local variable updates.
-+ */
-+#define lsub_positive(_ptr, _val) do {				\
-+	typeof(_ptr) ptr = (_ptr);				\
-+	*ptr -= min_t(typeof(*ptr), *ptr, _val);		\
-+} while (0)
-+
- #ifdef CONFIG_SMP
- static inline void
- enqueue_runnable_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se)
-@@ -4639,7 +4650,7 @@ static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun)
- 		cfs_b->distribute_running = 0;
- 		throttled = !list_empty(&cfs_b->throttled_cfs_rq);
- 
--		cfs_b->runtime -= min(runtime, cfs_b->runtime);
-+		lsub_positive(&cfs_b->runtime, runtime);
- 	}
- 
- 	/*
-@@ -4773,7 +4784,7 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
- 
- 	raw_spin_lock(&cfs_b->lock);
- 	if (expires == cfs_b->runtime_expires)
--		cfs_b->runtime -= min(runtime, cfs_b->runtime);
-+		lsub_positive(&cfs_b->runtime, runtime);
- 	cfs_b->distribute_running = 0;
- 	raw_spin_unlock(&cfs_b->lock);
+diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
+index d17a4736e47c..38d92ced5fb5 100644
+--- a/net/bluetooth/l2cap_core.c
++++ b/net/bluetooth/l2cap_core.c
+@@ -7615,17 +7615,7 @@ static int l2cap_debugfs_show(struct seq_file *f, void *p)
+ 	return 0;
  }
-@@ -6240,7 +6251,7 @@ static unsigned long cpu_util_without(int cpu, struct task_struct *p)
- 	util = READ_ONCE(cfs_rq->avg.util_avg);
  
- 	/* Discount task's util from CPU's util */
--	util -= min_t(unsigned int, util, task_util(p));
-+	lsub_positive(&util, task_util(p));
+-static int l2cap_debugfs_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, l2cap_debugfs_show, inode->i_private);
+-}
+-
+-static const struct file_operations l2cap_debugfs_fops = {
+-	.open		= l2cap_debugfs_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(l2cap_debugfs);
  
- 	/*
- 	 * Covered cases:
-@@ -6289,10 +6300,9 @@ static unsigned long cpu_util_without(int cpu, struct task_struct *p)
- 		 * properly fix the execl regression and it helps in further
- 		 * reducing the chances for the above race.
- 		 */
--		if (unlikely(task_on_rq_queued(p) || current == p)) {
--			estimated -= min_t(unsigned int, estimated,
--					   _task_util_est(p));
--		}
-+		if (unlikely(task_on_rq_queued(p) || current == p))
-+			lsub_positive(&estimated, _task_util_est(p));
-+
- 		util = max(util, estimated);
- 	}
+ static struct dentry *l2cap_debugfs;
+ 
+diff --git a/net/bluetooth/rfcomm/core.c b/net/bluetooth/rfcomm/core.c
+index b98225d65e87..1a635df80643 100644
+--- a/net/bluetooth/rfcomm/core.c
++++ b/net/bluetooth/rfcomm/core.c
+@@ -2166,17 +2166,7 @@ static int rfcomm_dlc_debugfs_show(struct seq_file *f, void *x)
+ 	return 0;
+ }
+ 
+-static int rfcomm_dlc_debugfs_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, rfcomm_dlc_debugfs_show, inode->i_private);
+-}
+-
+-static const struct file_operations rfcomm_dlc_debugfs_fops = {
+-	.open		= rfcomm_dlc_debugfs_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(rfcomm_dlc_debugfs);
+ 
+ static struct dentry *rfcomm_dlc_debugfs;
+ 
+diff --git a/net/bluetooth/rfcomm/sock.c b/net/bluetooth/rfcomm/sock.c
+index d606e9212291..aa0db1d1bd9b 100644
+--- a/net/bluetooth/rfcomm/sock.c
++++ b/net/bluetooth/rfcomm/sock.c
+@@ -1020,17 +1020,7 @@ static int rfcomm_sock_debugfs_show(struct seq_file *f, void *p)
+ 	return 0;
+ }
+ 
+-static int rfcomm_sock_debugfs_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, rfcomm_sock_debugfs_show, inode->i_private);
+-}
+-
+-static const struct file_operations rfcomm_sock_debugfs_fops = {
+-	.open		= rfcomm_sock_debugfs_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(rfcomm_sock_debugfs);
+ 
+ static struct dentry *rfcomm_sock_debugfs;
+ 
+diff --git a/net/bluetooth/sco.c b/net/bluetooth/sco.c
+index 8f0f9279eac9..529b38996d8b 100644
+--- a/net/bluetooth/sco.c
++++ b/net/bluetooth/sco.c
+@@ -1173,17 +1173,7 @@ static int sco_debugfs_show(struct seq_file *f, void *p)
+ 	return 0;
+ }
+ 
+-static int sco_debugfs_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, sco_debugfs_show, inode->i_private);
+-}
+-
+-static const struct file_operations sco_debugfs_fops = {
+-	.open		= sco_debugfs_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(sco_debugfs);
+ 
+ static struct dentry *sco_debugfs;
  
 -- 
-2.18.0
+2.17.0
 
