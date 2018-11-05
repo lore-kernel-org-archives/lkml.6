@@ -2,98 +2,153 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 208DDC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:30:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43726C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:31:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4A1F2085A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:30:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="N1zy0Pxy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4A1F2085A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 187232085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:31:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 187232085A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729572AbeKEXuP (ORCPT
+        id S1729742AbeKEXvr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 18:50:15 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43873 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726774AbeKEXuP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 18:50:15 -0500
-Received: by mail-wr1-f65.google.com with SMTP id y3-v6so9445308wrh.10
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 06:30:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=QccGvrQh7Yk0N0CYfBIrL6yeyGdTXixeZBLjFSeHOWI=;
-        b=N1zy0PxyAIKZzLwGUOq8IHZQHg2cv1tbnrN8GfBhycZwrD0BN9zGxGKRDZGjSfk6AT
-         /FutrdA629zkzzkoi+NoUByVm19fzc0U9ixjZPjsWW+qQSgRMdm5RayK1QKVWfQrpAoC
-         SrwCXhxL0O2l5JXelYBDE4p4jbIUixX1Wa+WA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=QccGvrQh7Yk0N0CYfBIrL6yeyGdTXixeZBLjFSeHOWI=;
-        b=d+2ymUdmo19TtbNIRt73tP4h2hwVAS77rAR+59kgo/FXHr36je0IzffEVjl1p0jCpv
-         2O795RZN6v5A3EE54imZSAoaEvtKYSIVC7f6877PRYEWg+zKQDXLVbl+Egpqjm/KFbu3
-         JszGigePqxkRiATL59B/LUENNvsGA9z38wfrT0OQ74fBtPmn7PZrC1oh/1a7VZtANVaQ
-         TWhEuBb836RBn+3AhA5eT3QxURAka4d4S5ntOo8f8ImvaZ1CEACrsEn4CejqqtPrsmr3
-         ENtD+54P8fLuvYirKma4cYHlBV7VqjiU8wwgXouPwd8rfzSrwcYYkgTsgE0OLvHRukDw
-         Id2A==
-X-Gm-Message-State: AGRZ1gKA4pcE2NNQwvHr28794WXG0bZMP7CCyTx41ecXImwAO3JKS/2H
-        YrET71eCT+mtwgKHJRiX9SOhBA==
-X-Google-Smtp-Source: AJdET5cMU9eepl/HHA5SW6misnK9od9xKF5vcz2TmzeF175MrKuYtR2DRQ+JMvRf+YUMCz8v185oKg==
-X-Received: by 2002:adf:bf10:: with SMTP id p16-v6mr18937965wrh.235.1541428214392;
-        Mon, 05 Nov 2018 06:30:14 -0800 (PST)
-Received: from [192.168.0.40] (119.151.136.77.rev.sfr.net. [77.136.151.119])
-        by smtp.googlemail.com with ESMTPSA id r73-v6sm36207526wmb.37.2018.11.05.06.30.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Nov 2018 06:30:13 -0800 (PST)
-Subject: Re: [PATCH] clocksource: imx-gpt: remove unnecessary irq protection
-To:     =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>
-Cc:     Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20181105141511.30657-1-peron.clem@gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <daf4fbee-b433-62c7-9dc6-e6fff058568d@linaro.org>
-Date:   Mon, 5 Nov 2018 15:30:11 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 5 Nov 2018 18:51:47 -0500
+Received: from mga11.intel.com ([192.55.52.93]:5880 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726173AbeKEXvr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 18:51:47 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 06:31:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
+   d="scan'208";a="278451650"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by fmsmga006.fm.intel.com with ESMTP; 05 Nov 2018 06:31:42 -0800
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andy.shevchenko@gmail.com>)
+        id 1gJfum-0005l3-Gz; Mon, 05 Nov 2018 16:31:40 +0200
+Date:   Mon, 5 Nov 2018 16:31:40 +0200
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        mark.shanahan@intel.com, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        David Woodhouse <dwmw@amazon.co.uk>, davidwang@zhaoxin.com,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
+        qianyue.zj@alibaba-inc.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v15 05/23] x86/cpu/intel: Detect SGX support and update
+ caps appropriately
+Message-ID: <20181105143140.GJ10650@smile.fi.intel.com>
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+ <20181102231320.29164-6-jarkko.sakkinen@linux.intel.com>
+ <CAHp75VcG4FtiS9bDM_pP216kxobFxkChDu6uxvuTsMHQ=YJ3Zg@mail.gmail.com>
+ <20181105140933.GA24038@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20181105141511.30657-1-peron.clem@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181105140933.GA24038@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/11/2018 15:15, Clément Péron wrote:
-> shutdown and oneshot are already protected against irq interruptions
+On Mon, Nov 05, 2018 at 04:09:33PM +0200, Jarkko Sakkinen wrote:
+> On Sat, Nov 03, 2018 at 03:05:39PM +0200, Andy Shevchenko wrote:
+
+> Agree. Would this be a more clean flow in the attached patch?
+
+LGTM.
+
+> From 3b863a7db00cefffc15df918a5132c35ea313c27 Mon Sep 17 00:00:00 2001
+> From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Date: Mon, 5 Nov 2018 16:06:06 +0200
+> Subject: [PATCH] x86/cpu/intel: clean up detect_sgx() flow
 > 
-> Signed-off-by: Clément Péron <peron.clem@gmail.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > ---
-
-Applied, thanks!
-
-  -- Daniel
+>  arch/x86/kernel/cpu/intel.c | 32 ++++++++++++++++++++------------
+>  1 file changed, 20 insertions(+), 12 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+> index bc52c52f7025..8a20a193d399 100644
+> --- a/arch/x86/kernel/cpu/intel.c
+> +++ b/arch/x86/kernel/cpu/intel.c
+> @@ -598,28 +598,36 @@ static void detect_tme(struct cpuinfo_x86 *c)
+>  
+>  static void detect_sgx(struct cpuinfo_x86 *c)
+>  {
+> -	bool unsupported = false;
+>  	unsigned long long fc;
+>  
+>  	rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
+>  	if (!(fc & FEATURE_CONTROL_LOCKED)) {
+>  		pr_err_once("sgx: IA32_FEATURE_CONTROL MSR is not locked\n");
+> -		unsupported = true;
+> -	} else if (!(fc & FEATURE_CONTROL_SGX_ENABLE)) {
+> +		goto out_unsupported;
+> +	}
+> +
+> +	if (!(fc & FEATURE_CONTROL_SGX_ENABLE)) {
+>  		pr_err_once("sgx: not enabled in IA32_FEATURE_CONTROL MSR\n");
+> -		unsupported = true;
+> -	} else if (!cpu_has(c, X86_FEATURE_SGX1)) {
+> +		goto out_unsupported;
+> +	}
+> +
+> +	if (!cpu_has(c, X86_FEATURE_SGX1)) {
+>  		pr_err_once("sgx: SGX1 instruction set not supported\n");
+> -		unsupported = true;
+> +		goto out_unsupported;
+>  	}
+>  
+> -	if (unsupported) {
+> -		setup_clear_cpu_cap(X86_FEATURE_SGX);
+> -		setup_clear_cpu_cap(X86_FEATURE_SGX1);
+> -		setup_clear_cpu_cap(X86_FEATURE_SGX2);
+> +	if (!(fc & FEATURE_CONTROL_SGX_LE_WR)) {
+> +		pr_info_once("sgx: launch control MSRs are not writable\n");
+> +		goto out_msrs_rdonly;
+>  	}
+> -	if (unsupported || !(fc & FEATURE_CONTROL_SGX_LE_WR))
+> -		setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
+> +
+> +	return;
+> +out_unsupported:
+> +	setup_clear_cpu_cap(X86_FEATURE_SGX);
+> +	setup_clear_cpu_cap(X86_FEATURE_SGX1);
+> +	setup_clear_cpu_cap(X86_FEATURE_SGX2);
+> +out_msrs_rdonly:
+> +	setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
+>  }
+>  
+>  static void init_intel_energy_perf(struct cpuinfo_x86 *c)
+> -- 
+> 2.19.1
+> 
 
 
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+With Best Regards,
+Andy Shevchenko
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
