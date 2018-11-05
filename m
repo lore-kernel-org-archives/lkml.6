@@ -2,158 +2,125 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56FA9C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:38:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A39A5C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:39:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EDB4204FD
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:38:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D49B20827
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:39:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="vmYUA4vw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EDB4204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SvqvZyO7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D49B20827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729564AbeKEQ5A (ORCPT
+        id S1729633AbeKEQ5u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 11:57:00 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:59574 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728671AbeKEQ5A (ORCPT
+        Mon, 5 Nov 2018 11:57:50 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45118 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729496AbeKEQ5u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 11:57:00 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA57XwJj189553;
-        Mon, 5 Nov 2018 07:38:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=07kIGKlmWAbwMeARQ0vQBDdBwBtVuNDiAifp9+wSuf4=;
- b=vmYUA4vwB+ivXyTsvm/ipNzmUmK+Cs4M70J8pV9UDCVqaF9dmQu12R1jIPZp98fU20zj
- pHxxoQNWbtFsbJsFVDXoZfl35JTHuMEshNRgID2luf6kA+rt/W0W1o0n+R9vOQ4r+MIV
- axS6z3ii6ghVGCucAbBjkTgaID3mVljCwHmpEIhKd5NUIchCF28RVpRHpFhqcZIvFelB
- QCkIu9Z77gbCOawYFY82TA+gp3ZweNR9beVacqzN+Tl9gOOG5M0jE0Tz9X5nnB4SK4lR
- HtYmT3Ky5nbh0SQ1mvCk2NrYw+u7q1AAq2LfLfq/m7QtDj0PpNTNl0ioe27ATOp9vxiC 1g== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2nh33tn1w4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 05 Nov 2018 07:38:36 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wA57cZrh024726
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 5 Nov 2018 07:38:35 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wA57cYYw012392;
-        Mon, 5 Nov 2018 07:38:34 GMT
-Received: from [10.159.211.29] (/10.159.211.29)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 04 Nov 2018 23:38:34 -0800
-Subject: Re: [PATCH 4.18 093/150] rds: RDS (tcp) hangs on sendto() to
- unresponding address
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     stable@vger.kernel.org,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-References: <20181102182902.250560510@linuxfoundation.org>
- <20181102182909.932793629@linuxfoundation.org>
-From:   Ka-Cheong Poon <ka-cheong.poon@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <e1f81ca0-3f7c-cdc9-cd9c-12af15005cdb@oracle.com>
-Date:   Mon, 5 Nov 2018 15:38:25 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181102182909.932793629@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9067 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1811050070
+        Mon, 5 Nov 2018 11:57:50 -0500
+Received: by mail-pl1-f196.google.com with SMTP id o19-v6so4011924pll.12
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Nov 2018 23:39:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=7+KsQAiIFIxoDmz5EswpwgvRJ2yLAWBeV0S1HKrrYFA=;
+        b=SvqvZyO7B1AF6b9TeCGIzx2VB+ajoHGmW9zoX5HpAJPVxATmn2JLN2W/tYH7qKzExA
+         vlR6CQwotJLPR/SZcr0LHzSnak9H58TGTlqJl5lZKZPeoYQV0Q8oEDurYTfUKN5FniIH
+         aXMKcrtluvcvI5cNn1GeNKK/uyqLipvhpsk0A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=7+KsQAiIFIxoDmz5EswpwgvRJ2yLAWBeV0S1HKrrYFA=;
+        b=sDKETSBF4DWbUeJ08kErb49UGdG5uppvlSrhY/hWon4NhVAV2uMZiiaueV3Wh0/LpQ
+         ZCFNZRvkhALESZfTInmAypqUCJT0DhZg/8uUPKnohl7Bq7N/10U8YjNwhGLRcNKQdwzV
+         fg6FjBDX2+GOu7em6GWihQBesGBra2F3pyo5NDwT1NsVwcx8zYrRUI9vbMe3GHsfMsN/
+         jbmbr611irhsVhWskVlbW7illqKydD4pLsvoiswpEX0fOGgAFOXjbIPjxi3O/ACYC3iN
+         GL0iMJ7SjCSUeIXIOXsrA4wDj3vboFGJeyAsSLqqPWuHPVN7bXkjG7SQYo1dlOwhnn1T
+         PKiw==
+X-Gm-Message-State: AGRZ1gJ8XyAfb+A7HpzODW7wWR4a0uDs87dJJaHyes1earb6J8XKWh8z
+        FhfBrKVIjjEqQADk47OpnQ3xnA==
+X-Google-Smtp-Source: AJdET5cjZKxUmRmUO/gdfCN64iASfiI3XiQUKX9hhRf37PVclw4pDcKO7v6LcAdHecbLwrrEuRet3w==
+X-Received: by 2002:a17:902:544:: with SMTP id 62-v6mr20148145plf.73.1541403570279;
+        Sun, 04 Nov 2018 23:39:30 -0800 (PST)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id d5-v6sm27632040pfo.131.2018.11.04.23.39.25
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 04 Nov 2018 23:39:29 -0800 (PST)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     sre@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, yuanjiang.yu@unisoc.com,
+        baolin.wang@linaro.org, broonie@kernel.org, ctatlor97@gmail.com,
+        linus.walleij@linaro.org, quentin.schulz@bootlin.com
+Subject: [PATCH v7 1/6] dt-bindings: power: Introduce one property to present the battery internal resistance
+Date:   Mon,  5 Nov 2018 15:39:06 +0800
+Message-Id: <5640f29e0b7f46f9ee77d80745f8c93eda355c34.1541393063.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/3/18 2:34 AM, Greg Kroah-Hartman wrote:
-> 4.18-stable review patch.  If anyone has any objections, please let me know.
+The internal resistance of a battery is not a constant in its life cycle,
+this varies over the age of the battery or temperature and so on. But we
+just want use one constant battery internal resistance to estimate the
+battery capacity. Thus this patch introduces one property to present
+the battery factory internal resistance for battery information.
 
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+---
+Changes from v6:
+ - None.
 
-This patch has a problem.  I am working on a fix for that.  Please
-do not include it in the stable release.  Thanks.
+Changes from v5:
+ - None.
 
+Changes from v4:
+ - None.
 
-> ------------------
-> 
-> [ Upstream commit 9a4890bd6d6325a1c88564a20ab310b2d56f6094 ]
-> 
-> In rds_send_mprds_hash(), if the calculated hash value is non-zero and
-> the MPRDS connections are not yet up, it will wait.  But it should not
-> wait if the send is non-blocking.  In this case, it should just use the
-> base c_path for sending the message.
-> 
-> Signed-off-by: Ka-Cheong Poon <ka-cheong.poon@oracle.com>
-> Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->   net/rds/send.c | 13 ++++++++++---
->   1 file changed, 10 insertions(+), 3 deletions(-)
-> 
-> diff --git a/net/rds/send.c b/net/rds/send.c
-> index 59f17a2335f4..0e54ca0f4e9e 100644
-> --- a/net/rds/send.c
-> +++ b/net/rds/send.c
-> @@ -1006,7 +1006,8 @@ static int rds_cmsg_send(struct rds_sock *rs, struct rds_message *rm,
->   	return ret;
->   }
->   
-> -static int rds_send_mprds_hash(struct rds_sock *rs, struct rds_connection *conn)
-> +static int rds_send_mprds_hash(struct rds_sock *rs,
-> +			       struct rds_connection *conn, int nonblock)
->   {
->   	int hash;
->   
-> @@ -1022,10 +1023,16 @@ static int rds_send_mprds_hash(struct rds_sock *rs, struct rds_connection *conn)
->   		 * used.  But if we are interrupted, we have to use the zero
->   		 * c_path in case the connection ends up being non-MP capable.
->   		 */
-> -		if (conn->c_npaths == 0)
-> +		if (conn->c_npaths == 0) {
-> +			/* Cannot wait for the connection be made, so just use
-> +			 * the base c_path.
-> +			 */
-> +			if (nonblock)
-> +				return 0;
->   			if (wait_event_interruptible(conn->c_hs_waitq,
->   						     conn->c_npaths != 0))
->   				hash = 0;
-> +		}
->   		if (conn->c_npaths == 1)
->   			hash = 0;
->   	}
-> @@ -1170,7 +1177,7 @@ int rds_sendmsg(struct socket *sock, struct msghdr *msg, size_t payload_len)
->   	}
->   
->   	if (conn->c_trans->t_mp_capable)
-> -		cpath = &conn->c_path[rds_send_mprds_hash(rs, conn)];
-> +		cpath = &conn->c_path[rds_send_mprds_hash(rs, conn, nonblock)];
->   	else
->   		cpath = &conn->c_path[0];
->   
-> 
+Changes from v3:
+ - Split binding into one separate patch.
+ - Add LinusW reviewed tag.
 
+Changes from v2:
+ - Rename the property.
+ - Improve the commit message.
 
+Changes from v1:
+ - New patch in v2.
+---
+ .../devicetree/bindings/power/supply/battery.txt   |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/power/supply/battery.txt b/Documentation/devicetree/bindings/power/supply/battery.txt
+index f4d3b4a..938d027 100644
+--- a/Documentation/devicetree/bindings/power/supply/battery.txt
++++ b/Documentation/devicetree/bindings/power/supply/battery.txt
+@@ -22,6 +22,7 @@ Optional Properties:
+  - charge-term-current-microamp: current for charge termination phase
+  - constant-charge-current-max-microamp: maximum constant input current
+  - constant-charge-voltage-max-microvolt: maximum constant input voltage
++ - factory-internal-resistance-micro-ohms: battery factory internal resistance
+ 
+ Battery properties are named, where possible, for the corresponding
+ elements in enum power_supply_property, defined in
+@@ -42,6 +43,7 @@ Example:
+ 		charge-term-current-microamp = <128000>;
+ 		constant-charge-current-max-microamp = <900000>;
+ 		constant-charge-voltage-max-microvolt = <4200000>;
++		factory-internal-resistance-micro-ohms = <250000>;
+ 	};
+ 
+ 	charger: charger@11 {
 -- 
-K. Poon
-ka-cheong.poon@oracle.com
-
+1.7.9.5
 
