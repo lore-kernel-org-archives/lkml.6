@@ -2,91 +2,274 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B622C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F302ECDE44
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:01:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4CAA20862
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:00:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4CAA20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 2D40520869
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:01:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MTDe8khK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D40520869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728758AbeKESTd (ORCPT
+        id S1728165AbeKESTq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 13:19:33 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:57326 "EHLO mail.bootlin.com"
+        Mon, 5 Nov 2018 13:19:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726774AbeKESTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 13:19:33 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 51558207B0; Mon,  5 Nov 2018 10:00:52 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-93-44.w90-88.abo.wanadoo.fr [90.88.34.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 1A4EC206A1;
-        Mon,  5 Nov 2018 10:00:42 +0100 (CET)
-Date:   Mon, 5 Nov 2018 10:00:42 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Icenowy Zheng <icenowy@aosc.io>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Corentin Labbe <clabbe@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 0/3] Allwinner H6 Ethernet support
-Message-ID: <20181105090042.u5x2h6rek4nyaghc@flea>
-References: <20181103123238.4665-1-icenowy@aosc.io>
+        id S1726228AbeKESTq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 13:19:46 -0500
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C83BE20862;
+        Mon,  5 Nov 2018 09:01:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541408466;
+        bh=3JrxKhn8fOzYe437n87pqO0d8ay6FPg38Szal6JuWBU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=MTDe8khKia8SZlLLqtqWzFK5Pckfil8ren0W3pq5Y3SFx5ZiRD+nr5rz+aElNUWi4
+         02A5bKSlc5QBadtqSddydb979mwPDgQAHVElJ5cm11rvXhVKK+5r4m7L3ww9lDN9CT
+         byxRyS03t9Oe+uKOrmHCePNbea3pK4mRO2wzBvnA=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Subject: [PATCH v2 02/12] tracing: Lock event_mutex before synth_event_mutex
+Date:   Mon,  5 Nov 2018 18:00:43 +0900
+Message-Id: <154140844377.17322.13781091165954002713.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <154140838606.17322.15294184388075458777.stgit@devbox>
+References: <154140838606.17322.15294184388075458777.stgit@devbox>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tg23n6htzoo3f5qs"
-Content-Disposition: inline
-In-Reply-To: <20181103123238.4665-1-icenowy@aosc.io>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+synthetic event is using synth_event_mutex for protecting
+synth_event_list, and event_trigger_write() path acquires
+locks as below order.
 
---tg23n6htzoo3f5qs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+event_trigger_write(event_mutex)
+  ->trigger_process_regex(trigger_cmd_mutex)
+    ->event_hist_trigger_func(synth_event_mutex)
 
-On Sat, Nov 03, 2018 at 08:32:35PM +0800, Icenowy Zheng wrote:
-> This patchset introduces Allwinner H6 Ethernet support with code already
-> available for A64.
->=20
-> As the EMAC on H6 is similar to A64 ones, support for them are directly
-> reused, by using fallback compatible strings.
->=20
-> Patches about system controller in v1 is sent by Jernej Skabrec as part
-> of his H6 display patchset, and already gets applied.
->=20
-> NOTE: This patchset targets the final version of Pine H64, and also
-> supports the early sample of Pine H64 model B. However, it's not
-> compatible with the early sample of Pine H64 model A. Please DO NOT test
-> this patchset on the Pine H64 model A samples.
+On the other hand, synthetic event creation and deletion paths
+finally calls trace_add_event_call() and trace_remove_event_call()
+which acquires event_mutex. In that case, if we keep the
+synth_event_mutex locked while registering/unregistering synthetic
+events, its dependency will be inversed.
 
-Applied thanks!
-Maxime
+To avoid this issue, current synthetic event is using 2 phases
+process to create/delete events. For example, it searches existing
+event under synth_event_mutex to checking event-name conflict, and
+unlock synth_event_mutex, then register new event under event_mutex
+locked. Finally, it locks synth_event_mutex and tries to add the
+new event to the list. But it can introduce complexity and a chance
+of name conflict.
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+To solve this simpler, this introduces trace_add_event_call_nolock()
+and trace_remove_event_call_nolock() which don't acquires
+event_mutex inside. synthetic event can lock event_mutex before
+synth_event_mutex for solving lock dependency issue simpler.
 
---tg23n6htzoo3f5qs
-Content-Type: application/pgp-signature; name="signature.asc"
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+ include/linux/trace_events.h     |    2 ++
+ kernel/trace/trace_events.c      |   34 ++++++++++++++++++++++++++++------
+ kernel/trace/trace_events_hist.c |   24 ++++++++++--------------
+ 3 files changed, 40 insertions(+), 20 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+index 4130a5497d40..3aa05593a53f 100644
+--- a/include/linux/trace_events.h
++++ b/include/linux/trace_events.h
+@@ -529,6 +529,8 @@ extern int trace_event_raw_init(struct trace_event_call *call);
+ extern int trace_define_field(struct trace_event_call *call, const char *type,
+ 			      const char *name, int offset, int size,
+ 			      int is_signed, int filter_type);
++extern int trace_add_event_call_nolock(struct trace_event_call *call);
++extern int trace_remove_event_call_nolock(struct trace_event_call *call);
+ extern int trace_add_event_call(struct trace_event_call *call);
+ extern int trace_remove_event_call(struct trace_event_call *call);
+ extern int trace_event_get_offsets(struct trace_event_call *call);
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index f94be0c2827b..a3b157f689ee 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -2305,11 +2305,11 @@ __trace_early_add_new_event(struct trace_event_call *call,
+ struct ftrace_module_file_ops;
+ static void __add_event_to_tracers(struct trace_event_call *call);
+ 
+-/* Add an additional event_call dynamically */
+-int trace_add_event_call(struct trace_event_call *call)
++int trace_add_event_call_nolock(struct trace_event_call *call)
+ {
+ 	int ret;
+-	mutex_lock(&event_mutex);
++	lockdep_assert_held(&event_mutex);
++
+ 	mutex_lock(&trace_types_lock);
+ 
+ 	ret = __register_event(call, NULL);
+@@ -2317,6 +2317,16 @@ int trace_add_event_call(struct trace_event_call *call)
+ 		__add_event_to_tracers(call);
+ 
+ 	mutex_unlock(&trace_types_lock);
++	return ret;
++}
++
++/* Add an additional event_call dynamically */
++int trace_add_event_call(struct trace_event_call *call)
++{
++	int ret;
++
++	mutex_lock(&event_mutex);
++	ret = trace_add_event_call_nolock(call);
+ 	mutex_unlock(&event_mutex);
+ 	return ret;
+ }
+@@ -2366,17 +2376,29 @@ static int probe_remove_event_call(struct trace_event_call *call)
+ 	return 0;
+ }
+ 
+-/* Remove an event_call */
+-int trace_remove_event_call(struct trace_event_call *call)
++/* no event_mutex version */
++int trace_remove_event_call_nolock(struct trace_event_call *call)
+ {
+ 	int ret;
+ 
+-	mutex_lock(&event_mutex);
++	lockdep_assert_held(&event_mutex);
++
+ 	mutex_lock(&trace_types_lock);
+ 	down_write(&trace_event_sem);
+ 	ret = probe_remove_event_call(call);
+ 	up_write(&trace_event_sem);
+ 	mutex_unlock(&trace_types_lock);
++
++	return ret;
++}
++
++/* Remove an event_call */
++int trace_remove_event_call(struct trace_event_call *call)
++{
++	int ret;
++
++	mutex_lock(&event_mutex);
++	ret = trace_remove_event_call_nolock(call);
+ 	mutex_unlock(&event_mutex);
+ 
+ 	return ret;
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index eb908ef2ecec..1670c65389fe 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -912,7 +912,7 @@ static int register_synth_event(struct synth_event *event)
+ 	call->data = event;
+ 	call->tp = event->tp;
+ 
+-	ret = trace_add_event_call(call);
++	ret = trace_add_event_call_nolock(call);
+ 	if (ret) {
+ 		pr_warn("Failed to register synthetic event: %s\n",
+ 			trace_event_name(call));
+@@ -936,7 +936,7 @@ static int unregister_synth_event(struct synth_event *event)
+ 	struct trace_event_call *call = &event->call;
+ 	int ret;
+ 
+-	ret = trace_remove_event_call(call);
++	ret = trace_remove_event_call_nolock(call);
+ 
+ 	return ret;
+ }
+@@ -1013,12 +1013,10 @@ static void add_or_delete_synth_event(struct synth_event *event, int delete)
+ 	if (delete)
+ 		free_synth_event(event);
+ 	else {
+-		mutex_lock(&synth_event_mutex);
+ 		if (!find_synth_event(event->name))
+ 			list_add(&event->list, &synth_event_list);
+ 		else
+ 			free_synth_event(event);
+-		mutex_unlock(&synth_event_mutex);
+ 	}
+ }
+ 
+@@ -1030,6 +1028,7 @@ static int create_synth_event(int argc, char **argv)
+ 	int i, consumed = 0, n_fields = 0, ret = 0;
+ 	char *name;
+ 
++	mutex_lock(&event_mutex);
+ 	mutex_lock(&synth_event_mutex);
+ 
+ 	/*
+@@ -1102,8 +1101,6 @@ static int create_synth_event(int argc, char **argv)
+ 		goto err;
+ 	}
+  out:
+-	mutex_unlock(&synth_event_mutex);
+-
+ 	if (event) {
+ 		if (delete_event) {
+ 			ret = unregister_synth_event(event);
+@@ -1113,10 +1110,13 @@ static int create_synth_event(int argc, char **argv)
+ 			add_or_delete_synth_event(event, ret);
+ 		}
+ 	}
++	mutex_unlock(&synth_event_mutex);
++	mutex_unlock(&event_mutex);
+ 
+ 	return ret;
+  err:
+ 	mutex_unlock(&synth_event_mutex);
++	mutex_unlock(&event_mutex);
+ 
+ 	for (i = 0; i < n_fields; i++)
+ 		free_synth_field(fields[i]);
+@@ -1127,12 +1127,10 @@ static int create_synth_event(int argc, char **argv)
+ 
+ static int release_all_synth_events(void)
+ {
+-	struct list_head release_events;
+ 	struct synth_event *event, *e;
+ 	int ret = 0;
+ 
+-	INIT_LIST_HEAD(&release_events);
+-
++	mutex_lock(&event_mutex);
+ 	mutex_lock(&synth_event_mutex);
+ 
+ 	list_for_each_entry(event, &synth_event_list, list) {
+@@ -1142,16 +1140,14 @@ static int release_all_synth_events(void)
+ 		}
+ 	}
+ 
+-	list_splice_init(&event->list, &release_events);
+-
+-	mutex_unlock(&synth_event_mutex);
+-
+-	list_for_each_entry_safe(event, e, &release_events, list) {
++	list_for_each_entry_safe(event, e, &synth_event_list, list) {
+ 		list_del(&event->list);
+ 
+ 		ret = unregister_synth_event(event);
+ 		add_or_delete_synth_event(event, !ret);
+ 	}
++	mutex_unlock(&synth_event_mutex);
++	mutex_unlock(&event_mutex);
+ 
+ 	return ret;
+ }
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+AGugAKCRDj7w1vZxhR
-xU3yAP9MqILXYjRDYrZ6Tcr+9q3wmubfZhvB1YvUK1G46CKKQgEA3qq4F3blV9r9
-SjmheEMcyEyQAX2BHV773+nW0NL+1gY=
-=6teA
------END PGP SIGNATURE-----
-
---tg23n6htzoo3f5qs--
