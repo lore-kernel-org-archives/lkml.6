@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 614F1C46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:01:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B030BC46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:01:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1792C20825
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:01:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79C3C20825
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:01:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="w9F7hGM+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1792C20825
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="UBlhdu0M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79C3C20825
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729170AbeKEVVJ (ORCPT
+        id S1729290AbeKEVVO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 16:21:09 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44722 "EHLO
+        Mon, 5 Nov 2018 16:21:14 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44960 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726358AbeKEVVI (ORCPT
+        with ESMTP id S1726358AbeKEVVO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 16:21:08 -0500
+        Mon, 5 Nov 2018 16:21:14 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=Ja04/I/xEu9epc73Kl9gmOcXJ8E1FL+1ehw/7xFw+V0=; b=w9F7hGM+453L
-        zKfxC+sHTgYrYCX3+q/AGwz9JKs2wPsioZnYx3WzBiiFOv7F+nxsmos7OwTnVhxLacHA4cvUAR0nE
-        J80QizkPf5pdzuuUBlZc4NONjp8ZDqnuEBgKn8b6f6jIeFe6ZECV+YrF96XQMP4si4po4TyFVhCKG
-        3226I=;
+        List-Archive; bh=KBUQrF28Xfs1E9rExRGFVSSN0OY4jv9DntZlGqUjqEs=; b=UBlhdu0Mkava
+        mjVKV1Ql/inic20ySQI20BQzpFcEOMO/0mjT9chPuy8UQ5PYuhcL3s0DFIjq8Ub0dERpI2UC315jr
+        RsJrkyVqzZzwvlcsGLIb7fwXJ3IF1/N45ppTPrGXKrv+hWLahI1wWc079RAlBZ33vHjO1/KUJoXt2
+        tT4lA=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gJdZZ-0008Jx-Sh; Mon, 05 Nov 2018 12:01:37 +0000
+        id 1gJdZh-0008KC-AO; Mon, 05 Nov 2018 12:01:45 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 97E291124D98; Mon,  5 Nov 2018 12:01:37 +0000 (GMT)
+        id 0D9251124D98; Mon,  5 Nov 2018 12:01:45 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Mason Yang <masonccyang@mxic.com.tw>
-Cc:     Mark Brown <broonie@kernel.org>, broonie@kernel.org,
-        tpiepho@impinj.com, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, boris.brezillon@bootlin.com,
-        juliensu@mxic.com.tw, zhengxunli@mxic.com.tw,
-        masonccyang@mxic.com.tw, linux-spi@vger.kernel.org
-Subject: Applied "spi: Add MXIC controller driver" to the spi tree
-In-Reply-To:  <1539742092-7049-2-git-send-email-masonccyang@mxic.com.tw>
-Message-Id: <20181105120137.97E291124D98@debutante.sirena.org.uk>
-Date:   Mon,  5 Nov 2018 12:01:37 +0000 (GMT)
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-spi@vger.kernel.org
+Subject: Applied "spi: spi-zynqmp-gqspi: simplify getting .driver_data" to the spi tree
+In-Reply-To:  <20181021200048.2114-4-wsa+renesas@sang-engineering.com>
+Message-Id: <20181105120145.0D9251124D98@debutante.sirena.org.uk>
+Date:   Mon,  5 Nov 2018 12:01:45 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: Add MXIC controller driver
+   spi: spi-zynqmp-gqspi: simplify getting .driver_data
 
 has been applied to the spi tree at
 
@@ -84,677 +84,44 @@ to this mail.
 Thanks,
 Mark
 
-From b942d80b0a394e8ea18fce3b032b4700439e8ca3 Mon Sep 17 00:00:00 2001
-From: Mason Yang <masonccyang@mxic.com.tw>
-Date: Wed, 17 Oct 2018 10:08:11 +0800
-Subject: [PATCH] spi: Add MXIC controller driver
+From 6eee6d317aa2511ea86c4f8f28d79bfd3d621826 Mon Sep 17 00:00:00 2001
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Sun, 21 Oct 2018 22:00:47 +0200
+Subject: [PATCH] spi: spi-zynqmp-gqspi: simplify getting .driver_data
 
-Add a driver for Macronix SPI controller IP.
+We should get 'driver_data' from 'struct device' directly. Going via
+platform_device is an unneeded step back and forth.
 
-Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/Kconfig    |   6 +
- drivers/spi/Makefile   |   1 +
- drivers/spi/spi-mxic.c | 619 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 626 insertions(+)
- create mode 100644 drivers/spi/spi-mxic.c
+ drivers/spi/spi-zynqmp-gqspi.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index 7d3a5c94727e..91d45c9ac439 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -684,6 +684,12 @@ config SPI_SUN6I
- 	help
- 	  This enables using the SPI controller on the Allwinner A31 SoCs.
+diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
+index cc4d31033494..9f83e1b17aa1 100644
+--- a/drivers/spi/spi-zynqmp-gqspi.c
++++ b/drivers/spi/spi-zynqmp-gqspi.c
+@@ -960,8 +960,7 @@ static int __maybe_unused zynqmp_qspi_resume(struct device *dev)
+  */
+ static int __maybe_unused zynqmp_runtime_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct spi_master *master = platform_get_drvdata(pdev);
++	struct spi_master *master = dev_get_drvdata(dev);
+ 	struct zynqmp_qspi *xqspi = spi_master_get_devdata(master);
  
-+config SPI_MXIC
-+        tristate "Macronix MX25F0A SPI controller"
-+        depends on SPI_MASTER
-+        help
-+          This selects the Macronix MX25F0A SPI controller driver.
-+
- config SPI_MXS
- 	tristate "Freescale MXS SPI controller"
- 	depends on ARCH_MXS
-diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
-index 3575205c5c27..de0be4b64c54 100644
---- a/drivers/spi/Makefile
-+++ b/drivers/spi/Makefile
-@@ -58,6 +58,7 @@ obj-$(CONFIG_SPI_MPC512x_PSC)		+= spi-mpc512x-psc.o
- obj-$(CONFIG_SPI_MPC52xx_PSC)		+= spi-mpc52xx-psc.o
- obj-$(CONFIG_SPI_MPC52xx)		+= spi-mpc52xx.o
- obj-$(CONFIG_SPI_MT65XX)                += spi-mt65xx.o
-+obj-$(CONFIG_SPI_MXIC)			+= spi-mxic.o
- obj-$(CONFIG_SPI_MXS)			+= spi-mxs.o
- obj-$(CONFIG_SPI_NUC900)		+= spi-nuc900.o
- obj-$(CONFIG_SPI_OC_TINY)		+= spi-oc-tiny.o
-diff --git a/drivers/spi/spi-mxic.c b/drivers/spi/spi-mxic.c
-new file mode 100644
-index 000000000000..e41ae6ef0f8a
---- /dev/null
-+++ b/drivers/spi/spi-mxic.c
-@@ -0,0 +1,619 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (C) 2018 Macronix International Co., Ltd.
-+//
-+// Authors:
-+//	Mason Yang <masonccyang@mxic.com.tw>
-+//	zhengxunli <zhengxunli@mxic.com.tw>
-+//	Boris Brezillon <boris.brezillon@bootlin.com>
-+//
-+
-+#include <linux/clk.h>
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/spi/spi.h>
-+#include <linux/spi/spi-mem.h>
-+
-+#define HC_CFG			0x0
-+#define HC_CFG_IF_CFG(x)	((x) << 27)
-+#define HC_CFG_DUAL_SLAVE	BIT(31)
-+#define HC_CFG_INDIVIDUAL	BIT(30)
-+#define HC_CFG_NIO(x)		(((x) / 4) << 27)
-+#define HC_CFG_TYPE(s, t)	((t) << (23 + ((s) * 2)))
-+#define HC_CFG_TYPE_SPI_NOR	0
-+#define HC_CFG_TYPE_SPI_NAND	1
-+#define HC_CFG_TYPE_SPI_RAM	2
-+#define HC_CFG_TYPE_RAW_NAND	3
-+#define HC_CFG_SLV_ACT(x)	((x) << 21)
-+#define HC_CFG_CLK_PH_EN	BIT(20)
-+#define HC_CFG_CLK_POL_INV	BIT(19)
-+#define HC_CFG_BIG_ENDIAN	BIT(18)
-+#define HC_CFG_DATA_PASS	BIT(17)
-+#define HC_CFG_IDLE_SIO_LVL(x)	((x) << 16)
-+#define HC_CFG_MAN_START_EN	BIT(3)
-+#define HC_CFG_MAN_START	BIT(2)
-+#define HC_CFG_MAN_CS_EN	BIT(1)
-+#define HC_CFG_MAN_CS_ASSERT	BIT(0)
-+
-+#define INT_STS			0x4
-+#define INT_STS_EN		0x8
-+#define INT_SIG_EN		0xc
-+#define INT_STS_ALL		GENMASK(31, 0)
-+#define INT_RDY_PIN		BIT(26)
-+#define INT_RDY_SR		BIT(25)
-+#define INT_LNR_SUSP		BIT(24)
-+#define INT_ECC_ERR		BIT(17)
-+#define INT_CRC_ERR		BIT(16)
-+#define INT_LWR_DIS		BIT(12)
-+#define INT_LRD_DIS		BIT(11)
-+#define INT_SDMA_INT		BIT(10)
-+#define INT_DMA_FINISH		BIT(9)
-+#define INT_RX_NOT_FULL		BIT(3)
-+#define INT_RX_NOT_EMPTY	BIT(2)
-+#define INT_TX_NOT_FULL		BIT(1)
-+#define INT_TX_EMPTY		BIT(0)
-+
-+#define HC_EN			0x10
-+#define HC_EN_BIT		BIT(0)
-+
-+#define TXD(x)			(0x14 + ((x) * 4))
-+#define RXD			0x24
-+
-+#define SS_CTRL(s)		(0x30 + ((s) * 4))
-+#define LRD_CFG			0x44
-+#define LWR_CFG			0x80
-+#define RWW_CFG			0x70
-+#define OP_READ			BIT(23)
-+#define OP_DUMMY_CYC(x)		((x) << 17)
-+#define OP_ADDR_BYTES(x)	((x) << 14)
-+#define OP_CMD_BYTES(x)		(((x) - 1) << 13)
-+#define OP_OCTA_CRC_EN		BIT(12)
-+#define OP_DQS_EN		BIT(11)
-+#define OP_ENHC_EN		BIT(10)
-+#define OP_PREAMBLE_EN		BIT(9)
-+#define OP_DATA_DDR		BIT(8)
-+#define OP_DATA_BUSW(x)		((x) << 6)
-+#define OP_ADDR_DDR		BIT(5)
-+#define OP_ADDR_BUSW(x)		((x) << 3)
-+#define OP_CMD_DDR		BIT(2)
-+#define OP_CMD_BUSW(x)		(x)
-+#define OP_BUSW_1		0
-+#define OP_BUSW_2		1
-+#define OP_BUSW_4		2
-+#define OP_BUSW_8		3
-+
-+#define OCTA_CRC		0x38
-+#define OCTA_CRC_IN_EN(s)	BIT(3 + ((s) * 16))
-+#define OCTA_CRC_CHUNK(s, x)	((fls((x) / 32)) << (1 + ((s) * 16)))
-+#define OCTA_CRC_OUT_EN(s)	BIT(0 + ((s) * 16))
-+
-+#define ONFI_DIN_CNT(s)		(0x3c + (s))
-+
-+#define LRD_CTRL		0x48
-+#define RWW_CTRL		0x74
-+#define LWR_CTRL		0x84
-+#define LMODE_EN		BIT(31)
-+#define LMODE_SLV_ACT(x)	((x) << 21)
-+#define LMODE_CMD1(x)		((x) << 8)
-+#define LMODE_CMD0(x)		(x)
-+
-+#define LRD_ADDR		0x4c
-+#define LWR_ADDR		0x88
-+#define LRD_RANGE		0x50
-+#define LWR_RANGE		0x8c
-+
-+#define AXI_SLV_ADDR		0x54
-+
-+#define DMAC_RD_CFG		0x58
-+#define DMAC_WR_CFG		0x94
-+#define DMAC_CFG_PERIPH_EN	BIT(31)
-+#define DMAC_CFG_ALLFLUSH_EN	BIT(30)
-+#define DMAC_CFG_LASTFLUSH_EN	BIT(29)
-+#define DMAC_CFG_QE(x)		(((x) + 1) << 16)
-+#define DMAC_CFG_BURST_LEN(x)	(((x) + 1) << 12)
-+#define DMAC_CFG_BURST_SZ(x)	((x) << 8)
-+#define DMAC_CFG_DIR_READ	BIT(1)
-+#define DMAC_CFG_START		BIT(0)
-+
-+#define DMAC_RD_CNT		0x5c
-+#define DMAC_WR_CNT		0x98
-+
-+#define SDMA_ADDR		0x60
-+
-+#define DMAM_CFG		0x64
-+#define DMAM_CFG_START		BIT(31)
-+#define DMAM_CFG_CONT		BIT(30)
-+#define DMAM_CFG_SDMA_GAP(x)	(fls((x) / 8192) << 2)
-+#define DMAM_CFG_DIR_READ	BIT(1)
-+#define DMAM_CFG_EN		BIT(0)
-+
-+#define DMAM_CNT		0x68
-+
-+#define LNR_TIMER_TH		0x6c
-+
-+#define RDM_CFG0		0x78
-+#define RDM_CFG0_POLY(x)	(x)
-+
-+#define RDM_CFG1		0x7c
-+#define RDM_CFG1_RDM_EN		BIT(31)
-+#define RDM_CFG1_SEED(x)	(x)
-+
-+#define LWR_SUSP_CTRL		0x90
-+#define LWR_SUSP_CTRL_EN	BIT(31)
-+
-+#define DMAS_CTRL		0x9c
-+#define DMAS_CTRL_DIR_READ	BIT(31)
-+#define DMAS_CTRL_EN		BIT(30)
-+
-+#define DATA_STROB		0xa0
-+#define DATA_STROB_EDO_EN	BIT(2)
-+#define DATA_STROB_INV_POL	BIT(1)
-+#define DATA_STROB_DELAY_2CYC	BIT(0)
-+
-+#define IDLY_CODE(x)		(0xa4 + ((x) * 4))
-+#define IDLY_CODE_VAL(x, v)	((v) << (((x) % 4) * 8))
-+
-+#define GPIO			0xc4
-+#define GPIO_PT(x)		BIT(3 + ((x) * 16))
-+#define GPIO_RESET(x)		BIT(2 + ((x) * 16))
-+#define GPIO_HOLDB(x)		BIT(1 + ((x) * 16))
-+#define GPIO_WPB(x)		BIT((x) * 16)
-+
-+#define HC_VER			0xd0
-+
-+#define HW_TEST(x)		(0xe0 + ((x) * 4))
-+
-+struct mxic_spi {
-+	struct clk *ps_clk;
-+	struct clk *send_clk;
-+	struct clk *send_dly_clk;
-+	void __iomem *regs;
-+	u32 cur_speed_hz;
-+};
-+
-+static int mxic_spi_clk_enable(struct mxic_spi *mxic)
-+{
-+	int ret;
-+
-+	ret = clk_prepare_enable(mxic->send_clk);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_prepare_enable(mxic->send_dly_clk);
-+	if (ret)
-+		goto err_send_dly_clk;
-+
-+	return ret;
-+
-+err_send_dly_clk:
-+	clk_disable_unprepare(mxic->send_clk);
-+
-+	return ret;
-+}
-+
-+static void mxic_spi_clk_disable(struct mxic_spi *mxic)
-+{
-+	clk_disable_unprepare(mxic->send_clk);
-+	clk_disable_unprepare(mxic->send_dly_clk);
-+}
-+
-+static void mxic_spi_set_input_delay_dqs(struct mxic_spi *mxic, u8 idly_code)
-+{
-+	writel(IDLY_CODE_VAL(0, idly_code) |
-+	       IDLY_CODE_VAL(1, idly_code) |
-+	       IDLY_CODE_VAL(2, idly_code) |
-+	       IDLY_CODE_VAL(3, idly_code),
-+	       mxic->regs + IDLY_CODE(0));
-+	writel(IDLY_CODE_VAL(4, idly_code) |
-+	       IDLY_CODE_VAL(5, idly_code) |
-+	       IDLY_CODE_VAL(6, idly_code) |
-+	       IDLY_CODE_VAL(7, idly_code),
-+	       mxic->regs + IDLY_CODE(1));
-+}
-+
-+static int mxic_spi_clk_setup(struct mxic_spi *mxic, unsigned long freq)
-+{
-+	int ret;
-+
-+	ret = clk_set_rate(mxic->send_clk, freq);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_set_rate(mxic->send_dly_clk, freq);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * A constant delay range from 0x0 ~ 0x1F for input delay,
-+	 * the unit is 78 ps, the max input delay is 2.418 ns.
-+	 */
-+	mxic_spi_set_input_delay_dqs(mxic, 0xf);
-+
-+	/*
-+	 * Phase degree = 360 * freq * output-delay
-+	 * where output-delay is a constant value 1 ns in FPGA.
-+	 *
-+	 * Get Phase degree = 360 * freq * 1 ns
-+	 *                  = 360 * freq * 1 sec / 1000000000
-+	 *                  = 9 * freq / 25000000
-+	 */
-+	ret = clk_set_phase(mxic->send_dly_clk, 9 * freq / 25000000);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int mxic_spi_set_freq(struct mxic_spi *mxic, unsigned long freq)
-+{
-+	int ret;
-+
-+	if (mxic->cur_speed_hz == freq)
-+		return 0;
-+
-+	mxic_spi_clk_disable(mxic);
-+	ret = mxic_spi_clk_setup(mxic, freq);
-+	if (ret)
-+		return ret;
-+
-+	ret = mxic_spi_clk_enable(mxic);
-+	if (ret)
-+		return ret;
-+
-+	mxic->cur_speed_hz = freq;
-+
-+	return 0;
-+}
-+
-+static void mxic_spi_hw_init(struct mxic_spi *mxic)
-+{
-+	writel(0, mxic->regs + DATA_STROB);
-+	writel(INT_STS_ALL, mxic->regs + INT_STS_EN);
-+	writel(0, mxic->regs + HC_EN);
-+	writel(0, mxic->regs + LRD_CFG);
-+	writel(0, mxic->regs + LRD_CTRL);
-+	writel(HC_CFG_NIO(1) | HC_CFG_TYPE(0, HC_CFG_TYPE_SPI_NAND) |
-+	       HC_CFG_SLV_ACT(0) | HC_CFG_MAN_CS_EN | HC_CFG_IDLE_SIO_LVL(1),
-+	       mxic->regs + HC_CFG);
-+}
-+
-+static int mxic_spi_data_xfer(struct mxic_spi *mxic, const void *txbuf,
-+			      void *rxbuf, unsigned int len)
-+{
-+	unsigned int pos = 0;
-+
-+	while (pos < len) {
-+		unsigned int nbytes = len - pos;
-+		u32 data = 0xffffffff;
-+		u32 sts;
-+		int ret;
-+
-+		if (nbytes > 4)
-+			nbytes = 4;
-+
-+		if (txbuf)
-+			memcpy(&data, txbuf + pos, nbytes);
-+
-+		ret = readl_poll_timeout(mxic->regs + INT_STS, sts,
-+					 sts & INT_TX_EMPTY, 0, USEC_PER_SEC);
-+		if (ret)
-+			return ret;
-+
-+		writel(data, mxic->regs + TXD(nbytes % 4));
-+
-+		if (rxbuf) {
-+			ret = readl_poll_timeout(mxic->regs + INT_STS, sts,
-+						 sts & INT_TX_EMPTY, 0,
-+						 USEC_PER_SEC);
-+			if (ret)
-+				return ret;
-+
-+			ret = readl_poll_timeout(mxic->regs + INT_STS, sts,
-+						 sts & INT_RX_NOT_EMPTY, 0,
-+						 USEC_PER_SEC);
-+			if (ret)
-+				return ret;
-+
-+			data = readl(mxic->regs + RXD);
-+			data >>= (8 * (4 - nbytes));
-+			memcpy(rxbuf + pos, &data, nbytes);
-+			WARN_ON(readl(mxic->regs + INT_STS) & INT_RX_NOT_EMPTY);
-+		} else {
-+			readl(mxic->regs + RXD);
-+		}
-+		WARN_ON(readl(mxic->regs + INT_STS) & INT_RX_NOT_EMPTY);
-+
-+		pos += nbytes;
-+	}
-+
-+	return 0;
-+}
-+
-+static bool mxic_spi_mem_supports_op(struct spi_mem *mem,
-+				     const struct spi_mem_op *op)
-+{
-+	if (op->data.buswidth > 4 || op->addr.buswidth > 4 ||
-+	    op->dummy.buswidth > 4 || op->cmd.buswidth > 4)
-+		return false;
-+
-+	if (op->data.nbytes && op->dummy.nbytes &&
-+	    op->data.buswidth != op->dummy.buswidth)
-+		return false;
-+
-+	if (op->addr.nbytes > 7)
-+		return false;
-+
-+	return true;
-+}
-+
-+static int mxic_spi_mem_exec_op(struct spi_mem *mem,
-+				const struct spi_mem_op *op)
-+{
-+	struct mxic_spi *mxic = spi_master_get_devdata(mem->spi->master);
-+	int nio = 1, i, ret;
-+	u32 ss_ctrl;
-+	u8 addr[8];
-+
-+	ret = mxic_spi_set_freq(mxic, mem->spi->max_speed_hz);
-+	if (ret)
-+		return ret;
-+
-+	if (mem->spi->mode & (SPI_TX_QUAD | SPI_RX_QUAD))
-+		nio = 4;
-+	else if (mem->spi->mode & (SPI_TX_DUAL | SPI_RX_DUAL))
-+		nio = 2;
-+
-+	writel(HC_CFG_NIO(nio) |
-+	       HC_CFG_TYPE(mem->spi->chip_select, HC_CFG_TYPE_SPI_NOR) |
-+	       HC_CFG_SLV_ACT(mem->spi->chip_select) | HC_CFG_IDLE_SIO_LVL(1) |
-+	       HC_CFG_MAN_CS_EN,
-+	       mxic->regs + HC_CFG);
-+	writel(HC_EN_BIT, mxic->regs + HC_EN);
-+
-+	ss_ctrl = OP_CMD_BYTES(1) | OP_CMD_BUSW(fls(op->cmd.buswidth) - 1);
-+
-+	if (op->addr.nbytes)
-+		ss_ctrl |= OP_ADDR_BYTES(op->addr.nbytes) |
-+			   OP_ADDR_BUSW(fls(op->addr.buswidth) - 1);
-+
-+	if (op->dummy.nbytes)
-+		ss_ctrl |= OP_DUMMY_CYC(op->dummy.nbytes);
-+
-+	if (op->data.nbytes) {
-+		ss_ctrl |= OP_DATA_BUSW(fls(op->data.buswidth) - 1);
-+		if (op->data.dir == SPI_MEM_DATA_IN)
-+			ss_ctrl |= OP_READ;
-+	}
-+
-+	writel(ss_ctrl, mxic->regs + SS_CTRL(mem->spi->chip_select));
-+
-+	writel(readl(mxic->regs + HC_CFG) | HC_CFG_MAN_CS_ASSERT,
-+	       mxic->regs + HC_CFG);
-+
-+	ret = mxic_spi_data_xfer(mxic, &op->cmd.opcode, NULL, 1);
-+	if (ret)
-+		goto out;
-+
-+	for (i = 0; i < op->addr.nbytes; i++)
-+		addr[i] = op->addr.val >> (8 * (op->addr.nbytes - i - 1));
-+
-+	ret = mxic_spi_data_xfer(mxic, addr, NULL, op->addr.nbytes);
-+	if (ret)
-+		goto out;
-+
-+	ret = mxic_spi_data_xfer(mxic, NULL, NULL, op->dummy.nbytes);
-+	if (ret)
-+		goto out;
-+
-+	ret = mxic_spi_data_xfer(mxic,
-+				 op->data.dir == SPI_MEM_DATA_OUT ?
-+				 op->data.buf.out : NULL,
-+				 op->data.dir == SPI_MEM_DATA_IN ?
-+				 op->data.buf.in : NULL,
-+				 op->data.nbytes);
-+
-+out:
-+	writel(readl(mxic->regs + HC_CFG) & ~HC_CFG_MAN_CS_ASSERT,
-+	       mxic->regs + HC_CFG);
-+	writel(0, mxic->regs + HC_EN);
-+
-+	return ret;
-+}
-+
-+static const struct spi_controller_mem_ops mxic_spi_mem_ops = {
-+	.supports_op = mxic_spi_mem_supports_op,
-+	.exec_op = mxic_spi_mem_exec_op,
-+};
-+
-+static void mxic_spi_set_cs(struct spi_device *spi, bool lvl)
-+{
-+	struct mxic_spi *mxic = spi_master_get_devdata(spi->master);
-+
-+	if (!lvl) {
-+		writel(readl(mxic->regs + HC_CFG) | HC_CFG_MAN_CS_EN,
-+		       mxic->regs + HC_CFG);
-+		writel(HC_EN_BIT, mxic->regs + HC_EN);
-+		writel(readl(mxic->regs + HC_CFG) | HC_CFG_MAN_CS_ASSERT,
-+		       mxic->regs + HC_CFG);
-+	} else {
-+		writel(readl(mxic->regs + HC_CFG) & ~HC_CFG_MAN_CS_ASSERT,
-+		       mxic->regs + HC_CFG);
-+		writel(0, mxic->regs + HC_EN);
-+	}
-+}
-+
-+static int mxic_spi_transfer_one(struct spi_master *master,
-+				 struct spi_device *spi,
-+				 struct spi_transfer *t)
-+{
-+	struct mxic_spi *mxic = spi_master_get_devdata(master);
-+	unsigned int busw = OP_BUSW_1;
-+	int ret;
-+
-+	if (t->rx_buf && t->tx_buf) {
-+		if (((spi->mode & SPI_TX_QUAD) &&
-+		     !(spi->mode & SPI_RX_QUAD)) ||
-+		    ((spi->mode & SPI_TX_DUAL) &&
-+		     !(spi->mode & SPI_RX_DUAL)))
-+			return -ENOTSUPP;
-+	}
-+
-+	ret = mxic_spi_set_freq(mxic, t->speed_hz);
-+	if (ret)
-+		return ret;
-+
-+	if (t->tx_buf) {
-+		if (spi->mode & SPI_TX_QUAD)
-+			busw = OP_BUSW_4;
-+		else if (spi->mode & SPI_TX_DUAL)
-+			busw = OP_BUSW_2;
-+	} else if (t->rx_buf) {
-+		if (spi->mode & SPI_RX_QUAD)
-+			busw = OP_BUSW_4;
-+		else if (spi->mode & SPI_RX_DUAL)
-+			busw = OP_BUSW_2;
-+	}
-+
-+	writel(OP_CMD_BYTES(1) | OP_CMD_BUSW(busw) |
-+	       OP_DATA_BUSW(busw) | (t->rx_buf ? OP_READ : 0),
-+	       mxic->regs + SS_CTRL(0));
-+
-+	ret = mxic_spi_data_xfer(mxic, t->tx_buf, t->rx_buf, t->len);
-+	if (ret)
-+		return ret;
-+
-+	spi_finalize_current_transfer(master);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused mxic_spi_runtime_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct spi_master *master = platform_get_drvdata(pdev);
-+	struct mxic_spi *mxic = spi_master_get_devdata(master);
-+
-+	mxic_spi_clk_disable(mxic);
-+	clk_disable_unprepare(mxic->ps_clk);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused mxic_spi_runtime_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct spi_master *master = platform_get_drvdata(pdev);
-+	struct mxic_spi *mxic = spi_master_get_devdata(master);
-+	int ret;
-+
-+	ret = clk_prepare_enable(mxic->ps_clk);
-+	if (ret) {
-+		dev_err(dev, "Cannot enable ps_clock.\n");
-+		return ret;
-+	}
-+
-+	return mxic_spi_clk_enable(mxic);
-+}
-+
-+static const struct dev_pm_ops mxic_spi_dev_pm_ops = {
-+	SET_RUNTIME_PM_OPS(mxic_spi_runtime_suspend,
-+			   mxic_spi_runtime_resume, NULL)
-+};
-+
-+static int mxic_spi_probe(struct platform_device *pdev)
-+{
-+	struct spi_master *master;
-+	struct resource *res;
-+	struct mxic_spi *mxic;
-+	int ret;
-+
-+	master = spi_alloc_master(&pdev->dev, sizeof(struct mxic_spi));
-+	if (!master)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, master);
-+
-+	mxic = spi_master_get_devdata(master);
-+
-+	master->dev.of_node = pdev->dev.of_node;
-+
-+	mxic->ps_clk = devm_clk_get(&pdev->dev, "ps_clk");
-+	if (IS_ERR(mxic->ps_clk))
-+		return PTR_ERR(mxic->ps_clk);
-+
-+	mxic->send_clk = devm_clk_get(&pdev->dev, "send_clk");
-+	if (IS_ERR(mxic->send_clk))
-+		return PTR_ERR(mxic->send_clk);
-+
-+	mxic->send_dly_clk = devm_clk_get(&pdev->dev, "send_dly_clk");
-+	if (IS_ERR(mxic->send_dly_clk))
-+		return PTR_ERR(mxic->send_dly_clk);
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "regs");
-+	mxic->regs = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(mxic->regs))
-+		return PTR_ERR(mxic->regs);
-+
-+	pm_runtime_enable(&pdev->dev);
-+	master->auto_runtime_pm = true;
-+
-+	master->num_chipselect = 1;
-+	master->mem_ops = &mxic_spi_mem_ops;
-+
-+	master->set_cs = mxic_spi_set_cs;
-+	master->transfer_one = mxic_spi_transfer_one;
-+	master->bits_per_word_mask = SPI_BPW_MASK(8);
-+	master->mode_bits = SPI_CPOL | SPI_CPHA |
-+			SPI_RX_DUAL | SPI_TX_DUAL |
-+			SPI_RX_QUAD | SPI_TX_QUAD;
-+
-+	mxic_spi_hw_init(mxic);
-+
-+	ret = spi_register_master(master);
-+	if (ret) {
-+		dev_err(&pdev->dev, "spi_register_master failed\n");
-+		goto err_put_master;
-+	}
-+
-+	return 0;
-+
-+err_put_master:
-+	spi_master_put(master);
-+	pm_runtime_disable(&pdev->dev);
-+
-+	return ret;
-+}
-+
-+static int mxic_spi_remove(struct platform_device *pdev)
-+{
-+	struct spi_master *master = platform_get_drvdata(pdev);
-+
-+	pm_runtime_disable(&pdev->dev);
-+	spi_unregister_master(master);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id mxic_spi_of_ids[] = {
-+	{ .compatible = "mxicy,mx25f0a-spi", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, mxic_spi_of_ids);
-+
-+static struct platform_driver mxic_spi_driver = {
-+	.probe = mxic_spi_probe,
-+	.remove = mxic_spi_remove,
-+	.driver = {
-+		.name = "mxic-spi",
-+		.of_match_table = mxic_spi_of_ids,
-+		.pm = &mxic_spi_dev_pm_ops,
-+	},
-+};
-+module_platform_driver(mxic_spi_driver);
-+
-+MODULE_AUTHOR("Mason Yang <masonccyang@mxic.com.tw>");
-+MODULE_DESCRIPTION("MX25F0A SPI controller driver");
-+MODULE_LICENSE("GPL v2");
+ 	clk_disable(xqspi->refclk);
+@@ -980,8 +979,7 @@ static int __maybe_unused zynqmp_runtime_suspend(struct device *dev)
+  */
+ static int __maybe_unused zynqmp_runtime_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct spi_master *master = platform_get_drvdata(pdev);
++	struct spi_master *master = dev_get_drvdata(dev);
+ 	struct zynqmp_qspi *xqspi = spi_master_get_devdata(master);
+ 	int ret;
+ 
 -- 
 2.19.0.rc2
 
