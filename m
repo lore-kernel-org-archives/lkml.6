@@ -2,82 +2,100 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4002CECDE44
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ADE9C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:52:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15C5C20854
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:51:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15C5C20854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 4621D20819
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:52:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D8MLgKNL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4621D20819
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728915AbeKESKJ (ORCPT
+        id S1727615AbeKESLb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 13:10:09 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:39194 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727414AbeKESKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 13:10:07 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id F0C3C20016C;
-        Mon,  5 Nov 2018 09:51:28 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id CCFB6200160;
-        Mon,  5 Nov 2018 09:51:18 +0100 (CET)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 5250940313;
-        Mon,  5 Nov 2018 16:51:06 +0800 (SGT)
-From:   Xiaowei Bao <xiaowei.bao@nxp.com>
-To:     bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        shawnguo@kernel.org, leoyang.li@nxp.com, kishon@ti.com,
-        lorenzo.pieralisi@arm.com, arnd@arndb.de,
-        gregkh@linuxfoundation.org, minghuan.Lian@nxp.com,
-        mingkai.hu@nxp.com, roy.zang@nxp.com, kstewart@linuxfoundation.org,
-        cyrille.pitchen@free-electrons.com, pombredanne@nexb.com,
-        shawn.lin@rock-chips.com, niklas.cassel@axis.com,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org
-Cc:     Xiaowei Bao <xiaowei.bao@nxp.com>
-Subject: [PATCHv2 6/6] misc: pci_endpoint_test: Add the layerscape EP device support
-Date:   Mon,  5 Nov 2018 16:46:53 +0800
-Message-Id: <20181105084653.26597-6-xiaowei.bao@nxp.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20181105084653.26597-1-xiaowei.bao@nxp.com>
-References: <20181105084653.26597-1-xiaowei.bao@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Mon, 5 Nov 2018 13:11:31 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:36318 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbeKESLb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 13:11:31 -0500
+Received: by mail-qk1-f196.google.com with SMTP id o125so13336850qkf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 00:52:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc:content-transfer-encoding;
+        bh=8JMYtjfNYxLfbYDC9OvzWnhNZN5UoKOiwiG13yTWbTE=;
+        b=D8MLgKNLezWGWd7LOpCrLZDP5Nr+JaEOE7X6Xqbg2a/Eyh46nZ1ApM2bDPcFC3jwKr
+         XPt7RrF8cp36pkH/mtNlUvElB/ak5HyiC9RQm6aZ9mkll9yyotYT1K/xQ9+lvfPFEWSX
+         9a+4CRE9k+tOnrLIPPZhBtdpWh3dithgTisXhwlwjd9GiI7aPvroqnx2lQTvcN9Ck3JP
+         KqONQ/EGDrV0nCtKR6Z7miCULypvSDozUxVGqtTddwe2ORpuLbJUqu7Maanuz7OAGPhi
+         kx7l7AmiCNXpCY1bMZHhns8Ri45Yeu2OZuLBQ/p4UNTmJphtKahAtJX4/1g74VHtel7x
+         X7nQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=8JMYtjfNYxLfbYDC9OvzWnhNZN5UoKOiwiG13yTWbTE=;
+        b=TWufWhcpdG7gxPuTW1TiGypGAFkjZoaSDRAnoY5aENxUP2GEMqX9sps6vOzfyv8Dlm
+         G+2joPtHlrHzn8BrOg3kKl2RjM+P9d/ZY/2PPXaID7Fr0sIPupWkR5gt1cPhmvxXY4HE
+         X2U4Lr+U4gjiFyZPvgqKQnMgLkQtkKvRg5sdFNK3JBmO/sR9jrgDfohUU2H94uKymNDc
+         35Ap2W84a/NZNq87l5YJnBqwt0cNNuFqAcXMJH3rgiowUXK9Us/iS+Kp8FnrkiXB7ED0
+         YjgqUC1vwNhyt+IJ5fhuQItqppjmUWpckEP9S0U9IM702k1opmPYniLYRmveeGHyQWyg
+         RSJA==
+X-Gm-Message-State: AGRZ1gLqH0oBBAZv9tHqiHfORNuGVCMkwUIEDnVh5tpCKg0TmkJKewhF
+        QBvASzXlIi36MRnGg4vowLQ67B0eGzLAQLNIdHo=
+X-Google-Smtp-Source: AJdET5dLcTAkwp9cARYapZYvWFyATrmLu/B6uVtF7HO3WXgZlcFDLisAuDY3POGB3YUMnu9iMatiKZiE/Va4je2jxWQ=
+X-Received: by 2002:a37:a3c6:: with SMTP id m189mr19797249qke.173.1541407973298;
+ Mon, 05 Nov 2018 00:52:53 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:a0c:9881:0:0:0:0:0 with HTTP; Mon, 5 Nov 2018 00:52:52 -0800 (PST)
+In-Reply-To: <20181105070551.GA7274@infradead.org>
+References: <CAAhSdy0Y_jdc=2Lf8epof_+7HigCfhDxMNe8EF0fHfncqhs-zA@mail.gmail.com>
+ <mhng-01f0ac6a-c2fd-41be-9d53-44d1c139d453@palmer-si-x1c4>
+ <20181101174857.du2zu4vnrhpu5asf@excalibur.cnev.de> <20181105065807.GA1286@andestech.com>
+ <20181105070551.GA7274@infradead.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 5 Nov 2018 09:52:52 +0100
+X-Google-Sender-Auth: o-kIcVGL0PLGM20_dbB_NR5HFxM
+Message-ID: <CAK8P3a2c98VVPArCkdAR=-nnDBq1gYRCLDDgQB71eGiTSRdb4A@mail.gmail.com>
+Subject: Re: [RFC 0/2] RISC-V: A proposal to add vendor-specific code
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Vincent Chen <vincentc@andestech.com>, aou@eecs.berkeley.edu,
+        alankao@andestech.com, greentime@andestech.com, palmer@sifive.com,
+        linux-kernel@vger.kernel.org, zong@andestech.com,
+        kito@andestech.com, linux-riscv@lists.infradead.org,
+        deanbo422@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the layerscape EP device support in pci_endpoint_test driver.
+On 11/5/18, Christoph Hellwig <hch@infradead.org> wrote:
+> On Mon, Nov 05, 2018 at 02:58:07PM +0800, Vincent Chen wrote:
+>> Many thanks for kinds of comments. I quickly synthesize the comments and
+>> list them as below.
+>> 1. The kernel image shall include all vendor-specific code.
+>
+> I fundamentally disagree with this=E2=80=A6 and think it should be the co=
+ntrary.
+>
+> 1. The kernel shall support no vendor specific instructions whatsoever,
+> period.
 
-Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
----
-v2:
- - no change
+I think what was meant above is
 
- drivers/misc/pci_endpoint_test.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+1. If a vendor extension requires kernel support, that support
+must be able to be built into a kernel image without breaking support
+for CPUs that do not have that extension, to allow building a single
+kernel image that works on all CPUs.
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index 896e2df..744d10c 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -788,6 +788,8 @@ static void pci_endpoint_test_remove(struct pci_dev *pdev)
- static const struct pci_device_id pci_endpoint_test_tbl[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA74x) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA72x) },
-+	/* 0x81c0: The device id of ls1046a in NXP. */
-+	{ PCI_DEVICE(PCI_VENDOR_ID_FREESCALE, 0x81c0) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_SYNOPSYS, 0xedda) },
- 	{ }
- };
--- 
-1.7.1
-
+       Arnd
